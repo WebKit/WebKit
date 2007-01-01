@@ -65,7 +65,7 @@ SVGTransform* SVGTransformList::concatenate() const
     AffineTransform matrix;
 
     ExceptionCode ec = 0;
-    for(unsigned int i = 0; i < length; i++)
+    for (unsigned int i = 0; i < length; i++)
         matrix = getItem(i, ec)->matrix() * matrix;
 
     obj->setMatrix(matrix);

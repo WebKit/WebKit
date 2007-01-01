@@ -512,6 +512,41 @@ bool SVGAnimationElement::isIndefinite(double value) const
     return (value == DBL_MAX);
 }
 
+static double calculateTimePercentage(double elapsedSeconds, double start, double end, double duration, double repetitions)
+{
+    double percentage = 0.0;
+    double useElapsed = elapsedSeconds - (duration * repetitions);
+    
+    if (duration > 0.0 && end == 0.0)
+        percentage = 1.0 - (((start + duration) - useElapsed) / duration);
+    else if (duration > 0.0 && end != 0.0) {
+        if (duration > end)
+            percentage = 1.0 - (((start + end) - useElapsed) / end);
+        else
+            percentage = 1.0 - (((start + duration) - useElapsed) / duration);
+    } else if (duration == 0.0 && end != 0.0)
+        percentage = 1.0 - (((start + end) - useElapsed) / end);
+    
+    return percentage;
+}
+
+bool SVGAnimationElement::updateForElapsedSeconds(double elapsedSeconds)
+{
+    // Validate animation timing settings:
+    // #1 (duration > 0) -> fine
+    // #2 (duration <= 0.0 && end > 0) -> fine
+    
+    if ((m_simpleDuration <= 0.0 && m_end <= 0.0) || (isIndefinite(m_simpleDuration) && m_end <= 0.0))
+        return false; // Ignore dur="0" or dur="-neg"
+    
+    float percentage = calculateTimePercentage(elapsedSeconds, m_begin, m_end, m_simpleDuration, m_repeations);
+    
+    if (percentage <= 1.0 || connected())
+        handleTimerEvent(percentage);
+    
+    return true;
+}
+
 }
 
 // vim:ts=4:noet

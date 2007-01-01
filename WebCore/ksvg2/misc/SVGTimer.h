@@ -51,10 +51,9 @@ public:
     static SVGTimer* downcast(Timer<TimeScheduler>* t) { return static_cast<SVGTimer*>(t); }
 
 private:
-    double calculateTimePercentage(double elapsed, double start, double end, double duration, double repetitions);
-    
     typedef HashMap<SVGElement*, Vector<SVGAnimationElement*> > TargetAnimationMap;
     TargetAnimationMap animationsByElement(double elapsedTime);
+    void applyAnimations(double elapsedSeconds, const SVGTimer::TargetAnimationMap& targetMap);
 
     TimeScheduler* m_scheduler;
     double m_interval;

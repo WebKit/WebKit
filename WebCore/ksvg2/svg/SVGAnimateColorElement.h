@@ -36,6 +36,7 @@ namespace WebCore {
         SVGAnimateColorElement(const QualifiedName&, Document*);
         virtual ~SVGAnimateColorElement();
 
+        void applyAnimationToValue(Color& currentColor);
         virtual void handleTimerEvent(double timePercentage);
 
         // Helper

@@ -49,27 +49,10 @@ void SVGTimer::start()
         startRepeating(m_interval);
 }
 
-double SVGTimer::calculateTimePercentage(double elapsedSeconds, double start, double end, double duration, double repetitions)
-{
-    double percentage = 0.0;
-
-    double useElapsed = elapsedSeconds - (duration * repetitions);
-    
-    if (duration > 0.0 && end == 0.0)
-        percentage = 1.0 - (((start + duration) - useElapsed) / duration);
-    else if (duration > 0.0 && end != 0.0) {
-        if (duration > end)
-            percentage = 1.0 - (((start + end) - useElapsed) / end);
-        else
-            percentage = 1.0 - (((start + duration) - useElapsed) / duration);
-    } else if (duration == 0.0 && end != 0.0)
-        percentage = 1.0 - (((start + end) - useElapsed) / end);
-
-    return percentage;
-}
-
 SVGTimer::TargetAnimationMap SVGTimer::animationsByElement(double elapsedSeconds)
 {
+    // Build a list of all animations which apply to each element
+    // FIXME: This list should be sorted by animation priority
     ExceptionCode ec = 0;
     TargetAnimationMap targetMap;
     SVGNotifySet::const_iterator end = m_notifySet.end();
@@ -98,110 +81,87 @@ SVGTimer::TargetAnimationMap SVGTimer::animationsByElement(double elapsedSeconds
     return targetMap;
 }
 
-void SVGTimer::notifyAll()
+// FIXME: This funtion will eventually become part of the AnimationCompositor
+void SVGTimer::applyAnimations(double elapsedSeconds, const SVGTimer::TargetAnimationMap& targetMap)
 {
-    if (m_enabledNotifySet.isEmpty())
-        return;
-
-    double elapsedSeconds = m_scheduler->elapsed() * 1000.0; // Take time now.
-
-    // First build a list of animation elements per target element
-    // This is important to decide about the order & priority of 
-    // the animations -> 'additive' support is handled this way.
-    TargetAnimationMap targetMap = animationsByElement(elapsedSeconds);
-
     ExceptionCode ec = 0;
-
-    TargetAnimationMap::iterator targetIterator = targetMap.begin();
-    TargetAnimationMap::iterator tend = targetMap.end();
+    
+    TargetAnimationMap::const_iterator targetIterator = targetMap.begin();
+    TargetAnimationMap::const_iterator tend = targetMap.end();
     for (; targetIterator != tend; ++targetIterator) {
-        HashMap<String, Color> targetColor; // special <animateColor> case
-        RefPtr<SVGTransformList> targetTransforms; // special <animateTransform> case    
-
+        HashMap<String, Color> attributeToColorMap; // special <animateColor> case
+        RefPtr<SVGTransformList> targetTransforms; // special <animateTransform> case
+        
+        // FIXME: This is still not 100% correct.  Correct would be:
+        // 1. Walk backwards through the priority list until a replace (!isAdditive()) is found
+        // 2. Set the initial value (or last replace) as the new animVal
+        // 3. Call each enabled animation in turn, to have it apply its changes
+        // 4. After building a new animVal, set it on the element.
+        
         unsigned count = targetIterator->second.size();
         for (unsigned i = 0; i < count; ++i) {
             SVGAnimationElement* animation = targetIterator->second[i];
-
-            double end = animation->getEndTime();
-            double start = animation->getStartTime();
-            double duration = animation->getSimpleDuration(ec);
-            double repetitions = animation->repeations();
-
-            // Validate animation timing settings:
-            // #1 (duration > 0) -> fine
-            // #2 (duration <= 0.0 && end > 0) -> fine
             
-            if ((duration <= 0.0 && end <= 0.0) || (animation->isIndefinite(duration) && end <= 0.0))
-                continue; // Ignore dur="0" or dur="-neg"
+            if (!animation->updateForElapsedSeconds(elapsedSeconds))
+                continue;
             
-            float percentage = calculateTimePercentage(elapsedSeconds, start, end, duration, repetitions);
-                
-            if (percentage <= 1.0 || animation->connected())
-                animation->handleTimerEvent(percentage);
-
-            // Special cases for animate* objects depending on 'additive' attribute
             if (animation->hasTagName(SVGNames::animateTransformTag)) {
                 SVGAnimateTransformElement* animTransform = static_cast<SVGAnimateTransformElement*>(animation);
-                AffineTransform transformMatrix = animTransform->transformMatrix();
-                RefPtr<SVGTransform> targetTransform = new SVGTransform();
-
-                if (!targetTransforms) { // lazy creation, only if needed.
+                if (!targetTransforms) {
                     targetTransforms = new SVGTransformList();
-
-                    if (animation->isAdditive()) {
-                        targetTransform->setMatrix(animTransform->initialMatrix());
-                        targetTransforms->appendItem(targetTransform.get(), ec);
-                        targetTransform = new SVGTransform();
+                    if (animation->isAdditive()) { // Avoid mallocing a transform which is about to be replaced
+                        RefPtr<SVGTransform> initialTransform = new SVGTransform();
+                        initialTransform->setMatrix(animTransform->initialMatrix());
+                        targetTransforms->appendItem(initialTransform.get(), ec);
                     }
                 }
-
-                if (targetTransforms->numberOfItems() <= 1)
-                    targetTransform->setMatrix(transformMatrix);
-                else {
-                    if (!animation->isAdditive())
-                        targetTransforms->clear(ec);
-                    targetTransform->setMatrix(transformMatrix);
-                }
-
-                targetTransforms->appendItem(targetTransform.get(), ec);
+                animTransform->applyAnimationToValue(targetTransforms.get());
             } else if (animation->hasTagName(SVGNames::animateColorTag)) {
                 SVGAnimateColorElement* animColor = static_cast<SVGAnimateColorElement*>(animation);
                 String name = animColor->attributeName();
-
-                if (animation->isAdditive()) {
-                    if (targetColor.contains(name))
-                        targetColor.set(name, animColor->addColorsAndClamp(targetColor.get(name), animColor->color()));
-                    else
-                        targetColor.set(name, animColor->addColorsAndClamp(animColor->initialColor(), animColor->color()));
-                } else
-                    targetColor.set(name, animColor->color());
+                Color currentColor = attributeToColorMap.contains(name) ? attributeToColorMap.get(name) : animColor->initialColor();
+                animColor->applyAnimationToValue(currentColor);
+                attributeToColorMap.set(name, currentColor);
             }
         }
-
-        // Handle <animateTransform>.
+        
+        // Apply any transform changes (animateTransform)
         if (targetTransforms) {
             SVGElement* key = targetIterator->first;
-            if (key && key->isStyled() && key->isStyledTransformable()) {
+            if (key && key->isStyledTransformable()) {
                 SVGStyledTransformableElement* transform = static_cast<SVGStyledTransformableElement*>(key);
                 transform->setTransform(targetTransforms.get());
                 transform->updateLocalTransform(transform->transform());
             }
         }
-
-        // Handle <animateColor>.
-        HashMap<String, Color>::iterator colorIteratorEnd = targetColor.end();
-        for (HashMap<String, Color>::iterator colorIterator = targetColor.begin(); colorIterator != colorIteratorEnd; ++colorIterator) {
+        
+        // Apply any color changes (animateColor)
+        HashMap<String, Color>::iterator colorIteratorEnd = attributeToColorMap.end();
+        for (HashMap<String, Color>::iterator colorIterator = attributeToColorMap.begin(); colorIterator != colorIteratorEnd; ++colorIterator) {
             if (colorIterator->second.isValid())
                 SVGAnimationElement::setTargetAttribute(targetIterator->first, colorIterator->first, colorIterator->second.name());
         }
     }
-
+    
     // Make a second pass through the map to avoid multiple setChanged calls on the same element.
     for (targetIterator = targetMap.begin(); targetIterator != tend; ++targetIterator) {
         SVGElement* key = targetIterator->first;
         if (key && key->isStyled())
             static_cast<SVGStyledElement*>(key)->setChanged(true);
     }
+}
+
+void SVGTimer::notifyAll()
+{
+    if (m_enabledNotifySet.isEmpty())
+        return;
+
+    // First build a list of animation elements per target element
+    double elapsedSeconds = m_scheduler->elapsed() * 1000.0; // Take time now.
+    TargetAnimationMap targetMap = animationsByElement(elapsedSeconds);
+    
+    // Then composite those animations down to final values and apply
+    applyAnimations(elapsedSeconds, targetMap);
 }
 
 void SVGTimer::addNotify(SVGAnimationElement* element, bool enabled)

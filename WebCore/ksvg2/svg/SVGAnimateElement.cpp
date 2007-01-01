@@ -40,31 +40,6 @@ SVGAnimateElement::~SVGAnimateElement()
 {
 }
 
-void SVGAnimateElement::handleTimerEvent(double timePercentage)
-{
-    // Start condition.
-    if (!m_connected) {
-        ownerSVGElement()->timeScheduler()->connectIntervalTimer(this);
-        m_connected = true;
-        return;
-    }
-
-    // Commit changes!
-    
-    // End condition.
-    if (timePercentage == 1.0) {
-        if ((m_repeatCount > 0 && m_repeations < m_repeatCount - 1) || isIndefinite(m_repeatCount)) {
-            m_repeations++;
-            return;
-        }
-        ownerSVGElement()->timeScheduler()->disconnectIntervalTimer(this);
-        m_connected = false;
-
-        // Reset...
-        m_currentItem = -1;
-    }
-}
-
 }
 
 // vim:ts=4:noet

@@ -2,6 +2,29 @@
 
         Reviewed by olliej.
 
+        Begin pushing more animation logic out of SVGTimer and into the SVGAnimate* classes.
+        
+        * ksvg2/misc/SVGTimer.cpp:
+        (WebCore::SVGTimer::animationsByElement): add comment
+        (WebCore::SVGTimer::notifyAll): push logic into SVGAnimte* classes
+        * ksvg2/svg/SVGAnimateColorElement.cpp:
+        (WebCore::SVGAnimateColorElement::applyAnimationToValue): added.
+        * ksvg2/svg/SVGAnimateColorElement.h:
+        * ksvg2/svg/SVGAnimateElement.cpp:
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::applyAnimationToValue): added.
+        * ksvg2/svg/SVGAnimateTransformElement.h:
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (WebCore::calculateTimePercentage): logic moved from SVGTimer
+        (WebCore::SVGAnimationElement::updateForElapsedSeconds): logic moved from SVGTimer
+        * ksvg2/svg/SVGAnimationElement.h:
+        * ksvg2/svg/SVGTransformList.cpp:
+        (SVGTransformList::concatenate): fixed spacing
+
+2007-01-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by olliej.
+
         Split out animationsByElement() logic in preparation for adding AnimationCompositor class
         Add addColorsAndClamp helper (since adding and clamping is the common case)
 

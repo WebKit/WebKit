@@ -33,7 +33,7 @@ namespace WebCore {
         SVGAnimateElement(const QualifiedName&, Document*);
         virtual ~SVGAnimateElement();
 
-        virtual void handleTimerEvent(double timePercentage);
+        virtual void handleTimerEvent(double timePercentage) { }
     
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -41,7 +41,7 @@ namespace WebCore {
     private:
         int m_currentItem;
 
-        DeprecatedString m_savedTo;
+        String m_savedTo;
     };
 
 } // namespace WebCore

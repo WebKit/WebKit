@@ -39,6 +39,7 @@ namespace WebCore {
         virtual void parseMappedAttribute(MappedAttribute*);
 
         virtual void handleTimerEvent(double timePercentage);
+        void applyAnimationToValue(SVGTransformList*);
 
         // Helpers
         RefPtr<SVGTransform> parseTransformValue(const String&) const;

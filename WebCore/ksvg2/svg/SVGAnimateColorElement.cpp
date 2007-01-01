@@ -49,6 +49,13 @@ SVGAnimateColorElement::~SVGAnimateColorElement()
 {
 }
 
+void calculateColorDifference(const Color& first, const Color& second, int& redDiff, int& greenDiff, int& blueDiff)
+{
+    redDiff = first.red() - second.red();
+    greenDiff = first.green() - second.green();
+    blueDiff = first.blue() - second.blue();
+}
+
 void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
 {
     // Start condition.
@@ -112,11 +119,8 @@ void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
             
                 String toColorString(qTo.name());
                 m_toColor->setRGBColor(toColorString);
-            
-                m_redDiff = qTo.red() - qFrom.red();
-                m_greenDiff = qTo.green() - qFrom.green();
-                m_blueDiff = qTo.blue() - qFrom.blue();
-
+                
+                calculateColorDifference(qTo, qFrom, m_redDiff, m_greenDiff, m_blueDiff);
                 break;
             }
             case VALUES_ANIMATION:
@@ -165,18 +169,9 @@ void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
                     apply = true;
                 }
 
-                String toColorString(value2);
-                m_toColor->setRGBColor(toColorString);
-    
-                String fromColorString(value1);
-                m_fromColor->setRGBColor(fromColorString);    
-
-                Color qTo = m_toColor->color();
-                Color qFrom = m_fromColor->color();
-
-                m_redDiff = qTo.red() - qFrom.red();
-                m_greenDiff = qTo.green() - qFrom.green();
-                m_blueDiff = qTo.blue() - qFrom.blue();
+                m_toColor->setRGBColor(value2);
+                m_fromColor->setRGBColor(value1);
+                calculateColorDifference(m_toColor->color(), m_fromColor->color(), m_redDiff, m_greenDiff, m_blueDiff);
 
                 m_currentItem = itemByPercentage;
 
@@ -223,6 +218,14 @@ void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
         m_greenDiff = 0;
         m_blueDiff = 0;
     }
+}
+
+void SVGAnimateColorElement::applyAnimationToValue(Color& currentColor)
+{
+    if (isAdditive())
+        currentColor = addColorsAndClamp(currentColor, color());
+    else
+        currentColor = color();
 }
 
 static inline int clampColorValue(int v)

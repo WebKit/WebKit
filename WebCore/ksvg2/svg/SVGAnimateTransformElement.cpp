@@ -318,6 +318,17 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
     }
 }
 
+void SVGAnimateTransformElement::applyAnimationToValue(SVGTransformList* targetTransforms)
+{
+    ExceptionCode ec;
+    if (!isAdditive())
+        targetTransforms->clear(ec);
+    
+    RefPtr<SVGTransform> targetTransform = new SVGTransform();
+    targetTransform->setMatrix(m_transformMatrix);
+    targetTransforms->appendItem(targetTransform.get(), ec);
+}
+
 RefPtr<SVGTransform> SVGAnimateTransformElement::parseTransformValue(const String& data) const
 {
     DeprecatedString parse = data.deprecatedString().stripWhiteSpace();
