@@ -1,3 +1,43 @@
+2006-12-31  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Geoff.
+
+        Update embedded pcre library from version 6.2 to 6.4.  Changes from pcre 6.2 to 6.3
+        did not include any files in JavaScriptCore/pcre.
+
+        All changes include renaming EXPORT to PCRE_EXPORT, renaming of ucp_findchar() to
+        _pcre_ucp_findchar(), or comment changes.  Additional changes noted below.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Updated source file list.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Renamed pcre_printint.c to pcre_printint.src
+        and changed it from a source file to a header file.
+        * JavaScriptCoreSources.bkl: Updated source file list.
+        * pcre/CMakeLists.txt: Updated source file list.
+        * pcre/pcre-config.h:
+        * pcre/pcre.h: Updated version.
+        * pcre/pcre.pri: Updated source file list.
+        * pcre/pcre_compile.c: Include pcre_printint.src #if DEBUG.
+        (pcre_compile2):
+        * pcre/pcre_config.c:
+        * pcre/pcre_exec.c:
+        (match):
+        * pcre/pcre_fullinfo.c:
+        * pcre/pcre_info.c:
+        * pcre/pcre_internal.h: Added header guard.  Removed export of _pcre_printint().
+        * pcre/pcre_ord2utf8.c:
+        * pcre/pcre_printint.c: Renamed to pcre_printint.src.
+        * pcre/pcre_printint.src: Added.  Renamed _pcre_printint() to pcre_printint().
+        * pcre/pcre_refcount.c:
+        * pcre/pcre_study.c:
+        * pcre/pcre_tables.c:
+        * pcre/pcre_try_flipped.c:
+        * pcre/pcre_ucp_findchar.c: Added contents of ucp_findchar.c.
+        * pcre/pcre_version.c:
+        * pcre/pcre_xclass.c:
+        (_pcre_xclass):
+        * pcre/ucp.h: Removed export of ucp_findchar().
+        * pcre/ucp_findchar.c: Removed.  Contents moved to pcre_ucp_findchar.c.
+
 2006-12-29  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Geoff.

@@ -6,7 +6,7 @@
 #ifndef _UCP_H
 #define _UCP_H
 
-/* These are the character categories that are returned by ucp_findchar */
+/* These are the character categories that are returned by _pcre_ucp_findchar */
 
 enum {
   ucp_C,     /* Other */
@@ -18,7 +18,7 @@ enum {
   ucp_Z      /* Separator */
 };
 
-/* These are the detailed character types that are returned by ucp_findchar */
+/* These are the detailed character types that are returned by _pcre_ucp_findchar */
 
 enum {
   ucp_Cc,    /* Control */
@@ -52,8 +52,6 @@ enum {
   ucp_Zp,    /* Paragraph separator */
   ucp_Zs     /* Space separator */
 };
-
-extern int ucp_findchar(const int, int *, int *);
 
 #endif
 

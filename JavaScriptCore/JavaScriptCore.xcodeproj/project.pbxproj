@@ -256,7 +256,7 @@
 		93E26BFE08B151D400F85226 /* ucpinternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E26BFC08B151D400F85226 /* ucpinternal.h */; };
 		93E26C1308B1523D00F85226 /* ucptable.c in Headers */ = {isa = PBXBuildFile; fileRef = 93E26C0D08B1520900F85226 /* ucptable.c */; };
 		93E26CF708B29A1C00F85226 /* pcre_get.c in Sources */ = {isa = PBXBuildFile; fileRef = 93E26CF608B29A1C00F85226 /* pcre_get.c */; };
-		93E26DDC08B2A4F400F85226 /* pcre_printint.c in Sources */ = {isa = PBXBuildFile; fileRef = 93E26DDB08B2A4F400F85226 /* pcre_printint.c */; };
+		93E26DDC08B2A4F400F85226 /* pcre_printint.src in Headers */ = {isa = PBXBuildFile; fileRef = 93E26DDB08B2A4F400F85226 /* pcre_printint.src */; };
 		93F0B3AB09BB4DC00068FCE3 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F0B3A909BB4DC00068FCE3 /* Parser.cpp */; };
 		93F0B3AC09BB4DC00068FCE3 /* Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F0B3AA09BB4DC00068FCE3 /* Parser.h */; };
 		BCF655590A2049710038A194 /* MathExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF6553B0A2048DE0038A194 /* MathExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -595,7 +595,7 @@
 		93E26BFC08B151D400F85226 /* ucpinternal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = ucpinternal.h; path = pcre/ucpinternal.h; sourceTree = "<group>"; tabWidth = 8; };
 		93E26C0D08B1520900F85226 /* ucptable.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; indentWidth = 4; name = ucptable.c; path = pcre/ucptable.c; sourceTree = "<group>"; tabWidth = 8; };
 		93E26CF608B29A1C00F85226 /* pcre_get.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = pcre_get.c; path = pcre/pcre_get.c; sourceTree = "<group>"; tabWidth = 8; };
-		93E26DDB08B2A4F400F85226 /* pcre_printint.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = pcre_printint.c; path = pcre/pcre_printint.c; sourceTree = "<group>"; tabWidth = 8; };
+		93E26DDB08B2A4F400F85226 /* pcre_printint.src */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = pcre_printint.src; path = pcre/pcre_printint.src; sourceTree = "<group>"; tabWidth = 8; };
 		93F0B3A909BB4DC00068FCE3 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cpp; sourceTree = "<group>"; };
 		93F0B3AA09BB4DC00068FCE3 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
 		93F1981A08245AAE001E9ABC /* keywords.table */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = keywords.table; sourceTree = "<group>"; tabWidth = 8; };
@@ -1024,7 +1024,7 @@
 				930754D108B0F76200AB3056 /* pcre_globals.c */,
 				93E26BE508B1517100F85226 /* pcre_internal.h */,
 				93E26BC908B1511900F85226 /* pcre_ord2utf8.c */,
-				93E26DDB08B2A4F400F85226 /* pcre_printint.c */,
+				93E26DDB08B2A4F400F85226 /* pcre_printint.src */,
 				930754CE08B0F74500AB3056 /* pcre_tables.c */,
 				93E26BD008B1513800F85226 /* pcre_try_flipped.c */,
 				93E26BCD08B1512600F85226 /* pcre_ucp_findchar.c */,
@@ -1149,6 +1149,7 @@
 				932FC11D0824A6A3005B3C75 /* create_hash_table in Headers */,
 				65621E6E089E859700760F35 /* property_slot.h in Headers */,
 				93E26BE608B1517100F85226 /* pcre_internal.h in Headers */,
+				93E26DDC08B2A4F400F85226 /* pcre_printint.src in Headers */,
 				93E26BFD08B151D400F85226 /* ucp.h in Headers */,
 				93E26BFE08B151D400F85226 /* ucpinternal.h in Headers */,
 				93E26C1308B1523D00F85226 /* ucptable.c in Headers */,
@@ -1487,7 +1488,6 @@
 				93E26BD108B1513800F85226 /* pcre_try_flipped.c in Sources */,
 				93E26BD408B1514100F85226 /* pcre_xclass.c in Sources */,
 				93E26CF708B29A1C00F85226 /* pcre_get.c in Sources */,
-				93E26DDC08B2A4F400F85226 /* pcre_printint.c in Sources */,
 				65E217BE08E7EECC0023E5F6 /* Assertions.cpp in Sources */,
 				65E217BF08E7EECC0023E5F6 /* FastMalloc.cpp in Sources */,
 				6541BD7408E80A17002CBEE7 /* TCSystemAlloc.cpp in Sources */,

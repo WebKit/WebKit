@@ -39,6 +39,13 @@ POSSIBILITY OF SUCH DAMAGE.
 -----------------------------------------------------------------------------
 */
 
+/* This header contains definitions that are shared between the different
+modules, but which are not relevant to the exported API. This includes some
+functions whose names all begin with "_pcre_". */
+
+#ifndef PCRE_INTERNAL_H
+#define PCRE_INTERNAL_H
+
 #include "Assertions.h"
 
 /* Added to prevent 64-to-32 shortening warnings when compiling for 64-bit
@@ -53,10 +60,6 @@ POSSIBILITY OF SUCH DAMAGE.
 #pragma warning(disable: 4232)
 #pragma warning(disable: 4244)
 #endif
-
-/* This header contains definitions that are shared between the different
-modules, but which are not relevant to the exported API. This includes some
-functions whose names all begin with "_pcre_". */
 
 #define _pcre_OP_lengths kjs_pcre_OP_lengths
 #define _pcre_default_tables kjs_pcre_default_tables
@@ -76,9 +79,9 @@ functions whose names all begin with "_pcre_". */
 
 /* Define DEBUG to get debugging output on stdout. */
 
-/****
+#if 0
 #define DEBUG
-****/
+#endif
 
 /* Use a macro for debugging printing, 'cause that eliminates the use of #ifdef
 inline, and there are *still* stupid compilers about that don't like indented
@@ -134,9 +137,11 @@ preprocessor time in standard C environments. */
   #error Cannot determine a type for 32-bit unsigned integers
 #endif
 
-/* Include the public PCRE header */
+/* Include the public PCRE header and the definitions of UCP character property
+values. */
 
 #include "pcre.h"
+#include "ucp.h"
 
 /* All character handling must be done as unsigned characters. Otherwise there
 are problems with top-bit-set characters and functions such as isspace().
@@ -153,12 +158,6 @@ typedef pcre_char pcre_uchar;
 #else
 typedef unsigned char pcre_uchar;
 #endif
-
-/* Include the (copy of) the public ucp header, changing the external name into
-a private one. This does no harm, even if we aren't compiling UCP support. */
-
-#define ucp_findchar _pcre_ucp_findchar
-#include "ucp.h"
 
 /* When compiling for use with the Virtual Pascal compiler, these functions
 need to have their names changed. PCRE must be compiled with the -DVPCOMPAT
@@ -951,7 +950,7 @@ total length. */
 #define tables_length (ctypes_offset + 256)
 
 /* Layout of the UCP type table that translates property names into codes for
-ucp_findchar(). */
+_pcre_ucp_findchar(). */
 
 typedef struct {
   const char *name;
@@ -983,11 +982,12 @@ one of the exported public functions. They have to be "external" in the C
 sense, but are not part of the PCRE public API. */
 
 extern int         _pcre_ord2utf8(int, uschar *);
-extern void        _pcre_printint(pcre *, FILE *);
 extern real_pcre * _pcre_try_flipped(const real_pcre *, real_pcre *,
                      const pcre_study_data *, pcre_study_data *);
 extern int         _pcre_ucp_findchar(const int, int *, int *);
 extern int         _pcre_valid_utf8(const uschar *, int);
 extern BOOL        _pcre_xclass(int, const uschar *);
+
+#endif
 
 /* End of pcre_internal.h */

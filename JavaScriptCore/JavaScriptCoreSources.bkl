@@ -60,7 +60,6 @@
         pcre/pcre_info.c
         pcre/pcre_maketables.c
         pcre/pcre_ord2utf8.c
-        pcre/pcre_printint.c
         pcre/pcre_refcount.c
         pcre/pcre_study.c
         pcre/pcre_tables.c
@@ -68,7 +67,6 @@
         pcre/pcre_ucp_findchar.c
         pcre/pcre_version.c
         pcre/pcre_xclass.c
-        pcre/ucp_findchar.c
     </set>
 
     <set append="1" var="JSCORE_SOURCES_BINDINGS">

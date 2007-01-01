@@ -565,7 +565,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\pcre\pcre_printint.c"
+				RelativePath="..\..\pcre\pcre_printint.src"
 				>
 			</File>
 			<File
@@ -598,10 +598,6 @@
 			</File>
 			<File
 				RelativePath="..\..\pcre\ucp.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\pcre\ucp_findchar.c"
 				>
 			</File>
 			<File

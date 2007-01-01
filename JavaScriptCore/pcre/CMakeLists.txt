@@ -21,7 +21,6 @@ set(pcre-unity_LIB_SRCS
    ${pcre-unity_LIB_SRCS}
    ${CMAKE_CURRENT_BINARY_DIR}/chartables.c
    pcre_get.c
-   pcre_printint.c
    pcre_refcount.c
    pcre_ucp_findchar.c
    pcre_compile.c
@@ -32,7 +31,6 @@ set(pcre-unity_LIB_SRCS
    pcre_study.c
    pcre_exec.c
    pcre_xclass.c
-   ucp_findchar.c
    pcre_tables.c
    pcre_maketables.c
    pcre_try_flipped.c

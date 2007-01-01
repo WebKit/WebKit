@@ -1364,7 +1364,7 @@ for (;;)
       {
       int chartype, rqdtype;
       int othercase;
-      int category = ucp_findchar(c, &chartype, &othercase);
+      int category = _pcre_ucp_findchar(c, &chartype, &othercase);
 
       rqdtype = *(++ecode);
       ecode++;
@@ -1391,7 +1391,7 @@ for (;;)
       {
       int chartype;
       int othercase;
-      int category = ucp_findchar(c, &chartype, &othercase);
+      int category = _pcre_ucp_findchar(c, &chartype, &othercase);
       if (category == ucp_M) RRETURN(MATCH_NOMATCH);
       while (eptr < md->end_subject)
         {
@@ -1400,7 +1400,7 @@ for (;;)
           {
           GETCHARLEN(c, eptr, len);
           }
-        category = ucp_findchar(c, &chartype, &othercase);
+        category = _pcre_ucp_findchar(c, &chartype, &othercase);
         if (category != ucp_M) break;
         eptr += len;
         }
@@ -1891,7 +1891,7 @@ for (;;)
         ecode += length;
 
         /* If we have Unicode property support, we can use it to test the other
-        case of the character, if there is one. The result of ucp_findchar() is
+        case of the character, if there is one. The result of _pcre_ucp_findchar() is
         < 0 if the char isn't found, and othercase is returned as zero if there
         isn't one. */
 
@@ -1900,7 +1900,7 @@ for (;;)
 #ifdef SUPPORT_UCP
           int chartype;
           int othercase;
-          if (ucp_findchar(fc, &chartype, &othercase) < 0 || dc != othercase)
+          if (_pcre_ucp_findchar(fc, &chartype, &othercase) < 0 || dc != othercase)
 #endif
             RRETURN(MATCH_NOMATCH);
           }
@@ -1963,7 +1963,7 @@ for (;;)
 #ifdef SUPPORT_UCP
         int othercase;
         int chartype;
-        if ((ims & PCRE_CASELESS) == 0 || ucp_findchar(fc, &chartype, &othercase) < 0)
+        if ((ims & PCRE_CASELESS) == 0 || _pcre_ucp_findchar(fc, &chartype, &othercase) < 0)
           othercase = -1; /* Guaranteed to not match any character */
 #endif  /* SUPPORT_UCP */
 
@@ -2078,7 +2078,7 @@ for (;;)
         int othercase;
         int chartype;
         if ((ims & PCRE_CASELESS) != 0 &&
-             ucp_findchar(fc, &chartype, &othercase) >= 0 &&
+             _pcre_ucp_findchar(fc, &chartype, &othercase) >= 0 &&
              othercase > 0)
           oclength = _pcre_ord2utf8(othercase, occhars);
 #endif  /* SUPPORT_UCP */
@@ -2604,7 +2604,7 @@ for (;;)
         for (i = 1; i <= min; i++)
           {
           GETCHARINC(c, eptr);
-          prop_category = ucp_findchar(c, &prop_chartype, &prop_othercase);
+          prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
           if ((*prop_test_variable == prop_test_against) == prop_fail_result)
             RRETURN(MATCH_NOMATCH);
           }
@@ -2618,7 +2618,7 @@ for (;;)
         for (i = 1; i <= min; i++)
           {
           GETCHARINCTEST(c, eptr);
-          prop_category = ucp_findchar(c, &prop_chartype, &prop_othercase);
+          prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
           if (prop_category == ucp_M) RRETURN(MATCH_NOMATCH);
           while (eptr < md->end_subject)
             {
@@ -2627,7 +2627,7 @@ for (;;)
               {
               GETCHARLEN(c, eptr, len);
               }
-            prop_category = ucp_findchar(c, &prop_chartype, &prop_othercase);
+            prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
             if (prop_category != ucp_M) break;
             eptr += len;
             }
@@ -2797,7 +2797,7 @@ for (;;)
           if (rrc != MATCH_NOMATCH) RRETURN(rrc);
           if (fi >= max || eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
           GETCHARINC(c, eptr);
-          prop_category = ucp_findchar(c, &prop_chartype, &prop_othercase);
+          prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
           if ((*prop_test_variable == prop_test_against) == prop_fail_result)
             RRETURN(MATCH_NOMATCH);
           }
@@ -2814,7 +2814,7 @@ for (;;)
           if (rrc != MATCH_NOMATCH) RRETURN(rrc);
           if (fi >= max || eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
           GETCHARINCTEST(c, eptr);
-          prop_category = ucp_findchar(c, &prop_chartype, &prop_othercase);
+          prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
           if (prop_category == ucp_M) RRETURN(MATCH_NOMATCH);
           while (eptr < md->end_subject)
             {
@@ -2823,7 +2823,7 @@ for (;;)
               {
               GETCHARLEN(c, eptr, len);
               }
-            prop_category = ucp_findchar(c, &prop_chartype, &prop_othercase);
+            prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
             if (prop_category != ucp_M) break;
             eptr += len;
             }
@@ -2955,7 +2955,7 @@ for (;;)
           int len = 1;
           if (eptr >= md->end_subject) break;
           GETCHARLEN(c, eptr, len);
-          prop_category = ucp_findchar(c, &prop_chartype, &prop_othercase);
+          prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
           if ((*prop_test_variable == prop_test_against) == prop_fail_result)
             break;
           eptr+= len;
@@ -2981,7 +2981,7 @@ for (;;)
           {
           if (eptr >= md->end_subject) break;
           GETCHARINCTEST(c, eptr);
-          prop_category = ucp_findchar(c, &prop_chartype, &prop_othercase);
+          prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
           if (prop_category == ucp_M) break;
           while (eptr < md->end_subject)
             {
@@ -2990,7 +2990,7 @@ for (;;)
               {
               GETCHARLEN(c, eptr, len);
               }
-            prop_category = ucp_findchar(c, &prop_chartype, &prop_othercase);
+            prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
             if (prop_category != ucp_M) break;
             eptr += len;
             }
@@ -3011,7 +3011,7 @@ for (;;)
               {
               GETCHARLEN(c, eptr, len);
               }
-            prop_category = ucp_findchar(c, &prop_chartype, &prop_othercase);
+            prop_category = _pcre_ucp_findchar(c, &prop_chartype, &prop_othercase);
             if (prop_category != ucp_M) break;
             eptr--;
             }
@@ -3365,7 +3365,7 @@ Returns:          > 0 => success; value is the number of elements filled in
                  < -1 => some kind of unexpected problem
 */
 
-EXPORT int
+PCRE_EXPORT int
 pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
   const pcre_char *subject, int length, int start_offset, int options, int *offsets,
   int offsetcount)
