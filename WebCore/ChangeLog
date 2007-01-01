@@ -2,6 +2,31 @@
 
         Reviewed by andersca.
 
+        Begin pushing code down into SVGAnimateElement
+
+        * ksvg2/svg/SVGAnimateColorElement.cpp:
+        (WebCore::SVGAnimateColorElement::handleStartCondition):
+        * ksvg2/svg/SVGAnimateColorElement.h:
+        * ksvg2/svg/SVGAnimateElement.h:
+        (WebCore::SVGAnimateElement::updateCurrentValue):
+        (WebCore::SVGAnimateElement::handleStartCondition):
+        (WebCore::SVGAnimateElement::handleEndCondition):
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::handleStartCondition):
+        * ksvg2/svg/SVGAnimateTransformElement.h:
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::handleTimerEvent):
+        * ksvg2/svg/SVGAnimationElement.h:
+        * ksvg2/svg/SVGSetElement.cpp:
+        (WebCore::SVGSetElement::updateCurrentValue):
+        (WebCore::SVGSetElement::handleStartCondition):
+        (WebCore::SVGSetElement::handleEndCondition):
+        * ksvg2/svg/SVGSetElement.h:
+
+2007-01-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by andersca.
+
         Add static function SVGColor::colorFromRGBColorString to allow parsing Colors from SVG color strings w/o creating an SVGColor object.
 
         * ksvg2/svg/SVGAnimateColorElement.cpp:

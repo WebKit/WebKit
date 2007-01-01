@@ -39,29 +39,28 @@ SVGSetElement::~SVGSetElement()
 {
 }
 
-void SVGSetElement::handleTimerEvent(double timePercentage)
+bool SVGSetElement::updateCurrentValue(double timePercentage)
 {
-    // Start condition.
-    if (!connectedToTimer()) {
-        connectTimer();
-        return;
-    }
-    
-    // Commit change now...
     if (m_savedTo.isEmpty()) {
         m_savedTo = targetAttribute();
         setTargetAttribute(m_to);
     }
+    return false;
+}
 
-    // End condition.
-    if (timePercentage == 1.0) {
-        disconnectTimer();
+bool SVGSetElement::handleStartCondition()
+{
+    return true;
+}
 
-        if (!isFrozen())
-            setTargetAttribute(m_savedTo);
-
-        m_savedTo = String();
-    }
+void SVGSetElement::handleEndCondition()
+{
+    disconnectTimer();
+    
+    if (!isFrozen())
+        setTargetAttribute(m_savedTo);
+    
+    m_savedTo = String();
 }
 
 }

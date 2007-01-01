@@ -224,68 +224,63 @@ bool SVGAnimateTransformElement::updateCurrentValue(double timePercentage)
     return true;
 }
 
-bool SVGAnimateTransformElement::startIfNecessary()
+bool SVGAnimateTransformElement::handleStartCondition()
 {
-    if (!connectedToTimer()) {
-        storeInitialValue();
-        
-        switch (detectAnimationMode()) {
-            case TO_ANIMATION:
-            case FROM_TO_ANIMATION:
-            {        
-                m_toTransform = parseTransformValue(m_to);
-                m_toRotateSpecialCase = m_rotateSpecialCase;
-                
-                if (!m_from.isEmpty()) { // from-to animation
-                    m_fromTransform = parseTransformValue(m_from);
-                    m_fromRotateSpecialCase = m_rotateSpecialCase;
-                } else { // to animation
-                    m_fromTransform = m_initialTransform;
-                    m_fromRotateSpecialCase = false;
-                }
-                
-                if (!m_fromTransform)
-                    m_fromTransform = new SVGTransform();
-                
-                break;
+    storeInitialValue();
+    
+    switch (detectAnimationMode()) {
+        case TO_ANIMATION:
+        case FROM_TO_ANIMATION:
+        {        
+            m_toTransform = parseTransformValue(m_to);
+            m_toRotateSpecialCase = m_rotateSpecialCase;
+            
+            if (!m_from.isEmpty()) { // from-to animation
+                m_fromTransform = parseTransformValue(m_from);
+                m_fromRotateSpecialCase = m_rotateSpecialCase;
+            } else { // to animation
+                m_fromTransform = m_initialTransform;
+                m_fromRotateSpecialCase = false;
             }
-            case BY_ANIMATION:
-            case FROM_BY_ANIMATION:
-            {
-                m_toTransform = parseTransformValue(m_by);
-                m_toRotateSpecialCase = m_rotateSpecialCase;
-                
-                if (!m_from.isEmpty()) { // from-by animation
-                    m_fromTransform = parseTransformValue(m_from);
-                    m_fromRotateSpecialCase = m_rotateSpecialCase;
-                } else { // by animation
-                    m_fromTransform = m_initialTransform;
-                    m_fromRotateSpecialCase = false;
-                }
-                
-                if (!m_fromTransform)
-                    m_fromTransform = new SVGTransform();
-                
-                AffineTransform byMatrix = m_toTransform->matrix();
-                AffineTransform fromMatrix = m_fromTransform->matrix();
-                
-                byMatrix *= fromMatrix;
-                
-                break;
-            }
-            case VALUES_ANIMATION:
-                break;
-            default:
-            {
-                //kdError() << k_funcinfo << " Unable to detect animation mode! Aborting creation!" << endl;
-                return true;
-            }
+            
+            if (!m_fromTransform)
+                m_fromTransform = new SVGTransform();
+            
+            break;
         }
-        
-        connectTimer();
-        return true;
+        case BY_ANIMATION:
+        case FROM_BY_ANIMATION:
+        {
+            m_toTransform = parseTransformValue(m_by);
+            m_toRotateSpecialCase = m_rotateSpecialCase;
+            
+            if (!m_from.isEmpty()) { // from-by animation
+                m_fromTransform = parseTransformValue(m_from);
+                m_fromRotateSpecialCase = m_rotateSpecialCase;
+            } else { // by animation
+                m_fromTransform = m_initialTransform;
+                m_fromRotateSpecialCase = false;
+            }
+            
+            if (!m_fromTransform)
+                m_fromTransform = new SVGTransform();
+            
+            AffineTransform byMatrix = m_toTransform->matrix();
+            AffineTransform fromMatrix = m_fromTransform->matrix();
+            
+            byMatrix *= fromMatrix;
+            
+            break;
+        }
+        case VALUES_ANIMATION:
+            break;
+        default:
+        {
+            //kdError() << k_funcinfo << " Unable to detect animation mode! Aborting creation!" << endl;
+            return false;
+        }
     }
-    return false;
+    return true;
 }
 
 void SVGAnimateTransformElement::handleEndCondition()
@@ -310,18 +305,6 @@ void SVGAnimateTransformElement::handleEndCondition()
         else
             m_transformMatrix.reset();
     }
-}
-
-void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
-{
-    if (startIfNecessary())
-        return;
-    
-    if (!updateCurrentValue(timePercentage))
-        return;
-
-    if (timePercentage == 1.0)
-        handleEndCondition();
 }
 
 void SVGAnimateTransformElement::applyAnimationToValue(SVGTransformList* targetTransforms)

@@ -37,7 +37,6 @@ namespace WebCore {
         virtual ~SVGAnimateColorElement();
 
         void applyAnimationToValue(Color& currentColor);
-        virtual void handleTimerEvent(double timePercentage);
 
         // Helper
         Color addColorsAndClamp(const Color&, const Color&);
@@ -51,9 +50,10 @@ namespace WebCore {
         virtual const SVGElement* contextElement() const { return this; }
         void storeInitialValue();
         void resetValues();
-        bool updateCurrentValue(double timePercentage);
-        bool startIfNecessary();
-        void handleEndCondition();
+        
+        virtual bool updateCurrentValue(double timePercentage);
+        virtual bool handleStartCondition();
+        virtual void handleEndCondition();
 
     private:
         Color m_lastColor;

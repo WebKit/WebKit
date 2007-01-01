@@ -38,7 +38,6 @@ namespace WebCore {
 
         virtual void parseMappedAttribute(MappedAttribute*);
 
-        virtual void handleTimerEvent(double timePercentage);
         void applyAnimationToValue(SVGTransformList*);
 
         // Helpers
@@ -51,10 +50,11 @@ namespace WebCore {
     protected:
         virtual const SVGElement* contextElement() const { return this; }
         void storeInitialValue();
-        bool updateCurrentValue(double timePercentage);
         void resetValues();
-        bool startIfNecessary();
-        void handleEndCondition();
+        
+        virtual bool updateCurrentValue(double timePercentage);
+        virtual bool handleStartCondition();
+        virtual void handleEndCondition();
 
     private:
         int m_currentItem;
