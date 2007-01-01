@@ -239,6 +239,13 @@ Color SVGAnimateColorElement::clampColor(int r, int g, int b) const
     return Color(clampColorValue(r), clampColorValue(g), clampColorValue(b));
 }
 
+Color SVGAnimateColorElement::addColorsAndClamp(const Color& first, const Color& second)
+{
+    return Color(clampColorValue(first.red() + second.red()),
+                 clampColorValue(first.green() + second.green()),
+                 clampColorValue(first.blue() + second.blue()));
+}
+
 void SVGAnimateColorElement::calculateColor(double time, int &r, int &g, int &b) const
 {
     r = lround(m_redDiff * time) + m_fromColor->color().red();

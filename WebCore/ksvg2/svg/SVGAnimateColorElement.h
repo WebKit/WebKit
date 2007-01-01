@@ -39,7 +39,8 @@ namespace WebCore {
         virtual void handleTimerEvent(double timePercentage);
 
         // Helper
-        Color clampColor(int r, int g, int b) const;
+        Color addColorsAndClamp(const Color&, const Color&);
+        Color clampColor(int r, int g, int b) const; // deprecated
         void calculateColor(double time, int &r, int &g, int &b) const;
 
         Color color() const;

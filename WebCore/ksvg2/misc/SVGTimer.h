@@ -25,10 +25,12 @@
 
 #include "TimeScheduler.h"
 #include "Timer.h"
-#include "wtf/HashSet.h"
+#include <wtf/HashSet.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
+class SVGElement;
 class SVGAnimationElement;
 
 typedef HashSet<SVGAnimationElement*> SVGNotifySet;
@@ -50,6 +52,9 @@ public:
 
 private:
     double calculateTimePercentage(double elapsed, double start, double end, double duration, double repetitions);
+    
+    typedef HashMap<SVGElement*, Vector<SVGAnimationElement*> > TargetAnimationMap;
+    TargetAnimationMap animationsByElement(double elapsedTime);
 
     TimeScheduler* m_scheduler;
     double m_interval;

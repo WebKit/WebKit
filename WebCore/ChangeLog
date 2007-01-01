@@ -1,3 +1,18 @@
+2007-01-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by olliej.
+
+        Split out animationsByElement() logic in preparation for adding AnimationCompositor class
+        Add addColorsAndClamp helper (since adding and clamping is the common case)
+
+        * ksvg2/misc/SVGTimer.cpp:
+        (WebCore::SVGTimer::animationsByElement): split out from notifyAll
+        (WebCore::SVGTimer::notifyAll):
+        * ksvg2/misc/SVGTimer.h:
+        * ksvg2/svg/SVGAnimateColorElement.cpp:
+        (WebCore::SVGAnimateColorElement::addColorsAndClamp): added.
+        * ksvg2/svg/SVGAnimateColorElement.h:
+
 2006-12-31  Eric Seidel  <eric@webkit.org>
 
         Reviewed by olliej.
