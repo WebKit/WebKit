@@ -51,6 +51,8 @@ namespace WebCore {
         unsigned short colorType() const;
 
         unsigned rgbColor() const;
+        
+        static Color colorFromRGBColorString(const String&);
 
         void setRGBColor(const String& rgbColor) { ExceptionCode ignored = 0; setRGBColor(rgbColor, ignored); }
         void setRGBColor(const String& rgbColor, ExceptionCode&);

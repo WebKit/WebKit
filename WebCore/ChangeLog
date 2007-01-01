@@ -2,6 +2,21 @@
 
         Reviewed by andersca.
 
+        Add static function SVGColor::colorFromRGBColorString to allow parsing Colors from SVG color strings w/o creating an SVGColor object.
+
+        * ksvg2/svg/SVGAnimateColorElement.cpp:
+        (WebCore::SVGAnimateColorElement::storeInitialValue): use colorFromRGBColorString
+        (WebCore::SVGAnimateColorElement::startIfNecessary): use colorFromRGBColorString
+        * ksvg2/svg/SVGColor.cpp:
+        (WebCore::SVGColor::setRGBColor): use colorFromRGBColorString
+        (WebCore::parseNumberOrPercent): new color parsing helper
+        (WebCore::SVGColor::colorFromRGBColorString): cleaned up version of setRGBColor parsing logic
+        * ksvg2/svg/SVGColor.h:
+
+2007-01-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by andersca.
+
         Split handleTimerEvent logic into separate functions in preparation for moving down into SVGAnimationElement
 
         * ksvg2/svg/SVGAnimateColorElement.cpp:
