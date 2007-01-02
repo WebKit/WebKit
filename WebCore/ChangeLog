@@ -1,3 +1,18 @@
+2007-01-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz and Anders.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=7075
+        textarea with align=right should not cause contained text to 
+        be right-justified
+
+        Don't map align for textarea elements.
+
+        Test: fast/forms/textarea-align.html
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::parseMappedAttribute):
+
 2007-01-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mitz.
