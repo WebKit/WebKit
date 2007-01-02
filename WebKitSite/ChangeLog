@@ -1,3 +1,7 @@
+2007-01-01  Darin Adler  <darin@apple.com>
+
+        * quality/bugzilla.html: Fix a lingering reference to opendarwin.org.
+
 2006-12-06  Rob Buis  <buis@kde.org>
 
         Reviewed by Brady.
