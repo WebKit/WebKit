@@ -1,3 +1,15 @@
+2007-01-01  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=12042
+          Assertion failure in WebCore::RenderObject::drawBorder
+
+        * fast/borders/outline-offset-min-assert-expected.checksum: Added.
+        * fast/borders/outline-offset-min-assert-expected.png: Added.
+        * fast/borders/outline-offset-min-assert-expected.txt: Added.
+        * fast/borders/outline-offset-min-assert.html: Added.
+
 2007-01-01  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Eric.

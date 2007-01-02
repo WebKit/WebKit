@@ -1719,6 +1719,9 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
     w += 2 * offset;
     h += 2 * offset;
 
+    if (h < 0 || w < 0)
+        return;
+
     drawBorder(graphicsContext, tx - ow, ty - ow, tx, ty + h + ow,
                BSLeft, Color(oc), style->color(), os, ow, ow);
 

@@ -1,3 +1,16 @@
+2007-01-01  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12042
+          Assertion failure in WebCore::RenderObject::drawBorder
+
+        Test: fast/borders/outline-offset-min-assert.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintOutline): Bail out if the width or height is
+        smaller than twice the outline inset.
+        
 2007-01-01  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Eric.
