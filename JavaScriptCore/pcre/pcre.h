@@ -237,9 +237,9 @@ PCRE_DATA_SCOPE int   pcre_callout(pcre_callout_block *);
 
 /* Exported PCRE functions */
 
-PCRE_DATA_SCOPE pcre *pcre_compile(const pcre_char *, int, const char **, int *,
+PCRE_DATA_SCOPE pcre *pcre_compile(const pcre_char *, int, int, const char **, int *,
                   const unsigned char *);
-PCRE_DATA_SCOPE pcre *pcre_compile2(const pcre_char *, int, int *, const char **,
+PCRE_DATA_SCOPE pcre *pcre_compile2(const pcre_char *, int, int, int *, const char **,
                   int *, const unsigned char *);
 PCRE_DATA_SCOPE int  pcre_config(int, void *);
 PCRE_DATA_SCOPE int  pcre_copy_named_substring(const pcre *, const pcre_char *,

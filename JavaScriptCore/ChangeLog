@@ -1,3 +1,34 @@
+2007-01-01  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11849
+          REGRESSION (r18182): Google Calendar is broken (a regular expression containing a null character is not parsed correctly)
+
+        Modified pcre_compile() (and the functions that it calls) to work with patterns
+        containing null characters.
+
+        Covered by JavaScriptCore tests ecma_3/RegExp/octal-002.js and ecma_3/RegExp/regress-85721.js
+
+        * kjs/regexp.cpp:
+        (KJS::RegExp::RegExp): Changed to not null-terminate the pattern string and instead
+        pass its length to pcre_compile.
+        * pcre/pcre.h:
+        * pcre/pcre_compile.c:
+        (check_escape):
+        (get_ucp):
+        (is_counted_repeat):
+        (check_posix_syntax):
+        (compile_branch):
+        (compile_regex):
+        (pcre_compile): Added a parameter specifying the length of the pattern, which
+        is no longer required to be null-terminated and may contain null characters. 
+        (pcre_compile2):
+        * pcre/pcre_internal.h:
+        * tests/mozilla/expected.html: Updated for the two tests that this patch
+        fixes. Also updated failing results for ecma_3/RegExp/regress-100199.js
+        which were not updated after bug 6257 was fixed.
+
 2007-01-01  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Darin.

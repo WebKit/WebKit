@@ -103,9 +103,7 @@ void RegularExpression::Private::compile(bool caseSensitive, bool glob)
     
     const char *errorMessage;
     int errorOffset;
-    char null = 0;
-    p.append(null);
-    regex = pcre_compile(reinterpret_cast<const uint16_t *>(p.unicode()), caseSensitive ? 0 : PCRE_CASELESS, &errorMessage, &errorOffset, NULL);
+    regex = pcre_compile(reinterpret_cast<const uint16_t *>(p.unicode()), p.length(), caseSensitive ? 0 : PCRE_CASELESS, &errorMessage, &errorOffset, NULL);
     if (regex == NULL) {
         LOG_ERROR("RegularExpression: pcre_compile failed with '%s'", errorMessage);
     }

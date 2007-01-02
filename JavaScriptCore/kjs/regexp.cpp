@@ -47,15 +47,12 @@ RegExp::RegExp(const UString &p, int flags)
   const char *errorMessage;
   int errorOffset;
   
-  UString pattern(p);
-  
-  pattern.append('\0');
-  m_regex = pcre_compile(reinterpret_cast<const uint16_t*>(pattern.data()),
+  m_regex = pcre_compile(reinterpret_cast<const uint16_t*>(p.data()), p.size(),
                         options, &errorMessage, &errorOffset, NULL);
   if (!m_regex) {
     // Try again, this time handle any \u we might find.
-    UString uPattern = sanitizePattern(pattern);
-    m_regex = pcre_compile(reinterpret_cast<const uint16_t*>(uPattern.data()),
+    UString uPattern = sanitizePattern(p);
+    m_regex = pcre_compile(reinterpret_cast<const uint16_t*>(uPattern.data()), uPattern.size(),
                           options, &errorMessage, &errorOffset, NULL);
     if (!m_regex) {
       m_constructionError = strdup(errorMessage);

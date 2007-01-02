@@ -2,6 +2,17 @@
 
         Reviewed by Darin.
 
+        - WebCore changes for http://bugs.webkit.org/show_bug.cgi?id=11849
+          REGRESSION (r18182): Google Calendar is broken (a regular expression containing a null character is not parsed correctly)
+
+        * platform/RegularExpression.cpp:
+        (WebCore::RegularExpression::Private::compile): Changed to not null-terminate
+        the pattern string and instead pass its length to pcre_compile.
+
+2007-01-01  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=11359
           Incomplete repaint of table cell's collapsed border when changing only the cell
 
