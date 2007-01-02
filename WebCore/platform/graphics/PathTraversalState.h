@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2006, 2007 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,8 @@ namespace WebCore {
         enum PathTraversalAction {
             TraversalTotalLength,
             TraversalPointAtLength,
-            TraversalSegmentAtLength, // not yet implemented
+            TraversalSegmentAtLength,
+            TraversalNormalAngleAtLength,
             TraversalPointAndAnglesForOffsets // not yet implemented
         };
         
@@ -60,8 +61,12 @@ namespace WebCore {
         FloatPoint m_control2;
         
         float m_totalLength;
-        unsigned m_segmentIndex; // for segment finding (not implemented)
+        unsigned m_segmentIndex;
         float m_desiredLength;
+        
+        // For normal calculations
+        FloatPoint m_previous;
+        float m_normalAngle; // degrees
         
         // FIXME: for (non-implemented) text-on-path layout
         Vector<float> m_offsets;

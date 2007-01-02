@@ -1764,6 +1764,8 @@
 		A8239E0109B3CF8A00B60641 /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = A8239DFF09B3CF8A00B60641 /* Logging.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8241D8B0B48D31E0084722B /* SVGTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = A8241D890B48D31E0084722B /* SVGTimer.h */; };
 		A8241D8C0B48D31E0084722B /* SVGTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8241D8A0B48D31E0084722B /* SVGTimer.cpp */; };
+		A82422700B4A16C50084722B /* SVGAnimateMotionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A824226E0B4A16C50084722B /* SVGAnimateMotionElement.h */; };
+		A82422710B4A16C50084722B /* SVGAnimateMotionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A824226F0B4A16C50084722B /* SVGAnimateMotionElement.cpp */; };
 		A826E8AE0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A826E8AC0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.h */; };
 		A826EC480A1B0CBE00CD1BB6 /* JSHTMLOptionElementConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A826E8AD0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.cpp */; };
 		A833C7CA0A2CF06B00D57664 /* SVGNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581E809D1508D000E61D7 /* SVGNames.cpp */; };
@@ -4725,6 +4727,8 @@
 		A8239DFF09B3CF8A00B60641 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
 		A8241D890B48D31E0084722B /* SVGTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTimer.h; sourceTree = "<group>"; };
 		A8241D8A0B48D31E0084722B /* SVGTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTimer.cpp; sourceTree = "<group>"; };
+		A824226E0B4A16C50084722B /* SVGAnimateMotionElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimateMotionElement.h; sourceTree = "<group>"; };
+		A824226F0B4A16C50084722B /* SVGAnimateMotionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimateMotionElement.cpp; sourceTree = "<group>"; };
 		A826E8AC0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptionElementConstructor.h; sourceTree = "<group>"; };
 		A826E8AD0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionElementConstructor.cpp; sourceTree = "<group>"; };
 		A82FC33B08CBB07C00EFEE23 /* SVGCursorElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGCursorElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -8086,6 +8090,8 @@
 				A8C0F822089701F300BA5114 /* SVGAnimateElement.cpp */,
 				A8C0F823089701F300BA5114 /* SVGAnimateElement.h */,
 				B2CB41060AB758E6004D9C45 /* SVGAnimateElement.idl */,
+				A824226F0B4A16C50084722B /* SVGAnimateMotionElement.cpp */,
+				A824226E0B4A16C50084722B /* SVGAnimateMotionElement.h */,
 				A8C0F824089701F300BA5114 /* SVGAnimateTransformElement.cpp */,
 				A8C0F825089701F300BA5114 /* SVGAnimateTransformElement.h */,
 				B2CB41070AB758E6004D9C45 /* SVGAnimateTransformElement.idl */,
@@ -10885,6 +10891,7 @@
 				A8C9E0950B43A5250097883A /* SVGImageEmptyClients.h in Headers */,
 				A88DD4870B4629A300C02990 /* PathTraversalState.h in Headers */,
 				A8241D8B0B48D31E0084722B /* SVGTimer.h in Headers */,
+				A82422700B4A16C50084722B /* SVGAnimateMotionElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12213,6 +12220,7 @@
 				A8C9DD270B4374260097883A /* SVGImage.cpp in Sources */,
 				A88DD4890B4629B000C02990 /* PathTraversalState.cpp in Sources */,
 				A8241D8C0B48D31E0084722B /* SVGTimer.cpp in Sources */,
+				A82422710B4A16C50084722B /* SVGAnimateMotionElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

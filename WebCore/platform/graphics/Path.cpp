@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *                     2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +44,7 @@ void pathLengthApplierFunction(void* info, const PathElement* element)
     PathTraversalState& traversalState = *static_cast<PathTraversalState*>(info);
     if (traversalState.m_success)
         return;
+    traversalState.m_previous = traversalState.m_current;
     FloatPoint* points = element->points;
     float segmentLength = 0.0f;
     switch (element->type) {
@@ -67,6 +69,13 @@ void pathLengthApplierFunction(void* info, const PathElement* element)
      && (traversalState.m_totalLength > traversalState.m_desiredLength)) {
         // FIXME: Need to actually find the exact point and change m_current
         traversalState.m_success = true;
+    } else if ((traversalState.m_action == PathTraversalState::TraversalNormalAngleAtLength)
+           && (traversalState.m_totalLength > traversalState.m_desiredLength)) {
+        FloatSize change = traversalState.m_previous - traversalState.m_current;
+        // tangent slope = -1/slope = -1/yChange/xChange = -xChange/yChange; arc-tangent converts a slope into an angle
+        static float rad2deg = 360 / 2 * M_PI;
+        traversalState.m_normalAngle = (change.height() == 0) ? 0 : (atan2(-change.width(), change.height()) * rad2deg);
+        traversalState.m_success = true;
     }
 }
 
@@ -84,6 +93,15 @@ FloatPoint Path::pointAtLength(float length, bool& ok)
     apply(&traversalState, pathLengthApplierFunction);
     ok = traversalState.m_success;
     return traversalState.m_current;
+}
+
+float Path::normalAngleAtLength(float length, bool& ok)
+{
+    PathTraversalState traversalState(PathTraversalState::TraversalNormalAngleAtLength);
+    traversalState.m_desiredLength = length;
+    apply(&traversalState, pathLengthApplierFunction);
+    ok = traversalState.m_success;
+    return traversalState.m_normalAngle;
 }
 
 Path Path::createRoundedRectangle(const FloatRect& rectangle, const FloatSize& roundingRadii)

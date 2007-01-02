@@ -1,8 +1,7 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 
-    This file is part of the KDE project
+    This file is part of the WebKit project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -30,6 +29,8 @@
 
 namespace WebCore
 {
+    class Path;
+    
     class SVGPathSegList : public SVGList<RefPtr<SVGPathSeg> >
     {
     public:
@@ -37,6 +38,9 @@ namespace WebCore
         virtual ~SVGPathSegList();
 
         const SVGStyledElement* context() const;
+        
+        unsigned getPathSegAtLength(double);
+        Path toPathData();
 
     private:
         const SVGStyledElement* m_context;

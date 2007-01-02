@@ -4,7 +4,7 @@ a
 #altGlyphItem
 animate
 animateColor
-#animateMotion
+animateMotion
 animateTransform
 circle
 clipPath

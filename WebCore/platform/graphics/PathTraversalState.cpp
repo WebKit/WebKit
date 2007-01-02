@@ -1,7 +1,7 @@
 /*
  * This file is part of the WebKit open source project.
  *
- * Copyright (C) 2006 Eric Seidel (eric@webkit.org)
+ * Copyright (C) 2006, 2007 Eric Seidel (eric@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -108,8 +108,14 @@ struct CubicBezier {
     FloatPoint end;
 };
 
+// FIXME: This function is possibly very slow due to the ifs required for proper path measuring
+// A simple speed-up would be to use an additional boolean template parameter to control whether
+// to use the "fast" version of this function with no PathTraversalState updating, vs. the slow
+// version which does update the PathTraversalState.  We'll have to shark it to see if that's necessary.
+// Another check which is possible up-front (to send us down the fast path) would be to check if
+// approximateDistance() + current total distance > desired distance
 template<class CurveType>
-static float curveLength(CurveType curve)
+static float curveLength(PathTraversalState& traversalState, CurveType curve)
 {
     Vector<CurveType> curveStack;
     curveStack.append(curve);
@@ -124,6 +130,13 @@ static float curveLength(CurveType curve)
             curveStack.append(right);
         } else {
             totalLength += length;
+            if (traversalState.m_action == PathTraversalState::TraversalPointAtLength
+             || traversalState.m_action == PathTraversalState::TraversalNormalAngleAtLength) {
+                traversalState.m_previous = curve.start;
+                traversalState.m_current = curve.end;
+                if (traversalState.m_totalLength + totalLength > traversalState.m_desiredLength)
+                    return totalLength;
+            }
             curve = curveStack.last();
             curveStack.removeLast();
         }
@@ -138,6 +151,7 @@ PathTraversalState::PathTraversalState(PathTraversalAction action)
     , m_totalLength(0.0f)
     , m_segmentIndex(0)
     , m_desiredLength(0.0f)
+    , m_normalAngle(0.0f)
 {
 }
 
@@ -163,7 +177,7 @@ float PathTraversalState::lineTo(const FloatPoint& point)
 
 float PathTraversalState::quadraticBezierTo(const FloatPoint& newControl, const FloatPoint& newEnd)
 {
-    float distance = curveLength<QuadraticBezier>(QuadraticBezier(m_current, newControl, newEnd));
+    float distance = curveLength<QuadraticBezier>(*this, QuadraticBezier(m_current, newControl, newEnd));
     m_control1 = newControl;
     m_control2 = m_current = newEnd;
     return distance;
@@ -171,7 +185,7 @@ float PathTraversalState::quadraticBezierTo(const FloatPoint& newControl, const 
 
 float PathTraversalState::cubicBezierTo(const FloatPoint& newControl1, const FloatPoint& newControl2, const FloatPoint& newEnd)
 {
-    float distance = curveLength<CubicBezier>(CubicBezier(m_current, newControl1, newControl2, newEnd));
+    float distance = curveLength<CubicBezier>(*this, CubicBezier(m_current, newControl1, newControl2, newEnd));
     m_control1 = m_current = newEnd;
     m_control2 = newControl2;
     return distance;

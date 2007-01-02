@@ -2,6 +2,7 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
     Copyright (C) 2006 Apple Computer, Inc.
+    Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 
     This file is part of the KDE project
 
@@ -27,6 +28,7 @@
 
 #include <wtf/HashMap.h>
 #include "SVGAnimateTransformElement.h"
+#include "SVGAnimateMotionElement.h"
 #include "SVGTransformList.h"
 #include "SVGAnimateColorElement.h"
 #include "SVGStyledTransformableElement.h"
@@ -68,7 +70,7 @@ SVGTimer::TargetAnimationMap SVGTimer::animationsByElement(double elapsedSeconds
                 continue;
         }
         
-        SVGElement* target = const_cast<SVGElement *>(animation->targetElement());
+        SVGElement* target = const_cast<SVGElement*>(animation->targetElement());
         TargetAnimationMap::iterator i = targetMap.find(target);
         if (i != targetMap.end())
             i->second.append(animation);
@@ -81,11 +83,28 @@ SVGTimer::TargetAnimationMap SVGTimer::animationsByElement(double elapsedSeconds
     return targetMap;
 }
 
+// FIXME: Eventually this logic will move into an AnimationCompositor class
+// FIXME: I also think this also violates the spec.  We should probably just copy the baseValue and not consolidate
+static PassRefPtr<SVGTransformList> baseValueTransformList(SVGElement* targetElement)
+{
+    ASSERT(targetElement->isStyledTransformable());
+    SVGStyledTransformableElement* transform = static_cast<SVGStyledTransformableElement*>(targetElement);
+    RefPtr<SVGTransformList> targetTransforms = new SVGTransformList();
+    SVGTransformList* transformList = transform->transformBaseValue();
+    if (transformList) {
+        RefPtr<SVGTransform> initialTransform = transformList->concatenate();
+        if (initialTransform) {
+            ExceptionCode ec;
+            targetTransforms->appendItem(initialTransform.get(), ec);
+            return targetTransforms.release();
+        }
+    }
+    return targetTransforms;
+}
+
 // FIXME: This funtion will eventually become part of the AnimationCompositor
 void SVGTimer::applyAnimations(double elapsedSeconds, const SVGTimer::TargetAnimationMap& targetMap)
-{
-    ExceptionCode ec = 0;
-    
+{    
     TargetAnimationMap::const_iterator targetIterator = targetMap.begin();
     TargetAnimationMap::const_iterator tend = targetMap.end();
     for (; targetIterator != tend; ++targetIterator) {
@@ -102,21 +121,20 @@ void SVGTimer::applyAnimations(double elapsedSeconds, const SVGTimer::TargetAnim
         for (unsigned i = 0; i < count; ++i) {
             SVGAnimationElement* animation = targetIterator->second[i];
             
+            if (!animation->hasValidTarget())
+                continue;
+            
             if (!animation->updateForElapsedSeconds(elapsedSeconds))
                 continue;
             
-            if (animation->hasTagName(SVGNames::animateTransformTag)) {
-                SVGAnimateTransformElement* animTransform = static_cast<SVGAnimateTransformElement*>(animation);
-                if (!targetTransforms) {
-                    targetTransforms = new SVGTransformList();
-                    if (animation->isAdditive()) { // Avoid mallocing a transform which is about to be replaced
-                        RefPtr<SVGTransform> initialTransform = new SVGTransform();
-                        initialTransform->setMatrix(animTransform->initialMatrix());
-                        targetTransforms->appendItem(initialTransform.get(), ec);
-                    }
-                }
-                animTransform->applyAnimationToValue(targetTransforms.get());
-            } else if (animation->hasTagName(SVGNames::animateColorTag)) {
+            if (!targetTransforms && (animation->hasTagName(SVGNames::animateTransformTag) || animation->hasTagName(SVGNames::animateMotionTag)))
+                targetTransforms = baseValueTransformList(animation->targetElement());
+            
+            if (animation->hasTagName(SVGNames::animateTransformTag))
+                static_cast<SVGAnimateTransformElement*>(animation)->applyAnimationToValue(targetTransforms.get());
+            else if (animation->hasTagName(SVGNames::animateMotionTag))
+                static_cast<SVGAnimateMotionElement*>(animation)->applyAnimationToValue(targetTransforms.get());
+            else if (animation->hasTagName(SVGNames::animateColorTag)) {
                 SVGAnimateColorElement* animColor = static_cast<SVGAnimateColorElement*>(animation);
                 String name = animColor->attributeName();
                 Color currentColor = attributeToColorMap.contains(name) ? attributeToColorMap.get(name) : animColor->initialColor();
@@ -125,7 +143,7 @@ void SVGTimer::applyAnimations(double elapsedSeconds, const SVGTimer::TargetAnim
             }
         }
         
-        // Apply any transform changes (animateTransform)
+        // Apply any transform changes (animateTransform & animateMotion)
         if (targetTransforms) {
             SVGElement* key = targetIterator->first;
             if (key && key->isStyledTransformable()) {

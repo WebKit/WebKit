@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
+    Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 
     This file is part of the KDE project
 
@@ -20,8 +21,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGAnimateColorElementImpl_H
-#define KSVG_SVGAnimateColorElementImpl_H
+#ifndef SVGAnimateColorElement_H
+#define SVGAnimateColorElement_H
 #ifdef SVG_SUPPORT
 
 #include "SVGAnimationElement.h"
@@ -49,11 +50,11 @@ namespace WebCore {
     protected:
         virtual const SVGElement* contextElement() const { return this; }
         void storeInitialValue();
-        void resetValues();
+        virtual void resetValues();
         
         virtual bool updateCurrentValue(double timePercentage);
         virtual bool handleStartCondition();
-        virtual void handleEndCondition();
+        virtual void updateLastValueWithCurrent();
 
     private:
         Color m_lastColor;

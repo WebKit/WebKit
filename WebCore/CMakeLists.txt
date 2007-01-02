@@ -552,6 +552,7 @@ set (SVG_SOURCES
     ksvg2/svg/SVGAnimatedPathData.cpp
     ksvg2/svg/SVGAnimatedPoints.cpp
     ksvg2/svg/SVGAnimateElement.cpp
+    ksvg2/svg/SVGAnimateMotionElement.cpp
     ksvg2/svg/SVGAnimateTransformElement.cpp
     ksvg2/svg/SVGAnimationElement.cpp
     ksvg2/svg/SVGCircleElement.cpp

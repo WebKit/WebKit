@@ -63,16 +63,16 @@ double SVGPathElement::getTotalLength()
     return toPathData().length();
 }
 
-FloatPoint SVGPathElement::getPointAtLength(double distance)
+FloatPoint SVGPathElement::getPointAtLength(double length)
 {
     // FIXME: this may wish to use the pathSegList instead of the pathdata if that's cheaper to build (or cached)
     bool ok = false;
-    return toPathData().pointAtLength(distance, ok);
+    return toPathData().pointAtLength(length, ok);
 }
 
-unsigned long SVGPathElement::getPathSegAtLength(double)
+unsigned long SVGPathElement::getPathSegAtLength(double length)
 {
-    return 0;
+    return pathSegList()->getPathSegAtLength(length);
 }
 
 SVGPathSegClosePath* SVGPathElement::createSVGPathSegClosePath()
@@ -274,9 +274,12 @@ void SVGPathElement::parseMappedAttribute(MappedAttribute* attr)
         if (!parseSVG(attr->value(), true))
             pathSegList()->clear(ec);
     } else {
-        if (SVGTests::parseMappedAttribute(attr)) return;
-        if (SVGLangSpace::parseMappedAttribute(attr)) return;
-        if (SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
+        if (SVGTests::parseMappedAttribute(attr))
+            return;
+        if (SVGLangSpace::parseMappedAttribute(attr))
+            return;
+        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+            return;
         SVGStyledTransformableElement::parseMappedAttribute(attr);
     }
 }
@@ -307,48 +310,9 @@ SVGPathSegList* SVGPathElement::animatedNormalizedPathSegList() const
     return 0;
 }
 
-// FIXME: This probably belongs on SVGPathSegList instead. -- ecs 12/5/05
 Path SVGPathElement::toPathData() const
 {
-    Path pathData;
-    // TODO : also support non-normalized mode, at least in dom structure
-    int len = pathSegList()->numberOfItems();
-    if (len < 1)
-        return pathData;
-
-    ExceptionCode ec = 0;
-    for (int i = 0; i < len; ++i) {
-        SVGPathSeg* p = pathSegList()->getItem(i, ec).get();;
-        switch (p->pathSegType())
-        {
-            case SVGPathSeg::PATHSEG_MOVETO_ABS:
-            {
-                SVGPathSegMovetoAbs* moveTo = static_cast<SVGPathSegMovetoAbs* >(p);
-                pathData.moveTo(FloatPoint(moveTo->x(), moveTo->y()));
-                break;
-            }
-            case SVGPathSeg::PATHSEG_LINETO_ABS:
-            {
-                SVGPathSegLinetoAbs* lineTo = static_cast<SVGPathSegLinetoAbs* >(p);
-                pathData.addLineTo(FloatPoint(lineTo->x(), lineTo->y()));
-                break;
-            }
-            case SVGPathSeg::PATHSEG_CURVETO_CUBIC_ABS:
-            {
-                SVGPathSegCurvetoCubicAbs* curveTo = static_cast<SVGPathSegCurvetoCubicAbs* >(p);
-                pathData.addBezierCurveTo(FloatPoint(curveTo->x1(), curveTo->y1()),
-                                 FloatPoint(curveTo->x2(), curveTo->y2()),
-                                 FloatPoint(curveTo->x(), curveTo->y()));
-                break;
-            }
-            case SVGPathSeg::PATHSEG_CLOSEPATH:
-                pathData.closeSubpath();
-            default:
-                break;
-        }
-    }
-
-    return pathData;
+    return pathSegList()->toPathData();
 }
 
 }

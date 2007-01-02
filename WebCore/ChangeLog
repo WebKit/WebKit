@@ -1,3 +1,72 @@
+2007-01-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by rwlbuis.
+
+        Refactor more animation code for better sharing between SVGAnimate*Element classes.
+        - replace handleEndCondition with resetValues() and updateLastValueWithCurrent()
+        - move initialTransform() function down into SVGTimer (eventually to AnimationCompositor)
+        Add non-functional (only parses) SVGAnimateMotionElement
+        Improve precision of getPointAtLength calculations and add support for "getNormalAtLength" functionality (needed for rotate='auto' support in animateMotion)
+        Move add getSegmentAtLength functionality to SVGPathSegList, move toPathData into SVGPathSegList as well.
+        Add SVGAnimationElement::hasValidTarget() for future better/simpler ASSERT checking
+        change transformMatrix() to currentTransform() to match AffineTransform class name
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/misc/SVGTimer.cpp:
+        (WebCore::SVGTimer::animationsByElement):
+        (WebCore::baseValueTransformList):
+        (WebCore::SVGTimer::applyAnimations):
+        * ksvg2/svg/SVGAnimateColorElement.cpp:
+        (WebCore::SVGAnimateColorElement::updateLastValueWithCurrent):
+        * ksvg2/svg/SVGAnimateColorElement.h:
+        * ksvg2/svg/SVGAnimateMotionElement.cpp: Added.
+        (WebCore::SVGAnimateMotionElement::SVGAnimateMotionElement):
+        (WebCore::SVGAnimateMotionElement::~SVGAnimateMotionElement):
+        (WebCore::SVGAnimateMotionElement::hasValidTarget): added.
+        (WebCore::SVGAnimateMotionElement::parseMappedAttribute):
+        (WebCore::SVGAnimateMotionElement::animationPath): fetch path from <mpath> or d attribute
+        (WebCore::SVGAnimateMotionElement::updateCurrentValue):
+        (WebCore::SVGAnimateMotionElement::handleStartCondition):
+        (WebCore::SVGAnimateMotionElement::applyAnimationToValue):
+        * ksvg2/svg/SVGAnimateMotionElement.h: Added.
+        (WebCore::SVGAnimateMotionElement::contextElement):
+        (WebCore::SVGAnimateMotionElement::):
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::hasValidTarget): added.
+        (WebCore::SVGAnimateTransformElement::storeInitialValue):
+        (WebCore::SVGAnimateTransformElement::updateCurrentValue):
+        (WebCore::SVGAnimateTransformElement::updateLastValueWithCurrent):
+        (WebCore::SVGAnimateTransformElement::applyAnimationToValue):
+        (WebCore::SVGAnimateTransformElement::currentTransform):
+        * ksvg2/svg/SVGAnimateTransformElement.h:
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::hasValidTarget): added.
+        (WebCore::SVGAnimationElement::parseMappedAttribute):
+        (WebCore::SVGAnimationElement::isAdditive):
+        (WebCore::SVGAnimationElement::isAccumulated):
+        (WebCore::SVGAnimationElement::handleTimerEvent):
+        * ksvg2/svg/SVGAnimationElement.h:
+        (WebCore::SVGAnimationElement::updateLastValueWithCurrent):
+        (WebCore::SVGAnimationElement::resetValues):
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::getPointAtLength):
+        (WebCore::SVGPathElement::getPathSegAtLength):
+        (WebCore::SVGPathElement::parseMappedAttribute):
+        (WebCore::SVGPathElement::toPathData):
+        * ksvg2/svg/SVGPathSegList.cpp:
+        (WebCore::SVGPathSegList::getPathSegAtLength): added.
+        (WebCore::SVGPathSegList::toPathData): added.
+        * ksvg2/svg/SVGPathSegList.h:
+        * ksvg2/svg/svgtags.in: add animateMotion
+        * platform/graphics/Path.cpp:
+        (WebCore::pathLengthApplierFunction): add support for TraversalNormalAngleAtLength
+        * platform/graphics/PathTraversalState.cpp:
+        (WebCore::curveLength): support higher precision pointAtLength calculations, and add normalAtLength support
+        (WebCore::PathTraversalState::quadraticBezierTo):
+        (WebCore::PathTraversalState::cubicBezierTo):
+        * platform/graphics/PathTraversalState.h:
+        (WebCore::PathTraversalState::): add TraversalNormalAngleAtLength mode
+
 2007-01-01  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
