@@ -95,9 +95,8 @@ void WebContextMenuClient::copyImageToClipboard(const HitTestResult& hitTestResu
     NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:hitTestResult] autorelease];
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
     NSArray *types = [NSPasteboard _web_writableTypesForImageIncludingArchive:(hitTestResult.innerNonSharedNode() != 0)];
-    [[[element objectForKey:WebElementFrameKey] webView] _writeImageForElement:element 
-                                                           withPasteboardTypes:types 
-                                                                  toPasteboard:pasteboard];
+    [pasteboard declareTypes:types owner:m_webView];
+    [m_webView _writeImageForElement:element withPasteboardTypes:types toPasteboard:pasteboard];
 }
 
 void WebContextMenuClient::searchWithSpotlight()

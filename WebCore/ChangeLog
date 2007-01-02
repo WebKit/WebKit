@@ -1,3 +1,14 @@
+2007-01-02  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Fix assertion failure with WebCore context menus by getting "Copy 
+        Image" item added in.
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate): Check if the image url is a local 
+        file or if we have an image in the cache.
+
 2007-01-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders.

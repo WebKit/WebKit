@@ -1,3 +1,13 @@
+2007-01-02  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Fix bug with WebCore context menu item "Copy Image."
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::copyImageToClipboard): We must call 
+        declareTypes on the pasteboard.
+
 2006-12-27  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Geoff.

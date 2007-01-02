@@ -202,7 +202,7 @@ void ContextMenu::populate()
 
             appendItem(OpenImageInNewWindowItem);
             appendItem(DownloadImageItem);
-            if (imageURL.isLocalFile()) // FIXME: Should be checking if the image is local or we have a file wrapper for it
+            if (imageURL.isLocalFile() || m_hitTestResult.image())
                 appendItem(CopyImageItem);
         }
 
