@@ -1,0 +1,54 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (-781.25,-781.25) size 2343.75x2343.75
+      RenderPath {rect} at (-781.25,-781.25) size 2343.75x2343.75 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-1000.00,-1000.00L2000.00,-1000.00L2000.00,2000.00L-1000.00,2000.00"]
+      RenderSVGContainer {g} at (77.54,77.54) size 157.42x24.61
+        RenderSVGContainer {g} at (77.54,77.54) size 157.42x24.61
+          RenderPath {rect} at (77.54,77.54) size 157.42x24.61 [stroke={[type=SOLID] [color=#696969] [stroke width=1.50]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M100.00,100.00L300.00,100.00L300.00,130.00L100.00,130.00"]
+          RenderSVGContainer {svg} at (-3.52,6.17) size 1.17x12.89
+            RenderSVGContainer {g} at (-3.52,6.17) size 1.17x12.89
+              RenderSVGText {text} at (105,122) size 800x0
+              RenderPath {line} at (-3.52,6.17) size 1.17x12.89 [stroke={[type=SOLID] [color=#FF0000] [stroke width=1.50]}] [fill={[type=SOLID] [color=#000000]}] [data="M100.00,125.00L100.00,108.50"]
+      RenderSVGContainer {g} at (77.54,22.85) size 48.05x24.61
+        RenderSVGContainer {g} at (77.54,22.85) size 48.05x24.61
+          RenderPath {rect} at (77.54,22.85) size 48.05x24.61 [stroke={[type=SOLID] [color=#696969] [stroke width=1.50]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M100.00,30.00L160.00,30.00L160.00,60.00L100.00,60.00"]
+          RenderSVGContainer {svg} at (-3.52,5.78) size 16.99x13.28
+            RenderSVGContainer {g} at (-3.52,5.78) size 16.99x13.28
+              RenderSVGText {text} at (105,52) size 800x17
+                RenderSVGInlineText {#text} at (0,-14) size 16x17
+                  text run at (0,-14) width 16: "50"
+              RenderPath {line} at (-3.52,6.17) size 1.17x12.89 [stroke={[type=SOLID] [color=#FF0000] [stroke width=1.50]}] [fill={[type=SOLID] [color=#000000]}] [data="M100.00,55.00L100.00,38.50"]
+      RenderSVGContainer {g} at (77.54,233.79) size 333.40x24.61 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,300.00)}]
+        RenderSVGContainer {g} at (77.54,233.79) size 333.40x24.61
+          RenderPath {rect} at (77.54,233.79) size 180.86x24.61 [stroke={[type=SOLID] [color=#696969] [stroke width=1.50]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00L230.00,0.00L230.00,30.00L0.00,30.00"]
+          RenderSVGContainer {svg} at (74.61,240.16) size 333.40x13.28
+            RenderSVGContainer {g} at (74.61,240.16) size 333.40x13.28
+              RenderSVGText {text} at (5,22) size 800x17
+                RenderSVGInlineText {#text} at (0,-14) size 421x17
+                  text run at (0,-14) width 421: "This is a transformed textbox with a very, very, very long content"
+              RenderPath {line} at (74.61,240.55) size 1.17x12.89 [stroke={[type=SOLID] [color=#FF0000] [stroke width=1.50]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,25.00L0.00,8.50"]
+      RenderSVGContainer {g} at (78.12,28.91) size 665.62x256.25
+        RenderSVGText {text} at (100,230) size 800x17
+          RenderSVGInlineText {#text} at (0,-13) size 67x17
+            text run at (0,-13) width 67: "ResultText"
+        RenderSVGText {text} at (170,50) size 800x17
+          RenderSVGInlineText {#text} at (0,-13) size 323x17
+            text run at (0,-13) width 323: "This textbox (textbox 2) only accepts up to 5 digits."
+        RenderSVGText {text} at (310,120) size 800x17
+          RenderSVGInlineText {#text} at (0,-13) size 390x17
+            text run at (0,-13) width 390: "This textbox (textbox 1) accepts up to 25 characters [a-zA-Z ]."
+        RenderSVGText {text} at (350,315) size 800x40
+          RenderSVGInlineText {#text} at (0,-13) size 244x17
+            text run at (0,-13) width 244: "This textbox (textbox 3) is transformed"
+          RenderSVGTSpan {tspan} at (0,0) size 233x17
+            RenderSVGInlineText {#text} at (0,10) size 233x17
+              text run at (0,10) width 233: "and accepts all characters (up to 300)"
+        RenderSVGText {text} at (620,315) size 800x17
+          RenderSVGInlineText {#text} at (0,-13) size 302x17
+            text run at (0,-13) width 302: "Click on this text to reset content of textbox nr 3"
+        RenderSVGText {text} at (620,338) size 800x17
+          RenderSVGInlineText {#text} at (0,-13) size 332x17
+            text run at (0,-13) width 332: "Click on this text to randomly reposition textbox nr 3"
+        RenderSVGText {text} at (620,361) size 800x17
+          RenderSVGInlineText {#text} at (0,-13) size 306x17
+            text run at (0,-13) width 306: "Click on this text to randomly resize textbox nr 3"

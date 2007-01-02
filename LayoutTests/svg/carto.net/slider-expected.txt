@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (-1562.50,-1562.50) size 4687.50x4687.50
+      RenderSVGContainer {defs} at (0,0) size 0x0
+      RenderPath {rect} at (-1562.50,-1562.50) size 4687.50x4687.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-2000.00,-2000.00L4000.00,-2000.00L4000.00,4000.00L-2000.00,4000.00"]
+      RenderSVGText {text} at (512,40) size 800x22
+        RenderSVGInlineText {#text} at (-254,-18) size 508x22
+          text run at (-254,-18) width 508: "Demonstration of the carto.net SVG GUI slider object"
+      RenderSVGContainer {g} at (548.83,44.92) size 11.72x89.84
+        RenderPath {line} at (548.83,44.92) size 11.72x89.84 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M710.00,65.00L710.00,165.00"]
+        RenderPath {line} at (553.52,50.78) size 2.34x78.12 [stroke={[type=SOLID] [color=#696969] [stroke width=3.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M710.00,65.00L710.00,165.00"]
+        RenderSVGContainer {use} at (554.69,89.84) size 0x0 [transform={m=((-0.00,1.00)(-1.00,-0.00)) t=(710.00,115.00)}]
+      RenderSVGContainer {g} at (69.84,69.84) size 172.82x172.82
+        RenderPath {line} at (69.84,69.84) size 172.82x172.82 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M100.00,100.00L300.00,300.00"]
+        RenderPath {line} at (77.30,77.30) size 157.91x157.91 [stroke={[type=SOLID] [color=#696969] [stroke width=3.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M100.00,100.00L300.00,300.00"]
+        RenderSVGContainer {use} at (171.88,171.88) size 0x0 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(220.00,220.00)}]
+      RenderSVGContainer {g} at (111.33,72.27) size 89.84x11.72 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
+        RenderPath {line} at (111.33,72.27) size 89.84x11.72 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M100.00,100.00L200.00,100.00"]
+        RenderPath {line} at (117.19,76.95) size 78.12x2.34 [stroke={[type=SOLID] [color=#696969] [stroke width=3.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M100.00,100.00L200.00,100.00"]
+        RenderSVGContainer {use} at (117.19,78.12) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,100.00)}]
+      RenderSVGContainer {g} at (321.94,233.79) size 116.95x136.20 [transform={m=((0.64,-0.77)(0.77,0.64)) t=(0.00,500.00)}]
+        RenderPath {line} at (321.94,233.79) size 116.95x136.20 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M300.00,300.00L500.00,300.00"]
+        RenderPath {line} at (329.30,241.29) size 102.23x121.20 [stroke={[type=SOLID] [color=#696969] [stroke width=3.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M300.00,300.00L500.00,300.00"]
+        RenderSVGContainer {use} at (370.37,313.86) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(380.00,300.00)}]
+      RenderSVGText {text} at (20,700) size 800x18
+        RenderSVGInlineText {#text} at (0,-14) size 62x18
+          text run at (0,-14) width 62: "Statusbar:"
+      RenderSVGText {text} at (500,600) size 800x18
+        RenderSVGInlineText {#text} at (0,-14) size 303x18
+          text run at (0,-14) width 303: "Click on this text to randomly reposition slider 4"

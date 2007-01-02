@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (7.81,34.38) size 214.06x34.38
+      RenderSVGContainer {g} at (195.31,7.81) size 0x0 [transform={m=((-0.00,1.00)(-1.00,-0.00)) t=(250.00,10.00)}]
+      RenderSVGContainer {g} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0
+      RenderSVGContainer {g} at (568.35,-134.18) size 0x0 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(727.49,-171.75)}]
+      RenderSVGText {text} at (10,55) size 800x44
+        RenderSVGInlineText {#text} at (0,-11) size 241x14
+          text run at (0,-11) width 241: "This is a tabgroup with triangular tab corners"
+        RenderSVGTSpan {tspan} at (0,0) size 274x14
+          RenderSVGInlineText {#text} at (0,4) size 274x14
+            text run at (0,4) width 274: "and a double line tab. (use \"\\n\" as a line separator)"
+        RenderSVGTSpan {tspan} at (0,0) size 255x14
+          RenderSVGInlineText {#text} at (0,19) size 255x14
+            text run at (0,19) width 255: "Click on the second tab to see oversize content"
+      RenderSVGText {text} at (10,55) size 800x14
+        RenderSVGInlineText {#text} at (0,-11) size 270x14
+          text run at (0,-11) width 270: "Please contact our sales person to get an account"
+      RenderSVGText {text} at (10,55) size 800x14
+        RenderSVGInlineText {#text} at (0,-11) size 36x14
+          text run at (0,-11) width 36: "RTFM!"

@@ -1,0 +1,97 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (-800,-780) size 4000x4000
+      RenderPath {rect} at (-800,-780) size 4000x4000 [data="M-1000.00,-1000.00L4000.00,-1000.00L4000.00,4000.00L-1000.00,4000.00"]
+      RenderSVGText {text} at (50,30) size 800x22
+        RenderSVGInlineText {#text} at (0,-18) size 343x22
+          text run at (0,-18) width 343: "Demonstration of the SVG Scrollbar"
+      RenderSVGText {text} at (950,30) size 800x17
+        RenderSVGInlineText {#text} at (-383,-14) size 383x17
+          text run at (-383,-14) width 383: "One can also drag the images and the scrollbars will adopt."
+      RenderSVGContainer {svg} at (0,20) size 2885.60x336
+        RenderSVGContainer {g} at (0,20) size 2885.60x336
+          RenderImage {image} at (0,0) size 3607x420
+          RenderSVGContainer {g} at (331.20,72) size 1624.80x259.20
+            RenderSVGText {text} at (456,88) size 800x17
+              RenderSVGInlineText {#text} at (-42,-14) size 85x17
+                text run at (-42,-14) width 85: "Furggeltihorn"
+            RenderSVGText {text} at (593,98) size 800x17
+              RenderSVGInlineText {#text} at (-23,-14) size 46x17
+                text run at (-23,-14) width 46: "P 2821"
+            RenderSVGText {text} at (635,79) size 800x17
+              RenderSVGInlineText {#text} at (-43,-14) size 86x17
+                text run at (-43,-14) width 86: "Zervreilahorn"
+            RenderSVGText {text} at (805,112) size 800x17
+              RenderSVGInlineText {#text} at (-37,-14) size 74x17
+                text run at (-37,-14) width 74: "Plattenberg"
+            RenderSVGText {text} at (2220,178) size 800x17
+              RenderSVGInlineText {#text} at (-29,-14) size 58x17
+                text run at (-29,-14) width 58: "Piz Fess"
+            RenderSVGText {text} at (2291,162) size 800x17
+              RenderSVGInlineText {#text} at (-40,-14) size 80x17
+                text run at (-40,-14) width 80: "Crap Grisch"
+            RenderSVGText {text} at (2412,149) size 800x17
+              RenderSVGInlineText {#text} at (-32,-14) size 65x17
+                text run at (-32,-14) width 65: "Piz Tom\x{FC}l"
+            RenderSVGText {text} at (1762,112) size 800x17
+              RenderSVGInlineText {#text} at (-26,-14) size 53x17
+                text run at (-26,-14) width 53: "Fruntalp"
+            RenderSVGText {text} at (1003,386) size 800x17
+              RenderSVGInlineText {#text} at (-40,-14) size 81x17
+                text run at (-40,-14) width 81: "Zervreilasee"
+      RenderSVGContainer {g} at (40,60) size 732.80x172.80
+        RenderSVGContainer {g} at (40,220) size 720x12.80
+          RenderPath {rect} at (52,220) size 696x12.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M65.50,250.50L934.50,250.50L934.50,265.50L65.50,265.50"]
+          RenderPath {rect} at (52,220) size 174.25x12.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M65.50,250.50L282.32,250.50L282.32,265.50L65.50,265.50"]
+          RenderPath {rect} at (40,220) size 12.80x12.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.50,250.50L65.50,250.50L65.50,265.50L50.50,265.50"]
+          RenderPath {rect} at (747.20,220) size 12.80x12.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M934.50,250.50L949.50,250.50L949.50,265.50L934.50,265.50"]
+          RenderPath {path} at (43.60,223.60) size 6.40x6.40 [fill={[type=SOLID] [color=#696969]}] [data="M54.50,258.50L62.50,254.50L62.50,262.50"]
+          RenderPath {path} at (750.80,223.60) size 6.40x6.40 [fill={[type=SOLID] [color=#696969]}] [data="M946.50,258.50L938.50,262.50L938.50,254.50"]
+        RenderSVGContainer {g} at (760,60) size 12.80x160
+          RenderPath {rect} at (760,72) size 12.80x136 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M950.50,65.50L965.50,65.50L965.50,234.50L950.50,234.50"]
+          RenderPath {rect} at (760,72) size 12.80x65.10 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,65.50L965.50,65.50L965.50,145.88L950.50,145.88"]
+          RenderPath {rect} at (760,60) size 12.80x12.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,50.50L965.50,50.50L965.50,65.50L950.50,65.50"]
+          RenderPath {rect} at (760,207.20) size 12.80x12.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,234.50L965.50,234.50L965.50,249.50L950.50,249.50"]
+          RenderPath {path} at (763.60,63.60) size 6.40x6.40 [fill={[type=SOLID] [color=#696969]}] [data="M958.00,54.50L962.50,62.50L954.50,62.50"]
+          RenderPath {path} at (763.60,210.80) size 6.40x6.40 [fill={[type=SOLID] [color=#696969]}] [data="M958.00,246.50L954.50,238.50L962.50,238.50"]
+      RenderSVGText {text} at (950,280) size 800x14
+        RenderSVGInlineText {#text} at (-520,-11) size 520x14
+          text run at (-520,-11) width 520: "Panorama Zervreilastausee, Vals, Graub\x{FC}nden, Switzerland, taken 2006-02-04 (\x{A9} A. Neumann)"
+      RenderSVGContainer {svg} at (0,20) size 2848x551.20
+        RenderSVGContainer {g} at (0,20) size 2848x551.20
+          RenderImage {image} at (0,0) size 3560x689
+      RenderSVGContainer {g} at (40,300) size 728.80x168.80
+        RenderSVGContainer {g} at (40,460) size 720x8.80
+          RenderPath {rect} at (40,460) size 704x8.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M50.50,550.50L929.50,550.50L929.50,560.50L50.50,560.50"]
+          RenderPath {rect} at (40,460) size 178.57x8.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.50,550.50L272.71,550.50L272.71,560.50L50.50,560.50"]
+          RenderPath {rect} at (743.20,460) size 8.80x8.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M929.50,550.50L939.50,550.50L939.50,560.50L929.50,560.50"]
+          RenderPath {rect} at (751.20,460) size 8.80x8.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M939.50,550.50L949.50,550.50L949.50,560.50L939.50,560.50"]
+          RenderPath {path} at (746,462.80) size 4.80x4.80 [fill={[type=SOLID] [color=#696969]}] [data="M932.50,556.50L938.50,553.50L938.50,559.50"]
+          RenderPath {path} at (754,462.80) size 4.80x4.80 [fill={[type=SOLID] [color=#696969]}] [data="M948.50,556.50L942.50,559.50L942.50,553.50"]
+        RenderSVGContainer {g} at (760,300) size 8.80x160
+          RenderPath {rect} at (760,300) size 8.80x144 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M950.50,350.50L960.50,350.50L960.50,529.50L950.50,529.50"]
+          RenderPath {rect} at (760,300) size 8.80x42.37 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,350.50L960.50,350.50L960.50,402.46L950.50,402.46"]
+          RenderPath {rect} at (760,443.20) size 8.80x8.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,529.50L960.50,529.50L960.50,539.50L950.50,539.50"]
+          RenderPath {rect} at (760,451.20) size 8.80x8.80 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,539.50L960.50,539.50L960.50,549.50L950.50,549.50"]
+          RenderPath {path} at (762.80,446) size 4.80x4.80 [fill={[type=SOLID] [color=#696969]}] [data="M955.50,532.50L959.50,538.50L953.50,538.50"]
+          RenderPath {path} at (762.80,454) size 4.80x4.80 [fill={[type=SOLID] [color=#696969]}] [data="M955.50,548.50L953.50,542.50L959.50,542.50"]
+      RenderSVGText {text} at (950,575) size 800x14
+        RenderSVGInlineText {#text} at (-514,-11) size 514x14
+          text run at (-514,-11) width 514: "Panorama Chalchtrittli, Tierfed, Linthal, Glarus, Switzerland, taken 2005-09-03 (\x{A9} A. Neumann)"
+      RenderSVGContainer {g} at (39.20,483.20) size 219.20x17.60
+        RenderSVGContainer {g} at (39.20,483.20) size 107.20x17.60
+          RenderPath {rect} at (39.20,483.20) size 88x16 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M49.00,579.00L159.00,579.00L159.00,599.00L49.00,599.00"]
+          RenderPath {rect} at (40.80,484.80) size 88x16 [fill={[type=SOLID] [color=#696969]}] [data="M51.00,581.00L161.00,581.00L161.00,601.00L51.00,601.00"]
+          RenderPath {rect} at (40,484) size 88x16 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M50.00,580.00L160.00,580.00L160.00,600.00L50.00,600.00"]
+          RenderSVGText {text} at (105,595) size 800x14
+            RenderSVGTSpan {tspan} at (0,0) size 78x14
+              RenderSVGInlineText {#text} at (-39,-11) size 78x14
+                text run at (-39,-11) width 78: "Hide Scrollbar"
+        RenderSVGContainer {g} at (135.20,483.20) size 123.20x17.60
+          RenderPath {rect} at (135.20,483.20) size 88x16 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M169.00,579.00L279.00,579.00L279.00,599.00L169.00,599.00"]
+          RenderPath {rect} at (136.80,484.80) size 88x16 [fill={[type=SOLID] [color=#696969]}] [data="M171.00,581.00L281.00,581.00L281.00,601.00L171.00,601.00"]
+          RenderPath {rect} at (136,484) size 88x16 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M170.00,580.00L280.00,580.00L280.00,600.00L170.00,600.00"]
+          RenderSVGText {text} at (225,595) size 800x14
+            RenderSVGTSpan {tspan} at (0,0) size 98x14
+              RenderSVGInlineText {#text} at (-49,-11) size 98x14
+                text run at (-49,-11) width 98: "Remove Scrollbar"

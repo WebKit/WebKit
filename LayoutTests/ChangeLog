@@ -1,5 +1,75 @@
 2007-01-02  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Rubber stamped by Rob.
+
+        Adding all carto.net SVG/JS examples. Highlights some nifty bugs.
+
+        * svg/carto.net/button-expected.checksum: Added.
+        * svg/carto.net/button-expected.png: Added.
+        * svg/carto.net/button-expected.txt: Added.
+        * svg/carto.net/button.svg: Added.
+        * svg/carto.net/colourpicker-expected.checksum: Added.
+        * svg/carto.net/colourpicker-expected.png: Added.
+        * svg/carto.net/colourpicker-expected.txt: Added.
+        * svg/carto.net/colourpicker.svg: Added.
+        * svg/carto.net/combobox-expected.checksum: Added.
+        * svg/carto.net/combobox-expected.png: Added.
+        * svg/carto.net/combobox-expected.txt: Added.
+        * svg/carto.net/combobox.svg: Added.
+        * svg/carto.net/images/butterscotch.jpg: Added.
+        * svg/carto.net/images/chalchtrittli_tierfed_panorama_low_res.jpg: Added.
+        * svg/carto.net/images/ci_peace.jpg: Added.
+        * svg/carto.net/images/impatient.jpg: Added.
+        * svg/carto.net/images/lady_hillingdon.jpg: Added.
+        * svg/carto.net/images/lavaglut.jpg: Added.
+        * svg/carto.net/images/mission_bells.jpg: Added.
+        * svg/carto.net/images/sexy_rexy.jpg: Added.
+        * svg/carto.net/images/souvenir_de_pierre_notting.jpg: Added.
+        * svg/carto.net/images/sunflare.jpg: Added.
+        * svg/carto.net/images/whisky_mac.jpg: Added.
+        * svg/carto.net/images/whisper_floribunda.jpg: Added.
+        * svg/carto.net/images/zervreilasee_vals_panorama_low_res.jpg: Added.
+        * svg/carto.net/resources/button.js: Added.
+        * svg/carto.net/resources/colourPicker.js: Added.
+        * svg/carto.net/resources/comboBox.js: Added.
+        * svg/carto.net/resources/helper_functions.js: Added.
+        * svg/carto.net/resources/initComboBox.js: Added.
+        * svg/carto.net/resources/initSelectionList.js: Added.
+        * svg/carto.net/resources/mapApp.js: Added.
+        * svg/carto.net/resources/scrollbar.js: Added.
+        * svg/carto.net/resources/selectionList.js: Added.
+        * svg/carto.net/resources/slider.js: Added.
+        * svg/carto.net/resources/tabgroup.js: Added.
+        * svg/carto.net/resources/textbox.js: Added.
+        * svg/carto.net/resources/timer.js: Added.
+        * svg/carto.net/resources/window.js: Added.
+        * svg/carto.net/scrollbar-expected.checksum: Added.
+        * svg/carto.net/scrollbar-expected.png: Added.
+        * svg/carto.net/scrollbar-expected.txt: Added.
+        * svg/carto.net/scrollbar.svg: Added.
+        * svg/carto.net/selectionlist-expected.checksum: Added.
+        * svg/carto.net/selectionlist-expected.png: Added.
+        * svg/carto.net/selectionlist-expected.txt: Added.
+        * svg/carto.net/selectionlist.svg: Added.
+        * svg/carto.net/slider-expected.checksum: Added.
+        * svg/carto.net/slider-expected.png: Added.
+        * svg/carto.net/slider-expected.txt: Added.
+        * svg/carto.net/slider.svg: Added.
+        * svg/carto.net/tabgroup-expected.checksum: Added.
+        * svg/carto.net/tabgroup-expected.png: Added.
+        * svg/carto.net/tabgroup-expected.txt: Added.
+        * svg/carto.net/tabgroup.svg: Added.
+        * svg/carto.net/textbox-expected.checksum: Added.
+        * svg/carto.net/textbox-expected.png: Added.
+        * svg/carto.net/textbox-expected.txt: Added.
+        * svg/carto.net/textbox.svg: Added.
+        * svg/carto.net/window-expected.checksum: Added.
+        * svg/carto.net/window-expected.png: Added.
+        * svg/carto.net/window-expected.txt: Added.
+        * svg/carto.net/window.svg: Added.
+
+2007-01-02  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Eric.
 
         Fixes: http://bugs.webkit.org/show_bug.cgi?id=12013

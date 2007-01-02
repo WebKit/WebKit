@@ -1,0 +1,202 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (-781.25,-781.25) size 2343.75x2343.75
+      RenderPath {rect} at (-781.25,-781.25) size 2343.75x2343.75 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-1000.00,-1000.00L2000.00,-1000.00L2000.00,2000.00L-1000.00,2000.00"]
+      RenderSVGContainer {g} at (39.06,37.50) size 467.97x465.62
+        RenderSVGText {text} at (500,60) size 800x15
+          RenderSVGInlineText {#text} at (0,-12) size 108x15
+            text run at (0,-12) width 108: "Combobox Demo"
+        RenderSVGContainer {a} at (390.62,54.69) size 116.41x9.38
+          RenderSVGText {text} at (500,80) size 800x12
+            RenderSVGInlineText {#text} at (0,-10) size 149x12
+              text run at (0,-10) width 149: "Link to Documentation (HTML)"
+        RenderSVGText {text} at (240,62) size 800x32
+          RenderSVGInlineText {#text} at (0,-10) size 28x12
+            text run at (0,-10) width 28: "Fruits"
+          RenderSVGTSpan {tspan} at (0,0) size 209x12
+            RenderSVGInlineText {#text} at (0,10) size 209x12
+              text run at (0,10) width 209: "This comboBox allows only single selection"
+        RenderSVGText {text} at (240,312) size 800x12
+          RenderSVGInlineText {#text} at (0,-10) size 32x12
+            text run at (0,-10) width 32: "Roses"
+        RenderSVGText {text} at (240,333) size 800x42
+          RenderSVGInlineText {#text} at (0,-10) size 105x12
+            text run at (0,-10) width 105: "This comboBox gives"
+          RenderSVGTSpan {tspan} at (0,0) size 105x12
+            RenderSVGInlineText {#text} at (0,5) size 105x12
+              text run at (0,5) width 105: "feedback on changes"
+          RenderSVGTSpan {tspan} at (0,0) size 72x12
+            RenderSVGInlineText {#text} at (0,20) size 72x12
+              text run at (0,20) width 72: "in the selection"
+        RenderSVGText {text} at (50,400) size 800x12
+          RenderSVGInlineText {#text} at (0,-10) size 168x12
+            text run at (0,-10) width 168: "The Following Roses are selected:"
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGText {text} at (240,562) size 800x12
+          RenderSVGInlineText {#text} at (0,-10) size 39x12
+            text run at (0,-10) width 39: "Flowers"
+        RenderSVGText {text} at (240,582) size 800x12
+          RenderSVGInlineText {#text} at (0,-10) size 196x12
+            text run at (0,-10) width 196: "Click on this text to deselect all elements"
+        RenderSVGText {text} at (240,597) size 800x12
+          RenderSVGInlineText {#text} at (0,-10) size 184x12
+            text run at (0,-10) width 184: "Click on this text to select all elements"
+        RenderSVGText {text} at (240,612) size 800x12
+          RenderSVGInlineText {#text} at (0,-10) size 168x12
+            text run at (0,-10) width 168: "Click on this text to invert selection"
+        RenderSVGText {text} at (240,627) size 800x12
+          RenderSVGInlineText {#text} at (0,-10) size 242x12
+            text run at (0,-10) width 242: "Click on this text to randomly move the combobox"
+        RenderSVGText {text} at (240,642) size 800x12
+          RenderSVGInlineText {#text} at (0,-10) size 245x12
+            text run at (0,-10) width 245: "Click on this text to randomly resize the combobox"
+      RenderSVGContainer {g} at (283.30,169.94) size 404.90x306.39 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(500.00,20.00)}]
+        RenderSVGContainer {g} at (283.30,169.94) size 165.05x167.91
+          RenderPath {rect} at (283.83,170.47) size 153.16x160.60 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,200.00L184.00,200.00L184.00,360.00L50.00,360.00"]
+          RenderSVGContainer {g} at (284.84,171.06) size 151.13x159.43
+            RenderPath {rect} at (341.09,171.06) size 94.88x62.00 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,200.00L182.50,200.00L182.50,216.00L51.50,216.00"]
+            RenderSVGText {text} at (53,212) size 800x12
+              RenderSVGInlineText {#text} at (0,-10) size 31x12
+                text run at (0,-10) width 31: "Boswil"
+            RenderPath {rect} at (334.84,181.88) size 94.88x62.00 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,216.00L182.50,216.00L182.50,232.00L51.50,232.00"]
+            RenderSVGText {text} at (53,228) size 800x12
+              RenderSVGInlineText {#text} at (0,-10) size 43x12
+                text run at (0,-10) width 43: "Bottenwil"
+            RenderPath {rect} at (328.59,192.71) size 94.88x62.00 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,232.00L182.50,232.00L182.50,248.00L51.50,248.00"]
+            RenderSVGText {text} at (53,244) size 800x12
+              RenderSVGInlineText {#text} at (0,-10) size 84x12
+                text run at (0,-10) width 84: "Bremgarten (AG)"
+            RenderPath {rect} at (322.34,203.53) size 94.88x62.00 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,248.00L182.50,248.00L182.50,264.00L51.50,264.00"]
+            RenderSVGText {text} at (53,260) size 800x12
+              RenderSVGInlineText {#text} at (0,-10) size 37x12
+                text run at (0,-10) width 37: "Brittnau"
+            RenderPath {rect} at (316.09,214.36) size 94.88x62.00 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,264.00L182.50,264.00L182.50,280.00L51.50,280.00"]
+            RenderSVGText {text} at (53,276) size 800x12
+              RenderSVGInlineText {#text} at (0,-10) size 29x12
+                text run at (0,-10) width 29: "Brugg"
+            RenderPath {rect} at (309.84,225.19) size 94.88x62.00 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,280.00L182.50,280.00L182.50,296.00L51.50,296.00"]
+            RenderSVGText {text} at (53,292) size 800x12
+              RenderSVGInlineText {#text} at (0,-10) size 41x12
+                text run at (0,-10) width 41: "Brunegg"
+            RenderPath {rect} at (303.59,236.01) size 94.88x62.00 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,296.00L182.50,296.00L182.50,312.00L51.50,312.00"]
+            RenderSVGText {text} at (53,308) size 800x12
+              RenderSVGInlineText {#text} at (0,-10) size 58x12
+                text run at (0,-10) width 58: "Buchs (AG)"
+            RenderPath {rect} at (297.34,246.84) size 94.88x62.00 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,312.00L182.50,312.00L182.50,328.00L51.50,328.00"]
+            RenderSVGText {text} at (53,324) size 800x12
+              RenderSVGInlineText {#text} at (0,-10) size 50x12
+                text run at (0,-10) width 50: "Burg (AG)"
+            RenderPath {rect} at (291.09,257.66) size 94.88x62.00 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,328.00L182.50,328.00L182.50,344.00L51.50,344.00"]
+            RenderSVGText {text} at (53,340) size 800x12
+              RenderSVGInlineText {#text} at (0,-10) size 31x12
+                text run at (0,-10) width 31: "Buttwil"
+            RenderPath {rect} at (284.84,268.49) size 94.88x62.00 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,344.00L182.50,344.00L182.50,360.00L51.50,360.00"]
+            RenderSVGText {text} at (53,356) size 800x12
+              RenderSVGInlineText {#text} at (0,-10) size 46x12
+                text run at (0,-10) width 46: "B\x{C3}\x{B6}bikon"
+          RenderPath {rect} at (283.30,169.94) size 154.23x161.66 [stroke={[type=SOLID] [color=#696969]}] [data="M50.00,200.00L184.00,200.00L184.00,360.00L50.00,360.00"]
+          RenderPath {rect} at (380.21,233.11) size 61.89x93.92 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M184.00,216.00L200.00,216.00L200.00,344.00L184.00,344.00"]
+          RenderPath {rect} at (430.21,222.28) size 18.14x18.14 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M184.00,200.00L200.00,200.00L200.00,216.00L184.00,216.00"]
+          RenderPath {path} at (435.01,227.09) size 8.54x8.54 [fill={[type=SOLID] [color=#696969]}] [data="M188.00,212.00L196.00,212.00L192.00,204.00"]
+          RenderPath {rect} at (373.96,319.71) size 18.14x18.14 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M184.00,344.00L200.00,344.00L200.00,360.00L184.00,360.00"]
+          RenderPath {path} at (378.76,324.51) size 8.54x8.54 [fill={[type=SOLID] [color=#696969]}] [data="M188.00,348.00L196.00,348.00L192.00,356.00"]
+          RenderPath {rect} at (421.80,242.25) size 15.02x12.73 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M184.00,229.51L200.00,229.51L200.00,237.51L184.00,237.51"]
+        RenderSVGText {text} at (220,212) size 800x32
+          RenderSVGInlineText {#text} at (0,-10) size 196x12
+            text run at (0,-10) width 196: "Communities of Kt. Aargau (Switzerland)"
+          RenderSVGTSpan {tspan} at (0,0) size 335x12
+            RenderSVGInlineText {#text} at (0,10) size 335x12
+              text run at (0,10) width 335: "Note that one can also transform the group containing the combo box"
+      RenderSVGContainer {g} at (38.67,429.30) size 133.59x100.78
+        RenderPath {rect} at (39.06,429.69) size 120.31x100 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,550.00L204.00,550.00L204.00,678.00L50.00,678.00"]
+        RenderSVGContainer {g} at (40.23,429.69) size 117.97x100
+          RenderPath {rect} at (40.23,429.69) size 117.97x12.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,550.00L202.50,550.00L202.50,566.00L51.50,566.00"]
+          RenderSVGText {text} at (53,562) size 800x12
+            RenderSVGInlineText {#text} at (0,-10) size 47x12
+              text run at (0,-10) width 47: "Amaranth"
+          RenderPath {rect} at (40.23,442.19) size 117.97x12.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,566.00L202.50,566.00L202.50,582.00L51.50,582.00"]
+          RenderSVGText {text} at (53,578) size 800x12
+            RenderSVGInlineText {#text} at (0,-10) size 55x12
+              text run at (0,-10) width 55: "Anthericum"
+          RenderPath {rect} at (40.23,454.69) size 117.97x12.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,582.00L202.50,582.00L202.50,598.00L51.50,598.00"]
+          RenderSVGText {text} at (53,594) size 800x12
+            RenderSVGInlineText {#text} at (0,-10) size 26x12
+              text run at (0,-10) width 26: "Arum"
+          RenderPath {rect} at (40.23,467.19) size 117.97x12.50 [fill={[type=SOLID] [color=#696969] [opacity=0.30]}] [data="M51.50,598.00L202.50,598.00L202.50,614.00L51.50,614.00"]
+          RenderSVGText {text} at (53,610) size 800x12
+            RenderSVGInlineText {#text} at (0,-10) size 19x12
+              text run at (0,-10) width 19: "Ash"
+          RenderPath {rect} at (40.23,479.69) size 117.97x12.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,614.00L202.50,614.00L202.50,630.00L51.50,630.00"]
+          RenderSVGText {text} at (53,626) size 800x12
+            RenderSVGInlineText {#text} at (0,-10) size 31x12
+              text run at (0,-10) width 31: "Aspen"
+          RenderPath {rect} at (40.23,492.19) size 117.97x12.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,630.00L202.50,630.00L202.50,646.00L51.50,646.00"]
+          RenderSVGText {text} at (53,642) size 800x12
+            RenderSVGInlineText {#text} at (0,-10) size 26x12
+              text run at (0,-10) width 26: "Aster"
+          RenderPath {rect} at (40.23,504.69) size 117.97x12.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,646.00L202.50,646.00L202.50,662.00L51.50,662.00"]
+          RenderSVGText {text} at (53,658) size 800x12
+            RenderSVGInlineText {#text} at (0,-10) size 24x12
+              text run at (0,-10) width 24: "Balm"
+          RenderPath {rect} at (40.23,517.19) size 117.97x12.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,662.00L202.50,662.00L202.50,678.00L51.50,678.00"]
+          RenderSVGText {text} at (53,674) size 800x12
+            RenderSVGInlineText {#text} at (0,-10) size 39x12
+              text run at (0,-10) width 39: "Barbery"
+        RenderPath {rect} at (38.67,429.30) size 121.09x100.78 [stroke={[type=SOLID] [color=#696969]}] [data="M50.00,550.00L204.00,550.00L204.00,678.00L50.00,678.00"]
+        RenderPath {rect} at (158.98,441.80) size 13.28x75.78 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M204.00,566.00L220.00,566.00L220.00,662.00L204.00,662.00"]
+        RenderPath {rect} at (158.98,429.30) size 13.28x13.28 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,550.00L220.00,550.00L220.00,566.00L204.00,566.00"]
+        RenderPath {path} at (162.50,432.81) size 6.25x6.25 [fill={[type=SOLID] [color=#696969]}] [data="M208.00,562.00L216.00,562.00L212.00,554.00"]
+        RenderPath {rect} at (158.98,516.80) size 13.28x13.28 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,662.00L220.00,662.00L220.00,678.00L204.00,678.00"]
+        RenderPath {path} at (162.50,520.31) size 6.25x6.25 [fill={[type=SOLID] [color=#696969]}] [data="M208.00,666.00L216.00,666.00L212.00,674.00"]
+        RenderPath {rect} at (158.98,449.69) size 13.28x32.36 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,576.11L220.00,576.11L220.00,616.53L204.00,616.53"]
+      RenderSVGContainer {g} at (38.67,233.98) size 133.59x63.28
+        RenderPath {rect} at (39.06,234.38) size 120.31x62.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,300.00L204.00,300.00L204.00,380.00L50.00,380.00"]
+        RenderSVGContainer {g} at (40.23,234.38) size 117.97x62.50
+          RenderPath {rect} at (40.23,234.38) size 117.97x12.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,300.00L202.50,300.00L202.50,316.00L51.50,316.00"]
+          RenderSVGText {text} at (53,312) size 800x12
+            RenderSVGInlineText {#text} at (0,-10) size 54x12
+              text run at (0,-10) width 54: "Sexy Rexy"
+          RenderPath {rect} at (40.23,246.88) size 117.97x12.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,316.00L202.50,316.00L202.50,332.00L51.50,332.00"]
+          RenderSVGText {text} at (53,328) size 800x12
+            RenderSVGInlineText {#text} at (0,-10) size 127x12
+              text run at (0,-10) width 127: "Souvenir de Pierre Notting"
+          RenderPath {rect} at (40.23,259.38) size 117.97x12.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,332.00L202.50,332.00L202.50,348.00L51.50,348.00"]
+          RenderSVGText {text} at (53,344) size 800x12
+            RenderSVGInlineText {#text} at (0,-10) size 40x12
+              text run at (0,-10) width 40: "Sunflare"
+          RenderPath {rect} at (40.23,271.88) size 117.97x12.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,348.00L202.50,348.00L202.50,364.00L51.50,364.00"]
+          RenderSVGText {text} at (53,360) size 800x12
+            RenderSVGInlineText {#text} at (0,-10) size 60x12
+              text run at (0,-10) width 60: "Whisky Mac"
+          RenderPath {rect} at (40.23,284.38) size 117.97x12.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,364.00L202.50,364.00L202.50,380.00L51.50,380.00"]
+          RenderSVGText {text} at (53,376) size 800x12
+            RenderSVGInlineText {#text} at (0,-10) size 94x12
+              text run at (0,-10) width 94: "Whisper Floribunda"
+        RenderPath {rect} at (38.67,233.98) size 121.09x63.28 [stroke={[type=SOLID] [color=#696969]}] [data="M50.00,300.00L204.00,300.00L204.00,380.00L50.00,380.00"]
+        RenderPath {rect} at (158.98,246.48) size 13.28x38.28 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M204.00,316.00L220.00,316.00L220.00,364.00L204.00,364.00"]
+        RenderPath {rect} at (158.98,233.98) size 13.28x13.28 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,300.00L220.00,300.00L220.00,316.00L204.00,316.00"]
+        RenderPath {path} at (162.50,237.50) size 6.25x6.25 [fill={[type=SOLID] [color=#696969]}] [data="M208.00,312.00L216.00,312.00L212.00,304.00"]
+        RenderPath {rect} at (158.98,283.98) size 13.28x13.28 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,364.00L220.00,364.00L220.00,380.00L204.00,380.00"]
+        RenderPath {path} at (162.50,287.50) size 6.25x6.25 [fill={[type=SOLID] [color=#696969]}] [data="M208.00,368.00L216.00,368.00L212.00,376.00"]
+        RenderPath {rect} at (158.98,266.94) size 13.28x17.83 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,342.18L220.00,342.18L220.00,364.00L204.00,364.00"]
+      RenderSVGContainer {g} at (38.67,38.67) size 121.09x50.78
+        RenderPath {rect} at (39.06,39.06) size 120.31x50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,50.00L204.00,50.00L204.00,114.00L50.00,114.00"]
+        RenderSVGContainer {g} at (40.23,39.06) size 117.97x50
+          RenderPath {rect} at (40.23,39.06) size 117.97x12.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,50.00L202.50,50.00L202.50,66.00L51.50,66.00"]
+          RenderSVGText {text} at (53,62) size 800x12
+            RenderSVGInlineText {#text} at (0,-10) size 43x12
+              text run at (0,-10) width 43: "Orangen"
+          RenderPath {rect} at (40.23,51.56) size 117.97x12.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,66.00L202.50,66.00L202.50,82.00L51.50,82.00"]
+          RenderSVGText {text} at (53,78) size 800x12
+            RenderSVGInlineText {#text} at (0,-10) size 28x12
+              text run at (0,-10) width 28: "\x{C3}\x{201E}pfel"
+          RenderPath {rect} at (40.23,64.06) size 117.97x12.50 [fill={[type=SOLID] [color=#696969] [opacity=0.30]}] [data="M51.50,82.00L202.50,82.00L202.50,98.00L51.50,98.00"]
+          RenderSVGText {text} at (53,94) size 800x12
+            RenderSVGInlineText {#text} at (0,-10) size 43x12
+              text run at (0,-10) width 43: "Bananen"
+          RenderPath {rect} at (40.23,76.56) size 117.97x12.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,98.00L202.50,98.00L202.50,114.00L51.50,114.00"]
+          RenderSVGText {text} at (53,110) size 800x12
+            RenderSVGInlineText {#text} at (0,-10) size 31x12
+              text run at (0,-10) width 31: "Birnen"
+        RenderPath {rect} at (38.67,38.67) size 121.09x50.78 [stroke={[type=SOLID] [color=#696969]}] [data="M50.00,50.00L204.00,50.00L204.00,114.00L50.00,114.00"]
