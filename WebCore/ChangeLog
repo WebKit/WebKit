@@ -1,3 +1,11 @@
+2007-01-01  David Kilzer  <ddkilzer@webkit.org>
+
+        WebCore.vcproj change reviewed by Darin.  Additional build files updated by ddkilzer.
+
+        * CMakeLists.txt: Removed RenderLineEdit.cpp.
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Removed RenderLineEdit.cpp and RenderLineEdit.h.
+        * WebCoreSources.bkl: Removed RenderLineEdit.cpp.
+
 2007-01-01  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Mark Rowe.

@@ -1244,7 +1244,6 @@ set(WebCore_SRCS
     rendering/RenderLabel.cpp
     rendering/RenderLayer.cpp
     rendering/RenderLegend.cpp
-    rendering/RenderLineEdit.cpp
     rendering/RenderListBox.cpp
     rendering/RenderListItem.cpp
     rendering/RenderListMarker.cpp

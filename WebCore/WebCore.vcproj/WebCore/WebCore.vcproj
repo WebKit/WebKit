@@ -3479,14 +3479,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\RenderLineEdit.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\RenderLineEdit.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\rendering\RenderListBox.cpp"
 				>
 			</File>
