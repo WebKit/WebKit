@@ -43,11 +43,12 @@
 #   ChangeLog patches use --fuzz=3 to prevent rejects, and the entry date is set in
 #       the patch to today's date using $changeLogTimeZone.
 #   Handles binary files (requires patches made by svn-create-patch).
+#   Handles copied and moved files (requires patches made by svn-create-patch).
 #
 # Missing features:
 #
 #   Handle property changes.
-#   Handle file moves (would require patches made by svn-create-patch).
+#   Handle copied and moved directories (would require patches made by svn-create-patch).
 #   When doing a removal, check that old file matches what's being removed.
 #   Notice a patch that's being applied at the "wrong level" and make it work anyway.
 #   Do a dry run on the whole patch and don't do anything if part of the patch is
@@ -93,9 +94,11 @@ my %removeDirectoryIgnoreList = (
 );
 
 my %checkedDirectories;
+my %copiedFiles;
 my @patches;
 my %versions;
 
+my $copiedFromPath;
 my $indexPath;
 my $patch;
 while (<>) {
@@ -104,7 +107,10 @@ while (<>) {
     if (/^Index: (.+)/) {
         $indexPath = $1;
         if ($patch) {
-            push @patches, $patch;
+            if (!$copiedFromPath) {
+                push @patches, $patch;
+            }
+            $copiedFromPath = "";
             $patch = "";
         }
     }
@@ -112,24 +118,37 @@ while (<>) {
         # Fix paths on diff, ---, and +++ lines to match preceding Index: line.
         s/\S+$/$indexPath/ if /^diff/;
         s/^--- \S+/--- $indexPath/;
+        if (/^--- .+\(from (\S+):(\d+)\)$/) {
+            $copiedFromPath = $1;
+            $copiedFiles{$indexPath} = $copiedFromPath;
+            $versions{$copiedFromPath} = $2 if ($2 != 0);
+        }
+        elsif (/^--- .+\(revision (\d+)\)$/) {
+            $versions{$indexPath} = $1 if ($1 != 0);
+        }
         if (s/^\+\+\+ \S+/+++ $indexPath/) {
             $indexPath = "";
         }
-    }
-    if (/^--- .+\(revision (\d+)\)$/) {
-        $versions{$indexPath} = $1 if( $1 != 0 );
     }
     $patch .= $_;
     $patch .= "\n";
 }
 
-push @patches, $patch if $patch;
+if ($patch && !$copiedFromPath) {
+    push @patches, $patch;
+}
 
 if ($merge) {
     for my $file (sort keys %versions) {
         print "Getting version $versions{$file} of $file\n";
         system "svn", "update", "-r", $versions{$file}, $file;
     }
+}
+
+# Handle copied and moved files first since moved files may have their source deleted before the move.
+for my $file (keys %copiedFiles) {
+    addDirectoriesIfNeeded(dirname($file));
+    system "svn", "copy", $copiedFiles{$file}, $file;
 }
 
 for $patch (@patches) {

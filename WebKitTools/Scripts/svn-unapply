@@ -40,11 +40,12 @@
 #   ChangeLog patches use --fuzz=3 to prevent rejects, and the entry date is reset in
 #       the patch before it is applied (svn-apply sets it when applying a patch).
 #   Handles binary files (requires patches made by svn-create-patch).
+#   Handles copied and moved files (requires patches made by svn-create-patch).
 #
 # Missing features:
 #
 #   Handle property changes.
-#   Handle file moves (would require patches made by svn-create-patch).
+#   Handle copied and moved directories (would require patches made by svn-create-patch).
 #   Use version numbers in the patch file and do a 3-way merge.
 #   When reversing an addition, check that the file matches what's being removed.
 #   Notice a patch that's being unapplied at the "wrong level" and make it work anyway.
@@ -76,8 +77,10 @@ if (!GetOptions("help!" => \$showHelp) || $showHelp) {
     exit 1;
 }
 
+my @copiedFiles;
 my %directoriesToCheck;
 
+my $copiedFromPath;
 my $indexPath;
 my $patch;
 while (<>) {
@@ -86,13 +89,21 @@ while (<>) {
     if (/^Index: (.*)/) {
         $indexPath = $1;
         if ($patch) {
-            patch($patch);
+            if ($copiedFromPath) {
+                push @copiedFiles, $patch;
+            } else {
+                patch($patch);
+            }
+            $copiedFromPath = "";
             $patch = "";
         }
     }
     if ($indexPath) {
         # Fix paths on diff, ---, and +++ lines to match preceding Index: line.
         s/^--- \S+/--- $indexPath/;
+        if (/^--- .+\(from (\S+):\d+\)$/) {
+            $copiedFromPath = $1;
+        }
         if (s/^\+\+\+ \S+/+++ $indexPath/) {
             $indexPath = "";
         }
@@ -100,7 +111,19 @@ while (<>) {
     $patch .= $_;
     $patch .= "\n";
 }
-patch($patch);
+
+if ($patch) {
+    if ($copiedFromPath) {
+        push @copiedFiles, $patch;
+    } else {
+        patch($patch);
+    }
+}
+
+# Handle copied and moved files last since they may have had post-copy changes that have now been unapplied
+for $patch (@copiedFiles) {
+    patch($patch);
+}
 
 revertDirectories();
 
@@ -180,7 +203,7 @@ sub patch($)
     my $addition = 0;
     my $isBinary = 0;
 
-    $addition = 1 if $patch =~ /\n--- .+\(revision 0\)\n/;
+    $addition = 1 if ($patch =~ /\n--- .+\(revision 0\)\n/ || $patch =~ /\n@@ -0,0 .* @@/);
     $deletion = 1 if $patch =~ /\n@@ .* \+0,0 @@/;
     $isBinary = 1 if $patch =~ /\nCannot display: file marked as a binary type\./;
 

@@ -34,10 +34,11 @@
 #   Always passes "-p" to diff so it will try to include function names.
 #   Handles binary files (encoded as a base64 chunk of text).
 #   Sorts the diffs alphabetically by text files, then binary files.
+#   Handles copied and moved files.
 #
 # Missing features:
 #
-#   Handle moved files.
+#   Handle copied and moved directories.
 
 use strict;
 use warnings;
@@ -53,9 +54,14 @@ use POSIX qw(:errno_h);
 use Time::gmtime;
 
 sub canonicalizePath($);
+sub findMimeType($);
+sub findModificationType($);
+sub findSourceFileAndRevision($);
 sub fixChangeLogPatch($);
-sub generateDiff($);
+sub generateDiff($$$);
 sub generateFileList($\%\%);
+sub isBinaryMimeType($);
+sub manufacturePatchForAdditionWithHistory($$);
 sub numericcmp($$);
 sub outputBinaryContent($);
 sub pathcmp($$);
@@ -79,10 +85,10 @@ for my $path (keys %paths) {
 
 # Generate the diff for text files, then binary files, for easy reviewing
 for my $file (sort pathcmp keys %textFiles) {
-    generateDiff($file);
+    generateDiff($file, $textFiles{$file}, 0);
 }
 for my $file (sort pathcmp keys %binaryFiles) {
-    generateDiff($file);
+    generateDiff($file, $binaryFiles{$file}, 1);
 }
 
 exit 0;
@@ -105,6 +111,56 @@ sub canonicalizePath($)
         }
     }
     return ($#dirs >= 0) ? File::Spec->catdir(@dirs) : ".";
+}
+
+sub findMimeType($)
+{
+    my ($file) = @_;
+    open PROPGET, "svn propget svn:mime-type '$file' |" or die;
+    my $mimeType = <PROPGET>;
+    close PROPGET;
+    chomp $mimeType if $mimeType;
+    return $mimeType;
+}
+
+sub findModificationType($)
+{
+    my ($stat) = @_;
+    my $fileStat = substr($stat, 0, 1);
+    my $propertyStat = substr($stat, 1, 1);
+    if ($fileStat eq "A") {
+        my $additionWithHistory = substr($stat, 3, 1);
+        return $additionWithHistory eq "+" ? "additionWithHistory" : "addition";
+    }
+    return "modification" if ($fileStat eq "M" || $propertyStat eq "M");
+    return "deletion" if ($fileStat eq "D");
+    return undef;
+}
+
+sub findSourceFileAndRevision($)
+{
+    my ($file) = @_;
+    my $baseUrl;
+    open INFO, "svn info . |" or die;
+    while (<INFO>) {
+        if (/^URL: (.+)/) {
+            $baseUrl = $1;
+            last;
+        }
+    }
+    close INFO;
+    my $sourceFile;
+    my $sourceRevision;
+    open INFO, "svn info '$file' |" or die;
+    while (<INFO>) {
+        if (/^Copied From URL: (.+)/) {
+            $sourceFile = substr($1, length($baseUrl) + 1);
+        } elsif (/^Copied From Rev: ([0-9]+)/) {
+            $sourceRevision = $1;
+        }
+    }
+    close INFO;
+    return ($sourceFile, $sourceRevision);
 }
 
 sub fixChangeLogPatch($)
@@ -158,58 +214,70 @@ sub fixChangeLogPatch($)
     return $newPatch;
 }
 
-sub generateDiff($)
+sub generateDiff($$$)
 {
-    my ($file) = @_;
-    my $errors = "";
-    my $isBinary;
+    my ($file, $modificationType, $isBinary) = @_;
     my $patch;
+    if ($modificationType eq "additionWithHistory") {
+        manufacturePatchForAdditionWithHistory($file, $isBinary);
+    }
     open DIFF, "svn diff --diff-cmd diff -x -uNp '$file' |" or die;
     while (<DIFF>) {
-        $isBinary = 1 if (/^Cannot display: file marked as a binary type\.$/);
         $patch .= $_;
     }
     close DIFF;
     $patch = fixChangeLogPatch($patch) if basename($file) eq "ChangeLog";
-    print $patch;
+    print $patch if $patch;
     if ($isBinary) {
-        print "\n" if $patch =~ m/\n\S+$/m;
+        print "\n" if ($patch && $patch =~ m/\n\S+$/m);
         outputBinaryContent($file);
     }
-    print STDERR $errors;
 }
 
 sub generateFileList($\%\%)
 {
-    my ($path, $textFiles, $binaryFiles) = @_;
-    my $indexPath;
-    my $isBinary;
-    open DIFF, "svn diff --diff-cmd diff -x -uNp '$path' |" or die;
-    while (<DIFF>) {
-        if (/^Index: (.*)/) {
-            my $newIndexPath = $1;
-            if ($indexPath) {
-                if ($isBinary) {
-                    $binaryFiles->{$indexPath} = 1;
-                } else {
-                    $textFiles->{$indexPath} = 1;
-                }
+    my ($statPath, $textFiles, $binaryFiles) = @_;
+    open STAT, "svn stat '$statPath' |" or die;
+    while (my $line = <STAT>) {
+        chomp $line;
+        my $stat = substr($line, 0, 7);
+        my $path = substr($line, 7);
+        my $modificationType = findModificationType($stat);
+        if ($modificationType) {
+            if (isBinaryMimeType($path)) {
+                $binaryFiles->{$path} = $modificationType;
+            } else {
+                $textFiles->{$path} = $modificationType;
             }
-            $indexPath = $newIndexPath;
-            $isBinary = 0;
-        }
-        if (/^Cannot display: file marked as a binary type\.$/) {
-            $isBinary = 1;
+        } else {
+            print STDERR $line, "\n";
         }
     }
-    close DIFF;
-    # Handle last patch
-    if ($indexPath) {
-        if ($isBinary) {
-            $binaryFiles->{$indexPath} = 1;
-        } else {
-            $textFiles->{$indexPath} = 1;
-        }
+    close STAT;
+}
+
+sub isBinaryMimeType($)
+{
+    my ($file) = @_;
+    my $mimeType = findMimeType($file);
+    return 0 if (!$mimeType || substr($mimeType, 0, 5) eq "text/");
+    return 1;
+}
+
+sub manufacturePatchForAdditionWithHistory($$)
+{
+    my ($file, $isBinary) = @_;
+    print "Index: ${file}\n";
+    print "=" x 67, "\n";
+    my ($sourceFile, $sourceRevision) = findSourceFileAndRevision($file);
+    print "--- ${file}\t(revision ${sourceRevision})\t(from ${sourceFile}:${sourceRevision})\n";
+    print "+++ ${file}\t(working copy)\n";
+    if ($isBinary) {
+        print "\nCannot display: file marked as a binary type.\n";
+        my $mimeType = findMimeType($file);
+        print "svn:mime-type = ${mimeType}\n\n";
+    } else {
+        print `svn cat -r${sourceRevision} ${sourceFile} | diff -u /dev/null - | tail +3`;
     }
 }
 

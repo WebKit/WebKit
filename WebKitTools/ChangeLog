@@ -1,3 +1,20 @@
+2007-01-01  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12023
+        svn-create-patch and friends should handle moved/copied files
+
+        * Scripts/svn-apply: Identify copied files and handle those before all other patches.
+        * Scripts/svn-create-patch: Generate patches with subtle changes for copied files.
+        (findMimeType($)): Added.
+        (findModificationTime($)): Added.
+        (findSourceFileAndRevision($)): Added.
+        (generateDiff($$$)): Changed to use svn stat instead of svn diff.
+        (isBinaryMimeType($)): Added.
+        (manufacturePatchForAdditionWithHistory($$)): Added.
+        * Scripts/svn-unapply: Identify copied files and handle those after unapplying all other patches.
+
 2006-12-29  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by olliej.
