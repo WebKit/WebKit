@@ -1,5 +1,16 @@
 2007-01-02  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders.
+
+        Testcase for http://bugs.webkit.org/show_bug.cgi?id=12072
+
+        * fast/forms/select-align-expected.checksum: Added.
+        * fast/forms/select-align-expected.png: Added.
+        * fast/forms/select-align-expected.txt: Added.
+        * fast/forms/select-align.html: Added.
+
+2007-01-02  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Mitz.
 
         Testcase for http://bugs.webkit.org/show_bug.cgi?id=12071

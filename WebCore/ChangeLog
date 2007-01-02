@@ -1,5 +1,19 @@
 2007-01-02  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=12072
+        select with align attribute should not affect contained text
+
+        Don't map align for select elements.
+
+        Test: fast/forms/select-align.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseMappedAttribute):
+
+2007-01-02  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Mitz.
 
         Patch for http://bugs.webkit.org/show_bug.cgi?id=12071
