@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- * Copyright (C) 2006 Apple Computer
+ * Copyright (C) 2006-2007 Apple Computer
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -299,13 +299,13 @@ double getUTCOffset() {
         tm localt;
 
         memset(&localt, 0, sizeof(localt));
-        
-        // get the difference between this time zone and GMT 
-        localt.tm_mday = 2;
-        localt.tm_year = 70;
 
-        utcOffset = mktime(&localt) - (hoursPerDay * secondsPerHour);
-        utcOffset *= -msPerSecond;
+        // get the difference between this time zone and UTC on Jan 01, 2000 12:00:00 AM
+        localt.tm_mday = 1;
+        localt.tm_year = 100;
+        utcOffset = 946684800.0 - mktime(&localt);
+
+        utcOffset *= msPerSecond;
 
         utcOffsetInitialized = true;
     }
@@ -358,8 +358,8 @@ static double getDSTOffset(double ms)
     // standard explicitly dictates that historical information should not be considered when
     // determining DST.  For this reason we shift years that localtime can handle but would
     // return historically accurate information.
-    
-    //if before 2000 or after 2038
+
+    // if before Jan 01, 2000 12:00:00 AM UTC or after Jan 01, 2038 12:00:00 AM UTC
     if (ms < 946684800000.0 || ms > 2145916800000.0) {
         int year;
         int day;

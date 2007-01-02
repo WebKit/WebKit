@@ -1,3 +1,22 @@
+2007-01-01  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12057
+          REGRESSION: JavaScript Date Is One Day In The Future in GMT time zone
+
+        Because Mac OS X returns geographically and historically accurate time zone information,
+        converting Jan 02, 1970 12:00:00 AM to local time then subtracting 24 hours did not work
+        in GMT (London - England) since it was in BST (+0100) all year in 1970[1].  Instead, the
+        UTC offset is calculated by converting Jan 01, 2000 12:00:00 AM to local time then
+        subtracting that from the same date in UTC.
+
+        [1] http://en.wikipedia.org/wiki/British_Summer_Time
+
+        * kjs/DateMath.cpp:
+        (KJS::getUTCOffset): Updated UTC offset calculation.
+        (KJS::getDSTOffset): Improved comment.
+
 2006-12-31  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Geoff.
