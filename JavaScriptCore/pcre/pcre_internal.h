@@ -57,7 +57,6 @@ functions whose names all begin with "_pcre_". */
 #endif
 
 #if COMPILER(MSVC)
-#pragma warning(disable: 4114)
 #pragma warning(disable: 4232)
 #pragma warning(disable: 4244)
 #endif

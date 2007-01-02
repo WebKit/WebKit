@@ -1,3 +1,12 @@
+2007-01-02  Darin Adler  <darin@apple.com>
+
+        - minor tweak (hope this doesn't re-break Windows)
+
+        * pcre/pcre_compile.c: Removed use of const pcre_uchar const * -- Mitz probably
+        meant const pcre_uchar *const, but I think we can do without the explicit const here.
+
+        * pcre/pcre_internal.h: Re-enabled warning C4114.
+
 2007-01-02  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by NOBODY (Windows build fix).
