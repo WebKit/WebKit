@@ -1,3 +1,11 @@
+2007-01-02  Zack Rusin  <zack@kde.org>
+
+        Make it work after javascriptcore/bindings changes.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::initJSObjects):
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.pro:
+
 2007-01-01  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Darin.

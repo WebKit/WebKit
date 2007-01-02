@@ -520,6 +520,7 @@ SOURCES += \
     platform/graphics/Image.cpp \
     platform/DeprecatedStringList.cpp \
     platform/graphics/FloatSize.cpp \
+    platform/graphics/PathTraversalState.cpp \
     platform/String.cpp \
     platform/DeprecatedValueListImpl.cpp \
     platform/graphics/IntRect.cpp \
@@ -886,7 +887,6 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/svg/SVGPathElement.cpp \
         ksvg2/svg/SVGStyledElement.cpp \
         ksvg2/svg/SVGFEMergeNodeElement.cpp \
-        ksvg2/svg/svgpathparser.cpp \
         ksvg2/svg/SVGFEGaussianBlurElement.cpp \
         ksvg2/svg/SVGLinearGradientElement.cpp \
         ksvg2/svg/SVGFEDisplacementMapElement.cpp \
@@ -948,7 +948,8 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/svg/SVGParserUtilities.cpp \
         ksvg2/misc/SVGImageLoader.cpp \
         ksvg2/misc/SVGDocumentExtensions.cpp \
-        ksvg2/misc/KSVGTimeScheduler.cpp \
+        ksvg2/misc/SVGTimer.cpp \
+        ksvg2/misc/TimeScheduler.cpp \
         ksvg2/misc/KCanvasRenderingStyle.cpp \
         ksvg2/events/JSSVGLazyEventListener.cpp \
         ksvg2/events/SVGZoomEvent.cpp \

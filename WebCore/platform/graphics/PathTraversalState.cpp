@@ -24,6 +24,8 @@
 
 #include "Path.h"
 
+#include <math.h>
+
 namespace WebCore {
 
 static const float kPathSegmentLengthTolerance = 0.00001f;

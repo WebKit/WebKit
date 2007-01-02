@@ -1,3 +1,12 @@
+2007-01-02  Zack Rusin  <zack@kde.org>
+
+        Compilation fixes for the Qt port.
+
+        * WebCore.pro:
+        * platform/qt/FrameQt.cpp:
+        (WebCore::FrameQt::bindingRootObject):
+        (WebCore::FrameQt::addPluginRootObject):
+
 2007-01-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by rwlbuis.

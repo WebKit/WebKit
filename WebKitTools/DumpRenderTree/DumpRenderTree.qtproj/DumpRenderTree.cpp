@@ -189,7 +189,7 @@ void DumpRenderTree::initJSObjects()
 {
     KJS::Bindings::RootObject *root = m_frame->bindingRootObject();
     KJS::ExecState *exec = root->interpreter()->globalExec();
-    KJS::JSObject *rootObject = root->rootObjectImp();
+    KJS::JSObject *rootObject = root->interpreter()->globalObject();
     KJS::JSObject *window = rootObject->get(exec, KJS::Identifier("window"))->getObject();
     if (!window) {
         qDebug() << "Warning: couldn't get window object";
