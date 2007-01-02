@@ -1,8 +1,19 @@
 2007-01-02  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Mitz.
+
+        Testcase for http://bugs.webkit.org/show_bug.cgi?id=12071
+
+        * fast/forms/button-align-expected.checksum: Added.
+        * fast/forms/button-align-expected.png: Added.
+        * fast/forms/button-align-expected.txt: Added.
+        * fast/forms/button-align.html: Added.
+
+2007-01-02  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Mitz and Anders.
 
-        Testcases for http://bugs.webkit.org/show_bug.cgi?id=7075
+        Testcase for http://bugs.webkit.org/show_bug.cgi?id=7075
 
         * fast/forms/textarea-align-expected.checksum: Added.
         * fast/forms/textarea-align-expected.png: Added.

@@ -6,6 +6,7 @@
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
+ * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -75,6 +76,9 @@ void HTMLButtonElement::parseMappedAttribute(MappedAttribute *attr)
         m_currValue = m_value;
     } else if (attr->name() == accesskeyAttr) {
         // Do nothing.
+    } else if (attr->name() == alignAttr) {
+        // Don't map 'align' attribute.  This matches what Firefox and IE do, but not Opera.
+        // See http://bugs.webkit.org/show_bug.cgi?id=12071
     } else if (attr->name() == onfocusAttr) {
         setHTMLEventListener(focusEvent, attr);
     } else if (attr->name() == onblurAttr) {

@@ -1,5 +1,19 @@
 2007-01-02  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Mitz.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=12071
+        button with align attribute should not affect contained text
+
+        Don't map align for button elements.
+
+        Test: fast/forms/button-align.html
+
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::parseMappedAttribute):
+
+2007-01-02  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Mitz and Anders.
 
         Patch for http://bugs.webkit.org/show_bug.cgi?id=7075
