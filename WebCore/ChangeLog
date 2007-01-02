@@ -1,5 +1,11 @@
 2007-01-02  Zack Rusin  <zack@kde.org>
 
+        Compilation fix. File names are case-sensitive.
+
+        * ksvg2/svg/SVGPathSegList.cpp:
+
+2007-01-02  Zack Rusin  <zack@kde.org>
+
         Compilation fixes for the Qt port.
 
         * WebCore.pro:

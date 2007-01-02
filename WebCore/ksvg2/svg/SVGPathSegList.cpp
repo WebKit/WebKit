@@ -29,8 +29,8 @@
 #include "FloatPoint.h"
 #include "Path.h"
 #include "PathTraversalState.h"
-#include "SVGPathSegMoveTo.h"
-#include "SVGPathSegLineTo.h"
+#include "SVGPathSegMoveto.h"
+#include "SVGPathSegLineto.h"
 #include "SVGPathSegCurvetoCubic.h"
 
 namespace WebCore {
