@@ -1,3 +1,14 @@
+2007-01-01  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12061
+        Bug 12061: Crash in WebCore::Shared<WebCore::StringImpl>::deref
+
+        * rendering/RenderStyle.cpp:
+        (WebCore::ContentData::clearContent): Reset _contentType to CONTENT_NONE to ensure repeated calls to clearContent
+        do not result in derefing deallocated members.
+
 2007-01-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by andersca.
