@@ -55,7 +55,7 @@ public:
     void setDrawsContents(bool);
     bool drawsContents() const;
 
-    virtual bool isRenderSVGContainer() const { return true; }
+    virtual bool isSVGContainer() const { return true; }
     virtual const char* renderName() const { return "RenderSVGContainer"; }
     
     virtual bool canHaveChildren() const;

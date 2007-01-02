@@ -42,7 +42,7 @@ void ImageBuffer::renderSubtreeToImage(ImageBuffer* image, RenderObject* item)
 
 #ifdef SVG_SUPPORT
     RenderSVGContainer* svgContainer = 0;
-    if(item && item->isRenderSVGContainer())
+    if (item && item->isSVGContainer())
          svgContainer = static_cast<RenderSVGContainer*>(item);
 
     bool drawsContents = svgContainer ? svgContainer->drawsContents() : false;

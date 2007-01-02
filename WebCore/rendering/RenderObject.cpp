@@ -793,7 +793,7 @@ RenderBlock* RenderObject::containingBlock() const
         while (o && ((o->isInline() && !o->isReplaced()) || o->isTableRow() || o->isTableSection()
                      || o->isTableCol() || o->isFrameSet()
 #ifdef SVG_SUPPORT
-                     || o->isRenderSVGContainer()
+                     || o->isSVGContainer()
 #endif
                      ))
             o = o->parent();

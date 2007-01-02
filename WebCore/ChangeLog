@@ -1,3 +1,22 @@
+2007-01-02  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Mitz.
+
+        Rename isRenderSVGContainer to isSVGContainer.
+
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::renderSubtreeToImage):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSVGContainer):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::viewportTransform):
+        * rendering/RenderSVGContainer.h:
+        (WebCore::RenderSVGContainer::isSVGContainer):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+
 2007-01-03  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Mitz.

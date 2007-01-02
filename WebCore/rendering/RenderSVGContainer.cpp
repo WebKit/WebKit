@@ -251,7 +251,7 @@ AffineTransform RenderSVGContainer::viewportTransform() const
 {
     if (!viewBox().isEmpty()) {
         FloatRect viewportRect = viewport();
-        if (!parent()->isRenderSVGContainer())
+        if (!parent()->isSVGContainer())
             viewportRect = FloatRect(viewport().x(), viewport().y(), width(), height());
         return getAspectRatio(viewBox(), viewportRect);
     }
