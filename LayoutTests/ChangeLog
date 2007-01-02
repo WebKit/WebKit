@@ -1,5 +1,17 @@
 2007-01-01  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Darin.
+
+        - repaint test for http://bugs.webkit.org/show_bug.cgi?id=11359
+          Incomplete repaint of table cell's collapsed border when changing only the cell
+
+        * fast/repaint/table-cell-collapsed-border-expected.checksum: Added.
+        * fast/repaint/table-cell-collapsed-border-expected.png: Added.
+        * fast/repaint/table-cell-collapsed-border-expected.txt: Added.
+        * fast/repaint/table-cell-collapsed-border.html: Added.
+
+2007-01-01  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Mark Rowe.
 
         - pixel test for http://bugs.webkit.org/show_bug.cgi?id=12042

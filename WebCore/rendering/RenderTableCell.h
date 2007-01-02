@@ -71,6 +71,11 @@ public:
     int borderTop() const;
     int borderBottom() const;
 
+    int borderHalfLeft(bool outer) const;
+    int borderHalfRight(bool outer) const;
+    int borderHalfTop(bool outer) const;
+    int borderHalfBottom(bool outer) const;
+
     CollapsedBorderValue collapsedLeftBorder(bool rtl) const;
     CollapsedBorderValue collapsedRightBorder(bool rtl) const;
     CollapsedBorderValue collapsedTopBorder() const;
@@ -91,6 +96,7 @@ public:
     // lie about position to outside observers
     virtual int yPos() const { return m_y + _topExtra; }
 
+    virtual IntRect getAbsoluteRepaintRect();
     virtual void computeAbsoluteRepaintRect(IntRect&, bool f=false);
     virtual bool absolutePosition(int& xPos, int& yPos, bool f = false);
 

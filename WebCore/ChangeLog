@@ -1,3 +1,33 @@
+2007-01-01  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11359
+          Incomplete repaint of table cell's collapsed border when changing only the cell
+
+        Test: fast/repaint/table-cell-collapsed-border.html
+
+        * rendering/RenderTable.h:
+        Added needsSectionRecalc() accessor.
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::getAbsoluteRepaintRect): Overloaded to add the
+        outer half of any collapsed borders. This function checks the cell's borders'
+        widths but also the widths of the adjoining cells' borders, since they can
+        contribute to the length of this cell's borders perpendicular to them, making
+        such a border overflow the cell in both dimensions.
+        (WebCore::RenderTableCell::borderLeft): Split the collapsing borders case off to
+        borderHalfLeft().
+        (WebCore::RenderTableCell::borderRight): Ditto.
+        (WebCore::RenderTableCell::borderTop): Ditto.
+        (WebCore::RenderTableCell::borderBottom): Ditto.
+        (WebCore::RenderTableCell::borderHalfLeft): Added. Takes an 'outer' boolean
+        parameter. When true, this function returns the width of the part of the border
+        that is outside the cell (different from the inner width when the total width is odd).
+        (WebCore::RenderTableCell::borderHalfRight): Ditto.
+        (WebCore::RenderTableCell::borderHalfTop): Ditto.
+        (WebCore::RenderTableCell::borderHalfBottom): Ditto.
+        * rendering/RenderTableCell.h:
+
 2007-01-01  David Kilzer  <ddkilzer@webkit.org>
 
         WebCore.vcproj change reviewed by Darin.  Additional build files updated by ddkilzer.
