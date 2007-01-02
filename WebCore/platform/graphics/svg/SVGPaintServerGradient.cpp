@@ -27,6 +27,8 @@
 
 #ifdef SVG_SUPPORT
 #include "SVGPaintServerGradient.h"
+
+#include "SVGGradientElement.h"
 #include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
@@ -63,10 +65,10 @@ TextStream& operator<<(TextStream& ts, const Vector<SVGGradientStop>& l)
     return ts;
 }
 
-SVGPaintServerGradient::SVGPaintServerGradient()
+SVGPaintServerGradient::SVGPaintServerGradient(const SVGGradientElement* owner)
     : m_spreadMethod(SPREADMETHOD_PAD)
     , m_boundingBoxMode(true)
-    , m_listener(0)
+    , m_ownerElement(owner)
 
 #if PLATFORM(CG)
     , m_stopsCache(0)
@@ -76,6 +78,7 @@ SVGPaintServerGradient::SVGPaintServerGradient()
     , m_imageBuffer(0)
 #endif
 {
+    ASSERT(owner);
 }
 
 SVGPaintServerGradient::~SVGPaintServerGradient()
@@ -95,11 +98,6 @@ void SVGPaintServerGradient::setGradientStops(const Vector<SVGGradientStop>& sto
 {
     m_stops = stops;
     std::sort(m_stops.begin(), m_stops.end(), compareStopOffset);
-}
-
-void SVGPaintServerGradient::setGradientStops(SVGPaintServerGradient* server)
-{
-    m_stops = server->gradientStops();
 }
 
 SVGGradientSpreadMethod SVGPaintServerGradient::spreadMethod() const
@@ -132,18 +130,11 @@ void SVGPaintServerGradient::setGradientTransform(const AffineTransform& transfo
     m_gradientTransform = transform;
 }
 
-SVGResourceListener* SVGPaintServerGradient::listener() const
-{
-    return m_listener;
-}
-
-void SVGPaintServerGradient::setListener(SVGResourceListener* listener)
-{
-    m_listener = listener;
-}
-
 TextStream& SVGPaintServerGradient::externalRepresentation(TextStream& ts) const
 {
+    // Gradients/patterns aren't setup, until they are used for painting. Work around that fact.
+    m_ownerElement->buildGradient();
+
     // abstract, don't stream type
     ts  << "[stops=" << gradientStops() << "]";
     if (spreadMethod() != SPREADMETHOD_PAD)

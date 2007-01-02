@@ -1,12 +1,12 @@
-KRenderingPaintServer {id="linearBoundingBoxPercentage" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(100,0)]}
-KRenderingPaintServer {id="linearBoundingBoxFraction" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(100,0)]}
+KRenderingPaintServer {id="linearBoundingBoxPercentage" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(1,0)]}
+KRenderingPaintServer {id="linearBoundingBoxFraction" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(1,0)]}
 KRenderingPaintServer {id="linearUserSpace" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [start=(0,0)] [end=(50,0)]}
-KRenderingPaintServer {id="radialBoundingBoxPercentage" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [center=(25,25)] [focal=(25,25)] [radius=25.00]}
-KRenderingPaintServer {id="radialBoundingBoxFraction" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [center=(25,25)] [focal=(25,25)] [radius=25.00]}
+KRenderingPaintServer {id="radialBoundingBoxPercentage" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [center=(0.25,0.25)] [focal=(0.25,0.25)] [radius=0.25]}
+KRenderingPaintServer {id="radialBoundingBoxFraction" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [center=(0.25,0.25)] [focal=(0.25,0.25)] [radius=0.25]}
 KRenderingPaintServer {id="radialUserSpace" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [center=(15,15)] [focal=(15,15)] [radius=15.00]}
-KRenderingPaintServer {id="patternBoundingBoxPercentage" [type=PATTERN] [bbox=at (0,0) size 0x0]}
-KRenderingPaintServer {id="patternBoundingBoxFraction" [type=PATTERN] [bbox=at (0,0) size 0x0]}
-KRenderingPaintServer {id="patternUserSpace" [type=PATTERN] [bbox=at (0,0) size 0x0]}
+KRenderingPaintServer {id="patternBoundingBoxPercentage" [type=PATTERN] [bbox=at (0.25,0.25) size 0.50x0.50]}
+KRenderingPaintServer {id="patternBoundingBoxFraction" [type=PATTERN] [bbox=at (0.25,0.25) size 0.50x0.50]}
+KRenderingPaintServer {id="patternUserSpace" [type=PATTERN] [bbox=at (12.50,7.50) size 1x1]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.25,0.25) size 479.25x359.25
@@ -15,8 +15,8 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-14) size 378x18
             text run at (0,-14) width 378: "Bounding box relative coordinates (percentage and fraction)"
         RenderSVGContainer {g} at (30,40) size 132x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,40.00)}]
-          RenderPath {rect} at (30,40) size 50x20 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(100,0)]}] [data="M0.00,0.00L50.00,0.00L50.00,20.00L0.00,20.00"]
-          RenderPath {rect} at (30,60) size 50x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,20.00)}] [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(100,0)]}] [data="M0.00,0.00L50.00,0.00L50.00,20.00L0.00,20.00"]
+          RenderPath {rect} at (30,40) size 50x20 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(1,0)]}] [data="M0.00,0.00L50.00,0.00L50.00,20.00L0.00,20.00"]
+          RenderPath {rect} at (30,60) size 50x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,20.00)}] [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(1,0)]}] [data="M0.00,0.00L50.00,0.00L50.00,20.00L0.00,20.00"]
           RenderPath {rect} at (30,80) size 50x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}] [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [start=(0,0)] [end=(50,0)]}] [data="M0.00,0.00L50.00,0.00L50.00,20.00L0.00,20.00"]
           RenderPath {line} at (30,59.50) size 50x1 [stroke={[type=SOLID] [color=#CCCCCC]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,20.00L50.00,20.00"]
           RenderPath {line} at (30,79.50) size 50x1 [stroke={[type=SOLID] [color=#CCCCCC]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,40.00L50.00,40.00"]
@@ -33,8 +33,8 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-14) size 345x18
             text run at (0,-14) width 345: "Bounding box relative length (percentage and fraction)"
         RenderSVGContainer {g} at (30,140) size 194x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,140.00)}]
-          RenderPath {rect} at (30,140) size 60x60 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [center=(25,25)] [focal=(25,25)] [radius=25.00]}] [data="M0.00,0.00L60.00,0.00L60.00,60.00L0.00,60.00"]
-          RenderPath {rect} at (91,140) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(61.00,0.00)}] [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [center=(25,25)] [focal=(25,25)] [radius=25.00]}] [data="M0.00,0.00L60.00,0.00L60.00,60.00L0.00,60.00"]
+          RenderPath {rect} at (30,140) size 60x60 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [center=(0.25,0.25)] [focal=(0.25,0.25)] [radius=0.25]}] [data="M0.00,0.00L60.00,0.00L60.00,60.00L0.00,60.00"]
+          RenderPath {rect} at (91,140) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(61.00,0.00)}] [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [center=(0.25,0.25)] [focal=(0.25,0.25)] [radius=0.25]}] [data="M0.00,0.00L60.00,0.00L60.00,60.00L0.00,60.00"]
           RenderPath {rect} at (152,140) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(122.00,0.00)}] [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [center=(15,15)] [focal=(15,15)] [radius=15.00]}] [data="M0.00,0.00L60.00,0.00L60.00,60.00L0.00,60.00"]
           RenderSVGText {text} at (0,70) size 480x18
             RenderSVGInlineText {#text} at (0,-14) size 51x18
@@ -58,9 +58,9 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-14) size 385x18
             text run at (0,-14) width 385: "Bounding box relative width/height (percentage and fraction)"
         RenderSVGContainer {g} at (29.50,249.50) size 432.50x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,250.00)}]
-          RenderPath {rect} at (29.50,249.50) size 51x31 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0,0) size 0x0]}] [data="M0.00,0.00L50.00,0.00L50.00,30.00L0.00,30.00"]
-          RenderPath {rect} at (179.50,249.50) size 51x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,0.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0,0) size 0x0]}] [data="M0.00,0.00L50.00,0.00L50.00,30.00L0.00,30.00"]
-          RenderPath {rect} at (329.50,249.50) size 51x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,0.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0,0) size 0x0]}] [data="M0.00,0.00L50.00,0.00L50.00,30.00L0.00,30.00"]
+          RenderPath {rect} at (29.50,249.50) size 51x31 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0.25,0.25) size 0.50x0.50]}] [data="M0.00,0.00L50.00,0.00L50.00,30.00L0.00,30.00"]
+          RenderPath {rect} at (179.50,249.50) size 51x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,0.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0.25,0.25) size 0.50x0.50]}] [data="M0.00,0.00L50.00,0.00L50.00,30.00L0.00,30.00"]
+          RenderPath {rect} at (329.50,249.50) size 51x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,0.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (12.50,7.50) size 1x1]}] [data="M0.00,0.00L50.00,0.00L50.00,30.00L0.00,30.00"]
           RenderSVGText {text} at (60,20) size 480x18
             RenderSVGInlineText {#text} at (0,-14) size 69x18
               text run at (0,-14) width 69: "Percentage"

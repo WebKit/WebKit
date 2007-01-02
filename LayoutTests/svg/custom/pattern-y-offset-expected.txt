@@ -1,7 +1,7 @@
-KRenderingPaintServer {id="patternUserSpace" [type=PATTERN] [bbox=at (0,0) size 0x0]}
+KRenderingPaintServer {id="patternUserSpace" [type=PATTERN] [bbox=at (20,20) size 1x1]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     RenderSVGContainer {svg} at (-0.50,-0.50) size 121x81
       RenderSVGContainer {pattern} at (-0.50,-0.50) size 51x31
         RenderPath {rect} at (-0.50,-0.50) size 51x31 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L50.00,0.00L50.00,30.00L0.00,30.00"]
-      RenderPath {rect} at (19.50,19.50) size 101x61 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0,0) size 0x0]}] [data="M20.00,20.00L120.00,20.00L120.00,80.00L20.00,80.00"]
+      RenderPath {rect} at (19.50,19.50) size 101x61 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (20,20) size 1x1]}] [data="M20.00,20.00L120.00,20.00L120.00,80.00L20.00,80.00"]

@@ -31,8 +31,9 @@
 
 namespace WebCore {
 
-SVGPaintServerRadialGradient::SVGPaintServerRadialGradient()
-    : m_radius(0.0)
+SVGPaintServerRadialGradient::SVGPaintServerRadialGradient(const SVGGradientElement* owner)
+    : SVGPaintServerGradient(owner)
+    , m_radius(0.0)
 {
 }
 

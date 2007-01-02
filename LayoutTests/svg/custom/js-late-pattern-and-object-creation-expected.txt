@@ -1,0 +1,21 @@
+KRenderingPaintServer {id="fillPattern" [type=PATTERN] [bbox=at (0,0) size 1x1]}
+KRenderingPaintServer {id="strokePattern" [type=PATTERN] [bbox=at (0,0) size 1x1]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (-250,8.33) size 933.33x370
+      RenderSVGContainer {g} at (-250,8.33) size 933.33x370
+        RenderSVGContainer {pattern} at (8.33,8.33) size 25x25
+          RenderPath {rect} at (8.33,8.33) size 16.67x16.67 [fill={[type=SOLID] [color=#FF0000]}] [data="M5.00,5.00L15.00,5.00L15.00,15.00L5.00,15.00"]
+          RenderPath {rect} at (16.67,16.67) size 16.67x16.67 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,10.00L20.00,10.00L20.00,20.00L10.00,20.00"]
+        RenderSVGContainer {pattern} at (8.33,8.33) size 25x25
+          RenderPath {rect} at (8.33,8.33) size 16.67x16.67 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00L15.00,5.00L15.00,15.00L5.00,15.00"]
+          RenderPath {rect} at (16.67,16.67) size 16.67x16.67 [fill={[type=SOLID] [color=#0000FF]}] [data="M10.00,10.00L20.00,10.00L20.00,20.00L10.00,20.00"]
+        RenderSVGText {text} at (-150,70) size 800x78
+          RenderSVGInlineText {#text} at (0,-61) size 375x78
+            text run at (0,-61) width 375: "Pattern on fill"
+        RenderSVGText {text} at (-150,140) size 800x78
+          RenderSVGInlineText {#text} at (0,-61) size 461x78
+            text run at (0,-61) width 461: "Pattern on stroke"
+        RenderSVGText {text} at (-150,210) size 800x78
+          RenderSVGInlineText {#text} at (0,-61) size 560x78
+            text run at (0,-61) width 560: "Pattern on fill/stroke"

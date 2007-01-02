@@ -1,0 +1,27 @@
+KRenderingPaintServer {id="pattern1f" [type=PATTERN] [bbox=at (0,0) size 1x1]}
+KRenderingPaintServer {id="pattern1e" [type=PATTERN] [bbox=at (0,0) size 1x1]}
+KRenderingPaintServer {id="pattern1d" [type=PATTERN] [bbox=at (0,0) size 1x1]}
+KRenderingPaintServer {id="pattern1c" [type=PATTERN] [bbox=at (0,0) size 0x1]}
+KRenderingPaintServer {id="pattern1b" [type=PATTERN] [bbox=at (0,0) size 0x0]}
+KRenderingPaintServer {id="pattern1a" [type=PATTERN] [bbox=at (0,0) size 0x0]}
+KRenderingPaintServer {id="pattern1" [type=PATTERN] [bbox=at (0,0) size 1x1]}
+KRenderingPaintServer {id="pattern2" [type=PATTERN] [bbox=at (0,0) size 1x1]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (-0.50,-0.50) size 446.50x154.50
+      RenderSVGContainer {defs} at (-0.50,-0.50) size 51x31
+        RenderSVGContainer {pattern} at (0,0) size 0x0
+        RenderSVGContainer {pattern} at (0,0) size 0x0
+        RenderSVGContainer {pattern} at (0,0) size 0x0
+        RenderSVGContainer {pattern} at (-0.50,-0.50) size 51x31
+          RenderPath {rect} at (-0.50,-0.50) size 51x31 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L50.00,0.00L50.00,30.00L0.00,30.00"]
+        RenderSVGContainer {pattern} at (0,0) size 0x0
+        RenderSVGContainer {pattern} at (0,0) size 0x0
+        RenderSVGContainer {pattern} at (0,0) size 0x0
+        RenderSVGContainer {pattern} at (-0.50,-0.50) size 51x31
+          RenderPath {rect} at (-0.50,-0.50) size 51x31 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L50.00,0.00L50.00,30.00L0.00,30.00"]
+      RenderPath {rect} at (50,10) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,10.00)}] [fill={[type=PATTERN] [bbox=at (0,0) size 1x1]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+      RenderPath {rect} at (200,10) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,10.00)}] [fill={[type=PATTERN] [bbox=at (0,0) size 1x1]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+      RenderSVGText {text} at (10,150) size 800x18
+        RenderSVGInlineText {#text} at (0,-14) size 436x18
+          text run at (0,-14) width 436: "The above two squares should be blue-red patterns and look identical"

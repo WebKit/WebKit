@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -25,11 +25,13 @@
 
 #ifdef SVG_SUPPORT
 
-#include <SVGGradientElement.h>
+#include "SVGGradientElement.h"
 
 namespace WebCore
 {
+    struct RadialGradientAttributes;
     class SVGLength;
+
     class SVGRadialGradientElement : public SVGGradientElement
     {
     public:
@@ -40,8 +42,10 @@ namespace WebCore
         virtual void parseMappedAttribute(MappedAttribute*);
 
     protected:
-        virtual void buildGradient(PassRefPtr<SVGPaintServerGradient>) const;
+        virtual void buildGradient() const;
         virtual SVGPaintServerType gradientType() const { return RadialGradientPaintServer; }
+
+        RadialGradientAttributes collectGradientProperties() const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }

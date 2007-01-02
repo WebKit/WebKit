@@ -1,6 +1,6 @@
 KRenderingPaintServer {id="Grad1" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (0.50,#FF0000), (1.00,#00FF00)]] [bounding box mode=0] [transform={m=((0.50,0.00)(0.00,0.50)) t=(25.00,35.00)}] [start=(0,0)] [end=(430,0)]}
 KRenderingPaintServer {id="Grad2" [type=RADIAL-GRADIENT] [stops=[(0.00,#000000), (1.00,#FFA500)]] [bounding box mode=0] [transform={m=((1.00,0.00)(1.00,1.00)) t=(240.00,155.00)}] [center=(0,0)] [focal=(0,0)] [radius=60.00]}
-KRenderingPaintServer {id="Pat3" [type=PATTERN] [bbox=at (0,0) size 0x0]}
+KRenderingPaintServer {id="Pat3" [type=PATTERN] [bbox=at (0,0) size 1x1] [pattern transform={m=((2.00,0.00)(2.00,2.00)) t=(25.00,215.00)}]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0,0) size 479.50x359.50
@@ -18,7 +18,7 @@ layer at (0,0) size 480x360
           RenderPath {rect} at (10,0) size 10x10 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,0.00L20.00,0.00L20.00,10.00L10.00,10.00"]
           RenderPath {rect} at (0,10) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,10.00L10.00,10.00L10.00,20.00L0.00,20.00"]
           RenderPath {rect} at (10,10) size 10x10 [fill={[type=SOLID] [color=#FFFF00]}] [data="M10.00,10.00L20.00,10.00L20.00,20.00L10.00,20.00"]
-        RenderPath {rect} at (20,210) size 440x50 [fill={[type=PATTERN] [bbox=at (0,0) size 0x0]}] [data="M20.00,210.00L460.00,210.00L460.00,260.00L20.00,260.00"]
+        RenderPath {rect} at (20,210) size 440x50 [fill={[type=PATTERN] [bbox=at (0,0) size 1x1] [pattern transform={m=((2.00,0.00)(2.00,2.00)) t=(25.00,215.00)}]}] [data="M20.00,210.00L460.00,210.00L460.00,260.00L20.00,260.00"]
         RenderSVGText {text} at (20,290) size 480x33
           RenderSVGInlineText {#text} at (0,-27) size 411x33
             text run at (0,-27) width 411: "scale(2), skewX(45) on pattern"

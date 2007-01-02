@@ -1,0 +1,11 @@
+KRenderingPaintServer {id="dynPattern" [type=PATTERN] [bbox=at (0,0) size 1x1]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (8.33,12.50) size 650x205
+      RenderSVGContainer {g} at (8.33,12.50) size 650x205 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
+        RenderSVGText {text} at (20,70) size 800x78
+          RenderSVGInlineText {#text} at (0,-61) size 375x78
+            text run at (0,-61) width 375: "Pattern on fill"
+        RenderSVGContainer {pattern} at (8.33,12.50) size 25x37.50
+          RenderPath {rect} at (8.33,12.50) size 16.67x25 [fill={[type=SOLID] [color=#FF0000]}] [data="M5.00,5.00L15.00,5.00L15.00,15.00L5.00,15.00"]
+          RenderPath {rect} at (16.67,25) size 16.67x25 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,10.00L20.00,10.00L20.00,20.00L10.00,20.00"]

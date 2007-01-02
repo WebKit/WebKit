@@ -27,20 +27,21 @@
 
 #ifdef SVG_SUPPORT
 #include "SVGPaintServerPattern.h"
+
+#include "SVGPatternElement.h"
 #include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
-SVGPaintServerPattern::SVGPaintServerPattern()
-    : m_boundingBoxMode(true)
-    , m_tileIsDirty(false)
-    , m_listener(0)
+SVGPaintServerPattern::SVGPaintServerPattern(const SVGPatternElement* owner)
+    : m_ownerElement(owner)
 
 #if PLATFORM(CG)
     , m_patternSpace(0)
     , m_pattern(0)
 #endif
 {
+    ASSERT(owner);
 }
 
 SVGPaintServerPattern::~SVGPaintServerPattern()
@@ -51,24 +52,14 @@ SVGPaintServerPattern::~SVGPaintServerPattern()
 #endif
 }
 
-FloatRect SVGPaintServerPattern::bbox() const
+FloatRect SVGPaintServerPattern::patternBoundaries() const
 {
-    return m_bbox;
+    return m_patternBoundaries;
 }
 
-void SVGPaintServerPattern::setBbox(const FloatRect& rect)
+void SVGPaintServerPattern::setPatternBoundaries(const FloatRect& rect)
 {
-    m_bbox = rect;
-}
-
-bool SVGPaintServerPattern::boundingBoxMode() const
-{
-    return m_boundingBoxMode;
-}
-
-void SVGPaintServerPattern::setBoundingBoxMode(bool mode)
-{
-    m_boundingBoxMode = mode;
+    m_patternBoundaries = rect;
 }
 
 ImageBuffer* SVGPaintServerPattern::tile() const
@@ -79,7 +70,6 @@ ImageBuffer* SVGPaintServerPattern::tile() const
 void SVGPaintServerPattern::setTile(ImageBuffer* tile)
 {
     m_tile.set(tile);
-    m_tileIsDirty = true;
 }
 
 AffineTransform SVGPaintServerPattern::patternTransform() const
@@ -92,22 +82,13 @@ void SVGPaintServerPattern::setPatternTransform(const AffineTransform& transform
     m_patternTransform = transform;
 }
 
-SVGResourceListener* SVGPaintServerPattern::listener() const
-{
-    return m_listener;
-}
-
-void SVGPaintServerPattern::setListener(SVGResourceListener* listener)
-{
-    m_listener = listener;
-}
-
 TextStream& SVGPaintServerPattern::externalRepresentation(TextStream& ts) const
 {
+    // Gradients/patterns aren't setup, until they are used for painting. Work around that fact.
+    m_ownerElement->buildPattern(FloatRect(0.0, 0.0, 1.0, 1.0));
+
     ts << "[type=PATTERN]"
-        << " [bbox=" << bbox() << "]";
-    if (!boundingBoxMode())
-        ts << " [bounding box mode=" << boundingBoxMode() << "]";
+        << " [bbox=" << patternBoundaries() << "]";
     if (!patternTransform().isIdentity())
         ts << " [pattern transform=" << patternTransform() << "]";
     return ts;

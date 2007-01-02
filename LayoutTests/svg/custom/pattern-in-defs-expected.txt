@@ -1,4 +1,4 @@
-KRenderingPaintServer {id="green" [type=PATTERN] [bbox=at (0,0) size 0x0]}
+KRenderingPaintServer {id="green" [type=PATTERN] [bbox=at (0,0) size 1x1]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     RenderSVGContainer {svg} at (0,0) size 100x100
@@ -6,4 +6,4 @@ layer at (0,0) size 800x600
         RenderSVGContainer {pattern} at (0,0) size 100x100
           RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
       RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
-      RenderPath {rect} at (0,0) size 100x100 [fill={[type=PATTERN] [bbox=at (0,0) size 0x0]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+      RenderPath {rect} at (0,0) size 100x100 [fill={[type=PATTERN] [bbox=at (0,0) size 1x1]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]

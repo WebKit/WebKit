@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2006       Alexander Kellett <lypanov@kde.org>
 
@@ -23,6 +23,7 @@
 
 #ifndef KCanvasRenderingStyle_H
 #define KCanvasRenderingStyle_H
+
 #ifdef SVG_SUPPORT
 
 #include <wtf/Vector.h>

@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2006 Apple Computer, Inc.
+                  2006 Nikolas Zimmermann <zimmermann@kde.org>
 
     This file is part of the WebKit project
 
@@ -20,6 +21,7 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGDocumentExtensions.h"
 
@@ -83,6 +85,32 @@ void SVGDocumentExtensions::unpauseAnimations()
     HashSet<SVGSVGElement*>::iterator end = m_timeContainers.end();
     for (HashSet<SVGSVGElement*>::iterator itr = m_timeContainers.begin(); itr != end; ++itr)
         (*itr)->unpauseAnimations();
+}
+
+void SVGDocumentExtensions::addPendingResource(const AtomicString& id, SVGStyledElement* obj)
+{
+    if (m_pendingResources.contains(id))
+        m_pendingResources.get(id).add(obj);
+    else {
+        HashSet<SVGStyledElement*> set;
+        set.add(obj);
+
+        m_pendingResources.add(id, set);
+    }
+}
+
+bool SVGDocumentExtensions::isPendingResource(const AtomicString& id) const
+{
+    return m_pendingResources.contains(id);
+}
+
+HashSet<SVGStyledElement*> SVGDocumentExtensions::removePendingResource(const AtomicString& id)
+{
+    ASSERT(m_pendingResources.contains(id));
+
+    HashSet<SVGStyledElement*> set = m_pendingResources.get(id);
+    m_pendingResources.remove(id);
+    return set;
 }
 
 }

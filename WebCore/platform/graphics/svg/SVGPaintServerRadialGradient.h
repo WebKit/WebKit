@@ -35,7 +35,7 @@ namespace WebCore {
 
     class SVGPaintServerRadialGradient : public SVGPaintServerGradient {
     public:
-        SVGPaintServerRadialGradient();
+        SVGPaintServerRadialGradient(const SVGGradientElement* owner);
         virtual ~SVGPaintServerRadialGradient();
 
         virtual SVGPaintServerType type() const { return RadialGradientPaintServer; }

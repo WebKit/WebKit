@@ -1,3 +1,194 @@
+2007-01-02  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12013
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11980
+        Partly fixes: http://bugs.webkit.org/show_bug.cgi?id=6000 (pattern/gradient recursion works now)
+
+        Fixed testcases:
+        coords-units-01-b.svg (<pattern> in objectBoundingBoxMode were broken.)
+        pattern-in-defs.svg (clip pattern size against target size, to avoid excessive mallocs)
+        js-update-pattern.svg (live updating really works now!)
+        js-late-gradient-and-object-creation.svg (objectBoundingBoxMode gradients-on-text work now)
+        js-late-gradient-creation.svg (same)
+
+        Added testcases:
+        js-late-pattern-and-object-creation.svg (objectBoundingBoxMode patterns-on-text work now)
+        js-late-pattern-creation.svg (same)
+        gradient-cycle-detection.svg (tests that cyclic gradients are ignored)
+        gradient-deep-referencing.svg
+        pattern-cycle-detection.svg (tests that cyclic patterns are ignored)
+        pattern-deep-referencing.svg
+
+        Rewrite gradient & pattern code, fixing all known bugs & regressions.
+
+        -> Remove SVGResourceListener completly (the ugly resourceNotification() hack is gone now)
+
+        -> Make patterns operate in all possible combinations of patternUnits / patternContentunits
+           The SVGPaintServerPattern now asks the SVGPatternElement to build the pattern tile, passing
+           the target object's bbox rectangle -> objectBoundingBox calculations can be done, so SVGPaintServerPattern
+           itself doesn't need to know anything about "bounding box mode". Same could be done for gradients.
+
+        -> SVGLength::valueAsPercentage() returns again fractional values, saves some "/ 100.0" statements.
+
+        -> Deep references (gradientA -> gradientB -> gradientC...) work now. Previously only one reference worked.
+           Adding GradientAttributes.h / PatternAttributes.h helper structures for the property collection.
+           Cycle detection is implemented and won't kill us anymore :-)
+
+        JS updates on gradients/patterns only cause one repaint of the client's now. Gradient drawing
+        does not cause the target object to be redrawn immediately afterwards anymore.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (WebCore::KSVGPainterFactory::fillPaintServer):
+        (WebCore::KSVGPainterFactory::strokePaintServer):
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+        * ksvg2/misc/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::addPendingResource):
+        (WebCore::SVGDocumentExtensions::isPendingResource):
+        (WebCore::SVGDocumentExtensions::removePendingResource):
+        * ksvg2/misc/SVGDocumentExtensions.h:
+        * ksvg2/svg/GradientAttributes.h: Added.
+        (WebCore::GradientAttributes::GradientAttributes):
+        (WebCore::GradientAttributes::spreadMethod):
+        (WebCore::GradientAttributes::boundingBoxMode):
+        (WebCore::GradientAttributes::gradientTransform):
+        (WebCore::GradientAttributes::stops):
+        (WebCore::GradientAttributes::setSpreadMethod):
+        (WebCore::GradientAttributes::setBoundingBoxMode):
+        (WebCore::GradientAttributes::setGradientTransform):
+        (WebCore::GradientAttributes::setStops):
+        (WebCore::GradientAttributes::hasSpreadMethod):
+        (WebCore::GradientAttributes::hasBoundingBoxMode):
+        (WebCore::GradientAttributes::hasGradientTransform):
+        (WebCore::GradientAttributes::hasStops):
+        * ksvg2/svg/LinearGradientAttributes.h: Added.
+        (WebCore::LinearGradientAttributes::LinearGradientAttributes):
+        (WebCore::LinearGradientAttributes::x1):
+        (WebCore::LinearGradientAttributes::y1):
+        (WebCore::LinearGradientAttributes::x2):
+        (WebCore::LinearGradientAttributes::y2):
+        (WebCore::LinearGradientAttributes::setX1):
+        (WebCore::LinearGradientAttributes::setY1):
+        (WebCore::LinearGradientAttributes::setX2):
+        (WebCore::LinearGradientAttributes::setY2):
+        (WebCore::LinearGradientAttributes::hasX1):
+        (WebCore::LinearGradientAttributes::hasY1):
+        (WebCore::LinearGradientAttributes::hasX2):
+        (WebCore::LinearGradientAttributes::hasY2):
+        * ksvg2/svg/PatternAttributes.h: Added.
+        (WebCore::PatternAttributes::PatternAttributes):
+        (WebCore::PatternAttributes::x):
+        (WebCore::PatternAttributes::y):
+        (WebCore::PatternAttributes::width):
+        (WebCore::PatternAttributes::height):
+        (WebCore::PatternAttributes::boundingBoxMode):
+        (WebCore::PatternAttributes::boundingBoxModeContent):
+        (WebCore::PatternAttributes::patternTransform):
+        (WebCore::PatternAttributes::patternContentElement):
+        (WebCore::PatternAttributes::setX):
+        (WebCore::PatternAttributes::setY):
+        (WebCore::PatternAttributes::setWidth):
+        (WebCore::PatternAttributes::setHeight):
+        (WebCore::PatternAttributes::setBoundingBoxMode):
+        (WebCore::PatternAttributes::setBoundingBoxModeContent):
+        (WebCore::PatternAttributes::setPatternTransform):
+        (WebCore::PatternAttributes::setPatternContentElement):
+        (WebCore::PatternAttributes::hasX):
+        (WebCore::PatternAttributes::hasY):
+        (WebCore::PatternAttributes::hasWidth):
+        (WebCore::PatternAttributes::hasHeight):
+        (WebCore::PatternAttributes::hasBoundingBoxMode):
+        (WebCore::PatternAttributes::hasBoundingBoxModeContent):
+        (WebCore::PatternAttributes::hasPatternTransform):
+        (WebCore::PatternAttributes::hasPatternContentElement):
+        * ksvg2/svg/RadialGradientAttributes.h: Added.
+        (WebCore::RadialGradientAttributes::RadialGradientAttributes):
+        (WebCore::RadialGradientAttributes::cx):
+        (WebCore::RadialGradientAttributes::cy):
+        (WebCore::RadialGradientAttributes::r):
+        (WebCore::RadialGradientAttributes::fx):
+        (WebCore::RadialGradientAttributes::fy):
+        (WebCore::RadialGradientAttributes::setCx):
+        (WebCore::RadialGradientAttributes::setCy):
+        (WebCore::RadialGradientAttributes::setR):
+        (WebCore::RadialGradientAttributes::setFx):
+        (WebCore::RadialGradientAttributes::setFy):
+        (WebCore::RadialGradientAttributes::hasCx):
+        (WebCore::RadialGradientAttributes::hasCy):
+        (WebCore::RadialGradientAttributes::hasR):
+        (WebCore::RadialGradientAttributes::hasFx):
+        (WebCore::RadialGradientAttributes::hasFy):
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::notifyAttributeChange):
+        (WebCore::SVGGradientElement::canvasResource):
+        (WebCore::SVGGradientElement::buildStops):
+        (WebCore::SVGGradientElement::insertedIntoDocument):
+        * ksvg2/svg/SVGGradientElement.h:
+        * ksvg2/svg/SVGLength.cpp:
+        (WebCore::SVGLength::valueAsPercentage):
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::buildGradient):
+        (WebCore::SVGLinearGradientElement::collectGradientProperties):
+        * ksvg2/svg/SVGLinearGradientElement.h:
+        * ksvg2/svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::getScreenCTM):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        (WebCore::SVGPatternElement::buildPattern):
+        (WebCore::SVGPatternElement::notifyAttributeChange):
+        (WebCore::SVGPatternElement::canvasResource):
+        (WebCore::SVGPatternElement::insertedIntoDocument):
+        (WebCore::SVGPatternElement::collectPatternProperties):
+        * ksvg2/svg/SVGPatternElement.h:
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::buildGradient):
+        (WebCore::SVGRadialGradientElement::collectGradientProperties):
+        * ksvg2/svg/SVGRadialGradientElement.h:
+        * platform/graphics/svg/SVGPaintServerGradient.cpp:
+        (WebCore::SVGPaintServerGradient::SVGPaintServerGradient):
+        (WebCore::SVGPaintServerGradient::externalRepresentation):
+        * platform/graphics/svg/SVGPaintServerGradient.h:
+        (WebCore::):
+        * platform/graphics/svg/SVGPaintServerLinearGradient.cpp:
+        (WebCore::SVGPaintServerLinearGradient::SVGPaintServerLinearGradient):
+        * platform/graphics/svg/SVGPaintServerLinearGradient.h:
+        * platform/graphics/svg/SVGPaintServerPattern.cpp:
+        (WebCore::SVGPaintServerPattern::SVGPaintServerPattern):
+        (WebCore::SVGPaintServerPattern::patternBoundaries):
+        (WebCore::SVGPaintServerPattern::setPatternBoundaries):
+        (WebCore::SVGPaintServerPattern::setTile):
+        (WebCore::SVGPaintServerPattern::externalRepresentation):
+        * platform/graphics/svg/SVGPaintServerPattern.h:
+        * platform/graphics/svg/SVGPaintServerRadialGradient.cpp:
+        (WebCore::SVGPaintServerRadialGradient::SVGPaintServerRadialGradient):
+        * platform/graphics/svg/SVGPaintServerRadialGradient.h:
+        * platform/graphics/svg/SVGResource.cpp:
+        (WebCore::SVGResource::invalidate):
+        (WebCore::SVGResource::repaintClients):
+        * platform/graphics/svg/SVGResource.h:
+        * platform/graphics/svg/SVGResourceListener.h:
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::cgGradientCallback):
+        (WebCore::CGShadingRefForRadialGradient):
+        (WebCore::SVGPaintServerGradient::updateQuartzGradientStopsCache):
+        (WebCore::SVGPaintServerGradient::updateQuartzGradientCache):
+        (WebCore::SVGPaintServerGradient::teardown):
+        (WebCore::SVGPaintServerGradient::renderPath):
+        (WebCore::SVGPaintServerGradient::handleBoundingBoxModeAndGradientTransformation):
+        (WebCore::SVGPaintServerGradient::setup):
+        (WebCore::SVGPaintServerGradient::invalidate):
+        * platform/graphics/svg/cg/SVGPaintServerPatternCg.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+        (WebCore::SVGPaintServerPattern::teardown):
+        * platform/graphics/svg/qt/SVGPaintServerLinearGradientQt.cpp:
+        (WebCore::SVGPaintServerLinearGradient::setup):
+        * platform/graphics/svg/qt/SVGPaintServerPatternQt.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+        * platform/graphics/svg/qt/SVGPaintServerRadialGradientQt.cpp:
+        (WebCore::SVGPaintServerRadialGradient::setup):
+
 2007-01-02  Zack Rusin  <zack@kde.org>
 
         Compilation fix. File names are case-sensitive.

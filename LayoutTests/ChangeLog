@@ -1,3 +1,85 @@
+2007-01-02  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12013
+        Update baseline after the pattern/gradient rewrite.
+
+        * svg/W3C-SVG-1.1/color-prop-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/coords-units-01-b-expected.png:
+        * svg/W3C-SVG-1.1/coords-units-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-composite-02-b-expected.png:
+        * svg/W3C-SVG-1.1/masking-intro-01-f-expected.png:
+        * svg/W3C-SVG-1.1/painting-render-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-04-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-05-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-05-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-09-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-10-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-12-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-13-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-13-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-14-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-15-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-16-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-17-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-17-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-18-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-18-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-19-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-19-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-pattern-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/struct-use-05-b-expected.txt:
+        * svg/W3C-SVG-1.1/styling-inherit-01-b-expected.png:
+        * svg/W3C-SVG-1.1/styling-inherit-01-b-expected.txt:
+        * svg/custom/gradient-attr-update-expected.png:
+        * svg/custom/gradient-attr-update-expected.txt:
+        * svg/custom/gradient-cycle-detection-expected.checksum: Added.
+        * svg/custom/gradient-cycle-detection-expected.png: Added.
+        * svg/custom/gradient-cycle-detection-expected.txt: Added.
+        * svg/custom/gradient-cycle-detection.svg: Added.
+        * svg/custom/gradient-deep-referencing-expected.checksum: Added.
+        * svg/custom/gradient-deep-referencing-expected.png: Added.
+        * svg/custom/gradient-deep-referencing-expected.txt: Added.
+        * svg/custom/gradient-deep-referencing.svg: Added.
+        * svg/custom/gradient-stroke-width-expected.txt:
+        * svg/custom/invalid-css-expected.txt:
+        * svg/custom/js-late-gradient-and-object-creation-expected.png:
+        * svg/custom/js-late-gradient-and-object-creation-expected.txt:
+        * svg/custom/js-late-gradient-creation-expected.png:
+        * svg/custom/js-late-gradient-creation-expected.txt:
+        * svg/custom/js-late-pattern-and-object-creation-expected.checksum: Added.
+        * svg/custom/js-late-pattern-and-object-creation-expected.png: Added.
+        * svg/custom/js-late-pattern-and-object-creation-expected.txt: Added.
+        * svg/custom/js-late-pattern-and-object-creation.svg: Added.
+        * svg/custom/js-late-pattern-creation-expected.checksum: Added.
+        * svg/custom/js-late-pattern-creation-expected.png: Added.
+        * svg/custom/js-late-pattern-creation-expected.txt: Added.
+        * svg/custom/js-late-pattern-creation.svg: Added.
+        * svg/custom/js-update-pattern-expected.png:
+        * svg/custom/js-update-pattern-expected.txt:
+        * svg/custom/large-bounding-box-percents-expected.txt:
+        * svg/custom/mask-excessive-malloc-expected.checksum: Added.
+        * svg/custom/mask-excessive-malloc-expected.png: Added.
+        * svg/custom/mask-excessive-malloc-expected.txt: Added.
+        * svg/custom/mask-excessive-malloc.svg: Added.
+        * svg/custom/pattern-cycle-detection-expected.checksum: Added.
+        * svg/custom/pattern-cycle-detection-expected.png: Added.
+        * svg/custom/pattern-cycle-detection-expected.txt: Added.
+        * svg/custom/pattern-cycle-detection.svg: Added.
+        * svg/custom/pattern-deep-referencing-expected.checksum: Added.
+        * svg/custom/pattern-deep-referencing-expected.png: Added.
+        * svg/custom/pattern-deep-referencing-expected.txt: Added.
+        * svg/custom/pattern-deep-referencing.svg: Added.
+        * svg/custom/pattern-in-defs-expected.txt:
+        * svg/custom/pattern-y-offset-expected.txt:
+        * svg/custom/text-gradient-no-content-expected.txt:
+
 2007-01-01  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

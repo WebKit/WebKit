@@ -1,0 +1,6 @@
+KCanvasResource {id="mask" [type=MASKER]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (200,200) size 100x200
+      RenderSVGContainer {mask} at (0,0) size 0x0
+      RenderPath {path} at (200,200) size 100x200 [fill={[type=SOLID] [color=#0000FF]}] [data="M200.00,200.00L300.00,200.00L300.00,400.00L200.00,400.00"]

@@ -44,9 +44,6 @@ SVGResource::~SVGResource()
 
 void SVGResource::invalidate()
 {
-    unsigned size = m_clients.size();
-    for (unsigned i = 0; i < size; i++)
-        const_cast<RenderPath*>(m_clients[i])->repaint();
 }
 
 void SVGResource::addClient(const RenderPath* item)
@@ -64,6 +61,38 @@ void SVGResource::addClient(const RenderPath* item)
 const RenderPathList& SVGResource::clients() const
 {
     return m_clients;
+}
+
+void SVGResource::repaintClients() const
+{
+    const RenderPathList& clientList(clients());
+
+    unsigned size = clientList.size();
+    for (unsigned i = 0 ; i < size; i++) {
+        const RenderPath* current = clientList[i];
+
+        SVGStyledElement* styled = (current ? static_cast<SVGStyledElement*>(current->element()) : 0);
+        if (styled) {
+            styled->setChanged(true);
+
+            if (styled->renderer())
+                styled->renderer()->repaint();
+        }
+    }
+}
+
+void SVGResource::repaintClients(HashSet<SVGStyledElement*> clients)
+{
+    HashSet<SVGStyledElement*>::const_iterator it = clients.begin();
+    const HashSet<SVGStyledElement*>::const_iterator end = clients.end();
+
+    for (; it != end; ++it) {
+        SVGStyledElement* cur = *it;
+        cur->setChanged(true);
+
+        if (cur->renderer())
+            cur->renderer()->repaint();
+    }
 }
 
 TextStream& SVGResource::externalRepresentation(TextStream& ts) const

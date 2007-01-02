@@ -42,22 +42,24 @@ class QGradient;
 
 namespace WebCore {
 
+    class SVGGradientElement;
+
+    // FIXME: Remove the spread method enum in SVGGradientElement
     enum SVGGradientSpreadMethod {
         SPREADMETHOD_PAD = 1,
-        SPREADMETHOD_REPEAT = 2,
-        SPREADMETHOD_REFLECT = 4
+        SPREADMETHOD_REFLECT = 2,
+        SPREADMETHOD_REPEAT = 3
     };
 
     typedef std::pair<float, Color> SVGGradientStop;
 
     class SVGPaintServerGradient : public SVGPaintServer {
     public:
-        SVGPaintServerGradient();
+        SVGPaintServerGradient(const SVGGradientElement*);
         virtual ~SVGPaintServerGradient();
 
         const Vector<SVGGradientStop>& gradientStops() const;
         void setGradientStops(const Vector<SVGGradientStop>&);
-        void setGradientStops(SVGPaintServerGradient*);
 
         SVGGradientSpreadMethod spreadMethod() const;
         void setGradientSpreadMethod(const SVGGradientSpreadMethod&);
@@ -71,9 +73,6 @@ namespace WebCore {
         AffineTransform gradientTransform() const;
         void setGradientTransform(const AffineTransform&);
 
-        SVGResourceListener* listener() const;
-        void setListener(SVGResourceListener*);
-
         virtual TextStream& externalRepresentation(TextStream&) const;
 
 #if PLATFORM(CG)
@@ -85,9 +84,9 @@ namespace WebCore {
         virtual void invalidate();
 
         // Helpers
-        void invalidateCaches();
         void updateQuartzGradientStopsCache(const Vector<SVGGradientStop>&);
         void updateQuartzGradientCache(const SVGPaintServerGradient*);
+        void handleBoundingBoxModeAndGradientTransformation(GraphicsContext*, const FloatRect& targetRect) const;
 #endif
 
 #if PLATFORM(QT)
@@ -100,7 +99,7 @@ namespace WebCore {
         SVGGradientSpreadMethod m_spreadMethod;
         bool m_boundingBoxMode;
         AffineTransform m_gradientTransform;
-        SVGResourceListener* m_listener;
+        const SVGGradientElement* m_ownerElement;
 
 #if PLATFORM(CG)
     public:

@@ -1,5 +1,5 @@
-KRenderingPaintServer {id="Pat3a" [type=PATTERN] [bbox=at (0,0) size 0x0]}
-KRenderingPaintServer {id="Pat3b" [type=PATTERN] [bbox=at (0,0) size 0x0]}
+KRenderingPaintServer {id="Pat3a" [type=PATTERN] [bbox=at (0,0) size 1x1]}
+KRenderingPaintServer {id="Pat3b" [type=PATTERN] [bbox=at (0,0) size 1x1]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0,0) size 479.50x359.50
@@ -10,11 +10,11 @@ layer at (0,0) size 480x360
           RenderPath {rect} at (0,10) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,10.00L10.00,10.00L10.00,20.00L0.00,20.00"]
           RenderPath {rect} at (10,10) size 10x10 [fill={[type=SOLID] [color=#FFFF00]}] [data="M10.00,10.00L20.00,10.00L20.00,20.00L10.00,20.00"]
         RenderSVGContainer {pattern} at (0,0) size 0x0
-        RenderPath {rect} at (20,20) size 440x80 [fill={[type=PATTERN] [bbox=at (0,0) size 0x0]}] [data="M20.00,20.00L460.00,20.00L460.00,100.00L20.00,100.00"]
+        RenderPath {rect} at (20,20) size 440x80 [fill={[type=PATTERN] [bbox=at (0,0) size 1x1]}] [data="M20.00,20.00L460.00,20.00L460.00,100.00L20.00,100.00"]
         RenderSVGText {text} at (20,130) size 480x33
           RenderSVGInlineText {#text} at (0,-27) size 142x33
             text run at (0,-27) width 142: "Pattern fill."
-        RenderPath {rect} at (20,150) size 440x80 [fill={[type=PATTERN] [bbox=at (0,0) size 0x0]}] [data="M20.00,150.00L460.00,150.00L460.00,230.00L20.00,230.00"]
+        RenderPath {rect} at (20,150) size 440x80 [fill={[type=PATTERN] [bbox=at (0,0) size 1x1]}] [data="M20.00,150.00L460.00,150.00L460.00,230.00L20.00,230.00"]
         RenderSVGText {text} at (20,260) size 480x33
           RenderSVGInlineText {#text} at (0,-27) size 399x33
             text run at (0,-27) width 399: "Referencing pattern fill below."

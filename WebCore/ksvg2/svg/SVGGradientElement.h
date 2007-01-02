@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -20,8 +20,9 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGGradientElementImpl_H
-#define KSVG_SVGGradientElementImpl_H
+#ifndef SVGGradientElement_H
+#define SVGGradientElement_H
+
 #ifdef SVG_SUPPORT
 
 #include "SVGPaintServerGradient.h"
@@ -34,8 +35,7 @@ namespace WebCore {
     class SVGTransformList;
     class SVGGradientElement : public SVGStyledElement,
                                public SVGURIReference,
-                               public SVGExternalResourcesRequired,
-                               public SVGResourceListener
+                               public SVGExternalResourcesRequired
     {
     public:
         enum SVGGradientType {
@@ -54,13 +54,19 @@ namespace WebCore {
 
         virtual SVGResource* canvasResource();
 
-        virtual void resourceNotification() const;
+        virtual void insertedIntoDocument();
 
     protected:
-        virtual void buildGradient(PassRefPtr<SVGPaintServerGradient>) const = 0;
-        virtual SVGPaintServerType gradientType() const = 0;
-        void rebuildStops() const;
+        friend class SVGPaintServerGradient;
+        friend class SVGLinearGradientElement;
+        friend class SVGRadialGradientElement;
 
+        virtual void buildGradient() const = 0;
+        virtual SVGPaintServerType gradientType() const = 0;
+
+        Vector<SVGGradientStop> buildStops() const;
+        mutable RefPtr<SVGPaintServerGradient> m_resource;
+ 
     protected:
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
@@ -68,8 +74,6 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, int, int, SpreadMethod, spreadMethod)
         ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, int, int, GradientUnits, gradientUnits)
         ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, SVGTransformList*, RefPtr<SVGTransformList>, GradientTransform, gradientTransform)
-
-        mutable RefPtr<SVGPaintServerGradient> m_resource;
     };
 
 } // namespace WebCore

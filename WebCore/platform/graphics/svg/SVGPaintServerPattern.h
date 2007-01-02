@@ -37,30 +37,24 @@
 
 namespace WebCore {
 
+    class SVGPatternElement;
+
     class SVGPaintServerPattern : public SVGPaintServer {
     public:
-        SVGPaintServerPattern();
+        SVGPaintServerPattern(const SVGPatternElement*);
         virtual ~SVGPaintServerPattern();
 
         virtual SVGPaintServerType type() const { return PatternPaintServer; }
 
-        // Pattern bounding box
-        void setBbox(const FloatRect&);
-        FloatRect bbox() const;
-
-        // Pattern x, y phase points are relative when in boundingBoxMode
-        // BoundingBox mode is enabled by default.
-        bool boundingBoxMode() const;
-        void setBoundingBoxMode(bool mode = true);
+        // Pattern boundaries
+        void setPatternBoundaries(const FloatRect&);
+        FloatRect patternBoundaries() const;
 
         ImageBuffer* tile() const;
         void setTile(ImageBuffer*);
 
         AffineTransform patternTransform() const;
         void setPatternTransform(const AffineTransform&);
-
-        SVGResourceListener* listener() const;
-        void setListener(SVGResourceListener*);
 
         virtual TextStream& externalRepresentation(TextStream&) const;
 
@@ -75,11 +69,10 @@ namespace WebCore {
 
     private:
         OwnPtr<ImageBuffer> m_tile;
+        const SVGPatternElement* m_ownerElement;
         AffineTransform m_patternTransform;
-        FloatRect m_bbox;
+        FloatRect m_patternBoundaries;
         bool m_boundingBoxMode;
-        mutable bool m_tileIsDirty;
-        SVGResourceListener* m_listener;
 
 #if PLATFORM(CG)
         mutable CGColorSpaceRef m_patternSpace;

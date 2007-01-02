@@ -233,8 +233,9 @@ float SVGLength::valueAsPercentage() const
 {
     // 100% = 100.0 instead of 1.0 for historical reasons, this could eventually be changed
     if (extractType(m_unit) == LengthTypePercentage)
-        return valueInSpecifiedUnits();
-    return valueInSpecifiedUnits() * 100.f;
+        return valueInSpecifiedUnits() / 100.0;
+
+    return valueInSpecifiedUnits();
 }
 
 void SVGLength::setValueAsString(const String& s)

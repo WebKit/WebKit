@@ -1,0 +1,74 @@
+/*
+    Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+
+    This file is part of the KDE project
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public License
+    along with this library; see the file COPYING.LIB.  If not, write to
+    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.
+*/
+
+#ifndef GradientAttributes_H
+#define GradientAttributes_H
+
+#ifdef SVG_SUPPORT
+
+namespace WebCore
+{
+    struct GradientAttributes {
+        GradientAttributes()
+            : m_spreadMethod(SPREADMETHOD_PAD)
+            , m_boundingBoxMode(true)
+            , m_spreadMethodSet(false)
+            , m_boundingBoxModeSet(false)
+            , m_gradientTransformSet(false)
+            , m_stopsSet(false)
+        {
+        }
+
+        SVGGradientSpreadMethod spreadMethod() const { return m_spreadMethod; }
+        bool boundingBoxMode() const { return m_boundingBoxMode; }
+        AffineTransform gradientTransform() const { return m_gradientTransform; }
+        const Vector<SVGGradientStop>& stops() const { return m_stops; }
+
+        void setSpreadMethod(SVGGradientSpreadMethod value) { m_spreadMethod = value; m_spreadMethodSet = true; }
+        void setBoundingBoxMode(bool value) { m_boundingBoxMode = value; m_boundingBoxModeSet = true; }
+        void setGradientTransform(const AffineTransform& value) { m_gradientTransform = value; m_gradientTransformSet = true; }
+        void setStops(const Vector<SVGGradientStop>& value) { m_stops = value; m_stopsSet = true; } 
+
+        bool hasSpreadMethod() const { return m_spreadMethodSet; }
+        bool hasBoundingBoxMode() const { return m_boundingBoxModeSet; }
+        bool hasGradientTransform() const { return m_gradientTransformSet; }
+        bool hasStops() const { return m_stopsSet; }
+
+    private:
+        // Properties
+        SVGGradientSpreadMethod m_spreadMethod;
+        bool m_boundingBoxMode;
+        AffineTransform m_gradientTransform;
+        Vector<SVGGradientStop> m_stops;
+
+        // Property states
+        bool m_spreadMethodSet : 1;
+        bool m_boundingBoxModeSet : 1;
+        bool m_gradientTransformSet : 1;
+        bool m_stopsSet : 1;
+    };
+
+} // namespace WebCore
+
+#endif // SVG_SUPPORT
+#endif
+
+// vim:ts=4:noet

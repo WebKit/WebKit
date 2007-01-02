@@ -26,6 +26,7 @@
 
 #include "GraphicsContext.h"
 #include "RenderObject.h"
+#include "SVGPatternElement.h"
 #include "CgSupport.h"
 
 namespace WebCore {
@@ -40,60 +41,49 @@ static void patternCallback(void* info, CGContextRef context)
 
 bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
 {
-    if (listener()) // this seems like bad design to me, should be in a common baseclass. -- ecs 8/6/05
-        listener()->resourceNotification();
+    CGContextRef contextRef = context->platformContext();
+
+    // Build pattern tile, passing destination object bounding box
+    FloatRect targetRect;
+    if (isPaintingText) {
+        IntRect textBoundary = const_cast<RenderObject*>(object)->absoluteBoundingBoxRect();
+        targetRect = object->absoluteTransform().inverse().mapRect(textBoundary);
+    } else
+        targetRect = CGContextGetPathBoundingBox(contextRef);
+
+    m_ownerElement->buildPattern(targetRect);
 
     if (!tile())
         return false;
 
-    if (m_pattern && m_tileIsDirty) {
-        m_tileIsDirty = false;
- 
-        CGPatternRelease(m_pattern);
-        m_pattern = 0;
-    }
-
-    RenderStyle* style = object->style();
-    CGContextRef contextRef = context->platformContext();
-
-    context->save();
-
     CGSize cellSize = CGSize(tile()->size());
     CGFloat alpha = 1; // canvasStyle->opacity(); //which?
 
-    if (boundingBoxMode()) {
-        // Compute destination object bounding box
-        CGRect objectBBox = CGContextGetPathBoundingBox(contextRef);
-
-        // Choose default pattern bounding box
-        CGRect patternBBox = CGRectMake(0, 0, 100, 100);
-
-        // Generate a transform to map between both bounding boxes
-        CGAffineTransform patternIntoObjectBBox = CGAffineTransformMakeMapBetweenRects(patternBBox, objectBBox);
-        CGContextConcatCTM(contextRef, patternIntoObjectBBox);
-    }
+    context->save();
 
     // Repesct local pattern transformations
     CGContextConcatCTM(contextRef, patternTransform());
 
-    CGSize phase = CGSizeMake(bbox().x(), -bbox().y()); // Pattern space seems to start in the lower-left, so we flip the Y here.
+    // Pattern space seems to start in the lower-left, so we flip the Y here. 
+    CGSize phase = CGSizeMake(patternBoundaries().x(), -patternBoundaries().y());
     CGContextSetPatternPhase(contextRef, phase);
 
+    RenderStyle* style = object->style();
     CGContextSetAlpha(contextRef, style->opacity()); // or do I set the alpha above?
 
-    if (!m_pattern) {
-        CGPatternCallbacks callbacks = {0, patternCallback, NULL};
-        m_pattern = CGPatternCreate(tile(),
-                                    CGRectMake(0, 0, cellSize.width, cellSize.height),
-                                    CGContextGetCTM(contextRef),
-                                    bbox().width(),
-                                    bbox().height(),
-                                    kCGPatternTilingConstantSpacing, // FIXME: should ask CG guys.
-                                    true, // has color
-                                    &callbacks);
-    }
+    ASSERT(!m_pattern);
+    CGPatternCallbacks callbacks = {0, patternCallback, NULL};
+    m_pattern = CGPatternCreate(tile(),
+                                CGRectMake(0, 0, cellSize.width, cellSize.height),
+                                CGContextGetCTM(contextRef),
+                                patternBoundaries().width(),
+                                patternBoundaries().height(),
+                                kCGPatternTilingConstantSpacing, // FIXME: should ask CG guys.
+                                true, // has color
+                                &callbacks);
 
-    m_patternSpace = CGColorSpaceCreatePattern(0);
+    if (!m_patternSpace)
+        m_patternSpace = CGColorSpaceCreatePattern(0);
 
     if ((type & ApplyToFillTargetType) && style->svgStyle()->hasFill()) {
         CGContextSetFillColorSpace(contextRef, m_patternSpace);
@@ -117,6 +107,9 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
 
 void SVGPaintServerPattern::teardown(GraphicsContext*& context, const RenderObject*, SVGPaintTargetType, bool) const
 {
+    CGPatternRelease(m_pattern);
+    m_pattern = 0;
+
     context->restore();
 }
 

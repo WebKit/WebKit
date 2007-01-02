@@ -2,10 +2,10 @@ KRenderingPaintServer {id="lgSpreadPad" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF
 KRenderingPaintServer {id="lgSpreadReflect" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]][method=REFLECT] [bounding box mode=0] [start=(50,0)] [end=(100,0)]}
 KRenderingPaintServer {id="lgSpreadRepeat" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]][method=REPEAT] [bounding box mode=0] [start=(50,0)] [end=(100,0)]}
 KRenderingPaintServer {id="lgSpreadDefault" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]] [bounding box mode=0] [start=(50,0)] [end=(100,0)]}
-KRenderingPaintServer {id="rgSpreadPad" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]] [center=(50,50)] [focal=(50,50)] [radius=20.00]}
-KRenderingPaintServer {id="rgSpreadReflect" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]][method=REFLECT] [center=(50,50)] [focal=(50,50)] [radius=20.00]}
-KRenderingPaintServer {id="rgSpreadRepeat" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]][method=REPEAT] [center=(50,50)] [focal=(50,50)] [radius=20.00]}
-KRenderingPaintServer {id="rgSpreadDefault" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]] [center=(50,50)] [focal=(50,50)] [radius=20.00]}
+KRenderingPaintServer {id="rgSpreadPad" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]}
+KRenderingPaintServer {id="rgSpreadReflect" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]][method=REFLECT] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]}
+KRenderingPaintServer {id="rgSpreadRepeat" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]][method=REPEAT] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]}
+KRenderingPaintServer {id="rgSpreadDefault" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
@@ -29,19 +29,19 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (10,265) size 480x18
         RenderSVGInlineText {#text} at (0,-14) size 156x18
           text run at (0,-14) width 156: "spreadMethod=\"default\""
-      RenderPath {rect} at (245,60) size 225x40 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]] [center=(50,50)] [focal=(50,50)] [radius=20.00]}] [data="M245.00,60.00L470.00,60.00L470.00,100.00L245.00,100.00"]
+      RenderPath {rect} at (245,60) size 225x40 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]}] [data="M245.00,60.00L470.00,60.00L470.00,100.00L245.00,100.00"]
       RenderSVGText {text} at (245,55) size 480x18
         RenderSVGInlineText {#text} at (0,-14) size 136x18
           text run at (0,-14) width 136: "spreadMethod=\"pad\""
-      RenderPath {rect} at (245,130) size 225x40 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]][method=REFLECT] [center=(50,50)] [focal=(50,50)] [radius=20.00]}] [data="M245.00,130.00L470.00,130.00L470.00,170.00L245.00,170.00"]
+      RenderPath {rect} at (245,130) size 225x40 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]][method=REFLECT] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]}] [data="M245.00,130.00L470.00,130.00L470.00,170.00L245.00,170.00"]
       RenderSVGText {text} at (245,125) size 480x18
         RenderSVGInlineText {#text} at (0,-14) size 152x18
           text run at (0,-14) width 152: "spreadMethod=\"reflect\""
-      RenderPath {rect} at (245,200) size 225x40 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]][method=REPEAT] [center=(50,50)] [focal=(50,50)] [radius=20.00]}] [data="M245.00,200.00L470.00,200.00L470.00,240.00L245.00,240.00"]
+      RenderPath {rect} at (245,200) size 225x40 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]][method=REPEAT] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]}] [data="M245.00,200.00L470.00,200.00L470.00,240.00L245.00,240.00"]
       RenderSVGText {text} at (245,195) size 480x18
         RenderSVGInlineText {#text} at (0,-14) size 151x18
           text run at (0,-14) width 151: "spreadMethod=\"repeat\""
-      RenderPath {rect} at (245,270) size 225x40 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]] [center=(50,50)] [focal=(50,50)] [radius=20.00]}] [data="M245.00,270.00L470.00,270.00L470.00,310.00L245.00,310.00"]
+      RenderPath {rect} at (245,270) size 225x40 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]}] [data="M245.00,270.00L470.00,270.00L470.00,310.00L245.00,310.00"]
       RenderSVGText {text} at (245,265) size 480x18
         RenderSVGInlineText {#text} at (0,-14) size 156x18
           text run at (0,-14) width 156: "spreadMethod=\"default\""

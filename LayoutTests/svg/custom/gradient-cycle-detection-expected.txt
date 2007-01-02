@@ -1,0 +1,10 @@
+KRenderingPaintServer {id="cycle2" [type=LINEAR-GRADIENT] [stops=[]] [start=(0,0)] [end=(0,0)]}
+KRenderingPaintServer {id="cycle1" [type=LINEAR-GRADIENT] [stops=[]] [start=(0,0)] [end=(0,0)]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (0,0) size 806x154
+      RenderSVGContainer {defs} at (0,0) size 0x0
+      RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+      RenderSVGText {text} at (10,150) size 800x18
+        RenderSVGInlineText {#text} at (0,-14) size 796x18
+          text run at (0,-14) width 796: "The square above should be BLACK (since webkit correctly ignores cycles, but doesn't support proper fill fallback yet 12062)"

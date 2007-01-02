@@ -1,5 +1,5 @@
-KRenderingPaintServer {id="Grad1" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(100,0)]}
-KRenderingPaintServer {id="Grad2" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [start=(0,0)] [end=(0,100)]}
+KRenderingPaintServer {id="Grad1" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(1,0)]}
+KRenderingPaintServer {id="Grad2" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [start=(0,0)] [end=(0,1)]}
 KRenderingPaintServer {id="Grad3" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [start=(0,0)] [end=(0,430)]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
@@ -8,14 +8,14 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (10,25) size 480x17
           RenderSVGInlineText {#text} at (0,-14) size 194x17
             text run at (0,-14) width 194: "Testing gradientUnits attribute"
-        RenderPath {rect} at (125,35) size 200x50 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(100,0)]}] [data="M125.00,35.00L325.00,35.00L325.00,85.00L125.00,85.00"]
+        RenderPath {rect} at (125,35) size 200x50 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(1,0)]}] [data="M125.00,35.00L325.00,35.00L325.00,85.00L125.00,85.00"]
         RenderSVGText {text} at (10,100) size 480x14
           RenderSVGInlineText {#text} at (0,-11) size 397x14
             text run at (0,-11) width 397: "Linear gradient with default attributes (thus, same as objectBoundingBox)"
         RenderSVGText {text} at (10,115) size 480x14
           RenderSVGInlineText {#text} at (0,-11) size 363x14
             text run at (0,-11) width 363: "Gradient is from the object left edge (red) to object right edge (blue)"
-        RenderPath {rect} at (10,125) size 430x50 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [start=(0,0)] [end=(0,100)]}] [data="M10.00,125.00L440.00,125.00L440.00,175.00L10.00,175.00"]
+        RenderPath {rect} at (10,125) size 430x50 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [start=(0,0)] [end=(0,1)]}] [data="M10.00,125.00L440.00,125.00L440.00,175.00L10.00,175.00"]
         RenderSVGText {text} at (10,190) size 480x14
           RenderSVGInlineText {#text} at (0,-11) size 187x14
             text run at (0,-11) width 187: "gradientUnits=objectBoundingBox"
