@@ -1,3 +1,16 @@
+2007-01-02  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by NOBODY (Windows build fix).
+
+        The MSVC compiler requires variables to be declared at the top of the enclosing block in C source.
+
+        Disable this warning to prevent MSVC from complaining about the 'const pcre_uchar const *' type:
+        warning C4114: same type qualifier used more than once
+
+        * pcre/pcre_compile.c:
+        (pcre_compile2): Moved variable declarations to top of their respective enclosing blocks.
+        * pcre/pcre_internal.h: Added pragma to disable compiler warning.
+
 2007-01-01  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

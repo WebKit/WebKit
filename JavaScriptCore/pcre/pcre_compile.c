@@ -3955,6 +3955,7 @@ size_t size;
 uschar *code;
 const uschar *codestart;
 const pcre_uchar *ptr;
+const pcre_uchar const* patternEnd;
 compile_data compile_block;
 int brastack[BRASTACK_SIZE];
 uschar bralenstack[BRASTACK_SIZE];
@@ -4045,17 +4046,17 @@ for any counted white space if an "extended" flag setting appears late in the
 pattern. We can't be so clever for #-comments. */
 
 ptr = (const pcre_uchar *)(pattern - 1);
-const pcre_uchar const* patternEnd = (const pcre_uchar *)(pattern + patternLength);
+patternEnd = (const pcre_uchar *)(pattern + patternLength);
 
 while (++ptr < patternEnd)
   {
-  c = *ptr;
-  
   int min, max;
   int class_optcount;
   int bracket_length;
   int duplength;
 
+  c = *ptr;
+  
   /* If we are inside a \Q...\E sequence, all chars are literal */
 
   if (inescq)
