@@ -289,7 +289,7 @@ void write(TextStream& ts, const RenderObject& o, int indent)
         write(ts, static_cast<const RenderPath&>(o), indent);
         return;
     }
-    if (o.isKCanvasContainer()) {
+    if (o.isRenderSVGContainer()) {
         write(ts, static_cast<const RenderSVGContainer&>(o), indent);
         return;
     }

@@ -296,7 +296,7 @@ public:
     virtual RenderFlow* continuation() const;
 
 #ifdef SVG_SUPPORT
-    virtual bool isKCanvasContainer() const { return false; }
+    virtual bool isRenderSVGContainer() const { return false; }
     virtual bool isRenderPath() const { return false; }
     virtual FloatRect relativeBBox(bool includeStroke = true) const;
     // We may eventually want to make these non-virtual
