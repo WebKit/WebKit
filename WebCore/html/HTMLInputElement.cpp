@@ -6,6 +6,7 @@
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
+ * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -321,6 +322,8 @@ void HTMLInputElement::setInputType(const String& t)
                     attributeChanged(height, false);
                 if (MappedAttribute* width = map->getAttributeItem(widthAttr))
                     attributeChanged(width, false);
+                if (MappedAttribute* align = map->getAttributeItem(alignAttr))
+                    attributeChanged(align, false);
             }
 
             if (wasAttached)
@@ -659,12 +662,15 @@ bool HTMLInputElement::mapToEntry(const QualifiedName& attrName, MappedAttribute
         result = eUniversal;
         return false;
     } 
-    
+
     if (attrName == alignAttr) {
-        result = eReplaced; // Share with <img> since the alignment behavior is the same.
-        return false;
+        if (inputType() == IMAGE) {
+            // Share with <img> since the alignment behavior is the same.
+            result = eReplaced;
+            return false;
+        }
     }
-    
+
     return HTMLElement::mapToEntry(attrName, result);
 }
 
@@ -732,7 +738,8 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
         addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
     } else if (attr->name() == alignAttr) {
-        addHTMLAlignment(attr);
+        if (inputType() == IMAGE)
+            addHTMLAlignment(attr);
     } else if (attr->name() == widthAttr) {
         if (respectHeightAndWidthAttrs())
             addCSSLength(attr, CSS_PROP_WIDTH, attr->value());

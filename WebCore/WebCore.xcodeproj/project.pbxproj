@@ -7862,8 +7862,10 @@
 				A871DE170A152AC800B12A68 /* HTMLFrameElement.cpp */,
 				A871DE1F0A152AC800B12A68 /* HTMLFrameElement.h */,
 				855542950AA4938800BA89F2 /* HTMLFrameElement.idl */,
-				93E241FE0B2B4E4000C732A1 /* HTMLFrameOwnerElement.h */,
+				14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */,
+				14FFE31B0AE1963300136BF5 /* HTMLFrameElementBase.h */,
 				93E2425E0B2B509500C732A1 /* HTMLFrameOwnerElement.cpp */,
+				93E241FE0B2B4E4000C732A1 /* HTMLFrameOwnerElement.h */,
 				A871DE220A152AC800B12A68 /* HTMLFrameSetElement.cpp */,
 				A871DE1C0A152AC800B12A68 /* HTMLFrameSetElement.h */,
 				855542960AA4938800BA89F2 /* HTMLFrameSetElement.idl */,
@@ -8000,8 +8002,6 @@
 				1A85B1D50A1B236C00D8C87C /* HTMLUListElement.idl */,
 				BCCD74E40A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp */,
 				BCCD74DB0A4C8D35005FDA6D /* HTMLViewSourceDocument.h */,
-				14FFE31B0AE1963300136BF5 /* HTMLFrameElementBase.h */,
-				14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */,
 			);
 			path = html;
 			sourceTree = "<group>";

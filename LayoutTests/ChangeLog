@@ -1,3 +1,18 @@
+2007-01-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Testcases for http://bugs.webkit.org/show_bug.cgi?id=3360
+
+        * fast/forms/input-align-expected.checksum: Added.
+        * fast/forms/input-align-expected.png: Added.
+        * fast/forms/input-align-expected.txt: Added.
+        * fast/forms/input-align-image-expected.checksum: Added.
+        * fast/forms/input-align-image-expected.png: Added.
+        * fast/forms/input-align-image-expected.txt: Added.
+        * fast/forms/input-align-image.html: Added.
+        * fast/forms/input-align.html: Added.
+
 2007-01-02  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Rubber stamped by Rob.

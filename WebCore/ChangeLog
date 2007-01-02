@@ -1,3 +1,21 @@
+2007-01-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=3360
+        align="right" on a text input aligns the input field to the right
+
+        Don't map align if input type is not 'image'.
+
+        Test: fast/forms/input-align-image.html
+        Test: fast/forms/input-align.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setInputType):
+        (WebCore::HTMLInputElement::mapToEntry):
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+
 2007-01-02  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.
