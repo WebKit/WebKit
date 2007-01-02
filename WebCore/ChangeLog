@@ -1,3 +1,22 @@
+2007-01-03  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Mitz.
+
+        Rename isKCanvasContainer to isRenderSVGContainer.
+
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::renderSubtreeToImage):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderSVGContainer):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::viewportTransform):
+        * rendering/RenderSVGContainer.h:
+        (WebCore::RenderSVGContainer::isRenderSVGContainer):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+
 2007-01-02  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.
