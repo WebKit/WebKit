@@ -1,3 +1,16 @@
+2007-01-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mitz.
+
+        Implement SVGSVGElement::deselectAll()
+
+        * ksvg2/svg/SVGAnimationElement.h:
+        (WebCore::SVGAnimationElement::updateLastValueWithCurrent): add comment
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::deselectAll): implement
+        (WebCore::SVGSVGElement::setCurrentTime): add comment about bug
+        * ksvg2/svg/SVGSVGElement.idl: remove unnecessary comment
+
 2007-01-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

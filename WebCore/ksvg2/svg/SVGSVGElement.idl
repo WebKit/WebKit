@@ -83,8 +83,6 @@ module svg {
         SVGRect createSVGRect();
         SVGTransform createSVGTransform();
         SVGTransform createSVGTransformFromMatrix(in SVGMatrix matrix);
-
-        // TODO    core::Element getElementById(in core::DOMString elementId);
     };
 
 }

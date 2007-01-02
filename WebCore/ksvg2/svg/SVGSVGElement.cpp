@@ -25,21 +25,23 @@
 #ifdef SVG_SUPPORT
 #include "SVGSVGElement.h"
 
+#include "AffineTransform.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "Frame.h"
 #include "HTMLNames.h"
-#include "TimeScheduler.h"
 #include "RenderSVGContainer.h"
 #include "SVGAngle.h"
 #include "SVGLength.h"
-#include "AffineTransform.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGTransform.h"
 #include "SVGZoomEvent.h"
+#include "SelectionController.h"
 #include "TextStream.h"
+#include "TimeScheduler.h"
 
 namespace WebCore {
 
@@ -265,7 +267,7 @@ bool SVGSVGElement::checkEnclosure(SVGElement* element, const FloatRect& rect)
 
 void SVGSVGElement::deselectAll()
 {
-    // FIXME: Implement me (see bug 11275)
+    document()->frame()->selectionController()->clear();
 }
 
 double SVGSVGElement::createSVGNumber()
@@ -390,7 +392,7 @@ float SVGSVGElement::getCurrentTime() const
 
 void SVGSVGElement::setCurrentTime(float /* seconds */)
 {
-    // FIXME: Implement me
+    // FIXME: Implement me, bug 12073
 }
 
 bool SVGSVGElement::hasPercentageValues() const
