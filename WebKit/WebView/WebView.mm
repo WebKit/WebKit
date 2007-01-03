@@ -31,6 +31,7 @@
 
 #import "DOMRangeInternal.h"
 #import "WebBackForwardList.h"
+#import "WebBackForwardListInternal.h"
 #import "WebBaseNetscapePluginView.h"
 #import "WebChromeClient.h"
 #import "WebContextMenuClient.h"
@@ -95,6 +96,7 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/FrameTree.h>
+#import <WebCore/HistoryItem.h>
 #import <WebCore/Logging.h>
 #import <WebCore/Page.h>
 #import <WebCore/SelectionController.h>
@@ -251,9 +253,8 @@ macro(yankAndSelect) \
     id scriptDebugDelegate;
     id scriptDebugDelegateForwarder;
     
-    WebBackForwardList *backForwardList;
     BOOL useBackForwardList;
-    
+        
     float textSizeMultiplier;
 
     NSString *applicationNameForUserAgent;
@@ -398,7 +399,6 @@ static BOOL grammarCheckingEnabled;
     if (!self)
         return nil;
     
-    backForwardList = [[WebBackForwardList alloc] init];
     textSizeMultiplier = 1;
     progressNotificationInterval = 0.02;
     progressNotificationTimeInterval = 0.1;
@@ -421,7 +421,6 @@ static BOOL grammarCheckingEnabled;
 
     delete userAgent;
 
-    [backForwardList release];
     [applicationNameForUserAgent release];
     [backgroundColor release];
     
@@ -651,16 +650,11 @@ static bool debugWidget = true;
     if (mainFrameLoader)
         mainFrameLoader->detachFromParent();
     
+    // Deleteing the WebCore::Page will clear the page cache so we call destroy on 
+    // all the plug-ins in the page cache to break any retain cycles.
+    // See comment in HistoryItem::releaseAllPendingPageCaches() for more information.
     delete _private->page;
     _private->page = 0;
-
-    // Clear the page cache so we call destroy on all the plug-ins in the page cache to break any retain cycles.
-    // See comment in [WebHistoryItem _releaseAllPendingPageCaches] for more information.
-    if (_private->backForwardList) {
-        [_private->backForwardList _close];
-        [_private->backForwardList release];
-        _private->backForwardList = nil;
-    }
 
     if (_private->hasSpellCheckerDocumentTag) {
         [[NSSpellChecker sharedSpellChecker] closeSpellDocumentWithTag:_private->spellCheckerDocumentTag];
@@ -810,15 +804,7 @@ static bool debugWidget = true;
     _private->lastElementWasNonNil = dictionary != nil;
 }
 
-- (void)_goToItem:(WebHistoryItem *)item withLoadType:(WebFrameLoadType)type
-{
-    // We never go back/forward on a per-frame basis, so the target must be the main frame
-    //ASSERT([item target] == nil || [self _findFrameNamed:[item target]] == [self mainFrame]);
 
-    // abort any current load if we're going back/forward
-    [[self mainFrame] stopLoading];
-    [[self mainFrame] _goToItem:item withLoadType:(FrameLoadType)type];
-}
 
 - (void)_loadBackForwardListFromOtherView:(WebView *)otherView
 {
@@ -826,32 +812,31 @@ static bool debugWidget = true;
     // type.  (See behavior matrix at the top of WebFramePrivate.)  So we copy all the items
     // in the back forward list, and go to the current one.
 
-    WebBackForwardList *bfList = [self backForwardList];
-    ASSERT(![bfList currentItem]); // destination list should be empty
+    BackForwardList* backForwardList = _private->page->backForwardList();
+    ASSERT(!backForwardList->currentItem()); // destination list should be empty
 
-    WebBackForwardList *otherBFList = [otherView backForwardList];
-    if (![otherBFList currentItem]) {
+    BackForwardList* otherBackForwardList = otherView->_private->page->backForwardList();
+    if (!otherBackForwardList->currentItem())
         return; // empty back forward list, bail
-    }
+    
+    HistoryItem* newItemToGoTo = 0;
 
-    WebHistoryItem *newItemToGoTo = nil;
-    int lastItemIndex = [otherBFList forwardListCount];
-    int i;
-    for (i = -[otherBFList backListCount]; i <= lastItemIndex; i++) {
+    int lastItemIndex = otherBackForwardList->forwardListCount();
+    for (int i = -otherBackForwardList->backListCount(); i <= lastItemIndex; ++i) {
         if (i == 0) {
             // If this item is showing , save away its current scroll and form state,
             // since that might have changed since loading and it is normally not saved
             // until we leave that page.
-            [[otherView mainFrame] _saveDocumentAndScrollState];
+            otherView->_private->page->mainFrame()->loader()->saveDocumentAndScrollState();
         }
-        WebHistoryItem *newItem = [[otherBFList itemAtIndex:i] copy];
-        [bfList addItem:newItem];
-        if (i == 0) {
-            newItemToGoTo = newItem;
-        }
+        RefPtr<HistoryItem> newItem = otherBackForwardList->itemAtIndex(i)->copy();
+        if (i == 0) 
+            newItemToGoTo = newItem.get();
+        backForwardList->addItem(newItem.release());
     }
     
-    [self _goToItem:newItemToGoTo withLoadType:WebFrameLoadTypeIndexedBackForward];
+    ASSERT(newItemToGoTo);
+    _private->page->goToItem(newItemToGoTo, FrameLoadTypeIndexedBackForward);
 }
 
 - (void)_setFormDelegate: (id<WebFormDelegate>)delegate
@@ -1826,6 +1811,8 @@ NSMutableDictionary *countInvocations;
 
     WebKitInitializeLoggingChannelsIfNecessary();
     WebCore::InitializeLoggingChannelsIfNecessary();
+    [WebBackForwardList setDefaultPageCacheSizeIfNecessary];
+    [WebHistoryItem initWindowWatcherIfNecessary];
 
     _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self));
     [[[WebFrameBridge alloc] initMainFrameWithPage:_private->page frameName:frameName frameView:frameView] release];
@@ -1900,7 +1887,7 @@ NS_DURING
     NSString *groupName;
     WebPreferences *preferences;
     BOOL useBackForwardList;
-
+    
     result = [super initWithCoder:decoder];
     result->_private = [[WebViewPrivate alloc] init];
 
@@ -2157,7 +2144,7 @@ NS_ENDHANDLER
 - (WebBackForwardList *)backForwardList
 {
     if (_private->useBackForwardList)
-        return _private->backForwardList;
+        return kit([self page]->backForwardList());
     return nil;
 }
 
@@ -2168,29 +2155,17 @@ NS_ENDHANDLER
 
 - (BOOL)goBack
 {
-    WebHistoryItem *item = [[self backForwardList] backItem];
-    
-    if (item){
-        [self _goToItem: item withLoadType: WebFrameLoadTypeBack];
-        return YES;
-    }
-    return NO;
+    return _private->page->goBack();
 }
 
 - (BOOL)goForward
 {
-    WebHistoryItem *item = [[self backForwardList] forwardItem];
-    
-    if (item){
-        [self _goToItem: item withLoadType: WebFrameLoadTypeForward];
-        return YES;
-    }
-    return NO;
+    return _private->page->goForward();
 }
 
 - (BOOL)goToBackForwardItem:(WebHistoryItem *)item
 {
-    [self _goToItem: item withLoadType: WebFrameLoadTypeIndexedBackForward];
+    _private->page->goToItem(core(item), FrameLoadTypeIndexedBackForward);
     return YES;
 }
 
@@ -2753,12 +2728,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (BOOL)canGoBack
 {
-    return [[self backForwardList] backItem] != nil;
+    return !!_private->page->backForwardList()->backItem();
 }
 
 - (BOOL)canGoForward
 {
-    return [[self backForwardList] forwardItem] != nil;
+    return !!_private->page->backForwardList()->forwardItem();
 }
 
 - (IBAction)goBack:(id)sender

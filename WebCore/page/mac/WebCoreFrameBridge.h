@@ -110,9 +110,6 @@ typedef enum ObjectElementType {
 
 - (void)addData:(NSData *)data;
 
-- (void)saveDocumentState;
-- (void)restoreDocumentState;
-
 - (void)clearFrame;
 
 - (NSURL *)baseURL;
@@ -301,9 +298,6 @@ typedef enum ObjectElementType {
 - (NSView *)nextKeyViewOutsideWebFrameViews;
 - (NSView *)previousKeyViewOutsideWebFrameViews;
 
-- (void)saveDocumentState:(NSArray *)documentState;
-- (NSArray *)documentState;
-
 - (void)setNeedsReapplyStyles;
 
 - (NSView *)viewForPluginWithURL:(NSURL *)URL
@@ -330,7 +324,6 @@ typedef enum ObjectElementType {
 - (BOOL)mayStartDragAtEventLocation:(NSPoint)location;
 
 - (int)historyLength;
-- (void)goBackOrForward:(int)distance;
 - (BOOL)canGoBackOrForward:(int)distance;
 - (NSURL *)historyURL:(int)distance;
 

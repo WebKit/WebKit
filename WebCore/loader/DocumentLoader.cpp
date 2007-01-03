@@ -29,11 +29,32 @@
 #include "config.h"
 #include "DocumentLoader.h"
 
+#include "FrameLoader.h"
+#include "PageCache.h"
+
 namespace WebCore {
+
+void DocumentLoader::loadFromPageCache(PassRefPtr<PageCache> pageCache)
+{
+    prepareForLoadStart();
+    setLoadingFromPageCache(true);
+    setCommitted(true);
+    frameLoader()->commitProvisionalLoad(pageCache);
+}
 
 const ResourceResponse& DocumentLoader::response() const
 {
     return m_response;
+}
+
+void DocumentLoader::setLoadingFromPageCache(bool loading)
+{
+    m_loadingFromPageCache = loading;
+}
+
+bool DocumentLoader::isLoadingFromPageCache() const
+{
+    return m_loadingFromPageCache;
 }
 
 void DocumentLoader::setResponse(const ResourceResponse& response) 
@@ -49,6 +70,26 @@ bool DocumentLoader::isStopping() const
 const ResourceError& DocumentLoader::mainDocumentError() const 
 { 
     return m_mainDocumentError; 
+}
+
+KURL DocumentLoader::originalURL() const
+{
+    return m_originalRequestCopy.url();
+}
+
+KURL DocumentLoader::requestURL() const
+{
+    return request().url();
+}
+
+KURL DocumentLoader::responseURL() const
+{
+    return m_response.url();
+}
+
+String DocumentLoader::responseMIMEType() const
+{
+    return m_response.mimeType();
 }
 
 }

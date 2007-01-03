@@ -113,6 +113,10 @@ public:
     
     friend bool operator==(const KURL &, const KURL &);
 
+#ifndef NDEBUG
+    void print() const;
+#endif
+
 private:
     bool isHierarchical() const;
     void init(const KURL&, const DeprecatedString&, const TextEncoding&);

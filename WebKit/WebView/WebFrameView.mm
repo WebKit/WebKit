@@ -37,6 +37,7 @@
 #import "WebFrameBridge.h"
 #import "WebFrameViewInternal.h"
 #import "WebFrameViewPrivate.h"
+#import "WebHistoryItemInternal.h"
 #import "WebHTMLViewPrivate.h"
 #import "WebKeyGenerator.h"
 #import "WebKitErrorsPrivate.h"
@@ -55,6 +56,8 @@
 #import <Foundation/NSURLRequest.h>
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/FrameMac.h>
+#import <WebCore/HistoryItem.h>
+#import <WebCore/Page.h>
 #import <WebCore/WebCoreFrameView.h>
 #import <WebCore/WebCoreView.h>
 #import <WebKitSystemInterface.h>
@@ -314,6 +317,12 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     if (!didFirstTimeInitialization) {
         didFirstTimeInitialization = true;
         InitWebCoreSystemInterface();
+        
+        // Need to tell WebCore what function to call for the 
+        // "History Item has Changed" notification
+        // Note: We also do this in WebHistoryItem's init method
+        WebCore::notifyHistoryItemChanged = WKNotifyHistoryItemChanged;
+
         [WebViewFactory createSharedFactory];
         [WebKeyGenerator createSharedGenerator];
 
@@ -673,8 +682,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     NSString *characters = [event characters];
     int index, count;
     BOOL callSuper = YES;
-    BOOL maintainsBackForwardList = [[[self webFrame] webView] backForwardList] == nil ? NO : YES;
-
+    BOOL maintainsBackForwardList = core([self webFrame])->page()->backForwardList() ? YES : NO;
+    
     count = [characters length];
     for (index = 0; index < count; ++index) {
         switch ([characters characterAtIndex:index]) {

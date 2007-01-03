@@ -48,16 +48,16 @@ namespace WebCore {
     class FormState;
     class Frame;
     class FrameLoader;
+    class HistoryItem;
     class KURL;
     class NavigationAction;
+    class PageCache;
     class String;
     class ResourceError;
     class ResourceHandle;
     class ResourceLoader;
     class ResourceRequest;
     class ResourceResponse;
-
-    struct LoadErrorResetToken;
 
     typedef void (FrameLoader::*FramePolicyFunction)(PolicyAction);
 
@@ -69,37 +69,15 @@ namespace WebCore {
         virtual bool hasWebView() const = 0; // mainly for assertions
         virtual bool hasFrameView() const = 0; // ditto
 
-        virtual bool hasBackForwardList() const = 0;
-        virtual void resetBackForwardList() = 0;
-
-        virtual bool provisionalItemIsTarget() const = 0;
-        virtual bool loadProvisionalItemFromPageCache() = 0;
-        virtual void invalidateCurrentItemPageCache() = 0;
-
         virtual bool privateBrowsingEnabled() const = 0;
 
         virtual void makeDocumentView() = 0;
         virtual void makeRepresentation(DocumentLoader*) = 0;
-#if PLATFORM(MAC)
-        virtual void setDocumentViewFromPageCache(NSDictionary *) = 0;
-#endif
+        virtual void setDocumentViewFromPageCache(PageCache*) = 0;
         virtual void forceLayout() = 0;
         virtual void forceLayoutForNonHTML() = 0;
 
-        virtual void updateHistoryForCommit() = 0;
-
-        virtual void updateHistoryForBackForwardNavigation() = 0;
-        virtual void updateHistoryForReload() = 0;
-        virtual void updateHistoryForStandardLoad() = 0;
-        virtual void updateHistoryForInternalLoad() = 0;
-
-        virtual void updateHistoryAfterClientRedirect() = 0;
-
         virtual void setCopiesOnScroll() = 0;
-
-        virtual LoadErrorResetToken* tokenForLoadErrorReset() = 0;
-        virtual void resetAfterLoadError(LoadErrorResetToken*) = 0;
-        virtual void doNotResetAfterLoadError(LoadErrorResetToken*) = 0;
 
         virtual void detachedFromParent1() = 0;
         virtual void detachedFromParent2() = 0;
@@ -158,8 +136,6 @@ namespace WebCore {
         virtual void dispatchWillSubmitForm(FramePolicyFunction, PassRefPtr<FormState>) = 0;
 
         virtual void dispatchDidLoadMainResource(DocumentLoader*) = 0;
-        virtual void clearLoadingFromPageCache(DocumentLoader*) = 0;
-        virtual bool isLoadingFromPageCache(DocumentLoader*) = 0;
         virtual void revertToProvisionalState(DocumentLoader*) = 0;
 #if PLATFORM(MAC)
         virtual void setMainDocumentError(DocumentLoader*, const ResourceError&) = 0;
@@ -189,6 +165,10 @@ namespace WebCore {
 #endif
         virtual void finishedLoading(DocumentLoader*) = 0;
         virtual void finalSetupForReplace(DocumentLoader*) = 0;
+        
+        virtual void updateGlobalHistoryForStandardLoad(const KURL&) = 0;
+        virtual void updateGlobalHistoryForReload(const KURL&) = 0;
+        virtual bool shouldGoToHistoryItem(HistoryItem*) const = 0;
 
 #if PLATFORM(MAC)
         virtual ResourceError cancelledError(const ResourceRequest&) = 0;
@@ -216,10 +196,9 @@ namespace WebCore {
         virtual String generatedMIMETypeForURLScheme(const String& URLScheme) const = 0;
 
         virtual void frameLoadCompleted() = 0;
+        virtual void saveScrollPositionAndViewStateToItem(HistoryItem*) = 0;
         virtual void restoreScrollPositionAndViewState() = 0;
         virtual void provisionalLoadStarted() = 0;
-        virtual bool shouldTreatURLAsSameAsCurrent(const KURL&) const = 0;
-        virtual void addHistoryItemForFragmentScroll() = 0;
         virtual void didFinishLoad() = 0;
         virtual void prepareForDataSourceReplacement() = 0;
 
@@ -229,6 +208,9 @@ namespace WebCore {
         virtual void setTitle(const String& title, const KURL&) = 0;
 
         virtual String userAgent() = 0;
+        
+        virtual void saveDocumentViewToPageCache(PageCache*) = 0;
+        virtual bool canCachePage() const = 0;
     };
 
 } // namespace WebCore

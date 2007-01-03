@@ -114,8 +114,10 @@
 - (void)cut:(id)sender;
 - (void)paste:(id)sender;
 - (void)pasteAsPlainText:(id)sender;
+- (void)closeIfNotCurrentView;
 - (void)_lookUpInDictionaryFromMenu:(id)sender;
 - (void)_hoverFeedbackSuspendedChanged;
+
 #if !BUILDING_ON_TIGER
 - (BOOL)isGrammarCheckingEnabled;
 - (void)setGrammarCheckingEnabled:(BOOL)flag;

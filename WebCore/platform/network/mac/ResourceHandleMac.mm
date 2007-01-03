@@ -182,6 +182,19 @@ bool ResourceHandle::loadsBlocked()
     return inNSURLConnectionCallback != 0;
 }
 
+bool ResourceHandle::willLoadFromCache(ResourceRequest& request)
+{
+    request.setCachePolicy(ReturnCacheDataDontLoad);
+    NSURLResponse *nsURLResponse = nil;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    
+   [NSURLConnection sendSynchronousRequest:request.nsURLRequest() returningResponse:&nsURLResponse error:nil];
+    
+    END_BLOCK_OBJC_EXCEPTIONS;
+    
+    return nsURLResponse;
+}
+
 void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     NSError *nsError = nil;

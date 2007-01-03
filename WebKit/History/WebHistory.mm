@@ -594,7 +594,7 @@ static inline bool matchUnicodeLetter(UniChar c, UniChar lowercaseLetter)
         if (length + 1 <= BUFFER_SIZE) {
             strBuffer = staticStrBuffer;
         } else {
-            strBuffer = malloc(length + 2);
+            strBuffer = (char*)malloc(length + 2);
         }
         memcpy(strBuffer, latin1, length + 1);
         strBuffer[length] = '/';
@@ -652,7 +652,7 @@ static inline bool matchUnicodeLetter(UniChar c, UniChar lowercaseLetter)
         if (length + 1 <= UNICODE_BUFFER_SIZE) {
             strBuffer = staticStrBuffer;
         } else {
-            strBuffer = malloc(sizeof(UniChar) * (length + 1));
+            strBuffer = (UniChar*)malloc(sizeof(UniChar) * (length + 1));
         }
         memcpy(strBuffer, unicode, 2 * length);
         strBuffer[length] = '/';

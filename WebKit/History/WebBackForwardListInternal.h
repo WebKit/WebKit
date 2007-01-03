@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,49 +26,20 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebDataSourcePrivate.h"
+#import <Cocoa/Cocoa.h>
 
-#ifdef __cplusplus
+#import <WebKit/WebBackForwardList.h>
+#import <wtf/PassRefPtr.h>
+
 namespace WebCore {
-    class DocumentLoader;
+    class BackForwardList;
 }
-typedef WebCore::DocumentLoader WebCoreDocumentLoader;
-class WebDocumentLoaderMac;
-#else
-@class WebCoreDocumentLoader;
-@class WebDocumentLoaderMac;
-#endif
 
-@class DOMDocumentFragment;
-@class DOMElement;
-@class NSError;
-@class NSURL;
-@class WebArchive;
-@class WebFrameBridge;
-@class WebResource;
-@class WebView;
+WebCore::BackForwardList* core(WebBackForwardList *);
+WebBackForwardList *kit(WebCore::BackForwardList*);
 
-@protocol WebDocumentRepresentation;
-
-@interface WebDataSource (WebInternal)
-- (void)_addToUnarchiveState:(WebArchive *)archive;
-- (void)_makeRepresentation;
-- (BOOL)_isDocumentHTML;
-- (WebView *)_webView;
-- (WebFrameBridge *)_bridge;
-- (WebArchive *)_popSubframeArchiveWithName:(NSString *)frameName;
-- (NSURL *)_URL;
-- (DOMElement *)_imageElementWithImageResource:(WebResource *)resource;
-- (DOMDocumentFragment *)_documentFragmentWithImageResource:(WebResource *)resource;
-- (DOMDocumentFragment *)_documentFragmentWithArchive:(WebArchive *)archive;
-+ (NSMutableDictionary *)_repTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission;
-- (void)_replaceSelectionWithArchive:(WebArchive *)archive selectReplacement:(BOOL)selectReplacement;
-- (WebResource *)_archivedSubresourceForURL:(NSURL *)URL;
-- (id)_initWithDocumentLoader:(WebDocumentLoaderMac*)loader;
-- (void)_finishedLoading;
-- (void)_receivedData:(NSData *)data;
-- (void)_revertToProvisionalState;
-- (void)_setMainDocumentError:(NSError *)error;
-- (void)_clearUnarchivingState;
-- (WebCoreDocumentLoader*)_documentLoader;
+@interface WebBackForwardList (WebBackForwardListInternal)
++ (void)setDefaultPageCacheSizeIfNecessary;
+- (id)initWithWebCoreBackForwardList:(PassRefPtr<WebCore::BackForwardList>)list;
 @end
+

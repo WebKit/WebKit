@@ -80,6 +80,7 @@ void InitWebCoreSystemInterface(void)
     INIT(SignalCFReadStreamHasBytes);
     INIT(SupportsMultipartXMixedReplace);
     INIT(NSURLProtocolClassForReqest);
+    INIT(SecondsSinceLastInputEvent);
     
     didInit = true;
 }

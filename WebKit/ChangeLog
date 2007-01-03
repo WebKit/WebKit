@@ -1,3 +1,154 @@
+2007-01-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed extensively and repeatedly by Darin
+
+        <rdar://problem/4887137> - WebCore Back/Forward Cache 
+        Most things not specifically commented on in the ChangeLog can be summed up as 
+        "Do things exactly the same way as we used to, but just stick in WebCore-land as much as possible"
+
+        * History/WebBackForwardList.mm:
+        (kitPrivate): Convenience functions to help with subbing "WebBackForwardListPrivate" for WebCore::BackForwardList
+        (core):
+        (backForwardListWrappers): A HashMap pattern used to map WebCore objects to their WebKit counterpart
+        (kit):
+        (+[WebBackForwardList setDefaultPageCacheSizeIfNecessary]):
+        (-[WebBackForwardList initWithWebCoreBackForwardList:]):
+        (-[WebBackForwardList init]):
+        (-[WebBackForwardList dealloc]):
+        (-[WebBackForwardList finalize]):
+        (-[WebBackForwardList _close]):
+        (-[WebBackForwardList addItem:]):
+        (-[WebBackForwardList removeItem:]):
+        (-[WebBackForwardList containsItem:]):
+        (-[WebBackForwardList goBack]):
+        (-[WebBackForwardList goForward]):
+        (-[WebBackForwardList goToItem:]):
+        (-[WebBackForwardList backItem]):
+        (-[WebBackForwardList currentItem]):
+        (-[WebBackForwardList forwardItem]):
+        (vectorToNSArray):
+        (-[WebBackForwardList backListWithLimit:]):
+        (-[WebBackForwardList forwardListWithLimit:]):
+        (-[WebBackForwardList capacity]):
+        (-[WebBackForwardList setCapacity:]):
+        (-[WebBackForwardList description]):
+        (-[WebBackForwardList _clearPageCache]):
+        (-[WebBackForwardList setPageCacheSize:]):
+        (-[WebBackForwardList pageCacheSize]):
+        (-[WebBackForwardList _usesPageCache]):
+        (-[WebBackForwardList backListCount]):
+        (-[WebBackForwardList forwardListCount]):
+        (-[WebBackForwardList itemAtIndex:]):
+        * History/WebBackForwardListInternal.h: Added.
+
+        * History/WebHistory.m: Removed.
+        * History/WebHistory.mm: Added - Needed to be .mm to accept C++ header style
+        (-[_WebCoreHistoryProvider containsItemForURLLatin1:length:]):
+        (-[_WebCoreHistoryProvider containsItemForURLUnicode:length:]):
+
+        * History/WebHistoryItem.mm:
+        (kitPrivate): Same pattern as WebBackForwardList
+        (core):
+        (historyItemWrappers):
+        (WKNotifyHistoryItemChanged):
+        (-[WebHistoryItem init]):
+        (-[WebHistoryItem initWithURLString:title:lastVisitedTimeInterval:]):
+        (-[WebHistoryItem dealloc]):
+        (-[WebHistoryItem finalize]):
+        (-[WebHistoryItem copyWithZone:]):
+        (-[WebHistoryItem URLString]):
+        (-[WebHistoryItem originalURLString]):
+        (-[WebHistoryItem title]):
+        (-[WebHistoryItem setAlternateTitle:]):
+        (-[WebHistoryItem alternateTitle]):
+        (-[WebHistoryItem icon]):
+        (-[WebHistoryItem lastVisitedTimeInterval]):
+        (-[WebHistoryItem hash]):
+        (-[WebHistoryItem isEqual:]):
+        (-[WebHistoryItem description]):
+        (kit):
+        (+[WebHistoryItem entryWithURL:]):
+        (+[WebHistoryItem initWindowWatcherIfNecessary]):
+        (-[WebHistoryItem initWithURL:target:parent:title:]):
+        (-[WebHistoryItem initWithWebCoreHistoryItem:]):
+        (-[WebHistoryItem setTitle:]):
+        (-[WebHistoryItem setVisitCount:]):
+        (-[WebHistoryItem setViewState:]):
+        (-[WebHistoryItem _mergeAutoCompleteHints:]):
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        (-[WebHistoryItem scrollPoint]):
+        (-[WebHistoryItem _transientPropertyForKey:]):
+        (-[WebHistoryItem _setTransientProperty:forKey:]):
+        (-[WebHistoryItem dictionaryRepresentation]):
+        (-[WebHistoryItem target]):
+        (-[WebHistoryItem isTargetItem]):
+        (-[WebHistoryItem visitCount]):
+        (-[WebHistoryItem RSSFeedReferrer]):
+        (-[WebHistoryItem setRSSFeedReferrer:]):
+        (-[WebHistoryItem children]):
+        (-[WebHistoryItem setAlwaysAttemptToUsePageCache:]):
+        (-[WebHistoryItem URL]):
+        (-[WebHistoryItem _setLastVisitedTimeInterval:]):
+        (-[WebHistoryItem _lastVisitedDate]):
+        (-[WebHistoryItem targetItem]):
+        (+[WebHistoryItem _releaseAllPendingPageCaches]):
+        (-[WebWindowWatcher windowWillClose:]):
+        * History/WebHistoryItemInternal.h:
+        * History/WebHistoryItemPrivate.h:
+
+        * WebCoreSupport/WebFrameBridge.mm:
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::setDocumentViewFromPageCache):
+        (WebFrameLoaderClient::detachedFromParent1):
+        (WebFrameLoaderClient::loadedFromPageCache):
+        (WebFrameLoaderClient::updateGlobalHistoryForStandardLoad):
+        (WebFrameLoaderClient::updateGlobalHistoryForReload):
+        (WebFrameLoaderClient::shouldGoToHistoryItem):
+        (WebFrameLoaderClient::frameLoadCompleted):
+        (WebFrameLoaderClient::saveScrollPositionAndViewStateToItem):
+        (WebFrameLoaderClient::restoreScrollPositionAndViewState):
+        (WebFrameLoaderClient::provisionalLoadStarted):
+        (WebFrameLoaderClient::setTitle):
+        (WebFrameLoaderClient::saveDocumentViewToPageCache):
+        (WebFrameLoaderClient::canCachePage):
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface):
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * WebView/WebDataSource.mm:
+        * WebView/WebDataSourceInternal.h:
+
+        * WebView/WebFrame.mm:
+        (-[WebFramePrivate dealloc]):
+        (-[WebFrame _canCachePage]):
+        (-[WebFrame _loadURL:referrer:intoChild:]):
+        * WebView/WebFrameInternal.h:
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView initWithFrame:]):
+        (-[WebFrameView keyDown:]):
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView closeIfNotCurrentView]): Added for a dirty hack in WebCore that is marked with a FIXME Radar
+        * WebView/WebHTMLViewInternal.h:
+
+        * WebView/WebView.mm:
+        (-[WebViewPrivate init]):
+        (-[WebViewPrivate dealloc]):
+        (-[WebView _close]):
+        (-[WebView _loadBackForwardListFromOtherView:]):
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initWithCoder:]):
+        (-[WebView backForwardList]):
+        (-[WebView goBack]):
+        (-[WebView goForward]):
+        (-[WebView goToBackForwardItem:]):
+        (-[WebView canGoBack]):
+        (-[WebView canGoForward]):
+
 2007-01-02  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin Decker

@@ -56,7 +56,6 @@ private:
     virtual void deleteWidget();
 
     Frame* m_frame;
-    bool m_disconnectOwnerElementWhenDestroyed;
 };
 
 }

@@ -300,39 +300,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     }
 }
 
-- (void)saveDocumentState
-{
-    Vector<String> stateVector;
-    if (Document* doc = m_frame->document())
-        stateVector = doc->formElementsState();
-    size_t size = stateVector.size();
-    NSMutableArray* stateArray = [[NSMutableArray alloc] initWithCapacity:size];
-    for (size_t i = 0; i < size; ++i) {
-        NSString* s = stateVector[i];
-        id o = s ? (id)s : (id)[NSNull null];
-        [stateArray addObject:o];
-    }
-    [self saveDocumentState:stateArray];
-    [stateArray release];
-}
-
-- (void)restoreDocumentState
-{
-    Document* doc = m_frame->document();
-    if (!doc)
-        return;
-    NSArray* stateArray = [self documentState];
-    size_t size = [stateArray count];
-    Vector<String> stateVector;
-    stateVector.reserveCapacity(size);
-    for (size_t i = 0; i < size; ++i) {
-        id o = [stateArray objectAtIndex:i];
-        NSString* s = [o isKindOfClass:[NSString class]] ? o : 0;
-        stateVector.append(s);
-    }
-    doc->setStateForNewFormElements(stateVector);
-}
-
 - (BOOL)scrollOverflowInDirection:(WebScrollDirection)direction granularity:(WebScrollGranularity)granularity
 {
     if (!m_frame)

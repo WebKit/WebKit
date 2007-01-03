@@ -32,29 +32,27 @@
 #import <WebKit/WebHistoryItem.h>
 
 @interface WebHistoryItem (WebPrivate)
++ (void)_releaseAllPendingPageCaches;
+
 - (id)initWithURL:(NSURL *)URL title:(NSString *)title;
 
 - (NSURL *)URL;
 - (int)visitCount;
 
-// Transient properties may be of any ObjC type.  They are intended to be used to store state per back/forward list entry.
-// The properties will not be persisted; when the history item is removed, the properties will be lost.
-- (id)_transientPropertyForKey:(NSString *)key;
-- (void)_setTransientProperty:(id)property forKey:(NSString *)key;
 - (NSString *)RSSFeedReferrer;
 - (void)setAlwaysAttemptToUsePageCache:(BOOL)flag;
-+ (void)_releaseAllPendingPageCaches;
 - (void)setRSSFeedReferrer:(NSString *)referrer;
 - (NSCalendarDate *)_lastVisitedDate;
+
+- (WebHistoryItem *)targetItem;
+- (NSString *)target;
+- (BOOL)isTargetItem;
+- (NSArray *)children;
+- (NSDictionary *)dictionaryRepresentation;
 
 // This should not be called directly for WebHistoryItems that are already included
 // in WebHistory. Use -[WebHistory setLastVisitedTimeInterval:forItem:] instead.
 - (void)_setLastVisitedTimeInterval:(NSTimeInterval)time;
-- (NSDictionary *)dictionaryRepresentation;
-- (WebHistoryItem *)targetItem;
-- (NSString *)target;
-- (NSArray *)children;
-- (BOOL)isTargetItem;
 
 @end
 

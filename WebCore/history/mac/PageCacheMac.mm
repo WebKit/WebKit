@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,37 +20,43 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Logging_H
-#define Logging_H
+#include "config.h"
+#include "PageCache.h"
 
-#include <wtf/Assertions.h>
-
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
-#endif
+#import <objc/objc-runtime.h>
 
 namespace WebCore {
 
-    extern WTFLogChannel LogNotYetImplemented;
-    extern WTFLogChannel LogFrames;
-    extern WTFLogChannel LogLoading;
-    extern WTFLogChannel LogPopupBlocking;
-    extern WTFLogChannel LogEvents;
-    extern WTFLogChannel LogEditing;
-    extern WTFLogChannel LogTextConversion;
-    extern WTFLogChannel LogIconDatabase;
-    extern WTFLogChannel LogSQLDatabase;
-    extern WTFLogChannel LogSpellingAndGrammar;
-    extern WTFLogChannel LogBackForward;
-    extern WTFLogChannel LogHistory;
-    extern WTFLogChannel LogPageCache;
-    extern WTFLogChannel LogNetwork;
+void PageCache::close()
+{
+    if (!m_pageState)
+        return;
+    
+    // FIXME: <rdar://problem/4886844>
+    // The current method of tracking the "document view" is messy and quite platform specific
+    // Having a WebCore-way to track this would be great.
+    if (m_documentView)
+        objc_msgSend(m_documentView.get(), @selector(closeIfNotCurrentView));
 
-    void InitializeLoggingChannelsIfNecessary();
+    m_pageState->clear();
+    
+    // Setting these to null is how the PageCache object knows it's been closed
+    m_pageState = 0;
+    m_documentLoader = 0;
+}
 
-} // namespace WebCore
+void PageCache::setDocumentView(id documentView)
+{
+    m_documentView = documentView;
+}
 
-#endif // Logging_H
+id PageCache::documentView()
+{
+    return m_documentView.get();
+}
+
+} //namespace WebCore
+

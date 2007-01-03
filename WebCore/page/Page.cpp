@@ -30,6 +30,9 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
+#include "FrameView.h"
+#include "HistoryItem.h"
+#include "RenderWidget.h"
 #include "SelectionController.h"
 #include "Settings.h"
 #include "StringHash.h"
@@ -50,6 +53,7 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_dragCaretController(new SelectionController(0, true))
     , m_focusController(new FocusController(this))
     , m_contextMenuController(new ContextMenuController(this, contextMenuClient))
+    , m_backForwardList(new BackForwardList)
     , m_settings(new Settings)
     , m_editorClient(editorClient)
     , m_frameCount(0)
@@ -82,12 +86,50 @@ Page::~Page()
     }
     
     m_editorClient->pageDestroyed();
+    m_backForwardList->close();
 }
 
 void Page::setMainFrame(PassRefPtr<Frame> mainFrame)
 {
     ASSERT(!m_mainFrame); // Should only be called during initialization
     m_mainFrame = mainFrame;
+}
+
+BackForwardList* Page::backForwardList()
+{
+    return m_backForwardList.get();
+}
+
+bool Page::goBack()
+{
+    HistoryItem* item = m_backForwardList->backItem();
+    
+    if (item) {
+        goToItem(item, FrameLoadTypeBack);
+        return true;
+    }
+    return false;
+}
+
+bool Page::goForward()
+{
+    HistoryItem* item = m_backForwardList->forwardItem();
+    
+    if (item) {
+        goToItem(item, FrameLoadTypeForward);
+        return true;
+    }
+    return false;
+}
+
+void Page::goToItem(HistoryItem* item, FrameLoadType type)
+{
+    // We never go back/forward on a per-frame basis, so the target must be the main frame
+    ASSERT(item->target().isEmpty() || m_mainFrame->tree()->find(item->target()) == m_mainFrame);
+
+    // Abort any current load if we're going to a history item
+    m_mainFrame->loader()->stopAllLoaders();
+    m_mainFrame->loader()->goToItem(item, type);
 }
 
 void Page::setGroupName(const String& name)

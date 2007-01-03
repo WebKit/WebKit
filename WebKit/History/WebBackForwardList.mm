@@ -25,9 +25,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 #import <JavaScriptCore/Assertions.h>
 #import "WebBackForwardList.h"
+#import "WebBackForwardListInternal.h"
+
 #import "WebHistoryItemInternal.h"
 #import "WebHistoryItemPrivate.h"
 #import "WebKitLogging.h"
@@ -36,27 +37,76 @@
 #import "WebKitSystemBits.h"
 
 #import "WebTypesInternal.h"
+#import <WebCore/BackForwardList.h>
+#import <WebCore/HistoryItem.h>
+#import <WebCore/RetainPtr.h>
 
 #define COMPUTE_DEFAULT_PAGE_CACHE_SIZE UINT_MAX
 
-@interface WebBackForwardListPrivate : NSObject
-{
-@public
-    NSMutableArray *entries;
-    int current;
-    int maximumSize;
-    unsigned pageCacheSize;
-    BOOL closed;
-}
-@end
+using WebCore::BackForwardList;
+using WebCore::HistoryItem;
+using WebCore::HistoryItemVector;
+using WebCore::RetainPtr;
 
-@implementation WebBackForwardListPrivate
+static inline WebBackForwardListPrivate* kitPrivate(BackForwardList* list) { return (WebBackForwardListPrivate*)list; }
+static inline BackForwardList* core(WebBackForwardListPrivate* list) { return (BackForwardList*)list; }
 
-- (void)dealloc
+HashMap<BackForwardList*, WebBackForwardList*>& backForwardListWrappers()
 {
-    [entries release];
-    [super dealloc];
+    static HashMap<BackForwardList*, WebBackForwardList*> backForwardListWrappers;
+    return backForwardListWrappers;
 }
+
+@implementation WebBackForwardList (WebBackForwardListInternal)
+
+BackForwardList* core(WebBackForwardList *list)
+{
+    if (!list)
+        return 0;
+    return core(list->_private);
+}
+
+WebBackForwardList *kit(BackForwardList* list)
+{
+    if (!list)
+        return nil;
+        
+    WebBackForwardList *kitList = backForwardListWrappers().get(list);
+    if (kitList)
+        return kitList;
+    
+    return [[[WebBackForwardList alloc] initWithWebCoreBackForwardList:list] autorelease];
+}
+
++ (void)setDefaultPageCacheSizeIfNecessary
+{
+    static bool initialized = false;
+    if (initialized)
+        return;
+        
+    vm_size_t memSize = WebSystemMainMemory();
+    unsigned s = [[WebPreferences standardPreferences] _pageCacheSize];
+    if (memSize >= 1024 * 1024 * 1024)
+        BackForwardList::setDefaultPageCacheSize(s);
+    else if (memSize >= 512 * 1024 * 1024)
+        BackForwardList::setDefaultPageCacheSize(s - 1);
+    else 
+        BackForwardList::setDefaultPageCacheSize(s - 2);
+        
+    initialized = true;
+}
+
+- (id)initWithWebCoreBackForwardList:(PassRefPtr<BackForwardList>)list
+{   
+    self = [super init];
+    if (!self)
+        return nil;
+    
+    _private = kitPrivate(list.releaseRef());
+    backForwardListWrappers().set(core(_private), self);
+    return self;
+}
+
 @end
 
 @implementation WebBackForwardList
@@ -68,217 +118,147 @@
         return nil;
     }
     
-    _private = [[WebBackForwardListPrivate alloc] init];
+    BackForwardList* coreList = new BackForwardList;
+    _private = kitPrivate(coreList);
+    coreList->ref();
     
-    _private->entries = [[NSMutableArray alloc] init];
-    _private->current = -1;
-    _private->maximumSize = 100; // typically set by browser app
-
-    _private->pageCacheSize = COMPUTE_DEFAULT_PAGE_CACHE_SIZE;
+    backForwardListWrappers().set(coreList, self);
     
     return self;
 }
 
 - (void)dealloc
 {
-    ASSERT(_private->closed);
-    [_private release];
+    BackForwardList* coreList = core(_private);
+    ASSERT(coreList->closed());
+    backForwardListWrappers().remove(coreList);
+    coreList->deref();
+        
     [super dealloc];
 }
 
 - (void)finalize
 {
-    ASSERT(_private->closed);
+    BackForwardList* coreList = core(_private);
+    ASSERT(coreList->closed());
+    backForwardListWrappers().remove(coreList);
+    coreList->deref();
+        
     [super finalize];
 }
 
 - (void)_close
 {
-    unsigned count = [_private->entries count];
-    unsigned i;
-    for (i = 0; i < count; i++){
-        WebHistoryItem *item = [_private->entries objectAtIndex: i];
-        [item setHasPageCache: NO]; 
-    }
-    _private->closed = YES;
+    core(_private)->close();
 }
 
 - (void)addItem:(WebHistoryItem *)entry;
 {
-    if (_private->maximumSize == 0)
-        return;
+    core(_private)->addItem(core(entry));
     
-    // Toss anything in the forward list
-    int currSize = [_private->entries count];
-    if (_private->current != currSize-1 && _private->current != -1) {
-        NSRange forwardRange = NSMakeRange(_private->current+1, currSize-(_private->current+1));
-        NSArray *subarray;
-        subarray = [_private->entries subarrayWithRange:forwardRange];
-        unsigned i;
-        for (i = 0; i < [subarray count]; i++){
-            WebHistoryItem *item = [subarray objectAtIndex: i];
-            [item setHasPageCache: NO];            
-        }
-        [_private->entries removeObjectsInRange: forwardRange];
-        currSize -= forwardRange.length;
-    }
-
-    // Toss the first item if the list is getting too big, as long as we're not using it
-    if (currSize == _private->maximumSize && _private->current != 0) {
-        WebHistoryItem *item = [_private->entries objectAtIndex: 0];
-        [item setHasPageCache: NO];
-        [_private->entries removeObjectAtIndex:0];
-        currSize--;
-        _private->current--;
-    }
-
-    [_private->entries addObject:entry];
-    _private->current++;
+    // Since the assumed contract with WebBackForwardList is that it retains its WebHistoryItems,
+    // the following line prevents a whole class of problems where a history item will be created in
+    // a function, added to the BFlist, then used in the rest of that function.
+    [[entry retain] autorelease];
 }
 
 - (void)removeItem:(WebHistoryItem *)item
 {
-    if (!item)
-        return;
-    
-    WebNSUInteger itemIndex = [_private->entries indexOfObjectIdenticalTo:item];
-    ASSERT(itemIndex != (unsigned)_private->current);
-    
-    if (itemIndex != NSNotFound && itemIndex != (WebNSUInteger)_private->current) {
-        [_private->entries removeObjectAtIndex:itemIndex];
-    }
+    core(_private)->removeItem(core(item));
 }
 
-- (BOOL)containsItem:(WebHistoryItem *)entry
+- (BOOL)containsItem:(WebHistoryItem *)item
 {
-    return [_private->entries indexOfObjectIdenticalTo:entry] != NSNotFound;
+    return core(_private)->containsItem(core(item));
 }
-
 
 - (void)goBack
 {
-    if(_private->current > 0)
-        _private->current--;
-    else
-        [NSException raise:NSInternalInconsistencyException format:@"%@: goBack called with empty back list", self];
+    core(_private)->goBack();
 }
 
 - (void)goForward
 {
-    if(_private->current < (int)[_private->entries count]-1)
-        _private->current++;
-    else
-        [NSException raise:NSInternalInconsistencyException format:@"%@: goForward called with empty forward list", self];
+    core(_private)->goForward();
 }
 
 - (void)goToItem:(WebHistoryItem *)item
 {
-    WebNSUInteger index = [_private->entries indexOfObjectIdenticalTo:item];
-    if (index != NSNotFound)
-        _private->current = index;
-    else
-        [NSException raise:NSInvalidArgumentException format:@"%@: %s:  invalid item", self, __FUNCTION__];
+    core(_private)->goToItem(core(item));
 }
 
 - (WebHistoryItem *)backItem
 {
-    if (_private->current > 0) {
-        return [_private->entries objectAtIndex:_private->current-1];
-    } else {
-        return nil;
-    }
+    return kit(core(_private)->backItem());
 }
 
 - (WebHistoryItem *)currentItem
 {
-    if (_private->current >= 0) {
-        return [_private->entries objectAtIndex:_private->current];
-    } else {
-        return nil;
-    }
+    return kit(core(_private)->currentItem());
 }
 
 - (WebHistoryItem *)forwardItem
 {
-    if (_private->current < (int)[_private->entries count]-1) {
-        return [_private->entries objectAtIndex:_private->current+1];
-    } else {
-        return nil;
-    }
+    return kit(core(_private)->forwardItem());
+}
+
+static NSArray* vectorToNSArray(HistoryItemVector& list)
+{
+    unsigned size = list.size();
+    NSMutableArray *result = [[[NSMutableArray alloc] initWithCapacity:size] autorelease];
+    for (unsigned i = 0; i < size; ++i)
+        [result addObject:kit(list[i].get())];
+
+    return result;
 }
 
 - (NSArray *)backListWithLimit:(int)limit;
 {
-    if (_private->current > 0) {
-        NSRange r;
-        r.location = MAX(_private->current-limit, 0);
-        r.length = _private->current - r.location;
-        return [_private->entries subarrayWithRange:r];
-    } else {
-        return nil;
-    }
+    HistoryItemVector list;
+    core(_private)->backListWithLimit(limit, list);
+    return vectorToNSArray(list);
 }
 
 - (NSArray *)forwardListWithLimit:(int)limit;
 {
-    int lastEntry = (int)[_private->entries count]-1;
-    if (_private->current < lastEntry) {
-        NSRange r;
-        r.location = _private->current+1;
-        r.length =  MIN(_private->current+limit, lastEntry) - _private->current;
-        return [_private->entries subarrayWithRange:r];
-    } else {
-        return nil;
-    }
+    HistoryItemVector list;
+    core(_private)->forwardListWithLimit(limit, list);
+    return vectorToNSArray(list);
 }
 
 - (int)capacity
 {
-    return _private->maximumSize;
+    return core(_private)->capacity();
 }
 
 - (void)setCapacity:(int)size
 {
-    if (size < _private->maximumSize){
-        int currSize = [_private->entries count];
-        NSRange forwardRange = NSMakeRange(size, currSize-size);
-        NSArray *subarray;
-        subarray = [_private->entries subarrayWithRange:forwardRange];
-        unsigned i;
-        for (i = 0; i < [subarray count]; i++){
-            WebHistoryItem *item = [subarray objectAtIndex: i];
-            [item setHasPageCache: NO];
-        }
-        [_private->entries removeObjectsInRange: forwardRange];
-        currSize -= forwardRange.length;
-    }
-    if (_private->current > (int)([_private->entries count] - 1))
-        _private->current = [_private->entries count] - 1;
-        
-    _private->maximumSize = size;
+    core(_private)->setCapacity(size);
 }
 
 
 -(NSString *)description
 {
     NSMutableString *result;
-    int i;
     
     result = [NSMutableString stringWithCapacity:512];
     
     [result appendString:@"\n--------------------------------------------\n"];    
     [result appendString:@"WebBackForwardList:\n"];
     
-    for (i = 0; i < (int)[_private->entries count]; i++) {
-        if (i == _private->current) {
+    BackForwardList* coreList = core(_private);
+    HistoryItemVector& entries = coreList->entries();
+    
+    unsigned size = entries.size();
+    for (unsigned i = 0; i < size; ++i) {
+        if (entries[i] == coreList->currentItem()) {
             [result appendString:@" >>>"]; 
-        }
-        else {
+        } else {
             [result appendString:@"    "]; 
         }   
         [result appendFormat:@"%2d) ", i];
         int currPos = [result length];
-        [result appendString:[[_private->entries objectAtIndex:i] description]];
+        [result appendString:[kit(entries[i].get()) description]];
 
         // shift all the contents over.  a bit slow, but this is for debugging
         NSRange replRange = {currPos, [result length]-currPos};
@@ -294,87 +274,37 @@
 
 - (void)_clearPageCache
 {
-    int i;
-    WebHistoryItem *currentItem = [self currentItem];
-    
-    for (i = 0; i < (int)[_private->entries count]; i++) {
-        WebHistoryItem *item;
-        // Don't clear the current item.  Objects are still in use.
-        item = [_private->entries objectAtIndex:i];
-        if (item != currentItem)
-            [item setHasPageCache:NO];
-    }
-    [WebHistoryItem _releaseAllPendingPageCaches];
+    core(_private)->clearPageCache();
 }
-
 
 - (void)setPageCacheSize: (unsigned)size
 {
-    _private->pageCacheSize = size;
-    if (size == 0) {
-        [self _clearPageCache];
-    }
+    core(_private)->setPageCacheSize(size);
 }
-
-#ifndef NDEBUG
-static BOOL loggedPageCacheSize = NO;
-#endif
 
 - (unsigned)pageCacheSize
 {
-    if (_private->pageCacheSize == COMPUTE_DEFAULT_PAGE_CACHE_SIZE) {
-        unsigned s;
-        vm_size_t memSize = WebSystemMainMemory();
-        
-        s = [[WebPreferences standardPreferences] _pageCacheSize];
-        if (memSize >= 1024 * 1024 * 1024)
-            _private->pageCacheSize = s;
-        else if (memSize >= 512 * 1024 * 1024)
-            _private->pageCacheSize = s - 1;
-        else
-            _private->pageCacheSize = s - 2;
-
-#ifndef NDEBUG
-        if (!loggedPageCacheSize){
-            LOG (CacheSizes, "Page cache size set to %d pages.", _private->pageCacheSize);
-            loggedPageCacheSize = YES;
-        }
-#endif
-    }
-    
-    return _private->pageCacheSize;
+    return core(_private)->pageCacheSize();
 }
 
 - (BOOL)_usesPageCache
 {
-    return _private->pageCacheSize != 0;
+    return core(_private)->usesPageCache();
 }
 
 - (int)backListCount
 {
-    return _private->current;
+    return core(_private)->backListCount();
 }
 
 - (int)forwardListCount
 {
-    return (int)[_private->entries count] - (_private->current + 1);
+    return core(_private)->forwardListCount();
 }
 
 - (WebHistoryItem *)itemAtIndex:(int)index
 {
-    // Do range checks without doing math on index to avoid overflow.
-    if (index < -_private->current) {
-        return nil;
-    }
-    if (index > [self forwardListCount]) {
-        return nil;
-    }
-    return [_private->entries objectAtIndex:index + _private->current];
-}
-
-- (NSMutableArray *)_entries
-{
-    return _private->entries;
+    return kit(core(_private)->itemAtIndex(index));
 }
 
 @end

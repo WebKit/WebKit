@@ -33,6 +33,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "Page.h"
+#include "PageCache.h"
 #include "ResourceError.h"
 #include "SVGDocument.h"
 #include "SVGImage.h"

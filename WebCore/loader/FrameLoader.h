@@ -82,6 +82,7 @@ namespace WebCore {
     class FormData;
     class Frame;
     class FrameLoaderClient;
+    class HistoryItem;
     class HTMLFormElement;
     class HTMLFrameOwnerElement;
     class IconLoader;
@@ -89,6 +90,7 @@ namespace WebCore {
     class MainResourceLoader;
     class NavigationAction;
     class Node;
+    class PageCache;
     class PageState;
     class RenderPart;
     class ResourceError;
@@ -168,9 +170,11 @@ namespace WebCore {
         void post(const KURL&, const String& referrer, const String& target,
             PassRefPtr<FormData>, const String& contentType,
             Event*, HTMLFormElement*, const HashMap<String, String>& formValues);
+
         void load(const ResourceRequest&);
         void load(const ResourceRequest&, const String& frameName);
         void load(const ResourceRequest&, const NavigationAction&, FrameLoadType, PassRefPtr<FormState>);
+        
         void load(DocumentLoader*);
         void load(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>);
 
@@ -179,7 +183,7 @@ namespace WebCore {
         Frame* createWindow(const FrameLoadRequest&, const WindowFeatures&);
 
         void loadResourceSynchronously(const ResourceRequest& request, ResourceResponse& r, Vector<char>& data);
-        
+
         bool canHandleRequest(const ResourceRequest&);
 
         // Also not cool.
@@ -291,9 +295,6 @@ namespace WebCore {
 
         void clientRedirectCancelledOrFinished(bool cancelWithLoadInProgress);
         void clientRedirected(const KURL&, double delay, double fireDate, bool lockHistory, bool isJavaScriptFormAction);
-#if PLATFORM(MAC)
-        void commitProvisionalLoad(NSDictionary *pageCache);
-#endif
         bool shouldReload(const KURL& currentURL, const KURL& destinationURL);
 
         bool isQuickRedirectComing() const;
@@ -311,6 +312,7 @@ namespace WebCore {
 #if PLATFORM(MAC)
         void addExtraFieldsToRequest(NSMutableURLRequest *, bool isMainResource, bool alwaysFromRequest);
 #endif
+
         void addExtraFieldsToRequest(ResourceRequest&, bool isMainResource, bool alwaysFromRequest);
 
         FrameLoaderClient* client() const;
@@ -340,6 +342,7 @@ namespace WebCore {
 
         KURL baseURL() const;
         String baseTarget() const;
+        KURL dataURLBaseFromRequest(const ResourceRequest& request) const;
 
         void scheduleRedirection(double delay, const String& URL, bool lockHistory = true);
 
@@ -383,7 +386,6 @@ namespace WebCore {
         void createEmptyDocument();
 
         void partClearedInBegin(); 
-        void saveDocumentState();
         void restoreDocumentState();
 
         String overrideMediaType() const;
@@ -451,8 +453,50 @@ namespace WebCore {
         void cancelAndClear();
 
         void setTitle(const String&);
+        void dispatchDidChangeLocationWithinPage();
+        
+        void dispatchDidFinishLoadToClient();
+        void updateGlobalHistoryForStandardLoad(const KURL&);
+        void updateGlobalHistoryForReload(const KURL&);
+        bool shouldGoToHistoryItem(HistoryItem*) const;
+        bool shouldTreatURLAsSameAsCurrent(const KURL&) const;
+        
+        void commitProvisionalLoad(PassRefPtr<PageCache>);
 
-    private:
+        void goToItem(HistoryItem*, FrameLoadType);
+        void saveDocumentAndScrollState();
+        void saveScrollPositionAndViewStateToItem(HistoryItem*);
+
+        // FIXME: These accessors are here for a dwindling number of users in WebKit, WebFrame
+        // being the primary one.  After they're no longer needed there, they can be removed!
+        HistoryItem* currentHistoryItem();
+        HistoryItem* previousHistoryItem();
+        HistoryItem* provisionalHistoryItem();
+        void setCurrentHistoryItem(PassRefPtr<HistoryItem>);
+        void setPreviousHistoryItem(PassRefPtr<HistoryItem>);
+        void setProvisionalHistoryItem(PassRefPtr<HistoryItem>);
+        
+    private:        
+        PassRefPtr<HistoryItem> createItem(bool useOriginal);
+        PassRefPtr<HistoryItem> createItemTree(Frame* targetFrame, bool clipAtTarget);
+
+        void addBackForwardItemClippedAtTarget(bool doClip);
+        void restoreScrollPositionAndViewState();
+        void saveDocumentState();
+        void loadItem(HistoryItem*, FrameLoadType);
+        bool urlsMatchItem(HistoryItem*) const;
+        void purgePageCache();
+        void invalidateCurrentItemPageCache();
+        void recursiveGoToItem(HistoryItem*, HistoryItem*, FrameLoadType);
+        bool childFramesMatchItem(HistoryItem*) const;
+
+        void updateHistoryForBackForwardNavigation();
+        void updateHistoryForReload();
+        void updateHistoryForStandardLoad();
+        void updateHistoryForInternalLoad();
+        void updateHistoryForClientRedirect();
+        void updateHistoryForCommit();
+    
         void redirectionTimerFired(Timer<FrameLoader>*);
 
         void cancelRedirection(bool newLoadInProgress = false);
@@ -465,6 +509,9 @@ namespace WebCore {
         bool shouldUsePlugin(const KURL&, const String& mimeType, bool hasFallback, bool& useFallback);
         bool loadPlugin(RenderPart*, const KURL&, const String& mimeType,
         const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
+        
+        bool loadProvisionalItemFromPageCache();
+        bool createPageCache(HistoryItem*);
 
         void emitLoadEvent();
 
@@ -487,6 +534,7 @@ namespace WebCore {
         void clearProvisionalLoad();
         void markLoadComplete();
         void commitProvisionalLoad();
+        void transitionToCommitted(PassRefPtr<PageCache>);
         void frameLoadCompleted();
 
 #if PLATFORM(MAC)
@@ -511,14 +559,12 @@ namespace WebCore {
         void continueLoadAfterNewWindowPolicy(const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, bool shouldContinue);
         static void callContinueFragmentScrollAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
         void continueFragmentScrollAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue);
+        void addHistoryItemForFragmentScroll();
 
         void stopPolicyCheck();
 
         void closeDocument();
-
-#if PLATFORM(MAC)
-        void transitionToCommitted(NSDictionary *pageCache);
-#endif
+        
         void checkLoadCompleteForThisFrame();
 
         void setDocumentLoader(DocumentLoader*);
@@ -532,6 +578,7 @@ namespace WebCore {
         void closeOldDataSources();
         void open(PageState&);
         void opened();
+        void updateHistoryAfterClientRedirect();
 
         bool shouldReloadToHandleUnreachableURL(const ResourceRequest&);
 #if PLATFORM(MAC)
@@ -625,6 +672,10 @@ namespace WebCore {
         HashSet<Frame*> m_openedFrames;
 
         bool m_openedByJavaScript;
+        
+        RefPtr<HistoryItem> m_currentHistoryItem;
+        RefPtr<HistoryItem> m_previousHistoryItem;
+        RefPtr<HistoryItem> m_provisionalHistoryItem;
 
     };
 

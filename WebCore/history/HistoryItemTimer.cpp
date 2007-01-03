@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,37 +20,42 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+ 
+#include "config.h"
+#include "HistoryItemTimer.h"
 
-#ifndef Logging_H
-#define Logging_H
-
-#include <wtf/Assertions.h>
-
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
-#endif
+#include "HistoryItem.h"
 
 namespace WebCore {
 
-    extern WTFLogChannel LogNotYetImplemented;
-    extern WTFLogChannel LogFrames;
-    extern WTFLogChannel LogLoading;
-    extern WTFLogChannel LogPopupBlocking;
-    extern WTFLogChannel LogEvents;
-    extern WTFLogChannel LogEditing;
-    extern WTFLogChannel LogTextConversion;
-    extern WTFLogChannel LogIconDatabase;
-    extern WTFLogChannel LogSQLDatabase;
-    extern WTFLogChannel LogSpellingAndGrammar;
-    extern WTFLogChannel LogBackForward;
-    extern WTFLogChannel LogHistory;
-    extern WTFLogChannel LogPageCache;
-    extern WTFLogChannel LogNetwork;
+const double DefaultPageCacheReleaseInterval = 3;
 
-    void InitializeLoggingChannelsIfNecessary();
+HistoryItemTimer::HistoryItemTimer()
+    : m_timer(this, &HistoryItemTimer::callReleasePageCache)
+{
+}
+
+bool HistoryItemTimer::isActive() const
+{
+    return m_timer.isActive();
+}
+
+void HistoryItemTimer::schedule(double seconds)
+{
+    m_timer.startOneShot(seconds);
+}
+
+void HistoryItemTimer::invalidate()
+{
+    m_timer.stop();
+}
+
+void HistoryItemTimer::callReleasePageCache(Timer<HistoryItemTimer>*)
+{
+    HistoryItem::releasePageCache();
+}
 
 } // namespace WebCore
 
-#endif // Logging_H

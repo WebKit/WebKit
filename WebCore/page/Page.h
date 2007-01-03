@@ -21,6 +21,10 @@
 #ifndef Page_h
 #define Page_h
 
+#include "BackForwardList.h"
+#include "Chrome.h"
+#include "ContextMenuController.h"
+#include "FrameLoaderTypes.h"
 #include "PlatformString.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
@@ -55,6 +59,16 @@ namespace WebCore {
         void setMainFrame(PassRefPtr<Frame>);
         Frame* mainFrame() const { return m_mainFrame.get(); }
 
+        BackForwardList* backForwardList();
+
+        // FIXME: The following three methods don't fall under the responsibilities of the Page object
+        // They seem to fit a hypothetical Page-controller object that would be akin to the 
+        // Frame-FrameLoader relationship.  They have to live here now, but should move somewhere that
+        // makes more sense when that class exists.
+        bool goBack();
+        bool goForward();
+        void goToItem(HistoryItem*, FrameLoadType);
+        
         void setGroupName(const String&);
         String groupName() const { return m_groupName; }
 
@@ -88,6 +102,7 @@ namespace WebCore {
         OwnPtr<SelectionController> m_dragCaretController;
         OwnPtr<FocusController> m_focusController;
         OwnPtr<ContextMenuController> m_contextMenuController;
+        RefPtr<BackForwardList> m_backForwardList;
         OwnPtr<Settings> m_settings;
 
         EditorClient* m_editorClient;
@@ -98,6 +113,7 @@ namespace WebCore {
 
         bool m_defersLoading;
 
+        
 #if PLATFORM(WIN)
         static HINSTANCE s_instanceHandle;
 #endif

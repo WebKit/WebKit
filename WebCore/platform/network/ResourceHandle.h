@@ -85,7 +85,8 @@ public:
     static PassRefPtr<ResourceHandle> create(const ResourceRequest&, ResourceHandleClient*, Frame*, bool defersLoading, bool mightDownloadFromHandle = false);
 
     static void loadResourceSynchronously(const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>& data);
-
+    static bool willLoadFromCache(ResourceRequest&);
+    
     ~ResourceHandle();
 
 #if PLATFORM(MAC)

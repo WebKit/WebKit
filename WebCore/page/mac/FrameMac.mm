@@ -340,18 +340,6 @@ NSString *FrameMac::matchLabelsAgainstElement(NSArray *labels, Element *element)
     return nil;
 }
 
-void FrameMac::setView(FrameView *view)
-{
-    Frame::setView(view);
-    
-#ifdef MULTIPLE_FORM_SUBMISSION_PROTECTION
-    // Only one form submission is allowed per view of a part.
-    // Since this part may be getting reused as a result of being
-    // pulled from the back/forward cache, reset this flag.
-    loader()->resetMultipleFormSubmissionProtection();
-#endif
-}
-
 void FrameMac::setStatusBarText(const String& status)
 {
     String text = status;

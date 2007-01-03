@@ -22,54 +22,64 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
- 
-#ifndef PageState_H
-#define PageState_H
 
-#include "KURL.h"
+#ifndef BackForwardList_H
+#define BackForwardList_H
+
 #include "Shared.h"
 #include <wtf/Forward.h>
-#include <wtf/OwnPtr.h>
-
-namespace KJS {
-    class PausedTimeouts;
-    class SavedBuiltins;
-    class SavedProperties;
-}
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-    class Document;
-    class FrameView;
-    class Node;
-    class Page;
+class HistoryItem;
+typedef Vector<RefPtr<HistoryItem> > HistoryItemVector;
 
-    class PageState : public Shared<PageState> {
-    public:
-        static PassRefPtr<PageState> create(Page*);
-        ~PageState();
+class BackForwardList : public Shared<BackForwardList> {
+public: 
+    BackForwardList();
+    ~BackForwardList();
+    
+    void addItem(PassRefPtr<HistoryItem>);
+    void goBack();
+    void goForward();
+    void goToItem(HistoryItem*);
+        
+    HistoryItem* backItem();
+    HistoryItem* currentItem();
+    HistoryItem* forwardItem();
+    HistoryItem* itemAtIndex(int);
 
-        void clear();
+    void backListWithLimit(int, HistoryItemVector&);
+    void forwardListWithLimit(int, HistoryItemVector&);
 
-        Document* document() { return m_document.get(); }
-        Node* mousePressNode() { return m_mousePressNode.get(); }
-        const KURL& URL() { return m_URL; }
+    int capacity();
+    void setCapacity(int);
+    int backListCount();
+    int forwardListCount();
+    bool containsItem(HistoryItem*);
 
-        void restore(Page*);
+    static void setDefaultPageCacheSize(unsigned);
+    static unsigned defaultPageCacheSize();
+    void setPageCacheSize(unsigned);
+    unsigned pageCacheSize();
+    bool usesPageCache();
+    
+    void close();
+    bool closed();
+    
+    void clearPageCache();
+    void removeItem(HistoryItem*);
+    HistoryItemVector& entries();
+    
+private:
+    HistoryItemVector m_entries;
+    unsigned m_current;
+    unsigned m_capacity;
+    unsigned m_pageCacheSize;
+    bool m_closed;
+}; //class BackForwardList
+    
+}; //namespace WebCore
 
-    private:
-        PageState(Page*);
-
-        RefPtr<Document> m_document;
-        RefPtr<FrameView> m_view;
-        RefPtr<Node> m_mousePressNode;
-        KURL m_URL;
-        OwnPtr<KJS::SavedProperties> m_windowProperties;
-        OwnPtr<KJS::SavedProperties> m_locationProperties;
-        OwnPtr<KJS::SavedBuiltins> m_interpreterBuiltins;
-        OwnPtr<KJS::PausedTimeouts> m_pausedTimeouts;
-    }; // class PageState
-
-} // namespace WebCore
-
-#endif // PageState_H
+#endif //BACKFORWARDLIST_H

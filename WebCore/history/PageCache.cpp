@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
+#include "PageCache.h"
+
+#include "PageState.h"
+#include "SystemTime.h"
+
 namespace WebCore {
-    class Page;
-    class PageState;
+
+PageCache::PageCache()
+    : m_timeStamp(0)
+{
 }
 
-@interface WebCorePageState : NSObject
+void PageCache::setPageState(PassRefPtr<PageState> pageState)
 {
-    WebCore::PageState* m_impl;
+    m_pageState = pageState;
 }
-- (id)initWithPage:(WebCore::Page*)page;
-- (WebCore::PageState*)impl;
-@end
+
+PageCache::~PageCache()
+{
+    close();
+}
+
+PageState* PageCache::pageState()
+{
+    return m_pageState.get();
+}
+
+void PageCache::setDocumentLoader(PassRefPtr<DocumentLoader> loader)
+{
+    m_documentLoader = loader;
+}
+
+DocumentLoader* PageCache::documentLoader()
+{
+    return m_documentLoader.get();
+}
+
+void PageCache::setTimeStamp(double timeStamp)
+{
+    m_timeStamp = timeStamp;
+}
+
+void PageCache::setTimeStampToNow()
+{
+    m_timeStamp = currentTime();
+}
+
+double PageCache::timeStamp() const
+{
+    return m_timeStamp;
+}
+
+} // namespace WebCore

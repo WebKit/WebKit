@@ -60,6 +60,7 @@
 #include "TextBoundaries.h"
 #include "AXObjectCache.h"
 #include "IconLoader.h"
+#include "SystemTime.h"
 
 using namespace WebCore;
 
@@ -136,6 +137,8 @@ namespace WebCore {
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }
     
+float userIdleTime() { notImplemented(); return 0.0; }
+
 }
 
 // vim: ts=4 sw=4 et

@@ -59,6 +59,7 @@ public:
     FormData() { } 
     FormData(const void* data, size_t);
     FormData(const CString&);
+    PassRefPtr<FormData> copy() const;
     
     void appendData(const void* data, size_t);
     void appendFile(const String& filename);
@@ -70,6 +71,8 @@ public:
     const Vector<FormDataElement>& elements() const { return m_elements; }
 
 private:
+     FormData(const FormData&);
+     
      Vector<FormDataElement> m_elements;
 };
 

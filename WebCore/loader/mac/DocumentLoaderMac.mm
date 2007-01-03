@@ -33,6 +33,8 @@
 #import "Event.h"
 #import "FrameLoader.h"
 #import "FrameMac.h"
+#import "HistoryItem.h"
+#import "PageCache.h"
 #import "PlatformString.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
@@ -111,6 +113,7 @@ DocumentLoader::DocumentLoader(const ResourceRequest& req)
     , m_gotFirstByte(false)
     , m_primaryLoadComplete(false)
     , m_isClientRedirect(false)
+    , m_loadingFromPageCache(false)
     , m_stopRecordingResponses(false)
 {
 }
@@ -173,6 +176,19 @@ ResourceRequest& DocumentLoader::actualRequest()
 const KURL& DocumentLoader::URL() const
 {
     return request().url();
+}
+
+bool DocumentLoader::getResponseRefreshAndModifiedHeaders(String& refreshOut, String& modified) const
+{
+    NSURLResponse *response = m_response.nsURLResponse();
+    if (![response isKindOfClass:[NSHTTPURLResponse class]])
+        return false;
+        
+    if (NSString *refresh = [[(NSHTTPURLResponse *)response allHeaderFields] objectForKey:@"Refresh"])
+        refreshOut = refresh;
+    modified = [wkGetNSURLResponseLastModifiedDate(response)
+                descriptionWithCalendarFormat:@"%a %b %d %Y %H:%M:%S" timeZone:nil locale:nil];
+    return true;
 }
 
 const KURL DocumentLoader::unreachableURL() const
@@ -282,7 +298,7 @@ void DocumentLoader::commitIfReady()
 {
     if (m_gotFirstByte && !m_committed) {
         m_committed = true;
-        frameLoader()->commitProvisionalLoad(nil);
+        frameLoader()->commitProvisionalLoad(0);
     }
 }
 
@@ -508,7 +524,7 @@ void DocumentLoader::setTitle(const String& title)
     }
 }
 
-KURL DocumentLoader::URLForHistory() const
+KURL DocumentLoader::urlForHistory() const
 {
     // Return the URL to be used for history and B/F list.
     // Returns nil for WebDataProtocol URLs that aren't alternates 

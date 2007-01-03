@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,37 +20,48 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Logging_H
-#define Logging_H
+#include "config.h"
+#include "HistoryItem.h"
 
-#include <wtf/Assertions.h>
-
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
-#endif
+#include "PageCache.h"
 
 namespace WebCore {
 
-    extern WTFLogChannel LogNotYetImplemented;
-    extern WTFLogChannel LogFrames;
-    extern WTFLogChannel LogLoading;
-    extern WTFLogChannel LogPopupBlocking;
-    extern WTFLogChannel LogEvents;
-    extern WTFLogChannel LogEditing;
-    extern WTFLogChannel LogTextConversion;
-    extern WTFLogChannel LogIconDatabase;
-    extern WTFLogChannel LogSQLDatabase;
-    extern WTFLogChannel LogSpellingAndGrammar;
-    extern WTFLogChannel LogBackForward;
-    extern WTFLogChannel LogHistory;
-    extern WTFLogChannel LogPageCache;
-    extern WTFLogChannel LogNetwork;
+// Notification strings.
+NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotification";
 
-    void InitializeLoggingChannelsIfNecessary();
+id HistoryItem::viewState() const
+{
+    return m_viewState.get();
+}
+
+void HistoryItem::setViewState(id statePList)
+{
+    id newState = [statePList copy];
+    m_viewState = newState;
+    [newState release];
+}
+
+id HistoryItem::getTransientProperty(const String& key) const
+{
+    if (!m_transientProperties)
+        return nil;
+    return m_transientProperties->get(key).get();
+}
+
+void HistoryItem::setTransientProperty(const String& key, id value)
+{
+    if (!m_transientProperties)
+        m_transientProperties.set(new HashMap<String, RetainPtr<id> >);
+    if (value == nil)
+        m_transientProperties->remove(key);
+    else
+        m_transientProperties->set(key, value);
+}
 
 } // namespace WebCore
 
-#endif // Logging_H
+

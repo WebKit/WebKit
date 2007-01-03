@@ -56,11 +56,14 @@ namespace WebCore {
     class Frame;
     class FrameMac;
     class FrameLoader;
+    class HistoryItem;
     class HTMLElement;
     class Node;
     class Page;
     class Range;
 }
+
+typedef WebCore::HistoryItem WebCoreHistoryItem;
 
 WebCore::CSSStyleDeclaration* core(DOMCSSStyleDeclaration *);
 DOMCSSStyleDeclaration *kit(WebCore::CSSStyleDeclaration*);
@@ -97,10 +100,6 @@ WebView *getWebView(WebFrame *webFrame);
     WebFrameView *webFrameView;
 
     WebFrameBridge *bridge;
-    WebHistoryItem *currentItem;        // BF item for our current content
-    WebHistoryItem *provisionalItem;    // BF item for where we're trying to go
-                                        // (only known when navigating to a pre-existing BF item)
-    WebHistoryItem *previousItem;       // BF item for previous content, see _itemForSavingDocState
 
     WebScriptDebugger *scriptDebugger;
     id internalLoadDelegate;
@@ -109,6 +108,8 @@ WebView *getWebView(WebFrame *webFrame);
 }
 @end
 
+#else
+struct WebCoreHistoryItem;
 #endif
 
 @interface WebFrame (WebInternal)
@@ -149,9 +150,6 @@ WebView *getWebView(WebFrame *webFrame);
 
 - (WebFrameBridge *)_bridge;
 
-#ifdef __cplusplus
-- (void)_goToItem:(WebHistoryItem *)item withLoadType:(WebCore::FrameLoadType)type;
-#endif
 - (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer intoChild:(WebFrame *)childFrame;
 
 - (void)_viewWillMoveToHostWindow:(NSWindow *)hostWindow;
@@ -159,14 +157,8 @@ WebView *getWebView(WebFrame *webFrame);
 
 - (void)_addChild:(WebFrame *)child;
 
-- (WebHistoryItem *)_itemForSavingDocState;
-- (WebHistoryItem *)_itemForRestoringDocState;
-
-- (void)_saveDocumentAndScrollState;
-
 + (CFAbsoluteTime)_timeOfLastCompletedLoad;
 - (BOOL)_canCachePage;
-- (void)_purgePageCache;
 
 - (int)_numPendingOrLoadingRequests:(BOOL)recurse;
 
@@ -176,16 +168,6 @@ WebView *getWebView(WebFrame *webFrame);
 - (void)_detachScriptDebugger;
 
 - (void)_recursive_pauseNullEventsForAllNetscapePlugins;
-
-- (void)_setProvisionalItem:(WebHistoryItem *)item;
-- (void)_setPreviousItem:(WebHistoryItem *)item;
-- (void)_setCurrentItem:(WebHistoryItem *)item;
-
-- (void)_saveScrollPositionAndViewStateToItem:(WebHistoryItem *)item;
-
-- (void)_addBackForwardItemClippedAtTarget:(BOOL)doClip;
-
-- (WebHistoryItem *)_createItem:(BOOL)useOriginal;
 
 @end
 

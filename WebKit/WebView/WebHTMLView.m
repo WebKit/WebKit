@@ -5173,6 +5173,12 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     [self _pasteAsPlainTextWithPasteboard:[NSPasteboard generalPasteboard]];
 }
 
+- (void)closeIfNotCurrentView
+{
+    if ([[[self _frame] frameView] documentView] != self)
+        [self close];
+}
+
 #if !BUILDING_ON_TIGER
 
 - (BOOL)isGrammarCheckingEnabled

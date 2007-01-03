@@ -1,3 +1,278 @@
+2007-01-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed extensively and repeatedly by Darin
+
+        <rdar://problem/4887137> - WebCore Back/Forward Cache
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * bridge/mac/WebCorePageState.h: Removed.
+        * bridge/mac/WebCorePageState.mm: Removed.
+
+        * history/BackForwardList.cpp: Added - This largely emulates the design of WebBackForwardList
+        (WebCore::BackForwardList::BackForwardList):
+        (WebCore::BackForwardList::~BackForwardList):
+        (WebCore::BackForwardList::addItem):
+        (WebCore::BackForwardList::goBack):
+        (WebCore::BackForwardList::goForward):
+        (WebCore::BackForwardList::goToItem):
+        (WebCore::BackForwardList::backItem):
+        (WebCore::BackForwardList::currentItem):
+        (WebCore::BackForwardList::forwardItem):
+        (WebCore::BackForwardList::backListWithLimit):
+        (WebCore::BackForwardList::forwardListWithLimit):
+        (WebCore::BackForwardList::capacity):
+        (WebCore::BackForwardList::setCapacity):
+        (WebCore::BackForwardList::setPageCacheSize):
+        (WebCore::BackForwardList::pageCacheSize):
+        (WebCore::BackForwardList::clearPageCache):
+        (WebCore::BackForwardList::usesPageCache):
+        (WebCore::BackForwardList::backListCount):
+        (WebCore::BackForwardList::forwardListCount):
+        (WebCore::BackForwardList::itemAtIndex):
+        (WebCore::BackForwardList::entries):
+        (WebCore::BackForwardList::close):
+        (WebCore::BackForwardList::closed):
+        (WebCore::BackForwardList::removeItem):
+        (WebCore::BackForwardList::containsItem):
+        (WebCore::BackForwardList::setDefaultPageCacheSize):
+        (WebCore::BackForwardList::defaultPageCacheSize):
+        * history/BackForwardList.h: Added.
+
+        * history/HistoryItem.cpp: Added - This largely emulates the design of WebBackForwardList
+        (WebCore::defaultNotifyHistoryItemChanged):
+        (WebCore::HistoryItem::HistoryItem):
+        (WebCore::HistoryItem::~HistoryItem):
+        (WebCore::HistoryItem::copy):
+        (WebCore::HistoryItem::setHasPageCache):
+        (WebCore::HistoryItem::retainIconInDatabase):
+        (WebCore::HistoryItem::urlString):
+        (WebCore::HistoryItem::originalURLString):
+        (WebCore::HistoryItem::title):
+        (WebCore::HistoryItem::alternateTitle):
+        (WebCore::HistoryItem::icon):
+        (WebCore::HistoryItem::lastVisitedTime):
+        (WebCore::HistoryItem::url):
+        (WebCore::HistoryItem::originalURL):
+        (WebCore::HistoryItem::target):
+        (WebCore::HistoryItem::parent):
+        (WebCore::HistoryItem::setAlternateTitle):
+        (WebCore::HistoryItem::setURLString):
+        (WebCore::HistoryItem::setURL):
+        (WebCore::HistoryItem::setOriginalURLString):
+        (WebCore::HistoryItem::setTitle):
+        (WebCore::HistoryItem::setTarget):
+        (WebCore::HistoryItem::setParent):
+        (WebCore::HistoryItem::setLastVisitedTime):
+        (WebCore::HistoryItem::visitCount):
+        (WebCore::HistoryItem::setVisitCount):
+        (WebCore::HistoryItem::scrollPoint):
+        (WebCore::HistoryItem::setScrollPoint):
+        (WebCore::HistoryItem::clearScrollPoint):
+        (WebCore::HistoryItem::setDocumentState):
+        (WebCore::HistoryItem::documentState):
+        (WebCore::HistoryItem::clearDocumentState):
+        (WebCore::HistoryItem::isTargetItem):
+        (WebCore::HistoryItem::setIsTargetItem):
+        (WebCore::HistoryItem::alwaysAttemptToUsePageCache):
+        (WebCore::HistoryItem::setAlwaysAttemptToUsePageCache):
+        (WebCore::HistoryItem::addChildItem):
+        (WebCore::HistoryItem::childItemWithName):
+        (WebCore::HistoryItem::recurseToFindTargetItem):
+        (WebCore::HistoryItem::targetItem):
+        (WebCore::HistoryItem::pageCache):
+        (WebCore::HistoryItem::children):
+        (WebCore::HistoryItem::hasChildren):
+        (WebCore::HistoryItem::formContentType):
+        (WebCore::HistoryItem::formReferrer):
+        (WebCore::HistoryItem::rssFeedReferrer):
+        (WebCore::HistoryItem::setRSSFeedReferrer):
+        (WebCore::HistoryItem::setFormInfoFromRequest):
+        (WebCore::HistoryItem::formData):
+        (WebCore::HistoryItem::mergeAutoCompleteHints):
+        (WebCore::HistoryItem::hasPageCache):
+        (WebCore::timer): Function to manage the global release timer
+        (WebCore::pendingPageCacheToRelease): Function to manage the global queue of caches to be released
+        (WebCore::HistoryItem::releasePageCache):
+        (WebCore::closeObjectsInPendingPageCaches):
+        (WebCore::HistoryItem::releaseAllPendingPageCaches):
+        (WebCore::HistoryItem::scheduleRelease):
+        (WebCore::HistoryItem::print):
+        * history/HistoryItem.h: Added.
+        * history/mac/HistoryItemMac.mm: Added.
+        (WebCore::HistoryItem::viewState): In the future we need a platform agnostic way to manage the view state
+        (WebCore::HistoryItem::setViewState):
+        (WebCore::HistoryItem::getTransientProperty): Transient properties are, for now, only a Mac concept
+        (WebCore::HistoryItem::setTransientProperty):
+
+        * history/HistoryItemTimer.cpp: Added
+        (WebCore::HistoryItemTimer::HistoryItemTimer): We need a specific class to be the history item timer because
+        WebCore::Timers only work when you have an instance of an object, but the caches pending release is a static concept
+        (WebCore::HistoryItemTimer::isActive):
+        (WebCore::HistoryItemTimer::schedule):
+        (WebCore::HistoryItemTimer::invalidate):
+        (WebCore::HistoryItemTimer::callReleasePageCache):
+        * history/HistoryItemTimer.h: Added.
+
+        * history/PageCache.cpp Added - This is a class that contains the fields that used to be in an NSDictionary in WebKit
+        (WebCore::PageCache::PageCache):
+        (WebCore::PageCache::setPageState):
+        (WebCore::PageCache::~PageCache):
+        (WebCore::PageCache::pageState):
+        (WebCore::PageCache::setDocumentLoader):
+        (WebCore::PageCache::documentLoader):
+        (WebCore::PageCache::setTimeStamp):
+        (WebCore::PageCache::setTimeStampToNow):
+        (WebCore::PageCache::timeStamp):
+        * history/PageCache.h: Added.
+        * history/mac/PageCacheMac.mm: Added.
+        (WebCore::PageCache::close):
+        (WebCore::PageCache::setDocumentView): In the future we need a platform agnostic way to manage the documentView
+        (WebCore::PageCache::documentView):
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::loadFromPageCache):
+        (WebCore::DocumentLoader::setLoadingFromPageCache): 
+        (WebCore::DocumentLoader::isLoadingFromPageCache):
+        (WebCore::DocumentLoader::originalURL):
+        (WebCore::DocumentLoader::requestURL):
+        (WebCore::DocumentLoader::responseURL):
+        (WebCore::DocumentLoader::responseMIMEType):
+        * loader/DocumentLoader.h:
+
+        * loader/FrameLoader.cpp: Responsibilities previously scattered in WebKit but concentrated in WebView and WebFrame 
+          are now here, where they should be.
+        (WebCore::FrameLoader::clear):
+        (WebCore::FrameLoader::restoreDocumentState):
+        (WebCore::FrameLoader::goBackOrForward):
+        (WebCore::FrameLoader::provisionalLoadStarted):
+        (WebCore::FrameLoader::canCachePage):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::open):
+        (WebCore::FrameLoader::didFirstLayout):
+        (WebCore::FrameLoader::dispatchDidChangeLocationWithinPage):
+        (WebCore::FrameLoader::dispatchDidFinishLoadToClient):
+        (WebCore::FrameLoader::updateGlobalHistoryForStandardLoad): Marked for usage in future GlobalHistory (uses client for now)
+        (WebCore::FrameLoader::updateGlobalHistoryForReload): Ditto
+        (WebCore::FrameLoader::shouldGoToHistoryItem):
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        (WebCore::FrameLoader::addHistoryItemForFragmentScroll):
+        (WebCore::FrameLoader::loadProvisionalItemFromPageCache):
+        (WebCore::FrameLoader::createPageCache):
+        (WebCore::FrameLoader::shouldTreatURLAsSameAsCurrent):
+        (WebCore::FrameLoader::createItem):
+        (WebCore::FrameLoader::addBackForwardItemClippedAtTarget):
+        (WebCore::FrameLoader::createItemTree):
+        (WebCore::FrameLoader::saveScrollPositionAndViewStateToItem):
+        (WebCore::FrameLoader::restoreScrollPositionAndViewState):
+        (WebCore::FrameLoader::purgePageCache):
+        (WebCore::FrameLoader::invalidateCurrentItemPageCache):
+        (WebCore::FrameLoader::saveDocumentState):
+        (WebCore::FrameLoader::loadItem):
+        (WebCore::FrameLoader::urlsMatchItem):
+        (WebCore::FrameLoader::goToItem):
+        (WebCore::FrameLoader::recursiveGoToItem):
+        (WebCore::FrameLoader::childFramesMatchItem):
+        (WebCore::FrameLoader::updateHistoryForStandardLoad):
+        (WebCore::FrameLoader::updateHistoryForClientRedirect):
+        (WebCore::FrameLoader::updateHistoryForBackForwardNavigation):
+        (WebCore::FrameLoader::updateHistoryForReload):
+        (WebCore::FrameLoader::updateHistoryForInternalLoad):
+        (WebCore::FrameLoader::updateHistoryForCommit):
+        (WebCore::FrameLoader::saveDocumentAndScrollState):
+        (WebCore::FrameLoader::currentHistoryItem):
+        (WebCore::FrameLoader::previousHistoryItem):
+        (WebCore::FrameLoader::provisionalHistoryItem):
+        (WebCore::FrameLoader::setCurrentHistoryItem):
+        (WebCore::FrameLoader::setPreviousHistoryItem):
+        (WebCore::FrameLoader::setProvisionalHistoryItem):
+        * loader/FrameLoader.h:
+
+        * loader/FrameLoaderClient.h:
+
+        * loader/mac/DocumentLoaderMac.mm:
+        (WebCore::DocumentLoader::DocumentLoader):
+        (WebCore::DocumentLoader::getResponseRefreshAndModifiedHeaders):
+        (WebCore::DocumentLoader::commitIfReady):
+        (WebCore::DocumentLoader::urlForHistory):
+
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::startLoading):
+        (WebCore::FrameLoader::receivedMainResourceError):
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+        (WebCore::FrameLoader::opened):
+        (WebCore::FrameLoader::dataURLBaseFromRequest):
+        (WebCore::FrameLoader::didChangeTitle):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::removeChild):
+
+        * page/Page.cpp: Transfered a handful of concepts from WebView
+        (WebCore::Page::Page):
+        (WebCore::Page::~Page):
+        (WebCore::Page::backForwardList):
+        (WebCore::Page::goBack):
+        (WebCore::Page::goForward):
+        (WebCore::Page::goToItem):
+        * page/Page.h:
+
+        * page/PageState.h:
+        * page/mac/FrameMac.h:
+        * page/mac/FrameMac.mm:
+        * page/mac/WebCoreFrameBridge.h:
+        * page/mac/WebCoreFrameBridge.mm:
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::print):  Added debug only method for debugging convenience
+        * platform/KURL.h:
+
+        * platform/Logging.cpp:
+        (WebCore::): Added some logging channels
+        * platform/Logging.h:
+
+        * platform/PlatformString.h:
+        (WebCore::nsStringNilIfEmpty): Added for WebKit use
+
+        * platform/SystemTime.h: Added userIdleTime()
+
+        * platform/graphics/svg/SVGImage.cpp:
+        * platform/graphics/svg/SVGImageEmptyClients.h: Updated for new FrameLoaderClient methods
+        (WebCore::SVGEmptyFrameLoaderClient::setDocumentViewFromPageCache):
+        (WebCore::SVGEmptyFrameLoaderClient::updateGlobalHistoryForStandardLoad):
+        (WebCore::SVGEmptyFrameLoaderClient::updateGlobalHistoryForReload):
+        (WebCore::SVGEmptyFrameLoaderClient::shouldGoToHistoryItem):
+        (WebCore::SVGEmptyFrameLoaderClient::saveScrollPositionAndViewStateToItem):
+        (WebCore::SVGEmptyFrameLoaderClient::saveDocumentViewToPageCache):
+        (WebCore::SVGEmptyFrameLoaderClient::canCachePage):
+        (WebCore::SVGEmptyEditorClient::~SVGEmptyEditorClient):
+
+        * platform/mac/LoggingMac.mm:
+        (WebCore::InitializeLoggingChannelsIfNecessary):
+
+        * platform/mac/SystemTimeMac.cpp:
+        (WebCore::userIdleTime):
+
+        * platform/mac/WebCoreSystemInterface.h: Added wkSecondsSinceLastInput for use in userIdleTime
+        * platform/mac/WebCoreSystemInterface.mm:
+
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::FormData):
+        (WebCore::FormData::copy):
+        * platform/network/FormData.h:
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::willLoadFromCache): For "are you sure you want to resubmit?" nag
+
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (WebCore::userIdleTime):
+        * rendering/RenderPart.h:
+
 2007-01-02  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Mitz.

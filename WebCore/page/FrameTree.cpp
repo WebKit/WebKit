@@ -93,7 +93,8 @@ void FrameTree::removeChild(Frame* child)
     RefPtr<Frame>& newLocationForNext = m_firstChild == child ? m_firstChild : child->tree()->m_previousSibling->tree()->m_nextSibling;
     Frame*& newLocationForPrevious = m_lastChild == child ? m_lastChild : child->tree()->m_nextSibling->tree()->m_previousSibling;
     swap(newLocationForNext, child->tree()->m_nextSibling);
-    swap(newLocationForPrevious, child->tree()->m_previousSibling);
+    // For some inexplicable reason, the following line does not compile without the explicit std:: namepsace
+    std::swap(newLocationForPrevious, child->tree()->m_previousSibling);
 
     child->tree()->m_previousSibling = 0;
     child->tree()->m_nextSibling = 0;

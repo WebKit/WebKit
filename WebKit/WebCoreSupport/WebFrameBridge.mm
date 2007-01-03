@@ -417,23 +417,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return newFrame.get();
 }
 
-- (void)saveDocumentState:(NSArray *)documentState
-{
-    WebHistoryItem *item = [_frame _itemForSavingDocState];
-    LOG(Loading, "%@: saving form state from to 0x%x", [_frame name], item);
-    if (item)
-        [item setDocumentState:documentState];
-        // You might think we could save the scroll state here too, but unfortunately this
-        // often gets called after WebFrame::_transitionToCommitted has restored the scroll
-        // position of the next document.
-}
-
-- (NSArray *)documentState
-{
-    LOG(Loading, "%@: restoring form state from item 0x%x", [_frame name], [_frame _itemForRestoringDocState]);
-    return [[_frame _itemForRestoringDocState] documentState];
-}
-
 - (NSString *)userAgentForURL:(NSURL *)URL
 {
     return [[self webView] userAgentForURL:URL];
@@ -821,31 +804,6 @@ static BOOL loggedObjectCacheSize = NO;
     if (distance < 0 && -distance <= [[[self webView] backForwardList] backListCount])
         return YES;
     return NO;
-}
-
-- (void)goBackOrForward:(int)distance
-{
-    if (distance == 0)
-        return;
-    WebView *webView = [self webView];
-    WebBackForwardList *list = [webView backForwardList];
-    WebHistoryItem *item = [list itemAtIndex:distance];
-    if (!item) {
-        if (distance > 0) {
-            int forwardListCount = [list forwardListCount];
-            if (forwardListCount > 0) {
-                item = [list itemAtIndex:forwardListCount];
-            }
-        } else {
-            int backListCount = [list forwardListCount];
-            if (backListCount > 0) {
-                item = [list itemAtIndex:-backListCount];
-            }
-        }
-    }
-    if (item) {
-        [webView goToBackForwardItem:item];
-    }
 }
 
 - (NSURL*)historyURL:(int)distance

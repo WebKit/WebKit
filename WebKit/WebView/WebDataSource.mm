@@ -68,7 +68,6 @@ using namespace WebCore;
    
     id <WebDocumentRepresentation> representation;
     
-    BOOL loadingFromPageCache;
     WebUnarchivingState *unarchivingState;
     NSMutableDictionary *subresources;
     BOOL representationFinishedLoading;
@@ -184,11 +183,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     }
 }
 
-- (void)_setLoadingFromPageCache:(BOOL)loadingFromPageCache
-{
-    _private->loadingFromPageCache = loadingFromPageCache;
-}
-
 - (void)_clearUnarchivingState
 {
     [_private->unarchivingState release];
@@ -289,14 +283,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     return URL.isEmpty() ? nil : URL.getNSURL();
 }
 
-- (void)_loadFromPageCache:(NSDictionary *)pageCache
-{
-    _private->loader->prepareForLoadStart();
-    _private->loadingFromPageCache = YES;
-    _private->loader->setCommitted(true);
-    _private->loader->frameLoader()->commitProvisionalLoad(pageCache);
-}
-
 - (WebArchive *)_popSubframeArchiveWithName:(NSString *)frameName
 {
     return [_private->unarchivingState popSubframeArchiveWithFrameName:frameName];
@@ -319,11 +305,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     return [WebView canShowMIMETypeAsHTML:MIMEType];
 }
 
-- (BOOL)_loadingFromPageCache
-{
-    return _private->loadingFromPageCache;
-}
-
 -(void)_makeRepresentation
 {
     Class repClass = [[self class] _representationClassForMIMEType:[[self response] MIMEType]];
@@ -336,12 +317,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     }
     
     [_private->representation setDataSource:self];
-}
-
-- (NSURL *)_URLForHistory
-{
-    KURL url = _private->loader->URLForHistory();
-    return url.isEmpty() ? nil : [url.getNSURL() _webkit_canonicalize];
 }
 
 - (void)_addToUnarchiveState:(WebArchive *)archive

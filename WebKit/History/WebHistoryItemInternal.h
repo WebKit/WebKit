@@ -30,50 +30,33 @@
 
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebHistoryItem.h>
+#import <wtf/PassRefPtr.h>
+
+namespace WebCore {
+    class HistoryItem;
+}
+
+WebCore::HistoryItem* core(WebHistoryItem *item);
+WebHistoryItem *kit(WebCore::HistoryItem* item);
+
+extern void WKNotifyHistoryItemChanged();
 
 @interface WebHistoryItem (WebInternal)
-- (void)_retainIconInDatabase:(BOOL)retain;
-- (BOOL)hasPageCache;
-- (void)setHasPageCache:(BOOL)f;
-- (NSMutableDictionary *)pageCache;
 
 + (WebHistoryItem *)entryWithURL:(NSURL *)URL;
++ (void)initWindowWatcherIfNecessary;
 
 - (id)initWithURL:(NSURL *)URL target:(NSString *)target parent:(NSString *)parent title:(NSString *)title;
-
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict;
-
-- (NSString *)parent;
-
-
-- (NSPoint)scrollPoint;
-- (NSArray *)documentState;
-- (NSData *)formData;
-- (NSString *)formContentType;
-- (NSString *)formReferrer;
-- (id)viewState;
+- (id)initWithWebCoreHistoryItem:(PassRefPtr<WebCore::HistoryItem>)item;
 
 - (void)_mergeAutoCompleteHints:(WebHistoryItem *)otherItem;
-
-- (void)setURL:(NSURL *)URL;
-- (void)setURLString:(NSString *)string;
-- (void)setOriginalURLString:(NSString *)URL;
-- (void)setTarget:(NSString *)target;
-- (void)setParent:(NSString *)parent;
 - (void)setTitle:(NSString *)title;
-- (void)setScrollPoint:(NSPoint)p;
-- (void)setDocumentState:(NSArray *)state;
-- (void)setIsTargetItem:(BOOL)flag;
-- (void)_setFormInfoFromRequest:(NSURLRequest *)request;
-- (void)setVisitCount:(int)count;
-- (void)setViewState:(id)statePList;
 
-
-- (void)addChildItem:(WebHistoryItem *)item;
-- (WebHistoryItem *)childItemWithName:(NSString *)name;
-
-- (BOOL)alwaysAttemptToUsePageCache;
-
+// Transient properties may be of any ObjC type.  They are intended to be used to store state per back/forward list entry.
+// The properties will not be persisted; when the history item is removed, the properties will be lost.
+- (id)_transientPropertyForKey:(NSString *)key;
+- (void)_setTransientProperty:(id)property forKey:(NSString *)key;
 
 @end
 
@@ -82,4 +65,5 @@
 - (BOOL)_usesPageCache;
 - (void)_clearPageCache;
 @end
+
 

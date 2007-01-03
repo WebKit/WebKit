@@ -36,6 +36,17 @@ FormData::FormData(const CString& s)
     appendData(s.data(), s.length());
 }
 
+FormData::FormData(const FormData& data)
+    : Shared<FormData>()
+    , m_elements(data.m_elements)
+{
+}
+
+PassRefPtr<FormData> FormData::copy() const
+{
+    return new FormData(*this);
+}
+
 void FormData::appendData(const void* data, size_t size)
 {
     if (m_elements.isEmpty() || m_elements.last().m_type != FormDataElement::data)
