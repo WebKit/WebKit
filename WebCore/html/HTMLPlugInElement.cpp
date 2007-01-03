@@ -29,7 +29,9 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "HTMLNames.h"
+#include "RenderWidget.h"
 #include "Settings.h"
+#include "Widget.h"
 #include "kjs_dom.h"
 #include "kjs_proxy.h"
 
@@ -155,6 +157,16 @@ void HTMLPlugInElement::detach()
     }
     
     HTMLElement::detach();
+}
+
+void HTMLPlugInElement::defaultEventHandler(Event* event)
+{
+    RenderObject* r = renderer();
+    if (!r || !r->isWidget())
+        return;
+
+    if (Widget* widget = static_cast<RenderWidget*>(r)->widget())
+        widget->handleEvent(event);
 }
 
 #if USE(NPOBJECT)

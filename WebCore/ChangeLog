@@ -1,3 +1,15 @@
+2007-01-03  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+        
+        Allow plugin elements to handle off events to their widgets.
+        
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::defaultEventHandler):
+        * html/HTMLPlugInElement.h:
+        * platform/Widget.h:
+        (WebCore::Widget::handleEvent):
+
 2007-01-03  Lars Knoll <lars@trolltech.com>
 
         Fix the Qt build
