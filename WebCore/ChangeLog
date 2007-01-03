@@ -1,3 +1,18 @@
+2007-01-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin and Geoff
+
+        http://bugs.webkit.org/show_bug.cgi?id=12105 - Crash visiting Acid2 test page
+        -Replace lost "free nil checking" in the WebKit->WebCore conversion of the BackForwardList
+        -Changed ::createItem and ::createItemTree to ::createHistoryItem and ::createHistoryItemTree
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createHistoryItem):
+        (WebCore::FrameLoader::addBackForwardItemClippedAtTarget):
+        (WebCore::FrameLoader::createHistoryItemTree):
+        (WebCore::FrameLoader::updateHistoryForInternalLoad):
+        * loader/FrameLoader.h:
+
 2007-01-03  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

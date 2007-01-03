@@ -477,8 +477,8 @@ namespace WebCore {
         void setProvisionalHistoryItem(PassRefPtr<HistoryItem>);
         
     private:        
-        PassRefPtr<HistoryItem> createItem(bool useOriginal);
-        PassRefPtr<HistoryItem> createItemTree(Frame* targetFrame, bool clipAtTarget);
+        PassRefPtr<HistoryItem> createHistoryItem(bool useOriginal);
+        PassRefPtr<HistoryItem> createHistoryItemTree(Frame* targetFrame, bool clipAtTarget);
 
         void addBackForwardItemClippedAtTarget(bool doClip);
         void restoreScrollPositionAndViewState();

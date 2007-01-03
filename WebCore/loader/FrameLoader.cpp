@@ -2563,10 +2563,9 @@ bool FrameLoader::shouldTreatURLAsSameAsCurrent(const KURL& URL) const
     return URL == m_currentHistoryItem->url() || URL == m_currentHistoryItem->originalURL();
 }
 
-PassRefPtr<HistoryItem> FrameLoader::createItem(bool useOriginal)
+PassRefPtr<HistoryItem> FrameLoader::createHistoryItem(bool useOriginal)
 {
     DocumentLoader* docLoader = documentLoader();
-    ASSERT(docLoader);
     
     KURL unreachableURL = docLoader ? docLoader->unreachableURL() : KURL();
     
@@ -2580,9 +2579,8 @@ PassRefPtr<HistoryItem> FrameLoader::createItem(bool useOriginal)
         originalURL = docLoader ? docLoader->originalURL() : KURL();
         if (useOriginal)
             url = originalURL;
-        else
-            if (docLoader)
-                url = docLoader->requestURL();                
+        else if (docLoader)
+            url = docLoader->requestURL();                
     }
 
     LOG (History, "WebCoreHistory - Creating item for %s", url.url().ascii());
@@ -2597,15 +2595,17 @@ PassRefPtr<HistoryItem> FrameLoader::createItem(bool useOriginal)
     if (originalURL.isEmpty())
         originalURL = KURL("about:blank");
     
-    RefPtr<HistoryItem> item = new HistoryItem(url, m_frame->tree()->name(), m_frame->tree()->parent() ? m_frame->tree()->parent()->tree()->name() : "", docLoader->title());
+    RefPtr<HistoryItem> item = new HistoryItem(url, m_frame->tree()->name(), m_frame->tree()->parent() ? m_frame->tree()->parent()->tree()->name() : "", docLoader ? docLoader->title() : "");
     item->setOriginalURLString(originalURL.url());
     
     // Save form state if this is a POST
-    if (useOriginal)
-        item->setFormInfoFromRequest(docLoader->originalRequest());
-    else
-        item->setFormInfoFromRequest(docLoader->request());
-        
+    if (docLoader) {
+        if (useOriginal)
+            item->setFormInfoFromRequest(docLoader->originalRequest());
+        else
+            item->setFormInfoFromRequest(docLoader->request());
+    }
+    
     // Set the item for which we will save document state
     m_previousHistoryItem = m_currentHistoryItem;
     m_currentHistoryItem = item;
@@ -2618,23 +2618,23 @@ void FrameLoader::addBackForwardItemClippedAtTarget(bool doClip)
     if (!documentLoader()->urlForHistory().isEmpty()) {
         Frame* mainFrame = m_frame->page()->mainFrame();
         ASSERT(mainFrame);
-        RefPtr<HistoryItem> item = mainFrame->loader()->createItemTree(m_frame, doClip);
+        RefPtr<HistoryItem> item = mainFrame->loader()->createHistoryItemTree(m_frame, doClip);
         LOG(BackForward, "WebCoreBackForward - Adding backforward item %p for frame %s", item.get(), documentLoader()->URL().url().ascii());
         ASSERT(m_frame->page());
         m_frame->page()->backForwardList()->addItem(item);
     }
 }
 
-PassRefPtr<HistoryItem> FrameLoader::createItemTree(Frame* targetFrame, bool clipAtTarget)
+PassRefPtr<HistoryItem> FrameLoader::createHistoryItemTree(Frame* targetFrame, bool clipAtTarget)
 {
-    RefPtr<HistoryItem> bfItem = createItem(m_frame->tree()->parent() ? true : false);
+    RefPtr<HistoryItem> bfItem = createHistoryItem(m_frame->tree()->parent() ? true : false);
     if (m_previousHistoryItem)
         saveScrollPositionAndViewStateToItem(m_previousHistoryItem.get());
     if (!(clipAtTarget && m_frame == targetFrame)) {
         // save frame state for items that aren't loading (khtml doesn't save those)
         saveDocumentState();
         for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-            bfItem->addChildItem(child->loader()->createItemTree(targetFrame, clipAtTarget));
+            bfItem->addChildItem(child->loader()->createHistoryItemTree(targetFrame, clipAtTarget));
     }
     if (m_frame == targetFrame)
         bfItem->setIsTargetItem(true);
@@ -3053,7 +3053,7 @@ void FrameLoader::updateHistoryForInternalLoad()
     // empty URL, which doesn't set up a current item in that parent.
     if (parentFrame) {
         if (parentFrame->loader()->m_currentHistoryItem)
-            parentFrame->loader()->m_currentHistoryItem->addChildItem(createItem(true));
+            parentFrame->loader()->m_currentHistoryItem->addChildItem(createHistoryItem(true));
     } else {
         // See 3556159. It's not clear if it's valid to be in FrameLoadTypeOnLoadEvent
         // for a top-level frame, but that was a likely explanation for those crashes,
