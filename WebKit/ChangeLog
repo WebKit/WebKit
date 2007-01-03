@@ -1,3 +1,27 @@
+2007-01-02  Brady Eidson <beidson@apple.com>
+
+        Controversially reviewed by Tim H. and Maciej
+
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=12086, http://bugs.webkit.org/show_bug.cgi?id=12088, 
+        possibly http://bugs.webkit.org/show_bug.cgi?id=12087, and probably a slew of others
+
+        WebHistoryItems returned from the WebBackForwardList accessors were being release/retained out-of-order
+        by the Safari app.  This bug never surfaced before because the WebBackForwardList had a retain on the 
+        item, preventing deallocation. Since the items are now just temporary wrappers, the list 
+        is no longer actually retaining them.
+
+        This solution is to simulate the ownership with a [[id retain] autorelease] - gross, but maybe the 
+        only solution for now...  =/
+
+        We can possibly consider reverting this fix at a later date - that task is marked by
+        <rdar://problem/4905705>
+
+        * History/WebBackForwardList.mm:
+        (-[WebBackForwardList backItem]):
+        (-[WebBackForwardList currentItem]):
+        (-[WebBackForwardList forwardItem]):
+        (-[WebBackForwardList itemAtIndex:]):
+
 2007-01-02  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff.

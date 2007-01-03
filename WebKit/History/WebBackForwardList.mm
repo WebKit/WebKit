@@ -189,17 +189,17 @@ WebBackForwardList *kit(BackForwardList* list)
 
 - (WebHistoryItem *)backItem
 {
-    return kit(core(_private)->backItem());
+    return [[kit(core(_private)->backItem()) retain] autorelease];
 }
 
 - (WebHistoryItem *)currentItem
 {
-    return kit(core(_private)->currentItem());
+    return [[kit(core(_private)->currentItem()) retain] autorelease];
 }
 
 - (WebHistoryItem *)forwardItem
 {
-    return kit(core(_private)->forwardItem());
+    return [[kit(core(_private)->forwardItem()) retain] autorelease];
 }
 
 static NSArray* vectorToNSArray(HistoryItemVector& list)
@@ -304,7 +304,7 @@ static NSArray* vectorToNSArray(HistoryItemVector& list)
 
 - (WebHistoryItem *)itemAtIndex:(int)index
 {
-    return kit(core(_private)->itemAtIndex(index));
+    return [[kit(core(_private)->itemAtIndex(index)) retain] autorelease];
 }
 
 @end
