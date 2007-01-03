@@ -154,7 +154,13 @@ void WKNotifyHistoryItemChanged()
 
 - (NSImage *)icon
 {
-    return core(_private)->icon()->getNSImage();
+    return [[WebIconDatabase sharedIconDatabase] iconForURL:[self URLString] withSize:WebIconSmallSize];
+    
+    // FIXME: Ideally, this code should simply be the following -
+    // return core(_private)->icon()->getNSImage();
+    // Once radar -
+    // <rdar://problem/4906567> - NSImage returned from WebCore::Image may be incorrect size
+    // is resolved
 }
 
 - (NSTimeInterval)lastVisitedTimeInterval
