@@ -335,6 +335,8 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     if (!appName)
         appName = UI_STRING("Finder", "Default application name for Open With context menu");
     
+    // To match the PDFKit style, we'll add Open with Preview even when there's no document yet to view, and
+    // disable it using validateUserInterfaceItem.
     NSString *title = [NSString stringWithFormat:UI_STRING("Open with %@", "context menu item for PDF"), appName];
     NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:@selector(_openWithFinder:) keyEquivalent:@""];
     [item setTag:WebMenuItemTagOpenWithDefaultApplication];
@@ -444,6 +446,9 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     SEL action = [item action];    
     if (action == @selector(takeFindStringFromSelection:) || action == @selector(centerSelectionInVisibleArea:) || action == @selector(jumpToSelection:))
         return [PDFSubview currentSelection] != nil;
+    
+    if (action == @selector(_openWithFinder:))
+        return [PDFSubview document] != nil;
 
     return YES;
 }
@@ -1000,6 +1005,12 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 - (void)_openWithFinder:(id)sender
 {
+    // We don't want to write the file until we have a document to write (see 4892525).
+    if (![PDFSubview document]) {
+        NSBeep();
+        return;
+    }
+    
     NSString *opath = [self _path];
     
     if (opath) {

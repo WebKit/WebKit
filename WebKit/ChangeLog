@@ -1,3 +1,19 @@
+2007-01-02  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin Decker
+
+        - fixed <rdar://problem/4892525> Cannot open PDF in Preview if you attempted to 
+          open it in Preview while PDF was loading
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView menuForEvent:]):
+        added comment
+        (-[WebPDFView validateUserInterfaceItem:]):
+        disable this menu item when there's no document yet
+        (-[WebPDFView _openWithFinder:]):
+        If this is invoked when there is no document yet (e.g. via the PDFKit delegate method), 
+        just beep and return. I should make a nice error message here, but I'll do that separately.
+
 2007-01-03  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Timothy.
