@@ -36,6 +36,50 @@ namespace WebCore {
     String submitButtonDefaultLabel();
     String fileButtonChooseFileLabel();
     String fileButtonNoFileSelectedLabel();
+    String contextMenuItemTagOpenLinkInNewWindow();
+    String contextMenuItemTagDownloadLinkToDisk();
+    String contextMenuItemTagCopyLinkToClipboard();
+    String contextMenuItemTagOpenImageInNewWindow();
+    String contextMenuItemTagDownloadImageToDisk();
+    String contextMenuItemTagCopyImageToClipboard();
+    String contextMenuItemTagOpenFrameInNewWindow();
+    String contextMenuItemTagCopy();
+    String contextMenuItemTagGoBack();
+    String contextMenuItemTagGoForward();
+    String contextMenuItemTagStop();
+    String contextMenuItemTagReload();
+    String contextMenuItemTagCut();
+    String contextMenuItemTagPaste();
+    String contextMenuItemTagNoGuessesFound();
+    String contextMenuItemTagIgnoreSpelling();
+    String contextMenuItemTagLearnSpelling();
+    String contextMenuItemTagSearchWeb();
+    String contextMenuItemTagLookUpInDictionary();
+    String contextMenuItemTagOpenLink();
+    String contextMenuItemTagIgnoreGrammar();
+    String contextMenuItemTagSpellingMenu();
+    String contextMenuItemTagShowSpellingPanel(bool show);
+    String contextMenuItemTagCheckSpelling();
+    String contextMenuItemTagCheckSpellingWhileTyping();
+    String contextMenuItemTagCheckGrammarWithSpelling();
+    String contextMenuItemTagFontMenu();
+    String contextMenuItemTagBold();
+    String contextMenuItemTagItalic();
+    String contextMenuItemTagUnderline();
+    String contextMenuItemTagOutline();
+    String contextMenuItemTagWritingDirectionMenu();
+    String contextMenuItemTagDefaultDirection();
+    String contextMenuItemTagLeftToRight();
+    String contextMenuItemTagRightToLeft();
+#if PLATFORM(MAC)
+    String contextMenuItemTagSearchInSpotlight();
+    String contextMenuItemTagShowFonts();
+    String contextMenuItemTagStyles();
+    String contextMenuItemTagShowColors();
+    String contextMenuItemTagSpeechMenu();
+    String contextMenuItemTagStartSpeaking();
+    String contextMenuItemTagStopSpeaking();
+#endif
 
 }
 

@@ -149,6 +149,234 @@
     return [NSUserDefaults _webkit_preferredLanguageCode];
 }
 
+- (NSString *)contextMenuItemTagOpenLinkInNewWindow
+{
+    return UI_STRING("Open Link in New Window", "Open in New Window context menu item");
+}
+
+- (NSString *)contextMenuItemTagDownloadLinkToDisk
+{
+    return UI_STRING("Download Linked File", "Download Linked File context menu item");
+}
+
+- (NSString *)contextMenuItemTagCopyLinkToClipboard
+{
+    return UI_STRING("Copy Link", "Copy Link context menu item");
+}
+
+- (NSString *)contextMenuItemTagOpenImageInNewWindow
+{
+    return UI_STRING("Open Image in New Window", "Open Image in New Window context menu item");
+}
+
+- (NSString *)contextMenuItemTagDownloadImageToDisk
+{
+    return UI_STRING("Download Image", "Download Image context menu item");
+}
+
+- (NSString *)contextMenuItemTagCopyImageToClipboard
+{
+    return UI_STRING("Copy Image", "Copy Image context menu item");
+}
+
+- (NSString *)contextMenuItemTagOpenFrameInNewWindow
+{
+    return UI_STRING("Open Frame in New Window", "Open Frame in New Window context menu item");
+}
+
+- (NSString *)contextMenuItemTagCopy
+{
+    return UI_STRING("Copy", "Copy context menu item");
+}
+
+- (NSString *)contextMenuItemTagGoBack
+{
+    return UI_STRING("Back", "Back context menu item");
+}
+
+- (NSString *)contextMenuItemTagGoForward
+{
+    return UI_STRING("Forward", "Forward context menu item");
+}
+
+- (NSString *)contextMenuItemTagStop
+{
+    return UI_STRING("Stop", "Stop context menu item");
+}
+
+- (NSString *)contextMenuItemTagReload
+{
+    return UI_STRING("Reload", "Reload context menu item");
+}
+
+- (NSString *)contextMenuItemTagCut
+{
+    return UI_STRING("Cut", "Cut context menu item");
+}
+
+- (NSString *)contextMenuItemTagPaste
+{
+    return UI_STRING("Paste", "Paste context menu item");
+}
+
+- (NSString *)contextMenuItemTagNoGuessesFound
+{
+    return UI_STRING("No Guesses Found", "No Guesses Found context menu item");
+}
+
+- (NSString *)contextMenuItemTagIgnoreSpelling
+{
+    return UI_STRING("Ignore Spelling", "Ignore Spelling context menu item");
+}
+
+- (NSString *)contextMenuItemTagLearnSpelling
+{
+    return UI_STRING("Learn Spelling", "Learn Spelling context menu item");
+}
+
+- (NSString *)contextMenuItemTagSearchInSpotlight
+{
+    return UI_STRING("Search in Spotlight", "Search in Spotlight context menu item");
+}
+
+- (NSString *)contextMenuItemTagSearchWeb
+{
+    return UI_STRING("Search in Google", "Search in Google context menu item");
+}
+
+- (NSString *)contextMenuItemTagLookUpInDictionary
+{
+    return UI_STRING("Look Up in Dictionary", "Look Up in Dictionary context menu item");
+}
+
+- (NSString *)contextMenuItemTagOpenLink
+{
+    return UI_STRING("Open Link", "Open Link context menu item");
+}
+
+- (NSString *)contextMenuItemTagIgnoreGrammar
+{
+    return UI_STRING("Ignore Grammar", "Ignore Grammar context menu item");
+}
+
+- (NSString *)contextMenuItemTagSpellingMenu
+{
+#ifndef BUILDING_ON_TIGER
+    return UI_STRING("Spelling and Grammar", "Spelling and Grammar context sub-menu item");
+#else
+    return UI_STRING("Spelling", "Spelling context sub-menu item");
+#endif
+}
+
+- (NSString *)contextMenuItemTagShowSpellingPanel:(bool)show
+{
+#ifndef BUILDING_ON_TIGER
+    if (show)
+        return UI_STRING("Show Spelling and Grammar", "menu item title");
+    return UI_STRING("Hide Spelling and Grammar", "menu item title");
+#else
+    return UI_STRING("Spelling...", "menu item title");
+#endif
+}
+
+- (NSString *)contextMenuItemTagCheckSpelling
+{
+#ifndef BUILDING_ON_TIGER
+    return UI_STRING("Check Document Now", "Check spelling context menu item");
+#else
+    return UI_STRING("Check Spelling", "Check spelling context menu item");
+#endif
+}
+
+- (NSString *)contextMenuItemTagCheckSpellingWhileTyping
+{
+#ifndef BUILDING_ON_TIGER
+    return UI_STRING("Check Spelling While Typing", "Check spelling while typing context menu item");
+#else
+    return UI_STRING("Check Spelling as You Type", "Check spelling while typing context menu item");
+#endif
+}
+
+- (NSString *)contextMenuItemTagCheckGrammarWithSpelling
+{
+    return UI_STRING("Check Grammar With Spelling", "Check grammar with spelling context menu item");
+}
+
+- (NSString *)contextMenuItemTagFontMenu
+{
+    return UI_STRING("Font", "Font context sub-menu item");
+}
+
+- (NSString *)contextMenuItemTagShowFonts
+{
+    return UI_STRING("Show Fonts", "Show fonts context menu item");
+}
+
+- (NSString *)contextMenuItemTagBold
+{
+    return UI_STRING("Bold", "Bold context menu item");
+}
+
+- (NSString *)contextMenuItemTagItalic
+{
+    return UI_STRING("Italic", "Italic context menu item");
+}
+
+- (NSString *)contextMenuItemTagUnderline
+{
+    return UI_STRING("Underline", "Underline context menu item");
+}
+
+- (NSString *)contextMenuItemTagOutline
+{
+    return UI_STRING("Outline", "Outline context menu item");
+}
+
+- (NSString *)contextMenuItemTagStyles
+{
+    return UI_STRING("Styles...", "Styles context menu item");
+}
+
+- (NSString *)contextMenuItemTagShowColors
+{
+    return UI_STRING("Show colors", "Show colors context menu item");
+}
+
+- (NSString *)contextMenuItemTagSpeechMenu
+{
+    return UI_STRING("Speech", "Speech context sub-menu item");
+}
+
+- (NSString *)contextMenuItemTagStartSpeaking
+{
+    return UI_STRING("Start Speaking", "Start speaking context menu item");
+}
+
+- (NSString *)contextMenuItemTagStopSpeaking
+{
+    return UI_STRING("Stop Speaking", "Stop speaking context menu item");
+}
+
+- (NSString *)contextMenuItemTagWritingDirectionMenu
+{
+    return UI_STRING("Writing Direction", "Writing direction context sub-menu item");
+}
+
+- (NSString *)contextMenuItemTagDefaultDirection
+{
+    return UI_STRING("Default", "Default writing direction context menu item");
+}
+
+- (NSString *)contextMenuItemTagLeftToRight
+{
+    return UI_STRING("Left to Right", "Left to Right context menu item");
+}
+
+- (NSString *)contextMenuItemTagRightToLeft
+{
+    return UI_STRING("Right to Left", "Right to Left context menu item");
+}
+
 - (BOOL)objectIsTextMarker:(id)object
 {
     return object != nil && CFGetTypeID(object) == WKGetAXTextMarkerTypeID();

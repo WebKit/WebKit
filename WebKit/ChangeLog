@@ -1,3 +1,55 @@
+2007-01-03  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by John.
+
+        Make localized strings for all of the context menu item titles that 
+        are accessible to WebCore.
+
+        * English.lproj/Localizable.strings:
+        * WebCoreSupport/WebViewFactory.m:
+        (-[WebViewFactory contextMenuItemTagOpenLinkInNewWindow]):
+        (-[WebViewFactory contextMenuItemTagDownloadLinkToDisk]):
+        (-[WebViewFactory contextMenuItemTagCopyLinkToClipboard]):
+        (-[WebViewFactory contextMenuItemTagOpenImageInNewWindow]):
+        (-[WebViewFactory contextMenuItemTagDownloadImageToDisk]):
+        (-[WebViewFactory contextMenuItemTagCopyImageToClipboard]):
+        (-[WebViewFactory contextMenuItemTagOpenFrameInNewWindow]):
+        (-[WebViewFactory contextMenuItemTagCopy]):
+        (-[WebViewFactory contextMenuItemTagGoBack]):
+        (-[WebViewFactory contextMenuItemTagGoForward]):
+        (-[WebViewFactory contextMenuItemTagStop]):
+        (-[WebViewFactory contextMenuItemTagReload]):
+        (-[WebViewFactory contextMenuItemTagCut]):
+        (-[WebViewFactory contextMenuItemTagPaste]):
+        (-[WebViewFactory contextMenuItemTagNoGuessesFound]):
+        (-[WebViewFactory contextMenuItemTagIgnoreSpelling]):
+        (-[WebViewFactory contextMenuItemTagLearnSpelling]):
+        (-[WebViewFactory contextMenuItemTagSearchInSpotlight]):
+        (-[WebViewFactory contextMenuItemTagSearchWeb]):
+        (-[WebViewFactory contextMenuItemTagLookUpInDictionary]):
+        (-[WebViewFactory contextMenuItemTagOpenLink]):
+        (-[WebViewFactory contextMenuItemTagIgnoreGrammar]):
+        (-[WebViewFactory contextMenuItemTagSpellingMenu]):
+        (-[WebViewFactory contextMenuItemTagShowSpellingPanel:]):
+        (-[WebViewFactory contextMenuItemTagCheckSpelling]):
+        (-[WebViewFactory contextMenuItemTagCheckSpellingWhileTyping]):
+        (-[WebViewFactory contextMenuItemTagCheckGrammarWithSpelling]):
+        (-[WebViewFactory contextMenuItemTagFontMenu]):
+        (-[WebViewFactory contextMenuItemTagShowFonts]):
+        (-[WebViewFactory contextMenuItemTagBold]):
+        (-[WebViewFactory contextMenuItemTagItalic]):
+        (-[WebViewFactory contextMenuItemTagUnderline]):
+        (-[WebViewFactory contextMenuItemTagOutline]):
+        (-[WebViewFactory contextMenuItemTagStyles]):
+        (-[WebViewFactory contextMenuItemTagShowColors]):
+        (-[WebViewFactory contextMenuItemTagSpeechMenu]):
+        (-[WebViewFactory contextMenuItemTagStartSpeaking]):
+        (-[WebViewFactory contextMenuItemTagStopSpeaking]):
+        (-[WebViewFactory contextMenuItemTagWritingDirectionMenu]):
+        (-[WebViewFactory contextMenuItemTagDefaultDirection]):
+        (-[WebViewFactory contextMenuItemTagLeftToRight]):
+        (-[WebViewFactory contextMenuItemTagRightToLeft]):
+
 2007-01-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John Sullivan

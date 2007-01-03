@@ -80,4 +80,340 @@ String fileButtonNoFileSelectedLabel()
     return String();
 }
 
+String contextMenuItemTagOpenLinkInNewWindow()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagOpenLinkInNewWindow];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagDownloadLinkToDisk()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagDownloadLinkToDisk];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagCopyLinkToClipboard()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagCopyLinkToClipboard];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagOpenImageInNewWindow()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagOpenImageInNewWindow];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagDownloadImageToDisk()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagDownloadImageToDisk];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagCopyImageToClipboard()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagCopyImageToClipboard];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagOpenFrameInNewWindow()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagOpenFrameInNewWindow];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagCopy()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagCopy];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagGoBack()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagGoBack];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagGoForward()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagGoForward];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagStop()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagStop];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagReload()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagReload];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagCut()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagCut];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagPaste()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagPaste];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagNoGuessesFound()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagNoGuessesFound];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagIgnoreSpelling()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagIgnoreSpelling];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagLearnSpelling()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagLearnSpelling];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagSearchInSpotlight()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagSearchInSpotlight];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagSearchWeb()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagSearchWeb];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagLookUpInDictionary()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagLookUpInDictionary];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagOpenLink()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagOpenLink];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagIgnoreGrammar()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagIgnoreGrammar];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagSpellingMenu()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagSpellingMenu];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagShowSpellingPanel(bool show)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagShowSpellingPanel:show];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagCheckSpelling()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagCheckSpelling];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagCheckSpellingWhileTyping()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagCheckSpellingWhileTyping];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagCheckGrammarWithSpelling()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagCheckGrammarWithSpelling];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagFontMenu()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagFontMenu];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagShowFonts()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagShowFonts];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagBold()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagBold];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagItalic()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagItalic];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagUnderline()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagUnderline];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagOutline()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagOutline];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagStyles()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagStyles];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagShowColors()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagShowColors];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagSpeechMenu()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagSpeechMenu];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagStartSpeaking()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagStartSpeaking];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagStopSpeaking()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagStopSpeaking];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagWritingDirectionMenu()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagWritingDirectionMenu];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagDefaultDirection()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagDefaultDirection];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagLeftToRight()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagLeftToRight];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String contextMenuItemTagRightToLeft()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagRightToLeft];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
 }

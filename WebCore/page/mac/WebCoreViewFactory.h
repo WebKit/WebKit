@@ -45,6 +45,50 @@
 - (NSString *)fileButtonChooseFileLabel;
 - (NSString *)fileButtonNoFileSelectedLabel;
 
+// Context menu item titles
+- (NSString *)contextMenuItemTagOpenLinkInNewWindow;
+- (NSString *)contextMenuItemTagDownloadLinkToDisk;
+- (NSString *)contextMenuItemTagCopyLinkToClipboard;
+- (NSString *)contextMenuItemTagOpenImageInNewWindow;
+- (NSString *)contextMenuItemTagDownloadImageToDisk;
+- (NSString *)contextMenuItemTagCopyImageToClipboard;
+- (NSString *)contextMenuItemTagOpenFrameInNewWindow;
+- (NSString *)contextMenuItemTagCopy;
+- (NSString *)contextMenuItemTagGoBack;
+- (NSString *)contextMenuItemTagGoForward;
+- (NSString *)contextMenuItemTagStop;
+- (NSString *)contextMenuItemTagReload;
+- (NSString *)contextMenuItemTagCut;
+- (NSString *)contextMenuItemTagPaste;
+- (NSString *)contextMenuItemTagNoGuessesFound;
+- (NSString *)contextMenuItemTagIgnoreSpelling;
+- (NSString *)contextMenuItemTagLearnSpelling;
+- (NSString *)contextMenuItemTagSearchInSpotlight;
+- (NSString *)contextMenuItemTagSearchWeb;
+- (NSString *)contextMenuItemTagLookUpInDictionary;
+- (NSString *)contextMenuItemTagOpenLink;
+- (NSString *)contextMenuItemTagIgnoreGrammar;
+- (NSString *)contextMenuItemTagSpellingMenu;
+- (NSString *)contextMenuItemTagShowSpellingPanel:(bool)show;
+- (NSString *)contextMenuItemTagCheckSpelling;
+- (NSString *)contextMenuItemTagCheckSpellingWhileTyping;
+- (NSString *)contextMenuItemTagCheckGrammarWithSpelling;
+- (NSString *)contextMenuItemTagFontMenu;
+- (NSString *)contextMenuItemTagShowFonts;
+- (NSString *)contextMenuItemTagBold;
+- (NSString *)contextMenuItemTagItalic;
+- (NSString *)contextMenuItemTagUnderline;
+- (NSString *)contextMenuItemTagOutline;
+- (NSString *)contextMenuItemTagStyles;
+- (NSString *)contextMenuItemTagShowColors;
+- (NSString *)contextMenuItemTagSpeechMenu;
+- (NSString *)contextMenuItemTagStartSpeaking;
+- (NSString *)contextMenuItemTagStopSpeaking;
+- (NSString *)contextMenuItemTagWritingDirectionMenu;
+- (NSString *)contextMenuItemTagDefaultDirection;
+- (NSString *)contextMenuItemTagLeftToRight;
+- (NSString *)contextMenuItemTagRightToLeft;
+
 - (NSMenu *)cellMenuForSearchField;
 
 - (NSString *)defaultLanguageCode;
