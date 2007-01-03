@@ -59,6 +59,7 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/editing \
                 $$PWD/kwq \
                 $$PWD/rendering \
+                $$PWD/history \
                 $$PWD/xml \
                 $$PWD/html \
                 $$PWD/bindings/js \
@@ -845,6 +846,7 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/svg/SVGFECompositeElement.cpp \
         ksvg2/svg/SVGImageElement.cpp \
         ksvg2/svg/SVGAnimateElement.cpp \
+        ksvg2/svg/SVGAnimateMotionElement.cpp \
         ksvg2/svg/SVGURIReference.cpp \
         ksvg2/svg/SVGLength.cpp \
         ksvg2/svg/SVGPathSegCurvetoCubic.cpp \
@@ -1001,7 +1003,12 @@ contains(DEFINES, SVG_SUPPORT=1) {
         rendering/RenderSVGText.cpp \
         rendering/RenderSVGTSpan.cpp \
         rendering/SVGInlineFlowBox.cpp \
-        rendering/SVGRootInlineBox.cpp
+        rendering/SVGRootInlineBox.cpp \
+        history/BackForwardList.cpp \
+        history/HistoryItem.cpp \
+        history/HistoryItemTimer.cpp \
+        history/PageCache.cpp \
+        history/qt/PageCacheQt.cpp \
 
         # GENERATOR 5-B:
         svgnames_a.output = tmp/SVGNames.cpp

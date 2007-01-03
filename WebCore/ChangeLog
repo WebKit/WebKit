@@ -1,3 +1,24 @@
+2007-01-03  Lars Knoll <lars@trolltech.com>
+
+        Fix the Qt build
+
+        * WebCore.pro:
+        * history/qt/PageCacheQt.cpp: Added.
+        (WebCore::PageCache::close):
+        * loader/qt/DocumentLoaderQt.cpp:
+        (WebCore::DocumentLoader::getResponseRefreshAndModifiedHeaders):
+        (WebCore::DocumentLoader::urlForHistory):
+        * loader/qt/FrameLoaderQt.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::didFirstLayout):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::opened):
+        (WebCore::FrameLoader::dataURLBaseFromRequest):
+        (WebCore::FrameLoader::applyUserAgent):
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::loadsBlocked):
+        (WebCore::ResourceHandle::willLoadFromCache):
+
 2007-01-02  Brady Eidson  <beidson@apple.com>
 
         Reviewed extensively and repeatedly by Darin

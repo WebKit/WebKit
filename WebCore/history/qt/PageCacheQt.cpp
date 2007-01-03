@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
- *
- * All rights reserved.
+ * Copyright (C) 2006 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,62 +20,31 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #include "config.h"
-
-#if PLATFORM(KDE)
-#include <kio/job.h>
-#endif
-
-#include <QRegExp>
-
-#include "FrameQt.h"
-#include "DocLoader.h"
-#include "ResourceHandle.h"
-#include "DeprecatedString.h"
-#include "ResourceHandleManagerQt.h"
-#include "ResourceHandleInternal.h"
-
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d (%s)\n", \
-           __FILE__, __LINE__, __FUNCTION__); } while(0)
+#include "PageCache.h"
 
 namespace WebCore {
 
-ResourceHandleInternal::~ResourceHandleInternal()
+void PageCache::close()
 {
+    if (!m_pageState)
+        return;
+    
+    // FIXME: <rdar://problem/4886844>
+    // The current method of tracking the "document view" is messy and quite platform specific
+    // Having a WebCore-way to track this would be great.
+//     if (m_documentView)
+//         objc_msgSend(m_documentView.get(), @selector(closeIfNotCurrentView));
+
+    m_pageState->clear();
+    
+    // Setting these to null is how the PageCache object knows it's been closed
+    m_pageState = 0;
+    m_documentLoader = 0;
 }
 
-ResourceHandle::~ResourceHandle()
-{
-    cancel();
-}
+} //namespace WebCore
 
-bool ResourceHandle::start(Frame* frame)
-{
-    ASSERT(frame);
-    FrameQt* f = QtFrame(frame);
-
-    ResourceHandleManager::self()->add(this, f ? f->client() : 0);
-    return true;
-}
-
-void ResourceHandle::cancel()
-{
-    ResourceHandleManager::self()->cancel(this);
-}
-
-bool ResourceHandle::loadsBlocked()
-{
-    notImplemented();
-    return false;
-}
-
-bool ResourceHandle::willLoadFromCache(ResourceRequest& request)
-{
-    notImplemented();
-    return false;
-}
-
-} // namespace WebCore

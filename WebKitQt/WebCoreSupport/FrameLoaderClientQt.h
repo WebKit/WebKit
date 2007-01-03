@@ -150,8 +150,18 @@ namespace WebCore {
 
         virtual String userAgent();
 
+
+        virtual void setDocumentViewFromPageCache(WebCore::PageCache*);
+        virtual void updateGlobalHistoryForStandardLoad(const WebCore::KURL&);
+        virtual void updateGlobalHistoryForReload(const WebCore::KURL&);
+        virtual bool shouldGoToHistoryItem(WebCore::HistoryItem*) const;
+        virtual void saveScrollPositionAndViewStateToItem(WebCore::HistoryItem*);
+        virtual void saveDocumentViewToPageCache(WebCore::PageCache*);
+        virtual bool canCachePage() const;
+        
         // FIXME: This should probably not be here, but it's needed for the tests currently
         virtual void partClearedInBegin();
+        
     };
 
 }

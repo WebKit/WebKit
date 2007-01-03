@@ -518,6 +518,42 @@ void FrameLoaderClientQt::partClearedInBegin()
     notImplemented();
 }
 
+void FrameLoaderClientQt::setDocumentViewFromPageCache(WebCore::PageCache*)
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::updateGlobalHistoryForStandardLoad(const WebCore::KURL&)
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::updateGlobalHistoryForReload(const WebCore::KURL&)
+{
+    notImplemented();
+}
+
+bool FrameLoaderClientQt::shouldGoToHistoryItem(WebCore::HistoryItem*) const
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::saveScrollPositionAndViewStateToItem(WebCore::HistoryItem*)
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::saveDocumentViewToPageCache(WebCore::PageCache*)
+{
+    notImplemented();
+}
+
+bool FrameLoaderClientQt::canCachePage() const
+{
+    notImplemented();
+}
+
+
 }
 
 

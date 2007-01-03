@@ -10,6 +10,7 @@ INCLUDEPATH += $$PWD/JavaScriptCore \
                $$PWD/WebCore/page \
                $$PWD/WebCore/dom \
                $$PWD/WebCore/html \
+               $$PWD/WebCore/history \
                $$PWD/WebCore/rendering \
                $$PWD/WebCore/loader \
                $$PWD/WebCore/loader/qt \
