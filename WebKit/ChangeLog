@@ -1,3 +1,12 @@
+2007-01-03  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Timothy.
+
+        Fix inspection of RenderSVGInlineText objects (#text nodes in SVG documents).
+
+        * WebInspector/WebInspector.m:
+        (-[WebInspector _highlightNode:]):
+
 2007-01-02  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.

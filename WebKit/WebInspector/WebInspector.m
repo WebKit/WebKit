@@ -567,7 +567,11 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
             DOMCSSStyleDeclaration *style = [_private->domDocument getComputedStyle:(DOMElement *)node pseudoElement:@""];
             if ([[style getPropertyValue:@"display"] isEqualToString:@"inline"])
                 rects = [node lineBoxRects];
-        } else if ([node isKindOfClass:[DOMText class]])
+        } else if ([node isKindOfClass:[DOMText class]]
+#ifdef SVG_SUPPORT
+                   && ![[node parentNode] isKindOfClass:NSClassFromString(@"DOMSVGElement")]
+#endif
+                  )
             rects = [node lineBoxRects];
 
         if (![rects count])
