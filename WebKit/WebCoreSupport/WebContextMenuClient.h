@@ -41,13 +41,12 @@ public:
     virtual void addCustomContextMenuItems(WebCore::ContextMenu*);
     virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*);
     
-    virtual void copyLinkToClipboard(const WebCore::HitTestResult&);
     virtual void downloadURL(const WebCore::KURL&);
     virtual void copyImageToClipboard(const WebCore::HitTestResult&);
-    virtual void searchWithSpotlight();
     virtual void lookUpInDictionary(WebCore::Frame*);
     virtual void speak(const WebCore::String&);
     virtual void stopSpeaking();
+    virtual void searchWithSpotlight();
 
     WebView *webView() { return m_webView; }
         

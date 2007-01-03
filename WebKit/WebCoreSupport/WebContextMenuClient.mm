@@ -77,14 +77,6 @@ void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const 
     }
 }
 
-void WebContextMenuClient::copyLinkToClipboard(const HitTestResult& hitTestResult)
-{
-    NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:hitTestResult] autorelease];
-    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
-    NSArray *types = [NSPasteboard _web_writableTypesForURL];
-    [m_webView _writeLinkElement:element withPasteboardTypes:types toPasteboard:pasteboard];
-}
-
 void WebContextMenuClient::downloadURL(const KURL& url)
 {
     [m_webView _downloadURL:url.getNSURL()];
