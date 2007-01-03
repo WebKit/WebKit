@@ -1,3 +1,11 @@
+2007-01-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        - Fix for <rdar://problem/4455147> Safari allows division slash character in URLs, which looks like slash character (not fixed by IDNScriptWhiteList.txt)
+
+        * Misc/WebNSURLExtras.m: (allCharactersInIDNScriptWhiteList): Always disallow the division slash character.
+
 2007-01-02  Brady Eidson <beidson@apple.com>
 
         Controversially reviewed by Tim H. and Maciej

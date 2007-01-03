@@ -53,6 +53,8 @@ typedef void (* StringRangeApplierFunction)(NSString *string, NSRange range, voi
 
 #define URL_BYTES_BUFFER_LENGTH 2048
 
+#define DIVISION_SLASH 0x2215
+
 static pthread_once_t IDNScriptWhiteListFileRead = PTHREAD_ONCE_INIT;
 static uint32_t IDNScriptWhiteList[(USCRIPT_CODE_LIMIT + 31) / 32];
 
@@ -892,6 +894,9 @@ static BOOL allCharactersInIDNScriptWhiteList(const UChar *buffer, int32_t lengt
         if (!(IDNScriptWhiteList[index] & mask)) {
             return NO;
         }
+        // Always disallow division slash since this looks like a forward slash.
+        if (c == DIVISION_SLASH)
+            return NO;
     }
     return YES;
 }
