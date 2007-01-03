@@ -1,0 +1,4 @@
+Tests for bug 3420: XMLHttpRequest does not handle set-cookie headers.
+
+SUCCESS
+
