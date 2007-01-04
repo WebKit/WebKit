@@ -1,3 +1,16 @@
+2007-01-03  John Sullivan  <sullivan@apple.com>
+
+        Written by Darin over my shoulder; reviewed by me
+
+        - fixed <rdar://problem/4907437> Find doesn't work if invoked when a form field is focused
+
+        * page/Frame.cpp:
+        (WebCore::isInShadowTree):
+        new helper function used by findString
+        (WebCore::Frame::findString):
+        when deciding whether to start from the selection, ignore selections that are in
+        a shadow tree (i.e. in a form control)
+
 2007-01-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mark Rowe
