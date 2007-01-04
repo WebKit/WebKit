@@ -529,8 +529,8 @@ KURL DocumentLoader::urlForHistory() const
     // Return the URL to be used for history and B/F list.
     // Returns nil for WebDataProtocol URLs that aren't alternates 
     // for unreachable URLs, because these can't be stored in history.
-
-    if ([WebDataProtocol _webIsDataProtocolURL:[m_originalRequestCopy.nsURLRequest() URL]])
+        
+    if (!m_originalRequestCopy.url().isEmpty() && [WebDataProtocol _webIsDataProtocolURL:m_originalRequestCopy.url().getNSURL()])
         return [m_originalRequestCopy.nsURLRequest() _webDataRequestUnreachableURL];
 
     return m_originalRequestCopy.url();

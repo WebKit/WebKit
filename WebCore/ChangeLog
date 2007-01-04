@@ -1,3 +1,16 @@
+2007-01-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        http://bugs.webkit.org/show_bug.cgi?id=12093 - Assertion in certain SVG layout tests
+        I can't really think of a cleaner way to fix this then to help these SVG cases avoid
+        the ASSERT - hopefully we can clean up the svg-as-image situation as the loader stabilizes 
+        and we find better ways to handle it...
+
+        * loader/mac/DocumentLoaderMac.mm:
+        (WebCore::DocumentLoader::urlForHistory): empty-check the url before passing it to the
+        ASSERTing method
+
 2007-01-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
