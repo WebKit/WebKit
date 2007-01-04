@@ -1,3 +1,13 @@
+2007-01-03  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12082
+          REGRESSION (r18333): Crash in RenderFrameSet::layOutAxis()
+
+        * fast/frames/negative-remaining-length-crash-expected.txt: Added.
+        * fast/frames/negative-remaining-length-crash.html: Added.
+
 2007-01-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

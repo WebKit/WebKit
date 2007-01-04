@@ -1,3 +1,16 @@
+2007-01-03  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12082
+          REGRESSION (r18333): Crash in RenderFrameSet::layOutAxis()
+
+        Test: fast/frames/negative-remaining-length-crash.html
+
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::layOutAxis): Treat negative availableLength
+        as zero.
+
 2007-01-03  John Sullivan  <sullivan@apple.com>
 
         Written by Darin over my shoulder; reviewed by me

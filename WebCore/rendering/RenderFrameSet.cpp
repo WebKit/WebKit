@@ -93,6 +93,8 @@ void RenderFrameSet::GridAxis::resize(int size)
 
 void RenderFrameSet::layOutAxis(GridAxis& axis, const Length* grid, int availableLen)
 {
+    availableLen = max(availableLen, 0);
+
     int* gridLayout = axis.m_sizes;
 
     if (!grid) {
