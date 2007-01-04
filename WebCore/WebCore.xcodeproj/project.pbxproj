@@ -2146,12 +2146,8 @@
 		A8DF5FA4098460AA0052981B /* SVGDocumentExtensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF5FA2098460AA0052981B /* SVGDocumentExtensions.cpp */; };
 		A8EA73C30A1900E300A8EF5F /* RenderFieldset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73AF0A1900E300A8EF5F /* RenderFieldset.cpp */; };
 		A8EA73C40A1900E300A8EF5F /* RenderFieldset.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73B00A1900E300A8EF5F /* RenderFieldset.h */; };
-		A8EA73C90A1900E300A8EF5F /* RenderFormElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73B50A1900E300A8EF5F /* RenderFormElement.h */; };
 		A8EA73CA0A1900E300A8EF5F /* RenderLegend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73B60A1900E300A8EF5F /* RenderLegend.cpp */; };
-		A8EA73CB0A1900E300A8EF5F /* RenderLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73B70A1900E300A8EF5F /* RenderLabel.h */; };
 		A8EA73D10A1900E300A8EF5F /* RenderLegend.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73BD0A1900E300A8EF5F /* RenderLegend.h */; };
-		A8EA73D30A1900E300A8EF5F /* RenderFormElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73BF0A1900E300A8EF5F /* RenderFormElement.cpp */; };
-		A8EA73D40A1900E300A8EF5F /* RenderLabel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73C00A1900E300A8EF5F /* RenderLabel.cpp */; };
 		A8EA79F10A1916DF00A8EF5F /* HTMLOListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA79E50A1916DF00A8EF5F /* HTMLOListElement.h */; };
 		A8EA79F20A1916DF00A8EF5F /* HTMLUListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA79E60A1916DF00A8EF5F /* HTMLUListElement.h */; };
 		A8EA79F30A1916DF00A8EF5F /* HTMLUListElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA79E70A1916DF00A8EF5F /* HTMLUListElement.cpp */; };
@@ -5140,12 +5136,8 @@
 		A8DF5FA2098460AA0052981B /* SVGDocumentExtensions.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGDocumentExtensions.cpp; sourceTree = "<group>"; };
 		A8EA73AF0A1900E300A8EF5F /* RenderFieldset.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFieldset.cpp; sourceTree = "<group>"; };
 		A8EA73B00A1900E300A8EF5F /* RenderFieldset.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderFieldset.h; sourceTree = "<group>"; };
-		A8EA73B50A1900E300A8EF5F /* RenderFormElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderFormElement.h; sourceTree = "<group>"; };
 		A8EA73B60A1900E300A8EF5F /* RenderLegend.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLegend.cpp; sourceTree = "<group>"; };
-		A8EA73B70A1900E300A8EF5F /* RenderLabel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderLabel.h; sourceTree = "<group>"; };
 		A8EA73BD0A1900E300A8EF5F /* RenderLegend.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderLegend.h; sourceTree = "<group>"; };
-		A8EA73BF0A1900E300A8EF5F /* RenderFormElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFormElement.cpp; sourceTree = "<group>"; };
-		A8EA73C00A1900E300A8EF5F /* RenderLabel.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLabel.cpp; sourceTree = "<group>"; };
 		A8EA79E50A1916DF00A8EF5F /* HTMLOListElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLOListElement.h; sourceTree = "<group>"; };
 		A8EA79E60A1916DF00A8EF5F /* HTMLUListElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLUListElement.h; sourceTree = "<group>"; };
 		A8EA79E70A1916DF00A8EF5F /* HTMLUListElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLUListElement.cpp; sourceTree = "<group>"; };
@@ -9249,8 +9241,6 @@
 				BCEA4831097D93020094C9E4 /* RenderFlow.h */,
 				853CA9EA0AEEC63C002372DC /* RenderForeignObject.cpp */,
 				853CA9EB0AEEC63C002372DC /* RenderForeignObject.h */,
-				A8EA73BF0A1900E300A8EF5F /* RenderFormElement.cpp */,
-				A8EA73B50A1900E300A8EF5F /* RenderFormElement.h */,
 				A871DECC0A1530C700B12A68 /* RenderFrame.cpp */,
 				A871DECB0A1530C700B12A68 /* RenderFrame.h */,
 				A871DECA0A1530C700B12A68 /* RenderFrameSet.cpp */,
@@ -9261,8 +9251,6 @@
 				BCEA4837097D93020094C9E4 /* RenderImage.h */,
 				BCEA4838097D93020094C9E4 /* RenderInline.cpp */,
 				BCEA4839097D93020094C9E4 /* RenderInline.h */,
-				A8EA73C00A1900E300A8EF5F /* RenderLabel.cpp */,
-				A8EA73B70A1900E300A8EF5F /* RenderLabel.h */,
 				BCEA483A097D93020094C9E4 /* RenderLayer.cpp */,
 				BCEA483B097D93020094C9E4 /* RenderLayer.h */,
 				A8EA73B60A1900E300A8EF5F /* RenderLegend.cpp */,
@@ -9992,8 +9980,6 @@
 				A8CFF7AB0A156978000A4234 /* HTMLAnchorElement.h in Headers */,
 				BC6DADEF0A195FDF00E5CD14 /* WebFontCache.h in Headers */,
 				A8EA73C40A1900E300A8EF5F /* RenderFieldset.h in Headers */,
-				A8EA73C90A1900E300A8EF5F /* RenderFormElement.h in Headers */,
-				A8EA73CB0A1900E300A8EF5F /* RenderLabel.h in Headers */,
 				A8EA73D10A1900E300A8EF5F /* RenderLegend.h in Headers */,
 				A8EA79F10A1916DF00A8EF5F /* HTMLOListElement.h in Headers */,
 				A8EA79F20A1916DF00A8EF5F /* HTMLUListElement.h in Headers */,
@@ -11547,8 +11533,6 @@
 				BC6DADFA0A19602B00E5CD14 /* WebFontCache.mm in Sources */,
 				A8EA73C30A1900E300A8EF5F /* RenderFieldset.cpp in Sources */,
 				A8EA73CA0A1900E300A8EF5F /* RenderLegend.cpp in Sources */,
-				A8EA73D30A1900E300A8EF5F /* RenderFormElement.cpp in Sources */,
-				A8EA73D40A1900E300A8EF5F /* RenderLabel.cpp in Sources */,
 				A8EA79F30A1916DF00A8EF5F /* HTMLUListElement.cpp in Sources */,
 				A8EA79F50A1916DF00A8EF5F /* HTMLDListElement.cpp in Sources */,
 				A8EA79F80A1916DF00A8EF5F /* HTMLMenuElement.cpp in Sources */,

@@ -33,12 +33,10 @@ namespace WebCore {
 
 class FormDataList;
 class HTMLFormElement;
-class RenderFormElement;
 
 class HTMLGenericFormElement : public HTMLElement
 {
     friend class HTMLFormElement;
-    friend class RenderFormElement;
 
 public:
     HTMLGenericFormElement(const QualifiedName& tagName, Document*, HTMLFormElement* = 0);

@@ -57,7 +57,6 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/page \
                 $$PWD/bridge \
                 $$PWD/editing \
-                $$PWD/kwq \
                 $$PWD/rendering \
                 $$PWD/history \
                 $$PWD/xml \
@@ -359,9 +358,6 @@ SOURCES += \
     editing/SetNodeAttributeCommand.cpp \
     editing/CreateLinkCommand.cpp \
     editing/qt/EditorQt.cpp \
-#    kwq/KWQWMatrix.cpp \
-#    kwq/KWQCString.cpp \
-#    kwq/KWQTextStream.cpp \
     xml/XSLStyleSheet.cpp \
     xml/XSLTProcessor.cpp \
     xml/XSLImportRule.cpp \
@@ -596,12 +592,9 @@ SOURCES += \
     platform/graphics/qt/ImageDecoderQt.cpp \
     platform/qt/FontCacheQt.cpp \
     platform/qt/FontQt.cpp \
-#    platform/qt/LineEditQt.cpp \
     platform/qt/ScreenQt.cpp \
-#    platform/qt/FileButtonQt.cpp \
     platform/qt/FrameQt.cpp \
     platform/qt/FrameQtClient.cpp \
-#    platform/qt/TextEditQt.cpp \
     platform/qt/ScrollViewCanvasQt.cpp \
     platform/qt/PlatformMouseEventQt.cpp \
     platform/qt/PlatformKeyboardEventQt.cpp \
@@ -653,12 +646,10 @@ SOURCES += \
     rendering/RenderTreeAsText.cpp \
     rendering/SVGRenderTreeAsText.cpp \
     rendering/RootInlineBox.cpp \
-    rendering/RenderFormElement.cpp \
     rendering/RenderBox.cpp \
     rendering/RenderButton.cpp \
     rendering/RenderTableSection.cpp \
     rendering/ListMarkerBox.cpp \
-    rendering/RenderLabel.cpp \
     rendering/RenderTableRow.cpp \
     rendering/RenderInline.cpp \
     rendering/RenderFileUploadControl.cpp \

@@ -3407,14 +3407,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\RenderFormElement.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\RenderFormElement.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\rendering\RenderFrame.cpp"
 				>
 			</File>
@@ -3452,14 +3444,6 @@
 			</File>
 			<File
 				RelativePath="..\..\rendering\RenderInline.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\RenderLabel.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\RenderLabel.h"
 				>
 			</File>
 			<File

@@ -422,13 +422,11 @@
         rendering/RenderFileUploadControl.cpp
         rendering/RenderFlexibleBox.cpp
         rendering/RenderFlow.cpp
-        rendering/RenderFormElement.cpp
         rendering/RenderFrame.cpp
         rendering/RenderFrameSet.cpp
         rendering/RenderHTMLCanvas.cpp
         rendering/RenderImage.cpp
         rendering/RenderInline.cpp
-        rendering/RenderLabel.cpp
         rendering/RenderLayer.cpp
         rendering/RenderLegend.cpp
         rendering/RenderListBox.cpp

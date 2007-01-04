@@ -1168,7 +1168,6 @@ set(WebCore_SRCS
     platform/qt/FrameQtClient.cpp
     platform/qt/FrameQt.cpp
     platform/qt/GlyphMapQt.cpp
-#   platform/qt/LineEditQt.cpp
     platform/qt/LoaderFunctionsQt.cpp
     platform/qt/MimeTypeRegistryQt.cpp
     platform/qt/PageQt.cpp
@@ -1188,7 +1187,6 @@ set(WebCore_SRCS
     platform/qt/TextBoundaries.cpp
     platform/qt/TextBreakIteratorQt.cpp
     platform/qt/TextCodecQt.cpp
-#   platform/qt/TextEditQt.cpp
     platform/qt/WidgetQt.cpp
 
     xml/DOMParser.cpp
@@ -1236,13 +1234,11 @@ set(WebCore_SRCS
     rendering/RenderFileUploadControl.cpp
     rendering/RenderFlexibleBox.cpp
     rendering/RenderFlow.cpp
-    rendering/RenderFormElement.cpp
     rendering/RenderFrame.cpp
     rendering/RenderFrameSet.cpp
     rendering/RenderHTMLCanvas.cpp
     rendering/RenderImage.cpp
     rendering/RenderInline.cpp
-    rendering/RenderLabel.cpp
     rendering/RenderLayer.cpp
     rendering/RenderLegend.cpp
     rendering/RenderListBox.cpp

@@ -1,5 +1,28 @@
 2007-01-03  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adele.
+
+        - removed some obsolete source files
+
+        * CMakeLists.txt: Removed obsolete files.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+
+        * html/HTMLGenericFormElement.h: Removed reference to RenderFormElement.
+
+        * platform/qt/ComboBoxQt.cpp: Removed.
+        * platform/qt/LineEditQt.cpp: Removed.
+        * platform/qt/ListBoxQt.cpp: Removed.
+        * platform/qt/TextEditQt.cpp: Removed.
+        * rendering/RenderFormElement.cpp: Removed.
+        * rendering/RenderFormElement.h: Removed.
+        * rendering/RenderLabel.cpp: Removed.
+        * rendering/RenderLabel.h: Removed.
+
+2007-01-03  Darin Adler  <darin@apple.com>
+
         Reviewed by Hyatt.
 
         - fix bug where :after content appears backwards
