@@ -65,6 +65,7 @@ public:
         , m_httpStatusCode(0)
         , m_expirationDate(0)
         , m_isUpToDate(true)
+        , m_isNull(false)
     {
     }
  

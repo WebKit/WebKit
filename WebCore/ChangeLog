@@ -1,3 +1,17 @@
+2007-01-04  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Brady.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12116
+        REGRESSION: ASSERTION FAILED: URL in +[WebDataProtocol _webIsDataProtocolURL:]
+        
+        <rdar://problem/4908910> 
+        REGRESSION: After switching to Bookmarks view, the browser window is completely empty (no bookmarks are displayed)
+        
+        * platform/network/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        Initialize m_isNull
+
 2007-01-04  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.
