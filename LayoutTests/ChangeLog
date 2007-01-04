@@ -1,5 +1,16 @@
 2007-01-03  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        - more updated results for http://bugs.webkit.org/show_bug.cgi?id=5164
+          Non-integer percentages are incorrectly rounded down in Safari
+
+        * css1/box_properties/acid_test-expected.checksum:
+        * css1/box_properties/acid_test-expected.png:
+        * css1/box_properties/acid_test-expected.txt:
+
+2007-01-03  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Hyatt.
 
         - test and updated results for http://bugs.webkit.org/show_bug.cgi?id=5164
