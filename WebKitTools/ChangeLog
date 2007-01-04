@@ -1,3 +1,8 @@
+2007-01-04  Lars Knoll <lars@trolltech.com>
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.pro:
+              Link with RPATH to (hopefully) get the automatic tests working.
+
 2007-01-03  Mark Rowe  <bdash@webkit.org>
 
         Reviewed by Anders.
