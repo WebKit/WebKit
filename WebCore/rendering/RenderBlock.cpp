@@ -1903,36 +1903,56 @@ void RenderBlock::setPaintsFloatingObject(RenderObject* o, bool b)
 
 void RenderBlock::positionNewFloats()
 {
-    if(!m_floatingObjects) return;
-    FloatingObject *f = m_floatingObjects->last();
-    if(!f || f->startY != -1) return;
-    FloatingObject *lastFloat;
-    while(1)
-    {
-        lastFloat = m_floatingObjects->getPrev();
-        if (!lastFloat || lastFloat->startY != -1)
-            break;        
-        f = m_floatingObjects->prev();
+    if (!m_floatingObjects)
+        return;
+    
+    FloatingObject* f = m_floatingObjects->last();
+
+    // If all floats have already been positioned, then we have no work to do.
+    if (!f || f->startY != -1)
+        return;
+
+    // Move backwards through our floating object list until we find a float that has
+    // already been positioned.  Then we'll be able to move forward, positioning all of
+    // the new floats that need it.
+    FloatingObject* lastFloat = m_floatingObjects->prev();
+    while (lastFloat && lastFloat->startY == -1) {
+        f = lastFloat;
+        lastFloat = m_floatingObjects->prev();
     }
 
+    int leftY = m_height;
+    int rightY = m_height;
+    
+    // The float cannot start above the y position of the last positioned float with the same
+    // alignment type.  Figure out what these values are.
+    bool leftChecked = false;
+    bool rightChecked = false;
+    for (FloatingObject* currFloat = m_floatingObjects->current(); currFloat; currFloat = m_floatingObjects->prev()) {
+        if (!leftChecked && currFloat->type() == FloatingObject::FloatLeft) {
+            leftY = max(currFloat->startY, leftY);
+            leftChecked = true;
+        } else if (!rightChecked && currFloat->type() == FloatingObject::FloatRight) {
+            rightY = max(currFloat->startY, rightY);
+            rightChecked = true;
+        }
+        if (leftChecked && rightChecked)
+            break;
+    }
 
-    int y = m_height;
-
-
-    // the float can not start above the y position of the last positioned float.
-    if(lastFloat && lastFloat->startY > y)
-        y = lastFloat->startY;
-
-    while(f)
-    {
-        //skip elements copied from elsewhere and positioned elements
-        if (f->node->containingBlock()!=this)
-        {
+    // Now walk through the set of unpositioned floats and place them.
+    m_floatingObjects->findRef(f);
+    while (f) {
+        // The containing block is responsible for positioning floats, so if we have floats in our
+        // list that come from somewhere else, do not attempt to position them.
+        if (f->node->containingBlock() != this) {
             f = m_floatingObjects->next();
             continue;
         }
 
-        RenderObject *o = f->node;
+        int& y = f->type() == FloatingObject::FloatLeft ? leftY : rightY;
+
+        RenderObject* o = f->node;
         int _height = o->height() + o->marginTop() + o->marginBottom();
 
         int ro = rightOffset(); // Constant part of right offset.
@@ -1943,39 +1963,35 @@ void RenderBlock::positionNewFloats()
         
         IntRect oldRect(o->xPos(), o->yPos() , o->width(), o->height());
         
-        if ( o->style()->clear() & CLEFT )
-            y = max( leftBottom(), y );
+        if (o->style()->clear() & CLEFT)
+            y = max(leftBottom(), y);
         if ( o->style()->clear() & CRIGHT )
-            y = max( rightBottom(), y );
+            y = max(rightBottom(), y);
 
-        if (o->style()->floating() == FLEFT)
-        {
+        if (o->style()->floating() == FLEFT) {
             int heightRemainingLeft = 1;
             int heightRemainingRight = 1;
             int fx = leftRelOffset(y,lo, false, &heightRemainingLeft);
-            while (rightRelOffset(y,ro, false, &heightRemainingRight)-fx < fwidth)
-            {
-                y += min( heightRemainingLeft, heightRemainingRight );
+            while (rightRelOffset(y,ro, false, &heightRemainingRight)-fx < fwidth) {
+                y += min(heightRemainingLeft, heightRemainingRight);
                 fx = leftRelOffset(y,lo, false, &heightRemainingLeft);
             }
-            if (fx<0) fx=0;
+            fx = max(0, fx);
             f->left = fx;
             o->setPos(fx + o->marginLeft(), y + o->marginTop());
-        }
-        else
-        {
+        } else {
             int heightRemainingLeft = 1;
             int heightRemainingRight = 1;
             int fx = rightRelOffset(y,ro, false, &heightRemainingRight);
-            while (fx - leftRelOffset(y,lo, false, &heightRemainingLeft) < fwidth)
-            {
+            while (fx - leftRelOffset(y,lo, false, &heightRemainingLeft) < fwidth) {
                 y += min(heightRemainingLeft, heightRemainingRight);
-                fx = rightRelOffset(y,ro, false, &heightRemainingRight);
+                fx = rightRelOffset(y, ro, false, &heightRemainingRight);
             }
-            if (fx<f->width) fx=f->width;
+            fx = max(f->width, fx);
             f->left = fx - f->width;
             o->setPos(fx - o->marginRight() - o->width(), y + o->marginTop());
         }
+
         f->startY = y;
         f->endY = f->startY + _height;
 

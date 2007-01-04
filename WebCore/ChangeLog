@@ -1,3 +1,15 @@
+2007-01-04  David Hyatt  <hyatt@apple.com>
+
+        Bug 12114 fix, make sure left/right floats are allowed to go above
+        other floats of opposite alignment.
+
+        Reviewed by aroben
+
+        fast/block/float/independent-align-positioning.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionNewFloats):
+
 2007-01-04  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Brady.
