@@ -1,3 +1,12 @@
+2007-01-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        Fixes http://bugs.webkit.org/show_bug.cgi?id=12089
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::updateHistoryForCommit): Null check the documentLoader
+
 2007-01-03  David Hyatt  <hyatt@apple.com>
 
         Relax the display type restriction a little bit for generated content inside
