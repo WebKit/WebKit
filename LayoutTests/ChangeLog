@@ -1,3 +1,14 @@
+2007-01-04  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=11611
+        REGRESSION: No http referer header sent on XMLHttpRequest
+
+        * http/tests/xmlhttprequest/referer-expected.txt: Added.
+        * http/tests/xmlhttprequest/referer.html: Added.
+        * http/tests/xmlhttprequest/resources/print-referer.cgi: Added.
+
 2007-01-03  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Mark Rowe.

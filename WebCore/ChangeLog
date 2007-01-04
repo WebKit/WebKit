@@ -1,3 +1,24 @@
+2007-01-04  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11611
+        REGRESSION: No http referer header sent on XMLHttpRequest
+
+        Test: http/tests/xmlhttprequest/referer.html
+
+        * loader/FrameLoader.h: Removed FrameLoader::addExtraFieldsToRequest(NSMutableURLRequest*, bool, bool),
+        which is no longer used.
+        * loader/mac/FrameLoaderMac.mm: Ditto.
+        * WebCore.exp: Do not export this method (WebKit doesn't use it).
+
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::create): Rewrote to create the request with ResourceRequest::nsURLRequest.
+
+        * platform/PlatformString.h:
+        (WebCore::operator!): Added. Previously, attempts to use operator! on a String would result 
+        with an NSString* conversion, which never returns nil. This was causing a problem in SubresourceLoader::create().
+
 2007-01-04  Lars Knoll <lars@trolltech.com>
 
 

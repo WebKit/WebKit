@@ -85,36 +85,29 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
     if (!hideReferrer && !request.httpReferrer())
         newRequest.setHTTPReferrer(fl->outgoingReferrer());
 
-    NSMutableURLRequest *newNSURLRequest = [[NSMutableURLRequest alloc] initWithURL:request.url().getNSURL()];    
-
-    // FIXME: Because of <rdar://problem/4803505>, the method has to be set before the body.
-    [newNSURLRequest setHTTPMethod:request.httpMethod()];
-    RefPtr<FormData> formData = request.httpBody();
-    if (formData && !formData->isEmpty())
-        setHTTPBody(newNSURLRequest, formData);
-
-    wkSupportsMultipartXMixedReplace(newNSURLRequest);
-
-    if (!request.httpHeaderFields().isEmpty())
-        [newNSURLRequest setAllHTTPHeaderFields:
-            [NSDictionary _webcore_dictionaryWithHeaderMap:request.httpHeaderFields()]];
-
     // Use the original request's cache policy for two reasons:
     // 1. For POST requests, we mutate the cache policy for the main resource,
     //    but we do not want this to apply to subresources
     // 2. Delegates that modify the cache policy using willSendRequest: should
     //    not affect any other resources. Such changes need to be done
     //    per request.
-    if (isConditionalRequest(newNSURLRequest))
-        [newNSURLRequest setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+    if (newRequest.isConditional())
+        newRequest.setCachePolicy(ReloadIgnoringCacheData);
     else
-        [newNSURLRequest setCachePolicy:(NSURLRequestCachePolicy)fl->originalRequest().cachePolicy()];
-    
-    fl->addExtraFieldsToRequest(newNSURLRequest, false, false);
+        newRequest.setCachePolicy(fl->originalRequest().cachePolicy());
+
+    fl->addExtraFieldsToRequest(newRequest, false, false);
+
+    NSMutableURLRequest *newNSURLRequest = [newRequest.nsURLRequest() mutableCopy];
+
+    // FIXME: should this be in ResourceRequest::nsURLRequest()?
+    wkSupportsMultipartXMixedReplace(newNSURLRequest);
 
     RefPtr<SubresourceLoader> subloader(new SubresourceLoader(frame, client));
-    if (!subloader->load(newNSURLRequest))
+    if (!subloader->load(newNSURLRequest)) {
+        [newNSURLRequest release];
         return 0;
+    }
 
     [newNSURLRequest release];
 

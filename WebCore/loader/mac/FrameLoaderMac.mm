@@ -1037,25 +1037,6 @@ void FrameLoader::post(const KURL& URL, const String& referrer, const String& fr
         load(request, action, FrameLoadTypeStandard, formState.release());
 }
 
-void FrameLoader::addExtraFieldsToRequest(NSMutableURLRequest *request, bool mainResource, bool alwaysFromRequest)
-{
-    applyUserAgent(request);
-    
-    if (m_loadType == FrameLoadTypeReload)
-        [request setValue:@"max-age=0" forHTTPHeaderField:@"Cache-Control"];
-    
-    // Don't set the cookie policy URL if it's already been set.
-    if (![request mainDocumentURL]) {
-        if (mainResource && (isLoadingMainFrame() || alwaysFromRequest))
-            [request setMainDocumentURL:[request URL]];
-        else
-            [request setMainDocumentURL:m_frame->page()->mainFrame()->loader()->url().getNSURL()];
-    }
-    
-    if (mainResource)
-        [request setValue:@"text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5" forHTTPHeaderField:@"Accept"];
-}
-
 bool FrameLoader::isReloading() const
 {
     return documentLoader()->request().cachePolicy() == ReloadIgnoringCacheData;

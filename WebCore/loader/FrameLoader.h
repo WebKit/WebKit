@@ -309,10 +309,6 @@ namespace WebCore {
         void detachFromParent();
         void detachChildren();
 
-#if PLATFORM(MAC)
-        void addExtraFieldsToRequest(NSMutableURLRequest *, bool isMainResource, bool alwaysFromRequest);
-#endif
-
         void addExtraFieldsToRequest(ResourceRequest&, bool isMainResource, bool alwaysFromRequest);
 
         FrameLoaderClient* client() const;
