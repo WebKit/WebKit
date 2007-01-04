@@ -129,6 +129,7 @@ static void createAndAppendSpellingSubMenu(const HitTestResult& result, ContextM
 }
 #endif
 
+#if PLATFORM(MAC)
 static void createAndAppendSpeechSubMenu(const HitTestResult& result, ContextMenuItem& speechMenuItem)
 {
     ContextMenu* speechMenu = new ContextMenu(result);
@@ -140,6 +141,7 @@ static void createAndAppendSpeechSubMenu(const HitTestResult& result, ContextMen
 
     speechMenuItem.setSubMenu(speechMenu);
 }
+#endif
 
 static void createAndAppendWritingDirectionSubMenu(const HitTestResult& result, ContextMenuItem& writingDirectionMenuItem)
 {
@@ -312,6 +314,7 @@ void ContextMenu::populate()
 
         if (!inPasswordField) {
             appendItem(*separatorItem());
+#if PLATFORM(MAC)
 #ifndef BUILDING_ON_TIGER
             ContextMenuItem SpellingAndGrammarMenuItem(SubmenuType, ContextMenuItemTagSpellingMenu, 
                 contextMenuItemTagSpellingMenu());
@@ -322,6 +325,7 @@ void ContextMenu::populate()
                 contextMenuItemTagSpellingMenu());
             createAndAppendSpellingSubMenu(m_hitTestResult, SpellingMenuItem);
             appendItem(SpellingMenuItem);
+#endif
 #endif
             ContextMenuItem  FontMenuItem(SubmenuType, ContextMenuItemTagFontMenu, 
                 contextMenuItemTagFontMenu());

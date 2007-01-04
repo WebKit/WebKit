@@ -1,3 +1,11 @@
+2007-01-04  Lars Knoll <lars@trolltech.com>
+
+
+        Make the Qt build compile again.
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+
 2007-01-03  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.
