@@ -326,6 +326,7 @@ input, input[type="password"], input[type="search"], isindex {
 
 input[type="search"] {
     -webkit-appearance: searchfield;
+    box-sizing: border-box;
 }
 
 input[type="search"]::-webkit-search-cancel-button {

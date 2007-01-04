@@ -1,3 +1,16 @@
+2007-01-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Test for <rdar://problem/4887422>
+        http://bugs.webkit.org/show_bug.cgi?id=11848
+        REGRESSION (SearchField): Search field on developer.apple.com not drawn with top/bottom borders (11848)
+
+        * fast/forms/searchfield-heights-expected.checksum: Added.
+        * fast/forms/searchfield-heights-expected.png: Added.
+        * fast/forms/searchfield-heights-expected.txt: Added.
+        * fast/forms/searchfield-heights.html: Added.
+
 2007-01-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

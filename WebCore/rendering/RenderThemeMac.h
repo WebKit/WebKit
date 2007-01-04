@@ -144,10 +144,12 @@ private:
     void paintMenuListButtonGradients(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     const IntSize* menuListSizes() const;
 
+    const IntSize* searchFieldSizes() const;
     const IntSize* cancelButtonSizes() const;
     const IntSize* resultsButtonSizes() const;
     void setSearchCellState(RenderObject*, const IntRect&);
-
+    void setSearchFieldSize(RenderStyle*) const;
+    
 private:
     NSButtonCell* checkbox;
     NSButtonCell* radio;

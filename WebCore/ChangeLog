@@ -1,3 +1,23 @@
+2007-01-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        - Fix for <rdar://problem/4887422>
+        http://bugs.webkit.org/show_bug.cgi?id=11848
+        REGRESSION (SearchField): Search field on developer.apple.com not drawn with top/bottom borders (11848)
+
+        Test: fast/forms/searchfield-heights.html
+
+        Override the border and the height for search fields that use -webkit-appearance: searchfield.
+
+        * css/html4.css: Use box-sizing: border-box for search fields.  We don't need to have the border-box quirk
+          that we use for the other text fields for this control.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::searchFieldSizes): Added.
+        (WebCore::RenderThemeMac::setSearchFieldSize): Added.
+        (WebCore::RenderThemeMac::adjustSearchFieldStyle): Override the border and the height of the search field.
+
 2007-01-04  Lars Knoll <lars@trolltech.com>
 
         * platform/qt/TemporaryLinkStubs.cpp:

@@ -1098,17 +1098,49 @@ void RenderThemeMac::setSearchCellState(RenderObject* o, const IntRect& r)
     updateFocusedState(search, o);
 }
 
+const IntSize* RenderThemeMac::searchFieldSizes() const
+{
+    static const IntSize sizes[3] = { IntSize(0, 22), IntSize(0, 19), IntSize(0, 17) };
+    return sizes;
+}
+
+void RenderThemeMac::setSearchFieldSize(RenderStyle* style) const
+{
+    // If the width and height are both specified, then we have nothing to do.
+    if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
+        return;
+    
+    // Use the font size to determine the intrinsic width of the control.
+    setSizeFromFont(style, searchFieldSizes());
+}
+
 void RenderThemeMac::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
-    NSControlSize controlSize = controlSizeForFont(style);
-    setFontFromControlSize(selector, style, controlSize);
-
+    // Override border.
+    style->resetBorder();
+    const short borderWidth = 2;
+    style->setBorderLeftWidth(borderWidth);
+    style->setBorderLeftStyle(INSET);
+    style->setBorderRightWidth(borderWidth);
+    style->setBorderRightStyle(INSET);
+    style->setBorderBottomWidth(borderWidth);
+    style->setBorderBottomStyle(INSET);
+    style->setBorderTopWidth(borderWidth);
+    style->setBorderTopStyle(INSET);    
+    
+    // Override height.
+    style->setHeight(Length(Auto));
+    setSearchFieldSize(style);
+    
     // Override padding size to match AppKit text positioning.
     const int padding = 1;
     style->setPaddingLeft(Length(padding, Fixed));
     style->setPaddingRight(Length(padding, Fixed));
     style->setPaddingTop(Length(padding, Fixed));
     style->setPaddingBottom(Length(padding, Fixed));
+    
+    NSControlSize controlSize = controlSizeForFont(style);
+    setFontFromControlSize(selector, style, controlSize);
 }
 
 bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
