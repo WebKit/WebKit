@@ -135,10 +135,22 @@ void RenderBlock::setStyle(RenderStyle* _style)
     updatePseudoChild(RenderStyle::AFTER);
 }
 
+static inline bool isAfterContent(RenderObject* child)
+{
+    if (!child)
+        return false;
+    if (child->style()->styleType() != RenderStyle::AFTER)
+        return false;
+    // Text nodes don't have their own styles, so ignore the style on a text node.
+    if (child->isText() && !child->isBR())
+        return false;
+    return true;
+}
+
 void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChild)
 {
     // Make sure we don't append things after :after-generated content if we have it.
-    if (!beforeChild && lastChild() && lastChild()->style()->styleType() == RenderStyle::AFTER)
+    if (!beforeChild && isAfterContent(lastChild()))
         beforeChild = lastChild();
     
     bool madeBoxesNonInline = false;

@@ -1,3 +1,18 @@
+2007-01-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix bug where :after content appears backwards
+
+        Test: fast/css-generated-content/after-order.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::isAfterContent): Added.
+        (WebCore::RenderBlock::addChildToFlow): Use isAfterContent.
+        * rendering/RenderInline.cpp:
+        (WebCore::isAfterContent): Added.
+        (WebCore::RenderInline::addChildToFlow): Use isAfterContent.
+
 2007-01-03  David Hyatt  <hyatt@apple.com>
 
         Implement box-shadow parsing... getting it all into the RenderStyle.

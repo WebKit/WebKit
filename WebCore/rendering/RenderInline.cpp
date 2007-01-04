@@ -76,10 +76,22 @@ bool RenderInline::isInlineContinuation() const
     return m_isContinuation;
 }
 
+static inline bool isAfterContent(RenderObject* child)
+{
+    if (!child)
+        return false;
+    if (child->style()->styleType() != RenderStyle::AFTER)
+        return false;
+    // Text nodes don't have their own styles, so ignore the style on a text node.
+    if (child->isText() && !child->isBR())
+        return false;
+    return true;
+}
+
 void RenderInline::addChildToFlow(RenderObject* newChild, RenderObject* beforeChild)
 {
     // Make sure we don't append things after :after-generated content if we have it.
-    if (!beforeChild && lastChild() && lastChild()->style()->styleType() == RenderStyle::AFTER)
+    if (!beforeChild && isAfterContent(lastChild()))
         beforeChild = lastChild();
 
     if (!newChild->isInline() && !newChild->isFloatingOrPositioned() && containingBlock()->isBlockFlow()) {

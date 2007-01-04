@@ -1,3 +1,15 @@
+2007-01-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - test for bug where :after content appeared in the wrong order
+
+        * fast/css-generated-content/after-order-expected.checksum: Added.
+        * fast/css-generated-content/after-order-expected.png: Added.
+        * fast/css-generated-content/after-order-expected.txt: Added.
+        * fast/css-generated-content/after-order.html: Added.
+        * fast/css-generated-content/resources/greenbox.png: Added.
+
 2007-01-03  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
