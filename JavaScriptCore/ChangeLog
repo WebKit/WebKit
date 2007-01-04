@@ -1,3 +1,13 @@
+2007-01-04  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Kevin McCullough.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12070
+          REGRESSION: KJS::getUTCOffset() caches UTC offset but ignores time zone changes
+
+        * kjs/DateMath.cpp:
+        (KJS::getUTCOffset): Don't cache UTC offset.
+
 2007-01-02  Darin Adler  <darin@apple.com>
 
         - minor tweak (hope this doesn't re-break Windows)

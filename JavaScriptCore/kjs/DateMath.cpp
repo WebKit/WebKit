@@ -293,22 +293,17 @@ int equivalentYearForDST(int year)
  * NOT including DST.
  */
 double getUTCOffset() {
-    static double utcOffset;
-    static bool utcOffsetInitialized = false;
-    if (!utcOffsetInitialized) {
-        tm localt;
+    tm localt;
 
-        memset(&localt, 0, sizeof(localt));
+    memset(&localt, 0, sizeof(localt));
 
-        // get the difference between this time zone and UTC on Jan 01, 2000 12:00:00 AM
-        localt.tm_mday = 1;
-        localt.tm_year = 100;
-        utcOffset = 946684800.0 - mktime(&localt);
+    // get the difference between this time zone and UTC on Jan 01, 2000 12:00:00 AM
+    localt.tm_mday = 1;
+    localt.tm_year = 100;
+    double utcOffset = 946684800.0 - mktime(&localt);
 
-        utcOffset *= msPerSecond;
+    utcOffset *= msPerSecond;
 
-        utcOffsetInitialized = true;
-    }
     return utcOffset;
 }
 
