@@ -1,5 +1,18 @@
 2007-01-03  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11744
+          Setting the 'content' property dynamically has no effect
+
+        Test: fast/css/content-dynamic.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::diff): Changed to return 'Detach' if the styles' content
+        data are not equivalent.
+
+2007-01-03  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=12082

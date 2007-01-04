@@ -637,7 +637,7 @@ Node::StyleChange Node::diff( RenderStyle *s1, RenderStyle *s2 ) const
     EDisplay display2 = s2 ? s2->display() : NONE;
     bool fl2 = s2 && s2->hasPseudoStyle(RenderStyle::FIRST_LETTER);
         
-    if (display1 != display2 || fl1 != fl2)
+    if (display1 != display2 || fl1 != fl2 || (s1 && s2 && !s1->contentDataEquivalent(s2)))
         ch = Detach;
     else if (!s1 || !s2)
         ch = Inherit;

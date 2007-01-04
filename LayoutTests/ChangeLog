@@ -1,5 +1,17 @@
 2007-01-03  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=11744
+          Setting the 'content' property dynamically has no effect
+
+        * fast/css/content-dynamic-expected.checksum: Added.
+        * fast/css/content-dynamic-expected.png: Added.
+        * fast/css/content-dynamic-expected.txt: Added.
+        * fast/css/content-dynamic.html: Added.
+
+2007-01-03  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin.
 
         - test for http://bugs.webkit.org/show_bug.cgi?id=12082
