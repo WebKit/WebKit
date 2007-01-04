@@ -836,7 +836,7 @@ bool RenderObject::mustRepaintBackgroundOrBorder() const
 
     // These are always percents or auto.
     if (shouldPaintBackgroundImage &&
-            (bgLayer->backgroundXPosition().value() != 0 || bgLayer->backgroundYPosition().value() != 0 ||
+            (!bgLayer->backgroundXPosition().isZero() || !bgLayer->backgroundYPosition().isZero() ||
              bgLayer->backgroundSize().width.isPercent() || bgLayer->backgroundSize().height.isPercent()))
         // The background image will shift unpredictably if the size changes.
         return true;
@@ -2662,7 +2662,7 @@ short RenderObject::lineHeight(bool firstLine, bool /*isRootLineBox*/) const
     Length lh = s->lineHeight();
 
     // its "unset", choose nice default
-    if (lh.value() < 0)
+    if (lh.isNegative())
         return s->font().lineSpacing();
 
     if (lh.isPercent())

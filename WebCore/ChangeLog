@@ -2,6 +2,107 @@
 
         Reviewed by Hyatt.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5164
+          Non-integer percentages are incorrectly rounded down in Safari
+
+        Test: fast/css/percentage-non-integer.html
+
+        Added floating point constructor and accessors to Length for use with
+        Percent lengths only. The raw value of a percent length is the integer
+        part of a constant multiple of the original double value. The constant
+        is percentScaleFactor, which is currently 128.
+        
+        Added assertions that the correct constructors and accessors are used
+        depending on the type: the double-based percent(), setValue() and Length()
+        for the Percent type, and the integer-based value(), setValue() and Length()
+        for all other types.
+        
+        calcValue() and calcMinValue() work the same as before, regardless of the
+        type.
+
+        Added helpers for testing if the value is 0, positive, negative or undefined
+        without having to check the type first.
+        
+        Added raw value accessors. These are useful for doing integer math and
+        comparisons with scaled percent values or doing Length type-agnostic math.
+
+        Changed the rest of the code to use the appropriate accessors and helpers.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForLength):
+        (WebCore::primitiveValueFromLength):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::convertToLength):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapBackgroundSize):
+        (WebCore::CSSStyleSelector::mapBackgroundXPosition):
+        (WebCore::CSSStyleSelector::mapBackgroundYPosition):
+        * platform/StringImpl.cpp:
+        (WebCore::parseLength):
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        (WebCore::AutoTableLayout::fullRecalc):
+        (WebCore::AutoTableLayout::calcMinMaxWidth):
+        (WebCore::AutoTableLayout::calcEffectiveWidth):
+        (WebCore::AutoTableLayout::layout):
+        (WebCore::AutoTableLayout::calcPercentages):
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::calcWidthArray):
+        (WebCore::FixedTableLayout::layout):
+        * rendering/Length.h:
+        (WebCore::Length::Length):
+        (WebCore::Length::value):
+        (WebCore::Length::rawValue):
+        (WebCore::Length::percent):
+        (WebCore::Length::setValue):
+        (WebCore::Length::setRawValue):
+        (WebCore::Length::calcValue):
+        (WebCore::Length::calcMinValue):
+        (WebCore::Length::isUndefined):
+        (WebCore::Length::isZero):
+        (WebCore::Length::isPositive):
+        (WebCore::Length::isNegative):
+        * rendering/RenderBR.cpp:
+        (WebCore::RenderBR::lineHeight):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isSelfCollapsingBlock):
+        * rendering/RenderBox.cpp:
+        (WebCore::cacluateBackgroundSize):
+        (WebCore::RenderBox::calcWidth):
+        (WebCore::RenderBox::calcHeight):
+        (WebCore::RenderBox::calcReplacedWidth):
+        (WebCore::RenderBox::calcReplacedHeight):
+        (WebCore::RenderBox::calcAbsoluteHorizontal):
+        (WebCore::RenderBox::calcAbsoluteVertical):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::allowedChildFlex):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::lineHeight):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::calcReplacedWidth):
+        (WebCore::RenderImage::calcReplacedHeight):
+        * rendering/RenderLayer.cpp:
+        (WebCore::Marquee::direction):
+        (WebCore::Marquee::start):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::mustRepaintBackgroundOrBorder):
+        (WebCore::RenderObject::lineHeight):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::layout): Added FIXMEs.
+        * rendering/RenderStyle.h:
+        (WebCore::LengthBox::nonZero):
+        (WebCore::RenderStyle::initialLineHeight):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::calcWidth):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addCell):
+        (WebCore::RenderTableSection::layoutRows):
+
+2007-01-03  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=11744
           Setting the 'content' property dynamically has no effect
 

@@ -211,10 +211,13 @@ void RenderSlider::layout()
         if (m_thumb->renderer()->style()->hasAppearance())
             theme()->adjustSliderThumbSize(m_thumb->renderer());
 
-        if (style()->appearance() == SliderVerticalAppearance)
+        if (style()->appearance() == SliderVerticalAppearance) {
+            // FIXME: Handle percentage widths correctly. See http://bugs.webkit.org/show_bug.cgi?id=12104
             m_thumb->renderer()->style()->setLeft(Length(m_width / 2 - m_thumb->renderer()->style()->width().value() / 2, Fixed));
-        else
+        } else {
+            // FIXME: Handle percentage heights correctly. See http://bugs.webkit.org/show_bug.cgi?id=12104
             m_thumb->renderer()->style()->setTop(Length(m_height / 2 - m_thumb->renderer()->style()->height().value() / 2, Fixed));
+        }
 
         if (relayoutChildren)
             setPositionFromValue(true);

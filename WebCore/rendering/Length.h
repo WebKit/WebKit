@@ -23,9 +23,12 @@
 #ifndef Length_H
 #define Length_H
 
+#include <wtf/Assertions.h>
+
 namespace WebCore {
 
     const int undefinedLength = -1;
+    const int percentScaleFactor = 128;
 
     enum LengthType { Auto, Relative, Percent, Fixed, Static, Intrinsic, MinIntrinsic };
 
@@ -43,17 +46,61 @@ namespace WebCore {
         Length(int v, LengthType t, bool q = false)
             : m_value((v * 16) | (q << 3) | t) // FIXME: Doesn't work if the passed-in value is very large!
         {
+            ASSERT(t != Percent);
+        }
+
+        Length(double v, LengthType t, bool q = false)
+            : m_value(static_cast<int>(v * percentScaleFactor) * 16 | (q << 3) | t)
+        {
+            ASSERT(t == Percent);
         }
 
         bool operator==(const Length& o) const { return m_value == o.m_value; }
         bool operator!=(const Length& o) const { return m_value != o.m_value; }
 
-        int value() const { return (m_value & ~0xF) / 16; }
+        int value() const {
+            ASSERT(type() != Percent);
+            return rawValue();
+        }
+
+        int rawValue() const { return (m_value & ~0xF) / 16; }
+
+        double percent() const
+        {
+            ASSERT(type() == Percent);
+            return static_cast<double>(rawValue()) / percentScaleFactor;
+        }
+
         LengthType type() const { return static_cast<LengthType>(m_value & 7); }
         bool quirk() const { return (m_value >> 3) & 1; }
 
-        void setValue(LengthType t, int value) { m_value = value * 16 | (m_value & 0x8) | t; }
-        void setValue(int value) { m_value = value * 16 | (m_value & 0xF); }
+        void setValue(LengthType t, int value)
+        {
+            ASSERT(t != Percent);
+            setRawValue(t, value);
+        }
+
+        void setRawValue(LengthType t, int value) { m_value = value * 16 | (m_value & 0x8) | t; }
+
+        void setValue(int value)
+        {
+            ASSERT(!value || type() != Percent);
+            setRawValue(value);
+        }
+
+        void setRawValue(int value) { m_value = value * 16 | (m_value & 0xF); }
+
+        void setValue(LengthType t, double value)
+        {
+            ASSERT(t == Percent);
+            m_value = static_cast<int>(value * percentScaleFactor) * 16 | (m_value & 0x8) | t;
+        }
+
+        void setValue(double value)
+        {
+            ASSERT(type() == Percent);
+            m_value = static_cast<int>(value * percentScaleFactor) * 16 | (m_value & 0xF);
+        }
 
         // note: works only for certain types, returns undefinedLength otherwise
         int calcValue(int maxValue) const
@@ -62,7 +109,7 @@ namespace WebCore {
                 case Fixed:
                     return value();
                 case Percent:
-                    return maxValue * value() / 100;
+                    return maxValue * rawValue() / (100 * percentScaleFactor);
                 case Auto:
                     return maxValue;
                 default:
@@ -76,12 +123,17 @@ namespace WebCore {
                 case Fixed:
                     return value();
                 case Percent:
-                    return maxValue * value() / 100;
+                    return maxValue * rawValue() / (100 * percentScaleFactor);
                 case Auto:
                 default:
                     return 0;
             }
         }
+
+        bool isUndefined() const { return rawValue() == undefinedLength; }
+        bool isZero() const { return !(m_value & ~0xF); }
+        bool isPositive() const { return rawValue() > 0; }
+        bool isNegative() const { return rawValue() < 0; }
 
         bool isAuto() const { return type() == Auto; }
         bool isRelative() const { return type() == Relative; }

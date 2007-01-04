@@ -64,7 +64,7 @@ short RenderBR::lineHeight(bool firstLine, bool isRootLineBox) const
     if (firstLine) {
         RenderStyle* s = style(firstLine);
         Length lh = s->lineHeight();
-        if (lh.value() < 0) {
+        if (lh.isNegative()) {
             if (s == style()) {
                 if (m_lineHeight == -1)
                     m_lineHeight = RenderObject::lineHeight(false);

@@ -2,6 +2,35 @@
 
         Reviewed by Hyatt.
 
+        - test and updated results for http://bugs.webkit.org/show_bug.cgi?id=5164
+          Non-integer percentages are incorrectly rounded down in Safari
+
+        * css2.1/t0804-c5507-padn-r-00-c-ag-expected.checksum:
+        * css2.1/t0804-c5507-padn-r-00-c-ag-expected.png:
+        * css2.1/t0804-c5507-padn-r-00-c-ag-expected.txt:
+        * css2.1/t0804-c5509-padn-l-00-b-ag-expected.checksum:
+        * css2.1/t0804-c5509-padn-l-00-b-ag-expected.png:
+        * css2.1/t0804-c5509-padn-l-00-b-ag-expected.txt:
+        * css2.1/t09-c5526c-display-00-e-expected.checksum:
+        * css2.1/t09-c5526c-display-00-e-expected.png:
+        * css2.1/t09-c5526c-display-00-e-expected.txt:
+        * fast/block/basic/011-expected.checksum:
+        * fast/block/basic/011-expected.png:
+        * fast/block/basic/011-expected.txt:
+        * fast/css/percentage-non-integer-expected.checksum: Added.
+        * fast/css/percentage-non-integer-expected.png: Added.
+        * fast/css/percentage-non-integer-expected.txt: Added.
+        * fast/css/percentage-non-integer.html: Added.
+        * tables/mozilla/bugs/bug4385-expected.checksum:
+        * tables/mozilla/bugs/bug4385-expected.png:
+        * tables/mozilla/bugs/bug4385-expected.txt:
+        * tables/mozilla_expected_failures/core/col_span2-expected.checksum:
+        * tables/mozilla_expected_failures/core/col_span2-expected.txt:
+
+2007-01-03  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
         - test for http://bugs.webkit.org/show_bug.cgi?id=11744
           Setting the 'content' property dynamically has no effect
 

@@ -392,7 +392,7 @@ bool RenderBlock::isSelfCollapsingBlock() const
     // (e) have specified that one of our margins can't collapse using a CSS extension
     if (m_height > 0 ||
         isTable() || (borderBottom() + paddingBottom() + borderTop() + paddingTop()) != 0 ||
-        style()->minHeight().value() > 0 || 
+        style()->minHeight().isPositive() || 
         style()->marginTopCollapse() == MSEPARATE || style()->marginBottomCollapse() == MSEPARATE)
         return false;
 
@@ -407,7 +407,7 @@ bool RenderBlock::isSelfCollapsingBlock() const
 
     // If the height is 0 or auto, then whether or not we are a self-collapsing block depends
     // on whether we have content that is all self-collapsing or not.
-    if (hasAutoHeight || ((style()->height().isFixed() || style()->height().isPercent()) && style()->height().value() == 0)) {
+    if (hasAutoHeight || ((style()->height().isFixed() || style()->height().isPercent()) && style()->height().isZero())) {
         // If the block has inline children, see if we generated any line boxes.  If we have any
         // line boxes, then we can't be self-collapsing, since we have content.
         if (childrenInline())

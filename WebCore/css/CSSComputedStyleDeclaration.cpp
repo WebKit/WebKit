@@ -168,7 +168,7 @@ static CSSValue* valueForLength(const Length& length)
         case MinIntrinsic:
             return new CSSPrimitiveValue(CSS_VAL_MIN_INTRINSIC);
         case Percent:
-            return new CSSPrimitiveValue(length.value(), CSSPrimitiveValue::CSS_PERCENTAGE);
+            return new CSSPrimitiveValue(length.percent(), CSSPrimitiveValue::CSS_PERCENTAGE);
         case Relative:
         case Static:
             // Should never be reached.
@@ -338,7 +338,7 @@ CSSPrimitiveValue* primitiveValueFromLength(Length length, RenderObject* rendere
 {
     String string;
     if (length.isPercent())
-        string = numberAsString(length.value()) + "%";
+        string = numberAsString(length.percent()) + "%";
     else if (length.isFixed())
         string = numberAsString(length.calcMinValue(0));
     else if (length.isAuto())
@@ -444,13 +444,13 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         String string;
         Length length(style->backgroundXPosition());
         if (length.isPercent())
-            string = numberAsString(length.value()) + "%";
+            string = numberAsString(length.percent()) + "%";
         else
             string = numberAsString(length.calcMinValue(renderer->contentWidth()));
         string += " ";
         length = style->backgroundYPosition();
         if (length.isPercent())
-            string += numberAsString(length.value()) + "%";
+            string += numberAsString(length.percent()) + "%";
         else
             string += numberAsString(length.calcMinValue(renderer->contentWidth()));
         return new CSSPrimitiveValue(string, CSSPrimitiveValue::CSS_STRING);
@@ -857,7 +857,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         return new CSSPrimitiveValue(style->lineClamp(), CSSPrimitiveValue::CSS_PERCENTAGE);
     case CSS_PROP_LINE_HEIGHT: {
         Length length(style->lineHeight());
-        if (length.value() < 0)
+        if (length.isNegative())
             return new CSSPrimitiveValue(CSS_VAL_NORMAL);
         if (length.isPercent()) {
             // This is imperfect, because it doesn't include the zoom factor and the real computation
@@ -865,7 +865,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             // On the other hand, since font-size doesn't include the zoom factor, we really can't do
             // that here either.
             float fontSize = style->fontDescription().specifiedSize();
-            return new CSSPrimitiveValue((int)(length.value() * fontSize) / 100, CSSPrimitiveValue::CSS_PX);
+            return new CSSPrimitiveValue((int)(length.percent() * fontSize) / 100, CSSPrimitiveValue::CSS_PX);
         }
         else {
             return new CSSPrimitiveValue(length.value(), CSSPrimitiveValue::CSS_PX);

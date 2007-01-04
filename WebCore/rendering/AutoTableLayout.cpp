@@ -86,9 +86,10 @@ void AutoTableLayout::recalcColumn(int effCol)
                     }
 
                     Length w = cell->styleOrColWidth();
-                    if (w.value() > 32760)
-                        w.setValue(32760);
-                    if (w.value() < 0)
+                    // FIXME: What is this arbitrary value?
+                    if (w.rawValue() > 32760)
+                        w.setRawValue(32760);
+                    if (w.isNegative())
                         w.setValue(0);
                     switch(w.type()) {
                     case Fixed:
@@ -110,11 +111,13 @@ void AutoTableLayout::recalcColumn(int effCol)
                         break;
                     case Percent:
                         m_hasPercent = true;
-                        if (w.value() > 0 && (!l.width.isPercent() || w.value() > l.width.value()))
+                        if (w.isPositive() && (!l.width.isPercent() || w.rawValue() > l.width.rawValue()))
                             l.width = w;
                         break;
                     case Relative:
-                        if (w.isAuto() || (w.isRelative() && w.value() > l.width.value()))
+                        // FIXME: Need to understand this case and whether it makes sense to compare values
+                        // which are not necessarily of the same type.
+                        if (w.isAuto() || (w.isRelative() && w.value() > l.width.rawValue()))
                             l.width = w;
                     default:
                         break;
@@ -174,7 +177,7 @@ void AutoTableLayout::fullRecalc()
                 Length w = col->style()->width();
                 if (w.isAuto())
                     w = grpWidth;
-                if ((w.isFixed() && w.value() == 0) || (w.isPercent() && w.value() == 0))
+                if ((w.isFixed() || w.isPercent()) && w.isZero())
                     w = Length();
                 int cEffCol = m_table->colToEffCol(cCol);
 #ifdef DEBUG_LAYOUT
@@ -254,13 +257,13 @@ void AutoTableLayout::calcMinMaxWidth()
     int maxPercent = 0;
     int maxNonPercent = 0;
 
-    int remainingPercent = 100;
+    int remainingPercent = 100 * percentScaleFactor;
     for (unsigned int i = 0; i < m_layoutStruct.size(); i++) {
         minWidth += m_layoutStruct[i].effMinWidth;
         maxWidth += m_layoutStruct[i].effMaxWidth;
         if (m_layoutStruct[i].effWidth.isPercent()) {
-            int percent = min(m_layoutStruct[i].effWidth.value(), remainingPercent);
-            int pw = (m_layoutStruct[i].effMaxWidth * 100) / max(percent, 1);
+            int percent = min(m_layoutStruct[i].effWidth.rawValue(), remainingPercent);
+            int pw = (m_layoutStruct[i].effMaxWidth * 100 * percentScaleFactor) / max(percent, percentScaleFactor);
             remainingPercent -= percent;
             maxPercent = max(pw,  maxPercent);
         } else {
@@ -269,7 +272,8 @@ void AutoTableLayout::calcMinMaxWidth()
     }
 
     if (shouldScaleColumns(m_table)) {
-        maxNonPercent = (maxNonPercent * 100 + 50) / max(remainingPercent, 1);
+        // FIXME: Why 50?
+        maxNonPercent = (maxNonPercent * 100 + 50) * percentScaleFactor / max(remainingPercent, percentScaleFactor);
         maxWidth = max(maxNonPercent,  maxWidth);
         maxWidth = max(maxWidth, maxPercent);
     }
@@ -319,7 +323,7 @@ int AutoTableLayout::calcEffectiveWidth()
         int span = cell->colSpan();
 
         Length w = cell->styleOrColWidth();
-        if (!w.isRelative() && w.value() == 0)
+        if (!w.isRelative() && w.isZero())
             w = Length(); // make it Auto
 
         int col = m_table->colToEffCol(cell->col());
@@ -339,7 +343,7 @@ int AutoTableLayout::calcEffectiveWidth()
         while (lastCol < nEffCols && span > 0) {
             switch (m_layoutStruct[lastCol].width.type()) {
             case Percent:
-                totalPercent += m_layoutStruct[lastCol].width.value();
+                totalPercent += m_layoutStruct[lastCol].width.rawValue();
                 allColsAreFixed = false;
                 break;
             case Fixed:
@@ -367,7 +371,7 @@ int AutoTableLayout::calcEffectiveWidth()
                     allColsArePercent = false;
                 }
                 else
-                    totalPercent += m_layoutStruct[lastCol].effWidth.value();
+                    totalPercent += m_layoutStruct[lastCol].effWidth.rawValue();
                 allColsAreFixed = false;
             }
             span -= m_table->spanOfEffCol(lastCol);
@@ -383,7 +387,7 @@ int AutoTableLayout::calcEffectiveWidth()
 
         // adjust table max width if needed
         if (w.isPercent()) {
-            if (totalPercent > w.value() || allColsArePercent) {
+            if (totalPercent > w.rawValue() || allColsArePercent) {
                 // can't satify this condition, treat as variable
                 w = Length();
             } else {
@@ -391,10 +395,10 @@ int AutoTableLayout::calcEffectiveWidth()
 #ifdef DEBUG_LAYOUT
                 qDebug("    adjusting tMaxWidth (%d): spanMax=%d, value=%d, totalPercent=%d", tMaxWidth, spanMax, w.value, totalPercent);
 #endif
-                tMaxWidth = max(tMaxWidth, spanMax * 100 / w.value());
+                tMaxWidth = max(tMaxWidth, spanMax * 100 * percentScaleFactor / w.rawValue());
 
                 // all non percent columns in the span get percent vlaues to sum up correctly.
-                int percentMissing = w.value() - totalPercent;
+                int percentMissing = w.rawValue() - totalPercent;
                 int totalWidth = 0;
                 for (unsigned int pos = col; pos < lastCol; pos++) {
                     if (!(m_layoutStruct[pos].width.isPercent()))
@@ -410,7 +414,7 @@ int AutoTableLayout::calcEffectiveWidth()
                         totalWidth -= m_layoutStruct[pos].effMaxWidth;
                         percentMissing -= percent;
                         if (percent > 0)
-                            m_layoutStruct[pos].effWidth = Length(percent, Percent);
+                            m_layoutStruct[pos].effWidth.setRawValue(Percent, percent);
                         else
                             m_layoutStruct[pos].effWidth = Length();
                     }
@@ -573,7 +577,7 @@ void AutoTableLayout::layout()
         switch (width.type()) {
         case Percent:
             havePercent = true;
-            totalPercent += width.value();
+            totalPercent += width.rawValue();
             break;
         case Relative:
             haveRelative = true;
@@ -604,9 +608,9 @@ void AutoTableLayout::layout()
                 m_layoutStruct[i].calcWidth = w;
             }
         }
-        if (totalPercent > 100) {
+        if (totalPercent > 100 * percentScaleFactor) {
             // remove overallocated space from the last columns
-            int excess = tableWidth*(totalPercent-100)/100;
+            int excess = tableWidth*(totalPercent - 100 * percentScaleFactor) / (100 * percentScaleFactor);
             for (int i = nEffCols-1; i >= 0; i--) {
                 if (m_layoutStruct[i].effWidth.isPercent()) {
                     int w = m_layoutStruct[i].calcWidth;
@@ -687,14 +691,14 @@ void AutoTableLayout::layout()
 #endif
     
     // spread over percent colums
-    if (available > 0 && m_hasPercent && totalPercent < 100) {
+    if (available > 0 && m_hasPercent && totalPercent < 100 * percentScaleFactor) {
         // still have some width to spread, distribute weighted to percent columns
         for (int i = 0; i < nEffCols; i++) {
             Length &width = m_layoutStruct[i].effWidth;
             if (width.isPercent()) {
-                int w = available * width.value() / totalPercent;
+                int w = available * width.rawValue() / totalPercent;
                 available -= w;
-                totalPercent -= width.value();
+                totalPercent -= width.rawValue();
                 m_layoutStruct[i].calcWidth += w;
                 if (!available || !totalPercent) break;
             }
@@ -833,11 +837,12 @@ void AutoTableLayout::layout()
 
 void AutoTableLayout::calcPercentages() const
 {
-    m_totalPercent = 0;
+    unsigned totalPercent = 0;
     for (unsigned i = 0; i < m_layoutStruct.size(); i++) {
         if (m_layoutStruct[i].width.isPercent())
-            m_totalPercent += m_layoutStruct[i].width.value();
+            totalPercent += m_layoutStruct[i].width.rawValue();
     }
+    m_totalPercent = totalPercent / percentScaleFactor;
     m_percentagesDirty = false;
 }
 

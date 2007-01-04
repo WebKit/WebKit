@@ -190,12 +190,12 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderObject* row)
     if (rSpan == 1) {
         // we ignore height settings on rowspan cells
         Length height = cell->style()->height();
-        if (height.value() > 0 || (height.isRelative() && height.value() >= 0)) {
+        if (height.isPositive() || (height.isRelative() && height.value() >= 0)) {
             Length cRowHeight = grid[cRow].height;
             switch (height.type()) {
                 case Percent:
                     if (!(cRowHeight.isPercent()) ||
-                        (cRowHeight.isPercent() && cRowHeight.value() < height.value()))
+                        (cRowHeight.isPercent() && cRowHeight.rawValue() < height.rawValue()))
                         grid[cRow].height = height;
                         break;
                 case Fixed:
@@ -397,23 +397,23 @@ int RenderTableSection::layoutRows(int toAdd)
             if (grid[r].height.isAuto())
                 numAuto++;
             else if (grid[r].height.isPercent())
-                totalPercent += grid[r].height.value();
+                totalPercent += grid[r].height.rawValue();
         }
         if (totalPercent) {
             // try to satisfy percent
             int add = 0;
-            if (totalPercent > 100)
-                totalPercent = 100;
+            if (totalPercent > 100 * percentScaleFactor)
+                totalPercent = 100 * percentScaleFactor;
             int rh = rowPos[1] - rowPos[0];
             for (int r = 0; r < totalRows; r++) {
                 if (totalPercent > 0 && grid[r].height.isPercent()) {
-                    int toAdd = min(dh, (totalHeight * grid[r].height.value() / 100) - rh);
+                    int toAdd = min(dh, (totalHeight * grid[r].height.rawValue() / (100 * percentScaleFactor)) - rh);
                     // If toAdd is negative, then we don't want to shrink the row (this bug
                     // affected Outlook Web Access).
                     toAdd = max(0, toAdd);
                     add += toAdd;
                     dh -= toAdd;
-                    totalPercent -= grid[r].height.value();
+                    totalPercent -= grid[r].height.rawValue();
                 }
                 if (r < totalRows - 1)
                     rh = rowPos[r + 2] - rowPos[r + 1];

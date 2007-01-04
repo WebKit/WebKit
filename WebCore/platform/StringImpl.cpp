@@ -301,7 +301,7 @@ static Length parseLength(const UChar* m_data, unsigned int m_length)
         if (i < m_length) {
             UChar next = m_data[i];
             if (next == '%')
-                return Length(r, Percent);
+                return Length(static_cast<double>(r), Percent);
             if (next == '*')
                 return Length(r, Relative);
         }
