@@ -298,19 +298,20 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
             setStart(spellingSearchRange.get(), selection.visibleEnd());
     }
 
-    // If we're not in an editable node, try to find one, make that our range to work in
-    Node *editableNode = spellingSearchRange->startContainer(ec);
-    if (!editableNode->isContentEditable()) {
-        editableNode = editableNode->nextEditable();
-        if (!editableNode)
+    Position position = spellingSearchRange->startPosition();
+    if (!isEditablePosition(position)) {
+        // This shouldn't happen in practice because the Spelling menu items aren't enabled unless the
+        // selection is editable.
+        position = firstEditablePositionAfterPositionInRoot(position, frame()->document()->documentElement()).deepEquivalent();
+        if (position.isNull())
             return;
-
-        spellingSearchRange->setStartBefore(editableNode, ec);
+        
+        spellingSearchRange->setStart(position.node(), position.offset(), ec);
         startedWithSelection = false;   // won't need to wrap
     }
     
     // topNode defines the whole range we want to operate on 
-    Node *topNode = editableNode->rootEditableElement();
+    Node* topNode = highestEditableRoot(position);
     spellingSearchRange->setEnd(topNode, maxDeepOffset(topNode), ec);
 
     // If spellingSearchRange starts in the middle of a word, advance to the next word so we start checking

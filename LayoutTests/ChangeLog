@@ -1,3 +1,10 @@
+2007-01-03  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        * editing/pasteboard/merge-end-blockquote-expected.txt: A
+        recent change caused an acceptable change in these expected results.
+
 2007-01-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
