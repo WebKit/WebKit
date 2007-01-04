@@ -1,3 +1,14 @@
+2007-01-03  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin Decker
+
+        - fixed <rdar://problem/4145714> WebKit's PDFView's "Open in Preview" puts the 
+          PDF in /tmp, both group and world-readable
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView _openWithFinder:]):
+        Make the file only readable by the current user
+
 2007-01-03  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John.
