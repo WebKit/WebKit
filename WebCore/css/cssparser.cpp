@@ -1047,6 +1047,7 @@ bool CSSParser::parseValue(int propId, bool important)
         valid_primitive = validUnit(value, FLength, strict);
         break;
     case CSS_PROP_TEXT_SHADOW: // CSS2 property, dropped in CSS2.1, back in CSS3, so treat as CSS3
+    case CSS_PROP__WEBKIT_BOX_SHADOW:
         if (id == CSS_VAL_NONE)
             valid_primitive = true;
         else

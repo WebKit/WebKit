@@ -570,6 +570,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         }
         ASSERT_NOT_REACHED();
         return 0;
+    case CSS_PROP__WEBKIT_BOX_SHADOW:
+        return valueForShadow(style->boxShadow());
     case CSS_PROP_CAPTION_SIDE:
         switch (style->captionSide()) {
             case CAPLEFT:

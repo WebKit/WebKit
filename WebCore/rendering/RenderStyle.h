@@ -746,7 +746,9 @@ public:
     bool operator!=(const StyleCSS3NonInheritedData &o) const {
         return !(*this == o);
     }
-    
+ 
+    bool shadowDataEquivalent(const StyleCSS3NonInheritedData& o) const;
+
     int lineClamp;         // An Apple extension.  Not really CSS3 but not worth making a new struct over.
     Vector<StyleDashboardRegion> m_dashboardRegions;
     float opacity;         // Whether or not we're transparent.
@@ -761,6 +763,8 @@ public:
 
     unsigned m_appearance : 6; // EAppearance
 
+    ShadowData* m_boxShadow;  // For box-shadow decorations.
+    
 #ifdef XBL_SUPPORT
     BindingURI* bindingURI; // The XBL binding URI list.
 #endif
@@ -1411,6 +1415,7 @@ public:
     unsigned int boxOrdinalGroup() const { return css3NonInheritedData->flexibleBox->ordinal_group; }
     EBoxOrient boxOrient() const { return static_cast<EBoxOrient>(css3NonInheritedData->flexibleBox->orient); }
     EBoxAlignment boxPack() const { return static_cast<EBoxAlignment>(css3NonInheritedData->flexibleBox->pack); }
+    ShadowData* boxShadow() const { return css3NonInheritedData->m_boxShadow; }
     EBoxSizing boxSizing() const { return static_cast<EBoxSizing>(box->boxSizing); }
     Length marqueeIncrement() const { return css3NonInheritedData->marquee->increment; }
     int marqueeSpeed() const { return css3NonInheritedData->marquee->speed; }
@@ -1638,6 +1643,7 @@ public:
     void setBoxOrdinalGroup(unsigned int og) { SET_VAR(css3NonInheritedData.access()->flexibleBox, ordinal_group, og); }
     void setBoxOrient(EBoxOrient o) { SET_VAR(css3NonInheritedData.access()->flexibleBox, orient, o); }
     void setBoxPack(EBoxAlignment p) { SET_VAR(css3NonInheritedData.access()->flexibleBox, pack, p); }
+    void setBoxShadow(ShadowData* val, bool add=false);
     void setBoxSizing(EBoxSizing s) { SET_VAR(box, boxSizing, s); }
     void setMarqueeIncrement(const Length& f) { SET_VAR(css3NonInheritedData.access()->marquee, increment, f); }
     void setMarqueeSpeed(int f) { SET_VAR(css3NonInheritedData.access()->marquee, speed, f); }

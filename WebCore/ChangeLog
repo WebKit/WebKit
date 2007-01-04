@@ -1,3 +1,25 @@
+2007-01-03  David Hyatt  <hyatt@apple.com>
+
+        Implement box-shadow parsing... getting it all into the RenderStyle.
+
+        Reviewed by beth
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSPropertyNames.in:
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleCSS3NonInheritedData::StyleCSS3NonInheritedData):
+        (WebCore::StyleCSS3NonInheritedData::operator==):
+        (WebCore::StyleCSS3NonInheritedData::shadowDataEquivalent):
+        (WebCore::RenderStyle::diff):
+        (WebCore::RenderStyle::setBoxShadow):
+        * rendering/RenderStyle.h:
+        (WebCore::RenderStyle::boxShadow):
+
 2007-01-03  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John.

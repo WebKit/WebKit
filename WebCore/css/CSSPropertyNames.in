@@ -51,6 +51,7 @@ bottom
 -webkit-box-ordinal-group
 -webkit-box-orient
 -webkit-box-pack
+-webkit-box-shadow
 box-sizing
 caption-side
 clear

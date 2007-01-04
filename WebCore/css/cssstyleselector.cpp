@@ -3755,23 +3755,19 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         style->setOutlineOffset(primitiveValue->computeLengthInt(style));
         break;
 
-    case CSS_PROP_TEXT_SHADOW: {
+    case CSS_PROP_TEXT_SHADOW:
+    case CSS_PROP__WEBKIT_BOX_SHADOW: {
         if (isInherit) {
-            style->setTextShadow(parentStyle->textShadow() ? new ShadowData(*parentStyle->textShadow()) : 0);
-            return;
+            if (id == CSS_PROP_TEXT_SHADOW)
+                return style->setTextShadow(parentStyle->textShadow() ? new ShadowData(*parentStyle->textShadow()) : 0);
+            return style->setBoxShadow(parentStyle->boxShadow() ? new ShadowData(*parentStyle->boxShadow()) : 0);
         }
-        if (isInitial) {
-            style->setTextShadow(0);
-            return;
-        }
-
-        if (primitiveValue) { // none
-            style->setTextShadow(0);
-            return;
-        }
+        if (isInitial || primitiveValue) // initial | none
+            return id == CSS_PROP_TEXT_SHADOW ? style->setTextShadow(0) : style->setBoxShadow(0);
 
         if (!value->isValueList())
             return;
+
         CSSValueList *list = static_cast<CSSValueList*>(value);
         int len = list->length();
         for (int i = 0; i < len; i++) {
@@ -3783,7 +3779,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             if (item->color)
                 color = getColorFromPrimitiveValue(item->color.get());
             ShadowData* shadowData = new ShadowData(x, y, blur, color.isValid() ? color : Color::transparent);
-            style->setTextShadow(shadowData, i != 0);
+            if (id == CSS_PROP_TEXT_SHADOW)
+                style->setTextShadow(shadowData, i != 0);
+            else
+                style->setBoxShadow(shadowData, i != 0);
         }
         return;
     }

@@ -400,6 +400,7 @@ StyleCSS3NonInheritedData::StyleCSS3NonInheritedData()
     , marginBottomCollapse(MCOLLAPSE)
     , matchNearestMailBlockquoteColor(RenderStyle::initialMatchNearestMailBlockquoteColor())
     , m_appearance(RenderStyle::initialAppearance())
+    , m_boxShadow(0)
 #ifdef XBL_SUPPORT
     , bindingURI(0)
 #endif
@@ -419,6 +420,7 @@ StyleCSS3NonInheritedData::StyleCSS3NonInheritedData(const StyleCSS3NonInherited
     , marginBottomCollapse(o.marginBottomCollapse)
     , matchNearestMailBlockquoteColor(o.matchNearestMailBlockquoteColor)
     , m_appearance(o.m_appearance)
+    , m_boxShadow(o.m_boxShadow ? new ShadowData(*o.m_boxShadow) : 0)
 #ifdef XBL_SUPPORT
     , bindingURI(o.bindingURI ? o.bindingURI->copy() : 0)
 #endif
@@ -450,12 +452,22 @@ bool StyleCSS3NonInheritedData::operator==(const StyleCSS3NonInheritedData& o) c
            userDrag == o.userDrag && userSelect == o.userSelect && textOverflow == o.textOverflow &&
            marginTopCollapse == o.marginTopCollapse && marginBottomCollapse == o.marginBottomCollapse &&
            matchNearestMailBlockquoteColor == o.matchNearestMailBlockquoteColor &&
-           m_appearance == o.m_appearance
+           m_appearance == o.m_appearance &&
+           shadowDataEquivalent(o)
 #ifdef XBL_SUPPORT
            && bindingsEquivalent(o)
 #endif
            && lineClamp == o.lineClamp && m_dashboardRegions == o.m_dashboardRegions
     ;
+}
+
+bool StyleCSS3NonInheritedData::shadowDataEquivalent(const StyleCSS3NonInheritedData& o) const
+{
+    if (!m_boxShadow && o.m_boxShadow || m_boxShadow && !o.m_boxShadow)
+        return false;
+    if (m_boxShadow && o.m_boxShadow && (*m_boxShadow != *o.m_boxShadow))
+        return false;
+    return true;
 }
 
 StyleCSS3InheritedData::StyleCSS3InheritedData()
@@ -921,6 +933,7 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
          !(inherited_flags._white_space == other->inherited_flags._white_space) ||
          !(noninherited_flags._clear == other->noninherited_flags._clear) ||
          !css3InheritedData->shadowDataEquivalent(*other->css3InheritedData.get()) ||
+         !css3NonInheritedData->shadowDataEquivalent(*other->css3NonInheritedData.get()) ||
          textStrokeWidth() != other->textStrokeWidth()
         )
         return Layout;
@@ -1256,6 +1269,20 @@ void RenderStyle::setTextShadow(ShadowData* val, bool add)
     }
 
     ShadowData* last = css3Data->textShadow;
+    while (last->next) last = last->next;
+    last->next = val;
+}
+
+void RenderStyle::setBoxShadow(ShadowData* val, bool add)
+{
+    StyleCSS3NonInheritedData* css3Data = css3NonInheritedData.access(); 
+    if (!add) {
+        delete css3Data->m_boxShadow;
+        css3Data->m_boxShadow = val;
+        return;
+    }
+
+    ShadowData* last = css3Data->m_boxShadow;
     while (last->next) last = last->next;
     last->next = val;
 }
