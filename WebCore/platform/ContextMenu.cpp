@@ -435,9 +435,9 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagShowSpellingPanel:
 #ifndef BUILDING_ON_TIGER
             if (frame->editor()->spellingPanelIsShowing())
-                item.setTitle(contextMenuItemTagWritingDirectionMenu(false));
+                item.setTitle(contextMenuItemTagShowSpellingPanel(false));
             else
-                item.setTitle(contextMenuItemTagWritingDirectionMenu(true));
+                item.setTitle(contextMenuItemTagShowSpellingPanel(true));
 #endif
             shouldEnable = frame->editor()->canEdit();
             break;
