@@ -30,6 +30,7 @@
 #define ResourceLoader_h
 
 #include "ResourceHandleClient.h"
+#include "ResourceResponse.h"
 #include "Shared.h"
 #include "KURL.h"
 
@@ -45,7 +46,6 @@
 @class NSURLAuthenticationChallenge;
 @class NSURLConnection;
 @class NSURLRequest;
-@class NSURLResponse;
 #else
 class NSCachedURLResponse;
 class NSData;
@@ -54,7 +54,6 @@ class NSURLAuthenticationChallenge;
 class NSURLConnection;
 class NSURLCredential;
 class NSURLRequest;
-class NSURLResponse;
 #endif
 
 #endif
@@ -87,16 +86,16 @@ namespace WebCore {
         id identifier() const { return m_identifier.get(); }
 
         virtual void releaseResources();
-        NSURLResponse *response() const;
+        const ResourceResponse& response() const;
 
         virtual void addData(const char*, int, bool allAtOnce);
         virtual NSData *resourceData();
         void clearResourceData();
 
-        virtual NSURLRequest *willSendRequest(NSURLRequest *, NSURLResponse *redirectResponse);
+        virtual NSURLRequest *willSendRequest(NSURLRequest *, const ResourceResponse& redirectResponse);
         void didReceiveAuthenticationChallenge(NSURLAuthenticationChallenge *);
         void didCancelAuthenticationChallenge(NSURLAuthenticationChallenge *);
-        virtual void didReceiveResponse(NSURLResponse *);
+        virtual void didReceiveResponse(const ResourceResponse&);
         virtual void didReceiveData(const char*, int, long long lengthReceived, bool allAtOnce);
         void willStopBufferingData(const char*, int);
         virtual void didFinishLoading();
@@ -161,7 +160,7 @@ protected:
         RefPtr<Frame> m_frame;
 #if PLATFORM(MAC)
         RetainPtr<id> m_identifier;
-        RetainPtr<NSURLResponse> m_response;
+        ResourceResponse m_response;
         NSURLAuthenticationChallenge *m_currentConnectionChallenge;
         RetainPtr<NSURLAuthenticationChallenge> m_currentWebChallenge;
         KURL m_originalURL;

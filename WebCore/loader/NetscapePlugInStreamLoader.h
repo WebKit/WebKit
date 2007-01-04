@@ -50,7 +50,7 @@ namespace WebCore {
         bool isDone() const;
 
 #if PLATFORM(MAC)
-        virtual void didReceiveResponse(NSURLResponse *);
+        virtual void didReceiveResponse(const ResourceResponse&);
         virtual void didReceiveData(const char *, int, long long lengthReceived, bool allAtOnce);
         virtual void didFinishLoading();
         virtual void didFail(const ResourceError&);

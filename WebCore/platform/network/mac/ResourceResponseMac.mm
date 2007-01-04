@@ -36,8 +36,21 @@
 
 namespace WebCore {
 
+NSURLResponse *ResourceResponse::nsURLResponse() const
+{
+    if (!m_nsResponse && !m_isNull)
+        const_cast<ResourceResponse*>(this)->m_nsResponse.adopt([[NSURLResponse alloc] initWithURL:m_url.getNSURL() MIMEType:m_mimeType expectedContentLength:m_expectedContentLength textEncodingName:m_textEncodingName]);
+    
+    return m_nsResponse.get();
+}
+
 void ResourceResponse::doUpdateResourceResponse()
 {
+    if (m_isNull) {
+        ASSERT(!m_nsResponse);
+        return;
+    }
+    
     m_url = [m_nsResponse.get() URL];
     m_mimeType = [m_nsResponse.get() MIMEType];
     m_expectedContentLength = [m_nsResponse.get() expectedContentLength];

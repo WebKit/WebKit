@@ -48,8 +48,8 @@ namespace WebCore {
         virtual void setDefersLoading(bool);
 
 #if PLATFORM(MAC)
-        virtual NSURLRequest *willSendRequest(NSURLRequest *, NSURLResponse *redirectResponse);
-        virtual void didReceiveResponse(NSURLResponse *);
+        virtual NSURLRequest *willSendRequest(NSURLRequest *, const ResourceResponse& redirectResponse);
+        virtual void didReceiveResponse(const ResourceResponse&);
         virtual void didReceiveData(const char*, int, long long lengthReceived, bool allAtOnce);
         virtual void didFinishLoading();
         virtual void didFail(const ResourceError&);
@@ -68,16 +68,15 @@ namespace WebCore {
         ResourceError interruptionForPolicyChangeError() const;
         void stopLoadingForPolicyChange();
 #if PLATFORM(MAC)
-        bool isPostOrRedirectAfterPost(NSURLRequest *newRequest, NSURLResponse *redirectResponse);
+        bool isPostOrRedirectAfterPost(NSURLRequest *newRequest, const ResourceResponse& redirectResponse);
 
         static void callContinueAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
         void continueAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue);
 
         static void callContinueAfterContentPolicy(void*, PolicyAction);
         void continueAfterContentPolicy(PolicyAction);
-        void continueAfterContentPolicy(PolicyAction, NSURLResponse *);
+        void continueAfterContentPolicy(PolicyAction, const ResourceResponse&);
 
-        RetainPtr<NSURLResponse> m_response;
         RetainPtr<NSURLRequest> m_initialRequest;
 #endif
 

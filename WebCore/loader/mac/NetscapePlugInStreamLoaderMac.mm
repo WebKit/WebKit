@@ -62,14 +62,14 @@ void NetscapePlugInStreamLoader::releaseResources()
     ResourceLoader::releaseResources();
 }
 
-void NetscapePlugInStreamLoader::didReceiveResponse(NSURLResponse *theResponse)
+void NetscapePlugInStreamLoader::didReceiveResponse(const ResourceResponse& theResponse)
 {
     // Protect self in this delegate method since the additional processing can do
     // anything including possibly getting rid of the last reference to this object.
     // One example of this is Radar 3266216.
     RefPtr<NetscapePlugInStreamLoader> protect(this);
 
-    [m_stream.get() startStreamWithResponse:theResponse];
+    [m_stream.get() startStreamWithResponse:theResponse.nsURLResponse()];
     
     // Don't continue if the stream is cancelled in startStreamWithResponse or didReceiveResponse.
     if (!m_stream)
@@ -77,8 +77,8 @@ void NetscapePlugInStreamLoader::didReceiveResponse(NSURLResponse *theResponse)
     ResourceLoader::didReceiveResponse(theResponse);
     if (!m_stream)
         return;
-    if ([theResponse isKindOfClass:[NSHTTPURLResponse class]] &&
-        ([(NSHTTPURLResponse *)theResponse statusCode] >= 400 || [(NSHTTPURLResponse *)theResponse statusCode] < 100)) {
+    if (theResponse.isHTTP() &&
+        (theResponse.httpStatusCode() >= 400 || theResponse.httpStatusCode() < 100)) {
         NSError *error = frameLoader()->fileDoesNotExistError(theResponse);
         [m_stream.get() cancelLoadAndDestroyStreamWithError:error];
     }

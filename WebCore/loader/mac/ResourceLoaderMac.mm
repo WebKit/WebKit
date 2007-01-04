@@ -162,7 +162,7 @@ void ResourceLoader::clearResourceData()
     [m_resourceData.get() setLength:0];
 }
 
-NSURLRequest *ResourceLoader::willSendRequest(NSURLRequest *newRequest, NSURLResponse *redirectResponse)
+NSURLRequest *ResourceLoader::willSendRequest(NSURLRequest *newRequest, const ResourceResponse& redirectResponse)
 {
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
@@ -247,7 +247,7 @@ void ResourceLoader::didCancelAuthenticationChallenge(NSURLAuthenticationChallen
     frameLoader()->didCancelAuthenticationChallenge(this, m_currentWebChallenge.get());
 }
 
-void ResourceLoader::didReceiveResponse(NSURLResponse *r)
+void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
 {
     ASSERT(!m_reachedTerminalState);
 
@@ -255,15 +255,17 @@ void ResourceLoader::didReceiveResponse(NSURLResponse *r)
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<ResourceLoader> protector(this);
 
+#if PLATFORM(MAC)
     // If the URL is one of our whacky applewebdata URLs then
     // fake up a substitute URL to present to the delegate.
-    if ([WebDataProtocol _webIsDataProtocolURL:[r URL]])
-        r = [[[NSURLResponse alloc] initWithURL:[m_request.get() _webDataRequestExternalURL] MIMEType:[r MIMEType]
-                expectedContentLength:[r expectedContentLength] textEncodingName:[r textEncodingName]] autorelease];
+    if ([WebDataProtocol _webIsDataProtocolURL:[r.nsURLResponse() URL]]) 
+        m_response = [[[NSURLResponse alloc] initWithURL:[m_request.get() _webDataRequestExternalURL] MIMEType:r.mimeType()
+                                   expectedContentLength:r.expectedContentLength() textEncodingName:r.textEncodingName()] autorelease];
+    else
+#endif
+        m_response = r;
 
-    m_response = r;
-
-    frameLoader()->didReceiveResponse(this, r);
+    frameLoader()->didReceiveResponse(this, m_response);
 }
 
 void ResourceLoader::didReceiveData(const char* data, int length, long long lengthReceived, bool allAtOnce)
@@ -384,9 +386,9 @@ void ResourceLoader::setIdentifier(id identifier)
     m_identifier = identifier;
 }
 
-NSURLResponse *ResourceLoader::response() const
+const ResourceResponse& ResourceLoader::response() const
 {
-    return m_response.get();
+    return m_response;
 }
 
 ResourceError ResourceLoader::cancelledError()
@@ -428,12 +430,12 @@ void ResourceLoader::receivedCancellation(NSURLAuthenticationChallenge *challeng
 
 void ResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
-    request = willSendRequest(request.nsURLRequest(), redirectResponse.nsURLResponse());
+    request = willSendRequest(request.nsURLRequest(), redirectResponse);
 }
 
 void ResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
 {
-    didReceiveResponse(response.nsURLResponse());
+    didReceiveResponse(response);
 }
 
 void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int lengthReceived)

@@ -42,7 +42,6 @@
 #import <Foundation/NSHTTPCookie.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
-#import <Foundation/NSURLResponse.h>
 #import <wtf/Assertions.h>
 #import <wtf/PassRefPtr.h>
 #import <wtf/Vector.h>
@@ -126,17 +125,15 @@ void MainResourceLoader::continueAfterNavigationPolicy(const ResourceRequest& re
     deref(); // balances ref in willSendRequest
 }
 
-bool MainResourceLoader::isPostOrRedirectAfterPost(NSURLRequest *newRequest, NSURLResponse *redirectResponse)
+bool MainResourceLoader::isPostOrRedirectAfterPost(NSURLRequest *newRequest, const ResourceResponse& redirectResponse)
 {
     if ([[newRequest HTTPMethod] isEqualToString:@"POST"])
         return true;
 
-    if (redirectResponse && [redirectResponse isKindOfClass:[NSHTTPURLResponse class]]) {
-        int status = [(NSHTTPURLResponse *)redirectResponse statusCode];
-        if (((status >= 301 && status <= 303) || status == 307)
-            && frameLoader()->initialRequest().httpMethod() == "POST")
-            return true;
-    }
+    int status = redirectResponse.httpStatusCode();
+    if (((status >= 301 && status <= 303) || status == 307)
+        && frameLoader()->initialRequest().httpMethod() == "POST")
+        return true;
     
     return false;
 }
@@ -147,7 +144,7 @@ void MainResourceLoader::addData(const char* data, int length, bool allAtOnce)
     frameLoader()->receivedData(data, length);
 }
 
-NSURLRequest *MainResourceLoader::willSendRequest(NSURLRequest *newRequest, NSURLResponse *redirectResponse)
+NSURLRequest *MainResourceLoader::willSendRequest(NSURLRequest *newRequest, const ResourceResponse& redirectResponse)
 {
     // Note that there are no asserts here as there are for the other callbacks. This is due to the
     // fact that this "callback" is sent when starting every load, and the state of callback
@@ -200,17 +197,17 @@ static bool shouldLoadAsEmptyDocument(const KURL& URL)
     return URL.isEmpty() || equalIgnoringCase(URL.protocol(), "about");
 }
 
-void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, NSURLResponse *r)
+void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, const ResourceResponse& r)
 {
-    NSURL *URL = [request() URL];
-    String MIMEType = [r MIMEType]; 
+    NSURL *url = [request() URL];
+    const String& mimeType = r.mimeType();
     
     switch (contentPolicy) {
     case PolicyUse: {
         // Prevent remote web archives from loading because they can claim to be from any domain and thus avoid cross-domain security checks (4120255).
-        bool isRemote = ![URL isFileURL] && ![WebDataProtocol _webIsDataProtocolURL:URL];
-        bool isRemoteWebArchive = isRemote && equalIgnoringCase("application/x-webarchive", MIMEType);
-        if (!frameLoader()->canShowMIMEType(MIMEType) || isRemoteWebArchive) {
+        bool isRemote = ![url isFileURL] && ![WebDataProtocol _webIsDataProtocolURL:url];
+        bool isRemoteWebArchive = isRemote && equalIgnoringCase("application/x-webarchive", mimeType);
+        if (!frameLoader()->canShowMIMEType(mimeType) || isRemoteWebArchive) {
             frameLoader()->cannotShowMIMEType(r);
             // Check reachedTerminalState since the load may have already been cancelled inside of _handleUnimplementablePolicyWithErrorCode::.
             if (!reachedTerminalState())
@@ -235,8 +232,8 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
 
     RefPtr<MainResourceLoader> protect(this);
 
-    if ([r isKindOfClass:[NSHTTPURLResponse class]]) {
-        int status = [(NSHTTPURLResponse *)r statusCode];
+    if (r.isHTTP()) {
+        int status = r.httpStatusCode();
         if (status < 200 || status >= 300) {
             bool hostedByObject = frameLoader()->isHostedByObjectElement();
 
@@ -254,8 +251,8 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
         ResourceLoader::didReceiveResponse(r);
 
     if (frameLoader() && !frameLoader()->isStopping()
-            && (shouldLoadAsEmptyDocument(URL)
-                || frameLoader()->representationExistsForURLScheme([URL scheme])))
+            && (shouldLoadAsEmptyDocument(url)
+                || frameLoader()->representationExistsForURLScheme([url scheme])))
         didFinishLoading();
 }
 
@@ -269,20 +266,20 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction policy)
     ASSERT(m_waitingForContentPolicy);
     m_waitingForContentPolicy = false;
     if (!frameLoader()->isStopping())
-        continueAfterContentPolicy(policy, m_response.get());
+        continueAfterContentPolicy(policy, m_response);
     deref(); // balances ref in didReceiveResponse
 }
 
-void MainResourceLoader::didReceiveResponse(NSURLResponse *r)
+void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
 {
-    ASSERT(shouldLoadAsEmptyDocument([r URL]) || !defersLoading());
+    ASSERT(shouldLoadAsEmptyDocument(r.url()) || !defersLoading());
 
     if (m_loadingMultipartContent) {
-        frameLoader()->setupForReplaceByMIMEType([r MIMEType]);
+        frameLoader()->setupForReplaceByMIMEType(r.mimeType());
         clearResourceData();
     }
     
-    if ([[r MIMEType] isEqualToString:@"multipart/x-mixed-replace"])
+    if (r.isMultipart())
         m_loadingMultipartContent = true;
         
     // The additional processing can do anything including possibly removing the last
@@ -296,7 +293,7 @@ void MainResourceLoader::didReceiveResponse(NSURLResponse *r)
     ASSERT(!m_waitingForContentPolicy);
     m_waitingForContentPolicy = true;
     ref(); // balanced by deref in continueAfterContentPolicy and didCancel
-    frameLoader()->checkContentPolicy([m_response.get() MIMEType], callContinueAfterContentPolicy, this);
+    frameLoader()->checkContentPolicy(m_response.mimeType(), callContinueAfterContentPolicy, this);
 }
 
 void MainResourceLoader::didReceiveData(const char* data, int length, long long lengthReceived, bool allAtOnce)
@@ -355,16 +352,14 @@ NSURLRequest *MainResourceLoader::loadNow(NSURLRequest *r)
         return r;
 
     if (shouldLoadEmpty || frameLoader()->representationExistsForURLScheme([URL scheme])) {
-        NSString *MIMEType;
+        String mimeType;
         if (shouldLoadEmpty)
-            MIMEType = @"text/html";
+            mimeType = "text/html";
         else
-            MIMEType = frameLoader()->generatedMIMETypeForURLScheme([URL scheme]);
+            mimeType = frameLoader()->generatedMIMETypeForURLScheme([URL scheme]);
 
-        NSURLResponse *resp = [[NSURLResponse alloc] initWithURL:URL MIMEType:MIMEType
-            expectedContentLength:0 textEncodingName:nil];
-        didReceiveResponse(resp);
-        [resp release];
+        ResourceResponse response(URL, mimeType, 0, String(), String());
+        didReceiveResponse(response);
     } else {
         m_handle = ResourceHandle::create(r, this, m_frame.get(), false, true);
     }

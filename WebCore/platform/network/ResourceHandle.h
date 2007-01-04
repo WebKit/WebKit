@@ -47,15 +47,11 @@ typedef LONG_PTR LRESULT;
 @class NSData;
 @class NSError;
 @class NSURLConnection;
-@class NSURLRequest;
-@class NSURLResponse;
 @class WebCoreResourceHandleAsDelegate;
 #else
 class NSData;
 class NSError;
 class NSURLConnection;
-class NSURLRequest;
-class NSURLResponse;
 class WebCoreResourceHandleAsDelegate;
 typedef struct objc_object *id;
 #endif

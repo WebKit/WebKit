@@ -41,13 +41,11 @@
 @class NSData;
 @class NSURLAuthenticationChallenge;
 @class NSURLCredential;
-@class NSURLResponse;
 #else
 class NSCachedURLResponse;
 class NSData;
 class NSURLAuthenticationChallenge;
 class NSURLCredential;
-class NSURLResponse;
 #endif
 #endif
 
@@ -59,10 +57,8 @@ namespace WebCore {
 
 #if USE(CFNETWORK)
     typedef void* PlatformData; // unused for now
-    typedef CFURLResponseRef PlatformResponse;
 #elif PLATFORM(MAC)
     typedef NSData* PlatformData;
-    typedef NSURLResponse* PlatformResponse;
 #elif PLATFORM(QT)
     class PlatformResponseQt : public Shared<PlatformResponseQt> {
     public:

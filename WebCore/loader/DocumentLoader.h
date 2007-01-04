@@ -47,7 +47,6 @@ class NSDictionary;
 class NSError;
 class NSMutableURLRequest;
 class NSURLRequest;
-class NSURLResponse;
 
 #endif
 

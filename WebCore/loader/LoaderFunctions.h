@@ -28,19 +28,6 @@
 #include "PlatformString.h"
 #include "HTTPHeaderMap.h"
 
-#ifdef __OBJC__
-@class NSDictionary;
-@class NSString;
-
-@interface NSDictionary (WebCore_Extras)
-+ (id)_webcore_dictionaryWithHeaderMap:(const WebCore::HTTPHeaderMap&)headerMap;
-@end
-
-#else
-class NSDictionary;
-class NSString;
-#endif
-
 namespace WebCore {
 
 class CachedResource;

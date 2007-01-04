@@ -135,17 +135,17 @@ public:
     virtual void loadedFromPageCache() { }
     
 #if PLATFORM(MAC)
-    virtual void download(ResourceHandle*, NSURLRequest *, NSURLResponse *) { }
+    virtual void download(ResourceHandle*, NSURLRequest *, const ResourceResponse&) { }
     
     virtual id dispatchIdentifierForInitialRequest(DocumentLoader*, const ResourceRequest&) { return 0; }
-    virtual NSURLRequest *dispatchWillSendRequest(DocumentLoader*, id identifier, NSURLRequest *, NSURLResponse *redirectResponse) { return 0; }
+    virtual NSURLRequest *dispatchWillSendRequest(DocumentLoader*, id identifier, NSURLRequest *, const ResourceResponse& redirectResponse) { return 0; }
     virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, id identifier, NSURLAuthenticationChallenge *) { }
     virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, id identifier, NSURLAuthenticationChallenge *) { }
-    virtual void dispatchDidReceiveResponse(DocumentLoader*, id identifier, NSURLResponse *) { }
+    virtual void dispatchDidReceiveResponse(DocumentLoader*, id identifier, const ResourceResponse&) { }
     virtual void dispatchDidReceiveContentLength(DocumentLoader*, id identifier, int lengthReceived) { }
     virtual void dispatchDidFinishLoading(DocumentLoader*, id identifier) { }
     virtual void dispatchDidFailLoading(DocumentLoader*, id identifier, const ResourceError&) { }
-    virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, NSURLRequest *, NSURLResponse *, int length) { return false; }
+    virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, NSURLRequest *, const ResourceResponse&, int length) { return false; }
 #endif
     
     virtual void dispatchDidHandleOnloadEvents() { }
@@ -196,7 +196,7 @@ public:
     virtual void progressCompleted() { }
     
 #if PLATFORM(MAC)
-    virtual void incrementProgress(id identifier, NSURLResponse *) { }
+    virtual void incrementProgress(id identifier, const ResourceResponse&) { }
     virtual void incrementProgress(id identifier, const char*, int) { }
     virtual void completeProgress(id identifier) { }
 #endif

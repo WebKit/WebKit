@@ -1,3 +1,17 @@
+2007-01-04  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Brady.
+
+        Update for WebCore changes.
+        
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::download):
+        (WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache):
+        (WebFrameLoaderClient::dispatchWillSendRequest):
+        (WebFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebFrameLoaderClient::incrementProgress):
+
 2007-01-04  Don Gibson  <dgibson77@gmail.com>
 
         Reviewed by Alexey.

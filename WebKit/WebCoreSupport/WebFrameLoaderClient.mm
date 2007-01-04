@@ -237,18 +237,18 @@ void WebFrameLoaderClient::loadedFromPageCache()
     core(m_webFrame.get())->loader()->currentHistoryItem()->setHasPageCache(false);
 }
 
-void WebFrameLoaderClient::download(ResourceHandle* handle, NSURLRequest *request, NSURLResponse *response)
+void WebFrameLoaderClient::download(ResourceHandle* handle, NSURLRequest *request, const ResourceResponse& response)
 {
     id proxy = handle->releaseProxy();
     ASSERT(proxy);
     [WebDownload _downloadWithLoadingConnection:handle->connection()
                                         request:request
-                                       response:response
+                                       response:response.nsURLResponse()
                                        delegate:[getWebView(m_webFrame.get()) downloadDelegate]
                                           proxy:proxy];
 }
 
-bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader* loader, NSURLRequest *request, NSURLResponse *response, int length)
+bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader* loader, NSURLRequest *request, const ResourceResponse& response, int length)
 {
     WebView *webView = getWebView(loader);
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
@@ -257,7 +257,7 @@ bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader
     if (!implementations.delegateImplementsDidLoadResourceFromMemoryCache)
         return false;
 
-    implementations.didLoadResourceFromMemoryCacheFunc(resourceLoadDelegate, @selector(webView:didLoadResourceFromMemoryCache:response:length:fromDataSource:), webView, request, response, length, dataSource(loader));
+    implementations.didLoadResourceFromMemoryCacheFunc(resourceLoadDelegate, @selector(webView:didLoadResourceFromMemoryCache:response:length:fromDataSource:), webView, request, response.nsURLResponse(), length, dataSource(loader));
     return true;
 }
 
@@ -273,15 +273,14 @@ id WebFrameLoaderClient::dispatchIdentifierForInitialRequest(DocumentLoader* loa
     return [[[NSObject alloc] init] autorelease];
 }
 
-NSURLRequest *WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, id identifier,
-    NSURLRequest *request, NSURLResponse *redirectResponse)
+NSURLRequest *WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, id identifier, NSURLRequest *request, const ResourceResponse& redirectResponse)
 {
     WebView *webView = getWebView(loader);
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
     if (implementations.delegateImplementsWillSendRequest)
-        return implementations.willSendRequestFunc(resourceLoadDelegate, @selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:), webView, identifier, request, redirectResponse, dataSource(loader));
+        return implementations.willSendRequestFunc(resourceLoadDelegate, @selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:), webView, identifier, request, redirectResponse.nsURLResponse(), dataSource(loader));
 
     return request;
 }
@@ -317,14 +316,14 @@ void WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge(DocumentLoad
     [(WebPanelAuthenticationHandler *)[WebPanelAuthenticationHandler sharedHandler] cancelAuthentication:challenge];
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader* loader, id identifier, NSURLResponse *response)
+void WebFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader* loader, id identifier, const ResourceResponse& response)
 {
     WebView *webView = getWebView(loader);
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
     if (implementations.delegateImplementsDidReceiveResponse)
-        implementations.didReceiveResponseFunc(resourceLoadDelegate, @selector(webView:resource:didReceiveResponse:fromDataSource:), webView, identifier, response, dataSource(loader));
+        implementations.didReceiveResponseFunc(resourceLoadDelegate, @selector(webView:resource:didReceiveResponse:fromDataSource:), webView, identifier, response.nsURLResponse(), dataSource(loader));
 }
 
 void WebFrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader* loader, id identifier, int lengthReceived)
@@ -582,9 +581,9 @@ void WebFrameLoaderClient::progressCompleted()
     [getWebView(m_webFrame.get()) _progressCompleted:m_webFrame.get()];
 }
 
-void WebFrameLoaderClient::incrementProgress(id identifier, NSURLResponse *response)
+void WebFrameLoaderClient::incrementProgress(id identifier, const ResourceResponse& response)
 {
-    [getWebView(m_webFrame.get()) _incrementProgressForIdentifier:identifier response:response];
+    [getWebView(m_webFrame.get()) _incrementProgressForIdentifier:identifier response:response.nsURLResponse()];
 }
 
 void WebFrameLoaderClient::incrementProgress(id identifier, const char*, int length)

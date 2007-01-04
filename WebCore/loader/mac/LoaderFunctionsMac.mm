@@ -41,50 +41,8 @@
 #import "ResourceRequest.h"
 #import "loader.h"
 #import <wtf/Vector.h>
-#import <Foundation/NSURLResponse.h>
-
-using namespace WebCore;
-
-@implementation NSDictionary (WebCore_Extras)
-
-+ (id)_webcore_dictionaryWithHeaderMap:(const HTTPHeaderMap&)headerMap
-{
-    NSMutableDictionary *headers = [[NSMutableDictionary alloc] init];
-    
-    HTTPHeaderMap::const_iterator end = headerMap.end();
-    for (HTTPHeaderMap::const_iterator it = headerMap.begin(); it != end; ++it)
-        [headers setValue:it->second forKey:it->first];
-    
-    return [headers autorelease];
-}
-
-@end
 
 namespace WebCore {
-
-NSString *HeaderStringFromDictionary(NSDictionary *headers, int statusCode)
-{
-    NSMutableString *headerString = [[[NSMutableString alloc] init] autorelease];
-    [headerString appendString:[NSString stringWithFormat:@"HTTP/1.0 %d OK\n", statusCode]];
-    
-    NSEnumerator *e = [headers keyEnumerator];
-    NSString *key;
-    
-    bool first = true;
-    
-    while ((key = [e nextObject]) != nil) {
-        if (first) {
-            first = false;
-        } else {
-            [headerString appendString:@"\n"];
-        }
-        [headerString appendString:key];
-        [headerString appendString:@": "];
-        [headerString appendString:[headers objectForKey:key]];
-    }
-        
-    return headerString;
-}
 
 bool CheckIfReloading(DocLoader *loader)
 {
@@ -115,7 +73,7 @@ void CheckCacheObjectStatus(DocLoader *loader, CachedResource *cachedResource)
         return;
         
     NSURLRequest *request = cachedResource->getNSURLRequest();
-    NSURLResponse *response = cachedResource->response().nsURLResponse();
+    const ResourceResponse& response = cachedResource->response();
     NSData *data = cachedResource->allData();
     
     // FIXME: If the WebKit client changes or cancels the request, WebCore does not respect this and continues the load.

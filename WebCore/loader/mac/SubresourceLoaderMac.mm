@@ -42,7 +42,6 @@
 #import "ResourceResponse.h"
 #import "SubresourceLoaderClient.h"
 #import "WebCoreSystemInterface.h"
-#import <Foundation/NSURLResponse.h>
 #import <wtf/Assertions.h>
 
 namespace WebCore {
@@ -114,7 +113,7 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
     return subloader.release();
 }
 
-NSURLRequest *SubresourceLoader::willSendRequest(NSURLRequest *newRequest, NSURLResponse *redirectResponse)
+NSURLRequest *SubresourceLoader::willSendRequest(NSURLRequest *newRequest, const ResourceResponse& redirectResponse)
 {
     NSURL *oldURL = [request() URL];
     NSURLRequest *clientRequest = ResourceLoader::willSendRequest(newRequest, redirectResponse);
@@ -129,11 +128,11 @@ NSURLRequest *SubresourceLoader::willSendRequest(NSURLRequest *newRequest, NSURL
     return clientRequest;
 }
 
-void SubresourceLoader::didReceiveResponse(NSURLResponse *r)
+void SubresourceLoader::didReceiveResponse(const ResourceResponse& r)
 {
-    ASSERT(r);
+    ASSERT(!r.isNull());
 
-    if ([[r MIMEType] isEqualToString:@"multipart/x-mixed-replace"])
+    if (r.isMultipart())
         m_loadingMultipartContent = true;
 
     // Reference the object in this method since the additional processing can do

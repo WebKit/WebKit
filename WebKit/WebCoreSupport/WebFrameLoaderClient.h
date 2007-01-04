@@ -77,13 +77,13 @@ private:
 
     virtual void loadedFromPageCache();
 
-    virtual void download(WebCore::ResourceHandle*, NSURLRequest *, NSURLResponse *);
+    virtual void download(WebCore::ResourceHandle*, NSURLRequest *, const WebCore::ResourceResponse&);
 
     virtual id dispatchIdentifierForInitialRequest(WebCore::DocumentLoader*, const WebCore::ResourceRequest&);
-    virtual NSURLRequest *dispatchWillSendRequest(WebCore::DocumentLoader*, id identifier, NSURLRequest *, NSURLResponse *redirectResponse);
+    virtual NSURLRequest *dispatchWillSendRequest(WebCore::DocumentLoader*, id identifier, NSURLRequest *, const WebCore::ResourceResponse& redirectResponse);
     virtual void dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, id identifier, NSURLAuthenticationChallenge *);
     virtual void dispatchDidCancelAuthenticationChallenge(WebCore::DocumentLoader*, id identifier, NSURLAuthenticationChallenge *);
-    virtual void dispatchDidReceiveResponse(WebCore::DocumentLoader*, id identifier, NSURLResponse *);
+    virtual void dispatchDidReceiveResponse(WebCore::DocumentLoader*, id identifier, const WebCore::ResourceResponse&);
     virtual void dispatchDidReceiveContentLength(WebCore::DocumentLoader*, id identifier, int lengthReceived);
     virtual void dispatchDidFinishLoading(WebCore::DocumentLoader*, id identifier);
     virtual void dispatchDidFailLoading(WebCore::DocumentLoader*, id identifier, const WebCore::ResourceError&);
@@ -122,12 +122,12 @@ private:
     virtual void revertToProvisionalState(WebCore::DocumentLoader*);
     virtual void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&);
     virtual void clearUnarchivingState(WebCore::DocumentLoader*);
-    virtual bool dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, NSURLRequest *, NSURLResponse *, int length);
+    virtual bool dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, NSURLRequest *, const WebCore::ResourceResponse&, int length);
 
     virtual void progressStarted();
     virtual void progressCompleted();
 
-    virtual void incrementProgress(id identifier, NSURLResponse *);
+    virtual void incrementProgress(id identifier, const WebCore::ResourceResponse&);
     virtual void incrementProgress(id identifier, const char*, int);
     virtual void completeProgress(id identifier);
 

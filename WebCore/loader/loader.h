@@ -33,10 +33,8 @@
 
 #ifdef __OBJC__
 @class NSData;
-@class NSURLResponse;
 #else
 class NSData;
-class NSURLResponse;
 #endif
 
 namespace WebCore {

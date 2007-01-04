@@ -87,17 +87,17 @@ namespace WebCore {
         virtual void loadedFromPageCache() = 0;
 
 #if PLATFORM(MAC)
-        virtual void download(ResourceHandle*, NSURLRequest *, NSURLResponse *) = 0;
+        virtual void download(ResourceHandle*, NSURLRequest *, const ResourceResponse&) = 0;
 
         virtual id dispatchIdentifierForInitialRequest(DocumentLoader*, const ResourceRequest&) = 0;
-        virtual NSURLRequest *dispatchWillSendRequest(DocumentLoader*, id identifier, NSURLRequest *, NSURLResponse *redirectResponse) = 0;
+        virtual NSURLRequest *dispatchWillSendRequest(DocumentLoader*, id identifier, NSURLRequest *, const ResourceResponse& redirectResponse) = 0;
         virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, id identifier, NSURLAuthenticationChallenge *) = 0;
         virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, id identifier, NSURLAuthenticationChallenge *) = 0;
-        virtual void dispatchDidReceiveResponse(DocumentLoader*, id identifier, NSURLResponse *) = 0;
+        virtual void dispatchDidReceiveResponse(DocumentLoader*, id identifier, const ResourceResponse&) = 0;
         virtual void dispatchDidReceiveContentLength(DocumentLoader*, id identifier, int lengthReceived) = 0;
         virtual void dispatchDidFinishLoading(DocumentLoader*, id identifier) = 0;
         virtual void dispatchDidFailLoading(DocumentLoader*, id identifier, const ResourceError&) = 0;
-        virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, NSURLRequest *, NSURLResponse *, int length) = 0;
+        virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, NSURLRequest *, const ResourceResponse&, int length) = 0;
 #endif
 
         virtual void dispatchDidHandleOnloadEvents() = 0;
@@ -146,7 +146,7 @@ namespace WebCore {
         virtual void progressCompleted() = 0;
 
 #if PLATFORM(MAC)
-        virtual void incrementProgress(id identifier, NSURLResponse *) = 0;
+        virtual void incrementProgress(id identifier, const ResourceResponse&) = 0;
         virtual void incrementProgress(id identifier, const char*, int) = 0;
         virtual void completeProgress(id identifier) = 0;
 #endif

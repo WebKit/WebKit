@@ -29,6 +29,15 @@
 
 namespace WebCore {
 
+bool ResourceResponse::isHTTP() const
+{
+    updateResourceResponse();
+    
+    String protocol = m_url.protocol();
+    
+    return equalIgnoringCase(protocol, "http")  || equalIgnoringCase(protocol, "https");
+}
+
 const KURL& ResourceResponse::url() const
 {
     updateResourceResponse();

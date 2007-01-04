@@ -1,3 +1,59 @@
+2007-01-04  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Brady.
+
+        Convert almost all occurrences of NSURLResponse to ResourceResponse.
+
+        * WebCore.exp:
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/MainResourceLoader.h:
+        * loader/NetscapePlugInStreamLoader.h:
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoader.h:
+        * loader/loader.h:
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::willSendRequest):
+        (WebCore::FrameLoader::didReceiveResponse):
+        (WebCore::FrameLoader::opened):
+        (WebCore::FrameLoader::sendRemainingDelegateMessages):
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/mac/LoaderFunctionsMac.mm:
+        (WebCore::CheckCacheObjectStatus):
+        * loader/mac/MainResourceLoaderMac.mm:
+        (WebCore::MainResourceLoader::isPostOrRedirectAfterPost):
+        (WebCore::MainResourceLoader::willSendRequest):
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        (WebCore::MainResourceLoader::didReceiveResponse):
+        (WebCore::MainResourceLoader::loadNow):
+        * loader/mac/NetscapePlugInStreamLoaderMac.mm:
+        (WebCore::NetscapePlugInStreamLoader::didReceiveResponse):
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::willSendRequest):
+        (WebCore::ResourceLoader::didReceiveResponse):
+        (WebCore::ResourceLoader::response):
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::willSendRequest):
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::download):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchWillSendRequest):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache):
+        (WebCore::SVGEmptyFrameLoaderClient::incrementProgress):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        * platform/network/ResourceResponse.cpp:
+        (WebCore::ResourceResponse::isHTTP):
+        * platform/network/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        (WebCore::ResourceResponse::isNull):
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::nsURLResponse):
+        (WebCore::ResourceResponse::doUpdateResourceResponse):
+
 2007-01-03  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

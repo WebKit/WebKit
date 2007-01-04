@@ -353,7 +353,7 @@ void FrameLoader::applyUserAgent(ResourceRequest& request)
     request.setHTTPUserAgent(userAgent);
 }
 
-NSURLRequest *FrameLoader::willSendRequest(ResourceLoader* loader, NSMutableURLRequest *clientRequest, NSURLResponse *redirectResponse)
+NSURLRequest *FrameLoader::willSendRequest(ResourceLoader* loader, NSMutableURLRequest *clientRequest, const ResourceResponse& redirectResponse)
 {
     applyUserAgent(clientRequest);
     return m_client->dispatchWillSendRequest(activeDocumentLoader(), loader->identifier(), clientRequest, redirectResponse);
@@ -369,7 +369,7 @@ void FrameLoader::didCancelAuthenticationChallenge(ResourceLoader* loader, NSURL
     m_client->dispatchDidCancelAuthenticationChallenge(activeDocumentLoader(), loader->identifier(), currentWebChallenge);
 }
 
-void FrameLoader::didReceiveResponse(ResourceLoader* loader, NSURLResponse *r)
+void FrameLoader::didReceiveResponse(ResourceLoader* loader, const ResourceResponse& r)
 {
     activeDocumentLoader()->addResponse(r);
     
@@ -490,13 +490,13 @@ void FrameLoader::opened()
         const ResponseVector& responses = m_documentLoader->responses();
         size_t count = responses.size();
         for (size_t i = 0; i < count; i++) {
-            NSURLResponse *response = responses[i].nsURLResponse();
+            const ResourceResponse& response = responses[i];
             // FIXME: If the WebKit client changes or cancels the request, this is not respected.
             ResourceError error;
             id identifier;
-            NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[response URL]];
+            NSURLRequest *request = [[NSURLRequest alloc] initWithURL:response.url().getNSURL()];
             requestFromDelegate(request, identifier, error);
-            sendRemainingDelegateMessages(identifier, response, (unsigned)[response expectedContentLength], error);
+            sendRemainingDelegateMessages(identifier, response, response.expectedContentLength(), error);
             [request release];
         }
         
@@ -964,9 +964,9 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
     mainFrame->loader()->load(request, NavigationAction(), FrameLoadTypeStandard, formState);
 }
 
-void FrameLoader::sendRemainingDelegateMessages(id identifier, NSURLResponse *response, unsigned length, const ResourceError& error)
+void FrameLoader::sendRemainingDelegateMessages(id identifier, const ResourceResponse& response, unsigned length, const ResourceError& error)
 {    
-    if (response)
+    if (!response.isNull())
         m_client->dispatchDidReceiveResponse(m_documentLoader.get(), identifier, response);
     
     if (length > 0)
@@ -993,7 +993,7 @@ NSURLRequest *FrameLoader::requestFromDelegate(NSURLRequest *request, id& identi
     return newRequest;
 }
 
-void FrameLoader::loadedResourceFromMemoryCache(NSURLRequest *request, NSURLResponse *response, int length)
+void FrameLoader::loadedResourceFromMemoryCache(NSURLRequest *request, const ResourceResponse& response, int length)
 {
     if (m_client->dispatchDidLoadResourceFromMemoryCache(m_documentLoader.get(), request, response, length))
         return;
@@ -1090,7 +1090,7 @@ void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Reso
         ResourceHandle::loadResourceSynchronously(newRequest, error, response, data);
     }
     
-    sendRemainingDelegateMessages(identifier, response.nsURLResponse(), data.size(), error);
+    sendRemainingDelegateMessages(identifier, response, data.size(), error);
 }
 
 Frame* FrameLoader::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer)
