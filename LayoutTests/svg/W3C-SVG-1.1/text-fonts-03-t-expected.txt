@@ -6,9 +6,9 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (15,60) size 480x22
           RenderSVGInlineText {#text} at (0,-17) size 241x22
             text run at (0,-17) width 241: "font-family = \"Haettenschweiler\""
-        RenderSVGText {text} at (340,60) size 480x40
-          RenderSVGInlineText {#text} at (0,-31) size 71x40
-            text run at (0,-31) width 71: "ABC"
+        RenderSVGText {text} at (340,60) size 480x35
+          RenderSVGInlineText {#text} at (0,-31) size 41x35
+            text run at (0,-31) width 41: "ABC"
         RenderSVGText {text} at (15,110) size 480x22
           RenderSVGInlineText {#text} at (0,-17) size 213x22
             text run at (0,-17) width 213: "font-family = \"Charlesworth\""
