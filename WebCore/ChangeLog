@@ -1,3 +1,16 @@
+2007-01-03  David Hyatt  <hyatt@apple.com>
+
+        Relax the display type restriction a little bit for generated content inside
+        inlines.  We still don't allow block display types like we should (since this
+        will cause a crash), but we at least handle inline-table and inline-block now.
+
+        Reviewed by beth
+
+        fast/css-generated-content/inline-display-types.html
+
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::updatePseudoChildForObject):
+
 2007-01-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

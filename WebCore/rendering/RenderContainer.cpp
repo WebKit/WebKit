@@ -299,11 +299,12 @@ void RenderContainer::updatePseudoChildForObject(RenderStyle::PseudoId type, Ren
     if (!newContentWanted)
         return;
 
-    if (isInlineFlow() && pseudo->display() != INLINE)
+    if (isInlineFlow() && !pseudo->isDisplayInlineType())
         // According to the CSS2 spec (the end of section 12.1), the only allowed
-        // display values for the pseudo style are NONE and INLINE.  Since we already
-        // determined that the pseudo is not display NONE, any display other than
-        // inline should be mutated to INLINE.
+        // display values for the pseudo style are NONE and INLINE for inline flows.
+        // FIXME: CSS2.1 lifted this restriction, but block display types will crash.
+        // For now we at least relax the restriction to allow all inline types like inline-block
+        // and inline-table.
         pseudo->setDisplay(INLINE);
 
     if (oldContentPresent) {
