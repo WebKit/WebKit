@@ -2,6 +2,15 @@
 
         Reviewed by Adam.
 
+        No need to hit test twice.
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView menuForEvent:]):
+
+2007-01-04  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
         Turn on WebCore context menus. Delete a bunch of WebKit context 
         menu code that is no longer needed.
 
