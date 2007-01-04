@@ -1,3 +1,12 @@
+2007-01-04  Lars Naesbye Christensen  <larsnaesbye@stud.ku.dk>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11295
+        Nightly download size is misleading
+
+        * images/download.png: Changed the size to 6 MB.
+
 2007-01-01  Darin Adler  <darin@apple.com>
 
         * quality/bugzilla.html: Fix a lingering reference to opendarwin.org.
