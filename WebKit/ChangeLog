@@ -1,3 +1,36 @@
+2007-01-04  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        Turn on WebCore context menus. Delete a bunch of WebKit context 
+        menu code that is no longer needed.
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.m: Removed a lot 
+        of code from this class. This class only still needs to exist for 
+        PDF context menus, so we only need to deal with the menu items that 
+        might possibly be added to a PDF context menu.
+        (-[WebDefaultUIDelegate 
+        menuItemWithTag:target:representedObject:]): Same.
+        (-[WebDefaultUIDelegate 
+        webView:contextMenuItemsForElement:defaultMenuItems:]): Same.
+        * WebCoreSupport/WebContextMenuClient.h: Name change and have the 
+        former getCustomMenuFromDefaultItems function return the 
+        PlatformMenuDescription since it feels funny to have the client set 
+        the new platform description.
+        * WebCoreSupport/WebContextMenuClient.mm: Same.
+        (WebContextMenuClient::getCustomMenuFromDefaultItems): Same. Also 
+        move in some code that used to be in _menuForElement.
+        * WebView/WebHTMLView.m: Deleted a bunch of un-used functions
+        (-[WebHTMLView menuForEvent:]): Turn on menus, and append the 
+        Inspect Element item. 
+        * WebView/WebHTMLViewPrivate.h: Deleted a bunch of un-used 
+        functions.
+        * WebView/WebView.mm:
+        (-[WebView _menuForElement:defaultItems:]): Removed a lot of code 
+        from _menuForElement that now makes more sense elsewhere. Only PDF 
+        context menus use this function now. Hopefully we can just get rid 
+        of it soon, too.
+
 2007-01-04  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Brady.

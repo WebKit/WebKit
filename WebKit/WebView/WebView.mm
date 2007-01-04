@@ -737,34 +737,8 @@ static bool debugWidget = true;
     NSMenu *menu = nil;
     unsigned i;
 
-    DOMNode* node = [element objectForKey:WebElementDOMNodeKey];
-    BOOL elementIsTextField = [node isKindOfClass:[DOMHTMLInputElement class]] && [(DOMHTMLInputElement*)node _isTextField];
-    BOOL elementIsTextArea = [node isKindOfClass:[DOMHTMLTextAreaElement class]];
-    if (_private->UIDelegate && !elementIsTextField && !elementIsTextArea) {
-        id cd = _private->UIDelegate;
-        
-        if ([cd respondsToSelector:@selector(webView:contextMenuItemsForElement:defaultMenuItems:)]) {
-            menuItems = [cd webView:self contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems];
-
-            // Versions of Mail compiled with older WebKits will end up without three context menu items, though
-            // with the separators between them. Here we check for that problem and reinsert the three missing
-            // items. This shouldn't affect any clients other than Mail since the tags for the three items
-            // were not public API. We can remove this code when we no longer support previously-built versions
-            // of Mail on Tiger. See 4498606 for more details.
-            if ([menuItems count] && ([[defaultMenuItems objectAtIndex:0] tag] == WebMenuItemTagSearchInSpotlight) && ([[menuItems objectAtIndex:0] isSeparatorItem])) {
-                ASSERT([[menuItems objectAtIndex:1] isSeparatorItem]);
-                ASSERT([[defaultMenuItems objectAtIndex:1] tag] == WebMenuItemTagSearchWeb);
-                ASSERT([[defaultMenuItems objectAtIndex:2] isSeparatorItem]);
-                ASSERT([[defaultMenuItems objectAtIndex:3] tag] == WebMenuItemTagLookUpInDictionary);
-                ASSERT([[defaultMenuItems objectAtIndex:4] isSeparatorItem]);
-                NSMutableArray *mutableMenuItems = [NSMutableArray arrayWithArray:menuItems];
-                [mutableMenuItems insertObject:[defaultMenuItems objectAtIndex:0] atIndex:0];
-                [mutableMenuItems insertObject:[defaultMenuItems objectAtIndex:1] atIndex:1];
-                [mutableMenuItems insertObject:[defaultMenuItems objectAtIndex:3] atIndex:3];
-                menuItems = mutableMenuItems;
-            }
-        }
-    } 
+    if ([_private->UIDelegate respondsToSelector:@selector(webView:contextMenuItemsForElement:defaultMenuItems:)])
+        menuItems = [_private->UIDelegate webView:self contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems];
 
     if (menuItems && [menuItems count] > 0) {
         menu = [[[NSMenu alloc] init] autorelease];
@@ -772,21 +746,6 @@ static bool debugWidget = true;
         for (i=0; i<[menuItems count]; i++) {
             [menu addItem:[menuItems objectAtIndex:i]];
         }
-    }
-
-    // optionally add the Inspect Element menu item it if preference is set or in debug builds
-    // and only showing the menu item if we are working with a WebHTMLView
-    WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
-    if ([WebView _developerExtrasEnabled] && [[[webFrame frameView] documentView] isKindOfClass:[WebHTMLView class]]) {
-        if (!menu)
-            menu = [[[NSMenu alloc] init] autorelease];
-        else if ([menu numberOfItems])
-            [menu addItem:[NSMenuItem separatorItem]];
-        NSMenuItem *menuItem = [[[NSMenuItem alloc] init] autorelease];
-        [menuItem setAction:@selector(_inspectElement:)];
-        [menuItem setTitle:UI_STRING("Inspect Element", "Inspect Element context menu item")];
-        [menuItem setRepresentedObject:element];
-        [menu addItem:menuItem];
     }
 
     return menu;

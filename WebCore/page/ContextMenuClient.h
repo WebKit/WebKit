@@ -26,6 +26,8 @@
 #ifndef ContextMenuClient_h
 #define ContextMenuClient_h
 
+#include "PlatformMenuDescription.h"
+
 namespace WebCore {
     class ContextMenu;
     class ContextMenuItem;
@@ -39,7 +41,7 @@ namespace WebCore {
         virtual ~ContextMenuClient() {  }
         virtual void contextMenuDestroyed() = 0;
         
-        virtual void addCustomContextMenuItems(ContextMenu*) = 0;
+        virtual PlatformMenuDescription getCustomMenuFromDefaultItems(ContextMenu*) = 0;
         virtual void contextMenuItemSelected(ContextMenuItem*, const ContextMenu*) = 0;
 
         virtual void downloadURL(const KURL& url) = 0;

@@ -134,7 +134,7 @@ static void createAndAppendSpeechSubMenu(const HitTestResult& result, ContextMen
 {
     ContextMenu* speechMenu = new ContextMenu(result);
     ContextMenuItem start(ActionType, ContextMenuItemTagStartSpeaking, contextMenuItemTagStartSpeaking());
-    ContextMenuItem stop(ActionType, ContextMenuItemTagStartSpeaking, contextMenuItemTagStartSpeaking());
+    ContextMenuItem stop(ActionType, ContextMenuItemTagStopSpeaking, contextMenuItemTagStopSpeaking());
 
     speechMenu->appendItem(start);
     speechMenu->appendItem(stop);

@@ -1633,60 +1633,6 @@ static WebHTMLView *lastHitView = nil;
     return coreFrame->selectionController()->isContentEditable();
 }
 
-- (BOOL)_isSelectionInPasswordField
-{
-    Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return NO;
-    return coreFrame->selectionController()->isInPasswordField();
-}
-
-- (BOOL)_isSelectionUngrammatical
-{
-    if (Frame* coreFrame = core([self _frame]))
-        return coreFrame->editor()->isSelectionUngrammatical();
-    return NO;
-}
-
-- (BOOL)_isSelectionMisspelled
-{
-    if (Frame* coreFrame = core([self _frame]))
-        return coreFrame->editor()->isSelectionMisspelled();
-    return NO;
-}
-
-- (NSArray *)_guessesForMisspelledSelection
-{
-    ASSERT([[self selectedString] length] != 0);
-    return [[NSSpellChecker sharedSpellChecker] guessesForWord:[self selectedString]];
-}
-
-- (void)_changeSpellingFromMenu:(id)sender
-{
-    ASSERT([[self selectedString] length] != 0);
-    if ([self _shouldReplaceSelectionWithText:[sender title] givenAction:WebViewInsertActionPasted]) {
-        [[self _bridge] replaceSelectionWithText:[sender title] selectReplacement:YES smartReplace:NO];
-    }
-}
-
-- (void)_ignoreSpellingFromMenu:(id)sender
-{
-    ASSERT([[self selectedString] length] != 0);
-    [[NSSpellChecker sharedSpellChecker] ignoreWord:[self selectedString] inSpellDocumentWithTag:[[self _webView] spellCheckerDocumentTag]];
-}
-
-- (void)_ignoreGrammarFromMenu:(id)sender
-{
-    // NSSpellChecker uses the same API for ignoring grammar as for ignoring spelling
-    [self _ignoreSpellingFromMenu:(id)sender];
-}
-
-- (void)_learnSpellingFromMenu:(id)sender
-{
-    ASSERT([[self selectedString] length] != 0);
-    [[NSSpellChecker sharedSpellChecker] learnWord:[self selectedString]];
-}
-
 - (BOOL)_transparentBackground
 {
     return _private->transparentBackground;
@@ -2594,7 +2540,6 @@ static WebHTMLView *lastHitView = nil;
     _private->handlingMouseDownEvent = NO;
     
     if (handledEvent && coreframe) {
-#ifdef WEBCORE_CONTEXT_MENUS
         if (Page* page = coreframe->page()) {
             NSArray* menuItems = page->contextMenuController()->contextMenu()->platformDescription();
             NSMenu* menu = nil;
@@ -2604,16 +2549,26 @@ static WebHTMLView *lastHitView = nil;
                 for (unsigned i = 0; i < [menuItems count]; i++)
                     [menu addItem:[menuItems objectAtIndex:i]];
             }
+
+            // Add the Inspect Element menu item if the preference is set or if this is a debug build
+            if ([WebView _developerExtrasEnabled]) {
+                if (!menu)
+                    menu = [[NSMenu alloc] init];
+                else if ([menu numberOfItems])
+                    [menu addItem:[NSMenuItem separatorItem]];
+                NSMenuItem *menuItem = [[[NSMenuItem alloc] init] autorelease];
+                [menuItem setAction:@selector(_inspectElement:)];
+                [menuItem setTitle:UI_STRING("Inspect Element", "Inspect Element context menu item")];
+                NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
+                [menuItem setRepresentedObject:[self elementAtPoint:point]];
+                [menu addItem:menuItem];
+            }
+
             return [menu autorelease];
         }
-#else
-        return nil;
-#endif
     }
 
-    NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
-    NSDictionary *element = [self elementAtPoint:point];
-    return [[self _webView] _menuForElement:element defaultItems:nil];
+    return nil;
 }
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag

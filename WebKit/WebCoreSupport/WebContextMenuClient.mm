@@ -57,14 +57,35 @@ void WebContextMenuClient::contextMenuDestroyed()
     delete this;
 }
 
-void WebContextMenuClient::addCustomContextMenuItems(ContextMenu* menu)
+NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* defaultMenu)
 {
     id delegate = [m_webView UIDelegate];
     if ([delegate respondsToSelector:@selector(webView:contextMenuItemsForElement:defaultMenuItems:)]) {
-        NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:menu->hitTestResult()] autorelease];
-        NSArray *newMenu = [delegate webView:m_webView contextMenuItemsForElement:element defaultMenuItems:menu->platformDescription()];
-        menu->setPlatformDescription(newMenu);
+        NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:defaultMenu->hitTestResult()] autorelease];
+        NSMutableArray *defaultMenuItems = defaultMenu->platformDescription();
+        NSMutableArray *newMenuItems = [[delegate webView:m_webView contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems] mutableCopy];
+        
+        // Versions of Mail compiled with older WebKits will end up without three context menu items, 
+        // though with the separators between them. Here we check for that problem and reinsert the 
+        // three missing items. This shouldn't affect any clients other than Mail since the tags for 
+        // the three items were not public API. We can remove this code when we no longer support 
+        // previously-built versions of Mail on Tiger. See 4498606 for more details.
+        if ([newMenuItems count] &&
+            ([[defaultMenuItems objectAtIndex:0] tag] == WebMenuItemTagSearchInSpotlight) &&
+            ([[newMenuItems objectAtIndex:0] isSeparatorItem])) {
+            ASSERT([[newMenuItems objectAtIndex:1] isSeparatorItem]);
+            ASSERT([[defaultMenuItems objectAtIndex:1] tag] == WebMenuItemTagSearchWeb);
+            ASSERT([[defaultMenuItems objectAtIndex:2] isSeparatorItem]);
+            ASSERT([[defaultMenuItems objectAtIndex:3] tag] == WebMenuItemTagLookUpInDictionary);
+            ASSERT([[defaultMenuItems objectAtIndex:4] isSeparatorItem]);
+            [newMenuItems insertObject:[defaultMenuItems objectAtIndex:0] atIndex:0];
+            [newMenuItems insertObject:[defaultMenuItems objectAtIndex:1] atIndex:1];
+            [newMenuItems insertObject:[defaultMenuItems objectAtIndex:3] atIndex:3];
+        }
+        
+        return [newMenuItems autorelease];
     }
+    return nil;
 }
 
 void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const ContextMenu* parentMenu)

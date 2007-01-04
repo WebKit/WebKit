@@ -1,3 +1,30 @@
+2007-01-04  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        Turn on WebCore context menus.
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::defaultEventHandler): Turn on WebCore 
+        menus.
+        * page/ContextMenuClient.h: Name change and have the 
+        former getCustomMenuFromDefaultItems function return the 
+        PlatformMenuDescription since it feels funny to have the client set 
+        the new platform description.
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::handleContextMenuEvent): Above 
+        name change.
+        (WebCore::ContextMenuController::contextMenuItemSelected): Use 
+        local variable.
+        * platform/ContextMenu.cpp:
+        (WebCore::createAndAppendSpeechSubMenu): Fix silly mistake -- make 
+        "Stop speaking" actually stop speaking.
+        * platform/graphics/svg/SVGImageEmptyClients.h: Name change and 
+        have the former getCustomMenuFromDefaultItems function return the 
+        PlatformMenuDescription since it feels funny to have the client set 
+        the new platform description.
+       (WebCore::SVGEmptyContextMenuClient::getCustomMenuFromDefaultItems):
+
 2007-01-04  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed and landed by Brady

@@ -38,7 +38,7 @@ public:
     
     virtual void contextMenuDestroyed();
     
-    virtual void addCustomContextMenuItems(WebCore::ContextMenu*);
+    virtual NSMutableArray* getCustomMenuFromDefaultItems(WebCore::ContextMenu*);
     virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*);
     
     virtual void downloadURL(const WebCore::KURL&);

@@ -89,11 +89,6 @@
 - (BOOL)_hasSelectionOrInsertionPoint;
 - (BOOL)_isEditable;
 
-- (BOOL)_isSelectionInPasswordField;
-- (BOOL)_isSelectionUngrammatical;
-- (BOOL)_isSelectionMisspelled;
-- (NSArray *)_guessesForMisspelledSelection;
-
 - (BOOL)_transparentBackground;
 - (void)_setTransparentBackground:(BOOL)f;
 

@@ -83,7 +83,8 @@ void ContextMenuController::handleContextMenuEvent(Event* event)
 
     m_contextMenu.set(new ContextMenu(result));
     m_contextMenu->populate();
-    m_client->addCustomContextMenuItems(m_contextMenu.get());
+    PlatformMenuDescription customMenu = m_client->getCustomMenuFromDefaultItems(m_contextMenu.get());
+    m_contextMenu->setPlatformDescription(customMenu);
     m_contextMenu->show();
 
     event->setDefaultHandled();
@@ -133,7 +134,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             m_client->downloadURL(result.absoluteLinkURL());
             break;
         case ContextMenuItemTagCopyLinkToClipboard:
-            frame->editor()->copyURL(m_contextMenu->hitTestResult().absoluteLinkURL(), m_contextMenu->hitTestResult().textContent());
+            frame->editor()->copyURL(result.absoluteLinkURL(), result.textContent());
             break;
         case ContextMenuItemTagOpenImageInNewWindow:
             openNewWindow(result.absoluteImageURL(), frame);
