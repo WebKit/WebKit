@@ -1,5 +1,11 @@
 2007-01-03  John Sullivan  <sullivan@apple.com>
 
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView _openWithFinder:]):
+        Tiger build fix: use [NSNumber initWithInt:] rather than the new [NSNumber initWithInteger:]
+
+2007-01-03  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Kevin Decker
 
         - fixed <rdar://problem/4145714> WebKit's PDFView's "Open in Preview" puts the 

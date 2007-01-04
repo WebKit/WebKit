@@ -1016,7 +1016,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     if (opath) {
         if (!written) {
             // Create a PDF file with the minimal permissions (only accessible to the current user, see 4145714)
-            NSNumber *permissions = [[NSNumber alloc] initWithInteger:S_IRUSR];
+            NSNumber *permissions = [[NSNumber alloc] initWithInt:S_IRUSR];
             NSDictionary *fileAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:permissions, NSFilePosixPermissions, nil];
             [permissions release];
 
