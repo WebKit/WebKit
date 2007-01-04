@@ -96,7 +96,7 @@ void FontData::platformInit()
     m_ATSUStyleInitialized = false;
     m_ATSUMirrors = false;
     
-    m_syntheticBoldOffset = m_font.syntheticBold ? ceilf([m_font.font pointSize] / 24.0f) : 0.f;
+    m_syntheticBoldOffset = m_font.syntheticBold ? 1.0f : 0.f;
     
     bool failedSetup = false;
     if (!initFontData(this)) {
