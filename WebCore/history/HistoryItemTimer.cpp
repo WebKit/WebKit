@@ -33,7 +33,7 @@ namespace WebCore {
 const double DefaultPageCacheReleaseInterval = 3;
 
 HistoryItemTimer::HistoryItemTimer()
-    : m_timer(this, &HistoryItemTimer::callReleasePageCache)
+    : m_timer(this, &HistoryItemTimer::callReleasePageCachesOrReschedule)
 {
 }
 
@@ -52,9 +52,9 @@ void HistoryItemTimer::invalidate()
     m_timer.stop();
 }
 
-void HistoryItemTimer::callReleasePageCache(Timer<HistoryItemTimer>*)
+void HistoryItemTimer::callReleasePageCachesOrReschedule(Timer<HistoryItemTimer>*)
 {
-    HistoryItem::releasePageCache();
+    HistoryItem::releasePageCachesOrReschedule();
 }
 
 } // namespace WebCore

@@ -43,6 +43,7 @@ void (*notifyHistoryItemChanged)() = defaultNotifyHistoryItemChanged;
 
 HistoryItem::HistoryItem()
     : m_lastVisitedTime(0)
+    , m_pageCacheIsPendingRelease(false)
     , m_isTargetItem(false)
     , m_alwaysAttemptToUsePageCache(false)
     , m_visitCount(0)
@@ -54,6 +55,7 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, double ti
     , m_originalURLString(urlString)
     , m_title(title)
     , m_lastVisitedTime(time)
+    , m_pageCacheIsPendingRelease(false)
     , m_isTargetItem(false)
     , m_alwaysAttemptToUsePageCache(false)
     , m_visitCount(0)
@@ -66,6 +68,7 @@ HistoryItem::HistoryItem(const KURL& url, const String& title)
     , m_originalURLString(url.url())
     , m_title(title)
     , m_lastVisitedTime(0)
+    , m_pageCacheIsPendingRelease(false)
     , m_isTargetItem(false)
     , m_alwaysAttemptToUsePageCache(false)
     , m_visitCount(0)
@@ -80,6 +83,7 @@ HistoryItem::HistoryItem(const KURL& url, const String& target, const String& pa
     , m_parent(parent)
     , m_title(title)
     , m_lastVisitedTime(0)
+    , m_pageCacheIsPendingRelease(false)
     , m_isTargetItem(false)
     , m_alwaysAttemptToUsePageCache(false)
     , m_visitCount(0)
@@ -103,6 +107,7 @@ HistoryItem::HistoryItem(const HistoryItem& item)
     , m_lastVisitedTime(item.m_lastVisitedTime)
     , m_scrollPoint(item.m_scrollPoint)
     , m_subItems(item.m_subItems.size())
+    , m_pageCacheIsPendingRelease(false)
     , m_isTargetItem(item.m_isTargetItem)
     , m_alwaysAttemptToUsePageCache(item.m_alwaysAttemptToUsePageCache)
     , m_visitCount(item.m_visitCount)
@@ -127,9 +132,12 @@ void HistoryItem::setHasPageCache(bool hasCache)
 {
     LOG(PageCache, "WebCorePageCache - HistoryItem %p setting has page cache to %s", this, hasCache ? "TRUE" : "FALSE" );
         
-    if (hasCache && !m_pageCache)
-        m_pageCache = new PageCache;
-    if (!hasCache && m_pageCache)
+    if (hasCache) {
+        if (!m_pageCache)
+            m_pageCache = new PageCache;
+        else if (m_pageCacheIsPendingRelease)
+            cancelRelease();
+    } else if (m_pageCache)
         scheduleRelease();
 }
 
@@ -353,6 +361,8 @@ HistoryItem* HistoryItem::targetItem()
 
 PageCache* HistoryItem::pageCache()
 {
+    if (m_pageCacheIsPendingRelease)
+        return 0;
     return m_pageCache.get();
 }
 
@@ -426,44 +436,49 @@ static HistoryItemTimer& timer()
     return historyItemTimer;
 }
 
-static Vector<RefPtr<PageCache> >& pendingPageCacheToRelease()
+static HashSet<RefPtr<HistoryItem> >& itemsWithPendingPageCacheToRelease()
 {
     // We keep this on the heap because otherwise, at app shutdown, we run into the "static destruction order fiasco" 
     // where the vector is torn down, the PageCaches destroyed, and all havok may break loose.  Instead, we just leak at shutdown
     // since nothing here persists
-    static Vector<RefPtr<PageCache> >* pendingPageCacheToRelease = new Vector<RefPtr<PageCache> >;
-    return *pendingPageCacheToRelease;
+    static HashSet<RefPtr<HistoryItem> >* itemsWithPendingPageCacheToRelease = new HashSet<RefPtr<HistoryItem> >;
+    return *itemsWithPendingPageCacheToRelease;
 }
 
-void HistoryItem::releasePageCache()
+void HistoryItem::releasePageCachesOrReschedule()
 {
     double loadDelta = currentTime() - FrameLoader::timeOfLastCompletedLoad();
     float userDelta = userIdleTime();
     
     // FIXME: This size of 42 pending caches to release seems awfully arbitrary
     // Wonder if anyone knows the rationalization
-    if ((userDelta < 0.5 || loadDelta < 1.25) && pendingPageCacheToRelease().size() < 42) {
-        LOG(PageCache, "WebCorePageCache: Postponing releasePageCache() - %f since last load, %f since last input, %i objects pending release", loadDelta, userDelta, pendingPageCacheToRelease().size());
+    if ((userDelta < 0.5 || loadDelta < 1.25) && itemsWithPendingPageCacheToRelease().size() < 42) {
+        LOG(PageCache, "WebCorePageCache: Postponing releasePageCachesOrReschedule() - %f since last load, %f since last input, %i objects pending release", loadDelta, userDelta, itemsWithPendingPageCacheToRelease().size());
         timer().schedule();
         return;
     }
 
-    LOG(PageCache, "WebCorePageCache: Releasing page caches - %f seconds since last load, %f since last input, %i objects pending release", loadDelta, userDelta, pendingPageCacheToRelease().size());
+    LOG(PageCache, "WebCorePageCache: Releasing page caches - %f seconds since last load, %f since last input, %i objects pending release", loadDelta, userDelta, itemsWithPendingPageCacheToRelease().size());
     releaseAllPendingPageCaches();
 }
 
-void closeObjectsInPendingPageCaches()
+void HistoryItem::releasePageCache()
 {
-    size_t size = pendingPageCacheToRelease().size();
-    for (size_t i = 0; i < size; ++i)
-        pendingPageCacheToRelease()[i]->close();
+    m_pageCache->close();
+    m_pageCache = 0;
+    m_pageCacheIsPendingRelease = false;
 }
 
 void HistoryItem::releaseAllPendingPageCaches()
 {
     timer().invalidate();
-    closeObjectsInPendingPageCaches();
-    pendingPageCacheToRelease().clear();
+
+    HashSet<RefPtr<HistoryItem> >::iterator i = itemsWithPendingPageCacheToRelease().begin();
+    HashSet<RefPtr<HistoryItem> >::iterator end = itemsWithPendingPageCacheToRelease().end();
+    for (; i != end; ++i)
+        (*i)->releasePageCache();
+
+    itemsWithPendingPageCacheToRelease().clear();
 }
 
 void HistoryItem::scheduleRelease()
@@ -473,12 +488,17 @@ void HistoryItem::scheduleRelease()
     if (!timer().isActive())
         timer().schedule();
 
-    if (m_pageCache) {
-        pendingPageCacheToRelease().append(m_pageCache);
-        m_pageCache = 0;
+    if (m_pageCache && !m_pageCacheIsPendingRelease) {
+        m_pageCacheIsPendingRelease = true;
+        itemsWithPendingPageCacheToRelease().add(this);
     }
 }
 
+void HistoryItem::cancelRelease()
+{
+    itemsWithPendingPageCacheToRelease().remove(this);
+    m_pageCacheIsPendingRelease = false;
+}
 #ifndef NDEBUG
 void HistoryItem::print() const
 {

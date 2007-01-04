@@ -143,6 +143,8 @@ public:
 #endif
 
     void scheduleRelease();
+    void cancelRelease();
+    void releasePageCache();  
     
 #ifndef NDEBUG
     void print() const;
@@ -150,8 +152,7 @@ public:
 
 private:
     HistoryItem(const HistoryItem&);
-    static void scheduleReleaseTimer();
-    static void releasePageCache();
+    static void releasePageCachesOrReschedule();
     
     String m_urlString;
     String m_originalURLString;
@@ -166,6 +167,7 @@ private:
     Vector<String> m_documentState;
     
     HistoryItemVector m_subItems;
+    bool m_pageCacheIsPendingRelease;
     RefPtr<PageCache> m_pageCache;
     
     bool m_isTargetItem;

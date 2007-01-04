@@ -1,3 +1,42 @@
+2007-01-04  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed and landed by Brady
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12087
+          REGRESSION: Reproducible crash going back in Back/Forward history
+
+        Allow a PageCache that is pending release to be resurrected by its
+        HistoryItem instead of creating a new PageCache. This avoids the
+        the condition of having two PageCaches for the same HistoryItem, one
+        current and one pending release but not yet released, which was causing
+        this and other bugs before.
+        
+        Replaced the vector of PageCaches pending release with a set of
+        HistoryItems that are pending release of their PageCache.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        (WebCore::HistoryItem::setHasPageCache): Check for an existing PageCache
+        pending release, and if found, resurrect it by canceling the release.
+        (WebCore::HistoryItem::pageCache): Return 0 if the PageCache is pending
+        release.
+        (WebCore::itemsWithPendingPageCacheToRelease): Renamed pendingPageCacheToRelease
+        to this. This method now returns a HashSet of HistoryItems that have scheduled
+        their PageCaches for release.
+        (WebCore::HistoryItem::releasePageCachesOrReschedule): Renamed releasePageCache
+        to this.
+        (WebCore::HistoryItem::releasePageCache): Added. Actually closes and releases
+        the PageCache.
+        (WebCore::HistoryItem::releaseAllPendingPageCaches): Rolled closeObjectsInPendingPageCaches
+        into this method.
+        (WebCore::HistoryItem::scheduleRelease):
+        (WebCore::HistoryItem::cancelRelease): Added.
+        * history/HistoryItem.h: Removed unused declaration of scheduleReleaseTimer()
+        * history/HistoryItemTimer.cpp:
+        (WebCore::HistoryItemTimer::HistoryItemTimer):
+        (WebCore::HistoryItemTimer::callReleasePageCachesOrReschedule):
+        * history/HistoryItemTimer.h:
+
 2007-01-04  David Hyatt  <hyatt@apple.com>
 
         Just make the synthetic bold offset always be 1.0.  This fixes bug
