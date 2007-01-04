@@ -125,9 +125,9 @@ void MainResourceLoader::continueAfterNavigationPolicy(const ResourceRequest& re
     deref(); // balances ref in willSendRequest
 }
 
-bool MainResourceLoader::isPostOrRedirectAfterPost(NSURLRequest *newRequest, const ResourceResponse& redirectResponse)
+bool MainResourceLoader::isPostOrRedirectAfterPost(const ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
 {
-    if ([[newRequest HTTPMethod] isEqualToString:@"POST"])
+    if (newRequest.httpMethod() == "POST")
         return true;
 
     int status = redirectResponse.httpStatusCode();

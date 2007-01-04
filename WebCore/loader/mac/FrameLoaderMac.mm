@@ -326,7 +326,7 @@ void FrameLoader::cancelMainResourceLoad(const ResourceError& error)
     m_mainResourceLoader->cancel(error);
 }
 
-id FrameLoader::identifierForInitialRequest(NSURLRequest *clientRequest)
+id FrameLoader::identifierForInitialRequest(const ResourceRequest& clientRequest)
 {
     return m_client->dispatchIdentifierForInitialRequest(activeDocumentLoader(), clientRequest);
 }
@@ -551,7 +551,7 @@ ResourceError FrameLoader::fileDoesNotExistError(const ResourceResponse& respons
     return m_client->fileDoesNotExistError(response);    
 }
 
-bool FrameLoader::willUseArchive(ResourceLoader* loader, NSURLRequest *request, const KURL& originalURL) const
+bool FrameLoader::willUseArchive(ResourceLoader* loader, const ResourceRequest& request, const KURL& originalURL) const
 {
     return m_client->willUseArchive(loader, request, originalURL);
 }

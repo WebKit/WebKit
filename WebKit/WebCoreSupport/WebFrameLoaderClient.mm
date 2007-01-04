@@ -237,12 +237,12 @@ void WebFrameLoaderClient::loadedFromPageCache()
     core(m_webFrame.get())->loader()->currentHistoryItem()->setHasPageCache(false);
 }
 
-void WebFrameLoaderClient::download(ResourceHandle* handle, NSURLRequest *request, const ResourceResponse& response)
+void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)
 {
     id proxy = handle->releaseProxy();
     ASSERT(proxy);
     [WebDownload _downloadWithLoadingConnection:handle->connection()
-                                        request:request
+                                        request:request.nsURLRequest()
                                        response:response.nsURLResponse()
                                        delegate:[getWebView(m_webFrame.get()) downloadDelegate]
                                           proxy:proxy];
@@ -704,11 +704,11 @@ void WebFrameLoaderClient::setDefersLoading(bool defers)
         deliverArchivedResourcesAfterDelay();
 }
 
-bool WebFrameLoaderClient::willUseArchive(ResourceLoader* loader, NSURLRequest *request, const KURL& originalURL) const
+bool WebFrameLoaderClient::willUseArchive(ResourceLoader* loader, const ResourceRequest& request, const KURL& originalURL) const
 {
-    if (![[request URL] isEqual:originalURL.getNSURL()])
+    if (request.url() != originalURL)
         return false;
-    if (!canUseArchivedResource(request))
+    if (!canUseArchivedResource(request.nsURLRequest()))
         return false;
     WebResource *resource = [dataSource(core(m_webFrame.get())->loader()->activeDocumentLoader()) _archivedSubresourceForURL:originalURL.getNSURL()];
     if (!resource)

@@ -87,7 +87,7 @@ namespace WebCore {
         virtual void loadedFromPageCache() = 0;
 
 #if PLATFORM(MAC)
-        virtual void download(ResourceHandle*, NSURLRequest *, const ResourceResponse&) = 0;
+        virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&) = 0;
 
         virtual id dispatchIdentifierForInitialRequest(DocumentLoader*, const ResourceRequest&) = 0;
         virtual NSURLRequest *dispatchWillSendRequest(DocumentLoader*, id identifier, NSURLRequest *, const ResourceResponse& redirectResponse) = 0;
@@ -184,7 +184,7 @@ namespace WebCore {
         virtual void setDefersLoading(bool) = 0;
 
 #if PLATFORM(MAC)
-        virtual bool willUseArchive(ResourceLoader*, NSURLRequest *, const KURL& originalURL) const = 0;
+        virtual bool willUseArchive(ResourceLoader*, const ResourceRequest&, const KURL& originalURL) const = 0;
 #endif
         virtual bool isArchiveLoadPending(ResourceLoader*) const = 0;
         virtual void cancelPendingArchiveLoad(ResourceLoader*) = 0;

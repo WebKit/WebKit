@@ -68,7 +68,7 @@ namespace WebCore {
         ResourceError interruptionForPolicyChangeError() const;
         void stopLoadingForPolicyChange();
 #if PLATFORM(MAC)
-        bool isPostOrRedirectAfterPost(NSURLRequest *newRequest, const ResourceResponse& redirectResponse);
+        bool isPostOrRedirectAfterPost(const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
 
         static void callContinueAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
         void continueAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue);

@@ -77,7 +77,7 @@ private:
 
     virtual void loadedFromPageCache();
 
-    virtual void download(WebCore::ResourceHandle*, NSURLRequest *, const WebCore::ResourceResponse&);
+    virtual void download(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     virtual id dispatchIdentifierForInitialRequest(WebCore::DocumentLoader*, const WebCore::ResourceRequest&);
     virtual NSURLRequest *dispatchWillSendRequest(WebCore::DocumentLoader*, id identifier, NSURLRequest *, const WebCore::ResourceResponse& redirectResponse);
@@ -159,7 +159,7 @@ private:
 
     virtual WebCore::String userAgent();
 
-    virtual bool willUseArchive(WebCore::ResourceLoader*, NSURLRequest *, const WebCore::KURL& originalURL) const;
+    virtual bool willUseArchive(WebCore::ResourceLoader*, const WebCore::ResourceRequest&, const WebCore::KURL& originalURL) const;
     virtual bool isArchiveLoadPending(WebCore::ResourceLoader*) const;
     virtual void cancelPendingArchiveLoad(WebCore::ResourceLoader*);
     virtual void clearArchivedResources();

@@ -1,3 +1,21 @@
+2007-01-04  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        Convert NSURLRequest to ResourceRequest in a few places
+
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/MainResourceLoader.h:
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::identifierForInitialRequest):
+        (WebCore::FrameLoader::willUseArchive):
+        * loader/mac/MainResourceLoaderMac.mm:
+        (WebCore::MainResourceLoader::isPostOrRedirectAfterPost):
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::download):
+        (WebCore::SVGEmptyFrameLoaderClient::willUseArchive):
+
 2007-01-04  David Hyatt  <hyatt@apple.com>
 
         Bug 12114 fix, make sure left/right floats are allowed to go above

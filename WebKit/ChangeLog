@@ -1,3 +1,14 @@
+2007-01-04  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        FrameLoaderClient changed again.
+        
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::download):
+        (WebFrameLoaderClient::willUseArchive):
+
 2007-01-04  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.

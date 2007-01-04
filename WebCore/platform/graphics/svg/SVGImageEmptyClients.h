@@ -135,7 +135,7 @@ public:
     virtual void loadedFromPageCache() { }
     
 #if PLATFORM(MAC)
-    virtual void download(ResourceHandle*, NSURLRequest *, const ResourceResponse&) { }
+    virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&) { }
     
     virtual id dispatchIdentifierForInitialRequest(DocumentLoader*, const ResourceRequest&) { return 0; }
     virtual NSURLRequest *dispatchWillSendRequest(DocumentLoader*, id identifier, NSURLRequest *, const ResourceResponse& redirectResponse) { return 0; }
@@ -230,7 +230,7 @@ public:
     virtual void setDefersLoading(bool) { }
     
 #if PLATFORM(MAC)
-    virtual bool willUseArchive(ResourceLoader*, NSURLRequest *, const KURL& originalURL) const { return false; }
+    virtual bool willUseArchive(ResourceLoader*, const ResourceRequest&, const KURL& originalURL) const { return false; }
 #endif
     virtual bool isArchiveLoadPending(ResourceLoader*) const { return false; }
     virtual void cancelPendingArchiveLoad(ResourceLoader*) { }
