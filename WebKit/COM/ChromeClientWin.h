@@ -71,7 +71,8 @@ public:
                                      const WebCore::String& sourceID);
 
     virtual bool canRunBeforeUnloadConfirmPanel();
-    virtual bool runBeforeUnloadConfirmPanel(const String& message, Frame* frame);
+    virtual bool runBeforeUnloadConfirmPanel(const WebCore::String& message,
+                                             WebCore::Frame* frame);
 
     virtual void closeWindowSoon();
 };

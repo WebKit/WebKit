@@ -48,8 +48,8 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, co
 
     // Set the text color to use for drawing.
     float red, green, blue, alpha;
-    Color penColor = graphicsContext->pen().color();
-    penColor.getRGBA(red, green, blue, alpha);
+    Color color = graphicsContext->strokeColor();
+    color.getRGBA(red, green, blue, alpha);
     cairo_set_source_rgba(context, red, green, blue, alpha);
     
     cairo_surface_t* surface = cairo_get_target(context);

@@ -341,7 +341,7 @@ void GraphicsContext::setPlatformFillColor(const Color&)
 {
 }
 
-void GraphicsContext::setPlatformStrokeColor(const Color&);
+void GraphicsContext::setPlatformStrokeColor(const Color&)
 {
 }
 

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Image.h"
+#include "BitmapImage.h"
 
 #if PLATFORM(CAIRO)
 #include <cairo.h>
@@ -37,18 +37,18 @@ Vector<char> loadResourceIntoArray(const char*);
 
 namespace WebCore {
 
-void Image::initPlatformData()
+void BitmapImage::initPlatformData()
 {
 }
 
-void Image::invalidatePlatformData()
+void BitmapImage::invalidatePlatformData()
 {
 }
 
 Image* Image::loadPlatformResource(const char *name)
 {
     Vector<char> arr = loadResourceIntoArray(name);
-    Image* img = new Image;
+    BitmapImage* img = new BitmapImage;
 #if PLATFORM(CAIRO)
     img->setNativeData(&arr, true);
 #else

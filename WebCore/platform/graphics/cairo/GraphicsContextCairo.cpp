@@ -128,8 +128,8 @@ void GraphicsContext::drawRect(const IntRect& rect)
     if (fillColor().alpha())
         fillRectSourceOver(context, rect, fillColor());
 
-    if (pen().style() != Pen::NoPen) {
-        setColor(context, pen().color());
+    if (strokeStyle() != NoStroke) {
+        setColor(context, strokeColor());
         FloatRect r(rect);
         r.inflate(-.5f);
         cairo_rectangle(context, r.x(), r.y(), r.width(), r.height());
@@ -139,13 +139,13 @@ void GraphicsContext::drawRect(const IntRect& rect)
 }
 
 // FIXME: Now that this is refactored, it should be shared by all contexts.
-static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, const Pen::PenStyle& penStyle)
+static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle style)
 {
     // For odd widths, we add in 0.5 to the appropriate x/y so that the float arithmetic
     // works out.  For example, with a border width of 3, KHTML will pass us (y1+y2)/2, e.g.,
     // (50+53)/2 = 103/2 = 51 when we want 51.5.  It is always true that an even width gave
     // us a perfect position, but an odd width gave us a position that is off by exactly 0.5.
-    if (penStyle == Pen::DotLine || penStyle == Pen::DashLine) {
+    if (style == DottedStroke || style == DashedStroke) {
         if (p1.x() == p2.x()) {
             p1.setY(p1.y() + strokeWidth);
             p2.setY(p2.y() - strokeWidth);
@@ -179,10 +179,10 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     cairo_t* context = m_data->context;
     cairo_save(context);
 
-    Pen::PenStyle penStyle = pen().style();
-    if (penStyle == Pen::NoPen)
+    StrokeStyle style = strokeStyle();
+    if (style == NoStroke)
         return;
-    float width = pen().width();
+    float width = strokeThickness();
     if (width < 1)
         width = 1;
 
@@ -190,23 +190,23 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     FloatPoint p2 = point2;
     bool isVerticalLine = (p1.x() == p2.x());
     
-    adjustLineToPixelBoundaries(p1, p2, width, penStyle);
+    adjustLineToPixelBoundaries(p1, p2, width, style);
     cairo_set_line_width(context, width);
 
     int patWidth = 0;
-    switch (penStyle) {
-    case Pen::NoPen:
-    case Pen::SolidLine:
+    switch (style) {
+    case NoStroke:
+    case SolidStroke:
         break;
-    case Pen::DotLine:
+    case DottedStroke:
         patWidth = (int)width;
         break;
-    case Pen::DashLine:
+    case DashedStroke:
         patWidth = 3*(int)width;
         break;
     }
 
-    setColor(context, pen().color());
+    setColor(context, strokeColor());
     
     cairo_set_antialias(context, CAIRO_ANTIALIAS_NONE);
     
@@ -214,11 +214,11 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
         // Do a rect fill of our endpoints.  This ensures we always have the
         // appearance of being a border.  We then draw the actual dotted/dashed line.
         if (isVerticalLine) {
-            fillRectSourceOver(context, FloatRect(p1.x()-width/2, p1.y()-width, width, width), pen().color());
-            fillRectSourceOver(context, FloatRect(p2.x()-width/2, p2.y(), width, width), pen().color());
+            fillRectSourceOver(context, FloatRect(p1.x()-width/2, p1.y()-width, width, width), strokeColor());
+            fillRectSourceOver(context, FloatRect(p2.x()-width/2, p2.y(), width, width), strokeColor());
         } else {
-            fillRectSourceOver(context, FloatRect(p1.x()-width, p1.y()-width/2, width, width), pen().color());
-            fillRectSourceOver(context, FloatRect(p2.x(), p2.y()-width/2, width, width), pen().color());
+            fillRectSourceOver(context, FloatRect(p1.x()-width, p1.y()-width/2, width, width), strokeColor());
+            fillRectSourceOver(context, FloatRect(p2.x(), p2.y()-width/2, width, width), strokeColor());
         }
         
         // Example: 80 pixels with a width of 30 pixels.
@@ -281,18 +281,15 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
         setColor(context, fillColor());
         cairo_fill(context);
     }
-    if (pen().style() != Pen::NoPen) {
-        setColor(context, pen().color());
-        unsigned penWidth = pen().width();
-        if (penWidth == 0) 
-            penWidth++;
-        cairo_set_line_width(context, penWidth);
+    if (strokeStyle() != NoStroke) {
+        setColor(context, strokeColor());
+        cairo_set_line_width(context, strokeThickness());
         cairo_stroke(context);
     }
 }
 
 // FIXME: This function needs to be adjusted to match the functionality on the Mac side.
-void GraphicsContext::drawArc(const IntRect& rect, float thickness, int startAngle, int angleSpan)
+void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSpan)
 {
     if (paintingDisabled())
         return;
@@ -305,14 +302,14 @@ void GraphicsContext::drawArc(const IntRect& rect, float thickness, int startAng
     float reverseScaleFactor = w / h;
     
     cairo_t* context = m_data->context;
-    if (pen().style() != Pen::NoPen) {        
+    if (strokeStyle() != NoStroke) {        
         float r = w / 2;
         float fa = startAngle;
         float falen =  fa + angleSpan;
         cairo_arc(context, x + r, y + r, r, -fa * M_PI/180, -falen * M_PI/180);
         
-        setColor(context, pen().color());
-        cairo_set_line_width(context, pen().width());
+        setColor(context, strokeColor());
+        cairo_set_line_width(context, strokeThickness());
         cairo_stroke(context);
     }
 }
@@ -340,9 +337,9 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
         cairo_fill(context);
     }
 
-    if (pen().style() != Pen::NoPen) {
-        setColor(context, pen().color());
-        cairo_set_line_width(context, pen().width());
+    if (strokeStyle() != NoStroke) {
+        setColor(context, strokeColor());
+        cairo_set_line_width(context, strokeThickness());
         cairo_stroke(context);
     }
     cairo_restore(context);

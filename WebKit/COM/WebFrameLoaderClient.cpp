@@ -74,34 +74,6 @@ bool WebFrameLoaderClient::hasFrameView() const
     return false;
 }
 
-bool WebFrameLoaderClient::hasBackForwardList() const
-{
-    notImplemented();
-    return false;
-}
-
-void WebFrameLoaderClient::resetBackForwardList()
-{
-    notImplemented();
-}
-
-bool WebFrameLoaderClient::provisionalItemIsTarget() const
-{
-    notImplemented();
-    return false;
-}
-
-bool WebFrameLoaderClient::loadProvisionalItemFromPageCache()
-{
-    notImplemented();
-    return false;
-}
-
-void WebFrameLoaderClient::invalidateCurrentItemPageCache()
-{
-    notImplemented();
-}
-
 bool WebFrameLoaderClient::privateBrowsingEnabled() const
 {
     notImplemented();
@@ -118,6 +90,11 @@ void WebFrameLoaderClient::makeRepresentation(WebCore::DocumentLoader*)
     notImplemented();
 }
 
+void WebFrameLoaderClient::setDocumentViewFromPageCache(WebCore::PageCache*)
+{
+    notImplemented();
+}
+
 void WebFrameLoaderClient::forceLayout()
 {
     notImplemented();
@@ -128,58 +105,7 @@ void WebFrameLoaderClient::forceLayoutForNonHTML()
     notImplemented();
 }
 
-void WebFrameLoaderClient::updateHistoryForCommit()
-{
-    notImplemented();
-}
-
-void WebFrameLoaderClient::updateHistoryForBackForwardNavigation()
-{
-    notImplemented();
-}
-
-void WebFrameLoaderClient::updateHistoryForReload()
-{
-    notImplemented();
-}
-
-void WebFrameLoaderClient::updateHistoryForStandardLoad()
-{
-    notImplemented();
-}
-
-void WebFrameLoaderClient::updateHistoryForInternalLoad()
-{
-    notImplemented();
-}
-
-void WebFrameLoaderClient::updateHistoryAfterClientRedirect()
-{
-    notImplemented();
-}
-
 void WebFrameLoaderClient::setCopiesOnScroll()
-{
-    notImplemented();
-}
-
-WebCore::LoadErrorResetToken* WebFrameLoaderClient::tokenForLoadErrorReset()
-{
-    notImplemented();
-    return 0;
-}
-
-void WebFrameLoaderClient::resetAfterLoadError(WebCore::LoadErrorResetToken*)
-{
-    notImplemented();
-}
-
-void WebFrameLoaderClient::doNotResetAfterLoadError(WebCore::LoadErrorResetToken*)
-{
-    notImplemented();
-}
-
-void WebFrameLoaderClient::willCloseDocument()
 {
     notImplemented();
 }
@@ -291,17 +217,6 @@ void WebFrameLoaderClient::dispatchDidLoadMainResource(WebCore::DocumentLoader*)
     notImplemented();
 }
 
-void WebFrameLoaderClient::clearLoadingFromPageCache(WebCore::DocumentLoader*)
-{
-    notImplemented();
-}
-
-bool WebFrameLoaderClient::isLoadingFromPageCache(WebCore::DocumentLoader*)
-{
-    notImplemented();
-    return false;
-}
-
 void WebFrameLoaderClient::revertToProvisionalState(WebCore::DocumentLoader*)
 {
     notImplemented();
@@ -345,6 +260,22 @@ void WebFrameLoaderClient::finishedLoading(WebCore::DocumentLoader*)
 void WebFrameLoaderClient::finalSetupForReplace(WebCore::DocumentLoader*)
 {
     notImplemented();
+}
+
+void WebFrameLoaderClient::updateGlobalHistoryForStandardLoad(const WebCore::KURL&)
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::updateGlobalHistoryForReload(const WebCore::KURL&)
+{
+    notImplemented();
+}
+
+bool WebFrameLoaderClient::shouldGoToHistoryItem(WebCore::HistoryItem*) const
+{
+    notImplemented();
+    return false;
 }
 
 void WebFrameLoaderClient::setDefersLoading(bool)
@@ -400,24 +331,17 @@ void WebFrameLoaderClient::frameLoadCompleted()
     notImplemented();
 }
 
+void WebFrameLoaderClient::saveScrollPositionAndViewStateToItem(WebCore::HistoryItem*)
+{
+    notImplemented();
+}
+
 void WebFrameLoaderClient::restoreScrollPositionAndViewState()
 {
     notImplemented();
 }
 
 void WebFrameLoaderClient::provisionalLoadStarted()
-{
-    notImplemented();
-}
-
-bool WebFrameLoaderClient::shouldTreatURLAsSameAsCurrent(
-    const WebCore::KURL&) const
-{
-    notImplemented();
-    return false;
-}
-
-void WebFrameLoaderClient::addHistoryItemForFragmentScroll()
 {
     notImplemented();
 }
@@ -441,4 +365,15 @@ void WebFrameLoaderClient::setTitle(const WebCore::String&,
 WebCore::String WebFrameLoaderClient::userAgent()
 {
     return "Mozilla/5.0 (PC; U; Intel; Windows; en) AppleWebKit/420+ (KHTML, like Gecko)";
+}
+
+void WebFrameLoaderClient::saveDocumentViewToPageCache(WebCore::PageCache*)
+{
+    notImplemented();
+}
+
+bool WebFrameLoaderClient::canCachePage() const
+{
+    notImplemented();
+    return false;
 }

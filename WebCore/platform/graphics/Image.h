@@ -107,10 +107,6 @@ private:
     virtual void drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, CompositeOperator) = 0;
     virtual void drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule, TileRule vRule, CompositeOperator) = 0;
     
-    // Handle OS-specific data
-    void initPlatformData();
-    void invalidatePlatformData();
-
     Vector<char> m_data; // The encoded raw data for the image. 
     ImageAnimationObserver* m_animationObserver;
 };

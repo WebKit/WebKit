@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Image.h"
+#include "BitmapImage.h"
 
 #if PLATFORM(CAIRO)
 
@@ -65,13 +65,13 @@ static void setCompositingOperation(cairo_t* context, CompositeOperator op, bool
         cairo_set_operator(context, CAIRO_OPERATOR_OVER);
 }
 
-void Image::checkForSolidColor()
+void BitmapImage::checkForSolidColor()
 {
     // FIXME: It's easy to implement this optimization. Just need to check the RGBA32 buffer to see if it is 1x1.
     m_isSolidColor = false;
 }
 
-void Image::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatRect& src, CompositeOperator op)
+void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatRect& src, CompositeOperator op)
 {
     cairo_t* context = ctxt->platformContext();
 
@@ -113,7 +113,7 @@ void Image::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatRect& s
 
 }
 
-void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatPoint& srcPoint,
+void BitmapImage::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatPoint& srcPoint,
     const FloatSize& tileSize, CompositeOperator op)
 {
     if (!m_source.initialized())

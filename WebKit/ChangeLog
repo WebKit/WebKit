@@ -1,3 +1,32 @@
+2007-01-04  Don Gibson  <dgibson77@gmail.com>
+
+        Reviewed by Alexey.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11900:
+        Windows build bustage
+
+        * COM/ChromeClientWin.cpp:
+        (ChromeClientWin::addMessageToConsole):
+        (ChromeClientWin::runBeforeUnloadConfirmPanel):
+        * COM/ChromeClientWin.h:
+        * COM/ContextMenuClientWin.cpp:
+        (ContextMenuClientWin::contextMenuItemSelected):
+        * COM/ContextMenuClientWin.h:
+        * COM/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::setDocumentViewFromPageCache):
+        (WebFrameLoaderClient::forceLayout):
+        (WebFrameLoaderClient::forceLayoutForNonHTML):
+        (WebFrameLoaderClient::updateGlobalHistoryForStandardLoad):
+        (WebFrameLoaderClient::updateGlobalHistoryForReload):
+        (WebFrameLoaderClient::shouldGoToHistoryItem):
+        (WebFrameLoaderClient::saveScrollPositionAndViewStateToItem):
+        (WebFrameLoaderClient::restoreScrollPositionAndViewState):
+        (WebFrameLoaderClient::provisionalLoadStarted):
+        (WebFrameLoaderClient::saveDocumentViewToPageCache):
+        (WebFrameLoaderClient::canCachePage):
+        * COM/WebFrameLoaderClient.h:
+        * WebKit.vcproj/WebKit.vcproj:
+
 2007-01-03  John Sullivan  <sullivan@apple.com>
 
         * WebView/WebPDFView.mm:

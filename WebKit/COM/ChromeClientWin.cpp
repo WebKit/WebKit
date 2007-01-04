@@ -152,8 +152,8 @@ void ChromeClientWin::setResizable(bool)
 }
 
 void ChromeClientWin::addMessageToConsole(const WebCore::String&,
-                                 unsigned int,
-                                 const WebCore::String&)
+                                          unsigned int,
+                                          const WebCore::String&)
 {
     notImplemented();
 }
@@ -164,7 +164,8 @@ bool ChromeClientWin::canRunBeforeUnloadConfirmPanel()
     return false;
 }
 
-bool ChromeClientWin::runBeforeUnloadConfirmPanel(const String&, Frame*)
+bool ChromeClientWin::runBeforeUnloadConfirmPanel(const WebCore::String&,
+                                                  WebCore::Frame*)
 {
     notImplemented();
     return false;

@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\&quot;;&quot;$(ProjectDir)\..\..\bindings\js&quot;;&quot;$(ProjectDir)\..\..\bridge&quot;;&quot;$(ProjectDir)\..\..\bridge\win&quot;;&quot;$(ProjectDir)\..\..\css&quot;;&quot;$(ProjectDir)\..\..\dom&quot;;&quot;$(ProjectDir)\..\..\editing&quot;;&quot;$(ProjectDir)\..\..\html&quot;;&quot;$(ProjectDir)\..\..\ksvg2\misc&quot;;&quot;$(ProjectDir)\..\..\loader&quot;;&quot;$(ProjectDir)\..\..\loader\icon&quot;;&quot;$(ProjectDir)\..\..\loader\win&quot;;&quot;$(ProjectDir)\..\..\page&quot;;&quot;$(ProjectDir)\..\..\platform&quot;;&quot;$(ProjectDir)\..\..\platform\graphics\cairo&quot;;&quot;$(ProjectDir)\..\..\platform\graphics\cairo\cairo\src&quot;;&quot;$(ProjectDir)\..\..\platform\graphics\cairo\pixman\src&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\bmp&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\ico&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\xbm&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)\..\..\platform\graphics&quot;;&quot;$(ProjectDir)\..\..\platform\network&quot;;&quot;$(ProjectDir)\..\..\platform\network\win&quot;;&quot;$(ProjectDir)\..\..\platform\win&quot;;&quot;$(ProjectDir)\..\..\rendering&quot;;&quot;$(ProjectDir)\..\..\xml&quot;;&quot;$(ProjectDir)\..\..\DerivedSources\WebCore&quot;;&quot;$(ProjectDir)\..\..\..\iconv\include&quot;;&quot;$(ProjectDir)\..\..\..\icu\include&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\kjs&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\os-win32&quot;;&quot;$(ProjectDir)\..\..\..\libxml\include&quot;;&quot;$(ProjectDir)\..\..\..\libxslt\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\&quot;;&quot;$(ProjectDir)\..\..\bindings\js&quot;;&quot;$(ProjectDir)\..\..\bridge&quot;;&quot;$(ProjectDir)\..\..\bridge\win&quot;;&quot;$(ProjectDir)\..\..\css&quot;;&quot;$(ProjectDir)\..\..\dom&quot;;&quot;$(ProjectDir)\..\..\editing&quot;;&quot;$(ProjectDir)\..\..\history&quot;;&quot;$(ProjectDir)\..\..\html&quot;;&quot;$(ProjectDir)\..\..\ksvg2\misc&quot;;&quot;$(ProjectDir)\..\..\loader&quot;;&quot;$(ProjectDir)\..\..\loader\icon&quot;;&quot;$(ProjectDir)\..\..\loader\win&quot;;&quot;$(ProjectDir)\..\..\page&quot;;&quot;$(ProjectDir)\..\..\platform&quot;;&quot;$(ProjectDir)\..\..\platform\graphics\cairo&quot;;&quot;$(ProjectDir)\..\..\platform\graphics\cairo\cairo\src&quot;;&quot;$(ProjectDir)\..\..\platform\graphics\cairo\pixman\src&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\bmp&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\ico&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\xbm&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)\..\..\platform\graphics&quot;;&quot;$(ProjectDir)\..\..\platform\network&quot;;&quot;$(ProjectDir)\..\..\platform\network\win&quot;;&quot;$(ProjectDir)\..\..\platform\win&quot;;&quot;$(ProjectDir)\..\..\rendering&quot;;&quot;$(ProjectDir)\..\..\xml&quot;;&quot;$(ProjectDir)\..\..\DerivedSources\WebCore&quot;;&quot;$(ProjectDir)\..\..\..\iconv\include&quot;;&quot;$(ProjectDir)\..\..\..\icu\include&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\kjs&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\os-win32&quot;;&quot;$(ProjectDir)\..\..\..\libxml\include&quot;;&quot;$(ProjectDir)\..\..\..\libxslt\include&quot;"
 				PreprocessorDefinitions="WIN32;XSLT_SUPPORT;XPATH_SUPPORT"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -108,7 +108,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\&quot;;&quot;$(ProjectDir)\..\..\bindings\js&quot;;&quot;$(ProjectDir)\..\..\bridge&quot;;&quot;$(ProjectDir)\..\..\bridge\win&quot;;&quot;$(ProjectDir)\..\..\css&quot;;&quot;$(ProjectDir)\..\..\dom&quot;;&quot;$(ProjectDir)\..\..\editing&quot;;&quot;$(ProjectDir)\..\..\html&quot;;&quot;$(ProjectDir)\..\..\ksvg2\misc&quot;;&quot;$(ProjectDir)\..\..\loader&quot;;&quot;$(ProjectDir)\..\..\loader\icon&quot;;&quot;$(ProjectDir)\..\..\loader\win&quot;;&quot;$(ProjectDir)\..\..\page&quot;;&quot;$(ProjectDir)\..\..\platform&quot;;&quot;$(ProjectDir)\..\..\platform\graphics\cairo&quot;;&quot;$(ProjectDir)\..\..\platform\graphics\cairo\cairo\src&quot;;&quot;$(ProjectDir)\..\..\platform\graphics\cairo\pixman\src&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\bmp&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\ico&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\xbm&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)\..\..\platform\graphics&quot;;&quot;$(ProjectDir)\..\..\platform\network&quot;;&quot;$(ProjectDir)\..\..\platform\network\win&quot;;&quot;$(ProjectDir)\..\..\platform\win&quot;;&quot;$(ProjectDir)\..\..\rendering&quot;;&quot;$(ProjectDir)\..\..\xml&quot;;&quot;$(ProjectDir)\..\..\DerivedSources\WebCore&quot;;&quot;$(ProjectDir)\..\..\..\iconv\include&quot;;&quot;$(ProjectDir)\..\..\..\icu\include&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\kjs&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\os-win32&quot;;&quot;$(ProjectDir)\..\..\..\libxml\include&quot;;&quot;$(ProjectDir)\..\..\..\libxslt\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\&quot;;&quot;$(ProjectDir)\..\..\bindings\js&quot;;&quot;$(ProjectDir)\..\..\bridge&quot;;&quot;$(ProjectDir)\..\..\bridge\win&quot;;&quot;$(ProjectDir)\..\..\css&quot;;&quot;$(ProjectDir)\..\..\dom&quot;;&quot;$(ProjectDir)\..\..\editing&quot;;&quot;$(ProjectDir)\..\..\history&quot;;&quot;$(ProjectDir)\..\..\html&quot;;&quot;$(ProjectDir)\..\..\ksvg2\misc&quot;;&quot;$(ProjectDir)\..\..\loader&quot;;&quot;$(ProjectDir)\..\..\loader\icon&quot;;&quot;$(ProjectDir)\..\..\loader\win&quot;;&quot;$(ProjectDir)\..\..\page&quot;;&quot;$(ProjectDir)\..\..\platform&quot;;&quot;$(ProjectDir)\..\..\platform\graphics\cairo&quot;;&quot;$(ProjectDir)\..\..\platform\graphics\cairo\cairo\src&quot;;&quot;$(ProjectDir)\..\..\platform\graphics\cairo\pixman\src&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\bmp&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\ico&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\xbm&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)\..\..\platform\graphics&quot;;&quot;$(ProjectDir)\..\..\platform\network&quot;;&quot;$(ProjectDir)\..\..\platform\network\win&quot;;&quot;$(ProjectDir)\..\..\platform\win&quot;;&quot;$(ProjectDir)\..\..\rendering&quot;;&quot;$(ProjectDir)\..\..\xml&quot;;&quot;$(ProjectDir)\..\..\DerivedSources\WebCore&quot;;&quot;$(ProjectDir)\..\..\..\iconv\include&quot;;&quot;$(ProjectDir)\..\..\..\icu\include&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\kjs&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\os-win32&quot;;&quot;$(ProjectDir)\..\..\..\libxml\include&quot;;&quot;$(ProjectDir)\..\..\..\libxslt\include&quot;"
 				PreprocessorDefinitions="WIN32;XSLT_SUPPORT;XPATH_SUPPORT;NDEBUG"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
@@ -1059,6 +1059,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\page\Settings.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\page\Settings.h"
 				>
 			</File>
@@ -1070,6 +1074,42 @@
 					>
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="history"
+			>
+			<File
+				RelativePath="..\..\history\BackForwardList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\history\BackForwardList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\history\HistoryItem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\history\HistoryItem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\history\HistoryItemTimer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\history\HistoryItemTimer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\history\PageCache.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\history\PageCache.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="loader"
@@ -1277,6 +1317,10 @@
 			<Filter
 				Name="icon"
 				>
+				<File
+					RelativePath="..\..\loader\icon\IconDatabase.h"
+					>
+				</File>
 				<File
 					RelativePath="..\..\loader\icon\IconLoader.cpp"
 					>
@@ -1559,6 +1603,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\PopupMenuClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\RegularExpression.cpp"
 				>
 			</File>
@@ -1584,6 +1632,10 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\ScrollView.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\SearchPopupMenu.h"
 				>
 			</File>
 			<File
@@ -1636,6 +1688,10 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\TextBoundaries.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\TextBreakIterator.h"
 				>
 			</File>
 			<File
@@ -1703,10 +1759,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\TextField.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\platform\TextStream.cpp"
 				>
 			</File>
@@ -1724,10 +1776,6 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\Timer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\UChar.h"
 				>
 			</File>
 			<File
@@ -1751,6 +1799,14 @@
 				</File>
 				<File
 					RelativePath="..\..\platform\graphics\AffineTransform.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\graphics\BitmapImage.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\graphics\BitmapImage.h"
 					>
 				</File>
 				<File
@@ -1818,6 +1874,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\platform\graphics\ImageBuffer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\graphics\ImageBuffer.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\platform\graphics\ImageSource.h"
 					>
 				</File>
@@ -1847,6 +1911,14 @@
 				</File>
 				<File
 					RelativePath="..\..\platform\graphics\Path.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\graphics\PathTraversalState.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\graphics\PathTraversalState.h"
 					>
 				</File>
 				<File
@@ -4310,18 +4382,6 @@
 				Name="win"
 				>
 				<File
-					RelativePath="..\..\bridge\win\ChromeClientWin.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\bridge\win\ContextMenuClientWin.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\bridge\win\EditorClientWin.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\bridge\win\FrameWin.cpp"
 					>
 				</File>
@@ -4432,6 +4492,10 @@
 			</File>
 			<File
 				RelativePath="..\..\editing\Editor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\editing\EditorDeleteAction.h"
 				>
 			</File>
 			<File

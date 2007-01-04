@@ -91,8 +91,6 @@ public:
     BitmapImage(ImageAnimationObserver* observer = 0);
     ~BitmapImage();
     
-    static BitmapImage* loadPlatformResource(const char* name);
-
     virtual IntSize size() const;
 
     virtual bool setNativeData(NativeBytePtr, bool allDataReceived);

@@ -1,3 +1,77 @@
+2007-01-04  Don Gibson  <dgibson77@gmail.com>
+
+        Reviewed by Alexey.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11900:
+        Windows build bustage
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::FrameWin):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setPlatformStrokeColor):
+        * platform/graphics/Image.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::adjustLineToPixelBoundaries):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::checkForSolidColor):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::drawTiled):
+        * platform/graphics/win/ImageWin.cpp:
+        (WebCore::BitmapImage::initPlatformData):
+        (WebCore::BitmapImage::invalidatePlatformData):
+        (WebCore::Image::loadPlatformResource):
+        * platform/win/FontWin.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::userIdleTime):
+        (WebCore::BitmapImage::drawTiled):
+        (WebCore::BitmapImage::getHBITMAP):
+        (WebCore::ContextMenu::~ContextMenu):
+        (WebCore::ContextMenu::appendItem):
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::releasePlatformDescription):
+        (WebCore::ContextMenuItem::type):
+        (WebCore::ContextMenuItem::setType):
+        (WebCore::ContextMenuItem::setAction):
+        (WebCore::ContextMenuItem::setTitle):
+        (WebCore::ContextMenuItem::setSubMenu):
+        (WebCore::ContextMenuItem::setChecked):
+        (WebCore::ContextMenuItem::setEnabled):
+        (WebCore::DocumentLoader::originalRequest):
+        (WebCore::DocumentLoader::request):
+        (WebCore::DocumentLoader::unreachableURL):
+        (WebCore::DocumentLoader::getResponseRefreshAndModifiedHeaders):
+        (WebCore::DocumentLoader::replaceRequestURLForAnchorScroll):
+        (WebCore::DocumentLoader::setCommitted):
+        (WebCore::DocumentLoader::isLoading):
+        (WebCore::DocumentLoader::prepareForLoadStart):
+        (WebCore::DocumentLoader::isClientRedirect):
+        (WebCore::DocumentLoader::title):
+        (WebCore::DocumentLoader::urlForHistory):
+        (WebCore::Editor::markMisspellingsAfterTypingToPosition):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::referrer):
+        (WebCore::FrameLoader::dataURLBaseFromRequest):
+        (WebCore::FrameLoader::opened):
+        (WebCore::FrameLoader::applyUserAgent):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::IconDatabase::iconForPageURL):
+        (WebCore::IconDatabase::defaultIcon):
+        (WebCore::IconDatabase::retainIconForPageURL):
+        (WebCore::IconDatabase::releaseIconForPageURL):
+        (WebCore::PageCache::close):
+        (WebCore::ResourceHandle::willLoadFromCache):
+        (WebCore::SearchPopupMenu::saveRecentSearches):
+        (WebCore::SearchPopupMenu::loadRecentSearches):
+        (WebCore::SearchPopupMenu::SearchPopupMenu):
+
 2007-01-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

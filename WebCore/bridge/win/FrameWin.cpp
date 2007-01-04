@@ -48,14 +48,14 @@ FrameWin::FrameWin(Page* page, HTMLFrameOwnerElement* ownerElement, FrameWinClie
     , m_client(client)
 {
     Settings* settings = new Settings();
-    settings->setAutoLoadImages(true);
-    settings->setMediumFixedFontSize(13);
-    settings->setMediumFontSize(16);
-    settings->setSerifFontName("Times New Roman");
-    settings->setFixedFontName("Courier New");
-    settings->setSansSerifFontName("Arial");
-    settings->setStdFontName("Times New Roman");
-    settings->setIsJavaScriptEnabled(true);
+    settings->setLoadsImagesAutomatically(true);
+    settings->setDefaultFixedFontSize(13);
+    settings->setDefaultFontSize(16);
+    settings->setSerifFontFamily("Times New Roman");
+    settings->setFixedFontFamily("Courier New");
+    settings->setSansSerifFontFamily("Arial");
+    settings->setStandardFontFamily("Times New Roman");
+    settings->setJavaScriptEnabled(true);
     setSettings(settings);
 }
 
