@@ -2,7 +2,7 @@
 
         Rubber-stamped by Adam.
         
-        Move a bunch of platform independant code over to DocumentLoader.cpp
+        Move a bunch of platform independent code over to DocumentLoader.cpp
 
         * WebCore.xcodeproj/project.pbxproj:
         * loader/DocumentLoader.cpp:
