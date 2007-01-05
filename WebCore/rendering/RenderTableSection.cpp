@@ -53,6 +53,9 @@ RenderTableSection::RenderTableSection(Node* node)
     , m_outerBorderRight(0)
     , m_outerBorderTop(0)
     , m_outerBorderBottom(0)
+    , m_overflowLeft(0)
+    , m_overflowWidth(0)
+    , m_hasOverflowingCell(false)
 {
     // init RenderObject attributes
     setInline(false);   // our object is not Inline
@@ -361,6 +364,10 @@ int RenderTableSection::layoutRows(int toAdd)
     
     // Set the width of our section now.  The rows will also be this width.
     m_width = table()->contentWidth();
+    m_overflowLeft = 0;
+    m_overflowWidth = m_width;
+    m_hasOverflowingCell = false;
+
     if (table()->collapseBorders())
         recalcOuterBorder();
     
@@ -429,10 +436,10 @@ int RenderTableSection::layoutRows(int toAdd)
 
     for (int r = 0; r < totalRows; r++) {
         // Set the row's x/y position and width/height.
-        if (m_grid[r].rowRenderer) {
-            m_grid[r].rowRenderer->setPos(0, m_rowPos[r]);
-            m_grid[r].rowRenderer->setWidth(m_width);
-            m_grid[r].rowRenderer->setHeight(m_rowPos[r + 1] - m_rowPos[r] - vspacing);
+        if (RenderObject* rowRenderer = m_grid[r].rowRenderer) {
+            rowRenderer->setPos(0, m_rowPos[r]);
+            rowRenderer->setWidth(m_width);
+            rowRenderer->setHeight(m_rowPos[r + 1] - m_rowPos[r] - vspacing);
         }
 
         for (int c = 0; c < nEffCols; c++) {
@@ -443,8 +450,7 @@ int RenderTableSection::layoutRows(int toAdd)
             if (r < totalRows - 1 && cell == cellAt(r + 1, c).cell)
                 continue;
 
-            if ((rindx = r - cell->rowSpan() + 1) < 0)
-                rindx = 0;
+            rindx = max(0, r - cell->rowSpan() + 1);
 
             rHeight = m_rowPos[r + 1] - m_rowPos[rindx] - vspacing;
             
@@ -515,7 +521,7 @@ int RenderTableSection::layoutRows(int toAdd)
                 int be = rHeight - cell->height() - te;
                 cell->setCellTopExtra(te);
                 cell->setCellBottomExtra(be);
-                if (!table()->selfNeedsLayout() && cell->checkForRepaintDuringLayout() && (te != oldTe || be > oldBe))
+                if ((te != oldTe || be > oldBe) && !table()->selfNeedsLayout() && cell->checkForRepaintDuringLayout())
                     cell->repaint();
             }
             
@@ -525,6 +531,10 @@ int RenderTableSection::layoutRows(int toAdd)
                 cell->setPos(table()->columnPositions()[nEffCols] - table()->columnPositions()[table()->colToEffCol(cell->col() + cell->colSpan())] + hspacing, m_rowPos[rindx]);
             } else
                 cell->setPos(table()->columnPositions()[c] + hspacing, m_rowPos[rindx]);
+
+            m_overflowLeft = min(m_overflowLeft, cell->xPos() + cell->overflowLeft(false));
+            m_overflowWidth = max(m_overflowWidth, cell->xPos() + cell->overflowWidth(false));
+            m_hasOverflowingCell |= cell->overflowLeft(false) || cell->overflowWidth(false) > cell->width();
 
             // If the cell moved, we have to repaint it as well as any floating/positioned
             // descendants.  An exception is if we need a layout.  In this case, we know we're going to
@@ -834,7 +844,9 @@ void RenderTableSection::paint(PaintInfo& paintInfo, int tx, int ty)
 
     unsigned startcol = 0;
     unsigned endcol = totalCols;
-    if (style()->direction() == LTR) {
+    // If some cell overflows, just paint all of them.
+    // FIXME: Implement RTL.
+    if (!m_hasOverflowingCell && style()->direction() == LTR) {
         for (; startcol < totalCols; startcol++) {
             if (tx + table()->columnPositions()[startcol + 1] >= x - os)
                 break;

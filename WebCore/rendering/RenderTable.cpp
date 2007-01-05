@@ -32,10 +32,12 @@
 #include "DeleteButtonController.h"
 #include "Document.h"
 #include "FixedTableLayout.h"
+#include "FrameView.h"
 #include "HTMLNames.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
 #include "RenderTableSection.h"
+#include "RenderView.h"
 #include "TextStream.h"
 
 using namespace std;
@@ -255,10 +257,14 @@ void RenderTable::layout()
     
     m_height = 0;
     m_overflowHeight = 0;
+    m_overflowTop = 0;
     initMaxMarginValues();
     
     //int oldWidth = m_width;
     calcWidth();
+
+    m_overflowWidth = m_width + (collapseBorders() ? outerBorderRight() - borderRight() : 0);
+    m_overflowLeft = collapseBorders() ? borderLeft() - outerBorderLeft() : 0;
 
     // FIXME: The optimisation below doesn't work since the internal table
     // layout could have changed.  we need to add a flag to the table
@@ -271,6 +277,7 @@ void RenderTable::layout()
 
     // layout child objects
     int calculatedHeight = 0;
+    int oldTableTop = m_caption ? m_caption->height() + m_caption->marginTop() + m_caption->marginBottom() : 0;
 
     RenderObject* child = firstChild();
     while (child) {
@@ -284,13 +291,30 @@ void RenderTable::layout()
         child = child->nextSibling();
     }
 
-    m_overflowWidth = m_width + (collapseBorders() ? outerBorderRight() - borderRight() : 0);
-    m_overflowLeft = collapseBorders() ? borderLeft() - outerBorderLeft() : 0;
+    // If any table section moved vertically, we will just repaint everything from that
+    // section down (it is quite unlikely that any of the following sections
+    // did not shift).
+    bool sectionMoved = false;
+    int movedSectionTop = 0;
 
     // FIXME: Collapse caption margin.
     if (m_caption && m_caption->style()->captionSide() != CAPBOTTOM) {
+        IntRect captionRect(m_caption->xPos(), m_caption->yPos(), m_caption->width(), m_caption->height());
+
         m_caption->setPos(m_caption->marginLeft(), m_height);
+        if (!selfNeedsLayout() && m_caption->checkForRepaintDuringLayout())
+            m_caption->repaintDuringLayoutIfMoved(captionRect);
+
         m_height += m_caption->height() + m_caption->marginTop() + m_caption->marginBottom();
+        m_overflowLeft = min(m_overflowLeft, m_caption->xPos() + m_caption->overflowLeft(false));
+        m_overflowWidth = max(m_overflowWidth, m_caption->xPos() + m_caption->overflowWidth(false));
+        m_overflowTop = min(m_overflowTop, m_caption->yPos() + m_caption->overflowTop(false));
+        m_overflowHeight = max(m_overflowHeight, m_caption->yPos() + m_caption->overflowHeight(false));
+
+        if (m_height != oldTableTop) {
+            sectionMoved = true;
+            movedSectionTop = min(m_height, oldTableTop);
+        }
     }
 
     int bpTop = borderTop() + (collapseBorders() ? 0 : paddingTop());
@@ -332,38 +356,63 @@ void RenderTable::layout()
         bl += paddingLeft();
 
     // position the table sections
-    if (m_head) {
-        m_head->setPos(bl, m_height);
-        m_height += m_head->height();
-    }
-    for (RenderObject* body = m_firstBody; body; body = body->nextSibling()) {
-        if (body != m_head && body != m_foot && body->isTableSection()) {
-            body->setPos(bl, m_height);
-            m_height += body->height();
+    RenderObject* section = m_head ? m_head : (m_firstBody ? m_firstBody : m_foot);
+    while (section) {
+        if (!sectionMoved && section->yPos() != m_height) {
+            sectionMoved = true;
+            movedSectionTop = min(m_height, section->yPos());
         }
-    }
-    if (m_foot) {
-        m_foot->setPos(bl, m_height);
-        m_height += m_foot->height();
+        section->setPos(bl, m_height);
+
+        m_height += section->height();
+        m_overflowLeft = min(m_overflowLeft, section->xPos() + section->overflowLeft(false));
+        m_overflowWidth = max(m_overflowWidth, section->xPos() + section->overflowWidth(false));
+        // FIXME: Use sectionBelow() instead of the following once sectionBelow() is fixed.
+        // See http://bugs.webkit.org/show_bug.cgi?id=12124
+        if (section == m_foot)
+            break;
+        if (section == m_head)
+            section = m_firstBody ? m_firstBody : m_foot;
+        else {
+            do {
+                section = section->nextSibling();
+            } while (section && (section == m_head || section == m_foot || !section->isTableSection()));
+            if (!section)
+                section = m_foot;
+        }
     }
 
     m_height += bpBottom;
-               
+
     if (m_caption && m_caption->style()->captionSide() == CAPBOTTOM) {
+        IntRect captionRect(m_caption->xPos(), m_caption->yPos(), m_caption->width(), m_caption->height());
+
         m_caption->setPos(m_caption->marginLeft(), m_height);
+        if (!selfNeedsLayout() && m_caption->checkForRepaintDuringLayout())
+            m_caption->repaintDuringLayoutIfMoved(captionRect);
+
         m_height += m_caption->height() + m_caption->marginTop() + m_caption->marginBottom();
+        m_overflowLeft = min(m_overflowLeft, m_caption->xPos() + m_caption->overflowLeft(false));
+        m_overflowWidth = max(m_overflowWidth, m_caption->xPos() + m_caption->overflowWidth(false));
     }
 
     if (isPositioned())
         calcHeight();
 
+    m_overflowHeight = max(m_overflowHeight, m_height);
+
     // table can be containing block of positioned elements.
     // FIXME: Only pass true if width or height changed.
     layoutPositionedObjects(true);
 
+    bool didFullRepaint = true;
     // Repaint with our new bounds if they are different from our old bounds.
     if (checkForRepaint)
-        repaintAfterLayoutIfNeeded(oldBounds, oldFullBounds);
+        didFullRepaint = repaintAfterLayoutIfNeeded(oldBounds, oldFullBounds);
+    if (!didFullRepaint && sectionMoved) {
+        IntRect repaintRect(m_overflowLeft, movedSectionTop, m_overflowWidth - m_overflowLeft, m_overflowHeight - movedSectionTop);
+        view()->frameView()->addRepaintInfo(this, repaintRect);
+    }
     
     setNeedsLayout(false);
 }
@@ -384,9 +433,9 @@ void RenderTable::paint(PaintInfo& paintInfo, int tx, int ty)
     PaintPhase paintPhase = paintInfo.phase;
 
     int os = 2 * maximalOutlineSize(paintPhase);
-    if (ty >= paintInfo.rect.bottom() + os || ty + height() <= paintInfo.rect.y() - os)
+    if (ty + overflowTop() >= paintInfo.rect.bottom() + os || ty + overflowHeight() <= paintInfo.rect.y() - os)
         return;
-    if (tx >= paintInfo.rect.right() + os || tx + width() <= paintInfo.rect.x() - os)
+    if (tx + overflowLeft() >= paintInfo.rect.right() + os || tx + overflowWidth() <= paintInfo.rect.x() - os)
         return;
 
     if ((paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) && shouldPaintBackgroundOrBorder() && style()->visibility() == VISIBLE)
@@ -796,7 +845,8 @@ int RenderTable::outerBorderBottom() const
         bottomSection = m_foot;
     else {
         RenderObject* child;
-        for (child = lastChild(); child && !child->isTableSection(); child = child->previousSibling());
+        for (child = lastChild(); child && !child->isTableSection(); child = child->previousSibling())
+            ;
         bottomSection = child ? static_cast<RenderTableSection*>(child) : 0;
     }
     if (bottomSection) {

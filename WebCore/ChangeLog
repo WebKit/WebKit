@@ -1,3 +1,41 @@
+2007-01-05  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12079
+          Nested tables don't repaint properly when a certain row is added
+
+        Tests: fast/repaint/table-section-repaint.html
+               fast/repaint/table-section-overflow.html
+
+        Fixed repainting when table sections move during layout.
+
+        Made table cells' overflows propagate to table sections and gave tables
+        overflows.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout): Added computation of horizontal and vertical overflows
+        based on the caption's and the table sections' overflows.
+        Added checks for table sections that change position during layout. When that happens,
+        we assume all sections below the first section that moved also moved, and repaint
+        everything downwards from there.
+        Added calls to repaintDuringLayoutIfMoved() for the caption.
+        Changed the way table sections are iterated over and added a FIXME to change it again
+        once bug 12124 is fixed.
+        (WebCore::RenderTable::paint): Changed to paint overflow.
+        (WebCore::RenderTable::outerBorderBottom):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::RenderTableSection):
+        (WebCore::RenderTableSection::layoutRows): Added code to compute the section's overflow
+        and a flag saying whether any cells in this section overflow.
+        (WebCore::RenderTableSection::paint): Changed to paint overflow. If any cell
+        in the section has overflow, then all cells are given a chance to paint. This is needed
+        because there can be internal overflow, and external overflow can be coming from any
+        cell inside.
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::overflowWidth):
+        (WebCore::RenderTableSection::overflowLeft):
+
 2007-01-05  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.

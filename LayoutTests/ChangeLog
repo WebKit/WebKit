@@ -1,3 +1,23 @@
+2007-01-05  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - repaint tests and updated results for
+          http://bugs.webkit.org/show_bug.cgi?id=12079
+          Nested tables don't repaint properly when a certain row is added
+
+        * fast/repaint/table-section-overflow-expected.checksum: Added.
+        * fast/repaint/table-section-overflow-expected.png: Added.
+        * fast/repaint/table-section-overflow-expected.txt: Added.
+        * fast/repaint/table-section-overflow.html: Added.
+        * fast/repaint/table-section-repaint-expected.checksum: Added.
+        * fast/repaint/table-section-repaint-expected.png: Added.
+        * fast/repaint/table-section-repaint-expected.txt: Added.
+        * fast/repaint/table-section-repaint.html: Added.
+        * tables/mozilla/core/misc-expected.txt:
+        * tables/mozilla/core/misc-expected.png:
+        * tables/mozilla/core/misc-expected.checksum:
+
 2007-01-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
