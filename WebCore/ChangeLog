@@ -1,6 +1,6 @@
 2007-01-05  Brady Eidson  <beidson@apple.com>
 
-        Reviewed by Eric Siedel
+        Reviewed by Eric Seidel
 
         http://bugs.webkit.org/show_bug.cgi?id=12117
         Fixes null deref when opening links from a gmail account
