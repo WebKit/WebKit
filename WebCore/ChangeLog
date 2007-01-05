@@ -1,3 +1,11 @@
+2007-01-04  Brady Eidson  <beidson@apple.com>
+
+        Reverted Anders' change to fix the world
+
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::willSendRequest):
+        (WebCore::ResourceLoader::didReceiveResponse):
+
 2007-01-04  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Sam Weinig.

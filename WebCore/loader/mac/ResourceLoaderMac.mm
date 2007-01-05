@@ -170,22 +170,17 @@ void ResourceLoader::willSendRequest(ResourceRequest& newRequest, const Resource
         
     ASSERT(!m_reachedTerminalState);
     
-    ResourceRequest clientRequest;
-    
     // If we have a special "applewebdata" scheme URL we send a fake request to the delegate.
     bool haveDataSchemeRequest = false;
-#if PLATFORM(MAC)
-    clientRequest = [newRequest.nsURLRequest() _webDataRequestExternalRequest];
-#endif
-    if (clientRequest.isNull())
-        clientRequest = newRequest;
-    else
+    if (NSMutableURLRequest *externalRequest = [newRequest.nsURLRequest() _webDataRequestExternalRequest]) {
+        newRequest = externalRequest;
         haveDataSchemeRequest = true;
+    }
     
     if (!m_identifier)
-        m_identifier = frameLoader()->identifierForInitialRequest(clientRequest);
+        m_identifier = frameLoader()->identifierForInitialRequest(newRequest);
     
-    ResourceRequest updatedRequest(clientRequest);
+    ResourceRequest updatedRequest(newRequest);
     frameLoader()->willSendRequest(this, updatedRequest, redirectResponse);
     
     if (!haveDataSchemeRequest)
@@ -194,14 +189,13 @@ void ResourceLoader::willSendRequest(ResourceRequest& newRequest, const Resource
         // If the delegate modified the request use that instead of
         // our applewebdata request, otherwise use the original
         // applewebdata request.
-        if (updatedRequest != clientRequest) {
+        if (updatedRequest != updatedRequest) {
             newRequest = updatedRequest;
-#if PLATFORM(MAC)
+            
             if ([newRequest.nsURLRequest() isKindOfClass:[NSMutableURLRequest class]]) {
                 NSMutableURLRequest *mr = (NSMutableURLRequest *)newRequest.nsURLRequest();
                 [NSURLProtocol _removePropertyForKey:[NSURLRequest _webDataRequestPropertyKey] inRequest:mr];
             }
-#endif
         }
     }
     
@@ -250,7 +244,7 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<ResourceLoader> protector(this);
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) 
     // If the URL is one of our whacky applewebdata URLs then
     // fake up a substitute URL to present to the delegate.
     if ([WebDataProtocol _webIsDataProtocolURL:[r.nsURLResponse() URL]]) 
