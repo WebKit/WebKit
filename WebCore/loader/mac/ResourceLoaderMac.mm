@@ -172,15 +172,21 @@ void ResourceLoader::willSendRequest(ResourceRequest& newRequest, const Resource
     
     // If we have a special "applewebdata" scheme URL we send a fake request to the delegate.
     bool haveDataSchemeRequest = false;
-    if (NSMutableURLRequest *externalRequest = [newRequest.nsURLRequest() _webDataRequestExternalRequest]) {
-        newRequest = externalRequest;
+    ResourceRequest clientRequest;
+    
+#if PLATFORM(MAC)
+    clientRequest = [newRequest.nsURLRequest() _webDataRequestExternalRequest];
+#endif
+    
+    if (!clientRequest.isNull())
         haveDataSchemeRequest = true;
-    }
+    else
+       clientRequest = newRequest;
     
     if (!m_identifier)
-        m_identifier = frameLoader()->identifierForInitialRequest(newRequest);
+        m_identifier = frameLoader()->identifierForInitialRequest(clientRequest);
     
-    ResourceRequest updatedRequest(newRequest);
+    ResourceRequest updatedRequest(clientRequest);
     frameLoader()->willSendRequest(this, updatedRequest, redirectResponse);
     
     if (!haveDataSchemeRequest)
@@ -189,7 +195,7 @@ void ResourceLoader::willSendRequest(ResourceRequest& newRequest, const Resource
         // If the delegate modified the request use that instead of
         // our applewebdata request, otherwise use the original
         // applewebdata request.
-        if (updatedRequest != updatedRequest) {
+        if (updatedRequest != clientRequest) {
             newRequest = updatedRequest;
             
             if ([newRequest.nsURLRequest() isKindOfClass:[NSMutableURLRequest class]]) {

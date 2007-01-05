@@ -50,7 +50,7 @@ KURL::KURL(NSURL *url)
         } else
             parse(bytes, 0);
     } else
-        parse("", 0);
+        parse(0, 0);
 }
 
 NSURL *KURL::getNSURL() const

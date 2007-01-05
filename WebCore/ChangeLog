@@ -1,3 +1,18 @@
+2007-01-05  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12120
+        REGRESSION(r18605): Safari snippet editor no longer works
+        
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::willSendRequest):
+        Put back the code change in r18607.
+        
+        * platform/mac/KURLMac.mm:
+        (WebCore::KURL::KURL):
+        Convert nil NSURLs to null KURLs.
+
 2007-01-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff.
