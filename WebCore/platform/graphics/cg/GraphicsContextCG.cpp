@@ -440,13 +440,12 @@ void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& top
     if (paintingDisabled())
         return;
 
-    // Need sufficient width and height to contain these curves.  Sanity check our top/bottom
-    // values and our width/height values to make sure the curves can all fit.
-    int requiredWidth = max(topLeft.width() + topRight.width(), bottomLeft.width() + bottomRight.width());
-    if (requiredWidth > rect.width())
-        return;
-    int requiredHeight = max(topLeft.height() + bottomLeft.height(), topRight.height() + bottomRight.height());
-    if (requiredHeight > rect.height())
+    // Need sufficient width and height to contain these curves.  Sanity check our
+    // corner radii and our width/height values to make sure the curves can all fit.
+    if (static_cast<unsigned>(rect.width()) < static_cast<unsigned>(topLeft.width()) + static_cast<unsigned>(topRight.width()) ||
+        static_cast<unsigned>(rect.width()) < static_cast<unsigned>(bottomLeft.width()) + static_cast<unsigned>(bottomRight.width()) ||
+        static_cast<unsigned>(rect.height()) < static_cast<unsigned>(topLeft.height()) + static_cast<unsigned>(bottomLeft.height()) ||
+        static_cast<unsigned>(rect.height()) < static_cast<unsigned>(topRight.height()) + static_cast<unsigned>(bottomRight.height()))
         return;
  
     // Clip to our rect.

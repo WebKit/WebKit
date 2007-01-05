@@ -1,3 +1,19 @@
+2007-01-04  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12043
+          Another assertion failure in WebCore::RenderObject::drawBorder
+
+        Test: fast/borders/border-radius-huge-assert.html
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::addRoundedRectClip): Fixed the check for border radii
+        that do not fit in the given width or height to work with radii that sum up to
+        more than MAX_INT.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintBorder): Ditto.
+
 2007-01-04  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

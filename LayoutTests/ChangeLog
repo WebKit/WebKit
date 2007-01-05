@@ -1,3 +1,15 @@
+2007-01-04  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=12043
+          Another assertion failure in WebCore::RenderObject::drawBorder
+
+        * fast/borders/border-radius-huge-assert-expected.checksum: Added.
+        * fast/borders/border-radius-huge-assert-expected.png: Added.
+        * fast/borders/border-radius-huge-assert-expected.txt: Added.
+        * fast/borders/border-radius-huge-assert.html: Added.
+
 2007-01-04  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john
