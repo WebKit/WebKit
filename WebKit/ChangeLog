@@ -1,3 +1,10 @@
+2007-01-04  Adam Roben  <aroben@apple.com>
+
+        Boo on me for undoing Beth's hard work.
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView menuForEvent:]): Undo a mistaken roll out of r18597.
+
 2007-01-04  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Brady.

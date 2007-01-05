@@ -2551,7 +2551,8 @@ static WebHTMLView *lastHitView = nil;
     
     if (handledEvent && coreframe) {
         if (Page* page = coreframe->page()) {
-            NSArray* menuItems = page->contextMenuController()->contextMenu()->platformDescription();
+            ContextMenu* coreMenu = page->contextMenuController()->contextMenu();
+            NSArray* menuItems = coreMenu->platformDescription();
             NSMenu* menu = nil;
             if (menuItems && [menuItems count] > 0) {
                 menu = [[NSMenu alloc] init];
@@ -2569,8 +2570,8 @@ static WebHTMLView *lastHitView = nil;
                 NSMenuItem *menuItem = [[[NSMenuItem alloc] init] autorelease];
                 [menuItem setAction:@selector(_inspectElement:)];
                 [menuItem setTitle:UI_STRING("Inspect Element", "Inspect Element context menu item")];
-                NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
-                [menuItem setRepresentedObject:[self elementAtPoint:point]];
+                [menuItem setRepresentedObject:[[[WebElementDictionary alloc] initWithHitTestResult:
+                    coreMenu->hitTestResult()] autorelease]];
                 [menu addItem:menuItem];
             }
 
