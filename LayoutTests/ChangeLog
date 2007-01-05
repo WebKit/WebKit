@@ -1,3 +1,14 @@
+2007-01-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=3420
+        XMLHttpRequest does not handle set-cookie headers
+
+        * http/tests/xmlhttprequest/resources/get-set-cookie.cgi:
+        Set the cookies unconditionally (previously, the test failed if there 
+        were other cookies for 127.0.0.1:8000.
+
 2007-01-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff.
