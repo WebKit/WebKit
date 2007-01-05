@@ -1,3 +1,12 @@
+2007-01-05  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        The data returned is now a SharedBuffer so wrap it in an NSData object.
+        
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource data]):
+
 2007-01-04  Adam Roben  <aroben@apple.com>
 
         Reviewed by Geoff, cheered by others.

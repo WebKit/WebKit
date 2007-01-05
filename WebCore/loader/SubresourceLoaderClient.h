@@ -29,11 +29,9 @@
 #ifndef SubresourceLoaderClient_h
 #define SubresourceLoaderClient_h
 
-// FIXME: This is just to define PlatformData, it should go away
-#include "ResourceHandleClient.h"
-
 namespace WebCore {
 
+class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
 class SubresourceLoader;
@@ -49,9 +47,6 @@ public:
     virtual void didReceiveData(SubresourceLoader*, const char*, int) { }
     virtual void didFinishLoading(SubresourceLoader*) { }
     virtual void didFail(SubresourceLoader*, const ResourceError&) { }
-    
-    // FIXME: Get rid of this function
-    virtual void receivedAllData(SubresourceLoader*, PlatformData) { }
 };
 
 }

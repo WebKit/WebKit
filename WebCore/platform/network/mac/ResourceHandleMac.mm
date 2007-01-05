@@ -33,6 +33,7 @@
 #import "FrameMac.h"
 #import "ResourceError.h"
 #import "ResourceResponse.h"
+#import "SharedBuffer.h"
 #import "SubresourceLoader.h"
 #import "WebCoreSystemInterface.h"
 
@@ -156,12 +157,12 @@ bool ResourceHandle::supportsBufferedData()
     return NSURLConnectionSupportsBufferedData;
 }
 
-NSData* ResourceHandle::bufferedData()
+PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()
 {
     if (ResourceHandle::supportsBufferedData())
-        return [d->m_connection.get() _bufferedData];
+        return SharedBuffer::wrapNSData([d->m_connection.get() _bufferedData]);
 
-    return nil;
+    return 0;
 }
 
 id ResourceHandle::releaseProxy()

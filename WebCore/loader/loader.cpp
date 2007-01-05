@@ -92,7 +92,7 @@ void Loader::servePendingRequests()
         m_requestsLoading.add(loader.release(), req);
 }
 
-void Loader::receivedAllData(SubresourceLoader* loader, PlatformData allData)
+void Loader::didFinishLoading(SubresourceLoader* loader)
 {
     RequestMap::iterator i = m_requestsLoading.find(loader);
     if (i == m_requestsLoading.end())
@@ -106,7 +106,7 @@ void Loader::receivedAllData(SubresourceLoader* loader, PlatformData allData)
 
     docLoader->setLoadInProgress(true);
     object->data(req->buffer(), true);
-    object->setAllData(allData);
+    object->setAllData(loader->resourceData());
     docLoader->setLoadInProgress(false);
     object->finish();
 

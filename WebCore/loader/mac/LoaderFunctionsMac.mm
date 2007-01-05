@@ -74,21 +74,16 @@ void CheckCacheObjectStatus(DocLoader *loader, CachedResource *cachedResource)
         
     NSURLRequest *request = cachedResource->getNSURLRequest();
     const ResourceResponse& response = cachedResource->response();
-    NSData *data = cachedResource->allData();
+    RefPtr<SharedBuffer> data = cachedResource->allData();
     
     // FIXME: If the WebKit client changes or cancels the request, WebCore does not respect this and continues the load.
-    frame->loader()->loadedResourceFromMemoryCache(request, response, [data length]);
+    frame->loader()->loadedResourceFromMemoryCache(request, response, data->size());
     
     frame->loader()->didTellBridgeAboutLoad(cachedResource->url());
 }
 
-void CachedResource::setAllData(PlatformData allData)
+void CachedResource::setAllData(PassRefPtr<SharedBuffer> allData)
 {
-    HardRetain(allData);
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    HardRelease(m_allData);
-    END_BLOCK_OBJC_EXCEPTIONS;
-
     m_allData = allData;
 }
 

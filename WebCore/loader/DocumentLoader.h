@@ -55,6 +55,7 @@ namespace WebCore {
     class HistoryItem;
     class KURL;
     class PageCache;
+    class SharedBuffer;
 
     typedef Vector<ResourceResponse> ResponseVector;
 
@@ -69,7 +70,7 @@ namespace WebCore {
 
         FrameLoader* frameLoader() const;
 #if PLATFORM(MAC)
-        NSData *mainResourceData() const;
+        PassRefPtr<SharedBuffer> mainResourceData() const;
 #endif
 
         const ResourceRequest& originalRequest() const;
@@ -137,7 +138,7 @@ namespace WebCore {
         
     private:
 #if PLATFORM(MAC)
-        void setMainResourceData(NSData *);
+        void setMainResourceData(PassRefPtr<SharedBuffer>);
 #endif
         void setupForReplace();
         void commitIfReady();
@@ -151,7 +152,7 @@ namespace WebCore {
         Frame* m_frame;
 
 #if PLATFORM(MAC)
-        RetainPtr<NSData> m_mainResourceData;
+        RefPtr<SharedBuffer> m_mainResourceData;
 #endif
 
         // A reference to actual request used to create the data source.

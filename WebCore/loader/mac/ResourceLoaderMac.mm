@@ -36,6 +36,7 @@
 #import "ResourceHandle.h"
 #import "ResourceRequest.h"
 #import "ResourceResponse.h"
+#import "SharedBuffer.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
 #import <Foundation/NSURLAuthenticationChallenge.h>
@@ -128,28 +129,26 @@ FrameLoader* ResourceLoader::frameLoader() const
 void ResourceLoader::addData(const char* data, int length, bool allAtOnce)
 {
     if (allAtOnce) {
-        m_resourceData.adopt([[NSMutableData alloc] initWithBytes:data length:length]);
+        m_resourceData = new SharedBuffer(data, length);
         return;
     }
         
     if (ResourceHandle::supportsBufferedData()) {
         // Buffer data only if the connection has handed us the data because is has stopped buffering it.
         if (m_resourceData)
-            [m_resourceData.get() appendBytes:data length:length];
+            m_resourceData->append(data, length);
     } else {
-        if (!m_resourceData) 
-            m_resourceData.adopt([[NSMutableData alloc] init]);
-
-        [m_resourceData.get() appendBytes:data length:length];
+        if (!m_resourceData)
+            m_resourceData = new SharedBuffer(data, length);
+        else
+            m_resourceData->append(data, length);
     }
 }
 
-NSData *ResourceLoader::resourceData()
+PassRefPtr<SharedBuffer> ResourceLoader::resourceData()
 {
     if (m_resourceData)
-        // Retain and autorelease resourceData since releaseResources (which releases resourceData) may be called 
-        // before the caller of this method has an opportunity to retain the returned data (4070729).
-        return [[m_resourceData.get() retain] autorelease];
+        return m_resourceData;
 
     if (ResourceHandle::supportsBufferedData() && m_handle)
         return m_handle->bufferedData();
@@ -159,7 +158,7 @@ NSData *ResourceLoader::resourceData()
 
 void ResourceLoader::clearResourceData()
 {
-    [m_resourceData.get() setLength:0];
+    m_resourceData->clear();
 }
 
 void ResourceLoader::willSendRequest(ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
@@ -266,7 +265,7 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
 void ResourceLoader::didReceiveData(const char* data, int length, long long lengthReceived, bool allAtOnce)
 {
     // The following assertions are not quite valid here, since a subclass
-    // might override didReceiveData: in a way that invalidates them. This
+    // might override didReceiveData in a way that invalidates them. This
     // happens with the steps listed in 3266216
     // ASSERT(con == connection);
     // ASSERT(!m_reachedTerminalState);
@@ -283,7 +282,7 @@ void ResourceLoader::didReceiveData(const char* data, int length, long long leng
 void ResourceLoader::willStopBufferingData(const char* data, int length)
 {
     ASSERT(!m_resourceData);
-    m_resourceData.adopt([[NSMutableData alloc] initWithBytes:data length:length]);
+    m_resourceData = new SharedBuffer(data, length);
 }
 
 void ResourceLoader::didFinishLoading()

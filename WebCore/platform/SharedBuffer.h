@@ -16,37 +16,60 @@
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#ifndef SharedBuffer_h
+#define SharedBuffer_h
 
-#import "config.h"
-#import "ImageDocumentMac.h"
+#include "Shared.h"
+#include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
-#include "CachedImage.h"
-#include "Document.h"
-#include "FrameLoader.h"
-#include "FrameMac.h"
-#include "WebCoreFrameBridge.h"
-#include "DocumentLoader.h"
+#if PLATFORM(MAC)
+#include "RetainPtr.h"
+
+#ifdef __OBJC__
+@class NSData;
+#else
+class NSData;
+#endif
+
+#endif
 
 namespace WebCore {
-    
-void finishImageLoad(Document* document, CachedImage* image, const void* imageData, size_t imageDataSize)
-{
-    // FIXME: This is terrible! Makes an extra copy of the image data!
-    // Can't we get the NSData from NSURLConnection?
-    // Why is this different from image subresources?
-    RefPtr<SharedBuffer> buffer = new SharedBuffer(reinterpret_cast<const char*>(imageData), imageDataSize);
 
-    Frame* frame = document->frame();
-    const ResourceResponse& response = frame->loader()->documentLoader()->response();
+class SharedBuffer : public Shared<SharedBuffer> {
+public:
+    SharedBuffer(const char*, int);
+#if PLATFORM(MAC)
+    NSData *createNSData();
+    static PassRefPtr<SharedBuffer> wrapNSData(NSData *data);
+#endif
+        
+    const char* data() const;
+    unsigned size() const;
 
-    IntSize size = image->imageSize();
-    if (size.width())
-        document->setTitle([Mac(frame)->bridge() imageTitleForFilename:response.suggestedFilename() size:size]);
-}
+    void append(const char*, int);
+    void clear();
+
+private:
+    void clearPlatformData();
+    void maybeTransferPlatformData();
+    bool hasPlatformData() const;
+    const char* platformData() const;
+    unsigned platformDataSize() const;
+    
+    Vector<char> m_buffer;
+#if PLATFORM(MAC)
+    SharedBuffer(NSData *nsdata);
+    RetainPtr<NSData> m_nsData;
+#endif
+};
     
 }
+
+#endif

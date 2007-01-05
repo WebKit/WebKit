@@ -61,6 +61,7 @@
 #import "ResourceHandle.h"
 #import "ResourceRequest.h"
 #import "ResourceResponse.h"
+#import "SharedBuffer.h"
 #import "Settings.h"
 #import "SubresourceLoader.h"
 #import "SystemTime.h"
@@ -1194,10 +1195,10 @@ String FrameLoader::overrideMediaType() const
     return String();
 }
 
-NSData *FrameLoader::mainResourceData() const
+PassRefPtr<SharedBuffer> FrameLoader::mainResourceData() const
 {
     if (!m_mainResourceLoader)
-        return nil;
+        return 0;
     return m_mainResourceLoader->resourceData();
 }
 

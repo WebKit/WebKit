@@ -32,6 +32,7 @@
 #import "FrameLoader.h"
 #import "ResourceError.h"
 #import "ResourceResponse.h"
+#import "SharedBuffer.h"
 #import <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -104,7 +105,9 @@ void NetscapePlugInStreamLoader::didFinishLoading()
     RefPtr<NetscapePlugInStreamLoader> protect(this);
 
     frameLoader()->removePlugInStreamLoader(this);
-    [m_stream.get() finishedLoadingWithData:resourceData()];
+    NSData *data = resourceData()->createNSData();
+    [m_stream.get() finishedLoadingWithData:data];
+    [data release];
     ResourceLoader::didFinishLoading();
 }
 

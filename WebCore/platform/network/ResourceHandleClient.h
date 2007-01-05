@@ -55,22 +55,14 @@ class NSURLCredential;
 
 namespace WebCore {
 
-#if USE(CFNETWORK)
-    typedef void* PlatformData; // unused for now
-#elif PLATFORM(MAC)
-    typedef NSData* PlatformData;
-#elif PLATFORM(QT)
+#if PLATFORM(QT)
     class PlatformResponseQt : public Shared<PlatformResponseQt> {
     public:
         QString data;
         QString url;
     };
 
-    typedef void* PlatformData;
     typedef RefPtr<PlatformResponseQt> PlatformResponse;
-#else
-    // Not sure what the strategy for this will be on other platforms.
-    typedef struct PlatformDataStruct* PlatformData;
 #endif
 
     class KURL;

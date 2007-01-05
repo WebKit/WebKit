@@ -52,11 +52,12 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/KURL.h>
-#import <WebKit/DOMHTML.h>
+#import <WebCore/MimeTypeRegistry.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/SharedBuffer.h>
+#import <WebKit/DOMHTML.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
-#import <WebCore/MimeTypeRegistry.h>
 
 using namespace WebCore;
 
@@ -376,7 +377,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSData *)data
 {
-    return _private->loader->mainResourceData();
+    return [_private->loader->mainResourceData()->createNSData() autorelease];
 }
 
 - (id <WebDocumentRepresentation>)representation

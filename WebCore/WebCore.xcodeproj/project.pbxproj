@@ -87,6 +87,9 @@
 		1A4A2DF00A1B852A00C807F8 /* JSHTMLAnchorElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4A2DEC0A1B852A00C807F8 /* JSHTMLAnchorElement.h */; };
 		1A4A2DF10A1B852A00C807F8 /* JSHTMLAppletElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A4A2DED0A1B852A00C807F8 /* JSHTMLAppletElement.cpp */; };
 		1A4A2DF20A1B852A00C807F8 /* JSHTMLAppletElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4A2DEE0A1B852A00C807F8 /* JSHTMLAppletElement.h */; };
+		1A4A954D0B4EDCCB002D8C3C /* SharedBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A4A954B0B4EDCCB002D8C3C /* SharedBuffer.cpp */; };
+		1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4A954C0B4EDCCB002D8C3C /* SharedBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A4A95520B4EDCFF002D8C3C /* SharedBufferMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A4A95510B4EDCFF002D8C3C /* SharedBufferMac.mm */; };
 		1A6938010A11100A00C127FE /* TextDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6937FF0A11100A00C127FE /* TextDocument.cpp */; };
 		1A6938020A11100A00C127FE /* TextDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6938000A11100A00C127FE /* TextDocument.h */; };
 		1A750D5C0A90DEE1000FF215 /* JSTreeWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A750D5A0A90DEE1000FF215 /* JSTreeWalker.cpp */; };
@@ -3101,6 +3104,9 @@
 		1A4A2DEC0A1B852A00C807F8 /* JSHTMLAnchorElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLAnchorElement.h; sourceTree = "<group>"; };
 		1A4A2DED0A1B852A00C807F8 /* JSHTMLAppletElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLAppletElement.cpp; sourceTree = "<group>"; };
 		1A4A2DEE0A1B852A00C807F8 /* JSHTMLAppletElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLAppletElement.h; sourceTree = "<group>"; };
+		1A4A954B0B4EDCCB002D8C3C /* SharedBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBuffer.cpp; sourceTree = "<group>"; };
+		1A4A954C0B4EDCCB002D8C3C /* SharedBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SharedBuffer.h; sourceTree = "<group>"; };
+		1A4A95510B4EDCFF002D8C3C /* SharedBufferMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SharedBufferMac.mm; sourceTree = "<group>"; };
 		1A6937FF0A11100A00C127FE /* TextDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextDocument.cpp; sourceTree = "<group>"; };
 		1A6938000A11100A00C127FE /* TextDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextDocument.h; sourceTree = "<group>"; };
 		1A750D3C0A90DE35000FF215 /* TreeWalker.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TreeWalker.idl; sourceTree = "<group>"; };
@@ -6722,6 +6728,7 @@
 				BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */,
 				9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */,
 				AB71709F0B31193B0017123E /* SearchPopupMenuMac.mm */,
+				1A4A95510B4EDCFF002D8C3C /* SharedBufferMac.mm */,
 				93309E9F099EB78C0056E581 /* SharedTimerMac.cpp */,
 				4B3043C80AE0371D00A82647 /* SoundMac.mm */,
 				84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.mm */,
@@ -8962,6 +8969,8 @@
 				BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */,
 				BCFB2F40097A24B500BA703D /* SegmentedString.h */,
 				BCFB2E830979FD4F00BA703D /* Shared.h */,
+				1A4A954B0B4EDCCB002D8C3C /* SharedBuffer.cpp */,
+				1A4A954C0B4EDCCB002D8C3C /* SharedBuffer.h */,
 				93309EA0099EB78C0056E581 /* SharedTimer.h */,
 				4B3043C60AE0370300A82647 /* Sound.h */,
 				F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */,
@@ -10939,6 +10948,7 @@
 				B25AE5600B49D6630074C726 /* RadialGradientAttributes.h in Headers */,
 				A82422700B4A16C50084722B /* SVGAnimateMotionElement.h in Headers */,
 				062287840B4DB322000C34DF /* FocusDirection.h in Headers */,
+				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12271,6 +12281,8 @@
 				A88DD4890B4629B000C02990 /* PathTraversalState.cpp in Sources */,
 				A8241D8C0B48D31E0084722B /* SVGTimer.cpp in Sources */,
 				A82422710B4A16C50084722B /* SVGAnimateMotionElement.cpp in Sources */,
+				1A4A954D0B4EDCCB002D8C3C /* SharedBuffer.cpp in Sources */,
+				1A4A95520B4EDCFF002D8C3C /* SharedBufferMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

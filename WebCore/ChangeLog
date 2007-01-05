@@ -1,5 +1,80 @@
 2007-01-05  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Maciej.
+
+        Add a shared buffer class which is backed by either a vector or an NSData object. This object can also
+        be held in a custom NSData subclass. Use this in the loader wherever NSData was used.
+        
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::allData):
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.h:
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoaderClient.h:
+        (WebCore::SubresourceLoaderClient::didFail):
+        * loader/loader.cpp:
+        (WebCore::Loader::didFinishLoading):
+        * loader/loader.h:
+        * loader/mac/DocumentLoaderMac.mm:
+        (WebCore::DocumentLoader::setMainResourceData):
+        (WebCore::DocumentLoader::mainResourceData):
+        (WebCore::DocumentLoader::setupForReplaceByMIMEType):
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::mainResourceData):
+        * loader/mac/ImageDocumentMac.mm:
+        (WebCore::finishImageLoad):
+        * loader/mac/LoaderFunctionsMac.mm:
+        (WebCore::CheckCacheObjectStatus):
+        (WebCore::CachedResource::setAllData):
+        * loader/mac/NetscapePlugInStreamLoaderMac.mm:
+        (WebCore::NetscapePlugInStreamLoader::didFinishLoading):
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::addData):
+        (WebCore::ResourceLoader::resourceData):
+        (WebCore::ResourceLoader::clearResourceData):
+        (WebCore::ResourceLoader::didReceiveData):
+        (WebCore::ResourceLoader::willStopBufferingData):
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge getData:andResponse:forURL:]):
+        (-[WebCoreFrameBridge getAllResourceDatas:andResponses:]):
+        * platform/KURL.h:
+        * platform/SharedBuffer.cpp: Added.
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::size):
+        (WebCore::SharedBuffer::data):
+        (WebCore::SharedBuffer::append):
+        (WebCore::SharedBuffer::clear):
+        (WebCore::SharedBuffer::clearPlatformData):
+        (WebCore::SharedBuffer::maybeTransferPlatformData):
+        (WebCore::SharedBuffer::hasPlatformData):
+        (WebCore::SharedBuffer::platformData):
+        * platform/SharedBuffer.h: Added.
+        * platform/mac/SharedBufferMac.mm: Added.
+        (-[SharedBufferData dealloc]):
+        (-[SharedBufferData finalize]):
+        (-[SharedBufferData initWithSharedBuffer:WebCore::]):
+        (-[SharedBufferData length]):
+        (-[SharedBufferData bytes]):
+        (WebCore::SharedBuffer::wrapNSData):
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::createNSData):
+        (WebCore::SharedBuffer::hasPlatformData):
+        (WebCore::SharedBuffer::platformData):
+        (WebCore::SharedBuffer::platformDataSize):
+        (WebCore::SharedBuffer::maybeTransferPlatformData):
+        (WebCore::SharedBuffer::clearPlatformData):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::bufferedData):
+
+2007-01-05  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Adam.
 
         http://bugs.webkit.org/show_bug.cgi?id=12120

@@ -36,6 +36,7 @@
 #import "HistoryItem.h"
 #import "PageCache.h"
 #import "PlatformString.h"
+#import "SharedBuffer.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
 #import "XMLTokenizer.h"
@@ -130,12 +131,12 @@ DocumentLoader::~DocumentLoader()
     ASSERT(!m_frame || frameLoader()->activeDocumentLoader() != this || !frameLoader()->isLoading());
 }
 
-void DocumentLoader::setMainResourceData(NSData *data)
+void DocumentLoader::setMainResourceData(PassRefPtr<SharedBuffer> data)
 {
     m_mainResourceData = data;
 }
 
-NSData *DocumentLoader::mainResourceData() const
+PassRefPtr<SharedBuffer> DocumentLoader::mainResourceData() const
 {
     return m_mainResourceData ? m_mainResourceData.get() : frameLoader()->mainResourceData();
 }
@@ -363,7 +364,8 @@ void DocumentLoader::setupForReplaceByMIMEType(const String& newMIMEType)
     if (!doesProgressiveLoad(oldMIMEType)) {
         frameLoader()->revertToProvisional(this);
         setupForReplace();
-        commitLoad((const char*)[mainResourceData() bytes], [mainResourceData() length]);
+        RefPtr<SharedBuffer> resourceData = mainResourceData();
+        commitLoad(resourceData->data(), resourceData->size());
     }
     
     frameLoader()->finishedLoadingDocument(this);

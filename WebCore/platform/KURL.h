@@ -35,10 +35,8 @@ typedef const struct __CFURL * CFURLRef;
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__
-@class NSData;
 @class NSURL;
 #else
-class NSData;
 class NSURL;
 #endif
 #endif

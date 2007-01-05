@@ -40,6 +40,7 @@
 #import "ResourceHandle.h"
 #import "ResourceRequest.h"
 #import "ResourceResponse.h"
+#import "SharedBuffer.h"
 #import "SubresourceLoaderClient.h"
 #import "WebCoreSystemInterface.h"
 #import <wtf/Assertions.h>
@@ -139,12 +140,13 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& r)
         return;
     ResourceLoader::didReceiveResponse(r);
     
-    if (m_loadingMultipartContent && [resourceData() length]) {
+    RefPtr<SharedBuffer> buffer = resourceData();
+    if (m_loadingMultipartContent && buffer && buffer->size()) {
         // Since a subresource loader does not load multipart sections progressively,
         // deliver the previously received data to the loader all at once now.
         // Then clear the data to make way for the next multipart section.
         if (m_client)
-            m_client->didReceiveData(this, (const char*)[resourceData() bytes], [resourceData() length]);
+            m_client->didReceiveData(this, buffer->data(), buffer->size());
         clearResourceData();
         
         // After the first multipart section is complete, signal to delegates that this load is "finished" 
@@ -175,10 +177,8 @@ void SubresourceLoader::didFinishLoading()
     // Calling removeSubresourceLoader will likely result in a call to deref, so we must protect ourselves.
     RefPtr<SubresourceLoader> protect(this);
 
-    if (m_client) {
-        m_client->receivedAllData(this, resourceData());
+    if (m_client)
         m_client->didFinishLoading(this);
-    }
     
     m_handle = 0;
 

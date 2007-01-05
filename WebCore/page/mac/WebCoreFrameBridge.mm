@@ -1558,7 +1558,12 @@ static NSCharacterSet *_getPostSmartSet(void)
     if (!resource)
         return NO;
 
-    *data = resource->allData();
+    SharedBuffer* buffer = resource->allData();
+    if (buffer)
+        *data = [buffer->createNSData() autorelease];
+    else
+        *data = nil;
+
     *response = resource->response().nsURLResponse();
     return YES;
 }
@@ -1580,7 +1585,16 @@ static NSCharacterSet *_getPostSmartSet(void)
 
     HashMap<String, CachedResource*>::const_iterator end = allResources.end();
     for (HashMap<String, CachedResource*>::const_iterator it = allResources.begin(); it != end; ++it) {
-        [d addObject:it->second->allData()];
+        SharedBuffer* buffer = it->second->allData();
+        NSData *data;
+        
+        if (buffer)
+            data = buffer->createNSData();
+        else
+            data = nil;
+        
+        [d addObject:data];
+        [data release];
         [r addObject:it->second->response().nsURLResponse()];
     }
 
