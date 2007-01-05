@@ -1,3 +1,16 @@
+2007-01-04  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff.
+
+        http://bugs.webkit.org/show_bug.cgi?id=7296
+        Disable JavaScript exceptions when dynamically changing CSS properties.
+
+        * bindings/js/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::put): Removed the Dashboard quirk logic.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setProperty): Don't raise an exception if parsing fails.
+
 2007-01-05  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by hyatt.

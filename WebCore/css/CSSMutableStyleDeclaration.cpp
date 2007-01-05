@@ -298,6 +298,7 @@ bool CSSMutableStyleDeclaration::setProperty(int propertyID, const String &value
     ec = 0;
 
     // Setting the value to an empty string just removes the property in both IE and Gecko.
+    // Setting it to null seems to produce less consistent results, but we treat it just the same.
     if (value.isEmpty()) {
         removeProperty(propertyID, notifyChanged, ec);
         return ec == 0;
@@ -308,9 +309,11 @@ bool CSSMutableStyleDeclaration::setProperty(int propertyID, const String &value
     CSSParser parser(useStrictParsing());
     bool success = parser.parseValue(this, propertyID, value, important);
     if (!success) {
-        ec = SYNTAX_ERR;
+        // CSS DOM requires raising SYNTAX_ERR here, but this is too dangerous for compatibility,
+        // see <http://bugs.webkit.org/show_bug.cgi?id=7296>.
     } else if (notifyChanged)
         setChanged();
+    ASSERT(!ec);
     return success;
 }
 

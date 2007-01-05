@@ -35,7 +35,6 @@
 #include "CSSStyleRule.h"
 #include "CSSValueList.h"
 #include "Document.h"
-#include "Frame.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "JSCSSPrimitiveValue.h"
@@ -44,7 +43,6 @@
 #include "JSCSSRuleList.h"
 #include "JSCSSValueList.h"
 #include "MediaList.h"
-#include "Settings.h"
 #include "StyleSheetList.h"
 #include "kjs_dom.h"
 
@@ -55,6 +53,8 @@
 #ifdef SVG_SUPPORT
 #include "JSSVGColor.h"
 #include "JSSVGPaint.h"
+#include "SVGColor.h"
+#include "SVGPaint.h"
 #endif
 
 using namespace WebCore;
@@ -225,20 +225,6 @@ void DOMCSSStyleDeclaration::put(ExecState* exec, const Identifier &propertyName
 #ifdef KJS_VERBOSE
       kdDebug(6070) << "DOMCSSStyleDeclaration: prop=" << prop << " propvalue=" << propvalue << endl;
 #endif
-      StyleSheet* stylesheet = styleDecl.stylesheet();
-      // Computed style declarations don't have stylesheets.
-      if (stylesheet) {
-        ASSERT(stylesheet->isCSSStyleSheet());
-        if (Frame* frame = static_cast<CSSStyleSheet*>(stylesheet)->doc()->frame())
-          if (frame->settings()->usesDashboardBackwardCompatibilityMode()) {
-            styleDecl.removeProperty(prop, exception);
-            if (!exception) {
-              ExceptionCode exceptionIgnored = 0;
-              styleDecl.setProperty(prop, propValue, exceptionIgnored);
-            }
-            return;
-          }
-      }
       styleDecl.setProperty(prop, propValue, exception);
     } else {
       DOMObject::put(exec, propertyName, value, attr);
