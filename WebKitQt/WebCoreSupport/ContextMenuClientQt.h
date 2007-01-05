@@ -41,7 +41,7 @@ namespace WebCore {
 
         virtual void contextMenuDestroyed();
         
-        virtual void addCustomContextMenuItems(ContextMenu*);
+        virtual PlatformMenuDescription getCustomMenuFromDefaultItems(ContextMenu*);
         virtual void contextMenuItemSelected(ContextMenuItem*, const ContextMenu*);
 
         virtual void downloadURL(const KURL& url);

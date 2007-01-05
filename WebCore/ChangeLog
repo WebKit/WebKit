@@ -1,3 +1,9 @@
+2007-01-05  Lars Knoll <lars@trolltech.com>
+
+        Make it compile with gcc 4.1
+
+        * rendering/RenderTableSection.h:
+
 2007-01-04  Adam Roben  <aroben@apple.com>
 
         Reviewed by Geoff, cheered by others.

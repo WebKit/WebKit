@@ -78,7 +78,7 @@ public:
     const CellStruct& cellAt(int row, int col) const { return (*m_grid[row].row)[col]; }
 
     void appendColumn(int pos);
-    void RenderTableSection::splitColumn(int pos, int newSize);
+    void splitColumn(int pos, int newSize);
 
     virtual int lowestPosition(bool includeOverflowInterior, bool includeSelf) const;
     virtual int rightmostPosition(bool includeOverflowInterior, bool includeSelf) const;

@@ -52,9 +52,10 @@ void ContextMenuClientQt::contextMenuDestroyed()
     notImplemented();
 }
 
-void ContextMenuClientQt::addCustomContextMenuItems(ContextMenu*)
+PlatformMenuDescription ContextMenuClientQt::getCustomMenuFromDefaultItems(ContextMenu*)
 {
     notImplemented();
+    return PlatformMenuDescription();
 }
 
 void ContextMenuClientQt::contextMenuItemSelected(ContextMenuItem*, const ContextMenu*)
