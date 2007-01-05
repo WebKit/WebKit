@@ -1,3 +1,12 @@
+2007-01-05  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Simon.
+
+        Fix the undefined warnings and try to detect
+        the DISPLAY properly.
+
+        * Scripts/run-webkit-tests:
+
 2007-01-05  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Mark Rowe.

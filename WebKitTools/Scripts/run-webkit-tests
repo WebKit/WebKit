@@ -877,14 +877,23 @@ sub openDumpRenderTreeIfNeeded()
     my $homeDir = $ENV{'HOME'};
     my $libraryPath = $ENV{'LD_LIBRARY_PATH'};
     my $dbusAddress = $ENV{'DBUS_SESSION_BUS_ADDRESS'};
+    my $display = $ENV{'DISPLAY'};
 
     my $isQt = isQt();
     local %ENV;
     if ($isQt) {
-      $ENV{DISPLAY} = ":0";
-      $ENV{HOME} = $homeDir;
-      $ENV{LD_LIBRARY_PATH} = $libraryPath;
-      $ENV{DBUS_SESSION_BUS_ADDRESS} = $dbusAddress;
+        if (defined $display) {
+            $ENV{DISPLAY} = $display;
+        } else {
+            $ENV{DISPLAY} = ":1";
+        }
+        $ENV{HOME} = $homeDir;
+        if (defined $libraryPath) {
+            $ENV{LD_LIBRARY_PATH} = $libraryPath;
+        }
+        if (defined $dbusAddress) {
+            $ENV{DBUS_SESSION_BUS_ADDRESS} = $dbusAddress;
+        }
     }
     $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
     $ENV{XML_CATALOG_FILES} = ""; # work around missing /etc/catalog <rdar://problem/4292995>
