@@ -1,3 +1,12 @@
+2007-01-04  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Brady.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12111
+          Uninitialized variable in -[WebDefaultPolicyDelegate webView:decidePolicyForMIMEType:request:frame:decisionListener:]
+
+        * DefaultDelegates/WebDefaultPolicyDelegate.m: Initialize isDirectory.
+
 2007-01-04  Adam Roben  <aroben@apple.com>
 
         Reviewed by Geoff.

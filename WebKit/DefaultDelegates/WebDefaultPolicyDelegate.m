@@ -65,7 +65,7 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
                                       decisionListener:(id <WebPolicyDecisionListener>)listener;
 {
     if ([[request URL] isFileURL]) {
-        BOOL isDirectory;
+        BOOL isDirectory = NO;
         [[NSFileManager defaultManager] fileExistsAtPath:[[request URL] path] isDirectory:&isDirectory];
         
         if (isDirectory) {
