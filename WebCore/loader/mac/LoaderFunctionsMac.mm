@@ -82,9 +82,4 @@ void CheckCacheObjectStatus(DocLoader *loader, CachedResource *cachedResource)
     frame->loader()->didTellBridgeAboutLoad(cachedResource->url());
 }
 
-void CachedResource::setAllData(PassRefPtr<SharedBuffer> allData)
-{
-    m_allData = allData;
-}
-
 } // namespace

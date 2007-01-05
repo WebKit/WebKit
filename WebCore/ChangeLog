@@ -1,3 +1,20 @@
+2007-01-05  Anders Carlsson  <acarlsson@apple.com>
+
+        Move some now cross platform functions over to ResourceLoader.cpp in an attempt to fix the non Mac builds.
+        
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::setAllData):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::resourceData):
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didFinishLoading):
+        * loader/mac/LoaderFunctionsMac.mm:
+        * loader/mac/ResourceLoaderMac.mm:
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::platformDataSize):
+        * platform/network/ResourceHandle.h:
+
 2007-01-05  David Hyatt  <hyatt@apple.com>
 
         Back out fix for 12114.  I missed rule #5 in the float positioning part of the CSS2.1 spec.  Keep all

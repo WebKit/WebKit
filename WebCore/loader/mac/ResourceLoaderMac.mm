@@ -145,17 +145,6 @@ void ResourceLoader::addData(const char* data, int length, bool allAtOnce)
     }
 }
 
-PassRefPtr<SharedBuffer> ResourceLoader::resourceData()
-{
-    if (m_resourceData)
-        return m_resourceData;
-
-    if (ResourceHandle::supportsBufferedData() && m_handle)
-        return m_handle->bufferedData();
-    
-    return nil;
-}
-
 void ResourceLoader::clearResourceData()
 {
     m_resourceData->clear();

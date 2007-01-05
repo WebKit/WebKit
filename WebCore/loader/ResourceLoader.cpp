@@ -32,8 +32,20 @@
 #include "Frame.h"
 #include "Page.h"
 #include "ResourceHandle.h"
+#include "SharedBuffer.h"
 
 namespace WebCore {
+
+PassRefPtr<SharedBuffer> ResourceLoader::resourceData()
+{
+    if (m_resourceData)
+        return m_resourceData;
+
+    if (ResourceHandle::supportsBufferedData() && m_handle)
+        return m_handle->bufferedData();
+    
+    return 0;
+}
 
 #if !PLATFORM(MAC)
 // FIXME: This is only temporary until ResourceLoader is truly platform independent.

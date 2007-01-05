@@ -90,10 +90,11 @@ public:
     NSURLConnection *connection() const;
     WebCoreResourceHandleAsDelegate *delegate();
     void releaseDelegate();
+#endif
     PassRefPtr<SharedBuffer> bufferedData();
-    
     static bool supportsBufferedData();
     
+#if PLATFORM(MAC)
     id releaseProxy();
 #endif
 

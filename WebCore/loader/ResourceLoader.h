@@ -48,7 +48,6 @@
 @class NSURLAuthenticationChallenge;
 #else
 class NSCachedURLResponse;
-class NSMutableData;
 class NSURLAuthenticationChallenge;
 class NSURLCredential;
 #endif
@@ -87,9 +86,11 @@ namespace WebCore {
         const ResourceResponse& response() const;
 
         virtual void addData(const char*, int, bool allAtOnce);
+#endif
         virtual PassRefPtr<SharedBuffer> resourceData();
         void clearResourceData();
 
+#if PLATFORM(MAC)
         virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
         void didReceiveAuthenticationChallenge(NSURLAuthenticationChallenge *);
         void didCancelAuthenticationChallenge(NSURLAuthenticationChallenge *);
@@ -160,8 +161,8 @@ protected:
         NSURLAuthenticationChallenge *m_currentConnectionChallenge;
         RetainPtr<NSURLAuthenticationChallenge> m_currentWebChallenge;
         KURL m_originalURL;
-        RefPtr<SharedBuffer> m_resourceData;
 #endif
+        RefPtr<SharedBuffer> m_resourceData;
         bool m_defersLoading;
     };
 

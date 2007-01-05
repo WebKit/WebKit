@@ -86,13 +86,10 @@ void SubresourceLoader::didReceiveData(ResourceHandle*, const char* data, int le
 
 void SubresourceLoader::didFinishLoading(ResourceHandle*)
 {
-    if (m_client) {
-        // We must protect the resource loader in case the call to receivedAllData causes a deref.
-        RefPtr<SubresourceLoader> protect(this);
-        
-        m_client->receivedAllData(this, 0);
+    RefPtr<SubresourceLoader> protect(this);
+
+    if (m_client)
         m_client->didFinishLoading(this);
-    }
 }
 
 void SubresourceLoader::didFail(ResourceHandle*, const ResourceError& error)
