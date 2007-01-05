@@ -1,3 +1,14 @@
+2007-01-05  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by hyatt.
+        
+        http://bugs.webkit.org/show_bug.cgi?id=12109
+        
+        Fix layer visibility in some cases with nested layers.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateVisibilityStatus):
+
 2007-01-05  Lars Knoll <lars@trolltech.com>
 
         Make it compile with gcc 4.1

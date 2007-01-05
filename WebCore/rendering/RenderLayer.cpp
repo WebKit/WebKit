@@ -292,20 +292,20 @@ void RenderLayer::updateVisibilityStatus()
             m_hasVisibleContent = false;
             RenderObject* r = m_object->firstChild();
             while (r) {
-                if (r->style()->visibility() == VISIBLE) {
+                if (r->style()->visibility() == VISIBLE && !r->layer()) {
                     m_hasVisibleContent = true;
                     break;
                 }
-                if (r->firstChild() && !r->firstChild()->layer())
+                if (r->firstChild() && !r->layer())
                     r = r->firstChild();
-                else if (r->nextSibling() && !r->nextSibling()->layer())
+                else if (r->nextSibling())
                     r = r->nextSibling();
                 else {
-                    while (r && (!r->nextSibling() || r->nextSibling()->layer())) {
+                    do {
                         r = r->parent();
                         if (r==m_object)
                             r = 0;
-                    }
+                    } while (r && !r->nextSibling());
                     if (r)
                         r = r->nextSibling();
                 }

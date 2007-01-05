@@ -1,3 +1,15 @@
+2007-01-05  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by hyatt.
+        
+        Test for http://bugs.webkit.org/show_bug.cgi?id=12109
+        layer visibility incorrect in some cases
+
+        * fast/layers/layer-visibility-sublayer-expected.checksum: Added.
+        * fast/layers/layer-visibility-sublayer-expected.png: Added.
+        * fast/layers/layer-visibility-sublayer-expected.txt: Added.
+        * fast/layers/layer-visibility-sublayer.html: Added.
+
 2007-01-04  Adam Roben  <aroben@apple.com>
 
         Reviewed by Geoff.
