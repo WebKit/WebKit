@@ -1,3 +1,14 @@
+2007-01-05  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Eric Siedel
+
+        http://bugs.webkit.org/show_bug.cgi?id=12117
+        Fixes null deref when opening links from a gmail account
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::updateHistoryForStandardLoad): Null check m_currentHistoryItem
+        (WebCore::FrameLoader::updateHistoryForClientRedirect): Ditto
+
 2007-01-05  Anders Carlsson  <acarlsson@apple.com>
 
         Move some now cross platform functions over to ResourceLoader.cpp in an attempt to fix the non Mac builds.
