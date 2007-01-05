@@ -69,9 +69,7 @@ namespace WebCore {
         virtual void detachFromFrame();
 
         FrameLoader* frameLoader() const;
-#if PLATFORM(MAC)
         PassRefPtr<SharedBuffer> mainResourceData() const;
-#endif
 
         const ResourceRequest& originalRequest() const;
         const ResourceRequest& originalRequestCopy() const;
@@ -107,9 +105,7 @@ namespace WebCore {
         void finishedLoading();
         const ResourceResponse& response() const;
         const ResourceError& mainDocumentError() const;
-#if PLATFORM(MAC)
         void mainReceivedError(const ResourceError&, bool isComplete);
-#endif
         void setResponse(const ResourceResponse& response);
         void prepareForLoadStart();
         bool isClientRedirect() const;
@@ -137,23 +133,17 @@ namespace WebCore {
         bool isLoadingFromPageCache() const;
         
     private:
-#if PLATFORM(MAC)
         void setMainResourceData(PassRefPtr<SharedBuffer>);
-#endif
         void setupForReplace();
         void commitIfReady();
         void clearErrors();
-#if PLATFORM(MAC)
         void setMainDocumentError(const ResourceError&);
         void commitLoad(const char*, int);
-#endif
         bool doesProgressiveLoad(const String& MIMEType) const;
 
         Frame* m_frame;
 
-#if PLATFORM(MAC)
         RefPtr<SharedBuffer> m_mainResourceData;
-#endif
 
         // A reference to actual request used to create the data source.
         // This should only be used by the resourceLoadDelegate's

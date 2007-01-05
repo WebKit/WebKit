@@ -137,9 +137,7 @@ namespace WebCore {
 
         virtual void dispatchDidLoadMainResource(DocumentLoader*) = 0;
         virtual void revertToProvisionalState(DocumentLoader*) = 0;
-#if PLATFORM(MAC)
         virtual void setMainDocumentError(DocumentLoader*, const ResourceError&) = 0;
-#endif
         virtual void clearUnarchivingState(DocumentLoader*) = 0;
 
         virtual void progressStarted() = 0;
@@ -160,9 +158,7 @@ namespace WebCore {
         virtual void willChangeTitle(DocumentLoader*) = 0;
         virtual void didChangeTitle(DocumentLoader*) = 0;
 
-#if PLATFORM(MAC)
         virtual void committedLoad(DocumentLoader*, const char*, int) = 0;
-#endif
         virtual void finishedLoading(DocumentLoader*) = 0;
         virtual void finalSetupForReplace(DocumentLoader*) = 0;
         
@@ -170,7 +166,6 @@ namespace WebCore {
         virtual void updateGlobalHistoryForReload(const KURL&) = 0;
         virtual bool shouldGoToHistoryItem(HistoryItem*) const = 0;
 
-#if PLATFORM(MAC)
         virtual ResourceError cancelledError(const ResourceRequest&) = 0;
         virtual ResourceError cannotShowURLError(const ResourceRequest&) = 0;
         virtual ResourceError interruptForPolicyChangeError(const ResourceRequest&) = 0;
@@ -179,7 +174,6 @@ namespace WebCore {
         virtual ResourceError fileDoesNotExistError(const ResourceResponse&) = 0;
 
         virtual bool shouldFallBack(const ResourceError&) = 0;
-#endif
 
         virtual void setDefersLoading(bool) = 0;
 
@@ -202,9 +196,7 @@ namespace WebCore {
         virtual void didFinishLoad() = 0;
         virtual void prepareForDataSourceReplacement() = 0;
 
-#if PLATFORM(MAC)
-        virtual PassRefPtr<DocumentLoader> createDocumentLoader(const ResourceRequest&) = 0;
-#endif
+        virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&) = 0;
         virtual void setTitle(const String& title, const KURL&) = 0;
 
         virtual String userAgent() = 0;

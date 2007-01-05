@@ -521,21 +521,6 @@ void FrameLoader::setResponse(const ResourceResponse& response)
     activeDocumentLoader()->setResponse(response);
 }
 
-void FrameLoader::mainReceivedError(const ResourceError& error, bool isComplete)
-{
-    activeDocumentLoader()->mainReceivedError(error, isComplete);
-}
-
-ResourceError FrameLoader::cancelledError(const ResourceRequest& request) const
-{
-    return m_client->cancelledError(request);
-}
-
-ResourceError FrameLoader::fileDoesNotExistError(const ResourceResponse& response) const
-{
-    return m_client->fileDoesNotExistError(response);    
-}
-
 bool FrameLoader::willUseArchive(ResourceLoader* loader, const ResourceRequest& request, const KURL& originalURL) const
 {
     return m_client->willUseArchive(loader, request, originalURL);
@@ -651,23 +636,6 @@ void FrameLoader::reload()
     loader->setOverrideEncoding(m_documentLoader->overrideEncoding());
     
     load(loader.get(), FrameLoadTypeReload, 0);
-}
-
-void FrameLoader::committedLoad(DocumentLoader* loader, const char* data, int length)
-{
-    m_client->committedLoad(loader, data, length);
-}
-
-void FrameLoader::setMainDocumentError(DocumentLoader* loader, const ResourceError& error)
-{
-    m_client->setMainDocumentError(loader, error);
-}
-
-void FrameLoader::mainReceivedCompleteError(DocumentLoader* loader, const ResourceError& error)
-{
-    loader->setPrimaryLoadComplete(true);
-    m_client->dispatchDidLoadMainResource(activeDocumentLoader());
-    checkLoadComplete();
 }
 
 void FrameLoader::didChangeTitle(DocumentLoader* loader)
@@ -1193,13 +1161,6 @@ String FrameLoader::overrideMediaType() const
     if (overrideType)
         return overrideType;
     return String();
-}
-
-PassRefPtr<SharedBuffer> FrameLoader::mainResourceData() const
-{
-    if (!m_mainResourceLoader)
-        return 0;
-    return m_mainResourceLoader->resourceData();
 }
 
 bool FrameLoader::canGoBackOrForward(int distance) const

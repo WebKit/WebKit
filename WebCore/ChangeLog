@@ -1,3 +1,77 @@
+2007-01-05  Anders Carlsson  <acarlsson@apple.com>
+
+        Rubber-stamped by Adam.
+        
+        Move a bunch of platform independant code over to DocumentLoader.cpp
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/DocumentLoader.cpp:
+        (WebCore::canonicalizedTitle):
+        (WebCore::DocumentLoader::DocumentLoader):
+        (WebCore::DocumentLoader::frameLoader):
+        (WebCore::DocumentLoader::~DocumentLoader):
+        (WebCore::DocumentLoader::setMainResourceData):
+        (WebCore::DocumentLoader::mainResourceData):
+        (WebCore::DocumentLoader::originalRequest):
+        (WebCore::DocumentLoader::originalRequestCopy):
+        (WebCore::DocumentLoader::request):
+        (WebCore::DocumentLoader::initialRequest):
+        (WebCore::DocumentLoader::actualRequest):
+        (WebCore::DocumentLoader::URL):
+        (WebCore::DocumentLoader::replaceRequestURLForAnchorScroll):
+        (WebCore::DocumentLoader::setRequest):
+        (WebCore::DocumentLoader::setMainDocumentError):
+        (WebCore::DocumentLoader::clearErrors):
+        (WebCore::DocumentLoader::mainReceivedError):
+        (WebCore::DocumentLoader::stopLoading):
+        (WebCore::DocumentLoader::setupForReplace):
+        (WebCore::DocumentLoader::commitIfReady):
+        (WebCore::DocumentLoader::finishedLoading):
+        (WebCore::DocumentLoader::setCommitted):
+        (WebCore::DocumentLoader::isCommitted):
+        (WebCore::DocumentLoader::setLoading):
+        (WebCore::DocumentLoader::isLoading):
+        (WebCore::DocumentLoader::commitLoad):
+        (WebCore::DocumentLoader::doesProgressiveLoad):
+        (WebCore::DocumentLoader::receivedData):
+        (WebCore::DocumentLoader::setupForReplaceByMIMEType):
+        (WebCore::DocumentLoader::updateLoading):
+        (WebCore::DocumentLoader::setFrame):
+        (WebCore::DocumentLoader::attachToFrame):
+        (WebCore::DocumentLoader::detachFromFrame):
+        (WebCore::DocumentLoader::prepareForLoadStart):
+        (WebCore::DocumentLoader::setIsClientRedirect):
+        (WebCore::DocumentLoader::isClientRedirect):
+        (WebCore::DocumentLoader::setPrimaryLoadComplete):
+        (WebCore::DocumentLoader::isLoadingInAPISense):
+        (WebCore::DocumentLoader::addResponse):
+        (WebCore::DocumentLoader::stopRecordingResponses):
+        (WebCore::DocumentLoader::title):
+        (WebCore::DocumentLoader::setLastCheckedRequest):
+        (WebCore::DocumentLoader::lastCheckedRequest):
+        (WebCore::DocumentLoader::triggeringAction):
+        (WebCore::DocumentLoader::setTriggeringAction):
+        (WebCore::DocumentLoader::responses):
+        (WebCore::DocumentLoader::setOverrideEncoding):
+        (WebCore::DocumentLoader::overrideEncoding):
+        (WebCore::DocumentLoader::setTitle):
+        (WebCore::DocumentLoader::urlForHistory):
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::committedLoad):
+        (WebCore::FrameLoader::setMainDocumentError):
+        (WebCore::FrameLoader::mainReceivedCompleteError):
+        (WebCore::FrameLoader::mainReceivedError):
+        (WebCore::FrameLoader::cancelledError):
+        (WebCore::FrameLoader::fileDoesNotExistError):
+        (WebCore::FrameLoader::mainResourceData):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/mac/DocumentLoaderMac.mm:
+        (WebCore::DocumentLoader::unreachableURL):
+        * loader/mac/FrameLoaderMac.mm:
+
 2007-01-05  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Eric Seidel
