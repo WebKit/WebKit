@@ -291,7 +291,7 @@ bool FrameLoader::startLoadingMainResource(ResourceRequest& request, id identifi
     m_mainResourceLoader->setIdentifier(identifier);
     // FIXME: is there any way the extra fields could have not been added by now?
     addExtraFieldsToRequest(request, true, false);
-    if (!m_mainResourceLoader->load(request.nsURLRequest())) {
+    if (!m_mainResourceLoader->load(request)) {
         // FIXME: If this should really be caught, we should just ASSERT this doesn't happen;
         // should it be caught by other parts of WebKit or other parts of the app?
         LOG_ERROR("could not create WebResourceHandle for URL %@ -- should be caught by policy handler level", request.url().getNSURL());

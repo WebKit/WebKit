@@ -1,5 +1,30 @@
 2007-01-04  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Adam.
+
+        Move all remaining instances of NSURLRequest over to ResourceRequest (well, pretty much all).
+
+        * loader/MainResourceLoader.h:
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoader.h:
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::startLoadingMainResource):
+        * loader/mac/MainResourceLoaderMac.mm:
+        (WebCore::MainResourceLoader::loadNow):
+        (WebCore::MainResourceLoader::load):
+        (WebCore::MainResourceLoader::setDefersLoading):
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::load):
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::load):
+        (WebCore::SubresourceLoader::create):
+        * platform/graphics/svg/SVGImage.cpp:
+        (WebCore::SVGImage::setData):
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+
+2007-01-04  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Brady.
 
         Move more NSURLRequests over to ResourceRequests.

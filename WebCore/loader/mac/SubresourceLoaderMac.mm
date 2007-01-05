@@ -58,9 +58,9 @@ SubresourceLoader::~SubresourceLoader()
 {
 }
 
-bool SubresourceLoader::load(NSURLRequest *r)
+bool SubresourceLoader::load(const ResourceRequest& r)
 {
-    m_frame->loader()->didTellBridgeAboutLoad(KURL([r URL]).url());
+    m_frame->loader()->didTellBridgeAboutLoad(r.url().url());
     
     return ResourceLoader::load(r);
 }
@@ -97,18 +97,9 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
 
     fl->addExtraFieldsToRequest(newRequest, false, false);
 
-    NSMutableURLRequest *newNSURLRequest = [newRequest.nsURLRequest() mutableCopy];
-
-    // FIXME: should this be in ResourceRequest::nsURLRequest()?
-    wkSupportsMultipartXMixedReplace(newNSURLRequest);
-
     RefPtr<SubresourceLoader> subloader(new SubresourceLoader(frame, client));
-    if (!subloader->load(newNSURLRequest)) {
-        [newNSURLRequest release];
+    if (!subloader->load(newRequest))
         return 0;
-    }
-
-    [newNSURLRequest release];
 
     return subloader.release();
 }

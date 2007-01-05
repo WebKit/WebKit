@@ -28,6 +28,7 @@
 #import "ResourceRequest.h"
 #import "WebCoreSystemInterface.h"
 #import "WebDataProtocol.h"
+#import "WebCoreSystemInterface.h"
 
 #import "FormDataStreamMac.h"
 
@@ -75,6 +76,8 @@ void ResourceRequest::doUpdatePlatformRequest()
     else
         nsRequest = [[NSMutableURLRequest alloc] initWithURL:url().getNSURL()];
     
+    wkSupportsMultipartXMixedReplace(nsRequest);
+
     [nsRequest setCachePolicy:(NSURLRequestCachePolicy)cachePolicy()];
     [nsRequest setTimeoutInterval:timeoutInterval()];
     [nsRequest setMainDocumentURL:mainDocumentURL().getNSURL()];

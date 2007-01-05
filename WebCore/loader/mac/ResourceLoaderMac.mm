@@ -89,12 +89,12 @@ void ResourceLoader::releaseResources()
     m_resourceData = nil;
 }
 
-bool ResourceLoader::load(NSURLRequest *r)
+bool ResourceLoader::load(const ResourceRequest& r)
 {
     ASSERT(!m_handle);
     ASSERT(!frameLoader()->isArchiveLoadPending(this));
     
-    m_originalURL = [r URL];
+    m_originalURL = r.url();
     
     ResourceRequest clientRequest(r);
     willSendRequest(clientRequest, ResourceResponse());

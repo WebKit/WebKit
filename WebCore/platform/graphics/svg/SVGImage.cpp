@@ -133,7 +133,7 @@ bool SVGImage::setData(bool allDataReceived)
         m_frameView->deref(); // FIXME: FrameView starts with a refcount of 1
         m_frame->setView(m_frameView.get());
         m_frame->setSettings(dummySettings);
-        ResourceRequest fakeRequest;
+        ResourceRequest fakeRequest(KURL(""));
         m_frame->loader()->load(fakeRequest); // Make sure the DocumentLoader is created
         m_frame->loader()->cancelContentPolicyCheck(); // cancel any policy checks
         m_frame->loader()->commitProvisionalLoad(0);

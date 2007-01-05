@@ -316,9 +316,9 @@ void MainResourceLoader::didFail(const ResourceError& error)
     receivedError(error);
 }
 
-NSURLRequest *MainResourceLoader::loadNow(NSURLRequest *r)
+bool MainResourceLoader::loadNow(ResourceRequest& r)
 {
-    bool shouldLoadEmptyBeforeRedirect = shouldLoadAsEmptyDocument([r URL]);
+    bool shouldLoadEmptyBeforeRedirect = shouldLoadAsEmptyDocument(r.url());
 
     ASSERT(!m_handle);
     ASSERT(shouldLoadEmptyBeforeRedirect || !defersLoading());
@@ -326,60 +326,55 @@ NSURLRequest *MainResourceLoader::loadNow(NSURLRequest *r)
     // Send this synthetic delegate callback since clients expect it, and
     // we no longer send the callback from within NSURLConnection for
     // initial requests.
-    ResourceRequest request(r);
-    willSendRequest(request, ResourceResponse());
-    r = request.nsURLRequest();
+    willSendRequest(r, ResourceResponse());
 
     // <rdar://problem/4801066>
     // willSendRequest() is liable to make the call to frameLoader() return NULL, so we need to check that here
     if (!frameLoader())
-        return nil;
+        return false;
     
-    NSURL *URL = [r URL];
-    bool shouldLoadEmpty = shouldLoadAsEmptyDocument(URL);
+    const KURL& url = r.url();
+    bool shouldLoadEmpty = shouldLoadAsEmptyDocument(url);
 
     if (shouldLoadEmptyBeforeRedirect && !shouldLoadEmpty && defersLoading())
-        return r;
+        return true;
 
-    if (shouldLoadEmpty || frameLoader()->representationExistsForURLScheme([URL scheme])) {
+    if (shouldLoadEmpty || frameLoader()->representationExistsForURLScheme(url.protocol())) {
         String mimeType;
         if (shouldLoadEmpty)
             mimeType = "text/html";
         else
-            mimeType = frameLoader()->generatedMIMETypeForURLScheme([URL scheme]);
+            mimeType = frameLoader()->generatedMIMETypeForURLScheme(url.protocol());
 
-        ResourceResponse response(URL, mimeType, 0, String(), String());
+        ResourceResponse response(url, mimeType, 0, String(), String());
         didReceiveResponse(response);
     } else {
         m_handle = ResourceHandle::create(r, this, m_frame.get(), false, true);
     }
 
-    return nil;
+    return false;
 }
 
-bool MainResourceLoader::load(NSURLRequest *r)
+bool MainResourceLoader::load(const ResourceRequest& r)
 {
     ASSERT(!m_handle);
 
+    ResourceRequest request(r);
     bool defer = defersLoading();
     if (defer) {
-        bool shouldLoadEmpty = shouldLoadAsEmptyDocument([r URL]);
+        bool shouldLoadEmpty = shouldLoadAsEmptyDocument(r.url());
         if (shouldLoadEmpty)
             defer = false;
     }
     if (!defer) {
-        r = loadNow(r);
-        if (r) {
+        if (loadNow(request)) {
             // Started as an empty document, but was redirected to something non-empty.
             ASSERT(defersLoading());
             defer = true;
         }
     }
-    if (defer) {
-        NSURLRequest *copy = [r copy];
-        m_initialRequest = copy;
-        [copy release];
-    }
+    if (defer) 
+        m_initialRequest = request;
 
     return true;
 }
@@ -391,7 +386,7 @@ void MainResourceLoader::setDefersLoading(bool defers)
         if (!m_initialRequest.isNull()) {
             ResourceRequest r(m_initialRequest);
             m_initialRequest = ResourceRequest();
-            loadNow(r.nsURLRequest());
+            loadNow(r);
         }
     }
 }
