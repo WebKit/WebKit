@@ -144,52 +144,37 @@ void MainResourceLoader::addData(const char* data, int length, bool allAtOnce)
     frameLoader()->receivedData(data, length);
 }
 
-NSURLRequest *MainResourceLoader::willSendRequest(NSURLRequest *newRequest, const ResourceResponse& redirectResponse)
+void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
 {
     // Note that there are no asserts here as there are for the other callbacks. This is due to the
     // fact that this "callback" is sent when starting every load, and the state of callback
     // deferrals plays less of a part in this function in preventing the bad behavior deferring 
     // callbacks is meant to prevent.
-    ASSERT(newRequest != nil);
-
+    ASSERT(!newRequest.isNull());
+    
     // The additional processing can do anything including possibly removing the last
     // reference to this object; one example of this is 3266216.
     RefPtr<MainResourceLoader> protect(this);
-
-    NSURL *URL = [newRequest URL];
-
-    NSMutableURLRequest *mutableRequest = nil;
+    
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.
-    if (frameLoader()->isLoadingMainFrame()) {
-        mutableRequest = [newRequest mutableCopy];
-        [mutableRequest setMainDocumentURL:URL];
-    }
-
+    if (frameLoader()->isLoadingMainFrame())
+        newRequest.setMainDocumentURL(newRequest.url());
+    
     // If we're fielding a redirect in response to a POST, force a load from origin, since
     // this is a common site technique to return to a page viewing some data that the POST
     // just modified.
     // Also, POST requests always load from origin, but this does not affect subresources.
-    if ([newRequest cachePolicy] == NSURLRequestUseProtocolCachePolicy && isPostOrRedirectAfterPost(newRequest, redirectResponse)) {
-        if (!mutableRequest)
-            mutableRequest = [newRequest mutableCopy];
-        [mutableRequest setCachePolicy:NSURLRequestReloadIgnoringCacheData];
-    }
-    if (mutableRequest)
-        newRequest = [mutableRequest autorelease];
+    if (newRequest.cachePolicy() == UseProtocolCachePolicy && isPostOrRedirectAfterPost(newRequest, redirectResponse))
+        newRequest.setCachePolicy(ReloadIgnoringCacheData);
 
-    // Note super will make a copy for us, so reassigning newRequest is important. Since we are returning this value, but
-    // it's only guaranteed to be retained by self, and self might be dealloc'ed in this method, we have to autorelease.
-    // See 3777253 for an example.
-    newRequest = [[ResourceLoader::willSendRequest(newRequest, redirectResponse) retain] autorelease];
-
+    ResourceLoader::willSendRequest(newRequest, redirectResponse);
+    
     // Don't set this on the first request. It is set when the main load was started.
     frameLoader()->setRequest(newRequest);
-
+    
     ref(); // balanced by deref in continueAfterNavigationPolicy
     frameLoader()->checkNavigationPolicy(newRequest, callContinueAfterNavigationPolicy, this);
-
-    return newRequest;
 }
 
 static bool shouldLoadAsEmptyDocument(const KURL& URL)
@@ -199,13 +184,16 @@ static bool shouldLoadAsEmptyDocument(const KURL& URL)
 
 void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, const ResourceResponse& r)
 {
-    NSURL *url = [request() URL];
+    KURL url = request().url();
     const String& mimeType = r.mimeType();
     
     switch (contentPolicy) {
     case PolicyUse: {
         // Prevent remote web archives from loading because they can claim to be from any domain and thus avoid cross-domain security checks (4120255).
-        bool isRemote = ![url isFileURL] && ![WebDataProtocol _webIsDataProtocolURL:url];
+        bool isRemote = !url.isLocalFile();
+#if PLATFORM(MAC)
+        isRemote = isRemote && ![WebDataProtocol _webIsDataProtocolURL:url.getNSURL()];
+#endif
         bool isRemoteWebArchive = isRemote && equalIgnoringCase("application/x-webarchive", mimeType);
         if (!frameLoader()->canShowMIMEType(mimeType) || isRemoteWebArchive) {
             frameLoader()->cannotShowMIMEType(r);
@@ -252,7 +240,7 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
 
     if (frameLoader() && !frameLoader()->isStopping()
             && (shouldLoadAsEmptyDocument(url)
-                || frameLoader()->representationExistsForURLScheme([url scheme])))
+                || frameLoader()->representationExistsForURLScheme(url.protocol())))
         didFinishLoading();
 }
 
@@ -338,8 +326,10 @@ NSURLRequest *MainResourceLoader::loadNow(NSURLRequest *r)
     // Send this synthetic delegate callback since clients expect it, and
     // we no longer send the callback from within NSURLConnection for
     // initial requests.
-    r = willSendRequest(r, nil);
-    
+    ResourceRequest request(r);
+    willSendRequest(request, ResourceResponse());
+    r = request.nsURLRequest();
+
     // <rdar://problem/4801066>
     // willSendRequest() is liable to make the call to frameLoader() return NULL, so we need to check that here
     if (!frameLoader())
@@ -398,10 +388,10 @@ void MainResourceLoader::setDefersLoading(bool defers)
 {
     ResourceLoader::setDefersLoading(defers);
     if (!defers) {
-        RetainPtr<NSURLRequest> r = m_initialRequest;
-        if (r) {
-            m_initialRequest = nil;
-            loadNow(r.get());
+        if (!m_initialRequest.isNull()) {
+            ResourceRequest r(m_initialRequest);
+            m_initialRequest = ResourceRequest();
+            loadNow(r.nsURLRequest());
         }
     }
 }

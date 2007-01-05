@@ -1,5 +1,16 @@
 2007-01-04  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Brady.
+
+        FrameLoaderClient changed yet again.
+        
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache):
+        (WebFrameLoaderClient::dispatchWillSendRequest):
+
+2007-01-04  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Adam.
 
         FrameLoaderClient changed again.

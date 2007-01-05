@@ -138,14 +138,14 @@ public:
     virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&) { }
     
     virtual id dispatchIdentifierForInitialRequest(DocumentLoader*, const ResourceRequest&) { return 0; }
-    virtual NSURLRequest *dispatchWillSendRequest(DocumentLoader*, id identifier, NSURLRequest *, const ResourceResponse& redirectResponse) { return 0; }
+    virtual void dispatchWillSendRequest(DocumentLoader*, id identifier, ResourceRequest&, const ResourceResponse& redirectResponse) { }
     virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, id identifier, NSURLAuthenticationChallenge *) { }
     virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, id identifier, NSURLAuthenticationChallenge *) { }
     virtual void dispatchDidReceiveResponse(DocumentLoader*, id identifier, const ResourceResponse&) { }
     virtual void dispatchDidReceiveContentLength(DocumentLoader*, id identifier, int lengthReceived) { }
     virtual void dispatchDidFinishLoading(DocumentLoader*, id identifier) { }
     virtual void dispatchDidFailLoading(DocumentLoader*, id identifier, const ResourceError&) { }
-    virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, NSURLRequest *, const ResourceResponse&, int length) { return false; }
+    virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length) { return false; }
 #endif
     
     virtual void dispatchDidHandleOnloadEvents() { }

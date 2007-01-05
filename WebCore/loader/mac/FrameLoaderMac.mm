@@ -331,21 +331,6 @@ id FrameLoader::identifierForInitialRequest(const ResourceRequest& clientRequest
     return m_client->dispatchIdentifierForInitialRequest(activeDocumentLoader(), clientRequest);
 }
 
-void FrameLoader::applyUserAgent(NSMutableURLRequest *request)
-{
-    static String lastUserAgent;
-    static RetainPtr<NSString> lastUserAgentNSString;
-
-    String userAgent = client()->userAgent();
-    ASSERT(!userAgent.isNull());
-    if (userAgent != lastUserAgent) {
-        lastUserAgent = userAgent;
-        lastUserAgentNSString = userAgent;
-    }
-
-    [request setValue:lastUserAgentNSString.get() forHTTPHeaderField:@"User-Agent"];
-}
-
 void FrameLoader::applyUserAgent(ResourceRequest& request)
 {
     String userAgent = client()->userAgent();
@@ -353,10 +338,10 @@ void FrameLoader::applyUserAgent(ResourceRequest& request)
     request.setHTTPUserAgent(userAgent);
 }
 
-NSURLRequest *FrameLoader::willSendRequest(ResourceLoader* loader, NSMutableURLRequest *clientRequest, const ResourceResponse& redirectResponse)
+void FrameLoader::willSendRequest(ResourceLoader* loader, ResourceRequest& clientRequest, const ResourceResponse& redirectResponse)
 {
     applyUserAgent(clientRequest);
-    return m_client->dispatchWillSendRequest(activeDocumentLoader(), loader->identifier(), clientRequest, redirectResponse);
+    m_client->dispatchWillSendRequest(activeDocumentLoader(), loader->identifier(), clientRequest, redirectResponse);
 }
 
 void FrameLoader::didReceiveAuthenticationChallenge(ResourceLoader* loader, NSURLAuthenticationChallenge *currentWebChallenge)
@@ -494,10 +479,9 @@ void FrameLoader::opened()
             // FIXME: If the WebKit client changes or cancels the request, this is not respected.
             ResourceError error;
             id identifier;
-            NSURLRequest *request = [[NSURLRequest alloc] initWithURL:response.url().getNSURL()];
+            ResourceRequest request(response.url());
             requestFromDelegate(request, identifier, error);
             sendRemainingDelegateMessages(identifier, response, response.expectedContentLength(), error);
-            [request release];
         }
         
         m_client->loadedFromPageCache();
@@ -978,29 +962,31 @@ void FrameLoader::sendRemainingDelegateMessages(id identifier, const ResourceRes
         m_client->dispatchDidFailLoading(m_documentLoader.get(), identifier, error);
 }
 
-NSURLRequest *FrameLoader::requestFromDelegate(NSURLRequest *request, id& identifier, ResourceError& error)
+void FrameLoader::requestFromDelegate(ResourceRequest& request, id& identifier, ResourceError& error)
 {
-    ASSERT(request != nil);
+    ASSERT(!request.isNull());
 
     identifier = m_client->dispatchIdentifierForInitialRequest(m_documentLoader.get(), request); 
-    NSURLRequest *newRequest = m_client->dispatchWillSendRequest(m_documentLoader.get(), identifier, request, nil);
+    ResourceRequest newRequest(request);
+    m_client->dispatchWillSendRequest(m_documentLoader.get(), identifier, newRequest, nil);
 
-    if (newRequest == nil)
+    if (newRequest.isNull())
         error = m_client->cancelledError(request);
     else
         error = ResourceError();
 
-    return newRequest;
+    request = newRequest;
 }
 
-void FrameLoader::loadedResourceFromMemoryCache(NSURLRequest *request, const ResourceResponse& response, int length)
+void FrameLoader::loadedResourceFromMemoryCache(const ResourceRequest& request, const ResourceResponse& response, int length)
 {
     if (m_client->dispatchDidLoadResourceFromMemoryCache(m_documentLoader.get(), request, response, length))
         return;
 
     id identifier;
     ResourceError error;
-    requestFromDelegate(request, identifier, error);
+    ResourceRequest r(request);
+    requestFromDelegate(r, identifier, error);
     sendRemainingDelegateMessages(identifier, response, length, error);
 }
 
@@ -1079,13 +1065,14 @@ void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Reso
     
     ResourceError error;
     id identifier = nil;    
-    NSURLRequest *newRequest = requestFromDelegate(initialRequest.nsURLRequest(), identifier, error);
+    ResourceRequest newRequest(initialRequest);
+    requestFromDelegate(newRequest, identifier, error);
 
     if (error.isNull()) {
-        ASSERT(newRequest != nil);
+        ASSERT(!newRequest.isNull());
         ResourceError error;
         
-        didTellBridgeAboutLoad(KURL([newRequest URL]).url());
+        didTellBridgeAboutLoad(newRequest.url().url());
 
         ResourceHandle::loadResourceSynchronously(newRequest, error, response, data);
     }

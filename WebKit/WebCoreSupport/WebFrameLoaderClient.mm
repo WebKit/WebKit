@@ -248,7 +248,7 @@ void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceReques
                                           proxy:proxy];
 }
 
-bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader* loader, NSURLRequest *request, const ResourceResponse& response, int length)
+bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader* loader, const ResourceRequest& request, const ResourceResponse& response, int length)
 {
     WebView *webView = getWebView(loader);
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
@@ -257,7 +257,7 @@ bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader
     if (!implementations.delegateImplementsDidLoadResourceFromMemoryCache)
         return false;
 
-    implementations.didLoadResourceFromMemoryCacheFunc(resourceLoadDelegate, @selector(webView:didLoadResourceFromMemoryCache:response:length:fromDataSource:), webView, request, response.nsURLResponse(), length, dataSource(loader));
+    implementations.didLoadResourceFromMemoryCacheFunc(resourceLoadDelegate, @selector(webView:didLoadResourceFromMemoryCache:response:length:fromDataSource:), webView, request.nsURLRequest(), response.nsURLResponse(), length, dataSource(loader));
     return true;
 }
 
@@ -273,16 +273,14 @@ id WebFrameLoaderClient::dispatchIdentifierForInitialRequest(DocumentLoader* loa
     return [[[NSObject alloc] init] autorelease];
 }
 
-NSURLRequest *WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, id identifier, NSURLRequest *request, const ResourceResponse& redirectResponse)
+void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, id identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     WebView *webView = getWebView(loader);
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
     if (implementations.delegateImplementsWillSendRequest)
-        return implementations.willSendRequestFunc(resourceLoadDelegate, @selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:), webView, identifier, request, redirectResponse.nsURLResponse(), dataSource(loader));
-
-    return request;
+        request = implementations.willSendRequestFunc(resourceLoadDelegate, @selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:), webView, identifier, request.nsURLRequest(), redirectResponse.nsURLResponse(), dataSource(loader));
 }
 
 void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader* loader, id identifier,

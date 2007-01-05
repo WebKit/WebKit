@@ -113,19 +113,20 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
     return subloader.release();
 }
 
-NSURLRequest *SubresourceLoader::willSendRequest(NSURLRequest *newRequest, const ResourceResponse& redirectResponse)
+void SubresourceLoader::willSendRequest(ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
 {
-    NSURL *oldURL = [request() URL];
-    NSURLRequest *clientRequest = ResourceLoader::willSendRequest(newRequest, redirectResponse);
-    if (clientRequest && oldURL != [clientRequest URL] && ![oldURL isEqual:[clientRequest URL]]) {
-        ResourceRequest request = newRequest;
+    KURL oldURL = request().url();
+    
+    ResourceRequest clientRequest(newRequest);
+    ResourceLoader::willSendRequest(clientRequest, redirectResponse);
+    if (!clientRequest.isNull() && oldURL != clientRequest.url()) {
         if (m_client)
-            m_client->willSendRequest(this, request, redirectResponse);
+            m_client->willSendRequest(this, newRequest, redirectResponse);
         
-        return request.nsURLRequest();
+        return;
     }
     
-    return clientRequest;
+    newRequest = clientRequest;
 }
 
 void SubresourceLoader::didReceiveResponse(const ResourceResponse& r)

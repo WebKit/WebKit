@@ -90,14 +90,14 @@ namespace WebCore {
         virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&) = 0;
 
         virtual id dispatchIdentifierForInitialRequest(DocumentLoader*, const ResourceRequest&) = 0;
-        virtual NSURLRequest *dispatchWillSendRequest(DocumentLoader*, id identifier, NSURLRequest *, const ResourceResponse& redirectResponse) = 0;
+        virtual void dispatchWillSendRequest(DocumentLoader*, id identifier, ResourceRequest&, const ResourceResponse& redirectResponse) = 0;
         virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, id identifier, NSURLAuthenticationChallenge *) = 0;
         virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, id identifier, NSURLAuthenticationChallenge *) = 0;
         virtual void dispatchDidReceiveResponse(DocumentLoader*, id identifier, const ResourceResponse&) = 0;
         virtual void dispatchDidReceiveContentLength(DocumentLoader*, id identifier, int lengthReceived) = 0;
         virtual void dispatchDidFinishLoading(DocumentLoader*, id identifier) = 0;
         virtual void dispatchDidFailLoading(DocumentLoader*, id identifier, const ResourceError&) = 0;
-        virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, NSURLRequest *, const ResourceResponse&, int length) = 0;
+        virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length) = 0;
 #endif
 
         virtual void dispatchDidHandleOnloadEvents() = 0;

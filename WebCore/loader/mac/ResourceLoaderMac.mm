@@ -96,17 +96,17 @@ bool ResourceLoader::load(NSURLRequest *r)
     
     m_originalURL = [r URL];
     
-    NSURLRequest *clientRequest = willSendRequest(r, nil);
-    if (clientRequest == nil) {
+    ResourceRequest clientRequest(r);
+    willSendRequest(clientRequest, ResourceResponse());
+    if (clientRequest.isNull()) {
         didFail(frameLoader()->cancelledError(r));
         return false;
     }
-    r = clientRequest;
     
-    if (frameLoader()->willUseArchive(this, r, m_originalURL))
+    if (frameLoader()->willUseArchive(this, clientRequest, m_originalURL))
         return true;
     
-    m_handle = ResourceHandle::create(r, this, m_frame.get(), m_defersLoading);
+    m_handle = ResourceHandle::create(clientRequest, this, m_frame.get(), m_defersLoading);
 
     return true;
 }
@@ -162,56 +162,45 @@ void ResourceLoader::clearResourceData()
     [m_resourceData.get() setLength:0];
 }
 
-NSURLRequest *ResourceLoader::willSendRequest(NSURLRequest *newRequest, const ResourceResponse& redirectResponse)
+void ResourceLoader::willSendRequest(ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
 {
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<ResourceLoader> protector(this);
-
+        
     ASSERT(!m_reachedTerminalState);
-    NSMutableURLRequest *mutableRequest = [[newRequest mutableCopy] autorelease];
     
-    newRequest = mutableRequest;
-
     // If we have a special "applewebdata" scheme URL we send a fake request to the delegate.
     bool haveDataSchemeRequest = false;
-    NSMutableURLRequest *clientRequest = [mutableRequest _webDataRequestExternalRequest];
-    if (!clientRequest)
-        clientRequest = mutableRequest;
-    else
+    if (NSMutableURLRequest *externalRequest = [newRequest.nsURLRequest() _webDataRequestExternalRequest]) {
+        newRequest = externalRequest;
         haveDataSchemeRequest = true;
+    }
     
     if (!m_identifier)
-        m_identifier = frameLoader()->identifierForInitialRequest(clientRequest);
-
-    NSURLRequest *updatedRequest = frameLoader()->willSendRequest(this, clientRequest, redirectResponse);
-
+        m_identifier = frameLoader()->identifierForInitialRequest(newRequest);
+    
+    ResourceRequest updatedRequest(newRequest);
+    frameLoader()->willSendRequest(this, updatedRequest, redirectResponse);
+    
     if (!haveDataSchemeRequest)
         newRequest = updatedRequest;
     else {
         // If the delegate modified the request use that instead of
         // our applewebdata request, otherwise use the original
         // applewebdata request.
-        if (![updatedRequest isEqual:clientRequest]) {
+        if (updatedRequest != updatedRequest) {
             newRequest = updatedRequest;
-
-            if ([newRequest isKindOfClass:[NSMutableURLRequest class]]) {
-                NSMutableURLRequest *mr = (NSMutableURLRequest *)newRequest;
+            
+            if ([newRequest.nsURLRequest() isKindOfClass:[NSMutableURLRequest class]]) {
+                NSMutableURLRequest *mr = (NSMutableURLRequest *)newRequest.nsURLRequest();
                 [NSURLProtocol _removePropertyForKey:[NSURLRequest _webDataRequestPropertyKey] inRequest:mr];
             }
         }
     }
-
-    // Old code used to autorelease rather than release, so do an autorelease here for now.
-    // Eventually we should remove this.
-    [[m_request.get() retain] autorelease];
-
+    
     // Store a copy of the request.
-    NSURLRequest *copy = [newRequest copy];
-    m_request = copy;
-    [copy release];
-
-    return copy;
+    m_request = newRequest;
 }
 
 void ResourceLoader::didReceiveAuthenticationChallenge(NSURLAuthenticationChallenge *challenge)
@@ -259,7 +248,7 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
     // If the URL is one of our whacky applewebdata URLs then
     // fake up a substitute URL to present to the delegate.
     if ([WebDataProtocol _webIsDataProtocolURL:[r.nsURLResponse() URL]]) 
-        m_response = [[[NSURLResponse alloc] initWithURL:[m_request.get() _webDataRequestExternalURL] MIMEType:r.mimeType()
+        m_response = [[[NSURLResponse alloc] initWithURL:[m_request.nsURLRequest() _webDataRequestExternalURL] MIMEType:r.mimeType()
                                    expectedContentLength:r.expectedContentLength() textEncodingName:r.textEncodingName()] autorelease];
     else
 #endif
@@ -393,7 +382,7 @@ const ResourceResponse& ResourceLoader::response() const
 
 ResourceError ResourceLoader::cancelledError()
 {
-    return frameLoader()->cancelledError(m_request.get());
+    return frameLoader()->cancelledError(m_request);
 }
 
 void ResourceLoader::receivedCredential(NSURLAuthenticationChallenge *challenge, NSURLCredential *credential)
@@ -430,7 +419,7 @@ void ResourceLoader::receivedCancellation(NSURLAuthenticationChallenge *challeng
 
 void ResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
-    request = willSendRequest(request.nsURLRequest(), redirectResponse);
+    willSendRequest(request, redirectResponse);
 }
 
 void ResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)

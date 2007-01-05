@@ -58,7 +58,7 @@ namespace WebCore {
 #if PLATFORM(MAC)
         virtual bool load(NSURLRequest *);
         
-        virtual NSURLRequest *willSendRequest(NSURLRequest *, const ResourceResponse& redirectResponse);
+        virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
         virtual void didReceiveResponse(const ResourceResponse&);
         virtual void didReceiveData(const char*, int, long long lengthReceived, bool allAtOnce);
         virtual void didFinishLoading();

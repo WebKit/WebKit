@@ -100,6 +100,7 @@ namespace WebCore {
         {
         }
 
+        bool isNull() const;
         bool isEmpty() const;
 
         const KURL& url() const;
@@ -188,6 +189,7 @@ namespace WebCore {
     };
 
     bool operator==(const ResourceRequest& a, const ResourceRequest& b);
+    inline bool operator!=(ResourceRequest& a, const ResourceRequest& b) { return !(a == b); }
 
 } // namespace WebCore
 

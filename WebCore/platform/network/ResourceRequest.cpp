@@ -35,6 +35,13 @@ bool ResourceRequest::isEmpty() const
     return m_url.isEmpty(); 
 }
 
+bool ResourceRequest::isNull() const
+{
+    updateResourceRequest(); 
+    
+    return m_url.url().isNull();
+}
+
 const KURL& ResourceRequest::url() const 
 {
     updateResourceRequest(); 

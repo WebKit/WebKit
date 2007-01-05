@@ -1,3 +1,41 @@
+2007-01-04  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Brady.
+
+        Move more NSURLRequests over to ResourceRequests.
+        
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/MainResourceLoader.h:
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::request):
+        * loader/SubresourceLoader.h:
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::willSendRequest):
+        (WebCore::FrameLoader::opened):
+        (WebCore::FrameLoader::requestFromDelegate):
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/mac/MainResourceLoaderMac.mm:
+        (WebCore::MainResourceLoader::willSendRequest):
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        (WebCore::MainResourceLoader::loadNow):
+        (WebCore::MainResourceLoader::setDefersLoading):
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::load):
+        (WebCore::ResourceLoader::willSendRequest):
+        (WebCore::ResourceLoader::didReceiveResponse):
+        (WebCore::ResourceLoader::cancelledError):
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::willSendRequest):
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchWillSendRequest):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache):
+        * platform/network/ResourceRequest.cpp:
+        (WebCore::ResourceRequest::isNull):
+        * platform/network/ResourceRequest.h:
+
 2007-01-04  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mark Rowe

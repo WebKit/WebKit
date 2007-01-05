@@ -43,10 +43,6 @@
 #ifndef __OBJC__
 
 class NSData;
-class NSDictionary;
-class NSError;
-class NSMutableURLRequest;
-class NSURLRequest;
 
 #endif
 
