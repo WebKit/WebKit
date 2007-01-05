@@ -1,3 +1,13 @@
+2007-01-05  David Hyatt  <hyatt@apple.com>
+
+        Back out fix for 12114.  I missed rule #5 in the float positioning part of the CSS2.1 spec.  Keep all
+        the code cleanup though.
+
+        Reviewed by mitz
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionNewFloats):
+
 2007-01-05  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.
