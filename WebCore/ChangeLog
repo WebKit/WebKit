@@ -1,3 +1,18 @@
+2007-01-04  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=12118 REGRESSION 
+        (Context menus): No context menu displayed when clicking outside a 
+        short document
+
+        No test case added since we do not currently have a way to automate 
+        context menus. 
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::handleContextMenuEvent): If the 
+        hit test does not find a node, use the document node.
+
 2007-01-04  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam.

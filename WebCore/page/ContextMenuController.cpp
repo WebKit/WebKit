@@ -78,8 +78,16 @@ void ContextMenuController::handleContextMenuEvent(Event* event)
         if (RenderLayer* layer = renderer->enclosingLayer())
             layer->hitTest(HitTestRequest(false, true), result);
 
-    if (!result.innerNonSharedNode())
-        return;
+    if (!result.innerNonSharedNode()) {
+        Frame* mainFrame = m_page->mainFrame();
+        if (!mainFrame)
+            return;
+        Document* document = mainFrame->document();
+        if (!document)
+            return;
+        result.setInnerNonSharedNode(document);
+        result.setInnerNode(document);
+    }
 
     m_contextMenu.set(new ContextMenu(result));
     m_contextMenu->populate();
