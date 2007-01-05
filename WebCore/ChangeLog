@@ -1,3 +1,14 @@
+2007-01-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        http://bugs.webkit.org/show_bug.cgi?id=12119
+        Changing the behavior of HistoryItem::pageCache() this morning also necessitated
+        changing the behavior of HistoryItem::hasPageCache()
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::hasPageCache): Add the same pendingRelease check pageCache() has
+
 2007-01-04  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Sam Weinig.

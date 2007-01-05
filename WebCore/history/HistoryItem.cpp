@@ -366,6 +366,13 @@ PageCache* HistoryItem::pageCache()
     return m_pageCache.get();
 }
 
+bool HistoryItem::hasPageCache() const
+{
+    if (m_pageCacheIsPendingRelease)
+        return false;
+    return m_pageCache;
+}
+
 const HistoryItemVector& HistoryItem::children() const
 {
     return m_subItems;
@@ -421,11 +428,6 @@ void HistoryItem::mergeAutoCompleteHints(HistoryItem* otherItem)
     ASSERT(otherItem);
     if (otherItem != this)
         m_visitCount += otherItem->m_visitCount;
-}
-
-bool HistoryItem::hasPageCache() const
-{
-    return m_pageCache;
 }
 
 // Timer management functions
