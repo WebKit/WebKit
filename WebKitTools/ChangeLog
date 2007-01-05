@@ -1,3 +1,13 @@
+2007-01-05  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Speed up svn-create-patch for copied and moved files.
+
+        * Scripts/svn-create-patch:
+        (manufacturePatchForAdditionWithHistory($$)): Use 'svn cat' instead of 'svn cat -rNNNNN'
+        so svn pulls original from local disk.
+
 2007-01-04  Lars Knoll <lars@trolltech.com>
 
         * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.pro:

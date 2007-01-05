@@ -277,7 +277,7 @@ sub manufacturePatchForAdditionWithHistory($$)
         my $mimeType = findMimeType($file);
         print "svn:mime-type = ${mimeType}\n\n";
     } else {
-        print `svn cat -r${sourceRevision} ${sourceFile} | diff -u /dev/null - | tail +3`;
+        print `svn cat ${sourceFile} | diff -u /dev/null - | tail +3`;
     }
 }
 
