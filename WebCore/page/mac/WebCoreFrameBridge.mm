@@ -726,38 +726,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     m_frame->setZoomFactor(newZoomFactor);
 }
 
-- (NSView *)nextKeyView
-{
-    Document *doc = m_frame->document();
-    if (!doc)
-        return nil;
-    return m_frame->eventHandler()->nextKeyView(doc->focusedNode(), FocusDirectionForward);
-}
-
-- (NSView *)previousKeyView
-{
-    Document *doc = m_frame->document();
-    if (!doc)
-        return nil;
-    return m_frame->eventHandler()->nextKeyView(doc->focusedNode(), FocusDirectionBackward);
-}
-
-- (NSView *)nextKeyViewInsideWebFrameViews
-{
-    Document *doc = m_frame->document();
-    if (!doc)
-        return nil;
-    return m_frame->eventHandler()->nextKeyViewInFrameHierarchy(doc->focusedNode(), FocusDirectionForward);
-}
-
-- (NSView *)previousKeyViewInsideWebFrameViews
-{
-    Document *doc = m_frame->document();
-    if (!doc)
-        return nil;
-    return m_frame->eventHandler()->nextKeyViewInFrameHierarchy(doc->focusedNode(), FocusDirectionBackward);
-}
-
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string
 {
     return [self stringByEvaluatingJavaScriptFromString:string forceUserGesture:true];

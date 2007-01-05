@@ -131,12 +131,6 @@ typedef enum ObjectElementType {
 - (void)adjustPageHeightNew:(float *)newBottom top:(float)oldTop bottom:(float)oldBottom limit:(float)bottomLimit;
 - (NSArray*)computePageRectsWithPrintWidthScaleFactor:(float)printWidthScaleFactor printHeight:(float)printHeight;
 
-- (NSView *)nextKeyView;
-- (NSView *)previousKeyView;
-
-- (NSView *)nextKeyViewInsideWebFrameViews;
-- (NSView *)previousKeyViewInsideWebFrameViews;
-
 - (NSObject *)copyRenderTree:(id <WebCoreRenderTreeCopier>)copier;
 - (NSString *)renderTreeAsExternalRepresentation;
 
@@ -294,9 +288,6 @@ typedef enum ObjectElementType {
 
 - (void)formControlIsBecomingFirstResponder:(NSView *)formControl;
 - (void)formControlIsResigningFirstResponder:(NSView *)formControl;
-
-- (NSView *)nextKeyViewOutsideWebFrameViews;
-- (NSView *)previousKeyViewOutsideWebFrameViews;
 
 - (void)setNeedsReapplyStyles;
 

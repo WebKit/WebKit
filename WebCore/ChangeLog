@@ -1,5 +1,18 @@
 2007-01-04  Adam Roben  <aroben@apple.com>
 
+        Reviewed by Geoff, cheered by others.
+
+        Dead code elimination.
+
+        All layout tests pass.
+
+        * page/EventHandler.h:
+        * page/mac/EventHandlerMac.mm:
+        * page/mac/WebCoreFrameBridge.h:
+        * page/mac/WebCoreFrameBridge.mm:
+
+2007-01-04  Adam Roben  <aroben@apple.com>
+
         Reviewed by Geoff.
 
         Fix: <rdar://4800335> REGRESSION: shift-tabbing from location field

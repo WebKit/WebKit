@@ -2997,16 +2997,6 @@ done:
     return YES;
 }
 
-- (NSView *)previousValidKeyView
-{
-    NSView *view = nil;
-    if (![self isHiddenOrHasHiddenAncestor])
-        view = [[self _bridge] previousKeyViewInsideWebFrameViews];
-    if (view == nil)
-        view = [super previousValidKeyView];
-    return view;
-}
-
 - (BOOL)becomeFirstResponder
 {
     NSSelectionDirection direction = NSDirectSelection;

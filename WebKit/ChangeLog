@@ -1,5 +1,13 @@
 2007-01-04  Adam Roben  <aroben@apple.com>
 
+        Reviewed by Geoff, cheered by others.
+
+        Dead code elimination.
+
+        * WebView/WebHTMLView.m:
+
+2007-01-04  Adam Roben  <aroben@apple.com>
+
         Boo on me for undoing Beth's hard work.
 
         * WebView/WebHTMLView.m:
