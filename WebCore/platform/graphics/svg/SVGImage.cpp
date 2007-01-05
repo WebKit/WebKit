@@ -119,7 +119,7 @@ bool SVGImage::setData(bool allDataReceived)
         return true;
     
     if (allDataReceived) {
-        static ChromeClient* dummyChromeClient = new SVGEmptyCromeClient;
+        static ChromeClient* dummyChromeClient = new SVGEmptyChromeClient;
         static FrameLoaderClient* dummyFrameLoaderClient =  new SVGEmptyFrameLoaderClient;
         static EditorClient* dummyEditorClient = new SVGEmptyEditorClient;
         static ContextMenuClient* dummyContextMenuClient = new SVGEmptyContextMenuClient;

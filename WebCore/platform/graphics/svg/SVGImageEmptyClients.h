@@ -31,6 +31,7 @@
 #include "ChromeClient.h"
 #include "ContextMenuClient.h"
 #include "EditorClient.h"
+#include "FocusDirection.h"
 #include "FrameLoaderClient.h"
 
 /*
@@ -47,9 +48,9 @@
 
 namespace WebCore {
 
-class SVGEmptyCromeClient : public ChromeClient {
+class SVGEmptyChromeClient : public ChromeClient {
 public:
-    virtual ~SVGEmptyCromeClient() { }
+    virtual ~SVGEmptyChromeClient() { }
     virtual void chromeDestroyed() { }
     
     virtual void setWindowRect(const FloatRect&) { }
@@ -61,6 +62,9 @@ public:
     
     virtual void focus() { }
     virtual void unfocus() { }
+    
+    virtual bool canTakeFocus(FocusDirection) { return false; }
+    virtual void takeFocus(FocusDirection) { }
     
     virtual Page* createWindow(const FrameLoadRequest&) { return 0; }
     virtual Page* createModalDialog(const FrameLoadRequest&) { return 0; }

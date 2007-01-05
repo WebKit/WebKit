@@ -46,6 +46,9 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
+using std::min;
+using std::max;
+
 HTMLElement::HTMLElement(const QualifiedName& tagName, Document *doc)
     : StyledElement(tagName, doc)
 {
@@ -134,7 +137,8 @@ void HTMLElement::parseMappedAttribute(MappedAttribute *attr)
     } else if (attr->name() == tabindexAttr) {
         indexstring = getAttribute(tabindexAttr);
         if (indexstring.length())
-            setTabIndex(indexstring.toInt());
+            // Clamp tabindex to the range of 'short' to match Firefox's behavior.
+            setTabIndex(max(static_cast<int>(std::numeric_limits<short>::min()), min(indexstring.toInt(), static_cast<int>(std::numeric_limits<short>::max()))));
     } else if (attr->name() == langAttr) {
         // FIXME: Implement
     } else if (attr->name() == dirAttr) {

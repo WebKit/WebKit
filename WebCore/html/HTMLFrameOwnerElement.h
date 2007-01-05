@@ -26,6 +26,7 @@
 namespace WebCore {
 
 class Frame;
+class KeyboardEvent;
 
 class HTMLFrameOwnerElement : public HTMLElement {
 protected:
@@ -36,6 +37,9 @@ public:
 
     Frame* contentFrame() const { return m_contentFrame; }
     Document* contentDocument() const;
+
+    virtual bool isFrameOwnerElement() const { return true; }
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const { return m_contentFrame; }
 
 private:
     friend class Frame;

@@ -1,3 +1,22 @@
+2007-01-04  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Geoff.
+
+        Remove WebKit/AppKit from handling tabbing between subframes.
+
+        * WebCoreSupport/WebChromeClient.h: Added new ChromeClient methods for
+        moving focus out of the WebView.
+        * WebCoreSupport/WebChromeClient.mm: Ditto.
+        (WebChromeClient::canTakeFocus):
+        (WebChromeClient::takeFocus):
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge webView]): Added null-check of m_frame.
+        * WebView/WebHTMLView.m: Removed -[WebHTMLView nextValidKeyView].
+        (-[WebHTMLView _updateActiveState]): Changed to focus the frame if
+        WebCore believes it to be the focused frame.
+        (-[WebHTMLView becomeFirstResponder]): Rewrote to call into
+        FocusController to place focus correctly within the WebView.
+
 2007-01-04  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Brady.

@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "FloatPoint.h"
+#include "FocusController.h"
 #include "FoundationExtras.h"
 #include "FrameLoader.h"
 #include "FrameMac.h"
@@ -93,7 +94,7 @@ bool EventHandler::wheelEvent(NSEvent *event)
     return wheelEvent.isAccepted();
 }
 
-NSView* EventHandler::nextKeyViewInFrame(Node* n, SelectionDirection direction, bool* focusCallResultedInViewBeingCreated)
+NSView* EventHandler::nextKeyViewInFrame(Node* n, FocusDirection direction, bool* focusCallResultedInViewBeingCreated)
 {
     Document* doc = m_frame->document();
     if (!doc)
@@ -103,9 +104,9 @@ NSView* EventHandler::nextKeyViewInFrame(Node* n, SelectionDirection direction, 
 
     RefPtr<Node> node = n;
     for (;;) {
-        node = direction == SelectingNext
-            ? doc->nextFocusedNode(node.get(), event.get())
-            : doc->previousFocusedNode(node.get(), event.get());
+        node = (direction == FocusDirectionForward)
+            ? doc->nextFocusableNode(node.get(), event.get())
+            : doc->previousFocusableNode(node.get(), event.get());
         if (!node)
             return nil;
         
@@ -139,7 +140,7 @@ NSView* EventHandler::nextKeyViewInFrame(Node* n, SelectionDirection direction, 
     }
 }
 
-NSView *EventHandler::nextKeyViewInFrameHierarchy(Node* node, SelectionDirection direction)
+NSView *EventHandler::nextKeyViewInFrameHierarchy(Node* node, FocusDirection direction)
 {
     bool focusCallResultedInViewBeingCreated = false;
     NSView *next = nextKeyViewInFrame(node, direction, &focusCallResultedInViewBeingCreated);
@@ -169,7 +170,7 @@ NSView *EventHandler::nextKeyViewInFrameHierarchy(Node* node, SelectionDirection
     return next;
 }
 
-NSView *EventHandler::nextKeyView(Node* node, SelectionDirection direction)
+NSView *EventHandler::nextKeyView(Node* node, FocusDirection direction)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -178,7 +179,7 @@ NSView *EventHandler::nextKeyView(Node* node, SelectionDirection direction)
         return next;
 
     // Look at views from the top level part up, looking for a next key view that we can use.
-    next = direction == SelectingNext
+    next = (direction == FocusDirectionForward)
         ? [Mac(m_frame)->bridge() nextKeyViewOutsideWebFrameViews]
         : [Mac(m_frame)->bridge() previousKeyViewOutsideWebFrameViews];
     if (next)
@@ -190,7 +191,7 @@ NSView *EventHandler::nextKeyView(Node* node, SelectionDirection direction)
     return nextKeyViewInFrameHierarchy(0, direction);
 }
 
-NSView *EventHandler::nextKeyView(Widget* startingWidget, SelectionDirection direction)
+NSView *EventHandler::nextKeyView(Widget* startingWidget, FocusDirection direction)
 {
     WidgetClient* client = startingWidget->client();
     if (!client)
@@ -343,6 +344,8 @@ void EventHandler::focusDocumentView()
     if ([Mac(m_frame)->bridge() firstResponder] != view)
         [Mac(m_frame)->bridge() makeFirstResponder:view];
     END_BLOCK_OBJC_EXCEPTIONS;
+    if (Page* page = m_frame->page())
+        page->focusController()->setFocusedFrame(m_frame);
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
@@ -379,10 +382,9 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
     ASSERT(nodeView);
     ASSERT([nodeView superview]);
     NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[currentEvent locationInWindow] fromView:nil]];
-    if (view == nil) {
-        LOG_ERROR("KHTML says we hit a RenderWidget, but AppKit doesn't agree we hit the corresponding NSView");
+    if (!view)
+        // We probably hit the border of a RenderWidget
         return true;
-    }
     
     if ([Mac(m_frame)->bridge() firstResponder] == view) {
         // In the case where we just became first responder, we should send the mouseDown:
@@ -782,8 +784,10 @@ bool EventHandler::passWheelEventToWidget(Widget* widget)
     ASSERT(nodeView);
     ASSERT([nodeView superview]);
     NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[currentEvent locationInWindow] fromView:nil]];
+    if (!view)
+        // We probably hit the border of a RenderWidget
+        return true;
 
-    ASSERT(view);
     m_sendingEventToSubview = true;
     [view scrollWheel:currentEvent];
     m_sendingEventToSubview = false;

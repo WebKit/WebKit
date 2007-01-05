@@ -31,6 +31,7 @@
 #import "WebDefaultUIDelegate.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
+#import "WebHTMLView.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
@@ -42,6 +43,10 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/Screen.h>
 #import <wtf/PassRefPtr.h>
+
+@interface NSView (AppKitSecretsWebBridgeKnowsAbout)
+- (NSView *)_findLastViewInKeyViewLoop;
+@end
 
 using namespace WebCore;
 
@@ -89,6 +94,26 @@ void WebChromeClient::focus()
 void WebChromeClient::unfocus()
 {
     [[m_webView _UIDelegateForwarder] webViewUnfocus:m_webView];
+}
+
+bool WebChromeClient::canTakeFocus(FocusDirection)
+{
+    // There's unfortunately no way to determine if we will become first responder again
+    // once we give it up, so we just have to guess that we won't.
+    return true;
+}
+
+void WebChromeClient::takeFocus(FocusDirection direction)
+{
+    if (direction == FocusDirectionForward) {
+        // Since we're trying to move focus out of m_webView, and because
+        // m_webView may contain subviews within it, we ask it for the next key
+        // view of the last view in its key view loop. This makes m_webView
+        // behave as if it had no subviews, which is the behavior we want.
+        NSView *lastView = [m_webView _findLastViewInKeyViewLoop];
+        [[m_webView window] selectKeyViewFollowingView:lastView];
+    } else
+        [[m_webView window] selectKeyViewPrecedingView:m_webView];
 }
 
 Page* WebChromeClient::createWindow(const FrameLoadRequest& request)

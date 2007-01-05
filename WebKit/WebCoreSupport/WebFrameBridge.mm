@@ -117,6 +117,9 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (WebView *)webView
 {
+    if (!m_frame)
+        return nil;
+    
     return kit(m_frame->page());
 }
 

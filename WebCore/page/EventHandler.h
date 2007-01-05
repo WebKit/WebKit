@@ -26,6 +26,7 @@
 #ifndef EventHandler_h
 #define EventHandler_h
 
+#include "FocusDirection.h"
 #include "PlatformMouseEvent.h"
 #include "ScrollTypes.h"
 #include "Timer.h"
@@ -66,8 +67,6 @@ class Widget;
 
 struct HitTestRequest;
 
-enum SelectionDirection { SelectingNext, SelectingPrevious };
-
 extern const float LinkDragHysteresis;
 extern const float ImageDragHysteresis;
 extern const float TextDragHysteresis;
@@ -95,8 +94,6 @@ public:
     void setMousePressed(bool pressed) { m_mousePressed = pressed; }
 
     void setCapturingMouseEventsNode(PassRefPtr<Node>);
-
-    bool advanceFocus(KeyboardEvent*);
 
     bool updateDragAndDrop(const PlatformMouseEvent&, Clipboard*);
     void cancelDragAndDrop(const PlatformMouseEvent&, Clipboard*);
@@ -129,9 +126,9 @@ public:
 
 #if PLATFORM(MAC)
 
-    NSView *nextKeyView(Node*, SelectionDirection);
-    NSView *nextKeyViewInFrameHierarchy(Node*, SelectionDirection);
-    static NSView *nextKeyView(Widget*, SelectionDirection);
+    NSView *nextKeyView(Node*, FocusDirection);
+    NSView *nextKeyViewInFrameHierarchy(Node*, FocusDirection);
+    static NSView *nextKeyView(Widget*, FocusDirection);
 
     PassRefPtr<KeyboardEvent> currentKeyboardEvent() const;
 
@@ -223,7 +220,7 @@ private:
     KeyboardUIMode keyboardUIMode() const;
 
     NSView *mouseDownViewIfStillGood();
-    NSView *nextKeyViewInFrame(Node*, SelectionDirection, bool* focusCallResultedInViewBeingCreated = 0);
+    NSView *nextKeyViewInFrame(Node*, FocusDirection, bool* focusCallResultedInViewBeingCreated = 0);
 #endif
 
     Frame* m_frame;

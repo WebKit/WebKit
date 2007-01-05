@@ -257,11 +257,6 @@ void HTMLGenericFormElement::closeRenderer()
     }
 }
 
-int HTMLGenericFormElement::tabIndex() const
-{
-    return getAttribute(tabindexAttr).toInt();
-}
-
 void HTMLGenericFormElement::setTabIndex(int value)
 {
     setAttribute(tabindexAttr, String::number(value));

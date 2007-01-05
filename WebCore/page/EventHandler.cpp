@@ -981,28 +981,6 @@ void EventHandler::setCapturingMouseEventsNode(PassRefPtr<Node> n)
     m_capturingMouseEventsNode = n;
 }
 
-bool EventHandler::advanceFocus(KeyboardEvent* event)
-{
-    Document* document = m_frame->document();
-    if (!document)
-        return false;
-
-    Node* node = event->shiftKey()
-        ? document->previousFocusedNode(document->focusedNode(), event)
-        : document->nextFocusedNode(document->focusedNode(), event);
-
-    if (!node)
-        // FIXME: Need to support tabbing out of the document to the UI.
-        return false;
-
-    if (!node->isElementNode())
-        // FIXME: May need a way to focus a document here.
-        return false;
-
-    static_cast<Element*>(node)->focus();
-    return true;
-}
-
 MouseEventWithHitTestResults EventHandler::prepareMouseEvent(const HitTestRequest& request, const PlatformMouseEvent& mev)
 {
     ASSERT(m_frame);

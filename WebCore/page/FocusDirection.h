@@ -16,42 +16,21 @@
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+                                        * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+                                        * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FocusController_h
-#define FocusController_h
-
-#include "Shared.h"
-#include <wtf/Forward.h>
-#include <wtf/RefPtr.h>
+#ifndef FocusDirection_h
+#define FocusDirection_h
 
 namespace WebCore {
-
-    class Frame;
-    class KeyboardEvent;
-    class Node;
-    class Page;
-
-    class FocusController {
-    public:
-        FocusController(Page*);
-
-        void setFocusedFrame(PassRefPtr<Frame>);
-        Frame* focusedFrame() const { return m_focusedFrame.get(); }
-        Frame* focusedOrMainFrame();
-
-        bool advanceFocus(KeyboardEvent*);
-
-    private:
-        Page* m_page;
-        RefPtr<Frame> m_focusedFrame;
+    enum FocusDirection {
+        FocusDirectionForward = 0,
+        FocusDirectionBackward
     };
+}
 
-} // namespace WebCore
-    
-#endif // FocusController_h
+#endif // FocusDirection_h

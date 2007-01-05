@@ -74,10 +74,13 @@
 #import <WebCore/Editor.h>
 #import <WebCore/EditorDeleteAction.h>
 #import <WebCore/EventHandler.h>
+#import <WebCore/EventNames.h>
 #import <WebCore/ExceptionHandlers.h>
 #import <WebCore/FloatRect.h>
+#import <WebCore/FocusController.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/KeyboardEvent.h>
 #import <WebCore/Page.h>
 #import <WebCore/Range.h>
 #import <WebCore/SelectionController.h>
@@ -1738,16 +1741,23 @@ static WebHTMLView *lastHitView = nil;
     // Also, this is responsible for letting the bridge know if the window has gained or lost focus
     // so we can send focus and blur events.
 
+    Frame* frame = core([self _frame]);
+    if (!frame)
+        return;
+    
+    Page* page = frame->page();
+    if (!page)
+        return;
+
     NSWindow *window = [self window];
     BOOL windowIsKey = [window isKeyWindow];
     BOOL windowOrSheetIsKey = windowIsKey || [[window attachedSheet] isKeyWindow];
 
     BOOL isActive = !_private->resigningFirstResponder && windowIsKey && (_private->descendantBecomingFirstResponder || [self _web_firstResponderCausesFocusDisplay]);
+    frame->setIsActive(isActive);            
 
-    if (Frame* coreFrame = core([self _frame])) {
-        coreFrame->setWindowHasFocus(windowOrSheetIsKey);
-        coreFrame->setIsActive(isActive);
-    }
+    Frame* focusedFrame = page->focusController()->focusedOrMainFrame();
+    frame->setWindowHasFocus(frame == focusedFrame && windowOrSheetIsKey);
 }
 
 - (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(unsigned)limit
@@ -2541,8 +2551,7 @@ static WebHTMLView *lastHitView = nil;
     
     if (handledEvent && coreframe) {
         if (Page* page = coreframe->page()) {
-            ContextMenu* coreMenu = page->contextMenuController()->contextMenu();
-            NSArray* menuItems = coreMenu->platformDescription();
+            NSArray* menuItems = page->contextMenuController()->contextMenu()->platformDescription();
             NSMenu* menu = nil;
             if (menuItems && [menuItems count] > 0) {
                 menu = [[NSMenu alloc] init];
@@ -2560,8 +2569,8 @@ static WebHTMLView *lastHitView = nil;
                 NSMenuItem *menuItem = [[[NSMenuItem alloc] init] autorelease];
                 [menuItem setAction:@selector(_inspectElement:)];
                 [menuItem setTitle:UI_STRING("Inspect Element", "Inspect Element context menu item")];
-                [menuItem setRepresentedObject:[[[WebElementDictionary alloc] initWithHitTestResult:
-                    coreMenu->hitTestResult()] autorelease]];
+                NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
+                [menuItem setRepresentedObject:[self elementAtPoint:point]];
                 [menu addItem:menuItem];
             }
 
@@ -2987,41 +2996,6 @@ done:
     return YES;
 }
 
-- (NSView *)nextValidKeyView
-{
-    NSView *view = nil;
-    BOOL lookInsideWebFrameViews = YES;
-    if ([self isHiddenOrHasHiddenAncestor]) {
-        lookInsideWebFrameViews = NO;
-    } else if ([self _frame] == [[self _webView] mainFrame]) {
-        // Check for case where first responder is last frame in a frameset, and we are
-        // the top-level documentView.
-        NSResponder *firstResponder = [[self window] firstResponder];
-        if ((firstResponder != self) && [firstResponder isKindOfClass:[WebHTMLView class]] && ([(NSView *)firstResponder nextKeyView] == nil)) {
-            lookInsideWebFrameViews = NO;
-        }
-    }
-    
-    if (lookInsideWebFrameViews) {
-        view = [[self _bridge] nextKeyViewInsideWebFrameViews];
-    }
-    
-    if (view == nil) {
-        view = [super nextValidKeyView];
-        // If there's no next view wired up, we must be in the last subframe, or we are
-        // being called at an unusual time when the views have not yet been wired together.
-        // There's no direct link to the next valid key view; get it from the bridge.
-        // Note that view == self here when nextKeyView returns nil, due to AppKit oddness.
-        // We'll check for both nil and self in case the AppKit oddness goes away.
-        // WebFrameView has this same kind of logic for the previousValidKeyView case.
-        if (view == nil || view == self) {
-            view = [[self _bridge] nextValidKeyViewOutsideWebFrameViews];
-        }
-    }
-        
-    return view;
-}
-
 - (NSView *)previousValidKeyView
 {
     NSView *view = nil;
@@ -3034,26 +3008,45 @@ done:
 
 - (BOOL)becomeFirstResponder
 {
-    NSView *view = nil;
-    if (![[self _webView] _isPerformingProgrammaticFocus] && !_private->willBecomeFirstResponderForNodeFocus) {
-        switch ([[self window] keyViewSelectionDirection]) {
-            case NSDirectSelection:
-                break;
-            case NSSelectingNext:
-                view = [[self _bridge] nextKeyViewInsideWebFrameViews];
-                break;
-            case NSSelectingPrevious:
-                view = [[self _bridge] previousKeyViewInsideWebFrameViews];
-                break;
-        }
-    }
+    NSSelectionDirection direction = NSDirectSelection;
+    if (![[self _webView] _isPerformingProgrammaticFocus] && !_private->willBecomeFirstResponderForNodeFocus)
+        direction = [[self window] keyViewSelectionDirection];
     _private->willBecomeFirstResponderForNodeFocus = NO;
-    if (view)
-        [[self window] makeFirstResponder:view];
+
     [self _updateActiveState];
     [self _updateFontPanel];
-    if (core([self _frame]))
-        core([self _frame])->editor()->setStartNewKillRingSequence(true);
+    
+    Frame* frame = core([self _frame]);
+    if (!frame)
+        return YES;
+    
+    frame->editor()->setStartNewKillRingSequence(true);
+
+    if (direction == NSDirectSelection)
+        return YES;
+
+    Page* page = frame->page();
+    if (!page)
+        return YES;
+
+    page->focusController()->setFocusedFrame(frame);
+    if (Document* document = frame->document())
+        document->setFocusedNode(0);
+    
+    BOOL createdFakeEvent = NO;
+    KeyboardEvent* currentEvent = frame->eventHandler()->currentKeyboardEvent().get();
+    if (!currentEvent) {
+        // If we didn't get an event (for example, when using eventSender.keyDown() under DumpRenderTree), just fake a Tab keydown.
+        currentEvent = new KeyboardEvent(EventNames::keydownEvent, true, true,
+                                         frame->document() ? frame->document()->defaultView() : 0,
+                                         "U+000009", KeyboardEvent::DOM_KEY_LOCATION_STANDARD, false, false, false, false, false);
+        createdFakeEvent = YES;
+    }
+    
+    page->focusController()->advanceFocus(currentEvent);
+    
+    if (createdFakeEvent)
+        delete currentEvent;
 
     return YES;
 }

@@ -135,6 +135,7 @@ public:
     virtual bool isSVGElement() const { return false; }
 #endif
     virtual bool isStyledElement() const { return false; }
+    virtual bool isFrameOwnerElement() const { return false; }
     virtual bool isAttributeNode() const { return false; }
     virtual bool isTextNode() const { return false; }
     virtual bool isCommentNode() const { return false; }
@@ -231,8 +232,8 @@ public:
     virtual void setActive(bool b = true, bool pause=false) { m_active = b; }
     virtual void setHovered(bool b = true) { m_hovered = b; }
 
-    unsigned short tabIndex() const { return m_tabIndex; }
-    void setTabIndex(unsigned short i) { m_tabIndex = i; }
+    short tabIndex() const { return m_tabIndex; }
+    void setTabIndex(short i) { m_tabIndex = i; }
 
     /**
      * Whether this node can receive the keyboard focus.
@@ -445,8 +446,7 @@ protected:
     typedef HashSet<NodeList*> NodeListSet;
     NodeListSet* m_nodeLists;
 
-    unsigned short m_tabIndex : 15;
-    bool m_hasTabIndex : 1;
+    short m_tabIndex;
 
     bool m_hasId : 1;
     bool m_hasClass : 1;

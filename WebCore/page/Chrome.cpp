@@ -73,6 +73,16 @@ void Chrome::unfocus() const
     m_client->unfocus();
 }
 
+bool Chrome::canTakeFocus(FocusDirection direction) const
+{
+    return m_client->canTakeFocus(direction);
+}
+
+void Chrome::takeFocus(FocusDirection direction) const
+{
+    m_client->takeFocus(direction);
+}
+
 Page* Chrome::createWindow(const FrameLoadRequest& request) const
 {
     return m_client->createWindow(request);

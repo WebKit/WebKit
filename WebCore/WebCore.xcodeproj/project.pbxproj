@@ -23,6 +23,7 @@
 /* Begin PBXBuildFile section */
 		06027CAD0B1CBFC000884B2D /* ContextMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 06027CAC0B1CBFC000884B2D /* ContextMenuItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		06027CB30B1CC03D00884B2D /* ContextMenuItemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06027CB20B1CC03D00884B2D /* ContextMenuItemMac.mm */; };
+		062287840B4DB322000C34DF /* FocusDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 062287830B4DB322000C34DF /* FocusDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		065AD4F50B0C2EDA005A2B1D /* ContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 065AD4F20B0C2EDA005A2B1D /* ContextMenuClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		065AD4F60B0C2EDA005A2B1D /* ContextMenuController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 065AD4F30B0C2EDA005A2B1D /* ContextMenuController.cpp */; };
 		065AD4F70B0C2EDA005A2B1D /* ContextMenuController.h in Headers */ = {isa = PBXBuildFile; fileRef = 065AD4F40B0C2EDA005A2B1D /* ContextMenuController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -50,7 +51,7 @@
 		148AFDA60AF58360008CC700 /* ExceptionHandlers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 148AFDA40AF58360008CC700 /* ExceptionHandlers.mm */; };
 		148CF65E0B00561400A997FC /* Screen.h in Headers */ = {isa = PBXBuildFile; fileRef = 148CF65D0B00561400A997FC /* Screen.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14993BE50B2F2B1C0050497F /* FocusController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14993BE30B2F2B1C0050497F /* FocusController.cpp */; };
-		14993BE60B2F2B1C0050497F /* FocusController.h in Headers */ = {isa = PBXBuildFile; fileRef = 14993BE40B2F2B1C0050497F /* FocusController.h */; };
+		14993BE60B2F2B1C0050497F /* FocusController.h in Headers */ = {isa = PBXBuildFile; fileRef = 14993BE40B2F2B1C0050497F /* FocusController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14C9A5EA0B3D105F005A0232 /* Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14C9A5E90B3D105F005A0232 /* Settings.cpp */; };
 		14CF78A409F58CBF00EB3665 /* JSCSSValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CF78A309F58CBF00EB3665 /* JSCSSValue.cpp */; };
 		14CF78A609F58CD800EB3665 /* JSCSSValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CF78A509F58CD800EB3665 /* JSCSSValue.h */; };
@@ -3019,6 +3020,7 @@
 /* Begin PBXFileReference section */
 		06027CAC0B1CBFC000884B2D /* ContextMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ContextMenuItem.h; sourceTree = "<group>"; };
 		06027CB20B1CC03D00884B2D /* ContextMenuItemMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuItemMac.mm; sourceTree = "<group>"; };
+		062287830B4DB322000C34DF /* FocusDirection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FocusDirection.h; sourceTree = "<group>"; };
 		065AD4F20B0C2EDA005A2B1D /* ContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ContextMenuClient.h; sourceTree = "<group>"; };
 		065AD4F30B0C2EDA005A2B1D /* ContextMenuController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ContextMenuController.cpp; sourceTree = "<group>"; };
 		065AD4F40B0C2EDA005A2B1D /* ContextMenuController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ContextMenuController.h; sourceTree = "<group>"; };
@@ -6766,6 +6768,7 @@
 				93C09A800B064F00005ABD4D /* EventHandler.cpp */,
 				14993BE40B2F2B1C0050497F /* FocusController.h */,
 				14993BE30B2F2B1C0050497F /* FocusController.cpp */,
+				062287830B4DB322000C34DF /* FocusDirection.h */,
 				65BF02290974816300C43196 /* Frame.cpp */,
 				65BF022A0974816300C43196 /* Frame.h */,
 				658436850AE01B7400E53753 /* FrameLoadRequest.h */,
@@ -10935,6 +10938,7 @@
 				B25AE55F0B49D6630074C726 /* LinearGradientAttributes.h in Headers */,
 				B25AE5600B49D6630074C726 /* RadialGradientAttributes.h in Headers */,
 				A82422700B4A16C50084722B /* SVGAnimateMotionElement.h in Headers */,
+				062287840B4DB322000C34DF /* FocusDirection.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -440,11 +440,6 @@ void HTMLObjectElement::setStandby(const String& value)
     setAttribute(standbyAttr, value);
 }
 
-int HTMLObjectElement::tabIndex() const
-{
-    return getAttribute(tabindexAttr).toInt();
-}
-
 void HTMLObjectElement::setTabIndex(int tabIndex)
 {
     setAttribute(tabindexAttr, String::number(tabIndex));

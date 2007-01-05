@@ -1,3 +1,125 @@
+2007-01-04  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Geoff.
+
+        Fix: <rdar://4800335> REGRESSION: shift-tabbing from location field
+        goes to first field rather than last (businessweek.com)
+
+        Fix: <rdar://4800373> REGRESSION: tabbing from last control focuses
+        nothing visible (busniessweek.com)
+
+        Handle tabbing into/out of subframes in WebCore instead of letting
+        AppKit do the dirty work. This change also fixes a number of bugs and
+        changes some behavior to match other browsers:
+          - No frames receive a focus event when the page is first loaded.
+          - When a frame is clicked or focused with the keyboard, it receives
+            a focus event and all other frames receive a blur event.
+          - tabindex values are clamped to the range of a signed short, rather
+            than overflowing within an unsigned short.
+          - tabindex is respected on frame owner elements, even though HTML4
+            says it shouldn't be.
+          - Subframes will be focused when tabbing if they don't contain any
+            focusable elements within them (it would be nice to only focus the
+            frame if it has scrollbars).
+
+        Renamed SelectionDirection to FocusDirection and put it in its own file.
+
+        * page/FocusDirection.h: Added.
+        (WebCore::):
+        * page/mac/WebCoreFrameBridge.mm: Updated for renames.
+        (-[WebCoreFrameBridge nextKeyView]):
+        (-[WebCoreFrameBridge previousKeyView]):
+        (-[WebCoreFrameBridge nextKeyViewInsideWebFrameViews]):
+        (-[WebCoreFrameBridge previousKeyViewInsideWebFrameViews]):
+
+        Moved advanceFocus from EventHandler to FocusController and added
+        support for moving into/out of subframes..
+
+        * page/EventHandler.cpp: Moved advanceFocus to FocusController.
+        * page/EventHandler.h: Ditto.
+        * page/FocusController.cpp:
+        (WebCore::deepFocusableNode): Static helper function to find focusable
+        nodes nested within frames.
+        (WebCore::FocusController::advanceFocus): Moved from EventHandler and
+        rewritten to handle subframes.
+        * page/FocusController.h: Added advanceFocus declaration.
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::defaultEventHandler): Updated for the move
+        of advanceFocus to FocusController.
+        * html/HTMLFrameOwnerElement.h:
+        (WebCore::HTMLFrameOwnerElement::isFrameOwnerElement): New method.
+        (WebCore::HTMLFrameOwnerElement::isKeyboardFocusable): New virtual
+        implementation used to trick Document::nextFocusableNode so that we
+        can focus frames.
+
+        Rewrote/renamed
+        Document::nextFocusableNode/Document::previousFocusableNode.
+
+        * dom/Document.cpp:
+        (WebCore::nextNodeWithExactTabIndex): New static helper
+        function.
+        (WebCore::previousNodeWithExactTabIndex): Ditto.
+        (WebCore::nextNodeWithGreaterTabIndex): Ditto.
+        (WebCore::previousNodeWithLowerTabIndex): Ditto.
+        (WebCore::Document::nextFocusableNode): Renamed from nextFocusedNode,
+        and rewritten with much simpler logic.
+        (WebCore::Document::previousFocusableNode): Ditto.
+        * dom/Document.h: Updated declarations for renames.
+        * page/mac/EventHandlerMac.mm: Updated for rename of SelectionDirection
+        to FocusDirection.
+        (WebCore::EventHandler::nextKeyViewInFrame): Updated for renames.
+        (WebCore::EventHandler::nextKeyViewInFrameHierarchy): Ditto.
+        (WebCore::EventHandler::nextKeyView): Ditto.
+        (WebCore::EventHandler::focusDocumentView): Added call to
+        setFocusedFrame when focusing the document view.
+        (WebCore::EventHandler::passMouseDownEventToWidget): Removed LOG_ERROR
+        when a nil NSView is returned from AppKit, as this is a fairly common
+        occurrence when a RenderWidget has a border.
+        (WebCore::EventHandler::passWheelEventToWidget): Added a nil-check of
+        the hit-tested NSView.
+
+        Changed storage of tabIndex to a signed short, and added clamping of
+        tabindex attribute values to match Firefox's behavior.
+
+        * dom/Node.h: Use a signed short to store m_tabIndex.
+        (WebCore::Node::isFrameOwnerElement): New method.
+        (WebCore::Node::tabIndex): Updated for signedness.
+        (WebCore::Node::setTabIndex): Ditto.
+        * html/HTMLAnchorElement.cpp: Remove implementation of tabIndex() so
+        that Node::tabIndex() will be called instead and return the clamped
+        value (which matches Firefox's behavior).
+        * html/HTMLAnchorElement.h: Ditto.
+        * html/HTMLAreaElement.cpp: Ditto.
+        * html/HTMLAreaElement.h: Ditto.
+        * html/HTMLGenericFormElement.cpp: Ditto.
+        * html/HTMLGenericFormElement.h: Ditto.
+        * html/HTMLObjectElement.cpp: Ditto.
+        * html/HTMLObjectElement.h: Ditto.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute): Clamp tabIndex to the
+        range of a signed short to match Firefox.
+
+        Added two new Chrome methods for transferring focus out of the
+        WebView.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::canTakeFocus):
+        (WebCore::Chrome::takeFocus):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/graphics/svg/SVGImageEmptyClients.h: Fixed typo "CromeClient" -> "ChromeClient".
+        (WebCore::SVGEmptyChromeClient::~SVGEmptyChromeClient):
+        (WebCore::SVGEmptyChromeClient::canTakeFocus):
+        (WebCore::SVGEmptyChromeClient::takeFocus):
+        * platform/graphics/svg/SVGImage.cpp:
+        (WebCore::SVGImage::setData): Fixed typo.
+
+        Miscellaneous:
+
+        * WebCore.exp: Updated/sorted symbols.
+        * WebCore.xcodeproj/project.pbxproj: Made FocusController.h Private so
+        WebKit can access it.
+
 2007-01-04  Brady Eidson  <beidson@apple.com>
 
         Reverted Anders' change to fix the world

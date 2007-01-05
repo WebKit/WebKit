@@ -101,7 +101,7 @@ function addElements(parentElement)
     var anchor = parentElement.document.createElement('a');
     anchor.innerHTML = "anchor";
     anchor.href = "javascript:";
-    addEventListeners(input);
+    addEventListeners(anchor);
     parentElement.appendChild(anchor);
 }
 
@@ -127,11 +127,13 @@ setup();
 
 log('PARENT DOCUMENT:\n');
 document.getElementsByTagName('input')[0].focus();
-for (var i = 0; i < 13; ++i) //>
+for (var i = 0; i < 12; ++i) //>
     dispatchOptionTab(lastFocusedElement, false);
+
+lastFocusedElement.blur();
 
 log('\nIFRAME DOCUMENT:\n');
 document.getElementById('testIframe').contentDocument.getElementsByTagName('input')[0].focus();
-for (var i = 0; i < 13; ++i) //>
+for (var i = 0; i < 12; ++i) //>
     dispatchOptionTab(lastFocusedElement, false);
 </script>

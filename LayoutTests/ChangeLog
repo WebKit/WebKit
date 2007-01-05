@@ -1,3 +1,30 @@
+2007-01-04  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Geoff.
+
+        Added new tests for tabindex and tabbing into/out of subframes.
+
+        * fast/dom/tabindex-clamp-expected.txt: Added.
+        * fast/dom/tabindex-clamp.html: Added.
+        * fast/events/frame-click-focus-expected.txt: Added.
+        * fast/events/frame-click-focus.html: Added.
+        * fast/events/frame-tab-focus-expected.txt: Added.
+        * fast/events/frame-tab-focus.html: Added.
+        * fast/events/resources/frame-tab-focus-child.html: Added.
+        * fast/events/resources/frame-tab-focus-empty-child.html: Added.
+        * fast/events/resources/frame-tab-focus-empty-middle.html: Added.
+        * fast/events/resources/frame-tab-focus-middle.html: Added.
+        * fast/events/resources/frame-tab-focus-upper.html: Added.
+        * fast/html/tab-order-expected.txt: Added.
+        * fast/html/tab-order.html: Added.
+
+        Updated test to match new behavior.
+
+        * fast/forms/focus2-expected.txt: Updated results.
+        * fast/forms/focus2.html: Fixed typo, and reduced the number of tab
+        events dispatched now that frames containing focusable elements aren't
+        themselves in the tab order.
+
 2007-01-04  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Sam Weinig.
@@ -22,7 +49,7 @@
         * editing/pasteboard/4861080-expected.txt: Added.
         * editing/pasteboard/4861080.html: Added.
 
-2007-01-03  Adele Peterson  <adele@apple.com>
+2007-01-04  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
 

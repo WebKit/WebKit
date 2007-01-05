@@ -21,6 +21,8 @@
 #ifndef ChromeClient_h
 #define ChromeClient_h
 
+#include "FocusDirection.h"
+
 namespace WebCore {
 
     class FloatRect;
@@ -44,6 +46,9 @@ namespace WebCore {
     
         virtual void focus() = 0;
         virtual void unfocus() = 0;
+
+        virtual bool canTakeFocus(FocusDirection) = 0;
+        virtual void takeFocus(FocusDirection) = 0;
 
         virtual Page* createWindow(const FrameLoadRequest&) = 0;
         virtual Page* createModalDialog(const FrameLoadRequest&) = 0;

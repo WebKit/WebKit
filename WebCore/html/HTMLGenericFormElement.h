@@ -98,7 +98,6 @@ public:
     virtual bool isActivatedSubmit() const { return false; }
     virtual void setActivatedSubmit(bool flag) { }
 
-    int tabIndex() const;
     void setTabIndex(int);
 
 protected:

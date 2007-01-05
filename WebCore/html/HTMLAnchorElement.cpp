@@ -389,11 +389,6 @@ void HTMLAnchorElement::setShape(const String &value)
     setAttribute(shapeAttr, value);
 }
 
-int HTMLAnchorElement::tabIndex() const
-{
-    return getAttribute(tabindexAttr).toInt();
-}
-
 void HTMLAnchorElement::setTabIndex(int tabIndex)
 {
     setAttribute(tabindexAttr, String::number(tabIndex));

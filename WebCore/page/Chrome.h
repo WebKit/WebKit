@@ -21,6 +21,7 @@
 #ifndef Chrome_h
 #define Chrome_h
 
+#include "FocusDirection.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
@@ -32,6 +33,7 @@ namespace WebCore {
     class Frame;
     class Page;
     class String;
+    
     struct FrameLoadRequest;
     
     class Chrome {
@@ -50,6 +52,9 @@ namespace WebCore {
 
         void focus() const;
         void unfocus() const;
+
+        bool canTakeFocus(FocusDirection) const;
+        void takeFocus(FocusDirection) const;
 
         Page* createWindow(const FrameLoadRequest&) const;
         Page* createModalDialog(const FrameLoadRequest&) const;

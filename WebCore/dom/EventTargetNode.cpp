@@ -33,6 +33,7 @@
 #include "EventHandler.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
@@ -562,9 +563,9 @@ void EventTargetNode::defaultEventHandler(Event* event)
     if (eventType == keypressEvent && event->isKeyboardEvent()) {
         KeyboardEvent* keyEvent = static_cast<KeyboardEvent*>(event);
         if (keyEvent->keyIdentifier() == "U+000009") {
-            Frame* frame = document()->frame();
-            if (frame && frame->view() && frame->eventHandler()->advanceFocus(keyEvent))
-                event->setDefaultHandled();
+            if (Page* page = document()->page())
+                if (page->focusController()->advanceFocus(keyEvent))
+                    event->setDefaultHandled();
         }
     } else if (eventType == clickEvent) {
         int detail = event->isUIEvent() ? static_cast<UIEvent*>(event)->detail() : 0;

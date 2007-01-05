@@ -1509,178 +1509,103 @@ void Document::determineParseMode(const String&)
     hMode = XHtml;
 }
 
-Node* Document::nextFocusedNode(Node* fromNode, KeyboardEvent* event)
+static Node* nextNodeWithExactTabIndex(Node* start, int tabIndex, KeyboardEvent* event)
 {
-    unsigned short fromTabIndex;
-
-    if (!fromNode) {
-        // No starting node supplied; begin with the top of the document
-
-        int lowestTabIndex = 65535;
-        for (Node* n = this; n; n = n->traverseNextNode())
-            if (n->isKeyboardFocusable(event) && n->tabIndex() > 0 && n->tabIndex() < lowestTabIndex)
-                lowestTabIndex = n->tabIndex();
-
-        if (lowestTabIndex == 65535)
-            lowestTabIndex = 0;
-
-        // Go to the first node in the document that has the desired tab index
-        for (Node* n = this; n; n = n->traverseNextNode())
-            if (n->isKeyboardFocusable(event) && n->tabIndex() == lowestTabIndex)
-                return n;
-
-        return 0;
-    }
-
-    fromTabIndex = fromNode->tabIndex();
-
-    if (fromTabIndex == 0) {
-        // Just need to find the next selectable node after fromNode (in document order) that has a tab index of 0
-        Node* n;
-        for (n = fromNode->traverseNextNode(); n; n = n->traverseNextNode())
-            if (n->isKeyboardFocusable(event) && n->tabIndex() == 0)
-                break;
-        
-        return n;
-    }
+    // Search is inclusive of start
+    for (Node* n = start; n; n = n->traverseNextNode())
+        if (n->isKeyboardFocusable(event) && n->tabIndex() == tabIndex)
+            return n;
     
-    // Find the lowest tab index out of all the nodes except fromNode, that is greater than or equal to fromNode's
-    // tab index. For nodes with the same tab index as fromNode, we are only interested in those that come after
-    // fromNode in document order.
-    // If we don't find a suitable tab index, the next focus node will be one with a tab index of 0.
-    unsigned short lowestSuitableTabIndex = 65535;
-
-    bool reachedFromNode = false;
-    for (Node* n = this; n; n = n->traverseNextNode()) {
-        if (n == fromNode)
-            reachedFromNode = true;
-        else if (n->isKeyboardFocusable(event)
-                 && ((reachedFromNode && n->tabIndex() >= fromTabIndex)
-                     || (!reachedFromNode && n->tabIndex() > fromTabIndex)))
-            // We found a selectable node with a tab index at least as high as fromNode's. Keep searching though,
-            // as there may be another node which has a lower tab index but is still suitable for use.
-            lowestSuitableTabIndex = min(lowestSuitableTabIndex, n->tabIndex());
-    }
-
-    if (lowestSuitableTabIndex == 65535) {
-        // No next node with a tab index -> just take first node with tab index of 0
-        Node* n;
-        for (n = this; n; n = n->traverseNextNode())
-            if (n->isKeyboardFocusable(event) && n->tabIndex() == 0)
-                break;
-        
-        return n;
-    }
-
-    // Search forwards from fromNode
-    for (Node* n = fromNode->traverseNextNode(); n; n = n->traverseNextNode())
-        if (n->isKeyboardFocusable(event) && n->tabIndex() == lowestSuitableTabIndex)
-            return n;
-
-    // The next node isn't after fromNode, start from the beginning of the document
-    for (Node* n = this; n != fromNode; n = n->traverseNextNode())
-        if (n->isKeyboardFocusable(event) && n->tabIndex() == lowestSuitableTabIndex)
-            return n;
-
-    ASSERT_NOT_REACHED();
     return 0;
 }
 
-Node* Document::previousFocusedNode(Node* fromNode, KeyboardEvent* event)
+static Node* previousNodeWithExactTabIndex(Node* start, int tabIndex, KeyboardEvent* event)
 {
-    Node* lastNode;
-    for (lastNode = this; lastNode->lastChild(); lastNode = lastNode->lastChild());
-    
-    if (!fromNode) {
-        // No starting node supplied; begin with the very last node in the document
-
-        int highestTabIndex = 0;
-        for (Node* n = lastNode; n; n = n->traversePreviousNode()) {
-            if (n->isKeyboardFocusable(event)) {
-                if (n->tabIndex() == 0)
-                    return n;
-                else if (n->tabIndex() > highestTabIndex)
-                    highestTabIndex = n->tabIndex();
-            }
-        }
-
-        // No node with a tab index of 0; just go to the last node with the highest tab index
-        for (Node* n = lastNode; n; n = n->traversePreviousNode())
-            if (n->isKeyboardFocusable(event) && n->tabIndex() == highestTabIndex)
-                return n;
-
-        return 0;
-    }
-    
-    unsigned short fromTabIndex = fromNode->tabIndex();
-
-    if (fromTabIndex == 0) {
-        // Find the previous selectable node before fromNode (in document order) that has a tab index of 0
-        Node* n;
-        for (n = fromNode->traversePreviousNode(); n; n = n->traversePreviousNode())
-            if (n->isKeyboardFocusable(event) && n->tabIndex() == 0)
-                break;
-        
-        if (n)
-            return n;
-
-        // No previous nodes with a 0 tab index, go to the last node in the document that has the highest tab index
-        int highestTabIndex = 0;
-        for (n = this; n; n = n->traverseNextNode())
-            if (n->isKeyboardFocusable(event) && n->tabIndex() > highestTabIndex)
-                highestTabIndex = n->tabIndex();
-
-        if (!highestTabIndex)
-            return 0;
-
-        for (n = lastNode; n; n = n->traversePreviousNode())
-            if (n->isKeyboardFocusable(event) && n->tabIndex() == highestTabIndex)
-                return n;
-
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-    
-    // Find the lowest tab index out of all the nodes except fromNode, that is less than or equal to fromNode's
-    // tab index. For nodes with the same tab index as fromNode, we are only interested in those before
-    // fromNode.
-    // If we don't find a suitable tab index, then there will be no previous focus node.
-    unsigned short highestSuitableTabIndex = 0;
-
-    bool reachedFromNode = false;
-    for (Node* n = this; n; n = n->traverseNextNode()) {
-        if (n->isKeyboardFocusable(event) &&
-            ((!reachedFromNode && (n->tabIndex() <= fromTabIndex)) ||
-             (reachedFromNode && (n->tabIndex() < fromTabIndex)))  &&
-            (n->tabIndex() > highestSuitableTabIndex) &&
-            (n != fromNode)) {
-
-            // We found a selectable node with a tab index no higher than fromNode's. Keep searching though, as
-            // there may be another node which has a higher tab index but is still suitable for use.
-            highestSuitableTabIndex = n->tabIndex();
-        }
-
-        if (n == fromNode)
-            reachedFromNode = true;
-    }
-
-    if (highestSuitableTabIndex == 0)
-        // No previous node with a tab index. Since the order specified by HTML is nodes with tab index > 0
-        // first, this means that there is no previous node.
-        return 0;
-
-    // Search backwards from fromNode
-    for (Node* n = fromNode->traversePreviousNode(); n; n = n->traversePreviousNode())
-        if (n->isKeyboardFocusable(event) && (n->tabIndex() == highestSuitableTabIndex))
+    // Search is inclusive of start
+    for (Node* n = start; n; n = n->traversePreviousNode())
+        if (n->isKeyboardFocusable(event) && n->tabIndex() == tabIndex)
             return n;
     
-    // The previous node isn't before fromNode, start from the end of the document
-    for (Node* n = lastNode; n != fromNode; n = n->traversePreviousNode())
-        if (n->isKeyboardFocusable(event) && (n->tabIndex() == highestSuitableTabIndex))
-            return n;
-
-    ASSERT_NOT_REACHED();
     return 0;
+}
+
+static Node* nextNodeWithGreaterTabIndex(Node* start, int tabIndex, KeyboardEvent* event)
+{
+    // Search is inclusive of start
+    int winningTabIndex = SHRT_MAX + 1;
+    Node* winner = 0;
+    for (Node* n = start; n; n = n->traverseNextNode())
+        if (n->isKeyboardFocusable(event) && n->tabIndex() > tabIndex && n->tabIndex() < winningTabIndex) {
+            winner = n;
+            winningTabIndex = n->tabIndex();
+        }
+    
+    return winner;
+}
+
+static Node* previousNodeWithLowerTabIndex(Node* start, int tabIndex, KeyboardEvent* event)
+{
+    // Search is inclusive of start
+    int winningTabIndex = 0;
+    Node* winner = 0;
+    for (Node* n = start; n; n = n->traversePreviousNode())
+        if (n->isKeyboardFocusable(event) && n->tabIndex() < tabIndex && n->tabIndex() > winningTabIndex) {
+            winner = n;
+            winningTabIndex = n->tabIndex();
+        }
+    
+    return winner;
+}
+
+Node* Document::nextFocusableNode(Node* start, KeyboardEvent* event)
+{
+    if (start) {
+        // First try to find a node with the same tabindex as start that comes after start in the document.
+        if (Node* winner = nextNodeWithExactTabIndex(start->traverseNextNode(), start->tabIndex(), event))
+            return winner;
+
+        if (start->tabIndex() == 0)
+            // We've reached the last node in the document with a tabindex of 0. This is the end of the tabbing order.
+            return 0;
+    }
+
+    // Look for the first node in the document that:
+    // 1) has the lowest tabindex that is higher than start's tabindex (or 0, if start is null), and
+    // 2) comes first in the document, if there's a tie.
+    if (Node* winner = nextNodeWithGreaterTabIndex(this, start ? start->tabIndex() : 0, event))
+        return winner;
+
+    // There are no nodes with a tabindex greater than start's tabindex,
+    // so find the first node with a tabindex of 0.
+    return nextNodeWithExactTabIndex(this, 0, event);
+}
+
+Node* Document::previousFocusableNode(Node* start, KeyboardEvent* event)
+{
+    Node* last;
+    for (last = this; last->lastChild(); last = last->lastChild())
+        ; // Empty loop.
+
+    // First try to find the last node in the document that comes before start and has the same tabindex as start.
+    // If start is null, find the last node in the document with a tabindex of 0.
+    Node* startingNode;
+    int startingTabIndex;
+    if (start) {
+        startingNode = start->traversePreviousNode();
+        startingTabIndex = start->tabIndex();
+    } else {
+        startingNode = last;
+        startingTabIndex = 0;
+    }
+
+    if (Node* winner = previousNodeWithExactTabIndex(startingNode, startingTabIndex, event))
+        return winner;
+
+    // There are no nodes before start with the same tabindex as start, so look for a node that:
+    // 1) has the highest non-zero tabindex (that is less than start's tabindex), and
+    // 2) comes last in the document, if there's a tie.
+    startingTabIndex = (start && start->tabIndex()) ? start->tabIndex() : SHRT_MAX;
+    return previousNodeWithLowerTabIndex(last, startingTabIndex, event);
 }
 
 int Document::nodeAbsIndex(Node *node)
