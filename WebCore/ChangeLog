@@ -2,6 +2,17 @@
 
         Reviewed by Adam.
 
+        http://bugs.webkit.org/show_bug.cgi?id=12120
+        REGRESSION(r18605): Safari snippet editor no longer works
+        
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::willSendRequest):
+        Fix logic so applewebdata: URLs no longer cause the underlying URL to be fetched .
+
+2007-01-04  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
         Move all remaining instances of NSURLRequest over to ResourceRequest (well, pretty much all).
 
         * loader/MainResourceLoader.h:
