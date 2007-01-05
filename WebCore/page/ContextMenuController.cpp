@@ -35,6 +35,7 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Event.h"
+#include "EventHandler.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -72,22 +73,15 @@ void ContextMenuController::handleContextMenuEvent(Event* event)
 {
     ASSERT(event->type() == contextmenuEvent);
     MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
-    HitTestResult result(IntPoint(mouseEvent->pageX(), mouseEvent->pageY()));
+    IntPoint point = IntPoint(mouseEvent->pageX(), mouseEvent->pageY());
+    HitTestResult result(point);
 
-    if (RenderObject* renderer = event->target()->toNode()->renderer())
-        if (RenderLayer* layer = renderer->enclosingLayer())
-            layer->hitTest(HitTestRequest(false, true), result);
-
-    if (!result.innerNonSharedNode()) {
-        Frame* mainFrame = m_page->mainFrame();
-        if (!mainFrame)
-            return;
-        Document* document = mainFrame->document();
-        if (!document)
-            return;
-        result.setInnerNonSharedNode(document);
-        result.setInnerNode(document);
-    }
+    if (Document* document = event->target()->toNode()->document())
+        if (Frame* frame = document->frame())
+            result = frame->eventHandler()->hitTestResultAtPoint(point, false);
+    
+    if (!result.innerNonSharedNode())
+        return;
 
     m_contextMenu.set(new ContextMenu(result));
     m_contextMenu->populate();

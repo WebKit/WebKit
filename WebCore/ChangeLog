@@ -1,3 +1,18 @@
+2007-01-05  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        Fix for <rdar://problem/4863434> Wrong contextual menu appears for 
+        textarea and input elements at http://www.apple.com/feedback/
+        ical.html
+
+        No test cases added since context menus are not in DRT.
+
+        * page/ContextMenuController.cpp: 
+        (WebCore::ContextMenuController::handleContextMenuEvent): Call 
+        EventHandler's hitTestResultAtPoint() instead of just hit testing 
+        the layer.
+
 2007-01-05  Anders Carlsson  <acarlsson@apple.com>
 
         Rubber-stamped by Adam.
