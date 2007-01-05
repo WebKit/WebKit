@@ -1289,7 +1289,10 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     FrameView* outerView = m_frame->view();
     FrameView* innerView = node->document()->view();
     IntPoint innerPoint = innerView->windowToContents(outerView->contentsToWindow(outerPoint));
-    return renderer->positionForCoordinates(innerPoint.x(), innerPoint.y());
+    VisiblePosition visiblePos = renderer->positionForCoordinates(innerPoint.x(), innerPoint.y());
+    if (visiblePos.isNull())
+        visiblePos = VisiblePosition(Position(node, 0));
+    return visiblePos;
 }
 
 - (void)moveDragCaretToPoint:(NSPoint)point

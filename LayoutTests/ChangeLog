@@ -1,3 +1,15 @@
+2007-01-04  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <rdar://problem/4861080>
+        GMail Editor: Crash when dropping content into certain list items
+
+        * editing/pasteboard/4861080-expected.checksum: Added.
+        * editing/pasteboard/4861080-expected.png: Added.
+        * editing/pasteboard/4861080-expected.txt: Added.
+        * editing/pasteboard/4861080.html: Added.
+
 2007-01-03  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

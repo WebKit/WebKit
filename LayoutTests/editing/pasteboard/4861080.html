@@ -1,0 +1,49 @@
+<p>This tests dropping content into the unwanted space above a list items content when the content is wrapped in a span.  You should see 'DragMe DropAboveMe'.</p>
+<div contenteditable="true">
+<li id="li" style="border: 1px solid black;"><span><div id="contents" style="border: 1px solid red;">DropAboveMe</div></span></li>
+<div><span id="drag">DragMe</span></div>
+</div>
+<ul id="console"></ul>
+<script>
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+
+function runTest() {
+    if (!window.layoutTestController)
+        log("This can only be run automatically using the layout test engine.  To run it manually, drag 'Dragme' and drop it above 'DropAboveMe'.");
+    
+    window.layoutTestController.waitUntilDone();
+
+    var drag = document.getElementById("drag");
+    var dragx = drag.offsetParent.offsetLeft + drag.offsetLeft + drag.offsetWidth / 2;
+    var dragy = drag.offsetParent.offsetTop +  drag.offsetTop + drag.offsetHeight / 2;
+    
+    eventSender.mouseMoveTo(dragx, dragy);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    // Leap forward so that the next mouseDown doesn't trigger a triple click.
+    eventSender.leapForward(1200);
+    
+    eventSender.mouseDown();
+    // Leap forward so that the mouse movement causes a drag instead of selection creation.
+    eventSender.leapForward(500);
+
+    var li = document.getElementById("li");
+    
+    var dropx = li.offsetParent.offsetLeft + li.offsetLeft + li.offsetWidth / 2;
+    var dropy = li.offsetParent.offsetTop + li.offsetTop + 15;
+
+    eventSender.mouseMoveTo(dropx, dropy);
+    eventSender.mouseUp();
+    
+    window.layoutTestController.notifyDone();
+}
+
+runTest();
+</script>

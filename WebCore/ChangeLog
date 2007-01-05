@@ -1,3 +1,24 @@
+2007-01-04  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        <rdar://problem/4861080>
+        GMail Editor: Crash when dropping content into certain list items
+        
+        A rendering bug (4907469) creates unwanted space at the top of a 
+        list item when its contents are wrapped in span.  Dropping content 
+        inside that space causes a crash because positionForCoordinates 
+        fails there and the code that creates drag carets can't handle it.
+
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge _visiblePositionForPoint:]): Added the
+        that's inside click handling for the case where 
+        positionForCoordinates returns null.  We should also fix 
+        positionForCoordinates but that's less important: now its only side 
+        effect is that a no-op drop is performed instead of a snap back 
+        when you drop the contents of one of these list items its own 
+        unwanted space.
+
 2007-01-04  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.
