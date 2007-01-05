@@ -1,3 +1,171 @@
+2007-01-04  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=12078
+          Clean up RenderTable*
+
+        - Coding style cleanup.
+        - Canceled AutoTableLayout and FixedTableLayout being friend classes of
+          RenderTable. Instead, added public accessors to RenderTable for what
+          the table layout classes need and changed TableLayout::calcMinMaxWidth()
+          to take references to the caller's min and max widths.
+        - Made RenderTableSection's grid protected and moved code that accessed it
+          from RenderTable into RenderTableSection.
+
+        No test possible (no change to functionality).
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::calcMinMaxWidth):
+        (WebCore::AutoTableLayout::layout):
+        * rendering/AutoTableLayout.h:
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::calcWidthArray):
+        (WebCore::FixedTableLayout::calcMinMaxWidth):
+        (WebCore::FixedTableLayout::layout):
+        * rendering/FixedTableLayout.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::RenderTable):
+        (WebCore::RenderTable::~RenderTable):
+        (WebCore::RenderTable::setStyle):
+        (WebCore::RenderTable::addChild):
+        (WebCore::RenderTable::calcWidth):
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::setCellWidths):
+        (WebCore::RenderTable::paint):
+        (WebCore::RenderTable::paintBoxDecorations):
+        (WebCore::RenderTable::calcMinMaxWidth):
+        (WebCore::RenderTable::splitColumn): Factored out the section work
+        to RenderTableSection::splitColumn().
+        (WebCore::RenderTable::appendColumn): Factored out the section work
+        to RenderTableSection::appendColumn().
+        (WebCore::RenderTable::colElement):
+        (WebCore::RenderTable::recalcSections):
+        (WebCore::RenderTable::removeChildNode):
+        (WebCore::RenderTable::calcBorderLeft):
+        (WebCore::RenderTable::calcBorderRight):
+        (WebCore::RenderTable::outerBorderTop):
+        (WebCore::RenderTable::outerBorderBottom):
+        (WebCore::RenderTable::outerBorderLeft):
+        (WebCore::RenderTable::outerBorderRight):
+        (WebCore::RenderTable::sectionAbove):
+        (WebCore::RenderTable::sectionBelow):
+        (WebCore::RenderTable::cellAbove):
+        (WebCore::RenderTable::cellBelow):
+        (WebCore::RenderTable::cellBefore):
+        (WebCore::RenderTable::getOverflowClipRect):
+        (WebCore::RenderTable::dump):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::getColumnPos):
+        (WebCore::RenderTable::hBorderSpacing):
+        (WebCore::RenderTable::vBorderSpacing):
+        (WebCore::RenderTable::getRules):
+        (WebCore::RenderTable::cellPadding):
+        (WebCore::RenderTable::setCellPadding):
+        (WebCore::RenderTable::ColumnStruct::ColumnStruct):
+        (WebCore::RenderTable::columns): Added this accessor.
+        (WebCore::RenderTable::columnPositions): Added this accessor.
+        (WebCore::RenderTable::header):
+        (WebCore::RenderTable::footer):
+        (WebCore::RenderTable::firstBody):
+        (WebCore::RenderTable::numEffCols):
+        (WebCore::RenderTable::spanOfEffCol):
+        (WebCore::RenderTable::colToEffCol):
+        (WebCore::RenderTable::effColToCol):
+        (WebCore::RenderTable::bordersPaddingAndSpacing):
+        (WebCore::RenderTable::needsSectionRecalc):
+        (WebCore::RenderTable::setNeedsSectionRecalc): Renamed setNeedSectionRecalc()
+        to this.
+        (WebCore::RenderTable::hasSections):
+        (WebCore::RenderTable::recalcSectionsIfNeeded):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::RenderTableCell):
+        (WebCore::RenderTableCell::destroy):
+        (WebCore::RenderTableCell::updateFromElement):
+        (WebCore::RenderTableCell::styleOrColWidth):
+        (WebCore::RenderTableCell::computeAbsoluteRepaintRect):
+        (WebCore::RenderTableCell::absolutePosition):
+        (WebCore::RenderTableCell::baselinePosition):
+        (WebCore::RenderTableCell::setStyle):
+        (WebCore::compareBorders):
+        (WebCore::RenderTableCell::collapsedTopBorder):
+        (WebCore::RenderTableCell::paint):
+        (WebCore::collapsedBorderStyle):
+        (WebCore::CollapsedBorder::CollapsedBorder):
+        (WebCore::CollapsedBorders::CollapsedBorders):
+        (WebCore::CollapsedBorders::addBorder):
+        (WebCore::CollapsedBorders::nextBorder):
+        (WebCore::RenderTableCell::paintCollapsedBorder):
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        (WebCore::RenderTableCell::paintBoxDecorations):
+        (WebCore::RenderTableCell::dump):
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::colSpan):
+        (WebCore::RenderTableCell::setColSpan):
+        (WebCore::RenderTableCell::rowSpan):
+        (WebCore::RenderTableCell::setRowSpan):
+        (WebCore::RenderTableCell::col):
+        (WebCore::RenderTableCell::setCol):
+        (WebCore::RenderTableCell::row):
+        (WebCore::RenderTableCell::setRow):
+        (WebCore::RenderTableCell::section):
+        (WebCore::RenderTableCell::table):
+        (WebCore::RenderTableCell::yPos):
+        (WebCore::RenderTableCell::setCellTopExtra):
+        (WebCore::RenderTableCell::setCellBottomExtra):
+        (WebCore::RenderTableCell::borderTopExtra):
+        (WebCore::RenderTableCell::borderBottomExtra):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::destroy):
+        (WebCore::RenderTableRow::setStyle):
+        (WebCore::RenderTableRow::addChild):
+        (WebCore::RenderTableRow::layout):
+        (WebCore::RenderTableRow::getAbsoluteRepaintRect):
+        (WebCore::RenderTableRow::paint):
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::section):
+        (WebCore::RenderTableRow::table):
+        (WebCore::RenderTableRow::lineHeight):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::RenderTableSection):
+        (WebCore::RenderTableSection::destroy):
+        (WebCore::RenderTableSection::setStyle):
+        (WebCore::RenderTableSection::addChild):
+        (WebCore::RenderTableSection::ensureRows):
+        (WebCore::RenderTableSection::addCell):
+        (WebCore::RenderTableSection::setCellWidths):
+        (WebCore::RenderTableSection::calcRowHeight):
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::lowestPosition):
+        (WebCore::RenderTableSection::rightmostPosition):
+        (WebCore::RenderTableSection::leftmostPosition):
+        (WebCore::RenderTableSection::calcOuterBorderTop):
+        (WebCore::RenderTableSection::calcOuterBorderBottom):
+        (WebCore::RenderTableSection::calcOuterBorderLeft):
+        (WebCore::RenderTableSection::calcOuterBorderRight):
+        (WebCore::RenderTableSection::paint):
+        (WebCore::RenderTableSection::recalcCells):
+        (WebCore::RenderTableSection::clearGrid):
+        (WebCore::RenderTableSection::numColumns):
+        (WebCore::RenderTableSection::appendColumn): Added. Moved code from
+        RenderTable::appendColumn() into here.
+        (WebCore::RenderTableSection::splitColumn): Added. Moved code from
+        RenderTable::splitColumn() into here.
+        (WebCore::RenderTableSection::removeChildNode):
+        (WebCore::RenderTableSection::dump):
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::renderName):
+        (WebCore::RenderTableSection::isTableSection):
+        (WebCore::RenderTableSection::lineHeight):
+        (WebCore::RenderTableSection::table):
+        (WebCore::RenderTableSection::cellAt):
+        (WebCore::RenderTableSection::numRows):
+        (WebCore::RenderTableSection::recalcCellsIfNeeded):
+        (WebCore::RenderTableSection::needsCellRecalc):
+        (WebCore::RenderTableSection::setNeedsCellRecalc):
+        (WebCore::RenderTableSection::getBaseline):
+        * rendering/TableLayout.h:
+
 2007-01-04  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam.

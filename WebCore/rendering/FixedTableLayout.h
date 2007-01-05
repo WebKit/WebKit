@@ -36,8 +36,8 @@ public:
     FixedTableLayout(RenderTable*);
     ~FixedTableLayout();
 
-    void calcMinMaxWidth();
-    void layout();
+    virtual void calcMinMaxWidth(int& minWidth, int& maxWidth);
+    virtual void layout();
 
 protected:
     int calcWidthArray(int tableWidth);

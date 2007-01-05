@@ -244,16 +244,13 @@ static bool shouldScaleColumns(RenderTable* table)
     return scale;
 }
 
-void AutoTableLayout::calcMinMaxWidth()
+void AutoTableLayout::calcMinMaxWidth(int& minWidth, int& maxWidth)
 {
-#ifdef DEBUG_LAYOUT
-    qDebug("AutoTableLayout::calcMinMaxWidth");
-#endif
     fullRecalc();
 
     int spanMaxWidth = calcEffectiveWidth();
-    int minWidth = 0;
-    int maxWidth = 0;
+    minWidth = 0;
+    maxWidth = 0;
     int maxPercent = 0;
     int maxNonPercent = 0;
 
@@ -289,12 +286,6 @@ void AutoTableLayout::calcMinMaxWidth()
         minWidth = max(minWidth, tw.value());
         maxWidth = minWidth;
     }
-
-    m_table->m_maxWidth = maxWidth;
-    m_table->m_minWidth = minWidth;
-#ifdef DEBUG_LAYOUT
-    qDebug("    minWidth=%d, maxWidth=%d", m_table->m_minWidth, m_table->m_maxWidth);
-#endif
 }
 
 /*
@@ -828,10 +819,10 @@ void AutoTableLayout::layout()
 #ifdef DEBUG_LAYOUT
         qDebug("col %d: %d (width %d)", i, pos, m_layoutStruct[i].calcWidth);
 #endif
-        m_table->columnPos[i] = pos;
+        m_table->columnPositions()[i] = pos;
         pos += m_layoutStruct[i].calcWidth + m_table->hBorderSpacing();
     }
-    m_table->columnPos[m_table->columnPos.size()-1] = pos;
+    m_table->columnPositions()[m_table->columnPositions().size() - 1] = pos;
 }
 
 

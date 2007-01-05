@@ -24,8 +24,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef RenderTableCell_H
-#define RenderTableCell_H
+#ifndef RenderTableCell_h
+#define RenderTableCell_h
 
 #include "RenderTableSection.h"
 
@@ -35,25 +35,29 @@ class RenderTableCell : public RenderBlock {
 public:
     RenderTableCell(Node*);
 
-    virtual void destroy();
-
     virtual const char* renderName() const { return "RenderTableCell"; }
+
     virtual bool isTableCell() const { return true; }
+
+    virtual void destroy();
 
     // FIXME: need to implement cellIndex
     int cellIndex() const { return 0; }
     void setCellIndex(int) { }
 
-    int colSpan() const { return cSpan; }
-    void setColSpan(int c) { cSpan = c; }
+    int colSpan() const { return m_columnSpan; }
+    void setColSpan(int c) { m_columnSpan = c; }
 
-    int rowSpan() const { return rSpan; }
-    void setRowSpan(int r) { rSpan = r; }
+    int rowSpan() const { return m_rowSpan; }
+    void setRowSpan(int r) { m_rowSpan = r; }
 
-    int col() const { return _col; }
-    void setCol(int col) { _col = col; }
-    int row() const { return _row; }
-    void setRow(int r) { _row = r; }
+    int col() const { return m_column; }
+    void setCol(int col) { m_column = col; }
+    int row() const { return m_row; }
+    void setRow(int row) { m_row = row; }
+
+    RenderTableSection* section() const { return static_cast<RenderTableSection*>(parent()->parent()); }
+    RenderTable* table() const { return static_cast<RenderTable*>(parent()->parent()->parent()); }
 
     Length styleOrColWidth();
 
@@ -85,49 +89,42 @@ public:
     virtual void updateFromElement();
 
     virtual void layout();
-    
-    void setCellTopExtra(int p) { _topExtra = p; }
-    void setCellBottomExtra(int p) { _bottomExtra = p; }
 
     virtual void paint(PaintInfo&, int tx, int ty);
-
+    virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
     void paintCollapsedBorder(GraphicsContext*, int x, int y, int w, int h);
-    
-    // lie about position to outside observers
-    virtual int yPos() const { return m_y + _topExtra; }
-
-    virtual IntRect getAbsoluteRepaintRect();
-    virtual void computeAbsoluteRepaintRect(IntRect&, bool f=false);
-    virtual bool absolutePosition(int& xPos, int& yPos, bool f = false);
-
-    virtual short baselinePosition(bool = false) const;
-
-    virtual int borderTopExtra() const { return _topExtra; }
-    virtual int borderBottomExtra() const { return _bottomExtra; }
-
-    RenderTable* table() const { return static_cast<RenderTable*>(parent()->parent()->parent()); }
-    RenderTableSection* section() const { return static_cast<RenderTableSection*>(parent()->parent()); }
-
-#ifndef NDEBUG
-    virtual void dump(TextStream *stream, DeprecatedString ind = "") const;
-#endif
-
     void paintBackgroundsBehindCell(PaintInfo&, int tx, int ty, RenderObject* backgroundObject);
 
+    // Lie about position to outside observers.
+    virtual int yPos() const { return m_y + m_topExtra; }
+
+    virtual IntRect getAbsoluteRepaintRect();
+    virtual void computeAbsoluteRepaintRect(IntRect&, bool fixed = false);
+    virtual bool absolutePosition(int& xPos, int& yPos, bool fixed = false);
+
+    virtual short baselinePosition(bool firstLine = false, bool isRootLineBox = false) const;
+
+    void setCellTopExtra(int p) { m_topExtra = p; }
+    void setCellBottomExtra(int p) { m_bottomExtra = p; }
+
+    virtual int borderTopExtra() const { return m_topExtra; }
+    virtual int borderBottomExtra() const { return m_bottomExtra; }
+
+#ifndef NDEBUG
+    virtual void dump(TextStream*, DeprecatedString ind = "") const;
+#endif
+
 protected:
-    virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
-
-    int _row;
-    int _col;
-    int rSpan;
-    int cSpan;
-    int _topExtra : 31;
-    int _bottomExtra : 31;
+    int m_row;
+    int m_column;
+    int m_rowSpan;
+    int m_columnSpan;
+    int m_topExtra : 31;
+    int m_bottomExtra : 31;
     bool m_widthChanged : 1;
-
     int m_percentageHeight;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // RenderTableCell_h
