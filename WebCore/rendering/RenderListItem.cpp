@@ -273,7 +273,7 @@ void RenderListItem::explicitValueChanged()
     if (m_marker)
         m_marker->setNeedsLayoutAndMinMaxRecalc();
     Node* listNode = enclosingList(node());
-    RenderObject* listRenderer;
+    RenderObject* listRenderer = 0;
     if (listNode)
         listRenderer = listNode->renderer();
     for (RenderObject* r = this; r; r = r->nextInPreOrder(listRenderer))

@@ -1,3 +1,9 @@
+2007-01-05  Adele Peterson  <adele@apple.com>
+
+        Release build fix.
+
+        * rendering/RenderListItem.cpp: (WebCore::RenderListItem::explicitValueChanged): Initialize listRenderer.
+
 2007-01-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
