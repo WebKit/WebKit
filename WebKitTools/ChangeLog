@@ -1,3 +1,9 @@
+2007-01-06  George Staikos  <staikos@kde.org>
+
+        This doesn't build on all unix platforms!
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.pro:
+
 2007-01-05  Zack Rusin  <zack@kde.org>
 
         Reviewed by Simon.

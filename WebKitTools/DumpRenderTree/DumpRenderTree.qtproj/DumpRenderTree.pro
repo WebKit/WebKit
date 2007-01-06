@@ -1,4 +1,4 @@
-unix {
+x11 {
 TARGET = DumpRenderTree
 
 include(../../../WebKit.pri)
