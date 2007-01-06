@@ -260,6 +260,7 @@ static void destroyCounterNodeChildren(AtomicStringImpl* identifier, CounterNode
         child->parent()->removeChild(child);
         ASSERT(counterMaps().get(child->renderer())->get(identifier) == child);
         counterMaps().get(child->renderer())->remove(identifier);
+        delete child;
     }
 }
 
