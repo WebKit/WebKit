@@ -1,3 +1,79 @@
+2007-01-05  Anders Carlsson  <acarlsson@apple.com>
+
+        Rubber stamped by Adam.
+        
+        Move even more code to .cpp files.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createWindow):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::canLoad):
+        (WebCore::FrameLoader::initialRequest):
+        (WebCore::FrameLoader::receivedData):
+        (WebCore::FrameLoader::setRequest):
+        (WebCore::FrameLoader::setResponse):
+        (WebCore::FrameLoader::willUseArchive):
+        (WebCore::FrameLoader::handleUnimplementablePolicy):
+        (WebCore::FrameLoader::cannotShowMIMEType):
+        (WebCore::FrameLoader::interruptionForPolicyChangeError):
+        (WebCore::FrameLoader::checkNavigationPolicy):
+        (WebCore::FrameLoader::checkContentPolicy):
+        (WebCore::FrameLoader::shouldReloadToHandleUnreachableURL):
+        (WebCore::FrameLoader::reloadAllowingStaleData):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::finishedLoading):
+        (WebCore::FrameLoader::continueAfterWillSubmitForm):
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::post):
+        (WebCore::FrameLoader::isReloading):
+        (WebCore::FrameLoader::loadEmptyDocumentSynchronously):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        (WebCore::FrameLoader::startLoadingMainResource):
+        (WebCore::FrameLoader::startLoading):
+        (WebCore::FrameLoader::cancelMainResourceLoad):
+        (WebCore::FrameLoader::identifierForInitialRequest):
+        (WebCore::FrameLoader::willSendRequest):
+        (WebCore::FrameLoader::didReceiveResponse):
+        (WebCore::FrameLoader::didReceiveData):
+        (WebCore::FrameLoader::didFailToLoad):
+        (WebCore::FrameLoader::originalRequest):
+        (WebCore::FrameLoader::receivedMainResourceError):
+        (WebCore::FrameLoader::callContinueFragmentScrollAfterNavigationPolicy):
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+        (WebCore::FrameLoader::opened):
+        (WebCore::FrameLoader::dataURLBaseFromRequest):
+        (WebCore::FrameLoader::checkNewWindowPolicy):
+        (WebCore::FrameLoader::continueAfterNewWindowPolicy):
+        (WebCore::FrameLoader::continueAfterNavigationPolicy):
+        (WebCore::FrameLoader::callContinueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::callContinueLoadAfterNewWindowPolicy):
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        (WebCore::FrameLoader::sendRemainingDelegateMessages):
+        (WebCore::FrameLoader::requestFromDelegate):
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache):
+        (WebCore::FrameLoader::applyUserAgent):
+        (WebCore::PolicyCheck::PolicyCheck):
+        (WebCore::PolicyCheck::clear):
+        (WebCore::PolicyCheck::set):
+        (WebCore::PolicyCheck::call):
+        (WebCore::PolicyCheck::clearRequest):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/MainResourceLoader.h:
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::setIdentifier):
+        (WebCore::ResourceLoader::identifier):
+        * loader/mac/FrameLoaderMac.mm:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::referrer):
+        (WebCore::FrameLoader::didReceiveAuthenticationChallenge):
+        (WebCore::FrameLoader::didCancelAuthenticationChallenge):
+        (WebCore::FrameLoader::didChangeTitle):
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchCreatePage):
+
 2007-01-05  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

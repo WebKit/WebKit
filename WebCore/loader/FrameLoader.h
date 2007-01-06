@@ -56,6 +56,9 @@ class NSURLAuthenticationChallenge;
 
 #endif // __OBJC__
 
+#else
+// FIXME: Get rid of this once we don't use id in the loader
+typedef void* id;
 #endif // PLATFORM(MAC)
 
 namespace KJS {
@@ -180,8 +183,8 @@ namespace WebCore {
         void stopLoadingSubresources();
 #if PLATFORM(MAC)
         void closeBridge();
-        void cancelMainResourceLoad(const ResourceError&);
 #endif
+        void cancelMainResourceLoad(const ResourceError&);
         void stopAllLoaders();
         void cancelMainResourceLoad();
         void cancelPendingArchiveLoad(ResourceLoader*);
@@ -209,14 +212,14 @@ namespace WebCore {
         FrameState state() const;
         static double timeOfLastCompletedLoad();
 
-#if PLATFORM(MAC)
         id identifierForInitialRequest(const ResourceRequest&);
         void willSendRequest(ResourceLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
+#if PLATFORM(MAC)
         void didReceiveAuthenticationChallenge(ResourceLoader*, NSURLAuthenticationChallenge *);
         void didCancelAuthenticationChallenge(ResourceLoader*, NSURLAuthenticationChallenge *);
+#endif
         void didReceiveResponse(ResourceLoader*, const ResourceResponse&);
         void didReceiveData(ResourceLoader*, const char*, int, int lengthReceived);
-#endif
         void didFinishLoad(ResourceLoader*);
         void didFailToLoad(ResourceLoader*, const ResourceError&);
         bool privateBrowsingEnabled() const;
@@ -228,9 +231,7 @@ namespace WebCore {
 
         void handleFallbackContent();
         bool isStopping() const;
-#if PLATFORM(MAC)
         void setResponse(const ResourceResponse&);
-#endif
 
         void finishedLoading();
         KURL URL() const;
@@ -239,10 +240,8 @@ namespace WebCore {
         ResourceError fileDoesNotExistError(const ResourceResponse&) const;
         bool willUseArchive(ResourceLoader*, const ResourceRequest&, const KURL&) const;
         bool isArchiveLoadPending(ResourceLoader*) const;
-#if PLATFORM(MAC)
         void cannotShowMIMEType(const ResourceResponse&);
         ResourceError interruptionForPolicyChangeError(const ResourceRequest&);
-#endif
 
         bool isHostedByObjectElement() const;
         bool isLoadingMainFrame() const;
@@ -282,11 +281,9 @@ namespace WebCore {
 
         bool isQuickRedirectComing() const;
 
-#if PLATFORM(MAC)
         void sendRemainingDelegateMessages(id identifier, const ResourceResponse&, unsigned length, const ResourceError&);
         void requestFromDelegate(ResourceRequest&, id& identifier, ResourceError&);
         void loadedResourceFromMemoryCache(const ResourceRequest&, const ResourceResponse&, int length);
-#endif
 
         void checkLoadComplete();
         void detachFromParent();
@@ -505,9 +502,7 @@ namespace WebCore {
 
         // Also not cool.
         void startLoading();
-#if PLATFORM(MAC)
         bool startLoadingMainResource(ResourceRequest&, id identifier);
-#endif
         void stopLoadingSubframes();
 
         void clearProvisionalLoad();
@@ -558,10 +553,8 @@ namespace WebCore {
         void updateHistoryAfterClientRedirect();
 
         bool shouldReloadToHandleUnreachableURL(const ResourceRequest&);
-#if PLATFORM(MAC)
         void handleUnimplementablePolicy(const ResourceError&);
 
-#endif
         void applyUserAgent(ResourceRequest& request);
 
         bool canTarget(Frame*) const;

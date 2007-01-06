@@ -40,10 +40,8 @@ namespace WebCore {
         static PassRefPtr<MainResourceLoader> create(Frame*);
         virtual ~MainResourceLoader();
 
-#if PLATFORM(MAC)
         virtual bool load(const ResourceRequest&);
         virtual void addData(const char*, int, bool allAtOnce);
-#endif
 
         virtual void setDefersLoading(bool);
 

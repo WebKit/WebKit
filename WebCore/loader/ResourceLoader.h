@@ -52,6 +52,9 @@ class NSURLAuthenticationChallenge;
 class NSURLCredential;
 #endif
 
+#else
+// FIXME: Get rid of this once we don't use id in the loader
+typedef void* id;
 #endif
 
 namespace WebCore {
@@ -67,26 +70,27 @@ namespace WebCore {
 
         void cancel();
 
-#if PLATFORM(MAC)
         virtual bool load(const ResourceRequest&);
 
         FrameLoader *frameLoader() const;
 
         virtual void cancel(const ResourceError&);
         ResourceError cancelledError();
-#endif
 
         virtual void setDefersLoading(bool);
 
 #if PLATFORM(MAC)
         void setIdentifier(id);
         id identifier() const { return m_identifier.get(); }
+#else
+        void setIdentifier(id) { }
+        id identifier() const { return 0; }
+#endif
 
         virtual void releaseResources();
         const ResourceResponse& response() const;
 
         virtual void addData(const char*, int, bool allAtOnce);
-#endif
         virtual PassRefPtr<SharedBuffer> resourceData();
         void clearResourceData();
 
