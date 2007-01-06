@@ -1,5 +1,15 @@
 2007-01-05  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Darin.
+
+        Fix build.
+        
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchCreatePage):
+
+2007-01-05  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Maciej.
 
         The data returned is now a SharedBuffer so wrap it in an NSData object.

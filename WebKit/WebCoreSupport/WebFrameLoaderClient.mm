@@ -461,12 +461,12 @@ void WebFrameLoaderClient::dispatchDidFirstLayout()
     [[webView _frameLoadDelegateForwarder] webView:webView didFirstLayoutInFrame:m_webFrame.get()];
 }
 
-Frame* WebFrameLoaderClient::dispatchCreatePage(NSURLRequest *request)
+Frame* WebFrameLoaderClient::dispatchCreatePage()
 {
     WebView *currentWebView = getWebView(m_webFrame.get());
     id wd = [currentWebView UIDelegate];
     if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
-        return core([[wd webView:currentWebView createWebViewWithRequest:request] mainFrame]);
+        return core([[wd webView:currentWebView createWebViewWithRequest:nil] mainFrame]);
     return 0;
 }
 

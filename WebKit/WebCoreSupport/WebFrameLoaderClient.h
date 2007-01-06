@@ -103,7 +103,7 @@ private:
     virtual void dispatchDidFinishLoad();
     virtual void dispatchDidFirstLayout();
 
-    virtual WebCore::Frame* dispatchCreatePage(NSURLRequest *);
+    virtual WebCore::Frame* dispatchCreatePage();
     virtual void dispatchShow();
 
     virtual void dispatchDecidePolicyForMIMEType(WebCore::FramePolicyFunction,
