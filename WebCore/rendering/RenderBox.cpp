@@ -34,6 +34,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "RenderArena.h"
+#include "RenderLayer.h"
 #include "RenderView.h"
 #include "RenderFlexibleBox.h"
 #include "RenderTableCell.h"

@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  *           (C) 2006 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006, 2007 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -1826,6 +1826,39 @@ void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
     }
 }
 
+static void applyCounterList(RenderStyle* style, CSSValueList* list, bool isReset)
+{
+    CounterDirectiveMap& map = style->accessCounterDirectives();
+    typedef CounterDirectiveMap::iterator Iterator;
+
+    Iterator end = map.end();
+    for (Iterator it = map.begin(); it != end; ++it)
+        if (isReset)
+            it->second.m_reset = false;
+        else
+            it->second.m_increment = false;
+
+    int length = list ? list->length() : 0;
+    for (int i = 0; i < length; ++i) {
+        Pair* pair = static_cast<CSSPrimitiveValue*>(list->item(i))->getPairValue();
+        AtomicString identifier = static_cast<CSSPrimitiveValue*>(pair->first())->getStringValue();
+        // FIXME: What about overflow?
+        int value = static_cast<int>(static_cast<CSSPrimitiveValue*>(pair->second())->getFloatValue());
+        CounterDirectives& directives = map.add(identifier.impl(), CounterDirectives()).first->second;
+        if (isReset) {
+            directives.m_reset = true;
+            directives.m_resetValue = value;
+        } else {
+            if (directives.m_increment)
+                directives.m_incrementValue += value;
+            else {
+                directives.m_increment = true;
+                directives.m_incrementValue = value;
+            }
+        }
+    }
+}
+
 void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 {
     CSSPrimitiveValue *primitiveValue = 0;
@@ -3202,56 +3235,68 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         // note is a reminder that eventually "inherit" needs to be supported.
 
         if (isInitial) {
-            if (style->contentData())
-                style->contentData()->clearContent();
+            style->clearContent();
             return;
         }
         
-        if (!value->isValueList()) return;
-        CSSValueList *list = static_cast<CSSValueList*>(value);
+        if (!value->isValueList())
+            return;
+
+        CSSValueList* list = static_cast<CSSValueList*>(value);
         int len = list->length();
 
+        bool didSet = false;
         for (int i = 0; i < len; i++) {
-            CSSValue *item = list->item(i);
+            CSSValue* item = list->item(i);
             if (!item->isPrimitiveValue())
                 continue;
             
-            CSSPrimitiveValue *val = static_cast<CSSPrimitiveValue*>(item);
-            if (val->primitiveType()==CSSPrimitiveValue::CSS_STRING)
-                style->setContent(val->getStringValue().impl(), i != 0);
-            else if (val->primitiveType()==CSSPrimitiveValue::CSS_ATTR) {
-                // FIXME: Can a namespace be specified for an attr(foo)?
-                if (style->styleType() == RenderStyle::NOPSEUDO)
-                    style->setUnique();
-                else
-                    parentStyle->setUnique();
-                QualifiedName attr(nullAtom, val->getStringValue().impl(), nullAtom);
-                style->setContent(element->getAttribute(attr).impl(), i != 0);
-                // register the fact that the attribute value affects the style
-                m_selectorAttrs.add(attr.localName().impl());
-            } else if (val->primitiveType()==CSSPrimitiveValue::CSS_URI) {
-                CSSImageValue *image = static_cast<CSSImageValue*>(val);
-                style->setContent(image->image(element->document()->docLoader()), i != 0);
-            } else if (val->primitiveType()==CSSPrimitiveValue::CSS_COUNTER) {
-                Counter* counterValue = val->getCounterValue();
-                CounterData counter(counterValue->identifier(),
-                    (EListStyleType)counterValue->listStyleNumber(), counterValue->separator());
-                style->setContent(new CounterData(counter), i != 0);
-           }
+            CSSPrimitiveValue* val = static_cast<CSSPrimitiveValue*>(item);
+            switch (val->primitiveType()) {
+                case CSSPrimitiveValue::CSS_STRING:
+                    style->setContent(val->getStringValue().impl(), didSet);
+                    didSet = true;
+                    break;
+                case CSSPrimitiveValue::CSS_ATTR: {
+                    // FIXME: Can a namespace be specified for an attr(foo)?
+                    if (style->styleType() == RenderStyle::NOPSEUDO)
+                        style->setUnique();
+                    else
+                        parentStyle->setUnique();
+                    QualifiedName attr(nullAtom, val->getStringValue().impl(), nullAtom);
+                    style->setContent(element->getAttribute(attr).impl(), didSet);
+                    didSet = true;
+                    // register the fact that the attribute value affects the style
+                    m_selectorAttrs.add(attr.localName().impl());
+                    break;
+                }
+                case CSSPrimitiveValue::CSS_URI: {
+                    CSSImageValue *image = static_cast<CSSImageValue*>(val);
+                    style->setContent(image->image(element->document()->docLoader()), didSet);
+                    didSet = true;
+                    break;
+                }
+                case CSSPrimitiveValue::CSS_COUNTER: {
+                    Counter* counterValue = val->getCounterValue();
+                    CounterContent* counter = new CounterContent(counterValue->identifier(),
+                        (EListStyleType)counterValue->listStyleNumber(), counterValue->separator());
+                    style->setContent(counter, didSet);
+                    didSet = true;
+                }
+            }
         }
+        if (!didSet)
+            style->clearContent();
         break;
     }
 
     case CSS_PROP_COUNTER_INCREMENT:
-        if (!value->isValueList())
-            return;
-        style->setCounterIncrementList(static_cast<CSSValueList*>(value));
+        applyCounterList(style, value->isValueList() ? static_cast<CSSValueList*>(value) : 0, false);
         break;
     case CSS_PROP_COUNTER_RESET:
-        if (!value->isValueList())
-            return;
-        style->setCounterResetList(static_cast<CSSValueList*>(value));
+        applyCounterList(style, value->isValueList() ? static_cast<CSSValueList*>(value) : 0, true);
         break;
+
     case CSS_PROP_FONT_FAMILY: {
         // list of strings and ids
         if (isInherit) {

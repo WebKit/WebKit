@@ -28,8 +28,7 @@
 
 namespace WebCore {
 
-class HTMLLIElement : public HTMLElement
-{
+class HTMLLIElement : public HTMLElement {
 public:
     HTMLLIElement(Document*);
 
@@ -48,7 +47,6 @@ public:
     void setValue(int);
 
 private:
-    bool m_isValued;
     int m_requestedValue;
 };
 

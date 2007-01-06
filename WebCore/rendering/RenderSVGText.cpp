@@ -107,11 +107,11 @@ bool RenderSVGText::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
 void RenderSVGText::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {
-    if (!m_firstLineBox)
+    if (!firstLineBox())
         return;
-    AffineTransform boxTransform = m_firstLineBox->object()->absoluteTransform();
-    FloatRect boxRect = FloatRect(xPos() + m_firstLineBox->xPos(), yPos() + m_firstLineBox->yPos(),
-                                  m_firstLineBox->width(), m_firstLineBox->height());
+    AffineTransform boxTransform = firstLineBox()->object()->absoluteTransform();
+    FloatRect boxRect = FloatRect(xPos() + firstLineBox()->xPos(), yPos() + firstLineBox()->yPos(),
+                                  firstLineBox()->width(), firstLineBox()->height());
     rects.append(enclosingIntRect(boxTransform.mapRect(boxRect)));
 }
 
@@ -125,7 +125,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int tx, int ty)
 FloatRect RenderSVGText::relativeBBox(bool includeStroke) const
 {
     FloatRect boundsRect;
-    InlineBox* box = m_firstLineBox;
+    InlineBox* box = firstLineBox();
     if (box) {
         boundsRect = FloatRect(xPos() + box->xPos(), yPos() + box->yPos(), box->width(), box->height());
         boundsRect = localTransform().mapRect(boundsRect);

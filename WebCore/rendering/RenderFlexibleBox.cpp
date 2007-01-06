@@ -25,6 +25,7 @@
 #include "config.h"
 #include "RenderFlexibleBox.h"
 
+#include "RenderLayer.h"
 #include "RenderView.h"
 
 using namespace std;

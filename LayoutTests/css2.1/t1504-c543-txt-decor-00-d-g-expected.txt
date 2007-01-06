@@ -29,6 +29,7 @@ layer at (0,0) size 800x394
       RenderBlock {P} at (0,204) size 784x18 [color=#000080]
         RenderText {#text} at (0,0) size 377x18
           text run at (0,0) width 377: "This sentence should be underlined, overlined, and stricken."
+      RenderBlock {DIV} at (0,238) size 784x0 [color=#FF0000]
       RenderBlock {P} at (0,238) size 784x18 [color=#000080]
         RenderText {#text} at (0,0) size 285x18
           text run at (0,0) width 285: "There should be no red at the end of this line."
@@ -40,16 +41,16 @@ layer at (0,0) size 800x394
       RenderBlock {P} at (0,272) size 784x19 [color=#000080]
         RenderText {#text} at (0,1) size 285x18
           text run at (0,1) width 285: "There should be no red at the end of this line."
-        RenderImage {IMG} at (285,0) size 15x15
+        RenderImage {IMG} at (285,0) size 15x15 [color=#FF0000]
         RenderText {#text} at (300,1) size 4x18
           text run at (300,1) width 4: " "
       RenderBlock {P} at (0,307) size 784x21 [color=#000080]
         RenderText {#text} at (0,3) size 202x18
           text run at (0,3) width 202: "This sentence and all its images "
-        RenderImage {IMG} at (202,0) size 17x17
+        RenderImage {IMG} at (202,0) size 17x17 [color=#FF0000]
         RenderText {#text} at (219,3) size 4x18
           text run at (219,3) width 4: " "
-        RenderImage {IMG} at (223,0) size 17x17
+        RenderImage {IMG} at (223,0) size 17x17 [color=#FF0000]
         RenderText {#text} at (240,3) size 140x18
           text run at (240,3) width 4: " "
           text run at (244,3) width 136: "should be underlined."

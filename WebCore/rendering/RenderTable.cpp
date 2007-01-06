@@ -6,7 +6,7 @@
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Computer, Inc.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -462,17 +462,20 @@ void RenderTable::paint(PaintInfo& paintInfo, int tx, int ty)
         // have all the styles sorted, we then do individual passes, painting each style of border
         // from lowest precedence to highest precedence.
         info.phase = PaintPhaseCollapsedTableBorders;
-        DeprecatedValueList<CollapsedBorderValue> borderStyles;
-        collectBorders(borderStyles);
-        DeprecatedValueListIterator<CollapsedBorderValue> it = borderStyles.begin();
-        DeprecatedValueListIterator<CollapsedBorderValue> end = borderStyles.end();
-        for (; it != end; ++it) {
-            m_currentBorder = &(*it);
-            for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        RenderTableCell::CollapsedBorderStyles borderStyles;
+        RenderObject* stop = nextInPreOrderAfterChildren();
+        for (RenderObject* o = firstChild(); o && o != stop; o = o->nextInPreOrder())
+            if (o->isTableCell())
+                static_cast<RenderTableCell*>(o)->collectBorderStyles(borderStyles);
+        RenderTableCell::sortBorderStyles(borderStyles);
+        size_t count = borderStyles.size();
+        for (size_t i = 0; i < count; ++i) {
+            m_currentBorder = &borderStyles[i];
+            for (RenderObject* child = firstChild(); child; child = child->nextSibling())
                 if (child->isTableSection())
                     child->paint(info, tx, ty);
-            }
         }
+        m_currentBorder = 0;
     }
 }
 

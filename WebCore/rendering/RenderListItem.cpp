@@ -22,6 +22,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #include "config.h"
 #include "RenderListItem.h"
 
@@ -38,13 +39,12 @@ using namespace HTMLNames;
 
 RenderListItem::RenderListItem(Node* node)
     : RenderBlock(node)
-    , m_predefVal(-1)
     , m_marker(0)
+    , m_hasExplicitValue(false)
+    , m_isValueUpToDate(false)
     , m_notInList(false)
-    , m_value(-1)
 {
-    // init RenderObject attributes
-    setInline(false); // our object is not Inline
+    setInline(false);
 }
 
 void RenderListItem::setStyle(RenderStyle* newStyle)
@@ -53,17 +53,14 @@ void RenderListItem::setStyle(RenderStyle* newStyle)
 
     if (style()->listStyleType() != LNONE ||
         (style()->listStyleImage() && !style()->listStyleImage()->isErrorImage())) {
-        RenderStyle *newStyle = new (renderArena()) RenderStyle();
+        RenderStyle* newStyle = new (renderArena()) RenderStyle;
         newStyle->ref();
         // The marker always inherits from the list item, regardless of where it might end
-        // up (e.g., in some deeply nested line box).  See CSS3 spec.
+        // up (e.g., in some deeply nested line box). See CSS3 spec.
         newStyle->inheritFrom(style()); 
-        if (!m_marker) {
-            m_marker = new (renderArena()) RenderListMarker(document());
-            m_marker->setStyle(newStyle);
-            m_marker->setListItem(this);
-        } else
-            m_marker->setStyle(newStyle);
+        if (!m_marker)
+            m_marker = new (renderArena()) RenderListMarker(this);
+        m_marker->setStyle(newStyle);
         newStyle->deref(renderArena());
     } else if (m_marker) {
         m_marker->destroy();
@@ -92,7 +89,7 @@ static Node* enclosingList(Node* node)
     return parent;
 }
 
-static RenderListItem* previousListItem(Node* list, RenderListItem* item)
+static RenderListItem* previousListItem(Node* list, const RenderListItem* item)
 {
     for (Node* n = item->node()->traversePreviousNode(); n != list; n = n->traversePreviousNode()) {
         RenderObject* o = n->renderer();
@@ -112,24 +109,24 @@ static RenderListItem* previousListItem(Node* list, RenderListItem* item)
     return 0;
 }
 
-void RenderListItem::calcValue()
+inline int RenderListItem::calcValue() const
 {
-    if (m_predefVal != -1)
-        m_value = m_predefVal;
-    else {
-        Node* list = enclosingList(node());
-        RenderListItem* item = previousListItem(list, this);
-        if (item) {
-            // FIXME: This recurses to a possible depth of the length of the list.
-            // That's not good -- we need to change this to an iterative algorithm.
-            if (item->value() == -1)
-                item->calcValue();
-            m_value = item->value() + 1;
-        } else if (list && list->hasTagName(olTag))
-            m_value = static_cast<HTMLOListElement*>(list)->start();
-        else
-            m_value = 1;
-    }
+    if (m_hasExplicitValue)
+        return m_explicitValue;
+    Node* list = enclosingList(node());
+    // FIXME: This recurses to a possible depth of the length of the list.
+    // That's not good -- we need to change this to an iterative algorithm.
+    if (RenderListItem* previousItem = previousListItem(list, this))
+        return previousItem->value() + 1;
+    if (list && list->hasTagName(olTag))
+        return static_cast<HTMLOListElement*>(list)->start();
+    return 1;
+}
+
+void RenderListItem::updateValueNow() const
+{
+    m_value = calcValue();
+    m_isValueUpToDate = true;
 }
 
 bool RenderListItem::isEmpty() const
@@ -168,11 +165,13 @@ static RenderObject* getParentOfFirstLineBox(RenderObject* curr, RenderObject* m
     return 0;
 }
 
-void RenderListItem::resetValue()
+void RenderListItem::updateValue()
 {
-    m_value = -1;
-    if (m_marker)
-        m_marker->setNeedsLayoutAndMinMaxRecalc();
+    if (!m_hasExplicitValue) {
+        m_isValueUpToDate = false;
+        if (m_marker)
+            m_marker->setNeedsLayoutAndMinMaxRecalc();
+    }
 }
 
 void RenderListItem::updateMarkerLocation()
@@ -261,9 +260,50 @@ void RenderListItem::paint(PaintInfo& paintInfo, int tx, int ty)
     RenderBlock::paint(paintInfo, tx, ty);
 }
 
-DeprecatedString RenderListItem::markerStringValue()
+const String& RenderListItem::markerText() const
 {
-    return m_marker ? m_marker->text() : "";
+    if (m_marker)
+        return m_marker->text();
+    static String staticNullString;
+    return staticNullString;
+}
+
+void RenderListItem::explicitValueChanged()
+{
+    if (m_marker)
+        m_marker->setNeedsLayoutAndMinMaxRecalc();
+    Node* listNode = enclosingList(node());
+    RenderObject* listRenderer;
+    if (listNode)
+        listRenderer = listNode->renderer();
+    for (RenderObject* r = this; r; r = r->nextInPreOrder(listRenderer))
+        if (r->isListItem()) {
+            RenderListItem* item = static_cast<RenderListItem*>(r);
+            if (!item->m_hasExplicitValue) {
+                item->m_isValueUpToDate = false;
+                if (RenderListMarker* marker = item->m_marker)
+                    marker->setNeedsLayoutAndMinMaxRecalc();
+            }
+        }
+}
+
+void RenderListItem::setExplicitValue(int value)
+{
+    if (m_hasExplicitValue && m_explicitValue == value)
+        return;
+    m_explicitValue = value;
+    m_value = value;
+    m_hasExplicitValue = true;
+    explicitValueChanged();
+}
+
+void RenderListItem::clearExplicitValue()
+{
+    if (!m_hasExplicitValue)
+        return;
+    m_hasExplicitValue = false;
+    m_isValueUpToDate = false;
+    explicitValueChanged();
 }
 
 } // namespace WebCore

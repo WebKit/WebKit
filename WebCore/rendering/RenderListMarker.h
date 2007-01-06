@@ -3,7 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,19 +25,19 @@
 #ifndef RenderListMarker_h
 #define RenderListMarker_h
 
-#include "DeprecatedString.h"
 #include "RenderBox.h"
 
 namespace WebCore {
 
 class RenderListItem;
 
-/* used to render the lists marker.
-     This class always has to be a direct child of a RenderListItem!
-*/
+String listMarkerText(EListStyleType, int value);
+
+// Used to render the list item's marker.
+// The RenderListMarker always has to be a child of a RenderListItem.
 class RenderListMarker : public RenderBox {
 public:
-    RenderListMarker(Document*);
+    RenderListMarker(RenderListItem*);
     ~RenderListMarker();
 
     virtual const char* renderName() const { return "RenderListMarker"; }
@@ -46,10 +46,8 @@ public:
 
     virtual void setStyle(RenderStyle*);
 
-    virtual void paint(PaintInfo&, int xoff, int yoff);
+    virtual void paint(PaintInfo&, int tx, int ty);
 
-    // so the marker gets to layout itself. Only needed for
-    // list-style-position: inside
     virtual void layout();
     virtual void calcMinMaxWidth();
 
@@ -62,16 +60,11 @@ public:
     virtual short lineHeight(bool firstLine, bool isRootLineBox = false) const;
     virtual short baselinePosition(bool firstLine, bool isRootLineBox = false) const;
 
-    CachedImage* listImage() const { return m_listImage; }
-
-    RenderListItem* listItem() { return m_listItem; }
-    void setListItem(RenderListItem* listItem) { m_listItem = listItem; }
-
-    const DeprecatedString& text() const { return m_item; }
+    bool isImage() const;
+    bool isText() const { return !isImage(); }
+    const String& text() const { return m_text; }
 
     bool isInside() const;
-
-    IntRect getRelativeMarkerRect();
 
     virtual SelectionState selectionState() const { return m_selectionState; }
     virtual void setSelectionState(SelectionState);
@@ -79,8 +72,10 @@ public:
     virtual bool canBeSelectionLeaf() const { return true; }
 
 private:
-    DeprecatedString m_item;
-    CachedImage* m_listImage;
+    IntRect getRelativeMarkerRect();
+
+    String m_text;
+    CachedImage* m_image;
     RenderListItem* m_listItem;
     SelectionState m_selectionState;
 };

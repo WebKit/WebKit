@@ -1,12 +1,10 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1997 Martin Jones (mjones@kde.org)
  *           (C) 1997 Torben Weis (weis@kde.org)
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -84,7 +82,10 @@ public:
     CollapsedBorderValue collapsedRightBorder(bool rtl) const;
     CollapsedBorderValue collapsedTopBorder() const;
     CollapsedBorderValue collapsedBottomBorder() const;
-    virtual void collectBorders(DeprecatedValueList<CollapsedBorderValue>&);
+
+    typedef Vector<CollapsedBorderValue, 100> CollapsedBorderStyles;
+    void collectBorderStyles(CollapsedBorderStyles&) const;
+    static void sortBorderStyles(CollapsedBorderStyles&);
 
     virtual void updateFromElement();
 

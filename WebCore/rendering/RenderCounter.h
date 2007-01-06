@@ -2,7 +2,7 @@
  * This file is part of the HTML rendering engine for KDE.
  *
  * Copyright (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,6 +20,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef RenderCounter_h
 #define RenderCounter_h
 
@@ -31,21 +32,18 @@ class CounterNode;
 
 class RenderCounter : public RenderText {
 public:
-    RenderCounter(Node*, CounterData*);
+    RenderCounter(Document*, const CounterContent&);
 
-    virtual const char* renderName() const { return "RenderCounter"; }
-
-    virtual bool isCounter() const { return true; }
-
-    virtual void layout();
+    virtual const char* renderName() const;
+    virtual bool isRenderCounter() const;
+    virtual PassRefPtr<StringImpl> originalString() const;
     virtual void calcMinMaxWidth();
 
-private:
-    String convertValueToType(int value, int total, EListStyleType);
+    static void destroyCounterNodes(RenderObject*);
 
-    String m_item;
-    CounterData* m_counter;
-    CounterNode* m_counterNode;
+private:
+    CounterContent m_counter;
+    mutable CounterNode* m_counterNode;
 };
 
 } // namespace WebCore

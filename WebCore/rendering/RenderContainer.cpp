@@ -5,7 +5,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  *           (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Computer, Inc.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "RenderCounter.h"
 #include "RenderImage.h"
+#include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderTable.h"
 #include "RenderTextFragment.h"
@@ -42,8 +43,8 @@ namespace WebCore {
 
 RenderContainer::RenderContainer(Node* node)
     : RenderBox(node)
-    , m_first(0)
-    , m_last(0)
+    , m_firstChild(0)
+    , m_lastChild(0)
 {
 }
 
@@ -59,14 +60,14 @@ void RenderContainer::destroy()
 
 void RenderContainer::destroyLeftoverChildren()
 {
-    while (m_first) {
-        if (m_first->isListMarker() || (m_first->style()->styleType() == RenderStyle::FIRST_LETTER && !m_first->isText()))
-            m_first->remove();  // List markers are owned by their enclosing list and so don't get destroyed by this container. Similarly, first letters are destroyed by their remaining text fragment.
+    while (m_firstChild) {
+        if (m_firstChild->isListMarker() || (m_firstChild->style()->styleType() == RenderStyle::FIRST_LETTER && !m_firstChild->isText()))
+            m_firstChild->remove();  // List markers are owned by their enclosing list and so don't get destroyed by this container. Similarly, first letters are destroyed by their remaining text fragment.
         else {
         // Destroy any anonymous children remaining in the render tree, as well as implicit (shadow) DOM elements like those used in the engine-based text fields.
-            if (m_first->element())
-                m_first->element()->setRenderer(0);
-            m_first->destroy();
+            if (m_firstChild->element())
+                m_firstChild->element()->setRenderer(0);
+            m_firstChild->destroy();
         }
     }
 }
@@ -78,10 +79,9 @@ bool RenderContainer::canHaveChildren() const
 
 static void updateListMarkerNumbers(RenderObject* child)
 {
-    for (RenderObject* r = child; r; r = r->nextSibling()) {
+    for (RenderObject* r = child; r; r = r->nextSibling())
         if (r->isListItem())
-            static_cast<RenderListItem*>(r)->resetValue();
-    }
+            static_cast<RenderListItem*>(r)->updateValue();
 }
 
 void RenderContainer::addChild(RenderObject* newChild, RenderObject* beforeChild)
@@ -91,7 +91,7 @@ void RenderContainer::addChild(RenderObject* newChild, RenderObject* beforeChild
     if(!newChild->isText() && !newChild->isReplaced()) {
         switch(newChild->style()->display()) {
         case LIST_ITEM:
-            updateListMarkerNumbers(beforeChild ? beforeChild : lastChild());
+            updateListMarkerNumbers(beforeChild ? beforeChild : m_lastChild);
             break;
         case INLINE:
         case BLOCK:
@@ -123,7 +123,7 @@ void RenderContainer::addChild(RenderObject* newChild, RenderObject* beforeChild
             // change we recurse infinitely when trying to render the CSS2 test page:
             // http://www.bath.ac.uk/%7Epy8ieh/internet/eviltests/htmlbodyheadrendering2.html.
             // See Radar 2925291.
-            if (isTableCell() && !firstChild() && !newChild->isTableCell())
+            if (isTableCell() && !m_firstChild && !newChild->isTableCell())
                 needsTable = false;
             break;
         case NONE:
@@ -134,12 +134,12 @@ void RenderContainer::addChild(RenderObject* newChild, RenderObject* beforeChild
     if (needsTable) {
         RenderTable *table;
         if(!beforeChild)
-            beforeChild = lastChild();
+            beforeChild = m_lastChild;
         if(beforeChild && beforeChild->isAnonymous() && beforeChild->isTable())
             table = static_cast<RenderTable*>(beforeChild);
         else {
             table = new (renderArena()) RenderTable(document() /* is anonymous */);
-            RenderStyle *newStyle = new (renderArena()) RenderStyle();
+            RenderStyle *newStyle = new (renderArena()) RenderStyle;
             newStyle->inheritFrom(style());
             newStyle->setDisplay(TABLE);
             table->setStyle(newStyle);
@@ -152,9 +152,9 @@ void RenderContainer::addChild(RenderObject* newChild, RenderObject* beforeChild
     }
     
     if (newChild->isText() && newChild->style()->textTransform() == CAPITALIZE) {
-        RefPtr<StringImpl> textToTransform =  static_cast<RenderText*>(newChild)->originalString();
+        RefPtr<StringImpl> textToTransform = static_cast<RenderText*>(newChild)->originalString();
         if (textToTransform)
-            static_cast<RenderText*>(newChild)->setText(textToTransform.get(), true);
+            static_cast<RenderText*>(newChild)->setText(textToTransform.release(), true);
     }
 }
 
@@ -208,10 +208,10 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
     if (oldChild->nextSibling())
         oldChild->nextSibling()->setPreviousSibling(oldChild->previousSibling());
 
-    if (m_first == oldChild)
-        m_first = oldChild->nextSibling();
-    if (m_last == oldChild)
-        m_last = oldChild->previousSibling();
+    if (m_firstChild == oldChild)
+        m_firstChild = oldChild->nextSibling();
+    if (m_lastChild == oldChild)
+        m_lastChild = oldChild->previousSibling();
 
     oldChild->setPreviousSibling(0);
     oldChild->setNextSibling(0);
@@ -244,7 +244,7 @@ RenderObject* RenderContainer::pseudoChild(RenderStyle::PseudoId type) const
     if (type == RenderStyle::AFTER)
         return lastChild();
 
-    assert(false);
+    ASSERT_NOT_REACHED();
     return 0;
 }
 
@@ -284,13 +284,12 @@ void RenderContainer::updatePseudoChildForObject(RenderStyle::PseudoId type, Ren
     // If we don't want generated content any longer, or if we have generated content, but it's no longer
     // identical to the new content data we want to build render objects for, then we nuke all
     // of the old generated content.
-    if (!newContentWanted ||
-        (oldContentPresent && !child->style()->contentDataEquivalent(pseudo))) {
+    if (!newContentWanted || (oldContentPresent && !child->style()->contentDataEquivalent(pseudo))) {
         // Nuke the child. 
         if (child && child->style()->styleType() == type) {
             oldContentPresent = false;
             child->destroy();
-            child = (type == RenderStyle::BEFORE) ? firstChild() : lastChild();
+            child = (type == RenderStyle::BEFORE) ? m_firstChild : m_lastChild;
         }
     }
 
@@ -317,12 +316,11 @@ void RenderContainer::updatePseudoChildForObject(RenderStyle::PseudoId type, Ren
             // in the future), this code will need to be patched.
             for (RenderObject* genChild = child->firstChild(); genChild; genChild = genChild->nextSibling()) {
                 if (genChild->isText())
-                    // Generated text content is a child whose style also needs to be set to the pseudo
-                    // style.
+                    // Generated text content is a child whose style also needs to be set to the pseudo style.
                     genChild->setStyle(pseudo);
                 else {
                     // Images get an empty style that inherits from the pseudo.
-                    RenderStyle* style = new (renderArena()) RenderStyle();
+                    RenderStyle* style = new (renderArena()) RenderStyle;
                     style->inheritFrom(pseudo);
                     genChild->setStyle(style);
                 }
@@ -337,39 +335,45 @@ void RenderContainer::updatePseudoChildForObject(RenderStyle::PseudoId type, Ren
     // by the content property).  This pseudo container gets the pseudo style set on it.
     RenderObject* pseudoContainer = 0;
     
-    // Now walk our list of generated content and create render objects for every type
-    // we encounter.
-    for (ContentData* contentData = pseudo->contentData();
-         contentData; contentData = contentData->_nextContent) {
-        if (!pseudoContainer)
-            pseudoContainer = RenderFlow::createAnonymousFlow(document(), pseudo); /* anonymous box */
-        
-        if (contentData->contentType() == CONTENT_TEXT) {
-            RenderText* t = new (renderArena()) RenderTextFragment(document() /*anonymous object */, contentData->contentText());
-            t->setStyle(pseudo);
-            pseudoContainer->addChild(t);
-        } else if (contentData->contentType() == CONTENT_OBJECT) {
-            RenderImage* img = new (renderArena()) RenderImage(document()); /* Anonymous object */
-            RenderStyle* style = new (renderArena()) RenderStyle();
-            style->inheritFrom(pseudo);
-            img->setStyle(style);
-            img->setContentObject(contentData->contentObject());
-            pseudoContainer->addChild(img);
-        } else if (contentData->_contentType == CONTENT_COUNTER) {
-            RenderCounter* c = new (renderArena()) RenderCounter(element(), contentData->contentCounter());
-            RenderStyle* style = new (renderArena()) RenderStyle();
-            style->inheritFrom(pseudo);
-            c->setIsAnonymous(true);
-            c->setStyle(style);
-            pseudoContainer->addChild(c);
+    // Walk our list of generated content and create render objects for each.
+    for (const ContentData* content = pseudo->contentData(); content; content = content->m_next) {
+        RenderObject* renderer = 0;
+        switch (content->m_type) {
+            case CONTENT_NONE:
+                break;
+            case CONTENT_TEXT:
+                renderer = new (renderArena()) RenderTextFragment(document() /* anonymous object */, content->m_content.m_text);
+                renderer->setStyle(pseudo);
+                break;
+            case CONTENT_OBJECT:
+                if (CachedResource* resource = content->m_content.m_object)
+                    if (resource->type() == CachedResource::ImageResource) {
+                        RenderImage* image = new (renderArena()) RenderImage(document()); // anonymous object
+                        RenderStyle* style = new (renderArena()) RenderStyle;
+                        style->inheritFrom(pseudo);
+                        image->setStyle(style);
+                        image->setCachedImage(static_cast<CachedImage*>(resource));
+                        image->setIsAnonymousImage(true);
+                        renderer = image;
+                    }
+                break;
+            case CONTENT_COUNTER:
+                renderer = new (renderArena()) RenderCounter(document(), *content->m_content.m_counter);
+                renderer->setStyle(pseudo);
+                break;
+        }
+
+        if (renderer) {
+            if (!pseudoContainer)
+                pseudoContainer = RenderFlow::createAnonymousFlow(document(), pseudo); // anonymous box
+            pseudoContainer->addChild(renderer);
         }
     }
 
-    if (pseudoContainer) {
-        // Add the pseudo after we've installed all our content, so that addChild will be able to find the text
-        // inside the inline for e.g., first-letter styling.
+    // Add the pseudo after we've installed all our content so that addChild will be able to find the text
+    // inside the inline for e.g., first-letter styling.
+    if (pseudoContainer)
         addChild(pseudoContainer, insertBefore);
-    }
 }
 
 
@@ -379,17 +383,15 @@ void RenderContainer::appendChildNode(RenderObject* newChild)
     ASSERT(!isBlockFlow() || (!newChild->isTableSection() && !newChild->isTableRow() && !newChild->isTableCell()));
 
     newChild->setParent(this);
-    RenderObject* lChild = lastChild();
+    RenderObject* lChild = m_lastChild;
 
-    if(lChild)
-    {
+    if (lChild) {
         newChild->setPreviousSibling(lChild);
         lChild->setNextSibling(newChild);
-    }
-    else
-        setFirstChild(newChild);
+    } else
+        m_firstChild = newChild;
 
-    setLastChild(newChild);
+    m_lastChild = newChild;
     
     // Keep our layer hierarchy updated.  Optimize for the common case where we don't have any children
     // and don't have a layer attached to ourselves.
@@ -419,20 +421,20 @@ void RenderContainer::appendChildNode(RenderObject* newChild)
 
 void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeChild)
 {
-    if(!beforeChild) {
+    if (!beforeChild) {
         appendChildNode(child);
         return;
     }
 
     ASSERT(!child->parent());
-    while ( beforeChild->parent() != this && beforeChild->parent()->isAnonymousBlock() )
+    while (beforeChild->parent() != this && beforeChild->parent()->isAnonymousBlock())
         beforeChild = beforeChild->parent();
     ASSERT(beforeChild->parent() == this);
 
     ASSERT(!isBlockFlow() || (!child->isTableSection() && !child->isTableRow() && !child->isTableCell()));
 
-    if(beforeChild == firstChild())
-        setFirstChild(child);
+    if (beforeChild == m_firstChild)
+        m_firstChild = child;
 
     RenderObject* prev = beforeChild->previousSibling();
     child->setNextSibling(beforeChild);
@@ -470,11 +472,11 @@ void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeC
 
 void RenderContainer::layout()
 {
-    ASSERT( needsLayout() );
-    ASSERT( minMaxKnown() );
+    ASSERT(needsLayout());
+    ASSERT(minMaxKnown());
 
-    RenderObject* child = firstChild();
-    while( child ) {
+    RenderObject* child = m_firstChild;
+    while (child) {
         child->layoutIfNeeded();
         child = child->nextSibling();
     }
@@ -485,7 +487,7 @@ void RenderContainer::removeLeftoverAnonymousBoxes()
 {
     // we have to go over all child nodes and remove anonymous boxes, that do _not_
     // have inline children to keep the tree flat
-    RenderObject* child = firstChild();
+    RenderObject* child = m_firstChild;
     while( child ) {
         RenderObject* next = child->nextSibling();
         
@@ -511,16 +513,16 @@ void RenderContainer::removeLeftoverAnonymousBoxes()
                     child->nextSibling()->setPreviousSibling( child->previousSibling() );
                 
             }
-            if ( child == firstChild() )
-                m_first = firstAnChild;
-            if ( child == lastChild() )
-                m_last = lastAnChild;
+            if (child == m_firstChild)
+                m_firstChild = firstAnChild;
+            if (child == m_lastChild)
+                m_lastChild = lastAnChild;
             child->setParent( 0 );
             child->setPreviousSibling( 0 );
             child->setNextSibling( 0 );
             if ( !child->isText() ) {
                 RenderContainer *c = static_cast<RenderContainer*>(child);
-                c->m_first = 0;
+                c->m_firstChild = 0;
                 c->m_next = 0;
             }
             child->destroy();
@@ -535,7 +537,7 @@ void RenderContainer::removeLeftoverAnonymousBoxes()
 VisiblePosition RenderContainer::positionForCoordinates(int x, int y)
 {
     // no children...return this render object's element, if there is one, and offset 0
-    if (!firstChild())
+    if (!m_firstChild)
         return VisiblePosition(element(), 0, DOWNSTREAM);
         
     if (isTable() && element()) {
@@ -558,7 +560,7 @@ VisiblePosition RenderContainer::positionForCoordinates(int x, int y)
     // Pass off to the closest child.
     int minDist = INT_MAX;
     RenderObject* closestRenderer = 0;
-    for (RenderObject* renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
+    for (RenderObject* renderer = m_firstChild; renderer; renderer = renderer->nextSibling()) {
         if (!renderer->firstChild() && !renderer->isInline() && !renderer->isBlockFlow() 
             || renderer->style()->visibility() != VISIBLE)
             continue;
@@ -616,14 +618,14 @@ VisiblePosition RenderContainer::positionForCoordinates(int x, int y)
 
 void RenderContainer::addLineBoxRects(Vector<IntRect>& rects, unsigned start, unsigned end)
 {
-    if (!firstChild() && (isInline() || isAnonymousBlock())) {
+    if (!m_firstChild && (isInline() || isAnonymousBlock())) {
         int x, y;
         absolutePositionForContent(x, y);
         absoluteRects(rects, x, y);
         return;
     }
 
-    if (!firstChild())
+    if (!m_firstChild)
         return;
 
     unsigned offset = start;

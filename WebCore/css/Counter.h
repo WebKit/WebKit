@@ -32,11 +32,9 @@ namespace WebCore {
 
 class Counter : public Shared<Counter> {
 public:
-    Counter() : m_identifier(0), m_listStyle(0), m_separator(0) { }
     Counter(PassRefPtr<CSSPrimitiveValue> identifier, PassRefPtr<CSSPrimitiveValue> listStyle,
         PassRefPtr<CSSPrimitiveValue> separator)
         : m_identifier(identifier), m_listStyle(listStyle), m_separator(separator) { }
-    ~Counter() { }
 
     String identifier() const { return m_identifier ? m_identifier->getStringValue() : String(); }
     String listStyle() const { return m_listStyle ? m_listStyle->getStringValue() : String(); }

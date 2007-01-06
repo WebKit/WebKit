@@ -1,0 +1,283 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x94
+  RenderBlock {HTML} at (0,0) size 800x94
+    RenderBody {BODY} at (8,16) size 784x70
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 292x18
+          text run at (0,0) width 292: "The following two lines should look the same:"
+      RenderBlock {DIV} at (0,34) size 784x18
+        RenderInline {SPAN} at (0,0) size 12x18
+          RenderInline (generated) at (0,0) size 12x18
+            RenderCounter at (0,0) size 12x18
+              text run at (0,0) width 12: "\x{531}"
+        RenderText {#text} at (12,0) size 4x18
+          text run at (12,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 9x18
+          RenderInline (generated) at (0,0) size 9x18
+            RenderCounter at (16,0) size 9x18
+              text run at (16,0) width 9: "\x{532}"
+        RenderText {#text} at (25,0) size 4x18
+          text run at (25,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 12x18
+          RenderInline (generated) at (0,0) size 12x18
+            RenderCounter at (29,0) size 12x18
+              text run at (29,0) width 12: "\x{533}"
+        RenderText {#text} at (41,0) size 4x18
+          text run at (41,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 12x18
+          RenderInline (generated) at (0,0) size 12x18
+            RenderCounter at (45,0) size 12x18
+              text run at (45,0) width 12: "\x{534}"
+        RenderText {#text} at (57,0) size 4x18
+          text run at (57,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (61,0) size 10x18
+              text run at (61,0) width 10: "\x{535}"
+        RenderText {#text} at (71,0) size 4x18
+          text run at (71,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (75,0) size 10x18
+              text run at (75,0) width 10: "\x{536}"
+        RenderText {#text} at (85,0) size 4x18
+          text run at (85,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 9x18
+          RenderInline (generated) at (0,0) size 9x18
+            RenderCounter at (89,0) size 9x18
+              text run at (89,0) width 9: "\x{537}"
+        RenderText {#text} at (98,0) size 4x18
+          text run at (98,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 9x18
+          RenderInline (generated) at (0,0) size 9x18
+            RenderCounter at (102,0) size 9x18
+              text run at (102,0) width 9: "\x{538}"
+        RenderText {#text} at (111,0) size 4x18
+          text run at (111,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 12x18
+          RenderInline (generated) at (0,0) size 12x18
+            RenderCounter at (115,0) size 12x18
+              text run at (115,0) width 12: "\x{539}"
+        RenderText {#text} at (127,0) size 4x18
+          text run at (127,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 11x18
+          RenderInline (generated) at (0,0) size 11x18
+            RenderCounter at (131,0) size 11x18
+              text run at (131,0) width 11: "\x{53A}"
+        RenderText {#text} at (142,0) size 4x18
+          text run at (142,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 23x18
+          RenderInline (generated) at (0,0) size 23x18
+            RenderCounter at (146,0) size 23x18
+              text run at (146,0) width 23: "\x{53A}\x{531}"
+        RenderText {#text} at (169,0) size 4x18
+          text run at (169,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 20x18
+          RenderInline (generated) at (0,0) size 20x18
+            RenderCounter at (173,0) size 20x18
+              text run at (173,0) width 20: "\x{53A}\x{532}"
+        RenderText {#text} at (193,0) size 4x18
+          text run at (193,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 9x18
+          RenderInline (generated) at (0,0) size 9x18
+            RenderCounter at (197,0) size 9x18
+              text run at (197,0) width 9: "\x{53B}"
+        RenderText {#text} at (206,0) size 4x18
+          text run at (206,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 8x18
+          RenderInline (generated) at (0,0) size 8x18
+            RenderCounter at (210,0) size 8x18
+              text run at (210,0) width 8: "\x{53C}"
+        RenderText {#text} at (218,0) size 4x18
+          text run at (218,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 12x18
+          RenderInline (generated) at (0,0) size 12x18
+            RenderCounter at (222,0) size 12x18
+              text run at (222,0) width 12: "\x{53D}"
+        RenderText {#text} at (234,0) size 4x18
+          text run at (234,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 11x18
+          RenderInline (generated) at (0,0) size 11x18
+            RenderCounter at (238,0) size 11x18
+              text run at (238,0) width 11: "\x{53E}"
+        RenderText {#text} at (249,0) size 4x18
+          text run at (249,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (253,0) size 10x18
+              text run at (253,0) width 10: "\x{53F}"
+        RenderText {#text} at (263,0) size 4x18
+          text run at (263,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 9x18
+          RenderInline (generated) at (0,0) size 9x18
+            RenderCounter at (267,0) size 9x18
+              text run at (267,0) width 9: "\x{540}"
+        RenderText {#text} at (276,0) size 4x18
+          text run at (276,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 11x18
+          RenderInline (generated) at (0,0) size 11x18
+            RenderCounter at (280,0) size 11x18
+              text run at (280,0) width 11: "\x{541}"
+        RenderText {#text} at (291,0) size 4x18
+          text run at (291,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 12x18
+          RenderInline (generated) at (0,0) size 12x18
+            RenderCounter at (295,0) size 12x18
+              text run at (295,0) width 12: "\x{542}"
+        RenderText {#text} at (307,0) size 4x18
+          text run at (307,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (311,0) size 10x18
+              text run at (311,0) width 10: "\x{543}"
+        RenderText {#text} at (321,0) size 4x18
+          text run at (321,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 12x18
+          RenderInline (generated) at (0,0) size 12x18
+            RenderCounter at (325,0) size 12x18
+              text run at (325,0) width 12: "\x{544}"
+        RenderText {#text} at (337,0) size 4x18
+          text run at (337,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 9x18
+          RenderInline (generated) at (0,0) size 9x18
+            RenderCounter at (341,0) size 9x18
+              text run at (341,0) width 9: "\x{545}"
+        RenderText {#text} at (350,0) size 4x18
+          text run at (350,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 12x18
+          RenderInline (generated) at (0,0) size 12x18
+            RenderCounter at (354,0) size 12x18
+              text run at (354,0) width 12: "\x{546}"
+        RenderText {#text} at (366,0) size 4x18
+          text run at (366,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (370,0) size 10x18
+              text run at (370,0) width 10: "\x{547}"
+        RenderText {#text} at (380,0) size 4x18
+          text run at (380,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 9x18
+          RenderInline (generated) at (0,0) size 9x18
+            RenderCounter at (384,0) size 9x18
+              text run at (384,0) width 9: "\x{548}"
+        RenderText {#text} at (393,0) size 4x18
+          text run at (393,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (397,0) size 10x18
+              text run at (397,0) width 10: "\x{549}"
+        RenderText {#text} at (407,0) size 4x18
+          text run at (407,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 11x18
+          RenderInline (generated) at (0,0) size 11x18
+            RenderCounter at (411,0) size 11x18
+              text run at (411,0) width 11: "\x{54A}"
+        RenderText {#text} at (422,0) size 4x18
+          text run at (422,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (426,0) size 10x18
+              text run at (426,0) width 10: "\x{54B}"
+        RenderText {#text} at (436,0) size 4x18
+          text run at (436,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 12x18
+          RenderInline (generated) at (0,0) size 12x18
+            RenderCounter at (440,0) size 12x18
+              text run at (440,0) width 12: "\x{54C}"
+        RenderText {#text} at (452,0) size 4x18
+          text run at (452,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (456,0) size 10x18
+              text run at (456,0) width 10: "\x{54D}"
+        RenderText {#text} at (466,0) size 4x18
+          text run at (466,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 12x18
+          RenderInline (generated) at (0,0) size 12x18
+            RenderCounter at (470,0) size 12x18
+              text run at (470,0) width 12: "\x{54E}"
+        RenderText {#text} at (482,0) size 4x18
+          text run at (482,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 9x18
+          RenderInline (generated) at (0,0) size 9x18
+            RenderCounter at (486,0) size 9x18
+              text run at (486,0) width 9: "\x{54F}"
+        RenderText {#text} at (495,0) size 4x18
+          text run at (495,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 8x18
+          RenderInline (generated) at (0,0) size 8x18
+            RenderCounter at (499,0) size 8x18
+              text run at (499,0) width 8: "\x{550}"
+        RenderText {#text} at (507,0) size 4x18
+          text run at (507,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 9x18
+          RenderInline (generated) at (0,0) size 9x18
+            RenderCounter at (511,0) size 9x18
+              text run at (511,0) width 9: "\x{551}"
+        RenderText {#text} at (520,0) size 4x18
+          text run at (520,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 19x18
+          RenderInline (generated) at (0,0) size 19x18
+            RenderCounter at (524,0) size 19x18
+              text run at (524,0) width 19: "\x{548}\x{552}"
+        RenderText {#text} at (543,0) size 4x18
+          text run at (543,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 11x18
+          RenderInline (generated) at (0,0) size 11x18
+            RenderCounter at (547,0) size 11x18
+              text run at (547,0) width 11: "\x{553}"
+        RenderText {#text} at (558,0) size 4x18
+          text run at (558,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (562,0) size 10x18
+              text run at (562,0) width 10: "\x{554}"
+        RenderText {#text} at (572,0) size 4x18
+          text run at (572,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 44x18
+          RenderInline (generated) at (0,0) size 44x18
+            RenderCounter at (576,0) size 44x18
+              text run at (576,0) width 44: "\x{554}\x{54B}\x{542}\x{539}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 620x18
+          text run at (0,0) width 16: "\x{531} "
+          text run at (16,0) width 13: "\x{532} "
+          text run at (29,0) width 16: "\x{533} "
+          text run at (45,0) width 16: "\x{534} "
+          text run at (61,0) width 14: "\x{535} "
+          text run at (75,0) width 14: "\x{536} "
+          text run at (89,0) width 13: "\x{537} "
+          text run at (102,0) width 13: "\x{538} "
+          text run at (115,0) width 16: "\x{539} "
+          text run at (131,0) width 15: "\x{53A} "
+          text run at (146,0) width 27: "\x{53A}\x{531} "
+          text run at (173,0) width 24: "\x{53A}\x{532} "
+          text run at (197,0) width 13: "\x{53B} "
+          text run at (210,0) width 12: "\x{53C} "
+          text run at (222,0) width 16: "\x{53D} "
+          text run at (238,0) width 15: "\x{53E} "
+          text run at (253,0) width 14: "\x{53F} "
+          text run at (267,0) width 13: "\x{540} "
+          text run at (280,0) width 15: "\x{541} "
+          text run at (295,0) width 16: "\x{542} "
+          text run at (311,0) width 14: "\x{543} "
+          text run at (325,0) width 16: "\x{544} "
+          text run at (341,0) width 13: "\x{545} "
+          text run at (354,0) width 16: "\x{546} "
+          text run at (370,0) width 14: "\x{547} "
+          text run at (384,0) width 13: "\x{548} "
+          text run at (397,0) width 14: "\x{549} "
+          text run at (411,0) width 15: "\x{54A} "
+          text run at (426,0) width 14: "\x{54B} "
+          text run at (440,0) width 16: "\x{54C} "
+          text run at (456,0) width 14: "\x{54D} "
+          text run at (470,0) width 16: "\x{54E} "
+          text run at (486,0) width 13: "\x{54F} "
+          text run at (499,0) width 12: "\x{550} "
+          text run at (511,0) width 13: "\x{551} "
+          text run at (524,0) width 23: "\x{548}\x{552} "
+          text run at (547,0) width 15: "\x{553} "
+          text run at (562,0) width 14: "\x{554} "
+          text run at (576,0) width 44: "\x{554}\x{54B}\x{542}\x{539}"

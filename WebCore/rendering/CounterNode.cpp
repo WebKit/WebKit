@@ -2,7 +2,7 @@
  * This file is part of the HTML rendering engine for KDE.
  *
  * Copyright (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,88 +24,168 @@
 #include "config.h"
 #include "CounterNode.h"
 
-#include "CounterResetNode.h"
 #include "RenderObject.h"
+
+// FIXME: There's currently no strategy for getting the counter tree updated when new
+// elements with counter-reset and counter-increment styles are added to the render tree.
+// Also, the code can't handle changes where an existing node needs to change into a
+// "reset" node, or from a "reset" node back to not a "reset" node. As of this writing,
+// at least some of these problems manifest as failures in the t1204-increment and
+// t1204-reset tests in the CSS 2.1 test suite.
 
 namespace WebCore {
 
-CounterNode::CounterNode(RenderObject* o)
-    : m_hasSeparator(false)
-    , m_willNeedLayout(false)
-    , m_value(0)
-    , m_count (0)
-    , m_parent(0)
-    , m_previous(0)
-    , m_next(0)
+CounterNode::CounterNode(RenderObject* o, bool isReset, int value)
+    : m_isReset(isReset)
+    , m_value(value)
+    , m_countInParent(0)
     , m_renderer(o)
+    , m_parent(0)
+    , m_previousSibling(0)
+    , m_nextSibling(0)
+    , m_firstChild(0)
+    , m_lastChild(0)
 {   
 }
 
-void CounterNode::insertAfter(CounterNode*, CounterNode*)
+int CounterNode::computeCountInParent() const
 {
-    ASSERT(false);
+    int increment = m_isReset ? 0 : m_value;
+    if (m_previousSibling)
+        return m_previousSibling->m_countInParent + increment;
+    ASSERT(m_parent->m_firstChild == this);
+    return m_parent->m_value + increment;
 }
 
-void CounterNode::removeChild(CounterNode*)
+void CounterNode::recount()
 {
-    ASSERT(false);
-}
-
-void CounterNode::remove()
-{
-    if (m_parent)
-        m_parent->removeChild(this);
-    else {
-        ASSERT(isReset());
-        ASSERT(!firstChild());
-        ASSERT(!lastChild());
+    for (CounterNode* c = this; c; c = c->m_nextSibling) {
+        int oldCount = c->m_countInParent;
+        int newCount = c->computeCountInParent();
+        c->m_countInParent = newCount;
+        if (oldCount == newCount)
+            break;
+        if (c->m_renderer->isCounter())
+            c->m_renderer->setNeedsLayoutAndMinMaxRecalc();
     }
 }
 
-void CounterNode::setUsesSeparator()
+void CounterNode::insertAfter(CounterNode* newChild, CounterNode* refChild)
 {
-    for (CounterNode* c = this; c; c = c->parent())
-        c->setHasSeparator();
+    ASSERT(newChild);
+    ASSERT(!newChild->m_parent);
+    ASSERT(!newChild->m_previousSibling);
+    ASSERT(!newChild->m_nextSibling);
+    ASSERT(!refChild || refChild->m_parent == this);
+
+    CounterNode* next;
+
+    if (refChild) {
+        next = refChild->m_nextSibling;
+        refChild->m_nextSibling = newChild;
+    } else {
+        next = m_firstChild;
+        m_firstChild = newChild;
+    }
+
+    if (next) {
+        ASSERT(next->m_previousSibling == refChild);
+        next->m_previousSibling = newChild;
+    } else {
+        ASSERT(m_lastChild == refChild);
+        m_lastChild = newChild;
+    }
+
+    newChild->m_parent = this;
+    newChild->m_previousSibling = refChild;
+    newChild->m_nextSibling = next;
+
+    newChild->m_countInParent = newChild->computeCountInParent();
+    if (next)
+        next->recount();
 }
 
-CounterNode* CounterNode::recountAndGetNext(bool setDirty)
+void CounterNode::removeChild(CounterNode* oldChild)
 {
-    int old_count = m_count;
-    if (m_previous)
-        m_count = m_previous->count() + m_value;
+    ASSERT(oldChild);
+    ASSERT(!oldChild->m_firstChild);
+    ASSERT(!oldChild->m_lastChild);
+
+    CounterNode* next = oldChild->m_nextSibling;
+    CounterNode* prev = oldChild->m_previousSibling;
+
+    oldChild->m_nextSibling = 0;
+    oldChild->m_previousSibling = 0;
+    oldChild->m_parent = 0;
+
+    if (prev) 
+        prev->m_nextSibling = next;
     else {
-        assert(m_parent->firstChild() == this);
-        m_count = m_parent->value() + m_value;
+        ASSERT(m_firstChild == oldChild);
+        m_firstChild = next;
     }
     
-    if (old_count != m_count && setDirty)
-        setSelfDirty();
-    if (old_count != m_count || !setDirty) {
-        if (m_parent)
-            m_parent->updateTotal(m_count);
-        return m_next;
+    if (next)
+        next->m_previousSibling = prev;
+    else {
+        ASSERT(m_lastChild == oldChild);
+        m_lastChild = prev;
     }
     
-    return 0;
+    if (next)
+        next->recount();
 }
 
-void CounterNode::recountTree(bool setDirty)
+#ifndef NDEBUG
+
+static const CounterNode* nextInPreOrderAfterChildren(const CounterNode* node)
 {
-    CounterNode* counterNode = this;
-    while (counterNode)
-        counterNode = counterNode->recountAndGetNext(setDirty);
+    CounterNode* next = node->nextSibling();
+    if (!next) {
+        next = node->parent();
+        while (next && !next->nextSibling())
+            next = next->parent();
+        if (next)
+            next = next->nextSibling();
+    }
+    return next;
 }
 
-void CounterNode::setSelfDirty()
+static const CounterNode* nextInPreOrder(const CounterNode* node)
 {
-    if (m_renderer && m_willNeedLayout)
-        m_renderer->setNeedsLayoutAndMinMaxRecalc();
+    if (CounterNode* child = node->firstChild())
+        return child;
+    return nextInPreOrderAfterChildren(node);
 }
 
-void CounterNode::setParentDirty()
+static void showTreeAndMark(const CounterNode* node)
 {
-    if (m_renderer && m_willNeedLayout && m_hasSeparator)
-        m_renderer->setNeedsLayoutAndMinMaxRecalc();
+    const CounterNode* root = node;
+    while (root->parent())
+        root = root->parent();
+
+    for (const CounterNode* c = root; c; c = nextInPreOrder(c)) {
+        if (c == node)
+            fprintf(stderr, "*");                        
+        for (const CounterNode* d = c; d && d != root; d = d->parent())
+            fprintf(stderr, "\t");
+        if (c->isReset())
+            fprintf(stderr, "reset: %d\n", c->value());
+        else
+            fprintf(stderr, "increment: %d\n", c->value());
+    }
 }
+
+#endif
 
 } // namespace WebCore
+
+#ifndef NDEBUG
+
+void showTree(const WebCore::CounterNode* counter)
+{
+    if (counter)
+        showTreeAndMark(counter);
+}
+
+#endif

@@ -5,7 +5,7 @@
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  *           (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,11 +28,9 @@
 #define RenderObject_h
 
 #include "CachedResourceClient.h"
-#include "DeprecatedValueList.h"
 #include "RenderStyle.h"
 #include "ScrollTypes.h"
 #include "VisiblePosition.h"
-#include <algorithm>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -40,7 +38,6 @@ namespace WebCore {
 class AffineTransform;
 class CollapsedBorderValue;
 class Color;
-class CounterNode;
 class Document;
 class Element;
 class Event;
@@ -62,7 +59,6 @@ class RenderText;
 class RenderView;
 class String;
 class TextStream;
-class VisiblePosition;
 struct HitTestRequest;
 
 /*
@@ -129,13 +125,9 @@ struct DashboardRegionValue {
 // This means the paint order of outlines will be wrong, although this is a minor issue.
 typedef HashSet<RenderFlow*> RenderFlowSequencedSet;
 
-/**
- * Base Class for all rendering tree objects.
- */
+// Base class for all rendering tree objects.
 class RenderObject : public CachedResourceClient {
-    friend class RenderListItem;
     friend class RenderContainer;
-    friend class RenderView;
 public:
     // Anonymous objects should pass the document as their node, and they will then automatically be
     // marked as anonymous in the constructor.
@@ -154,7 +146,9 @@ public:
     virtual RenderObject* lastChild() const { return 0; }
 
     RenderObject* nextInPreOrder() const;
+    RenderObject* nextInPreOrder(RenderObject* stayWithin) const;
     RenderObject* nextInPreOrderAfterChildren() const;
+    RenderObject* nextInPreOrderAfterChildren(RenderObject* stayWithin) const;
     RenderObject* previousInPreOrder() const;
     RenderObject* childAt(unsigned) const;
 
@@ -208,9 +202,6 @@ public:
     virtual int staticX() const { return 0; }
     virtual int staticY() const { return 0; }
 
-    CounterNode* findCounter(const String& counterName, bool willNeedLayout = false,
-                             bool usesSeparator = false, bool createIfNotFound = true);
-
     // RenderObject tree manipulation
     //////////////////////////////////////////
     virtual bool canHaveChildren() const;
@@ -257,7 +248,6 @@ private:
 public:
     RenderArena* renderArena() const;
 
-    // some helper functions...
     virtual bool isRenderBlock() const { return false; }
     virtual bool isRenderInline() const { return false; }
     virtual bool isInlineFlow() const { return false; }
@@ -275,7 +265,6 @@ public:
     virtual bool isTableCol() const { return false; }
     virtual bool isTable() const { return false; }
     virtual bool isWidget() const { return false; }
-    virtual bool isFormElement() const { return false; }
     virtual bool isImage() const { return false; }
     virtual bool isTextArea() const { return false; }
     virtual bool isTextField() const { return false; }
@@ -298,8 +287,9 @@ public:
 #ifdef SVG_SUPPORT
     virtual bool isSVGContainer() const { return false; }
     virtual bool isRenderPath() const { return false; }
+
     virtual FloatRect relativeBBox(bool includeStroke = true) const;
-    // We may eventually want to make these non-virtual
+
     virtual AffineTransform localTransform() const;
     virtual void setLocalTransform(const AffineTransform&);
     virtual AffineTransform absoluteTransform() const;
@@ -332,7 +322,7 @@ public:
     bool posChildNeedsLayout() const { return m_posChildNeedsLayout; }
     bool normalChildNeedsLayout() const { return m_normalChildNeedsLayout; }
 
-    bool minMaxKnown() const{ return m_minMaxKnown; }
+    bool minMaxKnown() const { return m_minMaxKnown; }
     bool recalcMinMax() const { return m_recalcMinMax; }
 
     bool isSelectionBorder() const;
@@ -711,9 +701,6 @@ public:
 
     virtual void setTable(RenderTable*) { }
 
-    // Used by collapsed border tables.
-    virtual void collectBorders(DeprecatedValueList<CollapsedBorderValue>&);
-
     // Repaint the entire object.  Called when, e.g., the color of a border changes, or when a border
     // style changes.
     void repaint(bool immediate = false);
@@ -878,7 +865,7 @@ public:
     virtual void imageChanged(CachedImage*);
     virtual bool willRenderImage(CachedImage*);
 
-    virtual void selectionStartEnd(int& spos, int& epos);
+    virtual void selectionStartEnd(int& spos, int& epos) const;
 
     RenderObject* paintingRootForChildren(PaintInfo& paintInfo) const
     {
@@ -891,12 +878,12 @@ public:
         return !paintInfo.paintingRoot || paintInfo.paintingRoot == this;
     }
 
+    void remove() { if (parent()) parent()->removeChild(this); }
+
 protected:
     virtual void printBoxDecorations(GraphicsContext*, int /*x*/, int /*y*/, int /*w*/, int /*h*/, int /*tx*/, int /*ty*/) { }
 
     virtual IntRect viewRect() const;
-
-    void remove() { if (parent()) parent()->removeChild(this); }
 
     void invalidateVerticalPositions();
     short getVerticalPosition(bool firstLine) const;
@@ -936,6 +923,7 @@ private:
 
     bool m_hasOverflowClip           : 1;
 
+public:
     bool m_hasCounterNodeMap         : 1;
 };
 

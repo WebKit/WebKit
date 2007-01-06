@@ -44,7 +44,7 @@ void RenderButton::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     if (!m_inner) {
         // Create an anonymous block.
-        assert(!m_first);
+        ASSERT(!firstChild());
         m_inner = createAnonymousBlock();
         m_inner->style()->setBoxFlex(1.0f);
         RenderFlexibleBox::addChild(m_inner);

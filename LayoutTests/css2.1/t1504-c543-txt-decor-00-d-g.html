@@ -11,10 +11,10 @@
    b.five {text-decoration: none;}
    .six {text-decoration: underline overline;}
    .seven {text-decoration: underline overline line-through;}
-   strong { color: red; }
+   div, strong, img { color: red; }
    span { color: white; }
   </style>
-  <link title="15.4 Font styling: the 'font-style' property" href="http://www.w3.org/TR/CSS21/fonts.html#font-styling" rel="help">
+  <link rel="help" href="http://www.w3.org/TR/CSS21/fonts.html#font-styling" title="15.4 Font styling: the 'font-style' property">
  </head>
  <body>
   <p class="one"> This sentence should be underlined. </p>
@@ -24,7 +24,8 @@
   <p class="one"> The sentence should be underlined. <b class="five">This sentence should be underlined</b>. </p>
   <p class="six"> This sentence should be underlined and overlined. </p>
   <p class="seven"> This sentence should be underlined, overlined, and stricken. </p>
-  <p> There should be no red at the end of this line.<strong class="one"> </strong> </p> <!-- the NBSP makes the span element's space not be collapsed -->
+  <div class="seven"></div> <!-- there should be no red on this page -->
+  <p> There should be no red at the end of this line.<strong class="one"> </strong> </p> <!-- the NBSP (there is one after the strong end tag) makes the strong element's space not be collapsed -->
   <p> There should be no red at the end of this line.<img alt="FAIL: Images required." src="support/swatch-white.png" class="one"> </p>
   <p class="one">
    This sentence and all its images

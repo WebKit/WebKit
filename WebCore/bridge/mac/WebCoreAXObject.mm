@@ -572,7 +572,7 @@ static int headingLevel(RenderObject* renderer)
         return static_cast<RenderMenuList*>(m_renderer)->text();
     
     if (m_renderer->isListMarker())
-        return static_cast<RenderListMarker*>(m_renderer)->text().getNSString();
+        return static_cast<RenderListMarker*>(m_renderer)->text();
 
     if ([self isWebArea]) {
         if (m_renderer->document()->frame())

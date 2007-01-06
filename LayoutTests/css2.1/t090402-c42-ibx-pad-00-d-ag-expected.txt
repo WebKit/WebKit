@@ -10,7 +10,7 @@ layer at (0,0) size 800x186
         RenderTableSection {TBODY} at (0,0) size 434x128
           RenderTableRow {TR} at (0,2) size 434x124
             RenderTableCell {TD} at (2,2) size 214x124 [border: (2px solid #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (12,2) size 200x120 [color=#000080]
+              RenderBlock {DIV} at (12,2) size 200x120
                 RenderText {#text} at (0,7) size 190x34
                   text run at (0,7) width 190: "1 2 3 4 5 6 7 8 9 0"
                   text run at (0,31) width 60: "1 2 3 "

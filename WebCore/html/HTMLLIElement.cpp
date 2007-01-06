@@ -3,6 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ * Copyright (C) 2006, 2007 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,7 +35,7 @@ using namespace HTMLNames;
 
 HTMLLIElement::HTMLLIElement(Document* doc)
     : HTMLElement(HTMLNames::liTag, doc)
-    , m_isValued(false)
+    , m_requestedValue(0)
 {
 }
 
@@ -48,16 +49,15 @@ bool HTMLLIElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEnt
     return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLLIElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLLIElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == valueAttr) {
-        m_isValued = true;
-        m_requestedValue = !attr->isNull() ? attr->value().toInt() : 0;
-
+        m_requestedValue = attr->value().toInt();
         if (renderer() && renderer()->isListItem()) {
-            RenderListItem* list = static_cast<RenderListItem*>(renderer());
-            // ### work out what to do when attribute removed - use default of some sort?
-            list->setValue(m_requestedValue);
+            if (m_requestedValue > 0)
+                static_cast<RenderListItem*>(renderer())->setExplicitValue(m_requestedValue);
+            else
+                static_cast<RenderListItem*>(renderer())->clearExplicitValue();
         }
     } else if (attr->name() == typeAttr) {
         if (attr->value() == "a")
@@ -82,9 +82,9 @@ void HTMLLIElement::attach()
 
     HTMLElement::attach();
 
-    if (renderer() && renderer()->style()->display() == LIST_ITEM) {
-        RenderListItem *render = static_cast<RenderListItem*>(renderer());
-        
+    if (renderer() && renderer()->isListItem()) {
+        RenderListItem* render = static_cast<RenderListItem*>(renderer());
+
         // Find the enclosing list node.
         Node* listNode = 0;
         Node* n = this;
@@ -92,15 +92,16 @@ void HTMLLIElement::attach()
             if (n->hasTagName(ulTag) || n->hasTagName(olTag))
                 listNode = n;
         }
-        
+
         // If we are not in a list, tell the renderer so it can position us inside.
         // We don't want to change our style to say "inside" since that would affect nested nodes.
         if (!listNode)
             render->setNotInList(true);
 
-        // If we had a value attr.
-        if (m_isValued)
-            render->setValue(m_requestedValue);
+        if (m_requestedValue > 0)
+            render->setExplicitValue(m_requestedValue);
+        else
+            render->clearExplicitValue();
     }
 }
 

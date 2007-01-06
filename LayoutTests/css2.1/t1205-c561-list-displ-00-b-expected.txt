@@ -4,8 +4,8 @@ layer at (0,0) size 800x202
   RenderBlock {HTML} at (0,0) size 800x202
     RenderBody {BODY} at (8,16) size 784x178
       RenderBlock {P} at (0,0) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 526x18
-          text run at (0,0) width 526: "There should be eight numbered lines below, all identical except for the numbering."
+        RenderText {#text} at (0,0) size 757x18
+          text run at (0,0) width 757: "There should be eight numbered lines below, all identical except for the numbering, which should match the description."
       RenderListItem {DIV} at (0,34) size 784x18 [color=#000080]
         RenderListMarker at (0,0) size 16x18
         RenderText {#text} at (16,0) size 155x18

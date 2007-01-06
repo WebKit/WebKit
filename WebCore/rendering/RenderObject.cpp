@@ -5,7 +5,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  *           (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,8 +31,6 @@
 #include "AffineTransform.h"
 #include "CachedImage.h"
 #include "Chrome.h"
-#include "CounterNode.h"
-#include "CounterResetNode.h"
 #include "Document.h"
 #include "Element.h"
 #include "EventHandler.h"
@@ -49,6 +47,7 @@
 #include "Page.h"
 #include "Position.h"
 #include "RenderArena.h"
+#include "RenderCounter.h"
 #include "RenderFlexibleBox.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
@@ -76,15 +75,6 @@ using namespace HTMLNames;
 static void* baseOfRenderObjectBeingDeleted;
 #endif
 
-typedef HashMap<String, CounterNode*> CounterNodeMap;
-typedef HashMap<const RenderObject*, CounterNodeMap*> RenderObjectsToCounterNodeMaps;
-
-static RenderObjectsToCounterNodeMaps* getRenderObjectsToCounterNodeMaps()
-{
-    static RenderObjectsToCounterNodeMaps objectsMap;
-    return &objectsMap;
-}
-
 void* RenderObject::operator new(size_t sz, RenderArena* renderArena) throw()
 {
     return renderArena->allocate(sz);
@@ -100,18 +90,23 @@ void RenderObject::operator delete(void* ptr, size_t sz)
 
 RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
 {
-    RenderObject* o = 0;
     RenderArena* arena = node->document()->renderArena();
 
-    if (ContentData* contentData = style->contentData()) {
-        RenderImage* contentImage = new (arena) RenderImage(node);
-        if (contentImage) {
-            contentImage->setStyle(style);
-            contentImage->setContentObject(contentData->contentObject());
-            contentImage->setIsAnonymousImage(true);
-        }
-        return contentImage;
+    // Minimal support for content properties replacing an entire element.
+    // Works only if we have exactly one piece of content and it's a URL.
+    // Otherwise acts as if we didn't support this feature.
+    const ContentData* contentData = style->contentData();
+    if (contentData && !contentData->m_next && contentData->m_type == CONTENT_OBJECT) {
+        RenderImage* image = new (arena) RenderImage(node);
+        image->setStyle(style);
+        if (CachedResource* resource = contentData->m_content.m_object)
+            if (resource->type() == CachedResource::ImageResource)
+                image->setCachedImage(static_cast<CachedImage*>(resource));
+        image->setIsAnonymousImage(true);
+        return image;
     }
+
+    RenderObject* o = 0;
 
     switch (style->display()) {
         case NONE:
@@ -159,6 +154,7 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
             o = new (arena) RenderFlexibleBox(node);
             break;
     }
+
     return o;
 }
 
@@ -293,6 +289,34 @@ RenderObject* RenderObject::nextInPreOrderAfterChildren() const
         o = parent();
         while (o && !o->nextSibling())
             o = o->parent();
+        if (o)
+            o = o->nextSibling();
+    }
+
+    return o;
+}
+
+RenderObject* RenderObject::nextInPreOrder(RenderObject* stayWithin) const
+{
+    if (RenderObject* o = firstChild())
+        return o;
+
+    return nextInPreOrderAfterChildren(stayWithin);
+}
+
+RenderObject* RenderObject::nextInPreOrderAfterChildren(RenderObject* stayWithin) const
+{
+    if (this == stayWithin)
+        return 0;
+
+    RenderObject* o;
+    if (!(o = nextSibling())) {
+        o = parent();
+        while (o && !o->nextSibling()) {
+            o = o->parent();
+            if (o == stayWithin)
+                return 0;
+        }
         if (o)
             o = o->nextSibling();
     }
@@ -2069,7 +2093,7 @@ Node* RenderObject::draggableNode(bool dhtmlOK, bool uaOK, int x, int y, bool& d
     return 0;
 }
 
-void RenderObject::selectionStartEnd(int& spos, int& epos)
+void RenderObject::selectionStartEnd(int& spos, int& epos) const
 {
     view()->selectionStartEnd(spos, epos);
 }
@@ -2412,8 +2436,8 @@ RenderObject* RenderObject::container() const
     // containingBlock() simply skips relpositioned inlines and lets an enclosing block handle
     // the layout of the positioned object.  This does mean that calcAbsoluteHorizontal and
     // calcAbsoluteVertical have to use container().
-    EPosition pos = m_style->position();
     RenderObject* o = parent();
+    EPosition pos = m_style->position();
     if (!isText() && pos == FixedPosition) {
         // container() can be called on an object that is not in the
         // tree yet.  We don't call view() since it will assert if it
@@ -2489,20 +2513,8 @@ void RenderObject::destroy()
     if (document() && document()->frame() && document()->frame()->eventHandler()->autoscrollRenderer() == this)
         document()->frame()->eventHandler()->stopAutoscrollTimer(true);
 
-    if (m_hasCounterNodeMap) {
-        RenderObjectsToCounterNodeMaps* objectsMap = getRenderObjectsToCounterNodeMaps();
-        if (CounterNodeMap* counterNodesMap = objectsMap->get(this)) {
-            CounterNodeMap::const_iterator end = counterNodesMap->end();
-            for (CounterNodeMap::const_iterator it = counterNodesMap->begin(); it != end; ++it) {
-                CounterNode* counterNode = it->second;
-                counterNode->remove();
-                delete counterNode;
-                counterNode = 0;
-            }
-            objectsMap->remove(this);
-            delete counterNodesMap;
-        }
-    }
+    if (m_hasCounterNodeMap)
+        RenderCounter::destroyCounterNodes(this);
 
     document()->axObjectCache()->remove(this);
 
@@ -2693,8 +2705,8 @@ void RenderObject::recalcMinMaxWidths()
 {
     ASSERT(m_recalcMinMax);
 
-    if (m_recalcMinMax)
-        updateFirstLetter();
+    m_recalcMinMax = false;
+    updateFirstLetter();
 
     RenderObject* child = firstChild();
     while (child) {
@@ -2723,7 +2735,6 @@ void RenderObject::recalcMinMaxWidths()
 
     if (!m_minMaxKnown)
         calcMinMaxWidth();
-    m_recalcMinMax = false;
 }
 
 void RenderObject::scheduleRelayout()
@@ -2933,12 +2944,6 @@ void RenderObject::collectDashboardRegions(Vector<DashboardRegionValue>& regions
         curr->collectDashboardRegions(regions);
 }
 
-void RenderObject::collectBorders(DeprecatedValueList<CollapsedBorderValue>& borderStyles)
-{
-    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
-        curr->collectBorders(borderStyles);
-}
-
 bool RenderObject::avoidsFloats() const
 {
     return isReplaced() || hasOverflowClip() || isHR();
@@ -2952,133 +2957,6 @@ bool RenderObject::usesLineWidth() const
     // (b) <hr>s use lineWidth
     // (c) all other objects use lineWidth in quirks mode and contentWidth in strict mode.
     return (avoidsFloats() && (style()->width().isAuto() || isHR() || (style()->htmlHacks() && !isTable())));
-}
-
-CounterNode* RenderObject::findCounter(const String& counterName, bool willNeedLayout,
-                                       bool usesSeparator, bool createIfNotFound)
-{
-    if (!style())
-        return 0;
-
-    RenderObjectsToCounterNodeMaps* objectsMap = getRenderObjectsToCounterNodeMaps();
-    CounterNode* newNode = 0;
-    if (CounterNodeMap* counterNodesMap = objectsMap->get(this)) {
-        if (counterNodesMap)
-            newNode = counterNodesMap->get(counterName);
-    }
-
-    if (newNode)
-        return newNode;
-
-    int val = 0;
-    if (style()->hasCounterReset(counterName) || isRoot()) {
-        newNode = new CounterResetNode(this);
-        val = style()->counterReset(counterName);
-        if (style()->hasCounterIncrement(counterName))
-            val += style()->counterIncrement(counterName);
-        newNode->setValue(val);
-    } else if (style()->hasCounterIncrement(counterName)) {
-        newNode = new CounterNode(this);
-        newNode->setValue(style()->counterIncrement(counterName));
-    } else if (counterName == "list-item") {
-        if (isListItem()) {
-            if (element()) {
-                String v = static_cast<Element*>(element())->getAttribute("value");
-                if (!v.isEmpty()) {
-                    newNode = new CounterResetNode(this);
-                    val = v.toInt();
-                }
-            }
-
-            if (!newNode) {
-                newNode = new CounterNode(this);
-                val = 1;
-            }
-
-            newNode->setValue(val);
-        } else if (element() && element()->hasTagName(olTag)) {
-            newNode = new CounterResetNode(this);
-            newNode->setValue(static_cast<HTMLOListElement*>(element())->start());
-        } else if (element() &&
-            (element()->hasTagName(ulTag) ||
-             element()->hasTagName(menuTag) ||
-             element()->hasTagName(dirTag))) {
-            newNode = new CounterResetNode(this);
-            newNode->setValue(0);
-        }
-    }
-
-    if (!newNode && !createIfNotFound)
-        return 0;
-    else if (!newNode) {
-        newNode = new CounterNode(this);
-        newNode->setValue(0);
-    }
-
-    if (willNeedLayout)
-        newNode->setWillNeedLayout();
-    if (usesSeparator)
-        newNode->setUsesSeparator();
-
-    CounterNodeMap* nodeMap;
-    if (m_hasCounterNodeMap)
-        nodeMap = objectsMap->get(this);
-    else {
-        nodeMap = new CounterNodeMap;
-        objectsMap->set(this, nodeMap);
-        m_hasCounterNodeMap = true;
-    }
-
-    nodeMap->set(counterName, newNode);
-
-    if (!isRoot()) {
-        RenderObject* n = !isListItem() && previousSibling()
-            ? previousSibling()->previousSibling() : previousSibling();
-
-        CounterNode* current = 0;
-        for (; n; n = n->previousSibling()) {
-            current = n->findCounter(counterName, false, false, false);
-            if (current)
-                break;
-        }
-
-        CounterNode* last = current;
-        CounterNode* sibling = current;
-        if (last && !newNode->isReset()) {
-            // Found render-sibling, now search for later counter-siblings among its render-children
-            n = n->lastChild();
-            while (n) {
-                current = n->findCounter(counterName, false, false, false);
-                if (current && (last->parent() == current->parent() || sibling == current->parent())) {
-                    last = current;
-                    // If the current counter is not the last, search deeper
-                    if (current->nextSibling()) {
-                        n = n->lastChild();
-                        continue;
-                    } else
-                        break;
-                }
-                n = n->previousSibling();
-            }
-
-            if (sibling->isReset()) {
-                if (last != sibling)
-                    sibling->insertAfter(newNode, last);
-                else
-                    sibling->insertAfter(newNode, 0);
-            } else
-                last->parent()->insertAfter(newNode, last);
-        } else {
-            // Nothing found among siblings, let our parent search
-            last = parent()->findCounter(counterName, false);
-            if (last->isReset())
-                last->insertAfter(newNode, 0);
-            else
-                last->parent()->insertAfter(newNode, last);
-        }
-    }
-
-    return newNode;
 }
 
 UChar RenderObject::backslashAsCurrencySymbol() const

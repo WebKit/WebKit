@@ -32,6 +32,7 @@
 #include "EventNames.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "RenderLayer.h"
 #include "RenderView.h"
 
 using namespace std;
@@ -277,7 +278,6 @@ void RenderWidget::setSelectionState(SelectionState state)
 {
     if (selectionState() != state) {
         RenderReplaced::setSelectionState(state);
-        m_selectionState = state;
         if (m_widget)
             m_widget->setIsSelected(isSelected());
     }

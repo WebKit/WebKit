@@ -1,3 +1,66 @@
+2007-01-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - added a new version of the CSS 2.1 test from the W3C site
+        - added counters, list, and other CSS tests for my counter-related check-in
+
+        * css2.1: Updated to the 2006-10-11 version of the test suite.
+        I downloaded it from http://www.w3.org/Style/CSS/Test/CSS2.1/20061011/
+        added UTF-8 BOMs to the beginning of all the files, and generated expected
+        results.
+
+        * fast/css-generated-content/reset-content-to-initial-expected.txt: Updated
+        to reflect a bug fix in CSS content property support.
+
+        * fast/css/counters/*: Removed all the existing tests since they are now part
+        of the CSS 2.1 test suite.
+
+        * fast/css/counters/counter-text-security-expected.checksum:  Added. New test.
+        * fast/css/counters/counter-text-security-expected.png: Ditto.
+        * fast/css/counters/counter-text-security-expected.txt: Ditto.
+        * fast/css/counters/counter-text-security.html: Ditto.
+
+        * fast/css/counters/counter-text-transform-expected.checksum: Added. New test.
+        * fast/css/counters/counter-text-transform-expected.png: Ditto.
+        * fast/css/counters/counter-text-transform-expected.txt: Ditto.
+        * fast/css/counters/counter-text-transform.html: Ditto.
+
+        * fast/lists/decimal-leading-zero-expected.checksum: Added. New test.
+        * fast/lists/decimal-leading-zero-expected.png: Ditto.
+        * fast/lists/decimal-leading-zero-expected.txt: Ditto.
+        * fast/lists/decimal-leading-zero.html: Ditto.
+
+        * fast/css/text-security-expected.checksum:  Added. New test.
+        * fast/css/text-security-expected.png: Ditto.
+        * fast/css/text-security-expected.txt: Ditto.
+        * fast/css/text-security.html: Ditto.
+
+        * fast/lists/decimal-leading-zero-expected.checksum: Added. New test.
+        * fast/lists/decimal-leading-zero-expected.png: Ditto.
+        * fast/lists/decimal-leading-zero-expected.txt: Ditto.
+        * fast/lists/decimal-leading-zero.html: Ditto.
+
+        * fast/lists/li-values-expected.checksum: Added. New test.
+        * fast/lists/li-values-expected.png: Ditto.
+        * fast/lists/li-values-expected.txt: Ditto.
+        * fast/lists/li-values.html: Ditto.
+
+        * fast/css/import-rule-regression-11590-expected.checksum: Added. Missing
+        pixel-test results.
+        * fast/css/import-rule-regression-11590-expected.png: Ditto.
+        * fast/dom/css-insert-import-rule-expected.checksum: Ditto.
+        * fast/dom/css-insert-import-rule-expected.png: Ditto.
+        * fast/forms/encoding-test-expected.checksum: Ditto.
+        * fast/forms/encoding-test-expected.png: Ditto.
+        * fast/frames/frame-src-attribute-expected.checksum: Ditto.
+        * fast/frames/frame-src-attribute-expected.png: Ditto.
+        * fast/frames/onlyCommentInIFrame-expected.png: Ditto.
+        * fast/frames/viewsource-attribute-expected.checksum: Ditto.
+        * fast/frames/viewsource-attribute-expected.png: Ditto.
+        * fast/loader/start-load-in-unload-expected.checksum: Ditto.
+        * fast/loader/start-load-in-unload-expected.png: Ditto.
+
 2007-01-05  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

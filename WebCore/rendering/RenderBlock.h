@@ -32,12 +32,8 @@
 namespace WebCore {
 
 class Position;
-class RootInlineBox;
 
-enum CaretType {
-    CursorCaret,
-    DragCaret
-};
+enum CaretType { CursorCaret, DragCaret };
 
 class RenderBlock : public RenderFlow {
 public:
@@ -79,18 +75,20 @@ public:
 
     void initMaxMarginValues()
     {
-        if (m_marginTop >= 0) {
-            m_maxTopPosMargin = m_marginTop;
+        int margTop = marginTop();
+        if (margTop >= 0) {
+            m_maxTopPosMargin = margTop;
             m_maxTopNegMargin = 0;
         } else {
-            m_maxTopNegMargin = -m_marginTop;
+            m_maxTopNegMargin = -margTop;
             m_maxTopPosMargin = 0;
         }
-        if (m_marginBottom >= 0) {
-            m_maxBottomPosMargin = m_marginBottom;
+        int margBottom = marginBottom();
+        if (margBottom >= 0) {
+            m_maxBottomPosMargin = margBottom;
             m_maxBottomNegMargin = 0;
         } else {
-            m_maxBottomNegMargin = -m_marginBottom;
+            m_maxBottomNegMargin = -margBottom;
             m_maxBottomPosMargin = 0;
         }
     }
@@ -133,8 +131,8 @@ public:
     RootInlineBox* constructLine(const BidiIterator& start, const BidiIterator& end);
     InlineFlowBox* createLineBoxes(RenderObject*);
     int tabWidth(bool isWhitespacePre);
-    void computeHorizontalPositionsForLine(RootInlineBox* lineBox, BidiState& bidi);
-    void computeVerticalPositionsForLine(RootInlineBox* lineBox);
+    void computeHorizontalPositionsForLine(RootInlineBox*, BidiState&);
+    void computeVerticalPositionsForLine(RootInlineBox*);
     void checkLinesForOverflow();
     void deleteEllipsisLineBoxes();
     void checkLinesForTextOverflow();
@@ -201,8 +199,8 @@ public:
     virtual int getBaselineOfFirstLineBox() const;
     virtual int getBaselineOfLastLineBox() const;
 
-    RootInlineBox* firstRootBox() const { return static_cast<RootInlineBox*>(m_firstLineBox); }
-    RootInlineBox* lastRootBox() const { return static_cast<RootInlineBox*>(m_lastLineBox); }
+    RootInlineBox* firstRootBox() const { return static_cast<RootInlineBox*>(firstLineBox()); }
+    RootInlineBox* lastRootBox() const { return static_cast<RootInlineBox*>(lastLineBox()); }
 
     // Obtains the nearest enclosing block (including this block) that contributes a first-line style to our inline
     // children.
@@ -411,7 +409,7 @@ protected:
     void setCollapsedBottomMargin(const MarginInfo&);
     // End helper functions and structs used by layoutBlockChildren.
 
-protected:
+private:
     DeprecatedPtrList<FloatingObject>* m_floatingObjects;
     DeprecatedPtrList<RenderObject>* m_positionedObjects;
 
@@ -423,6 +421,7 @@ protected:
     bool m_hasMarkupTruncation : 1;
     unsigned m_selectionState : 3; // SelectionState
 
+protected:
     int m_maxTopPosMargin;
     int m_maxTopNegMargin;
     int m_maxBottomPosMargin;
@@ -439,6 +438,7 @@ protected:
     int m_overflowLeft;
     int m_overflowTop;
 
+private:
     // full width of a tab character
     int m_tabWidth;
 };

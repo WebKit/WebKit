@@ -55,5 +55,5 @@ layer at (0,0) size 800x318
           text run at (0,216) width 237: "text dummy text dummy text dummy "
           text run at (237,216) width 181: "text dummy text dummy text"
       RenderBlock {DIV} at (0,284) size 784x18
-        RenderText {#text} at (0,0) size 296x18
-          text run at (0,0) width 296: "(All the lines of text should be equally spaced.)"
+        RenderText {#text} at (0,0) size 416x18
+          text run at (0,0) width 416: "(All the lines of text in the block above should be equally spaced.)"

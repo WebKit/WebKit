@@ -1,3 +1,13 @@
+2007-01-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        * Misc/WebNSAttributedStringExtras.m:
+        (+[NSAttributedString _web_attributedStringFromRange:]):
+        Updated to use new list marker text API that is String rather than
+        DeprecatedString. Also removed code to do text form of non-text list
+        markers since the list marker class now deals with that.
+
 2007-01-05  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

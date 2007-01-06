@@ -1,0 +1,25 @@
+<script>
+
+function finishTest()
+{
+    document.getElementById("removeMyValue").removeAttribute("value");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function init()
+{
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+    setTimeout(finishTest, 0);
+}
+
+</script>
+
+<body onload="init()">
+<ol>
+    <li value="4" id="removeMyValue">The list marker should show 1 because this item had a value of 4 but it was removed.</li>
+    <li value="0">The list marker should show 2 even though this item has a value of 0.</li>
+    <li value="-1">The list marker should show 3 even though this item has a value of -1.</li>
+</ol>
+</body>

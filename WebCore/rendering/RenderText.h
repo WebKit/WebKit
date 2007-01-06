@@ -3,7 +3,7 @@
  *
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -113,8 +113,8 @@ public:
     virtual const Font& font();
     virtual short verticalPositionHint(bool firstLine) const;
 
-    void setText(StringImpl*, bool force = false);
-    void setTextWithOffset(StringImpl*, unsigned offset, unsigned len, bool force = false);
+    void setText(PassRefPtr<StringImpl>, bool force = false);
+    void setTextWithOffset(PassRefPtr<StringImpl>, unsigned offset, unsigned len, bool force = false);
 
     virtual bool canBeSelectionLeaf() const { return true; }
     virtual SelectionState selectionState() const { return m_selectionState; }
@@ -137,11 +137,6 @@ public:
 
     virtual InlineBox* inlineBox(int offset, EAffinity = UPSTREAM);
 
-    int widthFromCache(const Font*, int start, int len, int tabWidth, int xPos) const;
-    bool shouldUseMonospaceCache(const Font*) const;
-    void cacheWidths();
-    bool allAscii() const;
-
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
     virtual unsigned caretMaxRenderedOffset() const;
@@ -154,6 +149,14 @@ public:
     InlineTextBox* findNextInlineTextBox(int offset, int& pos) const;
 
 protected:
+    void setInternalString(PassRefPtr<StringImpl>);
+
+private:
+    void cacheWidths();
+    int widthFromCache(const Font*, int start, int len, int tabWidth, int xPos) const;
+    bool shouldUseMonospaceCache(const Font*) const;
+    bool allAscii() const;
+
     // members
     RefPtr<StringImpl> m_str;
 

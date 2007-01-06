@@ -2,4 +2,4 @@ Test for bug 12061.
 
 PASS: If this doesn't crash, the test has succeeded.
 
-
+dfn

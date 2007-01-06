@@ -2,7 +2,7 @@
  * This file is part of the HTML rendering engine for KDE.
  *
  * Copyright (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,67 +20,64 @@
  * Boston, MA 02111-1307, USA.
  *
 */
+
 #ifndef CounterNode_h
 #define CounterNode_h
 
-#include "RenderObject.h"
+#include <wtf/Noncopyable.h>
+
+// This implements a counter tree that is used for finding parents in counters() lookup,
+// and for propagating count changes when nodes are added or removed.
+
+// Parents represent unique counters and their scope, which are created either explicitly
+// by "counter-reset" style rules or implicitly by referring to a counter that is not in scope.
+// Such nodes are tagged as "reset" nodes, although they are not all due to "counter-reset".
+
+// Not that render tree children are often counter tree siblings due to counter scoping rules.
 
 namespace WebCore {
 
-class CounterResetNode;
+class RenderObject;
 
-// This file implements a counter-tree that is used for finding all parents in counters() lookup,
-// and for propagating count-changes when nodes are added or removed.
-// Please note that only counter-reset and root can be parents here, and that render-tree parents
-// are just counter-tree siblings
-
-class CounterNode {
+class CounterNode : Noncopyable {
 public:
-    CounterNode(RenderObject*);
-    virtual ~CounterNode() { }
+    CounterNode(RenderObject*, bool isReset, int value);
 
-    CounterResetNode* parent() const { return m_parent; }
-    CounterNode* previousSibling() const { return m_previous; }
-    virtual CounterNode* nextSibling() const { return m_next; }
-    virtual CounterNode* firstChild() const { return 0; }
-    virtual CounterNode* lastChild() const { return 0; }
-    virtual void insertAfter(CounterNode* newChild, CounterNode* refChild);
-    virtual void removeChild(CounterNode*);
-    void remove();
-
+    bool isReset() const { return m_isReset; }
     int value() const { return m_value; }
-    void setValue(int v) { m_value = v; }
-    int count() const { return m_count; }
-    void setCount(int c) { m_count = c; }
-    void setHasSeparator() { m_hasSeparator = true; }
-
-    virtual bool isReset() const { return false; }
-    virtual CounterNode* recountAndGetNext(bool setDirty = true);
-    virtual void recountTree(bool setDirty = true);
-    virtual void setSelfDirty();
-    virtual void setParentDirty();
-
-    bool hasSeparator() const { return m_hasSeparator; }
-    bool willNeedLayout() const { return m_willNeedLayout; }
-    void setUsesSeparator();
-    void setWillNeedLayout() { m_willNeedLayout = true; }
-    bool isRoot() const { return m_renderer && m_renderer->isRoot(); }
-
-    void setRenderer(RenderObject* o) { m_renderer = o; }
+    int countInParent() const { return m_countInParent; }
     RenderObject* renderer() const { return m_renderer; }
 
-    friend class CounterResetNode;
-protected:
-    bool m_hasSeparator;
-    bool m_willNeedLayout;
+    CounterNode* parent() const { return m_parent; }
+    CounterNode* previousSibling() const { return m_previousSibling; }
+    CounterNode* nextSibling() const { return m_nextSibling; }
+    CounterNode* firstChild() const { return m_firstChild; }
+    CounterNode* lastChild() const { return m_lastChild; }
+
+    void insertAfter(CounterNode* newChild, CounterNode* beforeChild);
+    void removeChild(CounterNode*);
+
+private:
+    int computeCountInParent() const;
+    void recount();
+
+    bool m_isReset;
     int m_value;
-    int m_count;
-    CounterResetNode* m_parent;
-    CounterNode* m_previous;
-    CounterNode* m_next;
+    int m_countInParent;
     RenderObject* m_renderer;
+
+    CounterNode* m_parent;
+    CounterNode* m_previousSibling;
+    CounterNode* m_nextSibling;
+    CounterNode* m_firstChild;
+    CounterNode* m_lastChild;
 };
 
 } // namespace WebCore
+
+#ifndef NDEBUG
+// Outside the WebCore namespace for ease of invocation from gdb.
+void showTree(const WebCore::CounterNode*);
+#endif
 
 #endif // CounterNode_h

@@ -1,12 +1,10 @@
 /**
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1997 Martin Jones (mjones@kde.org)
  *           (C) 1997 Torben Weis (weis@kde.org)
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -620,10 +618,6 @@ static EBorderStyle collapsedBorderStyle(EBorderStyle style)
 }
 
 struct CollapsedBorder {
-    CollapsedBorder()
-    {
-    }
-    
     CollapsedBorderValue borderValue;
     RenderObject::BorderSide side;
     bool shouldPaint;
@@ -673,31 +667,42 @@ public:
     int m_count;
 };
 
-static void addBorderStyle(DeprecatedValueList<CollapsedBorderValue>& borderStyles, CollapsedBorderValue borderValue)
+static void addBorderStyle(RenderTableCell::CollapsedBorderStyles& borderStyles, CollapsedBorderValue borderValue)
 {
-    if (!borderValue.exists() || borderStyles.contains(borderValue))
+    if (!borderValue.exists())
         return;
-    
-    DeprecatedValueListIterator<CollapsedBorderValue> it = borderStyles.begin();
-    DeprecatedValueListIterator<CollapsedBorderValue> end = borderStyles.end();
-    for (; it != end; ++it) {
-        CollapsedBorderValue result = compareBorders(*it, borderValue);
-        if (result == *it) {
-            borderStyles.insert(it, borderValue);
+    size_t count = borderStyles.size();
+    for (size_t i = 0; i < count; ++i)
+        if (borderStyles[i] == borderValue)
             return;
-        }
-    }
-
     borderStyles.append(borderValue);
 }
 
-void RenderTableCell::collectBorders(DeprecatedValueList<CollapsedBorderValue>& borderStyles)
+void RenderTableCell::collectBorderStyles(CollapsedBorderStyles& borderStyles) const
 {
     bool rtl = table()->style()->direction() == RTL;
     addBorderStyle(borderStyles, collapsedLeftBorder(rtl));
     addBorderStyle(borderStyles, collapsedRightBorder(rtl));
     addBorderStyle(borderStyles, collapsedTopBorder());
     addBorderStyle(borderStyles, collapsedBottomBorder());
+}
+
+static int compareBorderStylesForQSort(const void* pa, const void* pb)
+{
+    const CollapsedBorderValue* a = static_cast<const CollapsedBorderValue*>(pa);
+    const CollapsedBorderValue* b = static_cast<const CollapsedBorderValue*>(pb);
+    if (*a == *b)
+        return 0;
+    CollapsedBorderValue borderWithHigherPrecedence = compareBorders(*a, *b);
+    if (*a == borderWithHigherPrecedence)
+        return 1;
+    return -1;
+}
+
+void RenderTableCell::sortBorderStyles(CollapsedBorderStyles& borderStyles)
+{
+    qsort(borderStyles.data(), borderStyles.size(), sizeof(CollapsedBorderValue),
+        compareBorderStylesForQSort);
 }
 
 void RenderTableCell::paintCollapsedBorder(GraphicsContext* graphicsContext, int tx, int ty, int w, int h)

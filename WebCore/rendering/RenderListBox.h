@@ -24,12 +24,11 @@
 #define RenderListBox_h
 
 #include "RenderBlock.h"
+#include "ScrollBar.h"
 
 namespace WebCore {
 
-class HTMLElement;
 class HTMLSelectElement;
-class HTMLOptionElement;
 
 class RenderListBox : public RenderBlock, public ScrollbarClient {
 public:

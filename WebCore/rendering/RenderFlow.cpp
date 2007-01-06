@@ -30,6 +30,7 @@
 #include "InlineTextBox.h"
 #include "RenderArena.h"
 #include "RenderInline.h"
+#include "RenderLayer.h"
 #include "RenderView.h"
 
 using namespace std;

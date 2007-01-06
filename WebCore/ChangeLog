@@ -1,3 +1,392 @@
+2007-01-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - eliminated use of DeprecatedString for list item markers
+        - eliminated use of DeprecatedValueList for border style collapsing
+        - made many members private instead of protected or public
+
+        - reworked counter implementation to fix most of the CSS 2.1 counter tests;
+            made CounterNode be a simple non-polymorphic class, moved most counter-
+            specific code out of RenderObject into RenderCounter, changed the data
+            structure in RenderStyle to be more speed-efficient but less space-
+            efficient for nodes with counter styles
+        - fixed http://bugs.webkit.org/show_bug.cgi?id=11557
+
+        Tests: css2.1
+
+        - fixed a bug where counter text did not have text transform or text security
+          applied to it
+
+        Test: fast/css/counters/counter-text-security.html
+        Test: fast/css/counters/counter-text-transform.html
+
+        - improved handling of CSS content property values with data of the wrong
+          type; this probably needs a bit more refinement
+
+        Test: fast/css-generated-content/reset-content-to-initial-expected.txt
+
+        - fixed a bug where removing the value attribute from an HTMLLIElement would
+          set the list item's value to 0 instead of restoring it to normal
+
+        Test: fast/lists/li-values.html
+
+        - fixed a bug where changing the text security style from one style to another
+          would not change the displayed text
+
+        Test: fast/css/text-security.html
+
+        - fixed some problems handling long sequences of counter-related styles;
+          still needs more work and some super-large test cases to check if
+          recursive algorithms for these that will overflow stack remain
+
+        - added support for list styles decimal-leading-zero, hiragana, hirigana-iroha,
+          katakana, katakana-iroha, cjk-ideographic, armenian, and georgian
+
+        Test: fast/lists/decimal-leading-zero.html
+
+        - minor tweaks and bug fixes for other list styles, including range checking
+
+        * WebCore.exp: Updated for RenderListItem change.
+
+        * bridge/mac/WebCoreAXObject.mm: (-[WebCoreAXObject value]): Updated to use
+        String instead of DeprecatedString.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Removed
+        implementation for counter styles for now. We should probably restore it
+        later, but we need to make sure the returned list is separate from the
+        original list in the DOM -- modifying the list should not change the element
+        it was computed from.
+
+        * css/Counter.h: Removed unneeded empty constructor and destructor.
+
+        * css/cssstyleselector.cpp:
+        (WebCore::applyCounterList): Added. Stores counter directives in hash tables
+        that should allow us to efficiently implement dynamic counter changes. Full
+        support will have to wait for a future check-in.
+        (WebCore::CSSStyleSelector::applyProperty): Changed counter properties to
+        call applyCounterList. Reformatted the code to parse the content property for
+        changes to RenderStyle and to handle the case where some the items in the
+        content list don't generate any content.
+
+        * editing/visible_units.cpp:
+        * rendering/RenderBox.cpp:
+        * rendering/RenderFlexibleBox.cpp:
+        * rendering/RenderFlow.cpp:
+        * rendering/RenderSlider.cpp:
+        Added includes needed because of header changes.
+
+        * html/HTMLLIElement.H: Removed unneeded m_isValued.
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::parseMappedAttribute): To match test results seen
+        in WinIE, ignore values that are 0 or negative, and use new functions in
+        RenderListItem to communicate the lack of a valid value.
+        (WebCore::HTMLLIElement::attach): More of the same.
+
+        * rendering/CounterNode.h: Made CounterNode be a non-polymorphic class,
+        removing all the subclasses. Merged in CounterResetNode. Removed
+        m_total from CounterResetNode, because it isn't needed for any of
+        the styles (decimal-leading-zero always uses two digits). Removed
+        m_hasSeparator and m_willNeedLayout since they aren't needed any more.
+        Renamed m_count to m_countInParent for clarify, and named the list
+        links the same as their associated functions. Removed many functions
+        as well.
+        * rendering/CounterNode.cpp:
+        (WebCore::CounterNode::CounterNode): Added new fields.
+        (WebCore::CounterNode::computeCountInParent): Added. Used by recount.
+        (WebCore::CounterNode::recount): Simplified by removing unused parameter and the
+        "get next" idiom. Changed to be iterative instead of recursive so we can handle
+        arbitrarily long lists.
+        (WebCore::CounterNode::insertAfter): Moved here from CounterResetNode. Updated
+        for field name changes. Corrected rule for when to recount.
+        (WebCore::CounterNode::removeChild): Moved here from CounterResetNode. Changed
+        to only work on nodes without children. Corrected rule for when to recount.
+        (WebCore::nextInPreOrderAfterChildren): Added. For debugging only.
+        (WebCore::nextInPreOrder): Ditto.
+        (WebCore::showTreeAndMark): Ditto.
+        (showTree): Ditto.
+
+        * rendering/CounterListItem.h:
+        * rendering/CounterResetNode.h:
+        * rendering/CounterResetNode.cpp:
+        Marked ready to remove. I'll do the remove in a separate patch, since I have
+        to update a lot of different make files when I do.
+
+        * rendering/ListMarkerBox.cpp: (WebCore::ListMarkerBox::isText): Changed for the
+        change to RenderListMarker.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildToFlow): Changed to use functions instead of
+        direct field access so the fields can be private and we don't need to be friends.
+        (WebCore::RenderBlock::getBaselineOfFirstLineBox): Ditto.
+        (WebCore::RenderBlock::getBaselineOfLastLineBox): Ditto.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::initMaxMarginValues): Ditto.
+        (WebCore::RenderBlock::firstRootBox): Ditto.
+        (WebCore::RenderBlock::lastRootBox): Ditto.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::setWidth): Ditto.
+        (WebCore::RenderBox::setHeight): Ditto.
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::addChild): Ditto.
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::determineStartPosition): Ditto.
+
+        * rendering/RenderContainer.h: Renamed m_first and m_last to m_firstChild
+        and m_lastChild. Made them private instead of proected. Removed the
+        setFirstChild and setLastChild functions.
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::RenderContainer): Updated for field name change.
+        Changed all calls to get at fields directly instead of using functions.
+        (WebCore::RenderContainer::destroyLeftoverChildren): Ditto.
+        (WebCore::updateListMarkerNumbers): Updated for RenderListItem change.
+        (WebCore::RenderContainer::addChild): Changed to get at fields directly
+        instead of using functions. Also used release() since RenderText::setText
+        now takes PassRefPtr.
+        (WebCore::RenderContainer::removeChildNode): Changed to get at fields directly
+        instead of using functions.
+        (WebCore::RenderContainer::updatePseudoChildForObject): Create the anonymous
+        box only if at least one of of the items in the content list actually
+        generates content. Since a RenderCounter is a RenderText, don't bother making
+        a new style for it -- it just shares the style with its parent. Changed code
+        to use RenderImage::setCachedImage() instead of of setContentObject().
+        Added a call to setIsAnonymousImage() here, which was the only special thing
+        that setContentObject() used to do. Pass a reference to the counter to the
+        RenderCounter rather than a pointer. Pass document() as the node instead of
+        passing the element to RenderCounter, which makes it anonymous automatically,
+        and removed the setIsAnonymous call.
+        (WebCore::RenderContainer::appendChildNode): Chagned to get at fields directly
+        instead of using functions.
+        (WebCore::RenderContainer::insertChildNode): Ditto.
+        (WebCore::RenderContainer::layout): Ditto.
+        (WebCore::RenderContainer::removeLeftoverAnonymousBoxes): Ditto.
+        (WebCore::RenderContainer::positionForCoordinates): Ditto.
+        (WebCore::RenderContainer::addLineBoxRects): Ditto.
+
+        * rendering/RenderCounter.h: Removed unneeded layout override, never called on a
+        text node. Added override of originalString. Replaced CounterData* with a copy of
+        the CounterContent -- it's two atomic strings and an integer so it's efficient
+        enough to store all three in the render object, and this eliminates the lifetime
+        problems we could have if we used a pointer.
+        * rendering/RenderCounter.cpp: Removed duplicate copy of list marker code.
+        (WebCore::counterMaps): Moved these maps here from RenderObject.
+        (WebCore::previousSiblingOrParent): Added.
+        (WebCore::lastDescendant): Added.
+        (WebCore::previousInPreOrder): Added.
+        (WebCore::planCounter): Added.
+        (WebCore::findPlaceForCounter): Added.
+        (WebCore::counter): New name of function that was named RenderObject::findCounter.
+        Also uses a new algorithm that passes all the CSS 2.1 tests.
+        (WebCore::RenderCounter::RenderCounter): Changed to take a Document* instead of a
+        Node*, since at the moment counters are always anonymous.
+        (WebCore::RenderCounter::originalString): Added. This overrides the originalString
+        in the RenderText base class so that any text transforms will use the counter's
+        value. This code was previously in calcMinMaxWidth.
+        (WebCore::RenderCounter::calcMinMaxWidth): Changed to call setInternalString and
+        pass originalString -- this uses the counter's value from the counter tree.
+        (WebCore::destroyCounterNodeChildren): Added.
+        (WebCore::RenderCounter::destroyCounterNodes): Added. Called as needed from
+        RenderObject::destroy for objects that have counter nodes.
+
+        * rendering/RenderFlow.h: Made m_continuation private instead of protected.
+
+        * rendering/RenderImage.h: Removed unneeded includes, and unnecessary element()
+        function that casts to HTMLElement*. Made image() protected, and made the two
+        calcAspectRatio functions private. Removed setContentObject(). Renamed the
+        errorOccured() function to isErrorImage() and made it private.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::RenderImage): Removed initialization of removed
+        m_selectionState field.
+        (WebCore::RenderImage::setCachedImage): Rearrange code so it won't try to
+        call isErrorImage() on a null image.
+        (WebCore::RenderImage::paint): Updated for name change.
+
+        * rendering/RenderListBox.h: Removed unneeded forward declarations.
+
+        * rendering/RenderListItem.h:
+        Renamed markerStringValue() to markerText() and made it return a String instead of
+        a DeprecatedString. Renamed m_prededfVal to m_explicitValue. Added booleans named
+        m_hasExplicitValue and m_isValueUpToDate and marked m_value mutable so it can be
+        computed in const member functions.
+        (WebCore::RenderListItem::value): Changed to update value on demand at the time
+        you ask for it.
+        (WebCore::RenderListItem::hasExplicitValue): Added. Use instead of magic -1 value
+        to indicate that the item does or does not have an explicit value.
+        (WebCore::RenderListItem::explicitValue): Added.
+        (WebCore::RenderListItem::setExplicitValue): Added.
+        (WebCore::RenderListItem::clearExplicitValue): Added.
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::RenderListItem): Updated to not use magic -1 values.
+        (WebCore::RenderListItem::setStyle): Removed call to RenderListMarker::setListItem
+        since it's not needed any more, and instead pass the list item to the constructor.
+        (WebCore::previousListItem): Made parameter const.
+        (WebCore::RenderListItem::calcValue): Restructed the function a bit.
+        (WebCore::RenderListItem::updateValueNow): Added. Calls calcValue.
+        (WebCore::RenderListItem::updateValue): Added. New name for resetValue(). Unlike
+        the old version, this no longer calculates the value until it's asked-for later.
+        (WebCore::RenderListItem::markerText): Changed to return String rather than a
+        DeprecatedString and to return a null string rather than empty string when there
+        is no marker.
+
+        * rendering/RenderListMarker.h: Added listMarkerText function -- common code shared
+        with anyone who needs to convert a value into text given a list style.
+        Changed constructor to take a RenderListItem and figure out the document from that.
+        Added isImage() and isText() functions and removed listImage() function. Changed the
+        type of the text() function from DeprecatedString to String. Removed the listItem()
+        and seListeItem() functions. Made the getRelativeMarkerRect() function private.
+        Renamed m_item to m_text and chagned it from DeprecatedString to String. Renamed
+        m_listImage to m_image.
+        * rendering/RenderListMarker.cpp:
+        (WebCore::toRoman): Added range checking to fix buffer overrun for large or negative
+        numbers. Rewrote to use a local UChar array and String rather than prepending to a
+        DeprecatedString.
+        (WebCore::toAlphabetic): Replaces toLetterString, and is more flexible since it takes
+        an alphabet array. Changed to match CSS 3 specification by using decimal numbering for
+        0 and negative numbers. Rewrote to use a local UChar array and String rather than
+        prepending to a DeprecatedString.
+        (WebCore::toHebrewUnder1000): Added. Helper function for Hebrew numbers so we can
+        handle numbers up to a million.
+        (WebCore::toHebrew): Changed to use toHebrewUnder1000, added a special case for
+        zero, negative, and too-large numbers.
+        (WebCore::toArmenianUnder10000): Added. Used by toArmenian.
+        (WebCore::toArmenian): Added.
+        (WebCore::toGeorgian): Added.
+        (WebCore::toCJKIdeographic): Added.
+        (WebCore::listMarkerText): Added. Moved the code here from calcMinMaxWidth, but added
+        support for text for the styles disc, circle, square, decimal-leading-zero, hiragana,
+        hirigana-iroha, katakana, katakana-iroha, cjk-ideographic, armenian, and georgian.
+        Also changed some of the styles to share the new toAlphabetic function.
+        (WebCore::RenderListMarker::RenderListMarker): Updated for name changes and list
+        item parameter.
+        (WebCore::RenderListMarker::~RenderListMarker): Updated for name changes.
+        (WebCore::RenderListMarker::setStyle): Updated for name changes.
+        (WebCore::RenderListMarker::isImage): Added. Useful helper that unifies the check
+        for no image and the error image.
+        (WebCore::RenderListMarker::paint): Updated for name changes to to use isImage()
+        and rearranged the code a bit.
+        (WebCore::RenderListMarker::imageChanged): Updated for name change
+        (WebCore::RenderListMarker::calcMinMaxWidth): Updated for name change, fixed a bug
+        where we'd leave the old text around if we were using an image-based marker. Also
+        changed the code to use isImage() instead of checking m_listImage.
+        (WebCore::RenderListMarker::calcWidth): Changed to use isImage().
+        (WebCore::RenderListMarker::lineHeight): Changed to use isImage().
+        (WebCore::RenderListMarker::baselinePosition): Changed to use isImage().
+        (WebCore::RenderListMarker::getRelativeMarkerRect): Changed to use isImage(),
+        restructured the code a little.
+
+        * rendering/RenderObject.h: Removed now-uneeded includes. Removed collectBorders()
+        and isFormElement(). Made remove() function and m_hasCounterNodeMap public so
+        we could remove friend declarations for RenderListItem and RenderView.
+        Moved findCounter() to become a private function inside RenderCounter.cpp.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject): Fix bug where a contentData() with
+        CONTENT_NONE is treated as image content -- only look at the content property
+        if it has exactly one entry which is a CONTENT_OBJECT.
+        (WebCore::RenderObject::selectionStartEnd): Add const.
+        (WebCore::RenderObject::destroy): Moved counter-specific code to
+        RenderCounter::destroyCounterNodes.
+        (WebCore::RenderObject::recalcMinMaxWidths): Changed code to set m_recalcMinMax
+        near the top of the function -- the old code would potentially reset it after it
+        was set by the calcMinMaxWidths functions, and possibly skip a future needed
+        recalc. That came up in counter test cases. Removed unneeded boolean check right
+        after an assertion.
+
+        * rendering/RenderPart.h: Marked two virtual functions virtual for clarity.
+
+        * rendering/RenderReplaced.h: Made shouldPaint be protected, and made
+        m_intrinsicWidth, m_intrinsicHeight, and m_selectionState be private.
+        Also marked isSelected() const.
+        * rendering/RenderReplaced.cpp: Added newly-needed include.
+        (WebCore::RenderReplaced::RenderReplaced): Use constructor syntax.
+        (WebCore::RenderReplaced::isSelected): Made const and changed to call the
+        selectionStartEnd function in the straightforward way.
+
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::absoluteRects): Use functions instead of direct field
+        access so the fields can be private.
+        (WebCore::RenderSVGText::relativeBBox): Ditto.
+
+        * rendering/RenderStyle.h: Tweaked formatting. Changed names of CSS3 holders
+        to say "rare" instead, since it's not all CSS 3. Renamed CounterData to
+        CounterContent, since it's used inside ContentData. Changed names of fields in
+        ContentData to have m prefix. Moved content and counter fields into the rare
+        non-inherited data object. Removed unneeded assignment operator from a class
+        that already inherits from Shared which makes it start out noncopyable.
+        * rendering/RenderStyle.cpp: Name changes, plus:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        Updated for added fields (content, counter-reset, counter-increment).
+        (WebCore::StyleRareNonInheritedData::~StyleRareNonInheritedData): Ditto.
+        (WebCore::StyleRareNonInheritedData::operator==): Reformatted and sorted so it's
+        easy to see if any fields are missing.
+        (WebCore::operator!=): Added. Compares two CounterContent objects.
+        (WebCore::RenderStyle::arenaDelete): Removed code to handle content, which is
+        now in the rareNonInheritedData structure.
+        (WebCore::RenderStyle::RenderStyle): Ditto.
+        (WebCore::RenderStyle::inheritFrom): Ditto.
+        (WebCore::RenderStyle::operator==): Ditto.
+        (WebCore::RenderStyle::inheritedNotEqual):
+        (WebCore::RenderStyle::diff):
+        (WebCore::RenderStyle::contentDataEquivalent): Added case for counter,
+        which previously would be ignored when determining if content is equivalent.
+        (WebCore::RenderStyle::clearContent): Added.
+        (WebCore::RenderStyle::setContent): Updated for change in content location.
+        (WebCore::ContentData::clear): Changed algorithm so that it's not recursive
+        and thus can handle a very long list of ContentData.
+        (WebCore::operator==): Added. Compares two CounterDirective objects.
+        (WebCore::RenderStyle::counterDirectives): Added.
+        (WebCore::RenderStyle::accessCounterDirectives): Added.
+
+        * rendering/RenderTable.h: Made m_currentBorder const to better reflect the
+        paint algorithm.
+        * rendering/RenderTable.cpp: (WebCore::RenderTable::paint): Changed to use
+        Vector instead of DeprecatedValueList for the border styles, and to sort
+        rather than inserting in sorted order as we go. Put the code to loop through
+        the nodes and collect border styles here instead of in a RenderObject virtual
+        function. Also set m_currentBorder to 0 after the loop for greater clarity.
+
+        * rendering/RenderTableCell.h: Added a typedef for a vector of border values.
+        Removed the virtual collectBorders and replaced with the non-virtual named
+        collectBorderStyles. Also added a static member function named sortBorderStyles.
+        * rendering/RenderTableCell.cpp:
+        (WebCore::CollapsedBorders::CollapsedBorders): Removed unneeded constructor
+        parameter.
+        (WebCore::addBorderStyle): Changed to use a vector instead of a
+        DeprecatedValueList. Wrote out a loop since Vector doesn't have a contains
+        member function. Removed the code to insert the border at a sorted location;
+        instead we have a separate call to sort the border styles
+        (WebCore::RenderTableCell::collectBorderStyles): Renamed, and changed the
+        parameter type.
+        (WebCore::compareBorderStylesForQSort): Added.
+        (WebCore::RenderTableCell::sortBorderStyles): Added.
+
+        * rendering/RenderText.h: Changed StringImpl parameters in setText functions
+        to be PassRefPtr; added a new setInternalString function. Made a bunch of the
+        member functions private and made all the data members private instead of
+        protected.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setStyle): Restructure a bit for clarity. Fix case where
+        the old style has a different security than the new style. Use release() since
+        RenderText::setText now takes PassRefPtr. Always call cacheWidths here.
+        (WebCore::RenderText::setTextWithOffset): Changed to take the string as a
+        PassRefPtr instead of a raw pointer.
+        (WebCore::isInlineFlowOrEmptyText): Added.
+        (WebCore::RenderText::setInternalString): Refactored core of setText into a
+        separate protected member function that can be used RenderCounter. Changed
+        the text security square character to match what's used in list markers.
+        Changed the text transform switch statement so that gcc will warn us if we add
+        a new value and don't add a case for it.
+        (WebCore::RenderText::setText): Refactored most of the function into
+        setInternalString. Removed the call to cacheWidths -- that's now done in the
+        setStyle function only.
+
+        * rendering/RenderView.h:
+        * rendering/RenderView.cpp: (WebCore::RenderView::selectionStartEnd): Now const.
+
+        * rendering/RenderWidget.cpp: Added newly-needed include.
+        (WebCore::RenderWidget::setSelectionState): Don't bother setting m_selectionState
+        here since RenderReplaced::setSelectionState already does that.
+
 2007-01-05  Anders Carlsson  <acarlsson@apple.com>
 
         Rubber stamped by Adam.

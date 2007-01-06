@@ -2,7 +2,7 @@
 <html>
  <head>
   <title>CSS 2.1 Test Suite: Cascading Order</title>
-  <link href="support/c-red.css" rel="stylesheet">
+  <link rel="stylesheet" href="support/c-red.css">
   <style type="text/css">
    body * { color: red; list-style: none; margin: 0; padding: 0; }
    span { color: red; }
@@ -27,8 +27,8 @@
    .test4 { color: green; }
    .c { color: green; }
   </style>
-  <link title="6.4.1 Cascading order" href="http://www.w3.org/TR/CSS21/cascade.html#cascading-order" rel="help">
-  <link title="6.4.3 Calculating a selector's specificity" href="http://www.w3.org/TR/CSS21/cascade.html#specificity" rel="help">
+  <link rel="help" href="http://www.w3.org/TR/CSS21/cascade.html#cascading-order" title="6.4.1 Cascading order">
+  <link rel="help" href="http://www.w3.org/TR/CSS21/cascade.html#specificity" title="6.4.3 Calculating a selector's specificity">
  </head>
  <body>
   <ul>
@@ -41,7 +41,7 @@
     </ul>
    </li>
    <li class="test2"> <span class="e"> This should be green. </span> </li>
-   <li class="test3" id="test3"> <span class="f"> This should be green. </span> </li>
+   <li id="test3" class="test3"> <span class="f"> This should be green. </span> </li>
    <li> <span class="a"> This should be green. </span> </li>
   </ul>
   <p style="color: green;"> This should be green. </p>

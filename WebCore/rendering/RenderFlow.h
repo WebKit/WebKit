@@ -90,13 +90,14 @@ public:
     void paintOutlineForLine(GraphicsContext*, int tx, int ty, const IntRect& prevLine, const IntRect& thisLine, const IntRect& nextLine);
     void paintOutline(GraphicsContext*, int tx, int ty);
 
-protected:
+private:
     // An inline can be split with blocks occurring in between the inline content.
     // When this occurs we need a pointer to our next object.  We can basically be
     // split into a sequence of inlines and blocks.  The continuation will either be
     // an anonymous block (that houses other blocks) or it will be an inline flow.
     RenderFlow* m_continuation;
 
+protected:
     // For block flows, each box represents the root inline box for a line in the
     // paragraph.
     // For inline flows, each box represents a portion of that inline.

@@ -28,11 +28,12 @@
 
 #include "Document.h"
 #include "Element.h"
-#include "RenderBlock.h"
-#include "TextBoundaries.h"
-#include "htmlediting.h"
 #include "HTMLNames.h"
+#include "RenderBlock.h"
+#include "RenderLayer.h"
+#include "TextBoundaries.h"
 #include "TextIterator.h"
+#include "htmlediting.h"
 
 namespace WebCore {
 

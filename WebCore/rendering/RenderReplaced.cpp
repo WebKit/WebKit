@@ -25,6 +25,7 @@
 #include "RenderReplaced.h"
 
 #include "RenderBlock.h"
+#include "RenderLayer.h"
 
 using namespace std;
 
@@ -32,13 +33,11 @@ namespace WebCore {
 
 RenderReplaced::RenderReplaced(Node* node)
     : RenderBox(node)
+    , m_intrinsicWidth(300)
+    , m_intrinsicHeight(150)
+    , m_selectionState(SelectionNone)
 {
-    // init RenderObject attributes
     setReplaced(true);
-
-    m_intrinsicWidth = 300;
-    m_intrinsicHeight = 150;
-    m_selectionState = SelectionNone;
 }
 
 bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, int& tx, int& ty)
@@ -78,11 +77,7 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, int& tx, int& ty)
 
 void RenderReplaced::calcMinMaxWidth()
 {
-    ASSERT( !minMaxKnown());
-
-#ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << "RenderReplaced::calcMinMaxWidth() known=" << minMaxKnown() << endl;
-#endif
+    ASSERT(!minMaxKnown());
 
     int width = calcReplacedWidth() + paddingLeft() + paddingRight() + borderLeft() + borderRight();
     if (style()->width().isPercent() || (style()->width().isAuto() && style()->height().isPercent())) {
@@ -94,14 +89,14 @@ void RenderReplaced::calcMinMaxWidth()
     setMinMaxKnown();
 }
 
-short RenderReplaced::lineHeight( bool, bool ) const
+short RenderReplaced::lineHeight(bool, bool) const
 {
-    return height()+marginTop()+marginBottom();
+    return height() + marginTop() + marginBottom();
 }
 
-short RenderReplaced::baselinePosition( bool, bool ) const
+short RenderReplaced::baselinePosition(bool, bool) const
 {
-    return height()+marginTop()+marginBottom();
+    return height() + marginTop() + marginBottom();
 }
 
 int RenderReplaced::caretMinOffset() const 
@@ -191,7 +186,7 @@ void RenderReplaced::setSelectionState(SelectionState s)
     containingBlock()->setSelectionState(s);
 }
 
-bool RenderReplaced::isSelected()
+bool RenderReplaced::isSelected() const
 {
     SelectionState s = selectionState();
     if (s == SelectionNone)
@@ -200,7 +195,7 @@ bool RenderReplaced::isSelected()
         return true;
 
     int selectionStart, selectionEnd;
-    RenderObject::selectionStartEnd(selectionStart, selectionEnd);
+    selectionStartEnd(selectionStart, selectionEnd);
     if (s == SelectionStart)
         return selectionStart == 0;
         

@@ -55,10 +55,6 @@
 using namespace WebCore;
 using namespace HTMLNames;
 
-#define BULLET_CHAR 0x2022
-#define SQUARE_CHAR 0x25AA
-#define CIRCLE_CHAR 0x25E6
-
 struct ListItemInfo {
     unsigned start;
     unsigned end;
@@ -323,24 +319,14 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
                         RenderListItem* listRenderer = static_cast<RenderListItem*>(renderer);
 
                         maxMarkerWidth = MAX([font pointSize], maxMarkerWidth);
-                        switch(style->listStyleType()) {
-                            case DISC:
-                                listText += ((DeprecatedChar)BULLET_CHAR);
-                                break;
-                            case CIRCLE:
-                                listText += ((DeprecatedChar)CIRCLE_CHAR);
-                                break;
-                            case SQUARE:
-                                listText += ((DeprecatedChar)SQUARE_CHAR);
-                                break;
-                            case LNONE:
-                                break;
-                            default:
-                                DeprecatedString marker = listRenderer->markerStringValue();
-                                listText += marker;
-                                // Use AppKit metrics.  Will be rendered by AppKit.
-                                float markerWidth = [marker.getNSString() sizeWithAttributes:[NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName]].width;
-                                maxMarkerWidth = MAX(markerWidth, maxMarkerWidth);
+
+                        String marker = listRenderer->markerText();
+                        if (!marker.isEmpty()) {
+                            listText += marker.deprecatedString();
+                            // Use AppKit metrics, since this will be rendered by AppKit.
+                            NSString *markerNSString = marker;
+                            float markerWidth = [markerNSString sizeWithAttributes:[NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName]].width;
+                            maxMarkerWidth = MAX(markerWidth, maxMarkerWidth);
                         }
 
                         listText += ' ';

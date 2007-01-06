@@ -3,7 +3,7 @@
  *
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Computer, Inc.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
@@ -27,11 +27,11 @@
 #include "config.h"
 #include "RenderText.h"
 
-#include "DeprecatedString.h"
 #include "InlineTextBox.h"
 #include "Range.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
+#include "RenderLayer.h"
 #include "TextBreakIterator.h"
 #include "TextStyle.h"
 #include "break_lines.h"
@@ -63,22 +63,20 @@ RenderText::RenderText(Node* node, StringImpl* str)
 
 void RenderText::setStyle(RenderStyle* newStyle)
 {
-    if (style() != newStyle) {
-        bool needToTransformText = (!style() && newStyle->textTransform() != TTNONE) ||
-                                   (style() && style()->textTransform() != newStyle->textTransform());
+    RenderStyle* oldStyle = style();
+    if (oldStyle == newStyle)
+        return;
 
-        bool needToSecureText = (!style() && newStyle->textSecurity() != TSNONE);
+    ETextTransform oldTransform = oldStyle ? oldStyle->textTransform() : TTNONE;
+    ETextSecurity oldSecurity = oldStyle ? oldStyle->textSecurity() : TSNONE;
 
-        RenderObject::setStyle(newStyle);
+    RenderObject::setStyle(newStyle);
 
-        if (needToTransformText || needToSecureText) {
-            RefPtr<StringImpl> textToTransform = originalString();
-            if (textToTransform)
-                // setText also calls cacheWidths(), so there is no need to call it again in that case.
-                setText(textToTransform.get(), true);
-        } else
-            cacheWidths();
-    }
+    if (oldTransform != newStyle->textTransform() || oldSecurity != newStyle->textSecurity())
+        if (RefPtr<StringImpl> textToTransform = originalString())
+            setText(textToTransform.release(), true);
+
+    cacheWidths();
 }
 
 void RenderText::destroy()
@@ -775,7 +773,7 @@ void RenderText::setSelectionState(SelectionState state)
     containingBlock()->setSelectionState(state);
 }
 
-void RenderText::setTextWithOffset(StringImpl* text, unsigned offset, unsigned len, bool force)
+void RenderText::setTextWithOffset(PassRefPtr<StringImpl> text, unsigned offset, unsigned len, bool force)
 {
     unsigned oldLen = m_str ? m_str->length() : 0;
     unsigned newLen = text ? text->length() : 0;
@@ -840,72 +838,87 @@ void RenderText::setTextWithOffset(StringImpl* text, unsigned offset, unsigned l
     setText(text, force);
 }
 
-#define BULLET_CHAR 0x2022
-#define SQUARE_CHAR 0x25AA
-#define CIRCLE_CHAR 0x25E6
-
-void RenderText::setText(StringImpl* text, bool force)
+static inline bool isInlineFlowOrEmptyText(RenderObject* o)
 {
-    if (!text)
-        return;
-    if (!force && m_str == text)
-        return;
+    if (o->isInlineFlow())
+        return true;
+    if (!o->isText())
+        return false;
+    StringImpl* string = static_cast<RenderText*>(o)->string();
+    if (!string)
+        return true;
+    return string->length() == 0;
+}
 
+void RenderText::setInternalString(PassRefPtr<StringImpl> text)
+{
     m_allAsciiChecked = false;
 
     m_str = text;
+
     if (m_str) {
         m_str = m_str->replace('\\', backslashAsCurrencySymbol());
         if (style()) {
             switch (style()->textTransform()) {
-                case CAPITALIZE:
-                {
-                    // find previous text renderer if one exists
-                    RenderObject* o;
-                    UChar previous = ' ';
-                    for (o = previousInPreOrder(); o && (o->isInlineFlow() || o->isText() && static_cast<RenderText*>(o)->string()->length() == 0); o = o->previousInPreOrder())
-                        ;
-                    if (o && o->isText()) {
-                        StringImpl* prevStr = static_cast<RenderText*>(o)->string();
-                        previous = (*prevStr)[prevStr->length() - 1];
-                    }
-                    m_str = m_str->capitalize(previous);
-                }
+                case TTNONE:
                     break;
+                case CAPITALIZE: {
+                    // find previous text renderer if one exists
+                    RenderObject* previousText = this;
+                    while ((previousText = previousText->previousInPreOrder()))
+                        if (!isInlineFlowOrEmptyText(previousText))
+                            break;
+                    UChar previousCharacter = ' ';
+                    if (previousText && previousText->isText())
+                        if (StringImpl* previousString = static_cast<RenderText*>(previousText)->string())
+                            previousCharacter = (*previousString)[previousString->length() - 1];
+                    m_str = m_str->capitalize(previousCharacter);
+                    break;
+                }
                 case UPPERCASE:
                     m_str = m_str->upper();
                     break;
                 case LOWERCASE:
                     m_str = m_str->lower();
                     break;
-                case NONE:
-                default:
-                    break;
             }
 
+            // We use the same characters here as for list markers.
+            // See the listMarkerText function in RenderListMarker.cpp.
             switch (style()->textSecurity()) {
-                case TSDISC:
-                    m_str = m_str->secure(BULLET_CHAR);
-                    break;
-                case TSCIRCLE:
-                    m_str = m_str->secure(CIRCLE_CHAR);
-                    break;
-                case TSSQUARE:
-                    m_str = m_str->secure(SQUARE_CHAR);
-                    break;
                 case TSNONE:
                     break;
+                case TSCIRCLE: {
+                    const UChar whiteBullet = 0x25E6;
+                    m_str = m_str->secure(whiteBullet);
+                    break;
+                }
+                case TSDISC: {
+                    const UChar bullet = 0x2022;
+                    m_str = m_str->secure(bullet);
+                    break;
+                }
+                case TSSQUARE: {
+                    const UChar blackSquare = 0x25A0;
+                    m_str = m_str->secure(blackSquare);
+                    break;
+                }
             }
         }
     }
 
-    cacheWidths();
-
-    // FIXME: what should happen if we change the text of a
-    // RenderBR object ?
     ASSERT(!isBR() || (m_str->length() == 1 && (*m_str)[0] == '\n'));
     ASSERT(!m_str->length() || m_str->characters());
+}
 
+void RenderText::setText(PassRefPtr<StringImpl> text, bool force)
+{
+    if (!text)
+        return;
+    if (!force && equal(m_str.get(), text.get()))
+        return;
+
+    setInternalString(text);
     setNeedsLayoutAndMinMaxRecalc();
 }
 

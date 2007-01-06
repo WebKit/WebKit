@@ -3,7 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -43,30 +43,40 @@ public:
 
     virtual void setStyle(RenderStyle*);
 
-    int value() const { return m_value; }
-    void setValue(int v) { m_predefVal = v; }
-    void calcValue();
-    void resetValue();
+    int value() const { if (!m_isValueUpToDate) updateValueNow(); return m_value; }
+    void updateValue();
+
+    bool hasExplicitValue() const { return m_hasExplicitValue; }
+    int explicitValue() const { return m_explicitValue; }
+    void setExplicitValue(int value);
+    void clearExplicitValue();
 
     virtual bool isEmpty() const;
-    virtual void paint(PaintInfo&, int xoff, int yoff);
+    virtual void paint(PaintInfo&, int tx, int ty);
 
     virtual void layout();
     virtual void calcMinMaxWidth();
 
     virtual void positionListMarker();
-    void updateMarkerLocation();
 
     void setNotInList(bool notInList) { m_notInList = notInList; }
     bool notInList() const { return m_notInList; }
 
-    DeprecatedString markerStringValue();
+    const String& markerText() const;
 
 private:
-    int m_predefVal;
+    void updateMarkerLocation();
+    inline int calcValue() const;
+    void updateValueNow() const;
+    void explicitValueChanged();
+
     RenderListMarker* m_marker;
-    bool m_notInList;
-    int m_value;
+    int m_explicitValue;
+    mutable int m_value;
+
+    bool m_hasExplicitValue : 1;
+    mutable bool m_isValueUpToDate : 1;
+    bool m_notInList : 1;
 };
 
 } // namespace WebCore

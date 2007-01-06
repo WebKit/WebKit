@@ -27,6 +27,7 @@
 #include "Element.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "RenderLayer.h"
 
 namespace WebCore {
 
@@ -428,7 +429,7 @@ void RenderView::clearSelection()
     setSelection(0, -1, 0, -1);
 }
 
-void RenderView::selectionStartEnd(int& startPos, int& endPos)
+void RenderView::selectionStartEnd(int& startPos, int& endPos) const
 {
     startPos = m_selectionStartPos;
     endPos = m_selectionEndPos;
