@@ -1,3 +1,15 @@
+2007-01-07  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - repaint test for http://bugs.webkit.org/show_bug.cgi?id=11935
+          REGRESSION: Changing the overflow style dynamically does not force repaint
+
+        * fast/repaint/erase-overflow-expected.checksum: Added.
+        * fast/repaint/erase-overflow-expected.png: Added.
+        * fast/repaint/erase-overflow-expected.txt: Added.
+        * fast/repaint/erase-overflow.html: Added.
+
 2007-01-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Re-apply r17618, which got reverted with CSS suite update.

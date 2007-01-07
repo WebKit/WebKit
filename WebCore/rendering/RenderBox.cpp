@@ -84,19 +84,20 @@ static RenderBlock* blockThatPaintsFloat(RenderObject* f)
     return lastBlock;
 }
 
-void RenderBox::setStyle(RenderStyle *_style)
+void RenderBox::setStyle(RenderStyle* newStyle)
 {
     bool wasFloating = isFloating();
+    bool hadOverflowClip = hasOverflowClip();
 
-    RenderObject::setStyle(_style);
+    RenderObject::setStyle(newStyle);
 
     // The root always paints its background/border.
     if (isRoot())
         setShouldPaintBackgroundOrBorder(true);
 
-    setInline(_style->isDisplayInlineType());
+    setInline(newStyle->isDisplayInlineType());
 
-    switch (_style->position()) {
+    switch (newStyle->position()) {
         case AbsolutePosition:
         case FixedPosition:
             setPositioned(true);
@@ -104,10 +105,10 @@ void RenderBox::setStyle(RenderStyle *_style)
         default:
             setPositioned(false);
 
-            if (_style->isFloating())
+            if (newStyle->isFloating())
                 setFloating(true);
 
-            if (_style->position() == RelativePosition)
+            if (newStyle->position() == RelativePosition)
                 setRelPositioned(true);
     }
 
@@ -115,8 +116,12 @@ void RenderBox::setStyle(RenderStyle *_style)
     if (!isRoot() && (!isBody() || !document()->isHTMLDocument()) && (isRenderBlock() || isTableRow() || isTableSection())) {
         // Check for overflow clip.
         // It's sufficient to just check one direction, since it's illegal to have visible on only one overflow value.
-        if (_style->overflowX() != OVISIBLE)
+        if (newStyle->overflowX() != OVISIBLE) {
+            if (!hadOverflowClip)
+                // Erase the overflow
+                repaint();
             setHasOverflowClip();
+        }
     }
 
     if (requiresLayer()) {
@@ -146,7 +151,7 @@ void RenderBox::setStyle(RenderStyle *_style)
     
     // Set the text color if we're the body.
     if (isBody())
-        element()->document()->setTextColor(_style->color());
+        element()->document()->setTextColor(newStyle->color());
     
     if (style()->outlineWidth() > 0 && style()->outlineSize() > maximalOutlineSize(PaintPhaseOutline))
         static_cast<RenderView*>(document()->renderer())->setMaximalOutlineSize(style()->outlineSize());

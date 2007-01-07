@@ -1,3 +1,16 @@
+2007-01-07  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11935
+          REGRESSION: Changing the overflow style dynamically does not force repaint
+
+        Test: fast/repaint/erase-overflow.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setStyle): Added a repaint before changing hasOverflowClip
+        to true, to ensure that the current overflow is erased.
+
 2007-01-07  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by Darin.
