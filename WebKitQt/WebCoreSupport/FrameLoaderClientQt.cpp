@@ -553,6 +553,146 @@ bool FrameLoaderClientQt::canCachePage() const
     notImplemented();
 }
 
+void FrameLoaderClientQt::setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&)
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::committedLoad(WebCore::DocumentLoader*, const char*, int)
+{
+    notImplemented();
+}
+
+WebCore::ResourceError FrameLoaderClientQt::cancelledError(const WebCore::ResourceRequest&)
+{
+    notImplemented();
+}
+
+WebCore::ResourceError FrameLoaderClientQt::cannotShowURLError(const WebCore::ResourceRequest&)
+{
+    notImplemented();
+}
+
+WebCore::ResourceError FrameLoaderClientQt::interruptForPolicyChangeError(const WebCore::ResourceRequest&)
+{
+    notImplemented();
+}
+
+WebCore::ResourceError FrameLoaderClientQt::cannotShowMIMETypeError(const WebCore::ResourceResponse&)
+{
+    notImplemented();
+}
+
+WebCore::ResourceError FrameLoaderClientQt::fileDoesNotExistError(const WebCore::ResourceResponse&)
+{
+    notImplemented();
+}
+
+bool FrameLoaderClientQt::shouldFallBack(const WebCore::ResourceError&)
+{
+    notImplemented();
+}
+
+WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClientQt::createDocumentLoader(const WebCore::ResourceRequest&)
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::download(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&)
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::dispatchWillSendRequest(WebCore::DocumentLoader*, void*, WebCore::ResourceRequest&, const WebCore::ResourceResponse&)
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::dispatchDidReceiveResponse(WebCore::DocumentLoader*, void*, const WebCore::ResourceResponse&)
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::dispatchDidReceiveContentLength(WebCore::DocumentLoader*, void*, int)
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::dispatchDidFinishLoading(WebCore::DocumentLoader*, void*)
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::dispatchDidFailLoading(WebCore::DocumentLoader*, void*, const WebCore::ResourceError&)
+{
+    notImplemented();
+}
+
+bool FrameLoaderClientQt::dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, int)
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::dispatchDidFailProvisionalLoad(const WebCore::ResourceError&)
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::dispatchDidFailLoad(const WebCore::ResourceError&)
+{
+    notImplemented();
+}
+
+WebCore::Frame* FrameLoaderClientQt::dispatchCreatePage()
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::dispatchDecidePolicyForMIMEType(void (WebCore::FrameLoader::*)(WebCore::PolicyAction), const WebCore::String&, const WebCore::ResourceRequest&)
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction(void (WebCore::FrameLoader::*)(WebCore::PolicyAction), const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::String&)
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(void (WebCore::FrameLoader::*)(WebCore::PolicyAction), const WebCore::NavigationAction&, const WebCore::ResourceRequest&)
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::dispatchUnableToImplementPolicy(const WebCore::ResourceError&)
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::incrementProgress(void*, const WebCore::ResourceResponse&)
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::incrementProgress(void*, const char*, int)
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::completeProgress(void*)
+{
+    notImplemented();
+}
+
+void FrameLoaderClientQt::startDownload(const WebCore::ResourceRequest&)
+{
+    notImplemented();
+}
+
+bool FrameLoaderClientQt::willUseArchive(WebCore::ResourceLoader*, const WebCore::ResourceRequest&, const WebCore::KURL&) const
+{
+    notImplemented();
+}
+
 
 }
 

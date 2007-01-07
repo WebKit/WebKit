@@ -159,6 +159,35 @@ namespace WebCore {
         virtual void saveDocumentViewToPageCache(WebCore::PageCache*);
         virtual bool canCachePage() const;
         
+        virtual void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&);
+        virtual void committedLoad(WebCore::DocumentLoader*, const char*, int);
+        virtual WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&);
+        virtual WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&);
+        virtual WebCore::ResourceError interruptForPolicyChangeError(const WebCore::ResourceRequest&);
+        virtual WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&);
+        virtual WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&);
+        virtual bool shouldFallBack(const WebCore::ResourceError&);
+        virtual WTF::PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&);
+        virtual void download(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+        virtual void dispatchWillSendRequest(WebCore::DocumentLoader*, void*, WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+        virtual void dispatchDidReceiveResponse(WebCore::DocumentLoader*, void*, const WebCore::ResourceResponse&);
+        virtual void dispatchDidReceiveContentLength(WebCore::DocumentLoader*, void*, int);
+        virtual void dispatchDidFinishLoading(WebCore::DocumentLoader*, void*);
+        virtual void dispatchDidFailLoading(WebCore::DocumentLoader*, void*, const WebCore::ResourceError&);
+        virtual bool dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, int);
+        virtual void dispatchDidFailProvisionalLoad(const WebCore::ResourceError&);
+        virtual void dispatchDidFailLoad(const WebCore::ResourceError&);
+        virtual WebCore::Frame* dispatchCreatePage();
+        virtual void dispatchDecidePolicyForMIMEType(void (WebCore::FrameLoader::*)(WebCore::PolicyAction), const WebCore::String&, const WebCore::ResourceRequest&);
+        virtual void dispatchDecidePolicyForNewWindowAction(void (WebCore::FrameLoader::*)(WebCore::PolicyAction), const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::String&);
+        virtual void dispatchDecidePolicyForNavigationAction(void (WebCore::FrameLoader::*)(WebCore::PolicyAction), const WebCore::NavigationAction&, const WebCore::ResourceRequest&);
+        virtual void dispatchUnableToImplementPolicy(const WebCore::ResourceError&);
+        virtual void incrementProgress(void*, const WebCore::ResourceResponse&);
+        virtual void incrementProgress(void*, const char*, int);
+        virtual void completeProgress(void*);
+        virtual void startDownload(const WebCore::ResourceRequest&);
+        virtual bool willUseArchive(WebCore::ResourceLoader*, const WebCore::ResourceRequest&, const WebCore::KURL&) const;
+
         // FIXME: This should probably not be here, but it's needed for the tests currently
         virtual void partClearedInBegin();
         

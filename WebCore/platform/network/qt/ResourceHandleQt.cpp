@@ -80,4 +80,21 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request)
     return false;
 }
 
+bool ResourceHandle::supportsBufferedData()
+{
+    notImplemented();
+    return false;
+}
+
+PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()
+{
+    notImplemented();
+    return 0;
+}
+
+void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, ResourceError& e, ResourceResponse& r, Vector<char>& data)
+{
+    notImplemented();
+}
+
 } // namespace WebCore

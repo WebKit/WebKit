@@ -1,3 +1,39 @@
+2007-01-06  George Staikos  <staikos@kde.org>
+
+        Reviewed by Brady.
+
+        Make it link.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::setMainDocumentError):
+        (WebCore::FrameLoaderClientQt::committedLoad):
+        (WebCore::FrameLoaderClientQt::cancelledError):
+        (WebCore::FrameLoaderClientQt::cannotShowURLError):
+        (WebCore::FrameLoaderClientQt::interruptForPolicyChangeError):
+        (WebCore::FrameLoaderClientQt::cannotShowMIMETypeError):
+        (WebCore::FrameLoaderClientQt::fileDoesNotExistError):
+        (WebCore::FrameLoaderClientQt::shouldFallBack):
+        (WebCore::FrameLoaderClientQt::createDocumentLoader):
+        (WebCore::FrameLoaderClientQt::download):
+        (WebCore::FrameLoaderClientQt::dispatchWillSendRequest):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveResponse):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveContentLength):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoading):
+        (WebCore::FrameLoaderClientQt::dispatchDidFailLoading):
+        (WebCore::FrameLoaderClientQt::dispatchDidLoadResourceFromMemoryCache):
+        (WebCore::FrameLoaderClientQt::dispatchDidFailProvisionalLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFailLoad):
+        (WebCore::FrameLoaderClientQt::dispatchCreatePage):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForMIMEType):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientQt::dispatchUnableToImplementPolicy):
+        (WebCore::FrameLoaderClientQt::incrementProgress):
+        (WebCore::FrameLoaderClientQt::completeProgress):
+        (WebCore::FrameLoaderClientQt::startDownload):
+        (WebCore::FrameLoaderClientQt::willUseArchive):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-01-05  Lars Knoll <lars@trolltech.com>
 
         Make the Qt build compile again

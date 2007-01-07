@@ -62,6 +62,9 @@
 #include "IconLoader.h"
 #include "SystemTime.h"
 
+#include <QApplication>
+#include <QDesktopWidget>
+
 using namespace WebCore;
 
 #define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d (%s)\n", \
@@ -147,19 +150,36 @@ String WebCore::contextMenuItemTagRightToLeft() { return String(); }
 
 void Frame::setNeedsReapplyStyles() { notImplemented(); }
 
-int WebCore::screenDepth(Widget*) { notImplemented(); return 0; }
-int WebCore::screenDepthPerComponent(Widget*) { notImplemented(); return 0; }
-bool WebCore::screenIsMonochrome(Widget*) { notImplemented(); return false; }
-FloatRect WebCore::screenRect(Widget*)
-{ notImplemented(); return FloatRect(); }
-FloatRect WebCore::screenAvailableRect(Widget*)
-{ notImplemented(); return FloatRect(); }
+int WebCore::screenDepth(Widget *w)
+{
+    QDesktopWidget *d = QApplication::desktop();
+    return d->screen(d->screenNumber(w->qwidget()))->depth();
+}
+
+int WebCore::screenDepthPerComponent(Widget *w)
+{
+    return w->qwidget()->depth();
+}
+
+bool WebCore::screenIsMonochrome(Widget *w)
+{
+    QDesktopWidget *d = QApplication::desktop();
+    return d->screen(d->screenNumber(w->qwidget()))->numColors() < 2;
+}
+
+FloatRect WebCore::screenRect(Widget *w)
+{
+    return (QRectF)QApplication::desktop()->screenGeometry(w->qwidget());
+}
+
+FloatRect WebCore::screenAvailableRect(Widget *w)
+{
+    return (QRectF)QApplication::desktop()->availableGeometry(w->qwidget());
+}
 
 void WebCore::setFocusRingColorChangeFunction(void (*)()) { notImplemented(); }
 
 void FrameView::updateBorder() { notImplemented(); }
-
-void FrameLoader::reload() { notImplemented(); }
 
 bool AXObjectCache::gAccessibilityEnabled = false;
 

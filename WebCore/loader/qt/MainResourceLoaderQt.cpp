@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 George Staikos <staikos@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,39 +27,15 @@
  */
 
 #include "config.h"
-#include "ResourceLoader.h"
+#include "MainResourceLoader.h"
 
-#include "FrameLoader.h"
 #include "FrameQt.h"
-#include "Page.h"
-#include <wtf/Assertions.h>
-#include <wtf/RefPtr.h>
 
 #define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
 
 namespace WebCore {
 
-void ResourceLoader::cancel()
-{
-    notImplemented();
-}
-
-bool ResourceLoader::load(const WebCore::ResourceRequest&)
-{
-    notImplemented();
-}
-
-void ResourceLoader::cancel(const WebCore::ResourceError&)
-{
-    notImplemented();
-}
-
-void ResourceLoader::releaseResources()
-{
-    notImplemented();
-}
-
-void ResourceLoader::addData(const char *, int, bool)
+PassRefPtr<WebCore::MainResourceLoader> MainResourceLoader::create(WebCore::Frame*)
 {
     notImplemented();
 }

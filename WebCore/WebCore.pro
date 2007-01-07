@@ -506,6 +506,7 @@ SOURCES += \
     loader/qt/DocumentLoaderQt.cpp \
     loader/qt/NavigationActionQt.cpp \
     loader/qt/ResourceLoaderQt.cpp \
+    loader/qt/MainResourceLoaderQt.cpp \
     platform/CString.cpp \
     platform/AtomicString.cpp \
     platform/Base64.cpp \
@@ -530,6 +531,7 @@ SOURCES += \
     platform/qt/TextCodecQt.cpp \
     platform/DeprecatedString.cpp \
     platform/DeprecatedCString.cpp \
+    platform/SharedBuffer.cpp \
     platform/qt/TextBreakIteratorQt.cpp \
     platform/TextCodecLatin1.cpp \
     platform/TextCodecUTF16.cpp \
