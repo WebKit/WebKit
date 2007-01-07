@@ -1,3 +1,11 @@
+2007-01-07  Rob Buis  <buis@kde.org>
+
+        Reviewed by weinig.
+
+        Correct results from previous patch.
+
+        * svg/custom/path-bad-data-expected.txt:
+
 2007-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Sam.
