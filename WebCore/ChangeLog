@@ -1,3 +1,16 @@
+2007-01-06  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12125
+        overflow attribute of the symbol element not respected
+
+        Copy the attribute map to the cloned node so the overflow on
+        the symbol is respected.
+
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::closeRenderer):
+
 2007-01-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed and significantly tweaked by Darin.

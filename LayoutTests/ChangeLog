@@ -1,3 +1,23 @@
+2007-01-06  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=12125
+        overflow attribute of the symbol element not respected
+
+        Also including changed testresults (improvements).
+
+        * svg/W3C-SVG-1.1/struct-symbol-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-symbol-01-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-symbol-01-b-expected.txt:
+        * svg/carto.net/window-expected.checksum:
+        * svg/carto.net/window-expected.png:
+        * svg/custom/use-symbol-overflow-expected.checksum: Added.
+        * svg/custom/use-symbol-overflow-expected.png: Added.
+        * svg/custom/use-symbol-overflow-expected.txt: Added.
+        * svg/custom/use-symbol-overflow.svg: Added.
+
 2007-01-06  Darin Adler  <darin@apple.com>
 
         Suggested by Mitz.

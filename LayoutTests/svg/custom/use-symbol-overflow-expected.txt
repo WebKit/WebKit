@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (0,0) size 100x100
+      RenderSVGContainer {defs} at (0,0) size 0x0
+      RenderSVGContainer {use} at (0,0) size 100x100
+        RenderSVGContainer {g} at (0,0) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}]
+          RenderSVGContainer {svg} at (0,0) size 100x100
+            RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M-50.00,-50.00L50.00,-50.00L50.00,50.00L-50.00,50.00"]

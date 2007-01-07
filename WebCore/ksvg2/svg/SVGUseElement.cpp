@@ -113,6 +113,7 @@ void SVGUseElement::closeRenderer()
             dummy->setAttribute(SVGNames::viewBoxAttr, symbolViewBox);
         }
         target->cloneChildNodes(dummy.get());
+        *dummy->attributes() = *target->attributes();
 
         RefPtr<SVGElement> dummy2 = new SVGDummyElement(SVGNames::gTag, document());
         dummy2->setAttribute(SVGNames::transformAttr, trans);

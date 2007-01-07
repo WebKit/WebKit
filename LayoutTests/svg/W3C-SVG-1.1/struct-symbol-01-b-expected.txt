@@ -5,15 +5,15 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (0,0) size 1240x1150
           RenderSVGContainer {use} at (0,0) size 1000x1000
             RenderSVGContainer {g} at (0,0) size 1000x1000
-              RenderSVGContainer {svg} at (45,0) size 150x150
+              RenderSVGContainer {svg} at (0,0) size 240x150
                 RenderImage {image} at (0,0) size 1000x1000
           RenderSVGContainer {use} at (240,150) size 1000x1000
             RenderSVGContainer {g} at (240,150) size 1000x1000 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,150.00)}]
-              RenderSVGContainer {svg} at (285,150) size 150x150
-                RenderPath {rect} at (285,150) size 75x75 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00L500.00,0.00L500.00,500.00L0.00,500.00"]
-                RenderPath {rect} at (360,150) size 75x75 [fill={[type=SOLID] [color=#FF0000]}] [data="M500.00,0.00L1000.00,0.00L1000.00,500.00L500.00,500.00"]
-                RenderPath {rect} at (285,225) size 75x75 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,500.00L500.00,500.00L500.00,1000.00L0.00,1000.00"]
-                RenderPath {rect} at (360,225) size 75x75 [fill={[type=SOLID] [color=#FFFF00]}] [data="M500.00,500.00L1000.00,500.00L1000.00,1000.00L500.00,1000.00"]
+              RenderSVGContainer {svg} at (240,150) size 240x150
+                RenderPath {rect} at (240,150) size 120x75 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00L500.00,0.00L500.00,500.00L0.00,500.00"]
+                RenderPath {rect} at (360,150) size 120x75 [fill={[type=SOLID] [color=#FF0000]}] [data="M500.00,0.00L1000.00,0.00L1000.00,500.00L500.00,500.00"]
+                RenderPath {rect} at (240,225) size 120x75 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,500.00L500.00,500.00L500.00,1000.00L0.00,1000.00"]
+                RenderPath {rect} at (360,225) size 120x75 [fill={[type=SOLID] [color=#FFFF00]}] [data="M500.00,500.00L1000.00,500.00L1000.00,1000.00L500.00,1000.00"]
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
           text run at (0,-36) width 264: "$Revision: 1.6 $"
