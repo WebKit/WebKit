@@ -93,7 +93,7 @@ void RenderBox::setStyle(RenderStyle* newStyle)
 
     // The root always paints its background/border.
     if (isRoot())
-        setShouldPaintBackgroundOrBorder(true);
+        setHasBoxDecorations(true);
 
     setInline(newStyle->isDisplayInlineType());
 
@@ -366,6 +366,10 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     else
         mh = min(paintInfo.rect.height(), h);
 
+    // FIXME: Should eventually give the theme control over whether the box shadow should paint, since controls could have
+    // custom shadows of their own.
+    paintBoxShadow(paintInfo.context, tx, ty, w, h, style());
+
     // If we have a native theme appearance, paint that before painting our background.  
     // The theme will tell us whether or not we should also paint the CSS background.
     bool themePainted = style()->hasAppearance() && !theme()->paint(this, paintInfo, IntRect(tx, ty, w, h));
@@ -448,11 +452,13 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
                                         int bleft, int bright, int pleft, int pright)
 {
     bool clippedToBorderRadius = false;
-    if (style()->hasBorderRadius()) {
+    if (style()->hasBorderRadius() && (bleft || bright)) {
         p->save();
         p->addRoundedRectClip(IntRect(_tx, _ty, w, h),
-            style()->borderTopLeftRadius(), style()->borderTopRightRadius(),
-            style()->borderBottomLeftRadius(), style()->borderBottomRightRadius());
+            bleft ? style()->borderTopLeftRadius() : IntSize(),
+            bright ? style()->borderTopRightRadius() : IntSize(),
+            bleft ? style()->borderBottomLeftRadius() : IntSize(),
+            bright ? style()->borderBottomRightRadius() : IntSize());
         clippedToBorderRadius = true;
     }
     

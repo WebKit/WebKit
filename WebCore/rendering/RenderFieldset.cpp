@@ -107,6 +107,8 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     int end = min(paintInfo.rect.bottom(), ty + h);
     int mh = end - my;
 
+    paintBoxShadow(paintInfo.context, tx, ty, w, h, style());
+
     paintBackground(paintInfo.context, style()->backgroundColor(), style()->backgroundLayers(), my, mh, tx, ty, w, h);
 
     if (style()->hasBorder())

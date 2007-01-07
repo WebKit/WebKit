@@ -314,7 +314,7 @@ public:
     bool isDragging() const { return m_isDragging; }
     bool isReplaced() const { return m_replaced; } // a "replaced" element (see CSS)
 
-    bool shouldPaintBackgroundOrBorder() const { return m_paintBackground; }
+    bool hasBoxDecorations() const { return m_paintBackground; }
     bool mustRepaintBackgroundOrBorder() const;
 
     bool needsLayout() const { return m_needsLayout || m_normalChildNeedsLayout || m_posChildNeedsLayout; }
@@ -390,7 +390,7 @@ public:
     void setRelPositioned(bool b = true) { m_relPositioned = b; }
     void setFloating(bool b = true) { m_floating = b; }
     void setInline(bool b = true) { m_inline = b; }
-    void setShouldPaintBackgroundOrBorder(bool b = true) { m_paintBackground = b; }
+    void setHasBoxDecorations(bool b = true) { m_paintBackground = b; }
     void setRenderText() { m_isText = true; }
     void setReplaced(bool b = true) { m_replaced = b; }
     void setHasOverflowClip(bool b = true) { m_hasOverflowClip = b; }
@@ -449,6 +449,7 @@ public:
     void paintBorder(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, bool begin = true, bool end = true);
     bool paintBorderImage(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*);
     void paintOutline(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*);
+    void paintBoxShadow(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, bool begin = true, bool end = true);
 
     // RenderBox implements this.
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty) { }

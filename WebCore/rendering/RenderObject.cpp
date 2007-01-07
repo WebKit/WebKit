@@ -844,7 +844,7 @@ int RenderObject::containingBlockHeight() const
 bool RenderObject::mustRepaintBackgroundOrBorder() const
 {
     // If we don't have a background/border, then nothing to do.
-    if (!shouldPaintBackgroundOrBorder())
+    if (!hasBoxDecorations())
         return false;
 
     // Ok, let's check the background first.
@@ -1619,6 +1619,30 @@ void RenderObject::paintBorder(GraphicsContext* graphicsContext, int tx, int ty,
         graphicsContext->restore();
 }
 
+void RenderObject::paintBoxShadow(GraphicsContext* context, int tx, int ty, int w, int h, const RenderStyle* s, bool begin, bool end)
+{
+    if (!s->boxShadow())
+        return;
+    
+    // FIXME: Deal with border-image.  Would be great to use border-image as a mask.
+    context->save();
+    context->setShadow(IntSize(s->boxShadow()->x, s->boxShadow()->y),
+                               s->boxShadow()->blur, s->boxShadow()->color);
+    IntRect rect(tx, ty, w, h);
+    if (s->hasBorderRadius()) {
+        IntSize topLeft = begin ? s->borderTopLeftRadius() : IntSize();
+        IntSize topRight = end ? s->borderTopRightRadius() : IntSize();
+        IntSize bottomLeft = begin ? s->borderBottomLeftRadius() : IntSize();
+        IntSize bottomRight = end ? s->borderBottomRightRadius() : IntSize();
+        context->clipOutRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight);
+        context->fillRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight, Color::black);
+    } else {
+        context->clipOut(rect);
+        context->fillRect(IntRect(tx, ty, w, h), Color::black);
+    }
+    context->restore();
+}
+
 void RenderObject::addLineBoxRects(Vector<IntRect>&, unsigned startOffset, unsigned endOffset)
 {
 }
@@ -1966,7 +1990,7 @@ void RenderObject::dump(TextStream* stream, DeprecatedString ind) const
         *stream << " inline";
     if (isReplaced())
         *stream << " replaced";
-    if (shouldPaintBackgroundOrBorder())
+    if (hasBoxDecorations())
         *stream << " paintBackground";
     if (needsLayout())
         *stream << " needsLayout";
@@ -2281,7 +2305,7 @@ void RenderObject::setStyle(RenderStyle* style)
     if (oldStyle)
         oldStyle->deref(renderArena());
 
-    setShouldPaintBackgroundOrBorder(m_style->hasBorder() || m_style->hasBackground() || m_style->hasAppearance());
+    setHasBoxDecorations(m_style->hasBorder() || m_style->hasBackground() || m_style->hasAppearance() || m_style->boxShadow());
 
     if (affectsParentBlock)
         handleDynamicFloatPositionChange();

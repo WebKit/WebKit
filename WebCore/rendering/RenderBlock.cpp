@@ -1359,7 +1359,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
     // 1. paint background, borders etc
     if (!inlineFlow &&
         (paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) &&
-        shouldPaintBackgroundOrBorder() && style()->visibility() == VISIBLE) {
+        hasBoxDecorations() && style()->visibility() == VISIBLE) {
         paintBoxDecorations(paintInfo, tx, ty);
     }
 

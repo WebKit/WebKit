@@ -172,7 +172,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
     tx += m_x;
     ty += m_y;
 
-    if (shouldPaintBackgroundOrBorder() && paintInfo.phase != PaintPhaseOutline && paintInfo.phase != PaintPhaseSelfOutline)
+    if (hasBoxDecorations() && paintInfo.phase != PaintPhaseOutline && paintInfo.phase != PaintPhaseSelfOutline)
         paintBoxDecorations(paintInfo, tx, ty);
 
     if (!m_view || paintInfo.phase != PaintPhaseForeground || style()->visibility() != VISIBLE)

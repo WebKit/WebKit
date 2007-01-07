@@ -516,7 +516,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
     if (box.y() > paintInfo.rect.bottom() || box.y() + box.height() < paintInfo.rect.y())
         return;
 
-    if (shouldPaintBackgroundOrBorder()) 
+    if (hasBoxDecorations()) 
         paintBoxDecorations(paintInfo, box.x(), box.y());
 
     GraphicsContext* context = paintInfo.context;

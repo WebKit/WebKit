@@ -488,6 +488,15 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& c)
     m_data->p().fillRect(rect, QColor(c));
 }
 
+void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& color)
+{
+    if (paintingDisabled() || !color.alpha())
+        return;
+
+    // FIXME: Implement.
+    notImplemented();
+}
+
 void GraphicsContext::beginPath()
 {
     m_data->currentPath = QPainterPath();
@@ -725,6 +734,24 @@ void GraphicsContext::scale(const FloatSize& s)
         return;
 
     m_data->p().scale(s.width(), s.height());
+}
+
+void GraphicsContext::clipOut(const IntRect& rect)
+{
+    if (paintingDisabled())
+        return;
+        
+    // FIXME: Implement
+    notImplemented();
+}
+
+void GraphicsContext::clipOutEllipseInRect(const IntRect& rect)
+{
+    if (paintingDisabled())
+        return;
+    
+    // FIXME: Implement.
+    notImplemented();
 }
 
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect,

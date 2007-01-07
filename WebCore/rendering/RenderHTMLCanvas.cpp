@@ -48,7 +48,7 @@ void RenderHTMLCanvas::paint(PaintInfo& paintInfo, int tx, int ty)
     int x = tx + m_x;
     int y = ty + m_y;
 
-    if (shouldPaintBackgroundOrBorder() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection)) 
+    if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection)) 
         paintBoxDecorations(paintInfo, x, y);
 
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)

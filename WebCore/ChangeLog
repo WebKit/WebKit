@@ -1,3 +1,67 @@
+2007-01-07  David Hyatt  <hyatt@apple.com>
+
+        Add support for the CSS3 box-shadow property.
+
+        Reviewed by olliej
+
+        fast/box-shadow/ contains the tests for this feature.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::clipOutRoundedRect):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::clipOutEllipseInRect):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::clipOutEllipseInRect):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paint):
+        (WebCore::InlineFlowBox::paintBoxShadow):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::shouldDrawTextDecoration):
+        (WebCore::InlineFlowBox::paintTextDecorations):
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineRunBox.h:
+        (WebCore::InlineRunBox::paintBoxDecorations):
+        (WebCore::InlineRunBox::paintTextDecorations):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setStyle):
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::paintBackgroundExtended):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paint):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paint):
+        * rendering/RenderImage.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::mustRepaintBackgroundOrBorder):
+        (WebCore::RenderObject::paintBoxShadow):
+        (WebCore::RenderObject::dump):
+        (WebCore::RenderObject::setStyle):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasBoxDecorations):
+        (WebCore::RenderObject::setHasBoxDecorations):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paint):
+        (WebCore::RenderTable::paintBoxDecorations):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::RenderTableCell):
+        (WebCore::RenderTableCell::setStyle):
+        (WebCore::RenderTableCell::paintBoxDecorations):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+
 2007-01-07  Rob Buis  <buis@kde.org>
 
         Reviewed by weinig.

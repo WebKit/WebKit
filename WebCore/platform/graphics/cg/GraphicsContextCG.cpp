@@ -426,12 +426,80 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
     }
 }
 
+void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& color)
+{
+    if (paintingDisabled() || !color.alpha())
+        return;
+
+    CGContextRef context = platformContext();
+    Color oldFillColor = fillColor();
+    if (oldFillColor != color)
+        setCGFillColor(context, color);
+
+    // Add the four ellipses to the path.  Technically this really isn't good enough, since we could end up
+    // not clipping the other 3/4 of the ellipse we don't care about.  We're relying on the fact that for
+    // normal use cases these ellipses won't overlap one another (or when they do the curvature of one will
+    // be subsumed by the other).
+    CGContextAddEllipseInRect(context, CGRectMake(rect.x(), rect.y(), topLeft.width() * 2, topLeft.height() * 2));
+    CGContextAddEllipseInRect(context, CGRectMake(rect.right() - topRight.width() * 2, rect.y(),
+                                                  topRight.width() * 2, topRight.height() * 2));
+    CGContextAddEllipseInRect(context, CGRectMake(rect.x(), rect.bottom() - bottomLeft.height() * 2,
+                                                  bottomLeft.width() * 2, bottomLeft.height() * 2));
+    CGContextAddEllipseInRect(context, CGRectMake(rect.right() - bottomRight.width() * 2,
+                                                  rect.bottom() - bottomRight.height() * 2,
+                                                  bottomRight.width() * 2, bottomRight.height() * 2));
+    
+    // Now add five rects (one for each edge rect in between the rounded corners and one for the interior).
+    CGContextAddRect(context, CGRectMake(rect.x() + topLeft.width(), rect.y(),
+                                         rect.width() - topLeft.width() - topRight.width(),
+                                         max(topLeft.height(), topRight.height())));
+    CGContextAddRect(context, CGRectMake(rect.x() + bottomLeft.width(), 
+                                         rect.bottom() - max(bottomLeft.height(), bottomRight.height()),
+                                         rect.width() - bottomLeft.width() - bottomRight.width(),
+                                         max(bottomLeft.height(), bottomRight.height())));
+    CGContextAddRect(context, CGRectMake(rect.x(), rect.y() + topLeft.height(),
+                                         max(topLeft.width(), bottomLeft.width()), rect.height() - topLeft.height() - bottomLeft.height()));
+    CGContextAddRect(context, CGRectMake(rect.right() - max(topRight.width(), bottomRight.width()),
+                                         rect.y() + topRight.height(),
+                                         max(topRight.width(), bottomRight.width()), rect.height() - topRight.height() - bottomRight.height()));
+    CGContextAddRect(context, CGRectMake(rect.x() + max(topLeft.width(), bottomLeft.width()),
+                                         rect.y() + max(topLeft.height(), topRight.height()),
+                                         rect.width() - max(topLeft.width(), bottomLeft.width()) - max(topRight.width(), bottomRight.width()),
+                                         rect.height() - max(topLeft.height(), topRight.height()) - max(bottomLeft.height(), bottomRight.height())));
+    CGContextFillPath(context);
+    if (oldFillColor != color)
+        setCGFillColor(context, oldFillColor);
+}
+
+
 void GraphicsContext::clip(const IntRect& rect)
 {
     if (paintingDisabled())
         return;
     CGContextClipToRect(platformContext(), rect);
     m_data->clip(rect);
+}
+
+void GraphicsContext::clipOut(const IntRect& rect)
+{
+    if (paintingDisabled())
+        return;
+        
+    CGRect rects[2] = { CGContextGetClipBoundingBox(platformContext()), rect };
+    CGContextBeginPath(platformContext());
+    CGContextAddRects(platformContext(), rects, 2);
+    CGContextEOClip(platformContext());
+}
+
+void GraphicsContext::clipOutEllipseInRect(const IntRect& rect)
+{
+    if (paintingDisabled())
+        return;
+        
+    CGContextBeginPath(platformContext());
+    CGContextAddRect(platformContext(), CGContextGetClipBoundingBox(platformContext()));
+    CGContextAddEllipseInRect(platformContext(), rect);
+    CGContextEOClip(platformContext());
 }
 
 void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,

@@ -315,6 +315,43 @@ void GraphicsContext::drawTiledImage(Image* image, const IntRect& dest, const In
     image->drawTiled(this, dest, srcRect, hRule, vRule, op);
 }
 
+void GraphicsContext::clipOutRoundedRect(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
+                                         const IntSize& bottomLeft, const IntSize& bottomRight)
+{
+    if (paintingDisabled())
+        return;
+        
+    // Need sufficient width and height to contain these curves.  Sanity check our
+    // corner radii and our width/height values to make sure the curves can all fit.
+    if (static_cast<unsigned>(rect.width()) < static_cast<unsigned>(topLeft.width()) + static_cast<unsigned>(topRight.width()) ||
+        static_cast<unsigned>(rect.width()) < static_cast<unsigned>(bottomLeft.width()) + static_cast<unsigned>(bottomRight.width()) ||
+        static_cast<unsigned>(rect.height()) < static_cast<unsigned>(topLeft.height()) + static_cast<unsigned>(bottomLeft.height()) ||
+        static_cast<unsigned>(rect.height()) < static_cast<unsigned>(topRight.height()) + static_cast<unsigned>(bottomRight.height()))
+        return;
+    
+    // Clip out each shape one by one.
+    clipOutEllipseInRect(IntRect(rect.x(), rect.y(), topLeft.width() * 2, topLeft.height() * 2));
+    clipOutEllipseInRect(IntRect(rect.right() - topRight.width() * 2, rect.y(), topRight.width() * 2, topRight.height() * 2));
+    clipOutEllipseInRect(IntRect(rect.x(), rect.bottom() - bottomLeft.height() * 2, bottomLeft.width() * 2, bottomLeft.height() * 2));
+    clipOutEllipseInRect(IntRect(rect.right() - bottomRight.width() * 2, rect.bottom() - bottomRight.height() * 2, bottomRight.width() * 2, bottomRight.height() * 2));
+    clipOut(IntRect(rect.x() + topLeft.width(), rect.y(),
+                    rect.width() - topLeft.width() - topRight.width(),
+                    max(topLeft.height(), topRight.height())));
+    clipOut(IntRect(rect.x() + bottomLeft.width(), 
+                    rect.bottom() - max(bottomLeft.height(), bottomRight.height()),
+                    rect.width() - bottomLeft.width() - bottomRight.width(),
+                    max(bottomLeft.height(), bottomRight.height())));
+    clipOut(IntRect(rect.x(), rect.y() + topLeft.height(),
+                    max(topLeft.width(), bottomLeft.width()), rect.height() - topLeft.height() - bottomLeft.height()));
+    clipOut(IntRect(rect.right() - max(topRight.width(), bottomRight.width()),
+                    rect.y() + topRight.height(),
+                    max(topRight.width(), bottomRight.width()), rect.height() - topRight.height() - bottomRight.height()));
+    clipOut(IntRect(rect.x() + max(topLeft.width(), bottomLeft.width()),
+                    rect.y() + max(topLeft.height(), topRight.height()),
+                    rect.width() - max(topLeft.width(), bottomLeft.width()) - max(topRight.width(), bottomRight.width()),
+                    rect.height() - max(topLeft.height(), topRight.height()) - max(bottomLeft.height(), bottomRight.height())));
+}
+
 int GraphicsContext::textDrawingMode()
 {
     return m_common->state.textDrawingMode;

@@ -111,6 +111,7 @@ namespace WebCore {
         
         void fillRect(const IntRect&, const Color&);
         void fillRect(const FloatRect&, const Color&);
+        void fillRoundedRect(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color&);
         void clearRect(const FloatRect&);
         void strokeRect(const FloatRect&, float lineWidth);
 
@@ -129,6 +130,9 @@ namespace WebCore {
         void clip(const IntRect&);
         void addRoundedRectClip(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight);
         void addInnerRoundedRectClip(const IntRect&, int thickness);
+        void clipOut(const IntRect&);
+        void clipOutEllipseInRect(const IntRect&);
+        void clipOutRoundedRect(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight);
 
         // Functions to work around bugs in focus ring clipping on Mac.
         void setFocusRingClip(const IntRect&);

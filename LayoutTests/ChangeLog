@@ -1,3 +1,14 @@
+2007-01-07  David Hyatt  <hyatt@apple.com>
+
+        Add support for the CSS3 box-shadow property.
+
+        Reviewed by olliej
+
+        * fast/box-shadow/basic-shadows-expected.checksum: Added.
+        * fast/box-shadow/basic-shadows-expected.png: Added.
+        * fast/box-shadow/basic-shadows-expected.txt: Added.
+        * fast/box-shadow/basic-shadows.html: Added.
+
 2007-01-07  Rob Buis  <buis@kde.org>
 
         Reviewed by weinig.

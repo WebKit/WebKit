@@ -49,7 +49,6 @@ RenderTableCell::RenderTableCell(Node* node)
     , m_percentageHeight(0)
 {
     updateFromElement();
-    setShouldPaintBackgroundOrBorder();
 }
 
 void RenderTableCell::destroy()
@@ -234,7 +233,7 @@ void RenderTableCell::setStyle(RenderStyle* newStyle)
     }
 
     RenderBlock::setStyle(newStyle);
-    setShouldPaintBackgroundOrBorder();
+    setHasBoxDecorations(true);
 }
 
 bool RenderTableCell::requiresLayer()
@@ -799,14 +798,18 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     if (!tableElt->collapseBorders() && style()->emptyCells() == HIDE && !firstChild())
         return;
 
+    int w = width();
+    int h = height() + borderTopExtra() + borderBottomExtra();
+   
+    if (style()->boxShadow())
+        paintBoxShadow(paintInfo.context, tx, ty - borderTopExtra(), w, h, style());
+    
     // Paint our cell background.
     paintBackgroundsBehindCell(paintInfo, tx, ty, this);
 
     if (!style()->hasBorder() || tableElt->collapseBorders())
         return;
 
-    int w = width();
-    int h = height() + borderTopExtra() + borderBottomExtra();
     ty -= borderTopExtra();
     paintBorder(paintInfo.context, tx, ty, w, h, style());
 }

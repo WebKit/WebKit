@@ -438,7 +438,7 @@ void RenderTable::paint(PaintInfo& paintInfo, int tx, int ty)
     if (tx + overflowLeft() >= paintInfo.rect.right() + os || tx + overflowWidth() <= paintInfo.rect.x() - os)
         return;
 
-    if ((paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) && shouldPaintBackgroundOrBorder() && style()->visibility() == VISIBLE)
+    if ((paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) && hasBoxDecorations() && style()->visibility() == VISIBLE)
         paintBoxDecorations(paintInfo, tx, ty);
 
     // We're done.  We don't bother painting any children.
@@ -499,6 +499,8 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     else
         mh = min(paintInfo.rect.height(), h);
 
+    paintBoxShadow(paintInfo.context, tx, ty, w, h, style());
+    
     paintBackground(paintInfo.context, style()->backgroundColor(), style()->backgroundLayers(), my, mh, tx, ty, w, h);
 
     if (style()->hasBorder() && !collapseBorders())

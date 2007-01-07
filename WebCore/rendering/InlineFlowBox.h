@@ -74,12 +74,13 @@ public:
 
     virtual void clearTruncation();
 
-    virtual void paintBackgroundAndBorder(RenderObject::PaintInfo&, int tx, int ty);
+    virtual void paintBoxDecorations(RenderObject::PaintInfo&, int tx, int ty);
     void paintBackgrounds(GraphicsContext*, const Color&, const BackgroundLayer*,
                           int my, int mh, int tx, int ty, int w, int h);
     void paintBackground(GraphicsContext*, const Color&, const BackgroundLayer*,
                          int my, int mh, int tx, int ty, int w, int h);
-    virtual void paintDecorations(RenderObject::PaintInfo&, int tx, int ty, bool paintedChildren = false);
+    void paintBoxShadow(GraphicsContext*, RenderStyle*, int tx, int ty, int w, int h);
+    virtual void paintTextDecorations(RenderObject::PaintInfo&, int tx, int ty, bool paintedChildren = false);
     virtual void paint(RenderObject::PaintInfo&, int tx, int ty);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty);
 
