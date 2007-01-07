@@ -1,3 +1,17 @@
+2007-01-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Re-apply r17618, which got reverted with CSS suite update.
+
+        Reviewed by Sam Weinig.
+
+        Fix a layout test failure that happened with additional fonts installed - replace a fancy 
+        Unicode character with a plain asterisk.
+
+        * css2.1/t0905-c414-flt-00-d-expected.checksum:
+        * css2.1/t0905-c414-flt-00-d-expected.png:
+        * css2.1/t0905-c414-flt-00-d-expected.txt:
+        * css2.1/t0905-c414-flt-00-d.html:
+
 2007-01-07  Lamar Goddard  <lamargoddard@gmail.com>
 
         Reviewed by Darin.
