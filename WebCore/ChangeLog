@@ -1,3 +1,68 @@
+2007-01-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed and significantly tweaked by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12103
+          LEAK: Fix the leaking ImageBuffer buffers on TOT
+
+        * ksvg2/svg/SVGMaskElement.h:
+        * ksvg2/svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        Changed to return auto_ptr since it returns a newly-created ImageBuffer.
+
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::buildPattern):
+        Changed to use auto_ptr since ImageBuffer::create now returns one.
+
+        * platform/graphics/GraphicsContext.h: Removed the include of ImageBuffer.h,
+        which was never needed, and the declaration of createImageBuffer, which is
+        now a class member function of ImageBuffer.
+
+        * platform/graphics/ImageBuffer.h: Replaced the constructor with a create
+        function. Added a comment about the need to move renderSubtreeToImage
+        elsewhere. Added an m_data member to store the data so it can be deleted
+        when the object is done, made the m_size member non-platform-specific.
+        Added a private constructor for use to create the CG version.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp: Removed
+        GraphicsContext::createImageBuffer.
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::create): Added. Replaces the old
+        GraphicsContext::createImageBuffer function.
+        (WebCore::ImageBuffer::ImageBuffer): Added m_data and m_context.
+        (WebCore::ImageBuffer::~ImageBuffer): Added a fastFree of the data and got
+        rid of the unneeded null check before calling CGImageRelease.
+
+        * platform/graphics/svg/SVGPaintServerGradient.h: Removed the include of
+        ImageBuffer.h and declared the ImageBuffer class instead.
+
+        * platform/graphics/svg/SVGPaintServerPattern.h: Removed the include of
+        ImageBuffer.h and declared the ImageBuffer class instead, and changed setTile
+        to take an auto_ptr since it takes ownership of the ImageBuffer.
+        * platform/graphics/svg/SVGPaintServerPattern.cpp:
+        (WebCore::SVGPaintServerPattern::setTile): Ditto.
+
+        * platform/graphics/svg/SVGResourceMasker.h: Removed the include of
+        ImageBuffer.h and declared the ImageBuffer class instead, and changed setMask
+        to take an auto_ptr since it takes ownership of the ImageBuffer.
+        * platform/graphics/svg/SVGResourceMasker.cpp:
+        (WebCore::SVGResourceMasker::setMask): Ditto.
+
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::setup): Updated to use auto_ptr.
+
+        * platform/graphics/svg/cg/SVGPaintServerPatternCg.cpp: Updated includes.
+
+        * platform/graphics/svg/cg/SVGResourceMaskerCg.mm:
+        (WebCore::SVGResourceMasker::applyMask): Updated to use auto_ptr.
+
+        - other changes
+
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::handleStartCondition):
+        Remove unused variables.
+
 2007-01-06  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.

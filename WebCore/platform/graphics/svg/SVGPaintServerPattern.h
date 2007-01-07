@@ -30,13 +30,14 @@
 
 #include "AffineTransform.h"
 #include "FloatRect.h"
-#include "GraphicsContext.h"
 #include "SVGPaintServer.h"
 
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
+    class GraphicsContext;
+    class ImageBuffer;
     class SVGPatternElement;
 
     class SVGPaintServerPattern : public SVGPaintServer {
@@ -51,7 +52,7 @@ namespace WebCore {
         FloatRect patternBoundaries() const;
 
         ImageBuffer* tile() const;
-        void setTile(ImageBuffer*);
+        void setTile(std::auto_ptr<ImageBuffer>);
 
         AffineTransform patternTransform() const;
         void setPatternTransform(const AffineTransform&);

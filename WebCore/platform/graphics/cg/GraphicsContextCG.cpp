@@ -771,27 +771,6 @@ void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
     }
 }
 
-ImageBuffer* GraphicsContext::createImageBuffer(const IntSize& size, bool grayScale)
-{
-    unsigned int bytesPerRow = size.width();
-    if (!grayScale)
-        bytesPerRow *= 4;
-
-    void* imageBuffer = fastMalloc(bytesPerRow * size.height());
-    if (!imageBuffer)
-        return 0;
-    memset(imageBuffer, 0, bytesPerRow * size.height());
-
-    CGColorSpaceRef colorSpace = grayScale ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
-    CGContextRef context = CGBitmapContextCreate(imageBuffer, size.width(), size.height(), 8, bytesPerRow,
-                                                 colorSpace, grayScale ? kCGImageAlphaNone : kCGImageAlphaPremultipliedLast);
-
-    CGColorSpaceRelease(colorSpace);
-    GraphicsContext *graphicsContext = new GraphicsContext(context);
-    CGContextRelease(context);
-    return new ImageBuffer(size, graphicsContext);
-}
-
 void GraphicsContext::setPlatformTextDrawingMode(int mode)
 {
     if (paintingDisabled())

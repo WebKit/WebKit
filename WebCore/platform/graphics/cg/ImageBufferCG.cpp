@@ -31,24 +31,46 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include <wtf/Assertions.h>
 
+using namespace std;
+
 namespace WebCore {
 
-ImageBuffer::ImageBuffer(const IntSize& size, GraphicsContext* context)
-    : m_context(context)
+auto_ptr<ImageBuffer> ImageBuffer::create(const IntSize& size, bool grayScale)
+{
+    unsigned int bytesPerRow = size.width();
+    if (!grayScale)
+        bytesPerRow *= 4;
+    
+    void* imageBuffer = fastCalloc(size.height(), bytesPerRow);
+    if (!imageBuffer)
+        return auto_ptr<ImageBuffer>();
+    
+    CGColorSpaceRef colorSpace = grayScale ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
+    CGContextRef cgContext = CGBitmapContextCreate(imageBuffer, size.width(), size.height(), 8, bytesPerRow,
+        colorSpace, grayScale ? kCGImageAlphaNone : kCGImageAlphaPremultipliedLast);
+    CGColorSpaceRelease(colorSpace);
+    if (!cgContext)
+        return auto_ptr<ImageBuffer>();
+
+    auto_ptr<GraphicsContext> context(new GraphicsContext(cgContext));
+    CGContextRelease(cgContext);
+    
+    return auto_ptr<ImageBuffer>(new ImageBuffer(imageBuffer, size, context));
+}
+
+
+ImageBuffer::ImageBuffer(void* imageData, const IntSize& size, auto_ptr<GraphicsContext> context)
+    : m_data(imageData)
     , m_size(size)
+    , m_context(context.release())
     , m_cgImage(0)
 {
 }
 
 ImageBuffer::~ImageBuffer()
 {
-    if (m_cgImage)
-        CGImageRelease(m_cgImage);
-}
-
-IntSize ImageBuffer::size() const
-{
-    return m_size;
+    fastFree(m_data);
+    CGImageRelease(m_cgImage);
 }
 
 GraphicsContext* ImageBuffer::context() const

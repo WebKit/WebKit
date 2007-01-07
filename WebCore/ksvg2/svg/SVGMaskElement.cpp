@@ -27,13 +27,16 @@
 #include "SVGMaskElement.h"
 
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "RenderSVGContainer.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "cssstyleselector.h"
-#include <wtf/OwnPtr.h>
 #include <math.h>
 #include <wtf/MathExtras.h>
+#include <wtf/OwnPtr.h>
+
+using namespace std;
 
 namespace WebCore {
 
@@ -106,13 +109,13 @@ void SVGMaskElement::parseMappedAttribute(MappedAttribute* attr)
     }
 }
 
-ImageBuffer* SVGMaskElement::drawMaskerContent()
+auto_ptr<ImageBuffer> SVGMaskElement::drawMaskerContent()
 {
     IntSize size = IntSize(lroundf(width().value()), lroundf(height().value()));
 
-    ImageBuffer* maskImage(GraphicsContext::createImageBuffer(size, false));
-    if (!maskImage)
-        return 0;
+    auto_ptr<ImageBuffer> maskImage = ImageBuffer::create(size, false);
+    if (!maskImage.get())
+        return maskImage;
 
     GraphicsContext* maskImageContext = maskImage->context();
     ASSERT(maskImageContext);
@@ -120,7 +123,7 @@ ImageBuffer* SVGMaskElement::drawMaskerContent()
     maskImageContext->save();
     maskImageContext->translate(-x().value(), -y().value());
 
-    ImageBuffer::renderSubtreeToImage(maskImage, renderer());
+    ImageBuffer::renderSubtreeToImage(maskImage.get(), renderer());
 
     maskImageContext->restore();
     return maskImage;

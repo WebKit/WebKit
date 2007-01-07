@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2007 Apple Computer, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,26 +39,32 @@ namespace WebCore {
     class GraphicsContext;
     class RenderObject;
 
-    class ImageBuffer {
+    class ImageBuffer : Noncopyable {
     public:
-        ImageBuffer(const IntSize&, GraphicsContext*);
+        static std::auto_ptr<ImageBuffer> create(const IntSize&, bool grayScale);
         ~ImageBuffer();
 
         IntSize size() const;
         GraphicsContext* context() const;
 
         // This offers a way to render parts of a WebKit rendering tree into this ImageBuffer class.
-        static void renderSubtreeToImage(ImageBuffer*, RenderObject* item);
+        // FIXME: This doesn't belong in the platform directory.
+        // Bad layering that this knows about the render tree.
+        // We need to move it into RenderObject or somewhere in the SVG world.
+        static void renderSubtreeToImage(ImageBuffer*, RenderObject*);
 
 #if PLATFORM(CG)
         CGImageRef cgImage() const;
 #endif
 
     private:
+        void* m_data;
+        IntSize m_size;
+
         OwnPtr<GraphicsContext> m_context;
 
-#if PLATFORM(CG) 
-        IntSize m_size;
+#if PLATFORM(CG)
+        ImageBuffer(void* imageData, const IntSize&, std::auto_ptr<GraphicsContext>);
         mutable CGImageRef m_cgImage;
 #endif
     };

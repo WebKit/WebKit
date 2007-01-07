@@ -36,13 +36,14 @@
 namespace WebCore {
 
     class FloatRect;
+    class ImageBuffer;
 
     class SVGResourceMasker : public SVGResource {
     public:
         SVGResourceMasker();
         virtual ~SVGResourceMasker();
 
-        void setMask(ImageBuffer* mask);
+        void setMask(std::auto_ptr<ImageBuffer> mask);
         ImageBuffer* mask() const;
 
         virtual bool isMasker() const { return true; }

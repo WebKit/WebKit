@@ -28,7 +28,6 @@
 
 #include "FloatRect.h"
 #include "Image.h"
-#include "ImageBuffer.h"
 #include "IntRect.h"
 #include "Path.h"
 #include "TextDirection.h"
@@ -197,8 +196,6 @@ namespace WebCore {
         void setFillRule(WindRule);
         PlatformPath* currentPath();
 #endif
-
-        static ImageBuffer* createImageBuffer(const IntSize&, bool grayScale);
 
     private:
         void savePlatformState();

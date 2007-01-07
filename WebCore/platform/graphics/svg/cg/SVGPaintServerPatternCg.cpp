@@ -24,10 +24,11 @@
 #ifdef SVG_SUPPORT
 #include "SVGPaintServerPattern.h"
 
+#include "CgSupport.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "RenderObject.h"
 #include "SVGPatternElement.h"
-#include "CgSupport.h"
 
 namespace WebCore {
 

@@ -28,6 +28,7 @@
 #include "AffineTransform.h"
 #include "Document.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "PatternAttributes.h"
 #include "RenderSVGContainer.h"
 #include "SVGLength.h"
@@ -41,6 +42,8 @@
 #include <math.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/MathExtras.h>
+
+using namespace std;
 
 namespace WebCore {
 
@@ -144,8 +147,8 @@ void SVGPatternElement::buildPattern(const FloatRect& targetRect) const
     if (heightValue > targetRect.height())
         heightValue = targetRect.height();
 
-    ImageBuffer* patternImage = GraphicsContext::createImageBuffer(IntSize(lroundf(widthValue), lroundf(heightValue)), false);
-    if (!patternImage)
+    auto_ptr<ImageBuffer> patternImage = ImageBuffer::create(IntSize(lroundf(widthValue), lroundf(heightValue)), false);
+    if (!patternImage.get())
         return;
 
     GraphicsContext* context = patternImage->context();
@@ -167,7 +170,7 @@ void SVGPatternElement::buildPattern(const FloatRect& targetRect) const
         if (!item)
             continue;
 
-        ImageBuffer::renderSubtreeToImage(patternImage, item);
+        ImageBuffer::renderSubtreeToImage(patternImage.get(), item);
     }
 
     if (attributes.boundingBoxModeContent())

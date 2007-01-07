@@ -265,12 +265,6 @@ bool SVGAnimateTransformElement::handleStartCondition()
             
             if (!m_fromTransform)
                 m_fromTransform = new SVGTransform();
-            
-            AffineTransform byMatrix = m_toTransform->matrix();
-            AffineTransform fromMatrix = m_fromTransform->matrix();
-            
-            byMatrix *= fromMatrix;
-            
             break;
         }
         case VALUES_ANIMATION:

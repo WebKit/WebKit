@@ -36,12 +36,9 @@
 class QGradient;
 #endif
 
-#if PLATFORM(CG)
-#include "ImageBuffer.h"
-#endif
-
 namespace WebCore {
 
+    class ImageBuffer;
     class SVGGradientElement;
 
     // FIXME: Remove the spread method enum in SVGGradientElement

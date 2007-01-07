@@ -24,12 +24,15 @@
 #ifdef SVG_SUPPORT
 #include "SVGPaintServerGradient.h"
 
+#include "CgSupport.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
+#include "RenderPath.h"
 #include "SVGGradientElement.h"
 #include "SVGPaintServerLinearGradient.h"
 #include "SVGPaintServerRadialGradient.h"
-#include "RenderPath.h"
-#include "CgSupport.h"
+
+using namespace std;
 
 namespace WebCore {
 
@@ -272,7 +275,7 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
             IntRect maskRect = const_cast<RenderObject*>(object)->absoluteBoundingBoxRect();
             maskRect = object->absoluteTransform().inverse().mapRect(maskRect);
 
-            ImageBuffer* maskImage = GraphicsContext::createImageBuffer(IntSize(maskRect.width(), maskRect.height()), false);
+            auto_ptr<ImageBuffer> maskImage = ImageBuffer::create(IntSize(maskRect.width(), maskRect.height()), false);
             // FIXME: maskImage could be NULL
 
             GraphicsContext* maskImageContext = maskImage->context();
@@ -283,7 +286,7 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
             const_cast<RenderObject*>(object)->style()->setColor(Color(255, 255, 255));
             maskImageContext->setTextDrawingMode(cTextStroke);
 
-            m_imageBuffer = maskImage;
+            m_imageBuffer = maskImage.release();
             m_savedContext = context;
             context = maskImageContext;
         }

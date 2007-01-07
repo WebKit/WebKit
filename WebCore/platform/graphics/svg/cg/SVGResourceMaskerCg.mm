@@ -27,15 +27,17 @@
 #include "config.h"
 
 #ifdef SVG_SUPPORT
-#import "SVGResourceFilter.h"
 #import "SVGResourceMasker.h"
-#import "SVGRenderStyle.h"
 
-#import "GraphicsContext.h"
 #import "CgSupport.h"
-
-#import <QuartzCore/CoreImage.h>
+#import "GraphicsContext.h"
+#import "ImageBuffer.h"
+#import "SVGRenderStyle.h"
+#import "SVGResourceFilter.h"
 #import <QuartzCore/CIFilter.h>
+#import <QuartzCore/CoreImage.h>
+
+using namespace std;
 
 namespace WebCore {
 
@@ -100,8 +102,8 @@ void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& bou
                                             maskSize.width(), maskSize.height());
 
     // Create new graphics context in gray scale mode for image rendering
-    OwnPtr<ImageBuffer> grayScaleImage(GraphicsContext::createImageBuffer(maskSize, true));
-    if (!grayScaleImage)
+    auto_ptr<ImageBuffer> grayScaleImage(ImageBuffer::create(maskSize, true));
+    if (!grayScaleImage.get())
         return;
     CGContextRef grayScaleContext = grayScaleImage->context()->platformContext();
 

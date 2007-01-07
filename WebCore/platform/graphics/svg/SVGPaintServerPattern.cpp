@@ -28,14 +28,16 @@
 #ifdef SVG_SUPPORT
 #include "SVGPaintServerPattern.h"
 
+#include "ImageBuffer.h"
 #include "SVGPatternElement.h"
 #include "SVGRenderTreeAsText.h"
+
+using namespace std;
 
 namespace WebCore {
 
 SVGPaintServerPattern::SVGPaintServerPattern(const SVGPatternElement* owner)
     : m_ownerElement(owner)
-
 #if PLATFORM(CG)
     , m_patternSpace(0)
     , m_pattern(0)
@@ -67,9 +69,9 @@ ImageBuffer* SVGPaintServerPattern::tile() const
     return m_tile.get();
 }
 
-void SVGPaintServerPattern::setTile(ImageBuffer* tile)
+void SVGPaintServerPattern::setTile(auto_ptr<ImageBuffer> tile)
 {
-    m_tile.set(tile);
+    m_tile.set(tile.release());
 }
 
 AffineTransform SVGPaintServerPattern::patternTransform() const
