@@ -1,3 +1,24 @@
+2007-01-06  Darin Adler  <darin@apple.com>
+
+        Suggested by Mitz.
+
+        - disabled 3 tests with results that are too font-dependent to be used as
+          part of the test suite; two are tests of Armenian numbering and one is
+          a test of some SVG font features which we do not support
+
+        * css2.1/t1202-counter-10-b-expected.checksum: Removed.
+        * css2.1/t1202-counter-10-b-expected.png: Removed.
+        * css2.1/t1202-counter-10-b-expected.txt: Removed.
+        * css2.1/t1202-counter-10-b.html: Removed.
+        * css2.1/t1202-counters-10-b-expected.checksum: Removed.
+        * css2.1/t1202-counters-10-b-expected.png: Removed.
+        * css2.1/t1202-counters-10-b-expected.txt: Removed.
+        * css2.1/t1202-counters-10-b.html: Removed.
+        * svg/W3C-SVG-1.1/text-fonts-03-t-expected.checksum: Removed.
+        * svg/W3C-SVG-1.1/text-fonts-03-t-expected.png: Removed.
+        * svg/W3C-SVG-1.1/text-fonts-03-t-expected.txt: Removed.
+        * svg/W3C-SVG-1.1/text-fonts-03-t.svg: Removed.
+
 2007-01-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
