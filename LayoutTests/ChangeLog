@@ -1,5 +1,16 @@
 2007-01-07  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=11133
+
+        * fast/forms/listbox-clip-expected.checksum: Added.
+        * fast/forms/listbox-clip-expected.png: Added.
+        * fast/forms/listbox-clip-expected.txt: Added.
+        * fast/forms/listbox-clip.html: Added.
+
+2007-01-07  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Hyatt.
 
         - repaint test for http://bugs.webkit.org/show_bug.cgi?id=11935

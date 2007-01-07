@@ -1,5 +1,25 @@
 2007-01-07  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11133
+
+        Test: fast/forms/listbox-clip.html
+
+        * platform/mac/PlatformScrollBarMac.mm:
+        (-[WebCoreScrollBar initWithPlatformScrollbar:]): Get the correct scrollbar
+        width/height based on control size.
+        * rendering/RenderListBox.cpp:
+        Renamed optionsSpacingLeft to optionsSpacingHorizontal since it is applied
+        on both sides.
+        (WebCore::RenderListBox::calcMinMaxWidth): Account for optionsSpacingHorizontal.
+        Not including the spacing before went unnoticed since the scrollbar was lying
+        about its width by exactly the same amount.
+        (WebCore::RenderListBox::paintObject): Clip out the scrollbar.
+        (WebCore::RenderListBox::paintItemForeground): Changed for the rename.
+
+2007-01-07  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Hyatt.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=11935

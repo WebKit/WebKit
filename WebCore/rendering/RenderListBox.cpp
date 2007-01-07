@@ -50,7 +50,7 @@ using namespace HTMLNames;
 using namespace EventNames;
  
 const int optionsSpacingMiddle = 1;
-const int optionsSpacingLeft = 2;
+const int optionsSpacingHorizontal = 2;
 
 RenderListBox::RenderListBox(HTMLSelectElement* element)
     : RenderBlock(element)
@@ -136,7 +136,7 @@ void RenderListBox::calcMinMaxWidth()
     if (style()->width().isFixed() && style()->width().value() > 0)
         m_minWidth = m_maxWidth = calcContentBoxWidth(style()->width().value());
     else {
-        m_maxWidth = m_optionsWidth;
+        m_maxWidth = m_optionsWidth + 2 * optionsSpacingHorizontal;
         if (m_vBar)
            m_maxWidth += m_vBar->width();
     }
@@ -214,7 +214,7 @@ void RenderListBox::paintObject(PaintInfo& paintInfo, int tx, int ty)
 {
     // Push a clip.
     IntRect clipRect(tx + borderLeft(), ty + borderTop(),
-         width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop());
+         width() - borderLeft() - borderRight() - (m_vBar ? m_vBar->width() : 0), height() - borderBottom() - borderTop());
     if (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseChildBlockBackgrounds) {
         if (clipRect.width() == 0 || clipRect.height() == 0)
             return;
@@ -278,7 +278,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, in
     
     // Determine where the item text should be placed
     IntRect r = itemBoundingBoxRect(tx, ty, listIndex);
-    r.move(optionsSpacingLeft, style()->font().ascent());
+    r.move(optionsSpacingHorizontal, style()->font().ascent());
 
     RenderStyle* itemStyle = element->renderStyle();
     if (!itemStyle)

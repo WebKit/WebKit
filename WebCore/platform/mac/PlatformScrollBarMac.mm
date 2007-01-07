@@ -58,13 +58,14 @@ static NSControlSize NSControlSizeForScrollBarControlSize(ScrollbarControlSize s
     // Cocoa scrollbars just set their orientation by examining their own
     // dimensions, so we have to do this unsavory hack.
     NSRect orientation;
+    NSControlSize controlSize = NSControlSizeForScrollBarControlSize(s->controlSize());
     orientation.origin.x = orientation.origin.y = 0;
     if (s->orientation() == VerticalScrollbar) {
-        orientation.size.width = [NSScroller scrollerWidth];
+        orientation.size.width = [NSScroller scrollerWidthForControlSize:controlSize];
         orientation.size.height = 100;
     } else {
         orientation.size.width = 100;
-        orientation.size.height = [NSScroller scrollerWidth];
+        orientation.size.height = [NSScroller scrollerWidthForControlSize:controlSize];
     }
     self = [self initWithFrame:orientation];
 
@@ -73,7 +74,7 @@ static NSControlSize NSControlSizeForScrollBarControlSize(ScrollbarControlSize s
     [self setEnabled:YES];
     [self setTarget:self];
     [self setAction:@selector(scroll:)];
-    [self setControlSize:NSControlSizeForScrollBarControlSize(s->controlSize())];
+    [self setControlSize:controlSize];
 
     return self;
 }
