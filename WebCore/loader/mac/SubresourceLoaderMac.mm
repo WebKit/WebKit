@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -107,18 +108,9 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
 
 void SubresourceLoader::willSendRequest(ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
 {
-    KURL oldURL = request().url();
-    
-    ResourceRequest clientRequest(newRequest);
-    ResourceLoader::willSendRequest(clientRequest, redirectResponse);
-    if (!clientRequest.isNull() && oldURL != clientRequest.url()) {
-        if (m_client)
-            m_client->willSendRequest(this, newRequest, redirectResponse);
-        
-        return;
-    }
-    
-    newRequest = clientRequest;
+    ResourceLoader::willSendRequest(newRequest, redirectResponse);
+    if (!newRequest.isNull() && m_originalURL != newRequest.url() && m_client)
+        m_client->willSendRequest(this, newRequest, redirectResponse);
 }
 
 void SubresourceLoader::didReceiveResponse(const ResourceResponse& r)

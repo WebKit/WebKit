@@ -1,3 +1,16 @@
+2007-01-07  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by Darin.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=12106
+        Changed URL from WebResourceLoadDelegate's webView:resource:willSendRequest:... is ignored
+
+        * loader/mac/SubresourceLoaderMac.mm:
+        (WebCore::SubresourceLoader::willSendRequest): Use m_originalURL instead of request().url()
+        as m_request is not set until the end of ResourceLoader::willSendRequest. Also, ensure that
+        the request is updated if the frame's client changes it, and that the SubresourceLoader's client
+        gets the new request and not the old one. 
+
 2007-01-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
