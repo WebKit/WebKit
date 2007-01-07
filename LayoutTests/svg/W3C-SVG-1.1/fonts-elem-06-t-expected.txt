@@ -1,7 +1,7 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (-4,-20) size 483.50x379.50
-      RenderSVGContainer {g} at (-4,-20) size 359x228
+      RenderSVGContainer {g} at (-4,-20) size 358x228
         RenderSVGText {text} at (240,50) size 480x36
           RenderSVGInlineText {#text} at (-114,-28) size 229x36
             text run at (-114,-28) width 229: "<font> horiz-adv-x"

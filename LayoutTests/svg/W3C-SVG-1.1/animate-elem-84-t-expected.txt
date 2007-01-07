@@ -10,7 +10,7 @@ layer at (0,0) size 480x360
             RenderPath {rect} at (319,22) size 110x110 [fill={[type=SOLID] [color=#000000]}] [data="M240.00,0.00L340.00,0.00L340.00,100.00L240.00,100.00"]
           RenderSVGContainer {g} at (319,187) size 110x110
             RenderPath {rect} at (319,187) size 110x110 [fill={[type=SOLID] [color=#000000]}] [data="M240.00,150.00L340.00,150.00L340.00,250.00L240.00,250.00"]
-          RenderSVGContainer {g} at (70.40,68.20) size 324.50x101.20
+          RenderSVGContainer {g} at (62.70,68.20) size 182.60x101.20
             RenderSVGText {text} at (50,130) size 480x17
               RenderSVGInlineText {#text} at (-36,-13) size 72x17
                 text run at (-36,-13) width 72: "currentColor"

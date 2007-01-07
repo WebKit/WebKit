@@ -121,7 +121,6 @@ public:
     virtual void setSelectionState(SelectionState s);
     virtual IntRect selectionRect();
     virtual IntRect caretRect(int offset, EAffinity, int* extraWidthToEndOfLine = 0);
-    void posOfChar(int ch, int& x, int& y);
 
     virtual int marginLeft() const { return style()->marginLeft().calcMinValue(0); }
     virtual int marginRight() const { return style()->marginRight().calcMinValue(0); }

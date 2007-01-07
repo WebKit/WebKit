@@ -8,8 +8,8 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (240,30) size 480x23
         RenderSVGInlineText {#text} at (-13,-18) size 27x23
           text run at (-13,-18) width 27: "dur"
-      RenderSVGContainer {g} at (116,92) size 229x167 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,100.00)}]
-        RenderSVGContainer {g} at (116,112) size 64x147 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,25.00)}]
+      RenderSVGContainer {g} at (148,92) size 188.50x167 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,100.00)}]
+        RenderSVGContainer {g} at (148,112) size 64x147 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,25.00)}]
           RenderSVGText {text} at (0,0) size 480x17
             RenderSVGInlineText {#text} at (-64,-13) size 64x17
               text run at (-64,-13) width 64: "clock value"
@@ -19,21 +19,21 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,130) size 480x17
             RenderSVGInlineText {#text} at (-34,-13) size 34x17
               text run at (-34,-13) width 34: "media"
-        RenderSVGContainer {g} at (235,92) size 110x147 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,5.00)}]
+        RenderSVGContainer {g} at (242,92) size 70x147 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,5.00)}]
           RenderSVGText {text} at (0,0) size 480x17
             RenderSVGInlineText {#text} at (-12,-13) size 24x17
               text run at (-12,-13) width 24: "> 2s"
           RenderSVGText {text} at (80,0) size 480x17
             RenderSVGInlineText {#text} at (-14,-13) size 29x17
               text run at (-14,-13) width 29: "0s-2s"
-          RenderSVGContainer {g} at (235,157) size 107x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,65.00)}]
+          RenderSVGContainer {g} at (242,157) size 66x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,65.00)}]
             RenderSVGText {text} at (0,0) size 480x17
               RenderSVGInlineText {#text} at (-15,-13) size 31x17
                 text run at (-15,-13) width 31: "never"
             RenderSVGText {text} at (80,0) size 480x17
               RenderSVGInlineText {#text} at (-12,-13) size 24x17
                 text run at (-12,-13) width 24: "> 0s"
-          RenderSVGContainer {g} at (235,222) size 107x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,130.00)}]
+          RenderSVGContainer {g} at (242,222) size 66x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,130.00)}]
             RenderSVGText {text} at (0,0) size 480x17
               RenderSVGInlineText {#text} at (-15,-13) size 31x17
                 text run at (-15,-13) width 31: "never"

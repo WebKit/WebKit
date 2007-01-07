@@ -8,8 +8,8 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (240,30) size 480x23
         RenderSVGInlineText {#text} at (-40,-18) size 81x23
           text run at (-40,-18) width 81: "repeatDur"
-      RenderSVGContainer {g} at (83,92) size 322x162 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,80.00)}]
-        RenderSVGContainer {g} at (83,112) size 167x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,45.00)}]
+      RenderSVGContainer {g} at (166,92) size 230.50x162 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,80.00)}]
+        RenderSVGContainer {g} at (166,112) size 167x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,45.00)}]
           RenderSVGText {text} at (0,0) size 480x17
             RenderSVGInlineText {#text} at (-167,-13) size 167x17
               text run at (-167,-13) width 167: "dur=5s repeatDur unspecified"
@@ -28,7 +28,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,125) size 480x17
             RenderSVGInlineText {#text} at (-130,-13) size 130x17
               text run at (-130,-13) width 130: "dur=0.7s repeatDur=5s"
-        RenderSVGContainer {g} at (298,92) size 107x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,25.00)}]
+        RenderSVGContainer {g} at (304,92) size 68x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,25.00)}]
           RenderSVGText {text} at (0,0) size 480x17
             RenderSVGInlineText {#text} at (-12,-13) size 24x17
               text run at (-12,-13) width 24: "> 5s"

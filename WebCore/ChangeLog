@@ -1,3 +1,19 @@
+2007-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam.
+
+        Cleanup code & fix InlineBox positioning when text-anchor is used.
+
+        * rendering/RenderSVGText.cpp: Cleanup code.
+        (WebCore::RenderSVGText::nodeAtPoint):
+        (WebCore::RenderSVGText::absoluteRects):
+        (WebCore::RenderSVGText::paint):
+        * rendering/RenderText.cpp: Remove unused function posOfChar()
+        * rendering/RenderText.h: Ditto.
+        * rendering/SVGInlineFlowBox.cpp:
+        (WebCore::translateBox):
+        (WebCore::placePositionedBoxesHorizontally):
+
 2007-01-06  George Staikos  <staikos@kde.org>
 
         Reviewed by Brady.

@@ -8,8 +8,8 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (240,30) size 480x23
         RenderSVGInlineText {#text} at (-51,-18) size 103x23
           text run at (-51,-18) width 103: "multiple end"
-      RenderSVGContainer {g} at (107,52) size 195x227 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,100.00)}]
-        RenderSVGContainer {g} at (107,112) size 73x167 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,25.00)}]
+      RenderSVGContainer {g} at (143,52) size 165x227 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,100.00)}]
+        RenderSVGContainer {g} at (143,112) size 73x167 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,25.00)}]
           RenderSVGText {text} at (0,0) size 480x17
             RenderSVGInlineText {#text} at (-48,-13) size 48x17
               text run at (-48,-13) width 48: "2 offsets"
@@ -28,7 +28,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,150) size 480x17
             RenderSVGInlineText {#text} at (-26,-13) size 26x17
               text run at (-26,-13) width 26: "misc"
-        RenderSVGContainer {g} at (236,52) size 66x57 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,5.00)}]
+        RenderSVGContainer {g} at (243,52) size 65x57 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,5.00)}]
           RenderSVGText {text} at (0,0) size 480x17
             RenderSVGInlineText {#text} at (-12,-13) size 24x17
               text run at (-12,-13) width 24: "0-1s"
@@ -38,7 +38,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,-40) size 480x17
             RenderSVGInlineText {#text} at (-12,-13) size 24x17
               text run at (-12,-13) width 24: "> 5s"
-          RenderSVGContainer {g} at (278,72) size 24x37 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,0.00)}]
+          RenderSVGContainer {g} at (284,72) size 24x37 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,0.00)}]
             RenderSVGText {text} at (0,0) size 480x17
               RenderSVGInlineText {#text} at (-12,-13) size 24x17
                 text run at (-12,-13) width 24: "1-2s"

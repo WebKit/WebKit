@@ -1,3 +1,63 @@
+2007-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam.
+
+        RenderSVGContainer shows different boundaries now that text-anchor is
+        taken into account in the flow box x position calculation.
+
+        * svg/W3C-SVG-1.1/animate-elem-08-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-27-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-36-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-37-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-39-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-41-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-46-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-60-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-61-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-62-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-63-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-64-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-65-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-66-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-67-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-68-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-69-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-70-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-77-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-78-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-80-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-81-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-82-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-83-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-84-t-expected.txt:
+        * svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/extend-namespace-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-felem-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-morph-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-specular-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-tile-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-turb-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/fonts-elem-06-t-expected.txt:
+        * svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/interact-cursor-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/painting-render-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-17-b-expected.txt:
+        * svg/W3C-SVG-1.1/struct-group-03-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-use-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/styling-css-04-f-expected.txt:
+        * svg/W3C-SVG-1.1/styling-css-05-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-05-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-intro-05-t-expected.txt:
+        * svg/W3C-SVG-1.1/text-text-04-t-expected.txt:
+        * svg/W3C-SVG-1.1/text-text-05-t-expected.txt:
+        * svg/carto.net/scrollbar-expected.txt:
+
 2007-01-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Updated pixel results that weren't landed with r17141.

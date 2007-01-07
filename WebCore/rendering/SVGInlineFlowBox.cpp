@@ -114,7 +114,7 @@ void paintSVGInlineFlow(InlineFlowBox* flow, RenderObject* object, RenderObject:
     paintInfo.context->restore();
 }
 
-static bool translateBox(InlineBox* box, int x, int y, bool topLevel = true)
+static bool translateBox(InlineBox* box, int x, int y, bool topLevel)
 {
     if (box->object()->isText()) {
         box->setXPos(box->xPos() + x);
@@ -122,7 +122,7 @@ static bool translateBox(InlineBox* box, int x, int y, bool topLevel = true)
     } else {
         InlineFlowBox* flow = static_cast<InlineFlowBox*>(box);
         SVGTextPositioningElement* text = static_cast<SVGTextPositioningElement*>(box->object()->element());
-        
+
         if (topLevel || !(text->x()->getFirst().value() || text->y()->getFirst().value() ||
                           text->dx()->getFirst().value() || text->dy()->getFirst().value())) {
             box->setXPos(box->xPos() + x);
@@ -161,16 +161,14 @@ static int placePositionedBoxesHorizontally(InlineFlowBox* flow, int x, int& lef
             mx = max(mx, x);
             amx = max(amx, x);
         } else {
-            assert(curr->object()->isInlineFlow());
+            ASSERT(curr->object()->isInlineFlow());
             InlineFlowBox* flow = static_cast<InlineFlowBox*>(curr);
             SVGTextPositioningElement* text = static_cast<SVGTextPositioningElement*>(flow->object()->element());
             x += (int)(text->dx()->getFirst().value());
             if (text->x()->numberOfItems() > 0)
                 x = (int)(text->x()->getFirst().value() - xPos);
-            if (text->x()->numberOfItems() > 0 ||
-                text->y()->numberOfItems() > 0 ||
-                text->dx()->numberOfItems() > 0 ||
-                text->dy()->numberOfItems() > 0) {
+            if (text->x()->numberOfItems() > 0 || text->y()->numberOfItems() > 0 ||
+                text->dx()->numberOfItems() > 0 || text->dy()->numberOfItems() > 0) {
                 seenPositionedElement = true;
                 needsWordSpacing = false;
                 int ignoreX, ignoreY;
@@ -190,15 +188,16 @@ static int placePositionedBoxesHorizontally(InlineFlowBox* flow, int x, int& lef
 
     int width = mx - mn;
     flow->setWidth(width);
+
     int awidth = amx - amn;
     int dx = 0;
     if (positioned) {
         switch (flow->object()->style()->svgStyle()->textAnchor()) {
             case TA_MIDDLE:
-                translateBox(flow, dx = -awidth / 2, 0);
+                translateBox(flow, dx = -awidth / 2, 0, true);
                 break;
             case TA_END:
-                translateBox(flow, dx = -awidth, 0);
+                translateBox(flow, dx = -awidth, 0, true);
                 break;
             case TA_START:
             default:
@@ -209,6 +208,10 @@ static int placePositionedBoxesHorizontally(InlineFlowBox* flow, int x, int& lef
             x += dx;
             mn += dx;
             mx += dx;
+
+            // text-anchor changes the x position of our root box
+            if (flow->isRootInlineBox())
+                flow->setXPos(flow->xPos() - (dx + xPos) / 2);
         }
     }
 
@@ -224,8 +227,6 @@ int placeSVGFlowHorizontally(InlineFlowBox* flow, int x, int& leftPosition, int&
 {
     int ignoreX, ignoreY;
     x = placePositionedBoxesHorizontally(flow, x, leftPosition, rightPosition, ignoreX, ignoreY, needsWordSpacing, flow->object()->xPos(), true);
-    leftPosition = min(leftPosition, x);
-    rightPosition = max(rightPosition, x);
     needsWordSpacing = false;
     return x;
 }

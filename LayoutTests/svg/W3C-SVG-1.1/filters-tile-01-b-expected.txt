@@ -2,7 +2,7 @@ KCanvasResource {id="feTileFilter" [type=FILTER]  [bounding box=at (115,40) size
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {g} at (114,11) size 252x280
+      RenderSVGContainer {g} at (73,11) size 293x280
         RenderSVGText {text} at (240,25) size 480x17
           RenderSVGInlineText {#text} at (-94,-14) size 189x17
             text run at (-94,-14) width 189: "feTile filter test: a tiled pattern"

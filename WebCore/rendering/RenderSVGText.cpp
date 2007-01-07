@@ -99,26 +99,25 @@ InlineBox* RenderSVGText::createInlineBox(bool makePlaceHolderBox, bool isRootLi
 
 bool RenderSVGText::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
-    AffineTransform totalTransform = absoluteTransform();
     double localX, localY;
-    totalTransform.inverse().map(_x, _y, &localX, &localY);
+    absoluteTransform().inverse().map(_x, _y, &localX, &localY);
     return RenderBlock::nodeAtPoint(request, result, (int)localX, (int)localY, _tx, _ty, hitTestAction);
 }
 
 void RenderSVGText::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {
-    if (!firstLineBox())
-        return;
-    AffineTransform boxTransform = firstLineBox()->object()->absoluteTransform();
-    FloatRect boxRect = FloatRect(xPos() + firstLineBox()->xPos(), yPos() + firstLineBox()->yPos(),
-                                  firstLineBox()->width(), firstLineBox()->height());
-    rects.append(enclosingIntRect(boxTransform.mapRect(boxRect)));
+    InlineBox* box = firstLineBox();
+    if (box) {
+        AffineTransform boxTransform = box->object()->absoluteTransform();
+        FloatRect boundsRect = FloatRect(xPos() + box->xPos(), yPos() + box->yPos(), box->width(), box->height());
+        rects.append(enclosingIntRect(boxTransform.mapRect(boundsRect)));
+    }
 }
 
 void RenderSVGText::paint(PaintInfo& paintInfo, int tx, int ty)
 {   
     RenderObject::PaintInfo pi(paintInfo);
-    pi.rect = (absoluteTransform()).inverse().mapRect(pi.rect);
+    pi.rect = absoluteTransform().inverse().mapRect(pi.rect);
     RenderBlock::paint(pi, tx, ty);
 }
 

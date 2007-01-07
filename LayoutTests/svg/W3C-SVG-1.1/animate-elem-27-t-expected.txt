@@ -1,11 +1,11 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {g} at (14,26) size 413x221
+      RenderSVGContainer {g} at (7,26) size 420x221
         RenderSVGText {text} at (225,40) size 480x17
           RenderSVGInlineText {#text} at (-197,-14) size 394x17
             text run at (-197,-14) width 394: "Test animation options for specifying the target element."
-        RenderSVGContainer {g} at (14,78) size 413x169
+        RenderSVGContainer {g} at (7,78) size 420x169
           RenderSVGText {text} at (80,244) size 480x16
             RenderSVGInlineText {#text} at (-66,-13) size 66x16
               text run at (-66,-13) width 66: "0 to 3 sec."

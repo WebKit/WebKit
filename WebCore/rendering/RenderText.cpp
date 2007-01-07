@@ -380,18 +380,6 @@ IntRect RenderText::caretRect(int offset, EAffinity affinity, int* extraWidthToE
     return IntRect(left, top, 1, height);
 }
 
-void RenderText::posOfChar(int chr, int& x, int& y)
-{
-    absolutePositionForContent(x, y);
-
-    int pos;
-    if (InlineTextBox* s = findNextInlineTextBox(chr, pos)) {
-        // s is the line containing the character
-        x += s->m_x; // this is the x of the beginning of the line, but it's good enough for now
-        y += s->m_y;
-    }
-}
-
 bool RenderText::allAscii() const
 {
     if (m_allAsciiChecked)

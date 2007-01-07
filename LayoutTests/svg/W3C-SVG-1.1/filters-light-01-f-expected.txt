@@ -13,7 +13,7 @@ KCanvasResource {id="spotLightD" [type=FILTER]  [effects=[[type=DIFFUSE-LIGHTING
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 536.50x359
-      RenderSVGContainer {g} at (70,9) size 467x266
+      RenderSVGContainer {g} at (57,9) size 480x266
         RenderSVGText {text} at (240,20) size 480x14
           RenderSVGInlineText {#text} at (-126,-11) size 253x14
             text run at (-126,-11) width 253: "Filters: feDistantLight, fePointLight, feSpotLight"
