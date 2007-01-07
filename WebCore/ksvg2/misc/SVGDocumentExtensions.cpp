@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2006 Apple Computer, Inc.
                   2006 Nikolas Zimmermann <zimmermann@kde.org>
+                  2007 Rob Buis <buis@kde.org>
 
     This file is part of the WebKit project
 
@@ -25,13 +26,17 @@
 #ifdef SVG_SUPPORT
 #include "SVGDocumentExtensions.h"
 
+#include "AtomicString.h"
+#include "Chrome.h"
 #include "Document.h"
 #include "EventListener.h"
 #include "Frame.h"
-#include "TimeScheduler.h"
-#include "AtomicString.h"
-#include "kjs_proxy.h"
+#include "FrameLoader.h"
+#include "Page.h"
 #include "SVGSVGElement.h"
+#include "TimeScheduler.h"
+#include "XMLTokenizer.h"
+#include "kjs_proxy.h"
 
 namespace WebCore {
 
@@ -85,6 +90,20 @@ void SVGDocumentExtensions::unpauseAnimations()
     HashSet<SVGSVGElement*>::iterator end = m_timeContainers.end();
     for (HashSet<SVGSVGElement*>::iterator itr = m_timeContainers.begin(); itr != end; ++itr)
         (*itr)->unpauseAnimations();
+}
+
+void SVGDocumentExtensions::reportWarning(const String& message)
+{
+    if (Page* page = m_doc->frame()->page()) {
+        page->chrome()->addMessageToConsole("Warning: " + message, m_doc->tokenizer() ? m_doc->tokenizer()->lineNumber() : 1, String());
+    }
+}
+
+void SVGDocumentExtensions::reportError(const String& message)
+{
+    if (Page* page = m_doc->frame()->page()) {
+        page->chrome()->addMessageToConsole("Error: " + message, m_doc->tokenizer() ? m_doc->tokenizer()->lineNumber() : 1, String());
+    }
 }
 
 void SVGDocumentExtensions::addPendingResource(const AtomicString& id, SVGStyledElement* obj)

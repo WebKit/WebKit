@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -24,11 +24,12 @@
 #ifdef SVG_SUPPORT
 #include "SVGFitToViewBox.h"
 
+#include "AffineTransform.h"
 #include "FloatRect.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGPreserveAspectRatio.h"
-#include "SVGSVGElement.h"
 #include "StringImpl.h"
 
 namespace WebCore {
@@ -51,31 +52,27 @@ void SVGFitToViewBox::parseViewBox(const String& str)
     double x = 0, y = 0, w = 0, h = 0;
     const UChar* c = str.characters();
     const UChar* end = c + str.length();
+    Document* doc = contextElement()->document();
 
     skipOptionalSpaces(c, end);
 
-    if (!parseNumber(c, end, x))
-        goto bail_out;
+    if (!(parseNumber(c, end, x) && parseNumber(c, end, y) &&
+          parseNumber(c, end, w) && parseNumber(c, end, h, false))) {
+        doc->accessSVGExtensions()->reportWarning("Problem parsing viewBox=\"" + str + "\"");
+        return;
+    }
 
-    if (!parseNumber(c, end, y))
-        goto bail_out;
-
-    if (!parseNumber(c, end, w) || w < 0.0) // check that width is positive
-        goto bail_out;
-
-    if (!parseNumber(c, end, h, false) || h < 0.0) // check that height is positive
-        goto bail_out;
-
-    skipOptionalSpaces(c, end);
-
-    if (c < end) // nothing should come after the last, fourth number
-        goto bail_out;
-
-    setViewBoxBaseValue(FloatRect(x, y, w, h));
-    return;
-
-bail_out:;
-    // FIXME: Per the spec we are supposed to set the document into an "error state" here.
+    if (w < 0.0) // check that width is positive
+        doc->accessSVGExtensions()->reportError("A negative value for ViewBox width is not allowed");
+    else if (h < 0.0) // check that height is positive
+        doc->accessSVGExtensions()->reportError("A negative value for ViewBox height is not allowed");
+    else {
+        skipOptionalSpaces(c, end);
+        if (c < end) // nothing should come after the last, fourth number
+            doc->accessSVGExtensions()->reportWarning("Problem parsing viewBox=\"" + str + "\"");
+        else
+            setViewBoxBaseValue(FloatRect(x, y, w, h));
+    }
 }
 
 AffineTransform SVGFitToViewBox::viewBoxToViewTransform(float viewWidth, float viewHeight) const

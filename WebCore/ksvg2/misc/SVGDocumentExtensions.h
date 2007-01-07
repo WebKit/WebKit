@@ -60,6 +60,9 @@ public:
     void pauseAnimations();
     void unpauseAnimations();
 
+    void reportWarning(const String&);
+    void reportError(const String&);
+
 private:
     Document* m_doc; // weak reference
     HashSet<SVGSVGElement*> m_timeContainers; // For SVG 1.2 support this will need to be made more general.

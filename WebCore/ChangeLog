@@ -1,3 +1,55 @@
+2007-01-07  Rob Buis  <buis@kde.org>
+
+        Reviewed by weinig.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10362
+        SVG needs to support SVGError events and some form of "error state"
+
+        Report SVG warnings and errors on (JS) console.
+        Expose line and column number getters in Tokenizer in
+        order to display them with the error message.
+
+        * dom/XMLTokenizer.cpp:
+        * dom/XMLTokenizer.h:
+        (WebCore::Tokenizer::lineNumber):
+        (WebCore::Tokenizer::columnNumber):
+        * html/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::lineNumber):
+        (WebCore::HTMLTokenizer::columnNumber):
+        * ksvg2/misc/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::reportWarning):
+        (WebCore::SVGDocumentExtensions::reportError):
+        * ksvg2/misc/SVGDocumentExtensions.h:
+        * ksvg2/svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::parseMappedAttribute):
+        * ksvg2/svg/SVGElement.h:
+        * ksvg2/svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::parseViewBox):
+        * ksvg2/svg/SVGFitToViewBox.h:
+        * ksvg2/svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::parseMappedAttribute):
+        * ksvg2/svg/SVGParserUtilities.cpp:
+        (WebCore::SVGPolyParser::parsePoints):
+        * ksvg2/svg/SVGParserUtilities.h:
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::parseMappedAttribute):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::parseMappedAttribute):
+        * ksvg2/svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::parseMappedAttribute):
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::parseMappedAttribute):
+        * ksvg2/svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::parseMappedAttribute):
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+        * ksvg2/svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::parseMappedAttribute):
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::parseMappedAttribute):
+
 2007-01-07  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Sam.

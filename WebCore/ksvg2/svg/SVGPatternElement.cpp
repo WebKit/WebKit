@@ -99,11 +99,15 @@ void SVGPatternElement::parseMappedAttribute(MappedAttribute* attr)
         setXBaseValue(SVGLength(this, LengthModeWidth, value));
     else if (attr->name() == SVGNames::yAttr)
         setYBaseValue(SVGLength(this, LengthModeHeight, value));
-    else if (attr->name() == SVGNames::widthAttr)
+    else if (attr->name() == SVGNames::widthAttr) {
         setWidthBaseValue(SVGLength(this, LengthModeWidth, value));
-    else if (attr->name() == SVGNames::heightAttr)
+        if (width().value() < 0.0)
+            document()->accessSVGExtensions()->reportError("A negative value for pattern attribute <width> is not allowed");
+    } else if (attr->name() == SVGNames::heightAttr) {
         setHeightBaseValue(SVGLength(this, LengthModeHeight, value));
-    else {
+        if (width().value() < 0.0)
+            document()->accessSVGExtensions()->reportError("A negative value for pattern attribute <height> is not allowed");
+    } else {
         if (SVGURIReference::parseMappedAttribute(attr))
             return;
         if (SVGTests::parseMappedAttribute(attr))

@@ -94,6 +94,9 @@ public:
     virtual bool processingData() const;
     virtual int executingScript() const { return m_executingScript; }
 
+    virtual int lineNumber() const { return lineno; }
+    virtual int columnNumber() const { return 1; }
+
 private:
     class State;
 

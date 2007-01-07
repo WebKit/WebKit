@@ -56,9 +56,11 @@ void SVGCircleElement::parseMappedAttribute(MappedAttribute* attr)
         setCxBaseValue(SVGLength(this, LengthModeWidth, value));       
     else if (attr->name() == SVGNames::cyAttr)
         setCyBaseValue(SVGLength(this, LengthModeHeight, value));
-    else if (attr->name() == SVGNames::rAttr)
+    else if (attr->name() == SVGNames::rAttr) {
         setRBaseValue(SVGLength(this, LengthModeOther, value));
-    else {
+        if (r().value() < 0.0)
+            document()->accessSVGExtensions()->reportError("A negative value for circle <r> is not allowed");
+    } else {
         if (SVGTests::parseMappedAttribute(attr))
             return;
         if (SVGLangSpace::parseMappedAttribute(attr))

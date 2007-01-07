@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -62,10 +62,12 @@ SVGPointList* SVGPolyElement::animatedPoints() const
 
 void SVGPolyElement::parseMappedAttribute(MappedAttribute* attr)
 {
+    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::pointsAttr) {
         ExceptionCode ec = 0;
         points()->clear(ec);
-        parsePoints(attr->value());
+        if (!parsePoints(value) && !m_ignoreAttributeChanges)
+            document()->accessSVGExtensions()->reportError("Problem parsing points=\"" + value + "\"");
     } else {
         if (SVGTests::parseMappedAttribute(attr))
             return;

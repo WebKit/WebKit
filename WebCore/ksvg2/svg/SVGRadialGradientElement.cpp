@@ -67,9 +67,11 @@ void SVGRadialGradientElement::parseMappedAttribute(MappedAttribute* attr)
         setCxBaseValue(SVGLength(this, LengthModeWidth, value));
     else if (attr->name() == SVGNames::cyAttr)
         setCyBaseValue(SVGLength(this, LengthModeHeight, value));
-    else if (attr->name() == SVGNames::rAttr)
+    else if (attr->name() == SVGNames::rAttr) {
         setRBaseValue(SVGLength(this, LengthModeOther, value));
-    else if (attr->name() == SVGNames::fxAttr)
+        if (r().value() < 0.0)
+            document()->accessSVGExtensions()->reportError("A negative value for radial gradient radius <r> is not allowed");
+    } else if (attr->name() == SVGNames::fxAttr)
         setFxBaseValue(SVGLength(this, LengthModeWidth, value));
     else if (attr->name() == SVGNames::fyAttr)
         setFyBaseValue(SVGLength(this, LengthModeHeight, value));

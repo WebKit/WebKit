@@ -94,10 +94,15 @@ void SVGTextContentElement::selectSubString(unsigned long charnum, unsigned long
 
 void SVGTextContentElement::parseMappedAttribute(MappedAttribute* attr)
 {
+    const AtomicString& value = attr->value();
     //if (attr->name() == SVGNames::lengthAdjustAttr)
     //    setXBaseValue(SVGLength(this, LengthModeWidth, value));
     //else
-    {
+    if (attr->name() == SVGNames::textLengthAttr) {
+        setTextLengthBaseValue(SVGLength(this, LengthModeOther, value));
+        if (textLength().value() < 0.0)
+            document()->accessSVGExtensions()->reportError("A negative value for text attribute <textLength> is not allowed");
+    } else {
         if (SVGTests::parseMappedAttribute(attr))
             return;
         if (SVGLangSpace::parseMappedAttribute(attr))

@@ -173,7 +173,6 @@ PassRefPtr<ClassName::SVGAnimatedTemplate##UpperProperty> ClassName::LowerProper
 }
 
 namespace WebCore {
-    class DocumentPtr;
     class Ecma;
     class SVGPreserveAspectRatio;
     class SVGMatrix;

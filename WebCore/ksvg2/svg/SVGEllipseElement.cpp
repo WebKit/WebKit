@@ -59,11 +59,15 @@ void SVGEllipseElement::parseMappedAttribute(MappedAttribute* attr)
         setCxBaseValue(SVGLength(this, LengthModeWidth, value));
     else if (attr->name() == SVGNames::cyAttr)
         setCyBaseValue(SVGLength(this, LengthModeHeight, value));
-    else if (attr->name() == SVGNames::rxAttr)
+    else if (attr->name() == SVGNames::rxAttr) {
         setRxBaseValue(SVGLength(this, LengthModeWidth, value));
-    else if (attr->name() == SVGNames::ryAttr)
+        if (rx().value() < 0.0)
+            document()->accessSVGExtensions()->reportError("A negative value for ellipse <rx> is not allowed");
+    } else if (attr->name() == SVGNames::ryAttr) {
         setRyBaseValue(SVGLength(this, LengthModeHeight, value));
-    else {
+        if (ry().value() < 0.0)
+            document()->accessSVGExtensions()->reportError("A negative value for ellipse <ry> is not allowed");
+    } else {
         if (SVGTests::parseMappedAttribute(attr))
             return;
         if (SVGLangSpace::parseMappedAttribute(attr))

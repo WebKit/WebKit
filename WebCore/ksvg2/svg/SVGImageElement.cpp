@@ -75,9 +75,13 @@ void SVGImageElement::parseMappedAttribute(MappedAttribute *attr)
     else if (attr->name() == SVGNames::widthAttr) {
         setWidthBaseValue(SVGLength(this, LengthModeWidth, value));
         addCSSProperty(attr, CSS_PROP_WIDTH, value);
+        if (width().value() < 0.0)
+            document()->accessSVGExtensions()->reportError("A negative value for image attribute <width> is not allowed");
     } else if (attr->name() == SVGNames::heightAttr) {
         setHeightBaseValue(SVGLength(this, LengthModeHeight, value));
         addCSSProperty(attr, CSS_PROP_HEIGHT, value);
+        if (height().value() < 0.0)
+            document()->accessSVGExtensions()->reportError("A negative value for image attribute <height> is not allowed");
     } else {
         if (SVGTests::parseMappedAttribute(attr))
             return;

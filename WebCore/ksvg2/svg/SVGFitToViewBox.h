@@ -20,17 +20,15 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGFitToViewBoxImpl_H
-#define KSVG_SVGFitToViewBoxImpl_H
+#ifndef SVGFitToViewBox_H
+#define SVGFitToViewBox_H
 #ifdef SVG_SUPPORT
 
 #include "SVGElement.h"
 
 namespace WebCore {
-    class Attribute;
     class AffineTransform;
     class SVGPreserveAspectRatio;
-    class StringImpl;
 
     class SVGFitToViewBox {
     public:
@@ -54,6 +52,6 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KSVG_SVGFitToViewBoxImpl_H
+#endif // SVGFitToViewBox_H
 
 // vim:ts=4:noet

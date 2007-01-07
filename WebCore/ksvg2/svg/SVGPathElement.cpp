@@ -268,11 +268,16 @@ void SVGPathElement::svgClosePath()
 
 void SVGPathElement::parseMappedAttribute(MappedAttribute* attr)
 {
+    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::dAttr) {
         ExceptionCode ec;
         pathSegList()->clear(ec);
-        if (!parseSVG(attr->value(), true))
-            pathSegList()->clear(ec);
+        if (!parseSVG(value, true))
+            document()->accessSVGExtensions()->reportError("Problem parsing d=\"" + value + "\"");
+    } else if (attr->name() == SVGNames::pathLengthAttr) {
+        m_pathLength = value.toDouble();
+        if (m_pathLength < 0.0)
+            document()->accessSVGExtensions()->reportError("A negative value for path attribute <pathLength> is not allowed");
     } else {
         if (SVGTests::parseMappedAttribute(attr))
             return;

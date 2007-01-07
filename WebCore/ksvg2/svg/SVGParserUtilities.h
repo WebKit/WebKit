@@ -69,7 +69,7 @@ namespace WebCore
     {
     public:
         virtual ~SVGPolyParser() { }
-        void parsePoints(const String &points) const;
+        bool parsePoints(const String& points) const;
 
     protected:
         virtual void svgPolyTo(double x1, double y1, int nr) const = 0;
@@ -90,7 +90,7 @@ namespace WebCore
     {
     public:
         virtual ~SVGPathParser() { }
-        bool parseSVG(const String &d, bool process = false);
+        bool parseSVG(const String& d, bool process = false);
 
     protected:
         virtual void svgMoveTo(double x1, double y1, bool closed, bool abs = true) = 0;
@@ -104,7 +104,7 @@ namespace WebCore
         virtual void svgArcTo(double x, double y, double r1, double r2, double angle, bool largeArcFlag, bool sweepFlag, bool abs = true);
         virtual void svgClosePath() = 0;
     private:
-        void calculateArc(bool relative, double &curx, double &cury, double angle, double x, double y, double r1, double r2, bool largeArcFlag, bool sweepFlag);
+        void calculateArc(bool relative, double& curx, double& cury, double angle, double x, double y, double r1, double r2, bool largeArcFlag, bool sweepFlag);
     };
 
 } // namespace WebCore

@@ -109,10 +109,10 @@ bool parseNumberOptionalNumber(const String& s, double& x, double& y)
     return cur == end;
 }
 
-void SVGPolyParser::parsePoints(const String& s) const
+bool SVGPolyParser::parsePoints(const String& s) const
 {
     if (s.isEmpty())
-        return;
+        return true;
     const UChar* cur = s.characters();
     const UChar* end = cur + s.length();
 
@@ -122,11 +122,11 @@ void SVGPolyParser::parsePoints(const String& s) const
     while (1) {
         double xPos = 0;
         if (!parseNumber(cur, end, xPos))
-            break;
+           return false;
 
         double yPos = 0;
         if (!parseNumber(cur, end, yPos))
-            break;
+            return false;
 
         svgPolyTo(xPos, yPos, segmentNum++);
     }

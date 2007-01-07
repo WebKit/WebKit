@@ -113,12 +113,12 @@ public:
 
     virtual bool wellFormed() const { return !m_sawError; }
 
+    int lineNumber() const;
+    int columnNumber() const;
+
 private:
     void initializeParserContext();
     void setCurrentNode(Node*);
-
-    int lineNumber() const;
-    int columnNumber() const;
 
     void insertErrorMessageBlock();
 

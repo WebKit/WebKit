@@ -65,6 +65,9 @@ public:
 
     virtual bool wellFormed() const { return true; }
 
+    virtual int lineNumber() const { return -1; }
+    virtual int columnNumber() const { return -1; }
+
 protected:
     // The tokenizer has buffers, so parsing may continue even after
     // it stops receiving data. We use m_parserStopped to stop the tokenizer
