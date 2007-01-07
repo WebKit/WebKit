@@ -1,3 +1,10 @@
+2007-01-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Updated pixel results that weren't landed with r17141.
+
+        * http/tests/incremental/slow-utf8-css-expected.checksum:
+        * http/tests/incremental/slow-utf8-css-expected.png:
+
 2007-01-07  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Mark Rowe.
