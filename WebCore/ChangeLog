@@ -1,3 +1,19 @@
+2007-01-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10313
+        xsl:import doesn't work in stylesheets loaded via XMLHttpRequest
+
+        This is a partial fix that makes a couple more steps towards fixing the problem.
+
+        Test: fast/xsl/transform-xhr-doc.xhtml
+
+        * xml/XSLTProcessor.cpp:
+        (WebCore::xsltStylesheetPointer): Pass an URL for the stylesheet. I'm not sure why this constructor even needs it, 
+        given that it has a Node, but this is a small modifications that makes XSLImportRule try to load from a correct URL.
+        (WebCore::XSLTProcessor::transformToString): Fix the crash for real this time.
+
 2007-01-06  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

@@ -1,3 +1,16 @@
+2007-01-07  Lamar Goddard  <lamargoddard@gmail.com>
+
+        Reviewed by Darin.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=10313
+        xsl:import doesn't work in stylesheets loaded via XMLHttpRequest
+
+        * fast/xsl/resources/xhr-doc-imported.xsl: Added.
+        * fast/xsl/resources/xhr-doc.xml: Added.
+        * fast/xsl/resources/xhr-doc.xsl: Added.
+        * fast/xsl/transform-xhr-doc-expected.txt: Added.
+        * fast/xsl/transform-xhr-doc.xhtml: Added.
+
 2007-01-06  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
