@@ -2,6 +2,19 @@
 
         Reviewed by Darin.
 
+        http://bugs.webkit.org/show_bug.cgi?id=12099
+        XMLHttpRequest shouldn't honor a charset specified via setRequestHeader
+
+        Test: http/tests/xmlhttprequest/request-encoding.html
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::send): Don't try to get the charset from Content-Type. Keep checking 
+        for unknown charsets, because that will be needed again when we start using document.xmlEncoding.
+
+2007-01-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         http://bugs.webkit.org/show_bug.cgi?id=7640
         Menu items are displayed as "undefined"
 

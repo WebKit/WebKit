@@ -380,16 +380,14 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
     
     if (!body.isNull() && m_method != "GET" && m_method != "HEAD" && (m_url.protocol().lower() == "http" || m_url.protocol().lower() == "https")) {
         String contentType = getRequestHeader("Content-Type");
-        String charset;
         if (contentType.isEmpty()) {
             ExceptionCode ec = 0;
             setRequestHeader("Content-Type", "application/xml", ec);
             ASSERT(ec == 0);
-        } else
-            charset = getCharset(contentType);
-      
-        if (charset.isEmpty())
-            charset = "UTF-8";
+        }
+
+        // FIXME: must use xmlEncoding for documents.
+        String charset = "UTF-8";
       
         TextEncoding m_encoding(charset);
         if (!m_encoding.isValid()) // FIXME: report an error?

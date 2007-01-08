@@ -2,6 +2,16 @@
 
         Reviewed by Darin.
 
+        Test for http://bugs.webkit.org/show_bug.cgi?id=12099
+        XMLHttpRequest shouldn't honor a charset specified via setRequestHeader
+
+        * http/tests/xmlhttprequest/request-encoding-expected.txt: Added.
+        * http/tests/xmlhttprequest/request-encoding.html: Added.
+
+2007-01-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         http://bugs.webkit.org/show_bug.cgi?id=7640
         Menu items are displayed as "undefined"
 
