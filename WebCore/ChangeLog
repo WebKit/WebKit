@@ -1,5 +1,48 @@
 2007-01-08  David Hyatt  <hyatt@apple.com>
 
+        Fix column-count so that it supports auto just like column-width does.
+
+        Add a new function, availableWidth(), that will be used to return the width available to content placed inside
+        a block.  For now it still returns contentWidth(), so no behavioral change has occurred yet.
+
+        Subclass calcWidth() in RenderBlock, but don't change anything yet.  This is where RenderBlock will calc the
+        correct column width.
+
+        Reviewed by mark
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::leftRelOffset):
+        (WebCore::RenderBlock::rightRelOffset):
+        (WebCore::RenderBlock::getClearDelta):
+        (WebCore::RenderBlock::availableWidth):
+        (WebCore::RenderBlock::calcWidth):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockWidth):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlockWidth):
+        (WebCore::RenderObject::paddingTop):
+        (WebCore::RenderObject::paddingBottom):
+        (WebCore::RenderObject::paddingLeft):
+        (WebCore::RenderObject::paddingRight):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::availableWidth):
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleMultiColData::StyleMultiColData):
+        (WebCore::StyleMultiColData::operator==):
+        * rendering/RenderStyle.h:
+        (WebCore::RenderStyle::hasAutoColumnCount):
+        (WebCore::RenderStyle::setColumnCount):
+        (WebCore::RenderStyle::setHasAutoColumnCount):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::calcWidth):
+
+2007-01-08  David Hyatt  <hyatt@apple.com>
+
         Fix z-index:inherit so that it works properly when inheriting from z-index:auto.
 
         Reviewed by eric

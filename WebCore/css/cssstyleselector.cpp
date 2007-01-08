@@ -3934,15 +3934,17 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             style->setBoxSizing(BORDER_BOX);
         break;
     case CSS_PROP__WEBKIT_COLUMN_COUNT: {
-        HANDLE_INHERIT_AND_INITIAL(columnCount, ColumnCount)
-        unsigned short count = 0;
-        if (primitiveValue->getIdent() == CSS_VAL_AUTO)
-            count = 1;
-        else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_NUMBER)
-            count = static_cast<unsigned short>(primitiveValue->getFloatValue());
-        if (count == 0)
+        if (isInherit) {
+            if (parentStyle->hasAutoColumnCount())
+                style->setHasAutoColumnCount();
+            else
+                style->setColumnCount(parentStyle->columnCount());
             return;
-        style->setColumnCount(count);
+        } else if (isInitial || primitiveValue->getIdent() == CSS_VAL_AUTO) {
+            style->setHasAutoColumnCount();
+            return;
+        }
+        style->setColumnCount(static_cast<unsigned short>(primitiveValue->getFloatValue()));
         break;
     }
     case CSS_PROP__WEBKIT_COLUMN_GAP: {

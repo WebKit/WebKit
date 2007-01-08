@@ -609,6 +609,7 @@ public:
     BorderValue m_rule;
     
     bool m_autoWidth : 1;
+    bool m_autoCount : 1;
     bool m_normalGap : 1;
     unsigned m_breakBefore : 2; // EPageBreak
     unsigned m_breakAfter : 2; // EPageBreak
@@ -1450,6 +1451,7 @@ public:
     float columnWidth() const { return rareNonInheritedData->m_multiCol->m_width; }
     bool hasAutoColumnWidth() const { return rareNonInheritedData->m_multiCol->m_autoWidth; }
     unsigned short columnCount() const { return rareNonInheritedData->m_multiCol->m_count; }
+    bool hasAutoColumnCount() const { return rareNonInheritedData->m_multiCol->m_autoCount; }
     float columnGap() const { return rareNonInheritedData->m_multiCol->m_gap; }
     bool hasNormalColumnGap() const { return rareNonInheritedData->m_multiCol->m_normalGap; }
     const Color& columnRuleColor() const { return rareNonInheritedData->m_multiCol->m_rule.color; }
@@ -1688,7 +1690,8 @@ public:
     void setResize(EResize r) { SET_VAR(rareInheritedData, resize, r); }
     void setColumnWidth(float f) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_width, false); SET_VAR(rareNonInheritedData.access()->m_multiCol, m_width, f); }
     void setHasAutoColumnWidth() { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_autoWidth, true); SET_VAR(rareNonInheritedData.access()->m_multiCol, m_width, 0); }
-    void setColumnCount(unsigned short c) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_count, c); }
+    void setColumnCount(unsigned short c) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_autoCount, false); SET_VAR(rareNonInheritedData.access()->m_multiCol, m_count, c); }
+    void setHasAutoColumnCount() { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_autoCount, true); SET_VAR(rareNonInheritedData.access()->m_multiCol, m_count, 0); }
     void setColumnGap(float f) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_normalGap, false); SET_VAR(rareNonInheritedData.access()->m_multiCol, m_gap, f); }
     void setHasNormalColumnGap() { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_normalGap, true); SET_VAR(rareNonInheritedData.access()->m_multiCol, m_gap, 0); }
     void setColumnRuleColor(const Color& c) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_rule.color, c); }

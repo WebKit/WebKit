@@ -756,7 +756,7 @@ int RenderBox::containingBlockWidth() const
     if (usesLineWidth())
         return cb->lineWidth(m_y);
     else
-        return cb->contentWidth();
+        return cb->availableWidth();
 }
 
 bool RenderBox::absolutePosition(int &xPos, int &yPos, bool f)

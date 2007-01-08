@@ -201,7 +201,7 @@ void RenderTable::calcWidth()
         calcAbsoluteHorizontal();
 
     RenderBlock* cb = containingBlock();
-    int availableWidth = cb->contentWidth();
+    int availableWidth = cb->availableWidth();
 
     LengthType widthType = style()->width().type();
     if (widthType > Relative && style()->width().isPositive()) {

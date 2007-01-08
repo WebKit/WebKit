@@ -503,6 +503,9 @@ public:
     // repaint and do not need a relayout
     virtual void updateFromElement() { }
 
+    // Block flows subclass availableWidth to handle multi column layout (shrinking the width available to children when laying out.)
+    virtual int availableWidth() const { return contentWidth(); }
+    
     virtual int availableHeight() const { return 0; }
 
     virtual void updateWidgetPosition();
