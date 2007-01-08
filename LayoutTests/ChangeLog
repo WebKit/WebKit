@@ -1,3 +1,14 @@
+2007-01-08  David Hyatt  <hyatt@apple.com>
+
+        Add layout test for inheritance of auto z-index.
+
+        Reviewed by eric
+
+        * fast/layers/zindex-inherit-expected.checksum: Added.
+        * fast/layers/zindex-inherit-expected.png: Added.
+        * fast/layers/zindex-inherit-expected.txt: Added.
+        * fast/layers/zindex-inherit.html: Added.
+
 2007-01-07  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

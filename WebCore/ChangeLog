@@ -1,5 +1,16 @@
 2007-01-08  David Hyatt  <hyatt@apple.com>
 
+        Fix z-index:inherit so that it works properly when inheriting from z-index:auto.
+
+        Reviewed by eric
+
+        fast/layers/zindex-inherit.html
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
+2007-01-08  David Hyatt  <hyatt@apple.com>
+
         Add support for all of the CSS3 multi-column properties in preparation for implementing the
         feature.
 
