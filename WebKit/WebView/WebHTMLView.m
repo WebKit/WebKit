@@ -2544,42 +2544,52 @@ static WebHTMLView *lastHitView = nil;
 
     _private->handlingMouseDownEvent = YES;
     BOOL handledEvent = NO;
-    Frame* coreframe = core([self _frame]);
-    if (coreframe)
-        handledEvent = coreframe->eventHandler()->sendContextMenuEvent(event);
-    _private->handlingMouseDownEvent = NO;
-    
-    if (handledEvent && coreframe) {
-        if (Page* page = coreframe->page()) {
-            ContextMenu* coreMenu = page->contextMenuController()->contextMenu();
-            NSArray* menuItems = coreMenu->platformDescription();
-            NSMenu* menu = nil;
-            if (menuItems && [menuItems count] > 0) {
-                menu = [[NSMenu alloc] init];
-                [menu setAutoenablesItems:NO];
-                for (unsigned i = 0; i < [menuItems count]; i++)
-                    [menu addItem:[menuItems objectAtIndex:i]];
-            }
+    Frame* coreFrame = core([self _frame]);
 
-            // Add the Inspect Element menu item if the preference is set or if this is a debug build
-            if ([WebView _developerExtrasEnabled]) {
-                if (!menu)
-                    menu = [[NSMenu alloc] init];
-                else if ([menu numberOfItems])
-                    [menu addItem:[NSMenuItem separatorItem]];
-                NSMenuItem *menuItem = [[[NSMenuItem alloc] init] autorelease];
-                [menuItem setAction:@selector(_inspectElement:)];
-                [menuItem setTitle:UI_STRING("Inspect Element", "Inspect Element context menu item")];
-                [menuItem setRepresentedObject:[[[WebElementDictionary alloc] initWithHitTestResult:
-                    coreMenu->hitTestResult()] autorelease]];
-                [menu addItem:menuItem];
-            }
-
-            return [menu autorelease];
-        }
+    if (!coreFrame) {
+        _private->handlingMouseDownEvent = NO;
+        return nil;
     }
 
-    return nil;
+    handledEvent = coreFrame->eventHandler()->sendContextMenuEvent(event);
+    _private->handlingMouseDownEvent = NO;
+
+    if (!handledEvent)
+        return nil;
+
+    Page* page = coreFrame->page();
+    if (!page)
+        return nil;
+
+    ContextMenu* coreMenu = page->contextMenuController()->contextMenu();
+    if (!coreMenu)
+        return nil;
+
+    NSArray* menuItems = coreMenu->platformDescription();
+    NSMenu* menu = nil;
+    if (menuItems && [menuItems count] > 0) {
+        menu = [[[NSMenu alloc] init] autorelease];
+        [menu setAutoenablesItems:NO];
+        for (unsigned i = 0; i < [menuItems count]; i++)
+            [menu addItem:[menuItems objectAtIndex:i]];
+    }
+
+    // Add the Inspect Element menu item if the preference is set or if this is a debug build
+    if ([WebView _developerExtrasEnabled]) {
+        if (!menu)
+            menu = [[[NSMenu alloc] init] autorelease];
+        else if ([menu numberOfItems])
+            [menu addItem:[NSMenuItem separatorItem]];
+        NSMenuItem *inspectorItem = [[NSMenuItem alloc] init];
+        [inspectorItem setAction:@selector(_inspectElement:)];
+        [inspectorItem setTitle:UI_STRING("Inspect Element", "Inspect Element context menu item")];
+        [inspectorItem setRepresentedObject:[[[WebElementDictionary alloc] initWithHitTestResult:
+            coreMenu->hitTestResult()] autorelease]];
+        [menu addItem:inspectorItem];
+        [inspectorItem release];
+    }
+
+    return menu;
 }
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag

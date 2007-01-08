@@ -1,3 +1,17 @@
+2007-01-08  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=12161 REGRESSION: 
+        Crash when control-clicking on an image for contextual menu
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView menuForEvent:]): We need to nil-check coreMenu since 
+        it will be nil if the DOM popped up a menu instead. I cleaned up 
+        the function to make all the nil checks early returns instead of 
+        nesting all of the content. Also moved the autorelease to be with 
+        the creation of the menu instead of at the return.
+
 2007-01-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Tim H.
