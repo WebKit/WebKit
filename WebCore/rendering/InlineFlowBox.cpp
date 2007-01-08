@@ -603,9 +603,8 @@ void InlineFlowBox::paintBackground(GraphicsContext* context, const Color& c, co
 {
     CachedImage* bg = bgLayer->backgroundImage();
     bool hasBackgroundImage = bg && bg->canRender();
-    if (!hasBackgroundImage || (!prevLineBox() && !nextLineBox()) || !parent())
-        object()->paintBackgroundExtended(context, c, bgLayer, my, mh, tx, ty, w, h, 
-                                          borderLeft(), borderRight(), paddingLeft(), paddingRight());
+    if ((!hasBackgroundImage && !object()->style()->hasBorderRadius()) || (!prevLineBox() && !nextLineBox()) || !parent())
+        object()->paintBackgroundExtended(context, c, bgLayer, my, mh, tx, ty, w, h);
     else {
         // We have a background image that spans multiple lines.
         // We need to adjust _tx and _ty by the width of all previous lines.
@@ -625,7 +624,7 @@ void InlineFlowBox::paintBackground(GraphicsContext* context, const Color& c, co
         context->save();
         context->clip(IntRect(tx, ty, width(), height()));
         object()->paintBackgroundExtended(context, c, bgLayer, my, mh, startX, ty,
-                                          totalWidth, h, borderLeft(), borderRight(), paddingLeft(), paddingRight());
+                                          totalWidth, h, includeLeftEdge(), includeRightEdge());
         context->restore();
     }
 }

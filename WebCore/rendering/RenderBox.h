@@ -140,7 +140,7 @@ public:
 
     virtual void paintBackgroundExtended(GraphicsContext*, const Color&, const BackgroundLayer*, int clipy, int cliph,
                                          int tx, int ty, int w, int height,
-                                         int bleft, int bright, int pleft, int pright);
+                                         bool includeLeftEdge = true, bool includeRightEdge = true);
 
     virtual void setStaticX(int staticX);
     virtual void setStaticY(int staticY);

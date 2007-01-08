@@ -456,7 +456,7 @@ public:
 
     virtual void paintBackgroundExtended(GraphicsContext*, const Color&, const BackgroundLayer*,
                                          int clipy, int cliph, int tx, int ty, int width, int height,
-                                         int bleft, int bright, int pleft, int pright) { }
+                                         bool includeLeftEdge = true, bool includeRightEdge = true) { }
 
     /*
      * This function calculates the minimum & maximum width that the object

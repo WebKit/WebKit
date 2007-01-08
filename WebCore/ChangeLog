@@ -1,5 +1,22 @@
 2007-01-07  David Hyatt  <hyatt@apple.com>
 
+        Fix a regression where border-radius was not clipping the background when border was set to none.
+        Fix multi-line inline flow painting to properly apply border-radius to the background only at the
+        beginning of the first line and end of the last line.
+
+        Reviewed by eric
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBackground):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBackground):
+        (WebCore::RenderBox::paintBackgroundExtended):
+        * rendering/RenderBox.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::paintBackgroundExtended):
+
+2007-01-07  David Hyatt  <hyatt@apple.com>
+
         Add support for the CSS3 box-shadow property.
 
         Reviewed by olliej

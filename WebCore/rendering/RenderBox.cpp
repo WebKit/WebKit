@@ -397,8 +397,7 @@ void RenderBox::paintBackgrounds(GraphicsContext* p, const Color& c, const Backg
 
 void RenderBox::paintBackground(GraphicsContext* p, const Color& c, const BackgroundLayer* bgLayer, int clipy, int cliph, int _tx, int _ty, int w, int height)
 {
-    paintBackgroundExtended(p, c, bgLayer, clipy, cliph, _tx, _ty, w, height,
-                            borderLeft(), borderRight(), paddingLeft(), paddingRight());
+    paintBackgroundExtended(p, c, bgLayer, clipy, cliph, _tx, _ty, w, height);
 }
 
 static void cacluateBackgroundSize(const BackgroundLayer* bgLayer, int& scaledWidth, int& scaledHeight)
@@ -448,17 +447,21 @@ static void cacluateBackgroundSize(const BackgroundLayer* bgLayer, int& scaledWi
 }
 
 void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, const BackgroundLayer* bgLayer, int clipy, int cliph,
-                                        int _tx, int _ty, int w, int h,
-                                        int bleft, int bright, int pleft, int pright)
+                                        int _tx, int _ty, int w, int h, bool includeLeftEdge, bool includeRightEdge)
 {
+    int bleft = includeLeftEdge ? borderLeft() : 0;
+    int bright = includeRightEdge ? borderRight() : 0;
+    int pleft = includeLeftEdge ? paddingLeft() : 0;
+    int pright = includeRightEdge ? paddingRight() : 0;
+
     bool clippedToBorderRadius = false;
-    if (style()->hasBorderRadius() && (bleft || bright)) {
+    if (style()->hasBorderRadius() && (includeLeftEdge || includeRightEdge)) {
         p->save();
         p->addRoundedRectClip(IntRect(_tx, _ty, w, h),
-            bleft ? style()->borderTopLeftRadius() : IntSize(),
-            bright ? style()->borderTopRightRadius() : IntSize(),
-            bleft ? style()->borderBottomLeftRadius() : IntSize(),
-            bright ? style()->borderBottomRightRadius() : IntSize());
+            includeLeftEdge ? style()->borderTopLeftRadius() : IntSize(),
+            includeRightEdge ? style()->borderTopRightRadius() : IntSize(),
+            includeLeftEdge ? style()->borderBottomLeftRadius() : IntSize(),
+            includeRightEdge ? style()->borderBottomRightRadius() : IntSize());
         clippedToBorderRadius = true;
     }
     
