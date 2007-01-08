@@ -1,3 +1,13 @@
+2007-01-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Tim H.
+
+        Adds default value for -webkit-box-shadow and fixes default
+        value of -webkit-column-count to be "auto".  Also sorts the
+        list of defaults.
+
+        * WebInspector/webInspector/inspector.js:
+
 2007-01-08  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Mark.

@@ -1,3 +1,11 @@
+2007-01-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Tim H.
+
+        Update results to include -webkit-box-shadow.
+
+        * fast/css/computed-style-expected.txt:
+
 2007-01-08  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Mark.
