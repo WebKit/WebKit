@@ -1,3 +1,14 @@
+2007-01-08  Rob Buis  <buis@kde.org>
+
+        Reviewed by bdash.
+
+        Initialize the member vars, fixes testcases
+        pointer-events-path.svg and pointer-events-text.svg
+        on the PPC build.
+
+        * ksvg2/misc/PointerEventsHitRules.cpp:
+        (WebCore::PointerEventsHitRules::PointerEventsHitRules):
+
 2007-01-08  David Hyatt  <hyatt@apple.com>
 
         This patch computes the correct column width and column count.  It ensures that content lays out constrained

@@ -26,6 +26,11 @@
 namespace WebCore {
 
 PointerEventsHitRules::PointerEventsHitRules(ESVGHitTesting hitTesting, EPointerEvents pointerEvents)
+    : requireVisible(false)
+    , requireFill(false)
+    , requireStroke(false)
+    , canHitStroke(false)
+    , canHitFill(false)
 {
     if (hitTesting == SVG_PATH_HITTESTING) {
         switch (pointerEvents)
