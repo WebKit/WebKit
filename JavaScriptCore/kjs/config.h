@@ -32,6 +32,7 @@
 #define HAVE_SYS_PARAM_H 1
 #define HAVE_SYS_TIME_H 1
 #define HAVE_SYS_TIMEB_H 1
+#define HAVE_JNI 1
 
 #elif PLATFORM(WIN_OS)
 

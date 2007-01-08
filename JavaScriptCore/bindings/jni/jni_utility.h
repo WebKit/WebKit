@@ -102,6 +102,7 @@ jfloat callJNIFloatMethodIDA(jobject obj, jmethodID methodID, jvalue *args);
 jdouble callJNIDoubleMethodIDA(jobject obj, jmethodID methodID, jvalue *args);
 
 JavaVM *getJavaVM();
+void    setJavaVM(JavaVM *javaVM);
 JNIEnv *getJNIEnv();
 
 bool dispatchJNICall(const void *targetAppletView, jobject obj, bool isStatic, JNIType returnType, jmethodID methodID, jvalue *args, jvalue &result, const char *callingURL, JSValue *&exceptionDescription);

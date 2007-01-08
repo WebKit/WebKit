@@ -55,6 +55,15 @@ static jint KJS_GetCreatedJavaVMs(JavaVM** vmBuf, jsize bufLen, jsize* nVMs)
 
 static JavaVM *jvm = 0;
 
+// Provide the ability for an outside component to specify the JavaVM to use
+// If the jvm value is set, the getJavaVM function below will just return. 
+// In getJNIEnv(), if AttachCurrentThread is called to a VM that is already
+// attached, the result is a no-op.
+void setJavaVM(JavaVM *javaVM)
+{
+    jvm = javaVM;
+}
+
 JavaVM *getJavaVM()
 {
     if (jvm)

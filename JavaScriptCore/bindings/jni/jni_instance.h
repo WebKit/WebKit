@@ -29,7 +29,6 @@
 
 #include "runtime.h"
 
-#include <CoreFoundation/CoreFoundation.h>
 #include <JavaVM/jni.h>
 
 

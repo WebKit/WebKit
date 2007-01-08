@@ -29,8 +29,10 @@
 #include "JSLock.h"
 #include "NP_jsobject.h"
 #include "c_instance.h"
-#if PLATFORM(MAC)
+#if HAVE(JNI)
 #include "jni_instance.h"
+#endif
+#if PLATFORM(MAC)
 #include "objc_instance.h"
 #endif
 #if PLATFORM(QT)
@@ -117,11 +119,13 @@ Instance* Instance::createBindingForLanguageInstance(BindingLanguage language, v
     Instance *newInstance = 0;
     
     switch (language) {
-#if PLATFORM(MAC)
+#if HAVE(JNI)
         case Instance::JavaLanguage: {
             newInstance = new Bindings::JavaInstance((jobject)nativeInstance, rootObject);
             break;
         }
+#endif
+#if PLATFORM(MAC)
         case Instance::ObjectiveCLanguage: {
             newInstance = new Bindings::ObjcInstance((ObjectStructPtr)nativeInstance);
             break;

@@ -2,6 +2,28 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12100
+          JNI bindings should be available to non-Mac platforms that have JNI
+
+        Change JNI so that it is not wrapped in the PLATFORM(MAC) ifdef, enabling
+        other platforms who have JNI to use it.
+
+        * bindings/jni/jni_instance.h:  
+          Removed unnecessary include of <CoreFoundation/CoreFoundation.h>
+        * bindings/jni/jni_utility.cpp:
+        (KJS::Bindings::setJavaVM):
+        * bindings/jni/jni_utility.h:
+          Added new method for clients to set the JavaVM
+        * bindings/runtime.cpp:
+        (KJS::Bindings::Instance::createBindingForLanguageInstance):
+          Changed code to utilize new #if HAVE(JNI)
+        * kjs/config.h:
+          Added new #define for JNI, ie HAVE_JNI
+
+2007-01-07  David Carson  <dacarson@gmail.com>
+
+        Reviewed by Darin.
+
         Fix http://bugs.webkit.org/show_bug.cgi?id=11431
         ARM platform has some byte alignment issues
 
