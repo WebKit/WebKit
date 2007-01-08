@@ -395,8 +395,7 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
             shouldEnable = frame->selectionController()->isRange();
             break;
         case ContextMenuItemTagPaste:
-            shouldEnable = frame->editor()->canDHTMLPaste() || (frame->editor()->canPaste() && 
-                frame->selectionController()->isContentRichlyEditable());
+            shouldEnable = frame->editor()->canDHTMLPaste() || frame->editor()->canPaste();
             break;
         case ContextMenuItemTagUnderline: {
             ExceptionCode ec = 0;

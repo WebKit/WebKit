@@ -1,3 +1,18 @@
+2007-01-08  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/4912254> REGRESSION: After copying text to 
+        the clipboard, the paste contextual remains dimmed when it should
+        be active
+
+        No layout test for context menu problems.
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::checkOrEnableIfNeeded): Remove check to see 
+        if the content is richly editable; it only has to be regular 
+        editable and the call to canPaste() takes care of that.
+
 2007-01-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mitz.
