@@ -46,18 +46,36 @@ namespace KJS {
 
 #else // !PLATFORM(DARWIN)
 
+// Note, we have to use union to ensure alignment. Otherwise, NaN_Bytes can start anywhere,
+// while NaN_double has to be 4-byte aligned for 32-bits.
+// With -fstrict-aliasing enabled, unions are the only safe way to do type masquerading.
+
+static const union {
+    struct {
+        unsigned char NaN_Bytes[8];
+        unsigned char Inf_Bytes[8];
+    } bytes;
+    
+    struct {
+        double NaN_Double;
+        double Inf_Double;
+    } doubles;
+    
+} NaNInf = { {
 #if PLATFORM(BIG_ENDIAN)
-    const unsigned char NaN_Bytes[] = { 0x7f, 0xf8, 0, 0, 0, 0, 0, 0 };
-    const unsigned char Inf_Bytes[] = { 0x7f, 0xf0, 0, 0, 0, 0, 0, 0 };
+    { 0x7f, 0xf8, 0, 0, 0, 0, 0, 0 },
+    { 0x7f, 0xf0, 0, 0, 0, 0, 0, 0 }
 #elif PLATFORM(MIDDLE_ENDIAN)
-    const unsigned char NaN_Bytes[] = { 0, 0, 0xf8, 0x7f, 0, 0, 0, 0 };
-    const unsigned char Inf_Bytes[] = { 0, 0, 0xf0, 0x7f, 0, 0, 0, 0 };
+    { 0, 0, 0xf8, 0x7f, 0, 0, 0, 0 },
+    { 0, 0, 0xf0, 0x7f, 0, 0, 0, 0 }
 #else
-    const unsigned char NaN_Bytes[] = { 0, 0, 0, 0, 0, 0, 0xf8, 0x7f };
-    const unsigned char Inf_Bytes[] = { 0, 0, 0, 0, 0, 0, 0xf0, 0x7f };
+    { 0, 0, 0, 0, 0, 0, 0xf8, 0x7f },
+    { 0, 0, 0, 0, 0, 0, 0xf0, 0x7f }
 #endif
-    extern const double NaN = *(const double*) NaN_Bytes;
-    extern const double Inf = *(const double*) Inf_Bytes;
+} } ;
+
+    extern const double NaN = NaNInf.doubles.NaN_Double;
+    extern const double Inf = NaNInf.doubles.Inf_Double;
  
 #endif // !PLATFORM(DARWIN)
 
