@@ -35,6 +35,7 @@
 #include "RenderView.h"
 
 using namespace std;
+namespace Unicode = WTF::Unicode;
 
 namespace WebCore {
 
@@ -279,26 +280,36 @@ static String toCJKIdeographic(int number, const UChar table[16])
         if (groupValue && i)
             group[7] = static_cast<AbstractCJKChar>(secondGroupMarker - 1 + i);
 
-        // Put in the four digits.
+        // Put in the four digits and digit markers for any non-zero digits.
         group[0] = static_cast<AbstractCJKChar>(digit0 + (groupValue % 10));
-        group[1] = static_cast<AbstractCJKChar>(digit0 + ((groupValue / 10) % 10));
-        group[3] = static_cast<AbstractCJKChar>(digit0 + ((groupValue / 100) % 10));
-        group[5] = static_cast<AbstractCJKChar>(digit0 + groupValue / 1000);
-
-        // Put in digit markers for any non-zero digits.
-        if (group[1] != digit0)
-            group[2] = secondDigitMarker;
-        if (group[3] != digit0)
-            group[4] = thirdDigitMarker;
-        if (group[5] != digit0)
-            group[6] = fourthDigitMarker;
+        if (number != 0 || groupValue > 9) {
+            int digitValue = ((groupValue / 10) % 10);
+            group[1] = static_cast<AbstractCJKChar>(digit0 + digitValue);
+            if (digitValue)
+                group[2] = secondDigitMarker;
+        }
+        if (number != 0 || groupValue > 99) {
+            int digitValue = ((groupValue / 100) % 10);
+            group[3] = static_cast<AbstractCJKChar>(digit0 + digitValue);
+            if (digitValue)
+                group[4] = thirdDigitMarker;
+        }
+        if (number != 0 || groupValue > 999) {
+            int digitValue = groupValue / 1000;
+            group[5] = static_cast<AbstractCJKChar>(digit0 + digitValue);
+            if (digitValue)
+                group[6] = fourthDigitMarker;
+        }
 
         // Remove the tens digit, but leave the marker, for any group that has
         // a value of less than 20.
         if (groupValue < 20) {
-            ASSERT(group[1] == noChar || group[1] == digit1);
+            ASSERT(group[1] == noChar || group[1] == digit0 || group[1] == digit1);
             group[1] = noChar;
         }
+
+        if (number == 0)
+            break;
     }
 
     // Convert into characters, omitting consecutive runs of digit0.
@@ -307,9 +318,11 @@ static String toCJKIdeographic(int number, const UChar table[16])
     AbstractCJKChar last = noChar;
     for (int i = 0; i < bufferLength; ++i) {
         AbstractCJKChar a = buffer[i];
-        if (a != noChar && (a != digit0 || last != digit0))
-            characters[length++] = table[a - 1];
-        last = a;
+        if (a != noChar) {
+            if (a != digit0 || last != digit0)
+                characters[length++] = table[a - 1];
+            last = a;
+        }
     }
     return String(characters, length);
 }
@@ -600,8 +613,22 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
     }
     if (m_text.isEmpty())
         return;
-    const Font& font = style()->font();
+
     TextRun textRun(m_text.impl());
+
+    // Text is not arbitrary. We can judge whether it's RTL from the first character,
+    // and we only need to handle the direction RightToLeft for now.
+    bool textNeedsReversing = Unicode::direction(m_text[0]) == Unicode::RightToLeft;
+    Vector<UChar> reversedText;
+    if (textNeedsReversing) {
+        int length = m_text.length();
+        reversedText.resize(length);
+        for (int i = 0; i < length; ++i)
+            reversedText[length - i - 1] = m_text[i];
+        textRun = TextRun(reversedText.data(), length);
+    }
+
+    const Font& font = style()->font();
     if (style()->direction() == LTR) {
         int width = font.width(textRun);
         context->drawText(textRun, marker.location());

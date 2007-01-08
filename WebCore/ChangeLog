@@ -1,5 +1,23 @@
 2007-01-08  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=3232
+          CSS2: Web Kit does not support all list style types
+
+        Test case showed problems in cjk-ideographic and hebrew
+        Test: fast/lists/w3-list-styles.html
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::toCJKIdeographic): Fix the algorithm so it doesn't include leading zeroes.
+        I had misread the part that says you start with the decimal form of the number.
+        Fix an assertion that was too stringent. Fix the code to collapse consecutive zeroes
+        so that it doesn't get confused by intervening "noChar" characters.
+        (WebCore::RenderListMarker::paint): Reverse the text before painting if the first character's
+        direction is right to left.
+
+2007-01-08  Darin Adler  <darin@apple.com>
+
         Reviewed by Beth.
 
         - http://bugs.webkit.org/show_bug.cgi?id=12142

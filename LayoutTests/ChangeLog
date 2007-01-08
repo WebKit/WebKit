@@ -1,5 +1,14 @@
 2007-01-08  Darin Adler  <darin@apple.com>
 
+        - added a W3C list style test that was cited in a bug
+
+        * fast/lists/w3-list-styles-expected.checksum: Added.
+        * fast/lists/w3-list-styles-expected.png: Added.
+        * fast/lists/w3-list-styles-expected.txt: Added.
+        * fast/lists/w3-list-styles.html: Added.
+
+2007-01-08  Darin Adler  <darin@apple.com>
+
         Reviewed by Beth.
 
         - http://bugs.webkit.org/show_bug.cgi?id=12142
