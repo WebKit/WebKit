@@ -113,30 +113,34 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
 + (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits size:(float)size
 {
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
-    NSFont *font= nil;
-    
+
     // Look for an exact match first.
     NSEnumerator *availableFonts = [[fontManager availableFonts] objectEnumerator];
     NSString *availableFont;
     while ((availableFont = [availableFonts nextObject])) {
         if ([desiredFamily caseInsensitiveCompare:availableFont] == NSOrderedSame) {
             NSFont *nameMatchedFont = [NSFont fontWithName:availableFont size:size];
-    
+
             // Special case Osaka-Mono.  According to <rdar://problem/3999467>, we need to 
             // treat Osaka-Mono as fixed pitch.
             if ([desiredFamily caseInsensitiveCompare:@"Osaka-Mono"] == NSOrderedSame && desiredTraits == 0)
-               return nameMatchedFont;
+                return nameMatchedFont;
 
             NSFontTraitMask traits = [fontManager traitsOfFont:nameMatchedFont];
-            
-            if ((traits & desiredTraits) == desiredTraits){
-                font = [fontManager convertFont:nameMatchedFont toHaveTrait:desiredTraits];
-                return font;
-            }
+            if ((traits & desiredTraits) == desiredTraits)
+                return [fontManager convertFont:nameMatchedFont toHaveTrait:desiredTraits];
             break;
         }
     }
-    
+
+    // font was not immediately available, try auto activated fonts <rdar://problem/4564955>
+    NSFont *font = [NSFont fontWithName:desiredFamily size:size];
+    if (font) {
+        NSFontTraitMask traits = [fontManager traitsOfFont:font];
+        if ((traits & desiredTraits) == desiredTraits)
+            return [fontManager convertFont:font toHaveTrait:desiredTraits];
+    }
+
     // Do a simple case insensitive search for a matching font family.
     // NSFontManager requires exact name matches.
     // This addresses the problem of matching arial to Arial, etc., but perhaps not all the issues.
