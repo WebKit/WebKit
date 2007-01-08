@@ -23,14 +23,14 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef HTMLTOKENIZER_H
-#define HTMLTOKENIZER_H
+#ifndef HTMLTokenizer_h
+#define HTMLTokenizer_h
 
 #include "DeprecatedPtrQueue.h"
 #include "NamedMappedAttrMap.h"
 #include "SegmentedString.h"
 #include "Timer.h"
-#include "XMLTokenizer.h"
+#include "Tokenizer.h"
 #include "CachedResourceClient.h"
 
 namespace WebCore {
@@ -50,8 +50,7 @@ class Node;
  * of attributes. Can also represent text. In this case the id = 0 and
  * text contains the text.
  */
-class Token
-{
+class Token {
 public:
     Token() : beginTag(true), flat(false) { }
 
@@ -63,7 +62,7 @@ public:
     void reset()
     {
         attrs = 0;
-        text = 0;        
+        text = 0;
         tagName = nullAtom;
         beginTag = true;
         flat = false;
@@ -78,8 +77,7 @@ public:
 
 //-----------------------------------------------------------------------------
 
-class HTMLTokenizer : public Tokenizer, public CachedResourceClient
-{
+class HTMLTokenizer : public Tokenizer, public CachedResourceClient {
 public:
     HTMLTokenizer(HTMLDocument*);
     HTMLTokenizer(HTMLViewSourceDocument*);
@@ -123,12 +121,13 @@ private:
     // if not enlarge it
     inline void checkBuffer(int len = 10)
     {
-        if ( (dest - buffer) > size-len )
+        if ((dest - buffer) > size - len)
             enlargeBuffer(len);
     }
+
     inline void checkScriptBuffer(int len = 10)
     {
-        if ( scriptCodeSize + len >= scriptCodeMaxSize )
+        if (scriptCodeSize + len >= scriptCodeMaxSize)
             enlargeScriptBuffer(len);
     }
 
@@ -183,7 +182,7 @@ private:
 
     class State {
     public:
-        State() : m_bits(0) {}
+        State() : m_bits(0) { }
 
         TagState tagState() const { return static_cast<TagState>(m_bits & TagMask); }
         void setTagState(TagState t) { m_bits = (m_bits & ~TagMask) | t; }
@@ -254,12 +253,12 @@ private:
             LoadingExtScript = 1 << 22,
             ForceSynchronous = 1 << 23
         };
-    
-        void setBit(StateBits bit, bool value) 
-        { 
-            if (value) 
-                m_bits |= bit; 
-            else 
+
+        void setBit(StateBits bit, bool value)
+        {
+            if (value)
+                m_bits |= bit;
+            else
                 m_bits &= ~bit;
         }
         bool testBit(StateBits bit) const { return m_bits & bit; }
@@ -273,7 +272,7 @@ private:
 
     // Name of an attribute that we just scanned.
     AtomicString attrName;
-    
+
     // Used to store the code of a srcipting sequence
     UChar* scriptCode;
     // Size of the script sequenze stored in @ref #scriptCode
@@ -331,9 +330,9 @@ private:
 // So any fixed number might be too small, but rather than rewriting all usage of this buffer
 // we'll just make it large enough to handle all imaginable cases.
 #define CBUFLEN 1024
-    char cBuffer[CBUFLEN+2];
+    char cBuffer[CBUFLEN + 2];
     unsigned int m_cBufferPos;
-    
+
     SegmentedString src;
     Document* m_doc;
     HTMLParser* parser;
@@ -345,6 +344,6 @@ void parseHTMLDocumentFragment(const String&, DocumentFragment*);
 
 UChar decodeNamedEntity(const char*);
 
-}
+} // namespace WebCore
 
-#endif
+#endif // HTMLTokenizer_h

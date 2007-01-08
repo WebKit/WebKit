@@ -26,10 +26,9 @@
 
 #include "XSLTProcessor.h"
 
-#include "Cache.h"
 #include "CString.h"
+#include "Cache.h"
 #include "DOMImplementation.h"
-#include "TextResourceDecoder.h"
 #include "DocLoader.h"
 #include "DocumentFragment.h"
 #include "Frame.h"
@@ -42,6 +41,8 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "Text.h"
+#include "TextResourceDecoder.h"
+#include "XMLTokenizer.h"
 #include "loader.h"
 #include "markup.h"
 #include <libxslt/imports.h>

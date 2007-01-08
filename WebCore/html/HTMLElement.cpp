@@ -39,6 +39,7 @@
 #include "HTMLNames.h"
 #include "HTMLTokenizer.h"
 #include "TextIterator.h"
+#include "XMLTokenizer.h"
 #include "markup.h"
 
 namespace WebCore {

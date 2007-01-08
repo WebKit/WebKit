@@ -1211,9 +1211,9 @@ void Document::updateSelection()
 #endif
 }
 
-Tokenizer *Document::createTokenizer()
+Tokenizer* Document::createTokenizer()
 {
-    return newXMLTokenizer(this, m_view);
+    return new XMLTokenizer(this, m_view);
 }
 
 void Document::open()

@@ -1,5 +1,47 @@
 2007-01-08  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by ap and the rubber stamp of Maciej.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=12164
+        Cleanup Tokenizers
+
+        - Moves Tokenizer class into its own file.
+        - Move XMLTokenizer declaration from XMLTokenizer.cpp to XMLTokenizer.h
+        - Fixup #includes.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::createTokenizer):
+        * dom/Tokenizer.h: Added.
+        (WebCore::Tokenizer::Tokenizer):
+        (WebCore::Tokenizer::~Tokenizer):
+        (WebCore::Tokenizer::stopParsing):
+        (WebCore::Tokenizer::processingData):
+        (WebCore::Tokenizer::executingScript):
+        (WebCore::Tokenizer::wantsRawData):
+        (WebCore::Tokenizer::writeRawData):
+        (WebCore::Tokenizer::inViewSourceMode):
+        (WebCore::Tokenizer::setInViewSourceMode):
+        (WebCore::Tokenizer::wellFormed):
+        (WebCore::Tokenizer::lineNumber):
+        (WebCore::Tokenizer::columnNumber):
+        * dom/XMLTokenizer.cpp:
+        * dom/XMLTokenizer.h:
+        (WebCore::XMLTokenizer::):
+        (WebCore::XMLTokenizer::setIsXHTMLDocument):
+        (WebCore::XMLTokenizer::isXHTMLDocument):
+        (WebCore::XMLTokenizer::wellFormed):
+        * html/HTMLElement.cpp:
+        * html/HTMLTokenizer.h:
+        (WebCore::Token::reset):
+        (WebCore::HTMLTokenizer::checkBuffer):
+        (WebCore::HTMLTokenizer::checkScriptBuffer):
+        (WebCore::HTMLTokenizer::State::State):
+        (WebCore::HTMLTokenizer::State::setBit):
+        * xml/XSLTProcessor.cpp:
+
+2007-01-08  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Tim H.
 
         Adds -webkit-box-shadow to list of computable styles.

@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2000 Peter Kelly (pmk@post.com)
  * Copyright (C) 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,70 +22,125 @@
  *
  */
 
-#ifndef XML_Tokenizer_h_
-#define XML_Tokenizer_h_
+#ifndef XMLTokenizer_h
+#define XMLTokenizer_h
 
+#include "CachedResourceClient.h"
+#include "SegmentedString.h"
 #include "StringHash.h"
+#include "Tokenizer.h"
+#include <libxml/tree.h>
+#include <libxml/xmlstring.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
 
-class DocLoader;
-class DocumentFragment;
-class Document;
-class Element;
-class FrameView;
-class SegmentedString;
+    class Node;
+    class CachedScript;
+    class DocLoader;
+    class DocumentFragment;
+    class Document;
+    class Element;
+    class FrameView;
+    class PendingCallbacks;
 
-class Tokenizer
-{
-public:
-    Tokenizer(bool viewSourceMode = false) 
-    : m_parserStopped(false)
-    , m_inViewSourceMode(viewSourceMode)
-    {}
-    
-    virtual ~Tokenizer() {}
+    class XMLTokenizer : public Tokenizer, public CachedResourceClient {
+    public:
+        XMLTokenizer(Document*, FrameView* = 0);
+        XMLTokenizer(DocumentFragment*, Element*);
+        ~XMLTokenizer();
 
-    // Script output must be prepended, while new data
-    // received during executing a script must be appended, hence the
-    // extra bool to be able to distinguish between both cases.
-    // document.write() always uses false, while the loader uses true.
-    virtual bool write(const SegmentedString&, bool appendData) = 0;
-    virtual void finish() = 0;
-    virtual bool isWaitingForScripts() const = 0;
-    virtual void stopParsing() { m_parserStopped = true; }
-    virtual bool processingData() const { return false; }
-    virtual int executingScript() const { return 0; }
+        enum ErrorType { warning, nonFatal, fatal };
 
-    virtual bool wantsRawData() const { return false; }
-    virtual bool writeRawData(const char* data, int len) { return false; }
-    
-    bool inViewSourceMode() const { return m_inViewSourceMode; }
-    void setInViewSourceMode(bool mode) { m_inViewSourceMode = mode; }
+        // from Tokenizer
+        virtual bool write(const SegmentedString&, bool appendData);
+        virtual void finish();
+        virtual bool isWaitingForScripts() const;
+        virtual void stopParsing();
 
-    virtual bool wellFormed() const { return true; }
+        void end();
 
-    virtual int lineNumber() const { return -1; }
-    virtual int columnNumber() const { return -1; }
+        void pauseParsing();
+        void resumeParsing();
 
-protected:
-    // The tokenizer has buffers, so parsing may continue even after
-    // it stops receiving data. We use m_parserStopped to stop the tokenizer
-    // even when it has buffered data.
-    bool m_parserStopped;
-    
-    bool m_inViewSourceMode;
-};
+        void setIsXHTMLDocument(bool isXHTML) { m_isXHTMLDocument = isXHTML; }
+        bool isXHTMLDocument() const { return m_isXHTMLDocument; }
 
-Tokenizer* newXMLTokenizer(Document*, FrameView* = 0);
+        // from CachedResourceClient
+        virtual void notifyFinished(CachedResource* finishedObj);
+
+        // callbacks from parser SAX
+        void error(ErrorType, const char* message, va_list args);
+        void startElementNs(const xmlChar* xmlLocalName, const xmlChar* xmlPrefix, const xmlChar* xmlURI, int nb_namespaces, const xmlChar** namespaces, int nb_attributes, int nb_defaulted, const xmlChar** libxmlAttributes);
+        void endElementNs();
+        void characters(const xmlChar* s, int len);
+        void processingInstruction(const xmlChar* target, const xmlChar* data);
+        void cdataBlock(const xmlChar* s, int len);
+        void comment(const xmlChar* s);
+        void startDocument(const xmlChar* version, const xmlChar* encoding, int standalone);
+        void internalSubset(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID);
+
+        void handleError(ErrorType type, const char* m, int lineNumber, int columnNumber);
+
+        virtual bool wellFormed() const { return !m_sawError; }
+
+        int lineNumber() const;
+        int columnNumber() const;
+
+    private:
+        void initializeParserContext();
+        void setCurrentNode(Node*);
+
+        void insertErrorMessageBlock();
+
+        bool enterText();
+        void exitText();
+
+        Document* m_doc;
+        FrameView* m_view;
+
+        String m_originalSourceForTransform;
+
+        xmlParserCtxtPtr m_context;
+        Node* m_currentNode;
+        bool m_currentNodeIsReferenced;
+
+        bool m_sawError;
+        bool m_sawXSLTransform;
+        bool m_sawFirstElement;
+        bool m_isXHTMLDocument;
+
+        bool m_parserPaused;
+        bool m_requestingScript;
+        bool m_finishCalled;
+
+        int m_errorCount;
+        int m_lastErrorLine;
+        int m_lastErrorColumn;
+        String m_errorMessages;
+
+        CachedScript* m_pendingScript;
+        RefPtr<Element> m_scriptElement;
+        int m_scriptStartLine;
+
+        bool m_parsingFragment;
+        String m_defaultNamespaceURI;
+
+        typedef HashMap<StringImpl*, StringImpl*> PrefixForNamespaceMap;
+        PrefixForNamespaceMap m_prefixToNamespaceMap;
+
+        PendingCallbacks* m_pendingCallbacks;
+        SegmentedString m_pendingSrc;
+    };
+
 #if XSLT_SUPPORT
 void* xmlDocPtrForString(DocLoader*, const String& source, const DeprecatedString& URL);
 void setLoaderForLibXMLCallbacks(DocLoader*);
 #endif
+
 HashMap<String, String> parseAttributes(const String&, bool& attrsOK);
 bool parseXMLDocumentFragment(const String&, DocumentFragment*, Element* parent = 0);
 
-}
+} // namespace WebCore
 
-#endif
+#endif // XMLTokenizer_h
