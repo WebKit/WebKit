@@ -1,3 +1,14 @@
+2007-01-08  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Brady and Beth
+        
+        - fixed <rdar://problem/4912541> GMAIL: With selected text in a rich text message, choosing 
+        "Search in Google" displays search results in the message body field
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        Visit google URL in main frame rather than in current frame
+
 2007-01-08  David Hyatt  <hyatt@apple.com>
 
         Fix computed style errors for color properties that had invalid colors.
