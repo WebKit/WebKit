@@ -302,6 +302,13 @@ static CSSValue *getPositionOffsetValue(RenderObject *renderer, int propertyID)
     return new CSSPrimitiveValue(CSS_VAL_AUTO);
 }
 
+static CSSPrimitiveValue* currentColorOrValidColor(RenderStyle* style, const Color& color)
+{
+    if (!color.isValid())
+        return new CSSPrimitiveValue(style->color().rgb());
+    return new CSSPrimitiveValue(color.rgb());
+}
+
 CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(PassRefPtr<Node> n)
     : m_node(n)
 {
@@ -489,13 +496,13 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
     case CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING:
         return new CSSPrimitiveValue(style->verticalBorderSpacing(), CSSPrimitiveValue::CSS_PX);
     case CSS_PROP_BORDER_TOP_COLOR:
-        return new CSSPrimitiveValue(style->borderLeftColor().rgb());
+        return currentColorOrValidColor(style, style->borderTopColor());
     case CSS_PROP_BORDER_RIGHT_COLOR:
-        return new CSSPrimitiveValue(style->borderRightColor().rgb());
+        return currentColorOrValidColor(style, style->borderRightColor());
     case CSS_PROP_BORDER_BOTTOM_COLOR:
-        return new CSSPrimitiveValue(style->borderBottomColor().rgb());
+        return currentColorOrValidColor(style, style->borderBottomColor());
     case CSS_PROP_BORDER_LEFT_COLOR:
-        return new CSSPrimitiveValue(style->borderLeftColor().rgb());
+        return currentColorOrValidColor(style, style->borderLeftColor());
     case CSS_PROP_BORDER_TOP_STYLE:
         return valueForBorderStyle(style->borderTopStyle());
     case CSS_PROP_BORDER_RIGHT_STYLE:
@@ -622,7 +629,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return new CSSPrimitiveValue(CSS_VAL_NORMAL);
         return new CSSPrimitiveValue(style->columnGap(), CSSPrimitiveValue::CSS_NUMBER);
     case CSS_PROP__WEBKIT_COLUMN_RULE_COLOR:
-        return new CSSPrimitiveValue(style->columnRuleColor().rgb());
+        return currentColorOrValidColor(style, style->columnRuleColor());
     case CSS_PROP__WEBKIT_COLUMN_RULE_STYLE:
         return valueForBorderStyle(style->columnRuleStyle());
     case CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH:
@@ -1078,8 +1085,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
     case CSS_PROP_ORPHANS:
         return new CSSPrimitiveValue(style->orphans(), CSSPrimitiveValue::CSS_NUMBER);
     case CSS_PROP_OUTLINE_COLOR:
-        // FIXME: unimplemented
-        break;
+        return currentColorOrValidColor(style, style->outlineColor());
     case CSS_PROP_OUTLINE_OFFSET:
         // FIXME: unimplemented
         break;
@@ -1245,7 +1251,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         return new CSSPrimitiveValue(string, CSSPrimitiveValue::CSS_STRING);
     }
     case CSS_PROP__WEBKIT_TEXT_FILL_COLOR:
-        return new CSSPrimitiveValue(style->textFillColor().rgb());
+        return currentColorOrValidColor(style, style->textFillColor());
     case CSS_PROP_TEXT_INDENT:
         return valueForLength(style->textIndent());
     case CSS_PROP_TEXT_SHADOW:
@@ -1271,7 +1277,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         else
             return new CSSPrimitiveValue(CSS_VAL_NONE);
     case CSS_PROP__WEBKIT_TEXT_STROKE_COLOR:
-        return new CSSPrimitiveValue(style->textStrokeColor().rgb());
+        return currentColorOrValidColor(style, style->textStrokeColor());
     case CSS_PROP__WEBKIT_TEXT_STROKE_WIDTH:
         return new CSSPrimitiveValue(style->textStrokeWidth(), CSSPrimitiveValue::CSS_NUMBER);
     case CSS_PROP_TEXT_TRANSFORM:

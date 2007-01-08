@@ -1,3 +1,20 @@
+2007-01-08  David Hyatt  <hyatt@apple.com>
+
+        Fix computed style errors for color properties that had invalid colors.
+        They should return the value of the 'color' property when their colors
+        are not valid.
+
+        Fixed the computed style value for border-top-color (a typo was causing it to
+        use border-left-color instead).
+
+        Implement outline-color computed style.
+
+        Reviewed by harrison
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::currentColorOrValidColor):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2007-01-08  Remi Zara  <remi_zara@mac.com>
 
         Reviewed by Darin and Eric.
