@@ -1,3 +1,19 @@
+2007-01-08  Remi Zara  <remi_zara@mac.com>
+
+        Reviewed by Darin and Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12150
+        Corrected results for W3C's pservers-grad-16-b.
+        Add a test for stop calues corner cases.
+
+        * svg/W3C-SVG-1.1/pservers-grad-16-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-grad-16-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-16-b-expected.txt:
+        * svg/custom/gradient-stop-corner-cases-expected.checksum: Added.
+        * svg/custom/gradient-stop-corner-cases-expected.png: Added.
+        * svg/custom/gradient-stop-corner-cases-expected.txt: Added.
+        * svg/custom/gradient-stop-corner-cases.svg: Added.
+
 2007-01-08  Darin Adler  <darin@apple.com>
 
         - turn off the Armenian part of this test for now,

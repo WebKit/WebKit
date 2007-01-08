@@ -45,10 +45,7 @@ static void cgGradientCallback(void* info, const CGFloat* inValues, CGFloat* out
     CGFloat inValue = inValues[0];
 
     if (!stopsCount) {
-        outColor[0] = 0;
-        outColor[1] = 0;
-        outColor[2] = 0;
-        outColor[3] = 1;
+        memset(outColor, 0, 4 * sizeof(CGFloat));
         return;
     } else if (stopsCount == 1) {
         memcpy(outColor, stops[0].colorArray, 4 * sizeof(CGFloat));
@@ -132,9 +129,10 @@ void SVGPaintServerGradient::updateQuartzGradientStopsCache(const Vector<SVGGrad
 
     CGFloat previousOffset = 0.0;
     for (unsigned i = 0; i < stops.size(); ++i) {
-        m_stopsCache[i].offset = stops[i].first;
-        m_stopsCache[i].previousDeltaInverse = 1.0 / (stops[i].first - previousOffset);
-        previousOffset = stops[i].first;
+        CGFloat currOffset = min(max(stops[i].first, previousOffset), 1.0f);
+        m_stopsCache[i].offset = currOffset;
+        m_stopsCache[i].previousDeltaInverse = 1.0 / (currOffset - previousOffset);
+        previousOffset = currOffset;
         CGFloat* ca = m_stopsCache[i].colorArray;
         stops[i].second.getRGBA(ca[0], ca[1], ca[2], ca[3]);
     }

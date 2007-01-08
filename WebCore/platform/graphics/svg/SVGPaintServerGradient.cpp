@@ -33,12 +33,6 @@
 
 namespace WebCore {
 
-// Helpers
-static inline bool compareStopOffset(const SVGGradientStop& first, const SVGGradientStop& second)
-{
-    return first.first < second.first;
-}
-
 TextStream& operator<<(TextStream& ts, SVGGradientSpreadMethod m)
 {
     switch (m) {
@@ -97,7 +91,6 @@ const Vector<SVGGradientStop>& SVGPaintServerGradient::gradientStops() const
 void SVGPaintServerGradient::setGradientStops(const Vector<SVGGradientStop>& stops)
 {
     m_stops = stops;
-    std::sort(m_stops.begin(), m_stops.end(), compareStopOffset);
 }
 
 SVGGradientSpreadMethod SVGPaintServerGradient::spreadMethod() const

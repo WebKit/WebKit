@@ -1,3 +1,21 @@
+2007-01-08  Remi Zara  <remi_zara@mac.com>
+
+        Reviewed by Darin and Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12150
+        Handle correctly cases where no stops are defined, cases where a
+        stop offset value is less than previous stops offset value, and cases
+        where a stop offset value is greater than 1.0.
+        
+        * platform/graphics/svg/SVGPaintServerGradient.cpp:
+        (WebCore::SVGPaintServerGradient::setGradientStops): Don't sort stops
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::cgGradientCallback): When there are no stops, use a transparent
+        fill
+        (WebCore::SVGPaintServerGradient::updateQuartzGradientStopsCache):
+        a stop offset must always be considered at greater or equal to all
+        preceding stop offsets, but no more than 1.0
+
 2007-01-08  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Geoff.
@@ -195,7 +213,6 @@
         * html/HTMLSelectElement.idl:
         Added this method to DOM and IDL, too. Made namedItem() non-virtual.
 
->>>>>>> .r18675
 2007-01-08  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.
