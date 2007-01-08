@@ -195,8 +195,6 @@ public:
     // Block flows subclass availableWidth to handle multi column layout (shrinking the width available to children when laying out.)
     virtual int availableWidth() const;
     
-    virtual void calcWidth();
-
     virtual void calcMinMaxWidth();
     void calcInlineMinMaxWidth();
     void calcBlockMinMaxWidth();
@@ -283,7 +281,10 @@ protected:
 private:
     Position positionForBox(InlineBox*, bool start = true) const;
     Position positionForRenderer(RenderObject*, bool start = true) const;
-        
+
+    int columnGap() const;
+    void calcColumnWidth();
+
 protected:
     struct FloatingObject {
         enum Type {
@@ -446,6 +447,10 @@ protected:
 private:
     // full width of a tab character
     int m_tabWidth;
+    
+    // Column information.
+    int m_columnWidth;
+    unsigned m_columnCount;
 };
 
 } // namespace WebCore
