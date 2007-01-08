@@ -57,6 +57,17 @@ caption-side
 clear
 clip
 color
+-webkit-column-break-after
+-webkit-column-break-before
+-webkit-column-break-inside
+-webkit-column-count
+-webkit-column-gap
+-webkit-column-rule-color
+-webkit-column-rule-style
+-webkit-column-rule-width
+-webkit-column-rule
+-webkit-column-width
+-webkit-columns
 content
 counter-increment
 counter-reset

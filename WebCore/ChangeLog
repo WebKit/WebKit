@@ -1,3 +1,56 @@
+2007-01-08  David Hyatt  <hyatt@apple.com>
+
+        Add support for all of the CSS3 multi-column properties in preparation for implementing the
+        feature.
+
+        Reviewed by eric
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::):
+        * css/CSSPropertyNames.in:
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleMultiColData::StyleMultiColData):
+        (WebCore::StyleMultiColData::operator==):
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        (WebCore::RenderStyle::RenderStyle):
+        (WebCore::RenderStyle::diff):
+        * rendering/RenderStyle.h:
+        (WebCore::StyleMultiColData::operator!=):
+        (WebCore::StyleMultiColData::ruleWidth):
+        (WebCore::RenderStyle::columnWidth):
+        (WebCore::RenderStyle::hasAutoColumnWidth):
+        (WebCore::RenderStyle::columnCount):
+        (WebCore::RenderStyle::columnGap):
+        (WebCore::RenderStyle::hasAutoColumnGap):
+        (WebCore::RenderStyle::columnRuleColor):
+        (WebCore::RenderStyle::columnRuleStyle):
+        (WebCore::RenderStyle::columnRuleWidth):
+        (WebCore::RenderStyle::columnBreakBefore):
+        (WebCore::RenderStyle::columnBreakInside):
+        (WebCore::RenderStyle::columnBreakAfter):
+        (WebCore::RenderStyle::setColumnWidth):
+        (WebCore::RenderStyle::setHasAutoColumnWidth):
+        (WebCore::RenderStyle::setColumnCount):
+        (WebCore::RenderStyle::setColumnGap):
+        (WebCore::RenderStyle::setHasAutoColumnGap):
+        (WebCore::RenderStyle::setColumnRuleColor):
+        (WebCore::RenderStyle::setColumnRuleStyle):
+        (WebCore::RenderStyle::setColumnRuleWidth):
+        (WebCore::RenderStyle::resetColumnRule):
+        (WebCore::RenderStyle::setColumnBreakBefore):
+        (WebCore::RenderStyle::setColumnBreakInside):
+        (WebCore::RenderStyle::setColumnBreakAfter):
+        (WebCore::RenderStyle::initialColumnCount):
+        (WebCore::RenderStyle::initialColumnWidth):
+
 2007-01-07  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

@@ -389,6 +389,38 @@ bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
            pack == o.pack && orient == o.orient && lines == o.lines;
 }
 
+StyleMultiColData::StyleMultiColData()
+    : m_width(0)
+    , m_count(RenderStyle::initialColumnCount())
+    , m_gap(0)
+    , m_autoWidth(true)
+    , m_normalGap(true)
+    , m_breakBefore(RenderStyle::initialPageBreak())
+    , m_breakAfter(RenderStyle::initialPageBreak())
+    , m_breakInside(RenderStyle::initialPageBreak())
+{}
+
+StyleMultiColData::StyleMultiColData(const StyleMultiColData& o)
+    : Shared<StyleMultiColData>()
+    , m_width(o.m_width)
+    , m_count(o.m_count)
+    , m_gap(o.m_gap)
+    , m_rule(o.m_rule)
+    , m_autoWidth(o.m_autoWidth)
+    , m_normalGap(o.m_normalGap)
+    , m_breakBefore(o.m_breakBefore)
+    , m_breakAfter(o.m_breakAfter)
+    , m_breakInside(o.m_breakInside)
+{}
+
+bool StyleMultiColData::operator==(const StyleMultiColData& o) const
+{
+    return m_width == o.m_width && m_count == o.m_count && m_gap == o.m_gap &&
+           m_rule == o.m_rule && m_breakBefore == o.m_breakBefore && 
+           m_autoWidth == o.m_autoWidth && m_gap == o.m_normalGap &&
+           m_breakAfter == o.m_breakAfter && m_breakInside == o.m_breakInside;
+}
+
 StyleRareNonInheritedData::StyleRareNonInheritedData()
     : lineClamp(RenderStyle::initialLineClamp())
     , opacity(RenderStyle::initialOpacity())
@@ -414,6 +446,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , opacity(o.opacity)
     , flexibleBox(o.flexibleBox)
     , marquee(o.marquee)
+    , m_multiCol(o.m_multiCol)
     , m_content(0)
     , m_counterDirectives(0)
     , userDrag(o.userDrag)
@@ -458,6 +491,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && opacity == o.opacity
         && flexibleBox == o.flexibleBox
         && marquee == o.marquee
+        && m_multiCol == o.m_multiCol
         && m_content == o.m_content
         && m_counterDirectives == o.m_counterDirectives
         && userDrag == o.userDrag
@@ -667,6 +701,7 @@ RenderStyle::RenderStyle(bool)
     rareNonInheritedData.init();
     rareNonInheritedData.access()->flexibleBox.init();
     rareNonInheritedData.access()->marquee.init();
+    rareNonInheritedData.access()->m_multiCol.init();
     rareInheritedData.init();
     inherited.init();
     
@@ -866,6 +901,7 @@ RenderStyle::Diff RenderStyle::diff(const RenderStyle* other) const
          rareNonInheritedData->marginTopCollapse != other->rareNonInheritedData->marginTopCollapse ||
          rareNonInheritedData->marginBottomCollapse != other->rareNonInheritedData->marginBottomCollapse ||
          *rareNonInheritedData->flexibleBox.get() != *other->rareNonInheritedData->flexibleBox.get() ||
+         *rareNonInheritedData->m_multiCol.get() != *other->rareNonInheritedData->m_multiCol.get() ||
          (rareNonInheritedData->lineClamp != other->rareNonInheritedData->lineClamp) ||
          (rareInheritedData->highlight != other->rareInheritedData->highlight) ||
          (rareInheritedData->textSizeAdjust != other->rareInheritedData->textSizeAdjust) ||

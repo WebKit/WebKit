@@ -2527,6 +2527,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSS_PROP_BORDER_LEFT_COLOR:
     case CSS_PROP_COLOR:
     case CSS_PROP_OUTLINE_COLOR:
+    case CSS_PROP__WEBKIT_COLUMN_RULE_COLOR:
     case CSS_PROP__WEBKIT_TEXT_STROKE_COLOR:
     case CSS_PROP__WEBKIT_TEXT_FILL_COLOR: {
         Color col;
@@ -2538,6 +2539,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             HANDLE_INHERIT_COND(CSS_PROP_BORDER_LEFT_COLOR, borderLeftColor, BorderLeftColor)
             HANDLE_INHERIT_COND(CSS_PROP_COLOR, color, Color)
             HANDLE_INHERIT_COND(CSS_PROP_OUTLINE_COLOR, outlineColor, OutlineColor)
+            HANDLE_INHERIT_COND(CSS_PROP__WEBKIT_COLUMN_RULE_COLOR, columnRuleColor, ColumnRuleColor)
             HANDLE_INHERIT_COND(CSS_PROP__WEBKIT_TEXT_STROKE_COLOR, textStrokeColor, TextStrokeColor)
             HANDLE_INHERIT_COND(CSS_PROP__WEBKIT_TEXT_FILL_COLOR, textFillColor, TextFillColor)
             return;
@@ -2569,6 +2571,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             style->setColor(col); break;
         case CSS_PROP_OUTLINE_COLOR:
             style->setOutlineColor(col); break;
+        case CSS_PROP__WEBKIT_COLUMN_RULE_COLOR:
+            style->setColumnRuleColor(col);
+            break;
         case CSS_PROP__WEBKIT_TEXT_STROKE_COLOR:
             style->setTextStrokeColor(col);
             break;
@@ -2600,6 +2605,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSS_PROP_BORDER_BOTTOM_WIDTH:
     case CSS_PROP_BORDER_LEFT_WIDTH:
     case CSS_PROP_OUTLINE_WIDTH:
+    case CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH:
     {
         if (isInherit) {
             HANDLE_INHERIT_COND(CSS_PROP_BORDER_TOP_WIDTH, borderTopWidth, BorderTopWidth)
@@ -2607,6 +2613,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             HANDLE_INHERIT_COND(CSS_PROP_BORDER_BOTTOM_WIDTH, borderBottomWidth, BorderBottomWidth)
             HANDLE_INHERIT_COND(CSS_PROP_BORDER_LEFT_WIDTH, borderLeftWidth, BorderLeftWidth)
             HANDLE_INHERIT_COND(CSS_PROP_OUTLINE_WIDTH, outlineWidth, OutlineWidth)
+            HANDLE_INHERIT_COND(CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH, columnRuleWidth, ColumnRuleWidth)
             return;
         }
         else if (isInitial) {
@@ -2615,6 +2622,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_BORDER_BOTTOM_WIDTH, BorderBottomWidth, BorderWidth)
             HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_BORDER_LEFT_WIDTH, BorderLeftWidth, BorderWidth)
             HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_OUTLINE_WIDTH, OutlineWidth, BorderWidth)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH, ColumnRuleWidth, BorderWidth)
             return;
         }
 
@@ -2655,6 +2663,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             break;
         case CSS_PROP_OUTLINE_WIDTH:
             style->setOutlineWidth(width);
+            break;
+        case CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH:
+            style->setColumnRuleWidth(width);
             break;
         default:
             return;
@@ -3128,7 +3139,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         
         return;
     }
-        
+
     case CSS_PROP_WIDOWS:
     {
         HANDLE_INHERIT_AND_INITIAL(widows, Widows)
@@ -3932,6 +3943,111 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else
             style->setBoxSizing(BORDER_BOX);
         break;
+    case CSS_PROP__WEBKIT_COLUMN_COUNT: {
+        HANDLE_INHERIT_AND_INITIAL(columnCount, ColumnCount)
+        unsigned short count = 0;
+        if (primitiveValue->getIdent() == CSS_VAL_AUTO)
+            count = 1;
+        else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_NUMBER)
+            count = static_cast<unsigned short>(primitiveValue->getFloatValue());
+        if (count == 0)
+            return;
+        style->setColumnCount(count);
+        break;
+    }
+    case CSS_PROP__WEBKIT_COLUMN_GAP: {
+        if (isInherit) {
+            if (parentStyle->hasNormalColumnGap())
+                style->setHasNormalColumnGap();
+            else
+                style->setColumnGap(parentStyle->columnGap());
+        } else if (isInitial || primitiveValue->getIdent() == CSS_VAL_NORMAL) {
+            style->setHasNormalColumnGap();
+            return;
+        }
+        style->setColumnGap(primitiveValue->getFloatValue());
+        break;
+    }
+    case CSS_PROP__WEBKIT_COLUMN_WIDTH: {
+        if (isInherit) {
+            if (parentStyle->hasAutoColumnWidth())
+                style->setHasAutoColumnWidth();
+            else
+                style->setColumnWidth(parentStyle->columnWidth());
+        } else if (isInitial || primitiveValue->getIdent() == CSS_VAL_AUTO) {
+            style->setHasAutoColumnWidth();
+            return;
+        }
+        style->setColumnWidth(primitiveValue->getFloatValue());
+        break;
+    }
+    case CSS_PROP__WEBKIT_COLUMN_RULE_STYLE:
+        HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(columnRuleStyle, ColumnRuleStyle, BorderStyle)
+        style->setColumnRuleStyle((EBorderStyle)(primitiveValue->getIdent() - CSS_VAL_NONE));
+        break;
+    case CSS_PROP__WEBKIT_COLUMN_BREAK_BEFORE: {
+        HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(columnBreakBefore, ColumnBreakBefore, PageBreak)
+        switch (primitiveValue->getIdent()) {
+            case CSS_VAL_AUTO:
+                style->setColumnBreakBefore(PBAUTO);
+                break;
+            case CSS_VAL_LEFT:
+            case CSS_VAL_RIGHT:
+            case CSS_VAL_ALWAYS:
+                style->setColumnBreakBefore(PBALWAYS);
+                break;
+            case CSS_VAL_AVOID:
+                style->setColumnBreakBefore(PBAVOID);
+                break;
+        }
+        break;
+    }
+    case CSS_PROP__WEBKIT_COLUMN_BREAK_AFTER: {
+        HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(columnBreakAfter, ColumnBreakAfter, PageBreak)
+        switch (primitiveValue->getIdent()) {
+            case CSS_VAL_AUTO:
+                style->setColumnBreakAfter(PBAUTO);
+                break;
+            case CSS_VAL_LEFT:
+            case CSS_VAL_RIGHT:
+            case CSS_VAL_ALWAYS:
+                style->setColumnBreakAfter(PBALWAYS);
+                break;
+            case CSS_VAL_AVOID:
+                style->setColumnBreakAfter(PBAVOID);
+                break;
+        }
+        break;
+    }
+    case CSS_PROP__WEBKIT_COLUMN_BREAK_INSIDE: {
+        HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(columnBreakInside, ColumnBreakInside, PageBreak)
+        if (primitiveValue->getIdent() == CSS_VAL_AUTO)
+            style->setColumnBreakInside(PBAUTO);
+        else if (primitiveValue->getIdent() == CSS_VAL_AVOID)
+            style->setColumnBreakInside(PBAVOID);
+        return;
+    }
+     case CSS_PROP__WEBKIT_COLUMN_RULE:
+        if (isInherit) {
+            style->setColumnRuleColor(parentStyle->columnRuleColor());
+            style->setColumnRuleStyle(parentStyle->columnRuleStyle());
+            style->setColumnRuleWidth(parentStyle->columnRuleWidth());
+        }
+        else if (isInitial)
+            style->resetColumnRule();
+        return;
+    case CSS_PROP__WEBKIT_COLUMNS:
+        if (isInherit) {
+            if (parentStyle->hasAutoColumnWidth())
+                style->setHasAutoColumnWidth();
+            else
+                style->setColumnWidth(parentStyle->columnWidth());
+            style->setColumnCount(parentStyle->columnCount());
+        } else if (isInitial) {
+            style->setHasAutoColumnWidth();
+            style->setColumnCount(RenderStyle::initialColumnCount());
+        }
+        return;
     case CSS_PROP__WEBKIT_MARQUEE:
         if (valueType != CSSValue::CSS_INHERIT || !parentNode) return;
         style->setMarqueeDirection(parentStyle->marqueeDirection());

@@ -584,7 +584,37 @@ public:
     unsigned behavior : 3; // EMarqueeBehavior 
     EMarqueeDirection direction : 3; // not unsigned because EMarqueeDirection has negative values
 };
+  
+// CSS3 Multi Column Layout
+
+class StyleMultiColData : public Shared<StyleMultiColData> {
+public:
+    StyleMultiColData();
+    StyleMultiColData(const StyleMultiColData& o);
+
+    bool operator==(const StyleMultiColData& o) const;
+    bool operator!=(const StyleMultiColData &o) const {
+        return !(*this == o);
+    }
+
+    unsigned short ruleWidth() const {
+        if (m_rule.style() == BNONE || m_rule.style() == BHIDDEN)
+            return 0; 
+        return m_rule.width;
+    }
+
+    float m_width;
+    unsigned short m_count;
+    float m_gap;
+    BorderValue m_rule;
     
+    bool m_autoWidth : 1;
+    bool m_normalGap : 1;
+    unsigned m_breakBefore : 2; // EPageBreak
+    unsigned m_breakAfter : 2; // EPageBreak
+    unsigned m_breakInside : 2; // EPageBreak
+};
+
 //------------------------------------------------
 // CSS3 Flexible Box Properties
 
@@ -795,8 +825,11 @@ public:
     int lineClamp; // An Apple extension.
     Vector<StyleDashboardRegion> m_dashboardRegions;
     float opacity; // Whether or not we're transparent.
+
     DataRef<StyleFlexibleBoxData> flexibleBox; // Flexible box properties 
     DataRef<StyleMarqueeData> marquee; // Marquee properties
+    DataRef<StyleMultiColData> m_multiCol; //  CSS3 multicol properties
+
     ContentData* m_content;
     CounterDirectiveMap* m_counterDirectives;
 
@@ -1414,6 +1447,17 @@ public:
     EMatchNearestMailBlockquoteColor matchNearestMailBlockquoteColor() const { return static_cast<EMatchNearestMailBlockquoteColor>(rareNonInheritedData->matchNearestMailBlockquoteColor); }
     const AtomicString& highlight() const { return rareInheritedData->highlight; }
     EResize resize() const { return static_cast<EResize>(rareInheritedData->resize); }
+    float columnWidth() const { return rareNonInheritedData->m_multiCol->m_width; }
+    bool hasAutoColumnWidth() const { return rareNonInheritedData->m_multiCol->m_autoWidth; }
+    unsigned short columnCount() const { return rareNonInheritedData->m_multiCol->m_count; }
+    float columnGap() const { return rareNonInheritedData->m_multiCol->m_gap; }
+    bool hasNormalColumnGap() const { return rareNonInheritedData->m_multiCol->m_normalGap; }
+    const Color& columnRuleColor() const { return rareNonInheritedData->m_multiCol->m_rule.color; }
+    EBorderStyle columnRuleStyle() const { return rareNonInheritedData->m_multiCol->m_rule.style(); }
+    unsigned short columnRuleWidth() const { return rareNonInheritedData->m_multiCol->ruleWidth(); }
+    EPageBreak columnBreakBefore() const { return static_cast<EPageBreak>(rareNonInheritedData->m_multiCol->m_breakBefore); }
+    EPageBreak columnBreakInside() const { return static_cast<EPageBreak>(rareNonInheritedData->m_multiCol->m_breakInside); }
+    EPageBreak columnBreakAfter() const { return static_cast<EPageBreak>(rareNonInheritedData->m_multiCol->m_breakAfter); }
     // End CSS3 Getters
 
     // Apple-specific property getter methods
@@ -1642,6 +1686,18 @@ public:
     void setMatchNearestMailBlockquoteColor(EMatchNearestMailBlockquoteColor c)  { SET_VAR(rareNonInheritedData, matchNearestMailBlockquoteColor, c); }
     void setHighlight(const AtomicString& h) { SET_VAR(rareInheritedData, highlight, h); }
     void setResize(EResize r) { SET_VAR(rareInheritedData, resize, r); }
+    void setColumnWidth(float f) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_width, false); SET_VAR(rareNonInheritedData.access()->m_multiCol, m_width, f); }
+    void setHasAutoColumnWidth() { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_autoWidth, true); SET_VAR(rareNonInheritedData.access()->m_multiCol, m_width, 0); }
+    void setColumnCount(unsigned short c) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_count, c); }
+    void setColumnGap(float f) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_normalGap, false); SET_VAR(rareNonInheritedData.access()->m_multiCol, m_gap, f); }
+    void setHasNormalColumnGap() { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_normalGap, true); SET_VAR(rareNonInheritedData.access()->m_multiCol, m_gap, 0); }
+    void setColumnRuleColor(const Color& c) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_rule.color, c); }
+    void setColumnRuleStyle(EBorderStyle b) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_rule.m_style, b); }
+    void setColumnRuleWidth(unsigned short w) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_rule.width, w); }
+    void resetColumnRule() { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_rule, BorderValue()) }
+    void setColumnBreakBefore(EPageBreak p) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_breakBefore, p); }
+    void setColumnBreakInside(EPageBreak p) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_breakInside, p); }
+    void setColumnBreakAfter(EPageBreak p) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_breakAfter, p); }
     // End CSS3 Setters
    
     // Apple-specific property setters
@@ -1778,6 +1834,7 @@ public:
     static EAppearance initialAppearance() { return NoAppearance; }
     static bool initialVisuallyOrdered() { return false; }
     static float initialTextStrokeWidth() { return 0; }
+    static unsigned short initialColumnCount() { return 1; }
 
     // Keep these at the end.
     static int initialLineClamp() { return -1; }

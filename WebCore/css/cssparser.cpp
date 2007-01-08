@@ -483,7 +483,9 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
 
     case CSS_PROP_PAGE_BREAK_AFTER:     // auto | always | avoid | left | right | inherit
-    case CSS_PROP_PAGE_BREAK_BEFORE:    // auto | always | avoid | left | right | inherit
+    case CSS_PROP_PAGE_BREAK_BEFORE:
+    case CSS_PROP__WEBKIT_COLUMN_BREAK_AFTER:
+    case CSS_PROP__WEBKIT_COLUMN_BREAK_BEFORE:
         if (id == CSS_VAL_AUTO ||
              id == CSS_VAL_ALWAYS ||
              id == CSS_VAL_AVOID ||
@@ -493,8 +495,8 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
 
     case CSS_PROP_PAGE_BREAK_INSIDE:    // avoid | auto | inherit
-        if (id == CSS_VAL_AUTO ||
-             id == CSS_VAL_AVOID)
+    case CSS_PROP__WEBKIT_COLUMN_BREAK_INSIDE:
+        if (id == CSS_VAL_AUTO || id == CSS_VAL_AVOID)
             valid_primitive = true;
         break;
 
@@ -611,7 +613,8 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSS_PROP_BORDER_TOP_STYLE:     //// <border-style> | inherit
     case CSS_PROP_BORDER_RIGHT_STYLE:   //   Defined as:    none | hidden | dotted | dashed |
     case CSS_PROP_BORDER_BOTTOM_STYLE:  //   solid | double | groove | ridge | inset | outset
-    case CSS_PROP_BORDER_LEFT_STYLE:    ////
+    case CSS_PROP_BORDER_LEFT_STYLE:
+    case CSS_PROP__WEBKIT_COLUMN_RULE_STYLE:
         if (id >= CSS_VAL_NONE && id <= CSS_VAL_DOUBLE)
             valid_primitive = true;
         break;
@@ -683,6 +686,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSS_PROP_TEXT_LINE_THROUGH_COLOR: // CSS3 text decoration colors
     case CSS_PROP_TEXT_UNDERLINE_COLOR:
     case CSS_PROP_TEXT_OVERLINE_COLOR:
+    case CSS_PROP__WEBKIT_COLUMN_RULE_COLOR:
     case CSS_PROP__WEBKIT_TEXT_FILL_COLOR:
     case CSS_PROP__WEBKIT_TEXT_STROKE_COLOR:
         if (id == CSS_VAL__WEBKIT_TEXT)
@@ -805,7 +809,8 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSS_PROP_BORDER_TOP_WIDTH:     //// <border-width> | inherit
     case CSS_PROP_BORDER_RIGHT_WIDTH:   //   Which is defined as
     case CSS_PROP_BORDER_BOTTOM_WIDTH:  //   thin | medium | thick | <length>
-    case CSS_PROP_BORDER_LEFT_WIDTH:    ////
+    case CSS_PROP_BORDER_LEFT_WIDTH:
+    case CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH:
         if (id == CSS_VAL_THIN || id == CSS_VAL_MEDIUM || id == CSS_VAL_THICK)
             valid_primitive = true;
         else
@@ -1196,6 +1201,24 @@ bool CSSParser::parseValue(int propId, bool important)
         if (id == CSS_VAL_NONE || id == CSS_VAL_BOTH || id == CSS_VAL_HORIZONTAL || id == CSS_VAL_VERTICAL || id == CSS_VAL_AUTO)
             valid_primitive = true;
         break;
+    case CSS_PROP__WEBKIT_COLUMN_COUNT:
+        if (id == CSS_VAL_AUTO)
+            valid_primitive = true;
+        else
+            valid_primitive = !id && validUnit(value, FInteger | FNonNeg, false);
+        break;
+    case CSS_PROP__WEBKIT_COLUMN_GAP:         // normal | <length>
+        if (id == CSS_VAL_NORMAL)
+            valid_primitive = true;
+        else
+            valid_primitive = validUnit(value, FLength, strict);
+        break;
+    case CSS_PROP__WEBKIT_COLUMN_WIDTH:         // auto | <length>
+        if (id == CSS_VAL_AUTO)
+            valid_primitive = true;
+        else
+            valid_primitive = validUnit(value, FLength, strict);
+        break;
     // End of CSS3 properties
 
     // Apple specific properties.  These will never be standardized and are purely to
@@ -1344,6 +1367,15 @@ bool CSSParser::parseValue(int propId, bool important)
     {
         const int properties[3] = { CSS_PROP_LIST_STYLE_TYPE, CSS_PROP_LIST_STYLE_POSITION,
                                     CSS_PROP_LIST_STYLE_IMAGE };
+        return parseShorthand(propId, properties, 3, important);
+    }
+    case CSS_PROP__WEBKIT_COLUMNS: {
+        const int properties[2] = { CSS_PROP__WEBKIT_COLUMN_WIDTH, CSS_PROP__WEBKIT_COLUMN_COUNT };
+        return parseShorthand(propId, properties, 2, important);
+    }
+    case CSS_PROP__WEBKIT_COLUMN_RULE: {
+        const int properties[3] = { CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH, CSS_PROP__WEBKIT_COLUMN_RULE_STYLE,
+                                    CSS_PROP__WEBKIT_COLUMN_RULE_COLOR };
         return parseShorthand(propId, properties, 3, important);
     }
     case CSS_PROP__WEBKIT_TEXT_STROKE: {

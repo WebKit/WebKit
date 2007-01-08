@@ -79,6 +79,15 @@ static const int computedProperties[] = {
     CSS_PROP_CAPTION_SIDE,
     CSS_PROP_CLEAR,
     CSS_PROP_COLOR,
+    CSS_PROP__WEBKIT_COLUMN_COUNT,
+    CSS_PROP__WEBKIT_COLUMN_GAP,
+    CSS_PROP__WEBKIT_COLUMN_RULE_COLOR,
+    CSS_PROP__WEBKIT_COLUMN_RULE_STYLE,
+    CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH,
+    CSS_PROP__WEBKIT_COLUMN_BREAK_BEFORE,
+    CSS_PROP__WEBKIT_COLUMN_BREAK_AFTER,
+    CSS_PROP__WEBKIT_COLUMN_BREAK_INSIDE,
+    CSS_PROP__WEBKIT_COLUMN_WIDTH,
     CSS_PROP_CURSOR,
 #if PLATFORM(MAC)
     CSS_PROP__WEBKIT_DASHBOARD_REGION,
@@ -603,6 +612,55 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         break;
     case CSS_PROP_COLOR:
         return new CSSPrimitiveValue(style->color().rgb());
+    case CSS_PROP__WEBKIT_COLUMN_COUNT:
+        return new CSSPrimitiveValue(style->columnCount(), CSSPrimitiveValue::CSS_NUMBER);
+    case CSS_PROP__WEBKIT_COLUMN_GAP:
+        if (style->hasNormalColumnGap())
+            return new CSSPrimitiveValue(CSS_VAL_NORMAL);
+        return new CSSPrimitiveValue(style->columnGap(), CSSPrimitiveValue::CSS_NUMBER);
+    case CSS_PROP__WEBKIT_COLUMN_RULE_COLOR:
+        return new CSSPrimitiveValue(style->columnRuleColor().rgb());
+    case CSS_PROP__WEBKIT_COLUMN_RULE_STYLE:
+        return valueForBorderStyle(style->columnRuleStyle());
+    case CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH:
+        return new CSSPrimitiveValue(style->columnRuleWidth(), CSSPrimitiveValue::CSS_PX);
+    case CSS_PROP__WEBKIT_COLUMN_BREAK_AFTER:
+        switch (style->columnBreakAfter()) {
+            case PBAUTO:
+                return new CSSPrimitiveValue(CSS_VAL_AUTO);
+            case PBALWAYS:
+                return new CSSPrimitiveValue(CSS_VAL_ALWAYS);
+            case PBAVOID:
+                return new CSSPrimitiveValue(CSS_VAL_AVOID);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
+    case CSS_PROP__WEBKIT_COLUMN_BREAK_BEFORE:
+        switch (style->columnBreakBefore()) {
+            case PBAUTO:
+                return new CSSPrimitiveValue(CSS_VAL_AUTO);
+            case PBALWAYS:
+                return new CSSPrimitiveValue(CSS_VAL_ALWAYS);
+            case PBAVOID:
+                return new CSSPrimitiveValue(CSS_VAL_AVOID);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
+    case CSS_PROP__WEBKIT_COLUMN_BREAK_INSIDE:
+        switch (style->columnBreakInside()) {
+            case PBAUTO:
+                return new CSSPrimitiveValue(CSS_VAL_AUTO);
+            case PBAVOID:
+                return new CSSPrimitiveValue(CSS_VAL_AVOID);
+            case PBALWAYS:
+                break; // not allowed
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
+    case CSS_PROP__WEBKIT_COLUMN_WIDTH:
+        if (style->hasAutoColumnWidth())
+            return new CSSPrimitiveValue(CSS_VAL_AUTO);
+        return new CSSPrimitiveValue(style->columnWidth(), CSSPrimitiveValue::CSS_NUMBER);
     case CSS_PROP_CONTENT:
         // FIXME: unimplemented
         break;
