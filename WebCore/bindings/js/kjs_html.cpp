@@ -531,6 +531,7 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
   length        KJS::JSHTMLElement::SelectLength  DontDelete
   form          KJS::JSHTMLElement::SelectForm    DontDelete|ReadOnly
   options       KJS::JSHTMLElement::SelectOptions DontDelete|ReadOnly
+  item          KJS::JSHTMLElement::SelectItem    DontDelete|Function 1
   namedItem     KJS::JSHTMLElement::SelectNamedItem       DontDelete|Function 1
   disabled      KJS::JSHTMLElement::SelectDisabled        DontDelete
   multiple      KJS::JSHTMLElement::SelectMultiple        DontDelete
@@ -1158,6 +1159,9 @@ JSValue *HTMLElementFunction::callAsFunction(ExecState* exec, JSObject* thisObj,
         else if (id == JSHTMLElement::SelectFocus) {
             select.focus();
             return jsUndefined();
+        }
+        else if (id == JSHTMLElement::SelectItem) {
+            return toJS(exec, select.item(args[0]->toUInt32(exec)));
         }
         else if (id == JSHTMLElement::SelectNamedItem) {
             return toJS(exec, select.namedItem(Identifier(args[0]->toString(exec))));

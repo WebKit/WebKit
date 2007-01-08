@@ -101,8 +101,6 @@ namespace KJS {
   isDefaultNamespace    DOMNode::IsDefaultNamespace DontDelete|Function 1
   lookupNamespaceURI    DOMNode::LookupNamespaceURI DontDelete|Function 1
   lookupPrefix  DOMNode::LookupPrefix   DontDelete|Function 1
-# "DOM level 0" (from Gecko DOM reference; also in WinIE)
-  item          DOMNode::Item           DontDelete|Function 1
 @end
 */
 KJS_IMPLEMENT_PROTOFUNC(DOMNodeProtoFunc)
@@ -327,8 +325,6 @@ JSValue* DOMNodeProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, co
      if (node.replaceChild(toNode(args[0]), toNode(args[1]), exception))
         return args[1];
       return jsNull();
-    case DOMNode::Item:
-      return thisObj->get(exec, args[0]->toInt32(exec));
   }
 
   return jsUndefined();

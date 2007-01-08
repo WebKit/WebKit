@@ -124,7 +124,7 @@ namespace KJS {
     enum {
            SelectAdd,
            SelectTabIndex, SelectValue, SelectSelectedIndex, SelectLength,
-           SelectRemove, SelectForm, SelectBlur, SelectType, SelectOptions,
+           SelectRemove, SelectForm, SelectBlur, SelectType, SelectOptions, SelectItem,
            SelectDisabled, SelectMultiple, SelectName, SelectNamedItem, SelectSize, SelectFocus,
            ObjectHspace, ObjectHeight, ObjectAlign,
            ObjectBorder, ObjectCode, ObjectType, ObjectVspace, ObjectArchive,

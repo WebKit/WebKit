@@ -1,3 +1,30 @@
+2007-01-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=7640
+        Menu items are displayed as "undefined"
+
+        * bindings/js/kjs_dom.cpp:
+        (KJS::DOMNodeProtoFunc::callAsFunction):
+        * bindings/js/kjs_domnode.h:
+        (KJS::DOMNode::):
+        Removed Node::item. No idea why it was there in the first place.
+
+        * bindings/js/kjs_html.cpp:
+        (KJS::HTMLElementFunction::callAsFunction):
+        * bindings/js/kjs_html.h:
+        (KJS::JSHTMLElement::):
+        Added HTMLSelectElement::item. It is not in DOM2 IDL, but the spec seems to mentions it anyway:
+        "The contained options can be directly accessed through the select element as a collection."
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::namedItem):
+        (WebCore::HTMLSelectElement::item):
+        * html/HTMLSelectElement.h:
+        * html/HTMLSelectElement.idl:
+        Added this method to DOM and IDL, too. Made namedItem() non-virtual.
+
 2007-01-08  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.

@@ -1,3 +1,16 @@
+2007-01-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=7640
+        Menu items are displayed as "undefined"
+
+        * fast/dom/Window/window-properties-expected.txt: Updated the results.
+
+        * fast/dom/node-item-expected.txt: Added.
+        * fast/dom/node-item.html: Added.
+        Check that there is no Node:item or HTMLElement:item.
+
 2007-01-08  Darin Adler  <darin@apple.com>
 
         - added a W3C list style test that was cited in a bug

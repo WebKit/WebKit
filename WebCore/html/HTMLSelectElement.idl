@@ -51,6 +51,9 @@ module html {
         void               blur();
         void               focus();
 
+        // This method is not in DOM Level 2 IDL, but it is mentioned in the standard:
+        // "The contained options can be directly accessed through the select element as a collection."
+        Node item(in [IsIndex] unsigned long index);
     };
 
 }

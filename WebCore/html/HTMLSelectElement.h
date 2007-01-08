@@ -122,7 +122,8 @@ public:
     void setOption(unsigned index, HTMLOptionElement*, ExceptionCode&);
     void setLength(unsigned, ExceptionCode&);
 
-    virtual Node* namedItem(const String& name, bool caseSensitive = true);
+    Node* namedItem(const String& name, bool caseSensitive = true);
+    Node* item(unsigned index);
 
     HTMLCollection::CollectionInfo* collectionInfo() { return &m_collectionInfo; }
     
