@@ -451,12 +451,6 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
 
   JSValue *result = 0;
   UString s;
-#if !PLATFORM(DARWIN)
-  CString oldlocale = setlocale(LC_TIME, 0);
-  if (!oldlocale.size())
-    oldlocale = setlocale(LC_ALL, 0);
-  // FIXME: Where's the code to set the locale back to oldlocale?
-#endif
   JSValue *v = thisDateObj->internalValue();
   double milli = v->toNumber(exec);
   if (isNaN(milli)) {

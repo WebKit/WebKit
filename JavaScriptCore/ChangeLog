@@ -1,3 +1,13 @@
+2007-01-07  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11917
+          setlocale() can return null
+
+        * kjs/date_object.cpp:
+        (KJS::DateProtoFunc::callAsFunction): Removed dead code.
+
 2007-01-07  David Carson  <dacarson@gmail.com>
 
         Reviewed by Darin.
