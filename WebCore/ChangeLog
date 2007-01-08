@@ -1,3 +1,13 @@
+2007-01-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        Attempt to fix build for buildbots.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::columnGap):
+        (WebCore::RenderBlock::calcColumnWidth):
+
 2007-01-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
