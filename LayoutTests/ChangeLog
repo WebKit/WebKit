@@ -4,7 +4,7 @@
 
         Fixes: http://bugs.webkit.org/show_bug.cgi?id=12150
         Corrected results for W3C's pservers-grad-16-b.
-        Add a test for stop calues corner cases.
+        Add a test for stop values corner cases.
 
         * svg/W3C-SVG-1.1/pservers-grad-16-b-expected.checksum:
         * svg/W3C-SVG-1.1/pservers-grad-16-b-expected.png:
