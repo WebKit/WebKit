@@ -36,13 +36,13 @@ layer at (0,0) size 800x600
             RenderBR {BR} at (147,50) size 0x0
           RenderBlock {UL} at (0,80) size 756x28
             RenderListItem {LI} at (40,0) size 716x28
-              RenderListMarker at (-22,0) size 9x28
+              RenderListMarker at (-22,0) size 9x28: bullet
               RenderText {#text} at (699,0) size 17x28
                 text run at (699,0) width 17: "A"
           RenderBlock {DIV} at (0,132) size 756x56
             RenderBlock {UL} at (0,0) size 756x56
               RenderListItem {LI} at (40,0) size 716x56
-                RenderListMarker at (-22,0) size 9x28
+                RenderListMarker at (-22,0) size 9x28: bullet
                 RenderInline {A} at (0,0) size 16x28 [color=#0000EE]
                   RenderText {#text} at (0,0) size 16x28
                     text run at (0,0) width 16: "B"
@@ -58,7 +58,7 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (2,26) size 780x28
             RenderBlock {UL} at (0,0) size 780x28
               RenderListItem {LI} at (40,0) size 740x28
-                RenderListMarker at (-22,0) size 9x28
+                RenderListMarker at (-22,0) size 9x28: bullet
                 RenderText {#text} at (723,0) size 17x28
                   text run at (723,0) width 17: "A"
           RenderBlock (anonymous) at (2,78) size 780x0
@@ -68,7 +68,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,0) size 780x56
               RenderBlock {UL} at (0,0) size 780x56
                 RenderListItem {LI} at (40,0) size 740x56
-                  RenderListMarker at (-22,0) size 9x28
+                  RenderListMarker at (-22,0) size 9x28: bullet
                   RenderInline {A} at (0,0) size 16x28 [color=#0000EE]
                     RenderText {#text} at (718,0) size 16x28
                       text run at (718,0) width 16: "B"

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include "InlineTextBox.h"
 #include "JSEditor.h"
 #include "RenderBR.h"
+#include "RenderListMarker.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
@@ -102,13 +103,13 @@ static void printBorderStyle(TextStream& ts, const RenderObject& o, const EBorde
     ts << " ";
 }
 
-static DeprecatedString getTagName(Node* n)
+static String getTagName(Node* n)
 {
     if (n->isDocumentNode())
         return "";
     if (n->isCommentNode())
         return "COMMENT";
-    return n->nodeName().deprecatedString();
+    return n->nodeName();
 }
 
 static bool isEmptyOrUnstyledAppleStyleSpan(const Node* node)
@@ -127,6 +128,36 @@ static bool isEmptyOrUnstyledAppleStyleSpan(const Node* node)
     return (!inlineStyleDecl || inlineStyleDecl->length() == 0);
 }
 
+static String quoteAndEscapeNonPrintables(const String& s)
+{
+    Vector<UChar> result;
+    result.append('"');
+    for (unsigned i = 0; i != s.length(); ++i) {
+        UChar c = s[i];
+        if (c == '\\') {
+            result.append('\\');
+            result.append('\\');
+        } else if (c == '"') {
+            result.append('\\');
+            result.append('"');
+        } else if (c == '\n' || c == 0x00A0)
+            result.append(' ');
+        else {
+            if (c >= 0x20 && c < 0x7F)
+                result.append(c);
+            else {
+                unsigned u = c;
+                String hex = String::format("\\x{%X}", u);
+                unsigned len = hex.length();
+                for (unsigned i = 0; i < len; ++i)
+                    result.append(hex[i]);
+            }
+        }
+    }
+    result.append('"');
+    return String::adopt(result);
+}
+
 static TextStream &operator<<(TextStream& ts, const RenderObject& o)
 {
     ts << o.renderName();
@@ -135,7 +166,7 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
         ts << " zI: " << o.style()->zIndex();
 
     if (o.element()) {
-        DeprecatedString tagName = getTagName(o.element());
+        String tagName = getTagName(o.element());
         if (!tagName.isEmpty()) {
             ts << " {" << tagName << "}";
             // flag empty or unstyled AppleStyleSpan because we never
@@ -148,7 +179,7 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
     IntRect r(o.xPos(), o.yPos(), o.width(), o.height());
     ts << " " << r;
 
-    if (!o.isText()) {
+    if (!(o.isText() && !o.isBR())) {
         if (o.parent() && (o.parent()->style()->color() != o.style()->color()))
             ts << " [color=" << o.style()->color().name() << "]";
 
@@ -238,34 +269,31 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
         ts << " [r=" << c.row() << " c=" << c.col() << " rs=" << c.rowSpan() << " cs=" << c.colSpan() << "]";
     }
 
-    return ts;
-}
-
-static String quoteAndEscapeNonPrintables(const String& s)
-{
-    DeprecatedString result;
-    result += '"';
-    for (unsigned i = 0; i != s.length(); ++i) {
-        UChar c = s[i];
-        if (c == '\\')
-            result += "\\\\";
-        else if (c == '"')
-            result += "\\\"";
-        else if (c == '\n' || c == 0x00A0)
-            result += ' ';
-        else {
-            if (c >= 0x20 && c < 0x7F)
-                result += c;
+    if (o.isListMarker()) {
+        String text = static_cast<const RenderListMarker&>(o).text();
+        if (!text.isEmpty()) {
+            if (text.length() != 1)
+                text = quoteAndEscapeNonPrintables(text);
             else {
-                DeprecatedString hex;
-                unsigned u = c;
-                hex.format("\\x{%X}", u);
-                result += hex;
+                switch (text[0]) {
+                    case 0x2022:
+                        text = "bullet";
+                        break;
+                    case 0x25A0:
+                        text = "black square";
+                        break;
+                    case 0x25E6:
+                        text = "white bullet";
+                        break;
+                    default:
+                        text = quoteAndEscapeNonPrintables(text);
+                }
             }
+            ts << ": " << text;
         }
     }
-    result += '"';
-    return result;
+
+    return ts;
 }
 
 static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBox& run)
@@ -284,7 +312,6 @@ static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBo
 void write(TextStream& ts, const RenderObject& o, int indent)
 {
 #ifdef SVG_SUPPORT
-    // FIXME:  A hackish way to doing our own "virtual" dispatch
     if (o.isRenderPath()) {
         write(ts, static_cast<const RenderPath&>(o), indent);
         return;
@@ -294,6 +321,7 @@ void write(TextStream& ts, const RenderObject& o, int indent)
         return;
     }
 #endif
+
     writeIndent(ts, indent);
 
     ts << o << "\n";
@@ -403,9 +431,9 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
     }
 }
 
-static DeprecatedString nodePosition(Node* node)
+static String nodePosition(Node* node)
 {
-    DeprecatedString result;
+    String result;
 
     Node* parent;
     for (Node* n = node; n; n = parent) {
@@ -415,7 +443,7 @@ static DeprecatedString nodePosition(Node* node)
         if (n != node)
             result += " of ";
         if (parent)
-            result += "child " + DeprecatedString::number(n->nodeIndex()) + " {" + getTagName(n) + "}";
+            result += "child " + String::number(n->nodeIndex()) + " {" + getTagName(n) + "}";
         else
             result += "document";
     }

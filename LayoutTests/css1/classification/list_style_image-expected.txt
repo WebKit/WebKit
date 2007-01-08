@@ -29,15 +29,15 @@ layer at (0,0) size 800x600
             text run at (0,1) width 146: "...images for each item."
       RenderBlock {UL} at (0,183) size 784x54
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (-17,0) size 7x18
+          RenderListMarker at (-17,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 62x18
             text run at (0,0) width 62: "This list..."
         RenderListItem {LI} at (40,18) size 744x18
-          RenderListMarker at (-17,0) size 7x18
+          RenderListMarker at (-17,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 113x18
             text run at (0,0) width 113: "...should feature..."
         RenderListItem {LI} at (40,36) size 744x18
-          RenderListMarker at (-17,0) size 7x18
+          RenderListMarker at (-17,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 231x18
             text run at (0,0) width 231: "...standard list markers for each item."
       RenderTable {TABLE} at (0,253) size 293x179 [border: (1px outset #808080)]
@@ -67,14 +67,14 @@ layer at (0,0) size 800x600
                     text run at (0,1) width 146: "...images for each item."
               RenderBlock {UL} at (4,77) size 271x54
                 RenderListItem {LI} at (40,0) size 231x18
-                  RenderListMarker at (-17,0) size 7x18
+                  RenderListMarker at (-17,0) size 7x18: bullet
                   RenderText {#text} at (0,0) size 62x18
                     text run at (0,0) width 62: "This list..."
                 RenderListItem {LI} at (40,18) size 231x18
-                  RenderListMarker at (-17,0) size 7x18
+                  RenderListMarker at (-17,0) size 7x18: bullet
                   RenderText {#text} at (0,0) size 113x18
                     text run at (0,0) width 113: "...should feature..."
                 RenderListItem {LI} at (40,36) size 231x18
-                  RenderListMarker at (-17,0) size 7x18
+                  RenderListMarker at (-17,0) size 7x18: bullet
                   RenderText {#text} at (0,0) size 231x18
                     text run at (0,0) width 231: "...standard list markers for each item."

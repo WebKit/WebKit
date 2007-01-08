@@ -13,54 +13,54 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (0,0) size 784x0
       RenderBlock {OL} at (0,52) size 784x234
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (-20,0) size 16x18
+          RenderListMarker at (-20,0) size 16x18: "1"
           RenderText {#text} at (0,0) size 320x18
             text run at (0,0) width 320: "NodeIterator: testing nextNode() (5 should be null)"
         RenderListItem {LI} at (40,18) size 744x18
-          RenderListMarker at (-20,0) size 16x18
+          RenderListMarker at (-20,0) size 16x18: "2"
           RenderText {#text} at (0,0) size 174x18
             text run at (0,0) width 174: "[object HTMLDivElement]"
         RenderListItem {LI} at (40,36) size 744x18
-          RenderListMarker at (-20,0) size 16x18
+          RenderListMarker at (-20,0) size 16x18: "3"
           RenderText {#text} at (0,0) size 174x18
             text run at (0,0) width 174: "[object HTMLDivElement]"
         RenderListItem {LI} at (40,54) size 744x18
-          RenderListMarker at (-20,0) size 16x18
+          RenderListMarker at (-20,0) size 16x18: "4"
           RenderText {#text} at (0,0) size 174x18
             text run at (0,0) width 174: "[object HTMLDivElement]"
         RenderListItem {LI} at (40,72) size 744x18
-          RenderListMarker at (-20,0) size 16x18
+          RenderListMarker at (-20,0) size 16x18: "5"
           RenderText {#text} at (0,0) size 24x18
             text run at (0,0) width 24: "null"
         RenderListItem {LI} at (40,90) size 744x18
-          RenderListMarker at (-20,0) size 16x18
+          RenderListMarker at (-20,0) size 16x18: "6"
           RenderText {#text} at (0,0) size 347x18
             text run at (0,0) width 347: "NodeIterator: testing previousNode() (7 should be null)"
         RenderListItem {LI} at (40,108) size 744x18
-          RenderListMarker at (-20,0) size 16x18
+          RenderListMarker at (-20,0) size 16x18: "7"
           RenderText {#text} at (0,0) size 24x18
             text run at (0,0) width 24: "null"
         RenderListItem {LI} at (40,126) size 744x18
-          RenderListMarker at (-20,0) size 16x18
+          RenderListMarker at (-20,0) size 16x18: "8"
           RenderText {#text} at (0,0) size 323x18
             text run at (0,0) width 323: "TreeWalker: testing nextNode() (11 should be null)"
         RenderListItem {LI} at (40,144) size 744x18
-          RenderListMarker at (-20,0) size 16x18
+          RenderListMarker at (-20,0) size 16x18: "9"
           RenderText {#text} at (0,0) size 174x18
             text run at (0,0) width 174: "[object HTMLDivElement]"
         RenderListItem {LI} at (40,162) size 744x18
-          RenderListMarker at (-28,0) size 24x18
+          RenderListMarker at (-28,0) size 24x18: "10"
           RenderText {#text} at (0,0) size 174x18
             text run at (0,0) width 174: "[object HTMLDivElement]"
         RenderListItem {LI} at (40,180) size 744x18
-          RenderListMarker at (-28,0) size 24x18
+          RenderListMarker at (-28,0) size 24x18: "11"
           RenderText {#text} at (0,0) size 24x18
             text run at (0,0) width 24: "null"
         RenderListItem {LI} at (40,198) size 744x18
-          RenderListMarker at (-28,0) size 24x18
+          RenderListMarker at (-28,0) size 24x18: "12"
           RenderText {#text} at (0,0) size 350x18
             text run at (0,0) width 350: "TreeWalker: testing previousNode() (13 should be null)"
         RenderListItem {LI} at (40,216) size 744x18
-          RenderListMarker at (-28,0) size 24x18
+          RenderListMarker at (-28,0) size 24x18: "13"
           RenderText {#text} at (0,0) size 24x18
             text run at (0,0) width 24: "null"

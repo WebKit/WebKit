@@ -1,3 +1,23 @@
+2007-01-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=12142
+          render tree dump for test results should include the value of list markers
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::getTagName): Changed to use String instead of DeprecatedString.
+        (WebCore::quoteAndEscapeNonPrintables): Ditto. Also moved up so it can be used
+        in the operator below.
+        (WebCore::operator<<): Added clause for RenderListMarker that dumps the value
+        of the list marker's text.
+        (WebCore::nodePosition): Changed to use String instead of DeprecatedString.
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::TextStreamSeparator::TextStreamSeparator): Changed to use String
+        instead of DeprecatedString.
+        (WebCore::getTagName): Ditto.
+        (WebCore::write): Ditto.
+
 2007-01-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by ap and the rubber stamp of Maciej.

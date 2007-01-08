@@ -45,20 +45,20 @@ layer at (0,0) size 785x688
         RenderText {#text} at (14,14) size 55x28
           text run at (14,14) width 55: "line 1"
       RenderBlock {P} at (0,200) size 769x56 [border: (2px solid #0000FF)]
-        RenderBR {BR} at (14,14) size 0x28
+        RenderBR {BR} at (14,14) size 0x28 [bgcolor=#008000]
       RenderBlock {P} at (0,280) size 769x56 [border: (2px solid #0000FF)]
         RenderInline {B} at (0,0) size 56x28
           RenderText {#text} at (14,14) size 56x28
             text run at (14,14) width 56: "line 2"
       RenderBlock {P} at (0,360) size 769x56 [border: (2px solid #0000FF)]
         RenderInline {B} at (0,0) size 0x28
-          RenderBR {BR} at (14,14) size 0x28
+          RenderBR {BR} at (14,14) size 0x28 [bgcolor=#008000]
       RenderBlock {P} at (0,440) size 769x56 [border: (2px solid #0000FF)]
         RenderInline {B} at (0,0) size 12x28
           RenderText {#text} at (14,14) size 12x28
             text run at (14,14) width 12: "x"
       RenderBlock {P} at (0,520) size 769x56 [border: (2px solid #0000FF)]
-        RenderBR {BR} at (14,14) size 0x28
+        RenderBR {BR} at (14,14) size 0x28 [bgcolor=#008000]
       RenderBlock {P} at (0,600) size 769x56 [border: (2px solid #0000FF)]
         RenderText {#text} at (14,14) size 55x28
           text run at (14,14) width 55: "line 3"

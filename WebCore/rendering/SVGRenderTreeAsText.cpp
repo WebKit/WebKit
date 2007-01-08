@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2007 Apple Computer, Inc.  All rights reserved.
  *           (C) 2005 Rob Buis <buis@kde.org>
  *           (C) 2006 Alexander Kellett <lypanov@kde.org>
  *
@@ -47,12 +47,11 @@ namespace WebCore {
 
 /** class + iomanip to help streaming list separators, i.e. ", " in string "a, b, c, d"
  * Can be used in cases where you don't know which item in the list is the first
- * one to be printed, but still want to avoid strings like ", b, c", works like
- * DeprecatedStringList::join for streams
+ * one to be printed, but still want to avoid strings like ", b, c".
  */
 class TextStreamSeparator {
 public:
-    TextStreamSeparator(const DeprecatedString& s)
+    TextStreamSeparator(const String& s)
         : m_separator(s)
         , m_needToSeparate(false)
     {
@@ -61,7 +60,7 @@ public:
 private:
     friend TextStream& operator<<(TextStream&, TextStreamSeparator&);
 
-    DeprecatedString m_separator;
+    String m_separator;
     bool m_needToSeparate;
 };
 
@@ -308,12 +307,11 @@ static TextStream& operator<<(TextStream& ts, const RenderSVGContainer& containe
     return ts;
 }
 
-static DeprecatedString getTagName(void* node)
+static String getTagName(SVGStyledElement* elem)
 {
-    SVGStyledElement* elem = static_cast<SVGStyledElement*>(node);
     if (elem)
-        return String(elem->nodeName()).deprecatedString();
-    return DeprecatedString();
+        return elem->nodeName();
+    return "";
 }
 
 void write(TextStream& ts, const RenderSVGContainer& container, int indent)
@@ -322,7 +320,7 @@ void write(TextStream& ts, const RenderSVGContainer& container, int indent)
     ts << container.renderName();
 
     if (container.element()) {
-        DeprecatedString tagName = getTagName(container.element());
+        String tagName = getTagName(static_cast<SVGStyledElement*>(container.element()));
         if (!tagName.isEmpty())
             ts << " {" << tagName << "}";
     }
@@ -339,7 +337,7 @@ void write(TextStream& ts, const RenderPath& path, int indent)
     ts << path.renderName();
 
     if (path.element()) {
-        DeprecatedString tagName = getTagName(path.element());
+        String tagName = getTagName(static_cast<SVGStyledElement*>(path.element()));
         if (!tagName.isEmpty())
             ts << " {" << tagName << "}";
     }

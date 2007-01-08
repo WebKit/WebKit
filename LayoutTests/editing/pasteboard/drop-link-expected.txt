@@ -23,12 +23,12 @@ layer at (0,0) size 800x600
       RenderBlock {UL} at (0,52) size 784x49
         RenderListItem {LI} at (40,0) size 744x18
           RenderBlock {PRE} at (0,0) size 744x18
-            RenderListMarker at (-17,0) size 7x18
+            RenderListMarker at (-17,0) size 7x18: bullet
             RenderText {#text} at (0,2) size 200x15
               text run at (0,2) width 200: "Link is http://apple.com/"
         RenderListItem {LI} at (40,31) size 744x18
           RenderBlock {PRE} at (0,0) size 744x18
-            RenderListMarker at (-17,0) size 7x18
+            RenderListMarker at (-17,0) size 7x18: bullet
             RenderText {#text} at (0,2) size 64x15
               text run at (0,2) width 64: "Success!"
       RenderBlock {DIV} at (0,117) size 784x40
