@@ -58,6 +58,8 @@ public:
 
     PassRefPtr<CSSMutableStyleDeclaration> copyInheritableProperties() const;
 
+    static void removeComputedInheritablePropertiesFrom(CSSMutableStyleDeclaration*);
+
 private:
     virtual void setCssText(const String&, ExceptionCode&);
     virtual String removeProperty(int propertyID, ExceptionCode&);

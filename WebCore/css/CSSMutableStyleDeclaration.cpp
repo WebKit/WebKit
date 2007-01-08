@@ -416,39 +416,6 @@ void CSSMutableStyleDeclaration::merge(CSSMutableStyleDeclaration *other, bool a
     // a notifyChanged argument to this function to follow the model of other functions in this class.
 }
 
-// This is the list of properties we want to copy in the copyInheritableProperties() function.
-// It is the intersection of the list of inherited CSS properties and the
-// properties for which we have a computed implementation in this file.
-// FIXME: This array is duplicated in CSSComputedStyleDeclaration.cpp!  Both must be patched if
-// you add something here!
-const int inheritableProperties[] = {
-    CSS_PROP_BORDER_COLLAPSE,
-    CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING,
-    CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING,
-    CSS_PROP_COLOR,
-    CSS_PROP_FONT_FAMILY,
-    CSS_PROP_FONT_SIZE,
-    CSS_PROP_FONT_STYLE,
-    CSS_PROP_FONT_VARIANT,
-    CSS_PROP_FONT_WEIGHT,
-    CSS_PROP_LETTER_SPACING,
-    CSS_PROP_LINE_HEIGHT,
-    CSS_PROP_TEXT_ALIGN,
-    CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT,
-    CSS_PROP__WEBKIT_TEXT_FILL_COLOR,
-    CSS_PROP_TEXT_INDENT,
-    CSS_PROP__WEBKIT_TEXT_SIZE_ADJUST,
-    CSS_PROP__WEBKIT_TEXT_STROKE_COLOR,
-    CSS_PROP__WEBKIT_TEXT_STROKE_WIDTH,
-    CSS_PROP_TEXT_TRANSFORM,
-    CSS_PROP_ORPHANS,
-    CSS_PROP_WHITE_SPACE,
-    CSS_PROP_WIDOWS,
-    CSS_PROP_WORD_SPACING,
-};
-
-const unsigned numInheritableProperties = sizeof(inheritableProperties) / sizeof(inheritableProperties[0]);
-
 // This is the list of properties we want to copy in the copyBlockProperties() function.
 // It is the list of CSS properties that apply specially to block-level elements.
 static const int blockProperties[] = {
@@ -481,11 +448,6 @@ PassRefPtr<CSSMutableStyleDeclaration> CSSMutableStyleDeclaration::copyBlockProp
 void CSSMutableStyleDeclaration::removeBlockProperties()
 {
     removePropertiesInSet(blockProperties, numBlockProperties);
-}
-
-void CSSMutableStyleDeclaration::removeInheritableProperties()
-{
-    removePropertiesInSet(inheritableProperties, numInheritableProperties);
 }
 
 void CSSMutableStyleDeclaration::removePropertiesInSet(const int *set, unsigned length)
