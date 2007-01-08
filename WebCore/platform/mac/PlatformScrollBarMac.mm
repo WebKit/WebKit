@@ -27,12 +27,10 @@
 #import "PlatformScrollBar.h"
 
 #import "BlockExceptions.h"
-#import "WebCoreWidgetHolder.h"
-#import "WidgetClient.h"
 
 using namespace WebCore;
 
-@interface WebCoreScrollBar : NSScroller <WebCoreWidgetHolder>
+@interface WebCoreScrollBar : NSScroller
 {
     PlatformScrollbar* scrollbar;
 }
@@ -91,16 +89,11 @@ static NSControlSize NSControlSizeForScrollBarControlSize(ScrollbarControlSize s
         scrollbar->scrollbarHit([sender hitPart]);
 }
 
-- (Widget *)widget
-{
-    return scrollbar;
-}
-
 - (void)mouseDown:(NSEvent *)event
 {
-    Widget::beforeMouseDown(self);
+    Widget::beforeMouseDown(self, scrollbar);
     [super mouseDown:event];
-    Widget::afterMouseDown(self);
+    Widget::afterMouseDown(self, scrollbar);
 }
 
 @end

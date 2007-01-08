@@ -34,15 +34,19 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "DocLoader.h"
-#if PLATFORM(MAC)
-#include "SVGImage.h"
-#endif
 #include "LoaderFunctions.h"
+#include "Request.h"
+#include <wtf/Vector.h>
+
 #if PLATFORM(CG)
 #include "PDFDocumentImage.h"
 #endif
-#include "Request.h"
-#include <wtf/Vector.h>
+
+#ifdef SVG_SUPPORT
+#if PLATFORM(MAC)
+#include "SVGImage.h"
+#endif
+#endif
 
 using std::max;
 
@@ -140,22 +144,23 @@ void CachedImage::clear()
 inline void CachedImage::createImage()
 {
     // Create the image if it doesn't yet exist.
-    
-    if (!m_image) {
+    if (m_image)
+        return;
 #if PLATFORM(CG)
-        if (m_response.mimeType() == "application/pdf")
-            m_image = new PDFDocumentImage;
-        else
+    if (m_response.mimeType() == "application/pdf") {
+        m_image = new PDFDocumentImage;
+        return;
+    }
 #endif
 #ifdef SVG_SUPPORT
 #if PLATFORM(MAC)
-        if (m_response.mimeType() == "image/svg+xml")
-            m_image = new SVGImage(this);
-        else
-#endif
-#endif
-            m_image = new BitmapImage(this);
+    if (m_response.mimeType() == "image/svg+xml") {
+        m_image = new SVGImage(this);
+        return;
     }
+#endif
+#endif
+    m_image = new BitmapImage(this);
 }
 
 Vector<char>& CachedImage::bufferData(const char* bytes, int addedSize, Request* request)

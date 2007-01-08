@@ -31,26 +31,7 @@ namespace WebCore {
     class Element;
     class Widget;
 
-    class WidgetClient {
-    public:
-        virtual ~WidgetClient() { }
-
-        virtual void scrollToVisible(Widget*) { }
-
-        virtual void focusIn(Widget*) { }
-        virtual void focusOut(Widget*) { }
-
-        virtual void clicked(Widget*) { }
-        virtual void valueChanged(Widget*) { }
-        virtual void selectionChanged(Widget*) { }
-
-        virtual void returnPressed(Widget*) { }
-        virtual void performSearch(Widget*) { }
-
-        virtual Element* element(Widget*) { return 0; }
-        virtual void sendConsumedMouseUp(Widget*) { }
-        virtual bool isVisible(Widget*) { return false; }
-    };
+    class WidgetClient { };
 
 }
 

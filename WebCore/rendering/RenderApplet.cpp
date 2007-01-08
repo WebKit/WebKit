@@ -49,18 +49,18 @@ RenderApplet::~RenderApplet()
 
 int RenderApplet::intrinsicWidth() const
 {
-    if (!m_widget)
-        return 150;
-    int w = m_widget->sizeHint().width();
-    return w > 10 ? w : 50;
+    // FIXME: This doesn't make sense.
+    // After some research we can probably remove this entirely and just call
+    // setIntrinsicWidth in the constructor.
+    return m_widget ? 50 : 150;
 }
 
 int RenderApplet::intrinsicHeight() const
 {
-    if (!m_widget)
-        return 150;
-    int h = m_widget->sizeHint().height();
-    return h > 10 ? h : 50;
+    // FIXME: This doesn't make sense.
+    // After some research we can probably remove this entirely and just call
+    // setIntrinsicHeight in the constructor.
+    return m_widget ? 50 : 150;
 }
 
 void RenderApplet::createWidgetIfNecessary()

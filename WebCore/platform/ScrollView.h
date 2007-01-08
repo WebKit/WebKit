@@ -26,10 +26,8 @@
 #ifndef ScrollView_H
 #define ScrollView_H
 
-#include "IntRect.h"
 #include "ScrollTypes.h"
 #include "Widget.h"
-#include <wtf/Platform.h>
 
 #if PLATFORM(QT)
 class QScrollArea;
@@ -40,7 +38,9 @@ typedef struct HRGN__* HRGN;
 #endif
 
 namespace WebCore {
+
     class FloatRect;
+    class IntRect;
     class PlatformWheelEvent;
     class PlatformScrollbar;
 

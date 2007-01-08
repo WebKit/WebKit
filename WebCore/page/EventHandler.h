@@ -126,8 +126,6 @@ public:
 #if PLATFORM(MAC)
     PassRefPtr<KeyboardEvent> currentKeyboardEvent() const;
 
-    static bool currentEventIsMouseDownInWidget(Widget*);
-
     void mouseDown(NSEvent*);
     void mouseDragged(NSEvent*);
     void mouseUp(NSEvent*);

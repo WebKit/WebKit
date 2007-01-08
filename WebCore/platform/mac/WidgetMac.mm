@@ -26,28 +26,22 @@
 #import "config.h"
 #import "Widget.h"
 
+#import "BlockExceptions.h"
 #import "Cursor.h"
 #import "Document.h"
 #import "Font.h"
-#import "GraphicsContext.h"
-#import "BlockExceptions.h"
 #import "FrameMac.h"
+#import "GraphicsContext.h"
 #import "RetainPtr.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
-#import "WebCoreWidgetHolder.h"
 #import "WidgetClient.h"
 
 namespace WebCore {
 
-static bool deferFirstResponderChanges;
-static Widget *deferredFirstResponder;
-
-class WidgetPrivate
-{
+class WidgetPrivate {
 public:
-    Font font;
     RetainPtr<NSView> view;
     WidgetClient* client;
     bool visible;
@@ -75,9 +69,6 @@ Widget::Widget(NSView* view) : data(new WidgetPrivate)
 
 Widget::~Widget() 
 {
-    if (deferredFirstResponder == this)
-        deferredFirstResponder = 0;
-
     delete data;
 }
 
@@ -114,108 +105,62 @@ IntRect Widget::frameGeometry() const
 
 bool Widget::hasFocus() const
 {
-    if (deferFirstResponderChanges && deferredFirstResponder)
-        return this == deferredFirstResponder;
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    NSView *view = [getView() _webcore_effectiveFirstResponder];
-
-    id firstResponder = [FrameMac::bridgeForWidget(this) firstResponder];
-
-    if (!firstResponder)
-        return false;
-    if (firstResponder == view)
-        return true;
-
-    // Some widgets, like text fields, secure text fields, text areas, and selects
-    // (when displayed using a list box) may have a descendent widget that is
-    // first responder. This checksDescendantsForFocus() check, turned on for the 
-    // four widget types listed, enables the additional check which makes this 
-    // function work correctly for the above-mentioned widget types.
-    if (checksDescendantsForFocus() && 
-        [firstResponder isKindOfClass:[NSView class]] && 
-        [(NSView *)firstResponder isDescendantOf:view]) {
-        // Return true when the first responder is a subview of this widget's view
-        return true;
-    }
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-
+    ASSERT_NOT_REACHED();
     return false;
 }
 
+// FIXME: Should move this to Chrome; bad layering that this knows about Frame.
 void Widget::setFocus()
 {
-    if (hasFocus())
+    Frame* frame = Frame::frameForWidget(this);
+    if (!frame)
         return;
-
-    if (deferFirstResponderChanges) {
-        deferredFirstResponder = this;
-        return;
-    }
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
+ 
     NSView *view = [getView() _webcore_effectiveFirstResponder];
-    if ([view superview] && [view acceptsFirstResponder]) {
-        WebCoreFrameBridge *bridge = FrameMac::bridgeForWidget(this);
-        NSResponder *oldFirstResponder = [bridge firstResponder];
+    WebCoreFrameBridge *bridge = Mac(frame)->bridge();
+    id firstResponder = [bridge firstResponder];
+    if (firstResponder && firstResponder == view)
+        return;
 
-        [bridge makeFirstResponder:view];
+    if (![view superview] || ![view acceptsFirstResponder])
+        return;
 
-        // Setting focus can actually cause a style change which might
-        // remove the view from its superview while it's being made
-        // first responder. This confuses AppKit so we must restore
-        // the old first responder.
+    NSResponder *oldFirstResponder = [bridge firstResponder];
 
-        if (![view superview])
-            [bridge makeFirstResponder:oldFirstResponder];
-    }
+    [bridge makeFirstResponder:view];
+
+    // Setting focus can actually cause a style change which might
+    // remove the view from its superview while it's being made
+    // first responder. This confuses AppKit so we must restore
+    // the old first responder.
+    if (![view superview])
+        [bridge makeFirstResponder:oldFirstResponder];
+
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void Widget::clearFocus()
 {
-    if (!hasFocus())
-        return;
-    // FIXME: This probably shouldn't be the Widget's responsibility
-    Frame* frame = Frame::frameForWidget(this);
-    if (!frame)
-        return;
-    frame->document()->setFocusedNode(0);
+    ASSERT_NOT_REACHED();
 }
 
 Widget::FocusPolicy Widget::focusPolicy() const
 {
-    // This provides support for controlling the widgets that take 
-    // part in tab navigation. Widgets must:
-    // 1. not be hidden by css
-    // 2. be enabled
-    // 3. accept first responder
-
-    if (!client())
-        return NoFocus;
-    if (!client()->isVisible(const_cast<Widget*>(this)))
-        return NoFocus;
-    if (!isEnabled())
-        return NoFocus;
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    if (![getView() acceptsFirstResponder])
-        return NoFocus;
-    END_BLOCK_OBJC_EXCEPTIONS;
-
-    return TabFocus;
+    ASSERT_NOT_REACHED();
+    return NoFocus;
 }
 
 const Font& Widget::font() const
 {
-    return data->font;
+    ASSERT_NOT_REACHED();
+    return *static_cast<Font*>(0);
 }
 
 void Widget::setFont(const Font& font)
 {
-    data->font = font;
+    ASSERT_NOT_REACHED();
 }
 
 void Widget::setCursor(const Cursor& cursor)
@@ -240,7 +185,7 @@ void Widget::show()
     data->visible = true;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [getOuterView() setHidden: NO];
+    [getOuterView() setHidden:NO];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
@@ -252,7 +197,7 @@ void Widget::hide()
     data->visible = false;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [getOuterView() setHidden: YES];
+    [getOuterView() setHidden:YES];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
@@ -293,46 +238,25 @@ NSView* Widget::getOuterView() const
     return view;
 }
 
-// FIXME: Get rid of the single use of these next two functions (frame resizing), and remove them.
-
 GraphicsContext* Widget::lockDrawingFocus()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [getView() lockFocus];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    PlatformGraphicsContext* platformContext = static_cast<PlatformGraphicsContext*>([[NSGraphicsContext currentContext] graphicsPort]);
-    ASSERT([[NSGraphicsContext currentContext] isFlipped]);
-    return new GraphicsContext(platformContext);
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
-void Widget::unlockDrawingFocus(GraphicsContext* context)
+void Widget::unlockDrawingFocus(GraphicsContext*)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [getView() unlockFocus];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    delete context;
+    ASSERT_NOT_REACHED();
 }
 
 void Widget::disableFlushDrawing()
 {
-    // It's OK to use the real window here, because if the view's not
-    // in the view hierarchy, then we don't actually want to affect
-    // flushing.
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [[getView() window] disableFlushWindow];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    ASSERT_NOT_REACHED();
 }
 
 void Widget::enableFlushDrawing()
 {
-    // It's OK to use the real window here, because if the view's not
-    // in the view hierarchy, then we don't actually want to affect
-    // flushing.
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    NSWindow* window = [getView() window];
-    [window enableFlushWindow];
-    [window flushWindow];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    ASSERT_NOT_REACHED();
 }
 
 void Widget::paint(GraphicsContext* p, const IntRect& r)
@@ -340,8 +264,6 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
     if (p->paintingDisabled())
         return;
     NSView *view = getOuterView();
-    // WebCoreTextField relies on the fact that we use this particular
-    // NSView display method. If you change this, be sure to update them as well.
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]]];
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -363,13 +285,14 @@ void Widget::invalidateRect(const IntRect& r)
 
 void Widget::sendConsumedMouseUp()
 {
-    if (client())
-        client()->sendConsumedMouseUp(this);
+    ASSERT_NOT_REACHED();
 }
 
+// FIXME: Should move this to Chrome; bad layering that this knows about Frame.
 void Widget::setIsSelected(bool isSelected)
 {
-    [FrameMac::bridgeForWidget(this) setIsSelected:isSelected forView:getView()];
+    if (Frame* frame = Frame::frameForWidget(this))
+        [Mac(frame)->bridge() setIsSelected:isSelected forView:getView()];
 }
 
 void Widget::addToSuperview(NSView *superview)
@@ -398,10 +321,8 @@ void Widget::removeFromSuperview()
     }
 }
 
-void Widget::beforeMouseDown(NSView *view)
+void Widget::beforeMouseDown(NSView *view, Widget* widget)
 {
-    ASSERT([view conformsToProtocol:@protocol(WebCoreWidgetHolder)]);
-    Widget* widget = [(NSView <WebCoreWidgetHolder> *)view widget];
     if (widget) {
         ASSERT(view == widget->getOuterView());
         ASSERT(!widget->data->mustStayInWindow);
@@ -409,10 +330,8 @@ void Widget::beforeMouseDown(NSView *view)
     }
 }
 
-void Widget::afterMouseDown(NSView *view)
+void Widget::afterMouseDown(NSView *view, Widget* widget)
 {
-    ASSERT([view conformsToProtocol:@protocol(WebCoreWidgetHolder)]);
-    Widget* widget = [(NSView <WebCoreWidgetHolder>*)view widget];
     if (!widget) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
         [view removeFromSuperview];
@@ -422,18 +341,6 @@ void Widget::afterMouseDown(NSView *view)
         widget->data->mustStayInWindow = false;
         if (widget->data->removeFromSuperviewSoon)
             widget->removeFromSuperview();
-    }
-}
-
-void Widget::setDeferFirstResponderChanges(bool defer)
-{
-    deferFirstResponderChanges = defer;
-    if (!defer) {
-        Widget* r = deferredFirstResponder;
-        deferredFirstResponder = 0;
-        if (r) {
-            r->setFocus();
-        }
     }
 }
 

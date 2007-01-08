@@ -64,20 +64,9 @@ namespace WebCore {
 
     class Widget {
     public:
-
-        enum FocusPolicy {
-            NoFocus = 0,
-            TabFocus = 0x1,
-            ClickFocus = 0x2,
-            StrongFocus = 0x3,
-            WheelFocus = 0x7
-        };
-
         Widget();
         virtual ~Widget();
 
-        virtual IntSize sizeHint() const;
-        
         virtual void setEnabled(bool);
         virtual bool isEnabled() const;
 
@@ -99,30 +88,13 @@ namespace WebCore {
         virtual void setFrameGeometry(const IntRect&);
         virtual IntRect frameGeometry() const;
 
-        virtual int baselinePosition(int height) const; // relative to the top of the widget
-
-        virtual bool hasFocus() const;
         virtual void setFocus();
-        virtual void clearFocus();
-        virtual bool checksDescendantsForFocus() const;
-
-        virtual FocusPolicy focusPolicy() const;
-
-        const Font& font() const;
-        virtual void setFont(const Font&);
 
         void setCursor(const Cursor&);
         Cursor cursor();
 
         virtual void show();
         virtual void hide();
-
-        virtual void populate() {}
-
-        GraphicsContext* lockDrawingFocus();
-        void unlockDrawingFocus(GraphicsContext*);
-        void enableFlushDrawing();
-        void disableFlushDrawing();
 
         void setIsSelected(bool);
 
@@ -139,6 +111,7 @@ namespace WebCore {
         virtual IntRect windowClipRect() const;
 
         virtual void handleEvent(Event*) { }
+
 #if PLATFORM(WIN)
         void setContainingWindow(HWND);
         HWND containingWindow() const;
@@ -170,8 +143,8 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(GDK)
-        Widget(GdkDrawable* drawable);
-        virtual void setDrawable(GdkDrawable* drawable);
+        Widget(GdkDrawable*);
+        virtual void setDrawable(GdkDrawable*);
         GdkDrawable* drawable() const;
 #endif
 
@@ -184,7 +157,7 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(MAC)
-        Widget(NSView* view);
+        Widget(NSView*);
 
         NSView* getView() const;
         NSView* getOuterView() const;
@@ -192,14 +165,24 @@ namespace WebCore {
         
         void sendConsumedMouseUp();
         
-        static void beforeMouseDown(NSView*);
-        static void afterMouseDown(NSView*);
+        static void beforeMouseDown(NSView*, Widget*);
+        static void afterMouseDown(NSView*, Widget*);
 
         void addToSuperview(NSView* superview);
         void removeFromSuperview();
-
-        static void setDeferFirstResponderChanges(bool);
 #endif
+
+        // To be deleted.
+        enum FocusPolicy { NoFocus, TabFocus, ClickFocus, StrongFocus, WheelFocus };
+        GraphicsContext* lockDrawingFocus();
+        const Font& font() const;
+        virtual FocusPolicy focusPolicy() const;
+        virtual bool hasFocus() const;
+        virtual void clearFocus();
+        virtual void setFont(const Font&);
+        void disableFlushDrawing();
+        void enableFlushDrawing();
+        void unlockDrawingFocus(GraphicsContext*);
 
     private:
         WidgetPrivate* data;

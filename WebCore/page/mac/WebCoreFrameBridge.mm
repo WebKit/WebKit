@@ -78,7 +78,6 @@
 #import "TypingCommand.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreViewFactory.h"
-#import "WebCoreWidgetHolder.h"
 #import "DocumentLoader.h"
 #import "FormDataStreamMac.h"
 #import "SubresourceLoader.h"
@@ -550,18 +549,6 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
     }
 
     m_frame->view()->initScrollbars();
-}
-
-- (DOMElement*)elementForView:(NSView*)view
-{
-    // FIXME: implemented currently for only a subset of the KWQ widgets
-    if ([view conformsToProtocol:@protocol(WebCoreWidgetHolder)]) {
-        NSView <WebCoreWidgetHolder>* widgetHolder = view;
-        Widget* widget = [widgetHolder widget];
-        if (widget && widget->client())
-            return [DOMElement _elementWith:widget->client()->element(widget)];
-    }
-    return nil;
 }
 
 static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)

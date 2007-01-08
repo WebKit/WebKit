@@ -25,18 +25,19 @@
 #include "config.h"
 #include "Node.h"
 
+#include "CString.h"
 #include "ChildNodeList.h"
 #include "DOMImplementation.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
-#include "NamedAttrMap.h"
-#include "Text.h"
-#include "htmlediting.h"
 #include "HTMLNames.h"
-#include "kjs_binding.h"
+#include "NamedAttrMap.h"
 #include "RenderObject.h"
+#include "Text.h"
 #include "TextStream.h"
+#include "htmlediting.h"
+#include "kjs_binding.h"
 
 namespace WebCore {
 
@@ -671,10 +672,8 @@ Node::StyleChange Node::diff( RenderStyle *s1, RenderStyle *s2 ) const
 }
 
 #ifndef NDEBUG
-void Node::dump(TextStream *stream, DeprecatedString ind) const
+void Node::dump(TextStream* stream, DeprecatedString ind) const
 {
-    // ### implement dump() for all appropriate subclasses
-
     if (m_hasId) { *stream << " hasId"; }
     if (m_hasClass) { *stream << " hasClass"; }
     if (m_hasStyle) { *stream << " hasStyle"; }
@@ -686,11 +685,9 @@ void Node::dump(TextStream *stream, DeprecatedString ind) const
     *stream << " tabIndex=" << m_tabIndex;
     *stream << endl;
 
-    Node *child = firstChild();
-    while(child) {
-        *stream << ind << child->nodeName().deprecatedString().ascii() << ": ";
-        child->dump(stream,ind+"  ");
-        child = child->nextSibling();
+    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+        *stream << ind << child->nodeName() << ": ";
+        child->dump(stream, ind + "  ");
     }
 }
 #endif
@@ -1401,10 +1398,10 @@ bool Node::offsetInCharacters() const
 
 #ifndef NDEBUG
 
-static void appendAttributeDesc(const Node *node, String &string, const QualifiedName& name, DeprecatedString attrDesc)
+static void appendAttributeDesc(const Node* node, String& string, const QualifiedName& name, const char* attrDesc)
 {
     if (node->isElementNode()) {
-        String attr = static_cast<const Element *>(node)->getAttribute(name);
+        String attr = static_cast<const Element*>(node)->getAttribute(name);
         if (!attr.isEmpty()) {
             string += attrDesc;
             string += attr;
@@ -1417,15 +1414,15 @@ void Node::showNode(const char* prefix) const
     if (!prefix)
         prefix = "";
     if (isTextNode()) {
-        DeprecatedString value = nodeValue().deprecatedString();
+        String value = nodeValue();
         value.replace('\\', "\\\\");
         value.replace('\n', "\\n");
-        fprintf(stderr, "%s%s\t%p \"%s\"\n", prefix, nodeName().deprecatedString().utf8().data(), this, value.utf8().data());
+        fprintf(stderr, "%s%s\t%p \"%s\"\n", prefix, nodeName().utf8().data(), this, value.utf8().data());
     } else {
         String attrs = "";
         appendAttributeDesc(this, attrs, classAttr, " CLASS=");
         appendAttributeDesc(this, attrs, styleAttr, " STYLE=");
-        fprintf(stderr, "%s%s\t%p%s\n", prefix, nodeName().deprecatedString().utf8().data(), this, attrs.deprecatedString().ascii());
+        fprintf(stderr, "%s%s\t%p%s\n", prefix, nodeName().utf8().data(), this, attrs.utf8().data());
     }
 }
 
@@ -1454,7 +1451,7 @@ void Node::showTreeAndMark(const Node* markedNode1, const char* markedLabel1, co
     }
 }
 
-void Node::formatForDebugger(char *buffer, unsigned length) const
+void Node::formatForDebugger(char* buffer, unsigned length) const
 {
     String result;
     String s;
@@ -1465,7 +1462,7 @@ void Node::formatForDebugger(char *buffer, unsigned length) const
     else
         result += s;
           
-    strncpy(buffer, result.deprecatedString().latin1(), length - 1);
+    strncpy(buffer, result.utf8().data(), length - 1);
 }
 
 #endif

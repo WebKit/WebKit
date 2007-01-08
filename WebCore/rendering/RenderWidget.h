@@ -25,11 +25,12 @@
 #define RenderWidget_h
 
 #include "RenderReplaced.h"
-#include "WidgetClient.h"
 
 namespace WebCore {
 
-class RenderWidget : public RenderReplaced, public WidgetClient {
+class Widget;
+
+class RenderWidget : public RenderReplaced {
 public:
     RenderWidget(Node*);
     virtual ~RenderWidget();
@@ -41,9 +42,10 @@ public:
     virtual void paint(PaintInfo&, int tx, int ty);
 
     virtual void destroy();
-    virtual void layout( );
+    virtual void layout();
 
     Widget* widget() const { return m_widget; }
+    static RenderWidget* find(const Widget*);
 
     RenderArena* ref() { ++m_refCount; return renderArena(); }
     void deref(RenderArena*);
@@ -57,13 +59,6 @@ public:
     using RenderReplaced::element;
 
 private:
-    virtual void focusIn(Widget*);
-    virtual void focusOut(Widget*);
-    virtual void scrollToVisible(Widget*);
-    virtual Element* element(Widget*);
-    virtual bool isVisible(Widget*);
-    virtual void sendConsumedMouseUp(Widget*);
-
     void resizeWidget(Widget*, int w, int h);
 
     virtual void deleteWidget();

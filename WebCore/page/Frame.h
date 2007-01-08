@@ -31,18 +31,12 @@
 #include "Color.h"
 #include "EditAction.h"
 #include "RenderLayer.h"
-#include "TextAffinity.h"
 #include "TextGranularity.h"
-#include "wtf/unicode/Unicode.h"
+#include <wtf/unicode/Unicode.h>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace KJS {
-    class JSValue;
-    class PausedTimeouts;
-    class SavedBuiltins;
-    class SavedProperties;
-
     namespace Bindings {
         class Instance;
         class RootObject;
@@ -57,7 +51,6 @@ class CSSStyleDeclaration;
 class CommandByName;
 class DOMWindow;
 class Document;
-class EditCommand;
 class Editor;
 class Element;
 class EventHandler;
@@ -70,11 +63,9 @@ class FrameTree;
 class FrameView;
 class GraphicsContext;
 class HTMLFormElement;
-class HitTestResult;
 class IntRect;
 class KJSProxy;
 class KURL;
-class MouseEventWithHitTestResults;
 class Node;
 class Page;
 class Range;
@@ -84,7 +75,6 @@ class RenderStyle;
 class Selection;
 class SelectionController;
 class Settings;
-class VisiblePosition;
 class Widget;
 
 struct FrameLoadRequest;
@@ -260,7 +250,7 @@ public:
     virtual void respondToChangedSelection(const Selection& oldSelection, bool closeTyping) = 0;
     virtual bool shouldChangeSelection(const Selection& oldSelection, const Selection& newSelection, EAffinity, bool stillSelecting) const = 0;
 
-    RenderStyle* styleForSelectionStart(Node* &nodeToRemove) const;
+    RenderStyle* styleForSelectionStart(Node*& nodeToRemove) const;
 
     const Vector<MarkedTextUnderline>& markedTextUnderlines() const;  
     bool markedTextUsesUnderlines() const;

@@ -68,7 +68,7 @@ HTMLFormElement::~HTMLFormElement()
     delete collectionInfo;
     
     for (unsigned i = 0; i < formElements.size(); ++i)
-        formElements[i]->m_form = 0;
+        formElements[i]->formDestroyed();
     for (unsigned i = 0; i < imgElements.size(); ++i)
         imgElements[i]->m_form = 0;
 }

@@ -94,33 +94,6 @@ bool EventHandler::wheelEvent(NSEvent *event)
     return wheelEvent.isAccepted();
 }
 
-bool EventHandler::currentEventIsMouseDownInWidget(Widget* candidate)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    switch ([[NSApp currentEvent] type]) {
-        case NSLeftMouseDown:
-        case NSRightMouseDown:
-        case NSOtherMouseDown:
-            break;
-        default:
-            return false;
-    }
-    END_BLOCK_OBJC_EXCEPTIONS;
-
-    if (!candidate)
-        return false;
-    WidgetClient* client = candidate->client();
-    if (!client)
-        return false;
-    Element* element = client->element(candidate);
-    if (!element)
-        return false;
-    Frame* frame = element->document()->frame();
-    if (!frame)
-        return false;
-    return frame->eventHandler()->nodeUnderMouse() == element;
-}
-
 PassRefPtr<KeyboardEvent> EventHandler::currentKeyboardEvent() const
 {
     NSEvent *event = [NSApp currentEvent];

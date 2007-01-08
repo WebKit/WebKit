@@ -2333,14 +2333,6 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
 
 - (RenderObject*)rendererForView:(NSView*)view
 {
-    // check for WebCore NSView that lets us find its widget
-    Frame* frame = m_renderer->document()->frame();
-    if (frame) {
-        DOMElement* domElement = [Mac(frame)->bridge() elementForView:view];
-        if (domElement)
-            return [domElement _element]->renderer();
-    }
-    
     // check for WebKit NSView that lets us find its bridge
     WebCoreFrameBridge* bridge = nil;
     if ([view conformsToProtocol:@protocol(WebCoreBridgeHolder)]) {

@@ -76,25 +76,6 @@
 
 #pragma mark DOM EXTENSIONS
 
-// This #import is used only by viewForElement and should be deleted 
-// when that function goes away.
-#import "RenderWidget.h"
-
-// This function is used only by the two FormAutoFillTransition categories, and will go away
-// as soon as possible.
-static NSView *viewForElement(DOMElement *element)
-{
-    WebCore::RenderObject *renderer = [element _element]->renderer();
-    if (renderer && renderer->isWidget()) {
-        WebCore::Widget *widget = static_cast<const WebCore::RenderWidget*>(renderer)->widget();
-        if (widget) {
-            widget->populate();
-            return widget->getView();
-        }
-    }
-    return nil;
-}
-
 @implementation DOMHTMLInputElement(FormAutoFillTransition)
 
 - (BOOL)_isTextField
@@ -176,10 +157,7 @@ static NSView *viewForElement(DOMElement *element)
 
 - (void)_activateItemAtIndex:(int)index
 {
-    NSPopUpButton *popUp = (NSPopUpButton *)viewForElement(self);
-    [popUp selectItemAtIndex:index];
-    // Must do this to simulate same side effect as if user made the choice
-    [NSApp sendAction:[popUp action] to:[popUp target] from:popUp];
+    // FIXME: Needs implementation for non-NSView <select>!
 }
 
 @end

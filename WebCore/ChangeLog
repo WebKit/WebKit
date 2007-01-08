@@ -1,3 +1,131 @@
+2007-01-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=12143
+          remove Widget code unneeded now that form elements do not use Widget
+
+        * bindings/objc/DOMHTML.mm: (-[DOMHTMLSelectElement _activateItemAtIndex:]):
+        Removed useless implementation that would only work with NSView-based
+        <select> elements, and added a FIXME about the fact that this function
+        doesn't do anything any more. I think it's used by Safari forms auto-fill.
+
+        * bridge/mac/WebCoreAXObject.mm: (-[WebCoreAXObject rendererForView:]):
+        Removed code that depends on elementForView:, since that always returns
+        nil now.
+
+        * html/HTMLFormElement.cpp: (WebCore::HTMLFormElement::~HTMLFormElement):
+        Use a formDestroyed() function rather than clearing m_form directly so that
+        this class doesn't have to be a friend of HTMLGenericFormElement.
+
+        * html/HTMLGenericFormElement.h: Removed now-unneeded friend declaration
+        for HTMLFormElement. Moved definition of supportsFocus into the .cpp file.
+        Added a public formDestroyed function for use by HTMLFormElement.
+        * html/HTMLGenericFormElement.cpp:
+        (WebCore::HTMLGenericFormElement::attach): Removed widget-specific code.
+        (WebCore::HTMLGenericFormElement::isKeyboardFocusable): Ditto.
+        (WebCore::HTMLGenericFormElement::isMouseFocusable): Ditto.
+        (WebCore::HTMLGenericFormElement::supportsFocus): Added this here; it was
+        in the header file before, for no good reason.
+
+        * page/EventHandler.h: Removed unused Mac-specific
+        currentEventIsMouseDownInWidget.
+        * page/mac/EventHandlerMac.mm: Ditto.
+
+        * page/Frame.cpp: (WebCore::Frame::frameForWidget): Changed to use
+        RenderWidget to find the frame rather than the WigetClient element()
+        function.
+
+        * page/mac/FrameMac.h: Removed unused bridgeForWidget.
+        * page/mac/FrameMac.mm: Ditto.
+
+        * page/mac/WebCoreFrameBridge.h: Removed elementForView.
+        * page/mac/WebCoreFrameBridge.mm: Ditto. While the scroll bar still did
+        implement WebCoreWidgetHolder, it does not correspond to a DOM element,
+        so this method was always returning nil.
+
+        * platform/Widget.h: Moved unused types and functions that are still
+        in the platform-specific implementations into a "to be deleted" section:
+        FocusPolicy, NoFocus, TabFocus, ClickFocus, StrongFocus, WheelFocus,
+        lockDrawingFocus, font, focusPolicy, hasFocus, clearFocus, setFont,
+        disableFlushDrawing, enableFlushDrawing, unlockDrawingFocus.
+        Removed unused functions that are not in platform-specific implementations:
+        sizeHint, baselinePosition, checksDescendantsForFocus.
+        * platform/Widget.cpp: Removed functions.
+
+        * platform/WidgetClient.h: Emptied out the class. Soon we can delete it.
+
+        * platform/mac/PlatformScrollBarMac.mm: (-[WebCoreScrollBar mouseDown:]):
+        Got rid of unneeded includes, removed use of the WebCoreWidgetHolder
+        protocol and the one method in it, and changed the calls to beforeMouseDown
+        and afterMouseDown to pass the widget pointer in.
+
+        * platform/mac/WebCoreWidgetHolder.h: Emptied out the file -- to be deleted
+        later.
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::~Widget): Removed code to manage deferredFirstResponder.
+        (WebCore::Widget::hasFocus): Removed body of function and replaced with
+        an assertion that it's never called. Later we'll remove it.
+        (WebCore::Widget::setFocus): Tweaked a bit to work given changes to the
+        FrameMac class. Also added a FIXME. Given how this works, it does not
+        belong in the platform layer.
+        (WebCore::Widget::clearFocus): Removed body of function and replaced with
+        an assertion that it's never called. Later we'll remove it.
+        (WebCore::Widget::focusPolicy): Ditto.
+        (WebCore::Widget::font): Ditto.
+        (WebCore::Widget::setFont): Ditto.
+        (WebCore::Widget::lockDrawingFocus): Ditto.
+        (WebCore::Widget::unlockDrawingFocus): Ditto.
+        (WebCore::Widget::disableFlushDrawing): Ditto.
+        (WebCore::Widget::enableFlushDrawing): Ditto.
+        (WebCore::Widget::paint): Removed obsolete comment.
+        (WebCore::Widget::sendConsumedMouseUp): Removed body of function and replaced with
+        an assertion that it's never called. Later we'll remove it.
+        (WebCore::Widget::setIsSelected): Tweaked a bit to work given changes to the
+        FrameMac class. Also added a FIXME. Given how this works, it does not
+        belong in the platform layer.
+        (WebCore::Widget::beforeMouseDown): Changed to take an explicit Widget parameter.
+        (WebCore::Widget::afterMouseDown): Ditto.
+
+        * rendering/RenderApplet.cpp:
+        (WebCore::RenderApplet::intrinsicWidth): Changed to not call sizeHint() any more.
+        I didn't change the values returned by the function, but they make no sense and
+        this should probably be fixed later.
+        (WebCore::RenderApplet::intrinsicHeight): Ditto.
+
+        * rendering/RenderWidget.h: Removed unneeded WidgetClient.h include. Changed
+        RenderWidget to no longer inherit from WidgetClient. Added a find function to find
+        a RenderWidget given a Widget. Removed all the virtual functions that override
+        WidgetClient hooks.
+        * rendering/RenderWidget.cpp: Removed all the WidgetClient functions.
+        (WebCore::widgetRendererMap): Added. Map that gives the RenderWidget for each
+        Widget that is owned by a RenderWidget.
+        (WebCore::RenderWidget::destroy): Removed the setClient call and added a call to
+        remove the widget from the widgetRendererMap.
+        (WebCore::RenderWidget::setWidget): Ditto.
+        (WebCore::RenderWidget::setStyle): Removed the call to Widget::setFont.
+        (WebCore::RenderWidget::find): Added. Returns the RenderWidget for a Widget, if any.
+
+        - other changes
+
+        * dom/Node.cpp:
+        (WebCore::Node::dump): Removed unnecessary use of DeprecatedString.
+        (WebCore::appendAttributeDesc): Ditto.
+        (WebCore::Node::showNode): Ditto.
+        (WebCore::Node::formatForDebugger): Ditto.
+
+        * loader/CachedImage.cpp: (WebCore::CachedImage::createImage): Cleaned up
+        conditional compilation so adding more MIME types here doesn't make the
+        function more and more difficult to read.
+
+        * page/Frame.h: Removed unneeded includes and declarations.
+        Tweaked formatting.
+        * page/Page.h: Removed unneeded declarations.
+        * platform/ScrollView.h: Removed unneeded includes.
+
+        * rendering/RenderBlock.cpp: (WebCore::RenderBlock::renderName): Tweaked formatting.
+
 2007-01-08  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

@@ -459,15 +459,6 @@ NPObject *FrameMac::windowScriptNPObject()
     return _windowScriptNPObject;
 }
 
-WebCoreFrameBridge *FrameMac::bridgeForWidget(const Widget* widget)
-{
-    ASSERT_ARG(widget, widget);
-    
-    FrameMac* frame = Mac(frameForWidget(widget));
-    ASSERT(frame);
-    return frame->_bridge;
-}
-
 void FrameMac::runJavaScriptAlert(const String& message)
 {
     String text = message;

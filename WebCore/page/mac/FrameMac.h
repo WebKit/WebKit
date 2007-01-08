@@ -68,10 +68,7 @@ typedef int NSWritingDirection;
 
 namespace WebCore {
 
-class ClipboardMac;
-class EditorClient;
 class HTMLTableCellElement;
-class RenderWidget;
 
 class FrameMac : public Frame {
     friend class Frame;
@@ -89,8 +86,6 @@ private:
 // === undecided, may or may not belong here
 
 public:
-    static WebCoreFrameBridge* bridgeForWidget(const Widget*);
-
     NSString* searchForLabelsAboveCell(RegularExpression*, HTMLTableCellElement*);
     NSString* searchForLabelsBeforeElement(NSArray* labels, Element*);
     NSString* matchLabelsAgainstElement(NSArray* labels, Element*);

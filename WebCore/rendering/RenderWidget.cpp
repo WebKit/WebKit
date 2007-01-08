@@ -41,6 +41,12 @@ namespace WebCore {
 
 using namespace EventNames;
 
+static HashMap<const Widget*, RenderWidget*>& widgetRendererMap()
+{
+    static HashMap<const Widget*, RenderWidget*>* staticWidgetRendererMap = new HashMap<const Widget*, RenderWidget*>;
+    return *staticWidgetRendererMap;
+}
+
 RenderWidget::RenderWidget(Node* node)
       : RenderReplaced(node)
       , m_widget(0)
@@ -52,9 +58,9 @@ RenderWidget::RenderWidget(Node* node)
 
     view()->addWidget(this);
 
-    // this is no real reference counting, its just there
-    // to make sure that we're not deleted while we're recursed
-    // in an eventFilter of the widget
+    // Reference counting is used to prevent the widget from being
+    // destroyed while inside the Widget code, which might not be
+    // able to handle that.
     ref();
 }
 
@@ -76,7 +82,7 @@ void RenderWidget::destroy()
     if (m_widget) {
         if (m_view)
             m_view->removeChild(m_widget);
-        m_widget->setClient(0);
+        widgetRendererMap().remove(m_widget);
     }
 
     RenderLayer* layer = m_layer;
@@ -113,12 +119,12 @@ void RenderWidget::setWidget(Widget* widget)
 {
     if (widget != m_widget) {
         if (m_widget) {
-            m_widget->setClient(0);
+            widgetRendererMap().remove(m_widget);
             deleteWidget();
         }
         m_widget = widget;
         if (m_widget) {
-            m_widget->setClient(this);
+            widgetRendererMap().add(m_widget, this);
             // if we've already received a layout, apply the calculated space to the
             // widget immediately, but we have to have really been full constructed (with a non-null
             // style pointer).
@@ -145,18 +151,10 @@ void RenderWidget::layout()
     setNeedsLayout(false);
 }
 
-void RenderWidget::sendConsumedMouseUp(Widget*)
-{
-    RenderArena* arena = ref();
-    EventTargetNodeCast(node())->dispatchSimulatedMouseEvent(mouseupEvent);
-    deref(arena);
-}
-
 void RenderWidget::setStyle(RenderStyle* newStyle)
 {
     RenderReplaced::setStyle(newStyle);
     if (m_widget) {
-        m_widget->setFont(style()->font());
         if (style()->visibility() != VISIBLE)
             m_widget->hide();
         else
@@ -197,41 +195,6 @@ void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
     // Paint a partially transparent wash over selected widgets.
     if (isSelected() && !document()->printing())
         paintInfo.context->fillRect(selectionRect(), selectionBackgroundColor());
-}
-
-void RenderWidget::focusIn(Widget*)
-{
-    RenderArena* arena = ref();
-    RefPtr<Node> elem = element();
-    if (elem)
-        elem->document()->setFocusedNode(elem);
-    deref(arena);
-}
-
-void RenderWidget::focusOut(Widget*)
-{
-    RenderArena* arena = ref();
-    RefPtr<Node> elem = element();
-    if (elem && elem == elem->document()->focusedNode())
-        elem->document()->setFocusedNode(0);
-    deref(arena);
-}
-
-void RenderWidget::scrollToVisible(Widget* widget)
-{
-    if (RenderLayer* layer = enclosingLayer())
-        layer->scrollRectToVisible(absoluteBoundingBoxRect());
-}
-
-bool RenderWidget::isVisible(Widget* widget)
-{
-    return style()->visibility() == VISIBLE;
-}
-
-Element* RenderWidget::element(Widget* widget)
-{
-    Node* n = node();
-    return n->isElementNode() ? static_cast<Element*>(n) : 0;
 }
 
 void RenderWidget::deref(RenderArena *arena)
@@ -286,6 +249,11 @@ void RenderWidget::setSelectionState(SelectionState state)
 void RenderWidget::deleteWidget()
 {
     delete m_widget;
+}
+
+RenderWidget* RenderWidget::find(const Widget* widget)
+{
+    return widgetRendererMap().get(widget);
 }
 
 } // namespace WebCore

@@ -26,7 +26,6 @@
 #ifndef HTML_HTMLGenericFormElementImpl_h
 #define HTML_HTMLGenericFormElementImpl_h
 
-#include "Document.h"
 #include "HTMLElement.h"
 
 namespace WebCore {
@@ -34,10 +33,7 @@ namespace WebCore {
 class FormDataList;
 class HTMLFormElement;
 
-class HTMLGenericFormElement : public HTMLElement
-{
-    friend class HTMLFormElement;
-
+class HTMLGenericFormElement : public HTMLElement {
 public:
     HTMLGenericFormElement(const QualifiedName& tagName, Document*, HTMLFormElement* = 0);
     virtual ~HTMLGenericFormElement();
@@ -69,7 +65,7 @@ public:
     bool disabled() const;
     void setDisabled(bool);
 
-    virtual bool supportsFocus() const { return isFocusable() || (!disabled() && document() && !document()->haveStylesheetsLoaded()); }
+    virtual bool supportsFocus() const;
     virtual bool isFocusable() const;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
@@ -99,6 +95,8 @@ public:
     virtual void setActivatedSubmit(bool flag) { }
 
     void setTabIndex(int);
+
+    void formDestroyed() { m_form = 0; }
 
 protected:
     HTMLFormElement* getForm() const;
