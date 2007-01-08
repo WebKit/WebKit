@@ -1,3 +1,10 @@
+2007-01-08  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Mark.
+
+        * WebInspector/webInspector/inspector.js: Hide default values of
+        -webkit-column styles in WebInspector.
+
 2007-01-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
