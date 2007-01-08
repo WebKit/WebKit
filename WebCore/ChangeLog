@@ -4,7 +4,7 @@
 
         * page/ContextMenuController.cpp:
         (WebCore::ContextMenuController::contextMenuItemSelected):
-        Adam suggested I should nil-check page->frame()
+        Adam suggested I should nil-check frame->page()
 
 2007-01-08  John Sullivan  <sullivan@apple.com>
 
