@@ -2214,6 +2214,8 @@
 		AA21ECCD0ABF0FC6002B834C /* CSSCursorImageValue.h in Headers */ = {isa = PBXBuildFile; fileRef = AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AA4C3A760B2B1679002334A2 /* StyleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4C3A740B2B1679002334A2 /* StyleElement.cpp */; };
 		AA4C3A770B2B1679002334A2 /* StyleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4C3A750B2B1679002334A2 /* StyleElement.h */; };
+		AA882B2F0B4EF5EB006D26D1 /* PointerEventsHitRules.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA882B2D0B4EF5EB006D26D1 /* PointerEventsHitRules.cpp */; };
+		AA882B300B4EF5EB006D26D1 /* PointerEventsHitRules.h in Headers */ = {isa = PBXBuildFile; fileRef = AA882B2E0B4EF5EB006D26D1 /* PointerEventsHitRules.h */; };
 		AAC8DAB10AA1002000DC0907 /* SVGMetadataElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC8DAAF0AA1002000DC0907 /* SVGMetadataElement.cpp */; };
 		AAC8DAB20AA1002000DC0907 /* SVGMetadataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC8DAB00AA1002000DC0907 /* SVGMetadataElement.h */; };
 		AACF7C4E0B42EE6000080BD8 /* SVGParserUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = AACF7C4C0B42EE6000080BD8 /* SVGParserUtilities.h */; };
@@ -5208,6 +5210,8 @@
 		AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSCursorImageValue.h; sourceTree = "<group>"; };
 		AA4C3A740B2B1679002334A2 /* StyleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StyleElement.cpp; sourceTree = "<group>"; };
 		AA4C3A750B2B1679002334A2 /* StyleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StyleElement.h; sourceTree = "<group>"; };
+		AA882B2D0B4EF5EB006D26D1 /* PointerEventsHitRules.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PointerEventsHitRules.cpp; sourceTree = "<group>"; };
+		AA882B2E0B4EF5EB006D26D1 /* PointerEventsHitRules.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PointerEventsHitRules.h; sourceTree = "<group>"; };
 		AAC8DAAF0AA1002000DC0907 /* SVGMetadataElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGMetadataElement.cpp; sourceTree = "<group>"; };
 		AAC8DAB00AA1002000DC0907 /* SVGMetadataElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGMetadataElement.h; sourceTree = "<group>"; };
 		AACF7C4C0B42EE6000080BD8 /* SVGParserUtilities.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGParserUtilities.h; sourceTree = "<group>"; };
@@ -8062,6 +8066,8 @@
 		A8C0F6EA089701F100BA5114 /* misc */ = {
 			isa = PBXGroup;
 			children = (
+				AA882B2D0B4EF5EB006D26D1 /* PointerEventsHitRules.cpp */,
+				AA882B2E0B4EF5EB006D26D1 /* PointerEventsHitRules.h */,
 				A8C0F6EB089701F100BA5114 /* KCanvasRenderingStyle.cpp */,
 				A8C0F6EC089701F100BA5114 /* KCanvasRenderingStyle.h */,
 				A8C0F6EF089701F100BA5114 /* TimeScheduler.cpp */,
@@ -10949,6 +10955,7 @@
 				A82422700B4A16C50084722B /* SVGAnimateMotionElement.h in Headers */,
 				062287840B4DB322000C34DF /* FocusDirection.h in Headers */,
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
+				AA882B300B4EF5EB006D26D1 /* PointerEventsHitRules.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12283,6 +12290,7 @@
 				A82422710B4A16C50084722B /* SVGAnimateMotionElement.cpp in Sources */,
 				1A4A954D0B4EDCCB002D8C3C /* SharedBuffer.cpp in Sources */,
 				1A4A95520B4EDCFF002D8C3C /* SharedBufferMac.mm in Sources */,
+				AA882B2F0B4EF5EB006D26D1 /* PointerEventsHitRules.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

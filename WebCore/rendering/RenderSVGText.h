@@ -24,8 +24,8 @@
 #define RenderSVGText_H
 #ifdef SVG_SUPPORT
 
-#include "RenderSVGBlock.h"
 #include "AffineTransform.h"
+#include "RenderSVGBlock.h"
 
 namespace WebCore {
 

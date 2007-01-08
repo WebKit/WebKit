@@ -1,0 +1,327 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (0,76) size 549x530
+      RenderSVGText {text} at (110,90) size 800x18
+        RenderSVGInlineText {#text} at (0,-14) size 107x18
+          text run at (0,-14) width 107: "Visibility: visible"
+      RenderSVGText {text} at (340,90) size 800x18
+        RenderSVGInlineText {#text} at (0,-14) size 109x18
+          text run at (0,-14) width 109: "Visibility: hidden"
+      RenderSVGContainer {g} at (0,100) size 549x506
+        RenderSVGText {text} at (0,130) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 88x18
+            text run at (0,-14) width 88: "visiblePainted"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (105,120) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (162,120) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (219,120) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (276,120) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (333,120) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (390,120) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (447,120) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (504,120) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderSVGText {text} at (0,187) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 62x18
+            text run at (0,-14) width 62: "visibleFill"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (105,177) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (162,177) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (219,177) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (276,177) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (333,177) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (390,177) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (447,177) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (504,177) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderSVGText {text} at (0,244) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 82x18
+            text run at (0,-14) width 82: "visibleStroke"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (105,234) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (162,234) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (219,234) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (276,234) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (333,234) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (390,234) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (447,234) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (504,234) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderSVGText {text} at (0,301) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 41x18
+            text run at (0,-14) width 41: "visible"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (105,291) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (162,291) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (219,291) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (276,291) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (333,291) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (390,291) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (447,291) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (504,291) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderSVGText {text} at (0,358) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 46x18
+            text run at (0,-14) width 46: "painted"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (105,348) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (162,348) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (219,348) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (276,348) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (333,348) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (390,348) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (447,348) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (504,348) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderSVGText {text} at (0,415) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 17x18
+            text run at (0,-14) width 17: "fill"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (105,405) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (162,405) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (219,405) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (276,405) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (333,405) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (390,405) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (447,405) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (504,405) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderSVGText {text} at (0,472) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 38x18
+            text run at (0,-14) width 38: "stroke"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (105,462) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (162,462) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (219,462) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (276,462) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (333,462) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (390,462) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (447,462) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (504,462) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderSVGText {text} at (0,529) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 15x18
+            text run at (0,-14) width 15: "all"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (105,519) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (162,519) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (219,519) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (276,519) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (333,519) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (390,519) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (447,519) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (504,519) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 27x18
+            text run at (0,-14) width 27: "HIT"
+        RenderSVGText {text} at (0,586) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 31x18
+            text run at (0,-14) width 31: "none"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (105,576) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (162,576) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (219,576) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (276,576) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (333,576) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (390,576) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (447,576) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+        RenderImage {image} at (0,0) size 50x50
+        RenderSVGText {text} at (504,576) size 800x18
+          RenderSVGInlineText {#text} at (0,-14) size 28x18
+            text run at (0,-14) width 28: "miss"
+selection start: position 0 of child 0 {#text} of child 3 {text} of child 0 {svg} of document
+selection end:   position 0 of child 5 {text} of child 0 {svg} of document

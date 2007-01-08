@@ -1,3 +1,27 @@
+2007-01-07  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10587
+        pointer-events is not implemented for RenderSVGImage or RenderSVGText
+
+        Implement pointer-events for raster images and svg text.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/misc/PointerEventsHitRules.cpp: Added.
+        (WebCore::PointerEventsHitRules::PointerEventsHitRules):
+        * ksvg2/misc/PointerEventsHitRules.h: Added.
+        (WebCore::PointerEventsHitRules::):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::nodeAtPoint):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::nodeAtPoint):
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::nodeAtPoint):
+        * rendering/RenderSVGText.h:
+
 2007-01-07  David Hyatt  <hyatt@apple.com>
 
         Fix a regression where border-radius was not clipping the background when border was set to none.

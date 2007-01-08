@@ -29,6 +29,7 @@
 
 #include "GraphicsContext.h"
 #include "KCanvasRenderingStyle.h"
+#include "PointerEventsHitRules.h"
 #include "SVGLength.h"
 #include "SVGLengthList.h"
 #include "SVGTextElement.h"
@@ -99,9 +100,19 @@ InlineBox* RenderSVGText::createInlineBox(bool makePlaceHolderBox, bool isRootLi
 
 bool RenderSVGText::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
-    double localX, localY;
-    absoluteTransform().inverse().map(_x, _y, &localX, &localY);
-    return RenderBlock::nodeAtPoint(request, result, (int)localX, (int)localY, _tx, _ty, hitTestAction);
+    PointerEventsHitRules hitRules(PointerEventsHitRules::SVG_TEXT_HITTESTING, style()->svgStyle()->pointerEvents());
+    bool isVisible = (style()->visibility() == VISIBLE);
+    if (isVisible || !hitRules.requireVisible) {
+        if ((hitRules.canHitStroke && (style()->svgStyle()->hasStroke() || !hitRules.requireStroke))
+            || (hitRules.canHitFill && (style()->svgStyle()->hasFill() || !hitRules.requireFill))) {
+            AffineTransform totalTransform = absoluteTransform();
+            double localX, localY;
+            totalTransform.inverse().map(_x, _y, &localX, &localY);
+            FloatPoint hitPoint(_x, _y);
+            return RenderBlock::nodeAtPoint(request, result, (int)localX, (int)localY, _tx, _ty, hitTestAction);
+        }
+    }
+    return false;
 }
 
 void RenderSVGText::absoluteRects(Vector<IntRect>& rects, int tx, int ty)

@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
     Copyright (C) 2006 Apple Computer, Inc.
+    Copyright (C) 2007 Rob Buis <buis@kde.org>
 
     This file is part of the WebKit project.
 
@@ -20,8 +21,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KCanvas_RenderSVGImage_H
-#define KCanvas_RenderSVGImage_H
+#ifndef RenderSVGImage_H
+#define RenderSVGImage_H
 #ifdef SVG_SUPPORT
 
 #include "AffineTransform.h"
@@ -65,6 +66,6 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KCanvas_RenderSVGImage_H
+#endif // RenderSVGImage_H
 
 // vim:ts=4:noet

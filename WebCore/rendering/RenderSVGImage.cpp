@@ -26,6 +26,7 @@
 
 #include "Attr.h"
 #include "GraphicsContext.h"
+#include "PointerEventsHitRules.h"
 #include "SVGResourceClipper.h"
 #include "SVGResourceFilter.h"
 #include "SVGResourceMasker.h"
@@ -185,11 +186,18 @@ void RenderSVGImage::computeAbsoluteRepaintRect(IntRect& r, bool f)
 
 bool RenderSVGImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
-    AffineTransform totalTransform = absoluteTransform();
-    totalTransform *= translationForAttributes();
-    double localX, localY;
-    totalTransform.inverse().map(_x + _tx, _y + _ty, &localX, &localY);
-    return RenderImage::nodeAtPoint(request, result, (int)localX, (int)localY, 0, 0, hitTestAction);
+    PointerEventsHitRules hitRules(PointerEventsHitRules::SVG_IMAGE_HITTESTING, style()->svgStyle()->pointerEvents());
+    
+    bool isVisible = (style()->visibility() == VISIBLE);
+    if (isVisible || !hitRules.requireVisible) {
+        AffineTransform totalTransform = absoluteTransform();
+        totalTransform *= translationForAttributes();
+        double localX, localY;
+        totalTransform.inverse().map(_x + _tx, _y + _ty, &localX, &localY);
+        if (hitRules.canHitFill)
+            return RenderImage::nodeAtPoint(request, result, (int)localX, (int)localY, 0, 0, hitTestAction);
+    }
+    return false;
 }
 
 bool RenderSVGImage::requiresLayer()

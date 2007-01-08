@@ -72,23 +72,6 @@ public:
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     
-    // FIXME: When the other SVG classes get pointer-events support this should be moved elsewhere
-    struct PointerEventsHitRules {
-        PointerEventsHitRules()
-        : requireVisible(false)
-        , requireFill(false)
-        , requireStroke(false)
-        , canHitStroke(false)
-        , canHitFill(false)
-    {}
-        
-        bool requireVisible;
-        bool requireFill;
-        bool requireStroke;
-        bool canHitStroke;
-        bool canHitFill;  
-    };
-
     virtual void drawMarkersIfNeeded(GraphicsContext*, const FloatRect&, const Path&) const;
     virtual FloatRect strokeBBox() const;
 
@@ -96,8 +79,6 @@ public:
 
 private:
     FloatPoint mapAbsolutePointToLocal(const FloatPoint&) const;
-    
-    PointerEventsHitRules pointerEventsHitRules();
 
     Path m_path;
 

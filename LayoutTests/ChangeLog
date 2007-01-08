@@ -1,3 +1,24 @@
+2007-01-07  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Testcases for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=10587
+        pointer-events is not implemented for RenderSVGImage or RenderSVGText
+
+        Also changed image-clipped-hit.svg to explicitly state
+        the pointer-events.
+
+        * svg/custom/image-clipped-hit.svg:
+        * svg/custom/pointer-events-image-expected.checksum: Added.
+        * svg/custom/pointer-events-image-expected.png: Added.
+        * svg/custom/pointer-events-image-expected.txt: Added.
+        * svg/custom/pointer-events-image.svg: Added.
+        * svg/custom/pointer-events-text-expected.checksum: Added.
+        * svg/custom/pointer-events-text-expected.png: Added.
+        * svg/custom/pointer-events-text-expected.txt: Added.
+        * svg/custom/pointer-events-text.svg: Added.
+
 2007-01-07  David Hyatt  <hyatt@apple.com>
 
         Add support for the CSS3 box-shadow property.

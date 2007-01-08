@@ -38,7 +38,7 @@
    ]]></script>
    <g style="visibility:hidden" transform="rotate(30)">
 	<svg x="250" width="100" height="150" style="overflow:hidden">"
-		<image onmousedown="clicked=true;" id="image1PNG" x="0" y="0" width="240" height="150" xlink:href="resources/struct-image-01.png"/>
+		<image pointer-events="all" onmousedown="clicked=true;" id="image1PNG" x="0" y="0" width="240" height="150" xlink:href="resources/struct-image-01.png"/>
 	</svg>
    </g>
    <text id="status" x="90" y="130" onmousedown="clicked=true;">Unknown</text>
