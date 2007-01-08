@@ -1,5 +1,13 @@
 2007-01-08  John Sullivan  <sullivan@apple.com>
 
+        Tweak to previous checkin
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        Adam suggested I should nil-check page->frame()
+
+2007-01-08  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Brady and Beth
         
         - fixed <rdar://problem/4912541> GMAIL: With selected text in a rich text message, choosing 
