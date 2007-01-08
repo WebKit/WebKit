@@ -1,3 +1,13 @@
+2007-01-08  Darin Adler  <darin@apple.com>
+
+        - turn off the Armenian part of this test for now,
+          since it gives different results with different fonts
+
+        * fast/lists/w3-list-styles-expected.checksum:
+        * fast/lists/w3-list-styles-expected.png:
+        * fast/lists/w3-list-styles-expected.txt:
+        * fast/lists/w3-list-styles.html:
+
 2007-01-08  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
