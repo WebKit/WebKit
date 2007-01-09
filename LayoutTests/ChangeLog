@@ -1,3 +1,20 @@
+2007-01-09  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Testcases for:
+        http://bugs.webkit.org/show_bug.cgi?id=12145
+        Color parsing is too relaxed in strict mode
+
+        * fast/css/color-quirk-expected.checksum: Added.
+        * fast/css/color-quirk-expected.png: Added.
+        * fast/css/color-quirk-expected.txt: Added.
+        * fast/css/color-quirk.html: Added.
+        * fast/css/color-strict-expected.checksum: Added.
+        * fast/css/color-strict-expected.png: Added.
+        * fast/css/color-strict-expected.txt: Added.
+        * fast/css/color-strict.html: Added.
+
 2007-01-09  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

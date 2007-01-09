@@ -1,3 +1,21 @@
+2007-01-09  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12145
+        Color parsing is too relaxed in strict mode
+        http://bugs.webkit.org/show_bug.cgi?id=12166
+        REGRESSION (r18480): "336633" is not parsed as a color
+
+        Fix a regression by using String::format return value.
+        Also make strict mode more strict for cases where hexcolors
+        lack a #.
+
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseColorFromValue):
+        * css/cssparser.h:
+
 2007-01-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -244,7 +244,7 @@ bool CSSParser::parseValue(CSSMutableStyleDeclaration *declaration, int _id, con
     return ok;
 }
 
-RGBA32 CSSParser::parseColor(const String &string)
+RGBA32 CSSParser::parseColor(const String &string, bool strict)
 {
     RGBA32 color = 0;
     RefPtr<CSSMutableStyleDeclaration>dummyStyleDeclaration = new CSSMutableStyleDeclaration;
@@ -252,7 +252,7 @@ RGBA32 CSSParser::parseColor(const String &string)
     CSSParser parser(true);
 
     // First try creating a color specified by name or the "#" syntax.
-    if (!parser.parseColor(string, color)) {
+    if (!parser.parseColor(string, color, strict)) {
     
         // Now try to create a color from the rgb() or rgba() syntax.
         if (parser.parseColor(dummyStyleDeclaration.get(), string)) {
@@ -2363,9 +2363,9 @@ CSSValueList* CSSParser::parseFontFamily()
     return list;
 }
 
-bool CSSParser::parseColor(const String &name, RGBA32& rgb)
+bool CSSParser::parseColor(const String &name, RGBA32& rgb, bool strict)
 {
-    if (Color::parseHexColor(name, rgb))
+    if (!strict && Color::parseHexColor(name, rgb))
         return true;
 
     // try a little harder
@@ -2455,14 +2455,13 @@ bool CSSParser::parseColorFromValue(Value* value, RGBA32& c, bool svg)
 {
     if (!strict && value->unit == CSSPrimitiveValue::CSS_NUMBER &&
         value->fValue >= 0. && value->fValue < 1000000.) {
-        String str;
-        str.format("%06d", (int)(value->fValue+.5));
-        if (!CSSParser::parseColor(str, c))
+        String str = String::format("%06d", (int)(value->fValue+.5));
+        if (!CSSParser::parseColor(str, c, strict))
             return false;
     } else if (value->unit == CSSPrimitiveValue::CSS_RGBCOLOR ||
                 value->unit == CSSPrimitiveValue::CSS_IDENT ||
                 (!strict && value->unit == CSSPrimitiveValue::CSS_DIMENSION)) {
-        if (!CSSParser::parseColor(domString(value->string), c))
+        if (!CSSParser::parseColor(domString(value->string), c, strict && value->unit == CSSPrimitiveValue::CSS_IDENT))
             return false;
     } else if (value->unit == Value::Function &&
                 value->function->args != 0 &&
