@@ -5,6 +5,9 @@
         - fix http://bugs.webkit.org/show_bug.cgi?id=12170
           RenderView holds dangling reference to RenderObjects as selection markers
 
+        This fixes the crash seen on Windows -- the underlying problem
+        may still exist.
+
         * rendering/RenderText.h:
         (WebCore::RenderText::selectionState):
         Change the m_selectionState enum-bitfield to an unsigned-bitfield,
