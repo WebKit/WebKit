@@ -1,3 +1,20 @@
+2007-01-09  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        <rdar://problem/4840662>
+        REGRESSION: Mail crash when dragging text into a link
+        
+        moveParagraphs fails to move content into a display:block 
+        anchor because of code in positionAvoidingSpecialElementBoundary,
+        and so it infinitely recurs.
+        
+        * editing/htmlediting.cpp:
+        (WebCore::positionAvoidingSpecialElementBoundary): Don't avoid anchors
+        that have display:block so that content is inserted in the expected
+        paragraph.  This fixes the bug and weird behavior when typing before/after
+        anchors with display:block.
+
 2007-01-09  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

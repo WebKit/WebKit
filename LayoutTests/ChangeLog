@@ -1,3 +1,16 @@
+2007-01-09  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        * editing/inserting/4840662-expected.checksum: Added.
+        * editing/inserting/4840662-expected.png: Added.
+        * editing/inserting/4840662-expected.txt: Added.
+        * editing/inserting/4840662.html: Added.
+        * editing/pasteboard/4840662-expected.checksum: Added.
+        * editing/pasteboard/4840662-expected.png: Added.
+        * editing/pasteboard/4840662-expected.txt: Added.
+        * editing/pasteboard/4840662.html: Added.
+
 2007-01-09  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
