@@ -1677,10 +1677,16 @@ JSValue* JSHTMLCollectionProtoFunc::callAsFunction(ExecState* exec, JSObject* th
   HTMLCollection &coll = *static_cast<JSHTMLCollection*>(thisObj)->impl();
 
   switch (id) {
-  case JSHTMLCollection::Item:
-    return toJS(exec,coll.item(args[0]->toUInt32(exec)));
   case JSHTMLCollection::Tags:
     return toJS(exec, coll.base()->getElementsByTagName(args[0]->toString(exec)).get());
+  case JSHTMLCollection::Item:
+    {
+        bool ok;
+        uint32_t index = args[0]->toUInt32(exec, ok);
+        if (ok)
+            return toJS(exec, coll.item(index));
+    }
+    // Fall through
   case JSHTMLCollection::NamedItem:
     return static_cast<JSHTMLCollection*>(thisObj)->getNamedItems(exec, Identifier(args[0]->toString(exec)));
   default:

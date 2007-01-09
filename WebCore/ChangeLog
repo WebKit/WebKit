@@ -1,3 +1,16 @@
+2007-01-09  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11078
+          Forms Don't Submit (ASP Pages)
+
+        Test: fast/dom/collection-namedItem-via-item.html
+
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLCollectionProtoFunc::callAsFunction): Changed item() to fall back
+        to namedItem() if its argument does not convert to a number.
+
 2007-01-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

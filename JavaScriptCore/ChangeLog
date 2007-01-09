@@ -1,3 +1,18 @@
+2007-01-09  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - changes for http://bugs.webkit.org/show_bug.cgi?id=11078
+          Forms Don't Submit (ASP Pages)
+
+        * JavaScriptCore.exp:
+        * kjs/value.cpp:
+        (KJS::JSValue::toInt32): Folded toInt32Inline into this method, which was its
+        only caller.
+        (KJS::JSValue::toUInt32): Added a variant that reports if the conversion has
+        succeeded.
+        * kjs/value.h:
+
 2007-01-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -55,7 +55,13 @@ double JSValue::toInteger(ExecState *exec) const
     return roundValue(exec, const_cast<JSValue*>(this));
 }
 
-inline int32_t JSValue::toInt32Inline(ExecState* exec, bool& ok) const
+int32_t JSValue::toInt32(ExecState* exec) const
+{
+    bool ok;
+    return toInt32(exec, ok);
+}
+
+int32_t JSValue::toInt32(ExecState* exec, bool& ok) const
 {
     ok = true;
 
@@ -78,26 +84,25 @@ inline int32_t JSValue::toInt32Inline(ExecState* exec, bool& ok) const
     return static_cast<int32_t>(d32);
 }
 
-int32_t JSValue::toInt32(ExecState* exec) const
+uint32_t JSValue::toUInt32(ExecState* exec) const
 {
     bool ok;
-    return toInt32(exec, ok);
+    return toUInt32(exec, ok);
 }
 
-int32_t JSValue::toInt32(ExecState* exec, bool& ok) const
+uint32_t JSValue::toUInt32(ExecState* exec, bool& ok) const
 {
-    return toInt32Inline(exec, ok);
-}
+    ok = true;
 
-uint32_t JSValue::toUInt32(ExecState *exec) const
-{
     uint32_t i;
     if (getUInt32(i))
         return i;
 
     double d = roundValue(exec, const_cast<JSValue*>(this));
-    if (isNaN(d) || isInf(d))
+    if (isNaN(d) || isInf(d)) {
+        ok = false;
         return 0;
+    }
     double d32 = fmod(d, D32);
 
     if (d32 < 0)
