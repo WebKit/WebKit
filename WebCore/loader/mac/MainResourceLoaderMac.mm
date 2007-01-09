@@ -168,6 +168,14 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
     if (newRequest.cachePolicy() == UseProtocolCachePolicy && isPostOrRedirectAfterPost(newRequest, redirectResponse))
         newRequest.setCachePolicy(ReloadIgnoringCacheData);
 
+#if PLATFORM(MAC)
+    ResourceRequest r([newRequest.nsURLRequest() _webDataRequestExternalRequest]);
+    if (!r.isNull()) {
+        ResourceLoader::willSendRequest(r, redirectResponse);
+        if (request() == r)
+            setRequest(newRequest);
+    } else
+#endif
     ResourceLoader::willSendRequest(newRequest, redirectResponse);
     
     // Don't set this on the first request. It is set when the main load was started.
@@ -235,8 +243,17 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
     }
 
     // we may have cancelled this load as part of switching to fallback content
-    if (!reachedTerminalState())
+    if (!reachedTerminalState()) {
+#if PLATFORM(MAC) 
+        // If the URL is one of our whacky applewebdata URLs then
+        // fake up a substitute URL to present to the delegate.
+        if ([WebDataProtocol _webIsDataProtocolURL:[r.nsURLResponse() URL]]) 
+            ResourceLoader::didReceiveResponse([[[NSURLResponse alloc] initWithURL:[request().nsURLRequest() _webDataRequestExternalURL] MIMEType:r.mimeType()
+                                                 expectedContentLength:r.expectedContentLength() textEncodingName:r.textEncodingName()] autorelease]);
+        else
+#endif
         ResourceLoader::didReceiveResponse(r);
+    }
 
     if (frameLoader() && !frameLoader()->isStopping()
             && (shouldLoadAsEmptyDocument(url)

@@ -1,3 +1,20 @@
+2007-01-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - move WebDataProtocol load handling from ResourceLoader to MainResourceLoader
+        
+        (it's only ever used for main resources)
+
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::setRequest):
+        * loader/mac/MainResourceLoaderMac.mm:
+        (WebCore::MainResourceLoader::willSendRequest):
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::willSendRequest):
+        (WebCore::ResourceLoader::didReceiveResponse):
+
 2007-01-09  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

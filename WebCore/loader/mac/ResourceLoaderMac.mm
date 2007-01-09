@@ -38,7 +38,6 @@
 #import "ResourceResponse.h"
 #import "SharedBuffer.h"
 #import "WebCoreSystemInterface.h"
-#import "WebDataProtocol.h"
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
@@ -150,7 +149,7 @@ void ResourceLoader::clearResourceData()
     m_resourceData->clear();
 }
 
-void ResourceLoader::willSendRequest(ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
+void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
@@ -158,43 +157,13 @@ void ResourceLoader::willSendRequest(ResourceRequest& newRequest, const Resource
         
     ASSERT(!m_reachedTerminalState);
     
-    // If we have a special "applewebdata" scheme URL we send a fake request to the delegate.
-    bool haveDataSchemeRequest = false;
-    ResourceRequest clientRequest;
-    
-#if PLATFORM(MAC)
-    clientRequest = [newRequest.nsURLRequest() _webDataRequestExternalRequest];
-#endif
-    
-    if (!clientRequest.isNull())
-        haveDataSchemeRequest = true;
-    else
-       clientRequest = newRequest;
-    
     if (!m_identifier)
-        m_identifier = frameLoader()->identifierForInitialRequest(clientRequest);
+        m_identifier = frameLoader()->identifierForInitialRequest(request);
     
-    ResourceRequest updatedRequest(clientRequest);
+    ResourceRequest updatedRequest(request);
     frameLoader()->willSendRequest(this, updatedRequest, redirectResponse);
-    
-    if (!haveDataSchemeRequest)
-        newRequest = updatedRequest;
-    else {
-        // If the delegate modified the request use that instead of
-        // our applewebdata request, otherwise use the original
-        // applewebdata request.
-        if (updatedRequest != clientRequest) {
-            newRequest = updatedRequest;
-            
-            if ([newRequest.nsURLRequest() isKindOfClass:[NSMutableURLRequest class]]) {
-                NSMutableURLRequest *mr = (NSMutableURLRequest *)newRequest.nsURLRequest();
-                [NSURLProtocol _removePropertyForKey:[NSURLRequest _webDataRequestPropertyKey] inRequest:mr];
-            }
-        }
-    }
-    
-    // Store a copy of the request.
-    m_request = newRequest;
+
+    m_request = updatedRequest;
 }
 
 void ResourceLoader::didReceiveAuthenticationChallenge(NSURLAuthenticationChallenge *challenge)
@@ -238,15 +207,7 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<ResourceLoader> protector(this);
 
-#if PLATFORM(MAC) 
-    // If the URL is one of our whacky applewebdata URLs then
-    // fake up a substitute URL to present to the delegate.
-    if ([WebDataProtocol _webIsDataProtocolURL:[r.nsURLResponse() URL]]) 
-        m_response = [[[NSURLResponse alloc] initWithURL:[m_request.nsURLRequest() _webDataRequestExternalURL] MIMEType:r.mimeType()
-                                   expectedContentLength:r.expectedContentLength() textEncodingName:r.textEncodingName()] autorelease];
-    else
-#endif
-        m_response = r;
+    m_response = r;
 
     frameLoader()->didReceiveResponse(this, m_response);
 }
