@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderTreeAsText.h"
 
+#include "CharacterNames.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -140,7 +141,7 @@ static String quoteAndEscapeNonPrintables(const String& s)
         } else if (c == '"') {
             result.append('\\');
             result.append('"');
-        } else if (c == '\n' || c == 0x00A0)
+        } else if (c == '\n' || c == noBreakSpace)
             result.append(' ');
         else {
             if (c >= 0x20 && c < 0x7F)
@@ -278,13 +279,13 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
                 text = quoteAndEscapeNonPrintables(text);
             else {
                 switch (text[0]) {
-                    case 0x2022:
+                    case bullet:
                         text = "bullet";
                         break;
-                    case 0x25A0:
+                    case blackSquare:
                         text = "black square";
                         break;
-                    case 0x25E6:
+                    case whiteBullet:
                         text = "white bullet";
                         break;
                     default:

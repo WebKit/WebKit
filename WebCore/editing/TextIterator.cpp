@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TextIterator.h"
 
+#include "CharacterNames.h"
 #include "Document.h"
 #include "Element.h"
 #include "HTMLNames.h"
@@ -38,12 +39,11 @@
 #include "RenderTableRow.h"
 
 using namespace std;
+using namespace WTF::Unicode;
 
 namespace WebCore {
 
 using namespace HTMLNames;
-
-const UChar nonBreakingSpace = 0xA0;
 
 // Buffer that knows how to compare with a search target.
 // Keeps enough of the previous text to be able to search in the future,
@@ -955,7 +955,7 @@ CircularSearchBuffer::CircularSearchBuffer(const String& s, bool isCaseSensitive
 
     if (!isCaseSensitive)
         m_target = s.foldCase();
-    m_target.replace(nonBreakingSpace, ' ');
+    m_target.replace(noBreakSpace, ' ');
     m_isCaseSensitive = isCaseSensitive;
 
     m_buffer = static_cast<UChar*>(fastMalloc(s.length() * sizeof(UChar)));
@@ -966,9 +966,9 @@ CircularSearchBuffer::CircularSearchBuffer(const String& s, bool isCaseSensitive
 void CircularSearchBuffer::append(UChar c)
 {
     if (m_isCaseSensitive)
-        *m_cursor++ = c == nonBreakingSpace ? ' ' : c;
+        *m_cursor++ = c == noBreakSpace ? ' ' : c;
     else
-        *m_cursor++ = c == nonBreakingSpace ? ' ' : WTF::Unicode::foldCase(c);
+        *m_cursor++ = c == noBreakSpace ? ' ' : foldCase(c);
     if (m_cursor == m_buffer + length()) {
         m_cursor = m_buffer;
         m_bufferFull = true;
@@ -988,12 +988,12 @@ void CircularSearchBuffer::append(int count, const UChar* characters)
     if (m_isCaseSensitive) {
         for (int i = 0; i != count; ++i) {
             UChar c = characters[i];
-            m_cursor[i] = c == nonBreakingSpace ? ' ' : c;
+            m_cursor[i] = c == noBreakSpace ? ' ' : c;
         }
     } else {
         for (int i = 0; i != count; ++i) {
             UChar c = characters[i];
-            m_cursor[i] = c == nonBreakingSpace ? ' ' : WTF::Unicode::foldCase(c);
+            m_cursor[i] = c == noBreakSpace ? ' ' : foldCase(c);
         }
     }
     if (count < tailSpace)

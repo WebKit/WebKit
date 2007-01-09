@@ -64,6 +64,7 @@ extern int cssyydebug;
 extern int cssyyparse(void* parser);
 
 using namespace std;
+using namespace WTF;
 
 namespace WebCore {
 
@@ -155,7 +156,7 @@ void ParseString::lower()
         ored |= characters[i];
     if (ored & ~0x7F)
         for (int i = 0; i < length; i++)
-            characters[i] = WTF::Unicode::toLower(characters[i]);
+            characters[i] = Unicode::toLower(characters[i]);
     else
         for (int i = 0; i < length; i++)
             characters[i] = tolower(characters[i]);

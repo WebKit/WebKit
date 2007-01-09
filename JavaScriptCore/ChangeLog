@@ -1,3 +1,29 @@
+2007-01-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12174
+          improve Unicode use (less WTF::Unicode:: prefix, centralized character names)
+
+        * wtf/unicode/icu/UnicodeIcu.h: Change parameter and return types
+        to UChar32 and UChar. Removed unneeded type casts and added some
+        const to functions that lacked it. Removed WTF::Unicode::memcmp.
+        (WTF::Unicode::umemcasecmp): Renamed from strcasecmp since this
+        doesn't work on 0-terminated strings as the str functions do.
+        * wtf/unicode/qt4/UnicodeQt4.h: Ditto.
+
+        - got rid of namespace prefixes from most uses of WTF::Unicode
+
+        * kjs/function.cpp:
+        (KJS::isStrWhiteSpace):
+        (KJS::escapeStringForPrettyPrinting):
+        * kjs/lexer.cpp:
+        (KJS::Lexer::isWhiteSpace):
+        (KJS::Lexer::isIdentStart):
+        (KJS::Lexer::isIdentPart):
+        * kjs/string_object.cpp:
+        (KJS::StringProtoFunc::callAsFunction):
+
 2007-01-07  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Darin.

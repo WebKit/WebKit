@@ -120,6 +120,8 @@
 #endif
 
 using namespace std;
+using namespace WTF;
+using namespace Unicode;
 
 namespace WebCore {
 
@@ -131,10 +133,10 @@ using namespace HTMLNames;
 // This amount of time must have elapsed before we will even consider scheduling a layout without a delay.
 // FIXME: For faster machines this value can really be lowered to 200.  250 is adequate, but a little high
 // for dual G5s. :)
-const int cLayoutScheduleThreshold = 250;
+static const int cLayoutScheduleThreshold = 250;
 
 // Use 1 to represent the document's default form.
-HTMLFormElement* const defaultForm = (HTMLFormElement*) 1;
+static HTMLFormElement* const defaultForm = reinterpret_cast<HTMLFormElement*>(1);
 
 // Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
 static const unsigned PHI = 0x9e3779b9U;
@@ -165,12 +167,8 @@ static inline bool isValidNameStart(UChar32 c)
         return true;
 
     // rules (a) and (f) above
-    const uint32_t nameStartMask = WTF::Unicode::Letter_Lowercase |
-                                   WTF::Unicode::Letter_Uppercase |
-                                   WTF::Unicode::Letter_Other |
-                                   WTF::Unicode::Letter_Titlecase |
-                                   WTF::Unicode::Number_Letter;
-    if (!(WTF::Unicode::category(c) & nameStartMask))
+    const uint32_t nameStartMask = Letter_Lowercase | Letter_Uppercase | Letter_Other | Letter_Titlecase | Number_Letter;
+    if (!(Unicode::category(c) & nameStartMask))
         return false;
 
     // rule (c) above
@@ -178,8 +176,8 @@ static inline bool isValidNameStart(UChar32 c)
         return false;
 
     // rule (d) above
-    WTF::Unicode::DecompositionType decompType = WTF::Unicode::decompositionType(c);
-    if (decompType == WTF::Unicode::DecompositionFont || decompType == WTF::Unicode::DecompositionCompat)
+    DecompositionType decompType = decompositionType(c);
+    if (decompType == DecompositionFont || decompType == DecompositionCompat)
         return false;
 
     return true;
@@ -200,12 +198,8 @@ static inline bool isValidNamePart(UChar32 c)
         return true;
 
     // rules (b) and (f) above
-    const uint32_t otherNamePartMask = WTF::Unicode::Mark_NonSpacing |
-                                       WTF::Unicode::Mark_Enclosing |
-                                       WTF::Unicode::Mark_SpacingCombining |
-                                       WTF::Unicode::Letter_Modifier |
-                                       WTF::Unicode::Number_DecimalDigit;
-    if (!(WTF::Unicode::category(c) & otherNamePartMask))
+    const uint32_t otherNamePartMask = Mark_NonSpacing | Mark_Enclosing | Mark_SpacingCombining | Letter_Modifier | Number_DecimalDigit;
+    if (!(Unicode::category(c) & otherNamePartMask))
         return false;
 
     // rule (c) above
@@ -213,8 +207,8 @@ static inline bool isValidNamePart(UChar32 c)
         return false;
 
     // rule (d) above
-    WTF::Unicode::DecompositionType decompType = WTF::Unicode::decompositionType(c);
-    if (decompType == WTF::Unicode::DecompositionFont || decompType == WTF::Unicode::DecompositionCompat)
+    DecompositionType decompType = decompositionType(c);
+    if (decompType == DecompositionFont || decompType == DecompositionCompat)
         return false;
 
     return true;

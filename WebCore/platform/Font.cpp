@@ -33,9 +33,13 @@
 #include "TextStyle.h"
 #include <wtf/unicode/Unicode.h>
 #include <wtf/MathExtras.h>
+
 #if USE(ICU_UNICODE)
 #include <unicode/unorm.h>
 #endif
+
+using namespace WTF;
+using namespace Unicode;
 
 namespace WebCore {
 
@@ -173,11 +177,11 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
 
         if (needCharTransform) {
             if (rtl)
-                c = WTF::Unicode::mirroredChar(c);
+                c = mirroredChar(c);
 
             // If small-caps, convert lowercase to upper.
-            if (m_font->isSmallCaps() && !WTF::Unicode::isUpper(c)) {
-                UChar32 upperC = WTF::Unicode::toUpper(c);
+            if (m_font->isSmallCaps() && !Unicode::isUpper(c)) {
+                UChar32 upperC = Unicode::toUpper(c);
                 if (upperC != c) {
                     c = upperC;
                     fontData = fontData->smallCapsFontData(m_font->fontDescription());
@@ -299,7 +303,7 @@ bool WidthIterator::advanceOneCharacter(float& width, GlyphBuffer* glyphBuffer)
 UChar32 WidthIterator::normalizeVoicingMarks(int currentCharacter)
 {
     if (currentCharacter + 1 < m_end) {
-        if (WTF::Unicode::combiningClass(m_run[currentCharacter + 1]) == hiraganaKatakanaVoicingMarksCombiningClass) {
+        if (combiningClass(m_run[currentCharacter + 1]) == hiraganaKatakanaVoicingMarksCombiningClass) {
 #if USE(ICU_UNICODE)
             // Normalize into composed form using 3.2 rules.
             UChar normalizedCharacters[2] = { 0, 0 };

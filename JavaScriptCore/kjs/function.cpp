@@ -42,6 +42,9 @@
 
 #include <wtf/unicode/Unicode.h>
 
+using namespace WTF;
+using namespace Unicode;
+
 namespace KJS {
 
 // ----------------------------- FunctionImp ----------------------------------
@@ -690,7 +693,7 @@ static bool isStrWhiteSpace(unsigned short c)
         case 0x2029:
             return true;
         default:
-            return WTF::Unicode::isSeparatorSpace(c);
+            return isSeparatorSpace(c);
     }
 }
 
@@ -965,7 +968,7 @@ UString escapeStringForPrettyPrinting(const UString& s)
             escapedString += "\\\\";
             break;
         default:
-            if (c < 128 && WTF::Unicode::isPrintableChar(c))
+            if (c < 128 && isPrintableChar(c))
                 escapedString.append(c);
             else {
                 char hexValue[7];

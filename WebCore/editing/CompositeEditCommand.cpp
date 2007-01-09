@@ -30,6 +30,7 @@
 #include "ApplyStyleCommand.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
+#include "CharacterNames.h"
 #include "DeleteFromTextNodeCommand.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
@@ -42,7 +43,6 @@
 #include "InsertParagraphSeparatorCommand.h"
 #include "InsertTextCommand.h"
 #include "JoinTextNodesCommand.h"
-#include "markup.h"
 #include "MergeIdenticalElementsCommand.h"
 #include "Range.h"
 #include "RemoveCSSPropertyCommand.h"
@@ -57,6 +57,7 @@
 #include "TextIterator.h"
 #include "WrapContentsInDummySpanCommand.h"
 #include "htmlediting.h"
+#include "markup.h"
 #include "visible_units.h"
 
 using namespace std;
@@ -328,7 +329,7 @@ void CompositeEditCommand::setNodeAttribute(Element* element, const QualifiedNam
 
 static inline bool isWhitespace(UChar c)
 {
-    return c == NON_BREAKING_SPACE || c == ' ' || c == '\n' || c == '\t';
+    return c == noBreakSpace || c == ' ' || c == '\n' || c == '\t';
 }
 
 // FIXME: Doesn't go into text nodes that contribute adjacent text (siblings, cousins, etc).

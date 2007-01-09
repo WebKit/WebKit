@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Computer, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TextEncodingRegistry_h
-#define TextEncodingRegistry_h
+#ifndef CharacterNames_h
+#define CharacterNames_h
 
-#include <memory>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
-    class TextCodec;
-    class TextEncoding;
+    // Names here are taken from the Unicode standard.
 
-    // Only TextEncoding and TextDecoder should use this function directly.
-    // - Use TextDecoder::decode to decode, since it handles BOMs.
-    // - Use TextEncoding::decode to decode if you have all the data at once.
-    //   It's implemented by calling TextDecoder::decode so works just as well.
-    // - Use TextEncoding::encode to encode, since it takes care of normalization.
-    std::auto_ptr<TextCodec> newTextCodec(const TextEncoding&);
+    // Note, these are UChar constants, not UChar32, which makes them
+    // more convenient for our code that mostly uses UTF-16.
 
-    // Only TextEncoding should use this function directly.
-    const char* atomicCanonicalTextEncodingName(const char* alias);
-    const char* atomicCanonicalTextEncodingName(const UChar* aliasCharacters, size_t aliasLength);
+    const UChar ideographicSpace = 0x3000;
+    const UChar noBreakSpace = 0x00A0;
+    const UChar bullet = 0x2022;
+    const UChar blackSquare = 0x25A0;
+    const UChar whiteBullet = 0x25E6;
+    const UChar softHyphen = 0x00AD;
+    const UChar zeroWidthSpace = 0x200B;
 
 }
 
-#endif // TextEncodingRegistry_h
+#endif // CharacterNames_h

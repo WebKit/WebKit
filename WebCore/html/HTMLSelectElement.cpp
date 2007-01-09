@@ -27,6 +27,7 @@
 #include "config.h"
 #include "HTMLSelectElement.h"
 
+#include "CharacterNames.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "Event.h"
@@ -53,11 +54,15 @@
 #endif
 
 using namespace std;
+using namespace WTF;
+using namespace Unicode;
 
 namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
+
+const DOMTimeStamp typeAheadTimeout = 1000;
 
 HTMLSelectElement::HTMLSelectElement(Document* doc, HTMLFormElement* f)
     : HTMLGenericFormElement(selectTag, doc, f)
@@ -819,19 +824,16 @@ void HTMLSelectElement::listBoxOnChange()
 
 static String stripLeadingWhiteSpace(const String& string)
 {
-    const UChar nonBreakingSpace = 0xA0;
-
     int length = string.length();
     int i;
     for (i = 0; i < length; ++i)
-        if (string[i] != nonBreakingSpace &&
-            (string[i] <= 0x7F ? !isspace(string[i]) : (WTF::Unicode::direction(string[i]) != WTF::Unicode::WhiteSpaceNeutral)))
+        if (string[i] != noBreakSpace &&
+            (string[i] <= 0x7F ? !isspace(string[i]) : (direction(string[i]) != WhiteSpaceNeutral)))
             break;
 
     return string.substring(i, length - i);
 }
 
-const DOMTimeStamp typeAheadTimeout = 1000;
 void HTMLSelectElement::typeAheadFind(KeyboardEvent* event)
 {
     if (event->timeStamp() < m_lastCharTime)

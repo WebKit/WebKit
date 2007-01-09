@@ -27,6 +27,7 @@
 #include "config.h"
 #include "RenderText.h"
 
+#include "CharacterNames.h"
 #include "InlineTextBox.h"
 #include "Range.h"
 #include "RenderArena.h"
@@ -38,6 +39,8 @@
 #include <wtf/AlwaysInline.h>
 
 using namespace std;
+using namespace WTF;
+using namespace Unicode;
 
 namespace WebCore {
 
@@ -424,8 +427,8 @@ ALWAYS_INLINE int RenderText::widthFromCache(const Font* f, int start, int len, 
         int w = 0;
         for (i = start; i < start + len; i++) {
             UChar c = (*m_str)[i];
-            WTF::Unicode::Direction dir = WTF::Unicode::direction(c);
-            if (dir != WTF::Unicode::NonSpacingMark && dir != WTF::Unicode::BoundaryNeutral) {
+            Direction dir = direction(c);
+            if (dir != NonSpacingMark && dir != BoundaryNeutral) {
                 if (c == '\t' && tabWidth)
                     w += tabWidth - ((xPos + w) % tabWidth);
                 else
@@ -528,7 +531,7 @@ void RenderText::calcMinMaxWidth()
 
 inline bool isSpaceAccordingToStyle(UChar c, RenderStyle* style)
 {
-    return c == ' ' || (c == 0xa0 && style->nbspMode() == SPACE);
+    return c == ' ' || (c == noBreakSpace && style->nbspMode() == SPACE);
 }
 
 void RenderText::calcMinMaxWidth(int leadWidth)
@@ -876,21 +879,14 @@ void RenderText::setInternalString(PassRefPtr<StringImpl> text)
             switch (style()->textSecurity()) {
                 case TSNONE:
                     break;
-                case TSCIRCLE: {
-                    const UChar whiteBullet = 0x25E6;
+                case TSCIRCLE:
                     m_str = m_str->secure(whiteBullet);
                     break;
-                }
-                case TSDISC: {
-                    const UChar bullet = 0x2022;
+                case TSDISC:
                     m_str = m_str->secure(bullet);
                     break;
-                }
-                case TSSQUARE: {
-                    const UChar blackSquare = 0x25A0;
+                case TSSQUARE:
                     m_str = m_str->secure(blackSquare);
-                    break;
-                }
             }
         }
     }

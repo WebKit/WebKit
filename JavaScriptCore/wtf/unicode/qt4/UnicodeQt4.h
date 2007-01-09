@@ -142,7 +142,7 @@ namespace WTF {
       Symbol_Other = U_MASK(QChar::Symbol_Other),
     };
 
-    inline int toLower(uint16_t* str, int strLength, uint16_t*& destIfNeeded)
+    inline int toLower(UChar* str, int strLength, UChar*& destIfNeeded)
     {
       destIfNeeded = 0;
 
@@ -152,12 +152,14 @@ namespace WTF {
       return strLength;
     }
 
-    inline uint16_t toLower(uint16_t ch)
+    inline UChar32 toLower(UChar32 ch)
     {
-      return QChar(ch).toLower().unicode();
+      if (ch > 0xffff)
+        return ch;
+      return QChar((unsigned short)ch).toLower().unicode();
     }
 
-    inline int toLower(UChar* result, int resultLength, UChar* src, int srcLength,  bool* error)
+    inline int toLower(UChar* result, int resultLength, const UChar* src, int srcLength,  bool* error)
     {
       *error = false;
       if (resultLength < srcLength) {
@@ -168,7 +170,7 @@ namespace WTF {
         result[i] = QChar(src[i]).toLower().unicode();
     }
 
-    inline int toUpper(uint16_t* str, int strLength, uint16_t*& destIfNeeded)
+    inline int toUpper(UChar* str, int strLength, UChar*& destIfNeeded)
     {
       destIfNeeded = 0;
 
@@ -178,9 +180,11 @@ namespace WTF {
       return strLength;
     }
 
-    inline uint16_t toUpper(uint16_t ch)
+    inline UChar32 toUpper(UChar32 ch)
     {
-      return QChar(ch).toUpper().unicode();
+      if (ch > 0xffff)
+        return ch;
+      return QChar((unsigned short)ch).toUpper().unicode();
     }
 
     inline int toUpper(UChar* result, int resultLength, UChar* src, int srcLength,  bool* error)
@@ -194,18 +198,18 @@ namespace WTF {
         result[i] = QChar(src[i]).toUpper().unicode();
     }
 
-    inline int toTitleCase (uint32_t c)
+    inline int toTitleCase(UChar32 c)
     {
       if (c > 0xffff)
         return c;
-      return QChar(c).toUpper().unicode();
+      return QChar((unsigned short)c).toUpper().unicode();
     }
 
-    inline uint32_t foldCase(uint32_t c)
+    inline UChar32 foldCase(UChar32 c)
     {
       if (c > 0xffff)
         return c;
-      return QChar(c).toLower().unicode();
+      return QChar((unsigned short)c).toLower().unicode();
     }
 
     inline int foldCase(UChar* result, int resultLength, UChar* src, int srcLength,  bool* error)
@@ -213,50 +217,52 @@ namespace WTF {
       return toLower(result, resultLength, src, srcLength, error);
     }
 
-    inline bool isFormatChar(int32_t c)
+    inline bool isFormatChar(UChar32 c)
     {
       return (c & 0xffff0000) == 0 && QChar((unsigned short)c).category() == QChar::Other_Format;
     }
 
-    inline bool isPrintableChar(int32_t c)
+    inline bool isPrintableChar(UChar32 c)
     {
       return (c & 0xffff0000) == 0 && QChar((unsigned short)c).isPrint();
     }
 
-    inline bool isSeparatorSpace(int32_t c)
+    inline bool isSeparatorSpace(UChar32 c)
     {
       return (c & 0xffff0000) == 0 && QChar((unsigned short)c).category() == QChar::Separator_Space;
     }
 
-    inline bool isPunct(int32_t c)
+    inline bool isPunct(UChar32 c)
     {
       return (c & 0xffff0000) == 0 && QChar((unsigned short)c).isPunct();
     }
 
-    inline bool isDigit(int32_t c)
+    inline bool isDigit(UChar32 c)
     {
       return (c & 0xffff0000) == 0 && QChar((unsigned short)c).isDigit();
     }
 
-    inline bool isLower(int32_t c)
+    inline bool isLower(UChar32 c)
     {
       return (c & 0xffff0000) == 0 && QChar((unsigned short)c).category() == QChar::Letter_Lowercase;
     }
 
-    inline bool isUpper(int32_t c)
+    inline bool isUpper(UChar32 c)
     {
       return (c & 0xffff0000) == 0 && QChar((unsigned short)c).category() == QChar::Letter_Uppercase;
     }
 
-    inline int digitValue(int32_t c)
+    inline int digitValue(UChar32 c)
     {
       if (c > 0xffff)
         return 0;
       return QChar(c).digitValue();
     }
 
-    inline uint16_t mirroredChar(uint16_t c)
+    inline UChar32 mirroredChar(UChar32 c)
     {
+      if (c > 0xffff)
+        return c;
       return QChar(c).mirroredChar().unicode();
     }
 
@@ -274,8 +280,7 @@ namespace WTF {
       return (DecompositionType)QChar(c).decompositionTag();
     }
 
-
-    inline int strcasecmp(const UChar *a, const UChar *b, int len)
+    inline int umemcasecmp(const UChar* a, const UChar* b, int len)
     {
       for (int i = 0; i < len; ++i) {
         QChar c1 = QChar(a[i]).toLower();
@@ -286,24 +291,18 @@ namespace WTF {
       return 0;
     }
 
-    inline void memset(UChar* dest, UChar ch, int32_t count)
-    {
-      UChar *end = dest + count;
-      while (dest < end)
-        *dest++ = ch;
-    }
-
-    inline Direction direction(int c) {
+    inline Direction direction(UChar32 c) {
       if (c > 0xffff)
         return LeftToRight;
       return (Direction)QChar(c).direction();
     }
 
-    inline CharCategory category(int c) {
+    inline CharCategory category(UChar32 c) {
       if (c > 0xffff)
         return (CharCategory) U_MASK(QChar::Letter_Other);
       return (CharCategory) U_MASK(QChar(c).category());
     }
+
   }
 }
 

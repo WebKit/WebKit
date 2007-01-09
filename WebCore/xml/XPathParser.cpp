@@ -37,6 +37,9 @@
 
 int xpathyyparse(void*);
 
+using namespace WTF;
+using namespace Unicode;
+
 namespace WebCore {
 namespace XPath {
 
@@ -57,18 +60,10 @@ static XMLCat charCat(UChar aChar)
 
     if (aChar == '.' || aChar == '-')
         return NameCont;
-    unsigned category = WTF::Unicode::category(aChar);
-    if (category & (WTF::Unicode::Letter_Uppercase|
-                    WTF::Unicode::Letter_Lowercase|
-                    WTF::Unicode::Letter_Other|
-                    WTF::Unicode::Letter_Titlecase|
-                    WTF::Unicode::Number_Letter))
+    CharCategory category = Unicode::category(aChar);
+    if (category & (Letter_Uppercase | Letter_Lowercase | Letter_Other | Letter_Titlecase | Number_Letter))
         return NameStart;
-    if (category & (WTF::Unicode::Mark_NonSpacing|
-                    WTF::Unicode::Mark_SpacingCombining|
-                    WTF::Unicode::Mark_Enclosing|
-                    WTF::Unicode::Letter_Modifier|
-                    WTF::Unicode::Number_DecimalDigit))
+    if (category & (Mark_NonSpacing | Mark_SpacingCombining | Mark_Enclosing | Letter_Modifier | Number_DecimalDigit))
         return NameCont;
     return NotPartOfName;
 }

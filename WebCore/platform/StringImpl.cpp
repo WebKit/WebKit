@@ -29,31 +29,30 @@
 
 #include "AtomicString.h"
 #include "CString.h"
+#include "CharacterNames.h"
 #include "DeprecatedString.h"
 #include "Length.h"
 #include "StringHash.h"
-#include "TextEncoding.h"
 #include "TextBreakIterator.h"
+#include "TextEncoding.h"
 #include <kjs/dtoa.h>
 #include <kjs/identifier.h>
 #include <wtf/Assertions.h>
 #include <wtf/unicode/Unicode.h>
-#include <assert.h>
 
 using namespace WTF;
+using namespace Unicode;
 
 using KJS::Identifier;
 using KJS::UString;
 
 namespace WebCore {
 
-const UChar nonBreakingSpace = 0xA0;
-
 static inline bool isSpace(UChar c)
 {
     // Use isspace() for basic Latin-1.
     // This will include newlines, which aren't included in unicode DirWS.
-    return c <= 0x7F ? isspace(c) : Unicode::direction(c) == Unicode::WhiteSpaceNeutral;
+    return c <= 0x7F ? isspace(c) : direction(c) == WhiteSpaceNeutral;
 }    
     
 static inline UChar* newUCharVector(unsigned n)
@@ -175,7 +174,7 @@ void StringImpl::append(char c)
 
 void StringImpl::append(UChar c)
 {
-    assert(!m_inTable);
+    ASSERT(!m_inTable);
     UChar* nc = newUCharVector(m_length + 1);
     memcpy(nc, m_data, m_length * sizeof(UChar));
     nc[m_length] = c;
@@ -187,7 +186,7 @@ void StringImpl::append(UChar c)
 
 void StringImpl::insert(const UChar* str, unsigned length, unsigned pos)
 {
-    assert(!m_inTable);
+    ASSERT(!m_inTable);
     if (pos >= m_length) {
         append(str, length);
         return;
@@ -214,7 +213,7 @@ void StringImpl::insert(const StringImpl* str, unsigned pos)
 
 void StringImpl::truncate(int len)
 {
-    assert(!m_inTable);
+    ASSERT(!m_inTable);
     if (len >= (int)m_length)
         return;
     int nl = len < 1 ? 1 : len;
@@ -228,7 +227,7 @@ void StringImpl::truncate(int len)
 
 void StringImpl::remove(unsigned pos, int len)
 {
-    assert(!m_inTable);
+    ASSERT(!m_inTable);
     if (len <= 0)
         return;
     if (pos >= m_length)
@@ -283,14 +282,14 @@ static Length parseLength(const UChar* m_data, unsigned int m_length)
         ++i;
     if (i < m_length && (m_data[i] == '+' || m_data[i] == '-'))
         ++i;
-    while (i < m_length && WTF::Unicode::isDigit(m_data[i]))
+    while (i < m_length && Unicode::isDigit(m_data[i]))
         ++i;
 
     bool ok;
     int r = DeprecatedConstString(reinterpret_cast<const DeprecatedChar*>(m_data), i).string().toInt(&ok);
 
     /* Skip over any remaining digits, we are not that accurate (5.5% => 5%) */
-    while (i < m_length && (WTF::Unicode::isDigit(m_data[i]) || m_data[i] == '.'))
+    while (i < m_length && (Unicode::isDigit(m_data[i]) || m_data[i] == '.'))
         ++i;
 
     /* IE Quirk: Skip any whitespace (20 % => 20%) */
@@ -400,7 +399,7 @@ bool StringImpl::isLower() const
     // Do a slower check for the other cases.
     bool allLower2 = true;
     for (unsigned i = 0; i < m_length; i++)
-        allLower2 &= WTF::Unicode::isLower(m_data[i]);
+        allLower2 &= Unicode::isLower(m_data[i]);
     return allLower2;
 }
 
@@ -427,7 +426,7 @@ StringImpl* StringImpl::lower() const
         return c;
 
     bool error;
-    int32_t realLength = WTF::Unicode::toLower(data, length, m_data, m_length, &error);
+    int32_t realLength = Unicode::toLower(data, length, m_data, m_length, &error);
     if (!error && realLength == length)
         return c;
 
@@ -440,7 +439,7 @@ StringImpl* StringImpl::lower() const
     c->m_data = data;
     c->m_length = length;
 
-    WTF::Unicode::toLower(data, length, m_data, m_length, &error);
+    Unicode::toLower(data, length, m_data, m_length, &error);
     if (error) {
         c->ref();
         c->deref();
@@ -455,10 +454,10 @@ StringImpl* StringImpl::upper() const
     if (!m_length)
         return c;
     bool error;
-    int32_t length = WTF::Unicode::toUpper(0, 0, m_data, m_length, &error);
+    int32_t length = Unicode::toUpper(0, 0, m_data, m_length, &error);
     c->m_data = newUCharVector(length);
     c->m_length = length;
-    WTF::Unicode::toUpper(c->m_data, length, m_data, m_length, &error);
+    Unicode::toUpper(c->m_data, length, m_data, m_length, &error);
     if (error) {
         c->ref();
         c->deref();
@@ -469,11 +468,14 @@ StringImpl* StringImpl::upper() const
 
 StringImpl* StringImpl::secure(UChar aChar) const
 {
-    StringImpl* c= new StringImpl;
-    c->m_data = newUCharVector(c->m_length= m_length);
-    
-    WTF::Unicode::memset(c->m_data, aChar, m_length);
-    
+    int length = m_length;
+    UChar* data = newUCharVector(length);
+    for (int i = 0; i < length; ++i)
+        data[i] = aChar;
+
+    StringImpl* c = new StringImpl;
+    c->m_data = data;
+    c->m_length = length;
     return c;
 }
 
@@ -483,10 +485,10 @@ StringImpl* StringImpl::foldCase() const
     if (!m_length)
         return c;
     bool error;
-    int32_t length = WTF::Unicode::foldCase(0, 0, m_data, m_length, &error);
+    int32_t length = Unicode::foldCase(0, 0, m_data, m_length, &error);
     c->m_data = newUCharVector(length);
     c->m_length = length;
-    WTF::Unicode::foldCase(c->m_data, length, m_data, m_length, &error);
+    Unicode::foldCase(c->m_data, length, m_data, m_length, &error);
     if (error) {
         c->ref();
         c->deref();
@@ -563,10 +565,10 @@ StringImpl* StringImpl::capitalize(UChar previous) const
         return capitalizedString;
 
     UChar* stringWithPrevious = newUCharVector(m_length + 1);
-    stringWithPrevious[0] = previous == nonBreakingSpace ? ' ' : previous;
+    stringWithPrevious[0] = previous == noBreakSpace ? ' ' : previous;
     for (unsigned i = 1; i < m_length + 1; i++) {
         // Replace &nbsp with a real space since ICU no longer treats &nbsp as a word separator.
-        if (m_data[i - 1] == nonBreakingSpace)
+        if (m_data[i - 1] == noBreakSpace)
             stringWithPrevious[i] = ' ';
         else
             stringWithPrevious[i] = m_data[i - 1];
@@ -585,7 +587,7 @@ StringImpl* StringImpl::capitalize(UChar previous) const
     int32_t startOfWord = textBreakFirst(boundary);
     for (endOfWord = textBreakNext(boundary); endOfWord != TextBreakDone; startOfWord = endOfWord, endOfWord = textBreakNext(boundary)) {
         if (startOfWord != 0) // Ignore first char of previous string
-            capitalizedString->m_data[startOfWord - 1] = m_data[startOfWord - 1] == nonBreakingSpace ? nonBreakingSpace : WTF::Unicode::toTitleCase(stringWithPrevious[startOfWord]);
+            capitalizedString->m_data[startOfWord - 1] = m_data[startOfWord - 1] == noBreakSpace ? noBreakSpace : toTitleCase(stringWithPrevious[startOfWord]);
         for (int i = startOfWord + 1; i < endOfWord; i++)
             capitalizedString->m_data[i - 1] = m_data[i - 1];
     }
@@ -610,7 +612,7 @@ int StringImpl::toInt(bool* ok) const
     
     // Allow digits.
     for (; i != m_length; ++i)
-        if (!WTF::Unicode::isDigit(m_data[i]))
+        if (!Unicode::isDigit(m_data[i]))
             break;
     
     return DeprecatedConstString(reinterpret_cast<const DeprecatedChar*>(m_data), i).string().toInt(ok);
@@ -647,7 +649,7 @@ static bool equalIgnoringCase(const UChar* a, const char* b, int length)
     ASSERT(length >= 0);
     while (length--) {
         unsigned char bc = *b++;
-        if (WTF::Unicode::foldCase(*a++) != WTF::Unicode::foldCase(bc))
+        if (foldCase(*a++) != foldCase(bc))
             return false;
     }
     return true;
@@ -656,7 +658,7 @@ static bool equalIgnoringCase(const UChar* a, const char* b, int length)
 static inline bool equalIgnoringCase(const UChar* a, const UChar* b, int length)
 {
     ASSERT(length >= 0);
-    return WTF::Unicode::strcasecmp(a, b, length) == 0;
+    return umemcasecmp(a, b, length) == 0;
 }
 
 // This function should be as fast as possible, every little bit helps.
@@ -689,10 +691,9 @@ int StringImpl::find(const char* chs, int index, bool caseSensitive) const
                 return m_length - chsLength - n + 1;
         } while (--n);
     } else {
-        UChar lc = WTF::Unicode::foldCase(*chs);
+        UChar lc = Unicode::foldCase(*chs);
         do {
-            if (WTF::Unicode::foldCase(*++ptr) == lc
-                    && equalIgnoringCase(ptr + 1, chsPlusOne, chsLengthMinusOne))
+            if (Unicode::foldCase(*++ptr) == lc && equalIgnoringCase(ptr + 1, chsPlusOne, chsLengthMinusOne))
                 return m_length - chsLength - n + 1;
         } while (--n);
     }
@@ -993,7 +994,7 @@ bool equalIgnoringCase(const StringImpl* a, const char* b)
         equal = true;
         for (unsigned i = 0; i != length; ++i) {
             unsigned char bc = b[i];
-            equal &= WTF::Unicode::foldCase(as[i]) == WTF::Unicode::foldCase(bc);
+            equal &= foldCase(as[i]) == foldCase(bc);
         }
     }
 

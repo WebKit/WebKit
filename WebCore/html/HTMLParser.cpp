@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HTMLParser.h"
 
+#include "CharacterNames.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "Comment.h"
@@ -54,8 +55,6 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-
-const UChar nonBreakingSpace = 0xa0;
 
 /**
  * @internal
@@ -504,7 +503,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                         return false;
                     StringImpl *i = t->string();
                     unsigned int pos = 0;
-                    while (pos < i->length() && ((*i)[pos] == ' ' || (*i)[pos] == nonBreakingSpace))
+                    while (pos < i->length() && ((*i)[pos] == ' ' || (*i)[pos] == noBreakSpace))
                         pos++;
                     if (pos == i->length())
                         possiblyMoveStrayContent = false;

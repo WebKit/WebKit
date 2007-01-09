@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Position.h"
 
+#include "CharacterNames.h"
 #include "Document.h"
 #include "Element.h"
 #include "Logging.h"
@@ -39,8 +40,6 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-
-const UChar nonBreakingSpace = 0xa0;
 
 static Node *nextRenderedEditable(Node *node)
 {
@@ -616,7 +615,7 @@ Position Position::leadingWhitespacePosition(EAffinity affinity, bool considerNo
     if (prev != *this && prev.node()->inSameContainingBlockFlowElement(node()) && prev.node()->isTextNode()) {
         String string = static_cast<Text *>(prev.node())->data();
         UChar c = string[prev.offset()];
-        if (considerNonCollapsibleWhitespace ? (DeprecatedChar(c).isSpace() || c == nonBreakingSpace) : isCollapsibleWhitespace(c))
+        if (considerNonCollapsibleWhitespace ? (DeprecatedChar(c).isSpace() || c == noBreakSpace) : isCollapsibleWhitespace(c))
             return prev;
     }
 
@@ -633,7 +632,7 @@ Position Position::trailingWhitespacePosition(EAffinity affinity, bool considerN
         if (offset() < (int)textNode->length()) {
             String string = textNode->data();
             UChar c = string[offset()];
-            if (considerNonCollapsibleWhitespace ? (DeprecatedChar(c).isSpace() || c == nonBreakingSpace) : isCollapsibleWhitespace(c))
+            if (considerNonCollapsibleWhitespace ? (DeprecatedChar(c).isSpace() || c == noBreakSpace) : isCollapsibleWhitespace(c))
                 return *this;
             return Position();
         }
@@ -646,7 +645,7 @@ Position Position::trailingWhitespacePosition(EAffinity affinity, bool considerN
     if (next != *this && next.node()->inSameContainingBlockFlowElement(node()) && next.node()->isTextNode()) {
         String string = static_cast<Text*>(next.node())->data();
         UChar c = string[0];
-        if (considerNonCollapsibleWhitespace ? (DeprecatedChar(c).isSpace() || c == nonBreakingSpace) : isCollapsibleWhitespace(c))
+        if (considerNonCollapsibleWhitespace ? (DeprecatedChar(c).isSpace() || c == noBreakSpace) : isCollapsibleWhitespace(c))
             return next;
     }
 

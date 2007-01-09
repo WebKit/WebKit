@@ -21,6 +21,7 @@
 #include "config.h"
 #include "break_lines.h"
 
+#include "CharacterNames.h"
 #include "TextBreakIterator.h"
 
 #if PLATFORM(MAC)
@@ -28,9 +29,6 @@
 #endif
 
 namespace WebCore {
-
-const UChar noBreakSpace = 0x00A0;
-const UChar softHyphen = 0x00AD;
 
 static inline bool isBreakableSpace(UChar ch, bool treatNoBreakSpaceAsBreak)
 {

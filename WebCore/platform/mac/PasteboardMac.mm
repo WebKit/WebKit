@@ -26,6 +26,7 @@
 #import "config.h"
 #import "Pasteboard.h"
 
+#import "CharacterNames.h"
 #import "DOMRangeInternal.h"
 #import "DocumentFragment.h"
 #import "Editor.h"
@@ -131,8 +132,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
         text.replace('\\', frame->backslashAsCurrencySymbol());
         NSMutableString *s = [[[(NSString*)text copy] autorelease] mutableCopy];
         
-        const unichar NonBreakingSpaceCharacter = 0xA0;
-        NSString *NonBreakingSpaceString = [NSString stringWithCharacters:&NonBreakingSpaceCharacter length:1];
+        NSString *NonBreakingSpaceString = [NSString stringWithCharacters:&noBreakSpace length:1];
         [s replaceOccurrencesOfString:NonBreakingSpaceString withString:@" " options:0 range:NSMakeRange(0, [s length])];
         [m_pasteboard setString:s forType:NSStringPboardType];
         [s release];

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "htmlediting.h"
 
+#include "CharacterNames.h"
 #include "Document.h"
 #include "EditingText.h"
 #include "HTMLElement.h"
@@ -362,7 +363,7 @@ String stringWithRebalancedWhitespace(const String& string, bool startIsStartOfP
 
     DeprecatedString rebalancedString = string.copy().deprecatedString();
 
-    rebalancedString.replace(NON_BREAKING_SPACE, ' ');
+    rebalancedString.replace(noBreakSpace, ' ');
     rebalancedString.replace('\n', ' ');
     rebalancedString.replace('\t', ' ');
     
@@ -385,7 +386,7 @@ bool isTableStructureNode(const Node *node)
 
 const String& nonBreakingSpaceString()
 {
-    static String nonBreakingSpaceString = DeprecatedString(DeprecatedChar(NON_BREAKING_SPACE));
+    static String nonBreakingSpaceString = String(&noBreakSpace, 1);
     return nonBreakingSpaceString;
 }
 

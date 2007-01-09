@@ -31,12 +31,11 @@
 #include "nodes.h"
 #include <wtf/unicode/Unicode.h>
 
-static bool isDecimalDigit(int);
+using namespace WTF;
+using namespace Unicode;
 
 // we can't specify the namespace in yacc's C output, so do it here
 using namespace KJS;
-
-static Lexer *currLexer = 0;
 
 #ifndef KDE_USE_FINAL
 #include "grammar.h"
@@ -52,6 +51,12 @@ int kjsyylex()
 {
   return Lexer::curr()->lex();
 }
+
+namespace KJS {
+
+static Lexer* currLexer = 0;
+
+static bool isDecimalDigit(int);
 
 Lexer::Lexer()
   : yylineno(1),
@@ -565,7 +570,7 @@ int Lexer::lex()
 
 bool Lexer::isWhiteSpace() const
 {
-  return current == '\t' || current == 0x0b || current == 0x0c || WTF::Unicode::isSeparatorSpace(current);
+  return current == '\t' || current == 0x0b || current == 0x0c || isSeparatorSpace(current);
 }
 
 bool Lexer::isLineTerminator()
@@ -581,25 +586,14 @@ bool Lexer::isLineTerminator()
 
 bool Lexer::isIdentStart(int c)
 {
-  return (WTF::Unicode::category(c) & (WTF::Unicode::Letter_Uppercase
-        | WTF::Unicode::Letter_Lowercase
-        | WTF::Unicode::Letter_Titlecase
-        | WTF::Unicode::Letter_Modifier
-        | WTF::Unicode::Letter_Other))
+  return (category(c) & (Letter_Uppercase | Letter_Lowercase | Letter_Titlecase | Letter_Modifier | Letter_Other))
     || c == '$' || c == '_';
 }
 
 bool Lexer::isIdentPart(int c)
 {
-  return (WTF::Unicode::category(c) & (WTF::Unicode::Letter_Uppercase
-        | WTF::Unicode::Letter_Lowercase
-        | WTF::Unicode::Letter_Titlecase
-        | WTF::Unicode::Letter_Modifier
-        | WTF::Unicode::Letter_Other
-        | WTF::Unicode::Mark_NonSpacing
-        | WTF::Unicode::Mark_SpacingCombining
-        | WTF::Unicode::Number_DecimalDigit
-        | WTF::Unicode::Punctuation_Connector))
+  return (category(c) & (Letter_Uppercase | Letter_Lowercase | Letter_Titlecase | Letter_Modifier | Letter_Other
+        | Mark_NonSpacing | Mark_SpacingCombining | Number_DecimalDigit | Punctuation_Connector))
     || c == '$' || c == '_';
 }
 
@@ -910,4 +904,6 @@ UString *Lexer::makeUString(KJS::UChar*, unsigned int)
   UString *string = new UString(buffer16, pos16);
   strings[numStrings++] = string;
   return string;
+}
+
 }

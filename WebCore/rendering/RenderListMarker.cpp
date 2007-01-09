@@ -27,6 +27,7 @@
 #include "RenderListMarker.h"
 
 #include "CachedImage.h"
+#include "CharacterNames.h"
 #include "Document.h"
 #include "GraphicsContext.h"
 #include "ListMarkerBox.h"
@@ -35,7 +36,8 @@
 #include "RenderView.h"
 
 using namespace std;
-namespace Unicode = WTF::Unicode;
+using namespace WTF;
+using namespace Unicode;
 
 namespace WebCore {
 
@@ -335,20 +337,14 @@ String listMarkerText(EListStyleType type, int value)
 
         // We use the same characters for text security.
         // See RenderText::setInternalString.
-        case CIRCLE: {
-            const UChar whiteBullet = 0x25E6;
+        case CIRCLE:
             return String(&whiteBullet, 1);
-        }
-        case DISC: {
-            const UChar bullet = 0x2022;
+        case DISC:
             return String(&bullet, 1);
-        }
-        case SQUARE: {
+        case SQUARE:
             // The CSS 2.1 test suite uses U+25EE BLACK MEDIUM SMALL SQUARE
             // instead, but I think this looks better.
-            const UChar blackSquare = 0x25A0;
             return String(&blackSquare, 1);
-        }
 
         case LDECIMAL:
             return String::number(value);
@@ -618,7 +614,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
 
     // Text is not arbitrary. We can judge whether it's RTL from the first character,
     // and we only need to handle the direction RightToLeft for now.
-    bool textNeedsReversing = Unicode::direction(m_text[0]) == Unicode::RightToLeft;
+    bool textNeedsReversing = direction(m_text[0]) == RightToLeft;
     Vector<UChar> reversedText;
     if (textNeedsReversing) {
         int length = m_text.length();

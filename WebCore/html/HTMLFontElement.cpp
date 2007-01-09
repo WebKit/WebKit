@@ -21,12 +21,15 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "HTMLFontElement.h"
 
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
+
+using namespace WTF;
 
 namespace WebCore {
 
@@ -64,12 +67,12 @@ static bool parseFontSizeNumber(const String& s, int& size)
     }
     
     // Parse a single digit.
-    if (!WTF::Unicode::isDigit(s[pos]))
+    if (!Unicode::isDigit(s[pos]))
         return false;
-    int num = WTF::Unicode::digitValue(s[pos++]);
+    int num = Unicode::digitValue(s[pos++]);
     
     // Check for an additional digit.
-    if (WTF::Unicode::isDigit(s[pos]))
+    if (Unicode::isDigit(s[pos]))
         num = 10;
     
     if (sawPlus) {

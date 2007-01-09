@@ -3,6 +3,7 @@
  *  This file is part of the KDE libraries
  *  Copyright (C) 2006 George Staikos <staikos@kde.org>
  *  Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
+ *  Copyright (C) 2007 Apple Computer, Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -117,140 +118,141 @@ namespace WTF {
       Punctuation_FinalQuote = U_MASK(U_FINAL_PUNCTUATION)
     };
 
-    inline uint32_t foldCase(uint32_t c)
+    inline UChar32 foldCase(UChar32 c)
     {
       return u_foldCase(c, U_FOLD_CASE_DEFAULT);
     }
 
-    inline int foldCase(UChar* result, int resultLength, UChar* src, int srcLength,  bool* error)
+    inline int foldCase(UChar* result, int resultLength, const UChar* src, int srcLength, bool* error)
     {
       UErrorCode status = U_ZERO_ERROR;
-      int32_t realLength = u_strFoldCase(result, resultLength, src, srcLength, U_FOLD_CASE_DEFAULT, &status);
+      int realLength = u_strFoldCase(result, resultLength, src, srcLength, U_FOLD_CASE_DEFAULT, &status);
       *error = !U_SUCCESS(status);
       return realLength;
     }
 
-    inline int toLower(uint16_t* str, int strLength, uint16_t*& destIfNeeded)
+    inline int toLower(UChar* str, int strLength, UChar*& destIfNeeded)
     {
       UErrorCode err = U_ZERO_ERROR;
       int resultLength;
       destIfNeeded = 0;
 
-      resultLength = u_strToLower(0, 0, reinterpret_cast< ::UChar*>(str), strLength, "", &err);
+      resultLength = u_strToLower(0, 0, str, strLength, "", &err);
 
       if (resultLength <= strLength) {
         err = U_ZERO_ERROR;
-        u_strToLower(reinterpret_cast< ::UChar*>(str), resultLength, reinterpret_cast< ::UChar*>(str), strLength, "", &err);
+        u_strToLower(str, resultLength, str, strLength, "", &err);
       } else {
         err = U_ZERO_ERROR;
-        destIfNeeded = (uint16_t*)malloc(resultLength * sizeof(uint16_t));
-        u_strToLower(reinterpret_cast< ::UChar*>(destIfNeeded), resultLength, reinterpret_cast< ::UChar*>(str), strLength, "", &err);
+        destIfNeeded = static_cast<UChar*>(malloc(resultLength * sizeof(UChar)));
+        u_strToLower(destIfNeeded, resultLength, str, strLength, "", &err);
       }
 
       return U_FAILURE(err) ? -1 : resultLength;
     }
 
-    inline int toLower(UChar* result, int resultLength, UChar* src, int srcLength,  bool* error)
+    inline int toLower(UChar* result, int resultLength, const UChar* src, int srcLength, bool* error)
     {
       UErrorCode status = U_ZERO_ERROR;
-      int32_t realLength = u_strToLower(result, resultLength, src, srcLength, "", &status);
+      int realLength = u_strToLower(result, resultLength, src, srcLength, "", &status);
       *error = !!U_FAILURE(status);
       return realLength;
     }
 
-    inline int32_t toLower(int32_t c)
+    inline UChar32 toLower(UChar32 c)
     {
       return u_tolower(c);
     }
 
-    inline int32_t toUpper(int32_t c)
+    inline UChar32 toUpper(UChar32 c)
     {
       return u_toupper(c);
     }
 
-    inline int toUpper(uint16_t* str, int strLength, uint16_t*& destIfNeeded)
+    inline int toUpper(UChar* str, int strLength, UChar*& destIfNeeded)
     {
       UErrorCode err = U_ZERO_ERROR;
       int resultLength;
       destIfNeeded = 0;
 
-      resultLength = u_strToUpper(0, 0, reinterpret_cast< ::UChar*>(str), strLength, "", &err);
+      resultLength = u_strToUpper(0, 0, str, strLength, "", &err);
 
       if (resultLength <= strLength) {
         err = U_ZERO_ERROR;
-        u_strToUpper(reinterpret_cast< ::UChar*>(str), resultLength, reinterpret_cast< ::UChar*>(str), strLength, "", &err);
+        u_strToUpper(str, resultLength, str, strLength, "", &err);
       } else {
         err = U_ZERO_ERROR;
-        destIfNeeded = (uint16_t*)malloc(resultLength * sizeof(uint16_t));
-        u_strToUpper(reinterpret_cast< ::UChar*>(destIfNeeded), resultLength, reinterpret_cast< ::UChar*>(str), strLength, "", &err);
+        destIfNeeded = (UChar*)malloc(resultLength * sizeof(UChar));
+        u_strToUpper(destIfNeeded, resultLength, str, strLength, "", &err);
       }
 
       return U_FAILURE(err) ? -1 : resultLength;
     }
 
-    inline int toUpper(UChar* result, int resultLength, UChar* src, int srcLength,  bool* error)
+    inline int toUpper(UChar* result, int resultLength, const UChar* src, int srcLength, bool* error)
     {
       UErrorCode status = U_ZERO_ERROR;
-      int32_t realLength = u_strToUpper(result, resultLength, src, srcLength, "", &status);
+      int realLength = u_strToUpper(result, resultLength, src, srcLength, "", &status);
       *error = !!U_FAILURE(status);
       return realLength;
     }
 
-    inline int toTitleCase (uint32_t c)
+    inline UChar32 toTitleCase(UChar32 c)
     {
       return u_totitle(c);
     }
 
-    inline bool isFormatChar(int32_t c)
+    inline bool isFormatChar(UChar32 c)
     {
       return u_charType(c) == U_FORMAT_CHAR;
     }
 
-    inline bool isSeparatorSpace(int32_t c)
+    inline bool isSeparatorSpace(UChar32 c)
     {
       return u_charType(c) == U_SPACE_SEPARATOR;
     }
 
-    inline bool isPrintableChar(int32_t c)
+    inline bool isPrintableChar(UChar32 c)
     {
       return !!u_isprint(c);
     }
     
-    inline bool isDigit(int32_t c)
+    inline bool isDigit(UChar32 c)
     {
       return !!u_isdigit(c);
     }
 
-    inline bool isPunct(int32_t c)
+    inline bool isPunct(UChar32 c)
     {
       return !!u_ispunct(c);
     }
 
-    inline int32_t mirroredChar(int32_t c)
+    inline UChar32 mirroredChar(UChar32 c)
     {
       return u_charMirror(c);
     }
 
-    inline CharCategory category(int32_t c)
+    inline CharCategory category(UChar32 c)
     {
       return static_cast<CharCategory>(U_GET_GC_MASK(c));
     }
 
-    inline Direction direction(int c) {
-      return (Direction)u_charDirection(c);
+    inline Direction direction(UChar32 c)
+    {
+      return static_cast<Direction>(u_charDirection(c));
     }
 
-    inline bool isLower(int32_t c)
+    inline bool isLower(UChar32 c)
     {
       return !!u_islower(c);
     }
 
-    inline bool isUpper(int32_t c)
+    inline bool isUpper(UChar32 c)
     {
       return !!u_isUUppercase(c);
       }
 
-    inline int digitValue(int32_t c)
+    inline int digitValue(UChar32 c)
     {
       return u_charDigitValue(c);
     }
@@ -265,15 +267,11 @@ namespace WTF {
       return static_cast<DecompositionType>(u_getIntPropertyValue(c, UCHAR_DECOMPOSITION_TYPE));
     }
 
-    inline int strcasecmp(const UChar *a, const UChar *b, int len)
+    inline int umemcasecmp(const UChar* a, const UChar* b, int len)
     {
       return u_memcasecmp(a, b, len, U_FOLD_CASE_DEFAULT);
     }
 
-    inline void memset(UChar* dest, UChar ch, int32_t count)
-    {
-      u_memset(dest, ch, count);
-    }
   }
 }
 

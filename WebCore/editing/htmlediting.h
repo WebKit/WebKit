@@ -38,8 +38,6 @@ class Position;
 class String;
 class VisiblePosition;
 
-const UChar NON_BREAKING_SPACE = 0xa0;
-
 Position rangeCompliantEquivalent(const Position&);
 Position rangeCompliantEquivalent(const VisiblePosition&);
 int maxDeepOffset(const Node*);

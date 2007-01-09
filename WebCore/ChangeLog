@@ -1,3 +1,105 @@
+2007-01-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12174
+          improve Unicode use (less WTF::Unicode:: prefix, centralized character names)
+
+        - got rid of namespace prefixes from most uses of WTF::Unicode
+
+        - updated for removal of WTF::Unicode::memcmp
+        - updated for renaming of WTF::Unicode::strcasecmp to umemcasecmp.
+
+        - unified constants for special Unicode characters in a new
+          CharacterNames.h header
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/cssparser.cpp:
+        (WebCore::ParseString::lower):
+        * dom/Document.cpp:
+        (WebCore::isValidNameStart):
+        (WebCore::isValidNamePart):
+        * dom/Position.cpp:
+        (WebCore::Position::leadingWhitespacePosition):
+        (WebCore::Position::trailingWhitespacePosition):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::isWhitespace):
+        * editing/HTMLInterchange.cpp:
+        * editing/TextIterator.cpp:
+        (WebCore::CircularSearchBuffer::CircularSearchBuffer):
+        (WebCore::CircularSearchBuffer::append):
+        * editing/htmlediting.cpp:
+        (WebCore::stringWithRebalancedWhitespace):
+        (WebCore::nonBreakingSpaceString):
+        * editing/htmlediting.h:
+        * html/HTMLFontElement.cpp:
+        (WebCore::parseFontSizeNumber):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::stripLeadingWhiteSpace):
+        * platform/Font.cpp:
+        (WebCore::WidthIterator::advance):
+        (WebCore::WidthIterator::normalizeVoicingMarks):
+        * platform/GlyphMap.cpp:
+        (WebCore::GlyphMap::locatePage):
+        * platform/MimeTypeRegistry.h:
+        * platform/StringHash.h:
+        * platform/StringImpl.cpp:
+        (WebCore::isSpace):
+        (WebCore::StringImpl::append):
+        (WebCore::StringImpl::insert):
+        (WebCore::StringImpl::truncate):
+        (WebCore::StringImpl::remove):
+        (WebCore::parseLength):
+        (WebCore::StringImpl::isLower):
+        (WebCore::StringImpl::lower):
+        (WebCore::StringImpl::upper):
+        (WebCore::StringImpl::secure):
+        (WebCore::StringImpl::foldCase):
+        (WebCore::StringImpl::capitalize):t
+        (WebCore::StringImpl::toInt):
+        (WebCore::equalIgnoringCase):
+        (WebCore::StringImpl::find):
+        * platform/TextBoundaries.h:
+        * platform/TextCodec.h:
+        * platform/TextCodecLatin1.cpp:
+        * platform/TextEncoding.h:
+        * platform/TextEncodingRegistry.h:
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeSelection):
+        * platform/mac/TextCodecMac.cpp:
+        (WebCore::TextCodecMac::decode):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::listMarkerText):
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::widthFromCache):
+        (WebCore::isSpaceAccordingToStyle):
+        (WebCore::RenderText::setInternalString):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::quoteAndEscapeNonPrintables):
+        (WebCore::operator<<):
+        * rendering/bidi.cpp:
+        (WebCore::BidiState::BidiState):
+        (WebCore::BidiContext::BidiContext):
+        (WebCore::bidiNext):
+        (WebCore::bidiFirst):
+        (WebCore::BidiIterator::direction):
+        (WebCore::appendRun):
+        (WebCore::embed):
+        (WebCore::RenderBlock::bidiReorderLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::skipNonBreakingSpace):
+        (WebCore::RenderBlock::findNextLineBreak):
+        * rendering/break_lines.cpp:
+        (WebCore::nextBreakablePosition):
+        * rendering/break_lines.h:
+        * xml/XPathParser.cpp:
+        (WebCore::XPath::charCat):
+
 2007-01-09  Dex Deacon  <occupant4@gmail.com>
 
         Reviewed by Darin.

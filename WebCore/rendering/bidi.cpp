@@ -24,6 +24,7 @@
 #include "config.h"
 #include "bidi.h"
 
+#include "CharacterNames.h"
 #include "Document.h"
 #include "Element.h"
 #include "FrameView.h"
@@ -36,6 +37,8 @@
 #include <wtf/Vector.h>
 
 using namespace std;
+using namespace WTF;
+using namespace Unicode;
 
 namespace WebCore {
 
@@ -49,7 +52,7 @@ struct BidiIterator {
     bool atEnd() const;
     
     UChar current() const;
-    WTF::Unicode::Direction direction() const;
+    Direction direction() const;
 
     RenderBlock* block;
     RenderObject* obj;
@@ -57,7 +60,7 @@ struct BidiIterator {
 };
 
 struct BidiState {
-    BidiState() : context(0), dir(WTF::Unicode::OtherNeutral), adjustEmbedding(false), reachedEndOfLine(false) {}
+    BidiState() : context(0), dir(OtherNeutral), adjustEmbedding(false), reachedEndOfLine(false) {}
     
     BidiIterator sor;
     BidiIterator eor;
@@ -65,7 +68,7 @@ struct BidiState {
     BidiIterator current;
     RefPtr<BidiContext> context;
     BidiStatus status;
-    WTF::Unicode::Direction dir;
+    Direction dir;
     bool adjustEmbedding;
     BidiIterator endOfLine;
     bool reachedEndOfLine;
@@ -105,7 +108,7 @@ static bool previousLineBrokeCleanly = true;
 static bool emptyRun = true;
 static int numSpaces;
 
-static void embed(WTF::Unicode::Direction, BidiState&);
+static void embed(Direction, BidiState&);
 static void appendRun(BidiState&);
 
 static int getBPMWidth(int childValue, Length cssUnit)
@@ -200,7 +203,7 @@ static void deleteBidiRuns(RenderArena* arena)
    Each line of text caches the embedding level at the start of the line for faster
    relayouting
 */
-BidiContext::BidiContext(unsigned char l, WTF::Unicode::Direction e, BidiContext *p, bool o)
+BidiContext::BidiContext(unsigned char l, Direction e, BidiContext *p, bool o)
     : level(l), override(o), m_dir(e)
 {
     parent = p;
@@ -278,9 +281,9 @@ static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, 
                 EUnicodeBidi ub = next->style()->unicodeBidi();
                 if (ub != UBNormal) {
                     TextDirection dir = next->style()->direction();
-                    WTF::Unicode::Direction d = (ub == Embed
-                        ? (dir == RTL ? WTF::Unicode::RightToLeftEmbedding : WTF::Unicode::LeftToRightEmbedding)
-                        : (dir == RTL ? WTF::Unicode::RightToLeftOverride : WTF::Unicode::LeftToRightOverride));
+                    Direction d = (ub == Embed
+                        ? (dir == RTL ? RightToLeftEmbedding : LeftToRightEmbedding)
+                        : (dir == RTL ? RightToLeftOverride : LeftToRightOverride));
                     embed(d, bidi);
                 }
             }
@@ -296,7 +299,7 @@ static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, 
 
             while (current && current != block) {
                 if (bidi.adjustEmbedding && current->isInlineFlow() && current->style()->unicodeBidi() != UBNormal)
-                    embed(WTF::Unicode::PopDirectionalFormat, bidi);
+                    embed(PopDirectionalFormat, bidi);
 
                 next = current->nextSibling();
                 if (next) {
@@ -304,9 +307,9 @@ static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, 
                         EUnicodeBidi ub = next->style()->unicodeBidi();
                         if (ub != UBNormal) {
                             TextDirection dir = next->style()->direction();
-                            WTF::Unicode::Direction d = (ub == Embed
-                                ? (dir == RTL ? WTF::Unicode::RightToLeftEmbedding: WTF::Unicode::LeftToRightEmbedding)
-                                : (dir == RTL ? WTF::Unicode::RightToLeftOverride : WTF::Unicode::LeftToRightOverride));
+                            Direction d = (ub == Embed
+                                ? (dir == RTL ? RightToLeftEmbedding: LeftToRightEmbedding)
+                                : (dir == RTL ? RightToLeftOverride : LeftToRightOverride));
                             embed(d, bidi);
                         }
                     }
@@ -346,9 +349,9 @@ static RenderObject* bidiFirst(RenderBlock* block, BidiState& bidi, bool skipInl
             EUnicodeBidi ub = o->style()->unicodeBidi();
             if (ub != UBNormal) {
                 TextDirection dir = o->style()->direction();
-                WTF::Unicode::Direction d = (ub == Embed
-                    ? (dir == RTL ? WTF::Unicode::RightToLeftEmbedding : WTF::Unicode::LeftToRightEmbedding)
-                    : (dir == RTL ? WTF::Unicode::RightToLeftOverride : WTF::Unicode::LeftToRightOverride));
+                Direction d = (ub == Embed
+                    ? (dir == RTL ? RightToLeftEmbedding : LeftToRightEmbedding)
+                    : (dir == RTL ? RightToLeftOverride : LeftToRightOverride));
                 embed(d, bidi);
             }
         }
@@ -396,18 +399,18 @@ UChar BidiIterator::current() const
     return text->text()[pos];
 }
 
-ALWAYS_INLINE WTF::Unicode::Direction BidiIterator::direction() const
+ALWAYS_INLINE Direction BidiIterator::direction() const
 {
     if (!obj)
-        return WTF::Unicode::OtherNeutral;
+        return OtherNeutral;
     if (obj->isListMarker())
-        return obj->style()->direction() == LTR ? WTF::Unicode::LeftToRight : WTF::Unicode::RightToLeft;
+        return obj->style()->direction() == LTR ? LeftToRight : RightToLeft;
     if (!obj->isText())
-        return WTF::Unicode::OtherNeutral;
+        return OtherNeutral;
     RenderText* renderTxt = static_cast<RenderText*>(obj);
     if (pos >= renderTxt->stringLength())
-        return WTF::Unicode::OtherNeutral;
-    return WTF::Unicode::direction(renderTxt->text()[pos]);
+        return OtherNeutral;
+    return Unicode::direction(renderTxt->text()[pos]);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -620,44 +623,44 @@ static void appendRun(BidiState &bidi)
     
     bidi.eor.increment(bidi);
     bidi.sor = bidi.eor;
-    bidi.dir = WTF::Unicode::OtherNeutral;
-    bidi.status.eor = WTF::Unicode::OtherNeutral;
+    bidi.dir = OtherNeutral;
+    bidi.status.eor = OtherNeutral;
     bidi.adjustEmbedding = b;
 }
 
-static void embed(WTF::Unicode::Direction d, BidiState& bidi)
+static void embed(Direction d, BidiState& bidi)
 {
     bool b = bidi.adjustEmbedding;
     bidi.adjustEmbedding = false;
-    if (d == WTF::Unicode::PopDirectionalFormat) {
+    if (d == PopDirectionalFormat) {
         BidiContext *c = bidi.context->parent;
         if (c) {
             if (!emptyRun && bidi.eor != bidi.last) {
-                assert(bidi.status.eor != WTF::Unicode::OtherNeutral);
+                assert(bidi.status.eor != OtherNeutral);
                 // bidi.sor ... bidi.eor ... bidi.last eor; need to append the bidi.sor-bidi.eor run or extend it through bidi.last
-                assert(bidi.status.last == WTF::Unicode::EuropeanNumberSeparator
-                    || bidi.status.last == WTF::Unicode::EuropeanNumberTerminator
-                    || bidi.status.last == WTF::Unicode::CommonNumberSeparator
-                    || bidi.status.last == WTF::Unicode::BoundaryNeutral
-                    || bidi.status.last == WTF::Unicode::BlockSeparator
-                    || bidi.status.last == WTF::Unicode::SegmentSeparator
-                    || bidi.status.last == WTF::Unicode::WhiteSpaceNeutral
-                    || bidi.status.last == WTF::Unicode::OtherNeutral);
-                if (bidi.dir == WTF::Unicode::OtherNeutral)
+                assert(bidi.status.last == EuropeanNumberSeparator
+                    || bidi.status.last == EuropeanNumberTerminator
+                    || bidi.status.last == CommonNumberSeparator
+                    || bidi.status.last == BoundaryNeutral
+                    || bidi.status.last == BlockSeparator
+                    || bidi.status.last == SegmentSeparator
+                    || bidi.status.last == WhiteSpaceNeutral
+                    || bidi.status.last == OtherNeutral);
+                if (bidi.dir == OtherNeutral)
                     bidi.dir = bidi.context->dir();
-                if (bidi.context->dir() == WTF::Unicode::LeftToRight) {
+                if (bidi.context->dir() == LeftToRight) {
                     // bidi.sor ... bidi.eor ... bidi.last L
-                    if (bidi.status.eor == WTF::Unicode::EuropeanNumber) {
-                        if (bidi.status.lastStrong != WTF::Unicode::LeftToRight) {
-                            bidi.dir = WTF::Unicode::EuropeanNumber;
+                    if (bidi.status.eor == EuropeanNumber) {
+                        if (bidi.status.lastStrong != LeftToRight) {
+                            bidi.dir = EuropeanNumber;
                             appendRun(bidi);
                         }
-                    } else if (bidi.status.eor == WTF::Unicode::ArabicNumber) {
-                        bidi.dir = WTF::Unicode::ArabicNumber;
+                    } else if (bidi.status.eor == ArabicNumber) {
+                        bidi.dir = ArabicNumber;
                         appendRun(bidi);
-                    } else if (bidi.status.eor != WTF::Unicode::LeftToRight)
+                    } else if (bidi.status.eor != LeftToRight)
                         appendRun(bidi);
-                } else if (bidi.status.eor != WTF::Unicode::RightToLeft && bidi.status.eor != WTF::Unicode::RightToLeftArabic)
+                } else if (bidi.status.eor != RightToLeft && bidi.status.eor != RightToLeftArabic)
                     appendRun(bidi);
                 bidi.eor = bidi.last;
             }
@@ -671,15 +674,15 @@ static void embed(WTF::Unicode::Direction d, BidiState& bidi)
             bidi.eor.obj = 0;
         }
     } else {
-        WTF::Unicode::Direction runDir;
-        if (d == WTF::Unicode::RightToLeftEmbedding || d == WTF::Unicode::RightToLeftOverride)
-            runDir = WTF::Unicode::RightToLeft;
+        Direction runDir;
+        if (d == RightToLeftEmbedding || d == RightToLeftOverride)
+            runDir = RightToLeft;
         else
-            runDir = WTF::Unicode::LeftToRight;
-        bool override = d == WTF::Unicode::LeftToRightOverride || d == WTF::Unicode::RightToLeftOverride;
+            runDir = LeftToRight;
+        bool override = d == LeftToRightOverride || d == RightToLeftOverride;
 
         unsigned char level = bidi.context->level;
-        if (runDir == WTF::Unicode::RightToLeft) {
+        if (runDir == RightToLeft) {
             if (level%2) // we have an odd level
                 level += 2;
             else
@@ -693,47 +696,47 @@ static void embed(WTF::Unicode::Direction d, BidiState& bidi)
 
         if (level < 61) {
             if (!emptyRun && bidi.eor != bidi.last) {
-                assert(bidi.status.eor != WTF::Unicode::OtherNeutral);
+                assert(bidi.status.eor != OtherNeutral);
                 // bidi.sor ... bidi.eor ... bidi.last eor; need to append the bidi.sor-bidi.eor run or extend it through bidi.last
-                assert(bidi.status.last == WTF::Unicode::EuropeanNumberSeparator
-                    || bidi.status.last == WTF::Unicode::EuropeanNumberTerminator
-                    || bidi.status.last == WTF::Unicode::CommonNumberSeparator
-                    || bidi.status.last == WTF::Unicode::BoundaryNeutral
-                    || bidi.status.last == WTF::Unicode::BlockSeparator
-                    || bidi.status.last == WTF::Unicode::SegmentSeparator
-                    || bidi.status.last == WTF::Unicode::WhiteSpaceNeutral
-                    || bidi.status.last == WTF::Unicode::OtherNeutral);
-                if (bidi.dir == WTF::Unicode::OtherNeutral)
+                assert(bidi.status.last == EuropeanNumberSeparator
+                    || bidi.status.last == EuropeanNumberTerminator
+                    || bidi.status.last == CommonNumberSeparator
+                    || bidi.status.last == BoundaryNeutral
+                    || bidi.status.last == BlockSeparator
+                    || bidi.status.last == SegmentSeparator
+                    || bidi.status.last == WhiteSpaceNeutral
+                    || bidi.status.last == OtherNeutral);
+                if (bidi.dir == OtherNeutral)
                     bidi.dir = runDir;
-                if (runDir == WTF::Unicode::LeftToRight) {
+                if (runDir == LeftToRight) {
                     // bidi.sor ... bidi.eor ... bidi.last L
-                    if (bidi.status.eor == WTF::Unicode::EuropeanNumber) {
-                        if (bidi.status.lastStrong != WTF::Unicode::LeftToRight) {
-                            bidi.dir = WTF::Unicode::EuropeanNumber;
+                    if (bidi.status.eor == EuropeanNumber) {
+                        if (bidi.status.lastStrong != LeftToRight) {
+                            bidi.dir = EuropeanNumber;
                             appendRun(bidi);
-                            if (bidi.context->dir() != WTF::Unicode::LeftToRight)
-                                bidi.dir = WTF::Unicode::RightToLeft;
+                            if (bidi.context->dir() != LeftToRight)
+                                bidi.dir = RightToLeft;
                         }
-                    } else if (bidi.status.eor == WTF::Unicode::ArabicNumber) {
-                        bidi.dir = WTF::Unicode::ArabicNumber;
+                    } else if (bidi.status.eor == ArabicNumber) {
+                        bidi.dir = ArabicNumber;
                         appendRun(bidi);
-                        if (bidi.context->dir() != WTF::Unicode::LeftToRight) {
+                        if (bidi.context->dir() != LeftToRight) {
                             bidi.eor = bidi.last;
-                            bidi.dir = WTF::Unicode::RightToLeft;
+                            bidi.dir = RightToLeft;
                             appendRun(bidi);
                         }
-                    } else if (bidi.status.eor != WTF::Unicode::LeftToRight) {
-                        if (bidi.context->dir() == WTF::Unicode::LeftToRight || bidi.status.lastStrong == WTF::Unicode::LeftToRight)
+                    } else if (bidi.status.eor != LeftToRight) {
+                        if (bidi.context->dir() == LeftToRight || bidi.status.lastStrong == LeftToRight)
                             appendRun(bidi);
                         else
-                            bidi.dir = WTF::Unicode::RightToLeft;
+                            bidi.dir = RightToLeft;
                     }
-                } else if (bidi.status.eor != WTF::Unicode::RightToLeft && bidi.status.eor != WTF::Unicode::RightToLeftArabic) {
+                } else if (bidi.status.eor != RightToLeft && bidi.status.eor != RightToLeftArabic) {
                     // bidi.sor ... bidi.eor ... bidi.last R; bidi.eor=L/EN/AN; EN,AN behave like R (rule N1)
-                    if (bidi.context->dir() == WTF::Unicode::RightToLeft || bidi.status.lastStrong == WTF::Unicode::RightToLeft || bidi.status.lastStrong == WTF::Unicode::RightToLeftArabic)
+                    if (bidi.context->dir() == RightToLeft || bidi.status.lastStrong == RightToLeft || bidi.status.lastStrong == RightToLeftArabic)
                         appendRun(bidi);
                     else
-                        bidi.dir = WTF::Unicode::LeftToRight;
+                        bidi.dir = LeftToRight;
                 }
                 bidi.eor = bidi.last;
             }
@@ -1013,7 +1016,7 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
     sLastBidiRun = 0;
     sBidiRunCount = 0;
 
-    assert(bidi.dir == WTF::Unicode::OtherNeutral);
+    assert(bidi.dir == OtherNeutral);
 
     emptyRun = true;
 
@@ -1027,7 +1030,7 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
     BidiState stateAtEnd;
 
     while (true) {
-        WTF::Unicode::Direction dirCurrent;
+        Direction dirCurrent;
         if (pastEnd && (previousLineBrokeCleanly || bidi.current.atEnd())) {
             BidiContext *c = bidi.context.get();
             while (c->parent)
@@ -1044,75 +1047,75 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
         } else {
             dirCurrent = bidi.current.direction();
             if (bidi.context->override
-                    && dirCurrent != WTF::Unicode::RightToLeftEmbedding
-                    && dirCurrent != WTF::Unicode::LeftToRightEmbedding
-                    && dirCurrent != WTF::Unicode::RightToLeftOverride
-                    && dirCurrent != WTF::Unicode::LeftToRightOverride
-                    && dirCurrent != WTF::Unicode::PopDirectionalFormat)
+                    && dirCurrent != RightToLeftEmbedding
+                    && dirCurrent != LeftToRightEmbedding
+                    && dirCurrent != RightToLeftOverride
+                    && dirCurrent != LeftToRightOverride
+                    && dirCurrent != PopDirectionalFormat)
                 dirCurrent = bidi.context->dir();
-            else if (dirCurrent == WTF::Unicode::NonSpacingMark)
+            else if (dirCurrent == NonSpacingMark)
                 dirCurrent = bidi.status.last;
         }
 
-        assert(bidi.status.eor != WTF::Unicode::OtherNeutral);
+        assert(bidi.status.eor != OtherNeutral);
         switch (dirCurrent) {
 
         // embedding and overrides (X1-X9 in the Bidi specs)
-        case WTF::Unicode::RightToLeftEmbedding:
-        case WTF::Unicode::LeftToRightEmbedding:
-        case WTF::Unicode::RightToLeftOverride:
-        case WTF::Unicode::LeftToRightOverride:
-        case WTF::Unicode::PopDirectionalFormat:
+        case RightToLeftEmbedding:
+        case LeftToRightEmbedding:
+        case RightToLeftOverride:
+        case LeftToRightOverride:
+        case PopDirectionalFormat:
             embed(dirCurrent, bidi);
             break;
 
             // strong types
-        case WTF::Unicode::LeftToRight:
+        case LeftToRight:
             switch(bidi.status.last) {
-                case WTF::Unicode::RightToLeft:
-                case WTF::Unicode::RightToLeftArabic:
-                case WTF::Unicode::EuropeanNumber:
-                case WTF::Unicode::ArabicNumber:
-                    if (bidi.status.last != WTF::Unicode::EuropeanNumber || bidi.status.lastStrong != WTF::Unicode::LeftToRight)
+                case RightToLeft:
+                case RightToLeftArabic:
+                case EuropeanNumber:
+                case ArabicNumber:
+                    if (bidi.status.last != EuropeanNumber || bidi.status.lastStrong != LeftToRight)
                         appendRun(bidi);
                     break;
-                case WTF::Unicode::LeftToRight:
+                case LeftToRight:
                     break;
-                case WTF::Unicode::EuropeanNumberSeparator:
-                case WTF::Unicode::EuropeanNumberTerminator:
-                case WTF::Unicode::CommonNumberSeparator:
-                case WTF::Unicode::BoundaryNeutral:
-                case WTF::Unicode::BlockSeparator:
-                case WTF::Unicode::SegmentSeparator:
-                case WTF::Unicode::WhiteSpaceNeutral:
-                case WTF::Unicode::OtherNeutral:
-                    if (bidi.status.eor == WTF::Unicode::EuropeanNumber) {
-                        if (bidi.status.lastStrong != WTF::Unicode::LeftToRight) {
+                case EuropeanNumberSeparator:
+                case EuropeanNumberTerminator:
+                case CommonNumberSeparator:
+                case BoundaryNeutral:
+                case BlockSeparator:
+                case SegmentSeparator:
+                case WhiteSpaceNeutral:
+                case OtherNeutral:
+                    if (bidi.status.eor == EuropeanNumber) {
+                        if (bidi.status.lastStrong != LeftToRight) {
                             // the numbers need to be on a higher embedding level, so let's close that run
-                            bidi.dir = WTF::Unicode::EuropeanNumber;
+                            bidi.dir = EuropeanNumber;
                             appendRun(bidi);
-                            if (bidi.context->dir() != WTF::Unicode::LeftToRight) {
+                            if (bidi.context->dir() != LeftToRight) {
                                 // the neutrals take the embedding direction, which is R
                                 bidi.eor = bidi.last;
-                                bidi.dir = WTF::Unicode::RightToLeft;
+                                bidi.dir = RightToLeft;
                                 appendRun(bidi);
                             }
                         }
-                    } else if (bidi.status.eor == WTF::Unicode::ArabicNumber) {
+                    } else if (bidi.status.eor == ArabicNumber) {
                         // Arabic numbers are always on a higher embedding level, so let's close that run
-                        bidi.dir = WTF::Unicode::ArabicNumber;
+                        bidi.dir = ArabicNumber;
                         appendRun(bidi);
-                        if (bidi.context->dir() != WTF::Unicode::LeftToRight) {
+                        if (bidi.context->dir() != LeftToRight) {
                             // the neutrals take the embedding direction, which is R
                             bidi.eor = bidi.last;
-                            bidi.dir = WTF::Unicode::RightToLeft;
+                            bidi.dir = RightToLeft;
                             appendRun(bidi);
                         }
-                    } else if(bidi.status.eor != WTF::Unicode::LeftToRight) {
+                    } else if(bidi.status.eor != LeftToRight) {
                         //last stuff takes embedding dir
-                        if (bidi.context->dir() != WTF::Unicode::LeftToRight && bidi.status.lastStrong != WTF::Unicode::LeftToRight) {
+                        if (bidi.context->dir() != LeftToRight && bidi.status.lastStrong != LeftToRight) {
                             bidi.eor = bidi.last; 
-                            bidi.dir = WTF::Unicode::RightToLeft;
+                            bidi.dir = RightToLeft;
                         }
                         appendRun(bidi); 
                     }
@@ -1120,34 +1123,34 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
                     break;
             }
             bidi.eor = bidi.current;
-            bidi.status.eor = WTF::Unicode::LeftToRight;
-            bidi.status.lastStrong = WTF::Unicode::LeftToRight;
-            bidi.dir = WTF::Unicode::LeftToRight;
+            bidi.status.eor = LeftToRight;
+            bidi.status.lastStrong = LeftToRight;
+            bidi.dir = LeftToRight;
             break;
-        case WTF::Unicode::RightToLeftArabic:
-        case WTF::Unicode::RightToLeft:
+        case RightToLeftArabic:
+        case RightToLeft:
             switch (bidi.status.last) {
-                case WTF::Unicode::LeftToRight:
-                case WTF::Unicode::EuropeanNumber:
-                case WTF::Unicode::ArabicNumber:
+                case LeftToRight:
+                case EuropeanNumber:
+                case ArabicNumber:
                     appendRun(bidi);
-                case WTF::Unicode::RightToLeft:
-                case WTF::Unicode::RightToLeftArabic:
+                case RightToLeft:
+                case RightToLeftArabic:
                     break;
-                case WTF::Unicode::EuropeanNumberSeparator:
-                case WTF::Unicode::EuropeanNumberTerminator:
-                case WTF::Unicode::CommonNumberSeparator:
-                case WTF::Unicode::BoundaryNeutral:
-                case WTF::Unicode::BlockSeparator:
-                case WTF::Unicode::SegmentSeparator:
-                case WTF::Unicode::WhiteSpaceNeutral:
-                case WTF::Unicode::OtherNeutral:
-                    if (bidi.status.eor != WTF::Unicode::RightToLeft && bidi.status.eor != WTF::Unicode::RightToLeftArabic) {
+                case EuropeanNumberSeparator:
+                case EuropeanNumberTerminator:
+                case CommonNumberSeparator:
+                case BoundaryNeutral:
+                case BlockSeparator:
+                case SegmentSeparator:
+                case WhiteSpaceNeutral:
+                case OtherNeutral:
+                    if (bidi.status.eor != RightToLeft && bidi.status.eor != RightToLeftArabic) {
                         //last stuff takes embedding dir
-                        if (bidi.context->dir() != WTF::Unicode::RightToLeft && bidi.status.lastStrong != WTF::Unicode::RightToLeft
-                            && bidi.status.lastStrong != WTF::Unicode::RightToLeftArabic) {
+                        if (bidi.context->dir() != RightToLeft && bidi.status.lastStrong != RightToLeft
+                            && bidi.status.lastStrong != RightToLeftArabic) {
                             bidi.eor = bidi.last;
-                            bidi.dir = WTF::Unicode::LeftToRight;
+                            bidi.dir = LeftToRight;
                         }
                         appendRun(bidi);
                     }
@@ -1155,99 +1158,99 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
                     break;
             }
             bidi.eor = bidi.current;
-            bidi.status.eor = WTF::Unicode::RightToLeft;
+            bidi.status.eor = RightToLeft;
             bidi.status.lastStrong = dirCurrent;
-            bidi.dir = WTF::Unicode::RightToLeft;
+            bidi.dir = RightToLeft;
             break;
 
             // weak types:
 
-        case WTF::Unicode::EuropeanNumber:
-            if (bidi.status.lastStrong != WTF::Unicode::RightToLeftArabic) {
+        case EuropeanNumber:
+            if (bidi.status.lastStrong != RightToLeftArabic) {
                 // if last strong was AL change EN to AN
                 switch (bidi.status.last) {
-                    case WTF::Unicode::EuropeanNumber:
-                    case WTF::Unicode::LeftToRight:
+                    case EuropeanNumber:
+                    case LeftToRight:
                         break;
-                    case WTF::Unicode::RightToLeft:
-                    case WTF::Unicode::RightToLeftArabic:
-                    case WTF::Unicode::ArabicNumber:
+                    case RightToLeft:
+                    case RightToLeftArabic:
+                    case ArabicNumber:
                         bidi.eor = bidi.last;
                         appendRun(bidi);
-                        bidi.dir = WTF::Unicode::EuropeanNumber;
+                        bidi.dir = EuropeanNumber;
                         break;
-                    case WTF::Unicode::EuropeanNumberSeparator:
-                    case WTF::Unicode::CommonNumberSeparator:
-                        if (bidi.status.eor == WTF::Unicode::EuropeanNumber)
+                    case EuropeanNumberSeparator:
+                    case CommonNumberSeparator:
+                        if (bidi.status.eor == EuropeanNumber)
                             break;
-                    case WTF::Unicode::EuropeanNumberTerminator:
-                    case WTF::Unicode::BoundaryNeutral:
-                    case WTF::Unicode::BlockSeparator:
-                    case WTF::Unicode::SegmentSeparator:
-                    case WTF::Unicode::WhiteSpaceNeutral:
-                    case WTF::Unicode::OtherNeutral:
-                        if (bidi.status.eor == WTF::Unicode::RightToLeft) {
+                    case EuropeanNumberTerminator:
+                    case BoundaryNeutral:
+                    case BlockSeparator:
+                    case SegmentSeparator:
+                    case WhiteSpaceNeutral:
+                    case OtherNeutral:
+                        if (bidi.status.eor == RightToLeft) {
                             // neutrals go to R
-                            bidi.eor = bidi.status.last == WTF::Unicode::EuropeanNumberTerminator ? bidi.lastBeforeET : bidi.last;
+                            bidi.eor = bidi.status.last == EuropeanNumberTerminator ? bidi.lastBeforeET : bidi.last;
                             appendRun(bidi);
-                            bidi.dir = WTF::Unicode::EuropeanNumber;
-                        } else if (bidi.status.eor != WTF::Unicode::LeftToRight &&
-                                 (bidi.status.eor != WTF::Unicode::EuropeanNumber || bidi.status.lastStrong != WTF::Unicode::LeftToRight) &&
-                                 bidi.dir != WTF::Unicode::LeftToRight) {
+                            bidi.dir = EuropeanNumber;
+                        } else if (bidi.status.eor != LeftToRight &&
+                                 (bidi.status.eor != EuropeanNumber || bidi.status.lastStrong != LeftToRight) &&
+                                 bidi.dir != LeftToRight) {
                             // numbers on both sides, neutrals get right to left direction
                             appendRun(bidi);
-                            bidi.eor = bidi.status.last == WTF::Unicode::EuropeanNumberTerminator ? bidi.lastBeforeET : bidi.last;
-                            bidi.dir = WTF::Unicode::RightToLeft;
+                            bidi.eor = bidi.status.last == EuropeanNumberTerminator ? bidi.lastBeforeET : bidi.last;
+                            bidi.dir = RightToLeft;
                             appendRun(bidi);
-                            bidi.dir = WTF::Unicode::EuropeanNumber;
+                            bidi.dir = EuropeanNumber;
                         }
                     default:
                         break;
                 }
                 bidi.eor = bidi.current;
-                bidi.status.eor = WTF::Unicode::EuropeanNumber;
-                if (bidi.dir == WTF::Unicode::OtherNeutral)
-                    bidi.dir = WTF::Unicode::LeftToRight;
+                bidi.status.eor = EuropeanNumber;
+                if (bidi.dir == OtherNeutral)
+                    bidi.dir = LeftToRight;
                 break;
             }
-        case WTF::Unicode::ArabicNumber:
-            dirCurrent = WTF::Unicode::ArabicNumber;
+        case ArabicNumber:
+            dirCurrent = ArabicNumber;
             switch (bidi.status.last) {
-                case WTF::Unicode::LeftToRight:
-                    if (bidi.context->dir() == WTF::Unicode::LeftToRight)
+                case LeftToRight:
+                    if (bidi.context->dir() == LeftToRight)
                         appendRun(bidi);
                     break;
-                case WTF::Unicode::ArabicNumber:
+                case ArabicNumber:
                     break;
-                case WTF::Unicode::RightToLeft:
-                case WTF::Unicode::RightToLeftArabic:
-                case WTF::Unicode::EuropeanNumber:
+                case RightToLeft:
+                case RightToLeftArabic:
+                case EuropeanNumber:
                     bidi.eor = bidi.last;
                     appendRun(bidi);
                     break;
-                case WTF::Unicode::CommonNumberSeparator:
-                    if (bidi.status.eor == WTF::Unicode::ArabicNumber)
+                case CommonNumberSeparator:
+                    if (bidi.status.eor == ArabicNumber)
                         break;
-                case WTF::Unicode::EuropeanNumberSeparator:
-                case WTF::Unicode::EuropeanNumberTerminator:
-                case WTF::Unicode::BoundaryNeutral:
-                case WTF::Unicode::BlockSeparator:
-                case WTF::Unicode::SegmentSeparator:
-                case WTF::Unicode::WhiteSpaceNeutral:
-                case WTF::Unicode::OtherNeutral:
-                    if (bidi.status.eor != WTF::Unicode::RightToLeft && bidi.status.eor != WTF::Unicode::RightToLeftArabic) {
+                case EuropeanNumberSeparator:
+                case EuropeanNumberTerminator:
+                case BoundaryNeutral:
+                case BlockSeparator:
+                case SegmentSeparator:
+                case WhiteSpaceNeutral:
+                case OtherNeutral:
+                    if (bidi.status.eor != RightToLeft && bidi.status.eor != RightToLeftArabic) {
                         // run of L before neutrals, neutrals take embedding dir (N2)
-                        if (bidi.context->dir() == WTF::Unicode::RightToLeft || bidi.status.lastStrong == WTF::Unicode::RightToLeft
-                            || bidi.status.lastStrong == WTF::Unicode::RightToLeftArabic) {
+                        if (bidi.context->dir() == RightToLeft || bidi.status.lastStrong == RightToLeft
+                            || bidi.status.lastStrong == RightToLeftArabic) {
                             // the embedding direction is R
                             // close the L run
                             appendRun(bidi);
                             // neutrals become an R run
-                            bidi.dir = WTF::Unicode::RightToLeft;
+                            bidi.dir = RightToLeft;
                         } else {
                             // the embedding direction is L
                             // append neutrals to the L run and close it
-                            bidi.dir = WTF::Unicode::LeftToRight;
+                            bidi.dir = LeftToRight;
                         }
                     }
                     bidi.eor = bidi.last;
@@ -1256,37 +1259,37 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
                     break;
             }
             bidi.eor = bidi.current;
-            bidi.status.eor = WTF::Unicode::ArabicNumber;
-            if (bidi.dir == WTF::Unicode::OtherNeutral)
-                bidi.dir = WTF::Unicode::ArabicNumber;
+            bidi.status.eor = ArabicNumber;
+            if (bidi.dir == OtherNeutral)
+                bidi.dir = ArabicNumber;
             break;
-        case WTF::Unicode::EuropeanNumberSeparator:
-        case WTF::Unicode::CommonNumberSeparator:
+        case EuropeanNumberSeparator:
+        case CommonNumberSeparator:
             break;
-        case WTF::Unicode::EuropeanNumberTerminator:
-            if (bidi.status.last == WTF::Unicode::EuropeanNumber) {
-                dirCurrent = WTF::Unicode::EuropeanNumber;
+        case EuropeanNumberTerminator:
+            if (bidi.status.last == EuropeanNumber) {
+                dirCurrent = EuropeanNumber;
                 bidi.eor = bidi.current;
                 bidi.status.eor = dirCurrent;
-            } else if (bidi.status.last != WTF::Unicode::EuropeanNumberTerminator)
+            } else if (bidi.status.last != EuropeanNumberTerminator)
                 bidi.lastBeforeET = emptyRun ? bidi.eor : bidi.last;
             break;
 
         // boundary neutrals should be ignored
-        case WTF::Unicode::BoundaryNeutral:
+        case BoundaryNeutral:
             if (bidi.eor == bidi.last)
                 bidi.eor = bidi.current;
             break;
             // neutrals
-        case WTF::Unicode::BlockSeparator:
+        case BlockSeparator:
             // ### what do we do with newline and paragraph seperators that come to here?
             break;
-        case WTF::Unicode::SegmentSeparator:
+        case SegmentSeparator:
             // ### implement rule L1
             break;
-        case WTF::Unicode::WhiteSpaceNeutral:
+        case WhiteSpaceNeutral:
             break;
-        case WTF::Unicode::OtherNeutral:
+        case OtherNeutral:
             break;
         default:
             break;
@@ -1297,13 +1300,13 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
                 if (!bidi.reachedEndOfLine) {
                     bidi.eor = bidi.endOfLine;
                     switch (bidi.status.eor) {
-                        case WTF::Unicode::LeftToRight:
-                        case WTF::Unicode::RightToLeft:
-                        case WTF::Unicode::ArabicNumber:
+                        case LeftToRight:
+                        case RightToLeft:
+                        case ArabicNumber:
                             bidi.dir = bidi.status.eor;
                             break;
-                        case WTF::Unicode::EuropeanNumber:
-                            bidi.dir = bidi.status.lastStrong == WTF::Unicode::LeftToRight ? WTF::Unicode::LeftToRight : WTF::Unicode::EuropeanNumber;
+                        case EuropeanNumber:
+                            bidi.dir = bidi.status.lastStrong == LeftToRight ? LeftToRight : EuropeanNumber;
                             break;
                         default:
                             assert(false);
@@ -1311,44 +1314,44 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
                     appendRun(bidi);
                 }
                 bidi = stateAtEnd;
-                bidi.dir = WTF::Unicode::OtherNeutral;
+                bidi.dir = OtherNeutral;
                 break;
             }
         }
 
         // set status.last as needed.
         switch (dirCurrent) {
-            case WTF::Unicode::EuropeanNumberTerminator:
-                if (bidi.status.last != WTF::Unicode::EuropeanNumber)
-                    bidi.status.last = WTF::Unicode::EuropeanNumberTerminator;
+            case EuropeanNumberTerminator:
+                if (bidi.status.last != EuropeanNumber)
+                    bidi.status.last = EuropeanNumberTerminator;
                 break;
-            case WTF::Unicode::EuropeanNumberSeparator:
-            case WTF::Unicode::CommonNumberSeparator:
-            case WTF::Unicode::SegmentSeparator:
-            case WTF::Unicode::WhiteSpaceNeutral:
-            case WTF::Unicode::OtherNeutral:
+            case EuropeanNumberSeparator:
+            case CommonNumberSeparator:
+            case SegmentSeparator:
+            case WhiteSpaceNeutral:
+            case OtherNeutral:
                 switch(bidi.status.last) {
-                    case WTF::Unicode::LeftToRight:
-                    case WTF::Unicode::RightToLeft:
-                    case WTF::Unicode::RightToLeftArabic:
-                    case WTF::Unicode::EuropeanNumber:
-                    case WTF::Unicode::ArabicNumber:
+                    case LeftToRight:
+                    case RightToLeft:
+                    case RightToLeftArabic:
+                    case EuropeanNumber:
+                    case ArabicNumber:
                         bidi.status.last = dirCurrent;
                         break;
                     default:
-                        bidi.status.last = WTF::Unicode::OtherNeutral;
+                        bidi.status.last = OtherNeutral;
                     }
                 break;
-            case WTF::Unicode::NonSpacingMark:
-            case WTF::Unicode::BoundaryNeutral:
-            case WTF::Unicode::RightToLeftEmbedding:
-            case WTF::Unicode::LeftToRightEmbedding:
-            case WTF::Unicode::RightToLeftOverride:
-            case WTF::Unicode::LeftToRightOverride:
-            case WTF::Unicode::PopDirectionalFormat:
+            case NonSpacingMark:
+            case BoundaryNeutral:
+            case RightToLeftEmbedding:
+            case LeftToRightEmbedding:
+            case RightToLeftOverride:
+            case LeftToRightOverride:
+            case PopDirectionalFormat:
                 // ignore these
                 break;
-            case WTF::Unicode::EuropeanNumber:
+            case EuropeanNumber:
                 // fall through
             default:
                 bidi.status.last = dirCurrent;
@@ -1356,11 +1359,11 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
 
         bidi.last = bidi.current;
 
-        if (emptyRun && !(dirCurrent == WTF::Unicode::RightToLeftEmbedding
-                || dirCurrent == WTF::Unicode::LeftToRightEmbedding
-                || dirCurrent == WTF::Unicode::RightToLeftOverride
-                || dirCurrent == WTF::Unicode::LeftToRightOverride
-                || dirCurrent == WTF::Unicode::PopDirectionalFormat)) {
+        if (emptyRun && !(dirCurrent == RightToLeftEmbedding
+                || dirCurrent == LeftToRightEmbedding
+                || dirCurrent == RightToLeftOverride
+                || dirCurrent == LeftToRightOverride
+                || dirCurrent == PopDirectionalFormat)) {
             bidi.sor = bidi.current;
             emptyRun = false;
         }
@@ -1370,11 +1373,11 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
         bidi.adjustEmbedding = true;
         bidi.current.increment(bidi);
         bidi.adjustEmbedding = false;
-        if (emptyRun && (dirCurrent == WTF::Unicode::RightToLeftEmbedding
-                || dirCurrent == WTF::Unicode::LeftToRightEmbedding
-                || dirCurrent == WTF::Unicode::RightToLeftOverride
-                || dirCurrent == WTF::Unicode::LeftToRightOverride
-                || dirCurrent == WTF::Unicode::PopDirectionalFormat)) {
+        if (emptyRun && (dirCurrent == RightToLeftEmbedding
+                || dirCurrent == LeftToRightEmbedding
+                || dirCurrent == RightToLeftOverride
+                || dirCurrent == LeftToRightOverride
+                || dirCurrent == PopDirectionalFormat)) {
             // exclude the embedding char itself from the new run so that ATSUI will never see it
             bidi.eor.obj = 0;
             bidi.last = bidi.current;
@@ -1557,18 +1560,18 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
 
         BidiContext *startEmbed;
         if (style()->direction() == LTR) {
-            startEmbed = new BidiContext( 0, WTF::Unicode::LeftToRight, NULL, style()->unicodeBidi() == Override );
-            bidi.status.eor = WTF::Unicode::LeftToRight;
+            startEmbed = new BidiContext(0, LeftToRight, NULL, style()->unicodeBidi() == Override);
+            bidi.status.eor = LeftToRight;
         } else {
-            startEmbed = new BidiContext( 1, WTF::Unicode::RightToLeft, NULL, style()->unicodeBidi() == Override );
-            bidi.status.eor = WTF::Unicode::RightToLeft;
+            startEmbed = new BidiContext(1, RightToLeft, NULL, style()->unicodeBidi() == Override);
+            bidi.status.eor = RightToLeft;
         }
 
         bidi.status.lastStrong = startEmbed->dir();
         bidi.status.last = startEmbed->dir();
         bidi.status.eor = startEmbed->dir();
         bidi.context = startEmbed;
-        bidi.dir = WTF::Unicode::OtherNeutral;
+        bidi.dir = OtherNeutral;
         
         if (!smidpoints)
             smidpoints = new Vector<BidiIterator>();
@@ -1890,11 +1893,9 @@ bool RenderBlock::matchedEndLine(const BidiIterator& start, const BidiStatus& st
     return false;
 }
 
-static const unsigned short nonBreakingSpace = 0xa0;
-
 static inline bool skipNonBreakingSpace(BidiIterator &it)
 {
-    if (it.obj->style()->nbspMode() != SPACE || it.current() != nonBreakingSpace)
+    if (it.obj->style()->nbspMode() != SPACE || it.current() != noBreakSpace)
         return false;
  
     // FIXME: This is bad.  It makes nbsp inconsistent with space and won't work correctly
@@ -2201,7 +2202,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 // FIXME: This check looks suspicious. Why does w have to be 0?  
                 bool breakWords = o->style()->wordWrap() == BREAK_WORD && ((allowBreak && w == 0) || o->style()->whiteSpace() == PRE);
 
-                currentCharacterIsWS = currentCharacterIsSpace || (breakNBSP && c == nonBreakingSpace);
+                currentCharacterIsWS = currentCharacterIsSpace || (breakNBSP && c == noBreakSpace);
 
                 if (breakWords)
                     wrapW += t->width(pos, 1, f, w+wrapW);

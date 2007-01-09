@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HTMLInterchange.h"
 
+#include "CharacterNames.h"
 #include "Document.h"
 #include "TextIterator.h"
 
@@ -40,7 +41,7 @@ DeprecatedString convertedSpaceString()
         convertedSpaceString = "<span class=\"";
         convertedSpaceString += AppleConvertedSpace;
         convertedSpaceString += "\">";
-        convertedSpaceString += DeprecatedChar(0xa0);
+        convertedSpaceString += DeprecatedChar(noBreakSpace);
         convertedSpaceString += "</span>";
     }
     return convertedSpaceString;
