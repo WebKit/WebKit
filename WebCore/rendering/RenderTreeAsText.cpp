@@ -189,11 +189,13 @@ static TextStream &operator<<(TextStream& ts, const RenderObject& o)
             ts << " [bgcolor=" << o.style()->backgroundColor().name() << "]";
         
         if (o.parent() && (o.parent()->style()->textFillColor() != o.style()->textFillColor()) &&
-            o.style()->textFillColor().isValid() && o.style()->textFillColor().rgb())
+            o.style()->textFillColor().isValid() && o.style()->textFillColor() != o.style()->color() &&
+            o.style()->textFillColor().rgb())
             ts << " [textFillColor=" << o.style()->textFillColor().name() << "]";
 
         if (o.parent() && (o.parent()->style()->textStrokeColor() != o.style()->textStrokeColor()) &&
-            o.style()->textStrokeColor().isValid() && o.style()->textStrokeColor().rgb())
+            o.style()->textStrokeColor().isValid() && o.style()->textStrokeColor() != o.style()->color() &&
+            o.style()->textStrokeColor().rgb())
             ts << " [textStrokeColor=" << o.style()->textStrokeColor().name() << "]";
 
         if (o.parent() && (o.parent()->style()->textStrokeWidth() != o.style()->textStrokeWidth()) &&
