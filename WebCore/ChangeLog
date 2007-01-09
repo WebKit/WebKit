@@ -2,6 +2,7 @@
 
         - rolled out Beth's RenderFlow::destroy change, which broke 5 editing tests
 
+        * rendering/InlineBox.cpp: (WebCore::InlineBox::root):
         * rendering/RenderFlow.cpp: (WebCore::RenderFlow::destroy):
         Used svn merge to roll the change out.
 
