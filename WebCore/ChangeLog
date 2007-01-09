@@ -2,6 +2,9 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12170
+          RenderView holds dangling reference to RenderObjects as selection markers
+
         * rendering/RenderText.h:
         (WebCore::RenderText::selectionState):
         Change the m_selectionState enum-bitfield to an unsigned-bitfield,
