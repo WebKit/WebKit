@@ -1,3 +1,14 @@
+2007-01-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - added a Thai line breaking test
+
+        * fast/text/international/thai-line-breaks-expected.checksum: Added.
+        * fast/text/international/thai-line-breaks-expected.png: Added.
+        * fast/text/international/thai-line-breaks-expected.txt: Added.
+        * fast/text/international/thai-line-breaks.html: Added.
+
 2007-01-09  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.
