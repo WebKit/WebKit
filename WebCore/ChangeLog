@@ -1,3 +1,13 @@
+2007-01-09  Dex Deacon  <occupant4@gmail.com>
+
+        Reviewed by Darin.
+
+        * rendering/RenderText.h:
+        (WebCore::RenderText::selectionState):
+        Change the m_selectionState enum-bitfield to an unsigned-bitfield,
+        because enums on Windows are signed, which caused it to become
+        negative (whereas the valid values are all positive).
+
 2007-01-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
