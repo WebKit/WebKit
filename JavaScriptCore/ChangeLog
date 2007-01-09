@@ -1,5 +1,12 @@
 2007-01-09  Darin Adler  <darin@apple.com>
 
+        - fix build
+
+        * kjs/string_object.cpp: (KJS::StringProtoFunc::callAsFunction):
+        Change types.
+
+2007-01-09  Darin Adler  <darin@apple.com>
+
         - fix build on platforms where Unicode::UChar is != uint16_t
 
         * kjs/string_object.cpp: (KJS::StringProtoFunc::callAsFunction):
