@@ -1,7 +1,6 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 2006 Lars Knoll <lars@trolltech.com>
+ * Copyright (C) 2007 Apple Computer, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,30 +18,29 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef TextBreakIterator_h
 #define TextBreakIterator_h
 
-#include "wtf/unicode/Unicode.h"
+#include <wtf/unicode/Unicode.h>
 
-#if USE(ICU_UNICODE)
-#include <unicode/ubrk.h>
-typedef UBreakIterator TextBreakIterator;
-#elif USE(QT4_UNICODE)
 namespace WebCore {
+
     class TextBreakIterator;
-}
-#endif
 
-
-namespace WebCore {
-    TextBreakIterator* wordBreakIterator(const UChar* string, int length);
-    TextBreakIterator* characterBreakIterator(const UChar* string, int length);
+    // Note: The returned iterator is good only until you get another iterator.
+    TextBreakIterator* characterBreakIterator(const UChar*, int length);
+    TextBreakIterator* wordBreakIterator(const UChar*, int length);
+    TextBreakIterator* lineBreakIterator(const UChar*, int length);
 
     int textBreakFirst(TextBreakIterator*);
     int textBreakNext(TextBreakIterator*);
     int textBreakCurrent(TextBreakIterator*);
     int textBreakPreceding(TextBreakIterator*, int);
     int textBreakFollowing(TextBreakIterator*, int);
-    enum { TextBreakDone = -1 };
+
+    const int TextBreakDone = -1;
+
 }
+
 #endif

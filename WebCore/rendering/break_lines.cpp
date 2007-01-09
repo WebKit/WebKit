@@ -1,7 +1,5 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
- * Copyright (C) 2005 Apple Computer, Inc.
+ * Copyright (C) 2005, 2007 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,7 +21,7 @@
 #include "config.h"
 #include "break_lines.h"
 
-#include "RenderText.h"
+#include "TextBreakIterator.h"
 
 #if PLATFORM(MAC)
 #include <CoreServices/CoreServices.h>
@@ -31,44 +29,88 @@
 
 namespace WebCore {
 
-int nextBreakablePosition(const UChar* str, int pos, int len, bool breakNBSP)
+const UChar noBreakSpace = 0x00A0;
+const UChar softHyphen = 0x00AD;
+
+static inline bool isBreakableSpace(UChar ch, bool treatNoBreakSpaceAsBreak)
 {
+    switch (ch) {
+        case ' ':
+        case '\n':
+        case '\t':
+            return true;
+        case noBreakSpace:
+            return treatNoBreakSpaceAsBreak;
+        default:
+            return false;
+    }
+}
+
+static inline bool shouldBreakAfter(UChar ch)
+{
+    // Match WinIE's breaking strategy, which is to always allow breaks after hyphens and question marks.
+    switch (ch) {
+        case '-':
+        case '?':
+        case softHyphen:
+            return true;
+        default:
+            return false;
+    }
+}
+
+static inline bool needsLineBreakIterator(UChar ch)
+{
+    return ch > 0x7F && ch != noBreakSpace;
+}
+
 #if PLATFORM(MAC)
-    OSStatus status = 0, findStatus = -1;
-    static TextBreakLocatorRef breakLocator = 0;
-    int nextUCBreak = -1;
+static inline TextBreakLocatorRef lineBreakLocator()
+{
+    TextBreakLocatorRef locator = 0;
+    UCCreateTextBreakLocator(0, 0, kUCTextBreakLineMask, &locator);
+    return locator;
+}
 #endif
-    int i;
-    unsigned short ch, lastCh;
-    
-    lastCh = pos > 0 ? str[pos - 1] : 0;
-    for (i = pos; i < len; i++) {
-        ch = str[i];
-        if (ch == ' ' || ch == '\n' || ch == '\t' || (breakNBSP && ch == 0xa0))
-            break;
-        // Match WinIE's breaking strategy, which is to always allow breaks after hyphens and question marks.
-        if (lastCh == '-' || lastCh == '?' || lastCh == SOFT_HYPHEN)
-            break;
-#if PLATFORM(MAC)
-        // FIXME: Rewrite break location using ICU.
-        // If current character, or the previous character aren't simple latin1 then
-        // use the UC line break locator.  UCFindTextBreak will report false if we
-        // have a sequence of 0xa0 0x20 (nbsp, sp), so we explicity check for that
-        // case.
-        if ((ch > 0x7f && ch != 0xa0) || (lastCh > 0x7f && lastCh != 0xa0)) {
-            if (nextUCBreak < i) {
-                if (!breakLocator)
-                    status = UCCreateTextBreakLocator(NULL, 0, kUCTextBreakLineMask, &breakLocator);
-                if (status == 0)
-                    findStatus = UCFindTextBreak(breakLocator, kUCTextBreakLineMask, 0, (const UniChar *)str, len, i, (UniCharArrayOffset *)&nextUCBreak);
+
+int nextBreakablePosition(const UChar* str, int pos, int len, bool treatNoBreakSpaceAsBreak)
+{
+#if !PLATFORM(MAC)
+    TextBreakIterator* breakIterator = 0;
+#endif
+    int nextBreak = -1;
+
+    UChar lastCh = pos > 0 ? str[pos - 1] : 0;
+    for (int i = pos; i < len; i++) {
+        UChar ch = str[i];
+
+        if (isBreakableSpace(ch, treatNoBreakSpaceAsBreak) || shouldBreakAfter(lastCh))
+            return i;
+
+        if (needsLineBreakIterator(ch) || needsLineBreakIterator(lastCh)) {
+            if (nextBreak < i && i) {
+#if !PLATFORM(MAC)
+                if (!breakIterator)
+                    breakIterator = lineBreakIterator(str, len);
+                if (breakIterator)
+                    nextBreak = textBreakFollowing(breakIterator, i - 1);
+#else
+                static TextBreakLocatorRef breakLocator = lineBreakLocator();
+                if (breakLocator) {
+                    UniCharArrayOffset nextUCBreak;
+                    if (UCFindTextBreak(breakLocator, kUCTextBreakLineMask, 0, str, len, i, &nextUCBreak) == 0)
+                        nextBreak = nextUCBreak;
+                }
+#endif
             }
-            if (findStatus == 0 && i == nextUCBreak && !(lastCh == ' ' || lastCh == '\n' || lastCh == '\t' || (breakNBSP && lastCh == 0xa0)))
-                break;
+            if (i == nextBreak && !isBreakableSpace(lastCh, treatNoBreakSpaceAsBreak))
+                return i;
         }
-#endif
+
         lastCh = ch;
     }
-    return i;
+
+    return len;
 }
 
 } // namespace WebCore

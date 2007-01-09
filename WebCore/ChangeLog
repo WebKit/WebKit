@@ -1,3 +1,30 @@
+2007-01-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=12175
+          port break_lines.cpp to be platform independent
+
+        * platform/TextBreakIterator.h: Added lineBreakIterator.
+        Removed ICU-specific stuff from the header.
+
+        * platform/TextBreakIteratorICU.cpp:
+        (WebCore::setUpIterator): Added helper to be shared by the three different
+        creation functions.
+        (WebCore::characterBreakIterator): Changed to use setUpIterator.
+        (WebCore::wordBreakIterator): Ditto.
+        (WebCore::lineBreakIterator): Added.
+
+        * platform/qt/TextBreakIteratorQt.cpp:
+        (WebCore::lineBreakIterator): Added a stub.
+
+        * rendering/break_lines.cpp:
+        (WebCore::isBreakableSpace): Added.
+        (WebCore::shouldBreakAfter): Added.
+        (WebCore::needsAdvancedBreakAnalysis): Added.
+        (WebCore::nextBreakablePosition): Changed to use TextBreakIterator on platforms
+        other than Mac.
+
 2007-01-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

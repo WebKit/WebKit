@@ -143,6 +143,12 @@ TextBreakIterator* characterBreakIterator(const UChar* string, int length)
     return iterator;
 }
 
+TextBreakIterator* lineBreakIterator(const UChar*, int)
+{
+    // not yet implemented
+    return 0;
+}
+
 int textBreakFirst(TextBreakIterator* bi)
 {
     return bi->first();

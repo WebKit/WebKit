@@ -1,7 +1,6 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 2006 Lars Knoll <lars@trolltech.com>
+ * Copyright (C) 2007 Apple Computer, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,28 +19,34 @@
  *
  */
 
+#include "config.h"
 #include "TextBreakIterator.h"
+
+#include <unicode/ubrk.h>
 
 namespace WebCore {
 
-TextBreakIterator* wordBreakIterator(const UChar* string, int length)
+static TextBreakIterator* setUpIterator(bool& createdIterator, TextBreakIterator*& iterator,
+    UBreakIteratorType type, const UChar* string, int length)
 {
-    // The locale is currently ignored when determining character cluster breaks.
-    // This may change in the future, according to Deborah Goldsmith.
-    static bool createdIterator = false;
-    static UBreakIterator* iterator;
-    UErrorCode status;
+    if (!string)
+        return 0;
+
     if (!createdIterator) {
-        status = U_ZERO_ERROR;
-        iterator = ubrk_open(UBRK_WORD, "en_us", 0, 0, &status);
+        // The locale is currently ignored when determining character cluster breaks.
+        // This may change in the future, according to Deborah Goldsmith.
+        // FIXME: Presumably we do need to pass the correct locale for word and line
+        // break iterators, though!
+        UErrorCode openStatus = U_ZERO_ERROR;
+        iterator = static_cast<TextBreakIterator*>(ubrk_open(type, "en_us", 0, 0, &openStatus));
         createdIterator = true;
     }
     if (!iterator)
         return 0;
 
-    status = U_ZERO_ERROR;
-    ubrk_setText(iterator, string, length, &status);
-    if (U_FAILURE(status))
+    UErrorCode setTextStatus = U_ZERO_ERROR;
+    ubrk_setText(iterator, string, length, &setTextStatus);
+    if (U_FAILURE(setTextStatus))
         return 0;
 
     return iterator;
@@ -49,28 +54,26 @@ TextBreakIterator* wordBreakIterator(const UChar* string, int length)
 
 TextBreakIterator* characterBreakIterator(const UChar* string, int length)
 {
-    if (!string)
-        return 0;
+    static bool createdCharacterBreakIterator = false;
+    static TextBreakIterator* staticCharacterBreakIterator;
+    return setUpIterator(createdCharacterBreakIterator,
+        staticCharacterBreakIterator, UBRK_CHARACTER, string, length);
+}
 
-    // The locale is currently ignored when determining character cluster breaks.
-    // This may change in the future, according to Deborah Goldsmith.
-    static bool createdIterator = false;
-    static UBreakIterator* iterator;
-    UErrorCode status;
-    if (!createdIterator) {
-        status = U_ZERO_ERROR;
-        iterator = ubrk_open(UBRK_CHARACTER, "en_us", 0, 0, &status);
-        createdIterator = true;
-    }
-    if (!iterator)
-        return 0;
+TextBreakIterator* wordBreakIterator(const UChar* string, int length)
+{
+    static bool createdWordBreakIterator = false;
+    static TextBreakIterator* staticWordBreakIterator;
+    return setUpIterator(createdWordBreakIterator,
+        staticWordBreakIterator, UBRK_WORD, string, length);
+}
 
-    status = U_ZERO_ERROR;
-    ubrk_setText(iterator, reinterpret_cast<const UChar*>(string), length, &status);
-    if (status != U_ZERO_ERROR)
-        return 0;
-
-    return iterator;
+TextBreakIterator* lineBreakIterator(const UChar* string, int length)
+{
+    static bool createdLineBreakIterator = false;
+    static TextBreakIterator* staticLineBreakIterator;
+    return setUpIterator(createdLineBreakIterator,
+        staticLineBreakIterator, UBRK_LINE, string, length);
 }
 
 int textBreakFirst(TextBreakIterator* bi)
