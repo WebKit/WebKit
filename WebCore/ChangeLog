@@ -1,3 +1,16 @@
+2007-01-08  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Brady.
+
+        Move some history related functions off the bridge and into FrameLoader directly.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::canGoBackOrForward):
+        (WebCore::FrameLoader::getHistoryLength):
+        (WebCore::FrameLoader::historyURL):
+        * loader/mac/FrameLoaderMac.mm:
+        * page/mac/WebCoreFrameBridge.h:
+
 2007-01-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark.

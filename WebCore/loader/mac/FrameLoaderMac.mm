@@ -311,27 +311,9 @@ String FrameLoader::overrideMediaType() const
     return String();
 }
 
-bool FrameLoader::canGoBackOrForward(int distance) const
-{
-    return [Mac(m_frame)->bridge() canGoBackOrForward:distance];
-}
-
 KURL FrameLoader::originalRequestURL() const
 {
     return activeDocumentLoader()->initialRequest().url();
-}
-
-int FrameLoader::getHistoryLength()
-{
-    return [Mac(m_frame)->bridge() historyLength];
-}
-
-KURL FrameLoader::historyURL(int distance)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [Mac(m_frame)->bridge() historyURL:distance];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return KURL();
 }
 
 void FrameLoader::didFinishLoad(ResourceLoader* loader)

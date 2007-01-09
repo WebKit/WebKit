@@ -3386,6 +3386,43 @@ void FrameLoader::applyUserAgent(ResourceRequest& request)
     request.setHTTPUserAgent(userAgent);
 }
 
+bool FrameLoader::canGoBackOrForward(int distance) const
+{
+    if (distance == 0)
+        return true;
+    if (distance > 0 && distance <= m_frame->page()->backForwardList()->forwardListCount())
+        return true;
+    if (distance < 0 && -distance <= m_frame->page()->backForwardList()->backListCount())
+        return true;
+    return false;
+}
+
+int FrameLoader::getHistoryLength()
+{
+    return m_frame->page()->backForwardList()->backListCount() + 1;
+}
+
+KURL FrameLoader::historyURL(int distance)
+{
+    BackForwardList *list = m_frame->page()->backForwardList();
+    HistoryItem* item = list->itemAtIndex(distance);
+    if (!item) {
+        if (distance > 0) {
+            int forwardListCount = list->forwardListCount();
+            if (forwardListCount > 0)
+                item = list->itemAtIndex(forwardListCount);
+        } else {
+            int backListCount = list->backListCount();
+            if (backListCount > 0)
+                item = list->itemAtIndex(-backListCount);
+        }
+    }
+    if (item)
+        return item->url();
+
+    return KURL();
+}
+
 void FrameLoader::addHistoryItemForFragmentScroll()
 {
     addBackForwardItemClippedAtTarget(false);

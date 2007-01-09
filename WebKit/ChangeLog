@@ -1,3 +1,11 @@
+2007-01-08  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Brady.
+
+        Remove bridge functions that are implemented directly in FrameLoader now.
+        
+        * WebCoreSupport/WebFrameBridge.mm:
+
 2007-01-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark.

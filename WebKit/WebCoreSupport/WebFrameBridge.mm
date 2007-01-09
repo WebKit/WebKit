@@ -793,44 +793,6 @@ static BOOL loggedObjectCacheSize = NO;
     return [docView _mayStartDragAtEventLocation:location];
 }
 
-- (int)historyLength
-{
-    return [[[self webView] backForwardList] backListCount] + 1;
-}
-
-- (BOOL)canGoBackOrForward:(int)distance
-{
-    if (distance == 0)
-        return YES;
-    if (distance > 0 && distance <= [[[self webView] backForwardList] forwardListCount])
-        return YES;
-    if (distance < 0 && -distance <= [[[self webView] backForwardList] backListCount])
-        return YES;
-    return NO;
-}
-
-- (NSURL*)historyURL:(int)distance
-{
-    WebView *webView = [self webView];
-    WebBackForwardList *list = [webView backForwardList];
-    WebHistoryItem *item = [list itemAtIndex:distance];
-    if (!item) {
-        if (distance > 0) {
-            int forwardListCount = [list forwardListCount];
-            if (forwardListCount > 0)
-                item = [list itemAtIndex:forwardListCount];
-        } else {
-            int backListCount = [list forwardListCount];
-            if (backListCount > 0)
-                item = [list itemAtIndex:-backListCount];
-        }
-    }
-    if (item)
-        return [item URL];
-    
-    return nil;
-}
-
 static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 {
     ASSERT(self->_frame != nil);
