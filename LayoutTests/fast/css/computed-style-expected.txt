@@ -83,6 +83,7 @@ min-width: 0px;
 -webkit-nbsp-mode: normal;
 opacity: 1;
 orphans: 2;
+outline-color: rgb(0, 0, 0);
 outline-style: none;
 overflow-x: visible;
 overflow-y: visible;

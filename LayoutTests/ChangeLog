@@ -1,3 +1,12 @@
+2007-01-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark.
+
+        Update results to include outline-color.
+
+        * fast/css/computed-style-expected.txt:
+        * fast/css/computed-style.html:
+
 2007-01-08  Remi Zara  <remi_zara@mac.com>
 
         Reviewed by Darin and Eric.
