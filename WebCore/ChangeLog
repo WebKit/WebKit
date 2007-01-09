@@ -1,3 +1,11 @@
+2007-01-08  David Hyatt  <hyatt@apple.com>
+
+        Fix a regression where layout is triggering on all recalcStyles, due to a bad comparison
+        in the multicol assignment operator.
+
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleMultiColData::operator==):
+
 2007-01-08  Darin Adler  <darin@apple.com>
 
         - rolled out Beth's RenderFlow::destroy change, which broke 5 editing tests
