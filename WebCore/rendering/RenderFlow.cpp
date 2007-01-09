@@ -201,11 +201,8 @@ void RenderFlow::destroy()
             // that will outlast this block. In the non-anonymous block case those
             // children will be destroyed by the time we return from this function.
             if (isAnonymousBlock()) {
-                for (InlineFlowBox* box = m_firstLineBox; box; box = box->nextFlowBox()) {
-                    while (InlineBox* childBox = box->firstChild()) {
-                        childBox->remove();
-                    }
-                }
+                for (InlineFlowBox* box = m_firstLineBox; box; box = box->nextFlowBox())
+                    box->deleteLine(renderArena());
             }
         } else if (isInline() && parent())
             parent()->dirtyLinesFromChangedChild(this);

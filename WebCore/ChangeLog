@@ -1,3 +1,18 @@
+2007-01-08  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for a bug that Adam, Hyatt, and I noticed when debugging 
+        another problem.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::root): Added assertion. If we are casting to a 
+        root, we should make sure we are root.
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::destroy): It is not enough to remove the 
+        child boxes for anonymous blocks. We need to be more thorough when 
+        cleaning these up. Adam's test case illustrates the problem well.
+
 2007-01-08  John Sullivan  <sullivan@apple.com>
 
         Tweak to previous checkin
