@@ -160,10 +160,8 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
     if (!m_identifier)
         m_identifier = frameLoader()->identifierForInitialRequest(request);
     
-    ResourceRequest updatedRequest(request);
-    frameLoader()->willSendRequest(this, updatedRequest, redirectResponse);
-
-    m_request = updatedRequest;
+    frameLoader()->willSendRequest(this, request, redirectResponse);
+    m_request = request;
 }
 
 void ResourceLoader::didReceiveAuthenticationChallenge(NSURLAuthenticationChallenge *challenge)

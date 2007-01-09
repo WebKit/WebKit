@@ -1,3 +1,14 @@
+2007-01-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed regression where redirects did not have user-agent any more
+
+        Showed up as a failure in one of the http tests, so no new test needed.
+
+        * loader/mac/ResourceLoaderMac.mm: (WebCore::ResourceLoader::willSendRequest):
+        Don't use a copy of the ResourceRequest; pass the original so it can be modified.
+
 2007-01-09  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
