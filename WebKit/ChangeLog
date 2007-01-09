@@ -1,3 +1,15 @@
+2007-01-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - remove window display throttling code; no longer used
+
+        * Misc/WebNSWindowExtras.h:
+        * Misc/WebNSWindowExtras.m:
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView initWithFrame:]):
+        * WebView/WebPreferenceKeysPrivate.h:
+
 2007-01-08  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Brady.

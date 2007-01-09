@@ -328,12 +328,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         
-        // Window display is throttled to 60 frames per second if WebKitThrottleWindowDisplayPreferenceKey
-        // is set to YES.  The window display throttle is OFF by default for compatibility with Mac OS X
-        // 10.4.6.
-        if ([defaults boolForKey:WebKitThrottleWindowDisplayPreferenceKey])
-            [NSWindow _webkit_enableWindowDisplayThrottle];
-        
         // CoreGraphics deferred updates are disabled if WebKitEnableCoalescedUpdatesPreferenceKey is set
         // to NO, or has no value.  For compatibility with Mac OS X 10.4.6, deferred updates are OFF by
         // default.
