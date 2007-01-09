@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x148 [textFillColor=#800080] [textStrokeColor=#000000] [textStrokeWidth=2.00]
+      RenderBlock {DIV} at (0,0) size 784x148 [textFillColor=#800080] [textStrokeWidth=2.00]
         RenderText {#text} at (0,0) size 616x148
           text run at (0,0) width 616: "Purple\x{300} fill, black stroke,"
           text run at (0,74) width 332: "complex text"
