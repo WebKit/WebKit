@@ -129,7 +129,7 @@ void SVGPaintServerGradient::updateQuartzGradientStopsCache(const Vector<SVGGrad
 
     CGFloat previousOffset = 0.0;
     for (unsigned i = 0; i < stops.size(); ++i) {
-        CGFloat currOffset = min(max(stops[i].first, previousOffset), 1.0f);
+        CGFloat currOffset = min(max(stops[i].first, previousOffset), static_cast<CGFloat>(1.0));
         m_stopsCache[i].offset = currOffset;
         m_stopsCache[i].previousDeltaInverse = 1.0 / (currOffset - previousOffset);
         previousOffset = currOffset;
