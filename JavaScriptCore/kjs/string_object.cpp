@@ -682,7 +682,7 @@ JSValue *StringProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
   case ToLocaleLowerCase: { // FIXME: See http://www.unicode.org/Public/UNIDATA/SpecialCasing.txt for locale-sensitive mappings that aren't implemented.
     u = s;
     u.copyForWriting();
-    ::UChar* dataPtr = reinterpret_cast<::UChar*>(u.rep()->data());
+    ::UChar* dataPtr = reinterpret_cast< ::UChar*>(u.rep()->data());
     ::UChar* destIfNeeded;
 
     int len = Unicode::toLower(dataPtr, u.size(), destIfNeeded);
@@ -698,7 +698,7 @@ JSValue *StringProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
   case ToLocaleUpperCase: { // FIXME: See http://www.unicode.org/Public/UNIDATA/SpecialCasing.txt for locale-sensitive mappings that aren't implemented.
     u = s;
     u.copyForWriting();
-    ::UChar* dataPtr = reinterpret_cast<::UChar*>(u.rep()->data());
+    ::UChar* dataPtr = reinterpret_cast< ::UChar*>(u.rep()->data());
     ::UChar* destIfNeeded;
 
     int len = Unicode::toUpper(dataPtr, u.size(), destIfNeeded);
