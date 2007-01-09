@@ -28,12 +28,14 @@
 
 #include "Shared.h"
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class HistoryItem;
 typedef Vector<RefPtr<HistoryItem> > HistoryItemVector;
+typedef HashSet<RefPtr<HistoryItem> > HistoryItemHashSet;
 
 class BackForwardList : public Shared<BackForwardList> {
 public: 
@@ -74,6 +76,7 @@ public:
     
 private:
     HistoryItemVector m_entries;
+    HistoryItemHashSet m_entryHash;
     unsigned m_current;
     unsigned m_capacity;
     unsigned m_pageCacheSize;

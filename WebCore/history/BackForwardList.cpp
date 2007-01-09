@@ -62,6 +62,7 @@ void BackForwardList::addItem(PassRefPtr<HistoryItem> prpItem)
         while (m_entries.size() > targetSize) {
             RefPtr<HistoryItem> item = m_entries.last();
             m_entries.removeLast();
+            m_entryHash.remove(item);
             item->setHasPageCache(false);
         }
     }
@@ -70,11 +71,13 @@ void BackForwardList::addItem(PassRefPtr<HistoryItem> prpItem)
     if (m_entries.size() == m_capacity && m_current != 0) {
         RefPtr<HistoryItem> item = m_entries[0];
         m_entries.remove(0);
+        m_entryHash.remove(item);
         item->setHasPageCache(false);
         m_current--;
     }
-
+    
     m_entries.append(prpItem);
+    m_entryHash.add(m_entries.last());
     m_current++;
 }
 
@@ -162,6 +165,7 @@ void BackForwardList::setCapacity(int size)
     while (size < (int)m_entries.size()) {
         RefPtr<HistoryItem> item = m_entries.last();
         m_entries.removeLast();
+        m_entryHash.remove(item);
         item->setHasPageCache(false);
     }
 
@@ -238,6 +242,7 @@ void BackForwardList::close()
     for (int i = 0; i < size; ++i)
         m_entries[i]->setHasPageCache(false);
     m_entries.clear();
+    m_entryHash.clear();
     m_closed = true;
 }
 
@@ -254,19 +259,14 @@ void BackForwardList::removeItem(HistoryItem* item)
     for (int i = 0; i < (int)m_entries.size(); ++i)
         if (m_entries[i] == item) {
             m_entries.remove(i);
+            m_entryHash.remove(item);
             break;
         }
 }
 
-// FIXME: <rdar://problem/4895178>
-// This is potentially expensive if called often and the BackForwardList is large - we should back the Vector with a HashSet for this lookup
 bool BackForwardList::containsItem(HistoryItem* entry)
 {
-    int size = m_entries.size();
-    for (int i = 0; i < size; ++i) 
-        if (m_entries[i].get() == entry)
-            return true;
-    return false;
+    return m_entryHash.contains(entry);
 }
 
 void BackForwardList::setDefaultPageCacheSize(unsigned size)

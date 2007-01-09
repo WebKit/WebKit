@@ -1,3 +1,20 @@
+2007-01-08  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Brian Dash
+
+        <rdar://problem/4895178> 
+        WebCore::BackForwardList vector should be backed by a HashSet to remove
+        the potential expense in frequently calling BackForwardList::containsItem()
+
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::addItem): Maintain HashSet as well as Vector
+        (WebCore::BackForwardList::setCapacity): Ditto
+        (WebCore::BackForwardList::close): Ditto
+        (WebCore::BackForwardList::removeItem): Ditto
+        (WebCore::BackForwardList::containsItem): Make a hash lookup instead of iterate 
+        through the Vector
+        * history/BackForwardList.h:
+
 2007-01-08  David Hyatt  <hyatt@apple.com>
 
         Fix a regression where layout is triggering on all recalcStyles, due to a bad comparison
