@@ -1,3 +1,16 @@
+2007-01-09  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=12129
+        repaint issue after setting viewBox attribute with ECMAScript
+
+        * svg/custom/dynamic-viewBox-expected.checksum: Added.
+        * svg/custom/dynamic-viewBox-expected.png: Added.
+        * svg/custom/dynamic-viewBox-expected.txt: Added.
+        * svg/custom/dynamic-viewBox.svg: Added.
+
 2007-01-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark.

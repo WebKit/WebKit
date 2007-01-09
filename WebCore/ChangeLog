@@ -1,3 +1,17 @@
+2007-01-09  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12129
+        repaint issue after setting viewBox attribute with ECMAScript
+
+        Make sure RenderSVGContainer updates after setting viewBox from js.
+
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::setViewBox):
+
 2007-01-09  Lars Knoll <lars@trolltech.com>
 
         Make the Qt build compile... again!

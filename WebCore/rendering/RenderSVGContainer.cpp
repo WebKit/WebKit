@@ -230,6 +230,8 @@ void RenderSVGContainer::calcViewport()
 void RenderSVGContainer::setViewBox(const FloatRect& viewBox)
 {
     m_viewBox = viewBox;
+    if (style())
+        setNeedsLayout(true);
 }
 
 FloatRect RenderSVGContainer::viewBox() const
