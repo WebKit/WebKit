@@ -158,12 +158,6 @@ String FrameLoader::overrideMediaType() const
     return String();
 }
 
-int FrameLoader::getHistoryLength()
-{
-    notImplemented();
-    return 0;
-}
-
 String FrameLoader::referrer() const
 {
     notImplemented();
@@ -217,12 +211,6 @@ void FrameLoader::checkLoadCompleteForThisFrame()
 
 }
 
-KURL FrameLoader::historyURL(int distance)
-{
-    notImplemented();
-    return KURL();
-}
-
 void FrameLoader::didFirstLayout()
 {
 //     if (isBackForwardLoadType(m_loadType) && m_client->hasBackForwardList())
@@ -230,12 +218,6 @@ void FrameLoader::didFirstLayout()
 
     m_firstLayoutDone = true;
     m_client->dispatchDidFirstLayout();
-}
-
-bool FrameLoader::canGoBackOrForward(int distance) const
-{
-    notImplemented();
-    return false;
 }
 
 void FrameLoader::partClearedInBegin()

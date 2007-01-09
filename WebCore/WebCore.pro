@@ -946,6 +946,7 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/misc/SVGTimer.cpp \
         ksvg2/misc/TimeScheduler.cpp \
         ksvg2/misc/KCanvasRenderingStyle.cpp \
+        ksvg2/misc/PointerEventsHitRules.cpp \
         ksvg2/events/JSSVGLazyEventListener.cpp \
         ksvg2/events/SVGZoomEvent.cpp \
         platform/graphics/svg/SVGPaintServer.cpp \

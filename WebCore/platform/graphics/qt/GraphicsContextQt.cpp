@@ -884,12 +884,6 @@ void GraphicsContext::setPlatformFillColor(const Color& color)
     m_data->p().setBrush(QBrush(color));
 }
 
-ImageBuffer* GraphicsContext::createImageBuffer(const IntSize&, bool)
-{
-    // FIXME!
-    return 0;
-}
-
 }
 
 // vim: ts=4 sw=4 et

@@ -217,9 +217,6 @@ Widget::FocusPolicy Widget::focusPolicy() const
     if (!data->m_widget)
         return NoFocus;
 
-    if (data->m_client && !data->m_client->isVisible(const_cast<Widget*>(this)))
-        return NoFocus;
-
     switch (data->m_widget->focusPolicy())
     {
         case Qt::TabFocus:

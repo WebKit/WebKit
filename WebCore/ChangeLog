@@ -1,3 +1,15 @@
+2007-01-09  Lars Knoll <lars@trolltech.com>
+
+        Make the Qt build compile... again!
+
+        * WebCore.pro:
+        * loader/qt/FrameLoaderQt.cpp:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::create):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::focusPolicy):
+
 2007-01-09  David Hyatt  <hyatt@apple.com>
 
         Fix for background: inherit bug where background-color wasn't getting properly overridden.  This was a
