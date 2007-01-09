@@ -1,3 +1,10 @@
+2007-01-08  Darin Adler  <darin@apple.com>
+
+        - rolled out Beth's RenderFlow::destroy change, which broke 5 editing tests
+
+        * rendering/RenderFlow.cpp: (WebCore::RenderFlow::destroy):
+        Used svn merge to roll the change out.
+
 2007-01-09  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim H.
