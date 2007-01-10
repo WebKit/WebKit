@@ -379,7 +379,6 @@
 		656D373F0ADBA5DE00A4554D /* ResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37270ADBA5DE00A4554D /* ResourceLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37400ADBA5DE00A4554D /* ResourceLoaderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656D37280ADBA5DE00A4554D /* ResourceLoaderMac.mm */; };
 		656D37410ADBA5DE00A4554D /* MainResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37290ADBA5DE00A4554D /* MainResourceLoader.h */; };
-		656D37420ADBA5DE00A4554D /* MainResourceLoaderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656D372A0ADBA5DE00A4554D /* MainResourceLoaderMac.mm */; };
 		656D37430ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D372B0ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37440ADBA5DE00A4554D /* NetscapePlugInStreamLoaderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656D372C0ADBA5DE00A4554D /* NetscapePlugInStreamLoaderMac.mm */; };
 		656D37450ADBA5DE00A4554D /* WebPlugInStreamLoaderDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D372D0ADBA5DE00A4554D /* WebPlugInStreamLoaderDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3445,7 +3444,6 @@
 		656D37270ADBA5DE00A4554D /* ResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceLoader.h; sourceTree = "<group>"; };
 		656D37280ADBA5DE00A4554D /* ResourceLoaderMac.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = ResourceLoaderMac.mm; sourceTree = "<group>"; };
 		656D37290ADBA5DE00A4554D /* MainResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MainResourceLoader.h; sourceTree = "<group>"; };
-		656D372A0ADBA5DE00A4554D /* MainResourceLoaderMac.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = MainResourceLoaderMac.mm; sourceTree = "<group>"; };
 		656D372B0ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NetscapePlugInStreamLoader.h; sourceTree = "<group>"; };
 		656D372C0ADBA5DE00A4554D /* NetscapePlugInStreamLoaderMac.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = NetscapePlugInStreamLoaderMac.mm; sourceTree = "<group>"; };
 		656D372D0ADBA5DE00A4554D /* WebPlugInStreamLoaderDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebPlugInStreamLoaderDelegate.h; sourceTree = "<group>"; };
@@ -4563,7 +4561,7 @@
 		93CD4FDD0995F9EA007ECC97 /* StringImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringImpl.h; sourceTree = "<group>"; };
 		93CD4FEB0995FD2A007ECC97 /* PlatformString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformString.h; sourceTree = "<group>"; };
 		93E227DB0AF589AD00D48324 /* DocumentLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = DocumentLoader.cpp; sourceTree = "<group>"; };
-		93E227DC0AF589AD00D48324 /* MainResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainResourceLoader.cpp; sourceTree = "<group>"; };
+		93E227DC0AF589AD00D48324 /* MainResourceLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = MainResourceLoader.cpp; sourceTree = "<group>"; };
 		93E227DD0AF589AD00D48324 /* NetscapePlugInStreamLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetscapePlugInStreamLoader.cpp; sourceTree = "<group>"; };
 		93E227DE0AF589AD00D48324 /* ResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoader.cpp; sourceTree = "<group>"; };
 		93E227DF0AF589AD00D48324 /* SubresourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubresourceLoader.cpp; sourceTree = "<group>"; };
@@ -7800,7 +7798,6 @@
 				656D371B0ADBA5DE00A4554D /* LoaderNSURLExtras.m */,
 				6563A9A50ADF4094000ED2CD /* LoaderNSURLRequestExtras.h */,
 				6563A9A60ADF4094000ED2CD /* LoaderNSURLRequestExtras.m */,
-				656D372A0ADBA5DE00A4554D /* MainResourceLoaderMac.mm */,
 				656D372C0ADBA5DE00A4554D /* NetscapePlugInStreamLoaderMac.mm */,
 				656D37280ADBA5DE00A4554D /* ResourceLoaderMac.mm */,
 				656D37310ADBA5DE00A4554D /* SubresourceLoaderMac.mm */,
@@ -12107,7 +12104,6 @@
 				656D373B0ADBA5DE00A4554D /* FormState.cpp in Sources */,
 				656D373D0ADBA5DE00A4554D /* FrameLoaderMac.mm in Sources */,
 				656D37400ADBA5DE00A4554D /* ResourceLoaderMac.mm in Sources */,
-				656D37420ADBA5DE00A4554D /* MainResourceLoaderMac.mm in Sources */,
 				656D37440ADBA5DE00A4554D /* NetscapePlugInStreamLoaderMac.mm in Sources */,
 				656D37490ADBA5DE00A4554D /* SubresourceLoaderMac.mm in Sources */,
 				0668E1900ADD9640004128E0 /* PopupMenuMac.mm in Sources */,

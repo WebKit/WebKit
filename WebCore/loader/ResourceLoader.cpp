@@ -30,8 +30,10 @@
 #include "ResourceLoader.h"
 
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "Page.h"
 #include "ResourceHandle.h"
+#include "ResourceError.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
@@ -47,46 +49,274 @@ PassRefPtr<SharedBuffer> ResourceLoader::resourceData()
     return 0;
 }
 
-#if !PLATFORM(MAC)
-// FIXME: This is only temporary until ResourceLoader is truly platform independent.
-
-ResourceLoader::~ResourceLoader()
-{
-}
-
 ResourceLoader::ResourceLoader(Frame* frame)
     : m_reachedTerminalState(false)
     , m_cancelled(false)
     , m_calledDidFinishLoad(false)
     , m_frame(frame)
+#if PLATFORM(MAC)
+    , m_currentConnectionChallenge(nil)
+#endif
     , m_defersLoading(frame->page()->defersLoading())
 {
 }
 
-void ResourceLoader::setDefersLoading(bool)
+ResourceLoader::~ResourceLoader()
 {
+    // FIXME: Once everything uses the loader, enable this assert again
+    ASSERT(m_reachedTerminalState);
+}
+
+void ResourceLoader::releaseResources()
+{
+    ASSERT(!m_reachedTerminalState);
+    
+    // It's possible that when we release the handle, it will be
+    // deallocated and release the last reference to this object.
+    // We need to retain to avoid accessing the object after it
+    // has been deallocated and also to avoid reentering this method.
+    RefPtr<ResourceLoader> protector(this);
+
+    m_frame = 0;
+
+    // We need to set reachedTerminalState to true before we release
+    // the resources to prevent a double dealloc of WebView <rdar://problem/4372628>
+    m_reachedTerminalState = true;
+
+#if PLATFORM(MAC)
+    m_identifier = nil;
+#endif
+    m_handle = 0;
+    m_resourceData = 0;
+}
+
+bool ResourceLoader::load(const ResourceRequest& r)
+{
+    ASSERT(!m_handle);
+    ASSERT(!frameLoader()->isArchiveLoadPending(this));
+    
+    m_originalURL = r.url();
+    
+    ResourceRequest clientRequest(r);
+    willSendRequest(clientRequest, ResourceResponse());
+    if (clientRequest.isNull()) {
+        didFail(frameLoader()->cancelledError(r));
+        return false;
+    }
+    
+    if (frameLoader()->willUseArchive(this, clientRequest, m_originalURL))
+        return true;
+    
+    m_handle = ResourceHandle::create(clientRequest, this, m_frame.get(), m_defersLoading);
+
+    return true;
+}
+
+void ResourceLoader::setDefersLoading(bool defers)
+{
+    m_defersLoading = defers;
+    if (m_handle)
+        m_handle->setDefersLoading(defers);
+}
+
+FrameLoader* ResourceLoader::frameLoader() const
+{
+    if (!m_frame)
+        return 0;
+    return m_frame->loader();
+}
+
+void ResourceLoader::addData(const char* data, int length, bool allAtOnce)
+{
+    if (allAtOnce) {
+        m_resourceData = new SharedBuffer(data, length);
+        return;
+    }
+        
+    if (ResourceHandle::supportsBufferedData()) {
+        // Buffer data only if the connection has handed us the data because is has stopped buffering it.
+        if (m_resourceData)
+            m_resourceData->append(data, length);
+    } else {
+        if (!m_resourceData)
+            m_resourceData = new SharedBuffer(data, length);
+        else
+            m_resourceData->append(data, length);
+    }
+}
+
+void ResourceLoader::clearResourceData()
+{
+    m_resourceData->clear();
+}
+
+void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)
+{
+    // Protect this in this delegate method since the additional processing can do
+    // anything including possibly derefing this; one example of this is Radar 3266216.
+    RefPtr<ResourceLoader> protector(this);
+        
+    ASSERT(!m_reachedTerminalState);
+
+#if PLATFORM(MAC)
+    if (!m_identifier)
+        m_identifier = frameLoader()->identifierForInitialRequest(request);
+#endif
+
+    frameLoader()->willSendRequest(this, request, redirectResponse);
+    m_request = request;
+}
+
+void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
+{
+    ASSERT(!m_reachedTerminalState);
+
+    // Protect this in this delegate method since the additional processing can do
+    // anything including possibly derefing this; one example of this is Radar 3266216.
+    RefPtr<ResourceLoader> protector(this);
+
+    m_response = r;
+
+    frameLoader()->didReceiveResponse(this, m_response);
+}
+
+void ResourceLoader::didReceiveData(const char* data, int length, long long lengthReceived, bool allAtOnce)
+{
+    // The following assertions are not quite valid here, since a subclass
+    // might override didReceiveData in a way that invalidates them. This
+    // happens with the steps listed in 3266216
+    // ASSERT(con == connection);
+    // ASSERT(!m_reachedTerminalState);
+
+    // Protect this in this delegate method since the additional processing can do
+    // anything including possibly derefing this; one example of this is Radar 3266216.
+    RefPtr<ResourceLoader> protector(this);
+
+    addData(data, length, allAtOnce);
+    if (m_frame)
+        frameLoader()->didReceiveData(this, data, length, lengthReceived);
+}
+
+void ResourceLoader::willStopBufferingData(const char* data, int length)
+{
+    ASSERT(!m_resourceData);
+    m_resourceData = new SharedBuffer(data, length);
+}
+
+void ResourceLoader::didFinishLoading()
+{
+    // If load has been cancelled after finishing (which could happen with a 
+    // JavaScript that changes the window location), do nothing.
+    if (m_cancelled)
+        return;
+    ASSERT(!m_reachedTerminalState);
+
+    didFinishLoadingOnePart();
+    releaseResources();
+}
+
+void ResourceLoader::didFinishLoadingOnePart()
+{
+    if (m_cancelled)
+        return;
+    ASSERT(!m_reachedTerminalState);
+
+    if (m_calledDidFinishLoad)
+        return;
+    m_calledDidFinishLoad = true;
+    frameLoader()->didFinishLoad(this);
+}
+
+void ResourceLoader::didFail(const ResourceError& error)
+{
+    if (m_cancelled)
+        return;
+    ASSERT(!m_reachedTerminalState);
+
+    // Protect this in this delegate method since the additional processing can do
+    // anything including possibly derefing this; one example of this is Radar 3266216.
+    RefPtr<ResourceLoader> protector(this);
+
+    frameLoader()->didFailToLoad(this, error);
+
+    releaseResources();
+}
+
+void ResourceLoader::didCancel(const ResourceError& error)
+{
+    ASSERT(!m_cancelled);
+    ASSERT(!m_reachedTerminalState);
+
+    // This flag prevents bad behavior when loads that finish cause the
+    // load itself to be cancelled (which could happen with a javascript that 
+    // changes the window location). This is used to prevent both the body
+    // of this method and the body of connectionDidFinishLoading: running
+    // for a single delegate. Cancelling wins.
+    m_cancelled = true;
+    
+#if PLATFORM(MAC)
+    m_currentConnectionChallenge = nil;
+    m_currentWebChallenge = nil;
+#endif
+
+    frameLoader()->cancelPendingArchiveLoad(this);
+    if (m_handle) {
+        m_handle->cancel();
+        m_handle = 0;
+    }
+    frameLoader()->didFailToLoad(this, error);
+
+    releaseResources();
+}
+
+void ResourceLoader::cancel()
+{
+    cancel(ResourceError());
+}
+
+void ResourceLoader::cancel(const ResourceError& error)
+{
+    if (m_reachedTerminalState)
+        return;
+    if (!error.isNull())
+        didCancel(error);
+    else
+        didCancel(cancelledError());
+}
+
+const ResourceResponse& ResourceLoader::response() const
+{
+    return m_response;
+}
+
+ResourceError ResourceLoader::cancelledError()
+{
+    return frameLoader()->cancelledError(m_request);
 }
 
 void ResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
+    willSendRequest(request, redirectResponse);
 }
 
 void ResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
 {
+    didReceiveResponse(response);
 }
 
 void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int lengthReceived)
 {
+    didReceiveData(data, length, lengthReceived, false);
 }
 
 void ResourceLoader::didFinishLoading(ResourceHandle*)
 {
+    didFinishLoading();
 }
 
 void ResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
 {
+    didFail(error);
 }
-
-#endif
 
 }

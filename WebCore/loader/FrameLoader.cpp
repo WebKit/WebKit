@@ -4055,6 +4055,12 @@ ResourceError FrameLoader::fileDoesNotExistError(const ResourceResponse& respons
     return m_client->fileDoesNotExistError(response);    
 }
 
+void FrameLoader::didFinishLoad(ResourceLoader* loader)
+{    
+    m_client->completeProgress(loader->identifier());
+    m_client->dispatchDidFinishLoading(activeDocumentLoader(), loader->identifier());
+}
+
 PassRefPtr<SharedBuffer> FrameLoader::mainResourceData() const
 {
     if (!m_mainResourceLoader)

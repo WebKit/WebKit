@@ -94,36 +94,35 @@ namespace WebCore {
         virtual PassRefPtr<SharedBuffer> resourceData();
         void clearResourceData();
 
-#if PLATFORM(MAC)
         virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
-        void didReceiveAuthenticationChallenge(NSURLAuthenticationChallenge *);
-        void didCancelAuthenticationChallenge(NSURLAuthenticationChallenge *);
         virtual void didReceiveResponse(const ResourceResponse&);
         virtual void didReceiveData(const char*, int, long long lengthReceived, bool allAtOnce);
         void willStopBufferingData(const char*, int);
         virtual void didFinishLoading();
         virtual void didFail(const ResourceError&);
+#if PLATFORM(MAC)
+        void didReceiveAuthenticationChallenge(NSURLAuthenticationChallenge *);
+        void didCancelAuthenticationChallenge(NSURLAuthenticationChallenge *);
         NSCachedURLResponse *willCacheResponse(NSCachedURLResponse *);
 
         void receivedCredential(NSURLAuthenticationChallenge *, NSURLCredential *);
         void receivedRequestToContinueWithoutCredential(NSURLAuthenticationChallenge *);
         void receivedCancellation(NSURLAuthenticationChallenge *);
-
 #endif
 
         // ResourceHandleClient
-        virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& redirectResponse);
-        
+        virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& redirectResponse);        
         virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
         virtual void didReceiveData(ResourceHandle*, const char*, int, int lengthReceived);
         virtual void didFinishLoading(ResourceHandle*);
         virtual void didFail(ResourceHandle*, const ResourceError&);
-        
+
+        virtual void willStopBufferingData(ResourceHandle*, const char* data, int length) { willStopBufferingData(data, length); } 
+
 #if PLATFORM(MAC)
         virtual void didReceiveAuthenticationChallenge(ResourceHandle*, NSURLAuthenticationChallenge *challenge) { didReceiveAuthenticationChallenge(challenge); } 
         virtual void didCancelAuthenticationChallenge(ResourceHandle*, NSURLAuthenticationChallenge *challenge) { didCancelAuthenticationChallenge(challenge); } 
         
-        virtual void willStopBufferingData(ResourceHandle*, const char* data, int length) { willStopBufferingData(data, length); } 
         
         virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *cachedResponse) { return willCacheResponse(cachedResponse); }
         
@@ -137,13 +136,11 @@ namespace WebCore {
     protected:
         ResourceLoader(Frame*);
 
-#if PLATFORM(MAC)
         virtual void didCancel(const ResourceError&);
         void didFinishLoadingOnePart();
 
         const ResourceRequest& request() const { return m_request; }
         void setRequest(const ResourceRequest& request) { m_request = request; }
-#endif
         bool reachedTerminalState() const { return m_reachedTerminalState; }
         bool cancelled() const { return m_cancelled; }
         bool defersLoading() const { return m_defersLoading; }
@@ -160,13 +157,13 @@ namespace WebCore {
 protected:
         // FIXME: Once everything is made cross platform, these can be private instead of protected
         RefPtr<Frame> m_frame;
+        ResourceResponse m_response;
 #if PLATFORM(MAC)
         RetainPtr<id> m_identifier;
-        ResourceResponse m_response;
         NSURLAuthenticationChallenge *m_currentConnectionChallenge;
         RetainPtr<NSURLAuthenticationChallenge> m_currentWebChallenge;
-        KURL m_originalURL;
 #endif
+        KURL m_originalURL;
         RefPtr<SharedBuffer> m_resourceData;
         bool m_defersLoading;
     };

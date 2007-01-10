@@ -45,27 +45,22 @@ namespace WebCore {
 
         virtual void setDefersLoading(bool);
 
-#if PLATFORM(MAC)
         virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
         virtual void didReceiveResponse(const ResourceResponse&);
         virtual void didReceiveData(const char*, int, long long lengthReceived, bool allAtOnce);
         virtual void didFinishLoading();
         virtual void didFail(const ResourceError&);
-#endif
 
     private:
         MainResourceLoader(Frame*);
 
         virtual void didCancel(const ResourceError&);
 
-#if PLATFORM(MAC)
         bool loadNow(ResourceRequest&);
-#endif
 
         void receivedError(const ResourceError&);
         ResourceError interruptionForPolicyChangeError() const;
         void stopLoadingForPolicyChange();
-#if PLATFORM(MAC)
         bool isPostOrRedirectAfterPost(const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
 
         static void callContinueAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
@@ -76,7 +71,6 @@ namespace WebCore {
         void continueAfterContentPolicy(PolicyAction, const ResourceResponse&);
 
         ResourceRequest m_initialRequest;
-#endif
 
         bool m_loadingMultipartContent;
         bool m_waitingForContentPolicy;

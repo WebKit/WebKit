@@ -316,12 +316,6 @@ KURL FrameLoader::originalRequestURL() const
     return activeDocumentLoader()->initialRequest().url();
 }
 
-void FrameLoader::didFinishLoad(ResourceLoader* loader)
-{    
-    m_client->completeProgress(loader->identifier());
-    m_client->dispatchDidFinishLoading(activeDocumentLoader(), loader->identifier());
-}
-
 void FrameLoader::setTitle(const String& title)
 {
     documentLoader()->setTitle(title);

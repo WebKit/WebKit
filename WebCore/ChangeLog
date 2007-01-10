@@ -1,3 +1,63 @@
+2007-01-10  Anders Carlsson  <acarlsson@apple.com>
+
+        Rubber-stamped by Maciej.
+        
+        Move most of ResourceLoader and MainResourceLoader into the platform-independent files.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didFinishLoad):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::MainResourceLoader):
+        (WebCore::MainResourceLoader::~MainResourceLoader):
+        (WebCore::MainResourceLoader::create):
+        (WebCore::MainResourceLoader::receivedError):
+        (WebCore::MainResourceLoader::didCancel):
+        (WebCore::MainResourceLoader::interruptionForPolicyChangeError):
+        (WebCore::MainResourceLoader::stopLoadingForPolicyChange):
+        (WebCore::MainResourceLoader::callContinueAfterNavigationPolicy):
+        (WebCore::MainResourceLoader::continueAfterNavigationPolicy):
+        (WebCore::MainResourceLoader::isPostOrRedirectAfterPost):
+        (WebCore::MainResourceLoader::addData):
+        (WebCore::MainResourceLoader::willSendRequest):
+        (WebCore::shouldLoadAsEmptyDocument):
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        (WebCore::MainResourceLoader::callContinueAfterContentPolicy):
+        (WebCore::MainResourceLoader::didReceiveResponse):
+        (WebCore::MainResourceLoader::didReceiveData):
+        (WebCore::MainResourceLoader::didFinishLoading):
+        (WebCore::MainResourceLoader::didFail):
+        (WebCore::MainResourceLoader::loadNow):
+        (WebCore::MainResourceLoader::load):
+        (WebCore::MainResourceLoader::setDefersLoading):
+        * loader/MainResourceLoader.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::ResourceLoader):
+        (WebCore::ResourceLoader::~ResourceLoader):
+        (WebCore::ResourceLoader::releaseResources):
+        (WebCore::ResourceLoader::load):
+        (WebCore::ResourceLoader::setDefersLoading):
+        (WebCore::ResourceLoader::frameLoader):
+        (WebCore::ResourceLoader::addData):
+        (WebCore::ResourceLoader::clearResourceData):
+        (WebCore::ResourceLoader::willSendRequest):
+        (WebCore::ResourceLoader::didReceiveResponse):
+        (WebCore::ResourceLoader::didReceiveData):
+        (WebCore::ResourceLoader::willStopBufferingData):
+        (WebCore::ResourceLoader::didFinishLoading):
+        (WebCore::ResourceLoader::didFinishLoadingOnePart):
+        (WebCore::ResourceLoader::didFail):
+        (WebCore::ResourceLoader::didCancel):
+        (WebCore::ResourceLoader::cancel):
+        (WebCore::ResourceLoader::response):
+        (WebCore::ResourceLoader::cancelledError):
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::willStopBufferingData):
+        (WebCore::ResourceLoader::setRequest):
+        * loader/mac/FrameLoaderMac.mm:
+        * loader/mac/MainResourceLoaderMac.mm: Removed.
+        * loader/mac/ResourceLoaderMac.mm:
+
 2007-01-10  Lars Knoll <lars@trolltech.com>
 
         Move files to the correct location,
