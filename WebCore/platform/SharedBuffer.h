@@ -44,6 +44,7 @@ namespace WebCore {
 
 class SharedBuffer : public Shared<SharedBuffer> {
 public:
+    SharedBuffer();
     SharedBuffer(const char*, int);
 #if PLATFORM(MAC)
     NSData *createNSData();

@@ -1,3 +1,13 @@
+2007-01-09  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Brady.
+
+        Add default constructor to SharedBuffer.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        * platform/SharedBuffer.h:
+
 2007-01-09  David Hyatt  <hyatt@apple.com>
 
         This patch gets rudimentary column layout working.  Normal flow content only gets laid out into
