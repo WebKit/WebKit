@@ -117,6 +117,11 @@ void WebContextMenuClient::searchWithSpotlight()
     [m_webView _searchWithSpotlightFromMenu:nil];
 }
 
+void WebContextMenuClient::searchWithGoogle(const Frame*)
+{
+    [m_webView _searchWithGoogleFromMenu:nil];
+}
+
 void WebContextMenuClient::lookUpInDictionary(Frame* frame)
 {
     WebHTMLView* htmlView = (WebHTMLView*)[[kit(frame) frameView] documentView];

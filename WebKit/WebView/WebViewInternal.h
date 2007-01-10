@@ -96,6 +96,7 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request;
 - (void)_writeImageForElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
 - (void)_writeLinkElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
+- (void)_searchWithGoogleFromMenu:(id)sender;
 - (void)_searchWithSpotlightFromMenu:(id)sender;
 - (void)_progressCompleted:(WebFrame *)frame;
 - (void)_didCommitLoadForFrame:(WebFrame *)frame;

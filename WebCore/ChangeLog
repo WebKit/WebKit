@@ -1,3 +1,19 @@
+2007-01-10  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by John.
+
+        Fix for <rdar://problem/4914258> REGRESSION: Search in Google now 
+        operates on the current WebView instead of invoking Safari's 
+        service
+
+        * page/ContextMenuClient.h: New call to the client to search in 
+        google.
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected): Call 
+        into the client instead of forming a new url string and loading it.
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyContextMenuClient::searchWithGoogle): New call.
+
 2007-01-10  Adam Roben  <aroben@apple.com>
 
         Rubberstamped by Darin.

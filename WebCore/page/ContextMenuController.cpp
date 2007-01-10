@@ -92,18 +92,6 @@ void ContextMenuController::handleContextMenuEvent(Event* event)
     event->setDefaultHandled();
 }
 
-static String makeGoogleSearchURL(String searchString)
-{
-    searchString.stripWhiteSpace();
-    DeprecatedString encoded = KURL::encode_string(searchString.deprecatedString());
-    encoded.replace(DeprecatedString("%20"), DeprecatedString("+"));
-    
-    String url("http://www.google.com/search?client=safari&q=");
-    url.append(String(encoded));
-    url.append("&ie=UTF-8&oe=UTF-8");
-    return url;
-}
-
 static void openNewWindow(const KURL& urlToLoad, const Frame* frame)
 {
     Page* newPage = frame->page()->chrome()->createWindow(FrameLoadRequest(ResourceRequest(urlToLoad, 
@@ -199,13 +187,9 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         case ContextMenuItemTagLearnSpelling:
             frame->editor()->learnSpelling();
             break;
-        case ContextMenuItemTagSearchWeb: {
-            String url = makeGoogleSearchURL(frame->selectedText());
-            ResourceRequest request = ResourceRequest(url);
-            if (Page* page = frame->page())
-                page->mainFrame()->loader()->urlSelected(FrameLoadRequest(request), 0);
+        case ContextMenuItemTagSearchWeb:
+            m_client->searchWithGoogle(frame);
             break;
-        }
         case ContextMenuItemTagLookUpInDictionary:
             // FIXME: Some day we may be able to do this from within WebCore.
             m_client->lookUpInDictionary(frame);
