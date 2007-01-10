@@ -1,4 +1,12 @@
-2007-01-10  Lars Knoll,,,  <lars@trolltech.com>
+2007-01-10  Ross Burton  <ross@burtonini.com>
+
+        Reviewed and landed by Anders.
+
+        Fix case in vcproj file (the GTK+ port uses the vcproj file).
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+
+2007-01-10  Lars Knoll  <lars@trolltech.com>
 
         Make the Qt build compile again after 
         the ResourceLoader was made platform

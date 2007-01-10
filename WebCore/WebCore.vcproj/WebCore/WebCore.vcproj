@@ -479,7 +479,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\derivedsources\webcore\JSHTMLFormElement.cpp"
+				RelativePath="..\..\DerivedSources\webcore\JSHTMLFormElement.cpp"
 				>
 			</File>
 			<File
@@ -1255,11 +1255,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\loader\NetscapePluginStreamLoader.cpp"
+				RelativePath="..\..\loader\NetscapePlugInStreamLoader.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\loader\NetscapePluginStreamLoader.h"
+				RelativePath="..\..\loader\NetscapePlugInStreamLoader.h"
 				>
 			</File>
 			<File
