@@ -1,3 +1,59 @@
+2007-01-09  David Hyatt  <hyatt@apple.com>
+
+        This patch gets rudimentary column layout working.  Normal flow content only gets laid out into
+        columns properly and painted correctly initially.  What doesn't work: hit testing, incremental repainting,
+        column rule painting, child layers.
+
+        Some work needs to be done on the render tree dumper before column tests will be
+        meaningful.
+
+        Also reworked overflow and fixed a bunch of bugs with the computation of overflow.  These include an error
+        in the height calculations caused by not adding in the horizontal scrollbar height and other errors caused
+        by not checking overflow in lowest/rightmostPosition.  Existing tests improve their rendering to match
+        Firefox with this change.
+
+        Fixed a bug where a table cell incorrectly expanded to encompass floats inside an overflow:auto block.
+        This should not have happened.  Covered by new test fast/overflow/table-overflow-float.html.
+
+        Reviewed by mitz
+
+        * page/Frame.cpp:
+        * rendering/RenderBlock.cpp:
+        (WebCore:::RenderFlow):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::paintContents):
+        (WebCore::RenderBlock::paintChildren):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::lowestPosition):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::leftmostPosition):
+        (WebCore::RenderBlock::avoidsFloats):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::hitTestContents):
+        (WebCore::RenderBlock::layoutColumns):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::hasOverhangingFloats):
+        (WebCore::RenderBlock::hasColumns):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::paintLines):
+        (WebCore::RenderFlow::lowestPosition):
+        (WebCore::RenderFlow::rightmostPosition):
+        (WebCore::RenderFlow::leftmostPosition):
+        * rendering/RenderFlow.h:
+        (WebCore::RenderFlow::hasColumns):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::expandsToEncloseOverflow):
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::expandsToEncloseOverflow):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paint):
+
 2007-01-09  Darin Adler  <darin@apple.com>
 
         - update all 2007 Apple copyrights for the new company name

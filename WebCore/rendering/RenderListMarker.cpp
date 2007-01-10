@@ -531,20 +531,6 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
     GraphicsContext* context = paintInfo.context;
     context->setFont(style()->font());
 
-    if (document()->printing()) {
-        if (box.y() < paintInfo.rect.y())
-            // This has been printed already we suppose.
-            return;
-        
-        RenderView* c = view();
-        if (box.y() + box.height() + paddingBottom() + borderBottom() >= c->printRect().bottom()) {
-            if (box.y() < c->truncatedAt())
-                c->setBestTruncatedAt(box.y(), this);
-            // Let's print this on the next page.
-            return; 
-        }
-    }
-
     if (isImage()) {
 #if PLATFORM(MAC)
         if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())

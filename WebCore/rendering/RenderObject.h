@@ -745,6 +745,8 @@ public:
     virtual bool expandsToEncloseOverhangingFloats() const { return isFloating() && style()->height().isAuto(); }
     virtual IntRect floatRect() const { return borderBox(); }
 
+    virtual bool expandsToEncloseOverflow() const { return false; }
+
     virtual void removePositionedObjects(RenderBlock*) { }
 
     virtual bool avoidsFloats() const;

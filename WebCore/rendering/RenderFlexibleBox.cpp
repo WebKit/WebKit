@@ -291,7 +291,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
     if (oldHeight != m_height) {
         // If the block got expanded in size, then increase our overflowheight to match.
         if (m_overflowHeight > m_height)
-            m_overflowHeight -= (borderBottom()+paddingBottom());
+            m_overflowHeight -= (borderBottom() + paddingBottom() + (includeHorizontalScrollbarSize() ? m_layer->horizontalScrollbarHeight() : 0));
         if (m_overflowHeight < m_height)
             m_overflowHeight = m_height;
     }
@@ -334,7 +334,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
 
 void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
 {
-    int toAdd = borderBottom() + paddingBottom();
+    int toAdd = borderBottom() + paddingBottom() + (includeHorizontalScrollbarSize() ? m_layer->horizontalScrollbarHeight() : 0);
     int yPos = borderTop() + paddingTop();
     int xPos = borderLeft() + paddingLeft();
     bool heightSpecified = false;
@@ -433,15 +433,8 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
         calcHeight();
 
         relayoutChildren = false;
-        if (oldHeight != m_height) {
+        if (oldHeight != m_height)
             heightSpecified = true;
-    
-            // If the block got expanded in size, then increase our overflowheight to match.
-            if (m_overflowHeight > m_height)
-                m_overflowHeight -= (borderBottom() + paddingBottom());
-            if (m_overflowHeight < m_height)
-                m_overflowHeight = m_height;
-        }
         
         // Now that our height is actually known, we can place our boxes.
         m_stretchingChildren = (style()->boxAlign() == BSTRETCH);
@@ -667,7 +660,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
     int yPos = borderTop() + paddingTop();
     if( style()->direction() == RTL )
         xPos = m_width - paddingRight() - borderRight();
-    int toAdd = borderBottom() + paddingBottom();
+    int toAdd = borderBottom() + paddingBottom() + (includeHorizontalScrollbarSize() ? m_layer->horizontalScrollbarHeight() : 0);;
     bool heightSpecified = false;
     int oldHeight = 0;
     

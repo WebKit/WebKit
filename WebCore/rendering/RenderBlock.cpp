@@ -102,6 +102,7 @@ RenderBlock::RenderBlock(Node* node)
     m_tabWidth = -1;
     m_columnCount = 1;
     m_columnWidth = 0;
+    m_columnRects = 0;
 }
 
 RenderBlock::~RenderBlock()
@@ -521,32 +522,26 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
                                     (parent() && parent()->isFlexibleBox())))
         m_height = floatBottom() + toAdd;
     
+    // Now lay out our columns within this intrinsic height, since they can slightly affect the intrinsic height as
+    // we adjust for clean column breaks.
+    layoutColumns();
+
+    // Calculate our new height.
     int oldHeight = m_height;
     calcHeight();
     if (oldHeight != m_height) {
         // If the block got expanded in size, then increase our overflowheight to match.
         if (m_overflowHeight > m_height)
-            m_overflowHeight -= paddingBottom() + borderBottom();
+            m_overflowHeight -= toAdd;
         if (m_overflowHeight < m_height)
             m_overflowHeight = m_height;
     }
     if (previousHeight != m_height)
         relayoutChildren = true;
 
-    if (isTableCell()) {
-        // Table cells need to grow to accommodate both overhanging floats and
-        // blocks that have overflowed content.
-        // Check for an overhanging float first.
-        // FIXME: This needs to look at the last flow, not the last child.
-        if (lastChild() && lastChild()->hasOverhangingFloats()) {
-            ASSERT(lastChild()->isRenderBlock());
-            m_height = lastChild()->yPos() + static_cast<RenderBlock*>(lastChild())->floatBottom();
-            m_height += borderBottom() + paddingBottom();
-        }
-
-        if (m_overflowHeight > m_height && !hasOverflowClip())
-            m_height = m_overflowHeight + borderBottom() + paddingBottom();
-    }
+    // Table cells need to grow to accommodate blocks that have overflowed content.
+    if (m_overflowHeight > m_height && !hasOverflowClip() && expandsToEncloseOverflow())
+        m_height = m_overflowHeight + borderBottom() + paddingBottom();
 
     // Some classes of objects (floats and fieldsets with no specified heights and table cells) expand to encompass
     // overhanging floats.
@@ -574,7 +569,9 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     if (checkForRepaint)
         didFullRepaint = repaintAfterLayoutIfNeeded(oldBounds, oldFullBounds);
     if (!didFullRepaint && !repaintRect.isEmpty()) {
-    
+        // FIXME: Deal with multiple column repainting.  We have to split the repaint
+        // rect up into multiple rects if it spans columns.
+
         repaintRect.inflate(maximalOutlineSize(PaintPhaseOutline));
         
         if (hasOverflowClip()) {
@@ -1304,14 +1301,62 @@ void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
     return paintObject(paintInfo, tx, ty);
 }
 
-void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
+void RenderBlock::paintContents(PaintInfo& paintInfo, int tx, int ty)
 {
     // Avoid painting descendants of the root element when stylesheets haven't loaded.  This eliminates FOUC.
     // It's ok not to draw, because later on, when all the stylesheets do load, updateStyleSelector on the Document
     // will do a full repaint().
     if (document()->didLayoutWithPendingStylesheets() && !isRenderView())
         return;
-    
+
+    if (!hasColumns()) {
+        if (childrenInline())
+            paintLines(paintInfo, tx, ty);
+        else
+            paintChildren(paintInfo, tx, ty);
+    } else {
+        // We need to do multiple passes, breaking up our child painting into strips.
+        GraphicsContext* context = paintInfo.context;
+        int currXOffset = 0;
+        int currYOffset = 0;
+        int colGap = columnGap();
+        for (unsigned i = 0; i < m_columnCount; i++) {
+            // For each rect, we clip to the rect, and then we adjust our coords.
+            IntRect colRect = m_columnRects->at(i);
+            colRect.move(tx, ty);
+            context->save();
+            
+            // Each strip pushes a clip, since column boxes are specified as being
+            // like overflow:hidden.
+            context->clip(colRect);
+            
+            // Adjust tx and ty to change where we paint.
+            PaintInfo info(paintInfo);
+            info.rect.intersect(colRect);
+            
+            // Adjust our x and y when painting.
+            int finalX = tx + currXOffset;
+            int finalY = ty + currYOffset;
+            if (childrenInline())
+                paintLines(paintInfo, finalX, finalY);
+            else
+                paintChildren(paintInfo, finalX, finalY);
+                
+            // Move to the next position.
+            if (style()->direction() == LTR)
+                currXOffset += colRect.width() + colGap;
+            else
+                currXOffset -= (colRect.width() + colGap);
+
+            currYOffset -= colRect.height();
+            
+            context->restore();
+        }
+    }
+}
+
+void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
+{
     PaintPhase newPhase = (paintInfo.phase == PaintPhaseChildOutlines) ? PaintPhaseOutline : paintInfo.phase;
     newPhase = (newPhase == PaintPhaseChildBlockBackgrounds) ? PaintPhaseChildBlockBackground : newPhase;
     
@@ -1381,16 +1426,13 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
         m_layer->subtractScrollOffset(scrolledX, scrolledY);
 
     // 2. paint contents
-    if (paintPhase != PaintPhaseSelfOutline) {
-        if (childrenInline())
-            paintLines(paintInfo, scrolledX, scrolledY);
-        else
-            paintChildren(paintInfo, scrolledX, scrolledY);
-    }
+    if (paintPhase != PaintPhaseSelfOutline)
+        paintContents(paintInfo, scrolledX, scrolledY);
 
     // 3. paint selection
+    // FIXME: Make this work with multi column layouts.  For now don't fill gaps.
     bool isPrinting = document()->printing();
-    if (!inlineFlow && !isPrinting)
+    if (!inlineFlow && !isPrinting && !hasColumns())
         paintSelection(paintInfo, scrolledX, scrolledY); // Fill in gaps in selection on lines and between blocks.
 
     // 4. paint floats.
@@ -2152,10 +2194,11 @@ RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) cons
     int bottom = RenderFlow::lowestPosition(includeOverflowInterior, includeSelf);
     if (!includeOverflowInterior && hasOverflowClip())
         return bottom;
-    if (includeSelf && m_overflowHeight > bottom)
-        bottom = m_overflowHeight;
+
+    if (m_overflowHeight > m_height)
+        bottom = max(m_overflowHeight, bottom);
     
-    if (m_floatingObjects) {
+    if (m_floatingObjects && !hasColumns()) {
         FloatingObject* r;
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it ) {
@@ -2179,7 +2222,7 @@ RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) cons
         }
     }
 
-    if (!includeSelf && lastLineBox()) {
+    if (!includeSelf && lastLineBox() && !hasColumns()) {
         int lp = lastLineBox()->yPos() + lastLineBox()->height();
         bottom = max(bottom, lp);
     }
@@ -2195,7 +2238,7 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
     if (includeSelf && m_overflowWidth > right)
         right = m_overflowWidth;
     
-    if (m_floatingObjects) {
+    if (m_floatingObjects && !hasColumns()) {
         FloatingObject* r;
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it ) {
@@ -2219,7 +2262,7 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
         }
     }
 
-    if (!includeSelf && firstLineBox()) {
+    if (!includeSelf && firstLineBox() && !hasColumns()) {
         for (InlineRunBox* currBox = firstLineBox(); currBox; currBox = currBox->nextLineBox()) {
             int rp = currBox->xPos() + currBox->width();
             // If this node is a root editable element, then the rightmostPosition should account for a caret at the end.
@@ -2241,7 +2284,7 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
     if (includeSelf && m_overflowLeft < left)
         left = m_overflowLeft;
     
-    if (m_floatingObjects) {
+    if (m_floatingObjects && !hasColumns()) {
         FloatingObject* r;
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it ) {
@@ -2265,7 +2308,7 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
         }
     }
     
-    if (!includeSelf && firstLineBox()) {
+    if (!includeSelf && firstLineBox() && !hasColumns()) {
         for (InlineRunBox* currBox = firstLineBox(); currBox; currBox = currBox->nextLineBox())
             left = min(left, (int)currBox->xPos());
     }
@@ -2447,6 +2490,12 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, int xoff, int yoff)
     }
 }
 
+bool RenderBlock::avoidsFloats() const
+{
+    // Floats can't intrude into our box if we have multiple columns.
+    return RenderFlow::avoidsFloats() || hasColumns();
+}
+
 bool RenderBlock::containsFloat(RenderObject* o)
 {
     if (m_floatingObjects) {
@@ -2579,27 +2628,9 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     int scrolledY = ty;
     if (hasOverflowClip())
         m_layer->subtractScrollOffset(scrolledX, scrolledY);
-    if (childrenInline() && !isTable()) {
-        // We have to hit-test our line boxes.
-        if (hitTestLines(request, result, _x, _y, scrolledX, scrolledY, hitTestAction)) {
-            setInnerNode(result);
-            return true;
-        }
-    }
-    else {
-        // Hit test our children.
-        HitTestAction childHitTest = hitTestAction;
-        if (hitTestAction == HitTestChildBlockBackgrounds)
-            childHitTest = HitTestChildBlockBackground;
-        for (RenderObject* child = lastChild(); child; child = child->previousSibling())
-            // FIXME: We have to skip over inline flows, since they can show up inside RenderTables at the moment (a demoted inline <form> for example).  If we ever implement a
-            // table-specific hit-test method (which we should do for performance reasons anyway), then we can remove this check.
-            if (!child->layer() && !child->isFloating() && !child->isInlineFlow() && child->nodeAtPoint(request, result, _x, _y, scrolledX, scrolledY, childHitTest)) {
-                setInnerNode(result);
-                return true;
-            }
-    }
-    
+    if (hitTestContents(request, result, _x, _y, scrolledX, scrolledY, hitTestAction))
+        return true;
+
     // Hit test floats.
     if (hitTestAction == HitTestFloat && m_floatingObjects) {
         if (isRenderView()) {
@@ -2628,6 +2659,32 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         }
     }
 
+    return false;
+}
+
+bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
+{
+    if (childrenInline() && !isTable()) {
+        // We have to hit-test our line boxes.
+        if (hitTestLines(request, result, x, y, tx, ty, hitTestAction)) {
+            setInnerNode(result);
+            return true;
+        }
+    } else {
+        // Hit test our children.
+        HitTestAction childHitTest = hitTestAction;
+        if (hitTestAction == HitTestChildBlockBackgrounds)
+            childHitTest = HitTestChildBlockBackground;
+        for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
+            // FIXME: We have to skip over inline flows, since they can show up inside RenderTables at the moment (a demoted inline <form> for example).  If we ever implement a
+            // table-specific hit-test method (which we should do for performance reasons anyway), then we can remove this check.
+            if (!child->layer() && !child->isFloating() && !child->isInlineFlow() && child->nodeAtPoint(request, result, x, y, tx, ty, childHitTest)) {
+                setInnerNode(result);
+                return true;
+            }
+        }
+    }
+    
     return false;
 }
 
@@ -2833,6 +2890,76 @@ void RenderBlock::calcColumnWidth()
             m_columnWidth = (availWidth - (m_columnCount - 1) * colGap) / m_columnCount;
         }
     }
+}
+
+void RenderBlock::layoutColumns()
+{
+    // Don't do anything if we have no columns
+    if (!hasColumns())
+        return;
+
+    // Fill the columns in to the available height.  Attempt to balance the height of the columns
+    int availableHeight = contentHeight();
+    int colHeight = availableHeight / m_columnCount;
+    int colGap = columnGap();
+
+    // Compute a collection of column rects.
+    delete m_columnRects;
+    m_columnRects = new Vector<IntRect>();
+    
+    // Then we do a simulated "paint" into the column slices and allow the content to slightly adjust our individual column rects.
+    // FIXME: We need to take into account layers that are affected by the columns as well here so that they can have an opportunity
+    // to adjust column rects also.
+    RenderView* v = view();
+    int left = borderLeft() + paddingLeft();
+    int top = borderTop() + paddingTop();
+    int currX = style()->direction() == LTR ? borderLeft() + paddingLeft() : borderLeft() + paddingLeft() + contentWidth() - m_columnWidth;
+    int currY = top;
+    int colCount = m_columnCount;
+    int maxColBottom = borderTop() + paddingTop();
+    for (unsigned i = 0; i < m_columnCount; i++) {
+        // This represents the real column position.
+        IntRect colRect(currX, top, m_columnWidth, colHeight);
+        
+        // For the simulated paint, we pretend like everything is in one long strip.
+        IntRect pageRect(left, currY, m_columnWidth, colHeight);
+        v->setPrintRect(pageRect);
+        v->setTruncatedAt(currY + colHeight);
+        GraphicsContext context((PlatformGraphicsContext*)0);
+        RenderObject::PaintInfo paintInfo(&context, pageRect, PaintPhaseForeground, false, 0, 0);
+        m_columnCount = 1;
+        paintObject(paintInfo, 0, 0);
+        m_columnCount = colCount;
+
+        int adjustedBottom = v->bestTruncatedAt();
+        if (adjustedBottom <= currY)
+            adjustedBottom = currY + colHeight;
+        
+        colRect.setHeight(adjustedBottom - currY);
+        
+        if (style()->direction() == LTR)
+            currX += m_columnWidth + colGap;
+        else
+            currX -= (m_columnWidth + colGap);
+
+        currY += colRect.height();
+        
+        maxColBottom = max(colRect.bottom(), maxColBottom);
+
+        m_columnRects->append(colRect);
+    }
+
+    // FIXME: We should be prepared to grow the last column to accommodate clipped out content if the amount of growth would be pretty small.
+    
+    m_overflowHeight = maxColBottom;
+    int toAdd = borderBottom() + paddingBottom();
+    if (includeHorizontalScrollbarSize())
+        toAdd += m_layer->horizontalScrollbarHeight();
+    m_height =  m_overflowHeight + toAdd;
+    m_overflowWidth = m_width;
+
+    v->setPrintRect(IntRect());
+    v->setTruncatedAt(0);
 }
 
 void RenderBlock::calcMinMaxWidth()

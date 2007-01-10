@@ -368,21 +368,21 @@ void RenderFlow::paintLines(PaintInfo& paintInfo, int tx, int ty)
     // See if our root lines intersect with the dirty rect.  If so, then we paint
     // them.  Note that boxes can easily overlap, so we can't make any assumptions
     // based off positions of our first line box or our last line box.
-    bool isPrinting = document()->printing();
+    RenderView* v = view();
+    bool usePrintRect = !v->printRect().isEmpty();
     for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextFlowBox()) {
-        if (isPrinting) {
+        if (usePrintRect) {
             // FIXME: This is a feeble effort to avoid splitting a line across two pages.
             // It is utterly inadequate, and this should not be done at paint time at all.
             // The whole way objects break across pages needs to be redone.
-            RenderView* c = view();
             // Try to avoid splitting a line vertically, but only if it's less than the height
             // of the entire page.
-            if (curr->root()->bottomOverflow() - curr->root()->topOverflow() <= c->printRect().height()) {
-                if (ty + curr->root()->bottomOverflow() > c->printRect().bottom()) {
-                    if (ty + curr->root()->topOverflow() < c->truncatedAt())
-                        c->setBestTruncatedAt(ty + curr->root()->topOverflow(), this);
+            if (curr->root()->bottomOverflow() - curr->root()->topOverflow() <= v->printRect().height()) {
+                if (ty + curr->root()->bottomOverflow() > v->printRect().bottom()) {
+                    if (ty + curr->root()->topOverflow() < v->truncatedAt())
+                        v->setBestTruncatedAt(ty + curr->root()->topOverflow(), this);
                     // If we were able to truncate, don't paint.
-                    if (ty + curr->root()->topOverflow() >= c->truncatedAt())
+                    if (ty + curr->root()->topOverflow() >= v->truncatedAt())
                         break;
                 }
             }
@@ -508,13 +508,15 @@ int RenderFlow::lowestPosition(bool includeOverflowInterior, bool includeSelf) c
     if (!includeOverflowInterior && hasOverflowClip())
         return bottom;
 
-    // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
-    // For now, we have to descend into all the children, since we may have a huge abs div inside
-    // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
-    // the abs div.
-    for (RenderObject* c = firstChild(); c; c = c->nextSibling()) {
-        if (!c->isFloatingOrPositioned() && !c->isText() && !c->isInlineFlow())
-            bottom = max(bottom, c->yPos() + c->lowestPosition(false));
+    if (!hasColumns()) {
+        // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
+        // For now, we have to descend into all the children, since we may have a huge abs div inside
+        // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
+        // the abs div.
+        for (RenderObject* c = firstChild(); c; c = c->nextSibling()) {
+            if (!c->isFloatingOrPositioned() && !c->isText() && !c->isInlineFlow())
+                bottom = max(bottom, c->yPos() + c->lowestPosition(false));
+        }
     }
 
     if (isRelPositioned())
@@ -530,13 +532,15 @@ int RenderFlow::rightmostPosition(bool includeOverflowInterior, bool includeSelf
     if (!includeOverflowInterior && hasOverflowClip())
         return right;
 
-    // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
-    // For now, we have to descend into all the children, since we may have a huge abs div inside
-    // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
-    // the abs div.
-    for (RenderObject* c = firstChild(); c; c = c->nextSibling()) {
-        if (!c->isFloatingOrPositioned() && !c->isText() && !c->isInlineFlow())
-            right = max(right, c->xPos() + c->rightmostPosition(false));
+    if (!hasColumns()) {
+        // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
+        // For now, we have to descend into all the children, since we may have a huge abs div inside
+        // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
+        // the abs div.
+        for (RenderObject* c = firstChild(); c; c = c->nextSibling()) {
+            if (!c->isFloatingOrPositioned() && !c->isText() && !c->isInlineFlow())
+                right = max(right, c->xPos() + c->rightmostPosition(false));
+        }
     }
 
     if (isRelPositioned())
@@ -552,13 +556,15 @@ int RenderFlow::leftmostPosition(bool includeOverflowInterior, bool includeSelf)
     if (!includeOverflowInterior && hasOverflowClip())
         return left;
 
-    // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
-    // For now, we have to descend into all the children, since we may have a huge abs div inside
-    // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
-    // the abs div.
-    for (RenderObject* c = firstChild(); c; c = c->nextSibling()) {
-        if (!c->isFloatingOrPositioned() && !c->isText() && !c->isInlineFlow())
-            left = min(left, c->xPos() + c->leftmostPosition(false));
+    if (!hasColumns()) {
+        // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
+        // For now, we have to descend into all the children, since we may have a huge abs div inside
+        // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
+        // the abs div.
+        for (RenderObject* c = firstChild(); c; c = c->nextSibling()) {
+            if (!c->isFloatingOrPositioned() && !c->isText() && !c->isInlineFlow())
+                left = min(left, c->xPos() + c->leftmostPosition(false));
+        }
     }
 
     if (isRelPositioned())

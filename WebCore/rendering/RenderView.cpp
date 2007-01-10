@@ -141,9 +141,9 @@ bool RenderView::absolutePosition(int& xPos, int& yPos, bool fixed)
 void RenderView::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     // Cache the print rect because the dirty rect could get changed during painting.
+    ASSERT(m_printingMode || printRect().isEmpty());
     if (m_printingMode)
         setPrintRect(paintInfo.rect);
-
     paintObject(paintInfo, tx, ty);
 }
 
