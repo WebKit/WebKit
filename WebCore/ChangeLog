@@ -1,5 +1,12 @@
 2007-01-10  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Build fix, not reviewed.
+
+        * rendering/RenderSVGText.cpp: Use correct method name.
+        (WebCore::RenderSVGText::relativeBBox):
+
+2007-01-10  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Eric.
 
         Fixes: http://bugs.webkit.org/show_bug.cgi?id=10262 (SVG fails to redraw top 20 pixels)
