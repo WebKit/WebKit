@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2006 George Staikos <staikos@kde.org>
@@ -141,6 +140,176 @@ namespace WTF {
       Symbol_Modifier = U_MASK(QChar::Symbol_Modifier),
       Symbol_Other = U_MASK(QChar::Symbol_Other),
     };
+
+
+#if QT_VERSION >= 0x040300
+    // FIXME: handle surrogates correctly in all methods
+    
+    inline int toLower(UChar* str, int strLength, UChar*& destIfNeeded)
+    {
+      destIfNeeded = 0;
+
+      // FIXME: handle special casing. Easiest with some low level API in Qt
+      for (int i = 0; i < strLength; ++i)
+        str[i] = QChar::toLower(str[i]);
+
+      return strLength;
+    }
+
+    inline UChar32 toLower(UChar32 ch)
+    {
+      return QChar::toLower(ch);
+    }
+
+    inline int toLower(UChar* result, int resultLength, const UChar* src, int srcLength,  bool* error)
+    {
+      // FIXME: handle special casing. Easiest with some low level API in Qt
+      *error = false;
+      if (resultLength < srcLength) {
+        *error = true;
+        return srcLength;
+      }
+      for (int i = 0; i < srcLength; ++i)
+        result[i] = QChar::toLower(src[i]);
+    }
+
+    inline int toUpper(UChar* str, int strLength, UChar*& destIfNeeded)
+    {
+      // FIXME: handle special casing. Easiest with some low level API in Qt
+      destIfNeeded = 0;
+
+      for (int i = 0; i < strLength; ++i)
+        str[i] = QChar::toUpper(str[i]);
+
+      return strLength;
+    }
+
+    inline UChar32 toUpper(UChar32 ch)
+    {
+      return QChar::toUpper(ch);
+    }
+
+    inline int toUpper(UChar* result, int resultLength, UChar* src, int srcLength,  bool* error)
+    {
+      // FIXME: handle special casing. Easiest with some low level API in Qt
+      *error = false;
+      if (resultLength < srcLength) {
+        *error = true;
+        return srcLength;
+      }
+      for (int i = 0; i < srcLength; ++i)
+        result[i] = QChar::toUpper(src[i]);
+    }
+
+    inline int toTitleCase(UChar32 c)
+    {
+      return QChar::toTitleCase(c);
+    }
+
+    inline UChar32 foldCase(UChar32 c)
+    {
+      return QChar::toCaseFolded(c);
+    }
+
+    inline int foldCase(UChar* result, int resultLength, UChar* src, int srcLength,  bool* error)
+    {
+      // FIXME: handle special casing. Easiest with some low level API in Qt
+      *error = false;
+      if (resultLength < srcLength) {
+        *error = true;
+        return srcLength;
+      }
+      for (int i = 0; i < srcLength; ++i)
+        result[i] = QChar::toCaseFolded(src[i]);
+    }
+
+    inline bool isFormatChar(UChar32 c)
+    {
+      return QChar::category(c) == QChar::Other_Format;
+    }
+
+    inline bool isPrintableChar(UChar32 c)
+    {
+      const uint test = U_MASK(QChar::Other_Control) |
+                        U_MASK(QChar::Other_NotAssigned);
+      return !(U_MASK(QChar::category(c)) & test);
+    }
+
+    inline bool isSeparatorSpace(UChar32 c)
+    {
+      return QChar::category(c) == QChar::Separator_Space;
+    }
+
+    inline bool isPunct(UChar32 c)
+    {
+      const uint test = U_MASK(QChar::Punctuation_Connector) |
+                        U_MASK(QChar::Punctuation_Dash) |
+                        U_MASK(QChar::Punctuation_Open) |
+                        U_MASK(QChar::Punctuation_Close) |
+                        U_MASK(QChar::Punctuation_InitialQuote) |
+                        U_MASK(QChar::Punctuation_FinalQuote) |
+                        U_MASK(QChar::Punctuation_Other);
+      return U_MASK(QChar::category(c)) & test;
+    }
+
+    inline bool isDigit(UChar32 c)
+    {
+      return QChar::category(c) == QChar::Number_DecimalDigit;
+    }
+
+    inline bool isLower(UChar32 c)
+    {
+      return QChar::category(c) == QChar::Letter_Lowercase;
+    }
+
+    inline bool isUpper(UChar32 c)
+    {
+      return QChar::category(c) == QChar::Letter_Uppercase;
+    }
+
+    inline int digitValue(UChar32 c)
+    {
+      return QChar::digitValue(c);
+    }
+
+    inline UChar32 mirroredChar(UChar32 c)
+    {
+      return QChar::mirroredChar(c);
+    }
+
+    inline uint8_t combiningClass(UChar32 c)
+    {
+      return QChar::combiningClass(c);
+    }
+
+    inline DecompositionType decompositionType(UChar32 c)
+    {
+      return (DecompositionType)QChar::decompositionTag(c);
+    }
+
+    inline int umemcasecmp(const UChar* a, const UChar* b, int len)
+    {
+      // handle surrogates correctly
+      for (int i = 0; i < len; ++i) {
+        QChar c1 = QChar(a[i]).toCaseFolded();
+        QChar c2 = QChar(b[i]).toCaseFolded();
+        if (c1 != c2)
+          return c1 < c2;
+      }
+      return 0;
+    }
+
+    inline Direction direction(UChar32 c)
+    {
+      return (Direction)QChar::direction(c);
+    }
+
+    inline CharCategory category(UChar32 c)
+    {
+      return (CharCategory) U_MASK(QChar::category(c));
+    }
+    
+#else
 
     inline int toLower(UChar* str, int strLength, UChar*& destIfNeeded)
     {
@@ -291,18 +460,22 @@ namespace WTF {
       return 0;
     }
 
-    inline Direction direction(UChar32 c) {
+    inline Direction direction(UChar32 c)
+    {
       if (c > 0xffff)
         return LeftToRight;
       return (Direction)QChar(c).direction();
     }
 
-    inline CharCategory category(UChar32 c) {
+    inline CharCategory category(UChar32 c)
+    {
       if (c > 0xffff)
         return (CharCategory) U_MASK(QChar::Letter_Other);
       return (CharCategory) U_MASK(QChar(c).category());
     }
 
+#endif
+    
   }
 }
 

@@ -1,3 +1,34 @@
+2007-01-10  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Use the new functionality in Qt 4.3, to make
+        the methods closer compliant with the Unicode
+        spec.
+
+        Keep the old code so that it still compiles against
+        Qt 4.2.
+
+        * wtf/unicode/qt4/UnicodeQt4.h:
+        (WTF::Unicode::toLower):
+        (WTF::Unicode::toUpper):
+        (WTF::Unicode::toTitleCase):
+        (WTF::Unicode::foldCase):
+        (WTF::Unicode::isFormatChar):
+        (WTF::Unicode::isPrintableChar):
+        (WTF::Unicode::isSeparatorSpace):
+        (WTF::Unicode::isPunct):
+        (WTF::Unicode::isDigit):
+        (WTF::Unicode::isLower):
+        (WTF::Unicode::isUpper):
+        (WTF::Unicode::digitValue):
+        (WTF::Unicode::mirroredChar):
+        (WTF::Unicode::combiningClass):
+        (WTF::Unicode::decompositionType):
+        (WTF::Unicode::umemcasecmp):
+        (WTF::Unicode::direction):
+        (WTF::Unicode::category):
+
 2007-01-09  Darin Adler  <darin@apple.com>
 
         - update 2007 Apple copyright for the new company name
