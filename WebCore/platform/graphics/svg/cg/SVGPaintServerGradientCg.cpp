@@ -45,7 +45,10 @@ static void cgGradientCallback(void* info, const CGFloat* inValues, CGFloat* out
     CGFloat inValue = inValues[0];
 
     if (!stopsCount) {
-        memset(outColor, 0, 4 * sizeof(CGFloat));
+        outColor[0] = 0;
+        outColor[1] = 0;
+        outColor[2] = 0;
+        outColor[3] = 0;
         return;
     } else if (stopsCount == 1) {
         memcpy(outColor, stops[0].colorArray, 4 * sizeof(CGFloat));

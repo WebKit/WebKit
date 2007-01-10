@@ -1,3 +1,14 @@
+2007-01-09  Remi Zara  <remi_zara@mac.com>
+
+        Reviewed by Darin and Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12150
+
+        Don't use memset to set float to 0
+
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::cgGradientCallback):
+
 2007-01-09  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Brady.
