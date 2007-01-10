@@ -509,8 +509,6 @@ SOURCES += \
     loader/qt/DocumentLoaderQt.cpp \
     loader/qt/LoaderFunctionsQt.cpp \
     loader/qt/NavigationActionQt.cpp \
-    loader/qt/ResourceLoaderQt.cpp \
-    loader/qt/MainResourceLoaderQt.cpp \
     platform/CString.cpp \
     platform/AtomicString.cpp \
     platform/Base64.cpp \

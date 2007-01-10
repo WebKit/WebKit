@@ -1,3 +1,20 @@
+2007-01-10  Lars Knoll,,,  <lars@trolltech.com>
+
+        Make the Qt build compile again after 
+        the ResourceLoader was made platform
+        independent. 
+
+        * WebCore.pro:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didFirstLayout):
+        * loader/qt/FrameLoaderQt.cpp:
+        * loader/qt/MainResourceLoaderQt.cpp: Removed.
+        * loader/qt/ResourceLoaderQt.cpp: Removed.
+        * page/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClient::openURL):
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::setDefersLoading):
+
 2007-01-10  Anders Carlsson  <acarlsson@apple.com>
 
         Rubber-stamped by Maciej.

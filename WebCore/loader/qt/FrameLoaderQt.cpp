@@ -44,6 +44,7 @@
 #include "FrameLoader.h"
 #include "FramePrivate.h"
 #include "FrameLoaderClientQt.h"
+#include "ResourceLoader.h"
 #include "DocumentLoader.h"
 #include "FrameView.h"
 #include "FormState.h"
@@ -209,15 +210,6 @@ void FrameLoader::checkLoadCompleteForThisFrame()
         return;
     }
 
-}
-
-void FrameLoader::didFirstLayout()
-{
-//     if (isBackForwardLoadType(m_loadType) && m_client->hasBackForwardList())
-//         m_client->restoreScrollPositionAndViewState();
-
-    m_firstLayoutDone = true;
-    m_client->dispatchDidFirstLayout();
 }
 
 void FrameLoader::partClearedInBegin()
