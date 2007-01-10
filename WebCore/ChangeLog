@@ -1,3 +1,12 @@
+2007-01-10  Adam Roben  <aroben@apple.com>
+
+        Rubberstamped by Darin.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected): Pass 0
+        instead of an empty Event to FrameLoader::load and
+        FrameLoader::urlSelected.
+
 2007-01-10  Anders Carlsson  <acarlsson@apple.com>
 
         * loader/ResourceLoader.cpp:

@@ -202,10 +202,8 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         case ContextMenuItemTagSearchWeb: {
             String url = makeGoogleSearchURL(frame->selectedText());
             ResourceRequest request = ResourceRequest(url);
-            if (Page* page = frame->page()) {
-                RefPtr<Event> event = new Event();
-                page->mainFrame()->loader()->urlSelected(FrameLoadRequest(request), event.get());
-            }
+            if (Page* page = frame->page())
+                page->mainFrame()->loader()->urlSelected(FrameLoadRequest(request), 0);
             break;
         }
         case ContextMenuItemTagLookUpInDictionary:
@@ -213,11 +211,10 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             m_client->lookUpInDictionary(frame);
             break;
         case ContextMenuItemTagOpenLink: {
-            if (Frame* targetFrame = result.targetFrame()) {
-                RefPtr<Event> event = new Event();
+            if (Frame* targetFrame = result.targetFrame())
                 targetFrame->loader()->load(FrameLoadRequest(ResourceRequest(result.absoluteLinkURL(), 
-                    frame->loader()->outgoingReferrer())), true, event.get(), 0, HashMap<String, String>());
-            } else
+                    frame->loader()->outgoingReferrer())), true, 0, 0, HashMap<String, String>());
+            else
                 openNewWindow(result.absoluteLinkURL(), frame);
         }
         case ContextMenuItemTagBold:
