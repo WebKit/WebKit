@@ -766,6 +766,7 @@ bool RenderBox::absolutePosition(int &xPos, int &yPos, bool f)
     RenderObject *o = container();
     if (o && o->absolutePosition(xPos, yPos, f)) {
         yPos += o->borderTopExtra();
+        
         if (style()->position() == AbsolutePosition && o->isRelPositioned() && o->isInlineFlow()) {
             // When we have an enclosing relpositioned inline, we need to add in the offset of the first line
             // box from the rest of the content, but only in the cases where we know we're positioned
@@ -800,8 +801,17 @@ bool RenderBox::absolutePosition(int &xPos, int &yPos, bool f)
             o->layer()->subtractScrollOffset(xPos, yPos); 
             
         if (!isInline() || isReplaced()) {
-            xPos += m_x;
-            yPos += m_y;
+            RenderBlock* cb;
+            if (o->isBlockFlow() && style()->position() != AbsolutePosition && style()->position() != FixedPosition &&
+                (cb = static_cast<RenderBlock*>(o))->hasColumns()) {
+                IntRect rect(m_x, m_y, 1, 1);
+                cb->adjustRectForColumns(rect);
+                xPos += rect.x();
+                yPos += rect.y();
+            } else {
+                xPos += m_x;
+                yPos += m_y;
+            }
         }
 
         if (isRelPositioned()) {
@@ -918,7 +928,7 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& r, bool f)
             RenderBlock* cb = static_cast<RenderBlock*>(o);
             if (cb->hasColumns()) {
                 IntRect repaintRect(x, y, r.width(), r.height());
-                cb->adjustRepaintRectForColumns(repaintRect);
+                cb->adjustRectForColumns(repaintRect);
                 x = repaintRect.x();
                 y = repaintRect.y();
                 r = repaintRect;

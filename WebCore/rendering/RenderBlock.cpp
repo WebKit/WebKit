@@ -3017,7 +3017,7 @@ void RenderBlock::layoutColumns()
     ASSERT(m_columnRects && m_columnCount == m_columnRects->size());
 }
 
-void RenderBlock::adjustRepaintRectForColumns(IntRect& r) const
+void RenderBlock::adjustRectForColumns(IntRect& r) const
 {
     // Just bail if we have no columns.
     if (!hasColumns() || !m_columnRects)
