@@ -23,6 +23,7 @@
 
 #ifndef RenderSVGImage_H
 #define RenderSVGImage_H
+
 #ifdef SVG_SUPPORT
 
 #include "AffineTransform.h"
@@ -49,11 +50,8 @@ namespace WebCore {
         virtual void imageChanged(CachedImage*);
         void adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, SVGPreserveAspectRatio*);
         virtual void paint(PaintInfo&, int parentX, int parentY);
-        virtual void layout();
 
         bool requiresLayer();
-
-        virtual void computeAbsoluteRepaintRect(IntRect&, bool f);
 
         virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int _x, int _y, int _tx, int _ty, HitTestAction);
 

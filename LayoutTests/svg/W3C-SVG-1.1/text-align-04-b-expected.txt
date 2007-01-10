@@ -14,7 +14,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-27) size 218x33
             text run at (0,-27) width 218: "Tspan, tref, toap"
         RenderPath {line} at (219.50,120) size 1x140 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M220.00,120.00L220.00,260.00"]
-        RenderSVGContainer {g} at (31,113) size 437x113
+        RenderSVGContainer {g} at (62,113) size 406x113
           RenderSVGText {text} at (220,140) size 480x33
             RenderSVGInlineText {#text} at (0,-27) size 122x33
               text run at (0,-27) width 122: "start text "

@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
       RenderSVGContainer {svg} at (0,20) size 2885.60x336
         RenderSVGContainer {g} at (0,20) size 2885.60x336
           RenderImage {image} at (0,0) size 3607x420
-          RenderSVGContainer {g} at (165.60,72) size 838.40x259.20
+          RenderSVGContainer {g} at (331.20,72) size 1624.80x259.20
             RenderSVGText {text} at (456,88) size 800x17
               RenderSVGInlineText {#text} at (-42,-14) size 85x17
                 text run at (-42,-14) width 85: "Furggeltihorn"
@@ -78,8 +78,8 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (950,575) size 800x14
         RenderSVGInlineText {#text} at (-514,-11) size 514x14
           text run at (-514,-11) width 514: "Panorama Chalchtrittli, Tierfed, Linthal, Glarus, Switzerland, taken 2005-09-03 (\x{A9} A. Neumann)"
-      RenderSVGContainer {g} at (39.20,483.20) size 219.20x17.60
-        RenderSVGContainer {g} at (39.20,483.20) size 107.20x17.60
+      RenderSVGContainer {g} at (39.20,483.20) size 185.60x17.60
+        RenderSVGContainer {g} at (39.20,483.20) size 89.60x17.60
           RenderPath {rect} at (39.20,483.20) size 88x16 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M49.00,579.00L159.00,579.00L159.00,599.00L49.00,599.00"]
           RenderPath {rect} at (40.80,484.80) size 88x16 [fill={[type=SOLID] [color=#696969]}] [data="M51.00,581.00L161.00,581.00L161.00,601.00L51.00,601.00"]
           RenderPath {rect} at (40,484) size 88x16 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M50.00,580.00L160.00,580.00L160.00,600.00L50.00,600.00"]
@@ -87,7 +87,7 @@ layer at (0,0) size 800x600
             RenderSVGTSpan {tspan} at (0,0) size 78x14
               RenderSVGInlineText {#text} at (-39,-11) size 78x14
                 text run at (-39,-11) width 78: "Hide Scrollbar"
-        RenderSVGContainer {g} at (135.20,483.20) size 123.20x17.60
+        RenderSVGContainer {g} at (135.20,483.20) size 89.60x17.60
           RenderPath {rect} at (135.20,483.20) size 88x16 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M169.00,579.00L279.00,579.00L279.00,599.00L169.00,599.00"]
           RenderPath {rect} at (136.80,484.80) size 88x16 [fill={[type=SOLID] [color=#696969]}] [data="M171.00,581.00L281.00,581.00L281.00,601.00L171.00,601.00"]
           RenderPath {rect} at (136,484) size 88x16 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M170.00,580.00L280.00,580.00L280.00,600.00L170.00,600.00"]

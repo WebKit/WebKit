@@ -1,12 +1,12 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    RenderSVGContainer {svg} at (-2,0.50) size 481.50x359
-      RenderSVGContainer {g} at (-2,4) size 444x221
+    RenderSVGContainer {svg} at (-4,0.50) size 483.50x359
+      RenderSVGContainer {g} at (-4,4) size 473x221
         RenderSVGText {text} at (5,40) size 480x44
           RenderSVGInlineText {#text} at (0,-36) size 346x44
             text run at (0,-36) width 346: "Test of 'text-anchor'"
         RenderPath {line} at (224.50,75) size 1x150 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M225.00,75.00L225.00,225.00"]
-        RenderSVGContainer {g} at (-2,83) size 444x133
+        RenderSVGContainer {g} at (-4,83) size 473x133
           RenderSVGText {text} at (225,110) size 480x133
             RenderSVGInlineText {#text} at (-229,-27) size 229x33
               text run at (-229,-27) width 229: "Begin with \"end\","

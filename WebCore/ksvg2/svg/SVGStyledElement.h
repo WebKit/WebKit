@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -20,16 +20,17 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGStyledElementImpl_H
-#define KSVG_SVGStyledElementImpl_H
+#ifndef SVGStyledElement_H
+#define SVGStyledElement_H
+
 #ifdef SVG_SUPPORT
 
 #include "AffineTransform.h"
+#include "Path.h"
 #include "SVGElement.h"
 #include "SVGLength.h"
-#include "SVGStylable.h"
 #include "SVGResource.h"
-#include "Path.h"
+#include "SVGStylable.h"
 
 namespace WebCore {
 
@@ -54,24 +55,24 @@ namespace WebCore {
         virtual void parseMappedAttribute(MappedAttribute*);
 
         RenderView* view() const;
+
         virtual void notifyAttributeChange() const;
         virtual void attributeChanged(Attribute*, bool preserveDecls = false);
 
     protected:
-        void updateCanvasItem(); // Handles "path data" object changes... (not for style/transform!)
-
         friend class RenderPath;
-        virtual bool hasPercentageValues() const { return false; }
+        void rebuildRenderer() const;
+
+        virtual bool hasRelativeValues() const { return false; }
 
     private:
         mutable RefPtr<CSSStyleDeclaration> m_pa;
         ANIMATED_PROPERTY_DECLARATIONS(SVGStyledElement, String, String, ClassName, className)
-        // Optimized updating logic
-        bool m_updateVectorial : 1;
     };
+
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KSVG_SVGStyledElementImpl_H
+#endif // SVGStyledElement
 
 // vim:ts=4:noet

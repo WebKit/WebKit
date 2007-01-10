@@ -8,8 +8,8 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (240,30) size 480x23
         RenderSVGInlineText {#text} at (-14,-18) size 29x23
           text run at (-14,-18) width 29: "end"
-      RenderSVGContainer {g} at (146,57) size 204x213 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,80.00)}]
-        RenderSVGContainer {g} at (146,72) size 67x192 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,5.00)}]
+      RenderSVGContainer {g} at (113,57) size 237x213 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,80.00)}]
+        RenderSVGContainer {g} at (113,72) size 67x192 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,5.00)}]
           RenderSVGText {text} at (0,0) size 480x17
             RenderSVGInlineText {#text} at (-64,-13) size 64x17
               text run at (-64,-13) width 64: "unspecified"
@@ -34,7 +34,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,175) size 480x17
             RenderSVGInlineText {#text} at (-64,-13) size 64x17
               text run at (-64,-13) width 64: "wallclock()"
-        RenderSVGContainer {g} at (198,57) size 81x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,-15.00)}]
+        RenderSVGContainer {g} at (196,57) size 153x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,-15.00)}]
           RenderSVGText {text} at (0,0) size 480x10
             RenderSVGInlineText {#text} at (-4,-8) size 9x10
               text run at (-4,-8) width 9: "0s"

@@ -1,11 +1,11 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (-16.62,-32.24) size 496.12x391.74
-      RenderSVGContainer {g} at (-16.62,-32.24) size 458.62x295.24
+      RenderSVGContainer {g} at (-16.62,-32.24) size 461.62x295.24
         RenderSVGText {text} at (225,25) size 480x16
           RenderSVGInlineText {#text} at (-137,-13) size 275x16
             text run at (-137,-13) width 275: "Test rotate='auto' and rotate='auto-reverse'"
-        RenderSVGContainer {g} at (-16.62,-32.24) size 458.62x295.24
+        RenderSVGContainer {g} at (-16.62,-32.24) size 461.62x295.24
           RenderPath {path} at (24,167.10) size 151.71x57.90 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [data="M25.00,225.00C25.00,175.00,125.00,150.00,175.00,200.00"]
           RenderPath {rect} at (8,193) size 34x34 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [data="M10.00,195.00L40.00,195.00L40.00,225.00L10.00,225.00"]
           RenderSVGText {text} at (25,240) size 480x14

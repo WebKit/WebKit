@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
     Copyright (C) 2006 Apple Computer, Inc.
+    Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
 
     This file is part of the WebKit project
 
@@ -21,6 +22,7 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "RenderSVGImage.h"
 
@@ -37,8 +39,8 @@
 
 namespace WebCore {
 
-RenderSVGImage::RenderSVGImage(SVGImageElement *impl)
-: RenderImage(impl)
+RenderSVGImage::RenderSVGImage(SVGImageElement* impl)
+    : RenderImage(impl)
 {
 }
 
@@ -46,7 +48,7 @@ RenderSVGImage::~RenderSVGImage()
 {
 }
 
-void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, SVGPreserveAspectRatio *aspectRatio)
+void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, SVGPreserveAspectRatio* aspectRatio)
 {
     float origDestWidth = destRect.width();
     float origDestHeight = destRect.height();
@@ -176,14 +178,6 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     paintInfo.context->restore();
 }
 
-void RenderSVGImage::computeAbsoluteRepaintRect(IntRect& r, bool f)
-{
-    AffineTransform transform = translationForAttributes() * localTransform();
-    r = transform.mapRect(r);
-    
-    RenderImage::computeAbsoluteRepaintRect(r, f);
-}
-
 bool RenderSVGImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
     PointerEventsHitRules hitRules(PointerEventsHitRules::SVG_IMAGE_HITTESTING, style()->svgStyle()->pointerEvents());
@@ -205,61 +199,40 @@ bool RenderSVGImage::requiresLayer()
     return false;
 }
 
-void RenderSVGImage::layout()
-{
-    ASSERT(needsLayout());
-    ASSERT(minMaxKnown());
-
-    IntRect oldBounds;
-    bool checkForRepaint = checkForRepaintDuringLayout();
-    if (checkForRepaint)
-        oldBounds = m_absoluteBounds;
-
-    // minimum height
-    m_height = cachedImage() && cachedImage() ? intrinsicHeight() : 0;
-
-    calcWidth();
-    calcHeight();
-
-    m_absoluteBounds = getAbsoluteRepaintRect();
-
-    if (checkForRepaint)
-        repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
-    
-    setNeedsLayout(false);
-}
-
 FloatRect RenderSVGImage::relativeBBox(bool includeStroke) const
 {
-    SVGImageElement *image = static_cast<SVGImageElement*>(node());
+    SVGImageElement* image = static_cast<SVGImageElement*>(node());
     return FloatRect(image->x().value(), image->y().value(), width(), height());
 }
 
 void RenderSVGImage::imageChanged(CachedImage* image)
 {
     RenderImage::imageChanged(image);
+
     // We override to invalidate a larger rect, since SVG images can draw outside their "bounds"
     repaintRectangle(getAbsoluteRepaintRect());
 }
 
 IntRect RenderSVGImage::getAbsoluteRepaintRect()
 {
-    SVGImageElement *image = static_cast<SVGImageElement*>(node());
-    FloatRect repaintRect = absoluteTransform().mapRect(FloatRect(image->x().value(), image->y().value(), width(), height()));
+    FloatRect repaintRect = relativeBBox(true);
+    repaintRect = absoluteTransform().mapRect(repaintRect);
 
     // Filters can expand the bounding box
-    SVGResourceFilter *filter = getFilterById(document(), style()->svgStyle()->filter().substring(1));
+    SVGResourceFilter* filter = getFilterById(document(), style()->svgStyle()->filter().substring(1));
     if (filter)
         repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
+
+    if (!repaintRect.isEmpty())
+        repaintRect.inflate(1); // inflate 1 pixel for antialiasing
 
     return enclosingIntRect(repaintRect);
 }
 
-void RenderSVGImage::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
+void RenderSVGImage::absoluteRects(Vector<IntRect>& rects, int, int)
 {
     rects.append(getAbsoluteRepaintRect());
 }
-
 
 AffineTransform RenderSVGImage::translationForAttributes()
 {

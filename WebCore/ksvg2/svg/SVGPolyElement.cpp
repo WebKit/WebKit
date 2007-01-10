@@ -91,7 +91,7 @@ void SVGPolyElement::notifyAttributeChange() const
         return;
 
     m_ignoreAttributeChanges = true;
-    SVGStyledElement::notifyAttributeChange();
+    rebuildRenderer();
 
     ExceptionCode ec = 0;
 

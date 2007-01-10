@@ -1,8 +1,8 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {g} at (64,72) size 224x136
-        RenderSVGContainer {g} at (64,72) size 224x136
+      RenderSVGContainer {g} at (128,72) size 224x136
+        RenderSVGContainer {g} at (128,72) size 224x136
           RenderSVGText {text} at (240,100) size 480x36
             RenderSVGInlineText {#text} at (-93,-28) size 186x36
               text run at (-93,-28) width 186: "Good morning!"

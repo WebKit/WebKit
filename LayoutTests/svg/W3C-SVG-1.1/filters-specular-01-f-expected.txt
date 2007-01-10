@@ -13,7 +13,7 @@ KCanvasResource {id="lightingColorC" [type=FILTER]  [effects=[[type=SPECULAR-LIG
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {g} at (85,9) size 346x281
+      RenderSVGContainer {g} at (90,9) size 341x281
         RenderSVGText {text} at (240,20) size 480x14
           RenderSVGInlineText {#text} at (-71,-11) size 142x14
             text run at (-71,-11) width 142: "Filters: feSpecularLighting"

@@ -401,15 +401,10 @@ void SVGSVGElement::setCurrentTime(float /* seconds */)
     // FIXME: Implement me, bug 12073
 }
 
-bool SVGSVGElement::hasPercentageValues() const
+bool SVGSVGElement::hasRelativeValues() const
 {
-    if (x().unitType() == LengthTypePercentage ||
-        y().unitType() == LengthTypePercentage ||
-        width().unitType() == LengthTypePercentage ||
-        height().unitType() == LengthTypePercentage) 
-        return true;
-
-    return false;
+    return (x().isRelative() || width().isRelative() ||
+            y().isRelative() || height().isRelative());
 }
 
 void SVGSVGElement::attributeChanged(Attribute* attr, bool preserveDecls)

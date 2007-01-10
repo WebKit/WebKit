@@ -8,8 +8,8 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (240,25) size 480x18
         RenderSVGInlineText {#text} at (-76,-14) size 152x18
           text run at (-76,-14) width 152: "<animate> on xlink:href"
-      RenderSVGContainer {g} at (38,59.50) size 440x214.50
-        RenderSVGContainer {g} at (49,82) size 45x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,90.00)}]
+      RenderSVGContainer {g} at (17,59.50) size 444x214.50
+        RenderSVGContainer {g} at (38,82) size 45x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,90.00)}]
           RenderSVGText {text} at (0,10) size 480x23
             RenderSVGInlineText {#text} at (-22,-18) size 45x23
               text run at (-22,-18) width 45: "<set>"
@@ -25,12 +25,12 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,60) size 480x18
             RenderSVGInlineText {#text} at (-12,-14) size 25x18
               text run at (-12,-14) width 25: "<a>"
-        RenderSVGContainer {g} at (270,60) size 72x94 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,90.00)}]
+        RenderSVGContainer {g} at (270,60) size 60x94 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,90.00)}]
           RenderImage {image} at (0,0) size 60x60
           RenderSVGText {text} at (0,60) size 480x18
             RenderSVGInlineText {#text} at (-28,-14) size 56x18
               text run at (-28,-14) width 56: "<image>"
-        RenderSVGContainer {g} at (401,62) size 77x92 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,90.00)}]
+        RenderSVGContainer {g} at (382,62) size 79x92 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,90.00)}]
           RenderSVGContainer {defs} at (420,76) size 41x18
             RenderSVGText {text} at (0,0) size 480x18
               RenderSVGInlineText {#text} at (0,-14) size 41x18
@@ -41,15 +41,15 @@ layer at (0,0) size 480x360
             RenderSVGText {text} at (0,0) size 480x18
               RenderSVGInlineText {#text} at (0,-14) size 40x18
                 text run at (0,-14) width 40: "Use C"
-          RenderSVGContainer {use} at (401,62) size 77x36
-            RenderSVGContainer {g} at (401,62) size 77x36
+          RenderSVGContainer {use} at (382,62) size 77x36
+            RenderSVGContainer {g} at (382,62) size 77x36
               RenderSVGText {text} at (0,0) size 480x36
                 RenderSVGInlineText {#text} at (-38,-28) size 77x36
                   text run at (-38,-28) width 77: "Use A"
           RenderSVGText {text} at (0,60) size 480x18
             RenderSVGInlineText {#text} at (-19,-14) size 39x18
               text run at (-19,-14) width 39: "<use>"
-        RenderSVGContainer {g} at (38,202) size 87x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,210.00)}]
+        RenderSVGContainer {g} at (17,202) size 87x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,210.00)}]
           RenderSVGText {text} at (0,10) size 480x23
             RenderSVGInlineText {#text} at (-43,-18) size 87x23
               text run at (-43,-18) width 87: "<animate>"
@@ -65,14 +65,14 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,60) size 480x18
             RenderSVGInlineText {#text} at (-12,-14) size 25x18
               text run at (-12,-14) width 25: "<a>"
-        RenderSVGContainer {g} at (270,180) size 72x94 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,210.00)}]
+        RenderSVGContainer {g} at (270,180) size 60x94 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,210.00)}]
           RenderImage {image} at (0,0) size 60x60
           RenderSVGText {text} at (0,60) size 480x18
             RenderSVGInlineText {#text} at (-28,-14) size 56x18
               text run at (-28,-14) width 56: "<image>"
-        RenderSVGContainer {g} at (401,182) size 77x92 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,210.00)}]
-          RenderSVGContainer {use} at (401,182) size 77x36
-            RenderSVGContainer {g} at (401,182) size 77x36
+        RenderSVGContainer {g} at (382,182) size 77x92 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,210.00)}]
+          RenderSVGContainer {use} at (382,182) size 77x36
+            RenderSVGContainer {g} at (382,182) size 77x36
               RenderSVGText {text} at (0,0) size 480x36
                 RenderSVGInlineText {#text} at (-38,-28) size 77x36
                   text run at (-38,-28) width 77: "Use A"

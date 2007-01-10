@@ -1,9 +1,9 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    RenderSVGContainer {svg} at (-47.72,-110) size 527.22x469.50
-      RenderSVGContainer {g} at (-47.72,-110) size 382.72x413
-        RenderSVGContainer {g} at (-47.72,-110) size 382.72x413
-          RenderSVGContainer {g} at (-47.72,-110) size 315.68x188.78 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,-60.00)}]
+    RenderSVGContainer {svg} at (0.50,-110) size 479x469.50
+      RenderSVGContainer {g} at (10,-110) size 342.80x413
+        RenderSVGContainer {g} at (10,-110) size 342.80x413
+          RenderSVGContainer {g} at (16.97,-110) size 335.83x274.44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,-60.00)}]
             RenderSVGText {text} at (30,150) size 480x23
               RenderSVGInlineText {#text} at (0,-18) size 344x23
                 text run at (0,-18) width 344: "Rotated Text for testing SVGLocatable"
@@ -22,8 +22,8 @@ layer at (0,0) size 480x360
             RenderSVGInlineText {#text} at (0,-11) size 311x14
               text run at (0,-11) width 311: ".getTransformToElement(): 0.42,0.42,-0.42,0.42,0.00,0.00"
           RenderSVGText {text} at (10,260) size 480x14
-            RenderSVGInlineText {#text} at (0,-11) size 325x14
-              text run at (0,-11) width 325: ".getBBox() for 'redCircle': .x=-50,.y=-50,.width=99,.height=99"
+            RenderSVGInlineText {#text} at (0,-11) size 339x14
+              text run at (0,-11) width 339: ".getBBox() for 'redCircle': .x=-50,.y=-50,.width=100,.height=100"
           RenderSVGText {text} at (10,280) size 480x14
             RenderSVGInlineText {#text} at (0,-11) size 253x14
               text run at (0,-11) width 253: ".farthestViewportElement of redCircle=svg-root"

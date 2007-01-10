@@ -1,3 +1,143 @@
+2007-01-10  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=10262 (SVG fails to redraw top 20 pixels)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=10263 (SVG seems to repaint way too many times during load)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=10404 (Invalidation issues with text skew)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=10407 (bad SVG text invalidation issues on mouseover/mouseout)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=10806 (failing manual-tests/svg-repaint-group.svg)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=10913 (SVG charts from plotkit fail to render unless you scroll them offscreen)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=10964 (inclusion of svg into svg leave a ghost invisible rectangle)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11680 (DojoKit SVG test chart fails to render (clipping issue?))
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11883 (SVG Text has updating/repainting issues)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11907 (RenderSVGContainer does not mark itself for repaint after setting viewBox, slice or align) 
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11913 (Invalidation issues in SVG javascript-based animation example)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11979 (SVG text does not respect font-size scaling in bbox calculation)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11984 (SVG <text> does not calculate the correct absoluteRepaintRect)
+        Partly fixes: http://bugs.webkit.org/show_bug.cgi?id=10745 (SVG layout needs to move out of DOM and into rendering tree during layout() call)
+
+        Fixes text redrawing issues seen in svg/carto.net (when actually playing with those files, manually)
+        Fixes svg/carto.net/window.svg (moving "Navigation Window" caused artefacts)
+        Fixes svg/W3C-SVG-1.1/types-basicDOM-01-b.svg (bbox calculations had one pixel offset)
+
+        Large SVG dynamic update rework/optimization. Also fixes SVG printing.
+
+        Rename updateCanvasItem() to rebuildRenderer(), as this is what it really does.
+
+        Do NOT call rebuildRenderer() in notifyAttributeChange() anymore,
+        but override notifyAttributeChange() in SVGPathElement/SVGCircleElement/etc..
+        (as only primitives using RenderPath as rendering object need this logic!)
+
+        This should clarify what really happens, as discussed with Eric.
+
+        Remove the invocations of notifyAttributeChange() in SVGLength. It's already
+        handled by the JS bindings, and we do double updating work. Fixed.
+
+        Because SVG dynamic updates have been flaky in the past, there was a hack introduced
+        in RenderPath causing the updateCanvasItem() function to be called _on every layout_ (!!!).
+        Finally this hack is gone. Offer RenderSVGContainer::absoluteRects() function to be able
+        to use WebInspector for <g> elements (very handy!).
+
+        Remove the unneeded "m_updateVectorial" bool from SVGStyledElement.
+        Remove computeAbsoluteRepaintRect() from RenderSVGContainer/RenderSVGImage/RenderSVGText,
+        as dicussed with David (we only need to reimplement getAbsoluteRepaintRect there).
+
+        Make RenderSVGText::absoluteRects just use the getAbsoluteRepaintRect() function, instead of
+        code duplication. Remove unneeded RenderSVGImage::layout() function (RenderImage does the same).
+
+        Add new function SVGStyledElement::renderStyleForElement, which centralizes the manual style
+        resolving needed for gradient stops.
+
+        * ksvg2/svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::notifyAttributeChange):
+        (WebCore::SVGCircleElement::hasRelativeValues):
+        * ksvg2/svg/SVGCircleElement.h:
+        * ksvg2/svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::notifyAttributeChange):
+        (WebCore::SVGEllipseElement::hasRelativeValues):
+        * ksvg2/svg/SVGEllipseElement.h:
+        * ksvg2/svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::notifyAttributeChange):
+        * ksvg2/svg/SVGImageElement.h:
+        * ksvg2/svg/SVGLength.cpp:
+        (WebCore::SVGLength::setValue):
+        (WebCore::SVGLength::setValueInSpecifiedUnits):
+        * ksvg2/svg/SVGLength.h:
+        (WebCore::SVGLength::isRelative):
+        * ksvg2/svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::notifyAttributeChange):
+        (WebCore::SVGLineElement::hasRelativeValues):
+        * ksvg2/svg/SVGLineElement.h:
+        * ksvg2/svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::getBBox):
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::notifyAttributeChange):
+        * ksvg2/svg/SVGPathElement.h:
+        * ksvg2/svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::notifyAttributeChange):
+        * ksvg2/svg/SVGPolyElement.h:
+        (WebCore::SVGPolyElement::rendererIsNeeded):
+        * ksvg2/svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::notifyAttributeChange):
+        (WebCore::SVGRectElement::hasRelativeValues):
+        * ksvg2/svg/SVGRectElement.h:
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::hasRelativeValues):
+        * ksvg2/svg/SVGSVGElement.h:
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::SVGStyledElement):
+        (WebCore::SVGStyledElement::createRenderer):
+        (WebCore::SVGStyledElement::notifyAttributeChange):
+        (WebCore::SVGStyledElement::rebuildRenderer):
+        * ksvg2/svg/SVGStyledElement.h:
+        (WebCore::SVGStyledElement::hasRelativeValues):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::setLocalTransform):
+        (WebCore::RenderPath::fillContains):
+        (WebCore::RenderPath::relativeBBox):
+        (WebCore::RenderPath::layout):
+        (WebCore::RenderPath::getAbsoluteRepaintRect):
+        (WebCore::RenderPath::paint):
+        (WebCore::RenderPath::nodeAtPoint):
+        (WebCore::drawMarkerWithData):
+        (WebCore::updateMarkerDataForElement):
+        (WebCore::drawStartAndMidMarkers):
+        (WebCore::RenderPath::drawMarkersIfNeeded):
+        (WebCore::RenderPath::hasRelativeValues):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::calcViewport):
+        (WebCore::RenderSVGContainer::setViewBox):
+        (WebCore::RenderSVGContainer::setAlign):
+        (WebCore::RenderSVGContainer::viewportTransform):
+        (WebCore::RenderSVGContainer::getAbsoluteRepaintRect):
+        (WebCore::RenderSVGContainer::absoluteRects):
+        (WebCore::RenderSVGContainer::fillContains):
+        (WebCore::RenderSVGContainer::strokeContains):
+        (WebCore::RenderSVGContainer::relativeBBox):
+        (WebCore::RenderSVGContainer::setSlice):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::RenderSVGImage):
+        (WebCore::RenderSVGImage::adjustRectsForAspectRatio):
+        (WebCore::RenderSVGImage::relativeBBox):
+        (WebCore::RenderSVGImage::imageChanged):
+        (WebCore::RenderSVGImage::getAbsoluteRepaintRect):
+        (WebCore::RenderSVGImage::absoluteRects):
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::getAbsoluteRepaintRect):
+        (WebCore::RenderSVGText::layout):
+        (WebCore::RenderSVGText::createInlineBox):
+        (WebCore::RenderSVGText::absoluteRects):
+        (WebCore::RenderSVGText::relativeBBox):
+        * rendering/RenderSVGText.h:
+        * rendering/SVGInlineFlowBox.cpp:
+        (WebCore::placePositionedBoxesHorizontally):
+
 2007-01-10  David Hyatt  <hyatt@apple.com>
 
         Make the selectionRect() method of RenderText better by reusing computeAbsoluteRepaintRect.  This enables

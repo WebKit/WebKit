@@ -1,11 +1,11 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    RenderSVGContainer {svg} at (0.50,0.50) size 483.50x359
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
       RenderSVGText {text} at (240,25) size 480x18
         RenderSVGInlineText {#text} at (-95,-14) size 191x18
           text run at (-95,-14) width 191: "<animate> of x/y/width/height"
-      RenderSVGContainer {g} at (21.50,39) size 462.50x250
-        RenderSVGContainer {g} at (24.50,54.50) size 97.50x99.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,90.00)}]
+      RenderSVGContainer {g} at (9,39) size 456x250
+        RenderSVGContainer {g} at (19,54.50) size 83x99.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,90.00)}]
           RenderSVGContainer {defs} at (39.50,69.50) size 41x41
             RenderPath {rect} at (57,87) size 6x6 [fill={[type=SOLID] [color=#000000]}] [data="M-3.00,-3.00L3.00,-3.00L3.00,3.00L-3.00,3.00"]
             RenderSVGContainer {g} at (41.50,71.50) size 37x37
@@ -43,7 +43,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,60) size 480x18
             RenderSVGInlineText {#text} at (-41,-14) size 83x18
               text run at (-41,-14) width 83: "x/y on <use>"
-        RenderSVGContainer {g} at (155,71.50) size 100x82.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,90.00)}]
+        RenderSVGContainer {g} at (130,71.50) size 100x82.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,90.00)}]
           RenderImage {image} at (0,0) size 50x50
           RenderSVGContainer {use} at (161.50,71.50) size 37x37
             RenderSVGContainer {g} at (161.50,71.50) size 37x37
@@ -63,7 +63,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,60) size 480x18
             RenderSVGInlineText {#text} at (-50,-14) size 100x18
               text run at (-50,-14) width 100: "x/y on <image>"
-        RenderSVGContainer {g} at (279,71.50) size 85x82.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,90.00)}]
+        RenderSVGContainer {g} at (258,71.50) size 85x82.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,90.00)}]
           RenderPath {rect} at (284.50,74.50) size 51x21 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#000000]}] [data="M-15.00,-15.00L35.00,-15.00L35.00,5.00L-15.00,5.00"]
           RenderSVGContainer {use} at (281.50,71.50) size 37x37
             RenderSVGContainer {g} at (281.50,71.50) size 37x37
@@ -83,7 +83,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,60) size 480x18
             RenderSVGInlineText {#text} at (-42,-14) size 85x18
               text run at (-42,-14) width 85: "x/y on <rect>"
-        RenderSVGContainer {g} at (279,71.50) size 85x82.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,90.00)}]
+        RenderSVGContainer {g} at (258,71.50) size 85x82.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,90.00)}]
           RenderPath {rect} at (284.50,74.50) size 51x21 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#000000]}] [data="M-15.00,-15.00L35.00,-15.00L35.00,5.00L-15.00,5.00"]
           RenderSVGContainer {use} at (281.50,71.50) size 37x37
             RenderSVGContainer {g} at (281.50,71.50) size 37x37
@@ -103,7 +103,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,60) size 480x18
             RenderSVGInlineText {#text} at (-42,-14) size 85x18
               text run at (-42,-14) width 85: "x/y on <rect>"
-        RenderSVGContainer {g} at (399,39) size 85x115 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,90.00)}]
+        RenderSVGContainer {g} at (378,39) size 87x115 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,90.00)}]
           RenderSVGContainer {defs} at (420,90) size 0x0
           RenderSVGText {text} at (-15,-15) size 480x46
             RenderSVGInlineText {#text} at (0,-36) size 60x46
@@ -126,7 +126,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,60) size 480x18
             RenderSVGInlineText {#text} at (-42,-14) size 85x18
               text run at (-42,-14) width 85: "x/y on <rect>"
-        RenderSVGContainer {g} at (21.50,159) size 115.50x115 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,210.00)}]
+        RenderSVGContainer {g} at (9,159) size 103x115 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,210.00)}]
           RenderSVGContainer {defs} at (41.50,191.50) size 37x37
             RenderSVGContainer {g} at (41.50,191.50) size 37x37
               RenderSVGContainer {use} at (41.50,191.50) size 7x7
@@ -177,7 +177,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,60) size 480x18
             RenderSVGInlineText {#text} at (-51,-14) size 103x18
               text run at (-51,-14) width 103: "x/y on <text>(2)"
-        RenderSVGContainer {g} at (139.50,169.50) size 99.50x119.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,210.00)}]
+        RenderSVGContainer {g} at (139.50,169.50) size 81x119.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,210.00)}]
           RenderImage {image} at (0,0) size 50x50
           RenderPath {rect} at (139.50,169.50) size 51x51 [stroke={[type=SOLID] [color=#FFB400]}] [data="M-40.00,-40.00L10.00,-40.00L10.00,10.00L-40.00,10.00"]
           RenderPath {rect} at (139.50,169.50) size 81x21 [stroke={[type=SOLID] [color=#FFB400]}] [data="M-40.00,-40.00L40.00,-40.00L40.00,-20.00L-40.00,-20.00"]
@@ -188,7 +188,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,75) size 480x18
             RenderSVGInlineText {#text} at (-38,-14) size 76x18
               text run at (-38,-14) width 76: "on <image>"
-        RenderSVGContainer {g} at (259.50,169.50) size 99.50x119.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,210.00)}]
+        RenderSVGContainer {g} at (259.50,169.50) size 81x119.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,210.00)}]
           RenderPath {rect} at (260,170) size 50x50 [fill={[type=SOLID] [color=#808080]}] [data="M-40.00,-40.00L10.00,-40.00L10.00,10.00L-40.00,10.00"]
           RenderPath {rect} at (259.50,169.50) size 51x51 [stroke={[type=SOLID] [color=#FFB400]}] [data="M-40.00,-40.00L10.00,-40.00L10.00,10.00L-40.00,10.00"]
           RenderPath {rect} at (259.50,169.50) size 81x21 [stroke={[type=SOLID] [color=#FFB400]}] [data="M-40.00,-40.00L40.00,-40.00L40.00,-20.00L-40.00,-20.00"]

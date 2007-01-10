@@ -3,8 +3,8 @@ KRenderingPaintServer {id="gradientSRGB" [type=LINEAR-GRADIENT] [stops=[(0.00,#F
 KRenderingPaintServer {id="gradientLinearRGB" [type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (0.33,#0000FF), (0.66,#FF0000), (1.00,#FFFF00)]] [start=(0,0)] [end=(1,0)]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    RenderSVGContainer {svg} at (-1,0.50) size 480.50x359
-      RenderSVGContainer {g} at (-1,8) size 469x272.50
+    RenderSVGContainer {svg} at (-2,0.50) size 481.50x359
+      RenderSVGContainer {g} at (-2,8) size 470x272.50
         RenderSVGContainer {defs} at (0,0) size 0x0
         RenderSVGText {text} at (225,30) size 480x27
           RenderSVGInlineText {#text} at (-227,-22) size 454x27

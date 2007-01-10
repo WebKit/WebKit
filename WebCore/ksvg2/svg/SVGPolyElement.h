@@ -51,11 +51,10 @@ namespace WebCore
         virtual SVGPointList* points() const;
         virtual SVGPointList* animatedPoints() const;
 
-        virtual void parseMappedAttribute(MappedAttribute* attr);
- 
-        virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
-
+        virtual void parseMappedAttribute(MappedAttribute* attr); 
         virtual void notifyAttributeChange() const;
+
+        virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }

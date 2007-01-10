@@ -208,10 +208,6 @@ static int placePositionedBoxesHorizontally(InlineFlowBox* flow, int x, int& lef
             x += dx;
             mn += dx;
             mx += dx;
-
-            // text-anchor changes the x position of our root box
-            if (flow->isRootInlineBox())
-                flow->setXPos(flow->xPos() - (dx + xPos) / 2);
         }
     }
 

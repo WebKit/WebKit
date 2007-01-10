@@ -1,7 +1,7 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    RenderSVGContainer {svg} at (0,0.50) size 479.50x359
-      RenderSVGContainer {g} at (0,6) size 471x292.75
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (17,6) size 454x292.75
         RenderSVGText {text} at (25,20) size 480x17
           RenderSVGInlineText {#text} at (0,-14) size 420x17
             text run at (0,-14) width 420: "Basics of tspan: changing visual properties and positioning."
@@ -44,7 +44,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (238,229) size 480x17
             RenderSVGInlineText {#text} at (0,-14) size 173x17
               text run at (0,-14) width 173: "'tspan' lowers \"a peach!\""
-        RenderSVGContainer {g} at (0,186) size 353.50x112.75
+        RenderSVGContainer {g} at (17,186) size 336.50x112.75
           RenderSVGText {text} at (0,0) size 480x47
             RenderSVGTSpan {tspan} at (0,0) size 69x17
               RenderSVGInlineText {#text} at (35,186) size 69x17

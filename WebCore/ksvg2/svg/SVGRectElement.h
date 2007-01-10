@@ -45,13 +45,14 @@ namespace WebCore
 
         // 'SVGRectElement' functions
         virtual void parseMappedAttribute(MappedAttribute* attr);
+        virtual void notifyAttributeChange() const;
 
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual Path toPathData() const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
-        virtual bool hasPercentageValues() const;
+        virtual bool hasRelativeValues() const;
 
     private:
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)

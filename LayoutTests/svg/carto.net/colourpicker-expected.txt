@@ -150,8 +150,8 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (512,285) size 800x14
             RenderSVGInlineText {#text} at (0,-11) size 243x14
               text run at (0,-11) width 243: "RGBA: 0,255,255,50; HSVA: 180,100,100,50"
-      RenderSVGContainer {g} at (389.84,132.03) size 345.31x273.44
-        RenderSVGContainer {g} at (397.66,344.53) size 121.88x17.19
+      RenderSVGContainer {g} at (389.84,132.03) size 286.72x273.44
+        RenderSVGContainer {g} at (397.66,344.53) size 87.50x17.19
           RenderPath {rect} at (397.66,344.53) size 85.94x15.62 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M509.00,441.00L619.00,441.00L619.00,461.00L509.00,461.00"]
           RenderPath {rect} at (399.22,346.09) size 85.94x15.62 [fill={[type=SOLID] [color=#696969]}] [data="M511.00,443.00L621.00,443.00L621.00,463.00L511.00,463.00"]
           RenderPath {rect} at (398.44,345.31) size 85.94x15.62 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M510.00,442.00L620.00,442.00L620.00,462.00L510.00,462.00"]
@@ -159,7 +159,7 @@ layer at (0,0) size 800x600
             RenderSVGTSpan {tspan} at (0,0) size 100x14
               RenderSVGInlineText {#text} at (-50,-11) size 100x14
                 text run at (-50,-11) width 100: "Hide ColourPicker"
-        RenderSVGContainer {g} at (397.66,366.41) size 111.72x17.19
+        RenderSVGContainer {g} at (397.66,366.41) size 87.50x17.19
           RenderPath {rect} at (397.66,366.41) size 85.94x15.62 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M509.00,469.00L619.00,469.00L619.00,489.00L509.00,489.00"]
           RenderPath {rect} at (399.22,367.97) size 85.94x15.62 [fill={[type=SOLID] [color=#696969]}] [data="M511.00,471.00L621.00,471.00L621.00,491.00L511.00,491.00"]
           RenderPath {rect} at (398.44,367.19) size 85.94x15.62 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M510.00,470.00L620.00,470.00L620.00,490.00L510.00,490.00"]
@@ -167,7 +167,7 @@ layer at (0,0) size 800x600
             RenderSVGTSpan {tspan} at (0,0) size 87x14
               RenderSVGInlineText {#text} at (-43,-11) size 87x14
                 text run at (-43,-11) width 87: "Set Random Fill"
-        RenderSVGContainer {g} at (397.66,388.28) size 126.56x17.19
+        RenderSVGContainer {g} at (397.66,388.28) size 87.50x17.19
           RenderPath {rect} at (397.66,388.28) size 85.94x15.62 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M509.00,497.00L619.00,497.00L619.00,517.00L509.00,517.00"]
           RenderPath {rect} at (399.22,389.84) size 85.94x15.62 [fill={[type=SOLID] [color=#696969]}] [data="M511.00,499.00L621.00,499.00L621.00,519.00L511.00,519.00"]
           RenderPath {rect} at (398.44,389.06) size 85.94x15.62 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M510.00,498.00L620.00,498.00L620.00,518.00L510.00,518.00"]
@@ -175,7 +175,7 @@ layer at (0,0) size 800x600
             RenderSVGTSpan {tspan} at (0,0) size 106x14
               RenderSVGInlineText {#text} at (-53,-11) size 106x14
                 text run at (-53,-11) width 106: "Set Random Stroke"
-        RenderSVGContainer {g} at (389.84,132.03) size 207.03x17.19
+        RenderSVGContainer {g} at (389.84,132.03) size 142.19x17.19
           RenderPath {rect} at (389.84,132.03) size 140.62x15.62 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M499.00,169.00L679.00,169.00L679.00,189.00L499.00,189.00"]
           RenderPath {rect} at (391.41,133.59) size 140.62x15.62 [fill={[type=SOLID] [color=#696969]}] [data="M501.00,171.00L681.00,171.00L681.00,191.00L501.00,191.00"]
           RenderPath {rect} at (390.62,132.81) size 140.62x15.62 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M500.00,170.00L680.00,170.00L680.00,190.00L500.00,190.00"]
@@ -183,7 +183,7 @@ layer at (0,0) size 800x600
             RenderSVGTSpan {tspan} at (0,0) size 174x14
               RenderSVGInlineText {#text} at (-87,-11) size 174x14
                 text run at (-87,-11) width 174: "Randomly Resize Colour Picker"
-        RenderSVGContainer {g} at (534.38,132.03) size 200.78x17.19
+        RenderSVGContainer {g} at (534.38,132.03) size 142.19x17.19
           RenderPath {rect} at (534.38,132.03) size 140.62x15.62 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M684.00,169.00L864.00,169.00L864.00,189.00L684.00,189.00"]
           RenderPath {rect} at (535.94,133.59) size 140.62x15.62 [fill={[type=SOLID] [color=#696969]}] [data="M686.00,171.00L866.00,171.00L866.00,191.00L686.00,191.00"]
           RenderPath {rect} at (535.16,132.81) size 140.62x15.62 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M685.00,170.00L865.00,170.00L865.00,190.00L685.00,190.00"]
@@ -191,7 +191,7 @@ layer at (0,0) size 800x600
             RenderSVGTSpan {tspan} at (0,0) size 166x14
               RenderSVGInlineText {#text} at (-83,-11) size 166x14
                 text run at (-83,-11) width 166: "Randomly Move Colour Picker"
-      RenderSVGContainer {g} at (358.59,389.06) size 23.44x14.06
+      RenderSVGContainer {g} at (358.59,389.06) size 21.09x14.06
         RenderPath {rect} at (358.59,389.06) size 19.53x12.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M459.00,498.00L484.00,498.00L484.00,514.00L459.00,514.00"]
         RenderPath {rect} at (360.16,390.62) size 19.53x12.50 [fill={[type=SOLID] [color=#696969]}] [data="M461.00,500.00L486.00,500.00L486.00,516.00L461.00,516.00"]
         RenderPath {rect} at (359.38,389.84) size 19.53x12.50 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M460.00,499.00L485.00,499.00L485.00,515.00L460.00,515.00"]

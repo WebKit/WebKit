@@ -1,7 +1,7 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {g} at (8,17) size 440x261
+      RenderSVGContainer {g} at (16,17) size 432x261
         RenderSVGText {text} at (240,35) size 480x22
           RenderSVGInlineText {#text} at (-77,-18) size 155x22
             text run at (-77,-18) width 155: "CSS selector test"
@@ -43,7 +43,7 @@ layer at (0,0) size 480x360
           RenderPath {rect} at (309.50,209.50) size 68.50x68.50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#800080]}] [data="M310.00,210.00L377.50,210.00L377.50,277.50L310.00,277.50"]
         RenderSVGContainer {g} at (379.50,209.50) size 68.50x68.50
           RenderPath {rect} at (379.50,209.50) size 68.50x68.50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M380.00,210.00L447.50,210.00L447.50,277.50L380.00,277.50"]
-        RenderSVGContainer {g} at (8,46) size 205x210
+        RenderSVGContainer {g} at (16,46) size 399x210
           RenderSVGText {text} at (64,60) size 480x17
             RenderSVGInlineText {#text} at (-5,-14) size 11x17
               text run at (-5,-14) width 11: "A"

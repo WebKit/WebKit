@@ -35,7 +35,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,270) size 480x18
             RenderSVGInlineText {#text} at (0,-14) size 44x18
               text run at (0,-14) width 44: "2.x 2.y"
-        RenderSVGContainer {g} at (132,9) size 82x321 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,40.00)}]
+        RenderSVGContainer {g} at (115,9) size 99x321 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,40.00)}]
           RenderSVGText {text} at (0,-17) size 480x18
             RenderSVGInlineText {#text} at (-35,-14) size 71x18
               text run at (-35,-14) width 71: "text-anchor"
@@ -212,7 +212,7 @@ layer at (0,0) size 480x360
               RenderSVGText {text} at (10,-10) size 480x13
                 RenderSVGInlineText {#text} at (0,-10) size 20x13
                   text run at (0,-10) width 20: "1234"
-        RenderSVGContainer {g} at (232,9) size 82x321 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,40.00)}]
+        RenderSVGContainer {g} at (215,9) size 99x321 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,40.00)}]
           RenderSVGText {text} at (0,-17) size 480x18
             RenderSVGInlineText {#text} at (-35,-14) size 71x18
               text run at (-35,-14) width 71: "text-anchor"
@@ -220,9 +220,9 @@ layer at (0,0) size 480x360
             RenderSVGInlineText {#text} at (-21,-14) size 43x18
               text run at (-21,-14) width 43: "middle"
           RenderPath {line} at (249.50,50) size 1x280 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,10.00L0.00,290.00"]
-          RenderSVGContainer {use} at (245,55) size 69x254
-            RenderSVGContainer {g} at (245,55) size 69x254
-              RenderSVGContainer {g} at (245,55) size 69x254
+          RenderSVGContainer {use} at (240,55) size 74x254
+            RenderSVGContainer {g} at (240,55) size 74x254
+              RenderSVGContainer {g} at (240,55) size 74x254
                 RenderSVGContainer {use} at (246,55) size 8x19
                   RenderSVGContainer {g} at (246,55) size 8x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
                     RenderSVGContainer {g} at (246,55) size 8x19
@@ -267,7 +267,7 @@ layer at (0,0) size 480x360
                 RenderSVGText {text} at (10,90) size 480x13
                   RenderSVGInlineText {#text} at (-10,-10) size 20x13
                     text run at (-10,-10) width 20: "1234"
-                RenderSVGContainer {g} at (245,135) size 54x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
+                RenderSVGContainer {g} at (240,135) size 59x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
                   RenderSVGContainer {use} at (246,135) size 8x19
                     RenderSVGContainer {g} at (246,135) size 8x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-10.00)}]
                       RenderSVGContainer {g} at (246,135) size 8x19
@@ -339,7 +339,7 @@ layer at (0,0) size 480x360
                   RenderSVGText {text} at (10,-10) size 480x13
                     RenderSVGInlineText {#text} at (-10,-10) size 20x13
                       text run at (-10,-10) width 20: "1234"
-                RenderSVGContainer {g} at (245,225) size 24x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,210.00)}]
+                RenderSVGContainer {g} at (240,225) size 29x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,210.00)}]
                   RenderSVGContainer {use} at (246,225) size 8x19
                     RenderSVGContainer {g} at (246,225) size 8x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-10.00)}]
                       RenderSVGContainer {g} at (246,225) size 8x19
@@ -391,7 +391,7 @@ layer at (0,0) size 480x360
                   RenderSVGText {text} at (10,-10) size 480x13
                     RenderSVGInlineText {#text} at (-10,-10) size 20x13
                       text run at (-10,-10) width 20: "1234"
-        RenderSVGContainer {g} at (332,9) size 82x321 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,40.00)}]
+        RenderSVGContainer {g} at (315,9) size 99x321 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,40.00)}]
           RenderSVGText {text} at (0,-17) size 480x18
             RenderSVGInlineText {#text} at (-35,-14) size 71x18
               text run at (-35,-14) width 71: "text-anchor"
@@ -399,9 +399,9 @@ layer at (0,0) size 480x360
             RenderSVGInlineText {#text} at (-11,-14) size 23x18
               text run at (-11,-14) width 23: "end"
           RenderPath {line} at (349.50,50) size 1x280 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,10.00L0.00,290.00"]
-          RenderSVGContainer {use} at (340,55) size 74x254
-            RenderSVGContainer {g} at (340,55) size 74x254
-              RenderSVGContainer {g} at (340,55) size 74x254
+          RenderSVGContainer {use} at (330,55) size 84x254
+            RenderSVGContainer {g} at (330,55) size 84x254
+              RenderSVGContainer {g} at (330,55) size 84x254
                 RenderSVGContainer {use} at (346,55) size 8x19
                   RenderSVGContainer {g} at (346,55) size 8x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
                     RenderSVGContainer {g} at (346,55) size 8x19
@@ -446,7 +446,7 @@ layer at (0,0) size 480x360
                 RenderSVGText {text} at (10,90) size 480x13
                   RenderSVGInlineText {#text} at (-20,-10) size 20x13
                     text run at (-20,-10) width 20: "1234"
-                RenderSVGContainer {g} at (340,135) size 59x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
+                RenderSVGContainer {g} at (330,135) size 69x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
                   RenderSVGContainer {use} at (346,135) size 8x19
                     RenderSVGContainer {g} at (346,135) size 8x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-10.00)}]
                       RenderSVGContainer {g} at (346,135) size 8x19
@@ -470,7 +470,7 @@ layer at (0,0) size 480x360
                   RenderSVGText {text} at (0,-10) size 480x13
                     RenderSVGInlineText {#text} at (-20,-10) size 20x13
                       text run at (-20,-10) width 20: "1234"
-                RenderSVGContainer {g} at (345,165) size 49x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,150.00)}]
+                RenderSVGContainer {g} at (340,165) size 54x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,150.00)}]
                   RenderSVGContainer {use} at (356,165) size 8x19
                     RenderSVGContainer {g} at (356,165) size 8x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,-10.00)}]
                       RenderSVGContainer {g} at (356,165) size 8x19
@@ -494,7 +494,7 @@ layer at (0,0) size 480x360
                   RenderSVGText {text} at (10,-10) size 480x13
                     RenderSVGInlineText {#text} at (-20,-10) size 20x13
                       text run at (-20,-10) width 20: "1234"
-                RenderSVGContainer {g} at (345,195) size 59x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,180.00)}]
+                RenderSVGContainer {g} at (340,195) size 64x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,180.00)}]
                   RenderSVGContainer {use} at (356,195) size 8x19
                     RenderSVGContainer {g} at (356,195) size 8x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,-10.00)}]
                       RenderSVGContainer {g} at (356,195) size 8x19
@@ -518,7 +518,7 @@ layer at (0,0) size 480x360
                   RenderSVGText {text} at (10,-10) size 480x13
                     RenderSVGInlineText {#text} at (-20,-10) size 20x13
                       text run at (-20,-10) width 20: "1234"
-                RenderSVGContainer {g} at (340,225) size 29x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,210.00)}]
+                RenderSVGContainer {g} at (330,225) size 39x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,210.00)}]
                   RenderSVGContainer {use} at (346,225) size 8x19
                     RenderSVGContainer {g} at (346,225) size 8x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-10.00)}]
                       RenderSVGContainer {g} at (346,225) size 8x19
@@ -532,7 +532,7 @@ layer at (0,0) size 480x360
                   RenderSVGText {text} at (0,-10) size 480x13
                     RenderSVGInlineText {#text} at (-20,-10) size 20x13
                       text run at (-20,-10) width 20: "1234"
-                RenderSVGContainer {g} at (345,255) size 49x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,240.00)}]
+                RenderSVGContainer {g} at (340,255) size 54x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,240.00)}]
                   RenderSVGContainer {use} at (356,255) size 8x19
                     RenderSVGContainer {g} at (356,255) size 8x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,-10.00)}]
                       RenderSVGContainer {g} at (356,255) size 8x19
@@ -556,7 +556,7 @@ layer at (0,0) size 480x360
                   RenderSVGText {text} at (10,-10) size 480x13
                     RenderSVGInlineText {#text} at (-20,-10) size 20x13
                       text run at (-20,-10) width 20: "1234"
-                RenderSVGContainer {g} at (345,285) size 69x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,270.00)}]
+                RenderSVGContainer {g} at (340,285) size 74x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,270.00)}]
                   RenderSVGContainer {use} at (356,285) size 8x19
                     RenderSVGContainer {g} at (356,285) size 8x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,-10.00)}]
                       RenderSVGContainer {g} at (356,285) size 8x19

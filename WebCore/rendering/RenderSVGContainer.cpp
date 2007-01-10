@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "RenderSVGContainer.h"
 
@@ -110,12 +111,12 @@ void RenderSVGContainer::layout()
 
     RenderObject* child = firstChild();
     while (child) {
-        if (!child->isRenderPath() || static_cast<RenderPath*>(child)->hasPercentageValues())
+        if (!child->isRenderPath() || static_cast<RenderPath*>(child)->hasRelativeValues())
             child->setNeedsLayout(true);
+
+        child->layoutIfNeeded();
         child = child->nextSibling();
     }
-
-    RenderContainer::layout();
 
     calcWidth();
     calcHeight();
@@ -124,16 +125,14 @@ void RenderSVGContainer::layout()
 
     if (selfNeedsLayout() && checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
+
+    setNeedsLayout(false);
 }
 
 void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
 {
     if (paintInfo.context->paintingDisabled())
         return;
-
-    // No one should be transforming us via these.
-    //ASSERT(m_x == 0);
-    //ASSERT(m_y == 0);
 
     if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection)) 
         paintBoxDecorations(paintInfo, parentX, parentY);
@@ -208,7 +207,7 @@ void RenderSVGContainer::calcViewport()
     if (svgelem->hasTagName(SVGNames::svgTag)) {
         SVGSVGElement* svg = static_cast<SVGSVGElement*>(element());
 
-        if (!selfNeedsLayout() && !svg->hasPercentageValues())
+        if (!selfNeedsLayout() && !svg->hasRelativeValues())
             return;
 
         double x = svg->x().value();
@@ -230,6 +229,7 @@ void RenderSVGContainer::calcViewport()
 void RenderSVGContainer::setViewBox(const FloatRect& viewBox)
 {
     m_viewBox = viewBox;
+
     if (style())
         setNeedsLayout(true);
 }
@@ -242,6 +242,8 @@ FloatRect RenderSVGContainer::viewBox() const
 void RenderSVGContainer::setAlign(KCAlign align)
 {
     m_align = align;
+    if (style())
+        setNeedsLayout(true);
 }
 
 KCAlign RenderSVGContainer::align() const
@@ -255,36 +257,31 @@ AffineTransform RenderSVGContainer::viewportTransform() const
         FloatRect viewportRect = viewport();
         if (!parent()->isSVGContainer())
             viewportRect = FloatRect(viewport().x(), viewport().y(), width(), height());
+
         return getAspectRatio(viewBox(), viewportRect);
     }
+
     return AffineTransform().translate(viewport().x(), viewport().y());
 }
 
 IntRect RenderSVGContainer::getAbsoluteRepaintRect()
 {
     IntRect repaintRect;
-    
-    for (RenderObject *current = firstChild(); current != 0; current = current->nextSibling())
+
+    for (RenderObject* current = firstChild(); current != 0; current = current->nextSibling())
         repaintRect.unite(current->getAbsoluteRepaintRect());
-    
+
     // Filters can expand the bounding box
-    SVGResourceFilter *filter = getFilterById(document(), style()->svgStyle()->filter().substring(1));
+    SVGResourceFilter* filter = getFilterById(document(), style()->svgStyle()->filter().substring(1));
     if (filter)
         repaintRect.unite(enclosingIntRect(filter->filterBBoxForItemBBox(repaintRect)));
-
-    // FIXME: what about transform?
 
     return repaintRect;
 }
 
-void RenderSVGContainer::computeAbsoluteRepaintRect(IntRect& r, bool f)
+void RenderSVGContainer::absoluteRects(Vector<IntRect>& rects, int, int)
 {
-    AffineTransform transform = localTransform();
-    r = transform.mapRect(r);
-    
-    // FIXME: consider filter
-
-    RenderContainer::computeAbsoluteRepaintRect(r, f);
+    rects.append(getAbsoluteRepaintRect());
 }
 
 AffineTransform RenderSVGContainer::absoluteTransform() const
@@ -294,10 +291,11 @@ AffineTransform RenderSVGContainer::absoluteTransform() const
 
 bool RenderSVGContainer::fillContains(const FloatPoint& p) const
 {
-    RenderObject *current = firstChild();
+    RenderObject* current = firstChild();
     while (current != 0) {
         if (current->isRenderPath() && static_cast<RenderPath*>(current)->fillContains(p))
             return true;
+
         current = current->nextSibling();
     }
 
@@ -306,10 +304,11 @@ bool RenderSVGContainer::fillContains(const FloatPoint& p) const
 
 bool RenderSVGContainer::strokeContains(const FloatPoint& p) const
 {
-    RenderObject *current = firstChild();
+    RenderObject* current = firstChild();
     while (current != 0) {
         if (current->isRenderPath() && static_cast<RenderPath*>(current)->strokeContains(p))
             return true;
+
         current = current->nextSibling();
     }
 
@@ -320,7 +319,7 @@ FloatRect RenderSVGContainer::relativeBBox(bool includeStroke) const
 {
     FloatRect rect;
     
-    RenderObject *current = firstChild();
+    RenderObject* current = firstChild();
     for (; current != 0; current = current->nextSibling()) {
         FloatRect childBBox = current->relativeBBox(includeStroke);
         FloatRect mappedBBox = current->localTransform().mapRect(childBBox);
@@ -333,6 +332,9 @@ FloatRect RenderSVGContainer::relativeBBox(bool includeStroke) const
 void RenderSVGContainer::setSlice(bool slice)
 {
     m_slice = slice;
+
+    if (style())
+        setNeedsLayout(true);
 }
 
 bool RenderSVGContainer::slice() const
@@ -402,6 +404,6 @@ bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResul
 
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

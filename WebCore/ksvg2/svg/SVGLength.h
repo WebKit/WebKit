@@ -90,6 +90,12 @@ namespace WebCore {
         // Helper functions
         static float PercentageOfViewport(float value, const SVGStyledElement*, SVGLengthMode);
 
+        inline bool isRelative() const
+        {
+            SVGLengthType type = unitType();
+            return (type == LengthTypePercentage || type == LengthTypeEMS || type == LengthTypeEXS);
+        }
+ 
     private:
         double dpi() const;
 

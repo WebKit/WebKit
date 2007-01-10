@@ -8,8 +8,8 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (240,30) size 480x23
         RenderSVGInlineText {#text} at (-12,-18) size 25x23
           text run at (-12,-18) width 25: "fill"
-      RenderSVGContainer {g} at (179,92) size 217.50x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,60.00)}]
-        RenderSVGContainer {g} at (179,92) size 141x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,45.00)}]
+      RenderSVGContainer {g} at (109,92) size 300x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,60.00)}]
+        RenderSVGContainer {g} at (109,92) size 141x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,45.00)}]
           RenderSVGText {text} at (0,0) size 480x17
             RenderSVGInlineText {#text} at (-141,-13) size 141x17
               text run at (-141,-13) width 141: "fill unspecified (remove)"
@@ -22,7 +22,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,125) size 480x17
             RenderSVGInlineText {#text} at (-126,-13) size 126x17
               text run at (-126,-13) width 126: "fill=freeze (no restart)"
-        RenderSVGContainer {g} at (302,157) size 77x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,125.00)}]
+        RenderSVGContainer {g} at (295,157) size 114x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,125.00)}]
           RenderSVGText {text} at (0,-15) size 480x17
             RenderSVGInlineText {#text} at (-15,-13) size 31x17
               text run at (-15,-13) width 31: "never"

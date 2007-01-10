@@ -7,8 +7,8 @@ KCanvasResource {id="Turb6" [type=FILTER] }
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {g} at (12,25) size 413x273
-        RenderSVGContainer {g} at (12,25) size 413x273
+      RenderSVGContainer {g} at (23,25) size 404x273
+        RenderSVGContainer {g} at (23,25) size 404x273
           RenderSVGContainer {defs} at (0,0) size 0x0
           RenderPath {rect} at (25,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [filter=#Turb1] [data="M25.00,25.00L125.00,25.00L125.00,100.00L25.00,100.00"]
           RenderSVGText {text} at (75,117) size 480x12

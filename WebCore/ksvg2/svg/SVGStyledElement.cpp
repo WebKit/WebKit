@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -26,8 +26,10 @@
 #include "SVGStyledElement.h"
 
 #include "Attr.h"
-#include "HTMLNames.h"
+#include "cssstyleselector.h"
 #include "Document.h"
+#include "HTMLNames.h"
+#include "ksvgcssproperties.h"
 #include "PlatformString.h"
 #include "RenderView.h"
 #include "RenderPath.h"
@@ -35,7 +37,6 @@
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
 #include "SVGSVGElement.h"
-#include "ksvgcssproperties.h"
 
 #include <wtf/Assertions.h>
 
@@ -48,7 +49,6 @@ using namespace SVGNames;
 
 SVGStyledElement::SVGStyledElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
-    , m_updateVectorial(false)
 {
 }
 
@@ -60,13 +60,8 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGStyledElement, String, String, string, ClassNam
 
 RenderObject* SVGStyledElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
-    Path pathData = toPathData();
-    if (pathData.isEmpty())
-        return 0;
-
-    RenderPath *item = new (arena) RenderPath(style, this);
-    item->setPath(pathData);
-    return item;
+    // The path data is set upon the first layout() call.
+    return new (arena) RenderPath(style, this);
 }
 
 void SVGStyledElement::parseMappedAttribute(MappedAttribute* attr)
@@ -88,12 +83,7 @@ void SVGStyledElement::parseMappedAttribute(MappedAttribute* attr)
 
 void SVGStyledElement::notifyAttributeChange() const
 {
-    // For most cases we need to handle vectorial data changes (ie. rect x changed)
-    if (!ownerDocument()->parsing()) {
-        // TODO: Use a more optimized way of updating, means not calling updateCanvasItem() here!
-        const_cast<SVGStyledElement*>(this)->m_updateVectorial = true;
-        const_cast<SVGStyledElement*>(this)->updateCanvasItem();
-    }
+    // no-op
 }
 
 void SVGStyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
@@ -111,9 +101,9 @@ RenderView* SVGStyledElement::view() const
     return static_cast<RenderView*>(document()->renderer());
 }
 
-void SVGStyledElement::updateCanvasItem()
+void SVGStyledElement::rebuildRenderer() const
 {
-    if (!m_updateVectorial || !renderer() || !renderer()->isRenderPath())
+    if (!renderer() || !renderer()->isRenderPath())
         return;
     
     RenderPath* renderPath = static_cast<RenderPath*>(renderer());
@@ -121,19 +111,17 @@ void SVGStyledElement::updateCanvasItem()
     
     SVGElement* parentElement = svg_dynamic_cast(parentNode());
     if (parentElement && parentElement->renderer() && parentElement->isStyled()
-        && parentElement->childShouldCreateRenderer(this))
+        && parentElement->childShouldCreateRenderer(const_cast<SVGStyledElement*>(this)))
         renderSection = true;
 
     renderPath->setPath(toPathData());
 
     if (renderSection)
         renderPath->setNeedsLayout(true);
-
-    m_updateVectorial = false;
 }
 
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

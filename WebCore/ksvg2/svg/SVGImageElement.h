@@ -52,6 +52,8 @@ namespace WebCore
 
         // 'SVGImageElement' functions
         virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void notifyAttributeChange() const;
+
         virtual void attach();
 
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric.seidel@kdemail.net>
 
@@ -22,6 +22,7 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "RenderPath.h"
 
@@ -57,11 +58,10 @@ AffineTransform RenderPath::localTransform() const
     return m_matrix;
 }
 
-void RenderPath::setLocalTransform(const AffineTransform &matrix)
+void RenderPath::setLocalTransform(const AffineTransform& matrix)
 {
     m_matrix = matrix;
 }
-
 
 FloatPoint RenderPath::mapAbsolutePointToLocal(const FloatPoint& point) const
 {
@@ -81,7 +81,7 @@ bool RenderPath::fillContains(const FloatPoint& point, bool requiresFill) const
     if (requiresFill && !KSVGPainterFactory::fillPaintServer(style(), this))
         return false;
 
-    return path().contains(point, style()->svgStyle()->fillRule());
+    return m_path.contains(point, style()->svgStyle()->fillRule());
 }
 
 FloatRect RenderPath::relativeBBox(bool includeStroke) const
@@ -92,11 +92,13 @@ FloatRect RenderPath::relativeBBox(bool includeStroke) const
     if (includeStroke) {
         if (m_strokeBbox.isEmpty())
             m_strokeBbox = strokeBBox();
+
         return m_strokeBbox;
     }
 
     if (m_fillBBox.isEmpty())
-        m_fillBBox = path().boundingRect();
+        m_fillBBox = m_path.boundingRect();
+
     return m_fillBBox;
 }
 
@@ -114,16 +116,15 @@ const Path& RenderPath::path() const
 
 void RenderPath::layout()
 {
-    // FIXME: Currently the DOM does all of the % length calculations, so we
-    // pretend that one of the attributes of the element has changed on the DOM
-    // to force the DOM object to update this render object with new aboslute position values.
-
     IntRect oldBounds;
     bool checkForRepaint = checkForRepaintDuringLayout();
     if (selfNeedsLayout() && checkForRepaint)
         oldBounds = m_absoluteBounds;
 
-    static_cast<SVGStyledElement*>(element())->notifyAttributeChange();
+    // FIXME: Until JSSVGPathSeg* relies on the genericContext<> hack for update
+    // notifications, we can't really disable this. It would break js-update-path-changes.svg
+    // if (m_path.isEmpty() && m_fillBBox.isEmpty() && m_strokeBbox.isEmpty())
+        static_cast<SVGStyledElement*>(element())->rebuildRenderer();
 
     m_absoluteBounds = getAbsoluteRepaintRect();
 
@@ -139,14 +140,15 @@ void RenderPath::layout()
 IntRect RenderPath::getAbsoluteRepaintRect()
 {
     FloatRect repaintRect = absoluteTransform().mapRect(relativeBBox(true));
-    
+
     // Filters can expand the bounding box
     SVGResourceFilter* filter = getFilterById(document(), style()->svgStyle()->filter().substring(1));
     if (filter)
         repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
-    
+
     if (!repaintRect.isEmpty())
         repaintRect.inflate(1); // inflate 1 pixel for antialiasing
+
     return enclosingIntRect(repaintRect);
 }
 
@@ -165,13 +167,9 @@ short RenderPath::baselinePosition(bool b, bool isRootLineBox) const
     return static_cast<short>(relativeBBox(true).height());
 }
 
-void RenderPath::paint(PaintInfo& paintInfo, int parentX, int parentY)
+void RenderPath::paint(PaintInfo& paintInfo, int, int)
 {
-    // No one should be transforming us via these.
-    //ASSERT(parentX == 0);
-    //ASSERT(parentY == 0);
-
-    if (paintInfo.context->paintingDisabled() || (paintInfo.phase != PaintPhaseForeground) || style()->visibility() == HIDDEN || path().isEmpty())
+    if (paintInfo.context->paintingDisabled() || (paintInfo.phase != PaintPhaseForeground) || style()->visibility() == HIDDEN || m_path.isEmpty())
         return;
 
     paintInfo.context->save();
@@ -192,16 +190,17 @@ void RenderPath::paint(PaintInfo& paintInfo, int parentX, int parentY)
     
     SVGPaintServer* fillPaintServer = KSVGPainterFactory::fillPaintServer(style(), this);
     if (fillPaintServer) {
-        paintInfo.context->addPath(path());
+        paintInfo.context->addPath(m_path);
         fillPaintServer->draw(paintInfo.context, this, ApplyToFillTargetType);
     }
+
     SVGPaintServer* strokePaintServer = KSVGPainterFactory::strokePaintServer(style(), this);
     if (strokePaintServer) {
-        paintInfo.context->addPath(path()); // path is cleared when filled.
+        paintInfo.context->addPath(m_path); // path is cleared when filled.
         strokePaintServer->draw(paintInfo.context, this, ApplyToStrokeTargetType);
     }
 
-    drawMarkersIfNeeded(paintInfo.context, paintInfo.rect, path());
+    drawMarkersIfNeeded(paintInfo.context, paintInfo.rect, m_path);
 
     // actually apply the filter
     if (filter)
@@ -220,6 +219,7 @@ bool RenderPath::nodeAtPoint(const HitTestRequest& request, HitTestResult& resul
     // We only draw in the forground phase, so we only hit-test then.
     if (hitTestAction != HitTestForeground)
         return false;
+
     PointerEventsHitRules hitRules(PointerEventsHitRules::SVG_PATH_HITTESTING, style()->svgStyle()->pointerEvents());
 
     bool isVisible = (style()->visibility() == VISIBLE);
@@ -231,6 +231,7 @@ bool RenderPath::nodeAtPoint(const HitTestRequest& request, HitTestResult& resul
             return true;
         }
     }
+
     return false;
 }
 
@@ -278,7 +279,7 @@ static void drawMarkerWithData(GraphicsContext* context, MarkerData &data)
     FloatPoint inslopeChange = data.inslopePoints[1] - FloatSize(data.inslopePoints[0].x(), data.inslopePoints[0].y());
     FloatPoint outslopeChange = data.outslopePoints[1] - FloatSize(data.outslopePoints[0].x(), data.outslopePoints[0].y());
     
-    static const double deg2rad = M_PI/180.0;
+    static const double deg2rad = M_PI / 180.0;
     double inslope = atan2(inslopeChange.y(), inslopeChange.x()) / deg2rad;
     double outslope = atan2(outslopeChange.y(), outslopeChange.x()) / deg2rad;
     
@@ -297,9 +298,9 @@ static void drawMarkerWithData(GraphicsContext* context, MarkerData &data)
     data.marker->draw(context, FloatRect(), data.origin.x(), data.origin.y(), data.strokeWidth, angle);
 }
 
-static inline void updateMarkerDataForElement(MarkerData &previousMarkerData, const PathElement *element)
+static inline void updateMarkerDataForElement(MarkerData& previousMarkerData, const PathElement* element)
 {
-    FloatPoint *points = element->points;
+    FloatPoint* points = element->points;
     
     switch (element->type) {
     case PathElementAddQuadCurveToPoint:
@@ -326,14 +327,14 @@ static inline void updateMarkerDataForElement(MarkerData &previousMarkerData, co
     }
 }
 
-static void drawStartAndMidMarkers(void *info, const PathElement *element)
+static void drawStartAndMidMarkers(void* info, const PathElement* element)
 {
     DrawMarkersData& data = *reinterpret_cast<DrawMarkersData*>(info);
 
     int elementIndex = data.elementIndex;
-    MarkerData &previousMarkerData = data.previousMarkerData;
+    MarkerData& previousMarkerData = data.previousMarkerData;
 
-    FloatPoint *points = element->points;
+    FloatPoint* points = element->points;
 
     // First update the outslope for the previous element
     previousMarkerData.outslopePoints[0] = previousMarkerData.origin;
@@ -357,7 +358,7 @@ static void drawStartAndMidMarkers(void *info, const PathElement *element)
 
 void RenderPath::drawMarkersIfNeeded(GraphicsContext* context, const FloatRect& rect, const Path& path) const
 {
-    Document *doc = document();
+    Document* doc = document();
     const SVGRenderStyle* svgStyle = style()->svgStyle();
 
     SVGResourceMarker* startMarker = getMarkerById(doc, svgStyle->startMarker().substring(1));
@@ -368,7 +369,6 @@ void RenderPath::drawMarkersIfNeeded(GraphicsContext* context, const FloatRect& 
         return;
 
     double strokeWidth = KSVGPainterFactory::cssPrimitiveToLength(this, style()->svgStyle()->strokeWidth(), 1.0);
-
     DrawMarkersData data(context, startMarker, midMarker, strokeWidth);
 
     path.apply(&data, drawStartAndMidMarkers);
@@ -378,11 +378,11 @@ void RenderPath::drawMarkersIfNeeded(GraphicsContext* context, const FloatRect& 
     drawMarkerWithData(context, data.previousMarkerData);
 }
 
-bool RenderPath::hasPercentageValues() const
+bool RenderPath::hasRelativeValues() const
 {
-    return static_cast<SVGStyledElement*>(element())->hasPercentageValues();
+    return static_cast<SVGStyledElement*>(element())->hasRelativeValues();
 }
-
+ 
 }
 
 #endif // SVG_SUPPORT

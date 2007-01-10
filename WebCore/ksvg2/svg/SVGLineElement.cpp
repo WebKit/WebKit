@@ -75,21 +75,22 @@ void SVGLineElement::parseMappedAttribute(MappedAttribute* attr)
     }
 }
 
+void SVGLineElement::notifyAttributeChange() const
+{
+    if (!ownerDocument()->parsing())
+        rebuildRenderer();
+}
+
 Path SVGLineElement::toPathData() const
 {
     return Path::createLine(FloatPoint(x1().value(), y1().value()),
                             FloatPoint(x2().value(), y2().value()));
 }
 
-bool SVGLineElement::hasPercentageValues() const
+bool SVGLineElement::hasRelativeValues() const
 {
-    if (x1().unitType() == LengthTypePercentage ||
-        y1().unitType() == LengthTypePercentage ||
-        x2().unitType() == LengthTypePercentage ||
-        y2().unitType() == LengthTypePercentage)
-        return true;
-
-    return false;
+    return (x1().isRelative() || y1().isRelative() ||
+            x2().isRelative() || y2().isRelative());
 }
 
 }

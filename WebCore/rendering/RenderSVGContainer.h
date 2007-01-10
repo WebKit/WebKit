@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,6 +22,7 @@
 
 #ifndef RenderSVGContainer_H
 #define RenderSVGContainer_H
+
 #ifdef SVG_SUPPORT
 
 #include "RenderContainer.h"
@@ -69,8 +70,7 @@ public:
     virtual void paint(PaintInfo&, int parentX, int parentY);
     
     virtual IntRect getAbsoluteRepaintRect();
-
-    virtual void computeAbsoluteRepaintRect(IntRect& r, bool f);
+    virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty);
 
     virtual AffineTransform absoluteTransform() const;
 

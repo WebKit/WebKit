@@ -128,7 +128,7 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
         friend class RenderSVGContainer;
-        virtual bool hasPercentageValues() const;
+        virtual bool hasRelativeValues() const;
 
     private:
         void addSVGWindowEventListner(const AtomicString& eventType, const Attribute* attr);   

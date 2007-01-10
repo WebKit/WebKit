@@ -78,23 +78,24 @@ void SVGEllipseElement::parseMappedAttribute(MappedAttribute* attr)
     }
 }
 
+void SVGEllipseElement::notifyAttributeChange() const
+{
+    if (!ownerDocument()->parsing())
+        rebuildRenderer();
+}
+
 Path SVGEllipseElement::toPathData() const
 {
     return Path::createEllipse(FloatPoint(cx().value(), cy().value()),
                                rx().value(), ry().value());
 }
-
-bool SVGEllipseElement::hasPercentageValues() const
-{
-    if (cx().unitType() == LengthTypePercentage ||
-        cy().unitType() == LengthTypePercentage ||
-        rx().unitType() == LengthTypePercentage ||
-        ry().unitType() == LengthTypePercentage)
-        return true;
-
-    return false;
-}
  
+bool SVGEllipseElement::hasRelativeValues() const
+{
+    return (cx().isRelative() || cy().isRelative() ||
+            rx().isRelative() || ry().isRelative());
+}
+
 }
 
 #endif // SVG_SUPPORT

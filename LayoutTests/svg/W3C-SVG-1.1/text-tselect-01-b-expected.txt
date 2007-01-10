@@ -1,11 +1,11 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    RenderSVGContainer {svg} at (0,0.50) size 479.50x359
-      RenderSVGContainer {g} at (0,0.50) size 479.50x359
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (0.50,0.50) size 479x359
         RenderSVGText {text} at (10,20) size 480x17
           RenderSVGInlineText {#text} at (0,-14) size 304x17
             text run at (0,-14) width 304: "Test single line and multiline text selection."
-        RenderSVGContainer {g} at (0,51) size 363x217
+        RenderSVGContainer {g} at (25,51) size 359x217
           RenderSVGText {text} at (25,65) size 480x17
             RenderSVGInlineText {#text} at (0,-14) size 252x17
               text run at (0,-14) width 252: "Here is a stand-alone 'text' element."

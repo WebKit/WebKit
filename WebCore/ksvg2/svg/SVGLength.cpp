@@ -211,17 +211,11 @@ void SVGLength::setValue(float value)
     default:
         break;
     }
-
-    if (m_context && m_context->ownerDocument()->documentElement() != m_context)
-        m_context->notifyAttributeChange();
 }
 
 void SVGLength::setValueInSpecifiedUnits(float value)
 {
     m_valueInSpecifiedUnits = value;
-
-    if (m_context && m_context->ownerDocument()->documentElement() != m_context)    
-        m_context->notifyAttributeChange();
 }
 
 float SVGLength::valueInSpecifiedUnits() const

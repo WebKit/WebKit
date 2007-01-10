@@ -71,21 +71,22 @@ void SVGCircleElement::parseMappedAttribute(MappedAttribute* attr)
     }
 }
 
+void SVGCircleElement::notifyAttributeChange() const
+{
+    if (!ownerDocument()->parsing())
+        rebuildRenderer();
+}
+
 Path SVGCircleElement::toPathData() const
 {
     return Path::createCircle(FloatPoint(cx().value(), cy().value()), r().value());
 }
 
-bool SVGCircleElement::hasPercentageValues() const
+bool SVGCircleElement::hasRelativeValues() const
 {
-    if (cx().unitType() == LengthTypePercentage ||
-        cy().unitType() == LengthTypePercentage ||
-        r().unitType() == LengthTypePercentage)
-        return true;
-
-    return false;
+    return (cx().isRelative() || cy().isRelative() || r().isRelative());
 }
-  
+ 
 }
 
 #endif // SVG_SUPPORT

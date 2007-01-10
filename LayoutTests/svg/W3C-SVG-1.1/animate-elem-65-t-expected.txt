@@ -8,8 +8,8 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (240,30) size 480x23
         RenderSVGInlineText {#text} at (-16,-18) size 32x23
           text run at (-16,-18) width 32: "min"
-      RenderSVGContainer {g} at (147,62) size 209.50x217 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,50.00)}]
-        RenderSVGContainer {g} at (147,82) size 145x197 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,45.00)}]
+      RenderSVGContainer {g} at (75,62) size 281.50x217 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,50.00)}]
+        RenderSVGContainer {g} at (75,82) size 145x197 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,45.00)}]
           RenderSVGText {text} at (0,0) size 480x17
             RenderSVGInlineText {#text} at (-86,-13) size 86x17
               text run at (-86,-13) width 86: "no min / media"
@@ -31,14 +31,14 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,180) size 480x17
             RenderSVGInlineText {#text} at (-137,-13) size 137x17
               text run at (-137,-13) width 137: "min > repeat dur, freeze"
-        RenderSVGContainer {g} at (242,62) size 70x197 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,25.00)}]
+        RenderSVGContainer {g} at (235,62) size 110x197 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,25.00)}]
           RenderSVGText {text} at (0,0) size 480x17
             RenderSVGInlineText {#text} at (-12,-13) size 24x17
               text run at (-12,-13) width 24: "> 5s"
           RenderSVGText {text} at (80,0) size 480x17
             RenderSVGInlineText {#text} at (-14,-13) size 29x17
               text run at (-14,-13) width 29: "0s-5s"
-          RenderSVGContainer {g} at (242,242) size 66x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,180.00)}]
+          RenderSVGContainer {g} at (235,242) size 107x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,180.00)}]
             RenderSVGText {text} at (0,0) size 480x17
               RenderSVGInlineText {#text} at (-15,-13) size 31x17
                 text run at (-15,-13) width 31: "never"

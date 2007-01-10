@@ -83,7 +83,6 @@ FloatRect SVGLocatable::getBBox(const SVGStyledElement* e)
         // See bug 11686.
         e->document()->updateLayoutIgnorePendingStylesheets();
         bboxRect = e->renderer()->relativeBBox(false);
-        bboxRect.setSize(bboxRect.size() - FloatSize(1, 1)); // FIXME: Why -1 here?
     }
 
     return bboxRect;
