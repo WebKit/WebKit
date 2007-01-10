@@ -1,5 +1,14 @@
 2007-01-09  David Hyatt  <hyatt@apple.com>
 
+        Avoid crashing when repainting multiple columns... make sure to use the current vector's size and
+        not the newly-computed column count.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutColumns):
+        (WebCore::RenderBlock::adjustRepaintRectForColumns):
+
+2007-01-09  David Hyatt  <hyatt@apple.com>
+
         Break up painting and hit testing of children into helper methods and add multi-column versions for both.
         
         Make incremental repainting able to invalidate the right spot in multiple column layouts so that e.g., link

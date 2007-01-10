@@ -3013,14 +3013,16 @@ void RenderBlock::layoutColumns()
 
     v->setPrintRect(IntRect());
     v->setTruncatedAt(0);
+    
+    ASSERT(m_columnRects && m_columnCount == m_columnRects->size());
 }
 
 void RenderBlock::adjustRepaintRectForColumns(IntRect& r) const
 {
     // Just bail if we have no columns.
-    if (!hasColumns())
+    if (!hasColumns() || !m_columnRects)
         return;
-        
+
     // Begin with a result rect that is empty.
     IntRect result;
     
@@ -3028,7 +3030,7 @@ void RenderBlock::adjustRepaintRectForColumns(IntRect& r) const
     int currXOffset = 0;
     int currYOffset = 0;
     int colGap = columnGap();
-    for (unsigned i = 0; i < m_columnCount; i++) {
+    for (unsigned i = 0; i < m_columnRects->size(); i++) {
         IntRect colRect = m_columnRects->at(i);
         
         IntRect repaintRect = r;
