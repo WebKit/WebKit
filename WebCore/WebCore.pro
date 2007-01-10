@@ -55,6 +55,7 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/css \
                 $$PWD/dom \
                 $$PWD/page \
+                $$PWD/page/qt \
                 $$PWD/bridge \
                 $$PWD/editing \
                 $$PWD/rendering \
@@ -461,6 +462,8 @@ SOURCES += \
     page/ContextMenuController.cpp \
     page/EventHandler.cpp \
     page/qt/EventHandlerQt.cpp \
+    page/qt/FrameQt.cpp \
+    page/qt/FrameQtClient.cpp \
     xml/XPathUtil.cpp \
     xml/XPathPredicate.cpp \
     xml/XPathVariableReference.cpp \
@@ -504,6 +507,7 @@ SOURCES += \
     loader/icon/SQLDatabase.cpp \
     loader/qt/FrameLoaderQt.cpp \
     loader/qt/DocumentLoaderQt.cpp \
+    loader/qt/LoaderFunctionsQt.cpp \
     loader/qt/NavigationActionQt.cpp \
     loader/qt/ResourceLoaderQt.cpp \
     loader/qt/MainResourceLoaderQt.cpp \
@@ -549,7 +553,6 @@ SOURCES += \
     platform/MimeTypeRegistry.cpp \
     platform/qt/MimeTypeRegistryQt.cpp \
     platform/qt/SoundQt.cpp \
-    platform/qt/LoaderFunctionsQt.cpp \
     platform/qt/FileChooserQt.cpp \
     platform/graphics/qt/IconQt.cpp \
     platform/graphics/qt/ImageBufferQt.cpp \
@@ -595,8 +598,6 @@ SOURCES += \
     platform/qt/FontCacheQt.cpp \
     platform/qt/FontQt.cpp \
     platform/qt/ScreenQt.cpp \
-    platform/qt/FrameQt.cpp \
-    platform/qt/FrameQtClient.cpp \
     platform/qt/ScrollViewCanvasQt.cpp \
     platform/qt/PlatformMouseEventQt.cpp \
     platform/qt/PlatformKeyboardEventQt.cpp \

@@ -46,52 +46,6 @@
 
 namespace WebCore {
 
-Vector<char> ServeSynchronousRequest(Loader*, DocLoader *docLoader, const ResourceRequest& request, ResourceResponse&)
-{
-    // FIXME: Handle last paremeter: "responseHeaders"
-    FrameQt* frame = QtFrame(docLoader->frame());
-
-    if (!frame)
-        return Vector<char>();
-
-    // FIXME: We shouldn't use temporary files for sync jobs!
-    QString tempFile;
-#if PLATFORM(KDE)
-    if (!KIO::NetAccess::download(KUrl(request.url().url()), tempFile, 0))
-        return Vector<char>();
-#else
-    KURL url = request.url();
-    if (!url.isLocalFile())
-        return Vector<char>();
-    tempFile = url.path();
-#endif
-
-    QFile file(tempFile);
-    if (!file.open(QIODevice::ReadOnly)) {
-#if PLATFORM(KDE)
-        KIO::NetAccess::removeTempFile(tempFile);
-#endif
-        return Vector<char>();
-    }
-
-    ASSERT(!file.atEnd());
-
-    QByteArray content = file.readAll();
-#if PLATFORM(KDE)
-    KIO::NetAccess::removeTempFile(tempFile);
-#endif
-
-    Vector<char> resultBuffer;
-    resultBuffer.append(content.data(), content.size());
-
-    return resultBuffer;
-}
-
-int NumberOfPendingOrLoadingRequests(DocLoader* docLoader)
-{
-    return cache()->loader()->numRequests(docLoader);
-}
-
 bool CheckIfReloading(WebCore::DocLoader* docLoader)
 {
     // FIXME: Needs a real implementation!
@@ -117,39 +71,6 @@ void CheckCacheObjectStatus(DocLoader* docLoader, CachedResource* cachedResource
     // FIXME: Doesn't work at the moment! ASSERT(cachedResource->response());
 
     // FIXME: Notify the caller that we "loaded".
-}
-
-bool IsResponseURLEqualToURL(PlatformResponse response, const String& url)
-{
-    if (!response)
-        return false;
-
-    return response->url == QString(url);
-}
-
-DeprecatedString ResponseURL(PlatformResponse response)
-{
-    if (!response)
-        return DeprecatedString();
-
-    return response->url;
-}
-
-DeprecatedString ResponseMIMEType(PlatformResponse)
-{
-    // FIXME: Store the response mime type in QtPlatformResponse!
-    return DeprecatedString();
-}
-
-bool ResponseIsMultipart(PlatformResponse response)
-{
-    return ResponseMIMEType(response) == "multipart/x-mixed-replace";
-}
-
-time_t CacheObjectExpiresTime(DocLoader*, PlatformResponse)
-{
-    // FIXME: Implement me!
-    return 0;
 }
 
 } // namespace WebCore

@@ -1,3 +1,67 @@
+2007-01-10  Lars Knoll <lars@trolltech.com>
+
+        Move files to the correct location,
+        and remove a few unused methods from 
+        LoaderFunctionsQt.cpp
+
+        * WebCore.pro:
+        * loader/qt/LoaderFunctionsQt.cpp: Added.
+        (WebCore::CheckCacheObjectStatus):
+        * page/qt/FrameQt.cpp: Added.
+        (WebCore::doScroll):
+        (WebCore::FrameQt::FrameQt):
+        (WebCore::FrameQt::~FrameQt):
+        (WebCore::FrameQt::passMouseDownEventToWidget):
+        (WebCore::FrameQt::isLoadTypeReload):
+        (WebCore::FrameQt::markedTextRange):
+        (WebCore::FrameQt::mimeTypeForFileName):
+        (WebCore::FrameQt::unfocusWindow):
+        (WebCore::FrameQt::focusWindow):
+        (WebCore::FrameQt::getEmbedInstanceForWidget):
+        (WebCore::FrameQt::getObjectInstanceForWidget):
+        (WebCore::FrameQt::getAppletInstanceForWidget):
+        (WebCore::FrameQt::issueCutCommand):
+        (WebCore::FrameQt::issueCopyCommand):
+        (WebCore::FrameQt::issuePasteCommand):
+        (WebCore::FrameQt::issuePasteAndMatchStyleCommand):
+        (WebCore::FrameQt::issueTransposeCommand):
+        (WebCore::FrameQt::respondToChangedSelection):
+        (WebCore::FrameQt::shouldChangeSelection):
+        (WebCore::FrameQt::print):
+        (WebCore::FrameQt::shouldInterruptJavaScript):
+        (WebCore::FrameQt::keyEvent):
+        (WebCore::FrameQt::setFrameGeometry):
+        (WebCore::FrameQt::client):
+        (WebCore::FrameQt::createNewWindow):
+        (WebCore::FrameQt::goBackOrForward):
+        (WebCore::FrameQt::historyURL):
+        (WebCore::FrameQt::runJavaScriptAlert):
+        (WebCore::FrameQt::runJavaScriptConfirm):
+        (WebCore::FrameQt::runJavaScriptPrompt):
+        (WebCore::FrameQt::bindingRootObject):
+        (WebCore::FrameQt::addPluginRootObject):
+        * page/qt/FrameQt.h: Added.
+        (WebCore::QtFrame):
+        * page/qt/FrameQtClient.cpp: Added.
+        (WebCore::FrameQtClient::FrameQtClient):
+        (WebCore::FrameQtClient::~FrameQtClient):
+        (WebCore::FrameQtClient::setFrame):
+        (WebCore::FrameQtClient::openURL):
+        (WebCore::FrameQtClient::submitForm):
+        (WebCore::FrameQtClient::didReceiveResponse):
+        (WebCore::FrameQtClient::didFinishLoading):
+        (WebCore::FrameQtClient::didFail):
+        (WebCore::FrameQtClient::didReceiveData):
+        (WebCore::FrameQtClient::traverseNextFrameStayWithin):
+        (WebCore::numRequests):
+        (WebCore::FrameQtClient::numPendingOrLoadingRequests):
+        * page/qt/FrameQtClient.h: Added.
+        * platform/qt/FrameQt.cpp: Removed.
+        * platform/qt/FrameQt.h: Removed.
+        * platform/qt/FrameQtClient.cpp: Removed.
+        * platform/qt/FrameQtClient.h: Removed.
+        * platform/qt/LoaderFunctionsQt.cpp: Removed.
+
 2007-01-10  Adam Roben  <aroben@apple.com>
 
         Reviewed by Geoff.
