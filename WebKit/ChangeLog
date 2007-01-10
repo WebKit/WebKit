@@ -1,3 +1,29 @@
+2007-01-09  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Rename the now ObjC++ files to be .mm and remove the explicit file types.
+
+        * DOM/WebDOMOperations.m: Removed.
+        * DefaultDelegates/WebDefaultContextMenuDelegate.m: Removed.
+        * English.lproj/StringsNotToBeLocalized.txt:
+        * Misc/WebCoreStatistics.m: Removed.
+        * Misc/WebElementDictionary.m: Removed.
+        * Misc/WebIconDatabase.m: Removed.
+        * Misc/WebNSAttributedStringExtras.m: Removed.
+        * Misc/WebNSPasteboardExtras.m: Removed.
+        * Plugins/WebNetscapePluginEmbeddedView.m: Removed.
+        * Plugins/WebNullPluginView.m: Removed.
+        * Plugins/WebPluginContainerCheck.m: Removed.
+        * WebCoreSupport/WebViewFactory.m: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebArchiver.m: Removed.
+        * WebView/WebHTMLRepresentation.m: Removed.
+        * WebView/WebHTMLView.m: Removed.
+        * WebView/WebRenderNode.m: Removed.
+        * WebView/WebResource.m: Removed.
+        * WebView/WebScriptDebugDelegate.m: Removed.
+
 2007-01-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
