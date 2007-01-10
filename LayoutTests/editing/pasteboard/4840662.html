@@ -1,5 +1,5 @@
 <p>This tests for a crash when pasting into a link that is display:block.  'bar' is pasted between 'foo' and 'baz', and must be part of the link in order to acheive the expected paragraph structure.  It should be part of the link but of the default font style.</p>
-<div id="div" contenteditable="true">asdsa<a id="anchor" href="http://www.google.com/" style="display:block;">foobaz</a></div>
+<div id="div" contenteditable="true"><a id="anchor" href="http://www.google.com/" style="display:block;">foobaz</a></div>
 
 <script>
 var sel = window.getSelection();
