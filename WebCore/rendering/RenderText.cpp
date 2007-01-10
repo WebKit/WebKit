@@ -1039,13 +1039,21 @@ IntRect RenderText::selectionRect()
     if (startPos == endPos)
         return rect;
 
-    int absx, absy;
-    cb->absolutePositionForContent(absx, absy);
-    RenderLayer* layer = cb->layer();
-    if (layer)
-       layer->subtractScrollOffset(absx, absy);
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
-        rect.unite(box->selectionRect(absx, absy, startPos, endPos));
+        rect.unite(box->selectionRect(0, 0, startPos, endPos));
+
+    if (cb->hasColumns())
+        cb->adjustRectForColumns(rect);
+
+    if (cb->hasOverflowClip()) {
+        int x = rect.x();
+        int y = rect.y();
+        IntRect boxRect(0, 0, cb->layer()->width(), cb->layer()->height());
+        cb->layer()->subtractScrollOffset(x, y);
+        IntRect repaintRect(x, y, rect.width(), rect.height());
+        rect = intersection(repaintRect, boxRect);
+    }
+    cb->computeAbsoluteRepaintRect(rect);
 
     return rect;
 }
