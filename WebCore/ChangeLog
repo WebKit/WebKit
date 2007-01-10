@@ -1,3 +1,15 @@
+2007-01-10  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Geoff.
+
+        Fix: <rdar://problem/4903003> ContextMenuController leaks Events
+
+        No layout tests possible.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected): Use RefPtr
+        to manage the lifetime of Shared objects.
+
 2007-01-10  Rob Buis  <buis@kde.org>
 
         Reviewed by Sam.

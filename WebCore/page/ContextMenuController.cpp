@@ -186,8 +186,10 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             if (frame->editor()->shouldInsertText(item->title(), frame->selectionController()->toRange().get(),
                 EditorInsertActionPasted)) {
                 Document* document = frame->document();
-                applyCommand(new ReplaceSelectionCommand(document, createFragmentFromMarkup(document, item->title(), ""),
-                    true, false, true));
+                RefPtr<ReplaceSelectionCommand> command =
+                    new ReplaceSelectionCommand(document, createFragmentFromMarkup(document, item->title(), ""),
+                                                                                   true, false, true);
+                applyCommand(command);
                 frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
             }
             break;
@@ -200,8 +202,10 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         case ContextMenuItemTagSearchWeb: {
             String url = makeGoogleSearchURL(frame->selectedText());
             ResourceRequest request = ResourceRequest(url);
-            if (frame->page())
-                frame->page()->mainFrame()->loader()->urlSelected(FrameLoadRequest(request), new Event());
+            if (Page* page = frame->page()) {
+                RefPtr<Event> event = new Event();
+                page->mainFrame()->loader()->urlSelected(FrameLoadRequest(request), event.get());
+            }
             break;
         }
         case ContextMenuItemTagLookUpInDictionary:
@@ -209,10 +213,11 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             m_client->lookUpInDictionary(frame);
             break;
         case ContextMenuItemTagOpenLink: {
-            if (Frame* targetFrame = result.targetFrame())
+            if (Frame* targetFrame = result.targetFrame()) {
+                RefPtr<Event> event = new Event();
                 targetFrame->loader()->load(FrameLoadRequest(ResourceRequest(result.absoluteLinkURL(), 
-                    frame->loader()->outgoingReferrer())), true, new Event(), 0, HashMap<String, String>());
-            else
+                    frame->loader()->outgoingReferrer())), true, event.get(), 0, HashMap<String, String>());
+            } else
                 openNewWindow(result.absoluteLinkURL(), frame);
         }
         case ContextMenuItemTagBold:
