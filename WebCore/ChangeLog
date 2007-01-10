@@ -1,3 +1,35 @@
+2007-01-09  Darin Adler  <darin@apple.com>
+
+        - update all 2007 Apple copyrights for the new company name
+
+        * css/cssstyleselector.cpp:
+        * html/HTMLLIElement.cpp:
+        * platform/CharacterNames.h:
+        * platform/TextBreakIterator.h:
+        * platform/TextBreakIteratorICU.cpp:
+        * platform/graphics/ImageBuffer.h:
+        * rendering/CounterNode.cpp:
+        * rendering/CounterNode.h:
+        * rendering/RenderBox.h:
+        * rendering/RenderContainer.cpp:
+        * rendering/RenderCounter.cpp:
+        * rendering/RenderCounter.h:
+        * rendering/RenderImage.h:
+        * rendering/RenderListItem.h:
+        * rendering/RenderListMarker.h:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderStyle.cpp:
+        * rendering/RenderStyle.h:
+        * rendering/RenderTable.cpp:
+        * rendering/RenderTableCell.cpp:
+        * rendering/RenderTableCell.h:
+        * rendering/RenderText.cpp:
+        * rendering/RenderText.h:
+        * rendering/RenderTreeAsText.cpp:
+        * rendering/SVGRenderTreeAsText.cpp:
+        * rendering/break_lines.cpp:
+
 2007-01-09  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

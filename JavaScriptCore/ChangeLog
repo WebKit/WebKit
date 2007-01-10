@@ -1,5 +1,11 @@
 2007-01-09  Darin Adler  <darin@apple.com>
 
+        - update 2007 Apple copyright for the new company name
+
+        * kjs/DateMath.cpp:
+
+2007-01-09  Darin Adler  <darin@apple.com>
+
         - fix build
 
         * kjs/string_object.cpp: (KJS::StringProtoFunc::callAsFunction):

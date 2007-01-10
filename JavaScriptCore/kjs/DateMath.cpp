@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- * Copyright (C) 2006-2007 Apple Computer
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -407,4 +407,3 @@ void msToGregorianDateTime(double ms, bool outputIsUTC, struct GregorianDateTime
 }
 
 }   // namespace KJS
-

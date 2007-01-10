@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2007 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2007 Apple Inc. All rights reserved.
  *           (C) 2005 Rob Buis <buis@kde.org>
  *           (C) 2006 Alexander Kellett <lypanov@kde.org>
  *
