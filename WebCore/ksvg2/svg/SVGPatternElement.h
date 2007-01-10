@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,7 +29,7 @@
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGLangSpace.h"
-#include "SVGStyledLocatableElement.h"
+#include "SVGStyledElement.h"
 #include "SVGTests.h"
 #include "SVGURIReference.h"
 
@@ -42,7 +42,7 @@ namespace WebCore
     class SVGPatternElement;
     class SVGTransformList;
 
-    class SVGPatternElement : public SVGStyledLocatableElement,
+    class SVGPatternElement : public SVGStyledElement,
                               public SVGURIReference,
                               public SVGTests,
                               public SVGLangSpace,
@@ -65,9 +65,6 @@ namespace WebCore
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
         virtual SVGResource* canvasResource();
-
-        // 'virtual SVGLocatable' functions
-        virtual AffineTransform getCTM() const;
 
         virtual void insertedIntoDocument();
 

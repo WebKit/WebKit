@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -48,7 +48,7 @@ using namespace std;
 namespace WebCore {
 
 SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document* doc)
-    : SVGStyledLocatableElement(tagName, doc)
+    : SVGStyledElement(tagName, doc)
     , SVGURIReference()
     , SVGTests()
     , SVGLangSpace()
@@ -217,14 +217,6 @@ void SVGPatternElement::insertedIntoDocument()
     String resourceId = SVGURIReference::getTarget(id());
     if (extensions->isPendingResource(resourceId))
         SVGResource::repaintClients(extensions->removePendingResource(resourceId));
-}
-
-AffineTransform SVGPatternElement::getCTM() const
-{
-    AffineTransform mat;
-    AffineTransform viewBox = viewBoxToViewTransform(width().value(), height().value());
-    mat *= viewBox;
-    return mat;
 }
 
 PatternAttributes SVGPatternElement::collectPatternProperties() const

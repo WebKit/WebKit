@@ -1,3 +1,17 @@
+2007-01-10  Rob Buis  <buis@kde.org>
+
+        Reviewed by Sam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12196
+        SVGPatternElement should not be locatable
+
+        Replace SVGStyledLocatableElement derivation with
+        SVGStyledElement.
+
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        * ksvg2/svg/SVGPatternElement.h:
+
 2007-01-10  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Build fix, not reviewed.
