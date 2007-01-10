@@ -142,6 +142,7 @@ public:
     virtual void paintObject(PaintInfo&, int tx, int ty);
     void paintFloats(PaintInfo&, int tx, int ty, bool paintSelection = false);
     void paintContents(PaintInfo&, int tx, int ty);
+    void paintColumns(PaintInfo&, int tx, int ty);
     void paintChildren(PaintInfo&, int tx, int ty);
     void paintEllipsisBoxes(PaintInfo&, int tx, int ty);
     void paintSelection(PaintInfo&, int tx, int ty);
@@ -190,6 +191,7 @@ public:
     int leftOffset(int y) const { return leftRelOffset(y, leftOffset(), true); }
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
+    virtual bool hitTestColumns(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
     virtual bool isPointInScrollbar(HitTestResult&, int x, int y, int tx, int ty);
@@ -279,7 +281,8 @@ public:
     void clearTruncation();
 
     virtual bool hasColumns() const { return m_columnCount > 1; }
-    
+    void adjustRepaintRectForColumns(IntRect&) const;
+
 protected:
     void newLine();
     virtual bool hasLineIfEmpty() const;

@@ -1,3 +1,33 @@
+2007-01-09  David Hyatt  <hyatt@apple.com>
+
+        Break up painting and hit testing of children into helper methods and add multi-column versions for both.
+        
+        Make incremental repainting able to invalidate the right spot in multiple column layouts so that e.g., link
+        hover works.
+
+        Turn off selection gap filling in columns for now until it can be made to work correctly.
+
+        Improve the column balancing heuristic by adding in the block's lineHeight/2 to each column initially to
+        account for column break adjustments that shrink the columns slightly.  Avoid clipping of the last column's
+        contents by ensuring it gets all the remaining available height.
+
+        Reviewed by mitz
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintColumns):
+        (WebCore::RenderBlock::paintContents):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::fillSelectionGaps):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::hitTestColumns):
+        (WebCore::RenderBlock::layoutColumns):
+        (WebCore::RenderBlock::adjustRepaintRectForColumns):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeAbsoluteRepaintRect):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::getAbsoluteRepaintRect):
+
 2007-01-09  Remi Zara  <remi_zara@mac.com>
 
         Reviewed by Darin and Eric.

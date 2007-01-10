@@ -1301,6 +1301,44 @@ void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
     return paintObject(paintInfo, tx, ty);
 }
 
+void RenderBlock::paintColumns(PaintInfo& paintInfo, int tx, int ty)
+{
+    // We need to do multiple passes, breaking up our child painting into strips.
+    GraphicsContext* context = paintInfo.context;
+    int currXOffset = 0;
+    int currYOffset = 0;
+    int colGap = columnGap();
+    for (unsigned i = 0; i < m_columnCount; i++) {
+        // For each rect, we clip to the rect, and then we adjust our coords.
+        IntRect colRect = m_columnRects->at(i);
+        colRect.move(tx, ty);
+        context->save();
+        
+        // Each strip pushes a clip, since column boxes are specified as being
+        // like overflow:hidden.
+        context->clip(colRect);
+        
+        // Adjust tx and ty to change where we paint.
+        PaintInfo info(paintInfo);
+        info.rect.intersect(colRect);
+        
+        // Adjust our x and y when painting.
+        int finalX = tx + currXOffset;
+        int finalY = ty + currYOffset;
+        paintContents(info, finalX, finalY);
+
+        // Move to the next position.
+        if (style()->direction() == LTR)
+            currXOffset += colRect.width() + colGap;
+        else
+            currXOffset -= (colRect.width() + colGap);
+
+        currYOffset -= colRect.height();
+        
+        context->restore();
+    }
+}
+
 void RenderBlock::paintContents(PaintInfo& paintInfo, int tx, int ty)
 {
     // Avoid painting descendants of the root element when stylesheets haven't loaded.  This eliminates FOUC.
@@ -1309,50 +1347,10 @@ void RenderBlock::paintContents(PaintInfo& paintInfo, int tx, int ty)
     if (document()->didLayoutWithPendingStylesheets() && !isRenderView())
         return;
 
-    if (!hasColumns()) {
-        if (childrenInline())
-            paintLines(paintInfo, tx, ty);
-        else
-            paintChildren(paintInfo, tx, ty);
-    } else {
-        // We need to do multiple passes, breaking up our child painting into strips.
-        GraphicsContext* context = paintInfo.context;
-        int currXOffset = 0;
-        int currYOffset = 0;
-        int colGap = columnGap();
-        for (unsigned i = 0; i < m_columnCount; i++) {
-            // For each rect, we clip to the rect, and then we adjust our coords.
-            IntRect colRect = m_columnRects->at(i);
-            colRect.move(tx, ty);
-            context->save();
-            
-            // Each strip pushes a clip, since column boxes are specified as being
-            // like overflow:hidden.
-            context->clip(colRect);
-            
-            // Adjust tx and ty to change where we paint.
-            PaintInfo info(paintInfo);
-            info.rect.intersect(colRect);
-            
-            // Adjust our x and y when painting.
-            int finalX = tx + currXOffset;
-            int finalY = ty + currYOffset;
-            if (childrenInline())
-                paintLines(paintInfo, finalX, finalY);
-            else
-                paintChildren(paintInfo, finalX, finalY);
-                
-            // Move to the next position.
-            if (style()->direction() == LTR)
-                currXOffset += colRect.width() + colGap;
-            else
-                currXOffset -= (colRect.width() + colGap);
-
-            currYOffset -= colRect.height();
-            
-            context->restore();
-        }
-    }
+    if (childrenInline())
+        paintLines(paintInfo, tx, ty);
+    else
+        paintChildren(paintInfo, tx, ty);
 }
 
 void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
@@ -1426,8 +1424,12 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
         m_layer->subtractScrollOffset(scrolledX, scrolledY);
 
     // 2. paint contents
-    if (paintPhase != PaintPhaseSelfOutline)
-        paintContents(paintInfo, scrolledX, scrolledY);
+    if (paintPhase != PaintPhaseSelfOutline) {
+        if (hasColumns())
+            paintColumns(paintInfo, scrolledX, scrolledY);
+        else
+            paintContents(paintInfo, scrolledX, scrolledY);
+    }
 
     // 3. paint selection
     // FIXME: Make this work with multi column layouts.  For now don't fill gaps.
@@ -1584,8 +1586,16 @@ GapRects RenderBlock::fillSelectionGaps(RenderBlock* rootBlock, int blockX, int 
     // FIXME: overflow: auto/scroll regions need more math here, since painting in the border box is different from painting in the padding box (one is scrolled, the other is
     // fixed).
     GapRects result;
-    if (!isBlockFlow())
+    if (!isBlockFlow()) // FIXME: Make multi-column selection gap filling work someday.
         return result;
+
+    if (hasColumns()) {
+        // FIXME: We should learn how to gap fill multiple columns eventually.
+        lastTop = (ty - blockY) + height();
+        lastLeft = leftSelectionOffset(rootBlock, height());
+        lastRight = rightSelectionOffset(rootBlock, height());
+        return result;
+    }
 
     if (childrenInline())
         result = fillInlineSelectionGaps(rootBlock, blockX, blockY, tx, ty, lastTop, lastLeft, lastRight, paintInfo);
@@ -2628,7 +2638,13 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     int scrolledY = ty;
     if (hasOverflowClip())
         m_layer->subtractScrollOffset(scrolledX, scrolledY);
-    if (hitTestContents(request, result, _x, _y, scrolledX, scrolledY, hitTestAction))
+
+    // Hit test contents if we don't have columns.
+    if (!hasColumns() && hitTestContents(request, result, _x, _y, scrolledX, scrolledY, hitTestAction))
+        return true;
+        
+    // Hit test our columns if we do have them.
+    if (hasColumns() && hitTestColumns(request, result, _x, _y, scrolledX, scrolledY, hitTestAction))
         return true;
 
     // Hit test floats.
@@ -2657,6 +2673,39 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
             setInnerNode(result);
             return true;
         }
+    }
+
+    return false;
+}
+
+bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
+{
+    // We need to do multiple passes, breaking up our hit testing into strips.
+    // We can always go left to right, since column contents are clipped (meaning that there
+    // can't be any overlap).
+    int currXOffset = 0;
+    int currYOffset = 0;
+    int colGap = columnGap();
+    for (unsigned i = 0; i < m_columnCount; i++) {
+        IntRect colRect = m_columnRects->at(i);
+        colRect.move(tx, ty);
+        
+        if (colRect.contains(x, y)) {
+            // The point is inside this column.
+            // Adjust tx and ty to change where we hit test.
+        
+            int finalX = tx + currXOffset;
+            int finalY = ty + currYOffset;
+            return hitTestContents(request, result, x, y, finalX, finalY, hitTestAction);
+        }
+        
+        // Move to the next position.
+        if (style()->direction() == LTR)
+            currXOffset += colRect.width() + colGap;
+        else
+            currXOffset -= (colRect.width() + colGap);
+
+        currYOffset -= colRect.height();
     }
 
     return false;
@@ -2900,7 +2949,8 @@ void RenderBlock::layoutColumns()
 
     // Fill the columns in to the available height.  Attempt to balance the height of the columns
     int availableHeight = contentHeight();
-    int colHeight = availableHeight / m_columnCount;
+    int colHeight = availableHeight / m_columnCount + lineHeight(false) / 2;  // Add in half our line-height to help with best-guess initial balancing.
+                                                                            
     int colGap = columnGap();
 
     // Compute a collection of column rects.
@@ -2918,6 +2968,10 @@ void RenderBlock::layoutColumns()
     int colCount = m_columnCount;
     int maxColBottom = borderTop() + paddingTop();
     for (unsigned i = 0; i < m_columnCount; i++) {
+        // The last column just gets all the remaining space.
+        if (i == m_columnCount - 1)
+            colHeight = availableHeight;
+
         // This represents the real column position.
         IntRect colRect(currX, top, m_columnWidth, colHeight);
         
@@ -2943,14 +2997,13 @@ void RenderBlock::layoutColumns()
             currX -= (m_columnWidth + colGap);
 
         currY += colRect.height();
-        
+        availableHeight -= colRect.height();
+
         maxColBottom = max(colRect.bottom(), maxColBottom);
 
         m_columnRects->append(colRect);
     }
 
-    // FIXME: We should be prepared to grow the last column to accommodate clipped out content if the amount of growth would be pretty small.
-    
     m_overflowHeight = maxColBottom;
     int toAdd = borderBottom() + paddingBottom();
     if (includeHorizontalScrollbarSize())
@@ -2960,6 +3013,41 @@ void RenderBlock::layoutColumns()
 
     v->setPrintRect(IntRect());
     v->setTruncatedAt(0);
+}
+
+void RenderBlock::adjustRepaintRectForColumns(IntRect& r) const
+{
+    // Just bail if we have no columns.
+    if (!hasColumns())
+        return;
+        
+    // Begin with a result rect that is empty.
+    IntRect result;
+    
+    // Determine which columns we intersect.
+    int currXOffset = 0;
+    int currYOffset = 0;
+    int colGap = columnGap();
+    for (unsigned i = 0; i < m_columnCount; i++) {
+        IntRect colRect = m_columnRects->at(i);
+        
+        IntRect repaintRect = r;
+        repaintRect.move(currXOffset, currYOffset);
+        
+        repaintRect.intersect(colRect);
+        
+        result.unite(repaintRect);
+
+        // Move to the next position.
+        if (style()->direction() == LTR)
+            currXOffset += colRect.width() + colGap;
+        else
+            currXOffset -= (colRect.width() + colGap);
+
+        currYOffset -= colRect.height();
+    }
+
+    r = result;
 }
 
 void RenderBlock::calcMinMaxWidth()
