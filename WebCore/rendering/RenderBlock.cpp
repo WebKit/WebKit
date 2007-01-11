@@ -100,8 +100,8 @@ RenderBlock::RenderBlock(Node* node)
     m_overflowHeight = m_overflowWidth = 0;
     m_overflowLeft = m_overflowTop = 0;
     m_tabWidth = -1;
-    m_columnCount = 1;
-    m_columnWidth = 0;
+    m_desiredColumnCount = 1;
+    m_desiredColumnWidth = 0;
     m_columnRects = 0;
 }
 
@@ -461,14 +461,15 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         getAbsoluteRepaintRectIncludingFloats(oldBounds, oldFullBounds);
 
     int oldWidth = m_width;
-    int oldColumnWidth = m_columnWidth;
+    int oldColumnWidth = m_desiredColumnWidth;
 
     calcWidth();
     calcColumnWidth();
 
     m_overflowWidth = m_width;
+    m_overflowLeft = 0;
 
-    if (oldWidth != m_width || oldColumnWidth != m_columnWidth)
+    if (oldWidth != m_width || oldColumnWidth != m_desiredColumnWidth)
         relayoutChildren = true;
 
     clearFloats();
@@ -524,12 +525,15 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     
     // Now lay out our columns within this intrinsic height, since they can slightly affect the intrinsic height as
     // we adjust for clean column breaks.
-    layoutColumns();
+    int singleColumnBottom = layoutColumns();
 
     // Calculate our new height.
     int oldHeight = m_height;
     calcHeight();
     if (oldHeight != m_height) {
+        // We have to rebalance columns to the new height.
+        layoutColumns(singleColumnBottom);
+
         // If the block got expanded in size, then increase our overflowheight to match.
         if (m_overflowHeight > m_height)
             m_overflowHeight -= toAdd;
@@ -1308,7 +1312,7 @@ void RenderBlock::paintColumns(PaintInfo& paintInfo, int tx, int ty)
     int currXOffset = 0;
     int currYOffset = 0;
     int colGap = columnGap();
-    for (unsigned i = 0; i < m_columnCount; i++) {
+    for (unsigned i = 0; i < m_columnRects->size(); i++) {
         // For each rect, we clip to the rect, and then we adjust our coords.
         IntRect colRect = m_columnRects->at(i);
         colRect.move(tx, ty);
@@ -2198,27 +2202,15 @@ IntRect RenderBlock::floatRect() const
     return result;
 }
 
-int
-RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
+int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
 {
     int bottom = RenderFlow::lowestPosition(includeOverflowInterior, includeSelf);
     if (!includeOverflowInterior && hasOverflowClip())
         return bottom;
 
-    if (m_overflowHeight > m_height)
-        bottom = max(m_overflowHeight, bottom);
-    
-    if (m_floatingObjects && !hasColumns()) {
-        FloatingObject* r;
-        DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
-        for ( ; (r = it.current()); ++it ) {
-            if (!r->noPaint || r->node->layer()) {
-                int lp = r->startY + r->node->marginTop() + r->node->lowestPosition(false);
-                bottom = max(bottom, lp);
-            }
-        }
-    }
-
+    if (includeSelf && m_overflowHeight > bottom)
+        bottom = m_overflowHeight;
+        
     if (m_positionedObjects) {
         RenderObject* r;
         DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
@@ -2232,7 +2224,25 @@ RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) cons
         }
     }
 
-    if (!includeSelf && lastLineBox() && !hasColumns()) {
+    if (hasColumns()) {
+        for (unsigned i = 0; i < m_columnRects->size(); i++)
+            bottom = max(bottom, m_columnRects->at(i).bottom());
+        return bottom;
+    }
+
+    if (m_floatingObjects) {
+        FloatingObject* r;
+        DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
+        for ( ; (r = it.current()); ++it ) {
+            if (!r->noPaint || r->node->layer()) {
+                int lp = r->startY + r->node->marginTop() + r->node->lowestPosition(false);
+                bottom = max(bottom, lp);
+            }
+        }
+    }
+
+
+    if (!includeSelf && lastLineBox()) {
         int lp = lastLineBox()->yPos() + lastLineBox()->height();
         bottom = max(bottom, lp);
     }
@@ -2245,19 +2255,9 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
     int right = RenderFlow::rightmostPosition(includeOverflowInterior, includeSelf);
     if (!includeOverflowInterior && hasOverflowClip())
         return right;
+
     if (includeSelf && m_overflowWidth > right)
         right = m_overflowWidth;
-    
-    if (m_floatingObjects && !hasColumns()) {
-        FloatingObject* r;
-        DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
-        for ( ; (r = it.current()); ++it ) {
-            if (!r->noPaint || r->node->layer()) {
-                int rp = r->left + r->node->marginLeft() + r->node->rightmostPosition(false);
-                right = max(right, rp);
-            }
-        }
-    }
 
     if (m_positionedObjects) {
         RenderObject* r;
@@ -2272,7 +2272,25 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
         }
     }
 
-    if (!includeSelf && firstLineBox() && !hasColumns()) {
+    if (hasColumns()) {
+        // This only matters for LTR
+        if (style()->direction() == LTR)
+            right = max(m_columnRects->last().right(), right);
+        return right;
+    }
+
+    if (m_floatingObjects) {
+        FloatingObject* r;
+        DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
+        for ( ; (r = it.current()); ++it ) {
+            if (!r->noPaint || r->node->layer()) {
+                int rp = r->left + r->node->marginLeft() + r->node->rightmostPosition(false);
+                right = max(right, rp);
+            }
+        }
+    }
+
+    if (!includeSelf && firstLineBox()) {
         for (InlineRunBox* currBox = firstLineBox(); currBox; currBox = currBox->nextLineBox()) {
             int rp = currBox->xPos() + currBox->width();
             // If this node is a root editable element, then the rightmostPosition should account for a caret at the end.
@@ -2291,20 +2309,10 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
     int left = RenderFlow::leftmostPosition(includeOverflowInterior, includeSelf);
     if (!includeOverflowInterior && hasOverflowClip())
         return left;
+    
     if (includeSelf && m_overflowLeft < left)
         left = m_overflowLeft;
-    
-    if (m_floatingObjects && !hasColumns()) {
-        FloatingObject* r;
-        DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
-        for ( ; (r = it.current()); ++it ) {
-            if (!r->noPaint || r->node->layer()) {
-                int lp = r->left + r->node->marginLeft() + r->node->leftmostPosition(false);
-                left = min(left, lp);
-            }
-        }
-    }
-    
+
     if (m_positionedObjects) {
         RenderObject* r;
         DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
@@ -2317,8 +2325,26 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
             }
         }
     }
-    
-    if (!includeSelf && firstLineBox() && !hasColumns()) {
+
+    if (hasColumns()) {
+        // This only matters for RTL
+        if (style()->direction() == RTL)
+            left = min(m_columnRects->last().x(), left);
+        return left;
+    }
+
+    if (m_floatingObjects) {
+        FloatingObject* r;
+        DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
+        for ( ; (r = it.current()); ++it ) {
+            if (!r->noPaint || r->node->layer()) {
+                int lp = r->left + r->node->marginLeft() + r->node->leftmostPosition(false);
+                left = min(left, lp);
+            }
+        }
+    }
+
+    if (!includeSelf && firstLineBox()) {
         for (InlineRunBox* currBox = firstLineBox(); currBox; currBox = currBox->nextLineBox())
             left = min(left, (int)currBox->xPos());
     }
@@ -2689,7 +2715,7 @@ bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& r
     int currXOffset = 0;
     int currYOffset = 0;
     int colGap = columnGap();
-    for (unsigned i = 0; i < m_columnCount; i++) {
+    for (unsigned i = 0; i < m_columnRects->size(); i++) {
         IntRect colRect = m_columnRects->at(i);
         colRect.move(tx, ty);
         
@@ -2800,7 +2826,7 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
     } 
 
     // If we start inside the shadow tree, we will stay inside (even if the point is above or below).
-    if (!(n && n->isShadowNode())) {
+    if (!(n && n->isShadowNode()) && !childrenInline()) {
         // Don't return positions inside editable roots for coordinates outside those roots, except for coordinates outside
         // a document that is entirely editable.
         bool isEditableRoot = n && n->rootEditableElement() == n && !n->hasTagName(bodyTag) && !n->hasTagName(htmlTag);
@@ -2871,6 +2897,8 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
     }
     
     // See if any child blocks exist at this y coordinate.
+    if (firstChild() && contentsY < firstChild()->yPos())
+        return VisiblePosition(n, 0, DOWNSTREAM);
     for (RenderObject* renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
         if (renderer->height() == 0 || renderer->style()->visibility() != VISIBLE || renderer->isFloatingOrPositioned())
             continue;
@@ -2891,8 +2919,8 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
 int RenderBlock::availableWidth() const
 {
     // If we have multiple columns, then the available width is reduced to our column width.
-    if (m_columnCount > 1)
-        return m_columnWidth;
+    if (hasColumns())
+        return m_desiredColumnWidth;
     return contentWidth();
 }
 
@@ -2906,30 +2934,30 @@ int RenderBlock::columnGap() const
 void RenderBlock::calcColumnWidth()
 {    
     // Calculate our column width and column count.
-    m_columnCount = 1;
-    m_columnWidth = contentWidth();
+    m_desiredColumnCount = 1;
+    m_desiredColumnWidth = contentWidth();
     
     // For now, we don't support multi-column layouts when printing, since we have to do a lot of work for proper pagination.
     if (document()->printing() || (style()->hasAutoColumnCount() && style()->hasAutoColumnWidth()))
         return;
         
-    int availWidth = m_columnWidth;
+    int availWidth = m_desiredColumnWidth;
     int colGap = columnGap();
 
     if (style()->hasAutoColumnWidth()) {
         int colCount = style()->columnCount();
         if ((colCount - 1) * colGap < availWidth) {
-            m_columnCount = colCount;
-            m_columnWidth = (availWidth - (m_columnCount - 1) * colGap) / m_columnCount;
+            m_desiredColumnCount = colCount;
+            m_desiredColumnWidth = (availWidth - (m_desiredColumnCount - 1) * colGap) / m_desiredColumnCount;
         } else if (colGap < availWidth) {
-            m_columnCount = availWidth / colGap;
-            m_columnWidth = (availWidth - (m_columnCount - 1) * colGap) / m_columnCount;
+            m_desiredColumnCount = availWidth / colGap;
+            m_desiredColumnWidth = (availWidth - (m_desiredColumnCount - 1) * colGap) / m_desiredColumnCount;
         }
     } else if (style()->hasAutoColumnCount()) {
         int colWidth = static_cast<int>(style()->columnWidth());
         if (colWidth < availWidth) {
-            m_columnCount = (availWidth + colGap) / (colWidth + colGap);
-            m_columnWidth = (availWidth - (m_columnCount - 1) * colGap) / m_columnCount;
+            m_desiredColumnCount = (availWidth + colGap) / (colWidth + colGap);
+            m_desiredColumnWidth = (availWidth - (m_desiredColumnCount - 1) * colGap) / m_desiredColumnCount;
         }
     } else {
         // Both are set.
@@ -2937,24 +2965,33 @@ void RenderBlock::calcColumnWidth()
         int colCount = style()->columnCount();
     
         if (colCount * colWidth + (colCount - 1) * colGap <= availWidth) {
-            m_columnCount = colCount;
-            m_columnWidth = colWidth;
+            m_desiredColumnCount = colCount;
+            m_desiredColumnWidth = colWidth;
         } else if (colWidth < availWidth) {
-            m_columnCount = (availWidth + colGap) / (colWidth + colGap);
-            m_columnWidth = (availWidth - (m_columnCount - 1) * colGap) / m_columnCount;
+            m_desiredColumnCount = (availWidth + colGap) / (colWidth + colGap);
+            m_desiredColumnWidth = (availWidth - (m_desiredColumnCount - 1) * colGap) / m_desiredColumnCount;
         }
     }
 }
 
-void RenderBlock::layoutColumns()
+int RenderBlock::layoutColumns(int endOfContent)
 {
     // Don't do anything if we have no columns
     if (!hasColumns())
-        return;
+        return -1;
+
+    bool computeIntrinsicHeight = (endOfContent == -1);
 
     // Fill the columns in to the available height.  Attempt to balance the height of the columns
     int availableHeight = contentHeight();
-    int colHeight = availableHeight / m_columnCount + lineHeight(false) / 2;  // Add in half our line-height to help with best-guess initial balancing.
+    int colHeight = computeIntrinsicHeight ? availableHeight / m_desiredColumnCount : availableHeight;
+    
+    // Add in half our line-height to help with best-guess initial balancing.
+    int columnSlop = lineHeight(false) / 2;
+    int remainingSlopSpace = columnSlop * m_desiredColumnCount;
+
+    if (computeIntrinsicHeight)
+        colHeight += columnSlop;
                                                                             
     int colGap = columnGap();
 
@@ -2968,27 +3005,30 @@ void RenderBlock::layoutColumns()
     RenderView* v = view();
     int left = borderLeft() + paddingLeft();
     int top = borderTop() + paddingTop();
-    int currX = style()->direction() == LTR ? borderLeft() + paddingLeft() : borderLeft() + paddingLeft() + contentWidth() - m_columnWidth;
+    int currX = style()->direction() == LTR ? borderLeft() + paddingLeft() : borderLeft() + paddingLeft() + contentWidth() - m_desiredColumnWidth;
     int currY = top;
-    int colCount = m_columnCount;
+    unsigned colCount = m_desiredColumnCount;
     int maxColBottom = borderTop() + paddingTop();
-    for (unsigned i = 0; i < m_columnCount; i++) {
-        // The last column just gets all the remaining space.
-        if (i == m_columnCount - 1)
+    int contentBottom = top + availableHeight; 
+    for (unsigned i = 0; i < colCount; i++) {
+        // If we aren't constrained, then the last column can just get all the remaining space.
+        if (computeIntrinsicHeight && i == colCount - 1)
             colHeight = availableHeight;
 
         // This represents the real column position.
-        IntRect colRect(currX, top, m_columnWidth, colHeight);
+        IntRect colRect(currX, top, m_desiredColumnWidth, colHeight);
         
         // For the simulated paint, we pretend like everything is in one long strip.
-        IntRect pageRect(left, currY, m_columnWidth, colHeight);
+        IntRect pageRect(left, currY, m_desiredColumnWidth, colHeight);
         v->setPrintRect(pageRect);
         v->setTruncatedAt(currY + colHeight);
         GraphicsContext context((PlatformGraphicsContext*)0);
         RenderObject::PaintInfo paintInfo(&context, pageRect, PaintPhaseForeground, false, 0, 0);
-        m_columnCount = 1;
+        
+        int oldColCount = m_desiredColumnCount;
+        m_desiredColumnCount = 1;
         paintObject(paintInfo, 0, 0);
-        m_columnCount = colCount;
+        m_desiredColumnCount = oldColCount;
 
         int adjustedBottom = v->bestTruncatedAt();
         if (adjustedBottom <= currY)
@@ -2996,10 +3036,23 @@ void RenderBlock::layoutColumns()
         
         colRect.setHeight(adjustedBottom - currY);
         
+        // Add in the lost space to the subsequent columns.
+        // FIXME: This will create a "staircase" effect if there are enough columns, but the effect should be pretty subtle.
+        if (computeIntrinsicHeight) {
+            int lostSpace = colHeight - colRect.height();
+            if (lostSpace > remainingSlopSpace) {
+                // Redestribute the space among the remaining columns.
+                int spaceToRedistribute = lostSpace - remainingSlopSpace;
+                int remainingColumns = colCount - i + 1;
+                colHeight += spaceToRedistribute / remainingColumns;
+            } 
+            remainingSlopSpace = max(0, remainingSlopSpace - lostSpace);
+        }
+        
         if (style()->direction() == LTR)
-            currX += m_columnWidth + colGap;
+            currX += m_desiredColumnWidth + colGap;
         else
-            currX -= (m_columnWidth + colGap);
+            currX -= (m_desiredColumnWidth + colGap);
 
         currY += colRect.height();
         availableHeight -= colRect.height();
@@ -3007,19 +3060,29 @@ void RenderBlock::layoutColumns()
         maxColBottom = max(colRect.bottom(), maxColBottom);
 
         m_columnRects->append(colRect);
+        
+        // Start adding in more columns as long as there's still content left.
+        if (currY < endOfContent && i == colCount - 1)
+            colCount++;
     }
+
+    m_overflowWidth = max(m_width, currX - colGap);
+    m_overflowLeft = min(0, currX + m_desiredColumnWidth + colGap);
 
     m_overflowHeight = maxColBottom;
     int toAdd = borderBottom() + paddingBottom();
     if (includeHorizontalScrollbarSize())
         toAdd += m_layer->horizontalScrollbarHeight();
-    m_height =  m_overflowHeight + toAdd;
-    m_overflowWidth = m_width;
+        
+    if (computeIntrinsicHeight)
+        m_height = m_overflowHeight + toAdd;
 
     v->setPrintRect(IntRect());
     v->setTruncatedAt(0);
     
-    ASSERT(m_columnRects && m_columnCount == m_columnRects->size());
+    ASSERT(m_columnRects && colCount == m_columnRects->size());
+    
+    return contentBottom;
 }
 
 void RenderBlock::adjustPointToColumnContents(IntPoint& point) const
@@ -3032,17 +3095,20 @@ void RenderBlock::adjustPointToColumnContents(IntPoint& point) const
     int colGap = columnGap();
     int leftGap = colGap / 2;
     IntPoint columnPoint(m_columnRects->at(0).location());
+    int yOffset = 0;
     for (unsigned i = 0; i < m_columnRects->size(); i++) {
         // Add in half the column gap to the left and right of the rect.
         IntRect colRect = m_columnRects->at(i);
         IntRect gapAndColumnRect(colRect.x() - leftGap, colRect.y(), colRect.width() + colGap, colRect.height());
         
-        if (gapAndColumnRect.contains(point))
+        if (gapAndColumnRect.contains(point)) {
             // We're inside the column.  Translate the x and y into our column coordinate space.
-            point -= columnPoint - colRect.location();
+            point.move(columnPoint.x() - colRect.x(), yOffset);
+            return;
+        }
 
         // Move to the next position.
-        columnPoint.setY(columnPoint.y() + colRect.height());
+        yOffset += colRect.height();
     }
 }
 

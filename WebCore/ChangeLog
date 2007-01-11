@@ -1,3 +1,35 @@
+2007-01-11  David Hyatt  <hyatt@apple.com>
+
+        Fix two bugs in positionForCoordinates.  (Make it work when you have a margin in between your border and
+        your first child block.)
+
+        Rewrite column rebalancing to have two modes: constrained and unconstrained.  In unconstrained mode,
+        the system will dynamically rebalance as it loses space to breaks and compute a final intrinsic height
+        for the overall block.  In constrained mode, columns flow into the fixed height block, and extra columns
+        spill out horizontally in the appropriate direction (RTL/LTR).
+
+        Make columns work properly with both LTR and RTL overflow blocks.
+
+        Initial column test suite coming soon now that the basic layout is right.
+
+        Reviewed by darin
+
+        * rendering/RenderBlock.cpp:
+        (WebCore:::RenderFlow):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::paintColumns):
+        (WebCore::RenderBlock::lowestPosition):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::leftmostPosition):
+        (WebCore::RenderBlock::hitTestColumns):
+        (WebCore::RenderBlock::positionForCoordinates):
+        (WebCore::RenderBlock::availableWidth):
+        (WebCore::RenderBlock::calcColumnWidth):
+        (WebCore::RenderBlock::layoutColumns):
+        (WebCore::RenderBlock::adjustPointToColumnContents):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::hasColumns):
+
 2007-01-10  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

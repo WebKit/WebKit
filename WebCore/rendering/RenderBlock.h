@@ -280,7 +280,7 @@ public:
     int heightForLineCount(int);
     void clearTruncation();
 
-    virtual bool hasColumns() const { return m_columnCount > 1; }
+    virtual bool hasColumns() const { return m_desiredColumnCount > 1; }
     void adjustRectForColumns(IntRect&) const;
 private:
     void adjustPointToColumnContents(IntPoint&) const;
@@ -295,7 +295,7 @@ private:
 
     int columnGap() const;
     void calcColumnWidth();
-    void layoutColumns();
+    int layoutColumns(int endOfContent = -1);
 
 protected:
     struct FloatingObject {
@@ -461,8 +461,8 @@ private:
     int m_tabWidth;
     
     // Column information.
-    int m_columnWidth;
-    unsigned m_columnCount;
+    int m_desiredColumnWidth;
+    unsigned m_desiredColumnCount;
     Vector<IntRect>* m_columnRects;
 };
 
