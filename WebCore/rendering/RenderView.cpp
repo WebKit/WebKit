@@ -435,7 +435,7 @@ void RenderView::selectionStartEnd(int& startPos, int& endPos) const
     endPos = m_selectionEndPos;
 }
 
-inline bool RenderView::printing() const
+bool RenderView::printing() const
 {
     return document()->printing();
 }
