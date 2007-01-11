@@ -1,5 +1,15 @@
 2007-01-11  Lars Knoll <lars@trolltech.com>
 
+        Rubberstamped by Anders
+
+        This one is not needed any longer neither.
+
+        * ChangeLog:
+        * WebCore.pro:
+        * loader/qt/NavigationActionQt.cpp: Removed.
+
+2007-01-11  Lars Knoll <lars@trolltech.com>
+
         Reviewed by Anders
 
         Remove now unused file

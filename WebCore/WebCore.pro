@@ -491,6 +491,7 @@ SOURCES += \
     loader/FrameLoader.cpp \
     loader/ImageDocument.cpp \
     loader/MainResourceLoader.cpp \
+    loader/NavigationAction.cpp \
     loader/NetscapePlugInStreamLoader.cpp \
     loader/PluginDocument.cpp \
     loader/Request.cpp \
@@ -507,7 +508,6 @@ SOURCES += \
     loader/icon/SQLDatabase.cpp \
     loader/qt/FrameLoaderQt.cpp \
     loader/qt/DocumentLoaderQt.cpp \
-    loader/qt/NavigationActionQt.cpp \
     platform/CString.cpp \
     platform/AtomicString.cpp \
     platform/Base64.cpp \
