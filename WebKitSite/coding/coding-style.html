@@ -19,225 +19,408 @@ pre .code {
 
 
 <h2>WebKit Coding Style Guidelines</h2>
-<h3>Indenting</h3>
+<h3>Indentation</h3>
 
 <ol>
-<li> Use spaces to indent. Tabs should not appear in code files (with the exception of files that require tabs, e.g. Makefiles).
-     We have a Subversion pre-commit script that enforces this rule for most
-     source files, preventing commits of files that don't follow this rule.
+<li> Use spaces, not tabs. Tabs should only appear in files that require them for semantic meaning, like Makefiles.
 </li>
-<li> The indent size is 4 spaces.</li>
-<li> Code editors should be configured to expand tabs that you type to 4 spaces.</li>
+<li> The indent size is 4 spaces.
+<h4 class="right">Right:</h4>
+<pre class="code">
+int main()
+{
+    return 0;
+}
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+int main() 
+{
+        return 0;
+}
+</pre>
+</li>
+<li>In a header, code inside a namespace should be indented.
+<h4 class="right">Right:</h4>
+<pre class="code">
+// Document.h
+namespace WebCore {
+
+    class Document {
+        Document();
+        ...
+    };
+
+} // namespace WebCore
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+// Document.h
+namespace WebCore {
+
+class Document {
+    Document();
+    ...
+};
+
+} // namespace WebCore
+</pre>
+</li>
+
+<li>In an implementation file, code inside a namespace should <em>not</em> be indented.
+<h4 class="wrong">Right:</h4>
+<pre class="code">
+// Document.cpp
+namespace WebCore {
+
+Document::Document()
+{
+    ...
+}
+
+} // namespace WebCore
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+// Document.cpp
+namespace WebCore {
+
+    Document::Document()
+    {
+        ...
+    }
+
+} // namespace WebCore
+</pre>
+</li>
+</ol>
+
+<h3>Spacing</h3>
+<ol>
+<li>Do not place spaces around unary operators.
+<h4 class="right">Right:</h4>
+<pre class="code">
+i++;
+</pre>
+
+<h4 class="right">Wrong:</h4>
+<pre class="code">
+i ++;
+</pre>
+</li>
+
+<li><em>Do</em> place spaces around binary and ternary operators.
+<h4 class="right">Right:</h4>
+<pre class="code">
+y = m * x + b;
+f(a, b);
+c = a | b;
+return condition ? 1 : 0;
+</pre>
+
+<h4 class="right">Wrong:</h4>
+<pre class="code">
+y=m*x+b;
+f(a,b);
+c = a|b;
+return condition ? 1:0;
+</pre>
+</li>
+
+<li>Place spaces between control statements and their parentheses.
+<h4 class="right">Right:</h4>
+<pre class="code">
+if (condition)
+    doIt();
+</pre>
+
+<h4 class="right">Wrong:</h4>
+<pre class="code">
+if(condition)
+    doIt();
+</pre>
+</li>
+
+<li>Do not place spaces between a function and its parentheses, or between a parenthesis and its content.
+<h4 class="right">Right:</h4>
+<pre class="code">
+f(a, b);
+</pre>
+
+<h4 class="right">Wrong:</h4>
+<pre class="code">
+f (a, b);
+f( a, b );
+</pre>
+</li>
+</ol>
+
+<h3>Line breaking</h3>
+<ol>
+<li>Each statement should get its own line.
+<h4 class="right">Right:</h4>
+<pre class="code">
+x++;
+y++;
+if (condition)
+    doIt();
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+x++; y++;
+if (condition) doIt();
+</pre>
+</li>
+
+<li>An else statement should go on the same line as a preceding close brace.
+<h4 class="right">Right:</h4>
+<pre class="code">
+if (condition) {
+    ...
+} else {
+    ...
+}
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+if (condition) {
+    ...
+}
+else {
+    ...
+}
+</pre>
+</li>
 </ol>
 
 <h3>Braces</h3>
 <ol>
-<li> Function definitions &mdash; open and close braces should be on lines by themselves. Do not put the open brace on the same line as the function signature. For example:<br>
+<li> Function definitions: place each brace on its own line.
 
 <h4 class="right">Right:</h4>
 <pre class="code">
-void foo()
+int main()
 {
-    // do stuff
+    ...
 }
 </pre>
 
 <h4 class="wrong">Wrong:</h4>
 <pre class="code">
-void foo() {
-    // do stuff
+int main() {
+    ...
 }
 </pre>
 </li>
-<li> Other braces, including for, while, do, switch statements and class definitions &mdash; the open brace should go on the same line as the control structure.<br>
+<li> Other braces: place the open brace on the line preceding the code block; place the close brace on its own line.
 
 <h4 class="right">Right:</h4>
 <pre class="code">
+class MyClass {
+    ...
+};
+
+namespace WebCore {
+    ...
+}
+
 for (int i = 0; i &lt; 10; i++) {
-    // do stuff
+    ...
 }
 </pre>
 
 <h4 class="wrong">Wrong:</h4>
 <pre class="code">
-for (int i = 0; i &lt; 10; i++)
+class MyClass 
 {
-    // do stuff
-}
+    ...
+};
 </pre>
-<li> If/else statements &mdash; as above, but if there is an else clause, the close brace should go on the same line as the else.
-     Also, one-line if or else clauses should not get braces.<br>
-<h4 class="right">Right:</h4>
+<li>One-line control clauses should not use braces
+<h4 class="wrong">Right:</h4>
 <pre class="code">
-if (timeToGetCoffee) {
-    buyCoffee(&#038;coffee);
-    chugIt(coffee);
-} else if (timeToGoHome)
-    // comment on else case
-    outtaHere = true;
+if (condition)
+    doIt();
 </pre>
 
 <h4 class="wrong">Wrong:</h4>
 <pre class="code">
-if (timeToGetCoffee)
-{
-    buyCoffee(&#038;coffee);
-    chugIt(coffee);
-// comment on else case
-} else if (timeToGoHome)
-{
-    outtaHere = true;
+if (condition) {
+    doIt();
 }
-    
-if (timeToGetCoffee) {
-}
-else
-    
-// comment on else case
-    
-if (timeToGoHome)
-    outtaHere = true;
 </pre>
-</li>
-</ol>
-
-<h3>Parentheses</h3>
-<ol>
-<li>Function declarations and calls &mdash; do not use any spaces between the name and the open paren, inside the parentheses, or before commas that separate arguments.
-    Do use a single space after commas that separate arguments.<br>
-
-<h4 class="right">Right:</h4>
-<pre class="code">
-int myFunction(int arg1, float arg2);
-
-void noArgFunction(); // for C++ or Objective-C++
-
-void noArgFunction(void); // for C or Objective-C
-</pre>
-
-<h4 class="wrong">Wrong:</h4>
-<pre class="code">
-int myFunction (int arg1, float arg2);
-
-int myFunction( int arg1 , float arg2 );
-
-void noArgFunction ();
-</pre>
-</li>
-
-<li>Control structures, such as if, while, do and switch &mdash; use a single space before the open paren, but no spaces inside the parentheses.
-
 </li>
 </ol>
 
 <h3>Null, false and 0</h3>
 <ol>
-<li>In C++, the null pointer value should be written as <code>0</code>. In C it should be written as <code>NULL</code>. In Objective-C, it should be written as <code>nil</code> if it is being used as a null pointer of type <code>id</code> or another ObjC object type, otherwise <code>NULL</code>.</li>
-<li>True and false values of type <code>bool</code> (common in C and C++), or just generic true/false values, should be written as <code>true</code> and <code>false</code>. Values of the Objective-C <code>BOOL</code> type should be written as <code>YES</code> and <code>NO</code>.</li>
-<li>Tests for null pointers, false values and 0 values should all be done directly, not through an inequality or equality comparison.<br>
+<li>In C++, the null pointer value should be written as <code>0</code>. In C, it should be written as <code>NULL</code>. In Objective-C and Objective-C++, follow the guideline for C or C++, respectively, but use <code>nil</code> to represent a null Objective-C object.</li>
+<li>C++ and C <code>bool</code> values should be written as <code>true</code> and <code>false</code>. Objective-C <code>BOOL</code> values should be written as <code>YES</code> and <code>NO</code>.</li>
+<li>Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.<br>
 
 <h4 class="right">Right:</h4>
 <pre class="code">
+if (condition)
+    doIt();
     
-// test for true
-if (foo->isSomething()) {
-    // code
-}
-    
-// test for false
-if (!foo->isSomething()) {
-    // code
-}
-    
-// test for non-null
-if (ptr) {
-   // code
-}
-    
-// test for null
-if (!ptr) {
-   // code
-}
-    
-// test for nonzero
-if (count) {
-    // code
-}
-    
-// test for zero
-if (!count) {
-    // code
-}
+if (!ptr)
+    return;
+
+if (!count)
+    return;
 </pre>
 
 <h4 class="wrong">Wrong:</h4>
 <pre class="code">
-if (foo->isSomething() == true) {
-    // code
-}
+if (condition == true)
+    doIt();
     
-if (foo->isSomething() != false) {
-    // code
-}
+if (ptr == NULL)
+    return;
     
-if (p == NULL) {
-    // code
-}
-    
-if (nil != p) {
-    // code
-}
-    
-if (count == 0) {
-    // code
-}
+if (count == 0)
+    return;
 </pre>
 </li>
 </ol>
 
 <h3>Names</h3>
 <ol>
-<li>General Rule: With very few exceptions, prefer embedded capitals instead of underscores for class, function and variable names.</li>
-<li>C++ and Objective-C classes, interfaces and protocols, and other type names &mdash; these names should start with a capital letter and use InterCaps.<br>
-
+<li>Use CamelCase. Capitalize the first letter of a class, struct, protocol, or namespace name. Lower-case the first letter of a variable or function name. Fully capitalize acronyms.
 <h4 class="right">Right:</h4>
 <pre class="code">
-class MyImportantClass;
+struct Data;
+size_t bufferSize;
+class HTMLDocument;
 </pre>
 
 <h4 class="wrong">Wrong:</h4>
 <pre class="code">
-class My_important_class;
-    
-class myImportantClass;
+struct data;
+size_t buffer_size;
+class HtmlDocument;
 </pre>
 </li>
 
-<li>Local variables should use interCaps, but the first word should start with a lowercase letter, like this:<br>
-
+<li>Use full words, except in the rare case where an abbreviation would be more canonical and easier to understand.
 <h4 class="right">Right:</h4>
 <pre class="code">
-int myInt;
+size_t characterSize;
+size_t length;
+short tabIndex; // more canonical
 </pre>
 
 <h4 class="wrong">Wrong:</h4>
 <pre class="code">
-int MyInt;
-    
-int my_int;
+size_t charSize;
+size_t len;
+short tabulationIndex; // bizarre
 </pre>
 </li>
 
-<li>Free function names in C++ should follow the same naming conventions as local variables. Most functions should be named to sound like verb phrases, like &#8220;openDoor&#8221; or &#8220;walkAroundTheBlock&#8221;. (getters, setters, predicates?)</li>
+<li>Prefix C++ data members with "m_".
+<h4 class="right">Right:</h4>
+<pre class="code">
+class String {
+    ...
+    short m_length;
+};
+</pre>
 
-<li>C++ data members should be named like local variables, but with a prefix of m_.</li>
-<li>C++ member functions should follow the same naming convention as free functions.</li>
-<li>Objective-C methods should follow the usual Cocoa naming style &mdash;
-they should read like a phrase or sentence and each piece of the selector should start with a lowercase letter and use intercaps.</li>
-<li>Objective-C instance variables should be named like local variables but starting with an underscore.</li>
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+class String {
+    ...
+    short length;
+};
+</pre>
+</li>
+
+<li>Prefix Objective-C instance variables with "_".
+<h4 class="right">Right:</h4>
+<pre class="code">
+@class String
+    ...
+    short _length;
+@end
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+@class String
+    ...
+    short length;
+@end
+</pre>
+</li>
+
+<li>Precede boolean values with words like "is" and "did".
+<h4 class="right">Right:</h4>
+<pre class="code">
+bool isValid;
+bool didSendData;
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+bool valid;
+bool sentData;
+</pre>
+</li>
+
+<li>Precede setters with the word "set". Use bare words for getters. Setter and getter names should match the names of the variables being set/gotten.
+<h4 class="right">Right:</h4>
+<pre class="code">
+void setCount(size_t); // sets m_count
+size_t count(); // returns m_count
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+void setCount(size_t); // sets m_theCount
+size_t getCount();
+</pre>
+</li>
+
+<li>Use descriptive verbs in function names.</li>
+<h4 class="right">Right:</h4>
+<pre class="code">
+bool convertToASCII(short*, size_t);
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+bool toASCII(short*, size_t);
+</pre>
+</li>
+
+<li>Leave meaningless variable names out of function declarations.
+<h4 class="right">Right:</h4>
+<pre class="code">
+void setCount(size_t);
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+void setCount(size_t count);
+</pre>
+</li>
+
+<li>Objective-C method names should follow the Cocoa naming guidelines &mdash;
+they should read like a phrase and each piece of the selector should 
+start with a lowercase letter and use intercaps.</li>
 <li>Enum members should user InterCaps with an initial capital letter.</li>
+<li>Prefer const to #define. Prefer inline functions to macros.</li>
 <li>#defined constants should use all uppercase names with words separated by underscores.</li>
-<li> Macros that expand to function calls or other non-constant computation: these should be named like functions, and should have parentheses at the end, even if they take no arguments (with the exception of some special macros like ASSERT). Note that usually it is preferrable to use an inline function in such cases instead of a macro.<br>
+<li> Macros that expand to function calls or other non-constant computation: these 
+should be named like functions, and should have parentheses at the end, even if 
+they take no arguments (with the exception of some special macros like ASSERT). 
+Note that usually it is preferrable to use an inline function in such cases instead of a macro.<br>
 
 <h4 class="right">Right:</h4>
 <pre class="code">
@@ -254,29 +437,15 @@ they should read like a phrase or sentence and each piece of the selector should
         NSLocalizedString(@"Stop", @"Stop button title")
 </pre>
 </li>
-
-<li> Acronyms in names: If an identifier includes an acronym, make the acronym all-uppercase
-     or all-lowercase, depending on whether a word in that position would be capitalized or not.<br>
-
-<h4 class="right">Right:</h4>
-<pre class="code">
-urlVariable
-myURLAccessor:
-</pre>
-
-<h4 class="wrong">Wrong:</h4>
-<pre class="code">
-uRLVariable
-myUrlAccessor:
-</pre>
-</li>
 </ol>
 
 <h3>Other Punctuation</h3>
 
 <ol>
 
-<li>Constructors for C++ classes should initialize all of their members using C++ constructor synatax.  Each member (and superclass) should be indented on a separate line, with the colon or comma preceding the member on that line.
+<li>Constructors for C++ classes should initialize all of their members using C++ 
+initializer synatax.  Each member (and superclass) should be indented on a separate 
+line, with the colon or comma preceding the member on that line.
 
 <h4 class="right">Right:</h4>
 <pre class="code">
@@ -328,7 +497,7 @@ Image *SVGStyledElement::doSomething(PaintInfo &amp;paintInfo)
     const KCDashArray &amp;dashes = dashArray();
 </pre>
 
-<h3>Include Statements</h3>
+<h3>#include Statements</h3>
 
 <ol>
 
