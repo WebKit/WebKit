@@ -1,3 +1,13 @@
+2007-01-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=9284
+          Quirksmode (CSS1): Removing inline border styles is impossible
+
+        * fast/css/remove-shorthand-expected.txt: Added.
+        * fast/css/remove-shorthand.html: Added.
+
 2007-01-10  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

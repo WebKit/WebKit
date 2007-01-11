@@ -92,7 +92,7 @@ public:
  
     PassRefPtr<CSSMutableStyleDeclaration> copyBlockProperties() const;
     void removeBlockProperties();
-    void removePropertiesInSet(const int* set, unsigned length);
+    void removePropertiesInSet(const int* set, unsigned length, bool notifyChanged = true);
 
     void merge(CSSMutableStyleDeclaration*, bool argOverridesOnConflict = true);
  

@@ -1,3 +1,27 @@
+2007-01-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=9284
+          Quirksmode (CSS1): Removing inline border styles is impossible
+
+        Test: fast/css/remove-shorthand.html
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::PropertyLonghand::PropertyLonghand): Added this structure
+        containing a pointer to an array if properties and the array's length.
+        (WebCore::PropertyLonghand::properties):
+        (WebCore::PropertyLonghand::length):
+        (WebCore::initShorthandMap): Initialize the mapping from shorthand
+        properties to their dependent properties.
+        (WebCore::CSSMutableStyleDeclaration::removeProperty): Changed to check
+        if the property being removed is a shorthand, and if so, to remove all
+        of its dependent properties.
+        (WebCore::CSSMutableStyleDeclaration::removePropertiesInSet): Added a
+        'notifyChanged' boolean parameter which controls whether this method
+        calls setChanged() if it actually removes any property.
+        * css/CSSMutableStyleDeclaration.h:
+
 2007-01-10  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Kevin.

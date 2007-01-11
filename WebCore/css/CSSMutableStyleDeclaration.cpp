@@ -211,9 +211,163 @@ PassRefPtr<CSSValue> CSSMutableStyleDeclaration::getPropertyCSSValue(int propert
     return 0;
 }
 
+struct PropertyLonghand {
+    PropertyLonghand()
+        : m_properties(0)
+        , m_length(0)
+    {
+    }
+
+    PropertyLonghand(const int* firstProperty, unsigned numProperties)
+        : m_properties(firstProperty)
+        , m_length(numProperties)
+    {
+    }
+
+    const int* properties() const { return m_properties; }
+    unsigned length() const { return m_length; }
+
+private:
+    const int* m_properties;
+    unsigned m_length;
+};
+
+static void initShorthandMap(HashMap<int, PropertyLonghand>& shorthandMap)
+{
+    #define SET_SHORTHAND_MAP_ENTRY(map, propID, array) \
+        map.set(propID, PropertyLonghand(array, sizeof(array) / sizeof(array[0])))
+
+    // FIXME: The following properties have "shorthand nature" but are not parsed as
+    // shorthands: 'font', '-webkit-border-radius' and 'overflow'.
+
+    // Do not change the order of the following four shorthands, and keep them together.
+    static const int borderProperties[4][3] = {
+        { CSS_PROP_BORDER_TOP_COLOR, CSS_PROP_BORDER_TOP_STYLE, CSS_PROP_BORDER_TOP_WIDTH },
+        { CSS_PROP_BORDER_RIGHT_COLOR, CSS_PROP_BORDER_RIGHT_STYLE, CSS_PROP_BORDER_RIGHT_WIDTH },
+        { CSS_PROP_BORDER_BOTTOM_COLOR, CSS_PROP_BORDER_BOTTOM_STYLE, CSS_PROP_BORDER_BOTTOM_WIDTH },
+        { CSS_PROP_BORDER_LEFT_COLOR, CSS_PROP_BORDER_LEFT_STYLE, CSS_PROP_BORDER_LEFT_WIDTH }
+    };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP_BORDER_TOP, borderProperties[0]);
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP_BORDER_RIGHT, borderProperties[1]);
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP_BORDER_BOTTOM, borderProperties[2]);
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP_BORDER_LEFT, borderProperties[3]);
+
+    shorthandMap.set(CSS_PROP_BORDER, PropertyLonghand(borderProperties[0], sizeof(borderProperties) / sizeof(borderProperties[0][0])));
+
+    static const int borderColorProperties[] = {
+        CSS_PROP_BORDER_TOP_COLOR,
+        CSS_PROP_BORDER_RIGHT_COLOR,
+        CSS_PROP_BORDER_BOTTOM_COLOR,
+        CSS_PROP_BORDER_LEFT_COLOR
+    };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP_BORDER_COLOR, borderColorProperties);
+
+    static const int borderStyleProperties[] = {
+        CSS_PROP_BORDER_TOP_STYLE,
+        CSS_PROP_BORDER_RIGHT_STYLE,
+        CSS_PROP_BORDER_BOTTOM_STYLE,
+        CSS_PROP_BORDER_LEFT_STYLE
+    };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP_BORDER_STYLE, borderStyleProperties);
+
+    static const int borderWidthProperties[] = {
+        CSS_PROP_BORDER_TOP_WIDTH,
+        CSS_PROP_BORDER_RIGHT_WIDTH,
+        CSS_PROP_BORDER_BOTTOM_WIDTH,
+        CSS_PROP_BORDER_LEFT_WIDTH
+    };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP_BORDER_WIDTH, borderWidthProperties);
+
+    static const int backgroundPositionProperties[] = { CSS_PROP_BACKGROUND_POSITION_X, CSS_PROP_BACKGROUND_POSITION_Y };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP_BACKGROUND_POSITION, backgroundPositionProperties);
+
+    static const int borderSpacingProperties[] = { CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING, CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP_BORDER_SPACING, borderSpacingProperties);
+
+    static const int listStyleProperties[] = {
+        CSS_PROP_LIST_STYLE_IMAGE,
+        CSS_PROP_LIST_STYLE_POSITION,
+        CSS_PROP_LIST_STYLE_TYPE
+    };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP_LIST_STYLE, listStyleProperties);
+
+    static const int marginProperties[] = {
+        CSS_PROP_MARGIN_TOP,
+        CSS_PROP_MARGIN_RIGHT,
+        CSS_PROP_MARGIN_BOTTOM,
+        CSS_PROP_MARGIN_LEFT
+    };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP_MARGIN, marginProperties);
+
+    static const int marginCollapseProperties[] = { CSS_PROP__WEBKIT_MARGIN_TOP_COLLAPSE, CSS_PROP__WEBKIT_MARGIN_BOTTOM_COLLAPSE };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP__WEBKIT_MARGIN_COLLAPSE, marginCollapseProperties);
+
+    static const int marqueeProperties[] = {
+        CSS_PROP__WEBKIT_MARQUEE_DIRECTION,
+        CSS_PROP__WEBKIT_MARQUEE_INCREMENT,
+        CSS_PROP__WEBKIT_MARQUEE_REPETITION,
+        CSS_PROP__WEBKIT_MARQUEE_STYLE,
+        CSS_PROP__WEBKIT_MARQUEE_SPEED
+    };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP__WEBKIT_MARQUEE, marqueeProperties);
+
+    static const int outlineProperties[] = {
+        CSS_PROP_OUTLINE_COLOR,
+        CSS_PROP_OUTLINE_OFFSET,
+        CSS_PROP_OUTLINE_STYLE,
+        CSS_PROP_OUTLINE_WIDTH
+    };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP_OUTLINE, outlineProperties);
+
+    static const int paddingProperties[] = {
+        CSS_PROP_PADDING_TOP,
+        CSS_PROP_PADDING_RIGHT,
+        CSS_PROP_PADDING_BOTTOM,
+        CSS_PROP_PADDING_LEFT
+    };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP_PADDING, paddingProperties);
+
+    static const int textStrokeProperties[] = { CSS_PROP__WEBKIT_TEXT_STROKE_COLOR, CSS_PROP__WEBKIT_TEXT_STROKE_WIDTH };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP__WEBKIT_TEXT_STROKE, textStrokeProperties);
+
+    static const int backgroundProperties[] = {
+        CSS_PROP_BACKGROUND_ATTACHMENT,
+        CSS_PROP_BACKGROUND_COLOR,
+        CSS_PROP_BACKGROUND_IMAGE,
+        CSS_PROP_BACKGROUND_POSITION_X,
+        CSS_PROP_BACKGROUND_POSITION_Y,
+        CSS_PROP_BACKGROUND_REPEAT,
+        CSS_PROP__WEBKIT_BACKGROUND_SIZE
+    };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP_BACKGROUND, backgroundProperties);
+
+    static const int columnsProperties[] = { CSS_PROP__WEBKIT_COLUMN_WIDTH, CSS_PROP__WEBKIT_COLUMN_COUNT };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP__WEBKIT_COLUMNS, columnsProperties);
+
+    static const int columnRuleProperties[] = {
+        CSS_PROP__WEBKIT_COLUMN_RULE_COLOR,
+        CSS_PROP__WEBKIT_COLUMN_RULE_STYLE,
+        CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH
+     };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP__WEBKIT_COLUMN_RULE, columnRuleProperties);
+
+    #undef SET_SHORTHAND_MAP_ENTRY
+}
+
 String CSSMutableStyleDeclaration::removeProperty(int propertyID, bool notifyChanged, ExceptionCode& ec)
 {
     ec = 0;
+
+    static HashMap<int, PropertyLonghand> shorthandMap;
+    if (shorthandMap.isEmpty())
+        initShorthandMap(shorthandMap);
+
+    PropertyLonghand longhand = shorthandMap.get(propertyID);
+    if (longhand.length()) {
+        removePropertiesInSet(longhand.properties(), longhand.length(), notifyChanged);
+        // FIXME: Return an equivalent shorthand when possible.
+        return String();
+    }
 
     String value;
 
@@ -450,7 +604,7 @@ void CSSMutableStyleDeclaration::removeBlockProperties()
     removePropertiesInSet(blockProperties, numBlockProperties);
 }
 
-void CSSMutableStyleDeclaration::removePropertiesInSet(const int *set, unsigned length)
+void CSSMutableStyleDeclaration::removePropertiesInSet(const int *set, unsigned length, bool notifyChanged)
 {
     bool changed = false;
     for (unsigned i = 0; i < length; i++) {
@@ -460,7 +614,7 @@ void CSSMutableStyleDeclaration::removePropertiesInSet(const int *set, unsigned 
             changed = true;
         }
     }
-    if (changed)
+    if (changed && notifyChanged)
         setChanged();
 }
 
