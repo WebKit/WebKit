@@ -706,7 +706,9 @@ Instance* FrameMac::getAppletInstanceForWidget(Widget* widget)
     if (applet) {
         // Wrap the Java instance in a language neutral binding and hand
         // off ownership to the APPLET element.
-        RootObject* rootObject = RootObject::findRootObjectForNativeHandleFunction()(aView);
+        void* nativeHandle = aView;
+        CreateRootObjectFunction createRootObject = RootObject::createRootObject();
+        RootObject* rootObject = createRootObject(nativeHandle);
         Instance* instance = Instance::createBindingForLanguageInstance(Instance::JavaLanguage, applet, rootObject);
         return instance;
     }
@@ -714,38 +716,42 @@ Instance* FrameMac::getAppletInstanceForWidget(Widget* widget)
     return 0;
 }
 
-static Instance* getInstanceForView(NSView *aView)
+static Instance* getPluginInstanceForWidget(Widget* widget)
 {
-    if ([aView respondsToSelector:@selector(objectForWebScript)]){
-        id object = [aView objectForWebScript];
-        if (object) {
-            RootObject* rootObject = RootObject::findRootObjectForNativeHandleFunction()(aView);
-            return Instance::createBindingForLanguageInstance(Instance::ObjectiveCLanguage, object, rootObject);
-        }
-    }
-    else if ([aView respondsToSelector:@selector(createPluginScriptableObject)]) {
-        NPObject *object = [aView createPluginScriptableObject];
-        if (object) {
-            RootObject* rootObject = RootObject::findRootObjectForNativeHandleFunction()(aView);
-            Instance* instance = Instance::createBindingForLanguageInstance(Instance::CLanguage, object, rootObject);
-            
+    NSView *aView = widget->getView();
+    if (!aView)
+        return 0;
+
+    void* nativeHandle = aView;
+    CreateRootObjectFunction createRootObject = RootObject::createRootObject();
+    RootObject* rootObject = createRootObject(nativeHandle);
+
+    if ([aView respondsToSelector:@selector(objectForWebScript)]) {
+        id objectForWebScript = [aView objectForWebScript];
+        if (objectForWebScript)
+            return Instance::createBindingForLanguageInstance(Instance::ObjectiveCLanguage, objectForWebScript, rootObject);
+    } else if ([aView respondsToSelector:@selector(createPluginScriptableObject)]) {
+        NPObject* npObject = [aView createPluginScriptableObject];
+        if (npObject) {
+            Instance* instance = Instance::createBindingForLanguageInstance(Instance::CLanguage, npObject, rootObject);
+
             // -createPluginScriptableObject returns a retained NPObject.  The caller is expected to release it.
-            _NPN_ReleaseObject(object);
-            
+            _NPN_ReleaseObject(npObject);
             return instance;
         }
     }
+
     return 0;
 }
 
 Instance* FrameMac::getEmbedInstanceForWidget(Widget* widget)
 {
-    return getInstanceForView(widget->getView());
+    return getPluginInstanceForWidget(widget);
 }
 
 Instance* FrameMac::getObjectInstanceForWidget(Widget* widget)
 {
-    return getInstanceForView(widget->getView());
+    return getPluginInstanceForWidget(widget);
 }
 
 void FrameMac::addPluginRootObject(RootObject* root)

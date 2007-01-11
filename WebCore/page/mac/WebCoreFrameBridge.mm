@@ -118,20 +118,17 @@ using KJS::Bindings::RootObject;
 
 NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
 
-@interface WebCoreFrameBridge (WebCoreBridgeInternal)
-- (RootObject*)rootObjectForView:(NSView *)aView;
-@end
-
-static RootObject* rootForView(void* v)
+static RootObject* createRootObject(void* nativeHandle)
 {
-    NSView *aView = (NSView *)v;
-    WebCoreFrameBridge *aBridge = [[WebCoreViewFactory sharedFactory] bridgeForView:aView];
-    RootObject *root = 0;
+    NSView *view = (NSView *)nativeHandle;
+    WebCoreFrameBridge *bridge = [[WebCoreViewFactory sharedFactory] bridgeForView:view];
+    if (!bridge)
+        return 0;
 
-    if (aBridge)
-        root = [aBridge rootObjectForView:aView];
-
-    return root;
+    FrameMac* frame = [bridge _frame];
+    RootObject* rootObject = new RootObject(nativeHandle, frame->scriptProxy()->interpreter());
+    frame->addPluginRootObject(rootObject); // The Frame owns the RootObject.
+    return rootObject;
 }
 
 static pthread_t mainThread = 0;
@@ -254,7 +251,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         initializedKJS = true;
 
         mainThread = pthread_self();
-        RootObject::setFindRootObjectForNativeHandleFunction(rootForView);
+        RootObject::setCreateRootObject(createRootObject);
         KJS::Bindings::Instance::setDidExecuteFunction(updateRenderingForBindings);
     }
     
@@ -1592,18 +1589,6 @@ static NSCharacterSet *_getPostSmartSet(void)
 - (FrameMac*)_frame
 {
     return m_frame;
-}
-
-@end
-
-@implementation WebCoreFrameBridge (WebCoreBridgeInternal)
-
-- (RootObject *)rootObjectForView:(NSView *)aView
-{
-    FrameMac *frame = [self _frame];
-    RootObject* rootObject = new RootObject(aView, frame->scriptProxy()->interpreter());
-    frame->addPluginRootObject(rootObject); // The Frame owns the RootObject.
-    return rootObject;
 }
 
 @end

@@ -1,3 +1,29 @@
+2007-01-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Even more cleanup in preparation for fixing <rdar://problem/4608404> 
+        WebScriptObject's _executionContext lack of ownership policy causes 
+        crashes (e.g., in Dashcode)
+        
+        Layout tests pass.
+        
+        Renames:
+            findRootObjectForNativeHandleFunction => createRootObject
+            FindRootObjectForNativeHandleFunctionPtr => CreateRootObjectFunction
+            
+        Also removed unnecessary use of "Bindings::" prefix.
+
+        * JavaScriptCore.exp:
+        * bindings/jni/jni_jsobject.cpp:
+        (JavaJSObject::createNative):
+        (JavaJSObject::convertValueToJObject):
+        (JavaJSObject::convertJObjectToValue):
+        * bindings/runtime_root.cpp:
+        (KJS::Bindings::RootObject::setCreateRootObject):
+        * bindings/runtime_root.h:
+        (KJS::Bindings::RootObject::createRootObject):
+
 2007-01-11  George Staikos  <staikos@kde.org>
 
         Reviewed by Maciej

@@ -303,11 +303,11 @@ jlong JavaJSObject::createNative(jlong nativeHandle)
     if (rootObjectForImp(jlong_to_impptr(nativeHandle)))
         return nativeHandle;
 
-    FindRootObjectForNativeHandleFunctionPtr aFunc = RootObject::findRootObjectForNativeHandleFunction();
-    if (!aFunc)
+    CreateRootObjectFunction createRootObject = RootObject::createRootObject();
+    if (!createRootObject)
         return ptr_to_jlong(0);
 
-    Bindings::RootObject* rootObject = aFunc(jlong_to_ptr(nativeHandle));
+    RootObject* rootObject = createRootObject(jlong_to_ptr(nativeHandle));
     // If rootObject is !NULL We must have been called via netscape.javascript.JavaJSObject.getWindow(),
     // otherwise we are being called after creating a JavaJSObject in
     // JavaJSObject::convertValueToJObject().
@@ -367,7 +367,7 @@ jobject JavaJSObject::convertValueToJObject (JSValue *value) const
             // as it's nativeHandle.
             if (imp->classInfo() && strcmp(imp->classInfo()->className, "RuntimeObject") == 0) {
                 RuntimeObjectImp *runtimeImp = static_cast<RuntimeObjectImp*>(value);
-                Bindings::JavaInstance *runtimeInstance = static_cast<Bindings::JavaInstance *>(runtimeImp->getInternalInstance());
+                JavaInstance *runtimeInstance = static_cast<JavaInstance *>(runtimeImp->getInternalInstance());
                 return runtimeInstance->javaInstance();
             }
             else {
@@ -416,7 +416,7 @@ JSValue *JavaJSObject::convertJObjectToValue (jobject theObject) const
     // Only the sun.plugin.javascript.webkit.JSObject has a member called nativeJSObject. This class is
     // created above to wrap internal browser objects. The constructor of this class takes the native
     // pointer and stores it in this object, so that it can be retrieved below.
-    if (strcmp(Bindings::JavaString(className).UTF8String(), "sun.plugin.javascript.webkit.JSObject") == 0) {
+    if (strcmp(JavaString(className).UTF8String(), "sun.plugin.javascript.webkit.JSObject") == 0) {
         // Pull the nativeJSObject value from the Java instance.  This is a
         // pointer to the JSObject.
         JNIEnv *env = getJNIEnv();
@@ -433,7 +433,7 @@ JSValue *JavaJSObject::convertJObjectToValue (jobject theObject) const
     }
 
     JSLock lock;
-    RuntimeObjectImp* newImp = new RuntimeObjectImp(new Bindings::JavaInstance(theObject, _rootObject));
+    RuntimeObjectImp* newImp = new RuntimeObjectImp(new JavaInstance(theObject, _rootObject));
 
     return newImp;
 }

@@ -1,3 +1,37 @@
+2007-01-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Anders Carlsson.
+        
+        Even more cleanup in preparation for fixing <rdar://problem/4608404> 
+        WebScriptObject's _executionContext lack of ownership policy causes 
+        crashes (e.g., in Dashcode)
+        
+        Layout tests pass.
+        
+        Renames:
+            findRootObjectForNativeHandleFunction => createRootObject
+            FindRootObjectForNativeHandleFunctionPtr => createRootObjectFunction
+            rootForView => createRootObject
+            getInstanceForView => getPluginInstanceForWidget
+
+        * page/mac/FrameMac.mm:
+        (WebCore::FrameMac::getAppletInstanceForWidget): Put the NSView * in a void*
+        variable named "nativeHandle" to be more explicit about the fact that JavaScript's
+        "nativeHandle" is just an NSView *.
+
+        (WebCore::getPluginInstanceForWidget): This function now does the NSView *
+        fetching that its callers used to do.
+        (WebCore::FrameMac::getEmbedInstanceForWidget): Updated for rename.
+        (WebCore::FrameMac::getObjectInstanceForWidget): ditto
+
+        * page/mac/WebCoreFrameBridge.mm: Killed the WebCoreBridgeInternal category,
+        which was really more of a shmategory.
+        (createRootObject): Removed rootObjectForView, folding it into its only
+        caller, the similarly named rootForView. Renamed the pair to "createRootObject"
+        because that's what they do.
+
+        (-[WebCoreFrameBridge init]): Updated for renames
+
 2007-01-11  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

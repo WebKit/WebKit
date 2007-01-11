@@ -260,16 +260,16 @@ static void performJavaScriptAccess(void*)
     }
 }
 
-FindRootObjectForNativeHandleFunctionPtr RootObject::_findRootObjectForNativeHandleFunctionPtr = 0;
+CreateRootObjectFunction RootObject::_createRootObject = 0;
 CFRunLoopRef RootObject::_runLoop = 0;
 CFRunLoopSourceRef RootObject::_performJavaScriptSource = 0;
 
 // Must be called from the thread that will be used to access JavaScript.
-void RootObject::setFindRootObjectForNativeHandleFunction(FindRootObjectForNativeHandleFunctionPtr aFunc) {
+void RootObject::setCreateRootObject(CreateRootObjectFunction createRootObject) {
     // Should only be called once.
-    assert (_findRootObjectForNativeHandleFunctionPtr == 0);
+    ASSERT(!_createRootObject);
 
-    _findRootObjectForNativeHandleFunctionPtr = aFunc;
+    _createRootObject = createRootObject;
     
     // Assume that we can retain this run loop forever.  It'll most 
     // likely (always?) be the main loop.
