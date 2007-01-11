@@ -1,5 +1,14 @@
 2007-01-11  Darin Adler  <darin@apple.com>
 
+        Reviewed by Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12180
+          REGRESSION: Double-clicking on JS exception in JS log crashes in -[SharedBufferData initWithSharedBuffer:]
+
+        * WebView/WebDataSource.mm: (-[WebDataSource data]): Added null check.
+
+2007-01-11  Darin Adler  <darin@apple.com>
+
         Reviewed by Hyatt.
 
         - moved code from a couple WebCore bridging classes here instead

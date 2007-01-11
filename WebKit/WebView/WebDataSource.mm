@@ -377,7 +377,10 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSData *)data
 {
-    return [_private->loader->mainResourceData()->createNSData() autorelease];
+    RefPtr<SharedBuffer> mainResourceData = _private->loader->mainResourceData();
+    if (!mainResourceData)
+        return nil;
+    return [mainResourceData->createNSData() autorelease];
 }
 
 - (id <WebDocumentRepresentation>)representation
