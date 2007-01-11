@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +35,11 @@
 #import "WebURLsWithTitles.h"
 #import "WebViewPrivate.h"
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/MimeTypeRegistry.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
-#import <WebCore/WebMimeTypeRegistryBridge.h>
+
+using namespace WebCore;
 
 NSString *WebURLPboardType = nil;
 NSString *WebURLNamePboardType = nil;
@@ -243,10 +245,11 @@ static NSArray *_writableTypesForImageWithArchive (void)
             // or the main resource (standalone image case).
             NSArray *subresources = [archive subresources];
             WebResource *mainResource = [archive mainResource];
-            WebResource *resource = ![WebMimeTypeRegistryBridge supportsImageResourceWithMIMEType:[mainResource MIMEType]] && [subresources count] > 0 ? (WebResource *)[subresources objectAtIndex:0] : mainResource;
+            WebResource *resource = (!MimeTypeRegistry::isSupportedImageResourceMIMEType([mainResource MIMEType])
+                && [subresources count] > 0) ? (WebResource *)[subresources objectAtIndex:0] : mainResource;
             ASSERT(resource != nil);
             
-            ASSERT([WebMimeTypeRegistryBridge supportsImageResourceWithMIMEType:[resource MIMEType]]);
+            ASSERT(MimeTypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType]));
             [self _web_writeFileWrapperAsRTFDAttachment:[resource _fileWrapperRepresentation]];
         }
         if ([types containsObject:WebArchivePboardType]) {

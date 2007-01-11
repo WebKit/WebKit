@@ -1,3 +1,55 @@
+2007-01-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - removed a couple Mac bridging classes; put the code in WebKit instead
+
+        * WebCore.exp: Updated for new WebKit uses.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed files.
+        * bridge/mac/WebCoreEncodings.h: Removed.
+        * bridge/mac/WebCoreEncodings.mm: Removed.
+        * bridge/mac/WebMimeTypeRegistryBridge.h: Removed.
+        * bridge/mac/WebMimeTypeRegistryBridge.mm: Removed.
+        * platform/mac/WebNSAttributedStringExtras.h: Removed.
+        * platform/mac/WebNSAttributedStringExtras.mm: Removed.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::stripAttachmentCharacters): Added. Moved code from
+        WebNSAttributedStringExtras.mm, and fixed a garbage collection problem
+        (a global with a plain old retain rather than HardRetain).
+        (WebCore::Pasteboard::writeSelection): Updated to use stripAttachmentCharacters.
+
+        - removed some DeprecatedCString use
+
+        * loader/FrameLoader.cpp: Changed to use String more to eliminate use of
+        DeprecatedCString here in the mailto form support. But maybe we can remove
+        this entirely. Do we really care about mailto forms any more?
+
+        * platform/Pasteboard.h: Removed unneeded DeprecatedCString declaration.
+
+        * platform/PlatformString.h: Added replace that takes two strings.
+        * platform/StringImpl.h: Ditto.
+        * platform/StringImpl.cpp: (WebCore::StringImpl::replace): Ditto.
+
+        * platform/TextStream.h: Remove DeprecatedCString case.
+        * platform/TextStream.cpp: Ditto.
+
+        - made a few more files use CharacterNames.h
+
+        * platform/CharacterNames.h: Added some more character names and
+        sorted alphabetically.
+
+        * bridge/mac/WebCoreStringTruncator.mm:
+        (centerTruncateToBuffer): Use character name from CharacterNames.h.
+        (rightTruncateToBuffer): Ditto.
+        (truncateString): Ditto.
+        * platform/mac/FontMac.mm: (WebCore::addDirectionalOverride): Ditto.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutVerticalBox): Ditto.
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::checkLinesForTextOverflow): Ditto.
+
 2007-01-11  David Hyatt  <hyatt@apple.com>
 
         Fix two bugs in positionForCoordinates.  (Make it work when you have a margin in between your border and

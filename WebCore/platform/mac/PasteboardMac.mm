@@ -32,7 +32,7 @@
 #import "Editor.h"
 #import "EditorClient.h"
 #import "KURL.h"
-#import "WebNSAttributedStringExtras.h"
+#import "RetainPtr.h"
 #import "WebCoreSystemInterface.h"
 #import "markup.h"
 
@@ -99,6 +99,19 @@ void Pasteboard::clear()
     [m_pasteboard declareTypes:[NSArray array] owner:nil];
 }
 
+static NSAttributedString *stripAttachmentCharacters(NSAttributedString *string)
+{
+    const unichar attachmentCharacter = NSAttachmentCharacter;
+    static RetainPtr<NSString> attachmentCharacterString = [NSString stringWithCharacters:&attachmentCharacter length:1];
+    NSMutableAttributedString *result = [[string mutableCopy] autorelease];
+    NSRange attachmentRange = [[result string] rangeOfString:attachmentCharacterString.get()];
+    while (attachmentRange.location != NSNotFound) {
+        [result replaceCharactersInRange:attachmentRange withString:@""];
+        attachmentRange = [[result string] rangeOfString:attachmentCharacterString.get()];
+    }
+    return result;
+}
+
 void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
     NSAttributedString *attributedString = [[[NSAttributedString alloc] _initWithDOMRange:[DOMRange _rangeWith:selectedRange]] autorelease];
@@ -117,9 +130,8 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
         [m_pasteboard setData:RTFDData forType:NSRTFDPboardType];
     }        
     if ([types containsObject:NSRTFPboardType]) {
-        if ([attributedString containsAttachments]) {
-            attributedString = [attributedString _web_attributedStringByStrippingAttachmentCharacters];
-        }
+        if ([attributedString containsAttachments])
+            attributedString = stripAttachmentCharacters(attributedString);
         NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
         [m_pasteboard setData:RTFData forType:NSRTFPboardType];
     }

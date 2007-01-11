@@ -33,14 +33,18 @@ namespace WebCore {
     // Names here are taken from the Unicode standard.
 
     // Note, these are UChar constants, not UChar32, which makes them
-    // more convenient for our code that mostly uses UTF-16.
+    // more convenient for WebCore code that mostly uses UTF-16.
 
-    const UChar ideographicSpace = 0x3000;
-    const UChar noBreakSpace = 0x00A0;
-    const UChar bullet = 0x2022;
     const UChar blackSquare = 0x25A0;
-    const UChar whiteBullet = 0x25E6;
+    const UChar bullet = 0x2022;
+    const UChar horizontalEllipsis = 0x200B;
+    const UChar ideographicSpace = 0x3000;
+    const UChar leftToRightOverride = 0x202D;
+    const UChar noBreakSpace = 0x00A0;
+    const UChar popDirectionalFormatting = 0x202C;
+    const UChar rightToLeftOverride = 0x202E;
     const UChar softHyphen = 0x00AD;
+    const UChar whiteBullet = 0x25E6;
     const UChar zeroWidthSpace = 0x200B;
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 David Smith (catfish.man@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -96,12 +96,13 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/FrameTree.h>
+#import <WebCore/HTMLNames.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Logging.h>
 #import <WebCore/Page.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/Settings.h>
-#import <WebCore/WebCoreEncodings.h>
+#import <WebCore/TextResourceDecoder.h>
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebCoreTextRenderer.h>
 #import <WebCore/WebCoreView.h>
@@ -989,7 +990,11 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 
 + (NSString *)_decodeData:(NSData *)data
 {
-    return [WebCoreEncodings decodeData:data];
+    HTMLNames::init(); // this method is used for importing bookmarks at startup, so HTMLNames are likely to be uninitialized yet
+    RefPtr<TextResourceDecoder> decoder = new TextResourceDecoder("text/html"); // bookmark files are HTML
+    String result = decoder->decode(static_cast<const char*>([data bytes]), [data length]);
+    result += decoder->flush();
+    return result;
 }
 
 - (void)_pushPerformingProgrammaticFocus

@@ -29,15 +29,15 @@
 #import "config.h"
 #import "WebCoreStringTruncator.h"
 
+#import "CharacterNames.h"
 #import "Font.h"
 #import "FontPlatformData.h"
 #import "TextStyle.h"
 #import <wtf/Assertions.h>
 
-#define STRING_BUFFER_SIZE 2048
-#define ELLIPSIS_CHARACTER 0x2026
-
 using namespace WebCore;
+
+#define STRING_BUFFER_SIZE 2048
 
 static NSFont *currentFont;
 static Font* currentRenderer = 0;
@@ -61,7 +61,7 @@ static unsigned centerTruncateToBuffer(NSString *string, unsigned length, unsign
     ASSERT(truncatedLength <= length);
 
     [string getCharacters:buffer range:beforeRange];
-    buffer[beforeRange.length] = ELLIPSIS_CHARACTER;
+    buffer[beforeRange.length] = horizontalEllipsis;
     [string getCharacters:&buffer[beforeRange.length + 1] range:afterRange];
     
     return truncatedLength;
@@ -75,7 +75,7 @@ static unsigned rightTruncateToBuffer(NSString *string, unsigned length, unsigne
     NSRange keepRange = NSMakeRange(0, [string rangeOfComposedCharacterSequenceAtIndex:keepCount].location);
     
     [string getCharacters:buffer range:keepRange];
-    buffer[keepRange.length] = ELLIPSIS_CHARACTER;
+    buffer[keepRange.length] = horizontalEllipsis;
     
     return keepRange.length + 1;
 }
@@ -113,7 +113,7 @@ static NSString *truncateString(NSString *string, float maxWidth, NSFont *font, 
         FontPlatformData f(font);
         delete currentRenderer;
         currentRenderer = new Font(f, ![[NSGraphicsContext currentContext] isDrawingToScreen]);
-        ellipsis = ELLIPSIS_CHARACTER;
+        ellipsis = horizontalEllipsis;
         currentEllipsisWidth = stringWidth(currentRenderer, &ellipsis, 1);
     }
     

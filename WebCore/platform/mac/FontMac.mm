@@ -27,6 +27,7 @@
 #import "Font.h"
 
 #import "BlockExceptions.h"
+#import "CharacterNames.h"
 #import "FontData.h"
 #import "FontFallbackList.h"
 #import "GlyphBuffer.h"
@@ -39,10 +40,6 @@
 #import "WebCoreTextRenderer.h"
 
 #define SYNTHETIC_OBLIQUE_ANGLE 14
-
-#define POP_DIRECTIONAL_FORMATTING 0x202C
-#define LEFT_TO_RIGHT_OVERRIDE 0x202D
-#define RIGHT_TO_LEFT_OVERRIDE 0x202E
 
 #ifdef __LP64__
 #define URefCon void*
@@ -91,9 +88,9 @@ struct ATSULayoutParameters
 static TextRun addDirectionalOverride(const TextRun& run, bool rtl)
 {
     UChar* charactersWithOverride = new UChar[run.length() + 2];
-    charactersWithOverride[0] = rtl ? RIGHT_TO_LEFT_OVERRIDE : LEFT_TO_RIGHT_OVERRIDE;
+    charactersWithOverride[0] = rtl ? rightToLeftOverride : leftToRightOverride;
     memcpy(&charactersWithOverride[1], run.data(0), sizeof(UChar) * run.length());
-    charactersWithOverride[run.length() + 1] = POP_DIRECTIONAL_FORMATTING;
+    charactersWithOverride[run.length() + 1] = popDirectionalFormatting;
 
     return TextRun(charactersWithOverride, run.length() + 2, run.from() + 1, run.to() + 1);
 }

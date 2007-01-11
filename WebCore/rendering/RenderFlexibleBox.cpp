@@ -25,6 +25,7 @@
 #include "config.h"
 #include "RenderFlexibleBox.h"
 
+#include "CharacterNames.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
 
@@ -761,7 +762,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                 if (!lastVisibleLine)
                     continue;
 
-                const UChar ellipsisAndSpace[2] = { 0x2026, ' ' };
+                const UChar ellipsisAndSpace[2] = { horizontalEllipsis, ' ' };
                 static AtomicString ellipsisAndSpaceStr(ellipsisAndSpace, 2);
 
                 const Font& font = style(numVisibleLines == 1)->font();

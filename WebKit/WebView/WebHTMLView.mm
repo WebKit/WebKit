@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -81,12 +81,12 @@
 #import <WebCore/FrameMac.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/MimeTypeRegistry.h>
 #import <WebCore/Page.h>
 #import <WebCore/Range.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/WebCoreTextRenderer.h>
 #import <WebCore/WebDataProtocol.h>
-#import <WebCore/WebMimeTypeRegistryBridge.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
@@ -321,9 +321,8 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
     
     while ((path = [enumerator nextObject]) != nil) {
         NSString *MIMEType = WKGetMIMETypeForExtension([path pathExtension]);
-        if ([WebMimeTypeRegistryBridge supportsImageResourceWithMIMEType:MIMEType]) {
+        if (MimeTypeRegistry::isSupportedImageResourceMIMEType(MIMEType))
             return YES;
-        }
     }
     
     return NO;
@@ -359,7 +358,7 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
     
     while ((path = [enumerator nextObject]) != nil) {
         NSString *MIMEType = WKGetMIMETypeForExtension([path pathExtension]);
-        if ([WebMimeTypeRegistryBridge supportsImageResourceWithMIMEType:MIMEType]) {
+        if (MimeTypeRegistry::isSupportedImageResourceMIMEType(MIMEType)) {
             WebResource *resource = [[WebResource alloc] initWithData:[NSData dataWithContentsOfFile:path]
                                                                   URL:[NSURL fileURLWithPath:path]
                                                              MIMEType:MIMEType 

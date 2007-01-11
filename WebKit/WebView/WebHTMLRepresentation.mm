@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,8 +47,8 @@
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/FrameMac.h>
+#import <WebCore/MimeTypeRegistry.h>
 #import <WebCore/Range.h>
-#import <WebCore/WebMimeTypeRegistryBridge.h>
 
 using namespace WebCore;
 
@@ -77,26 +77,41 @@ using namespace WebCore;
 
 @implementation WebHTMLRepresentation
 
+static NSArray *stringArray(const HashSet<String>& set)
+{
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:set.size()];
+    HashSet<String>::const_iterator end = set.end();
+    for (HashSet<String>::const_iterator it = set.begin(); it != end; ++it)
+        [array addObject:(NSString *)(*it)];
+    return array;
+}
+
+static NSArray *concatenateArrays(NSArray *first, NSArray *second)
+{
+    NSMutableArray *result = [[first mutableCopy] autorelease];
+    [result addObjectsFromArray:second];
+    return result;
+}
+
 + (NSArray *)supportedMIMETypes
 {
-    static NSMutableArray *mimeTypes = nil;
-    
-    if (!mimeTypes) {
-        mimeTypes = [[self supportedNonImageMIMETypes] mutableCopy];
-        [mimeTypes addObjectsFromArray:[self supportedImageMIMETypes]];
-    }
-    
-    return mimeTypes;
+    static RetainPtr<NSArray> staticSupportedMIMETypes =
+        concatenateArrays([self supportedNonImageMIMETypes], [self supportedImageMIMETypes]);
+    return staticSupportedMIMETypes.get();
 }
 
 + (NSArray *)supportedNonImageMIMETypes
 {
-    return [WebMimeTypeRegistryBridge supportedNonImageMIMETypes];
+    static RetainPtr<NSArray> staticSupportedNonImageMIMETypes =
+        stringArray(MimeTypeRegistry::getSupportedNonImageMIMETypes());
+    return staticSupportedNonImageMIMETypes.get();
 }
 
 + (NSArray *)supportedImageMIMETypes
 {
-    return [WebMimeTypeRegistryBridge supportedImageMIMETypes];
+    static RetainPtr<NSArray> staticSupportedImageMIMETypes =
+        stringArray(MimeTypeRegistry::getSupportedImageMIMETypes());
+    return staticSupportedImageMIMETypes.get();
 }
 
 - init

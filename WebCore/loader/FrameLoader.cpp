@@ -472,26 +472,22 @@ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<F
     bool mailtoForm = u.protocol() == "mailto";
     if (mailtoForm) {
         // Append body=
-        DeprecatedString encodedBody;
+        String body;
         if (equalIgnoringCase(contentType, "multipart/form-data"))
             // FIXME: is this correct? I suspect not, but what site can we test this on?
-            encodedBody = KURL::encode_string(formData->flattenToString().deprecatedString());
-        else if (equalIgnoringCase(contentType, "text/plain")) {
+            body = formData->flattenToString();
+        else if (equalIgnoringCase(contentType, "text/plain"))
             // Convention seems to be to decode, and s/&/\n/
-            encodedBody = formData->flattenToString().deprecatedString();
-            encodedBody.replace('&', '\n');
-            encodedBody.replace('+', ' ');
-            encodedBody = KURL::decode_string(encodedBody); // Decode the rest of it
-            encodedBody = KURL::encode_string(encodedBody); // Recode for the URL
-        } else
-            encodedBody = KURL::encode_string(formData->flattenToString().deprecatedString());
+            body = KURL::decode_string(
+                formData->flattenToString().replace('&', '\n')
+                .replace('+', ' ').deprecatedString()); // Recode for the URL
+        else
+            body = formData->flattenToString();
 
-        DeprecatedString query = u.query();
+        String query = u.query();
         if (!query.isEmpty())
-            query += '&';
-        query += "body=";
-        query += encodedBody;
-        u.setQuery(query);
+            query.append('&');
+        u.setQuery((query + "body=" + KURL::encode_string(body.deprecatedString())).deprecatedString());
     }
 
     if (strcmp(action, "GET") == 0) {

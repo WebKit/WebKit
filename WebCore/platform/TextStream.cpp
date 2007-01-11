@@ -122,12 +122,6 @@ TextStream& TextStream::operator<<(const char* s)
     return *this;
 }
 
-TextStream& TextStream::operator<<(const DeprecatedCString& qcs)
-{
-    const char *s = qcs;
-    return *this << s;
-}
-
 TextStream& TextStream::operator<<(const DeprecatedString& s)
 {
     if (m_hasByteArray) {

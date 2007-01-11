@@ -55,7 +55,6 @@ extern NSString *WebURLsWithTitlesPboardType;
 #endif
 
 class CString;
-class DeprecatedCString;
 class DocumentFragment;
 class Frame;
 class KURL;

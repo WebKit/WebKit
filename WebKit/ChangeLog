@@ -1,3 +1,33 @@
+2007-01-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - moved code from a couple WebCore bridging classes here instead
+
+        * Misc/WebNSPasteboardExtras.mm:
+        (-[NSPasteboard _web_writeImage:element:URL:title:archive:types:]):
+        Use MimeTypeRegistry instead of WebMimeTypeRegistryBridge.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (stringArray): Added. Helper to convert a HashSet to an NSArray.
+        (concatenateArrays): Added. Helper to concatenate two NSArray objects.
+        (+[WebHTMLRepresentation supportedMIMETypes]): Use MimeTypeRegistry instead of
+        WebMimeTypeRegistryBridge. Also fix a potential GC problem by using a RetainPtr
+        instead of a [retain] on a global variable.
+        (+[WebHTMLRepresentation supportedNonImageMIMETypes]): Ditto.
+        (+[WebHTMLRepresentation supportedImageMIMETypes]): Ditto.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _imageExistsAtPaths:]): Use MimeTypeRegistry instead of
+        WebMimeTypeRegistryBridge.
+        (-[WebHTMLView _documentFragmentWithPaths:]): Ditto.
+
+        * WebView/WebView.mm: (+[WebView _decodeData:]): Moved code here from
+        the old WebCoreEncodings class.
+
+        * WebKit.xcodeproj/project.pbxproj: Let Xcode have its way with this file.
+        Moved WebRenderNode into the appropriate group.
+
 2007-01-10  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
