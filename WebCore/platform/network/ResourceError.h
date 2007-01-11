@@ -117,6 +117,29 @@ namespace WebCore {
         bool m_isNull;
 };
 
+inline bool operator==(const ResourceError& a, const ResourceError& b)
+{
+    if (a.isNull() && b.isNull())
+        return true;
+    if (a.isNull() || b.isNull())
+        return false;
+    if (a.domain() != b.domain())
+        return false;
+    if (a.errorCode() != b.errorCode())
+        return false;
+    if (a.failingURL() != b.failingURL())
+        return false;
+    if (a.localizedDescription() != b.localizedDescription())
+        return false;
+#if PLATFORM(MAC)
+    if ((NSError *)a != (NSError *)b)
+        return false;
+#endif
+    return true;
+}
+
+inline bool operator!=(const ResourceError& a, const ResourceError& b) { return !(a == b); }
+
 } // namespace WebCore
 
 #endif // ResourceError_h_

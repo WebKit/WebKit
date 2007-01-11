@@ -29,6 +29,7 @@
 #import "config.h"
 #import "ResourceLoader.h"
 
+#import "AuthenticationMac.h"
 #import "FrameLoader.h"
 #import "FrameMac.h"
 #import "Page.h"
@@ -53,37 +54,40 @@ using namespace WebCore;
 
 namespace WebCore {
 
-void ResourceLoader::didReceiveAuthenticationChallenge(NSURLAuthenticationChallenge *challenge)
+void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
 {
     ASSERT(!m_reachedTerminalState);
-    ASSERT(!m_currentConnectionChallenge);
-    ASSERT(!m_currentWebChallenge);
-
+    ASSERT(!m_currentMacChallenge);
+    ASSERT(m_currentWebChallenge.isNull());
+    // Since NSURLConnection networking relies on keeping a reference to the original NSURLAuthenticationChallenge,
+    // we make sure that is actually present
+    ASSERT(challenge.nsURLAuthenticationChallenge());
+    
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<ResourceLoader> protector(this);
 
-    m_currentConnectionChallenge = challenge;
-    NSURLAuthenticationChallenge *webChallenge = [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:challenge sender:(id<NSURLAuthenticationChallengeSender>)m_handle->delegate()];
-    m_currentWebChallenge = webChallenge;
-
-    frameLoader()->didReceiveAuthenticationChallenge(this, webChallenge);
-
+    m_currentMacChallenge = challenge.nsURLAuthenticationChallenge();
+    NSURLAuthenticationChallenge *webChallenge = [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:m_currentMacChallenge 
+                                                                                       sender:(id<NSURLAuthenticationChallengeSender>)m_handle->delegate()];
+    m_currentWebChallenge = core(webChallenge);
     [webChallenge release];
+
+    frameLoader()->didReceiveAuthenticationChallenge(this, m_currentWebChallenge);
 }
 
-void ResourceLoader::didCancelAuthenticationChallenge(NSURLAuthenticationChallenge *challenge)
+void ResourceLoader::didCancelAuthenticationChallenge(const AuthenticationChallenge& challenge)
 {
     ASSERT(!m_reachedTerminalState);
-    ASSERT(m_currentConnectionChallenge);
-    ASSERT(m_currentWebChallenge);
-    ASSERT(m_currentConnectionChallenge == challenge);
+    ASSERT(m_currentMacChallenge);
+    ASSERT(!m_currentWebChallenge.isNull());
+    ASSERT(m_currentWebChallenge == challenge);
 
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<ResourceLoader> protector(this);
 
-    frameLoader()->didCancelAuthenticationChallenge(this, m_currentWebChallenge.get());
+    frameLoader()->didCancelAuthenticationChallenge(this, m_currentWebChallenge);
 }
 
 NSCachedURLResponse *ResourceLoader::willCacheResponse(NSCachedURLResponse *cachedResponse)
@@ -103,31 +107,31 @@ void ResourceLoader::setIdentifier(id identifier)
 }
 
 
-void ResourceLoader::receivedCredential(NSURLAuthenticationChallenge *challenge, NSURLCredential *credential)
+void ResourceLoader::receivedCredential(const AuthenticationChallenge& challenge, const Credential& credential)
 {
-    ASSERT(challenge);
+    ASSERT(!challenge.isNull());
     if (challenge != m_currentWebChallenge)
         return;
 
-    [[m_currentConnectionChallenge sender] useCredential:credential forAuthenticationChallenge:m_currentConnectionChallenge];
+    [[m_currentMacChallenge sender] useCredential:mac(credential) forAuthenticationChallenge:m_currentMacChallenge];
 
-    m_currentConnectionChallenge = nil;
-    m_currentWebChallenge = nil;
+    m_currentMacChallenge = nil;
+    m_currentWebChallenge.nullify();
 }
 
-void ResourceLoader::receivedRequestToContinueWithoutCredential(NSURLAuthenticationChallenge *challenge)
+void ResourceLoader::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge& challenge)
 {
-    ASSERT(challenge);
+    ASSERT(!challenge.isNull());
     if (challenge != m_currentWebChallenge)
         return;
 
-    [[m_currentConnectionChallenge sender] continueWithoutCredentialForAuthenticationChallenge:m_currentConnectionChallenge];
+    [[m_currentMacChallenge sender] continueWithoutCredentialForAuthenticationChallenge:m_currentMacChallenge];
 
-    m_currentConnectionChallenge = nil;
-    m_currentWebChallenge = nil;
+    m_currentMacChallenge = nil;
+    m_currentWebChallenge.nullify();
 }
 
-void ResourceLoader::receivedCancellation(NSURLAuthenticationChallenge *challenge)
+void ResourceLoader::receivedCancellation(const AuthenticationChallenge& challenge)
 {
     if (challenge != m_currentWebChallenge)
         return;

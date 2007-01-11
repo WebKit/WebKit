@@ -55,7 +55,7 @@ ResourceLoader::ResourceLoader(Frame* frame)
     , m_calledDidFinishLoad(false)
     , m_frame(frame)
 #if PLATFORM(MAC)
-    , m_currentConnectionChallenge(nil)
+    , m_currentMacChallenge(nil)
 #endif
     , m_defersLoading(frame->page()->defersLoading())
 {
@@ -255,9 +255,10 @@ void ResourceLoader::didCancel(const ResourceError& error)
     m_cancelled = true;
     
 #if PLATFORM(MAC)
-    m_currentConnectionChallenge = nil;
-    m_currentWebChallenge = nil;
+    m_currentMacChallenge = nil;
 #endif
+    m_currentWebChallenge.nullify();
+
 
     frameLoader()->cancelPendingArchiveLoad(this);
     if (m_handle) {

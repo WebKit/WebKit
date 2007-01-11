@@ -46,6 +46,7 @@ typedef void* id;
 
 namespace WebCore {
 
+    class AuthenticationChallenge;
     class DocumentLoader;
     class Element;
     class FormState;
@@ -55,12 +56,12 @@ namespace WebCore {
     class KURL;
     class NavigationAction;
     class PageCache;
-    class String;
     class ResourceError;
     class ResourceHandle;
     class ResourceLoader;
     class ResourceRequest;
     class ResourceResponse;
+    class String;
 
     typedef void (FrameLoader::*FramePolicyFunction)(PolicyAction);
 
@@ -89,16 +90,10 @@ namespace WebCore {
 
         virtual void loadedFromPageCache() = 0;
 
-        virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&) = 0;
+        virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, id identifier, const AuthenticationChallenge&) = 0;
+        virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, id identifier, const AuthenticationChallenge&) = 0;
 
-#if PLATFORM(MAC)
-        virtual id dispatchIdentifierForInitialRequest(DocumentLoader*, const ResourceRequest&) = 0;
-#endif
         virtual void dispatchWillSendRequest(DocumentLoader*, id identifier, ResourceRequest&, const ResourceResponse& redirectResponse) = 0;
-#if PLATFORM(MAC)
-        virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, id identifier, NSURLAuthenticationChallenge *) = 0;
-        virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, id identifier, NSURLAuthenticationChallenge *) = 0;
-#endif
         virtual void dispatchDidReceiveResponse(DocumentLoader*, id identifier, const ResourceResponse&) = 0;
         virtual void dispatchDidReceiveContentLength(DocumentLoader*, id identifier, int lengthReceived) = 0;
         virtual void dispatchDidFinishLoading(DocumentLoader*, id identifier) = 0;
@@ -194,6 +189,11 @@ namespace WebCore {
         
         virtual void saveDocumentViewToPageCache(PageCache*) = 0;
         virtual bool canCachePage() const = 0;
+        virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&) = 0;
+
+#if PLATFORM(MAC)
+        virtual id dispatchIdentifierForInitialRequest(DocumentLoader*, const ResourceRequest&) = 0;
+#endif
     };
 
 } // namespace WebCore

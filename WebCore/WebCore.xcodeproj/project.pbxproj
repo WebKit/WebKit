@@ -295,9 +295,17 @@
 		4E19592E0A39DACC00220FE5 /* MediaQueryExp.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959280A39DACC00220FE5 /* MediaQueryExp.h */; };
 		510184690B08602A004A825F /* PageCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 510184670B08602A004A825F /* PageCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5101846A0B08602A004A825F /* PageCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510184680B08602A004A825F /* PageCache.cpp */; };
+		510F735F0B56C08800A3002A /* AuthenticationChallenge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510F73590B56C08800A3002A /* AuthenticationChallenge.cpp */; };
+		510F73600B56C08800A3002A /* AuthenticationChallenge.h in Headers */ = {isa = PBXBuildFile; fileRef = 510F735A0B56C08800A3002A /* AuthenticationChallenge.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		510F73610B56C08800A3002A /* Credential.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510F735B0B56C08800A3002A /* Credential.cpp */; };
+		510F73620B56C08800A3002A /* Credential.h in Headers */ = {isa = PBXBuildFile; fileRef = 510F735C0B56C08800A3002A /* Credential.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		510F73630B56C08800A3002A /* ProtectionSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510F735D0B56C08800A3002A /* ProtectionSpace.cpp */; };
+		510F73640B56C08800A3002A /* ProtectionSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 510F735E0B56C08800A3002A /* ProtectionSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5115095C0A9CE04700901013 /* urlIcon.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 5115095B0A9CE04600901013 /* urlIcon.tiff */; };
 		5126E6BB0A2E3B12005C29FA /* IconDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */; };
 		5126E6BC0A2E3B12005C29FA /* IconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5126E6BA0A2E3B12005C29FA /* IconDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		513BF1080B4F558900CCFECE /* AuthenticationMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 513BF1070B4F558900CCFECE /* AuthenticationMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		513BF1280B4F57DC00CCFECE /* AuthenticationMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 513BF1270B4F57DC00CCFECE /* AuthenticationMac.mm */; };
 		513F14530AB634C400094DDF /* IconLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 513F14510AB634C400094DDF /* IconLoader.cpp */; };
 		513F14540AB634C400094DDF /* IconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 513F14520AB634C400094DDF /* IconLoader.h */; };
 		5160F1FE0B0A7EF400C1D2AF /* HistoryItemTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5160F1FC0B0A7EF400C1D2AF /* HistoryItemTimer.h */; };
@@ -3319,9 +3327,17 @@
 		4E1959280A39DACC00220FE5 /* MediaQueryExp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaQueryExp.h; sourceTree = "<group>"; };
 		510184670B08602A004A825F /* PageCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageCache.h; sourceTree = "<group>"; };
 		510184680B08602A004A825F /* PageCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageCache.cpp; sourceTree = "<group>"; };
+		510F73590B56C08800A3002A /* AuthenticationChallenge.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticationChallenge.cpp; sourceTree = "<group>"; };
+		510F735A0B56C08800A3002A /* AuthenticationChallenge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AuthenticationChallenge.h; sourceTree = "<group>"; };
+		510F735B0B56C08800A3002A /* Credential.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Credential.cpp; sourceTree = "<group>"; };
+		510F735C0B56C08800A3002A /* Credential.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Credential.h; sourceTree = "<group>"; };
+		510F735D0B56C08800A3002A /* ProtectionSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ProtectionSpace.cpp; sourceTree = "<group>"; };
+		510F735E0B56C08800A3002A /* ProtectionSpace.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ProtectionSpace.h; sourceTree = "<group>"; };
 		5115095B0A9CE04600901013 /* urlIcon.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = urlIcon.tiff; sourceTree = "<group>"; };
 		5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconDatabase.cpp; sourceTree = "<group>"; };
 		5126E6BA0A2E3B12005C29FA /* IconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconDatabase.h; sourceTree = "<group>"; };
+		513BF1070B4F558900CCFECE /* AuthenticationMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationMac.h; sourceTree = "<group>"; };
+		513BF1270B4F57DC00CCFECE /* AuthenticationMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationMac.mm; sourceTree = "<group>"; };
 		513F14510AB634C400094DDF /* IconLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconLoader.cpp; sourceTree = "<group>"; };
 		513F14520AB634C400094DDF /* IconLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconLoader.h; sourceTree = "<group>"; };
 		5150C2A10702629000AF642C /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDashboardRegion.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -6640,6 +6656,10 @@
 			isa = PBXGroup;
 			children = (
 				656B84E70AEA1DAE00A095B4 /* mac */,
+				510F73590B56C08800A3002A /* AuthenticationChallenge.cpp */,
+				510F735A0B56C08800A3002A /* AuthenticationChallenge.h */,
+				510F735B0B56C08800A3002A /* Credential.cpp */,
+				510F735C0B56C08800A3002A /* Credential.h */,
 				65DADA170AFD878000CE53ED /* FormData.h */,
 				65DAD9FA0AFD86B400CE53ED /* FormData.cpp */,
 				651888860AFF3BF700164720 /* ResourceError.cpp */,
@@ -6647,14 +6667,16 @@
 				655A81BD0AEF67E6000975F0 /* HTTPHeaderMap.h */,
 				E1D8E3150B29E39C00F4BAF6 /* HTTPParsers.h */,
 				E1D8E3190B29E3B600F4BAF6 /* HTTPParsers.cpp */,
+				510F735D0B56C08800A3002A /* ProtectionSpace.cpp */,
+				510F735E0B56C08800A3002A /* ProtectionSpace.h */,
 				656B85370AEA1F9A00A095B4 /* ResourceHandle.h */,
 				656B84DC0AEA1D3100A095B4 /* ResourceHandle.cpp */,
 				656B84DE0AEA1D3100A095B4 /* ResourceHandleClient.h */,
 				656B84DF0AEA1D3100A095B4 /* ResourceHandleInternal.h */,
-				1AD8CFCD0B1CED8900696DE0 /* ResourceRequest.cpp */,
 				6522BCDE09C9DAA800C9BA7A /* ResourceRequest.h */,
-				1A8180A40B1D4E4300CE46C4 /* ResourceResponse.cpp */,
+				1AD8CFCD0B1CED8900696DE0 /* ResourceRequest.cpp */,
 				658821650AF4CDF700F01D1F /* ResourceResponse.h */,
+				1A8180A40B1D4E4300CE46C4 /* ResourceResponse.cpp */,
 			);
 			path = network;
 			sourceTree = "<group>";
@@ -6668,6 +6690,8 @@
 				656B84EA0AEA1DDA00A095B4 /* ResourceHandleMac.mm */,
 				650E3F680AF6C168001FA3AD /* ResourceRequestMac.mm */,
 				658821690AF4CE1200F01D1F /* ResourceResponseMac.mm */,
+				513BF1070B4F558900CCFECE /* AuthenticationMac.h */,
+				513BF1270B4F57DC00CCFECE /* AuthenticationMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -10920,9 +10944,13 @@
 				A82422700B4A16C50084722B /* SVGAnimateMotionElement.h in Headers */,
 				062287840B4DB322000C34DF /* FocusDirection.h in Headers */,
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
+				513BF1080B4F558900CCFECE /* AuthenticationMac.h in Headers */,
 				BCCFBAE80B5152ED0001F1D7 /* Tokenizer.h in Headers */,
 				AA882B300B4EF5EB006D26D1 /* PointerEventsHitRules.h in Headers */,
 				93C7B5F40B52D89100B5477E /* CharacterNames.h in Headers */,
+				510F73600B56C08800A3002A /* AuthenticationChallenge.h in Headers */,
+				510F73620B56C08800A3002A /* Credential.h in Headers */,
+				510F73640B56C08800A3002A /* ProtectionSpace.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12250,7 +12278,11 @@
 				A82422710B4A16C50084722B /* SVGAnimateMotionElement.cpp in Sources */,
 				1A4A954D0B4EDCCB002D8C3C /* SharedBuffer.cpp in Sources */,
 				1A4A95520B4EDCFF002D8C3C /* SharedBufferMac.mm in Sources */,
+				513BF1280B4F57DC00CCFECE /* AuthenticationMac.mm in Sources */,
 				AA882B2F0B4EF5EB006D26D1 /* PointerEventsHitRules.cpp in Sources */,
+				510F735F0B56C08800A3002A /* AuthenticationChallenge.cpp in Sources */,
+				510F73610B56C08800A3002A /* Credential.cpp in Sources */,
+				510F73630B56C08800A3002A /* ProtectionSpace.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

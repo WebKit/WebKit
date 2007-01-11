@@ -1,3 +1,94 @@
+2007-01-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Rewrites HTTP Authentication setting up a more platform-independent structure
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didReceiveAuthenticationChallenge):
+        (WebCore::FrameLoader::didCancelAuthenticationChallenge):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::ResourceLoader):
+        (WebCore::ResourceLoader::didCancel):
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceLoader::didCancelAuthenticationChallenge):
+        (WebCore::ResourceLoader::receivedCredential):
+        (WebCore::ResourceLoader::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceLoader::receivedCancellation):
+        * loader/mac/FrameLoaderMac.mm:
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceLoader::didCancelAuthenticationChallenge):
+        (WebCore::ResourceLoader::receivedCredential):
+        (WebCore::ResourceLoader::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceLoader::receivedCancellation):
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidCancelAuthenticationChallenge):
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::willSendRequest):
+        (WebCore::ResourceHandleClient::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandleClient::didCancelAuthenticationChallenge):
+        (WebCore::ResourceHandleClient::receivedCredential):
+        (WebCore::ResourceHandleClient::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceHandleClient::receivedCancellation):
+        (WebCore::ResourceHandleClient::willCacheResponse):
+        * platform/network/ResourceResponse.h:
+        (WebCore::operator!=):
+        * platform/network/URLAuthenticationChallenge.cpp: Added.
+        (WebCore::URLAuthenticationChallenge::URLAuthenticationChallenge):
+        (WebCore::URLAuthenticationChallenge::previousFailureCount):
+        (WebCore::URLAuthenticationChallenge::proposedCredential):
+        (WebCore::URLAuthenticationChallenge::protectionSpace):
+        (WebCore::URLAuthenticationChallenge::failureResponse):
+        (WebCore::URLAuthenticationChallenge::error):
+        (WebCore::URLAuthenticationChallenge::isNull):
+        (WebCore::URLAuthenticationChallenge::nullify):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        * platform/network/URLAuthenticationChallenge.h: Added.
+        (WebCore::URLAuthenticationChallenge::sender):
+        (WebCore::URLAuthenticationChallenge::nsURLAuthenticationChallenge):
+        * platform/network/URLCredential.cpp: Added.
+        (WebCore::URLCredential::URLCredential):
+        (WebCore::URLCredential::user):
+        (WebCore::URLCredential::password):
+        (WebCore::URLCredential::hasPassword):
+        (WebCore::URLCredential::persistence):
+        (WebCore::operator==):
+        * platform/network/URLCredential.h: Added.
+        (WebCore::):
+        (WebCore::operator!=):
+        * platform/network/URLProtectionSpace.cpp: Added.
+        (WebCore::URLProtectionSpace::URLProtectionSpace):
+        (WebCore::URLProtectionSpace::host):
+        (WebCore::URLProtectionSpace::port):
+        (WebCore::URLProtectionSpace::serverType):
+        (WebCore::URLProtectionSpace::realm):
+        (WebCore::URLProtectionSpace::authenticationScheme):
+        (WebCore::operator==):
+        * platform/network/URLProtectionSpace.h: Added.
+        (WebCore::):
+        (WebCore::operator!=):
+        * platform/network/mac/AuthenticationMac.h: Added.
+        * platform/network/mac/AuthenticationMac.mm: Added.
+        (WebCore::URLAuthenticationChallenge::URLAuthenticationChallenge):
+        (WebCore::mac):
+        (WebCore::core):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveAuthenticationChallenge:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didCancelAuthenticationChallenge:]):
+        (-[WebCoreResourceHandleAsDelegate useCredential:forAuthenticationChallenge:]):
+        (-[WebCoreResourceHandleAsDelegate continueWithoutCredentialForAuthenticationChallenge:]):
+        (-[WebCoreResourceHandleAsDelegate cancelAuthenticationChallenge:]):
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::operator==):
+
 2007-01-11  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Anders Carlsson.

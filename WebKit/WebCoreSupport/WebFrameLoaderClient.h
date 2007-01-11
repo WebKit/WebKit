@@ -38,6 +38,7 @@
 @class WebResource;
 
 namespace WebCore {
+    class AuthenticationChallenge;
     class HistoryItem;
     class PageCache;
     class String;
@@ -81,8 +82,8 @@ private:
 
     virtual id dispatchIdentifierForInitialRequest(WebCore::DocumentLoader*, const WebCore::ResourceRequest&);
     virtual void dispatchWillSendRequest(WebCore::DocumentLoader*, id identifier, WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
-    virtual void dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, id identifier, NSURLAuthenticationChallenge *);
-    virtual void dispatchDidCancelAuthenticationChallenge(WebCore::DocumentLoader*, id identifier, NSURLAuthenticationChallenge *);
+    virtual void dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, id identifier, const WebCore::AuthenticationChallenge&);
+    virtual void dispatchDidCancelAuthenticationChallenge(WebCore::DocumentLoader*, id identifier, const WebCore::AuthenticationChallenge&);
     virtual void dispatchDidReceiveResponse(WebCore::DocumentLoader*, id identifier, const WebCore::ResourceResponse&);
     virtual void dispatchDidReceiveContentLength(WebCore::DocumentLoader*, id identifier, int lengthReceived);
     virtual void dispatchDidFinishLoading(WebCore::DocumentLoader*, id identifier);

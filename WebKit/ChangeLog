@@ -1,3 +1,15 @@
+2007-01-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Rewrites HTTP Authentication setting up a more platform-independent structure
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2007-01-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

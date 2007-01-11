@@ -34,6 +34,7 @@
 #include "ResourceResponse.h"
 #include "ResourceLoader.h"
 #include "Shared.h"
+#include "AuthenticationChallenge.h"
 #include "KURL.h"
 
 #include <wtf/Forward.h>
@@ -93,7 +94,7 @@ namespace WebCore {
         virtual void addData(const char*, int, bool allAtOnce);
         virtual PassRefPtr<SharedBuffer> resourceData();
         void clearResourceData();
-
+        
         virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
         virtual void didReceiveResponse(const ResourceResponse&);
         virtual void didReceiveData(const char*, int, long long lengthReceived, bool allAtOnce);
@@ -101,13 +102,7 @@ namespace WebCore {
         virtual void didFinishLoading();
         virtual void didFail(const ResourceError&);
 #if PLATFORM(MAC)
-        void didReceiveAuthenticationChallenge(NSURLAuthenticationChallenge *);
-        void didCancelAuthenticationChallenge(NSURLAuthenticationChallenge *);
         NSCachedURLResponse *willCacheResponse(NSCachedURLResponse *);
-
-        void receivedCredential(NSURLAuthenticationChallenge *, NSURLCredential *);
-        void receivedRequestToContinueWithoutCredential(NSURLAuthenticationChallenge *);
-        void receivedCancellation(NSURLAuthenticationChallenge *);
 #endif
 
         // ResourceHandleClient
@@ -116,19 +111,22 @@ namespace WebCore {
         virtual void didReceiveData(ResourceHandle*, const char*, int, int lengthReceived);
         virtual void didFinishLoading(ResourceHandle*);
         virtual void didFail(ResourceHandle*, const ResourceError&);
-
         virtual void willStopBufferingData(ResourceHandle*, const char* data, int length) { willStopBufferingData(data, length); } 
 
 #if PLATFORM(MAC)
-        virtual void didReceiveAuthenticationChallenge(ResourceHandle*, NSURLAuthenticationChallenge *challenge) { didReceiveAuthenticationChallenge(challenge); } 
-        virtual void didCancelAuthenticationChallenge(ResourceHandle*, NSURLAuthenticationChallenge *challenge) { didCancelAuthenticationChallenge(challenge); } 
-        
-        
         virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *cachedResponse) { return willCacheResponse(cachedResponse); }
         
-        virtual void receivedCredential(ResourceHandle*, NSURLAuthenticationChallenge *challenge, NSURLCredential *credential) { receivedCredential(challenge, credential); }
-        virtual void receivedRequestToContinueWithoutCredential(ResourceHandle*, NSURLAuthenticationChallenge *challenge) { receivedRequestToContinueWithoutCredential(challenge); } 
-        virtual void receivedCancellation(ResourceHandle*, NSURLAuthenticationChallenge *challenge) { receivedCancellation(challenge); }
+        void didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge);
+        void didCancelAuthenticationChallenge(const AuthenticationChallenge& challenge);
+        void receivedCredential(const AuthenticationChallenge&, const Credential&);
+        void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
+        void receivedCancellation(const AuthenticationChallenge&);
+        
+        virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) { didReceiveAuthenticationChallenge(challenge); } 
+        virtual void didCancelAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) { didCancelAuthenticationChallenge(challenge); } 
+        virtual void receivedCredential(ResourceHandle*, const AuthenticationChallenge& challenge, const Credential& credential) { receivedCredential(challenge, credential); }
+        virtual void receivedRequestToContinueWithoutCredential(ResourceHandle*, const AuthenticationChallenge& challenge) { receivedRequestToContinueWithoutCredential(challenge); } 
+        virtual void receivedCancellation(ResourceHandle*, const AuthenticationChallenge& challenge) { receivedCancellation(challenge); }
 #endif
         
         ResourceHandle* handle() const { return m_handle.get(); }
@@ -146,7 +144,7 @@ namespace WebCore {
         bool defersLoading() const { return m_defersLoading; }
 
         RefPtr<ResourceHandle> m_handle;
-        
+
     private:
         ResourceRequest m_request;
 
@@ -160,9 +158,10 @@ protected:
         ResourceResponse m_response;
 #if PLATFORM(MAC)
         RetainPtr<id> m_identifier;
-        NSURLAuthenticationChallenge *m_currentConnectionChallenge;
-        RetainPtr<NSURLAuthenticationChallenge> m_currentWebChallenge;
+        NSURLAuthenticationChallenge *m_currentMacChallenge;
 #endif
+        AuthenticationChallenge m_currentWebChallenge;
+
         KURL m_originalURL;
         RefPtr<SharedBuffer> m_resourceData;
         bool m_defersLoading;

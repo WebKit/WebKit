@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+    class AuthenticationChallenge;
     class DocumentLoader;
     class Element;
     class FormState;
@@ -190,6 +191,9 @@ namespace WebCore {
         virtual void startDownload(const WebCore::ResourceRequest&);
         virtual bool willUseArchive(WebCore::ResourceLoader*, const WebCore::ResourceRequest&, const WebCore::KURL&) const;
 
+        virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, id identifier, const AuthenticationChallenge&);
+        virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, id identifier, const AuthenticationChallenge&);
+        
         // FIXME: This should probably not be here, but it's needed for the tests currently
         virtual void partClearedInBegin();
 

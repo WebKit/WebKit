@@ -4053,6 +4053,16 @@ PassRefPtr<SharedBuffer> FrameLoader::mainResourceData() const
     return m_mainResourceLoader->resourceData();
 }
 
+void FrameLoader::didReceiveAuthenticationChallenge(ResourceLoader* loader, const AuthenticationChallenge& currentWebChallenge)
+{
+    m_client->dispatchDidReceiveAuthenticationChallenge(activeDocumentLoader(), loader->identifier(), currentWebChallenge);
+}
+
+void FrameLoader::didCancelAuthenticationChallenge(ResourceLoader* loader, const AuthenticationChallenge& currentWebChallenge)
+{
+    m_client->dispatchDidCancelAuthenticationChallenge(activeDocumentLoader(), loader->identifier(), currentWebChallenge);
+}
+
 PolicyCheck::PolicyCheck()
     : m_navigationFunction(0)
     , m_newWindowFunction(0)

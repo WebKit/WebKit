@@ -171,16 +171,6 @@ String FrameLoader::referrer() const
     return documentLoader()->request().httpReferrer();
 }
 
-void FrameLoader::didReceiveAuthenticationChallenge(ResourceLoader* loader, NSURLAuthenticationChallenge *currentWebChallenge)
-{
-    m_client->dispatchDidReceiveAuthenticationChallenge(activeDocumentLoader(), loader->identifier(), currentWebChallenge);
-}
-
-void FrameLoader::didCancelAuthenticationChallenge(ResourceLoader* loader, NSURLAuthenticationChallenge *currentWebChallenge)
-{
-    m_client->dispatchDidCancelAuthenticationChallenge(activeDocumentLoader(), loader->identifier(), currentWebChallenge);
-}
-
 void FrameLoader::didChangeTitle(DocumentLoader* loader)
 {
     m_client->didChangeTitle(loader);

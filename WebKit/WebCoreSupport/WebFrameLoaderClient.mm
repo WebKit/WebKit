@@ -64,6 +64,7 @@
 #import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
+#import <WebCore/AuthenticationMac.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
@@ -283,35 +284,37 @@ void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, id id
         request = implementations.willSendRequestFunc(resourceLoadDelegate, @selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:), webView, identifier, request.nsURLRequest(), redirectResponse.nsURLResponse(), dataSource(loader));
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader* loader, id identifier,
-    NSURLAuthenticationChallenge *challenge)
+void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader* loader, id identifier, const AuthenticationChallenge& challenge)
 {
     WebView *webView = getWebView(m_webFrame.get());
     id resourceLoadDelegate = [webView resourceLoadDelegate];
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
+    NSURLAuthenticationChallenge *webChallenge = mac(challenge);
+
     if (implementations.delegateImplementsDidReceiveAuthenticationChallenge) {
-        [resourceLoadDelegate webView:webView resource:identifier didReceiveAuthenticationChallenge:challenge fromDataSource:dataSource(loader)];
+        [resourceLoadDelegate webView:webView resource:identifier didReceiveAuthenticationChallenge:webChallenge fromDataSource:dataSource(loader)];
         return;
     }
 
     NSWindow *window = [webView hostWindow] ? [webView hostWindow] : [webView window];
-    [[WebPanelAuthenticationHandler sharedHandler] startAuthentication:challenge window:window];
+    [[WebPanelAuthenticationHandler sharedHandler] startAuthentication:webChallenge window:window];
 }
 
-void WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge(DocumentLoader* loader, id identifier,
-    NSURLAuthenticationChallenge *challenge)
+void WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge(DocumentLoader* loader, id identifier, const AuthenticationChallenge&challenge)
 {
     WebView *webView = getWebView(m_webFrame.get());
     id resourceLoadDelegate = [webView resourceLoadDelegate];
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
+    NSURLAuthenticationChallenge *webChallenge = mac(challenge);
+
     if (implementations.delegateImplementsDidCancelAuthenticationChallenge) {
-        [resourceLoadDelegate webView:webView resource:identifier didCancelAuthenticationChallenge:challenge fromDataSource:dataSource(loader)];
+        [resourceLoadDelegate webView:webView resource:identifier didCancelAuthenticationChallenge:webChallenge fromDataSource:dataSource(loader)];
         return;
     }
 
-    [(WebPanelAuthenticationHandler *)[WebPanelAuthenticationHandler sharedHandler] cancelAuthentication:challenge];
+    [(WebPanelAuthenticationHandler *)[WebPanelAuthenticationHandler sharedHandler] cancelAuthentication:webChallenge];
 }
 
 void WebFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader* loader, id identifier, const ResourceResponse& response)

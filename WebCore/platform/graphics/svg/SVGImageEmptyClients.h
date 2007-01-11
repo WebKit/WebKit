@@ -143,8 +143,8 @@ public:
     
     virtual id dispatchIdentifierForInitialRequest(DocumentLoader*, const ResourceRequest&) { return 0; }
     virtual void dispatchWillSendRequest(DocumentLoader*, id identifier, ResourceRequest&, const ResourceResponse& redirectResponse) { }
-    virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, id identifier, NSURLAuthenticationChallenge *) { }
-    virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, id identifier, NSURLAuthenticationChallenge *) { }
+    virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, id identifier, const AuthenticationChallenge&) { }
+    virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, id identifier, const AuthenticationChallenge&) { }
     virtual void dispatchDidReceiveResponse(DocumentLoader*, id identifier, const ResourceResponse&) { }
     virtual void dispatchDidReceiveContentLength(DocumentLoader*, id identifier, int lengthReceived) { }
     virtual void dispatchDidFinishLoading(DocumentLoader*, id identifier) { }

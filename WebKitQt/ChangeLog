@@ -1,3 +1,13 @@
+2007-01-11  Brady Eidson  <beidson@apple.com>
+
+        Keep the fancy new FrameLoaderClientQt building with a small api change in WebCore
+        Yay for the loader on QT!
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveAuthenticationChallenge):
+        (WebCore::FrameLoaderClientQt::dispatchDidCancelAuthenticationChallenge):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-01-11  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Darin

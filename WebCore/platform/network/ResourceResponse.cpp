@@ -162,4 +162,33 @@ void ResourceResponse::updateResourceResponse() const
 #endif
 }
 
+bool operator==(const ResourceResponse& a, const ResourceResponse& b)
+{
+    if (a.isNull() != b.isNull())
+        return false;  
+    if (a.url() != b.url())
+        return false;
+    if (a.mimeType() != b.mimeType())
+        return false;
+    if (a.expectedContentLength() != b.expectedContentLength())
+        return false;
+    if (a.textEncodingName() != b.textEncodingName())
+        return false;
+    if (a.suggestedFilename() != b.suggestedFilename())
+        return false;
+    if (a.httpStatusCode() != b.httpStatusCode())
+        return false;
+    if (a.httpStatusText() != b.httpStatusText())
+        return false;
+    if (a.httpHeaderFields() != b.httpHeaderFields())
+        return false;
+    if (a.expirationDate() != b.expirationDate())
+        return false;
+#if PLATFORM(MAC)
+    if (a.nsURLResponse() != b.nsURLResponse())
+        return false;
+#endif
+    return true;
+ }
+
 }

@@ -27,6 +27,7 @@
 #import "ResourceHandle.h"
 #import "ResourceHandleInternal.h"
 
+#import "AuthenticationMac.h"
 #import "BlockExceptions.h"
 #import "DocLoader.h"
 #import "FrameLoader.h"
@@ -35,6 +36,7 @@
 #import "ResourceResponse.h"
 #import "SharedBuffer.h"
 #import "SubresourceLoader.h"
+#import "AuthenticationChallenge.h"
 #import "WebCoreSystemInterface.h"
 
 using namespace WebCore;
@@ -261,7 +263,7 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
     if (!m_handle)
         return;
     ++inNSURLConnectionCallback;
-    m_handle->client()->didReceiveAuthenticationChallenge(m_handle, challenge);
+    m_handle->client()->didReceiveAuthenticationChallenge(m_handle, core(challenge));
     --inNSURLConnectionCallback;
 }
 
@@ -270,7 +272,7 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
     if (!m_handle)
         return;
     ++inNSURLConnectionCallback;
-    m_handle->client()->didCancelAuthenticationChallenge(m_handle, challenge);
+    m_handle->client()->didCancelAuthenticationChallenge(m_handle, core(challenge));
     --inNSURLConnectionCallback;
 }
 
@@ -337,21 +339,21 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
 {
     if (!m_handle)
         return;
-    m_handle->client()->receivedCredential(m_handle, challenge, credential);
+    m_handle->client()->receivedCredential(m_handle, core(challenge), core(credential));
 }
 
 - (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     if (!m_handle)
         return;
-    m_handle->client()->receivedRequestToContinueWithoutCredential(m_handle, challenge);
+    m_handle->client()->receivedRequestToContinueWithoutCredential(m_handle, core(challenge));
 }
 
 - (void)cancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     if (!m_handle)
         return;
-    m_handle->client()->receivedCancellation(m_handle, challenge);
+    m_handle->client()->receivedCancellation(m_handle, core(challenge));
 }
 
 @end

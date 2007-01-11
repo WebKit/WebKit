@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,59 +22,59 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-
 #include "config.h"
-#include "ResourceHandle.h"
-#include "ResourceHandleInternal.h"
-
-#include "Logging.h"
+#include "Credential.h"
 
 namespace WebCore {
 
-ResourceHandle::ResourceHandle(const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool mightDownloadFromHandle)
-    : d(new ResourceHandleInternal(this, request, client, defersLoading, mightDownloadFromHandle))
+// Need to enforce empty, non-null strings due to the pickiness of the String == String operator
+// combined with the semantics of the String(NSString*) constructor
+Credential::Credential()
+    : m_user("")
+    , m_password("")
 {
 }
-
-PassRefPtr<ResourceHandle> ResourceHandle::create(const ResourceRequest& request, ResourceHandleClient* client, Frame* frame, bool defersLoading, bool mightDownloadFromHandle)
+   
+// Need to enforce empty, non-null strings due to the pickiness of the String == String operator
+// combined with the semantics of the String(NSString*) constructor
+Credential::Credential(const String& user, const String& password, CredentialPersistence persistence)
+    : m_user(user.length() ? user : "")
+    , m_password(password.length() ? password : "")
+    , m_persistence(persistence)
 {
-    RefPtr<ResourceHandle> newLoader(new ResourceHandle(request, client, defersLoading, mightDownloadFromHandle));
+}
     
-    if (newLoader->start(frame))
-        return newLoader.release();
-
-    return 0;
+const String& Credential::user() const
+{ 
+    return m_user; 
 }
 
-const HTTPHeaderMap& ResourceHandle::requestHeaders() const
+const String& Credential::password() const 
+{ 
+    return m_password; 
+}
+
+bool Credential::hasPassword() const 
+{ 
+    return !m_password.isEmpty(); 
+}
+
+CredentialPersistence Credential::persistence() const 
+{ 
+    return m_persistence; 
+}
+
+bool operator==(const Credential& a, const Credential& b)
 {
-    return d->m_request.httpHeaderFields();
+    if (a.user() != b.user())
+        return false;
+    if (a.password() != b.password())
+        return false;
+    if (a.persistence() != b.persistence())
+        return false;
+        
+    return true;
 }
 
-const KURL& ResourceHandle::url() const
-{
-    return d->m_request.url();
 }
-
-PassRefPtr<FormData> ResourceHandle::postData() const
-{
-    return d->m_request.httpBody();
-}
-
-const String& ResourceHandle::method() const
-{
-    return d->m_request.httpMethod();
-}
-
-ResourceHandleClient* ResourceHandle::client() const
-{
-    return d->m_client;
-}
-
-const ResourceRequest& ResourceHandle::request() const
-{
-    return d->m_request;
-}
-
-} // namespace WebCore
 
