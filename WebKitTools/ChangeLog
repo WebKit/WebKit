@@ -1,5 +1,11 @@
 2007-01-11  Lars Knoll <lars@trolltech.com>
 
+        Fix compilation
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.pro:
+
+2007-01-11  Lars Knoll <lars@trolltech.com>
+
         Reviewed by Darin.
 
         Adjust to loader changes.
