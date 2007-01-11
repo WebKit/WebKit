@@ -36,7 +36,6 @@
 #include "FrameView.h"
 #include "FrameLoader.h"
 #include "ResourceHandle.h"
-#include "LoaderFunctions.h"
 #include "ResourceHandleInternal.h"
 
 #if PLATFORM(KDE)
