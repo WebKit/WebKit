@@ -1,3 +1,16 @@
+2007-01-11  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adam.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11449
+          Type-to-select in unopened popups doesn't work with Hebrew
+
+        Test: fast/forms/select-type-ahead-non-latin.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::defaultEventHandler): Changed locale-specific
+        isprint() condition to a Unicode isPrintableChar().
+
 2007-01-09  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by geoff
