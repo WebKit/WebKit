@@ -507,7 +507,6 @@ SOURCES += \
     loader/icon/SQLDatabase.cpp \
     loader/qt/FrameLoaderQt.cpp \
     loader/qt/DocumentLoaderQt.cpp \
-    loader/qt/LoaderFunctionsQt.cpp \
     loader/qt/NavigationActionQt.cpp \
     platform/CString.cpp \
     platform/AtomicString.cpp \

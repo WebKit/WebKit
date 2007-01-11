@@ -1,3 +1,12 @@
+2007-01-11  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Anders
+
+        Remove now unused file
+
+        * WebCore.pro:
+        * loader/qt/LoaderFunctionsQt.cpp: Removed.
+
 2007-01-11  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by NOBODY (build fix).
