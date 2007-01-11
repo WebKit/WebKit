@@ -27,7 +27,6 @@
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
 
-#include "LoaderFunctions.h"
 #include "Logging.h"
 
 namespace WebCore {

@@ -1,3 +1,24 @@
+2007-01-11  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        Loader cleanup, get rid of unused code.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/CachedResource.h:
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestResource):
+        (WebCore::DocLoader::checkCacheObjectStatus):
+        * loader/DocLoader.h:
+        * loader/LoaderFunctions.h: Removed.
+        * loader/mac/CachedResourceMac.mm: Removed.
+        * loader/mac/LoaderFunctionsMac.mm: Removed.
+        * loader/mac/LoaderNSURLRequestExtras.h: Removed.
+        * loader/mac/LoaderNSURLRequestExtras.m: Removed.
+        * loader/mac/SubresourceLoaderMac.mm:
+        * page/mac/WebCoreFrameBridge.mm:
+        * platform/network/ResourceHandle.cpp:
+
 2007-01-11  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam.

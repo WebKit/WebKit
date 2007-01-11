@@ -138,10 +138,6 @@ public:
     String accept() const { return m_accept; }
     void setAccept(const String& accept) { m_accept = accept; }
 
-#if PLATFORM(MAC)
-    NSURLRequest* getNSURLRequest();
-#endif
-
 protected:
     void setSize(unsigned size);
 
@@ -150,10 +146,6 @@ protected:
     String m_url;
     String m_accept;
     Request* m_request;
-
-#if PLATFORM(MAC)
-    RetainPtr<NSURLRequest> m_nsURLRequest;
-#endif
 
     ResourceResponse m_response;
     RefPtr<SharedBuffer> m_allData;

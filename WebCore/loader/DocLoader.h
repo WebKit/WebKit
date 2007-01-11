@@ -90,7 +90,8 @@ private:
     CachedResource* requestResource(CachedResource::Type, const String& url, const String* charset = 0);
 
     void checkForReload(const KURL&);
-
+    void checkCacheObjectStatus(CachedResource*);
+    
     Cache* m_cache;
     HashSet<String> m_reloadedURLs;
     mutable HashMap<String, CachedResource*> m_docResources;
