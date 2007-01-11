@@ -129,10 +129,9 @@ NSURLProtectionSpace *mac(const ProtectionSpace& coreSpace)
 
 NSURLCredential *mac(const Credential& coreCredential)
 {
-    NSURLCredentialPersistence persistence;
+    NSURLCredentialPersistence persistence = NSURLCredentialPersistenceNone;
     switch (coreCredential.persistence()) {
         case CredentialPersistenceNone:
-            persistence = NSURLCredentialPersistenceNone;
             break;
         case CredentialPersistenceForSession:
             persistence = NSURLCredentialPersistenceForSession;
