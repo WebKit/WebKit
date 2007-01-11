@@ -3028,9 +3028,6 @@ void RenderBlock::adjustPointToColumnContents(IntPoint& point) const
     if (!hasColumns() || !m_columnRects)
         return;
 
-    // Begin with a result rect that is empty.
-    IntRect result;
-    
     // Determine which columns we intersect.
     int colGap = columnGap();
     int leftGap = colGap / 2;
