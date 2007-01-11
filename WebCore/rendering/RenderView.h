@@ -63,8 +63,7 @@ public:
     virtual RenderObject* selectionStart() const { return m_selectionStart; }
     virtual RenderObject* selectionEnd() const { return m_selectionEnd; }
 
-    void setPrintingMode(bool print) { m_printingMode = print; }
-    bool printingMode() const { return m_printingMode; }
+    bool printing() const;
     void setPrintImages(bool enable) { m_printImages = enable; }
     bool printImages() const { return m_printImages; }
     void setTruncatedAt(int y) { m_truncatedAt = y; m_bestTruncatedAt = m_truncatorWidth = 0; m_forcedPageBreak = false; }
@@ -103,7 +102,6 @@ protected:
     int m_selectionEndPos;
 
     // used to ignore viewport width when printing to the printer
-    bool m_printingMode;
     bool m_printImages;
     int m_truncatedAt;
 

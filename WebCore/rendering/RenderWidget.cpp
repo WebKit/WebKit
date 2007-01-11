@@ -223,7 +223,7 @@ void RenderWidget::updateWidgetPosition()
         // The widget changed positions.  Update the frame geometry.
         if (checkForRepaintDuringLayout()) {
             RenderView* v = view();
-            if (!v->printingMode()) {
+            if (!v->printing()) {
                 v->repaintViewRectangle(oldBounds);
                 v->repaintViewRectangle(newBounds);
             }

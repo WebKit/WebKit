@@ -388,39 +388,18 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     m_frame->reparseConfiguration();
 }
 
-static BOOL nowPrinting(WebCoreFrameBridge *self)
-{
-    Document *doc = self->m_frame->document();
-    return doc && doc->printing();
-}
-
-// Set or unset the printing mode in the view.  We only toy with this if we're printing.
-- (void)_setupRootForPrinting:(BOOL)onOrOff
-{
-    if (nowPrinting(self)) {
-        RenderView *root = static_cast<RenderView *>(m_frame->document()->renderer());
-        if (root) {
-            root->setPrintingMode(onOrOff);
-        }
-    }
-}
-
 - (void)forceLayoutAdjustingViewSize:(BOOL)flag
 {
-    [self _setupRootForPrinting:YES];
     m_frame->forceLayout();
     if (flag)
         m_frame->view()->adjustViewSize();
-    [self _setupRootForPrinting:NO];
 }
 
 - (void)forceLayoutWithMinimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustingViewSize:(BOOL)flag
 {
-    [self _setupRootForPrinting:YES];
     m_frame->forceLayoutWithPageWidthRange(minPageWidth, maxPageWidth);
     if (flag)
         m_frame->view()->adjustViewSize();
-    [self _setupRootForPrinting:NO];
 }
 
 - (void)sendResizeEvent
@@ -439,18 +418,12 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
     ASSERT([[NSGraphicsContext currentContext] isFlipped]);
     GraphicsContext context(platformContext);
     
-    [self _setupRootForPrinting:YES];
-    
-    ASSERT(!m_frame->document() || m_frame->document()->printing() == m_frame->document()->renderer()->view()->printingMode());
-    
     m_frame->paint(&context, enclosingIntRect(rect));
-    [self _setupRootForPrinting:NO];
 }
 
 // Used by pagination code called from AppKit when a standalone web page is printed.
 - (NSArray*)computePageRectsWithPrintWidthScaleFactor:(float)printWidthScaleFactor printHeight:(float)printHeight
 {
-    [self _setupRootForPrinting:YES];
     NSMutableArray* pages = [NSMutableArray arrayWithCapacity:5];
     if (printWidthScaleFactor <= 0) {
         LOG_ERROR("printWidthScaleFactor has bad value %.2f", printWidthScaleFactor);
@@ -486,7 +459,6 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
             [pages addObject: val];
         }
     }
-    [self _setupRootForPrinting:NO];
     
     return pages;
 }
@@ -494,9 +466,7 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
 // This is to support the case where a webview is embedded in the view that's being printed
 - (void)adjustPageHeightNew:(float *)newBottom top:(float)oldTop bottom:(float)oldBottom limit:(float)bottomLimit
 {
-    [self _setupRootForPrinting:YES];
     m_frame->adjustPageHeight(newBottom, oldTop, oldBottom, bottomLimit);
-    [self _setupRootForPrinting:NO];
 }
 
 - (NSObject *)copyRenderNode:(RenderObject *)node copier:(id <WebCoreRenderTreeCopier>)copier

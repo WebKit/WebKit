@@ -1553,7 +1553,7 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
                 // before layout started.  Luckily the layer has cached the repaint rect for its original
                 // position and size, and so we can use that to make a repaint happen now.
                 RenderView* c = view();
-                if (c && !c->printingMode())
+                if (c && !c->printing())
                     c->repaintViewRectangle(m_layer->repaintRect());
             }
         }

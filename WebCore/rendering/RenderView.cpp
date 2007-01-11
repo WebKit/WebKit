@@ -38,7 +38,6 @@ RenderView::RenderView(Node* node, FrameView* view)
     , m_selectionEnd(0)
     , m_selectionStartPos(-1)
     , m_selectionEndPos(-1)
-    , m_printingMode(false)
     , m_printImages(true)
     , m_maximalOutlineSize(0)
     , m_flexBoxInFirstLayout(0)
@@ -68,13 +67,13 @@ RenderView::~RenderView()
 
 void RenderView::calcHeight()
 {
-    if (!m_printingMode && m_frameView)
+    if (!printing() && m_frameView)
         m_height = m_frameView->visibleHeight();
 }
 
 void RenderView::calcWidth()
 {
-    if (!m_printingMode && m_frameView)
+    if (!printing() && m_frameView)
         m_width = m_frameView->visibleWidth();
     m_marginLeft = 0;
     m_marginRight = 0;
@@ -93,7 +92,7 @@ void RenderView::calcMinMaxWidth()
 
 void RenderView::layout()
 {
-    if (m_printingMode)
+    if (printing())
         m_minWidth = m_width;
 
     // FIXME: This is all just a terrible workaround for bugs in layout when the view height changes.
@@ -114,7 +113,7 @@ void RenderView::layout()
     int docw = docWidth();
     int doch = docHeight();
 
-    if (!m_printingMode) {
+    if (!printing()) {
         setWidth(m_frameView->visibleWidth());
         setHeight(m_frameView->visibleHeight());
     }
@@ -141,9 +140,10 @@ bool RenderView::absolutePosition(int& xPos, int& yPos, bool fixed)
 void RenderView::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     // Cache the print rect because the dirty rect could get changed during painting.
-    ASSERT(m_printingMode || printRect().isEmpty());
-    if (m_printingMode)
+    if (printing())
         setPrintRect(paintInfo.rect);
+    else
+        setPrintRect(IntRect());
     paintObject(paintInfo, tx, ty);
 }
 
@@ -180,7 +180,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 
 void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
 {
-    if (m_printingMode || ur.width() == 0 || ur.height() == 0)
+    if (printing() || ur.width() == 0 || ur.height() == 0)
         return;
 
     IntRect vr = viewRect();
@@ -208,7 +208,7 @@ void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
 
 void RenderView::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
 {
-    if (m_printingMode)
+    if (printing())
         return;
 
     if (fixed && m_frameView)
@@ -435,6 +435,11 @@ void RenderView::selectionStartEnd(int& startPos, int& endPos) const
     endPos = m_selectionEndPos;
 }
 
+inline bool RenderView::printing() const
+{
+    return document()->printing();
+}
+
 void RenderView::updateWidgetPositions()
 {
     RenderObjectSet::iterator end = m_widgets.end();
@@ -454,7 +459,7 @@ void RenderView::removeWidget(RenderObject* o)
 
 IntRect RenderView::viewRect() const
 {
-    if (m_printingMode)
+    if (printing())
         return IntRect(0, 0, m_width, m_height);
     if (m_frameView)
         return IntRect(m_frameView->contentsX(),
@@ -467,7 +472,7 @@ IntRect RenderView::viewRect() const
 int RenderView::docHeight() const
 {
     int h;
-    if (m_printingMode || !m_frameView)
+    if (printing() || !m_frameView)
         h = m_height;
     else
         h = m_frameView->visibleHeight();
@@ -492,7 +497,7 @@ int RenderView::docHeight() const
 int RenderView::docWidth() const
 {
     int w;
-    if (m_printingMode || !m_frameView)
+    if (printing() || !m_frameView)
         w = m_width;
     else
         w = m_frameView->visibleWidth();

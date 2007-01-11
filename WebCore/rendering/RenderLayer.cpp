@@ -203,7 +203,7 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
         m_object->getAbsoluteRepaintRectIncludingFloats(newRect, newFullRect);
         if (checkForRepaint) {
             RenderView *c = m_object->view();
-            if (c && !c->printingMode()) {
+            if (c && !c->printing()) {
                 bool didMove = x != m_repaintX || y != m_repaintY;
                 if (!didMove && !m_repaintOverflowOnResize)
                     m_object->repaintAfterLayoutIfNeeded(m_repaintRect, m_fullRepaintRect);
