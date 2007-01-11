@@ -1,3 +1,10 @@
+2007-01-11  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by NOBODY (build fix).
+
+        * loader/mac/FrameLoaderMac.mm:  Removed import of LoaderNSURLRequestExtras.h.
+        * loader/mac/SubresourceLoaderMac.mm:  Ditto.
+
 2007-01-11  George Staikos  <staikos@kde.org>
 
         Fix compile.

@@ -35,7 +35,6 @@
 #import "FrameLoader.h"
 #import "FrameMac.h"
 #import "LoaderNSURLExtras.h"
-#import "LoaderNSURLRequestExtras.h"
 #import "ResourceError.h"
 #import "ResourceHandle.h"
 #import "ResourceRequest.h"
