@@ -227,7 +227,7 @@ bool RenderPath::nodeAtPoint(const HitTestRequest& request, HitTestResult& resul
         FloatPoint hitPoint = mapAbsolutePointToLocal(FloatPoint(_x, _y));
         if ((hitRules.canHitStroke && (style()->svgStyle()->hasStroke() || !hitRules.requireStroke) && strokeContains(hitPoint, hitRules.requireStroke))
             || (hitRules.canHitFill && (style()->svgStyle()->hasFill() || !hitRules.requireFill) && fillContains(hitPoint, hitRules.requireFill))) {
-            setInnerNode(result);
+            updateHitTestResult(result, IntPoint(_x, _y));
             return true;
         }
     }

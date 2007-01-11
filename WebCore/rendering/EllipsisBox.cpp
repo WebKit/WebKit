@@ -71,13 +71,13 @@ bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         int mtx = tx + m_width - m_markupBox->xPos();
         int mty = ty + m_baseline - (m_markupBox->yPos() + m_markupBox->baseline());
         if (m_markupBox->nodeAtPoint(request, result, x, y, mtx, mty)) {
-            object()->setInnerNode(result);
+            object()->updateHitTestResult(result, IntPoint(x - mtx, y - mty));
             return true;
         }
     }
 
     if (object()->style()->visibility() == VISIBLE && IntRect(tx, ty, m_width, m_height).contains(x, y)) {
-        object()->setInnerNode(result);
+        object()->updateHitTestResult(result, IntPoint(x - tx, y - ty));
         return true;
     }
 

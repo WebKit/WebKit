@@ -46,12 +46,14 @@ public:
     Node* innerNode() const { return m_innerNode.get(); }
     Node* innerNonSharedNode() const { return m_innerNonSharedNode.get(); }
     IntPoint point() const { return m_point; }
+    IntPoint localPoint() const { return m_localPoint; }
     Element* URLElement() const { return m_innerURLElement.get(); }
     PlatformScrollbar* scrollbar() const { return m_scrollbar.get(); }
 
     void setInnerNode(Node*);
     void setInnerNonSharedNode(Node*);
     void setPoint(const IntPoint& p) { m_point = p; }
+    void setLocalPoint(const IntPoint& p) { m_localPoint = p; }
     void setURLElement(Element*);
     void setScrollbar(PlatformScrollbar*);
 
@@ -73,6 +75,8 @@ private:
     RefPtr<Node> m_innerNode;
     RefPtr<Node> m_innerNonSharedNode;
     IntPoint m_point;
+    IntPoint m_localPoint; // A point in the local coordinate space of m_innerNonSharedNode's renderer.  Allows us to efficiently
+                           // determine where inside the renderer we hit on subsequent operations.
     RefPtr<Element> m_innerURLElement;
     RefPtr<PlatformScrollbar> m_scrollbar;
 };

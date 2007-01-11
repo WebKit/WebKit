@@ -272,7 +272,7 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
         // table-specific hit-test method (which we should do for performance reasons anyway),
         // then we can remove this check.
         if (!child->layer() && !child->isInlineFlow() && child->nodeAtPoint(request, result, x, y, tx, ty, action)) {
-            setInnerNode(result);
+            updateHitTestResult(result, IntPoint(x - tx, y - ty));
             return true;
         }
     }
@@ -280,7 +280,7 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
     // Check our bounds next. For this purpose always assume that we can only be hit in the
     // foreground phase (which is true for replaced elements like images).
     if (action == HitTestForeground && IntRect(tx, ty, m_width, m_height).contains(x, y)) {
-        setInnerNode(result);
+        updateHitTestResult(result, IntPoint(x - tx, y - ty));
         return true;
     }
 

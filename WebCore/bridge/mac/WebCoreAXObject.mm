@@ -579,8 +579,8 @@ static int headingLevel(RenderObject* renderer)
             return nil;
         
         // FIXME: should use startOfDocument and endOfDocument (or rangeForDocument?) here
-        VisiblePosition startVisiblePosition = m_renderer->positionForCoordinates (0, 0);
-        VisiblePosition endVisiblePosition   = m_renderer->positionForCoordinates (LONG_MAX, LONG_MAX);
+        VisiblePosition startVisiblePosition = m_renderer->positionForCoordinates(0, 0);
+        VisiblePosition endVisiblePosition   = m_renderer->positionForCoordinates(LONG_MAX, LONG_MAX);
         if (startVisiblePosition.isNull() || endVisiblePosition.isNull())
             return nil;
             
@@ -1221,7 +1221,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
     // iterate over the lines
     // NOTE: BUG this is wrong when lineNumber is lineCount+1,  because nextLinePosition takes you to the
     // last offset of the last line
-    VisiblePosition visiblePos = [self topRenderer]->positionForCoordinates (0, 0);
+    VisiblePosition visiblePos = [self topRenderer]->positionForCoordinates(0, 0);
     VisiblePosition savedVisiblePos;
     while (--lineCount != 0) {
         savedVisiblePos = visiblePos;
@@ -1266,20 +1266,22 @@ static IntRect boundingBoxRect(RenderObject* obj)
     NSView* view = docView->getDocumentView();
     RenderObject* renderer = [self topRenderer];
     Node* innerNode = NULL;
-    NSPoint ourpoint;
     
     // locate the node containing the point
+    IntPoint pointResult;
     while (1) {
         // ask the document layer to hitTest
         NSPoint windowCoord = [[view window] convertScreenToBase: point];
-        ourpoint = [view convertPoint:windowCoord fromView:nil];
-        
+        IntPoint ourpoint([view convertPoint:windowCoord fromView:nil]);
+
         HitTestRequest request(true, true);
-        HitTestResult result = HitTestResult(IntPoint(ourpoint));
+        HitTestResult result(ourpoint);
         renderer->layer()->hitTest(request, result);
         innerNode = result.innerNode();
         if (!innerNode || !innerNode->renderer())
             return nil;
+
+        pointResult = result.localPoint();
 
         // done if hit something other than a widget
         renderer = innerNode->renderer();
@@ -1302,7 +1304,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
     }
     
     // get position within the node
-    VisiblePosition pos = innerNode->renderer()->positionForCoordinates ((int)ourpoint.x, (int)ourpoint.y);
+    VisiblePosition pos = innerNode->renderer()->positionForPoint(pointResult);
     return (id) [self textMarkerForVisiblePosition:pos];
 }
 

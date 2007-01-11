@@ -125,13 +125,13 @@ void EventHandler::clear()
     m_mousePressed = false;
 }
 
-void EventHandler::selectClosestWordFromMouseEvent(const PlatformMouseEvent& mouse, Node *innerNode)
+void EventHandler::selectClosestWordFromMouseEvent(const MouseEventWithHitTestResults& result)
 {
+    Node* innerNode = result.targetNode();
     Selection newSelection;
 
     if (innerNode && innerNode->renderer() && m_mouseDownMayStartSelect && innerNode->renderer()->shouldSelect()) {
-        IntPoint vPoint = m_frame->view()->windowToContents(mouse.pos());
-        VisiblePosition pos(innerNode->renderer()->positionForPoint(vPoint));
+        VisiblePosition pos(innerNode->renderer()->positionForPoint(result.localPoint()));
         if (pos.isNotNull()) {
             newSelection = Selection(pos);
             newSelection.expandUsingGranularity(WordGranularity);
@@ -160,7 +160,7 @@ bool EventHandler::handleMousePressEventDoubleClick(const MouseEventWithHitTestR
         // from setting caret selection.
         m_beganSelectingText = true;
     else
-        selectClosestWordFromMouseEvent(event.event(), event.targetNode());
+        selectClosestWordFromMouseEvent(event);
 
     return true;
 }
@@ -176,8 +176,7 @@ bool EventHandler::handleMousePressEventTripleClick(const MouseEventWithHitTestR
         return false;
 
     Selection newSelection;
-    IntPoint vPoint = m_frame->view()->windowToContents(event.event().pos());
-    VisiblePosition pos(innerNode->renderer()->positionForPoint(vPoint));
+    VisiblePosition pos(innerNode->renderer()->positionForPoint(event.localPoint()));
     if (pos.isNotNull()) {
         newSelection = Selection(pos);
         newSelection.expandUsingGranularity(ParagraphGranularity);
@@ -212,7 +211,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
     if (!extendSelection && m_frame->selectionController()->contains(vPoint))
         return false;
 
-    VisiblePosition visiblePos(innerNode->renderer()->positionForPoint(vPoint));
+    VisiblePosition visiblePos(innerNode->renderer()->positionForPoint(event.localPoint()));
     if (visiblePos.isNull())
         visiblePos = VisiblePosition(innerNode, innerNode->caretMinOffset(), DOWNSTREAM);
     Position pos = visiblePos.deepEquivalent();
@@ -323,8 +322,7 @@ bool EventHandler::handleMouseMoveEvent(const MouseEventWithHitTestResults& even
         return false;
 
     // handle making selection
-    IntPoint vPoint = m_frame->view()->windowToContents(event.event().pos());        
-    VisiblePosition pos(innerNode->renderer()->positionForPoint(vPoint));
+    VisiblePosition pos(innerNode->renderer()->positionForPoint(event.localPoint()));
 
     updateSelectionForMouseDragOverPosition(pos);
 
@@ -378,8 +376,7 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
         Selection newSelection;
         Node *node = event.targetNode();
         if (node && node->isContentEditable() && node->renderer()) {
-            IntPoint vPoint = m_frame->view()->windowToContents(event.event().pos());
-            VisiblePosition pos = node->renderer()->positionForPoint(vPoint);
+            VisiblePosition pos = node->renderer()->positionForPoint(event.localPoint());
             newSelection = Selection(pos);
         }
         if (m_frame->shouldChangeSelection(newSelection))
@@ -1128,7 +1125,7 @@ bool EventHandler::sendContextMenuEvent(PlatformMouseEvent event)
             (m_frame->editor()->selectWordBeforeMenuEvent() || m_frame->editor()->clientIsEditable()
             || (mev.targetNode() && mev.targetNode()->isContentEditable()))) {
         m_mouseDownMayStartSelect = true; // context menu events are always allowed to perform a selection
-        selectClosestWordFromMouseEvent(event, mev.targetNode());
+        selectClosestWordFromMouseEvent(mev);
     }
     
     return swallowEvent;

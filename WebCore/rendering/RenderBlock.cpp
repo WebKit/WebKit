@@ -2627,7 +2627,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
     if (isPointInScrollbar(result, _x, _y, tx, ty)) {
         if (hitTestAction == HitTestBlockBackground) {
-            setInnerNode(result);
+            updateHitTestResult(result, IntPoint(_x - tx, _y - ty));
             return true;
         }
         return false;
@@ -2656,13 +2656,16 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         
         FloatingObject* o;
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
-        for (it.toLast(); (o = it.current()); --it)
-            if (!o->noPaint && !o->node->layer() && o->node->hitTest(request, result, _x, _y,
-                                     scrolledX + o->left + o->node->marginLeft() - o->node->xPos(),
-                                     scrolledY + o->startY + o->node->marginTop() - o->node->yPos())) {
-                setInnerNode(result);
-                return true;
+        for (it.toLast(); (o = it.current()); --it) {
+            if (!o->noPaint && !o->node->layer()) {
+                int xoffset = scrolledX + o->left + o->node->marginLeft() - o->node->xPos();
+                int yoffset =  scrolledY + o->startY + o->node->marginTop() - o->node->yPos();
+                if (o->node->hitTest(request, result, _x, _y, xoffset, yoffset)) {
+                    updateHitTestResult(result, IntPoint(_x - xoffset, _y - yoffset));
+                    return true;
+                }
             }
+        }
     }
 
     // Now hit test our background.
@@ -2670,7 +2673,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         int topExtra = borderTopExtra();
         IntRect boundsRect(tx, ty - topExtra, m_width, m_height + topExtra + borderBottomExtra());
         if (style()->visibility() == VISIBLE && boundsRect.contains(_x, _y)) {
-            setInnerNode(result);
+            updateHitTestResult(result, IntPoint(_x - tx, _y - ty + topExtra));
             return true;
         }
     }
@@ -2716,7 +2719,7 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
     if (childrenInline() && !isTable()) {
         // We have to hit-test our line boxes.
         if (hitTestLines(request, result, x, y, tx, ty, hitTestAction)) {
-            setInnerNode(result);
+            updateHitTestResult(result, IntPoint(x - tx, y - ty));
             return true;
         }
     } else {
@@ -2728,7 +2731,7 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
             // FIXME: We have to skip over inline flows, since they can show up inside RenderTables at the moment (a demoted inline <form> for example).  If we ever implement a
             // table-specific hit-test method (which we should do for performance reasons anyway), then we can remove this check.
             if (!child->layer() && !child->isFloating() && !child->isInlineFlow() && child->nodeAtPoint(request, result, x, y, tx, ty, childHitTest)) {
-                setInnerNode(result);
+                updateHitTestResult(result, IntPoint(x - tx, y - ty));
                 return true;
             }
         }
@@ -2770,21 +2773,29 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
     if (isTable())
         return RenderFlow::positionForCoordinates(x, y); 
 
-    int absx, absy;
-    absolutePositionForContent(absx, absy);
+    int top = borderTop() + paddingTop();
+    int bottom = top + contentHeight() + borderTopExtra() + borderBottomExtra();
 
-    int top = absy + borderTop() + paddingTop();
-    int bottom = top + contentHeight();
-
-    int left = absx + borderLeft() + paddingLeft();
+    int left = borderLeft() + paddingLeft();
     int right = left + contentWidth();
 
     Node* n = element();
     
+    int contentsX = x;
+    int contentsY = y - borderTopExtra();
+    if (hasOverflowClip())
+        m_layer->scrollOffset(contentsX, contentsY);
+    if (hasColumns()) {
+        IntPoint contentsPoint(contentsX, contentsY);
+        adjustPointToColumnContents(contentsPoint);
+        contentsX = contentsPoint.x();
+        contentsY = contentsPoint.y();
+    }
+
     if (isReplaced()) {
-        if (y < absy || y < absy + height() && x < absx)
+        if (y < 0 || y < height() && x < 0)
             return VisiblePosition(n, caretMinOffset(), DOWNSTREAM);
-        if (y >= absy + height() || y >= absy && x >= absx + width())
+        if (y >= height() || y >= 0 && x >= width())
             return VisiblePosition(n, caretMaxOffset(), DOWNSTREAM);
     } 
 
@@ -2796,8 +2807,8 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
 
         if (y < top || (isEditableRoot && (y < bottom && x < left))) {
             if (!isEditableRoot)
-                if (RenderObject* c = firstChild()) {
-                    VisiblePosition p = c->positionForCoordinates(x, y);
+                if (RenderObject* c = firstChild()) { // FIXME: This code doesn't make any sense.  This child could be an inline or a positioned element or a float or a compact, etc.
+                    VisiblePosition p = c->positionForCoordinates(contentsX - c->xPos(), contentsY - c->yPos());
                     if (p.isNotNull())
                         return p;
                 }
@@ -2812,8 +2823,8 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
 
         if (y >= bottom || (isEditableRoot && (y >= top && x >= right))) {
             if (!isEditableRoot)
-                if (RenderObject* c = lastChild()) {
-                    VisiblePosition p = c->positionForCoordinates(x, y);
+                if (RenderObject* c = lastChild()) { // FIXME: This code doesn't make any sense.  This child could be an inline or a positioned element or a float or a compact, ect.
+                    VisiblePosition p = c->positionForCoordinates(contentsX - c->xPos(), contentsY - c->yPos());
                     if (p.isNotNull())
                         return p;
                 }
@@ -2830,13 +2841,8 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
     if (childrenInline()) {
         if (!firstRootBox())
             return VisiblePosition(n, 0, DOWNSTREAM);
-            
-        int contentsX = absx;
-        int contentsY = absy;
-        if (hasOverflowClip())
-            layer()->subtractScrollOffset(contentsX, contentsY); 
 
-        if (y < contentsY + firstRootBox()->topOverflow() - verticalLineClickFudgeFactor)
+        if (contentsY < firstRootBox()->topOverflow() - verticalLineClickFudgeFactor)
             // y coordinate is above first root line box
             return VisiblePosition(positionForBox(firstRootBox()->firstLeafChild(), true), DOWNSTREAM);
         
@@ -2845,15 +2851,15 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
             // set the bottom based on whether there is a next root box
             if (root->nextRootBox())
                 // FIXME: make the break point halfway between the bottom of the previous root box and the top of the next root box
-                bottom = contentsY + root->nextRootBox()->topOverflow();
+                bottom = root->nextRootBox()->topOverflow();
             else
-                bottom = contentsY + root->bottomOverflow() + verticalLineClickFudgeFactor;
+                bottom = root->bottomOverflow() + verticalLineClickFudgeFactor;
             // check if this root line box is located at this y coordinate
-            if (y < bottom && root->firstChild()) {
-                InlineBox* closestBox = root->closestLeafChildForXPos(x, contentsX);
+            if (contentsY < bottom && root->firstChild()) {
+                InlineBox* closestBox = root->closestLeafChildForXPos(x);
                 if (closestBox)
                     // pass the box a y position that is inside it
-                    return closestBox->object()->positionForCoordinates(x, contentsY + closestBox->m_y);
+                    return closestBox->object()->positionForCoordinates(contentsX, closestBox->m_y);
             }
         }
 
@@ -2868,16 +2874,15 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
     for (RenderObject* renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
         if (renderer->height() == 0 || renderer->style()->visibility() != VISIBLE || renderer->isFloatingOrPositioned())
             continue;
-        renderer->absolutePositionForContent(absx, top);
         RenderObject* next = renderer->nextSibling();
         while (next && next->isFloatingOrPositioned())
             next = next->nextSibling();
         if (next) 
-            next->absolutePositionForContent(absx, bottom);
+            bottom = next->yPos();
         else
-            bottom = top + contentHeight();
-        if (y >= top && y < bottom)
-            return renderer->positionForCoordinates(x, y);
+            bottom = top + scrollHeight();
+        if (contentsY >= renderer->yPos() && contentsY < bottom)
+            return renderer->positionForCoordinates(contentsX - renderer->xPos(), contentsY - renderer->yPos());
     }
     
     return RenderFlow::positionForCoordinates(x, y);
@@ -3015,6 +3020,33 @@ void RenderBlock::layoutColumns()
     v->setTruncatedAt(0);
     
     ASSERT(m_columnRects && m_columnCount == m_columnRects->size());
+}
+
+void RenderBlock::adjustPointToColumnContents(IntPoint& point) const
+{
+    // Just bail if we have no columns.
+    if (!hasColumns() || !m_columnRects)
+        return;
+
+    // Begin with a result rect that is empty.
+    IntRect result;
+    
+    // Determine which columns we intersect.
+    int colGap = columnGap();
+    int leftGap = colGap / 2;
+    IntPoint columnPoint(m_columnRects->at(0).location());
+    for (unsigned i = 0; i < m_columnRects->size(); i++) {
+        // Add in half the column gap to the left and right of the rect.
+        IntRect colRect = m_columnRects->at(i);
+        IntRect gapAndColumnRect(colRect.x() - leftGap, colRect.y(), colRect.width() + colGap, colRect.height());
+        
+        if (gapAndColumnRect.contains(point))
+            // We're inside the column.  Translate the x and y into our column coordinate space.
+            point -= columnPoint - colRect.location();
+
+        // Move to the next position.
+        columnPoint.setY(columnPoint.y() + colRect.height());
+    }
 }
 
 void RenderBlock::adjustRectForColumns(IntRect& r) const

@@ -208,46 +208,40 @@ VisiblePosition RenderText::positionForCoordinates(int x, int y)
     if (!firstTextBox() || stringLength() == 0)
         return VisiblePosition(element(), 0, DOWNSTREAM);
 
-    int absx, absy;
-    RenderBlock* cb = containingBlock();
-    cb->absolutePositionForContent(absx, absy);
-    if (cb->hasOverflowClip())
-        cb->layer()->subtractScrollOffset(absx, absy);
-
     // Get the offset for the position, since this will take rtl text into account.
     int offset;
 
     // FIXME: We should be able to roll these special cases into the general cases in the loop below.
-    if (firstTextBox() && y < absy + firstTextBox()->root()->bottomOverflow() && x < absx + firstTextBox()->m_x) {
+    if (firstTextBox() && y <  firstTextBox()->root()->bottomOverflow() && x < firstTextBox()->m_x) {
         // at the y coordinate of the first line or above
         // and the x coordinate is to the left of the first text box left edge
-        offset = firstTextBox()->offsetForPosition(x - absx);
+        offset = firstTextBox()->offsetForPosition(x);
         return VisiblePosition(element(), offset + firstTextBox()->m_start, DOWNSTREAM);
     }
-    if (lastTextBox() && y >= absy + lastTextBox()->root()->topOverflow() && x >= absx + lastTextBox()->m_x + lastTextBox()->m_width) {
+    if (lastTextBox() && y >= lastTextBox()->root()->topOverflow() && x >= lastTextBox()->m_x + lastTextBox()->m_width) {
         // at the y coordinate of the last line or below
         // and the x coordinate is to the right of the last text box right edge
-        offset = lastTextBox()->offsetForPosition(x - absx);
+        offset = lastTextBox()->offsetForPosition(x);
         return VisiblePosition(element(), offset + lastTextBox()->m_start, DOWNSTREAM);
     }
 
     InlineTextBox* lastBoxAbove = 0;
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
-        if (y >= absy + box->root()->topOverflow()) {
-            if (y < absy + box->root()->bottomOverflow()) {
-                offset = box->offsetForPosition(x - absx);
+        if (y >= box->root()->topOverflow()) {
+            if (y < box->root()->bottomOverflow()) {
+                offset = box->offsetForPosition(x);
 
-                if (x == absx + box->m_x)
+                if (x == box->m_x)
                     // the x coordinate is equal to the left edge of this box
                     // the affinity must be downstream so the position doesn't jump back to the previous line
                     return VisiblePosition(element(), offset + box->m_start, DOWNSTREAM);
 
-                if (x < absx + box->m_x + box->m_width)
+                if (x < box->m_x + box->m_width)
                     // and the x coordinate is to the left of the right edge of this box
                     // check to see if position goes in this box
                     return VisiblePosition(element(), offset + box->m_start, offset > 0 ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM);
 
-                if (!box->prevOnLine() && x < absx + box->m_x)
+                if (!box->prevOnLine() && x < box->m_x)
                     // box is first on line
                     // and the x coordinate is to the left of the first text box left edge
                     return VisiblePosition(element(), offset + box->m_start, DOWNSTREAM);

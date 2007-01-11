@@ -35,10 +35,11 @@ static inline Element* targetElement(Node* node)
 }
 
 MouseEventWithHitTestResults::MouseEventWithHitTestResults(const PlatformMouseEvent& event,
-        PassRefPtr<Node> node, PlatformScrollbar* scrollbar, bool isOverLink)
+        PassRefPtr<Node> node, const IntPoint& localPoint, PlatformScrollbar* scrollbar, bool isOverLink)
     : m_event(event)
     , m_targetNode(node)
     , m_targetElement(targetElement(m_targetNode.get()))
+    , m_localPoint(localPoint)
     , m_scrollbar(scrollbar)
     , m_isOverLink(isOverLink)
 {

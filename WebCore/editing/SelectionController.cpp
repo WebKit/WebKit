@@ -1007,7 +1007,7 @@ bool SelectionController::contains(const IntPoint& point)
     if (!innerNode || !innerNode->renderer())
         return false;
     
-    Position pos(innerNode->renderer()->positionForPoint(point).deepEquivalent());
+    Position pos(innerNode->renderer()->positionForPoint(result.localPoint()).deepEquivalent());
     if (pos.isNull())
         return false;
 

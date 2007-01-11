@@ -2609,12 +2609,13 @@ bool RenderObject::hitTest(const HitTestRequest& request, HitTestResult& result,
     return inside;
 }
 
-void RenderObject::setInnerNode(HitTestResult& result)
+void RenderObject::updateHitTestResult(HitTestResult& result, const IntPoint& point)
 {
     if (result.innerNode())
         return;
 
     Node* node = element();
+    IntPoint localPoint(point);
     if (isRenderView())
         node = document()->documentElement();
     else if (!isInline() && continuation())
@@ -2624,9 +2625,23 @@ void RenderObject::setInnerNode(HitTestResult& result)
         node = continuation()->element();
 
     if (node) {
+        if (node->renderer()->continuation() && node->renderer() != this) {
+            // We're in the continuation of a split inline.  Adjust our local point to be in the coordinate space
+            // of the principal renderer's containing block.  This will end up being the innerNonSharedNode.
+            RenderObject* firstBlock = node->renderer()->containingBlock();
+            
+            // Get our containing block.
+            RenderObject* block = this;
+            if (isInline())
+                block = containingBlock();
+        
+            localPoint.move(block->xPos() - firstBlock->xPos(), block->yPos() - firstBlock->yPos());
+        }
+
         result.setInnerNode(node);
         if (!result.innerNonSharedNode())
             result.setInnerNonSharedNode(node);
+        result.setLocalPoint(localPoint);
     }
 }
 

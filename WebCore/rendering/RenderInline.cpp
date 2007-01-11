@@ -354,9 +354,16 @@ bool RenderInline::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
 
 VisiblePosition RenderInline::positionForCoordinates(int x, int y)
 {
+    // Translate the coords from the pre-anonymous block to the post-anonymous block.
+    RenderBlock* cb = containingBlock();
+    int parentBlockX = cb->xPos() + x;
+    int parentBlockY = cb->yPos() + y;
     for (RenderObject* c = continuation(); c; c = c->continuation()) {
+        RenderObject* contBlock = c;
+        if (c->isInline())
+            contBlock = c->containingBlock();
         if (c->isInline() || c->firstChild())
-            return c->positionForCoordinates(x, y);
+            return c->positionForCoordinates(parentBlockX - contBlock->xPos(), parentBlockY - contBlock->yPos());
     }
 
     return RenderFlow::positionForCoordinates(x, y);

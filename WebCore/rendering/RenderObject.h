@@ -526,7 +526,7 @@ public:
 
     bool hitTest(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestFilter = HitTestAll);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
-    void setInnerNode(HitTestResult&);
+    void updateHitTestResult(HitTestResult&, const IntPoint&);
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
     VisiblePosition positionForPoint(const IntPoint& point) { return positionForCoordinates(point.x(), point.y()); }

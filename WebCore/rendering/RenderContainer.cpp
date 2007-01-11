@@ -539,16 +539,11 @@ VisiblePosition RenderContainer::positionForCoordinates(int x, int y)
         return VisiblePosition(element(), 0, DOWNSTREAM);
         
     if (isTable() && element()) {
-        int absx, absy;
-        absolutePositionForContent(absx, absy);
+        int right = contentWidth() + borderRight() + paddingRight() + borderLeft() + paddingLeft();
+        int bottom = contentHeight() + borderTop() + paddingTop() + borderBottom() + paddingBottom();
         
-        int left = absx;
-        int right = left + contentWidth() + borderRight() + paddingRight() + borderLeft() + paddingLeft();
-        int top = absy;
-        int bottom = top + contentHeight() + borderTop() + paddingTop() + borderBottom() + paddingBottom();
-        
-        if (x < left || x > right || y < top || y > bottom) {
-            if (x <= (left + right) / 2)
+        if (x < 0 || x > right || y < 0 || y > bottom) {
+            if (x <= right / 2)
                 return VisiblePosition(Position(element(), 0));
             else
                 return VisiblePosition(Position(element(), maxDeepOffset(element())));
@@ -558,22 +553,28 @@ VisiblePosition RenderContainer::positionForCoordinates(int x, int y)
     // Pass off to the closest child.
     int minDist = INT_MAX;
     RenderObject* closestRenderer = 0;
+    int newX = x;
+    int newY = y;
+    if (isTableRow()) {
+        newX += xPos();
+        newY += yPos();
+    }
     for (RenderObject* renderer = m_firstChild; renderer; renderer = renderer->nextSibling()) {
         if (!renderer->firstChild() && !renderer->isInline() && !renderer->isBlockFlow() 
             || renderer->style()->visibility() != VISIBLE)
             continue;
-
-        int absx, absy;
-        renderer->absolutePositionForContent(absx, absy);
         
-        int top = absy + borderTop() + paddingTop();
+        int top = borderTop() + paddingTop() + isTableRow() ? 0 : renderer->xPos();
         int bottom = top + renderer->contentHeight();
-        int left = absx + borderLeft() + paddingLeft();
+        int left = borderLeft() + paddingLeft() + isTableRow() ? 0 : renderer->yPos();
         int right = left + renderer->contentWidth();
         
-        if (x <= right && x >= left && y <= top && y >= bottom)
-            return renderer->positionForCoordinates(x, y);
-        
+        if (x <= right && x >= left && y <= top && y >= bottom) {
+            if (renderer->isTableRow())
+                return renderer->positionForCoordinates(x + newX - renderer->xPos(), y + newY - renderer->yPos());
+            return renderer->positionForCoordinates(x - renderer->xPos(), y - renderer->yPos());
+        }
+
         // Find the distance from (x, y) to the box.  Split the space around the box into 8 pieces
         // and use a different compare depending on which piece (x, y) is in.
         IntPoint cmp;
@@ -609,7 +610,7 @@ VisiblePosition RenderContainer::positionForCoordinates(int x, int y)
     }
     
     if (closestRenderer)
-        return closestRenderer->positionForCoordinates(x, y);
+        return closestRenderer->positionForCoordinates(newX - closestRenderer->xPos(), newY - closestRenderer->yPos());
     
     return VisiblePosition(element(), 0, DOWNSTREAM);
 }

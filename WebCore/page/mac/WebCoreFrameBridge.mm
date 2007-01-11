@@ -1205,16 +1205,14 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (VisiblePosition)_visiblePositionForPoint:(NSPoint)point
 {
     IntPoint outerPoint(point);
-    Node* node = m_frame->eventHandler()->hitTestResultAtPoint(outerPoint, true).innerNode();
+    HitTestResult result = m_frame->eventHandler()->hitTestResultAtPoint(outerPoint, true);
+    Node* node = result.innerNode();
     if (!node)
         return VisiblePosition();
     RenderObject* renderer = node->renderer();
     if (!renderer)
         return VisiblePosition();
-    FrameView* outerView = m_frame->view();
-    FrameView* innerView = node->document()->view();
-    IntPoint innerPoint = innerView->windowToContents(outerView->contentsToWindow(outerPoint));
-    VisiblePosition visiblePos = renderer->positionForCoordinates(innerPoint.x(), innerPoint.y());
+    VisiblePosition visiblePos = renderer->positionForCoordinates(result.localPoint().x(), result.localPoint().y());
     if (visiblePos.isNull())
         visiblePos = VisiblePosition(Position(node, 0));
     return visiblePos;

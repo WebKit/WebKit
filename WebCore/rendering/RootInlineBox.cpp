@@ -146,7 +146,7 @@ bool RootInlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 {
     if (m_ellipsisBox && object()->style()->visibility() == VISIBLE) {
         if (m_ellipsisBox->nodeAtPoint(request, result, x, y, tx, ty)) {
-            object()->setInnerNode(result);
+            object()->updateHitTestResult(result, IntPoint(x - tx, y - ty));
             return true;
         }
     }
@@ -286,7 +286,7 @@ RenderBlock* RootInlineBox::block() const
     return static_cast<RenderBlock*>(m_object);
 }
 
-InlineBox* RootInlineBox::closestLeafChildForXPos(int x, int tx)
+InlineBox* RootInlineBox::closestLeafChildForXPos(int x)
 {
     InlineBox* firstLeaf = firstLeafChildAfterBox();
     InlineBox* lastLeaf = lastLeafChildBeforeBox();
@@ -294,19 +294,19 @@ InlineBox* RootInlineBox::closestLeafChildForXPos(int x, int tx)
         return firstLeaf;
 
     // Avoid returning a list marker when possible.
-    if (x <= tx + firstLeaf->m_x && !firstLeaf->object()->isListMarker())
+    if (x <= firstLeaf->m_x && !firstLeaf->object()->isListMarker())
         // The x coordinate is less or equal to left edge of the firstLeaf.
         // Return it.
         return firstLeaf;
 
-    if (x >= tx + lastLeaf->m_x + lastLeaf->m_width && !lastLeaf->object()->isListMarker())
+    if (x >= lastLeaf->m_x + lastLeaf->m_width && !lastLeaf->object()->isListMarker())
         // The x coordinate is greater or equal to right edge of the lastLeaf.
         // Return it.
         return lastLeaf;
 
     for (InlineBox* leaf = firstLeaf; leaf && leaf != lastLeaf; leaf = leaf->nextLeafChild()) {
         if (!leaf->object()->isListMarker()) {
-            int leafX = tx + leaf->m_x;
+            int leafX = leaf->m_x;
             if (x < leafX + leaf->m_width)
                 // The x coordinate is less than the right edge of the box.
                 // Return it.

@@ -28,12 +28,14 @@ namespace WebCore {
 
 class PlatformScrollbar;
 
+// FIXME: Why doesn't this class just cache a HitTestResult instead of copying all of HitTestResult's fields over?
 class MouseEventWithHitTestResults {
 public:
-    MouseEventWithHitTestResults(const PlatformMouseEvent&, PassRefPtr<Node>, PlatformScrollbar*, bool isOverLink);
+    MouseEventWithHitTestResults(const PlatformMouseEvent&, PassRefPtr<Node>, const IntPoint& localPoint, PlatformScrollbar*, bool isOverLink);
 
     const PlatformMouseEvent& event() const { return m_event; }
     Node* targetNode() const;
+    const IntPoint& localPoint() const { return m_localPoint; }
     PlatformScrollbar* scrollbar() const { return m_scrollbar; }
     bool isOverLink() const { return m_isOverLink; }
 
@@ -41,6 +43,7 @@ private:
     PlatformMouseEvent m_event;
     RefPtr<Node> m_targetNode;
     RefPtr<Element> m_targetElement;
+    IntPoint m_localPoint;
     PlatformScrollbar* m_scrollbar;
     bool m_isOverLink;
 };

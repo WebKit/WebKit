@@ -118,34 +118,32 @@ unsigned RenderReplaced::caretMaxRenderedOffset() const
     return 1; 
 }
 
-VisiblePosition RenderReplaced::positionForCoordinates(int _x, int _y)
+VisiblePosition RenderReplaced::positionForCoordinates(int x, int y)
 {
-    InlineBox *box = inlineBoxWrapper();
+    InlineBox* box = inlineBoxWrapper();
     if (!box)
         return VisiblePosition(element(), 0, DOWNSTREAM);
 
-    RootInlineBox *root = box->root();
+    // FIXME: This code is buggy if the replaced element is relative positioned.
 
-    int absx, absy;
-    containingBlock()->absolutePosition(absx, absy);
+    RootInlineBox* root = box->root();
 
-    int top = absy + root->topOverflow();
-    int bottom = root->nextRootBox() ? absy + root->nextRootBox()->topOverflow() : absy + root->bottomOverflow();
+    int top = root->topOverflow();
+    int bottom = root->nextRootBox() ? root->nextRootBox()->topOverflow() : root->bottomOverflow();
 
-    if (_y < top)
+    if (y + yPos() < top)
         return VisiblePosition(element(), caretMinOffset(), DOWNSTREAM); // coordinates are above
     
-    if (_y >= bottom)
+    if (y + yPos() >= bottom)
         return VisiblePosition(element(), caretMaxOffset(), DOWNSTREAM); // coordinates are below
     
     if (element()) {
-        if (_x <= absx + xPos() + (width() / 2))
+        if (x <= width() / 2)
             return VisiblePosition(element(), 0, DOWNSTREAM);
-
         return VisiblePosition(element(), 1, DOWNSTREAM);
     }
 
-    return RenderBox::positionForCoordinates(_x, _y);
+    return RenderBox::positionForCoordinates(x, y);
 }
 
 IntRect RenderReplaced::selectionRect()
