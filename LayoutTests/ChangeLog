@@ -1,3 +1,26 @@
+2007-01-10  Kirby White  <KWhiteRight@gmail.com>
+
+        Reviewed by Darin.
+
+        New and adjusted test cases for
+        http://bugs.webkit.org/show_bug.cgi?id=11841
+
+        * fast/dom/HTMLImageElement/image-alt-text-expected.checksum: Added.
+        * fast/dom/HTMLImageElement/image-alt-text-expected.png: Added.
+        * fast/dom/HTMLImageElement/image-alt-text-expected.txt: Added.
+        * fast/dom/HTMLImageElement/image-alt-text.html: Added.
+        * fast/dom/HTMLImageElement/resources/blue_rect.jpg: Added.
+        * fast/dom/HTMLInputElement/input-image-alt-text-expected.checksum: Added.
+        * fast/dom/HTMLInputElement/input-image-alt-text-expected.png: Added.
+        * fast/dom/HTMLInputElement/input-image-alt-text-expected.txt: Added.
+        * fast/dom/HTMLInputElement/input-image-alt-text.html: Added.
+        * fast/dom/HTMLInputElement/resources/blue_rect.jpg: Added.
+        * fast/forms/focus2-expected.txt:
+        * fast/forms/focus2.html:
+        * fast/forms/input-value-expected.checksum:
+        * fast/forms/input-value-expected.png:
+        * fast/forms/input-value-expected.txt:
+
 2007-01-10  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

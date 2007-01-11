@@ -166,8 +166,15 @@ void HTMLImageElement::attach()
 {
     HTMLElement::attach();
 
-    if (RenderImage* imageObj = static_cast<RenderImage*>(renderer()))
+    if (renderer()) {
+        RenderImage* imageObj = static_cast<RenderImage*>(renderer());
         imageObj->setCachedImage(m_imageLoader.image());
+        
+        // If we have no image at all because we have no src attribute, set
+        // image height and width for the alt text instead.
+        if (!m_imageLoader.image() && !imageObj->cachedImage())
+            imageObj->setImageSizeForAltText();
+    }
 }
 
 void HTMLImageElement::insertedIntoDocument()

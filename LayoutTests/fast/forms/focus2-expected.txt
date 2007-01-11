@@ -13,6 +13,9 @@ blur event: [to] CHECKBOX
 focus event: [to] FILE
 keypress event: [to] FILE
 blur event: [to] FILE
+focus event: [to] IMAGE
+keypress event: [to] IMAGE
+blur event: [to] IMAGE
 focus event: [to] ISINDEX
 keypress event: [to] ISINDEX
 blur event: [to] ISINDEX
@@ -55,6 +58,9 @@ blur event: [to] CHECKBOX
 focus event: [to] FILE
 keypress event: [to] FILE
 blur event: [to] FILE
+focus event: [to] IMAGE
+keypress event: [to] IMAGE
+blur event: [to] IMAGE
 focus event: [to] ISINDEX
 keypress event: [to] ISINDEX
 blur event: [to] ISINDEX

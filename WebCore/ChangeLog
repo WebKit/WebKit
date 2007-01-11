@@ -1,3 +1,22 @@
+2007-01-10  Kirby White  <KWhiteRight@gmail.com>
+
+        Reviewed by Darin.
+
+        Fixes for http://bugs.webkit.org/show_bug.cgi?id=11841
+
+        Set image size to fit alt text when image or input-image element
+        has no src attribute, so that those images show their alt text instead
+        of showing nothing at all.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::attach):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::attach):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::setImageSizeForAltText):
+        (WebCore::RenderImage::imageChanged):
+        * rendering/RenderImage.h:
+
 2007-01-11  Mark Rowe  <mrowe@apple.com>
 
         Build fix.

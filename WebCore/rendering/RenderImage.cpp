@@ -75,6 +75,54 @@ void RenderImage::setCachedImage(CachedImage* newImage)
     }
 }
 
+// If we'll be displaying either alt text or an image, add some padding.
+static const unsigned short paddingWidth = 4;
+static const unsigned short paddingHeight = 4;
+
+// Alt text is restricted to this maximum size, in pixels.  These are
+// signed integers because they are compared with other signed values.
+static const int maxAltTextWidth = 1024;
+static const int maxAltTextHeight = 256;
+
+// Sets the image height and width to fit the alt text.  Returns true if the
+// image size changed.
+bool RenderImage::setImageSizeForAltText(CachedImage* newImage /* = 0 */)
+{
+    int imageWidth = 0;
+    int imageHeight = 0;
+  
+    // If we'll be displaying either text or an image, add a little padding.
+    if (!m_altText.isEmpty() || newImage) {
+        imageWidth = paddingWidth;
+        imageHeight = paddingHeight;
+    }
+  
+    if (newImage) {
+        imageWidth += newImage->image()->width();
+        imageHeight += newImage->image()->height();
+    }
+  
+    // we have an alt and the user meant it (its not a text we invented)
+    if (!m_altText.isEmpty()) {
+        const Font& font = style()->font();
+        imageWidth = max(imageWidth, min(font.width(TextRun(m_altText.characters(), m_altText.length())), maxAltTextWidth));
+        imageHeight = max(imageHeight, min(font.height(), maxAltTextHeight));
+    }
+  
+    bool imageSizeChanged = false;
+  
+    if (imageWidth != intrinsicWidth()) {
+        setIntrinsicWidth(imageWidth);
+        imageSizeChanged = true;
+    }
+    if (imageHeight != intrinsicHeight()) {
+        setIntrinsicHeight(imageHeight);
+        imageSizeChanged = true;
+    }
+  
+    return imageSizeChanged;
+}
+
 void RenderImage::imageChanged(CachedImage* newImage)
 {
     if (documentBeingDestroyed())
@@ -87,27 +135,10 @@ void RenderImage::imageChanged(CachedImage* newImage)
 
     bool imageSizeChanged = false;
 
-    if (newImage->isErrorImage()) {
-        int imageWidth = newImage->image()->width() + 4;
-        int imageHeight = newImage->image()->height() + 4;
-
-        // we have an alt and the user meant it (its not a text we invented)
-        if (!m_altText.isEmpty()) {
-            const Font& font = style()->font();
-            imageWidth = max(imageWidth, min(font.width(TextRun(m_altText.characters(), m_altText.length())), 1024));
-            imageHeight = max(imageHeight, min(font.height(), 256));
-        }
-
-        if (imageWidth != intrinsicWidth()) {
-            setIntrinsicWidth(imageWidth);
-            imageSizeChanged = true;
-        }
-        if (imageHeight != intrinsicHeight()) {
-            setIntrinsicHeight(imageHeight);
-            imageSizeChanged = true;
-        }
-    }
-
+    // Set image dimensions, taking into account the size of the alt text.
+    if (newImage->isErrorImage())
+        imageSizeChanged = setImageSizeForAltText(newImage);
+    
     bool ensureLayout = false;
 
     // Image dimensions have been changed, see what needs to be done
