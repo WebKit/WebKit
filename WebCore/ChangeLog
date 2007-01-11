@@ -7,9 +7,11 @@
         Radar)
 
         * page/EventHandler.cpp:
-        (WebCore::EventHandler::sendContextMenuEvent): Ask if we *have* 
+        (WebCore::EventHandler::sendContextMenuEvent): Since WebcCore now 
+        handles the context menu event, we want to ask if we *have* 
         swallowed the event instead of if we *haven't* when deciding to 
-        perform a selection.
+        perform a selection. In the past, WebKit handled the event, so 
+        swallowEvent was false in the case where we want to pop up a menu. 
 
 2007-01-11  Darin Adler  <darin@apple.com>
 
