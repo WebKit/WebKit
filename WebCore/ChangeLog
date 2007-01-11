@@ -1,3 +1,16 @@
+2007-01-11  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=12135 REGRESSION: 
+        <input> and <textarea> not focused on right click (4908884 in 
+        Radar)
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendContextMenuEvent): Ask if we *have* 
+        swallowed the event instead of if we *haven't* when deciding to 
+        perform a selection.
+
 2007-01-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
