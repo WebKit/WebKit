@@ -467,5 +467,5 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (504,576) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-selection start: position 0 of child 0 {#text} of child 3 {text} of child 0 {svg} of document
-selection end:   position 0 of child 5 {text} of child 0 {svg} of document
+selection start: position 0 of child 0 {#text} of child 5 {text} of child 0 {svg} of document
+selection end:   position 0 of child 0 {text} of child 7 {g} of child 0 {svg} of document
