@@ -7,24 +7,24 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     RenderSVGContainer {svg} at (0.83,0.83) size 1081.67x698.33
       RenderSVGContainer {g} at (0.83,0.83) size 1081.67x698.33
-        RenderSVGContainer {svg} at (0.58,8.27) size 748.85x483.46
-          RenderSVGContainer {defs} at (0,7.69) size 0x0
-          RenderPath {rect} at (0.58,8.27) size 748.85x483.46 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00L649.00,1.00L649.00,419.00L1.00,419.00"]
-          RenderSVGContainer {g} at (0.58,8.27) size 748.85x483.46
-            RenderPath {rect} at (0.58,8.27) size 748.85x483.46 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00L649.00,1.00L649.00,419.00L1.00,419.00"]
-            RenderPath {rect} at (23.08,19.23) size 669.23x46.15 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#00FF00), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#Identity] [data="M20.00,10.00L600.00,10.00L600.00,50.00L20.00,50.00"]
+        RenderSVGContainer {svg} at (25.58,16.60) size 748.85x483.46
+          RenderSVGContainer {defs} at (25,16.03) size 0x0
+          RenderPath {rect} at (25.58,16.60) size 748.85x483.46 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00L649.00,1.00L649.00,419.00L1.00,419.00"]
+          RenderSVGContainer {g} at (25.58,16.60) size 748.85x483.46
+            RenderPath {rect} at (25.58,16.60) size 748.85x483.46 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00L649.00,1.00L649.00,419.00L1.00,419.00"]
+            RenderPath {rect} at (48.08,27.56) size 669.23x46.15 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#00FF00), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#Identity] [data="M20.00,10.00L600.00,10.00L600.00,50.00L20.00,50.00"]
             RenderSVGText {text} at (20,70) size 800x18
               RenderSVGInlineText {#text} at (0,-15) size 101x18
                 text run at (0,-15) width 101: "type: identity"
-            RenderPath {rect} at (23.08,134.62) size 669.23x46.15 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#00FF00), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#DiscreteBlank] [data="M20.00,110.00L600.00,110.00L600.00,150.00L20.00,150.00"]
+            RenderPath {rect} at (48.08,142.95) size 669.23x46.15 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#00FF00), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#DiscreteBlank] [data="M20.00,110.00L600.00,110.00L600.00,150.00L20.00,150.00"]
             RenderSVGText {text} at (20,170) size 800x18
               RenderSVGInlineText {#text} at (0,-15) size 452x18
                 text run at (0,-15) width 452: "type: linear slope=1 intercept=0 -- Result should be identity"
-            RenderPath {rect} at (23.08,250) size 669.23x46.15 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#00FF00), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#DiscreteFull] [data="M20.00,210.00L600.00,210.00L600.00,250.00L20.00,250.00"]
+            RenderPath {rect} at (48.08,258.33) size 669.23x46.15 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#00FF00), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#DiscreteFull] [data="M20.00,210.00L600.00,210.00L600.00,250.00L20.00,250.00"]
             RenderSVGText {text} at (20,270) size 800x18
               RenderSVGInlineText {#text} at (0,-15) size 469x18
                 text run at (0,-15) width 469: "type: linear slope=-1 intercept=0 -- Should invert the gradient"
-            RenderPath {rect} at (23.08,365.38) size 669.23x46.15 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#00FF00), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#DiscreteOrd] [data="M20.00,310.00L600.00,310.00L600.00,350.00L20.00,350.00"]
+            RenderPath {rect} at (48.08,373.72) size 669.23x46.15 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#00FF00), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#DiscreteOrd] [data="M20.00,310.00L600.00,310.00L600.00,350.00L20.00,350.00"]
             RenderSVGText {text} at (20,370) size 800x18
               RenderSVGInlineText {#text} at (0,-15) size 599x18
                 text run at (0,-15) width 599: "type: linear slope=0.5 intercept=0.25 -- Result should be less extreme gradient"

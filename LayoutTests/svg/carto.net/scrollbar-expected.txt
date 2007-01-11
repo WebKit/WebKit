@@ -8,10 +8,10 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (950,30) size 800x17
         RenderSVGInlineText {#text} at (-383,-14) size 383x17
           text run at (-383,-14) width 383: "One can also drag the images and the scrollbars will adopt."
-      RenderSVGContainer {svg} at (0,20) size 2885.60x336
-        RenderSVGContainer {g} at (0,20) size 2885.60x336
+      RenderSVGContainer {svg} at (40,60) size 2885.60x336
+        RenderSVGContainer {g} at (40,60) size 2885.60x336
           RenderImage {image} at (0,0) size 3607x420
-          RenderSVGContainer {g} at (331.20,72) size 1624.80x259.20
+          RenderSVGContainer {g} at (371.20,112) size 1624.80x259.20
             RenderSVGText {text} at (456,88) size 800x17
               RenderSVGInlineText {#text} at (-42,-14) size 85x17
                 text run at (-42,-14) width 85: "Furggeltihorn"
@@ -57,8 +57,8 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (950,280) size 800x14
         RenderSVGInlineText {#text} at (-520,-11) size 520x14
           text run at (-520,-11) width 520: "Panorama Zervreilastausee, Vals, Graub\x{FC}nden, Switzerland, taken 2006-02-04 (\x{A9} A. Neumann)"
-      RenderSVGContainer {svg} at (0,20) size 2848x551.20
-        RenderSVGContainer {g} at (0,20) size 2848x551.20
+      RenderSVGContainer {svg} at (40,300) size 2848x551.20
+        RenderSVGContainer {g} at (40,300) size 2848x551.20
           RenderImage {image} at (0,0) size 3560x689
       RenderSVGContainer {g} at (40,300) size 728.80x168.80
         RenderSVGContainer {g} at (40,460) size 720x8.80

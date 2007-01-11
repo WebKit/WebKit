@@ -1,3 +1,18 @@
+2007-01-10  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12201
+        Fix image dragging issues with http://www.carto.net/papers/svg/gui/scrollbar/index.svg
+
+        Fix calculation of absolute transform so that viewport x,y
+        translation is always done, also when viewBox is set.     
+
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::viewportTransform):
+        (WebCore::RenderSVGContainer::absoluteTransform):
+
 2007-01-10  David Hyatt  <hyatt@apple.com>
 
         Rework positionForCoordinates to be more efficient and to handle multi-column content.  This entailed
