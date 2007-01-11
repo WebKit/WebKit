@@ -1,5 +1,14 @@
 2007-01-11  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Build Fix Karma
+
+        I broke the release build (debug build passed)
+
+        * platform/network/mac/AuthenticationMac.mm:
+        (WebCore::core):
+
+2007-01-11  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Anders
 
         Rewrites HTTP Authentication setting up a more platform-independent structure

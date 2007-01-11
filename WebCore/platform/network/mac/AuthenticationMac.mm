@@ -155,7 +155,7 @@ AuthenticationChallenge core(NSURLAuthenticationChallenge *macChallenge)
 
 ProtectionSpace core(NSURLProtectionSpace *macSpace)
 {
-    ProtectionSpaceServerType serverType;
+    ProtectionSpaceServerType serverType = ProtectionSpaceProxyHTTP;
     
     if ([macSpace isProxy]) {
         NSString *proxyType = [macSpace proxyType];
@@ -183,7 +183,7 @@ ProtectionSpace core(NSURLProtectionSpace *macSpace)
             ASSERT_NOT_REACHED();
     }
 
-    ProtectionSpaceAuthenticationScheme scheme;
+    ProtectionSpaceAuthenticationScheme scheme = ProtectionSpaceAuthenticationSchemeDefault;
     NSString *method = [macSpace authenticationMethod];
     if ([method isEqualToString:NSURLAuthenticationMethodDefault])
         scheme = ProtectionSpaceAuthenticationSchemeDefault;
@@ -202,10 +202,9 @@ ProtectionSpace core(NSURLProtectionSpace *macSpace)
 
 Credential core(NSURLCredential *macCredential)
 {
-    CredentialPersistence persistence;
+    CredentialPersistence persistence = CredentialPersistenceNone;
     switch ([macCredential persistence]) {
         case NSURLCredentialPersistenceNone:
-            persistence = CredentialPersistenceNone;
             break;
         case NSURLCredentialPersistenceForSession:
             persistence = CredentialPersistenceForSession;
