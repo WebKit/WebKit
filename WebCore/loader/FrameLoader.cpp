@@ -2302,11 +2302,11 @@ void FrameLoader::commitProvisionalLoad(PassRefPtr<PageCache> prpPageCache)
 
         m_responseMIMEType = pdl->responseMIMEType();
 
-        if (didOpenURL(url))
-            if (!pdl->getResponseRefreshAndModifiedHeaders(m_responseRefreshHeader, m_responseModifiedHeader)) {
-                m_responseRefreshHeader = "";
+        if (didOpenURL(url)) {
+            m_responseRefreshHeader = pdl->response().httpHeaderField("Refresh");
+            if (!pdl->getResponseModifiedHeader(m_responseModifiedHeader))
                 m_responseModifiedHeader = "";
-            }
+        }
     }
     opened();
 }

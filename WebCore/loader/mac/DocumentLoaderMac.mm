@@ -39,14 +39,12 @@ const KURL DocumentLoader::unreachableURL() const
     return [m_originalRequest.nsURLRequest() _webDataRequestUnreachableURL];
 }
 
-bool DocumentLoader::getResponseRefreshAndModifiedHeaders(String& refreshOut, String& modified) const
+bool DocumentLoader::getResponseModifiedHeader(String& modified) const
 {
     NSURLResponse *response = m_response.nsURLResponse();
     if (![response isKindOfClass:[NSHTTPURLResponse class]])
         return false;
         
-    if (NSString *refresh = [[(NSHTTPURLResponse *)response allHeaderFields] objectForKey:@"Refresh"])
-        refreshOut = refresh;
     modified = [wkGetNSURLResponseLastModifiedDate(response)
                 descriptionWithCalendarFormat:@"%a %b %d %Y %H:%M:%S" timeZone:nil locale:nil];
     return true;

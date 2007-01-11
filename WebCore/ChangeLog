@@ -1,3 +1,15 @@
+2007-01-10  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        Get the Refresh header directly from the ResourceResponse.
+        
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        * loader/mac/DocumentLoaderMac.mm:
+        (WebCore::DocumentLoader::getResponseModifiedHeader):
+
 2007-01-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John.
