@@ -36,7 +36,6 @@
 #include "FrameView.h"
 #include "HTMLDocument.h"
 #include "HTMLTokenizer.h"
-#include "LoaderFunctions.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"

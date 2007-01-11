@@ -33,7 +33,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
-#include "LoaderFunctions.h"
 #include "PlatformString.h"
 #include "RegularExpression.h"
 #include "ResourceHandle.h"

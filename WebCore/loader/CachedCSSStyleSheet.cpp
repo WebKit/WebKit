@@ -34,7 +34,6 @@
 #include "CachedResourceClientWalker.h"
 #include "TextResourceDecoder.h"
 #include "DeprecatedString.h"
-#include "LoaderFunctions.h"
 #include "loader.h"
 #include <wtf/Vector.h>
 

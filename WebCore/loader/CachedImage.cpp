@@ -34,7 +34,6 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "DocLoader.h"
-#include "LoaderFunctions.h"
 #include "Request.h"
 #include <wtf/Vector.h>
 

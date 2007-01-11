@@ -1,5 +1,17 @@
 2007-01-11  Anders Carlsson  <acarlsson@apple.com>
 
+        Fix build.
+        
+        * dom/XMLTokenizer.cpp:
+        * loader/CachedCSSStyleSheet.cpp:
+        * loader/CachedImage.cpp:
+        * loader/DocLoader.cpp:
+        * loader/loader.cpp:
+        * xml/XSLTProcessor.cpp:
+        * xml/xmlhttprequest.cpp:
+
+2007-01-11  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Adam.
 
         Loader cleanup, get rid of unused code.

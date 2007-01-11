@@ -42,7 +42,6 @@
 #include "HTMLScriptElement.h"
 #include "HTMLTableSectionElement.h"
 #include "HTMLTokenizer.h"
-#include "LoaderFunctions.h"
 #include "ProcessingInstruction.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
