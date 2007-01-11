@@ -1,5 +1,9 @@
 2007-01-10  Geoffrey Garen  <ggaren@apple.com>
 
+        * coding/coding-style.html: Fixed minor validation error.
+
+2007-01-10  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Beth Dakin.
         
         Updated coding style guidelines to cover a lot of stuff previously absent.
