@@ -1,3 +1,21 @@
+2007-01-11  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Darin.
+
+        Start using the loader in the Qt port.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+        (WebCore::FrameLoader::URL):
+        (WebCore::FrameLoader::createEmptyDocument):
+        * loader/qt/FrameLoaderQt.cpp:
+        (WebCore::FrameLoader::setTitle):
+        (WebCore::FrameLoader::originalRequestURL):
+        (WebCore::FrameLoader::referrer):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        * page/qt/FrameQtClient.cpp:
+        (WebCore::FrameQtClient::openURL):
+
 2007-01-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

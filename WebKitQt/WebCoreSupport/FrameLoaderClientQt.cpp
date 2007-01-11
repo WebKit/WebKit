@@ -29,27 +29,33 @@
 #include "config.h"
 #include "FrameLoaderClientQt.h"
 #include "DocumentLoader.h"
+#include "ResourceResponse.h"
+#include "qdebug.h"
 
 #define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d (%s)\n", __FILE__, __LINE__, __FUNCTION__); } while(0)
+
 
 namespace WebCore
 {
 
 FrameLoaderClientQt::FrameLoaderClientQt()
+    : m_frame(0)
 {
-    notImplemented();
 }
 
 
 FrameLoaderClientQt::~FrameLoaderClientQt()
 {
-    notImplemented();
 }
 
+void FrameLoaderClientQt::setFrame(FrameQt *frame)
+{
+    m_frame = frame;
+}
 
 void FrameLoaderClientQt::detachFrameLoader()
 {
-    notImplemented();
+    m_frame = 0;
 }
 
 void FrameLoaderClientQt::ref()
@@ -118,13 +124,16 @@ bool FrameLoaderClientQt::privateBrowsingEnabled() const
 
 void FrameLoaderClientQt::makeDocumentView()
 {
-    notImplemented();
+    qDebug() << "FrameLoaderClientQt::makeDocumentView" << m_frame->document();
+    
+//     if (!m_frame->document()) 
+//         m_frame->loader()->createEmptyDocument();
 }
 
 
 void FrameLoaderClientQt::makeRepresentation(DocumentLoader*)
 {
-    notImplemented();
+    // don't need this for now I think.
 }
 
 
@@ -178,7 +187,7 @@ void FrameLoaderClientQt::updateHistoryAfterClientRedirect()
 
 void FrameLoaderClientQt::setCopiesOnScroll()
 {
-    notImplemented();
+    // apparently mac specific 
 }
 
 
@@ -277,7 +286,7 @@ void FrameLoaderClientQt::dispatchWillClose()
 
 void FrameLoaderClientQt::dispatchDidStartProvisionalLoad()
 {
-    notImplemented();
+    // we're not interested in this neither I think
 }
 
 
@@ -313,14 +322,17 @@ void FrameLoaderClientQt::dispatchShow()
 
 void FrameLoaderClientQt::cancelPolicyCheck()
 {
-    notImplemented();
+    // don't need to do anything here as long as we don't start doing asyncronous policy checks
 }
 
 
-void FrameLoaderClientQt::dispatchWillSubmitForm(FramePolicyFunction,
+void FrameLoaderClientQt::dispatchWillSubmitForm(FramePolicyFunction function,
                                                  PassRefPtr<FormState>)
 {
-    notImplemented();
+    // FIXME: This is surely too simple
+    if (!m_frame)
+        return;
+    (m_frame->loader()->*function)(PolicyUse);
 }
 
 
@@ -357,19 +369,19 @@ void FrameLoaderClientQt::clearUnarchivingState(DocumentLoader*)
 
 void FrameLoaderClientQt::progressStarted()
 {
-    notImplemented();
+    // no progress notification for now
 }
 
 
 void FrameLoaderClientQt::progressCompleted()
 {
-    notImplemented();
+    // no progress notification for now
 }
 
 
-void FrameLoaderClientQt::setMainFrameDocumentReady(bool)
+void FrameLoaderClientQt::setMainFrameDocumentReady(bool b)
 {
-    notImplemented();
+    // this is only interesting once we provide an external API for the DOM
 }
 
 
@@ -418,21 +430,22 @@ void FrameLoaderClientQt::cancelPendingArchiveLoad(ResourceLoader*)
 
 void FrameLoaderClientQt::clearArchivedResources()
 {
-    notImplemented();
+    // don't think we need to do anything here currently
 }
 
 
 bool FrameLoaderClientQt::canShowMIMEType(const String& MIMEType) const
 {
-    notImplemented();
-    return false;
+    // FIXME: This is not good enough in the general case
+    qDebug() << "FrameLoaderClientQt::canShowMIMEType" << MIMEType;
+    return true;
 }
 
 
-bool FrameLoaderClientQt::representationExistsForURLScheme(
-    const String& URLScheme) const
+bool FrameLoaderClientQt::representationExistsForURLScheme(const String& URLScheme) const
 {
     notImplemented();
+    qDebug() << "    scheme is" << URLScheme;
     return false;
 }
 
@@ -458,7 +471,7 @@ void FrameLoaderClientQt::restoreScrollPositionAndViewState()
 
 void FrameLoaderClientQt::provisionalLoadStarted()
 {
-    notImplemented();
+    // don't need to do anything here
 }
 
 
@@ -483,7 +496,7 @@ void FrameLoaderClientQt::didFinishLoad()
 
 void FrameLoaderClientQt::prepareForDataSourceReplacement()
 {
-    notImplemented();
+    m_frame->loader()->detachChildren();
 }
 
 
@@ -505,12 +518,13 @@ void FrameLoaderClientQt::dispatchDidReceiveIcon()
 
 void FrameLoaderClientQt::frameLoaderDestroyed()
 {
-    notImplemented();
+    m_frame = 0;
+    delete this;
 }
 
 bool FrameLoaderClientQt::canHandleRequest(const WebCore::ResourceRequest&) const
 {
-    notImplemented();
+    return true;
 }
 
 void FrameLoaderClientQt::partClearedInBegin()
@@ -536,6 +550,7 @@ void FrameLoaderClientQt::updateGlobalHistoryForReload(const WebCore::KURL&)
 bool FrameLoaderClientQt::shouldGoToHistoryItem(WebCore::HistoryItem*) const
 {
     notImplemented();
+    return false;
 }
 
 void FrameLoaderClientQt::saveScrollPositionAndViewStateToItem(WebCore::HistoryItem*)
@@ -550,7 +565,8 @@ void FrameLoaderClientQt::saveDocumentViewToPageCache(WebCore::PageCache*)
 
 bool FrameLoaderClientQt::canCachePage() const
 {
-    notImplemented();
+    // don't do any caching for now
+    return false;
 }
 
 void FrameLoaderClientQt::setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&)
@@ -558,44 +574,56 @@ void FrameLoaderClientQt::setMainDocumentError(WebCore::DocumentLoader*, const W
     notImplemented();
 }
 
-void FrameLoaderClientQt::committedLoad(WebCore::DocumentLoader*, const char*, int)
+void FrameLoaderClientQt::committedLoad(WebCore::DocumentLoader* loader, const char* data, int length)
 {
-    notImplemented();
+    qDebug() << "FrameLoaderClientQt::committedLoad" << length;
+    if (!m_frame)
+        return;
+    FrameLoader *fl = loader->frameLoader();
+    fl->setEncoding(m_response.textEncodingName(), false);
+    fl->addData(data, length);
 }
 
 WebCore::ResourceError FrameLoaderClientQt::cancelledError(const WebCore::ResourceRequest&)
 {
     notImplemented();
+    return ResourceError();
 }
 
 WebCore::ResourceError FrameLoaderClientQt::cannotShowURLError(const WebCore::ResourceRequest&)
 {
     notImplemented();
+    return ResourceError();
 }
 
 WebCore::ResourceError FrameLoaderClientQt::interruptForPolicyChangeError(const WebCore::ResourceRequest&)
 {
     notImplemented();
+    return ResourceError();
 }
 
 WebCore::ResourceError FrameLoaderClientQt::cannotShowMIMETypeError(const WebCore::ResourceResponse&)
 {
     notImplemented();
+    return ResourceError();
 }
 
 WebCore::ResourceError FrameLoaderClientQt::fileDoesNotExistError(const WebCore::ResourceResponse&)
 {
     notImplemented();
+    return ResourceError();
 }
 
 bool FrameLoaderClientQt::shouldFallBack(const WebCore::ResourceError&)
 {
     notImplemented();
+    return false;
 }
 
-WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClientQt::createDocumentLoader(const WebCore::ResourceRequest&)
+WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClientQt::createDocumentLoader(const WebCore::ResourceRequest& request)
 {
-    notImplemented();
+    RefPtr<DocumentLoader> loader = new DocumentLoader(request);
+    return loader.release();
 }
 
 void FrameLoaderClientQt::download(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&)
@@ -603,14 +631,18 @@ void FrameLoaderClientQt::download(WebCore::ResourceHandle*, const WebCore::Reso
     notImplemented();
 }
 
-void FrameLoaderClientQt::dispatchWillSendRequest(WebCore::DocumentLoader*, void*, WebCore::ResourceRequest&, const WebCore::ResourceResponse&)
+void FrameLoaderClientQt::dispatchWillSendRequest(WebCore::DocumentLoader*, void*, WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response)
 {
-    notImplemented();
+    // seems like the Mac code doesn't do anything here by default neither
+    qDebug() << "FrameLoaderClientQt::dispatchWillSendRequest" << request.isNull() << request.url().url();
 }
 
-void FrameLoaderClientQt::dispatchDidReceiveResponse(WebCore::DocumentLoader*, void*, const WebCore::ResourceResponse&)
+void FrameLoaderClientQt::dispatchDidReceiveResponse(WebCore::DocumentLoader*, void*, const WebCore::ResourceResponse& response)
 {
-    notImplemented();
+
+    m_response = response;
+    m_firstData = true;
+    qDebug() << "    got response from" << response.url().url();
 }
 
 void FrameLoaderClientQt::dispatchDidReceiveContentLength(WebCore::DocumentLoader*, void*, int)
@@ -648,19 +680,28 @@ WebCore::Frame* FrameLoaderClientQt::dispatchCreatePage()
     notImplemented();
 }
 
-void FrameLoaderClientQt::dispatchDecidePolicyForMIMEType(void (WebCore::FrameLoader::*)(WebCore::PolicyAction), const WebCore::String&, const WebCore::ResourceRequest&)
+void FrameLoaderClientQt::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const WebCore::String&, const WebCore::ResourceRequest&)
 {
-    notImplemented();
+    if (!m_frame)
+        return;
+    // FIXME: This is maybe too simple
+    (m_frame->loader()->*function)(PolicyUse);
 }
 
-void FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction(void (WebCore::FrameLoader::*)(WebCore::PolicyAction), const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::String&)
+void FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::String&)
 {
-    notImplemented();
+    if (!m_frame)
+        return;
+    // FIXME: This is maybe too simple
+    (m_frame->loader()->*function)(PolicyIgnore);
 }
 
-void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(void (WebCore::FrameLoader::*)(WebCore::PolicyAction), const WebCore::NavigationAction&, const WebCore::ResourceRequest&)
+void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const WebCore::NavigationAction&, const WebCore::ResourceRequest&)
 {
-    notImplemented();
+    if (!m_frame)
+        return;
+    // FIXME: This is maybe too simple
+    (m_frame->loader()->*function)(PolicyUse);
 }
 
 void FrameLoaderClientQt::dispatchUnableToImplementPolicy(const WebCore::ResourceError&)
@@ -691,6 +732,7 @@ void FrameLoaderClientQt::startDownload(const WebCore::ResourceRequest&)
 bool FrameLoaderClientQt::willUseArchive(WebCore::ResourceLoader*, const WebCore::ResourceRequest&, const WebCore::KURL&) const
 {
     notImplemented();
+    return false;
 }
 
 

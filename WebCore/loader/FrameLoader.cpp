@@ -718,11 +718,11 @@ void FrameLoader::clear(bool clearWindowProperties)
         return;
     m_needsClear = false;
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) && !PLATFORM(QT)
     // FIXME: Remove this after making other platforms do loading more like Mac.
     detachChildren();
 #endif
-
+    
     if (m_frame->document()) {
         m_frame->document()->cancelParsing();
         m_frame->document()->willRemove();
@@ -2514,10 +2514,6 @@ void FrameLoader::finishedLoading()
 
 KURL FrameLoader::URL() const
 {
-#if PLATFORM(QT)
-    if (!activeDocumentLoader())
-        return KURL();
-#endif
     return activeDocumentLoader()->URL();
 }
 
@@ -2693,7 +2689,7 @@ FrameLoaderClient* FrameLoader::client() const
     return m_client;
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(QT)
 void FrameLoader::submitForm(const FrameLoadRequest& request, Event* event)
 {
 #ifdef MULTIPLE_FORM_SUBMISSION_PROTECTION
@@ -2731,7 +2727,7 @@ void FrameLoader::urlSelected(const FrameLoadRequest& request, Event* event)
     load(copy, true, event, 0, HashMap<String, String>());
 }
 #endif
-
+    
 String FrameLoader::userAgent() const
 {
     return m_client->userAgent();
@@ -2742,15 +2738,10 @@ void FrameLoader::createEmptyDocument()
     // Although it's not completely clear from the name of this function,
     // it does nothing if we already have a document, and just creates an
     // empty one if we have no document at all.
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(QT)
     if (!m_frame->document()) {
         loadEmptyDocumentSynchronously();
         updateBaseURLForEmptyDocument();
-    }
-#elif PLATFORM(QT)
-    if (!m_frame->document()) {
-        begin();
-        end();
     }
 #endif
 }

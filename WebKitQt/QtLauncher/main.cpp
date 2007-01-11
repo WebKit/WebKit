@@ -88,7 +88,9 @@ int main(int argc, char **argv)
     // Initialize WebCore in Qt platform mode...
     Page* page = new Page(new ChromeClientQt(), new ContextMenuClientQt(),
                           new EditorClientQt());
-    Frame* frame = new FrameQt(page, 0, new FrameQtClient(), new FrameLoaderClientQt());
+    FrameLoaderClientQt *frameLoaderClient = new FrameLoaderClientQt();
+    FrameQt* frame = new FrameQt(page, 0, new FrameQtClient(), frameLoaderClient);
+    frameLoaderClient->setFrame(frame);
 
     FrameView* frameView = new FrameView(frame);
     frame->setView(frameView);

@@ -1,3 +1,50 @@
+2007-01-11  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Darin
+
+        Start using the loader in the Qt port.
+
+        * QtLauncher/main.cpp:
+        (main):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::FrameLoaderClientQt):
+        (WebCore::FrameLoaderClientQt::~FrameLoaderClientQt):
+        (WebCore::FrameLoaderClientQt::setFrame):
+        (WebCore::FrameLoaderClientQt::detachFrameLoader):
+        (WebCore::FrameLoaderClientQt::makeDocumentView):
+        (WebCore::FrameLoaderClientQt::makeRepresentation):
+        (WebCore::FrameLoaderClientQt::setCopiesOnScroll):
+        (WebCore::FrameLoaderClientQt::dispatchDidStartProvisionalLoad):
+        (WebCore::FrameLoaderClientQt::cancelPolicyCheck):
+        (WebCore::FrameLoaderClientQt::dispatchWillSubmitForm):
+        (WebCore::FrameLoaderClientQt::progressStarted):
+        (WebCore::FrameLoaderClientQt::progressCompleted):
+        (WebCore::FrameLoaderClientQt::setMainFrameDocumentReady):
+        (WebCore::FrameLoaderClientQt::clearArchivedResources):
+        (WebCore::FrameLoaderClientQt::canShowMIMEType):
+        (WebCore::FrameLoaderClientQt::representationExistsForURLScheme):
+        (WebCore::FrameLoaderClientQt::provisionalLoadStarted):
+        (WebCore::FrameLoaderClientQt::prepareForDataSourceReplacement):
+        (WebCore::FrameLoaderClientQt::frameLoaderDestroyed):
+        (WebCore::FrameLoaderClientQt::canHandleRequest):
+        (WebCore::FrameLoaderClientQt::shouldGoToHistoryItem):
+        (WebCore::FrameLoaderClientQt::canCachePage):
+        (WebCore::FrameLoaderClientQt::committedLoad):
+        (WebCore::FrameLoaderClientQt::cancelledError):
+        (WebCore::FrameLoaderClientQt::cannotShowURLError):
+        (WebCore::FrameLoaderClientQt::interruptForPolicyChangeError):
+        (WebCore::FrameLoaderClientQt::cannotShowMIMETypeError):
+        (WebCore::FrameLoaderClientQt::fileDoesNotExistError):
+        (WebCore::FrameLoaderClientQt::shouldFallBack):
+        (WebCore::FrameLoaderClientQt::createDocumentLoader):
+        (WebCore::FrameLoaderClientQt::dispatchWillSendRequest):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveResponse):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForMIMEType):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientQt::willUseArchive):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-01-11  George Staikos  <staikos@kde.org>
 
         Fix Qt Build.
