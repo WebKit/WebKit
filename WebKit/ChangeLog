@@ -1,3 +1,17 @@
+2007-01-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11775
+          'Show URLs in Tool Tips' preference is ignored
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _resetCachedWebPreferences:]):
+        (-[WebHTMLView setDataSource:]): Added a call to _resetCachedWebPreferences:.
+        Added an assertion that the view is not closed, instead of reopening it.
+        Reopening should not occur, now that <http://bugs.webkit.org/show_bug.cgi?id=12087>
+        is fixed.
+
 2007-01-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John.

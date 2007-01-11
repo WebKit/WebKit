@@ -1901,9 +1901,9 @@ static WebHTMLView *lastHitView = nil;
 {
     WebPreferences *preferences = [[self _webView] preferences];
     // Check for nil because we might not yet have an associated webView when this is called
-    if (preferences == nil) {
+    if (preferences == nil)
         preferences = [WebPreferences standardPreferences];
-    }
+
     _private->showsURLsInToolTips = [preferences showsURLsInToolTips];
 }
 
@@ -3073,13 +3073,14 @@ done:
 - (void)setDataSource:(WebDataSource *)dataSource 
 {
     ASSERT(dataSource);
-    if (_private->dataSource == dataSource)
-        return;
-    ASSERT(!_private->dataSource);
-    _private->closed = NO; // setting a data source reopens a closed view
-    _private->dataSource = [dataSource retain];
-    [_private->pluginController setDataSource:dataSource];
-    [self addMouseMovedObserver];
+    if (_private->dataSource != dataSource) {
+        ASSERT(!_private->dataSource);
+        ASSERT(!_private->closed);
+        _private->dataSource = [dataSource retain];
+        [_private->pluginController setDataSource:dataSource];
+        [self addMouseMovedObserver];
+    }
+    [self _resetCachedWebPreferences:nil];
 }
 
 - (void)dataSourceUpdated:(WebDataSource *)dataSource
