@@ -1,3 +1,16 @@
+2007-01-09  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by geoff
+        
+        <rdar://problem/4889140>
+        GMail Editor: List creation fails in new message
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply): Inserting the list
+        into an empty paragraph not held open by a br or a '\n', 
+        will invalidate start and end.  Insert a placeholder and 
+        then recompute start and end.
+
 2007-01-11  Lars Knoll <lars@trolltech.com>
 
         Rubberstamped by Anders

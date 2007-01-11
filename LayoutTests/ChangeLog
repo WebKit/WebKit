@@ -1,3 +1,15 @@
+2007-01-11  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by geoff
+        
+        <rdar://problem/4889140>
+        GMail Editor: List creation fails in new message
+
+        * editing/execCommand/insert-list-empty-div-expected.checksum: Added.
+        * editing/execCommand/insert-list-empty-div-expected.png: Added.
+        * editing/execCommand/insert-list-empty-div-expected.txt: Added.
+        * editing/execCommand/insert-list-empty-div.html: Added.
+
 2007-01-10  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.
