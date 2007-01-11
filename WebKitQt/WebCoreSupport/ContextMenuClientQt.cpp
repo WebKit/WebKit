@@ -88,5 +88,10 @@ void ContextMenuClientQt::stopSpeaking()
     notImplemented();
 }
 
+void ContextMenuClientQt::searchWithGoogle(const Frame*)
+{
+    notImplemented();
+}
+
 }
 

@@ -50,7 +50,7 @@ const KURL DocumentLoader::unreachableURL() const
     return url;
 }
 
-bool DocumentLoader::getResponseRefreshAndModifiedHeaders(WebCore::String&, WebCore::String&) const
+bool DocumentLoader::getResponseModifiedHeader(WebCore::String&) const
 {
     notImplemented();
 }
