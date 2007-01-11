@@ -1,5 +1,15 @@
 2007-01-11  Darin Adler  <darin@apple.com>
 
+        Reviewed by Anders.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12189
+          REGRESSION(r18614-18640): Crash in WebCore::SharedBuffer::hasPlatformData()
+
+        * loader/mac/LoaderFunctionsMac.mm: (WebCore::CheckCacheObjectStatus):
+        Added null check.
+
+2007-01-11  Darin Adler  <darin@apple.com>
+
         * platform/CharacterNames.h: Oops! horizontalEllipsis != zeroWidthSpace!
 
 2007-01-11  Lars Knoll <lars@trolltech.com>
