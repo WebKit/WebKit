@@ -342,6 +342,10 @@ PassRefPtr<HTMLDocument> DOMImplementation::createHTMLDocument(const String& tit
 
 PassRefPtr<Document> DOMImplementation::createDocument(const String& type, FrameView* view, bool inViewSourceMode)
 {
+    if (inViewSourceMode)
+        return new HTMLViewSourceDocument(this, view);
+    if (type == "text/html")
+        return new HTMLDocument(this, view);
 #ifdef SVG_SUPPORT
     if (type == "image/svg+xml")
         return new SVGDocument(this, view);
@@ -356,8 +360,6 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
         return new ImageDocument(this, view);
     if (PlugInInfoStore::supportsMIMEType(type))
         return new PluginDocument(this, view);
-    if (inViewSourceMode)
-        return new HTMLViewSourceDocument(this, view);
     return new HTMLDocument(this, view);
 }
 

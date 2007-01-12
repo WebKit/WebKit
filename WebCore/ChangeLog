@@ -1,3 +1,14 @@
+2007-01-12  Kevin Decker <kdecker@apple.com>
+
+        Reviewed by andersca.
+
+        Fixed: <rdar://problem/4701326>21.2 ms launch time regression spent in +[WebPluginDatabase installedPlugins]
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument): Added a guard clause for text/html which used to be in WebKit before a lot of the 
+        loader plumbing was moved to WebCore.  Pinging the plug-in database to ask it if it supports a given mime type has the side 
+        effect of reading from disk on first call, therefore such a check should be a last resort.  
+
 2007-01-12  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
