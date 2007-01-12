@@ -1,3 +1,14 @@
+2007-01-12  Geoffrey Garen  <ggaren@apple.com>
+
+        RS by Brady Eidson.
+        
+        Rolling back in r18786 with leaks fixed, and these renames slightly reworked:
+
+        Because they can return 0:
+        rootObjectForImp => findRootObject (overloaded for JSObject* and Interpreter*)
+        rootObjectForInterpreter => findRootObject (ditto)
+        findReferenceSet => findProtectCountSet
+
 2007-01-11  Geoffrey Garen  <ggaren@apple.com>
 
         RS by Brady Eidson.
