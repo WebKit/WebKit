@@ -1,3 +1,14 @@
+2007-01-12  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        Test for poly element identity.
+
+        * svg/custom/poly-identify-expected.checksum: Added.
+        * svg/custom/poly-identify-expected.png: Added.
+        * svg/custom/poly-identify-expected.txt: Added.
+        * svg/custom/poly-identify.svg: Added.
+
 2007-01-11  David Hyatt  <hyatt@apple.com>
 
        Force column-width to parse in strict mode so that there is no confusion when it is used in the columns

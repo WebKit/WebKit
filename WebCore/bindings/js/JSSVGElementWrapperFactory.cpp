@@ -200,8 +200,8 @@ typedef DOMNode* (*CreateSVGElementWrapperFunction)(ExecState*, PassRefPtr<SVGEl
     macro(metadata, Metadata) \
     macro(path, Path) \
     macro(pattern, Pattern) \
-    macro(polyline, Polygon) \
-    macro(polygon, Polyline) \
+    macro(polyline, Polyline) \
+    macro(polygon, Polygon) \
     macro(radialGradient, RadialGradient) \
     macro(rect, Rect) \
     macro(script, Script) \

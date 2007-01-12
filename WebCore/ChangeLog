@@ -1,3 +1,11 @@
+2007-01-12  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        Do not mix up JSSVGPolygonElement and JSSVGPolylineElement.
+
+        * bindings/js/JSSVGElementWrapperFactory.cpp:
+
 2007-01-12  Kevin Decker <kdecker@apple.com>
 
         Reviewed by andersca.
