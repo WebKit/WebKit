@@ -544,11 +544,8 @@ wbr {
     outline: auto 5px -webkit-focus-ring-color
 }
 
-html:focus, body:focus { 
-    outline: none
-}
-
-html:focus, body:focus {
+/* Read-only text fields do not show a focus ring but do still receive focus */
+html:focus, body:focus, input[readonly]:focus { 
     outline: none
 }
   
@@ -568,7 +565,7 @@ input[type="submit"]:focus,
 input[type="file"]::-webkit-file-upload-button:focus {
     outline-offset: 0
 }
-
+    
 a:-webkit-any-link {
     color: -webkit-link;
     text-decoration: underline;

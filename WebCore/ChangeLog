@@ -1,5 +1,18 @@
 2007-01-11  David Hyatt  <hyatt@apple.com>
 
+        Fix for bug 8705, readonly text fields should not get focus rings.  Add a rule to that effect to
+        html4.css and then also add readonly as a special case for style sharing so that we can retain the
+        performance boost from sharing styles on inputs.
+
+        Reviewed by bdash
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::checkOneSelector):
+        * css/html4.css:
+
+2007-01-11  David Hyatt  <hyatt@apple.com>
+
         Fix for bug 11595.  Autoscrolling of layers didn't really work at all unless the layer was coincidentally
         in the root layer's coordinate space.  The event point was an absolute position within the document, but
         the layer's rect was only local coords.  This patch makes sure to use absolute bounds for the layer

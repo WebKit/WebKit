@@ -696,7 +696,8 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n)
             (s->isIndeterminate() == element->isIndeterminate()) &&
             (s->isChecked() == element->isChecked()) &&
             (s != s->document()->getCSSTarget() && element != element->document()->getCSSTarget()) &&
-            (s->getAttribute(typeAttr) == element->getAttribute(typeAttr))) {
+            (s->getAttribute(typeAttr) == element->getAttribute(typeAttr)) &&
+            (s->getAttribute(readonlyAttr) == element->getAttribute(readonlyAttr))) {
             bool classesMatch = true;
             if (s->hasClass()) {
                 const AtomicString& class1 = element->getAttribute(classAttr);
@@ -1341,8 +1342,8 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSub
         }
         else if (sel->match == CSSSelector::Id)
             return e->hasID() && e->getIDAttribute() == sel->value;
-        else if (style && (e != element || !styledElement || (!styledElement->isMappedAttribute(sel->attr) && sel->attr != typeAttr))) {
-            style->setAffectedByAttributeSelectors(); // Special-case the "type" attribute so input form controls can share style.
+        else if (style && (e != element || !styledElement || (!styledElement->isMappedAttribute(sel->attr) && sel->attr != typeAttr && sel->attr != readonlyAttr))) {
+            style->setAffectedByAttributeSelectors(); // Special-case the "type" and "readonly" attributes so input form controls can share style.
             m_selectorAttrs.add(sel->attr.localName().impl());
         }
 
