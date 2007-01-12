@@ -79,7 +79,7 @@ jvalue JavaJSObject::invoke (JSObjectCallContext *context)
         }
         else {
             JSObject *imp = jlong_to_impptr(nativeHandle);
-            if (!rootObjectForImp(imp)) {
+            if (!getRootObject(imp)) {
                 fprintf (stderr, "%s:%d:  Attempt to access JavaScript from destroyed applet, type %d.\n", __FILE__, __LINE__, context->type);
                 return result;
             }
@@ -127,7 +127,7 @@ jvalue JavaJSObject::invoke (JSObjectCallContext *context)
     
                 case Finalize: {
                     JSObject *imp = jlong_to_impptr(nativeHandle);
-                    if (findReferenceSet(imp) == 0) {
+                    if (!getProtectCountSet(imp)) {
                         // We may have received a finalize method call from the VM 
                         // AFTER removing our last reference to the Java instance.
                         JS_LOG ("finalize called on instance we have already removed.\n");
@@ -158,7 +158,7 @@ JavaJSObject::JavaJSObject(jlong nativeJSObject)
     // terribly wrong.
     assert (_imp != 0);
     
-    _rootObject = rootObjectForImp(_imp);
+    _rootObject = getRootObject(_imp);
     
     // If we can't find the root for the object something is terribly wrong.
     assert (_rootObject != 0);
@@ -300,7 +300,7 @@ jlong JavaJSObject::createNative(jlong nativeHandle)
     if (nativeHandle == UndefinedHandle)
         return nativeHandle;
 
-    if (rootObjectForImp(jlong_to_impptr(nativeHandle)))
+    if (getRootObject(jlong_to_impptr(nativeHandle)))
         return nativeHandle;
 
     CreateRootObjectFunction createRootObject = RootObject::createRootObject();

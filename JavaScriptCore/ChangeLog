@@ -9,6 +9,42 @@
         Layout tests pass.
         
         Renames:
+            ReferencesSet | ProtectCounts => ProtectCountSet (because it's a typename for a set of GC protect counts)
+            ReferencesByRootMap => RootObjectMap (because RootObjectToProtectCountSetMap would have been confusing)
+            pv => protectedValues
+            rootObjectForImp => getRootObject (overloaded for JSObject* and Interpreter*)
+            rootObjectForInterpreter => getRootObject (ditto)
+            findReferenceSet => getProtectCountSet
+            imp => jsObject
+        
+        (KJS::Bindings::getRootObjectMap): Changed to take advantage of built-in
+        facility for initializing static variables.
+
+        (KJS::Bindings::getProtectCountSet):
+        (KJS::Bindings::destroyProtectCountSet): Added. Helps encapsulate the fact
+        that getting a ProtectCountSet entails adding a RootObject to a hash table,
+        and destroying one entails the reverse.
+
+        (KJS::Bindings::getRootObject): Removed spurious NULL check.
+        
+        (KJS::Bindings::findReferenceSet): Renamed. Changed to use getRootObject()
+        instead of iterating on its own.
+
+        (KJS::Bindings::addNativeReference): Changed to use an early return instead
+        of indenting the whole function.
+        (KJS::Bindings::removeNativeReference): Ditto.
+
+2007-01-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Even more cleanup in preparation for fixing <rdar://problem/4608404> 
+        WebScriptObject's _executionContext lack of ownership policy causes 
+        crashes (e.g., in Dashcode)
+        
+        Layout tests pass.
+        
+        Renames:
             findRootObjectForNativeHandleFunction => createRootObject
             FindRootObjectForNativeHandleFunctionPtr => CreateRootObjectFunction
             

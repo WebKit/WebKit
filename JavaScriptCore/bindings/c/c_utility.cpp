@@ -126,7 +126,7 @@ void convertValueToNPVariant(ExecState *exec, JSValue *value, NPVariant *result)
             OBJECT_TO_NPVARIANT(obj, *result);
         } else {
             Interpreter *originInterpreter = exec->dynamicInterpreter();
-            const Bindings::RootObject* originRootObject = rootObjectForInterpreter(originInterpreter);
+            const Bindings::RootObject* originRootObject = getRootObject(originInterpreter);
 
             Interpreter *interpreter = 0;
             if (originInterpreter->isGlobalObject(value)) {
@@ -136,7 +136,7 @@ void convertValueToNPVariant(ExecState *exec, JSValue *value, NPVariant *result)
             if (!interpreter)
                 interpreter = originInterpreter;
 
-            const RootObject* rootObject = rootObjectForInterpreter(interpreter);
+            const RootObject* rootObject = getRootObject(interpreter);
             if (!rootObject) {
                 RootObject* newRootObject = new RootObject(0, interpreter);
                 rootObject = newRootObject;

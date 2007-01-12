@@ -141,7 +141,7 @@ JSValue* ObjcField::valueFromInstance(ExecState* exec, const Instance* instance)
 
 static id convertValueToObjcObject(ExecState* exec, JSValue* value)
 {
-    const RootObject* rootObject = rootObjectForInterpreter(exec->dynamicInterpreter());
+    const RootObject* rootObject = getRootObject(exec->dynamicInterpreter());
     if (!rootObject) {
         RootObject* newRootObject = new RootObject(0, exec->dynamicInterpreter());
         rootObject = newRootObject;
