@@ -54,9 +54,6 @@ ResourceLoader::ResourceLoader(Frame* frame)
     , m_cancelled(false)
     , m_calledDidFinishLoad(false)
     , m_frame(frame)
-#if PLATFORM(MAC)
-    , m_currentMacChallenge(nil)
-#endif
     , m_defersLoading(frame->page()->defersLoading())
 {
 }
@@ -84,7 +81,7 @@ void ResourceLoader::releaseResources()
     m_reachedTerminalState = true;
 
 #if PLATFORM(MAC)
-    m_identifier = nil;
+    setIdentifier(nil);
 #endif
     m_handle = 0;
     m_resourceData = 0;
@@ -254,11 +251,8 @@ void ResourceLoader::didCancel(const ResourceError& error)
     // for a single delegate. Cancelling wins.
     m_cancelled = true;
     
-#if PLATFORM(MAC)
-    m_currentMacChallenge = nil;
-#endif
-    m_currentWebChallenge.nullify();
-
+    if (m_handle)
+        m_handle->clearAuthentication();
 
     frameLoader()->cancelPendingArchiveLoad(this);
     if (m_handle) {
@@ -318,6 +312,27 @@ void ResourceLoader::didFinishLoading(ResourceHandle*)
 void ResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
 {
     didFail(error);
+}
+
+void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
+{
+    // Protect this in this delegate method since the additional processing can do
+    // anything including possibly derefing this; one example of this is Radar 3266216.
+    RefPtr<ResourceLoader> protector(this);
+    frameLoader()->didReceiveAuthenticationChallenge(this, challenge);
+}
+
+void ResourceLoader::didCancelAuthenticationChallenge(const AuthenticationChallenge& challenge)
+{
+    // Protect this in this delegate method since the additional processing can do
+    // anything including possibly derefing this; one example of this is Radar 3266216.
+    RefPtr<ResourceLoader> protector(this);
+    frameLoader()->didCancelAuthenticationChallenge(this, challenge);
+}
+
+void ResourceLoader::receivedCancellation(const AuthenticationChallenge&)
+{
+    cancel();
 }
 
 }

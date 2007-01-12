@@ -229,6 +229,62 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
     error = nsError;
 }
 
+void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
+{
+    ASSERT(!d->m_currentMacChallenge);
+    ASSERT(d->m_currentWebChallenge.isNull());
+    // Since NSURLConnection networking relies on keeping a reference to the original NSURLAuthenticationChallenge,
+    // we make sure that is actually present
+    ASSERT(challenge.nsURLAuthenticationChallenge());
+        
+    d->m_currentMacChallenge = challenge.nsURLAuthenticationChallenge();
+    NSURLAuthenticationChallenge *webChallenge = [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:d->m_currentMacChallenge 
+                                                                                       sender:(id<NSURLAuthenticationChallengeSender>)delegate()];
+    d->m_currentWebChallenge = core(webChallenge);
+    [webChallenge release];
+    
+    client()->didReceiveAuthenticationChallenge(this, d->m_currentWebChallenge);
+}
+
+void ResourceHandle::didCancelAuthenticationChallenge(const AuthenticationChallenge& challenge)
+{
+    ASSERT(d->m_currentMacChallenge);
+    ASSERT(!d->m_currentWebChallenge.isNull());
+    ASSERT(d->m_currentWebChallenge == challenge);
+
+    client()->didCancelAuthenticationChallenge(this, d->m_currentWebChallenge);
+}
+
+void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge, const Credential& credential)
+{
+    ASSERT(!challenge.isNull());
+    if (challenge != d->m_currentWebChallenge)
+        return;
+
+    [[d->m_currentMacChallenge sender] useCredential:mac(credential) forAuthenticationChallenge:d->m_currentMacChallenge];
+
+    clearAuthentication();
+}
+
+void ResourceHandle::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge& challenge)
+{
+    ASSERT(!challenge.isNull());
+    if (challenge != d->m_currentWebChallenge)
+        return;
+
+    [[d->m_currentMacChallenge sender] continueWithoutCredentialForAuthenticationChallenge:d->m_currentMacChallenge];
+
+    clearAuthentication();
+}
+
+void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challenge)
+{
+    if (challenge != d->m_currentWebChallenge)
+        return;
+
+    client()->receivedCancellation(this, challenge);
+}
+
 } // namespace WebCore
 
 @implementation WebCoreResourceHandleAsDelegate
@@ -263,7 +319,7 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
     if (!m_handle)
         return;
     ++inNSURLConnectionCallback;
-    m_handle->client()->didReceiveAuthenticationChallenge(m_handle, core(challenge));
+    m_handle->didReceiveAuthenticationChallenge(core(challenge));
     --inNSURLConnectionCallback;
 }
 
@@ -272,7 +328,7 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
     if (!m_handle)
         return;
     ++inNSURLConnectionCallback;
-    m_handle->client()->didCancelAuthenticationChallenge(m_handle, core(challenge));
+    m_handle->didCancelAuthenticationChallenge(core(challenge));
     --inNSURLConnectionCallback;
 }
 
@@ -339,21 +395,21 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
 {
     if (!m_handle)
         return;
-    m_handle->client()->receivedCredential(m_handle, core(challenge), core(credential));
+    m_handle->receivedCredential(core(challenge), core(credential));
 }
 
 - (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     if (!m_handle)
         return;
-    m_handle->client()->receivedRequestToContinueWithoutCredential(m_handle, core(challenge));
+    m_handle->receivedRequestToContinueWithoutCredential(core(challenge));
 }
 
 - (void)cancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     if (!m_handle)
         return;
-    m_handle->client()->receivedCancellation(m_handle, core(challenge));
+    m_handle->receivedCancellation(core(challenge));
 }
 
 @end

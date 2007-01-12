@@ -54,42 +54,6 @@ using namespace WebCore;
 
 namespace WebCore {
 
-void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
-{
-    ASSERT(!m_reachedTerminalState);
-    ASSERT(!m_currentMacChallenge);
-    ASSERT(m_currentWebChallenge.isNull());
-    // Since NSURLConnection networking relies on keeping a reference to the original NSURLAuthenticationChallenge,
-    // we make sure that is actually present
-    ASSERT(challenge.nsURLAuthenticationChallenge());
-    
-    // Protect this in this delegate method since the additional processing can do
-    // anything including possibly derefing this; one example of this is Radar 3266216.
-    RefPtr<ResourceLoader> protector(this);
-
-    m_currentMacChallenge = challenge.nsURLAuthenticationChallenge();
-    NSURLAuthenticationChallenge *webChallenge = [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:m_currentMacChallenge 
-                                                                                       sender:(id<NSURLAuthenticationChallengeSender>)m_handle->delegate()];
-    m_currentWebChallenge = core(webChallenge);
-    [webChallenge release];
-
-    frameLoader()->didReceiveAuthenticationChallenge(this, m_currentWebChallenge);
-}
-
-void ResourceLoader::didCancelAuthenticationChallenge(const AuthenticationChallenge& challenge)
-{
-    ASSERT(!m_reachedTerminalState);
-    ASSERT(m_currentMacChallenge);
-    ASSERT(!m_currentWebChallenge.isNull());
-    ASSERT(m_currentWebChallenge == challenge);
-
-    // Protect this in this delegate method since the additional processing can do
-    // anything including possibly derefing this; one example of this is Radar 3266216.
-    RefPtr<ResourceLoader> protector(this);
-
-    frameLoader()->didCancelAuthenticationChallenge(this, m_currentWebChallenge);
-}
-
 NSCachedURLResponse *ResourceLoader::willCacheResponse(NSCachedURLResponse *cachedResponse)
 {
     // When in private browsing mode, prevent caching to disk
@@ -99,44 +63,6 @@ NSCachedURLResponse *ResourceLoader::willCacheResponse(NSCachedURLResponse *cach
                                                                userInfo:[cachedResponse userInfo]
                                                           storagePolicy:NSURLCacheStorageAllowedInMemoryOnly] autorelease];
     return cachedResponse;
-}
-
-void ResourceLoader::setIdentifier(id identifier)
-{
-    m_identifier = identifier;
-}
-
-
-void ResourceLoader::receivedCredential(const AuthenticationChallenge& challenge, const Credential& credential)
-{
-    ASSERT(!challenge.isNull());
-    if (challenge != m_currentWebChallenge)
-        return;
-
-    [[m_currentMacChallenge sender] useCredential:mac(credential) forAuthenticationChallenge:m_currentMacChallenge];
-
-    m_currentMacChallenge = nil;
-    m_currentWebChallenge.nullify();
-}
-
-void ResourceLoader::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge& challenge)
-{
-    ASSERT(!challenge.isNull());
-    if (challenge != m_currentWebChallenge)
-        return;
-
-    [[m_currentMacChallenge sender] continueWithoutCredentialForAuthenticationChallenge:m_currentMacChallenge];
-
-    m_currentMacChallenge = nil;
-    m_currentWebChallenge.nullify();
-}
-
-void ResourceLoader::receivedCancellation(const AuthenticationChallenge& challenge)
-{
-    if (challenge != m_currentWebChallenge)
-        return;
-
-    cancel();
 }
 
 }

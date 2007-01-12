@@ -89,6 +89,9 @@ namespace WebCore {
 #if USE(CURL)
             , m_handle(0)
 #endif
+#if PLATFORM(MAC)
+            , m_currentMacChallenge(nil)
+#endif
         {
         }
         
@@ -127,6 +130,10 @@ namespace WebCore {
 #if USE(CURL)
         CURL* m_handle;
 #endif
+#if PLATFORM(MAC)
+        NSURLAuthenticationChallenge *m_currentMacChallenge;
+#endif
+        AuthenticationChallenge m_currentWebChallenge;
     };
 
 } // namespace WebCore

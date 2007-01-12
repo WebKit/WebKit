@@ -81,7 +81,7 @@ namespace WebCore {
         virtual void setDefersLoading(bool);
 
 #if PLATFORM(MAC)
-        void setIdentifier(id);
+        void setIdentifier(id i) { m_identifier = i; }
         id identifier() const { return m_identifier.get(); }
 #else
         void setIdentifier(id) { }
@@ -105,6 +105,10 @@ namespace WebCore {
         NSCachedURLResponse *willCacheResponse(NSCachedURLResponse *);
 #endif
 
+        void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
+        void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
+        void receivedCancellation(const AuthenticationChallenge&);
+
         // ResourceHandleClient
         virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& redirectResponse);        
         virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
@@ -112,21 +116,12 @@ namespace WebCore {
         virtual void didFinishLoading(ResourceHandle*);
         virtual void didFail(ResourceHandle*, const ResourceError&);
         virtual void willStopBufferingData(ResourceHandle*, const char* data, int length) { willStopBufferingData(data, length); } 
-
-#if PLATFORM(MAC)
-        virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *cachedResponse) { return willCacheResponse(cachedResponse); }
-        
-        void didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge);
-        void didCancelAuthenticationChallenge(const AuthenticationChallenge& challenge);
-        void receivedCredential(const AuthenticationChallenge&, const Credential&);
-        void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
-        void receivedCancellation(const AuthenticationChallenge&);
-        
         virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) { didReceiveAuthenticationChallenge(challenge); } 
         virtual void didCancelAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) { didCancelAuthenticationChallenge(challenge); } 
-        virtual void receivedCredential(ResourceHandle*, const AuthenticationChallenge& challenge, const Credential& credential) { receivedCredential(challenge, credential); }
-        virtual void receivedRequestToContinueWithoutCredential(ResourceHandle*, const AuthenticationChallenge& challenge) { receivedRequestToContinueWithoutCredential(challenge); } 
         virtual void receivedCancellation(ResourceHandle*, const AuthenticationChallenge& challenge) { receivedCancellation(challenge); }
+        
+#if PLATFORM(MAC)
+        virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *cachedResponse) { return willCacheResponse(cachedResponse); }
 #endif
         
         ResourceHandle* handle() const { return m_handle.get(); }
@@ -158,9 +153,7 @@ protected:
         ResourceResponse m_response;
 #if PLATFORM(MAC)
         RetainPtr<id> m_identifier;
-        NSURLAuthenticationChallenge *m_currentMacChallenge;
 #endif
-        AuthenticationChallenge m_currentWebChallenge;
 
         KURL m_originalURL;
         RefPtr<SharedBuffer> m_resourceData;

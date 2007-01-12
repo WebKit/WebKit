@@ -1,3 +1,40 @@
+2007-01-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver
+
+        -Move more HTTP Auth handling towards ResourceHandle, away from ResourceHandleClient
+        -Make more of ResourceLoader cross-platform
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::ResourceLoader):
+        (WebCore::ResourceLoader::releaseResources):
+        (WebCore::ResourceLoader::didCancel):
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceLoader::didCancelAuthenticationChallenge):
+        (WebCore::ResourceLoader::receivedCancellation):
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::willStopBufferingData):
+        (WebCore::ResourceLoader::didCancelAuthenticationChallenge):
+        (WebCore::ResourceLoader::willCacheResponse):
+        * loader/mac/ResourceLoaderMac.mm:
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::willStopBufferingData):
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::didCancelAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceHandle::receivedCancellation):
+        (WebCore::ResourceHandle::clearAuthentication):
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveAuthenticationChallenge:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didCancelAuthenticationChallenge:]):
+        (-[WebCoreResourceHandleAsDelegate useCredential:forAuthenticationChallenge:]):
+        (-[WebCoreResourceHandleAsDelegate continueWithoutCredentialForAuthenticationChallenge:]):
+        (-[WebCoreResourceHandleAsDelegate cancelAuthenticationChallenge:]):
+
 2007-01-11  David Hyatt  <hyatt@apple.com>
 
         A hit test is returning a null renderer.  Make sure to null-check it in the autoscroll code.

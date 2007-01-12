@@ -76,5 +76,13 @@ const ResourceRequest& ResourceHandle::request() const
     return d->m_request;
 }
 
+void ResourceHandle::clearAuthentication()
+{
+#if PLATFORM(MAC)
+    d->m_currentMacChallenge = nil;
+#endif
+    d->m_currentWebChallenge.nullify();
+}
+
 } // namespace WebCore
 

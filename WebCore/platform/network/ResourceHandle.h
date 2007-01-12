@@ -26,9 +26,10 @@
 #ifndef ResourceHandle_h
 #define ResourceHandle_h
 
+#include "AuthenticationChallenge.h"
+#include "HTTPHeaderMap.h"
 #include <wtf/OwnPtr.h>
 
-#include "HTTPHeaderMap.h"
 
 #if PLATFORM(WIN)
 typedef unsigned long DWORD;
@@ -42,7 +43,9 @@ typedef _W64 long LONG_PTR;
 typedef LONG_PTR LRESULT;
 #endif
 
+
 #if PLATFORM(MAC)
+#include "RetainPtr.h"
 #ifdef __OBJC__
 @class NSData;
 @class NSError;
@@ -59,6 +62,8 @@ typedef struct objc_object *id;
 
 namespace WebCore {
 
+class AuthenticationChallenge;
+class Credential;
 class FormData;
 class Frame;
 class KURL;
@@ -87,6 +92,12 @@ public:
     ~ResourceHandle();
 
 #if PLATFORM(MAC)
+    void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
+    void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
+    void receivedCredential(const AuthenticationChallenge&, const Credential&);
+    void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
+    void receivedCancellation(const AuthenticationChallenge&);
+        
     NSURLConnection *connection() const;
     WebCoreResourceHandleAsDelegate *delegate();
     void releaseDelegate();
@@ -116,6 +127,7 @@ public:
     // Used to work around the fact that you don't get any more NSURLConnection callbacks until you return from the one you're in.
     static bool loadsBlocked();    
     
+    void clearAuthentication();
     void cancel();
     
     ResourceHandleClient* client() const;
@@ -129,7 +141,7 @@ public:
 
 private:
     bool start(Frame*);
-
+        
     OwnPtr<ResourceHandleInternal> d;
 };
 
