@@ -1808,7 +1808,7 @@ int RenderBlock::leftSelectionOffset(RenderBlock* rootBlock, int y)
         if (rootBlock != this)
             // The border can potentially be further extended by our containingBlock().
             return containingBlock()->leftSelectionOffset(rootBlock, y + yPos());
-        return 0;
+        return left;
     }
     else {
         RenderBlock* cb = this;
@@ -1828,7 +1828,7 @@ int RenderBlock::rightSelectionOffset(RenderBlock* rootBlock, int y)
         if (rootBlock != this)
             // The border can potentially be further extended by our containingBlock().
             return containingBlock()->rightSelectionOffset(rootBlock, y + yPos());
-        return width();
+        return right;
     }
     else {
         RenderBlock* cb = this;
