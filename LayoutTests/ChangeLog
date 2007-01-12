@@ -2,6 +2,46 @@
 
         Reviewed by Hyatt.
 
+        - updated results for http://bugs.webkit.org/show_bug.cgi?id=12124
+          RenderTable::section{Above,Below}() can return the wrong answer for the {footer,header}
+
+        Collapsed borders changed in the "marvin" tests, as the footer cells now
+        collapse correctly with the last row of the body. Visual differences not
+        captured by the pixel results since they occurred below 600px.
+
+        The "other" test has changed since in a table with multiple captions,
+        now the first one wins. No visual difference in this case since both captions
+        are the same.
+
+        * tables/mozilla/marvin/backgr_layers-opacity-expected.txt:
+        * tables/mozilla/marvin/backgr_position-table-expected.txt:
+        * tables/mozilla/marvin/backgr_simple-table-cell-expected.txt:
+        * tables/mozilla/marvin/backgr_simple-table-column-expected.txt:
+        * tables/mozilla/marvin/backgr_simple-table-column-group-expected.txt:
+        * tables/mozilla/marvin/backgr_simple-table-expected.txt:
+        * tables/mozilla/marvin/backgr_simple-table-row-expected.txt:
+        * tables/mozilla/marvin/backgr_simple-table-row-group-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-quirks-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_layers-show-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-column-group-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.txt:
+        * tables/mozilla_expected_failures/other/test4-expected.txt:
+
+2007-01-11  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
         - updated results for http://bugs.webkit.org/show_bug.cgi?id=12115
           RTL text is jumbled on display
           (fixing fixed table layout)

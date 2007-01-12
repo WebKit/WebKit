@@ -93,6 +93,17 @@ void RenderTable::setStyle(RenderStyle* newStyle)
     }
 }
 
+static inline void resetSectionPointerIfNotBefore(RenderTableSection*& ptr, RenderObject* before)
+{
+    if (!before || !ptr)
+        return;
+    RenderObject* o = before->previousSibling();
+    while (o && o != ptr)
+        o = o->previousSibling();
+    if (!o)
+        ptr = 0;
+}
+
 void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
 {
     bool wrapInAnonymousSection = true;
@@ -100,8 +111,18 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
 
     switch (child->style()->display()) {
         case TABLE_CAPTION:
-            if (child->isRenderBlock())
-                m_caption = static_cast<RenderBlock*>(child);
+            if (child->isRenderBlock()) {
+                // First caption wins.
+                if (beforeChild && m_caption) {
+                    RenderObject* o = beforeChild->previousSibling();
+                    while (o && o != m_caption)
+                        o = o->previousSibling();
+                    if (!o)
+                        m_caption = 0;
+                }
+                if (!m_caption)
+                    m_caption = static_cast<RenderBlock*>(child);
+            }
             wrapInAnonymousSection = false;
             break;
         case TABLE_COLUMN:
@@ -110,27 +131,34 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
             wrapInAnonymousSection = false;
             break;
         case TABLE_HEADER_GROUP:
-            if (!m_head) {
-                if (child->isTableSection())
+            if (child->isTableSection()) {
+                resetSectionPointerIfNotBefore(m_head, beforeChild);
+                if (!m_head) {
                     m_head = static_cast<RenderTableSection*>(child);
-            } else if (!m_firstBody) {
-                if (child->isTableSection())
-                    m_firstBody = static_cast<RenderTableSection*>(child);
+                } else {
+                    resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
+                    if (!m_firstBody) 
+                        m_firstBody = static_cast<RenderTableSection*>(child);
+                }
             }
             wrapInAnonymousSection = false;
             break;
         case TABLE_FOOTER_GROUP:
-            if (!m_foot) {
-                if (child->isTableSection())
+            if (child->isTableSection()) {
+                resetSectionPointerIfNotBefore(m_foot, beforeChild);
+                if (!m_foot) {
                     m_foot = static_cast<RenderTableSection*>(child);
-                wrapInAnonymousSection = false;
-                break;
+                    wrapInAnonymousSection = false;
+                    break;
+                }
             }
-            // fall through
+            // Fall through.
         case TABLE_ROW_GROUP:
-            if (!m_firstBody)
-                if (child->isTableSection())
+            if (child->isTableSection()) {
+                resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
+                if (!m_firstBody)
                     m_firstBody = static_cast<RenderTableSection*>(child);
+            }
             wrapInAnonymousSection = false;
             break;
         case TABLE_CELL:
@@ -354,7 +382,7 @@ void RenderTable::layout()
         bl += paddingLeft();
 
     // position the table sections
-    RenderObject* section = m_head ? m_head : (m_firstBody ? m_firstBody : m_foot);
+    RenderTableSection* section = m_head ? m_head : (m_firstBody ? m_firstBody : m_foot);
     while (section) {
         if (!sectionMoved && section->yPos() != m_height) {
             sectionMoved = true;
@@ -365,19 +393,7 @@ void RenderTable::layout()
         m_height += section->height();
         m_overflowLeft = min(m_overflowLeft, section->xPos() + section->overflowLeft(false));
         m_overflowWidth = max(m_overflowWidth, section->xPos() + section->overflowWidth(false));
-        // FIXME: Use sectionBelow() instead of the following once sectionBelow() is fixed.
-        // See http://bugs.webkit.org/show_bug.cgi?id=12124
-        if (section == m_foot)
-            break;
-        if (section == m_head)
-            section = m_firstBody ? m_firstBody : m_foot;
-        else {
-            do {
-                section = section->nextSibling();
-            } while (section && (section == m_head || section == m_foot || !section->isTableSection()));
-            if (!section)
-                section = m_foot;
-        }
+        section = sectionBelow(section);
     }
 
     m_height += bpBottom;
@@ -694,27 +710,25 @@ int RenderTable::calcBorderLeft() const
                 borderWidth = max(borderWidth, gb.width);
         }
         
-        RenderObject* child = firstChild();
-        while (child && !child->isTableSection())
-            child = child->nextSibling();
-        if (child && child->isTableSection()) {
-            RenderTableSection* section = static_cast<RenderTableSection*>(child);
-            
-            if (!section->numRows())
-                return borderWidth / 2;
-            
-            const BorderValue& sb = section->style()->borderLeft();
+        RenderTableSection* firstNonEmptySection = m_head ? m_head : (m_firstBody ? m_firstBody : m_foot);
+        if (firstNonEmptySection && !firstNonEmptySection->numRows())
+            firstNonEmptySection = sectionBelow(firstNonEmptySection, true);
+        
+        if (firstNonEmptySection) {
+            const BorderValue& sb = firstNonEmptySection->style()->borderLeft();
             if (sb.style() == BHIDDEN)
                 return 0;
+
             if (sb.style() > BHIDDEN)
                 borderWidth = max(borderWidth, sb.width);
 
-            const RenderTableSection::CellStruct& cs = section->cellAt(0, leftmostColumn);
+            const RenderTableSection::CellStruct& cs = firstNonEmptySection->cellAt(0, leftmostColumn);
             
             if (cs.cell) {
                 const BorderValue& cb = cs.cell->style()->borderLeft();
                 if (cb.style() == BHIDDEN)
                     return 0;
+
                 const BorderValue& rb = cs.cell->parent()->style()->borderLeft();
                 if (rb.style() == BHIDDEN)
                     return 0;
@@ -755,27 +769,25 @@ int RenderTable::calcBorderRight() const
                 borderWidth = max(borderWidth, gb.width);
         }
         
-        RenderObject* child = firstChild();
-        while (child && !child->isTableSection())
-            child = child->nextSibling();
-        if (child && child->isTableSection()) {
-            RenderTableSection* section = static_cast<RenderTableSection*>(child);
-            
-            if (!section->numRows())
-                return (borderWidth + 1) / 2;
-            
-            const BorderValue& sb = section->style()->borderRight();
+        RenderTableSection* firstNonEmptySection = m_head ? m_head : (m_firstBody ? m_firstBody : m_foot);
+        if (firstNonEmptySection && !firstNonEmptySection->numRows())
+            firstNonEmptySection = sectionBelow(firstNonEmptySection, true);
+        
+        if (firstNonEmptySection) {
+            const BorderValue& sb = firstNonEmptySection->style()->borderRight();
             if (sb.style() == BHIDDEN)
                 return 0;
+
             if (sb.style() > BHIDDEN)
                 borderWidth = max(borderWidth, sb.width);
 
-            const RenderTableSection::CellStruct& cs = section->cellAt(0, rightmostColumn);
+            const RenderTableSection::CellStruct& cs = firstNonEmptySection->cellAt(0, rightmostColumn);
             
             if (cs.cell) {
                 const BorderValue& cb = cs.cell->style()->borderRight();
                 if (cb.style() == BHIDDEN)
                     return 0;
+
                 const BorderValue& rb = cs.cell->parent()->style()->borderRight();
                 if (rb.style() == BHIDDEN)
                     return 0;
@@ -929,7 +941,7 @@ RenderTableSection* RenderTable::sectionAbove(const RenderTableSection* section,
 {
     if (section == m_head)
         return 0;
-    RenderObject* prevSection = (section == m_foot ? lastChild() : section)->previousSibling();
+    RenderObject* prevSection = section == m_foot ? lastChild() : section->previousSibling();
     while (prevSection) {
         if (prevSection->isTableSection() && prevSection != m_head && prevSection != m_foot && (!skipEmptySections || static_cast<RenderTableSection*>(prevSection)->numRows()))
             break;
@@ -944,7 +956,7 @@ RenderTableSection* RenderTable::sectionBelow(const RenderTableSection* section,
 {
     if (section == m_foot)
         return 0;
-    RenderObject* nextSection = (section == m_head ? firstChild() : section)->nextSibling();
+    RenderObject* nextSection = section == m_head ? firstChild() : section->nextSibling();
     while (nextSection) {
         if (nextSection->isTableSection() && nextSection != m_head && nextSection != m_foot && (!skipEmptySections || static_cast<RenderTableSection*>(nextSection)->numRows()))
             break;

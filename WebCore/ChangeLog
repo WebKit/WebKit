@@ -2,6 +2,31 @@
 
         Reviewed by Hyatt.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12124
+          RenderTable::section{Above,Below}() can return the wrong answer for the {footer,header}
+
+        * rendering/RenderTable.cpp:
+        (WebCore::resetSectionPointerIfNotBefore): Added this function to help with
+        checking if a section being inserted is the going to be the first of its kind.
+        (WebCore::RenderTable::addChild): Changed to maintain the pointers to the
+        header, the footer, the caption and the first table body properly when objects
+        are inserted in the middle. Also changed to make the first caption win over
+        any other captions. This matches Firefox and what already used to happen when a
+        section recalc took place.
+        (WebCore::RenderTable::layout): Changed to use sectionBelow() for iterating
+        over the sections from top to bottom.
+        (WebCore::RenderTable::calcBorderLeft): Changed to really find the section
+        containing the first row.
+        (WebCore::RenderTable::calcBorderRight): Ditto.
+        (WebCore::RenderTable::sectionAbove): Fixed a bug when the last section was
+        skipped if the input was the footer.
+        (WebCore::RenderTable::sectionBelow): Ditto for "first" and "header"
+        respectively.
+
+2007-01-11  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=12115
           RTL text is jumbled on display
 

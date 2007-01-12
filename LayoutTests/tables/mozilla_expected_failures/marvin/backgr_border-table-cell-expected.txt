@@ -132,9 +132,9 @@ layer at (0,0) size 785x1305
                 text run at (34,4) width 45: "TH D"
         RenderTableSection {TFOOT} at (2,319) size 581x116
           RenderTableRow {TR} at (0,0) size 581x116
-            RenderTableCell {TD} at (0,44) size 344x27 [bgcolor=#000000] [border: (1px dotted #FFFFFF)] [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (4,2) size 47x22
-                text run at (4,2) width 47: "TD M"
+            RenderTableCell {TD} at (0,41) size 344x33 [bgcolor=#000000] [border: (7px dotted #FFFFFF)] [r=0 c=0 rs=1 cs=2]
+              RenderText {#text} at (4,8) size 47x22
+                text run at (4,8) width 47: "TD M"
             RenderTableCell {TD} at (344,44) size 123x27 [border: (1px dotted #FFFFFF)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 46x22
                 text run at (2,2) width 46: "TD O"
