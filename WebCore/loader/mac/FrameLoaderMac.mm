@@ -77,100 +77,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-void FrameLoader::checkLoadCompleteForThisFrame()
-{
-    ASSERT(m_client->hasWebView());
-
-    switch (m_state) {
-        case FrameStateProvisional: {
-            if (m_delegateIsHandlingProvisionalLoadError)
-                return;
-
-            RefPtr<DocumentLoader> pdl = m_provisionalDocumentLoader;
-            if (!pdl)
-                return;
-                
-            // If we've received any errors we may be stuck in the provisional state and actually complete.
-            const ResourceError& error = pdl->mainDocumentError();
-            if (error.isNull())
-                return;
-
-            // Check all children first.
-            RefPtr<HistoryItem> item;
-            if (isBackForwardLoadType(loadType()) && m_frame == m_frame->page()->mainFrame())
-                item = m_currentHistoryItem;
-                
-            bool shouldReset = true;
-            if (!pdl->isLoadingInAPISense()) {
-                m_delegateIsHandlingProvisionalLoadError = true;
-                m_client->dispatchDidFailProvisionalLoad(error);
-                m_delegateIsHandlingProvisionalLoadError = false;
-
-                // FIXME: can stopping loading here possibly have any effect, if isLoading is false,
-                // which it must be to be in this branch of the if? And is it OK to just do a full-on
-                // stopAllLoaders instead of stopLoadingSubframes?
-                stopLoadingSubframes();
-                pdl->stopLoading();
-
-                // Finish resetting the load state, but only if another load hasn't been started by the
-                // delegate callback.
-                if (pdl == m_provisionalDocumentLoader)
-                    clearProvisionalLoad();
-                else if (m_documentLoader) {
-                    KURL unreachableURL = m_documentLoader->unreachableURL();
-                    if (!unreachableURL.isEmpty() && unreachableURL == pdl->request().url())
-                        shouldReset = false;
-                }
-            }
-            if (shouldReset && item && m_frame->page())
-                 m_frame->page()->backForwardList()->goToItem(item.get());
-
-            return;
-        }
-        
-        case FrameStateCommittedPage: {
-            DocumentLoader* dl = m_documentLoader.get();            
-            if (dl->isLoadingInAPISense())
-                return;
-
-            markLoadComplete();
-
-            // FIXME: Is this subsequent work important if we already navigated away?
-            // Maybe there are bugs because of that, or extra work we can skip because
-            // the new page is ready.
-
-            m_client->forceLayoutForNonHTML();
-             
-            // If the user had a scroll point, scroll to it, overriding the anchor point if any.
-            if ((isBackForwardLoadType(m_loadType) || m_loadType == FrameLoadTypeReload)
-                    && m_frame->page() && m_frame->page()->backForwardList())
-                restoreScrollPositionAndViewState();
-
-            const ResourceError& error = dl->mainDocumentError();
-            if (!error.isNull())
-                m_client->dispatchDidFailLoad(error);
-            else
-                m_client->dispatchDidFinishLoad();
-
-            m_client->progressCompleted();
-            return;
-        }
-        
-        case FrameStateComplete:
-            // Even if already complete, we might have set a previous item on a frame that
-            // didn't do any data loading on the past transaction. Make sure to clear these out.
-            m_client->frameLoadCompleted();
-            return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-String FrameLoader::referrer() const
-{
-    return documentLoader()->request().httpReferrer();
-}
-
 void FrameLoader::didChangeTitle(DocumentLoader* loader)
 {
     m_client->didChangeTitle(loader);
@@ -298,16 +204,6 @@ String FrameLoader::overrideMediaType() const
     if (overrideType)
         return overrideType;
     return String();
-}
-
-KURL FrameLoader::originalRequestURL() const
-{
-    return activeDocumentLoader()->initialRequest().url();
-}
-
-void FrameLoader::setTitle(const String& title)
-{
-    documentLoader()->setTitle(title);
 }
 
 void FrameLoader::closeBridge()

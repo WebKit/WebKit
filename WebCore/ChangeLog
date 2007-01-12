@@ -1,5 +1,35 @@
 2007-01-12  Lars Knoll <lars@trolltech.com>
 
+        Reviewed by Darin and Anders.
+
+        Make some more of the loader code platform independent.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::createEmptyDocument):
+        (WebCore::FrameLoader::setTitle):
+        (WebCore::FrameLoader::originalRequestURL):
+        (WebCore::FrameLoader::referrer):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::SubresourceLoader):
+        (WebCore::SubresourceLoader::load):
+        (WebCore::SubresourceLoader::create):
+        (WebCore::SubresourceLoader::willSendRequest):
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::didReceiveData):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::didFail):
+        (WebCore::SubresourceLoader::didCancel):
+        (WebCore::SubresourceLoader::stopLoading):
+        * loader/SubresourceLoader.h:
+        * loader/mac/FrameLoaderMac.mm:
+        * loader/mac/SubresourceLoaderMac.mm: Removed.
+        * loader/qt/FrameLoaderQt.cpp:
+
+2007-01-12  Lars Knoll <lars@trolltech.com>
+
         Reviewed by Zack
 
         Valgrind reported uninitialized variable.
