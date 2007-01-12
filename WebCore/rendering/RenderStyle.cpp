@@ -86,7 +86,6 @@ bool StyleBoxData::operator==(const StyleBoxData& o) const
 StyleVisualData::StyleVisualData()
     : hasClip(false)
     , textDecoration(RenderStyle::initialTextDecoration())
-    , colspan(1)
     , counterIncrement(0)
     , counterReset(0)
 {
@@ -101,7 +100,6 @@ StyleVisualData::StyleVisualData(const StyleVisualData& o)
     , clip(o.clip)
     , hasClip(o.hasClip)
     , textDecoration(o.textDecoration)
-    , colspan(o.colspan)
     , counterIncrement(o.counterIncrement)
     , counterReset(o.counterReset)
 {
@@ -603,13 +601,22 @@ StyleInheritedData::StyleInheritedData(const StyleInheritedData& o)
 {
 }
 
+static bool cursorDataEqvuialent(const CursorList* c1, const CursorList* c2)
+{
+    if (c1 == c2)
+        return true;
+    if (!c1 && c2 || c1 && !c2)
+        return false;
+    return (*c1 == *c2);
+}
+
 bool StyleInheritedData::operator==(const StyleInheritedData& o) const
 {
     return
         indent == o.indent &&
         line_height == o.line_height &&
         style_image == o.style_image &&
-        cursorData  == o.cursorData &&
+        cursorDataEqvuialent(cursorData.get(), o.cursorData.get()) &&
         font == o.font &&
         color == o.color &&
         horizontal_border_spacing == o.horizontal_border_spacing &&
@@ -618,6 +625,21 @@ bool StyleInheritedData::operator==(const StyleInheritedData& o) const
         orphans == o.orphans &&
         page_break_inside == o.page_break_inside;
 }
+
+bool CursorList::operator==(const CursorList& other) const
+{
+    // If the lists aren't the same size, then they can't be equivalent.
+    if (size() != other.size())
+        return false;
+        
+    for (unsigned i = 0; i < size(); i++) {
+        if (m_vector[i] != other.m_vector[i])
+            return false;
+    }
+    
+    return true;
+}
+
 
 static inline bool operator!=(const CounterContent& a, const CounterContent& b)
 {
@@ -871,81 +893,86 @@ RenderStyle::Diff RenderStyle::diff(const RenderStyle* other) const
         return Layout;
 #endif
 
-    // we anyway assume they are the same
-//      EDisplay _effectiveDisplay : 5;
-
-    // NonVisible:
-//      ECursor _cursor_style : 4;
-
-// ### this needs work to know more exactly if we need a relayout
-//     or just a repaint
-
-// non-inherited attributes
-//     DataRef<StyleBoxData> box;
-//     DataRef<StyleVisualData> visual;
-//     DataRef<StyleSurroundData> surround;
-
-// inherited attributes
-//     DataRef<StyleInheritedData> inherited;
-
-    if ( box->width != other->box->width ||
-         box->min_width != other->box->min_width ||
-         box->max_width != other->box->max_width ||
-         box->height != other->box->height ||
-         box->min_height != other->box->min_height ||
-         box->max_height != other->box->max_height ||
-         box->vertical_align != other->box->vertical_align ||
-         box->boxSizing != other->box->boxSizing ||
-         !(surround->margin == other->surround->margin) ||
-         !(surround->padding == other->surround->padding) ||
-         rareNonInheritedData->m_appearance != other->rareNonInheritedData->m_appearance ||
-         rareNonInheritedData->marginTopCollapse != other->rareNonInheritedData->marginTopCollapse ||
-         rareNonInheritedData->marginBottomCollapse != other->rareNonInheritedData->marginBottomCollapse ||
-         *rareNonInheritedData->flexibleBox.get() != *other->rareNonInheritedData->flexibleBox.get() ||
-         *rareNonInheritedData->m_multiCol.get() != *other->rareNonInheritedData->m_multiCol.get() ||
-         (rareNonInheritedData->lineClamp != other->rareNonInheritedData->lineClamp) ||
-         (rareInheritedData->highlight != other->rareInheritedData->highlight) ||
-         (rareInheritedData->textSizeAdjust != other->rareInheritedData->textSizeAdjust) ||
-         (rareInheritedData->wordWrap != other->rareInheritedData->wordWrap) ||
-         (rareInheritedData->nbspMode != other->rareInheritedData->nbspMode) ||
-         (rareInheritedData->khtmlLineBreak != other->rareInheritedData->khtmlLineBreak) ||
-        !(inherited->indent == other->inherited->indent) ||
-        !(inherited->line_height == other->inherited->line_height) ||
-        !(inherited->style_image == other->inherited->style_image) ||
-        !(inherited->cursorData  == other->inherited->cursorData) ||
-        !(inherited->font == other->inherited->font) ||
-        !(inherited->horizontal_border_spacing == other->inherited->horizontal_border_spacing) ||
-        !(inherited->vertical_border_spacing == other->inherited->vertical_border_spacing) ||
-        !(inherited_flags._box_direction == other->inherited_flags._box_direction) ||
-        !(inherited_flags._visuallyOrdered == other->inherited_flags._visuallyOrdered) ||
-        !(inherited_flags._htmlHacks == other->inherited_flags._htmlHacks) ||
-        !(noninherited_flags._position == other->noninherited_flags._position) ||
-        !(noninherited_flags._floating == other->noninherited_flags._floating) ||
-        !(noninherited_flags._originalDisplay == other->noninherited_flags._originalDisplay) ||
-         visual->colspan != other->visual->colspan ||
-         visual->counterIncrement != other->visual->counterIncrement ||
-         visual->counterReset != other->visual->counterReset ||
-         rareNonInheritedData->textOverflow != other->rareNonInheritedData->textOverflow ||
-         (rareInheritedData->textSecurity != other->rareInheritedData->textSecurity))
+    if (box->width != other->box->width ||
+        box->min_width != other->box->min_width ||
+        box->max_width != other->box->max_width ||
+        box->height != other->box->height ||
+        box->min_height != other->box->min_height ||
+        box->max_height != other->box->max_height)
         return Layout;
-   
-    // changes causing Layout changes:
+    
+    if (box->vertical_align != other->box->vertical_align || noninherited_flags._vertical_align != other->noninherited_flags._vertical_align)
+        return Layout;
+    
+    if (box->boxSizing != other->box->boxSizing)
+        return Layout;
+    
+    if (surround->margin != other->surround->margin)
+        return Layout;
+        
+    if (surround->padding != other->surround->padding)
+        return Layout;
+    
+    if (rareNonInheritedData.get() != other->rareNonInheritedData.get()) {
+        if (rareNonInheritedData->m_appearance != other->rareNonInheritedData->m_appearance ||
+            rareNonInheritedData->marginTopCollapse != other->rareNonInheritedData->marginTopCollapse ||
+            rareNonInheritedData->marginBottomCollapse != other->rareNonInheritedData->marginBottomCollapse ||
+            rareNonInheritedData->lineClamp != other->rareNonInheritedData->lineClamp ||
+            rareNonInheritedData->textOverflow != other->rareNonInheritedData->textOverflow)
+            return Layout;
+        
+        if (rareNonInheritedData->flexibleBox.get() != other->rareNonInheritedData->flexibleBox.get() &&
+            *rareNonInheritedData->flexibleBox.get() != *other->rareNonInheritedData->flexibleBox.get())
+            return Layout;
+        
+        if (!rareNonInheritedData->shadowDataEquivalent(*other->rareNonInheritedData.get()))
+            return Layout;
 
-// only for tables:
-//     _border_collapse
-//     EEmptyCell _empty_cells : 2 ;
-//     ECaptionSide _caption_side : 2;
-//     ETableLayout _table_layout : 1;
-//     EPosition _position : 2;
-//     EFloat _floating : 2;
-    if ( ((int)noninherited_flags._effectiveDisplay) >= TABLE ) {
-        // Stupid gcc gives a compile error on
-        // a != other->b if a and b are bitflags. Using
-        // !(a== other->b) instead.
-        if ( !(inherited_flags._border_collapse == other->inherited_flags._border_collapse) ||
-             !(inherited_flags._empty_cells == other->inherited_flags._empty_cells) ||
-             !(inherited_flags._caption_side == other->inherited_flags._caption_side) ||
-             !(noninherited_flags._table_layout == other->noninherited_flags._table_layout))
+        if (rareNonInheritedData->m_multiCol.get() != other->rareNonInheritedData->m_multiCol.get() &&
+            *rareNonInheritedData->m_multiCol.get() != *other->rareNonInheritedData->m_multiCol.get())
+            return Layout;
+            
+        // If regions change trigger a relayout to re-calc regions.
+        if (rareNonInheritedData->m_dashboardRegions != other->rareNonInheritedData->m_dashboardRegions)
+            return Layout;
+    }
+
+    if (rareInheritedData.get() != other->rareInheritedData.get()) {
+        if (rareInheritedData->highlight != other->rareInheritedData->highlight ||
+            rareInheritedData->textSizeAdjust != other->rareInheritedData->textSizeAdjust ||
+            rareInheritedData->wordWrap != other->rareInheritedData->wordWrap ||
+            rareInheritedData->nbspMode != other->rareInheritedData->nbspMode ||
+            rareInheritedData->khtmlLineBreak != other->rareInheritedData->khtmlLineBreak ||
+            rareInheritedData->textSecurity != other->rareInheritedData->textSecurity)
+            return Layout;
+        
+        if (!rareInheritedData->shadowDataEquivalent(*other->rareInheritedData.get()))
+            return Layout;
+            
+        if (textStrokeWidth() != other->textStrokeWidth())
+            return Layout;
+    }
+
+    if (inherited->indent != other->inherited->indent ||
+        inherited->line_height != other->inherited->line_height ||
+        inherited->style_image != other->inherited->style_image ||
+        inherited->font != other->inherited->font ||
+        inherited->horizontal_border_spacing != other->inherited->horizontal_border_spacing ||
+        inherited->vertical_border_spacing != other->inherited->vertical_border_spacing ||
+        inherited_flags._box_direction != other->inherited_flags._box_direction ||
+        inherited_flags._visuallyOrdered != other->inherited_flags._visuallyOrdered ||
+        inherited_flags._htmlHacks != other->inherited_flags._htmlHacks ||
+        noninherited_flags._position != other->noninherited_flags._position ||
+        noninherited_flags._floating != other->noninherited_flags._floating ||
+        noninherited_flags._originalDisplay != other->noninherited_flags._originalDisplay)
+        return Layout;
+
+   
+    if (((int)noninherited_flags._effectiveDisplay) >= TABLE) {
+        if (inherited_flags._border_collapse != other->inherited_flags._border_collapse ||
+            inherited_flags._empty_cells != other->inherited_flags._empty_cells ||
+            inherited_flags._caption_side != other->inherited_flags._caption_side ||
+            noninherited_flags._table_layout != other->noninherited_flags._table_layout)
             return Layout;
         
         // In the collapsing border model, 'hidden' suppresses other borders, while 'none'
@@ -962,45 +989,24 @@ RenderStyle::Diff RenderStyle::diff(const RenderStyle* other) const
             return Layout;
     }
 
-// only for lists:
-//      EListStyleType _list_style_type : 5 ;
-//      EListStylePosition _list_style_position :1;
-    if (noninherited_flags._effectiveDisplay == LIST_ITEM ) {
-        if ( !(inherited_flags._list_style_type == other->inherited_flags._list_style_type) ||
-             !(inherited_flags._list_style_position == other->inherited_flags._list_style_position) )
+    if (noninherited_flags._effectiveDisplay == LIST_ITEM) {
+        if (inherited_flags._list_style_type != other->inherited_flags._list_style_type ||
+            inherited_flags._list_style_position != other->inherited_flags._list_style_position)
             return Layout;
     }
 
-// ### These could be better optimised
-//      ETextAlign _text_align : 3;
-//      ETextTransform _text_transform : 4;
-//      EDirection _direction : 1;
-//      EWhiteSpace _white_space : 2;
-//      EFontVariant _font_variant : 1;
-//     EClear _clear : 2;
-    if ( !(inherited_flags._text_align == other->inherited_flags._text_align) ||
-         !(inherited_flags._text_transform == other->inherited_flags._text_transform) ||
-         !(inherited_flags._direction == other->inherited_flags._direction) ||
-         !(inherited_flags._white_space == other->inherited_flags._white_space) ||
-         !(noninherited_flags._clear == other->noninherited_flags._clear) ||
-         !rareInheritedData->shadowDataEquivalent(*other->rareInheritedData.get()) ||
-         !rareNonInheritedData->shadowDataEquivalent(*other->rareNonInheritedData.get()) ||
-         textStrokeWidth() != other->textStrokeWidth()
-        )
+    if (inherited_flags._text_align != other->inherited_flags._text_align ||
+        inherited_flags._text_transform != other->inherited_flags._text_transform ||
+        inherited_flags._direction != other->inherited_flags._direction ||
+        inherited_flags._white_space != other->inherited_flags._white_space ||
+        noninherited_flags._clear != other->noninherited_flags._clear)
         return Layout;
 
     // Overflow returns a layout hint.
     if (noninherited_flags._overflowX != other->noninherited_flags._overflowX ||
         noninherited_flags._overflowY != other->noninherited_flags._overflowY)
         return Layout;
-        
-// only for inline:
-//     EVerticalAlign _vertical_align : 4;
-
-    if ( !(noninherited_flags._effectiveDisplay == INLINE) &&
-         !(noninherited_flags._vertical_align == other->noninherited_flags._vertical_align))
-        return Layout;
-
+ 
     // If our border widths change, then we need to layout.  Other changes to borders
     // only necessitate a repaint.
     if (borderLeftWidth() != other->borderLeftWidth() ||
@@ -1009,20 +1015,19 @@ RenderStyle::Diff RenderStyle::diff(const RenderStyle* other) const
         borderRightWidth() != other->borderRightWidth())
         return Layout;
 
-    // If regions change trigger a relayout to re-calc regions.
-    if (!(rareNonInheritedData->m_dashboardRegions == other->rareNonInheritedData->m_dashboardRegions))
-        return Layout;
-    
     // If the counter directives change, trigger a relayout to re-calculate counter values and rebuild the counter node tree.
     const CounterDirectiveMap* mapA = rareNonInheritedData->m_counterDirectives;
     const CounterDirectiveMap* mapB = other->rareNonInheritedData->m_counterDirectives;
     if (!(mapA == mapB || (mapA && mapB && *mapA == *mapB)))
         return Layout;
+    if (visual->counterIncrement != other->visual->counterIncrement ||
+        visual->counterReset != other->visual->counterReset)
+        return Layout;
 
     // Make sure these left/top/right/bottom checks stay below all layout checks and above
     // all visible checks.
     if (other->position() != StaticPosition) {
-        if (!(surround->offset == other->surround->offset)) {
+        if (surround->offset != other->surround->offset) {
             // FIXME: We will need to do a bit of work in RenderObject/Box::setStyle before we
             // can stop doing a layout when relative positioned objects move.  In particular, we'll need
             // to update scrolling positions and figure out how to do a repaint properly of the updated layer.
@@ -1032,31 +1037,29 @@ RenderStyle::Diff RenderStyle::diff(const RenderStyle* other) const
                 return Layout;
         }
         else if (box->z_index != other->box->z_index || box->z_auto != other->box->z_auto ||
-                 !(visual->clip == other->visual->clip) || visual->hasClip != other->visual->hasClip)
+                 visual->clip != other->visual->clip || visual->hasClip != other->visual->hasClip)
             return RepaintLayer;
     }
 
     if (rareNonInheritedData->opacity != other->rareNonInheritedData->opacity)
         return RepaintLayer;
 
-    // Repaint:
-//      EVisibility _visibility : 2;
-//      int _text_decoration : 4;
-//     DataRef<StyleBackgroundData> background;
     if (inherited->color != other->inherited->color ||
         inherited_flags._visibility != other->inherited_flags._visibility ||
-        !(inherited_flags._text_decorations == other->inherited_flags._text_decorations) ||
-        !(inherited_flags._force_backgrounds_to_white == other->inherited_flags._force_backgrounds_to_white) ||
-        !(surround->border == other->surround->border) ||
+        inherited_flags._text_decorations != other->inherited_flags._text_decorations ||
+        inherited_flags._force_backgrounds_to_white != other->inherited_flags._force_backgrounds_to_white ||
+        surround->border != other->surround->border ||
         *background.get() != *other->background.get() ||
         visual->textDecoration != other->visual->textDecoration ||
         rareInheritedData->userModify != other->rareInheritedData->userModify ||
         rareNonInheritedData->userSelect != other->rareNonInheritedData->userSelect ||
         rareNonInheritedData->userDrag != other->rareNonInheritedData->userDrag ||
         rareInheritedData->textFillColor != other->rareInheritedData->textFillColor ||
-        rareInheritedData->textStrokeColor != other->rareInheritedData->textStrokeColor
-        )
+        rareInheritedData->textStrokeColor != other->rareInheritedData->textStrokeColor)
         return Repaint;
+
+    // Cursors are not checked, since they will be set appropriately in response to mouse events,
+    // so they don't need to cause any repaint or layout.
 
     return Equal;
 }

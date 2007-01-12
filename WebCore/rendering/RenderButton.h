@@ -46,7 +46,8 @@ public:
 
     virtual void updatePseudoChild(RenderStyle::PseudoId);
 
-    virtual void paintObject(PaintInfo&, int tx, int ty);
+    virtual bool hasControlClip() const { return true; }
+    virtual IntRect controlClipRect(int /*tx*/, int /*ty*/) const;
 
     void setText(const String&);
 

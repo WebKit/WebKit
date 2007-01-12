@@ -67,7 +67,7 @@ void RenderButton::setStyle(RenderStyle* style)
     RenderBlock::setStyle(style);
     if (m_buttonText)
         m_buttonText->setStyle(style);
-    if (m_inner)
+    if (m_inner) // RenderBlock handled updating the anonymous block's style.
         m_inner->style()->setBoxFlex(1.0f);
     setReplaced(isInline());
 }
@@ -108,24 +108,11 @@ void RenderButton::updatePseudoChild(RenderStyle::PseudoId type)
         updatePseudoChildForObject(type, this);
 }
 
-void RenderButton::paintObject(PaintInfo& paintInfo, int tx, int ty)
+IntRect RenderButton::controlClipRect(int tx, int ty) const
 {
-    // Push a clip.
-    if (m_inner && paintInfo.phase == PaintPhaseForeground) {
-        IntRect clipRect(tx + borderLeft(), ty + borderTop(),
-            width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop());
-        if (clipRect.width() == 0 || clipRect.height() == 0)
-            return;
-        paintInfo.context->save();
-        paintInfo.context->clip(clipRect);
-    }
-
-    // Paint the children.
-    RenderBlock::paintObject(paintInfo, tx, ty);
-
-    // Pop the clip.
-    if (m_inner && paintInfo.phase == PaintPhaseForeground)
-        paintInfo.context->restore();
+    // Clip to the padding box to at least give content the extra padding space.
+    return IntRect(tx + borderLeft(), ty + borderTop(), m_width - borderLeft() - borderRight(), m_height - borderTop() - borderBottom());
 }
+
 
 } // namespace WebCore

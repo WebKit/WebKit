@@ -95,7 +95,7 @@ void RenderMenuList::setStyle(RenderStyle* style)
     RenderBlock::setStyle(style);
     if (m_buttonText)
         m_buttonText->setStyle(style);
-    if (m_innerBlock)
+    if (m_innerBlock) // RenderBlock handled updating the anonymous block's style.
         m_innerBlock->style()->setBoxFlex(1.0f);
     setReplaced(isInline());
 }
@@ -168,25 +168,12 @@ String RenderMenuList::text()
     return m_buttonText ? m_buttonText->data() : String();
 }
 
-void RenderMenuList::paintObject(PaintInfo& paintInfo, int x, int y)
+IntRect RenderMenuList::controlClipRect(int tx, int ty) const
 {
-    // Push a clip.
-    if (paintInfo.phase == PaintPhaseForeground) {
-        IntRect clipRect(x + borderLeft() + paddingLeft(), y + borderTop() + paddingTop(),
-            width() - borderLeft() - borderRight() - paddingLeft() - paddingRight(),
-            height() - borderBottom() - borderTop() - paddingTop() - paddingBottom());
-        if (clipRect.isEmpty())
-            return;
-        paintInfo.context->save();
-        paintInfo.context->clip(clipRect);
-    }
-
-    // Paint the children.
-    RenderBlock::paintObject(paintInfo, x, y);
-
-    // Pop the clip.
-    if (paintInfo.phase == PaintPhaseForeground)
-        paintInfo.context->restore();
+    // Clip to the content box, since the arrow sits in the padding space, and we don't want to draw over it.
+    return IntRect(tx + borderLeft() + paddingLeft(), 
+                   ty + borderTop() + paddingTop(),
+                   contentWidth(), contentHeight());
 }
 
 void RenderMenuList::calcMinMaxWidth()

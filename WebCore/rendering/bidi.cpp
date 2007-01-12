@@ -1492,9 +1492,7 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
     invalidateVerticalPositions();
     
     m_height = borderTop() + paddingTop();
-    int toAdd = borderBottom() + paddingBottom();
-    if (includeHorizontalScrollbarSize())
-        toAdd += m_layer->horizontalScrollbarHeight();
+    int toAdd = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
     
     // Figure out if we should clear out our line boxes.
     // FIXME: Handle resize eventually!

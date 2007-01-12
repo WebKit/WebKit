@@ -108,6 +108,10 @@ struct LengthBox {
         return left == o.left && right == o.right && top == o.top && bottom == o.bottom;
     }
 
+    bool operator!=(const LengthBox& o) const
+    {
+        return !(*this == o);
+    }
 
     bool nonZero() const { return !(left.isZero() && right.isZero() && top.isZero() && bottom.isZero()); }
 };
@@ -412,7 +416,6 @@ public:
     bool operator==(const StyleVisualData& o) const {
         return ( clip == o.clip &&
                  hasClip == o.hasClip &&
-                 colspan == o.colspan &&
                  counterIncrement == o.counterIncrement &&
                  counterReset == o.counterReset &&
                  textDecoration == o.textDecoration);
@@ -422,8 +425,6 @@ public:
     LengthBox clip;
     bool hasClip : 1;
     unsigned textDecoration : 4; // Text decorations defined *only* by this element.
-    
-    short colspan; // for html, not a css2 attribute
 
     short counterIncrement; // ok, so these are not visual mode specific
     short counterReset;     // can't go to inherited, since these are not inherited
@@ -961,6 +962,11 @@ struct CursorData {
         : cursorImage(0)
     {}
     
+    bool operator==(const CursorData& o) const {
+        return hotSpot == o.hotSpot && cursorImage == o.cursorImage && cursorFragmentId == o.cursorFragmentId;
+    }
+    bool operator!=(const CursorData& o) const { return !(*this == o); }
+
     IntPoint hotSpot; // for CSS3 support
     CachedImage* cursorImage; // weak pointer, the CSSValueImage takes care of deleting cursorImage
     String cursorFragmentId; // only used for SVGCursorElement, a direct pointer would get stale
@@ -971,6 +977,9 @@ public:
     const CursorData& operator[](int i) const {
         return m_vector[i];
     }
+
+    bool operator==(const CursorList&) const;
+    bool operator!=(const CursorList& o) const { return !(*this == o); }
 
     size_t size() const { return m_vector.size(); }
     void append(const CursorData& cursorData) { m_vector.append(cursorData); }
@@ -1305,8 +1314,6 @@ public:
     EClear clear() const { return static_cast<EClear>(noninherited_flags._clear); }
     ETableLayout tableLayout() const { return static_cast<ETableLayout>(noninherited_flags._table_layout); }
 
-    short colSpan() const { return visual->colspan; }
-
     const Font& font() { return inherited->font; }
     const FontDescription& fontDescription() { return inherited->font.fontDescription(); }
     int fontSize() const { return inherited->font.pixelSize(); }
@@ -1565,7 +1572,6 @@ public:
 
     void setClear(EClear v) {  noninherited_flags._clear = v; }
     void setTableLayout(ETableLayout v) {  noninherited_flags._table_layout = v; }
-    void ssetColSpan(short v) { SET_VAR(visual,colspan,v) }
 
     bool setFontDescription(const FontDescription& v) {
         if (inherited->font.fontDescription() != v) {

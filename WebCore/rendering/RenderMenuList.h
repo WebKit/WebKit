@@ -53,7 +53,8 @@ public:
     virtual void setStyle(RenderStyle*);
     virtual void updateFromElement();
 
-    virtual void paintObject(PaintInfo&, int tx, int ty);
+    virtual bool hasControlClip() const { return true; }
+    virtual IntRect controlClipRect(int /*tx*/, int /*ty*/) const;
 
     virtual const char* renderName() const { return "RenderMenuList"; }
 

@@ -180,26 +180,6 @@ void RenderBox::destroy()
         layer->destroy(arena);
 }
 
-int RenderBox::contentWidth() const
-{
-    int w = m_width - (borderLeft() + borderRight() + paddingLeft() + paddingRight());
-
-    if (includeVerticalScrollbarSize())
-        w -= m_layer->verticalScrollbarWidth();
-    
-    return w;
-}
-
-int RenderBox::contentHeight() const
-{
-    int h = m_height - (borderTop() + borderBottom() + paddingTop() + paddingBottom());
-
-    if (includeHorizontalScrollbarSize())
-        h -= m_layer->horizontalScrollbarHeight();
-
-    return h;
-}
-
 int RenderBox::overrideWidth() const
 {
     return m_overrideSize == -1 ? m_width : m_overrideSize;
@@ -974,6 +954,13 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& r, bool f)
             // anyway if its size does change.
             IntRect boxRect(0, 0, o->layer()->width(), o->layer()->height());
             o->layer()->subtractScrollOffset(x,y); // For overflow:auto/scroll/hidden.
+            IntRect repaintRect(x, y, r.width(), r.height());
+            r = intersection(repaintRect, boxRect);
+            if (r.isEmpty())
+                return;
+        } else if (o->hasControlClip()) {
+            // Some form controls use a lightweight clipping scheme to avoid the overhead of a layer.
+            IntRect boxRect(borderLeft(), borderTop(), m_width - borderLeft() - borderRight(), m_height - borderTop() - borderBottom());
             IntRect repaintRect(x, y, r.width(), r.height());
             r = intersection(repaintRect, boxRect);
             if (r.isEmpty())

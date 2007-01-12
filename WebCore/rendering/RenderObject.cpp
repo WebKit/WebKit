@@ -653,18 +653,27 @@ RenderObject* RenderObject::offsetParent() const
     return curr;
 }
 
+int RenderObject::verticalScrollbarWidth() const
+{
+    return includeVerticalScrollbarSize() ? layer()->verticalScrollbarWidth() : 0;
+}
+
+int RenderObject::horizontalScrollbarHeight() const
+{
+    return includeHorizontalScrollbarSize() ? layer()->horizontalScrollbarHeight() : 0;
+}
+
 // More IE extensions.  clientWidth and clientHeight represent the interior of an object
 // excluding border and scrollbar.
 int RenderObject::clientWidth() const
 {
-    return width() - borderLeft() - borderRight() -
-        (includeVerticalScrollbarSize() ? layer()->verticalScrollbarWidth() : 0);
+    return width() - borderLeft() - borderRight() - verticalScrollbarWidth();
+        
 }
 
 int RenderObject::clientHeight() const
 {
-    return height() - borderTop() - borderBottom() -
-      (includeHorizontalScrollbarSize() ? layer()->horizontalScrollbarHeight() : 0);
+    return height() - borderTop() - borderBottom() - horizontalScrollbarHeight();
 }
 
 // scrollWidth/scrollHeight will be the same as clientWidth/clientHeight unless the
@@ -2310,7 +2319,7 @@ void RenderObject::setStyle(RenderStyle* style)
 
     // No need to ever schedule repaints from a style change of a text run, since
     // we already did this for the parent of the text run.
-    if (d == RenderStyle::Layout && m_parent)
+    if (d == RenderStyle::Layout && m_parent && !isText())
         setNeedsLayoutAndMinMaxRecalc();
     else if (m_parent && !isText() && (d == RenderStyle::RepaintLayer || d == RenderStyle::Repaint))
         // Do a repaint with the new style now, e.g., for example if we go from

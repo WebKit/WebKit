@@ -136,15 +136,15 @@ void EventHandler::selectClosestWordFromMouseEvent(const MouseEventWithHitTestRe
             newSelection = Selection(pos);
             newSelection.expandUsingGranularity(WordGranularity);
         }
-    }
     
-    if (newSelection.isRange()) {
-        m_frame->setSelectionGranularity(WordGranularity);
-        m_beganSelectingText = true;
+        if (newSelection.isRange()) {
+            m_frame->setSelectionGranularity(WordGranularity);
+            m_beganSelectingText = true;
+        }
+        
+        if (m_frame->shouldChangeSelection(newSelection))
+            m_frame->selectionController()->setSelection(newSelection);
     }
-    
-    if (m_frame->shouldChangeSelection(newSelection))
-        m_frame->selectionController()->setSelection(newSelection);
 }
 
 bool EventHandler::handleMousePressEventDoubleClick(const MouseEventWithHitTestResults& event)

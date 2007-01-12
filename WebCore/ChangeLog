@@ -1,5 +1,88 @@
 2007-01-12  David Hyatt  <hyatt@apple.com>
 
+        Fix for bug 11598, implement lightweight control clipping mechanism for
+        buttons, list boxes, and dropdown lists.  Make sure list box respects
+        scrollLeft/Top/Width/Height as well as clientWidth/Height.
+
+        Fix bugs in RenderStyle::diff.  CursorData was not being compared properly.
+        vertical-align had a non-inline display check that was wrong (preventing
+        dynamic changes to keyword-based vertical-align from working).
+
+        Reviewed by mitz
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectClosestWordFromMouseEvent):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layout):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::determineHorizontalPosition):
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::paint):
+        (WebCore::RenderBlock::fillHorizontalSelectionGap):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::layoutColumns):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeAbsoluteRepaintRect):
+        * rendering/RenderBox.h:
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::setStyle):
+        (WebCore::RenderButton::controlClipRect):
+        * rendering/RenderButton.h:
+        (WebCore::RenderButton::hasControlClip):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::addFocusRingRects):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::itemBoundingBoxRect):
+        (WebCore::RenderListBox::paintObject):
+        (WebCore::RenderListBox::itemHeight):
+        (WebCore::RenderListBox::verticalScrollbarWidth):
+        (WebCore::RenderListBox::scrollWidth):
+        (WebCore::RenderListBox::scrollHeight):
+        (WebCore::RenderListBox::scrollLeft):
+        (WebCore::RenderListBox::setScrollLeft):
+        (WebCore::RenderListBox::scrollTop):
+        (WebCore::RenderListBox::setScrollTop):
+        (WebCore::RenderListBox::controlClipRect):
+        * rendering/RenderListBox.h:
+        (WebCore::RenderListBox::hasControlClip):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::setStyle):
+        (WebCore::RenderMenuList::controlClipRect):
+        * rendering/RenderMenuList.h:
+        (WebCore::RenderMenuList::hasControlClip):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::verticalScrollbarWidth):
+        (WebCore::RenderObject::horizontalScrollbarHeight):
+        (WebCore::RenderObject::clientWidth):
+        (WebCore::RenderObject::clientHeight):
+        (WebCore::RenderObject::setStyle):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasControlClip):
+        (WebCore::RenderObject::controlClipRect):
+        (WebCore::RenderObject::contentWidth):
+        (WebCore::RenderObject::contentHeight):
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleVisualData::StyleVisualData):
+        (WebCore::cursorDataEqvuialent):
+        (WebCore::StyleInheritedData::operator==):
+        (WebCore::CursorList::operator==):
+        (WebCore::RenderStyle::diff):
+        * rendering/RenderStyle.h:
+        (WebCore::LengthBox::operator!=):
+        (WebCore::StyleVisualData::operator==):
+        (WebCore::CursorData::operator==):
+        (WebCore::CursorData::operator!=):
+        (WebCore::CursorList::operator!=):
+        (WebCore::RenderStyle::setTableLayout):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+
+2007-01-12  David Hyatt  <hyatt@apple.com>
+
         Fix for bug 9934, smaller line heights should not be allowed on
         text fields.
 

@@ -204,24 +204,14 @@ short RenderListBox::baselinePosition(bool b, bool isRootLineBox) const
 
 IntRect RenderListBox::itemBoundingBoxRect(int tx, int ty, int index)
 {
-    return IntRect (tx + borderLeft() + paddingLeft(),
+    return IntRect(tx + borderLeft() + paddingLeft(),
                    ty + borderTop() + paddingTop() + ((style()->font().height() + optionsSpacingMiddle) * (index - m_indexOffset)),
-                   absoluteBoundingBoxRect().width() - borderLeft() - borderRight() - paddingLeft() - paddingRight(),
+                   contentWidth(),
                    style()->font().height() + optionsSpacingMiddle);
 }
     
 void RenderListBox::paintObject(PaintInfo& paintInfo, int tx, int ty)
 {
-    // Push a clip.
-    IntRect clipRect(tx + borderLeft(), ty + borderTop(),
-         width() - borderLeft() - borderRight() - (m_vBar ? m_vBar->width() : 0), height() - borderBottom() - borderTop());
-    if (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseChildBlockBackgrounds) {
-        if (clipRect.width() == 0 || clipRect.height() == 0)
-            return;
-        paintInfo.context->save();
-        paintInfo.context->clip(clipRect);
-    }
-    
     HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
     int listItemsSize = select->listItems().size();
 
@@ -244,9 +234,6 @@ void RenderListBox::paintObject(PaintInfo& paintInfo, int tx, int ty)
         }
         paintScrollbar(paintInfo);
     }
-    // Pop the clip.
-    if (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseChildBlockBackgrounds)
-        paintInfo.context->restore();
 }
 
 void RenderListBox::paintScrollbar(PaintInfo& paintInfo)
@@ -449,6 +436,72 @@ void RenderListBox::valueChanged(Scrollbar*)
             EventTargetNodeCast(node())->dispatchHTMLEvent(scrollEvent, true, false);
         }
     }
+}
+
+int RenderListBox::itemHeight() const
+{
+    return style()->font().height() + optionsSpacingMiddle;
+}
+
+int RenderListBox::verticalScrollbarWidth() const
+{
+    return m_vBar ? m_vBar->width() : 0;
+}
+
+// FIXME: We ignore padding in the vertical direction as far as these values are concerned, since that's
+// how the control currently paints.
+int RenderListBox::scrollWidth() const
+{
+    // There is no horizontal scrolling allowed.
+    return clientWidth();
+}
+
+int RenderListBox::scrollHeight() const
+{
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+    const Vector<HTMLElement*>& listItems = select->listItems();
+    return max(clientHeight(), (int)listItems.size() * itemHeight());
+}
+
+int RenderListBox::scrollLeft() const
+{
+    return 0;
+}
+
+void RenderListBox::setScrollLeft(int)
+{
+}
+
+int RenderListBox::scrollTop() const
+{
+    return m_indexOffset * itemHeight();
+}
+
+void RenderListBox::setScrollTop(int newTop)
+{
+    // Determine an index and scroll to it.
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+    const Vector<HTMLElement*>& listItems = select->listItems();
+    
+    int index = newTop / itemHeight();
+    if (index < 0 || index > (int)listItems.size() - 1 || listIndexIsVisible(index))
+        return;
+
+    int newOffset = index;
+  
+    if (m_vBar) {
+        IntRect rect = absoluteBoundingBoxRect();
+        m_vBar->setValue(itemBoundingBoxRect(rect.x(), rect.y(), newOffset + m_indexOffset).y() - rect.y());
+    }
+    m_indexOffset = newOffset;
+}
+
+IntRect RenderListBox::controlClipRect(int tx, int ty) const
+{
+    // Clip to the padding box, since we have a scrollbar inside the padding box.
+    return IntRect(tx + borderLeft(), 
+                   ty + borderTop(),
+                   clientWidth(), clientHeight());
 }
 
 IntRect RenderListBox::windowClipRect() const

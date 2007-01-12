@@ -436,6 +436,15 @@ void RenderBlock::layout()
     // Table cells call layoutBlock directly, so don't add any logic here.  Put code into
     // layoutBlock().
     layoutBlock(false);
+    
+    // It's safe to check for control clip here, since controls can never be table cells.
+    if (hasControlClip()) {
+        // Because of the lightweight clip, there can never be any overflow from children.
+        m_overflowWidth = m_width;
+        m_overflowHeight = m_height;
+        m_overflowLeft = 0;
+        m_overflowTop = 0;
+    }
 }
 
 void RenderBlock::layoutBlock(bool relayoutChildren)
@@ -516,9 +525,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         layoutBlockChildren(relayoutChildren);
 
     // Expand our intrinsic height to encompass floats.
-    int toAdd = borderBottom() + paddingBottom();
-    if (includeHorizontalScrollbarSize())
-        toAdd += m_layer->horizontalScrollbarHeight();
+    int toAdd = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
     if (floatBottom() > (m_height - toAdd) && (isInlineBlockOrInlineTable() || isFloatingOrPositioned() || hasOverflowClip() ||
                                     (parent() && parent()->isFlexibleBox())))
         m_height = floatBottom() + toAdd;
@@ -979,7 +986,7 @@ void RenderBlock::determineHorizontalPosition(RenderObject* child)
         }
         child->setPos(chPos, child->yPos());
     } else {
-        int xPos = m_width - borderRight() - paddingRight() - (includeVerticalScrollbarSize() ? m_layer->verticalScrollbarWidth() : 0);
+        int xPos = m_width - borderRight() - paddingRight() - verticalScrollbarWidth();
         int chPos = xPos - (child->width() + child->marginRight());
         if (child->avoidsFloats()) {
             int rightOff = rightOffset(m_height);
@@ -1056,7 +1063,7 @@ void RenderBlock::handleBottomOfBlock(int top, int bottom, MarginInfo& marginInf
 void RenderBlock::layoutBlockChildren(bool relayoutChildren)
 {
     int top = borderTop() + paddingTop();
-    int bottom = borderBottom() + paddingBottom() + (includeHorizontalScrollbarSize() ? m_layer->horizontalScrollbarHeight() : 0);
+    int bottom = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
 
     m_height = m_overflowHeight = top;
 
@@ -1302,7 +1309,21 @@ void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
         }
     }
 
-    return paintObject(paintInfo, tx, ty);
+    // Push a clip.
+    bool useControlClip = paintInfo.phase == PaintPhaseForeground && hasControlClip();
+    if (useControlClip) {
+        IntRect clipRect(controlClipRect(tx, ty));
+        if (clipRect.isEmpty())
+            return;
+        paintInfo.context->save();
+        paintInfo.context->clip(clipRect);
+    }
+
+    paintObject(paintInfo, tx, ty);
+    
+    // Pop the clip.
+    if (useControlClip)
+        paintInfo.context->restore();
 }
 
 void RenderBlock::paintColumns(PaintInfo& paintInfo, int tx, int ty)
@@ -1733,7 +1754,7 @@ IntRect RenderBlock::fillHorizontalSelectionGap(RenderObject* selObj, int xPos, 
     if (width <= 0 || height <= 0)
         return IntRect();
     IntRect gapRect(xPos, yPos, width, height);
-    if (paintInfo)
+    if (paintInfo && selObj->style()->visibility() == VISIBLE)
         paintInfo->context->fillRect(gapRect, selObj->selectionBackgroundColor());
     return gapRect;
 }
@@ -2634,7 +2655,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
     int tx = _tx + m_x;
     int ty = _ty + m_y + borderTopExtra();
-    
+
     if (!inlineFlow && !isRenderView()) {
         // Check if we need to do anything at all.
         IntRect overflowBox = overflowRect(false);
@@ -2659,36 +2680,39 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         return false;
     }
 
-    // Hit test descendants first.
-    int scrolledX = tx;
-    int scrolledY = ty;
-    if (hasOverflowClip())
-        m_layer->subtractScrollOffset(scrolledX, scrolledY);
+     // If we have lightweight control clipping, then we can't have any spillout. 
+    if (!hasControlClip() || controlClipRect(tx, ty).contains(_x, _y)) {
+        // Hit test descendants first.
+        int scrolledX = tx;
+        int scrolledY = ty;
+        if (hasOverflowClip())
+            m_layer->subtractScrollOffset(scrolledX, scrolledY);
 
-    // Hit test contents if we don't have columns.
-    if (!hasColumns() && hitTestContents(request, result, _x, _y, scrolledX, scrolledY, hitTestAction))
-        return true;
-        
-    // Hit test our columns if we do have them.
-    if (hasColumns() && hitTestColumns(request, result, _x, _y, scrolledX, scrolledY, hitTestAction))
-        return true;
+        // Hit test contents if we don't have columns.
+        if (!hasColumns() && hitTestContents(request, result, _x, _y, scrolledX, scrolledY, hitTestAction))
+            return true;
+            
+        // Hit test our columns if we do have them.
+        if (hasColumns() && hitTestColumns(request, result, _x, _y, scrolledX, scrolledY, hitTestAction))
+            return true;
 
-    // Hit test floats.
-    if (hitTestAction == HitTestFloat && m_floatingObjects) {
-        if (isRenderView()) {
-            scrolledX += static_cast<RenderView*>(this)->frameView()->contentsX();
-            scrolledY += static_cast<RenderView*>(this)->frameView()->contentsY();
-        }
-        
-        FloatingObject* o;
-        DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
-        for (it.toLast(); (o = it.current()); --it) {
-            if (!o->noPaint && !o->node->layer()) {
-                int xoffset = scrolledX + o->left + o->node->marginLeft() - o->node->xPos();
-                int yoffset =  scrolledY + o->startY + o->node->marginTop() - o->node->yPos();
-                if (o->node->hitTest(request, result, _x, _y, xoffset, yoffset)) {
-                    updateHitTestResult(result, IntPoint(_x - xoffset, _y - yoffset));
-                    return true;
+        // Hit test floats.
+        if (hitTestAction == HitTestFloat && m_floatingObjects) {
+            if (isRenderView()) {
+                scrolledX += static_cast<RenderView*>(this)->frameView()->contentsX();
+                scrolledY += static_cast<RenderView*>(this)->frameView()->contentsY();
+            }
+            
+            FloatingObject* o;
+            DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
+            for (it.toLast(); (o = it.current()); --it) {
+                if (!o->noPaint && !o->node->layer()) {
+                    int xoffset = scrolledX + o->left + o->node->marginLeft() - o->node->xPos();
+                    int yoffset =  scrolledY + o->startY + o->node->marginTop() - o->node->yPos();
+                    if (o->node->hitTest(request, result, _x, _y, xoffset, yoffset)) {
+                        updateHitTestResult(result, IntPoint(_x - xoffset, _y - yoffset));
+                        return true;
+                    }
                 }
             }
         }
@@ -3070,9 +3094,7 @@ int RenderBlock::layoutColumns(int endOfContent)
     m_overflowLeft = min(0, currX + m_desiredColumnWidth + colGap);
 
     m_overflowHeight = maxColBottom;
-    int toAdd = borderBottom() + paddingBottom();
-    if (includeHorizontalScrollbarSize())
-        toAdd += m_layer->horizontalScrollbarHeight();
+    int toAdd = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
         
     if (computeIntrinsicHeight)
         m_height = m_overflowHeight + toAdd;
