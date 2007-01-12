@@ -1,3 +1,13 @@
+2007-01-12  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 9934, smaller line heights should not be allowed on
+        text fields.
+
+        Reviewed by darin
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::createInnerTextStyle):
+
 2007-01-12  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

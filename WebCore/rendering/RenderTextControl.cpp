@@ -149,6 +149,10 @@ RenderStyle* RenderTextControl::createInnerTextStyle(RenderStyle* startStyle)
         textBlockStyle->setWhiteSpace(PRE);
         textBlockStyle->setOverflowX(OHIDDEN);
         textBlockStyle->setOverflowY(OHIDDEN);
+        
+        // Do not allow line-height to be smaller than our default.
+        if (textBlockStyle->font().lineSpacing() > lineHeight(true, true))
+            textBlockStyle->setLineHeight(Length(-100, Percent);
     }
 
     if (!m_multiLine) {
