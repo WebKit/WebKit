@@ -1,3 +1,33 @@
+2007-01-12  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by hyatt
+
+        <rdar://problem/4875425>
+        EBay, GMail, and GoogleDocs RTEs font size popups don't work
+
+        Added to test changes:
+        * editing/style/fontsize-1-expected.checksum: Added.
+        * editing/style/fontsize-1-expected.png: Added.
+        * editing/style/fontsize-1-expected.txt: Added.
+        * editing/style/fontsize-1.html: Added.
+
+        Removed use of "px" and "pt" values passed to
+        execCommand("FontSize", ...) (other browsers don't
+        support them): 
+        * editing/input/attributed-substring-from-range-lines.html-disabled:
+        * editing/style/block-style-004-expected.checksum:
+        * editing/style/block-style-004-expected.png:
+        * editing/style/block-style-004-expected.txt:
+        * editing/style/block-style-004.html:
+        * editing/style/block-style-005-expected.checksum:
+        * editing/style/block-style-005-expected.png:
+        * editing/style/block-style-005-expected.txt:
+        * editing/style/block-style-005.html:
+        * editing/style/block-style-006-expected.checksum:
+        * editing/style/block-style-006-expected.png:
+        * editing/style/block-style-006-expected.txt:
+        * editing/style/block-style-006.html:
+
 2007-01-12  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

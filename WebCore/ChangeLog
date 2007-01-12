@@ -1,3 +1,27 @@
+2007-01-12  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by hyatt
+        
+        <rdar://problem/4875425>
+        EBay, GMail, and GoogleDocs RTEs font size popups don't work
+
+        Changed execCommand("FontSize", ...) to match the spec 
+        and the behavior of other browsers.  It expects a number, 
+        n, which, the spec says can be 1 through 7.  Other browsers 
+        perform the font size change by creating a font element 
+        wrapper with size="n".  We convert n into one of the absolute 
+        size CSS keywords (x-small, medium, etc.).
+
+        * editing/JSEditor.cpp: Call cssValueFromFontSizeNumber.  If
+        successful, perform the style change.
+        * html/HTMLFontElement.cpp:
+        (WebCore::HTMLFontElement::cssValueFromFontSizeNumber):  Added.
+        Moved this code from parsedMappedAttribute so that it could be
+        called from the Editor.
+        (WebCore::HTMLFontElement::parseMappedAttribute): Moved code into
+        cssValueFromFontSizeNumber.
+        * html/HTMLFontElement.h:
+
 2007-01-12  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 11598, implement lightweight control clipping mechanism for

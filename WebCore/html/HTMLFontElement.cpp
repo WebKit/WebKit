@@ -102,28 +102,44 @@ bool HTMLFontElement::mapToEntry(const QualifiedName& attrName, MappedAttributeE
     return HTMLElement::mapToEntry(attrName, result);
 }
 
+bool HTMLFontElement::cssValueFromFontSizeNumber(const String& s, int& size)
+{
+    int num;
+    if (!parseFontSizeNumber(s, num))
+        return false;
+        
+    switch (num) {
+        case 2: 
+            size = CSS_VAL_SMALL; 
+            break;
+        case 0: // treat 0 the same as 3, because people expect it to be between -1 and +1
+        case 3: 
+            size = CSS_VAL_MEDIUM; 
+            break;
+        case 4: 
+            size = CSS_VAL_LARGE; 
+            break;
+        case 5: 
+            size = CSS_VAL_X_LARGE; 
+            break;
+        case 6: 
+            size = CSS_VAL_XX_LARGE; 
+            break;
+        default:
+            if (num > 6)
+                size = CSS_VAL__WEBKIT_XXX_LARGE;
+            else
+                size = CSS_VAL_X_SMALL;
+    }
+    return true;
+}
+
 void HTMLFontElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == sizeAttr) {
-        int num;
-        if (parseFontSizeNumber(attr->value(), num)) {
-            int size;
-            switch (num)
-            {
-            case 2: size = CSS_VAL_SMALL; break;
-            case 0: // treat 0 the same as 3, because people expect it to be between -1 and +1
-            case 3: size = CSS_VAL_MEDIUM; break;
-            case 4: size = CSS_VAL_LARGE; break;
-            case 5: size = CSS_VAL_X_LARGE; break;
-            case 6: size = CSS_VAL_XX_LARGE; break;
-            default:
-                if (num > 6)
-                    size = CSS_VAL__WEBKIT_XXX_LARGE;
-                else
-                    size = CSS_VAL_X_SMALL;
-            }
+        int size;
+        if (cssValueFromFontSizeNumber(attr->value(), size))
             addCSSProperty(attr, CSS_PROP_FONT_SIZE, size);
-        }
     } else if (attr->name() == colorAttr) {
         addCSSColor(attr, CSS_PROP_COLOR, attr->value());
     } else if (attr->name() == faceAttr) {

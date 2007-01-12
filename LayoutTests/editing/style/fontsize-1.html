@@ -1,0 +1,35 @@
+<p>This test execCommand("FontSize", ...).  You should see 'small' 'medium' and 'large' below in every increasing font sizes.</p>
+<div id="div" contenteditable="true"></div>
+<ul id="console"></ul>
+
+<script>
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+
+var div = document.getElementById("div");
+var sel = window.getSelection();
+
+sel.setPosition(div, 0);
+
+if (document.execCommand("FontSize", false, "pasd"))
+    log("Failure: execCommand('FontSize', [Illegal value]) should fail.");
+
+if (!document.execCommand("FontSize", false, "2"))
+    log("Failure: execCommand('FontSize', [Legal value]) failed.");
+
+document.execCommand("InsertText", false, "small");    
+
+if (!document.execCommand("FontSize", false, "4"))
+    log("Failure: execCommand('FontSize', [Legal value]) failed.");
+
+document.execCommand("InsertText", false, "medium");
+
+if (!document.execCommand("FontSize", false, "6"))
+    log("Failure: execCommand('FontSize', [Legal value]) failed.");
+
+document.execCommand("InsertText", false, "large");
+</script>

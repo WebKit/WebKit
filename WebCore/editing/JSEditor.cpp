@@ -34,6 +34,7 @@
 #include "EditorClient.h"
 #include "FormatBlockCommand.h"
 #include "Frame.h"
+#include "HTMLFontElement.h"
 #include "HTMLNames.h"
 #include "HTMLImageElement.h"
 #include "IndentOutdentCommand.h"
@@ -165,6 +166,14 @@ bool execStyleChange(Frame* frame, int propertyID, const char* propertyValue)
     return execStyleChange(frame, propertyID, String(propertyValue));
 }
 
+bool execStyleChange(Frame* frame, int propertyID, int propertyValue)
+{
+    RefPtr<CSSMutableStyleDeclaration> style = new CSSMutableStyleDeclaration;
+    style->setProperty(propertyID, propertyValue);
+    frame->editor()->applyStyle(style.get());
+    return true;
+}
+
 Frame::TriState stateStyle(Frame* frame, int propertyID, const char* desiredValue)
 {
     RefPtr<CSSMutableStyleDeclaration> style = new CSSMutableStyleDeclaration;
@@ -250,7 +259,11 @@ bool execFontName(Frame* frame, bool, const String& value)
 
 bool execFontSize(Frame* frame, bool, const String& value)
 {
-    return execStyleChange(frame, CSS_PROP_FONT_SIZE, value);
+    int size;
+    if (!HTMLFontElement::cssValueFromFontSizeNumber(value, size))
+        return false;
+        
+    return execStyleChange(frame, CSS_PROP_FONT_SIZE, size);
 }
 
 bool execFontSizeDelta(Frame* frame, bool, const String& value)

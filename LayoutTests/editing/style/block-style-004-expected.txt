@@ -43,23 +43,23 @@ layer at (0,0) size 800x600
         RenderText {#text} at (665,70) size 665x56
           text run at (665,70) width 14: ">"
           text run at (14,98) width 557: "REGRESSION (Mail): Style not preserved on blank lines"
-      RenderBlock {DIV} at (0,164) size 784x276
-        RenderBlock {DIV} at (0,0) size 784x69
-          RenderInline {FONT} at (0,0) size 30x55
-            RenderInline {SPAN} at (0,0) size 30x69
-              RenderText {#text} at (0,0) size 30x69
-                text run at (0,0) width 30: "x"
-        RenderBlock {DIV} at (0,69) size 784x69
+      RenderBlock {DIV} at (0,164) size 784x220
+        RenderBlock {DIV} at (0,0) size 784x55
+          RenderInline {FONT} at (0,0) size 24x13
+            RenderInline {SPAN} at (0,0) size 24x55
+              RenderText {#text} at (0,0) size 24x55
+                text run at (0,0) width 24: "x"
+        RenderBlock {DIV} at (0,55) size 784x55
+          RenderInline {FONT} at (0,0) size 0x13
+            RenderInline {SPAN} at (0,0) size 0x55
+              RenderBR {BR} at (0,0) size 0x55
+        RenderBlock {DIV} at (0,110) size 784x55
           RenderInline {FONT} at (0,0) size 0x55
-            RenderInline {SPAN} at (0,0) size 0x69
-              RenderBR {BR} at (0,0) size 0x69
-        RenderBlock {DIV} at (0,138) size 784x69
-          RenderInline {FONT} at (0,0) size 0x55
-            RenderInline {SPAN} at (0,0) size 0x69
-              RenderBR {BR} at (0,0) size 0x69
-        RenderBlock {DIV} at (0,207) size 784x69
-          RenderInline {FONT} at (0,0) size 30x55
-            RenderInline {SPAN} at (0,0) size 30x69
-              RenderText {#text} at (0,0) size 30x69
-                text run at (0,0) width 30: "x"
+            RenderInline {SPAN} at (0,0) size 0x55
+              RenderBR {BR} at (0,0) size 0x55
+        RenderBlock {DIV} at (0,165) size 784x55
+          RenderInline {FONT} at (0,0) size 24x13
+            RenderInline {SPAN} at (0,0) size 24x55
+              RenderText {#text} at (0,0) size 24x55
+                text run at (0,0) width 24: "x"
 caret: position 0 of child 0 {BR} of child 0 {SPAN} of child 0 {FONT} of child 3 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
