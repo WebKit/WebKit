@@ -1,3 +1,10 @@
+2007-01-12  Lars Knoll <lars@trolltech.com>
+
+        Fix the Qt build after the Authenitcation changes.
+
+        * WebCore.pro:
+        * platform/network/ResourceHandleInternal.h:
+
 2007-01-12  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 9569.  Make sure the selection offset for selection roots excludes border and padding.

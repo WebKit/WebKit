@@ -574,7 +574,10 @@ SOURCES += \
     platform/ContextMenu.cpp \
 #    platform/SearchPopupMenu.cpp \ 
     platform/qt/SearchPopupMenuQt.cpp \ 
+    platform/network/AuthenticationChallenge.cpp \
+    platform/network/Credential.cpp \
     platform/network/FormData.cpp \
+    platform/network/ProtectionSpace.cpp \
     platform/network/ResourceHandle.cpp \
     platform/network/ResourceRequest.cpp \
     platform/network/ResourceResponse.cpp \

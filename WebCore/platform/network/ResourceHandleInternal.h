@@ -28,6 +28,7 @@
 #define ResourceHandleInternal_h
 
 #include "ResourceRequest.h"
+#include "AuthenticationChallenge.h"
 
 #if USE(CFNETWORK)
 #include <CFNetwork/CFURLConnectionPriv.h>
