@@ -48,6 +48,11 @@ void DumpRenderTreeClient::partClearedInBegin()
     dumper->initJSObjects();
 }
 
+void DumpRenderTreeClient::dispatchDidHandleOnloadEvents()
+{
+    dumper->maybeDump();
+}
+
 }
 
 // vim: ts=4 sw=4 et

@@ -2,6 +2,7 @@
 fast/dom/location-hash.html
 fast/forms/access-key.html
 fast/overflow/scroll-vertical-not-horizontal.html
+dom/xhtml/level2/html/HTMLDocument17.xhtml
 
 # As kcanvas is in the process of being killed,
 # we didn't even start implementing filtrs / masks

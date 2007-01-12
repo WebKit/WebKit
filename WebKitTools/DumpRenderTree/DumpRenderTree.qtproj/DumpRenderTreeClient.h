@@ -40,6 +40,7 @@ public:
     virtual ~DumpRenderTreeClient();
 
     virtual void partClearedInBegin();
+    void dispatchDidHandleOnloadEvents();
 
 private:
     DumpRenderTree *dumper;

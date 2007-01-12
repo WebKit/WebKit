@@ -87,7 +87,9 @@ DumpRenderTree::DumpRenderTree()
     view->setParentWidget(0 /* no toplevel widget */);
 
     m_controller = new LayoutTestController();
-    QObject::connect(m_controller, SIGNAL(done()), this, SLOT(dump()));
+    QObject::connect(m_controller, SIGNAL(done()), this, SLOT(dump()), Qt::QueuedConnection);
+    QObject::connect(this, SIGNAL(quit()), qApp, SLOT(quit()), Qt::QueuedConnection);
+    
 
     // Reverse calculations in QAbstractScrollArea::maximumViewportSize()
     QScrollArea* area = qobject_cast<QScrollArea*>(m_frame->view()->qwidget());
@@ -104,7 +106,6 @@ DumpRenderTree::DumpRenderTree()
 DumpRenderTree::~DumpRenderTree()
 {
     delete m_frame;
-    delete m_client;
 
     delete m_stdin;
     delete m_notifier;
@@ -136,9 +137,6 @@ void DumpRenderTree::open(const KURL& url)
     }
 
     m_frame->client()->openURL(url);
-
-    // Simple poll mechanism, to find out when the page is loaded...
-    checkLoaded();
 }
 
 void DumpRenderTree::readStdin(int /* socket */)
@@ -207,37 +205,39 @@ void DumpRenderTree::initJSObjects()
 
 void DumpRenderTree::dump()
 {
-        if (!m_notifier) {
-            // Dump markup in single file mode...
-            DeprecatedString markup = createMarkup(m_frame->document());
-            fprintf(stdout, "Source:\n\n%s\n", markup.ascii());
-        }
-
-        // Dump render text...
-        String renderDump;
-        if (m_controller->shouldDumpAsText()) {
-            Element *documentElement = m_frame->document()->documentElement();
-            renderDump = documentElement->innerText();
-            renderDump.append("\n");
-        } else {
-            renderDump = externalRepresentation(m_frame->renderer());
-        }
+    //qDebug() << ">>>>>>>>>>>>>>>>>>>>>> Dumping" << m_frame->loader()->URL().url();
+    if (!m_notifier) {
+        // Dump markup in single file mode...
+        DeprecatedString markup = createMarkup(m_frame->document());
+        fprintf(stdout, "Source:\n\n%s\n", markup.ascii());
+    }
+    
+    // Dump render text...
+    String renderDump;
+    if (m_controller->shouldDumpAsText()) {
+        Element *documentElement = m_frame->document()->documentElement();
+        renderDump = documentElement->innerText();
+        renderDump.append("\n");
+    } else {
+        renderDump = externalRepresentation(m_frame->renderer());
+    }
+    if (renderDump.isEmpty()) {
+        printf("ERROR: nil result from %s", m_controller->shouldDumpAsText() ? "[documentElement innerText]" : "[frame renderTreeAsExternalRepresentation]");
+    } else {
         fprintf(stdout, "%s#EOF\n", renderDump.utf8().data());
-        fflush(stdout);
-
-        if (!m_notifier) {
-            // Exit now in single file mode...
-            QApplication::exit();
-        }
+    }
+    fflush(stdout);
+    
+    if (!m_notifier) {
+        // Exit now in single file mode...
+        quit();
+    }
 }
     
-void DumpRenderTree::checkLoaded()
+void DumpRenderTree::maybeDump()
 {
-    if (m_frame->loader()->isComplete() && !m_controller->shouldWaitUntilDone()) {
+    if (!m_controller->shouldWaitUntilDone()) 
         dump();
-        return;
-    } 
-    QTimer::singleShot(10, this, SLOT(checkLoaded()));
 }
 
 FrameQt* DumpRenderTree::frame() const

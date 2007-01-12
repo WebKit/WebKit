@@ -1,3 +1,26 @@
+2007-01-12  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Get DumpRenderTree to work again for the Qt build.
+
+        Make run-webkit-tests a little less verbose when testing
+        Qt, and add an option to run DumpRenderTree inside valgrind
+        (useful for debugging)
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::~DumpRenderTree):
+        (WebCore::DumpRenderTree::open):
+        (WebCore::DumpRenderTree::dump):
+        (WebCore::DumpRenderTree::maybeDump):
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTreeClient.cpp:
+        (WebCore::DumpRenderTreeClient::dispatchDidHandleOnloadEvents):
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTreeClient.h:
+        * DumpRenderTree/DumpRenderTree.qtproj/tests-skipped.txt:
+        * Scripts/run-webkit-tests:
+
 2007-01-12  Zack Rusin  <zack@kde.org>
 
         Add WEBKIT_FULLBUILD env variable to get the
