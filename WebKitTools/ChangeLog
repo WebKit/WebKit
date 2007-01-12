@@ -1,3 +1,11 @@
+2007-01-12  Zack Rusin  <zack@kde.org>
+
+        Add WEBKIT_FULLBUILD env variable to get the
+        build do a make clean before make to cleanout the
+        stale depenendencies (for buildbot mainly).
+
+        * Scripts/webkitdirs.pm:
+
 2007-01-11  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

@@ -493,6 +493,12 @@ sub buildQMakeProject($$)
        die "Failed to setup build environment using qmake!\n";
     }
 
+    my $clean = $ENV{"WEBKIT_FULLBUILD"};
+
+    if(defined $clean) {
+      system "make clean";
+    }
+
     $result = system "make";
     chdir ".." or die;
     return $result;
