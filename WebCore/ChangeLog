@@ -1,3 +1,12 @@
+2007-01-12  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by rwlbuis.
+
+        - add missing null check in new fixed table layout code
+
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::calcWidthArray):
+
 2007-01-12  Lars Knoll <lars@trolltech.com>
 
         Fix the Qt build after the Authenitcation changes.

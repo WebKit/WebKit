@@ -143,7 +143,7 @@ int FixedTableLayout::calcWidthArray(int tableWidth)
         section = m_table->firstBody();
     if (!section)
         section = m_table->footer();
-    if (!section->numRows())
+    if (section && !section->numRows())
         section = m_table->sectionBelow(section, true);
     if (section) {
         cCol = 0;
