@@ -22,7 +22,9 @@
                  -webkit-text-stroke: orange 1pt;\
                  -webkit-columns: 100px 3;\
                  -webkit-column-rule: thick dashed silver;\
-                 border-spacing: 10px 20px;");
+                 border-spacing: 10px 20px;\
+                 -webkit-border-radius: 6px 8px;\
+                 overflow: scroll;");
             element.style.removeProperty(shorthand);
             log("Removing '" + shorthand + "' leaves '" + element.style.cssText +"'");
         }
@@ -46,7 +48,9 @@
                 "-webkit-text-stroke",
                 "-webkit-columns",
                 "-webkit-column-rule",
-                "border-spacing"
+                "border-spacing",
+                "-webkit-border-radius",
+                "overflow"
             ];
 
             for (i in shorthands)

@@ -1,3 +1,14 @@
+2007-01-12  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - test updated for http://bugs.webkit.org/show_bug.cgi?id=12215
+          Treat 'overflow' and '-webkit-border-radius' as shorthands when parsing and
+          when removing.
+
+        * fast/css/remove-shorthand-expected.txt:
+        * fast/css/remove-shorthand.html:
+
 2007-01-12  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.

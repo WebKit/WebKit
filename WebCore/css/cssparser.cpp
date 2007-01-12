@@ -547,9 +547,16 @@ bool CSSParser::parseValue(int propId, bool important)
             valid_primitive = true;
         break;
 
-    case CSS_PROP_OVERFLOW:             // visible | hidden | scroll | auto | marquee | overlay | inherit
+    case CSS_PROP_OVERFLOW: {
+        ShorthandScope scope(this, propId);
+        if (num != 1 || !parseValue(CSS_PROP_OVERFLOW_X, important))
+            return false;
+        CSSValue* value = parsedProperties[numParsedProperties - 1]->value();
+        addProperty(CSS_PROP_OVERFLOW_Y, value, important);
+        return true;
+    }
     case CSS_PROP_OVERFLOW_X:
-    case CSS_PROP_OVERFLOW_Y:
+    case CSS_PROP_OVERFLOW_Y:           // visible | hidden | scroll | auto | marquee | overlay | inherit
         if (id == CSS_VAL_VISIBLE || id == CSS_VAL_HIDDEN || id == CSS_VAL_SCROLL || id == CSS_VAL_AUTO ||
             id == CSS_VAL_OVERLAY || id == CSS_VAL__WEBKIT_MARQUEE)
             valid_primitive = true;
@@ -1046,7 +1053,15 @@ bool CSSParser::parseValue(int propId, bool important)
         
         Pair* pair = new Pair(parsedValue1, parsedValue2);
         CSSPrimitiveValue* val = new CSSPrimitiveValue(pair);
-        addProperty(propId, val, important);
+        if (propId == CSS_PROP__WEBKIT_BORDER_RADIUS) {
+            const int properties[4] = { CSS_PROP__WEBKIT_BORDER_TOP_RIGHT_RADIUS,
+                                        CSS_PROP__WEBKIT_BORDER_TOP_LEFT_RADIUS,
+                                        CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS,
+                                        CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS };
+            for (int i = 0; i < 4; i++)
+                addProperty(properties[i], val, important);
+        } else
+            addProperty(propId, val, important);
         return true;
     }
     case CSS_PROP_OUTLINE_OFFSET:

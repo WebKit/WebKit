@@ -237,8 +237,7 @@ static void initShorthandMap(HashMap<int, PropertyLonghand>& shorthandMap)
     #define SET_SHORTHAND_MAP_ENTRY(map, propID, array) \
         map.set(propID, PropertyLonghand(array, sizeof(array) / sizeof(array[0])))
 
-    // FIXME: The following properties have "shorthand nature" but are not parsed as
-    // shorthands: 'font', '-webkit-border-radius' and 'overflow'.
+    // FIXME: The 'font' property has "shorthand nature" but is not parsed as a shorthand.
 
     // Do not change the order of the following four shorthands, and keep them together.
     static const int borderProperties[4][3] = {
@@ -348,8 +347,19 @@ static void initShorthandMap(HashMap<int, PropertyLonghand>& shorthandMap)
         CSS_PROP__WEBKIT_COLUMN_RULE_COLOR,
         CSS_PROP__WEBKIT_COLUMN_RULE_STYLE,
         CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH
-     };
+    };
     SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP__WEBKIT_COLUMN_RULE, columnRuleProperties);
+
+    static const int overflowProperties[] = { CSS_PROP_OVERFLOW_X, CSS_PROP_OVERFLOW_Y };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP_OVERFLOW, overflowProperties);
+
+    static const int borderRadiusProperties[] = {
+        CSS_PROP__WEBKIT_BORDER_TOP_RIGHT_RADIUS,
+        CSS_PROP__WEBKIT_BORDER_TOP_LEFT_RADIUS,
+        CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS,
+        CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS
+    };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSS_PROP__WEBKIT_BORDER_RADIUS, borderRadiusProperties);
 
     #undef SET_SHORTHAND_MAP_ENTRY
 }
