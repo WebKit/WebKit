@@ -41,6 +41,25 @@ RenderFieldset::RenderFieldset(HTMLGenericFormElement* element)
 {
 }
 
+void RenderFieldset::calcMinMaxWidth()
+{
+    RenderBlock::calcMinMaxWidth();
+    if (RenderObject* legend = findLegend()) {
+        int legendMinWidth = legend->minWidth();
+
+        Length legendMarginLeft = legend->style()->marginLeft();
+        Length legendMarginRight = legend->style()->marginLeft();
+
+        if (legendMarginLeft.isFixed())
+            legendMinWidth += legendMarginLeft.value();
+
+        if (legendMarginRight.isFixed())
+            legendMinWidth += legendMarginRight.value();
+
+        m_minWidth = max(m_minWidth, legendMinWidth + paddingLeft() + paddingRight() + borderLeft() + borderRight());
+    }
+}
+
 RenderObject* RenderFieldset::layoutLegend(bool relayoutChildren)
 {
     RenderObject* legend = findLegend();
@@ -81,7 +100,7 @@ RenderObject* RenderFieldset::layoutLegend(bool relayoutChildren)
     return legend;
 }
 
-RenderObject* RenderFieldset::findLegend()
+RenderObject* RenderFieldset::findLegend() const
 {
     for (RenderObject* legend = firstChild(); legend; legend = legend->nextSibling()) {
         if (!legend->isFloatingOrPositioned() && legend->element() &&
@@ -100,6 +119,7 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
         return RenderBlock::paintBoxDecorations(paintInfo, tx, ty);
 
     int yOff = (legend->yPos() > 0) ? 0 : (legend->height() - borderTop()) / 2;
+    int legendBottom = ty + legend->yPos() + legend->height();
     h -= yOff;
     ty += yOff - borderTopExtra();
 
@@ -112,13 +132,13 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     paintBackground(paintInfo.context, style()->backgroundColor(), style()->backgroundLayers(), my, mh, tx, ty, w, h);
 
     if (style()->hasBorder())
-        paintBorderMinusLegend(paintInfo.context, tx, ty, w, h, style(), legend->xPos(), legend->width());
+        paintBorderMinusLegend(paintInfo.context, tx, ty, w, h, style(), legend->xPos(), legend->width(), legendBottom);
 }
 
 void RenderFieldset::paintBorderMinusLegend(GraphicsContext* graphicsContext, int tx, int ty, int w, int h,
-                                            const RenderStyle* style, int lx, int lw)
+                                            const RenderStyle* style, int lx, int lw, int lb)
 {
-
+    // FIXME: Implement border-radius
     const Color& tc = style->borderTopColor();
     const Color& bc = style->borderBottomColor();
 
@@ -132,11 +152,18 @@ void RenderFieldset::paintBorderMinusLegend(GraphicsContext* graphicsContext, in
     bool render_r = rs > BHIDDEN;
     bool render_b = bs > BHIDDEN;
 
+    int borderLeftWidth = style->borderLeftWidth();
+    int borderRightWidth = style->borderRightWidth();
+
     if (render_t) {
-        drawBorder(graphicsContext, tx, ty, tx + lx, ty + style->borderTopWidth(), BSTop, tc, style->color(), ts,
-                   (render_l && (ls == DOTTED || ls == DASHED || ls == DOUBLE) ? style->borderLeftWidth() : 0), 0);
-        drawBorder(graphicsContext, tx + lx + lw, ty, tx + w, ty + style->borderTopWidth(), BSTop, tc, style->color(), ts,
-                   0, (render_r && (rs == DOTTED || rs == DASHED || rs == DOUBLE) ? style->borderRightWidth() : 0));
+        if (lx >= borderLeftWidth)
+            drawBorder(graphicsContext, tx, ty, tx + min(lx, w), ty + style->borderTopWidth(), BSTop, tc, style->color(), ts,
+                       (render_l && (ls == DOTTED || ls == DASHED || ls == DOUBLE) ? borderLeftWidth : 0),
+                       (lx >= w && render_r && (rs == DOTTED || rs == DASHED || rs == DOUBLE) ? borderRightWidth : 0));
+        if (lx + lw <=  w - borderRightWidth)
+            drawBorder(graphicsContext, tx + max(0, lx + lw), ty, tx + w, ty + style->borderTopWidth(), BSTop, tc, style->color(), ts,
+                       (lx + lw <= 0 && render_l && (ls == DOTTED || ls == DASHED || ls == DOUBLE) ? borderLeftWidth : 0),
+                       (render_r && (rs == DOTTED || rs == DASHED || rs == DOUBLE) ? borderRightWidth : 0));
     }
 
     if (render_b)
@@ -146,6 +173,7 @@ void RenderFieldset::paintBorderMinusLegend(GraphicsContext* graphicsContext, in
 
     if (render_l) {
         const Color& lc = style->borderLeftColor();
+        int startY = ty;
 
         bool ignore_top =
             (tc == lc) &&
@@ -157,12 +185,19 @@ void RenderFieldset::paintBorderMinusLegend(GraphicsContext* graphicsContext, in
             (ls >= OUTSET) &&
             (bs == DOTTED || bs == DASHED || bs == SOLID || bs == INSET);
 
-        drawBorder(graphicsContext, tx, ty, tx + style->borderLeftWidth(), ty + h, BSLeft, lc, style->color(), ls,
+        if (lx < borderLeftWidth && lx + lw > 0) {
+            // The legend intersects the border.
+            ignore_top = true;
+            startY = lb;
+        }
+
+        drawBorder(graphicsContext, tx, startY, tx + borderLeftWidth, ty + h, BSLeft, lc, style->color(), ls,
                    ignore_top ? 0 : style->borderTopWidth(), ignore_bottom ? 0 : style->borderBottomWidth());
     }
 
     if (render_r) {
         const Color& rc = style->borderRightColor();
+        int startY = ty;
 
         bool ignore_top =
             (tc == rc) &&
@@ -174,7 +209,13 @@ void RenderFieldset::paintBorderMinusLegend(GraphicsContext* graphicsContext, in
             (rs >= DOTTED || rs == INSET) &&
             (bs == DOTTED || bs == DASHED || bs == SOLID || bs == INSET);
 
-        drawBorder(graphicsContext, tx + w - style->borderRightWidth(), ty, tx + w, ty + h, BSRight, rc, style->color(), rs,
+        if (lx < w && lx + lw > w - borderRightWidth) {
+            // The legend intersects the border.
+            ignore_top = true;
+            startY = lb;
+        }
+
+        drawBorder(graphicsContext, tx + w - borderRightWidth, startY, tx + w, ty + h, BSRight, rc, style->color(), rs,
                    ignore_top ? 0 : style->borderTopWidth(), ignore_bottom ? 0 : style->borderBottomWidth());
     }
 }

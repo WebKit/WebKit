@@ -1,5 +1,17 @@
 2007-01-11  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=8438
+          iExploder(#460): Assertion failure in RenderObject::drawBorder()
+
+        * fast/block/basic/fieldset-stretch-to-legend-expected.checksum: Added.
+        * fast/block/basic/fieldset-stretch-to-legend-expected.png: Added.
+        * fast/block/basic/fieldset-stretch-to-legend-expected.txt: Added.
+        * fast/block/basic/fieldset-stretch-to-legend.html: Added.
+
+2007-01-11  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Adam.
 
         - test for http://bugs.webkit.org/show_bug.cgi?id=11449

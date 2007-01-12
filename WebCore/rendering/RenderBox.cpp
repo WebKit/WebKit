@@ -1099,6 +1099,11 @@ void RenderBox::calcWidth()
         }
     }
     
+    if (m_width < m_minWidth && stretchesToMinIntrinsicWidth()) {
+        m_width = m_minWidth;
+        width = Length(m_width, Fixed);
+    }
+
     // Margin calculations
     if (width.isAuto()) {
         m_marginLeft = marginLeft.calcMinValue(containerWidth);
@@ -1178,41 +1183,29 @@ bool RenderBox::sizesToIntrinsicWidth(WidthType widthType) const
 
 void RenderBox::calcHorizontalMargins(const Length& ml, const Length& mr, int cw)
 {
-    if (isFloating() || isInline()) // Inline blocks/tables and floats don't have their margins increased.
-    {
+    if (isFloating() || isInline()) {
+        // Inline blocks/tables and floats don't have their margins increased.
         m_marginLeft = ml.calcMinValue(cw);
         m_marginRight = mr.calcMinValue(cw);
+        return;
     }
-    else
-    {
-        if ( (ml.isAuto() && mr.isAuto() && m_width<cw) ||
-             (!ml.isAuto() && !mr.isAuto() &&
-                containingBlock()->style()->textAlign() == KHTML_CENTER) )
-        {
-            m_marginLeft = (cw - m_width)/2;
-            if (m_marginLeft<0) m_marginLeft=0;
-            m_marginRight = cw - m_width - m_marginLeft;
-        }
-        else if ( (mr.isAuto() && m_width<cw) ||
-                 (!ml.isAuto() && containingBlock()->style()->direction() == RTL &&
-                  containingBlock()->style()->textAlign() == KHTML_LEFT))
-        {
-            m_marginLeft = ml.calcValue(cw);
-            m_marginRight = cw - m_width - m_marginLeft;
-        }
-        else if ( (ml.isAuto() && m_width<cw) ||
-                 (!mr.isAuto() && containingBlock()->style()->direction() == LTR &&
-                  containingBlock()->style()->textAlign() == KHTML_RIGHT))
-        {
-            m_marginRight = mr.calcValue(cw);
-            m_marginLeft = cw - m_width - m_marginRight;
-        }
-        else
-        {
-            // this makes auto margins 0 if we failed a m_width<cw test above (css2.1, 10.3.3)
-            m_marginLeft = ml.calcMinValue(cw);
-            m_marginRight = mr.calcMinValue(cw);
-        }
+
+    if ((ml.isAuto() && mr.isAuto() && m_width < cw) ||
+        (!ml.isAuto() && !mr.isAuto() && containingBlock()->style()->textAlign() == KHTML_CENTER)) {
+        m_marginLeft = max(0, (cw - m_width) / 2);
+        m_marginRight = cw - m_width - m_marginLeft;
+    } else if ((mr.isAuto() && m_width < cw) ||
+       (!ml.isAuto() && containingBlock()->style()->direction() == RTL && containingBlock()->style()->textAlign() == KHTML_LEFT)) {
+        m_marginLeft = ml.calcValue(cw);
+        m_marginRight = cw - m_width - m_marginLeft;
+    } else if ((ml.isAuto() && m_width < cw) ||
+        (!mr.isAuto() && containingBlock()->style()->direction() == LTR && containingBlock()->style()->textAlign() == KHTML_RIGHT)) {
+        m_marginRight = mr.calcValue(cw);
+        m_marginLeft = cw - m_width - m_marginRight;
+    } else {
+        // This makes auto margins 0 if we failed a m_width < cw test above (css2.1, 10.3.3).
+        m_marginLeft = ml.calcMinValue(cw);
+        m_marginRight = mr.calcMinValue(cw);
     }
 }
 
@@ -1632,7 +1625,7 @@ void RenderBox::calcAbsoluteHorizontal()
                                  left, right, marginLeft, marginRight,
                                  m_width, m_marginLeft, m_marginRight, m_x);
 
-    // Calculate constraint equation values for 'max-width' case.calcContentBoxWidth(width.calcValue(containerWidth));
+    // Calculate constraint equation values for 'max-width' case.
     if (!style()->maxWidth().isUndefined()) {
         int maxWidth;
         int maxMarginLeft;
@@ -1671,6 +1664,12 @@ void RenderBox::calcAbsoluteHorizontal()
             m_x = minXPos;
         }
     }
+
+    if (m_width < m_minWidth - bordersPlusPadding && stretchesToMinIntrinsicWidth())
+        calcAbsoluteHorizontalValues(Length(m_minWidth - bordersPlusPadding, Fixed), containerBlock, containerDirection, 
+                                     containerWidth, bordersPlusPadding,
+                                     left, right, marginLeft, marginRight,
+                                     m_width, m_marginLeft, m_marginRight, m_x);
 
     // Put m_width into correct form.
     m_width += bordersPlusPadding;

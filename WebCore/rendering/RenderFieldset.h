@@ -42,13 +42,15 @@ public:
 
     virtual void setStyle(RenderStyle*);
 
+    virtual void calcMinMaxWidth();
     virtual bool avoidsFloats() const { return true; }
     virtual bool expandsToEncloseOverhangingFloats() const { return style()->height().isAuto(); }
+    virtual bool stretchesToMinIntrinsicWidth() const { return true; }
 
 private:
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
-    void paintBorderMinusLegend(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, int lx, int lw);
-    RenderObject* findLegend();
+    void paintBorderMinusLegend(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, int lx, int lw, int lb);
+    RenderObject* findLegend() const;
 };
 
 } // namespace WebCore

@@ -1,3 +1,36 @@
+2007-01-11  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8438
+          iExploder(#460): Assertion failure in RenderObject::drawBorder()
+
+        Test: fast/block/basic/fieldset-stretch-to-legend.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcWidth): Stretch to the minimum intrinsic
+        width if the object requires it.
+        (WebCore::RenderBox::calcHorizontalMargins): Some style cleanup.
+        (WebCore::RenderBox::calcAbsoluteHorizontal): Stretch to the minimum
+        intrinsic width if the object requires it.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::stretchesToMinIntrinsicWidth): Added. Returns false.
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::calcMinMaxWidth): Overloaded RenderBlock's
+        implementation to ensure that the legend's will fit in the fieldset's
+        minimum intrinsic width.
+        (WebCore::RenderFieldset::findLegend): Made const.
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        (WebCore::RenderFieldset::paintBorderMinusLegend): Fixed the behavior when
+        the legend does overflow the fieldset. This is the part of the fix that
+        prevents the assertion failure. If the legend intersects with a corner of
+        the fieldset's border, that corner will not be painted, even if it is not
+        completely occluded. This edge case can be improved with clipping in the
+        future. Added FIXME to implement border-radius.
+        * rendering/RenderFieldset.h:
+        (WebCore::RenderFieldset::stretchesToMinIntrinsicWidth): Overloaded to
+        return true.
+
 2007-01-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Build Fix Karma
