@@ -732,13 +732,15 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment
     int xOffset = 0, yOffset = 0;
     
     if (m_object->hasOverflowClip()) {
-        IntRect layerBounds = IntRect(xPos() + scrollXOffset(), yPos() + scrollYOffset(), 
+        int x, y;
+        m_object->absolutePosition(x, y);
+        IntRect layerBounds = IntRect(x + scrollXOffset(), y + scrollYOffset(), 
                                       width() - verticalScrollbarWidth(), height() - horizontalScrollbarHeight());
         IntRect exposeRect = IntRect(rect.x() + scrollXOffset(), rect.y() + scrollYOffset(), rect.width(), rect.height());
         IntRect r = getRectToExpose(layerBounds, exposeRect, alignX, alignY);
         
-        xOffset = r.x() - xPos();
-        yOffset = r.y() - yPos();
+        xOffset = r.x() - x;
+        yOffset = r.y() - y;
         // Adjust offsets if they're outside of the allowable range.
         xOffset = max(0, min(scrollWidth() - width(), xOffset));
         yOffset = max(0, min(scrollHeight() - height(), yOffset));

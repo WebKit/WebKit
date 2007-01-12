@@ -1,3 +1,18 @@
+2007-01-11  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 11595.  Autoscrolling of layers didn't really work at all unless the layer was coincidentally
+        in the root layer's coordinate space.  The event point was an absolute position within the document, but
+        the layer's rect was only local coords.  This patch makes sure to use absolute bounds for the layer
+        when comparing it with the point.
+
+        This is covered by the scrollRevealButton test case already in the tree... the results change to be more
+        correct.
+
+        Reviewed by ggaren
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+
 2007-01-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Oliver
