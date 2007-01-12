@@ -1,5 +1,16 @@
 2007-01-11  David Hyatt  <hyatt@apple.com>
 
+        A hit test is returning a null renderer.  Make sure to null-check it in the autoscroll code.
+        This really shouldn't happen, but I'm just going to bullet proof for now given that it's happening
+        on the front page of yahoo.com!
+
+        Reviewed by mark
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::autoscroll):
+
+2007-01-11  David Hyatt  <hyatt@apple.com>
+
         Force column-width to parse in strict mode so that there is no confusion when it is used in the columns
         shorthand (it can be mistaken for column-count otherwise).
 

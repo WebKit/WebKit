@@ -870,7 +870,7 @@ void RenderLayer::autoscroll()
     if (currentFrame->eventHandler()->mouseDownMayStartSelect()) {
         HitTestRequest request(true, false, true);
         HitTestResult result(currentPos);
-        if (hitTest(request, result)) {
+        if (hitTest(request, result) && result.innerNode()->renderer()) {
             VisiblePosition pos(result.innerNode()->renderer()->positionForPoint(result.localPoint()));
             currentFrame->eventHandler()->updateSelectionForMouseDragOverPosition(pos);
         }
