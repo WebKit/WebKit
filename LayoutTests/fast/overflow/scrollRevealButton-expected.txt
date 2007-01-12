@@ -16,14 +16,14 @@ layer at (0,0) size 785x1184
           layer at (0,0) size 308x316
             RenderBlock {HTML} at (0,0) size 285x316
               RenderBody {BODY} at (8,8) size 269x300
-          layer at (8,8) size 300x300 clip at (8,8) size 285x300 scrollY 535 scrollHeight 1268
+          layer at (8,8) size 300x300 clip at (8,8) size 285x300 scrollY 543 scrollHeight 1268
             RenderBlock {DIV} at (0,0) size 300x300
               RenderBlock (anonymous) at (0,0) size 285x18
                 RenderText {#text} at (0,0) size 88x18
                   text run at (0,0) width 88: "overflow:auto"
               RenderBlock {DIV} at (0,18) size 285x600
               RenderBlock {DIV} at (0,768) size 285x500
-          layer at (8,91) size 150x150 clip at (8,91) size 135x150 scrollY 480 scrollHeight 858
+          layer at (8,83) size 150x150 clip at (8,83) size 135x150 scrollY 472 scrollHeight 858
             RenderBlock {DIV} at (0,618) size 150x150
               RenderBlock (anonymous) at (0,0) size 135x18
                 RenderText {#text} at (0,0) size 88x18
