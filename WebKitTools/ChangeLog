@@ -1,3 +1,18 @@
+2007-01-11  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=10249
+          Temporarily disable tests that are causing kernel panics
+
+        Changed the ImageDiff tool not to use CoreImage filters.
+
+        * DumpRenderTree/ImageDiff.m:
+        (main):
+        (createImageFromStdin):
+        (compareImages):
+        (getDifferenceBitmap):
+
 2007-01-11  Lars Knoll <lars@trolltech.com>
 
         Fix compilation

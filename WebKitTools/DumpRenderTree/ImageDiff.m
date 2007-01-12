@@ -25,18 +25,16 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <QuartzCore/CIFilter.h>
-#import <QuartzCore/CIImage.h>
-#import <QuartzCore/CIContext.h>
+#import <QuartzCore/CoreImage.h>
 #import <AppKit/NSBitmapImageRep.h>
 #import <AppKit/NSGraphicsContext.h>
 #import <AppKit/NSCIImageRep.h>
 
 /* prototypes */
 int main(int argc, const char *argv[]);
-NSBitmapImageRep *getImageFromStdin(int imageSize);
-void compareImages(NSBitmapImageRep *actualBitmap, NSBitmapImageRep *baselineImage);
-NSBitmapImageRep *getDifferenceBitmap(NSBitmapImageRep *testBitmap, NSBitmapImageRep *referenceBitmap);
+CGImageRef createImageFromStdin(int imageSize);
+void compareImages(CGImageRef actualBitmap, CGImageRef baselineImage);
+NSBitmapImageRep *getDifferenceBitmap(CGImageRef actualBitmap, CGImageRef baselineImage);
 float computePercentageDifferent(NSBitmapImageRep *diffBitmap);
 
 
@@ -45,8 +43,8 @@ int main(int argc, const char *argv[])
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     char buffer[2048];
-    NSBitmapImageRep *actualImage = nil;
-    NSBitmapImageRep *baselineImage = nil;
+    CGImageRef actualImage = nil;
+    CGImageRef baselineImage = nil;
 
     NSAutoreleasePool *innerPool = [[NSAutoreleasePool alloc] init];
     while (fgets(buffer, sizeof(buffer), stdin)) {
@@ -61,15 +59,17 @@ int main(int argc, const char *argv[])
             int imageSize = strtol(strtok(NULL, " "), NULL, 10);
 
             if(imageSize > 0 && actualImage == nil) 
-                actualImage = getImageFromStdin(imageSize);
+                actualImage = createImageFromStdin(imageSize);
             else if (imageSize > 0 && baselineImage == nil)
-                baselineImage = getImageFromStdin(imageSize);
+                baselineImage = createImageFromStdin(imageSize);
             else
                 fputs("error, image size must be specified.\n", stdout);
         }
-        
+
         if (actualImage != nil && baselineImage != nil) {
             compareImages(actualImage, baselineImage);
+            CGImageRelease(actualImage);
+            CGImageRelease(baselineImage);
             actualImage = nil;
             baselineImage = nil;
             [innerPool release];
@@ -84,7 +84,7 @@ int main(int argc, const char *argv[])
     return 0;
 }
 
-NSBitmapImageRep *getImageFromStdin(int bytesRemaining)
+CGImageRef createImageFromStdin(int bytesRemaining)
 {
     unsigned char buffer[2048];
     NSMutableData *data = [[NSMutableData alloc] initWithCapacity:bytesRemaining];
@@ -96,14 +96,15 @@ NSBitmapImageRep *getImageFromStdin(int bytesRemaining)
         [data appendBytes:buffer length:bytesRead];
         bytesRemaining -= bytesRead;
     }
-    
-    NSBitmapImageRep *image = [NSBitmapImageRep imageRepWithData:data];
+    CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData((CFDataRef)data);
+    CGImageRef image = CGImageCreateWithPNGDataProvider(dataProvider, NULL, NO, kCGRenderingIntentDefault);
     [data release];
+    CGDataProviderRelease(dataProvider);
     
     return image; 
 }
 
-void compareImages(NSBitmapImageRep *actualBitmap, NSBitmapImageRep *baselineBitmap)
+void compareImages(CGImageRef actualBitmap, CGImageRef baselineBitmap)
 {
     // prepare the difference blend to check for pixel variations
     NSBitmapImageRep *diffBitmap = getDifferenceBitmap(actualBitmap, baselineBitmap);
@@ -121,38 +122,34 @@ void compareImages(NSBitmapImageRep *actualBitmap, NSBitmapImageRep *baselineBit
         fprintf(stdout, "diff: %01.2f%% passed\n", percentage);
 }
 
-NSBitmapImageRep *getDifferenceBitmap(NSBitmapImageRep *testBitmap, NSBitmapImageRep *referenceBitmap)
+NSBitmapImageRep *getDifferenceBitmap(CGImageRef testBitmap, CGImageRef referenceBitmap)
 {
     // we must have both images to take diff
     if (testBitmap == nil || referenceBitmap == nil)
         return nil;
 
-    // create a new graphics context to draw our CIImage on
-    NSBitmapImageRep *diffBitmap = [[testBitmap copy] autorelease]; // FIXME: likely faster ways than copying.
-    NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithBitmapImageRep:diffBitmap];
-    CIImage *referenceImage = [[CIImage alloc] initWithBitmapImageRep:referenceBitmap];
-    CIImage *testImage = [[CIImage alloc] initWithBitmapImageRep:testBitmap];
-    CIFilter *diffBlend = [CIFilter filterWithName:@"CIDifferenceBlendMode"];
+    NSBitmapImageRep *diffBitmap = [NSBitmapImageRep alloc];
+    [diffBitmap initWithBitmapDataPlanes:NULL
+                              pixelsWide:CGImageGetWidth(testBitmap)
+                              pixelsHigh:CGImageGetHeight(testBitmap)
+                           bitsPerSample:CGImageGetBitsPerComponent(testBitmap)
+                         samplesPerPixel:CGImageGetBitsPerPixel(testBitmap) / CGImageGetBitsPerComponent(testBitmap)
+                                hasAlpha:YES
+                                isPlanar:NO
+                          colorSpaceName:NSCalibratedRGBColorSpace
+                            bitmapFormat:0
+                             bytesPerRow:CGImageGetBytesPerRow(testBitmap)
+                            bitsPerPixel:CGImageGetBitsPerPixel(testBitmap)
+    ];
 
-    // generate the diff image
-    [diffBlend setValue:referenceImage forKey:@"inputImage"];
-    [diffBlend setValue:testImage forKey:@"inputBackgroundImage"];
-    CIImage *diffImage = [diffBlend valueForKey:@"outputImage"];
-    
-    // prepare to draw the image, save current state
-    [NSGraphicsContext saveGraphicsState];
-    [NSGraphicsContext setCurrentContext: nsContext];
-    
-    // draw the difference image
-    [[nsContext CIContext] drawImage:diffImage atPoint:CGPointZero fromRect:[diffImage extent]];
-    
-    // restore the previous context and state
-    [NSGraphicsContext restoreGraphicsState];
-        
-    [referenceImage release];
-    [testImage release];
-    
-    return diffBitmap;
+    NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithBitmapImageRep:diffBitmap];
+    CGContextRef cgContext = [nsContext graphicsPort];
+    CGContextSetBlendMode(cgContext, kCGBlendModeNormal);
+    CGContextDrawImage(cgContext, CGRectMake(0, 0, CGImageGetWidth(testBitmap), CGImageGetHeight(testBitmap)), testBitmap);
+    CGContextSetBlendMode(cgContext, kCGBlendModeDifference);
+    CGContextDrawImage(cgContext, CGRectMake(0, 0, CGImageGetWidth(referenceBitmap), CGImageGetHeight(referenceBitmap)), referenceBitmap);
+
+    return [diffBitmap autorelease];
 }
 
 /**
