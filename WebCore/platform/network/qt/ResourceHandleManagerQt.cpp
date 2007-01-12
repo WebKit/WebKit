@@ -359,6 +359,7 @@ void FileLoader::request(RequestQt* request)
         DEBUG() << "opening" << QString(url.path());
 
         if (f.open(QIODevice::ReadOnly)) {
+            request->response = QHttpResponseHeader(100);
             emit receivedResponse(request);
         
             QByteArray data = f.readAll();
