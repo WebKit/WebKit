@@ -1,3 +1,10 @@
+2007-01-12  Anders Carlsson  <acarlsson@apple.com>
+
+        Build fix.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove SubresourceLoaderMac.mm.
+        
 2007-01-12  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Darin and Anders.
