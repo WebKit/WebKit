@@ -2,6 +2,30 @@
 
         Reviewed by Hyatt.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12115
+          RTL text is jumbled on display
+
+        Fixed fixed table layout. Implemented an algorithm that matches the behavior
+        of Firefox, up to rounding errors.
+
+        Fixes three existing table tests.
+
+        * rendering/FixedTableLayout.cpp:
+        Undid accidental search-and-replace of "width" to "m_width" in the comments.
+        Removed an outdated comment, since WebKit no longer honors table-layout:fixed
+        for variable-width tables.
+        (WebCore::FixedTableLayout::calcWidthArray): Fixed the logic that finds the
+        first row. Changed to divide the width specified for a cell that spans multiple
+        columns between the columns rather than assign its entire width to each column.
+        (WebCore::FixedTableLayout::calcMinMaxWidth):
+        (WebCore::FixedTableLayout::layout): Implemented the behavior observed in
+        Firefox.
+        * rendering/FixedTableLayout.h:
+
+2007-01-11  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=8438
           iExploder(#460): Assertion failure in RenderObject::drawBorder()
 

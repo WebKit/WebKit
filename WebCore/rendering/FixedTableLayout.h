@@ -20,8 +20,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef FixedTableLayout_H
-#define FixedTableLayout_H
+#ifndef FixedTableLayout_h
+#define FixedTableLayout_h
 
 #include "Length.h"
 #include "TableLayout.h"
@@ -34,7 +34,6 @@ class RenderTable;
 class FixedTableLayout : public TableLayout {
 public:
     FixedTableLayout(RenderTable*);
-    ~FixedTableLayout();
 
     virtual void calcMinMaxWidth(int& minWidth, int& maxWidth);
     virtual void layout();
@@ -47,4 +46,4 @@ protected:
 
 } // namespace WebCore
 
-#endif // FixedTableLayout_H
+#endif // FixedTableLayout_h

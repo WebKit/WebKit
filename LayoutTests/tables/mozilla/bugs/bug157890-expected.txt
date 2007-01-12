@@ -42,32 +42,32 @@ layer at (0,0) size 800x484
       RenderTable {TABLE} at (0,0) size 24x0
         RenderTableSection {TBODY} at (0,0) size 24x0
           RenderTableRow {TR} at (0,0) size 24x0
-            RenderTableCell {TD} at (0,0) size 4x0 [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (4,0) size 4x0 [r=0 c=1 rs=1 cs=1]
-            RenderTableCell {TD} at (8,0) size 3x0 [r=0 c=2 rs=1 cs=1]
-            RenderTableCell {TD} at (11,0) size 3x0 [r=0 c=3 rs=1 cs=1]
-            RenderTableCell {TD} at (14,0) size 10x0 [r=0 c=4 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 2x0 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,0) size 2x0 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (4,0) size 2x0 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (6,0) size 2x0 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (8,0) size 16x0 [r=0 c=4 rs=1 cs=1]
       RenderTable {TABLE} at (0,0) size 25x0
         RenderTableSection {TBODY} at (0,0) size 25x0
           RenderTableRow {TR} at (0,0) size 25x0
-            RenderTableCell {TD} at (0,0) size 4x0 [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (4,0) size 4x0 [r=0 c=1 rs=1 cs=1]
-            RenderTableCell {TD} at (8,0) size 4x0 [r=0 c=2 rs=1 cs=1]
-            RenderTableCell {TD} at (12,0) size 3x0 [r=0 c=3 rs=1 cs=1]
-            RenderTableCell {TD} at (15,0) size 10x0 [r=0 c=4 rs=1 cs=1]
-      RenderTable {TABLE} at (0,0) size 100x0
-        RenderTableSection {TBODY} at (0,0) size 100x0
-          RenderTableRow {TR} at (0,0) size 100x0
-            RenderTableCell {TD} at (0,0) size 10x0 [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (10,0) size 10x0 [r=0 c=1 rs=1 cs=1]
-            RenderTableCell {TD} at (20,0) size 10x0 [r=0 c=2 rs=1 cs=1]
-            RenderTableCell {TD} at (30,0) size 10x0 [r=0 c=3 rs=1 cs=1]
-            RenderTableCell {TD} at (40,0) size 10x0 [r=0 c=4 rs=1 cs=1]
-            RenderTableCell {TD} at (50,0) size 10x0 [r=0 c=5 rs=1 cs=1]
-            RenderTableCell {TD} at (60,0) size 10x0 [r=0 c=6 rs=1 cs=1]
-            RenderTableCell {TD} at (70,0) size 10x0 [r=0 c=7 rs=1 cs=1]
-            RenderTableCell {TD} at (80,0) size 10x0 [r=0 c=8 rs=1 cs=1]
-            RenderTableCell {TD} at (90,0) size 10x0 [r=0 c=9 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 3x0 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (3,0) size 2x0 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (5,0) size 2x0 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (7,0) size 2x0 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (9,0) size 16x0 [r=0 c=4 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 17x0
+        RenderTableSection {TBODY} at (0,0) size 17x0
+          RenderTableRow {TR} at (0,0) size 17x0
+            RenderTableCell {TD} at (0,0) size 2x0 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,0) size 2x0 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (4,0) size 2x0 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (6,0) size 2x0 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (8,0) size 2x0 [r=0 c=4 rs=1 cs=1]
+            RenderTableCell {TD} at (10,0) size 2x0 [r=0 c=5 rs=1 cs=1]
+            RenderTableCell {TD} at (12,0) size 2x0 [r=0 c=6 rs=1 cs=1]
+            RenderTableCell {TD} at (14,0) size 1x0 [r=0 c=7 rs=1 cs=1]
+            RenderTableCell {TD} at (15,0) size 1x0 [r=0 c=8 rs=1 cs=1]
+            RenderTableCell {TD} at (16,0) size 1x0 [r=0 c=9 rs=1 cs=1]
       RenderBlock {PRE} at (0,13) size 784x450
         RenderText {#text} at (0,0) size 216x15
           text run at (0,0) width 216: "Specified table width: 25px"
@@ -245,15 +245,15 @@ layer at (0,0) size 800x484
         RenderText {#text} at (0,270) size 168x15
           text run at (0,270) width 168: "Actual TD widths:    "
         RenderText {#text} at (168,270) size 32x15
-          text run at (168,270) width 32: "4px "
+          text run at (168,270) width 32: "2px "
         RenderText {#text} at (200,270) size 32x15
-          text run at (200,270) width 32: "4px "
+          text run at (200,270) width 32: "2px "
         RenderText {#text} at (232,270) size 32x15
-          text run at (232,270) width 32: "3px "
+          text run at (232,270) width 32: "2px "
         RenderText {#text} at (264,270) size 32x15
-          text run at (264,270) width 32: "3px "
+          text run at (264,270) width 32: "2px "
         RenderText {#text} at (296,270) size 40x15
-          text run at (296,270) width 40: "10px "
+          text run at (296,270) width 40: "16px "
         RenderText {#text} at (336,270) size 336x30
           text run at (336,270) width 0: " "
           text run at (0,285) width 0: " "
@@ -280,24 +280,24 @@ layer at (0,0) size 800x484
         RenderText {#text} at (0,345) size 168x15
           text run at (0,345) width 168: "Actual TD widths:    "
         RenderText {#text} at (168,345) size 32x15
-          text run at (168,345) width 32: "4px "
+          text run at (168,345) width 32: "3px "
         RenderText {#text} at (200,345) size 32x15
-          text run at (200,345) width 32: "4px "
+          text run at (200,345) width 32: "2px "
         RenderText {#text} at (232,345) size 32x15
-          text run at (232,345) width 32: "4px "
+          text run at (232,345) width 32: "2px "
         RenderText {#text} at (264,345) size 32x15
-          text run at (264,345) width 32: "3px "
+          text run at (264,345) width 32: "2px "
         RenderText {#text} at (296,345) size 40x15
-          text run at (296,345) width 40: "10px "
+          text run at (296,345) width 40: "16px "
         RenderText {#text} at (336,345) size 336x30
           text run at (336,345) width 0: " "
           text run at (0,360) width 0: " "
         RenderText {#text} at (0,375) size 216x15
           text run at (0,375) width 216: "Specified table width: 17px"
           text run at (216,375) width 0: " "
-        RenderText {#text} at (0,390) size 224x15
-          text run at (0,390) width 224: "Actual table width:    100px"
-          text run at (224,390) width 0: " "
+        RenderText {#text} at (0,390) size 216x15
+          text run at (0,390) width 216: "Actual table width:    17px"
+          text run at (216,390) width 0: " "
         RenderText {#text} at (0,405) size 168x15
           text run at (0,405) width 168: "Specified TD widths: "
         RenderText {#text} at (168,405) size 32x15
@@ -324,26 +324,26 @@ layer at (0,0) size 800x484
           text run at (488,405) width 0: " "
         RenderText {#text} at (0,420) size 168x15
           text run at (0,420) width 168: "Actual TD widths:    "
-        RenderText {#text} at (168,420) size 40x15
-          text run at (168,420) width 40: "10px "
-        RenderText {#text} at (208,420) size 40x15
-          text run at (208,420) width 40: "10px "
-        RenderText {#text} at (248,420) size 40x15
-          text run at (248,420) width 40: "10px "
-        RenderText {#text} at (288,420) size 40x15
-          text run at (288,420) width 40: "10px "
-        RenderText {#text} at (328,420) size 40x15
-          text run at (328,420) width 40: "10px "
-        RenderText {#text} at (368,420) size 40x15
-          text run at (368,420) width 40: "10px "
-        RenderText {#text} at (408,420) size 40x15
-          text run at (408,420) width 40: "10px "
-        RenderText {#text} at (448,420) size 40x15
-          text run at (448,420) width 40: "10px "
-        RenderText {#text} at (488,420) size 40x15
-          text run at (488,420) width 40: "10px "
-        RenderText {#text} at (528,420) size 40x15
-          text run at (528,420) width 40: "10px "
-        RenderText {#text} at (568,420) size 568x30
-          text run at (568,420) width 0: " "
+        RenderText {#text} at (168,420) size 32x15
+          text run at (168,420) width 32: "2px "
+        RenderText {#text} at (200,420) size 32x15
+          text run at (200,420) width 32: "2px "
+        RenderText {#text} at (232,420) size 32x15
+          text run at (232,420) width 32: "2px "
+        RenderText {#text} at (264,420) size 32x15
+          text run at (264,420) width 32: "2px "
+        RenderText {#text} at (296,420) size 32x15
+          text run at (296,420) width 32: "2px "
+        RenderText {#text} at (328,420) size 32x15
+          text run at (328,420) width 32: "2px "
+        RenderText {#text} at (360,420) size 32x15
+          text run at (360,420) width 32: "2px "
+        RenderText {#text} at (392,420) size 32x15
+          text run at (392,420) width 32: "1px "
+        RenderText {#text} at (424,420) size 32x15
+          text run at (424,420) width 32: "1px "
+        RenderText {#text} at (456,420) size 32x15
+          text run at (456,420) width 32: "1px "
+        RenderText {#text} at (488,420) size 488x30
+          text run at (488,420) width 0: " "
           text run at (0,435) width 0: " "

@@ -2,6 +2,24 @@
 
         Reviewed by Hyatt.
 
+        - updated results for http://bugs.webkit.org/show_bug.cgi?id=12115
+          RTL text is jumbled on display
+          (fixing fixed table layout)
+
+        * tables/mozilla/bugs/bug157890-expected.checksum:
+        * tables/mozilla/bugs/bug157890-expected.png:
+        * tables/mozilla/bugs/bug157890-expected.txt:
+        * tables/mozilla/bugs/bug44505-expected.checksum:
+        * tables/mozilla/bugs/bug44505-expected.png:
+        * tables/mozilla/bugs/bug44505-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug7243-expected.checksum:
+        * tables/mozilla_expected_failures/bugs/bug7243-expected.png:
+        * tables/mozilla_expected_failures/bugs/bug7243-expected.txt:
+
+2007-01-11  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
         - test for http://bugs.webkit.org/show_bug.cgi?id=8438
           iExploder(#460): Assertion failure in RenderObject::drawBorder()
 
