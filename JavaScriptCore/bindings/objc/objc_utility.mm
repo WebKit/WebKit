@@ -136,7 +136,7 @@ ObjcValue convertValueToObjcValue(ExecState *exec, JSValue *value, ObjcValueType
     switch (type) {
         case ObjcObjectType: {
             Interpreter *originInterpreter = exec->dynamicInterpreter();
-            const RootObject* originRootObject = getRootObject(originInterpreter);
+            const RootObject* originRootObject = rootObjectForInterpreter(originInterpreter);
 
             Interpreter *interpreter = 0;
             if (originInterpreter->isGlobalObject(value))
@@ -145,7 +145,7 @@ ObjcValue convertValueToObjcValue(ExecState *exec, JSValue *value, ObjcValueType
             if (!interpreter)
                 interpreter = originInterpreter;
                 
-            const RootObject* rootObject = getRootObject(interpreter);
+            const RootObject* rootObject = rootObjectForInterpreter(interpreter);
             if (!rootObject) {
                 RootObject* newRootObject = new RootObject(0, interpreter);
                 rootObject = newRootObject;

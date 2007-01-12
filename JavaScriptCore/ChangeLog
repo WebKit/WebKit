@@ -1,5 +1,11 @@
 2007-01-11  Geoffrey Garen  <ggaren@apple.com>
 
+        RS by Brady Eidson.
+        
+        Rolling out r18786 because it caused leaks.
+
+2007-01-11  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Even more cleanup in preparation for fixing <rdar://problem/4608404> 

@@ -103,7 +103,7 @@ private:
 
 extern "C" {
 
-// Functions called from the Java VM when making calls to the JavaJSObject class.
+// The Java VM calls these functions to handle calls to methods in Java's JSObject class.
 jlong KJS_JSCreateNativeJSObject(JNIEnv*, jclass, jstring jurl, jlong nativeHandle, jboolean ctx);
 void KJS_JSObject_JSFinalize(JNIEnv*, jclass, jlong nativeJSObject);
 jobject KJS_JSObject_JSObjectCall(JNIEnv*, jclass, jlong nativeJSObject, jstring jurl, jstring methodName, jobjectArray args, jboolean ctx);

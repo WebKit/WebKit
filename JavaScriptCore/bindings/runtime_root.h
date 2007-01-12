@@ -39,13 +39,13 @@ namespace Bindings {
 class RootObject;
 
 typedef RootObject* (*CreateRootObjectFunction)(void* nativeHandle);
-typedef HashCountedSet<JSObject*> ProtectCountSet;
+typedef HashCountedSet<JSObject*> ReferencesSet;
 
-extern ProtectCountSet* getProtectCountSet(JSObject*);
-extern const RootObject* getRootObject(JSObject*);
-extern const RootObject* getRootObject(Interpreter*);
-extern void addNativeReference(const RootObject*, JSObject*);
-extern void removeNativeReference(JSObject*);
+extern ReferencesSet* findReferenceSet(JSObject *imp);
+extern const RootObject* rootObjectForImp(JSObject*);
+extern const RootObject* rootObjectForInterpreter(Interpreter*);
+extern void addNativeReference (const RootObject *root, JSObject *imp);
+extern void removeNativeReference (JSObject *imp);
 
 class RootObject
 {
