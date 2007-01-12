@@ -1,3 +1,17 @@
+2007-01-12  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12223
+          REGRESSION: Leaks under CSSStyleSelector::applyProperty
+
+        No test possible (no change to functionality).
+
+        * rendering/RenderObject.h: Removed unused forward declaration.
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleRareNonInheritedData::~StyleRareNonInheritedData):
+        Delete shadow data.
+
 2007-01-12  Anders Carlsson  <acarlsson@apple.com>
 
         Build fix.

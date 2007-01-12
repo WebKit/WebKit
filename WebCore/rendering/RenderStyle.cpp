@@ -467,6 +467,7 @@ StyleRareNonInheritedData::~StyleRareNonInheritedData()
 {
     delete m_content;
     delete m_counterDirectives;
+    delete m_boxShadow;
 #ifdef XBL_SUPPORT
     delete bindingURI;
 #endif

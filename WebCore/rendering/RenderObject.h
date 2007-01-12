@@ -34,7 +34,6 @@
 namespace WebCore {
 
 class AffineTransform;
-class CollapsedBorderValue;
 class Color;
 class Document;
 class Element;
