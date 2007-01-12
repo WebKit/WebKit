@@ -1,3 +1,15 @@
+2007-01-11  David Hyatt  <hyatt@apple.com>
+
+       Force column-width to parse in strict mode so that there is no confusion when it is used in the columns
+       shorthand (it can be mistaken for column-count otherwise).
+
+       Reviewed by Mark
+       
+        * fast/multicol/columns-shorthand-parsing-expected.checksum: Added.
+        * fast/multicol/columns-shorthand-parsing-expected.png: Added.
+        * fast/multicol/columns-shorthand-parsing-expected.txt: Added.
+        * fast/multicol/columns-shorthand-parsing.html: Added.
+
 2007-01-11  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

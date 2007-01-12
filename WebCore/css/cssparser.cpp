@@ -1217,8 +1217,8 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSS_PROP__WEBKIT_COLUMN_WIDTH:         // auto | <length>
         if (id == CSS_VAL_AUTO)
             valid_primitive = true;
-        else
-            valid_primitive = validUnit(value, FLength, strict);
+        else // Always parse this property in strict mode, since it would be ambiguous otherwise when used in the 'columns' shorthand property.
+            valid_primitive = validUnit(value, FLength, true);
         break;
     // End of CSS3 properties
 
