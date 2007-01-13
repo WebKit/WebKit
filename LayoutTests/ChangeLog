@@ -1,3 +1,13 @@
+2007-01-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=12165
+        REGRESSION: text encoding problem at jn.sapo.pt
+
+        * fast/encoding/script-in-head-expected.txt: Added.
+        * fast/encoding/script-in-head.html: Added.
+
 2007-01-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.

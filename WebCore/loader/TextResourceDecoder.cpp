@@ -483,10 +483,12 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
     // matches behavior in other browsers; more details in
     // <http://bugs.webkit.org/show_bug.cgi?id=3590>.
     
-    // Additionally, we ignore things that looks like tags in <title>; see
-    // <http://bugs.webkit.org/show_bug.cgi?id=4560>.
+    // Additionally, we ignore things that looks like tags in <title> and <script>; see
+    // <http://bugs.webkit.org/show_bug.cgi?id=4560> and
+    // <http://bugs.webkit.org/show_bug.cgi?id=12165>.
     
     bool withinTitle = false;
+    bool withinScript = false;
 
     const char* ptr = m_buffer.data();
     const char* pEnd = ptr + m_buffer.size();
@@ -548,6 +550,8 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
             
             if (tag == titleTag)
                 withinTitle = !end;
+            else if (tag == scriptTag)
+                withinScript = !end;
             
             if (!end && tag == metaTag) {
                 const char* end = ptr;
@@ -593,7 +597,7 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
             } else if (tag != scriptTag && tag != noscriptTag && tag != styleTag &&
                        tag != linkTag && tag != metaTag && tag != objectTag &&
                        tag != titleTag && tag != baseTag && 
-                       (end || tag != htmlTag) && !withinTitle &&
+                       (end || tag != htmlTag) && !withinTitle && !withinScript &&
                        (tag != headTag) && isalpha(tmp[0])) {
                 m_checkedForHeadCharset = true;
                 return true;

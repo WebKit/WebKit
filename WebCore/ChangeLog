@@ -1,3 +1,16 @@
+2007-01-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12165
+        REGRESSION: text encoding problem at jn.sapo.pt
+
+        Test: fast/encoding/script-in-head.html
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::checkForHeadCharset):
+        Ignore tags within <script> elements in head, just like we do for <title>.
+
 2007-01-13  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Maciej
