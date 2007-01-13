@@ -87,7 +87,7 @@ namespace WTF {
     template<> struct HashTraits<long long> : GenericHashTraits<long long> {
         static long long deletedValue() { return -1; }
     };
-    template<> struct HashTraits<unsigned long> : GenericHashTraits<unsigned long long> {
+    template<> struct HashTraits<unsigned long long> : GenericHashTraits<unsigned long long> {
         static unsigned long long deletedValue() { return static_cast<unsigned long long>(-1); }
     };
     
