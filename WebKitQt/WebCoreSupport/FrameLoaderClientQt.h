@@ -172,11 +172,17 @@ namespace WebCore {
         virtual bool shouldFallBack(const WebCore::ResourceError&);
         virtual WTF::PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&);
         virtual void download(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
-        virtual void dispatchWillSendRequest(WebCore::DocumentLoader*, void*, WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
-        virtual void dispatchDidReceiveResponse(WebCore::DocumentLoader*, void*, const WebCore::ResourceResponse&);
-        virtual void dispatchDidReceiveContentLength(WebCore::DocumentLoader*, void*, int);
-        virtual void dispatchDidFinishLoading(WebCore::DocumentLoader*, void*);
-        virtual void dispatchDidFailLoading(WebCore::DocumentLoader*, void*, const WebCore::ResourceError&);
+
+        virtual void assignIdentifierToInitialRequest(unsigned long identifier, WebCore::DocumentLoader*, const WebCore::ResourceRequest&);
+        
+        virtual void dispatchWillSendRequest(WebCore::DocumentLoader*, unsigned long, WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+        virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long identifier, const AuthenticationChallenge&);
+        virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, unsigned long identifier, const AuthenticationChallenge&);
+        virtual void dispatchDidReceiveResponse(WebCore::DocumentLoader*, unsigned long, const WebCore::ResourceResponse&);
+        virtual void dispatchDidReceiveContentLength(WebCore::DocumentLoader*, unsigned long, int);
+        virtual void dispatchDidFinishLoading(WebCore::DocumentLoader*, unsigned long);
+        virtual void dispatchDidFailLoading(WebCore::DocumentLoader*, unsigned long, const WebCore::ResourceError&);
+
         virtual bool dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, int);
         virtual void dispatchDidFailProvisionalLoad(const WebCore::ResourceError&);
         virtual void dispatchDidFailLoad(const WebCore::ResourceError&);
@@ -185,14 +191,13 @@ namespace WebCore {
         virtual void dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::String&);
         virtual void dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const WebCore::NavigationAction&, const WebCore::ResourceRequest&);
         virtual void dispatchUnableToImplementPolicy(const WebCore::ResourceError&);
-        virtual void incrementProgress(void*, const WebCore::ResourceResponse&);
-        virtual void incrementProgress(void*, const char*, int);
-        virtual void completeProgress(void*);
+
+        virtual void incrementProgress(unsigned long, const WebCore::ResourceResponse&);
+        virtual void incrementProgress(unsigned long, const char*, int);
+        virtual void completeProgress(unsigned long);
+
         virtual void startDownload(const WebCore::ResourceRequest&);
         virtual bool willUseArchive(WebCore::ResourceLoader*, const WebCore::ResourceRequest&, const WebCore::KURL&) const;
-
-        virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, id identifier, const AuthenticationChallenge&);
-        virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, id identifier, const AuthenticationChallenge&);
         
         // FIXME: This should probably not be here, but it's needed for the tests currently
         virtual void partClearedInBegin();

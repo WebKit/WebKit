@@ -1,3 +1,20 @@
+2007-01-13  Lars Knoll <lars@trolltech.com>
+
+        Compile again after yesterdays changes.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::assignIdentifierToInitialRequest):
+        (WebCore::FrameLoaderClientQt::dispatchWillSendRequest):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveAuthenticationChallenge):
+        (WebCore::FrameLoaderClientQt::dispatchDidCancelAuthenticationChallenge):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveResponse):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveContentLength):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoading):
+        (WebCore::FrameLoaderClientQt::dispatchDidFailLoading):
+        (WebCore::FrameLoaderClientQt::incrementProgress):
+        (WebCore::FrameLoaderClientQt::completeProgress):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-01-11  Brady Eidson  <beidson@apple.com>
 
         Keep the fancy new FrameLoaderClientQt building with a small api change in WebCore
