@@ -1,3 +1,17 @@
+2007-01-12  David Hyatt  <hyatt@apple.com>
+
+        Make multicolumn layout work with floats.
+
+        Reviewed by andersca
+
+        Added fast/multicol/float-multicol.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::paintColumns):
+        (WebCore::RenderBlock::paintObject):
+        * rendering/RenderBlock.h:
+
 2007-01-12  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Maciej.

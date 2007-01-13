@@ -527,7 +527,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     // Expand our intrinsic height to encompass floats.
     int toAdd = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
     if (floatBottom() > (m_height - toAdd) && (isInlineBlockOrInlineTable() || isFloatingOrPositioned() || hasOverflowClip() ||
-                                    (parent() && parent()->isFlexibleBox())))
+                                    (parent() && parent()->isFlexibleBox() || hasColumns())))
         m_height = floatBottom() + toAdd;
     
     // Now lay out our columns within this intrinsic height, since they can slightly affect the intrinsic height as
@@ -1326,7 +1326,7 @@ void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
         paintInfo.context->restore();
 }
 
-void RenderBlock::paintColumns(PaintInfo& paintInfo, int tx, int ty)
+void RenderBlock::paintColumns(PaintInfo& paintInfo, int tx, int ty, bool paintingFloats)
 {
     // We need to do multiple passes, breaking up our child painting into strips.
     GraphicsContext* context = paintInfo.context;
@@ -1350,7 +1350,10 @@ void RenderBlock::paintColumns(PaintInfo& paintInfo, int tx, int ty)
         // Adjust our x and y when painting.
         int finalX = tx + currXOffset;
         int finalY = ty + currYOffset;
-        paintContents(info, finalX, finalY);
+        if (paintingFloats)
+            paintFloats(info, finalX, finalY, paintInfo.phase == PaintPhaseSelection);
+        else
+            paintContents(info, finalX, finalY);
 
         // Move to the next position.
         if (style()->direction() == LTR)
@@ -1463,8 +1466,12 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
         paintSelection(paintInfo, scrolledX, scrolledY); // Fill in gaps in selection on lines and between blocks.
 
     // 4. paint floats.
-    if (!inlineFlow && (paintPhase == PaintPhaseFloat || paintPhase == PaintPhaseSelection))
-        paintFloats(paintInfo, scrolledX, scrolledY, paintPhase == PaintPhaseSelection);
+    if (!inlineFlow && (paintPhase == PaintPhaseFloat || paintPhase == PaintPhaseSelection)) {
+        if (hasColumns())
+            paintColumns(paintInfo, scrolledX, scrolledY, true);
+        else
+            paintFloats(paintInfo, scrolledX, scrolledY, paintPhase == PaintPhaseSelection);
+    }
 
     // 5. paint outline.
     if (!inlineFlow && (paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseSelfOutline) 

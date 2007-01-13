@@ -142,7 +142,7 @@ public:
     virtual void paintObject(PaintInfo&, int tx, int ty);
     void paintFloats(PaintInfo&, int tx, int ty, bool paintSelection = false);
     void paintContents(PaintInfo&, int tx, int ty);
-    void paintColumns(PaintInfo&, int tx, int ty);
+    void paintColumns(PaintInfo&, int tx, int ty, bool paintFloats = false);
     void paintChildren(PaintInfo&, int tx, int ty);
     void paintEllipsisBoxes(PaintInfo&, int tx, int ty);
     void paintSelection(PaintInfo&, int tx, int ty);
