@@ -2217,6 +2217,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             o = OSCROLL; break;
         case CSS_VAL_AUTO:
             o = OAUTO; break;
+        case CSS_VAL__WEBKIT_MARQUEE:
+            o = OMARQUEE; break;
         case CSS_VAL_OVERLAY:
             o = OOVERLAY; break;
         default:
@@ -2240,6 +2242,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             o = OSCROLL; break;
         case CSS_VAL_AUTO:
             o = OAUTO; break;
+        case CSS_VAL__WEBKIT_MARQUEE:
+            o = OMARQUEE; break;
         case CSS_VAL_OVERLAY:
             o = OOVERLAY; break;
         default:

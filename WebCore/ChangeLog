@@ -1,3 +1,14 @@
+2007-01-12  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12235
+          REGRESSION (r18815): Marquees do not scroll
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Apply the '-webkit-marquee' value
+        of 'overflow-x' and 'overflow-y'.
+
 2007-01-12  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by hyatt
