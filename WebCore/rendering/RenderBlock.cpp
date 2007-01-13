@@ -1332,8 +1332,16 @@ void RenderBlock::paintColumns(PaintInfo& paintInfo, int tx, int ty, bool painti
     GraphicsContext* context = paintInfo.context;
     int currXOffset = 0;
     int currYOffset = 0;
+    int ruleAdd = borderLeft() + paddingLeft();
+    int ruleX = 0;
     int colGap = columnGap();
-    for (unsigned i = 0; i < m_columnRects->size(); i++) {
+    const Color& ruleColor = style()->columnRuleColor();
+    bool ruleTransparent = style()->columnRuleIsTransparent();
+    EBorderStyle ruleStyle = style()->columnRuleStyle();
+    int ruleWidth = style()->columnRuleWidth();
+    bool renderRule = !paintingFloats && ruleStyle > BHIDDEN && !ruleTransparent && ruleWidth <= colGap;
+    unsigned colCount = m_columnRects->size();
+    for (unsigned i = 0; i < colCount; i++) {
         // For each rect, we clip to the rect, and then we adjust our coords.
         IntRect colRect = m_columnRects->at(i);
         colRect.move(tx, ty);
@@ -1356,14 +1364,27 @@ void RenderBlock::paintColumns(PaintInfo& paintInfo, int tx, int ty, bool painti
             paintContents(info, finalX, finalY);
 
         // Move to the next position.
-        if (style()->direction() == LTR)
+        if (style()->direction() == LTR) {
+            ruleX += colRect.width() + colGap / 2;
             currXOffset += colRect.width() + colGap;
-        else
+        } else {
+            ruleX -= (colRect.width() + colGap / 2);
             currXOffset -= (colRect.width() + colGap);
+        }
 
         currYOffset -= colRect.height();
         
         context->restore();
+        
+        // Now paint the column rule.
+        if (renderRule && paintInfo.phase == PaintPhaseForeground && i < colCount - 1) {
+            int ruleStart = ruleX - ruleWidth / 2 + ruleAdd;
+            int ruleEnd = ruleStart + ruleWidth;
+            drawBorder(paintInfo.context, tx + ruleStart, ty + borderTop() + paddingTop(), tx + ruleEnd, ty + borderTop() + paddingTop() + contentHeight(),
+                       style()->direction() == LTR ? BSLeft : BSRight, ruleColor, style()->color(), ruleStyle, 0, 0);
+        }
+        
+        ruleX = currXOffset;
     }
 }
 
