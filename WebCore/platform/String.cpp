@@ -281,6 +281,14 @@ String String::format(const char *format, ...)
 #else
     char ch;
     int result = vsnprintf(&ch, 1, format, args);
+    // We need to call va_end() and then va_start() again here, as the
+    // contents of args is undefined after the call to vsnprintf
+    // according to http://man.cx/snprintf(3)
+    //
+    // Not calling va_end/va_start here happens to work on lots of
+    // systems, but fails e.g. on 64bit Linux.
+    va_end(args);
+    va_start(args, format);
 #endif
 
     if (result == 0)

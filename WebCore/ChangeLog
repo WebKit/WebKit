@@ -1,3 +1,14 @@
+2007-01-13  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Alexey
+
+        String::format() was relying on undefined behaviour, which
+        happened to work on lots of systems (Mac and 32bit Linux at least)
+        but broke badly on 64bit Linux.
+        
+        * platform/String.cpp:
+        (WebCore::String::format):
+
 2007-01-13  Martin Reddy  <reddy@pixar.com>
 
         Fix for bug 11924: WebCore would crash on any HTML content
