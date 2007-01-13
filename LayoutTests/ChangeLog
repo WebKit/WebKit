@@ -1,3 +1,15 @@
+2007-01-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by hyatt.
+        
+        Test case for:
+        http://bugs.webkit.org/show_bug.cgi?id=10364
+
+        * svg/custom/svg-absolute-children-expected.checksum: Added.
+        * svg/custom/svg-absolute-children-expected.png: Added.
+        * svg/custom/svg-absolute-children-expected.txt: Added.
+        * svg/custom/svg-absolute-children.svg: Added.
+
 2007-01-12  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Maciej.
@@ -1311,7 +1323,7 @@
         * fast/css-generated-content/reset-content-to-initial-expected.txt: Added.
         * fast/css-generated-content/reset-content-to-initial.html: Added.
 
-2006-12-31  Eric Seidel  <eric@eseidel.com>
+2006-12-31  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mitz.
         
@@ -1322,7 +1334,7 @@
         * svg/custom/path-getTotalLength-expected.txt:
         * svg/custom/path-getTotalLength.svg:
 
-2006-12-31  Eric Seidel  <eric@eseidel.com>
+2006-12-31  Eric Seidel  <eric@webkit.org>
 
         Reviewed by weinig.
         
@@ -1440,7 +1452,7 @@
         * svg/custom/viewbox-syntax-expected.txt: Added.
         * svg/custom/viewbox-syntax.svg: Added.
 
-2006-12-29  Eric Seidel  <eric@eseidel.com>
+2006-12-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by olliej.
         

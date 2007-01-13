@@ -114,6 +114,7 @@ void RenderSVGContainer::layout()
             child->setNeedsLayout(true);
 
         child->layoutIfNeeded();
+        ASSERT(!child->needsLayout());
         child = child->nextSibling();
     }
 

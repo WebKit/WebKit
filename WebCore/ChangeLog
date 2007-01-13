@@ -1,3 +1,22 @@
+2007-01-13  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by hyatt.
+
+        RichDraw demo does not live-update in Safari
+        (SVG elements should ignore CSS position)
+        http://bugs.webkit.org/show_bug.cgi?id=10364
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle): ignore position for everything but <svg>
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::rebuildRenderer): move path generation into layout()
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::layout): ASSERT kids marked as having completed layout
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::layout): move path generation into layout()
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout): ASSERT kids marked as having completed layout
+
 2007-01-12  David Hyatt  <hyatt@apple.com>
 
         Add support for column rules.

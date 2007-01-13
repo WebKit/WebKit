@@ -120,11 +120,8 @@ void RenderPath::layout()
     bool checkForRepaint = checkForRepaintDuringLayout();
     if (selfNeedsLayout() && checkForRepaint)
         oldBounds = m_absoluteBounds;
-
-    // FIXME: Until JSSVGPathSeg* relies on the genericContext<> hack for update
-    // notifications, we can't really disable this. It would break js-update-path-changes.svg
-    // if (m_path.isEmpty() && m_fillBBox.isEmpty() && m_strokeBbox.isEmpty())
-        static_cast<SVGStyledElement*>(element())->rebuildRenderer();
+    
+    setPath(static_cast<SVGStyledElement*>(element())->toPathData());
 
     m_absoluteBounds = getAbsoluteRepaintRect();
 
