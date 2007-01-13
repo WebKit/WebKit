@@ -109,6 +109,7 @@ RenderBlock::~RenderBlock()
 {
     delete m_floatingObjects;
     delete m_positionedObjects;
+    delete m_columnRects;
 }
 
 void RenderBlock::setStyle(RenderStyle* _style)
@@ -3222,7 +3223,7 @@ void RenderBlock::calcMinMaxWidth()
             m_minWidth = m_maxWidth;
             
             // A horizontal marquee with inline children has no minimum width.
-            if (m_layer && m_layer->marquee() && m_layer->marquee()->isHorizontal() && !m_layer->marquee()->isUnfurlMarquee())
+            if (m_layer && m_layer->marquee() && m_layer->marquee()->isHorizontal())
                 m_minWidth = 0;
         }
 
