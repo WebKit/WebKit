@@ -1,3 +1,18 @@
+2007-01-13  Martin Reddy  <reddy@pixar.com>
+
+        Fix for bug 11924: WebCore would crash on any HTML content
+        with a non-empty <table> tag in it on a 64-bit machine. The
+        size_t (64bit) vs int (32bit) cast is now fixed in ensureRows,
+        and the clients of this function have been updated to check
+        for a false return code.
+
+        Reviewed by Darin, landed by Lars
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild):
+        (WebCore::RenderTableSection::ensureRows):
+        (WebCore::RenderTableSection::recalcCells):
+
 2007-01-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
