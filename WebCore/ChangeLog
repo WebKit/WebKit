@@ -1,3 +1,20 @@
+2007-01-13  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Maciej
+
+        Don't crash when constructing a GraphicsContext with a 0
+        PlatformGraphicsContext and don't do anything if painting
+        is disabled.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContext::origin):
+        (WebCore::GraphicsContext::setPlatformFont):
+        (WebCore::GraphicsContext::setPlatformStrokeColor):
+        (WebCore::GraphicsContext::setPlatformStrokeStyle):
+        (WebCore::GraphicsContext::setPlatformStrokeThickness):
+        (WebCore::GraphicsContext::setPlatformFillColor):
+
 2007-01-13  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by hyatt.

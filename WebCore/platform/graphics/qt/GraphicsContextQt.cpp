@@ -228,13 +228,14 @@ private:
 
 
 GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(QPainter* p)
-    : device(p->device())
 {
     painter = p;
+    device = painter ? painter->device() : 0;
     redirect = 0;
 
     // FIXME: Maybe only enable in SVG mode?
-    painter->setRenderHint(QPainter::Antialiasing);
+    if (painter)
+        painter->setRenderHint(QPainter::Antialiasing);
 }
 
 GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
@@ -716,6 +717,8 @@ void GraphicsContext::translate(float x, float y)
 
 IntPoint GraphicsContext::origin()
 {
+    if (paintingDisabled())
+        return IntPoint();
     return IntPoint(qRound(m_data->p().matrix().dx()),
                     qRound(m_data->p().matrix().dy()));
 }
@@ -859,21 +862,29 @@ void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
 
 void GraphicsContext::setPlatformFont(const Font& aFont)
 {
+    if (paintingDisabled())
+        return;
     m_data->p().setFont(aFont);
 }
 
 void GraphicsContext::setPlatformStrokeColor(const Color& color)
 {
+    if (paintingDisabled())
+        return;
     m_data->p().setPen(color);
 }
 
 void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle& strokeStyle)
 {   
+    if (paintingDisabled())
+        return;
     m_data->p().setPen(toQPenStyle(strokeStyle));
 }
 
 void GraphicsContext::setPlatformStrokeThickness(float thickness)
 {
+    if (paintingDisabled())
+        return;
     QPen newPen(m_data->p().pen());
     newPen.setWidthF(thickness);
     m_data->p().setPen(newPen);
@@ -881,6 +892,8 @@ void GraphicsContext::setPlatformStrokeThickness(float thickness)
 
 void GraphicsContext::setPlatformFillColor(const Color& color)
 {
+    if (paintingDisabled())
+        return;
     m_data->p().setBrush(QBrush(color));
 }
 
