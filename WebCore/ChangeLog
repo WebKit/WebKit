@@ -1,3 +1,15 @@
+2007-01-13  David Hyatt  <hyatt@apple.com>
+
+        While optimizing form controls and fixing their clipping, I caused this text zoom regression.  The layout
+        of text is necessary because it needs to recalc minmaxwidth.  This is still a really unfortunate
+        bit of code... since a lot of properties don't apply to text (e.g., borders), we're marking text renderers
+        as dirty when we don't have to.
+
+        Reviewed by mitz
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle):
+
 2007-01-13  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Alexey
