@@ -1,3 +1,31 @@
+2007-01-12  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        Add a HashMap between unsigned longs and Objective-C objects and use it for
+        the resource load delegate.
+        
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebFrameLoaderClient::dispatchIdentifierForInitialRequest):
+        (WebFrameLoaderClient::dispatchWillSendRequest):
+        (WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge):
+        (WebFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebFrameLoaderClient::dispatchDidFinishLoading):
+        (WebFrameLoaderClient::dispatchDidFailLoading):
+        (WebFrameLoaderClient::incrementProgress):
+        (WebFrameLoaderClient::completeProgress):
+        * WebView/WebView.mm:
+        (-[WebViewPrivate init]):
+        (-[WebViewPrivate dealloc]):
+        (-[WebView _addObject:forIdentifier:]):
+        (-[WebView _objectForIdentifier:]):
+        (-[WebView _removeObjectForIdentifier:]):
+        * WebView/WebViewInternal.h:
+
 2007-01-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

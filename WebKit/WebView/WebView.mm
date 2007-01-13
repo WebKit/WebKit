@@ -112,6 +112,7 @@
 #import <WebKitSystemInterface.h>
 #import <objc/objc-runtime.h>
 #import <wtf/RefPtr.h>
+#import <wtf/HashTraits.h>
 
 using namespace WebCore;
 
@@ -318,6 +319,8 @@ macro(yankAndSelect) \
     BOOL selectWordBeforeMenuEvent;
     
     WebPluginDatabase *pluginDatabase;
+    
+    HashMap<unsigned long, RetainPtr<id> >* identifierMap;
 }
 @end
 
@@ -412,6 +415,8 @@ static BOOL grammarCheckingEnabled;
 #endif
     userAgent = new String;
     
+    identifierMap = new HashMap<unsigned long, RetainPtr<id> >();
+
     return self;
 }
 
@@ -421,7 +426,8 @@ static BOOL grammarCheckingEnabled;
     ASSERT(draggingDocumentView == nil);
 
     delete userAgent;
-
+    delete identifierMap;
+    
     [applicationNameForUserAgent release];
     [backgroundColor release];
     
@@ -3677,6 +3683,24 @@ static WebFrameView *containingFrameView(NSView *view)
     if (_private->userAgent->isNull())
         [self _computeUserAgent];
     return *_private->userAgent;
+}
+
+- (void)_addObject:(id)object forIdentifier:(unsigned long)identifier
+{
+    ASSERT(!_private->identifierMap->contains(identifier));
+    _private->identifierMap->set(identifier, object);
+}
+
+- (id)_objectForIdentifier:(unsigned long)identifier
+{
+    ASSERT(_private->identifierMap->contains(identifier));
+    return _private->identifierMap->get(identifier).get();
+}
+
+- (void)_removeObjectForIdentifier:(unsigned long)identifier
+{
+    ASSERT(_private->identifierMap->contains(identifier));
+    _private->identifierMap->remove(identifier);
 }
 
 @end

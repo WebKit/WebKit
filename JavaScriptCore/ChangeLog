@@ -1,3 +1,10 @@
+2007-01-12  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        * wtf/HashTraits.h:
+        Add hash traits for unsigned long and unsigned long long.
+
 2007-01-12  Geoffrey Garen  <ggaren@apple.com>
 
         RS by Brady Eidson.

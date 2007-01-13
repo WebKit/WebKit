@@ -41,21 +41,13 @@
 
 #if PLATFORM(MAC)
 
-#include "RetainPtr.h"
 #import <objc/objc.h>
 
 #ifdef __OBJC__
 @class NSCachedURLResponse;
-@class NSURLAuthenticationChallenge;
 #else
 class NSCachedURLResponse;
-class NSURLAuthenticationChallenge;
-class NSURLCredential;
 #endif
-
-#else
-// FIXME: Get rid of this once we don't use id in the loader
-typedef void* id;
 #endif
 
 namespace WebCore {
@@ -80,13 +72,8 @@ namespace WebCore {
 
         virtual void setDefersLoading(bool);
 
-#if PLATFORM(MAC)
-        void setIdentifier(id i) { m_identifier = i; }
-        id identifier() const { return m_identifier.get(); }
-#else
-        void setIdentifier(id) { }
-        id identifier() const { return 0; }
-#endif
+        void setIdentifier(unsigned long identifier) { m_identifier = identifier; }
+        unsigned long identifier() const { return m_identifier; }
 
         virtual void releaseResources();
         const ResourceResponse& response() const;
@@ -151,9 +138,7 @@ protected:
         // FIXME: Once everything is made cross platform, these can be private instead of protected
         RefPtr<Frame> m_frame;
         ResourceResponse m_response;
-#if PLATFORM(MAC)
-        RetainPtr<id> m_identifier;
-#endif
+        unsigned long m_identifier;
 
         KURL m_originalURL;
         RefPtr<SharedBuffer> m_resourceData;

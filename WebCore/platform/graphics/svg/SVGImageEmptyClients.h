@@ -141,14 +141,14 @@ public:
 #if PLATFORM(MAC)
     virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&) { }
     
-    virtual id dispatchIdentifierForInitialRequest(DocumentLoader*, const ResourceRequest&) { return 0; }
-    virtual void dispatchWillSendRequest(DocumentLoader*, id identifier, ResourceRequest&, const ResourceResponse& redirectResponse) { }
-    virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, id identifier, const AuthenticationChallenge&) { }
-    virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, id identifier, const AuthenticationChallenge&) { }
-    virtual void dispatchDidReceiveResponse(DocumentLoader*, id identifier, const ResourceResponse&) { }
-    virtual void dispatchDidReceiveContentLength(DocumentLoader*, id identifier, int lengthReceived) { }
-    virtual void dispatchDidFinishLoading(DocumentLoader*, id identifier) { }
-    virtual void dispatchDidFailLoading(DocumentLoader*, id identifier, const ResourceError&) { }
+    virtual void assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&) { }
+    virtual void dispatchWillSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse) { }
+    virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long identifier, const AuthenticationChallenge&) { }
+    virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, unsigned long identifier, const AuthenticationChallenge&) { }
+    virtual void dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&) { }
+    virtual void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long identifier, int lengthReceived) { }
+    virtual void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier) { }
+    virtual void dispatchDidFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError&) { }
     virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length) { return false; }
 #endif
     
@@ -184,7 +184,7 @@ public:
 #if PLATFORM(MAC)
     virtual void dispatchUnableToImplementPolicy(const ResourceError&) { }
 #endif
-    
+
     virtual void dispatchWillSubmitForm(FramePolicyFunction, PassRefPtr<FormState>) { }
     
     virtual void dispatchDidLoadMainResource(DocumentLoader*) { }
@@ -200,9 +200,9 @@ public:
     virtual void progressCompleted() { }
     
 #if PLATFORM(MAC)
-    virtual void incrementProgress(id identifier, const ResourceResponse&) { }
-    virtual void incrementProgress(id identifier, const char*, int) { }
-    virtual void completeProgress(id identifier) { }
+    virtual void incrementProgress(unsigned long identifier, const ResourceResponse&) { }
+    virtual void incrementProgress(unsigned long identifier, const char*, int) { }
+    virtual void completeProgress(unsigned long identifier) { }
 #endif
     
     virtual void setMainFrameDocumentReady(bool) { }
@@ -320,6 +320,7 @@ public:
     
     virtual NSString* userVisibleString(NSURL*) { return 0; }
 #endif
+  
     
 };
 

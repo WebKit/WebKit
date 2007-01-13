@@ -80,14 +80,15 @@ private:
 
     virtual void download(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
-    virtual id dispatchIdentifierForInitialRequest(WebCore::DocumentLoader*, const WebCore::ResourceRequest&);
-    virtual void dispatchWillSendRequest(WebCore::DocumentLoader*, id identifier, WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
-    virtual void dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, id identifier, const WebCore::AuthenticationChallenge&);
-    virtual void dispatchDidCancelAuthenticationChallenge(WebCore::DocumentLoader*, id identifier, const WebCore::AuthenticationChallenge&);
-    virtual void dispatchDidReceiveResponse(WebCore::DocumentLoader*, id identifier, const WebCore::ResourceResponse&);
-    virtual void dispatchDidReceiveContentLength(WebCore::DocumentLoader*, id identifier, int lengthReceived);
-    virtual void dispatchDidFinishLoading(WebCore::DocumentLoader*, id identifier);
-    virtual void dispatchDidFailLoading(WebCore::DocumentLoader*, id identifier, const WebCore::ResourceError&);
+    virtual void assignIdentifierToInitialRequest(unsigned long identifier, WebCore::DocumentLoader*, const WebCore::ResourceRequest&);
+
+    virtual void dispatchWillSendRequest(WebCore::DocumentLoader*, unsigned long identifier, WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
+    virtual void dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::AuthenticationChallenge&);
+    virtual void dispatchDidCancelAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::AuthenticationChallenge&);
+    virtual void dispatchDidReceiveResponse(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ResourceResponse&);
+    virtual void dispatchDidReceiveContentLength(WebCore::DocumentLoader*, unsigned long identifier, int lengthReceived);
+    virtual void dispatchDidFinishLoading(WebCore::DocumentLoader*, unsigned long identifier);
+    virtual void dispatchDidFailLoading(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ResourceError&);
 
     virtual void dispatchDidHandleOnloadEvents();
     virtual void dispatchDidReceiveServerRedirectForProvisionalLoad();
@@ -128,9 +129,9 @@ private:
     virtual void progressStarted();
     virtual void progressCompleted();
 
-    virtual void incrementProgress(id identifier, const WebCore::ResourceResponse&);
-    virtual void incrementProgress(id identifier, const char*, int);
-    virtual void completeProgress(id identifier);
+    virtual void incrementProgress(unsigned long identifier, const WebCore::ResourceResponse&);
+    virtual void incrementProgress(unsigned long identifier, const char*, int);
+    virtual void completeProgress(unsigned long identifier);
 
     virtual void setMainFrameDocumentReady(bool);
 

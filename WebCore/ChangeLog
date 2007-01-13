@@ -1,3 +1,42 @@
+2007-01-12  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        Use unsigned long for identifiers instead of Objective-C objects.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        (WebCore::FrameLoader::startLoadingMainResource):
+        (WebCore::FrameLoader::startLoading):
+        (WebCore::FrameLoader::assignIdentifierToInitialRequest):
+        (WebCore::FrameLoader::opened):
+        (WebCore::FrameLoader::sendRemainingDelegateMessages):
+        (WebCore::FrameLoader::requestFromDelegate):
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::ResourceLoader):
+        (WebCore::ResourceLoader::willSendRequest):
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::setIdentifier):
+        (WebCore::ResourceLoader::identifier):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::createUniqueIdentifier):
+        * page/Page.h:
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchWillSendRequest):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidCancelAuthenticationChallenge):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidFinishLoading):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidFailLoading):
+        (WebCore::SVGEmptyFrameLoaderClient::incrementProgress):
+        (WebCore::SVGEmptyFrameLoaderClient::completeProgress):
+
 2007-01-12  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

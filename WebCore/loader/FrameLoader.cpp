@@ -2994,7 +2994,7 @@ void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Reso
     initialRequest.setHTTPUserAgent(client()->userAgent());
     
     ResourceError error;
-    id identifier = nil;    
+    unsigned long identifier = 0;    
     ResourceRequest newRequest(initialRequest);
     requestFromDelegate(newRequest, identifier, error);
 
@@ -3010,11 +3010,12 @@ void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Reso
     sendRemainingDelegateMessages(identifier, response, data.size(), error);
 }
 
-bool FrameLoader::startLoadingMainResource(ResourceRequest& request, id identifier)
+bool FrameLoader::startLoadingMainResource(ResourceRequest& request, unsigned long identifier)
 {
     ASSERT(!m_mainResourceLoader);
     m_mainResourceLoader = MainResourceLoader::create(m_frame);
     m_mainResourceLoader->setIdentifier(identifier);
+    
     // FIXME: is there any way the extra fields could have not been added by now?
     addExtraFieldsToRequest(request, true, false);
     if (!m_mainResourceLoader->load(request)) {
@@ -3042,12 +3043,8 @@ void FrameLoader::startLoading()
 
     m_provisionalDocumentLoader->setLoadingFromPageCache(false);
 
-#if PLATFORM(MAC)
-    id identifier = m_client->dispatchIdentifierForInitialRequest
-        (m_provisionalDocumentLoader.get(), m_provisionalDocumentLoader->originalRequest());
-#else
-    id identifier = 0;
-#endif
+    unsigned long identifier = m_frame->page()->createUniqueIdentifier();
+    m_client->assignIdentifierToInitialRequest(identifier, m_provisionalDocumentLoader.get(), m_provisionalDocumentLoader->originalRequest());
 
     if (!startLoadingMainResource(m_provisionalDocumentLoader->actualRequest(), identifier))
         m_provisionalDocumentLoader->updateLoading();
@@ -3058,13 +3055,9 @@ void FrameLoader::cancelMainResourceLoad(const ResourceError& error)
     m_mainResourceLoader->cancel(error);
 }
 
-id FrameLoader::identifierForInitialRequest(const ResourceRequest& clientRequest)
+void FrameLoader::assignIdentifierToInitialRequest(unsigned long identifier, const ResourceRequest& clientRequest)
 {
-#if PLATFORM(MAC)
-    return m_client->dispatchIdentifierForInitialRequest(activeDocumentLoader(), clientRequest);
-#else
-    return 0;
-#endif
+    return m_client->assignIdentifierToInitialRequest(identifier, activeDocumentLoader(), clientRequest);
 }
 
 void FrameLoader::willSendRequest(ResourceLoader* loader, ResourceRequest& clientRequest, const ResourceResponse& redirectResponse)
@@ -3197,7 +3190,7 @@ void FrameLoader::opened()
             const ResourceResponse& response = responses[i];
             // FIXME: If the WebKit client changes or cancels the request, this is not respected.
             ResourceError error;
-            id identifier;
+            unsigned long identifier;
             ResourceRequest request(response.url());
             requestFromDelegate(request, identifier, error);
             sendRemainingDelegateMessages(identifier, response, response.expectedContentLength(), error);
@@ -3397,7 +3390,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
     mainFrame->loader()->load(request, NavigationAction(), FrameLoadTypeStandard, formState);
 }
 
-void FrameLoader::sendRemainingDelegateMessages(id identifier, const ResourceResponse& response, unsigned length, const ResourceError& error)
+void FrameLoader::sendRemainingDelegateMessages(unsigned long identifier, const ResourceResponse& response, unsigned length, const ResourceError& error)
 {    
     if (!response.isNull())
         m_client->dispatchDidReceiveResponse(m_documentLoader.get(), identifier, response);
@@ -3411,15 +3404,13 @@ void FrameLoader::sendRemainingDelegateMessages(id identifier, const ResourceRes
         m_client->dispatchDidFailLoading(m_documentLoader.get(), identifier, error);
 }
 
-void FrameLoader::requestFromDelegate(ResourceRequest& request, id& identifier, ResourceError& error)
+void FrameLoader::requestFromDelegate(ResourceRequest& request, unsigned long& identifier, ResourceError& error)
 {
     ASSERT(!request.isNull());
 
-#if PLATFORM(MAC)
-    identifier = m_client->dispatchIdentifierForInitialRequest(m_documentLoader.get(), request); 
-#else
-    identifier = 0;
-#endif
+    identifier = m_frame->page()->createUniqueIdentifier();
+    m_client->assignIdentifierToInitialRequest(identifier, m_documentLoader.get(), request);
+
     ResourceRequest newRequest(request);
     m_client->dispatchWillSendRequest(m_documentLoader.get(), identifier, newRequest, ResourceResponse());
 
@@ -3436,7 +3427,7 @@ void FrameLoader::loadedResourceFromMemoryCache(const ResourceRequest& request, 
     if (m_client->dispatchDidLoadResourceFromMemoryCache(m_documentLoader.get(), request, response, length))
         return;
 
-    id identifier;
+    unsigned long identifier;
     ResourceError error;
     ResourceRequest r(request);
     requestFromDelegate(r, identifier, error);

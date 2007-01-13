@@ -32,18 +32,6 @@
 #include <wtf/Forward.h>
 #include <wtf/Platform.h>
 
-#if PLATFORM(MAC)
-#ifdef __OBJC__
-@class NSURLConnection;
-#else
-class NSImage;
-class NSURLConnection;
-#endif
-#else
-// FIXME: Get rid of this once we don't use id in the loader
-typedef void* id;
-#endif
-
 namespace WebCore {
 
     class AuthenticationChallenge;
@@ -90,14 +78,15 @@ namespace WebCore {
 
         virtual void loadedFromPageCache() = 0;
 
-        virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, id identifier, const AuthenticationChallenge&) = 0;
-        virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, id identifier, const AuthenticationChallenge&) = 0;
+        virtual void assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&) = 0;
 
-        virtual void dispatchWillSendRequest(DocumentLoader*, id identifier, ResourceRequest&, const ResourceResponse& redirectResponse) = 0;
-        virtual void dispatchDidReceiveResponse(DocumentLoader*, id identifier, const ResourceResponse&) = 0;
-        virtual void dispatchDidReceiveContentLength(DocumentLoader*, id identifier, int lengthReceived) = 0;
-        virtual void dispatchDidFinishLoading(DocumentLoader*, id identifier) = 0;
-        virtual void dispatchDidFailLoading(DocumentLoader*, id identifier, const ResourceError&) = 0;
+        virtual void dispatchWillSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse) = 0;
+        virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long identifier, const AuthenticationChallenge&) = 0;
+        virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, unsigned long identifier, const AuthenticationChallenge&) = 0;        
+        virtual void dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&) = 0;
+        virtual void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long identifier, int lengthReceived) = 0;
+        virtual void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier) = 0;
+        virtual void dispatchDidFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError&) = 0;
         virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length) = 0;
 
         virtual void dispatchDidHandleOnloadEvents() = 0;
@@ -135,9 +124,9 @@ namespace WebCore {
         virtual void progressStarted() = 0;
         virtual void progressCompleted() = 0;
 
-        virtual void incrementProgress(id identifier, const ResourceResponse&) = 0;
-        virtual void incrementProgress(id identifier, const char*, int) = 0;
-        virtual void completeProgress(id identifier) = 0;
+        virtual void incrementProgress(unsigned long identifier, const ResourceResponse&) = 0;
+        virtual void incrementProgress(unsigned long identifier, const char*, int) = 0;
+        virtual void completeProgress(unsigned long identifier) = 0;
 
         virtual void setMainFrameDocumentReady(bool) = 0;
 
@@ -190,10 +179,6 @@ namespace WebCore {
         virtual void saveDocumentViewToPageCache(PageCache*) = 0;
         virtual bool canCachePage() const = 0;
         virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&) = 0;
-
-#if PLATFORM(MAC)
-        virtual id dispatchIdentifierForInitialRequest(DocumentLoader*, const ResourceRequest&) = 0;
-#endif
     };
 
 } // namespace WebCore
