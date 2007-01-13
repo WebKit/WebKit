@@ -1,3 +1,16 @@
+2007-01-12  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12239
+          REGRESSION (r18816-r18818): Assertion failure in 
+          WebCore::Length::Length[in-charge](int, WebCore::LengthType, bool)
+
+        Test: fast/css/line-height.html
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::createInnerTextStyle): Use a float to create a percent Length.
+
 2007-01-12  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

@@ -152,7 +152,7 @@ RenderStyle* RenderTextControl::createInnerTextStyle(RenderStyle* startStyle)
         
         // Do not allow line-height to be smaller than our default.
         if (textBlockStyle->font().lineSpacing() > lineHeight(true, true))
-            textBlockStyle->setLineHeight(Length(-100, Percent));
+            textBlockStyle->setLineHeight(Length(-100.0f, Percent));
     }
 
     if (!m_multiLine) {

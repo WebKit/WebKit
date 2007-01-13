@@ -1,3 +1,16 @@
+2007-01-12  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Maciej.
+
+        - test for fast/css/line-height.html
+          REGRESSION (r18816-r18818): Assertion failure in
+          WebCore::Length::Length[in-charge](int, WebCore::LengthType, bool)
+
+        * fast/css/line-height-expected.checksum: Added.
+        * fast/css/line-height-expected.png: Added.
+        * fast/css/line-height-expected.txt: Added.
+        * fast/css/line-height.html: Added.
+
 2007-01-12  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by hyatt
