@@ -2049,8 +2049,8 @@ void RenderLayer::suspendMarquees()
 Marquee::Marquee(RenderLayer* l)
     : m_layer(l), m_currentLoop(0)
     , m_timer(this, &Marquee::timerFired)
-    , m_start(0), m_end(0), m_speed(0), m_unfurlPos(0), m_reset(false)
-    , m_suspended(false), m_stopped(false), m_whiteSpace(NORMAL), m_direction(MAUTO)
+    , m_start(0), m_end(0), m_speed(0), m_reset(false)
+    , m_suspended(false), m_stopped(false), m_direction(MAUTO)
 {
 }
 
@@ -2090,12 +2090,6 @@ EMarqueeDirection Marquee::direction() const
 bool Marquee::isHorizontal() const
 {
     return direction() == MLEFT || direction() == MRIGHT;
-}
-
-bool Marquee::isUnfurlMarquee() const
-{
-    EMarqueeBehavior behavior = m_layer->renderer()->style()->marqueeBehavior();
-    return (behavior == MUNFURL);
 }
 
 int Marquee::computePosition(EMarqueeDirection dir, bool stopAtContentEdge)
@@ -2150,18 +2144,10 @@ void Marquee::start()
         return;
     
     if (!m_suspended && !m_stopped) {
-        if (isUnfurlMarquee()) {
-            bool forward = direction() == MDOWN || direction() == MRIGHT;
-            bool isReversed = (forward && m_currentLoop % 2) || (!forward && !(m_currentLoop % 2));
-            m_unfurlPos = isReversed ? m_end : m_start;
-            m_layer->renderer()->setChildNeedsLayout(true);
-        }
-        else {
-            if (isHorizontal())
-                m_layer->scrollToOffset(m_start, 0, false, false);
-            else
-                m_layer->scrollToOffset(0, m_start, false, false);
-        }
+        if (isHorizontal())
+            m_layer->scrollToOffset(m_start, 0, false, false);
+        else
+            m_layer->scrollToOffset(0, m_start, false, false);
         // FIXME: At this point a scroll event fired, which could have deleted this layer,
         // including the marquee. Need to handle this case.
     }
@@ -2189,21 +2175,9 @@ void Marquee::updateMarqueePosition()
 {
     bool activate = (m_totalLoops <= 0 || m_currentLoop < m_totalLoops);
     if (activate) {
-        if (isUnfurlMarquee()) {
-            if (m_unfurlPos < m_start) {
-                m_unfurlPos = m_start;
-                m_layer->renderer()->setChildNeedsLayout(true);
-            }
-            else if (m_unfurlPos > m_end) {
-                m_unfurlPos = m_end;
-                m_layer->renderer()->setChildNeedsLayout(true);
-            }
-        }
-        else {
-            EMarqueeBehavior behavior = m_layer->renderer()->style()->marqueeBehavior();
-            m_start = computePosition(direction(), behavior == MALTERNATE);
-            m_end = computePosition(reverseDirection(), behavior == MALTERNATE || behavior == MSLIDE);
-        }
+        EMarqueeBehavior behavior = m_layer->renderer()->style()->marqueeBehavior();
+        m_start = computePosition(direction(), behavior == MALTERNATE);
+        m_end = computePosition(reverseDirection(), behavior == MALTERNATE || behavior == MSLIDE);
         if (!m_stopped)
             start();
     }
@@ -2218,12 +2192,11 @@ void Marquee::updateMarqueeStyle()
     
     m_totalLoops = s->marqueeLoopCount();
     m_direction = s->marqueeDirection();
-    m_whiteSpace = s->whiteSpace();
     
     if (m_layer->renderer()->isHTMLMarquee()) {
         // Hack for WinIE.  In WinIE, a value of 0 or lower for the loop count for SLIDE means to only do
         // one loop.
-        if (m_totalLoops <= 0 && (s->marqueeBehavior() == MSLIDE || s->marqueeBehavior() == MUNFURL))
+        if (m_totalLoops <= 0 && s->marqueeBehavior() == MSLIDE)
             m_totalLoops = 1;
         
         // Hack alert: Set the white-space value to nowrap for horizontal marquees with inline children, thus ensuring
@@ -2285,23 +2258,16 @@ void Marquee::timerFired(Timer<Marquee>*)
     else {  
         bool addIncrement = direction() == MUP || direction() == MLEFT;
         bool isReversed = s->marqueeBehavior() == MALTERNATE && m_currentLoop % 2;
-        if (isUnfurlMarquee()) {
-            isReversed = (!addIncrement && m_currentLoop % 2) || (addIncrement && !(m_currentLoop % 2));
-            addIncrement = !isReversed;
-        }
         if (isReversed) {
             // We're going in the reverse direction.
             endPoint = m_start;
             range = -range;
-            if (!isUnfurlMarquee())
-                addIncrement = !addIncrement;
+            addIncrement = !addIncrement;
         }
         bool positive = range > 0;
-        int clientSize = isUnfurlMarquee() ? abs(range) :
-            (isHorizontal() ? m_layer->renderer()->clientWidth() : m_layer->renderer()->clientHeight());
+        int clientSize = (isHorizontal() ? m_layer->renderer()->clientWidth() : m_layer->renderer()->clientHeight());
         int increment = max(1, abs(m_layer->renderer()->style()->marqueeIncrement().calcValue(clientSize)));
-        int currentPos = isUnfurlMarquee() ? m_unfurlPos : 
-            (isHorizontal() ? m_layer->scrollXOffset() : m_layer->scrollYOffset());
+        int currentPos = (isHorizontal() ? m_layer->scrollXOffset() : m_layer->scrollYOffset());
         newPos =  currentPos + (addIncrement ? increment : -increment);
         if (positive)
             newPos = min(newPos, endPoint);
@@ -2313,20 +2279,14 @@ void Marquee::timerFired(Timer<Marquee>*)
         m_currentLoop++;
         if (m_totalLoops > 0 && m_currentLoop >= m_totalLoops)
             m_timer.stop();
-        else if (s->marqueeBehavior() != MALTERNATE && s->marqueeBehavior() != MUNFURL)
+        else if (s->marqueeBehavior() != MALTERNATE)
             m_reset = true;
     }
     
-    if (isUnfurlMarquee()) {
-        m_unfurlPos = newPos;
-        m_layer->renderer()->setChildNeedsLayout(true);
-    }
-    else {
-        if (isHorizontal())
-            m_layer->scrollToXOffset(newPos);
-        else
-            m_layer->scrollToYOffset(newPos);
-    }
+    if (isHorizontal())
+        m_layer->scrollToXOffset(newPos);
+    else
+        m_layer->scrollToYOffset(newPos);
 }
 
 } // namespace WebCore

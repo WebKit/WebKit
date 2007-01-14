@@ -1,3 +1,43 @@
+2007-01-14  David Hyatt  <hyatt@apple.com>
+
+        Fix for 10145, regression where line breaks are not being honored between adjacent replaced elements.
+        When checking for break opportunities where replaced elements are involved, we ignore their white-space
+        values and use their parents' instead.  The assumption/idea behind this change is that because the element
+        is replaced, its white-space value is irrelevant except as a means of applying style to its interior.
+
+        The CSS spec does not cover this situation, so we're implementing this based off what other browsers seem to
+        do.
+
+        Reviewed by aroben
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSValueKeywords.in:
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::handleWheelEvent):
+        * page/EventHandler.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcHeight):
+        * rendering/RenderLayer.cpp:
+        (WebCore::Marquee::Marquee):
+        (WebCore::Marquee::start):
+        (WebCore::Marquee::updateMarqueePosition):
+        (WebCore::Marquee::updateMarqueeStyle):
+        (WebCore::Marquee::timerFired):
+        * rendering/RenderLayer.h:
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::viewCleared):
+        * rendering/RenderStyle.h:
+        (WebCore::):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2007-01-13  David Hyatt  <hyatt@apple.com>
 
         While optimizing form controls and fixing their clipping, I caused this text zoom regression.  The layout

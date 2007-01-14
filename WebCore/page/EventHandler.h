@@ -239,8 +239,6 @@ private:
     RefPtr<Frame> m_lastMouseMoveEventSubframe;
     RefPtr<PlatformScrollbar> m_lastScrollbarUnderMouse;
 
-    bool m_ignoreWheelEvents;
-
     int m_clickCount;
     RefPtr<Node> m_clickNode;
 

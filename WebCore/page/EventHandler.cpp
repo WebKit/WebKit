@@ -90,7 +90,6 @@ EventHandler::EventHandler(Frame* frame)
     , m_mouseDownMayStartDrag(false)
     , m_resizeLayer(0)
     , m_capturingMouseEventsNode(0)
-    , m_ignoreWheelEvents(false)
     , m_clickCount(0)
     , m_mouseDownTimestamp(0)
     , m_mouseDownWasInSubframe(false)
@@ -120,7 +119,6 @@ void EventHandler::clear()
     m_frameSetBeingResized = 0;
     m_dragTarget = 0;
     m_currentMousePosition = IntPoint();
-    m_ignoreWheelEvents = false;
     m_mousePressNode = 0;
     m_mousePressed = false;
 }
@@ -1053,16 +1051,8 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
     return swallowEvent;
 }
 
-void EventHandler::setIgnoreWheelEvents(bool e)
-{
-    m_ignoreWheelEvents = e;
-}
-
 bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
 {
-    if (m_ignoreWheelEvents)
-        return false;
-
     Document* doc = m_frame->document();
     if (!doc)
         return false;

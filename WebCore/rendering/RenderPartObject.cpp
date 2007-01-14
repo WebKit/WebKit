@@ -270,7 +270,6 @@ void RenderPartObject::viewCleared()
         }
 
         view->setHasBorder(hasBorder);
-        view->frame()->eventHandler()->setIgnoreWheelEvents(element()->hasTagName(iframeTag));
         if (marginw != -1)
             view->setMarginWidth(marginw);
         if (marginh != -1)

@@ -125,10 +125,6 @@ public:
     EMarqueeDirection direction() const;
 
     bool isHorizontal() const;
-    bool isUnfurlMarquee() const;
-    int unfurlPos() const { return m_unfurlPos; }
-
-    EWhiteSpace whiteSpace() { return static_cast<EWhiteSpace>(m_whiteSpace); }
 
     int computePosition(EMarqueeDirection, bool stopAtClientEdge);
 
@@ -151,12 +147,10 @@ private:
     int m_start;
     int m_end;
     int m_speed;
-    int m_unfurlPos;
     Length m_height;
     bool m_reset: 1;
     bool m_suspended : 1;
     bool m_stopped : 1;
-    unsigned m_whiteSpace : 3; // EWhiteSpace
     EMarqueeDirection m_direction : 4;
 };
 
