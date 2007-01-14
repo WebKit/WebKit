@@ -1,3 +1,19 @@
+2007-01-14  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Mitz.
+
+        Minor fixes to JavaScript pretty-printing.
+
+        * JavaScriptCore.exp:
+        * kjs/Parser.cpp:
+        (KJS::Parser::prettyPrint): Return line number and error message if parsing fails.
+        * kjs/Parser.h:
+        * kjs/nodes2string.cpp:
+        (ElementNode::streamTo): Include comma delimiters in array literals.
+        (PropertyNameNode::streamTo): Quote property names in object literals to handle the case when the property name is not a valid identifier.
+        * kjs/testkjs.cpp:
+        (doIt): Print any errors encountered while pretty-printing.
+
 2007-01-12  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

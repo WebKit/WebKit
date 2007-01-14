@@ -141,6 +141,8 @@ void ElementNode::streamTo(SourceStream &s) const
     for (int i = 0; i < n->elision; i++)
       s << ",";
     s << n->node;
+    if (n->next)
+        s << ",";
   }
 }
 
@@ -193,7 +195,7 @@ void PropertyNameNode::streamTo(SourceStream &s) const
   if (str.isNull())
     s << UString::from(numeric);
   else
-    s << str;
+    s << '"' << escapeStringForPrettyPrinting(str.ustring()) << '"';
 }
 
 void BracketAccessorNode::streamTo(SourceStream &s) const

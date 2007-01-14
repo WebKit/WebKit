@@ -246,8 +246,11 @@ bool doIt(int argc, char** argv)
     }
     
     if (prettyPrint) {
-      UString s = Parser::prettyPrint(script);
+      int errLine = 0;
+      UString errMsg;
+      UString s = Parser::prettyPrint(script, &errLine, &errMsg);
       if (s.isNull()) {
+        fprintf(stderr, "%s:%d: %s.\n", fileName, errLine, errMsg.UTF8String().c_str());
         success = false;
         break;
       }

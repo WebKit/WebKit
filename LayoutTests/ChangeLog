@@ -1,3 +1,12 @@
+2007-01-14  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Mitz.
+
+        Layout tests for fixes to JavaScript pretty-printing.
+
+        * fast/js/pretty-print-expected.txt:
+        * fast/js/resources/pretty-print.js: Test handling of object literal with non-identifier property name, and of array literals.
+
 2007-01-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
