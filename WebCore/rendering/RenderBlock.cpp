@@ -2578,8 +2578,8 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, int xoff, int yoff)
 
 bool RenderBlock::avoidsFloats() const
 {
-    // Floats can't intrude into our box if we have multiple columns.
-    return RenderFlow::avoidsFloats() || hasColumns();
+    // Floats can't intrude into our box if we have a non-auto column count or width.
+    return RenderFlow::avoidsFloats() || !style()->hasAutoColumnCount() || !style()->hasAutoColumnWidth();
 }
 
 bool RenderBlock::containsFloat(RenderObject* o)

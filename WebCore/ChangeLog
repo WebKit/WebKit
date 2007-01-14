@@ -1,5 +1,17 @@
 2007-01-14  David Hyatt  <hyatt@apple.com>
 
+        Make sure floats are avoided if you have non-auto column property values.  Fixes the crazy layout
+        on http://weblogs.mozillazine.org/roc.
+
+        Reviewed by mitz
+
+        Added fast/multicol/float-avoidance.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::avoidsFloats):
+
+2007-01-14  David Hyatt  <hyatt@apple.com>
+
         Fix for 10145, regression where line breaks are not being honored between adjacent replaced elements.
         When checking for break opportunities where replaced elements are involved, we ignore their white-space
         values and use their parents' instead.  The assumption/idea behind this change is that because the element
