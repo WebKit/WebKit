@@ -842,9 +842,9 @@ void FrameLoader::begin(const KURL& url)
         m_frame->view()->resizeContents(0, 0);
 }
 
-void FrameLoader::write(const char* str, int len)
+void FrameLoader::write(const char* str, int len, bool flush)
 {
-    if (len == 0)
+    if (len == 0 && !flush)
         return;
     
     if (len == -1)
@@ -866,6 +866,8 @@ void FrameLoader::write(const char* str, int len)
     }
 
     String decoded = m_decoder->decode(str, len);
+    if (flush)
+        decoded += m_decoder->flush();
     if (decoded.isEmpty())
         return;
 
@@ -915,14 +917,7 @@ void FrameLoader::endIfNotLoading()
 
     // make sure nothing's left in there
     if (m_frame->document()) {
-        if (m_decoder) {
-            String decoded = m_decoder->flush();
-            if (!m_receivedData) {
-                m_receivedData = true;
-                m_frame->document()->determineParseMode(decoded);
-            }
-            write(decoded);
-        }
+        write(0, 0, true);
         m_frame->document()->finishParsing();
     } else
         // WebKit partially uses WebCore when loading non-HTML docs.  In these cases doc==nil, but

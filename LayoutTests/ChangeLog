@@ -1,3 +1,18 @@
+2007-01-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        http://bugs.webkit.org/show_bug.cgi?id=12258
+        fast/tokenizer/002 test broken
+
+        * editing/selection/designmode-no-caret-expected.txt:
+        * fast/dom/HTMLHeadElement/textInHead4-expected.txt:
+        * fast/parser/broken-comments-vs-parsing-mode-expected.txt:
+        * fast/parser/tabs-in-scripts-expected.txt:
+        * fast/tokenizer/external-script-document-write-expected.txt:
+        * fast/tokenizer/missing-title-end-tag-1-expected.txt:
+        * tables/mozilla/images/adforce_imgis_com-expected.txt:
+        * tables/mozilla_expected_failures/images/adforce_imgis_com-expected.txt:
+        Updated the results (inconsequential changes only).
+
 2007-01-14  Adam Roben  <aroben@apple.com>
 
         Reviewed by Maciej.

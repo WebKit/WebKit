@@ -316,7 +316,7 @@ namespace WebCore {
 
         void begin();
         void begin(const KURL&);
-        void write(const char* str, int len = -1);
+        void write(const char* str, int len = -1, bool flush = false);
         void write(const String&);
         void end();
 
