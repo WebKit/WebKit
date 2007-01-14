@@ -1,3 +1,30 @@
+2007-01-14  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Maciej.
+
+        Make sure our whitelisting of the type and language attributes of the
+        <script> element is enforced in all HTMLTokenizer/HTMLScriptElement
+        code paths.
+
+        All layout tests pass.
+
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::shouldExecuteAsJavaScript): New method to
+        determine whether the script should be executed, given its type and
+        language attributes.
+        (WebCore::HTMLScriptElement::evaluateScript): Check type/language
+        before executing.
+        * html/HTMLScriptElement.h: Added new declarations.
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::begin): Made scriptSrc a String. 
+        (WebCore::HTMLTokenizer::scriptHandler): Check
+        shouldExecuteAsJavaScript before executing.
+        (WebCore::HTMLTokenizer::notifyFinished): Ditto.
+        (WebCore::HTMLTokenizer::parseTag): Moved type/language checking from
+        here to HTMLScriptElement::shouldExecuteAsJavaScript.
+        * html/HTMLTokenizer.h: Made scriptSrc a String, and removed the
+        javascript member.
+
 2007-01-14  David Hyatt  <hyatt@apple.com>
 
         Make sure floats are avoided if you have non-auto column property values.  Fixes the crazy layout

@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -159,9 +159,83 @@ void HTMLScriptElement::notifyFinished(CachedResource* o)
     m_cachedScript = 0;
 }
 
+bool HTMLScriptElement::shouldExecuteAsJavaScript()
+{
+    /*
+        Mozilla 1.8 and WinIE 7 both accept text/javascript and text/ecmascript.
+        Mozilla 1.8 accepts application/javascript, application/ecmascript, and application/x-javascript, but WinIE 7 doesn't.
+        WinIE 7 accepts text/javascript1.1 - text/javascript1.3, text/jscript, and text/livescript, but Mozilla 1.8 doesn't.
+        Mozilla 1.8 allows leading and trailing whitespace, but WinIE 7 doesn't.
+        Mozilla 1.8 and WinIE 7 both accept the empty string, but neither accept a whitespace-only string.
+        We want to accept all the values that either of these browsers accept, but not other values.
+     */
+    static const AtomicString validTypes[] = {
+        "text/javascript",
+        "text/ecmascript",
+        "application/javascript",
+        "application/ecmascript",
+        "application/x-javascript",
+        "text/javascript1.1",
+        "text/javascript1.2",
+        "text/javascript1.3",
+        "text/jscript",
+        "text/livescript",
+    };
+    static const unsigned validTypesCount = sizeof(validTypes) / sizeof(validTypes[0]);
+
+    /*
+         Mozilla 1.8 accepts javascript1.0 - javascript1.7, but WinIE 7 accepts only javascript1.1 - javascript1.3.
+         Mozilla 1.8 and WinIE 7
+         WinIE 7 accepts ecmascript and jscript, but Mozilla 1.8 doesn't.
+         Neither Mozilla 1.8 nor WinIE 7 accept leading or trailing whitespace.
+         We want to accept all the values that either of these browsers accept, but not other values.
+     */
+    static const AtomicString validLanguages[] = {
+        "javascript",
+        "javascript1.0",
+        "javascript1.1",
+        "javascript1.2",
+        "javascript1.3",
+        "javascript1.4",
+        "javascript1.5",
+        "javascript1.6",
+        "javascript1.7",
+        "livescript",
+        "ecmascript",
+        "jscript"
+    };
+    static const unsigned validLanguagesCount = sizeof(validLanguages) / sizeof(validLanguages[0]); 
+
+    const AtomicString& type = getAttribute(typeAttr);
+    if (!type.isEmpty()) {
+        String lowerType = type.domString().stripWhiteSpace().lower();
+        for (unsigned i = 0; i < validTypesCount; ++i)
+            if (lowerType == validTypes[i])
+                return true;
+
+        return false;
+    }
+    
+    const AtomicString& language = getAttribute(languageAttr);
+    if (!language.isEmpty()) {
+        String lowerLanguage = language.domString().lower();
+        for (unsigned i = 0; i < validLanguagesCount; ++i)
+            if (lowerLanguage == validLanguages[i])
+                return true;
+
+        return false;
+    }
+
+    // No type or language is specified, so we assume the script to be JavaScript
+    return true;
+}
+
 void HTMLScriptElement::evaluateScript(const String& URL, const String& script)
 {
     if (m_evaluated)
+        return;
+    
+    if (!shouldExecuteAsJavaScript())
         return;
     
     Frame* frame = document()->frame();

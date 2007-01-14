@@ -7,7 +7,7 @@
               (C) 1999 Lars Knoll (knoll@kde.org)
               (C) 1999 Antti Koivisto (koivisto@kde.org)
               (C) 2001 Dirk Mueller (mueller@kde.org)
-    Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+    Copyright (C) 2004, 2005, 2006, 2007 Apple Inc.
     Copyright (C) 2005, 2006 Alexey Proskuryakov (ap@nypop.com)
 
     This library is free software; you can redistribute it and/or
@@ -36,12 +36,13 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
-#include "HTMLViewSourceDocument.h"
 #include "HTMLElement.h"
-#include "SystemTime.h"
-#include "csshelper.h"
 #include "HTMLNames.h"
 #include "HTMLParser.h"
+#include "HTMLScriptElement.h"
+#include "HTMLViewSourceDocument.h"
+#include "SystemTime.h"
+#include "csshelper.h"
 #include "kjs_proxy.h"
 
 #include "HTMLEntityNames.c"
@@ -226,7 +227,7 @@ void HTMLTokenizer::begin()
     tquote = NoQuote;
     searchCount = 0;
     m_state.setEntityState(NoEntity);
-    scriptSrc = DeprecatedString::null;
+    scriptSrc = String();
     pendingSrc.clear();
     currentPrependingSrc = 0;
     noMoreData = false;
@@ -391,16 +392,16 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
                     scriptNode = 0;
             } else
                 scriptNode = 0;
-            scriptSrc=DeprecatedString::null;
+            scriptSrc = String();
         } else {
 #ifdef TOKEN_DEBUG
             kdDebug( 6036 ) << "---START SCRIPT---" << endl;
             kdDebug( 6036 ) << DeprecatedString(scriptCode, scriptCodeSize) << endl;
             kdDebug( 6036 ) << "---END SCRIPT---" << endl;
 #endif
-            scriptNode = 0;
             // Parse scriptCode containing <script> info
-            doScriptExec = true;
+            doScriptExec = static_cast<HTMLScriptElement*>(scriptNode.get())->shouldExecuteAsJavaScript();
+            scriptNode = 0;
         }
     }
 
@@ -441,8 +442,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
             // will be 0 if script was already loaded and ref() executed it
             if (!pendingScripts.isEmpty())
                 state.setLoadingExtScript(true);
-        }
-        else if (!m_fragment && doScriptExec && javascript ) {
+        } else if (!m_fragment && doScriptExec) {
             if (!m_executingScript)
                 pendingSrc.prepend(src);
             else
@@ -1147,69 +1147,15 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             bool beginTag = !currToken.flat && currToken.beginTag;
             if (currToken.beginTag && currToken.tagName == scriptTag) {
                 Attribute* a = 0;
-                bool foundTypeAttribute = false;
-                scriptSrc = DeprecatedString::null;
+                scriptSrc = String();
                 scriptSrcCharset = String();
                 if (currToken.attrs && !m_fragment && m_doc->frame() && m_doc->frame()->settings()->isJavaScriptEnabled()) {
                     if ((a = currToken.attrs->getAttributeItem(srcAttr)))
-                        scriptSrc = m_doc->completeURL(parseURL(a->value()).deprecatedString());
+                        scriptSrc = m_doc->completeURL(parseURL(a->value()));
                     if ((a = currToken.attrs->getAttributeItem(charsetAttr)))
                         scriptSrcCharset = a->value().domString().stripWhiteSpace();
                     if (scriptSrcCharset.isEmpty())
                         scriptSrcCharset = m_doc->frame()->loader()->encoding();
-                    /* Check type before language, since language is deprecated */
-                    if ((a = currToken.attrs->getAttributeItem(typeAttr)) != 0 && !a->value().isEmpty())
-                        foundTypeAttribute = true;
-                    else
-                        a = currToken.attrs->getAttributeItem(languageAttr);
-                }
-                javascript = true;
-
-                if( foundTypeAttribute ) {
-                    /* 
-                        Mozilla 1.5 accepts application/x-javascript, and some web references claim it is the only
-                        correct variation, but WinIE 6 doesn't accept it.
-                        Neither Mozilla 1.5 nor WinIE 6 accept application/javascript, application/ecmascript, or
-                        application/x-ecmascript.
-                        Mozilla 1.5 doesn't accept the text/javascript1.x formats, but WinIE 6 does.
-                        Mozilla 1.5 doesn't accept text/jscript, text/ecmascript, and text/livescript, but WinIE 6 does.
-                        Mozilla 1.5 allows leading and trailing whitespace, but WinIE 6 doesn't.
-                        Mozilla 1.5 and WinIE 6 both accept the empty string, but neither accept a whitespace-only string.
-                        We want to accept all the values that either of these browsers accept, but not other values.
-                     */
-                    DeprecatedString type = a->value().domString().stripWhiteSpace().lower().deprecatedString();
-                    if( type.compare("application/x-javascript") != 0 &&
-                        type.compare("text/javascript") != 0 &&
-                        type.compare("text/javascript1.0") != 0 &&
-                        type.compare("text/javascript1.1") != 0 &&
-                        type.compare("text/javascript1.2") != 0 &&
-                        type.compare("text/javascript1.3") != 0 &&
-                        type.compare("text/javascript1.4") != 0 &&
-                        type.compare("text/javascript1.5") != 0 &&
-                        type.compare("text/jscript") != 0 &&
-                        type.compare("text/ecmascript") != 0 &&
-                        type.compare("text/livescript") )
-                        javascript = false;
-                } else if( a ) {
-                    /* 
-                     Mozilla 1.5 doesn't accept jscript or ecmascript, but WinIE 6 does.
-                     Mozilla 1.5 accepts javascript1.0, javascript1.4, and javascript1.5, but WinIE 6 accepts only 1.1 - 1.3.
-                     Neither Mozilla 1.5 nor WinIE 6 accept leading or trailing whitespace.
-                     We want to accept all the values that either of these browsers accept, but not other values.
-                     */
-                    String lang = a->value().domString().lower();
-                    if( lang != "" &&
-                        lang != "javascript" &&
-                        lang != "javascript1.0" &&
-                        lang != "javascript1.1" &&
-                        lang != "javascript1.2" &&
-                        lang != "javascript1.3" &&
-                        lang != "javascript1.4" &&
-                        lang != "javascript1.5" &&
-                        lang != "ecmascript" &&
-                        lang != "livescript" &&
-                        lang != "jscript")
-                        javascript = false;
                 }
             }
 
@@ -1700,8 +1646,7 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
         DeprecatedString cachedScriptUrl( cs->url().deprecatedString() );
         bool errorOccurred = cs->errorOccurred();
         cs->deref(this);
-        RefPtr<Node> n = scriptNode;
-        scriptNode = 0;
+        RefPtr<Node> n = scriptNode.release();
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
         if (!m_doc->ownerElement())
@@ -1711,7 +1656,8 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
         if (errorOccurred)
             EventTargetNodeCast(n.get())->dispatchHTMLEvent(errorEvent, true, false);
         else {
-            m_state = scriptExecution(scriptSource.deprecatedString(), m_state, cachedScriptUrl);
+            if (static_cast<HTMLScriptElement*>(n.get())->shouldExecuteAsJavaScript())
+                m_state = scriptExecution(scriptSource.deprecatedString(), m_state, cachedScriptUrl);
             EventTargetNodeCast(n.get())->dispatchHTMLEvent(loadEvent, false, false);
         }
 

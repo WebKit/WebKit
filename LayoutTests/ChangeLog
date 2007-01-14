@@ -1,3 +1,13 @@
+2007-01-14  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Maciej.
+
+        * editing/deleting/4845371.html: Removed bogus "Javascript" type.
+        * editing/selection/4397952.html: Ditto.
+        * fast/html/script-allowed-types-languages-expected.txt: Added.
+        * fast/html/script-allowed-types-languages.html: Added. Tests
+        type/language whitelisting.
+
 2007-01-14  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Mitz.
