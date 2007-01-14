@@ -3693,13 +3693,11 @@ static WebFrameView *containingFrameView(NSView *view)
 
 - (id)_objectForIdentifier:(unsigned long)identifier
 {
-    ASSERT(_private->identifierMap->contains(identifier));
     return _private->identifierMap->get(identifier).get();
 }
 
 - (void)_removeObjectForIdentifier:(unsigned long)identifier
 {
-    ASSERT(_private->identifierMap->contains(identifier));
     _private->identifierMap->remove(identifier);
 }
 

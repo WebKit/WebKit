@@ -1,3 +1,15 @@
+2007-01-14  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12251
+          REGRESSION (r18822-r18823): Assertion failure opening document with non-existent resources
+          (dom/xhtml/level2/html/HTMLIFrameElement11.xhtml)
+
+        * WebView/WebView.mm:
+        (-[WebView _objectForIdentifier:]): Removed assertion.
+        (-[WebView _removeObjectForIdentifier:]): Removed assertion.
+
 2007-01-12  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
