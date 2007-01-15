@@ -1,3 +1,15 @@
+2007-01-14  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 10356, positioning doesn't work with <svg> elements in XHTML.  Change the requiresLayer
+        check to use the DOM, since the old check would fail if the parent block had no element.
+
+        Reviewed by Eric
+
+        Added svg/custom/relative-positioning.html (absolute/fixed too)
+
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::requiresLayer):
+
 2007-01-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.
