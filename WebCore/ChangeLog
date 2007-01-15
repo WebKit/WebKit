@@ -1,3 +1,16 @@
+2007-01-15  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by mjs.
+        
+        SVG gradients do not notice stop additions
+        http://bugs.webkit.org/show_bug.cgi?id=12192
+
+        Test: svg/custom/gradient-add-stops.svg
+
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::childrenChanged):
+        * ksvg2/svg/SVGGradientElement.h:
+
 2007-01-14  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 10356, positioning doesn't work with <svg> elements in XHTML.  Change the requiresLayer

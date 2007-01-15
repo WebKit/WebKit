@@ -1,3 +1,15 @@
+2007-01-15  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by mjs.
+        
+        SVG gradients do not notice stop additions
+        http://bugs.webkit.org/show_bug.cgi?id=12192
+
+        * svg/custom/gradient-add-stops-expected.checksum: Added.
+        * svg/custom/gradient-add-stops-expected.png: Added.
+        * svg/custom/gradient-add-stops-expected.txt: Added.
+        * svg/custom/gradient-add-stops.svg: Added.
+
 2007-01-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.
