@@ -1,3 +1,16 @@
+2007-01-15  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8604
+          rowspan does not work when set through javascript
+
+        Covered by existing tests.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::updateFromElement): Mark the section for grid recalc
+        if row span or column span change.
+
 2007-01-15  Adam Roben  <aroben@apple.com>
 
         Reviewed by Darin.

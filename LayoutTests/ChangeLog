@@ -1,3 +1,48 @@
+2007-01-15  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - updates for http://bugs.webkit.org/show_bug.cgi?id=8604
+          rowspan does not work when set through javascript
+
+        * fast/dom/HTMLTableElement/colSpan-expected.checksum: Updated.
+        * fast/dom/HTMLTableElement/colSpan-expected.png: Updated.
+        * fast/dom/HTMLTableElement/colSpan-expected.txt: Updated.
+        * fast/dom/HTMLTableElement/colSpan.html: Removed comment about expected
+        failure.
+        * tables/mozilla/bugs/bug22246-2-expected.checksum: Added.
+        * tables/mozilla/bugs/bug22246-2-expected.png: Added.
+        * tables/mozilla/bugs/bug22246-2-expected.txt: Added.
+        * tables/mozilla/bugs/bug22246-2a-expected.checksum: Added.
+        * tables/mozilla/bugs/bug22246-2a-expected.png: Added.
+        * tables/mozilla/bugs/bug22246-2a-expected.txt: Added.
+        * tables/mozilla/bugs/bug22246-3-expected.checksum: Added.
+        * tables/mozilla/bugs/bug22246-3-expected.png: Added.
+        * tables/mozilla/bugs/bug22246-3-expected.txt: Added.
+        * tables/mozilla/bugs/bug22246-3a-expected.checksum: Added.
+        * tables/mozilla/bugs/bug22246-3a-expected.png: Added.
+        * tables/mozilla/bugs/bug22246-3a-expected.txt: Added.
+        * tables/mozilla_expected_failures/bugs/bug22246-2-expected.checksum: Removed.
+        * tables/mozilla_expected_failures/bugs/bug22246-2-expected.png: Removed.
+        * tables/mozilla_expected_failures/bugs/bug22246-2-expected.txt: Removed.
+        * tables/mozilla_expected_failures/bugs/bug22246-2.html: Moved to mozilla/ since it
+        no longer fails.
+        * tables/mozilla_expected_failures/bugs/bug22246-2a-expected.checksum: Removed.
+        * tables/mozilla_expected_failures/bugs/bug22246-2a-expected.png: Removed.
+        * tables/mozilla_expected_failures/bugs/bug22246-2a-expected.txt: Removed.
+        * tables/mozilla_expected_failures/bugs/bug22246-2a.html: Moved to mozilla/ since it
+        no longer fails.
+        * tables/mozilla_expected_failures/bugs/bug22246-3-expected.checksum: Removed.
+        * tables/mozilla_expected_failures/bugs/bug22246-3-expected.png: Removed.
+        * tables/mozilla_expected_failures/bugs/bug22246-3-expected.txt: Removed.
+        * tables/mozilla_expected_failures/bugs/bug22246-3.html: Moved to mozilla/ since it
+        no longer fails.
+        * tables/mozilla_expected_failures/bugs/bug22246-3a-expected.checksum: Removed.
+        * tables/mozilla_expected_failures/bugs/bug22246-3a-expected.png: Removed.
+        * tables/mozilla_expected_failures/bugs/bug22246-3a-expected.txt: Removed.
+        * tables/mozilla_expected_failures/bugs/bug22246-3a.html: Moved to mozilla/ since it
+        no longer fails.
+
 2007-01-15  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

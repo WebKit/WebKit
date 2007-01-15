@@ -69,8 +69,11 @@ void RenderTableCell::updateFromElement()
 
         m_columnSpan = tc->colSpan();
         m_rowSpan = tc->rowSpan();
-        if ((oldRSpan != m_rowSpan || oldCSpan != m_columnSpan) && style() && parent())
+        if ((oldRSpan != m_rowSpan || oldCSpan != m_columnSpan) && style() && parent()) {
             setNeedsLayoutAndMinMaxRecalc();
+            if (section())
+                section()->setNeedsCellRecalc();
+        }
     }
 }
 
