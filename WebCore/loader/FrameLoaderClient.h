@@ -121,13 +121,13 @@ namespace WebCore {
         virtual void setMainDocumentError(DocumentLoader*, const ResourceError&) = 0;
         virtual void clearUnarchivingState(DocumentLoader*) = 0;
 
-        virtual void progressStarted() = 0;
-        virtual void progressCompleted() = 0;
-
-        virtual void incrementProgress(unsigned long identifier, const ResourceResponse&) = 0;
-        virtual void incrementProgress(unsigned long identifier, const char*, int) = 0;
-        virtual void completeProgress(unsigned long identifier) = 0;
-
+        // Maybe these should go into a ProgressTrackerClient some day
+        virtual void willChangeEstimatedProgress() { }
+        virtual void didChangeEstimatedProgress() { }
+        virtual void postProgressStartedNotification() = 0;
+        virtual void postProgressEstimateChangedNotification() = 0;
+        virtual void postProgressFinishedNotification() = 0;
+        
         virtual void setMainFrameDocumentReady(bool) = 0;
 
         virtual void startDownload(const ResourceRequest&) = 0;

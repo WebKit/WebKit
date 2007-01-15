@@ -1,3 +1,61 @@
+2007-01-15  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin and Adam.
+
+        Move progress tracking down to WebCore.
+        
+        * WebCore.exp:
+        Add ProgressTracker::estimatedProgress() to be used by WebKit.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        Add ProgressTracker.[cpp|h]
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::prepareForLoadStart):
+        (WebCore::FrameLoader::clearProvisionalLoad):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::startLoading):
+        (WebCore::FrameLoader::didReceiveResponse):
+        (WebCore::FrameLoader::didReceiveData):
+        (WebCore::FrameLoader::didFailToLoad):
+        (WebCore::FrameLoader::requestFromDelegate):
+        (WebCore::FrameLoader::didFinishLoad):
+        Call directly to the progress tracker instead of through the frame loader client.
+        
+        * loader/FrameLoaderClient.h:
+        Get rid of the old methods and add new methods for tracking progress.
+        
+        * loader/ProgressTracker.cpp: Added.
+        (WebCore::ProgressItem::ProgressItem):
+        (WebCore::ProgressTracker::ProgressTracker):
+        (WebCore::ProgressTracker::~ProgressTracker):
+        (WebCore::ProgressTracker::estimatedProgress):
+        (WebCore::ProgressTracker::reset):
+        (WebCore::ProgressTracker::progressStarted):
+        (WebCore::ProgressTracker::progressCompleted):
+        (WebCore::ProgressTracker::finalProgressComplete):
+        (WebCore::ProgressTracker::incrementProgress):
+        (WebCore::ProgressTracker::completeProgress):
+        (WebCore::ProgressTracker::createUniqueIdentifier):
+        * loader/ProgressTracker.h: Added.
+        New per page class which tracks progress.
+        
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willSendRequest):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::progress):
+        Move createUniqueIdentifier to ProgressTracker, add ProgressTracker object to Page.
+        
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::willChangeEstimatedProgress):
+        (WebCore::SVGEmptyFrameLoaderClient::didChangeEstimatedProgress):
+        (WebCore::SVGEmptyFrameLoaderClient::postProgressStartedNotification):
+        (WebCore::SVGEmptyFrameLoaderClient::postProgressEstimateChangedNotification):
+        (WebCore::SVGEmptyFrameLoaderClient::postProgressFinishedNotification):
+        Add new methods, get rid of the old ones.
+
 2007-01-15  Adam Roben  <aroben@apple.com>
 
         Reviewed by Anders.

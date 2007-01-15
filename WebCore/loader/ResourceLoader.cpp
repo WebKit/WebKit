@@ -32,6 +32,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "Page.h"
+#include "ProgressTracker.h"
 #include "ResourceHandle.h"
 #include "ResourceError.h"
 #include "SharedBuffer.h"
@@ -157,7 +158,7 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
     ASSERT(!m_reachedTerminalState);
 
     if (!m_identifier) {
-        m_identifier = m_frame->page()->createUniqueIdentifier();
+        m_identifier = m_frame->page()->progress()->createUniqueIdentifier();
         frameLoader()->assignIdentifierToInitialRequest(m_identifier, request);
     }
 

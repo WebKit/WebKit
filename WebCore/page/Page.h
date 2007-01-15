@@ -43,6 +43,7 @@ namespace WebCore {
     class FocusController;
     class Frame;
     class Node;
+    class ProgressTracker;
     class SelectionController;
     class Settings;
 
@@ -79,17 +80,16 @@ namespace WebCore {
         static void setNeedsReapplyStyles();
         static void setNeedsReapplyStylesForSettingsChange(Settings*);
 
-        Chrome* chrome() { return m_chrome.get(); }
-        SelectionController* dragCaretController() { return m_dragCaretController.get(); }
-        FocusController* focusController() { return m_focusController.get(); }
-        ContextMenuController* contextMenuController() { return m_contextMenuController.get(); }
-        Settings* settings() { return m_settings.get(); }
-
+        Chrome* chrome() const { return m_chrome.get(); }
+        SelectionController* dragCaretController() const { return m_dragCaretController.get(); }
+        FocusController* focusController() const { return m_focusController.get(); }
+        ContextMenuController* contextMenuController() const { return m_contextMenuController.get(); }
+        Settings* settings() const { return m_settings.get(); }
+        ProgressTracker* progress() const { return m_progress.get(); }
+        
         void setDefersLoading(bool);
         bool defersLoading() const { return m_defersLoading; }
 
-        unsigned long createUniqueIdentifier();
-        
 #if PLATFORM(WIN)
         // The global DLL or application instance used for all windows.
         static void setInstanceHandle(HINSTANCE instanceHandle) { s_instanceHandle = instanceHandle; }
@@ -103,7 +103,8 @@ namespace WebCore {
         OwnPtr<ContextMenuController> m_contextMenuController;
         RefPtr<BackForwardList> m_backForwardList;
         OwnPtr<Settings> m_settings;
-
+        OwnPtr<ProgressTracker> m_progress;
+        
         EditorClient* m_editorClient;
         RefPtr<Frame> m_mainFrame;
         RefPtr<Node> m_focusedNode;
@@ -112,8 +113,6 @@ namespace WebCore {
 
         bool m_defersLoading;
 
-        unsigned long m_uniqueIdentifier;
-        
 #if PLATFORM(WIN)
         static HINSTANCE s_instanceHandle;
 #endif

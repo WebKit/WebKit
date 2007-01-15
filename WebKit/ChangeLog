@@ -1,3 +1,26 @@
+2007-01-15  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        Update to match WebCore.
+        
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::willChangeEstimatedProgress):
+        (WebFrameLoaderClient::didChangeEstimatedProgress):
+        (WebFrameLoaderClient::postProgressStartedNotification):
+        (WebFrameLoaderClient::postProgressEstimateChangedNotification):
+        (WebFrameLoaderClient::postProgressFinishedNotification):
+        Post the correct notifications.
+        
+        * WebView/WebView.mm:
+        (-[WebViewPrivate init]):
+        (-[WebViewPrivate dealloc]):
+        Get rid of all progress tracking code.
+        
+        (-[WebView estimatedProgress]):
+        Call ProgressTracker::estimatedProgress()
+
 2007-01-15  Adam Roben  <aroben@apple.com>
 
         Reviewed by Darin.

@@ -100,6 +100,7 @@
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Logging.h>
 #import <WebCore/Page.h>
+#import <WebCore/ProgressTracker.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TextResourceDecoder.h>
@@ -273,19 +274,6 @@ macro(yankAndSelect) \
     
     WebResourceDelegateImplementationCache resourceLoadDelegateImplementations;
 
-    long long totalPageAndResourceBytesToLoad;
-    long long totalBytesReceived;
-    double progressValue;
-    double lastNotifiedProgressValue;
-    double lastNotifiedProgressTime;
-    double progressNotificationInterval;
-    double progressNotificationTimeInterval;
-    BOOL finalProgressChangedSent;
-    WebFrame *originatingProgressFrame;
-    
-    int numProgressTrackedFrames;
-    NSMutableDictionary *progressItems;
-    
     void *observationInfo;
     
     BOOL closed;
@@ -404,8 +392,6 @@ static BOOL grammarCheckingEnabled;
         return nil;
     
     textSizeMultiplier = 1;
-    progressNotificationInterval = 0.02;
-    progressNotificationTimeInterval = 0.1;
     dashboardBehaviorAllowWheelScrolling = YES;
     tabKeyCyclesThroughElements = YES;
     shouldCloseWithWindow = objc_collecting_enabled();
@@ -441,8 +427,6 @@ static BOOL grammarCheckingEnabled;
     [editingDelegateForwarder release];
     [scriptDebugDelegateForwarder release];
     
-    [progressItems release];
-        
     [mediaStyle release];
     
     [super dealloc];
@@ -1018,9 +1002,6 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
     return _private->programmaticFocusCount != 0;
 }
 
-#define UnknownTotalBytes -1
-#define WebProgressItemDefaultEstimatedLength 1024*16
-
 - (void)_didChangeValueForKey: (NSString *)key
 {
     LOG (Bindings, "calling didChangeValueForKey: %@", key);
@@ -1031,176 +1012,6 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 {
     LOG (Bindings, "calling willChangeValueForKey: %@", key);
     [self willChangeValueForKey: key];
-}
-
-// Always start progress at INITIAL_PROGRESS_VALUE. This helps provide feedback as 
-// soon as a load starts.
-#define INITIAL_PROGRESS_VALUE 0.1
-// Similarly, always leave space at the end. This helps show the user that we're not done
-// until we're done.
-#define FINAL_PROGRESS_VALUE 1.0 - INITIAL_PROGRESS_VALUE
-
-- (void)_resetProgress
-{
-    [_private->progressItems release];
-    _private->progressItems = nil;
-    _private->totalPageAndResourceBytesToLoad = 0;
-    _private->totalBytesReceived = 0;
-    _private->progressValue = 0;
-    _private->lastNotifiedProgressValue = 0;
-    _private->lastNotifiedProgressTime = 0;
-    _private->finalProgressChangedSent = NO;
-    _private->numProgressTrackedFrames = 0;
-    [_private->originatingProgressFrame release];
-    _private->originatingProgressFrame = nil;
-}
-- (void)_progressStarted:(WebFrame *)frame
-{
-    LOG (Progress, "frame %p(%@), _private->numProgressTrackedFrames %d, _private->originatingProgressFrame %p", frame, [frame name], _private->numProgressTrackedFrames, _private->originatingProgressFrame);
-    [self _willChangeValueForKey: @"estimatedProgress"];
-    if (_private->numProgressTrackedFrames == 0 || _private->originatingProgressFrame == frame){
-        [self _resetProgress];
-        _private->progressValue = INITIAL_PROGRESS_VALUE;
-        _private->originatingProgressFrame = [frame retain];
-        [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressStartedNotification object:self];
-    }
-    _private->numProgressTrackedFrames++;
-    [self _didChangeValueForKey: @"estimatedProgress"];
-}
-
-- (void)_finalProgressComplete
-{
-    LOG (Progress, "");
-
-    // Before resetting progress value be sure to send client a least one notification
-    // with final progress value.
-    if (!_private->finalProgressChangedSent) {
-        _private->progressValue = 1;
-        [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressEstimateChangedNotification object:self];
-    }
-    
-    [self _resetProgress];
-    
-    [self setMainFrameDocumentReady:YES];   // make sure this is turned on at this point
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressFinishedNotification object:self];
-}
-
-- (void)_progressCompleted:(WebFrame *)frame
-{    
-    LOG (Progress, "frame %p(%@), _private->numProgressTrackedFrames %d, _private->originatingProgressFrame %p", frame, [frame name], _private->numProgressTrackedFrames, _private->originatingProgressFrame);
-
-    if (_private->numProgressTrackedFrames <= 0)
-        return;
-
-    [self _willChangeValueForKey: @"estimatedProgress"];
-
-    _private->numProgressTrackedFrames--;
-    if (_private->numProgressTrackedFrames == 0 ||
-        (frame == _private->originatingProgressFrame && _private->numProgressTrackedFrames != 0)){
-        [self _finalProgressComplete];
-    }
-    [self _didChangeValueForKey: @"estimatedProgress"];
-}
-
-- (void)_incrementProgressForIdentifier:(id)identifier response:(NSURLResponse *)response;
-{
-    if (!identifier)
-        return;
-
-    LOG (Progress, "_private->numProgressTrackedFrames %d, _private->originatingProgressFrame %p", _private->numProgressTrackedFrames, _private->originatingProgressFrame);
-    
-    if (_private->numProgressTrackedFrames <= 0)
-        return;
-        
-    WebProgressItem *item = [[WebProgressItem alloc] init];
-
-    if (!item)
-        return;
-
-    long long length = [response expectedContentLength];
-    if (length < 0){
-        length = WebProgressItemDefaultEstimatedLength;
-    }
-    item->estimatedLength = length;
-    _private->totalPageAndResourceBytesToLoad += length;
-    
-    if (!_private->progressItems)
-        _private->progressItems = [[NSMutableDictionary alloc] init];
-        
-    [_private->progressItems _webkit_setObject:item forUncopiedKey:identifier];
-    [item release];
-}
-
-- (void)_incrementProgressForIdentifier:(id)identifier length:(int)length
-{
-    if (!identifier)
-        return;
-
-    WebProgressItem *item = [_private->progressItems objectForKey:identifier];
-
-    if (!item)
-        return;
-
-    [self _willChangeValueForKey: @"estimatedProgress"];
-
-    unsigned bytesReceived = length;
-    double increment, percentOfRemainingBytes;
-    long long remainingBytes, estimatedBytesForPendingRequests;
-
-    item->bytesReceived += bytesReceived;
-    if (item->bytesReceived > item->estimatedLength){
-        _private->totalPageAndResourceBytesToLoad += ((item->bytesReceived*2) - item->estimatedLength);
-        item->estimatedLength = item->bytesReceived*2;
-    }
-    
-    int numPendingOrLoadingRequests = [_private->originatingProgressFrame _numPendingOrLoadingRequests:YES];
-    estimatedBytesForPendingRequests = WebProgressItemDefaultEstimatedLength * numPendingOrLoadingRequests;
-    remainingBytes = ((_private->totalPageAndResourceBytesToLoad + estimatedBytesForPendingRequests) - _private->totalBytesReceived);
-    percentOfRemainingBytes = (double)bytesReceived / (double)remainingBytes;
-
-    // Treat the first layout as the half-way point.
-    double maxProgressValue = [_private->originatingProgressFrame _firstLayoutDone]
-        ? FINAL_PROGRESS_VALUE
-        : .5;
-    increment = (maxProgressValue - _private->progressValue) * percentOfRemainingBytes;
-    _private->progressValue += increment;
-    if (_private->progressValue > maxProgressValue)
-        _private->progressValue = maxProgressValue;
-    ASSERT(_private->progressValue >= INITIAL_PROGRESS_VALUE);
-
-    _private->totalBytesReceived += bytesReceived;
-
-    double now = CFAbsoluteTimeGetCurrent();
-    double notifiedProgressTimeDelta = now - _private->lastNotifiedProgressTime;
-    
-    LOG (Progress, "_private->progressValue %g, _private->numProgressTrackedFrames %d", _private->progressValue, _private->numProgressTrackedFrames);
-    double notificationProgressDelta = _private->progressValue - _private->lastNotifiedProgressValue;
-    if ((notificationProgressDelta >= _private->progressNotificationInterval ||
-            notifiedProgressTimeDelta >= _private->progressNotificationTimeInterval) &&
-            _private->numProgressTrackedFrames > 0) {
-        if (!_private->finalProgressChangedSent) {
-            if (_private->progressValue == 1)
-                _private->finalProgressChangedSent = YES;
-            [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressEstimateChangedNotification object:self];
-            _private->lastNotifiedProgressValue = _private->progressValue;
-            _private->lastNotifiedProgressTime = now;
-        }
-    }
-
-    [self _didChangeValueForKey: @"estimatedProgress"];
-}
-
-- (void)_completeProgressForIdentifier:(id)identifier
-{
-    WebProgressItem *item = [_private->progressItems objectForKey:identifier];
-
-    if (!item)
-        return;
-        
-    // Adjust the total expected bytes to account for any overage/underage.
-    long long delta = item->bytesReceived - item->estimatedLength;
-    _private->totalPageAndResourceBytesToLoad += delta;
-    item->estimatedLength = item->bytesReceived;
 }
 
 // Required to prevent automatic observer notifications.
@@ -2552,7 +2363,10 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (double)estimatedProgress
 {
-    return _private->progressValue;
+    if (!_private->page)
+        return 0.0;
+
+    return _private->page->progress()->estimatedProgress();
 }
 
 - (NSArray *)pasteboardTypesForSelection

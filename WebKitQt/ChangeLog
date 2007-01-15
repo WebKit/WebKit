@@ -1,3 +1,13 @@
+2007-01-15  Anders Carlsson  <acarlsson@apple.com>
+
+        Fix build.
+        
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::postProgressStartedNotification):
+        (WebCore::FrameLoaderClientQt::postProgressEstimateChangedNotification):
+        (WebCore::FrameLoaderClientQt::postProgressFinishedNotification):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-01-13  Lars Knoll <lars@trolltech.com>
 
         Compile again after yesterdays changes.

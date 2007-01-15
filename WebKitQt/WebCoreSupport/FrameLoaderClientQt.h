@@ -126,8 +126,6 @@ namespace WebCore {
         virtual void revertToProvisionalState(DocumentLoader*);
         virtual void clearUnarchivingState(DocumentLoader*);
 
-        virtual void progressStarted();
-        virtual void progressCompleted();
         virtual void setMainFrameDocumentReady(bool);
         virtual void willChangeTitle(DocumentLoader*);
         virtual void didChangeTitle(DocumentLoader*);
@@ -192,12 +190,12 @@ namespace WebCore {
         virtual void dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const WebCore::NavigationAction&, const WebCore::ResourceRequest&);
         virtual void dispatchUnableToImplementPolicy(const WebCore::ResourceError&);
 
-        virtual void incrementProgress(unsigned long, const WebCore::ResourceResponse&);
-        virtual void incrementProgress(unsigned long, const char*, int);
-        virtual void completeProgress(unsigned long);
-
         virtual void startDownload(const WebCore::ResourceRequest&);
         virtual bool willUseArchive(WebCore::ResourceLoader*, const WebCore::ResourceRequest&, const WebCore::KURL&) const;
+
+        virtual void postProgressStartedNotification();
+        virtual void postProgressEstimateChangedNotification();
+        virtual void postProgressFinishedNotification();
         
         // FIXME: This should probably not be here, but it's needed for the tests currently
         virtual void partClearedInBegin();

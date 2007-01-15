@@ -581,35 +581,29 @@ void WebFrameLoaderClient::clearUnarchivingState(DocumentLoader* loader)
     [dataSource(loader) _clearUnarchivingState];
 }
 
-void WebFrameLoaderClient::progressStarted()
+void WebFrameLoaderClient::willChangeEstimatedProgress()
 {
-    [getWebView(m_webFrame.get()) _progressStarted:m_webFrame.get()];
+    [getWebView(m_webFrame.get()) _willChangeValueForKey:_WebEstimatedProgressKey];
 }
 
-void WebFrameLoaderClient::progressCompleted()
+void WebFrameLoaderClient::didChangeEstimatedProgress()
 {
-    [getWebView(m_webFrame.get()) _progressCompleted:m_webFrame.get()];
+    [getWebView(m_webFrame.get()) _didChangeValueForKey:_WebEstimatedProgressKey];
 }
 
-void WebFrameLoaderClient::incrementProgress(unsigned long identifier, const ResourceResponse& response)
+void WebFrameLoaderClient::postProgressStartedNotification()
 {
-    WebView *webView = getWebView(m_webFrame.get());
-
-    [webView _incrementProgressForIdentifier:[webView _objectForIdentifier:identifier] response:response.nsURLResponse()];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressStartedNotification object:getWebView(m_webFrame.get())];
 }
 
-void WebFrameLoaderClient::incrementProgress(unsigned long identifier, const char*, int length)
+void WebFrameLoaderClient::postProgressEstimateChangedNotification()
 {
-    WebView *webView = getWebView(m_webFrame.get());
-
-    [webView _incrementProgressForIdentifier:[webView _objectForIdentifier:identifier] length:length];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressEstimateChangedNotification object:getWebView(m_webFrame.get())];
 }
 
-void WebFrameLoaderClient::completeProgress(unsigned long identifier)
+void WebFrameLoaderClient::postProgressFinishedNotification()
 {
-    WebView *webView = getWebView(m_webFrame.get());
-
-    [webView _completeProgressForIdentifier:[webView _objectForIdentifier:identifier]];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressFinishedNotification object:getWebView(m_webFrame.get())];
 }
 
 void WebFrameLoaderClient::setMainFrameDocumentReady(bool ready)

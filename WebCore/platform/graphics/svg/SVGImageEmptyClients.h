@@ -196,14 +196,11 @@ public:
 #endif
     virtual void clearUnarchivingState(DocumentLoader*) { }
     
-    virtual void progressStarted() { }
-    virtual void progressCompleted() { }
-    
-#if PLATFORM(MAC)
-    virtual void incrementProgress(unsigned long identifier, const ResourceResponse&) { }
-    virtual void incrementProgress(unsigned long identifier, const char*, int) { }
-    virtual void completeProgress(unsigned long identifier) { }
-#endif
+    virtual void willChangeEstimatedProgress() { }
+    virtual void didChangeEstimatedProgress() { }
+    virtual void postProgressStartedNotification() { }
+    virtual void postProgressEstimateChangedNotification() { }
+    virtual void postProgressFinishedNotification() { }
     
     virtual void setMainFrameDocumentReady(bool) { }
     
