@@ -43,13 +43,28 @@ class LoaderThread;
 class ResourceHandle;
 class NetworkLoader;
 
+struct HostInfo {
+    HostInfo() {}
+    HostInfo(const KURL& url);
+    QString protocol;
+    QString host;
+    int port;
+    bool isLocalFile() { return protocol.isEmpty() || protocol == QLatin1String("file"); }
+};
+    
 class RequestQt
 {
 public:
     RequestQt(ResourceHandle*, FrameQtClient *);
+    void setURL(const KURL &url);
+    // not thread safe, don't use in other threads
+    KURL url;
+
     FrameQtClient *client;
     ResourceHandle* resource;
-    KURL url;
+
+    // to be used by other threads
+    HostInfo hostInfo;
     QByteArray postData;
     QHttpRequestHeader request;
     QHttpResponseHeader response;
@@ -125,11 +140,6 @@ signals:
     void receivedFinished(RequestQt* resource, int errorCode);
 };
 
-struct HostInfo {
-    HostInfo(const KURL& url);
-    QString host;
-    int port;
-};
 
 class WebCoreHttp : public QObject
 {

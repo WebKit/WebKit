@@ -1,3 +1,26 @@
+2007-01-15  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Fix weird crashes when running the layout tests. The
+        reason was that I used KURL (and thus DeprecatedString)
+        in a thread. Unfortunately that class is not threadsafe
+        at all.
+
+        * platform/network/qt/ResourceHandleManagerQt.cpp:
+        (WebCore::RequestQt::RequestQt):
+        (WebCore::RequestQt::setURL):
+        (WebCore::ResourceHandleManager::add):
+        (WebCore::ResourceHandleManager::cancel):
+        (WebCore::ResourceHandleManager::receivedResponse):
+        (WebCore::FileLoader::request):
+        (WebCore::HostInfo::HostInfo):
+        (WebCore::NetworkLoader::request):
+        (WebCore::NetworkLoader::cancel):
+        * platform/network/qt/ResourceHandleManagerQt.h:
+        (WebCore::HostInfo::HostInfo):
+        (WebCore::HostInfo::isLocalFile):
+
 2007-01-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by rwlbuis.

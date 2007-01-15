@@ -31,4 +31,38 @@ LayoutTestController::LayoutTestController() : QObject()
 {
     textDump = false;
     waitForDone = false;
+    timeoutTimer = 0;
+}
+
+void LayoutTestController::reset()
+{
+    textDump = false;
+    waitForDone = false;
+    if (timeoutTimer)
+        killTimer(timeoutTimer);
+}
+
+void LayoutTestController::waitUntilDone()
+{
+    //qDebug() << ">>>>waitForDone";
+    waitForDone = true;
+    timeoutTimer = startTimer(1000);
+}
+
+void LayoutTestController::notifyDone()
+{
+    //qDebug() << ">>>>notifyDone"; emit done();
+}
+
+void LayoutTestController::dumpEditingCallbacks()
+{
+    //qDebug() << ">>>dumpEditingCallbacks";
+}
+
+void LayoutTestController::timerEvent(QTimerEvent *)
+{
+    qDebug() << ">>>>>>>>>>>>> timeout";
+    killTimer(timeoutTimer);
+    timeoutTimer = 0;
+    notifyDone();
 }

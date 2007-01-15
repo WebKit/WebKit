@@ -1,3 +1,25 @@
+2007-01-15  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Fix a few smaller issues in here, and update
+        our list of skipped tests.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::readStdin):
+        (WebCore::DumpRenderTree::dump):
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.qtproj/jsobjects.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::reset):
+        (LayoutTestController::waitUntilDone):
+        (LayoutTestController::notifyDone):
+        (LayoutTestController::dumpEditingCallbacks):
+        (LayoutTestController::timerEvent):
+        * DumpRenderTree/DumpRenderTree.qtproj/jsobjects.h:
+        * DumpRenderTree/DumpRenderTree.qtproj/tests-skipped.txt:
+
 2007-01-14  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Adam.
