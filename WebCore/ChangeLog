@@ -1,3 +1,14 @@
+2007-01-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by rwlbuis.
+
+        Make isValid check not malloc 3 SVGStringLists for every element.
+        
+        No test possible, performance fix only.
+
+        * ksvg2/svg/SVGTests.cpp:
+        (WebCore::SVGTests::isValid):
+
 2007-01-15  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.
@@ -27,7 +38,7 @@
         * rendering/RenderBlock.cpp:
         (WebCore::RenderBlock::paintChildren):
 
-2007-01-15  Eric Seidel  <eric@eseidel.com>
+2007-01-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mjs.
         

@@ -73,20 +73,21 @@ bool SVGTests::isValid() const
 {
     ExceptionCode ec = 0;
 
-    SVGStringList* list = requiredFeatures();
-    for (unsigned long i = 0; i < list->numberOfItems(); i++) {
-        String value = list->getItem(i, ec);
-        if (value.isEmpty() || !DOMImplementation::instance()->hasFeature(value, String()))
-            return false;
+    if (m_features) {
+        for (unsigned long i = 0; i < m_features->numberOfItems(); i++) {
+            String value = m_features->getItem(i, ec);
+            if (value.isEmpty() || !DOMImplementation::instance()->hasFeature(value, String()))
+                return false;
+        }
     }
 
-    list = systemLanguage();
-    for (unsigned long i = 0; i < list->numberOfItems(); i++)
-        if (list->getItem(i, ec) != defaultLanguage().substring(0, 2))
-            return false;
+    if (m_systemLanguage) {
+        for (unsigned long i = 0; i < m_systemLanguage->numberOfItems(); i++)
+            if (m_systemLanguage->getItem(i, ec) != defaultLanguage().substring(0, 2))
+                return false;
+    }
 
-    list = requiredExtensions();
-    if (list->numberOfItems() > 0)
+    if (m_extensions && m_extensions->numberOfItems() > 0)
         return false;
 
     return true;
