@@ -89,6 +89,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar *uri,
             xmlChar *base = xmlNodeGetBase(context->document->doc, context->node);
             KURL url((const char*)base, (const char*)uri);
             xmlFree(base);
+            ResourceError error;
             ResourceResponse response;
             xmlGenericErrorFunc oldErrorFunc = xmlGenericError;
             void *oldErrorContext = xmlGenericErrorContext;
@@ -96,7 +97,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar *uri,
             Vector<char> data;
                 
             if (globalDocLoader->frame()) 
-                globalDocLoader->frame()->loader()->loadResourceSynchronously(url, response, data);
+                globalDocLoader->frame()->loader()->loadResourceSynchronously(url, error, response, data);
 
             xmlSetGenericErrorFunc(0, parseErrorFunc);
             // We don't specify an encoding here. Neither Gecko nor WinIE respects

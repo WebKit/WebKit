@@ -44,8 +44,11 @@ class String;
 typedef int ExceptionCode;
 
 const int XMLHttpRequestExceptionOffset = 500;
-const int XMLHttpRequestExceptionMax = 599;
-enum XMLHttpRequestExceptionCode { PERMISSION_DENIED = XMLHttpRequestExceptionOffset };
+const int XMLHttpRequestExceptionMax = 699;
+enum XMLHttpRequestExceptionCode {
+    PERMISSION_DENIED = XMLHttpRequestExceptionOffset, // Use SECURITY_ERR when that's in DOM Core, http://bugs.webkit.org/show_bug.cgi?id=12182
+    NETWORK_ERR = XMLHttpRequestExceptionOffset + 101
+};
 
 // these exact numeric values are important because JS expects them
 enum XMLHttpRequestState {

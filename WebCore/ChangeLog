@@ -1,3 +1,43 @@
+2007-01-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=6272
+        XMLHttpRequest freezes on getting a missing document with overridden Content-Length
+
+        http://bugs.webkit.org/show_bug.cgi?id=6212
+        Investigate disallowing some XMLHttpRequest headers from being set via setRequestHeader.
+
+        Tests:
+        - http/tests/xmlhttprequest/connection-error-sync.html
+        - http/tests/xmlhttprequest/set-dangerous-headers.html
+
+        * bindings/js/kjs_binding.cpp:
+        (KJS::):
+        (KJS::setDOMException): Added support for NETWORK_ERR. Changed the temporary 
+        PERMISSION_DENIED error into a special case.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/FrameLoader.h:
+        Return the error object to the caller. Removed an extra local variable for error, 
+        which shadowed the one from enclosing block.
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::openFunc): 
+        * xml/XSLTProcessor.cpp:
+        (WebCore::docLoaderFunc): 
+        Updated to pass an error object (currently ignored).
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::canSetRequestHeader): Added. The headers to block include the ones from 
+        the current XMLHttpRequest draft plus "Via", which is blocked by Firefox.
+        (WebCore::XMLHttpRequest::send): Raise an exception if a sync request results in 
+        an error.
+        (WebCore::XMLHttpRequest::setRequestHeader): Call canSetRequestHeader().
+        * xml/xmlhttprequest.h:
+        (WebCore::): Added NETWORK_ERR and a comment about PERMISSION_DENIED.
+
 2007-01-15  Zack Rusin  <zack@kde.org>
 
         Optimizing rendering on the Qt platform. Mainly

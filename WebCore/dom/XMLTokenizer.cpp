@@ -373,11 +373,12 @@ static void* openFunc(const char* uri)
     if (!globalDocLoader || !shouldAllowExternalLoad(uri))
         return &globalDescriptor;
 
+    ResourceError error;
     ResourceResponse response;
     Vector<char> data;
     
     if (globalDocLoader->frame()) 
-        globalDocLoader->frame()->loader()->loadResourceSynchronously(KURL(uri), response, data);
+        globalDocLoader->frame()->loader()->loadResourceSynchronously(KURL(uri), error, response, data);
 
     return new OffsetBuffer(data);
 }

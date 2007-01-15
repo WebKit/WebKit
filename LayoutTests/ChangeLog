@@ -1,3 +1,20 @@
+2007-01-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=6272
+        XMLHttpRequest freezes on getting a missing document with overridden Content-Length
+
+        http://bugs.webkit.org/show_bug.cgi?id=6212
+        Investigate disallowing some XMLHttpRequest headers from being set via setRequestHeader.
+
+        * http/tests/xmlhttprequest/connection-error-sync-expected.txt: Added.
+        * http/tests/xmlhttprequest/connection-error-sync.html: Added.
+        * http/tests/xmlhttprequest/resources/infinite-loop.php: Added.
+        * http/tests/xmlhttprequest/resources/print-headers.cgi: Added.
+        * http/tests/xmlhttprequest/set-dangerous-headers-expected.txt: Added.
+        * http/tests/xmlhttprequest/set-dangerous-headers.html: Added.
+
 2007-01-15  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

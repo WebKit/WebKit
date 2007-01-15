@@ -156,7 +156,7 @@ namespace WebCore {
 
         Frame* createWindow(const FrameLoadRequest&, const WindowFeatures&);
 
-        void loadResourceSynchronously(const ResourceRequest& request, ResourceResponse& r, Vector<char>& data);
+        void loadResourceSynchronously(const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>& data);
 
         bool canHandleRequest(const ResourceRequest&);
 

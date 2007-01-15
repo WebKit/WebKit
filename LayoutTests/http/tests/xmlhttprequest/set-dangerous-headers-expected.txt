@@ -1,0 +1,4 @@
+Test that setRequestHeader cannot be used to alter security-sensitive headers.
+
+SUCCESS
+

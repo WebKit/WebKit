@@ -353,7 +353,7 @@ static const char* const eventExceptionNames[] = {
 };
 
 static const char* const xmlHttpRequestExceptionNames[] = {
-    "Permission denied"
+    "NETWORK_ERR"
 };
 
 #ifdef XPATH_SUPPORT
@@ -395,15 +395,17 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
         nameIndex = code;
         nameTable = eventExceptionNames;
         nameTableSize = sizeof(eventExceptionNames) / sizeof(eventExceptionNames[0]);
-    } else if (code >= XMLHttpRequestExceptionOffset && code <= XMLHttpRequestExceptionMax) {
-        // XMLHttpRequest case is special, because there is no exception code assigned (yet?).
+    } else if (code == XMLHttpRequestExceptionOffset) {
+        // FIXME: this exception should be replaced with DOM SECURITY_ERR when it finds its way to the spec.
+        throwError(exec, GeneralError, "Permission denied");
+        return;
+    } else if (code > XMLHttpRequestExceptionOffset && code <= XMLHttpRequestExceptionMax) {
+        type = "XMLHttpRequest";
+        // XMLHttpRequest exception codes start with 101 and we don't want 100 empty elements in the name array
+        nameIndex = code - NETWORK_ERR;
         code -= XMLHttpRequestExceptionOffset;
-        nameIndex = code;
         nameTable = xmlHttpRequestExceptionNames;
         nameTableSize = sizeof(xmlHttpRequestExceptionNames) / sizeof(xmlHttpRequestExceptionNames[0]);
-
-        throwError(exec, GeneralError, nameIndex < nameTableSize ? nameTable[nameIndex] : 0);
-        return;
 #ifdef XPATH_SUPPORT
     } else if (code >= XPathExceptionOffset && code <= XPathExceptionMax) {
         type = "DOM XPath";
@@ -427,7 +429,7 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
         nameTableSize = sizeof(exceptionNames) / sizeof(exceptionNames[0]);
     }
 
-    const char* name = nameIndex < nameTableSize ? nameTable[nameIndex] : 0;
+    const char* name = (nameIndex < nameTableSize && nameIndex >= 0) ? nameTable[nameIndex] : 0;
 
     // 100 characters is a big enough buffer, because there are:
     //   13 characters in the message
