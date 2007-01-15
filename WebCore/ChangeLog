@@ -1,3 +1,15 @@
+2007-01-14  David Hyatt  <hyatt@apple.com>
+
+        More work to fix 10145, regression where form elements don't break properly.  Make sure to really use
+        the parent of the replaced element's whitespace value everywhere.
+
+        Reviewed by olliej
+
+        fast/replaced/three-selects-break.html
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2007-01-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin and then by Mitz.
