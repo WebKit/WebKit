@@ -42,7 +42,7 @@ static const double initialProgressValue = 0.1;
     
 // Similarly, always leave space at the end. This helps show the user that we're not done
 // until we're done.
-static const double finalProgressValue = 1.0 - initialProgressValue;
+static const double finalProgressValue = 0.9 // 1.0 - initialProgressValue;
 
 static const int progressItemDefaultEstimatedLength = 1024 * 16;
 

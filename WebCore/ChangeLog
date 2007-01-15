@@ -1,5 +1,13 @@
 2007-01-15  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Darin.
+
+        * loader/ProgressTracker.cpp:
+        Set finalProgressValue to its value explicitly instead of calculating it 
+        (which causes a global initializer to be generated).
+
+2007-01-15  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Darin and Adam.
 
         Move progress tracking down to WebCore.
