@@ -1,3 +1,9 @@
+2007-01-15  John Sullivan  <sullivan@apple.com>
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::checkOrEnableIfNeeded):
+        Leopard build fix; don't declare one of the case values twice
+
 2007-01-15  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

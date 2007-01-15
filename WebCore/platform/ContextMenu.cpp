@@ -408,13 +408,13 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagLookUpInDictionary:
             shouldEnable = frame->selectionController()->isRange();
             break;
-#ifndef BUILDING_ON_TIGER
         case ContextMenuItemTagCheckGrammarWithSpelling:
+#ifndef BUILDING_ON_TIGER
             if (frame->editor()->isGrammarCheckingEnabled())
                 shouldCheck = true;
             shouldEnable = true;
-            break;
 #endif
+            break;
         case ContextMenuItemTagItalic: {
             ExceptionCode ec = 0;
             RefPtr<CSSStyleDeclaration> style = frame->document()->createCSSStyleDeclaration();
@@ -478,7 +478,6 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagIgnoreGrammar:
         case ContextMenuItemTagSpellingMenu:
         case ContextMenuItemTagCheckSpellingWhileTyping:
-        case ContextMenuItemTagCheckGrammarWithSpelling:
         case ContextMenuItemTagFontMenu:
         case ContextMenuItemTagShowFonts:
         case ContextMenuItemTagStyles:
