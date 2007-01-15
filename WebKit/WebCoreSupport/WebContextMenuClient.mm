@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,22 +57,18 @@ void WebContextMenuClient::contextMenuDestroyed()
     delete this;
 }
 
-NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* defaultMenu)
-{
-    id delegate = [m_webView UIDelegate];
-    if ([delegate respondsToSelector:@selector(webView:contextMenuItemsForElement:defaultMenuItems:)]) {
-        NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:defaultMenu->hitTestResult()] autorelease];
-        NSMutableArray *defaultMenuItems = defaultMenu->platformDescription();
-        NSMutableArray *newMenuItems = [[delegate webView:m_webView contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems] mutableCopy];
-        
-        // Versions of Mail compiled with older WebKits will end up without three context menu items, 
-        // though with the separators between them. Here we check for that problem and reinsert the 
-        // three missing items. This shouldn't affect any clients other than Mail since the tags for 
-        // the three items were not public API. We can remove this code when we no longer support 
-        // previously-built versions of Mail on Tiger. See 4498606 for more details.
-        if ([newMenuItems count] &&
-            ([[defaultMenuItems objectAtIndex:0] tag] == WebMenuItemTagSearchInSpotlight) &&
-            ([[newMenuItems objectAtIndex:0] isSeparatorItem])) {
+static NSMutableArray* fixMenusFromOldApps(NSMutableArray *newMenuItems, NSMutableArray *defaultMenuItems)
+{    
+    // The WebMenuItemTag enum has changed since Tiger, so clients built against Tiger WebKit might reference incorrect values for tags.
+    // Here we fix up Tiger Mail and Tiger Safari.
+    
+    if ([newMenuItems count] && [[newMenuItems objectAtIndex:0] isSeparatorItem]) {
+        if ([[newMenuItems objectAtIndex:1] isSeparatorItem]) {
+            // Versions of Mail compiled with older WebKits will end up without three context menu items, 
+            // though with the separators between them. Here we check for that problem and reinsert the 
+            // three missing items. This shouldn't affect any clients other than Mail since the tags for 
+            // the three items were not public API. We can remove this code when we no longer support 
+            // previously-built versions of Mail on Tiger. See 4498606 for more details.
             ASSERT([[newMenuItems objectAtIndex:1] isSeparatorItem]);
             ASSERT([[defaultMenuItems objectAtIndex:1] tag] == WebMenuItemTagSearchWeb);
             ASSERT([[defaultMenuItems objectAtIndex:2] isSeparatorItem]);
@@ -81,11 +77,35 @@ NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu*
             [newMenuItems insertObject:[defaultMenuItems objectAtIndex:0] atIndex:0];
             [newMenuItems insertObject:[defaultMenuItems objectAtIndex:1] atIndex:1];
             [newMenuItems insertObject:[defaultMenuItems objectAtIndex:3] atIndex:3];
+            
+            return [newMenuItems autorelease];
         }
         
-        return [newMenuItems autorelease];
+        unsigned defaultItemsCount = [defaultMenuItems count];
+        for (unsigned i = 0; i < defaultItemsCount; ++i)
+            if ([[defaultMenuItems objectAtIndex:i] tag] == WebMenuItemTagSpellingMenu) {
+                // Tiger Safari doesn't realize we're popping up an editing menu.
+                // http://bugs.webkit.org/show_bug.cgi?id=12134 has details.
+                [newMenuItems release];
+                return defaultMenuItems;
+            }
     }
-    return nil;
+    
+    // Nothing needs to be done
+    return [newMenuItems autorelease];
+}
+
+NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* defaultMenu)
+{
+    id delegate = [m_webView UIDelegate];
+    if (![delegate respondsToSelector:@selector(webView:contextMenuItemsForElement:defaultMenuItems:)])
+        return nil;
+    
+    NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:defaultMenu->hitTestResult()] autorelease];
+    NSMutableArray *defaultMenuItems = defaultMenu->platformDescription();
+    NSMutableArray *newMenuItems = [[delegate webView:m_webView contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems] mutableCopy];
+
+    return fixMenusFromOldApps(newMenuItems, defaultMenuItems);
 }
 
 void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const ContextMenu* parentMenu)

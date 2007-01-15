@@ -187,7 +187,7 @@ void ContextMenu::populate()
     ContextMenuItem ReloadItem(ActionType, ContextMenuItemTagReload, contextMenuItemTagReload());
     ContextMenuItem OpenFrameItem(ActionType, ContextMenuItemTagOpenFrameInNewWindow, 
         contextMenuItemTagOpenFrameInNewWindow());
-    ContextMenuItem NowGuessesItem(ActionType, ContextMenuItemTagNoGuessesFound, 
+    ContextMenuItem NoGuessesItem(ActionType, ContextMenuItemTagNoGuessesFound, 
         contextMenuItemTagNoGuessesFound());
     ContextMenuItem IgnoreSpellingItem(ActionType, ContextMenuItemTagIgnoreSpelling, 
         contextMenuItemTagIgnoreSpelling());
@@ -274,7 +274,7 @@ void ContextMenu::populate()
                     // If there's bad grammar but no suggestions (e.g., repeated word), just leave off the suggestions
                     // list and trailing separator rather than adding a "No Guesses Found" item (matches AppKit)
                     if (misspelling) {
-                        appendItem(NowGuessesItem);
+                        appendItem(NoGuessesItem);
                         appendItem(*separatorItem());
                     }
                 } else {
@@ -445,7 +445,49 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
             shouldEnable = frame->editor()->canEdit();
             break;
 #endif
-        default:
+        case ContextMenuItemTagNoGuessesFound:
+            shouldEnable = false;
+            break;
+        case ContextMenuItemTagNoAction:
+        case ContextMenuItemTagOpenLinkInNewWindow:
+        case ContextMenuItemTagDownloadLinkToDisk:
+        case ContextMenuItemTagCopyLinkToClipboard:
+        case ContextMenuItemTagOpenImageInNewWindow:
+        case ContextMenuItemTagDownloadImageToDisk:
+        case ContextMenuItemTagCopyImageToClipboard:
+        case ContextMenuItemTagOpenFrameInNewWindow:
+        case ContextMenuItemTagGoBack:
+        case ContextMenuItemTagGoForward:
+        case ContextMenuItemTagStop:
+        case ContextMenuItemTagReload:
+        case ContextMenuItemTagSpellingGuess:
+        case ContextMenuItemTagOther:
+        case ContextMenuItemTagSearchInSpotlight:
+        case ContextMenuItemTagSearchWeb:
+        case ContextMenuItemTagOpenWithDefaultApplication:
+        case ContextMenuItemPDFActualSize:
+        case ContextMenuItemPDFZoomIn:
+        case ContextMenuItemPDFZoomOut:
+        case ContextMenuItemPDFAutoSize:
+        case ContextMenuItemPDFSinglePage:
+        case ContextMenuItemPDFFacingPages:
+        case ContextMenuItemPDFContinuous:
+        case ContextMenuItemPDFNextPage:
+        case ContextMenuItemPDFPreviousPage:
+        case ContextMenuItemTagOpenLink:
+        case ContextMenuItemTagIgnoreGrammar:
+        case ContextMenuItemTagSpellingMenu:
+        case ContextMenuItemTagCheckSpellingWhileTyping:
+        case ContextMenuItemTagCheckGrammarWithSpelling:
+        case ContextMenuItemTagFontMenu:
+        case ContextMenuItemTagShowFonts:
+        case ContextMenuItemTagStyles:
+        case ContextMenuItemTagShowColors:
+        case ContextMenuItemTagSpeechMenu:
+        case ContextMenuItemTagStartSpeaking:
+        case ContextMenuItemTagStopSpeaking:
+        case ContextMenuItemTagWritingDirectionMenu:
+        case ContextMenuItemBaseApplicationTag:
             break;
     }
 

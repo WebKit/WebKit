@@ -1,3 +1,18 @@
+2007-01-15  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Darin.
+
+        Fix: http://bugs.webkit.org/show_bug.cgi?id=12134
+        REGRESSION: Assertion failure and crash when right clicking selection
+        in forms
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (fixMenusFromOldApps): Static helper to fix up menus from applications
+        compiled against Tiger WebKit.
+        (WebContextMenuClient::getCustomMenuFromDefaultItems): Call helper to
+        fix menus.
+        * WebView/WebUIDelegatePrivate.h: Fixed typo.
+
 2007-01-14  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin.

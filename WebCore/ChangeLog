@@ -1,3 +1,14 @@
+2007-01-15  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Darin.
+
+        Small context menu fixes.
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate): Fix typo.
+        (WebCore::ContextMenu::checkOrEnableIfNeeded): Disabled "No Guesses
+        Found", and added all enum values explicitly.
+
 2007-01-15  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
