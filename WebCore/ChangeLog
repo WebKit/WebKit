@@ -1,3 +1,9 @@
+2007-01-15  Lars Knoll <lars@trolltech.com>
+
+        Fix the Qt build
+
+        * WebCore.pro:
+
 2007-01-15  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

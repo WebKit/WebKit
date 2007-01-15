@@ -494,6 +494,7 @@ SOURCES += \
     loader/NavigationAction.cpp \
     loader/NetscapePlugInStreamLoader.cpp \
     loader/PluginDocument.cpp \
+    loader/ProgressTracker.cpp \
     loader/Request.cpp \
     loader/ResourceLoader.cpp \
     loader/SubresourceLoader.cpp \
