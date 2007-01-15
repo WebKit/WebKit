@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2006 Mark Rowe.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -124,22 +123,18 @@ int main(int argc, char *argv[])
     NSString *pathToEnablerLib = [[NSBundle mainBundle] pathForResource:@"WebKitNightlyEnabler" ofType:@"dylib"];
     
     NSMutableArray *arguments = [NSMutableArray arrayWithObjects:executablePath, @"-WebKitDeveloperExtras", @"YES", @"-WebKitScriptDebuggerEnabled", @"YES", nil];
+    NSMutableDictionary *environment = [NSDictionary dictionaryWithObjectsAndKeys:frameworkPath, @"DYLD_FRAMEWORK_PATH", @"YES", @"WEBKIT_UNSET_DYLD_FRAMEWORK_PATH",
+                                                                                  pathToEnablerLib, @"DYLD_INSERT_LIBRARIES", [[NSBundle mainBundle] executablePath], @"WebKitAppPath", nil];
     addStartPageToArgumentsIfNeeded(arguments);
 
     while (*++argv)
         [arguments addObject:[NSString stringWithUTF8String:*argv]];
 
-    myExecve(executablePath,
-             arguments,
-             [NSDictionary dictionaryWithObjectsAndKeys:frameworkPath, @"DYLD_FRAMEWORK_PATH", 
-             @"YES", @"WEBKIT_UNSET_DYLD_FRAMEWORK_PATH", 
-             pathToEnablerLib, @"DYLD_INSERT_LIBRARIES", 
-             [[NSBundle mainBundle] executablePath], @"CFProcessPath",
-              nil]);
+    myExecve(executablePath, arguments, environment);
 
-     char *error = strerror(errno);
-     NSString *errorMessage = [NSString stringWithFormat:@"Launching Safari at %@ failed with the error '%s' (%d)", [(NSURL *)safariURL  path], error, errno];
-     displayErrorAndQuit(@"Unable to launch Safari", errorMessage);
+    char *error = strerror(errno);
+    NSString *errorMessage = [NSString stringWithFormat:@"Launching Safari at %@ failed with the error '%s' (%d)", [(NSURL *)safariURL path], error, errno];
+    displayErrorAndQuit(@"Unable to launch Safari", errorMessage);
 
     [pool release];
     return 0;

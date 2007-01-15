@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2006 Graham Dennis.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,14 +28,8 @@
  */
 
 #import <Cocoa/Cocoa.h>
-#include <mach-o/dyld.h>
-#include <dlfcn.h>
-#include <mach-o/loader.h>
-#include <mach-o/nlist.h>
-#include <string.h>
 
-static void cleanUpAfterOurselves(void) __attribute__ ((constructor));
-static void *symbol_lookup(char *symbol);
+static void enableWebKitNightlyBehaviour() __attribute__ ((constructor));
 
 static NSString *WKNERunState = @"WKNERunState";
 static NSString *WKNEShouldMonitorShutdowns = @"WKNEShouldMonitorShutdowns";
@@ -103,16 +97,32 @@ static void myApplicationWillTerminate(CFNotificationCenterRef center, void *obs
     [userDefaults synchronize];
 }
 
-void cleanUpAfterOurselves(void)
+extern char **_CFGetProcessPath() __attribute__((weak));
+
+static void poseAsWebKitApp()
 {
-    char **args = *(char***)_NSGetArgv();
-    char **procPath = symbol_lookup("___CFProcessPath");
-    char *procPathBackup = *procPath;
-    *procPath = args[0];
+    char *webKitAppPath = getenv("WebKitAppPath");
+    if (!webKitAppPath || !_CFGetProcessPath)
+        return;
+
+    // Set up the main bundle early so it points at Safari.app
     CFBundleGetMainBundle();
-    *procPath = procPathBackup;
-    unsetenv("DYLD_INSERT_LIBRARIES");
+
+    // Fiddle with CoreFoundation to have it pick up the executable path as being within WebKit.app
+    char **processPath = _CFGetProcessPath();
+    *processPath = NULL;
+    setenv("CFProcessPath", webKitAppPath, 1);
+    _CFGetProcessPath();
+
+    // Clean up
     unsetenv("CFProcessPath");
+    unsetenv("WebKitAppPath");
+}
+
+static void enableWebKitNightlyBehaviour()
+{
+    unsetenv("DYLD_INSERT_LIBRARIES");
+    poseAsWebKitApp();
 
     extensionPaths = [[NSSet alloc] initWithObjects:@"~/Library/InputManagers/", @"/Library/InputManagers/",
                                                     @"~/Library/Application Support/SIMBL/Plugins/", @"/Library/Application Support/SIMBL/Plugins/",
@@ -153,113 +163,3 @@ void cleanUpAfterOurselves(void)
                                     NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
     [pool release];
 }
-
-#if __LP64__
-#define LC_SEGMENT_COMMAND LC_SEGMENT_64
-#define macho_header mach_header_64
-#define macho_segment_command segment_command_64
-#define macho_section section_64
-#define getsectdatafromheader getsectdatafromheader_64
-#define macho_nlist nlist_64
-#else
-#define LC_SEGMENT_COMMAND LC_SEGMENT
-#define macho_header mach_header
-#define macho_segment_command segment_command
-#define macho_section section
-#define macho_nlist nlist
-#endif
-
-static void *GDSymbolLookup(const struct macho_header *header, const char *symbol);
-
-static void *symbol_lookup(char *symbol)
-{
-    int i;
-    for (i = 0; i < _dyld_image_count(); i++) {
-        void *symbolResult = GDSymbolLookup((const struct macho_header*)_dyld_get_image_header(i), symbol);
-        if (symbolResult)
-            return symbolResult;
-    }
-    return NULL;
-}
-
-static void *GDSymbolLookup(const struct macho_header *header, const char *symbol)
-{
-    if (!header || !symbol)
-        return NULL;
-
-    if (header->magic != MH_MAGIC && header->magic != MH_MAGIC_64)
-        return NULL;
-
-    uint32_t currCommand;
-    const struct load_command *loadCommand = (const struct load_command *)( ((void *)header) + sizeof(struct macho_header));
-    const struct macho_segment_command *segCommand;
-
-    const struct symtab_command *symtabCommand = NULL;
-    const struct dysymtab_command *dysymtabCommand = NULL;
-    const struct macho_segment_command *textSegment = NULL;
-    const struct macho_segment_command *linkEditSegment = NULL;
-
-    for (currCommand = 0; currCommand < header->ncmds; currCommand++) {
-        switch (loadCommand->cmd) {
-            case LC_SEGMENT_COMMAND:
-                segCommand = (const struct macho_segment_command *)loadCommand;
-                if (!strcmp(segCommand->segname, "__TEXT"))
-                    textSegment = segCommand;
-                else if (!strcmp(segCommand->segname, "__LINKEDIT"))
-                    linkEditSegment = segCommand;
-                    break;
-
-            case LC_SYMTAB:
-                symtabCommand = (const struct symtab_command *)loadCommand;
-                break;
-
-            case LC_DYSYMTAB:
-                dysymtabCommand = (const struct dysymtab_command *)loadCommand;
-                break;
-        }
-
-        loadCommand = (const struct load_command *)(((void*)loadCommand) + loadCommand->cmdsize);
-    }
-    if (!textSegment || !linkEditSegment || !symtabCommand || !dysymtabCommand)
-        return NULL;
-
-    typedef enum { Start = 0, LocalSymbols, ExternalSymbols, Done } SymbolSearchState;
-    uint32_t currentSymbolIndex;
-    uint32_t maximumSymbolIndex;
-    SymbolSearchState state;
-
-    for (state = Start + 1; state < Done; state++) {
-        switch (state) {
-            case LocalSymbols:
-                currentSymbolIndex = dysymtabCommand->ilocalsym;
-                maximumSymbolIndex = dysymtabCommand->ilocalsym + dysymtabCommand->nlocalsym;
-                break;
-
-            case ExternalSymbols:
-                currentSymbolIndex = dysymtabCommand->iextdefsym;
-                maximumSymbolIndex = dysymtabCommand->nextdefsym;
-                break;
-
-            default:
-                return NULL;
-        }
-        for (; currentSymbolIndex < maximumSymbolIndex; currentSymbolIndex++) {
-            const struct macho_nlist *symbolTableEntry;
-            symbolTableEntry = (const struct macho_nlist *)(currentSymbolIndex*sizeof(struct macho_nlist)
-                                                            + (ptrdiff_t)header + symtabCommand->symoff
-                                                            + linkEditSegment->vmaddr - linkEditSegment->fileoff
-                                                            - textSegment->vmaddr);
-            int32_t stringTableIndex = symbolTableEntry->n_un.n_strx;
-            if (stringTableIndex < 0)
-                continue;
-            const char *stringTableEntry = (const char*)(stringTableIndex + (ptrdiff_t)header + symtabCommand->stroff
-                                                         + linkEditSegment->vmaddr - linkEditSegment->fileoff
-                                                         - textSegment->vmaddr);
-            if (!strcmp(symbol, stringTableEntry))
-                return ((void*)header) - textSegment->vmaddr + symbolTableEntry->n_value;
-        }
-        state++;
-    }
-    return NULL;
-}
-

@@ -1,3 +1,19 @@
+2007-01-14  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/4908909> Need to create Leopard nightly build
+
+        * WebKitLauncher/WebKitLauncher.xcodeproj/project.pbxproj: Always use the 10.4 Universal SDK.  The disk images don't mount pre-10.4 so we aren't losing anything here.
+        * WebKitLauncher/WebKitNightlyEnabler.m:
+        (poseAsWebKitApp): Simplify CoreFoundation-related hackery by using _CFGetProcessPath instead of walking the mach-o symbol tables.  The smaller timeframe where the
+        CFProcessPath environment variable is set allows this to work correctly on Leopard where the old code failed.
+        (enableWebKitNightlyBehaviour):
+        * WebKitLauncher/main.m:
+        (main): Pass executable path as WebKitAppPath rather than CFProcessPath to prevent it being picked up too early by CoreFoundation.
+        * Drosera/launcher.m:
+        (main): Ditto
+
 2007-01-12  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack
