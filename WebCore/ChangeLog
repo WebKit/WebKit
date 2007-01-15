@@ -1,3 +1,15 @@
+2007-01-15  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12069
+        Hit detection fails under some viewbox constraints
+
+        Do not take viewBox into account when hit testing svg container.
+
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::nodeAtPoint):
+
 2007-01-15  David Hyatt  <hyatt@apple.com>
 
         Fix  for 12275, negative margins confuse page breaks.

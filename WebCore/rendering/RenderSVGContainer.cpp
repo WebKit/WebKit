@@ -410,9 +410,10 @@ bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResul
         // Check if we need to do anything at all.
         IntRect overflowBox = overflowRect(false);
         overflowBox.move(tx, ty);
-        AffineTransform totalTransform = absoluteTransform();
+        AffineTransform ctm = RenderContainer::absoluteTransform();
+        ctm.translate(viewport().x(), viewport().y());
         double localX, localY;
-        totalTransform.inverse().map(_x + _tx, _y + _ty, &localX, &localY);
+        ctm.inverse().map(_x + _tx, _y + _ty, &localX, &localY);
         if (!overflowBox.contains((int)localX, (int)localY))
             return false;
     }

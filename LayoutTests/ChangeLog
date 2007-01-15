@@ -1,3 +1,16 @@
+2007-01-15  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=12069
+        Hit detection fails under some viewbox constraints
+
+        * svg/custom/viewBox-hit-expected.checksum: Added.
+        * svg/custom/viewBox-hit-expected.png: Added.
+        * svg/custom/viewBox-hit-expected.txt: Added.
+        * svg/custom/viewBox-hit.svg: Added.
+
 2007-01-15  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by mjs.
