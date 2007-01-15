@@ -20,8 +20,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef CSSBorderImageValue_H
-#define CSSBorderImageValue_H
+#ifndef CSSBorderImageValue_h
+#define CSSBorderImageValue_h
 
 #include "CSSValue.h"
 #include <wtf/PassRefPtr.h>
@@ -32,8 +32,7 @@ namespace WebCore {
 class CSSImageValue;
 class RectImpl;
 
-class CSSBorderImageValue : public CSSValue
-{
+class CSSBorderImageValue : public CSSValue {
 public:
     CSSBorderImageValue();
     CSSBorderImageValue(PassRefPtr<CSSImageValue>, PassRefPtr<RectImpl>, int horizontalRule, int verticalRule);
@@ -47,12 +46,12 @@ public:
     // These four values are used to make "cuts" in the image.  They can be numbers
     // or percentages.
     RefPtr<RectImpl> m_imageSliceRect;
-    
+
     // Values for how to handle the scaling/stretching/tiling of the image slices.
     int m_horizontalSizeRule; // Rule for how to adjust the widths of the top/middle/bottom
     int m_verticalSizeRule; // Rule for how to adjust the heights of the left/middle/right
 };
 
-} // namespace
+} // namespace WebCore
 
-#endif
+#endif // CSSBorderImageValue_h

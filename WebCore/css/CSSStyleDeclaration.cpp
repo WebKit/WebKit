@@ -19,6 +19,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "CSSStyleDeclaration.h"
 
@@ -52,12 +53,12 @@ static int propertyID(const String& s)
         buffer[i] = c;
     }
 
-    int id = getPropertyID(buffer, len);
+    int propID = getPropertyID(buffer, len);
 #ifdef SVG_SUPPORT
-    if (id == 0)
-        id = SVG::getSVGCSSPropertyID(buffer, len);
+    if (!propID)
+        propID = SVG::getSVGCSSPropertyID(buffer, len);
 #endif
-    return id;
+    return propID;
 }
 
 CSSStyleDeclaration::CSSStyleDeclaration(CSSRule* parent)
@@ -86,7 +87,7 @@ String CSSStyleDeclaration::getPropertyValue(const String &propertyName)
     return getPropertyValue(propID);
 }
 
-String CSSStyleDeclaration::getPropertyPriority(const String &propertyName)
+String CSSStyleDeclaration::getPropertyPriority(const String& propertyName)
 {
     int propID = propertyID(propertyName);
     if (!propID)
@@ -94,7 +95,7 @@ String CSSStyleDeclaration::getPropertyPriority(const String &propertyName)
     return getPropertyPriority(propID) ? "important" : "";
 }
 
-String CSSStyleDeclaration::getPropertyShorthand(const String &propertyName)
+String CSSStyleDeclaration::getPropertyShorthand(const String& propertyName)
 {
     int propID = propertyID(propertyName);
     if (!propID)
@@ -105,7 +106,7 @@ String CSSStyleDeclaration::getPropertyShorthand(const String &propertyName)
     return getPropertyName(shorthandID);
 }
 
-bool CSSStyleDeclaration::isPropertyImplicit(const String &propertyName)
+bool CSSStyleDeclaration::isPropertyImplicit(const String& propertyName)
 {
     int propID = propertyID(propertyName);
     if (!propID)
@@ -125,7 +126,8 @@ void CSSStyleDeclaration::setProperty(const String& propertyName, const String& 
 void CSSStyleDeclaration::setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode& ec)
 {
     int propID = propertyID(propertyName);
-    if (!propID) // set exception?
+    if (!propID)
+        // FIXME: set exception?
         return;
     bool important = priority.find("important", 0, false) != -1;
     setProperty(propID, value, important, ec);
@@ -139,17 +141,17 @@ String CSSStyleDeclaration::removeProperty(const String& propertyName, Exception
     return removeProperty(propID, ec);
 }
 
-bool CSSStyleDeclaration::isPropertyName(const String &propertyName)
+bool CSSStyleDeclaration::isPropertyName(const String& propertyName)
 {
     return propertyID(propertyName);
 }
 
-CSSRule *CSSStyleDeclaration::parentRule() const
+CSSRule* CSSStyleDeclaration::parentRule() const
 {
-    return (parent() && parent()->isRule()) ? static_cast<CSSRule *>(parent()) : 0;
+    return (parent() && parent()->isRule()) ? static_cast<CSSRule*>(parent()) : 0;
 }
 
-void CSSStyleDeclaration::diff(CSSMutableStyleDeclaration *style) const
+void CSSStyleDeclaration::diff(CSSMutableStyleDeclaration* style) const
 {
     if (!style)
         return;
@@ -167,7 +169,7 @@ void CSSStyleDeclaration::diff(CSSMutableStyleDeclaration *style) const
         style->removeProperty(properties[i]);
 }
 
-PassRefPtr<CSSMutableStyleDeclaration> CSSStyleDeclaration::copyPropertiesInSet(const int *set, unsigned length) const
+PassRefPtr<CSSMutableStyleDeclaration> CSSStyleDeclaration::copyPropertiesInSet(const int* set, unsigned length) const
 {
     DeprecatedValueList<CSSProperty> list;
     for (unsigned i = 0; i < length; i++) {
@@ -178,4 +180,4 @@ PassRefPtr<CSSMutableStyleDeclaration> CSSStyleDeclaration::copyPropertiesInSet(
     return new CSSMutableStyleDeclaration(0, list);
 }
 
-}
+} // namespace WebCore

@@ -20,6 +20,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "CSSRuleList.h"
 
@@ -32,12 +33,12 @@ CSSRuleList::CSSRuleList()
 {
 }
 
-CSSRuleList::CSSRuleList(StyleList* lst, bool omitCharsetRules)
+CSSRuleList::CSSRuleList(StyleList* list, bool omitCharsetRules)
 {
-    if (lst) {
-        unsigned len = lst->length();
+    if (list) {
+        unsigned len = list->length();
         for (unsigned i = 0; i < len; ++i) {
-            StyleBase* style = lst->item(i);
+            StyleBase* style = list->item(i);
             if (style->isRule() && !(omitCharsetRules && style->isCharsetRule()))
                 append(static_cast<CSSRule*>(style));
         }
@@ -57,7 +58,7 @@ void CSSRuleList::deleteRule(unsigned index)
     if (rule)
         rule->deref();
     else
-        ; // ### Throw INDEX_SIZE_ERR exception here (TODO)
+        ; // FIXME: Throw INDEX_SIZE_ERR exception here
 }
 
 void CSSRuleList::append(CSSRule* rule)
@@ -72,8 +73,8 @@ unsigned CSSRuleList::insertRule(CSSRule* rule, unsigned index)
         return index;
     }
 
-    // ### Should throw INDEX_SIZE_ERR exception instead! (TODO)
+    // FIXME: Should throw INDEX_SIZE_ERR exception instead!
     return 0;
 }
 
-}
+} // namespace WebCore

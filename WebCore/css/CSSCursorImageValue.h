@@ -19,18 +19,17 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef CSSCursorImageValue_H
-#define CSSCursorImageValue_H
+#ifndef CSSCursorImageValue_h
+#define CSSCursorImageValue_h
 
-#include "IntPoint.h"
 #include "CSSImageValue.h"
+#include "IntPoint.h"
 
 namespace WebCore {
 
-class CSSCursorImageValue : public CSSImageValue
-{
+class CSSCursorImageValue : public CSSImageValue {
 public:
-    CSSCursorImageValue(const String& url, const IntPoint&, StyleBase*);
+    CSSCursorImageValue(const String& url, const IntPoint& hotspot, StyleBase*);
     virtual ~CSSCursorImageValue();
 
     IntPoint hotspot() const { return m_hotspot; }
@@ -38,6 +37,7 @@ public:
 protected:
     IntPoint m_hotspot;
 };
-} // namespace
 
-#endif
+} // namespace WebCore
+
+#endif // CSSCursorImageValue_h

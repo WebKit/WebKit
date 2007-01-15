@@ -1,3 +1,139 @@
+2007-01-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin and then by Mitz.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=12228
+        Cleanup assorted CSS classes
+
+        * css/CSSBorderImageValue.cpp:
+        (WebCore::CSSBorderImageValue::CSSBorderImageValue):
+        (WebCore::CSSBorderImageValue::cssText):
+        * css/CSSBorderImageValue.h:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForLength):
+        (WebCore::valueForBorderStyle):
+        (WebCore::valueForTextAlign):
+        (WebCore::valueForShadow):
+        (WebCore::getPositionOffsetValue):
+        (WebCore::CSSComputedStyleDeclaration::cssText):
+        (WebCore::primitiveValueFromLength):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyPriority):
+        (WebCore::CSSComputedStyleDeclaration::removeProperty):
+        (WebCore::CSSComputedStyleDeclaration::setProperty):
+        (WebCore::CSSComputedStyleDeclaration::length):
+        (WebCore::CSSComputedStyleDeclaration::item):
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::CSSCursorImageValue):
+        * css/CSSCursorImageValue.h:
+        * css/CSSGrammar.y:
+        * css/CSSImageValue.cpp:
+        * css/CSSImageValue.h:
+        * css/CSSInheritedValue.cpp:
+        * css/CSSInheritedValue.h:
+        * css/CSSInitialValue.cpp:
+        * css/CSSInitialValue.h:
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::CSSMutableStyleDeclaration):
+        (WebCore::CSSMutableStyleDeclaration::operator=):
+        (WebCore::CSSMutableStyleDeclaration::getPropertyValue):
+        (WebCore::CSSMutableStyleDeclaration::get4Values):
+        (WebCore::CSSMutableStyleDeclaration::getShorthandValue):
+        (WebCore::CSSMutableStyleDeclaration::getPropertyCSSValue):
+        (WebCore::CSSMutableStyleDeclaration::removeProperty):
+        (WebCore::CSSMutableStyleDeclaration::setChanged):
+        (WebCore::CSSMutableStyleDeclaration::getPropertyPriority):
+        (WebCore::CSSMutableStyleDeclaration::getPropertyShorthand):
+        (WebCore::CSSMutableStyleDeclaration::isPropertyImplicit):
+        (WebCore::CSSMutableStyleDeclaration::setProperty):
+        (WebCore::CSSMutableStyleDeclaration::setImageProperty):
+        (WebCore::CSSMutableStyleDeclaration::parseDeclaration):
+        (WebCore::CSSMutableStyleDeclaration::addParsedProperties):
+        (WebCore::CSSMutableStyleDeclaration::setLengthProperty):
+        (WebCore::CSSMutableStyleDeclaration::cssText):
+        (WebCore::CSSMutableStyleDeclaration::merge):
+        (WebCore::CSSMutableStyleDeclaration::removePropertiesInSet):
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore::CSSMutableStyleDeclaration::setProperty):
+        (WebCore::CSSMutableStyleDeclaration::removeProperty):
+        * css/CSSNamespace.h:
+        (WebCore::CSSNamespace::CSSNamespace):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isCSSTokenizerIdentifier):
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::computeLengthInt):
+        (WebCore::CSSPrimitiveValue::computeLengthIntForLength):
+        (WebCore::CSSPrimitiveValue::computeLengthShort):
+        (WebCore::CSSPrimitiveValue::computeLengthFloat):
+        (WebCore::CSSPrimitiveValue::setFloatValue):
+        (WebCore::scaleFactorForConversion):
+        (WebCore::CSSPrimitiveValue::getFloatValue):
+        (WebCore::CSSPrimitiveValue::setStringValue):
+        (WebCore::CSSPrimitiveValue::getStringValue):
+        (WebCore::CSSPrimitiveValue::parseString):
+        (WebCore::CSSPrimitiveValue::getIdent):
+        (WebCore::CSSPrimitiveValue::cssText):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::getCounterValue):
+        (WebCore::CSSPrimitiveValue::getRectValue):
+        (WebCore::CSSPrimitiveValue::getRGBColorValue):
+        (WebCore::CSSPrimitiveValue::getPairValue):
+        (WebCore::CSSPrimitiveValue::getDashboardRegionValue):
+        * css/CSSProperty.cpp:
+        (WebCore::operator==):
+        * css/CSSProperty.h:
+        (WebCore::CSSProperty::operator=):
+        * css/CSSQuirkPrimitiveValue.h:
+        (WebCore::CSSQuirkPrimitiveValue::CSSQuirkPrimitiveValue):
+        * css/CSSRuleList.cpp:
+        (WebCore::CSSRuleList::CSSRuleList):
+        (WebCore::CSSRuleList::deleteRule):
+        (WebCore::CSSRuleList::insertRule):
+        * css/CSSRuleList.h:
+        (WebCore::CSSRuleList::item):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::print):
+        (WebCore::CSSSelector::specificity):
+        (WebCore::CSSSelector::extractPseudoType):
+        (WebCore::CSSSelector::operator==):
+        (WebCore::CSSSelector::selectorText):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::CSSSelector):
+        (WebCore::CSSSelector::~CSSSelector):
+        (WebCore::CSSSelector::append):
+        (WebCore::CSSSelector::next):
+        (WebCore::CSSSelector::pseudoType):
+        (WebCore::CSSSelector::hasTag):
+        (WebCore::CSSSelector::hasAttribute):
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::propertyID):
+        (WebCore::CSSStyleDeclaration::getPropertyPriority):
+        (WebCore::CSSStyleDeclaration::getPropertyShorthand):
+        (WebCore::CSSStyleDeclaration::isPropertyImplicit):
+        (WebCore::CSSStyleDeclaration::setProperty):
+        (WebCore::CSSStyleDeclaration::isPropertyName):
+        (WebCore::CSSStyleDeclaration::parentRule):
+        (WebCore::CSSStyleDeclaration::diff):
+        (WebCore::CSSStyleDeclaration::copyPropertiesInSet):
+        * css/CSSStyleDeclaration.h:
+        * css/Counter.h:
+        (WebCore::Counter::Counter):
+        (WebCore::Counter::listStyleNumber):
+        * css/csshelper.cpp:
+        (WebCore::parseURL):
+        * css/csshelper.h:
+        * css/cssparser.h:
+        (WebCore::domString):
+        (WebCore::atomicString):
+        (WebCore::CSSParser::operator|):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::matchRulesForList):
+        (WebCore::CSSStyleSelector::checkSelector):
+        (WebCore::CSSStyleSelector::checkOneSelector):
+        (WebCore::CSSRuleSet::addRule):
+
 2007-01-14  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adam.

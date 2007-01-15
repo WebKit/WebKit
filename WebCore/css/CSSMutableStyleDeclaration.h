@@ -20,11 +20,11 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef CSSMutableStyleDeclaration_H
-#define CSSMutableStyleDeclaration_H
+#ifndef CSSMutableStyleDeclaration_h
+#define CSSMutableStyleDeclaration_h
 
 #include "CSSStyleDeclaration.h"
-#include "CSSPrimitiveValue.h" // for CSSPrimitiveValue::UnitTypes
+#include "CSSPrimitiveValue.h"
 #include "DeprecatedValueList.h"
 #include "PlatformString.h"
 
@@ -33,15 +33,14 @@ namespace WebCore {
 class CSSProperty;
 class Node;
 
-class CSSMutableStyleDeclaration : public CSSStyleDeclaration
-{
+class CSSMutableStyleDeclaration : public CSSStyleDeclaration {
 public:
     CSSMutableStyleDeclaration();
     CSSMutableStyleDeclaration(CSSRule* parentRule);
     CSSMutableStyleDeclaration(CSSRule* parentRule, const DeprecatedValueList<CSSProperty>&);
-    CSSMutableStyleDeclaration(CSSRule* parentRule, const CSSProperty * const *, int numProperties);
+    CSSMutableStyleDeclaration(CSSRule* parentRule, const CSSProperty* const *, int numProperties);
 
-    CSSMutableStyleDeclaration &operator=(const CSSMutableStyleDeclaration &);
+    CSSMutableStyleDeclaration& operator=(const CSSMutableStyleDeclaration&);
 
     void setNode(Node* node) { m_node = node; }
 
@@ -68,11 +67,17 @@ public:
     bool setProperty(int propertyID, int value, bool important = false, bool notifyChanged = true);
     bool setProperty(int propertyID, const String& value, bool important, bool notifyChanged, ExceptionCode&);
     bool setProperty(int propertyId, const String& value, bool important = false, bool notifyChanged = true)
-        { ExceptionCode ec; return setProperty(propertyId, value, important, notifyChanged, ec); }
+    { 
+        ExceptionCode ec;
+        return setProperty(propertyId, value, important, notifyChanged, ec);
+    }
 
     String removeProperty(int propertyID, bool notifyChanged, ExceptionCode&);
     String removeProperty(int propertyID, bool notifyChanged = true)
-        { ExceptionCode ec; return removeProperty(propertyID, notifyChanged, ec); }
+    {
+        ExceptionCode ec;
+        return removeProperty(propertyID, notifyChanged, ec);
+    }
 
     void clear();
 
@@ -81,29 +86,29 @@ public:
     // setLengthProperty treats integers as pixels! (Needed for conversion of HTML attributes.)
     void setLengthProperty(int propertyId, const String& value, bool important, bool multiLength = false);
     void setStringProperty(int propertyId, const String& value, CSSPrimitiveValue::UnitTypes, bool important = false); // parsed string value
-    void setImageProperty(int propertyId, const String& URL, bool important = false);
+    void setImageProperty(int propertyId, const String& url, bool important = false);
  
     // The following parses an entire new style declaration.
     void parseDeclaration(const String& styleDeclaration);
 
     // Besides adding the properties, this also removes any existing properties with these IDs.
     // It does no notification since it's called by the parser.
-    void addParsedProperties(const CSSProperty * const *, int numProperties);
+    void addParsedProperties(const CSSProperty* const *, int numProperties);
  
     PassRefPtr<CSSMutableStyleDeclaration> copyBlockProperties() const;
     void removeBlockProperties();
     void removePropertiesInSet(const int* set, unsigned length, bool notifyChanged = true);
 
     void merge(CSSMutableStyleDeclaration*, bool argOverridesOnConflict = true);
- 
+
 private:
-    String getShortHandValue(const int* properties, int number) const;
+    String getShorthandValue(const int* properties, int number) const;
     String get4Values(const int* properties) const;
  
     DeprecatedValueList<CSSProperty> m_values;
     Node* m_node;
 };
 
-} // namespace
+} // namespace WebCore
 
-#endif
+#endif // CSSMutableStyleDeclaration_h

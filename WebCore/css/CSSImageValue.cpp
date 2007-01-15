@@ -19,12 +19,13 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "CSSImageValue.h"
 
+#include "CSSValueKeywords.h"
 #include "Cache.h"
 #include "CachedImage.h"
-#include "CSSValueKeywords.h"
 #include "DocLoader.h"
 
 namespace WebCore {
@@ -67,4 +68,4 @@ CachedImage* CSSImageValue::image(DocLoader* loader)
     return m_image;
 }
 
-}
+} // namespace WebCore

@@ -42,7 +42,7 @@ String parseURL(const String& url)
         ++o;
         --l;
     }
-    while (l > 0 && (*i)[o+l-1] <= ' ')
+    while (l > 0 && (*i)[o + l - 1] <= ' ')
         --l;
 
     if (l >= 5
@@ -59,10 +59,10 @@ String parseURL(const String& url)
         ++o;
         --l;
     }
-    while (l > 0 && (*i)[o+l-1] <= ' ')
+    while (l > 0 && (*i)[o + l - 1] <= ' ')
         --l;
 
-    if (l >= 2 && (*i)[o] == (*i)[o+l-1] && ((*i)[o] == '\'' || (*i)[o] == '\"')) {
+    if (l >= 2 && (*i)[o] == (*i)[o + l - 1] && ((*i)[o] == '\'' || (*i)[o] == '\"')) {
         o++;
         l -= 2;
     }
@@ -71,7 +71,7 @@ String parseURL(const String& url)
         ++o;
         --l;
     }
-    while (l > 0 && (*i)[o+l-1] <= ' ')
+    while (l > 0 && (*i)[o + l - 1] <= ' ')
         --l;
 
     Vector<UChar, 2048> buffer(l);
@@ -86,4 +86,4 @@ String parseURL(const String& url)
     return new StringImpl(buffer.data(), nl);
 }
 
-}
+} // namespace WebCore

@@ -20,8 +20,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef CSSPrimitiveValue_H
-#define CSSPrimitiveValue_H
+#ifndef CSSPrimitiveValue_h
+#define CSSPrimitiveValue_h
 
 #include "CSSValue.h"
 #include <wtf/PassRefPtr.h>
@@ -37,8 +37,7 @@ class StringImpl;
 
 typedef int ExceptionCode;
 
-class CSSPrimitiveValue : public CSSValue
-{
+class CSSPrimitiveValue : public CSSValue {
 public:
     enum UnitTypes {
         CSS_UNKNOWN = 0,
@@ -117,30 +116,18 @@ public:
 
     void setStringValue(unsigned short stringType, const String& stringValue, ExceptionCode&);
     String getStringValue() const;
-    
-    Counter* getCounterValue () const {
-        return m_type != CSS_COUNTER ? 0 : m_value.counter;
-    }
 
-    RectImpl* getRectValue () const {
-        return m_type != CSS_RECT ? 0 : m_value.rect;
-    }
-
-    unsigned getRGBColorValue() const {
-        return m_type != CSS_RGBCOLOR ? 0 : m_value.rgbcolor;
-    }
-
-    Pair* getPairValue() const {
-        return m_type != CSS_PAIR ? 0 : m_value.pair;
-    }
+    Counter* getCounterValue () const { return m_type != CSS_COUNTER ? 0 : m_value.counter; }
+    RectImpl* getRectValue () const { return m_type != CSS_RECT ? 0 : m_value.rect; }
+    unsigned getRGBColorValue() const { return m_type != CSS_RGBCOLOR ? 0 : m_value.rgbcolor; }
+    Pair* getPairValue() const { return m_type != CSS_PAIR ? 0 : m_value.pair; }
 
 #if PLATFORM(MAC)
-    DashboardRegion *getDashboardRegionValue () const {
-        return m_type != CSS_DASHBOARD_REGION ? 0 : m_value.region;
-    }
+    DashboardRegion* getDashboardRegionValue () const { return m_type != CSS_DASHBOARD_REGION ? 0 : m_value.region; }
 #endif
 
     virtual bool isPrimitiveValue() const { return true; }
+
     virtual unsigned short cssValueType() const;
 
     int getIdent();
@@ -166,6 +153,6 @@ protected:
     } m_value;
 };
 
-} // namespace
+} // namespace WebCore
 
-#endif
+#endif // CSSPrimitiveValue_h

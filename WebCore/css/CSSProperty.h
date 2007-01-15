@@ -20,8 +20,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef CSSProperty_H
-#define CSSProperty_H
+#ifndef CSSProperty_h
+#define CSSProperty_h
 
 #include "CSSValue.h"
 #include <wtf/PassRefPtr.h>
@@ -39,19 +39,19 @@ public:
         , m_value(value)
     {
     }
-    
-    CSSProperty &operator=(const CSSProperty& o)
+
+    CSSProperty& operator=(const CSSProperty& other)
     {
-        m_id = o.m_id;
-        m_shorthandID = o.m_shorthandID;
-        m_important = o.m_important;
-        m_value = o.m_value;
+        m_id = other.m_id;
+        m_shorthandID = other.m_shorthandID;
+        m_important = other.m_important;
+        m_value = other.m_value;
         return *this;
     }
-    
+
     int id() const { return m_id; }
     int shorthandID() const { return m_shorthandID; }
-    
+
     bool isImportant() const { return m_important; }
     bool isImplicit() const { return m_implicit; }
 
@@ -59,17 +59,17 @@ public:
     
     String cssText() const;
 
+    friend bool operator==(const CSSProperty&, const CSSProperty&);
+
     // make sure the following fits in 4 bytes.
     int m_id;
     int m_shorthandID;  // If this property was set as part of a shorthand, gives the shorthand.
     bool m_important : 1;
     bool m_implicit : 1; // Whether or not the property was set implicitly as the result of a shorthand.
 
-    friend bool operator==(const CSSProperty &, const CSSProperty &);
-
     RefPtr<CSSValue> m_value;
 };
 
-} // namespace
+} // namespace WebCore
 
-#endif
+#endif // CSSProperty_h

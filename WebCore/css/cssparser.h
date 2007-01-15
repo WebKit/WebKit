@@ -20,14 +20,14 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef CSS_cssparser_h_
-#define CSS_cssparser_h_
+#ifndef cssparser_h
+#define cssparser_h
 
 #include "AtomicString.h"
 #include "Color.h"
+#include "MediaQuery.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
-#include "MediaQuery.h"
 
 namespace WebCore {
 
@@ -42,21 +42,19 @@ namespace WebCore {
     class CSSValueList;
     class Document;
     class MediaList;
-    class StyleBase;
-    class StyleList;
     class MediaList;
     class MediaQueryExp;
-
+    class StyleBase;
+    class StyleList;
+    struct Function;
 
     struct ParseString {
         UChar* characters;
         int length;
-        
+
         void lower();
     };
 
-    struct Function;
-    
     struct Value {
         int id;
         bool isInt;
@@ -75,10 +73,14 @@ namespace WebCore {
     };
 
     DeprecatedString deprecatedString(const ParseString&);
-    static inline String domString(const ParseString& ps) {
+
+    static inline String domString(const ParseString& ps)
+    {
         return String(ps.characters, ps.length);
     }
-    static inline AtomicString atomicString(const ParseString& ps) {
+
+    static inline AtomicString atomicString(const ParseString& ps)
+    {
         return AtomicString(ps.characters, ps.length);
     }
 
@@ -86,10 +88,12 @@ namespace WebCore {
     public:
         ValueList() : m_current(0) { }
         ~ValueList();
+
         void addValue(const Value& v) { m_values.append(v); }
         unsigned size() const { return m_values.size(); }
         Value* current() { return m_current < m_values.size() ? &m_values[m_current] : 0; }
         Value* next() { ++m_current; return current(); }
+
     private:
         Vector<Value, 16> m_values;
         unsigned m_current;
@@ -101,16 +105,15 @@ namespace WebCore {
 
         ~Function() { delete args; }
     };
-    
-    class CSSParser
-    {
+
+    class CSSParser {
     public:
         CSSParser(bool strictParsing = true);
         ~CSSParser();
 
         void parseSheet(CSSStyleSheet*, const String&);
         PassRefPtr<CSSRule> parseRule(CSSStyleSheet*, const String&);
-        bool parseValue(CSSMutableStyleDeclaration*, int id, const String&, bool important);
+        bool parseValue(CSSMutableStyleDeclaration*, int propId, const String&, bool important);
         static RGBA32 parseColor(const String&, bool strict = false);
         bool parseColor(CSSMutableStyleDeclaration*, const String&);
         bool parseDeclaration(CSSMutableStyleDeclaration*, const String&);
@@ -132,36 +135,39 @@ namespace WebCore {
         CSSValue* parseBackgroundColor();
         CSSValue* parseBackgroundImage();
         CSSValue* parseBackgroundPositionXY(bool& xFound, bool& yFound);
-        void parseBackgroundPosition(CSSValue*& value1, CSSValue*& value2);
+        void parseBackgroundPosition(CSSValue*&, CSSValue*&);
         CSSValue* parseBackgroundSize();
         
-        bool parseBackgroundProperty(int propId, int& propId1, int& propId2, CSSValue*& retValue1, CSSValue*& retValue2);
+        bool parseBackgroundProperty(int propId, int& propId1, int& propId2, CSSValue*&, CSSValue*&);
         bool parseBackgroundShorthand(bool important);
 
         void addBackgroundValue(CSSValue*& lval, CSSValue* rval);
-      
+
 #if PLATFORM(MAC)
         bool parseDashboardRegions(int propId, bool important);
 #endif
 
         bool parseShape(int propId, bool important);
+
         bool parseFont(bool important);
-        bool parseCounter(int propId, int defaultValue, bool important);
         CSSValueList* parseFontFamily();
+
+        bool parseCounter(int propId, int defaultValue, bool important);
+        PassRefPtr<CSSValue> parseCounterContent(ValueList* args, bool counters);
+
         bool parseColorParameters(Value*, int* colorValues, bool parseAlpha);
         bool parseHSLParameters(Value*, double* colorValues, bool parseAlpha);
         CSSPrimitiveValue* parseColor(Value* = 0);
         bool parseColorFromValue(Value*, RGBA32&, bool = false);
-        PassRefPtr<CSSValue> parseCounterContent(ValueList* args, bool counters);
-        
+
+        static bool parseColor(const String&, RGBA32& rgb, bool strict);
+
 #ifdef SVG_SUPPORT
         bool parseSVGValue(int propId, bool important);
         CSSValue* parseSVGPaint();
         CSSValue* parseSVGColor();
         CSSValue* parseSVGStrokeDasharray();
 #endif
-
-        static bool parseColor(const String&, RGBA32& rgb, bool strict);
 
         // CSS3 Parsing Routines (for properties specific to CSS3)
         bool parseShadow(int propId, bool important);
@@ -205,7 +211,7 @@ namespace WebCore {
         CSSProperty** parsedProperties;
         int numParsedProperties;
         int maxParsedProperties;
-        
+
         int m_inParseShorthand;
         int m_currentShorthand;
         bool m_implicitShorthand;
@@ -263,11 +269,13 @@ namespace WebCore {
         };
 
         friend inline Units operator|(Units a, Units b)
-            { return static_cast<Units>(static_cast<unsigned>(a) | static_cast<unsigned>(b)); }
+        {
+            return static_cast<Units>(static_cast<unsigned>(a) | static_cast<unsigned>(b));
+        }
 
         static bool validUnit(Value*, Units, bool strict);
     };
 
-} // namespace
+} // namespace WebCore
 
-#endif
+#endif // cssparser_h

@@ -19,6 +19,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "CSSBorderImageValue.h"
 
@@ -28,8 +29,7 @@
 
 namespace WebCore {
 
-CSSBorderImageValue::CSSBorderImageValue(PassRefPtr<CSSImageValue> image,
-    PassRefPtr<RectImpl> imageRect, int horizontalRule, int verticalRule)
+CSSBorderImageValue::CSSBorderImageValue(PassRefPtr<CSSImageValue> image, PassRefPtr<RectImpl> imageRect, int horizontalRule, int verticalRule)
     : m_image(image)
     , m_imageSliceRect(imageRect)
     , m_horizontalSizeRule(horizontalRule)
@@ -42,7 +42,7 @@ String CSSBorderImageValue::cssText() const
     // Image first.
     String text(m_image->cssText());
     text += " ";
-    
+
     // Now the rect, but it isn't really a rect, so we dump manually
     text += m_imageSliceRect->top()->cssText();
     text += " ";
@@ -51,7 +51,7 @@ String CSSBorderImageValue::cssText() const
     text += m_imageSliceRect->bottom()->cssText();
     text += " ";
     text += m_imageSliceRect->left()->cssText();
-    
+
     // Now the keywords.
     text += " ";
     text += CSSPrimitiveValue(m_horizontalSizeRule).cssText();
@@ -61,4 +61,4 @@ String CSSBorderImageValue::cssText() const
     return text;
 }
 
-}
+} // namespace WebCore

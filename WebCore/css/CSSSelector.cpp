@@ -22,6 +22,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "CSSSelector.h"
 
@@ -29,45 +30,46 @@ namespace WebCore {
 
 void CSSSelector::print()
 {
-    if (tagHistory)
-        tagHistory->print();
+    if (m_tagHistory)
+        m_tagHistory->print();
 }
 
 unsigned int CSSSelector::specificity()
 {
     // FIXME: Pseudo-elements and pseudo-classes do not have the same specificity. This function
     // isn't quite correct.
-    int s = (tag.localName() == starAtom ? 0 : 1);
-    switch(match)
-    {
-    case Id:
-        s += 0x10000;
-        break;
-    case Exact:
-    case Class:
-    case Set:
-    case List:
-    case Hyphen:
-    case PseudoClass:
-    case PseudoElement:
-    case Contain:
-    case Begin:
-    case End:
-        s += 0x100;
-    case None:
-        break;
+    int s = (m_tag.localName() == starAtom ? 0 : 1);
+    switch (m_match) {
+        case Id:
+            s += 0x10000;
+            break;
+        case Exact:
+        case Class:
+        case Set:
+        case List:
+        case Hyphen:
+        case PseudoClass:
+        case PseudoElement:
+        case Contain:
+        case Begin:
+        case End:
+            s += 0x100;
+        case None:
+            break;
     }
-    if (tagHistory)
-        s += tagHistory->specificity();
+
+    if (m_tagHistory)
+        s += m_tagHistory->specificity();
+
     // make sure it doesn't overflow
     return s & 0xffffff;
 }
 
 void CSSSelector::extractPseudoType() const
 {
-    if (match != PseudoClass && match != PseudoElement)
+    if (m_match != PseudoClass && m_match != PseudoElement)
         return;
-    
+
     static AtomicString active("active");
     static AtomicString after("after");
     static AtomicString anyLink("-webkit-any-link");
@@ -102,116 +104,123 @@ void CSSSelector::extractPseudoType() const
     static AtomicString sliderThumb("-webkit-slider-thumb");
     static AtomicString target("target");
     static AtomicString visited("visited");
-    bool element = false;       // pseudo-element
-    bool compat = false;        // single colon compatbility mode
-    
-    _pseudoType = PseudoOther;
-    if (value == active)
-        _pseudoType = PseudoActive;
-    else if (value == after) {
-        _pseudoType = PseudoAfter;
-        element = compat = true;
-    } else if (value == anyLink)
-        _pseudoType = PseudoAnyLink;
-    else if (value == autofill)
-        _pseudoType = PseudoAutofill;
-    else if (value == before) {
-        _pseudoType = PseudoBefore;
-        element = compat = true;
-    } else if (value == checked)
-        _pseudoType = PseudoChecked;
-    else if (value == fileUploadButton) {
-        _pseudoType = PseudoFileUploadButton;
+
+    bool element = false; // pseudo-element
+    bool compat = false; // single colon compatbility mode
+
+    m_pseudoType = PseudoOther;
+    if (m_value == active)
+        m_pseudoType = PseudoActive;
+    else if (m_value == after) {
+        m_pseudoType = PseudoAfter;
         element = true;
-    } else if (value == disabled)
-        _pseudoType = PseudoDisabled;
-    else if (value == drag)
-        _pseudoType = PseudoDrag;
-    else if (value == enabled)
-        _pseudoType = PseudoEnabled;
-    else if (value == empty)
-        _pseudoType = PseudoEmpty;
-    else if (value == firstChild)
-        _pseudoType = PseudoFirstChild;
-    else if (value == firstLetter) {
-        _pseudoType = PseudoFirstLetter;
-        element = compat = true;
-    } else if (value == firstLine) {
-        _pseudoType = PseudoFirstLine;
-        element = compat = true;
-    } else if (value == firstOfType)
-        _pseudoType = PseudoFirstOfType;
-    else if (value == focus)
-        _pseudoType = PseudoFocus;
-    else if (value == hover)
-        _pseudoType = PseudoHover;
-    else if (value == indeterminate)
-        _pseudoType = PseudoIndeterminate;
-    else if (value == link)
-        _pseudoType = PseudoLink;
-    else if (value == lang)
-        _pseudoType = PseudoLang;
-    else if (value == lastChild)
-        _pseudoType = PseudoLastChild;
-    else if (value == lastOfType)
-        _pseudoType = PseudoLastOfType;
-    else if (value == notStr)
-        _pseudoType = PseudoNot;
-    else if (value == onlyChild)
-        _pseudoType = PseudoOnlyChild;
-    else if (value == onlyOfType)
-        _pseudoType = PseudoOnlyOfType;
-    else if (value == root)
-        _pseudoType = PseudoRoot;
-    else if (value == searchCancelButton) {
-        _pseudoType = PseudoSearchCancelButton;
+        compat = true;
+    } else if (m_value == anyLink)
+        m_pseudoType = PseudoAnyLink;
+    else if (m_value == autofill)
+        m_pseudoType = PseudoAutofill;
+    else if (m_value == before) {
+        m_pseudoType = PseudoBefore;
         element = true;
-    } else if (value == searchDecoration) {
-        _pseudoType = PseudoSearchDecoration;
+        compat = true;
+    } else if (m_value == checked)
+        m_pseudoType = PseudoChecked;
+    else if (m_value == fileUploadButton) {
+        m_pseudoType = PseudoFileUploadButton;
         element = true;
-    } else if (value == searchResultsDecoration) {
-        _pseudoType = PseudoSearchResultsDecoration;
+    } else if (m_value == disabled)
+        m_pseudoType = PseudoDisabled;
+    else if (m_value == drag)
+        m_pseudoType = PseudoDrag;
+    else if (m_value == enabled)
+        m_pseudoType = PseudoEnabled;
+    else if (m_value == empty)
+        m_pseudoType = PseudoEmpty;
+    else if (m_value == firstChild)
+        m_pseudoType = PseudoFirstChild;
+    else if (m_value == firstLetter) {
+        m_pseudoType = PseudoFirstLetter;
         element = true;
-    } else if (value == searchResultsButton) {
-        _pseudoType = PseudoSearchResultsButton;
+        compat = true;
+    } else if (m_value == firstLine) {
+        m_pseudoType = PseudoFirstLine;
         element = true;
-    }  else if (value == selection) {
-        _pseudoType = PseudoSelection;
+        compat = true;
+    } else if (m_value == firstOfType)
+        m_pseudoType = PseudoFirstOfType;
+    else if (m_value == focus)
+        m_pseudoType = PseudoFocus;
+    else if (m_value == hover)
+        m_pseudoType = PseudoHover;
+    else if (m_value == indeterminate)
+        m_pseudoType = PseudoIndeterminate;
+    else if (m_value == link)
+        m_pseudoType = PseudoLink;
+    else if (m_value == lang)
+        m_pseudoType = PseudoLang;
+    else if (m_value == lastChild)
+        m_pseudoType = PseudoLastChild;
+    else if (m_value == lastOfType)
+        m_pseudoType = PseudoLastOfType;
+    else if (m_value == notStr)
+        m_pseudoType = PseudoNot;
+    else if (m_value == onlyChild)
+        m_pseudoType = PseudoOnlyChild;
+    else if (m_value == onlyOfType)
+        m_pseudoType = PseudoOnlyOfType;
+    else if (m_value == root)
+        m_pseudoType = PseudoRoot;
+    else if (m_value == searchCancelButton) {
+        m_pseudoType = PseudoSearchCancelButton;
         element = true;
-    } else if (value == sliderThumb) {
-        _pseudoType = PseudoSliderThumb;
+    } else if (m_value == searchDecoration) {
+        m_pseudoType = PseudoSearchDecoration;
         element = true;
-    } else if (value == target)
-        _pseudoType = PseudoTarget;
-    else if (value == visited)
-        _pseudoType = PseudoVisited;
-    
-    if (match == PseudoClass && element)
+    } else if (m_value == searchResultsDecoration) {
+        m_pseudoType = PseudoSearchResultsDecoration;
+        element = true;
+    } else if (m_value == searchResultsButton) {
+        m_pseudoType = PseudoSearchResultsButton;
+        element = true;
+    }  else if (m_value == selection) {
+        m_pseudoType = PseudoSelection;
+        element = true;
+    } else if (m_value == sliderThumb) {
+        m_pseudoType = PseudoSliderThumb;
+        element = true;
+    } else if (m_value == target)
+        m_pseudoType = PseudoTarget;
+    else if (m_value == visited)
+        m_pseudoType = PseudoVisited;
+
+    if (m_match == PseudoClass && element) {
         if (!compat) 
-            _pseudoType = PseudoOther;
+            m_pseudoType = PseudoOther;
         else 
-           match = PseudoElement;
-    else if (match == PseudoElement && !element)
-        _pseudoType = PseudoOther;
+           m_match = PseudoElement;
+    } else if (m_match == PseudoElement && !element)
+        m_pseudoType = PseudoOther;
 }
 
-bool CSSSelector::operator == (const CSSSelector &other)
+bool CSSSelector::operator==(const CSSSelector& other)
 {
-    const CSSSelector *sel1 = this;
-    const CSSSelector *sel2 = &other;
+    const CSSSelector* sel1 = this;
+    const CSSSelector* sel2 = &other;
 
     while (sel1 && sel2) {
-        if (sel1->tag != sel2->tag || sel1->attr != sel2->attr ||
-             sel1->relation() != sel2->relation() || sel1->match != sel2->match ||
-             sel1->value != sel2->value ||
+        if (sel1->m_tag != sel2->m_tag || sel1->m_attr != sel2->m_attr ||
+             sel1->relation() != sel2->relation() || sel1->m_match != sel2->m_match ||
+             sel1->m_value != sel2->m_value ||
              sel1->pseudoType() != sel2->pseudoType() ||
-             sel1->argument != sel2->argument)
+             sel1->m_argument != sel2->m_argument)
             return false;
-        sel1 = sel1->tagHistory;
-        sel2 = sel2->tagHistory;
+        sel1 = sel1->m_tagHistory;
+        sel2 = sel2->m_tagHistory;
     }
+
     if (sel1 || sel2)
         return false;
+
     return true;
 }
 
@@ -220,28 +229,30 @@ String CSSSelector::selectorText() const
     // FIXME: Support namespaces when dumping the selector text. -dwh
     String str;
     const CSSSelector* cs = this;
-    const AtomicString& localName = cs->tag.localName();
-    if (cs->match == CSSSelector::None || localName != starAtom)
+    const AtomicString& localName = cs->m_tag.localName();
+
+    if (cs->m_match == CSSSelector::None || localName != starAtom)
         str = localName;
+
     while (true) {
-        if (cs->match == CSSSelector::Id) {
+        if (cs->m_match == CSSSelector::Id) {
             str += "#";
-            str += cs->value;
-        } else if (cs->match == CSSSelector::Class) {
+            str += cs->m_value;
+        } else if (cs->m_match == CSSSelector::Class) {
             str += ".";
-            str += cs->value;
-        } else if (cs->match == CSSSelector::PseudoClass) {
+            str += cs->m_value;
+        } else if (cs->m_match == CSSSelector::PseudoClass) {
             str += ":";
-            str += cs->value;
-        } else if (cs->match == CSSSelector::PseudoElement) {
+            str += cs->m_value;
+        } else if (cs->m_match == CSSSelector::PseudoElement) {
             str += "::";
-            str += cs->value;
+            str += cs->m_value;
         } else if (cs->hasAttribute()) {
             // FIXME: Add support for dumping namespaces.
-            String attrName = cs->attr.localName();
+            String attrName = cs->m_attr.localName();
             str += "[";
             str += attrName;
-            switch (cs->match) {
+            switch (cs->m_match) {
                 case CSSSelector::Exact:
                     str += "=";
                     break;
@@ -267,28 +278,31 @@ String CSSSelector::selectorText() const
                 default:
                     break;
             }
-            if (cs->match != CSSSelector::Set) {
+            if (cs->m_match != CSSSelector::Set) {
                 str += "\"";
-                str += cs->value;
+                str += cs->m_value;
                 str += "\"]";
             }
         }
-        if (cs->relation() != CSSSelector::SubSelector || !cs->tagHistory)
+        if (cs->relation() != CSSSelector::SubSelector || !cs->m_tagHistory)
             break;
-        cs = cs->tagHistory;
+        cs = cs->m_tagHistory;
     }
-    if (cs->tagHistory) {
-        String tagHistoryText = cs->tagHistory->selectorText();
+
+    if (cs->m_tagHistory) {
+        String tagHistoryText = cs->m_tagHistory->selectorText();
         if (cs->relation() == CSSSelector::DirectAdjacent)
             str = tagHistoryText + " + " + str;
         else if (cs->relation() == CSSSelector::IndirectAdjacent)
             str = tagHistoryText + " ~ " + str;
         else if (cs->relation() == CSSSelector::Child)
             str = tagHistoryText + " > " + str;
-        else // Descendant
+        else
+            // Descendant
             str = tagHistoryText + " " + str;
     }
+
     return str;
 }
 
-}
+} // namespace WebCore

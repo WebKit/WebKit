@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef css_helper_h
-#define css_helper_h
+#ifndef csshelper_h
+#define csshelper_h
 
 namespace WebCore {
 
@@ -30,8 +30,8 @@ namespace WebCore {
     /*
      * mostly just removes the url("...") brace
      */
-    String parseURL(const String &url);
+    String parseURL(const String& url);
 
-}
+} // namespace WebCore
 
-#endif
+#endif // csshelper_h
