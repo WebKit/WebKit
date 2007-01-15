@@ -47,6 +47,10 @@ namespace WebCore {
 ScrollView::ScrollView()
     : m_area(new QScrollArea(0))
 {
+    ScrollViewCanvasQt* canvas = new ScrollViewCanvasQt(this, m_area);
+
+    setQWidget(m_area);
+    m_area->setWidget(canvas);
 }
 
 ScrollView::~ScrollView()
@@ -56,19 +60,11 @@ ScrollView::~ScrollView()
 void ScrollView::setParentWidget(QWidget* parent)
 {
     Widget::setParentWidget(parent);
-
-    // 'isFrameView()' can not be called yet in the constructor!
-    if (isFrameView()) {
-        ScrollViewCanvasQt* canvas = new ScrollViewCanvasQt(this, m_area);
-
-        setQWidget(m_area);
-        m_area->setWidget(canvas);
-    }
 }
 
 void ScrollView::updateContents(const IntRect& updateRect, bool now)
 {
-    // FIXME: We don't force updating with now=true here...
+    //Update is fine for both now=true/false cases
     if (m_area->widget())
         m_area->widget()->update(updateRect);
 }

@@ -37,7 +37,7 @@
 
 namespace WebCore {
     enum ImageFormat { ImageFormat_None, ImageFormat_GIF, ImageFormat_PNG, ImageFormat_JPEG,
-           ImageFormat_BMP,  ImageFormat_ICO,  ImageFormat_XBM };
+                       ImageFormat_BMP,  ImageFormat_ICO,  ImageFormat_XBM };
 
 ImageFormat  detectImageFormat(const Vector<char>& data)
 {
@@ -161,11 +161,11 @@ NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
         return 0;
 
     
-    const QImage* source = m_decoder->imageAtIndex( index);
+    const QPixmap* source = m_decoder->imageAtIndex( index);
     if (!source)
         return 0;
 
-    return new QImage(*source);
+    return new QPixmap(*source);
 }
 
 float ImageSource::frameDurationAtIndex(size_t index)
@@ -181,7 +181,7 @@ bool ImageSource::frameHasAlphaAtIndex(size_t index)
     if (!m_decoder || !m_decoder->supportsAlpha())
         return false;
     
-    const QImage* source = m_decoder->imageAtIndex( index);
+    const QPixmap* source = m_decoder->imageAtIndex( index);
     if (!source)
         return false;
     

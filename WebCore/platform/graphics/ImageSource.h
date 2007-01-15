@@ -34,7 +34,7 @@ typedef struct CGImageSource* CGImageSourceRef;
 typedef struct CGImage* CGImageRef;
 typedef const struct __CFData* CFDataRef;
 #elif PLATFORM(QT)
-class QImage;
+class QPixmap;
 #elif PLATFORM(CAIRO)
 struct _cairo_surface;
 typedef struct _cairo_surface cairo_surface_t;
@@ -52,7 +52,7 @@ typedef CFDataRef NativeBytePtr;
 class ImageDecoderQt;
 typedef ImageDecoderQt* NativeImageSourcePtr;
 typedef const Vector<char>* NativeBytePtr;
-typedef QImage* NativeImagePtr;
+typedef QPixmap* NativeImagePtr;
 #else
 class ImageDecoder;
 typedef ImageDecoder* NativeImageSourcePtr;

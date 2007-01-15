@@ -1,3 +1,41 @@
+2007-01-15  Zack Rusin  <zack@kde.org>
+
+        Optimizing rendering on the Qt platform. Mainly
+        switching from client side QImage to QPixmap's.
+        Also cleaning the the ScrollViewCanvasQt code
+        quite a bit.
+
+        * platform/graphics/ImageSource.h: use QPixmap
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::TransparencyLayer::TransparencyLayer):
+        (WebCore::GraphicsContext::clip): clip rects when you can
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::ImageData::ImageData):
+        (WebCore::ImageDecoderQt::ReadContext::read):
+        (WebCore::ImageDecoderQt::ReadContext::readImageLines):
+        (WebCore::ImageDecoderQt::imageAtIndex):
+        * platform/graphics/qt/ImageDecoderQt.h: use QPixmap
+        * platform/graphics/qt/ImageQt.cpp: QPixmap instead of QImage
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::drawTiled):
+        * platform/graphics/qt/ImageSourceQt.cpp:
+        (WebCore::):
+        (WebCore::ImageSource::createFrameAtIndex):
+        (WebCore::ImageSource::frameHasAlphaAtIndex):
+        * platform/qt/ScrollViewCanvasQt.cpp: clean up
+        (WebCore::ScrollViewCanvasQt::ScrollViewCanvasQt):
+        (WebCore::ScrollViewCanvasQt::updateFrameView):
+        (WebCore::ScrollViewCanvasQt::paintEvent):
+        (WebCore::ScrollViewCanvasQt::mouseMoveEvent):
+        (WebCore::ScrollViewCanvasQt::mousePressEvent):
+        (WebCore::ScrollViewCanvasQt::mouseReleaseEvent):
+        (WebCore::ScrollViewCanvasQt::handleKeyEvent):
+        * platform/qt/ScrollViewCanvasQt.h:
+        * platform/qt/ScrollViewQt.cpp: remove hacks
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::setParentWidget):
+        (WebCore::ScrollView::updateContents):
+
 2007-01-15  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack

@@ -41,8 +41,10 @@ namespace {
 }
 
 namespace WebCore {
-ImageDecoderQt::ImageData::ImageData(const QImage& image, ImageState imageState, int duration) :
-    m_image(image), m_imageState(imageState), m_duration(duration)
+ImageDecoderQt::ImageData::ImageData(const QPixmap& image, QImage::Format format, 
+                                     ImageState imageState, int duration)
+    : m_image(image), m_format(format),
+      m_imageState(imageState), m_duration(duration)
 {
 }
 
@@ -117,7 +119,7 @@ ImageDecoderQt::ReadContext::ReadResult
             // for efficient reading
             QImage newImage = m_dataFormat != QImage::Format_Invalid  ?
                           QImage(m_size,m_dataFormat) : QImage();
-            m_target.push_back(ImageData(newImage));
+            m_target.push_back(ImageData(QPixmap::fromImage(newImage), m_dataFormat));
         }
 
         // read chunks
@@ -130,7 +132,7 @@ ImageDecoderQt::ReadContext::ReadResult
         case IncrementalReadComplete:
             m_target.back().m_imageState = ImageComplete;
             //store for next
-            m_dataFormat = m_target.back().m_image.format();
+            m_dataFormat = m_target.back().m_format;
             m_size = m_target.back().m_image.size();
             const bool supportsAnimation = m_reader.supportsAnimation();
 
@@ -158,7 +160,8 @@ ImageDecoderQt::ReadContext::IncrementalReadResult
 
     const qint64 startPos = m_buffer.pos ();
     // Oops, failed. Rewind.
-    if (!m_reader.read(&imageData.m_image)) {
+    QImage image = imageData.m_image.toImage();
+    if (!m_reader.read(&image)) {
         m_buffer.seek(startPos);
         const bool gotHeader = imageData.m_image.size().width();
 
@@ -172,6 +175,7 @@ ImageDecoderQt::ReadContext::IncrementalReadResult
         }
         return IncrementalReadFailed;
     }
+    imageData.m_image = QPixmap::fromImage(image);
     imageData.m_duration = m_reader.nextImageDelay();
     return IncrementalReadComplete;
 }
@@ -267,7 +271,7 @@ RGBA32Buffer* ImageDecoderQt::frameBufferAtIndex(size_t index)
     return 0;
 }
 
-const QImage* ImageDecoderQt::imageAtIndex(size_t index) const
+const QPixmap* ImageDecoderQt::imageAtIndex(size_t index) const
 {
     if (debugImageDecoderQt)
         qDebug() << "ImageDecoderQt::imageAtIndex(" << index << ')';
