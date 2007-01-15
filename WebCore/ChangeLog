@@ -2,6 +2,14 @@
 
         Reviewed by Eric.
 
+        Remove unused member var.
+
+        * ksvg2/svg/SVGStyledElement.h:
+
+2007-01-15  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
         http://bugs.webkit.org/show_bug.cgi?id=12069
         Hit detection fails under some viewbox constraints
 
