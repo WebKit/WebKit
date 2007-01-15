@@ -185,7 +185,7 @@ bool HTMLScriptElement::shouldExecuteAsJavaScript()
 
     /*
          Mozilla 1.8 accepts javascript1.0 - javascript1.7, but WinIE 7 accepts only javascript1.1 - javascript1.3.
-         Mozilla 1.8 and WinIE 7
+         Mozilla 1.8 and WinIE 7 both accept javascript and livescript.
          WinIE 7 accepts ecmascript and jscript, but Mozilla 1.8 doesn't.
          Neither Mozilla 1.8 nor WinIE 7 accept leading or trailing whitespace.
          We want to accept all the values that either of these browsers accept, but not other values.

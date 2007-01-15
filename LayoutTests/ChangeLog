@@ -1,3 +1,16 @@
+2007-01-15  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Anders.
+
+        Fix: http://bugs.webkit.org/show_bug.cgi?id=12288
+        fast/tokenizer/004 needs new results
+
+        * fast/tokenizer/004.html: Changed to dump as text, changed tabs to
+        spaces.
+        * fast/tokenizer/004-expected.txt: Updated results.
+        * fast/tokenizer/004-expected.checksum: Removed.
+        * fast/tokenizer/004-expected.png: Removed.
+
 2007-01-15  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
