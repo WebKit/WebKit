@@ -134,8 +134,9 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (paintInfo.context->paintingDisabled())
         return;
 
+    // This should only exist for <svg> renderers
     if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection)) 
-        paintBoxDecorations(paintInfo, parentX, parentY);
+        paintBoxDecorations(paintInfo, m_x + parentX, m_y + parentY);
 
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
         paintOutline(paintInfo.context, parentX, parentY, width(), height(), style());
@@ -149,10 +150,22 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
     
     paintInfo.context->save();
 
-    if (parentX != 0 || parentY != 0) {
+    if (!parent()->isSVGContainer()) {
         // Translate from parent offsets (html renderers) to a relative transform (svg renderers)
-        paintInfo.context->concatCTM(AffineTransform().translate(parentX, parentY));
+        IntPoint origin;
+        origin.move(parentX, parentY);
+        origin.move(m_x, m_y);
+        origin.move(borderLeft(), borderTop());
+        origin.move(paddingLeft(), paddingTop());
+        if (origin.x() || origin.y())
+            paintInfo.context->concatCTM(AffineTransform().translate(origin.x(), origin.y()));
         parentX = parentY = 0;
+    } else {
+        // Only the root <svg> element should need any translations using the HTML system
+        ASSERT(parentX == 0);
+        ASSERT(parentY == 0);
+        ASSERT(m_x == 0);
+        ASSERT(m_y == 0);
     }
 
     if (!viewport().isEmpty()) {

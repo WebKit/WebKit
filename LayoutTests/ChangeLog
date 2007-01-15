@@ -1,3 +1,15 @@
+2007-01-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by hyatt.
+        
+        SVG does not correctly handle float: left
+        http://bugs.webkit.org/show_bug.cgi?id=12210
+
+        * svg/custom/svg-float-border-padding-expected.checksum: Added.
+        * svg/custom/svg-float-border-padding-expected.png: Added.
+        * svg/custom/svg-float-border-padding-expected.txt: Added.
+        * svg/custom/svg-float-border-padding.xml: Added.
+
 2007-01-14  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adam.

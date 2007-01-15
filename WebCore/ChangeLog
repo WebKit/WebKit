@@ -1,3 +1,15 @@
+2007-01-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by hyatt.
+        
+        SVG does not correctly handle float: left
+        http://bugs.webkit.org/show_bug.cgi?id=12210
+
+        Test: svg/custom/svg-float-border-padding.xml
+
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+
 2007-01-14  David Hyatt  <hyatt@apple.com>
 
         More work to fix 10145, regression where form elements don't break properly.  Make sure to really use
@@ -329,7 +341,7 @@
         (WebCore::GraphicsContext::setPlatformStrokeThickness):
         (WebCore::GraphicsContext::setPlatformFillColor):
 
-2007-01-13  Eric Seidel  <eric@eseidel.com>
+2007-01-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.
 
