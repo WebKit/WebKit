@@ -193,8 +193,6 @@ private:
         void setInScript(bool v) { setBit(InScript, v); }
         bool inStyle() const { return testBit(InStyle); }
         void setInStyle(bool v) { setBit(InStyle, v); }
-        bool inSelect() const { return testBit(InSelect); }
-        void setInSelect(bool v) { setBit(InSelect, v); }
         bool inXmp() const { return testBit(InXmp); }
         void setInXmp(bool v) { setBit(InXmp, v); }
         bool inTitle() const { return testBit(InTitle); }
@@ -237,7 +235,7 @@ private:
             EntityMask = (1 << 7) - (1 << 4),
             InScript = 1 << 7,
             InStyle = 1 << 8,
-            InSelect = 1 << 9,
+            // Bit 9 unused
             InXmp = 1 << 10,
             InTitle = 1 << 11,
             InPlainText = 1 << 12,

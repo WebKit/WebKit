@@ -1,3 +1,13 @@
+2007-01-14  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adam.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12264
+          REGRESSION (r18843): Webkit crashes on 43Folders.com home page
+
+        * fast/tokenizer/ignore-tags-in-iframe-expected.txt: Added.
+        * fast/tokenizer/ignore-tags-in-iframe.html: Added.
+
 2007-01-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Mitz.

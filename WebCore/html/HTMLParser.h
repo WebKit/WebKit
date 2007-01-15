@@ -70,7 +70,6 @@ public:
 
     bool skipMode() const { return !discard_until.isNull(); }
     bool noSpaces() const { return !inBody; }
-    bool selectMode() const { return inSelect; }
 
     HTMLDocument *doc() const { return static_cast<HTMLDocument *>(document); }
 
@@ -171,7 +170,6 @@ private:
     bool haveContent;
     bool haveFrameSet;
     bool end;
-    bool inSelect;
 
     /*
      * tells the parser to discard all tags, until it reaches the one specified

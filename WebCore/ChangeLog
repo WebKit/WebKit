@@ -1,3 +1,26 @@
+2007-01-14  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adam.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12264
+          REGRESSION (r18843): Webkit crashes on 43Folders.com home page
+
+        Test: fast/tokenizer/ignore-tags-in-iframe.html
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::reset): Removed unused inSelect member variable.
+        (WebCore::HTMLParser::selectCreateErrorCheck): Ditto.
+        (WebCore::HTMLParser::processCloseTag): Ditto.
+        * html/HTMLParser.h: Ditto.
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag): Changed not to process <pre>, <listing>,
+        <script>, <style>, <title>, <textarea> and <xmp> if the parser is in skip mode
+        (waiting for a close tag of an element whose contents are not parsed,
+        such as iframe).
+        * html/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::State::setInStyle): Removed unused bit.
+        (WebCore::HTMLTokenizer::State::): Ditto.
+
 2007-01-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

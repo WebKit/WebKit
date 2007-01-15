@@ -1145,7 +1145,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             // compatibility.
             bool isSelfClosingScript = currToken.flat && currToken.beginTag && currToken.tagName == scriptTag;
             bool beginTag = !currToken.flat && currToken.beginTag;
-            if (currToken.beginTag && currToken.tagName == scriptTag) {
+            if (currToken.beginTag && currToken.tagName == scriptTag && !parser->skipMode()) {
                 Attribute* a = 0;
                 scriptSrc = String();
                 scriptSrcCharset = String();
@@ -1160,69 +1160,69 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             }
 
             RefPtr<Node> n = processToken();
-
-            if ((tagName == preTag || tagName == listingTag) && !inViewSourceMode()) {
-                if (beginTag)
-                    state.setDiscardLF(true); // Discard the first LF after we open a pre.
-            } else if (tagName == scriptTag) {
-                ASSERT(!scriptNode);
-                scriptNode = n;
-                if (beginTag) {
-                    searchStopper = scriptEnd;
-                    searchStopperLen = 8;
-                    state.setInScript(true);
-                    state = parseSpecial(src, state);
-                } else if (isSelfClosingScript) { // Handle <script src="foo"/>
-                    state.setInScript(true);
-                    state = scriptHandler(state);
-                }
-            } else if (tagName == styleTag) {
-                if (beginTag) {
-                    searchStopper = styleEnd;
-                    searchStopperLen = 7;
-                    state.setInStyle(true);
-                    state = parseSpecial(src, state);
-                }
-            } else if (tagName == textareaTag) {
-                if (beginTag) {
-                    searchStopper = textareaEnd;
-                    searchStopperLen = 10;
-                    state.setInTextArea(true);
-                    state = parseSpecial(src, state);
-                }
-            } else if (tagName == titleTag) {
-                if (beginTag) {
-                    searchStopper = titleEnd;
-                    searchStopperLen = 7;
-                    State savedState = state;
-                    SegmentedString savedSrc = src;
-                    long savedLineno = lineno;
-                    state.setInTitle(true);
-                    state = parseSpecial(src, state);
-                    if (state.inTitle() && src.isEmpty()) {
-                        // We just ate the rest of the document as the title #text node!
-                        // Reset the state then retokenize without special title handling.
-                        // Let the parser clean up the missing </title> tag.
-                        // FIXME: This is incorrect, because src.isEmpty() doesn't mean we're
-                        // at the end of the document unless noMoreData is also true. We need
-                        // to detect this case elsewhere, and save the state somewhere other
-                        // than a local variable.
-                        state = savedState;
-                        src = savedSrc;
-                        lineno = savedLineno;
-                        scriptCodeSize = 0;
+            if (n) {
+                if ((tagName == preTag || tagName == listingTag) && !inViewSourceMode()) {
+                    if (beginTag)
+                        state.setDiscardLF(true); // Discard the first LF after we open a pre.
+                } else if (tagName == scriptTag && n) {
+                    ASSERT(!scriptNode);
+                    scriptNode = n;
+                    if (beginTag) {
+                        searchStopper = scriptEnd;
+                        searchStopperLen = 8;
+                        state.setInScript(true);
+                        state = parseSpecial(src, state);
+                    } else if (isSelfClosingScript) { // Handle <script src="foo"/>
+                        state.setInScript(true);
+                        state = scriptHandler(state);
+                    }
+                } else if (tagName == styleTag) {
+                    if (beginTag) {
+                        searchStopper = styleEnd;
+                        searchStopperLen = 7;
+                        state.setInStyle(true);
+                        state = parseSpecial(src, state);
+                    }
+                } else if (tagName == textareaTag) {
+                    if (beginTag) {
+                        searchStopper = textareaEnd;
+                        searchStopperLen = 10;
+                        state.setInTextArea(true);
+                        state = parseSpecial(src, state);
+                    }
+                } else if (tagName == titleTag) {
+                    if (beginTag) {
+                        searchStopper = titleEnd;
+                        searchStopperLen = 7;
+                        State savedState = state;
+                        SegmentedString savedSrc = src;
+                        long savedLineno = lineno;
+                        state.setInTitle(true);
+                        state = parseSpecial(src, state);
+                        if (state.inTitle() && src.isEmpty()) {
+                            // We just ate the rest of the document as the title #text node!
+                            // Reset the state then retokenize without special title handling.
+                            // Let the parser clean up the missing </title> tag.
+                            // FIXME: This is incorrect, because src.isEmpty() doesn't mean we're
+                            // at the end of the document unless noMoreData is also true. We need
+                            // to detect this case elsewhere, and save the state somewhere other
+                            // than a local variable.
+                            state = savedState;
+                            src = savedSrc;
+                            lineno = savedLineno;
+                            scriptCodeSize = 0;
+                        }
+                    }
+                } else if (tagName == xmpTag) {
+                    if (beginTag) {
+                        searchStopper = xmpEnd;
+                        searchStopperLen = 5;
+                        state.setInXmp(true);
+                        state = parseSpecial(src, state);
                     }
                 }
-            } else if (tagName == xmpTag) {
-                if (beginTag) {
-                    searchStopper = xmpEnd;
-                    searchStopperLen = 5;
-                    state.setInXmp(true);
-                    state = parseSpecial(src, state);
-                }
-            } else if (tagName == selectTag)
-                state.setInSelect(beginTag);
-            else if (tagName == plaintextTag)
+            }
+            if (tagName == plaintextTag)
                 state.setInPlainText(beginTag);
             m_cBufferPos = cBufferPos;
             return state; // Finished parsing tag!
