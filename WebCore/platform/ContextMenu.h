@@ -53,9 +53,6 @@ namespace WebCore {
         void populate();
         void checkOrEnableIfNeeded(ContextMenuItem&) const;
 
-        void show();
-        void hide();
-
         void insertItem(unsigned position, ContextMenuItem&);
         void appendItem(ContextMenuItem&);
         

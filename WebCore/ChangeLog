@@ -1,3 +1,14 @@
+2007-01-16  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam.
+
+        Get rid of show() and hide() since they don't do anything.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::handleContextMenuEvent):
+        * platform/ContextMenu.h:
+        * platform/mac/ContextMenuMac.mm:
+
 2007-01-16  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack
@@ -109,6 +120,7 @@
         * platform/network/ResourceHandleInternal.h:
         (WebCore::ResourceHandleInternal::ResourceHandleInternal):
 
+>>>>>>> .r18887
 2007-01-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.

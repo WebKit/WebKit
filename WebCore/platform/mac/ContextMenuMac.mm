@@ -135,12 +135,4 @@ NSMutableArray* ContextMenu::platformDescription() const
     return m_platformDescription.get();
 }
 
-void ContextMenu::show()
-{
-}
-
-void ContextMenu::hide()
-{
-}
-
 }
