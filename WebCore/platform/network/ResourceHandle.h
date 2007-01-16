@@ -91,13 +91,14 @@ public:
     
     ~ResourceHandle();
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || USE(CFNETWORK)
     void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
-    void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
     void receivedCredential(const AuthenticationChallenge&, const Credential&);
     void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
     void receivedCancellation(const AuthenticationChallenge&);
-        
+#endif
+#if PLATFORM(MAC)
+    void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
     NSURLConnection *connection() const;
     WebCoreResourceHandleAsDelegate *delegate();
     void releaseDelegate();

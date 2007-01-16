@@ -25,6 +25,8 @@
 #include "config.h"
 #include "AuthenticationChallenge.h"
 
+#include "ResourceHandle.h"
+
 namespace WebCore {
 
 AuthenticationChallenge::AuthenticationChallenge()
@@ -91,6 +93,12 @@ bool operator==(const AuthenticationChallenge& a, const AuthenticationChallenge&
         return false;
         
     if (a.nsURLAuthenticationChallenge() != b.nsURLAuthenticationChallenge())
+        return false;
+#elif USE(CFNETWORK)
+    if (a.sourceHandle() != b.sourceHandle())
+        return false;
+
+    if (a.cfURLAuthChallengeRef() != b.cfURLAuthChallengeRef())
         return false;
 #endif
 

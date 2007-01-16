@@ -1,3 +1,19 @@
+2007-01-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam
+        
+        CFNet additions
+
+        * platform/network/AuthenticationChallenge.cpp:
+        (WebCore::operator==):
+        * platform/network/AuthenticationChallenge.h:
+        (WebCore::AuthenticationChallenge::sourceHandle):
+        (WebCore::AuthenticationChallenge::cfURLAuthChallengeRef):
+        * platform/network/ResourceError.h:
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+
 2007-01-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.

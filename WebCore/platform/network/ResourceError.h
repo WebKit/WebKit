@@ -39,6 +39,10 @@
 class NSError;
 #endif
 
+#if USE(CFNETWORK)
+#include <CoreFoundation/CFStream.h>
+#endif
+
 namespace WebCore {
 
     class ResourceError {
@@ -71,6 +75,8 @@ namespace WebCore {
             , m_isNull(!error)
         {
         }
+#elif PLATFORM(CF)
+        ResourceError(CFStreamError);
 #endif
         
 #if 0
@@ -90,6 +96,8 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
         operator NSError*() const;
+#elif USE(CFNETWORK)
+        operator CFStreamError() const;
 #endif
 
     private:
