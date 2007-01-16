@@ -43,6 +43,9 @@ enum MappedAttributeEntry {
     , eCaption
     , eBDO
     , ePre
+#ifdef SVG_SUPPORT
+    , eSVG
+#endif
 // When adding new entries, make sure to keep eLastEntry at the end of the list.
     , eLastEntry
 };

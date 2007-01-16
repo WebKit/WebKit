@@ -1,5 +1,24 @@
 2007-01-15  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by hyatt.
+
+        Fix SVGStyledElement::parseMappedAttribute to only map SVG-allowed CSS properties
+        (i.e. width is no longer mapped to CSS for SVG)
+        Add SVGStyledElement::mapToEntry to allow RenderStyle-sharing
+        http://bugs.webkit.org/show_bug.cgi?id=12060
+
+        * dom/MappedAttributeEntry.h:
+        (WebCore::):
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::cssPropertyIdForName): new helper
+        (WebCore::mapAttributeToCSSProperty): new helper
+        (WebCore::SVGStyledElement::cssPropertyIdForSVGAttributeName): new helper
+        (WebCore::SVGStyledElement::mapToEntry): added.
+        (WebCore::SVGStyledElement::parseMappedAttribute): use cssPropertyIdForSVGAttributeName
+        * ksvg2/svg/SVGStyledElement.h:
+
+2007-01-15  Eric Seidel  <eric@webkit.org>
+
         Reviewed by bdash.
 
         Update header guards to follow new style guidelines using new clean-header-guards script.

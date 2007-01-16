@@ -52,6 +52,7 @@ namespace WebCore {
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
         virtual SVGResource* canvasResource() { return 0; }
         
+        virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
         virtual void parseMappedAttribute(MappedAttribute*);
 
         RenderView* view() const;
@@ -64,6 +65,8 @@ namespace WebCore {
         void rebuildRenderer() const;
 
         virtual bool hasRelativeValues() const { return false; }
+        
+        static int cssPropertyIdForSVGAttributeName(const QualifiedName&);
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGStyledElement, String, String, ClassName, className)
