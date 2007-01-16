@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.s
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,7 +32,7 @@ class HTMLSearchFieldCancelButtonElement;
 class HTMLSearchFieldResultsButtonElement;
 class SearchPopupMenu;
 
-class RenderTextControl : public RenderBlock, public PopupMenuClient {
+class RenderTextControl : public RenderBlock, private PopupMenuClient {
 public:
     RenderTextControl(Node*, bool multiLine);
     virtual ~RenderTextControl();
@@ -50,10 +50,10 @@ public:
     virtual void layout();
     virtual bool avoidsFloats() const { return true; }
 
-    bool isEdited() const { return m_dirty; };
-    void setEdited(bool isEdited) { m_dirty = isEdited; };
-    bool isTextField() const { return !m_multiLine; }
-    bool isTextArea() const { return m_multiLine; }
+    virtual bool isEdited() const { return m_dirty; }
+    virtual void setEdited(bool isEdited) { m_dirty = isEdited; }
+    virtual bool isTextField() const { return !m_multiLine; }
+    virtual bool isTextArea() const { return m_multiLine; }
 
     int selectionStart();
     int selectionEnd();
@@ -81,38 +81,36 @@ public:
     int indexForVisiblePosition(const VisiblePosition&);
 
     void addSearchResult();
-    void onSearch() const;
 
     bool popupIsVisible() const { return m_searchPopupIsVisible; }
     void showPopup();
     void hidePopup();
 
-    // PopupMenuClient methods
-    void valueChanged(unsigned listIndex, bool fireOnSearch = true);
-    String itemText(unsigned listIndex) const;
-    bool itemIsEnabled(unsigned listIndex) const;
-    RenderStyle* itemStyle(unsigned listIndex) const;
-    RenderStyle* clientStyle() const;
-    Document* clientDocument() const;
-    int clientPaddingLeft() const;
-    int clientPaddingRight() const;
-    unsigned listSize() const;
-    int selectedIndex() const;
-    bool itemIsSeparator(unsigned listIndex) const;
-    bool itemIsLabel(unsigned listIndex) const;
-    bool itemIsSelected(unsigned listIndex) const;
-    void setTextFromItem(unsigned listIndex);
-    bool shouldPopOver() const { return false; }
-    bool valueShouldChangeOnHotTrack() const { return false; }
-
 private:
+    // PopupMenuClient methods
+    virtual void valueChanged(unsigned listIndex, bool fireEvents = true);
+    virtual String itemText(unsigned listIndex) const;
+    virtual bool itemIsEnabled(unsigned listIndex) const;
+    virtual RenderStyle* itemStyle(unsigned listIndex) const;
+    virtual RenderStyle* clientStyle() const;
+    virtual Document* clientDocument() const;
+    virtual int clientPaddingLeft() const;
+    virtual int clientPaddingRight() const;
+    virtual unsigned listSize() const;
+    virtual int selectedIndex() const;
+    virtual bool itemIsSeparator(unsigned listIndex) const;
+    virtual bool itemIsLabel(unsigned listIndex) const;
+    virtual bool itemIsSelected(unsigned listIndex) const;
+    virtual void setTextFromItem(unsigned listIndex);
+    virtual bool shouldPopOver() const { return false; }
+    virtual bool valueShouldChangeOnHotTrack() const { return false; }
+
     RenderStyle* createInnerBlockStyle(RenderStyle* startStyle);
     RenderStyle* createInnerTextStyle(RenderStyle* startStyle);
     RenderStyle* createCancelButtonStyle(RenderStyle* startStyle);
     RenderStyle* createResultsButtonStyle(RenderStyle* startStyle);
 
-    void showPlaceholderIfNeeded();
-    void hidePlaceholderIfNeeded();
+    void updatePlaceholder();
     void createSubtreeIfNeeded();
     void updateCancelButtonVisibility(RenderStyle*);
     const AtomicString& autosaveName() const;

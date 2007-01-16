@@ -1,3 +1,13 @@
+2007-01-15  Darin Adler  <darin@apple.com>
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12190
+          REGRESSION: Placeholder text does not reflect dynamic updates
+
+        * fast/forms/placeholder-set-attribute-expected.checksum: Added.
+        * fast/forms/placeholder-set-attribute-expected.png: Added.
+        * fast/forms/placeholder-set-attribute-expected.txt: Added.
+        * fast/forms/placeholder-set-attribute.html: Added.
+
 2007-01-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs

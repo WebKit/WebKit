@@ -101,8 +101,8 @@ void HTMLSearchFieldCancelButtonElement::defaultEventHandler(Event* evt)
         evt->setDefaultHandled();
     } else if (evt->type() == mouseupEvent) {
         if (renderer() && renderer()->style()->visibility() == VISIBLE) {
-            input->setValue(String(""));
-            static_cast<RenderTextControl*>(input->renderer())->onSearch();
+            input->setValue("");
+            input->onSearch();
             evt->setDefaultHandled();
         }
     }

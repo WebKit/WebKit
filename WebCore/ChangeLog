@@ -1,3 +1,54 @@
+2007-01-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12190
+          REGRESSION: Placeholder text does not reflect dynamic updates
+
+        Test: fast/forms/placeholder-set-attribute.html
+
+        * html/HTMLTextFieldInnerElement.cpp:
+        (WebCore::HTMLSearchFieldCancelButtonElement::defaultEventHandler):
+        Call onSearch on the element since I removed it from the renderer.
+
+        * rendering/RenderTextControl.h: Added explicit virtual keywords for overrides
+        of virtual functions. Removed the unneeded onSearch function. Made the inheritance
+        from PopupMenuClient be private, and made the overrides all private. Replaced the
+        showPlaceholderIfNeeded and hidePlaceholderIfNeeded functions with updatePlaceholder.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::createResultsButtonStyle): Added an assertion.
+        (WebCore::RenderTextControl::updatePlaceholder): Added. Replaces the two
+        functions, showPlaceholderIfNeeded and hidePlaceholderIfNeeded.
+        (WebCore::RenderTextControl::updateFromElement): Added call to
+        updatePlaceholder before updating the value. Also improved the structure
+        of the function and corrected incorrect use of copy and replace.
+        (WebCore::RenderTextControl::updateCancelButtonVisibility): Added an
+        assertion and removed an unneeded local variable.
+        (WebCore::RenderTextControl::subtreeHasChanged): Removed an unneeded
+        null check and virtual function calls.
+        (WebCore::RenderTextControl::forwardEvent): Replaced calls to the old
+        functions with calls to updatePlaceholder.
+        (WebCore::RenderTextControl::selectionChanged): Changed code to dispatch
+        the select event directly -- I plan to remove the onSelect function, which
+        was only called here.
+        (WebCore::RenderTextControl::autosaveName): Removed too-specific cast and
+        local variable.
+        (WebCore::RenderTextControl::addSearchResult): Added assertion and changed
+        variable name for clarity.
+        (WebCore::RenderTextControl::valueChanged): Changed code to check for empty
+        autosave name instead of null for consistency with other call sites that
+        manage the autosave name. Also changed the code that dispatches an event
+        to call onSearch on the input element so we don't need our own function.
+
+2007-01-15  Lars Naesbye Christensen  <larsnaesbye@stud.ku.dk>
+
+        Reviewed by Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=11112
+          add a drop shadow to the hand cursor used for links
+
+        * Resources/linkCursor.png: Added a drop shadow.
+
 2007-01-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.
@@ -1065,6 +1116,7 @@
         * rendering/RenderObject.cpp:
         (WebCore::RenderObject::setStyle):
 
+>>>>>>> .r18876
 2007-01-13  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Alexey

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -173,6 +173,7 @@ RenderStyle* RenderTextControl::createInnerTextStyle(RenderStyle* startStyle)
 
 RenderStyle* RenderTextControl::createResultsButtonStyle(RenderStyle* startStyle)
 {
+    ASSERT(!m_multiLine);
     HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
     RenderStyle* resultsBlockStyle;
     if (input->maxResults() < 0)
@@ -209,42 +210,35 @@ RenderStyle* RenderTextControl::createCancelButtonStyle(RenderStyle* startStyle)
     return cancelBlockStyle;
 }
 
-void RenderTextControl::showPlaceholderIfNeeded()
+void RenderTextControl::updatePlaceholder()
 {
-    if (m_multiLine)
-        return;
+    String placeholder;
+    if (!m_multiLine) {
+        HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
+        if (input->value().isEmpty() && document()->focusedNode() != node())
+            placeholder = input->getAttribute(placeholderAttr);
+    }
 
-    String value = static_cast<HTMLInputElement*>(node())->value().copy();
-    String placeholder = static_cast<HTMLInputElement*>(node())->getAttribute(placeholderAttr);
+    if (!placeholder.isEmpty() || m_placeholderVisible) {
+        ExceptionCode ec = 0;
+        m_innerText->setInnerText(placeholder, ec);
+        m_placeholderVisible = !placeholder.isEmpty();
+    }
 
-    if (!value.isEmpty() || placeholder.isEmpty())
-        return;
-
-    if (document()->focusedNode() == node())
-        return;
-
-    m_placeholderVisible = true;
-    ExceptionCode ec = 0;
-    m_innerText->setInnerText(placeholder, ec);
-    Color placeholderColor(128, 128, 128);
-    m_innerText->renderer()->style()->setColor(placeholderColor);
-    m_innerText->renderer()->repaint();
-}
-
-void RenderTextControl::hidePlaceholderIfNeeded()
-{
-    if (!m_placeholderVisible)
-        return;
-
-    m_placeholderVisible = false;
-    m_innerText->removeChildren();
-    if (node()->isEnabled())
-        m_innerText->renderer()->style()->setColor(style()->color());
+    Color color;
+    if (!placeholder.isEmpty())
+        color = Color::darkGray;
+    else if (node()->isEnabled())
+        color = style()->color();
     else
-        m_innerText->renderer()->style()->setColor(disabledTextColor(style()->color(), style()->backgroundColor()));
+        color = disabledTextColor(style()->color(), style()->backgroundColor());
 
-    m_innerText->renderer()->repaint();
-
+    RenderObject* renderer = m_innerText->renderer();
+    RenderStyle* style = renderer->style();
+    if (style->color() != color) {
+        style->setColor(color);
+        renderer->repaint();
+    }
 }
 
 void RenderTextControl::createSubtreeIfNeeded()
@@ -325,36 +319,37 @@ void RenderTextControl::createSubtreeIfNeeded()
 
 void RenderTextControl::updateFromElement()
 {
+    HTMLGenericFormElement* element = static_cast<HTMLGenericFormElement*>(node());
+
     createSubtreeIfNeeded();
 
     if (m_cancelButton)
         updateCancelButtonVisibility(m_cancelButton->renderer()->style());
 
-    HTMLGenericFormElement* element = static_cast<HTMLGenericFormElement*>(node());
-    m_innerText->renderer()->style()->setUserModify(element->isReadOnlyControl() || element->disabled() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
-    String value;
-    if (m_multiLine)
-        value = static_cast<HTMLTextAreaElement*>(element)->value().copy();
-    else
-        value = static_cast<HTMLInputElement*>(element)->value().copy();
+    updatePlaceholder();
 
-    if (!element->valueMatchesRenderer() || m_multiLine) {
-        String oldText = text();
+    m_innerText->renderer()->style()->setUserModify(element->isReadOnlyControl() || element->disabled() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
+
+    if ((!element->valueMatchesRenderer() || m_multiLine) && !m_placeholderVisible) {
+        String value;
+        if (m_multiLine)
+            value = static_cast<HTMLTextAreaElement*>(element)->value();
+        else
+            value = static_cast<HTMLInputElement*>(element)->value();
         if (value.isNull())
             value = "";
-        value.replace('\\', backslashAsCurrencySymbol());
-        if (value != oldText || !m_innerText->hasChildNodes()) {
+        else
+            value = value.replace('\\', backslashAsCurrencySymbol());
+        if (value != text() || !m_innerText->hasChildNodes()) {
             ExceptionCode ec = 0;
             m_innerText->setInnerText(value, ec);
             if (value.endsWith("\n") || value.endsWith("\r"))
                 m_innerText->appendChild(new HTMLBRElement(document()), ec);
-            if (document()->frame())
-                document()->frame()->editor()->clearUndoRedoOperations();
-            setEdited(false);
+            if (Frame* frame = document()->frame())
+                frame->editor()->clearUndoRedoOperations();
+            m_dirty = false;
         }
         element->setValueMatchesRenderer();
-
-        showPlaceholderIfNeeded();
     }
 
     if (m_searchPopupIsVisible)
@@ -363,12 +358,18 @@ void RenderTextControl::updateFromElement()
 
 int RenderTextControl::selectionStart()
 {
-    return indexForVisiblePosition(document()->frame()->selectionController()->start());
+    Frame* frame = document()->frame();
+    if (!frame)
+        return 0;
+    return indexForVisiblePosition(frame->selectionController()->start());
 }
 
 int RenderTextControl::selectionEnd()
 {
-    return indexForVisiblePosition(document()->frame()->selectionController()->end());
+    Frame* frame = document()->frame();
+    if (!frame)
+        return 0;
+    return indexForVisiblePosition(frame->selectionController()->end());
 }
 
 void RenderTextControl::setSelectionStart(int start)
@@ -411,10 +412,14 @@ void RenderTextControl::setSelectionRange(int start, int end)
     ASSERT(startPosition.deepEquivalent().node()->shadowAncestorNode() == node() && endPosition.deepEquivalent().node()->shadowAncestorNode() == node());
 
     Selection newSelection = Selection(startPosition, endPosition);
-    document()->frame()->selectionController()->setSelection(newSelection);
+
+    if (Frame* frame = document()->frame())
+        frame->selectionController()->setSelection(newSelection);
+
     // FIXME: Granularity is stored separately on the frame, but also in the selection controller.
     // The granularity in the selection controller should be used, and then this line of code would not be needed.
-    document()->frame()->setSelectionGranularity(CharacterGranularity);
+    if (Frame* frame = document()->frame())
+        frame->setSelectionGranularity(CharacterGranularity);
 }
 
 VisiblePosition RenderTextControl::visiblePositionForIndex(int index)
@@ -443,9 +448,9 @@ int RenderTextControl::indexForVisiblePosition(const VisiblePosition& pos)
 
 void RenderTextControl::updateCancelButtonVisibility(RenderStyle* style)
 {
+    ASSERT(!m_multiLine);
     HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
-    String val = input->value();
-    if (val.isEmpty())
+    if (input->value().isEmpty())
         style->setVisibility(HIDDEN);
     else
         style->setVisibility(VISIBLE);
@@ -453,27 +458,29 @@ void RenderTextControl::updateCancelButtonVisibility(RenderStyle* style)
 
 void RenderTextControl::subtreeHasChanged()
 {
-    bool wasPreviouslyEdited = isEdited();
-    setEdited(true);
+    bool wasDirty = m_dirty;
+    m_dirty = true;
     HTMLGenericFormElement* element = static_cast<HTMLGenericFormElement*>(node());
     if (m_multiLine) {
         element->setValueMatchesRenderer(false);
-        document()->frame()->textDidChangeInTextArea(element);
+        if (Frame* frame = document()->frame())
+            frame->textDidChangeInTextArea(element);
     } else {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(element);
-        if (input) {
-            input->setValueFromRenderer(text());
-            if (m_cancelButton)
-                updateCancelButtonVisibility(m_cancelButton->renderer()->style());
+        input->setValueFromRenderer(text());
+        if (m_cancelButton)
+            updateCancelButtonVisibility(m_cancelButton->renderer()->style());
 
-            // If the incremental attribute is set, then dispatch the search event
-            if (!input->getAttribute(incrementalAttr).isNull())
-                onSearch();
+        // If the incremental attribute is set, then dispatch the search event
+        if (!input->getAttribute(incrementalAttr).isNull())
+            input->onSearch();
 
-            if (!wasPreviouslyEdited)
-                document()->frame()->textFieldDidBeginEditing(input);
-            document()->frame()->textDidChangeInTextField(input);
+        if (!wasDirty) {
+            if (Frame* frame = document()->frame())
+                frame->textFieldDidBeginEditing(input);
         }
+        if (Frame* frame = document()->frame())
+            frame->textDidChangeInTextField(input);
     }
 }
 
@@ -705,9 +712,9 @@ void RenderTextControl::forwardEvent(Event* evt)
             if (innerLayer && !m_multiLine)
                 innerLayer->scrollToOffset(style()->direction() == RTL ? innerLayer->scrollWidth() : 0, 0);
         }
-        showPlaceholderIfNeeded();
+        updatePlaceholder();
     } else if (evt->type() == focusEvent)
-        hidePlaceholderIfNeeded();
+        updatePlaceholder();
     else {
         EventTargetNode* leftNode;
         EventTargetNode* rightNode;
@@ -734,8 +741,9 @@ void RenderTextControl::selectionChanged(bool userTriggered)
         static_cast<HTMLTextAreaElement*>(element)->cacheSelection(selectionStart(), selectionEnd());
     else
         static_cast<HTMLInputElement*>(element)->cacheSelection(selectionStart(), selectionEnd());
-    if (document()->frame()->selectionController()->isRange() && userTriggered)
-        element->onSelect();
+    if (Frame* frame = document()->frame())
+        if (frame->selectionController()->isRange() && userTriggered)
+            element->dispatchHTMLEvent(selectEvent, true, false);
 }
 
 int RenderTextControl::scrollWidth() const
@@ -780,26 +788,31 @@ void RenderTextControl::setScrollTop(int newTop)
 
 const AtomicString& RenderTextControl::autosaveName() const
 {
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
-    return input->getAttribute(autosaveAttr);
+    return static_cast<Element*>(node())->getAttribute(autosaveAttr);
 }
 
 void RenderTextControl::addSearchResult()
 {
+    ASSERT(!m_multiLine);
+
     HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
     if (input->maxResults() <= 0)
         return;
 
-    String v = input->value();
-    if (v.isEmpty() || !document() || !document()->frame() || document()->frame()->settings()->privateBrowsingEnabled())
+    String value = input->value();
+    if (value.isEmpty())
+        return;
+
+    Frame* frame = document()->frame();
+    if (!frame || frame->settings()->privateBrowsingEnabled())
         return;
 
     int size = static_cast<int>(m_recentSearches.size());
     for (int i = size - 1; i >= 0; --i)
-        if (m_recentSearches[i] == v)
+        if (m_recentSearches[i] == value)
             m_recentSearches.remove(i);
 
-    m_recentSearches.insert(0, v);
+    m_recentSearches.insert(0, value);
     while (static_cast<int>(m_recentSearches.size()) > input->maxResults())
         m_recentSearches.removeLast();
 
@@ -807,11 +820,6 @@ void RenderTextControl::addSearchResult()
     if (!m_searchPopup)
         m_searchPopup = SearchPopupMenu::create(this);
     m_searchPopup->saveRecentSearches(name, m_recentSearches);
-}
-
-void RenderTextControl::onSearch() const
-{
-    static_cast<HTMLInputElement*>(node())->onSearch();
 }
 
 void RenderTextControl::showPopup()
@@ -845,15 +853,15 @@ void RenderTextControl::hidePopup()
     m_searchPopupIsVisible = false;
 }
 
-void RenderTextControl::valueChanged(unsigned listIndex, bool fireOnSearch)
+void RenderTextControl::valueChanged(unsigned listIndex, bool fireEvents)
 {
     ASSERT(listIndex < listSize());
     HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
     if (listIndex == (listSize() - 1)) {
-        if (fireOnSearch) {
+        if (fireEvents) {
             m_recentSearches.clear();
             const AtomicString& name = autosaveName();
-            if (!name.isNull()) {
+            if (!name.isEmpty()) {
                 if (!m_searchPopup)
                     m_searchPopup = SearchPopupMenu::create(this);
                 m_searchPopup->saveRecentSearches(name, m_recentSearches);
@@ -861,8 +869,8 @@ void RenderTextControl::valueChanged(unsigned listIndex, bool fireOnSearch)
         }
     } else {
         input->setValue(itemText(listIndex));
-        if (fireOnSearch)
-            onSearch();
+        if (fireEvents)
+            input->onSearch();
         input->select();
     }
 }
