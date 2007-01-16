@@ -1,3 +1,12 @@
+2007-01-15  Lars Naesbye Christensen  <larsnaesbye@stud.ku.dk>
+
+        Reviewed by Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=11112
+          add a drop shadow to the hand cursor used for links
+
+        * Resources/linkCursor.png: Added a drop shadow.
+
 2007-01-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.
@@ -39,15 +48,6 @@
         autosave name instead of null for consistency with other call sites that
         manage the autosave name. Also changed the code that dispatches an event
         to call onSearch on the input element so we don't need our own function.
-
-2007-01-15  Lars Naesbye Christensen  <larsnaesbye@stud.ku.dk>
-
-        Reviewed by Darin.
-
-        - http://bugs.webkit.org/show_bug.cgi?id=11112
-          add a drop shadow to the hand cursor used for links
-
-        * Resources/linkCursor.png: Added a drop shadow.
 
 2007-01-15  Eric Seidel  <eric@webkit.org>
 
