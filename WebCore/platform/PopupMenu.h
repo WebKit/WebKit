@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef POPUPMENU_H
-#define POPUPMENU_H
+#ifndef PopupMenu_h
+#define PopupMenu_h
 
 #include "Shared.h"
 

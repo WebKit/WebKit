@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FLOATPOINT_H_
-#define FLOATPOINT_H_
+#ifndef FloatPoint_h
+#define FloatPoint_h
 
 #include "FloatSize.h"
 #include <wtf/Platform.h>

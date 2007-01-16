@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef RenderPart_H
-#define RenderPart_H
+#ifndef RenderPart_h
+#define RenderPart_h
 
 #include "RenderWidget.h"
 

@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef HTMLLIElement_H
-#define HTMLLIElement_H
+#ifndef HTMLLIElement_h
+#define HTMLLIElement_h
 
 #include "HTMLElement.h"
 

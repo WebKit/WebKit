@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef append_node_command_h__
-#define append_node_command_h__
+#ifndef AppendNodeCommand_h
+#define AppendNodeCommand_h
 
 #include "EditCommand.h"
 
@@ -47,4 +47,4 @@ private:
 
 } // namespace WebCore
 
-#endif // append_node_command_h__
+#endif // AppendNodeCommand_h

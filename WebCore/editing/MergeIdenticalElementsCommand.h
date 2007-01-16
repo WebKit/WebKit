@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef merge_identical_elements_command_h__
-#define merge_identical_elements_command_h__
+#ifndef MergeIdenticalElementsCommand_h
+#define MergeIdenticalElementsCommand_h
 
 #include "EditCommand.h"
 
@@ -45,4 +45,4 @@ private:
 
 } // namespace WebCore
 
-#endif // merge_identical_elements_command_h__
+#endif // MergeIdenticalElementsCommand_h

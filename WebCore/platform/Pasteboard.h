@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PASTEBOARD_H_
-#define PASTEBOARD_H_
+#ifndef Pasteboard_h
+#define Pasteboard_h
 
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -87,4 +87,4 @@ private:
 
 } // namespace WebCore
 
-#endif // PASTEBOARD_H_
+#endif // Pasteboard_h

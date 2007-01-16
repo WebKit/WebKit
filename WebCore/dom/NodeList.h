@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef DOM_NodeList_h
-#define DOM_NodeList_h
+#ifndef NodeList_h
+#define NodeList_h
 
 #include "Shared.h"
 #include <wtf/Forward.h>

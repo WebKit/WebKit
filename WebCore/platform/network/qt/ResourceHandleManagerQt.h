@@ -26,8 +26,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceHandleManagerQt_H
-#define ResourceHandleManagerQt_H
+#ifndef ResourceHandleManagerQt_h
+#define ResourceHandleManagerQt_h
 
 #include <QHash>
 #include <QHttp>

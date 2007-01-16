@@ -25,8 +25,8 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#ifndef CachedCSSStyleSheet_H
-#define CachedCSSStyleSheet_H
+#ifndef CachedCSSStyleSheet_h
+#define CachedCSSStyleSheet_h
 
 #include "CachedResource.h"
 #include "TextEncoding.h"

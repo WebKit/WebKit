@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HistoryItem_H
-#define HistoryItem_H
+#ifndef HistoryItem_h
+#define HistoryItem_h
 
 #include "FormData.h"
 #include "IntPoint.h"

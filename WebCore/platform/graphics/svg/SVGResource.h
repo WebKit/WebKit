@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGResource_H
-#define SVGResource_H
+#ifndef SVGResource_h
+#define SVGResource_h
 
 #ifdef SVG_SUPPORT
 
@@ -98,4 +98,4 @@ namespace WebCore {
 
 #endif
 
-#endif // SVGResource_H
+#endif // SVGResource_h

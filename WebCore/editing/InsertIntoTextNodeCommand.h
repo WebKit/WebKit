@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef insert_into_text_node_command_h__
-#define insert_into_text_node_command_h__
+#ifndef InsertIntoTextNodeCommand_h
+#define InsertIntoTextNodeCommand_h
 
 #include "EditCommand.h"
 
@@ -51,4 +51,4 @@ private:
 
 } // namespace WebCore
 
-#endif // insert_into_text_node_command_h__
+#endif // InsertIntoTextNodeCommand_h

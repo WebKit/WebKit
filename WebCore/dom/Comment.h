@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef DOM_CommentImpl_h
-#define DOM_CommentImpl_h
+#ifndef Comment_h
+#define Comment_h
 
 #include "CharacterData.h"
 
@@ -52,4 +52,4 @@ public:
 
 } // namespace WebCore
 
-#endif // DOM_CommentImpl_h
+#endif // Comment_h

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DEPRECATEDCSTRING_H_
-#define DEPRECATEDCSTRING_H_
+#ifndef DeprecatedCString_h
+#define DeprecatedCString_h
 
 #include "DeprecatedArray.h"
 #include <string.h>

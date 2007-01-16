@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef RENDER_POPUPMENU_GDK_H
-#define RENDER_POPUPMENU_GDK_H
+#ifndef RenderPopupMenuGdk_h
+#define RenderPopupMenuGdk_h
 
 #include "PopupMenu.h"
 

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#ifndef HTMLTextFieldInnerElement_H
-#define HTMLTextFieldInnerElement_H
+#ifndef HTMLTextFieldInnerElement_h
+#define HTMLTextFieldInnerElement_h
 
 #include "HTMLDivElement.h"
 

@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef ICON_H_
-#define ICON_H_
+#ifndef Icon_h
+#define Icon_h
 
 #include "Shared.h"
 

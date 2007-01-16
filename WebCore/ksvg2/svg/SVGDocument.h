@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef SVGDocument_H
-#define SVGDocument_H
+#ifndef SVGDocument_h
+#define SVGDocument_h
 #ifdef SVG_SUPPORT
 
 #include "Document.h"
@@ -50,6 +50,6 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // SVGDocument_H
+#endif // SVGDocument_h
 
 // vim:ts=4:noet

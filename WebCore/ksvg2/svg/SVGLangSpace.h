@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGLangSpaceImpl_H
-#define KSVG_SVGLangSpaceImpl_H
+#ifndef SVGLangSpace_h
+#define SVGLangSpace_h
 #ifdef SVG_SUPPORT
 
 #include "AtomicString.h"
@@ -52,6 +52,6 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KSVG_SVGLangSpaceImpl_H
+#endif // SVGLangSpace_h
 
 // vim:ts=4:noet

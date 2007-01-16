@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef remove_node_attribute_command_h__
-#define remove_node_attribute_command_h__
+#ifndef RemoveNodeAttributeCommand_h
+#define RemoveNodeAttributeCommand_h
 
 #include "EditCommand.h"
 #include "QualifiedName.h"
@@ -49,4 +49,4 @@ private:
 
 } // namespace WebCore
 
-#endif // remove_node_attribute_command_h__
+#endif // RemoveNodeAttributeCommand_h

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef join_text_nodes_command_h__
-#define join_text_nodes_command_h__
+#ifndef JoinTextNodesCommand_h
+#define JoinTextNodesCommand_h
 
 #include "EditCommand.h"
 
@@ -51,4 +51,4 @@ private:
 
 } // namespace WebCore
 
-#endif // join_text_nodes_command_h__
+#endif // JoinTextNodesCommand_h

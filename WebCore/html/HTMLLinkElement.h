@@ -21,8 +21,8 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef HTMLLinkElement_H
-#define HTMLLinkElement_H
+#ifndef HTMLLinkElement_h
+#define HTMLLinkElement_h
 
 #include "HTMLElement.h"
 #include "CachedResourceClient.h"

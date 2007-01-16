@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef ListMarkerBox_H
-#define ListMarkerBox_H
+#ifndef ListMarkerBox_h
+#define ListMarkerBox_h
 
 #include "InlineBox.h"
 
@@ -38,4 +38,4 @@ public:
 
 } // namespace WebCore
 
-#endif // ListMarkerBox_H
+#endif // ListMarkerBox_h

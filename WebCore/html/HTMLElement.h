@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef HTMLElementImpl_H
-#define HTMLElementImpl_H
+#ifndef HTMLElement_h
+#define HTMLElement_h
 
 #include "StyledElement.h"
 

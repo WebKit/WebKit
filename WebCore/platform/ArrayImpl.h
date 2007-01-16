@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ARRAY_IMPL_H
-#define ARRAY_IMPL_H
+#ifndef ArrayImpl_h
+#define ArrayImpl_h
 
 #include <wtf/RefPtr.h>
 #include "Shared.h"

@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGFEColorMatrixElementImpl_H
-#define KSVG_SVGFEColorMatrixElementImpl_H
+#ifndef SVGFEColorMatrixElement_h
+#define SVGFEColorMatrixElement_h
 #ifdef SVG_SUPPORT
 
 #include "SVGFEColorMatrix.h"

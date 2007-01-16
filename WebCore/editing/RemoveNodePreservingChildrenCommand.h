@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef remove_node_preserving_children_command_h__
-#define remove_node_preserving_children_command_h__
+#ifndef RemoveNodePreservingChildrenCommand_h
+#define RemoveNodePreservingChildrenCommand_h
 
 #include "CompositeEditCommand.h"
 
@@ -44,4 +44,4 @@ private:
 
 } // namespace WebCore
 
-#endif // remove_node_preserving_children_command_h__
+#endif // RemoveNodePreservingChildrenCommand_h

@@ -24,8 +24,8 @@
  *
  */
 
-#ifndef DOM2_RangeImpl_h_
-#define DOM2_RangeImpl_h_
+#ifndef Range_h
+#define Range_h
 
 #include "Shared.h"
 #include <wtf/Forward.h>

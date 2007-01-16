@@ -25,8 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SharedTimerQtQt_H
-#define SharedTimerQtQt_H
+#ifndef SharedTimerQt_h
+#define SharedTimerQt_h
 
 #include "SharedTimerQt.h"
 #include "SystemTime.h"

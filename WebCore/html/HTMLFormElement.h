@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef HTML_HTMLFormElementImpl_H
-#define HTML_HTMLFormElementImpl_H
+#ifndef HTMLFormElement_h
+#define HTMLFormElement_h
 
 #include "HTMLCollection.h" 
 #include "HTMLElement.h"
@@ -133,4 +133,4 @@ private:
 
 } // namespace WebCore
 
-#endif // HTML_HTMLFormElementImpl_H
+#endif // HTMLFormElement_h

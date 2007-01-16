@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DELETE_BUTTON_H
-#define DELETE_BUTTON_H
+#ifndef DeleteButton_h
+#define DeleteButton_h
 
 #include "HTMLImageElement.h"
 

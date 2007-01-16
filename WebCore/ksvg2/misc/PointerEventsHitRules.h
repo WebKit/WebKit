@@ -19,8 +19,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef PointerEventsHitRules_H
-#define PointerEventsHitRules_H
+#ifndef PointerEventsHitRules_h
+#define PointerEventsHitRules_h
 #ifdef SVG_SUPPORT
 
 #include "SVGRenderStyle.h"

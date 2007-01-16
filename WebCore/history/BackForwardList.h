@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef BackForwardList_H
-#define BackForwardList_H
+#ifndef BackForwardList_h
+#define BackForwardList_h
 
 #include "Shared.h"
 #include <wtf/Forward.h>

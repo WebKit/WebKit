@@ -22,8 +22,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef StyleBase_H
-#define StyleBase_H
+#ifndef StyleBase_h
+#define StyleBase_h
 
 #include "Shared.h"
 

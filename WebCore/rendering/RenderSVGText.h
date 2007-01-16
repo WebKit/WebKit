@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef RenderSVGText_H
-#define RenderSVGText_H
+#ifndef RenderSVGText_h
+#define RenderSVGText_h
 
 #ifdef SVG_SUPPORT
 

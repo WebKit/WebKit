@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef HTML_HTMLKeygenElementImpl_H
-#define HTML_HTMLKeygenElementImpl_H
+#ifndef HTMLKeygenElement_h
+#define HTMLKeygenElement_h
 
 #include "HTMLSelectElement.h"
 

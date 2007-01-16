@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef HTML_HTMLTextAreaElementImpl_H
-#define HTML_HTMLTextAreaElementImpl_H
+#ifndef HTMLTextAreaElement_h
+#define HTMLTextAreaElement_h
 
 #include "HTMLGenericFormElement.h"
 

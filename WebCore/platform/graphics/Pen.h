@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PEN_H_
-#define PEN_H_
+#ifndef Pen_h
+#define Pen_h
 
 #include "Color.h"
 

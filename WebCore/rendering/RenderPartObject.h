@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef RenderPartObject_H
-#define RenderPartObject_H
+#ifndef RenderPartObject_h
+#define RenderPartObject_h
 
 #include "RenderPart.h"
 
@@ -43,4 +43,4 @@ public:
 
 } // namespace WebCore
 
-#endif // RenderPartObject_H
+#endif // RenderPartObject_h

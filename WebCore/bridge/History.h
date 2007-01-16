@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HISTORY_H
-#define HISTORY_H
+#ifndef History_h
+#define History_h
 
 namespace WebCore {
 

@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef SVGFitToViewBox_H
-#define SVGFitToViewBox_H
+#ifndef SVGFitToViewBox_h
+#define SVGFitToViewBox_h
 #ifdef SVG_SUPPORT
 
 #include "SVGElement.h"
@@ -52,6 +52,6 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // SVGFitToViewBox_H
+#endif // SVGFitToViewBox_h
 
 // vim:ts=4:noet

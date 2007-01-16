@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef HTML_HTMLSelectElementImpl_H
-#define HTML_HTMLSelectElementImpl_H
+#ifndef HTMLSelectElement_h
+#define HTMLSelectElement_h
 
 #include "Event.h"
 #include "HTMLCollection.h"

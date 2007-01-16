@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef RENDER_FILECHOOSER_H_
-#define RENDER_FILECHOOSER_H_
+#ifndef FileChooser_h
+#define FileChooser_h
 
 #include "Icon.h"
 #include "PlatformString.h"

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef delete_selection_command_h__
-#define delete_selection_command_h__
+#ifndef DeleteSelectionCommand_h
+#define DeleteSelectionCommand_h
 
 #include "CompositeEditCommand.h"
 
@@ -79,4 +79,4 @@ private:
 
 } // namespace WebCore
 
-#endif // delete_selection_command_h__
+#endif // DeleteSelectionCommand_h

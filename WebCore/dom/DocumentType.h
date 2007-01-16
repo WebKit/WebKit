@@ -22,8 +22,8 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef DOM_DocumentTypeImpl_h
-#define DOM_DocumentTypeImpl_h
+#ifndef DocumentType_h
+#define DocumentType_h
 
 #include "Node.h"
 

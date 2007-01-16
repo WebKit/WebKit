@@ -22,8 +22,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef AuthenticationChallenge_h_
-#define AuthenticationChallenge_h_
+#ifndef AuthenticationChallenge_h
+#define AuthenticationChallenge_h
 
 #include "Credential.h"
 #include "ProtectionSpace.h"

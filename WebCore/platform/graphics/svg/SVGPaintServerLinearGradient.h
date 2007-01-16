@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGPaintServerLinearGradient_H
-#define SVGPaintServerLinearGradient_H
+#ifndef SVGPaintServerLinearGradient_h
+#define SVGPaintServerLinearGradient_h
 
 #ifdef SVG_SUPPORT
 
@@ -61,4 +61,4 @@ namespace WebCore {
 
 #endif
 
-#endif // SVGPaintServerLinearGradient_H
+#endif // SVGPaintServerLinearGradient_h

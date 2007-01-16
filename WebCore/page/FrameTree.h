@@ -18,8 +18,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef FRAME_TREE_H
-#define FRAME_TREE_H
+#ifndef FrameTree_h
+#define FrameTree_h
 
 #include "AtomicString.h"
 
@@ -82,4 +82,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // FRAME_TREE_H
+#endif // FrameTree_h

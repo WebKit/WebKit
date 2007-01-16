@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FONTDATA_H
-#define FONTDATA_H
+#ifndef FontData_h
+#define FontData_h
 
 #include "FontPlatformData.h"
 #include "GlyphMap.h"
@@ -123,4 +123,4 @@ public:
 
 } // namespace WebCore
 
-#endif // FONTDATA_H
+#endif // FontData_h

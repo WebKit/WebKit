@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGClipPathElementImpl_H
-#define KSVG_SVGClipPathElementImpl_H
+#ifndef SVGClipPathElement_h
+#define SVGClipPathElement_h
 #ifdef SVG_SUPPORT
 
 #include "SVGResourceClipper.h"

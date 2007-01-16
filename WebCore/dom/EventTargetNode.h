@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef DOM_EventTargetNodeImpl_h
-#define DOM_EventTargetNodeImpl_h
+#ifndef EventTargetNode_h
+#define EventTargetNode_h
 
 #include "EventTarget.h"
 #include "Node.h"
@@ -133,4 +133,4 @@ inline void allowEventDispatch() { }
 
 } // namespace WebCore
 
-#endif // DOM_EventTargetNodeImpl_h
+#endif // EventTargetNode_h

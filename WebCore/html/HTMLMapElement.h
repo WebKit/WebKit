@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef HTMLMapElement_H
-#define HTMLMapElement_H
+#ifndef HTMLMapElement_h
+#define HTMLMapElement_h
 
 #include "HTMLElement.h"
 

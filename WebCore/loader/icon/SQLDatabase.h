@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SQLDatabase_H
-#define SQLDatabase_H
+#ifndef SQLDatabase_h
+#define SQLDatabase_h
 
 #include "PlatformString.h"
 #include <wtf/Noncopyable.h>

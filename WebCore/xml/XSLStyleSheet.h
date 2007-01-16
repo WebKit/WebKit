@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef XSLStyleSheet_H
-#define XSLStyleSheet_H
+#ifndef XSLStyleSheet_h
+#define XSLStyleSheet_h
 
 #ifdef XSLT_SUPPORT
 
@@ -81,4 +81,4 @@ protected:
 
 #endif // XSLT_SUPPORT
 
-#endif // XSLStyleSheet_H
+#endif // XSLStyleSheet_h

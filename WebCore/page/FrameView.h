@@ -23,8 +23,8 @@
    Boston, MA 02111-1307, USA.
 */
 
-#ifndef FrameView_H
-#define FrameView_H
+#ifndef FrameView_h
+#define FrameView_h
 
 #include "ScrollView.h"
 #include "IntSize.h"

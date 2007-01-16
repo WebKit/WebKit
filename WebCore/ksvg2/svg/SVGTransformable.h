@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGTransformableImpl_H
-#define KSVG_SVGTransformableImpl_H
+#ifndef SVGTransformable_h
+#define SVGTransformable_h
 #ifdef SVG_SUPPORT
 
 #include "SVGLocatable.h"
@@ -50,6 +50,6 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KSVG_SVGTransformableImpl_H
+#endif // SVGTransformable_h
 
 // vim:ts=4:noet

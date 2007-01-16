@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FLOATRECTF_H_
-#define FLOATRECTF_H_
+#ifndef FloatRect_h
+#define FloatRect_h
 
 #include "FloatPoint.h"
 

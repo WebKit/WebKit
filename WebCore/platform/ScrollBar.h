@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Scrollbar_h
-#define Scrollbar_h
+#ifndef ScrollBar_h
+#define ScrollBar_h
 
 #include "Shared.h"
 #include "ScrollTypes.h"

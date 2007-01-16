@@ -21,8 +21,8 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef HTMLScriptElement_H
-#define HTMLScriptElement_H
+#ifndef HTMLScriptElement_h
+#define HTMLScriptElement_h
 
 #include "HTMLElement.h"
 #include "CachedResourceClient.h"

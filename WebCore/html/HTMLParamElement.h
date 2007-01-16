@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef HTMLParamElement_H
-#define HTMLParamElement_H
+#ifndef HTMLParamElement_h
+#define HTMLParamElement_h
 
 #include "HTMLElement.h"
 

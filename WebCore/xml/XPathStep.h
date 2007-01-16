@@ -24,8 +24,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPathStep_H
-#define XPathStep_H
+#ifndef XPathStep_h
+#define XPathStep_h
 
 #ifdef XPATH_SUPPORT
 

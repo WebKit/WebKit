@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CgSupport_H
-#define CgSupport_H
+#ifndef CgSupport_h
+#define CgSupport_h
 
 #ifdef SVG_SUPPORT
 
@@ -76,4 +76,4 @@ static inline CGLineJoin CGLineJoinFromKC(LineJoin join)
 }
 
 #endif // SVG_SUPPORT
-#endif // !CgSupport_H
+#endif // !CgSupport_h

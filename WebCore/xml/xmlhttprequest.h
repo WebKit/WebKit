@@ -19,8 +19,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef XMLHTTPREQUEST_H_
-#define XMLHTTPREQUEST_H_
+#ifndef xmlhttprequest_h
+#define xmlhttprequest_h
 
 #include "EventTarget.h"
 #include "HTTPHeaderMap.h"

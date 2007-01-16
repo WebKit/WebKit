@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef HTMLELEMENTFACTORY_H
-#define HTMLELEMENTFACTORY_H
+#ifndef HTMLElementFactory_h
+#define HTMLElementFactory_h
 
 #include <wtf/Forward.h>
 

@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef HTMLImageLoader_H
-#define HTMLImageLoader_H
+#ifndef HTMLImageLoader_h
+#define HTMLImageLoader_h
 
 #include "CachedResourceClient.h"
 

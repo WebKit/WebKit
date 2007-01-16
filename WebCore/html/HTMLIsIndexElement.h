@@ -22,8 +22,8 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef HTML_HTMLInputElementImpl_H
-#define HTML_HTMLInputElementImpl_H
+#ifndef HTMLIsIndexElement_h
+#define HTMLIsIndexElement_h
 
 #include "HTMLInputElement.h"
 

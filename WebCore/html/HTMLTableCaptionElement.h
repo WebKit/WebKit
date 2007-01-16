@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef HTMLTableCaptionElement_H
-#define HTMLTableCaptionElement_H
+#ifndef HTMLTableCaptionElement_h
+#define HTMLTableCaptionElement_h
 
 #include "HTMLTablePartElement.h"
 

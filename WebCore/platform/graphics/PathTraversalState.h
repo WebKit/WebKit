@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PathTraversalState_H
-#define PathTraversalState_H
+#ifndef PathTraversalState_h
+#define PathTraversalState_h
 
 #include "FloatPoint.h"
 #include <wtf/Vector.h>

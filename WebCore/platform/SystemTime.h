@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SYSTEM_TIME_H
-#define SYSTEM_TIME_H
+#ifndef SystemTime_h
+#define SystemTime_h
 
 namespace WebCore {
 

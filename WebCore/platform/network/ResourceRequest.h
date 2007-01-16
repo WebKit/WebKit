@@ -25,8 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceRequest_H_
-#define ResourceRequest_H_
+#ifndef ResourceRequest_h
+#define ResourceRequest_h
 
 #include "FormData.h"
 #include "KURL.h"
@@ -193,4 +193,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // ResourceRequest_H_
+#endif // ResourceRequest_h

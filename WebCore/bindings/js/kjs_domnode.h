@@ -18,8 +18,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef KJS_DOMNODE_H
-#define KJS_DOMNODE_H
+#ifndef kjs_domnode_h
+#define kjs_domnode_h
 
 #include <kjs_binding.h>
 #include <kjs/lookup.h>

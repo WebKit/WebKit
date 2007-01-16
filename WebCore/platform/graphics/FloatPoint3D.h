@@ -21,8 +21,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef FloatPoint3D_H
-#define FloatPoint3D_H
+#ifndef FloatPoint3D_h
+#define FloatPoint3D_h
 
 #ifdef SVG_SUPPORT
 
@@ -54,4 +54,4 @@ private:
 
 #endif // SVG_SUPPORT
 
-#endif // FloatPoint3D_H
+#endif // FloatPoint3D_h

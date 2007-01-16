@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PageCache_H
-#define PageCache_H
+#ifndef PageCache_h
+#define PageCache_h
 
 #include "DocumentLoader.h"
 #include "PageState.h"
@@ -73,5 +73,5 @@ private:
 
 } // namespace WebCore
 
-#endif // PageCache_H
+#endif // PageCache_h
 

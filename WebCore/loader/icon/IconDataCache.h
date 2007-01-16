@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#ifndef ICONDATACACHE_H
-#define ICONDATACACHE_H
+#ifndef IconDataCache_h
+#define IconDataCache_h
 
 #include "PlatformString.h"
 

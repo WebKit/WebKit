@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef XSLImportRule_H
-#define XSLImportRule_H
+#ifndef XSLImportRule_h
+#define XSLImportRule_h
 
 #ifdef XSLT_SUPPORT
 
@@ -61,4 +61,4 @@ protected:
 
 #endif // XSLT_SUPPORT
 
-#endif // XSLImportRule_H
+#endif // XSLImportRule_h

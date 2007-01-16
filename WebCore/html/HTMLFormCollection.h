@@ -21,8 +21,8 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef HTMLFormCollectionImpl_H
-#define HTMLFormCollectionImpl_H
+#ifndef HTMLFormCollection_h
+#define HTMLFormCollection_h
 
 #include "HTMLCollection.h"
 

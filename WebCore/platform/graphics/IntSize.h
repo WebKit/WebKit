@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef INTSIZE_H_
-#define INTSIZE_H_
+#ifndef IntSize_h
+#define IntSize_h
 
 #include <wtf/Platform.h>
 
@@ -151,4 +151,4 @@ inline bool operator!=(const IntSize& a, const IntSize& b)
 
 } // namespace WebCore
 
-#endif // INTSIZE_H_
+#endif // IntSize_h

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef modify_selection_list_level_h__
-#define modify_selection_list_level_h__
+#ifndef ModifySelectionListLevel_h
+#define ModifySelectionListLevel_h
 
 #include "CompositeEditCommand.h"
 
@@ -77,4 +77,4 @@ private:
 
 } // namespace WebCore
 
-#endif // modify_selection_list_level_h__
+#endif // ModifySelectionListLevel_h

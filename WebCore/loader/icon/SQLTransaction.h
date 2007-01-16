@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SQLTransaction_H
-#define SQLTransaction_H
+#ifndef SQLTransaction_h
+#define SQLTransaction_h
 
 #include <wtf/Noncopyable.h>
 

@@ -17,8 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef JSHTMLInputElementBase_H
-#define JSHTMLInputElementBase_H
+#ifndef JSHTMLInputElementBase_h
+#define JSHTMLInputElementBase_h
 
 #include "kjs_html.h"
 #include "kjs_binding.h"

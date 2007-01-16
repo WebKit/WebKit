@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef IMAGE_ANIMATION_OBSERVER_H_
-#define IMAGE_ANIMATION_OBSERVER_H_
+#ifndef ImageAnimationObserver_h
+#define ImageAnimationObserver_h
 
 namespace WebCore {
 

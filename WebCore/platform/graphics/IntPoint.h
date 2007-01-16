@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef INTPOINT_H_
-#define INTPOINT_H_
+#ifndef IntPoint_h
+#define IntPoint_h
 
 #include "IntSize.h"
 #include <wtf/Platform.h>
@@ -133,4 +133,4 @@ inline bool operator!=(const IntPoint& a, const IntPoint& b)
 
 } // namespace WebCore
 
-#endif // INTPOINT_H_
+#endif // IntPoint_h

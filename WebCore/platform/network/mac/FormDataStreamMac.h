@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FormDataStreamMac_h_
-#define FormDataStreamMac_h_
+#ifndef FormDataStreamMac_h
+#define FormDataStreamMac_h
 
 #include "FormData.h"
 
@@ -39,4 +39,4 @@ namespace WebCore {
     FormData* httpBodyFromStream(NSInputStream* stream);
 }
 
-#endif // FormDataStreamMac_h_
+#endif // FormDataStreamMac_h

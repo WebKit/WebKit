@@ -20,8 +20,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef RectImpl_H
-#define RectImpl_H
+#ifndef RectImpl_h
+#define RectImpl_h
 
 #include "Shared.h"
 #include "CSSPrimitiveValue.h"

@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef RenderThemeGdk_H_
-#define RenderThemeGdk_H_
+#ifndef RenderThemeGdk_h
+#define RenderThemeGdk_h
 
 #include "RenderTheme.h"
 

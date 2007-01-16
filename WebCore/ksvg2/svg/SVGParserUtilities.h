@@ -18,8 +18,8 @@
    Boston, MA 02111-1307, USA.
 */
 
-#ifndef SVGPARSERUILS_H
-#define SVGPARSERUILS_H
+#ifndef SVGParserUtilities_h
+#define SVGParserUtilities_h
 #ifdef SVG_SUPPORT
 
 #include <PlatformString.h>

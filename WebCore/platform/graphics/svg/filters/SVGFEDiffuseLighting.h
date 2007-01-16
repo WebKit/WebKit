@@ -21,8 +21,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef SVGFEDiffuseLighting_H
-#define SVGFEDiffuseLighting_H
+#ifndef SVGFEDiffuseLighting_h
+#define SVGFEDiffuseLighting_h
 
 #ifdef SVG_SUPPORT
 #include "Color.h"
@@ -74,4 +74,4 @@ private:
 
 #endif // SVG_SUPPORT
 
-#endif // SVGFEDiffuseLighting_H
+#endif // SVGFEDiffuseLighting_h

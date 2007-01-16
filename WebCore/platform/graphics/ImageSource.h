@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef IMAGE_SOURCE_H_
-#define IMAGE_SOURCE_H_
+#ifndef ImageSource_h
+#define ImageSource_h
 
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>

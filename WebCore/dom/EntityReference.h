@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef EntityReference_H
-#define EntityReference_H
+#ifndef EntityReference_h
+#define EntityReference_h
 
 #include "ContainerNode.h"
 

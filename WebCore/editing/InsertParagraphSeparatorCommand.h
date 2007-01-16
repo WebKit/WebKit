@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef insert_paragraph_separator_command_h__
-#define insert_paragraph_separator_command_h__
+#ifndef InsertParagraphSeparatorCommand_h
+#define InsertParagraphSeparatorCommand_h
 
 #include "CompositeEditCommand.h"
 

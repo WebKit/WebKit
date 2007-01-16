@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef HTMLNameCollectionImpl_H
-#define HTMLNameCollectionImpl_H
+#ifndef HTMLNameCollection_h
+#define HTMLNameCollection_h
 
 #include "HTMLCollection.h"
 #include "PlatformString.h"

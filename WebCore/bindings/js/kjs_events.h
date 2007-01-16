@@ -18,8 +18,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef KJS_EVENTS_H
-#define KJS_EVENTS_H
+#ifndef kjs_events_h
+#define kjs_events_h
 
 #include "EventListener.h"
 #include "PlatformString.h"

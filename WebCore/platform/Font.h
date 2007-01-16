@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef FONT_H
-#define FONT_H
+#ifndef Font_h
+#define Font_h
 
 #include "FontDescription.h"
 

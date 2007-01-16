@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Logging_H
-#define Logging_H
+#ifndef Logging_h
+#define Logging_h
 
 #include <wtf/Assertions.h>
 
@@ -53,4 +53,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // Logging_H
+#endif // Logging_h

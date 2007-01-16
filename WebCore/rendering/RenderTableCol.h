@@ -24,8 +24,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef RenderTableCol_H
-#define RenderTableCol_H
+#ifndef RenderTableCol_h
+#define RenderTableCol_h
 
 #include "RenderContainer.h"
 

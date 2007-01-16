@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceRequestCFNet_h_
-#define ResourceRequestCFNet_h_
+#ifndef ResourceRequestCFNet_h
+#define ResourceRequestCFNet_h
 
 typedef const struct _CFURLRequest* CFURLRequestRef;
 
@@ -37,4 +37,4 @@ namespace WebCore {
     CFURLRequestRef cfURLRequest(const ResourceRequest&);
 }
 
-#endif // ResourceRequestCFNet_h_
+#endif // ResourceRequestCFNet_h

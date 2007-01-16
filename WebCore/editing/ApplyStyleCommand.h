@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef apply_style_command_h__
-#define apply_style_command_h__
+#ifndef ApplyStyleCommand_h
+#define ApplyStyleCommand_h
 
 #include "CompositeEditCommand.h"
 

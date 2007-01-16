@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef EVENT_NAMES_H
-#define EVENT_NAMES_H
+#ifndef EventNames_h
+#define EventNames_h
 
 #include "AtomicString.h"
 

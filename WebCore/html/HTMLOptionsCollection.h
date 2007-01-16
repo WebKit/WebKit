@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef HTML_HTMLOptionsCollectionImpl_H
-#define HTML_HTMLOptionsCollectionImpl_H
+#ifndef HTMLOptionsCollection_h
+#define HTMLOptionsCollection_h
 
 #include "HTMLCollection.h"
 #include "HTMLOptionElement.h"

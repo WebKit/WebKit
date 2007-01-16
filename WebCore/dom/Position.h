@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Position_H
-#define Position_H
+#ifndef Position_h
+#define Position_h
 
 #include "Node.h"
 #include "TextAffinity.h"
@@ -114,4 +114,4 @@ void showTree(const WebCore::Position&);
 void showTree(const WebCore::Position*);
 #endif
 
-#endif // Position_H
+#endif // Position_h

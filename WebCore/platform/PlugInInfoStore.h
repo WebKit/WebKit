@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PlugInInfoStore_H
-#define PlugInInfoStore_H
+#ifndef PlugInInfoStore_h
+#define PlugInInfoStore_h
 
 #include "PlatformString.h"
 #include <wtf/Vector.h>

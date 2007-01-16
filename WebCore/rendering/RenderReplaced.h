@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef RenderReplaced_H
-#define RenderReplaced_H
+#ifndef RenderReplaced_h
+#define RenderReplaced_h
 
 #include "RenderBox.h"
 

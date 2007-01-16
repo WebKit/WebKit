@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef DOM_DocumentMarker_h
-#define DOM_DocumentMarker_h
+#ifndef DocumentMarker_h
+#define DocumentMarker_h
 
 #include "PlatformString.h"
 
@@ -57,4 +57,4 @@ struct DocumentMarker {
 
 } // namespace WebCore
 
-#endif // DOM_DocumentMarker_h
+#endif // DocumentMarker_h

@@ -20,8 +20,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef DashboardRegion_H
-#define DashboardRegion_H
+#ifndef DashboardRegion_h
+#define DashboardRegion_h
 
 #include "RectImpl.h"
 

@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef FONT_DESCRIPTION_H
-#define FONT_DESCRIPTION_H
+#ifndef FontDescription_h
+#define FontDescription_h
 
 #include "FontFamily.h"
 

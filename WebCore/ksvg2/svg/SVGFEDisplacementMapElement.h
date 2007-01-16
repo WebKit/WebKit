@@ -17,8 +17,8 @@
  Boston, MA 02111-1307, USA.
  */
 
-#ifndef KSVG_SVGFEDisplacementMapElementImpl_H
-#define KSVG_SVGFEDisplacementMapElementImpl_H
+#ifndef SVGFEDisplacementMapElement_h
+#define SVGFEDisplacementMapElement_h
 #ifdef SVG_SUPPORT
 
 #include "SVGFEDisplacementMap.h"
@@ -54,4 +54,4 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KSVG_SVGFEDisplacementMapElementImpl_H
+#endif // SVGFEDisplacementMapElement_h

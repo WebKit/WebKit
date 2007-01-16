@@ -25,8 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceHandleManager_H
-#define ResourceHandleManager_H
+#ifndef ResourceHandleManagerKDE_h
+#define ResourceHandleManagerKDE_h
 
 #include <QMap>
 #include <QObject>

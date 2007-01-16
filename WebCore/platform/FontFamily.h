@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FONT_FAMILY_H
-#define FONT_FAMILY_H
+#ifndef FontFamily_h
+#define FontFamily_h
 
 #include "AtomicString.h"
 #include "Shared.h"

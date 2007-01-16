@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KeyboardCodes_H
-#define KeyboardCodes_H
+#ifndef KeyboardCodes_h
+#define KeyboardCodes_h
 
 namespace WebCore {
 

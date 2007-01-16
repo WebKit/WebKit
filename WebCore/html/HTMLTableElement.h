@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef HTMLTableElement_H
-#define HTMLTableElement_H
+#ifndef HTMLTableElement_h
+#define HTMLTableElement_h
 
 #include "HTMLElement.h"
 

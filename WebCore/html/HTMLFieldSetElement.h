@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef KHTML_HTMLFieldSetElementImpl_H
-#define KHTML_HTMLFieldSetElementImpl_H
+#ifndef HTMLFieldSetElement_h
+#define HTMLFieldSetElement_h
 
 #include "HTMLGenericFormElement.h"
 

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef xslt_processorimpl_h_
-#define xslt_processorimpl_h_
+#ifndef XSLTProcessor_h
+#define XSLTProcessor_h
 
 #ifdef XSLT_SUPPORT
 

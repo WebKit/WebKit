@@ -21,8 +21,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef SVGFEGaussianBlur_H
-#define SVGFEGaussianBlur_H
+#ifndef SVGFEGaussianBlur_h
+#define SVGFEGaussianBlur_h
 
 #ifdef SVG_SUPPORT
 #include "SVGFilterEffect.h"
@@ -52,4 +52,4 @@ private:
 
 #endif // SVG_SUPPORT
 
-#endif // SVGFEGaussianBlur_H
+#endif // SVGFEGaussianBlur_h

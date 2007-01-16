@@ -24,8 +24,8 @@
  *
  */
 
-#ifndef HTML_FormDataList_h
-#define HTML_FormDataList_h
+#ifndef FormDataList_h
+#define FormDataList_h
 
 #include "CString.h"
 #include "PlatformString.h"
@@ -67,4 +67,4 @@ private:
 
 } // namespace WebCore
 
-#endif // HTML_FormDataList_h
+#endif // FormDataList_h

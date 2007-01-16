@@ -22,8 +22,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef Credential_h_
-#define Credential_h_
+#ifndef Credential_h
+#define Credential_h
 
 #include "PlatformString.h"
 

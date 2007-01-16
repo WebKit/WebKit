@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLImagePattern_h
-#define HTMLImagePattern_h
+#ifndef CanvasPattern_h
+#define CanvasPattern_h
 
 #include "CachedResourceClient.h"
 #include "Shared.h"

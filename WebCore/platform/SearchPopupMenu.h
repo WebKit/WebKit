@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef SEARCHPOPUPMENU_H
-#define SEARCHPOPUPMENU_H
+#ifndef SearchPopupMenu_h
+#define SearchPopupMenu_h
 
 #include "PopupMenu.h"
 #include <wtf/Forward.h>

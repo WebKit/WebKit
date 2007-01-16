@@ -21,8 +21,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef SVGFEConvolveMatrix_H
-#define SVGFEConvolveMatrix_H
+#ifndef SVGFEConvolveMatrix_h
+#define SVGFEConvolveMatrix_h
 
 #ifdef SVG_SUPPORT
 #include "SVGFilterEffect.h"
@@ -79,4 +79,4 @@ private:
 
 #endif // SVG_SUPPORT
 
-#endif // SVGFEConvolveMatrix_H
+#endif // SVGFEConvolveMatrix_h

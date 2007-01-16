@@ -22,8 +22,8 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef DOM_ChildNodeListImpl_h
-#define DOM_ChildNodeListImpl_h
+#ifndef ChildNodeList_h
+#define ChildNodeList_h
 
 #include "NodeList.h"
 
@@ -42,4 +42,4 @@ protected:
 
 } // namespace WebCore
 
-#endif // DOM_ChildNodeListImpl_h
+#endif // ChildNodeList_h

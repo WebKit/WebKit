@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef HTML_HTMLOptGroupElementImpl_H
-#define HTML_HTMLOptGroupElementImpl_H
+#ifndef HTMLOptGroupElement_h
+#define HTMLOptGroupElement_h
 
 #include "HTMLGenericFormElement.h"
 

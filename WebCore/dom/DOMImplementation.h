@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef DOM_DOMImplementationImpl_h
-#define DOM_DOMImplementationImpl_h
+#ifndef DOMImplementation_h
+#define DOMImplementation_h
 
 #include "Shared.h"
 #include <wtf/Forward.h>

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef split_text_node_command_h__
-#define split_text_node_command_h__
+#ifndef SplitTextNodeCommand_h
+#define SplitTextNodeCommand_h
 
 #include "EditCommand.h"
 
@@ -51,4 +51,4 @@ private:
 
 } // namespace WebCore
 
-#endif // split_text_node_command_h__
+#endif // SplitTextNodeCommand_h

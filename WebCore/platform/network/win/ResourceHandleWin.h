@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceHandleWin_H
-#define ResourceHandleWin_H
+#ifndef ResourceHandleWin_h
+#define ResourceHandleWin_h
 
 #include <windows.h>
 

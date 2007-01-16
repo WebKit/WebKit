@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef HTMLFrameSetElement_H
-#define HTMLFrameSetElement_H
+#ifndef HTMLFrameSetElement_h
+#define HTMLFrameSetElement_h
 
 #include "HTMLElement.h"
 

@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef RenderSVGInline_H
-#define RenderSVGInline_H
+#ifndef RenderSVGInline_h
+#define RenderSVGInline_h
 
 #ifdef SVG_SUPPORT
 #include "RenderInline.h"

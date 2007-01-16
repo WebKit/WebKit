@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef composite_edit_command_h__
-#define composite_edit_command_h__
+#ifndef CompositeEditCommand_h
+#define CompositeEditCommand_h
 
 #include "EditCommand.h"
 #include <wtf/Vector.h>
@@ -109,4 +109,4 @@ private:
 
 } // namespace WebCore
 
-#endif // composite_edit_command_h__
+#endif // CompositeEditCommand_h

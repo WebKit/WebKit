@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SCROLLVIEWCANVASQT_H
-#define SCROLLVIEWCANVASQT_H
+#ifndef ScrollViewCanvasQt_h
+#define ScrollViewCanvasQt_h
 
 #include <QScrollArea>
 

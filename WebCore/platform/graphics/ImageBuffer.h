@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ImageBuffer_H
-#define ImageBuffer_H
+#ifndef ImageBuffer_h
+#define ImageBuffer_h
 
 #include "IntSize.h"
 #include <wtf/OwnPtr.h>

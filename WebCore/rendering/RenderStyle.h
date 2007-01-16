@@ -24,8 +24,8 @@
  *
  */
 
-#ifndef RENDERSTYLE_H
-#define RENDERSTYLE_H
+#ifndef RenderStyle_h
+#define RenderStyle_h
 
 /*
  * WARNING:

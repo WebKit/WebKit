@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef HTMLAppletElement_H
-#define HTMLAppletElement_H
+#ifndef HTMLAppletElement_h
+#define HTMLAppletElement_h
 
 #include "HTMLPlugInElement.h"
 

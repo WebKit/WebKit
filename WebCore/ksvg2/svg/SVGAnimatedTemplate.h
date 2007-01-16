@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef SVGAnimatedTemplate_H
-#define SVGAnimatedTemplate_H
+#ifndef SVGAnimatedTemplate_h
+#define SVGAnimatedTemplate_h
 
 #ifdef SVG_SUPPORT
 
@@ -66,6 +66,6 @@ namespace WebCore {
 }
 
 #endif // SVG_SUPPORT
-#endif // SVGAnimatedTemplate_H
+#endif // SVGAnimatedTemplate_h
 
 // vim:ts=4:noet

@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef HTMLHeadingElement_H
-#define HTMLHeadingElement_H
+#ifndef HTMLHeadingElement_h
+#define HTMLHeadingElement_h
 
 #include "HTMLElement.h"
 
@@ -42,4 +42,4 @@ public:
 
 } // namespace WebCore
 
-#endif // HTMLHeadingElement_H
+#endif // HTMLHeadingElement_h

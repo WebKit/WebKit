@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLCanvasStyle_h
-#define HTMLCanvasStyle_h
+#ifndef CanvasStyle_h
+#define CanvasStyle_h
 
 #include "PlatformString.h"
 

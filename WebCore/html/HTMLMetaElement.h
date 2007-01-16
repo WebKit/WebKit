@@ -21,8 +21,8 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef HTMLMetaElement_H
-#define HTMLMetaElement_H
+#ifndef HTMLMetaElement_h
+#define HTMLMetaElement_h
 
 #include "HTMLElement.h"
 

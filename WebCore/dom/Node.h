@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef DOM_NodeImpl_h_
-#define DOM_NodeImpl_h_
+#ifndef Node_h
+#define Node_h
 
 #include "DocPtr.h"
 #include "PlatformString.h"

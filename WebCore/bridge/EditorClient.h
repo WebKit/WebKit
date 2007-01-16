@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Editor_Client_h
-#define Editor_Client_h
+#ifndef EditorClient_h
+#define EditorClient_h
 
 #include "EditorInsertAction.h"
 #include <wtf/Forward.h>
@@ -99,4 +99,4 @@ public:
 
 }
 
-#endif // Editor_Client_h
+#endif // EditorClient_h

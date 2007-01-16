@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef RETAINPTR_H_
-#define RETAINPTR_H_
+#ifndef RetainPtr_h
+#define RetainPtr_h
 
 #include <algorithm>
 #include <CoreFoundation/CoreFoundation.h>
@@ -210,4 +210,4 @@ namespace WebCore {
 
 }
 
-#endif // RETAINPTR_H_
+#endif // RetainPtr_h

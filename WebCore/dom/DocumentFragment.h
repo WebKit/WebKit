@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef DOM_DocumentFragmentImpl_h
-#define DOM_DocumentFragmentImpl_h
+#ifndef DocumentFragment_h
+#define DocumentFragment_h
 
 #include "ContainerNode.h"
 

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef COLOR_H_
-#define COLOR_H_
+#ifndef Color_h
+#define Color_h
 
 #include <wtf/Platform.h>
 
@@ -131,4 +131,4 @@ CGColorRef cgColor(const Color&);
 
 } // namespace WebCore
 
-#endif // COLOR_H_
+#endif // Color_h

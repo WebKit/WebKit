@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef RenderMenuList_H
-#define RenderMenuList_H
+#ifndef RenderMenuList_h
+#define RenderMenuList_h
 
 #include "RenderFlexibleBox.h"
 #include "PopupMenuClient.h"

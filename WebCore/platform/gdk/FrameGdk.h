@@ -25,8 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FrameGdk_H_
-#define FrameGdk_H_
+#ifndef FrameGdk_h
+#define FrameGdk_h
 
 #include "Frame.h"
 #include "EditorClient.h"

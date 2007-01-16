@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef HTML_HTMLInputElement_H
-#define HTML_HTMLInputElement_H
+#ifndef HTMLInputElement_h
+#define HTMLInputElement_h
 
 #include "HTMLGenericFormElement.h"
 

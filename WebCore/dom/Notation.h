@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef Notation_H
-#define Notation_H
+#ifndef Notation_h
+#define Notation_h
 
 #include "CachedResourceClient.h"
 #include "ContainerNode.h"

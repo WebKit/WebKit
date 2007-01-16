@@ -20,8 +20,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef ShadowValue_H
-#define ShadowValue_H
+#ifndef ShadowValue_h
+#define ShadowValue_h
 
 #include "CSSValue.h"
 #include <wtf/PassRefPtr.h>

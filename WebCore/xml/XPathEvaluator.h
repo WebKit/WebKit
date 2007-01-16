@@ -24,8 +24,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPathEvaluator_H
-#define XPathEvaluator_H
+#ifndef XPathEvaluator_h
+#define XPathEvaluator_h
 
 #ifdef XPATH_SUPPORT
 
@@ -59,4 +59,4 @@ namespace WebCore {
 
 #endif // XPATH_SUPPORT
 
-#endif // XPathEvaluator_H
+#endif // XPathEvaluator_h

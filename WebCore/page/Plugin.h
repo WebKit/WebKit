@@ -18,8 +18,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef PLUGIN_H
-#define PLUGIN_H
+#ifndef Plugin_h
+#define Plugin_h
 
 #include "Shared.h"
 
@@ -38,4 +38,4 @@ namespace WebCore {
     
 } // namespace WebCore
 
-#endif // PLUGIN_H
+#endif // Plugin_h

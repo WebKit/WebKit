@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGPreserveAspectRatio_H
-#define KSVG_SVGPreserveAspectRatio_H
+#ifndef SVGPreserveAspectRatio_h
+#define SVGPreserveAspectRatio_h
 
 #ifdef SVG_SUPPORT
 
@@ -82,6 +82,6 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KSVG_SVGPreserveAspectRatio_H
+#endif // SVGPreserveAspectRatio_h
 
 // vim:ts=4:noet

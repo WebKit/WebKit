@@ -21,8 +21,8 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef HTMLBRElement_H
-#define HTMLBRElement_H
+#ifndef HTMLBRElement_h
+#define HTMLBRElement_h
 
 #include "HTMLElement.h"
 

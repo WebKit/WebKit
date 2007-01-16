@@ -19,8 +19,8 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef StyleElement_H
-#define StyleElement_H
+#ifndef StyleElement_h
+#define StyleElement_h
 
 #include "CSSStyleSheet.h"
 

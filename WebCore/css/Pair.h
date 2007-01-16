@@ -20,8 +20,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef Pair_H
-#define Pair_H
+#ifndef Pair_h
+#define Pair_h
 
 #include "Shared.h"
 #include "CSSPrimitiveValue.h"

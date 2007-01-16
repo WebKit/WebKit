@@ -25,8 +25,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef Frame_H
-#define Frame_H
+#ifndef Frame_h
+#define Frame_h
 
 #include "Color.h"
 #include "EditAction.h"
@@ -326,4 +326,4 @@ public:
 
 } // namespace WebCore
 
-#endif // Frame_H
+#endif // Frame_h

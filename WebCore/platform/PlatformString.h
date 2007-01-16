@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef String_h
-#define String_h
+#ifndef PlatformString_h
+#define PlatformString_h
 
 // This file would be called String.h, but that conflicts with <string.h>
 // on systems without case-sensitive file systems.

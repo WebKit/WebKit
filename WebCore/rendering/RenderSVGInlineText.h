@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef RenderSVGInlineText_H
-#define RenderSVGInlineText_H
+#ifndef RenderSVGInlineText_h
+#define RenderSVGInlineText_h
 
 #ifdef SVG_SUPPORT
 
@@ -41,4 +41,4 @@ public:
 
 #endif // SVG_SUPPORT
 
-#endif // !RenderSVGInlineText_H
+#endif // !RenderSVGInlineText_h

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebCoreSound_h
-#define WebCoreSound_h
+#ifndef Sound_h
+#define Sound_h
 
 namespace WebCore {
 
@@ -32,4 +32,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // WebCoreSound_h
+#endif // Sound_h

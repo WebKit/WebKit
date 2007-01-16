@@ -19,8 +19,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef JSSVGLazyEventListener_H
-#define JSSVGLazyEventListener_H
+#ifndef JSSVGLazyEventListener_h
+#define JSSVGLazyEventListener_h
 #ifdef SVG_SUPPORT
 
 #include "kjs_events.h"

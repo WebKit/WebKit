@@ -21,8 +21,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_TimeScheduler_H
-#define KSVG_TimeScheduler_H
+#ifndef TimeScheduler_h
+#define TimeScheduler_h
 #ifdef SVG_SUPPORT
 
 #include <wtf/HashSet.h>

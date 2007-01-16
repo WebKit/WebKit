@@ -20,8 +20,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef AutoTableLayout_H
-#define AutoTableLayout_H
+#ifndef AutoTableLayout_h
+#define AutoTableLayout_h
 
 #include "Length.h"
 #include "TableLayout.h"
@@ -82,4 +82,4 @@ protected:
 
 } // namespace WebCore
 
-#endif // AutoTableLayout_H
+#endif // AutoTableLayout_h

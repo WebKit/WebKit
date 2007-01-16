@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TIMER_H
-#define TIMER_H
+#ifndef Timer_h
+#define Timer_h
 
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>

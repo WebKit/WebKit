@@ -20,8 +20,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef MediaList_H
-#define MediaList_H
+#ifndef MediaList_h
+#define MediaList_h
 
 #include "StyleBase.h"
 #include <wtf/Vector.h>

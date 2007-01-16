@@ -30,8 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FrameQt_H
-#define FrameQt_H
+#ifndef FrameQt_h
+#define FrameQt_h
 
 #include "Frame.h"
 #include "FrameQtClient.h"

@@ -25,8 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceHandleManager_H_
-#define ResourceHandleManager_H_
+#ifndef ResourceHandleManager_h
+#define ResourceHandleManager_h
 
 #include "Frame.h"
 #include "Timer.h"

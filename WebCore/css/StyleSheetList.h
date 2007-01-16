@@ -20,8 +20,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef StyleSheetList_H
-#define StyleSheetList_H
+#ifndef StyleSheetList_h
+#define StyleSheetList_h
 
 #include "Shared.h"
 #include "DeprecatedPtrList.h"

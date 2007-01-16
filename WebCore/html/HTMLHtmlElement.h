@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef HTMLHtmlElement_H
-#define HTMLHtmlElement_H
+#ifndef HTMLHtmlElement_h
+#define HTMLHtmlElement_h
 
 #include "HTMLElement.h"
 

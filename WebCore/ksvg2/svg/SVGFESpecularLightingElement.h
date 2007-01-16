@@ -19,8 +19,8 @@
     Boston, MA 02111-1307, USA.
  */
 
-#ifndef SVGFESpecularLightingElement_H
-#define SVGFESpecularLightingElement_H
+#ifndef SVGFESpecularLightingElement_h
+#define SVGFESpecularLightingElement_h
 #ifdef SVG_SUPPORT
 
 #include "SVGFESpecularLighting.h"

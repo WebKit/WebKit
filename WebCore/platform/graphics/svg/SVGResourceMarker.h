@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGResourceMarker_H
-#define SVGResourceMarker_H
+#ifndef SVGResourceMarker_h
+#define SVGResourceMarker_h
 
 #ifdef SVG_SUPPORT
 
@@ -72,4 +72,4 @@ namespace WebCore {
 
 #endif
 
-#endif // SVGResourceMarker_H
+#endif // SVGResourceMarker_h

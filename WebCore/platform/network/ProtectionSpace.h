@@ -22,8 +22,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef ProtectionSpace_h_
-#define ProtectionSpace_h_
+#ifndef ProtectionSpace_h
+#define ProtectionSpace_h
 
 #include "PlatformString.h"
 

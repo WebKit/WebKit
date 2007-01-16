@@ -17,8 +17,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef DOMParser_H
-#define DOMParser_H
+#ifndef DOMParser_h
+#define DOMParser_h
 
 #include "Shared.h"
 #include "Document.h"

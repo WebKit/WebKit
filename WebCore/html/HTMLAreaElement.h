@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef HTMLAreaElement_H
-#define HTMLAreaElement_H
+#ifndef HTMLAreaElement_h
+#define HTMLAreaElement_h
 
 #include "HTMLAnchorElement.h"
 #include "IntSize.h"

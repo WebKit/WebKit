@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef RENDER_BOX_H
-#define RENDER_BOX_H
+#ifndef RenderBox_h
+#define RenderBox_h
 
 #include "RenderObject.h"
 

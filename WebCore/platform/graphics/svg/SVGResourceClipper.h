@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGResourceClipper_H
-#define SVGResourceClipper_H
+#ifndef SVGResourceClipper_h
+#define SVGResourceClipper_h
 
 #ifdef SVG_SUPPORT
 
@@ -89,4 +89,4 @@ namespace WebCore {
 
 #endif
 
-#endif // SVGResourceClipper_H
+#endif // SVGResourceClipper_h

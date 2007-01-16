@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef EDITING_TEXT_GRANULARITY_H
-#define EDITING_TEXT_GRANULARITY_H
+#ifndef TextGranularity_h
+#define TextGranularity_h
 
 namespace WebCore {
 

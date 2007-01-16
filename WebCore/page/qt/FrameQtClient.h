@@ -26,8 +26,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FrameQtClient_H
-#define FrameQtClient_H
+#ifndef FrameQtClient_h
+#define FrameQtClient_h
 
 #include <wtf/PassRefPtr.h>
 #include "ResourceHandleClient.h"

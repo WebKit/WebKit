@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef SHARED_H
-#define SHARED_H
+#ifndef Shared_h
+#define Shared_h
 
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>

@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IMAGEDECODERQT_H_
-#define IMAGEDECODERQT_H_
+#ifndef ImageDecoderQt_h
+#define ImageDecoderQt_h
 
 #include "ImageDecoder.h"
 #include <QtCore/QList>

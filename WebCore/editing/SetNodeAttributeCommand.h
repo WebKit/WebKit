@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef set_node_attribute_command_h__
-#define set_node_attribute_command_h__
+#ifndef SetNodeAttributeCommand_h
+#define SetNodeAttributeCommand_h
 
 #include "EditCommand.h"
 #include "QualifiedName.h"
@@ -51,4 +51,4 @@ private:
 
 } // namespace WebCore
 
-#endif // set_node_attribute_command_h__
+#endif // SetNodeAttributeCommand_h

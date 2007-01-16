@@ -25,8 +25,8 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#ifndef Request_h_
-#define Request_h_
+#ifndef Request_h
+#define Request_h
 
 #include <wtf/Vector.h>
 
@@ -60,4 +60,4 @@ namespace WebCore {
 
 } //namespace WebCore
 
-#endif // Request_h_
+#endif // Request_h

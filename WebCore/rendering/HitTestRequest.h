@@ -19,8 +19,8 @@
  * Boston, MA 02111-1307, USA.
  *
 */
-#ifndef HitTestRequest_h_
-#define HitTestRequest_h_
+#ifndef HitTestRequest_h
+#define HitTestRequest_h
 
 namespace WebCore {
 
@@ -41,4 +41,4 @@ struct HitTestRequest {
 
 } // namespace WebCore
 
-#endif // HitTestRequest_h_
+#endif // HitTestRequest_h

@@ -26,8 +26,8 @@
 //
 // KDE HTML Widget -- HTML Parser
 
-#ifndef HTMLPARSER_H
-#define HTMLPARSER_H
+#ifndef HTMLParser_h
+#define HTMLParser_h
 
 #include "HTMLDocument.h"
 
@@ -183,4 +183,4 @@ private:
 
 }
     
-#endif // HTMLPARSER_H
+#endif // HTMLParser_h

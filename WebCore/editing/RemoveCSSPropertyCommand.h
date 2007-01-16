@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RemoveCSSPropertyCommand_H
-#define RemoveCSSPropertyCommand_H
+#ifndef RemoveCSSPropertyCommand_h
+#define RemoveCSSPropertyCommand_h
 
 #include "EditCommand.h"
 

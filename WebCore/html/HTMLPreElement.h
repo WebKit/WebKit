@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef HTMLPreElement_H
-#define HTMLPreElement_H
+#ifndef HTMLPreElement_h
+#define HTMLPreElement_h
 
 #include "HTMLElement.h"
 
@@ -47,4 +47,4 @@ public:
 
 } // namespace WebCore
 
-#endif // HTMLPreElement_H
+#endif // HTMLPreElement_h

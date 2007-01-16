@@ -22,8 +22,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef AuthenticationMac_h_
-#define AuthenticationMac_h_
+#ifndef AuthenticationMac_h
+#define AuthenticationMac_h
 
 #ifdef __OBJC__
 

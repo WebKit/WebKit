@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceResponseCFNet_h_
-#define ResourceResponseCFNet_h_
+#ifndef ResourceResponseCFNet_h
+#define ResourceResponseCFNet_h
 
 typedef struct _CFURLResponse* CFURLResponseRef;
 
@@ -37,4 +37,4 @@ namespace WebCore {
 
 }
 
-#endif // ResourceResponseCFNet_h_
+#endif // ResourceResponseCFNet_h

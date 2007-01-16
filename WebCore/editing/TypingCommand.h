@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef typing_command_h__
-#define typing_command_h__
+#ifndef TypingCommand_h
+#define TypingCommand_h
 
 #include "CompositeEditCommand.h"
 
@@ -87,4 +87,4 @@ private:
 
 } // namespace WebCore
 
-#endif // typing_command_h__
+#endif // TypingCommand_h

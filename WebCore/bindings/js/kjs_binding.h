@@ -19,8 +19,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef KJS_BINDING_H_
-#define KJS_BINDING_H_
+#ifndef kjs_binding_h
+#define kjs_binding_h
 
 #include <kjs/lookup.h>
 #include <wtf/Noncopyable.h>

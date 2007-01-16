@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef DOM_EditingTextImpl_h
-#define DOM_EditingTextImpl_h
+#ifndef EditingText_h
+#define EditingText_h
 
 #include "Text.h"
 
@@ -41,4 +41,4 @@ public:
 
 } // namespace WebCore
 
-#endif // DOM_EditingTextImpl_h
+#endif // EditingText_h

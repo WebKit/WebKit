@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef HTMLMarqueeElement_H
-#define HTMLMarqueeElement_H
+#ifndef HTMLMarqueeElement_h
+#define HTMLMarqueeElement_h
 
 #include "HTMLElement.h"
 
@@ -46,4 +46,4 @@ private:
 
 } // namespace WebCore
 
-#endif // HTMLMarqueeElement_H
+#endif // HTMLMarqueeElement_h

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGImage_H
-#define SVGImage_H
+#ifndef SVGImage_h
+#define SVGImage_h
 
 #ifdef SVG_SUPPORT
 

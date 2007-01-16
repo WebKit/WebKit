@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGZoomAndPanImpl_H
-#define KSVG_SVGZoomAndPanImpl_H
+#ifndef SVGZoomAndPan_h
+#define SVGZoomAndPan_h
 #ifdef SVG_SUPPORT
 
 namespace WebCore {
@@ -52,6 +52,6 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KSVG_SVGZoomAndPanImpl_H
+#endif // SVGZoomAndPan_h
 
 // vim:ts=4:noet

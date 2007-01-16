@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGTransformImpl_H
-#define KSVG_SVGTransformImpl_H
+#ifndef SVGTransform_h
+#define SVGTransform_h
 #ifdef SVG_SUPPORT
 
 #include "AffineTransform.h"

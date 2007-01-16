@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef DOM_TextImpl_h
-#define DOM_TextImpl_h
+#ifndef Text_h
+#define Text_h
 
 #include "CharacterData.h"
 
@@ -67,4 +67,4 @@ protected:
 
 } // namespace WebCore
 
-#endif // DOM_TextImpl_h
+#endif // Text_h

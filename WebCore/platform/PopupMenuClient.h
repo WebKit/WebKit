@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef POPUPMENUCLIENT_H
-#define POPUPMENUCLIENT_H
+#ifndef PopupMenuClient_h
+#define PopupMenuClient_h
 
 namespace WebCore {
 

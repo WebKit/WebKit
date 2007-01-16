@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GLYPH_BUFFER_H
-#define GLYPH_BUFFER_H
+#ifndef GlyphBuffer_h
+#define GlyphBuffer_h
 
 #if PLATFORM(CG)
 #include <ApplicationServices/ApplicationServices.h>

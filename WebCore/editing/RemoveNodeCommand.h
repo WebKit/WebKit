@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef remove_node_command_h__
-#define remove_node_command_h__
+#ifndef RemoveNodeCommand_h
+#define RemoveNodeCommand_h
 
 #include "EditCommand.h"
 
@@ -47,4 +47,4 @@ private:
 
 } // namespace WebCore
 
-#endif // remove_node_command_h__
+#endif // RemoveNodeCommand_h

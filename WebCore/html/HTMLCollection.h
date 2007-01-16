@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef HTMLCollectionImpl_H
-#define HTMLCollectionImpl_H
+#ifndef HTMLCollection_h
+#define HTMLCollection_h
 
 #include "Shared.h"
 #include <wtf/Forward.h>

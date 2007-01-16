@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef CSS_cssstyleselector_h_
-#define CSS_cssstyleselector_h_
+#ifndef cssstyleselector_h
+#define cssstyleselector_h
 
 #include "DeprecatedString.h"
 #include "RenderStyle.h"

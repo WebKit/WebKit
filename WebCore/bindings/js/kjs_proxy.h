@@ -18,8 +18,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef KJS_PROXY_H
-#define KJS_PROXY_H
+#ifndef kjs_proxy_h
+#define kjs_proxy_h
 
 #include <wtf/RefPtr.h>
 

@@ -23,8 +23,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPathVariableReference_H
-#define XPathVariableReference_H
+#ifndef XPathVariableReference_h
+#define XPathVariableReference_h
 
 #ifdef XPATH_SUPPORT
 

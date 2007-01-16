@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DELETE_BUTTON_CONTROLLER_H
-#define DELETE_BUTTON_CONTROLLER_H
+#ifndef DeleteButtonController_h
+#define DeleteButtonController_h
 
 #include "DeleteButton.h"
 

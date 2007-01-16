@@ -21,8 +21,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef SVGResourceFilter_H
-#define SVGResourceFilter_H
+#ifndef SVGResourceFilter_h
+#define SVGResourceFilter_h
 
 #ifdef SVG_SUPPORT
 #include "SVGResource.h"
@@ -114,4 +114,4 @@ SVGResourceFilter* getFilterById(Document*, const AtomicString&);
 
 #endif // SVG_SUPPORT
 
-#endif // SVGResourceFilter_H
+#endif // SVGResourceFilter_h

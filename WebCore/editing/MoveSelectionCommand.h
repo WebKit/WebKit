@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef move_selection_command_h__
-#define move_selection_command_h__
+#ifndef MoveSelectionCommand_h
+#define MoveSelectionCommand_h
 
 #include "CompositeEditCommand.h"
 
@@ -48,4 +48,4 @@ private:
 
 } // namespace WebCore
 
-#endif // __move_selection_command_h__
+#endif // __MoveSelectionCommand_h

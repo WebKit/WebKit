@@ -26,8 +26,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef SVGRenderStyleDefs_H
-#define SVGRenderStyleDefs_H
+#ifndef SVGRenderStyleDefs_h
+#define SVGRenderStyleDefs_h
 #ifdef SVG_SUPPORT
 
 #include "Color.h"
@@ -232,6 +232,6 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KSVG_SVGRenderStyleDefs_H
+#endif // KSVG_SVGRenderStyleDefs_h
 
 // vim:ts=4:noet

@@ -21,8 +21,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef StyleList_H
-#define StyleList_H
+#ifndef StyleList_h
+#define StyleList_h
 
 #include "StyleBase.h"
 #include <wtf/PassRefPtr.h>

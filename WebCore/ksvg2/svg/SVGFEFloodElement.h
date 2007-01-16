@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGFEFloodElementImpl_H
-#define KSVG_SVGFEFloodElementImpl_H
+#ifndef SVGFEFloodElement_h
+#define SVGFEFloodElement_h
 #ifdef SVG_SUPPORT
 
 #include "SVGFilterPrimitiveStandardAttributes.h"

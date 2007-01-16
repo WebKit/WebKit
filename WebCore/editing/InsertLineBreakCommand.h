@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef InsertLineBreakCommand_H
-#define InsertLineBreakCommand_H
+#ifndef InsertLineBreakCommand_h
+#define InsertLineBreakCommand_h
 
 #include "CompositeEditCommand.h"
 
@@ -44,4 +44,4 @@ private:
 
 } // namespace WebCore
 
-#endif // InsertLineBreakCommand_H
+#endif // InsertLineBreakCommand_h

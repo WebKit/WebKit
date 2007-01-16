@@ -37,8 +37,8 @@
  * version of this file under any of the LGPL, the MPL or the GPL.
  */
 
-#ifndef ARENA_H
-#define ARENA_H
+#ifndef Arena_h
+#define Arena_h
 
 #define ARENA_ALIGN_MASK 3
 

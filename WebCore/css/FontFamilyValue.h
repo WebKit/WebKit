@@ -20,8 +20,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef FontFamilyValue_H
-#define FontFamilyValue_H
+#ifndef FontFamilyValue_h
+#define FontFamilyValue_h
 
 #include "CSSPrimitiveValue.h"
 #include "DeprecatedString.h"

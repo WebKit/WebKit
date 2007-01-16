@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceResponse_h_
-#define ResourceResponse_h_
+#ifndef ResourceResponse_h
+#define ResourceResponse_h
 
 #include "HTTPHeaderMap.h"
 #include "KURL.h"
@@ -146,4 +146,4 @@ inline bool operator!=(const ResourceResponse& a, const ResourceResponse& b) { r
 
 } // namespace WebCore
 
-#endif // ResourceResponse_h_
+#endif // ResourceResponse_h

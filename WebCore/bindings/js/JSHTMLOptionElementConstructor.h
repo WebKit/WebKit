@@ -17,8 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef JSHTMLOptionElementConstructor_H
-#define JSHTMLOptionElementConstructor_H
+#ifndef JSHTMLOptionElementConstructor_h
+#define JSHTMLOptionElementConstructor_h
 
 #include "kjs_binding.h"
 #include <wtf/RefPtr.h>

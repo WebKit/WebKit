@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef InlineBox_H
-#define InlineBox_H
+#ifndef InlineBox_h
+#define InlineBox_h
 
 #include "RenderObject.h" // needed for RenderObject::PaintInfo
 
@@ -210,4 +210,4 @@ public: // FIXME: Would like to make this protected, but methods are accessing t
 void showTree(const WebCore::InlineBox*);
 #endif
 
-#endif // InlineBox_H
+#endif // InlineBox_h

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef HTML_HTMLLegendElementImpl_H
-#define HTML_HTMLLegendElementImpl_H
+#ifndef HTMLLegendElement_h
+#define HTMLLegendElement_h
 
 #include "HTMLGenericFormElement.h"
 

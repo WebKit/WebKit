@@ -25,8 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef DocumentLoader_H_
-#define DocumentLoader_H_
+#ifndef DocumentLoader_h
+#define DocumentLoader_h
 
 #include "NavigationAction.h"
 #include "Shared.h"
@@ -195,4 +195,4 @@ namespace WebCore {
 
 }
 
-#endif // DocumentLoader_H_
+#endif // DocumentLoader_h

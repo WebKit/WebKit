@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef HTMLBlockquoteElement_H
-#define HTMLBlockquoteElement_H
+#ifndef HTMLBlockquoteElement_h
+#define HTMLBlockquoteElement_h
 
 #include "HTMLElement.h"
 
@@ -42,4 +42,4 @@ public:
 
 } // namespace WebCore
 
-#endif // HTMLBlockquoteElement_H
+#endif // HTMLBlockquoteElement_h

@@ -19,8 +19,8 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef MEDIAFEATURENAMES_H
-#define MEDIAFEATURENAMES_H
+#ifndef MediaFeatureNames_h
+#define MediaFeatureNames_h
 
 #include "AtomicString.h"
 
@@ -66,4 +66,4 @@ namespace WebCore {
     } // namespace MediaFeatureNames
 } // namespace WebCore
 
-#endif // MEDIAFEATURENAMES_H
+#endif // MediaFeatureNames_h

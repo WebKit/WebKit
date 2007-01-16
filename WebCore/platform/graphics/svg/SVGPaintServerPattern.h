@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGPaintServerPattern_H
-#define SVGPaintServerPattern_H
+#ifndef SVGPaintServerPattern_h
+#define SVGPaintServerPattern_h
 
 #ifdef SVG_SUPPORT
 
@@ -85,4 +85,4 @@ namespace WebCore {
 
 #endif
 
-#endif // SVGPaintServerPattern_H
+#endif // SVGPaintServerPattern_h

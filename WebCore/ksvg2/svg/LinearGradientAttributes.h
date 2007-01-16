@@ -19,8 +19,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef LinearGradientAttributes_H
-#define LinearGradientAttributes_H
+#ifndef LinearGradientAttributes_h
+#define LinearGradientAttributes_h
 
 #include "GradientAttributes.h"
 

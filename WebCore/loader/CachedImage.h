@@ -25,8 +25,8 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#ifndef KHTML_CachedImage_h
-#define KHTML_CachedImage_h
+#ifndef CachedImage_h
+#define CachedImage_h
 
 #include "CachedResource.h"
 #include "ImageAnimationObserver.h"

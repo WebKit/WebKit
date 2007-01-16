@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef ProcessingInstruction_H
-#define ProcessingInstruction_H
+#ifndef ProcessingInstruction_h
+#define ProcessingInstruction_h
 
 #include "CachedResourceClient.h"
 #include "ContainerNode.h"

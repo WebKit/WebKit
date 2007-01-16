@@ -21,8 +21,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ChromeClientGdk_H
-#define ChromeClientGdk_H
+#ifndef ChromeClientGdk_h
+#define ChromeClientGdk_h
 
 #include "ChromeClient.h"
 
@@ -70,4 +70,4 @@ namespace WebCore {
 
 }
 
-#endif // ChromeClientGdk_H
+#endif // ChromeClientGdk_h

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef command_by_name_h__
-#define command_by_name_h__
+#ifndef CommandByName_h
+#define CommandByName_h
 
 namespace WebCore {
 
@@ -42,4 +42,4 @@ private:
 
 } // namespace WebCore
 
-#endif // command_by_name_h__
+#endif // CommandByName_h

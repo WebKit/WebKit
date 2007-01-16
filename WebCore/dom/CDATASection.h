@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef DOM_CDATASectionImpl_h
-#define DOM_CDATASectionImpl_h
+#ifndef CDATASection_h
+#define CDATASection_h
 
 #include "Text.h"
 
@@ -49,4 +49,4 @@ protected:
 
 } // namespace WebCore
 
-#endif // DOM_CDATASectionImpl_h
+#endif // CDATASection_h

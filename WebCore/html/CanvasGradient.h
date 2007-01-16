@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLGradient_h
-#define HTMLGradient_h
+#ifndef CanvasGradient_h
+#define CanvasGradient_h
 
 #include "FloatPoint.h"
 #include "Shared.h"

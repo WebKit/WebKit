@@ -24,8 +24,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPathFunctions_H
-#define XPathFunctions_H
+#ifndef XPathFunctions_h
+#define XPathFunctions_h
 
 #ifdef XPATH_SUPPORT
 

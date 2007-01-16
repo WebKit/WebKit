@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef RenderThemeWin_H
-#define RenderThemeWin_H
+#ifndef RenderThemeWin_h
+#define RenderThemeWin_h
 
 #include "RenderTheme.h"
 

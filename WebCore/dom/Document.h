@@ -24,8 +24,8 @@
  *
  */
 
-#ifndef DOM_Document_h
-#define DOM_Document_h
+#ifndef Document_h
+#define Document_h
 
 #include "Attr.h"
 #include "Color.h"

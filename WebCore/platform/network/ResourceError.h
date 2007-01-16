@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceError_H_
-#define ResourceError_H_
+#ifndef ResourceError_h
+#define ResourceError_h
 
 #include "PlatformString.h"
 

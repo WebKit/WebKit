@@ -19,8 +19,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGImageLoader_H
-#define KSVG_SVGImageLoader_H
+#ifndef SVGImageLoader_h
+#define SVGImageLoader_h
 #ifdef SVG_SUPPORT
 
 #include "HTMLImageLoader.h"
@@ -41,6 +41,6 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KSVG_SVGImageLoader_H
+#endif // SVGImageLoader_h
 
 // vim:ts=4:noet

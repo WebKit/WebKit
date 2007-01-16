@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FONTCACHE_H
-#define FONTCACHE_H
+#ifndef FontCache_h
+#define FontCache_h
 
 #include <wtf/unicode/Unicode.h>
 

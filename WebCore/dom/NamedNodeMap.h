@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef DOM_NamedNodeMapImpl_h
-#define DOM_NamedNodeMapImpl_h
+#ifndef NamedNodeMap_h
+#define NamedNodeMap_h
 
 #include "Shared.h"
 #include <wtf/PassRefPtr.h>

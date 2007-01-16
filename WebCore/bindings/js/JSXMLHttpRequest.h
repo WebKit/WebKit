@@ -19,8 +19,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef JSXMLHTTPREQUEST_H_
-#define JSXMLHTTPREQUEST_H_
+#ifndef JSXMLHttpRequest_h
+#define JSXMLHttpRequest_h
 
 #include "kjs_binding.h"
 

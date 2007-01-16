@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#ifndef PageState_H
-#define PageState_H
+#ifndef PageState_h
+#define PageState_h
 
 #include "KURL.h"
 #include "Shared.h"
@@ -72,4 +72,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // PageState_H
+#endif // PageState_h

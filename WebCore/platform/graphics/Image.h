@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Image_H
-#define Image_H
+#ifndef Image_h
+#define Image_h
 
 #include "Color.h"
 #include "GraphicsTypes.h"

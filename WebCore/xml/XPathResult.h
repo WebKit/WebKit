@@ -24,8 +24,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPathResult_H
-#define XPathResult_H
+#ifndef XPathResult_h
+#define XPathResult_h
 
 #ifdef XPATH_SUPPORT
 
@@ -89,4 +89,4 @@ namespace WebCore {
 
 #endif // XPATH_SUPPORT
 
-#endif // XPathResult_H
+#endif // XPathResult_h

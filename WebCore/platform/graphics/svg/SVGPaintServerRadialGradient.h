@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGPaintServerRadialGradient_H
-#define SVGPaintServerRadialGradient_H
+#ifndef SVGPaintServerRadialGradient_h
+#define SVGPaintServerRadialGradient_h
 
 #ifdef SVG_SUPPORT
 
@@ -65,4 +65,4 @@ namespace WebCore {
 
 #endif
 
-#endif // SVGPaintServerRadialGradient_H
+#endif // SVGPaintServerRadialGradient_h

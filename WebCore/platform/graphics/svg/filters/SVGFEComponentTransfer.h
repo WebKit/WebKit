@@ -21,8 +21,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef SVGFEComponentTransfer_H
-#define SVGFEComponentTransfer_H
+#ifndef SVGFEComponentTransfer_h
+#define SVGFEComponentTransfer_h
 
 #ifdef SVG_SUPPORT
 #include <wtf/Vector.h>
@@ -100,4 +100,4 @@ private:
 
 #endif // SVG_SUPPORT
 
-#endif // SVGFEComponentTransfer_H
+#endif // SVGFEComponentTransfer_h

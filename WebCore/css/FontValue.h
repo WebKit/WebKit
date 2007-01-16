@@ -20,8 +20,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef FontValue_H
-#define FontValue_H
+#ifndef FontValue_h
+#define FontValue_h
 
 #include "CSSValue.h"
 #include <wtf/RefPtr.h>

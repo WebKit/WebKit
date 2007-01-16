@@ -18,8 +18,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef KJS_DOM_H
-#define KJS_DOM_H
+#ifndef kjs_dom_h
+#define kjs_dom_h
 
 #include "JSNode.h"
 #include "NodeList.h"

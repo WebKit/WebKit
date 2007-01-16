@@ -22,8 +22,8 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef HTML_HTMLOptionElementImpl_H
-#define HTML_HTMLOptionElementImpl_H
+#ifndef HTMLOptionElement_h
+#define HTMLOptionElement_h
 
 #include "HTMLGenericFormElement.h"
 

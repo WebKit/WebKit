@@ -17,8 +17,8 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef INTSIZEHASH_H_
-#define INTSIZEHASH_H_
+#ifndef IntSizeHash_h
+#define IntSizeHash_h
 
 #include "IntSize.h"
 #include <wtf/HashMap.h>

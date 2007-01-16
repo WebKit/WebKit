@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef break_blockquote_command_h__
-#define break_blockquote_command_h__
+#ifndef BreakBlockquoteCommand_h
+#define BreakBlockquoteCommand_h
 
 #include "CompositeEditCommand.h"
 

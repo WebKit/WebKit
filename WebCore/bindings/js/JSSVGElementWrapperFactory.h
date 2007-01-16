@@ -16,8 +16,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef JSSVGELEMENTWRAPPERFACTORY_H
-#define JSSVGELEMENTWRAPPERFACTORY_H
+#ifndef JSSVGElementWrapperFactory_h
+#define JSSVGElementWrapperFactory_h
 
 #ifdef SVG_SUPPORT
 

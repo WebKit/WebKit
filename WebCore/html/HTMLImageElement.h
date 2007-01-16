@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef HTMLImageElement_H
-#define HTMLImageElement_H
+#ifndef HTMLImageElement_h
+#define HTMLImageElement_h
 
 #include "HTMLElement.h"
 #include "GraphicsTypes.h"

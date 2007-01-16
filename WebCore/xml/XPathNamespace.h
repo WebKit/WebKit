@@ -24,8 +24,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPathNamespace_H
-#define XPathNamespace_H
+#ifndef XPathNamespace_h
+#define XPathNamespace_h
 
 #ifdef XPATH_SUPPORT
 
@@ -62,5 +62,5 @@ namespace WebCore {
 
 #endif // XPATH_SUPPORT
 
-#endif // XPathNamespace_H
+#endif // XPathNamespace_h
 

@@ -18,8 +18,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef KJS_TRAVERSAL_H_
-#define KJS_TRAVERSAL_H_
+#ifndef kjs_traversal_h
+#define kjs_traversal_h
 
 #include "NodeFilter.h"
 #include "NodeFilterCondition.h"

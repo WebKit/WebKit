@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGResourceMasker_H
-#define SVGResourceMasker_H
+#ifndef SVGResourceMasker_h
+#define SVGResourceMasker_h
 
 #ifdef SVG_SUPPORT
 
@@ -62,4 +62,4 @@ namespace WebCore {
 
 #endif
 
-#endif // SVGResourceMasker_H
+#endif // SVGResourceMasker_h

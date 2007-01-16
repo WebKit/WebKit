@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSSVGPODTypeWrapper_H
-#define JSSVGPODTypeWrapper_H
+#ifndef JSSVGPODTypeWrapper_h
+#define JSSVGPODTypeWrapper_h
 
 #ifdef SVG_SUPPORT
 
@@ -112,4 +112,4 @@ private:
 };
 
 #endif // SVG_SUPPORT
-#endif // JSSVGPODTypeWrapper_H
+#endif // JSSVGPODTypeWrapper_h

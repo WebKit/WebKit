@@ -20,8 +20,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef CSSValueList_H
-#define CSSValueList_H
+#ifndef CSSValueList_h
+#define CSSValueList_h
 
 #include "CSSValue.h"
 #include <wtf/PassRefPtr.h>

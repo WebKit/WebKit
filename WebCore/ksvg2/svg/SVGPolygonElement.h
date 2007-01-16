@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef SVGPolygonElement_H
-#define SVGPolygonElement_H
+#ifndef SVGPolygonElement_h
+#define SVGPolygonElement_h
 
 #ifdef SVG_SUPPORT
 

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#ifndef ICONDATABASE_H
-#define ICONDATABASE_H
+#ifndef IconDatabase_h
+#define IconDatabase_h
 
 #include "SQLDatabase.h"
 #include "StringHash.h"

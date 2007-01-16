@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ICONLOADER_H_
-#define ICONLOADER_H_
+#ifndef IconLoader_h
+#define IconLoader_h
 
 #include "KURL.h"
 #include "SubresourceLoaderClient.h"

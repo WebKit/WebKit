@@ -21,8 +21,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef SVGPointLightSource_H
-#define SVGPointLightSource_H
+#ifndef SVGPointLightSource_h
+#define SVGPointLightSource_h
 
 #ifdef SVG_SUPPORT
 #include "FloatPoint3D.h"
@@ -49,4 +49,4 @@ private:
 
 #endif // SVG_SUPPORT
 
-#endif // SVGPointLightSource_H
+#endif // SVGPointLightSource_h

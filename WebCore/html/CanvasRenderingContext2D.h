@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLCanvas2DContext_h
-#define HTMLCanvas2DContext_h
+#ifndef CanvasRenderingContext2D_h
+#define CanvasRenderingContext2D_h
 
 #include "FloatSize.h"
 #include "GraphicsTypes.h"

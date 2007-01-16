@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef HTMLPlugInElement_H
-#define HTMLPlugInElement_H
+#ifndef HTMLPlugInElement_h
+#define HTMLPlugInElement_h
 
 #include "HTMLFrameOwnerElement.h"
 
@@ -92,4 +92,4 @@ private:
 
 } // namespace WebCore
 
-#endif // HTMLPlugInElement_H
+#endif // HTMLPlugInElement_h

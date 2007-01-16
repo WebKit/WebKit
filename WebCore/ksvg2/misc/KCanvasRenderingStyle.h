@@ -21,8 +21,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KCanvasRenderingStyle_H
-#define KCanvasRenderingStyle_H
+#ifndef KCanvasRenderingStyle_h
+#define KCanvasRenderingStyle_h
 
 #ifdef SVG_SUPPORT
 
@@ -59,6 +59,6 @@ typedef Vector<float> KCDashArray;
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KCanvasRenderingStyle_H
+#endif // KCanvasRenderingStyle_h
 
 // vim:ts=4:noet

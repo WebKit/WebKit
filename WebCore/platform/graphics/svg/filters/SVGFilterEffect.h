@@ -21,8 +21,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef SVGFilterEffect_H
-#define SVGFilterEffect_H
+#ifndef SVGFilterEffect_h
+#define SVGFilterEffect_h
 
 #ifdef SVG_SUPPORT
 #include "FloatRect.h"
@@ -99,4 +99,4 @@ TextStream& operator<<(TextStream&, const SVGFilterEffect&);
 
 #endif // SVG_SUPPORT
 
-#endif // SVGFilterEffect_H
+#endif // SVGFilterEffect_h

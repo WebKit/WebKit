@@ -21,8 +21,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef SVGFEImage_H
-#define SVGFEImage_H
+#ifndef SVGFEImage_h
+#define SVGFEImage_h
 
 #ifdef SVG_SUPPORT
 #include "CachedImage.h"
@@ -56,4 +56,4 @@ private:
 
 #endif // SVG_SUPPORT
 
-#endif // SVGFEImage_H
+#endif // SVGFEImage_h

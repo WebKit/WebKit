@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGStyleElementImpl_H
-#define KSVG_SVGStyleElementImpl_H
+#ifndef SVGStyleElement_h
+#define SVGStyleElement_h
 #ifdef SVG_SUPPORT
 
 #include <SVGElement.h>
@@ -55,6 +55,6 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // SVG_SUPPORT
-#endif // KSVG_SVGStyleElementImpl_H
+#endif // SVGStyleElement_h
 
 // vim:ts=4:noet

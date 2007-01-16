@@ -21,8 +21,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef SVGFEFlood_H
-#define SVGFEFlood_H
+#ifndef SVGFEFlood_h
+#define SVGFEFlood_h
 
 #ifdef SVG_SUPPORT
 #include "Color.h"
@@ -53,4 +53,4 @@ private:
 
 #endif // SVG_SUPPORT
 
-#endif // SVGFEFlood_H
+#endif // SVGFEFlood_h

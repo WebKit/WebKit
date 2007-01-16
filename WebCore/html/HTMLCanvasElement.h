@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLCanvasElement_H
-#define HTMLCanvasElement_H
+#ifndef HTMLCanvasElement_h
+#define HTMLCanvasElement_h
 
 #include "HTMLElement.h"
 #include "IntSize.h"

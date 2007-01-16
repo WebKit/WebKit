@@ -21,8 +21,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef SVGFEDisplacementMap_H
-#define SVGFEDisplacementMap_H
+#ifndef SVGFEDisplacementMap_h
+#define SVGFEDisplacementMap_h
 
 #ifdef SVG_SUPPORT
 #include "SVGFilterEffect.h"
@@ -70,4 +70,4 @@ private:
 
 #endif // SVG_SUPPORT
 
-#endif // SVGFEDisplacementMap_H
+#endif // SVGFEDisplacementMap_h

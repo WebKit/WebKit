@@ -21,8 +21,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef SVGFEComposite_H
-#define SVGFEComposite_H
+#ifndef SVGFEComposite_h
+#define SVGFEComposite_h
 
 #ifdef SVG_SUPPORT
 #include "SVGFilterEffect.h"
@@ -78,4 +78,4 @@ private:
 
 #endif // SVG_SUPPORT
 
-#endif // SVGFEComposite_H
+#endif // SVGFEComposite_h
