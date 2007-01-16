@@ -67,6 +67,7 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/ksvg2 $$PWD/ksvg2/css $$PWD/ksvg2/svg $$PWD/ksvg2/misc $$PWD/ksvg2/events \
                 $$PWD/platform/image-decoders \
                 $$PWD/../WebKitQt/WebCoreSupport \
+                $$PWD/../WebKitQt/Api \
                 $$PWD/WebCore+SVG
 QT += network
 !mac:CONFIG += link_pkgconfig
@@ -101,7 +102,9 @@ STYLESHEETS_EMBED = $$PWD/css/html4.css
 MANUALMOC += \
     $$PWD/platform/qt/SharedTimerQt.h \
     $$PWD/platform/qt/ScrollViewCanvasQt.h \
-    $$PWD/platform/network/qt/ResourceHandleManagerQt.h
+    $$PWD/platform/network/qt/ResourceHandleManagerQt.h \
+    $$PWD/../WebKitQt/Api/qwebpage.h \
+    $$PWD/../WebKitQt/Api/qwebframe.h
 
 LUT_FILES += \
     bindings/js/kjs_window.cpp \
@@ -671,7 +674,9 @@ SOURCES += \
     ../WebKitQt/WebCoreSupport/FrameLoaderClientQt.cpp \
     ../WebKitQt/WebCoreSupport/EditorClientQt.cpp \
     ../WebKitQt/WebCoreSupport/ChromeClientQt.cpp \
-    ../WebKitQt/WebCoreSupport/ContextMenuClientQt.cpp
+    ../WebKitQt/WebCoreSupport/ContextMenuClientQt.cpp \
+    ../WebKitQt/Api/qwebpage.cpp \
+    ../WebKitQt/Api/qwebframe.cpp
 
 contains(DEFINES, XPATH_SUPPORT=1) {
     FEATURE_DEFINES_JAVASCRIPT += XPATH_SUPPORT

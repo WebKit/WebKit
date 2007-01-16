@@ -1,3 +1,28 @@
+2007-01-16  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Use the new public API for the Qt build, and don't rely on
+        WebKit internals anymore.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::~DumpRenderTree):
+        (WebCore::DumpRenderTree::open):
+        (WebCore::DumpRenderTree::readStdin):
+        (WebCore::DumpRenderTree::initJSObjects):
+        (WebCore::DumpRenderTree::dump):
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.pro:
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTreeClient.cpp: Removed.
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTreeClient.h: Removed.
+        * DumpRenderTree/DumpRenderTree.qtproj/jsobjects.cpp:
+        (LayoutTestController::notifyDone):
+        (LayoutTestController::timerEvent):
+        * DumpRenderTree/DumpRenderTree.qtproj/main.cpp:
+        (main):
+        * DumpRenderTree/DumpRenderTree.qtproj/tests-skipped.txt:
+
 2007-01-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs

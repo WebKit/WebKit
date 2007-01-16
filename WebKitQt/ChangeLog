@@ -1,3 +1,62 @@
+2007-01-16  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Added the start of a public API to the Qt build
+        of WebKit. Currently we have QWebPage and QWebFrame
+        with a few small methods.
+
+        Converted the QtLauncher to use the new public API.
+
+        * Api/qwebframe.cpp: Added.
+        (QWebFrame::QWebFrame):
+        (QWebFrame::~QWebFrame):
+        (QWebFrame::addToJSWindowObject):
+        (QWebFrame::markup):
+        (QWebFrame::innerText):
+        (QWebFrame::renderTreeDump):
+        * Api/qwebframe.h: Added.
+        * Api/qwebframe_p.h: Added.
+        (QWebFramePrivate::QWebFramePrivate):
+        * Api/qwebpage.cpp: Added.
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPagePrivate::~QWebPagePrivate):
+        (QWebPagePrivate::createMainFrame):
+        (QWebPage::QWebPage):
+        (QWebPage::~QWebPage):
+        (QWebPage::createFrame):
+        (QWebPage::open):
+        (QWebPage::mainFrame):
+        (QWebPage::sizeHint):
+        * Api/qwebpage.h: Added.
+        * Api/qwebpage_p.h: Added.
+        * QtLauncher/main.cpp:
+        (main):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::ChromeClientQt):
+        (WebCore::ChromeClientQt::setWindowRect):
+        (WebCore::ChromeClientQt::windowRect):
+        (WebCore::ChromeClientQt::pageRect):
+        (WebCore::ChromeClientQt::focus):
+        (WebCore::ChromeClientQt::unfocus):
+        (WebCore::ChromeClientQt::canTakeFocus):
+        (WebCore::ChromeClientQt::takeFocus):
+        (WebCore::ChromeClientQt::createWindow):
+        (WebCore::ChromeClientQt::createModalDialog):
+        (WebCore::ChromeClientQt::show):
+        (WebCore::ChromeClientQt::addMessageToConsole):
+        (WebCore::ChromeClientQt::chromeDestroyed):
+        (WebCore::ChromeClientQt::canRunBeforeUnloadConfirmPanel):
+        (WebCore::ChromeClientQt::runBeforeUnloadConfirmPanel):
+        (WebCore::ChromeClientQt::closeWindowSoon):
+        * WebCoreSupport/ChromeClientQt.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::setFrame):
+        (WebCore::FrameLoaderClientQt::detachFrameLoader):
+        (WebCore::FrameLoaderClientQt::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientQt::partClearedInBegin):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-01-15  Anders Carlsson  <acarlsson@apple.com>
 
         Fix build.

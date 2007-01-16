@@ -146,7 +146,7 @@ namespace WebCore {
         ScrollView();
         ~ScrollView();
 
-        virtual void setParentWidget(QWidget*);
+        void setScrollArea(QScrollArea*);
 
     private:
         QScrollArea* m_area;

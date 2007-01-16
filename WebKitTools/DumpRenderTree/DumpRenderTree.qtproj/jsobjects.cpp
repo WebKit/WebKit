@@ -51,7 +51,10 @@ void LayoutTestController::waitUntilDone()
 
 void LayoutTestController::notifyDone()
 {
-    //qDebug() << ">>>>notifyDone"; emit done();
+    //qDebug() << ">>>>notifyDone";
+    killTimer(timeoutTimer);
+    timeoutTimer = 0;
+    emit done();
 }
 
 void LayoutTestController::dumpEditingCallbacks()
@@ -62,7 +65,5 @@ void LayoutTestController::dumpEditingCallbacks()
 void LayoutTestController::timerEvent(QTimerEvent *)
 {
     qDebug() << ">>>>>>>>>>>>> timeout";
-    killTimer(timeoutTimer);
-    timeoutTimer = 0;
     notifyDone();
 }

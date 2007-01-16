@@ -31,6 +31,7 @@
 
 #include "config.h"
 #include "ScrollView.h"
+#include "FrameView.h"
 #include "FloatRect.h"
 #include "IntPoint.h"
 
@@ -45,21 +46,22 @@
 namespace WebCore {
 
 ScrollView::ScrollView()
-    : m_area(new QScrollArea(0))
+    : m_area(0)
 {
-    ScrollViewCanvasQt* canvas = new ScrollViewCanvasQt(this, m_area);
-
-    setQWidget(m_area);
-    m_area->setWidget(canvas);
 }
 
 ScrollView::~ScrollView()
 {
 }
 
-void ScrollView::setParentWidget(QWidget* parent)
+void ScrollView::setScrollArea(QScrollArea* area)
 {
-    Widget::setParentWidget(parent);
+    m_area = area;
+    if (isFrameView()) {
+        ScrollViewCanvasQt* canvas = new ScrollViewCanvasQt(static_cast<FrameView*>(this), m_area);
+        m_area->setWidget(canvas);
+    }
+    Widget::setQWidget(area);
 }
 
 void ScrollView::updateContents(const IntRect& updateRect, bool now)
@@ -228,10 +230,11 @@ void ScrollView::setStaticBackground(bool flag)
 
 void ScrollView::addChild(Widget* child)
 {
-    Q_ASSERT(child != 0);
-    Q_ASSERT(m_area && m_area->widget());
+    notImplemented();
+//     Q_ASSERT(child != 0);
+//     Q_ASSERT(m_area && m_area->widget());
 
-    child->setParentWidget(m_area->widget());
+//     child->setParentWidget(m_area->widget());
 }
 
 void ScrollView::removeChild(Widget*)

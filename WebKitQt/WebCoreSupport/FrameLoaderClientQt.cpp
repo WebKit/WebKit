@@ -31,6 +31,7 @@
 #include "DocumentLoader.h"
 #include "ResourceResponse.h"
 #include "qdebug.h"
+#include "qwebframe.h"
 
 #define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d (%s)\n", __FILE__, __LINE__, __FUNCTION__); } while(0)
 
@@ -48,13 +49,15 @@ FrameLoaderClientQt::~FrameLoaderClientQt()
 {
 }
 
-void FrameLoaderClientQt::setFrame(FrameQt *frame)
+void FrameLoaderClientQt::setFrame(QWebFrame *webFrame, FrameQt *frame)
 {
+    m_webFrame = webFrame;
     m_frame = frame;
 }
 
 void FrameLoaderClientQt::detachFrameLoader()
 {
+    m_webFrame = 0;
     m_frame = 0;
 }
 
@@ -248,7 +251,7 @@ void FrameLoaderClientQt::loadedFromPageCache()
 
 void FrameLoaderClientQt::dispatchDidHandleOnloadEvents()
 {
-    //notImplemented();
+    emit m_webFrame->loadDone();
 }
 
 
@@ -532,7 +535,7 @@ bool FrameLoaderClientQt::canHandleRequest(const WebCore::ResourceRequest&) cons
 
 void FrameLoaderClientQt::partClearedInBegin()
 {
-    notImplemented();
+    emit m_webFrame->cleared();
 }
 
 void FrameLoaderClientQt::setDocumentViewFromPageCache(WebCore::PageCache*)

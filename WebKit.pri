@@ -1,23 +1,6 @@
 # Include file to make it easy to include WebKit into Qt projects
 
-INCLUDEPATH += $$PWD/JavaScriptCore \
-               $$PWD/WebCore \
-               $$PWD/WebCore/platform \
-               $$PWD/WebCore/platform/qt \
-               $$PWD/WebCore/platform/network \
-               $$PWD/WebCore/platform/graphics \
-               $$PWD/WebCore/editing \
-               $$PWD/WebCore/page \
-               $$PWD/WebCore/page/qt \
-               $$PWD/WebCore/dom \
-               $$PWD/WebCore/html \
-               $$PWD/WebCore/history \
-               $$PWD/WebCore/rendering \
-               $$PWD/WebCore/loader \
-               $$PWD/WebCore/loader/qt \
-               $$PWD/WebCore/css \
-               $$PWD/WebCore/bridge \
-               $$PWD/WebKitQt/WebCoreSupport
+INCLUDEPATH += $$PWD/WebKitQt/Api 
 
 DEFINES += BUILDING_QT__=1
 

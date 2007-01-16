@@ -7,8 +7,8 @@ INCLUDEPATH += ../../../JavaScriptCore/kjs
 
 QT = core gui
 
-HEADERS = DumpRenderTreeClient.h DumpRenderTree.h jsobjects.h
-SOURCES = DumpRenderTreeClient.cpp DumpRenderTree.cpp main.cpp jsobjects.cpp
+HEADERS = DumpRenderTree.h jsobjects.h
+SOURCES = DumpRenderTree.cpp main.cpp jsobjects.cpp
 
 unix:!mac {
     SOURCES += fontoverload.cpp

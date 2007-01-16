@@ -26,56 +26,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
 #include "DumpRenderTree.h"
-#include "KURL.h"
+#include "qurl.h"
+#include "qdir.h"
 
 #include <qstringlist.h>
-
-using namespace WebCore;
-
-#if PLATFORM(KDE)
-#include <kapplication.h>
-#include <kcmdlineargs.h>
-
-static KCmdLineOptions options[] =
-{
-    { "+file", "File to load", 0 },
-    KCmdLineLastOption
-};
-#else
 #include <qapplication.h>
-#endif
+
+
 int main(int argc, char* argv[])
 {
-#if PLATFORM(KDE)
-    KCmdLineArgs::init(argc, argv, "DumpRenderTree", "DumpRenderTree", "testing application", "0.1");
-    KCmdLineArgs::addCmdLineOptions(options);
-
-    KApplication app;
-    KCmdLineArgs* args = KCmdLineArgs::parsedArgs();
-
-    WebCore::DumpRenderTree dumper;
-
-    if (args->count() == 1 && args->arg(0) == QString::fromAscii("-"))
-        dumper.open();
-    else if (args->count() == 1)
-        dumper.open(KURL(args->arg(0)));
-
-    return app.exec();
-#else
     QApplication app(argc, argv);
 
-    const QStringList args = app.arguments();
+    QStringList args = app.arguments();
 
     WebCore::DumpRenderTree dumper;
 
     if (args.count() == 2 && args[1] == QLatin1String("-"))
         dumper.open();
-    else if (args.count() == 2)
-        dumper.open(KURL(args[1]));
-
+    else if (args.count() == 2) {
+        if (!args[1].startsWith("/")
+            && !args[1].startsWith("file:")) {
+            QString path = QDir::currentPath();
+            if (!path.endsWith('/'))
+                path.append('/');
+            args[1].prepend(path);
+        }
+        dumper.open(QUrl(args[1]));
+    }
     return app.exec();
-
-#endif
 }

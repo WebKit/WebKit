@@ -180,6 +180,9 @@ void ResourceHandleManager::cancel(ResourceHandle* resource)
 
     DEBUG() << "ResourceHandleManager::cancel" << resource->url().path();
     
+    RequestQt* request = pendingRequests[resource];
+    if (!request)
+        return;
     request->cancelled = true;
 
     String protocol = request->hostInfo.protocol;

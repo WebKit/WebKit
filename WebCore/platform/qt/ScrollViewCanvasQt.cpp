@@ -47,6 +47,7 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QMouseEvent>
+#include <qdebug.h>
 
 
 //this output ms that it takes WebKit to render in each paint event
@@ -58,31 +59,20 @@
 
 namespace WebCore {
 
-ScrollViewCanvasQt::ScrollViewCanvasQt(ScrollView* frameView, QWidget* parent)
-    : QWidget(parent),
-      m_scrollView(frameView),
-      m_frameView(0)
+ScrollViewCanvasQt::ScrollViewCanvasQt(FrameView* frameView, QWidget* parent)
+    : QWidget(0),
+      m_frameView(frameView)
 {
     setMouseTracking(true);
     setFocusPolicy(Qt::StrongFocus);
-}
-
-bool ScrollViewCanvasQt::updateFrameView()
-{
-    m_frameView = static_cast<FrameView*>(m_scrollView);
-    if (!m_frameView || !m_frameView->frame())
-        return false;
-    return true;
+    resize(500, 500);
 }
 
 
 void ScrollViewCanvasQt::paintEvent(QPaintEvent* ev)
 {
-    if (!m_frameView) {
-        if (!updateFrameView() ||
-            !m_frameView->frame()->renderer())
-            return;
-    }
+    if (!m_frameView || !m_frameView->frame()->renderer())
+        return;
 
 #ifdef QWEBKIT_TIME_RENDERING
     QTime time;
@@ -109,30 +99,24 @@ void ScrollViewCanvasQt::paintEvent(QPaintEvent* ev)
 
 void ScrollViewCanvasQt::mouseMoveEvent(QMouseEvent* ev)
 {
-    if (!m_frameView) {
-        if (!updateFrameView())
-            return;
-    }
+    if (!m_frameView)
+        return;
 
     m_frameView->handleMouseMoveEvent(PlatformMouseEvent(ev, 0));
 }
 
 void ScrollViewCanvasQt::mousePressEvent(QMouseEvent* ev)
 {
-    if (!m_frameView) {
-        if (!updateFrameView() || !m_frameView->frame()->eventHandler())
-            return;
-    }
+    if (!m_frameView || !m_frameView->frame()->eventHandler())
+        return;
 
     m_frameView->frame()->eventHandler()->handleMousePressEvent(PlatformMouseEvent(ev, 1));
 }
 
 void ScrollViewCanvasQt::mouseReleaseEvent(QMouseEvent* ev)
 {
-    if (!m_frameView) {
-        if (!updateFrameView())
-            return;
-    }
+    if (!m_frameView) 
+        return;
 
     m_frameView->handleMouseReleaseEvent(PlatformMouseEvent(ev, 0));
 }
@@ -151,10 +135,9 @@ void ScrollViewCanvasQt::handleKeyEvent(QKeyEvent* ev, bool isKeyUp)
 {
     PlatformKeyboardEvent kevent(ev, isKeyUp);
 
-    if (!m_frameView) {
-        if (!updateFrameView())
-            return;
-    }
+    if (!m_frameView)
+        return;
+
     FrameQt* frame = static_cast<FrameQt*>(m_frameView->frame());
     if (!frame)
         return;

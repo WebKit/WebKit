@@ -2,6 +2,35 @@
 
         Reviewed by Zack
 
+        Cleaned up the way we create native widgets. They are
+        now not created in WebCore anymore, but in the new
+        Qt API to WebKit.
+
+        Fix a compile issue in the ResourceHandleManager.
+
+        * WebCore.pro:
+        * platform/ScrollView.h:
+        * platform/Widget.h:
+        (WebCore::ResourceHandleManager::cancel):
+        * platform/qt/ScrollViewCanvasQt.cpp:
+        (WebCore::ScrollViewCanvasQt::ScrollViewCanvasQt):
+        (WebCore::ScrollViewCanvasQt::paintEvent):
+        (WebCore::ScrollViewCanvasQt::mouseMoveEvent):
+        (WebCore::ScrollViewCanvasQt::mousePressEvent):
+        (WebCore::ScrollViewCanvasQt::mouseReleaseEvent):
+        (WebCore::ScrollViewCanvasQt::handleKeyEvent):
+        * platform/qt/ScrollViewCanvasQt.h:
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::setScrollArea):
+        (WebCore::ScrollView::addChild):
+        * platform/qt/WidgetQt.cpp:
+        * platform/network/qt/ResourceHandleManagerQt.cpp:
+
+2007-01-16  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
         Looks like ResourceHandle _has_ to do everything
         asynchronously if we don't want to run into
         lots of trouble in the loader.

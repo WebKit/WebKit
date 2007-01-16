@@ -46,7 +46,7 @@ class ScrollViewCanvasQt : public QWidget
 {
     Q_OBJECT
 public:
-    ScrollViewCanvasQt(ScrollView*, QWidget* parent = 0);
+    ScrollViewCanvasQt(FrameView*, QWidget* parent = 0);
 
 protected:
     virtual void paintEvent(QPaintEvent*);
@@ -58,9 +58,7 @@ protected:
 
 private:
     void handleKeyEvent(QKeyEvent*, bool isKeyUp);
-    bool updateFrameView();
 
-    ScrollView* m_scrollView;
     FrameView* m_frameView;
 };
 

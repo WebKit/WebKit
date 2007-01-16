@@ -149,16 +149,6 @@ QWidget* Widget::qwidget()
     return data->m_widget;
 }
 
-void Widget::setParentWidget(QWidget* parent)
-{
-    data->m_parent = parent;
-}
-
-QWidget* Widget::parentWidget() const
-{
-    return data->m_parent;
-}
-
 void Widget::setFrameGeometry(const IntRect& r)
 {
     if (!data->m_widget)

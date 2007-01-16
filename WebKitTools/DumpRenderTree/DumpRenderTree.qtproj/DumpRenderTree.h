@@ -33,9 +33,11 @@
 #include <QObject>
 #include <QTextStream>
 #include <QSocketNotifier>
+class QUrl;
 class QFile;
+class QWebPage;
+class QWebFrame;
 
-#include "DumpRenderTreeClient.h"
 class LayoutTestController;
 
 namespace WebCore {
@@ -51,28 +53,25 @@ public:
     void open();
 
     // Initialize in single-file mode.
-    void open(const KURL& url);
+    void open(const QUrl& url);
 
-    void initJSObjects();
     void resetJSObjects();
    
 public Q_SLOTS:
+    void initJSObjects();
     void readStdin(int);
     void maybeDump();
     void dump();
 
 Q_SIGNALS:
     void quit();
-private:
-    friend class DumpRenderTreeClient;
-
-    FrameQt* frame() const;
 
 private:
     void readSkipFile();
- 
-    FrameQt* m_frame;
-    DumpRenderTreeClient* m_client;
+
+    QWebPage *page;
+    QWebFrame *frame;
+    
     LayoutTestController *m_controller;
 
     QFile *m_stdin;

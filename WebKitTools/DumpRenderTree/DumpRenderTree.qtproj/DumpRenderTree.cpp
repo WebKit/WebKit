@@ -27,31 +27,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
 #include "DumpRenderTree.h"
-#include "DumpRenderTreeClient.h"
 #include "jsobjects.h"
-
-#include "Page.h"
-#include "markup.h"
-#include "Document.h"
-#include "FrameView.h"
-#include "KURL.h"
-#include "FrameLoader.h"
-#include "RenderTreeAsText.h"
-#include "ChromeClientQt.h"
-#include "ContextMenuClientQt.h"
-#include "EditorClientQt.h"
-#include "FrameLoaderClientQt.h"
-#include "CString.h"
-
-#include "bindings/runtime.h"
-#include "bindings/runtime_root.h"
-#include "ExecState.h"
-#include "object.h"
-
-#include "Document.h"
-#include "Element.h"
 
 #include <QDir>
 #include <QFile>
@@ -59,6 +36,10 @@
 #include <QBoxLayout>
 #include <QScrollArea>
 #include <QApplication>
+#include <QUrl>
+
+#include <qwebpage.h>
+#include <qwebframe.h>
 
 #include <unistd.h>
 #include <qdebug.h>
@@ -70,35 +51,23 @@ const unsigned int maxViewWidth = 800;
 const unsigned int maxViewHeight = 600;
 
 DumpRenderTree::DumpRenderTree()
-    : m_frame(0)
-    , m_client(new DumpRenderTreeClient(this))
-    , m_stdin(0)
+    : m_stdin(0)
     , m_notifier()
     , m_loading(false)
 {
-    // Initialize WebCore in Qt platform mode...
-    Page* page = new Page(new ChromeClientQt(), new ContextMenuClientQt(), new EditorClientQt());
-    m_frame = new FrameQt(page, 0, new FrameQtClient(), m_client);
-    m_client->setFrame(m_frame);
+    page = new QWebPage(0);
+    frame = page->mainFrame();
+    frame->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    frame->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    FrameView* view = new FrameView(m_frame);
-    view->setScrollbarsMode(ScrollbarAlwaysOff);
-
-    m_frame->setView(view);
-    view->setParentWidget(0 /* no toplevel widget */);
-
+    
     m_controller = new LayoutTestController();
     QObject::connect(m_controller, SIGNAL(done()), this, SLOT(dump()), Qt::QueuedConnection);
     QObject::connect(this, SIGNAL(quit()), qApp, SLOT(quit()), Qt::QueuedConnection);
+    QObject::connect(frame, SIGNAL(cleared()), this, SLOT(initJSObjects()));
+    QObject::connect(frame, SIGNAL(loadDone()), this, SLOT(maybeDump()));
     
-
-    // Reverse calculations in QAbstractScrollArea::maximumViewportSize()
-    QScrollArea* area = qobject_cast<QScrollArea*>(m_frame->view()->qwidget());
-
-    unsigned int viewWidth = maxViewWidth + 2 * area->frameWidth();
-    unsigned int viewHeight = maxViewHeight + 2 * area->frameWidth();
-
-    area->resize(viewWidth, viewHeight);
+    page->resize(800, 800);
 
     // Read file containing to be skipped tests...
     readSkipFile();
@@ -106,7 +75,7 @@ DumpRenderTree::DumpRenderTree()
 
 DumpRenderTree::~DumpRenderTree()
 {
-    delete m_frame;
+    delete page;
 
     delete m_stdin;
     delete m_notifier;
@@ -125,10 +94,9 @@ void DumpRenderTree::open()
     }
 }
 
-void DumpRenderTree::open(const KURL& url)
+void DumpRenderTree::open(const QUrl& url)
 {
     resetJSObjects();
-    Q_ASSERT(url.isLocalFile());
 
     // Ignore skipped tests
     if (m_skipped.indexOf(url.path()) != -1) {
@@ -137,7 +105,7 @@ void DumpRenderTree::open(const KURL& url)
         return;
     }
 
-    m_frame->client()->openURL(url);
+    page->open(url);
 }
 
 void DumpRenderTree::readStdin(int /* socket */)
@@ -150,7 +118,7 @@ void DumpRenderTree::readStdin(int /* socket */)
     if (line.endsWith('\n'))
         line.truncate(line.size()-1);
     if (!line.isEmpty())
-        open(KURL(line));
+        open(QUrl(QString(line)));
 }
 
 void DumpRenderTree::readSkipFile()
@@ -190,21 +158,7 @@ void DumpRenderTree::resetJSObjects()
 
 void DumpRenderTree::initJSObjects()
 {
-    KJS::Bindings::RootObject *root = m_frame->bindingRootObject();
-    KJS::ExecState *exec = root->interpreter()->globalExec();
-    KJS::JSObject *rootObject = root->interpreter()->globalObject();
-    KJS::JSObject *window = rootObject->get(exec, KJS::Identifier("window"))->getObject();
-    if (!window) {
-        qDebug() << "Warning: couldn't get window object";
-        return;
-    }
-            
-    KJS::JSObject *testController =
-        KJS::Bindings::Instance::createRuntimeObject(KJS::Bindings::Instance::QtLanguage,
-                                                     m_controller, root);
-
-    window->put(exec, KJS::Identifier("layoutTestController"), testController);
-    
+    frame->addToJSWindowObject("layoutTestController", m_controller);    
 }
 
 void DumpRenderTree::dump()
@@ -212,23 +166,22 @@ void DumpRenderTree::dump()
     //qDebug() << ">>>>>>>>>>>>>>>>>>>>>> Dumping" << m_frame->loader()->URL().url();
     if (!m_notifier) {
         // Dump markup in single file mode...
-        DeprecatedString markup = createMarkup(m_frame->document());
-        fprintf(stdout, "Source:\n\n%s\n", markup.ascii());
+        QString markup = frame->markup();
+        fprintf(stdout, "Source:\n\n%s\n", markup.toUtf8().constData());
     }
     
     // Dump render text...
-    String renderDump;
+    QString renderDump;
     if (m_controller->shouldDumpAsText()) {
-        Element *documentElement = m_frame->document()->documentElement();
-        renderDump = documentElement->innerText();
+        renderDump = frame->innerText();
         renderDump.append("\n");
     } else {
-        renderDump = externalRepresentation(m_frame->renderer());
+        renderDump = frame->renderTreeDump();
     }
     if (renderDump.isEmpty()) {
         printf("ERROR: nil result from %s", m_controller->shouldDumpAsText() ? "[documentElement innerText]" : "[frame renderTreeAsExternalRepresentation]");
     } else {
-        fprintf(stdout, "%s#EOF\n", renderDump.utf8().data());
+        fprintf(stdout, "%s#EOF\n", renderDump.toUtf8().constData());
     }
     fflush(stdout);
 
@@ -244,11 +197,6 @@ void DumpRenderTree::maybeDump()
 {
     if (!m_controller->shouldWaitUntilDone()) 
         dump();
-}
-
-FrameQt* DumpRenderTree::frame() const
-{
-    return m_frame;
 }
 
 }

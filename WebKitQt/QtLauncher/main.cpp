@@ -28,83 +28,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <wtf/Platform.h>
-
 #include <QApplication>
-#include <QWidget>
-#if PLATFORM(KDE)
-#include <kapplication.h>
-#include <kcmdlineargs.h>
-#include <kdebug.h>
-#endif
-
-#include <Document.h>
-#include <FrameView.h>
-#include <ChromeClientQt.h>
-#include <ContextMenuClientQt.h>
-#include <EditorClientQt.h>
-#include <KURL.h>
-
-#include <FrameQt.h>
-#include <FrameLoaderClientQt.h>
-#include <page/Page.h>
+#include <qwebpage.h>
 
 #include <QVBoxLayout>
 #include <QDir>
-
-using namespace WebCore;
-
-#if PLATFORM(KDE)
-static KCmdLineOptions options[] =
-{
-    { "+file",        "File to load", 0 },
-    KCmdLineLastOption
-};
-#endif
-
+#include <QUrl>
+ 
 int main(int argc, char **argv)
 {
     QString url = QString("%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
-#if PLATFORM(KDE)
-    KCmdLineArgs::init(argc, argv, "testunity", "testunity",
-                       "unity testcase app", "0.1");
-    KCmdLineArgs::addCmdLineOptions(options);
-    KApplication app;
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-
-    if (args->count() != 0)
-        url = args->arg(0);
-#else
     QApplication app(argc, argv);
 
     const QStringList args = app.arguments();
     if (args.count() > 1)
         url = args.at(1);
-#endif
      
     QWidget topLevel;
     QBoxLayout *l = new QVBoxLayout(&topLevel);
- 
-    // Initialize WebCore in Qt platform mode...
-    Page* page = new Page(new ChromeClientQt(), new ContextMenuClientQt(),
-                          new EditorClientQt());
-    FrameLoaderClientQt *frameLoaderClient = new FrameLoaderClientQt();
-    FrameQt* frame = new FrameQt(page, 0, new FrameQtClient(), frameLoaderClient);
-    frameLoaderClient->setFrame(frame);
 
-    FrameView* frameView = new FrameView(frame);
-    frame->setView(frameView);
-    frameView->setParentWidget(&topLevel);
-
-    l->addWidget(frame->view()->qwidget());
-    l->activate();
-    frame->view()->qwidget()->show();
+    QWebPage *page = new QWebPage(&topLevel);
+    l->addWidget(page);
 
     topLevel.show();
 
-    QtFrame(frame)->client()->openURL(KURL(url.toLatin1()));
+    page->open(url);
     
     app.exec();
-    delete frame;
     return 0;
 }

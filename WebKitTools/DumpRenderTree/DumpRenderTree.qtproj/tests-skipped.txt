@@ -1,6 +1,9 @@
 # These tests hang forever
 editing/selection/extend-by-word-002.html
 
+# tests that currently crash
+fast/borders/border-radius-huge-assert.html
+
 # As kcanvas is in the process of being killed,
 # we didn't even start implementing filtrs / masks
 # on Qt/Linux. Disabling the crashing tests for now.
