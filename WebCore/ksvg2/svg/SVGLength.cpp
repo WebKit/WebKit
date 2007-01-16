@@ -32,6 +32,7 @@
 #include "SVGSVGElement.h"
 #include "SVGStyledElement.h"
 #include "SVGParserUtilities.h"
+#include "csshelper.h"
 
 #include <math.h>
 #include <wtf/Assertions.h>
@@ -159,15 +160,15 @@ float SVGLength::value() const
     case LengthTypePX:
         return m_valueInSpecifiedUnits;
     case LengthTypeCM:
-        return m_valueInSpecifiedUnits / 2.54 * dpi();
+        return m_valueInSpecifiedUnits / 2.54 * cssPixelsPerInch;
     case LengthTypeMM:
-        return m_valueInSpecifiedUnits / 25.4 * dpi();
+        return m_valueInSpecifiedUnits / 25.4 * cssPixelsPerInch;
     case LengthTypeIN:
-        return m_valueInSpecifiedUnits * dpi();
+        return m_valueInSpecifiedUnits * cssPixelsPerInch;
     case LengthTypePT:
-        return m_valueInSpecifiedUnits / 72.0 * dpi();
+        return m_valueInSpecifiedUnits / 72.0 * cssPixelsPerInch;
     case LengthTypePC:
-        return m_valueInSpecifiedUnits / 6.0 * dpi();
+        return m_valueInSpecifiedUnits / 6.0 * cssPixelsPerInch;
     default:
         break;
     }
@@ -194,19 +195,19 @@ void SVGLength::setValue(float value)
         m_valueInSpecifiedUnits = value;
         break;
     case LengthTypeCM:
-        m_valueInSpecifiedUnits = value * 2.54 / dpi();
+        m_valueInSpecifiedUnits = value * 2.54 / cssPixelsPerInch;
         break;
     case LengthTypeMM:
-        m_valueInSpecifiedUnits = value * 25.4 / dpi();
+        m_valueInSpecifiedUnits = value * 25.4 / cssPixelsPerInch;
         break;
     case LengthTypeIN:
-        m_valueInSpecifiedUnits = value / dpi();
+        m_valueInSpecifiedUnits = value / cssPixelsPerInch;
         break;
     case LengthTypePT:
-        m_valueInSpecifiedUnits = value * 72.0 / dpi();
+        m_valueInSpecifiedUnits = value * 72.0 / cssPixelsPerInch;
         break;
     case LengthTypePC:
-        m_valueInSpecifiedUnits = value / 6.0 * dpi();
+        m_valueInSpecifiedUnits = value / 6.0 * cssPixelsPerInch;
         break;
     default:
         break;
@@ -266,22 +267,6 @@ void SVGLength::convertToSpecifiedUnits(unsigned short type)
     float valueInUserUnits = value();
     m_unit = storeUnit(extractMode(m_unit), (SVGLengthType) type);
     setValue(valueInUserUnits);
-}
-
-double SVGLength::dpi() const
-{
-    /* FIXME: DPI detection
-    if (context && context->ownerDoc()) {
-        if (mode == LengthModeWidth)
-            return 25.4 * context->ownerDoc()->screenPixelsPerMillimeterX();
-        else if (mode == LengthModeHeight)
-            return 25.4 * context->ownerDoc()->screenPixelsPerMillimeterY();
-        else if (mode == LengthModeOther)
-            return 25.4 * context->ownerDoc()->screenPixelsPerMillimeterX();
-    }
-    */
-
-    return 90.0;
 }
 
 float SVGLength::PercentageOfViewport(float value, const SVGStyledElement* context, SVGLengthMode mode)

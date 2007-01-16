@@ -1,3 +1,22 @@
+2007-01-15  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12272
+        SVG picture is clipped (edges not visible)
+
+        Expose css dpi constant and use it for svg, making
+        1in amount to 96 pixels like for html.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLengthFloat):
+        (WebCore::scaleFactorForConversion):
+        * css/csshelper.h:
+        * ksvg2/svg/SVGLength.cpp:
+        (WebCore::SVGLength::value):
+        (WebCore::SVGLength::setValue):
+        * ksvg2/svg/SVGLength.h:
+
 2007-01-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam

@@ -1,3 +1,28 @@
+2007-01-15  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=12272
+        SVG picture is clipped (edges not visible)
+
+        Also updated test results(all improvements, matches Opera
+        and FF).
+
+        * svg/W3C-SVG-1.1/coords-units-03-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-units-03-b-expected.png:
+        * svg/W3C-SVG-1.1/coords-units-03-b-expected.txt:
+        * svg/custom/coords-relative-units-transforms-expected.checksum:
+        * svg/custom/coords-relative-units-transforms-expected.png:
+        * svg/custom/coords-relative-units-transforms-expected.txt:
+        * svg/custom/css-pixels-dpi-expected.checksum: Added.
+        * svg/custom/css-pixels-dpi-expected.png: Added.
+        * svg/custom/css-pixels-dpi-expected.txt: Added.
+        * svg/custom/css-pixels-dpi.svg: Added.
+        * svg/custom/js-update-container-expected.checksum:
+        * svg/custom/js-update-container-expected.png:
+        * svg/custom/js-update-container-expected.txt:
+
 2007-01-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.

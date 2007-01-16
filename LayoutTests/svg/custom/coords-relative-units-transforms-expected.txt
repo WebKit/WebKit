@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
     RenderSVGContainer {svg} at (0,0) size 400x200
       RenderPath {rect} at (0,0) size 400x200 [stroke={[type=SOLID] [color=#0000FF] [stroke width=10.00]}] [data="M5.00,5.00L3995.00,5.00L3995.00,1995.00L5.00,1995.00"]
       RenderSVGContainer {g} at (35,14.90) size 338.20x148.26
-        RenderSVGContainer {g} at (35,14.90) size 81.80x144.94 [transform={m=((1.00,0.00)(0.00,1.00)) t=(400.00,0.00)}]
+        RenderSVGContainer {g} at (35,14.90) size 85.64x147.34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(400.00,0.00)}]
           RenderSVGText {text} at (-50,300) size 800x182
             RenderSVGInlineText {#text} at (0,-151) size 818x182
               text run at (0,-151) width 818: "Abs. units:"
-          RenderPath {rect} at (38.08,38.08) size 39.84x21.84 [stroke={[type=SOLID] [color=#FF0000] [stroke width=38.40]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,400.00L360.00,400.00L360.00,580.00L0.00,580.00"]
+          RenderPath {rect} at (38.08,38.08) size 42.24x23.04 [stroke={[type=SOLID] [color=#FF0000] [stroke width=38.40]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,400.00L384.00,400.00L384.00,592.00L0.00,592.00"]
           RenderPath {rect} at (38.08,73.08) size 42.24x23.04 [stroke={[type=SOLID] [color=#FF0000] [stroke width=38.40]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,750.00L384.00,750.00L384.00,942.00L0.00,942.00"]
-          RenderSVGContainer {g} at (36.16,116.16) size 79.68x43.68 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}]
-            RenderPath {rect} at (36.16,116.16) size 79.68x43.68 [stroke={[type=SOLID] [color=#FF0000] [stroke width=38.40]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,600.00L360.00,600.00L360.00,780.00L0.00,780.00"]
+          RenderSVGContainer {g} at (36.16,116.16) size 84.48x46.08 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}]
+            RenderPath {rect} at (36.16,116.16) size 84.48x46.08 [stroke={[type=SOLID] [color=#FF0000] [stroke width=38.40]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,600.00L384.00,600.00L384.00,792.00L0.00,792.00"]
         RenderSVGContainer {g} at (155,14.90) size 83.75x146.35 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1600.00,0.00)}]
           RenderSVGText {text} at (-50,300) size 800x182
             RenderSVGInlineText {#text} at (0,-151) size 778x182

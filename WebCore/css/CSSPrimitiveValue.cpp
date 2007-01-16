@@ -30,6 +30,7 @@
 #include "ExceptionCode.h"
 #include "Pair.h"
 #include "RenderStyle.h"
+#include "csshelper.h"
 #include <ctype.h>
 
 namespace WebCore {
@@ -285,11 +286,6 @@ double CSSPrimitiveValue::computeLengthFloat(RenderStyle* style, bool applyZoomF
 {
     unsigned short type = primitiveType();
 
-    // We always assume 96 CSS pixels in a CSS inch. This is the cold hard truth of the Web.
-    // At high DPI, we may scale a CSS pixel, but the ratio of the CSS pixel to the so-called
-    // "absolute" CSS length units like inch and pt is always fixed and never changes.
-    const double cssPixelsPerInch = 96.0;
-
     double factor = 1.0;
     switch (type) {
         case CSS_EMS:
@@ -345,8 +341,6 @@ void CSSPrimitiveValue::setFloatValue(unsigned short unitType, double floatValue
 
 double scaleFactorForConversion(unsigned short unitType)
 {
-    const double cssPixelsPerInch = 96.0;
-
     double factor = 1.0;
     switch (unitType) {
         case CSSPrimitiveValue::CSS_PX:

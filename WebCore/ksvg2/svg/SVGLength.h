@@ -97,8 +97,6 @@ namespace WebCore {
         }
  
     private:
-        double dpi() const;
-
         float m_valueInSpecifiedUnits;
         unsigned int m_unit;
 
