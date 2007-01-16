@@ -1,3 +1,23 @@
+2007-01-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Added re-entrency checking to GC allocation and collection. It is an error
+        to allocate or collect from within a collection. We've had at least one 
+        case of each bug in the past.
+        
+        Added a comment to the API header, explaining that API clients must not
+        make this mistake, either.
+        
+        Layout tests and JS tests pass.
+
+        * API/JSObjectRef.h:
+        * kjs/collector.cpp:
+        (KJS::GCLock::GCLock):
+        (KJS::GCLock::~GCLock):
+        (KJS::Collector::allocate):
+        (KJS::Collector::collect):
+
 2007-01-14  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Mitz.

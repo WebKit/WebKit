@@ -110,6 +110,27 @@ static CollectorHeap heap = {NULL, 0, 0, 0, NULL, 0, 0, 0, 0};
 
 bool Collector::memoryFull = false;
 
+#ifndef NDEBUG
+class GCLock {
+    static bool isLocked;
+
+public:
+    GCLock()
+    {
+        ASSERT(!isLocked);
+        isLocked = true;
+    }
+    
+    ~GCLock()
+    {
+        ASSERT(isLocked);
+        isLocked = false;
+    }
+};
+
+bool GCLock::isLocked = false;
+#endif
+
 void* Collector::allocate(size_t s)
 {
   assert(JSLock::lockCount() > 0);
@@ -123,6 +144,10 @@ void* Collector::allocate(size_t s)
     collect();
     numLiveObjects = heap.numLiveObjects;
   }
+  
+#ifndef NDEBUG
+  GCLock lock;
+#endif
   
   if (s > CELL_SIZE) {
     // oversize allocator
@@ -462,6 +487,10 @@ bool Collector::collect()
 {
   assert(JSLock::lockCount() > 0);
 
+#ifndef NDEBUG
+  GCLock lock;
+#endif
+  
 #if USE(MULTIPLE_THREADS)
     bool currentThreadIsMainThread = !pthread_is_threaded_np() || pthread_main_np();
 #else
