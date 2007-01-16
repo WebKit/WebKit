@@ -1,3 +1,18 @@
+2007-01-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by mjs
+
+        <rdar://problem/4810960>
+        Gmail Editor: window.focus() called on keyDown (9640)
+
+        The window's keydown event handler was being called
+        instead of the editable subframe's if there was a key binding
+        for the key event.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView performKeyEquivalent:]): Don't send the event
+        to WebCore unless this WebHTMLView is the firstResponder.
+
 2007-01-15  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

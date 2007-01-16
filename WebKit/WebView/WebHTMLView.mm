@@ -3935,7 +3935,7 @@ done:
     // But don't do it if we have already handled the event.
     if (!eventWasSentToWebCore 
             && event == [NSApp currentEvent]    // Pressing Esc results in a fake event being sent - don't pass it to WebCore
-            && [self _web_firstResponderIsSelfOrDescendantView]
+            && self == [[self window] firstResponder]
             && core([self _frame])
             && core([self _frame])->eventHandler()->keyEvent(event))
         ret = YES;

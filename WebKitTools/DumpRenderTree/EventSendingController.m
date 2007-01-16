@@ -369,9 +369,8 @@ BOOL replayingSavedEvents;
                         keyCode:0];
     
 
-    NSView *subView = [[frame webView] hitTest:[event locationInWindow]];
-    if (subView)
-        [subView keyDown:event];
+    NSResponder *firstResponder = [[[frame webView] window] firstResponder];
+    [firstResponder keyDown:event];
 }
 
 - (void)enableDOMUIEventLogging:(WebScriptObject *)node

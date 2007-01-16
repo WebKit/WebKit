@@ -35,7 +35,7 @@ function editingTest() {
     typeCharacterCommand('n');
     typeCharacterCommand('d');
     typeCharacterCommand(' ');
-    fontSizeCommand("36pt");
+    fontSizeCommand("6");
     underlineCommand();
     typeCharacterCommand('t');
     typeCharacterCommand('h');

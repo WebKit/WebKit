@@ -1,3 +1,16 @@
+2007-01-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by mjs
+
+        <rdar://problem/4810960>
+        Gmail Editor: window.focus() called on keyDown (9640)
+
+        * editing/input/attributed-substring-from-range-lines.html-disabled:
+        * fast/events/keydown-1-expected.checksum: Added.
+        * fast/events/keydown-1-expected.png: Added.
+        * fast/events/keydown-1-expected.txt: Added.
+        * fast/events/keydown-1.html: Added.
+
 2007-01-15  Adam Roben  <aroben@apple.com>
 
         Reviewed by Anders.
