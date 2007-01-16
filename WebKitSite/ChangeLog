@@ -1,3 +1,9 @@
+2007-01-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by bdash.
+
+        * coding/coding-style.html: update to include style for header guards
+
 2007-01-10  Geoffrey Garen  <ggaren@apple.com>
 
         * coding/coding-style.html: Fixed minor validation error.
@@ -148,13 +154,13 @@
         * building/run.html: Added.
         * nav.inc:
 
-2006-10-05  Eric Seidel  <eric@eseidel.com>
+2006-10-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Tim H.
 
         * coding/coding-style.html: use css styles, add example for whitespace, add example for c++ constructors
 
-2006-09-26  Eric Seidel  <eric@eseidel.com>
+2006-09-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by anders.
 
@@ -290,7 +296,7 @@
         * quality/lifecycle.html:
         * quality/reporting.html:
 
-2006-08-15  Eric Seidel  <eric@eseidel.com>
+2006-08-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by TimH.
 

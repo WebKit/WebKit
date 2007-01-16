@@ -420,7 +420,7 @@ start with a lowercase letter and use intercaps.</li>
 <li> Macros that expand to function calls or other non-constant computation: these 
 should be named like functions, and should have parentheses at the end, even if 
 they take no arguments (with the exception of some special macros like ASSERT). 
-Note that usually it is preferrable to use an inline function in such cases instead of a macro.<br>
+Note that usually it is preferable to use an inline function in such cases instead of a macro.<br>
 
 <h4 class="right">Right:</h4>
 <pre class="code">
@@ -435,6 +435,21 @@ Note that usually it is preferrable to use an inline function in such cases inst
 
 #define WBStopButtontitle \
         NSLocalizedString(@"Stop", @"Stop button title")
+</pre>
+</li>
+<li>#define, #ifdef "header guards" should be named exactly the same as the file (including case), replacing the '.' with a '_'.
+<h4 class="right">Right:</h4>
+<pre class="code">
+// HTMLDocument.h
+#ifndef HTMLDocument_h
+#define HTMLDocument_h
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+// HTMLDocument.h
+#ifndef _HTML_DOCUMENT_H_
+#define _HTML_DOCUMENT_H_
 </pre>
 </li>
 </ol>
