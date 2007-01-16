@@ -87,6 +87,9 @@ static inline void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, int>* pr
 
 int SVGStyledElement::cssPropertyIdForSVGAttributeName(const QualifiedName& attrName)
 {
+    if (!attrName.namespaceURI().isNull())
+        return 0;
+    
     static HashMap<AtomicStringImpl*, int>* propertyNameToIdMap = 0;
     if (!propertyNameToIdMap) {
         propertyNameToIdMap = new HashMap<AtomicStringImpl*, int>;

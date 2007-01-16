@@ -1,3 +1,14 @@
+2007-01-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by hyatt.
+
+        Don't map attributes in namespaces other than null to CSS properties.
+        
+        Test: svg/custom/attribute-namespace-check.svg
+
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::cssPropertyIdForSVGAttributeName):
+
 2007-01-15  Lars Naesbye Christensen  <larsnaesbye@stud.ku.dk>
 
         Reviewed by Darin.

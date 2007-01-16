@@ -1,3 +1,14 @@
+2007-01-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by hyatt.
+        
+        Don't map attributes in namespaces other than null to CSS properties.
+
+        * svg/custom/attribute-namespace-check-expected.checksum: Added.
+        * svg/custom/attribute-namespace-check-expected.png: Added.
+        * svg/custom/attribute-namespace-check-expected.txt: Added.
+        * svg/custom/attribute-namespace-check.svg: Added.
+
 2007-01-15  Darin Adler  <darin@apple.com>
 
         - test for http://bugs.webkit.org/show_bug.cgi?id=12190
@@ -109,7 +120,7 @@
         * svg/custom/viewBox-hit-expected.txt: Added.
         * svg/custom/viewBox-hit.svg: Added.
 
-2007-01-15  Eric Seidel  <eric@eseidel.com>
+2007-01-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mjs.
         
