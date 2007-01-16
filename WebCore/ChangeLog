@@ -120,7 +120,6 @@
         * platform/network/ResourceHandleInternal.h:
         (WebCore::ResourceHandleInternal::ResourceHandleInternal):
 
->>>>>>> .r18887
 2007-01-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.
