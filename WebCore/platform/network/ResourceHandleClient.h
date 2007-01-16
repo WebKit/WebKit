@@ -45,22 +45,7 @@ class NSData;
 #endif
 #endif
 
-#if PLATFORM(QT)
-#include <QString>
-#endif
-
 namespace WebCore {
-
-#if PLATFORM(QT)
-    class PlatformResponseQt : public Shared<PlatformResponseQt> {
-    public:
-        QString data;
-        QString url;
-    };
-
-    typedef RefPtr<PlatformResponseQt> PlatformResponse;
-#endif
-
     class AuthenticationChallenge;
     class Credential;
     class KURL;

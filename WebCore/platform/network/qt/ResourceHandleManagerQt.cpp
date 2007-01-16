@@ -40,6 +40,8 @@
 #include <QHttpRequestHeader>
 #include <QFile>
 #include <QMap>
+#include <QByteArray>
+#include <QUrl>
 #include <qdebug.h>
 
 #define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d (%s)\n", \
@@ -128,6 +130,7 @@ void RequestQt::setURL(const KURL &u)
     else
         request.setValue(QLatin1String("Host"), url.host());
     hostInfo = HostInfo(u);
+    qurl = url.url();
 }
 
 void ResourceHandleManager::add(ResourceHandle* resource, FrameQtClient* client)
@@ -152,11 +155,6 @@ void ResourceHandleManager::add(RequestQt* request)
 
     //DEBUG() << "ResourceHandleManager::add" << request->hostInfo.protocol << request->hostInfo.host;
     // check for not implemented protocols
-    if (request->hostInfo.isLocalFile()) {
-        //DEBUG() << "fileRequest";
-        emit fileRequest(request);
-        return;
-    }
     String protocol = request->hostInfo.protocol;
     if (protocol == "http") {
         //DEBUG() << "networkRequest";
@@ -164,10 +162,12 @@ void ResourceHandleManager::add(RequestQt* request)
         return;
     }
 
-    notImplemented();
-    cancel(request->resource);
+    // "file", "data" and all unhandled stuff go through here
+    //DEBUG() << "fileRequest";
+    emit fileRequest(request);
     return;
 }
+
 
 void ResourceHandleManager::cancel(ResourceHandle* resource)
 {
@@ -179,23 +179,12 @@ void ResourceHandleManager::cancel(ResourceHandle* resource)
         return;
 
     DEBUG() << "ResourceHandleManager::cancel" << resource->url().path();
-    client->didFail(resource, ResourceError());
-
-    RequestQt* request = pendingRequests.take(resource);
-    if (!request)
-        return;
+    
     request->cancelled = true;
 
-    if (request->hostInfo.isLocalFile()) {
-        emit fileCancel(request);
-    } else {
-        String protocol = request->hostInfo.protocol;
-        if (protocol == "http") {
-            emit networkCancel(request);
-        } else {
-            delete request;
-        }
-    }
+    String protocol = request->hostInfo.protocol;
+    if (protocol == "http") 
+        emit networkCancel(request);
 
     return;
 }
@@ -285,11 +274,6 @@ void ResourceHandleManager::receivedFinished(RequestQt* request, int errorCode)
 
     pendingRequests.remove(request->resource);
 
-    if (request->cancelled) {
-        delete request;
-        return;
-    }
-
     if (request->redirected) {
         request->redirected = false;
         add(request);
@@ -300,7 +284,7 @@ void ResourceHandleManager::receivedFinished(RequestQt* request, int errorCode)
     if (!client)
         return;
 
-    if (errorCode) {
+    if (errorCode || request->cancelled) {
         //FIXME: error setting error was removed from ResourceHandle
         client->didFail(request->resource, ResourceError());
     } else {
@@ -329,8 +313,6 @@ void LoaderThread::run()
         m_loader = new FileLoader;
         connect(m_manager, SIGNAL(fileRequest(RequestQt*)),
                 m_loader, SLOT(request(RequestQt*)));
-        connect(m_manager, SIGNAL(fileCancel(RequestQt*)),
-                m_loader, SLOT(cancel(RequestQt*)));
         break;
     }
     connect(m_loader, SIGNAL(receivedResponse(RequestQt*)),
@@ -353,36 +335,102 @@ FileLoader::FileLoader()
     DEBUG() << "FileLoader::FileLoader";
 }
 
+
 void FileLoader::request(RequestQt* request)
 {
     DEBUG() << "FileLoader::request" << request->request.path();
-    Q_ASSERT(request->hostInfo.isLocalFile());
-    int error = 0;
 
-    if (request->postData.isEmpty()) {
+    if (request->cancelled) {
+        sendData(request, 400, QByteArray());
+        return;
+    }
+    
+    if (request->hostInfo.protocol == QLatin1String("data")) {
+        parseDataUrl(request);
+        return;
+    }
+
+    int statusCode = 200;
+    QByteArray data;
+    if (!request->hostInfo.isLocalFile()) {
+        statusCode = 404;
+    } else if (request->postData.isEmpty()) {
         QFile f(QString(request->request.path()));
         DEBUG() << "opening" << QString(request->request.path());
 
         if (f.open(QIODevice::ReadOnly)) {
-            request->response = QHttpResponseHeader(100);
+            request->response.setStatusLine(200);
             emit receivedResponse(request);
         
-            QByteArray data = f.readAll();
-            emit receivedData(request, data);
+            data = f.readAll();
         } else {
-            error = 2;
+            statusCode = 404;
         }
     } else {
-        error = 1;
+        statusCode = 404;
     }
-    DEBUG() << "error" << error;
+    sendData(request, statusCode, data);
+}
+
+void FileLoader::sendData(RequestQt* request, int statusCode, const QByteArray &data)
+{
+    int error = statusCode >= 400 ? 1 : 0;
+    if (!request->cancelled) {
+        request->response.setStatusLine(statusCode);
+        emit receivedResponse(request);
+        if (!data.isEmpty())
+            emit receivedData(request, data);
+    }
     emit receivedFinished(request, error);
 }
 
-void FileLoader::cancel(RequestQt* resource)
+void FileLoader::parseDataUrl(RequestQt* request)
 {
-    emit receivedFinished(resource, 1);
+    QByteArray data = request->qurl.toLatin1();
+    //qDebug() << "handling data url:" << data; 
+
+    ASSERT(data.startsWith("data:"));
+
+    // Here's the syntax of data URLs:
+    // dataurl    := "data:" [ mediatype ] [ ";base64" ] "," data
+    // mediatype  := [ type "/" subtype ] *( ";" parameter )
+    // data       := *urlchar
+    // parameter  := attribute "=" value
+    QByteArray header;
+    bool base64 = false;
+
+    int index = data.indexOf(',');
+    if (index != -1) {
+        header = data.mid(5, index - 5);
+        header = header.toLower();
+        //qDebug() << "header=" << header;
+        data = data.mid(index+1);
+        //qDebug() << "data=" << data;
+
+        if (header.endsWith(";base64")) {
+            //qDebug() << "base64";
+            base64 = true;
+            header = header.left(header.length() - 7);
+            //qDebug() << "mime=" << header;
+        }        
+    } else {
+        data = QByteArray();
+    }
+    if (base64) {
+        data = QByteArray::fromBase64(data);
+    } else {
+        data = QUrl::fromPercentEncoding(data).toLatin1();
+    }
+
+    if (header.isEmpty()) 
+        header = "text/plain;charset=US-ASCII";
+    int statusCode = data.isEmpty() ? 404 : 200;
+    request->response.setContentType(header);
+    request->response.setContentLength(data.size());
+
+    sendData(request, statusCode, data);
 }
+
 
 /////////////////////////////////////////////////////////////////////////////
 WebCoreHttp::WebCoreHttp(NetworkLoader* parent, const HostInfo &hi)

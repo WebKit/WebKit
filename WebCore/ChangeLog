@@ -1,3 +1,27 @@
+2007-01-16  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Looks like ResourceHandle _has_ to do everything
+        asynchronously if we don't want to run into
+        lots of trouble in the loader.
+
+        Implement support data: URLs.
+
+        Remove some unused Qt only code in ResourceHandleClient.h
+
+        * platform/network/ResourceHandleClient.h:
+        * platform/network/qt/ResourceHandleManagerQt.cpp:
+        (WebCore::RequestQt::setURL):
+        (WebCore::ResourceHandleManager::add):
+        (WebCore::ResourceHandleManager::cancel):
+        (WebCore::ResourceHandleManager::receivedFinished):
+        (WebCore::LoaderThread::run):
+        (WebCore::FileLoader::request):
+        (WebCore::FileLoader::sendData):
+        (WebCore::FileLoader::parseDataUrl):
+        * platform/network/qt/ResourceHandleManagerQt.h:
+
 2007-01-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mitz.
