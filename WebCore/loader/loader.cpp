@@ -196,11 +196,6 @@ int Loader::numRequests(DocLoader* dl) const
         res += (r->docLoader() == dl && !r->isMultipart());
     }
 
-    DeprecatedPtrListIterator<Request> bdIt(m_requestsBackgroundDecoding);
-    for (; bdIt.current(); ++bdIt)
-        if (bdIt.current()->docLoader() == dl)
-            res++;
-
     if (dl->loadInProgress())
         res++;
 
@@ -233,21 +228,6 @@ void Loader::cancelRequests(DocLoader* dl)
         m_requestsLoading.remove(loader);
         cache()->remove(r->cachedResource());
     }
-
-    DeprecatedPtrListIterator<Request> bdIt(m_requestsBackgroundDecoding);
-    while (bdIt.current()) {
-        if (bdIt.current()->docLoader() == dl) {
-            cache()->remove(bdIt.current()->cachedResource());
-            m_requestsBackgroundDecoding.remove(bdIt);
-        } else
-            ++bdIt;
-    }
-}
-
-void Loader::removeBackgroundDecodingRequest(Request* r)
-{
-    if (m_requestsBackgroundDecoding.containsRef(r))
-        m_requestsBackgroundDecoding.remove(r);
 }
 
 } //namespace WebCore
