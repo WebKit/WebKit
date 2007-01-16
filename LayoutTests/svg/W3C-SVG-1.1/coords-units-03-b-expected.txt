@@ -52,35 +52,35 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (230,120) size 480x15
             RenderSVGInlineText {#text} at (0,-12) size 57x15
               text run at (0,-12) width 57: "Inches (in)"
-          RenderPath {rect} at (20,180) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,120.00L110.00,120.00L110.00,121.00L20.00,121.00"]
+          RenderPath {rect} at (20,180) size 96x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,120.00L116.00,120.00L116.00,121.00L20.00,121.00"]
           RenderSVGText {text} at (20,138) size 480x15
             RenderSVGInlineText {#text} at (0,-12) size 77x15
               text run at (0,-12) width 77: "2.54 cm = 1 in"
           RenderSVGText {text} at (230,140) size 480x15
             RenderSVGInlineText {#text} at (0,-12) size 92x15
               text run at (0,-12) width 92: "Centimeters (cm)"
-          RenderPath {rect} at (20,200) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,140.00L110.00,140.00L110.00,141.00L20.00,141.00"]
+          RenderPath {rect} at (20,200) size 96x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,140.00L116.00,140.00L116.00,141.00L20.00,141.00"]
           RenderSVGText {text} at (20,158) size 480x15
             RenderSVGInlineText {#text} at (0,-12) size 81x15
               text run at (0,-12) width 81: "25.4 mm = 1 in"
           RenderSVGText {text} at (230,160) size 480x15
             RenderSVGInlineText {#text} at (0,-12) size 94x15
               text run at (0,-12) width 94: "Millimeters (mm)"
-          RenderPath {rect} at (20,220) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,160.00L110.00,160.00L110.00,161.00L20.00,161.00"]
+          RenderPath {rect} at (20,220) size 96x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,160.00L116.00,160.00L116.00,161.00L20.00,161.00"]
           RenderSVGText {text} at (20,178) size 480x15
             RenderSVGInlineText {#text} at (0,-12) size 59x15
               text run at (0,-12) width 59: "72pt = 1 in"
           RenderSVGText {text} at (230,180) size 480x15
             RenderSVGInlineText {#text} at (0,-12) size 56x15
               text run at (0,-12) width 56: "Points (pt)"
-          RenderPath {rect} at (20,240) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,180.00L110.00,180.00L110.00,181.00L20.00,181.00"]
+          RenderPath {rect} at (20,240) size 96x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,180.00L116.00,180.00L116.00,181.00L20.00,181.00"]
           RenderSVGText {text} at (20,198) size 480x15
             RenderSVGInlineText {#text} at (0,-12) size 54x15
               text run at (0,-12) width 54: "6pc = 1 in"
           RenderSVGText {text} at (230,200) size 480x15
             RenderSVGInlineText {#text} at (0,-12) size 52x15
               text run at (0,-12) width 52: "Picas (pc)"
-          RenderPath {rect} at (20,260) size 90x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,200.00L110.00,200.00L110.00,201.00L20.00,201.00"]
+          RenderPath {rect} at (20,260) size 96x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,200.00L116.00,200.00L116.00,201.00L20.00,201.00"]
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
           text run at (0,-36) width 264: "$Revision: 1.4 $"

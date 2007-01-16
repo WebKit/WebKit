@@ -1,3 +1,11 @@
+2007-01-16  Darin Adler  <darin@apple.com>
+
+        - updated one more test results affected by Rob's coordinates patch
+
+        * svg/W3C-SVG-1.1/coords-units-03-b-expected.checksum: Regenerated.
+        * svg/W3C-SVG-1.1/coords-units-03-b-expected.png: Ditto.
+        * svg/W3C-SVG-1.1/coords-units-03-b-expected.txt: Ditto.
+
 2007-01-15  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.
