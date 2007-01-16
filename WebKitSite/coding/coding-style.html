@@ -96,6 +96,31 @@ namespace WebCore {
 } // namespace WebCore
 </pre>
 </li>
+<li>A case label should line up with its switch statement.  The case statement is indented.
+<h4 class="right">Right:</h4>
+<pre class="code">
+switch (condition) {
+case fooCondition:
+case barCondition:
+    i++;
+    break;
+default:
+    i--;
+}
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+switch (condition) {
+    case fooCondition:
+    case barCondition:
+        i++;
+        break;
+    default:
+        i--;
+}
+</pre>
+</li>
 </ol>
 
 <h3>Spacing</h3>

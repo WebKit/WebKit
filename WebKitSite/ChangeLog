@@ -1,3 +1,9 @@
+2007-01-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        * coding/coding-style.html: Added switch/case indentation rules
+
 2007-01-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by bdash.
