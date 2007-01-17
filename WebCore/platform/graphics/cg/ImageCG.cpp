@@ -183,7 +183,7 @@ void Image::drawPatternCallback(void* info, CGContextRef context)
     CGContextDrawImage(context, GraphicsContext(context).roundToDevicePixels(FloatRect(0, data->size().height() - h, w, h)), image);
 }
 
-void Image::drawPatternCombined(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
+void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
                                 const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect)
 {
     static const CGPatternCallbacks patternCallbacks = { 0, drawPatternCallback, NULL };
@@ -263,7 +263,7 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
     }
 
     FloatRect tileRect(FloatPoint(), intrinsicTileSize);    
-    drawPatternCombined(ctxt, tileRect, patternTransform, oneTileRect.location(), op, destRect);
+    drawPattern(ctxt, tileRect, patternTransform, oneTileRect.location(), op, destRect);
     
     startAnimation();
 }
@@ -292,7 +292,7 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
         vPhase -= fmodf(dstRect.height(), scale.height() * srcRect.height()) / 2.0f;
     FloatPoint patternPhase(dstRect.x() - hPhase, dstRect.y() - vPhase);
     
-    drawPatternCombined(ctxt, srcRect, patternTransform, patternPhase, op, dstRect);
+    drawPattern(ctxt, srcRect, patternTransform, patternPhase, op, dstRect);
 
     startAnimation();
 }
