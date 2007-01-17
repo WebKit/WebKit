@@ -50,12 +50,6 @@ void ContextMenu::appendItem(ContextMenuItem& item)
     QAction* action  = m_menu->addAction(item.title());
 }
 
-void ContextMenu::show()
-{
-    ASSERT(m_menu);
-    m_menu->exec();
-}
-
 unsigned ContextMenu::itemCount() const
 {
     // FIXME: This method is silly
