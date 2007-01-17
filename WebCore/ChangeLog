@@ -1,3 +1,12 @@
+2007-01-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by rwlbuis.
+
+        Test: svg/custom/inner-svg-hit-test.svg
+
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::nodeAtPoint): never allow containers to be hit.
+
 2007-01-17  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack

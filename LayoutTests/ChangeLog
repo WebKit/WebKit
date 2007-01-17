@@ -1,5 +1,14 @@
 2007-01-17  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by rwlbuis.
+
+        * svg/custom/inner-svg-hit-test-expected.checksum: Added.
+        * svg/custom/inner-svg-hit-test-expected.png: Added.
+        * svg/custom/inner-svg-hit-test-expected.txt: Added.
+        * svg/custom/inner-svg-hit-test.svg: Added.
+
+2007-01-17  Eric Seidel  <eric@webkit.org>
+
         Reviewed by mitz and rwlbuis.
         
         SVGs don't work as background images.

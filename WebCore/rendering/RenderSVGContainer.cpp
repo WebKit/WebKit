@@ -418,7 +418,16 @@ bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResul
             return false;
     }
 
-    return RenderContainer::nodeAtPoint(request, result, _x, _y, _tx, _ty, hitTestAction);
+    for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
+        if (child->nodeAtPoint(request, result, _x, _y, _tx, _ty, hitTestAction)) {
+            updateHitTestResult(result, IntPoint(_x - _tx, _y - _ty));
+            return true;
+        }
+    }
+    
+    // Spec: Only graphical elements can be targeted by the mouse, period.
+    // 16.4: "If there are no graphics elements whose relevant graphics content is under the pointer (i.e., there is no target element), the event is not dispatched."
+    return false;
 }
 
 }
