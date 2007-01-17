@@ -1,5 +1,13 @@
 2007-01-17  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Mitz.
+
+        Updating this new layout test so that it actually crashes before the last fix.
+
+        * fast/css/pseudostyle-anonymous-text.html:
+
+2007-01-17  Adele Peterson  <adele@apple.com>
+
         Reviewed by Beth.
 
         Test for http://bugs.webkit.org/show_bug.cgi?id=10139

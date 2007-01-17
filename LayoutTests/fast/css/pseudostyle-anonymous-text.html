@@ -9,6 +9,8 @@
             if (window.layoutTestController)
                 layoutTestController.dumpAsText();
             document.execCommand("SelectAll");
+            if (window.layoutTestController)
+                layoutTestController.display();
         }
     </script>
 </head>
