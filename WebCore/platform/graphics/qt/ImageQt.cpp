@@ -150,7 +150,7 @@ void BitmapImage::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, con
 }
 
 void BitmapImage::drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, 
-        TileRule hRule, TileRule vRule, CompositeOperator op)
+        CompositeOperator op)
 {
     // FIXME: no implemented
 }
