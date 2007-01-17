@@ -127,7 +127,7 @@ void RenderView::layout()
     setNeedsLayout(false);
 }
 
-bool RenderView::absolutePosition(int& xPos, int& yPos, bool fixed)
+bool RenderView::absolutePosition(int& xPos, int& yPos, bool fixed) const
 {
     if (fixed && m_frameView) {
         xPos = m_frameView->contentsX();

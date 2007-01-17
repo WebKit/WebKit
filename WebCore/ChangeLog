@@ -1,3 +1,35 @@
+2007-01-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12278
+          <rdar://problem/4928705> REGRESSION(r13070): Dragged image size includes padding (12278)
+
+        * WebCore.exp: Added HitTestResult::imageRect,
+        removed HitTestResult::boundingBox.
+
+        * rendering/HitTestResult.h:
+        * rendering/HitTestResult.cpp: (WebCore::HitTestResult::imageRect):
+        Added. Returns the content rectangle of the image.
+
+        * rendering/RenderObject.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::absolutePosition): Made const.
+        (WebCore::RenderObject::contentBox): Added.
+        (WebCore::RenderObject::absoluteContentBox): Added.
+
+        * rendering/RenderBox.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absolutePosition): Made const.
+
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::absolutePosition): Made const.
+
+        * rendering/RenderView.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::absolutePosition): Made const.
+
 2007-01-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Beth.

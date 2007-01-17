@@ -189,9 +189,8 @@ static NSString* NSStringOrNil(String coreString)
 
 - (NSValue *)_imageRect
 {
-    if ([self objectForKey:WebElementImageURLKey])
-        return [NSValue valueWithRect:_result->boundingBox()];
-    return nil;
+    IntRect rect = _result->imageRect();
+    return rect.isEmpty() ? nil : [NSValue valueWithRect:rect];
 }
 
 - (NSURL *)_absoluteImageURL

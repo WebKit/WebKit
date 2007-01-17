@@ -739,7 +739,7 @@ int RenderBox::containingBlockWidth() const
         return cb->availableWidth();
 }
 
-bool RenderBox::absolutePosition(int &xPos, int &yPos, bool f)
+bool RenderBox::absolutePosition(int &xPos, int &yPos, bool f) const
 {
     if (style()->position() == FixedPosition)
         f = true;

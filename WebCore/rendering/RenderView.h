@@ -43,7 +43,7 @@ public:
     virtual void calcWidth();
     virtual void calcHeight();
     virtual void calcMinMaxWidth();
-    virtual bool absolutePosition(int& xPos, int& yPos, bool fixed = false);
+    virtual bool absolutePosition(int& xPos, int& yPos, bool fixed = false) const;
 
     int docHeight() const;
     int docWidth() const;

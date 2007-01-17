@@ -102,7 +102,7 @@ public:
 
     virtual IntRect getAbsoluteRepaintRect();
     virtual void computeAbsoluteRepaintRect(IntRect&, bool fixed = false);
-    virtual bool absolutePosition(int& xPos, int& yPos, bool fixed = false);
+    virtual bool absolutePosition(int& x, int& y, bool fixed = false) const;
 
     virtual short baselinePosition(bool firstLine = false, bool isRootLineBox = false) const;
 

@@ -199,6 +199,13 @@ Image* HitTestResult::image() const
     return 0;
 }
 
+IntRect HitTestResult::imageRect() const
+{
+    if (!image())
+        return IntRect();
+    return m_innerNonSharedNode->renderer()->absoluteContentBox();
+}
+
 KURL HitTestResult::absoluteImageURL() const
 {
     if (!(m_innerNonSharedNode && m_innerNonSharedNode->document()))
