@@ -1,5 +1,12 @@
 2007-01-17  Darin Adler  <darin@apple.com>
 
+        Reviewed by Hyatt.
+
+        * rendering/RenderObject.h: Removed unused nextEditable and previousEditable.
+        * rendering/RenderObject.cpp: Ditto.
+
+2007-01-17  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=12278

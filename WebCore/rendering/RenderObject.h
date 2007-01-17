@@ -149,9 +149,6 @@ public:
     RenderObject* previousInPreOrder() const;
     RenderObject* childAt(unsigned) const;
 
-    RenderObject* nextEditable() const;
-    RenderObject* previousEditable() const;
-
     RenderObject* firstLeafChild() const;
     RenderObject* lastLeafChild() const;
 
@@ -166,7 +163,7 @@ public:
 
     virtual IntRect getOverflowClipRect(int /*tx*/, int /*ty*/) { return IntRect(0, 0, 0, 0); }
     virtual IntRect getClipRect(int /*tx*/, int /*ty*/) { return IntRect(0, 0, 0, 0); }
-    bool hasClip() { return isPositioned() &&  style()->hasClip(); }
+    bool hasClip() { return isPositioned() && style()->hasClip(); }
 
     virtual int getBaselineOfFirstLineBox() const { return -1; }
     virtual int getBaselineOfLastLineBox() const { return -1; }
