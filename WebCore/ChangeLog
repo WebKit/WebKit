@@ -1,3 +1,17 @@
+2007-01-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4747450>
+        Gmail Editor: Caret doesn't always position itself after list marker
+        <rdar://problem/4917055>
+        GMail Editor: A hang can occur when attempting to apply list styling to selected indented text
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::rangeFromLocationAndLength): Use VisiblePositions
+        to compute the end of a run for emitted '\n's, because it's often wrong
+        in that case.
+
 2007-01-16  Darin Adler  <darin@apple.com>
 
         - quick lame attempt to get Qt compiling again

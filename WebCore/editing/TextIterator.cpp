@@ -1072,8 +1072,26 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element *scope, int r
     for (; !it.atEnd(); it.advance()) {
         int len = it.length();
         textRunRange = it.range();
+        
+        bool foundStart = rangeLocation >= docTextPosition && rangeLocation <= docTextPosition + len;
+        bool foundEnd = rangeEnd >= docTextPosition && rangeEnd <= docTextPosition + len;
+        
+        // Fix textRunRange->endPosition(), but only if foundStart || foundEnd, because it is only
+        // in those cases that textRunRange is used.
+        if (foundStart || foundEnd) {
+            // FIXME: This is a workaround for the fact that the end of a run is often at the wrong
+            // position for emitted '\n's.
+            if (len == 1 && it.characters()[0] == UChar('\n')) {
+                Position runStart = textRunRange->startPosition();
+                Position runEnd = VisiblePosition(runStart).next().deepEquivalent();
+                if (runEnd.isNotNull()) {
+                    ExceptionCode ec = 0;
+                    textRunRange->setEnd(runEnd.node(), runEnd.offset(), ec);
+                }
+            }
+        }
 
-        if (rangeLocation >= docTextPosition && rangeLocation <= docTextPosition + len) {
+        if (foundStart) {
             startRangeFound = true;
             int exception = 0;
             if (textRunRange->startContainer(exception)->isTextNode()) {
@@ -1087,7 +1105,7 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element *scope, int r
             }
         }
 
-        if (rangeEnd >= docTextPosition && rangeEnd <= docTextPosition + len) {
+        if (foundEnd) {
             int exception = 0;
             if (textRunRange->startContainer(exception)->isTextNode()) {
                 int offset = rangeEnd - docTextPosition;
