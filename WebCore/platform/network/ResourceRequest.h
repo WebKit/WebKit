@@ -134,7 +134,7 @@ namespace WebCore {
         void setHTTPUserAgent(const String& httpUserAgent) { setHTTPHeaderField("User-Agent", httpUserAgent); }
 
         String httpAccept() const { return httpHeaderField("Accept"); }
-        void setHTTPAccept(const String& httpUserAgent) { setHTTPHeaderField("Accept", httpUserAgent); }
+        void setHTTPAccept(const String& httpAccept) { setHTTPHeaderField("Accept", httpAccept); }
 
         FormData* httpBody() const;
         void setHTTPBody(PassRefPtr<FormData> httpBody);
