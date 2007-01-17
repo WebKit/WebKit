@@ -1,3 +1,12 @@
+2007-01-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        <rdar://problem/4887781> Seed: Repro Safari crash in -[WebHTMLRepresentation receivedData:withDataSource:] (music.aol.com)
+
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _receivedData:]): Protect self against destruction partway through this method.
+
 2007-01-16  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by harrison.

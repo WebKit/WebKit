@@ -70,7 +70,6 @@ using namespace WebCore;
     id <WebDocumentRepresentation> representation;
     
     WebUnarchivingState *unarchivingState;
-    NSMutableDictionary *subresources;
     BOOL representationFinishedLoading;
 }
 
@@ -172,6 +171,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)_receivedData:(NSData *)data
 {
+    // protect self temporarily, as the bridge receivedData call could remove our last ref
+    RetainPtr<WebDataSource*> protect(self);
+    
     [[self representation] receivedData:data withDataSource:self];
     [[[[self webFrame] frameView] documentView] dataSourceUpdated:self];
 }
