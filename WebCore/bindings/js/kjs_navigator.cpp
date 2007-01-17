@@ -152,7 +152,7 @@ const ClassInfo Navigator::info = { "Navigator", 0, &NavigatorTable, 0 };
   javaEnabled   Navigator::JavaEnabled  DontDelete|Function 0
 @end
 */
-KJS_IMPLEMENT_PROTOFUNC(NavigatorFunc)
+KJS_IMPLEMENT_PROTOTYPE_FUNCTION(NavigatorFunc)
 
 Navigator::Navigator(ExecState *exec, Frame *f) 
     : m_frame(f)
@@ -279,7 +279,7 @@ void PluginBase::refresh(bool reload)
   refresh       Plugins::Refresh        DontDelete|Function 0
 @end
 */
-KJS_IMPLEMENT_PROTOFUNC(PluginsFunc)
+KJS_IMPLEMENT_PROTOTYPE_FUNCTION(PluginsFunc)
 
 JSValue *Plugins::getValueProperty(ExecState *exec, int token) const
 {

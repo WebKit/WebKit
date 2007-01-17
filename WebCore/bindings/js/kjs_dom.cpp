@@ -83,8 +83,8 @@ using namespace EventNames;
 namespace KJS {
 
 // -------------------------------------------------------------------------
-/* Source for DOMNodeProtoTable. Use "make hashtables" to regenerate.
-@begin DOMNodeProtoTable 25
+/* Source for DOMNodePrototypeTable. Use "make hashtables" to regenerate.
+@begin DOMNodePrototypeTable 25
   insertBefore  DOMNode::InsertBefore   DontDelete|Function 2
   replaceChild  DOMNode::ReplaceChild   DontDelete|Function 2
   removeChild   DOMNode::RemoveChild    DontDelete|Function 1
@@ -103,15 +103,15 @@ namespace KJS {
   lookupPrefix  DOMNode::LookupPrefix   DontDelete|Function 1
 @end
 */
-KJS_IMPLEMENT_PROTOFUNC(DOMNodeProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE("DOMNode", DOMNodeProto, DOMNodeProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE_FUNCTION(DOMNodePrototypeFunction)
+KJS_IMPLEMENT_PROTOTYPE("DOMNode", DOMNodePrototype, DOMNodePrototypeFunction)
 
 const ClassInfo DOMNode::info = { "Node", 0, &DOMNodeTable, 0 };
 
 DOMNode::DOMNode(ExecState* exec, Node* n)
   : m_impl(n)
 {
-  setPrototype(DOMNodeProto::self(exec));
+  setPrototype(DOMNodePrototype::self(exec));
 }
 
 DOMNode::~DOMNode()
@@ -280,7 +280,7 @@ UString DOMNode::toString(ExecState*) const
     return "[object " + className() + "]";
 }
 
-JSValue* DOMNodeProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
+JSValue* DOMNodePrototypeFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
 {
   if (!thisObj->inherits(&DOMNode::info))
     return throwError(exec, TypeError);
@@ -396,7 +396,7 @@ onunload      DOMEventTargetNode::OnUnload               DontDelete
 DOMEventTargetNode::DOMEventTargetNode(ExecState* exec, Node* n)
     : JSNode(exec, n)
 {
-    setPrototype(DOMEventTargetNodeProto::self(exec));
+    setPrototype(DOMEventTargetNodePrototype::self(exec));
 }
 
 bool DOMEventTargetNode::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -653,7 +653,7 @@ void DOMEventTargetNode::pushEventHandlerScope(ExecState*, ScopeChain &) const
 }
 
 /*
-@begin DOMEventTargetNodeProtoTable 5
+@begin DOMEventTargetNodePrototypeTable 5
 # from the EventTarget interface
 addEventListener        DOMEventTargetNode::AddEventListener   DontDelete|Function 3
 removeEventListener     DOMEventTargetNode::RemoveEventListener    DontDelete|Function 3
@@ -661,10 +661,10 @@ dispatchEvent           DOMEventTargetNode::DispatchEvent  DontDelete|Function 1
 @end
 */
 
-KJS_IMPLEMENT_PROTOFUNC(DOMEventTargetNodeProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE("DOMEventTargetNode", DOMEventTargetNodeProto, DOMEventTargetNodeProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE_FUNCTION(DOMEventTargetNodePrototypeFunction)
+KJS_IMPLEMENT_PROTOTYPE("DOMEventTargetNode", DOMEventTargetNodePrototype, DOMEventTargetNodePrototypeFunction)
 
-JSValue* DOMEventTargetNodeProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
+JSValue* DOMEventTargetNodePrototypeFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
 {
     if (!thisObj->inherits(&DOMEventTargetNode::info))
         return throwError(exec, TypeError);
@@ -700,7 +700,7 @@ JSValue* DOMEventTargetNodeProtoFunc::callAsFunction(ExecState* exec, JSObject* 
 @end
 */
 
-KJS_IMPLEMENT_PROTOFUNC(DOMNodeListFunc)
+KJS_IMPLEMENT_PROTOTYPE_FUNCTION(DOMNodeListFunc)
 
 const ClassInfo DOMNodeList::info = { "NodeList", 0, &DOMNodeListTable, 0 };
 
@@ -820,8 +820,8 @@ DocumentType* toDocumentType(JSValue* val)
 
 // -------------------------------------------------------------------------
 
-/* Source for DOMNamedNodeMapProtoTable. Use "make hashtables" to regenerate.
-@begin DOMNamedNodeMapProtoTable 10
+/* Source for DOMNamedNodeMapPrototypeTable. Use "make hashtables" to regenerate.
+@begin DOMNamedNodeMapPrototypeTable 10
   getNamedItem          DOMNamedNodeMap::GetNamedItem           DontDelete|Function 1
   setNamedItem          DOMNamedNodeMap::SetNamedItem           DontDelete|Function 1
   removeNamedItem       DOMNamedNodeMap::RemoveNamedItem        DontDelete|Function 1
@@ -832,16 +832,16 @@ DocumentType* toDocumentType(JSValue* val)
   removeNamedItemNS     DOMNamedNodeMap::RemoveNamedItemNS      DontDelete|Function 2
 @end
 */
-KJS_DEFINE_PROTOTYPE(DOMNamedNodeMapProto)
-KJS_IMPLEMENT_PROTOFUNC(DOMNamedNodeMapProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE("NamedNodeMap", DOMNamedNodeMapProto, DOMNamedNodeMapProtoFunc)
+KJS_DEFINE_PROTOTYPE(DOMNamedNodeMapPrototype)
+KJS_IMPLEMENT_PROTOTYPE_FUNCTION(DOMNamedNodeMapPrototypeFunction)
+KJS_IMPLEMENT_PROTOTYPE("NamedNodeMap", DOMNamedNodeMapPrototype, DOMNamedNodeMapPrototypeFunction)
 
 const ClassInfo DOMNamedNodeMap::info = { "NamedNodeMap", 0, 0, 0 };
 
 DOMNamedNodeMap::DOMNamedNodeMap(ExecState* exec, NamedNodeMap* m)
     : m_impl(m) 
 { 
-    setPrototype(DOMNamedNodeMapProto::self(exec));
+    setPrototype(DOMNamedNodeMapPrototype::self(exec));
 }
 
 DOMNamedNodeMap::~DOMNamedNodeMap()
@@ -895,7 +895,7 @@ bool DOMNamedNodeMap::getOwnPropertySlot(ExecState* exec, const Identifier& prop
   return DOMObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-JSValue* DOMNamedNodeMapProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
+JSValue* DOMNamedNodeMapPrototypeFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
 {
   if (!thisObj->inherits(&KJS::DOMNamedNodeMap::info))
     return throwError(exec, TypeError);

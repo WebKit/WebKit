@@ -347,19 +347,19 @@ const ClassInfo DOMEvent::info = { "Event", 0, &DOMEventTable, 0 };
   dataTransfer  DOMEvent::DataTransfer  DontDelete|ReadOnly
   clipboardData  DOMEvent::ClipboardData  DontDelete|ReadOnly
 @end
-@begin DOMEventProtoTable 3
+@begin DOMEventPrototypeTable 3
   stopPropagation       DOMEvent::StopPropagation       DontDelete|Function 0
   preventDefault        DOMEvent::PreventDefault        DontDelete|Function 0
   initEvent             DOMEvent::InitEvent             DontDelete|Function 3
 @end
 */
-KJS_IMPLEMENT_PROTOFUNC(DOMEventProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE("DOMEvent", DOMEventProto, DOMEventProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE_FUNCTION(DOMEventPrototypeFunction)
+KJS_IMPLEMENT_PROTOTYPE("DOMEvent", DOMEventPrototype, DOMEventPrototypeFunction)
 
 DOMEvent::DOMEvent(ExecState *exec, Event *e)
   : m_impl(e), clipboard(0) 
 {
-    setPrototype(DOMEventProto::self(exec));
+    setPrototype(DOMEventPrototype::self(exec));
 }
 
 DOMEvent::~DOMEvent()
@@ -449,7 +449,7 @@ void DOMEvent::putValueProperty(ExecState *exec, int token, JSValue *value, int)
   }
 }
 
-JSValue *DOMEventProtoFunc::callAsFunction(ExecState *exec, JSObject * thisObj, const List &args)
+JSValue *DOMEventPrototypeFunction::callAsFunction(ExecState *exec, JSObject * thisObj, const List &args)
 {
   if (!thisObj->inherits(&DOMEvent::info))
     return throwError(exec, TypeError);
@@ -516,7 +516,7 @@ const ClassInfo Clipboard::info = { "Clipboard", 0, &ClipboardTable, 0 };
   effectAllowed Clipboard::EffectAllowed        DontDelete
   types         Clipboard::Types        DontDelete|ReadOnly
 @end
-@begin ClipboardProtoTable 4
+@begin ClipboardPrototypeTable 4
   clearData     Clipboard::ClearData    DontDelete|Function 0
   getData       Clipboard::GetData      DontDelete|Function 1
   setData       Clipboard::SetData      DontDelete|Function 2
@@ -524,14 +524,14 @@ const ClassInfo Clipboard::info = { "Clipboard", 0, &ClipboardTable, 0 };
 @end
 */
 
-KJS_DEFINE_PROTOTYPE(ClipboardProto)
-KJS_IMPLEMENT_PROTOFUNC(ClipboardProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE("Clipboard", ClipboardProto, ClipboardProtoFunc)
+KJS_DEFINE_PROTOTYPE(ClipboardPrototype)
+KJS_IMPLEMENT_PROTOTYPE_FUNCTION(ClipboardPrototypeFunction)
+KJS_IMPLEMENT_PROTOTYPE("Clipboard", ClipboardPrototype, ClipboardPrototypeFunction)
 
 Clipboard::Clipboard(ExecState *exec, WebCore::Clipboard *cb)
   : clipboard(cb)
 {
-    setPrototype(ClipboardProto::self(exec));
+    setPrototype(ClipboardPrototype::self(exec));
 }
 
 bool Clipboard::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -587,7 +587,7 @@ void Clipboard::putValueProperty(ExecState *exec, int token, JSValue *value, int
     }
 }
 
-JSValue *ClipboardProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue *ClipboardPrototypeFunction::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
     if (!thisObj->inherits(&Clipboard::info))
         return throwError(exec, TypeError);

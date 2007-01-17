@@ -1,3 +1,19 @@
+2007-01-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12268
+        Give object prototypes their own names
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/prototype-chain-expected.txt:
+        * fast/events/event-view-toString-expected.txt:
+        * fast/events/mouseclick-target-and-positioning-expected.txt:
+        * fast/tokenizer/external-script-document-write-expected.checksum:
+        * fast/tokenizer/external-script-document-write-expected.png:
+        * fast/tokenizer/external-script-document-write-expected.txt:
+        Updated the results.
+
 2007-01-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by rwlbuis.

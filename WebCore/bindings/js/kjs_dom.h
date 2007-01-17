@@ -43,7 +43,7 @@ namespace WebCore {
 
 namespace KJS {
 
-  KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(DOMEventTargetNodeProto, WebCore::JSNodeProto)
+  KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(DOMEventTargetNodePrototype, WebCore::JSNodePrototype)
 
   class DOMEventTargetNode : public WebCore::JSNode {
   public:

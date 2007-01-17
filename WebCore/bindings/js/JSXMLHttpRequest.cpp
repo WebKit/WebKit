@@ -36,8 +36,8 @@ namespace KJS {
 
 ////////////////////// JSXMLHttpRequest Object ////////////////////////
 
-/* Source for JSXMLHttpRequestProtoTable.
-@begin JSXMLHttpRequestProtoTable 7
+/* Source for JSXMLHttpRequestPrototypeTable.
+@begin JSXMLHttpRequestPrototypeTable 7
   abort                 JSXMLHttpRequest::Abort                   DontDelete|Function 0
   getAllResponseHeaders JSXMLHttpRequest::GetAllResponseHeaders   DontDelete|Function 0
   getResponseHeader     JSXMLHttpRequest::GetResponseHeader       DontDelete|Function 1
@@ -52,15 +52,15 @@ namespace KJS {
   dispatchEvent         JSXMLHttpRequest::DispatchEvent           DontDelete|Function 1
 @end
 */
-KJS_DEFINE_PROTOTYPE(JSXMLHttpRequestProto)
-KJS_IMPLEMENT_PROTOFUNC(JSXMLHttpRequestProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE("JSXMLHttpRequest", JSXMLHttpRequestProto, JSXMLHttpRequestProtoFunc)
+KJS_DEFINE_PROTOTYPE(JSXMLHttpRequestPrototype)
+KJS_IMPLEMENT_PROTOTYPE_FUNCTION(JSXMLHttpRequestPrototypeFunction)
+KJS_IMPLEMENT_PROTOTYPE("JSXMLHttpRequest", JSXMLHttpRequestPrototype, JSXMLHttpRequestPrototypeFunction)
 
 JSXMLHttpRequestConstructorImp::JSXMLHttpRequestConstructorImp(ExecState* exec, Document* d)
     : doc(d)
 {
     setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
-    putDirect(prototypePropertyName, JSXMLHttpRequestProto::self(exec), None);
+    putDirect(prototypePropertyName, JSXMLHttpRequestPrototype::self(exec), None);
 }
 
 bool JSXMLHttpRequestConstructorImp::implementsConstruct() const
@@ -175,7 +175,7 @@ void JSXMLHttpRequest::mark()
 JSXMLHttpRequest::JSXMLHttpRequest(ExecState* exec, Document* d)
   : m_impl(new XMLHttpRequest(d))
 {
-    setPrototype(JSXMLHttpRequestProto::self(exec));
+    setPrototype(JSXMLHttpRequestPrototype::self(exec));
     ScriptInterpreter::putDOMObject(m_impl.get(), this);
 }
 
@@ -187,7 +187,7 @@ JSXMLHttpRequest::~JSXMLHttpRequest()
     ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-JSValue* JSXMLHttpRequestProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* JSXMLHttpRequestPrototypeFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
     if (!thisObj->inherits(&JSXMLHttpRequest::info))
         return throwError(exec, TypeError);

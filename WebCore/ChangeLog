@@ -1,3 +1,71 @@
+2007-01-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12268
+        Give object prototypes their own names
+
+        * bindings/js/kjs_html.cpp: Changed the names of KJS:HTMLElement and KJS::HTMLElement to 
+        not match the names of their WebCore counterparts. The "DOM" prefix I gave them doesn't 
+        seem to carry much sense, but matches some other kjs_html object names.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Append "Proto" to interface name for the prototype's ClassInfo.
+
+        * bindings/js/JSHTMLInputElementBase.cpp:
+        (WebCore::JSHTMLInputElementBasePrototypeFunction::callAsFunction):
+        (WebCore::JSHTMLInputElementBase::JSHTMLInputElementBase):
+        * bindings/js/JSHTMLInputElementBase.h:
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequestConstructorImp::JSXMLHttpRequestConstructorImp):
+        (KJS::JSXMLHttpRequest::JSXMLHttpRequest):
+        (KJS::JSXMLHttpRequestPrototypeFunction::callAsFunction):
+        * bindings/js/JSXMLHttpRequest.h:
+        * bindings/js/JSXSLTProcessor.cpp:
+        (KJS::JSXSLTProcessor::JSXSLTProcessor):
+        (KJS::XSLTProcessorPrototypeFunction::callAsFunction):
+        (KJS::XSLTProcessorConstructorImp::XSLTProcessorConstructorImp):
+        * bindings/js/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::DOMCSSStyleDeclaration):
+        (KJS::DOMCSSStyleDeclarationPrototypeFunction::callAsFunction):
+        (KJS::DOMMediaList::DOMMediaList):
+        (KJS::KJS::DOMMediaListPrototypeFunction::callAsFunction):
+        (KJS::DOMCSSStyleSheet::DOMCSSStyleSheet):
+        (KJS::DOMCSSStyleSheetPrototypeFunction::callAsFunction):
+        (KJS::DOMCSSValue::DOMCSSValue):
+        (KJS::DOMCSSValuePrototypeFunction::callAsFunction):
+        * bindings/js/kjs_css.h:
+        * bindings/js/kjs_dom.cpp:
+        (KJS::DOMNode::DOMNode):
+        (KJS::DOMNodePrototypeFunction::callAsFunction):
+        (KJS::DOMEventTargetNode::DOMEventTargetNode):
+        (KJS::DOMEventTargetNodePrototypeFunction::callAsFunction):
+        (KJS::DOMNamedNodeMap::DOMNamedNodeMap):
+        (KJS::DOMNamedNodeMapPrototypeFunction::callAsFunction):
+        * bindings/js/kjs_dom.h:
+        * bindings/js/kjs_domnode.h:
+        * bindings/js/kjs_events.cpp:
+        (KJS::DOMEvent::DOMEvent):
+        (KJS::DOMEventPrototypeFunction::callAsFunction):
+        (KJS::Clipboard::Clipboard):
+        (KJS::ClipboardPrototypeFunction::callAsFunction):
+        * bindings/js/kjs_events.h:
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLDocumentPrototypeFunction::callAsFunction):
+        (KJS::):
+        (KJS::JSHTMLDocument::JSHTMLDocument):
+        (KJS::JSHTMLElementPrototypeFunction::callAsFunction):
+        (KJS::JSHTMLElement::JSHTMLElement):
+        (KJS::JSHTMLCollection::JSHTMLCollection):
+        (KJS::JSHTMLCollectionPrototypeFunction::callAsFunction):
+        * bindings/js/kjs_html.h:
+        * bindings/js/kjs_navigator.cpp:
+        * bindings/js/kjs_traversal.cpp:
+        (KJS::DOMNodeFilter::DOMNodeFilter):
+        (KJS::DOMNodeFilterPrototypeFunction::callAsFunction):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::clear):
+        Changed Proto to Prototype, and ProtoFunc to PrototypeFunction.
+
 2007-01-17  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack and Darin

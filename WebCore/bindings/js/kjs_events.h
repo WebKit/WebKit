@@ -119,10 +119,10 @@ namespace KJS {
 
     WebCore::Event* toEvent(JSValue*); // returns 0 if value is not a DOMEvent object
 
-    KJS_DEFINE_PROTOTYPE(DOMEventProto)
+    KJS_DEFINE_PROTOTYPE(DOMEventPrototype)
 
     class Clipboard : public DOMObject {
-    friend class ClipboardProtoFunc;
+    friend class ClipboardPrototypeFunction;
     public:
         Clipboard(ExecState*, WebCore::Clipboard *ds);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);

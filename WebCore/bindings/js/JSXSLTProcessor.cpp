@@ -43,7 +43,7 @@ namespace KJS {
 const ClassInfo JSXSLTProcessor::info = { "XSLTProcessor", 0, 0, 0 };
 
 /*
-@begin XSLTProcessorProtoTable 7
+@begin XSLTProcessorPrototypeTable 7
   importStylesheet      JSXSLTProcessor::ImportStylesheet     DontDelete|Function 1
   transformToFragment   JSXSLTProcessor::TransformToFragment  DontDelete|Function 2
   transformToDocument   JSXSLTProcessor::TransformToDocument  DontDelete|Function 2
@@ -55,13 +55,13 @@ const ClassInfo JSXSLTProcessor::info = { "XSLTProcessor", 0, 0, 0 };
 @end
 */
 
-KJS_DEFINE_PROTOTYPE(XSLTProcessorProto)
-KJS_IMPLEMENT_PROTOFUNC(XSLTProcessorProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE("XSLTProcessor", XSLTProcessorProto, XSLTProcessorProtoFunc)
+KJS_DEFINE_PROTOTYPE(XSLTProcessorPrototype)
+KJS_IMPLEMENT_PROTOTYPE_FUNCTION(XSLTProcessorPrototypeFunction)
+KJS_IMPLEMENT_PROTOTYPE("XSLTProcessor", XSLTProcessorPrototype, XSLTProcessorPrototypeFunction)
 
 JSXSLTProcessor::JSXSLTProcessor(ExecState *exec) : m_impl(new XSLTProcessor())
 {
-    setPrototype(XSLTProcessorProto::self(exec));
+    setPrototype(XSLTProcessorPrototype::self(exec));
 }
 
 JSXSLTProcessor::~JSXSLTProcessor()
@@ -69,7 +69,7 @@ JSXSLTProcessor::~JSXSLTProcessor()
     ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-JSValue *XSLTProcessorProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue *XSLTProcessorPrototypeFunction::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
     if (!thisObj->inherits(&KJS::JSXSLTProcessor::info))
         return throwError(exec, TypeError);
@@ -154,7 +154,7 @@ JSValue *XSLTProcessorProtoFunc::callAsFunction(ExecState *exec, JSObject *thisO
 XSLTProcessorConstructorImp::XSLTProcessorConstructorImp(ExecState *exec)
 {
     setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
-    putDirect(prototypePropertyName, XSLTProcessorProto::self(exec), None);
+    putDirect(prototypePropertyName, XSLTProcessorPrototype::self(exec), None);
 }
 
 }
