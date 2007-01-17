@@ -107,11 +107,14 @@ public:
     virtual bool getHBITMAP(HBITMAP) { return false; }
 #endif
 
+protected:
+    static void fillWithSolidColor(GraphicsContext* ctxt, const FloatRect& dstRect, const Color& color, CompositeOperator op);
+
 private:
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator) = 0;
     void drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, CompositeOperator);
     void drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule, TileRule vRule, CompositeOperator);
-    
+
     // Supporting tiled drawing
     virtual bool mayFillWithSolidColor() const { return false; }
     virtual Color solidColor() const { return Color(); }
@@ -120,11 +123,11 @@ private:
     
     virtual void startAnimation() { }
     
+    virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
+                             const FloatPoint& phase, CompositeOperator, const FloatRect& destRect);
 #if PLATFORM(CG)
     // These are private to CG.  Ideally they would be only in the .cpp file, but the callback requires access
     // to the private function nativeImageForCurrentFrame()
-    void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
-                     const FloatPoint& phase, CompositeOperator, const FloatRect& destRect);
     static void drawPatternCallback(void* info, CGContext*);
 #endif
     

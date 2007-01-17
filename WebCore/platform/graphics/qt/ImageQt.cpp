@@ -34,15 +34,19 @@
 #include "FloatRect.h"
 #include "PlatformString.h"
 #include "GraphicsContext.h"
+#include "AffineTransform.h"
 
 #include <QPixmap>
 #include <QPainter>
 #include <QImage>
 #include <QImageReader>
+#include <QTransform>
 
-#include <QtDebug>
+#include <QDebug>
 
 #include <math.h>
+
+#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
 // This function loads resources from WebKit
 Vector<char> loadResourceIntoArray(const char*);
@@ -58,17 +62,11 @@ void FrameData::clear()
     }
 }
 
+
+    
 // ================================================
 // Image Class
 // ================================================
-
-void BitmapImage::initPlatformData()
-{
-}
-
-void BitmapImage::invalidatePlatformData()
-{
-}
 
 Image* Image::loadPlatformResource(const char* name)
 {
@@ -78,16 +76,34 @@ Image* Image::loadPlatformResource(const char* name)
     return img;
 }
 
+    
+void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
+                        const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect)
+{
+    notImplemented();
+}
+
+
+void BitmapImage::initPlatformData()
+{
+}
+
+void BitmapImage::invalidatePlatformData()
+{
+}
+    
 // Drawing Routines
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
-                 const FloatRect& src, CompositeOperator op)
+                       const FloatRect& src, CompositeOperator op)
 {
-    if (!m_source.initialized())
+    QPixmap* image = nativeImageForCurrentFrame();
+    if (!image)
         return;
-
-    QPixmap* image = frameAtIndex(m_currentFrame);
-    if (!image) // If it's too early we won't have an image yet.
+    
+    if (mayFillWithSolidColor()) {
+        fillWithSolidColor(ctxt, dst, solidColor(), op);
         return;
+    }
 
     IntSize selfSize = size();
     FloatRect srcRect(src);
@@ -109,50 +125,30 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     startAnimation();
 }
 
-void BitmapImage::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatPoint& srcPoint,
-                      const FloatSize& tileSize, CompositeOperator op)
+void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
+                              const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect)
 {
-    if (!m_source.initialized())
+    QPixmap* framePixmap = nativeImageForCurrentFrame();
+    if (!framePixmap) // If it's too early we won't have an image yet.
         return;
-
-    QPixmap* image = frameAtIndex(m_currentFrame);
-    QPixmap pix;
-    if (!image) // If it's too early we won't have an image yet.
-        return;
-
-    IntSize intrinsicImageSize = size();
-
-    if (!qFuzzyCompare(tileSize.width(), intrinsicImageSize.width()) ||
-        !qFuzzyCompare(tileSize.height(), intrinsicImageSize.height())) {
-
-        QPixmap img((int)tileSize.width(), (int)tileSize.height());
-
-        QPainter p(&img);
-        p.drawPixmap(QRectF(0, 0, tileSize.width(), tileSize.height()),
-                    *image, QRectF(srcPoint.x(), srcPoint.y(),
-                                   tileSize.width() - srcPoint.x(), 
-                                   tileSize.height()- srcPoint.y()));
-        p.end();
-
-        pix = img;
-    }
-
+    
+    QPixmap pixmap = *framePixmap;
+    QRect tr = QRectF(tileRect).toRect();
+    if (tr.x() || tr.y() || tr.width() != pixmap.width() || tr.height() != pixmap.height())
+        pixmap = pixmap.copy(tr);
+    
+    QBrush b(pixmap);
+    b.setMatrix(patternTransform);
+    
     ctxt->save();
-
+    
     // Set the compositing operation.
     ctxt->setCompositeOperation(op);
     QPainter* p = ctxt->platformContext();
-    p->drawTiledPixmap(dstRect, pix);
-
-    ctxt->restore();
+    p->setBrushOrigin(phase);
+    p->fillRect(tileRect, b);
     
-    startAnimation();
-}
-
-void BitmapImage::drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, 
-        CompositeOperator op)
-{
-    // FIXME: no implemented
+    ctxt->restore();
 }
 
 void BitmapImage::checkForSolidColor()

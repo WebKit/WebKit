@@ -1,3 +1,28 @@
+2007-01-17  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack and Darin
+
+        Fix the Qt build again after the latest Image changes.
+        Also make some of the methods implemented in ImageCG 
+        crossplatform.
+
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::fillWithSolidColor):
+        (WebCore::calculatePatternScale):
+        (WebCore::Image::drawTiled):
+        * platform/graphics/Image.h:
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::Image::loadPlatformResource):
+        (WebCore::Image::drawPattern):
+        (WebCore::BitmapImage::initPlatformData):
+        (WebCore::BitmapImage::invalidatePlatformData):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::drawPattern):
+        * platform/qt/TemporaryLinkStubs.cpp:
+
 2007-01-17  Darin Adler  <darin@apple.com>
 
         - quick attempt to fix the Qt build
