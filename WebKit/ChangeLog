@@ -1,3 +1,23 @@
+2007-01-17  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by John Sullivan.
+        
+        Move all code in WebNetscapePluginEmbeddedView down to WebBaseNetscapePluginView.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView initWithFrame:pluginPackage:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:DOMElement:]):
+        (-[WebBaseNetscapePluginView didStart]):
+        (-[WebBaseNetscapePluginView dataSource]):
+        (-[WebBaseNetscapePluginView dealloc]):
+        (-[WebBaseNetscapePluginView pluginView:receivedResponse:]):
+        (-[WebBaseNetscapePluginView pluginView:receivedData:]):
+        (-[WebBaseNetscapePluginView pluginView:receivedError:]):
+        (-[WebBaseNetscapePluginView pluginViewFinishedLoading:]):
+        (-[WebBaseNetscapePluginView _redeliverStream]):
+        * Plugins/WebNetscapePluginEmbeddedView.h:
+        * Plugins/WebNetscapePluginEmbeddedView.mm:
+
 2007-01-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

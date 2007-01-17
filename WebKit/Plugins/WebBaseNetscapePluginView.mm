@@ -50,6 +50,8 @@
 #import <Carbon/Carbon.h>
 #import <JavaScriptCore/Assertions.h>
 #import <JavaScriptCore/npruntime_impl.h>
+#import <WebCore/Document.h>
+#import <WebCore/Element.h>
 #import <WebCore/FrameLoader.h> 
 #import <WebCore/FrameMac.h> 
 #import <WebCore/FrameTree.h> 
@@ -82,6 +84,7 @@ using namespace WebCore;
 - (void)_reshapeAGLWindow;
 - (void)_hideAGLWindow;
 - (NSImage *)_aglOffscreenImageForDrawingInRect:(NSRect)drawingInRect;
+- (void)_redeliverStream;
 @end
 
 static WebBaseNetscapePluginView *currentPluginView = nil;
@@ -139,9 +142,46 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 @interface WebBaseNetscapePluginView (ForwardDeclarations)
 - (void)setWindowIfNecessary;
+- (NPError)loadRequest:(NSMutableURLRequest *)request inTarget:(const char *)cTarget withNotifyData:(void *)notifyData sendNotification:(BOOL)sendNotification;
 @end
 
 @implementation WebBaseNetscapePluginView
+
+- (id)initWithFrame:(NSRect)frame
+      pluginPackage:(WebNetscapePluginPackage *)thePluginPackage
+                URL:(NSURL *)theURL
+            baseURL:(NSURL *)theBaseURL
+           MIMEType:(NSString *)MIME
+      attributeKeys:(NSArray *)keys
+    attributeValues:(NSArray *)values
+       loadManually:(BOOL)loadManually
+         DOMElement:(DOMElement *)anElement
+{
+    [super initWithFrame:frame];
+    
+    // load the plug-in if it is not already loaded
+    if (![thePluginPackage load]) {
+        [self release];
+        return nil;
+    }
+    [self setPluginPackage:thePluginPackage];
+    
+    element = [anElement retain];
+    
+    sourceURL = [theURL retain];
+    
+    [self setMIMEType:MIME];
+    [self setBaseURL:theBaseURL];
+    [self setAttributeKeys:keys andValues:values];
+    if (loadManually)
+        [self setMode:NP_FULL];
+    else
+        [self setMode:NP_EMBED];
+    
+    _loadManually = loadManually;
+    
+    return self;
+}
 
 + (void)initialize
 {
@@ -1155,7 +1195,18 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 - (void)didStart
 {
-    // Do nothing. Overridden by subclasses.
+    if (_loadManually) {
+        [self _redeliverStream];
+        return;
+    }
+    
+    // If the OBJECT/EMBED tag has no SRC, the URL is passed to us as "".
+    // Check for this and don't start a load in this case.
+    if (sourceURL != nil && ![sourceURL _web_isEmpty]) {
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:sourceURL];
+        [request _web_setHTTPReferrer:core([self webFrame])->loader()->outgoingReferrer()];
+        [self loadRequest:request inTarget:nil withNotifyData:nil sendNotification:NO];
+    } 
 }
 
 - (void)addWindowObservers
@@ -1311,8 +1362,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 - (WebDataSource *)dataSource
 {
-    // Do nothing. Overridden by subclasses.
-    return nil;
+    WebFrame *webFrame = kit(core(element)->document()->frame());
+    return [webFrame dataSource];
 }
 
 - (WebFrame *)webFrame
@@ -1450,6 +1501,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 {
     ASSERT(!isStarted);
 
+    [sourceURL release];
+    [_manualStream release];
+    [_error release];
+    
     [pluginPackage release];
     [streams release];
     [MIMEType release];
@@ -1730,6 +1785,59 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         shouldStopSoon = NO;
         [self stop];
     }
+}
+
+-(void)pluginView:(NSView *)pluginView receivedResponse:(NSURLResponse *)response
+{
+    ASSERT(_loadManually);
+    ASSERT(!_manualStream);
+    
+    _manualStream = [[WebNetscapePluginStream alloc] init];
+}
+
+- (void)pluginView:(NSView *)pluginView receivedData:(NSData *)data
+{
+    ASSERT(_loadManually);
+    ASSERT(_manualStream);
+    
+    _dataLengthReceived += [data length];
+    
+    if (![self isStarted])
+        return;
+    
+    if ([_manualStream plugin] == NULL) {
+        [_manualStream setRequestURL:[[[self dataSource] request] URL]];
+        [_manualStream setPlugin:[self plugin]];
+        ASSERT([_manualStream plugin]);
+        [_manualStream startStreamWithResponse:[[self dataSource] response]];
+    }
+    
+    if ([_manualStream plugin])
+        [_manualStream receivedData:data];
+}
+
+- (void)pluginView:(NSView *)pluginView receivedError:(NSError *)error
+{
+    ASSERT(_loadManually);
+    
+    [error retain];
+    [_error release];
+    _error = error;
+    
+    if (![self isStarted]) {
+        return;
+    }
+    
+    [_manualStream destroyStreamWithError:error];
+}
+
+- (void)pluginViewFinishedLoading:(NSView *)pluginView 
+{
+    ASSERT(_loadManually);
+    ASSERT(_manualStream);
+    
+    if ([self isStarted])
+        [_manualStream finishedLoadingWithData:[[self dataSource] data]];    
 }
 
 @end
@@ -2818,6 +2926,24 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [aglBitmap release];
     
     return aglImage;
+}
+
+- (void)_redeliverStream
+{
+    if ([self dataSource] && [self isStarted]) {
+        // Deliver what has not been passed to the plug-in up to this point.
+        if (_dataLengthReceived > 0) {
+            NSData *data = [[[self dataSource] data] subdataWithRange:NSMakeRange(0, _dataLengthReceived)];
+            _dataLengthReceived = 0;
+            [self pluginView:self receivedData:data];
+            if (![[self dataSource] isLoading]) {
+                if (_error)
+                    [self pluginView:self receivedError:_error];
+                else
+                    [self pluginViewFinishedLoading:self];
+            }
+        }
+    }
 }
 
 @end

@@ -31,12 +31,14 @@
 #import <AGL/agl.h>
 #import <WebKit/npfunctions.h>
 #import <WebKit/npapi.h>
+#import <WebKit/WebBasePluginPackage.h>
 
 @class DOMElement;
 @class WebDataSource;
 @class WebFrame;
 @class WebNetscapePluginPackage;
 @class WebNetscapePluginNullEventSender;
+@class WebNetscapePluginStream;
 @class WebView;
 
 typedef union PluginPort {
@@ -47,9 +49,17 @@ typedef union PluginPort {
     NP_GLContext aglPort;
 } PluginPort;
 
-@interface WebBaseNetscapePluginView : NSView
+@interface WebBaseNetscapePluginView : NSView <WebPluginManualLoader>
 {
     WebNetscapePluginPackage *pluginPackage;
+    
+    NSURL *sourceURL;
+    WebFrame *_webFrame;
+    
+    BOOL _loadManually;
+    WebNetscapePluginStream *_manualStream;
+    unsigned _dataLengthReceived;
+    NSError *_error;
     
     int mode;
     
@@ -108,6 +118,18 @@ typedef union PluginPort {
 }
 
 + (WebBaseNetscapePluginView *)currentPluginView;
+
+
+- (id)initWithFrame:(NSRect)r
+      pluginPackage:(WebNetscapePluginPackage *)thePluginPackage
+                URL:(NSURL *)URL
+            baseURL:(NSURL *)baseURL
+           MIMEType:(NSString *)MIME
+      attributeKeys:(NSArray *)keys
+    attributeValues:(NSArray *)values
+       loadManually:(BOOL)loadManually
+         DOMElement:(DOMElement *)anElement;
+
 
 - (BOOL)start;
 - (BOOL)isStarted;
