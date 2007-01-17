@@ -68,8 +68,7 @@
 
 using namespace KJS;
 
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d (%s)\n", \
-           __FILE__, __LINE__, __FUNCTION__); } while(0)
+#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
 namespace WebCore {
 

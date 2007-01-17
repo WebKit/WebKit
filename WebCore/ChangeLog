@@ -1,3 +1,28 @@
+2007-01-17  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        change all notImplemented() macros to use qDebug
+        instead of fprintf(stder, ...)
+
+        * loader/qt/DocumentLoaderQt.cpp:
+        * loader/qt/FrameLoaderQt.cpp:
+        * page/qt/EventHandlerQt.cpp:
+        * page/qt/FrameQt.cpp:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        * platform/graphics/qt/IconQt.cpp:
+        * platform/network/qt/ResourceHandleManagerQt.cpp:
+        * platform/network/qt/ResourceHandleQt.cpp:
+        * platform/qt/CursorQt.cpp:
+        * platform/qt/FileChooserQt.cpp:
+        * platform/qt/MimeTypeRegistryQt.cpp:
+        * platform/qt/PageQt.cpp: Removed.
+        * platform/qt/PopupMenuQt.cpp:
+        * platform/qt/ScrollViewQt.cpp:
+        * platform/qt/TemporaryLinkStubs.cpp:
+        * platform/qt/TextBoundaries.cpp:
+        * platform/qt/WidgetQt.cpp:
+
 2007-01-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Oliver

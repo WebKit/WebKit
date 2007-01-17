@@ -27,11 +27,17 @@
  */
 
 #include "DumpRenderTree.h"
-#include "qurl.h"
-#include "qdir.h"
 
 #include <qstringlist.h>
 #include <qapplication.h>
+#include <qurl.h>
+#include <qdir.h>
+#include <qdebug.h>
+
+void messageHandler(QtMsgType, const char *)
+{
+    // do nothing
+}
 
 
 int main(int argc, char* argv[])
@@ -39,20 +45,28 @@ int main(int argc, char* argv[])
     QApplication app(argc, argv);
 
     QStringList args = app.arguments();
+    if (args.count() < 2) {
+        qDebug() << "Usage: DumpRenderTree [-v] filename";
+        exit(0);
+    }
+        
+    // supress debug output from Qt if not started with -v
+    if (!args.contains(QLatin1String("-v"))) 
+        qInstallMsgHandler(messageHandler);
 
     WebCore::DumpRenderTree dumper;
-
-    if (args.count() == 2 && args[1] == QLatin1String("-"))
+    
+    if (args.last() == QLatin1String("-"))
         dumper.open();
-    else if (args.count() == 2) {
-        if (!args[1].startsWith("/")
-            && !args[1].startsWith("file:")) {
+    else {
+        if (!args.last().startsWith("/")
+            && !args.last().startsWith("file:")) {
             QString path = QDir::currentPath();
             if (!path.endsWith('/'))
                 path.append('/');
-            args[1].prepend(path);
+            args.last().prepend(path);
         }
-        dumper.open(QUrl(args[1]));
+        dumper.open(QUrl(args.last()));
     }
     return app.exec();
 }

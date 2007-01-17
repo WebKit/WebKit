@@ -1,3 +1,24 @@
+2007-01-17  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Add a message handler to DumpRenderTree that will
+        suppress all debug output coming from qDebug() statements.
+        Like this we can get rid of all the noise coming
+        from the notImplemented() macro when running the
+        layout tests. You can get it back by adding -v to
+        DumpRenderTree's command line.
+
+        Changed run-webkit-tests slightly, so we by default
+        don't fail anymore when our output differs from what
+        is generated on the Mac. Added a --strict option, so
+        that we can still see this cases and fix them one by one.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/main.cpp:
+        (messageHandler):
+        (main):
+        * Scripts/run-webkit-tests:
+
 2007-01-16  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack
