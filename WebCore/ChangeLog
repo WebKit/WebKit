@@ -1,3 +1,34 @@
+2007-01-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mitz and rwlbuis.
+        
+        SVGs do not work as background images:
+        http://bugs.webkit.org/show_bug.cgi?id=12096
+
+        Tests updated:
+        - fast/images/svg-as-background.svg: now passes
+        - fast/images/svg-as-tiled-background.svg: now passes
+
+        * platform/graphics/BitmapImage.h:
+        (WebCore::BitmapImage::nativeImageForCurrentFrame):
+        (WebCore::BitmapImage::mayFillWithSolidColor):
+        (WebCore::BitmapImage::solidColor):
+        * platform/graphics/Image.h:
+        (WebCore::Image::mayFillWithSolidColor):
+        (WebCore::Image::solidColor):
+        (WebCore::Image::nativeImageForCurrentFrame):
+        (WebCore::Image::startAnimation):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::Image::drawPatternCallback):
+        (WebCore::Image::drawPatternCombined):
+        (WebCore::caculatePatternScale):
+        (WebCore::Image::drawTiled):
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        * platform/graphics/cg/PDFDocumentImage.h:
+        * platform/graphics/svg/SVGImage.cpp:
+        (WebCore::SVGImage::nativeImageForCurrentFrame):
+        * platform/graphics/svg/SVGImage.h:
+
 2007-01-17  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric

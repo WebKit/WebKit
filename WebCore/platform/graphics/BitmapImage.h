@@ -115,12 +115,10 @@ public:
     virtual bool getHBITMAP(HBITMAP);
 #endif
 
-    NativeImagePtr nativeImageForCurrentFrame() { return frameAtIndex(currentFrame()); }
+    virtual NativeImagePtr nativeImageForCurrentFrame() { return frameAtIndex(currentFrame()); }
 
 private:
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator);
-    virtual void drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, CompositeOperator);
-    virtual void drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule, TileRule vRule, CompositeOperator); 
     
     size_t currentFrame() const { return m_currentFrame; }
     size_t frameCount();
@@ -139,7 +137,7 @@ private:
 
     // Animation.
     bool shouldAnimate();
-    void startAnimation();
+    virtual void startAnimation();
     void advanceAnimation(Timer<BitmapImage>*);
     
     // Handle platform-specific data
@@ -149,8 +147,8 @@ private:
     // Checks to see if the image is a 1x1 solid color.  We optimize these images and just do a fill rect instead.
     void checkForSolidColor();
     
-    bool mayFillWithSolidColor() const { return m_isSolidColor && m_currentFrame == 0; }
-    Color solidColor() const { return m_solidColor; }
+    virtual bool mayFillWithSolidColor() const { return m_isSolidColor && m_currentFrame == 0; }
+    virtual Color solidColor() const { return m_solidColor; }
     
     ImageSource m_source;
     mutable IntSize m_size; // The size to use for the overall image (will just be the size of the first image).

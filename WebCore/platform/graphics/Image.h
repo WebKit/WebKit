@@ -39,12 +39,17 @@ class NSImage;
 #endif
 #endif
 
+#if PLATFORM(CG)
+struct CGContext;
+#endif
+
 #if PLATFORM(WIN)
 typedef struct HBITMAP__ *HBITMAP;
 #endif
 
 namespace WebCore {
 
+class AffineTransform;
 class FloatPoint;
 class FloatRect;
 class FloatSize;
@@ -104,8 +109,24 @@ public:
 
 private:
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator) = 0;
-    virtual void drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, CompositeOperator) = 0;
-    virtual void drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule, TileRule vRule, CompositeOperator) = 0;
+    void drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, CompositeOperator);
+    void drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule, TileRule vRule, CompositeOperator);
+    
+    // Supporting tiled drawing
+    virtual bool mayFillWithSolidColor() const { return false; }
+    virtual Color solidColor() const { return Color(); }
+    
+    virtual NativeImagePtr nativeImageForCurrentFrame() { return 0; }
+    
+    virtual void startAnimation() { }
+    
+#if PLATFORM(CG)
+    // These are private to CG.  Ideally they would be only in the .cpp file, but the callback requires access
+    // to the private function nativeImageForCurrentFrame()
+    void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
+                     const FloatPoint& phase, CompositeOperator, const FloatRect& destRect);
+    static void drawPatternCallback(void* info, CGContext*);
+#endif
     
     Vector<char> m_data; // The encoded raw data for the image. 
     ImageAnimationObserver* m_animationObserver;

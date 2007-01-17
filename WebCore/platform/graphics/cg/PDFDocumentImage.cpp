@@ -153,16 +153,6 @@ void PDFDocumentImage::draw(GraphicsContext* context, const FloatRect& dstRect, 
     context->restore();
 }
 
-void PDFDocumentImage::drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, CompositeOperator)
-{
-    // FIXME: implement to support background images
-}
-
-void PDFDocumentImage::drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule, TileRule vRule, CompositeOperator)
-{
-    // FIXME: implement to support background images
-}
-
 }
 
 #endif // PLATFORM(CG)

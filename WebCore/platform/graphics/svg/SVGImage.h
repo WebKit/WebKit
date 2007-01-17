@@ -29,6 +29,7 @@
 #ifdef SVG_SUPPORT
 
 #include "Image.h"
+#include "ImageBuffer.h"
 #include "IntSize.h"
 #include <wtf/OwnPtr.h>
 
@@ -52,14 +53,15 @@ namespace WebCore {
         
 private:
         virtual void draw(GraphicsContext*, const FloatRect& fromRect, const FloatRect& toRect, CompositeOperator);
-        virtual void drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, CompositeOperator);
-        virtual void drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule, TileRule vRule, CompositeOperator);
+        
+        virtual NativeImagePtr nativeImageForCurrentFrame();
         
         SVGDocument* m_document;
         OwnPtr<Page> m_page;
         RefPtr<Frame> m_frame;
         RefPtr<FrameView> m_frameView;
         IntSize m_minSize;
+        OwnPtr<ImageBuffer> m_frameCache;
     };
 }
 

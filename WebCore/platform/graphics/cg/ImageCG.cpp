@@ -28,6 +28,7 @@
 
 #if PLATFORM(CG)
 
+#include "AffineTransform.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "PDFDocumentImage.h"
@@ -173,21 +174,25 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const Fl
 
 }
 
-static void drawPattern(void* info, CGContextRef context)
+void Image::drawPatternCallback(void* info, CGContextRef context)
 {
-    BitmapImage* data = (BitmapImage*)info;
+    Image* data = (Image*)info;
     CGImageRef image = data->nativeImageForCurrentFrame();
     float w = CGImageGetWidth(image);
     float h = CGImageGetHeight(image);
-    CGContextDrawImage(context, GraphicsContext(context).roundToDevicePixels(FloatRect
-        (0, data->size().height() - h, w, h)), image);    
+    CGContextDrawImage(context, GraphicsContext(context).roundToDevicePixels(FloatRect(0, data->size().height() - h, w, h)), image);
 }
 
-static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
-
-
-static inline void drawPattern(GraphicsContext* ctxt, CGPatternRef pattern, CGPoint phase, CompositeOperator op, const FloatRect& destRect)
+void Image::drawPatternCombined(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
+                                const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect)
 {
+    static const CGPatternCallbacks patternCallbacks = { 0, drawPatternCallback, NULL };
+    CGPatternRef pattern = CGPatternCreate(this, tileRect,
+                                           CGAffineTransform(patternTransform), tileRect.width(), tileRect.height(), 
+                                           kCGPatternTilingConstantSpacing, true, &patternCallbacks);
+    if (!pattern)
+        return;
+    
     CGContextRef context = ctxt->platformContext();
     ctxt->save();
     
@@ -206,50 +211,7 @@ static inline void drawPattern(GraphicsContext* ctxt, CGPatternRef pattern, CGPo
     CGContextFillRect(context, destRect);
     
     ctxt->restore();
-}
-
-void BitmapImage::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, CompositeOperator op)
-{    
-    CGImageRef image = frameAtIndex(m_currentFrame);
-    if (!image)
-        return;
-    
-    if (mayFillWithSolidColor()) {
-        fillWithSolidColor(ctxt, destRect, solidColor(), op);
-        return;
-    }
-
-    FloatSize intrinsicTileSize = size();
-    FloatSize scale(scaledTileSize.width() / intrinsicTileSize.width(),
-                    scaledTileSize.height() / intrinsicTileSize.height());
-    CGAffineTransform patternTransform = CGAffineTransformMakeScale(scale.width(), scale.height());
-
-    FloatRect oneTileRect;
-    oneTileRect.setX(destRect.x() + fmodf(fmodf(-srcPoint.x(), scaledTileSize.width()) - scaledTileSize.width(), scaledTileSize.width()));
-    oneTileRect.setY(destRect.y() + fmodf(fmodf(-srcPoint.y(), scaledTileSize.height()) - scaledTileSize.height(), scaledTileSize.height()));
-    oneTileRect.setSize(scaledTileSize);
-    
-    // Check and see if a single draw of the image can cover the entire area we are supposed to tile.    
-    if (oneTileRect.contains(destRect)) {
-        FloatRect visibleSrcRect;
-        visibleSrcRect.setX((destRect.x() - oneTileRect.x()) / scale.width());
-        visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());
-        visibleSrcRect.setWidth(destRect.width() / scale.width());
-        visibleSrcRect.setHeight(destRect.height() / scale.height());
-        draw(ctxt, destRect, visibleSrcRect, op);
-        return;
-    }
-
-    CGPatternRef pattern = CGPatternCreate(this, CGRectMake(0, 0, intrinsicTileSize.width(), intrinsicTileSize.height()),
-                                           patternTransform, intrinsicTileSize.width(), intrinsicTileSize.height(), 
-                                           kCGPatternTilingConstantSpacing, true, &patternCallbacks);
-    
-    if (pattern) {
-        drawPattern(ctxt, pattern, oneTileRect.location(), op, destRect);
-        CGPatternRelease(pattern);
-    }
-    
-    startAnimation();
+    CGPatternRelease(pattern);
 }
 
 static inline FloatSize caculatePatternScale(const FloatRect& dstRect, const FloatRect& srcRect, Image::TileRule hRule, Image::TileRule vRule)
@@ -269,11 +231,47 @@ static inline FloatSize caculatePatternScale(const FloatRect& dstRect, const Flo
     return FloatSize(scaleX, scaleY);
 }
 
-// FIXME: Merge with the other drawTiled eventually, since we need a combination of both for some things.
-void BitmapImage::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule, TileRule vRule, CompositeOperator op)
+void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, CompositeOperator op)
 {    
-    CGImageRef image = frameAtIndex(m_currentFrame);
-    if (!image)
+    if (!nativeImageForCurrentFrame())
+        return;
+    
+    if (mayFillWithSolidColor()) {
+        fillWithSolidColor(ctxt, destRect, solidColor(), op);
+        return;
+    }
+
+    FloatSize intrinsicTileSize = size();
+    FloatSize scale(scaledTileSize.width() / intrinsicTileSize.width(),
+                    scaledTileSize.height() / intrinsicTileSize.height());
+    AffineTransform patternTransform = AffineTransform().scale(scale.width(), scale.height());
+
+    FloatRect oneTileRect;
+    oneTileRect.setX(destRect.x() + fmodf(fmodf(-srcPoint.x(), scaledTileSize.width()) - scaledTileSize.width(), scaledTileSize.width()));
+    oneTileRect.setY(destRect.y() + fmodf(fmodf(-srcPoint.y(), scaledTileSize.height()) - scaledTileSize.height(), scaledTileSize.height()));
+    oneTileRect.setSize(scaledTileSize);
+    
+    // Check and see if a single draw of the image can cover the entire area we are supposed to tile.    
+    if (oneTileRect.contains(destRect)) {
+        FloatRect visibleSrcRect;
+        visibleSrcRect.setX((destRect.x() - oneTileRect.x()) / scale.width());
+        visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());
+        visibleSrcRect.setWidth(destRect.width() / scale.width());
+        visibleSrcRect.setHeight(destRect.height() / scale.height());
+        draw(ctxt, destRect, visibleSrcRect, op);
+        return;
+    }
+
+    FloatRect tileRect(FloatPoint(), intrinsicTileSize);    
+    drawPatternCombined(ctxt, tileRect, patternTransform, oneTileRect.location(), op, destRect);
+    
+    startAnimation();
+}
+
+// FIXME: Merge with the other drawTiled eventually, since we need a combination of both for some things.
+void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule, TileRule vRule, CompositeOperator op)
+{    
+    if (!nativeImageForCurrentFrame())
         return;
 
     if (mayFillWithSolidColor()) {
@@ -281,25 +279,20 @@ void BitmapImage::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, con
         return;
     }
     
-    // Optimization: Cache the CGPatternRef
     FloatSize scale = caculatePatternScale(dstRect, srcRect, hRule, vRule);
-    CGPatternRef pattern = CGPatternCreate(this, srcRect, CGAffineTransformMakeScale(scale.width(), scale.height()),
-                                           srcRect.width(), srcRect.height(),
-                                           kCGPatternTilingConstantSpacing, true, &patternCallbacks);
-    if (pattern) {    
-        // We want to construct the phase such that the pattern is centered (when stretch is not
-        // set for a particular rule).
-        float hPhase = scale.width() * srcRect.x();
-        float vPhase = scale.height() * (srcRect.height() - srcRect.y());
-        if (hRule == Image::RepeatTile)
-            hPhase -= fmodf(dstRect.width(), scale.width() * srcRect.width()) / 2.0f;
-        if (vRule == Image::RepeatTile)
-            vPhase -= fmodf(dstRect.height(), scale.height() * srcRect.height()) / 2.0f;
-        
-        CGPoint patternPhase = CGPointMake(dstRect.x() - hPhase, dstRect.y() - vPhase);
-        drawPattern(ctxt, pattern, patternPhase, op, dstRect);
-        CGPatternRelease(pattern);
-    }
+    AffineTransform patternTransform = AffineTransform().scale(scale.width(), scale.height());
+
+    // We want to construct the phase such that the pattern is centered (when stretch is not
+    // set for a particular rule).
+    float hPhase = scale.width() * srcRect.x();
+    float vPhase = scale.height() * (srcRect.height() - srcRect.y());
+    if (hRule == Image::RepeatTile)
+        hPhase -= fmodf(dstRect.width(), scale.width() * srcRect.width()) / 2.0f;
+    if (vRule == Image::RepeatTile)
+        vPhase -= fmodf(dstRect.height(), scale.height() * srcRect.height()) / 2.0f;
+    FloatPoint patternPhase(dstRect.x() - hPhase, dstRect.y() - vPhase);
+    
+    drawPatternCombined(ctxt, srcRect, patternTransform, patternPhase, op, dstRect);
 
     startAnimation();
 }

@@ -1,3 +1,15 @@
+2007-01-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mitz and rwlbuis.
+        
+        SVGs don't work as background images.
+        http://bugs.webkit.org/show_bug.cgi?id=12096
+
+        * fast/images/svg-as-background-expected.checksum:
+        * fast/images/svg-as-background-expected.png:
+        * fast/images/svg-as-tiled-background-expected.checksum:
+        * fast/images/svg-as-tiled-background-expected.png:
+
 2007-01-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
