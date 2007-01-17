@@ -1,3 +1,14 @@
+2007-01-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver
+
+        A few enhancements to the HTTP Auth architecture
+
+        * platform/network/ProtectionSpace.cpp:
+        (WebCore::ProtectionSpace::isProxy):
+        (WebCore::ProtectionSpace::receivesCredentialSecurely):
+        * platform/network/ProtectionSpace.h:
+
 2007-01-16  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by harrison.

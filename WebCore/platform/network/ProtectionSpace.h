@@ -56,9 +56,12 @@ public:
     const String& host() const;
     int port() const;
     ProtectionSpaceServerType serverType() const;
+    bool isProxy() const;
     const String& realm() const;
     ProtectionSpaceAuthenticationScheme authenticationScheme() const;
     
+    bool receivesCredentialSecurely() const;
+
 private:
     String m_host;
     int m_port;
