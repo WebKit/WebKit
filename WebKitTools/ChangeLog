@@ -1,5 +1,12 @@
 2007-01-17  Lars Knoll <lars@trolltech.com>
 
+        Fix my last commit to actually work in all cases.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::readStdin):
+
+2007-01-17  Lars Knoll <lars@trolltech.com>
+
         Reviewed by Maciej
 
         Make sure DumpRenderTree exits when run-webkit-tests

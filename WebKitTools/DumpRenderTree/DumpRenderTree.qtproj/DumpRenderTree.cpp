@@ -112,17 +112,15 @@ void DumpRenderTree::readStdin(int /* socket */)
 {
     if (m_loading)
         fprintf(stderr, "=========================== still loading\n");
-
-    if (m_stdin->atEnd())
-        quit();
     
     // Read incoming data from stdin...
     QByteArray line = m_stdin->readLine();
     if (line.endsWith('\n'))
         line.truncate(line.size()-1);
     //fprintf(stderr, "\n    opening %s\n", line.constData());
-    if (!line.isEmpty())
-        open(QUrl(QString(line)));
+    if (line.isEmpty())
+        quit();
+    open(QUrl(QString(line)));
 }
 
 void DumpRenderTree::readSkipFile()
