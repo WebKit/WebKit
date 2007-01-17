@@ -1,5 +1,15 @@
 2007-01-17  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Beth.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=10139
+        <rdar://problem/4823028> REGRESSION: Reproducible crash when selecting a popup/button with ::selection pseudostyle
+
+        * fast/css/pseudostyle-anonymous-text-expected.txt: Added.
+        * fast/css/pseudostyle-anonymous-text.html: Added.
+
+2007-01-17  Adele Peterson  <adele@apple.com>
+
         Reviewed by Anders and John.
 
         Test for http://bugs.webkit.org/show_bug.cgi?id=11278

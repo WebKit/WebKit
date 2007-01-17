@@ -2858,8 +2858,8 @@ RenderStyle* RenderObject::getPseudoStyle(RenderStyle::PseudoId pseudo, RenderSt
         return result;
 
     Node* node = element();
-    if (isText())
-        node = element()->parentNode();
+    if (node && isText())
+        node = node->parentNode();
     if (!node)
         return 0;
 
