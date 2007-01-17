@@ -1,3 +1,12 @@
+2007-01-17  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric
+
+        Add proper condition for rx attribute negative check.
+
+        * ksvg2/svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::parseMappedAttribute):
+
 2007-01-17  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack
