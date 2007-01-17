@@ -1,3 +1,15 @@
+2007-01-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Anders and John.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=11278
+        <rdar://problem/4826875> REGRESSION: Popup width doesn't change to accommodate dynamic changes to options
+
+        * fast/forms/menulist-width-change-expected.checksum: Added.
+        * fast/forms/menulist-width-change-expected.png: Added.
+        * fast/forms/menulist-width-change-expected.txt: Added.
+        * fast/forms/menulist-width-change.html: Added.
+
 2007-01-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

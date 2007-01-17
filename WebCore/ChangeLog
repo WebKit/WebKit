@@ -1,3 +1,15 @@
+2007-01-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Anders and John.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11278
+        <rdar://problem/4826875> REGRESSION: Popup width doesn't change to accommodate dynamic changes to options
+
+        Test: fast/forms/menulist-width-change.html
+
+        * rendering/RenderMenuList.cpp: (WebCore::RenderMenuList::updateFromElement):
+          When the options change, call setNeedsLayoutAndMinMaxRecalc.
+
 2007-01-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.
@@ -1503,7 +1515,6 @@
         * rendering/RenderObject.cpp:
         (WebCore::RenderObject::setStyle):
 
->>>>>>> .r18876
 2007-01-13  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Alexey

@@ -120,6 +120,7 @@ void RenderMenuList::updateFromElement()
         }
         m_optionsWidth = static_cast<int>(ceilf(width));
         m_optionsChanged = false;
+        setNeedsLayoutAndMinMaxRecalc();
     }
 
     setTextFromOption(select->selectedIndex());
