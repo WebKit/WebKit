@@ -40,15 +40,12 @@ namespace WebCore {
     class Page;
     struct FrameLoadRequest;
 
-    class ChromeClientQt : public ChromeClient,
-                           public Shared<ChromeClientQt> {
+    class ChromeClientQt : public ChromeClient
+    {
     public:
         ChromeClientQt(QWebPage* webPage);
         virtual ~ChromeClientQt();
         virtual void chromeDestroyed();
-
-        virtual void ref();
-        virtual void deref();
 
         virtual void setWindowRect(const FloatRect&);
         virtual FloatRect windowRect();

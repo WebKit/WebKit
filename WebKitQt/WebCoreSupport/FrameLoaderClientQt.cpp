@@ -40,7 +40,11 @@ namespace WebCore
 
 FrameLoaderClientQt::FrameLoaderClientQt()
     : m_frame(0)
+    , m_webFrame(0)
+    , m_firstData(false)
+    , m_policyFunction(0)
 {
+    connect(this, SIGNAL(sigCallPolicyFunction(int)), this, SLOT(slotCallPolicyFunction(int)), Qt::QueuedConnection);
 }
 
 
@@ -60,14 +64,22 @@ void FrameLoaderClientQt::detachFrameLoader()
     m_frame = 0;
 }
 
-void FrameLoaderClientQt::ref()
+void FrameLoaderClientQt::callPolicyFunction(FramePolicyFunction function, PolicyAction action)
 {
-    Shared<FrameLoaderClientQt>::ref();
+    qDebug() << "FrameLoaderClientQt::callPolicyFunction";
+    ASSERT(!m_policyFunction);
+
+    m_policyFunction = function;
+    emit sigCallPolicyFunction(action);
 }
 
-void FrameLoaderClientQt::deref()
+void FrameLoaderClientQt::slotCallPolicyFunction(int action)
 {
-    Shared<FrameLoaderClientQt>::deref();
+    qDebug() << "FrameLoaderClientQt::slotCallPolicyFunction";
+    if (!m_frame || !m_policyFunction)
+        return;
+    (m_frame->loader()->*m_policyFunction)(WebCore::PolicyAction(action));
+    m_policyFunction = 0;
 }
 
 bool FrameLoaderClientQt::hasWebView() const
@@ -324,17 +336,16 @@ void FrameLoaderClientQt::dispatchShow()
 
 void FrameLoaderClientQt::cancelPolicyCheck()
 {
-    // don't need to do anything here as long as we don't start doing asyncronous policy checks
+    m_policyFunction = 0;
 }
 
 
 void FrameLoaderClientQt::dispatchWillSubmitForm(FramePolicyFunction function,
                                                  PassRefPtr<FormState>)
 {
+    notImplemented();
     // FIXME: This is surely too simple
-    if (!m_frame)
-        return;
-    (m_frame->loader()->*function)(PolicyUse);
+    callPolicyFunction(function, PolicyUse);
 }
 
 
@@ -702,26 +713,21 @@ WebCore::Frame* FrameLoaderClientQt::dispatchCreatePage()
 
 void FrameLoaderClientQt::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const WebCore::String&, const WebCore::ResourceRequest&)
 {
-    if (!m_frame)
-        return;
-    // FIXME: This is maybe too simple
-    (m_frame->loader()->*function)(PolicyUse);
+    // we need to call directly here
+    m_policyFunction = function;
+    slotCallPolicyFunction(PolicyUse);
 }
 
 void FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::String&)
 {
-    if (!m_frame)
-        return;
-    // FIXME: This is maybe too simple
-    (m_frame->loader()->*function)(PolicyIgnore);
+    notImplemented();
+    callPolicyFunction(function, PolicyIgnore);
 }
 
 void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const WebCore::NavigationAction&, const WebCore::ResourceRequest&)
 {
-    if (!m_frame)
-        return;
-    // FIXME: This is maybe too simple
-    (m_frame->loader()->*function)(PolicyUse);
+    notImplemented();
+    callPolicyFunction(function, PolicyUse);
 }
 
 void FrameLoaderClientQt::dispatchUnableToImplementPolicy(const WebCore::ResourceError&)
@@ -742,4 +748,4 @@ bool FrameLoaderClientQt::willUseArchive(WebCore::ResourceLoader*, const WebCore
 
 }
 
-
+#include "FrameLoaderClientQt.moc"

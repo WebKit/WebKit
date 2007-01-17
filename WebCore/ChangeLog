@@ -1,3 +1,22 @@
+2007-01-17  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Don't call receivedResponse twice for file: URLs.
+        Never call back into the ResourceHandleClient once
+        cancel() has been called on the ResourceHandle.
+
+        * WebCore.pro:
+        * platform/network/qt/ResourceHandleManagerQt.cpp:
+        (WebCore::ResourceHandleManager::cancel):
+        (WebCore::ResourceHandleManager::receivedResponse):
+        (WebCore::ResourceHandleManager::receivedData):
+        (WebCore::ResourceHandleManager::receivedFinished):
+        (WebCore::FileLoader::request):
+        (WebCore::FileLoader::parseDataUrl):
+        (WebCore::WebCoreHttp::scheduleNextRequest):
+        * platform/network/qt/ResourceHandleManagerQt.h:
+
 2007-01-17  Eric Seidel  <eric@webkit.org>
 
         No review, build fix only.

@@ -36,6 +36,7 @@
 #include <QThread>
 #include <QString>
 #include <QEvent>
+#include <QUrl>
 
 namespace WebCore {
 
@@ -55,13 +56,13 @@ struct HostInfo {
 class RequestQt
 {
 public:
-    RequestQt(ResourceHandle*, FrameQtClient *);
+    RequestQt(ResourceHandle*, FrameQtClient*);
     void setURL(const KURL &url);
     // not thread safe, don't use in other threads
     KURL url;
 
-    QString qurl;
-    FrameQtClient *client;
+    QUrl qurl;
+    FrameQtClient* client;
     ResourceHandle* resource;
 
     // to be used by other threads

@@ -33,12 +33,9 @@
 namespace WebCore {
     class ContextMenu;
 
-    class ContextMenuClientQt : public ContextMenuClient,
-                                public Shared<ContextMenuClientQt> {
+    class ContextMenuClientQt : public ContextMenuClient
+    {
     public:
-        virtual void ref();
-        virtual void deref();
-
         virtual void contextMenuDestroyed();
         
         virtual PlatformMenuDescription getCustomMenuFromDefaultItems(ContextMenu*);

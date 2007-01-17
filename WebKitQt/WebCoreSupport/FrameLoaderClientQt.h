@@ -28,6 +28,8 @@
 #ifndef FrameLoaderClientQt_H
 #define FrameLoaderClientQt_H
 
+#include <qobject.h>
+
 #include "FrameLoaderClient.h"
 #include "KURL.h"
 #include "FrameQt.h"
@@ -48,15 +50,19 @@ namespace WebCore {
 
     struct LoadErrorResetToken;
 
-    class FrameLoaderClientQt : public FrameLoaderClient, public Shared<FrameLoaderClientQt> {
+    class FrameLoaderClientQt : public QObject, public FrameLoaderClient {
+        Q_OBJECT
+
+        void callPolicyFunction(FramePolicyFunction function, PolicyAction action);
+    private slots:
+        void slotCallPolicyFunction(int);
+    signals:
+        void sigCallPolicyFunction(int);
     public:
         FrameLoaderClientQt();
         ~FrameLoaderClientQt();
         void setFrame(QWebFrame *webFrame, FrameQt *frame);
         virtual void detachFrameLoader();
-
-        virtual void ref();
-        virtual void deref();
 
         virtual bool hasWebView() const; // mainly for assertions
         virtual bool hasFrameView() const; // ditto
@@ -207,6 +213,7 @@ namespace WebCore {
         QWebFrame *m_webFrame;
         ResourceResponse m_response;
         bool m_firstData;
+        FramePolicyFunction m_policyFunction;
     };
 
 }

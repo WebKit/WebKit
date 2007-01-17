@@ -2,6 +2,33 @@
 
         Reviewed by Zack
 
+        Remove the inheritance from Shared<XxxClient> in the
+        client classes.
+
+        Answer asynchronously to most of the Policy checking methods
+        in FrameLoaderClientQt to avoid some crashes in the loader.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        * WebCoreSupport/ChromeClientQt.h:
+        * WebCoreSupport/ContextMenuClientQt.cpp:
+        * WebCoreSupport/ContextMenuClientQt.h:
+        * WebCoreSupport/EditorClientQt.cpp:
+        * WebCoreSupport/EditorClientQt.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::FrameLoaderClientQt):
+        (WebCore::FrameLoaderClientQt::callPolicyFunction):
+        (WebCore::FrameLoaderClientQt::slotCallPolicyFunction):
+        (WebCore::FrameLoaderClientQt::cancelPolicyCheck):
+        (WebCore::FrameLoaderClientQt::dispatchWillSubmitForm):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForMIMEType):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
+2007-01-17  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
         change all notImplemented() macros to use qDebug
         instead of fprintf(stder, ...)
 

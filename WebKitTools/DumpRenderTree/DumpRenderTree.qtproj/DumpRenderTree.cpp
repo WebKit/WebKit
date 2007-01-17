@@ -111,12 +111,13 @@ void DumpRenderTree::open(const QUrl& url)
 void DumpRenderTree::readStdin(int /* socket */)
 {
     if (m_loading)
-        qDebug() << "=========================== still loading";
+        fprintf(stderr, "=========================== still loading\n");
 
     // Read incoming data from stdin...
     QByteArray line = m_stdin->readLine();
     if (line.endsWith('\n'))
         line.truncate(line.size()-1);
+    //fprintf(stderr, "\n    opening %s\n", line.constData());
     if (!line.isEmpty())
         open(QUrl(QString(line)));
 }
@@ -163,7 +164,7 @@ void DumpRenderTree::initJSObjects()
 
 void DumpRenderTree::dump()
 {
-    //qDebug() << ">>>>>>>>>>>>>>>>>>>>>> Dumping" << m_frame->loader()->URL().url();
+    //fprintf(stderr, "    Dumping\n");
     if (!m_notifier) {
         // Dump markup in single file mode...
         QString markup = frame->markup();

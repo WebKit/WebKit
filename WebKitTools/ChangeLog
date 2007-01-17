@@ -2,6 +2,23 @@
 
         Reviewed by Zack
 
+        Small fixes in DumpRenderTree, so we don't by
+        accident dump twice for the same test.
+
+        Exclude one more test as it currently causes DumpRenderTree to
+        hang forever.
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::readStdin):
+        (WebCore::DumpRenderTree::dump):
+        * DumpRenderTree/DumpRenderTree.qtproj/jsobjects.cpp:
+        (LayoutTestController::notifyDone):
+        * DumpRenderTree/DumpRenderTree.qtproj/tests-skipped.txt:
+
+2007-01-17  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
         Add a message handler to DumpRenderTree that will
         suppress all debug output coming from qDebug() statements.
         Like this we can get rid of all the noise coming

@@ -36,16 +36,6 @@
 
 namespace WebCore {
     
-void ContextMenuClientQt::ref()
-{
-    Shared<ContextMenuClientQt>::ref();
-}
-
-void ContextMenuClientQt::deref()
-{
-    Shared<ContextMenuClientQt>::deref();
-}
-
 void ContextMenuClientQt::contextMenuDestroyed()
 {
     notImplemented();

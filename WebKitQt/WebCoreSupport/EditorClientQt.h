@@ -37,10 +37,8 @@
 
 namespace WebCore {
 
-class EditorClientQt : public EditorClient, public Shared<EditorClientQt> {
+class EditorClientQt : public EditorClient {
 public:
-    virtual void ref();
-    virtual void deref();
     virtual void pageDestroyed();
 
     virtual bool shouldDeleteRange(Range*);

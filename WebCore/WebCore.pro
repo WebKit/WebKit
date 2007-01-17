@@ -104,7 +104,8 @@ MANUALMOC += \
     $$PWD/platform/qt/ScrollViewCanvasQt.h \
     $$PWD/platform/network/qt/ResourceHandleManagerQt.h \
     $$PWD/../WebKitQt/Api/qwebpage.h \
-    $$PWD/../WebKitQt/Api/qwebframe.h
+    $$PWD/../WebKitQt/Api/qwebframe.h \
+    $$PWD/../WebKitQt/WebCoreSupport/FrameLoaderClientQt.h
 
 LUT_FILES += \
     bindings/js/kjs_window.cpp \
