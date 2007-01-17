@@ -297,6 +297,7 @@ public:
     virtual void didBeginEditing() { }
     virtual void respondToChangedContents() { }
     virtual void didEndEditing() { }
+    virtual void didWriteSelectionToPasteboard() { }
     //  virtual void webViewDidChangeTypingStyle:(NSNotification *)notification { }
     //  virtual void webViewDidChangeSelection:(NSNotification *)notification { }
     //  virtual NSUndoManager* undoManagerForWebView:(WebView *)webView { return 0; }

@@ -74,6 +74,7 @@ public:
     virtual void didBeginEditing() = 0;
     virtual void respondToChangedContents() = 0;
     virtual void didEndEditing() = 0;
+    virtual void didWriteSelectionToPasteboard() = 0;
 //  virtual void webViewDidChangeTypingStyle:(NSNotification *)notification = 0;
 //  virtual void webViewDidChangeSelection:(NSNotification *)notification = 0;
 //  virtual NSUndoManager* undoManagerForWebView:(WebView *)webView = 0;

@@ -161,6 +161,7 @@ public:
 
     void didBeginEditing();
     void didEndEditing();
+    void didWriteSelectionToPasteboard();
     
     void showFontPanel();
     void showStylesPanel();

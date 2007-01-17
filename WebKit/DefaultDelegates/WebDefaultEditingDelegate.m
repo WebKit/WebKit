@@ -97,6 +97,10 @@ static WebDefaultEditingDelegate *sharedDelegate = nil;
     return NO;
 }
 
+- (void)webView:(WebView *)webView didWriteSelectionToPasteboard:(NSPasteboard *)pasteboard
+{
+}
+
 - (void)webViewDidBeginEditing:(NSNotification *)notification
 {
 }

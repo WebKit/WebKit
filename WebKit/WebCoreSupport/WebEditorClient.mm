@@ -242,6 +242,11 @@ void WebEditorClient::didEndEditing()
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidEndEditingNotification object:m_webView];
 }
 
+void WebEditorClient::didWriteSelectionToPasteboard()
+{
+    [[m_webView _editingDelegateForwarder] webView:m_webView didWriteSelectionToPasteboard:[NSPasteboard generalPasteboard]];
+}
+
 NSData* WebEditorClient::dataForArchivedSelection(Frame* frame)
 {
     WebArchive *archive = [WebArchiver archiveSelectionInFrame:kit(frame)];

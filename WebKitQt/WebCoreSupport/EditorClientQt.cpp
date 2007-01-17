@@ -117,6 +117,11 @@ void EditorClientQt::didEndEditing()
     notImplemented();
 }
 
+void EditorClientQt::didWriteSelectionToPasteboard()
+{
+    notImplemented();
+}
+
 bool EditorClientQt::selectWordBeforeMenuEvent()
 {
     notImplemented();

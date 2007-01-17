@@ -61,6 +61,7 @@ public:
 
     virtual void didBeginEditing();
     virtual void didEndEditing();
+    virtual void didWriteSelectionToPasteboard();
 
     virtual NSData* dataForArchivedSelection(WebCore::Frame*);
     virtual NSString* userVisibleString(NSURL*);

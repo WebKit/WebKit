@@ -1,3 +1,18 @@
+2007-01-16  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by harrison.
+
+        Fixed <rdar://problem/4921134> WebKit needs extensible cut/copy to allow additional types to be written to pasteboard
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/EditorClient.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::copy):
+        (WebCore::Editor::didWriteSelectionToPasteboard):
+        * editing/Editor.h:
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyEditorClient::didWriteSelectionToPasteboard):
+
 2007-01-16  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
