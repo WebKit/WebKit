@@ -62,5 +62,19 @@
 - (NSView *)selectionView;
 @end
 
-@interface WebHTMLView (WebDocumentPrivateProtocols) <WebDocumentSelection>
+@protocol WebDocumentIncrementalSearching
+/*!
+@method searchFor:direction:caseSensitive:wrap:startInSelection:
+ @abstract Searches a document view for a string and highlights the string if it is found.
+ @param string The string to search for.
+ @param forward YES to search forward, NO to seach backwards.
+ @param caseFlag YES to for case-sensitive search, NO for case-insensitive search.
+ @param wrapFlag YES to wrap around, NO to avoid wrapping.
+ @param startInSelection YES to begin search in the selected text (useful for incremental searching), NO to begin search after the selected text.
+ @result YES if found, NO if not found.
+ */
+- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag startInSelection:(BOOL)startInSelection;
+@end
+
+@interface WebHTMLView (WebDocumentPrivateProtocols) <WebDocumentSelection, WebDocumentIncrementalSearching>
 @end

@@ -221,7 +221,7 @@ private:
 
 public:
     virtual String selectedText() const;  
-    bool findString(const String&, bool, bool, bool);
+    bool findString(const String&, bool forward, bool caseFlag, bool wrapFlag, bool startInSelection);
 
     const Selection& mark() const; // Mark, to be used as emacs uses it.
     void setMark(const Selection&);

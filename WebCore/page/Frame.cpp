@@ -1308,31 +1308,32 @@ static bool isInShadowTree(Node* node)
 }
 
 // Searches from the beginning of the document if nothing is selected.
-bool Frame::findString(const String& target, bool forward, bool caseFlag, bool wrapFlag)
+bool Frame::findString(const String& target, bool forward, bool caseFlag, bool wrapFlag, bool startInSelection)
 {
     if (target.isEmpty())
         return false;
     
-    // Initially search from the start (if forward) or end (if backward) of the selection, and search to edge of document.
+    // Start from an edge of the selection, if there's a selection that's not in shadow content. Which edge
+    // is used depends on whether we're searching forward or backward, and whether startInSelection is set.
     RefPtr<Range> searchRange(rangeOfContents(document()));
     Selection selection(selectionController()->selection());
     Node* selectionBaseNode = selection.base().node();
     
     // FIXME 3099526: We don't search in the shadow trees (e.g. text fields and textareas), though we'd like to
     // someday. If we don't explicitly skip them here, we'll miss hits in the regular content.
-    bool startAtSelection = selectionBaseNode && !isInShadowTree(selectionBaseNode);
+    bool selectionIsInMainContent = selectionBaseNode && !isInShadowTree(selectionBaseNode);
 
-    if (startAtSelection) {
+    if (selectionIsInMainContent) {
         if (forward)
-            setStart(searchRange.get(), selection.visibleStart());
+            setStart(searchRange.get(), startInSelection ? selection.visibleStart() : selection.visibleEnd());
         else
-            setEnd(searchRange.get(), selection.visibleEnd());
+            setEnd(searchRange.get(), startInSelection ? selection.visibleEnd() : selection.visibleStart());
     }
     RefPtr<Range> resultRange(findPlainText(searchRange.get(), target, forward, caseFlag));
-    // If the found range is already selected, find again.
+    // If we started in the selection and the found range exactly matches the existing selection, find again.
     // Build a selection with the found range to remove collapsed whitespace.
     // Compare ranges instead of selection objects to ignore the way that the current selection was made.
-    if (startAtSelection && *Selection(resultRange.get()).toRange() == *selection.toRange()) {
+    if (startInSelection && selectionIsInMainContent && *Selection(resultRange.get()).toRange() == *selection.toRange()) {
         searchRange = rangeOfContents(document());
         if (forward)
             setStart(searchRange.get(), selection.visibleEnd());

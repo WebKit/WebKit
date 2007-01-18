@@ -2294,51 +2294,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
 {
-    if (_private->closed)
-        return NO;
-
-    // Get the frame holding the selection, or start with the main frame
-    WebFrame *startFrame = [self _selectedOrMainFrame];
-
-    // Search the first frame, then all the other frames, in order
-    NSView <WebDocumentSearching> *startSearchView = nil;
-    BOOL startHasSelection = NO;
-    WebFrame *frame = startFrame;
-    do {
-        id <WebDocumentView> view = [[frame frameView] documentView];
-        if ([view conformsToProtocol:@protocol(WebDocumentSearching)]) {
-            NSView <WebDocumentSearching> *searchView = (NSView <WebDocumentSearching> *)view;
-
-            // first time through
-            if (frame == startFrame) {
-                // Remember if start even has a selection, to know if we need to search more later
-                if ([searchView isKindOfClass:[WebHTMLView class]])
-                    // optimization for the common case, to avoid making giant string for selection
-                    startHasSelection = [startFrame _hasSelection];
-                else if ([searchView conformsToProtocol:@protocol(WebDocumentText)])
-                    startHasSelection = [(id <WebDocumentText>)searchView selectedString] != nil;
-                startSearchView = searchView;
-            }
-            
-            if ([searchView searchFor:string direction:forward caseSensitive:caseFlag wrap:NO]) {
-                if (frame != startFrame)
-                    [startFrame _clearSelection];
-                [[self window] makeFirstResponder:searchView];
-                return YES;
-            }
-        }
-        frame = incrementFrame(frame, forward, wrapFlag);
-    } while (frame != nil && frame != startFrame);
-
-    // Search contents of startFrame, on the other side of the selection that we did earlier.
-    // We cheat a bit and just research with wrap on
-    if (wrapFlag && startHasSelection && startSearchView) {
-        if ([startSearchView searchFor:string direction:forward caseSensitive:caseFlag wrap:YES]) {
-            [[self window] makeFirstResponder:startSearchView];
-            return YES;
-        }
-    }
-    return NO;
+    return [self searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag startInSelection:NO];
 }
 
 + (void)registerViewClass:(Class)viewClass representationClass:(Class)representationClass forMIMEType:(NSString *)MIMEType
@@ -2655,6 +2611,66 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 @end
 
 @implementation WebView (WebPendingPublic)
+
+- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag startInSelection:(BOOL)startInSelection
+{
+    if (_private->closed)
+        return NO;
+    
+    // Get the frame holding the selection, or start with the main frame
+    WebFrame *startFrame = [self _selectedOrMainFrame];
+    
+    // Search the first frame, then all the other frames, in order
+    NSView <WebDocumentSearching> *startSearchView = nil;
+    BOOL startHasSelection = NO;
+    WebFrame *frame = startFrame;
+    do {
+        id <WebDocumentView> view = [[frame frameView] documentView];
+        if ([view conformsToProtocol:@protocol(WebDocumentSearching)]) {
+            NSView <WebDocumentSearching> *searchView = (NSView <WebDocumentSearching> *)view;
+            
+            // first time through
+            if (frame == startFrame) {
+                // Remember if start even has a selection, to know if we need to search more later
+                if ([searchView isKindOfClass:[WebHTMLView class]])
+                    // optimization for the common case, to avoid making giant string for selection
+                    startHasSelection = [startFrame _hasSelection];
+                else if ([searchView conformsToProtocol:@protocol(WebDocumentText)])
+                    startHasSelection = [(id <WebDocumentText>)searchView selectedString] != nil;
+                startSearchView = searchView;
+            }
+            
+            BOOL foundString;
+            if ([searchView conformsToProtocol:@protocol(WebDocumentIncrementalSearching)])
+                foundString = [(NSView <WebDocumentIncrementalSearching> *)searchView searchFor:string direction:forward caseSensitive:caseFlag wrap:NO startInSelection:startInSelection];
+            else
+                foundString = [searchView searchFor:string direction:forward caseSensitive:caseFlag wrap:NO];
+            
+            if (foundString) {
+                if (frame != startFrame)
+                    [startFrame _clearSelection];
+                [[self window] makeFirstResponder:searchView];
+                return YES;
+            }
+        }
+        frame = incrementFrame(frame, forward, wrapFlag);
+    } while (frame != nil && frame != startFrame);
+    
+    // Search contents of startFrame, on the other side of the selection that we did earlier.
+    // We cheat a bit and just research with wrap on
+    if (wrapFlag && startHasSelection && startSearchView) {
+        BOOL foundString;
+        if ([startSearchView conformsToProtocol:@protocol(WebDocumentIncrementalSearching)])
+            foundString = [(NSView <WebDocumentIncrementalSearching> *)startSearchView searchFor:string direction:forward caseSensitive:caseFlag wrap:YES startInSelection:startInSelection];
+        else
+            foundString = [startSearchView searchFor:string direction:forward caseSensitive:caseFlag wrap:YES];
+        if (foundString) {
+            [[self window] makeFirstResponder:startSearchView];
+            return YES;
+        }
+    }
+    return NO;
+}
 
 - (void)setHoverFeedbackSuspended:(BOOL)newValue
 {

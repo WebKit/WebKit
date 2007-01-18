@@ -625,9 +625,9 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return KURL(doc->completeURL(rel)).getNSURL();
 }
 
-- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
+- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag startInSelection:(BOOL)startInSelection
 {
-    return m_frame->findString(String(string), forward, caseFlag, wrapFlag);
+    return m_frame->findString(string, forward, caseFlag, wrapFlag, startInSelection);
 }
 
 - (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag limit:(unsigned)limit

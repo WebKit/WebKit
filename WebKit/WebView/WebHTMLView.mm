@@ -2593,10 +2593,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
 {
-    if (![string length])
-        return NO;
-
-    return [[self _bridge] searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag];
+    return [self searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag startInSelection:NO];
 }
 
 - (void)clearFocus
@@ -5871,6 +5868,14 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 - (BOOL)supportsTextEncoding
 {
     return YES;
+}
+
+- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag startInSelection:(BOOL)startInSelection
+{
+    if (![string length])
+        return NO;
+    
+    return [[self _bridge] searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag startInSelection:startInSelection];
 }
 
 @end

@@ -533,6 +533,13 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
 {
+    return [self searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag startInSelection:NO];
+}
+
+#pragma mark WebDocumentIncrementalSearching PROTOCOL IMPLEMENTATION
+
+- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag startInSelection:(BOOL)startInSelection
+{
     if (![string length])
         return NO;
 
@@ -549,26 +556,28 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     PDFDocument *document = [PDFSubview document];
     PDFSelection *oldSelection = [PDFSubview currentSelection];
     
-    // Initially we want to include the selected text in the search. PDFDocument's API always searches from just
-    // past the passed-in selection, so we need to pass a selection that's modified appropriately. 
-    // FIXME 4182863: Ideally we'd use a zero-length selection at the edge of the current selection, but zero-length
-    // selections don't work in PDFDocument. So instead we make a one-length selection just before or after the
-    // current selection, which works for our purposes even when the current selection is at an edge of the
-    // document.
     PDFSelection *selectionForInitialSearch = [oldSelection copy];
-    int oldSelectionLength = [[oldSelection string] length];
-    if (forward) {
-        [selectionForInitialSearch extendSelectionAtStart:1];
-        [selectionForInitialSearch extendSelectionAtEnd:-oldSelectionLength];
-    } else {
-        [selectionForInitialSearch extendSelectionAtEnd:1];
-        [selectionForInitialSearch extendSelectionAtStart:-oldSelectionLength];
+    if (startInSelection) {
+        // Initially we want to include the selected text in the search. PDFDocument's API always searches from just
+        // past the passed-in selection, so we need to pass a selection that's modified appropriately. 
+        // FIXME 4182863: Ideally we'd use a zero-length selection at the edge of the current selection, but zero-length
+        // selections don't work in PDFDocument. So instead we make a one-length selection just before or after the
+        // current selection, which works for our purposes even when the current selection is at an edge of the
+        // document.
+        int oldSelectionLength = [[oldSelection string] length];
+        if (forward) {
+            [selectionForInitialSearch extendSelectionAtStart:1];
+            [selectionForInitialSearch extendSelectionAtEnd:-oldSelectionLength];
+        } else {
+            [selectionForInitialSearch extendSelectionAtEnd:1];
+            [selectionForInitialSearch extendSelectionAtStart:-oldSelectionLength];
+        }
     }
     PDFSelection *foundSelection = [document findString:string fromSelection:selectionForInitialSearch withOptions:options];
     [selectionForInitialSearch release];
     
-    // If we found the selection, search again from just past the selection
-    if (_PDFSelectionsAreEqual(foundSelection, oldSelection))
+    // If we first searched in the selection, and we found the selection, search again from just past the selection
+    if (startInSelection && _PDFSelectionsAreEqual(foundSelection, oldSelection))
         foundSelection = [document findString:string fromSelection:oldSelection withOptions:options];
     
     if (!foundSelection && wrapFlag)

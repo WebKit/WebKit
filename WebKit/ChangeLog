@@ -1,3 +1,47 @@
+2007-01-17  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+
+        - WebKit part of fix for <rdar://problem/4462420> REGRESSION: Mail hangs during 
+          Replace All if the replacement string contains the search string
+
+        * Misc/WebKitVersionChecks.h:
+        Added extern "C" so this can be used from .mm files. I don't need this change anymore for
+        this fix, but it's still worth fixing now so it doesn't bite anyone later.
+
+        * WebView/WebDocumentPrivate.h:
+        Invented new private protocol WebDocumentIncrementalSearching, that has one method. The one
+        method is just like the one WebDocumentSearching method, but with an additional parameter.
+        We hope to eliminate this dependence on protocols someday, but adding another one as SPI
+        seems like it won't make anything worse.
+        
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView searchFor:direction:caseSensitive:wrap:]):
+        now calls through to new method that has one additional parameter, passing NO to match old behavior
+        (-[WebHTMLView searchFor:direction:caseSensitive:wrap:startInSelection:]):
+        pass new parameter to bridge
+        
+        * WebView/WebPDFView.h:
+        Declare conformance to WebDocumentIncrementalSearching protocol
+        
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView searchFor:direction:caseSensitive:wrap:]):
+        now calls through to new method that has one additional parameter, passing NO to match old behavior
+        (-[WebPDFView searchFor:direction:caseSensitive:wrap:startInSelection:]):
+        new method, former guts of searchFor:direction:caseSensitive:wrap: but now handles startInSelection
+        parameter
+        
+        * WebView/WebViewPrivate.h:
+        Declare new searchFor:direction:caseSensitive:wrap:startInSelection: method, just like existing
+        method but with one additional parameter
+
+        * WebView/WebView.mm:
+        (-[WebView searchFor:direction:caseSensitive:wrap:]):
+        now calls through to new method that has one additional parameter, passing NO to match old behavior
+        (-[WebView searchFor:direction:caseSensitive:wrap:startInSelection:]):
+        new method, former guts of searchFor:direction:caseSensitive:wrap: but now handles startInSelection
+        parameter
+        
 2007-01-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Deth Bakin and Brian Dash
