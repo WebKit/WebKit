@@ -30,7 +30,6 @@
 
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLDownload.h>
-#import <Foundation/NSURLDownloadPrivate.h> 
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebPanelAuthenticationHandler.h>
 
