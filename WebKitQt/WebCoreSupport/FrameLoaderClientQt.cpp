@@ -30,8 +30,13 @@
 #include "FrameLoaderClientQt.h"
 #include "DocumentLoader.h"
 #include "ResourceResponse.h"
-#include "qdebug.h"
+#include "Page.h"
+#include "ProgressTracker.h"
+
+#include "qwebpage.h"
 #include "qwebframe.h"
+
+#include "qdebug.h"
 
 #define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
@@ -56,10 +61,24 @@ void FrameLoaderClientQt::setFrame(QWebFrame *webFrame, FrameQt *frame)
 {
     m_webFrame = webFrame;
     m_frame = frame;
+    if (!m_webFrame || !m_webFrame->page()) {
+        qWarning("FrameLoaderClientQt::setFrame frame without Page!");
+        return;
+    }
+
+    connect(this, SIGNAL(loadStarted(QWebFrame*)),
+            m_webFrame->page(), SIGNAL(loadStarted(QWebFrame *)));
+    connect(this, SIGNAL(loadProgressChanged(double)),
+            m_webFrame->page(), SIGNAL(loadProgressChanged(double)));
+    connect(this, SIGNAL(loadFinished(QWebFrame*)),
+            m_webFrame->page(), SIGNAL(loadFinished(QWebFrame *)));
 }
 
 void FrameLoaderClientQt::detachFrameLoader()
 {
+    disconnect(this, SIGNAL(loadStarted(QWebFrame*)));
+    disconnect(this, SIGNAL(loadProgressChanged(double)));
+    disconnect(this, SIGNAL(loadFinished(QWebFrame*)));
     m_webFrame = 0;
     m_frame = 0;
 }
@@ -382,17 +401,17 @@ void FrameLoaderClientQt::clearUnarchivingState(DocumentLoader*)
 
 void FrameLoaderClientQt::postProgressStartedNotification()
 {
-    // no progress notification for now
+    emit loadStarted(m_webFrame);
 }
 
 void FrameLoaderClientQt::postProgressEstimateChangedNotification()
 {
-    // no progress notification for now    
+    emit loadProgressChanged(m_frame->page()->progress()->estimatedProgress());
 }
 
 void FrameLoaderClientQt::postProgressFinishedNotification()
 {
-    // no progress notification for now
+    emit loadFinished(m_webFrame);
 }
 
 void FrameLoaderClientQt::setMainFrameDocumentReady(bool b)

@@ -1,3 +1,26 @@
+2007-01-18  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Lars.
+
+        Implementing a little bit of load progress tracking in the Qt port.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::QWebFrame):
+        (QWebFrame::page):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        (QWebFramePrivate::QWebFramePrivate):
+        * Api/qwebpage.h:
+        * QtLauncher/main.cpp:
+        (main):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::setFrame):
+        (WebCore::FrameLoaderClientQt::detachFrameLoader):
+        (WebCore::FrameLoaderClientQt::postProgressStartedNotification):
+        (WebCore::FrameLoaderClientQt::postProgressEstimateChangedNotification):
+        (WebCore::FrameLoaderClientQt::postProgressFinishedNotification):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-01-17  Alice Liu  <alice.liu@apple.com>
 
         Added these stubs to keep the Qt build from failing.

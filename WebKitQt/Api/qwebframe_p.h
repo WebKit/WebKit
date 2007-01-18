@@ -31,6 +31,7 @@ namespace WebCore
     class FrameQt;
     class FrameView;
 }
+class QWebPage;
 
 class QWebFramePrivate
 {
@@ -39,10 +40,12 @@ public:
         : frameLoaderClient(0)
         , frame(0)
         , frameView(0)
+        , page(0)
         {}
     WebCore::FrameLoaderClientQt *frameLoaderClient;
     WebCore::FrameQt *frame;
     WebCore::FrameView *frameView;
+    QWebPage *page;
 };
 
 

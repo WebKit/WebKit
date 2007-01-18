@@ -40,6 +40,8 @@ public:
     QWebFrame(QWebFrame *parent);
     ~QWebFrame();
 
+    QWebPage *page() const;
+
     void addToJSWindowObject(const QByteArray &name, QObject *object);
     QString markup() const;
     QString innerText() const;

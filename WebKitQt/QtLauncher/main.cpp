@@ -30,11 +30,59 @@
 
 #include <QApplication>
 #include <qwebpage.h>
+#include <qwebframe.h>
 
 #include <QVBoxLayout>
 #include <QDir>
 #include <QUrl>
- 
+
+#include <QProgressBar>
+#include <QWidget>
+#include <QPainter>
+#include <QPen>
+#include <QBrush>
+#include <QTimer>
+#include <QDebug>
+
+
+class InfoWidget :public QProgressBar {
+    Q_OBJECT
+public:
+    InfoWidget(QWidget *parent)
+        : QProgressBar(parent), m_progress(0)
+    {
+        setMinimum(0);
+        setMaximum(100);
+    }
+    QSize sizeHint() const
+    {
+        QSize size(100, 20);
+        return size;
+    }
+public slots:
+    void startLoad()
+    {
+        setValue(int(m_progress*100));
+        show();
+    }
+    void changeLoad(double change)
+    {
+        m_progress = change;
+        setValue(int(change*100));
+        //update();
+    }
+    void endLoad()
+    {
+        QTimer::singleShot(1000, this, SLOT(hide()));
+        m_progress = 0;
+    }
+
+protected:
+    qreal m_progress;
+};
+
+#include "main.moc"
+
 int main(int argc, char **argv)
 {
     QString url = QString("%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
@@ -48,11 +96,24 @@ int main(int argc, char **argv)
     QBoxLayout *l = new QVBoxLayout(&topLevel);
 
     QWebPage *page = new QWebPage(&topLevel);
+    InfoWidget *info = new InfoWidget(page);
+    info->setGeometry(20, 20, info->sizeHint().width(),
+                      info->sizeHint().height());
+    QObject::connect(page, SIGNAL(loadStarted(QWebFrame*)),
+                     info, SLOT(startLoad()));
+    QObject::connect(page, SIGNAL(loadProgressChanged(double)),
+                     info, SLOT(changeLoad(double)));
+    QObject::connect(page, SIGNAL(loadFinished(QWebFrame*)),
+                     info, SLOT(endLoad()));
+    
+    
     l->addWidget(page);
 
     topLevel.show();
 
     page->open(url);
+
+    info->raise();
     
     app.exec();
     return 0;

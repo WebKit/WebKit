@@ -46,6 +46,25 @@ public:
     
     QSize sizeHint() const;
 
+signals:
+    /**
+     * Signal is emitted when load is started on one of the child
+     * frames of the page. The frame on which the load started
+     * is passed.
+     */
+    void loadStarted(QWebFrame *frame);
+    /**
+     * Signal is emitted when the global progress status changes.
+     * It accumulates changes from all the child frames.
+     */
+    void loadProgressChanged(double progress);
+    /**
+     * Signal is emitted when load has been finished on one of
+     * the child frames of the page. The frame on which the
+     * load finished is passed as an argument.
+     */
+    void loadFinished(QWebFrame *frame);
+
    
 private:
     friend class QWebFrame;
