@@ -1,3 +1,13 @@
+2007-01-18  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/4939511> WebKit should set the CG clip path for plug-ins that draw using CoreGraphics
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView drawRect:]):  Set the CG clip path to the plug-in dirty rect. This allows plug-ins to obtain their
+        dirty rect using functions like CGContextGetClipBoundingBox().
+
 2007-01-17  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Harrison.

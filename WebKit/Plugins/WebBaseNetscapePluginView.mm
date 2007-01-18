@@ -1571,6 +1571,12 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             CGContextRestoreGState(cgContext);
         }
     }
+    
+    // Set the CG clip path to the plug-in dirty rect. This allows plug-ins to obtain their dirty rect using
+    // functions like CGContextGetClipBoundingBox().
+    if (drawingModel == NPDrawingModelCoreGraphics) 
+        CGContextClipToRect((CGContextRef)[[NSGraphicsContext currentContext] graphicsPort], (CGRect &)rect);
+       
 }
 
 - (BOOL)isFlipped
