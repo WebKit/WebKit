@@ -865,7 +865,7 @@ WordAwareIterator::WordAwareIterator()
 }
 
 WordAwareIterator::WordAwareIterator(const Range *r)
-: m_previousText(0), m_didLookAhead(false), m_textIterator(r)
+: m_previousText(0), m_didLookAhead(false), m_textIterator(r, RUNFINDER)
 {
     m_didLookAhead = true;  // so we consider the first chunk from the text iterator
     advance();              // get in position over the first chunk of text
@@ -878,7 +878,7 @@ WordAwareIterator::WordAwareIterator(const Range *r)
 //      (we looked ahead to the next chunk and found a word boundary)
 // - We built up our own chunk of text from many chunks from the text iterator
 
-//FIXME: Perf could be bad for huge spans next to each other that don't fall on word boundaries
+// FIXME: Perf could be bad for huge spans next to each other that don't fall on word boundaries
 
 void WordAwareIterator::advance()
 {
