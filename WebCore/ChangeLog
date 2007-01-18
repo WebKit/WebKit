@@ -1,5 +1,18 @@
 2007-01-17  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Brady.
+
+        Fix for <rdar://problem/4900895> REGRESSION: onChange doesn't always fire for popups that have had value changed by JS
+
+        No test case since you need to open up the menu to fire onChange.
+
+        * html/HTMLSelectElement.cpp: (WebCore::HTMLSelectElement::setSelectedIndex):
+          Keep track of m_lastOnChangeIndex even when we're not firing onChange.  Since
+          the selected index has changed, we still want the m_lastOnChangeIndex to be up to date when we compare
+          it later.  This matches our behavior in Safari 2.0.
+
+2007-01-17  Adele Peterson  <adele@apple.com>
+
         Reviewed by Darin and John.
 
         - Fix for <rdar://problem/4816550> REGRESSION: autoscrolling doesn't work after double-click

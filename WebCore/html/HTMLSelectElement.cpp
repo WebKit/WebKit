@@ -183,9 +183,10 @@ void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect, bool fi
             setActiveSelectionEndIndex(listIndex);
     }
 
-    if (usesMenuList() && fireOnChange && m_lastOnChangeIndex != optionIndex) {
+    if (usesMenuList() && m_lastOnChangeIndex != optionIndex) {
         m_lastOnChangeIndex = optionIndex;
-        onChange();
+        if (fireOnChange)
+            onChange();
     }
 }
 
