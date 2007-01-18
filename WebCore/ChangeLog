@@ -1,3 +1,15 @@
+2007-01-18  David Hyatt  <hyatt@apple.com>
+
+        Make sure layer autoscrolling puts the event coordinates into the layer's coordinate space before
+        calling hitTest on it.  Fixes "flashy" selection in textareas.
+
+        Reviewed by darin
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::autoscroll):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::nodeAtPoint):
+
 2007-01-18  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam.

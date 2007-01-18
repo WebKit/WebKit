@@ -589,24 +589,44 @@ bool RenderTextControl::nodeAtPoint(const HitTestRequest& request, HitTestResult
     // In a search field, we want to act as if we've hit the results block if we're to the left of the inner text block,
     // and act as if we've hit the close block if we're to the right of the inner text block.
 
-    if (RenderBlock::nodeAtPoint(request, result, x, y, tx, ty, hitTestAction)) {
-        Node* leftNode;
-        Node* rightNode;
-        if (style()->direction() == LTR) {
-            leftNode = m_resultsButton.get();
-            rightNode = m_cancelButton.get();
-        } else {
-            leftNode = m_cancelButton.get();
-            rightNode = m_resultsButton.get();
+    if (RenderBlock::nodeAtPoint(request, result, x, y, tx, ty, hitTestAction) &&
+        (result.innerNode() == element() || result.innerNode() == m_innerBlock)) {
+        IntPoint localPoint = IntPoint(x - tx - m_x, y - ty - m_y);
+        if (m_innerBlock) {
+            Node* leftNode;
+            Node* rightNode;
+            if (style()->direction() == LTR) {
+                leftNode = m_resultsButton.get();
+                rightNode = m_cancelButton.get();
+            } else {
+                leftNode = m_cancelButton.get();
+                rightNode = m_resultsButton.get();
+            }
+            
+            int textLeft = tx + m_x + m_innerBlock->renderer()->xPos() + m_innerText->renderer()->xPos();
+            int textRight = textLeft + m_innerText->renderer()->width();
+            if (leftNode && x < textLeft) {
+                result.setInnerNode(leftNode);
+                result.setLocalPoint(IntPoint(localPoint.x() - m_innerText->renderer()->xPos() - m_innerBlock->renderer()->xPos() - leftNode->renderer()->xPos(),
+                                              localPoint.y() - m_innerText->renderer()->yPos() - m_innerBlock->renderer()->yPos() - leftNode->renderer()->yPos()));
+                return true;
+            } 
+            if (rightNode && x > textRight) {
+                result.setInnerNode(rightNode);
+                result.setLocalPoint(IntPoint(localPoint.x() - m_innerText->renderer()->xPos() - m_innerBlock->renderer()->xPos() - rightNode->renderer()->xPos(),
+                                              localPoint.y() - m_innerText->renderer()->yPos() - m_innerBlock->renderer()->yPos() - rightNode->renderer()->yPos()));
+                return true;
+            }
         }
-        if (leftNode && x < m_innerText->renderer()->absoluteBoundingBoxRect().x())
-            result.setInnerNode(leftNode);
-        else if (rightNode && x > m_innerText->renderer()->absoluteBoundingBoxRect().right())
-            result.setInnerNode(rightNode);
-        else
-            result.setInnerNode(m_innerText.get());
+        
+        // Hit the inner text block.
+        result.setInnerNode(m_innerText.get());
+        result.setLocalPoint(IntPoint(localPoint.x() - m_innerText->renderer()->xPos() - (m_innerBlock.get() ? m_innerBlock->renderer()->xPos() : 0),
+                                      localPoint.y() - m_innerText->renderer()->yPos() - (m_innerBlock.get() ? m_innerBlock->renderer()->yPos() : 0)));
+        
         return true;
     }
+
     return false;
 }
 
