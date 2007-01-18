@@ -337,4 +337,11 @@ void ResourceLoader::receivedCancellation(const AuthenticationChallenge&)
     cancel();
 }
 
+void ResourceLoader::willCacheResponse(ResourceHandle*, CacheStoragePolicy& policy)
+{
+    // When in private browsing mode, prevent caching to disk
+    if (policy == StorageAllowed && frameLoader()->privateBrowsingEnabled())
+        policy = StorageAllowedInMemoryOnly;    
+}
+
 }

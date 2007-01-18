@@ -35,16 +35,6 @@
 #include <CFNetwork/CFURLResponsePriv.h>
 #endif
 
-#if PLATFORM(MAC)
-#ifdef __OBJC__
-@class NSCachedURLResponse;
-@class NSData;
-#else
-class NSCachedURLResponse;
-class NSData;
-#endif
-#endif
-
 namespace WebCore {
     class AuthenticationChallenge;
     class Credential;
@@ -54,6 +44,12 @@ namespace WebCore {
     class ResourceRequest;
     class ResourceResponse;
 
+    enum CacheStoragePolicy {
+        StorageAllowed,
+        StorageAllowedInMemoryOnly,
+        StorageNotAllowed,
+    };
+    
     class ResourceHandleClient {
     public:
         virtual ~ResourceHandleClient() { }
@@ -66,8 +62,7 @@ namespace WebCore {
         virtual void didFinishLoading(ResourceHandle*) { }
         virtual void didFail(ResourceHandle*, const ResourceError&) { }
 
-        // cached response may be modified
-        // void willCacheResponse(ResourceHandle*, CachedResourceResponse&) { }
+        virtual void willCacheResponse(ResourceHandle*, CacheStoragePolicy&) { }
 
         virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) { }
         virtual void didCancelAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) { }
@@ -77,7 +72,6 @@ namespace WebCore {
 
 #if PLATFORM(MAC)        
         virtual void willStopBufferingData(ResourceHandle*, const char*, int) { } 
-        virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *cachedResponse) { return cachedResponse; }
 #endif
     };
 

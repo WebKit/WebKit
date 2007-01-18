@@ -1,3 +1,20 @@
+2007-01-18  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        Get rid of ResourceLoaderMac.mm and make willCacheResponse platform-independent.
+        
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willCacheResponse):
+        * loader/ResourceLoader.h:
+        * loader/mac/ResourceLoaderMac.mm: Removed.
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::):
+        (WebCore::ResourceHandleClient::willCacheResponse):
+        (WebCore::ResourceHandleClient::willStopBufferingData):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:willCacheResponse:]):
+
 2007-01-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
