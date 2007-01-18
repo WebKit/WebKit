@@ -39,30 +39,6 @@
         * fast/dom/Range/compareBoundaryPoints-1-expected.txt: Added.
         * fast/dom/Range/compareBoundaryPoints-1.html: Added.
 
-2007-01-18  David Kilzer  <ddkilzer@kilzer.net>
-
-        Reviewed by Darin and Mitz.
-
-        - Test for http://bugs.webkit.org/show_bug.cgi?id=12305
-          REGRESSION: Images do not load in video sections on CNN.com homepage
-
-        * fast/dom/HTMLImageElement/image-lowsrc-getset-expected.txt: Added.
-        * fast/dom/HTMLImageElement/image-lowsrc-getset.html: Added.
-
-2007-01-17  Justin Garcia  <justin.garcia@apple.com>
-
-        Reviewed by darin
-
-        <rdar://problem/4920488>
-        REGRESSION: A crash occurs at WebCore::Range::processContents () when removing formatting from selected text (that contains a link)
-
-        * editing/execCommand/4920488-expected.checksum: Added.
-        * editing/execCommand/4920488-expected.png: Added.
-        * editing/execCommand/4920488-expected.txt: Added.
-        * editing/execCommand/4920488.html: Added.
-        * fast/dom/Range/compareBoundaryPoints-1-expected.txt: Added.
-        * fast/dom/Range/compareBoundaryPoints-1.html: Added.
-
 2007-01-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Brady.
