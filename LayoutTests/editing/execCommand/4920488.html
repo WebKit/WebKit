@@ -1,0 +1,18 @@
+<p>This tests for a bug in GMail's Editor, they try to extract the contents of a range that has had it's contents removed from the document by an editing command.  You should see 'dogfood' unstyled below.</p>
+<div id="div" contenteditable="true">dog<a href="http://www.google.com/">food</a></div>
+
+<script>
+var div = document.getElementById("div");
+var text = div.firstChild;
+var link = div.lastChild;
+div.focus();
+
+var r = document.createRange();
+r.setStart(text, 0);
+r.setEnd(link, link.childNodes.length);
+
+document.execCommand("SelectAll");
+document.execCommand("RemoveFormat");
+
+r.extractContents();
+</script>

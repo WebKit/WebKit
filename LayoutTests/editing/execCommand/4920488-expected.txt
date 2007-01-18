@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 769x36
+          text run at (0,0) width 769: "This tests for a bug in GMail's Editor, they try to extract the contents of a range that has had it's contents removed from the"
+          text run at (0,18) width 222: "document by an editing command. "
+          text run at (222,18) width 265: "You should see 'dogfood' unstyled below."
+      RenderBlock {DIV} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 53x18
+          text run at (0,0) width 53: "dogfood"
+caret: position 7 of child 0 {#text} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document

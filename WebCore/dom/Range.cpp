@@ -156,9 +156,6 @@ Node *Range::commonAncestorContainer(Node *containerA, Node *containerB)
         if (parentStart == parentEnd)
             break;
     }
-
-    if (!parentStart)
-        return containerA->document()->documentElement();
         
     return parentStart;
 }
@@ -506,6 +503,8 @@ short Range::compareBoundaryPoints( Node *containerA, int offsetA, Node *contain
     // case 4: containers A & B are siblings, or children of siblings
     // ### we need to do a traversal here instead
     Node *cmnRoot = commonAncestorContainer(containerA,containerB);
+    if (!cmnRoot)
+        return 0;
     Node *childA = containerA;
     while (childA && childA->parentNode() != cmnRoot)
         childA = childA->parentNode();
