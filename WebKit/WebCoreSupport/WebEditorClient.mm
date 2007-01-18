@@ -247,6 +247,11 @@ void WebEditorClient::didWriteSelectionToPasteboard()
     [[m_webView _editingDelegateForwarder] webView:m_webView didWriteSelectionToPasteboard:[NSPasteboard generalPasteboard]];
 }
 
+void WebEditorClient::didSetSelectionTypesForPasteboard()
+{
+    [[m_webView _editingDelegateForwarder] webView:m_webView didSetSelectionTypesForPasteboard:[NSPasteboard generalPasteboard]];
+}
+
 NSData* WebEditorClient::dataForArchivedSelection(Frame* frame)
 {
     WebArchive *archive = [WebArchiver archiveSelectionInFrame:kit(frame)];
@@ -257,6 +262,14 @@ NSString* WebEditorClient::userVisibleString(NSURL *URL)
 {
     return [URL _web_userVisibleString];
 }
+
+#ifdef BUILDING_ON_TIGER
+NSArray* WebEditorClient::pasteboardTypesForSelection(Frame* selectedFrame)
+{
+    WebFrame* frame = kit(selectedFrame);
+    return [[[frame frameView] documentView] pasteboardTypesForSelection];
+}
+#endif
 
 bool WebEditorClient::shouldInsertNode(Node *node, Range* replacingRange, EditorInsertAction givenAction)
 { 

@@ -298,6 +298,7 @@ public:
     virtual void respondToChangedContents() { }
     virtual void didEndEditing() { }
     virtual void didWriteSelectionToPasteboard() { }
+    virtual void didSetSelectionTypesForPasteboard() { }
     //  virtual void webViewDidChangeTypingStyle:(NSNotification *)notification { }
     //  virtual void webViewDidChangeSelection:(NSNotification *)notification { }
     //  virtual NSUndoManager* undoManagerForWebView:(WebView *)webView { return 0; }
@@ -317,6 +318,9 @@ public:
     virtual NSData* dataForArchivedSelection(Frame*) { return 0; } 
     
     virtual NSString* userVisibleString(NSURL*) { return 0; }
+#ifdef BUILDING_ON_TIGER
+    virtual NSArray* pasteboardTypesForSelection(Frame*) { return 0; }
+#endif
 #endif
   
     

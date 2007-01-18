@@ -62,9 +62,13 @@ public:
     virtual void didBeginEditing();
     virtual void didEndEditing();
     virtual void didWriteSelectionToPasteboard();
+    virtual void didSetSelectionTypesForPasteboard();
 
     virtual NSData* dataForArchivedSelection(WebCore::Frame*);
     virtual NSString* userVisibleString(NSURL*);
+#ifdef BUILDING_ON_TIGER
+    virtual NSArray* pasteboardTypesForSelection(WebCore::Frame*);
+#endif
     
     virtual void respondToChangedContents();
 

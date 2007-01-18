@@ -1,3 +1,25 @@
+2007-01-17  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Harrison.
+
+        Fix for <rdar://problem/4894155> REGRESSION: Extra line break is pasted with content into message body after choosing File - Paste
+
+        Migration of some editing code from WebHTMView to WebCore::Editor
+        resulted in not calling pasteboardTypesForSelection, which Mail was
+        overriding for the special purpose of adding a type to the
+        pasteboard after WebKit did.  This patch adds 2 separate code paths
+        for Tiger and Leopard.  On Tiger we give in and call the WebView's
+        pasteboardTypesForSelection.  On Leopard we call a delegate after
+        the pasteboard types are set. 
+
+        * DefaultDelegates/WebDefaultEditingDelegate.m:
+        (-[WebDefaultEditingDelegate webView:didSetSelectionTypesForPasteboard:]):
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::didSetSelectionTypesForPasteboard):
+        (WebEditorClient::pasteboardTypesForSelection):
+        * WebView/WebEditingDelegate.h:
+
 2007-01-17  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

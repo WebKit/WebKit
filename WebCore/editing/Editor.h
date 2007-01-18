@@ -187,7 +187,6 @@ private:
     PassRefPtr<Clipboard> newGeneralClipboard(ClipboardAccessPolicy policy);
     PassRefPtr<Range> selectedRange();
     void pasteAsPlainTextWithPasteboard(Pasteboard*);
-    Vector<String> pasteboardTypesForSelection();
     void pasteWithPasteboard(Pasteboard*, bool allowPlainText);
     void replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment, bool selectReplacement, bool smartReplace, bool matchStyle);
     void replaceSelectionWithText(String text, bool selectReplacement, bool smartReplace);
