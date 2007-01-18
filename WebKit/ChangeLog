@@ -1,3 +1,11 @@
+2007-01-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Deth Bakin and Brian Dash
+
+        Drop Panther Support (?!?) and change the comment explaining some SPI forward decls
+
+        * Misc/WebDownload.m:
+
 2007-01-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

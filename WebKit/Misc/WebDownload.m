@@ -30,6 +30,7 @@
 
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLDownload.h>
+#import <Foundation/NSURLDownloadPrivate.h> 
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebPanelAuthenticationHandler.h>
 
@@ -37,19 +38,14 @@
 
 @class NSURLConnectionDelegateProxy;
 
-// FIXME: Remove these declarations because _initWithLoadingConnection is declared in NSURLDownloadPrivate.h
-// and _initWithLoadingResource is obsolete, once we compile only with the new Foundation.
+// FIXME: The following are NSURLDownload SPI - it would be nice to not have to override them at 
+// some point in the future
 @interface NSURLDownload (WebDownloadCapability)
 - (id)_initWithLoadingConnection:(NSURLConnection *)connection
                          request:(NSURLRequest *)request
                         response:(NSURLResponse *)response
                         delegate:(id)delegate
                            proxy:(NSURLConnectionDelegateProxy *)proxy;
-- (id)_initWithLoadingResource:(NSURLConnection *)connection
-                       request:(NSURLRequest *)request
-                      response:(NSURLResponse *)response
-                      delegate:(id)delegate
-                         proxy:(NSURLConnectionDelegateProxy *)proxy;
 - (id)_initWithRequest:(NSURLRequest *)request
               delegate:(id)delegate
              directory:(NSString *)directory;
@@ -223,17 +219,6 @@
 {
     [self _setRealDelegate:delegate];
     return [super _initWithLoadingConnection:connection request:request response:response delegate:_webInternal proxy:proxy];
-}
-
-// FIXME: Remove this override because it no longer exists in newer Foundations.
-- (id)_initWithLoadingResource:(NSURLConnection *)connection
-                       request:(NSURLRequest *)request
-                      response:(NSURLResponse *)response
-                      delegate:(id)delegate
-                         proxy:(NSURLConnectionDelegateProxy *)proxy
-{
-    [self _setRealDelegate:delegate];
-    return [super _initWithLoadingResource:connection request:request response:response delegate:_webInternal proxy:proxy];
 }
 
 - (id)_initWithRequest:(NSURLRequest *)request
