@@ -1,3 +1,9 @@
+2007-01-18  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        * WebCore.pro: Ha^H^HFix to support massive parallel builds.
+
 2007-01-18  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin and Mitz.
