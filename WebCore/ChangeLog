@@ -1,3 +1,19 @@
+2007-01-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/4887416> REGRESSION (SearchField): Assertion failure in HTMLInputElement::setValueFromRenderer when editing via drag and drop (11846)
+        http://bugs.webkit.org/show_bug.cgi?id=11846
+        
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Don't insert extra paragraph separators to avoid
+        nesting blocks in plaintext mode, since that's not an issue under normal circumstances.
+        * html/HTMLInputElement.h:
+        * manual-tests/drag-move-in-search-field.html: Added.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::subtreeHasChanged): constrain the value; we'd
+        rather truncate it than end up with an illegal value here.
+
 2007-01-18  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack.

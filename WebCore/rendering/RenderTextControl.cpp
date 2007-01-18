@@ -467,7 +467,7 @@ void RenderTextControl::subtreeHasChanged()
             frame->textDidChangeInTextArea(element);
     } else {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(element);
-        input->setValueFromRenderer(text());
+        input->setValueFromRenderer(input->constrainValue(text()));
         if (m_cancelButton)
             updateCancelButtonVisibility(m_cancelButton->renderer()->style());
 

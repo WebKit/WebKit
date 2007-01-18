@@ -177,13 +177,14 @@ public:
     void addSearchResult();
     void onSearch();
 
+    String constrainValue(const String& proposedValue) const;
+
 protected:
     AtomicString m_name;
 
 private:
     void init();
     bool storesValueSeparateFromAttribute() const;
-    String constrainValue(const String& proposedValue) const;
     String constrainValue(const String& proposedValue, int maxLen) const;
     void recheckValue();
 
