@@ -1,3 +1,14 @@
+2007-01-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        * Scripts/run-webkit-tests: Fix handling of configuration so it
+        does the right thing when no explicit configuration is passed in.
+        The old code assumed that the result of setConfiguration() was the
+        configuration, but it's undefined when no configuration is
+        explicitly passed in. The correct function to use is
+        configuration(), and I also streamlined the code.
+
 2007-01-17  Lars Knoll <lars@trolltech.com>
 
         Fix my last commit to actually work in all cases.

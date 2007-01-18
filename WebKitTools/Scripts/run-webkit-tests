@@ -144,7 +144,8 @@ my $usage =
     "  --strict                Do a comparison with the output on Mac (Qt only)\n";
 
 # Parse out build options (--debug or --release) first
-my $buildConfiguration = setConfiguration();
+setConfiguration();
+my $configurationOption = "--" . lc configuration();
 
 my $getOptionsResult = GetOptions(
     'guard-malloc|g' => \$guardMalloc,
@@ -189,11 +190,7 @@ $productDir .= "/WebKitTools/DumpRenderTree/DumpRenderTree.qtproj" if (isQt());
 
 chdirWebKit();
 
-my @buildOptions = ();
-if ($buildConfiguration) {
-    push @buildOptions, '--' . lc($buildConfiguration);
-}
-my $buildResult = system "WebKitTools/Scripts/build-dumprendertree", @buildOptions;
+my $buildResult = system "WebKitTools/Scripts/build-dumprendertree", $configurationOption;
 exit WEXITSTATUS($buildResult) if $buildResult;
 
 my $dumpToolName = "DumpRenderTree";
@@ -753,7 +750,7 @@ close HTML;
 if(isQt()) {
   system "konqueror", $testResults if $launchSafari;
 } else {
-  system "WebKitTools/Scripts/run-safari", "--" . lc($buildConfiguration), "-NSOpen", $testResults if $launchSafari;
+  system "WebKitTools/Scripts/run-safari", $configurationOption, "-NSOpen", $testResults if $launchSafari;
 }
 
 exit 1;
