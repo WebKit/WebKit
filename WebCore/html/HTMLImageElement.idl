@@ -35,6 +35,7 @@ module html {
         
         // Extensions
         readonly attribute boolean complete;
+                 attribute DOMString lowsrc;
         readonly attribute long x;
         readonly attribute long y;
 

@@ -1,3 +1,22 @@
+2007-01-18  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin and Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12305
+          REGRESSION: Images do not load in video sections on CNN.com homepage
+
+        <rdar://problem/4931480> REGRESSION: Images do not load in video sections on CNN.com homepage (12305)
+
+        Test: fast/dom/HTMLImageElement/image-lowsrc-getset.html
+
+        * html/HTMLAttributeNames.in: Added lowsrc.
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::isURLAttribute): Added lowsrc.
+        (WebCore::HTMLImageElement::lowsrc): Added.
+        (WebCore::HTMLImageElement::setLowsrc): Added.
+        * html/HTMLImageElement.h: Added lowsrc and setLowsrc.
+        * html/HTMLImageElement.idl: Added lowsrc.
+
 2007-01-18  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack.

@@ -20,6 +20,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "HTMLImageElement.h"
 
@@ -84,7 +85,7 @@ bool HTMLImageElement::mapToEntry(const QualifiedName& attrName, MappedAttribute
     return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLImageElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLImageElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const QualifiedName& attrName = attr->name();
     if (attrName == altAttr) {
@@ -154,7 +155,7 @@ String HTMLImageElement::altText() const
     return alt;
 }
 
-RenderObject *HTMLImageElement::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject* HTMLImageElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
      if (style->contentData())
         return RenderObject::createObject(this, style);
@@ -209,11 +210,10 @@ int HTMLImageElement::width(bool ignorePendingStylesheets) const
             return m_imageLoader.image()->imageSize().width();
     }
 
-    Document* doc = document();
     if (ignorePendingStylesheets)
-        doc->updateLayoutIgnorePendingStylesheets();
+        document()->updateLayoutIgnorePendingStylesheets();
     else
-        doc->updateLayout();
+        document()->updateLayout();
 
     return renderer() ? renderer()->contentWidth() : 0;
 }
@@ -232,18 +232,19 @@ int HTMLImageElement::height(bool ignorePendingStylesheets) const
             return m_imageLoader.image()->imageSize().height();        
     }
 
-    Document* doc = document();
     if (ignorePendingStylesheets)
-        doc->updateLayoutIgnorePendingStylesheets();
+        document()->updateLayoutIgnorePendingStylesheets();
     else
-        doc->updateLayout();
+        document()->updateLayout();
 
     return renderer() ? renderer()->contentHeight() : 0;
 }
 
-bool HTMLImageElement::isURLAttribute(Attribute *attr) const
+bool HTMLImageElement::isURLAttribute(Attribute* attr) const
 {
-    return attr->name() == srcAttr || (attr->name() == usemapAttr && attr->value().domString()[0] != '#');
+    return attr->name() == srcAttr
+        || attr->name() == lowsrcAttr
+        || (attr->name() == usemapAttr && attr->value().domString()[0] != '#');
 }
 
 String HTMLImageElement::name() const
@@ -281,7 +282,7 @@ String HTMLImageElement::border() const
     return getAttribute(borderAttr);
 }
 
-void HTMLImageElement::setBorder(const String &value)
+void HTMLImageElement::setBorder(const String& value)
 {
     setAttribute(borderAttr, value);
 }
@@ -322,6 +323,16 @@ void HTMLImageElement::setLongDesc(const String& value)
     setAttribute(longdescAttr, value);
 }
 
+String HTMLImageElement::lowsrc() const
+{
+    return document()->completeURL(getAttribute(lowsrcAttr));
+}
+
+void HTMLImageElement::setLowsrc(const String& value)
+{
+    setAttribute(lowsrcAttr, value);
+}
+
 String HTMLImageElement::src() const
 {
     return document()->completeURL(getAttribute(srcAttr));
@@ -360,7 +371,7 @@ void HTMLImageElement::setWidth(int value)
 
 int HTMLImageElement::x() const
 {
-    RenderObject *r = renderer();
+    RenderObject* r = renderer();
     if (!r)
         return 0;
     int x, y;
@@ -370,7 +381,7 @@ int HTMLImageElement::x() const
 
 int HTMLImageElement::y() const
 {
-    RenderObject *r = renderer();
+    RenderObject* r = renderer();
     if (!r)
         return 0;
     int x, y;
