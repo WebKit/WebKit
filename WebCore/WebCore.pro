@@ -1019,6 +1019,7 @@ contains(DEFINES, SVG_SUPPORT=1) {
         svgnames_a.dependency_type = TYPE_C
         svgnames_a.CONFIG = target_predeps
         svgnames_a.variable_out = GENERATED_SOURCES
+        svgnames_a.clean = ${QMAKE_FILE_OUT} tmp/SVGNames.h
         QMAKE_EXTRA_COMPILERS += svgnames_a
         svgnames_b.output = tmp/SVGElementFactory.cpp
         svgnames_b.commands = @echo -n ''
@@ -1026,6 +1027,7 @@ contains(DEFINES, SVG_SUPPORT=1) {
         svgnames_b.depends = tmp/SVGNames.cpp
         svgnames_b.CONFIG = target_predeps
         svgnames_b.variable_out = GENERATED_SOURCES
+        svgnames_b.clean += tmp/SVGElementFactory.h ${QMAKE_FILE_OUT}
         QMAKE_EXTRA_COMPILERS += svgnames_b
 
         # GENERATOR 5-C:
@@ -1035,6 +1037,7 @@ contains(DEFINES, SVG_SUPPORT=1) {
         xlinknames.dependency_type = TYPE_C
         xlinknames.CONFIG = target_predeps
         xlinknames.variable_out = GENERATED_SOURCES
+        xlinknames.clean = ${QMAKE_FILE_OUT} tmp/XLinkNames.h
         QMAKE_EXTRA_COMPILERS += xlinknames
 
         # GENERATOR 5-D:
@@ -1044,6 +1047,7 @@ contains(DEFINES, SVG_SUPPORT=1) {
         xmlnames.dependency_type = TYPE_C
         xmlnames.CONFIG = target_predeps
         xmlnames.variable_out = GENERATED_SOURCES
+        xmlnames.clean = ${QMAKE_FILE_OUT} tmp/XMLNames.h
         QMAKE_EXTRA_COMPILERS += xmlnames
 }
 
@@ -1054,6 +1058,7 @@ idl.variable_out = GENERATED_SOURCES
 idl.input = IDL_BINDINGS
 idl.commands = perl -I$$PWD/bindings/scripts $$PWD/bindings/scripts/generate-bindings.pl --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator JS --include $$PWD/dom --include $$PWD/html --include $$PWD/xml --include $$PWD/ksvg2/svg --outputdir tmp ${QMAKE_FILE_NAME}
 idl.CONFIG += target_predeps
+idl.clean = tmp/JS${QMAKE_FILE_BASE}.h ${QMAKE_FILE_OUT}
 QMAKE_EXTRA_COMPILERS += idl
 
 # GENERATOR 2-A: LUT creator
@@ -1089,6 +1094,7 @@ cssbison.input = CSSBISON
 cssbison.CONFIG = target_predeps
 cssbison.dependency_type = TYPE_C
 cssbison.variable_out = GENERATED_SOURCES
+cssbison.clean = ${QMAKE_FILE_OUT} tmp/${QMAKE_FILE_BASE}.h
 QMAKE_EXTRA_COMPILERS += cssbison
 #PRE_TARGETDEPS += tmp/CSSGrammar.cpp
 
@@ -1099,34 +1105,39 @@ htmlnames.input = HTML_NAMES
 htmlnames.dependency_type = TYPE_C
 htmlnames.CONFIG = target_predeps
 htmlnames.variable_out = GENERATED_SOURCES
+htmlnames.clean = ${QMAKE_FILE_OUT} tmp/HTMLNames.h
 QMAKE_EXTRA_COMPILERS += htmlnames
 
 # GENERATOR 6-A:
 cssprops.output = tmp/CSSPropertyNames.c
 cssprops.input = WALDOCSSPROPS
-cssprops.commands = cp ${QMAKE_FILE_NAME} tmp && cd tmp && sh $$PWD/css/makeprop
+cssprops.commands = cp ${QMAKE_FILE_NAME} tmp && cd tmp && sh $$PWD/css/makeprop && rm ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
 cssprops.CONFIG = target_predeps no_link
+cssprops.clean = ${QMAKE_FILE_OUT} tmp/CSSPropertyNames.h
 QMAKE_EXTRA_COMPILERS += cssprops
 
 # GENERATOR 6-B:
 cssvalues.output = tmp/CSSValueKeywords.c
 cssvalues.input = WALDOCSSVALUES
-cssvalues.commands = cp ${QMAKE_FILE_NAME} tmp && cd tmp && sh $$PWD/css/makevalues
+cssvalues.commands = cp ${QMAKE_FILE_NAME} tmp && cd tmp && sh $$PWD/css/makevalues && rm CSSValueKeywords.in CSSValueKeywords.strip CSSValueKeywords.gperf
 cssvalues.CONFIG = target_predeps no_link
+cssvalues.clean = ${QMAKE_FILE_OUT} tmp/CSSValueKeywords.h
 QMAKE_EXTRA_COMPILERS += cssvalues
 
 # GENERATOR 7-A:
 svgcssproperties.output = tmp/ksvgcssproperties.h
 svgcssproperties.input = SVGCSSPROPERTIES
-svgcssproperties.commands = cp $$PWD/ksvg2/css/CSSPropertyNames.in tmp/ksvgcssproperties.in && cd tmp && perl $$PWD/ksvg2/scripts/cssmakeprops -n SVG -f ksvgcssproperties.in
+svgcssproperties.commands = cp $$PWD/ksvg2/css/CSSPropertyNames.in tmp/ksvgcssproperties.in && cd tmp && perl $$PWD/ksvg2/scripts/cssmakeprops -n SVG -f ksvgcssproperties.in && rm ksvgcssproperties.in ksvgcssproperties.gperf
 svgcssproperties.CONFIG = target_predeps no_link
+svgcssproperties.clean = ${QMAKE_FILE_OUT} tmp/ksvgcssproperties.c
 QMAKE_EXTRA_COMPILERS += svgcssproperties
 
 # GENERATOR 7-B:
 svgcssvalues.output = tmp/ksvgcssvalues.h
 svgcssvalues.input = SVGCSSVALUES
-svgcssvalues.commands = perl -ne \'print lc\' $$PWD/ksvg2/css/CSSValueKeywords.in > tmp/ksvgcssvalues.in && cd tmp && perl $$PWD/ksvg2/scripts/cssmakevalues -n SVG -f ksvgcssvalues.in
+svgcssvalues.commands = perl -ne \'print lc\' $$PWD/ksvg2/css/CSSValueKeywords.in > tmp/ksvgcssvalues.in && cd tmp && perl $$PWD/ksvg2/scripts/cssmakevalues -n SVG -f ksvgcssvalues.in && rm ksvgcssvalues.in ksvgcssvalues.gperf
 svgcssvalues.CONFIG = target_predeps no_link
+svgcssvalues.clean = ${QMAKE_FILE_OUT} tmp/ksvgcssvalues.c tmp/CSSValueKeywords.h
 QMAKE_EXTRA_COMPILERS += svgcssvalues
 
 # GENERATOR 8-A:
@@ -1135,6 +1146,7 @@ entities.commands = gperf -a -L ANSI-C -C -G -c -o -t -k '\*' -N findEntity -D -
 entities.input = ENTITIES_GPERF
 entities.dependency_type = TYPE_C
 entities.CONFIG = target_predeps no_link
+entities.clean = ${QMAKE_FILE_OUT}
 QMAKE_EXTRA_COMPILERS += entities
 
 # PRE-GENERATOR 8-B:
@@ -1142,6 +1154,7 @@ doctypestrings.target = $$OUTPUT_DIR/WebCore/tmp/DocTypeStrings.cpp
 doctypestrings.commands = echo \"$${LITERAL_HASH}include <string.h>\" > $$doctypestrings.target && gperf -CEot -L ANSI-C -k \'*\' -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards < $$PWD/html/DocTypeStrings.gperf >> $$doctypestrings.target
 QMAKE_EXTRA_TARGETS += doctypestrings
 PRE_TARGETDEPS += $$OUTPUT_DIR/WebCore/tmp/DocTypeStrings.cpp
+CLEAN_FILES += $$doctypestrings.target
 
 # GENERATOR 8-C:
 colordata.output = tmp/ColorData.c
@@ -1156,6 +1169,7 @@ stylesheets.commands = perl $$PWD/css/make-css-file-arrays.pl tmp/UserAgentStyle
 stylesheets.input = STYLESHEETS_EMBED
 stylesheets.CONFIG = target_predeps
 stylesheets.variable_out = GENERATED_SOURCES
+stylesheets.clean = ${QMAKE_FILE_OUT} tmp/UserAgentStyleSheets.h
 QMAKE_EXTRA_COMPILERS += stylesheets
 
 # GENERATOR M
@@ -1173,6 +1187,7 @@ xpathbison.input = XPATHBISON
 xpathbison.CONFIG = target_predeps
 xpathbison.dependency_type = TYPE_C
 xpathbison.variable_out = GENERATED_SOURCES
+xpathbison.clean = ${QMAKE_FILE_OUT} tmp/${QMAKE_FILE_BASE}.h
 QMAKE_EXTRA_COMPILERS += xpathbison
 
 

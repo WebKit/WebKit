@@ -31,4 +31,5 @@ ctgen.input = CTGENFILE
 ctgen.CONFIG += target_predeps no_link
 ctgen.variable_out = GENERATED_SOURCES
 ctgen.dependency_type = TYPE_C
+ctgen.clean = ${QMAKE_FILE_OUT} tmp/${QMAKE_FILE_BASE}
 QMAKE_EXTRA_COMPILERS += ctgen

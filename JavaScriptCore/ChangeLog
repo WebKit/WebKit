@@ -1,3 +1,10 @@
+2007-01-18  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        * JavaScriptCore.pro: Remove generated files on make clean.
+        * pcre/pcre.pri:
+
 2007-01-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.
