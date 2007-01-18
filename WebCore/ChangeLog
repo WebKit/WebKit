@@ -1,3 +1,12 @@
+2007-01-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin and John.
+
+        - Fix for <rdar://problem/4816550> REGRESSION: autoscrolling doesn't work after double-click
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::handleMousePressEvent): Set swallowEvent bool instead
+          of returning early for double and triple clicks.
+
 2007-01-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
