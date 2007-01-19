@@ -1,3 +1,10 @@
+2007-01-19  Anders Carlsson  <acarlsson@apple.com>
+        
+        Build fix.
+        
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyChromeClient::setStatusbarText):
+
 2007-01-18  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam.

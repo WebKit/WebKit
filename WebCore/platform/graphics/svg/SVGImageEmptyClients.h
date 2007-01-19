@@ -97,7 +97,7 @@ public:
     virtual void runJavaScriptAlert(Frame*, const String&) { }
     virtual bool runJavaScriptConfirm(Frame*, const String&) { return false; }
     virtual bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result) { return false; }
-    virtual void setStatusBarText(const String&) { }
+    virtual void setStatusbarText(const String&) { }
 };
 
 class SVGEmptyFrameLoaderClient : public FrameLoaderClient {
