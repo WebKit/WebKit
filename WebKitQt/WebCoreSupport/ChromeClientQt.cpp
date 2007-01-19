@@ -232,6 +232,26 @@ void ChromeClientQt::closeWindowSoon()
     notImplemented();
 }
 
+void ChromeClientQt::runJavaScriptAlert(Frame*, const String&)
+{
+    notImplemented();
+}
+
+bool ChromeClientQt::runJavaScriptConfirm(Frame*, const String&)
+{
+    notImplemented();    
+}
+
+bool ChromeClientQt::runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result)
+{
+    notImplemented();
+}
+
+void ChromeClientQt::setStatusbarText(const String&)
+{
+    notImplemented();
+}
+
 }
 
 

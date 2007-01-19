@@ -1,3 +1,14 @@
+2007-01-19  Anders Carlsson  <acarlsson@apple.com>
+
+        Try fixing the QT build.
+        
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::runJavaScriptAlert):
+        (WebCore::ChromeClientQt::runJavaScriptConfirm):
+        (WebCore::ChromeClientQt::runJavaScriptPrompt):
+        (WebCore::ChromeClientQt::setStatusbarText):
+        * WebCoreSupport/ChromeClientQt.h:
+
 2007-01-18  Zack Rusin  <zack@kde.org>
 
         Reviewed by Lars.
