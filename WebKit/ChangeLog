@@ -1,3 +1,17 @@
+2007-01-18  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        Move functions from the bridge to the chrome client.
+        
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::runJavaScriptAlert):
+        (WebChromeClient::runJavaScriptConfirm):
+        (WebChromeClient::runJavaScriptPrompt):
+        (WebChromeClient::setStatusBarText):
+        * WebCoreSupport/WebFrameBridge.mm:
+
 2007-01-18  Adam Roben  <aroben@apple.com>
 
         Reviewed by Beth.

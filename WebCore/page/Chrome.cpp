@@ -23,6 +23,7 @@
 
 #include "ChromeClient.h"
 #include "FloatRect.h"
+#include "Frame.h"
 #include "Page.h"
 #include "ResourceHandle.h"
 #include <wtf/PassRefPtr.h>
@@ -203,6 +204,48 @@ bool Chrome::runBeforeUnloadConfirmPanel(const String& message, Frame* frame)
 void Chrome::closeWindowSoon()
 {
     m_client->closeWindowSoon();
+}
+
+void Chrome::runJavaScriptAlert(Frame* frame, const String& message)
+{
+    ASSERT(frame);
+    String text = message;
+    text.replace('\\', frame->backslashAsCurrencySymbol());
+    m_client->runJavaScriptAlert(frame, text);
+}
+
+bool Chrome::runJavaScriptConfirm(Frame* frame, const String& message)
+{
+    ASSERT(frame);
+    String text = message;
+    text.replace('\\', frame->backslashAsCurrencySymbol());
+    
+    return m_client->runJavaScriptConfirm(frame, text);
+}
+
+bool Chrome::runJavaScriptPrompt(Frame* frame, const String& prompt, const String& defaultValue, String& result)
+{
+    ASSERT(frame);
+    String promptText = prompt;
+    promptText.replace('\\', frame->backslashAsCurrencySymbol());
+    String defaultValueText = defaultValue;
+    defaultValueText.replace('\\', frame->backslashAsCurrencySymbol());
+    
+    bool ok = m_client->runJavaScriptPrompt(frame, promptText, defaultValueText, result);
+    
+    if (ok)
+        result.replace(frame->backslashAsCurrencySymbol(), '\\');
+    
+    return ok;
+}
+
+void Chrome::setStatusbarText(Frame* frame, const String& status)
+{
+    ASSERT(frame);
+    String text = status;
+    text.replace('\\', frame->backslashAsCurrencySymbol());
+    
+    m_client->setStatusbarText(text);
 }
 
 } // namespace WebCore

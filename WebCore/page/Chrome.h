@@ -85,6 +85,10 @@ namespace WebCore {
 
         void closeWindowSoon();
 
+        void runJavaScriptAlert(Frame*, const String&);
+        bool runJavaScriptConfirm(Frame*, const String&);
+        bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result);        
+        void setStatusbarText(Frame*, const String&);
     private:
         Page* m_page;
         ChromeClient* m_client;

@@ -286,33 +286,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return [[_frame frameView] window];
 }
 
-- (void)runJavaScriptAlertPanelWithMessage:(NSString *)message
-{
-    WebView *wv = [self webView];
-    id wd = [wv UIDelegate];
-    // Check whether delegate implements new version, then whether delegate implements old version. If neither,
-    // fall back to shared delegate's implementation of new version.
-    if ([wd respondsToSelector:@selector(webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:)])
-        [wd webView:wv runJavaScriptAlertPanelWithMessage:message initiatedByFrame:_frame];
-    else if ([wd respondsToSelector:@selector(webView:runJavaScriptAlertPanelWithMessage:)])
-        [wd webView:wv runJavaScriptAlertPanelWithMessage:message];
-    else
-        [[WebDefaultUIDelegate sharedUIDelegate] webView:wv runJavaScriptAlertPanelWithMessage:message initiatedByFrame:_frame];
-}
-
-- (BOOL)runJavaScriptConfirmPanelWithMessage:(NSString *)message
-{
-    WebView *wv = [self webView];
-    id wd = [wv UIDelegate];
-    // Check whether delegate implements new version, then whether delegate implements old version. If neither,
-    // fall back to shared delegate's implementation of new version.
-    if ([wd respondsToSelector:@selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:)])
-        return [wd webView:wv runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:_frame];
-    if ([wd respondsToSelector:@selector(webView:runJavaScriptConfirmPanelWithMessage:)])
-        return [wd webView:wv runJavaScriptConfirmPanelWithMessage:message];    
-    return [[WebDefaultUIDelegate sharedUIDelegate] webView:wv runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:_frame];
-}
-
 - (BOOL)shouldInterruptJavaScript
 {
     WebView *wv = [self webView];
@@ -351,13 +324,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     ASSERT(dataSource != nil);
 
     return dataSource;
-}
-
-- (void)setStatusText:(NSString *)status
-{
-    ASSERT(_frame != nil);
-    WebView *wv = [self webView];
-    [[wv _UIDelegateForwarder] webView:wv setStatusText:status];
 }
 
 - (void)close

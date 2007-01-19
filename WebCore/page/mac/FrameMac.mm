@@ -340,22 +340,6 @@ NSString *FrameMac::matchLabelsAgainstElement(NSArray *labels, Element *element)
     return nil;
 }
 
-void FrameMac::setStatusBarText(const String& status)
-{
-    String text = status;
-    text.replace('\\', backslashAsCurrencySymbol());
-    
-    // We want the temporaries allocated here to be released even before returning to the 
-    // event loop; see <http://bugs.webkit.org/show_bug.cgi?id=9880>.
-    NSAutoreleasePool* localPool = [[NSAutoreleasePool alloc] init];
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [_bridge setStatusText:text];
-    END_BLOCK_OBJC_EXCEPTIONS;
-
-    [localPool release];
-}
-
 void FrameMac::focusWindow()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -457,52 +441,6 @@ NPObject *FrameMac::windowScriptNPObject()
     }
 
     return _windowScriptNPObject;
-}
-
-void FrameMac::runJavaScriptAlert(const String& message)
-{
-    String text = message;
-    text.replace('\\', backslashAsCurrencySymbol());
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [_bridge runJavaScriptAlertPanelWithMessage:text];
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-bool FrameMac::runJavaScriptConfirm(const String& message)
-{
-    String text = message;
-    text.replace('\\', backslashAsCurrencySymbol());
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [_bridge runJavaScriptConfirmPanelWithMessage:text];
-    END_BLOCK_OBJC_EXCEPTIONS;
-
-    return false;
-}
-
-bool FrameMac::runJavaScriptPrompt(const String& prompt, const String& defaultValue, String& result)
-{
-    String promptText = prompt;
-    promptText.replace('\\', backslashAsCurrencySymbol());
-    String defaultValueText = defaultValue;
-    defaultValueText.replace('\\', backslashAsCurrencySymbol());
-
-    bool ok;
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    NSString *returnedText = nil;
-
-    ok = [_bridge runJavaScriptTextInputPanelWithPrompt:prompt
-        defaultText:defaultValue returningText:&returnedText];
-
-    if (ok) {
-        result = String(returnedText);
-        result.replace(backslashAsCurrencySymbol(), '\\');
-    }
-
-    return ok;
-    END_BLOCK_OBJC_EXCEPTIONS;
-    
-    return false;
 }
 
 bool FrameMac::shouldInterruptJavaScript()

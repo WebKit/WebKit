@@ -267,3 +267,59 @@ void WebChromeClient::closeWindowSoon()
     [m_webView performSelector:@selector(_closeWindow) withObject:nil afterDelay:0.0];
 }
 
+void WebChromeClient::runJavaScriptAlert(Frame* frame, const String& message)
+{
+    id wd = [m_webView UIDelegate];
+    // Check whether delegate implements new version, then whether delegate implements old version. If neither,
+    // fall back to shared delegate's implementation of new version.
+    if ([wd respondsToSelector:@selector(webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:)])
+        [wd webView:m_webView runJavaScriptAlertPanelWithMessage:message initiatedByFrame:kit(frame)];
+    else if ([wd respondsToSelector:@selector(webView:runJavaScriptAlertPanelWithMessage:)])
+        [wd webView:m_webView runJavaScriptAlertPanelWithMessage:message];
+    else
+        [[WebDefaultUIDelegate sharedUIDelegate] webView:m_webView runJavaScriptAlertPanelWithMessage:message initiatedByFrame:kit(frame)];    
+}
+
+bool WebChromeClient::runJavaScriptConfirm(Frame* frame, const String& message)
+{
+    id wd = [m_webView UIDelegate];
+    // Check whether delegate implements new version, then whether delegate implements old version. If neither,
+    // fall back to shared delegate's implementation of new version.
+    if ([wd respondsToSelector:@selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:)])
+        return [wd webView:m_webView runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:kit(frame)];
+    if ([wd respondsToSelector:@selector(webView:runJavaScriptConfirmPanelWithMessage:)])
+        return [wd webView:m_webView runJavaScriptConfirmPanelWithMessage:message];    
+    return [[WebDefaultUIDelegate sharedUIDelegate] webView:m_webView runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:kit(frame)];
+}
+
+bool WebChromeClient::runJavaScriptPrompt(Frame* frame, const String& prompt, const String& defaultText, String& result)
+{
+    id wd = [m_webView UIDelegate];
+    // Check whether delegate implements new version, then whether delegate implements old version. If neither,
+    // fall back to shared delegate's implementation of new version.
+    if ([wd respondsToSelector:@selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:)])
+        result = [wd webView:m_webView runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText initiatedByFrame:kit(frame)];
+    else if ([wd respondsToSelector:@selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:)])
+        result = [wd webView:m_webView runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText];
+    else
+        result = [[WebDefaultUIDelegate sharedUIDelegate] webView:m_webView runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText initiatedByFrame:kit(frame)];
+    
+    return !result.isNull();
+}
+
+void WebChromeClient::setStatusBarText(const WebCore::String& status)
+{
+    id wd = [m_webView UIDelegate];
+
+    if ([wd respondsToSelector:@selector(webView:setStatusText:)]) {
+        // We want the temporaries allocated here to be released even before returning to the 
+        // event loop; see <http://bugs.webkit.org/show_bug.cgi?id=9880>.
+        NSAutoreleasePool* localPool = [[NSAutoreleasePool alloc] init];
+    
+        [wd webView:m_webView setStatusText:status];
+        
+        [localPool release];
+    }
+}
+
+

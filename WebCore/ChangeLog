@@ -1,3 +1,31 @@
+2007-01-18  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        Move JavaScript alert and status bar functions to the chrome.
+        
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowFunc::callAsFunction):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::runJavaScriptAlert):
+        (WebCore::Chrome::runJavaScriptConfirm):
+        (WebCore::Chrome::runJavaScriptPrompt):
+        (WebCore::Chrome::setStatusBarText):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::setJSStatusBarText):
+        (WebCore::Frame::setJSDefaultStatusBarText):
+        * page/Frame.h:
+        * page/mac/FrameMac.h:
+        * page/mac/FrameMac.mm:
+        * page/mac/WebCoreFrameBridge.h:
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyChromeClient::runJavaScriptAlert):
+        (WebCore::SVGEmptyChromeClient::runJavaScriptConfirm):
+        (WebCore::SVGEmptyChromeClient::runJavaScriptPrompt):
+        (WebCore::SVGEmptyChromeClient::setStatusBarText):
+
 2007-01-19  Zack Rusin  <zack@kde.org>
 
         Fix the build.

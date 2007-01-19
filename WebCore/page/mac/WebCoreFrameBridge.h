@@ -266,8 +266,6 @@ typedef enum ObjectElementType {
 
 - (NSView *)documentView;
 
-- (void)setStatusText:(NSString *)status;
-
 - (WebCore::Frame*)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL referrer:(const WebCore::String&)referrer
     ownerElement:(WebCore::HTMLFrameOwnerElement *)ownerElement allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
 
@@ -279,9 +277,6 @@ typedef enum ObjectElementType {
 
 - (BOOL)textViewWasFirstResponderAtMouseDownTime:(NSTextView *)textView;
 
-- (void)runJavaScriptAlertPanelWithMessage:(NSString *)message;
-- (BOOL)runJavaScriptConfirmPanelWithMessage:(NSString *)message;
-- (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result;
 - (BOOL)shouldInterruptJavaScript;
 - (void)runOpenPanelForFileButtonWithResultListener:(id <WebCoreOpenPanelResultListener>)resultListener;
 

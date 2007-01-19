@@ -77,6 +77,12 @@ namespace WebCore {
         virtual bool runBeforeUnloadConfirmPanel(const String& message, Frame* frame) = 0;
 
         virtual void closeWindowSoon() = 0;
+        
+        virtual void runJavaScriptAlert(Frame*, const String&) = 0;
+        virtual bool runJavaScriptConfirm(Frame*, const String&) = 0;
+        virtual bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result) = 0;
+        virtual void setStatusbarText(const String&) = 0;
+
 };
 
 }

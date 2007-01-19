@@ -204,18 +204,12 @@ private:
 // === to be moved into Chrome
 
 public:
-    virtual void runJavaScriptAlert(const String& message) = 0;
-    virtual bool runJavaScriptConfirm(const String& message) = 0;
-    virtual bool runJavaScriptPrompt(const String& message, const String& defaultValue, String& result) = 0;  
     virtual bool shouldInterruptJavaScript() = 0;
     virtual void focusWindow() = 0;
     virtual void unfocusWindow() = 0;
     virtual void print() = 0;
     bool shouldClose();
     void scheduleClose();
-
-private:
-    virtual void setStatusBarText(const String&);
 
 // === to be moved into Editor
 
