@@ -44,11 +44,13 @@ FontData::FontData(const FontPlatformData& f)
     // Nasty hack to determine if we should round or ceil space widths.
     // If the font is monospace or fake monospace we ceil to ensure that 
     // every character and the space are the same width.  Otherwise we round.
-    m_spaceGlyph = m_characterToGlyphMap.glyphDataForCharacter(' ', this).glyph;
+    m_spaceGlyph = GlyphPageTreeNode::getRootChild(this, 0)->page()->glyphDataForCharacter(' ').glyph;
     float width = widthForGlyph(m_spaceGlyph);
     m_spaceWidth = width;
     determinePitch();
     m_adjustedSpaceWidth = m_treatAsFixedPitch ? ceilf(width) : roundf(width);
+    m_missingGlyphData.fontData = this;
+    m_missingGlyphData.glyph = 0;
 }
 
 FontData::~FontData()

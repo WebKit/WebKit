@@ -2689,9 +2689,9 @@
 		BC6DABF30A19015700E5CD14 /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6DABF20A19015700E5CD14 /* FontCache.cpp */; };
 		BC6DADEF0A195FDF00E5CD14 /* WebFontCache.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6DADEE0A195FDF00E5CD14 /* WebFontCache.h */; };
 		BC6DADFA0A19602B00E5CD14 /* WebFontCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC6DADF90A19602B00E5CD14 /* WebFontCache.mm */; };
-		BC6DB3690A1A7CB700E5CD14 /* GlyphMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6DB3680A1A7CB700E5CD14 /* GlyphMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC6DB4740A1A90FB00E5CD14 /* GlyphMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6DB4730A1A90FB00E5CD14 /* GlyphMap.cpp */; };
-		BC6DB4D40A1AFEEF00E5CD14 /* GlyphMapMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6DB4D30A1AFEEF00E5CD14 /* GlyphMapMac.cpp */; };
+		BC6DB3690A1A7CB700E5CD14 /* GlyphPageTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6DB3680A1A7CB700E5CD14 /* GlyphPageTreeNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC6DB4740A1A90FB00E5CD14 /* GlyphPageTreeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6DB4730A1A90FB00E5CD14 /* GlyphPageTreeNode.cpp */; };
+		BC6DB4D40A1AFEEF00E5CD14 /* GlyphPageTreeNodeMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6DB4D30A1AFEEF00E5CD14 /* GlyphPageTreeNodeMac.cpp */; };
 		BCAA90C30A7EBA60008B1229 /* ScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */; };
 		BCB16B8B0979B01400467741 /* DeprecatedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16B880979B01400467741 /* DeprecatedArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCB16B8C0979B01400467741 /* ArrayImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16B890979B01400467741 /* ArrayImpl.cpp */; };
@@ -5811,9 +5811,9 @@
 		BC6DABF20A19015700E5CD14 /* FontCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontCache.cpp; sourceTree = "<group>"; };
 		BC6DADEE0A195FDF00E5CD14 /* WebFontCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebFontCache.h; sourceTree = "<group>"; };
 		BC6DADF90A19602B00E5CD14 /* WebFontCache.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFontCache.mm; sourceTree = "<group>"; };
-		BC6DB3680A1A7CB700E5CD14 /* GlyphMap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GlyphMap.h; sourceTree = "<group>"; };
-		BC6DB4730A1A90FB00E5CD14 /* GlyphMap.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GlyphMap.cpp; sourceTree = "<group>"; };
-		BC6DB4D30A1AFEEF00E5CD14 /* GlyphMapMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GlyphMapMac.cpp; sourceTree = "<group>"; };
+		BC6DB3680A1A7CB700E5CD14 /* GlyphPageTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GlyphPageTreeNode.h; sourceTree = "<group>"; };
+		BC6DB4730A1A90FB00E5CD14 /* GlyphPageTreeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GlyphPageTreeNode.cpp; sourceTree = "<group>"; };
+		BC6DB4D30A1AFEEF00E5CD14 /* GlyphPageTreeNodeMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GlyphPageTreeNodeMac.cpp; sourceTree = "<group>"; };
 		BC7B2AF80450824100A8000F /* ScrollBar.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBar.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC7B2AF90450824100A8000F /* PlatformScrollBarMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformScrollBarMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScrollBar.cpp; path = platform/ScrollBar.cpp; sourceTree = SOURCE_ROOT; };
@@ -6716,7 +6716,7 @@
 				BCEB377209B7BA3900CB38B1 /* FontMac.mm */,
 				148A00100AF59F3F008CC700 /* FontPlatformData.h */,
 				935C476C09AC4D6300A6AAB4 /* FoundationExtras.h */,
-				BC6DB4D30A1AFEEF00E5CD14 /* GlyphMapMac.cpp */,
+				BC6DB4D30A1AFEEF00E5CD14 /* GlyphPageTreeNodeMac.cpp */,
 				935C476E09AC4D7300A6AAB4 /* KeyEventMac.mm */,
 				6593923909AE435C002C531F /* KURLMac.mm */,
 				9352084409BD43B900F2038D /* Language.mm */,
@@ -8937,8 +8937,8 @@
 				BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */,
 				BCC47E2509A3D6F100ADB771 /* FontFamily.h */,
 				BCC71A120A0FF94D0014EE6E /* GlyphBuffer.h */,
-				BC6DB4730A1A90FB00E5CD14 /* GlyphMap.cpp */,
-				BC6DB3680A1A7CB700E5CD14 /* GlyphMap.h */,
+				BC6DB4730A1A90FB00E5CD14 /* GlyphPageTreeNode.cpp */,
+				BC6DB3680A1A7CB700E5CD14 /* GlyphPageTreeNode.h */,
 				BCC089550A1C4CC9006189A6 /* GlyphWidthMap.cpp */,
 				BCC089290A1C4991006189A6 /* GlyphWidthMap.h */,
 				6593923509AE4346002C531F /* KURL.cpp */,
@@ -10048,7 +10048,7 @@
 				A80E73500A199C77007FB8C5 /* StyleBase.h in Headers */,
 				A80E73510A199C77007FB8C5 /* StyleList.h in Headers */,
 				A80E73520A199C77007FB8C5 /* CSSSelector.h in Headers */,
-				BC6DB3690A1A7CB700E5CD14 /* GlyphMap.h in Headers */,
+				BC6DB3690A1A7CB700E5CD14 /* GlyphPageTreeNode.h in Headers */,
 				A80E7A180A19C3D6007FB8C5 /* JSHTMLMetaElement.h in Headers */,
 				A80E7B0C0A19D606007FB8C5 /* JSHTMLTitleElement.h in Headers */,
 				A80E7B0D0A19D606007FB8C5 /* JSHTMLLinkElement.h in Headers */,
@@ -11619,8 +11619,8 @@
 				A80E7E9E0A1A83E3007FB8C5 /* JSHTMLTextAreaElement.cpp in Sources */,
 				A80E7EA00A1A83E3007FB8C5 /* JSHTMLButtonElement.cpp in Sources */,
 				A826EC480A1B0CBE00CD1BB6 /* JSHTMLOptionElementConstructor.cpp in Sources */,
-				BC6DB4740A1A90FB00E5CD14 /* GlyphMap.cpp in Sources */,
-				BC6DB4D40A1AFEEF00E5CD14 /* GlyphMapMac.cpp in Sources */,
+				BC6DB4740A1A90FB00E5CD14 /* GlyphPageTreeNode.cpp in Sources */,
+				BC6DB4D40A1AFEEF00E5CD14 /* GlyphPageTreeNodeMac.cpp in Sources */,
 				1A9EF4570A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp in Sources */,
 				BCC088860A1BD78D006189A6 /* FontDataMac.mm in Sources */,
 				BCC0891A0A1C4652006189A6 /* FontData.cpp in Sources */,

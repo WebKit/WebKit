@@ -27,14 +27,15 @@
  */
 
 #include "config.h"
-#include "GlyphMap.h"
+#include "GlyphPageTreeNode.h"
+
 #include "FontData.h"
 #include <windows.h>
 
 namespace WebCore
 {
 
-bool GlyphMap::fillPage(GlyphPage* page, UChar* buffer, unsigned bufferLength, const FontData* fontData)
+bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const FontData* fontData)
 {
     HDC dc = GetDC((HWND)0);
     SaveDC(dc);
@@ -45,7 +46,7 @@ bool GlyphMap::fillPage(GlyphPage* page, UChar* buffer, unsigned bufferLength, c
     WORD localGlyphBuffer[GlyphPage::size];
     GetGlyphIndices(dc, buffer, bufferLength, localGlyphBuffer, 0);
     for (unsigned i = 0; i < GlyphPage::size; i++)
-        page->setGlyphDataForIndex(i, localGlyphBuffer[i], fontData);
+        setGlyphDataForIndex(i, localGlyphBuffer[i], fontData);
     RestoreDC(dc, -1);
     ReleaseDC(0, dc);
     return true;

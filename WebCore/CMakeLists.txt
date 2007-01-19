@@ -997,7 +997,7 @@ set(WebCore_SRCS
     platform/FontData.cpp
     platform/FontFallbackList.cpp
     platform/FontFamily.cpp
-    platform/GlyphMap.cpp
+    platform/GlyphPageTreeNode.cpp
     platform/GlyphWidthMap.cpp
     platform/KURL.cpp
     platform/Logging.cpp
@@ -1167,7 +1167,7 @@ set(WebCore_SRCS
     platform/qt/FontQt.cpp
     platform/qt/FrameQtClient.cpp
     platform/qt/FrameQt.cpp
-    platform/qt/GlyphMapQt.cpp
+    platform/qt/GlyphPageTreeNodeQt.cpp
     platform/qt/LoaderFunctionsQt.cpp
     platform/qt/MimeTypeRegistryQt.cpp
     platform/qt/PageQt.cpp

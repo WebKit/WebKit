@@ -148,7 +148,7 @@
         platform/FontData.cpp
         platform/FontFallbackList.cpp
         platform/FontFamily.cpp
-        platform/GlyphMap.cpp
+        platform/GlyphPageTreeNode.cpp
         platform/GlyphWidthMap.cpp
         platform/KURL.cpp
         platform/Logging.cpp
@@ -191,7 +191,7 @@
         platform/win/FontDataWin.cpp
         platform/win/FontPlatformDataWin.cpp
         platform/win/FontWin.cpp
-        platform/win/GlyphMapWin.cpp
+        platform/win/GlyphPageTreeNodeWin.cpp
         platform/win/IntPointWin.cpp
         platform/win/IntRectWin.cpp
         platform/win/IntSizeWin.cpp

@@ -27,6 +27,7 @@
 #define Font_h
 
 #include "FontDescription.h"
+#include <wtf/HashMap.h>
 
 #if PLATFORM(QT)
 class QFont;
@@ -40,9 +41,12 @@ class FontData;
 class FontFallbackList;
 class FontPlatformData;
 class GlyphBuffer;
+class GlyphPageTreeNode;
 class GraphicsContext;
 class IntPoint;
 class TextStyle;
+
+struct GlyphData;
 
 class TextRun {
 public:
@@ -148,6 +152,8 @@ public:
 
     const FontData* primaryFont() const;
     const FontData* fontDataAt(unsigned) const;
+    const GlyphData& glyphDataForCharacter(UChar32, const UChar* cluster, unsigned clusterLength, bool mirror, bool attemptFontSubstitution) const;
+    // Used for complex text, and does not utilize the glyph map cache.
     const FontData* fontDataForCharacters(const UChar*, int length) const;
 
 private:
@@ -156,8 +162,7 @@ private:
     void drawSimpleText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const;
     void drawGlyphs(GraphicsContext*, const FontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
     void drawComplexText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const;
-    float floatWidthForSimpleText(const TextRun&, const TextStyle&, const FontData* substituteFontData,
-                                  float* startX, GlyphBuffer*) const;
+    float floatWidthForSimpleText(const TextRun&, const TextStyle&, float* startX, GlyphBuffer*) const;
     float floatWidthForComplexText(const TextRun&, const TextStyle&) const;
     int offsetForPositionForSimpleText(const TextRun&, const TextStyle&, int position, bool includePartialGlyphs) const;
     int offsetForPositionForComplexText(const TextRun&, const TextStyle&, int position, bool includePartialGlyphs) const;
@@ -182,6 +187,8 @@ public:
 private:
     FontDescription m_fontDescription;
     mutable RefPtr<FontFallbackList> m_fontList;
+    mutable HashMap<int, GlyphPageTreeNode*> m_pages;
+    mutable GlyphPageTreeNode* m_pageZero;
     short m_letterSpacing;
     short m_wordSpacing;
 };

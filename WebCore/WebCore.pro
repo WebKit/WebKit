@@ -561,7 +561,7 @@ SOURCES += \
     platform/graphics/qt/AffineTransformQt.cpp \
     platform/qt/StringQt.cpp \
     platform/graphics/qt/ColorQt.cpp \
-    platform/qt/GlyphMapQt.cpp \
+    platform/qt/GlyphPageTreeNodeQt.cpp \
     platform/qt/CookieJarQt.cpp \
     platform/qt/FontPlatformDataQt.cpp \
     platform/qt/ScrollViewQt.cpp \
@@ -614,7 +614,7 @@ SOURCES += \
     platform/FontCache.cpp \
     platform/FontFallbackList.cpp \
     platform/RegularExpression.cpp \
-    platform/GlyphMap.cpp \
+    platform/GlyphPageTreeNode.cpp \
     platform/Font.cpp \
     platform/FontData.cpp \
     rendering/HitTestResult.cpp \

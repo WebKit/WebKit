@@ -24,7 +24,7 @@
 #define FontData_h
 
 #include "FontPlatformData.h"
-#include "GlyphMap.h"
+#include "GlyphPageTreeNode.h"
 #include "GlyphWidthMap.h"
 #include <wtf/Noncopyable.h>
 
@@ -65,10 +65,8 @@ public:
 
     void determinePitch();
     Pitch pitch() const { return m_treatAsFixedPitch ? FixedPitch : VariablePitch; }
-    
-    // FIXME: Should go away when we pull the glyph map out of the FontData.
-    GlyphData glyphDataForCharacter(UChar32 c) const { return m_characterToGlyphMap.glyphDataForCharacter(c, this); }
-    void setGlyphDataForCharacter(UChar32 c, Glyph glyph, const FontData* fontData) const { m_characterToGlyphMap.setGlyphDataForCharacter(c, glyph, fontData); }
+
+    const GlyphData& missingGlyphData() const { return m_missingGlyphData; }
 
 #if PLATFORM(MAC)
     NSFont* getNSFont() const { return m_font.font; }
@@ -95,13 +93,14 @@ public:
     float m_xHeight;
     
     FontPlatformData m_font;
-    mutable GlyphMap m_characterToGlyphMap;
     mutable GlyphWidthMap m_glyphToWidthMap;
 
     bool m_treatAsFixedPitch;
     Glyph m_spaceGlyph;
     float m_spaceWidth;
     float m_adjustedSpaceWidth;
+
+    GlyphData m_missingGlyphData;
 
     mutable FontData* m_smallCapsFontData;
 

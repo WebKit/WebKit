@@ -2,6 +2,88 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6218
+          CSS1: WebTextRenderer caches and re-uses fallback renderers that are based on family lists
+
+        This patch takes character-to-glyph mapping out of FontData and instead makes
+        each Font keep its own mapping, using a shared set of glyph page fallback trees.
+
+        For each page number there is (at most) one tree. A path from the root to a
+        node in the tree corresponds to a fallback list of FontDatas. The node points to
+        a page (which may be shared with other nodes) that maps each character in its range
+        to a glyph in the first FontData in the fallback list that has it, or to 0 if none of
+        the FontDatas has a glyph for that character. A special kind of node, that can
+        only occur as a leaf, corresponds to using system fallback fonts after the list
+        has been exhausted. This prevents system fallback from polluting non-leaf
+        nodes.
+
+        Nodes and pages are initialized lazily and employ "copy on write".
+
+        * CMakeLists.txt:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * platform/Font.cpp:
+        (WebCore::WidthIterator::WidthIterator): Removed substituteFontData.
+        (WebCore::WidthIterator::advance): Moved all character-to-glyph mapping logic out
+        of here and replaced it with a call to Font::glyphDataForCharacter().
+        (WebCore::Font::Font):
+        (WebCore::Font::operator=):
+        (WebCore::Font::glyphDataForCharacter): Added. This method performs the lookup in the
+        page fallback trees, triggering lazy initialization as needed, and caching pointers to
+        the retrieved page tree nodes in the font.
+        (WebCore::Font::update):
+        (WebCore::Font::drawSimpleText):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::floatWidthForSimpleText): Removed substituteFont argument.
+        (WebCore::Font::offsetForPositionForSimpleText):
+        * platform/Font.h:
+        * platform/FontData.cpp:
+        (WebCore::FontData::FontData):
+        * platform/FontData.h:
+        (WebCore::FontData::missingGlyphData): Added. Returns the "missing glyph" GlyphData for
+        this FontData.
+        * platform/GlyphMap.cpp: Removed.
+        * platform/GlyphMap.h: Removed.
+        * platform/GlyphPageTreeNode.cpp: Renamed GlyphMap.cpp to this.
+        (WebCore::GlyphPageTreeNode::getRoot): Added. Returns the root of the page fallback tree for
+        the given page number.
+        (WebCore::GlyphPageTreeNode::initializePage): Added. Helper method that initializes the page
+        pointer of a node, possibly to a pointer to another node's page or to 0.
+        (WebCore::GlyphPageTreeNode::getChild): Added.
+        * platform/GlyphPageTreeNode.h: Renamed GlyphMap.h to this.
+        (WebCore::GlyphPage::glyphDataForCharacter):
+        (WebCore::GlyphPage::setGlyphDataForCharacter):
+        (WebCore::GlyphPage::setGlyphDataForIndex):
+        (WebCore::GlyphPageTreeNode::GlyphPageTreeNode):
+        (WebCore::GlyphPageTreeNode::getRootChild):
+        (WebCore::GlyphPageTreeNode::parent):
+        (WebCore::GlyphPageTreeNode::page):
+        (WebCore::GlyphPageTreeNode::level):
+        (WebCore::GlyphPageTreeNode::isSystemFallback): Added. Returns whether the node corresponds
+        to the system providing fallback fonts, which is done on a character-by-character basis.
+        * platform/gdk/GlyphMapGdk.cpp: Removed.
+        * platform/gdk/GlyphPageTreeNodeGdk.cpp: Renamed GlyphMapGdk.cpp to this.
+        (WebCore::GlyphPage::fill):
+        * platform/mac/FontDataMac.mm:
+        (WebCore::FontData::platformInit):
+        * platform/mac/FontMac.mm:
+        (WebCore::Font::Font):
+        * platform/mac/GlyphMapMac.cpp: Removed.
+        * platform/mac/GlyphPageTreeNodeMac.cpp: Renamed GlypMapMac.cpp to this.
+        (WebCore::GlyphPage::fill): Changed to return false if the font has no glyphs in the page.
+        * platform/qt/GlyphMapQt.cpp: Removed.
+        * platform/qt/GlyphPageTreeNodeQt.cpp: Renamed GlyphMapQt.cpp to this.
+        (WebCore::GlyphPage::fill):
+        * platform/win/GlyphMapWin.cpp: Removed.
+        * platform/win/GlyphPageTreeNodeWin.cpp: Renamed GlyphMapWin to this.
+        (WebCore::GlyphPage::fill):
+
+2007-01-18  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=9952
           REGRESSION: Repro crash when dragging an image from the window to the address bar
 

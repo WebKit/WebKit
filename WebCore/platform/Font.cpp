@@ -27,6 +27,7 @@
 #include "Font.h"
 
 #include "FloatRect.h"
+#include "FontCache.h"
 #include "FontFallbackList.h"
 #include "IntPoint.h"
 #include "GlyphBuffer.h"
@@ -60,7 +61,7 @@ const uint8_t Font::gRoundingHackCharacterTable[256] = {
 Font::CodePath Font::codePath = Auto;
 
 struct WidthIterator {
-    WidthIterator(const Font* font, const TextRun& run, const TextStyle& style, const FontData* substituteFontData = 0);
+    WidthIterator(const Font* font, const TextRun& run, const TextStyle& style);
 
     void advance(int to, GlyphBuffer* glyphBuffer = 0);
     bool advanceOneCharacter(float& width, GlyphBuffer* glyphBuffer = 0);
@@ -72,8 +73,6 @@ struct WidthIterator {
 
     const TextStyle& m_style;
     
-    const FontData* m_substituteFontData;
-
     unsigned m_currentCharacter;
     float m_runWidthSoFar;
     float m_widthToStart;
@@ -85,12 +84,11 @@ private:
     UChar32 normalizeVoicingMarks(int currentCharacter);
 };
 
-WidthIterator::WidthIterator(const Font* font, const TextRun& run, const TextStyle& style, const FontData* substituteFontData)
+WidthIterator::WidthIterator(const Font* font, const TextRun& run, const TextStyle& style)
     : m_font(font)
     , m_run(run)
     , m_end(style.rtl() ? run.length() : run.to())
     , m_style(style)
-    , m_substituteFontData(substituteFontData)
     , m_currentCharacter(run.from())
     , m_runWidthSoFar(0)
     , m_finalRoundingWidth(0)
@@ -120,7 +118,7 @@ WidthIterator::WidthIterator(const Font* font, const TextRun& run, const TextSty
     else {
         TextRun completeRun(run);
         completeRun.makeComplete();
-        WidthIterator startPositionIterator(font, completeRun, style, m_substituteFontData);
+        WidthIterator startPositionIterator(font, completeRun, style);
         startPositionIterator.advance(run.from());
         m_widthToStart = startPositionIterator.m_runWidthSoFar;
     }
@@ -135,14 +133,12 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
     const UChar* cp = m_run.data(currentCharacter);
 
     bool rtl = m_style.rtl();
-    bool needCharTransform = rtl || m_font->isSmallCaps();
+    bool attemptFontSubstitution = m_style.attemptFontSubstitution();
     bool hasExtraSpacing = m_font->letterSpacing() || m_font->wordSpacing() || m_padding;
 
     float runWidthSoFar = m_runWidthSoFar;
     float lastRoundingWidth = m_finalRoundingWidth;
     
-    const FontData* primaryFont = m_font->primaryFont();
-
     while (currentCharacter < offset) {
         UChar32 c = *cp;
         unsigned clusterLength = 1;
@@ -173,44 +169,11 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
             }
         }
 
-        const FontData* fontData = m_substituteFontData ? m_substituteFontData : primaryFont;
-
-        if (needCharTransform) {
-            if (rtl)
-                c = mirroredChar(c);
-
-            // If small-caps, convert lowercase to upper.
-            if (m_font->isSmallCaps() && !Unicode::isUpper(c)) {
-                UChar32 upperC = Unicode::toUpper(c);
-                if (upperC != c) {
-                    c = upperC;
-                    fontData = fontData->smallCapsFontData(m_font->fontDescription());
-                }
-            }
-        }
-
-        // FIXME: Should go through fallback list eventually when we rework the glyph map.
-        const GlyphData& glyphData = fontData->glyphDataForCharacter(c);
+        const GlyphData& glyphData = m_font->glyphDataForCharacter(c, cp, clusterLength, rtl, attemptFontSubstitution);
         Glyph glyph = glyphData.glyph;
-        fontData = glyphData.fontData;
+        const FontData* fontData = glyphData.fontData;
 
-        // Try to find a substitute font if this font didn't have a glyph for a character in the
-        // string. If one isn't found we end up drawing and measuring the 0 glyph, usually a box.
-        if (glyph == 0 && !m_substituteFontData && m_style.attemptFontSubstitution()) {
-            const FontData* substituteFontData = m_font->fontDataForCharacters(cp, clusterLength);
-            if (substituteFontData) {
-                GlyphBuffer localGlyphBuffer;
-                m_font->floatWidthForSimpleText(TextRun((UChar*)cp, clusterLength), TextStyle(0, 0, 0, m_style.rtl(), m_style.directionalOverride(), 
-                                                                                              false, m_style.applyWordRounding()), 
-                                                                                              substituteFontData, 0, &localGlyphBuffer);
-                if (localGlyphBuffer.size() == 1) {
-                    assert(substituteFontData == localGlyphBuffer.fontDataAt(0));
-                    glyph = localGlyphBuffer.glyphAt(0);
-                    fontData->setGlyphDataForCharacter(c, glyph, substituteFontData);
-                    fontData = substituteFontData;
-                }
-            }
-        }
+        ASSERT(fontData);
 
         // Now that we have a glyph and font data, get its width.
         float width;
@@ -331,6 +294,7 @@ Font::Font() :m_fontList(0), m_letterSpacing(0), m_wordSpacing(0) {}
 Font::Font(const FontDescription& fd, short letterSpacing, short wordSpacing) 
 : m_fontDescription(fd),
   m_fontList(0),
+  m_pageZero(0),
   m_letterSpacing(letterSpacing),
   m_wordSpacing(wordSpacing)
 {}
@@ -341,6 +305,8 @@ Font::Font(const Font& other)
     m_fontList = other.m_fontList;
     m_letterSpacing = other.m_letterSpacing;
     m_wordSpacing = other.m_wordSpacing;
+    m_pages = other.m_pages;
+    m_pageZero = other.m_pageZero;
 }
 
 Font& Font::operator=(const Font& other)
@@ -348,6 +314,8 @@ Font& Font::operator=(const Font& other)
     if (&other != this) {
         m_fontDescription = other.m_fontDescription;
         m_fontList = other.m_fontList;
+        m_pages = other.m_pages;
+        m_pageZero = other.m_pageZero;
         m_letterSpacing = other.m_letterSpacing;
         m_wordSpacing = other.m_wordSpacing;
     }
@@ -356,6 +324,107 @@ Font& Font::operator=(const Font& other)
 
 Font::~Font()
 {
+}
+
+// FIXME: It is unfortunate that this function needs to be passed the original cluster.
+// It is only required for the platform's FontCache::getFontDataForCharacters(), and it means
+// that this function is not correct if it transforms the character to uppercase and calls
+// FontCache::getFontDataForCharacters() afterwards.
+const GlyphData& Font::glyphDataForCharacter(UChar32 c, const UChar* cluster, unsigned clusterLength, bool mirror, bool attemptFontSubstitution) const
+{
+    bool smallCaps = false;
+
+    if (m_fontDescription.smallCaps() && !Unicode::isUpper(c)) {
+        // Convert lowercase to upper.
+        UChar32 upperC = Unicode::toUpper(c);
+        if (upperC != c) {
+            c = upperC;
+            smallCaps = true;
+        }
+    }
+
+    if (mirror)
+        c = mirroredChar(c);
+
+    unsigned pageNumber = (c / GlyphPage::size);
+
+    GlyphPageTreeNode* node = pageNumber ? m_pages.get(pageNumber) : m_pageZero;
+    if (!node) {
+        node = GlyphPageTreeNode::getRootChild(primaryFont(), pageNumber);
+        if (pageNumber)
+            m_pages.set(pageNumber, node);
+        else
+            m_pageZero = node;
+    }
+
+    if (!attemptFontSubstitution && node->level() != 1)
+        node = GlyphPageTreeNode::getRootChild(primaryFont(), pageNumber);
+
+    while (true) {
+        GlyphPage* page = node->page();
+
+        if (page) {
+            const GlyphData& data = page->glyphDataForCharacter(c);
+            if (data.glyph || !attemptFontSubstitution) {
+                if (!smallCaps)
+                    return data;
+
+                const FontData* smallCapsFontData = data.fontData->smallCapsFontData(m_fontDescription);
+
+                if (!smallCapsFontData)
+                    // This should not happen, but if it does, we will return a big cap.
+                    return data;
+
+                GlyphPageTreeNode* smallCapsNode = GlyphPageTreeNode::getRootChild(smallCapsFontData, pageNumber);
+                GlyphPage* smallCapsPage = smallCapsNode->page();
+
+                if (smallCapsPage) {
+                    const GlyphData& data = smallCapsPage->glyphDataForCharacter(c);
+                    if (data.glyph || !attemptFontSubstitution)
+                        return data;
+                }
+                // Not attempting system fallback off the smallCapsFontData. This is the very unlikely case that
+                // a font has the lowercase character but not its uppercase version.
+                return smallCapsFontData->missingGlyphData();
+            }
+        } else if (!attemptFontSubstitution) {
+            if (smallCaps) {
+                if (const FontData* smallCapsFontData = primaryFont()->smallCapsFontData(m_fontDescription))
+                    return smallCapsFontData->missingGlyphData();
+            }
+            return primaryFont()->missingGlyphData();
+        }
+
+        if (node->isSystemFallback()) {
+            // System fallback is character-dependent.
+            const FontData* characterFontData = FontCache::getFontDataForCharacters(*this, cluster, clusterLength);
+            if (smallCaps)
+                characterFontData = characterFontData->smallCapsFontData(m_fontDescription);
+            if (characterFontData) {
+                GlyphPageTreeNode* fallbackNode = GlyphPageTreeNode::getRootChild(characterFontData, pageNumber);
+                const GlyphData& data = fallbackNode->page()->glyphDataForCharacter(c);
+                if (!smallCaps)
+                    page->setGlyphDataForCharacter(c, data.glyph, characterFontData);
+                return data;
+            }
+            // Even system fallback can fail.
+            // FIXME: Should the last resort font be used?
+            const GlyphData& data = primaryFont()->missingGlyphData();
+            if (!smallCaps)
+                page->setGlyphDataForCharacter(c, data.glyph, data.fontData);
+            return data;
+        }
+
+        // Proceed with the fallback list.
+        const FontData* fontData = fontDataAt(node->level());
+        node = node->getChild(fontData, pageNumber);
+
+        if (pageNumber)
+            m_pages.set(pageNumber, node);
+        else
+            m_pageZero = node;
+    }
+
 }
 
 const FontData* Font::primaryFont() const
@@ -386,6 +455,8 @@ void Font::update() const
     if (!m_fontList)
         m_fontList = new FontFallbackList();
     m_fontList->invalidate();
+    m_pageZero = 0;
+    m_pages.clear();
 }
 
 int Font::width(const TextRun& run) const
@@ -495,7 +566,7 @@ void Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const Te
 
     // Our measuring code will generate glyphs and advances for us.
     float startX;
-    floatWidthForSimpleText(run, style, 0, &startX, &glyphBuffer);
+    floatWidthForSimpleText(run, style, &startX, &glyphBuffer);
     
     // We couldn't generate any glyphs for the run.  Give up.
     if (glyphBuffer.isEmpty())
@@ -541,16 +612,14 @@ void Font::drawText(GraphicsContext* context, const TextRun& run, const TextStyl
 float Font::floatWidth(const TextRun& run, const TextStyle& style) const
 {
     if (canUseGlyphCache(run))
-        return floatWidthForSimpleText(run, style, 0, 0, 0);
-    else
-        return floatWidthForComplexText(run, style);
+        return floatWidthForSimpleText(run, style, 0, 0);
+    return floatWidthForComplexText(run, style);
 }
 
-float Font::floatWidthForSimpleText(const TextRun& run, const TextStyle& style,
-                                    const FontData* substituteFont, float* startPosition, GlyphBuffer* glyphBuffer) const
+float Font::floatWidthForSimpleText(const TextRun& run, const TextStyle& style, float* startPosition, GlyphBuffer* glyphBuffer) const
 {
     
-    WidthIterator it(this, run, style, substituteFont);
+    WidthIterator it(this, run, style);
     it.advance(run.to(), glyphBuffer);
     float runWidth = it.m_runWidthSoFar;
     if (startPosition) {
@@ -604,11 +673,11 @@ int Font::offsetForPositionForSimpleText(const TextRun& run, const TextStyle& st
 {
     float delta = (float)x;
 
-    WidthIterator it(this, run, style);    
+    WidthIterator it(this, run, style);
     GlyphBuffer localGlyphBuffer;
     unsigned offset;
     if (style.rtl()) {
-        delta -= floatWidthForSimpleText(run, style, 0, 0, 0);
+        delta -= floatWidthForSimpleText(run, style, 0, 0);
         while (1) {
             offset = it.m_currentCharacter;
             float w;

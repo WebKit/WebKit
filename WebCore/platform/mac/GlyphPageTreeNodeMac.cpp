@@ -1,7 +1,5 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
- * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,17 +27,47 @@
  */
 
 #include "config.h"
-#include "GlyphMap.h"
+#include "GlyphPageTreeNode.h"
 
 #include "FontData.h"
+#include "WebCoreSystemInterface.h"
+#include <ApplicationServices/ApplicationServices.h>
 
 namespace WebCore {
 
-bool GlyphMap::fillPage(GlyphPage* page, UChar* buffer, unsigned bufferLength, const FontData* fontData)
+bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const FontData* fontData)
 {
-    for (unsigned i = 0; i < bufferLength; i++)
-        page->setGlyphDataForIndex(i, fontData->getGlyphIndex(buffer[i]), fontData);
-    return true;
+    // Use an array of long so we get good enough alignment.
+    long glyphVector[(GLYPH_VECTOR_SIZE + sizeof(long) - 1) / sizeof(long)];
+    
+    OSStatus status = wkInitializeGlyphVector(GlyphPage::size, &glyphVector);
+    if (status != noErr)
+        // This should never happen, perhaps indicates a bad font!  If it does the
+        // font substitution code will find an alternate font.
+        return false;
+
+    wkConvertCharToGlyphs(fontData->m_styleGroup, buffer, bufferLength, &glyphVector);
+
+    unsigned numGlyphs = wkGetGlyphVectorNumGlyphs(&glyphVector);
+    if (numGlyphs != GlyphPage::size) {
+        // This should never happen, perhaps indicates a bad font?
+        // If it does happen, the font substitution code will find an alternate font.
+        wkClearGlyphVector(&glyphVector);
+        return false;
+    }
+
+    bool haveGlyphs = false;
+    ATSLayoutRecord* glyphRecord = (ATSLayoutRecord*)wkGetGlyphVectorFirstRecord(glyphVector);
+    for (unsigned i = 0; i < GlyphPage::size; i++) {
+        Glyph glyph = glyphRecord->glyphID;
+        setGlyphDataForIndex(i, glyph, fontData);
+        if (!haveGlyphs && glyph)
+            haveGlyphs = true;
+        glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + wkGetGlyphVectorRecordSize(glyphVector));
+    }
+    wkClearGlyphVector(&glyphVector);
+
+    return haveGlyphs;
 }
 
-}
+} // namespace WebCore

@@ -421,7 +421,9 @@ static void disposeATSULayoutParameters(ATSULayoutParameters *params)
 }
 
 Font::Font(const FontPlatformData& fontData, bool isPrinterFont)
-:m_letterSpacing(0), m_wordSpacing(0)
+    : m_pageZero(0)
+    , m_letterSpacing(0)
+    , m_wordSpacing(0)
 {
     m_fontDescription.setUsePrinterFont(isPrinterFont);
     m_fontList = new FontFallbackList();

@@ -1523,11 +1523,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\GlyphMap.cpp"
+				RelativePath="..\..\platform\GlyphPageTreeNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\GlyphMap.h"
+				RelativePath="..\..\platform\GlyphPageTreeNode.h"
 				>
 			</File>
 			<File
@@ -2854,7 +2854,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\platform\win\GlyphMapWin.cpp"
+					RelativePath="..\..\platform\win\GlyphPageTreeNodeWin.cpp"
 					>
 				</File>
 				<File

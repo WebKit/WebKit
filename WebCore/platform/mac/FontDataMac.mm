@@ -180,7 +180,7 @@ void FontData::platformInit()
     
     // Measure the actual character "x", because AppKit synthesizes X height rather than getting it from the font.
     // Unfortunately, NSFont will round this for us so we don't quite get the right value.
-    NSGlyph xGlyph = m_characterToGlyphMap.glyphDataForCharacter('x', this).glyph;
+    NSGlyph xGlyph = GlyphPageTreeNode::getRootChild(this, 0)->page()->glyphDataForCharacter('x').glyph;
     if (xGlyph) {
         NSRect xBox = [m_font.font boundingRectForGlyph:xGlyph];
         // Use the maximum of either width or height because "x" is nearly square
