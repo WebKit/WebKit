@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -380,7 +378,6 @@ void HTMLSelectElement::selectAll()
     setActiveSelectionEndIndex(previousSelectableListIndex(-1));
     
     updateListBoxSelection(false);
-    renderer()->repaint();
     listBoxOnChange();
 }
 
@@ -543,7 +540,7 @@ void HTMLSelectElement::notifyOptionSelected(HTMLOptionElement *selectedOption, 
         deselectItems(selectedOption);
 
     if (renderer() && !usesMenuList())
-        static_cast<RenderListBox*>(renderer())->setSelectionChanged(true);
+        static_cast<RenderListBox*>(renderer())->selectionChanged();
 
     setChanged(true);
 }
@@ -651,6 +648,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
         return;
 
     if (evt->type() == mousedownEvent) {
+        focus();
         MouseEvent* mEvt = static_cast<MouseEvent*>(evt);
         int listIndex = static_cast<RenderListBox*>(renderer())->listIndexAtOffset(mEvt->offsetX(), mEvt->offsetY());
         if (listIndex >= 0) {
@@ -699,7 +697,10 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
             
             setActiveSelectionEndIndex(listIndex);
             updateListBoxSelection(!multiSelect);
-            renderer()->repaint();
+
+            if (Frame* frame = document()->frame())
+                frame->eventHandler()->setMouseDownMayStartAutoscroll();
+
             evt->setDefaultHandled();
         }
     } else if (evt->type() == mouseupEvent && document()->frame()->eventHandler()->autoscrollRenderer() != renderer())
@@ -740,7 +741,6 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
 
             static_cast<RenderListBox*>(renderer())->scrollToRevealElementAtListIndex(endIndex);
             updateListBoxSelection(deselectOthers);
-            renderer()->repaint();            
             listBoxOnChange();
             evt->setDefaultHandled();
         }
@@ -788,7 +788,7 @@ void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
         }
     }
 
-    static_cast<RenderListBox*>(renderer())->setSelectionChanged(true);
+    static_cast<RenderListBox*>(renderer())->selectionChanged();
 }
 
 void HTMLSelectElement::listBoxOnChange()

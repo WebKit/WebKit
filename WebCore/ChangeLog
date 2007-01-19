@@ -1,3 +1,115 @@
+2007-01-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11999
+          <rdar://problem/4940442> REGRESSION: Incomplete listing in TVListings window (11999)
+          Fix was to use the actual size of the renderer in the RenderListBox
+          case, instead of always using the size specified by the select element.
+
+        Test: fast/forms/select-list-box-with-height.html
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12008
+          <rdar://problem/4901834> REGRESSION(NativeListBox): Focus is not placed on
+          SELECT after mousing down on OPTION
+
+        Test: fast/forms/select-list-box-mouse-focus.html
+
+        - fix bug where auto-scrolling was not working in list box select elements
+
+        No test yet.
+
+        - fix a missing semicolon in the radio/checkbox section of html4.css
+
+        Test: fast/forms/radio-no-theme-padding.html
+
+        - fix bug where the scroll bars for select elements were pixel-type scroll
+          bars even though the scrolling is line at a time scrolling
+
+        No test.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::selectAll): Removed an explicit call
+        to repaint, since the RenderListBox now does that in selectionChanged.
+        (WebCore::HTMLSelectElement::notifyOptionSelected): Call the new
+        selectionChanged instead of the old setSelectionChanged.
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler): Added a call
+        to focus. Removed an explicit call to repaint and added a call to the
+        new setMouseDownMayStartAutoscroll function in EventHandler. Removed an
+        explicit call to repaint as above.
+        (WebCore::HTMLSelectElement::updateListBoxSelection): Call the new
+        selectionChanged instead of the old setSelectionChanged.
+
+        * page/EventHandler.h: Added setMouseDownMayStartAutoscroll, needed
+        because the existing code to set that flag won't get triggered when
+        the select element's default event handler handles the event.
+
+        * rendering/RenderListBox.h: Made ScrollbarClient a private base class.
+        Removed setSelectionChanged and m_selectionChanged. Added selectionChanged,
+        which is really just a synonym for repaint for now. Moved valueChanged,
+        the ScrollbarClient function implementations, and itemHeight into the
+        private part of the class. Added numVisibleItems() and listHeight() to
+        the private section. Changed m_vBar to be a RefPtr.
+
+        * rendering/RenderListBox.cpp: Removed unneeded includes. Moved all
+        the constants to the top of the file.
+        (WebCore::RenderListBox::RenderListBox): Removed initialization of
+        m_selectionChanged because it was removed and of m_vBar because it's
+        now a RefPtr which is automaticall initialized.
+        (WebCore::RenderListBox::~RenderListBox): Removed the explicit deref of
+        m_vBar because it's a RefPtr. Added null checking for FrameView.
+        (WebCore::RenderListBox::updateFromElement): Use numItems().
+        (WebCore::RenderListBox::calcMinMaxWidth): Added null checking for
+        FrameView and used RefPtr for the newly-created scroll bar.
+        (WebCore::RenderListBox::size): Tweaked formatting. Also renamed the
+        misleading minDefaultSize to maxDefaultSize, since it's a maximum.
+        (WebCore::RenderListBox::numVisibleItems): Added. Used in many places
+        where size() was used before. This computes the number of rows we have
+        room for. We don't need a row space after the last row, and this takes
+        that into account.
+        (WebCore::RenderListBox::numItems): Tweaked to remove the local variable.
+        (WebCore::RenderListBox::listHeight): Added. Total height of all the rows
+        and spaces between them.
+        (WebCore::RenderListBox::calcHeight): Changed to call itemHeight for the
+        row height, and to subtract the last row spacing off since we don't need
+        a space after the last row. Changed the scroll bar setup to make it
+        correspond to row numbers, not pixel numbers.
+        (WebCore::RenderListBox::baselinePosition): Moved the comment to the
+        constant declaration at the top of the file.
+        (WebCore::RenderListBox::itemBoundingBoxRect): Simplified by using
+        the itemHeight() function.
+        (WebCore::RenderListBox::paintObject): Changed to use numItems and
+        to use numVisibleItems instead of size.
+        (WebCore::RenderListBox::isPointInScrollbar): Added get() call since
+        m_vBar is now a RefPtr.
+        (WebCore::RenderListBox::listIndexAtOffset): Changed to use numItems(),
+        itemHeight(), and rearranged a min/max combo so it starts with the low,
+        then the value, then the high value for pinning.
+        (WebCore::RenderListBox::autoscroll): Use numVisibleItems() instead of
+        size().
+        (WebCore::RenderListBox::stopAutoscroll): Removed an unneeded nil check
+        of the element.
+        (WebCore::RenderListBox::scrollToRevealElementAtListIndex): Changed
+        to use numItems() and to use numVisibleItems() instead of size().
+        Also changed scroll bar code to work more simply now that the scroll
+        bar is row-based.
+        (WebCore::RenderListBox::listIndexIsVisible): Changed to use
+        numVisibleItems() instead of size().
+        (WebCore::RenderListBox::valueChanged): Simplified since the scrollbar
+        is now row-based. Also removed an unnecessary null check.
+        (WebCore::RenderListBox::itemHeight): Updated for name change from
+        optionsSpacingMiddle to rowSpacing.
+        (WebCore::RenderListBox::scrollHeight): Changed to use listHeight().
+        (WebCore::RenderListBox::setScrollTop): Simplified, and removed the code
+        that does nothing if the computed list index is visible (which did not
+        make sense for this function and seemed a cut and paste error from the
+        scrollToReveal function). The scrollbar part is simpler now that it's
+        row-based.
+        (WebCore::RenderListBox::windowClipRect): Changed to use document()->view()
+        so we don't have to include RenderView.h.
+
+        * css/html4.css: Added a semicolon I noticed was missing.
+
 2007-01-19  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej and Darin.

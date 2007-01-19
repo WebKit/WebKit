@@ -1,3 +1,33 @@
+2007-01-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - test for html4.css problem where we had a missing semicolon and thus missed
+          parsing a style rule
+
+        * fast/forms/radio-no-theme-padding-expected.txt: Added.
+        * fast/forms/radio-no-theme-padding.html: Added.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12008
+          <rdar://problem/4901834> REGRESSION(NativeListBox): Focus is not placed on
+          SELECT after mousing down on OPTION
+
+        * fast/forms/select-list-box-mouse-focus-expected.txt: Added.
+        * fast/forms/select-list-box-mouse-focus.html: Added.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=11999
+          <rdar://problem/4940442> REGRESSION: Incomplete listing in TVListings window (11999)
+
+        Note: Only the pixel test shows the failure in the old version.
+
+        Note: I generated the pixel results on Leopard -- may need to be
+        regenated on Tiger.
+
+        * fast/forms/select-list-box-with-height-expected.checksum: Added.
+        * fast/forms/select-list-box-with-height-expected.png: Added.
+        * fast/forms/select-list-box-with-height-expected.txt: Added.
+        * fast/forms/select-list-box-with-height.html: Added.
+
 2007-01-19  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej and Darin.

@@ -1,23 +1,31 @@
-/**
+/*
  * This file is part of the select element renderer in WebCore.
  *
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer. 
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution. 
+ * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+ *     its contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission. 
  *
- * You should have received a copy of the GNU Library General Public License
- * along with this library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
- *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -35,8 +43,6 @@
 #include "HTMLSelectElement.h"
 #include "HitTestResult.h"
 #include "PlatformScrollBar.h" 
-#include "RenderBR.h"
-#include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "TextStyle.h"
@@ -46,30 +52,34 @@ using namespace std;
 
 namespace WebCore {
 
-using namespace HTMLNames;
 using namespace EventNames;
+using namespace HTMLNames;
  
-const int optionsSpacingMiddle = 1;
+const int rowSpacing = 1;
+
 const int optionsSpacingHorizontal = 2;
+
+const int minSize = 4;
+const int maxDefaultSize = 10;
+
+// FIXME: This hardcoded baselineAdjustment is what we used to do for the old
+// widget, but I'm not sure this is right for the new control.
+const int baselineAdjustment = 7;
 
 RenderListBox::RenderListBox(HTMLSelectElement* element)
     : RenderBlock(element)
     , m_optionsChanged(true)
     , m_optionsWidth(0)
     , m_indexOffset(0)
-    , m_selectionChanged(true)
-    , m_vBar(0)
 {
 }
 
 RenderListBox::~RenderListBox()
 {
-    if (m_vBar && m_vBar->isWidget()) {
-        element()->document()->view()->removeChild(static_cast<PlatformScrollbar*>(m_vBar));
-        m_vBar->deref();
-    }
+    if (m_vBar && m_vBar->isWidget())
+        if (FrameView* view = node()->document()->view())
+            view->removeChild(static_cast<PlatformScrollbar*>(m_vBar.get()));
 }
-
 
 void RenderListBox::setStyle(RenderStyle* style)
 {
@@ -83,7 +93,7 @@ void RenderListBox::updateFromElement()
 
     if (m_optionsChanged) {
         const Vector<HTMLElement*>& listItems = select->listItems();
-        int size = listItems.size();
+        int size = numItems();
         
         float width = 0;
         TextStyle textStyle(0, 0, 0, false, false, false, false);
@@ -119,14 +129,13 @@ void RenderListBox::updateFromElement()
 
 void RenderListBox::calcMinMaxWidth()
 {
-    if (!m_vBar) {
-        if (Scrollbar::hasPlatformScrollbars()) {
-            PlatformScrollbar* widget = new PlatformScrollbar(this, VerticalScrollbar, SmallScrollbar);
-            widget->ref();
-            node()->document()->view()->addChild(widget);
-            m_vBar = widget;
+    if (!m_vBar && Scrollbar::hasPlatformScrollbars())
+        if (FrameView* view = node()->document()->view()) {
+            RefPtr<PlatformScrollbar> widget = new PlatformScrollbar(this, VerticalScrollbar, SmallScrollbar);
+            view->addChild(widget.get());
+            m_vBar = widget.release();
         }
-    }
+
     if (m_optionsChanged)
         updateFromElement();
 
@@ -138,7 +147,7 @@ void RenderListBox::calcMinMaxWidth()
     else {
         m_maxWidth = m_optionsWidth + 2 * optionsSpacingHorizontal;
         if (m_vBar)
-           m_maxWidth += m_vBar->width();
+            m_maxWidth += m_vBar->width();
     }
 
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
@@ -161,63 +170,65 @@ void RenderListBox::calcMinMaxWidth()
     setMinMaxKnown();
 }
 
-const int minSize = 4;
-const int minDefaultSize = 10;
 int RenderListBox::size() const
 {
-    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
-    int specifiedSize = select->size();
+    int specifiedSize = static_cast<HTMLSelectElement*>(node())->size();
     if (specifiedSize > 1)
         return max(minSize, specifiedSize);
+    return min(max(minSize, numItems()), maxDefaultSize);
+}
 
-    return min(max(numItems(), minSize), minDefaultSize);
+int RenderListBox::numVisibleItems() const
+{
+    // Only count fully visible rows. But don't return 0 even if only part of a row shows.
+    return max(1, (height() + rowSpacing) / itemHeight());
 }
 
 int RenderListBox::numItems() const
 {
-    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
-    return select->listItems().size();
+    return static_cast<HTMLSelectElement*>(node())->listItems().size();
+}
+
+int RenderListBox::listHeight() const
+{
+    return itemHeight() * numItems() - rowSpacing;
 }
 
 void RenderListBox::calcHeight()
 {
     int toAdd = paddingTop() + paddingBottom() + borderTop() + borderBottom();
-
-    int itemHeight = style()->font().height() + optionsSpacingMiddle;
-    m_height = itemHeight * size() + toAdd;
+ 
+    int itemHeight = RenderListBox::itemHeight();
+    m_height = itemHeight * size() - rowSpacing + toAdd;
     
     RenderBlock::calcHeight();
     
     if (m_vBar) {
-        m_vBar->setEnabled(size() < numItems());
-        m_vBar->setSteps(itemHeight, itemHeight);
-        m_vBar->setProportion(m_height - toAdd, itemHeight * numItems());
+        m_vBar->setEnabled(numVisibleItems() < numItems());
+        m_vBar->setSteps(1, min(1, numVisibleItems() - 1));
+        m_vBar->setProportion(numVisibleItems(), numItems());
     }
 }
 
-const int baselineAdjustment = 7;
 short RenderListBox::baselinePosition(bool b, bool isRootLineBox) const
 {
-    // FIXME: This hardcoded baselineAdjustment is what we used to do for the old widget, but I'm not sure this is right for the new control.
     return height() + marginTop() + marginBottom() - baselineAdjustment;
 }
 
 IntRect RenderListBox::itemBoundingBoxRect(int tx, int ty, int index)
 {
     return IntRect(tx + borderLeft() + paddingLeft(),
-                   ty + borderTop() + paddingTop() + ((style()->font().height() + optionsSpacingMiddle) * (index - m_indexOffset)),
-                   contentWidth(),
-                   style()->font().height() + optionsSpacingMiddle);
+                   ty + borderTop() + paddingTop() + itemHeight() * (index - m_indexOffset),
+                   contentWidth(), itemHeight());
 }
     
 void RenderListBox::paintObject(PaintInfo& paintInfo, int tx, int ty)
 {
-    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
-    int listItemsSize = select->listItems().size();
+    int listItemsSize = numItems();
 
     if (paintInfo.phase == PaintPhaseForeground) {
         int index = m_indexOffset;
-        while (index < listItemsSize && index < m_indexOffset + size()) {
+        while (index < listItemsSize && index <= m_indexOffset + numVisibleItems()) {
             paintItemForeground(paintInfo, tx, ty, index);
             index++;
         }
@@ -228,7 +239,7 @@ void RenderListBox::paintObject(PaintInfo& paintInfo, int tx, int ty)
 
     if (paintInfo.phase == PaintPhaseBlockBackground) {
         int index = m_indexOffset;
-        while (index < listItemsSize && index < m_indexOffset + size()) {
+        while (index < listItemsSize && index <= m_indexOffset + numVisibleItems()) {
             paintItemBackground(paintInfo, tx, ty, index);
             index++;
         }
@@ -327,7 +338,7 @@ bool RenderListBox::isPointInScrollbar(HitTestResult& result, int _x, int _y, in
                    height() + borderTopExtra() + borderBottomExtra() - borderTop() - borderBottom());
 
     if (vertRect.contains(_x, _y)) {
-        result.setScrollbar(m_vBar->isWidget() ? static_cast<PlatformScrollbar*>(m_vBar) : 0);
+        result.setScrollbar(m_vBar->isWidget() ? static_cast<PlatformScrollbar*>(m_vBar.get()) : 0);
         return true;
     }
     return false;
@@ -335,12 +346,9 @@ bool RenderListBox::isPointInScrollbar(HitTestResult& result, int _x, int _y, in
 
 int RenderListBox::listIndexAtOffset(int offsetX, int offsetY)
 {
-    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
-    const Vector<HTMLElement*>& listItems = select->listItems();
-
-    if ((int)listItems.size() > 0) {
-        int newOffset = max(0, offsetY / (style()->font().height() + optionsSpacingMiddle)) + m_indexOffset;
-        newOffset = max(0, min((int)listItems.size() - 1, newOffset));
+    if (numItems() > 0) {
+        int newOffset = max(0, offsetY / itemHeight()) + m_indexOffset;
+        newOffset = min(max(0, newOffset), numItems() - 1);
         int scrollbarWidth = m_vBar ? m_vBar->width() : 0;
         if (offsetX >= borderLeft() + paddingLeft() && offsetX < absoluteBoundingBoxRect().width() - borderRight() - paddingRight() - scrollbarWidth)
             return newOffset;
@@ -360,9 +368,9 @@ void RenderListBox::autoscroll()
     int offsetY = pos.y() - ry;
     
     int endIndex = -1;
-    int rows = size();
+    int rows = numVisibleItems();
     int offset = m_indexOffset;
-    if (offsetY <  0 && scrollToRevealElementAtListIndex(offset - 1))
+    if (offsetY < 0 && scrollToRevealElementAtListIndex(offset - 1))
         endIndex = offset - 1;
     else if (offsetY > absoluteBoundingBoxRect().height() && scrollToRevealElementAtListIndex(offset + rows))
         endIndex = offset + rows - 1;
@@ -381,36 +389,30 @@ void RenderListBox::autoscroll()
 
 void RenderListBox::stopAutoscroll()
 {
-    if ( HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node()))
-        select->listBoxOnChange();
+    static_cast<HTMLSelectElement*>(node())->listBoxOnChange();
 }
 
 bool RenderListBox::scrollToRevealElementAtListIndex(int index)
-{
-    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
-    const Vector<HTMLElement*>& listItems = select->listItems();
-    
-    if (index < 0 || index > (int)listItems.size() - 1 || listIndexIsVisible(index))
+{    
+    if (index < 0 || index >= numItems() || listIndexIsVisible(index))
         return false;
 
     int newOffset;
     if (index < m_indexOffset)
         newOffset = index;
     else
-        newOffset = index - size() + 1;
+        newOffset = index - numVisibleItems() + 1;
 
-    if (m_vBar) {
-        IntRect rect = absoluteBoundingBoxRect();
-        m_vBar->setValue(itemBoundingBoxRect(rect.x(), rect.y(), newOffset + m_indexOffset).y() - rect.y());
-    }
     m_indexOffset = newOffset;
-    
+    if (m_vBar)
+        m_vBar->setValue(m_indexOffset);
+
     return true;
 }
 
 bool RenderListBox::listIndexIsVisible(int index)
 {    
-    return index >= m_indexOffset && index < m_indexOffset + size();
+    return index >= m_indexOffset && index < m_indexOffset + numVisibleItems();
 }
 
 bool RenderListBox::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
@@ -427,20 +429,18 @@ void RenderListBox::valueChanged(unsigned listIndex)
 
 void RenderListBox::valueChanged(Scrollbar*)
 {
-    if (m_vBar) {
-        int newOffset = max(0, m_vBar->value() / (style()->font().height() + optionsSpacingMiddle));
-        if (newOffset != m_indexOffset) {
-            m_indexOffset = newOffset;
-            repaint();
-            // Fire the scroll DOM event.
-            EventTargetNodeCast(node())->dispatchHTMLEvent(scrollEvent, true, false);
-        }
+    int newOffset = m_vBar->value();
+    if (newOffset != m_indexOffset) {
+        m_indexOffset = newOffset;
+        repaint();
+        // Fire the scroll DOM event.
+        EventTargetNodeCast(node())->dispatchHTMLEvent(scrollEvent, true, false);
     }
 }
 
 int RenderListBox::itemHeight() const
 {
-    return style()->font().height() + optionsSpacingMiddle;
+    return style()->font().height() + rowSpacing;
 }
 
 int RenderListBox::verticalScrollbarWidth() const
@@ -458,9 +458,7 @@ int RenderListBox::scrollWidth() const
 
 int RenderListBox::scrollHeight() const
 {
-    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
-    const Vector<HTMLElement*>& listItems = select->listItems();
-    return max(clientHeight(), (int)listItems.size() * itemHeight());
+    return max(clientHeight(), listHeight());
 }
 
 int RenderListBox::scrollLeft() const
@@ -479,29 +477,19 @@ int RenderListBox::scrollTop() const
 
 void RenderListBox::setScrollTop(int newTop)
 {
-    // Determine an index and scroll to it.
-    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
-    const Vector<HTMLElement*>& listItems = select->listItems();
-    
+    // Determine an index and scroll to it.    
     int index = newTop / itemHeight();
-    if (index < 0 || index > (int)listItems.size() - 1 || listIndexIsVisible(index))
+    if (index < 0 || index >= numItems() || index == m_indexOffset)
         return;
-
-    int newOffset = index;
-  
-    if (m_vBar) {
-        IntRect rect = absoluteBoundingBoxRect();
-        m_vBar->setValue(itemBoundingBoxRect(rect.x(), rect.y(), newOffset + m_indexOffset).y() - rect.y());
-    }
-    m_indexOffset = newOffset;
+    m_indexOffset = index;
+    if (m_vBar)
+        m_vBar->setValue(index);
 }
 
 IntRect RenderListBox::controlClipRect(int tx, int ty) const
 {
     // Clip to the padding box, since we have a scrollbar inside the padding box.
-    return IntRect(tx + borderLeft(), 
-                   ty + borderTop(),
-                   clientWidth(), clientHeight());
+    return IntRect(tx + borderLeft(), ty + borderTop(), clientWidth(), clientHeight());
 }
 
 IntRect RenderListBox::windowClipRect() const

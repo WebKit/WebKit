@@ -377,7 +377,7 @@ input:-webkit-autofill {
 
 input[type="radio"], input[type="checkbox"] {
     margin: 3px 0.5ex;
-    -webkit-user-select: ignore
+    -webkit-user-select: ignore;
     padding: initial;
     background-color: initial;
     border: initial;
