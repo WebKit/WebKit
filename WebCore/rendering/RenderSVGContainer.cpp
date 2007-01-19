@@ -161,9 +161,10 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
             paintInfo.context->concatCTM(AffineTransform().translate(origin.x(), origin.y()));
         parentX = parentY = 0;
     } else {
-        // Only the root <svg> element should need any translations using the HTML system
-        ASSERT(parentX == 0);
-        ASSERT(parentY == 0);
+        // Only the root <svg> element should need any translations using the HTML/CSS system
+        // parentX, parentY are also non-zero for first-level kids of these
+        // CSS-transformed <svg> root-elements (due to RenderBox::paint) for any other element
+        // they should be 0.   m_x, m_y should always be 0 for non-root svg containers
         ASSERT(m_x == 0);
         ASSERT(m_y == 0);
     }
