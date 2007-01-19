@@ -1,3 +1,9 @@
+2007-01-19  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by NOBODY (no-svg build fix).
+
+        * ksvg2/svg/SVGMPathElement.cpp: Added #ifdef SVG_SUPPORT/#endif guards.
+
 2007-01-19  Anders Carlsson  <acarlsson@apple.com>
         
         Build fix.
