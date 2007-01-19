@@ -1,3 +1,14 @@
+2007-01-19  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Test for <rdar://problem/4760280> REGRESSION: Bottom portion of text hangs off edge of SELECT element at http://macreviewzone.com/index.php
+
+        * fast/forms/control-restrict-line-height-expected.checksum: Added.
+        * fast/forms/control-restrict-line-height-expected.png: Added.
+        * fast/forms/control-restrict-line-height-expected.txt: Added.
+        * fast/forms/control-restrict-line-height.html: Added.
+
 2007-01-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

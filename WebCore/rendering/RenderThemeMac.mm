@@ -352,6 +352,9 @@ void RenderThemeMac::setFontFromControlSize(CSSStyleSelector* selector, RenderSt
     fontDescription.setComputedSize([font pointSize]);
     fontDescription.setSpecifiedSize([font pointSize]);
 
+    // Reset line height
+    style->setLineHeight(RenderStyle::initialLineHeight());
+
     if (style->setFontDescription(fontDescription))
         style->font().update();
 }
