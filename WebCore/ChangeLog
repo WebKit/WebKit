@@ -1,3 +1,21 @@
+2007-01-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by rwlbuis.
+
+        Implement better parsing for keyTimes, keySplines and keyPoints.
+
+        Unfortunately none of this code is used much yet, thus isn't very testable.
+
+        * ksvg2/svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::parseMappedAttribute):
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::parseKeyNumbers):
+        (WebCore::parseKeySplines):
+        (WebCore::SVGAnimationElement::parseMappedAttribute):
+        * ksvg2/svg/SVGAnimationElement.h:
+        * ksvg2/svg/SVGNumberList.cpp:
+        (WebCore::SVGNumberList::parse):
+
 2007-01-18  Adam Roben  <aroben@apple.com>
 
         Reviewed by Beth.

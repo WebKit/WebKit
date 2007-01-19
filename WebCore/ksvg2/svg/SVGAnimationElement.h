@@ -137,6 +137,8 @@ namespace WebCore {
         virtual bool handleStartCondition() = 0;
         virtual void updateLastValueWithCurrent() { } // See bug 12075 for explaination of why this is a bad API
         virtual void resetValues() { }
+        
+        static void parseKeyNumbers(Vector<float>& keyNumbers, const String& value);
 
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
 
@@ -169,8 +171,13 @@ namespace WebCore {
         double m_repeatCount;
 
         RefPtr<SVGStringList> m_values;
-        RefPtr<SVGStringList> m_keyTimes;
-        RefPtr<SVGStringList> m_keySplines;
+        Vector<float> m_keyTimes;
+        
+        struct KeySpline {
+            FloatPoint control1;
+            FloatPoint control2;
+        };
+        Vector<KeySpline> m_keySplines;
     };
 
 } // namespace WebCore

@@ -28,6 +28,7 @@
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "TimeScheduler.h"
+#include "SVGParserUtilities.h"
 #include "SVGSVGElement.h"
 #include "SVGURIReference.h"
 #include "XLinkNames.h"
@@ -113,6 +114,53 @@ double SVGAnimationElement::getCurrentTime() const
 double SVGAnimationElement::getSimpleDuration(ExceptionCode&) const
 {
     return m_simpleDuration;
+}
+
+void SVGAnimationElement::parseKeyNumbers(Vector<float>& keyNumbers, const String& value)
+{
+    double number = 0.f;
+    
+    const UChar* ptr = value.characters();
+    const UChar* end = ptr + value.length();
+    skipOptionalSpaces(ptr, end);
+    while (ptr < end) {
+        if (!parseNumber(ptr, end, number, false))
+            return;
+        keyNumbers.append(number);
+        
+        if (!(skipOptionalSpaces(ptr, end) && *ptr == ';'))
+            return;
+        skipOptionalSpaces(ptr, end);
+    }
+}
+
+static void parseKeySplines(Vector<SVGAnimationElement::KeySpline>& keySplines, const String& value)
+{
+    double number = 0.f;
+    SVGAnimationElement::KeySpline keySpline;
+    
+    const UChar* ptr = value.characters();
+    const UChar* end = ptr + value.length();
+    skipOptionalSpaces(ptr, end);
+    while (ptr < end) {
+        if (!(parseNumber(ptr, end, number, false) && skipOptionalSpaces(ptr, end)))
+            return;
+        keySpline.control1.setX(number);
+        if (!(parseNumber(ptr, end, number, false) && skipOptionalSpaces(ptr, end)))
+            return;
+        keySpline.control1.setY(number);
+        if (!(parseNumber(ptr, end, number, false) && skipOptionalSpaces(ptr, end)))
+            return;
+        keySpline.control2.setX(number);
+        if (!parseNumber(ptr, end, number, false))
+            return;
+        keySpline.control2.setY(number);
+        keySplines.append(keySpline);
+        
+        if (!(skipOptionalSpaces(ptr, end) && *ptr == ';'))
+            return;
+        skipOptionalSpaces(ptr, end);
+    }
 }
 
 void SVGAnimationElement::parseMappedAttribute(MappedAttribute* attr)
@@ -228,11 +276,11 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute* attr)
         m_values = new SVGStringList();
         m_values->parse(value, ';');
     } else if (attr->name() == SVGNames::keyTimesAttr) {
-        m_keyTimes = new SVGStringList();
-        m_keyTimes->parse(value, ';');
+        m_keyTimes.clear();
+        parseKeyNumbers(m_keyTimes, value);
     } else if (attr->name() == SVGNames::keySplinesAttr) {
-        m_keySplines = new SVGStringList();
-        m_keySplines->parse(value, ';');
+        m_keySplines.clear();
+        parseKeySplines(m_keySplines, value);
     } else if (attr->name() == SVGNames::fromAttr)
         m_from = value;
     else if (attr->name() == SVGNames::toAttr)

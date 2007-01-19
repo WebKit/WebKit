@@ -58,9 +58,10 @@ void SVGAnimateMotionElement::parseMappedAttribute(MappedAttribute* attr)
             m_angle = value.toDouble();
         }
     } else if (name == SVGNames::keyPointsAttr) {
-        // FIXME: not implemented
+        m_keyPoints.clear();
+        parseKeyNumbers(m_keyPoints, value);
     } else if (name == SVGNames::dAttr) {
-        // FIXME: This dummy object is neccessary until path parsing is untangled from SVGPathElement
+        // FIXME: This dummy object is necessary until path parsing is untangled from SVGPathElement, see bug 12122
         RefPtr<SVGPathElement> dummyPath = new SVGPathElement(SVGNames::pathTag, document());
         if (dummyPath->parseSVG(attr->value(), true))
             m_path = dummyPath->toPathData();

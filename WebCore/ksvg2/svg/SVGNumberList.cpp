@@ -46,6 +46,7 @@ void SVGNumberList::parse(const String& value)
    
     const UChar* ptr = value.characters();
     const UChar* end = ptr + value.length();
+    // The spec strangely doesn't allow leading whitespace.  We might chose to violate that intentionally. (section 4.1)
     while (ptr < end) {
         if (!parseNumber(ptr, end, number))
             return;
