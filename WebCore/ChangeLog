@@ -1,3 +1,16 @@
+2007-01-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=11853
+        REGRESSION (r17352): Whitespace in <title> is rendered
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::canonicalizedTitle): Changed to also collapse internal
+        whitespace.  This required removing an optimization that is no
+        longer possible.
+        * manual-tests/title-internal-whitespace.html: Added.
+
 2007-01-18  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.

@@ -48,48 +48,46 @@
 namespace WebCore {
 
 /*
- * Performs three operations:
+ * Performs four operations:
  *  1. Convert backslashes to currency symbols
  *  2. Convert control characters to spaces
  *  3. Trim leading and trailing spaces
+ *  4. Collapse internal whitespace.
  */
 static inline String canonicalizedTitle(const String& title, Frame* frame)
 {
     ASSERT(!title.isEmpty());
-    
+
     const UChar* characters = title.characters();
     unsigned length = title.length();
     unsigned i;
-    
-    // Find the first non-canonical character
-    for (i = 0; i < length; ++i) {
-        UChar c = characters[i];
-        if (c < 0x20 || c == 0x7F || c == '\\')
-            break;
-    }
-
-    // Optimization for titles that have no non-canonical characters and no leading or trailing spaces
-    if (i == length && characters[0] != ' ' && characters[length - 1] != ' ')
-        return title;
 
     Vector<UChar> stringBuilder(length);
     unsigned builderIndex = 0;
-    
+
     // Skip leading spaces and leading characters that would convert to spaces
     for (i = 0; i < length; ++i) {
         UChar c = characters[i];
         if (!(c <= 0x20 || c == 0x7F))
             break;
     }
-    
-    // Replace control characters with spaces, and backslashes with currency symbols
+
+    // Replace control characters with spaces, and backslashes with currency symbols, and collapse whitespace.
+    bool previousCharWasWS = false;
     for (; i < length; ++i) {
         UChar c = characters[i];
-        if (c < 0x20 || c == 0x7F)
-            c = ' ';
-        else if (c == '\\')
-            c = frame->backslashAsCurrencySymbol();
-        stringBuilder[builderIndex++] = c;
+        if (c <= 0x20 || c == 0x7F) {
+            if (previousCharWasWS)
+                continue;
+            stringBuilder[builderIndex++] = ' ';
+            previousCharWasWS = true;
+        } else if (c == '\\') {
+            stringBuilder[builderIndex++] = frame->backslashAsCurrencySymbol();
+            previousCharWasWS = false;
+        } else {
+            stringBuilder[builderIndex++] = c;
+            previousCharWasWS = false;
+        }
     }
 
     // Strip trailing spaces
@@ -98,10 +96,10 @@ static inline String canonicalizedTitle(const String& title, Frame* frame)
         if (stringBuilder[builderIndex] != ' ')
             break;
     }
-    
-    if (builderIndex == 0 && stringBuilder[builderIndex] == ' ')
+
+    if (!builderIndex && stringBuilder[builderIndex] == ' ')
         return "";
-    
+
     stringBuilder.resize(builderIndex + 1);
     return String::adopt(stringBuilder);
 }
