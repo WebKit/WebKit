@@ -1,3 +1,50 @@
+2007-01-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Update svg baseline after <use> rewrite.
+
+        * svg/W3C-SVG-1.1/text-text-04-t-expected.png:
+        * svg/W3C-SVG-1.1/text-text-04-t-expected.txt:
+        * svg/carto.net/button-expected.png:
+        * svg/carto.net/button-expected.txt:
+        * svg/carto.net/colourpicker-expected.png:
+        * svg/carto.net/colourpicker-expected.txt:
+        * svg/carto.net/slider-expected.png:
+        * svg/carto.net/slider-expected.txt:
+        * svg/carto.net/window-expected.png:
+        * svg/carto.net/window-expected.txt:
+        * svg/custom/use-forward-refs-expected.png:
+        * svg/custom/use-forward-refs-expected.txt:
+        * svg/custom/use-instanceRoot-modifications-expected.checksum: Added.
+        * svg/custom/use-instanceRoot-modifications-expected.png: Added.
+        * svg/custom/use-instanceRoot-modifications-expected.txt: Added.
+        * svg/custom/use-instanceRoot-modifications.svg: Added.
+        * svg/custom/use-on-g-expected.checksum: Added.
+        * svg/custom/use-on-g-expected.png: Added.
+        * svg/custom/use-on-g-expected.txt: Added.
+        * svg/custom/use-on-g.svg: Added.
+        * svg/custom/use-on-rect-expected.checksum: Added.
+        * svg/custom/use-on-rect-expected.png: Added.
+        * svg/custom/use-on-rect-expected.txt: Added.
+        * svg/custom/use-on-rect.svg: Added.
+        * svg/custom/use-on-symbol-expected.checksum: Added.
+        * svg/custom/use-on-symbol-expected.png: Added.
+        * svg/custom/use-on-symbol-expected.txt: Added.
+        * svg/custom/use-on-symbol-inside-pattern-expected.checksum: Added.
+        * svg/custom/use-on-symbol-inside-pattern-expected.png: Added.
+        * svg/custom/use-on-symbol-inside-pattern-expected.txt: Added.
+        * svg/custom/use-on-symbol-inside-pattern.svg: Added.
+        * svg/custom/use-on-symbol.svg: Added.
+        * svg/custom/use-on-text-expected.checksum: Added.
+        * svg/custom/use-on-text-expected.png: Added.
+        * svg/custom/use-on-text-expected.txt: Added.
+        * svg/custom/use-on-text.svg: Added.
+        * svg/custom/use-transform-expected.checksum: Added.
+        * svg/custom/use-transform-expected.png: Added.
+        * svg/custom/use-transform-expected.txt: Added.
+        * svg/custom/use-transform.svg: Added.
+
 2007-01-18  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.

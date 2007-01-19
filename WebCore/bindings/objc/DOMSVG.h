@@ -53,6 +53,8 @@
 #import <WebCore/DOMSVGDescElement.h>
 #import <WebCore/DOMSVGDocument.h>
 #import <WebCore/DOMSVGElement.h>
+#import <WebCore/DOMSVGElementInstance.h>
+#import <WebCore/DOMSVGElementInstanceList.h>
 #import <WebCore/DOMSVGEllipseElement.h>
 #import <WebCore/DOMSVGException.h>
 #import <WebCore/DOMSVGExternalResourcesRequired.h>

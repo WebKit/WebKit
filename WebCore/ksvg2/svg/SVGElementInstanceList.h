@@ -1,6 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+    Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
 
     This file is part of the KDE project
 
@@ -25,18 +24,21 @@
 
 #ifdef SVG_SUPPORT
 
+#include "Shared.h"
 #include "SVGElementInstance.h"
-#include "SVGList.h"
 
-namespace WebCore
-{
-    class SVGElementInstanceList : public SVGList<RefPtr<SVGElementInstance> >
-    {
+namespace WebCore {
+    class SVGElementInstanceList : public Shared<SVGElementInstanceList> {
     public:
-        SVGElementInstanceList();
+        SVGElementInstanceList(PassRefPtr<SVGElementInstance> rootInstance);
         virtual ~SVGElementInstanceList();
-    };
 
+        unsigned int length() const;
+        RefPtr<SVGElementInstance> item(unsigned int index);
+
+    private:
+        RefPtr<SVGElementInstance> m_rootInstance;
+    };
 } // namespace WebCore
 
 #endif // SVG_SUPPORT

@@ -102,6 +102,8 @@ void SVGImageElement::notifyAttributeChange() const
 {
     if (!ownerDocument()->parsing())
         rebuildRenderer();
+
+    SVGStyledElement::notifyAttributeChange();
 }
 
 RenderObject* SVGImageElement::createRenderer(RenderArena* arena, RenderStyle* style)

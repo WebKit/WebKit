@@ -1,6 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+    Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
 
     This file is part of the KDE project
 
@@ -27,13 +26,37 @@
 
 namespace WebCore {
 
-SVGElementInstanceList::SVGElementInstanceList()
-    : SVGList<RefPtr<SVGElementInstance> >()
+SVGElementInstanceList::SVGElementInstanceList(PassRefPtr<SVGElementInstance> rootInstance)
+    : m_rootInstance(rootInstance)
 {
 }
 
 SVGElementInstanceList::~SVGElementInstanceList()
 {
+}
+
+unsigned int SVGElementInstanceList::length() const
+{
+    // NOTE: We could use the same caching facilities, "ChildNodeList" uses.
+    unsigned length = 0;
+    SVGElementInstance* instance;
+    for (instance = m_rootInstance->firstChild(); instance; instance = instance->nextSibling())
+        length++;
+
+    return length;
+}
+
+RefPtr<SVGElementInstance> SVGElementInstanceList::item(unsigned int index)
+{
+    unsigned int pos = 0;
+    SVGElementInstance* instance = m_rootInstance->firstChild();
+
+    while (instance && pos < index) {
+        instance = instance->nextSibling();
+        pos++;
+    }
+
+    return instance;
 }
 
 }

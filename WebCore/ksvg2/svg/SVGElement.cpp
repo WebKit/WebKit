@@ -35,6 +35,7 @@
 #include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
+#include "SVGURIReference.h"
 #include "XMLNames.h"
 
 namespace WebCore {
@@ -177,6 +178,27 @@ bool SVGElement::childShouldCreateRenderer(Node* child) const
     if (child->isSVGElement())
         return static_cast<SVGElement*>(child)->isValid();
     return false;
+}
+
+void SVGElement::insertedIntoDocument()
+{
+    StyledElement::insertedIntoDocument();
+    SVGDocumentExtensions* extensions = document()->accessSVGExtensions();
+
+    String resourceId = SVGURIReference::getTarget(id());
+    if (extensions->isPendingResource(resourceId)) {
+        HashSet<SVGStyledElement*>* clients = extensions->removePendingResource(resourceId);
+        if (!clients || clients->isEmpty())
+            return;
+
+        HashSet<SVGStyledElement*>::const_iterator it = clients->begin();
+        const HashSet<SVGStyledElement*>::const_iterator end = clients->end();
+
+        for (; it != end; ++it)
+            (*it)->buildPendingResource();
+
+        SVGResource::repaintClients(*clients);
+    }
 }
 
 }

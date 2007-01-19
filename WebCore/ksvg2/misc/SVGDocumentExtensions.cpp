@@ -94,25 +94,25 @@ void SVGDocumentExtensions::unpauseAnimations()
 
 void SVGDocumentExtensions::reportWarning(const String& message)
 {
-    if (Page* page = m_doc->frame()->page()) {
+    if (Page* page = m_doc->frame()->page())
         page->chrome()->addMessageToConsole("Warning: " + message, m_doc->tokenizer() ? m_doc->tokenizer()->lineNumber() : 1, String());
-    }
 }
 
 void SVGDocumentExtensions::reportError(const String& message)
 {
-    if (Page* page = m_doc->frame()->page()) {
+    if (Page* page = m_doc->frame()->page())
         page->chrome()->addMessageToConsole("Error: " + message, m_doc->tokenizer() ? m_doc->tokenizer()->lineNumber() : 1, String());
-    }
 }
 
 void SVGDocumentExtensions::addPendingResource(const AtomicString& id, SVGStyledElement* obj)
 {
+    ASSERT(obj);
+
     if (m_pendingResources.contains(id))
-        m_pendingResources.get(id).add(obj);
+        m_pendingResources.get(id)->add(obj);
     else {
-        HashSet<SVGStyledElement*> set;
-        set.add(obj);
+        HashSet<SVGStyledElement*>* set = new HashSet<SVGStyledElement*>();
+        set->add(obj);
 
         m_pendingResources.add(id, set);
     }
@@ -120,16 +120,50 @@ void SVGDocumentExtensions::addPendingResource(const AtomicString& id, SVGStyled
 
 bool SVGDocumentExtensions::isPendingResource(const AtomicString& id) const
 {
+    if (id.isEmpty())
+        return false;
+
     return m_pendingResources.contains(id);
 }
 
-HashSet<SVGStyledElement*> SVGDocumentExtensions::removePendingResource(const AtomicString& id)
+HashSet<SVGStyledElement*>* SVGDocumentExtensions::removePendingResource(const AtomicString& id)
 {
     ASSERT(m_pendingResources.contains(id));
 
-    HashSet<SVGStyledElement*> set = m_pendingResources.get(id);
+    HashSet<SVGStyledElement*>* set = m_pendingResources.get(id);
     m_pendingResources.remove(id);
     return set;
+}
+
+void SVGDocumentExtensions::mapInstanceToElement(SVGElementInstance* instance, SVGElement* element)
+{
+    ASSERT(instance);
+    ASSERT(element);
+
+    if (m_elementInstances.contains(element))
+        m_elementInstances.get(element)->add(instance);
+    else {
+        HashSet<SVGElementInstance*>* set = new HashSet<SVGElementInstance*>();;
+        set->add(instance);
+
+        m_elementInstances.add(element, set);
+    }
+}
+
+void SVGDocumentExtensions::removeInstanceMapping(SVGElementInstance* instance, SVGElement* element)
+{
+    ASSERT(instance);
+
+    if (!m_elementInstances.contains(element))
+        return;
+
+    m_elementInstances.get(element)->remove(instance);
+}
+
+HashSet<SVGElementInstance*>* SVGDocumentExtensions::instancesForElement(SVGElement* element) const
+{
+    ASSERT(element);
+    return m_elementInstances.get(element);
 }
 
 }

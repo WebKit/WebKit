@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGGElement.h"
 
@@ -56,24 +57,8 @@ RenderObject* SVGGElement::createRenderer(RenderArena* arena, RenderStyle* style
     return new (arena) RenderSVGContainer(this);
 }
 
-// Helper class for <use> support
-SVGDummyElement::SVGDummyElement(const QualifiedName& tagName, Document* doc)
-    : SVGGElement(tagName, doc)
-    ,  m_localName("dummy")
-{
 }
 
-SVGDummyElement::~SVGDummyElement()
-{
-}
-
-const AtomicString& SVGDummyElement::localName() const
-{
-    return m_localName;
-}
-
-}
-
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

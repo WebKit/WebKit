@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -33,7 +33,9 @@
 
 namespace WebCore
 {
+    class SVGElementInstance;
     class SVGLength;
+
     class SVGUseElement : public SVGStyledTransformableElement,
                           public SVGTests,
                           public SVGLangSpace,
@@ -43,16 +45,20 @@ namespace WebCore
     public:
         SVGUseElement(const QualifiedName&, Document*);
         virtual ~SVGUseElement();
-        
+
+        SVGElementInstance* instanceRoot() const;
+        SVGElementInstance* animatedInstanceRoot() const;
+
         virtual bool isValid() const { return SVGTests::isValid(); }
 
         // Derived from: 'Element'
         virtual bool hasChildNodes() const;
-
-        virtual void closeRenderer();
+        virtual void insertedIntoDocument();
+        virtual void buildPendingResource();
 
         // 'SVGUseElement' functions
         virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void notifyAttributeChange() const;
 
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
@@ -68,6 +74,13 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGUseElement, SVGLength, SVGLength, Y, y)
         ANIMATED_PROPERTY_DECLARATIONS(SVGUseElement, SVGLength, SVGLength, Width, width)
         ANIMATED_PROPERTY_DECLARATIONS(SVGUseElement, SVGLength, SVGLength, Height, height)
+
+    private:
+        void recursiveShadowTreeBuilder(SVGElement* target, SVGElement* clonedTarget, SVGElementInstance* targetInstance);
+        void buildShadowTree(SVGElement* target);
+        void addShadowTree(SVGElement* target, bool onlyAddChildren = false);
+
+        RefPtr<SVGElementInstance> m_targetElementInstance;
     };
 
 } // namespace WebCore
@@ -76,3 +89,4 @@ namespace WebCore
 #endif
 
 // vim:ts=4:noet
+

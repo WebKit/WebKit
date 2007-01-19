@@ -211,6 +211,9 @@ namespace WebCore {
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }
         virtual bool childShouldCreateRenderer(Node*) const;
 
+        virtual void insertedIntoDocument();
+        virtual void buildPendingResource() { }
+
         void sendSVGLoadEventIfPossible(bool sendParentLoadEvents = false);
 
         // Forwarded properties (declared/defined anywhere else in the inheritance structure)

@@ -170,6 +170,8 @@
 #import "DOMSVGDescElementInternal.h"
 #import "DOMSVGDocumentInternal.h"
 #import "DOMSVGElementInternal.h"
+#import "DOMSVGElementInstanceInternal.h"
+#import "DOMSVGElementInstanceListInternal.h"
 #import "DOMSVGEllipseElementInternal.h"
 #import "DOMSVGFEBlendElementInternal.h"
 #import "DOMSVGFEColorMatrixElementInternal.h"

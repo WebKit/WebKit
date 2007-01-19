@@ -58,15 +58,11 @@ namespace WebCore
         // 'SVGPatternElement' functions
         virtual void parseMappedAttribute(MappedAttribute*);
 
-        const SVGStyledElement* pushAttributeContext(const SVGStyledElement*);
-
         virtual void notifyAttributeChange() const;
 
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
         virtual SVGResource* canvasResource();
-
-        virtual void insertedIntoDocument();
 
     protected:
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)

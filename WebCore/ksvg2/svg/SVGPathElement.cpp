@@ -293,6 +293,8 @@ void SVGPathElement::notifyAttributeChange() const
 {
     if (!ownerDocument()->parsing())
         rebuildRenderer();
+
+    SVGStyledElement::notifyAttributeChange();
 }
 
 SVGPathSegList* SVGPathElement::pathSegList() const

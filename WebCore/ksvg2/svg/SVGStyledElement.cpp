@@ -34,6 +34,7 @@
 #include "RenderView.h"
 #include "RenderPath.h"
 #include "SVGElement.h"
+#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
 #include "SVGSVGElement.h"
@@ -180,7 +181,39 @@ void SVGStyledElement::parseMappedAttribute(MappedAttribute* attr)
 
 void SVGStyledElement::notifyAttributeChange() const
 {
-    // no-op
+    SVGDocumentExtensions* extensions = document()->accessSVGExtensions();
+    if (!extensions)
+        return;
+
+    // In case we're referenced by a <use> element, we have element instances registered
+    // to us in the SVGDocumentExtensions. If notifyAttributeChange() is called, we need
+    // to recursively update all children including ourselves.
+    updateElementInstance(extensions);
+}
+
+void SVGStyledElement::updateElementInstance(SVGDocumentExtensions* extensions) const
+{
+    SVGStyledElement* nonConstThis = const_cast<SVGStyledElement*>(this);
+    HashSet<SVGElementInstance*>* set = extensions->instancesForElement(nonConstThis);
+    if (!set || set->isEmpty())
+        return;
+
+    HashSet<SVGElementInstance*>::const_iterator it = set->begin();
+    const HashSet<SVGElementInstance*>::const_iterator end = set->end();
+
+    for (; it != end; ++it)
+        (*it)->updateInstance(nonConstThis);
+
+    if (hasChildNodes()) {
+        for (Node* child = firstChild(); child; child = child->nextSibling()) {
+            SVGElement* element = svg_dynamic_cast(child);
+            if (!element || !element->isStyled())
+                continue;
+
+            SVGStyledElement* styled = static_cast<SVGStyledElement*>(element);
+            styled->updateElementInstance(extensions);
+        }
+    }
 }
 
 void SVGStyledElement::attributeChanged(Attribute* attr, bool preserveDecls)

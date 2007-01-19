@@ -1,3 +1,111 @@
+2007-01-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=10410 (SVG Slider example renders completely wrong (inserting <use> dynamically doesn't work))
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=11660 (SVG: creation of <use/> elements through scripting/DOM doesn't work)
+
+        Added test: svg/custom/use-instanceRoot-modifications.svg
+        Added test: svg/custom/use-on-g.svg
+        Added test: svg/custom/use-on-rect.svg
+        Added test: svg/custom/use-on-symbol-inside-pattern.svg
+        Added test: svg/custom/use-on-symbol.svg
+        Added test: svg/custom/use-on-text.svg
+        Added test: svg/custom/use-transform.svg
+
+        Fixes: svg/W3C-SVG-1.1/text-text-04-t.svg (missing use elements)
+        Fixes: svg/carto.net/button.svg (image buttons didn't appear)
+        Fixes: svg/carto.net/colourpicker.svg (slider handles finally show up)
+        Fixes: svg/carto.net/slider.svg (slider handles finally show up)
+        Fixes: svg/carto.net/window.svg (window decorations show up) 
+        Fixes: svg/custom/use-forward-refs.svg (missing use elements)
+
+        Rewrite <use> support with a real-shadow tree (as the spec demands), and implement SVGElementInstance.
+        AFAIK we're the first implementing this SVG feature - after ASV3 (!).
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMSVG.h:
+        * ksvg2/misc/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::reportWarning):
+        (WebCore::SVGDocumentExtensions::reportError):
+        (WebCore::SVGDocumentExtensions::addPendingResource):
+        (WebCore::SVGDocumentExtensions::isPendingResource):
+        (WebCore::SVGDocumentExtensions::removePendingResource):
+        (WebCore::SVGDocumentExtensions::mapInstanceToElement):
+        (WebCore::SVGDocumentExtensions::removeInstanceMapping):
+        (WebCore::SVGDocumentExtensions::instancesForElement):
+        * ksvg2/misc/SVGDocumentExtensions.h:
+        * ksvg2/svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::notifyAttributeChange):
+        * ksvg2/svg/SVGElement.cpp:
+        (WebCore::SVGElement::insertedIntoDocument):
+        * ksvg2/svg/SVGElement.h:
+        (WebCore::SVGElement::buildPendingResource):
+        * ksvg2/svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::SVGElementInstance):
+        (WebCore::SVGElementInstance::~SVGElementInstance):
+        (WebCore::SVGElementInstance::clonedElement):
+        (WebCore::SVGElementInstance::correspondingElement):
+        (WebCore::SVGElementInstance::correspondingUseElement):
+        (WebCore::SVGElementInstance::parentNode):
+        (WebCore::SVGElementInstance::childNodes):
+        (WebCore::SVGElementInstance::previousSibling):
+        (WebCore::SVGElementInstance::nextSibling):
+        (WebCore::SVGElementInstance::firstChild):
+        (WebCore::SVGElementInstance::lastChild):
+        (WebCore::SVGElementInstance::appendChild):
+        (WebCore::SVGElementInstance::updateInstance):
+        * ksvg2/svg/SVGElementInstance.h:
+        * ksvg2/svg/SVGElementInstance.idl: Added.
+        * ksvg2/svg/SVGElementInstanceList.cpp:
+        (WebCore::SVGElementInstanceList::SVGElementInstanceList):
+        (WebCore::SVGElementInstanceList::length):
+        (WebCore::SVGElementInstanceList::item):
+        * ksvg2/svg/SVGElementInstanceList.h:
+        * ksvg2/svg/SVGElementInstanceList.idl: Added.
+        * ksvg2/svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::notifyAttributeChange):
+        * ksvg2/svg/SVGGElement.cpp:
+        * ksvg2/svg/SVGGElement.h:
+        (WebCore::SVGGElement::contextElement):
+        * ksvg2/svg/SVGGradientElement.cpp:
+        * ksvg2/svg/SVGGradientElement.h:
+        * ksvg2/svg/SVGHiddenElement.h: Added.
+        (WebCore::SVGHiddenElement::Type):
+        (WebCore::SVGHiddenElement::~SVGHiddenElement):
+        (WebCore::SVGHiddenElement::localName):
+        * ksvg2/svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::notifyAttributeChange):
+        * ksvg2/svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::notifyAttributeChange):
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::notifyAttributeChange):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        * ksvg2/svg/SVGPatternElement.h:
+        * ksvg2/svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::notifyAttributeChange):
+        * ksvg2/svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::notifyAttributeChange):
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::notifyAttributeChange):
+        (WebCore::SVGStyledElement::updateElementInstance):
+        * ksvg2/svg/SVGStyledElement.h:
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::instanceRoot):
+        (WebCore::SVGUseElement::animatedInstanceRoot):
+        (WebCore::SVGUseElement::hasChildNodes):
+        (WebCore::SVGUseElement::insertedIntoDocument):
+        (WebCore::SVGUseElement::buildPendingResource):
+        (WebCore::SVGUseElement::createRenderer):
+        (WebCore::SVGUseElement::buildShadowTree):
+        (WebCore::SVGUseElement::recursiveShadowTreeBuilder):
+        (WebCore::dumpShadowTree):
+        (WebCore::SVGUseElement::addShadowTree):
+        * ksvg2/svg/SVGUseElement.h:
+        * ksvg2/svg/SVGUseElement.idl:
+
 2007-01-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by rwlbuis.

@@ -1,6 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
+    Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
 
     This file is part of the KDE project
 
@@ -22,19 +21,22 @@
 
 #ifndef SVGElementInstance_h
 #define SVGElementInstance_h
+
 #ifdef SVG_SUPPORT
 
-#include "EventTarget.h"
+#include "Shared.h"
 
-namespace WebCore
-{
+#include <wtf/RefPtr.h>
+#include <wtf/PassRefPtr.h>
+
+namespace WebCore {
     class SVGElement;
     class SVGUseElement;
     class SVGElementInstanceList;
-    class SVGElementInstance : public EventTarget
-    {
+
+    class SVGElementInstance : public TreeShared<SVGElementInstance> {
     public:
-        SVGElementInstance();
+        SVGElementInstance(PassRefPtr<SVGUseElement>, PassRefPtr<SVGElement> clonedElement, PassRefPtr<SVGElement> originalElement);
         virtual ~SVGElementInstance();
 
         // 'SVGElementInstance' functions
@@ -42,11 +44,34 @@ namespace WebCore
         SVGUseElement* correspondingUseElement() const;
 
         SVGElementInstance* parentNode() const;
-        SVGElementInstanceList* childNodes() const;
+        PassRefPtr<SVGElementInstanceList> childNodes();
+
         SVGElementInstance* previousSibling() const;
         SVGElementInstance* nextSibling() const;
+
         SVGElementInstance* firstChild() const;
         SVGElementInstance* lastChild() const;
+
+        // Internal usage only!
+        SVGElement* clonedElement() const; 
+ 
+    private: // Helper methods
+        friend class SVGUseElement;
+        void appendChild(PassRefPtr<SVGElementInstance> child);
+
+        friend class SVGStyledElement;
+        void updateInstance(SVGElement*);
+
+    private:
+        RefPtr<SVGUseElement> m_useElement;
+        RefPtr<SVGElement> m_element;
+        RefPtr<SVGElement> m_clonedElement;
+
+        SVGElementInstance* m_previousSibling;
+        SVGElementInstance* m_nextSibling;
+
+        SVGElementInstance* m_firstChild;
+        SVGElementInstance* m_lastChild;
     };
 
 } // namespace WebCore

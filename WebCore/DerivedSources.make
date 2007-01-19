@@ -173,6 +173,8 @@ all : \
     DOMSVGDescElement.h \
     DOMSVGDocument.h \
     DOMSVGElement.h \
+    DOMSVGElementInstance.h \
+    DOMSVGElementInstanceList.h \
     DOMSVGEllipseElement.h \
     DOMSVGExternalResourcesRequired.h \
     DOMSVGFEBlendElement.h \
@@ -457,6 +459,8 @@ all : \
     JSSVGViewElement.h \
     JSSVGPreserveAspectRatio.h \
     JSSVGElement.h \
+    JSSVGElementInstance.h \
+    JSSVGElementInstanceList.h \
     JSSVGSVGElement.h \
     JSSVGEllipseElement.h \
     JSSVGFEBlendElement.h \

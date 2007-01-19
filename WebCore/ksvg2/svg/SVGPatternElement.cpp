@@ -209,16 +209,6 @@ SVGResource* SVGPatternElement::canvasResource()
     return m_resource.get();
 }
 
-void SVGPatternElement::insertedIntoDocument()
-{
-    SVGElement::insertedIntoDocument();
-    SVGDocumentExtensions* extensions = document()->accessSVGExtensions();
-
-    String resourceId = SVGURIReference::getTarget(id());
-    if (extensions->isPendingResource(resourceId))
-        SVGResource::repaintClients(extensions->removePendingResource(resourceId));
-}
-
 PatternAttributes SVGPatternElement::collectPatternProperties() const
 {
     PatternAttributes attributes;

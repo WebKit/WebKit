@@ -112,6 +112,8 @@ void SVGPolyElement::notifyAttributeChange() const
     }
 
     m_ignoreAttributeChanges = false;
+
+    SVGStyledElement::notifyAttributeChange();
 }
 
 }

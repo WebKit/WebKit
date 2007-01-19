@@ -54,7 +54,6 @@ namespace WebCore {
 
         virtual SVGResource* canvasResource();
 
-        virtual void insertedIntoDocument();
         virtual void childrenChanged();
 
     protected:
