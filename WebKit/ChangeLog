@@ -1,5 +1,16 @@
 2007-01-19  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by John Sullivan.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12308
+        REGRESSION(r18910): Crash in WebBaseNetscapePluginStream cancelLoadAndDestroyStreamWithError
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView initWithFrame:pluginPackage:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:DOMElement:]):
+        Move code from initWithFrame in here.
+
+2007-01-19  Anders Carlsson  <acarlsson@apple.com>
+
         Yet another build fix.
         
         * WebCoreSupport/WebChromeClient.h:

@@ -147,42 +147,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 @implementation WebBaseNetscapePluginView
 
-- (id)initWithFrame:(NSRect)frame
-      pluginPackage:(WebNetscapePluginPackage *)thePluginPackage
-                URL:(NSURL *)theURL
-            baseURL:(NSURL *)theBaseURL
-           MIMEType:(NSString *)MIME
-      attributeKeys:(NSArray *)keys
-    attributeValues:(NSArray *)values
-       loadManually:(BOOL)loadManually
-         DOMElement:(DOMElement *)anElement
-{
-    [super initWithFrame:frame];
-    
-    // load the plug-in if it is not already loaded
-    if (![thePluginPackage load]) {
-        [self release];
-        return nil;
-    }
-    [self setPluginPackage:thePluginPackage];
-    
-    element = [anElement retain];
-    
-    sourceURL = [theURL retain];
-    
-    [self setMIMEType:MIME];
-    [self setBaseURL:theBaseURL];
-    [self setAttributeKeys:keys andValues:values];
-    if (loadManually)
-        [self setMode:NP_FULL];
-    else
-        [self setMode:NP_EMBED];
-    
-    _loadManually = loadManually;
-    
-    return self;
-}
-
 + (void)initialize
 {
     WKSendUserChangeNotifications();
@@ -1476,14 +1440,49 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 #pragma mark NSVIEW
 
-- (NSView *)initWithFrame:(NSRect)frame
+- (id)initWithFrame:(NSRect)frame
+      pluginPackage:(WebNetscapePluginPackage *)thePluginPackage
+                URL:(NSURL *)theURL
+            baseURL:(NSURL *)theBaseURL
+           MIMEType:(NSString *)MIME
+      attributeKeys:(NSArray *)keys
+    attributeValues:(NSArray *)values
+       loadManually:(BOOL)loadManually
+         DOMElement:(DOMElement *)anElement
 {
     [super initWithFrame:frame];
-
+ 
     streams = [[NSMutableArray alloc] init];
-    pendingFrameLoads = [[NSMutableDictionary alloc] init];
-
+    pendingFrameLoads = [[NSMutableDictionary alloc] init];    
+    
+    // load the plug-in if it is not already loaded
+    if (![thePluginPackage load]) {
+        [self release];
+        return nil;
+    }
+    [self setPluginPackage:thePluginPackage];
+    
+    element = [anElement retain];
+    
+    sourceURL = [theURL retain];
+    
+    [self setMIMEType:MIME];
+    [self setBaseURL:theBaseURL];
+    [self setAttributeKeys:keys andValues:values];
+    if (loadManually)
+        [self setMode:NP_FULL];
+    else
+        [self setMode:NP_EMBED];
+    
+    _loadManually = loadManually;
+    
     return self;
+}
+
+- (id)initWithFrame:(NSRect)frame
+{
+    ASSERT_NOT_REACHED();
+    return nil;
 }
 
 - (void)freeAttributeKeysAndValues
