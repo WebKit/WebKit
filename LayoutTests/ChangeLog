@@ -2,6 +2,17 @@
 
         Reviewed by Darin.
 
+        - test for http://bugs.webkit.org/show_bug.cgi?id=11451
+          REGRESSION: Dell.com does not render correctly in ToT (stylesheet not loaded)
+
+        * http/tests/misc/css-accept-any-type-expected.txt: Added.
+        * http/tests/misc/css-accept-any-type.html: Added.
+        * http/tests/misc/resources/stylesheet.php: Added.
+
+2007-01-18  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - test for http://bugs.webkit.org/show_bug.cgi?id=11271
         REGRESSION (r12358): Text in display: table unselectable
 

@@ -2,6 +2,20 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11451
+          REGRESSION: Dell.com does not render correctly in ToT (stylesheet not loaded)
+
+        Test: http/tests/misc/css-accept-any-type.html
+
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet): Changed the accept header
+        for stylesheets to "text/css,*/*;q=0.1" to match Firefox, accepting CSS served
+        as any type.
+
+2007-01-18  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=11271
         REGRESSION (r12358): Text in display: table unselectable
 
