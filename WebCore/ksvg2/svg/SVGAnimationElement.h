@@ -104,7 +104,7 @@ namespace WebCore {
         bool updateForElapsedSeconds(double);
         void handleTimerEvent(double timePercentage);
 
-        double parseClockValue(const String&) const;
+        static double parseClockValue(const String&);
 
         String targetAttribute() const;
         void setTargetAttribute(const String&);
@@ -125,7 +125,7 @@ namespace WebCore {
         double calculateRelativeTimePercentage(double timePercentage, int currentItem);
 
         double repeations() const;
-        bool isIndefinite(double value) const;
+        static bool isIndefinite(double value);
 
     protected:
         mutable SVGElement* m_targetElement;
@@ -139,6 +139,7 @@ namespace WebCore {
         virtual void resetValues() { }
         
         static void parseKeyNumbers(Vector<float>& keyNumbers, const String& value);
+        static void parseBeginOrEndValue(double& number, const String& value);
 
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
 

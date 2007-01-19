@@ -58,7 +58,6 @@ namespace WebCore {
         };
         RotateMode m_rotateMode;
         float m_angle;
-        AffineTransform m_currentTransform;
     };
     
 } // namespace WebCore

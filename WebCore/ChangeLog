@@ -1,3 +1,21 @@
+2007-01-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by rwlbuis.
+
+        More cleanup to SVGAnimated* classes.
+
+        No tests possible (only code cleanup)
+
+        * ksvg2/svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::applyAnimationToValue):
+        * ksvg2/svg/SVGAnimateMotionElement.h:
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::parseBeginOrEndValue):
+        (WebCore::SVGAnimationElement::parseMappedAttribute):
+        (WebCore::SVGAnimationElement::parseClockValue):
+        (WebCore::SVGAnimationElement::isIndefinite):
+        * ksvg2/svg/SVGAnimationElement.h:
+
 2007-01-19  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Not reviewed.

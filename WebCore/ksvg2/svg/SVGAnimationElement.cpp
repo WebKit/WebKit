@@ -163,6 +163,57 @@ static void parseKeySplines(Vector<SVGAnimationElement::KeySpline>& keySplines, 
     }
 }
 
+void SVGAnimationElement::parseBeginOrEndValue(double& number, const String& value)
+{
+    RefPtr<SVGStringList> valueList = new SVGStringList();
+    valueList->parse(value, ';');
+    
+    ExceptionCode ec = 0;
+    for (unsigned int i = 0; i < valueList->numberOfItems(); i++) {
+        String current = valueList->getItem(i, ec);
+        
+        if (current.startsWith("accessKey")) {
+            // Register keyDownEventListener for the character
+            String character = current.substring(current.length() - 2, 1);
+            // FIXME: Not implemented! Supposed to register accessKey character
+        } else if (current.startsWith("wallclock")) {
+            int firstBrace = current.find('(');
+            int secondBrace = current.find(')');
+            
+            String wallclockValue = current.substring(firstBrace + 1, secondBrace - firstBrace - 2);
+            // FIXME: Not implemented! Supposed to use wallClock value
+        } else if (current.contains('.')) {
+            int dotPosition = current.find('.');
+            
+            String element = current.substring(0, dotPosition);
+            String clockValue;
+            if (current.contains("begin"))
+                clockValue = current.substring(dotPosition + 6);
+            else if (current.contains("end"))
+                clockValue = current.substring(dotPosition + 4);
+            else if (current.contains("repeat"))
+                clockValue = current.substring(dotPosition + 7);
+            else { // DOM2 Event Reference
+                int plusMinusPosition = -1;
+                
+                if (current.contains('+'))
+                    plusMinusPosition = current.find('+');
+                else if (current.contains('-'))
+                    plusMinusPosition = current.find('-');
+                
+                String event = current.substring(dotPosition + 1, plusMinusPosition - dotPosition - 1);
+                clockValue = current.substring(dotPosition + event.length() + 1);
+                // FIXME: supposed to use DOM Event
+            }
+        } else {
+            number = parseClockValue(current);
+            if (!isIndefinite(number))
+                number *= 1000.0;
+            // FIXME: supposed to set begin/end time
+        }
+    }    
+}
+
 void SVGAnimationElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
@@ -177,62 +228,11 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute* attr)
             m_attributeType = ATTRIBUTETYPE_XML;
         else if (value == "auto")
             m_attributeType = ATTRIBUTETYPE_AUTO;
-    } else if (attr->name() == SVGNames::beginAttr || attr->name() == SVGNames::endAttr) {
-        RefPtr<SVGStringList> valueList = new SVGStringList();
-        valueList->parse(value, ';');
-
-        ExceptionCode ec = 0;
-        for (unsigned int i = 0; i < valueList->numberOfItems(); i++) {
-            String current = valueList->getItem(i, ec);
-
-            if (current.startsWith("accessKey")) {
-                // Register keyDownEventListener for the character
-                String character = current.substring(current.length() - 2, 1);
-                // FIXME: Not implemented! Supposed to register accessKey character
-            } else if (current.startsWith("wallclock")) {
-                int firstBrace = current.find('(');
-                int secondBrace = current.find(')');
-
-                String wallclockValue = current.substring(firstBrace + 1, secondBrace - firstBrace - 2);
-                // FIXME: Not implemented! Supposed to use wallClock value
-            } else if (current.contains('.')) {
-                int dotPosition = current.find('.');
-
-                String element = current.substring(0, dotPosition);
-                String clockValue;
-                if (current.contains("begin"))
-                    clockValue = current.substring(dotPosition + 6);
-                else if (current.contains("end"))
-                    clockValue = current.substring(dotPosition + 4);
-                else if (current.contains("repeat"))
-                    clockValue = current.substring(dotPosition + 7);
-                else { // DOM2 Event Reference
-                    int plusMinusPosition = -1;
-
-                    if (current.contains('+'))
-                        plusMinusPosition = current.find('+');
-                    else if (current.contains('-'))
-                        plusMinusPosition = current.find('-');
-
-                    String event = current.substring(dotPosition + 1, plusMinusPosition - dotPosition - 1);
-                    clockValue = current.substring(dotPosition + event.length() + 1);
-                    // FIXME: supposed to use DOM Event
-                }
-            } else {
-                if (attr->name() == SVGNames::beginAttr) {
-                    m_begin = parseClockValue(current);
-                    if (!isIndefinite(m_begin))
-                        m_begin *= 1000.0;
-                    // FIXME: supposed to set begin time
-                } else {
-                    m_end = parseClockValue(current);
-                    if (!isIndefinite(m_end))
-                        m_end *= 1000.0;
-                    // FIXME: supposed to set end time
-                }
-            }
-        }
-    } else if (attr->name() == SVGNames::durAttr) {
+    } else if (attr->name() == SVGNames::beginAttr)
+        parseBeginOrEndValue(m_begin, value);
+    else if (attr->name() == SVGNames::endAttr)
+        parseBeginOrEndValue(m_end, value);
+    else if (attr->name() == SVGNames::durAttr) {
         m_simpleDuration = parseClockValue(value);
         if (!isIndefinite(m_simpleDuration))
             m_simpleDuration *= 1000.0;
@@ -306,7 +306,7 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute* attr)
     }
 }
 
-double SVGAnimationElement::parseClockValue(const String& data) const
+double SVGAnimationElement::parseClockValue(const String& data)
 {
     DeprecatedString parse = data.deprecatedString().stripWhiteSpace();
     
@@ -503,18 +503,25 @@ EAnimationMode SVGAnimationElement::detectAnimationMode() const
     return NO_ANIMATION;
 }
 
+static inline Vector<double> startTimesForValues(const SVGStringList* values)
+{
+    // Calculate the relative time percentages for each 'fade'.
+    // Eventually value spacing will need to take keySplines into account
+    unsigned long items = values->numberOfItems();
+    Vector<double> startTimes(items);
+    startTimes[0] = 0.0;
+    for (unsigned i = 1; i < items; ++i)
+        startTimes[i] = (((2.0 * i)) / (items - 1)) / 2.0;
+    return startTimes;
+}
+
 int SVGAnimationElement::calculateCurrentValueItem(double timePercentage)
 {
     if (!m_values)
         return -1;
     
     unsigned long items = m_values->numberOfItems();
-
-    // Calculate the relative time percentages for each 'fade'.
-    Vector<double> startTimes(items);
-    startTimes[0] = 0.0;
-    for (unsigned i = 1; i < items; ++i)
-        startTimes[i] = (((2.0 * i)) / (items - 1)) / 2.0;
+    Vector<double> startTimes = startTimesForValues(m_values.get());
 
     int itemByPercentage = -1;
     for (unsigned i = 0; i < items - 1; ++i) {
@@ -532,13 +539,7 @@ double SVGAnimationElement::calculateRelativeTimePercentage(double timePercentag
     if (currentItem == -1 || !m_values)
         return 0.0;
 
-    unsigned long items = m_values->numberOfItems();
-
-    // Calculate the relative time percentages for each 'fade'.
-    Vector<double> startTimes(items);
-    startTimes[0] = 0.0;
-    for (unsigned i = 1; i < items; ++i)
-        startTimes[i] = (((2.0 * i)) / (items - 1)) / 2.0;
+    Vector<double> startTimes = startTimesForValues(m_values.get());
 
     double beginTimePercentage = startTimes[currentItem];
     double endTimePercentage = startTimes[currentItem + 1];
@@ -555,7 +556,7 @@ double SVGAnimationElement::repeations() const
     return m_repetitions;
 }
 
-bool SVGAnimationElement::isIndefinite(double value) const
+bool SVGAnimationElement::isIndefinite(double value)
 {
     return (value == DBL_MAX);
 }
