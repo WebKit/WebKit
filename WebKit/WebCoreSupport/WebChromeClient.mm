@@ -307,7 +307,7 @@ bool WebChromeClient::runJavaScriptPrompt(Frame* frame, const String& prompt, co
     return !result.isNull();
 }
 
-void WebChromeClient::setStatusBarText(const WebCore::String& status)
+void WebChromeClient::setStatusbarText(const WebCore::String& status)
 {
     id wd = [m_webView UIDelegate];
 

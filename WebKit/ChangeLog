@@ -1,3 +1,11 @@
+2007-01-19  Anders Carlsson  <acarlsson@apple.com>
+
+        Yet another build fix.
+        
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::setStatusbarText):
+
 2007-01-18  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam.
