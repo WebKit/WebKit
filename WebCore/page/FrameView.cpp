@@ -132,10 +132,9 @@ FrameView::~FrameView()
     ASSERT(m_refCount == 0);
 
     if (m_frame) {
-        // FIXME: Is this really the right place to call detach on the document?
-        if (Document* doc = m_frame->document())
-            doc->detach();
-        if (RenderPart* renderer = m_frame->ownerRenderer())
+        ASSERT(m_frame->view() != this || !m_frame->document() || !m_frame->document()->renderer());
+        RenderPart* renderer = m_frame->ownerRenderer();
+        if (renderer && renderer->widget() == this)
             renderer->setWidget(0);
     }
 
@@ -215,9 +214,8 @@ void FrameView::setMarginHeight(int h)
 
 void FrameView::adjustViewSize()
 {
-    if (m_frame->document()) {
-        Document* document = m_frame->document();
-
+    ASSERT(m_frame->view() == this);
+    if (Document* document = m_frame->document()) {
         RenderView* root = static_cast<RenderView*>(document->renderer());
         if (!root)
             return;
@@ -310,6 +308,9 @@ void FrameView::layout(bool allowSubtree)
     }
 
     bool subtree = d->layoutRoot;
+
+    ASSERT(m_frame->view() == this);
+
     Document* document = m_frame->document();
     if (!document) {
         // FIXME: Should we set m_size.height here too?
@@ -634,6 +635,8 @@ void FrameView::layoutTimerFired(Timer<FrameView>*)
 
 void FrameView::scheduleRelayout()
 {
+    ASSERT(m_frame->view() == this);
+
     if (d->layoutRoot) {
         if (d->layoutRoot->renderer())
             d->layoutRoot->renderer()->markContainingBlocksForLayout(false);
@@ -663,6 +666,8 @@ void FrameView::scheduleRelayout()
 
 void FrameView::scheduleRelayoutOfSubtree(Node* n)
 {
+    ASSERT(m_frame->view() == this);
+
     if (!d->layoutSchedulingEnabled || (m_frame->document()
             && m_frame->document()->renderer()
             && m_frame->document()->renderer()->needsLayout())) {
@@ -810,6 +815,8 @@ IntRect FrameView::windowClipRect() const
 
 IntRect FrameView::windowClipRect(bool clipToContents) const
 {
+    ASSERT(m_frame->view() == this);
+
     // Set our clip rect to be our contents.
     IntRect clipRect;
     if (clipToContents)

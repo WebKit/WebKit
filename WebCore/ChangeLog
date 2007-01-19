@@ -1,3 +1,24 @@
+2007-01-18  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=9952
+          REGRESSION: Repro crash when dragging an image from the window to the address bar
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::~FrameView): Removed the call to Document::detach(). If this
+        view is the current view, then the Frame should have already detached the document.
+        Added an assertion that this is the case. If this view is not the current view,
+        then it cannot access its document, but the page cache should have detached it already.
+        Similarly, changed to call RenderPart::setWidget() only if this is the current view
+        in the frame.
+        (WebCore::FrameView::adjustViewSize): Added an assertion that this view is the current
+        view in the frame.
+        (WebCore::FrameView::layout): Ditto.
+        (WebCore::FrameView::scheduleRelayout): Ditto.
+        (WebCore::FrameView::scheduleRelayoutOfSubtree): Ditto.
+        (WebCore::FrameView::windowClipRect): Ditto.
+
 2007-01-18  Eric Seidel  <eric@webkit.org>
 
         Reviewed by bdash.
