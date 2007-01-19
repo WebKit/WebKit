@@ -1643,6 +1643,8 @@
 		A7352C1A0B1BB89D00A986D0 /* RenderSVGBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = A7352C180B1BB89D00A986D0 /* RenderSVGBlock.h */; };
 		A7638A970995965D0007E14F /* SVGFEDisplacementMapElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A7638A950995965D0007E14F /* SVGFEDisplacementMapElement.h */; };
 		A7638A980995965D0007E14F /* SVGFEDisplacementMapElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7638A960995965D0007E14F /* SVGFEDisplacementMapElement.cpp */; };
+		A80CEBAC0B60FC49007637C1 /* SVGMPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A80CEBAA0B60FC49007637C1 /* SVGMPathElement.h */; };
+		A80CEBAD0B60FC49007637C1 /* SVGMPathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80CEBAB0B60FC49007637C1 /* SVGMPathElement.cpp */; };
 		A80E6CE40A1989CA007FB8C5 /* CSSValueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */; };
 		A80E6CE50A1989CA007FB8C5 /* CSSBorderImageValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBB0A1989CA007FB8C5 /* CSSBorderImageValue.cpp */; };
 		A80E6CE60A1989CA007FB8C5 /* CSSPrimitiveValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CBC0A1989CA007FB8C5 /* CSSPrimitiveValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4608,6 +4610,8 @@
 		A7352C180B1BB89D00A986D0 /* RenderSVGBlock.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGBlock.h; sourceTree = "<group>"; };
 		A7638A950995965D0007E14F /* SVGFEDisplacementMapElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFEDisplacementMapElement.h; sourceTree = "<group>"; };
 		A7638A960995965D0007E14F /* SVGFEDisplacementMapElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEDisplacementMapElement.cpp; sourceTree = "<group>"; };
+		A80CEBAA0B60FC49007637C1 /* SVGMPathElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGMPathElement.h; sourceTree = "<group>"; };
+		A80CEBAB0B60FC49007637C1 /* SVGMPathElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGMPathElement.cpp; sourceTree = "<group>"; };
 		A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueList.cpp; sourceTree = "<group>"; };
 		A80E6CBB0A1989CA007FB8C5 /* CSSBorderImageValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSBorderImageValue.cpp; sourceTree = "<group>"; };
 		A80E6CBC0A1989CA007FB8C5 /* CSSPrimitiveValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSPrimitiveValue.h; sourceTree = "<group>"; };
@@ -8108,8 +8112,6 @@
 				B25AE55D0B49D6630074C726 /* LinearGradientAttributes.h */,
 				B2DDF0640B4829FA0064A4B1 /* PatternAttributes.h */,
 				B25AE55E0B49D6630074C726 /* RadialGradientAttributes.h */,
-				AACF7C4C0B42EE6000080BD8 /* SVGParserUtilities.h */,
-				AACF7C4D0B42EE6000080BD8 /* SVGParserUtilities.cpp */,
 				A8C0F7FF089701F300BA5114 /* SVGAElement.cpp */,
 				A8C0F800089701F300BA5114 /* SVGAElement.h */,
 				B2CB41010AB758E6004D9C45 /* SVGAElement.idl */,
@@ -8306,6 +8308,8 @@
 				AAC8DAAF0AA1002000DC0907 /* SVGMetadataElement.cpp */,
 				AAC8DAB00AA1002000DC0907 /* SVGMetadataElement.h */,
 				B2E954770AB5FBA30076DE37 /* SVGMetadataElement.idl */,
+				A80CEBAB0B60FC49007637C1 /* SVGMPathElement.cpp */,
+				A80CEBAA0B60FC49007637C1 /* SVGMPathElement.h */,
 				A833BEA20A2C329300D57664 /* SVGNumber.idl */,
 				A8C0F888089701F300BA5114 /* SVGNumberList.cpp */,
 				A8C0F889089701F300BA5114 /* SVGNumberList.h */,
@@ -8313,6 +8317,7 @@
 				A8C0F88A089701F300BA5114 /* SVGPaint.cpp */,
 				A8C0F88B089701F300BA5114 /* SVGPaint.h */,
 				B2CB41450AB75904004D9C45 /* SVGPaint.idl */,
+				AACF7C4D0B42EE6000080BD8 /* SVGParserUtilities.cpp */,
 				AACF7C4D0B42EE6000080BD8 /* SVGParserUtilities.cpp */,
 				AACF7C4C0B42EE6000080BD8 /* SVGParserUtilities.h */,
 				A8C0F88C089701F300BA5114 /* SVGPathElement.cpp */,
@@ -8467,6 +8472,7 @@
 				A8C0F8EB089701F400BA5114 /* SVGZoomAndPan.cpp */,
 				A8C0F8EC089701F400BA5114 /* SVGZoomAndPan.h */,
 				B2CB41640AB75904004D9C45 /* SVGZoomAndPan.idl */,
+				AACF7C4C0B42EE6000080BD8 /* SVGParserUtilities.h */,
 			);
 			path = svg;
 			sourceTree = "<group>";
@@ -10952,6 +10958,7 @@
 				510F73620B56C08800A3002A /* Credential.h in Headers */,
 				510F73640B56C08800A3002A /* ProtectionSpace.h in Headers */,
 				1A2A68240B5BEDE70002A480 /* ProgressTracker.h in Headers */,
+				A80CEBAC0B60FC49007637C1 /* SVGMPathElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10989,7 +10996,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -11004,7 +11010,6 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -12285,6 +12290,7 @@
 				510F73610B56C08800A3002A /* Credential.cpp in Sources */,
 				510F73630B56C08800A3002A /* ProtectionSpace.cpp in Sources */,
 				1A2A68230B5BEDE70002A480 /* ProgressTracker.cpp in Sources */,
+				A80CEBAD0B60FC49007637C1 /* SVGMPathElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

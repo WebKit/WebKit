@@ -2,6 +2,27 @@
 
         Reviewed by rwlbuis.
 
+        Add support for SVGMPathElement parsing.
+
+        No test cases possible (SVGAnimateMotion doesn't work yet)
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::animationPath):
+        * ksvg2/svg/SVGMPathElement.cpp: Added.
+        (WebCore::SVGMPathElement::SVGMPathElement):
+        (WebCore::SVGMPathElement::~SVGMPathElement):
+        (WebCore::SVGMPathElement::parseMappedAttribute):
+        (WebCore::SVGMPathElement::pathElement):
+        * ksvg2/svg/SVGMPathElement.h: Added.
+        * ksvg2/svg/SVGNumberList.cpp:
+        (WebCore::SVGNumberList::parse): fix typo in comment
+        * ksvg2/svg/svgtags.in: add back mpath
+
+2007-01-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by rwlbuis.
+
         Implement better parsing for keyTimes, keySplines and keyPoints.
 
         Unfortunately none of this code is used much yet, thus isn't very testable.
