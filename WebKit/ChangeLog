@@ -1,3 +1,15 @@
+2007-01-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adele
+
+        <rdar://problem/4917290> - 
+        Null deref in WebFrameLoaderClient::restoreScrollPositionAndViewState() 
+        after regaining network connection
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::restoreScrollPositionAndViewState): Bail early with a null currentItem, preventing 
+        a crash in release builds.  Leave the ASSERT to help find other cases where this might happen in debug builds.
+
 2007-01-18  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by John.
