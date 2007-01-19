@@ -1,3 +1,15 @@
+2007-01-19  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Adam Roben.
+
+        run-webkit-tests does now not generate new results by default anymore. 
+        You'll have to pass the --new-tests flag to it to force it to do so.
+
+        This is required to make it possible to have tests running on multiple 
+        platforms peacefully together.
+
+        * Scripts/run-webkit-tests:
+
 2007-01-18  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
