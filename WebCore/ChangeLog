@@ -9,7 +9,7 @@
 
         Test: fast/forms/select-list-box-with-height.html
 
-        - fix http://bugs.webkit.org/show_bug.cgi?id=12008
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11995
           <rdar://problem/4901834> REGRESSION(NativeListBox): Focus is not placed on
           SELECT after mousing down on OPTION
 
