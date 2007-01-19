@@ -1,3 +1,12 @@
+2007-01-19  Nicholas Shanks  <contact@nickshanks.com>
+
+        Reviewed by Maciej.
+
+        Change doctype for webkit.org/blog/ admin interface to HTML 4.01.
+
+        * blog/wp-admin/admin-header.php:
+        * blog/wp-login.php:
+
 2007-01-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej
