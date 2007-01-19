@@ -1,3 +1,14 @@
+2007-01-18  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim H.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=7926
+        Bug 7926: Crash using -callWebScriptMethod to access offsetTop property
+
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject callWebScriptMethod:withArguments:]): Bail out early if function value is an immediate,
+        or if the function object is not callable.
+
 2007-01-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.

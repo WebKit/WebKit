@@ -181,13 +181,15 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     Identifier identifier(v->toString(exec));
     JSValue *func = [self _imp]->get(exec, identifier);
 
-    if (!func || func->isUndefined()) {
+    if (!func || !func->isObject())
         // Maybe throw an exception here?
         return 0;
-    }
 
-    // Call the function object.    
+    // Call the function object.
     JSObject *funcImp = static_cast<JSObject*>(func);
+    if (!funcImp->implementsCall())
+        return 0;
+
     JSObject *thisObj = const_cast<JSObject*>([self _imp]);
     List argList = listFromNSArray(exec, args);
     JSValue *result = funcImp->call(exec, thisObj, argList);
