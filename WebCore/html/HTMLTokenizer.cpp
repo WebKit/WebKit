@@ -1408,7 +1408,7 @@ bool HTMLTokenizer::write(const SegmentedString& str, bool appendData)
             ++src;
         } else {
             state.setDiscardLF(false);
-            *dest++ = *src;
+            *dest++ = cc;
             ++src;
         }
     }
@@ -1544,7 +1544,7 @@ PassRefPtr<Node> HTMLTokenizer::processToken()
         }
 
 #endif
-        currToken.text = new StringImpl( buffer, dest - buffer );
+        currToken.text = StringImpl::createStrippingNull(buffer, dest - buffer);
         if (currToken.tagName != commentAtom)
             currToken.tagName = textAtom;
     } else if (currToken.tagName == nullAtom) {

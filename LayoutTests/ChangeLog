@@ -1,3 +1,32 @@
+2007-01-19  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej and Darin.
+
+        New layout tests and some updates results for the fix for <rdar://
+        problem/4702420> REGRESSION: Null characters need to be stripped 
+        from text nodes (townhall.com)
+
+        * fast/dom/stripNullFromTextNodes-expected.checksum: Added.
+        * fast/dom/stripNullFromTextNodes-expected.png: Added.
+        * fast/dom/stripNullFromTextNodes-expected.txt: Added.
+        * fast/dom/stripNullFromTextNodes.html: Added.
+        * fast/js/null-char-in-string-expected.txt: New results.
+        * fast/text/stripNullFromText-expected.checksum: Added.
+        * fast/text/stripNullFromText-expected.png: Added.
+        * fast/text/stripNullFromText-expected.txt: Added.
+        * fast/text/stripNullFromText.html: Added.
+        * tables/mozilla/images/adforce_imgis_com-expected.txt: New 
+        results.
+        * tables/mozilla_expected_failures/images/adforce_imgis_com-
+        expected.checksum: Removed. This is the same test as the one above. 
+        The same test was in two places.
+        * tables/mozilla_expected_failures/images/adforce_imgis_com-
+        expected.png: Removed.
+        * tables/mozilla_expected_failures/images/adforce_imgis_com-
+        expected.txt: Removed.
+        * tables/mozilla_expected_failures/images/adforce_imgis_com.html: 
+        Removed.
+
 2007-01-19  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

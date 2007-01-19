@@ -1170,6 +1170,23 @@ StringImpl::StringImpl(const UString& str)
     init(reinterpret_cast<const UChar*>(str.data()), str.size());
 }
 
+PassRefPtr<StringImpl> StringImpl::createStrippingNull(const UChar* str, unsigned len)
+{
+    StringImpl* result = new StringImpl;
+    if (!len || !str)
+        return result;
+    
+    UChar* strippedCopy = newUCharVector(len);
+    int strippedLength = 0;
+    for (unsigned i = 0; i < len; i++)
+        if (UChar c = str[i])
+            strippedCopy[strippedLength++] = c;
+
+    result->m_data = strippedCopy;
+    result->m_length = strippedLength;
+    return result;
+}
+
 StringImpl* StringImpl::newUninitialized(size_t length, UChar*& characterBuffer)
 {
     StringImpl* result = new StringImpl;

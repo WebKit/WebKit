@@ -3,4 +3,8 @@ This test checks that null characters are allowed in JavaScript strings, rather 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS String("
+PASS String("").length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

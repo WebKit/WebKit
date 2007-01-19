@@ -1,3 +1,25 @@
+2007-01-19  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej and Darin.
+
+        Fix for <rdar://problem/4702420> REGRESSION: Null characters need 
+        to be stripped from text nodes (townhall.com)
+
+        This was a regression from the fix for <rdar://problem/3727939>
+        Safari strips \0 characters from HTML tags making them valid, which
+        was fixed with r12652. We still need to strip null characters in
+        text nodes.
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::write): No behavior change here, this is
+        just to make Darin happy.
+        (WebCore::HTMLTokenizer::processToken): Call into StringImpl's new 
+        createStrippingNull function instead of the normal StringImpl 
+        constructor.
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::createStrippingNull): Strip null.
+        * platform/StringImpl.h:
+
 2007-01-19  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by NOBODY (no-svg build fix).
