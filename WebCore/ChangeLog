@@ -1,5 +1,14 @@
 2007-01-19  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Not reviewed.
+
+        Remove accidently commited debug output. Shame on me :-)
+
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::notifyAttributeChange):
+
+2007-01-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Eric.
 
         Fixes: http://bugs.webkit.org/show_bug.cgi?id=10410 (SVG Slider example renders completely wrong (inserting <use> dynamically doesn't work))
