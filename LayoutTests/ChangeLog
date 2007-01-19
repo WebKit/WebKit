@@ -1,3 +1,15 @@
+2007-01-18  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=11271
+        REGRESSION (r12358): Text in display: table unselectable
+
+        * editing/selection/display-table-text-expected.checksum: Added.
+        * editing/selection/display-table-text-expected.png: Added.
+        * editing/selection/display-table-text-expected.txt: Added.
+        * editing/selection/display-table-text.html: Added.
+
 2007-01-18  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

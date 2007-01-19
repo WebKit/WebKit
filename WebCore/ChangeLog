@@ -2,6 +2,18 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11271
+        REGRESSION (r12358): Text in display: table unselectable
+
+        Test: editing/selection/display-table-text.html
+
+        * editing/htmlediting.cpp:
+        (WebCore::isTableElement): Changed to return false for text nodes.
+
+2007-01-18  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=6218
           CSS1: WebTextRenderer caches and re-uses fallback renderers that are based on family lists
 

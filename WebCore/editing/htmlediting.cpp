@@ -681,9 +681,12 @@ Node* highestAncestor(Node* node)
 }
 
 // FIXME: do not require renderer, so that this can be used within fragments, or rename to isRenderedTable()
-bool isTableElement(Node *n)
+bool isTableElement(Node* n)
 {
-    RenderObject *renderer = n ? n->renderer() : 0;
+    if (!n || !n->isElementNode())
+        return false;
+
+    RenderObject* renderer = n->renderer();
     return (renderer && (renderer->style()->display() == TABLE || renderer->style()->display() == INLINE_TABLE));
 }
 
