@@ -88,7 +88,6 @@ Pasteboard* Pasteboard::generalPasteboard()
 
 Pasteboard::Pasteboard(NSPasteboard* pboard)
     : m_pasteboard(pboard)
-    , m_types([NSArray array])
 {
     WebArchivePboardType          = @"Apple Web Archive pasteboard type";
     WebSmartPastePboardType       = @"NeXT smart paste pasteboard type";
@@ -99,8 +98,7 @@ Pasteboard::Pasteboard(NSPasteboard* pboard)
 
 void Pasteboard::clear()
 {
-    m_types = [NSArray array];
-    [m_pasteboard declareTypes:m_types owner:nil];
+    [m_pasteboard declareTypes:[NSArray array] owner:nil];
 }
 
 static NSAttributedString *stripAttachmentCharacters(NSAttributedString *string)
@@ -124,32 +122,32 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     // after WebKit does.  On Tiger we must call this function so that Mail code will be executed, meaning that 
     // we can't call WebCore::Pasteboard's method for setting types. 
     
-    m_types = frame->editor()->client()->pasteboardTypesForSelection(frame);
+    NSArray *types = frame->editor()->client()->pasteboardTypesForSelection(frame);
     // Don't write RTFD to the pasteboard when the copied attributed string has no attachments.
     NSMutableArray *mutableTypes = nil;
     if (![attributedString containsAttachments]) {
-        mutableTypes = [m_types mutableCopy];
+        mutableTypes = [[types mutableCopy] autorelease];
         [mutableTypes removeObject:NSRTFDPboardType];
-        m_types = mutableTypes;
+        types = mutableTypes;
     }
-    [m_pasteboard declareTypes:m_types owner:nil];    
+    [m_pasteboard declareTypes:types owner:nil];    
 #else
-    m_types = selectionPasteboardTypes(canSmartCopyOrDelete, [attributedString containsAttachments]);
-    [m_pasteboard declareTypes:m_types owner:nil];
+    types = selectionPasteboardTypes(canSmartCopyOrDelete, [attributedString containsAttachments]);
+    [m_pasteboard declareTypes:types owner:nil];
     frame->editor()->client()->didSetSelectionTypesForPasteboard();
 #endif
 
     // Put HTML on the pasteboard.
-    if ([m_types containsObject:WebArchivePboardType]) {
+    if ([types containsObject:WebArchivePboardType]) {
         [m_pasteboard setData:frame->editor()->client()->dataForArchivedSelection(frame) forType:WebArchivePboardType];
     }
 
     // Put the attributed string on the pasteboard (RTF/RTFD format).
-    if ([m_types containsObject:NSRTFDPboardType]) {
+    if ([types containsObject:NSRTFDPboardType]) {
         NSData *RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
         [m_pasteboard setData:RTFDData forType:NSRTFDPboardType];
     }
-    if ([m_types containsObject:NSRTFPboardType]) {
+    if ([types containsObject:NSRTFPboardType]) {
         if ([attributedString containsAttachments])
             attributedString = stripAttachmentCharacters(attributedString);
         NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
@@ -157,7 +155,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     }
     
     // Put plain string on the pasteboard.
-    if ([m_types containsObject:NSStringPboardType]) {
+    if ([types containsObject:NSStringPboardType]) {
         // Map &nbsp; to a plain old space because this is better for source code, other browsers do it,
         // and because HTML forces you to do this any time you want two spaces in a row.
         String text = frame->selectedText();
@@ -170,7 +168,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
         [s release];
     }
     
-    if ([m_types containsObject:WebSmartPastePboardType]) {
+    if ([types containsObject:WebSmartPastePboardType]) {
         [m_pasteboard setData:nil forType:WebSmartPastePboardType];
     }
 }
@@ -189,8 +187,8 @@ void Pasteboard::writeURL(const KURL& url, const String& titleStr, Frame* frame)
             title = userVisibleString;
     }
 
-    m_types = writableTypesForURL();
-    [m_pasteboard declareTypes:m_types owner:nil];
+    NSArray *types = writableTypesForURL();
+    [m_pasteboard declareTypes:types owner:nil];
 
     [m_pasteboard setPropertyList:[NSArray arrayWithObjects:[NSArray arrayWithObject:userVisibleString], 
                                                             [NSArray arrayWithObject:(NSString*)titleStr.stripWhiteSpace()], 
@@ -210,17 +208,17 @@ bool Pasteboard::canSmartReplace()
 
 String Pasteboard::plainText(Frame* frame)
 {
-    m_types = [m_pasteboard types];
+    NSArray *types = [m_pasteboard types];
     
-    if ([m_types containsObject:NSStringPboardType])
+    if ([types containsObject:NSStringPboardType])
         return [m_pasteboard stringForType:NSStringPboardType];
     
     NSAttributedString *attributedString = nil;
     NSString *string;
 
-    if ([m_types containsObject:NSRTFDPboardType])
+    if ([types containsObject:NSRTFDPboardType])
         attributedString = [[NSAttributedString alloc] initWithRTFD:[m_pasteboard dataForType:NSRTFDPboardType] documentAttributes:NULL];
-    if (attributedString == nil && [m_types containsObject:NSRTFPboardType])
+    if (attributedString == nil && [types containsObject:NSRTFPboardType])
         attributedString = [[NSAttributedString alloc] initWithRTF:[m_pasteboard dataForType:NSRTFPboardType] documentAttributes:NULL];
     if (attributedString != nil) {
         string = [[attributedString string] copy];
@@ -228,7 +226,7 @@ String Pasteboard::plainText(Frame* frame)
         return [string autorelease];
     }
     
-    if ([m_types containsObject:NSFilenamesPboardType]) {
+    if ([types containsObject:NSFilenamesPboardType]) {
         string = [[m_pasteboard propertyListForType:NSFilenamesPboardType] componentsJoinedByString:@"\n"];
         if (string != nil)
             return string;
@@ -252,10 +250,10 @@ String Pasteboard::plainText(Frame* frame)
 
 PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context, bool allowPlainText, bool& chosePlainText)
 {
-    m_types = [m_pasteboard types];
+    NSArray *types = [m_pasteboard types];
     chosePlainText = false;
 
-    if ([m_types containsObject:NSHTMLPboardType]) {
+    if ([types containsObject:NSHTMLPboardType]) {
         NSString *HTMLString = [m_pasteboard stringForType:NSHTMLPboardType];
         // This is a hack to make Microsoft's HTML pasteboard data work. See 3778785.
         if ([HTMLString hasPrefix:@"Version:"]) {
@@ -271,7 +269,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
         }
     }
     
-    if (allowPlainText && [m_types containsObject:NSStringPboardType]) {
+    if (allowPlainText && [types containsObject:NSStringPboardType]) {
         chosePlainText = true;
         RefPtr<DocumentFragment> fragment = createFragmentFromText(context.get(), [m_pasteboard stringForType:NSStringPboardType]);
         if (fragment)

@@ -1159,6 +1159,7 @@ void Editor::cut()
     RefPtr<Range> selection = selectedRange();
     if (shouldDeleteRange(selection.get())) {
         Pasteboard::generalPasteboard()->writeSelection(selection.get(), canSmartCopyOrDelete(), m_frame);
+        didWriteSelectionToPasteboard();
         deleteSelectionWithSmartDelete();
     }
 }

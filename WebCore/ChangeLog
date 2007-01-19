@@ -1,3 +1,20 @@
+2007-01-18  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fixes the leaks from my last patch, except for the first change below which is a missing delegate call for Mail purposes
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::cut):
+        * platform/Pasteboard.h:
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::clear):
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::Pasteboard::documentFragment):
+
 2007-01-18  David Hyatt  <hyatt@apple.com>
 
         Make sure layer autoscrolling puts the event coordinates into the layer's coordinate space before

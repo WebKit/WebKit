@@ -36,7 +36,6 @@
 
 #if PLATFORM(MAC)
 class NSPasteboard;
-class NSArray;
 #endif
 
 #if PLATFORM(WIN)
@@ -78,7 +77,6 @@ private:
 #if PLATFORM(MAC)
     Pasteboard(NSPasteboard *);
     NSPasteboard *m_pasteboard;
-    NSArray *m_types;
 #endif
 
 #if PLATFORM(WIN)
