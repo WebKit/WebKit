@@ -1,5 +1,12 @@
 2007-01-18  Alice Liu  <alice.liu@apple.com>
 
+        Build Fix
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeSelection):
+
+2007-01-18  Alice Liu  <alice.liu@apple.com>
+
         Reviewed by Mark Rowe.
 
         Fixes the leaks from my last patch, except for the first change below which is a missing delegate call for Mail purposes

@@ -132,7 +132,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     }
     [m_pasteboard declareTypes:types owner:nil];    
 #else
-    types = selectionPasteboardTypes(canSmartCopyOrDelete, [attributedString containsAttachments]);
+    NSArray *types = selectionPasteboardTypes(canSmartCopyOrDelete, [attributedString containsAttachments]);
     [m_pasteboard declareTypes:types owner:nil];
     frame->editor()->client()->didSetSelectionTypesForPasteboard();
 #endif
