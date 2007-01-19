@@ -825,7 +825,10 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/events/SVGZoomEvent.idl \
         ksvg2/svg/SVGNumber.idl \
         ksvg2/svg/SVGPoint.idl \
-        ksvg2/svg/SVGRect.idl
+        ksvg2/svg/SVGRect.idl \
+        ksvg2/svg/SVGElementInstance.idl \
+        ksvg2/svg/SVGElementInstanceList.idl
+
 
     SOURCES += \
 # TODO: this-one-is-not-auto-added! FIXME! tmp/SVGElementFactory.cpp \
@@ -871,7 +874,7 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/svg/SVGStylable.cpp \
         ksvg2/svg/SVGPolyElement.cpp \
         ksvg2/svg/SVGPolygonElement.cpp \
-#        ksvg2/svg/SVGElementInstanceList.cpp \
+        ksvg2/svg/SVGElementInstanceList.cpp \
         ksvg2/svg/SVGTSpanElement.cpp \
         ksvg2/svg/SVGFEFuncRElement.cpp \
         ksvg2/svg/SVGFEFloodElement.cpp \
@@ -888,6 +891,7 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/svg/SVGLocatable.cpp \
         ksvg2/svg/SVGEllipseElement.cpp \
         ksvg2/svg/SVGPathElement.cpp \
+        ksvg2/svg/SVGMPathElement.cpp \
         ksvg2/svg/SVGStyledElement.cpp \
         ksvg2/svg/SVGFEMergeNodeElement.cpp \
         ksvg2/svg/SVGFEGaussianBlurElement.cpp \
@@ -910,7 +914,7 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/svg/SVGFEMergeElement.cpp \
         ksvg2/svg/SVGCursorElement.cpp \
         ksvg2/svg/SVGStringList.cpp \
-#        ksvg2/svg/SVGElementInstance.cpp \
+        ksvg2/svg/SVGElementInstance.cpp \
         ksvg2/svg/SVGFilterElement.cpp \
         ksvg2/svg/SVGPathSegCurvetoCubicSmooth.cpp \
         ksvg2/svg/SVGPatternElement.cpp \
