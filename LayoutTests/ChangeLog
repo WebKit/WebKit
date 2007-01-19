@@ -1,5 +1,17 @@
 2007-01-18  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Maciej.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12039
+          Assertion failure in WebCore::Font::primaryFont
+
+        * fast/text/font-initial-expected.checksum: Added.
+        * fast/text/font-initial-expected.png: Added.
+        * fast/text/font-initial-expected.txt: Added.
+        * fast/text/font-initial.html: Added.
+
+2007-01-18  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin.
 
         - test for http://bugs.webkit.org/show_bug.cgi?id=11451

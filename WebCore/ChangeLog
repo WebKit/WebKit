@@ -1,5 +1,20 @@
 2007-01-18  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12039
+          Assertion failure in WebCore::Font::primaryFont
+
+        Test: fast/text/font-initial.html
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Give 'font: initial' the
+        Standard generic family. This makes the FontDescription different from
+        that of the initial font of a GraphicsContext, ensuring that the latter
+        will not be used.
+
+2007-01-18  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=11451

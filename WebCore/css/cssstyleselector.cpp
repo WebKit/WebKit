@@ -3569,6 +3569,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 fontDirty = true;
         } else if (isInitial) {
             FontDescription fontDescription;
+            fontDescription.setGenericFamily(FontDescription::StandardFamily);
             style->setLineHeight(RenderStyle::initialLineHeight());
             if (style->setFontDescription(fontDescription))
                 fontDirty = true;
