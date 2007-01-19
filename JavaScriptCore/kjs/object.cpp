@@ -43,6 +43,7 @@
 #endif
 
 #define JAVASCRIPT_CALL_TRACING 0
+#define JAVASCRIPT_MARK_TRACING 0
 
 #if JAVASCRIPT_CALL_TRACING
 static bool _traceJavaScript = false;
@@ -118,11 +119,24 @@ void JSObject::mark()
 {
   JSCell::mark();
 
+#if JAVASCRIPT_MARK_TRACING
+  static int markStackDepth = 0;
+  markStackDepth++;
+  for (int i = 0; i < markStackDepth; i++)
+    putchar('-');
+  
+  printf("%s (%p)\n", className().UTF8String().c_str(), this);
+#endif
+  
   JSValue *proto = _proto;
   if (!proto->marked())
     proto->mark();
 
   _prop.mark();
+  
+#if JAVASCRIPT_MARK_TRACING
+  markStackDepth--;
+#endif
 }
 
 JSType JSObject::type() const
