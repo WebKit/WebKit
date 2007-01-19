@@ -2568,7 +2568,6 @@ static WebHTMLView *lastHitView = nil;
     NSMenu* menu = nil;
     if (menuItems && [menuItems count] > 0) {
         menu = [[[NSMenu alloc] init] autorelease];
-        [menu setAutoenablesItems:NO];
         for (unsigned i = 0; i < [menuItems count]; i++)
             [menu addItem:[menuItems objectAtIndex:i]];
     }

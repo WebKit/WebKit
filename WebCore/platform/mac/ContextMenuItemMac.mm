@@ -145,4 +145,9 @@ void ContextMenuItem::setEnabled(bool enable)
     [m_platformDescription.get() setEnabled:enable];
 }
 
+bool ContextMenuItem::enabled() const
+{
+    return [m_platformDescription.get() isEnabled];
+}
+
 }

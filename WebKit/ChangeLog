@@ -1,3 +1,14 @@
+2007-01-18  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Beth.
+
+        Fix <rdar://problem/4939672> REGRESSION: With text selected that is
+        not a link, the "Remove Link" contextual menu item remains active
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView menuForEvent:]): Leave autoenabling of menu items on so
+        that clients can implement validateMenuItem:.
+
 2007-01-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adele

@@ -93,4 +93,9 @@ void ContextMenuItem::setEnabled(bool)
 {
 }
 
+bool ContextMenuItem::enabled() const
+{
+    return true;
+}
+
 }

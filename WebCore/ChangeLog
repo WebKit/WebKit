@@ -1,3 +1,19 @@
+2007-01-18  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Beth.
+
+        Fix: <rdar://problem/4939672> REGRESSION: With text selected that is
+        not a link, the "Remove Link" contextual menu item remains active
+
+        * platform/ContextMenuItem.h: Added enabled method.
+        * platform/qt/ContextMenuItemQt.cpp:
+        (WebCore::ContextMenuItem::enabled): Implemented.
+        * platform/mac/ContextMenuItemMac.mm:
+        (WebCore::ContextMenuItem::enabled): Ditto.
+        * platform/mac/ContextMenuMac.mm:
+        (-[WebCoreMenuTarget validateMenuItem:]): Implemented to fulfill the
+        NSMenuValidation protocol.
+        
 2007-01-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adele.

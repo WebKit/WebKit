@@ -35,6 +35,7 @@
 - (WebCore::ContextMenuController*)menuController;
 - (void)setMenuController:(WebCore::ContextMenuController*)menuController;
 - (void)forwardContextMenuAction:(id)sender;
+- (BOOL)validateMenuItem:(NSMenuItem *)item;
 @end
 
 static WebCoreMenuTarget* target;
@@ -62,6 +63,14 @@ static WebCoreMenuTarget* target;
 {
     WebCore::ContextMenuItem item(WebCore::ActionType, static_cast<WebCore::ContextMenuAction>([sender tag]), [sender title]);
     _menuController->contextMenuItemSelected(&item);
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)item
+{
+    WebCore::ContextMenuItem coreItem(item);
+    ASSERT(_menuController->contextMenu());
+    _menuController->contextMenu()->checkOrEnableIfNeeded(coreItem);
+    return coreItem.enabled();
 }
 
 @end
