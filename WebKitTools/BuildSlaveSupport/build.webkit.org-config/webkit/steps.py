@@ -23,8 +23,8 @@ class LayoutTest(Test):
     name = "layout-test"
     description = ["layout-tests running"]
     descriptionDone = ["layout-tests"]
-    command = ["./WebKitTools/Scripts/run-webkit-tests", "--no-launch-safari", "--results-directory", "layout-test-results"]
-        
+    command = ["./WebKitTools/Scripts/run-webkit-tests", "--no-launch-safari", "--no-new-test-results", "--results-directory", "layout-test-results"]
+
     def commandComplete(self, cmd):
         Test.commandComplete(self, cmd)
         
@@ -50,12 +50,13 @@ class JavaScriptCoreTest(Test):
     description = ["jscore-tests running"]
     descriptionDone = ["jscore-tests"]
     command = ["./WebKitTools/Scripts/run-javascriptcore-tests"]
+    logfiles = {'results': 'JavaScriptCore/tests/mozilla/actual.html'}
 
     def commandComplete(self, cmd):
         Test.commandComplete(self, cmd)
 
         logText = cmd.logs['stdio'].getText()
-        statusLines = [line for line in logText.splitlines() if line.find('regressions found.') >= 0]
+        statusLines = [line for line in logText.splitlines() if line.find('regression') >= 0 and line.find(' found.') >= 0]
         if statusLines and statusLines[0].split()[0] != '0':
             self.regressionLine = statusLines[0]
         else:

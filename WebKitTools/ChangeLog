@@ -1,3 +1,10 @@
+2007-01-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej.
+
+        * BuildSlaveSupport/build.webkit.org-config/webkit/steps.py: Track the output of run-javascriptcore-tests,
+        catch single regressions, and don't generate tests results for new tests.
+
 2007-01-20  Adam Roben  <aroben@apple.com>
 
         Rubberstamped by Maciej.
