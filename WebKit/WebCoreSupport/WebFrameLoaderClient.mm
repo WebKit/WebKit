@@ -437,7 +437,7 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
 {
     // Tell the client we've committed this URL.
     ASSERT([m_webFrame->_private->webFrameView documentView] != nil);
-
+    
     WebView *webView = getWebView(m_webFrame.get());   
     [webView _didCommitLoadForFrame:m_webFrame.get()];
     [[webView _frameLoadDelegateForwarder] webView:webView didCommitLoadForFrame:m_webFrame.get()];
@@ -457,6 +457,14 @@ void WebFrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
     [webView _didFailLoadWithError:error forFrame:m_webFrame.get()];
     [[webView _frameLoadDelegateForwarder] webView:webView didFailLoadWithError:error forFrame:m_webFrame.get()];
     [m_webFrame->_private->internalLoadDelegate webFrame:m_webFrame.get() didFinishLoadWithError:error];
+}
+
+void WebFrameLoaderClient::dispatchDidFinishDocumentLoad()
+{
+    WebView *webView = getWebView(m_webFrame.get());
+    id delegate = [webView frameLoadDelegate];
+    if ([delegate respondsToSelector:@selector(webView:didFinishDocumentLoadForFrame:)])
+        [delegate webView:webView didFinishDocumentLoadForFrame:m_webFrame.get()];
 }
 
 void WebFrameLoaderClient::dispatchDidFinishLoad()

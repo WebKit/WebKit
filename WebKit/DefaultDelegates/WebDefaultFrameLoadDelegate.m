@@ -57,6 +57,8 @@ static WebDefaultFrameLoadDelegate *sharedDelegate = nil;
 
 - (void)webView:(WebView *)sender didReceiveIcon:(NSImage *)image forFrame:(WebFrame *)frame { }
 
+- (void)webView:(WebView *)sender didFinishDocumentLoadForFrame:(WebFrame *)frame { }
+
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame { }
 
 - (void)webView:(WebView *)sender didHandleOnloadEventsForFrame:(WebFrame *)frame { }

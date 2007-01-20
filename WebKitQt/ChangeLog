@@ -1,3 +1,11 @@
+2007-01-19  John Sullivan  <sullivan@apple.com>
+
+        Added stubs for new callbacks, to try to avoid breaking the Qt port.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishDocumentLoad):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-01-19  Anders Carlsson  <acarlsson@apple.com>
 
         Try fixing the QT build.

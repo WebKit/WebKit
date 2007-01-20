@@ -1,3 +1,26 @@
+2007-01-19  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+
+        - WebKit part of fix for: <rdar://problem/4451715> REGRESSION: On some sites, have to 
+          type a character before username/password autofill kicks in
+          
+        Added new webView:didFinishDocumentLoadForFrame: SPI and wired it up
+
+        * WebView/WebViewPrivate.h:
+        declare new delegate method
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        declare dispatchDidFinishDocumentLoad()
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidFinishDocumentLoad):
+        new method, calls new delegate method
+
+        * DefaultDelegates/WebDefaultFrameLoadDelegate.m:
+        (-[WebDefaultFrameLoadDelegate webView:didFinishDocumentLoadForFrame:]):
+        empty default implementation of new delegate method
+
 2007-01-19  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by John Sullivan.

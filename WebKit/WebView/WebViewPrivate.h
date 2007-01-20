@@ -388,6 +388,11 @@ Could be worth adding to the API.
 
 @interface NSObject (WebFrameLoadDelegatePrivate)
 - (void)webView:(WebView *)sender didFirstLayoutInFrame:(WebFrame *)frame;
+
+// didFinishDocumentLoadForFrame is sent when the document has finished loading, though not necessarily all
+// of its subresources.
+- (void)webView:(WebView *)sender didFinishDocumentLoadForFrame:(WebFrame *)frame;
+
 // Addresses 4192534.  Private API for now.
 - (void)webView:(WebView *)sender didHandleOnloadEventsForFrame:(WebFrame *)frame;
 @end

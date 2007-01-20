@@ -122,6 +122,7 @@ namespace WebCore {
         virtual void dispatchDidReceiveTitle(const String& title);
         virtual void dispatchDidCommitLoad();
 
+        virtual void dispatchDidFinishDocumentLoad();
         virtual void dispatchDidFinishLoad();
         virtual void dispatchDidFirstLayout();
 

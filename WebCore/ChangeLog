@@ -1,3 +1,21 @@
+2007-01-19  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+
+        - WebCore part of fix for: <rdar://problem/4451715> REGRESSION: On some sites, have to 
+          type a character before username/password autofill kicks in
+
+        * loader/FrameLoaderClient.h:
+        new dispatchDidFinishDocumentLoad call
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::finishedParsing):
+        call dispatchDidFinishDocumentLoad
+        
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidFinishDocumentLoad):
+        empty implementation for dispatchDidFinishDocumentLoad
+
 2007-01-19  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.
