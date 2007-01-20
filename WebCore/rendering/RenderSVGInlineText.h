@@ -36,6 +36,7 @@ public:
     virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty);
     virtual bool requiresLayer() { return false; }
     virtual IntRect selectionRect();
+    virtual bool isSVGText() const { return true; }
 };
 }
 

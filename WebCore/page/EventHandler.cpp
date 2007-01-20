@@ -320,6 +320,15 @@ bool EventHandler::handleMouseMoveEvent(const MouseEventWithHitTestResults& even
     if (!(m_mouseDownMayStartSelect && innerNode->renderer()->shouldSelect()))
         return false;
 
+#if SVG_SUPPORT
+    Selection curSelection = m_frame->selectionController()->selection();
+    if (!curSelection.isNone()
+        && curSelection.base().node()->renderer()
+        && curSelection.base().node()->renderer()->isSVGText()
+        && innerNode->renderer()->containingBlock() != curSelection.base().node()->renderer()->containingBlock())
+        return false;
+#endif
+
     // handle making selection
     VisiblePosition pos(innerNode->renderer()->positionForPoint(event.localPoint()));
 

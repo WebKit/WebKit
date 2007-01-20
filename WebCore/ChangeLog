@@ -1,3 +1,26 @@
+2007-01-20  Rob Buis  <buis@kde.org>
+
+        Reviewed by Sam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12334
+        Respect <text> boundaries for svg text selecting
+
+        Make sure the text selection for svg stays inside
+        containing blocks.
+        Added one manual test since html selection does not
+        seem to work for SVG and selectSubString for SVG
+        is not implemented yet.
+
+        * manual-tests/svg-text-selection.svg: Added.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSVGText):
+        * rendering/RenderSVGInlineText.h:
+        (WebCore::RenderSVGInlineText::isSVGText):
+        * rendering/RenderSVGText.h:
+        (WebCore::RenderSVGText::isSVGText):
+
 2007-01-19  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

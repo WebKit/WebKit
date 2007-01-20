@@ -49,6 +49,7 @@ public:
     virtual void layout();
     virtual FloatRect relativeBBox(bool includeStroke = true) const;
     virtual InlineBox* createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool isOnlyRun = false);
+    virtual bool isSVGText() const { return true; }
 
 private:
     AffineTransform m_transform;

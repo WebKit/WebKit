@@ -281,6 +281,7 @@ public:
 #ifdef SVG_SUPPORT
     virtual bool isSVGContainer() const { return false; }
     virtual bool isRenderPath() const { return false; }
+    virtual bool isSVGText() const { return false; }
 
     virtual FloatRect relativeBBox(bool includeStroke = true) const;
 
