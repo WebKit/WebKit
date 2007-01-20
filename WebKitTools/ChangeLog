@@ -1,3 +1,11 @@
+2007-01-20  Adam Roben  <aroben@apple.com>
+
+        Rubberstamped by Maciej.
+
+        * Scripts/run-webkit-tests: Change the default behavior back to
+        generating results for new tests (this can be disabled with
+        --no-new-test-results)
+
 2007-01-19  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Adam Roben.
