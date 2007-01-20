@@ -28,8 +28,9 @@
 
 #ifdef SVG_SUPPORT
 
+#include "Frame.h"
 #include "Shared.h"
-#include "SVGStyledElement.h"
+#include "SVGElement.h"
 
 #include <wtf/Assertions.h>
 
@@ -48,7 +49,7 @@ public:
     operator PODType&() { return m_podType; }
 
     // Implemented by JSSVGPODTypeWrapperCreator
-    virtual void commitChange() { }
+    virtual void commitChange(KJS::ExecState*) { }
 
 private:
     PODType m_podType;
@@ -69,7 +70,23 @@ public:
 
     virtual ~JSSVGPODTypeWrapperCreator() { }
 
-    virtual void commitChange() { (m_creator->*m_setter)((PODType&)(*this)); }
+    virtual void commitChange(KJS::ExecState* exec)
+    {
+        (m_creator->*m_setter)((PODType&)(*this));
+
+        ASSERT(exec && exec->dynamicInterpreter());
+        Frame* activeFrame = static_cast<KJS::ScriptInterpreter*>(exec->dynamicInterpreter())->frame();
+        if (!activeFrame)
+            return;
+
+        SVGDocumentExtensions* extensions = (activeFrame->document() ? activeFrame->document()->accessSVGExtensions() : 0);
+        if (extensions && extensions->hasGenericContext<PODTypeCreator>(m_creator)) {
+            const SVGElement* context = extensions->genericContext<PODTypeCreator>(m_creator);
+            ASSERT(context);
+
+            context->notifyAttributeChange();
+        }
+    }
 
 private:
     // Update callbacks
@@ -93,13 +110,13 @@ public:
 
     virtual ~JSSVGPODTypeWrapperCreatorForList() { }
 
-    virtual void commitChange()
+    virtual void commitChange(KJS::ExecState* exec)
     {
         // Update POD item within SVGList
-        JSSVGPODTypeWrapperCreator<PODType, SVGPODListItem<PODType> >::commitChange();
+        JSSVGPODTypeWrapperCreator<PODType, SVGPODListItem<PODType> >::commitChange(exec);
 
         // Notify owner of the list, that it's content changed
-        const SVGStyledElement* context = m_list->context();
+        const SVGElement* context = m_list->context();
         ASSERT(context);
 
         context->notifyAttributeChange();         

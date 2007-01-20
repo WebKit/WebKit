@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-SVGPathSegList::SVGPathSegList(const SVGStyledElement* context)
+SVGPathSegList::SVGPathSegList(const SVGElement* context)
     : SVGList<RefPtr<SVGPathSeg> >()
     , m_context(context)
 {
@@ -45,7 +45,7 @@ SVGPathSegList::~SVGPathSegList()
 {
 }
 
-const SVGStyledElement* SVGPathSegList::context() const
+const SVGElement* SVGPathSegList::context() const
 {
     return m_context;
 }

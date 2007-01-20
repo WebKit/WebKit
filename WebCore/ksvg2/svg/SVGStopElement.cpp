@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGStopElement.h"
 
@@ -51,10 +52,13 @@ void SVGStopElement::parseMappedAttribute(MappedAttribute* attr)
             setOffsetBaseValue(value.toDouble());
     } else
         SVGStyledElement::parseMappedAttribute(attr);
+}
 
+void SVGStopElement::notifyAttributeChange() const
+{
     if (!ownerDocument()->parsing() && attached()) {
-        recalcStyle(Force);
-        
+        const_cast<SVGStopElement*>(this)->recalcStyle(Force);
+
         SVGStyledElement* parentStyled = static_cast<SVGStyledElement*>(parentNode());
         if (parentStyled)
             parentStyled->notifyAttributeChange();
@@ -63,6 +67,6 @@ void SVGStopElement::parseMappedAttribute(MappedAttribute* attr)
 
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

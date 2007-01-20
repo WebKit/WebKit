@@ -1,3 +1,60 @@
+2007-01-20  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam.
+
+        Fix JS bindings for SVGAnimated{Boolean, Enumeration, Integer, Number, String}.
+
+        Dynamic SVG DOM updates (ie. "someUse.href.baseVal = '#rect'") with these types
+        didn't work. Existing gradient updating examples relied on calling setAttribute
+        after a SVG DOM update - that was the only reason it worked, added a new test
+        only using SVG DOM updates (js-update-stop.svg).
+
+        Added test: js-update-stop.svg
+        Added test: use-property-changes-through-dom.svg (change xlink:href, x/y attributes using setAttribute)
+        Added test: use-property-changes-through-svg-dom.svg (change xlink:href, x/y attributes using SVG DOM)
+
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        (WebCore::JSSVGPODTypeWrapper::commitChange):
+        (WebCore::JSSVGPODTypeWrapperCreator::commitChange):
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::commitChange):
+        * bindings/js/JSSVGPathSegListCustom.cpp:
+        (WebCore::updatePathSegContextMap):
+        (WebCore::removeFromPathSegContextMap):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * ksvg2/misc/SVGDocumentExtensions.h:
+        (WebCore::SVGDocumentExtensions::baseValueMap):
+        (WebCore::SVGDocumentExtensions::genericContextMap):
+        (WebCore::SVGDocumentExtensions::baseValue):
+        (WebCore::SVGDocumentExtensions::setBaseValue):
+        (WebCore::SVGDocumentExtensions::removeBaseValue):
+        (WebCore::SVGDocumentExtensions::hasBaseValue):
+        (WebCore::SVGDocumentExtensions::genericContext):
+        (WebCore::SVGDocumentExtensions::setGenericContext):
+        (WebCore::SVGDocumentExtensions::removeGenericContext):
+        (WebCore::SVGDocumentExtensions::hasGenericContext):
+        (WebCore::String):
+        (WebCore::FloatRect):
+        (WebCore::bool):
+        (WebCore::double):
+        * ksvg2/svg/SVGClipPathElement.h:
+        * ksvg2/svg/SVGElement.h:
+        (WebCore::SVGElement::notifyAttributeChange):
+        * ksvg2/svg/SVGPathSegList.cpp:
+        (WebCore::SVGPathSegList::SVGPathSegList):
+        (WebCore::SVGPathSegList::context):
+        * ksvg2/svg/SVGPathSegList.h:
+        * ksvg2/svg/SVGPatternElement.h:
+        * ksvg2/svg/SVGPointList.cpp:
+        (SVGPointList::SVGPointList):
+        (SVGPointList::context):
+        * ksvg2/svg/SVGPointList.h:
+        * ksvg2/svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::parseMappedAttribute):
+        (WebCore::SVGStopElement::notifyAttributeChange):
+        * ksvg2/svg/SVGStopElement.h:
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::notifyAttributeChange):
+
 2007-01-20  Rob Buis  <buis@kde.org>
 
         Reviewed by Sam.

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,6 +22,7 @@
 
 #ifndef SVGStopElement_h
 #define SVGStopElement_h
+
 #ifdef SVG_SUPPORT
 
 #include "SVGStyledElement.h"
@@ -38,6 +39,8 @@ namespace WebCore
 
         // 'SVGStoplement' functions
         virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void notifyAttributeChange() const;
+
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGStopElement, double, double, Offset, offset)
     };

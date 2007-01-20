@@ -507,19 +507,20 @@ sub GenerateImplementation
     # - Add default header template
     @implContentHeader = split("\r", $headerTemplate);
     push(@implContentHeader, "\n#include \"config.h\"\n\n");
-
     push(@implContentHeader, "#ifdef ${conditional}_SUPPORT\n\n") if $conditional;
 
-    if ($className =~ /^JSSVGAnimated/) {
-        AddIncludesForSVGAnimatedType($interfaceName);
-    } elsif($className =~ /^JSSVGPathSeg/) {
+    if ($className =~ /^JSSVG/) {
         push(@implContentHeader, "#include \"Document.h\"\n");
         push(@implContentHeader, "#include \"Frame.h\"\n");
         push(@implContentHeader, "#include \"SVGDocumentExtensions.h\"\n");
-        push(@implContentHeader, "#include \"SVGStyledElement.h\"\n");
+        push(@implContentHeader, "#include \"SVGElement.h\"\n");
+        push(@implContentHeader, "#include \"SVGAnimatedTemplate.h\"\n");
+
+        if ($className =~ /^JSSVGAnimated/) {
+            AddIncludesForSVGAnimatedType($interfaceName);
+        }
     }
 
-    push(@implContentHeader, "#include \"SVGAnimatedTemplate.h\"\n") if ($className =~ /SVG/);
     push(@implContentHeader, "#include \"$className.h\"\n\n");
     push(@implContentHeader, "#include <wtf/GetPtr.h>\n\n");
 
@@ -819,7 +820,28 @@ sub GenerateImplementation
                         push(@implContent, "        return " . NativeToJSValue($attribute->signature, "", "imp.$name()") . ";\n");
                     }
                 } else {
-                    push(@implContent, "        return " . NativeToJSValue($attribute->signature, $implClassNameForValueConversion, "imp->$name()") . ";\n");
+                    my $type = $codeGenerator->StripModule($attribute->signature->type);
+                    my $jsType = NativeToJSValue($attribute->signature, $implClassNameForValueConversion, "imp->$name()");
+
+                    if ($codeGenerator->IsSVGAnimatedType($type)) {
+                        push(@implContent, "    {\n");   
+                        push(@implContent, "        ASSERT(exec && exec->dynamicInterpreter());\n\n");
+                        push(@implContent, "        RefPtr<$type> obj = $jsType;\n");
+                        push(@implContent, "        Frame* activeFrame = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->frame();\n");
+                        push(@implContent, "        if (activeFrame) {\n");
+                        push(@implContent, "            SVGDocumentExtensions* extensions = (activeFrame->document() ? activeFrame->document()->accessSVGExtensions() : 0);\n");
+                        push(@implContent, "            if (extensions) {\n");
+                        push(@implContent, "                if (extensions->hasGenericContext<$type>(obj.get()))\n");
+                        push(@implContent, "                    ASSERT(extensions->genericContext<$type>(obj.get()) == imp);\n");
+                        push(@implContent, "                else\n");
+                        push(@implContent, "                    extensions->setGenericContext<$type>(obj.get(), imp);\n");
+                        push(@implContent, "            }\n");
+                        push(@implContent, "        }\n\n");
+                        push(@implContent, "        return toJS(exec, obj.get());\n");
+                        push(@implContent, "    }\n");
+                    } else {
+                        push(@implContent, "        return $jsType;\n");
+                    }
                 }
             } else {
                 push(@implContent, "    case " . WK_ucfirst($name) . "AttrNum: {\n");
@@ -891,7 +913,7 @@ sub GenerateImplementation
                             } else {
                                 push(@implContent, "        imp.set" . WK_ucfirst($name) . "(" . JSValueToNative($attribute->signature, "value") . ");\n");
                             }
-                            push(@implContent, "        m_impl->commitChange();\n");
+                            push(@implContent, "        m_impl->commitChange(exec);\n");
                         } else {
                             push(@implContent, "        ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
                             push(@implContent, "        imp->set" . WK_ucfirst($name) . "(" . JSValueToNative($attribute->signature, "value"));
@@ -909,13 +931,13 @@ sub GenerateImplementation
             if ($interfaceName eq "DOMWindow") {
                 push(@implContent, "    // FIXME: Hack to prevent unused variable warning -- remove once DOMWindow includes a settable property\n");
                 push(@implContent, "    (void)imp;\n");
-            } elsif ($interfaceName =~ /^SVGPathSeg/) {
+            } elsif ($interfaceName =~ /^SVGPathSeg/ or $codeGenerator->IsSVGAnimatedType($interfaceName)) {
                 push(@implContent, "    ASSERT(exec && exec->dynamicInterpreter());\n");
                 push(@implContent, "    Frame* activeFrame = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->frame();\n");
                 push(@implContent, "    if (!activeFrame)\n        return;\n\n");
                 push(@implContent, "    SVGDocumentExtensions* extensions = (activeFrame->document() ? activeFrame->document()->accessSVGExtensions() : 0);\n");
                 push(@implContent, "    if (extensions && extensions->hasGenericContext<$interfaceName>(imp)) {\n");
-                push(@implContent, "        const SVGStyledElement* context = extensions->genericContext<$interfaceName>(imp);\n");
+                push(@implContent, "        const SVGElement* context = extensions->genericContext<$interfaceName>(imp);\n");
                 push(@implContent, "        ASSERT(context);\n\n");
                 push(@implContent, "        context->notifyAttributeChange();\n");
                 push(@implContent, "    }\n\n");
@@ -1369,6 +1391,7 @@ sub NativeToJSValue
         $implIncludes{"$type.h"} = 1;
     }
 
+    return $value if $codeGenerator->IsSVGAnimatedType($type);
     return "toJS(exec, WTF::getPtr($value))";
 }
 

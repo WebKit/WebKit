@@ -127,9 +127,10 @@ void SVGUseElement::insertedIntoDocument()
 
 void SVGUseElement::notifyAttributeChange() const
 {
-    if (!attached() || ownerDocument()->parsing())
+    if (!attached())
         return;
 
+    renderer()->setNeedsLayout(true);
     const_cast<SVGUseElement*>(this)->buildPendingResource();
 }
 
