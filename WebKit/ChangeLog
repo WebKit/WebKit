@@ -1,3 +1,21 @@
+2007-01-19  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Beth.
+
+        Fix <rdar://problem/4942294> REGRESSION: "Spelling and Grammar",
+        "Font", "Speech", and "Writing Direction" are missing from contextual
+        menu
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (fixMenusForOldClients): Change our new SPI tags to
+        WebMenuItemTagOther because old clients aren't expecting the new tags.
+        (fixMenusFromOldClients): Use each menu item's title to figure out its
+        correct tag again.
+        (WebContextMenuClient::getCustomMenuFromDefaultItems): Call
+        fixMenusForOldClients before calling up to the delegate.
+        * WebView/WebUIDelegatePrivate.h: Define WEBMENUITEMTAG_SPI_START so
+        that we can use it in WebContextMenuClient.
+
 2007-01-19  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

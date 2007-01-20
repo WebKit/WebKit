@@ -37,6 +37,7 @@
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebView.h"
+#import "WebViewFactory.h"
 #import "WebViewInternal.h"
 #import <WebCore/ContextMenu.h>
 #import <WebCore/KURL.h>
@@ -57,7 +58,22 @@ void WebContextMenuClient::contextMenuDestroyed()
     delete this;
 }
 
-static NSMutableArray* fixMenusFromOldApps(NSMutableArray *newMenuItems, NSMutableArray *defaultMenuItems)
+static NSMutableArray *fixMenusForOldClients(NSMutableArray *defaultMenuItems)
+{
+    // Here we change all SPI tags listed in WebUIDelegatePrivate.h to WebMenuItemTagOther
+    // to match our old WebKit context menu behavior.
+    
+    unsigned defaultItemsCount = [defaultMenuItems count];
+    for (unsigned i = 0; i < defaultItemsCount; ++i) {
+        NSMenuItem *item = [defaultMenuItems objectAtIndex:i];
+        if ([item tag] >= WEBMENUITEMTAG_SPI_START)
+            [item setTag:WebMenuItemTagOther];
+    }
+    
+    return defaultMenuItems;
+}
+
+static NSMutableArray *fixMenusFromOldClients(NSMutableArray *newMenuItems, NSMutableArray *defaultMenuItems)
 {    
     // The WebMenuItemTag enum has changed since Tiger, so clients built against Tiger WebKit might reference incorrect values for tags.
     // Here we fix up Tiger Mail and Tiger Safari.
@@ -91,7 +107,60 @@ static NSMutableArray* fixMenusFromOldApps(NSMutableArray *newMenuItems, NSMutab
             }
     }
     
-    // Nothing needs to be done
+    unsigned defaultItemsCount = [defaultMenuItems count];
+    for (unsigned i = 0; i < defaultItemsCount; ++i) {
+        NSMenuItem *item = [defaultMenuItems objectAtIndex:i];
+        if ([item tag] != WebMenuItemTagOther)
+            continue;
+        
+        NSString *title = [item title];
+        if (title == [[WebViewFactory sharedFactory] contextMenuItemTagOpenLink])
+            [item setTag:WebMenuItemTagOpenLink];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagIgnoreGrammar])
+            [item setTag:WebMenuItemTagIgnoreGrammar];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagSpellingMenu])
+            [item setTag:WebMenuItemTagSpellingMenu];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagShowSpellingPanel:true]
+            || title == [[WebViewFactory sharedFactory] contextMenuItemTagShowSpellingPanel:false])
+            [item setTag:WebMenuItemTagShowSpellingPanel];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagCheckSpelling])
+            [item setTag:WebMenuItemTagCheckSpelling];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagCheckSpellingWhileTyping])
+            [item setTag:WebMenuItemTagCheckSpellingWhileTyping];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagCheckGrammarWithSpelling])
+            [item setTag:WebMenuItemTagCheckGrammarWithSpelling];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagFontMenu])
+            [item setTag:WebMenuItemTagFontMenu];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagShowFonts])
+            [item setTag:WebMenuItemTagShowFonts];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagBold])
+            [item setTag:WebMenuItemTagBold];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagItalic])
+            [item setTag:WebMenuItemTagItalic];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagUnderline])
+            [item setTag:WebMenuItemTagUnderline];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagOutline])
+            [item setTag:WebMenuItemTagOutline];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagStyles])
+            [item setTag:WebMenuItemTagStyles];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagShowColors])
+            [item setTag:WebMenuItemTagShowColors];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagSpeechMenu])
+            [item setTag:WebMenuItemTagSpeechMenu];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagStartSpeaking])
+            [item setTag:WebMenuItemTagStartSpeaking];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagStopSpeaking])
+            [item setTag:WebMenuItemTagStopSpeaking];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagWritingDirectionMenu])
+            [item setTag:WebMenuItemTagWritingDirectionMenu];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagDefaultDirection])
+            [item setTag:WebMenuItemTagDefaultDirection];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagLeftToRight])
+            [item setTag:WebMenuItemTagLeftToRight];
+        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagRightToLeft])
+            [item setTag:WebMenuItemTagRightToLeft];
+    }
+
     return [newMenuItems autorelease];
 }
 
@@ -102,10 +171,10 @@ NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu*
         return nil;
     
     NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:defaultMenu->hitTestResult()] autorelease];
-    NSMutableArray *defaultMenuItems = defaultMenu->platformDescription();
+    NSMutableArray *defaultMenuItems = fixMenusForOldClients(defaultMenu->platformDescription());
     NSMutableArray *newMenuItems = [[delegate webView:m_webView contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems] mutableCopy];
 
-    return fixMenusFromOldApps(newMenuItems, defaultMenuItems);
+    return fixMenusFromOldClients(newMenuItems, defaultMenuItems);
 }
 
 void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const ContextMenu* parentMenu)

@@ -29,8 +29,9 @@
 #import <WebKit/WebUIDelegate.h>
 
 // FIXME: These should move to WebUIDelegate.h as part of the WebMenuItemTag enum there, when we're not in API freeze 
+#define WEBMENUITEMTAG_SPI_START 1000
 enum { 
-    WebMenuItemTagOpenLink = 1000,
+    WebMenuItemTagOpenLink = WEBMENUITEMTAG_SPI_START,
     WebMenuItemTagIgnoreGrammar,
     WebMenuItemTagSpellingMenu,
     WebMenuItemTagShowSpellingPanel,
