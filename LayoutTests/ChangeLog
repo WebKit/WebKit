@@ -1,3 +1,129 @@
+2007-01-20  Darin Adler  <darin@apple.com>
+
+        - updated results because my recent check-in made list boxes
+          one pixel taller
+
+        * fast/forms/HTMLOptionElement_label05-expected.checksum:
+        * fast/forms/HTMLOptionElement_label05-expected.png:
+        * fast/forms/HTMLOptionElement_label05-expected.txt:
+        * fast/forms/form-element-geometry-expected.checksum:
+        * fast/forms/form-element-geometry-expected.png:
+        * fast/forms/form-element-geometry-expected.txt:
+        * fast/forms/listbox-clip-expected.checksum:
+        * fast/forms/listbox-clip-expected.png:
+        * fast/forms/listbox-clip-expected.txt:
+        * fast/forms/listbox-width-change-expected.checksum:
+        * fast/forms/listbox-width-change-expected.png:
+        * fast/forms/listbox-width-change-expected.txt:
+        * fast/forms/option-strip-whitespace-expected.checksum:
+        * fast/forms/option-strip-whitespace-expected.png:
+        * fast/forms/option-strip-whitespace-expected.txt:
+        * fast/forms/select-change-popup-to-listbox-expected.checksum:
+        * fast/forms/select-change-popup-to-listbox-expected.png:
+        * fast/forms/select-change-popup-to-listbox-expected.txt:
+        * fast/replaced/replaced-breaking-expected.checksum:
+        * fast/replaced/replaced-breaking-expected.png:
+        * fast/replaced/replaced-breaking-expected.txt:
+        * fast/text/updateNewFont-expected.checksum:
+        * fast/text/updateNewFont-expected.png:
+        * fast/text/updateNewFont-expected.txt:
+
+        - reset results since the ones I generated before were on Leopard
+
+        * fast/forms/select-list-box-with-height-expected.checksum:
+        * fast/forms/select-list-box-with-height-expected.png:
+
+        - generated some missing pixel results
+
+        * http/tests/navigation/anchor-basic-expected.checksum: Added.
+        * http/tests/navigation/anchor-basic-expected.png: Added.
+        * http/tests/navigation/anchor-frames-expected.checksum: Added.
+        * http/tests/navigation/anchor-frames-expected.png: Added.
+        * http/tests/navigation/anchor-goback-expected.checksum: Added.
+        * http/tests/navigation/anchor-goback-expected.png: Added.
+        * http/tests/navigation/anchor-subframeload-expected.checksum: Added.
+        * http/tests/navigation/anchor-subframeload-expected.png: Added.
+        * http/tests/navigation/error404-basic-expected.checksum: Added.
+        * http/tests/navigation/error404-basic-expected.png: Added.
+        * http/tests/navigation/error404-frames-expected.checksum: Added.
+        * http/tests/navigation/error404-frames-expected.png: Added.
+        * http/tests/navigation/error404-goback-expected.checksum: Added.
+        * http/tests/navigation/error404-goback-expected.png: Added.
+        * http/tests/navigation/error404-subframeload-expected.checksum: Added.
+        * http/tests/navigation/error404-subframeload-expected.png: Added.
+        * http/tests/navigation/javascriptlink-basic-expected.checksum: Added.
+        * http/tests/navigation/javascriptlink-basic-expected.png: Added.
+        * http/tests/navigation/javascriptlink-frames-expected.checksum: Added.
+        * http/tests/navigation/javascriptlink-frames-expected.png: Added.
+        * http/tests/navigation/javascriptlink-goback-expected.checksum: Added.
+        * http/tests/navigation/javascriptlink-goback-expected.png: Added.
+        * http/tests/navigation/javascriptlink-subframeload-expected.checksum: Added.
+        * http/tests/navigation/javascriptlink-subframeload-expected.png: Added.
+        * http/tests/navigation/metaredirect-basic-expected.checksum: Added.
+        * http/tests/navigation/metaredirect-basic-expected.png: Added.
+        * http/tests/navigation/metaredirect-frames-expected.checksum: Added.
+        * http/tests/navigation/metaredirect-frames-expected.png: Added.
+        * http/tests/navigation/metaredirect-goback-expected.checksum: Added.
+        * http/tests/navigation/metaredirect-goback-expected.png: Added.
+        * http/tests/navigation/metaredirect-subframeload-expected.checksum: Added.
+        * http/tests/navigation/metaredirect-subframeload-expected.png: Added.
+        * http/tests/navigation/post-basic-expected.checksum: Added.
+        * http/tests/navigation/post-basic-expected.png: Added.
+        * http/tests/navigation/post-frames-expected.checksum: Added.
+        * http/tests/navigation/post-frames-expected.png: Added.
+        * http/tests/navigation/post-goback1-expected.checksum: Added.
+        * http/tests/navigation/post-goback1-expected.png: Added.
+        * http/tests/navigation/post-goback2-expected.checksum: Added.
+        * http/tests/navigation/post-goback2-expected.png: Added.
+        * http/tests/navigation/postredirect-basic-expected.checksum: Added.
+        * http/tests/navigation/postredirect-basic-expected.png: Added.
+        * http/tests/navigation/postredirect-frames-expected.checksum: Added.
+        * http/tests/navigation/postredirect-frames-expected.png: Added.
+        * http/tests/navigation/postredirect-goback1-expected.checksum: Added.
+        * http/tests/navigation/postredirect-goback1-expected.png: Added.
+        * http/tests/navigation/postredirect-goback2-expected.checksum: Added.
+        * http/tests/navigation/postredirect-goback2-expected.png: Added.
+        * http/tests/navigation/redirect302-basic-expected.checksum: Added.
+        * http/tests/navigation/redirect302-basic-expected.png: Added.
+        * http/tests/navigation/redirect302-frames-expected.checksum: Added.
+        * http/tests/navigation/redirect302-frames-expected.png: Added.
+        * http/tests/navigation/redirect302-goback-expected.checksum: Added.
+        * http/tests/navigation/redirect302-goback-expected.png: Added.
+        * http/tests/navigation/redirect302-subframeload-expected.checksum: Added.
+        * http/tests/navigation/redirect302-subframeload-expected.png: Added.
+        * http/tests/navigation/relativeanchor-basic-expected.checksum: Added.
+        * http/tests/navigation/relativeanchor-basic-expected.png: Added.
+        * http/tests/navigation/relativeanchor-frames-expected.checksum: Added.
+        * http/tests/navigation/relativeanchor-frames-expected.png: Added.
+        * http/tests/navigation/relativeanchor-goback-expected.checksum: Added.
+        * http/tests/navigation/relativeanchor-goback-expected.png: Added.
+        * http/tests/navigation/slowmetaredirect-basic-expected.checksum: Added.
+        * http/tests/navigation/slowmetaredirect-basic-expected.png: Added.
+        * http/tests/navigation/slowtimerredirect-basic-expected.checksum: Added.
+        * http/tests/navigation/slowtimerredirect-basic-expected.png: Added.
+        * http/tests/navigation/success200-basic-expected.checksum: Added.
+        * http/tests/navigation/success200-basic-expected.png: Added.
+        * http/tests/navigation/success200-frames-expected.checksum: Added.
+        * http/tests/navigation/success200-frames-expected.png: Added.
+        * http/tests/navigation/success200-frames-loadsame-expected.checksum: Added.
+        * http/tests/navigation/success200-frames-loadsame-expected.png: Added.
+        * http/tests/navigation/success200-goback-expected.checksum: Added.
+        * http/tests/navigation/success200-goback-expected.png: Added.
+        * http/tests/navigation/success200-loadsame-expected.checksum: Added.
+        * http/tests/navigation/success200-loadsame-expected.png: Added.
+        * http/tests/navigation/success200-reload-expected.checksum: Added.
+        * http/tests/navigation/success200-reload-expected.png: Added.
+        * http/tests/navigation/success200-subframeload-expected.checksum: Added.
+        * http/tests/navigation/success200-subframeload-expected.png: Added.
+        * http/tests/navigation/timerredirect-basic-expected.checksum: Added.
+        * http/tests/navigation/timerredirect-basic-expected.png: Added.
+        * http/tests/navigation/timerredirect-frames-expected.checksum: Added.
+        * http/tests/navigation/timerredirect-frames-expected.png: Added.
+        * http/tests/navigation/timerredirect-goback-expected.checksum: Added.
+        * http/tests/navigation/timerredirect-goback-expected.png: Added.
+        * http/tests/navigation/timerredirect-subframeload-expected.checksum: Added.
+        * http/tests/navigation/timerredirect-subframeload-expected.png: Added.
+
 2007-01-19  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.
