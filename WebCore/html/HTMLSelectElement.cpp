@@ -320,7 +320,14 @@ void HTMLSelectElement::parseMappedAttribute(MappedAttribute *attr)
 {
     bool oldUsesMenuList = usesMenuList();
     if (attr->name() == sizeAttr) {
-        m_size = max(attr->value().toInt(), 1);
+        // Set the attribute value to a number.
+        // This is important since the style rules for this attribute can determine the appearance property.
+        int size = attr->value().toInt();
+        String attrSize = String::number(size);
+        if (attrSize != attr->value())
+            attr->setValue(attrSize);
+
+        m_size = max(size, 1);
         if (oldUsesMenuList != usesMenuList() && attached()) {
             detach();
             attach();

@@ -1,3 +1,19 @@
+2007-01-19  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for: <rdar://problem/4697438> REGRESSION: select menu lists match the wrong css rule on www.chainreaction.com
+
+        Update the size attribute value for select elements to match the numeric value.  This is a special case since this
+        attribute is used to determine which control to use.  We want to make sure that the size attribute is valid when we match
+        CSS rules.
+
+        Test: fast/forms/select-size.html
+
+        * html/HTMLSelectElement.cpp: (WebCore::HTMLSelectElement::parseMappedAttribute): If the attribute string value is not the
+          same as its integer value, then update the attribute value to match the integer.
+        * dom/Attribute.h: Made setValue and setPrefix public.
+
 2007-01-19  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

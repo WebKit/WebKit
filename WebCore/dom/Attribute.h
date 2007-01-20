@@ -75,10 +75,10 @@ public:
     // An extension to get the style information for presentational attributes.
     virtual CSSStyleDeclaration* style() const { return 0; }
     
-private:
     void setValue(const AtomicString& value) { m_value = value; }
     void setPrefix(const AtomicString& prefix) { m_name.setPrefix(prefix); }
 
+private:
     QualifiedName m_name;
     AtomicString m_value;
     Attr* m_impl;
