@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (0,0) size 300x144
+      RenderSVGContainer {defs} at (0,0) size 100x100
+        RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+      RenderSVGContainer {g} at (50,10) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,10.00)}]
+        RenderPath {rect} at (50,10) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+        RenderSVGContainer {use} at (50,10) size 100x100
+          RenderSVGContainer {g} at (50,10) size 100x100
+            RenderPath {rect} at (50,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+      RenderSVGContainer {g} at (200,10) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
+        RenderSVGContainer {use} at (200,10) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,-50.00)}]
+          RenderSVGContainer {g} at (200,10) size 100x100
+            RenderPath {rect} at (200,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+      RenderSVGText {text} at (60,140) size 800x18
+        RenderSVGInlineText {#text} at (0,-14) size 236x18
+          text run at (0,-14) width 236: "You should see two green rectangles."

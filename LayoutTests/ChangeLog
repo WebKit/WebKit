@@ -1,3 +1,22 @@
+2007-01-20  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam.
+
+        Update svg baseline after the dynamic update fixes.
+
+        * svg/custom/js-update-stop-expected.checksum: Added.
+        * svg/custom/js-update-stop-expected.png: Added.
+        * svg/custom/js-update-stop-expected.txt: Added.
+        * svg/custom/js-update-stop.svg: Added.
+        * svg/custom/use-property-changes-through-dom-expected.checksum: Added.
+        * svg/custom/use-property-changes-through-dom-expected.png: Added.
+        * svg/custom/use-property-changes-through-dom-expected.txt: Added.
+        * svg/custom/use-property-changes-through-dom.svg: Added.
+        * svg/custom/use-property-changes-through-svg-dom-expected.checksum: Added.
+        * svg/custom/use-property-changes-through-svg-dom-expected.png: Added.
+        * svg/custom/use-property-changes-through-svg-dom-expected.txt: Added.
+        * svg/custom/use-property-changes-through-svg-dom.svg: Added.
+
 2007-01-20  Darin Adler  <darin@apple.com>
 
         - updated results because my recent check-in made list boxes
