@@ -1082,6 +1082,8 @@ void HTMLInputElement::setValue(const String& value)
     setValueMatchesRenderer(false);
     if (storesValueSeparateFromAttribute()) {
         m_value = constrainValue(value);
+        if (isTextField() && inDocument())
+            document()->updateRendering();
         if (renderer())
             renderer()->updateFromElement();
         // Changes to hidden values don't require re-rendering.

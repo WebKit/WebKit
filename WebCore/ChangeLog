@@ -1,5 +1,19 @@
 2007-01-20  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11115
+          REGRESSION: Crash on Flickr after hitting cancel from adding a note
+
+        Test: fast/forms/text-set-value-crash.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValue): Added a call to Document::updateRendering().
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::setValue): Ditto.
+
+2007-01-20  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=8360

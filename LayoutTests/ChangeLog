@@ -1,5 +1,15 @@
 2007-01-20  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Maciej.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=11115
+          REGRESSION: Crash on Flickr after hitting cancel from adding a note
+
+        * fast/forms/text-set-value-crash-expected.txt: Added.
+        * fast/forms/text-set-value-crash.html: Added.
+
+2007-01-20  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin.
 
         - test for http://bugs.webkit.org/show_bug.cgi?id=8360
