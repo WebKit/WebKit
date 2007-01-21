@@ -1,3 +1,12 @@
+2007-01-21  Sam Weinig  <sam@webkit.org>
+
+        Rolling out patch for http://bugs.webkit.org/show_bug.cgi?id=8360.
+
+        * fast/layers/removed-by-scroll-handler-expected.checksum: Removed.
+        * fast/layers/removed-by-scroll-handler-expected.png: Removed.
+        * fast/layers/removed-by-scroll-handler-expected.txt: Removed.
+        * fast/layers/removed-by-scroll-handler.html: Removed.
+
 2007-01-21  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Darin.

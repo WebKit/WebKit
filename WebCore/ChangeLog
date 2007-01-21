@@ -1,3 +1,15 @@
+2007-01-21  Sam Weinig  <sam@webkit.org>
+
+        Rolling out patch for http://bugs.webkit.org/show_bug.cgi?id=8360.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::scrollToOffset):
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        (WebCore::Marquee::start):
+        * rendering/RenderLayer.h:
+
 2007-01-21  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Darin.
