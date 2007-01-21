@@ -1,3 +1,24 @@
+2007-01-20  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8360
+          Repro crash when onscroll handler deletes the scrolled object
+
+        Test: fast/layers/removed-by-scroll-handler.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::dispatchScrollEvent): Added. Called when the timer
+        fires and dispatches the scroll event to the layer's element.
+        (WebCore::RenderLayer::scrollToOffset): Instead of dispatching the scroll
+        event from this function, which is called during layout, schedule a 0-duration
+        timer to dispatch the event after layout.
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        (WebCore::Marquee::start):
+        * rendering/RenderLayer.h:
+
 2007-01-20  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Sam.

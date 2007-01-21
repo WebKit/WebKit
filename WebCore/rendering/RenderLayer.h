@@ -377,6 +377,8 @@ private:
     void dirtyVisibleDescendantStatus();
     void updateVisibilityStatus();
 
+    void dispatchScrollEvent(Timer<RenderLayer>*);
+
 protected:   
     RenderObject* m_object;
 
@@ -452,6 +454,8 @@ protected:
     bool m_hasVisibleDescendant : 1;
 
     Marquee* m_marquee; // Used by layers with overflow:marquee
+    
+    Timer<RenderLayer> m_scrollEventTimer;
 };
 
 } // namespace WebCore

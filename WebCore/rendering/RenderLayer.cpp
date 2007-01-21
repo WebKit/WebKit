@@ -112,44 +112,45 @@ void ClipRects::destroy(RenderArena* renderArena)
 }
 
 RenderLayer::RenderLayer(RenderObject* object)
-: m_object(object),
-m_parent(0),
-m_previous(0),
-m_next(0),
-m_first(0),
-m_last(0),
-m_repaintX(0),
-m_repaintY(0),
-m_relX(0),
-m_relY(0),
-m_x(0),
-m_y(0),
-m_width(0),
-m_height(0),
-m_scrollX(0),
-m_scrollY(0),
-m_scrollOriginX(0),
-m_scrollLeftOverflow(0),
-m_scrollWidth(0),
-m_scrollHeight(0),
-m_inResizeMode(false),
-m_posZOrderList(0),
-m_negZOrderList(0),
-m_overflowList(0),
-m_clipRects(0) ,
-m_scrollDimensionsDirty(true),
-m_zOrderListsDirty(true),
-m_overflowListDirty(true),
-m_isOverflowOnly(shouldBeOverflowOnly()),
-m_usedTransparency(false),
-m_inOverflowRelayout(false),
-m_repaintOverflowOnResize(false),
-m_overflowStatusDirty(true),
-m_visibleContentStatusDirty( true ),
-m_hasVisibleContent( false ),
-m_visibleDescendantStatusDirty( false ),
-m_hasVisibleDescendant( false ),
-m_marquee(0)
+    : m_object(object)
+    , m_parent(0)
+    , m_previous(0)
+    , m_next(0)
+    , m_first(0)
+    , m_last(0)
+    , m_repaintX(0)
+    , m_repaintY(0)
+    , m_relX(0)
+    , m_relY(0)
+    , m_x(0)
+    , m_y(0)
+    , m_width(0)
+    , m_height(0)
+    , m_scrollX(0)
+    , m_scrollY(0)
+    , m_scrollOriginX(0)
+    , m_scrollLeftOverflow(0)
+    , m_scrollWidth(0)
+    , m_scrollHeight(0)
+    , m_inResizeMode(false)
+    , m_posZOrderList(0)
+    , m_negZOrderList(0)
+    , m_overflowList(0)
+    , m_clipRects(0)
+    , m_scrollDimensionsDirty(true)
+    , m_zOrderListsDirty(true)
+    , m_overflowListDirty(true)
+    , m_isOverflowOnly(shouldBeOverflowOnly())
+    , m_usedTransparency(false)
+    , m_inOverflowRelayout(false)
+    , m_repaintOverflowOnResize(false)
+    , m_overflowStatusDirty(true)
+    , m_visibleContentStatusDirty(true)
+    , m_hasVisibleContent(false)
+    , m_visibleDescendantStatusDirty(false)
+    , m_hasVisibleDescendant(false)
+    , m_marquee(0)
+    , m_scrollEventTimer(this, &RenderLayer::dispatchScrollEvent)
 {
     if (!object->firstChild() && object->style()) {
         m_visibleContentStatusDirty = false;
@@ -672,6 +673,11 @@ RenderLayer::subtractScrollOffset(int& x, int& y)
     y -= scrollYOffset();
 }
 
+void RenderLayer::dispatchScrollEvent(Timer<RenderLayer>* timer)
+{
+    EventTargetNodeCast(m_object->element())->dispatchHTMLEvent(scrollEvent, true, false);
+}
+
 void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repaint)
 {
     if (renderer()->style()->overflowX() != OMARQUEE) {
@@ -721,8 +727,9 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
             m_vBar->setValue(m_scrollY);
     }
 
-    // Fire the scroll DOM event.
-    EventTargetNodeCast(m_object->element())->dispatchHTMLEvent(scrollEvent, true, false);
+    // Schedule the scroll DOM event. Since the event handler might destroy the object and its renderer,
+    // we do not dispatch the event here during layout.
+    m_scrollEventTimer.startOneShot(0);
 }
 
 void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
@@ -749,8 +756,6 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment
             int diffX = scrollXOffset();
             int diffY = scrollYOffset();
             scrollToOffset(xOffset, yOffset);
-            // FIXME: At this point a scroll event fired, which could have deleted this layer.
-            // Need to handle this case.
             diffX = scrollXOffset() - diffX;
             diffY = scrollYOffset() - diffY;
             newRect.setX(rect.x() - diffX);
@@ -1184,8 +1189,6 @@ RenderLayer::updateScrollInfoAfterLayout()
         int newY = max(0, min(m_scrollY, scrollHeight() - m_object->clientHeight()));
         if (newX != scrollXOffset() || newY != m_scrollY)
             scrollToOffset(newX, newY);
-        // FIXME: At this point a scroll event fired, which could have deleted this layer.
-        // Need to handle this case.
     }
 
     bool haveHorizontalBar = m_hBar;
@@ -2152,8 +2155,6 @@ void Marquee::start()
             m_layer->scrollToOffset(m_start, 0, false, false);
         else
             m_layer->scrollToOffset(0, m_start, false, false);
-        // FIXME: At this point a scroll event fired, which could have deleted this layer,
-        // including the marquee. Need to handle this case.
     }
     else {
         m_suspended = false;
