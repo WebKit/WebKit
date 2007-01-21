@@ -1,3 +1,13 @@
+2007-01-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=10805
+          REGRESSION (r15720): manual-tests/onblur-remove.html failing
+
+        * manual-tests/onblur-remove.html: Changed the test to not require pressing
+        Enter, since the correct behavior for Enter is to send a blur event.
+
 2007-01-21  Sanjay Madhav  <sanjay12@gmail.com>
 
         Reviewed by Darin.
