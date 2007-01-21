@@ -5422,6 +5422,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\bindings\js\JSDocumentCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\bindings\js\JSHTMLElementWrapperFactory.cpp"
 					>
 				</File>

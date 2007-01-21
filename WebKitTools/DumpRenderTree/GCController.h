@@ -34,4 +34,5 @@
 + (NSString *)webScriptNameForSelector:(SEL)aSelector;
 - (void)collect;
 - (void)collectOnAlternateThread:(BOOL)waitUntilDone;
+- (size_t)getJSObjectCount;
 @end

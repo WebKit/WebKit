@@ -1,3 +1,16 @@
+2007-01-21  Sanjay Madhav  <sanjay12@gmail.com>
+
+        Reviewed by Darin.
+
+        Test support for: <rdar://problem/4928583> Memory usage grows when reloading google.com/ig
+
+        This adds a getJSObjectCount test-accessible function to allow test scripts to track JSObject usage.
+
+        * DumpRenderTree/GCController.h:
+        * DumpRenderTree/GCController.mm:
+        (+[GCController isSelectorExcludedFromWebScript:]):
+        (-[GCController getJSObjectCount]):
+
 2007-01-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej.

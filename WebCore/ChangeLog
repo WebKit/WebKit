@@ -1,3 +1,24 @@
+2007-01-21  Sanjay Madhav  <sanjay12@gmail.com>
+
+        Reviewed by Darin.
+
+        Fix for: <rdar://problem/4928583> Memory usage grows when reloading google.com/ig
+
+        JSDocuments are now responsible for marking the DOM wrappers associated with them, when they get marked.
+        This fixes a JS object leak when a DOM wrapper has a reference to a JSDocument that is otherwise not reachable.
+
+        Test: fast/dom/gc-10.html
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDocumentCustom.cpp: Added.
+        (WebCore::JSDocument::mark):
+        * bindings/js/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::markDOMNodesForDocument):
+        (KJS::ScriptInterpreter::mark):
+        * bindings/js/kjs_binding.h:
+        * dom/Document.idl:
+
 2007-01-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

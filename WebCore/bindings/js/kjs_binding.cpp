@@ -197,10 +197,10 @@ void ScriptInterpreter::forgetAllDOMNodesForDocument(Document* document)
     }
 }
 
-void ScriptInterpreter::mark(bool currentThreadIsMainThread)
+void ScriptInterpreter::markDOMNodesForDocument(Document* doc)
 {
-    NodePerDocMap::iterator dictEnd = domNodesPerDocument().end();
-    for (NodePerDocMap::iterator dictIt = domNodesPerDocument().begin(); dictIt != dictEnd; ++dictIt) {
+    NodePerDocMap::iterator dictIt = domNodesPerDocument().find(doc);
+    if (dictIt != domNodesPerDocument().end()) {
         NodeMap* nodeDict = dictIt->second;
         NodeMap::iterator nodeEnd = nodeDict->end();
         for (NodeMap::iterator nodeIt = nodeDict->begin(); nodeIt != nodeEnd; ++nodeIt) {
@@ -212,7 +212,10 @@ void ScriptInterpreter::mark(bool currentThreadIsMainThread)
                 node->mark();
         }
     }
+}
 
+void ScriptInterpreter::mark(bool currentThreadIsMainThread)
+{
     if (!currentThreadIsMainThread) {
         // On alternate threads, DOMObjects remain in the cache because they're not collected.
         // So, they need an opportunity to mark their children.

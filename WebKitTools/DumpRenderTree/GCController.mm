@@ -37,6 +37,9 @@
         return NO;
     if (aSelector == @selector(collectOnAlternateThread:))
         return NO;
+    if (aSelector == @selector(getJSObjectCount))
+        return NO;
+    
     return YES;
 }
 
@@ -56,5 +59,10 @@
 - (void)collectOnAlternateThread:(BOOL)waitUntilDone
 {
     [WebCoreStatistics garbageCollectJavaScriptObjectsOnAlternateThread:waitUntilDone];
+}
+
+- (size_t)getJSObjectCount
+{
+    return [WebCoreStatistics javaScriptObjectsCount];
 }
 @end

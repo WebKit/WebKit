@@ -1,3 +1,13 @@
+2007-01-21  Sanjay Madhav  <sanjay12@gmail.com>
+
+        Reviewed by Darin.
+
+        Test for: <rdar://problem/4928583> Memory usage grows when reloading google.com/ig
+
+        * fast/dom/gc-10-expected.txt: Added.
+        * fast/dom/gc-10.html: Added.
+        * fast/dom/resources/gc-10-frame.html: Added.
+
 2007-01-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

@@ -1346,6 +1346,7 @@
 		85FF313C0AAFBD7200374F38 /* DOMWheelEventPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 85FF313B0AAFBD7200374F38 /* DOMWheelEventPrivate.h */; };
 		85FF315A0AAFBFCB00374F38 /* DOMKeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 85FF31580AAFBFCB00374F38 /* DOMKeyboardEvent.h */; };
 		85FF315B0AAFBFCB00374F38 /* DOMKeyboardEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 85FF31590AAFBFCB00374F38 /* DOMKeyboardEvent.mm */; };
+		929264770B61FC7200B41D34 /* JSDocumentCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 929264760B61FC7200B41D34 /* JSDocumentCustom.cpp */; };
 		9305B24D098F1B6B00C28855 /* Timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9305B24C098F1B6B00C28855 /* Timer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9307056C09E0AF8F00B17FE4 /* csshelper.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4786097CAAC80094C9E4 /* csshelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		930705D809E0C9B700B17FE4 /* JSCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 930705D709E0C9B700B17FE4 /* JSCounter.cpp */; };
@@ -4369,6 +4370,7 @@
 		85FF313B0AAFBD7200374F38 /* DOMWheelEventPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMWheelEventPrivate.h; sourceTree = "<group>"; };
 		85FF31580AAFBFCB00374F38 /* DOMKeyboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMKeyboardEvent.h; sourceTree = "<group>"; };
 		85FF31590AAFBFCB00374F38 /* DOMKeyboardEvent.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMKeyboardEvent.mm; sourceTree = "<group>"; };
+		929264760B61FC7200B41D34 /* JSDocumentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentCustom.cpp; sourceTree = "<group>"; };
 		9305B24C098F1B6B00C28855 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
 		9307059009E0C75800B17FE4 /* CSSPrimitiveValue.idl */ = {isa = PBXFileReference; explicitFileType = sourcecode; fileEncoding = 4; path = CSSPrimitiveValue.idl; sourceTree = "<group>"; };
 		930705C709E0C95F00B17FE4 /* Counter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Counter.idl; sourceTree = "<group>"; };
@@ -8780,6 +8782,7 @@
 				14DFB33F0A7DF7630018F769 /* Derived Sources */,
 				93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */,
 				1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */,
+				929264760B61FC7200B41D34 /* JSDocumentCustom.cpp */,
 				938E65F609F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp */,
 				938E65F009F09840008A48EC /* JSHTMLElementWrapperFactory.h */,
 				A8D065AD0A2446CD005E7203 /* JSHTMLFormElementCustom.cpp */,
@@ -12343,6 +12346,7 @@
 				B2F273F30B5BFAC80068C956 /* SVGElementInstanceList.cpp in Sources */,
 				1A2A68230B5BEDE70002A480 /* ProgressTracker.cpp in Sources */,
 				A80CEBAD0B60FC49007637C1 /* SVGMPathElement.cpp in Sources */,
+				929264770B61FC7200B41D34 /* JSDocumentCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
