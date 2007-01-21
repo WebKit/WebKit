@@ -1,3 +1,14 @@
+2007-01-21  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12280
+          select element not available by name through document.all
+          (dropdown list not available on smarthome.com checkout)
+
+        * fast/dom/document-all-select-expected.txt: Added.
+        * fast/dom/document-all-select.html: Added.
+
 2007-01-21  Sanjay Madhav  <sanjay12@gmail.com>
 
         Reviewed by Darin.

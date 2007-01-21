@@ -1,3 +1,17 @@
+2007-01-21  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12280
+          select element not available by name through document.all
+          (dropdown list not available on smarthome.com checkout)
+
+        Test: fast/dom/document-all-select.html
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::checkForNameMatch):
+        (WebCore::HTMLCollection::updateNameCache):
+
 2007-01-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
