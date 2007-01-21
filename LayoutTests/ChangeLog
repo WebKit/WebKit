@@ -2,6 +2,18 @@
 
         Reviewed by Darin.
 
+        - test for http://bugs.webkit.org/show_bug.cgi?id=10692
+          REGRESSION (r14847): Unnecessary scrollbars with position:relative; and overflow:auto;
+
+        * fast/overflow/position-relative-expected.checksum: Added.
+        * fast/overflow/position-relative-expected.png: Added.
+        * fast/overflow/position-relative-expected.txt: Added.
+        * fast/overflow/position-relative.html: Added.
+
+2007-01-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - test for http://bugs.webkit.org/show_bug.cgi?id=10472
           REGRESSION: "add" method of <select> object does not put the <option> object in the correct position
 

@@ -2,6 +2,25 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=10692
+          REGRESSION (r14847): Unnecessary scrollbars with position:relative; and overflow:auto;
+
+        Test: fast/overflow/position-relative.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::lowestPosition): Add the relative position offset only
+        if 'includeSelf' is true.
+        (WebCore::RenderBox::rightmostPosition): Ditto.
+        (WebCore::RenderBox::leftmostPosition): Ditto.
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::lowestPosition): Ditto.
+        (WebCore::RenderFlow::rightmostPosition): Ditto.
+        (WebCore::RenderFlow::leftmostPosition): Ditto.
+
+2007-01-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=10472
           REGRESSION: "add" method of <select> object does not put the <option> object in the correct position
 

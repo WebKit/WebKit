@@ -522,7 +522,7 @@ int RenderFlow::lowestPosition(bool includeOverflowInterior, bool includeSelf) c
         }
     }
 
-    if (isRelPositioned())
+    if (includeSelf && isRelPositioned())
         bottom += relativePositionOffsetY();         
 
     return bottom;
@@ -546,7 +546,7 @@ int RenderFlow::rightmostPosition(bool includeOverflowInterior, bool includeSelf
         }
     }
 
-    if (isRelPositioned())
+    if (includeSelf && isRelPositioned())
         right += relativePositionOffsetX();
 
     return right;
@@ -570,7 +570,7 @@ int RenderFlow::leftmostPosition(bool includeOverflowInterior, bool includeSelf)
         }
     }
 
-    if (isRelPositioned())
+    if (includeSelf && isRelPositioned())
         left += relativePositionOffsetX(); 
 
     return left;
