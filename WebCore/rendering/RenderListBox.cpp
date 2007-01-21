@@ -69,6 +69,8 @@ const int baselineAdjustment = 7;
 RenderListBox::RenderListBox(HTMLSelectElement* element)
     : RenderBlock(element)
     , m_optionsChanged(true)
+    , m_scrollToRevealSelectionAfterLayout(false)
+    , m_inAutoscroll(false)
     , m_optionsWidth(0)
     , m_indexOffset(0)
 {
@@ -89,10 +91,8 @@ void RenderListBox::setStyle(RenderStyle* style)
 
 void RenderListBox::updateFromElement()
 {
-    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
-
     if (m_optionsChanged) {
-        const Vector<HTMLElement*>& listItems = select->listItems();
+        const Vector<HTMLElement*>& listItems = static_cast<HTMLSelectElement*>(node())->listItems();
         int size = numItems();
         
         float width = 0;
@@ -120,10 +120,34 @@ void RenderListBox::updateFromElement()
         m_optionsChanged = false;
         setNeedsLayoutAndMinMaxRecalc();
     }
-    
+}
+
+void RenderListBox::selectionChanged()
+{
+    repaint();
+    if (!m_inAutoscroll) {
+        if (needsLayout())
+            m_scrollToRevealSelectionAfterLayout = true;
+        else
+            scrollToRevealSelection();
+    }
+}
+
+void RenderListBox::layout()
+{
+    RenderBlock::layout();
+    if (m_scrollToRevealSelectionAfterLayout)
+        scrollToRevealSelection();
+}
+
+void RenderListBox::scrollToRevealSelection()
+{    
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+
+    m_scrollToRevealSelectionAfterLayout = false;
+
     int firstIndex = select->optionToListIndex(select->selectedIndex());
-    int lastIndex = select->lastSelectedListIndex();
-    if (firstIndex >= 0 && !listIndexIsVisible(firstIndex) && !listIndexIsVisible(lastIndex))
+    if (firstIndex >= 0 && !listIndexIsVisible(select->lastSelectedListIndex()))
         scrollToRevealElementAtListIndex(firstIndex);
 }
 
@@ -377,13 +401,14 @@ void RenderListBox::autoscroll()
     else
         endIndex = listIndexAtOffset(offsetX, offsetY);
 
-    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
-    if (endIndex >= 0 && select) {
+    if (endIndex >= 0) {
+        HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+        m_inAutoscroll = true;
         if (!select->multiple())
             select->setActiveSelectionAnchorIndex(endIndex);
         select->setActiveSelectionEndIndex(endIndex);
         select->updateListBoxSelection(!select->multiple());
-        repaint();
+        m_inAutoscroll = false;
     }
 }
 
@@ -393,7 +418,7 @@ void RenderListBox::stopAutoscroll()
 }
 
 bool RenderListBox::scrollToRevealElementAtListIndex(int index)
-{    
+{
     if (index < 0 || index >= numItems() || listIndexIsVisible(index))
         return false;
 

@@ -1,6 +1,31 @@
-2007-01-21  David Kilzer  <ddkilzer@webkit.org>
+2007-01-21  Darin Adler  <darin@apple.com>
 
-        Reviewed by NOBODY (no-svg build fix).
+        Reviewed by Adam and Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12347
+          REGRESSION: list box scrolling broken (fast/forms/listbox-selection.html)
+
+        Covered by existing test: fast/forms/listbox-selection.html
+
+        * rendering/RenderListBox.h: Added override of layout(), made selectionChanged()
+        no longer an inline. Added private scrollToRevealSelection(),
+        m_scrollToRevealSelectionAfterLayout, and m_inAutoscroll.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::RenderListBox): Initialize new data members.
+        (WebCore::RenderListBox::updateFromElement): Remove scrolling code.
+        (WebCore::RenderListBox::selectionChanged): Moved from header. Calls repaint
+        and then scrollToRevealSelection, but if we need layout, instead schedules
+        scrollToRevealSelection to be done after layout.
+        (WebCore::RenderListBox::layout): Added. After calling base class, calls
+        scrollToRevealSelection if the m_scrollToRevealSelectionAfterLayout is set.
+        (WebCore::RenderListBox::scrollToRevealSelection): Added. Code was originally
+        in updateFromElement.
+        (WebCore::RenderListBox::autoscroll): Set m_inAutoscroll so that the
+        selectionChanged function knows not to scroll. Also removed the repaint()
+        here because updateListBoxSelection() takes care of repainting by calling
+        selectionChanged().
+
+2007-01-21  David Kilzer  <ddkilzer@webkit.org>
 
         * page/EventHandler.cpp:
         (WebCore::EventHandler::handleMouseMoveEvent): Changed #if SVG_SUPPORT to #ifdef SVG_SUPPORT.
