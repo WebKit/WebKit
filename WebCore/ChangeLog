@@ -2,6 +2,21 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12349
+          NativeFileUpload: Button text is not grayed out when the control is disabled
+
+        Covered by fast/forms/file-input-disabled.html 
+
+        * css/html4.css: Changed selectors that had pseudo-classes after the -webkit-file-upload-button
+        pseudo-element to have the pseudo-element at the end. Pseudo-elements must be at the end.
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::createButtonStyle): Changed to not overwrite the button's
+        style with its parent's style. getPseudoStyle() handles inheritance properly.
+
+2007-01-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=12343
           crash in css2.1/t1202-counter-09-b.html
 

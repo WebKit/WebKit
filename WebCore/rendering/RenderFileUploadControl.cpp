@@ -127,11 +127,11 @@ int RenderFileUploadControl::maxFilenameWidth()
 RenderStyle* RenderFileUploadControl::createButtonStyle(RenderStyle* parentStyle)
 {
     RenderStyle* style = getPseudoStyle(RenderStyle::FILE_UPLOAD_BUTTON);
-    if (!style)
+    if (!style) {
         style = new (renderArena()) RenderStyle();
-
-    if (parentStyle)
-        style->inheritFrom(parentStyle);
+        if (parentStyle)
+            style->inheritFrom(parentStyle);
+    }
 
     // Button text will wrap on file upload controls with widths smaller than the intrinsic button width
     // without this setWhiteSpace.

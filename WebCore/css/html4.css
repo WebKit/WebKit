@@ -412,15 +412,15 @@ input[type="range"]::-webkit-slider-thumb {
     -webkit-user-select: ignore
 }
 
-input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled, input[type="file"]::-webkit-file-upload-button:disabled, button:disabled, select:disabled, optgroup:disabled, option:disabled {
+input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled, input[type="file"]:disabled::-webkit-file-upload-button, button:disabled, select:disabled, optgroup:disabled, option:disabled {
     color: GrayText
 }
 
-input[type="button"]:active, input[type="submit"]:active, input[type="reset"]:active, input[type="file"]::-webkit-file-upload-button:active, button:active {
+input[type="button"]:active, input[type="submit"]:active, input[type="reset"]:active, input[type="file"]:active::-webkit-file-upload-button, button:active {
     border-style: inset
 }
 
-input[type="button"]:active:disabled, input[type="submit"]:active:disabled, input[type="reset"]:active:disabled, input[type="file"]::-webkit-file-upload-button:active:disabled, button:active:disabled {
+input[type="button"]:active:disabled, input[type="submit"]:active:disabled, input[type="reset"]:active:disabled, input[type="file"]:active:disabled::-webkit-file-upload-button, button:active:disabled {
     border-style: outset
 }
 
@@ -562,7 +562,7 @@ input[type="radio"]:focus,
 input[type="reset"]:focus,
 input[type="search"]:focus,
 input[type="submit"]:focus,
-input[type="file"]::-webkit-file-upload-button:focus {
+input[type="file"]:focus::-webkit-file-upload-button {
     outline-offset: 0
 }
     

@@ -1,3 +1,14 @@
+2007-01-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - updated results for http://bugs.webkit.org/show_bug.cgi?id=12349
+          NativeFileUpload: Button text is not grayed out when the control is disabled
+
+        * fast/forms/file-input-disabled-expected.checksum:
+        * fast/forms/file-input-disabled-expected.png:
+        * fast/forms/file-input-disabled-expected.txt:
+
 2007-01-20  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.
