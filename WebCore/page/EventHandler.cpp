@@ -320,7 +320,7 @@ bool EventHandler::handleMouseMoveEvent(const MouseEventWithHitTestResults& even
     if (!(m_mouseDownMayStartSelect && innerNode->renderer()->shouldSelect()))
         return false;
 
-#if SVG_SUPPORT
+#ifdef SVG_SUPPORT
     Selection curSelection = m_frame->selectionController()->selection();
     if (!curSelection.isNone()
         && curSelection.base().node()->renderer()

@@ -1,3 +1,10 @@
+2007-01-21  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by NOBODY (no-svg build fix).
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseMoveEvent): Changed #if SVG_SUPPORT to #ifdef SVG_SUPPORT.
+
 2007-01-20  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.
