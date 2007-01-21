@@ -514,6 +514,8 @@ void HTMLSelectElement::setRecalcListItems()
         else
             static_cast<RenderListBox*>(renderer())->setOptionsChanged(true);
     }
+    if (!inDocument())
+        m_collectionInfo.reset();
     setChanged();
 }
 

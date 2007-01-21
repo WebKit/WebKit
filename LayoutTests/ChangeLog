@@ -2,6 +2,16 @@
 
         Reviewed by Darin.
 
+        - test for http://bugs.webkit.org/show_bug.cgi?id=10472
+          REGRESSION: "add" method of <select> object does not put the <option> object in the correct position
+
+        * fast/dom/HTMLSelectElement/options-collection-detached-expected.txt: Added.
+        * fast/dom/HTMLSelectElement/options-collection-detached.html: Added.
+
+2007-01-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - updated results for http://bugs.webkit.org/show_bug.cgi?id=12349
           NativeFileUpload: Button text is not grayed out when the control is disabled
 

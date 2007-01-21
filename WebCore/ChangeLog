@@ -2,6 +2,20 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=10472
+          REGRESSION: "add" method of <select> object does not put the <option> object in the correct position
+
+        Test: fast/dom/HTMLSelectElement/options-collection-detached.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setRecalcListItems): Reset the options collection
+        info if the <select> is not in the document. For in-document <select>s this
+        happens anyway as a result of the DOM tree version increasing.
+
+2007-01-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=12349
           NativeFileUpload: Button text is not grayed out when the control is disabled
 
