@@ -1,3 +1,16 @@
+2007-01-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10934
+        REGRESSION: prototype.js logs error (HTMLFormElement) on webkit builds
+
+        * fast/dom/Window/window-properties-expected.txt: Updated results.
+
+        * fast/dom/Window/element-constructors-on-window.html: Added a more explicit test 
+        for element constructors, as it isn't always easy to recognize regressions via window-properties.html.
+        * fast/dom/Window/element-constructors-on-window-expected.txt: Added.
+
 2007-01-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

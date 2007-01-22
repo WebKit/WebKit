@@ -18,7 +18,7 @@
  */
 
 module html {
-    interface [LegacyParent=KJS::JSHTMLElement] HTMLMenuElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLMenuElement : HTMLElement {
         attribute boolean compact;
     };
 }

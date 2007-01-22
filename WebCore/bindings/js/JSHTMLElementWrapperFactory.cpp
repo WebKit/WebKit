@@ -58,6 +58,7 @@
 #include "HTMLPreElement.h"
 #include "HTMLQuoteElement.h"
 #include "HTMLScriptElement.h"
+#include "HTMLSelectElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTitleElement.h"
@@ -104,6 +105,7 @@
 #include "JSHTMLPreElement.h"
 #include "JSHTMLQuoteElement.h"
 #include "JSHTMLScriptElement.h"
+#include "JSHTMLSelectElement.h"
 #include "JSHTMLStyleElement.h"
 #include "JSHTMLTextAreaElement.h"
 #include "JSHTMLTitleElement.h"
@@ -161,6 +163,7 @@ typedef DOMNode* (*CreateHTMLElementWrapperFunction)(ExecState*, PassRefPtr<HTML
     macro(pre, Pre) \
     macro(q, Quote) \
     macro(script, Script) \
+    macro(select, Select) \
     macro(style, Style) \
     macro(textarea, TextArea) \
     macro(title, Title) \

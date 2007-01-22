@@ -20,7 +20,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement] HTMLAreaElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLAreaElement : HTMLElement {
         attribute DOMString accessKey;
         attribute DOMString alt;
         attribute DOMString coords;

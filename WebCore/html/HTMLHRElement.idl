@@ -18,7 +18,7 @@
  */
 
 module html {
-    interface [LegacyParent=KJS::JSHTMLElement] HTMLHRElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLHRElement : HTMLElement {
         attribute DOMString align;
         attribute boolean noShade;
         attribute DOMString size;

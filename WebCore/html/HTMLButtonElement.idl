@@ -20,7 +20,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement] HTMLButtonElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLButtonElement : HTMLElement {
         readonly attribute  HTMLFormElement      form;
                  attribute  DOMString            accessKey;
                  attribute  boolean              disabled;

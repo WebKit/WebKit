@@ -18,7 +18,7 @@
  */
 
 module html {
-    interface [LegacyParent=KJS::JSHTMLElement] HTMLLIElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLLIElement : HTMLElement {
         attribute DOMString type;
         attribute long value;    
     };

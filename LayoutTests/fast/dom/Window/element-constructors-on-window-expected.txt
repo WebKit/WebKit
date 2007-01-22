@@ -1,0 +1,117 @@
+Test that HTML element constructors are accessible as window object properties.
+
+HTMLElement: [object HTMLElementConstructor]
+
+HTMLAnchorElement: [object HTMLAnchorElementConstructor]
+
+HTMLAppletElement: [object HTMLAppletElementConstructor]
+
+HTMLAreaElement: [object HTMLAreaElementConstructor]
+
+HTMLBaseElement: [object HTMLBaseElementConstructor]
+
+HTMLBaseFontElement: [object HTMLBaseFontElementConstructor]
+
+HTMLBodyElement: [object HTMLBodyElementConstructor]
+
+HTMLBRElement: [object HTMLBRElementConstructor]
+
+HTMLButtonElement: [object HTMLButtonElementConstructor]
+
+HTMLDirectoryElement: [object HTMLDirectoryElementConstructor]
+
+HTMLDivElement: [object HTMLDivElementConstructor]
+
+HTMLDListElement: [object HTMLDListElementConstructor]
+
+HTMLFieldSetElement: [object HTMLFieldSetElementConstructor]
+
+HTMLFontElement: [object HTMLFontElementConstructor]
+
+HTMLFormElement: [object HTMLFormElementConstructor]
+
+HTMLFrameElement: undefined
+
+HTMLFrameSetElement: undefined
+
+HTMLHeadElement: [object HTMLHeadElementConstructor]
+
+HTMLHeadingElement: [object HTMLHeadingElementConstructor]
+
+HTMLHRElement: [object HTMLHRElementConstructor]
+
+HTMLHtmlElement: [object HTMLHtmlElementConstructor]
+
+HTMLIFrameElement: undefined
+
+HTMLImageElement: [object HTMLImageElementConstructor]
+
+HTMLInputElement: [object HTMLInputElementConstructor]
+
+HTMLIsIndexElement: [object HTMLIsIndexElementConstructor]
+
+HTMLLabelElement: [object HTMLLabelElementConstructor]
+
+HTMLLegendElement: [object HTMLLegendElementConstructor]
+
+HTMLLIElement: [object HTMLLIElementConstructor]
+
+HTMLLinkElement: [object HTMLLinkElementConstructor]
+
+HTMLMapElement: [object HTMLMapElementConstructor]
+
+HTMLMenuElement: [object HTMLMenuElementConstructor]
+
+HTMLMetaElement: [object HTMLMetaElementConstructor]
+
+HTMLModElement: [object HTMLModElementConstructor]
+
+HTMLObjectElement: undefined
+
+HTMLOListElement: [object HTMLOListElementConstructor]
+
+HTMLOptGroupElement: [object HTMLOptGroupElementConstructor]
+
+HTMLOptionElement: [object HTMLElementConstructor]
+
+HTMLParagraphElement: [object HTMLParagraphElementConstructor]
+
+HTMLParamElement: [object HTMLParamElementConstructor]
+
+HTMLPreElement: [object HTMLPreElementConstructor]
+
+HTMLQuoteElement: [object HTMLQuoteElementConstructor]
+
+HTMLScriptElement: [object HTMLScriptElementConstructor]
+
+HTMLSelectElement: [object HTMLSelectElementConstructor]
+
+HTMLStyleElement: [object HTMLStyleElementConstructor]
+
+HTMLTableCaptionElement: undefined
+
+HTMLTableCellElement: undefined
+
+HTMLTableColElement: undefined
+
+HTMLTableElement: undefined
+
+HTMLTableRowElement: undefined
+
+HTMLTableSectionElement: undefined
+
+HTMLTextAreaElement: [object HTMLTextAreaElementConstructor]
+
+HTMLTitleElement: [object HTMLTitleElementConstructor]
+
+HTMLUListElement: [object HTMLUListElementConstructor]
+
+HTMLCanvasElement: [object HTMLCanvasElementConstructor]
+
+HTMLInsElement: undefined
+
+HTMLDelElement: undefined
+
+HTMLEmbedElement: undefined
+
+

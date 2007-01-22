@@ -20,7 +20,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement] HTMLAnchorElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLAnchorElement : HTMLElement {
         attribute DOMString accessKey;
         attribute DOMString charset;
         attribute DOMString coords;

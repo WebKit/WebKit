@@ -19,7 +19,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement] HTMLHtmlElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLHtmlElement : HTMLElement {
 
         attribute DOMString version;
         

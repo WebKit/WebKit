@@ -20,7 +20,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement] HTMLLinkElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLLinkElement : HTMLElement {
         attribute  boolean              disabled;
         attribute  DOMString            charset;
         attribute  DOMString            href;

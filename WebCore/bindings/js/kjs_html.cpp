@@ -41,7 +41,6 @@
 #include "HTMLObjectElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
-#include "HTMLSelectElement.h"
 #include "HTMLTableCaptionElement.h"
 #include "HTMLTableCellElement.h"
 #include "HTMLTableColElement.h"
@@ -425,7 +424,6 @@ const ClassInfo JSHTMLElement::iFrame_info = { "HTMLIFrameElement", &JSHTMLEleme
 const ClassInfo JSHTMLElement::info = { "DOMHTMLElement", &JSElement::info, &HTMLElementTable, 0 };
 const ClassInfo JSHTMLElement::marquee_info = { "HTMLMarqueeElement", &JSHTMLElement::info, &HTMLMarqueeElementTable, 0 };
 const ClassInfo JSHTMLElement::object_info = { "HTMLObjectElement", &JSHTMLElement::info, &HTMLObjectElementTable, 0 };
-const ClassInfo JSHTMLElement::select_info = { "HTMLSelectElement", &JSHTMLElement::info, &HTMLSelectElementTable, 0 };
 const ClassInfo JSHTMLElement::table_info = { "HTMLTableElement", &JSHTMLElement::info, &HTMLTableElementTable, 0 };
 const ClassInfo JSHTMLElement::tablecell_info = { "HTMLTableCellElement", &JSHTMLElement::info, &HTMLTableCellElementTable, 0 };
 const ClassInfo JSHTMLElement::tablesection_info = { "HTMLTableSectionElement", &JSHTMLElement::info, &HTMLTableSectionElementTable, 0 };
@@ -444,7 +442,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
         classInfoMap.set(iframeTag.localName().impl(), &iFrame_info);
         classInfoMap.set(marqueeTag.localName().impl(), &marquee_info);
         classInfoMap.set(objectTag.localName().impl(), &object_info);
-        classInfoMap.set(selectTag.localName().impl(), &select_info);
         classInfoMap.set(tableTag.localName().impl(), &table_info);
         classInfoMap.set(tbodyTag.localName().impl(), &tablesection_info);
         classInfoMap.set(tdTag.localName().impl(), &tablecell_info);
@@ -461,7 +458,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
     return &info;
 }
 
-const JSHTMLElement::Accessors JSHTMLElement::select_accessors = { &JSHTMLElement::selectGetter, &JSHTMLElement::selectSetter };
 const JSHTMLElement::Accessors JSHTMLElement::object_accessors = { &JSHTMLElement::objectGetter, &JSHTMLElement::objectSetter };
 const JSHTMLElement::Accessors JSHTMLElement::embed_accessors = { &JSHTMLElement::embedGetter, &JSHTMLElement::embedSetter };
 const JSHTMLElement::Accessors JSHTMLElement::table_accessors = { &JSHTMLElement::tableGetter, &JSHTMLElement::tableSetter };
@@ -488,7 +484,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
         accessorMap.add(iframeTag.localName().impl(), &iFrame_accessors);
         accessorMap.add(marqueeTag.localName().impl(), &marquee_accessors);
         accessorMap.add(objectTag.localName().impl(), &object_accessors);
-        accessorMap.add(selectTag.localName().impl(), &select_accessors);
         accessorMap.add(tableTag.localName().impl(), &table_accessors);
         accessorMap.add(tbodyTag.localName().impl(), &tablesection_accessors);
         accessorMap.add(tdTag.localName().impl(), &tablecell_accessors);
@@ -522,26 +517,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
   children      KJS::JSHTMLElement::ElementChildren  DontDelete|ReadOnly
   contentEditable   KJS::JSHTMLElement::ElementContentEditable  DontDelete
   isContentEditable KJS::JSHTMLElement::ElementIsContentEditable  DontDelete|ReadOnly
-@end
-@begin HTMLSelectElementTable 11
-# Also supported, by index
-  type          KJS::JSHTMLElement::SelectType    DontDelete|ReadOnly
-  selectedIndex KJS::JSHTMLElement::SelectSelectedIndex   DontDelete
-  value         KJS::JSHTMLElement::SelectValue   DontDelete
-  length        KJS::JSHTMLElement::SelectLength  DontDelete
-  form          KJS::JSHTMLElement::SelectForm    DontDelete|ReadOnly
-  options       KJS::JSHTMLElement::SelectOptions DontDelete|ReadOnly
-  item          KJS::JSHTMLElement::SelectItem    DontDelete|Function 1
-  namedItem     KJS::JSHTMLElement::SelectNamedItem       DontDelete|Function 1
-  disabled      KJS::JSHTMLElement::SelectDisabled        DontDelete
-  multiple      KJS::JSHTMLElement::SelectMultiple        DontDelete
-  name          KJS::JSHTMLElement::SelectName    DontDelete
-  size          KJS::JSHTMLElement::SelectSize    DontDelete
-  tabIndex      KJS::JSHTMLElement::SelectTabIndex        DontDelete
-  add           KJS::JSHTMLElement::SelectAdd     DontDelete|Function 2
-  remove        KJS::JSHTMLElement::SelectRemove  DontDelete|Function 1
-  blur          KJS::JSHTMLElement::SelectBlur    DontDelete|Function 0
-  focus         KJS::JSHTMLElement::SelectFocus   DontDelete|Function 0
 @end
 @begin HTMLObjectElementTable 20
   form            KJS::JSHTMLElement::ObjectForm            DontDelete|ReadOnly
@@ -702,14 +677,6 @@ JSHTMLElement::JSHTMLElement(ExecState* exec, HTMLElement* e)
     setPrototype(JSHTMLElementPrototype::self(exec));
 }
 
-JSValue *JSHTMLElement::selectIndexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
-{
-    JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
-    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(thisObj->impl());
-
-    return toJS(exec, select->options()->item(slot.index()));
-}
-
 JSValue *JSHTMLElement::framesetNameGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
@@ -746,15 +713,7 @@ bool JSHTMLElement::getOwnPropertySlot(ExecState* exec, const Identifier& proper
     HTMLElement &element = *static_cast<HTMLElement*>(impl());
 
     // First look at dynamic properties
-    if (element.hasLocalName(selectTag)) {
-        bool ok;
-        unsigned u = propertyName.toUInt32(&ok);
-        if (ok) {
-            // not specified by DOM(?) but supported in netscape/IE
-            slot.setCustomIndex(this, u, selectIndexGetter);
-            return true;
-        }
-    } else if (element.hasLocalName(framesetTag)) {
+    if (element.hasLocalName(framesetTag)) {
         WebCore::Node *frame = element.children()->namedItem(propertyName);
         if (frame && frame->hasTagName(frameTag)) {
             slot.setCustom(this, framesetNameGetter);
@@ -808,25 +767,6 @@ JSValue *JSHTMLElement::callAsFunction(ExecState* exec, JSObject* thisObj, const
     if (element->hasTagName(embedTag) || element->hasTagName(objectTag) || element->hasTagName(appletTag)) {
         if (JSValue *runtimeObject = getRuntimeObject(exec, element))
             return static_cast<JSObject*>(runtimeObject)->call(exec, thisObj, args);
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::selectGetter(ExecState* exec, int token) const
-{
-    HTMLSelectElement& select = *static_cast<HTMLSelectElement*>(impl());
-    switch (token) {
-        case SelectType:            return jsString(select.type());
-        case SelectSelectedIndex:   return jsNumber(select.selectedIndex());
-        case SelectValue:           return jsString(select.value());
-        case SelectLength:          return jsNumber(select.length());
-        case SelectForm:            return toJS(exec, select.form()); // type HTMLFormElement
-        case SelectOptions:         return getHTMLOptionsCollection(exec, select.options().get());
-        case SelectDisabled:        return jsBoolean(select.disabled());
-        case SelectMultiple:        return jsBoolean(select.multiple());
-        case SelectName:            return jsString(select.name());
-        case SelectSize:            return jsNumber(select.size());
-        case SelectTabIndex:        return jsNumber(select.tabIndex());
     }
     return jsUndefined();
 }
@@ -1137,37 +1077,7 @@ JSValue *HTMLElementFunction::callAsFunction(ExecState* exec, JSObject* thisObj,
     DOMExceptionTranslator exception(exec);
     HTMLElement &element = *static_cast<HTMLElement*>(static_cast<JSHTMLElement*>(thisObj)->impl());
 
-    if (element.hasLocalName(selectTag)) {
-        HTMLSelectElement &select = static_cast<HTMLSelectElement &>(element);
-        if (id == JSHTMLElement::SelectAdd) {
-            select.add(toHTMLElement(args[0]), toHTMLElement(args[1]), exception);
-            return jsUndefined();
-        }
-        else if (id == JSHTMLElement::SelectRemove) {
-            // we support both options index and options objects
-            HTMLElement* element = toHTMLElement(args[0]);
-            if (element && element->hasTagName(optionTag))
-                select.remove(((HTMLOptionElement*)element)->index());
-            else
-                select.remove(int(args[0]->toNumber(exec)));
-            return jsUndefined();
-        }
-        else if (id == JSHTMLElement::SelectBlur) {
-            select.blur();
-            return jsUndefined();
-        }
-        else if (id == JSHTMLElement::SelectFocus) {
-            select.focus();
-            return jsUndefined();
-        }
-        else if (id == JSHTMLElement::SelectItem) {
-            return toJS(exec, select.item(args[0]->toUInt32(exec)));
-        }
-        else if (id == JSHTMLElement::SelectNamedItem) {
-            return toJS(exec, select.namedItem(Identifier(args[0]->toString(exec))));
-        }
-    }
-    else if (element.hasLocalName(tableTag)) {
+    if (element.hasLocalName(tableTag)) {
         HTMLTableElement &table = static_cast<HTMLTableElement &>(element);
         if (id == JSHTMLElement::TableCreateTHead)
             return toJS(exec,table.createTHead());
@@ -1247,17 +1157,7 @@ void JSHTMLElement::put(ExecState* exec, const Identifier &propertyName, JSValue
 {
     HTMLElement &element = *static_cast<HTMLElement*>(impl());
     // First look at dynamic properties
-    if (element.hasLocalName(selectTag)) {
-        HTMLSelectElement &select = static_cast<HTMLSelectElement &>(element);
-        bool ok;
-        /*unsigned u =*/ propertyName.toUInt32(&ok);
-        if (ok) {
-            JSObject* coll = static_cast<JSObject*>(getHTMLOptionsCollection(exec, select.options().get()));
-            coll->put(exec,propertyName,value);
-            return;
-        }
-    }
-    else if (element.hasLocalName(embedTag) || element.hasLocalName(objectTag) || element.hasLocalName(appletTag)) {
+    if (element.hasLocalName(embedTag) || element.hasLocalName(objectTag) || element.hasLocalName(appletTag)) {
         if (JSValue *runtimeObject = getRuntimeObject(exec, &element)) {
             JSObject* imp = static_cast<JSObject*>(runtimeObject);
             if (imp->canPut(exec, propertyName))
@@ -1278,28 +1178,6 @@ void JSHTMLElement::put(ExecState* exec, const Identifier &propertyName, JSValue
     }
 
     lookupPut<JSHTMLElement, WebCore::JSHTMLElement>(exec, propertyName, value, attr, &HTMLElementTable, this);
-}
-
-void JSHTMLElement::selectSetter(ExecState* exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLSelectElement& select = *static_cast<HTMLSelectElement*>(impl());
-    switch (token) {
-        // read-only: type
-        case SelectSelectedIndex:   { select.setSelectedIndex(value->toInt32(exec)); return; }
-        case SelectValue:           { select.setValue(str); return; }
-        case SelectLength:          { // read-only according to the NS spec, but webpages need it writeable
-                                        JSObject* coll = static_cast<JSObject*>(getHTMLOptionsCollection(exec, select.options().get()));
-                                        coll->put(exec,lengthPropertyName,value);
-                                        return;
-                                    }
-        // read-only: form
-        // read-only: options
-        case SelectDisabled:        { select.setDisabled(value->toBoolean(exec)); return; }
-        case SelectMultiple:        { select.setMultiple(value->toBoolean(exec)); return; }
-        case SelectName:            { select.setName(AtomicString(str)); return; }
-        case SelectSize:            { select.setSize(value->toInt32(exec)); return; }
-        case SelectTabIndex:        { select.setTabIndex(value->toInt32(exec)); return; }
-    }
 }
 
 void JSHTMLElement::objectSetter(ExecState* exec, int token, JSValue *value, const WebCore::String& str)
@@ -1745,19 +1623,9 @@ JSValue* getHTMLCollection(ExecState* exec, HTMLCollection* c)
     return cacheDOMObject<HTMLCollection, JSHTMLCollection>(exec, c);
 }
 
-JSValue* getHTMLOptionsCollection(ExecState* exec, HTMLOptionsCollection* c)
+JSValue* toJS(ExecState* exec, HTMLOptionsCollection* c)
 {
-  DOMObject* ret;
-  if (!c)
-    return jsNull();
-  ScriptInterpreter* interp = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter());
-  if ((ret = interp->getDOMObject(c)))
-    return ret;
-  else {
-    ret = new JSHTMLOptionsCollection(exec, c);
-    interp->putDOMObject(c, ret);
-    return ret;
-  }
+    return cacheDOMObject<HTMLOptionsCollection, JSHTMLOptionsCollection>(exec, c);
 }
 
 } // namespace

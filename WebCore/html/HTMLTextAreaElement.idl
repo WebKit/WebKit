@@ -20,7 +20,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement] HTMLTextAreaElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLTextAreaElement : HTMLElement {
                  attribute  DOMString            defaultValue;
         readonly attribute  HTMLFormElement      form;
                  attribute  DOMString            accessKey;

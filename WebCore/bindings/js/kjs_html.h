@@ -31,7 +31,6 @@ namespace WebCore {
     class HTMLDocument;
     class HTMLElement;
     class HTMLOptionsCollection;
-    class HTMLSelectElement;
     class HTMLTableCaptionElement;
     class HTMLTableSectionElement;
 }
@@ -80,7 +79,7 @@ namespace KJS {
     static const ClassInfo info;
 
     static const ClassInfo
-      select_info, object_info, 
+      object_info, 
       embed_info, table_info, caption_info, col_info, tablesection_info, tr_info,
       tablecell_info, frameSet_info, frame_info, iFrame_info, marquee_info;
 
@@ -90,12 +89,10 @@ namespace KJS {
     struct Accessors { GetterFunction m_getter; SetterFunction m_setter; };
     const Accessors* accessors() const;
     static const Accessors
-      select_accessors, object_accessors, embed_accessors, table_accessors,
+      object_accessors, embed_accessors, table_accessors,
       caption_accessors, col_accessors, tablesection_accessors, tr_accessors,
       tablecell_accessors, frameSet_accessors, frame_accessors, iFrame_accessors, marquee_accessors;
 
-    JSValue* selectGetter(ExecState* exec, int token) const;
-    void  selectSetter(ExecState*, int token, JSValue*, const WebCore::String&);
     JSValue* objectGetter(ExecState* exec, int token) const;
     void  objectSetter(ExecState*, int token, JSValue*, const WebCore::String&);
     JSValue* embedGetter(ExecState*, int token) const;
@@ -122,10 +119,6 @@ namespace KJS {
     void  marqueeSetter(ExecState*, int token, JSValue*, const WebCore::String&);
 
     enum {
-           SelectAdd,
-           SelectTabIndex, SelectValue, SelectSelectedIndex, SelectLength,
-           SelectRemove, SelectForm, SelectBlur, SelectType, SelectOptions, SelectItem,
-           SelectDisabled, SelectMultiple, SelectName, SelectNamedItem, SelectSize, SelectFocus,
            ObjectHspace, ObjectHeight, ObjectAlign,
            ObjectBorder, ObjectCode, ObjectType, ObjectVspace, ObjectArchive,
            ObjectDeclare, ObjectForm, ObjectCodeBase, ObjectCodeType, ObjectData,
@@ -159,7 +152,6 @@ namespace KJS {
            ElementIsContentEditable, ElementOuterHTML, ElementOuterText
   };
   private:
-    static JSValue* selectIndexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     static JSValue* framesetNameGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     static JSValue* frameWindowPropertyGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     static JSValue* runtimeObjectGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
@@ -212,8 +204,8 @@ namespace KJS {
     RefPtr<WebCore::Document> m_doc;
   };
 
+  JSValue* toJS(ExecState*, WebCore::HTMLOptionsCollection*);
   JSValue* getHTMLCollection(ExecState*, WebCore::HTMLCollection*);
-  JSValue* getHTMLOptionsCollection(ExecState*, WebCore::HTMLOptionsCollection*);
   JSValue* getAllHTMLCollection(ExecState*, WebCore::HTMLCollection*);
 
 } // namespace

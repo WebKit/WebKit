@@ -19,7 +19,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement] HTMLMetaElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLMetaElement : HTMLElement {
         attribute  DOMString    content;
         attribute  DOMString    httpEquiv;
         attribute  DOMString    name;

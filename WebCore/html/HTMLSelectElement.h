@@ -65,7 +65,7 @@ public:
 
     virtual bool isEnumeratable() const { return true; }
 
-    int length() const;
+    unsigned length() const;
 
     int minWidth() const { return m_minwidth; }
 

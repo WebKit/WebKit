@@ -18,7 +18,7 @@
  */
 
 module html {
-    interface [LegacyParent=KJS::JSHTMLElement] HTMLHeadingElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLHeadingElement : HTMLElement {
         attribute DOMString align;
     };
 }

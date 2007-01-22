@@ -19,7 +19,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement] HTMLBaseElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLBaseElement : HTMLElement {
         attribute  DOMString            href;
         attribute  DOMString            target;
     };

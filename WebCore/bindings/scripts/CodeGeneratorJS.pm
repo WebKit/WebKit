@@ -1187,6 +1187,7 @@ sub TypeCanFailConversion
                 $type eq "SVGMatrix" or
                 $type eq "SVGRect" or
                 $type eq "SVGElement" or
+                $type eq "HTMLElement" or
                 $type eq "HTMLOptionElement" or
                 $type eq "unsigned short" or # or can it?
                 $type eq "CompareHow" or # or can it?

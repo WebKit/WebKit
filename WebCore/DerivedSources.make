@@ -359,6 +359,7 @@ all : \
     JSHTMLParamElement.h \
     JSHTMLPreElement.h \
     JSHTMLScriptElement.h \
+    JSHTMLSelectElement.h \
     JSHTMLStyleElement.h \
     JSHTMLTextAreaElement.h \
     JSHTMLTitleElement.h \

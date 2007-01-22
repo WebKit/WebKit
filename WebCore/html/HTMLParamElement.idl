@@ -19,7 +19,7 @@
 
 module html {
 
-    interface [LegacyParent=KJS::JSHTMLElement] HTMLParamElement : HTMLElement {
+    interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLParamElement : HTMLElement {
         attribute DOMString name;
         attribute DOMString type;
         attribute DOMString value;
