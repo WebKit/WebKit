@@ -1,3 +1,25 @@
+2007-01-22  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam and Darin
+
+        - fixed <rdar://problem/4794320> "Look Up in Dictionary" does nothing in WebKit 
+        (need to adopt new API)
+
+        * Misc/WebNSURLExtras.m:
+        (-[NSString _web_isUserVisibleURL]):
+        random typo correction in comment
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+        updated for these changes
+
+        * WebView/WebHTMLView.mm:
+        (coreGraphicsScreenPointForAppKitScreenPoint):
+        new function to convert an AppKit screen point to a CG screen point
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
+        on Leopard now uses new API. There's something of an impedance mismatch between
+        this API and WebKit, but that was true for the SPI we were using in Tiger also.
+        Bug 4945808 covers the ways in which this is not perfect.
+
 2007-01-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim H.

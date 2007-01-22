@@ -749,7 +749,7 @@ typedef struct {
     int length = strlen(p);
 
     // check for characters <= 0x20 or >=0x7f, %-escape sequences of %7f, and xn--, these
-    // are the things that will lead _web_userVisisbleString to actually change things.
+    // are the things that will lead _web_userVisibleString to actually change things.
     int i;
     for (i = 0; i < length; i++) {
         unsigned char c = p[i];

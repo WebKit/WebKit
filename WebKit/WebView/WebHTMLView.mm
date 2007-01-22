@@ -5150,30 +5150,59 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 #endif /* !BUILDING_ON_TIGER */
 
+#if !BUILDING_ON_TIGER
+static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
+{
+    NSRect allScreensFrame = NSZeroRect;
+    NSArray *screens = [NSScreen screens];
+    unsigned int screenCount = [screens count];
+    unsigned int screenIndex;
+    
+    // Linear search here is warranted by the fact that nobody will ever have enough screens to make this slow
+    for (screenIndex = 0; screenIndex < screenCount; screenIndex++) {
+        NSScreen *screen = [screens objectAtIndex:screenIndex];
+        NSRect screenFrame = [screen frame];
+        if (NSEqualRects(allScreensFrame, NSZeroRect))
+            allScreensFrame = screenFrame;
+        else
+            allScreensFrame = NSUnionRect(allScreensFrame, screenFrame);
+    }
+    
+    return CGPointMake(point.x, NSMaxY(allScreensFrame) - point.y);
+}
+#endif
+
 - (void)_lookUpInDictionaryFromMenu:(id)sender
 {
-    // This should only be called when there's a selection, but play it safe.
-    if (![self _hasSelection])
+    // Dictionary API will accept a whitespace-only string and display UI as if it were real text,
+    // so bail out early to avoid that.
+    if ([[[self selectedString] _webkit_stringByTrimmingWhitespace] length] == 0)
         return;
     
-    // Soft link to dictionary-display function to avoid linking another framework (ApplicationServices/LangAnalysis)
+    // We soft link to get the function that displays the dictionary (either pop-up window or app) to avoid the performance
+    // penalty of linking to another framework. This function changed signature as well as framework between Tiger and Leopard,
+    // so the two cases are handled separately.
+#if BUILDING_ON_TIGER
     static bool lookedForFunction = false;
+    
     typedef OSStatus (*ServiceWindowShowFunction)(id inWordString, NSRect inWordBoundary, UInt16 inLineDirection);
     static ServiceWindowShowFunction dictionaryServiceWindowShow;
+    
     if (!lookedForFunction) {
         const struct mach_header *frameworkImageHeader = 0;
         dictionaryServiceWindowShow = reinterpret_cast<ServiceWindowShowFunction>(
             _NSSoftLinkingGetFrameworkFuncPtr(@"ApplicationServices", @"LangAnalysis", "_DCMDictionaryServiceWindowShow", &frameworkImageHeader));
         lookedForFunction = true;
     }
+    
     if (!dictionaryServiceWindowShow) {
         LOG_ERROR("Couldn't find _DCMDictionaryServiceWindowShow"); 
         return;
     }
-
+    
     // FIXME: must check for right-to-left here
     NSWritingDirection writingDirection = NSWritingDirectionLeftToRight;
-
+    
     NSAttributedString *attrString = [self selectedAttributedString];
     // FIXME: the dictionary API expects the rect for the first line of selection. Passing
     // the rect for the entire selection, as we do here, positions the pop-up window near
@@ -5181,7 +5210,42 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     NSRect rect = [self convertRect:core([self _frame])->visibleSelectionRect() toView:nil];
     rect.origin = [[self window] convertBaseToScreen:rect.origin];
     NSData *data = [attrString RTFFromRange:NSMakeRange(0, [attrString length]) documentAttributes:nil];
-    dictionaryServiceWindowShow(data, rect, (writingDirection == NSWritingDirectionRightToLeft) ? 1 : 0);
+    OSStatus status = dictionaryServiceWindowShow(data, rect, (writingDirection == NSWritingDirectionRightToLeft) ? 1 : 0);
+#else
+    static bool lookedForFunction = false;
+    
+    typedef void (*ServiceWindowShowFunction)(id unusedDictionaryRef, id inWordString, CFRange selectionRange, id unusedFont, CGPoint textOrigin, Boolean verticalText, id unusedTransform);
+    static ServiceWindowShowFunction dictionaryServiceWindowShow;
+    
+    if (!lookedForFunction) {
+        const struct mach_header *frameworkImageHeader = 0;
+        dictionaryServiceWindowShow = reinterpret_cast<ServiceWindowShowFunction>(
+            _NSSoftLinkingGetFrameworkFuncPtr(nil, @"DictionaryServices", "_DCSShowDictionaryServiceWindow", &frameworkImageHeader));
+        lookedForFunction = true;
+    }
+        
+    if (!dictionaryServiceWindowShow) {
+        LOG_ERROR("Couldn't find _DCSShowDictionaryServiceWindow"); 
+        return;
+    }
+    
+    // The DictionaryServices API requires the origin, in CG screen coordinates, of the first character of text in the selection.
+    // FIXME 4945808: We approximate this in a way that works well when a single word is selected, and less well in some other cases
+    // (but no worse than we did in Tiger)
+    NSAttributedString *attrString = [self selectedAttributedString];
+    NSRect rect = core([self _frame])->visibleSelectionRect();
+    
+    NSDictionary *attributes = [attrString fontAttributesInRange:NSMakeRange(0,1)];
+    NSFont *font = [attributes objectForKey:NSFontAttributeName];
+    if (font)
+        rect.origin.y += [font ascender];
+    
+    NSPoint windowPoint = [self convertPoint:rect.origin toView:nil];
+    NSPoint screenPoint = [[self window] convertBaseToScreen:windowPoint];
+    
+    dictionaryServiceWindowShow(nil, attrString, CFRangeMake(0, [attrString length]), nil, 
+                                coreGraphicsScreenPointForAppKitScreenPoint(screenPoint), false, nil);
+#endif    
 }
 
 - (void)_hoverFeedbackSuspendedChanged
