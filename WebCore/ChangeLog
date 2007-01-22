@@ -1,3 +1,14 @@
+2007-01-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12357
+        Bug 12357: Reproducible crash in WebCore::Settings::isJavaScriptEnabled in svg/custom/js-update-bounce.svg under guard-malloc
+
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame): Access the global object directly rather than via Window::retrieveWindow to prevent our reference to
+        a deleted settings object being used.
+
 2007-01-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

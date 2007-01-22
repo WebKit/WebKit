@@ -200,7 +200,7 @@ Frame::~Frame()
 #endif
 
     if (d->m_jscript && d->m_jscript->haveInterpreter())
-        if (Window* w = Window::retrieveWindow(this)) {
+        if (Window* w = static_cast<Window*>(d->m_jscript->interpreter()->globalObject()->getObject())) {
             w->disconnectFrame();
             // Must clear the window pointer, otherwise we will not
             // garbage-collect collect the window (inside the call to
