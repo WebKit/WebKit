@@ -200,6 +200,7 @@ IDL_BINDINGS += \
     html/HTMLPreElement.idl \
     html/HTMLQuoteElement.idl \
     html/HTMLScriptElement.idl \
+    html/HTMLSelectElement.idl \
     html/HTMLStyleElement.idl \
     html/HTMLTextAreaElement.idl \
     html/HTMLTitleElement.idl \
@@ -230,6 +231,7 @@ SOURCES += \
     bindings/js/JSNodeIteratorCustom.cpp \
     bindings/js/JSTreeWalkerCustom.cpp \
     bindings/js/JSXSLTProcessor.cpp \
+    bindings/JSHTMLSelectElementCustom.cpp \
     css/cssparser.cpp \
     css/cssstyleselector.cpp \
     css/csshelper.cpp \
