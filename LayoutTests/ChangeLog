@@ -1,3 +1,15 @@
+2007-01-22  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Darin and I looked into these tests that are adding an empty 
+        RenderText, and we think they just need new results. Here they are!
+
+        * editing/execCommand/find-after-replace-expected.txt:
+        * fast/css/beforeSelectorOnCodeElement-expected.txt:
+        * fast/forms/control-restrict-line-height-expected.txt:
+        * fast/forms/select-size-expected.txt:
+
 2007-01-22  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

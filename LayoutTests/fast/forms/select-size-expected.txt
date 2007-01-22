@@ -11,3 +11,4 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (8,2) size 20x13
           RenderText at (0,0) size 20x13
             text run at (0,0) width 20: "test"
+      RenderText {#text} at (0,0) size 0x0
