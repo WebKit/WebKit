@@ -478,8 +478,8 @@ void EventHandler::startAutoscrollTimer()
 void EventHandler::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
 {
     if (m_mouseDownWasInSubframe) {
-        Frame* subframe = subframeForTargetNode(m_mousePressNode.get());
-        subframe->eventHandler()->stopAutoscrollTimer(rendererIsBeingDestroyed);
+        if (Frame* subframe = subframeForTargetNode(m_mousePressNode.get()))
+            subframe->eventHandler()->stopAutoscrollTimer(rendererIsBeingDestroyed);
         return;
     }
 

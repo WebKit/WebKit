@@ -1,3 +1,14 @@
+2007-01-22  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/4912129> REGRESSION: Crash occurs at 
+        WebCore::Frame::eventHandler() after clicking to dismiss a 
+        contextual menu on the page
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::stopAutoscrollTimer): Added nil-check.
+
 2007-01-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.
