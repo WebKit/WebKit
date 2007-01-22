@@ -1,5 +1,11 @@
 2007-01-22  John Sullivan  <sullivan@apple.com>
 
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
+        Tiger build fix: remove unused variable for return value of dictionaryServiceWindowShow
+
+2007-01-22  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Adam and Darin
 
         - fixed <rdar://problem/4794320> "Look Up in Dictionary" does nothing in WebKit 

@@ -5210,7 +5210,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     NSRect rect = [self convertRect:core([self _frame])->visibleSelectionRect() toView:nil];
     rect.origin = [[self window] convertBaseToScreen:rect.origin];
     NSData *data = [attrString RTFFromRange:NSMakeRange(0, [attrString length]) documentAttributes:nil];
-    OSStatus status = dictionaryServiceWindowShow(data, rect, (writingDirection == NSWritingDirectionRightToLeft) ? 1 : 0);
+    dictionaryServiceWindowShow(data, rect, (writingDirection == NSWritingDirectionRightToLeft) ? 1 : 0);
 #else
     static bool lookedForFunction = false;
     
