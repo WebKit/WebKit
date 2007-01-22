@@ -1,3 +1,15 @@
+2007-01-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12345
+          REGRESSION: Disabled pop-up text is not grayed out
+
+        Test: fast/forms/select-disabled-appearance.html
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustMenuListStyle):
+
 2007-01-21  Darin Adler  <darin@apple.com>
 
         - fix non-Mac builds

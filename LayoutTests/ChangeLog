@@ -2,6 +2,18 @@
 
         Reviewed by Darin.
 
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=12345
+          REGRESSION: Disabled pop-up text is not grayed out
+
+        * fast/forms/select-disabled-appearance-expected.checksum: Added.
+        * fast/forms/select-disabled-appearance-expected.png: Added.
+        * fast/forms/select-disabled-appearance-expected.txt: Added.
+        * fast/forms/select-disabled-appearance.html: Added.
+
+2007-01-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - test for http://bugs.webkit.org/show_bug.cgi?id=12353
           REGRESSION: Crash on load (mutation event dispatch under the image element constructor deletes the element)
 
