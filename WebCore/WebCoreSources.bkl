@@ -678,6 +678,7 @@
 
     <set append="1" var="WEBCORE_SOURCES_JS">
         bindings/js/JSCanvasRenderingContext2DCustom.cpp
+        bindings/js/JSDocumentCustom.cpp
         bindings/js/JSHTMLElementWrapperFactory.cpp
         bindings/js/JSHTMLFormElementCustom.cpp
         bindings/js/JSHTMLInputElementBase.cpp

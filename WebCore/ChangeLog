@@ -1,3 +1,11 @@
+2007-01-21  Darin Adler  <darin@apple.com>
+
+        - fix non-Mac builds
+
+        * CMakeLists.txt: Added JSDocumentCustom.cpp.
+        * WebCore.pro: Ditto.
+        * WebCoreSources.bkl: Ditto.
+
 2007-01-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

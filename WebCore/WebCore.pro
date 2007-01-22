@@ -220,6 +220,7 @@ SOURCES += \
     bindings/js/kjs_traversal.cpp \
     bindings/js/kjs_window.cpp \
     bindings/js/JSCanvasRenderingContext2DCustom.cpp \
+    bindings/js/JSDocumentCustom.cpp \
     bindings/js/JSHTMLElementWrapperFactory.cpp \
     bindings/js/JSHTMLFormElementCustom.cpp \
     bindings/js/JSHTMLOptionElementConstructor.cpp \
