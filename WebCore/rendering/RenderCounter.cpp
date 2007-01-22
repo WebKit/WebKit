@@ -218,7 +218,7 @@ bool RenderCounter::isRenderCounter() const
     return true;
 }
 
-PassRefPtr<StringImpl> RenderCounter::originalString() const
+PassRefPtr<StringImpl> RenderCounter::originalText() const
 {
     if (!parent())
         return 0;
@@ -246,7 +246,7 @@ PassRefPtr<StringImpl> RenderCounter::originalString() const
 
 void RenderCounter::calcMinMaxWidth()
 {
-    setInternalString(originalString());
+    setTextInternal(originalText());
     RenderText::calcMinMaxWidth();
 }
 

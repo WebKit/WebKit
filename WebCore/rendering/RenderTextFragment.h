@@ -47,7 +47,7 @@ public:
     RenderObject* firstLetter() const { return m_firstLetter; }
 
     StringImpl* contentString() const { return m_generatedContentStr.get(); }
-    virtual PassRefPtr<StringImpl> originalString() const;
+    virtual PassRefPtr<StringImpl> originalText() const;
 
 private:
     unsigned m_start;

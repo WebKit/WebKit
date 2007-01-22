@@ -38,6 +38,7 @@
 #include "HTMLNames.h"
 #include "markup.h"
 #include "ReplaceSelectionCommand.h"
+#include "Text.h"
 #include "TextIterator.h"
 #include "visible_units.h"
 

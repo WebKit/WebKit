@@ -34,6 +34,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "htmlediting.h"
 #include "HTMLNames.h"
+#include "Text.h"
 #include "TextIterator.h"
 #include "visible_units.h"
   

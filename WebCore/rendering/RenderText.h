@@ -24,43 +24,33 @@
 #define RenderText_h
 
 #include "RenderObject.h"
-#include "Text.h"
 
 namespace WebCore {
 
-// Define a constant for soft hyphen's unicode value.
-const unsigned short SOFT_HYPHEN = 173;
-
-class DocumentMarker;
-class InlineBox;
 class InlineTextBox;
-class Position;
-class String;
 class StringImpl;
 
 class RenderText : public RenderObject {
-    friend class InlineTextBox;
 public:
-    RenderText(Node*, StringImpl*);
+    RenderText(Node*, PassRefPtr<StringImpl>);
 
     virtual const char* renderName() const { return "RenderText"; }
 
     virtual bool isTextFragment() const { return false; }
 
-    virtual PassRefPtr<StringImpl> originalString() const;
+    virtual PassRefPtr<StringImpl> originalText() const;
 
     virtual void setStyle(RenderStyle*);
 
     void extractTextBox(InlineTextBox*);
     void attachTextBox(InlineTextBox*);
     void removeTextBox(InlineTextBox*);
-    void deleteTextBoxes();
+
     virtual void destroy();
 
-    String data() const { return m_str.get(); }
-    StringImpl* string() const { return m_str.get(); }
+    StringImpl* text() const { return m_text.get(); }
 
-    virtual InlineBox* createInlineBox(bool,bool, bool isOnlyRun = false);
+    virtual InlineBox* createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool isOnlyRun = false);
     virtual void dirtyLineBoxes(bool fullLayout, bool isRootInlineBox = false);
 
     virtual void paint(PaintInfo&, int tx, int ty) { ASSERT_NOT_REACHED(); }
@@ -73,33 +63,27 @@ public:
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
 
-    virtual unsigned length() const { return m_str->length(); }
-    const UChar* text() const { return m_str->characters(); }
-    unsigned stringLength() const { return m_str->length(); } // non virtual implementation of length()
+    const UChar* characters() const { return m_text->characters(); }
+    unsigned textLength() const { return m_text->length(); } // non virtual implementation of length()
     virtual void position(InlineBox*);
 
-    virtual unsigned width(unsigned from, unsigned len, const Font*, int xPos) const;
+    virtual unsigned width(unsigned from, unsigned len, const Font&, int xPos) const;
     virtual unsigned width(unsigned from, unsigned len, int xPos, bool firstLine = false) const;
     virtual int width() const;
     virtual int height() const;
 
     virtual short lineHeight(bool firstLine, bool isRootLineBox = false) const;
 
-    // overrides
     virtual void calcMinMaxWidth();
     virtual int minWidth() const { return m_minWidth; }
     virtual int maxWidth() const { return m_maxWidth; }
 
-    // widths
-    void calcMinMaxWidth(int leadWidth);
-    virtual void trimmedMinMaxWidth(int leadWidth,
-                                    int& beginMinW, bool& beginWS,
-                                    int& endMinW, bool& endWS,
-                                    bool& hasBreakableChar, bool& hasBreak,
-                                    int& beginMaxW, int& endMaxW,
-                                    int& minW, int& maxW, bool& stripFrontSpaces);
-
-    bool containsOnlyWhitespace(unsigned from, unsigned len) const;
+    void trimmedMinMaxWidth(int leadWidth,
+                            int& beginMinW, bool& beginWS,
+                            int& endMinW, bool& endWS,
+                            bool& hasBreakableChar, bool& hasBreak,
+                            int& beginMaxW, int& endMaxW,
+                            int& minW, int& maxW, bool& stripFrontSpaces);
 
     // returns the minimum x position of all runs relative to the parent.
     // defaults to 0.
@@ -108,7 +92,6 @@ public:
     virtual int xPos() const;
     virtual int yPos() const;
 
-    virtual const Font& font();
     virtual short verticalPositionHint(bool firstLine) const;
 
     void setText(PassRefPtr<StringImpl>, bool force = false);
@@ -124,10 +107,6 @@ public:
     virtual int marginRight() const { return style()->marginRight().calcMinValue(0); }
 
     virtual IntRect getAbsoluteRepaintRect();
-
-    const Font* font(bool firstLine) const;
-
-    Text* element() const { return static_cast<Text*>(RenderObject::element()); }
 
     InlineTextBox* firstTextBox() const { return m_firstTextBox; }
     InlineTextBox* lastTextBox() const { return m_lastTextBox; }
@@ -146,16 +125,23 @@ public:
     InlineTextBox* findNextInlineTextBox(int offset, int& pos) const;
 
 protected:
-    void setInternalString(PassRefPtr<StringImpl>);
+    void setTextInternal(PassRefPtr<StringImpl>);
 
 private:
-    void cacheWidths();
-    int widthFromCache(const Font*, int start, int len, int tabWidth, int xPos) const;
-    bool shouldUseMonospaceCache(const Font*) const;
-    bool allAscii() const;
+    // Make length() private so that callers that have a RenderText*
+    // will use the more efficient textLength() instead, while
+    // callers with a RenderObject* can continue to use length().
+    virtual unsigned length() const { return textLength(); }
 
-    // members
-    RefPtr<StringImpl> m_str;
+    void deleteTextBoxes();
+    bool containsOnlyWhitespace(unsigned from, unsigned len) const;
+    void calcMinMaxWidthInternal(int leadWidth);
+
+    void updateMonospaceCharacterWidth();
+    int widthFromCache(const Font&, int start, int len, int tabWidth, int xPos) const;
+    bool isAllASCII() const { return m_isAllASCII; }
+
+    RefPtr<StringImpl> m_text;
 
     InlineTextBox* m_firstTextBox;
     InlineTextBox* m_lastTextBox;
@@ -171,16 +157,13 @@ private:
     bool m_hasTab : 1; // Whether or not we have a variable width tab character (e.g., <pre> with '\t').
     bool m_hasBeginWS : 1; // Whether or not we begin with WS (only true if we aren't pre)
     bool m_hasEndWS : 1; // Whether or not we end with WS (only true if we aren't pre)
-
     bool m_linesDirty : 1; // This bit indicates that the text run has already dirtied specific
                            // line boxes, and this hint will enable layoutInlineChildren to avoid
                            // just dirtying everything when character data is modified (e.g., appended/inserted
                            // or removed).
     bool m_containsReversedText : 1;
+    bool m_isAllASCII : 1;
 
-    // 22 bits left
-    mutable bool m_allAsciiChecked:1;
-    mutable bool m_allAscii:1;
     int m_monospaceCharacterWidth;
 };
 

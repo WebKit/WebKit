@@ -854,8 +854,6 @@ public:
 
     virtual void destroy();
 
-    const Font& font(bool firstLine) const { return style(firstLine)->font(); }
-
     // Virtual function helpers for CSS3 Flexible Box Layout
     virtual bool isFlexibleBox() const { return false; }
     virtual bool isFlexingChildren() const { return false; }

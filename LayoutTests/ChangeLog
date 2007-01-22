@@ -1,3 +1,27 @@
+2007-01-22  Darin Adler  <darin@apple.com>
+
+        Test by Andrew Wellington <proton@wiretapped.net>.
+        Reviewed by Darin.
+        
+        - test for fix to http://bugs.webkit.org/show_bug.cgi?id=11197
+          REGRESSION: Specifying a counter for a CODE tag's content style
+          property on before or after causes a crash.
+
+        * fast/css/beforeSelectorOnCodeElement-expected.checksum: Added.
+        * fast/css/beforeSelectorOnCodeElement-expected.png: Added.
+        * fast/css/beforeSelectorOnCodeElement-expected.txt: Added.
+        * fast/css/beforeSelectorOnCodeElement.html: Added.
+
+        Test by Mitz.
+        Reviewed by Darin.
+
+        - test for monospace problem mentioned in the above bug
+        
+        * fast/text/monospace-width-cache-expected.checksum: Added.
+        * fast/text/monospace-width-cache-expected.png: Added.
+        * fast/text/monospace-width-cache-expected.txt: Added.
+        * fast/text/monospace-width-cache.html: Added.
+
 2007-01-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

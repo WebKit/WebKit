@@ -32,6 +32,7 @@
 #include "InlineTextBox.h"
 #include "Logging.h"
 #include "Range.h"
+#include "Text.h"
 #include "htmlediting.h"
 #include "visible_units.h"
 

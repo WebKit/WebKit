@@ -38,6 +38,7 @@
 #include "HTMLElementFactory.h"
 #include "HTMLNames.h"
 #include "HTMLTokenizer.h"
+#include "Text.h"
 #include "TextIterator.h"
 #include "XMLTokenizer.h"
 #include "markup.h"

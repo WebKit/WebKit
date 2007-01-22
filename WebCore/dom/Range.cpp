@@ -34,6 +34,7 @@
 #include "ProcessingInstruction.h"
 #include "RangeException.h"
 #include "RenderBlock.h"
+#include "Text.h"
 #include "TextIterator.h"
 #include "markup.h"
 #include "visible_units.h"

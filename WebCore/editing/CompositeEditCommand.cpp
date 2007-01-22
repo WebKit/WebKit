@@ -54,6 +54,7 @@
 #include "SplitElementCommand.h"
 #include "SplitTextNodeCommand.h"
 #include "SplitTextNodeContainingElementCommand.h"
+#include "Text.h"
 #include "TextIterator.h"
 #include "WrapContentsInDummySpanCommand.h"
 #include "htmlediting.h"

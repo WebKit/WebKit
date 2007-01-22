@@ -372,7 +372,7 @@ inline void BidiIterator::increment(BidiState& bidi)
         return;
     if (obj->isText()) {
         pos++;
-        if (pos >= static_cast<RenderText *>(obj)->stringLength()) {
+        if (pos >= static_cast<RenderText *>(obj)->textLength()) {
             obj = bidiNext(block, obj, bidi);
             pos = 0;
         }
@@ -393,10 +393,10 @@ UChar BidiIterator::current() const
         return 0;
     
     RenderText* text = static_cast<RenderText*>(obj);
-    if (!text->text())
+    if (!text->characters())
         return 0;
     
-    return text->text()[pos];
+    return text->characters()[pos];
 }
 
 ALWAYS_INLINE Direction BidiIterator::direction() const
@@ -408,9 +408,9 @@ ALWAYS_INLINE Direction BidiIterator::direction() const
     if (!obj->isText())
         return OtherNeutral;
     RenderText* renderTxt = static_cast<RenderText*>(obj);
-    if (pos >= renderTxt->stringLength())
+    if (pos >= renderTxt->textLength())
         return OtherNeutral;
-    return Unicode::direction(renderTxt->text()[pos]);
+    return Unicode::direction(renderTxt->characters()[pos]);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -429,9 +429,9 @@ static void addRun(BidiRun* bidiRun)
     // Compute the number of spaces in this run,
     if (bidiRun->obj && bidiRun->obj->isText()) {
         RenderText* text = static_cast<RenderText*>(bidiRun->obj);
-        if (text->text()) {
+        if (text->characters()) {
             for (int i = bidiRun->start; i < bidiRun->stop; i++) {
-                UChar c = text->text()[i];
+                UChar c = text->characters()[i];
                 if (c == ' ' || c == '\n' || c == '\t')
                     numSpaces++;
             }
@@ -521,12 +521,12 @@ static void checkMidpoints(BidiIterator& lBreak, BidiState& bidi)
                 if (endpoint.obj->isText()) {
                     // Don't shave a character off the endpoint if it was from a soft hyphen.
                     RenderText* textObj = static_cast<RenderText*>(endpoint.obj);
-                    if (endpoint.pos+1 < textObj->length()) {
-                        if (textObj->text()[endpoint.pos+1] == SOFT_HYPHEN)
+                    if (endpoint.pos + 1 < textObj->textLength()) {
+                        if (textObj->characters()[endpoint.pos+1] == softHyphen)
                             return;
                     } else if (startpoint.obj->isText()) {
                         RenderText *startText = static_cast<RenderText*>(startpoint.obj);
-                        if (startText->length() > 0 && startText->text()[0] == SOFT_HYPHEN)
+                        if (startText->textLength() && startText->characters()[0] == softHyphen)
                             return;
                     }
                 }
@@ -875,11 +875,11 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
             RenderText* rt = static_cast<RenderText*>(r->obj);
             int textWidth = rt->width(r->start, r->stop-r->start, totWidth, m_firstLine);
             int effectiveWidth = textWidth;
-            int rtLength = rt->length();
+            int rtLength = rt->textLength();
             if (rtLength != 0) {
-                if (r->start == 0 && needsWordSpacing && DeprecatedChar(rt->text()[r->start]).isSpace())
-                    effectiveWidth += rt->font(m_firstLine)->wordSpacing();
-                needsWordSpacing = !DeprecatedChar(rt->text()[r->stop-1]).isSpace() && r->stop == rtLength;          
+                if (r->start == 0 && needsWordSpacing && DeprecatedChar(rt->characters()[r->start]).isSpace())
+                    effectiveWidth += rt->style(m_firstLine)->font().wordSpacing();
+                needsWordSpacing = !DeprecatedChar(rt->characters()[r->stop-1]).isSpace() && r->stop == rtLength;          
             }
             r->box->setWidth(textWidth);
         } else if (!r->obj->isInlineFlow()) {
@@ -950,7 +950,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
                 // get the number of spaces in the run
                 int spaces = 0;
                 for ( int i = r->start; i < r->stop; i++ ) {
-                    UChar c = static_cast<RenderText*>(r->obj)->text()[i];
+                    UChar c = static_cast<RenderText*>(r->obj)->characters()[i];
                     if (c == ' ' || c == '\n' || c == '\t')
                         spaces++;
                 }
@@ -1921,7 +1921,7 @@ int RenderBlock::skipWhitespace(BidiIterator &it, BidiState &bidi)
     int w = lineWidth(m_height);
     while (!it.atEnd() && (it.obj->isInlineFlow() || (shouldCollapseWhiteSpace(it.obj->style()) && !it.obj->isBR() &&
           (it.current() == ' ' || it.current() == '\t' || (!it.obj->style()->preserveNewline() && it.current() == '\n') ||
-          it.current() == SOFT_HYPHEN || skipNonBreakingSpace(it) || it.obj->isFloatingOrPositioned())))) {
+          it.current() == softHyphen || skipNonBreakingSpace(it) || it.obj->isFloatingOrPositioned())))) {
         if (it.obj->isFloatingOrPositioned()) {
             RenderObject *o = it.obj;
             // add to special objects...
@@ -2115,9 +2115,9 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 // Optimize for a common case. If we can't find whitespace after the list
                 // item, then this is all moot. -dwh
                 RenderObject* next = bidiNext(start.block, o, bidi);
-                if (style()->collapseWhiteSpace() && next && !next->isBR() && next->isText() && static_cast<RenderText*>(next)->stringLength() > 0) {
+                if (style()->collapseWhiteSpace() && next && !next->isBR() && next->isText() && static_cast<RenderText*>(next)->textLength() > 0) {
                     RenderText *nextText = static_cast<RenderText*>(next);
-                    UChar nextChar = nextText->text()[0];
+                    UChar nextChar = nextText->characters()[0];
                     if (nextText->style()->isCollapsibleWhiteSpace(nextChar)) {
                         currentCharacterIsSpace = true;
                         currentCharacterIsWS = true;
@@ -2130,11 +2130,11 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 tmpW += o->width() + o->marginLeft() + o->marginRight() + inlineWidth(o);
         } else if (o->isText()) {
             RenderText *t = static_cast<RenderText *>(o);
-            int strlen = t->stringLength();
+            int strlen = t->textLength();
             int len = strlen - pos;
-            const UChar* str = t->text();
+            const UChar* str = t->characters();
 
-            const Font *f = t->font(m_firstLine);
+            const Font& f = t->style(m_firstLine)->font();
             // proportional font, needs a bit more work.
             int lastSpace = pos;
             int wordSpacing = o->style()->wordSpacing();
@@ -2155,14 +2155,14 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                     isLineEmpty = false;
                 
                 // Check for soft hyphens.  Go ahead and ignore them.
-                if (c == SOFT_HYPHEN) {
+                if (c == softHyphen) {
                     if (!ignoringSpaces) {
                         // Ignore soft hyphens
                         BidiIterator endMid;
                         if (pos > 0)
                             endMid = BidiIterator(0, o, pos-1);
                         else
-                            endMid = BidiIterator(0, previous, previous->isText() ? static_cast<RenderText *>(previous)->stringLength() - 1 : 0);
+                            endMid = BidiIterator(0, previous, previous->isText() ? static_cast<RenderText *>(previous)->textLength() - 1 : 0);
                         // Two consecutive soft hyphens. Avoid overlapping midpoints.
                         if (sNumMidpoints && smidpoints->at(sNumMidpoints - 1).obj == endMid.obj && smidpoints->at(sNumMidpoints - 1).pos > endMid.pos)
                             sNumMidpoints--;
@@ -2273,7 +2273,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                             }
                         }
                         if (lineWasTooWide || w + tmpW > width) {
-                            if (lBreak.obj && lBreak.obj->style()->preserveNewline() && lBreak.obj->isText() && static_cast<RenderText*>(lBreak.obj)->text()[lBreak.pos] == '\n') {
+                            if (lBreak.obj && lBreak.obj->style()->preserveNewline() && lBreak.obj->isText() && static_cast<RenderText*>(lBreak.obj)->characters()[lBreak.pos] == '\n') {
                                 if (!stoppedIgnoringSpaces && pos > 0) {
                                     // We need to stop right before the newline and then start up again.
                                     BidiIterator midpoint(0, o, pos);
@@ -2287,7 +2287,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                         } else {
                             if (midWordBreak)
                                 tmpW -= additionalTmpW;
-                            if (pos > 0 && str[pos-1] == SOFT_HYPHEN)
+                            if (pos > 0 && str[pos-1] == softHyphen)
                                 // Subtract the width of the soft hyphen out since we fit on a line.
                                 tmpW -= t->width(pos-1, 1, f, w+tmpW);
                         }
@@ -2388,8 +2388,8 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 else {
                     checkForBreak = false;
                     RenderText* nextText = static_cast<RenderText*>(next);
-                    if (nextText->stringLength() != 0) {
-                        UChar c = nextText->text()[0];
+                    if (nextText->textLength() != 0) {
+                        UChar c = nextText->characters()[0];
                         if (c == ' ' || c == '\t' || (c == '\n' && !next->style()->preserveNewline()))
                             // If the next item on the line is text, and if we did not end with
                             // a space, then the next text run continues our word (and so it needs to
@@ -2510,7 +2510,8 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
         else if (lBreak.obj == 0 && trailingSpaceObject->isText()) {
             // Add a new end midpoint that stops right at the very end.
             RenderText* text = static_cast<RenderText *>(trailingSpaceObject);
-            unsigned pos = text->length() >=2 ? text->length() - 2 : UINT_MAX;
+            unsigned length = text->textLength();
+            unsigned pos = length >= 2 ? length - 2 : UINT_MAX;
             BidiIterator endMid(0, trailingSpaceObject, pos);
             addMidpoint(endMid);
         }
@@ -2528,8 +2529,8 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
     if (lBreak.obj && lBreak.pos >= 2 && lBreak.obj->isText()) {
         // For soft hyphens on line breaks, we have to chop out the midpoints that made us
         // ignore the hyphen so that it will render at the end of the line.
-        UChar c = static_cast<RenderText*>(lBreak.obj)->text()[lBreak.pos-1];
-        if (c == SOFT_HYPHEN)
+        UChar c = static_cast<RenderText*>(lBreak.obj)->characters()[lBreak.pos-1];
+        if (c == softHyphen)
             chopMidpointsAt(lBreak.obj, lBreak.pos-2);
     }
     

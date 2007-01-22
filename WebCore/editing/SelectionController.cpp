@@ -924,14 +924,14 @@ void SelectionController::debugRenderer(RenderObject *r, bool selected) const
         fprintf(stderr, "%s%s\n", selected ? "==> " : "    ", element->localName().deprecatedString().latin1());
     }
     else if (r->isText()) {
-        RenderText *textRenderer = static_cast<RenderText *>(r);
-        if (textRenderer->stringLength() == 0 || !textRenderer->firstTextBox()) {
+        RenderText* textRenderer = static_cast<RenderText*>(r);
+        if (textRenderer->textLength() == 0 || !textRenderer->firstTextBox()) {
             fprintf(stderr, "%s#text (empty)\n", selected ? "==> " : "    ");
             return;
         }
         
         static const int max = 36;
-        DeprecatedString text = String(textRenderer->string()).deprecatedString();
+        DeprecatedString text = String(textRenderer->text()).deprecatedString();
         int textLength = text.length();
         if (selected) {
             int offset = 0;

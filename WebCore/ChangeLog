@@ -1,3 +1,157 @@
+2007-01-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        Inspired by a much simpler patch by Andrew Wellington <proton@wiretapped.net>.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11197
+          REGRESSION: Specifying a counter for a CODE tag's content style property
+          on before or after causes a crash.
+
+        Test: fast/css/beforeSelectorOnCodeElement.html
+
+        - fix regression I recently introduced where the monospace cache could be
+          used for text that was not ASCII, if text was changed after the style was set
+
+        Test: fast/text/monospace-width-cache.html
+
+        - streamline RenderText.h -- remove unneeded functions, make some needlessly
+          virtual functions non-virtual, remove unneeded header includes, replace use
+          of Font* with Font& for consistency with RenderStyle, use "text" consistently
+          instead of "string"
+
+        * rendering/RenderText.h: Removed unneeded include of "Text.h", declarations of
+        SOFT_HYPHEN, DocumentMarker, InlineBox, Position, String. Got rid of friend
+        declaration for InlineTextBox. Changed constructor to take a PassRefPtr since
+        we do take owership of the passed-in text. Made deleteTextBoxes() private.
+        Removed unneeded data(). Made override of length() private so people will use
+        the faster textLength() instead. Renamed string() to text() so it matches up
+        better with setText(). Same for stringLength(), originalString(), and
+        setInternalString(), which are now textLength(), originalText(), and
+        setTextInternal(). Renamed the old text() function to characters(), since it
+        returns a pointer as StringImpl::characters does. Changed Font* to Font& everywhere.
+        Renamed the internal calcMinMaxWidth() function to calcMinMaxWidthInternal() and
+        made it non-virtual since it's not overriden anywhere. Also made the
+        trimmedMinMaxWidth() function non-virtual. Made containsOnlyWhitespace() private.
+        Removed both font() functions (one was needlessly virtual) and element().
+        Renamed cacheWidths() to updateMonospaceCharacterWidth() and removed the
+        shouldUseMonospaceCache() function. Renamed allAscii() to isAllASCII() and made
+        it an inline function. Removed the m_allAsciiChecked flag and renamed the
+        m_allAscii flag to m_isAllASCII.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::RenderText): Removed initialization of m_allAsciiChecked.
+        Initialize m_isAllASCII. Changed all occurrences of m_str->length() and
+        m_str->characters () to use the stringLength() and characters() inline functions
+        instead.
+        (WebCore::RenderText::setStyle): Replaced the unconditional call to cacheWidths
+        with a conditional call to updateMonospaceCharacterWidth. This speeds up the common
+        case where style is changed without changing the font.
+        (WebCore::RenderText::originalText): Changed code to not depend on overridden
+        element() function with casts to a Text node -- this was one of only two call sites.
+        Also renamed.
+        (WebCore::RenderText::positionForCoordinates): Name change.
+        (WebCore::RenderText::caretRect): Ditto.
+        (WebCore::RenderText::updateMonospaceCharacterWidth): Renamed from cacheWidths and
+        incorporate the check that was formerly in a separate shouldUseMonospaceCache
+        function.
+        (WebCore::RenderText::widthFromCache): Changed to take a Font& instead of Font*.
+        Changed to take advantage of the fact that the string is known to be all ASCII in
+        the m_monospaceCharacterWidth code path.
+        (WebCore::RenderText::trimmedMinMaxWidth): Ditto. Also use style()->font() instead
+        of font(false).
+        (WebCore::RenderText::calcMinMaxWidth): Ditto. Also changed to use softHyphen instead
+        of SOFT_HYPHEN.
+        (WebCore::RenderText::containsOnlyWhitespace): More of the same.
+        (WebCore::RenderText::setSelectionState): Ditto.
+        (WebCore::RenderText::setTextWithOffset): Ditto.
+        (WebCore::isInlineFlowOrEmptyText): Ditto.
+        (WebCore::RenderText::setTextInternal): Updated for name changes. Also changed to
+        set the m_isAllASCII flag every time, in the more-efficient way we use elsewhere
+        (or'ing all the characters together), and to call updateMonospaceCharacterWidth
+        if the "all ASCII"-ness of the text changes.
+        (WebCore::RenderText::setText): Updated for name changes.
+        (WebCore::RenderText::width): More like above.
+        (WebCore::RenderText::selectionRect): Ditto.
+        (WebCore::RenderText::caretMaxOffset): Ditto.
+        (WebCore::RenderText::previousOffset): Ditto.
+        (WebCore::RenderText::nextOffset): Ditto.
+
+        * dom/Position.cpp:
+        * dom/Range.cpp:
+        * editing/CompositeEditCommand.cpp:
+        * editing/DeleteSelectionCommand.cpp:
+        * editing/VisiblePosition.cpp:
+        * html/HTMLElement.cpp:
+        Added now-needed include of "Text.h" which is no longer included by "RenderText.h".
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::debugRenderer):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextNode):
+        (WebCore::TextIterator::handleTextBox):
+        (WebCore::SimplifiedBackwardsTextIterator::handleTextNode):
+        Update for name changes of stringLength(), string(), and originalString() to
+        textLength(), text(), and originalText(), and to always use textLength() instead
+        of length() when we have a RenderText* rather than a RenderObject*.
+        * editing/visible_units.cpp:
+        (WebCore::startOfParagraph): Ditto.
+        (WebCore::endOfParagraph): Ditto.
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally): Ditto. Also removed use of the
+        RenderObject::font() function and replaced it with explicit access to the style.
+        (WebCore::InlineFlowBox::placeBoxesVertically): Ditto.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect): Ditto.
+        (WebCore::InlineTextBox::isLineBreak): Ditto.
+        (WebCore::InlineTextBox::paint): Ditto.
+        (WebCore::InlineTextBox::selectionStartEnd): Ditto.
+        (WebCore::InlineTextBox::paintSelection): Ditto.
+        (WebCore::InlineTextBox::paintMarkedTextBackground): Ditto.
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker): Ditto.
+        (WebCore::InlineTextBox::paintTextMatchMarker): Ditto.
+        (WebCore::InlineTextBox::offsetForPosition): Ditto.
+        (WebCore::InlineTextBox::positionForOffset): Ditto.
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::addChild): Ditto.
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::originalText): Ditto.
+        (WebCore::RenderCounter::calcMinMaxWidth): Ditto.
+        * rendering/RenderCounter.h: Ditto.
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::originalText): Ditto.
+        * rendering/RenderTextFragment.h: Ditto.
+        * rendering/SVGInlineFlowBox.cpp:
+        (WebCore::placePositionedBoxesHorizontally): Ditto.
+        (WebCore::placeBoxesVerticallyWithAbsBaseline): Ditto.
+        * rendering/bidi.cpp:
+        (WebCore::BidiIterator::increment): Ditto.
+        (WebCore::BidiIterator::current): Ditto.
+        (WebCore::BidiIterator::direction): Ditto.
+        (WebCore::addRun): Ditto.
+        (WebCore::checkMidpoints): Ditto.
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine): Ditto.
+        (WebCore::RenderBlock::skipWhitespace): Ditto.
+        (WebCore::RenderBlock::findNextLineBreak): Ditto.
+
+        * rendering/RenderBR.h: Updated signature of width function which now takes a
+        Font& instead of a Font*.
+
+        * rendering/RenderBlock.cpp: (WebCore::stripTrailingSpace): Updated to no longer
+        use the RenderObject::font() function, and added a comment about first-line, which
+        is not handled properly here.
+
+        * rendering/RenderMenuList.cpp: (WebCore::RenderMenuList::text):
+        * rendering/RenderTreeAsText.cpp: (WebCore::writeTextRun):
+        Eliminated use of RenderText::data().
+
+        * rendering/RenderObject.h: Removed RenderObject::font(). This had the bad effect of
+        having everyone pass in a boolean rather than using the cleaner style() and
+        firstLineStyle() functions in cases where there's no a firstLineStyle boolean.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getVerticalPosition): Replaced use of RenderObject::font()
+        with direct use of the style instead, which is arguably easier to understand anyway.
+        (WebCore::RenderObject::baselinePosition): Ditto.
+
 2007-01-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by The Mitz.

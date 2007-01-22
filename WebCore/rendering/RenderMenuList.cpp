@@ -166,7 +166,7 @@ void RenderMenuList::setText(const String& s)
 
 String RenderMenuList::text()
 {
-    return m_buttonText ? m_buttonText->data() : String();
+    return m_buttonText ? m_buttonText->text() : 0;
 }
 
 IntRect RenderMenuList::controlClipRect(int tx, int ty) const

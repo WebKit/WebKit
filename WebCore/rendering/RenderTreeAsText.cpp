@@ -308,7 +308,7 @@ static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBo
             ts << " override";
     }
     ts << ": "
-        << quoteAndEscapeNonPrintables(o.data().substring(run.m_start, run.m_len))
+        << quoteAndEscapeNonPrintables(String(o.text()).substring(run.m_start, run.m_len))
         << "\n";
 }
 

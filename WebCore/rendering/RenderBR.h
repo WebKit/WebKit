@@ -42,7 +42,7 @@ public:
  
     virtual IntRect selectionRect() { return IntRect(); }
 
-    virtual unsigned width(unsigned /*from*/, unsigned /*len*/, const Font*, int /*xpos*/) const { return 0; }
+    virtual unsigned width(unsigned /*from*/, unsigned /*len*/, const Font&, int /*xpos*/) const { return 0; }
     virtual unsigned width(unsigned /*from*/, unsigned /*len*/, int /*xpos*/, bool /*firstLine = false*/) const { return 0; }
 
     virtual short lineHeight(bool firstLine, bool isRootLineBox = false) const;

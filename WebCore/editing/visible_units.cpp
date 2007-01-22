@@ -624,13 +624,13 @@ VisiblePosition startOfParagraph(const VisiblePosition &c)
             
         if (r->isText()) {
             if (style->preserveNewline()) {
-                const UChar* text = static_cast<RenderText*>(r)->text();
-                int i = static_cast<RenderText*>(r)->length();
+                const UChar* chars = static_cast<RenderText*>(r)->characters();
+                int i = static_cast<RenderText*>(r)->textLength();
                 int o = offset;
                 if (n == startNode && o < i)
                     i = max(0, o);
                 while (--i >= 0)
-                    if (text[i] == '\n')
+                    if (chars[i] == '\n')
                         return VisiblePosition(n, i + 1, DOWNSTREAM);
             }
             node = n;
@@ -688,12 +688,12 @@ VisiblePosition endOfParagraph(const VisiblePosition &c)
         // FIXME: We avoid returning a position where the renderer can't accept the caret.
         // We should probably do this in other cases such as startOfParagraph.
         if (r->isText() && r->caretMaxRenderedOffset() > 0) {
-            int length = static_cast<RenderText *>(r)->length();
+            int length = static_cast<RenderText*>(r)->textLength();
             if (style->preserveNewline()) {
-                const UChar* text = static_cast<RenderText *>(r)->text();
+                const UChar* chars = static_cast<RenderText*>(r)->characters();
                 int o = n == startNode ? offset : 0;
                 for (int i = o; i < length; ++i)
-                    if (text[i] == '\n')
+                    if (chars[i] == '\n')
                         return VisiblePosition(n, i, DOWNSTREAM);
             }
             node = n;

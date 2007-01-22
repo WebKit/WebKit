@@ -34,7 +34,7 @@ public:
 
     virtual const char* renderName() const;
     virtual bool isRenderCounter() const;
-    virtual PassRefPtr<StringImpl> originalString() const;
+    virtual PassRefPtr<StringImpl> originalText() const;
     virtual void calcMinMaxWidth();
 
     static void destroyCounterNodes(RenderObject*);

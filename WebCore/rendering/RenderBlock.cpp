@@ -3350,10 +3350,9 @@ static inline void stripTrailingSpace(int& inlineMax, int& inlineMin,
 {
     if (trailingSpaceChild && trailingSpaceChild->isText()) {
         // Collapse away the trailing space at the end of a block.
-        RenderText* t = static_cast<RenderText *>(trailingSpaceChild);
-        const Font *f = t->font(false);  // FIXME: Why are we ignoring first-line?
+        RenderText* t = static_cast<RenderText*>(trailingSpaceChild);
         const UChar space = ' ';
-        int spaceWidth = f->width(TextRun(&space, 1));
+        int spaceWidth = t->style()->font().width(TextRun(&space, 1)); // FIXME: This ignores first-line.
         inlineMax -= spaceWidth;
         if (inlineMin > inlineMax)
             inlineMin = inlineMax;
@@ -3915,7 +3914,7 @@ void RenderBlock::updateFirstLetter()
         // The original string is going to be either a generated content string or a DOM node's
         // string.  We want the original string before it got transformed in case first-letter has
         // no text-transform or a different text-transform applied to it.
-        RefPtr<StringImpl> oldText = textObj->originalString();
+        RefPtr<StringImpl> oldText = textObj->originalText();
         ASSERT(oldText);
         
         if (oldText && oldText->length() > 0) {
