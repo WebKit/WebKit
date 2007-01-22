@@ -1,3 +1,15 @@
+2007-01-22  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=12364
+          REGRESSSION (NativeListBox): Selected option's background is not clipped to the list box
+
+        * fast/forms/select-item-background-clip-expected.checksum: Added.
+        * fast/forms/select-item-background-clip-expected.png: Added.
+        * fast/forms/select-item-background-clip-expected.txt: Added.
+        * fast/forms/select-item-background-clip.html: Added.
+
 2007-01-22  Darin Adler  <darin@apple.com>
 
         Test by Andrew Wellington <proton@wiretapped.net>.

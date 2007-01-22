@@ -1,3 +1,16 @@
+2007-01-22  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12364
+          REGRESSSION (NativeListBox): Selected option's background is not clipped to the list box
+
+        Test: fast/forms/select-item-background-clip.html
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemBackground): Intersect the item's rect with
+        the list box's clip rect.
+
 2007-01-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Beth.
