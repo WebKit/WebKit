@@ -78,6 +78,8 @@ void RenderText::setStyle(RenderStyle* newStyle)
     if (oldStyle == newStyle)
         return;
 
+    bool fontChanged = !oldStyle || oldStyle->font() != newStyle->font();
+
     ETextTransform oldTransform = oldStyle ? oldStyle->textTransform() : TTNONE;
     ETextSecurity oldSecurity = oldStyle ? oldStyle->textSecurity() : TSNONE;
 
@@ -87,7 +89,7 @@ void RenderText::setStyle(RenderStyle* newStyle)
         if (RefPtr<StringImpl> textToTransform = originalText())
             setText(textToTransform.release(), true);
 
-    if (!oldStyle || oldStyle->font() != newStyle->font())
+    if (fontChanged)
         updateMonospaceCharacterWidth();
 }
 

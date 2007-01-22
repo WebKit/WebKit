@@ -1,3 +1,15 @@
+2007-01-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12369
+          REGRESSION (r19027): amazon.com home page crashes WebKit r19028 debug build
+
+        I caused this a few hours ago. Oops!
+
+        * rendering/RenderText.cpp: (WebCore::RenderText::setStyle):
+        Compute whether the font changed before calling RenderObject::setStyle.
+
 2007-01-22  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.
