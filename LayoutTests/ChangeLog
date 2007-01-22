@@ -1,3 +1,13 @@
+2007-01-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12353
+          REGRESSION: Crash on load (mutation event dispatch under the image element constructor deletes the element)
+
+        * fast/dom/HTMLImageElement/constructor-mutation-event-dispatch-expected.txt: Added.
+        * fast/dom/HTMLImageElement/constructor-mutation-event-dispatch.html: Added.
+
 2007-01-21  Sam Weinig  <sam@webkit.org>
 
         Rolling out patch for http://bugs.webkit.org/show_bug.cgi?id=8360.

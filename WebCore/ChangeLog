@@ -1,3 +1,16 @@
+2007-01-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12353 <rdar://problem/4944599>
+          REGRESSION: Crash on load (mutation event dispatch under the image element constructor deletes the element)
+    
+        Test: fast/dom/HTMLImageElement/constructor-mutation-event-dispatch.html
+
+        * bindings/js/kjs_html.cpp:
+        (KJS::ImageConstructorImp::construct): Protect the image element before setting
+        its attributes.
+
 2007-01-21  Sam Weinig  <sam@webkit.org>
 
         Rolling out patch for http://bugs.webkit.org/show_bug.cgi?id=8360.

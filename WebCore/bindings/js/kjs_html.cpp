@@ -1722,14 +1722,15 @@ JSObject* ImageConstructorImp::construct(ExecState*  exec, const List & list)
         height = h->toInt32(exec);
     }
         
-    HTMLImageElement* result = new HTMLImageElement(m_doc.get());
+    HTMLImageElement* image = new HTMLImageElement(m_doc.get());
+    JSObject* result = static_cast<JSObject*>(toJS(exec, image));
     
     if (widthSet)
-        result->setWidth(width);
+        image->setWidth(width);
     if (heightSet)
-        result->setHeight(height);
+        image->setHeight(height);
     
-    return static_cast<JSObject*>(toJS(exec, result));
+    return result;
 }
 
 ////////////////////////////////////////////////////////////////
