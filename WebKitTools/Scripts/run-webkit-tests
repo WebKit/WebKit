@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
 # Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -134,7 +134,7 @@ my $usage =
     "  -q|--quiet              Less verbose output\n" .
     "  -r|--repaint-tests      Run repaint tests (implies --pixel-tests)\n" .
     "  --reset-results         Reset ALL results (including pixel tests if --pixel-tests is set)\n" .
-    "  --[no-]new-test-results  Generate results for new tests\n" .
+    "  --[no-]new-test-results Generate results for new tests\n" .
     "  -o|--results-directory  Output results directory (default: " . $testResultsDirectory . ")\n" .
     "  -1|--singly             Isolate each test case run (implies --verbose)\n" .
     "  --slowest               Report the 10 slowest tests\n" .
@@ -503,7 +503,7 @@ for my $test (@tests) {
         }
         $result = "new";
 
-        if ($generateNewResults) {
+        if ($generateNewResults || $resetResults) {
             # Create the path if needed
             mkpath(catfile($expectedTestResultsDirectory, dirname($base))) if $testDirectory ne $expectedTestResultsDirectory;
 
@@ -513,13 +513,15 @@ for my $test (@tests) {
         }
         unlink "$testResultsDirectory/$base-$actualTag.txt";
         unlink "$testResultsDirectory/$base-$diffsTag.txt";
-        # Always print the file name for new tests, as they will probably need some manual inspection.
-        # in verbose mode we already printed the test case, so no need to do it again.
-        unless ($verbose) {
-            print "\n" unless $atLineStart;
-            print "$test -> ";
+        unless ($resetResults) {
+            # Always print the file name for new tests, as they will probably need some manual inspection.
+            # in verbose mode we already printed the test case, so no need to do it again.
+            unless ($verbose) {
+                print "\n" unless $atLineStart;
+                print "$test -> ";
+            }
+            print "new\n";
         }
-        print "new\n";
         $atLineStart = 1;
     } elsif ($actual eq $expected && $diffResult eq "passed") {
         if ($verbose) {

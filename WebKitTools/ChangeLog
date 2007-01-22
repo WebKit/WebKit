@@ -1,3 +1,13 @@
+2007-01-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - a couple tiny tweaks to make --reset-results work better
+
+        * Scripts/run-webkit-tests: Always generate results when --reset-results is specified.
+        Don't make a separate "new" entry while generating results when --reset-results
+        is specified since new results are the norm in that case.
+
 2007-01-21  Sanjay Madhav  <sanjay12@gmail.com>
 
         Reviewed by Darin.
