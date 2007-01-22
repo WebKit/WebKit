@@ -326,7 +326,7 @@ select[disabled] {
     left: 5px;
     right: 5px;
     height: 10px;
-    cursor: move;
+    cursor: row-resize;
     z-index: 10;
     -webkit-dashboard-region: dashboard-region(control rectangle);
 }

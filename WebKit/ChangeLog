@@ -1,3 +1,10 @@
+2007-01-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim H.
+
+        * WebInspector/webInspector/inspector.css: Use row-resize for the splitter cursor
+        instead of move. It's a horizontal splitter resizer.
+
 2007-01-19  Adam Roben  <aroben@apple.com>
 
         Reviewed by Beth.
