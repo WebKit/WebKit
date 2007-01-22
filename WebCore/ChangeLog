@@ -1,3 +1,15 @@
+2007-01-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by The Mitz.
+
+        Move JSHTMLSelectElementCustom.cpp from bindings to bindings/js
+        where it belongs.
+
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/JSHTMLSelectElementCustom.cpp: Removed.
+        * bindings/js/JSHTMLSelectElementCustom.cpp: Added.
+
 2007-01-22  Zack Rusin  <zack@kde.org>
 
         Fix the Qt build.

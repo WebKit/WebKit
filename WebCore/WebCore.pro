@@ -224,14 +224,14 @@ SOURCES += \
     bindings/js/JSDocumentCustom.cpp \
     bindings/js/JSHTMLElementWrapperFactory.cpp \
     bindings/js/JSHTMLFormElementCustom.cpp \
+    bindings/js/JSHTMLInputElementBase.cpp \
     bindings/js/JSHTMLOptionElementConstructor.cpp \
     bindings/js/JSHTMLOptionsCollectionCustom.cpp \
-    bindings/js/JSHTMLInputElementBase.cpp \
-    bindings/js/JSXMLHttpRequest.cpp \
+    bindings/js/JSHTMLSelectElementCustom.cpp \
     bindings/js/JSNodeIteratorCustom.cpp \
     bindings/js/JSTreeWalkerCustom.cpp \
+    bindings/js/JSXMLHttpRequest.cpp \
     bindings/js/JSXSLTProcessor.cpp \
-    bindings/JSHTMLSelectElementCustom.cpp \
     css/cssparser.cpp \
     css/cssstyleselector.cpp \
     css/csshelper.cpp \
