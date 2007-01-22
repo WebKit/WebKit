@@ -1,3 +1,15 @@
+2007-01-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix <rdar://problem/4930503> REGRESSION: Page changes title when
+          command-clicking on named anchor link (12299)
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+        Return if shouldContinue is false. This matches the other similar
+        functions and prevents us from doing extra work in the "ignore" case.
+
 2007-01-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin.

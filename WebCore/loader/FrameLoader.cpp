@@ -3139,10 +3139,13 @@ void FrameLoader::callContinueFragmentScrollAfterNavigationPolicy(void* argument
 
 void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequest& request, bool shouldContinue)
 {
-    KURL URL = request.url();
-    
     bool isRedirect = m_quickRedirectComing;
     m_quickRedirectComing = false;
+
+    if (!shouldContinue)
+        return;
+
+    KURL URL = request.url();
     
     m_documentLoader->replaceRequestURLForAnchorScroll(URL);
     if (!isRedirect && !shouldTreatURLAsSameAsCurrent(URL)) {
