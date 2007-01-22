@@ -51,7 +51,7 @@ bool parseNumber(const UChar*& ptr, const UChar* end, double& number, bool skip)
         sign = -1;
     }
     // read the integer part
-    while(ptr < end && *ptr >= '0' && *ptr <= '9')
+    while (ptr < end && *ptr >= '0' && *ptr <= '9')
         integer = (integer * 10) + *(ptr++) - '0';
 
     if (ptr < end && *ptr == '.') { // read the decimals
@@ -60,7 +60,7 @@ bool parseNumber(const UChar*& ptr, const UChar* end, double& number, bool skip)
             decimal += (*(ptr++) - '0') * (frac *= 0.1);
     }
 
-    if (ptr < end && *ptr == 'e' || *ptr == 'E') { // read the exponent part
+    if (ptr < end && (*ptr == 'e' || *ptr == 'E')) { // read the exponent part
         ptr++;
 
         // read the sign of the exponent

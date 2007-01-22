@@ -1,3 +1,13 @@
+2007-01-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12355
+        Bug 12355: Reproducible crash in WebCore::parseNumber in svg/custom/js-update-bounce.svg under guard-malloc
+
+        * ksvg2/svg/SVGParserUtilities.cpp:
+        (WebCore::parseNumber): Parenthesize to prevent reading past end of buffer.
+
 2007-01-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
