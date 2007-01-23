@@ -1,3 +1,18 @@
+2007-01-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        <rdar://problem/4920742>
+        REGRESSION: GMail Editor: Attempting to remove formatting from selection results in a crash at WebCore::Range::checkDeleteExtract()
+
+        * dom/Range.cpp:
+        (WebCore::Range::checkDeleteExtract): Return if there is no
+        commonAncestor container or if commonAncestorContainer() throws
+        an exception.
+        * editing/Editor.cpp:
+        (WebCore::Editor::removeFormattingAndStyle): Fixed a bug that reversed
+        the order of the selected paragraphs.
+
 2007-01-23  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Sam.

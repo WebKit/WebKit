@@ -1,0 +1,4 @@
+This tests for a crash when performing Range::extractContents on a range that has had the start or end removed from the document. When extractContents is called on this kind of invalid range, an exception should be thrown.
+
+link
+

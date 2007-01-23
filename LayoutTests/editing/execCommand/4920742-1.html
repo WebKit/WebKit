@@ -1,0 +1,9 @@
+<p>This tests for a bug where RemoveFormat would reverse the order of paragraphs. <b>This demonstrates a bug: the caret is on the wrong line.  It should be on the last line.</b></p>
+<div id="div" contenteditable="true"><b>foo</b><div><br></div><div><br></div></div>
+
+<script>
+var div = document.getElementById("div");
+div.focus();
+document.execCommand("SelectAll");
+document.execCommand("RemoveFormat");
+</script>

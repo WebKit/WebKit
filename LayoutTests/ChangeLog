@@ -1,3 +1,18 @@
+2007-01-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <rdar://problem/4920742>
+        REGRESSION: GMail Editor: Attempting to remove formatting from selection results in a crash at WebCore::Range::checkDeleteEx
+tract()
+
+        * editing/execCommand/4920742-1-expected.checksum: Added.
+        * editing/execCommand/4920742-1-expected.png: Added.
+        * editing/execCommand/4920742-1-expected.txt: Added.
+        * editing/execCommand/4920742-1.html: Added.
+        * editing/execCommand/4920742-2-expected.txt: Added.
+        * editing/execCommand/4920742-2.html: Added.
+
 2007-01-23  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Sam.

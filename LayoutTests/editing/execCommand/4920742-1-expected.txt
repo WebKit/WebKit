@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 516x18
+          text run at (0,0) width 516: "This tests for a bug where RemoveFormat would reverse the order of paragraphs. "
+        RenderInline {B} at (0,0) size 764x36
+          RenderText {#text} at (516,0) size 764x36
+            text run at (516,0) width 248: "This demonstrates a bug: the caret is"
+            text run at (0,18) width 126: "on the wrong line. "
+            text run at (126,18) width 185: "It should be on the last line."
+      RenderBlock {DIV} at (0,52) size 784x54
+        RenderBlock (anonymous) at (0,0) size 784x0
+        RenderBlock {DIV} at (0,0) size 784x54
+          RenderBlock {DIV} at (0,0) size 784x18
+            RenderText {#text} at (0,0) size 21x18
+              text run at (0,0) width 21: "foo"
+          RenderBlock {DIV} at (0,18) size 784x18
+            RenderBR {BR} at (0,0) size 0x18
+          RenderBlock (anonymous) at (0,36) size 784x18
+            RenderBR {BR} at (0,0) size 0x18
+caret: position 0 of child 0 {BR} of child 1 {DIV} of child 0 {DIV} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document

@@ -1415,6 +1415,9 @@ void Range::setStartBefore( Node *refNode, ExceptionCode& ec)
 
 void Range::checkDeleteExtract(ExceptionCode& ec)
 {
+    if (!commonAncestorContainer(ec) || ec)
+        return;
+        
     Node *pastEnd = pastEndNode();
     for (Node *n = startNode(); n != pastEnd; n = n->traverseNextNode()) {
         if (n->isReadOnlyNode()) {

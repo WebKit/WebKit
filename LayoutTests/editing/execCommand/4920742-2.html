@@ -1,0 +1,33 @@
+<p>This tests for a crash when performing Range::extractContents on a range that has had the start or end removed from the document.  When extractContents is called on this kind of invalid range, an exception should be thrown.</p>
+<div id="div" contenteditable="true">text <a href="http://www.apple.com/">link</a></div>
+<ul id="console"></ul>
+
+<script>
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+
+if (window.layoutTestController)
+    window.layoutTestController.dumpAsText();
+    
+var div = document.getElementById("div");
+var text = div.firstChild;
+var link = div.lastChild;
+var r = document.createRange();
+r.setStart(text, 0);
+r.setEnd(link, 0);
+
+text.parentNode.removeChild(text);
+
+try {
+    r.extractContents();
+    log("Failure.  Expected an exception to be thrown.");
+} catch (e) {
+    var expected = "Error: WRONG_DOCUMENT_ERR: DOM Exception 4";
+    if (e != expected)
+        log("Failure. Expected: " + expected);
+}
+</script>

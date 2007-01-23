@@ -486,8 +486,8 @@ void Editor::removeFormattingAndStyle()
     
     ExceptionCode ec;
     
-    while (text->lastChild())
-        span->appendChild(text->lastChild(), ec);
+    while (text->firstChild())
+        span->appendChild(text->firstChild(), ec);
     
     RefPtr<DocumentFragment> fragment = new DocumentFragment(document);
     fragment->appendChild(span, ec);
