@@ -1,5 +1,11 @@
 2007-01-23  Zack Rusin  <zack@kde.org>
 
+        Forgot to add one new file to the build.
+
+        * WebCore.pro: Add dom/clipboard.cpp
+
+2007-01-23  Zack Rusin  <zack@kde.org>
+
         Fix the Qt build
 
         * page/DragActions.h:

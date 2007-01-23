@@ -268,6 +268,7 @@ SOURCES += \
     css/MediaList.cpp \
     css/CSSFontFaceRule.cpp \
     css/ShadowValue.cpp \
+    dom/Clipboard.cpp \
     dom/Event.cpp \
     dom/EventTarget.cpp \
     dom/Range.cpp \
