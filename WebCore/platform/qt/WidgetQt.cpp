@@ -47,7 +47,7 @@ namespace WebCore {
 struct WidgetPrivate
 {
     WidgetPrivate() : m_parent(0), m_widget(0), m_client(0) { }
-    ~WidgetPrivate() { delete m_widget; }
+    ~WidgetPrivate() { }
 
     WidgetClient *m_client;
 
@@ -140,7 +140,6 @@ void Widget::hide()
 
 void Widget::setQWidget(QWidget* child)
 {
-    delete data->m_widget;
     data->m_widget = child;
 }
 

@@ -1,3 +1,33 @@
+2007-01-23  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Widget and ScrollView do not own the Qt widgets
+        anymore. Make sure they can handle the case of
+        a null QWidget and never delete them.
+
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::setScrollArea):
+        (WebCore::ScrollView::updateContents):
+        (WebCore::ScrollView::visibleWidth):
+        (WebCore::ScrollView::visibleHeight):
+        (WebCore::ScrollView::visibleContentRect):
+        (WebCore::ScrollView::setContentsPos):
+        (WebCore::ScrollView::resizeContents):
+        (WebCore::ScrollView::contentsX):
+        (WebCore::ScrollView::contentsY):
+        (WebCore::ScrollView::contentsWidth):
+        (WebCore::ScrollView::contentsHeight):
+        (WebCore::ScrollView::scrollOffset):
+        (WebCore::ScrollView::scrollBy):
+        (WebCore::ScrollView::hScrollbarMode):
+        (WebCore::ScrollView::vScrollbarMode):
+        (WebCore::ScrollView::setHScrollbarMode):
+        (WebCore::ScrollView::setVScrollbarMode):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::WidgetPrivate::~WidgetPrivate):
+        (WebCore::Widget::setQWidget):
+
 2007-01-23  Zack Rusin  <zack@kde.org>
 
         Forgot to add one new file to the build.

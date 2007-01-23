@@ -1,3 +1,24 @@
+2007-01-23  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Fix refcounting of FrameViews (they get created with a
+        refcount of 1) and add a few safety checks to the 
+        FrameLoaderClientQt.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::QWebFrame):
+        (QWebFrame::~QWebFrame):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::detachedFromParent3):
+        (WebCore::FrameLoaderClientQt::detachedFromParent4):
+        (WebCore::FrameLoaderClientQt::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientQt::postProgressStartedNotification):
+        (WebCore::FrameLoaderClientQt::postProgressEstimateChangedNotification):
+        (WebCore::FrameLoaderClientQt::postProgressFinishedNotification):
+        (WebCore::FrameLoaderClientQt::frameLoaderDestroyed):
+        (WebCore::FrameLoaderClientQt::windowObjectCleared):
+
 2007-01-23  Zack Rusin  <zack@kde.org>
 
         Adjust the DragClientQt to latest changes.
