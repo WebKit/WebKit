@@ -717,7 +717,13 @@ sub GenerateImplementation
     # Destructor
     if (!$hasParent) {
         push(@implContent, "${className}::~$className()\n");
-        push(@implContent, "{\n    ScriptInterpreter::forgetDOMObject(m_impl.get());\n}\n\n");
+
+        if ($codeGenerator->IsSVGAnimatedType($interfaceName)) {
+            push(@implContent, "{\n    SVGDocumentExtensions::forgetGenericContext<$interfaceName>(m_impl.get());\n");   
+            push(@implContent, "    ScriptInterpreter::forgetDOMObject(m_impl.get());\n}\n\n");
+        } else {
+            push(@implContent, "{\n    ScriptInterpreter::forgetDOMObject(m_impl.get());\n}\n\n");
+        }
     }
 
     # Document needs a special destructor because it's a special case for caching. It needs

@@ -1,3 +1,15 @@
+2007-01-23  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Maciej.
+
+        Fix evil genericContext() assertion, which occours sometimes when running DRT.
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12379
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * ksvg2/misc/SVGDocumentExtensions.h:
+        (WebCore::SVGDocumentExtensions::genericContextMap):
+        (WebCore::SVGDocumentExtensions::forgetGenericContext):
+
 2007-01-23  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
