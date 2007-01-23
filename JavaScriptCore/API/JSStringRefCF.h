@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,49 +24,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <wtf/Platform.h>
-#include "APICast.h"
-#include "JSContextRef.h"
+#ifndef JSStringRefCF_h
+#define JSStringRefCF_h
 
-#include "JSCallbackObject.h"
-#include "completion.h"
-#include "interpreter.h"
-#include "object.h"
+#include "JSBase.h"
+#include <CoreFoundation/CoreFoundation.h>
 
-using namespace KJS;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
-{
-    JSLock lock;
+// CFString convenience methods
 
-    JSObject* globalObject;
-    if (globalObjectClass)
-        globalObject = new JSCallbackObject(0, globalObjectClass, 0, 0); // FIXME: <rdar://problem/4949002>
-    else
-        globalObject = new JSObject();
-
-    Interpreter* interpreter = new Interpreter(globalObject); // adds the built-in object prototype to the global object
-    JSGlobalContextRef ctx = reinterpret_cast<JSGlobalContextRef>(interpreter->globalExec());
-    return JSGlobalContextRetain(ctx);
+/*!
+@function
+@abstract         Creates a JavaScript string from a CFString.
+@discussion       This function is optimized to take advantage of cases when 
+ CFStringGetCharactersPtr returns a valid pointer.
+@param string     The CFString to copy into the new JSString.
+@result           A JSString containing string. Ownership follows the Create Rule.
+*/
+JSStringRef JSStringCreateWithCFString(CFStringRef string);
+/*!
+@function
+@abstract         Creates a CFString from a JavaScript string.
+@param alloc      The alloc parameter to pass to CFStringCreate.
+@param string     The JSString to copy into the new CFString.
+@result           A CFString containing string. Ownership follows the Create Rule.
+*/
+CFStringRef JSStringCopyCFString(CFAllocatorRef alloc, JSStringRef string);
+    
+#ifdef __cplusplus
 }
+#endif
 
-JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef ctx)
-{
-    JSLock lock;
-    ExecState* exec = toJS(ctx);
-    exec->dynamicInterpreter()->ref();
-    return ctx;
-}
-
-void JSGlobalContextRelease(JSGlobalContextRef ctx)
-{
-    JSLock lock;
-    ExecState* exec = toJS(ctx);
-    exec->dynamicInterpreter()->deref();
-}
-
-JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)
-{
-    ExecState* exec = toJS(ctx);
-    return toRef(exec->dynamicInterpreter()->globalObject());
-}
+#endif // JSStringRefCF_h

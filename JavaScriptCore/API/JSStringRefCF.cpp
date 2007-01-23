@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,49 +24,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <wtf/Platform.h>
-#include "APICast.h"
-#include "JSContextRef.h"
+#include "config.h"
+#include "JSStringRefCF.h"
 
-#include "JSCallbackObject.h"
-#include "completion.h"
-#include "interpreter.h"
-#include "object.h"
+#include "APICast.h"
+#include "JSStringRef.h"
+#include <kjs/JSLock.h>
+#include <kjs/ustring.h>
+#include <kjs/value.h>
 
 using namespace KJS;
 
-JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
+JSStringRef JSStringCreateWithCFString(CFStringRef string)
 {
     JSLock lock;
+    CFIndex length = CFStringGetLength(string);
+    
+    // Optimized path for when CFString backing store is a UTF16 buffer
+    if (const UniChar* buffer = CFStringGetCharactersPtr(string)) {
+        UString::Rep* rep = UString(reinterpret_cast<const UChar*>(buffer), length).rep()->ref();
+        return toRef(rep);
+    }
 
-    JSObject* globalObject;
-    if (globalObjectClass)
-        globalObject = new JSCallbackObject(0, globalObjectClass, 0, 0); // FIXME: <rdar://problem/4949002>
-    else
-        globalObject = new JSObject();
-
-    Interpreter* interpreter = new Interpreter(globalObject); // adds the built-in object prototype to the global object
-    JSGlobalContextRef ctx = reinterpret_cast<JSGlobalContextRef>(interpreter->globalExec());
-    return JSGlobalContextRetain(ctx);
+    UniChar* buffer = static_cast<UniChar*>(fastMalloc(sizeof(UniChar) * length));
+    CFStringGetCharacters(string, CFRangeMake(0, length), buffer);
+    UString::Rep* rep = UString(reinterpret_cast<UChar*>(buffer), length, false).rep()->ref();
+    return toRef(rep);
 }
 
-JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef ctx)
+CFStringRef JSStringCopyCFString(CFAllocatorRef alloc, JSStringRef string)
 {
-    JSLock lock;
-    ExecState* exec = toJS(ctx);
-    exec->dynamicInterpreter()->ref();
-    return ctx;
-}
-
-void JSGlobalContextRelease(JSGlobalContextRef ctx)
-{
-    JSLock lock;
-    ExecState* exec = toJS(ctx);
-    exec->dynamicInterpreter()->deref();
-}
-
-JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)
-{
-    ExecState* exec = toJS(ctx);
-    return toRef(exec->dynamicInterpreter()->globalObject());
+    UString::Rep* rep = toJS(string);
+    return CFStringCreateWithCharacters(alloc, reinterpret_cast<const UniChar*>(rep->data()), rep->size());
 }

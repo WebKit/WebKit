@@ -1,3 +1,33 @@
+2007-01-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Fixed <rdar://problem/4885131> Move CFString function declarations from 
+        JSStringRef.h to JSStringRefCF.h
+        
+        Also removed remaining API FIXMEs and changed them into Radars.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::OpaqueJSClass): Added Radar numbers for UTF8 conversion.
+
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreate): Replaced FIXME for NULL JSContextRef with Radar number.
+
+        * API/JSObjectRef.h: Removed FIXME, which is unprofessional in a public header.
+
+        * API/JSStringRef.cpp: Moved CF related implementations to JSStringRefCF.cpp.
+        (JSStringCreateWithUTF8CString): Replaced FIXME with Radar number.
+        * API/JSStringRef.h: Moved CF related declarations to JSStringRefCF.h. Added
+        #include of JSStringRefCF.h as a stopgap until clients start #including
+        it as needed by themselves.
+
+        * API/JSStringRefCF.cpp: Added.
+        (JSStringCreateWithCFString):
+        (JSStringCopyCFString): Replaced JSChar cast with UniChar cast, which is 
+        more appropriate for a CF call.
+        * API/JSStringRefCF.h: Added.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2007-01-18  Sanjay Madhav  <sanjay12@gmail.com>
 
         Reviewed by Darin.

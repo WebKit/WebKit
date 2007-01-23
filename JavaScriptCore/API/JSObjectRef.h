@@ -285,7 +285,7 @@ typedef JSValueRef
 @field attributes A logically ORed set of JSPropertyAttributes to give to the property.
 */
 typedef struct {
-    const char* const name; // FIXME: convert UTF8
+    const char* const name;
     JSObjectGetPropertyCallback getProperty;
     JSObjectSetPropertyCallback setProperty;
     JSPropertyAttributes attributes;
@@ -299,7 +299,7 @@ typedef struct {
 @field attributes A logically ORed set of JSPropertyAttributes to give to the property.
 */
 typedef struct {
-    const char* const name; // FIXME: convert UTF8
+    const char* const name;
     JSObjectCallAsFunctionCallback callAsFunction;
     JSPropertyAttributes attributes;
 } JSStaticFunction;
