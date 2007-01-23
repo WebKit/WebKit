@@ -1,3 +1,72 @@
+2007-01-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Drop logic bindings for WebKit
+
+        * WebCoreSupport/WebDragClient.h: Added.
+        * WebCoreSupport/WebDragClient.mm: Added.
+        (WebDragClient::WebDragClient):
+        (WebDragClient::actionMaskForDrag):
+        (WebDragClient::willPerformDragDestinationAction):
+          Standard client impl
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+          Updated to use DragController to track drag state
+    
+        * WebCoreSupport/WebPasteboardHelper.h: Added.
+        (WebPasteboardHelper::WebPasteboardHelper):
+          A *temporary* Helper class to access NSPasteboard access and 
+          manipulation functions present in WebKit
+        * WebCoreSupport/WebPasteboardHelper.mm: Added.
+        (WebPasteboardHelper::urlFromPasteboard):
+        (WebPasteboardHelper::plainTextFromPasteboard):
+        (WebPasteboardHelper::fragmentFromPasteboard):
+        (WebPasteboardHelper::insertablePasteboardTypes):
+          See header comment
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDocumentInternal.h:
+          Remove unnecessary protocol
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _setDocumentView:]):
+          Updating to use DragController to track drag state
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+          ditto
+        (-[WebHTMLView dragImage:at:offset:event:pasteboard:source:slideBack:]):
+          ditto
+        (-[WebHTMLView draggingSourceOperationMaskForLocal:]):
+          ditto
+        (-[WebHTMLView draggedImage:endedAt:operation:]):
+          ditto          
+        (-[WebHTMLView _documentFragmentForPasteboard:]):
+          Helper method to generate DocumentFragment from NSPasteboard without regressing 
+        (-[WebHTMLView _canProcessDragWithDraggingInfo:]):
+          Updating to use DragController to track drag state
+        (-[WebHTMLView _isMoveDrag:]):
+        (-[WebHTMLView _isNSColorDrag:]):
+        * WebView/WebHTMLViewInternal.h:
+          Removing unnecessary fields and methods
+        * WebView/WebView.mm:
+        (-[WebViewPrivate dealloc]):
+          Remove obsolete ASSERT
+        (-[WebView _setInitiatedDrag:]):
+          Now passes directly through to DragController
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView _loadingDragOperationForDraggingInfo:]):
+          Removed
+        (-[WebView draggingEntered:]):
+          Updated to use DragController
+        (-[WebView draggingUpdated:]):
+          ditto
+        (-[WebView draggingExited:]):
+          ditto
+        (-[WebView performDragOperation:]):
+          ditto
+        (-[WebView _hitTest:dragTypes:]):
+        * WebView/WebViewInternal.h:
+          remove unnecessary method def
+
 2007-01-22  John Sullivan  <sullivan@apple.com>
 
         * WebView/WebHTMLView.mm:

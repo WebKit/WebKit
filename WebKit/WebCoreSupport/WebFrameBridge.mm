@@ -78,6 +78,8 @@
 #import <WebCore/Cache.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
+#import <WebCore/DragController.h>
+#import <WebCore/Element.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderClient.h>
 #import <WebCore/FrameMac.h>
@@ -747,7 +749,8 @@ static BOOL loggedObjectCacheSize = NO;
 {
     WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
     ASSERT([docView isKindOfClass:[WebHTMLView class]]);
-    [docView _setInitiatedDrag:YES];
+    if (core([docView _webView]))
+        core([docView _webView])->dragController()->setDragInitiator(core(_frame) ? core(_frame)->document() : 0);
     return [docView _startDraggingImage:dragImage at:dragLoc operation:op event:event
         sourceIsDHTML:flag DHTMLWroteData:dhtmlWroteData];
 }

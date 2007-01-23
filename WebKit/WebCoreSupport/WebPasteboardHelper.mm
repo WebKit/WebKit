@@ -1,0 +1,97 @@
+/*
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#import "WebArchive.h"
+#import "WebHTMLViewInternal.h"
+#import "WebNSPasteboardExtras.h"
+#import "WebNSURLExtras.h"
+#import "WebPasteboardHelper.h"
+
+#import <WebCore/DOMDocument.h>
+#import <WebCore/DOMDocumentFragment.h>
+#import <WebCore/PlatformString.h>
+
+using namespace WebCore;
+
+String WebPasteboardHelper::urlFromPasteboard(const NSPasteboard* pasteboard, String* title) const
+{
+    NSURL *URL = [pasteboard _web_bestURL];
+    if (title)
+        if (NSString *URLTitleString = [pasteboard stringForType:WebURLNamePboardType])
+            *title = URLTitleString;
+
+    return [URL _web_userVisibleString];
+}
+
+String WebPasteboardHelper::plainTextFromPasteboard(const NSPasteboard *pasteboard) const
+{    
+    NSArray *types = [pasteboard types];
+    
+    if ([types containsObject:NSStringPboardType])
+        return [pasteboard stringForType:NSStringPboardType];
+    
+    NSAttributedString *attributedString = nil;
+    NSString *string;
+    
+    if ([types containsObject:NSRTFDPboardType])
+        attributedString = [[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:NSRTFDPboardType] documentAttributes:nil];
+    if (!attributedString && [types containsObject:NSRTFPboardType])
+        attributedString = [[NSAttributedString alloc] initWithRTF:[pasteboard dataForType:NSRTFPboardType] documentAttributes:nil];
+    if (attributedString) {
+        string = [[attributedString string] copy];
+        [attributedString release];
+        return [string autorelease];
+    }
+    
+    if ([types containsObject:NSFilenamesPboardType]) {
+        string = [[pasteboard propertyListForType:NSFilenamesPboardType] componentsJoinedByString:@"\n"];
+        if (string)
+            return string;
+    }
+    
+    NSURL *URL;
+    
+    if ((URL = [NSURL URLFromPasteboard:pasteboard])) {
+        string = [URL _web_userVisibleString];
+        if ([string length] > 0)
+            return string;
+    }
+    
+    return String();
+}
+
+DOMDocumentFragment *WebPasteboardHelper::fragmentFromPasteboard(const NSPasteboard *pasteboard) const
+{   
+    return [m_view _documentFragmentFromPasteboard:pasteboard];
+}
+
+NSArray *WebPasteboardHelper::insertablePasteboardTypes() const
+{    
+    static NSArray *types = [[NSArray alloc] initWithObjects:WebArchivePboardType, NSHTMLPboardType,
+           NSFilenamesPboardType, NSTIFFPboardType, NSPICTPboardType, NSURLPboardType, 
+           NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, NSColorPboardType, nil];
+    
+    return types;
+}

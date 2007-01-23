@@ -55,6 +55,7 @@
 #import "WebViewPrivate.h"
 #import <Foundation/NSURLRequest.h>
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/DragController.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Page.h>
@@ -184,7 +185,7 @@ enum {
 - (void)_setDocumentView:(NSView <WebDocumentView> *)view
 {
     WebDynamicScrollBarsView *sv = (WebDynamicScrollBarsView *)[self _scrollView];
-    [[self _webView] _setInitiatedDrag:NO];
+    core([self _webView])->dragController()->setDidInitiateDrag(false);
     
     [sv setSuppressLayout:YES];
     

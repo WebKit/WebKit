@@ -56,12 +56,6 @@
 
 @end
 
-@protocol WebDocumentDragging <NSObject>
-- (NSDragOperation)draggingUpdatedWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo actionMask:(unsigned int)actionMask;
-- (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)draggingInfo actionMask:(unsigned int)actionMask;
-- (void)draggingCancelledWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
-@end
-
 @protocol WebDocumentElement <NSObject>
 - (NSDictionary *)elementAtPoint:(NSPoint)point;
 - (NSDictionary *)elementAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow;
@@ -75,5 +69,5 @@
 - (void)setViewState:(id)statePList;
 @end
 
-@interface WebHTMLView (WebDocumentInternalProtocols) <WebDocumentDragging, WebDocumentElement>
+@interface WebHTMLView (WebDocumentInternalProtocols) <WebDocumentElement>
 @end

@@ -31,6 +31,7 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 
 @class WebTextCompleteController;
+@class DOMDocumentFragment;
 
 @interface WebHTMLViewPrivate : NSObject
 {
@@ -41,10 +42,6 @@
     BOOL showsURLsInToolTips;
     BOOL ignoringMouseDraggedEvents;
     BOOL printing;
-    BOOL initiatedDrag;
-    // Is WebCore handling drag destination duties (DHTML dragging)?
-    BOOL webCoreHandlingDrag;
-    NSDragOperation webCoreDragOp;
     // Offset from lower left corner of dragged image to mouse location (when we're the drag source)
     NSPoint dragOffset;
     
@@ -108,8 +105,6 @@
 - (void)_willMakeFirstResponderForNodeFocus;
 - (id<WebHTMLHighlighter>)_highlighterForType:(NSString*)type;
 - (WebFrame *)_frame;
-- (void)_setInitiatedDrag:(BOOL)flag;
-- (BOOL)_initiatedDrag;
 - (void)copy:(id)sender;
 - (void)cut:(id)sender;
 - (void)paste:(id)sender;
@@ -117,7 +112,7 @@
 - (void)closeIfNotCurrentView;
 - (void)_lookUpInDictionaryFromMenu:(id)sender;
 - (void)_hoverFeedbackSuspendedChanged;
-
+- (DOMDocumentFragment*)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard;
 #if !BUILDING_ON_TIGER
 - (BOOL)isGrammarCheckingEnabled;
 - (void)setGrammarCheckingEnabled:(BOOL)flag;

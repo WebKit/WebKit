@@ -76,6 +76,7 @@
 #import <WebCore/EventHandler.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/ExceptionHandlers.h>
+#import <WebCore/DragController.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FrameMac.h>
@@ -1200,6 +1201,7 @@ static WebHTMLView *lastHitView = nil;
     }
 }
 
+// keep in sync with WebPasteboardHelper::insertablePasteboardTypes
 + (NSArray *)_insertablePasteboardTypes
 {
     static NSArray *types = nil;
@@ -1315,7 +1317,12 @@ static WebHTMLView *lastHitView = nil;
     _private->draggingImageURL = nil;
 
     NSPoint mouseDraggedPoint = [self convertPoint:[mouseDraggedEvent locationInWindow] fromView:nil];
-    _private->webCoreDragOp = op;     // will be DragNone if WebCore doesn't care
+    
+    Page* page = core([self _webView]);
+    ASSERT(page);
+    DragController *dragController = page->dragController();
+    dragController->setDragOperation((DragOperation)op);     // will be DragNone if WebCore doesn't care
+    
     NSImage *dragImage = nil;
     NSPoint dragLoc = { 0, 0 }; // quiet gcc 4.0 warning
 
@@ -2876,9 +2883,10 @@ done:
     }
 
     WebView *webView = [self _webView];
+    Page *page = core(webView);
+    ASSERT(page);
+    page->dragController()->setDidInitiateDrag(true);
     
-    [webView _setInitiatedDrag:YES];
-
     // Retain this view during the drag because it may be released before the drag ends.
     [self retain];
 
@@ -2908,10 +2916,13 @@ done:
 - (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal
 {
     ASSERT([self _isTopHTMLView]);
-
-    if (_private->webCoreDragOp == NSDragOperationNone)
+    
+    Page *page = core([self _webView]);
+    ASSERT(page);
+    if (page->dragController()->dragOperation() == DragOperationNone)
         return NSDragOperationGeneric | NSDragOperationCopy;
-    return _private->webCoreDragOp;
+    
+    return (NSDragOperation)page->dragController()->dragOperation();
 }
 
 - (void)draggedImage:(NSImage *)image movedTo:(NSPoint)screenLoc
@@ -2930,9 +2941,9 @@ done:
     NSPoint windowImageLoc = [[self window] convertScreenToBase:aPoint];
     NSPoint windowMouseLoc = NSMakePoint(windowImageLoc.x + _private->dragOffset.x, windowImageLoc.y + _private->dragOffset.y);
     [[self _bridge] dragSourceEndedAt:windowMouseLoc operation:operation];
-
-    _private->initiatedDrag = NO;
-    [[self _webView] _setInitiatedDrag:NO];
+    Page *page = core([self _webView]);
+    ASSERT(page);
+    page->dragController()->dragEnded();
     
     // Prevent queued mouseDragged events from coming after the drag and fake mouseUp event.
     _private->ignoringMouseDraggedEvents = YES;
@@ -5042,16 +5053,6 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     return [_private->dataSource webFrame];
 }
 
-- (void)_setInitiatedDrag:(BOOL)flag
-{
-    _private->initiatedDrag = flag;
-}
-
-- (BOOL)_initiatedDrag
-{
-    return _private->initiatedDrag;
-}
-
 - (void)copy:(id)sender
 {
 #if USING_WEBCORE_COPY
@@ -5123,6 +5124,12 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 {
     if ([[[self _frame] frameView] documentView] != self)
         [self close];
+}
+
+- (DOMDocumentFragment*)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard
+{
+    BOOL discard;
+    return [self _documentFragmentFromPasteboard:pasteboard inContext:nil allowPlainText:NO chosePlainText:&discard];
 }
 
 #if !BUILDING_ON_TIGER
@@ -5944,168 +5951,6 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 @end
 
 @implementation WebHTMLView (WebDocumentInternalProtocols)
-
-- (BOOL)_canProcessDragWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo
-{
-    ASSERT([self _isTopHTMLView]);
-
-    NSPasteboard *pasteboard = [draggingInfo draggingPasteboard];
-    NSMutableSet *types = [NSMutableSet setWithArray:[pasteboard types]];
-    [types intersectSet:[NSSet setWithArray:[WebHTMLView _insertablePasteboardTypes]]];
-    if ([types count] == 0)
-        return NO;
-    if ([types count] == 1
-            && [types containsObject:NSFilenamesPboardType]
-            && ![self _imageExistsAtPaths:[pasteboard propertyListForType:NSFilenamesPboardType]])
-        return NO;
-
-    NSPoint point = [self convertPoint:[draggingInfo draggingLocation] fromView:nil];
-    NSDictionary *element = [self elementAtPoint:point allowShadowContent:YES];
-    ASSERT(element);
-    WebFrame *innerFrame = (WebFrame *)[element objectForKey:WebElementFrameKey];
-    ASSERT(innerFrame);
-    ASSERT([innerFrame isKindOfClass:[WebFrame class]]);
-    WebHTMLView* innerView = (WebHTMLView *)[[innerFrame frameView] documentView];
-    if ([[element objectForKey:WebElementDOMNodeKey] isContentEditable]) {
-        // Can't drag onto the selection being dragged.
-        if ([innerView _initiatedDrag] && [[element objectForKey:WebElementIsSelectedKey] boolValue])
-            return NO;
-        return YES;
-    }
-
-    return NO;
-}
-
-- (BOOL)_isMoveDrag:(id <NSDraggingInfo>)draggingInfo
-{
-    FrameMac* coreFrame = core([self _frame]);
-    return _private->initiatedDrag
-        && coreFrame
-        && coreFrame->selectionController()->isContentEditable()
-        && !([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask)
-        && ![[[draggingInfo draggingPasteboard] types] containsObject:NSURLPboardType];
-}
-
-- (BOOL)_isNSColorDrag:(id <NSDraggingInfo>)draggingInfo
-{
-    return [[[draggingInfo draggingPasteboard] types] containsObject:NSColorPboardType];
-}
-
-- (NSDragOperation)draggingUpdatedWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo actionMask:(unsigned int)actionMask
-{
-    ASSERT([self _isTopHTMLView]);
-
-    NSDragOperation operation = NSDragOperationNone;
-    if (actionMask & WebDragDestinationActionDHTML)
-        operation = [[self _bridge] dragOperationForDraggingInfo:draggingInfo];
-    _private->webCoreHandlingDrag = (operation != NSDragOperationNone);
-
-    if ((actionMask & WebDragDestinationActionEdit) && !_private->webCoreHandlingDrag && [self _canProcessDragWithDraggingInfo:draggingInfo]) {
-        if ([self _isNSColorDrag:draggingInfo])
-            operation = NSDragOperationGeneric;
-        else {
-            WebView *webView = [self _webView];
-            [webView moveDragCaretToPoint:[webView convertPoint:[draggingInfo draggingLocation] fromView:nil]];
-            NSPoint point = [self convertPoint:[draggingInfo draggingLocation] fromView:nil];
-            NSDictionary *element = [self elementAtPoint:point allowShadowContent:YES];
-            ASSERT(element);
-            WebFrame *innerFrame = (WebFrame *)[element objectForKey:WebElementFrameKey];
-            ASSERT(innerFrame);
-            ASSERT([innerFrame isKindOfClass:[WebFrame class]]);
-            WebHTMLView* innerView = (WebHTMLView *)[[innerFrame frameView] documentView];
-            operation = [innerView _isMoveDrag:draggingInfo] ? NSDragOperationMove : NSDragOperationCopy;
-        }
-    } else
-        [[self _webView] removeDragCaret];
-
-    return operation;
-}
-
-- (void)draggingCancelledWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo
-{
-    ASSERT([self _isTopHTMLView]);
-
-    [[self _bridge] dragExitedWithDraggingInfo:draggingInfo];
-    [[self _webView] removeDragCaret];
-}
-
-- (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)draggingInfo actionMask:(unsigned int)actionMask
-{
-    ASSERT([self _isTopHTMLView]);
-
-    WebView *webView = [self _webView];
-    WebFrameBridge *bridge = [self _bridge];
-    if (_private->webCoreHandlingDrag) {
-        ASSERT(actionMask & WebDragDestinationActionDHTML);
-        [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionDHTML forDraggingInfo:draggingInfo];
-        [bridge concludeDragForDraggingInfo:draggingInfo];
-        return YES;
-    }
-
-    if (!(actionMask & WebDragDestinationActionEdit))
-        return NO;
-
-    NSPoint point = [self convertPoint:[draggingInfo draggingLocation] fromView:nil];
-    NSDictionary *element = [self elementAtPoint:point allowShadowContent:YES];
-    ASSERT(element);
-    WebFrame *innerFrame = (WebFrame *)[element objectForKey:WebElementFrameKey];
-    ASSERT(innerFrame);
-    ASSERT([innerFrame isKindOfClass:[WebFrame class]]);
-    WebHTMLView* innerView = (WebHTMLView *)[[innerFrame frameView] documentView];
-    WebFrameBridge *innerBridge = [innerFrame _bridge];
-
-    if ([self _isNSColorDrag:draggingInfo]) {
-        NSColor *color = [NSColor colorFromPasteboard:[draggingInfo draggingPasteboard]];
-        if (!color)
-            return NO;
-        Frame* coreFrame = core(innerFrame);
-        if (!coreFrame)
-            return NO;
-        DOMRange *innerRange = kit(coreFrame->selectionController()->toRange().get());
-        DOMCSSStyleDeclaration *style = [self _emptyStyle];
-        [style setProperty:@"color" value:[self _colorAsString:color] priority:@""];
-        if (![[webView _editingDelegateForwarder] webView:webView
-                shouldApplyStyle:style toElementsInDOMRange:innerRange])
-            return NO;
-        [[webView _UIDelegateForwarder] webView:webView
-            willPerformDragDestinationAction:WebDragDestinationActionEdit
-            forDraggingInfo:draggingInfo];
-        coreFrame->editor()->applyStyle(core(style), EditActionSetColor);
-        return YES;
-    }
-
-    BOOL didInsert = NO;
-    if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
-        NSPasteboard *pasteboard = [draggingInfo draggingPasteboard];
-        if ([innerView _isMoveDrag:draggingInfo] || [innerBridge isDragCaretRichlyEditable]) { 
-            DOMRange *range = [innerBridge dragCaretDOMRange];
-            BOOL chosePlainText;
-            DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard
-                inContext:range allowPlainText:YES chosePlainText:&chosePlainText];
-            if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:range givenAction:WebViewInsertActionDropped]) {
-                [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
-                if ([innerView _isMoveDrag:draggingInfo]) {
-                    BOOL smartMove = [innerBridge selectionGranularity] == WordGranularity && [self _canSmartReplaceWithPasteboard:pasteboard];
-                    [innerBridge moveSelectionToDragCaret:fragment smartMove:smartMove];
-                } else {
-                    [innerBridge setSelectionToDragCaret];
-                    [innerBridge replaceSelectionWithFragment:fragment selectReplacement:YES smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard] matchStyle:chosePlainText];
-                }
-                didInsert = YES;
-            }
-        } else {
-            NSString *text = [self _plainTextFromPasteboard:pasteboard];
-            if (text && [self _shouldInsertText:text replacingDOMRange:[innerBridge dragCaretDOMRange] givenAction:WebViewInsertActionDropped]) {
-                [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
-                [innerBridge setSelectionToDragCaret];
-                [innerBridge replaceSelectionWithText:text selectReplacement:YES smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard]];
-                didInsert = YES;
-            }
-        }
-    }
-    [webView removeDragCaret];
-    return didInsert;
-}
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point
 {

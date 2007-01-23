@@ -48,6 +48,7 @@
 #import "WebDocumentInternal.h"
 #import "WebDownload.h"
 #import "WebDownloadInternal.h"
+#import "WebDragClient.h"
 #import "WebDynamicScrollBarsView.h"
 #import "WebEditingDelegate.h"
 #import "WebEditorClient.h"
@@ -76,6 +77,7 @@
 #import "WebNSURLRequestExtras.h"
 #import "WebNSUserDefaultsExtras.h"
 #import "WebNSViewExtras.h"
+#import "WebPasteboardHelper.h"
 #import "WebPDFView.h"
 #import "WebPluginDatabase.h"
 #import "WebPolicyDelegate.h"
@@ -91,6 +93,8 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
+#import <WebCore/DragController.h>
+#import <WebCore/DragData.h>
 #import <WebCore/Editor.h>
 #import <WebCore/ExceptionHandlers.h>
 #import <WebCore/FrameLoader.h>
@@ -100,6 +104,7 @@
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Logging.h>
 #import <WebCore/Page.h>
+#import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/ProgressTracker.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/Settings.h>
@@ -281,7 +286,6 @@ macro(yankAndSelect) \
     BOOL mainFrameDocumentReady;
     BOOL drawsBackground;
     BOOL editable;
-    BOOL initiatedDrag;
     BOOL tabKeyCyclesThroughElements;
     BOOL tabKeyCyclesThroughElementsChanged;
     BOOL becomingFirstResponder;
@@ -291,7 +295,6 @@ macro(yankAndSelect) \
 
     NSString *mediaStyle;
     
-    NSView <WebDocumentDragging> *draggingDocumentView;
     unsigned int dragDestinationActionMask;
     
     BOOL hasSpellCheckerDocumentTag;
@@ -409,7 +412,6 @@ static BOOL grammarCheckingEnabled;
 - (void)dealloc
 {
     ASSERT(!page);
-    ASSERT(draggingDocumentView == nil);
 
     delete userAgent;
     delete identifierMap;
@@ -1142,7 +1144,7 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 
 - (void)_setInitiatedDrag:(BOOL)initiatedDrag
 {
-    _private->initiatedDrag = initiatedDrag;
+    [self page]->dragController()->setDidInitiateDrag(initiatedDrag);
 }
 
 #define DASHBOARD_CONTROL_LABEL @"control"
@@ -1595,7 +1597,7 @@ NSMutableDictionary *countInvocations;
     [WebBackForwardList setDefaultPageCacheSizeIfNecessary];
     [WebHistoryItem initWindowWatcherIfNecessary];
 
-    _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self));
+    _private->page = new Page(new WebChromeClient(self), new WebContextMenuClient(self), new WebEditorClient(self), new WebDragClient(self));
     [[[WebFrameBridge alloc] initMainFrameWithPage:_private->page frameName:frameName frameView:frameView] release];
 
     [self _addToAllWebViewsSet];
@@ -2078,15 +2080,6 @@ NS_ENDHANDLER
     return [[self _frameViewAtWindowPoint:point] documentView];
 }
 
-- (NSView <WebDocumentDragging> *)_draggingDocumentViewAtWindowPoint:(NSPoint)point
-{
-    NSView <WebDocumentView> *documentView = [self documentViewAtWindowPoint:point];
-    if ([documentView conformsToProtocol:@protocol(WebDocumentDragging)]) {
-        return (NSView <WebDocumentDragging> *)documentView;
-    }
-    return nil;
-}
-
 - (NSDictionary *)_elementAtWindowPoint:(NSPoint)windowPoint
 {
     WebFrameView *frameView = [self _frameViewAtWindowPoint:windowPoint];
@@ -2105,50 +2098,18 @@ NS_ENDHANDLER
     return [self _elementAtWindowPoint:[self convertPoint:point toView:nil]];
 }
 
-- (void)_setDraggingDocumentView:(NSView <WebDocumentDragging> *)newDraggingView
-{
-    if (_private->draggingDocumentView != newDraggingView) {
-        [_private->draggingDocumentView release];
-        _private->draggingDocumentView = [newDraggingView retain];
-    }
-}
-
 - (NSDragOperation)_loadingDragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     if (_private->dragDestinationActionMask & WebDragDestinationActionLoad) {
         NSPoint windowPoint = [draggingInfo draggingLocation];
         NSView *view = [self hitTest:[[self superview] convertPoint:windowPoint toView:nil]];
         // Don't accept the drag over a plug-in since plug-ins may want to handle it.
-        if (![view isKindOfClass:[WebBaseNetscapePluginView class]] && !_private->editable && !_private->initiatedDrag) {
+        if (![view isKindOfClass:[WebBaseNetscapePluginView class]] && !_private->editable && [self page]->dragController()->didInitiateDrag()) {
             // If not editing or dragging, use _web_dragOperationForDraggingInfo to find a URL to load on the pasteboard.
             return [self _web_dragOperationForDraggingInfo:draggingInfo];
         }
     }
     return NSDragOperationNone;
-}
-
-- (NSDragOperation)_delegateDragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
-{
-    NSPoint windowPoint = [draggingInfo draggingLocation];
-    NSView <WebDocumentDragging> *newDraggingView = [self _draggingDocumentViewAtWindowPoint:windowPoint];
-    if (_private->draggingDocumentView != newDraggingView) {
-        [_private->draggingDocumentView draggingCancelledWithDraggingInfo:draggingInfo];
-        [self _setDraggingDocumentView:newDraggingView];
-    }
-    
-    _private->dragDestinationActionMask = [[self _UIDelegateForwarder] webView:self dragDestinationActionMaskForDraggingInfo:draggingInfo];
-    NSDragOperation operation = NSDragOperationNone;
-    
-    if (_private->dragDestinationActionMask == WebDragDestinationActionNone) {
-        [_private->draggingDocumentView draggingCancelledWithDraggingInfo:draggingInfo];
-    } else {
-        operation = [_private->draggingDocumentView draggingUpdatedWithDraggingInfo:draggingInfo actionMask:_private->dragDestinationActionMask];
-        if (operation == NSDragOperationNone) {
-            return [self _loadingDragOperationForDraggingInfo:draggingInfo];
-        }
-    }
-    
-    return operation;
 }
 
 // The following 2 internal NSView methods are called on the drag destination by make scrolling while dragging work.
@@ -2169,18 +2130,32 @@ NS_ENDHANDLER
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)draggingInfo
 {
-    return [self _delegateDragOperationForDraggingInfo:draggingInfo];
+    NSView <WebDocumentView>* view = [self documentViewAtWindowPoint:[draggingInfo draggingLocation]];
+    WebPasteboardHelper helper([view isKindOfClass:[WebHTMLView class]] ? (WebHTMLView*)view : nil);
+    IntPoint client([draggingInfo draggingLocation]);
+    IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
+    DragData dragData(draggingInfo, client, global, (DragOperation)[draggingInfo draggingSourceOperationMask], &helper);
+    return core(self)->dragController()->dragEntered(&dragData);
 }
 
 - (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)draggingInfo
 {
-    return [self _delegateDragOperationForDraggingInfo:draggingInfo];
+    NSView <WebDocumentView>* view = [self documentViewAtWindowPoint:[draggingInfo draggingLocation]];
+    WebPasteboardHelper helper([view isKindOfClass:[WebHTMLView class]] ? (WebHTMLView*)view : nil);
+    IntPoint client([draggingInfo draggingLocation]);
+    IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
+    DragData dragData(draggingInfo, client, global, (DragOperation)[draggingInfo draggingSourceOperationMask], &helper);
+    return core(self)->dragController()->dragUpdated(&dragData);
 }
 
 - (void)draggingExited:(id <NSDraggingInfo>)draggingInfo
 {
-    [_private->draggingDocumentView draggingCancelledWithDraggingInfo:draggingInfo];
-    [self _setDraggingDocumentView:nil];
+    NSView <WebDocumentView>* view = [self documentViewAtWindowPoint:[draggingInfo draggingLocation]];
+    WebPasteboardHelper helper([view isKindOfClass:[WebHTMLView class]] ? (WebHTMLView*)view : nil);
+    IntPoint client([draggingInfo draggingLocation]);
+    IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
+    DragData dragData(draggingInfo, client, global, (DragOperation)[draggingInfo draggingSourceOperationMask], &helper);
+    core(self)->dragController()->dragExited(&dragData);
 }
 
 - (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)draggingInfo
@@ -2190,27 +2165,12 @@ NS_ENDHANDLER
 
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)draggingInfo
 {
-    ASSERT(_private->draggingDocumentView == [self _draggingDocumentViewAtWindowPoint:[draggingInfo draggingLocation]]);
-    
-    if ([_private->draggingDocumentView concludeDragForDraggingInfo:draggingInfo actionMask:_private->dragDestinationActionMask]) {
-        [self _setDraggingDocumentView:nil];
-        return YES;
-    }
-    
-    [self _setDraggingDocumentView:nil];
-        
-    if ([self _loadingDragOperationForDraggingInfo:draggingInfo] != NSDragOperationNone) {    
-        NSURL *URL = [[self class] URLFromPasteboard:[draggingInfo draggingPasteboard]];
-        if (URL != nil) {
-            [[self _UIDelegateForwarder] webView:self willPerformDragDestinationAction:WebDragDestinationActionLoad forDraggingInfo:draggingInfo];
-            NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
-            [[self mainFrame] loadRequest:request];
-            [request release];
-            return YES;
-        }
-    }
-    
-    return NO;
+    NSView <WebDocumentView>* view = [self documentViewAtWindowPoint:[draggingInfo draggingLocation]];
+    WebPasteboardHelper helper([view isKindOfClass:[WebHTMLView class]]? (WebHTMLView*)view : nil);
+    IntPoint client([draggingInfo draggingLocation]);
+    IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
+    DragData dragData(draggingInfo, client, global, (DragOperation)[draggingInfo draggingSourceOperationMask], &helper);
+    return core(self)->dragController()->performDrag(&dragData);
 }
 
 - (NSView *)_hitTest:(NSPoint *)aPoint dragTypes:(NSSet *)types
