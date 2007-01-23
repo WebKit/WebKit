@@ -29,6 +29,7 @@
 #include <wtf/HashSet.h>
 #include "AtomicString.h"
 #include "ClipboardAccessPolicy.h"
+#include "DragActions.h"
 #include "Node.h"
 #include "Shared.h"
 
@@ -40,15 +41,16 @@ namespace WebCore {
     // State available during IE's events for drag and drop and copy/paste
     class Clipboard : public Shared<Clipboard> {
     public:
+        Clipboard(ClipboardAccessPolicy policy) : m_policy(policy) { }
         virtual ~Clipboard() { }
 
         // Is this operation a drag-drop or a copy-paste?
         virtual bool isForDragging() const = 0;
 
-        virtual String dropEffect() const = 0;
-        virtual void setDropEffect(const String&) = 0;
-        virtual String effectAllowed() const = 0;
-        virtual void setEffectAllowed(const String&) = 0;
+        String dropEffect() const { return m_dropEffect; }
+        void setDropEffect(const String&);
+        String effectAllowed() const { return m_effectAllowed; }
+        void setEffectAllowed(const String&);
     
         virtual void clearData(const String& type) = 0;
         virtual void clearAllData() = 0;
@@ -64,7 +66,20 @@ namespace WebCore {
         virtual Node* dragImageElement() = 0;
         virtual void setDragImageElement(Node*, const IntPoint&) = 0;
 
-        virtual void setAccessPolicy(ClipboardAccessPolicy) = 0;
+        void setAccessPolicy(ClipboardAccessPolicy);
+
+        bool sourceOperation(DragOperation&) const;
+        bool destinationOperation(DragOperation&) const;
+        void setSourceOperation(DragOperation);
+        void setDestinationOperation(DragOperation);
+        
+    protected:
+        ClipboardAccessPolicy policy() const { return m_policy; }
+        
+    private:
+        ClipboardAccessPolicy m_policy;
+        String m_dropEffect;
+        String m_effectAllowed;
     };
 
 } // namespace WebCore

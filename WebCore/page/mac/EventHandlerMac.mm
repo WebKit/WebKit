@@ -472,7 +472,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
 
                 NSImage *dragImage = nil;       // we use these values if WC is out of the loop
                 NSPoint dragLoc = NSZeroPoint;
-                NSDragOperation srcOp = NSDragOperationNone;                
+                DragOperation srcOp = DragOperationNone;                
                 BOOL wcWrotePasteboard = NO;
                 if (dragState().m_dragSrcMayBeDHTML) {
                     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
@@ -857,7 +857,7 @@ void EventHandler::dragSourceMovedTo(const PlatformMouseEvent& event)
 void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, NSDragOperation operation)
 {
     if (dragState().m_dragSrc && dragState().m_dragSrcMayBeDHTML) {
-        dragState().m_dragClipboard->setDestinationOperation(operation);
+        dragState().m_dragClipboard->setDestinationOperation((DragOperation)operation);
         // for now we don't care if event handler cancels default behavior, since there is none
         dispatchDragSrcEvent(dragendEvent, event);
     }

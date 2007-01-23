@@ -242,9 +242,6 @@ typedef enum ObjectElementType {
 - (void)setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebCore::EditAction)undoAction;
 - (NSCellStateValue)selectionHasStyle:(DOMCSSStyleDeclaration *)style;
 
-- (NSDragOperation)dragOperationForDraggingInfo:(id <NSDraggingInfo>)info;
-- (void)dragExitedWithDraggingInfo:(id <NSDraggingInfo>)info;
-- (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)info;
 - (void)dragSourceMovedTo:(NSPoint)windowLoc;
 - (void)dragSourceEndedAt:(NSPoint)windowLoc operation:(NSDragOperation)operation;
 

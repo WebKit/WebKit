@@ -30,6 +30,7 @@
 
 #include "ChromeClient.h"
 #include "ContextMenuClient.h"
+#include "DragClient.h"
 #include "EditorClient.h"
 #include "FocusDirection.h"
 #include "FrameLoaderClient.h"
@@ -352,6 +353,14 @@ public:
 #endif
 };
 
+class SVGEmptyDragClient : public DragClient {
+public:
+    virtual ~SVGEmptyDragClient() {}
+    virtual void willPerformDragDestinationAction(DragDestinationAction, DragData*) { }
+    virtual DragDestinationAction actionMaskForDrag(DragData*) { return DragDestinationActionNone; }
+    virtual void dragControllerDestroyed() { }
+};
+    
 }
 
 #endif // SVG_SUPPORT

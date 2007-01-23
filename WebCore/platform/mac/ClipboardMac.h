@@ -32,6 +32,7 @@
 #include "Clipboard.h"
 #include "ClipboardAccessPolicy.h"
 #include "CachedResourceClient.h"
+#include "RetainPtr.h"
 
 #ifdef __OBJC__
 @class NSImage;
@@ -53,11 +54,6 @@ public:
 
     bool isForDragging() const;
     
-    String dropEffect() const;
-    void setDropEffect(const String&);
-    String effectAllowed() const;
-    void setEffectAllowed(const String&);
-    
     void clearData(const String& type);
     void clearAllData();
     String getData(const String& type, bool& success) const;
@@ -74,25 +70,17 @@ public:
 
     // Methods for getting info in Cocoa's type system
     NSImage *dragNSImage(NSPoint&); // loc converted from dragLoc, based on whole image size
-    bool sourceOperation(NSDragOperation&) const;
-    bool destinationOperation(NSDragOperation&) const;
-    void setSourceOperation(NSDragOperation);
-    void setDestinationOperation(NSDragOperation);
 
-    void setAccessPolicy(ClipboardAccessPolicy);
     void setDragHasStarted() { m_dragStarted = true; }
     
 private:
     void setDragImage(CachedImage*, Node*, const IntPoint&);
 
-    NSPasteboard *m_pasteboard;
+    RetainPtr<NSPasteboard> m_pasteboard;
     bool m_forDragging;
-    String m_dropEffect;
-    String m_effectAllowed;
     IntPoint m_dragLoc;
     CachedImage* m_dragImage;
     RefPtr<Node> m_dragImageElement;
-    ClipboardAccessPolicy m_policy;
     int m_changeCount;
     bool m_dragStarted;
     FrameMac* m_frame; // used on the source side to generate dragging images

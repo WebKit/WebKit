@@ -468,9 +468,11 @@ SOURCES += \
     page/PageState.cpp \
     page/ContextMenuController.cpp \
     page/EventHandler.cpp \
+    page/DragController.cpp \
     page/qt/EventHandlerQt.cpp \
     page/qt/FrameQt.cpp \
     page/qt/FrameQtClient.cpp \
+    page/qt/DragControllerQt.cpp \
     xml/XPathUtil.cpp \
     xml/XPathPredicate.cpp \
     xml/XPathVariableReference.cpp \
@@ -517,6 +519,7 @@ SOURCES += \
     loader/qt/FrameLoaderQt.cpp \
     loader/qt/DocumentLoaderQt.cpp \
     platform/CString.cpp \
+    platform/DragData.cpp \
     platform/AtomicString.cpp \
     platform/Base64.cpp \
     platform/graphics/AffineTransform.cpp \
@@ -580,6 +583,7 @@ SOURCES += \
     platform/qt/ContextMenuQt.cpp \
     platform/qt/ContextMenuItemQt.cpp \
     platform/qt/PasteboardQt.cpp \
+    platform/qt/DragDataQt.cpp \
     platform/ContextMenu.cpp \
 #    platform/SearchPopupMenu.cpp \ 
     platform/qt/SearchPopupMenuQt.cpp \ 
@@ -680,6 +684,7 @@ SOURCES += \
     ../WebKitQt/WebCoreSupport/EditorClientQt.cpp \
     ../WebKitQt/WebCoreSupport/ChromeClientQt.cpp \
     ../WebKitQt/WebCoreSupport/ContextMenuClientQt.cpp \
+    ../WebKitQt/WebCoreSupport/DragClientQt.cpp \
     ../WebKitQt/Api/qwebpage.cpp \
     ../WebKitQt/Api/qwebframe.cpp
 

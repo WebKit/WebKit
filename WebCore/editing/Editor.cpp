@@ -148,6 +148,13 @@ bool Editor::canDeleteRange(Range* range) const
     return true;
 }
 
+bool Editor::smartInsertDeleteEnabled()
+{   
+    if (client())
+        return client()->smartInsertDeleteEnabled();
+    return false;
+}
+    
 bool Editor::canSmartCopyOrDelete()
 {
     if (client())
@@ -523,7 +530,12 @@ void Editor::applyStyle(CSSStyleDeclaration* style, EditAction editingAction)
             break;
     }
 }
-
+    
+bool Editor::shouldApplyStyle(CSSStyleDeclaration* style, Range* range)
+{   
+    return client()->shouldApplyStyle(style, range);
+}
+    
 void Editor::applyParagraphStyle(CSSStyleDeclaration* style, EditAction editingAction)
 {
     switch (m_frame->selectionController()->state()) {

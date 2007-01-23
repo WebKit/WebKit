@@ -37,31 +37,23 @@
 namespace WebCore {
 
 ClipboardMac::ClipboardMac(bool forDragging, NSPasteboard *pasteboard, ClipboardAccessPolicy policy, FrameMac *frame)
-    : m_pasteboard(HardRetain(pasteboard))
+    : Clipboard(policy)
+    , m_pasteboard(pasteboard)
     , m_forDragging(forDragging)
     , m_dragImage(0)
-    , m_policy(policy)
     , m_dragStarted(false)
     , m_frame(frame)
 {
-    m_changeCount = [m_pasteboard changeCount];
+    m_changeCount = [m_pasteboard.get() changeCount];
 }
 
 ClipboardMac::~ClipboardMac()
 {
-    HardRelease(m_pasteboard);
 }
 
 bool ClipboardMac::isForDragging() const
 {
     return m_forDragging;
-}
-
-void ClipboardMac::setAccessPolicy(ClipboardAccessPolicy policy)
-{
-    // once you go numb, can never go back
-    ASSERT(m_policy != ClipboardNumb || policy == ClipboardNumb);
-    m_policy = policy;
 }
 
 static NSString *cocoaTypeFromMIMEType(const String& type)
@@ -121,36 +113,36 @@ static String MIMETypeFromCocoaType(NSString *type)
 
 void ClipboardMac::clearData(const String& type)
 {
-    if (m_policy != ClipboardWritable)
+    if (policy() != ClipboardWritable)
         return;
 
     // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
 
     NSString *cocoaType = cocoaTypeFromMIMEType(type);
     if (cocoaType) {
-        [m_pasteboard setString:@"" forType:cocoaType];
+        [m_pasteboard.get() setString:@"" forType:cocoaType];
     }
 }
 
 void ClipboardMac::clearAllData()
 {
-    if (m_policy != ClipboardWritable)
+    if (policy() != ClipboardWritable)
         return;
 
     // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
 
-    [m_pasteboard declareTypes:[NSArray array] owner:nil];
+    [m_pasteboard.get() declareTypes:[NSArray array] owner:nil];
 }
 
 String ClipboardMac::getData(const String& type, bool& success) const
 {
     success = false;
-    if (m_policy != ClipboardReadable)
+    if (policy() != ClipboardReadable)
         return String();
     
     NSString *cocoaType = cocoaTypeFromMIMEType(type);
     NSString *cocoaValue = nil;
-    NSArray *availableTypes = [m_pasteboard types];
+    NSArray *availableTypes = [m_pasteboard.get() types];
 
     // Fetch the data in different ways for the different Cocoa types
 
@@ -158,7 +150,7 @@ String ClipboardMac::getData(const String& type, bool& success) const
         // When both URL and filenames are present, filenames is superior since it can contain a list.
         // must check this or we get a printf from CF when there's no data of this type
         if ([availableTypes containsObject:NSFilenamesPboardType]) {
-            NSArray *fileList = [m_pasteboard propertyListForType:NSFilenamesPboardType];
+            NSArray *fileList = [m_pasteboard.get() propertyListForType:NSFilenamesPboardType];
             if (fileList && [fileList isKindOfClass:[NSArray class]]) {
                 unsigned count = [fileList count];
                 if (count > 0) {
@@ -184,19 +176,19 @@ String ClipboardMac::getData(const String& type, bool& success) const
         if (!cocoaValue) {
             // must check this or we get a printf from CF when there's no data of this type
             if ([availableTypes containsObject:NSURLPboardType]) {
-                NSURL *url = [NSURL URLFromPasteboard:m_pasteboard];
+                NSURL *url = [NSURL URLFromPasteboard:m_pasteboard.get()];
                 if (url) {
                     cocoaValue = [url absoluteString];
                 }
             }
         }
     } else if (cocoaType) {        
-        cocoaValue = [m_pasteboard stringForType:cocoaType];
+        cocoaValue = [m_pasteboard.get() stringForType:cocoaType];
     }
 
     // Enforce changeCount ourselves for security.  We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
-    if (cocoaValue && m_changeCount == [m_pasteboard changeCount]) {
+    if (cocoaValue && m_changeCount == [m_pasteboard.get() changeCount]) {
         success = true;
         return String(DeprecatedString::fromNSString(cocoaValue));
     }
@@ -206,7 +198,7 @@ String ClipboardMac::getData(const String& type, bool& success) const
 
 bool ClipboardMac::setData(const String &type, const String &data)
 {
-    if (m_policy != ClipboardWritable)
+    if (policy() != ClipboardWritable)
         return false;
     // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
 
@@ -214,14 +206,14 @@ bool ClipboardMac::setData(const String &type, const String &data)
     NSString *cocoaData = data;
 
     if ([cocoaType isEqualToString:NSURLPboardType]) {
-        [m_pasteboard addTypes:[NSArray arrayWithObject:NSURLPboardType] owner:nil];
+        [m_pasteboard.get() addTypes:[NSArray arrayWithObject:NSURLPboardType] owner:nil];
         NSURL *url = [[NSURL alloc] initWithString:cocoaData];
-        [url writeToPasteboard:m_pasteboard];
+        [url writeToPasteboard:m_pasteboard.get()];
 
         if ([url isFileURL]) {
-            [m_pasteboard addTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
+            [m_pasteboard.get() addTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
             NSArray *fileList = [NSArray arrayWithObject:[url path]];
-            [m_pasteboard setPropertyList:fileList forType:NSFilenamesPboardType];
+            [m_pasteboard.get() setPropertyList:fileList forType:NSFilenamesPboardType];
         }
 
         [url release];
@@ -230,8 +222,8 @@ bool ClipboardMac::setData(const String &type, const String &data)
 
     if (cocoaType) {
         // everything else we know of goes on the pboard as a string
-        [m_pasteboard addTypes:[NSArray arrayWithObject:cocoaType] owner:nil];
-        return [m_pasteboard setString:cocoaData forType:cocoaType];
+        [m_pasteboard.get() addTypes:[NSArray arrayWithObject:cocoaType] owner:nil];
+        return [m_pasteboard.get() setString:cocoaData forType:cocoaType];
     }
 
     return false;
@@ -239,14 +231,14 @@ bool ClipboardMac::setData(const String &type, const String &data)
 
 HashSet<String> ClipboardMac::types() const
 {
-    if (m_policy != ClipboardReadable && m_policy != ClipboardTypesReadable)
+    if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
         return HashSet<String>();
 
-    NSArray *types = [m_pasteboard types];
+    NSArray *types = [m_pasteboard.get() types];
 
     // Enforce changeCount ourselves for security.  We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
-    if (m_changeCount != [m_pasteboard changeCount])
+    if (m_changeCount != [m_pasteboard.get() changeCount])
         return HashSet<String>();
 
     HashSet<String> result;
@@ -295,7 +287,7 @@ void ClipboardMac::setDragImageElement(Node *node, const IntPoint &loc)
 
 void ClipboardMac::setDragImage(CachedImage* image, Node *node, const IntPoint &loc)
 {
-    if (m_policy == ClipboardImageWritable || m_policy == ClipboardWritable) {
+    if (policy() == ClipboardImageWritable || policy() == ClipboardWritable) {
         if (m_dragImage)
             m_dragImage->deref(this);
         m_dragImage = image;
@@ -305,7 +297,7 @@ void ClipboardMac::setDragImage(CachedImage* image, Node *node, const IntPoint &
         m_dragLoc = loc;
         m_dragImageElement = node;
         
-        if (m_dragStarted && m_changeCount == [m_pasteboard changeCount]) {
+        if (m_dragStarted && m_changeCount == [m_pasteboard.get() changeCount]) {
             NSPoint cocoaLoc;
             NSImage* cocoaImage = dragNSImage(cocoaLoc);
             if (cocoaImage) {
@@ -348,102 +340,6 @@ NSImage *ClipboardMac::dragNSImage(NSPoint& loc)
         loc.y = [result size].height - loc.y;
     }
     return result;
-}
-
-String ClipboardMac::dropEffect() const
-{
-    return m_dropEffect;
-}
-
-void ClipboardMac::setDropEffect(const String &s)
-{
-    if (m_policy == ClipboardReadable || m_policy == ClipboardTypesReadable) {
-        m_dropEffect = s;
-    }
-}
-
-String ClipboardMac::effectAllowed() const
-{
-    return m_effectAllowed;
-}
-
-void ClipboardMac::setEffectAllowed(const String &s)
-{
-    if (m_policy == ClipboardWritable)
-        m_effectAllowed = s;
-}
-
-// These "conversion" methods are called by the bridge and part, and never make sense to JS, so we don't
-// worry about security for these. They don't allow access to the pasteboard anyway.
-
-static NSDragOperation cocoaOpFromIEOp(const String& op)
-{
-    // yep, it's really just this fixed set
-    if (op == "none")
-        return NSDragOperationNone;
-    if (op == "copy")
-        return NSDragOperationCopy;
-    if (op == "link")
-        return NSDragOperationLink;
-    if (op == "move")
-        return NSDragOperationGeneric;
-    if (op == "copyLink")
-        return NSDragOperationCopy | NSDragOperationLink;
-    if (op == "copyMove")
-        return NSDragOperationCopy | NSDragOperationGeneric | NSDragOperationMove;
-    if (op == "linkMove")
-        return NSDragOperationLink | NSDragOperationGeneric | NSDragOperationMove;
-    if (op == "all")
-        return NSDragOperationEvery;
-    return NSDragOperationPrivate;  // really a marker for "no conversion"
-}
-
-static String IEOpFromCocoaOp(NSDragOperation op)
-{
-    bool moveSet = ((NSDragOperationGeneric | NSDragOperationMove) & op) != 0;
-    
-    if ((moveSet && (op & NSDragOperationCopy) && (op & NSDragOperationLink))
-        || (op == NSDragOperationEvery))
-        return "all";
-    if (moveSet && (op & NSDragOperationCopy))
-        return "copyMove";
-    if (moveSet && (op & NSDragOperationLink))
-        return "linkMove";
-    if ((op & NSDragOperationCopy) && (op & NSDragOperationLink))
-        return "copyLink";
-    if (moveSet)
-        return "move";
-    if (op & NSDragOperationCopy)
-        return "copy";
-    if (op & NSDragOperationLink)
-        return "link";
-    return "none";
-}
-
-bool ClipboardMac::sourceOperation(NSDragOperation& op) const
-{
-    if (m_effectAllowed.isNull())
-        return false;
-    op = cocoaOpFromIEOp(m_effectAllowed);
-    return true;
-}
-
-bool ClipboardMac::destinationOperation(NSDragOperation& op) const
-{
-    if (m_dropEffect.isNull())
-        return false;
-    op = cocoaOpFromIEOp(m_dropEffect);
-    return true;
-}
-
-void ClipboardMac::setSourceOperation(NSDragOperation op)
-{
-    m_effectAllowed = IEOpFromCocoaOp(op);
-}
-
-void ClipboardMac::setDestinationOperation(NSDragOperation op)
-{
-    m_dropEffect = IEOpFromCocoaOp(op);
 }
 
 }

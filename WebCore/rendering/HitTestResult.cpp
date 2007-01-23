@@ -51,6 +51,7 @@ HitTestResult::HitTestResult(const HitTestResult& other)
     : m_innerNode(other.innerNode())
     , m_innerNonSharedNode(other.innerNonSharedNode())
     , m_point(other.point())
+    , m_localPoint(other.localPoint())
     , m_innerURLElement(other.URLElement())
     , m_scrollbar(other.scrollbar())
 {

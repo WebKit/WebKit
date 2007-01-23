@@ -1641,10 +1641,20 @@
 		A70023FD0B02BEAB00170215 /* MimeTypeRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A70023FB0B02BEAB00170215 /* MimeTypeRegistry.cpp */; };
 		A70023FE0B02BEAB00170215 /* MimeTypeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = A70023FC0B02BEAB00170215 /* MimeTypeRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A70024000B02BECC00170215 /* MimeTypeRegistryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A70023FF0B02BECC00170215 /* MimeTypeRegistryMac.mm */; };
+		A718760E0B2A120100A16ECE /* DragActions.h in Headers */ = {isa = PBXBuildFile; fileRef = A718760D0B2A120100A16ECE /* DragActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */; };
 		A7352C190B1BB89D00A986D0 /* RenderSVGBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7352C170B1BB89D00A986D0 /* RenderSVGBlock.cpp */; };
 		A7352C1A0B1BB89D00A986D0 /* RenderSVGBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = A7352C180B1BB89D00A986D0 /* RenderSVGBlock.h */; };
 		A7638A970995965D0007E14F /* SVGFEDisplacementMapElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A7638A950995965D0007E14F /* SVGFEDisplacementMapElement.h */; };
 		A7638A980995965D0007E14F /* SVGFEDisplacementMapElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7638A960995965D0007E14F /* SVGFEDisplacementMapElement.cpp */; };
+		A784941B0B5FE507001E237A /* Clipboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A784941A0B5FE507001E237A /* Clipboard.cpp */; };
+		A795463E0B5C4C80007B438F /* DragDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A795463D0B5C4C80007B438F /* DragDataMac.mm */; };
+		A79546430B5C4CB4007B438F /* DragData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A79546420B5C4CB4007B438F /* DragData.cpp */; };
+		A7B6E69F0B291A9600D0529F /* DragData.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B6E69D0B291A9600D0529F /* DragData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7CA595D0B27BD9E00FA021D /* DragController.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CA595B0B27BD9E00FA021D /* DragController.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7CA595E0B27BD9E00FA021D /* DragController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7CA595C0B27BD9E00FA021D /* DragController.cpp */; };
+		A7CA59630B27C1F200FA021D /* DragClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CA59620B27C1F200FA021D /* DragClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7D3C5240B576B4B002CA450 /* PasteboardHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A80CEBAC0B60FC49007637C1 /* SVGMPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A80CEBAA0B60FC49007637C1 /* SVGMPathElement.h */; };
 		A80CEBAD0B60FC49007637C1 /* SVGMPathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80CEBAB0B60FC49007637C1 /* SVGMPathElement.cpp */; };
 		A80E6CE40A1989CA007FB8C5 /* CSSValueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */; };
@@ -4627,10 +4637,20 @@
 		A70023FB0B02BEAB00170215 /* MimeTypeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MimeTypeRegistry.cpp; sourceTree = "<group>"; };
 		A70023FC0B02BEAB00170215 /* MimeTypeRegistry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MimeTypeRegistry.h; sourceTree = "<group>"; };
 		A70023FF0B02BECC00170215 /* MimeTypeRegistryMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = MimeTypeRegistryMac.mm; sourceTree = "<group>"; };
+		A718760D0B2A120100A16ECE /* DragActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragActions.h; sourceTree = "<group>"; };
+		A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragControllerMac.mm; sourceTree = "<group>"; };
 		A7352C170B1BB89D00A986D0 /* RenderSVGBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGBlock.cpp; sourceTree = "<group>"; };
 		A7352C180B1BB89D00A986D0 /* RenderSVGBlock.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGBlock.h; sourceTree = "<group>"; };
 		A7638A950995965D0007E14F /* SVGFEDisplacementMapElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFEDisplacementMapElement.h; sourceTree = "<group>"; };
 		A7638A960995965D0007E14F /* SVGFEDisplacementMapElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEDisplacementMapElement.cpp; sourceTree = "<group>"; };
+		A784941A0B5FE507001E237A /* Clipboard.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Clipboard.cpp; sourceTree = "<group>"; };
+		A795463D0B5C4C80007B438F /* DragDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DragDataMac.mm; sourceTree = "<group>"; };
+		A79546420B5C4CB4007B438F /* DragData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DragData.cpp; sourceTree = "<group>"; };
+		A7B6E69D0B291A9600D0529F /* DragData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragData.h; sourceTree = "<group>"; };
+		A7CA595B0B27BD9E00FA021D /* DragController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragController.h; sourceTree = "<group>"; };
+		A7CA595C0B27BD9E00FA021D /* DragController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DragController.cpp; sourceTree = "<group>"; };
+		A7CA59620B27C1F200FA021D /* DragClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragClient.h; sourceTree = "<group>"; };
+		A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardHelper.h; sourceTree = "<group>"; };
 		A80CEBAA0B60FC49007637C1 /* SVGMPathElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGMPathElement.h; sourceTree = "<group>"; };
 		A80CEBAB0B60FC49007637C1 /* SVGMPathElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGMPathElement.cpp; sourceTree = "<group>"; };
 		A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueList.cpp; sourceTree = "<group>"; };
@@ -6745,6 +6765,7 @@
 		6582A14809999D6C00BEEB6D /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				A795463D0B5C4C80007B438F /* DragDataMac.mm */,
 				06027CB20B1CC03D00884B2D /* ContextMenuItemMac.mm */,
 				65A640F00533BB1F0085E777 /* BlockExceptions.h */,
 				65F80697054D9F86008BF776 /* BlockExceptions.mm */,
@@ -6805,6 +6826,7 @@
 				BC6DADF90A19602B00E5CD14 /* WebFontCache.mm */,
 				935C477209AC4D7700A6AAB4 /* WheelEventMac.mm */,
 				9380F47709A11ACC001FDB34 /* WidgetMac.mm */,
+				A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -6844,6 +6866,10 @@
 				93E22A720AF5E94C00D48324 /* PageState.h */,
 				65D1C1C909932B22000CB324 /* Plugin.h */,
 				F587863A02DE3A1401EA4122 /* Settings.h */,
+				A7CA595B0B27BD9E00FA021D /* DragController.h */,
+				A7CA595C0B27BD9E00FA021D /* DragController.cpp */,
+				A7CA59620B27C1F200FA021D /* DragClient.h */,
+				A718760D0B2A120100A16ECE /* DragActions.h */,
 				14C9A5E90B3D105F005A0232 /* Settings.cpp */,
 			);
 			path = page;
@@ -7854,6 +7880,7 @@
 			isa = PBXGroup;
 			children = (
 				93C09A7E0B064EEF005ABD4D /* EventHandlerMac.mm */,
+				A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */,
 				65BF023B0974819000C43196 /* FrameMac.h */,
 				65BF023C0974819000C43196 /* FrameMac.mm */,
 				654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */,
@@ -8982,6 +9009,7 @@
 				F58786C202DE3B8601EA4122 /* DeprecatedValueList.h */,
 				F587853C02DE375901EA4122 /* DeprecatedValueListImpl.cpp */,
 				F587853B02DE375901EA4122 /* DeprecatedValueListImpl.h */,
+				A7B6E69D0B291A9600D0529F /* DragData.h */,
 				934FE9E40B5CA539003E4A73 /* FileChooser.cpp */,
 				066C772A0AB603B700238CC4 /* FileChooser.h */,
 				BC6D6DD009AF906600F59759 /* Font.cpp */,
@@ -9066,6 +9094,7 @@
 				9380F47109A11AB4001FDB34 /* Widget.cpp */,
 				9380F47209A11AB4001FDB34 /* Widget.h */,
 				93B780C909B3B7FE00690162 /* WidgetClient.h */,
+				A79546420B5C4CB4007B438F /* DragData.cpp */,
 			);
 			path = platform;
 			sourceTree = "<group>";
@@ -9403,6 +9432,7 @@
 		F523D32402DE4478018635CA /* dom */ = {
 			isa = PBXGroup;
 			children = (
+				A784941A0B5FE507001E237A /* Clipboard.cpp */,
 				BC3B364705C9D5E200E42902 /* AtomicStringList.h */,
 				A8C4A7FC09D563270003AC8D /* Attr.cpp */,
 				A8C4A7FB09D563270003AC8D /* Attr.h */,
@@ -9560,6 +9590,11 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A7D3C5240B576B4B002CA450 /* PasteboardHelper.h in Headers */,
+				A718760E0B2A120100A16ECE /* DragActions.h in Headers */,
+				A7B6E69F0B291A9600D0529F /* DragData.h in Headers */,
+				A7CA595D0B27BD9E00FA021D /* DragController.h in Headers */,
+				A7CA59630B27C1F200FA021D /* DragClient.h in Headers */,
 				1A3178930B20A81600316987 /* SubresourceLoaderClient.h in Headers */,
 				93F198E608245E59001E9ABC /* HTMLElement.h in Headers */,
 				93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */,
@@ -11056,6 +11091,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -11070,6 +11106,7 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -12320,10 +12357,12 @@
 				B2310B760B1F46A200D55D87 /* CgSupport.cpp in Sources */,
 				B2310B780B1F46A300D55D87 /* RenderPathCg.cpp in Sources */,
 				B2ED97710B1F55CE00257D0F /* GraphicsContextCG.cpp in Sources */,
+				A7CA595E0B27BD9E00FA021D /* DragController.cpp in Sources */,
 				B277B4040B22F37C0004BEC6 /* GraphicsContextMac.mm in Sources */,
 				ED501DC60B249F2900AE18D9 /* EditorMac.mm in Sources */,
 				93354A3C0B24F8C9003F6DEA /* UIEventWithKeyState.cpp in Sources */,
 				E1D8E31A0B29E3B600F4BAF6 /* HTTPParsers.cpp in Sources */,
+				A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */,
 				BC18C5D10B2A886F0018461D /* TextBreakIteratorICU.cpp in Sources */,
 				AA4C3A760B2B1679002334A2 /* StyleElement.cpp in Sources */,
 				93E2425F0B2B509500C732A1 /* HTMLFrameOwnerElement.cpp in Sources */,
@@ -12351,6 +12390,8 @@
 				510F735F0B56C08800A3002A /* AuthenticationChallenge.cpp in Sources */,
 				510F73610B56C08800A3002A /* Credential.cpp in Sources */,
 				510F73630B56C08800A3002A /* ProtectionSpace.cpp in Sources */,
+				A795463E0B5C4C80007B438F /* DragDataMac.mm in Sources */,
+				A79546430B5C4CB4007B438F /* DragData.cpp in Sources */,
 				B2CB92420B5BD966009BAA78 /* JSSVGElementInstance.cpp in Sources */,
 				B2CB92460B5BD97B009BAA78 /* JSSVGElementInstanceList.cpp in Sources */,
 				B2CB92620B5BDA02009BAA78 /* DOMSVGElementInstance.mm in Sources */,
@@ -12358,6 +12399,7 @@
 				B2F273F20B5BFAC50068C956 /* SVGElementInstance.cpp in Sources */,
 				B2F273F30B5BFAC80068C956 /* SVGElementInstanceList.cpp in Sources */,
 				1A2A68230B5BEDE70002A480 /* ProgressTracker.cpp in Sources */,
+				A784941B0B5FE507001E237A /* Clipboard.cpp in Sources */,
 				934FE9E50B5CA539003E4A73 /* FileChooser.cpp in Sources */,
 				A80CEBAD0B60FC49007637C1 /* SVGMPathElement.cpp in Sources */,
 				E1E6EEA40B628DA8005F2F70 /* JSHTMLSelectElement.cpp in Sources */,
@@ -12406,6 +12448,7 @@
 				HEADER_SEARCH_PATHS_QUOTED_1 = "\"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
+				LINKER_DISPLAYS_MANGLED_NAMES = YES;
 				OTHER_LDFLAGS = (
 					"-sub_library",
 					libobjc,

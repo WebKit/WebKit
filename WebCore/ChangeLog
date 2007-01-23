@@ -1,3 +1,189 @@
+2007-01-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Added DragController to handled drag and drop state and control logic.
+        Currently this only handles logic for Dragging and Dropping, and is 
+        unable to initialise a drag itself.
+
+        platform/DragData encapsulate the paltform Drag data (NSDraggingInfo on Mac, 
+        QMimeType in Qt).  This provides methods to pull data out the drag data as a String, 
+        a URL, a DocumentFragment (for rich content), or a Colour.
+
+        * WebCore.exp:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Clipboard.cpp: Added.
+        (WebCore::Clipboard::setAccessPolicy):
+        (WebCore::dragOpFromIEOp):
+        (WebCore::IEOpFromDragOp):
+        (WebCore::Clipboard::sourceOperation):
+        (WebCore::Clipboard::destinationOperation):
+        (WebCore::Clipboard::setSourceOperation):
+        (WebCore::Clipboard::setDestinationOperation):
+        (WebCore::Clipboard::setDropEffect):
+        (WebCore::Clipboard::setEffectAllowed):
+          move platform independent functions from ClipboardMac to Clipboard
+
+        * dom/Clipboard.h:
+        (WebCore::Clipboard::Clipboard):
+        (WebCore::Clipboard::dropEffect):
+        (WebCore::Clipboard::effectAllowed):
+        (WebCore::Clipboard::policy):
+          as above -- also removed virtual modifier from now 
+          platform independent methods
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::smartInsertDeleteEnabled): 
+        (WebCore::Editor::shouldApplyStyle):
+        * editing/Editor.h:
+          adding calls through to EditorClient
+         
+        * page/DragActions.h: Added.
+        (WebCore::):
+          Replicates a number of NS* enums in the WebCore namespace
+
+        * page/DragClient.h: Added.
+        (WebCore::DragClient::~DragClient):
+          Standard client interface for dragging UIDelegate
+
+        * page/DragController.cpp: Added.
+        (WebCore::createMouseEvent):
+        (WebCore::DragController::DragController):
+        (WebCore::DragController::~DragController):
+        (WebCore::documentFragmentFromDragData):
+        (WebCore::DragController::isMoveDrag):
+        (WebCore::visiblePositionForPoint):
+        (WebCore::DragController::cancelDrag):
+        (WebCore::documentAtPoint):
+        (WebCore::DragController::dragEntered):
+        (WebCore::DragController::dragExited):
+        (WebCore::DragController::dragUpdated):
+        (WebCore::DragController::performDrag):
+        (WebCore::DragController::dragEnteredOrUpdated):
+        (WebCore::DragController::tryDocumentDrag):
+        (WebCore::DragController::operationForLoad):
+        (WebCore::DragController::concludeDrag):
+        (WebCore::DragController::canProcessDrag):
+        (WebCore::DragController::tryDHTMLDrag):
+          Class to handle state and logic for dragging and dropping
+
+        * page/DragController.h: Added.
+        (WebCore::DragController::client):
+        (WebCore::DragController::didInitiateDrag):
+        (WebCore::DragController::isHandlingDrag):
+        (WebCore::DragController::dragOperation):
+        (WebCore::DragController::document):
+        (WebCore::DragController::dragInitiator):
+        (WebCore::DragController::dragDestinationAction):
+        (WebCore::DragController::dragSourceAction):
+        (WebCore::DragController::dragEnded):
+        (WebCore::DragController::setIsHandlingDrag):
+        (WebCore::DragController::setDidInitiateDrag):
+        (WebCore::DragController::setDragOperation):
+        (WebCore::DragController::setDragSourceAction):
+        (WebCore::DragController::setDragInitiator):
+          See above
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+          Update Page to have DragController
+
+        * page/Page.h:
+        (WebCore::Page::dragController):
+          ditto
+
+        * page/mac/DragControllerMac.mm: Added.
+        (WebCore::DragController::isCopyKeyDown):
+        (WebCore::DragController::dragOperation):
+          Platform specific portions of the DragController
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::handleDrag):
+        (WebCore::EventHandler::dragSourceEndedAt):
+          Convert from NSDragOperation to WebCore::DragOperation
+
+        * page/mac/WebCoreFrameBridge.h:
+        * page/mac/WebCoreFrameBridge.mm:
+          Remove obsolete Drag functions
+
+        * page/qt/DragControllerQt.cpp: Added.
+        (WebCore::DragController::isCopyKeyDown):
+        (WebCore::DragController::dragOperation):
+          Basic stubs to maintain Qt  build
+
+        * platform/DragData.cpp: Added.
+        (WebCore::DragData::DragData):
+        * platform/DragData.h: Added.
+        (WebCore::DragData::clientPosition):
+        (WebCore::DragData::globalPosition):
+        (WebCore::DragData::platformData):
+        (WebCore::DragData::draggingSourceOperationMask):
+          DragData class to encapsulate platform drag data/event
+
+        * platform/graphics/svg/SVGImage.cpp:
+        (WebCore::SVGImage::setData):
+          Addition of dummy DragClient
+
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyDragClient::~SVGEmptyDragClient):
+        (WebCore::SVGEmptyDragClient::willPerformDragDestinationAction):
+        (WebCore::SVGEmptyDragClient::actionMaskForDrag):
+        (WebCore::SVGEmptyDragClient::dragControllerDestroyed):
+          ditto
+
+        * platform/mac/ClipboardMac.h:
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::ClipboardMac):
+        (WebCore::ClipboardMac::clearData):
+        (WebCore::ClipboardMac::clearAllData):
+        (WebCore::ClipboardMac::getData):
+        (WebCore::ClipboardMac::setData):
+        (WebCore::ClipboardMac::types):
+        (WebCore::ClipboardMac::setDragImage):
+         Moving platform independent logic to Clipboard, and updating
+         platform specific methods to use appropriate accessors rather than 
+         directly manipulating data they no longer own
+
+        * platform/mac/DragDataMac.mm: Added.
+        (WebCore::DragData::DragData):
+        (WebCore::DragData::canSmartReplace):
+        (WebCore::DragData::containsColor):
+        (WebCore::DragData::containsPlainText):
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::asColor):
+        (WebCore::DragData::createClipboard):
+        (WebCore::imageExistsAtPaths):
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asFragment):
+          Mac implementations of DragData methods.  A number of these use
+          a Helper class that accesses WebKit functionality.  That functionality 
+          should be migrated to WebCore in the future.
+
+        * platform/mac/PasteboardHelper.h: Added.
+        (WebCore::PasteboardHelper::~PasteboardHelper):
+          Temporary, and Mac only, helper class to access WebKit functionality 
+          from WebCore
+
+        * platform/qt/DragDataQt.cpp: Added.
+        (WebCore::DragData::canSmartReplace):
+        (WebCore::DragData::containsColor):
+        (WebCore::DragData::containsPlainText):
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::asColor):
+        (WebCore::DragData::createClipboard):
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asFragment):
+         Basic stubs to maintain Qt build
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::HitTestResult):
+         Correct HitTestResult copy contructor to copy localPoint
+
 2007-01-22  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej.
