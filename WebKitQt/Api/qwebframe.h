@@ -31,15 +31,18 @@ class QWebPage;
 namespace WebCore {
     class FrameLoaderClientQt;
 }
+class QWebFrameData;
 
 class QWebFrame : public QScrollArea
 {
     Q_OBJECT
-public:
-    QWebFrame(QWebPage *parent);
-    QWebFrame(QWebFrame *parent);
+protected:
+    QWebFrame(QWebPage *parent, QWebFrameData *frameData);
+    QWebFrame(QWebFrame *parent, QWebFrameData *frameData);
     ~QWebFrame();
 
+public:
+    
     QWebPage *page() const;
 
     void addToJSWindowObject(const QByteArray &name, QObject *object);

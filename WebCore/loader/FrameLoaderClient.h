@@ -29,6 +29,7 @@
 #define FrameLoaderClient_h
 
 #include "FrameLoaderTypes.h"
+#include "StringHash.h"
 #include <wtf/Forward.h>
 #include <wtf/Platform.h>
 
@@ -41,6 +42,8 @@ namespace WebCore {
     class Frame;
     class FrameLoader;
     class HistoryItem;
+    class HTMLFrameOwnerElement;
+    class IntSize;
     class KURL;
     class NavigationAction;
     class PageCache;
@@ -50,6 +53,7 @@ namespace WebCore {
     class ResourceRequest;
     class ResourceResponse;
     class String;
+    class Widget;
 
     typedef void (FrameLoader::*FramePolicyFunction)(PolicyAction);
 
@@ -71,7 +75,6 @@ namespace WebCore {
 
         virtual void setCopiesOnScroll() = 0;
 
-        virtual void detachedFromParent1() = 0;
         virtual void detachedFromParent2() = 0;
         virtual void detachedFromParent3() = 0;
         virtual void detachedFromParent4() = 0;
@@ -180,6 +183,18 @@ namespace WebCore {
         virtual void saveDocumentViewToPageCache(PageCache*) = 0;
         virtual bool canCachePage() const = 0;
         virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&) = 0;
+
+        virtual Frame* createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
+                                   const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) = 0;
+        virtual Widget* createPlugin(Element*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually) = 0;
+        virtual void redirectDataToPlugin(Widget* pluginWidget) = 0;
+        
+        virtual Widget* createJavaAppletWidget(const IntSize&, Element*, const KURL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues) = 0;
+
+        virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType) = 0;
+        virtual String overrideMediaType() const = 0;
+
+        virtual void windowObjectCleared() const = 0;
     };
 
 } // namespace WebCore

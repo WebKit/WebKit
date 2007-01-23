@@ -136,7 +136,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     m_frame = new FrameMac(page, ownerElement, new WebFrameLoaderClient(_frame));
     m_frame->setBridge(self);
     m_frame->tree()->setName(name);
-    m_frame->setSettings(core(webView)->settings());
     
     [self setTextSizeMultiplier:[webView textSizeMultiplier]];
 
@@ -357,10 +356,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                   marginWidth:(int)width
                                  marginHeight:(int)height
 {
-    bool hideReferrer;
-    if (!m_frame->loader()->canLoad(URL, referrer, hideReferrer))
-        return 0;
-
     ASSERT(_frame);
     
     WebFrameView *childView = [[WebFrameView alloc] initWithFrame:NSMakeRect(0,0,0,0)];
@@ -379,7 +374,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
     RefPtr<Frame> newFrame = [newBridge _frame];
     
-    [_frame _loadURL:URL referrer:(hideReferrer ? String() : referrer) intoChild:kit(newFrame.get())];
+    [_frame _loadURL:URL referrer:referrer intoChild:kit(newFrame.get())];
 
     // The frame's onload handler may have removed it from the document.
     if (!newFrame->tree()->parent())
@@ -506,10 +501,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                       DOMElement:(DOMElement *)element
                     loadManually:(BOOL)loadManually
 {
-    bool hideReferrer;
-    if (!m_frame->loader()->canLoad(URL, m_frame->loader()->outgoingReferrer(), hideReferrer))
-        return nil;
-
     ASSERT([attributeNames count] == [attributeValues count]);
 
     WebBasePluginPackage *pluginPackage = nil;

@@ -47,7 +47,7 @@ namespace WebCore {
     class NavigationAction;
     class String;
     class ResourceLoader;
-
+    
     struct LoadErrorResetToken;
 
     class FrameLoaderClientQt : public QObject, public FrameLoaderClient {
@@ -101,7 +101,6 @@ namespace WebCore {
 
         virtual void willCloseDocument();
 
-        virtual void detachedFromParent1();
         virtual void detachedFromParent2();
         virtual void detachedFromParent3();
         virtual void detachedFromParent4();
@@ -207,10 +206,17 @@ namespace WebCore {
         virtual void postProgressStartedNotification();
         virtual void postProgressEstimateChangedNotification();
         virtual void postProgressFinishedNotification();
-        
-        // FIXME: This should probably not be here, but it's needed for the tests currently
-        virtual void partClearedInBegin();
 
+        virtual Frame* createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
+                                   const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) ;
+        virtual Widget* createPlugin(Element*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool);
+        virtual void redirectDataToPlugin(Widget* pluginWidget);
+        virtual Widget* createJavaAppletWidget(const IntSize&, Element*, const KURL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues);
+
+        virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType);
+        virtual String overrideMediaType() const;
+        
+        virtual void windowObjectCleared() const;
 
     private:
         Frame *m_frame;

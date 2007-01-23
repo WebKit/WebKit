@@ -516,7 +516,6 @@ SOURCES += \
     loader/icon/SQLTransaction.cpp \
     loader/icon/SQLStatement.cpp \
     loader/icon/SQLDatabase.cpp \
-    loader/qt/FrameLoaderQt.cpp \
     loader/qt/DocumentLoaderQt.cpp \
     platform/CString.cpp \
     platform/DragData.cpp \

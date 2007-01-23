@@ -30,6 +30,7 @@
 #include "FrameQtClient.h"
 #include "FrameQt.h"
 #include "FrameView.h"
+#include "ResourceRequest.h"
 
 #include "markup.h"
 #include "RenderTreeAsText.h"
@@ -41,42 +42,48 @@
 #include "ExecState.h"
 #include "object.h"
 
+#include "wtf/HashMap.h"
 
 using namespace WebCore;
 
-QWebFrame::QWebFrame(QWebPage *parent)
+QWebFrame::QWebFrame(QWebPage *parent, QWebFrameData *frameData)
     : QScrollArea(parent)
     , d(new QWebFramePrivate)
 {
     d->page = parent;
 
     d->frameLoaderClient = new FrameLoaderClientQt();
-    d->frame = new FrameQt(parent->d->page, 0, new FrameQtClient(), d->frameLoaderClient);
-    d->frameLoaderClient->setFrame(this, d->frame);
+    d->frame = new FrameQt(parent->d->page, frameData->ownerElement, new FrameQtClient(), d->frameLoaderClient);
+    d->frameLoaderClient->setFrame(this, d->frame.get());
 
-    d->frameView = new FrameView(d->frame);
+    d->frameView = new FrameView(d->frame.get());
     d->frameView->setScrollArea(this);
-    d->frame->setView(d->frameView);
+    d->frame->setView(d->frameView.get());
+    if (!frameData->url.isEmpty()) {
+        ResourceRequest request(frameData->url, frameData->referrer);
+        d->frame->loader()->load(request, frameData->name);
+    }
 }
 
 
-QWebFrame::QWebFrame(QWebFrame *parent)
+QWebFrame::QWebFrame(QWebFrame *parent, QWebFrameData *frameData)
     : QScrollArea(parent)
     , d(new QWebFramePrivate)
 {
     d->page = parent->d->page;
-//     d->frameLoaderClient = new FrameLoaderClientQt();
-//     d->frame = new FrameQt(page, 0, new FrameQtClient(), frameLoaderClient);
-//     d->frameLoaderClient->setFrame(d->frame);
 
-//     d->frameView = new FrameView(d->frame);
-//     d->frameView->setScrollArea(this);
-//     d->frame->setView(d->frameView);
+    d->frameLoaderClient = new FrameLoaderClientQt();
+    d->frame = new FrameQt(parent->d->page->d->page, frameData->ownerElement, new FrameQtClient(), d->frameLoaderClient);
+    d->frameLoaderClient->setFrame(this, d->frame.get());
+
+    d->frameView = new FrameView(d->frame.get());
+    d->frameView->setScrollArea(this);
+    d->frame->setView(d->frameView.get());
 }
 
 QWebFrame::~QWebFrame()
 {
-    delete d->frame;
+    delete d;
 }
 
 void QWebFrame::addToJSWindowObject(const QByteArray &name, QObject *object)

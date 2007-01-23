@@ -184,6 +184,8 @@ Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient*
         ownerElement->m_contentFrame = this;
     }
 
+    setSettings(page->settings());
+
 #ifndef NDEBUG
     ++FrameCounter::count;
 #endif

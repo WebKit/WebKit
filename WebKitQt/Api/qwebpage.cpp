@@ -31,6 +31,7 @@
 #include "ChromeClientQt.h"
 #include "ContextMenuClientQt.h"
 #include "EditorClientQt.h"
+#include "Settings.h"
 #include "Page.h"
 #include "FrameLoader.h"
 #include "KURL.h"
@@ -46,6 +47,20 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     editorClient = new EditorClientQt();
     page = new Page(chromeClient, contextMenuClient, editorClient);
 
+    Settings *settings = page->settings();
+    settings->setLoadsImagesAutomatically(true);
+    settings->setMinimumFontSize(5);
+    settings->setMinimumLogicalFontSize(5);
+    settings->setShouldPrintBackgrounds(true);
+    settings->setJavaScriptEnabled(true);
+
+    settings->setDefaultFixedFontSize(14);
+    settings->setDefaultFontSize(14);
+    settings->setSerifFontFamily("Times New Roman");
+    settings->setSansSerifFontFamily("Arial");
+    settings->setFixedFontFamily("Courier");
+    settings->setStandardFontFamily("Arial");
+
     mainFrame = 0;
 }
 
@@ -57,7 +72,12 @@ QWebPagePrivate::~QWebPagePrivate()
 void QWebPagePrivate::createMainFrame()
 {
     if (!mainFrame) {
-        mainFrame = q->createFrame(0);
+        QWebFrameData frameData;
+        frameData.ownerElement = 0;
+        frameData.allowsScrolling = true;
+        frameData.marginWidth = 5;
+        frameData.marginHeight = 5;
+        mainFrame = q->createFrame(0, &frameData);
         layout->addWidget(mainFrame);
     }
 }
@@ -77,11 +97,11 @@ QWebPage::~QWebPage()
     delete d;
 }
 
-QWebFrame *QWebPage::createFrame(QWebFrame *parentFrame)
+QWebFrame *QWebPage::createFrame(QWebFrame *parentFrame, QWebFrameData *frameData)
 {
     if (parentFrame)
-        return new QWebFrame(parentFrame);
-    return new QWebFrame(this);
+        return new QWebFrame(parentFrame, frameData);
+    return new QWebFrame(this, frameData);
 }
 
 void QWebPage::open(const QUrl &url)

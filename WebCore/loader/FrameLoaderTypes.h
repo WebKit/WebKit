@@ -66,6 +66,12 @@ namespace WebCore {
         NavigationTypeOther
     };
 
+    enum ObjectContentType {
+        ObjectContentNone,
+        ObjectContentImage,
+        ObjectContentFrame,
+        ObjectContentPlugin
+    };
 }
 
 #endif

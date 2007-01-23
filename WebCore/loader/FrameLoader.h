@@ -82,10 +82,6 @@ namespace WebCore {
 
     template <typename T> class Timer;
 
-    enum ObjectContentType {
-        ObjectContentNone, ObjectContentImage, ObjectContentFrame, ObjectContentPlugin
-    };
-
     typedef HashSet<RefPtr<ResourceLoader> > ResourceLoaderSet;
 
     bool isBackForwardLoadType(FrameLoadType);
@@ -163,9 +159,6 @@ namespace WebCore {
         // Also not cool.
         void stopLoadingPlugIns();
         void stopLoadingSubresources();
-#if PLATFORM(MAC)
-        void closeBridge();
-#endif
         void cancelMainResourceLoad(const ResourceError&);
         void stopAllLoaders();
         void cancelMainResourceLoad();
@@ -281,7 +274,6 @@ namespace WebCore {
         void urlSelected(const FrameLoadRequest&, Event*);
       
         bool requestFrame(HTMLFrameOwnerElement*, const String& URL, const AtomicString& frameName);
-        Frame* createFrame(const KURL& URL, const String& name, HTMLFrameOwnerElement*, const String& referrer);
         Frame* loadSubframe(HTMLFrameOwnerElement*, const KURL& URL, const String& name, const String& referrer);
 
         void submitForm(const char* action, const String& URL, PassRefPtr<FormData>, const String& target, const String& contentType, const String& boundary, Event*);
@@ -347,8 +339,6 @@ namespace WebCore {
 
         String overrideMediaType() const;
 
-        void redirectDataToPlugin(Widget* pluginWidget);
-
         Frame* opener();
         void setOpener(Frame*);
         bool openedByJavaScript();
@@ -395,12 +385,7 @@ namespace WebCore {
 
         KURL completeURL(const String& URL);
 
-        Widget* createPlugin(Element*, const KURL&, const Vector<String>& paramNames,
-            const Vector<String>& paramValues, const String& mimeType);
-
         void clear(bool clearWindowProperties = true);
-
-        ObjectContentType objectContentType(const KURL& url, const String& mimeType);
 
         void didTellBridgeAboutLoad(const String& URL);
         bool haveToldBridgeAboutLoad(const String& URL);

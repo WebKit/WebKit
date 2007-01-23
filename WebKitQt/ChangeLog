@@ -1,3 +1,33 @@
+2007-01-23  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Maciej
+
+        Add support for Frames to the Qt build and fix some issues
+        in the API classes.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::QWebFrame):
+        (QWebFrame::~QWebFrame):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPagePrivate::createMainFrame):
+        (QWebPage::createFrame):
+        * Api/qwebpage.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::detachedFromParent3):
+        (WebCore::FrameLoaderClientQt::detachedFromParent4):
+        (WebCore::FrameLoaderClientQt::cancelPolicyCheck):
+        (WebCore::FrameLoaderClientQt::windowObjectCleared):
+        (WebCore::FrameLoaderClientQt::createFrame):
+        (WebCore::FrameLoaderClientQt::objectContentType):
+        (WebCore::FrameLoaderClientQt::createPlugin):
+        (WebCore::FrameLoaderClientQt::redirectDataToPlugin):
+        (WebCore::FrameLoaderClientQt::createJavaAppletWidget):
+        (WebCore::FrameLoaderClientQt::overrideMediaType):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-01-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

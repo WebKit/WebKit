@@ -1,3 +1,61 @@
+2007-01-23  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Maciej
+
+        Make the last remaining pieces of the FrameLoader platform 
+        independent. Move most of the code over to WebFrameLoaderClient.
+        Some smaller cleanups in the WebFrameBridge, and moved some
+        platform independent functionality over to the shared code
+        in WebCore.
+        
+        * WebCore.exp:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadSubframe):
+        (WebCore::FrameLoader::shouldUsePlugin):
+        (WebCore::FrameLoader::loadPlugin):
+        (WebCore::FrameLoader::detachFromParent):
+        (WebCore::FrameLoader::partClearedInBegin):
+        (WebCore::FrameLoader::createJavaAppletWidget):
+        (WebCore::FrameLoader::didChangeTitle):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/FrameLoaderTypes.h:
+        (WebCore::):
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginTokenizer::writeRawData):
+        * loader/mac/FrameLoaderMac.mm: Removed.
+        * loader/qt/FrameLoaderQt.cpp: Removed.
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::mediaType):
+        * page/qt/FrameQt.cpp:
+        (WebCore::FrameQt::FrameQt):
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::makeRepresentation):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidCommitLoad):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDidFailLoad):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchCreatePage):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchUnableToImplementPolicy):
+        (WebCore::SVGEmptyFrameLoaderClient::revertToProvisionalState):
+        (WebCore::SVGEmptyFrameLoaderClient::setMainDocumentError):
+        (WebCore::SVGEmptyFrameLoaderClient::startDownload):
+        (WebCore::SVGEmptyFrameLoaderClient::committedLoad):
+        (WebCore::SVGEmptyFrameLoaderClient::shouldFallBack):
+        (WebCore::SVGEmptyFrameLoaderClient::willUseArchive):
+        (WebCore::SVGEmptyFrameLoaderClient::createDocumentLoader):
+        (WebCore::SVGEmptyFrameLoaderClient::createFrame):
+        (WebCore::SVGEmptyFrameLoaderClient::createPlugin):
+        (WebCore::SVGEmptyFrameLoaderClient::createJavaAppletWidget):
+        (WebCore::SVGEmptyFrameLoaderClient::objectContentType):
+        (WebCore::SVGEmptyFrameLoaderClient::overrideMediaType):
+        (WebCore::SVGEmptyFrameLoaderClient::redirectDataToPlugin):
+        (WebCore::SVGEmptyFrameLoaderClient::windowObjectCleared):
+
 2007-01-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

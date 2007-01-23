@@ -27,6 +27,7 @@
 
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "Element.h"
 #include "HTMLNames.h"
 #include "RenderWidget.h"
@@ -94,8 +95,9 @@ bool PluginTokenizer::writeRawData(const char* data, int len)
     if (!m_embedElement) {
         createDocumentStructure();
 
-        if (m_doc->frame()->settings()->arePluginsEnabled()) {
-            m_doc->frame()->loader()->redirectDataToPlugin(static_cast<RenderWidget*>(m_embedElement->renderer())->widget());
+        Frame* frame = m_doc->frame();
+        if (frame->settings()->arePluginsEnabled()) {
+            frame->loader()->client()->redirectDataToPlugin(static_cast<RenderWidget*>(m_embedElement->renderer())->widget());
             finish();
         }
         

@@ -33,6 +33,7 @@
 #import "WebFrame.h"
 #undef private
 
+#import "DOMElementInternal.h"
 #import "WebBackForwardList.h"
 #import "WebChromeClient.h"
 #import "WebDataSourceInternal.h"
@@ -65,6 +66,7 @@
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
 #import <WebCore/AuthenticationMac.h>
+#import <WebCore/BlockExceptions.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
@@ -78,6 +80,7 @@
 #import <WebCore/HitTestResult.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/IconDatabase.h>
+#import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageCache.h>
@@ -89,6 +92,8 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebDataProtocol.h>
+#import <WebCore/Widget.h>
+#import <WebKit/DOMElement.h>
 #import <WebKit/DOMHTMLFormElement.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/PassRefPtr.h>
@@ -203,13 +208,6 @@ void WebFrameLoaderClient::forceLayoutForNonHTML()
 void WebFrameLoaderClient::setCopiesOnScroll()
 {
     [[[m_webFrame->_private->webFrameView _scrollView] contentView] setCopiesOnScroll:YES];
-}
-
-void WebFrameLoaderClient::detachedFromParent1()
-{
-    Frame* coreFrame = core(m_webFrame.get());
-    if (coreFrame)
-        coreFrame->loader()->saveScrollPositionAndViewStateToItem(coreFrame->loader()->currentHistoryItem());
 }
 
 void WebFrameLoaderClient::detachedFromParent2()
@@ -911,8 +909,11 @@ PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const Reso
 // Once that task is complete, this will go away
 void WebFrameLoaderClient::setTitle(const String& title, const KURL& URL)
 {
+    NSURL* nsURL = canonicalURL(URL.getNSURL());
+    if(!nsURL)
+        return;
     NSString *titleNSString = title;
-    [[[WebHistory optionalSharedHistory] itemForURL:URL.getNSURL()] setTitle:titleNSString];
+    [[[WebHistory optionalSharedHistory] itemForURL:nsURL] setTitle:titleNSString];
     if (HistoryItem* item = core(m_webFrame.get())->loader()->currentHistoryItem())
         item->setTitle(title);
 }
@@ -1067,6 +1068,96 @@ bool WebFrameLoaderClient::canCachePage() const
 {
     // We can only cache HTML pages right now
     return [[[m_webFrame.get() dataSource] representation] isKindOfClass:[WebHTMLRepresentation class]];
+}
+
+Frame* WebFrameLoaderClient::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
+                                         const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
+{
+    WebFrameBridge* bridge = m_webFrame->_private->bridge;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    
+    return [bridge createChildFrameNamed:name
+                   withURL:url.getNSURL()
+                   referrer:referrer 
+                   ownerElement:ownerElement
+                   allowsScrolling:allowsScrolling
+                   marginWidth:marginWidth
+                   marginHeight:marginHeight];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return 0;
+}
+
+ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const String& mimeType)
+{
+    WebFrameBridge* bridge = m_webFrame->_private->bridge;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return (ObjectContentType)[bridge determineObjectFromMIMEType:mimeType URL:url.getNSURL()];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return ObjectContentNone;
+}
+
+static NSArray* nsArray(const Vector<String>& vector)
+{
+    unsigned len = vector.size();
+    NSMutableArray* array = [NSMutableArray arrayWithCapacity:len];
+    for (unsigned x = 0; x < len; x++)
+        [array addObject:vector[x]];
+    return array;
+}
+
+Widget* WebFrameLoaderClient::createPlugin(Element* element, const KURL& url, const Vector<String>& paramNames,
+                                           const Vector<String>& paramValues, const String& mimeType, bool loadManually)
+{
+    WebFrameBridge* bridge = m_webFrame->_private->bridge;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return new Widget([bridge viewForPluginWithURL:url.getNSURL()
+                              attributeNames:nsArray(paramNames)
+                              attributeValues:nsArray(paramValues)
+                              MIMEType:mimeType
+                              DOMElement:[DOMElement _elementWith:element]
+                              loadManually:loadManually]);
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    return 0;
+}
+
+void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [m_webFrame->_private->bridge redirectDataToPlugin:pluginWidget->getView()];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+WebCore::Widget* WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, Element* element, const KURL& baseURL, 
+                                                              const Vector<String>& paramNames, const Vector<String>& paramValues)
+{
+    Widget* result = new Widget;
+    
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    WebFrameBridge* bridge = m_webFrame->_private->bridge;
+    result->setView([bridge viewForJavaAppletWithFrame:NSMakeRect(0, 0, size.width(), size.height())
+                            attributeNames:nsArray(paramNames)
+                            attributeValues:nsArray(paramValues)
+                            baseURL:baseURL.getNSURL()
+                            DOMElement:[DOMElement _elementWith:element]]);    
+    END_BLOCK_OBJC_EXCEPTIONS;
+    
+    return result;
+}
+
+String WebFrameLoaderClient::overrideMediaType() const
+{
+    NSString* overrideType = [m_webFrame->_private->bridge overrideMediaType];
+    if (overrideType)
+        return overrideType;
+    return String();
+}
+
+void WebFrameLoaderClient::windowObjectCleared() const
+{
+    [m_webFrame->_private->bridge windowObjectCleared];
 }
 
 @implementation WebFramePolicyListener

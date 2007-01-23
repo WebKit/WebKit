@@ -103,22 +103,6 @@ FrameQt::FrameQt(Page* page, HTMLFrameOwnerElement* ownerElement,
     : Frame(page, ownerElement, frameLoader)
     , m_bindingRoot(0)
 {
-    Settings* settings = new Settings;
-    settings->setLoadsImagesAutomatically(true);
-    settings->setMinimumFontSize(5);
-    settings->setMinimumLogicalFontSize(5);
-    settings->setShouldPrintBackgrounds(true);
-    settings->setJavaScriptEnabled(true);
-
-    settings->setDefaultFixedFontSize(14);
-    settings->setDefaultFontSize(14);
-    settings->setSerifFontFamily("Times New Roman");
-    settings->setSansSerifFontFamily("Arial");
-    settings->setFixedFontFamily("Courier");
-    settings->setStandardFontFamily("Arial");
-
-    setSettings(settings);
-
     m_client = frameClient;
     m_client->setFrame(this);
 }

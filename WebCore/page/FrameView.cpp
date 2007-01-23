@@ -32,6 +32,7 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "HTMLDocument.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
@@ -549,7 +550,7 @@ void FrameView::setMediaType(const String& mediaType)
 String FrameView::mediaType() const
 {
     // See if we have an override type.
-    String overrideType = m_frame->loader()->overrideMediaType();
+    String overrideType = m_frame->loader()->client()->overrideMediaType();
     if (!overrideType.isNull())
         return overrideType;
     return d->m_mediaType;

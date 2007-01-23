@@ -379,7 +379,6 @@
 		656D373A0ADBA5DE00A4554D /* FormState.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37220ADBA5DE00A4554D /* FormState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D373B0ADBA5DE00A4554D /* FormState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656D37230ADBA5DE00A4554D /* FormState.cpp */; };
 		656D373C0ADBA5DE00A4554D /* FrameLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37240ADBA5DE00A4554D /* FrameLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		656D373D0ADBA5DE00A4554D /* FrameLoaderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 656D37250ADBA5DE00A4554D /* FrameLoaderMac.mm */; };
 		656D373E0ADBA5DE00A4554D /* FrameLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37260ADBA5DE00A4554D /* FrameLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D373F0ADBA5DE00A4554D /* ResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37270ADBA5DE00A4554D /* ResourceLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37410ADBA5DE00A4554D /* MainResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37290ADBA5DE00A4554D /* MainResourceLoader.h */; };
@@ -3472,7 +3471,6 @@
 		656D37220ADBA5DE00A4554D /* FormState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FormState.h; sourceTree = "<group>"; };
 		656D37230ADBA5DE00A4554D /* FormState.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = FormState.cpp; sourceTree = "<group>"; };
 		656D37240ADBA5DE00A4554D /* FrameLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameLoader.h; sourceTree = "<group>"; };
-		656D37250ADBA5DE00A4554D /* FrameLoaderMac.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = FrameLoaderMac.mm; sourceTree = "<group>"; };
 		656D37260ADBA5DE00A4554D /* FrameLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameLoaderClient.h; sourceTree = "<group>"; };
 		656D37270ADBA5DE00A4554D /* ResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceLoader.h; sourceTree = "<group>"; };
 		656D37290ADBA5DE00A4554D /* MainResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MainResourceLoader.h; sourceTree = "<group>"; };
@@ -7863,7 +7861,6 @@
 			isa = PBXGroup;
 			children = (
 				656D371F0ADBA5DE00A4554D /* DocumentLoaderMac.mm */,
-				656D37250ADBA5DE00A4554D /* FrameLoaderMac.mm */,
 				93A1EAA70A563508006960A0 /* ImageDocumentMac.h */,
 				93A1EA9F0A5634C9006960A0 /* ImageDocumentMac.mm */,
 				656D371A0ADBA5DE00A4554D /* LoaderNSURLExtras.h */,
@@ -12197,7 +12194,6 @@
 				656D37350ADBA5DE00A4554D /* WebDataProtocol.mm in Sources */,
 				656D37370ADBA5DE00A4554D /* DocumentLoaderMac.mm in Sources */,
 				656D373B0ADBA5DE00A4554D /* FormState.cpp in Sources */,
-				656D373D0ADBA5DE00A4554D /* FrameLoaderMac.mm in Sources */,
 				656D37440ADBA5DE00A4554D /* NetscapePlugInStreamLoaderMac.mm in Sources */,
 				0668E1900ADD9640004128E0 /* PopupMenuMac.mm in Sources */,
 				4B3043C90AE0371D00A82647 /* SoundMac.mm in Sources */,

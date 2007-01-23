@@ -28,6 +28,11 @@ class QWebFrame;
 class QUrl;
 
 class QWebPagePrivate;
+class QWebFrameData;
+
+namespace WebCore {
+    class FrameLoaderClientQt;
+}
 
 class QWebPage : public QWidget
 {
@@ -36,8 +41,6 @@ public:
     QWebPage(QWidget *parent);
     ~QWebPage();
 
-    virtual QWebFrame *createFrame(QWebFrame *parentFrame);
-    //virtual QWebPage *createPage(...);
 
     void open(const QUrl &url);
 
@@ -65,9 +68,14 @@ signals:
      */
     void loadFinished(QWebFrame *frame);
 
+protected:
+    virtual QWebFrame *createFrame(QWebFrame *parentFrame, QWebFrameData *frameData);
+    //virtual QWebPage *createPage(...);
    
 private:
     friend class QWebFrame;
+    friend class QWebPagePrivate;
+    friend class WebCore::FrameLoaderClientQt;
     QWebPagePrivate *d;
 };
 

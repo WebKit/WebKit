@@ -1,3 +1,30 @@
+2007-01-23  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Maciej
+
+        Make the last remaining pieces of the FrameLoader platform 
+        independent. Move most of the code over to WebFrameLoaderClient.
+        Some smaller cleanups in the WebFrameBridge, and moved some
+        platform independent functionality over to the shared code
+        in WebCore.
+
+        * Webcoresupport/WebFrameBridge.mm:
+        (-[WebFrameBridge finishInitializingWithPage:frameName:frameView:ownerElement:]):
+        (-[WebFrameBridge createChildFrameNamed:withURL:referrer:ownerElement:allowsScrolling:marginWidth:marginHeight:]):
+        (-[WebFrameBridge viewForPluginWithURL:attributeNames:attributeValues:MIMEType:DOMElement:loadManually:]):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::setTitle):
+        (WebFrameLoaderClient::createFrame):
+        (WebFrameLoaderClient::objectContentType):
+        (nsArray):
+        (WebFrameLoaderClient::createPlugin):
+        (WebFrameLoaderClient::redirectDataToPlugin):
+        (nsMutableArray):
+        (WebFrameLoaderClient::createJavaAppletWidget):
+        (WebFrameLoaderClient::overrideMediaType):
+        (WebFrameLoaderClient::windowObjectCleared):
+
 2007-01-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

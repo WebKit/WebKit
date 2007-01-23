@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * All rights reserved.
  *
@@ -25,16 +26,20 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #include "config.h"
 #include "FrameLoaderClientQt.h"
+#include "FrameTree.h"
+#include "FrameView.h"
 #include "DocumentLoader.h"
 #include "ResourceResponse.h"
 #include "Page.h"
 #include "ProgressTracker.h"
+#include "ResourceRequest.h"
 
 #include "qwebpage.h"
 #include "qwebframe.h"
+#include "qwebframe_p.h"
 
 #include "qdebug.h"
 
@@ -248,13 +253,6 @@ void FrameLoaderClientQt::willCloseDocument()
     notImplemented();
 }
 
-
-void FrameLoaderClientQt::detachedFromParent1()
-{
-    notImplemented();
-}
-
-
 void FrameLoaderClientQt::detachedFromParent2()
 {
     notImplemented();
@@ -263,13 +261,13 @@ void FrameLoaderClientQt::detachedFromParent2()
 
 void FrameLoaderClientQt::detachedFromParent3()
 {
-    notImplemented();
+    m_webFrame->d->frameView = 0;
 }
 
 
 void FrameLoaderClientQt::detachedFromParent4()
 {
-    notImplemented();
+    delete m_webFrame;
 }
 
 
@@ -361,6 +359,7 @@ void FrameLoaderClientQt::dispatchShow()
 
 void FrameLoaderClientQt::cancelPolicyCheck()
 {
+    qDebug() << "FrameLoaderClientQt::cancelPolicyCheck";
     m_policyFunction = 0;
 }
 
@@ -568,7 +567,7 @@ bool FrameLoaderClientQt::canHandleRequest(const WebCore::ResourceRequest&) cons
     return true;
 }
 
-void FrameLoaderClientQt::partClearedInBegin()
+void FrameLoaderClientQt::windowObjectCleared() const
 {
     emit m_webFrame->cleared();
 }
@@ -769,6 +768,73 @@ bool FrameLoaderClientQt::willUseArchive(WebCore::ResourceLoader*, const WebCore
 {
     notImplemented();
     return false;
+}
+
+Frame* FrameLoaderClientQt::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
+                                        const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
+{
+    qDebug() << ">>>>>>>>>>> createFrame";
+    QWebFrameData frameData;
+    frameData.url = url;
+    frameData.name = name;
+    frameData.ownerElement = ownerElement;
+    frameData.referrer = referrer;
+    frameData.allowsScrolling = allowsScrolling;
+    frameData.marginWidth = marginWidth;
+    frameData.marginHeight = marginHeight;
+        
+
+    QWebFrame* webFrame = m_webFrame->page()->createFrame(m_webFrame, &frameData);
+
+    RefPtr<Frame> childFrame = webFrame->d->frame;
+
+    // FIXME: All of the below should probably be moved over into WebCore
+    childFrame->tree()->setName(name);
+    m_frame->tree()->appendChild(childFrame);
+    // ### set override encoding if we have one
+
+    FrameLoadType loadType = m_frame->loader()->loadType();
+    FrameLoadType childLoadType = FrameLoadTypeInternal;
+
+    childFrame->loader()->load(frameData.url, frameData.referrer, childLoadType,
+                             String(), 0, 0, WTF::HashMap<String, String>());
+    
+    // The frame's onload handler may have removed it from the document.
+    if (!childFrame->tree()->parent())
+        return 0;
+    
+    return childFrame.get();
+}
+
+ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const String& mimeType)
+{
+    notImplemented();
+    return ObjectContentType();
+}
+
+Widget* FrameLoaderClientQt::createPlugin(Element*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool)
+{
+    notImplemented();
+    return 0;
+}
+
+void FrameLoaderClientQt::redirectDataToPlugin(Widget* pluginWidget)
+{
+    notImplemented();
+    return;
+}
+
+Widget* FrameLoaderClientQt::createJavaAppletWidget(const IntSize&, Element*, const KURL& baseURL,
+                                                    const Vector<String>& paramNames, const Vector<String>& paramValues)
+{
+    notImplemented();
+    return 0;
+}
+
+String FrameLoaderClientQt::overrideMediaType() const
+{
+    notImplemented();
+    return String();
 }
 
 }

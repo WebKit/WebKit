@@ -52,6 +52,7 @@
 #include "FrameView.h"
 #include "HistoryItem.h"
 #include "HTMLFormElement.h"
+#include "HTMLFrameElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTTPParsers.h"
@@ -397,7 +398,23 @@ bool FrameLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const String
 
 Frame* FrameLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const KURL& url, const String& name, const String& referrer)
 {
-    Frame* frame = createFrame(url, name, ownerElement, referrer);
+    bool allowsScrolling = true;
+    int marginWidth = -1;
+    int marginHeight = -1;
+    if (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag)) {
+        HTMLFrameElementBase* o = static_cast<HTMLFrameElementBase*>(ownerElement);
+        allowsScrolling = o->scrollingMode() != ScrollbarAlwaysOff;
+        marginWidth = o->getMarginWidth();
+        marginHeight = o->getMarginHeight();
+    }
+
+    bool hideReferrer;
+    if (!canLoad(url, referrer, hideReferrer))
+        return 0;
+
+    Frame* frame = m_client->createFrame(url, name, ownerElement, hideReferrer ? String() : referrer,
+                                         allowsScrolling, marginWidth, marginHeight);
+
     if (!frame)  {
         checkEmitLoadEvent();
         return 0;
@@ -1334,7 +1351,7 @@ bool FrameLoader::requestObject(RenderPart* renderer, const String& url, const A
 
 bool FrameLoader::shouldUsePlugin(const KURL& url, const String& mimeType, bool hasFallback, bool& useFallback)
 {
-    ObjectContentType objectType = objectContentType(url, mimeType);
+    ObjectContentType objectType = m_client->objectContentType(url, mimeType);
     // If an object's content can't be handled and it has no fallback, let
     // it be handled as a plugin to show the broken plugin icon.
     useFallback = objectType == ObjectContentNone && hasFallback;
@@ -1351,7 +1368,12 @@ bool FrameLoader::loadPlugin(RenderPart* renderer, const KURL& url, const String
         if (renderer->node() && renderer->node()->isElementNode())
             pluginElement = static_cast<Element*>(renderer->node());
 
-        widget = createPlugin(pluginElement, url, paramNames, paramValues, mimeType);
+        bool hideReferrer;
+        if (!canLoad(url, outgoingReferrer(), hideReferrer))
+            return false;
+
+        widget = m_client->createPlugin(pluginElement, url, paramNames, paramValues, mimeType,
+                                        m_frame->document()->isPluginDocument());
         if (widget) {
             renderer->setWidget(widget);
             m_containsPlugIns = true;
@@ -2857,7 +2879,7 @@ void FrameLoader::detachFromParent()
 
     closeURL();
     stopAllLoaders();
-    m_client->detachedFromParent1();
+    saveScrollPositionAndViewStateToItem(currentHistoryItem());
     detachChildren();
     m_client->detachedFromParent2();
     setDocumentLoader(0);
@@ -2869,7 +2891,7 @@ void FrameLoader::detachFromParent()
         m_frame->pageDestroyed();
     }
 #if PLATFORM(MAC)
-    closeBridge();
+    [Mac(m_frame)->bridge() close];
 #endif
     m_client->detachedFromParent4();
 }
@@ -4226,5 +4248,47 @@ String FrameLoader::referrer() const
     return documentLoader()->request().httpReferrer();
 }
 
+void FrameLoader::partClearedInBegin()
+{
+    if (m_frame->settings()->isJavaScriptEnabled())
+        m_client->windowObjectCleared();
+}
+
+Widget* FrameLoader::createJavaAppletWidget(const IntSize& size, Element* element, const HashMap<String, String>& args)
+{
+    String baseURLString;
+    Vector<String> paramNames;
+    Vector<String> paramValues;
+    HashMap<String, String>::const_iterator end = args.end();
+    for (HashMap<String, String>::const_iterator it = args.begin(); it != end; ++it) {
+        if (it->first.lower() == "baseurl")
+            baseURLString = it->second;
+        paramNames.append(it->first);
+        paramValues.append(it->second);
+    }
+    
+    if (baseURLString.isEmpty())
+        baseURLString = m_frame->document()->baseURL();
+    KURL baseURL = completeURL(baseURLString);
+
+    Widget* widget = m_client->createJavaAppletWidget(size, element, baseURL, paramNames, paramValues);
+    if(widget)
+        m_frame->view()->addChild(widget);
+    return widget;
+}
+
+void FrameLoader::didChangeTitle(DocumentLoader* loader)
+{
+    m_client->didChangeTitle(loader);
+
+    // The title doesn't get communicated to the WebView until we are committed.
+    if (loader->isCommitted()) {
+        // Must update the entries in the back-forward list too.
+        // This must go through the WebFrame because it has the right notion of the current b/f item.
+        m_client->setTitle(loader->title(), loader->urlForHistory());
+        m_client->setMainFrameDocumentReady(true); // update observers with new DOMDocument
+        m_client->dispatchDidReceiveTitle(loader->title());
+    }
+}
 
 } // namespace WebCore
