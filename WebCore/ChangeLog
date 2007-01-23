@@ -1,3 +1,13 @@
+2007-01-23  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Follow-up to the fix below for 4843226.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::transparencyClipBox): Has to be recursive or we will miss 
+        out on grandchildren!
+
 2007-01-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

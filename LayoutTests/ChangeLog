@@ -1,3 +1,14 @@
+2007-01-23  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Updated test for 4843226 to include a grandchild.
+
+        * fast/clip/nestedTransparencyClip-expected.checksum:
+        * fast/clip/nestedTransparencyClip-expected.png:
+        * fast/clip/nestedTransparencyClip-expected.txt:
+        * fast/clip/nestedTransparencyClip.html:
+
 2007-01-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john
