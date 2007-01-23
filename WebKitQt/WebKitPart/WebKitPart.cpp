@@ -33,6 +33,7 @@
 #include "FrameView.h"
 #include "ChromeClientQt.h"
 #include "ContextMenuClientQt.h"
+#include "DragClientQt.h"
 #include "EditorClientQt.h"
 #include "KURL.h"
 
@@ -107,7 +108,7 @@ void WebKitPart::initView(QWidget* parentWidget, GUIProfile prof)
     m_client = new WebKitPartClient(this);
  
     // Initialize WebCore in Qt platform mode...
-    Page* page = new Page(new ChromeClientQt(), new ContextMenuClientQt(), new EditorClientQt());
+    Page* page = new Page(new ChromeClientQt(), new ContextMenuClientQt(), new EditorClientQt(), new DragClientQt());
     Frame* frame = new FrameQt(page, 0, m_client);
 
     m_frame = frame;

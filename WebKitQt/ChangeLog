@@ -1,3 +1,16 @@
+2007-01-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Qt build stubs for Drop logic
+
+        * WebCoreSupport/DragClientQt.cpp: Added.
+        (WebCore::DragClientQt::actionMaskForDrag):
+        (WebCore::DragClientQt::willPerformDragDestinationAction):
+        * WebCoreSupport/DragClientQt.h: Added.
+        * WebKitPart/WebKitPart.cpp:
+        (WebKitPart::initView):
+
 2007-01-19  John Sullivan  <sullivan@apple.com>
 
         Added stubs for new callbacks, to try to avoid breaking the Qt port.
