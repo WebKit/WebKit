@@ -1,0 +1,5 @@
+This test is for a bug we had with clipping transparency layers. The bug is visual, so the pixel test is more worthwhile. Below, both "Applications" and "Productivity" should appear. Before, we were clipping out "Productivity."<br><br>
+
+<div style="opacity:.95;">Applications
+    <div style="position:absolute; opacity:.95;">Productivity</div>
+</div>

@@ -458,11 +458,8 @@ static IntRect transparencyClipBox(RenderLayer* l)
     
     // Note: we don't have to walk z-order lists since transparent elements always establish
     // a stacking context.  This means we can just walk the layer tree directly. 
-    for (RenderLayer* curr = l->firstChild(); curr; curr = curr->nextSibling()) {
-        // Transparent children paint in a different transparency layer, and so we exclude them.
-        if (!curr->isTransparent())
-            clipRect.unite(curr->absoluteBoundingBox());
-    }
+    for (RenderLayer* curr = l->firstChild(); curr; curr = curr->nextSibling())
+        clipRect.unite(curr->absoluteBoundingBox());
     
     return clipRect;
 }

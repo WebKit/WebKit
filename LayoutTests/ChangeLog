@@ -1,3 +1,15 @@
+2007-01-23  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Test for <rdar://problem/4843226> REGRESSION: Pull down menu 
+        appears clipped at http://istweb.apple.com/
+
+        * fast/clip/nestedTransparencyClip-expected.checksum: Added.
+        * fast/clip/nestedTransparencyClip-expected.png: Added.
+        * fast/clip/nestedTransparencyClip-expected.txt: Added.
+        * fast/clip/nestedTransparencyClip.html: Added.
+
 2007-01-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john
