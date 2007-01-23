@@ -67,12 +67,12 @@ public:
     virtual short lineHeight(bool b, bool isRootLineBox = false) const;
     virtual short baselinePosition(bool b, bool isRootLineBox = false) const;
     virtual void paint(PaintInfo&, int parentX, int parentY);
- 
+
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
-    
-    virtual void drawMarkersIfNeeded(GraphicsContext*, const FloatRect&, const Path&) const;
+
+    FloatRect drawMarkersIfNeeded(GraphicsContext*, const FloatRect&, const Path&) const;
     virtual FloatRect strokeBBox() const;
 
     bool hasRelativeValues() const;
@@ -83,6 +83,7 @@ private:
     mutable Path m_path;
     mutable FloatRect m_fillBBox;
     mutable FloatRect m_strokeBbox;
+    FloatRect m_markerBounds;
     AffineTransform m_matrix;
     IntRect m_absoluteBounds;
 };

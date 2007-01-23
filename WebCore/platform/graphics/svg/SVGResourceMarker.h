@@ -28,11 +28,11 @@
 
 #ifdef SVG_SUPPORT
 
+#include "FloatRect.h"
 #include "SVGResource.h"
 
 namespace WebCore {
 
-    class FloatRect;
     class GraphicsContext;
     class RenderSVGContainer;
 
@@ -54,6 +54,7 @@ namespace WebCore {
         void setUseStrokeWidth(bool useStrokeWidth = true) { m_useStrokeWidth = useStrokeWidth; }
         bool useStrokeWidth() const { return m_useStrokeWidth; }
 
+        FloatRect cachedBounds() const;
         void draw(GraphicsContext*, const FloatRect&, double x, double y, double strokeWidth = 1, double angle = 0);
 
         virtual bool isMarker() const { return true; }
@@ -61,6 +62,7 @@ namespace WebCore {
 
     private:
         double m_refX, m_refY;
+        FloatRect m_cachedBounds;
         float m_angle;
         RenderSVGContainer* m_marker;
         bool m_useStrokeWidth;

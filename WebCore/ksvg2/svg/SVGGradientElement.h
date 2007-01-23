@@ -54,8 +54,6 @@ namespace WebCore {
 
         virtual SVGResource* canvasResource();
 
-        virtual void childrenChanged();
-
     protected:
         friend class SVGPaintServerGradient;
         friend class SVGLinearGradientElement;

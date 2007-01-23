@@ -24,7 +24,6 @@
 #include "config.h"
 
 #ifdef SVG_SUPPORT
-
 #include "SVGInlineFlowBox.h"
 
 #include "GraphicsContext.h"
@@ -37,8 +36,10 @@
 #include "SVGResourceFilter.h"
 #include "SVGResourceMasker.h"
 #include "SVGTextPositioningElement.h"
+#include "SVGURIReference.h"
 
-using namespace std;
+using std::min;
+using std::max;
 
 namespace WebCore {
 
@@ -67,16 +68,36 @@ void paintSVGInlineFlow(InlineFlowBox* flow, RenderObject* object, RenderObject:
 
     FloatRect boundingBox(tx + flow->xPos(), ty + flow->yPos(), flow->width(), flow->height());
 
+    SVGElement* svgElement = static_cast<SVGElement*>(object->element());
+    ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
+
+    SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(svgElement);
     const SVGRenderStyle* svgStyle = object->style()->svgStyle();
-    if (SVGResourceClipper* clipper = getClipperById(object->document(), svgStyle->clipPath().substring(1)))
-        clipper->applyClip(paintInfo.context, boundingBox);
 
-    if (SVGResourceMasker* masker = getMaskerById(object->document(), svgStyle->maskElement().substring(1)))
-        masker->applyMask(paintInfo.context, boundingBox);
+    AtomicString filterId(SVGURIReference::getTarget(svgStyle->filter()));
+    AtomicString clipperId(SVGURIReference::getTarget(svgStyle->clipPath()));
+    AtomicString maskerId(SVGURIReference::getTarget(svgStyle->maskElement()));
 
-    SVGResourceFilter* filter = getFilterById(object->document(), svgStyle->filter().substring(1));
+    SVGResourceFilter* filter = getFilterById(object->document(), filterId);
+    SVGResourceClipper* clipper = getClipperById(object->document(), clipperId);
+    SVGResourceMasker* masker = getMaskerById(object->document(), maskerId);
+
     if (filter)
         filter->prepareFilter(paintInfo.context, boundingBox);
+    else if (!filterId.isEmpty())
+        svgElement->document()->accessSVGExtensions()->addPendingResource(filterId, styledElement);
+
+    if (clipper) {
+        clipper->addClient(styledElement);
+        clipper->applyClip(paintInfo.context, boundingBox);
+    } else if (!clipperId.isEmpty())
+        svgElement->document()->accessSVGExtensions()->addPendingResource(clipperId, styledElement);
+
+    if (masker) {
+        masker->addClient(styledElement);
+        masker->applyMask(paintInfo.context, boundingBox);
+    } else if (!maskerId.isEmpty())
+        svgElement->document()->accessSVGExtensions()->addPendingResource(maskerId, styledElement);
 
     RenderObject::PaintInfo pi(paintInfo);
 

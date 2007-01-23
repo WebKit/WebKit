@@ -1,3 +1,79 @@
+2007-01-23  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam.
+
+        Fix dynamic creation/updates of markers, masks, clipPaths, and several tiny pattern issues.
+        Added 16 (!) new layout tests covering quite some weird scenerios - Batik & Opera do have problems, we don't.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12380
+        Fixes: svg/custom/image-with-transform-clip-filter.svg (filter shows up again)
+
+        Added: svg/custom/clip-path-child-changes.svg
+        Added: svg/custom/clip-path-href-changes.svg
+        Added: svg/custom/clip-path-units-changes.svg
+        Added: svg/custom/deep-dynamic-updates.svg
+        Added: svg/custom/js-late-clipPath-and-object-creation.svg
+        Added: svg/custom/js-late-clipPath-creation.svg
+        Added: svg/custom/js-late-marker-and-object-creation.svg
+        Added: svg/custom/js-late-marker-creation.svg
+        Added: svg/custom/js-late-mask-and-object-creation.svg
+        Added: svg/custom/js-late-mask-creation.svg
+        Added: svg/custom/js-update-pattern-child.svg
+        Added: svg/custom/marker-changes.svg
+        Added: svg/custom/marker-child-changes.svg
+        Added: svg/custom/marker-viewBox-changes.svg
+        Added: svg/custom/mask-changes.svg
+        Added: svg/custom/mask-child-changes.svg
+
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (WebCore::KSVGPainterFactory::fillPaintServer):
+        (WebCore::KSVGPainterFactory::strokePaintServer):
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::notifyAttributeChange):
+        * ksvg2/svg/SVGClipPathElement.h:
+        * ksvg2/svg/SVGGradientElement.cpp:
+        * ksvg2/svg/SVGGradientElement.h:
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::canvasResource):
+        (WebCore::SVGMarkerElement::notifyAttributeChange):
+        * ksvg2/svg/SVGMarkerElement.h:
+        * ksvg2/svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::notifyAttributeChange):
+        * ksvg2/svg/SVGMaskElement.h:
+        * ksvg2/svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::notifyAttributeChange):
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::notifyAttributeChange):
+        (WebCore::SVGStyledElement::notifyResourceParentIfExistant):
+        (WebCore::SVGStyledElement::rebuildRenderer):
+        * ksvg2/svg/SVGStyledElement.h:
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::notifyAttributeChange):
+        * platform/graphics/svg/SVGResource.cpp:
+        (WebCore::SVGResource::invalidate):
+        (WebCore::SVGResource::addClient):
+        (WebCore::SVGResource::repaintClients):
+        * platform/graphics/svg/SVGResource.h:
+        * platform/graphics/svg/SVGResourceMarker.cpp:
+        (WebCore::SVGResourceMarker::draw):
+        (WebCore::SVGResourceMarker::cachedBounds):
+        * platform/graphics/svg/SVGResourceMarker.h:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::layout):
+        (WebCore::RenderPath::getAbsoluteRepaintRect):
+        (WebCore::RenderPath::paint):
+        (WebCore::drawMarkerWithData):
+        (WebCore::RenderPath::drawMarkersIfNeeded):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::getAbsoluteRepaintRect):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        (WebCore::RenderSVGImage::getAbsoluteRepaintRect):
+        * rendering/SVGInlineFlowBox.cpp:
+        (WebCore::paintSVGInlineFlow):
+
 2007-01-23  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

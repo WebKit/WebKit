@@ -29,6 +29,7 @@
 #include <math.h>
 
 #include "GraphicsContext.h"
+#include "KCanvasRenderingStyle.h"
 #include "RenderSVGContainer.h"
 #include "PointerEventsHitRules.h"
 #include "SVGPaintServer.h"
@@ -36,8 +37,9 @@
 #include "SVGResourceFilter.h"
 #include "SVGResourceMasker.h"
 #include "SVGResourceMarker.h"
-#include "KCanvasRenderingStyle.h"
 #include "SVGStyledElement.h"
+#include "SVGURIReference.h"
+
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -120,7 +122,7 @@ void RenderPath::layout()
     bool checkForRepaint = checkForRepaintDuringLayout();
     if (selfNeedsLayout() && checkForRepaint)
         oldBounds = m_absoluteBounds;
-    
+
     setPath(static_cast<SVGStyledElement*>(element())->toPathData());
 
     m_absoluteBounds = getAbsoluteRepaintRect();
@@ -130,7 +132,7 @@ void RenderPath::layout()
 
     if (selfNeedsLayout() && checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
-        
+
     setNeedsLayout(false);
 }
 
@@ -138,8 +140,11 @@ IntRect RenderPath::getAbsoluteRepaintRect()
 {
     FloatRect repaintRect = absoluteTransform().mapRect(relativeBBox(true));
 
+    // Markers can expand the bounding box
+    repaintRect.unite(m_markerBounds);
+
     // Filters can expand the bounding box
-    SVGResourceFilter* filter = getFilterById(document(), style()->svgStyle()->filter().substring(1));
+    SVGResourceFilter* filter = getFilterById(document(), SVGURIReference::getTarget(style()->svgStyle()->filter()));
     if (filter)
         repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
 
@@ -172,19 +177,41 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
     paintInfo.context->save();
     paintInfo.context->concatCTM(localTransform());
 
-    // setup to apply filters
-    SVGResourceFilter* filter = getFilterById(document(), style()->svgStyle()->filter().substring(1));
+    FloatRect strokeBBox = relativeBBox(true);
+
+    SVGElement* svgElement = static_cast<SVGElement*>(element());
+    ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
+
+    SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(svgElement);
+    const SVGRenderStyle* svgStyle = style()->svgStyle();
+
+    AtomicString filterId(SVGURIReference::getTarget(svgStyle->filter()));
+    AtomicString clipperId(SVGURIReference::getTarget(svgStyle->clipPath()));
+    AtomicString maskerId(SVGURIReference::getTarget(svgStyle->maskElement()));
+
+    SVGResourceFilter* filter = getFilterById(document(), filterId);
+    SVGResourceClipper* clipper = getClipperById(document(), clipperId);
+    SVGResourceMasker* masker = getMaskerById(document(), maskerId);
+
     if (filter)
-        filter->prepareFilter(paintInfo.context, relativeBBox(true));
+        filter->prepareFilter(paintInfo.context, strokeBBox);
+    else if (!filterId.isEmpty())
+        svgElement->document()->accessSVGExtensions()->addPendingResource(filterId, styledElement);
 
-    if (SVGResourceClipper* clipper = getClipperById(document(), style()->svgStyle()->clipPath().substring(1)))
-        clipper->applyClip(paintInfo.context, relativeBBox(true));
+    if (clipper) {
+        clipper->addClient(styledElement);
+        clipper->applyClip(paintInfo.context, strokeBBox);
+    } else if (!clipperId.isEmpty())
+        svgElement->document()->accessSVGExtensions()->addPendingResource(clipperId, styledElement);
 
-    if (SVGResourceMasker* masker = getMaskerById(document(), style()->svgStyle()->maskElement().substring(1)))
-        masker->applyMask(paintInfo.context, relativeBBox(true));
+    if (masker) {
+        masker->addClient(styledElement);
+        masker->applyMask(paintInfo.context, strokeBBox);
+    } else if (!maskerId.isEmpty())
+        svgElement->document()->accessSVGExtensions()->addPendingResource(maskerId, styledElement);
 
     paintInfo.context->beginPath();
-    
+
     SVGPaintServer* fillPaintServer = KSVGPainterFactory::fillPaintServer(style(), this);
     if (fillPaintServer) {
         paintInfo.context->addPath(m_path);
@@ -197,11 +224,11 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
         strokePaintServer->draw(paintInfo.context, this, ApplyToStrokeTargetType);
     }
 
-    drawMarkersIfNeeded(paintInfo.context, paintInfo.rect, m_path);
+    m_markerBounds = drawMarkersIfNeeded(paintInfo.context, paintInfo.rect, m_path);
 
     // actually apply the filter
     if (filter)
-        filter->applyFilter(paintInfo.context, relativeBBox(true));
+        filter->applyFilter(paintInfo.context, strokeBBox);
 
     paintInfo.context->restore();
 }
@@ -245,7 +272,7 @@ struct MarkerData {
     FloatPoint inslopePoints[2];
     FloatPoint outslopePoints[2];
     MarkerType type;
-    SVGResourceMarker *marker;
+    SVGResourceMarker* marker;
 };
 
 struct DrawMarkersData {
@@ -272,14 +299,14 @@ static void drawMarkerWithData(GraphicsContext* context, MarkerData &data)
 {
     if (!data.marker)
         return;
-    
+
     FloatPoint inslopeChange = data.inslopePoints[1] - FloatSize(data.inslopePoints[0].x(), data.inslopePoints[0].y());
     FloatPoint outslopeChange = data.outslopePoints[1] - FloatSize(data.outslopePoints[0].x(), data.outslopePoints[0].y());
-    
+
     static const double deg2rad = M_PI / 180.0;
     double inslope = atan2(inslopeChange.y(), inslopeChange.x()) / deg2rad;
     double outslope = atan2(outslopeChange.y(), outslopeChange.x()) / deg2rad;
-    
+
     double angle = 0.0;
     switch (data.type) {
         case Start:
@@ -291,7 +318,7 @@ static void drawMarkerWithData(GraphicsContext* context, MarkerData &data)
         case End:
             angle = inslope;
     }
-    
+
     data.marker->draw(context, FloatRect(), data.origin.x(), data.origin.y(), data.strokeWidth, angle);
 }
 
@@ -353,19 +380,43 @@ static void drawStartAndMidMarkers(void* info, const PathElement* element)
     data.elementIndex++;
 }
 
-void RenderPath::drawMarkersIfNeeded(GraphicsContext* context, const FloatRect& rect, const Path& path) const
+FloatRect RenderPath::drawMarkersIfNeeded(GraphicsContext* context, const FloatRect& rect, const Path& path) const
 {
     Document* doc = document();
+
+    SVGElement* svgElement = static_cast<SVGElement*>(element());
+    ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
+
+    SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(svgElement);
     const SVGRenderStyle* svgStyle = style()->svgStyle();
 
-    SVGResourceMarker* startMarker = getMarkerById(doc, svgStyle->startMarker().substring(1));
-    SVGResourceMarker* midMarker = getMarkerById(doc, svgStyle->midMarker().substring(1));
-    SVGResourceMarker* endMarker = getMarkerById(doc, svgStyle->endMarker().substring(1));
-    
-    if (!startMarker && !midMarker && !endMarker)
-        return;
+    AtomicString startMarkerId(SVGURIReference::getTarget(svgStyle->startMarker()));
+    AtomicString midMarkerId(SVGURIReference::getTarget(svgStyle->midMarker()));
+    AtomicString endMarkerId(SVGURIReference::getTarget(svgStyle->endMarker()));
 
-    double strokeWidth = KSVGPainterFactory::cssPrimitiveToLength(this, style()->svgStyle()->strokeWidth(), 1.0);
+    SVGResourceMarker* startMarker = getMarkerById(doc, startMarkerId);
+    SVGResourceMarker* midMarker = getMarkerById(doc, midMarkerId);
+    SVGResourceMarker* endMarker = getMarkerById(doc, endMarkerId);
+
+    if (!startMarker && !startMarkerId.isEmpty())
+        svgElement->document()->accessSVGExtensions()->addPendingResource(startMarkerId, styledElement);
+    else if (startMarker)
+        startMarker->addClient(styledElement);
+
+    if (!midMarker && !midMarkerId.isEmpty())
+        svgElement->document()->accessSVGExtensions()->addPendingResource(midMarkerId, styledElement);
+    else if (midMarker)
+        midMarker->addClient(styledElement);
+
+    if (!endMarker && !endMarkerId.isEmpty())
+        svgElement->document()->accessSVGExtensions()->addPendingResource(endMarkerId, styledElement);
+    else if (endMarker)
+        endMarker->addClient(styledElement);
+
+    if (!startMarker && !midMarker && !endMarker)
+        return FloatRect();
+
+    double strokeWidth = KSVGPainterFactory::cssPrimitiveToLength(this, svgStyle->strokeWidth(), 1.0);
     DrawMarkersData data(context, startMarker, midMarker, strokeWidth);
 
     path.apply(&data, drawStartAndMidMarkers);
@@ -373,6 +424,22 @@ void RenderPath::drawMarkersIfNeeded(GraphicsContext* context, const FloatRect& 
     data.previousMarkerData.marker = endMarker;
     data.previousMarkerData.type = End;
     drawMarkerWithData(context, data.previousMarkerData);
+
+    // We know the marker boundaries, only after they're drawn!
+    // Otherwhise we'd need to do all the marker calculation twice
+    // once here (through paint()) and once in getAbsoluteRepaintRect().
+    FloatRect bounds;
+
+    if (startMarker)
+        bounds.unite(startMarker->cachedBounds());
+
+    if (midMarker)
+        bounds.unite(midMarker->cachedBounds());
+
+    if (endMarker)
+        bounds.unite(endMarker->cachedBounds());
+
+    return bounds;
 }
 
 bool RenderPath::hasRelativeValues() const

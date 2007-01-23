@@ -70,21 +70,6 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Length, length, Y, y, S
 ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Length, length, Width, width, SVGNames::widthAttr.localName(), m_width)
 ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Length, length, Height, height, SVGNames::heightAttr.localName(), m_height)
 
-void SVGMaskElement::attributeChanged(Attribute* attr, bool preserveDecls)
-{
-    IntSize newSize = IntSize(lroundf(width().value()), lroundf(height().value()));
-    if (!m_masker || !m_masker->mask() || (m_masker->mask()->size() != newSize))
-        m_dirty = true;
-
-    SVGStyledLocatableElement::attributeChanged(attr, preserveDecls);
-}
-
-void SVGMaskElement::childrenChanged()
-{
-    m_dirty = true;
-    SVGStyledLocatableElement::childrenChanged();
-}
-
 void SVGMaskElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
@@ -147,6 +132,21 @@ SVGResource* SVGMaskElement::canvasResource()
         m_dirty = !m_masker->mask();
     }
     return m_masker.get();
+}
+
+void SVGMaskElement::notifyAttributeChange() const
+{
+    if (!attached() || ownerDocument()->parsing())
+        return;
+
+    IntSize newSize = IntSize(lroundf(width().value()), lroundf(height().value()));
+    if (!m_masker || !m_masker->mask() || (m_masker->mask()->size() != newSize))
+        m_dirty = true;
+
+    if (m_masker) {
+        m_masker->invalidate();
+        m_masker->repaintClients();
+    }
 }
 
 }

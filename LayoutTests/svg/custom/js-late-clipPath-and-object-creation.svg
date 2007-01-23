@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Basic//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-basic.dtd">  
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root" width="100%" height="100%" viewBox="0 0 480 360" onload="createClipPath()">
+<g id="content" transform="scale(1, 1.5)"/>
+<script>
+    var content = document.getElementById("content");
+ 
+    function createObject()
+    {
+        var text = document.createElement("text");
+        text.setAttribute("font-size", "60");
+        text.setAttribute("fill", "navy");
+        text.setAttribute("clip-path", "url(#dynClip)");
+        text.setAttribute("x", "10");
+        text.setAttribute("y", "70");
+
+        text.appendChild(document.createTextNode("Clipped. INVISIBLE."));        
+        content.appendChild(text);
+    }
+
+    function createClipPath()
+    {
+        createObject();
+
+        var clipPath = document.createElement("clipPath");
+        clipPath.setAttribute("id", "dynClip");
+        clipPath.setAttribute("clipPathUnits", "userSpaceOnUse");
+
+        var path = document.createElement("path");
+        path.setAttribute("d", "M 0 0 l 200 0 l 0 200 l -200 0 Z");
+
+        clipPath.appendChild(path);
+        content.appendChild(clipPath);
+    }
+</script>
+
+</svg>

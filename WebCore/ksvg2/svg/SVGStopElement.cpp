@@ -56,13 +56,11 @@ void SVGStopElement::parseMappedAttribute(MappedAttribute* attr)
 
 void SVGStopElement::notifyAttributeChange() const
 {
-    if (!ownerDocument()->parsing() && attached()) {
-        const_cast<SVGStopElement*>(this)->recalcStyle(Force);
+    if (!attached() || ownerDocument()->parsing())
+        return;
 
-        SVGStyledElement* parentStyled = static_cast<SVGStyledElement*>(parentNode());
-        if (parentStyled)
-            parentStyled->notifyAttributeChange();
-    }
+    const_cast<SVGStopElement*>(this)->recalcStyle(Force);
+    SVGStyledElement::notifyAttributeChange();
 }
 
 }

@@ -133,12 +133,6 @@ Vector<SVGGradientStop> SVGGradientElement::buildStops() const
     return stops;
 }
 
-void SVGGradientElement::childrenChanged()
-{
-    notifyAttributeChange();
-    SVGStyledElement::childrenChanged();
-}
-
 }
 
 #endif // SVG_SUPPORT

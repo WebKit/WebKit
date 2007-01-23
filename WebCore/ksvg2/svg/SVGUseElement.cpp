@@ -132,6 +132,8 @@ void SVGUseElement::notifyAttributeChange() const
 
     renderer()->setNeedsLayout(true);
     const_cast<SVGUseElement*>(this)->buildPendingResource();
+
+    SVGStyledElement::notifyAttributeChange();
 }
 
 void SVGUseElement::buildPendingResource()

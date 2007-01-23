@@ -61,13 +61,13 @@ SVGPaintServer* KSVGPainterFactory::fillPaintServer(const RenderStyle* style, co
         AtomicString id(SVGURIReference::getTarget(fill->uri()));
         fillPaintServer = getPaintServerById(item->document(), id);
 
+        SVGElement* svgElement = static_cast<SVGElement*>(item->element());
+        ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
+
         if (item->isRenderPath() && fillPaintServer)
-            fillPaintServer->addClient(static_cast<const RenderPath*>(item));
-        else if (!fillPaintServer) {
-            SVGElement* svgElement = static_cast<SVGElement*>(item->element());
-            ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
+            fillPaintServer->addClient(static_cast<SVGStyledElement*>(svgElement));
+        else if (!fillPaintServer)
             svgElement->document()->accessSVGExtensions()->addPendingResource(id, static_cast<SVGStyledElement*>(svgElement)); 
-        }
     } else {
         fillPaintServer = sharedSolidPaintServer();
         SVGPaintServerSolid* fillPaintServerSolid = static_cast<SVGPaintServerSolid*>(fillPaintServer);
@@ -99,13 +99,13 @@ SVGPaintServer* KSVGPainterFactory::strokePaintServer(const RenderStyle* style, 
         AtomicString id(SVGURIReference::getTarget(stroke->uri()));
         strokePaintServer = getPaintServerById(item->document(), id);
 
+        SVGElement* svgElement = static_cast<SVGElement*>(item->element());
+        ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
+ 
         if (item->isRenderPath() && strokePaintServer)
-            strokePaintServer->addClient(static_cast<const RenderPath*>(item));
-        else if (!strokePaintServer) {
-            SVGElement* svgElement = static_cast<SVGElement*>(item->element());
-            ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
+            strokePaintServer->addClient(static_cast<SVGStyledElement*>(svgElement));
+        else if (!strokePaintServer)
             svgElement->document()->accessSVGExtensions()->addPendingResource(id, static_cast<SVGStyledElement*>(svgElement)); 
-        }
     } else {
         strokePaintServer = sharedSolidPaintServer();
         SVGPaintServerSolid* strokePaintServerSolid = static_cast<SVGPaintServerSolid*>(strokePaintServer);

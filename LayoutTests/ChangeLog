@@ -1,3 +1,75 @@
+2007-01-23  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam.
+
+        Update SVG baseline after the dynamic update fixes (16 new tests added).
+
+        * svg/custom/clip-path-child-changes-expected.checksum: Added.
+        * svg/custom/clip-path-child-changes-expected.png: Added.
+        * svg/custom/clip-path-child-changes-expected.txt: Added.
+        * svg/custom/clip-path-child-changes.svg: Added.
+        * svg/custom/clip-path-href-changes-expected.checksum: Added.
+        * svg/custom/clip-path-href-changes-expected.png: Added.
+        * svg/custom/clip-path-href-changes-expected.txt: Added.
+        * svg/custom/clip-path-href-changes.svg: Added.
+        * svg/custom/clip-path-units-changes-expected.checksum: Added.
+        * svg/custom/clip-path-units-changes-expected.png: Added.
+        * svg/custom/clip-path-units-changes-expected.txt: Added.
+        * svg/custom/clip-path-units-changes.svg: Added.
+        * svg/custom/deep-dynamic-updates-expected.checksum: Added.
+        * svg/custom/deep-dynamic-updates-expected.png: Added.
+        * svg/custom/deep-dynamic-updates-expected.txt: Added.
+        * svg/custom/deep-dynamic-updates.svg: Added.
+        * svg/custom/image-with-transform-clip-filter-expected.png:
+        * svg/custom/js-late-clipPath-and-object-creation-expected.checksum: Added.
+        * svg/custom/js-late-clipPath-and-object-creation-expected.png: Added.
+        * svg/custom/js-late-clipPath-and-object-creation-expected.txt: Added.
+        * svg/custom/js-late-clipPath-and-object-creation.svg: Added.
+        * svg/custom/js-late-clipPath-creation-expected.checksum: Added.
+        * svg/custom/js-late-clipPath-creation-expected.png: Added.
+        * svg/custom/js-late-clipPath-creation-expected.txt: Added.
+        * svg/custom/js-late-clipPath-creation.svg: Added.
+        * svg/custom/js-late-marker-and-object-creation-expected.checksum: Added.
+        * svg/custom/js-late-marker-and-object-creation-expected.png: Added.
+        * svg/custom/js-late-marker-and-object-creation-expected.txt: Added.
+        * svg/custom/js-late-marker-and-object-creation.svg: Added.
+        * svg/custom/js-late-marker-creation-expected.checksum: Added.
+        * svg/custom/js-late-marker-creation-expected.png: Added.
+        * svg/custom/js-late-marker-creation-expected.txt: Added.
+        * svg/custom/js-late-marker-creation.svg: Added.
+        * svg/custom/js-late-mask-and-object-creation-expected.checksum: Added.
+        * svg/custom/js-late-mask-and-object-creation-expected.png: Added.
+        * svg/custom/js-late-mask-and-object-creation-expected.txt: Added.
+        * svg/custom/js-late-mask-and-object-creation.svg: Added.
+        * svg/custom/js-late-mask-creation-expected.checksum: Added.
+        * svg/custom/js-late-mask-creation-expected.png: Added.
+        * svg/custom/js-late-mask-creation-expected.txt: Added.
+        * svg/custom/js-late-mask-creation.svg: Added.
+        * svg/custom/js-update-pattern-child-expected.checksum: Added.
+        * svg/custom/js-update-pattern-child-expected.png: Added.
+        * svg/custom/js-update-pattern-child-expected.txt: Added.
+        * svg/custom/js-update-pattern-child.svg: Added.
+        * svg/custom/marker-changes-expected.checksum: Added.
+        * svg/custom/marker-changes-expected.png: Added.
+        * svg/custom/marker-changes-expected.txt: Added.
+        * svg/custom/marker-changes.svg: Added.
+        * svg/custom/marker-child-changes-expected.checksum: Added.
+        * svg/custom/marker-child-changes-expected.png: Added.
+        * svg/custom/marker-child-changes-expected.txt: Added.
+        * svg/custom/marker-child-changes.svg: Added.
+        * svg/custom/marker-viewBox-changes-expected.checksum: Added.
+        * svg/custom/marker-viewBox-changes-expected.png: Added.
+        * svg/custom/marker-viewBox-changes-expected.txt: Added.
+        * svg/custom/marker-viewBox-changes.svg: Added.
+        * svg/custom/mask-changes-expected.checksum: Added.
+        * svg/custom/mask-changes-expected.png: Added.
+        * svg/custom/mask-changes-expected.txt: Added.
+        * svg/custom/mask-changes.svg: Added.
+        * svg/custom/mask-child-changes-expected.checksum: Added.
+        * svg/custom/mask-child-changes-expected.png: Added.
+        * svg/custom/mask-child-changes-expected.txt: Added.
+        * svg/custom/mask-child-changes.svg: Added.
+
 2007-01-22  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

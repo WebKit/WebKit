@@ -58,7 +58,7 @@ namespace WebCore {
         RenderView* view() const;
 
         virtual void notifyAttributeChange() const;
-        void updateElementInstance(SVGDocumentExtensions*) const;
+        void notifyResourceParentIfExistant() const;
 
         virtual void attributeChanged(Attribute*, bool preserveDecls = false);
 
@@ -72,6 +72,8 @@ namespace WebCore {
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGStyledElement, String, String, ClassName, className)
+
+        void updateElementInstance(SVGDocumentExtensions*) const;
     };
 
 } // namespace WebCore

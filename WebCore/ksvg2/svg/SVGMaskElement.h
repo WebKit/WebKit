@@ -47,9 +47,8 @@ namespace WebCore
         virtual bool isValid() const { return SVGTests::isValid(); }
 
         // 'SVGMaskElement' functions
-        virtual void childrenChanged();
-        virtual void attributeChanged(Attribute*, bool preserveDecls);
         virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void notifyAttributeChange() const;
 
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
@@ -70,7 +69,7 @@ namespace WebCore
 
     private:
         RefPtr<SVGResourceMasker> m_masker;
-        bool m_dirty;
+        mutable bool m_dirty;
     };
 
 } // namespace WebCore

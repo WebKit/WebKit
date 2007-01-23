@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGClipPathElement.h"
 
@@ -96,8 +97,17 @@ SVGResource* SVGClipPathElement::canvasResource()
     return m_clipper.get();
 }
 
+void SVGClipPathElement::notifyAttributeChange() const
+{
+    if (!m_clipper || !attached() || ownerDocument()->parsing())
+        return;
+
+    m_clipper->invalidate();
+    m_clipper->repaintClients();
 }
 
-// vim:ts=4:noet
+}
+
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

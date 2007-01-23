@@ -29,6 +29,7 @@
 #include "SVGResourceFilter.h"
 #include "SVGResourceMasker.h"
 #include "SVGStyledElement.h"
+#include "SVGURIReference.h"
 #include "GraphicsContext.h"
 #include "SVGLength.h"
 #include "SVGMarkerElement.h"
@@ -143,8 +144,11 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
     
     if (paintInfo.phase != PaintPhaseForeground || !drawsContents())
         return;
-    
-    SVGResourceFilter* filter = getFilterById(document(), style()->svgStyle()->filter().substring(1));
+
+    const SVGRenderStyle* svgStyle = style()->svgStyle();
+    AtomicString filterId(SVGURIReference::getTarget(svgStyle->filter()));
+ 
+    SVGResourceFilter* filter = getFilterById(document(), filterId);
     if (!firstChild() && !filter)
         return; // Spec: groups w/o children still may render filter content.
     
@@ -181,11 +185,28 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     FloatRect strokeBBox = relativeBBox(true);
 
-    if (SVGResourceClipper* clipper = getClipperById(document(), style()->svgStyle()->clipPath().substring(1)))
-        clipper->applyClip(paintInfo.context, strokeBBox);
+    SVGElement* svgElement = static_cast<SVGElement*>(element());
+    ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
 
-    if (SVGResourceMasker* masker = getMaskerById(document(), style()->svgStyle()->maskElement().substring(1)))
+    SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(svgElement);
+ 
+    AtomicString clipperId(SVGURIReference::getTarget(svgStyle->clipPath()));
+    AtomicString maskerId(SVGURIReference::getTarget(svgStyle->maskElement()));
+
+    SVGResourceClipper* clipper = getClipperById(document(), clipperId);
+    SVGResourceMasker* masker = getMaskerById(document(), maskerId);
+
+    if (clipper) {
+        clipper->addClient(styledElement);
+        clipper->applyClip(paintInfo.context, strokeBBox);
+    } else if (!clipperId.isEmpty())
+        svgElement->document()->accessSVGExtensions()->addPendingResource(clipperId, styledElement);
+
+    if (masker) {
+        masker->addClient(styledElement);
         masker->applyMask(paintInfo.context, strokeBBox);
+    } else if (!maskerId.isEmpty())
+        svgElement->document()->accessSVGExtensions()->addPendingResource(maskerId, styledElement);
 
     float opacity = style()->opacity();
     if (opacity < 1.0f) {
@@ -195,6 +216,8 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     if (filter)
         filter->prepareFilter(paintInfo.context, strokeBBox);
+    else if (!filterId.isEmpty())
+        svgElement->document()->accessSVGExtensions()->addPendingResource(filterId, styledElement);
 
     if (!viewBox().isEmpty())
         paintInfo.context->concatCTM(viewportTransform());
@@ -289,7 +312,7 @@ IntRect RenderSVGContainer::getAbsoluteRepaintRect()
         repaintRect.unite(current->getAbsoluteRepaintRect());
 
     // Filters can expand the bounding box
-    SVGResourceFilter* filter = getFilterById(document(), style()->svgStyle()->filter().substring(1));
+    SVGResourceFilter* filter = getFilterById(document(), SVGURIReference::getTarget(style()->svgStyle()->filter()));
     if (filter)
         repaintRect.unite(enclosingIntRect(filter->filterBBoxForItemBBox(repaintRect)));
 

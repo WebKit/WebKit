@@ -44,8 +44,6 @@ namespace WebCore {
     class SVGStyledElement;
     class TextStream;
 
-    typedef Vector<const RenderPath*> RenderPathList;
-
     enum SVGResourceType {
         // Painting mode
         ClipperResourceType = 0,
@@ -71,9 +69,8 @@ namespace WebCore {
         virtual ~SVGResource();
       
         virtual void invalidate();
-        void addClient(const RenderPath*);
 
-        const RenderPathList& clients() const;
+        void addClient(SVGStyledElement*);
 
         void repaintClients() const;
         static void repaintClients(HashSet<SVGStyledElement*>);
@@ -87,7 +84,7 @@ namespace WebCore {
         virtual TextStream& externalRepresentation(TextStream&) const;
 
     private:
-        RenderPathList m_clients;
+        HashSet<SVGStyledElement*> m_clients;
     };
 
     SVGResource* getResourceById(Document*, const AtomicString&);

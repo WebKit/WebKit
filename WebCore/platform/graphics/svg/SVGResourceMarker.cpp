@@ -93,6 +93,13 @@ void SVGResourceMarker::draw(GraphicsContext* context, const FloatRect& rect, do
     m_marker->paint(info, 0, 0);
     m_marker->setDrawsContents(false);
     context->restore();
+
+    m_cachedBounds = transform.mapRect(m_marker->getAbsoluteRepaintRect());
+}
+
+FloatRect SVGResourceMarker::cachedBounds() const
+{
+    return m_cachedBounds;
 }
 
 TextStream& SVGResourceMarker::externalRepresentation(TextStream& ts) const

@@ -134,17 +134,37 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     paintInfo.context->concatCTM(translationForAttributes());
 
     FloatRect boundingBox = FloatRect(0, 0, width(), height());
+
+    SVGElement* svgElement = static_cast<SVGElement*>(element());
+    ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
+
+    SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(svgElement);
     const SVGRenderStyle* svgStyle = style()->svgStyle();
 
-    if (SVGResourceClipper* clipper = getClipperById(document(), svgStyle->clipPath().substring(1)))
-        clipper->applyClip(paintInfo.context, boundingBox);
+    AtomicString filterId(SVGURIReference::getTarget(svgStyle->filter()));
+    AtomicString clipperId(SVGURIReference::getTarget(svgStyle->clipPath()));
+    AtomicString maskerId(SVGURIReference::getTarget(svgStyle->maskElement()));
 
-    if (SVGResourceMasker* masker = getMaskerById(document(), svgStyle->maskElement().substring(1)))
-        masker->applyMask(paintInfo.context, boundingBox);
+    SVGResourceFilter* filter = getFilterById(document(), filterId);
+    SVGResourceClipper* clipper = getClipperById(document(), clipperId);
+    SVGResourceMasker* masker = getMaskerById(document(), maskerId);
 
-    SVGResourceFilter* filter = getFilterById(document(), svgStyle->filter().substring(1));
     if (filter)
         filter->prepareFilter(paintInfo.context, boundingBox);
+    else if (!filterId.isEmpty())
+        svgElement->document()->accessSVGExtensions()->addPendingResource(filterId, styledElement);
+
+    if (clipper) {
+        clipper->addClient(styledElement);
+        clipper->applyClip(paintInfo.context, boundingBox);
+    } else if (!clipperId.isEmpty())
+        svgElement->document()->accessSVGExtensions()->addPendingResource(clipperId, styledElement);
+
+    if (masker) {
+        masker->addClient(styledElement);
+        masker->applyMask(paintInfo.context, boundingBox);
+    } else if (!maskerId.isEmpty())
+        svgElement->document()->accessSVGExtensions()->addPendingResource(maskerId, styledElement);
 
     float opacity = style()->opacity();
     if (opacity < 1.0f) {
@@ -219,7 +239,7 @@ IntRect RenderSVGImage::getAbsoluteRepaintRect()
     repaintRect = absoluteTransform().mapRect(repaintRect);
 
     // Filters can expand the bounding box
-    SVGResourceFilter* filter = getFilterById(document(), style()->svgStyle()->filter().substring(1));
+    SVGResourceFilter* filter = getFilterById(document(), SVGURIReference::getTarget(style()->svgStyle()->filter()));
     if (filter)
         repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
 

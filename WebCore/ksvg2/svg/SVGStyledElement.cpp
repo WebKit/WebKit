@@ -189,6 +189,27 @@ void SVGStyledElement::notifyAttributeChange() const
     // to us in the SVGDocumentExtensions. If notifyAttributeChange() is called, we need
     // to recursively update all children including ourselves.
     updateElementInstance(extensions);
+
+    // If we're a child of an element creating a "resource" (ie. <pattern> child)
+    // then we have to notify our parent resource that we changed.
+    notifyResourceParentIfExistant();
+}
+
+void SVGStyledElement::notifyResourceParentIfExistant() const
+{
+    Node* node = parentNode();
+    while (node) {
+        if (node->hasTagName(SVGNames::linearGradientTag) || node->hasTagName(SVGNames::radialGradientTag) ||
+            node->hasTagName(SVGNames::patternTag) || node->hasTagName(SVGNames::clipPathTag) ||
+            node->hasTagName(SVGNames::markerTag) || node->hasTagName(SVGNames::maskTag)) {
+            SVGElement* element = svg_dynamic_cast(node);
+            ASSERT(element);
+
+            element->notifyAttributeChange();
+        }
+
+        node = node->parentNode();
+    }
 }
 
 void SVGStyledElement::updateElementInstance(SVGDocumentExtensions* extensions) const
@@ -235,11 +256,11 @@ void SVGStyledElement::rebuildRenderer() const
 {
     if (!renderer() || !renderer()->isRenderPath())
         return;
-    
-    RenderPath* renderPath = static_cast<RenderPath*>(renderer());    
+
+    RenderPath* renderPath = static_cast<RenderPath*>(renderer());
     SVGElement* parentElement = svg_dynamic_cast(parentNode());
-    if (parentElement && parentElement->renderer() && parentElement->isStyled()
-        && parentElement->childShouldCreateRenderer(const_cast<SVGStyledElement*>(this)))
+    if (parentElement && parentElement->renderer() && parentElement->isStyled() &&
+        parentElement->childShouldCreateRenderer(const_cast<SVGStyledElement*>(this)))
         renderPath->setNeedsLayout(true);
 }
 

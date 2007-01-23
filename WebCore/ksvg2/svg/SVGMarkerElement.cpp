@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -112,14 +112,14 @@ SVGResource* SVGMarkerElement::canvasResource()
 {
     if (!m_marker)
         m_marker = new SVGResourceMarker();
-    
+
     m_marker->setMarker(static_cast<RenderSVGContainer*>(renderer()));
 
     // Spec: If the attribute is not specified, the effect is as if a
     // value of "0" were specified.
     if (!m_orientType)
         setOrientToAngle(SVGSVGElement::createSVGAngle());
-    
+
     if (orientType() == SVG_MARKER_ORIENT_ANGLE)
         m_marker->setAngle(orientAngle()->value());
     else
@@ -127,7 +127,7 @@ SVGResource* SVGMarkerElement::canvasResource()
 
     m_marker->setRef(refX().value(), refY().value());
     m_marker->setUseStrokeWidth(markerUnits() == SVG_MARKERUNITS_STROKEWIDTH);
-    
+
     return m_marker.get();
 }
 
@@ -139,6 +139,24 @@ RenderObject* SVGMarkerElement::createRenderer(RenderArena* arena, RenderStyle* 
     markerContainer->setSlice(preserveAspectRatio()->meetOrSlice() == SVGPreserveAspectRatio::SVG_MEETORSLICE_SLICE);
     markerContainer->setDrawsContents(false); // Marker contents will be explicitly drawn.
     return markerContainer;
+}
+
+void SVGMarkerElement::notifyAttributeChange() const
+{
+    if (!m_marker || !attached() || ownerDocument()->parsing())
+        return;
+
+    RenderSVGContainer* markerContainer = static_cast<RenderSVGContainer*>(renderer());
+
+    // NOTE: This is a typical case, where proper "attributeChanged" usage would reduce the number of updates needed.
+    if (markerContainer) {
+        markerContainer->setViewBox(viewBox());
+        markerContainer->setAlign(KCAlign(preserveAspectRatio()->align() - 1));
+        markerContainer->setSlice(preserveAspectRatio()->meetOrSlice() == SVGPreserveAspectRatio::SVG_MEETORSLICE_SLICE);
+    }
+
+    m_marker->invalidate();
+    m_marker->repaintClients();
 }
 
 }

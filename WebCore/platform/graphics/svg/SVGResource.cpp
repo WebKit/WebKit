@@ -46,39 +46,17 @@ void SVGResource::invalidate()
 {
 }
 
-void SVGResource::addClient(const RenderPath* item)
+void SVGResource::addClient(SVGStyledElement* item)
 {
-    unsigned size = m_clients.size();
+    if (m_clients.contains(item))
+        return;
 
-    for (unsigned i = 0; i < size; i++) {
-        if (m_clients[i] == item)
-            return;
-    }
-
-    m_clients.append(item);
-}
-
-const RenderPathList& SVGResource::clients() const
-{
-    return m_clients;
+    m_clients.add(item);
 }
 
 void SVGResource::repaintClients() const
 {
-    const RenderPathList& clientList(clients());
-
-    unsigned size = clientList.size();
-    for (unsigned i = 0 ; i < size; i++) {
-        const RenderPath* current = clientList[i];
-
-        SVGStyledElement* styled = (current ? static_cast<SVGStyledElement*>(current->element()) : 0);
-        if (styled) {
-            styled->setChanged(true);
-
-            if (styled->renderer())
-                styled->renderer()->repaint();
-        }
-    }
+    SVGResource::repaintClients(m_clients);
 }
 
 void SVGResource::repaintClients(HashSet<SVGStyledElement*> clients)
@@ -92,6 +70,8 @@ void SVGResource::repaintClients(HashSet<SVGStyledElement*> clients)
 
         if (cur->renderer())
             cur->renderer()->repaint();
+
+        cur->notifyResourceParentIfExistant();
     }
 }
 
