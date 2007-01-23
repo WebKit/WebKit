@@ -559,6 +559,7 @@ SOURCES += \
     platform/qt/MimeTypeRegistryQt.cpp \
     platform/qt/SoundQt.cpp \
     platform/qt/FileChooserQt.cpp \
+    platform/FileChooser.cpp \
     platform/graphics/qt/IconQt.cpp \
     platform/graphics/qt/ImageBufferQt.cpp \
     platform/graphics/qt/AffineTransformQt.cpp \

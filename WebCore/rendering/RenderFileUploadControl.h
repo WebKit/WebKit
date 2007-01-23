@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer
+ * Copyright (C) 2006, 2007 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,22 +22,19 @@
 #define RenderFileUploadControl_h
 
 #include "FileChooser.h"
-#include "HTMLInputElement.h"
 #include "RenderBlock.h"
-#include "Shared.h"
 
 namespace WebCore {
 
-class HTMLFileUploadInnerButtonElement;
-//class RenderFileUploadInnerFileBlock;
+class HTMLInputElement;
     
-// RenderFileUploadControls contain a RenderButton (for opening the file chooser), and
-// sufficient space to draw a file icon and filename. The RenderButton has an
-// HTMLFileUploadInnerButtonElement shadow node associated with it to receive click/hover events.
+// Each RenderFileUploadControl contains a RenderButton (for opening the file chooser), and
+// sufficient space to draw a file icon and filename. The RenderButton has a shadow node
+// associated with it to receive click/hover events.
 
-class RenderFileUploadControl : public RenderBlock {
+class RenderFileUploadControl : public RenderBlock, private FileChooserClient {
 public:
-    RenderFileUploadControl(Node*);
+    RenderFileUploadControl(HTMLInputElement*);
     ~RenderFileUploadControl();
 
     virtual const char* renderName() const { return "RenderFileUploadControl"; }
@@ -51,11 +48,11 @@ public:
 
     void valueChanged();
 
-protected:
-    int maxFilenameWidth();
-    RenderStyle* createButtonStyle(RenderStyle* parentStyle = 0);
+private:
+    int maxFilenameWidth() const;
+    RenderStyle* createButtonStyle(RenderStyle* parentStyle) const;
 
-    RefPtr<HTMLFileUploadInnerButtonElement> m_button;
+    RefPtr<HTMLInputElement> m_button;
     RefPtr<FileChooser> m_fileChooser;
 };
 

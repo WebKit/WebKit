@@ -993,6 +993,7 @@ set(WebCore_SRCS
     platform/DeprecatedString.cpp
     platform/DeprecatedStringList.cpp
     platform/DeprecatedValueListImpl.cpp
+    platform/FileChooser.cpp
     platform/FontCache.cpp
     platform/Font.cpp
     platform/FontData.cpp

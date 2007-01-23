@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,69 +24,37 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  */
 
-#ifndef FileChooser_h
-#define FileChooser_h
+#include "config.h"
+#include "FileChooser.h"
 
-#include "PlatformString.h"
-#include <wtf/RefPtr.h>
-
-#if PLATFORM(MAC)
-#include "RetainPtr.h"
-#ifdef __OBJC__
-@class OpenPanelController;
-#else
-class OpenPanelController;
-#endif
-#endif
+#include "Icon.h"
 
 namespace WebCore {
-
-class Document;
-class Font;
-class Icon;
-
-class FileChooserClient {
-public:
-    virtual ~FileChooserClient() { }
-    virtual void valueChanged() = 0;
-};
-
-class FileChooser : public Shared<FileChooser> {
-public:
-    static PassRefPtr<FileChooser> create(FileChooserClient*, const String& initialFilename);
-    ~FileChooser();
-
-    void disconnectClient() { m_client = 0; }
-
-    // FIXME: It's a layering violation that we pass a Document in here.
-    // The platform directory is underneath the DOM, so it can't use the DOM.
-    // Because of UI delegates, it's not clear that this class belongs in the platform
-    // layer at all. It might need to go alongside the Chrome class instead.
-    void openFileChooser(Document*);
-
-    const String& filename() const { return m_filename; }
-    String basenameForWidth(const Font&, int width) const;
-
-    Icon* icon() const { return m_icon.get(); }
-
-    void chooseFile(const String& filename);
-
-private:
-    FileChooser(FileChooserClient*, const String& initialFilename);
-    static PassRefPtr<Icon> chooseIcon(const String& filename);
-
-    FileChooserClient* m_client;
-    String m_filename;
-    RefPtr<Icon> m_icon;
-
-#if PLATFORM(MAC)
-    RetainPtr<OpenPanelController> m_controller;
-#endif
-};
-
+    
+PassRefPtr<FileChooser> FileChooser::create(FileChooserClient* client, const String& filename)
+{
+    return new FileChooser(client, filename);
 }
 
-#endif
+void FileChooser::chooseFile(const String& filename)
+{
+    if (m_filename == filename)
+        return;
+    m_filename = filename;
+    m_icon = chooseIcon(filename);
+    if (m_client)
+        m_client->valueChanged();
+}
+
+PassRefPtr<Icon> FileChooser::chooseIcon(const String& filename)
+{
+    // FIXME: Should the special cases be in Icon::newIconForFile?
+    // Need unsigned 0 here to disambiguate String::operator[] from operator(NSString*, int)[]
+    if (filename.isEmpty() || filename[0U] != '/')
+        return 0;
+    return Icon::newIconForFile(filename);
+}
+
+}

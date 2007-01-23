@@ -25,41 +25,26 @@
 
 namespace WebCore {
 
-FileChooser::FileChooser(Document*, RenderFileUploadControl*)
+FileChooser::FileChooser(FileChooserClient* client, const String& filename)
+    : m_client(client)
+    , m_filename(filename)
+    , m_icon(chooseIcon(filename))
 {
-    notImplemented();
 }
 
 FileChooser::~FileChooser()
 {
-    notImplemented();
 }
 
-PassRefPtr<FileChooser> FileChooser::create(Document*, RenderFileUploadControl*)
-{
-    notImplemented();
-    return 0;
-}
-
-void FileChooser::openFileChooser()
+void FileChooser::openFileChooser(Document*)
 {
     notImplemented();
 }
 
-String FileChooser::basenameForWidth(int width) const
+String FileChooser::basenameForWidth(const Font&, int width) const
 {
     notImplemented();
     return String();
-}
-
-void FileChooser::disconnectUploadControl()
-{
-    notImplemented();
-}
-
-void FileChooser::chooseFile(const String& filename)
-{
-    notImplemented();
 }
 
 }

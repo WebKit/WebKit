@@ -331,13 +331,10 @@ void PlatformScrollbar::updateThumbPosition() { }
 void PlatformScrollbar::updateThumbProportion() { }
 void PlatformScrollbar::setRect(const IntRect&) { }
 
-FileChooser::FileChooser(Document*, RenderFileUploadControl*) { notImplemented(); }
+FileChooser::FileChooser(FileChooserClient*, const String&) { notImplemented(); }
 FileChooser::~FileChooser() { notImplemented(); }
-PassRefPtr<FileChooser> FileChooser::create(Document*, RenderFileUploadControl*) { notImplemented(); return 0; }
-void FileChooser::openFileChooser() { notImplemented(); }
-String FileChooser::basenameForWidth(int width) const { notImplemented(); return String(); }
-void FileChooser::disconnectUploadControl() { notImplemented(); }
-void FileChooser::chooseFile(const String& filename) { notImplemented(); }
+void FileChooser::openFileChooser(Document*) { notImplemented(); }
+String FileChooser::basenameForWidth(const Font&, int width) const { notImplemented(); return String(); }
 
 Color WebCore::focusRingColor() { return 0xFF0000FF; }
 void WebCore::setFocusRingColorChangeFunction(void (*)()) { }

@@ -1,3 +1,81 @@
+2007-01-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12273
+          REGRESSION: File input value invisible after removing and re-appending
+
+        - made more of the file chooser code cross-platform
+
+        - fixed an Objective-C garbage collection problem in FileChooser
+
+        - tried to remove layering violations where FileChooser in the platform
+          directory knows about the rendering and DOM trees (but wasn't able to
+          do it entirely)
+
+        * platform/FileChooser.cpp: Added.
+        (WebCore::FileChooser::create): Changed parameters.
+        (WebCore::FileChooser::chooseFile): Changed to call chooseIcon function.
+        (WebCore::FileChooser::chooseIcon): Added.
+
+        * platform/FileChooser.h: Added FileChooserClient so this file doesn't have
+        to know about RenderFileUploadControl. Used RetainPtr instead of retain/release
+        so this works properly with Objective-C GC. Replaced disconnectUploadControl
+        with disconnectClient, which has a simple inline implementation. Moved the
+        Document parameter from the constructor to openFileChooser, along with a comment
+        about why it should not be there. Added a filename parameter to the constructor
+        for the initial filename. Added a font parameter to basenameForWidth so we don't
+        depend on having a pointer to the renderer. Removed the uploadControl() and
+        document() functions since no one calls either of them.
+
+        * platform/mac/FileChooserMac.mm: Removed code that is now cross-platform.
+        (-[OpenPanelController beginSheetWithFrame:]): Added frame parameter, instead
+        of storing a document pointer in the FileChooser.
+        (WebCore::FileChooser::FileChooser): Updated for changed parameters. Also added
+        code to choose the icon based on the initial filename. Pass the adopt parameter
+        to the constructor of the RetainPtr.
+        (WebCore::FileChooser::~FileChooser): Removed the release call, since the
+        RetainPtr will take care of it. Added a call to disconnectFileChooser here.
+        There's no need to disconnect at disconnectClient time, and that lets us have
+        one more cross-platform function.
+        (WebCore::FileChooser::openFileChooser): Added document parameter. Added code
+        to get the frame from the document. And added a nil check since there's no
+        ironclad guarantee the document won't have outlived its frame.
+        (WebCore::FileChooser::basenameForWidth): Added font parameter. Use that instead
+        of going at the upload control's style. The caller can handle that now.
+
+        * rendering/RenderFileUploadControl.h: Removed unnecessary includes.
+        Made class inherit privately from FileChooserClient. Changed constructor
+        parameter to HTMLInputElement rather than Node. Made protected members be
+        private instead, and made a couple function members const.
+        * rendering/RenderFileUploadControl.cpp: Moved constants to the top of the file,
+        but after the "using namespace"
+        (WebCore::RenderFileUploadControl::RenderFileUploadControl): Updated for changes
+        to the FileChooser::create function and the parameter types.
+        (WebCore::RenderFileUploadControl::~RenderFileUploadControl): Removed unneeded
+        null check -- there's no case where the FileChooser fails to be created.
+        (WebCore::RenderFileUploadControl::click): Pass document to openFileChooser.
+        (WebCore::RenderFileUploadControl::updateFromElement): Tweaked code a bit by
+        using updateFromElement and setValue instead of casting the renderer to a
+        RenderButton and calling setText directly. Put setInputType call here.
+        (WebCore::RenderFileUploadControl::maxFilenameWidth): Made const. Broke long line.
+        (WebCore::RenderFileUploadControl::createButtonStyle): Made const.
+        (WebCore::RenderFileUploadControl::paintObject): Moved buttonShadowHeight constant
+        to the top of the file. Call isEmpty instead of checking width and height of
+        IntRect for 0. Computed font to pass to FileChooser::basenameForWidth. Broke
+        long lines.
+        (WebCore::HTMLFileUploadInnerButtonElement::HTMLFileUploadInnerButtonElement):
+        Moved the setInputType call to the caller; concept here is that this class is
+        as simple as possible, rather than doing as much of the button job as possible.
+
+        * WebCore.xcodeproj/project.pbxproj: Added FileChooser.cpp.
+        * WebCore.pro: Ditto.
+        * CMakeLists.txt: Ditto.
+        * WebCoreSources.bkl: Ditto.
+
+        * platform/gdk/TemporaryLinkStubs.cpp: Updated stubs.
+        * platform/qt/FileChooserQt.cpp: Updated stubs.
+
 2007-01-22  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

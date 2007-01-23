@@ -1,33 +1,40 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer. 
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution. 
+ * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+ *     its contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission. 
  *
- * You should have received a copy of the GNU Library General Public License
- * along with this library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
 #import "config.h"
 #import "FileChooser.h"
 
-#import <AppKit/NSOpenPanel.h>
 #import "Document.h"
 #import "FontData.h"
 #import "FrameMac.h"
 #import "Icon.h"
 #import "LocalizedStrings.h"
-#import "RenderFileUploadControl.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreStringTruncator.h"
 
@@ -39,7 +46,7 @@ using namespace WebCore;
 }
 - (id)initWithFileChooser:(FileChooser *)fileChooser;
 - (void)disconnectFileChooser;
-- (void)beginSheet;
+- (void)beginSheetWithFrame:(Frame*)frame;
 @end
 
 @implementation OpenPanelController
@@ -49,7 +56,7 @@ using namespace WebCore;
     self = [super init];
     if (!self)
         return nil;
-    
+
     _fileChooser = fileChooser;
     return self;
 }
@@ -59,12 +66,12 @@ using namespace WebCore;
     _fileChooser = 0;
 }
 
-- (void)beginSheet
+- (void)beginSheetWithFrame:(Frame*)frame
 {
     if (!_fileChooser)
         return;
     
-    _bridge = Mac(_fileChooser->document()->frame())->bridge();
+    _bridge = Mac(frame)->bridge();
     [_bridge retain];
     [_bridge runOpenPanelForFileButtonWithResultListener:self];
 }
@@ -85,64 +92,38 @@ using namespace WebCore;
 
 namespace WebCore {
     
-PassRefPtr<FileChooser> FileChooser::create(Document* document, RenderFileUploadControl* uploadControl)
-{
-    return new FileChooser(document, uploadControl);
-}
-
-FileChooser::FileChooser(Document* document, RenderFileUploadControl* uploadControl)
-    : m_document(document)
-    , m_icon(0)
-    , m_uploadControl(uploadControl)
-    , m_controller([[OpenPanelController alloc] initWithFileChooser:this])
+FileChooser::FileChooser(FileChooserClient* client, const String& filename)
+    : m_client(client)
+    , m_filename(filename)
+    , m_icon(chooseIcon(filename))
+    , m_controller(Adopt, [[OpenPanelController alloc] initWithFileChooser:this])
 {
 }
 
 FileChooser::~FileChooser()
 {
-    [m_controller release];
+    [m_controller.get() disconnectFileChooser];
 }
 
-void FileChooser::openFileChooser()
+void FileChooser::openFileChooser(Document* document)
 {
-    [m_controller beginSheet];
+    if (Frame* frame = document->frame())
+        [m_controller.get() beginSheetWithFrame:frame];
 }
 
-String FileChooser::basenameForWidth(int width) const
+String FileChooser::basenameForWidth(const Font& font, int width) const
 {
     if (width <= 0)
         return String();
-    
+
     String strToTruncate;
     if (m_filename.isEmpty())
         strToTruncate = fileButtonNoFileSelectedLabel();
     else
         strToTruncate = [[NSFileManager defaultManager] displayNameAtPath:m_filename];
-    
+
     return [WebCoreStringTruncator centerTruncateString:strToTruncate
-            toWidth:width withFont:m_uploadControl->style()->font().primaryFont()->getNSFont()];
-}
-
-void FileChooser::disconnectUploadControl()
-{
-    if (m_controller)
-        [m_controller disconnectFileChooser];
-}
-
-void FileChooser::chooseFile(const String& filename)
-{
-    if (m_filename == filename)
-        return;
-    
-    m_filename = filename;
-    
-    // Need unsigned 0 here to disambiguate String::operator[] from operator(NSString*, int)[]
-    if (!m_filename.length() || m_filename[0U] != '/')
-        m_icon = 0;
-    else
-        m_icon = Icon::newIconForFile(m_filename);
-    
-    uploadControl()->valueChanged();
+        toWidth:width withFont:font.primaryFont()->getNSFont()];
 }
 
 }
