@@ -38,5 +38,10 @@ void DragClientQt::willPerformDragDestinationAction(DragDestinationAction,
 {
 }
 
+void DragClientQt::dragControllerDestroyed()
+{    
 }
+
+}
+
 

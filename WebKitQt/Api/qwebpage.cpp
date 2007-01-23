@@ -30,6 +30,7 @@
 #include "FrameQt.h"
 #include "ChromeClientQt.h"
 #include "ContextMenuClientQt.h"
+#include "DragClientQt.h"
 #include "EditorClientQt.h"
 #include "Settings.h"
 #include "Page.h"
@@ -45,7 +46,8 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     chromeClient = new ChromeClientQt(q);
     contextMenuClient = new ContextMenuClientQt();
     editorClient = new EditorClientQt();
-    page = new Page(chromeClient, contextMenuClient, editorClient);
+    page = new Page(chromeClient, contextMenuClient, editorClient,
+                    new DragClientQt());
 
     Settings *settings = page->settings();
     settings->setLoadsImagesAutomatically(true);

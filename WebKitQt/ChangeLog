@@ -1,5 +1,15 @@
 2007-01-23  Zack Rusin  <zack@kde.org>
 
+        Adjust the DragClientQt to latest changes.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * WebCoreSupport/DragClientQt.cpp:
+        (WebCore::DragClientQt::dragControllerDestroyed):
+        * WebCoreSupport/DragClientQt.h:
+
+2007-01-23  Zack Rusin  <zack@kde.org>
+
         Fix the Qt build
 
         * WebCoreSupport/DragClientQt.cpp:

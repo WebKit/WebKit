@@ -32,7 +32,7 @@ public:
     virtual void willPerformDragDestinationAction(DragDestinationAction,
                                                   DragData*);
     virtual WebCore::DragDestinationAction actionMaskForDrag(DragData*);
-    
+    virtual void dragControllerDestroyed();
 private:
 };
 
