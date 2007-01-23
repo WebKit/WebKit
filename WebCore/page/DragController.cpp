@@ -208,10 +208,9 @@ bool DragController::performDrag(DragData* dragData)
     
     m_document = 0;
 
-    if (operationForLoad(dragData) != DragOperationNone)
+    if (operationForLoad(dragData) == DragOperationNone)
         return false;
       
-    //FIXME: should we pass the event?
     m_page->mainFrame()->loader()->load(ResourceRequest(dragData->asURL()));
     return true;
 }
