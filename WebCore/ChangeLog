@@ -1,3 +1,9 @@
+2007-01-23  George Staikos  <staikos@kde.org>
+
+        Compile with a released Qt.
+
+        * platform/graphics/qt/ImageQt.cpp:
+
 2007-01-23  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack
