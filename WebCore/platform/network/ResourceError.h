@@ -77,6 +77,7 @@ namespace WebCore {
         }
 #elif PLATFORM(CF)
         ResourceError(CFStreamError);
+        ResourceError(CFErrorRef);
 #endif
         
 #if 0

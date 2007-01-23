@@ -1,3 +1,12 @@
+2007-01-23  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Added a couple of CF things previously missed
+
+        * platform/network/ResourceError.h:
+        * platform/network/ResourceHandle.h:
+
 2007-01-23  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Maciej.
