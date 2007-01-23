@@ -1,3 +1,15 @@
+2007-01-22  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12344
+          NativeListBox: item hit testing does not account for top padding and border
+
+        * fast/forms/listbox-selection-2-expected.checksum: Added.
+        * fast/forms/listbox-selection-2-expected.png: Added.
+        * fast/forms/listbox-selection-2-expected.txt: Added.
+        * fast/forms/listbox-selection-2.html: Added.
+
 2007-01-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

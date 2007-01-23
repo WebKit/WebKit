@@ -1,3 +1,23 @@
+2007-01-22  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12344
+          NativeListBox: item hit testing does not account for top padding and border
+
+        Test: fast/forms/listbox-selection-2.html
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::numVisibleItems): Changed height() to contentHeight()
+        since items are visible only in the content box.
+        (WebCore::RenderListBox::listIndexAtOffset): Adjusted for vertical padding and
+        borders. Changed to return -1 instead of the last item's index if the given offset
+        is below the last item.
+        (WebCore::RenderListBox::autoscroll): Adjusted for vertical padding and borders.
+        (WebCore::RenderListBox::controlClipRect): Changed to return the content box since
+        items should not spill into the padding box. This change is the reason the test
+        generates pixel results.
+
 2007-01-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

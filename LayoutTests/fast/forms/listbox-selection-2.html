@@ -1,0 +1,123 @@
+<html>
+    <head>
+        <script>
+            function setup() {
+                var results = document.createElement('div');
+                results.id = "res";
+                results.appendChild(document.createTextNode("Results:"));
+                document.body.appendChild(results);
+            }
+            function test() {
+                setup();
+                
+                mouseDownOnSelect("sl1", 0, false, false);                
+                var expectedSelectionResults = new Array(true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
+                testResults("sl1", expectedSelectionResults, 1);
+
+                mouseDownOnSelect("sl1", 1, false, false);                
+                expectedSelectionResults = new Array(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
+                testResults("sl1", expectedSelectionResults, 2);
+
+                mouseDownOnSelect("sl1", 6, false, false);                
+                expectedSelectionResults = new Array(false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false);
+                testResults("sl1", expectedSelectionResults, 3);
+
+                mouseDownOnSelect("sl1", 7, false, false);                
+                expectedSelectionResults = new Array(false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false);
+                testResults("sl1", expectedSelectionResults, 4);
+
+                mouseDownOnSelect("sl1", 8, false, false);                
+                expectedSelectionResults = new Array(false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false);
+                testResults("sl1", expectedSelectionResults, 5);
+
+                mouseDownOnSelect("sl1", 0, false, false);                
+                expectedSelectionResults = new Array(false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
+                testResults("sl1", expectedSelectionResults, 6);
+
+                for (i = 0; i < 9; i++)
+                    mouseDownOnSelect("sl1", 7, false, false);                
+                expectedSelectionResults = new Array(false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true);
+                testResults("sl1", expectedSelectionResults, 7);
+
+                mouseDownOnSelect("sl2", 1, false, false);                
+                expectedSelectionResults = new Array(false, true, false);
+                testResults("sl2", expectedSelectionResults, 8);
+
+                mouseDownOnSelect("sl2", 3, false, false);                
+                expectedSelectionResults = new Array(false, true, false);
+                testResults("sl2", expectedSelectionResults, 9);
+
+                mouseDownOnSelect("sl2", 2, false, false);                
+                expectedSelectionResults = new Array(false, false, true);
+                testResults("sl2", expectedSelectionResults, 10);
+            }
+            
+            function mouseDownOnSelect(selId, index, shift, meta) {
+                var sl = document.getElementById(selId);
+                var itemHeight = 14;
+                var borderPaddingTop = 15;
+                var borderPaddingLeft = 15;
+                var y = 8 + index * itemHeight - window.pageYOffset + borderPaddingTop;
+                var event = document.createEvent("MouseEvent");
+                event.initMouseEvent("mousedown", true, true, document.defaultView, 1, sl.offsetLeft + 8 + borderPaddingLeft, sl.offsetTop + y, sl.offsetLeft + 8 + borderPaddingLeft, sl.offsetTop + y, false, false, shift, meta, 0, document);
+                sl.dispatchEvent(event);
+            }
+            
+            function testResults(selId, expectedArr, testNum) {
+                var sl = document.getElementById(selId);
+                var res = document.getElementById('res');
+                var resultsArr = new Array(sl.options.length);
+                
+                var i;
+                for (i=0; i < sl.options.length; i++) {
+                    resultsArr[i] = sl.options[i].selected;
+                }
+                var successString = "Failed";
+                var success = false;
+                if (expectedArr.join() == resultsArr.join()) {
+                    success = true;
+                    successString = "Passed";
+                }
+                
+               log("Test " + testNum + " " + successString);
+                if (!success) {
+                    log("<pre>     Expected: " + expectedArr.join() + "<br>" + "     Actual: " + resultsArr.join() + "</pre>");
+                }
+            }
+            
+            function log(msg) {
+                var r = document.getElementById('res');
+                r.innerHTML = r.innerHTML + "<br>" + msg;
+            }
+        </script>
+    </head>
+    <body onload="test()">
+
+    <select id="sl1" multiple style="height: 105px; border: 10px solid; padding: 5px;">
+        <option>one</option>
+        <option>two</option>
+        <option>three</option>
+        <option>four</option>
+        <option>five</option>
+        <option>six</option>
+        <option>seven</option>
+        <option>eight</option>
+        <option>nine</option>
+        <option>ten</option>
+        <option>eleven</option>
+        <option>twelve</option>
+        <option>thirteen</option>
+        <option>fourteen</option>
+        <option>fifteen</option>
+        <option>sixteen</option>
+        <option>seventeen</option>
+    </select>
+    
+    <select id="sl2" multiple style="height: 105px; border: 10px solid; padding: 5px;">
+        <option>one</option>
+        <option>two</option>
+        <option>three</option>
+    </select>
+
+    </body>
+</html>

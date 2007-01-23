@@ -1,0 +1,46 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x135
+        RenderListBox {SELECT} at (2,0) size 99x135 [bgcolor=#FFFFFF] [border: (10px solid #000000)]
+        RenderText {#text} at (103,114) size 4x18
+          text run at (103,114) width 4: " "
+        RenderListBox {SELECT} at (109,0) size 73x135 [bgcolor=#FFFFFF] [border: (10px solid #000000)]
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,135) size 784x198
+        RenderText {#text} at (0,0) size 50x18
+          text run at (0,0) width 50: "Results:"
+        RenderBR {BR} at (50,14) size 0x0
+        RenderText {#text} at (0,18) size 86x18
+          text run at (0,18) width 86: "Test 1 Passed"
+        RenderBR {BR} at (86,32) size 0x0
+        RenderText {#text} at (0,36) size 86x18
+          text run at (0,36) width 86: "Test 2 Passed"
+        RenderBR {BR} at (86,50) size 0x0
+        RenderText {#text} at (0,54) size 86x18
+          text run at (0,54) width 86: "Test 3 Passed"
+        RenderBR {BR} at (86,68) size 0x0
+        RenderText {#text} at (0,72) size 86x18
+          text run at (0,72) width 86: "Test 4 Passed"
+        RenderBR {BR} at (86,86) size 0x0
+        RenderText {#text} at (0,90) size 86x18
+          text run at (0,90) width 86: "Test 5 Passed"
+        RenderBR {BR} at (86,104) size 0x0
+        RenderText {#text} at (0,108) size 86x18
+          text run at (0,108) width 86: "Test 6 Passed"
+        RenderBR {BR} at (86,122) size 0x0
+        RenderText {#text} at (0,126) size 86x18
+          text run at (0,126) width 86: "Test 7 Passed"
+        RenderBR {BR} at (86,140) size 0x0
+        RenderText {#text} at (0,144) size 86x18
+          text run at (0,144) width 86: "Test 8 Passed"
+        RenderBR {BR} at (86,158) size 0x0
+        RenderText {#text} at (0,162) size 86x18
+          text run at (0,162) width 86: "Test 9 Passed"
+        RenderBR {BR} at (86,176) size 0x0
+        RenderText {#text} at (0,180) size 94x18
+          text run at (0,180) width 94: "Test 10 Passed"
