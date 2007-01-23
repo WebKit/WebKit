@@ -1,3 +1,14 @@
+2007-01-22  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11692
+        Bug 11692: REGRESSION(r17352): Disappearing page title
+
+        * dom/Document.cpp:
+        (WebCore::Document::setTitle): If the title has already been set explicitly via JavaScript,
+        ignore any changes to it due to encountering <title> tags.
+
 2007-01-22  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

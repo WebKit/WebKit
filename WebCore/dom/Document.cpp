@@ -816,7 +816,7 @@ void Document::setTitle(const String& title, Node* titleElement)
         m_titleSetExplicitly = true;
         m_titleElement = 0;
     } else if (titleElement != m_titleElement) {
-        if (m_titleElement)
+        if (m_titleElement || m_titleSetExplicitly)
             // Only allow the first title element to change the title -- others have no effect.
             return;
         m_titleElement = titleElement;
