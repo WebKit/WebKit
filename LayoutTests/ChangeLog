@@ -1,3 +1,15 @@
+2007-01-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <rdar://problem/4947130>
+        REGRESSION: Items duplicated when moved inside contenteditable element (11766)
+
+        * editing/pasteboard/4947130-expected.checksum: Added.
+        * editing/pasteboard/4947130-expected.png: Added.
+        * editing/pasteboard/4947130-expected.txt: Added.
+        * editing/pasteboard/4947130.html: Added.
+
 2007-01-23  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
