@@ -26,6 +26,8 @@
 #ifndef DragActions_h
 #define DragActions_h
 
+#include <limits.h>
+
 namespace WebCore {
 
     // WebCoreDragDestinationAction should be kept in sync with WebDragDestinationAction

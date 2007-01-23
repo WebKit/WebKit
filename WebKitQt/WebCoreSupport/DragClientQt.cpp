@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "WebDragQt.h"
+#include "DragClientQt.h"
 
 namespace WebCore
 {
@@ -33,7 +33,8 @@ DragDestinationAction DragClientQt::actionMaskForDrag(DragData*)
     return DragDestinationActionAny;
 }
 
-void DragClientQt::willPerformDragDestinationAction(DragDestinationAction, DragData*)
+void DragClientQt::willPerformDragDestinationAction(DragDestinationAction,
+                                                    DragData*)
 {
 }
 

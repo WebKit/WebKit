@@ -42,7 +42,7 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "HTMLAnchorElement.h"
-#include "MarkUp.h"
+#include "markup.h"
 #include "MoveSelectionCommand.h"
 #include "Node.h"
 #include "Page.h"

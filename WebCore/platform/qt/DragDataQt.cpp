@@ -26,55 +26,58 @@
 #include "config.h"
 #include "DragData.h"
 
+#include "Document.h"
+#include "DocumentFragment.h"
+
 namespace WebCore {
 
-bool DragData::canSmartReplace()
+bool DragData::canSmartReplace() const
 {
     return false;
 }
     
-bool DragData::containsColor()
+bool DragData::containsColor() const
 {
     return false;
 }
 
-bool DragData::containsPlainText()
+bool DragData::containsPlainText() const
 {
     return false;
 }
 
-String DragData::asPlainText()
+String DragData::asPlainText() const
 {
     return String();
 }
     
-Color DragData::asColor()
+Color DragData::asColor() const
 {
     return Color();
 }
 
-Clipboard* DragData::createClipboard(ClipboardAccessPolicy)
+Clipboard* DragData::createClipboard(ClipboardAccessPolicy) const
 {
     return 0;
 }
     
-bool DragData::containsCompatibleContent()
+bool DragData::containsCompatibleContent() const
 {
     return false;
 }
     
-bool DragData::containsURL() 
+bool DragData::containsURL() const
 {
     return false;
 }
     
-String DragData::asURL(String* title)
+String DragData::asURL(String* title) const
 {
     return String();
 }
     
     
-PassRefPtr<DocumentFragment> DragData::asFragment(Document*)
+PassRefPtr<DocumentFragment> DragData::asFragment(Document*) const
 {
     return 0;
 }
