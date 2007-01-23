@@ -1,3 +1,45 @@
+2007-01-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/4944770>
+        editing/pasteboard/4641033 layout test is broken (12328)
+        
+        This layout test failure demonstrates three bugs:
+        Smart replace shouldn't be turned on, but is because a word
+        selection granularity from the previous test isn't cleared.
+        Smart replace shouldn't add any spaces because the paste is performed
+        in an empty paragraph.
+        Smart replace spaces are added to the text of options inside
+        the select element instead of before/after the select element.
+        
+        This patch fixes the second two problems.  During a 
+        ReplaceSelectionCommand, the VisiblePosition for the end of 
+        the inserted content is the last position in the last leaf 
+        inserted.  This is a problem when the last leaf is inside a 
+        select element, since VP creation is inconsistent there.  
+        Second, smart spaces were inserted inside the last leaf, not
+        at the endOfInsertedContent.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::shouldMergeStart): Renamed 
+        m_lastNodeInserted to m_lastLeafInserted.  Use the 
+        start/endOfInsertedContent getters.
+        (WebCore::ReplaceSelectionCommand::shouldMergeEnd): Ditto.
+        (WebCore::ReplaceSelectionCommand::removeNodePreservingChildren): Ditto.
+        (WebCore::ReplaceSelectionCommand::removeRedundantStyles): Ditto.
+        (WebCore::ReplaceSelectionCommand::positionAtEndOfInsertedContent): Added.
+        Special case for when the last leaf inserted is inside a select 
+        element: return the VisiblePosition after the select element.
+        (WebCore::ReplaceSelectionCommand::positionAtStartOfInsertedContent): Added.
+        (WebCore::ReplaceSelectionCommand::doApply): Did renaming.  Used
+        the start/endOfInsertedContent getters.  Insert smart replace spaces
+        into the right nodes.
+        (WebCore::ReplaceSelectionCommand::shouldRemoveEndBR): Renaming.
+        (WebCore::ReplaceSelectionCommand::completeHTMLReplacement): Ditto.
+        (WebCore::ReplaceSelectionCommand::updateNodesInserted): Ditto.
+        * editing/ReplaceSelectionCommand.h:
+
 2007-01-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam.

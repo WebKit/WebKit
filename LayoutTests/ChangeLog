@@ -1,3 +1,39 @@
+2007-01-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        <rdar://problem/4944770>
+        editing/pasteboard/4641033 layout test is broken (12328)
+
+        The fixes not only make this test pass, but also fix a bug that 
+        was reflected in the results checked in for this test.  The caret
+        was in the wrong position:
+        * editing/pasteboard/4641033-expected.checksum:
+        * editing/pasteboard/4641033-expected.png:
+        * editing/pasteboard/4641033-expected.txt:
+        Added:
+        * editing/pasteboard/4944770-1-expected.checksum: Added.
+        * editing/pasteboard/4944770-1-expected.png: Added.
+        * editing/pasteboard/4944770-1-expected.txt: Added.
+        * editing/pasteboard/4944770-1.html: Added.
+        * editing/pasteboard/4944770-2-expected.checksum: Added.
+        * editing/pasteboard/4944770-2-expected.png: Added.
+        * editing/pasteboard/4944770-2-expected.txt: Added.
+        * editing/pasteboard/4944770-2.html: Added.
+        * editing/pasteboard/4944770-expected.checksum: Added.
+        * editing/pasteboard/4944770-expected.png: Added.
+        * editing/pasteboard/4944770-expected.txt: Added.
+        Equivalent render trees:
+        * editing/execCommand/format-block-from-range-selection-expected.txt:
+        * editing/pasteboard/drag-drop-modifies-page-expected.txt:
+        Fixed:
+        * editing/pasteboard/nested-blocks-with-text-area-expected.checksum:
+        * editing/pasteboard/nested-blocks-with-text-area-expected.png:
+        * editing/pasteboard/nested-blocks-with-text-area-expected.txt:
+        * editing/pasteboard/nested-blocks-with-text-field-expected.checksum:
+        * editing/pasteboard/nested-blocks-with-text-field-expected.png:
+        * editing/pasteboard/nested-blocks-with-text-field-expected.txt:
+
 2007-01-22  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.

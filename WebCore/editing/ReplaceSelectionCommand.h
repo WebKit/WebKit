@@ -94,9 +94,12 @@ private:
     void handlePasteAsQuotationNode();
     
     virtual void removeNodePreservingChildren(Node*);
+    
+    VisiblePosition positionAtStartOfInsertedContent();
+    VisiblePosition positionAtEndOfInsertedContent();
 
     RefPtr<Node> m_firstNodeInserted;
-    RefPtr<Node> m_lastNodeInserted;
+    RefPtr<Node> m_lastLeafInserted;
     RefPtr<CSSMutableStyleDeclaration> m_insertionStyle;
     bool m_selectReplacement;
     bool m_smartReplace;

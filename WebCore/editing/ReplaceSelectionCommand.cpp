@@ -287,7 +287,7 @@ ReplaceSelectionCommand::ReplaceSelectionCommand(Document* document, PassRefPtr<
 
 bool ReplaceSelectionCommand::shouldMergeStart(bool selectionStartWasStartOfParagraph, bool fragmentHasInterchangeNewlineAtStart)
 {
-    VisiblePosition startOfInsertedContent(Position(m_firstNodeInserted.get(), 0));
+    VisiblePosition startOfInsertedContent(positionAtStartOfInsertedContent());
     VisiblePosition prev = startOfInsertedContent.previous(true);
     if (prev.isNull())
         return false;
@@ -301,7 +301,7 @@ bool ReplaceSelectionCommand::shouldMergeStart(bool selectionStartWasStartOfPara
 
 bool ReplaceSelectionCommand::shouldMergeEnd(bool selectionEndWasEndOfParagraph)
 {
-    VisiblePosition endOfInsertedContent(Position(m_lastNodeInserted.get(), maxDeepOffset(m_lastNodeInserted.get())));
+    VisiblePosition endOfInsertedContent(positionAtEndOfInsertedContent());
     VisiblePosition next = endOfInsertedContent.next(true);
     if (next.isNull())
         return false;
@@ -322,8 +322,8 @@ void ReplaceSelectionCommand::removeNodePreservingChildren(Node* node)
 {
     if (m_firstNodeInserted == node)
         m_firstNodeInserted = node->traverseNextNode();
-    if (m_lastNodeInserted == node)
-        m_lastNodeInserted = node->lastChild() ? node->lastChild() : node->traverseNextSibling();
+    if (m_lastLeafInserted == node)
+        m_lastLeafInserted = node->lastChild() ? node->lastChild() : node->traverseNextSibling();
     CompositeEditCommand::removeNodePreservingChildren(node);
 }
 
@@ -400,7 +400,7 @@ void ReplaceSelectionCommand::removeRedundantStyles(Node* mailBlockquoteEnclosin
             parentStyle->diff(style.get());
             styles.append(style.release());
         }
-        if (node == m_lastNodeInserted)
+        if (node == m_lastLeafInserted)
             break;
     }
     
@@ -448,6 +448,20 @@ void ReplaceSelectionCommand::handlePasteAsQuotationNode()
     Node* node = m_firstNodeInserted.get();
     if (isMailPasteAsQuotationNode(node))
         static_cast<Element*>(node)->setAttribute(classAttr, "");
+}
+
+VisiblePosition ReplaceSelectionCommand::positionAtEndOfInsertedContent()
+{
+    Node* lastNode = m_lastLeafInserted.get();
+    Node* enclosingSelect = enclosingNodeWithTag(lastNode, selectTag);
+    if (enclosingSelect)
+        lastNode = enclosingSelect;
+    return VisiblePosition(Position(lastNode, maxDeepOffset(lastNode)));
+}
+
+VisiblePosition ReplaceSelectionCommand::positionAtStartOfInsertedContent()
+{
+    return VisiblePosition(Position(m_firstNodeInserted.get(), 0));
 }
 
 void ReplaceSelectionCommand::doApply()
@@ -589,8 +603,8 @@ void ReplaceSelectionCommand::doApply()
     
     removeRedundantStyles(mailBlockquoteEnclosingSelectionStart);
     
-    endOfInsertedContent = VisiblePosition(Position(m_lastNodeInserted.get(), maxDeepOffset(m_lastNodeInserted.get())));
-    startOfInsertedContent = VisiblePosition(Position(m_firstNodeInserted.get(), 0));
+    endOfInsertedContent = positionAtEndOfInsertedContent();
+    startOfInsertedContent = positionAtStartOfInsertedContent();
     
     // We inserted before the startBlock to prevent nesting, and the content before the startBlock wasn't in its own block and
     // didn't have a br after it, so the inserted content ended up in the same paragraph.
@@ -604,8 +618,8 @@ void ReplaceSelectionCommand::doApply()
     if (shouldRemoveEndBR(endBR)) {
         if (interchangeNewlineAtEnd) {
             interchangeNewlineAtEnd = false;
-            m_lastNodeInserted = endBR;
-            lastPositionToSelect = VisiblePosition(Position(m_lastNodeInserted.get(), 0)).deepEquivalent();
+            m_lastLeafInserted = endBR;
+            lastPositionToSelect = VisiblePosition(Position(m_lastLeafInserted.get(), 0)).deepEquivalent();
         } else
             removeNodeAndPruneAncestors(endBR);
     }
@@ -618,12 +632,12 @@ void ReplaceSelectionCommand::doApply()
         // only ever used to create positions where inserted content starts/ends.
         moveParagraph(startOfParagraphToMove, endOfParagraph(startOfParagraphToMove), destination);
         m_firstNodeInserted = endingSelection().visibleStart().deepEquivalent().downstream().node();
-        if (!m_lastNodeInserted->inDocument())
-            m_lastNodeInserted = endingSelection().visibleEnd().deepEquivalent().upstream().node();
+        if (!m_lastLeafInserted->inDocument())
+            m_lastLeafInserted = endingSelection().visibleEnd().deepEquivalent().upstream().node();
     }
             
-    endOfInsertedContent = VisiblePosition(Position(m_lastNodeInserted.get(), maxDeepOffset(m_lastNodeInserted.get())));
-    startOfInsertedContent = VisiblePosition(Position(m_firstNodeInserted.get(), 0));
+    endOfInsertedContent = positionAtEndOfInsertedContent();
+    startOfInsertedContent = positionAtStartOfInsertedContent();
     
     if (interchangeNewlineAtEnd) {
         VisiblePosition next = endOfInsertedContent.next(true);
@@ -642,13 +656,13 @@ void ReplaceSelectionCommand::doApply()
             lastPositionToSelect = next.deepEquivalent().downstream();
         }
 
-    } else if (m_lastNodeInserted->hasTagName(brTag)) {
+    } else if (m_lastLeafInserted->hasTagName(brTag)) {
         // We want to honor the last incoming line break, so, if it will collapse away because of quirks mode, 
         // add an extra one.
         // FIXME: This will expand a br inside a block: <div><br></div>
         // FIXME: Should we expand all incoming brs that collapse because of quirks mode?
         if (!document()->inStrictMode() && isEndOfBlock(endOfInsertedContent) && !isStartOfParagraph(endOfInsertedContent))
-            insertNodeBeforeAndUpdateNodesInserted(createBreakElement(document()).get(), m_lastNodeInserted.get());
+            insertNodeBeforeAndUpdateNodesInserted(createBreakElement(document()).get(), m_lastLeafInserted.get());
             
     } else if (shouldMergeEnd(selectionEndWasEndOfParagraph)) {
     
@@ -661,11 +675,11 @@ void ReplaceSelectionCommand::doApply()
         VisiblePosition startOfParagraphToMove = mergeForward ? startOfParagraph(endOfInsertedContent) : endOfInsertedContent.next();
 
         moveParagraph(startOfParagraphToMove, endOfParagraph(startOfParagraphToMove), destination);
-        // Merging forward will remove m_lastNodeInserted from the document.
+        // Merging forward will remove m_lastLeafInserted from the document.
         // FIXME: Maintain positions for the start and end of inserted content instead of keeping nodes.  The nodes are
         // only ever used to create positions where inserted content starts/ends.
         if (mergeForward) {
-            m_lastNodeInserted = destination.previous().deepEquivalent().node();
+            m_lastLeafInserted = destination.previous().deepEquivalent().node();
             if (!m_firstNodeInserted->inDocument())
                 m_firstNodeInserted = endingSelection().visibleStart().deepEquivalent().node();
         }
@@ -673,8 +687,8 @@ void ReplaceSelectionCommand::doApply()
     
     handlePasteAsQuotationNode();
     
-    endOfInsertedContent = VisiblePosition(Position(m_lastNodeInserted.get(), maxDeepOffset(m_lastNodeInserted.get())));
-    startOfInsertedContent = VisiblePosition(Position(m_firstNodeInserted.get(), 0));    
+    endOfInsertedContent = positionAtEndOfInsertedContent();
+    startOfInsertedContent = positionAtStartOfInsertedContent();
     
     // Add spaces for smart replace.
     if (m_smartReplace && currentRoot) {
@@ -687,30 +701,32 @@ void ReplaceSelectionCommand::doApply()
         bool needsTrailingSpace = !isEndOfParagraph(endOfInsertedContent) &&
                                   !frame->isCharacterSmartReplaceExempt(endOfInsertedContent.characterAfter(), false);
         if (needsTrailingSpace) {
-            RenderObject* renderer = m_lastNodeInserted->renderer();
+            RenderObject* renderer = m_lastLeafInserted->renderer();
             bool collapseWhiteSpace = !renderer || renderer->style()->collapseWhiteSpace();
-            if (m_lastNodeInserted->isTextNode()) {
-                Text* text = static_cast<Text*>(m_lastNodeInserted.get());
+            Node* endNode = positionAtEndOfInsertedContent().deepEquivalent().upstream().node();
+            if (endNode->isTextNode()) {
+                Text* text = static_cast<Text*>(endNode);
                 insertTextIntoNode(text, text->length(), collapseWhiteSpace ? nonBreakingSpaceString() : " ");
             } else {
                 RefPtr<Node> node = document()->createEditingTextNode(collapseWhiteSpace ? nonBreakingSpaceString() : " ");
-                insertNodeAfterAndUpdateNodesInserted(node.get(), m_lastNodeInserted.get());
+                insertNodeAfterAndUpdateNodesInserted(node.get(), endNode);
             }
         }
     
         bool needsLeadingSpace = !isStartOfParagraph(startOfInsertedContent) &&
                                  !frame->isCharacterSmartReplaceExempt(startOfInsertedContent.previous().characterAfter(), true);
         if (needsLeadingSpace) {
-            RenderObject* renderer = m_lastNodeInserted->renderer();
+            RenderObject* renderer = m_lastLeafInserted->renderer();
             bool collapseWhiteSpace = !renderer || renderer->style()->collapseWhiteSpace();
-            if (m_firstNodeInserted->isTextNode()) {
-                Text* text = static_cast<Text*>(m_firstNodeInserted.get());
+            Node* startNode = positionAtStartOfInsertedContent().deepEquivalent().downstream().node();
+            if (startNode->isTextNode()) {
+                Text* text = static_cast<Text*>(startNode);
                 insertTextIntoNode(text, 0, collapseWhiteSpace ? nonBreakingSpaceString() : " ");
             } else {
                 RefPtr<Node> node = document()->createEditingTextNode(collapseWhiteSpace ? nonBreakingSpaceString() : " ");
-                // Don't updateNodesInserted.  Doing so would set m_lastNodeInserted to be the node containing the 
-                // leading space, but m_lastNodeInserted is supposed to mark the end of pasted content.
-                insertNodeBefore(node.get(), m_firstNodeInserted.get());
+                // Don't updateNodesInserted.  Doing so would set m_lastLeafInserted to be the node containing the 
+                // leading space, but m_lastLeafInserted is supposed to mark the end of pasted content.
+                insertNodeBefore(node.get(), startNode);
                 // FIXME: Use positions to track the start/end of inserted content.
                 m_firstNodeInserted = node;
             }
@@ -732,7 +748,7 @@ bool ReplaceSelectionCommand::shouldRemoveEndBR(Node* endBR)
         !document()->inStrictMode() && isEndOfBlock(visiblePos) && !isStartOfParagraph(visiblePos) ||
         // A br that was originally holding a line open should be displaced by inserted content or turned into a line break.
         // A br that was originally acting as a line break should still be acting as a line break, not as a placeholder.
-        isStartOfParagraph(visiblePos) && isEndOfParagraph(visiblePos) && !m_lastNodeInserted->hasTagName(brTag);
+        isStartOfParagraph(visiblePos) && isEndOfParagraph(visiblePos) && !m_lastLeafInserted->hasTagName(brTag);
 }
 
 void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositionToSelect)
@@ -740,13 +756,11 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
     Position start;
     Position end;
 
-    if (m_firstNodeInserted && m_firstNodeInserted->inDocument() && m_lastNodeInserted && m_lastNodeInserted->inDocument()) {
+    // FIXME: This should never not be the case.
+    if (m_firstNodeInserted && m_firstNodeInserted->inDocument() && m_lastLeafInserted && m_lastLeafInserted->inDocument()) {
         
-        Node* lastLeaf = m_lastNodeInserted->lastDescendant();
-        Node* firstLeaf = m_firstNodeInserted->firstDescendant();
-        
-        start = Position(firstLeaf, 0);
-        end = Position(lastLeaf, maxDeepOffset(lastLeaf));
+        start = positionAtStartOfInsertedContent().deepEquivalent();
+        end = positionAtEndOfInsertedContent().deepEquivalent();
         
         // FIXME (11475): Remove this and require that the creator of the fragment to use nbsps.
         rebalanceWhitespaceAt(start);
@@ -801,10 +815,10 @@ void ReplaceSelectionCommand::updateNodesInserted(Node *node)
     if (!m_firstNodeInserted)
         m_firstNodeInserted = node;
     
-    if (node == m_lastNodeInserted)
+    if (node == m_lastLeafInserted)
         return;
     
-    m_lastNodeInserted = node->lastDescendant();
+    m_lastLeafInserted = node->lastDescendant();
 }
 
 } // namespace WebCore
