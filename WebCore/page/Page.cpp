@@ -61,6 +61,7 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_progress(new ProgressTracker)
     , m_editorClient(editorClient)
     , m_frameCount(0)
+    , m_tabKeyCyclesThroughElements(true)
     , m_defersLoading(false)
 {
     if (!allPages) {

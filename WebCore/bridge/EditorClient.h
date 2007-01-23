@@ -39,8 +39,10 @@ namespace WebCore {
 
 class CSSStyleDeclaration;
 class EditCommand;
+class EventTargetNode;
 class Frame;
 class HTMLElement;
+class KeyboardEvent;
 class Node;
 class Range;
 class String;
@@ -90,6 +92,8 @@ public:
     
     virtual void undo() = 0;
     virtual void redo() = 0;
+
+    virtual void handleKeyPress(EventTargetNode*, KeyboardEvent*) = 0;
 
 #if PLATFORM(MAC)
     // FIXME: This should become SelectionController::toWebArchive()

@@ -125,6 +125,8 @@ public:
 
     void setMouseDownMayStartAutoscroll() { m_mouseDownMayStartAutoscroll = true; }
 
+    void defaultKeyboardEventHandler(EventTargetNode*, KeyboardEvent*);
+
 #if PLATFORM(MAC)
     PassRefPtr<KeyboardEvent> currentKeyboardEvent() const;
 

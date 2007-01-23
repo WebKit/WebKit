@@ -112,6 +112,7 @@
 - (void)closeIfNotCurrentView;
 - (void)_lookUpInDictionaryFromMenu:(id)sender;
 - (void)_hoverFeedbackSuspendedChanged;
+- (BOOL)_interceptEditingKeyEvent:(NSEvent *)event;
 - (DOMDocumentFragment*)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard;
 #if !BUILDING_ON_TIGER
 - (BOOL)isGrammarCheckingEnabled;

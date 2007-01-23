@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "Editor.h"
 #include "EventNames.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
@@ -45,6 +46,7 @@
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "MouseEventWithHitTestResults.h"
+#include "Page.h"
 #include "PlatformScrollBar.h"
 #include "PlatformWheelEvent.h"
 #include "RenderWidget.h"
@@ -1171,6 +1173,19 @@ void EventHandler::hoverTimerFired(Timer<EventHandler>*)
 {
     m_hoverTimer.stop();
     prepareMouseEvent(HitTestRequest(false, false, true), PlatformMouseEvent(PlatformMouseEvent::currentEvent));
+}
+
+void EventHandler::defaultKeyboardEventHandler(EventTargetNode* target, KeyboardEvent* event)
+{
+    if (target == event->target() && event->type() == keypressEvent) {
+        if (Page* page = target->document()->page())
+            if (page->tabKeyCyclesThroughElements() && event->keyIdentifier() == "U+000009")
+                if (page->focusController()->advanceFocus(event)) {
+                    event->setDefaultHandled();
+                    return;
+                }
+        m_frame->editor()->handleKeyPress(target, event);
+    }
 }
 
 }

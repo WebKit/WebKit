@@ -43,6 +43,8 @@
 #import <wtf/PassRefPtr.h>
 #import <WebCore/EditAction.h>
 #import <WebCore/EditCommand.h>
+#import <WebCore/KeyboardEvent.h>
+#import <WebCore/PlatformKeyboardEvent.h>
 
 using namespace WebCore;
 
@@ -383,6 +385,14 @@ void WebEditorClient::redo()
 {
     if (canRedo())
         [[m_webView undoManager] redo];    
+}
+
+void WebEditorClient::handleKeyPress(EventTargetNode* node, KeyboardEvent* event)
+{
+    WebHTMLView *webHTMLView = [[[m_webView mainFrame] frameView] documentView];
+    if (const PlatformKeyboardEvent* platformEvent = event->keyEvent())
+        if ([webHTMLView _canEdit] && [webHTMLView _interceptEditingKeyEvent:platformEvent->macEvent()])
+            event->setDefaultHandled();
 }
 
 /*

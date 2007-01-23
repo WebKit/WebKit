@@ -72,6 +72,12 @@ EditorClient* Editor::client() const
     return 0;
 }
 
+void Editor::handleKeyPress(EventTargetNode* target, KeyboardEvent* event)
+{
+    if (EditorClient* c = client())
+        c->handleKeyPress(target, event);
+}
+
 bool Editor::canEdit() const
 {
     SelectionController* selectionController = m_frame->selectionController();
@@ -162,23 +168,26 @@ bool Editor::canSmartCopyOrDelete()
     return false;
 }
 
-void Editor::deleteRange(Range *range, bool killRing, bool prepend, bool smartDeleteOK, EditorDeleteAction deletionAction, TextGranularity granularity)
+void Editor::deleteRange(Range* range, bool killRing, bool prepend, bool smartDeleteOK, EditorDeleteAction deletionAction, TextGranularity granularity)
 {
     if (killRing)
         addToKillRing(range, prepend);
 
-    SelectionController* selectionController = m_frame->selectionController();
-    bool smartDelete = smartDeleteOK ? canSmartCopyOrDelete() : false;
     ExceptionCode ec = 0;
+
+    SelectionController* selectionController = m_frame->selectionController();
+    bool smartDelete = smartDeleteOK && canSmartCopyOrDelete();
     switch (deletionAction) {
-        case deleteSelectionAction:             
+        case deleteSelectionAction:
             selectionController->setSelectedRange(range, DOWNSTREAM, true, ec);
-            propogateDOMException(ec);
+            if (ec)
+                return;
             deleteSelectionWithSmartDelete(smartDelete);
             break;
         case deleteKeyAction:
             selectionController->setSelectedRange(range, DOWNSTREAM, (granularity != CharacterGranularity), ec);
-            propogateDOMException(ec);
+            if (ec)
+                return;
             if (m_frame->document()) {
                 TypingCommand::deleteKeyPressed(m_frame->document(), smartDelete, granularity);
                 m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
@@ -186,7 +195,8 @@ void Editor::deleteRange(Range *range, bool killRing, bool prepend, bool smartDe
             break;
         case forwardDeleteKeyAction:
             selectionController->setSelectedRange(range, DOWNSTREAM, (granularity != CharacterGranularity), ec);
-            propogateDOMException(ec);
+            if (ec)
+                return;
             if (m_frame->document()) {
                 TypingCommand::forwardDeleteKeyPressed(m_frame->document(), smartDelete, granularity);
                 m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);

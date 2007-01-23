@@ -1,3 +1,28 @@
+2007-01-23  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        WebKit part of fix for <rdar://problem/4946753>REGRESSION: Inserting tabs is broken in Mail
+        
+        In addition to this fix, I also reorganized some event handling code for keyPress events to
+        prepare for another fix.
+
+        * WebCoreSupport/WebEditorClient.h: Added handleKeyPress method.
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::handleKeyPress): Added.  Code moved from WebHTMLView keyDown method.
+         This is called from the defaultEventHandler so that in the future, we can make the right 
+         decision about which selection the keyPress should apply to.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView keyDown:]): Moved _interceptEditingKeyEvent call to handleKeyPress.
+        (-[WebHTMLView _interceptEditingKeyEvent:]): Prevents intercepting keys for cmd-modified events. Removed tabCycling checks
+         since this is now handled in WebCore.
+        * WebView/WebHTMLViewInternal.h: Made _interceptEditingKeyEvent SPI.
+        * WebView/WebView.mm: Use new tabKeyCyclesThroughElements methods on the page.
+        (-[WebViewPrivate init]): ditto.
+        (-[WebView setTabKeyCyclesThroughElements:]): ditto.
+        (-[WebView tabKeyCyclesThroughElements]): ditto.
+        (-[WebView setEditable:]): ditto
+
 2007-01-23  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Maciej

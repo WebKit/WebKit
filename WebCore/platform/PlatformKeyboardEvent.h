@@ -30,6 +30,7 @@
 #include <wtf/Platform.h>
 
 #if PLATFORM(MAC)
+#include "RetainPtr.h"
 #ifdef __OBJC__
 @class NSEvent;
 #else
@@ -70,6 +71,7 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
         PlatformKeyboardEvent(NSEvent*, bool forceAutoRepeat = false);
+        NSEvent* macEvent() const { return m_macEvent.get(); }
 #endif
 
 #if PLATFORM(WIN)
@@ -96,6 +98,10 @@ namespace WebCore {
         bool m_ctrlKey;
         bool m_altKey;
         bool m_metaKey;
+
+#if PLATFORM(MAC)
+        RetainPtr<NSEvent> m_macEvent;
+#endif
     };
 
 } // namespace WebCore

@@ -90,6 +90,9 @@ namespace WebCore {
         Settings* settings() const { return m_settings.get(); }
         ProgressTracker* progress() const { return m_progress.get(); }
         
+        void setTabKeyCyclesThroughElements(bool b) { m_tabKeyCyclesThroughElements = b; }
+        bool tabKeyCyclesThroughElements() const { return m_tabKeyCyclesThroughElements; }
+        
         void setDefersLoading(bool);
         bool defersLoading() const { return m_defersLoading; }
 
@@ -115,6 +118,7 @@ namespace WebCore {
         int m_frameCount;
         String m_groupName;
 
+        bool m_tabKeyCyclesThroughElements;
         bool m_defersLoading;
 
 #if PLATFORM(WIN)

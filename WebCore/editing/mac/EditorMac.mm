@@ -70,11 +70,6 @@ NSString* Editor::userVisibleString(NSURL* nsURL)
     return nil;
 }
 
-void Editor::propogateDOMException(ExceptionCode ec)
-{
-    if (ec) raiseDOMException(ec);
-}
-
 void Editor::addToKillRing(Range* range, bool prepend)
 {
     if (m_startNewKillRingSequence)
@@ -649,5 +644,5 @@ void Editor::showColorPanel()
 {
     [[NSApplication sharedApplication] orderFrontColorPanel:nil];
 }
-    
+
 } // namespace WebCore

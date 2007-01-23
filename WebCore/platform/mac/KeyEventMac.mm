@@ -705,17 +705,18 @@ static int WindowsKeyCodeForKeyEvent(NSEvent* event)
 }
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(NSEvent *event, bool forceAutoRepeat)
-    : m_text([event characters]),
-      m_unmodifiedText([event charactersIgnoringModifiers]),
-      m_keyIdentifier(keyIdentifierForKeyEvent(event)),
-      m_isKeyUp([event type] == NSKeyUp),
-      m_autoRepeat(forceAutoRepeat || [event isARepeat]),
-      m_WindowsKeyCode(WindowsKeyCodeForKeyEvent(event)),
-      m_isKeypad(isKeypadEvent(event)),
-      m_shiftKey([event modifierFlags] & NSShiftKeyMask),
-      m_ctrlKey([event modifierFlags] & NSControlKeyMask),
-      m_altKey([event modifierFlags] & NSAlternateKeyMask),
-      m_metaKey([event modifierFlags] & NSCommandKeyMask)
+    : m_text([event characters])
+    , m_unmodifiedText([event charactersIgnoringModifiers])
+    , m_keyIdentifier(keyIdentifierForKeyEvent(event))
+    , m_isKeyUp([event type] == NSKeyUp)
+    , m_autoRepeat(forceAutoRepeat || [event isARepeat])
+    , m_WindowsKeyCode(WindowsKeyCodeForKeyEvent(event))
+    , m_isKeypad(isKeypadEvent(event))
+    , m_shiftKey([event modifierFlags] & NSShiftKeyMask)
+    , m_ctrlKey([event modifierFlags] & NSControlKeyMask)
+    , m_altKey([event modifierFlags] & NSAlternateKeyMask)
+    , m_metaKey([event modifierFlags] & NSCommandKeyMask)
+    , m_macEvent(event)
 {
     // Turn 0x7F into 8, because backspace needs to always be 8.
     if (m_text == "\x7F")

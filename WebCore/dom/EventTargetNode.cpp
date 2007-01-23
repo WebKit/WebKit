@@ -560,13 +560,10 @@ bool EventTargetNode::disabled() const
 void EventTargetNode::defaultEventHandler(Event* event)
 {
     const AtomicString& eventType = event->type();
-    if (eventType == keypressEvent && event->isKeyboardEvent()) {
-        KeyboardEvent* keyEvent = static_cast<KeyboardEvent*>(event);
-        if (keyEvent->keyIdentifier() == "U+000009") {
-            if (Page* page = document()->page())
-                if (page->focusController()->advanceFocus(keyEvent))
-                    event->setDefaultHandled();
-        }
+    if (eventType == keypressEvent) {
+        if (event->isKeyboardEvent())
+            if (Frame* frame = document()->frame())
+                frame->eventHandler()->defaultKeyboardEventHandler(this, static_cast<KeyboardEvent*>(event));
     } else if (eventType == clickEvent) {
         int detail = event->isUIEvent() ? static_cast<UIEvent*>(event)->detail() : 0;
         dispatchUIEvent(DOMActivateEvent, detail, event);

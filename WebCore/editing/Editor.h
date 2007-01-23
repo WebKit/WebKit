@@ -47,6 +47,7 @@ class DeleteButtonController;
 class DocumentFragment;
 class EditCommand;
 class EditorClient;
+class EventTargetNode;
 class FontData;
 class Frame;
 class HTMLElement;
@@ -64,7 +65,9 @@ public:
     Frame* frame() const { return m_frame; }
     DeleteButtonController* deleteButtonController() const { return m_deleteButtonController.get(); }
     EditCommand* lastEditCommand() { return m_lastEditCommand.get(); }
-    
+
+    void handleKeyPress(EventTargetNode*, KeyboardEvent*);
+
     bool canEdit() const;
     bool canEditRichly() const;
 
@@ -114,7 +117,7 @@ public:
     void deleteRange(Range*, bool killRing, bool prepend, bool smartDeleteOK, EditorDeleteAction, TextGranularity);
     void deleteSelectionWithSmartDelete(bool smartDelete);
     void deleteSelectionWithSmartDelete();
-    bool dispatchCPPEvent(const AtomicString &, ClipboardAccessPolicy);
+    bool dispatchCPPEvent(const AtomicString&, ClipboardAccessPolicy);
     
     Node* removedAnchor() const { return m_removedAnchor.get(); }
     void setRemovedAnchor(PassRefPtr<Node> n) { m_removedAnchor = n; }
@@ -197,14 +200,10 @@ private:
     void writeSelectionToPasteboard(Pasteboard*);
 
 #if PLATFORM(MAC)
-    // propogate DOM exception as an ObjC exception
-    void propogateDOMException(ExceptionCode);
-
     void addToKillRing(Range*, bool prepend);
     bool m_startNewKillRingSequence;
 #else
-    void propogateDOMException(ExceptionCode){}
-    void addToKillRing(Range*, bool){}
+    void addToKillRing(Range*, bool) { }
 #endif
 
 };

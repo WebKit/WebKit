@@ -286,7 +286,6 @@ macro(yankAndSelect) \
     BOOL mainFrameDocumentReady;
     BOOL drawsBackground;
     BOOL editable;
-    BOOL tabKeyCyclesThroughElements;
     BOOL tabKeyCyclesThroughElementsChanged;
     BOOL becomingFirstResponder;
     BOOL hoverFeedbackSuspended;
@@ -396,7 +395,6 @@ static BOOL grammarCheckingEnabled;
     
     textSizeMultiplier = 1;
     dashboardBehaviorAllowWheelScrolling = YES;
-    tabKeyCyclesThroughElements = YES;
     shouldCloseWithWindow = objc_collecting_enabled();
     continuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled];
 #if !BUILDING_ON_TIGER
@@ -2677,12 +2675,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)setTabKeyCyclesThroughElements:(BOOL)cyclesElements
 {
     _private->tabKeyCyclesThroughElementsChanged = YES;
-    _private->tabKeyCyclesThroughElements = cyclesElements;
+    _private->page->setTabKeyCyclesThroughElements(cyclesElements);
 }
 
 - (BOOL)tabKeyCyclesThroughElements
 {
-    return _private->tabKeyCyclesThroughElements;
+    return _private->page->tabKeyCyclesThroughElements();
 }
 
 - (void)setScriptDebugDelegate:(id)delegate
@@ -2976,7 +2974,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     if (_private->editable != flag) {
         _private->editable = flag;
         if (!_private->tabKeyCyclesThroughElementsChanged)
-            _private->tabKeyCyclesThroughElements = !flag;
+            _private->page->setTabKeyCyclesThroughElements(!flag);
         FrameMac* mainFrame = [[[self mainFrame] _bridge] _frame];
         if (mainFrame) {
             if (flag) {
