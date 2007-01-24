@@ -53,7 +53,7 @@
 		1440F8AF0A508D200005F061 /* JSCallbackConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1440F8AD0A508D200005F061 /* JSCallbackConstructor.cpp */; };
 		1440FCE30A51E46B0005F061 /* JSClassRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1440FCE10A51E46B0005F061 /* JSClassRef.h */; };
 		1440FCE40A51E46B0005F061 /* JSClassRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1440FCE20A51E46B0005F061 /* JSClassRef.cpp */; };
-		146AAB2B0B66A84900E55F16 /* JSStringRefCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 146AAB2A0B66A84900E55F16 /* JSStringRefCF.h */; };
+		146AAB2B0B66A84900E55F16 /* JSStringRefCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 146AAB2A0B66A84900E55F16 /* JSStringRefCF.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		146AAB380B66A94400E55F16 /* JSStringRefCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 146AAB370B66A94400E55F16 /* JSStringRefCF.cpp */; };
 		14760864099C633800437128 /* JSImmediate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14760863099C633800437128 /* JSImmediate.cpp */; };
 		1482B6EB0A4300B300517CFC /* JSValueRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B6EA0A4300B300517CFC /* JSValueRef.h */; settings = {ATTRIBUTES = (Public, ); }; };

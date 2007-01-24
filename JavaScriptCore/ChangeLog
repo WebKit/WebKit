@@ -1,3 +1,9 @@
+2007-01-24  Mark Rowe  <mrowe@apple.com>
+
+        Build fix for DumpRenderTree.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Make JSStringRefCF.h public so it's copied into build framework.
+
 2007-01-23  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
