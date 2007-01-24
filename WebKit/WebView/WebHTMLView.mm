@@ -140,6 +140,10 @@ void _NSResetKillRingOperationFlag(void);
 - (void)learnWord:(NSString *)word;
 @end
 
+// Used to avoid linking with ApplicationServices framework for _DCMDictionaryServiceWindowShow
+extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
+    NSString *inFrameworkName, const char *inFuncName, const struct mach_header **);
+
 // By imaging to a width a little wider than the available pixels,
 // thin pages will be scaled down a little, matching the way they
 // print in IE and Camino. This lets them use fewer sheets than they
@@ -187,14 +191,13 @@ void _NSResetKillRingOperationFlag(void);
 #define STANDARD_BOLD_WEIGHT 10
 
 // if YES, do the standard NSView hit test (which can't give the right result when HTML overlaps a view)
-static BOOL forceNSViewHitTest = NO;
+static BOOL forceNSViewHitTest;
 
 // if YES, do the "top WebHTMLView" it test (which we'd like to do all the time but can't because of Java requirements [see bug 4349721])
-static BOOL forceWebHTMLViewHitTest = NO;
+static BOOL forceWebHTMLViewHitTest;
 
-// Used to avoid linking with ApplicationServices framework for _DCMDictionaryServiceWindowShow
-extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
-    NSString *inFrameworkName, const char *inFuncName, const struct mach_header **);
+static NSEvent *performKeyEquivalentEvent;
+static WebHTMLView *lastHitView;
 
 @interface WebHTMLView (WebTextSizing) <_WebDocumentTextSizing>
 @end
@@ -398,6 +401,7 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
             @"applet", @"basefont", @"center", @"dir", @"font", @"isindex", @"menu", @"s", @"strike", @"u",
             // Omit object so no file attachments are part of the fragment.
             @"object", nil];
+        CFRetain(elements);
     }
     return elements;
 }
@@ -995,8 +999,6 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
     return nil;
 }
 
-static WebHTMLView *lastHitView = nil;
-
 - (void)_clearLastHitViewIfSelf
 {
     if (lastHitView == self)
@@ -1209,6 +1211,7 @@ static WebHTMLView *lastHitView = nil;
         types = [[NSArray alloc] initWithObjects:WebArchivePboardType, NSHTMLPboardType,
             NSFilenamesPboardType, NSTIFFPboardType, NSPICTPboardType, NSURLPboardType, 
             NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, NSColorPboardType, nil];
+        CFRetain(types);
     }
     return types;
 }
@@ -3900,8 +3903,6 @@ done:
     return NO;
 }
 
-static NSEvent *performKeyEquivalentEvent;
-
 - (BOOL)performKeyEquivalent:(NSEvent *)event
 {
     if ([self _handleStyleKeyEquivalent:event])
@@ -3918,17 +3919,16 @@ static NSEvent *performKeyEquivalentEvent;
     // Pass command-key combos through WebCore if there is a key binding available for
     // this event. This lets web pages have a crack at intercepting command-modified keypresses.
     // But don't do it if we have already handled the event.
-    if (!eventWasSentToWebCore 
-            && event == [NSApp currentEvent]    // Pressing Esc results in a fake event being sent - don't pass it to WebCore
-            && self == [[self window] firstResponder]
-            && core([self _frame])) {
-            
+    // Pressing Esc results in a fake event being sent - don't pass it to WebCore.
+    if (!eventWasSentToWebCore && event == [NSApp currentEvent] && self == [[self window] firstResponder])
+        if (Frame* frame = core([self _frame])) {
             NSEvent *savedPerformKeyEquivalentEvent = performKeyEquivalentEvent;
             performKeyEquivalentEvent = event;
-            if (core([self _frame])->eventHandler()->keyEvent(event))
-                ret = YES;
+            ret = frame->eventHandler()->keyEvent(event);
             performKeyEquivalentEvent = savedPerformKeyEquivalentEvent;
-    } else if (!ret)
+        }
+
+    if (!ret)
         ret = [super performKeyEquivalent:event];
 
     [self release];
@@ -5248,8 +5248,9 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     if (event == performKeyEquivalentEvent)
         return NO;
 
-    // Now process the key normally
+    // Ask AppKit to process the key event -- it will call back with the appropriate selector(s).
     [self interpretKeyEvents:[NSArray arrayWithObject:event]];
+    // FIXME: We return YES here even though AppKit might have decided to not do anything with the event.
     return YES;
 }
 
@@ -5260,15 +5261,17 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 - (NSArray *)validAttributesForMarkedText
 {
     static NSArray *validAttributes;
-    if (!validAttributes)
-        validAttributes = [[NSArray allocWithZone:[self zone]] initWithObjects:
+    if (!validAttributes) {
+        validAttributes = [[NSArray alloc] initWithObjects:
             NSUnderlineStyleAttributeName, NSUnderlineColorAttributeName,
             NSMarkedClauseSegmentAttributeName, NSTextInputReplacementRangeAttributeName, nil];
-    // NSText also supports the following attributes, but it's
-    // hard to tell which are really required for text input to
-    // work well; I have not seen any input method make use of them yet.
-    //     NSFontAttributeName, NSForegroundColorAttributeName,
-    //     NSBackgroundColorAttributeName, NSLanguageAttributeName.
+        // NSText also supports the following attributes, but it's
+        // hard to tell which are really required for text input to
+        // work well; I have not seen any input method make use of them yet.
+        //     NSFontAttributeName, NSForegroundColorAttributeName,
+        //     NSBackgroundColorAttributeName, NSLanguageAttributeName.
+        CFRetain(validAttributes);
+    }
     return validAttributes;
 }
 

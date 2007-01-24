@@ -1,3 +1,20 @@
+2007-01-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix small regression and GC problems noticed by code inspection
+
+        * WebView/WebHTMLView.mm: Move global declarations to the start of the file.
+        (+[WebHTMLView _excludedElementsForAttributedStringConversion]):
+        Add a CFRetain here for GC compatibility.
+        (+[WebHTMLView _insertablePasteboardTypes]): Ditto.
+        (-[WebHTMLView performKeyEquivalent:]): Fix small logic mistake that prevents
+        super from being called if EventHandler::keyEvent returns false. Reformatted
+        the code a bit and added a local variable for the frame.
+        (-[WebHTMLView _interceptEditingKeyEvent:]): Added some comments.
+        (-[WebHTMLView validAttributesForMarkedText]): Add a CFRetain here for
+        GC compatibility.
+
 2007-01-23  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.
