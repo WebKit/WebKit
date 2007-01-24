@@ -1,3 +1,10 @@
+2007-01-23  Alice Liu  <alice.liu@apple.com>
+
+        release build fix
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        Copy APICasts.h
+
 2007-01-23  Geoffrey Garen  <ggaren@apple.com>
 
         build fix
