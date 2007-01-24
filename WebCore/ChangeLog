@@ -4,7 +4,7 @@
 
         Fixes DragController to allow a null target Document.
         This is encountered in new tabs/windows that have not 
-        loaded any page (including about:blank)
+        loaded any page
 
         * page/DragController.cpp:
         (WebCore::documentAtPoint):
