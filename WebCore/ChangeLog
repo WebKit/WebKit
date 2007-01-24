@@ -1,3 +1,69 @@
+2007-01-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=12394
+        Cleanup RenderBox
+
+        No functionality changes, just a good old fashion cleanup,
+        thus no tests.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::RenderBox):
+        (WebCore::RenderBox::setStyle):
+        (WebCore::RenderBox::destroy):
+        (WebCore::RenderBox::setPos):
+        (WebCore::RenderBox::calcBorderBoxWidth):
+        (WebCore::RenderBox::calcBorderBoxHeight):
+        (WebCore::RenderBox::calcContentBoxWidth):
+        (WebCore::RenderBox::calcContentBoxHeight):
+        (WebCore::RenderBox::nodeAtPoint):
+        (WebCore::RenderBox::paintRootBoxDecorations):
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::paintBackgrounds):
+        (WebCore::RenderBox::paintBackground):
+        (WebCore::cacluateBackgroundSize):
+        (WebCore::RenderBox::paintBackgroundExtended):
+        (WebCore::RenderBox::getOverflowClipRect):
+        (WebCore::RenderBox::getClipRect):
+        (WebCore::RenderBox::containingBlockWidth):
+        (WebCore::RenderBox::absolutePosition):
+        (WebCore::RenderBox::dirtyLineBoxes):
+        (WebCore::RenderBox::position):
+        (WebCore::RenderBox::getAbsoluteRepaintRect):
+        (WebCore::RenderBox::computeAbsoluteRepaintRect):
+        (WebCore::RenderBox::repaintDuringLayoutIfMoved):
+        (WebCore::RenderBox::relativePositionOffsetX):
+        (WebCore::RenderBox::relativePositionOffsetY):
+        (WebCore::RenderBox::calcWidth):
+        (WebCore::RenderBox::calcWidthUsing):
+        (WebCore::RenderBox::sizesToIntrinsicWidth):
+        (WebCore::RenderBox::calcHorizontalMargins):
+        (WebCore::RenderBox::calcHeight):
+        (WebCore::RenderBox::calcPercentageHeight):
+        (WebCore::RenderBox::calcReplacedWidthUsing):
+        (WebCore::RenderBox::calcReplacedHeightUsing):
+        (WebCore::RenderBox::availableHeightUsing):
+        (WebCore::RenderBox::calcVerticalMargins):
+        (WebCore::RenderBox::containingBlockWidthForPositioned):
+        (WebCore::RenderBox::calcAbsoluteHorizontal):
+        (WebCore::RenderBox::calcAbsoluteHorizontalValues):
+        (WebCore::RenderBox::calcAbsoluteVertical):
+        (WebCore::RenderBox::calcAbsoluteVerticalValues):
+        (WebCore::RenderBox::calcAbsoluteHorizontalReplaced):
+        (WebCore::RenderBox::caretRect):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::setOverrideSize):
+        (WebCore::RenderBox::width):
+        (WebCore::RenderBox::height):
+        (WebCore::RenderBox::setWidth):
+        (WebCore::RenderBox::setHeight):
+        (WebCore::RenderBox::inlineBoxWrapper):
+        (WebCore::RenderBox::setInlineBoxWrapper):
+        (WebCore::RenderBox::stretchesToViewHeight):
+        (WebCore::RenderBox::setStaticX):
+        (WebCore::RenderBox::setStaticY):
+
 2007-01-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by ap.
