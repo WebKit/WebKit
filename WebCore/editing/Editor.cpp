@@ -648,7 +648,7 @@ void Editor::appliedEditing(PassRefPtr<EditCommand> cmd)
     // FIXME: We shouldn't tell setSelection to clear the typing style or removed anchor here.
     // If we didn't, we wouldn't have to save/restore the removedAnchor, and we wouldn't have to have
     // the typing style stored in two places (the Frame and commands).
-    RefPtr<Node> anchor = m_frame->editor()->removedAnchor();
+    RefPtr<Node> anchor = removedAnchor();
     
     Selection newSelection(cmd->endingSelection());
     // If there is no selection change, don't bother sending shouldChangeSelection, but still call setSelection,
@@ -656,7 +656,7 @@ void Editor::appliedEditing(PassRefPtr<EditCommand> cmd)
     if (newSelection == m_frame->selectionController()->selection() || m_frame->shouldChangeSelection(newSelection))
         m_frame->selectionController()->setSelection(newSelection, false);
     
-    m_frame->editor()->setRemovedAnchor(anchor);
+    setRemovedAnchor(anchor);
     
     // Now set the typing style from the command. Clear it when done.
     // This helps make the case work where you completely delete a piece

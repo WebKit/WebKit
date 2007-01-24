@@ -1,3 +1,11 @@
+2007-01-23  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Brady.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::appliedEditing):
+        minor change.  removing unnecessary call to frame to fetch editor
+
 2007-01-23  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Adele.
