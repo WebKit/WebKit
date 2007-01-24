@@ -1,3 +1,16 @@
+2007-01-23  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Brady.
+
+        Plug thousands of node leaks seen running layout tests.
+
+        * ksvg2/svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::~SVGElementInstance): Disassociate ourselves from our children so they will
+        be destroyed if we were the only thing referencing them.
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::removedFromDocument):
+        * ksvg2/svg/SVGUseElement.h:
+
 2007-01-23  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Brady.
