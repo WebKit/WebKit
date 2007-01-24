@@ -144,7 +144,7 @@ void DragController::cancelDrag()
 
 static Document* documentAtPoint(Frame* frame, const IntPoint& point)
 {  
-    if (!frame) 
+    if (!frame || !frame->view()) 
         return 0;
 
     IntPoint pt = frame->view()->windowToContents(point);
@@ -249,8 +249,8 @@ DragOperation DragController::tryDocumentDrag(DragData* dragData, DragDestinatio
         operation = tryDHTMLDrag(dragData);
     m_isHandlingDrag = operation != DragOperationNone; 
 
-    FrameView *frameView = m_document->view();
-    if (!m_document || !frameView)
+    FrameView *frameView = 0;
+    if (!m_document || !(frameView = m_document->view()))
         return operation;
     
     
@@ -278,7 +278,7 @@ DragOperation DragController::operationForLoad(DragData* dragData)
 {
     ASSERT(dragData);
     Document* doc = documentAtPoint(m_page->mainFrame(), dragData->clientPosition());
-    if (!doc || m_didInitiateDrag || doc->isPluginDocument() || (doc->frame() && doc->frame()->editor()->clientIsEditable()))
+    if (doc && (m_didInitiateDrag || doc->isPluginDocument() || (doc->frame() && doc->frame()->editor()->clientIsEditable())))
         return DragOperationNone;
     return dragOperation(dragData);
 }
@@ -287,8 +287,11 @@ bool DragController::concludeDrag(DragData* dragData, DragDestinationAction acti
 {
     ASSERT(dragData);
     ASSERT(!m_isHandlingDrag);
-    
     ASSERT(actionMask & DragDestinationActionEdit);
+    
+    if (!m_document)
+        return false;
+    
     IntPoint point = m_document->view()->windowToContents(dragData->clientPosition());
     Element* element =  m_document->elementFromPoint(point.x(), point.y());
     ASSERT(element);

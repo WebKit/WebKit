@@ -1,3 +1,19 @@
+2007-01-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adele.
+
+        Fixes DragController to allow a null target Document.
+        This is encountered in new tabs/windows that have not 
+        loaded any page (including about:blank)
+
+        * page/DragController.cpp:
+        (WebCore::documentAtPoint):
+        (WebCore::DragController::tryDocumentDrag):
+        (WebCore::DragController::operationForLoad):
+        (WebCore::DragController::concludeDrag):
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::dragOperation):
+
 2007-01-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mitz.
