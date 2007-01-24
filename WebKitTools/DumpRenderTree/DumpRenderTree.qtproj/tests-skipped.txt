@@ -1,6 +1,4 @@
 # These tests hang forever
-editing/selection/extend-by-word-002.html
-tables/mozilla/core/col_widths_fix_autoFixPer.html
 
 # tests that currently crash
 fast/borders/border-radius-huge-assert.html

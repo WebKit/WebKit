@@ -34,16 +34,33 @@
 #include <qdir.h>
 #include <qdebug.h>
 
+#include <signal.h>
+
 void messageHandler(QtMsgType, const char *)
 {
     // do nothing
 }
 
+static void crashHandler(int sig)
+{
+    fprintf(stderr, "%s\n", strsignal(sig));
+    exit(128 + sig);
+}
 
 int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
 
+    signal(SIGILL, crashHandler);    /* 4:   illegal instruction (not reset when caught) */
+    signal(SIGTRAP, crashHandler);   /* 5:   trace trap (not reset when caught) */
+    signal(SIGFPE, crashHandler);    /* 8:   floating point exception */
+    signal(SIGBUS, crashHandler);    /* 10:  bus error */
+    signal(SIGSEGV, crashHandler);   /* 11:  segmentation violation */
+    signal(SIGSYS, crashHandler);    /* 12:  bad argument to system call */
+    signal(SIGPIPE, crashHandler);   /* 13:  write on a pipe with no reader */
+    signal(SIGXCPU, crashHandler);   /* 24:  exceeded CPU time limit */
+    signal(SIGXFSZ, crashHandler);   /* 25:  exceeded file size limit */
+    
     QStringList args = app.arguments();
     if (args.count() < 2) {
         qDebug() << "Usage: DumpRenderTree [-v] filename";

@@ -60,7 +60,7 @@ public:
 public Q_SLOTS:
     void initJSObjects();
     void readStdin(int);
-    void maybeDump();
+    void maybeDump(bool);
     void dump();
 
 Q_SIGNALS:

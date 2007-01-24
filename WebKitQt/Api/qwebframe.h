@@ -52,7 +52,7 @@ public:
 
 signals:
     void cleared();
-    void loadDone();
+    void loadDone(bool ok);
     
 private:
     friend class QWebPage;

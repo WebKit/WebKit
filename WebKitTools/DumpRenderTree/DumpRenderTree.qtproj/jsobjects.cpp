@@ -46,7 +46,7 @@ void LayoutTestController::waitUntilDone()
 {
     //qDebug() << ">>>>waitForDone";
     waitForDone = true;
-    timeoutTimer = startTimer(1000);
+    timeoutTimer = startTimer(5000);
 }
 
 void LayoutTestController::notifyDone()

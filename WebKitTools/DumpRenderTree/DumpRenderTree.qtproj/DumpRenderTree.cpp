@@ -65,7 +65,7 @@ DumpRenderTree::DumpRenderTree()
     QObject::connect(m_controller, SIGNAL(done()), this, SLOT(dump()), Qt::QueuedConnection);
     QObject::connect(this, SIGNAL(quit()), qApp, SLOT(quit()), Qt::QueuedConnection);
     QObject::connect(frame, SIGNAL(cleared()), this, SLOT(initJSObjects()));
-    QObject::connect(frame, SIGNAL(loadDone()), this, SLOT(maybeDump()));
+    QObject::connect(frame, SIGNAL(loadDone(bool)), this, SLOT(maybeDump(bool)));
     
     page->resize(800, 800);
 
@@ -195,9 +195,9 @@ void DumpRenderTree::dump()
     }
 }
     
-void DumpRenderTree::maybeDump()
+void DumpRenderTree::maybeDump(bool ok)
 {
-    if (!m_controller->shouldWaitUntilDone()) 
+    if (!ok || !m_controller->shouldWaitUntilDone()) 
         dump();
 }
 

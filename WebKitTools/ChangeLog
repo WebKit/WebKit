@@ -1,3 +1,22 @@
+2007-01-24  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Add a signal handler, always dump immediately if we get an
+        error during a page load and raise the timeout to 5 seconds
+        (as we get a lot less such failures now)
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::maybeDump):
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.qtproj/jsobjects.cpp:
+        (LayoutTestController::waitUntilDone):
+        * DumpRenderTree/DumpRenderTree.qtproj/main.cpp:
+        (crashHandler):
+        (main):
+        * DumpRenderTree/DumpRenderTree.qtproj/tests-skipped.txt:
+
 2007-01-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

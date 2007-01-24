@@ -1,5 +1,24 @@
 2007-01-24  Lars Knoll <lars@trolltech.com>
 
+        Reviewed by Zack
+
+        Implement some bits and pieces required by the loader.
+        Fixes quite a few crashes and hangs in the lyout tests
+
+        * Api/qwebframe.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoad):
+        (WebCore::FrameLoaderClientQt::finishedLoading):
+        (WebCore::FrameLoaderClientQt::setMainDocumentError):
+        (WebCore::FrameLoaderClientQt::committedLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoading):
+        (WebCore::FrameLoaderClientQt::dispatchDidFailLoading):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientQt::createFrame):
+
+2007-01-24  Lars Knoll <lars@trolltech.com>
+
         Fix compilation again.
 
         * WebCoreSupport/EditorClientQt.cpp:
