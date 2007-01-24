@@ -389,7 +389,9 @@ void WebEditorClient::redo()
 
 void WebEditorClient::handleKeyPress(EventTargetNode* node, KeyboardEvent* event)
 {
-    WebHTMLView *webHTMLView = [[[m_webView mainFrame] frameView] documentView];
+    // FIXME: Instead of using the selectedFrame, we may want to use the frame for the
+    // target node.
+    WebHTMLView *webHTMLView = [[[m_webView selectedFrame] frameView] documentView];
     if (const PlatformKeyboardEvent* platformEvent = event->keyEvent())
         if ([webHTMLView _canEdit] && [webHTMLView _interceptEditingKeyEvent:platformEvent->macEvent()])
             event->setDefaultHandled();

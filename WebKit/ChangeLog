@@ -1,5 +1,17 @@
 2007-01-23  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Adam.
+
+        Fixed 2 layout tests that I broke with my last checkin.
+
+        * WebCoreSupport/WebEditorClient.mm: (WebEditorClient::handleKeyPress): Use the selected frame to get the WebHTMLView.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView performKeyEquivalent:]): Added global to keep track of NSEvent used here.
+        (-[WebHTMLView _interceptEditingKeyEvent:]): Check NSEvent against the event used in performKeyEquivalent.
+          We don't want to intercept these events.
+
+2007-01-23  Adele Peterson  <adele@apple.com>
+
         Reviewed by Darin.
 
         WebKit part of fix for <rdar://problem/4946753>REGRESSION: Inserting tabs is broken in Mail

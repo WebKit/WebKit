@@ -3900,6 +3900,8 @@ done:
     return NO;
 }
 
+static NSEvent *performKeyEquivalentEvent;
+
 - (BOOL)performKeyEquivalent:(NSEvent *)event
 {
     if ([self _handleStyleKeyEquivalent:event])
@@ -3912,19 +3914,23 @@ done:
     _private->keyDownEvent = [event retain];
     
     [self retain];
-    
+
     // Pass command-key combos through WebCore if there is a key binding available for
     // this event. This lets web pages have a crack at intercepting command-modified keypresses.
     // But don't do it if we have already handled the event.
     if (!eventWasSentToWebCore 
             && event == [NSApp currentEvent]    // Pressing Esc results in a fake event being sent - don't pass it to WebCore
             && self == [[self window] firstResponder]
-            && core([self _frame])
-            && core([self _frame])->eventHandler()->keyEvent(event))
-        ret = YES;
-    else
+            && core([self _frame])) {
+            
+            NSEvent *savedPerformKeyEquivalentEvent = performKeyEquivalentEvent;
+            performKeyEquivalentEvent = event;
+            if (core([self _frame])->eventHandler()->keyEvent(event))
+                ret = YES;
+            performKeyEquivalentEvent = savedPerformKeyEquivalentEvent;
+    } else if (!ret)
         ret = [super performKeyEquivalent:event];
-    
+
     [self release];
     
     return ret;
@@ -5238,9 +5244,8 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (BOOL)_interceptEditingKeyEvent:(NSEvent *)event
 {
-    // If the cmd-key is down, then we shouldn't intercept the key since this will
-    // be handled correctly in performKeyEquivalent
-    if ([event modifierFlags] & NSCommandKeyMask) 
+    // We shouldn't call interpretKeyEvents: on an event from performKeyEquivalent.
+    if (event == performKeyEquivalentEvent)
         return NO;
 
     // Now process the key normally
