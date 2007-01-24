@@ -74,6 +74,9 @@ public:
 
     virtual void toggleContinuousSpellChecking();
     virtual void toggleGrammarChecking();
+
+    virtual void handleKeyPress(EventTargetNode*, KeyboardEvent*);
+
 };
 
 }

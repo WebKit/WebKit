@@ -192,6 +192,10 @@ void EditorClientQt::toggleGrammarChecking()
     notImplemented();
 }
 
+void EditorClientQt::handleKeyPress(EventTargetNode*, KeyboardEvent*)
+{
+    notImplemented();
+}
 
 }
 

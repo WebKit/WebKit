@@ -1,3 +1,11 @@
+2007-01-24  Lars Knoll <lars@trolltech.com>
+
+        Fix compilation again.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeyPress):
+        * WebCoreSupport/EditorClientQt.h:
+
 2007-01-23  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack
