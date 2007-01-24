@@ -63,6 +63,7 @@
 #include "HTMLNameCollection.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
+#include "HTMLTitleElement.h"
 #include "HTTPParsers.h"
 #include "JSEditor.h"
 #include "KeyboardEvent.h"
@@ -809,12 +810,22 @@ void Document::updateTitle()
         f->loader()->setTitle(m_title);
 }
 
-void Document::setTitle(const String& title, Node* titleElement)
+void Document::setTitle(const String& title, Element* titleElement)
 {
     if (!titleElement) {
         // Title set by JavaScript -- overrides any title elements.
         m_titleSetExplicitly = true;
-        m_titleElement = 0;
+        if (!isHTMLDocument())
+            m_titleElement = 0;
+        else if (!m_titleElement) {
+            if (HTMLElement* headElement = head()) {
+                ExceptionCode ec = 0;
+                m_titleElement = createElement("title", ec);
+                ASSERT(!ec);
+                headElement->appendChild(m_titleElement, ec);
+                ASSERT(!ec);
+            }
+        }
     } else if (titleElement != m_titleElement) {
         if (m_titleElement || m_titleSetExplicitly)
             // Only allow the first title element to change the title -- others have no effect.
@@ -827,17 +838,30 @@ void Document::setTitle(const String& title, Node* titleElement)
 
     m_title = title;
     updateTitle();
+
+    if (m_titleSetExplicitly && m_titleElement && m_titleElement->hasTagName(titleTag))
+        static_cast<HTMLTitleElement*>(m_titleElement.get())->setText(m_title);
 }
 
-void Document::removeTitle(Node* titleElement)
+void Document::removeTitle(Element* titleElement)
 {
     if (m_titleElement != titleElement)
         return;
 
-    // FIXME: Ideally we might want this to search for the first remaining title element, and use it.
     m_titleElement = 0;
+    m_titleSetExplicitly = false;
 
-    if (!m_title.isEmpty()) {
+    // Update title based on first title element in the head, if one exists.
+    if (HTMLElement* headElement = head()) {
+        for (Node* e = headElement->firstChild(); e; e = e->nextSibling())
+            if (e->hasTagName(titleTag)) {
+                HTMLTitleElement* titleElement = static_cast<HTMLTitleElement*>(e);
+                setTitle(titleElement->text(), titleElement);
+                break;
+            }
+    }
+
+    if (!m_titleElement && !m_title.isEmpty()) {
         m_title = "";
         updateTitle();
     }
@@ -1255,7 +1279,7 @@ void Document::implicitOpen()
 
 HTMLElement* Document::body()
 {
-    Node *de = documentElement();
+    Node* de = documentElement();
     if (!de)
         return 0;
     
@@ -1268,7 +1292,20 @@ HTMLElement* Document::body()
         if (i->hasTagName(bodyTag))
             body = i;
     }
-    return static_cast<HTMLElement *>(body);
+    return static_cast<HTMLElement*>(body);
+}
+
+HTMLElement* Document::head()
+{
+    Node* de = documentElement();
+    if (!de)
+        return 0;
+
+    for (Node* e = de->firstChild(); e; e = e->nextSibling())
+        if (e->hasTagName(headTag))
+            return static_cast<HTMLElement*>(e);
+
+    return 0;
 }
 
 void Document::close()

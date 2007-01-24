@@ -1,3 +1,20 @@
+2007-01-23  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adele.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12375
+        Bug 12375: REGRESSION(r19038): fast/dom/title-text-property-2.html failing
+
+        Fix regression by making setTitle/updateTitle/removeTitle logic match document.title
+        specification at http://whatwg.org/specs/web-apps/current-work/#the-title1.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setTitle): Materialize a title element into the head if one doesn't exist when setting
+        document.title.  Also update the contents of the title element when the title is set via document.title.
+        (WebCore::Document::removeTitle): Update the title based on first title element in the head, if one exists.
+        (WebCore::Document::head): Convenience method to retrieve the head element in an HTML document.
+        * dom/Document.h:
+
 2007-01-23  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

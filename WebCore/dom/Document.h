@@ -196,8 +196,8 @@ public:
 
     // Actually part of JSHTMLDocument, but used for giving XML documents a window title as well
     String title() const { return m_title; }
-    void setTitle(const String&, Node* titleElement = 0);
-    void removeTitle(Node* titleElement);
+    void setTitle(const String&, Element* titleElement = 0);
+    void removeTitle(Element* titleElement);
 
     PassRefPtr<HTMLCollection> images();
     PassRefPtr<HTMLCollection> embeds();
@@ -535,6 +535,7 @@ public:
     HTMLMapElement* getImageMap(const String& URL) const;
 
     HTMLElement* body();
+    HTMLElement* head();
 
     String toString() const;
     
@@ -691,7 +692,7 @@ protected:
     
     String m_title;
     bool m_titleSetExplicitly;
-    RefPtr<Node> m_titleElement;
+    RefPtr<Element> m_titleElement;
     
     RenderArena* m_renderArena;
 

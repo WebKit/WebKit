@@ -7,7 +7,7 @@ function runTests() {
         layoutTestController.dumpTitleChanges();
     }
     
-    document.title='1. setting document.title';
+    document.title = '1. setting document.title';
 
     title = document.getElementsByTagName('title').item(0);
     
@@ -18,10 +18,10 @@ function runTests() {
     
     document.getElementsByTagName('head').item(0).appendChild(newTitle);
     
-    // Remove both title elements 
+    // Remove both title elements
     titleElements = document.getElementsByTagName('title');
-    for (i = 0; i < titleElements.length; i++) {
-        titleElement = titleElements.item(i);
+    while (titleElements.length) {
+        titleElement = titleElements[titleElements.length - 1];
         titleElement.parentNode.removeChild(titleElement);
     }
 }

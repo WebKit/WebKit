@@ -1,3 +1,17 @@
+2007-01-23  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adele.
+
+        Layout tests for http://bugs.webkit.org/show_bug.cgi?id=12375
+        Bug 12375: REGRESSION(r19038): fast/dom/title-text-property-2.html failing
+
+        * fast/dom/Document/title-property-creates-title-element-expected.txt: Added.
+        * fast/dom/Document/title-property-creates-title-element.html: Added.
+        * fast/dom/Document/title-property-set-multiple-times-expected.txt: Added.
+        * fast/dom/Document/title-property-set-multiple-times.html: Added.
+        * fast/dom/title-text-property-2.html: Remove in reverse order to preserve test behaviour when removing title elements.
+        * svg/custom/multiple-title-elements.svg: Added.
+
 2007-01-23  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
