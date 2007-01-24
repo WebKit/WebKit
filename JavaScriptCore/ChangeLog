@@ -2,7 +2,7 @@
 
         Build fix for DumpRenderTree.
 
-        * JavaScriptCore.xcodeproj/project.pbxproj: Make JSStringRefCF.h public so it's copied into build framework.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Make JSStringRefCF.h public so it's copied into built framework.
 
 2007-01-23  Anders Carlsson  <acarlsson@apple.com>
 
