@@ -1,3 +1,16 @@
+2007-01-24  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Eric.
+
+        Plug another bunch of SVG memory leaks.
+
+        * ksvg2/misc/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::~SVGDocumentExtensions): Delete memory we have allocated.
+        (WebCore::SVGDocumentExtensions::removePendingResource): Return an auto_ptr to show that we are transferring ownership.
+        * ksvg2/misc/SVGDocumentExtensions.h:
+        * ksvg2/svg/SVGElement.cpp:
+        (WebCore::SVGElement::insertedIntoDocument): Update for use of auto_ptr.
+
 2007-01-23  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Brady.

@@ -47,6 +47,8 @@ SVGDocumentExtensions::SVGDocumentExtensions(Document* doc)
 
 SVGDocumentExtensions::~SVGDocumentExtensions()
 {
+    deleteAllValues(m_pendingResources);
+    deleteAllValues(m_elementInstances);
 }
 
 PassRefPtr<EventListener> SVGDocumentExtensions::createSVGEventListener(const String& functionName, const String& code, Node *node)
@@ -126,11 +128,11 @@ bool SVGDocumentExtensions::isPendingResource(const AtomicString& id) const
     return m_pendingResources.contains(id);
 }
 
-HashSet<SVGStyledElement*>* SVGDocumentExtensions::removePendingResource(const AtomicString& id)
+std::auto_ptr<HashSet<SVGStyledElement*> > SVGDocumentExtensions::removePendingResource(const AtomicString& id)
 {
     ASSERT(m_pendingResources.contains(id));
 
-    HashSet<SVGStyledElement*>* set = m_pendingResources.get(id);
+    std::auto_ptr<HashSet<SVGStyledElement*> > set(m_pendingResources.get(id));
     m_pendingResources.remove(id);
     return set;
 }

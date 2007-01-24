@@ -93,7 +93,7 @@ public:
     // For instance, dynamically build gradients / patterns / clippers...
     void addPendingResource(const AtomicString& id, SVGStyledElement*);
     bool isPendingResource(const AtomicString& id) const;
-    HashSet<SVGStyledElement*>* removePendingResource(const AtomicString& id);
+    std::auto_ptr<HashSet<SVGStyledElement*> > removePendingResource(const AtomicString& id);
 
     // This HashMap maps elements to their instances, when they are used by <use> elements.
     // This is needed to synchronize the original element with the internally cloned one.

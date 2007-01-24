@@ -187,8 +187,8 @@ void SVGElement::insertedIntoDocument()
 
     String resourceId = SVGURIReference::getTarget(id());
     if (extensions->isPendingResource(resourceId)) {
-        HashSet<SVGStyledElement*>* clients = extensions->removePendingResource(resourceId);
-        if (!clients || clients->isEmpty())
+        std::auto_ptr<HashSet<SVGStyledElement*> > clients(extensions->removePendingResource(resourceId));
+        if (clients->isEmpty())
             return;
 
         HashSet<SVGStyledElement*>::const_iterator it = clients->begin();
