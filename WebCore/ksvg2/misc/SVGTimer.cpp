@@ -92,10 +92,10 @@ static PassRefPtr<SVGTransformList> baseValueTransformList(SVGElement* targetEle
     RefPtr<SVGTransformList> targetTransforms = new SVGTransformList();
     SVGTransformList* transformList = transform->transformBaseValue();
     if (transformList) {
-        RefPtr<SVGTransform> initialTransform = transformList->concatenate();
-        if (initialTransform) {
+        SVGTransform initialTransform = transformList->concatenate();
+        if (initialTransform.isValid()) {
             ExceptionCode ec;
-            targetTransforms->appendItem(initialTransform.get(), ec);
+            targetTransforms->appendItem(initialTransform, ec);
             return targetTransforms.release();
         }
     }

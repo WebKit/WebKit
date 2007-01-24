@@ -306,16 +306,14 @@ FloatRect SVGSVGElement::createSVGRect()
     return FloatRect();
 }
 
-SVGTransform* SVGSVGElement::createSVGTransform()
+SVGTransform SVGSVGElement::createSVGTransform()
 {
-    return new SVGTransform();
+    return SVGTransform();
 }
 
-SVGTransform* SVGSVGElement::createSVGTransformFromMatrix(const AffineTransform& matrix)
-{    
-    SVGTransform* obj = SVGSVGElement::createSVGTransform();
-    obj->setMatrix(matrix);
-    return obj;
+SVGTransform SVGSVGElement::createSVGTransformFromMatrix(const AffineTransform& matrix)
+{
+    return SVGTransform(matrix);
 }
 
 AffineTransform SVGSVGElement::getCTM() const

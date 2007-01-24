@@ -71,9 +71,9 @@ void SVGTextElement::parseMappedAttribute(MappedAttribute* attr)
 void SVGTextElement::updateLocalTransform(SVGTransformList* localTransforms)
 {
     // Update cached local matrix
-    RefPtr<SVGTransform> localTransform = localTransforms->concatenate();
-    if (localTransform) {
-        m_localMatrix = localTransform->matrix();
+    SVGTransform localTransform = localTransforms->concatenate();
+    if (localTransform.isValid()) {
+        m_localMatrix = localTransform.matrix();
         if (renderer()) {
             renderer()->setLocalTransform(m_localMatrix);
             renderer()->setNeedsLayout(true);

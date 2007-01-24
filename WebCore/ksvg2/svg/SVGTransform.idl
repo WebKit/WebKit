@@ -23,7 +23,7 @@
 
 module svg {
 
-    interface [Conditional=SVG, GenerateConstructor] SVGTransform { 
+    interface [Conditional=SVG, GenerateConstructor, PODType=SVGTransform] SVGTransform { 
         // Transform Types
         const unsigned short SVG_TRANSFORM_UNKNOWN   = 0;
         const unsigned short SVG_TRANSFORM_MATRIX    = 1;

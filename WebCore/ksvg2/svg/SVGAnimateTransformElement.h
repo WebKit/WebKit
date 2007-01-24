@@ -44,7 +44,7 @@ namespace WebCore {
         void applyAnimationToValue(SVGTransformList*);
 
         // Helpers
-        RefPtr<SVGTransform> parseTransformValue(const String&) const;
+        SVGTransform parseTransformValue(const String&) const;
         void calculateRotationFromMatrix(const AffineTransform&, double& angle, double& cx, double& cy) const;
 
         AffineTransform currentTransform() const;
@@ -62,9 +62,9 @@ namespace WebCore {
         int m_currentItem;
         SVGTransform::SVGTransformType m_type;
 
-        RefPtr<SVGTransform> m_toTransform;
-        RefPtr<SVGTransform> m_fromTransform;
-        RefPtr<SVGTransform> m_initialTransform;
+        SVGTransform m_toTransform;
+        SVGTransform m_fromTransform;
+        SVGTransform m_initialTransform;
 
         AffineTransform m_lastTransform;
         AffineTransform m_currentTransform;

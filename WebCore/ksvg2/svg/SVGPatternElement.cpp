@@ -235,7 +235,7 @@ PatternAttributes SVGPatternElement::collectPatternProperties() const
             attributes.setBoundingBoxModeContent(current->getAttribute(SVGNames::patternContentUnitsAttr) == "objectBoundingBox");
 
         if (!attributes.hasPatternTransform() && current->hasAttribute(SVGNames::patternTransformAttr))
-            attributes.setPatternTransform(current->patternTransform()->consolidate()->matrix());
+            attributes.setPatternTransform(current->patternTransform()->consolidate().matrix());
 
         if (!attributes.hasPatternContentElement() && current->hasChildNodes())
             attributes.setPatternContentElement(current);

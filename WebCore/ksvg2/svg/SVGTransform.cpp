@@ -32,14 +32,25 @@
 using namespace WebCore;
 
 SVGTransform::SVGTransform()
-    : Shared<SVGTransform>()
+    : m_type(SVG_TRANSFORM_UNKNOWN)
+    , m_angle(0)
 {
-    m_type = SVG_TRANSFORM_UNKNOWN;
-    m_angle = 0;
+}
+
+SVGTransform::SVGTransform(const AffineTransform& matrix)
+    : m_type(SVG_TRANSFORM_MATRIX)
+    , m_angle(0)
+    , m_matrix(matrix)
+{
 }
 
 SVGTransform::~SVGTransform()
 {
+}
+
+bool SVGTransform::isValid()
+{
+    return (m_type != SVG_TRANSFORM_UNKNOWN);
 }
 
 unsigned short SVGTransform::type() const

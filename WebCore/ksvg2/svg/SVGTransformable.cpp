@@ -149,35 +149,35 @@ bool SVGTransformable::parseTransformAttribute(SVGTransformList* list, const Ato
         if ((nr = parseTransformParamList(currTransform, end, x, required, optional)) < 0)
             goto bail_out;
 
-        SVGTransform* t = new SVGTransform();
+        SVGTransform t;
 
         switch (type) {
             case SVGTransform::SVG_TRANSFORM_SKEWX:
-               t->setSkewX(x[0]);
+               t.setSkewX(x[0]);
                 break;
             case SVGTransform::SVG_TRANSFORM_SKEWY:
-               t->setSkewY(x[0]);
+               t.setSkewY(x[0]);
                 break;
             case SVGTransform::SVG_TRANSFORM_SCALE:
                   if (nr == 1) // Spec: if only one param given, assume uniform scaling
-                      t->setScale(x[0], x[0]);
+                      t.setScale(x[0], x[0]);
                   else
-                      t->setScale(x[0], x[1]);
+                      t.setScale(x[0], x[1]);
                 break;
             case SVGTransform::SVG_TRANSFORM_TRANSLATE:
                   if (nr == 1) // Spec: if only one param given, assume 2nd param to be 0
-                      t->setTranslate(x[0], 0);
+                      t.setTranslate(x[0], 0);
                   else
-                      t->setTranslate(x[0], x[1]);
+                      t.setTranslate(x[0], x[1]);
                 break;
             case SVGTransform::SVG_TRANSFORM_ROTATE:
                   if (nr == 1)
-                      t->setRotate(x[0], 0, 0);
+                      t.setRotate(x[0], 0, 0);
                   else
-                      t->setRotate(x[0], x[1], x[2]);
+                      t.setRotate(x[0], x[1], x[2]);
                 break;
             case SVGTransform::SVG_TRANSFORM_MATRIX:
-                t->setMatrix(AffineTransform(x[0], x[1], x[2], x[3], x[4], x[5]));
+                t.setMatrix(AffineTransform(x[0], x[1], x[2], x[3], x[4], x[5]));
                 break;
         }
 

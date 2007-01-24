@@ -39,7 +39,7 @@ my %primitiveTypeHash = ("int" => 1, "short" => 1, "long" => 1,
                          "unsigned long" => 1, "float" => 1,
                          "double" => 1, "boolean" => 1, "void" => 1);
 
-my %podTypeHash = ("RGBColor" => 1, "SVGLength" => 1, "SVGPoint" => 1, "SVGRect" => 1, "SVGNumber" => 1, "SVGMatrix" => 1);
+my %podTypeHash = ("RGBColor" => 1, "SVGLength" => 1, "SVGPoint" => 1, "SVGRect" => 1, "SVGNumber" => 1, "SVGMatrix" => 1, "SVGTransform" => 1);
  
 my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
 

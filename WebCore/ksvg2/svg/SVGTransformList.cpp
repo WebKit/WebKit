@@ -32,7 +32,7 @@
 using namespace WebCore;
 
 SVGTransformList::SVGTransformList()
-    : SVGList<RefPtr<SVGTransform> >()
+    : SVGPODList<SVGTransform>()
 {
 }
 
@@ -40,36 +40,29 @@ SVGTransformList::~SVGTransformList()
 {
 }
 
-RefPtr<SVGTransform> SVGTransformList::createSVGTransformFromMatrix(const AffineTransform& matrix) const
+SVGTransform SVGTransformList::createSVGTransformFromMatrix(const AffineTransform& matrix) const
 {
     return SVGSVGElement::createSVGTransformFromMatrix(matrix);
 }
 
-RefPtr<SVGTransform> SVGTransformList::consolidate()
+SVGTransform SVGTransformList::consolidate()
 {
-    SVGTransform* obj = concatenate();
-    if (!obj)
-        return 0;
-
     ExceptionCode ec = 0;
-    return initialize(obj, ec);
+    return initialize(concatenate(), ec);
 }
 
-SVGTransform* SVGTransformList::concatenate() const
+SVGTransform SVGTransformList::concatenate() const
 {
     unsigned int length = numberOfItems();
     if (!length)
-        return 0;
+        return SVGTransform();
         
-    SVGTransform* obj = SVGSVGElement::createSVGTransform();
     AffineTransform matrix;
-
     ExceptionCode ec = 0;
     for (unsigned int i = 0; i < length; i++)
-        matrix = getItem(i, ec)->matrix() * matrix;
+        matrix = getItem(i, ec).matrix() * matrix;
 
-    obj->setMatrix(matrix);
-    return obj;
+    return SVGTransform(matrix);
 }
 
 #endif // SVG_SUPPORT

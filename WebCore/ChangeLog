@@ -1,3 +1,51 @@
+2007-01-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by ap.
+
+        Converted SVGTransform from being Shared<T> to a POD type.
+
+        No functional changes, thus no tests.
+
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * ksvg2/misc/SVGTimer.cpp:
+        (WebCore::baseValueTransformList):
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::storeInitialValue):
+        (WebCore::SVGAnimateTransformElement::resetValues):
+        (WebCore::SVGAnimateTransformElement::updateCurrentValue):
+        (WebCore::SVGAnimateTransformElement::handleStartCondition):
+        (WebCore::SVGAnimateTransformElement::applyAnimationToValue):
+        (WebCore::SVGAnimateTransformElement::parseTransformValue):
+        * ksvg2/svg/SVGAnimateTransformElement.h:
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::collectGradientProperties):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::collectPatternProperties):
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::collectGradientProperties):
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::createSVGTransform):
+        (WebCore::SVGSVGElement::createSVGTransformFromMatrix):
+        * ksvg2/svg/SVGSVGElement.h:
+        * ksvg2/svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::updateLocalTransform):
+        * ksvg2/svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::updateLocalTransform):
+        * ksvg2/svg/SVGTransform.cpp:
+        (SVGTransform::SVGTransform):
+        (SVGTransform::isValid):
+        * ksvg2/svg/SVGTransform.h:
+        * ksvg2/svg/SVGTransform.idl:
+        * ksvg2/svg/SVGTransformList.cpp:
+        (SVGTransformList::SVGTransformList):
+        (SVGTransformList::createSVGTransformFromMatrix):
+        (SVGTransformList::consolidate):
+        (SVGTransformList::concatenate):
+        * ksvg2/svg/SVGTransformList.h:
+        * ksvg2/svg/SVGTransformable.cpp:
+        (WebCore::SVGTransformable::parseTransformAttribute):
+
 2007-01-24  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Eric.

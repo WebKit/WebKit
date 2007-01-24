@@ -115,7 +115,7 @@ RadialGradientAttributes SVGRadialGradientElement::collectGradientProperties() c
             attributes.setBoundingBoxMode(current->getAttribute(SVGNames::gradientUnitsAttr) == "objectBoundingBox");
 
         if (!attributes.hasGradientTransform() && current->hasAttribute(SVGNames::gradientTransformAttr))
-            attributes.setGradientTransform(current->gradientTransform()->consolidate()->matrix());
+            attributes.setGradientTransform(current->gradientTransform()->consolidate().matrix());
 
         if (!attributes.hasStops()) {
             const Vector<SVGGradientStop>& stops(current->buildStops());

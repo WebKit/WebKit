@@ -1154,6 +1154,7 @@ sub GetNativeType
     return "FloatRect" if $type eq "SVGRect";
     return "FloatPoint" if $type eq "SVGPoint";
     return "AffineTransform" if $type eq "SVGMatrix";
+    return "SVGTransform" if $type eq "SVGTransform";
     return "SVGLength" if $type eq "SVGLength";
     return "double" if $type eq "SVGNumber";
     return "SVGPaint::SVGPaintType" if $type eq "SVGPaintType";
