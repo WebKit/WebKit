@@ -37,7 +37,7 @@ extern "C" {
 #endif
 
 #if defined(__APPLE__)
-#include "JSStringRefCF.h"
+#include <JavaScriptCore/JSStringRefCF.h>
 #endif
 
 /*!
