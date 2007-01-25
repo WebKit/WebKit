@@ -1430,7 +1430,7 @@ static WebHTMLView *lastHitView;
                  source:self
               slideBack:YES];
     } else if (srcIsDHTML) {
-        ASSERT(_private->dragSourceActionMask & WebDragSourceActionDHTML);
+        ASSERT(dragController->dragSourceAction() & WebDragSourceActionDHTML);
         [[webView _UIDelegateForwarder] webView:webView willPerformDragSourceAction:WebDragSourceActionDHTML fromPoint:mouseDownPoint withPasteboard:pasteboard];
         if (dragImage == nil) {
             // WebCore should have given us an image, but we'll make one up
@@ -2976,7 +2976,7 @@ done:
     ASSERT([self _isTopHTMLView]);
     Page* page = core([self _webView]);
     KURL imageURL = page->dragController()->draggingImageURL();
-    ASSERT(!imageURL.empty());
+    ASSERT(!imageURL.isEmpty());
 
     NSFileWrapper *wrapper = [[self _dataSource] _fileWrapperForURL:imageURL.getNSURL()];
     if (wrapper == nil) {
