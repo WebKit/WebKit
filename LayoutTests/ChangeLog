@@ -1,3 +1,13 @@
+2007-01-25  Beth Dakin  <bdakin@apple.com>
+
+        Test for <rdar://problem/4921692> not processing comments inside a 
+        title element leads to XSS (for at least BlogSpot)
+
+        * fast/parser/parseCommentsInTitles-expected.checksum: Added.
+        * fast/parser/parseCommentsInTitles-expected.png: Added.
+        * fast/parser/parseCommentsInTitles-expected.txt: Added.
+        * fast/parser/parseCommentsInTitles.html: Added.
+
 2007-01-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

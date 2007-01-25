@@ -1,0 +1,13 @@
+<html>
+<head>
+<title>Real title
+<!--
+should be ignored
+</title><script>alert('You should not see this.');</script>
+-->
+</title>
+</head>
+<body>
+Fix for <a href="rdar://problem/4921692">4921692</a>. We should NOT run the script nested in the comment in the title.
+</body>
+</html>

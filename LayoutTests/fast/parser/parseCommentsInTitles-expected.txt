@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 47x18
+        text run at (0,0) width 47: "Fix for "
+      RenderInline {A} at (0,0) size 56x18 [color=#0000EE]
+        RenderText {#text} at (47,0) size 56x18
+          text run at (47,0) width 56: "4921692"
+      RenderText {#text} at (103,0) size 415x18
+        text run at (103,0) width 415: ". We should NOT run the script nested in the comment in the title."
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0

@@ -1,3 +1,18 @@
+2007-01-25 Dirk Mueller  <mueller@kde.org>
+
+        Reviewed and merged by Beth.
+
+        Fix for <rdar://problem/4921692> not processing comments inside a 
+        title element leads to XSS (for at least BlogSpot)
+
+        This is equivalent to commit 626791 in the KDE tree. Basically, the 
+        patch allows comment parsing in titles to avoid capturing a 
+        <script> tag by accident.
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseSpecial):
+        (WebCore::HTMLTokenizer::parseComment):
+
 2007-01-25  Darin Adler  <darin@apple.com>
 
         * ksvg2/svg/SVGPreserveAspectRatio.cpp: Add a couple of comments.
