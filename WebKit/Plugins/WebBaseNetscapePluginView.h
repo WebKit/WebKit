@@ -38,6 +38,7 @@
 @class WebFrame;
 @class WebNetscapePluginPackage;
 @class WebNetscapePluginNullEventSender;
+@class WebBaseNetscapePluginStream;
 @class WebNetscapePluginStream;
 @class WebView;
 
@@ -148,7 +149,7 @@ typedef union PluginPort {
 - (void)setBaseURL:(NSURL *)theBaseURL;
 - (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values;
 - (void)setMode:(int)theMode;
-
+- (void)streamIsDead:(WebBaseNetscapePluginStream*)stream;
 - (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow;
 - (void)viewDidMoveToHostWindow;
 

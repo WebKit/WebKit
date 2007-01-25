@@ -1,3 +1,18 @@
+2007-01-25  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by andersca.
+
+        A few tweaks with of a fix done by Steve Gehrman.
+
+        Fixed: <rdar://problem/4946922> WebBaseNetscapePluginView leaks memory
+               http://bugs.webkit.org/show_bug.cgi?id=11523
+
+        * Plugins/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream setPlugin:]): Calls -[WebBaseNetscapePluginView streamIsDead:]
+        * Plugins/WebBaseNetscapePluginView.h: Added streamIsDead to header.
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView streamIsDead:]): Added. Removes the stream from the streams collection.
+
 2007-01-25  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin, Geoff, Brady, and Darin

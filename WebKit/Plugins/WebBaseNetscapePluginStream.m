@@ -175,8 +175,12 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
         NPP_URLNotify = [pluginPackage NPP_URLNotify];
     } else {
         plugin = NULL;
+        // pluginView holds the last reference to the stream
+        [self retain];
+        [pluginView streamIsDead:self];
         [pluginView release];
         pluginView = nil;
+        [self release];
         NPP_NewStream = NULL;
         NPP_WriteReady = NULL;
         NPP_Write = NULL;
