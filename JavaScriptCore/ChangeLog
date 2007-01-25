@@ -1,3 +1,11 @@
+2007-01-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        Copy JSStringRefCF, in case anybody wants to use it. (I just added
+        it recently.)
+
 2007-01-24  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed, trivial property change.
