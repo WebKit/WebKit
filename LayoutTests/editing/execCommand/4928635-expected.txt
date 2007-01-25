@@ -1,0 +1,4 @@
+This tests for a crash when outdenting an indented paragraph. You should see 'foo' in a single level list item.
+
+foo
+

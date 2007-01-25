@@ -32,8 +32,8 @@ namespace WebCore {
 
 class DeleteSelectionCommand : public CompositeEditCommand { 
 public:
-    DeleteSelectionCommand(Document*, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false);
-    DeleteSelectionCommand(const Selection&, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false);
+    DeleteSelectionCommand(Document*, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true);
+    DeleteSelectionCommand(const Selection&, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true);
 
     virtual void doApply();
     virtual EditAction editingAction() const;
@@ -41,7 +41,7 @@ public:
 private:
     virtual bool preservesTypingStyle() const;
 
-    void initializeStartEnd();
+    void initializeStartEnd(Position&, Position&);
     void initializePositionData();
     void saveTypingStyleState();
     void saveFullySelectedAnchor();
@@ -61,6 +61,7 @@ private:
     bool m_mergeBlocksAfterDelete;
     bool m_needPlaceholder;
     bool m_replace;
+    bool m_expandForSpecialElements;
 
     // This data is transient and should be cleared at the end of the doApply function.
     Selection m_selectionToDelete;

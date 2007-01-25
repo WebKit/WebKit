@@ -2,10 +2,7 @@
 if (window.layoutTestController)
      layoutTestController.dumpEditingCallbacks();
 </script>
-<p>This tests Insert{Un}OrderedList on a range selection that contains a mix of list and non-list content.
-<b>This test used to end with a flat list from 1 to 6, with a selection extending from just before the last "o"
-in "1. asdfoo" to just after the "a" in "6. baz". This result changed with John's rangeCompliantEquivalent
-fixes in CompositeEditCommand::moveParagraphs on 11/30/2006.</b></p>
+<p>This tests Insert{Un}OrderedList on a range selection that contains a mix of list and non-list content.</p>
 <div id="test" contenteditable="true">asd<span id="start">foo</span><br><ul><li>bar</li></ul>baz<br>foo<ol><li>bar</li></ol><span id="end">baz</span></div>
 <script>
 var s = window.getSelection();

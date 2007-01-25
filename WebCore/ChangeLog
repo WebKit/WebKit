@@ -1,3 +1,43 @@
+2007-01-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        <rdar://problem/4916235>
+        eBay Editor: Crash occurs at WebCore::Range::startPosition() after applying ordered list styling to selected text
+        <rdar://problem/4857269>
+        REGRESSION: editing/execCommand/create-list-from-range-selection.html no longer works as intended
+        <rdar://problem/4916583>
+        eBay Editor: Removing a indent from a list item actually deletes the list item instead
+        <rdar://problem/4928635>
+        designMode outdent causes crash (11750)
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs): Fixed br insertion
+        after the pruning of empty containers left over after the paragraph
+        to move is removed.
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::DeleteSelectionCommand): There are
+        bugs that leave the wrong number of line breaks after a deletion 
+        that expands to include special elements (lists/tables).  Added 
+        a workaround so that moveParagraphs can avoid these until they 
+        are fixed.
+        (WebCore::DeleteSelectionCommand::initializeStartEnd): Ditto.
+        (WebCore::DeleteSelectionCommand::initializePositionData): Ditto.
+        * editing/DeleteSelectionCommand.h:
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::advance): We used to not call exitNode for
+        ancestors of a node where the next node in a pre-order traversal is 
+        the ranges's pastEndNode().  This is only correct for ancestors that
+        contain the end of the range.
+        (WebCore::shouldEmitNewlineAfterNode): Added, we should only emit newlines
+        after blocks that have VisiblePositions after them.  VisiblePosition creation
+        though is too expensive to do here, what I added here is an OK substitute.
+        (WebCore::shouldEmitNewlineBeforeNode): Added.  No special logic yet.
+        (WebCore::TextIterator::handleNonTextNode): Call shouldEmitNewlineBeforeNode.
+        (WebCore::TextIterator::exitNode): Call shouldEmitNewlineAfterNode.
+        (WebCore::SimplifiedBackwardsTextIterator::handleNonTextNode): Call
+        shouldEmitNewlineAfterNode.
+
 2007-01-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

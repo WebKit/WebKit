@@ -1,3 +1,39 @@
+2007-01-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4916235>
+        <rdar://problem/4857269>
+        <rdar://problem/4916583>
+        <rdar://problem/4928635>
+        
+        Fixed and removed FIXME:
+        * editing/execCommand/create-list-from-range-selection-expected.checksum:
+        * editing/execCommand/create-list-from-range-selection-expected.png:
+        * editing/execCommand/create-list-from-range-selection-expected.txt:
+        * editing/execCommand/create-list-from-range-selection.html:
+        Added:
+        * editing/deleting/4916235-1-expected.txt: Added.
+        * editing/deleting/4916235-1.html: Added.
+        * editing/execCommand/4916235-expected.txt: Added.
+        * editing/execCommand/4916235.html: Added.
+        * editing/execCommand/4916583-expected.checksum: Added.
+        * editing/execCommand/4916583-expected.png: Added.
+        * editing/execCommand/4916583-expected.txt: Added.
+        * editing/execCommand/4916583.html: Added.
+        * editing/execCommand/4928635-expected.txt: Added.
+        * editing/execCommand/4928635.html: Added.
+        Equivalent trees:
+        * editing/execCommand/remove-list-item-1-expected.txt:
+        * editing/execCommand/remove-list-items-expected.txt:
+        * editing/execCommand/switch-list-type-expected.txt:
+        Introduced an extraneous newline because of the poor substitute for
+        VisiblePosition creation in shouldEmitNewlineAfterNode:
+        * dom/xhtml/level3/core/nodecomparedocumentposition12-expected.txt:
+        * dom/xhtml/level3/core/nodecomparedocumentposition17-expected.txt:
+        * dom/xhtml/level3/core/nodeinsertbefore09-expected.txt: 
+
+
 2007-01-23  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Adele.
