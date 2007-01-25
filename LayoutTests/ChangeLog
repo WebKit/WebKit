@@ -1,3 +1,15 @@
+2007-01-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        Adding this layout test for a bug fixed by the changes
+        in r19088.
+
+        * editing/execCommand/4916402-expected.checksum: Added.
+        * editing/execCommand/4916402-expected.png: Added.
+        * editing/execCommand/4916402-expected.txt: Added.
+        * editing/execCommand/4916402.html: Added.
+
 2007-01-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
