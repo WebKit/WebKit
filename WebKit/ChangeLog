@@ -15,7 +15,7 @@
 
         Reviewed by Darin.
 
-        - Fix for <rdar://problem/4943650> REGRESSION: insertion point blink in form field redraws entire web page, making everything slow
+        - Fix for <rdar://problem/4950527> REGRESSION: Can't use arrow keys (left/right) to navigate caret in input (type=text) or textarea fields
 
         Keep track of whether interpretKeyEvents handles the key event based on whether or not we get
         called in insertText or doCommandBySelector.
