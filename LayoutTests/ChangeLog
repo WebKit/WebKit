@@ -1,3 +1,16 @@
+2007-01-25  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        Testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=12391
+        SVG containers with viewports should respect overflow when hit testing
+
+        * svg/custom/use-clipped-hit-expected.checksum: Added.
+        * svg/custom/use-clipped-hit-expected.png: Added.
+        * svg/custom/use-clipped-hit-expected.txt: Added.
+        * svg/custom/use-clipped-hit.svg: Added.
+
 2007-01-22  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Maciej.

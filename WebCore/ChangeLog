@@ -1,3 +1,15 @@
+2007-01-25  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12391
+        SVG containers with viewports should respect overflow when hit testing
+
+        Take into account the overflow property when hit testing <svg>.
+
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::nodeAtPoint):
+
 2007-01-23  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Maciej.

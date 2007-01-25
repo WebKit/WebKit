@@ -426,8 +426,9 @@ AffineTransform RenderSVGContainer::getAspectRatio(const FloatRect& logical, con
 
 bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
-    SVGElement* svgelem = static_cast<SVGElement*>(element());
-    if (svgelem->hasTagName(SVGNames::svgTag)) {
+    if (!viewport().isEmpty()
+        && style()->overflowX() == OHIDDEN
+        && style()->overflowY() == OHIDDEN) {
         int tx = _tx + m_x;
         int ty = _ty + m_y;
 
