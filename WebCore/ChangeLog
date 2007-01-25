@@ -1,3 +1,16 @@
+2007-01-25  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by oliver
+        
+        <http://bugs.webkit.org/show_bug.cgi?id=12409>
+        REGRESSION (r19039): Drag caret isn't cleared after a drop
+
+        No new layout tests because the regression was
+        caught by current layout tests.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeDrag): Clear the drag caret.
+
 2007-01-25  Darin Adler  <darin@apple.com>
 
         Reviewed and landed by Geoffrey Garen.
