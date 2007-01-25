@@ -1,5 +1,11 @@
 2007-01-24  Geoffrey Garen  <ggaren@apple.com>
 
+        Fixed up #include order for style. No review necessary.
+
+        * API/JSStringRef.cpp:
+
+2007-01-24  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:

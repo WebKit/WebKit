@@ -25,9 +25,9 @@
  */
 
 #include <wtf/Platform.h>
-#include "APICast.h"
 #include "JSStringRef.h"
 
+#include "APICast.h"
 #include <kjs/JSLock.h>
 #include <kjs/JSType.h>
 #include <kjs/internal.h>

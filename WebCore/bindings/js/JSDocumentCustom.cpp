@@ -32,3 +32,4 @@ void JSDocument::mark()
 }
     
 }
+
