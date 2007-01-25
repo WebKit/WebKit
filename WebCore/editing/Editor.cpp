@@ -97,12 +97,12 @@ bool Editor::canEditRichly() const
 
 bool Editor::canDHTMLCut()
 {
-    return canCopy() && !dispatchCPPEvent(beforecutEvent, ClipboardNumb);
+    return !m_frame->selectionController()->isInPasswordField() && !dispatchCPPEvent(beforecutEvent, ClipboardNumb);
 }
 
 bool Editor::canDHTMLCopy()
 {
-    return canCopy() && !dispatchCPPEvent(beforecopyEvent, ClipboardNumb);
+    return !m_frame->selectionController()->isInPasswordField() && !dispatchCPPEvent(beforecopyEvent, ClipboardNumb);
 }
 
 bool Editor::canDHTMLPaste()
@@ -321,8 +321,8 @@ bool Editor::shouldDeleteRange(Range* range) const
 }
 
 bool Editor::tryDHTMLCopy()
-{
-    if (!canCopy())
+{   
+    if (m_frame->selectionController()->isInPasswordField())
         return false;
 
     // Must be done before oncopy adds types and data to the pboard,
@@ -334,7 +334,7 @@ bool Editor::tryDHTMLCopy()
 
 bool Editor::tryDHTMLCut()
 {
-    if (!canCopy())
+    if (m_frame->selectionController()->isInPasswordField())
         return false;
 
     // Must be done before oncut adds types and data to the pboard,

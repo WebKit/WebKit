@@ -1,3 +1,12 @@
+2007-01-25  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Geoff and Adele
+
+        added test for <rdar://problem/4866655> REGRESSION: Copying out of Calculator & CIFIlterWidget is broken on 9A320
+
+        * editing/execCommand/copy-without-selection-expected.txt: Added.
+        * editing/execCommand/copy-without-selection.html: Added.
+
 2007-01-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Brady and Oliver.

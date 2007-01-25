@@ -1,3 +1,21 @@
+2007-01-25  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Geoff and Adele.
+
+        fixed <rdar://problem/4866655> REGRESSION: Copying out of Calculator & CIFIlterWidget is broken on 9A320
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::canDHTMLCut):
+        (WebCore::Editor::canDHTMLCopy):
+        (WebCore::Editor::tryDHTMLCopy):
+        (WebCore::Editor::tryDHTMLCut):
+        Reverting some mistakes made in r17504:
+        Anything in r17503 that used to call mayDHTML* still calls canDHTML* as it was changed in r17504, where canDHTML* now calls !selectionController::isInPasswordField instead of editor::canCopy
+        Anything else in r17503 that used to call mayCopy now calls (!)selectionController::isInPasswordField.
+
+        * editing/JSEditor.cpp:
+        copy via JS should be enabled as long as selection is not in a password field.  a range selection shouldn't be required. 
+
 2007-01-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Brady and Oliver.
