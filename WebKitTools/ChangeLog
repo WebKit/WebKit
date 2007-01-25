@@ -1,3 +1,25 @@
+2007-01-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - made the deferral of mouse events until drag completes conditional
+          it's needed for drag testing, and harmful for selection testing
+
+        * DumpRenderTree/EventSendingController.h: Added inDragMode boolean.
+        * DumpRenderTree/EventSendingController.m:
+        (+[EventSendingController isSelectorExcludedFromWebScript:]): Added setDragMode:.
+        (+[EventSendingController webScriptNameForSelector:]): Added name for setDragMode,
+        and remove unneeded clearKillRing name.
+        (-[EventSendingController init]): Initialize inDragMode to true.
+        (-[EventSendingController dealloc]): Removed overzealous assertions -- we should
+        not be asserting things that are dependent on the test content!
+        (-[EventSendingController leapForward:]): Only queue events in drag mode.
+        (-[EventSendingController setDragMode:]): Added.
+        (-[EventSendingController mouseDown]): Removed overzealous assertion.
+        (-[EventSendingController mouseUp]): Removed overzealous assertions.
+        Only queue events in drag mode.
+        (-[EventSendingController mouseMoveToX:Y:]): Only queue events in drag mode.
+
 2007-01-24  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack

@@ -107,7 +107,8 @@ BOOL replayingSavedEvents;
             || aSelector == @selector(keyDown:withModifiers:)
             || aSelector == @selector(enableDOMUIEventLogging:)
             || aSelector == @selector(fireKeyboardEventsToElement:)
-            || aSelector == @selector(clearKillRing))
+            || aSelector == @selector(clearKillRing)
+            || aSelector == @selector(setDragMode:))
         return NO;
     return YES;
 }
@@ -124,17 +125,22 @@ BOOL replayingSavedEvents;
         return @"enableDOMUIEventLogging";
     if (aSelector == @selector(fireKeyboardEventsToElement:))
         return @"fireKeyboardEventsToElement";
-    if (aSelector == @selector(clearKillRing))
-        return @"clearKillRing";
+    if (aSelector == @selector(setDragMode:))
+        return @"setDragMode";
     return nil;
+}
+
+- (id)init
+{
+    self = [super init];
+    if (self)
+        inDragMode = YES;
+    return self;
 }
 
 - (void)dealloc
 {
-    assert(!down);
-    assert([savedMouseEvents count] == 0);
     [savedMouseEvents release];
-    savedMouseEvents = nil;
     [super dealloc];
 }
 
@@ -145,7 +151,7 @@ BOOL replayingSavedEvents;
 
 - (void)leapForward:(int)milliseconds
 {
-    if (down && !replayingSavedEvents) {
+    if (inDragMode && down && !replayingSavedEvents) {
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[EventSendingController instanceMethodSignatureForSelector:@selector(leapForward:)]];
         [invocation setTarget:self];
         [invocation setSelector:@selector(leapForward:)];
@@ -164,11 +170,13 @@ BOOL replayingSavedEvents;
     _NSNewKillRingSequence();
 }
 
+- (void)setDragMode:(BOOL)dragMode
+{
+    inDragMode = dragMode;
+}
+
 - (void)mouseDown
 {
-    assert(!down);
-    assert(!replayingSavedEvents);
-
     [[[frame frameView] documentView] layout];
     if ([self currentEventTime] - lastClick >= 1)
         clickCount = 1;
@@ -193,9 +201,7 @@ BOOL replayingSavedEvents;
 
 - (void)mouseUp
 {
-    assert(down);
-
-    if (!replayingSavedEvents) {
+    if (inDragMode && !replayingSavedEvents) {
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[EventSendingController instanceMethodSignatureForSelector:@selector(mouseUp)]];
         [invocation setTarget:self];
         [invocation setSelector:@selector(mouseUp)];
@@ -205,7 +211,6 @@ BOOL replayingSavedEvents;
 
         return;
     }
-
 
     [[[frame frameView] documentView] layout];
     NSEvent *event = [NSEvent mouseEventWithType:NSLeftMouseUp 
@@ -244,7 +249,7 @@ BOOL replayingSavedEvents;
 
 - (void)mouseMoveToX:(int)x Y:(int)y
 {
-    if (down && !replayingSavedEvents) {
+    if (inDragMode && down && !replayingSavedEvents) {
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[EventSendingController instanceMethodSignatureForSelector:@selector(mouseMoveToX:Y:)]];
         [invocation setTarget:self];
         [invocation setSelector:@selector(mouseMoveToX:Y:)];
