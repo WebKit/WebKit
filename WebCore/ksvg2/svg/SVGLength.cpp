@@ -280,7 +280,7 @@ float SVGLength::PercentageOfViewport(float value, const SVGStyledElement* conte
     if (doc->documentElement() == context) {
         // We have to ask the canvas for the full "canvas size"...
         RenderView* view = static_cast<RenderView*>(doc->renderer());
-        if (view) {
+        if (view && view->frameView()) {
             width = view->frameView()->visibleWidth(); // TODO: recheck!
             height = view->frameView()->visibleHeight(); // TODO: recheck!
          }

@@ -1,3 +1,42 @@
+2007-01-24  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff.
+
+        Fix for <rdar://problem/4948128> REGRESSION: A crash occurs at 
+        WebCore::Frame::view() after completing a query at mapquest.com 
+        then switching to Bookmarks view
+
+        This is just a null-check. If you are in strict mode and ask for 
+        the clientWidth or clientHeight after the document was removed from 
+        it's parent, we no longer have a frameView, so we have to null-
+        check it. I added null checks for the FrameView in some other 
+        places where it seems like we could potentially run into this 
+        issue.
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLInputElement _rectOnScreen]):
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilityAttributeValue:]):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getUpperLeftCorner):
+        * dom/Element.cpp:
+        (WebCore::Element::clientWidth): Actual bug fix here!
+        (WebCore::Element::clientHeight): And here!
+        * ksvg2/svg/SVGLength.cpp:
+        (WebCore::SVGLength::PercentageOfViewport):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createJavaAppletWidget):
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge computePageRectsWithPrintWidthScaleFactor:printHeight:]):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::windowClipRect):
+        (WebCore::RenderLayer::updateOverflowStatus):
+        (WebCore::frameVisibleRect):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::windowClipRect):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+
 2007-01-24  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed, just removing accidentally committed file.

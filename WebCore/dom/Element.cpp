@@ -251,7 +251,8 @@ int Element::clientWidth()
     // When in strict mode, clientWidth for the document
     // element should return the width of the containing frame.
     if (!document()->inCompatMode() && document()->documentElement() == this)
-        return document()->frame()->view()->visibleWidth();
+        if (FrameView* view = document()->view())
+            return view->visibleWidth();
     
     if (RenderObject* rend = renderer())
         return rend->clientWidth();
@@ -265,7 +266,8 @@ int Element::clientHeight()
     // When in strict mode, clientHeight for the document
     // element should return the height of the containing frame.
     if (!document()->inCompatMode() && document()->documentElement() == this)
-        return document()->frame()->view()->visibleHeight();
+        if (FrameView* view = document()->view())
+            return view->visibleHeight();
     
     if (RenderObject* rend = renderer())
         return rend->clientHeight();

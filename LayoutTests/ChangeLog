@@ -1,3 +1,16 @@
+2007-01-24  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff.
+
+        Test for <rdar://problem/4948128> REGRESSION: A crash occurs at 
+        WebCore::Frame::view() after completing a query at mapquest.com 
+        then switching to Bookmarks view
+
+        * fast/dom/clientWidthAfterDocumentIsRemoved-expected.checksum: Added.
+        * fast/dom/clientWidthAfterDocumentIsRemoved-expected.png: Added.
+        * fast/dom/clientWidthAfterDocumentIsRemoved-expected.txt: Added.
+        * fast/dom/clientWidthAfterDocumentIsRemoved.html: Added.
+
 2007-01-24  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff and Adam.

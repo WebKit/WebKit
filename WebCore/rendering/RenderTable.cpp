@@ -425,7 +425,8 @@ void RenderTable::layout()
         didFullRepaint = repaintAfterLayoutIfNeeded(oldBounds, oldFullBounds);
     if (!didFullRepaint && sectionMoved) {
         IntRect repaintRect(m_overflowLeft, movedSectionTop, m_overflowWidth - m_overflowLeft, m_overflowHeight - movedSectionTop);
-        view()->frameView()->addRepaintInfo(this, repaintRect);
+        if (FrameView* frameView = view()->frameView())
+            frameView->addRepaintInfo(this, repaintRect);
     }
     
     setNeedsLayout(false);

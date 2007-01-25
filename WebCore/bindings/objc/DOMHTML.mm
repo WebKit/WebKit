@@ -112,8 +112,11 @@
 - (NSRect)_rectOnScreen
 {
     // Returns bounding rect of text field, in screen coordinates.
-    NSView* view = [self _HTMLInputElement]->document()->view()->getDocumentView();
     NSRect result = [self boundingBox];
+    if (![self _HTMLInputElement]->document()->view())
+        return result;
+
+    NSView* view = [self _HTMLInputElement]->document()->view()->getDocumentView();
     result = [view convertRect:result toView:nil];
     result.origin = [[view window] convertBaseToScreen:result.origin];
     return result;

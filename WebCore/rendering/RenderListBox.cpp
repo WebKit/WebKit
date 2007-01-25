@@ -526,7 +526,11 @@ IntRect RenderListBox::controlClipRect(int tx, int ty) const
 
 IntRect RenderListBox::windowClipRect() const
 {
-    return view()->frameView()->windowClipRectForLayer(enclosingLayer(), true);
+    FrameView* frameView = view()->frameView();
+    if (!frameView)
+        return IntRect();
+
+    return frameView->windowClipRectForLayer(enclosingLayer(), true);
 }
 
 } // namespace WebCore

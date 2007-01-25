@@ -1094,7 +1094,10 @@ static IntRect boundingBoxRect(RenderObject* obj)
         // Trouble is we need to know which document view to ask.
         Selection selection = [self topView]->frame()->selectionController()->selection();
         if (selection.isNone()) {
-            selection = m_renderer->document()->renderer()->view()->frameView()->frame()->selectionController()->selection();
+            FrameView* view = m_renderer->document()->renderer()->view()->frameView();
+            if (!view)
+                return nil;
+            selection = view->frame()->selectionController()->selection();
             if (selection.isNone())
                 return nil;
         }

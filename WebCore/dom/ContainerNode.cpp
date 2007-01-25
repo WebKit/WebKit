@@ -715,7 +715,7 @@ bool ContainerNode::getUpperLeftCorner(int &xPos, int &yPos) const
     
     // If the target doesn't have any children or siblings that could be used to calculate the scroll position, we must be
     // at the end of the document.  Scroll to the bottom.
-    if (!o) {
+    if (!o && document()->view()) {
         yPos += document()->view()->contentsHeight();
         return true;
     }

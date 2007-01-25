@@ -435,6 +435,9 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     if (!root) return pages;
     
     FrameView* view = m_frame->view();
+    if (!view)
+        return pages;
+
     NSView* documentView = view->getDocumentView();
     if (!documentView)
         return pages;
