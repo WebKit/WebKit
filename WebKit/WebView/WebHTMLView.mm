@@ -5240,9 +5240,11 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 - (BOOL)_interceptEditingKeyEvent:(NSEvent *)event
 {
     // Ask AppKit to process the key event -- it will call back with either insertText or doCommandBySelector.
-    _private->keyEventWasInterpreted = NO;
+    BOOL wasInterpreted = NO;
+    _private->keyEventWasInterpreted = &wasInterpreted;
     [self interpretKeyEvents:[NSArray arrayWithObject:event]];
-    return _private->keyEventWasInterpreted;
+    _private->keyEventWasInterpreted = 0;
+    return wasInterpreted;
 }
 
 @end
@@ -5447,7 +5449,10 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 {
     if (aSelector == @selector(noop:))
         return;
-    _private->keyEventWasInterpreted = YES;
+    if (_private->keyEventWasInterpreted) {
+        *_private->keyEventWasInterpreted = YES;
+        _private->keyEventWasInterpreted = 0;
+    }
     WebView *webView = [self _webView];
     if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:aSelector])
         [super doCommandBySelector:aSelector];
@@ -5495,7 +5500,10 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (void)insertText:(id)string
 {
-    _private->keyEventWasInterpreted = YES;
+    if (_private->keyEventWasInterpreted) {
+        *_private->keyEventWasInterpreted = YES;
+        _private->keyEventWasInterpreted = 0;
+    }
     // We don't yet support inserting an attributed string but input methods don't appear to require this.
     NSString *text;
     if ([string isKindOfClass:[NSAttributedString class]])

@@ -85,7 +85,7 @@
     
     BOOL transparentBackground;
 
-    BOOL keyEventWasInterpreted;
+    BOOL *keyEventWasInterpreted;
 
     NSTextView *firstResponderTextViewAtMouseDownTime;
     

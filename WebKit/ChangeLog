@@ -2,6 +2,19 @@
 
         Reviewed by Darin.
 
+        Small improvement to my last checkin to prevent the keyEventWasInterpreted bool from
+        being overwritten by reentrancy.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _interceptEditingKeyEvent:]): Point keyEventWasInterpreted pointer to local variable.
+        (-[WebHTMLView doCommandBySelector:]):
+        (-[WebHTMLView insertText:]):
+        * WebView/WebHTMLViewInternal.h: Added BOOL pointer that will point to the local variable on the stack in _interceptEditingKeyEvent
+
+2007-01-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
         - Fix for <rdar://problem/4943650> REGRESSION: insertion point blink in form field redraws entire web page, making everything slow
 
         Keep track of whether interpretKeyEvents handles the key event based on whether or not we get
