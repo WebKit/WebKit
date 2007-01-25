@@ -1,3 +1,13 @@
+2007-01-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth.
+
+        - fix <rdar://problem/4952766> Safari has a top secret color picker that can be used to... uhh... I don't know
+
+        * Panels/English.lproj/WebAuthenticationPanel.nib/info.nib: Let Interface Builder have its way.
+        * Panels/English.lproj/WebAuthenticationPanel.nib/objects.nib: Remove the NSColorWell that was
+        in here (for no good reason).
+
 2007-01-25  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by andersca.
