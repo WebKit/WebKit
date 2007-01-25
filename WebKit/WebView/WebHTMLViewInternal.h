@@ -85,6 +85,8 @@
     
     BOOL transparentBackground;
 
+    BOOL keyEventWasInterpreted;
+
     NSTextView *firstResponderTextViewAtMouseDownTime;
     
     WebDataSource *dataSource;

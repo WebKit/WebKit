@@ -1,3 +1,21 @@
+2007-01-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        - Fix for <rdar://problem/4943650> REGRESSION: insertion point blink in form field redraws entire web page, making everything slow
+
+        Keep track of whether interpretKeyEvents handles the key event based on whether or not we get
+        called in insertText or doCommandBySelector.
+
+        Test: fast/events/arrow-navigation.html
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView performKeyEquivalent:]):
+        (-[WebHTMLView _interceptEditingKeyEvent:]):
+        (-[WebHTMLView doCommandBySelector:]):
+        (-[WebHTMLView insertText:]):
+        * WebView/WebHTMLViewInternal.h:
+
 2007-01-25  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej.

@@ -196,7 +196,6 @@ static BOOL forceNSViewHitTest;
 // if YES, do the "top WebHTMLView" it test (which we'd like to do all the time but can't because of Java requirements [see bug 4349721])
 static BOOL forceWebHTMLViewHitTest;
 
-static NSEvent *performKeyEquivalentEvent;
 static WebHTMLView *lastHitView;
 
 @interface WebHTMLView (WebTextSizing) <_WebDocumentTextSizing>
@@ -3921,12 +3920,8 @@ done:
     // But don't do it if we have already handled the event.
     // Pressing Esc results in a fake event being sent - don't pass it to WebCore.
     if (!eventWasSentToWebCore && event == [NSApp currentEvent] && self == [[self window] firstResponder])
-        if (Frame* frame = core([self _frame])) {
-            NSEvent *savedPerformKeyEquivalentEvent = performKeyEquivalentEvent;
-            performKeyEquivalentEvent = event;
+        if (Frame* frame = core([self _frame]))
             ret = frame->eventHandler()->keyEvent(event);
-            performKeyEquivalentEvent = savedPerformKeyEquivalentEvent;
-        }
 
     if (!ret)
         ret = [super performKeyEquivalent:event];
@@ -5244,14 +5239,10 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (BOOL)_interceptEditingKeyEvent:(NSEvent *)event
 {
-    // We shouldn't call interpretKeyEvents: on an event from performKeyEquivalent.
-    if (event == performKeyEquivalentEvent)
-        return NO;
-
-    // Ask AppKit to process the key event -- it will call back with the appropriate selector(s).
+    // Ask AppKit to process the key event -- it will call back with either insertText or doCommandBySelector.
+    _private->keyEventWasInterpreted = NO;
     [self interpretKeyEvents:[NSArray arrayWithObject:event]];
-    // FIXME: We return YES here even though AppKit might have decided to not do anything with the event.
-    return YES;
+    return _private->keyEventWasInterpreted;
 }
 
 @end
@@ -5454,6 +5445,9 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (void)doCommandBySelector:(SEL)aSelector
 {
+    if (aSelector == @selector(noop:))
+        return;
+    _private->keyEventWasInterpreted = YES;
     WebView *webView = [self _webView];
     if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:aSelector])
         [super doCommandBySelector:aSelector];
@@ -5501,6 +5495,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (void)insertText:(id)string
 {
+    _private->keyEventWasInterpreted = YES;
     // We don't yet support inserting an attributed string but input methods don't appear to require this.
     NSString *text;
     if ([string isKindOfClass:[NSAttributedString class]])

@@ -1,3 +1,12 @@
+2007-01-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Test for <rdar://problem/4943650> REGRESSION: insertion point blink in form field redraws entire web page, making everything slow
+
+        * fast/events/arrow-navigation-expected.txt: Added.
+        * fast/events/arrow-navigation.html: Added.
+
 2007-01-24  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.
