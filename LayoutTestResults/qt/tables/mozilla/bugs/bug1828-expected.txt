@@ -1,0 +1,17 @@
+layer at (0,0) size 201x70
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 201x70
+  RenderBlock {HTML} at (0,0) size 96x70
+    RenderBody {BODY} at (8,8) size 80x54
+      RenderTable {TABLE} at (0,0) size 193x54 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 191x52
+          RenderTableRow {TR} at (0,0) size 191x34
+            RenderTableCell {TD} at (0,0) size 191x34 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DT} at (1,1) size 189x32
+                RenderText {#text} at (0,0) size 189x32
+                  text run at (0,0) width 49: "Richard"
+                  text run at (0,16) width 189: "Pizzarro<rhp@netscape.com>"
+          RenderTableRow {TR} at (0,34) size 191x18
+            RenderTableCell {TD} at (0,34) size 191x18 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 175x16
+                text run at (1,1) width 175: "Architect Rich's Home Page"

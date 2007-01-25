@@ -1,0 +1,23 @@
+layer at (0,0) size 96x148
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x148
+  RenderBlock {HTML} at (0,0) size 96x148
+    RenderBody {BODY} at (8,8) size 80x132
+      RenderBlock (anonymous) at (0,0) size 80x64
+        RenderText {#text} at (0,0) size 75x64
+          text run at (0,0) width 65: "This is the"
+          text run at (0,16) width 65: "first of two"
+          text run at (0,32) width 75: "lines on this"
+          text run at (0,48) width 35: "page."
+      RenderBlock {TABLE} at (0,64) size 80x68
+        RenderTable at (0,0) size 80x68
+          RenderTableSection {TBODY} at (0,0) size 80x68
+            RenderTableRow at (0,2) size 80x64
+              RenderTableCell at (2,2) size 76x64 [r=0 c=0 rs=1 cs=1]
+                RenderBlock {TR} at (0,0) size 76x64
+                  RenderBlock {TD} at (0,0) size 76x64
+                    RenderText {#text} at (0,0) size 75x64
+                      text run at (0,0) width 65: "This is the"
+                      text run at (0,16) width 62: "second of"
+                      text run at (0,32) width 75: "two lines on"
+                      text run at (0,48) width 61: "this page."

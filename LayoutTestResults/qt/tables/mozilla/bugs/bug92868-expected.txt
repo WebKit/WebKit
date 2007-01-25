@@ -1,0 +1,22 @@
+layer at (0,0) size 96x112
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x112
+  RenderBlock {HTML} at (0,0) size 96x112
+    RenderBody {BODY} at (8,8) size 80x96 [bgcolor=#FFFFFF]
+      RenderInline {A} at (0,0) size 60x16 [color=#0000EE]
+        RenderText {#text} at (0,0) size 60x16
+          text run at (0,0) width 60: "Hide Blue"
+      RenderText {#text} at (60,0) size 8x16
+        text run at (60,0) width 8: "  "
+      RenderInline {A} at (0,0) size 66x16 [color=#0000EE]
+        RenderText {#text} at (0,16) size 66x16
+          text run at (0,16) width 66: "Show Blue"
+      RenderText {#text} at (66,16) size 12x16
+        text run at (66,16) width 12: "   "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (0,32) size 76x48
+        text run at (0,32) width 67: "Should not"
+        text run at (0,48) width 76: "see the blue"
+        text run at (0,64) width 30: "table"
+      RenderBR {BR} at (30,77) size 0x0
+      RenderBR {BR} at (0,80) size 0x16

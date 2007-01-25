@@ -1,0 +1,68 @@
+layer at (0,0) size 288x213
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 288x213
+  RenderBlock {HTML} at (0,0) size 96x213
+    RenderBody {BODY} at (8,8) size 80x197
+      RenderTable {TABLE} at (0,0) size 280x197 [border: (2px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 275x32
+          RenderText {#text} at (10,0) size 254x32
+            text run at (10,0) width 254: "Communicator 4.5 Installers for Mac and"
+            text run at (77,16) width 120: "Windows Platforms"
+        RenderTableSection {TBODY} at (2,34) size 275x160
+          RenderTableRow {TR} at (0,0) size 275x37
+            RenderTableCell {TH} at (0,16) size 65x5 [border: (3px solid #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TH} at (65,0) size 76x37 [border: (3px solid #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,4) size 73x32
+                text run at (2,4) width 73: "Macintosh"
+                text run at (23,20) width 31: "PPC"
+            RenderTableCell {TH} at (141,0) size 66x37 [border: (3px solid #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,4) size 63x32
+                text run at (2,4) width 63: "Windows"
+                text run at (25,20) width 16: "95"
+            RenderTableCell {TH} at (207,0) size 68x37 [border: (3px solid #808080)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,4) size 63x32
+                text run at (2,4) width 63: "Windows"
+                text run at (24,20) width 19: "NT"
+          RenderTableRow {TR} at (0,37) size 275x35
+            RenderTableCell {TD} at (0,37) size 65x35 [border: (1px solid #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,2) size 37x32
+                text run at (4,2) width 32: "Base"
+                text run at (4,18) width 37: "Install"
+            RenderTableCell {TD} at (65,45) size 76x19 [border: (1px solid #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x16
+                text run at (2,2) width 22: "yes"
+            RenderTableCell {TD} at (141,45) size 66x19 [border: (1px solid #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x16
+                text run at (2,2) width 22: "yes"
+            RenderTableCell {TD} at (207,45) size 68x19 [border: (1px solid #808080)] [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x16
+                text run at (2,2) width 22: "yes"
+          RenderTableRow {TR} at (0,72) size 275x35
+            RenderTableCell {TD} at (0,72) size 65x35 [border: (1px solid #808080)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,2) size 60x32
+                text run at (4,2) width 60: "Complete"
+                text run at (4,18) width 37: "Install"
+            RenderTableCell {TD} at (65,80) size 76x19 [border: (1px solid #808080)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x16
+                text run at (2,2) width 22: "yes"
+            RenderTableCell {TD} at (141,80) size 66x19 [border: (1px solid #808080)] [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x16
+                text run at (2,2) width 22: "yes"
+            RenderTableCell {TD} at (207,80) size 68x19 [border: (1px solid #808080)] [r=2 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x16
+                text run at (2,2) width 22: "yes"
+          RenderTableRow {TR} at (0,107) size 275x53
+            RenderTableCell {TD} at (0,107) size 65x53 [border: (1px solid #808080)] [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,2) size 43x48
+                text run at (4,2) width 22: "Pro"
+                text run at (4,18) width 43: "Edition"
+                text run at (4,34) width 37: "Install"
+            RenderTableCell {TD} at (65,123) size 76x21 [border: (1px solid #808080)] [r=3 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x16
+                text run at (2,2) width 22: "yes"
+            RenderTableCell {TD} at (141,123) size 66x21 [border: (1px solid #808080)] [r=3 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x16
+                text run at (2,2) width 22: "yes"
+            RenderTableCell {TD} at (207,123) size 68x21 [border: (1px solid #808080)] [r=3 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x16
+                text run at (2,2) width 22: "yes"

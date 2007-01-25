@@ -1,0 +1,46 @@
+layer at (0,0) size 131x378
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 131x378
+  RenderBlock {HTML} at (0,0) size 96x378
+    RenderBody {BODY} at (8,8) size 80x362
+      RenderTable {TABLE} at (0,0) size 123x362 [bgcolor=#FFFF00] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 121x360
+          RenderTableRow {TR} at (0,0) size 121x360
+            RenderTableCell {TD} at (0,170) size 25x20 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 21x16
+                text run at (2,2) width 21: "xxx"
+            RenderTableCell {TD} at (25,0) size 71x360 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 67x102 [bgcolor=#00FF00] [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 65x100
+                  RenderTableRow {TR} at (0,0) size 65x100
+                    RenderTableCell {TH} at (0,0) size 65x100 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (7,2) size 61x96
+                        text run at (7,2) width 51: "IceWM,"
+                        text run at (20,18) width 25: "The"
+                        text run at (5,34) width 55: "Window"
+                        text run at (2,50) width 61: "Manager"
+                        text run at (5,66) width 55: "Cool As"
+                        text run at (22,82) width 20: "Ice"
+              RenderBlock {P} at (2,118) size 67x240
+                RenderText {#text} at (0,0) size 58x112
+                  text run at (0,0) width 58: "IceWM is"
+                  text run at (0,16) width 47: "a small,"
+                  text run at (0,32) width 18: "but"
+                  text run at (0,48) width 53: "powerful"
+                  text run at (0,64) width 47: "window"
+                  text run at (0,80) width 56: "manager"
+                  text run at (0,96) width 41: "for the"
+                RenderInline {A} at (0,0) size 50x48 [color=#0000EE]
+                  RenderText {#text} at (0,112) size 50x48
+                    text run at (0,112) width 25: "X11"
+                    text run at (0,128) width 50: "Window"
+                    text run at (0,144) width 46: "System"
+                RenderText {#text} at (0,160) size 59x80
+                  text run at (0,160) width 41: "whose"
+                  text run at (0,176) width 30: "main"
+                  text run at (0,192) width 59: "goals are"
+                  text run at (0,208) width 20: "the"
+                  text run at (0,224) width 58: "following:"
+            RenderTableCell {TD} at (96,170) size 25x20 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 21x16
+                text run at (2,2) width 21: "yyy"

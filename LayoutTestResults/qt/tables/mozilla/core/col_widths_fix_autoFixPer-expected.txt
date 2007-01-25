@@ -1,0 +1,5 @@
+layer at (0,0) size 96x26
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x8
+  RenderBlock {HTML} at (0,0) size 96x8
+    RenderBody {BODY} at (8,8) size 80x0

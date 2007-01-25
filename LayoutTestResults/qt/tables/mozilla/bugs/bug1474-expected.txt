@@ -1,0 +1,20 @@
+layer at (0,0) size 143x42
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 143x42
+  RenderBlock {HTML} at (0,0) size 96x42
+    RenderBody {BODY} at (8,8) size 80x26
+      RenderTable {TABLE} at (0,0) size 135x26 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 133x24
+          RenderTableRow {TR} at (0,2) size 133x20
+            RenderTableCell {TD} at (2,2) size 28x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 24x16
+                text run at (2,2) width 24: "one"
+            RenderTableCell {TD} at (32,2) size 26x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x16
+                text run at (2,2) width 22: "two"
+            RenderTableCell {TD} at (60,2) size 37x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 33x16
+                text run at (2,2) width 33: "three"
+            RenderTableCell {TD} at (99,2) size 32x20 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 28x16
+                text run at (2,2) width 28: "four!"

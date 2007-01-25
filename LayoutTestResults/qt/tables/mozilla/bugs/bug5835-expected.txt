@@ -1,0 +1,161 @@
+layer at (0,0) size 628x1852
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 628x1852
+  RenderBlock {HTML} at (0,0) size 96x1852
+    RenderBody {BODY} at (8,8) size 80x1830
+      RenderBlock {P} at (0,0) size 80x208
+        RenderText {#text} at (0,0) size 80x208
+          text run at (0,0) width 54: "This first"
+          text run at (0,16) width 68: "table is the"
+          text run at (0,32) width 67: "simple test"
+          text run at (0,48) width 33: "case."
+          text run at (0,64) width 52: "Colspan"
+          text run at (0,80) width 80: "confuses the"
+          text run at (0,96) width 33: "width"
+          text run at (0,112) width 60: "allocation"
+          text run at (0,128) width 71: "when there"
+          text run at (0,144) width 72: "is an image"
+          text run at (0,160) width 35: "in the"
+          text run at (0,176) width 73: "colspanned"
+          text run at (0,192) width 26: "row."
+      RenderTable {TABLE} at (0,222) size 620x92 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 618x90
+          RenderTableRow {TR} at (0,2) size 618x20
+            RenderTableCell {TD} at (2,2) size 413x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 20x16
+                text run at (2,2) width 20: "foo"
+            RenderTableCell {TD} at (417,2) size 199x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 20x16
+                text run at (2,2) width 20: "bar"
+          RenderTableRow {TR} at (0,24) size 618x64
+            RenderTableCell {TD} at (2,24) size 614x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+              RenderImage {IMG} at (2,2) size 468x60
+              RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,328) size 80x144
+        RenderText {#text} at (0,0) size 77x144
+          text run at (0,0) width 77: "This second"
+          text run at (0,16) width 68: "table is the"
+          text run at (0,32) width 77: "same as the"
+          text run at (0,48) width 66: "first, minus"
+          text run at (0,64) width 70: "the second"
+          text run at (0,80) width 72: "'colspan=2'"
+          text run at (0,96) width 73: "row. Widths"
+          text run at (0,112) width 51: "are now"
+          text run at (0,128) width 47: "correct."
+      RenderTable {TABLE} at (0,486) size 620x26 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 618x24
+          RenderTableRow {TR} at (0,2) size 618x20
+            RenderTableCell {TD} at (2,2) size 412x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 20x16
+                text run at (2,2) width 20: "foo"
+            RenderTableCell {TD} at (416,2) size 200x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 20x16
+                text run at (2,2) width 20: "bar"
+      RenderBlock {P} at (0,526) size 80x400
+        RenderText {#text} at (0,0) size 87x400
+          text run at (0,0) width 17: "An"
+          text run at (0,16) width 76: "observation:"
+          text run at (0,32) width 77: "Note that as"
+          text run at (0,48) width 66: "the image-"
+          text run at (0,64) width 33: "width"
+          text run at (0,80) width 75: "approaches"
+          text run at (0,96) width 58: "the table-"
+          text run at (0,112) width 60: "width, the"
+          text run at (0,128) width 77: "two columns"
+          text run at (0,144) width 60: "approach"
+          text run at (0,160) width 71: "equal width"
+          text run at (0,176) width 36: "(error"
+          text run at (0,192) width 69: "increases)."
+          text run at (0,208) width 74: "Conversely,"
+          text run at (0,224) width 74: "below some"
+          text run at (0,240) width 59: "threshold"
+          text run at (0,256) width 75: "image-width"
+          text run at (0,272) width 55: "(which is"
+          text run at (0,288) width 77: "about 390px"
+          text run at (0,304) width 77: "or 30px less"
+          text run at (0,320) width 75: "than the TD"
+          text run at (0,336) width 87: "WIDTH=420),"
+          text run at (0,352) width 69: "the error is"
+          text run at (0,368) width 77: "(apparently)"
+          text run at (0,384) width 31: "zero."
+      RenderBlock {P} at (0,940) size 80x48
+        RenderText {#text} at (0,0) size 74x48
+          text run at (0,0) width 55: "Here the"
+          text run at (0,16) width 30: "<img"
+          text run at (0,32) width 74: "width=600>"
+      RenderTable {TABLE} at (0,1002) size 620x92 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 618x90
+          RenderTableRow {TR} at (0,2) size 618x20
+            RenderTableCell {TD} at (2,2) size 412x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 20x16
+                text run at (2,2) width 20: "foo"
+            RenderTableCell {TD} at (416,2) size 200x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 20x16
+                text run at (2,2) width 20: "bar"
+          RenderTableRow {TR} at (0,24) size 618x64
+            RenderTableCell {TD} at (2,24) size 614x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+              RenderImage {IMG} at (2,2) size 600x60
+              RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,1108) size 80x96
+        RenderText {#text} at (0,0) size 74x96
+          text run at (0,0) width 55: "Here the"
+          text run at (0,16) width 30: "<img"
+          text run at (0,32) width 74: "width=400>"
+          text run at (0,48) width 50: "(error is"
+          text run at (0,64) width 41: "almost"
+          text run at (0,80) width 36: "zero)."
+      RenderTable {TABLE} at (0,1218) size 620x26 [bgcolor=#DDDDDD] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 618x24
+          RenderTableRow {TR} at (0,2) size 618x20
+            RenderTableCell {TD} at (2,2) size 412x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 132x16
+                text run at (2,2) width 132: "foo (single row table)"
+            RenderTableCell {TD} at (416,2) size 200x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 132x16
+                text run at (2,2) width 132: "bar (single row table)"
+      RenderTable {TABLE} at (0,1244) size 620x92 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 618x90
+          RenderTableRow {TR} at (0,2) size 618x20
+            RenderTableCell {TD} at (2,2) size 413x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 20x16
+                text run at (2,2) width 20: "foo"
+            RenderTableCell {TD} at (417,2) size 199x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 20x16
+                text run at (2,2) width 20: "bar"
+          RenderTableRow {TR} at (0,24) size 618x64
+            RenderTableCell {TD} at (2,24) size 614x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+              RenderImage {IMG} at (2,2) size 400x60
+              RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,1350) size 80x480
+        RenderText {#text} at (0,0) size 78x480
+          text run at (0,0) width 71: "I tested the"
+          text run at (0,16) width 67: "above with"
+          text run at (0,32) width 48: "M4 and"
+          text run at (0,48) width 75: "May01 build"
+          text run at (0,64) width 61: "for win95."
+          text run at (0,80) width 72: "(The above"
+          text run at (0,96) width 60: "examples"
+          text run at (0,112) width 76: "assume that"
+          text run at (0,128) width 76: "images load"
+          text run at (0,144) width 65: "normally --"
+          text run at (0,160) width 46: "N.B. for"
+          text run at (0,176) width 67: "May01 the"
+          text run at (0,192) width 45: "images"
+          text run at (0,208) width 76: "initially load,"
+          text run at (0,224) width 48: "and the"
+          text run at (0,240) width 68: "width error"
+          text run at (0,256) width 59: "is visually"
+          text run at (0,272) width 60: "apparent,"
+          text run at (0,288) width 74: "but then the"
+          text run at (0,304) width 69: "images get"
+          text run at (0,320) width 73: "replaced by"
+          text run at (0,336) width 58: "their ALT"
+          text run at (0,352) width 78: "text, and the"
+          text run at (0,368) width 68: "width error"
+          text run at (0,384) width 74: "is no longer"
+          text run at (0,400) width 60: "present --"
+          text run at (0,416) width 55: "this is, of"
+          text run at (0,432) width 57: "course, a"
+          text run at (0,448) width 52: "different"
+          text run at (0,464) width 66: "issue/bug.)"
+        RenderText {#text} at (0,0) size 0x0

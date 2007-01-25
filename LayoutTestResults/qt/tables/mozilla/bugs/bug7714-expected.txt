@@ -1,0 +1,115 @@
+layer at (0,0) size 153x1095
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 153x1095
+  RenderBlock {HTML} at (0,0) size 96x1095
+    RenderBody {BODY} at (8,8) size 80x1079
+      RenderBlock {P} at (0,0) size 80x528
+        RenderText {#text} at (0,0) size 145x528
+          text run at (0,0) width 59: "The table"
+          text run at (0,16) width 36: "below"
+          text run at (0,32) width 76: "should have"
+          text run at (0,48) width 77: "two columns"
+          text run at (0,64) width 67: "and a total"
+          text run at (0,80) width 59: "of 7 cells,"
+          text run at (0,96) width 73: "arranged in"
+          text run at (0,112) width 16: "an"
+          text run at (0,128) width 145: "alternating/overlapping"
+          text run at (0,144) width 78: "fashion. The"
+          text run at (0,160) width 87: "cellspacing=0"
+          text run at (0,176) width 80: "for this table."
+          text run at (0,192) width 63: "In Nav4.5,"
+          text run at (0,208) width 79: "this example"
+          text run at (0,224) width 42: "can be"
+          text run at (0,240) width 63: "viewed. In"
+          text run at (0,256) width 62: "5.0 (jun08"
+          text run at (0,272) width 71: "win95), this"
+          text run at (0,288) width 53: "example"
+          text run at (0,304) width 51: "displays"
+          text run at (0,320) width 77: "(apparently)"
+          text run at (0,336) width 71: "as a simple"
+          text run at (0,352) width 57: "2x2 table"
+          text run at (0,368) width 63: "(i.e., some"
+          text run at (0,384) width 57: "elements"
+          text run at (0,400) width 45: "are not"
+          text run at (0,416) width 76: "displayed at"
+          text run at (0,432) width 56: "all). (The"
+          text run at (0,448) width 78: "numbers are"
+          text run at (0,464) width 73: "the position"
+          text run at (0,480) width 70: "of each TD"
+          text run at (0,496) width 78: "in the HTML"
+          text run at (0,512) width 50: "source)."
+      RenderTable {TABLE} at (0,542) size 22x122 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 20x120
+          RenderTableRow {TR} at (0,0) size 20x20
+            RenderTableCell {TD} at (0,11) size 10x18 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (1,1) size 8x16
+                text run at (1,1) width 8: "1"
+            RenderTableCell {TD} at (10,1) size 10x18 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 8x16
+                text run at (1,1) width 8: "2"
+          RenderTableRow {TR} at (0,20) size 20x20
+            RenderTableCell {TD} at (10,31) size 10x18 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
+              RenderText {#text} at (1,1) size 8x16
+                text run at (1,1) width 8: "3"
+          RenderTableRow {TR} at (0,40) size 20x20
+            RenderTableCell {TD} at (0,51) size 10x18 [border: (1px inset #808080)] [r=2 c=0 rs=2 cs=1]
+              RenderText {#text} at (1,1) size 8x16
+                text run at (1,1) width 8: "4"
+          RenderTableRow {TR} at (0,60) size 20x20
+            RenderTableCell {TD} at (10,71) size 10x18 [border: (1px inset #808080)] [r=3 c=1 rs=2 cs=1]
+              RenderText {#text} at (1,1) size 8x16
+                text run at (1,1) width 8: "5"
+          RenderTableRow {TR} at (0,80) size 20x20
+            RenderTableCell {TD} at (0,91) size 10x18 [border: (1px inset #808080)] [r=4 c=0 rs=2 cs=1]
+              RenderText {#text} at (1,1) size 8x16
+                text run at (1,1) width 8: "6"
+          RenderTableRow {TR} at (0,100) size 20x20
+            RenderTableCell {TD} at (10,101) size 10x18 [border: (1px inset #808080)] [r=5 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 8x16
+                text run at (1,1) width 8: "7"
+      RenderBlock {P} at (0,678) size 80x240
+        RenderText {#text} at (0,0) size 87x240
+          text run at (0,0) width 65: "This is the"
+          text run at (0,16) width 68: "same table"
+          text run at (0,32) width 60: "as above,"
+          text run at (0,48) width 18: "but"
+          text run at (0,64) width 87: "cellspacing=5"
+          text run at (0,80) width 74: "in this case."
+          text run at (0,96) width 47: "For 5.0,"
+          text run at (0,112) width 39: "(jun08"
+          text run at (0,128) width 42: "win95)"
+          text run at (0,144) width 62: "notice the"
+          text run at (0,160) width 24: "odd"
+          text run at (0,176) width 70: "cellspacing"
+          text run at (0,192) width 57: "overlaps."
+          text run at (0,208) width 55: "See also"
+          text run at (0,224) width 69: "bug #6304."
+      RenderTable {TABLE} at (0,932) size 37x147 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 35x145
+          RenderTableRow {TR} at (0,5) size 35x20
+            RenderTableCell {TD} at (5,16) size 10x18 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (1,1) size 8x16
+                text run at (1,1) width 8: "1"
+            RenderTableCell {TD} at (20,6) size 10x18 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 8x16
+                text run at (1,1) width 8: "2"
+          RenderTableRow {TR} at (0,30) size 35x15
+            RenderTableCell {TD} at (20,41) size 10x18 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
+              RenderText {#text} at (1,1) size 8x16
+                text run at (1,1) width 8: "3"
+          RenderTableRow {TR} at (0,50) size 35x20
+            RenderTableCell {TD} at (5,61) size 10x18 [border: (1px inset #808080)] [r=2 c=0 rs=2 cs=1]
+              RenderText {#text} at (1,1) size 8x16
+                text run at (1,1) width 8: "4"
+          RenderTableRow {TR} at (0,75) size 35x15
+            RenderTableCell {TD} at (20,86) size 10x18 [border: (1px inset #808080)] [r=3 c=1 rs=2 cs=1]
+              RenderText {#text} at (1,1) size 8x16
+                text run at (1,1) width 8: "5"
+          RenderTableRow {TR} at (0,95) size 35x20
+            RenderTableCell {TD} at (5,108) size 10x18 [border: (1px inset #808080)] [r=4 c=0 rs=2 cs=1]
+              RenderText {#text} at (1,1) size 8x16
+                text run at (1,1) width 8: "6"
+          RenderTableRow {TR} at (0,120) size 35x20
+            RenderTableCell {TD} at (20,121) size 10x18 [border: (1px inset #808080)] [r=5 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 8x16
+                text run at (1,1) width 8: "7"

@@ -1,0 +1,46 @@
+layer at (0,0) size 170x260
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 170x260
+  RenderBlock {HTML} at (0,0) size 96x260
+    RenderBody {BODY} at (8,8) size 80x244
+      RenderTable {TABLE} at (0,0) size 162x106 [bgcolor=#00FF00] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 160x104
+          RenderTableRow {TR} at (0,2) size 160x100
+            RenderTableCell {TD} at (2,2) size 77x100 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 73x96
+                text run at (2,2) width 57: "Here is a"
+                text run at (2,18) width 71: "table with a"
+                text run at (2,34) width 25: "lime"
+                text run at (2,50) width 73: "background"
+                text run at (2,66) width 57: "using the"
+                text run at (2,82) width 71: "ID attribute."
+            RenderTableCell {TD} at (81,2) size 77x100 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 73x96
+                text run at (2,2) width 57: "Here is a"
+                text run at (2,18) width 71: "table with a"
+                text run at (2,34) width 25: "lime"
+                text run at (2,50) width 73: "background"
+                text run at (2,66) width 57: "using the"
+                text run at (2,82) width 71: "ID attribute."
+      RenderBlock (anonymous) at (0,106) size 80x32
+        RenderBR {BR} at (0,0) size 0x16
+        RenderBR {BR} at (0,16) size 0x16
+      RenderTable {TABLE} at (0,138) size 116x106 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 114x104
+          RenderTableRow {TR} at (0,2) size 114x100
+            RenderTableCell {TD} at (2,2) size 54x100 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 50x96
+                text run at (2,2) width 45: "Here is"
+                text run at (2,18) width 42: "a table"
+                text run at (2,34) width 45: "with no"
+                text run at (2,50) width 14: "ID"
+                text run at (2,66) width 50: "attribute"
+                text run at (2,82) width 36: "value."
+            RenderTableCell {TD} at (58,2) size 54x100 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 50x96
+                text run at (2,2) width 45: "Here is"
+                text run at (2,18) width 42: "a table"
+                text run at (2,34) width 45: "with no"
+                text run at (2,50) width 14: "ID"
+                text run at (2,66) width 50: "attribute"
+                text run at (2,82) width 36: "value."

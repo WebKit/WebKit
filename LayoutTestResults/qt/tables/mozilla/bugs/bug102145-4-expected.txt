@@ -1,0 +1,11 @@
+layer at (0,0) size 208x216
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 208x216
+  RenderBlock {HTML} at (0,0) size 96x216
+    RenderBody {BODY} at (8,8) size 80x200
+      RenderTable {TABLE} at (0,0) size 200x200
+        RenderTableSection {TBODY} at (0,0) size 200x200
+          RenderTableRow {TR} at (0,2) size 200x196
+            RenderTableCell {TD} at (2,91) size 196x18 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 165x16
+                text run at (1,1) width 165: "I should be 200px x 200px"

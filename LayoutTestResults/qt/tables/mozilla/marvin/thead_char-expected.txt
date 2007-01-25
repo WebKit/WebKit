@@ -1,0 +1,80 @@
+layer at (0,0) size 199x448
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 199x448
+  RenderBlock {HTML} at (0,0) size 96x448
+    RenderBody {BODY} at (8,8) size 80x432
+      RenderBlock {P} at (0,0) size 80x224
+        RenderText {#text} at (0,0) size 79x224
+          text run at (0,0) width 76: "The THEAD"
+          text run at (0,16) width 50: "element"
+          text run at (0,32) width 58: "defines a"
+          text run at (0,48) width 79: "table header"
+          text run at (0,64) width 48: "within a"
+          text run at (0,80) width 75: "table. In this"
+          text run at (0,96) width 50: "test, the"
+          text run at (0,112) width 53: "numbers"
+          text run at (0,128) width 77: "contained in"
+          text run at (0,144) width 71: "the THEAD"
+          text run at (0,160) width 73: "cells should"
+          text run at (0,176) width 74: "align on the"
+          text run at (0,192) width 48: "decimal"
+          text run at (0,208) width 34: "point."
+      RenderTable {TABLE} at (0,238) size 191x194 [border: (1px outset #808080)]
+        RenderTableSection {THEAD} at (1,1) size 189x46
+          RenderTableRow {TR} at (0,2) size 189x20
+            RenderTableCell {TD} at (2,2) size 55x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 35x16
+                text run at (2,2) width 35: "55.00"
+            RenderTableCell {TD} at (59,2) size 63x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 59x16
+                text run at (2,2) width 59: "55555.00"
+            RenderTableCell {TD} at (124,2) size 63x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 43x16
+                text run at (2,2) width 43: "555.00"
+          RenderTableRow {TR} at (0,24) size 189x20
+            RenderTableCell {TD} at (2,24) size 55x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 51x16
+                text run at (2,2) width 51: "1234.56"
+            RenderTableCell {TD} at (59,24) size 63x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 43x16
+                text run at (2,2) width 43: "123.45"
+            RenderTableCell {TD} at (124,24) size 63x20 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 59x16
+                text run at (2,2) width 59: "12345.67"
+        RenderTableSection {TFOOT} at (1,121) size 189x72
+          RenderTableRow {TR} at (0,2) size 189x68
+            RenderTableCell {TD} at (2,2) size 55x68 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 48x64
+                text run at (2,2) width 27: "This"
+                text run at (2,18) width 37: "text is"
+                text run at (2,34) width 35: "in the"
+                text run at (2,50) width 48: "TFOOT"
+            RenderTableCell {TD} at (59,10) size 63x52 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 54x48
+                text run at (2,2) width 54: "This text"
+                text run at (2,18) width 49: "is in the"
+                text run at (2,34) width 48: "TFOOT"
+            RenderTableCell {TD} at (124,10) size 63x52 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 54x48
+                text run at (2,2) width 54: "This text"
+                text run at (2,18) width 49: "is in the"
+                text run at (2,34) width 48: "TFOOT"
+        RenderTableSection {TBODY} at (1,47) size 189x72
+          RenderTableRow {TR} at (0,2) size 189x68
+            RenderTableCell {TD} at (2,2) size 55x68 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 48x64
+                text run at (2,2) width 27: "This"
+                text run at (2,18) width 37: "text is"
+                text run at (2,34) width 35: "in the"
+                text run at (2,50) width 48: "TBODY"
+            RenderTableCell {TD} at (59,10) size 63x52 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 54x48
+                text run at (2,2) width 54: "This text"
+                text run at (2,18) width 49: "is in the"
+                text run at (2,34) width 48: "TBODY"
+            RenderTableCell {TD} at (124,10) size 63x52 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 54x48
+                text run at (2,2) width 54: "This text"
+                text run at (2,18) width 49: "is in the"
+                text run at (2,34) width 48: "TBODY"
+        RenderTableSection {TBODY} at (1,119) size 189x2

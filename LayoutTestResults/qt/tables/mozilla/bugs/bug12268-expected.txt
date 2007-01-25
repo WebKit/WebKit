@@ -1,0 +1,17 @@
+layer at (0,0) size 618x206
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 618x206
+  RenderBlock {HTML} at (0,0) size 96x206
+    RenderBody {BODY} at (8,8) size 80x190
+      RenderBlock (anonymous) at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 78x80
+          text run at (0,0) width 78: "If bug 12268"
+          text run at (0,16) width 71: "is not fixed,"
+          text run at (0,32) width 52: "then the"
+          text run at (0,48) width 68: "table is too"
+          text run at (0,64) width 44: "narrow"
+      RenderTable {TABLE} at (0,80) size 610x110 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 608x108
+          RenderTableRow {TR} at (0,2) size 608x104
+            RenderTableCell {TD} at (2,2) size 604x104 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (2,2) size 600x100

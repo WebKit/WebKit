@@ -1,0 +1,67 @@
+layer at (0,0) size 96x596
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x596
+  RenderBlock {HTML} at (0,0) size 96x596
+    RenderBody {BODY} at (8,8) size 80x580 [bgcolor=#FFFFFF]
+      RenderBlock {P} at (0,0) size 80x272
+        RenderText {#text} at (0,0) size 71x64
+          text run at (0,0) width 59: "The table"
+          text run at (0,16) width 50: "below is"
+          text run at (0,32) width 71: "inside a div"
+          text run at (0,48) width 49: "tag with"
+        RenderInline {B} at (0,0) size 60x16
+          RenderText {#text} at (0,64) size 60x16
+            text run at (0,64) width 60: "absolute"
+        RenderText {#text} at (0,80) size 75x192
+          text run at (0,80) width 68: "positioning"
+          text run at (0,96) width 69: "for top and"
+          text run at (0,112) width 65: "left but not"
+          text run at (0,128) width 57: "for width."
+          text run at (0,144) width 59: "The table"
+          text run at (0,160) width 75: "should push"
+          text run at (0,176) width 46: "it out to"
+          text run at (0,192) width 69: "100% but it"
+          text run at (0,208) width 49: "doesn't."
+          text run at (0,224) width 71: "Instead the"
+          text run at (0,240) width 31: "layer"
+          text run at (0,256) width 59: "collapses"
+      RenderBlock {P} at (0,286) size 80x64
+        RenderBR {BR} at (0,0) size 0x16
+        RenderBR {BR} at (0,16) size 0x16
+        RenderBR {BR} at (0,32) size 0x16
+        RenderBR {BR} at (0,48) size 0x16
+      RenderBlock {P} at (0,364) size 80x144
+        RenderText {#text} at (0,0) size 72x64
+          text run at (0,0) width 56: "The next"
+          text run at (0,16) width 44: "table is"
+          text run at (0,32) width 71: "inside a div"
+          text run at (0,48) width 72: "tag set with"
+        RenderInline {B} at (0,0) size 51x16
+          RenderText {#text} at (0,64) size 51x16
+            text run at (0,64) width 51: "relative"
+        RenderText {#text} at (0,80) size 75x16
+          text run at (0,80) width 75: "positioning. "
+        RenderBR {BR} at (75,93) size 0x0
+        RenderText {#text} at (0,96) size 58x48
+          text run at (0,96) width 55: "No width"
+          text run at (0,112) width 58: "has been"
+          text run at (0,128) width 19: "set"
+layer at (8,70) size 88x42
+  RenderBlock (positioned) {DIV} at (8,70) size 88x42 [bgcolor=#CCFFCC]
+    RenderTable {TABLE} at (0,0) size 88x42 [border: (1px outset #808080)]
+      RenderTableSection {TBODY} at (1,1) size 86x40
+        RenderTableRow {TR} at (0,2) size 86x36
+          RenderTableCell {TD} at (2,2) size 82x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderText {#text} at (2,2) size 72x32
+              text run at (2,2) width 72: "Table width"
+              text run at (2,18) width 49: "= 100%"
+layer at (8,530) size 80x58
+  RenderBlock (relative positioned) {DIV} at (0,522) size 80x58 [bgcolor=#CC0066]
+    RenderTable {TABLE} at (0,0) size 80x58 [border: (1px outset #808080)]
+      RenderTableSection {TBODY} at (1,1) size 78x56
+        RenderTableRow {TR} at (0,2) size 78x52
+          RenderTableCell {TD} at (2,2) size 74x52 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderText {#text} at (2,2) size 46x48
+              text run at (2,2) width 35: "Table"
+              text run at (2,18) width 46: "width ="
+              text run at (2,34) width 36: "100%"

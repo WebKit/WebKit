@@ -1,0 +1,21 @@
+layer at (0,0) size 96x80
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x80
+  RenderBlock {HTML} at (0,0) size 96x80
+    RenderBody {BODY} at (8,8) size 80x64
+      RenderTable {TABLE} at (0,0) size 80x64 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 78x62
+          RenderTableRow {TR} at (0,2) size 78x58
+            RenderTableCell {TD} at (2,2) size 74x58 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 70x54 [bgcolor=#FFCC99]
+                RenderBlock {FORM} at (0,0) size 0x0
+                RenderTableSection {TBODY} at (0,0) size 70x54
+                  RenderTableRow {TR} at (0,2) size 70x50
+                    RenderTableCell {TD} at (2,18) size 29x18 [bgcolor=#FF6600] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 27x16
+                        text run at (1,1) width 27: "Find"
+                    RenderTableCell {TD} at (33,2) size 35x50 [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 29x48
+                        text run at (1,1) width 22: "rick"
+                        text run at (1,17) width 25: "was"
+                        text run at (1,33) width 29: "here"

@@ -1,0 +1,22 @@
+layer at (0,0) size 96x130
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x130
+  RenderBlock {HTML} at (0,0) size 96x130
+    RenderBody {BODY} at (8,17) size 80x105
+      RenderBlock {H2} at (0,0) size 80x72
+        RenderText {#text} at (0,0) size 83x71
+          text run at (0,0) width 57: "table-"
+          text run at (0,24) width 83: "column-"
+          text run at (0,48) width 60: "group"
+      RenderTable {DIV} at (0,89) size 66x16
+        RenderTableCol {DIV} at (0,0) size 0x0
+          RenderTableCol {DIV} at (0,0) size 0x0
+          RenderTableCol {DIV} at (0,0) size 0x0
+        RenderTableSection at (0,0) size 66x16
+          RenderTableRow {DIV} at (0,0) size 66x16
+            RenderTableCell {DIV} at (0,0) size 33x16 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 33x16
+                text run at (0,0) width 33: "white"
+            RenderTableCell {DIV} at (33,0) size 33x16 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 33x16
+                text run at (0,0) width 33: "white"

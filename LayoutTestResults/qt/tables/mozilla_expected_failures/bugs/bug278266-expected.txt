@@ -1,0 +1,18 @@
+layer at (0,0) size 96x112
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x112
+  RenderBlock {HTML} at (0,0) size 96x112
+    RenderBody {BODY} at (8,8) size 80x96
+      RenderTable at (0,0) size 80x32
+        RenderTableSection at (0,0) size 80x32
+          RenderTableRow {DIV} at (0,0) size 80x32
+            RenderTableCell at (0,0) size 80x32 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 74x32
+                text run at (0,0) width 74: "Second line"
+                text run at (0,16) width 39: "of text"
+      RenderBlock (anonymous) at (0,32) size 80x64
+        RenderText {#text} at (0,0) size 63x64
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 60: "should be"
+          text run at (0,32) width 63: "text below"
+          text run at (0,48) width 51: "this line:"

@@ -1,0 +1,19 @@
+layer at (0,0) size 197x260
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 197x260
+  RenderBlock {HTML} at (0,0) size 96x260
+    RenderBody {BODY} at (0,0) size 96x260 [bgcolor=#FFFFFF]
+      RenderBlock (anonymous) at (0,0) size 96x80
+        RenderText {#text} at (0,0) size 88x80
+          text run at (0,0) width 51: "The bug"
+          text run at (0,16) width 49: "showed"
+          text run at (0,32) width 62: "horizontal"
+          text run at (0,48) width 64: "scroll bars"
+          text run at (0,64) width 88: "when resized "
+        RenderBR {BR} at (88,77) size 0x0
+      RenderTable {TABLE} at (0,80) size 197x180
+        RenderTableSection {TBODY} at (0,0) size 197x180
+          RenderTableRow {TR} at (0,0) size 197x180
+            RenderTableCell {TD} at (0,0) size 197x180 [bgcolor=#FFFFFF] [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 194x90
+              RenderImage {IMG} at (64,90) size 133x90

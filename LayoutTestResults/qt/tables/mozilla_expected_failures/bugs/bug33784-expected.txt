@@ -1,0 +1,13 @@
+layer at (0,0) size 608x32
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 608x32
+  RenderBlock {HTML} at (0,0) size 96x32
+    RenderBody {BODY} at (8,8) size 80x16
+      RenderTable {TABLE} at (0,0) size 600x16
+        RenderTableSection {TBODY} at (0,0) size 600x16
+          RenderTableRow {TR} at (0,0) size 600x16
+            RenderTableCell {TD} at (0,0) size 600x16 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 600x16 [color=#FFFFFF]
+                RenderBlock {P} at (0,0) size 600x16
+                  RenderText {#text} at (0,0) size 48x16
+                    text run at (0,0) width 48: "fooobar"

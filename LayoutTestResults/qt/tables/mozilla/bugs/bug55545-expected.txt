@@ -1,0 +1,21 @@
+layer at (0,0) size 389x60
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 389x60
+  RenderBlock {HTML} at (0,0) size 96x60
+    RenderBody {BODY} at (8,8) size 80x44
+      RenderTable {TABLE} at (0,0) size 381x44
+        RenderTableSection {TBODY} at (0,0) size 381x44
+          RenderTableRow {TR} at (0,2) size 381x40
+            RenderTableCell {TD} at (2,2) size 377x40 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 375x38
+                RenderTableSection {TBODY} at (0,0) size 375x38
+                  RenderTableRow {TR} at (0,2) size 375x34
+                    RenderTableCell {TH} at (2,2) size 35x34 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 33x32
+                        text run at (1,1) width 33: "User"
+                        text run at (7,17) width 20: "ID:"
+                    RenderTableCell {TD} at (39,5) size 334x28 [r=0 c=1 rs=1 cs=1]
+                      RenderTextControl {INPUT} at (3,3) size 328x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                      RenderText {#text} at (0,0) size 0x0
+layer at (56,22) size 322x16
+  RenderBlock {DIV} at (3,3) size 322x16

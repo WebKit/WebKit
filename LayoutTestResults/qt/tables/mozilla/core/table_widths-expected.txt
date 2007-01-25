@@ -1,0 +1,52 @@
+layer at (0,0) size 212x396
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 212x396
+  RenderBlock {HTML} at (0,0) size 96x396
+    RenderBody {BODY} at (8,8) size 80x380
+      RenderBlock (anonymous) at (0,0) size 80x48
+        RenderText {#text} at (0,0) size 67x48
+          text run at (0,0) width 67: "table width"
+          text run at (0,16) width 51: "includes"
+          text run at (0,32) width 41: "border"
+      RenderBlock {HR} at (0,55) size 202x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,64) size 200x44 [border: (10px outset #808080)]
+        RenderTableSection {TBODY} at (10,10) size 180x24
+          RenderTableRow {TR} at (0,2) size 180x20
+            RenderTableCell {TD} at (2,2) size 176x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 58x16
+                text run at (2,2) width 58: "200 table"
+      RenderBlock (anonymous) at (0,108) size 80x80
+        RenderBR {BR} at (0,0) size 0x16
+        RenderText {#text} at (0,16) size 77x64
+          text run at (0,16) width 77: "nested table"
+          text run at (0,32) width 33: "width"
+          text run at (0,48) width 51: "includes"
+          text run at (0,64) width 41: "border"
+      RenderTable {TABLE} at (0,188) size 204x48 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 202x46
+          RenderTableRow {TR} at (0,0) size 202x46
+            RenderTableCell {TD} at (0,0) size 202x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 200x44 [border: (10px outset #808080)]
+                RenderTableSection {TBODY} at (10,10) size 180x24
+                  RenderTableRow {TR} at (0,2) size 180x20
+                    RenderTableCell {TD} at (2,2) size 176x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 105x16
+                        text run at (2,2) width 105: "200 nested table"
+      RenderBlock (anonymous) at (0,236) size 80x64
+        RenderText {#text} at (0,0) size 77x64
+          text run at (0,0) width 77: "nested table"
+          text run at (0,16) width 33: "width"
+          text run at (0,32) width 51: "includes"
+          text run at (0,48) width 41: "border"
+      RenderTable {TABLE} at (0,300) size 80x80 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 78x78
+          RenderTableRow {TR} at (0,0) size 78x78
+            RenderTableCell {TD} at (0,0) size 78x78 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 76x76 [border: (10px outset #808080)]
+                RenderTableSection {TBODY} at (10,10) size 56x56
+                  RenderTableRow {TR} at (0,2) size 56x52
+                    RenderTableCell {TD} at (2,2) size 52x52 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 43x48
+                        text run at (2,2) width 36: "100%"
+                        text run at (2,18) width 43: "nested"
+                        text run at (2,34) width 30: "table"

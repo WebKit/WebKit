@@ -1,0 +1,63 @@
+layer at (0,0) size 254x202
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 254x202
+  RenderBlock {HTML} at (0,0) size 96x202
+    RenderBody {BODY} at (8,8) size 80x186
+      RenderTable {TABLE} at (0,0) size 246x144 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 244x142
+          RenderTableRow {TR} at (0,2) size 244x68
+            RenderTableCell {TD} at (2,26) size 80x20 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 76x16
+                text run at (2,2) width 76: "fooooooooo"
+            RenderTableCell {TD} at (84,26) size 80x20 [bgcolor=#008000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 76x16
+                text run at (2,2) width 76: "fooooooooo"
+            RenderTableCell {TD} at (166,18) size 50x36 [bgcolor=#FFA500] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=2]
+              RenderText {#text} at (2,2) size 44x32
+                text run at (2,2) width 44: "foo foo"
+                text run at (2,18) width 44: "foo foo"
+            RenderTableCell {TD} at (218,2) size 24x68 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 20x64
+                text run at (2,2) width 20: "foo"
+                text run at (2,18) width 20: "foo"
+                text run at (2,34) width 20: "foo"
+                text run at (2,50) width 20: "foo"
+          RenderTableRow {TR} at (0,72) size 244x68
+            RenderTableCell {TD} at (2,96) size 80x20 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 76x16
+                text run at (2,2) width 76: "fooooooooo"
+            RenderTableCell {TD} at (84,96) size 80x20 [bgcolor=#008000] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 76x16
+                text run at (2,2) width 76: "fooooooooo"
+            RenderTableCell {TD} at (166,72) size 24x68 [bgcolor=#FFA500] [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 20x64
+                text run at (2,2) width 20: "foo"
+                text run at (2,18) width 20: "foo"
+                text run at (2,34) width 20: "foo"
+                text run at (2,50) width 20: "foo"
+            RenderTableCell {TD} at (192,72) size 24x68 [bgcolor=#FFA500] [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 20x64
+                text run at (2,2) width 20: "foo"
+                text run at (2,18) width 20: "foo"
+                text run at (2,34) width 20: "foo"
+                text run at (2,50) width 20: "foo"
+            RenderTableCell {TD} at (218,72) size 24x68 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 20x64
+                text run at (2,2) width 20: "foo"
+                text run at (2,18) width 20: "foo"
+                text run at (2,34) width 20: "foo"
+                text run at (2,50) width 20: "foo"
+      RenderBlock (anonymous) at (0,144) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderTable {TABLE} at (0,160) size 85x26 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 83x24
+          RenderTableRow {TR} at (0,2) size 83x20
+            RenderTableCell {TD} at (2,2) size 24x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 20x16
+                text run at (2,2) width 20: "foo"
+            RenderTableCell {TD} at (28,2) size 24x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 20x16
+                text run at (2,2) width 20: "bar"
+            RenderTableCell {TD} at (54,2) size 27x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 23x16
+                text run at (2,2) width 23: "zap"

@@ -1,0 +1,42 @@
+layer at (0,0) size 106x118
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 106x118
+  RenderBlock {HTML} at (0,0) size 96x118
+    RenderBody {BODY} at (8,8) size 80x102 [bgcolor=#FFFFFF]
+      RenderTable {TABLE} at (0,0) size 98x102 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 96x100
+          RenderTableRow {TR} at (0,0) size 96x20
+            RenderTableCell {TH} at (0,0) size 32x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (8,2) size 16x16
+                text run at (8,2) width 16: "c1"
+            RenderTableCell {TH} at (32,0) size 32x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (8,2) size 16x16
+                text run at (8,2) width 16: "c2"
+            RenderTableCell {TH} at (64,0) size 32x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (8,2) size 16x16
+                text run at (8,2) width 16: "c4"
+          RenderTableRow {TR} at (0,20) size 96x20
+            RenderTableCell {TD} at (0,20) size 32x20 [border: (1px inset #808080)] [r=1 c=0 rs=4 cs=1]
+              RenderText {#text} at (2,2) size 28x16
+                text run at (2,2) width 28: "r1c2"
+            RenderTableCell {TD} at (32,20) size 32x20 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 28x16
+                text run at (2,2) width 28: "r1c3"
+            RenderTableCell {TD} at (64,20) size 32x20 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 28x16
+                text run at (2,2) width 28: "r1c4"
+          RenderTableRow {TR} at (0,40) size 96x20
+            RenderTableCell {TD} at (64,40) size 32x20 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 28x16
+                text run at (2,2) width 28: "r2c4"
+          RenderTableRow {TR} at (0,60) size 96x20
+            RenderTableCell {TD} at (32,70) size 32x20 [border: (1px inset #808080)] [r=3 c=1 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 28x16
+                text run at (2,2) width 28: "r3c3"
+            RenderTableCell {TD} at (64,60) size 32x20 [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 28x16
+                text run at (2,2) width 28: "r3c4"
+          RenderTableRow {TR} at (0,80) size 96x20
+            RenderTableCell {TD} at (64,80) size 32x20 [border: (1px inset #808080)] [r=4 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 28x16
+                text run at (2,2) width 28: "r4c4"

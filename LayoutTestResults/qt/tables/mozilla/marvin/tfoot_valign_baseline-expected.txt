@@ -1,0 +1,45 @@
+layer at (0,0) size 379x472
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 379x472
+  RenderBlock {HTML} at (0,0) size 96x472
+    RenderBody {BODY} at (8,8) size 80x456
+      RenderBlock (anonymous) at (0,0) size 80x32
+        RenderText {#text} at (0,0) size 127x32
+          text run at (0,0) width 48: "TFOOT"
+          text run at (0,16) width 127: "VALIGN=BASELINE"
+      RenderTable {TABLE} at (0,32) size 371x424 [border: (1px outset #808080)]
+        RenderTableSection {THEAD} at (1,1) size 369x24
+          RenderTableRow {TR} at (0,2) size 369x20
+            RenderTableCell {TD} at (2,2) size 304x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 47x16
+                text run at (2,2) width 47: "THEAD"
+            RenderTableCell {TD} at (308,2) size 59x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 47x16
+                text run at (2,2) width 47: "THEAD"
+        RenderTableSection {TFOOT} at (1,51) size 369x372
+          RenderTableRow {TR} at (0,2) size 369x368
+            RenderTableCell {TD} at (2,2) size 304x189 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (2,2) size 300x185
+            RenderTableCell {TD} at (308,174) size 59x196 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 55x192
+                text run at (2,2) width 54: "This text"
+                text run at (2,18) width 50: "is within"
+                text run at (2,34) width 20: "the"
+                text run at (2,50) width 48: "TFOOT"
+                text run at (2,66) width 50: "element"
+                text run at (2,82) width 24: "and"
+                text run at (2,98) width 41: "should"
+                text run at (2,114) width 15: "be"
+                text run at (2,130) width 55: "vertically"
+                text run at (2,146) width 46: "aligned"
+                text run at (2,162) width 36: "to the"
+                text run at (2,178) width 52: "baseline"
+        RenderTableSection {TBODY} at (1,25) size 369x24
+          RenderTableRow {TR} at (0,2) size 369x20
+            RenderTableCell {TD} at (2,2) size 304x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 48x16
+                text run at (2,2) width 48: "TBODY"
+            RenderTableCell {TD} at (308,2) size 59x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 48x16
+                text run at (2,2) width 48: "TBODY"
+        RenderTableSection {TBODY} at (1,49) size 369x2

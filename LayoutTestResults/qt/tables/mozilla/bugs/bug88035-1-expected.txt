@@ -1,0 +1,21 @@
+layer at (0,0) size 116x128
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 116x128
+  RenderBlock {HTML} at (0,0) size 96x128
+    RenderBody {BODY} at (8,8) size 80x112
+      RenderTable {TABLE} at (0,0) size 108x112 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 106x110
+          RenderTableRow {TR} at (0,2) size 106x84
+            RenderTableCell {TD} at (2,2) size 102x84 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (13,2) size 98x80
+                text run at (13,2) width 75: "This table is"
+                text run at (4,18) width 94: "not wrapped in"
+                text run at (8,34) width 85: "a <CENTER>"
+                text run at (25,50) width 52: "tag, with"
+                text run at (2,66) width 98: "HEIGHT=100%"
+          RenderTableRow {TR} at (0,88) size 106x20
+            RenderTableCell {TD} at (2,88) size 102x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderInline {A} at (0,0) size 69x16 [color=#0000EE]
+                RenderText {#text} at (16,2) size 69x16
+                  text run at (16,2) width 69: "This one is"
+              RenderText {#text} at (0,0) size 0x0

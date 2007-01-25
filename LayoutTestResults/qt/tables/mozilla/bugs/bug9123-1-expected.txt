@@ -1,0 +1,147 @@
+layer at (0,0) size 148x1646
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 148x1646
+  RenderBlock {HTML} at (0,0) size 96x1646
+    RenderBody {BODY} at (0,0) size 96x1632
+      RenderBlock {P} at (0,0) size 96x528
+        RenderText {#text} at (20,0) size 55x208
+          text run at (20,0) width 41: "Here's"
+          text run at (20,16) width 20: "the"
+          text run at (20,32) width 54: "structure"
+          text run at (20,48) width 36: "of the"
+          text run at (20,64) width 50: "problem"
+          text run at (20,80) width 30: "table"
+          text run at (20,96) width 41: "(which"
+          text run at (20,112) width 42: "usually"
+          text run at (20,128) width 41: "begins"
+          text run at (20,144) width 29: "with "
+          text run at (49,144) width 26: "'N E"
+          text run at (20,160) width 30: "W S "
+          text run at (50,160) width 23: "H E"
+          text run at (20,176) width 43: "A D L I"
+          text run at (20,192) width 51: "N E S'). "
+        RenderBR {BR} at (71,205) size 0x0
+        RenderText {#text} at (20,208) size 55x128
+          text run at (20,208) width 27: "This"
+          text run at (20,224) width 44: "table is"
+          text run at (20,240) width 33: "width"
+          text run at (20,256) width 40: "100%;"
+          text run at (20,272) width 22: "two"
+          text run at (20,288) width 34: "rows;"
+          text run at (20,304) width 33: "three"
+          text run at (20,320) width 55: "columns;"
+        RenderBR {BR} at (75,333) size 0x0
+        RenderText {#text} at (20,336) size 52x192
+          text run at (20,336) width 52: "The first"
+          text run at (20,352) width 26: "row:"
+          text run at (20,368) width 40: "widths"
+          text run at (20,384) width 50: "15, 125,"
+          text run at (20,400) width 29: "15 ..."
+          text run at (20,416) width 25: "The"
+          text run at (20,432) width 46: "second"
+          text run at (20,448) width 26: "row:"
+          text run at (20,464) width 40: "widths"
+          text run at (20,480) width 19: "15,"
+          text run at (20,496) width 39: "100%,"
+          text run at (20,512) width 16: "15"
+      RenderTable {TABLE} at (0,542) size 148x37 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 146x35
+          RenderTableRow {TR} at (0,0) size 146x17
+            RenderTableCell {TD} at (0,7) size 17x3 [bgcolor=#666666] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 15x1
+            RenderTableCell {TD} at (17,0) size 112x17 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 110x15
+            RenderTableCell {TD} at (129,7) size 17x3 [bgcolor=#666666] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 15x1
+          RenderTableRow {TR} at (0,17) size 146x18
+            RenderTableCell {TD} at (0,24) size 17x3 [bgcolor=#666666] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 15x1
+            RenderTableCell {TD} at (17,17) size 112x18 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 24x16
+                text run at (1,1) width 24: "that"
+            RenderTableCell {TD} at (129,24) size 17x3 [bgcolor=#666666] [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 15x1
+      RenderBlock {P} at (0,593) size 96x288
+        RenderText {#text} at (20,0) size 55x288
+          text run at (20,0) width 41: "Here's"
+          text run at (20,16) width 47: "the first"
+          text run at (20,32) width 50: "row in a"
+          text run at (20,48) width 50: "table on"
+          text run at (20,64) width 47: "its own."
+          text run at (20,80) width 27: "This"
+          text run at (20,96) width 44: "table is"
+          text run at (20,112) width 33: "width"
+          text run at (20,128) width 40: "100%;"
+          text run at (20,144) width 24: "one"
+          text run at (20,160) width 34: "rows;"
+          text run at (20,176) width 33: "three"
+          text run at (20,192) width 55: "columns;"
+          text run at (20,208) width 27: "This"
+          text run at (20,224) width 26: "row:"
+          text run at (20,240) width 40: "widths"
+          text run at (20,256) width 50: "15, 125,"
+          text run at (20,272) width 16: "15"
+      RenderTable {TABLE} at (0,895) size 148x19 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 146x17
+          RenderTableRow {TR} at (0,0) size 146x17
+            RenderTableCell {TD} at (0,7) size 17x3 [bgcolor=#666666] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 15x1
+            RenderTableCell {TD} at (17,0) size 112x17 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 110x15
+            RenderTableCell {TD} at (129,7) size 17x3 [bgcolor=#666666] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 15x1
+      RenderBlock {P} at (0,928) size 96x320
+        RenderText {#text} at (20,0) size 55x320
+          text run at (20,0) width 41: "Here's"
+          text run at (20,16) width 20: "the"
+          text run at (20,32) width 46: "second"
+          text run at (20,48) width 50: "row in a"
+          text run at (20,64) width 50: "table on"
+          text run at (20,80) width 47: "its own."
+          text run at (20,96) width 27: "This"
+          text run at (20,112) width 44: "table is"
+          text run at (20,128) width 33: "width"
+          text run at (20,144) width 40: "100%;"
+          text run at (20,160) width 24: "one"
+          text run at (20,176) width 34: "rows;"
+          text run at (20,192) width 33: "three"
+          text run at (20,208) width 55: "columns;"
+          text run at (20,224) width 27: "This"
+          text run at (20,240) width 26: "row:"
+          text run at (20,256) width 40: "widths"
+          text run at (20,272) width 19: "15,"
+          text run at (20,288) width 39: "100%,"
+          text run at (20,304) width 16: "15"
+      RenderTable {TABLE} at (0,1262) size 96x20 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 94x18
+          RenderTableRow {TR} at (0,0) size 94x18
+            RenderTableCell {TD} at (0,7) size 17x3 [bgcolor=#666666] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 15x1
+            RenderTableCell {TD} at (17,0) size 60x18 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 24x16
+                text run at (1,1) width 24: "that"
+            RenderTableCell {TD} at (77,7) size 17x3 [bgcolor=#666666] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 15x1
+      RenderBlock {P} at (0,1296) size 96x336
+        RenderText {#text} at (20,0) size 63x336
+          text run at (20,0) width 30: "Note"
+          text run at (20,16) width 39: "that in"
+          text run at (20,32) width 46: "Nav4.x,"
+          text run at (20,48) width 20: "the"
+          text run at (20,64) width 41: "middle"
+          text run at (20,80) width 44: "column"
+          text run at (20,96) width 51: "gets the"
+          text run at (20,112) width 49: "width of"
+          text run at (20,128) width 20: "the"
+          text run at (20,144) width 58: "maximum"
+          text run at (20,160) width 33: "width"
+          text run at (20,176) width 36: "cell in"
+          text run at (20,192) width 20: "the"
+          text run at (20,208) width 48: "column;"
+          text run at (20,224) width 42: "on 5.0,"
+          text run at (20,240) width 20: "the"
+          text run at (20,256) width 41: "middle"
+          text run at (20,272) width 44: "column"
+          text run at (20,288) width 51: "gets the"
+          text run at (20,304) width 54: "opposite"
+          text run at (20,320) width 63: "treatment."

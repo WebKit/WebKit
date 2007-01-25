@@ -1,0 +1,33 @@
+layer at (0,0) size 126x142
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 126x142
+  RenderBlock {HTML} at (0,0) size 96x142
+    RenderBody {BODY} at (8,8) size 80x126 [bgcolor=#FFFFFF]
+      RenderBlock {P} at (0,0) size 80x64
+        RenderText {#text} at (0,0) size 79x64
+          text run at (0,0) width 64: "Table with"
+          text run at (0,16) width 65: "one green"
+          text run at (0,32) width 79: "row and one"
+          text run at (0,48) width 60: "white row"
+      RenderTable {TABLE} at (0,78) size 118x48 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 116x46
+          RenderTableRow {TR} at (0,2) size 116x20 [bgcolor=#008000]
+            RenderTableCell {TD} at (2,2) size 36x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 32x16
+                text run at (2,2) width 32: "        "
+            RenderTableCell {TD} at (40,2) size 36x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 32x16
+                text run at (2,2) width 32: "        "
+            RenderTableCell {TD} at (78,2) size 36x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 32x16
+                text run at (2,2) width 32: "        "
+          RenderTableRow {TR} at (0,24) size 116x20
+            RenderTableCell {TD} at (2,24) size 36x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 32x16
+                text run at (2,2) width 32: "        "
+            RenderTableCell {TD} at (40,24) size 36x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 32x16
+                text run at (2,2) width 32: "        "
+            RenderTableCell {TD} at (78,24) size 36x20 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 32x16
+                text run at (2,2) width 32: "        "

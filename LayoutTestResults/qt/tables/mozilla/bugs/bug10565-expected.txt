@@ -1,0 +1,25 @@
+layer at (0,0) size 684x366
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 684x366
+  RenderBlock {HTML} at (0,0) size 96x366
+    RenderBody {BODY} at (8,8) size 80x350
+      RenderBlock {P} at (0,0) size 80x112
+        RenderText {#text} at (0,0) size 80x112
+          text run at (0,0) width 48: "Using a"
+          text run at (0,16) width 64: "10px wide"
+          text run at (0,32) width 73: "transparent"
+          text run at (0,48) width 60: "gif with td"
+          text run at (0,64) width 68: "width=\"10\""
+          text run at (0,80) width 80: "in the middle"
+          text run at (0,96) width 53: "column..."
+      RenderTable {TABLE} at (0,126) size 676x224 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 674x222
+          RenderTableRow {TR} at (0,0) size 674x222
+            RenderTableCell {TD} at (0,0) size 331x222 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderInline {A} at (0,0) size 329x13 [color=#0000EE]
+                RenderImage {IMG} at (1,1) size 329x220
+            RenderTableCell {TD} at (331,109) size 12x3 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 10x1
+            RenderTableCell {TD} at (343,0) size 331x222 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderInline {A} at (0,0) size 329x13 [color=#0000EE]
+                RenderImage {IMG} at (1,1) size 329x220

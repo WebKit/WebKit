@@ -1,0 +1,101 @@
+layer at (0,0) size 96x1006
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x1006
+  RenderBlock {HTML} at (0,0) size 96x1006
+    RenderBody {BODY} at (8,8) size 80x990
+      RenderBlock {DIV} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 74x80
+          text run at (0,0) width 39: "Buggy"
+          text run at (0,16) width 56: "example:"
+          text run at (0,32) width 61: "This table"
+          text run at (0,48) width 67: "has a tfoot"
+          text run at (0,64) width 74: "and a tbody"
+      RenderTable {TABLE} at (0,80) size 80x178 [border: (1px outset #808080)]
+        RenderTableSection {TFOOT} at (1,137) size 78x40
+          RenderTableRow {TR} at (0,2) size 78x36 [bgcolor=#808000]
+            RenderTableCell {TD} at (2,2) size 74x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (7,2) size 65x32
+                text run at (7,2) width 65: "This is the"
+                text run at (35,18) width 37: "footer"
+        RenderTableSection {TBODY} at (1,1) size 78x136
+          RenderTableRow {TR} at (0,2) size 78x132 [bgcolor=#C0C0C0]
+            RenderTableCell {TD} at (2,2) size 74x132 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderBlock (anonymous) at (0,258) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderBlock {DIV} at (0,274) size 80x80
+        RenderText {#text} at (0,0) size 78x80
+          text run at (0,0) width 21: "For"
+          text run at (0,16) width 76: "comparison:"
+          text run at (0,32) width 63: "The same"
+          text run at (0,48) width 78: "table without"
+          text run at (0,64) width 40: "a tfoot"
+      RenderTable {TABLE} at (0,354) size 80x138 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 78x136
+          RenderTableRow {TR} at (0,2) size 78x132 [bgcolor=#C0C0C0]
+            RenderTableCell {TD} at (2,2) size 74x132 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderBlock {DIV} at (0,492) size 80x304
+        RenderText {#text} at (0,0) size 85x304
+          text run at (0,0) width 57: "ILLEGAL"
+          text run at (0,16) width 56: "example:"
+          text run at (0,32) width 48: "TFOOT"
+          text run at (0,48) width 29: "after"
+          text run at (0,64) width 60: "TBODY --"
+          text run at (0,80) width 49: "THIS IS"
+          text run at (0,96) width 85: "PROHIBITED"
+          text run at (0,112) width 61: "BY HTML"
+          text run at (0,128) width 27: "4.01"
+          text run at (0,144) width 51: "STRICT"
+          text run at (0,160) width 29: "AND"
+          text run at (0,176) width 58: "SHOULD"
+          text run at (0,192) width 77: "NOT WORK"
+          text run at (0,208) width 69: "IN STRICT"
+          text run at (0,224) width 45: "MODE."
+          text run at (0,240) width 78: "Please fix or"
+          text run at (0,256) width 55: "reenable"
+          text run at (0,272) width 69: "transitional"
+          text run at (0,288) width 38: "mode."
+      RenderTable {TABLE} at (0,796) size 80x178 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 78x136
+          RenderTableRow {TR} at (0,2) size 78x132 [bgcolor=#C0C0C0]
+            RenderTableCell {TD} at (2,2) size 74x132 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TFOOT} at (1,137) size 78x40
+          RenderTableRow {TR} at (0,2) size 78x36 [bgcolor=#808000]
+            RenderTableCell {TD} at (2,2) size 74x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (7,2) size 65x32
+                text run at (7,2) width 65: "This is the"
+                text run at (35,18) width 37: "footer"
+      RenderBlock (anonymous) at (0,974) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+layer at (13,93) size 41x128
+  RenderBlock (relative positioned) {DIV} at (2,2) size 35x128 [bgcolor=#FF0000]
+    RenderText {#text} at (8,0) size 41x128
+      text run at (8,0) width 27: "This"
+      text run at (12,16) width 23: "row"
+      text run at (0,32) width 41: "should"
+      text run at (5,48) width 30: "be in"
+      text run at (15,64) width 20: "the"
+      text run at (0,80) width 38: "(grey)"
+      text run at (5,96) width 30: "table"
+      text run at (5,112) width 30: "body"
+layer at (13,367) size 41x128
+  RenderBlock (relative positioned) {DIV} at (2,2) size 35x128 [bgcolor=#FF0000]
+    RenderText {#text} at (8,0) size 41x128
+      text run at (8,0) width 27: "This"
+      text run at (12,16) width 23: "row"
+      text run at (0,32) width 41: "should"
+      text run at (5,48) width 30: "be in"
+      text run at (15,64) width 20: "the"
+      text run at (0,80) width 38: "(grey)"
+      text run at (5,96) width 30: "table"
+      text run at (5,112) width 30: "body"
+layer at (13,809) size 41x128
+  RenderBlock (relative positioned) {DIV} at (2,2) size 35x128 [bgcolor=#FF0000]
+    RenderText {#text} at (8,0) size 41x128
+      text run at (8,0) width 27: "This"
+      text run at (12,16) width 23: "row"
+      text run at (0,32) width 41: "should"
+      text run at (5,48) width 30: "be in"
+      text run at (15,64) width 20: "the"
+      text run at (0,80) width 38: "(grey)"
+      text run at (5,96) width 30: "table"
+      text run at (5,112) width 30: "body"

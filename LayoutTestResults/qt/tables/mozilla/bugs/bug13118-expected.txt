@@ -1,0 +1,85 @@
+layer at (0,0) size 96x622
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x622
+  RenderBlock {HTML} at (0,0) size 96x622
+    RenderBody {BODY} at (8,8) size 80x600 [bgcolor=#FFFFFF]
+      RenderBlock {H4} at (0,0) size 80x144
+        RenderText {#text} at (0,0) size 80x144
+          text run at (0,0) width 67: "TBODY is"
+          text run at (0,16) width 23: "not"
+          text run at (0,32) width 62: "correctly"
+          text run at (0,48) width 74: "positioned"
+          text run at (0,64) width 36: "when"
+          text run at (0,80) width 65: "TFOOT is"
+          text run at (0,96) width 80: "present but"
+          text run at (0,112) width 64: "THEAD is"
+          text run at (0,128) width 28: "not:"
+      RenderTable {TABLE} at (0,162) size 58x50 [border: (1px outset #808080)]
+        RenderTableSection {TFOOT} at (1,25) size 56x24
+          RenderTableRow {TR} at (0,2) size 56x20
+            RenderTableCell {TD} at (2,2) size 52x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 48x16
+                text run at (2,2) width 48: "TFOOT"
+        RenderTableSection {TBODY} at (1,1) size 56x24
+          RenderTableRow {TR} at (0,2) size 56x20
+            RenderTableCell {TD} at (2,2) size 52x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 48x16
+                text run at (2,2) width 48: "TBODY"
+      RenderBlock (anonymous) at (0,212) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderTable {TABLE} at (0,228) size 58x74 [border: (1px outset #808080)]
+        RenderTableSection {THEAD} at (1,1) size 56x24
+          RenderTableRow {TR} at (0,2) size 56x20
+            RenderTableCell {TH} at (2,2) size 52x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 48x16
+                text run at (2,2) width 48: "THEAD"
+        RenderTableSection {TFOOT} at (1,49) size 56x24
+          RenderTableRow {TR} at (0,2) size 56x20
+            RenderTableCell {TD} at (2,2) size 52x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 48x16
+                text run at (2,2) width 48: "TFOOT"
+        RenderTableSection {TBODY} at (1,25) size 56x24
+          RenderTableRow {TR} at (0,2) size 56x20
+            RenderTableCell {TD} at (2,2) size 52x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 48x16
+                text run at (2,2) width 48: "TBODY"
+      RenderBlock {P} at (0,316) size 80x284
+        RenderBlock (anonymous) at (0,0) size 80x64
+          RenderText {#text} at (0,0) size 60x48
+            text run at (0,0) width 55: "Same as"
+            text run at (0,16) width 60: "above but"
+            text run at (0,32) width 25: "with"
+          RenderInline {CODE} at (0,0) size 64x16
+            RenderText {#text} at (0,48) size 64x16
+              text run at (0,48) width 64: "CELLSPACING=\"10\""
+          RenderText {#text} at (64,48) size 3x16
+            text run at (64,48) width 3: ":"
+        RenderTable {TABLE} at (0,64) size 74x82 [border: (1px outset #808080)]
+          RenderTableSection {TFOOT} at (1,41) size 72x40
+            RenderTableRow {TR} at (0,10) size 72x20
+              RenderTableCell {TD} at (10,10) size 52x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 48x16
+                  text run at (2,2) width 48: "TFOOT"
+          RenderTableSection {TBODY} at (1,1) size 72x40
+            RenderTableRow {TR} at (0,10) size 72x20
+              RenderTableCell {TD} at (10,10) size 52x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 48x16
+                  text run at (2,2) width 48: "TBODY"
+        RenderBlock (anonymous) at (0,146) size 80x16
+          RenderBR {BR} at (0,0) size 0x16
+        RenderTable {TABLE} at (0,162) size 74x122 [border: (1px outset #808080)]
+          RenderTableSection {THEAD} at (1,1) size 72x40
+            RenderTableRow {TR} at (0,10) size 72x20
+              RenderTableCell {TH} at (10,10) size 52x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 48x16
+                  text run at (2,2) width 48: "THEAD"
+          RenderTableSection {TFOOT} at (1,81) size 72x40
+            RenderTableRow {TR} at (0,10) size 72x20
+              RenderTableCell {TD} at (10,10) size 52x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 48x16
+                  text run at (2,2) width 48: "TFOOT"
+          RenderTableSection {TBODY} at (1,41) size 72x40
+            RenderTableRow {TR} at (0,10) size 72x20
+              RenderTableCell {TD} at (10,10) size 52x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 48x16
+                  text run at (2,2) width 48: "TBODY"

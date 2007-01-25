@@ -1,0 +1,15 @@
+layer at (0,0) size 483x54
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x26
+  RenderBlock {HTML} at (0,0) size 96x26
+    RenderBody {BODY} at (8,8) size 80x10
+      RenderTable {TABLE} at (2,2) size 473x44 [bgcolor=#000000] [border: (5px outset #808080)]
+        RenderTableSection {TBODY} at (5,5) size 463x34
+          RenderTableRow {TR} at (0,0) size 463x34
+            RenderTableCell {TD} at (0,0) size 463x34 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 459x30 [border: (5px outset #808080)]
+                RenderTableSection {TBODY} at (5,5) size 449x20
+                  RenderTableRow {TR} at (0,0) size 449x20
+                    RenderTableCell {TD} at (0,0) size 449x20 [bgcolor=#FFFFCC] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 445x16
+                        text run at (2,2) width 445: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxQ"

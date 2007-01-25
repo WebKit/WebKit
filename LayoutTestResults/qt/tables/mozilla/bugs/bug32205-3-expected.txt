@@ -1,0 +1,37 @@
+layer at (0,0) size 271x148
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 271x148
+  RenderBlock {HTML} at (0,0) size 96x148
+    RenderBody {BODY} at (8,8) size 80x132
+      RenderTable {TABLE} at (0,0) size 263x132 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 261x130
+          RenderTableRow {TR} at (0,2) size 261x126
+            RenderTableCell {TD} at (2,23) size 106x84 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 77x16
+                text run at (2,2) width 77: "Outer Table:"
+              RenderBR {BR} at (79,15) size 0x0
+              RenderText {#text} at (2,18) size 102x64
+                text run at (2,18) width 38: "<table"
+                text run at (2,34) width 68: "border=\"1\""
+                text run at (2,50) width 88: "width=\"100%\""
+                text run at (2,66) width 102: "height=\"100%\">"
+            RenderTableCell {TD} at (110,2) size 149x126 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 145x122 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 143x120
+                  RenderTableRow {TR} at (0,2) size 143x116
+                    RenderTableCell {TD} at (2,2) size 106x116 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 87x16
+                        text run at (2,2) width 87: "Nested Table:"
+                      RenderBR {BR} at (89,15) size 0x0
+                      RenderText {#text} at (2,18) size 102x64
+                        text run at (2,18) width 38: "<table"
+                        text run at (2,34) width 68: "border=\"1\""
+                        text run at (2,50) width 88: "width=\"100%\""
+                        text run at (2,66) width 102: "height=\"100%\">"
+                      RenderBR {BR} at (104,79) size 0x0
+                      RenderText {#text} at (2,82) size 102x32
+                        text run at (2,82) width 20: "<td"
+                        text run at (2,98) width 102: "height=\"100%\">"
+                    RenderTableCell {TD} at (110,50) size 31x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 27x16
+                        text run at (2,2) width 27: "asdf"

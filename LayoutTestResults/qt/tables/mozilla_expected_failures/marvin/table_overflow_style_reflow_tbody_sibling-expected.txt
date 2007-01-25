@@ -1,0 +1,35 @@
+layer at (0,0) size 527x705
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 527x705
+  RenderBlock {HTML} at (0,0) size 96x705
+    RenderBody {BODY} at (8,8) size 80x689
+      RenderTable {TABLE} at (0,0) size 200x689 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 198x206 [border: (3px solid #FFA500)]
+          RenderText {#text} at (73,4) size 52x34
+            text run at (73,4) width 52: "cap"
+        RenderTableSection {TBODY} at (1,207) size 198x116
+          RenderTableRow {TR} at (0,30) size 198x56
+            RenderTableCell {TD} at (30,48) size 54x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 22x18
+                text run at (1,1) width 22: "foo"
+            RenderTableCell {TD} at (114,30) size 54x56 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 23x18
+                text run at (1,1) width 23: "bar"
+              RenderBR {BR} at (24,1) size 0x18
+              RenderText {#text} at (1,19) size 26x18
+                text run at (1,19) width 26: "baz"
+              RenderBR {BR} at (27,19) size 0x18
+              RenderText {#text} at (1,37) size 26x18
+                text run at (1,37) width 26: "zap"
+        RenderTableSection {TBODY} at (1,323) size 198x365
+          RenderTableRow {TR} at (0,30) size 198x305
+            RenderTableCell {TD} at (30,127) size 54x110 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,2) size 52x106
+                text run at (1,2) width 45: "foo"
+                text run at (1,38) width 47: "bar"
+                text run at (1,74) width 52: "baz"
+            RenderTableCell {TD} at (114,30) size 54x305 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 52x52 [border: (1px solid #008000)]
+                RenderBlock {DIV} at (1,1) size 402x302 [border: (1px solid #FF0000)]
+                  RenderText {#text} at (1,2) size 18x34
+                    text run at (1,2) width 18: "d"

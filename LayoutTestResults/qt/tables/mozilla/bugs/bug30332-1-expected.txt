@@ -1,0 +1,39 @@
+layer at (0,0) size 96x224
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x224
+  RenderBlock {HTML} at (0,0) size 96x224
+    RenderBody {BODY} at (8,8) size 80x208
+      RenderBlock (anonymous) at (0,0) size 80x32
+        RenderText {#text} at (0,0) size 31x16
+          text run at (0,0) width 31: "BAD:"
+        RenderBR {BR} at (31,13) size 0x0
+        RenderBR {BR} at (0,16) size 0x16
+      RenderBlock {CENTER} at (0,32) size 80x56
+        RenderTable {TABLE} at (0,0) size 80x56 [border: (5px outset #808080)]
+          RenderTableSection {TBODY} at (5,5) size 70x46
+            RenderTableRow {TR} at (0,2) size 70x20
+              RenderTableCell {TD} at (2,2) size 66x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 27x16
+                  text run at (2,2) width 27: "One"
+            RenderTableRow {TR} at (0,24) size 70x20
+              RenderTableCell {TD} at (2,24) size 66x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 27x16
+                  text run at (2,2) width 27: "Two"
+      RenderBlock (anonymous) at (0,88) size 80x64
+        RenderBR {BR} at (0,0) size 0x16
+        RenderBR {BR} at (0,16) size 0x16
+        RenderText {#text} at (0,32) size 46x16
+          text run at (0,32) width 46: "GOOD:"
+        RenderBR {BR} at (46,45) size 0x0
+        RenderBR {BR} at (0,48) size 0x16
+      RenderBlock {CENTER} at (0,152) size 80x56
+        RenderTable {TABLE} at (0,0) size 80x56 [border: (5px outset #808080)]
+          RenderTableSection {TBODY} at (5,5) size 70x46
+            RenderTableRow {TR} at (0,2) size 70x20
+              RenderTableCell {TD} at (2,2) size 66x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 27x16
+                  text run at (2,2) width 27: "One"
+            RenderTableRow {TR} at (0,24) size 70x20
+              RenderTableCell {TD} at (2,24) size 66x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 27x16
+                  text run at (2,2) width 27: "Two"

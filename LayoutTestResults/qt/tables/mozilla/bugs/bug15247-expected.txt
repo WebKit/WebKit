@@ -1,0 +1,120 @@
+layer at (0,0) size 346x456
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 346x456
+  RenderBlock {HTML} at (0,0) size 96x456
+    RenderBody {BODY} at (8,8) size 80x440
+      RenderTable {TABLE} at (0,0) size 310x148 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 308x146
+          RenderTableRow {TR} at (0,2) size 308x142
+            RenderTableCell {TD} at (2,2) size 244x142 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (2,2) size 240x32
+                RenderText {#text} at (0,0) size 223x32
+                  text run at (0,0) width 223: "some normal text before the nested"
+                  text run at (0,16) width 30: "table"
+              RenderTable {TABLE} at (52,34) size 216x74 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 214x72
+                  RenderTableRow {TR} at (0,2) size 214x68
+                    RenderTableCell {TD} at (2,2) size 68x68 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 56x64
+                        text run at (2,2) width 56: "selection"
+                        text run at (2,18) width 54: "of words"
+                        text run at (2,34) width 40: "to pad"
+                        text run at (2,50) width 55: "table cell"
+                    RenderTableCell {TD} at (72,2) size 69x68 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 56x64
+                        text run at (2,2) width 56: "selection"
+                        text run at (2,18) width 54: "of words"
+                        text run at (2,34) width 40: "to pad"
+                        text run at (2,50) width 55: "table cell"
+                    RenderTableCell {TD} at (143,2) size 69x68 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 56x64
+                        text run at (2,2) width 56: "selection"
+                        text run at (2,18) width 54: "of words"
+                        text run at (2,34) width 40: "to pad"
+                        text run at (2,50) width 55: "table cell"
+              RenderBlock (anonymous) at (2,108) size 240x32
+                RenderText {#text} at (0,0) size 212x32
+                  text run at (0,0) width 212: "some normal text after the nested"
+                  text run at (0,16) width 30: "table"
+            RenderTableCell {TD} at (248,39) size 58x68 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 54x64
+                text run at (2,2) width 54: "contents"
+                text run at (2,18) width 46: "of table"
+                text run at (2,34) width 37: "cell to"
+                text run at (2,50) width 28: "right"
+      RenderTable {TABLE} at (0,148) size 310x148 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 308x146
+          RenderTableRow {TR} at (0,2) size 308x142
+            RenderTableCell {TD} at (2,2) size 244x142 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (2,2) size 240x32
+                RenderText {#text} at (0,0) size 223x32
+                  text run at (0,0) width 223: "some normal text before the nested"
+                  text run at (0,16) width 30: "table"
+              RenderTable {TABLE} at (52,34) size 190x74 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 188x72
+                  RenderTableRow {TR} at (0,2) size 188x68
+                    RenderTableCell {TD} at (2,2) size 60x68 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 56x64
+                        text run at (2,2) width 56: "selection"
+                        text run at (2,18) width 54: "of words"
+                        text run at (2,34) width 40: "to pad"
+                        text run at (2,50) width 55: "table cell"
+                    RenderTableCell {TD} at (64,2) size 60x68 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 56x64
+                        text run at (2,2) width 56: "selection"
+                        text run at (2,18) width 54: "of words"
+                        text run at (2,34) width 40: "to pad"
+                        text run at (2,50) width 55: "table cell"
+                    RenderTableCell {TD} at (126,2) size 60x68 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 56x64
+                        text run at (2,2) width 56: "selection"
+                        text run at (2,18) width 54: "of words"
+                        text run at (2,34) width 40: "to pad"
+                        text run at (2,50) width 55: "table cell"
+              RenderBlock (anonymous) at (2,108) size 240x32
+                RenderText {#text} at (0,0) size 212x32
+                  text run at (0,0) width 212: "some normal text after the nested"
+                  text run at (0,16) width 30: "table"
+            RenderTableCell {TD} at (248,39) size 58x68 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 54x64
+                text run at (2,2) width 54: "contents"
+                text run at (2,18) width 46: "of table"
+                text run at (2,34) width 37: "cell to"
+                text run at (2,50) width 28: "right"
+      RenderTable {TABLE} at (0,296) size 338x144 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 336x142
+          RenderTableRow {TR} at (0,2) size 336x138
+            RenderTableCell {TD} at (2,2) size 272x138 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (2,2) size 268x16
+                RenderText {#text} at (0,0) size 257x16
+                  text run at (0,0) width 257: "some normal text before the nested table"
+              RenderTable {TABLE} at (52,18) size 218x102 [border: (10px solid #000000)]
+                RenderTableSection {TBODY} at (15,15) size 188x72
+                  RenderTableRow {TR} at (0,2) size 188x68
+                    RenderTableCell {TD} at (2,2) size 60x68 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 56x64
+                        text run at (2,2) width 56: "selection"
+                        text run at (2,18) width 54: "of words"
+                        text run at (2,34) width 40: "to pad"
+                        text run at (2,50) width 55: "table cell"
+                    RenderTableCell {TD} at (64,2) size 60x68 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 56x64
+                        text run at (2,2) width 56: "selection"
+                        text run at (2,18) width 54: "of words"
+                        text run at (2,34) width 40: "to pad"
+                        text run at (2,50) width 55: "table cell"
+                    RenderTableCell {TD} at (126,2) size 60x68 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 56x64
+                        text run at (2,2) width 56: "selection"
+                        text run at (2,18) width 54: "of words"
+                        text run at (2,34) width 40: "to pad"
+                        text run at (2,50) width 55: "table cell"
+              RenderBlock (anonymous) at (2,120) size 268x16
+                RenderText {#text} at (0,0) size 246x16
+                  text run at (0,0) width 246: "some normal text after the nested table"
+            RenderTableCell {TD} at (276,37) size 58x68 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 54x64
+                text run at (2,2) width 54: "contents"
+                text run at (2,18) width 46: "of table"
+                text run at (2,34) width 37: "cell to"
+                text run at (2,50) width 28: "right"

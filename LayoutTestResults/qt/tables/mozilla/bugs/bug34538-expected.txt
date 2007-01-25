@@ -1,0 +1,13 @@
+layer at (0,0) size 96x30
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x26
+  RenderBlock {HTML} at (0,0) size 96x26
+    RenderBody {BODY} at (8,8) size 80x10
+layer at (8,8) size 34x22
+  RenderTable {TABLE} at (8,8) size 34x22
+    RenderBlock {FORM} at (0,0) size 0x0
+    RenderTableSection {TBODY} at (0,0) size 34x22
+      RenderTableRow {TR} at (0,2) size 34x18
+        RenderTableCell {TD} at (2,2) size 30x18 [r=0 c=0 rs=1 cs=1]
+          RenderText {#text} at (1,1) size 28x16
+            text run at (1,1) width 28: "Test"

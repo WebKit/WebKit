@@ -1,0 +1,17 @@
+layer at (0,0) size 138x31
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 138x31
+  RenderBlock {HTML} at (0,0) size 96x31
+    RenderBody {BODY} at (8,8) size 80x15 [bgcolor=#999999]
+      RenderTable {TABLE} at (0,0) size 130x15
+        RenderTableSection {TBODY} at (0,0) size 130x15
+          RenderTableRow {TR} at (0,0) size 130x15
+            RenderTableCell {TD} at (0,0) size 15x15 [bgcolor=#FFCC00] [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 15x15
+            RenderTableCell {TD} at (15,2) size 100x11 [bgcolor=#FFCC00] [r=0 c=1 rs=1 cs=1]
+              RenderInline {B} at (0,0) size 51x11
+                RenderInline {FONT} at (0,0) size 51x11
+                  RenderText {#text} at (24,0) size 51x11
+                    text run at (24,0) width 51: "Downloads"
+            RenderTableCell {TD} at (115,0) size 15x15 [bgcolor=#FFCC00] [r=0 c=2 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 15x15

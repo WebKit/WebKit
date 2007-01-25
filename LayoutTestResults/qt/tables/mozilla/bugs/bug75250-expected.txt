@@ -1,0 +1,14 @@
+layer at (0,0) size 96x86
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x86
+  RenderBlock {HTML} at (0,0) size 96x86
+    RenderBody {BODY} at (8,8) size 80x70
+      RenderTable {TABLE} at (0,0) size 80x70
+        RenderTableSection {TBODY} at (0,0) size 80x70
+          RenderTableRow {TR} at (0,2) size 80x66
+            RenderTableCell {TD} at (2,2) size 76x66 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 69x64
+                text run at (1,1) width 48: "this is a"
+                text run at (1,17) width 67: "simple test"
+                text run at (1,33) width 69: "and should"
+                text run at (1,49) width 58: "not wrap."

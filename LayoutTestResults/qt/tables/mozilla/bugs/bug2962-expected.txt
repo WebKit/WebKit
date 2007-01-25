@@ -1,0 +1,22 @@
+layer at (0,0) size 308x58
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 308x58
+  RenderBlock {HTML} at (0,0) size 96x58
+    RenderBody {BODY} at (8,8) size 80x42
+      RenderTable {TABLE} at (0,0) size 300x42 [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 296x38
+          RenderTableRow {TR} at (0,0) size 296x38
+            RenderTableCell {TD} at (0,0) size 296x38 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {CENTER} at (3,3) size 290x32
+                RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
+                  RenderImage {IMG} at (0,0) size 4x4
+                RenderText {#text} at (0,0) size 0x0
+                RenderInline {A} at (0,0) size 181x32 [color=#0000EE]
+                  RenderInline {FONT} at (0,0) size 181x32 [color=#000000]
+                    RenderText {#text} at (58,0) size 181x16
+                      text run at (58,0) width 110: "Free Homepage! "
+                      text run at (168,0) width 71: "Free Email!"
+                    RenderBR {BR} at (239,13) size 0x0
+                    RenderText {#text} at (65,16) size 159x16
+                      text run at (65,16) width 40: "It's all "
+                      text run at (105,16) width 119: "yours at ACMEcity!"

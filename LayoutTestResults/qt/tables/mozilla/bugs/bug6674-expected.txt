@@ -1,0 +1,31 @@
+layer at (0,0) size 120x306
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 120x306
+  RenderBlock {HTML} at (0,0) size 96x306
+    RenderBody {BODY} at (8,8) size 80x290
+      RenderTable {TABLE} at (0,0) size 96x48 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 94x46
+          RenderTableRow {TR} at (0,2) size 94x42
+            RenderTableCell {TD} at (2,2) size 90x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (2,2) size 86x38 [border: (3px dotted #00FF00)]
+                RenderText {#text} at (3,3) size 104x32
+                  text run at (3,3) width 72: "Truncated?"
+                  text run at (3,19) width 104: " It should not be!"
+      RenderBlock {P} at (0,62) size 80x176
+        RenderText {#text} at (0,0) size 79x176
+          text run at (0,0) width 79: "According to"
+          text run at (0,16) width 70: "the rules of"
+          text run at (0,32) width 55: "CSS, the"
+          text run at (0,48) width 65: "text above"
+          text run at (0,64) width 69: "should spill"
+          text run at (0,80) width 67: "right out of"
+          text run at (0,96) width 24: "the "
+          text run at (24,96) width 52: "table, as"
+          text run at (0,112) width 57: "it does in"
+          text run at (0,128) width 58: "the table-"
+          text run at (0,144) width 59: "less case"
+          text run at (0,160) width 39: "below:"
+      RenderBlock {DIV} at (0,252) size 86x38 [border: (3px dotted #00FF00)]
+        RenderText {#text} at (3,3) size 104x32
+          text run at (3,3) width 72: "Truncated?"
+          text run at (3,19) width 104: " It should not be!"

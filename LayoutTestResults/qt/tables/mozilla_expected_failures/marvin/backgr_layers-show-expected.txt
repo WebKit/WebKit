@@ -1,0 +1,439 @@
+layer at (0,0) size 197x4673
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 197x4673
+  RenderBlock {HTML} at (0,0) size 96x4673
+    RenderBody {BODY} at (8,18) size 80x4647 [color=#00FF00] [bgcolor=#333333]
+      RenderBlock {H1} at (0,0) size 80x160
+        RenderText {#text} at (0,1) size 180x158
+          text run at (0,1) width 74: "CSS2"
+          text run at (0,33) width 74: "Table"
+          text run at (0,65) width 180: "Backgrounds"
+          text run at (0,97) width 58: "Test"
+          text run at (0,129) width 69: "Suite"
+      RenderBlock {H2} at (0,178) size 80x72
+        RenderText {#text} at (0,0) size 124x71
+          text run at (0,0) width 69: "Part C:"
+          text run at (0,24) width 124: "Background"
+          text run at (0,48) width 69: "Layers"
+      RenderBlock {H3} at (0,267) size 80x54
+        RenderText {#text} at (0,0) size 52x54
+          text run at (0,0) width 52: "empty-"
+          text run at (0,18) width 40: "cells:"
+          text run at (0,36) width 41: "show"
+      RenderBlock {P} at (0,337) size 80x48
+        RenderText {#text} at (0,0) size 72x48
+          text run at (0,0) width 72: "Both tables should"
+          text run at (0,16) width 44: "have a blue"
+          text run at (0,32) width 44: "background."
+      RenderBlock {P} at (0,399) size 80x64
+        RenderText {#text} at (0,0) size 80x64
+          text run at (0,0) width 60: "In table cell C"
+          text run at (0,16) width 72: "(third cell in the"
+          text run at (0,32) width 80: "first row), which is"
+          text run at (0,48) width 24: "empty:"
+      RenderBlock {UL} at (0,477) size 80x912
+        RenderListItem {LI} at (40,0) size 40x208
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 40x208
+            text run at (0,0) width 36: "Four sets"
+            text run at (0,16) width 8: "of"
+            text run at (0,32) width 40: "horizontal"
+            text run at (0,48) width 24: "double"
+            text run at (0,64) width 24: "violet"
+            text run at (0,80) width 28: "stripes"
+            text run at (0,96) width 40: "surrounded"
+            text run at (0,112) width 28: "by aqua"
+            text run at (0,128) width 40: "should run"
+            text run at (0,144) width 16: "just"
+            text run at (0,160) width 40: "inside the"
+            text run at (0,176) width 40: "top border"
+            text run at (0,192) width 20: "edge."
+        RenderListItem {LI} at (40,208) size 40x224
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 40x224
+            text run at (0,0) width 40: "One set of"
+            text run at (0,16) width 20: "aqua-"
+            text run at (0,32) width 24: "backed"
+            text run at (0,48) width 24: "double"
+            text run at (0,64) width 24: "violet"
+            text run at (0,80) width 28: "stripes"
+            text run at (0,96) width 40: "should run"
+            text run at (0,112) width 16: "just"
+            text run at (0,128) width 40: "inside the"
+            text run at (0,144) width 20: "left,"
+            text run at (0,160) width 40: "right, and"
+            text run at (0,176) width 24: "bottom"
+            text run at (0,192) width 24: "border"
+            text run at (0,208) width 24: "edges."
+        RenderListItem {LI} at (40,432) size 40x208
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 40x208
+            text run at (0,0) width 36: "The third"
+            text run at (0,16) width 36: "set along"
+            text run at (0,32) width 28: "the top"
+            text run at (0,48) width 24: "should"
+            text run at (0,64) width 36: "turn down"
+            text run at (0,80) width 24: "at the"
+            text run at (0,96) width 40: "right edge"
+            text run at (0,112) width 24: "and go"
+            text run at (0,128) width 36: "under the"
+            text run at (0,144) width 40: "fourth set"
+            text run at (0,160) width 28: "to form"
+            text run at (0,176) width 40: "the right-"
+            text run at (0,192) width 36: "edge set."
+        RenderListItem {LI} at (40,640) size 40x128
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 40x128
+            text run at (0,0) width 40: "The fourth"
+            text run at (0,16) width 40: "set should"
+            text run at (0,32) width 36: "turn down"
+            text run at (0,48) width 24: "at the"
+            text run at (0,64) width 36: "left edge"
+            text run at (0,80) width 28: "to form"
+            text run at (0,96) width 32: "the left"
+            text run at (0,112) width 16: "set."
+        RenderListItem {LI} at (40,768) size 40x144
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 40x96
+            text run at (0,0) width 40: "The bottom"
+            text run at (0,16) width 24: "stripe"
+            text run at (0,32) width 36: "should be"
+            text run at (0,48) width 32: "straight"
+            text run at (0,64) width 28: "and cut"
+            text run at (0,80) width 24: "across"
+          RenderInline {EM} at (0,0) size 28x16
+            RenderText {#text} at (0,96) size 28x16
+              text run at (0,96) width 28: "over"
+          RenderText {#text} at (0,112) size 32x32
+            text run at (0,112) width 32: "the side"
+            text run at (0,128) width 20: "sets."
+      RenderBlock {P} at (0,1403) size 80x48
+        RenderText {#text} at (0,0) size 72x48
+          text run at (0,0) width 64: "In table cell A,"
+          text run at (0,16) width 72: "(first cell in the"
+          text run at (0,32) width 44: "first row):"
+      RenderBlock {UL} at (0,1465) size 80x528
+        RenderListItem {LI} at (40,0) size 40x208
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 40x208
+            text run at (0,0) width 40: "Three sets"
+            text run at (0,16) width 8: "of"
+            text run at (0,32) width 40: "horizontal"
+            text run at (0,48) width 20: "aqua-"
+            text run at (0,64) width 24: "backed"
+            text run at (0,80) width 24: "double"
+            text run at (0,96) width 24: "violet"
+            text run at (0,112) width 28: "stripes"
+            text run at (0,128) width 40: "should run"
+            text run at (0,144) width 16: "just"
+            text run at (0,160) width 40: "inside the"
+            text run at (0,176) width 40: "top border"
+            text run at (0,192) width 20: "edge."
+        RenderListItem {LI} at (40,208) size 40x64
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 40x64
+            text run at (0,0) width 36: "The first"
+            text run at (0,16) width 40: "set should"
+            text run at (0,32) width 12: "run"
+            text run at (0,48) width 28: "across."
+        RenderListItem {LI} at (40,272) size 40x256
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 40x256
+            text run at (0,0) width 40: "The second"
+            text run at (0,16) width 40: "set should"
+            text run at (0,32) width 36: "turn down"
+            text run at (0,48) width 24: "at the"
+            text run at (0,64) width 40: "left edge,"
+            text run at (0,80) width 40: "going over"
+            text run at (0,96) width 36: "the third"
+            text run at (0,112) width 24: "set to"
+            text run at (0,128) width 16: "form"
+            text run at (0,144) width 28: "another"
+            text run at (0,160) width 32: "set that"
+            text run at (0,176) width 36: "runs just"
+            text run at (0,192) width 40: "inside the"
+            text run at (0,208) width 16: "left"
+            text run at (0,224) width 24: "border"
+            text run at (0,240) width 20: "edge."
+      RenderBlock {P} at (0,2007) size 80x48
+        RenderText {#text} at (0,0) size 68x48
+          text run at (0,0) width 64: "In table cell D,"
+          text run at (0,16) width 68: "(last cell in the"
+          text run at (0,32) width 44: "first row):"
+      RenderBlock {UL} at (0,2069) size 80x480
+        RenderListItem {LI} at (40,0) size 40x208
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 40x208
+            text run at (0,0) width 32: "Two sets"
+            text run at (0,16) width 8: "of"
+            text run at (0,32) width 40: "horizontal"
+            text run at (0,48) width 20: "aqua-"
+            text run at (0,64) width 24: "backed"
+            text run at (0,80) width 24: "double"
+            text run at (0,96) width 24: "violet"
+            text run at (0,112) width 24: "strips"
+            text run at (0,128) width 40: "should run"
+            text run at (0,144) width 16: "just"
+            text run at (0,160) width 40: "inside the"
+            text run at (0,176) width 40: "top border"
+            text run at (0,192) width 20: "edge."
+        RenderListItem {LI} at (40,208) size 40x272
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 40x272
+            text run at (0,0) width 36: "The first"
+            text run at (0,16) width 40: "set should"
+            text run at (0,32) width 36: "turn down"
+            text run at (0,48) width 24: "at the"
+            text run at (0,64) width 20: "right"
+            text run at (0,80) width 20: "edge,"
+            text run at (0,96) width 20: "going"
+            text run at (0,112) width 36: "under the"
+            text run at (0,128) width 24: "second"
+            text run at (0,144) width 40: "horizontal"
+            text run at (0,160) width 40: "set to run"
+            text run at (0,176) width 40: "vertically"
+            text run at (0,192) width 16: "just"
+            text run at (0,208) width 40: "inside the"
+            text run at (0,224) width 20: "right"
+            text run at (0,240) width 24: "border"
+            text run at (0,256) width 20: "edge."
+      RenderBlock {P} at (0,2563) size 80x48
+        RenderText {#text} at (0,0) size 72x48
+          text run at (0,0) width 64: "In table cell G,"
+          text run at (0,16) width 72: "(third cell in the"
+          text run at (0,32) width 48: "second row):"
+      RenderBlock {UL} at (0,2625) size 80x640
+        RenderListItem {LI} at (40,0) size 40x208
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 40x208
+            text run at (0,0) width 32: "Two sets"
+            text run at (0,16) width 8: "of"
+            text run at (0,32) width 40: "horizontal"
+            text run at (0,48) width 20: "aqua-"
+            text run at (0,64) width 24: "backed"
+            text run at (0,80) width 24: "double"
+            text run at (0,96) width 24: "violet"
+            text run at (0,112) width 28: "stripes"
+            text run at (0,128) width 40: "should run"
+            text run at (0,144) width 16: "just"
+            text run at (0,160) width 40: "inside the"
+            text run at (0,176) width 40: "top border"
+            text run at (0,192) width 20: "edge."
+        RenderListItem {LI} at (40,208) size 40x208
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 40x208
+            text run at (0,0) width 32: "A set of"
+            text run at (0,16) width 32: "vertical"
+            text run at (0,32) width 28: "stripes"
+            text run at (0,48) width 40: "should run"
+            text run at (0,64) width 36: "down just"
+            text run at (0,80) width 40: "inside the"
+            text run at (0,96) width 16: "left"
+            text run at (0,112) width 24: "border"
+            text run at (0,128) width 20: "edge,"
+            text run at (0,144) width 20: "going"
+            text run at (0,160) width 40: "under both"
+            text run at (0,176) width 40: "horizontal"
+            text run at (0,192) width 32: "stripes."
+        RenderListItem {LI} at (40,416) size 40x224
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 40x224
+            text run at (0,0) width 28: "Another"
+            text run at (0,16) width 24: "set of"
+            text run at (0,32) width 32: "vertical"
+            text run at (0,48) width 28: "stripes"
+            text run at (0,64) width 40: "should run"
+            text run at (0,80) width 36: "down just"
+            text run at (0,96) width 40: "inside the"
+            text run at (0,112) width 20: "right"
+            text run at (0,128) width 24: "border"
+            text run at (0,144) width 40: "edge, also"
+            text run at (0,160) width 20: "going"
+            text run at (0,176) width 40: "under both"
+            text run at (0,192) width 40: "horizontal"
+            text run at (0,208) width 32: "stripes."
+      RenderBlock {DL} at (0,3279) size 80x240
+        RenderBlock {DT} at (0,0) size 80x16
+          RenderText {#text} at (0,0) size 16x16
+            text run at (0,0) width 16: "next"
+        RenderBlock {DD} at (40,16) size 40x80
+          RenderInline {A} at (0,0) size 40x80 [color=#FFFF00]
+            RenderText {#text} at (0,0) size 40x80
+              text run at (0,0) width 40: "Background"
+              text run at (0,16) width 28: "Layers:"
+              text run at (0,32) width 24: "empty-"
+              text run at (0,48) width 24: "cells:"
+              text run at (0,64) width 16: "show"
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DT} at (0,96) size 80x16
+          RenderText {#text} at (0,0) size 32x16
+            text run at (0,0) width 32: "previous"
+        RenderBlock {DD} at (40,112) size 40x80
+          RenderInline {A} at (0,0) size 40x80 [color=#FFFF00]
+            RenderText {#text} at (0,0) size 40x80
+              text run at (0,0) width 40: "Background"
+              text run at (0,16) width 36: "Position:"
+              text run at (0,32) width 40: "Background"
+              text run at (0,48) width 40: "on 'table-"
+              text run at (0,64) width 20: "cell'"
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DT} at (0,192) size 80x16
+          RenderText {#text} at (0,0) size 32x16
+            text run at (0,0) width 32: "contents"
+        RenderBlock {DD} at (40,208) size 40x32
+          RenderInline {A} at (0,0) size 32x32 [color=#FFFF00]
+            RenderText {#text} at (0,0) size 32x32
+              text run at (0,0) width 32: "Table of"
+              text run at (0,16) width 32: "Contents"
+          RenderText {#text} at (0,0) size 0x0
+      RenderTable {TABLE} at (0,3533) size 189x498 [color=#FFFFFF] [bgcolor=#0000FF] [border: (1px dotted #FFFFFF)]
+        RenderBlock {CAPTION} at (0,0) size 187x40
+          RenderText {#text} at (8,0) size 171x39
+            text run at (8,0) width 171: "With 'border-collapse:"
+            text run at (57,20) width 73: "separate'"
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {THEAD} at (1,41) size 187x114
+          RenderTableRow {TR} at (0,7) size 187x100
+            RenderTableCell {TH} at (7,45) size 50x24 [border: (1px dotted #FFFFFF)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (5,2) size 39x19
+                text run at (5,2) width 39: "TH A"
+            RenderTableCell {TH} at (64,23) size 50x68 [border: (13px dotted #FFFFFF)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (14,14) size 22x39
+                text run at (14,14) width 22: "TH"
+                text run at (19,34) width 11: "B"
+            RenderTableCell {TH} at (121,55) size 26x4 [border: (1px dotted #FFFFFF)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TH} at (154,35) size 26x44 [border: (1px dotted #FFFFFF)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x39
+                text run at (2,2) width 22: "TH"
+                text run at (7,22) width 12: "D"
+        RenderTableSection {TFOOT} at (1,368) size 187x129
+          RenderTableRow {TR} at (0,7) size 187x115
+            RenderTableCell {TD} at (7,52) size 107x24 [border: (1px dotted #FFFFFF)] [r=0 c=0 rs=1 cs=2]
+              RenderText {#text} at (2,2) size 40x19
+                text run at (2,2) width 40: "TD M"
+            RenderTableCell {TD} at (121,42) size 26x44 [border: (1px dotted #FFFFFF)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x39
+                text run at (2,2) width 22: "TD"
+                text run at (2,22) width 13: "O"
+            RenderTableCell {TD} at (154,42) size 26x44 [border: (1px dotted #FFFFFF)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x39
+                text run at (2,2) width 22: "TD"
+                text run at (2,22) width 11: "P"
+        RenderTableSection {TBODY} at (1,155) size 187x213
+          RenderTableRow {TR} at (0,7) size 187x108
+            RenderTableCell {TD} at (7,72) size 50x68 [border: (13px dotted #FFFFFF)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (14,14) size 22x39
+                text run at (14,14) width 22: "TD"
+                text run at (14,34) width 10: "E"
+            RenderTableCell {TD} at (64,49) size 50x24 [border: (1px dotted #FFFFFF)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 37x19
+                text run at (2,2) width 37: "TD F"
+            RenderTableCell {TD} at (121,39) size 26x44 [border: (1px dotted #FFFFFF)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x39
+                text run at (2,2) width 22: "TD"
+                text run at (2,22) width 12: "G"
+            RenderTableCell {TD} at (154,39) size 26x44 [border: (1px dotted #FFFFFF)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x39
+                text run at (2,2) width 22: "TD"
+                text run at (2,22) width 12: "H"
+          RenderTableRow {TR} at (0,122) size 187x84
+            RenderTableCell {TD} at (64,152) size 50x24 [border: (1px dotted #FFFFFF)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 36x19
+                text run at (2,2) width 36: "TD J"
+            RenderTableCell {TD} at (121,142) size 26x44 [border: (1px dotted #FFFFFF)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x39
+                text run at (2,2) width 22: "TD"
+                text run at (2,22) width 12: "K"
+            RenderTableCell {TD} at (154,142) size 26x44 [border: (1px dotted #FFFFFF)] [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x39
+                text run at (2,2) width 22: "TD"
+                text run at (2,22) width 10: "L"
+      RenderTable {TABLE} at (0,4031) size 125x470 [color=#FFFFFF] [bgcolor=#0000FF] [border: (6px dotted #FFFFFF)]
+        RenderBlock {CAPTION} at (0,0) size 124x60
+          RenderText {#text} at (11,0) size 101x59
+            text run at (11,0) width 101: "With 'border-"
+            text run at (27,20) width 70: "collapse:"
+            text run at (27,40) width 69: "collapse'"
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {THEAD} at (0,66) size 124x99
+          RenderTableRow {TR} at (0,0) size 124x99
+            RenderTableCell {TH} at (0,25) size 37x49 [border: (1px dotted #FFFFFF)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (5,2) size 22x39
+                text run at (5,2) width 22: "TH"
+                text run at (10,22) width 12: "A"
+            RenderTableCell {TH} at (37,22) size 37x55 [border: (7px dotted #FFFFFF)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (8,8) size 22x39
+                text run at (8,8) width 22: "TH"
+                text run at (13,28) width 11: "B"
+            RenderTableCell {TH} at (74,48) size 25x3 [border: (1px dotted #FFFFFF)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TH} at (99,28) size 25x43 [border: (1px dotted #FFFFFF)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x39
+                text run at (2,2) width 22: "TH"
+                text run at (7,22) width 12: "D"
+        RenderTableSection {TFOOT} at (0,355) size 124x114
+          RenderTableRow {TR} at (0,0) size 124x114
+            RenderTableCell {TD} at (0,42) size 74x29 [border: (7px dotted #FFFFFF)] [r=0 c=0 rs=1 cs=2]
+              RenderText {#text} at (2,8) size 40x19
+                text run at (2,8) width 40: "TD M"
+            RenderTableCell {TD} at (74,35) size 25x43 [border: (1px dotted #FFFFFF)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x39
+                text run at (2,2) width 22: "TD"
+                text run at (2,22) width 13: "O"
+            RenderTableCell {TD} at (99,35) size 25x43 [border: (1px dotted #FFFFFF)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x39
+                text run at (2,2) width 22: "TD"
+                text run at (2,22) width 11: "P"
+        RenderTableSection {TBODY} at (0,165) size 124x190
+          RenderTableRow {TR} at (0,0) size 124x107
+            RenderTableCell {TD} at (0,67) size 37x55 [border: (7px dotted #FFFFFF)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (8,8) size 22x39
+                text run at (8,8) width 22: "TD"
+                text run at (8,28) width 10: "E"
+            RenderTableCell {TD} at (37,29) size 37x49 [border: (7px dotted #FFFFFF)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (8,8) size 22x39
+                text run at (8,8) width 22: "TD"
+                text run at (8,28) width 10: "F"
+            RenderTableCell {TD} at (74,32) size 25x43 [border: (1px dotted #FFFFFF)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x39
+                text run at (2,2) width 22: "TD"
+                text run at (2,22) width 12: "G"
+            RenderTableCell {TD} at (99,32) size 25x43 [border: (1px dotted #FFFFFF)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x39
+                text run at (2,2) width 22: "TD"
+                text run at (2,22) width 12: "H"
+          RenderTableRow {TR} at (0,107) size 124x83
+            RenderTableCell {TD} at (37,127) size 37x43 [border: (1px dotted #FFFFFF)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (8,2) size 22x39
+                text run at (8,2) width 22: "TD"
+                text run at (8,22) width 9: "J"
+            RenderTableCell {TD} at (74,127) size 25x43 [border: (1px dotted #FFFFFF)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x39
+                text run at (2,2) width 22: "TD"
+                text run at (2,22) width 12: "K"
+            RenderTableCell {TD} at (99,127) size 25x43 [border: (1px dotted #FFFFFF)] [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x39
+                text run at (2,2) width 22: "TD"
+                text run at (2,22) width 10: "L"
+      RenderBlock {DIV} at (0,4501) size 80x34
+        RenderInline {A} at (0,0) size 88x16 [color=#FFFF00]
+          RenderImage {IMG} at (0,0) size 88x31
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {ADDRESS} at (0,4535) size 80x112
+        RenderText {#text} at (0,0) size 154x112
+          text run at (0,0) width 75: "CSS2 Table"
+          text run at (0,16) width 82: "Backgrounds"
+          text run at (0,32) width 63: "Test Suite"
+          text run at (0,48) width 58: "designed"
+          text run at (0,64) width 70: "and written"
+          text run at (0,80) width 68: "by fantasai"
+          text run at (0,96) width 154: "<fantasai@escape.com>"

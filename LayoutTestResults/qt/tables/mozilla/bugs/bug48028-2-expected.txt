@@ -1,0 +1,33 @@
+layer at (0,0) size 170x90
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 170x90
+  RenderBlock {HTML} at (0,0) size 96x90
+    RenderBody {BODY} at (8,8) size 80x74
+      RenderBlock (anonymous) at (0,0) size 80x0
+        RenderInline {FONT} at (0,0) size 0x0
+      RenderTable {TABLE} at (0,0) size 162x74 [bgcolor=#FFFFFF] [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 160x16
+          RenderText {#text} at (19,0) size 122x16
+            text run at (19,0) width 122: "Complete Price List"
+        RenderTableSection {TBODY} at (1,17) size 160x56
+          RenderTableRow {TR} at (0,0) size 160x56
+            RenderTableCell {TD} at (0,0) size 30x30 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 26x25
+                RenderText {#text} at (2,2) size 26x25
+                  text run at (2,2) width 26: "Apple"
+                  text run at (2,15) width 26: "Store"
+            RenderTableCell {TD} at (30,0) size 34x17 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 30x12
+                RenderText {#text} at (2,2) size 30x12
+                  text run at (2,2) width 30: "14415"
+            RenderTableCell {TD} at (64,0) size 53x56 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 49x51
+                RenderText {#text} at (2,2) size 49x51
+                  text run at (2,2) width 31: "PB G3"
+                  text run at (2,15) width 49: "\"FireWire\"-"
+                  text run at (2,28) width 40: "[256MB]"
+                  text run at (2,41) width 18: "222"
+            RenderTableCell {TD} at (117,0) size 43x17 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 39x12
+                RenderText {#text} at (2,2) size 39x12
+                  text run at (2,2) width 39: "$264.00"

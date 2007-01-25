@@ -1,0 +1,85 @@
+layer at (0,0) size 867x1002
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 867x1002
+  RenderBlock {HTML} at (0,0) size 96x1002
+    RenderBody {BODY} at (8,8) size 80x986
+      RenderTable {TABLE} at (0,0) size 80x26 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 78x24
+          RenderTableRow {TR} at (0,2) size 78x20
+            RenderTableCell {TD} at (2,2) size 27x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 7x16
+                text run at (2,2) width 7: "x"
+            RenderTableCell {TD} at (31,2) size 45x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 7x16
+                text run at (2,2) width 7: "y"
+      RenderBlock (anonymous) at (0,26) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderTable {TABLE} at (0,42) size 80x26 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 78x24
+          RenderTableRow {TR} at (0,2) size 78x20
+            RenderTableCell {TD} at (2,2) size 36x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 7x16
+                text run at (2,2) width 7: "x"
+            RenderTableCell {TD} at (40,2) size 36x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 7x16
+                text run at (2,2) width 7: "y"
+      RenderBlock (anonymous) at (0,68) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderTable {TABLE} at (0,84) size 859x610 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 857x608
+          RenderTableRow {TR} at (0,2) size 857x604
+            RenderTableCell {TD} at (2,2) size 804x604 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (2,2) size 800x600
+            RenderTableCell {TD} at (808,262) size 47x84 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 43x80
+                text run at (2,2) width 30: "can't"
+                text run at (2,18) width 36: "we all"
+                text run at (2,34) width 21: "just"
+                text run at (2,50) width 20: "get"
+                text run at (2,66) width 43: "along?"
+      RenderBlock (anonymous) at (0,694) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderTable {TABLE} at (0,710) size 120x74 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 118x72
+          RenderTableRow {TR} at (0,2) size 118x68
+            RenderTableCell {TD} at (2,2) size 36x68 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 32x64
+                text run at (2,2) width 32: "Hello"
+                text run at (2,18) width 26: "how"
+                text run at (2,34) width 21: "are"
+                text run at (2,50) width 22: "you"
+            RenderTableCell {TD} at (40,2) size 34x68 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 30x64
+                text run at (2,2) width 26: "I'am"
+                text run at (2,18) width 26: "fine,"
+                text run at (2,34) width 24: "and"
+                text run at (2,50) width 30: "you?"
+            RenderTableCell {TD} at (76,2) size 40x68 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 36x64
+                text run at (2,2) width 4: "I"
+                text run at (2,18) width 36: "great,"
+                text run at (2,34) width 35: "thank"
+                text run at (2,50) width 22: "you"
+      RenderBlock (anonymous) at (0,784) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderTable {TABLE} at (0,800) size 352x186 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 350x184
+          RenderTableRow {TR} at (0,2) size 350x180
+            RenderTableCell {TD} at (2,82) size 162x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 158x16
+                text run at (2,2) width 158: "<../images/pikajumpr.gif\">"
+            RenderTableCell {TD} at (166,19) size 146x146 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (2,2) size 142x142
+            RenderTableCell {TD} at (314,2) size 34x180 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 30x176
+                text run at (2,2) width 27: "This"
+                text run at (2,18) width 22: "is a"
+                text run at (2,34) width 23: "test"
+                text run at (2,50) width 12: "to"
+                text run at (2,66) width 23: "see"
+                text run at (2,82) width 7: "if"
+                text run at (2,98) width 22: "this"
+                text run at (2,114) width 19: "will"
+                text run at (2,130) width 30: "work"
+                text run at (2,146) width 16: "on"
+                text run at (2,162) width 19: "5.0"

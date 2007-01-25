@@ -1,0 +1,83 @@
+layer at (0,0) size 476x96
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 476x96
+  RenderBlock {HTML} at (0,0) size 96x96
+    RenderBody {BODY} at (8,8) size 80x80 [bgcolor=#FFFFFF]
+      RenderTable {TABLE} at (0,0) size 468x80
+        RenderTableSection {TBODY} at (0,0) size 468x80
+          RenderTableRow {TR} at (0,0) size 468x1
+            RenderTableCell {TD} at (0,0) size 18x0 [r=0 c=0 rs=1 cs=3]
+            RenderTableCell {TD} at (18,0) size 187x1 [r=0 c=3 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 187x1
+            RenderTableCell {TD} at (205,0) size 20x1 [r=0 c=4 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 20x1
+            RenderTableCell {TD} at (225,0) size 18x1 [r=0 c=5 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 18x1
+            RenderTableCell {TD} at (243,0) size 18x0 [r=0 c=6 rs=1 cs=3]
+            RenderTableCell {TD} at (261,0) size 187x1 [r=0 c=9 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 187x1
+            RenderTableCell {TD} at (448,0) size 20x1 [r=0 c=10 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 20x1
+          RenderTableRow {TR} at (0,1) size 468x22
+            RenderTableCell {TD} at (0,1) size 18x22 [r=1 c=0 rs=1 cs=3]
+              RenderImage {IMG} at (0,0) size 18x22
+            RenderTableCell {TD} at (18,4) size 187x16 [bgcolor=#FFCC00] [r=1 c=3 rs=1 cs=1]
+              RenderInline {A} at (0,0) size 110x16 [color=#0000EE]
+                RenderInline {B} at (0,0) size 110x16
+                  RenderInline {FONT} at (0,0) size 110x16
+                    RenderText {#text} at (38,0) size 110x16
+                      text run at (38,0) width 110: "Detailed Search"
+              RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (205,1) size 20x22 [r=1 c=4 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 20x22
+            RenderTableCell {TD} at (225,4) size 18x16 [r=1 c=5 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 4x16
+                text run at (0,0) width 4: " "
+            RenderTableCell {TD} at (243,1) size 18x22 [r=1 c=6 rs=1 cs=3]
+              RenderImage {IMG} at (0,0) size 18x22
+            RenderTableCell {TD} at (261,4) size 187x16 [bgcolor=#FFCC00] [r=1 c=9 rs=1 cs=1]
+              RenderInline {A} at (0,0) size 136x16 [color=#0000EE]
+                RenderInline {B} at (0,0) size 136x16
+                  RenderInline {FONT} at (0,0) size 136x16
+                    RenderText {#text} at (25,0) size 136x16
+                      text run at (25,0) width 136: "Search By Distance"
+              RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (448,1) size 20x22 [r=1 c=10 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 20x22
+          RenderTableRow {TR} at (0,23) size 468x57
+            RenderTableCell {TD} at (0,43) size 7x16 [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 4x16
+                text run at (0,0) width 4: " "
+            RenderTableCell {TD} at (7,43) size 7x16 [bgcolor=#EBEBE4] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 4x16
+                text run at (0,0) width 4: " "
+            RenderTableCell {TD} at (14,23) size 211x57 [bgcolor=#EBEBE4] [r=2 c=2 rs=1 cs=3]
+              RenderBlock {P} at (0,0) size 211x57
+                RenderImage {IMG} at (0,0) size 1x5
+                RenderBR {BR} at (1,5) size 0x0
+                RenderInline {FONT} at (0,0) size 209x38
+                  RenderText {#text} at (0,5) size 209x38
+                    text run at (0,5) width 95: "Search using almost "
+                    text run at (95,5) width 88: "any combination of"
+                    text run at (0,18) width 209: "business name, category, street address, city,"
+                    text run at (0,31) width 134: "state, ZIP, or phone number."
+                RenderInline {FONT} at (0,0) size 134x25
+                  RenderBR {BR} at (134,41) size 0x0
+                  RenderText {#text} at (0,44) size 3x12
+                    text run at (0,44) width 3: " "
+            RenderTableCell {TD} at (225,43) size 18x16 [r=2 c=5 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 4x16
+                text run at (0,0) width 4: " "
+            RenderTableCell {TD} at (243,43) size 8x16 [r=2 c=6 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 4x16
+                text run at (0,0) width 4: " "
+            RenderTableCell {TD} at (251,43) size 8x16 [bgcolor=#EBEBE4] [r=2 c=7 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 4x16
+                text run at (0,0) width 4: " "
+            RenderTableCell {TD} at (259,23) size 209x31 [bgcolor=#EBEBE4] [r=2 c=8 rs=1 cs=3]
+              RenderInline {FONT} at (0,0) size 174x30
+                RenderImage {IMG} at (0,0) size 1x5
+                RenderBR {BR} at (1,5) size 0x0
+                RenderText {#text} at (0,5) size 174x25
+                  text run at (0,5) width 174: "Search for businesses within a certain"
+                  text run at (0,18) width 167: "distance from a location you specify."

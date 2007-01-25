@@ -1,0 +1,48 @@
+layer at (0,0) size 208x510
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 208x510
+  RenderBlock {HTML} at (0,0) size 96x510
+    RenderBody {BODY} at (8,8) size 80x494
+      RenderBlock {P} at (0,0) size 80x256
+        RenderText {#text} at (0,0) size 77x176
+          text run at (0,0) width 71: "The INPUT"
+          text run at (0,16) width 50: "element"
+          text run at (0,32) width 57: "using the"
+          text run at (0,48) width 45: "IMAGE"
+          text run at (0,64) width 64: "attribute is"
+          text run at (0,80) width 77: "used to load"
+          text run at (0,96) width 77: "the image in"
+          text run at (0,112) width 57: "the table."
+          text run at (0,128) width 69: "This image"
+          text run at (0,144) width 32: "flows"
+          text run at (0,160) width 73: "outside the "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (0,176) size 74x80
+          text run at (0,176) width 54: "the table"
+          text run at (0,192) width 53: "after the"
+          text run at (0,208) width 74: "window has"
+          text run at (0,224) width 31: "been"
+          text run at (0,240) width 49: "resized."
+      RenderTable {TABLE} at (0,270) size 200x23 [bgcolor=#FF0000]
+        RenderTableSection {TBODY} at (0,0) size 200x23
+          RenderTableRow {TR} at (0,2) size 200x19
+            RenderTableCell {TD} at (2,2) size 196x19 [r=0 c=0 rs=1 cs=1]
+              RenderImage {INPUT} at (3,3) size 13x13 [bgcolor=#C0C0C0]
+              RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,307) size 80x144
+        RenderText {#text} at (0,0) size 77x144
+          text run at (0,0) width 54: "This test"
+          text run at (0,16) width 44: "case is"
+          text run at (0,32) width 77: "identicate to"
+          text run at (0,48) width 66: "one above"
+          text run at (0,64) width 66: "except the"
+          text run at (0,80) width 44: "table is"
+          text run at (0,96) width 69: "assigned a"
+          text run at (0,112) width 69: "border of 2"
+          text run at (0,128) width 36: "pixels"
+      RenderTable {TABLE} at (0,465) size 200x29 [bgcolor=#FF0000] [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 196x25
+          RenderTableRow {TR} at (0,2) size 196x21
+            RenderTableCell {TD} at (2,2) size 192x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderImage {INPUT} at (4,4) size 13x13 [bgcolor=#C0C0C0]
+              RenderText {#text} at (0,0) size 0x0

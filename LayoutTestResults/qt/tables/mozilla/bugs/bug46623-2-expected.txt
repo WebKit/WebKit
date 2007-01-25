@@ -1,0 +1,24 @@
+layer at (0,0) size 648x116
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 648x116
+  RenderBlock {HTML} at (0,0) size 96x116
+    RenderBody {BODY} at (8,8) size 80x100
+      RenderTable {TABLE} at (0,0) size 640x100 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 638x98
+          RenderTableRow {TR} at (0,2) size 638x94
+            RenderTableCell {TD} at (2,2) size 322x94 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 300x90 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 298x88
+                  RenderTableRow {TR} at (0,2) size 298x84
+                    RenderTableCell {TD} at (2,2) size 294x84 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+                      RenderText {#text} at (2,2) size 281x80
+                        text run at (2,2) width 246: "Welcome to PlanDepot.com, the fastest"
+                        text run at (2,18) width 134: "growing resource for "
+                        text run at (136,18) width 133: "Construction Data on"
+                        text run at (2,34) width 281: "the Internet! We offer an extensive database"
+                        text run at (2,50) width 260: "of construction bid opportunities, currently"
+                        text run at (2,66) width 58: "covering "
+                        text run at (60,66) width 62: "13 states!"
+            RenderTableCell {TD} at (326,2) size 310x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 208x16
+                text run at (2,2) width 208: "Expanded Geographic Coverage"

@@ -1,0 +1,24 @@
+layer at (0,0) size 226x204
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x80
+  RenderBlock {HTML} at (0,0) size 96x80
+    RenderBody {BODY} at (8,8) size 80x64
+      RenderText {#text} at (0,0) size 65x64
+        text run at (0,0) width 50: "The cell"
+        text run at (0,16) width 51: "padding"
+        text run at (0,32) width 65: "should not"
+        text run at (0,48) width 63: "disappear"
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (120,120) size 106x84
+  RenderTable {TABLE} at (120,120) size 106x84 [border: (1px outset #808080)]
+    RenderTableSection {TBODY} at (1,1) size 104x82
+      RenderTableRow {TR} at (0,2) size 104x38
+        RenderTableCell {TD} at (2,2) size 100x38 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+          RenderText {#text} at (11,11) size 58x16
+            text run at (11,11) width 58: "S\x{E9}lection"
+      RenderTableRow {TR} at (0,42) size 104x38
+        RenderTableCell {TD} at (2,42) size 100x38 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderText {#text} at (11,11) size 78x16
+            text run at (11,11) width 78: "Suppression"

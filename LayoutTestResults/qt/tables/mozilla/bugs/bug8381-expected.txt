@@ -1,0 +1,87 @@
+layer at (0,0) size 280x158
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 280x158
+  RenderBlock {HTML} at (0,0) size 96x158
+    RenderBody {BODY} at (8,8) size 80x142 [bgcolor=#3333FF]
+      RenderBlock {CENTER} at (0,0) size 80x142
+        RenderTable {TABLE} at (0,0) size 272x142 [bgcolor=#FFFFFF] [border: (2px outset #808080)]
+          RenderBlock {CAPTION} at (0,0) size 268x20
+            RenderInline {B} at (0,0) size 117x16
+              RenderInline {FONT} at (0,0) size 117x19 [color=#C0C0C0]
+                RenderText {#text} at (75,0) size 117x19
+                  text run at (75,0) width 117: "Future Bugzilla"
+            RenderText {#text} at (0,0) size 0x0
+          RenderTableSection {TBODY} at (2,22) size 268x118
+            RenderTableRow {TR} at (0,2) size 268x56
+              RenderTableCell {TD} at (2,21) size 35x17 [bgcolor=#009900] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderBlock {DIV} at (2,2) size 31x13
+                  RenderInline {B} at (0,0) size 31x12
+                    RenderInline {FONT} at (0,0) size 31x12
+                      RenderText {#text} at (0,0) size 31x12
+                        text run at (0,0) width 31: "Credit"
+              RenderTableCell {TD} at (39,21) size 34x17 [bgcolor=#009900] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderInline {B} at (0,0) size 19x12
+                  RenderInline {FONT} at (0,0) size 19x12
+                    RenderText {#text} at (2,2) size 19x12
+                      text run at (2,2) width 19: "Bug"
+              RenderTableCell {TD} at (75,21) size 51x17 [bgcolor=#009900] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                RenderInline {B} at (0,0) size 47x12
+                  RenderInline {FONT} at (0,0) size 47x12
+                    RenderText {#text} at (2,2) size 47x12
+                      text run at (2,2) width 47: "Summary"
+              RenderTableCell {TD} at (128,21) size 50x17 [bgcolor=#009900] [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+                RenderInline {B} at (0,0) size 33x12
+                  RenderInline {FONT} at (0,0) size 33x12
+                    RenderText {#text} at (2,2) size 33x12
+                      text run at (2,2) width 33: "Status"
+              RenderTableCell {TD} at (180,21) size 57x17 [bgcolor=#009900] [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
+                RenderInline {B} at (0,0) size 53x12
+                  RenderInline {FONT} at (0,0) size 53x12
+                    RenderText {#text} at (2,2) size 53x12
+                      text run at (2,2) width 53: "Resolution"
+              RenderTableCell {TD} at (239,2) size 27x56 [bgcolor=#009900] [border: (1px inset #808080)] [r=0 c=5 rs=1 cs=1]
+                RenderInline {B} at (0,0) size 23x51
+                  RenderInline {FONT} at (0,0) size 23x51
+                    RenderText {#text} at (2,2) size 23x51
+                      text run at (2,2) width 23: "Date"
+                      text run at (2,15) width 9: "(-"
+                      text run at (2,28) width 15: "8/-"
+                      text run at (2,41) width 10: "7)"
+            RenderTableRow {TR} at (0,60) size 268x56
+              RenderTableCell {TD} at (2,79) size 35x17 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                RenderInline {B} at (0,0) size 6x12
+                  RenderInline {FONT} at (0,0) size 6x12
+                    RenderText {#text} at (2,2) size 6x12
+                      text run at (2,2) width 6: "1"
+              RenderTableCell {TD} at (39,79) size 34x17 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                RenderInline {B} at (0,0) size 30x12
+                  RenderInline {FONT} at (0,0) size 30x12
+                    RenderText {#text} at (0,0) size 0x0
+                    RenderInline {A} at (0,0) size 30x12
+                      RenderText {#text} at (2,2) size 30x12
+                        text run at (2,2) width 30: "10000"
+                    RenderText {#text} at (0,0) size 0x0
+              RenderTableCell {TD} at (75,60) size 51x56 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+                RenderInline {B} at (0,0) size 37x51
+                  RenderInline {FONT} at (0,0) size 37x51
+                    RenderText {#text} at (2,2) size 37x51
+                      text run at (2,2) width 24: "JWZ"
+                      text run at (2,15) width 36: "returns"
+                      text run at (2,28) width 10: "to"
+                      text run at (2,41) width 37: "Mozilla"
+              RenderTableCell {TD} at (128,79) size 50x17 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+                RenderInline {B} at (0,0) size 46x12
+                  RenderInline {FONT} at (0,0) size 46x12
+                    RenderText {#text} at (2,2) size 46x12
+                      text run at (2,2) width 46: "Resolved"
+              RenderTableCell {TD} at (180,79) size 57x17 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
+                RenderInline {B} at (0,0) size 46x12
+                  RenderInline {FONT} at (0,0) size 46x12
+                    RenderText {#text} at (2,2) size 46x12
+                      text run at (2,2) width 46: "Duplicate"
+              RenderTableCell {TD} at (239,73) size 27x30 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=1 c=5 rs=1 cs=1]
+                RenderInline {B} at (0,0) size 21x25
+                  RenderInline {FONT} at (0,0) size 21x25
+                    RenderText {#text} at (2,2) size 21x25
+                      text run at (2,2) width 21: "July"
+                      text run at (2,15) width 6: "1"

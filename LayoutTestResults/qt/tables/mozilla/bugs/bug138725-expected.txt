@@ -1,0 +1,37 @@
+layer at (0,0) size 179x77
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 179x77
+  RenderBlock {HTML} at (0,0) size 96x77
+    RenderBody {BODY} at (8,8) size 80x61
+      RenderTable {TABLE} at (0,0) size 171x61
+        RenderTableSection {TBODY} at (0,0) size 171x61
+          RenderTableRow {TR} at (0,2) size 171x57
+            RenderTableCell {TD} at (2,2) size 167x57 [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (1,1) size 165x0
+                RenderInline {SPAN} at (0,0) size 0x0
+                  RenderText {#text} at (0,0) size 0x0
+                  RenderInline {SPAN} at (0,0) size 0x0
+                    RenderText {#text} at (0,0) size 0x0
+                    RenderText {#text} at (0,0) size 0x0
+                    RenderText {#text} at (0,0) size 0x0
+                    RenderText {#text} at (0,0) size 0x0
+              RenderBlock (anonymous) at (1,1) size 165x55
+                RenderTable {TABLE} at (0,0) size 165x55
+                  RenderTableSection {TBODY} at (0,0) size 165x55
+                    RenderTableRow {TR} at (0,2) size 165x51
+                      RenderTableCell {TD} at (2,2) size 161x51 [r=0 c=0 rs=1 cs=1]
+                        RenderTable {TABLE} at (1,1) size 159x49
+                          RenderTableSection {TBODY} at (0,0) size 159x49
+                            RenderTableRow {TR} at (0,2) size 159x45
+                              RenderTableCell {TD} at (2,2) size 155x45 [r=0 c=0 rs=1 cs=1]
+                                RenderBlock {FORM} at (1,1) size 153x29
+                                  RenderButton {INPUT} at (2,2) size 149x25 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+                                    RenderBlock (anonymous) at (8,4) size 133x16
+                                      RenderText at (0,0) size 133x16
+                                        text run at (0,0) width 133: "ApplyForThisPosition"
+                                  RenderText {#text} at (0,0) size 0x0
+              RenderBlock (anonymous) at (1,56) size 165x0
+                RenderInline {SPAN} at (0,0) size 0x0
+                  RenderInline {SPAN} at (0,0) size 0x0
+                  RenderText {#text} at (0,0) size 0x0
+                RenderText {#text} at (0,0) size 0x0

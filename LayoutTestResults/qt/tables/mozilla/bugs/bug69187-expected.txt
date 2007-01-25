@@ -1,0 +1,39 @@
+layer at (0,0) size 140x205
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 140x205
+  RenderBlock {HTML} at (0,0) size 96x205
+    RenderBody {BODY} at (8,8) size 80x189
+      RenderTable {TABLE} at (0,0) size 132x189 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 130x187
+          RenderTableRow {TR} at (0,2) size 130x69
+            RenderTableCell {TD} at (2,2) size 126x69 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderBlock {H2} at (2,2) size 122x48
+                RenderText {#text} at (0,0) size 90x47
+                  text run at (0,0) width 90: "Personal"
+                  text run at (0,24) width 77: "Friends"
+          RenderTableRow {TR} at (0,73) size 130x112
+            RenderTableCell {TD} at (2,73) size 70x112 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (2,2) size 66x0
+                RenderInline {FONT} at (0,0) size 0x0
+                RenderText {#text} at (0,0) size 0x0
+              RenderBlock {P} at (2,2) size 66x48
+                RenderText {#text} at (0,0) size 66x48
+                  text run at (0,0) width 46: "Alisha -"
+                  text run at (0,16) width 66: "Password-"
+                  text run at (0,32) width 61: "Protected"
+              RenderBlock {P} at (2,64) size 66x16
+                RenderText {#text} at (0,0) size 43x16
+                  text run at (0,0) width 43: "Arlesia"
+              RenderBlock {P} at (2,94) size 66x16
+                RenderText {#text} at (0,0) size 35x16
+                  text run at (0,0) width 35: "Asale"
+            RenderTableCell {TD} at (74,89) size 54x80 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (2,2) size 50x16
+                RenderText {#text} at (0,0) size 33x16
+                  text run at (0,0) width 33: "Ernie"
+              RenderBlock {P} at (2,32) size 50x16
+                RenderText {#text} at (0,0) size 50x16
+                  text run at (0,0) width 50: "Melanie"
+              RenderBlock {P} at (2,62) size 50x16
+                RenderText {#text} at (0,0) size 49x16
+                  text run at (0,0) width 49: "Tamara"

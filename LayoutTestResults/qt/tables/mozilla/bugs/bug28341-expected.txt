@@ -1,0 +1,22 @@
+layer at (0,0) size 190x147
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 190x147
+  RenderBlock {HTML} at (0,0) size 96x147
+    RenderBody {BODY} at (8,8) size 80x131
+      RenderBlock (anonymous) at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 73x80
+          text run at (0,0) width 51: "The bug"
+          text run at (0,16) width 56: "causes a"
+          text run at (0,32) width 73: "crash when"
+          text run at (0,48) width 70: "the page is"
+          text run at (0,64) width 67: "destroyed "
+        RenderBR {BR} at (67,77) size 0x0
+      RenderTable {TABLE} at (0,80) size 182x51
+        RenderBlock {CAPTION} at (0,0) size 182x29
+          RenderImage {IMG} at (0,0) size 182x29
+          RenderText {#text} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (0,29) size 182x22
+          RenderTableRow {TR} at (0,2) size 182x18
+            RenderTableCell {TD} at (2,2) size 178x18 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 20x16
+                text run at (1,1) width 20: "foo"

@@ -1,0 +1,140 @@
+layer at (0,0) size 618x1896
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 618x1896
+  RenderBlock {HTML} at (0,0) size 96x1896
+    RenderBody {BODY} at (8,8) size 80x1880
+      RenderBlock {P} at (0,0) size 80x256
+        RenderText {#text} at (0,0) size 76x208
+          text run at (0,0) width 59: "The table"
+          text run at (0,16) width 36: "below"
+          text run at (0,32) width 76: "should have"
+          text run at (0,48) width 58: "the same"
+          text run at (0,64) width 76: "width as the"
+          text run at (0,80) width 48: "red DIV"
+          text run at (0,96) width 62: "below this"
+          text run at (0,112) width 69: "paragraph."
+          text run at (0,128) width 61: "The inner"
+          text run at (0,144) width 38: "image"
+          text run at (0,160) width 66: "should just"
+          text run at (0,176) width 43: "fit. The"
+          text run at (0,192) width 38: "image"
+        RenderInline {EM} at (0,0) size 65x16
+          RenderText {#text} at (0,208) size 65x16
+            text run at (0,208) width 65: "should not"
+        RenderText {#text} at (0,224) size 72x32
+          text run at (0,224) width 72: "overrun the"
+          text run at (0,240) width 51: "borders."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,270) size 610x2 [border: (1px solid #FF0000)]
+      RenderTable {TABLE} at (0,286) size 608x379 [border: (1px dotted #000080)]
+        RenderTableSection {TBODY} at (1,1) size 606x377
+          RenderTableRow {TR} at (0,2) size 606x20
+            RenderTableCell {TD} at (2,2) size 156x20 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 8x16
+                text run at (2,2) width 8: "a"
+            RenderTableCell {TD} at (160,2) size 157x20 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 7x16
+                text run at (2,2) width 7: "b"
+            RenderTableCell {TD} at (319,2) size 136x20 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 7x16
+                text run at (2,2) width 7: "c"
+            RenderTableCell {TD} at (457,2) size 147x20 [border: (1px solid #008000)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 8x16
+                text run at (2,2) width 8: "d"
+          RenderTableRow {TR} at (0,24) size 606x20
+            RenderTableCell {TD} at (2,24) size 315x20 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (2,2) size 24x16
+                text run at (2,2) width 24: "eee"
+            RenderTableCell {TD} at (319,24) size 285x20 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=2]
+              RenderText {#text} at (2,2) size 4x16
+                text run at (2,2) width 4: "f"
+          RenderTableRow {TR} at (0,46) size 606x329
+            RenderTableCell {TD} at (2,46) size 602x329 [border: (1px solid #008000)] [r=2 c=0 rs=1 cs=4]
+              RenderImage {IMG} at (2,2) size 593x325
+              RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,679) size 610x2 [border: (1px solid #FF0000)]
+      RenderBlock {P} at (0,695) size 80x96
+        RenderText {#text} at (0,0) size 77x96
+          text run at (0,0) width 44: "Mozilla"
+          text run at (0,16) width 65: "makes the"
+          text run at (0,32) width 59: "table way"
+          text run at (0,48) width 77: "too small for"
+          text run at (0,64) width 77: "no apparent"
+          text run at (0,80) width 47: "reason."
+      RenderBlock {P} at (0,805) size 80x64
+        RenderText {#text} at (0,0) size 71x64
+          text run at (0,0) width 69: "Here is the"
+          text run at (0,16) width 71: "same table,"
+          text run at (0,32) width 57: "one pixel"
+          text run at (0,48) width 37: "wider:"
+      RenderTable {TABLE} at (0,883) size 609x379 [border: (1px dotted #000080)]
+        RenderTableSection {TBODY} at (1,1) size 607x377
+          RenderTableRow {TR} at (0,2) size 607x20
+            RenderTableCell {TD} at (2,2) size 156x20 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 8x16
+                text run at (2,2) width 8: "a"
+            RenderTableCell {TD} at (160,2) size 157x20 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 7x16
+                text run at (2,2) width 7: "b"
+            RenderTableCell {TD} at (319,2) size 137x20 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 7x16
+                text run at (2,2) width 7: "c"
+            RenderTableCell {TD} at (458,2) size 147x20 [border: (1px solid #008000)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 8x16
+                text run at (2,2) width 8: "d"
+          RenderTableRow {TR} at (0,24) size 607x20
+            RenderTableCell {TD} at (2,24) size 315x20 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (2,2) size 24x16
+                text run at (2,2) width 24: "eee"
+            RenderTableCell {TD} at (319,24) size 286x20 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=2]
+              RenderText {#text} at (2,2) size 4x16
+                text run at (2,2) width 4: "f"
+          RenderTableRow {TR} at (0,46) size 607x329
+            RenderTableCell {TD} at (2,46) size 603x329 [border: (1px solid #008000)] [r=2 c=0 rs=1 cs=4]
+              RenderImage {IMG} at (2,2) size 593x325
+              RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,1276) size 80x352
+        RenderText {#text} at (0,0) size 86x352
+          text run at (0,0) width 86: "Observations:"
+          text run at (0,16) width 76: "Fiddle about"
+          text run at (0,32) width 49: "with the"
+          text run at (0,48) width 63: "content of"
+          text run at (0,64) width 58: "the \"eee\""
+          text run at (0,80) width 49: "cell and"
+          text run at (0,96) width 66: "everything"
+          text run at (0,112) width 57: "changes."
+          text run at (0,128) width 79: "Remove any"
+          text run at (0,144) width 73: "of the three"
+          text run at (0,160) width 58: "rows and"
+          text run at (0,176) width 38: "things"
+          text run at (0,192) width 50: "change."
+          text run at (0,208) width 79: "Remove any"
+          text run at (0,224) width 64: "of the four"
+          text run at (0,240) width 79: "columns and"
+          text run at (0,256) width 38: "things"
+          text run at (0,272) width 50: "change."
+          text run at (0,288) width 76: "Remove the"
+          text run at (0,304) width 66: "image and"
+          text run at (0,320) width 38: "things"
+          text run at (0,336) width 50: "change."
+      RenderBlock {P} at (0,1642) size 80x160
+        RenderText {#text} at (0,0) size 79x160
+          text run at (0,0) width 74: "(Note: If the"
+          text run at (0,16) width 65: "image has"
+          text run at (0,32) width 79: "disappeared"
+          text run at (0,48) width 52: "from the"
+          text run at (0,64) width 43: "server,"
+          text run at (0,80) width 58: "replace it"
+          text run at (0,96) width 52: "with any"
+          text run at (0,112) width 39: "593px"
+          text run at (0,128) width 64: "image you"
+          text run at (0,144) width 29: "like.)"
+      RenderBlock {P} at (0,1816) size 80x48
+        RenderText {#text} at (0,0) size 55x16
+          text run at (0,0) width 55: "See also"
+        RenderInline {A} at (0,0) size 92x16 [color=#0000EE]
+          RenderText {#text} at (0,16) size 92x16
+            text run at (0,16) width 92: "tablewidth.html"
+        RenderText {#text} at (0,32) size 3x16
+          text run at (0,32) width 3: "."
+      RenderBlock {HR} at (0,1878) size 80x2 [border: (1px inset #000000)]

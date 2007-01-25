@@ -1,0 +1,37 @@
+layer at (0,0) size 224x174
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 224x174
+  RenderBlock {HTML} at (0,0) size 96x174
+    RenderBody {BODY} at (8,14) size 80x152
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 76x80
+          text run at (0,0) width 25: "The"
+          text run at (0,16) width 73: "background"
+          text run at (0,32) width 76: "color should"
+          text run at (0,48) width 49: "span all"
+          text run at (0,64) width 51: "columns"
+      RenderTable {TABLE} at (0,94) size 216x58 [border: (1px outset #808080)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#00FF00]
+        RenderTableSection {TBODY} at (1,1) size 214x56
+          RenderTableRow {TR} at (0,2) size 214x52
+            RenderTableCell {TD} at (2,2) size 51x52 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 47x48
+                text run at (2,2) width 47: "Column"
+                text run at (2,18) width 38: "1, row"
+                text run at (2,34) width 8: "1"
+            RenderTableCell {TD} at (55,2) size 51x52 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 47x48
+                text run at (2,2) width 47: "Column"
+                text run at (2,18) width 38: "2, row"
+                text run at (2,34) width 8: "1"
+            RenderTableCell {TD} at (108,2) size 51x52 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 47x48
+                text run at (2,2) width 47: "Column"
+                text run at (2,18) width 38: "3, row"
+                text run at (2,34) width 8: "1"
+            RenderTableCell {TD} at (161,2) size 51x52 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 47x48
+                text run at (2,2) width 47: "Column"
+                text run at (2,18) width 38: "4, row"
+                text run at (2,34) width 8: "1"

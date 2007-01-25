@@ -1,0 +1,24 @@
+layer at (0,0) size 515x118
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 515x118
+  RenderBlock {HTML} at (0,0) size 96x118
+    RenderBody {BODY} at (8,8) size 80x102
+      RenderTable {TABLE} at (0,0) size 504x102 [border: (3px outset #808080)]
+        RenderTableSection {TBODY} at (3,3) size 498x96
+          RenderTableRow {TR} at (0,2) size 498x92
+            RenderTableCell {TD} at (2,2) size 494x92 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 500x88 [border: (2px outset #808080)]
+                RenderTableSection {TBODY} at (2,2) size 496x84
+                  RenderTableRow {TR} at (0,2) size 496x80
+                    RenderTableCell {TD} at (2,2) size 400x80 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (11,11) size 378x58 [border: (1px outset #808080)]
+                        RenderTableSection {TBODY} at (1,1) size 376x56
+                          RenderTableRow {TR} at (0,2) size 376x52
+                            RenderTableCell {TD} at (2,2) size 372x52 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                              RenderText {#text} at (2,2) size 362x48
+                                text run at (2,2) width 358: "Have a tip or rumor to share? Just click on the icon and if"
+                                text run at (2,18) width 362: "you get a BrowserWatch net.fame be sure and display the"
+                                text run at (2,34) width 268: "icon on your own home page for all to see!"
+                    RenderTableCell {TD} at (404,23) size 90x38 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (11,11) size 20x16
+                        text run at (11,11) width 20: "foo"

@@ -1,0 +1,17 @@
+layer at (0,0) size 96x232
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x232
+  RenderBlock {HTML} at (0,0) size 96x232
+    RenderBody {BODY} at (8,8) size 80x216
+      RenderTable {TABLE} at (0,0) size 80x216
+        RenderTableSection {TBODY} at (0,0) size 80x216
+          RenderTableRow {TR} at (0,2) size 80x212
+            RenderTableCell {TD} at (2,2) size 76x212 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 74x210
+                RenderPartObject {IFRAME} at (0,0) size 74x210
+                  layer at (0,0) size 70x206
+                    RenderView at (0,0) size 70x206
+                  layer at (0,0) size 70x8
+                    RenderBlock {HTML} at (0,0) size 70x8
+                      RenderBody {BODY} at (8,8) size 54x0
+                RenderText {#text} at (0,0) size 0x0

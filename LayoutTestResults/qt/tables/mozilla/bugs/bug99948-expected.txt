@@ -1,0 +1,22 @@
+layer at (0,0) size 186x190
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 186x190
+  RenderBlock {HTML} at (0,0) size 96x190
+    RenderBody {BODY} at (8,8) size 80x174 [bgcolor=#FFFFFF]
+      RenderBlock (anonymous) at (0,0) size 80x112
+        RenderText {#text} at (0,0) size 76x112
+          text run at (0,0) width 63: "the purple"
+          text run at (0,16) width 57: "text input"
+          text run at (0,32) width 76: "control must"
+          text run at (0,48) width 54: "be in the"
+          text run at (0,64) width 60: "same line"
+          text run at (0,80) width 49: "with the"
+          text run at (0,96) width 70: "grey image"
+      RenderTable {TABLE} at (0,112) size 178x62
+        RenderTableSection {TBODY} at (0,0) size 178x62
+          RenderTableRow {TR} at (0,2) size 178x58
+            RenderTableCell {TD} at (2,2) size 174x58 [bgcolor=#CCDDFF] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (3,3) size 168x22 [bgcolor=#CCAAFF] [border: (2px inset #000000)]
+              RenderImage {IMG} at (4,28) size 126x26 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
+layer at (16,128) size 162x16
+  RenderBlock {DIV} at (3,3) size 162x16

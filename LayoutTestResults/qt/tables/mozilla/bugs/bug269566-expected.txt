@@ -1,0 +1,9 @@
+layer at (0,0) size 190x45
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 190x45
+  RenderBlock {HTML} at (0,0) size 96x45
+    RenderTable {BODY} at (8,8) size 182x29
+      RenderTableSection at (0,0) size 182x29
+        RenderTableRow at (0,0) size 182x29
+          RenderTableCell at (0,0) size 182x29 [r=0 c=0 rs=1 cs=1]
+            RenderImage {IMG} at (0,0) size 182x29

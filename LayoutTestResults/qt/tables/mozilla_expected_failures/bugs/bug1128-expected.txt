@@ -1,0 +1,113 @@
+layer at (0,0) size 358x1123
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 358x1123
+  RenderBlock {HTML} at (0,0) size 96x1123
+    RenderBody {BODY} at (8,8) size 80x1107
+      RenderBlock {H2} at (0,0) size 80x168
+        RenderText {#text} at (0,0) size 126x167
+          text run at (0,0) width 59: "HTML"
+          text run at (0,24) width 30: "4.0"
+          text run at (0,48) width 56: "Table"
+          text run at (0,72) width 79: "Column"
+          text run at (0,96) width 126: "Proportional"
+          text run at (0,120) width 59: "Width"
+          text run at (0,144) width 118: "Constraints"
+      RenderBlock {P} at (0,185) size 80x160
+        RenderText {#text} at (0,0) size 80x160
+          text run at (0,0) width 59: "The table"
+          text run at (0,16) width 78: "below is 350"
+          text run at (0,32) width 72: "pixels wide."
+          text run at (0,48) width 80: "The columns"
+          text run at (0,64) width 21: "are"
+          text run at (0,80) width 57: "assigned"
+          text run at (0,96) width 76: "proportional"
+          text run at (0,112) width 77: "widths using"
+          text run at (0,128) width 55: "COLs as"
+          text run at (0,144) width 46: "follows:"
+      RenderBlock (anonymous) at (0,359) size 80x64
+        RenderInline {TT} at (0,0) size 56x64
+          RenderText {#text} at (0,0) size 56x16
+            text run at (0,0) width 56: "<col width=50>"
+          RenderBR {BR} at (56,13) size 0x0
+          RenderText {#text} at (0,16) size 56x16
+            text run at (0,16) width 56: "<col width=2*>"
+          RenderBR {BR} at (56,29) size 0x0
+          RenderText {#text} at (0,32) size 56x16
+            text run at (0,32) width 56: "<col width=1*>"
+          RenderBR {BR} at (56,45) size 0x0
+          RenderText {#text} at (0,48) size 56x16
+            text run at (0,48) width 56: "<col width=3*>"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,437) size 80x608
+        RenderText {#text} at (0,0) size 80x608
+          text run at (0,0) width 73: "This means"
+          text run at (0,16) width 47: "the first"
+          text run at (0,32) width 44: "column"
+          text run at (0,48) width 80: "should be 50"
+          text run at (0,64) width 72: "pixels wide."
+          text run at (0,80) width 25: "The"
+          text run at (0,96) width 62: "remaining"
+          text run at (0,112) width 78: "width should"
+          text run at (0,128) width 64: "be divided"
+          text run at (0,144) width 67: "among the"
+          text run at (0,160) width 33: "three"
+          text run at (0,176) width 62: "remaining"
+          text run at (0,192) width 51: "columns"
+          text run at (0,208) width 78: "according to"
+          text run at (0,224) width 20: "the"
+          text run at (0,240) width 76: "proportional"
+          text run at (0,256) width 33: "width"
+          text run at (0,272) width 69: "statements"
+          text run at (0,288) width 44: "into six"
+          text run at (0,304) width 52: "(2+1+3)"
+          text run at (0,320) width 74: "parts. Since"
+          text run at (0,336) width 73: "the Table is"
+          text run at (0,352) width 64: "350 pixels"
+          text run at (0,368) width 60: "wide, and"
+          text run at (0,384) width 20: "the"
+          text run at (0,400) width 62: "remaining"
+          text run at (0,416) width 75: "width is 300"
+          text run at (0,432) width 73: "pixels (350-"
+          text run at (0,448) width 48: "50), the"
+          text run at (0,464) width 62: "remaining"
+          text run at (0,480) width 51: "columns"
+          text run at (0,496) width 60: "should be"
+          text run at (0,512) width 72: "100 (2*50),"
+          text run at (0,528) width 61: "50 (1*50)"
+          text run at (0,544) width 52: "and 150"
+          text run at (0,560) width 41: "(3*50)"
+          text run at (0,576) width 72: "pixels wide,"
+          text run at (0,592) width 78: "respectively."
+      RenderTable {TABLE} at (0,1059) size 350x48 [border: (1px outset #808080)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 348x46
+          RenderTableRow {TR} at (0,2) size 348x20
+            RenderTableCell {TH} at (2,2) size 50x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (10,2) size 29x16
+                text run at (10,2) width 29: "One"
+            RenderTableCell {TH} at (54,2) size 96x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (34,2) size 27x16
+                text run at (34,2) width 27: "Two"
+            RenderTableCell {TH} at (152,2) size 94x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (27,2) size 39x16
+                text run at (27,2) width 39: "Three"
+            RenderTableCell {TH} at (248,2) size 98x20 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (32,2) size 33x16
+                text run at (32,2) width 33: "Four"
+          RenderTableRow {TR} at (0,24) size 348x20
+            RenderTableCell {TD} at (2,24) size 50x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 26x16
+                text run at (2,2) width 26: "Red"
+            RenderTableCell {TD} at (54,24) size 96x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 40x16
+                text run at (2,2) width 40: "Green"
+            RenderTableCell {TD} at (152,24) size 94x20 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 27x16
+                text run at (2,2) width 27: "Blue"
+            RenderTableCell {TD} at (248,24) size 98x20 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 40x16
+                text run at (2,2) width 40: "Green"

@@ -1,0 +1,40 @@
+layer at (0,0) size 812x261
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 812x261
+  RenderBlock {HTML} at (0,0) size 96x261
+    RenderBody {BODY} at (8,8) size 80x245
+      RenderBlock (anonymous) at (0,0) size 80x64
+        RenderText {#text} at (0,0) size 79x64
+          text run at (0,0) width 79: "cell split with"
+          text run at (0,16) width 31: "color"
+          text run at (0,32) width 61: "(standard"
+          text run at (0,48) width 40: "mode)"
+      RenderTable {TABLE} at (0,64) size 30x26 [border: (1px outset #808080)]
+        RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FF0000]
+        RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#0000FF]
+        RenderTableSection {TBODY} at (1,1) size 28x24
+          RenderTableRow {TR} at (0,2) size 28x20
+            RenderTableCell {TD} at (2,2) size 24x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderText {#text} at (2,2) size 20x16
+                text run at (2,2) width 20: "foo"
+      RenderBlock (anonymous) at (0,90) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderBlock {HR} at (0,113) size 602x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,122) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderTable {TABLE} at (0,138) size 600x107
+        RenderTableSection {TBODY} at (0,0) size 600x107
+          RenderTableRow {TR} at (0,2) size 600x44
+            RenderTableCell {TD} at (2,2) size 800x44 [r=0 c=0 rs=1 cs=3]
+              RenderImage {IMG} at (110,1) size 579x42
+              RenderText {#text} at (0,0) size 0x0
+          RenderTableRow {TR} at (0,48) size 600x37
+            RenderTableCell {TD} at (2,48) size 371x37 [r=1 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 232x35 [border: (1px solid #000000)]
+            RenderTableCell {TD} at (375,57) size 219x18 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (38,1) size 142x16
+                text run at (38,1) width 142: "Hassle-Free Upgrades"
+          RenderTableRow {TR} at (0,87) size 600x18
+            RenderTableCell {TD} at (2,87) size 802x18 [bgcolor=#99CCCC] [r=2 c=0 rs=1 cs=4]
+              RenderText {#text} at (1,1) size 7x16
+                text run at (1,1) width 7: "x"

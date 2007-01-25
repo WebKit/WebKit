@@ -1,0 +1,52 @@
+layer at (0,0) size 218x116
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 218x116
+  RenderBlock {HTML} at (0,0) size 96x116
+    RenderBody {BODY} at (8,8) size 80x100
+      RenderBlock (anonymous) at (0,0) size 80x16
+        RenderText {#text} at (0,0) size 4x16
+          text run at (0,0) width 4: " "
+      RenderTable {TABLE} at (0,16) size 210x84 [border: (3px solid #0000BB)]
+        RenderBlock {CAPTION} at (0,0) size 204x32
+          RenderText {#text} at (10,0) size 184x32
+            text run at (10,0) width 184: "Testing BORDERCOLOR tag"
+            text run at (22,16) width 159: "the border shood be blue."
+        RenderTableSection {TBODY} at (3,35) size 204x46
+          RenderTableRow {TR} at (0,2) size 204x20
+            RenderTableCell {TD} at (2,2) size 33x20 [border: (1px solid #0000BB)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 29x16
+                text run at (2,2) width 29: "mike"
+            RenderTableCell {TD} at (37,2) size 29x20 [border: (1px solid #0000BB)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 25x16
+                text run at (2,2) width 25: "was"
+            RenderTableCell {TD} at (68,2) size 33x20 [border: (1px solid #0000BB)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 29x16
+                text run at (2,2) width 29: "here"
+            RenderTableCell {TD} at (103,2) size 33x20 [border: (1px solid #0000BB)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 29x16
+                text run at (2,2) width 29: "mike"
+            RenderTableCell {TD} at (138,2) size 29x20 [border: (1px solid #0000BB)] [r=0 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 25x16
+                text run at (2,2) width 25: "was"
+            RenderTableCell {TD} at (169,2) size 33x20 [border: (1px solid #0000BB)] [r=0 c=5 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 29x16
+                text run at (2,2) width 29: "here"
+          RenderTableRow {TR} at (0,24) size 204x20
+            RenderTableCell {TD} at (2,24) size 33x20 [border: (1px solid #0000BB)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 29x16
+                text run at (2,2) width 29: "mike"
+            RenderTableCell {TD} at (37,24) size 29x20 [border: (1px solid #0000BB)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 25x16
+                text run at (2,2) width 25: "was"
+            RenderTableCell {TD} at (68,24) size 33x20 [border: (1px solid #0000BB)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 29x16
+                text run at (2,2) width 29: "here"
+            RenderTableCell {TD} at (103,24) size 33x20 [border: (1px solid #0000BB)] [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 29x16
+                text run at (2,2) width 29: "mike"
+            RenderTableCell {TD} at (138,24) size 29x20 [border: (1px solid #0000BB)] [r=1 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 25x16
+                text run at (2,2) width 25: "was"
+            RenderTableCell {TD} at (169,24) size 33x20 [border: (1px solid #0000BB)] [r=1 c=5 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 29x16
+                text run at (2,2) width 29: "here"

@@ -1,0 +1,33 @@
+layer at (0,0) size 618x106
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 618x106
+  RenderBlock {HTML} at (0,0) size 96x106
+    RenderBody {BODY} at (8,8) size 80x90 [bgcolor=#FFFFFF]
+      RenderTable {TABLE} at (0,0) size 610x90 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 608x88
+          RenderTableRow {TR} at (0,2) size 608x84
+            RenderTableCell {TD} at (2,15) size 479x58 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 475x54 [bgcolor=#BBBBBB]
+                RenderTableSection {TBODY} at (0,0) size 475x54
+                  RenderTableRow {TR} at (0,2) size 475x50
+                    RenderTableCell {TD} at (2,26) size 2x2 [r=0 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (6,2) size 467x50 [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 215x16
+                        text run at (1,1) width 215: "Welcome to the new DaveCentral!"
+                      RenderBR {BR} at (216,14) size 0x0
+                      RenderText {#text} at (1,17) size 453x32
+                        text run at (1,17) width 85: "I have a new "
+                        text run at (86,17) width 346: "Linux software archive as well as the Windows archive "
+                        text run at (432,17) width 22: "you"
+                        text run at (1,33) width 183: "have come to know and love."
+            RenderTableCell {TD} at (483,2) size 123x84 [bgcolor=#99CCCC] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 99x16
+                text run at (2,2) width 99: "ANDOVER.NET"
+              RenderBR {BR} at (101,15) size 0x0
+              RenderText {#text} at (2,18) size 96x16
+                text run at (2,18) width 96: "E-COMMERCE"
+              RenderBR {BR} at (98,31) size 0x0
+              RenderText {#text} at (2,34) size 100x48
+                text run at (2,34) width 100: "Buy some smart"
+                text run at (2,50) width 58: "stuff from"
+                text run at (2,66) width 78: "Andover.Net"

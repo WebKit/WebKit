@@ -1,0 +1,82 @@
+layer at (0,0) size 122x1126
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 122x1126
+  RenderBlock {HTML} at (0,0) size 96x1126
+    RenderBody {BODY} at (8,8) size 80x1110
+      RenderBlock {P} at (0,0) size 80x256
+        RenderText {#text} at (0,0) size 80x256
+          text run at (0,0) width 59: "The table"
+          text run at (0,16) width 36: "below"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 80: "sized so that"
+          text run at (0,64) width 66: "each word"
+          text run at (0,80) width 39: "of text"
+          text run at (0,96) width 72: "wraps to its"
+          text run at (0,112) width 55: "own line,"
+          text run at (0,128) width 59: "and if the"
+          text run at (0,144) width 67: "font size is"
+          text run at (0,160) width 44: "not too"
+          text run at (0,176) width 67: "large, then"
+          text run at (0,192) width 77: "the table will"
+          text run at (0,208) width 77: "not be wider"
+          text run at (0,224) width 52: "than the"
+          text run at (0,240) width 46: "screen."
+      RenderBlock {P} at (0,270) size 80x688
+        RenderText {#text} at (0,0) size 114x688
+          text run at (0,0) width 67: "Previously,"
+          text run at (0,16) width 54: "the table"
+          text run at (0,32) width 55: "would be"
+          text run at (0,48) width 59: "incredibly"
+          text run at (0,64) width 65: "wide, wide"
+          text run at (0,80) width 66: "enough so"
+          text run at (0,96) width 48: "that the"
+          text run at (0,112) width 36: "entire"
+          text run at (0,128) width 66: "paragraph"
+          text run at (0,144) width 68: "of text was"
+          text run at (0,160) width 73: "on one line."
+          text run at (0,176) width 58: "That was"
+          text run at (0,192) width 76: "because the"
+          text run at (0,208) width 114: "\"maxElementSize\""
+          text run at (0,224) width 61: "of the cell"
+          text run at (0,240) width 25: "was"
+          text run at (0,256) width 55: "including"
+          text run at (0,272) width 50: "margins"
+          text run at (0,288) width 63: "calculated"
+          text run at (0,304) width 52: "from the"
+          text run at (0,320) width 76: "desired size"
+          text run at (0,336) width 63: "of the text"
+          text run at (0,352) width 79: "(in this case,"
+          text run at (0,368) width 47: "19x the"
+          text run at (0,384) width 47: "desired"
+          text run at (0,400) width 73: "width of the"
+          text run at (0,416) width 74: "paragraph)."
+          text run at (0,432) width 72: "The fix was"
+          text run at (0,448) width 71: "to calculate"
+          text run at (0,464) width 67: "the margin"
+          text run at (0,480) width 41: "for the"
+          text run at (0,496) width 114: "\"maxElementSize\""
+          text run at (0,512) width 61: "of the cell"
+          text run at (0,528) width 57: "using the"
+          text run at (0,544) width 114: "\"maxElementSize\""
+          text run at (0,560) width 36: "of the"
+          text run at (0,576) width 62: "contained"
+          text run at (0,592) width 68: "block itself,"
+          text run at (0,608) width 77: "which in this"
+          text run at (0,624) width 68: "case is the"
+          text run at (0,640) width 58: "maximum"
+          text run at (0,656) width 61: "width of a"
+          text run at (0,672) width 34: "word."
+      RenderTable {TABLE} at (0,972) size 80x138 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 78x136
+          RenderTableRow {TR} at (0,2) size 78x132
+            RenderTableCell {TD} at (2,2) size 74x132 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {P} at (68,2) size 4x128
+                RenderText {#text} at (0,0) size 34x128
+                  text run at (0,0) width 27: "This"
+                  text run at (0,16) width 10: "is"
+                  text run at (0,32) width 34: "some"
+                  text run at (0,48) width 26: "text."
+                  text run at (0,64) width 27: "This"
+                  text run at (0,80) width 10: "is"
+                  text run at (0,96) width 34: "some"
+                  text run at (0,112) width 26: "text."

@@ -1,0 +1,36 @@
+layer at (0,0) size 118x159
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 118x159
+  RenderBlock {HTML} at (0,0) size 96x159
+    RenderBody {BODY} at (8,8) size 80x143
+      RenderBlock (anonymous) at (0,0) size 80x96
+        RenderText {#text} at (0,0) size 78x96
+          text run at (0,0) width 60: "If the font"
+          text run at (0,16) width 63: "size is too"
+          text run at (0,32) width 63: "big for the"
+          text run at (0,48) width 74: "inside table,"
+          text run at (0,64) width 78: "it is probably"
+          text run at (0,80) width 61: "bug 6925."
+      RenderTable {TABLE} at (0,96) size 110x47 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 108x45
+          RenderTableRow {TR} at (0,2) size 108x41
+            RenderTableCell {TD} at (2,2) size 104x41 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {CENTER} at (2,2) size 100x37
+                RenderTable {TABLE} at (0,0) size 100x21 [border: (1px outset #808080)]
+                  RenderTableSection {TBODY} at (1,1) size 98x19
+                    RenderTableRow {TR} at (0,2) size 98x15
+                      RenderTableCell {TD} at (2,2) size 94x15 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                        RenderBlock (anonymous) at (2,2) size 90x0
+                          RenderInline {FONT} at (0,0) size 0x0
+                            RenderText {#text} at (0,0) size 0x0
+                        RenderBlock (anonymous) at (2,2) size 90x0
+                        RenderBlock (anonymous) at (2,2) size 90x0
+                          RenderInline {FONT} at (0,0) size 0x0
+                        RenderBlock {CENTER} at (2,2) size 90x11
+                          RenderInline {FONT} at (0,0) size 24x11
+                            RenderText {#text} at (33,0) size 24x11
+                              text run at (33,0) width 24: "inside"
+                          RenderText {#text} at (0,0) size 0x0
+                RenderBlock (anonymous) at (0,21) size 100x16
+                  RenderText {#text} at (10,0) size 79x16
+                    text run at (10,0) width 79: "outside table"

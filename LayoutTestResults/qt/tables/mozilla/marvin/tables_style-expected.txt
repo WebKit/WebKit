@@ -1,0 +1,38 @@
+layer at (0,0) size 134x238
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 134x238
+  RenderBlock {HTML} at (0,0) size 96x238
+    RenderBody {BODY} at (8,8) size 80x222
+      RenderTable {TABLE} at (0,0) size 126x222 [border: (3px dashed #FF0000)]
+        RenderTableSection {TBODY} at (3,3) size 120x216
+          RenderTableRow {TR} at (0,2) size 120x212
+            RenderTableCell {TD} at (2,2) size 57x212 [border: (1px inset #FF0000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 53x208
+                text run at (2,2) width 53: "This is a"
+                text run at (2,18) width 30: "table"
+                text run at (2,34) width 37: "with a"
+                text run at (2,50) width 21: "red"
+                text run at (2,66) width 47: "dashed"
+                text run at (2,82) width 41: "border"
+                text run at (2,98) width 39: "to test"
+                text run at (2,114) width 20: "the"
+                text run at (2,130) width 44: "STYLE"
+                text run at (2,146) width 50: "attribute"
+                text run at (2,162) width 36: "of the"
+                text run at (2,178) width 44: "TABLE"
+                text run at (2,194) width 53: "element."
+            RenderTableCell {TD} at (61,2) size 57x212 [border: (1px inset #FF0000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 53x208
+                text run at (2,2) width 53: "This is a"
+                text run at (2,18) width 30: "table"
+                text run at (2,34) width 37: "with a"
+                text run at (2,50) width 21: "red"
+                text run at (2,66) width 47: "dashed"
+                text run at (2,82) width 41: "border"
+                text run at (2,98) width 39: "to test"
+                text run at (2,114) width 20: "the"
+                text run at (2,130) width 44: "STYLE"
+                text run at (2,146) width 50: "attribute"
+                text run at (2,162) width 36: "of the"
+                text run at (2,178) width 44: "TABLE"
+                text run at (2,194) width 53: "element."

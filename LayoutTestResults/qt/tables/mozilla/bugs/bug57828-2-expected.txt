@@ -1,0 +1,72 @@
+layer at (0,0) size 683x351
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 683x351
+  RenderBlock {HTML} at (0,0) size 96x351
+    RenderBody {BODY} at (8,8) size 80x335
+      RenderBlock {P} at (0,0) size 80x96
+        RenderText {#text} at (0,0) size 76x96
+          text run at (0,0) width 59: "The table"
+          text run at (0,16) width 74: "below takes"
+          text run at (0,32) width 43: "out the"
+          text run at (0,48) width 76: "nowrap with"
+          text run at (0,64) width 61: "the cell of"
+          text run at (0,80) width 60: "1% width."
+      RenderTable {TABLE} at (0,110) size 675x59
+        RenderTableSection {TBODY} at (0,0) size 675x59
+          RenderTableRow {TR} at (0,0) size 675x59 [bgcolor=#9999CC]
+            RenderTableCell {TD} at (0,17) size 636x24 [r=0 c=0 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 141x19
+                RenderInline {B} at (0,0) size 141x19
+                  RenderText {#text} at (2,2) size 141x19
+                    text run at (2,2) width 141: "Technology News"
+              RenderInline {FONT} at (0,0) size 146x12
+                RenderText {#text} at (143,8) size 146x12
+                  text run at (143,8) width 50: " - updated "
+                  text run at (193,8) width 96: "12:15 PM ET Oct 24"
+              RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (636,0) size 39x59 [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 35x55
+                RenderTableSection {TBODY} at (0,0) size 35x55
+                  RenderTableRow {TR} at (0,0) size 35x55
+                    RenderTableCell {TD} at (0,0) size 35x55 [bgcolor=#CCCCFF] [r=0 c=0 rs=1 cs=1]
+                      RenderImage {IMG} at (3,3) size 16x16
+                      RenderInline {FONT} at (0,0) size 29x33
+                        RenderInline {A} at (0,0) size 29x33 [color=#0000EE]
+                          RenderText {#text} at (3,19) size 29x33
+                            text run at (3,19) width 27: "Add to"
+                            text run at (3,30) width 13: "My"
+                            text run at (3,41) width 29: "Yahoo!"
+                      RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,183) size 80x112
+        RenderText {#text} at (0,0) size 80x112
+          text run at (0,0) width 59: "The table"
+          text run at (0,16) width 36: "below"
+          text run at (0,32) width 80: "leaves in the"
+          text run at (0,48) width 69: "nowrap but"
+          text run at (0,64) width 74: "take out the"
+          text run at (0,80) width 72: "1% width in"
+          text run at (0,96) width 48: "the cell."
+      RenderTable {TABLE} at (0,309) size 675x26
+        RenderTableSection {TBODY} at (0,0) size 675x26
+          RenderTableRow {TR} at (0,0) size 675x26 [bgcolor=#9999CC]
+            RenderTableCell {TD} at (0,1) size 497x24 [r=0 c=0 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 141x19
+                RenderInline {B} at (0,0) size 141x19
+                  RenderText {#text} at (2,2) size 141x19
+                    text run at (2,2) width 141: "Technology News"
+              RenderInline {FONT} at (0,0) size 146x12
+                RenderText {#text} at (143,8) size 146x12
+                  text run at (143,8) width 50: " - updated "
+                  text run at (193,8) width 96: "12:15 PM ET Oct 24"
+              RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (497,0) size 178x26 [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 100x22
+                RenderTableSection {TBODY} at (0,0) size 100x22
+                  RenderTableRow {TR} at (0,0) size 100x22
+                    RenderTableCell {TD} at (0,0) size 100x22 [bgcolor=#CCCCFF] [r=0 c=0 rs=1 cs=1]
+                      RenderImage {IMG} at (3,3) size 16x16
+                      RenderInline {FONT} at (0,0) size 75x11
+                        RenderInline {A} at (0,0) size 75x11 [color=#0000EE]
+                          RenderText {#text} at (22,3) size 75x11
+                            text run at (22,3) width 75: "Add to My Yahoo!"
+                      RenderText {#text} at (0,0) size 0x0

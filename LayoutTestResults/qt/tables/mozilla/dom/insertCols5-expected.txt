@@ -1,0 +1,44 @@
+layer at (0,0) size 102x132
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 102x132
+  RenderBlock {HTML} at (0,0) size 96x132
+    RenderBody {BODY} at (8,8) size 80x116
+      RenderBlock (anonymous) at (0,0) size 80x48
+        RenderText {#text} at (0,0) size 78x48
+          text run at (0,0) width 78: "The 2 tables"
+          text run at (0,16) width 71: "should look"
+          text run at (0,32) width 58: "the same"
+      RenderTable {TABLE} at (0,48) size 94x26 [bgcolor=#FFA500] [border: (1px outset #808080)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 92x24
+          RenderTableRow {TR} at (0,2) size 92x20
+            RenderTableCell {TD} at (2,2) size 28x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 24x16
+                text run at (2,2) width 24: "100"
+            RenderTableCell {TD} at (32,2) size 28x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 24x16
+                text run at (2,2) width 24: "200"
+            RenderTableCell {TD} at (62,2) size 28x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 24x16
+                text run at (2,2) width 24: "300"
+      RenderBlock (anonymous) at (0,74) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderTable {TABLE} at (0,90) size 94x26 [bgcolor=#FFA500] [border: (1px outset #808080)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 92x24
+          RenderTableRow {TR} at (0,2) size 92x20
+            RenderTableCell {TD} at (2,2) size 28x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 24x16
+                text run at (2,2) width 24: "100"
+            RenderTableCell {TD} at (32,2) size 28x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 24x16
+                text run at (2,2) width 24: "200"
+            RenderTableCell {TD} at (62,2) size 28x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 24x16
+                text run at (2,2) width 24: "300"

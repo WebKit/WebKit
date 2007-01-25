@@ -1,0 +1,121 @@
+layer at (0,0) size 285x1052
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 285x1052
+  RenderBlock {HTML} at (0,0) size 96x1052
+    RenderBody {BODY} at (8,8) size 80x1036 [bgcolor=#FFFFFF]
+      RenderBlock {H4} at (0,0) size 80x112
+        RenderText {#text} at (0,0) size 61x48
+          text run at (0,0) width 61: "Testcase"
+          text run at (0,16) width 55: "distilled"
+          text run at (0,32) width 31: "from"
+        RenderInline {A} at (0,0) size 277x64 [color=#0000EE]
+          RenderText {#text} at (0,48) size 277x64
+            text run at (0,48) width 277: "http://www.download.com/pc/list/0,339,0-"
+            text run at (0,64) width 49: "b-0-0-a-"
+            text run at (0,80) width 71: "1,00.html?"
+            text run at (0,96) width 99: "st.dl.fd.ag.new"
+      RenderBlock {H4} at (0,130) size 80x128
+        RenderText {#text} at (0,0) size 80x128
+          text run at (0,0) width 71: "Resize the"
+          text run at (0,16) width 80: "width of the"
+          text run at (0,32) width 51: "window"
+          text run at (0,48) width 70: "and watch"
+          text run at (0,64) width 53: "the Buy"
+          text run at (0,80) width 60: "and Pick"
+          text run at (0,96) width 59: "columns"
+          text run at (0,112) width 44: "below."
+      RenderTable {TABLE} at (0,276) size 142x298
+        RenderTableSection {TBODY} at (0,0) size 142x298
+          RenderTableRow {TR} at (0,2) size 142x34 [bgcolor=#CCCCCC]
+            RenderTableCell {TD} at (2,2) size 69x34 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 64x32
+                text run at (1,1) width 64: "Re-sort by"
+                text run at (1,17) width 27: "Title"
+            RenderTableCell {TD} at (73,10) size 29x18 [r=0 c=1 rs=1 cs=1]
+              RenderInline {SPAN} at (0,0) size 23x16
+                RenderText {#text} at (1,1) size 23x16
+                  text run at (1,1) width 23: "Buy"
+              RenderText {#text} at (24,1) size 4x16
+                text run at (24,1) width 4: " "
+            RenderTableCell {TD} at (104,10) size 36x18 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 4x16
+                text run at (1,1) width 4: " "
+              RenderInline {SPAN} at (0,0) size 26x16
+                RenderText {#text} at (5,1) size 26x16
+                  text run at (5,1) width 26: "Pick"
+              RenderText {#text} at (31,1) size 4x16
+                text run at (31,1) width 4: " "
+          RenderTableRow {TR} at (0,38) size 142x258
+            RenderTableCell {TD} at (2,38) size 69x258 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 67x256
+                text run at (1,1) width 43: "Norton"
+                text run at (1,17) width 55: "AntiVirus"
+                text run at (1,33) width 66: "Definitions"
+                text run at (1,49) width 46: "Update"
+                text run at (1,65) width 56: "10/21/99"
+                text run at (1,81) width 46: "Update"
+                text run at (1,97) width 59: "your NAV"
+                text run at (1,113) width 17: "for"
+                text run at (1,129) width 57: "Windows"
+                text run at (1,145) width 62: "95/98/NT,"
+                text run at (1,161) width 34: "Lotus"
+                text run at (1,177) width 57: "Notes, or"
+                text run at (1,193) width 63: "Exchange"
+                text run at (1,209) width 49: "with the"
+                text run at (1,225) width 67: "latest virus"
+                text run at (1,241) width 67: "definitions."
+            RenderTableCell {TD} at (73,158) size 29x18 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 4x16
+                text run at (1,1) width 4: " "
+            RenderTableCell {TD} at (104,158) size 36x18 [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 4x16
+                text run at (1,1) width 4: " "
+      RenderBlock (anonymous) at (0,574) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderBlock {H4} at (0,608) size 80x112
+        RenderText {#text} at (0,0) size 75x112
+          text run at (0,0) width 71: "This is the"
+          text run at (0,16) width 74: "same table"
+          text run at (0,32) width 62: "as above"
+          text run at (0,48) width 75: "but with all"
+          text run at (0,64) width 57: "<SPAN>"
+          text run at (0,80) width 62: "elements"
+          text run at (0,96) width 64: "removed."
+      RenderTable {TABLE} at (0,738) size 142x298
+        RenderTableSection {TBODY} at (0,0) size 142x298
+          RenderTableRow {TR} at (0,2) size 142x34 [bgcolor=#CCCCCC]
+            RenderTableCell {TD} at (2,2) size 69x34 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 64x32
+                text run at (1,1) width 64: "Re-sort by"
+                text run at (1,17) width 27: "Title"
+            RenderTableCell {TD} at (73,10) size 29x18 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 27x16
+                text run at (1,1) width 27: "Buy "
+            RenderTableCell {TD} at (104,10) size 36x18 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 34x16
+                text run at (1,1) width 34: " Pick "
+          RenderTableRow {TR} at (0,38) size 142x258
+            RenderTableCell {TD} at (2,38) size 69x258 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 67x256
+                text run at (1,1) width 43: "Norton"
+                text run at (1,17) width 55: "AntiVirus"
+                text run at (1,33) width 66: "Definitions"
+                text run at (1,49) width 46: "Update"
+                text run at (1,65) width 56: "10/21/99"
+                text run at (1,81) width 46: "Update"
+                text run at (1,97) width 59: "your NAV"
+                text run at (1,113) width 17: "for"
+                text run at (1,129) width 57: "Windows"
+                text run at (1,145) width 62: "95/98/NT,"
+                text run at (1,161) width 34: "Lotus"
+                text run at (1,177) width 57: "Notes, or"
+                text run at (1,193) width 63: "Exchange"
+                text run at (1,209) width 49: "with the"
+                text run at (1,225) width 67: "latest virus"
+                text run at (1,241) width 67: "definitions."
+            RenderTableCell {TD} at (73,158) size 29x18 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 4x16
+                text run at (1,1) width 4: " "
+            RenderTableCell {TD} at (104,158) size 36x18 [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 4x16
+                text run at (1,1) width 4: " "

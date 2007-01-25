@@ -1,0 +1,38 @@
+layer at (0,0) size 203x774
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 203x774
+  RenderBlock {HTML} at (0,0) size 96x774
+    RenderBody {BODY} at (8,8) size 80x758 [bgcolor=#C0C0C0]
+      RenderTable {TABLE} at (0,0) size 111x150 [border: (20px outset #808080)]
+        RenderTableSection {TBODY} at (20,20) size 71x110
+          RenderTableRow {TR} at (0,10) size 71x90
+            RenderTableCell {TD} at (10,37) size 51x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 47x32
+                text run at (2,2) width 21: "cell"
+                text run at (2,18) width 47: "content"
+      RenderBlock {P} at (0,164) size 80x160
+        RenderText {#text} at (0,0) size 78x160
+          text run at (0,0) width 25: "The"
+          text run at (0,16) width 55: "following"
+          text run at (0,32) width 63: "two tables"
+          text run at (0,48) width 78: "demostrates"
+          text run at (0,64) width 75: "the bug with"
+          text run at (0,80) width 47: "TD and"
+          text run at (0,96) width 75: "TABLE both"
+          text run at (0,112) width 42: "having"
+          text run at (0,128) width 39: "height"
+          text run at (0,144) width 59: "specified."
+      RenderTable {TABLE} at (0,338) size 178x210 [border: (20px outset #808080)]
+        RenderTableSection {TBODY} at (20,20) size 138x170
+          RenderTableRow {TR} at (0,10) size 138x150
+            RenderTableCell {TD} at (10,67) size 118x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 114x32
+                text run at (2,2) width 72: "height=210"
+                text run at (2,18) width 114: "(150+2*10+2*20)"
+      RenderTable {TABLE} at (0,548) size 195x210 [border: (20px outset #808080)]
+        RenderTableSection {TBODY} at (20,20) size 155x170
+          RenderTableRow {TR} at (0,10) size 155x150
+            RenderTableCell {TD} at (10,67) size 135x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 131x32
+                text run at (2,2) width 72: "height=211"
+                text run at (2,18) width 131: "(150+2*10+2*20+1)"

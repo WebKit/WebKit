@@ -1,0 +1,35 @@
+layer at (0,0) size 650x180
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 650x180
+  RenderBlock {HTML} at (0,0) size 96x180
+    RenderBody {BODY} at (8,8) size 80x164 [bgcolor=#FFFFFF]
+      RenderTable {TABLE} at (0,0) size 642x164 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 640x162
+          RenderTableRow {TR} at (0,2) size 640x158
+            RenderTableCell {TD} at (2,76) size 124x10 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 120x6
+                RenderTableSection {TBODY} at (0,0) size 120x6
+                  RenderTableRow {TR} at (0,2) size 120x2
+                    RenderBlock {FORM} at (0,0) size 0x0
+                    RenderTableCell {TD} at (2,2) size 116x2 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (128,2) size 510x158 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 506x154 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 504x152
+                  RenderTableRow {TR} at (0,2) size 504x148
+                    RenderTableCell {TD} at (2,2) size 500x148 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (2,2) size 496x80
+                        RenderTableSection {TBODY} at (0,0) size 496x80
+                          RenderTableRow {TR} at (0,10) size 496x60
+                            RenderTableCell {TD} at (10,10) size 476x60 [r=0 c=0 rs=1 cs=1]
+                              RenderInline {A} at (0,0) size 468x13 [color=#0000EE]
+                                RenderImage {IMG} at (0,0) size 468x60
+                      RenderBlock (anonymous) at (2,82) size 496x64
+                        RenderText {#text} at (0,0) size 494x64
+                          text run at (0,0) width 286: "Your donation to protect our wildlife was paid "
+                          text run at (286,0) width 206: "for by the sponsors on this page,"
+                          text run at (0,16) width 72: "so it's free. "
+                          text run at (72,16) width 373: "100% of each donation is distributed through organizations "
+                          text run at (445,16) width 49: "working"
+                          text run at (0,32) width 282: "hard to protect our wildlife. You can view live "
+                          text run at (282,32) width 201: "donation totals in support of this"
+                          text run at (0,48) width 108: "cause by clicking."

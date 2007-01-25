@@ -1,0 +1,52 @@
+layer at (0,0) size 96x188
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x188
+  RenderBlock {HTML} at (0,0) size 96x188
+    RenderBody {BODY} at (8,8) size 80x172
+      RenderTable {TABLE} at (0,0) size 79x8 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 77x6
+          RenderTableRow {TR} at (0,0) size 77x6
+            RenderTableCell {TD} at (0,2) size 71x2 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (71,0) size 6x6 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 4x4
+      RenderBlock (anonymous) at (0,8) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderTable {TABLE} at (0,24) size 68x60
+        RenderTableSection {TBODY} at (0,0) size 68x60
+          RenderTableRow {TR} at (0,0) size 68x56
+            RenderTableCell {TD} at (0,0) size 64x56 [bgcolor=#006666] [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 13x16
+              RenderInline {FONT} at (0,0) size 64x39 [color=#FFFFFF]
+                RenderInline {B} at (0,0) size 64x39
+                  RenderText {#text} at (0,16) size 64x39
+                    text run at (0,16) width 62: "Rugged"
+                    text run at (0,36) width 64: "Laptops"
+            RenderTableCell {TD} at (64,38) size 4x18 [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 4x18
+          RenderTableRow {TR} at (0,56) size 68x4
+            RenderTableCell {TD} at (0,56) size 64x4 [r=1 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 1x4
+            RenderTableCell {TD} at (64,56) size 4x4 [r=1 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 4x4
+      RenderBlock (anonymous) at (0,84) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderTable {TABLE} at (0,100) size 68x72
+        RenderTableSection {TBODY} at (0,0) size 68x72
+          RenderTableRow {TR} at (0,0) size 68x56
+            RenderTableCell {TD} at (0,0) size 64x56 [bgcolor=#006666] [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 13x16
+              RenderInline {FONT} at (0,0) size 64x39 [color=#FFFFFF]
+                RenderInline {B} at (0,0) size 64x39
+                  RenderText {#text} at (0,16) size 64x39
+                    text run at (0,16) width 62: "Rugged"
+                    text run at (0,36) width 64: "Laptops"
+            RenderTableCell {TD} at (64,38) size 4x18 [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 4x18
+          RenderTableRow {TR} at (0,56) size 68x16
+            RenderTableCell {TD} at (0,56) size 64x16 [r=1 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (0,9) size 1x4
+              RenderInline {B} at (0,0) size 22x16
+                RenderText {#text} at (1,0) size 22x16
+                  text run at (1,0) width 22: "foo"
+            RenderTableCell {TD} at (64,62) size 4x4 [r=1 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 4x4

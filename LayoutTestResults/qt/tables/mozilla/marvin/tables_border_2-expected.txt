@@ -1,0 +1,37 @@
+layer at (0,0) size 229x178
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 229x178
+  RenderBlock {HTML} at (0,0) size 96x178
+    RenderBody {BODY} at (8,8) size 80x162
+      RenderBlock (anonymous) at (0,0) size 80x112
+        RenderText {#text} at (0,0) size 80x112
+          text run at (0,0) width 59: "The table"
+          text run at (0,16) width 74: "displayed is"
+          text run at (0,32) width 74: "two rows by"
+          text run at (0,48) width 33: "three"
+          text run at (0,64) width 80: "columns with"
+          text run at (0,80) width 67: "a two pixel"
+          text run at (0,96) width 44: "border."
+        RenderBR {BR} at (44,109) size 0x0
+      RenderTable {TABLE} at (0,112) size 221x50 [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 217x46
+          RenderTableRow {TR} at (0,2) size 217x20
+            RenderTableCell {TD} at (2,2) size 69x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 61x16
+                text run at (2,2) width 61: "Navigator"
+            RenderTableCell {TD} at (73,2) size 75x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 71x16
+                text run at (2,2) width 71: "Messenger"
+            RenderTableCell {TD} at (150,2) size 65x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 52x16
+                text run at (2,2) width 52: "Collabra"
+          RenderTableRow {TR} at (0,24) size 217x20
+            RenderTableCell {TD} at (2,24) size 69x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 65x16
+                text run at (2,2) width 65: "Composer"
+            RenderTableCell {TD} at (73,24) size 75x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 58x16
+                text run at (2,2) width 58: "Calendar"
+            RenderTableCell {TD} at (150,24) size 65x20 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 61x16
+                text run at (2,2) width 61: "Netcaster"

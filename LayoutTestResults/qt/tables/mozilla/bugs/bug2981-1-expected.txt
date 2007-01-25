@@ -1,0 +1,34 @@
+layer at (0,0) size 221x288
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 221x288
+  RenderBlock {HTML} at (0,0) size 96x288
+    RenderBody {BODY} at (8,8) size 80x272
+      RenderTable {TABLE} at (0,0) size 213x272
+        RenderTableSection {TBODY} at (0,0) size 213x272
+          RenderTableRow {TR} at (0,0) size 213x272
+            RenderTableCell {TD} at (0,128) size 135x16 [bgcolor=#DDDDDD] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (0,0) size 135x16
+                RenderTableSection {TBODY} at (0,0) size 135x16
+                  RenderTableRow {TR} at (0,0) size 135x16
+                    RenderTableCell {TD} at (0,0) size 135x16 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (0,0) size 132x16
+                        text run at (0,0) width 132: "should be 135 pixels-"
+            RenderTableCell {TD} at (135,0) size 78x272 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 78x272
+                text run at (0,0) width 36: "Spain"
+                text run at (0,16) width 59: "stretched"
+                text run at (0,32) width 28: "their"
+                text run at (0,48) width 58: "unbeaten"
+                text run at (0,64) width 76: "streak to six"
+                text run at (0,80) width 61: "games as"
+                text run at (0,96) width 58: "they beat"
+                text run at (0,112) width 70: "Croatia 3-1"
+                text run at (0,128) width 73: "in a friendly"
+                text run at (0,144) width 67: "at Seville's"
+                text run at (0,160) width 26: "new"
+                text run at (0,176) width 50: "Olympic"
+                text run at (0,192) width 48: "stadium"
+                text run at (0,208) width 65: "which was"
+                text run at (0,224) width 74: "inaugurated"
+                text run at (0,240) width 16: "on"
+                text run at (0,256) width 78: "Wednesday."

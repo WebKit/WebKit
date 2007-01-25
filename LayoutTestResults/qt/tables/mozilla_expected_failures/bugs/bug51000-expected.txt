@@ -1,0 +1,41 @@
+layer at (0,0) size 96x376
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x376
+  RenderBlock {HTML} at (0,0) size 96x376
+    RenderBody {BODY} at (8,8) size 80x360
+      RenderBlock {P} at (0,0) size 80x96
+        RenderText {#text} at (0,0) size 79x96
+          text run at (0,0) width 39: "300xp"
+          text run at (0,16) width 76: "height value"
+          text run at (0,32) width 39: "set on"
+          text run at (0,48) width 50: "THEAD,"
+          text run at (0,64) width 79: "TBODY, and"
+          text run at (0,80) width 48: "TFOOT"
+      RenderTable {TABLE} at (0,110) size 80x250 [border: (1px outset #808080)]
+        RenderTableSection {THEAD} at (1,1) size 78x88
+          RenderTableRow {TR} at (0,2) size 78x84
+            RenderTableCell {TH} at (2,2) size 74x84 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (22,2) size 69x80
+                text run at (22,2) width 29: "This"
+                text run at (13,18) width 48: "THEAD"
+                text run at (2,34) width 69: "should be"
+                text run at (17,50) width 40: "300px"
+                text run at (21,66) width 31: "high"
+              RenderText {#text} at (0,0) size 0x0
+        RenderTableSection {TFOOT} at (1,177) size 78x72
+          RenderTableRow {TR} at (0,2) size 78x68
+            RenderTableCell {TD} at (2,2) size 74x68 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 70x64
+                text run at (2,2) width 27: "This"
+                text run at (2,18) width 48: "TFOOT"
+                text run at (2,34) width 60: "should be"
+                text run at (2,50) width 70: "300px high"
+        RenderTableSection {TBODY} at (1,89) size 78x88
+          RenderTableRow {TR} at (0,2) size 78x84
+            RenderTableCell {TD} at (2,2) size 74x84 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 60x80
+                text run at (2,2) width 27: "This"
+                text run at (2,18) width 48: "TBODY"
+                text run at (2,34) width 60: "should be"
+                text run at (2,50) width 39: "300px"
+                text run at (2,66) width 31: "hight"

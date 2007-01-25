@@ -1,0 +1,15 @@
+layer at (0,0) size 96x32
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x32
+  RenderBlock {HTML} at (0,0) size 96x32
+    RenderBody {BODY} at (8,8) size 80x16 [bgcolor=#FFFFFF]
+      RenderTable {TABLE} at (0,0) size 50x16 [bgcolor=#00FF00]
+        RenderTableSection {TBODY} at (0,0) size 50x16
+          RenderTableRow {TR} at (0,0) size 50x16
+            RenderTableCell {TD} at (0,0) size 7x15 [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 7x15
+            RenderTableCell {TD} at (7,0) size 37x16 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 37x16
+                text run at (0,0) width 37: "Home"
+            RenderTableCell {TD} at (44,0) size 6x15 [r=0 c=2 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 6x15

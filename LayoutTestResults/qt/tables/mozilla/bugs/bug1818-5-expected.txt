@@ -1,0 +1,17 @@
+layer at (0,0) size 96x32
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x32
+  RenderBlock {HTML} at (0,0) size 96x32
+    RenderBody {BODY} at (8,8) size 80x16
+      RenderTable {TABLE} at (0,0) size 80x16
+        RenderTableSection {TBODY} at (0,0) size 80x16
+          RenderTableRow {TR} at (0,0) size 80x16
+            RenderTableCell {TD} at (0,0) size 71x16 [bgcolor=#0000CC] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 4x16
+                text run at (0,0) width 4: " "
+            RenderTableCell {TD} at (71,0) size 5x16 [bgcolor=#00CC00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 4x16
+                text run at (0,0) width 4: " "
+            RenderTableCell {TD} at (76,0) size 4x16 [bgcolor=#CC0000] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 4x16
+                text run at (0,0) width 4: " "

@@ -1,0 +1,37 @@
+layer at (0,0) size 96x264
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x264
+  RenderBlock {HTML} at (0,0) size 96x264
+    RenderBody {BODY} at (8,8) size 80x248
+      RenderTable {TABLE} at (0,0) size 80x248 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 78x246
+          RenderTableRow {TR} at (0,0) size 78x114
+            RenderTableCell {TD} at (0,114) size 6x18 [bgcolor=#CCCCCC] [border: (1px inset #808080)] [r=0 c=0 rs=3 cs=1]
+              RenderText {#text} at (1,1) size 4x16
+                text run at (1,1) width 4: " "
+            RenderTableCell {TD} at (6,0) size 66x114 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 61x112
+                text run at (1,1) width 54: "This row"
+                text run at (1,17) width 49: "has two"
+                text run at (1,33) width 57: "cells with"
+                text run at (1,49) width 61: "rowspans"
+                text run at (1,65) width 36: "and a"
+                text run at (1,81) width 41: "middle"
+                text run at (1,97) width 24: "cell."
+            RenderTableCell {TD} at (72,114) size 6x18 [bgcolor=#CCCCCC] [border: (1px inset #808080)] [r=0 c=2 rs=3 cs=1]
+              RenderText {#text} at (1,1) size 4x16
+                text run at (1,1) width 4: " "
+          RenderTableRow {TR} at (0,114) size 78x66
+            RenderTableCell {TD} at (6,114) size 66x66 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 54x64
+                text run at (1,1) width 52: "This cell"
+                text run at (1,17) width 10: "is"
+                text run at (1,33) width 54: "coloured"
+                text run at (1,49) width 28: "blue."
+          RenderTableRow {TR} at (0,180) size 78x66 [bgcolor=#FF0000]
+            RenderTableCell {TD} at (6,180) size 66x66 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 54x64
+                text run at (1,1) width 54: "This row"
+                text run at (1,17) width 10: "is"
+                text run at (1,33) width 54: "coloured"
+                text run at (1,49) width 24: "red."

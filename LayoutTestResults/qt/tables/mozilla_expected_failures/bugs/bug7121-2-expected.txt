@@ -1,0 +1,20 @@
+layer at (0,0) size 96x74
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x74
+  RenderBlock {HTML} at (0,0) size 96x74
+    RenderBody {BODY} at (8,8) size 80x58
+      RenderTable {TABLE} at (0,0) size 80x58
+        RenderTableSection {TBODY} at (0,0) size 80x58
+          RenderTableRow {TR} at (0,2) size 80x54
+            RenderTableCell {TD} at (2,20) size 3x18 [bgcolor=#000000] [r=0 c=0 rs=1 cs=15]
+              RenderBR {BR} at (1,1) size 0x16
+            RenderTableCell {TD} at (7,2) size 67x54 [bgcolor=#000000] [r=0 c=15 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 62x51 [color=#AAAAAA]
+                RenderText {#text} at (1,1) size 62x51
+                  text run at (1,1) width 59: "Copyright \x{A9}"
+                  text run at (1,14) width 52: "1998-1999"
+                  text run at (1,27) width 50: "The Mozilla"
+                  text run at (1,40) width 62: "Organization."
+              RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (76,20) size 2x18 [bgcolor=#000000] [r=0 c=16 rs=1 cs=15]
+              RenderBR {BR} at (1,1) size 0x16

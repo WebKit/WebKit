@@ -1,0 +1,23 @@
+layer at (0,0) size 289x101
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 289x101
+  RenderBlock {HTML} at (0,0) size 96x101
+    RenderBody {BODY} at (8,8) size 80x85 [bgcolor=#FFFFFF]
+      RenderTable {TABLE} at (0,0) size 281x85 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 279x83
+          RenderTableRow {TR} at (0,2) size 279x4
+            RenderTableCell {TD} at (2,6) size 198x49 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderImage {IMG} at (2,2) size 194x45
+            RenderTableCell {TD} at (202,2) size 75x4 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+          RenderTableRow {TR} at (0,8) size 279x52
+            RenderTableCell {TD} at (202,8) size 75x52 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 71x16
+                text run at (2,2) width 71: "Information"
+              RenderImage {IMG} at (2,24) size 4x7
+              RenderText {#text} at (6,18) size 56x32
+                text run at (6,18) width 4: " "
+                text run at (10,18) width 48: "Student"
+                text run at (2,34) width 23: "Life"
+          RenderTableRow {TR} at (0,62) size 279x19
+            RenderTableCell {TD} at (2,62) size 275x19 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=2]
+              RenderBlock {HR} at (2,9) size 271x1 [border: (1px inset #000000) none (1px inset #000000)]

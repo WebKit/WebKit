@@ -1,0 +1,39 @@
+layer at (0,0) size 96x196
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x196
+  RenderBlock {HTML} at (0,0) size 96x196
+    RenderBody {BODY} at (8,8) size 80x180 [bgcolor=#C0C0C0]
+      RenderTable {TABLE} at (0,0) size 80x82 [border: (5px outset #808080)]
+        RenderTableSection {TBODY} at (5,5) size 70x72
+          RenderTableRow {TR} at (0,2) size 70x68
+            RenderTableCell {TD} at (2,19) size 26x34 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 22x30 [border: (3px outset #808080)]
+                RenderTableSection {TBODY} at (3,3) size 16x24
+                  RenderTableRow {TR} at (0,2) size 16x20
+                    RenderTableCell {TD} at (2,2) size 12x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 4x16
+                        text run at (2,2) width 4: " "
+            RenderTableCell {TD} at (30,2) size 38x68 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 34x64
+                text run at (2,2) width 27: "This"
+                text run at (2,18) width 10: "is"
+                text run at (2,34) width 34: "some"
+                text run at (2,50) width 23: "text"
+      RenderBlock (anonymous) at (0,82) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderTable {TABLE} at (0,98) size 80x82 [border: (5px outset #808080)]
+        RenderTableSection {TBODY} at (5,5) size 70x72
+          RenderTableRow {TR} at (0,2) size 70x68
+            RenderTableCell {TD} at (2,19) size 26x34 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 22x30 [border: (3px outset #808080)]
+                RenderTableSection {TBODY} at (3,3) size 16x24
+                  RenderTableRow {TR} at (0,2) size 16x20
+                    RenderTableCell {TD} at (2,2) size 12x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 4x16
+                        text run at (2,2) width 4: " "
+            RenderTableCell {TD} at (30,2) size 38x68 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 34x64
+                text run at (2,2) width 27: "This"
+                text run at (2,18) width 10: "is"
+                text run at (2,34) width 34: "some"
+                text run at (2,50) width 23: "text"

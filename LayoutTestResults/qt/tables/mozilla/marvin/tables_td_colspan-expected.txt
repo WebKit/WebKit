@@ -1,0 +1,49 @@
+layer at (0,0) size 215x256
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 215x256
+  RenderBlock {HTML} at (0,0) size 96x256
+    RenderBody {BODY} at (8,8) size 80x240
+      RenderBlock (anonymous) at (0,0) size 80x160
+        RenderText {#text} at (0,0) size 77x144
+          text run at (0,0) width 61: "This table"
+          text run at (0,16) width 41: "uses a"
+          text run at (0,32) width 66: "COLSPAN"
+          text run at (0,48) width 65: "attribute in"
+          text run at (0,64) width 70: "the TD tag."
+          text run at (0,80) width 25: "The"
+          text run at (0,96) width 66: "COLSPAN"
+          text run at (0,112) width 77: "attribute has"
+          text run at (0,128) width 76: "a value of 6."
+        RenderBR {BR} at (76,141) size 0x0
+        RenderBR {BR} at (0,144) size 0x16
+      RenderTable {TABLE} at (0,160) size 207x80 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 205x78
+          RenderTableRow {TR} at (0,2) size 205x36
+            RenderTableCell {TD} at (2,2) size 201x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=6]
+              RenderText {#text} at (2,2) size 188x32
+                text run at (2,2) width 188: "Netscape Communicator 4.0.6"
+                text run at (2,18) width 59: "Platforms"
+          RenderTableRow {TR} at (0,40) size 205x36
+            RenderTableCell {TD} at (2,40) size 31x36 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 27x32
+                text run at (2,2) width 27: "Mac"
+                text run at (2,18) width 23: "68k"
+            RenderTableCell {TD} at (35,40) size 44x36 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 40x32
+                text run at (2,2) width 40: "Power"
+                text run at (2,18) width 27: "Mac"
+            RenderTableCell {TD} at (81,40) size 28x36 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 24x32
+                text run at (2,2) width 24: "Win"
+                text run at (2,18) width 19: "3.1"
+            RenderTableCell {TD} at (111,40) size 28x36 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 24x32
+                text run at (2,2) width 24: "Win"
+                text run at (2,18) width 16: "95"
+            RenderTableCell {TD} at (141,40) size 28x36 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 24x32
+                text run at (2,2) width 24: "Win"
+                text run at (2,18) width 16: "98"
+            RenderTableCell {TD} at (171,48) size 32x20 [border: (1px inset #808080)] [r=1 c=5 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 28x16
+                text run at (2,2) width 28: "Unix"

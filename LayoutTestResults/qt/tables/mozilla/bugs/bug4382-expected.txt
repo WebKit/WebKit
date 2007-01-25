@@ -1,0 +1,40 @@
+layer at (0,0) size 196x266
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 196x266
+  RenderBlock {HTML} at (0,0) size 96x266
+    RenderBody {BODY} at (8,8) size 80x244
+      RenderBlock (anonymous) at (0,0) size 80x64
+        RenderText {#text} at (0,0) size 74x64
+          text run at (0,0) width 66: "The select"
+          text run at (0,16) width 65: "should not"
+          text run at (0,32) width 46: "contain"
+          text run at (0,48) width 74: "blank items "
+        RenderBR {BR} at (74,61) size 0x0
+      RenderBlock {FORM} at (0,64) size 80x64
+        RenderInline {B} at (0,0) size 49x16
+          RenderText {#text} at (0,0) size 49x16
+            text run at (0,0) width 49: "Search"
+        RenderText {#text} at (49,0) size 4x16
+          text run at (49,0) width 4: " "
+        RenderTextControl {INPUT} at (2,18) size 152x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (0,0) size 0x0
+        RenderMenuList {SELECT} at (2,44) size 56x18 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 54x16
+            RenderText at (0,0) size 38x16
+              text run at (0,0) width 38: "Excite"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,142) size 80x80
+        RenderBR {BR} at (0,0) size 0x16
+        RenderText {#text} at (0,16) size 74x64
+          text run at (0,16) width 66: "The select"
+          text run at (0,32) width 65: "should not"
+          text run at (0,48) width 46: "contain"
+          text run at (0,64) width 74: "blank items "
+        RenderBR {BR} at (74,77) size 0x0
+      RenderBlock {FORM} at (0,222) size 80x22
+        RenderMenuList {SELECT} at (2,2) size 184x18 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 182x16
+            RenderText at (0,0) size 65x16
+              text run at (0,0) width 65: "Quick Link"
+layer at (13,93) size 146x16
+  RenderBlock {DIV} at (3,3) size 146x16

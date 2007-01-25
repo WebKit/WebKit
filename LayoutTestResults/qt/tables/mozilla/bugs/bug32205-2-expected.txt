@@ -1,0 +1,267 @@
+layer at (0,0) size 140x3685
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 140x3685
+  RenderBlock {HTML} at (0,0) size 96x3685
+    RenderBody {BODY} at (8,8) size 80x3669 [bgcolor=#FFFFFF]
+      RenderBlock {P} at (0,0) size 80x112
+        RenderText {#text} at (0,0) size 74x112
+          text run at (0,0) width 53: "This is a"
+          text run at (0,16) width 40: "simple"
+          text run at (0,32) width 69: "example of"
+          text run at (0,48) width 73: "table height"
+          text run at (0,64) width 57: "problems"
+          text run at (0,80) width 67: "with only a"
+          text run at (0,96) width 74: "single table."
+      RenderBlock {P} at (0,126) size 80x416
+        RenderText {#text} at (0,0) size 79x416
+          text run at (0,0) width 25: "The"
+          text run at (0,16) width 58: "indention"
+          text run at (0,32) width 59: "here is to"
+          text run at (0,48) width 56: "specify a"
+          text run at (0,64) width 59: "table with"
+          text run at (0,80) width 59: "two rows."
+          text run at (0,96) width 59: "The table"
+          text run at (0,112) width 69: "has a fixed"
+          text run at (0,128) width 79: "overall width"
+          text run at (0,144) width 74: "(200 for the"
+          text run at (0,160) width 58: "example)"
+          text run at (0,176) width 50: "and two"
+          text run at (0,192) width 62: "rows. The"
+          text run at (0,208) width 78: "first row 'just"
+          text run at (0,224) width 27: "high"
+          text run at (0,240) width 54: "enough' "
+          text run at (54,240) width 17: "for"
+          text run at (0,256) width 63: "a title line,"
+          text run at (0,272) width 48: "and the"
+          text run at (0,288) width 46: "second"
+          text run at (0,304) width 77: "contains the"
+          text run at (0,320) width 27: "rest."
+          text run at (0,336) width 54: "Creating"
+          text run at (0,352) width 75: "such a table"
+          text run at (0,368) width 14: "is "
+          text run at (14,368) width 56: "hamperd"
+          text run at (0,384) width 76: "by a number"
+          text run at (0,400) width 45: "of bugs"
+      RenderBlock {OL} at (0,556) size 80x768
+        RenderListItem {LI} at (40,0) size 40x208
+          RenderListMarker at (-19,0) size 15x16: "1"
+          RenderText {#text} at (0,0) size 56x208
+            text run at (0,0) width 20: "If a"
+            text run at (0,16) width 39: "height"
+            text run at (0,32) width 10: "is"
+            text run at (0,48) width 56: "specified"
+            text run at (0,64) width 17: "for"
+            text run at (0,80) width 26: "only"
+            text run at (0,96) width 24: "one"
+            text run at (0,112) width 23: "row"
+            text run at (0,128) width 25: "(not"
+            text run at (0,144) width 32: "both)"
+            text run at (0,160) width 39: "then it"
+            text run at (0,176) width 38: "will be"
+            text run at (0,192) width 48: "ignored"
+        RenderListItem {LI} at (40,208) size 40x256
+          RenderListMarker at (-19,0) size 15x16: "2"
+          RenderText {#text} at (0,0) size 66x256
+            text run at (0,0) width 8: "If"
+            text run at (0,16) width 56: "specified"
+            text run at (0,32) width 46: "heights"
+            text run at (0,48) width 21: "are"
+            text run at (0,64) width 66: "insufficient"
+            text run at (0,80) width 57: "(because"
+            text run at (0,96) width 20: "the"
+            text run at (0,112) width 47: "content"
+            text run at (0,128) width 34: "is too"
+            text run at (0,144) width 37: "large)"
+            text run at (0,160) width 28: "then"
+            text run at (0,176) width 20: "the"
+            text run at (0,192) width 36: "entire"
+            text run at (0,208) width 30: "table"
+            text run at (0,224) width 38: "will be"
+            text run at (0,240) width 66: "expanded."
+        RenderListItem {LI} at (40,464) size 40x304
+          RenderListMarker at (-19,0) size 15x16: "3"
+          RenderText {#text} at (0,0) size 73x304
+            text run at (0,0) width 73: "Percentage"
+            text run at (0,16) width 46: "heights"
+            text run at (0,32) width 45: "appear"
+            text run at (0,48) width 12: "to"
+            text run at (0,64) width 39: "simply"
+            text run at (0,80) width 15: "be"
+            text run at (0,96) width 63: "translated"
+            text run at (0,112) width 23: "into"
+            text run at (0,128) width 29: "pixel"
+            text run at (0,144) width 46: "heights"
+            text run at (0,160) width 29: "prior"
+            text run at (0,176) width 12: "to"
+            text run at (0,192) width 33: "other"
+            text run at (0,208) width 72: "processing,"
+            text run at (0,224) width 15: "so"
+            text run at (0,240) width 29: "offer"
+            text run at (0,256) width 16: "no"
+            text run at (0,272) width 61: "additional"
+            text run at (0,288) width 55: "solutions"
+      RenderBlock {P} at (0,1338) size 80x144
+        RenderText {#text} at (0,0) size 69x144
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 55: "following"
+          text run at (0,32) width 69: "table ought"
+          text run at (0,48) width 66: "to give the"
+          text run at (0,64) width 47: "desired"
+          text run at (0,80) width 41: "results"
+          text run at (0,96) width 63: "(small title"
+          text run at (0,112) width 61: "line, large"
+          text run at (0,128) width 35: "body)"
+      RenderBlock {P} at (0,1496) size 80x48
+        RenderText {#text} at (0,0) size 66x48
+          text run at (0,0) width 22: "It is"
+          text run at (0,16) width 66: "specifiable"
+          text run at (0,32) width 15: "as"
+      RenderBlock {BLOCKQUOTE} at (40,1558) size 0x416
+        RenderBlock {P} at (0,0) size 0x416
+          RenderText {#text} at (0,0) size 42x48
+            text run at (0,0) width 35: "Table"
+            text run at (0,16) width 42: "height:"
+            text run at (0,32) width 24: "200"
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,48) size 28x96
+            text run at (0,48) width 27: "First"
+            text run at (0,64) width 28: "Row"
+            text run at (0,80) width 3: ":"
+            text run at (0,96) width 8: "1"
+            text run at (0,112) width 13: "or"
+            text run at (0,128) width 20: "1%"
+          RenderInline {I} at (0,0) size 57x80
+            RenderText {#text} at (0,144) size 57x80
+              text run at (0,144) width 22: "(i.e."
+              text run at (0,160) width 47: "expand"
+              text run at (0,176) width 12: "to"
+              text run at (0,192) width 54: "minimum"
+              text run at (0,208) width 57: "required)"
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,224) size 71x64
+            text run at (0,224) width 48: "Second"
+            text run at (0,240) width 28: "Row"
+            text run at (0,256) width 3: ":"
+            text run at (0,272) width 71: "unspecified"
+          RenderInline {I} at (0,0) size 92x128
+            RenderText {#text} at (0,288) size 92x128
+              text run at (0,288) width 22: "(i.e."
+              text run at (0,304) width 30: "table"
+              text run at (0,320) width 39: "height"
+              text run at (0,336) width 4: "-"
+              text run at (0,352) width 39: "height"
+              text run at (0,368) width 12: "of"
+              text run at (0,384) width 33: "other"
+              text run at (0,400) width 92: "rows+borders)"
+          RenderText {#text} at (0,0) size 0x0
+      RenderTable {TABLE} at (0,1988) size 80x200 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 78x198
+          RenderTableRow {TR} at (0,2) size 78x20
+            RenderTableCell {TD} at (2,2) size 74x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 48x16
+                text run at (2,2) width 48: "title line"
+          RenderTableRow {TR} at (0,24) size 78x172
+            RenderTableCell {TD} at (2,92) size 74x36 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 40x32
+                text run at (2,2) width 40: "rest of"
+                text run at (2,18) width 38: "space"
+      RenderBlock {P} at (0,2202) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 77: "This doesn't"
+          text run at (0,16) width 30: "work"
+          text run at (0,32) width 68: "because of"
+          text run at (0,48) width 69: "the 1st bug"
+          text run at (0,64) width 41: "above."
+      RenderBlock {P} at (0,2296) size 80x96
+        RenderText {#text} at (0,0) size 79x96
+          text run at (0,0) width 59: "A second"
+          text run at (0,16) width 77: "attempt is to"
+          text run at (0,32) width 44: "specify"
+          text run at (0,48) width 74: "heights that"
+          text run at (0,64) width 79: "do add up to"
+          text run at (0,80) width 54: "the total."
+      RenderBlock {P} at (0,2406) size 80x80
+        RenderText {#text} at (0,0) size 74x32
+          text run at (0,0) width 35: "Table"
+          text run at (0,16) width 74: "height: 200 "
+        RenderBR {BR} at (74,29) size 0x0
+        RenderText {#text} at (0,32) size 78x16
+          text run at (0,32) width 78: "First Row : 1"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (0,48) size 80x32
+          text run at (0,48) width 80: "Second Row"
+          text run at (0,64) width 31: ": 199"
+      RenderTable {TABLE} at (0,2500) size 80x227 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 78x225
+          RenderTableRow {TR} at (0,2) size 78x20
+            RenderTableCell {TD} at (2,2) size 74x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 48x16
+                text run at (2,2) width 48: "title line"
+          RenderTableRow {TR} at (0,24) size 78x199
+            RenderTableCell {TD} at (2,105) size 74x36 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 40x32
+                text run at (2,2) width 40: "rest of"
+                text run at (2,18) width 38: "space"
+      RenderBlock {P} at (0,2741) size 80x160
+        RenderText {#text} at (0,0) size 74x160
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 74: "appears ok,"
+          text run at (0,32) width 55: "but close"
+          text run at (0,48) width 64: "inspection"
+          text run at (0,64) width 56: "will show"
+          text run at (0,80) width 48: "that the"
+          text run at (0,96) width 74: "table is now"
+          text run at (0,112) width 36: ">200 "
+          text run at (36,112) width 36: "pixels"
+          text run at (0,128) width 57: "high (2rd"
+          text run at (0,144) width 30: "bug)."
+      RenderBlock {P} at (0,2915) size 80x128
+        RenderText {#text} at (0,0) size 71x128
+          text run at (0,0) width 41: "A third"
+          text run at (0,16) width 47: "attempt"
+          text run at (0,32) width 57: "using 1%"
+          text run at (0,48) width 56: "and 99%"
+          text run at (0,64) width 33: "gives"
+          text run at (0,80) width 52: "identical"
+          text run at (0,96) width 71: "results (3rd"
+          text run at (0,112) width 30: "bug)."
+      RenderBlock {P} at (0,3057) size 80x144
+        RenderText {#text} at (0,0) size 80x144
+          text run at (0,0) width 57: "A related"
+          text run at (0,16) width 60: "bug is the"
+          text run at (0,32) width 79: "the height of"
+          text run at (0,48) width 77: "a row that is"
+          text run at (0,64) width 80: "not specified"
+          text run at (0,80) width 53: "explicitly"
+          text run at (0,96) width 62: "cannot be"
+          text run at (0,112) width 66: "used by its"
+          text run at (0,128) width 53: "children."
+      RenderBlock {P} at (0,3215) size 80x240
+        RenderText {#text} at (0,0) size 81x240
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 79: "example is a"
+          text run at (0,32) width 46: "table of"
+          text run at (0,48) width 67: "height 200"
+          text run at (0,64) width 78: "with a single"
+          text run at (0,80) width 39: "row of"
+          text run at (0,96) width 71: "unspecified"
+          text run at (0,112) width 46: "height. "
+          text run at (46,112) width 27: "This"
+          text run at (0,128) width 65: "contains a"
+          text run at (0,144) width 68: "DIV whose"
+          text run at (0,160) width 43: "style is"
+          text run at (0,176) width 81: "height:100%."
+          text run at (0,192) width 80: "It ought to fill"
+          text run at (0,208) width 60: "the entire"
+          text run at (0,224) width 33: "table."
+      RenderTable {TABLE} at (0,3469) size 81x200 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 79x198
+          RenderTableRow {TR} at (0,2) size 79x194
+            RenderTableCell {TD} at (2,2) size 75x194 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (2,2) size 71x190 [bgcolor=#FF0000]
+                RenderText {#text} at (0,0) size 71x80
+                  text run at (0,0) width 71: "A 100% div"
+                  text run at (0,16) width 49: "inside a"
+                  text run at (0,32) width 39: "row of"
+                  text run at (0,48) width 71: "unspecified"
+                  text run at (0,64) width 39: "height"
