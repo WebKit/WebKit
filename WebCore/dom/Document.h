@@ -64,6 +64,7 @@ namespace WebCore {
     class HTMLElement;
     class HTMLFormElement;
     class HTMLGenericFormElement;
+    class HTMLHeadElement;
     class HTMLImageLoader;
     class HTMLInputElement;
     class HTMLMapElement;
@@ -535,7 +536,7 @@ public:
     HTMLMapElement* getImageMap(const String& URL) const;
 
     HTMLElement* body();
-    HTMLElement* head();
+    HTMLHeadElement* head();
 
     String toString() const;
     

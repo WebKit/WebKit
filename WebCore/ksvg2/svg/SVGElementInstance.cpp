@@ -45,23 +45,18 @@ SVGElementInstance::SVGElementInstance(PassRefPtr<SVGUseElement> useElement, Pas
     ASSERT(m_clonedElement);
 
     // Register as instance for passed element.
-    SVGDocumentExtensions* extensions = (m_element->document() ? m_element->document()->accessSVGExtensions() : 0);
-    if (extensions)
-        extensions->mapInstanceToElement(this, m_element.get());
+    if (Document* document = m_element->document())
+        document->accessSVGExtensions()->mapInstanceToElement(this, m_element.get());
 }
 
 SVGElementInstance::~SVGElementInstance()
 {
-    RefPtr<SVGElementInstance> child = m_firstChild;
-    while (child) {
+    for (RefPtr<SVGElementInstance> child = m_firstChild; child; child = child->m_nextSibling)
         child->setParent(0);
-        child = child->m_nextSibling;
-    }
 
     // Deregister as instance for passed element.
-    SVGDocumentExtensions* extensions = (m_element->document() ? m_element->document()->accessSVGExtensions() : 0);
-    if (extensions)
-        extensions->removeInstanceMapping(this, m_element.get());
+    if (Document* document = m_element->document())
+        document->accessSVGExtensions()->removeInstanceMapping(this, m_element.get());
 }
 
 SVGElement* SVGElementInstance::clonedElement() const

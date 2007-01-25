@@ -1,3 +1,16 @@
+2007-01-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - a couple minor tweaks to recently-changed things
+
+        * dom/Document.h: Use HTMLHeadElement as type for the head function.
+        * dom/Document.cpp: (WebCore::Document::head):
+
+        * ksvg2/svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::~SVGElementInstance): Change loop to
+        a for loop and use a local variable for document.
+
 2007-01-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adele.
