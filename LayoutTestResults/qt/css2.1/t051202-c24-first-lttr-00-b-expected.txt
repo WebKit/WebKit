@@ -1,0 +1,119 @@
+layer at (0,0) size 96x1054
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x1054
+  RenderBlock {HTML} at (0,0) size 96x1054
+    RenderBody {BODY} at (8,14) size 80x1026 [color=#0000FF]
+      RenderBlock {P} at (0,0) size 80x240
+        RenderInline (generated) at (0,0) size 9x16 [color=#008000]
+          RenderText {#text} at (0,0) size 9x16
+            text run at (0,0) width 9: "T"
+        RenderText {#text} at (9,0) size 20x16
+          text run at (9,0) width 20: "he "
+        RenderInline {STRONG} at (0,0) size 56x32
+          RenderText {#text} at (29,0) size 56x32
+            text run at (29,0) width 27: "first"
+            text run at (0,16) width 36: "letter"
+        RenderText {#text} at (36,16) size 78x80
+          text run at (36,16) width 42: " of this"
+          text run at (0,32) width 69: "paragraph,"
+          text run at (0,48) width 54: "and only"
+          text run at (0,64) width 28: "that "
+          text run at (28,64) width 27: "one,"
+          text run at (0,80) width 60: "should be"
+        RenderInline {STRONG} at (0,0) size 40x16
+          RenderText {#text} at (0,96) size 40x16
+            text run at (0,96) width 40: "green"
+        RenderText {#text} at (40,96) size 75x144
+          text run at (40,96) width 15: ". If"
+          text run at (0,112) width 72: "this precise"
+          text run at (0,128) width 75: "combination"
+          text run at (0,144) width 55: "does not"
+          text run at (0,160) width 69: "occur, then"
+          text run at (0,176) width 51: "the user"
+          text run at (0,192) width 63: "agent has"
+          text run at (0,208) width 60: "failed this"
+          text run at (0,224) width 26: "test."
+      RenderBlock {P} at (0,254) size 80x304
+        RenderInline (generated) at (0,0) size 17x30 [color=#008000]
+          RenderText {#text} at (0,1) size 17x30
+            text run at (0,1) width 17: "T"
+        RenderText {#text} at (17,14) size 20x16
+          text run at (17,14) width 20: "he "
+        RenderInline {STRONG} at (0,0) size 64x34
+          RenderText {#text} at (37,14) size 64x34
+            text run at (37,14) width 27: "first"
+            text run at (0,32) width 36: "letter"
+        RenderText {#text} at (36,32) size 78x96
+          text run at (36,32) width 42: " of this"
+          text run at (0,48) width 69: "paragraph,"
+          text run at (0,64) width 54: "and only"
+          text run at (0,80) width 28: "that "
+          text run at (28,80) width 27: "one,"
+          text run at (0,96) width 75: "should be in"
+          text run at (0,112) width 12: "a "
+        RenderInline {STRONG} at (0,0) size 41x16
+          RenderText {#text} at (12,112) size 41x16
+            text run at (12,112) width 41: "larger"
+        RenderText {#text} at (0,128) size 75x32
+          text run at (0,128) width 75: "font size, as"
+          text run at (0,144) width 43: "well as"
+        RenderInline {STRONG} at (0,0) size 40x16
+          RenderText {#text} at (0,160) size 40x16
+            text run at (0,160) width 40: "green"
+        RenderText {#text} at (40,160) size 75x144
+          text run at (40,160) width 15: ". If"
+          text run at (0,176) width 72: "this precise"
+          text run at (0,192) width 75: "combination"
+          text run at (0,208) width 55: "does not"
+          text run at (0,224) width 41: "occur, "
+          text run at (41,224) width 28: "then"
+          text run at (0,240) width 51: "the user"
+          text run at (0,256) width 63: "agent has"
+          text run at (0,272) width 60: "failed this"
+          text run at (0,288) width 26: "test."
+      RenderBlock {P} at (0,572) size 80x454
+        RenderInline (generated) at (0,0) size 47x51 [color=#008000]
+          RenderText {#text} at (0,1) size 47x51
+            text run at (0,1) width 47: "\"T"
+        RenderText {#text} at (47,33) size 16x16
+          text run at (47,33) width 16: "he"
+        RenderInline {STRONG} at (0,0) size 74x32
+          RenderText {#text} at (0,54) size 74x32
+            text run at (0,54) width 55: "first two"
+            text run at (0,70) width 74: "characters"
+        RenderText {#text} at (0,86) size 75x128
+          text run at (0,86) width 37: "in this"
+          text run at (0,102) width 66: "paragraph"
+          text run at (0,118) width 17: "(a "
+          text run at (17,118) width 45: "double-"
+          text run at (0,134) width 70: "quote mark"
+          text run at (0,150) width 36: "and a"
+          text run at (0,166) width 65: "capital 'T')"
+          text run at (0,182) width 75: "should be in"
+          text run at (0,198) width 12: "a "
+        RenderInline {STRONG} at (0,0) size 50x32
+          RenderText {#text} at (12,198) size 50x32
+            text run at (12,198) width 38: "much"
+            text run at (0,214) width 41: "larger"
+        RenderText {#text} at (41,214) size 69x96
+          text run at (41,214) width 28: " font"
+          text run at (0,230) width 57: "size than"
+          text run at (0,246) width 64: "the rest of"
+          text run at (0,262) width 20: "the"
+          text run at (0,278) width 69: "paragraph,"
+          text run at (0,294) width 28: "and "
+        RenderInline {STRONG} at (0,0) size 40x16
+          RenderText {#text} at (28,294) size 40x16
+            text run at (28,294) width 40: "green"
+        RenderText {#text} at (68,294) size 75x160
+          text run at (68,294) width 3: "."
+          text run at (0,310) width 34: "If this"
+          text run at (0,326) width 46: "precise"
+          text run at (0,342) width 75: "combination"
+          text run at (0,358) width 55: "does not"
+          text run at (0,374) width 41: "occur, "
+          text run at (41,374) width 28: "then"
+          text run at (0,390) width 51: "the user"
+          text run at (0,406) width 63: "agent has"
+          text run at (0,422) width 60: "failed this"
+          text run at (0,438) width 26: "test."

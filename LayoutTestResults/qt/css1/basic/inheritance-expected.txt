@@ -1,0 +1,255 @@
+layer at (0,0) size 144x2014
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 144x2014
+  RenderBlock {HTML} at (0,0) size 96x2014
+    RenderBody {BODY} at (8,8) size 80x1998 [color=#008000] [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 58: "The style"
+          text run at (0,16) width 77: "declarations"
+          text run at (0,32) width 74: "which apply"
+          text run at (0,48) width 63: "to the text"
+          text run at (0,64) width 64: "below are:"
+      RenderBlock {PRE} at (0,94) size 80x112
+        RenderText {#text} at (0,0) size 136x112
+          text run at (0,0) width 80: "BODY {color: green;}"
+          text run at (80,0) width 0: " "
+          text run at (0,16) width 68: "H3 {color: blue;}"
+          text run at (68,16) width 0: " "
+          text run at (0,32) width 76: "EM {color: purple;}"
+          text run at (76,32) width 0: " "
+          text run at (0,48) width 104: ".one {font-style: italic;}"
+          text run at (104,48) width 0: " "
+          text run at (0,64) width 136: ".two {text-decoration: underline;}"
+          text run at (136,64) width 0: " "
+          text run at (0,80) width 76: "#two {color: navy;}"
+          text run at (76,80) width 0: " "
+          text run at (0,96) width 92: ".three {color: purple;}"
+          text run at (92,96) width 0: " "
+      RenderBlock {HR} at (0,220) size 80x2 [border: (1px inset #008000)]
+      RenderBlock {H3} at (0,238) size 80x108 [color=#0000FF]
+        RenderText {#text} at (0,0) size 70x72
+          text run at (0,0) width 33: "This"
+          text run at (0,18) width 70: "sentence"
+          text run at (0,36) width 53: "should"
+          text run at (0,54) width 45: "show "
+        RenderInline {STRONG} at (0,0) size 33x18
+          RenderText {#text} at (45,54) size 33x18
+            text run at (45,54) width 33: "blue"
+        RenderText {#text} at (0,72) size 29x18
+          text run at (0,72) width 29: "and"
+        RenderInline {EM} at (0,0) size 49x18 [color=#800080]
+          RenderText {#text} at (0,90) size 49x18
+            text run at (0,90) width 49: "purple"
+        RenderText {#text} at (49,90) size 4x18
+          text run at (49,90) width 4: "."
+      RenderBlock {H3} at (0,362) size 80x90 [color=#0000FF]
+        RenderText {#text} at (0,0) size 76x54
+          text run at (0,0) width 33: "This"
+          text run at (0,18) width 70: "sentence"
+          text run at (0,36) width 76: "should be"
+        RenderInline {SPAN} at (0,0) size 33x18
+          RenderText {#text} at (0,54) size 33x18
+            text run at (0,54) width 33: "blue"
+        RenderText {#text} at (0,72) size 90x18
+          text run at (0,72) width 90: "throughout."
+      RenderBlock {P} at (0,468) size 80x144
+        RenderText {#text} at (0,0) size 72x64
+          text run at (0,0) width 72: "This should"
+          text run at (0,16) width 56: "be green"
+          text run at (0,32) width 63: "except for"
+          text run at (0,48) width 20: "the"
+        RenderInline {EM} at (0,0) size 76x32 [color=#800080]
+          RenderText {#text} at (0,64) size 76x32
+            text run at (0,64) width 76: "emphasized"
+            text run at (0,80) width 38: "words"
+        RenderText {#text} at (38,80) size 60x64
+          text run at (38,80) width 3: ","
+          text run at (0,96) width 36: "which"
+          text run at (0,112) width 60: "should be"
+          text run at (0,128) width 42: "purple."
+      RenderBlock {H3} at (0,628) size 80x72 [color=#0000FF]
+        RenderText {#text} at (0,0) size 86x72
+          text run at (0,0) width 33: "This"
+          text run at (0,18) width 76: "should be"
+          text run at (0,36) width 66: "blue and"
+          text run at (0,54) width 86: "underlined."
+      RenderBlock {P} at (0,716) size 80x144
+        RenderText {#text} at (0,0) size 69x80
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 58: "sentence"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 69: "underlined,"
+          text run at (0,64) width 59: "including "
+        RenderInline {TT} at (0,0) size 75x32
+          RenderText {#text} at (59,64) size 75x32
+            text run at (59,64) width 16: "this"
+            text run at (0,80) width 16: "part"
+        RenderText {#text} at (16,80) size 7x16
+          text run at (16,80) width 7: ", "
+        RenderInline {I} at (0,0) size 51x16
+          RenderText {#text} at (23,80) size 51x16
+            text run at (23,80) width 51: "this part"
+        RenderText {#text} at (74,80) size 3x16
+          text run at (74,80) width 3: ","
+        RenderInline {EM} at (0,0) size 51x16 [color=#800080]
+          RenderText {#text} at (0,96) size 51x16
+            text run at (0,96) width 51: "this part"
+        RenderText {#text} at (51,96) size 54x32
+          text run at (51,96) width 3: ","
+          text run at (0,112) width 28: "and "
+        RenderInline {STRONG} at (0,0) size 54x32
+          RenderText {#text} at (28,112) size 54x32
+            text run at (28,112) width 26: "this"
+            text run at (0,128) width 28: "part"
+        RenderText {#text} at (28,128) size 3x16
+          text run at (28,128) width 3: "."
+      RenderBlock {P} at (0,874) size 80x144 [color=#000080]
+        RenderText {#text} at (0,0) size 71x128
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 58: "sentence"
+          text run at (0,32) width 71: "should also"
+          text run at (0,48) width 15: "be"
+          text run at (0,64) width 69: "underlined,"
+          text run at (0,80) width 62: "as well as"
+          text run at (0,96) width 57: "dark blue"
+          text run at (0,112) width 43: "(navy),"
+        RenderInline {TT} at (0,0) size 76x16
+          RenderText {#text} at (0,128) size 76x16
+            text run at (0,128) width 76: "including this part"
+        RenderText {#text} at (76,128) size 3x16
+          text run at (76,128) width 3: "."
+      RenderBlock {P} at (0,1032) size 80x144 [color=#800080]
+        RenderText {#text} at (0,0) size 60x80
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 58: "sentence"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 42: "purple,"
+          text run at (0,64) width 55: "including"
+        RenderInline {STRONG} at (0,0) size 58x16
+          RenderText {#text} at (0,80) size 58x16
+            text run at (0,80) width 58: "this part"
+        RenderText {#text} at (0,96) size 28x16
+          text run at (0,96) width 28: "and "
+        RenderInline {SPAN} at (0,0) size 79x48
+          RenderText {#text} at (28,96) size 79x48
+            text run at (28,96) width 51: "this part"
+            text run at (0,112) width 55: "(which is"
+            text run at (0,128) width 60: "spanned)"
+        RenderText {#text} at (60,128) size 3x16
+          text run at (60,128) width 3: "."
+      RenderTable {TABLE} at (0,1190) size 112x808 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 110x806
+          RenderTableRow {TR} at (0,0) size 110x40
+            RenderTableCell {TD} at (0,0) size 110x40 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 100x32
+                RenderText {#text} at (4,4) size 100x32
+                  text run at (4,4) width 100: "TABLE Testing"
+                  text run at (4,20) width 53: "Section"
+          RenderTableRow {TR} at (0,40) size 110x766
+            RenderTableCell {TD} at (0,411) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x16
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,40) size 98x766 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {H3} at (4,4) size 90x90 [color=#0000FF]
+                RenderText {#text} at (0,0) size 70x72
+                  text run at (0,0) width 33: "This"
+                  text run at (0,18) width 70: "sentence"
+                  text run at (0,36) width 53: "should"
+                  text run at (0,54) width 45: "show "
+                RenderInline {STRONG} at (0,0) size 33x18
+                  RenderText {#text} at (45,54) size 33x18
+                    text run at (45,54) width 33: "blue"
+                RenderText {#text} at (0,72) size 33x18
+                  text run at (0,72) width 33: "and "
+                RenderInline {EM} at (0,0) size 49x18 [color=#800080]
+                  RenderText {#text} at (33,72) size 49x18
+                    text run at (33,72) width 49: "purple"
+                RenderText {#text} at (82,72) size 4x18
+                  text run at (82,72) width 4: "."
+              RenderBlock {H3} at (4,110) size 90x90 [color=#0000FF]
+                RenderText {#text} at (0,0) size 76x54
+                  text run at (0,0) width 33: "This"
+                  text run at (0,18) width 70: "sentence"
+                  text run at (0,36) width 76: "should be"
+                RenderInline {SPAN} at (0,0) size 33x18
+                  RenderText {#text} at (0,54) size 33x18
+                    text run at (0,54) width 33: "blue"
+                RenderText {#text} at (0,72) size 90x18
+                  text run at (0,72) width 90: "throughout."
+              RenderBlock {P} at (4,216) size 90x112
+                RenderText {#text} at (0,0) size 87x48
+                  text run at (0,0) width 72: "This should"
+                  text run at (0,16) width 56: "be green"
+                  text run at (0,32) width 87: "except for the"
+                RenderInline {EM} at (0,0) size 76x32 [color=#800080]
+                  RenderText {#text} at (0,48) size 76x32
+                    text run at (0,48) width 76: "emphasized"
+                    text run at (0,64) width 38: "words"
+                RenderText {#text} at (38,64) size 81x48
+                  text run at (38,64) width 43: ", which"
+                  text run at (0,80) width 60: "should be"
+                  text run at (0,96) width 42: "purple."
+              RenderBlock {H3} at (4,344) size 90x54 [color=#0000FF]
+                RenderText {#text} at (0,0) size 90x54
+                  text run at (0,0) width 90: "This should"
+                  text run at (0,18) width 89: "be blue and"
+                  text run at (0,36) width 86: "underlined."
+              RenderBlock {P} at (4,414) size 90x112
+                RenderText {#text} at (0,0) size 89x64
+                  text run at (0,0) width 89: "This sentence"
+                  text run at (0,16) width 60: "should be"
+                  text run at (0,32) width 69: "underlined,"
+                  text run at (0,48) width 59: "including "
+                RenderInline {TT} at (0,0) size 75x32
+                  RenderText {#text} at (59,48) size 75x32
+                    text run at (59,48) width 16: "this"
+                    text run at (0,64) width 16: "part"
+                RenderText {#text} at (16,64) size 7x16
+                  text run at (16,64) width 7: ", "
+                RenderInline {I} at (0,0) size 51x16
+                  RenderText {#text} at (23,64) size 51x16
+                    text run at (23,64) width 51: "this part"
+                RenderText {#text} at (74,64) size 3x16
+                  text run at (74,64) width 3: ","
+                RenderInline {EM} at (0,0) size 51x16 [color=#800080]
+                  RenderText {#text} at (0,80) size 51x16
+                    text run at (0,80) width 51: "this part"
+                RenderText {#text} at (51,80) size 31x16
+                  text run at (51,80) width 31: ", and"
+                RenderInline {STRONG} at (0,0) size 58x16
+                  RenderText {#text} at (0,96) size 58x16
+                    text run at (0,96) width 58: "this part"
+                RenderText {#text} at (58,96) size 3x16
+                  text run at (58,96) width 3: "."
+              RenderBlock {P} at (4,540) size 90x96 [color=#000080]
+                RenderText {#text} at (0,0) size 90x80
+                  text run at (0,0) width 89: "This sentence"
+                  text run at (0,16) width 90: "should also be"
+                  text run at (0,32) width 88: "underlined, as"
+                  text run at (0,48) width 75: "well as dark"
+                  text run at (0,64) width 72: "blue (navy),"
+                RenderInline {TT} at (0,0) size 76x16
+                  RenderText {#text} at (0,80) size 76x16
+                    text run at (0,80) width 76: "including this part"
+                RenderText {#text} at (76,80) size 3x16
+                  text run at (76,80) width 3: "."
+              RenderBlock {P} at (4,650) size 90x112 [color=#800080]
+                RenderText {#text} at (0,0) size 89x64
+                  text run at (0,0) width 89: "This sentence"
+                  text run at (0,16) width 60: "should be"
+                  text run at (0,32) width 42: "purple,"
+                  text run at (0,48) width 59: "including "
+                RenderInline {STRONG} at (0,0) size 85x32
+                  RenderText {#text} at (59,48) size 85x32
+                    text run at (59,48) width 26: "this"
+                    text run at (0,64) width 28: "part"
+                RenderText {#text} at (28,64) size 32x16
+                  text run at (28,64) width 32: " and "
+                RenderInline {SPAN} at (0,0) size 84x48
+                  RenderText {#text} at (60,64) size 84x48
+                    text run at (60,64) width 22: "this"
+                    text run at (0,80) width 84: "part (which is"
+                    text run at (0,96) width 60: "spanned)"
+                RenderText {#text} at (60,96) size 3x16
+                  text run at (60,96) width 3: "."

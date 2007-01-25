@@ -1,0 +1,184 @@
+layer at (0,0) size 650x1541
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 650x1541
+  RenderBlock {HTML} at (0,0) size 96x1541
+    RenderBody {BODY} at (8,8) size 80x1513 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 80x80
+          text run at (0,0) width 80: "The style"
+          text run at (0,16) width 77: "declarations"
+          text run at (0,32) width 80: "which apply"
+          text run at (0,48) width 80: "to the text"
+          text run at (0,64) width 64: "below are:"
+      RenderBlock {PRE} at (0,94) size 80x208
+        RenderText {#text} at (0,0) size 256x208
+          text run at (0,0) width 196: "P { margin: 0; padding: 0; text-align:  justify;}"
+          text run at (196,0) width 0: " "
+          text run at (0,16) width 0: " "
+          text run at (0,32) width 168: "DIV.yellow, DIV.blue, DIV.red, DIV.green {"
+          text run at (168,32) width 0: " "
+          text run at (0,48) width 168: " width: 60px; padding: 20px; margin: 10px;"
+          text run at (168,48) width 0: " "
+          text run at (0,64) width 236: " border: 20px solid black; float: left; text-align: center;"
+          text run at (236,64) width 0: " "
+          text run at (0,80) width 180: " font-family: \"Times New Roman\",Times,serif;}"
+          text run at (180,80) width 0: " "
+          text run at (0,96) width 256: "DIV.yellow {margin-left: 0px; background: yellow; color: black;}"
+          text run at (256,96) width 0: " "
+          text run at (0,112) width 168: "DIV.blue {background: blue; color: white;}"
+          text run at (168,112) width 0: " "
+          text run at (0,128) width 160: "DIV.red {background: red; color: black;}"
+          text run at (160,128) width 0: " "
+          text run at (0,144) width 176: "DIV.green {background: green; color: white;}"
+          text run at (176,144) width 0: " "
+          text run at (0,160) width 96: "DIV.below {clear: both;}"
+          text run at (96,160) width 0: " "
+          text run at (0,176) width 100: "TABLE {margin: 20px 0px;}"
+          text run at (100,176) width 0: " "
+          text run at (0,192) width 0: " "
+      RenderBlock {HR} at (0,316) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,325) size 80x336
+        RenderText {#text} at (0,0) size 80x336
+          text run at (0,0) width 80: "The four"
+          text run at (0,16) width 80: "floating DIV"
+          text run at (0,32) width 57: "elements"
+          text run at (0,48) width 36: "below"
+          text run at (0,64) width 41: "should"
+          text run at (0,80) width 80: "appear next"
+          text run at (0,96) width 80: "to each"
+          text run at (0,112) width 33: "other"
+          text run at (0,128) width 75: "horizontally."
+          text run at (0,144) width 80: "The table at"
+          text run at (0,160) width 80: "the bottom"
+          text run at (0,176) width 80: "of this page"
+          text run at (0,192) width 56: "indicates"
+          text run at (0,208) width 80: "how the DIV"
+          text run at (0,224) width 57: "elements"
+          text run at (0,240) width 80: "should be"
+          text run at (0,256) width 80: "laid out"
+          text run at (0,272) width 75: "horizontally."
+          text run at (0,288) width 80: "They should"
+          text run at (0,304) width 80: "align with"
+          text run at (0,320) width 71: "each other."
+      RenderBlock (floating) {DIV} at (0,671) size 140x96 [bgcolor=#FFFF00] [border: (20px solid #000000)]
+        RenderBlock {P} at (40,40) size 60x16
+          RenderText {#text} at (0,0) size 40x16
+            text run at (0,0) width 40: "Yellow"
+      RenderBlock (floating) {DIV} at (10,787) size 140x96 [color=#FFFFFF] [bgcolor=#0000FF] [border: (20px solid #000000)]
+        RenderBlock {P} at (40,40) size 60x16
+          RenderText {#text} at (0,0) size 26x16
+            text run at (0,0) width 26: "Blue"
+      RenderBlock (floating) {DIV} at (10,903) size 140x96 [bgcolor=#FF0000] [border: (20px solid #000000)]
+        RenderBlock {P} at (40,40) size 60x16
+          RenderText {#text} at (0,0) size 23x16
+            text run at (0,0) width 23: "Red"
+      RenderBlock (floating) {DIV} at (10,1019) size 140x96 [color=#FFFFFF] [bgcolor=#008000] [border: (20px solid #000000)]
+        RenderBlock {P} at (40,40) size 60x16
+          RenderText {#text} at (0,0) size 37x16
+            text run at (0,0) width 37: "Green"
+      RenderBlock {DIV} at (0,1125) size 80x17
+        RenderTable {TABLE} at (0,0) size 620x17
+          RenderTableSection {TBODY} at (0,0) size 620x17
+            RenderTableRow {TR} at (0,0) size 620x17
+              RenderTableCell {TD} at (0,8) size 20x1 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
+                RenderImage {IMG} at (0,0) size 20x1
+              RenderTableCell {TD} at (20,8) size 100x1 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+                RenderImage {IMG} at (0,0) size 100x1
+              RenderTableCell {TD} at (120,8) size 20x1 [bgcolor=#000000] [r=0 c=2 rs=1 cs=1]
+                RenderImage {IMG} at (0,0) size 20x1
+              RenderTableCell {TD} at (140,8) size 20x1 [bgcolor=#FFFFFF] [r=0 c=3 rs=1 cs=1]
+                RenderImage {IMG} at (0,0) size 20x1
+              RenderTableCell {TD} at (160,8) size 20x1 [bgcolor=#000000] [r=0 c=4 rs=1 cs=1]
+                RenderImage {IMG} at (0,0) size 20x1
+              RenderTableCell {TD} at (180,8) size 100x1 [bgcolor=#0000FF] [r=0 c=5 rs=1 cs=1]
+                RenderImage {IMG} at (0,0) size 100x1
+              RenderTableCell {TD} at (280,8) size 20x1 [bgcolor=#000000] [r=0 c=6 rs=1 cs=1]
+                RenderImage {IMG} at (0,0) size 20x1
+              RenderTableCell {TD} at (300,8) size 20x1 [bgcolor=#FFFFFF] [r=0 c=7 rs=1 cs=1]
+                RenderImage {IMG} at (0,0) size 20x1
+              RenderTableCell {TD} at (320,8) size 20x1 [bgcolor=#000000] [r=0 c=8 rs=1 cs=1]
+                RenderImage {IMG} at (0,0) size 20x1
+              RenderTableCell {TD} at (340,8) size 100x1 [bgcolor=#FF0000] [r=0 c=9 rs=1 cs=1]
+                RenderImage {IMG} at (0,0) size 100x1
+              RenderTableCell {TD} at (440,0) size 20x17 [bgcolor=#000000] [r=0 c=10 rs=1 cs=1]
+                RenderImage {IMG} at (0,0) size 20x1
+                RenderText {#text} at (0,1) size 4x16
+                  text run at (0,1) width 4: ";"
+              RenderTableCell {TD} at (460,8) size 20x1 [bgcolor=#FFFFFF] [r=0 c=11 rs=1 cs=1]
+                RenderImage {IMG} at (0,0) size 20x1
+              RenderTableCell {TD} at (480,8) size 20x1 [bgcolor=#000000] [r=0 c=12 rs=1 cs=1]
+                RenderImage {IMG} at (0,0) size 20x1
+              RenderTableCell {TD} at (500,8) size 100x1 [bgcolor=#008000] [r=0 c=13 rs=1 cs=1]
+                RenderImage {IMG} at (0,0) size 100x1
+              RenderTableCell {TD} at (600,8) size 20x1 [bgcolor=#000000] [r=0 c=14 rs=1 cs=1]
+                RenderImage {IMG} at (0,0) size 20x1
+      RenderTable {TABLE} at (0,1162) size 642x351 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 640x349
+          RenderTableRow {TR} at (0,0) size 640x24
+            RenderTableCell {TD} at (0,0) size 640x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 157x16
+                RenderText {#text} at (4,4) size 157x16
+                  text run at (4,4) width 157: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,24) size 640x325
+            RenderTableCell {TD} at (0,174) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x16
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,24) size 628x325 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 620x48
+                RenderText {#text} at (0,0) size 620x48
+                  text run at (0,0) width 620: "The four floating DIV elements below should appear next to each other horizontally. The table at"
+                  text run at (0,16) width 542: "the bottom of this page indicates how the DIV elements should be laid out horizontally. "
+                  text run at (542,16) width 78: "They should"
+                  text run at (0,32) width 134: "align with each other."
+              RenderBlock (floating) {DIV} at (4,62) size 140x96 [bgcolor=#FFFF00] [border: (20px solid #000000)]
+                RenderBlock {P} at (40,40) size 60x16
+                  RenderText {#text} at (0,0) size 40x16
+                    text run at (0,0) width 40: "Yellow"
+              RenderBlock (floating) {DIV} at (164,62) size 140x96 [color=#FFFFFF] [bgcolor=#0000FF] [border: (20px solid #000000)]
+                RenderBlock {P} at (40,40) size 60x16
+                  RenderText {#text} at (0,0) size 26x16
+                    text run at (0,0) width 26: "Blue"
+              RenderBlock (floating) {DIV} at (324,62) size 140x96 [bgcolor=#FF0000] [border: (20px solid #000000)]
+                RenderBlock {P} at (40,40) size 60x16
+                  RenderText {#text} at (0,0) size 23x16
+                    text run at (0,0) width 23: "Red"
+              RenderBlock (floating) {DIV} at (14,178) size 140x96 [color=#FFFFFF] [bgcolor=#008000] [border: (20px solid #000000)]
+                RenderBlock {P} at (40,40) size 60x16
+                  RenderText {#text} at (0,0) size 37x16
+                    text run at (0,0) width 37: "Green"
+              RenderBlock {DIV} at (4,284) size 620x17
+                RenderTable {TABLE} at (0,0) size 620x17
+                  RenderTableSection {TBODY} at (0,0) size 620x17
+                    RenderTableRow {TR} at (0,0) size 620x17
+                      RenderTableCell {TD} at (0,8) size 20x1 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
+                        RenderImage {IMG} at (0,0) size 20x1
+                      RenderTableCell {TD} at (20,8) size 100x1 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+                        RenderImage {IMG} at (0,0) size 100x1
+                      RenderTableCell {TD} at (120,8) size 20x1 [bgcolor=#000000] [r=0 c=2 rs=1 cs=1]
+                        RenderImage {IMG} at (0,0) size 20x1
+                      RenderTableCell {TD} at (140,8) size 20x1 [bgcolor=#FFFFFF] [r=0 c=3 rs=1 cs=1]
+                        RenderImage {IMG} at (0,0) size 20x1
+                      RenderTableCell {TD} at (160,8) size 20x1 [bgcolor=#000000] [r=0 c=4 rs=1 cs=1]
+                        RenderImage {IMG} at (0,0) size 20x1
+                      RenderTableCell {TD} at (180,8) size 100x1 [bgcolor=#0000FF] [r=0 c=5 rs=1 cs=1]
+                        RenderImage {IMG} at (0,0) size 100x1
+                      RenderTableCell {TD} at (280,8) size 20x1 [bgcolor=#000000] [r=0 c=6 rs=1 cs=1]
+                        RenderImage {IMG} at (0,0) size 20x1
+                      RenderTableCell {TD} at (300,8) size 20x1 [bgcolor=#FFFFFF] [r=0 c=7 rs=1 cs=1]
+                        RenderImage {IMG} at (0,0) size 20x1
+                      RenderTableCell {TD} at (320,8) size 20x1 [bgcolor=#000000] [r=0 c=8 rs=1 cs=1]
+                        RenderImage {IMG} at (0,0) size 20x1
+                      RenderTableCell {TD} at (340,8) size 100x1 [bgcolor=#FF0000] [r=0 c=9 rs=1 cs=1]
+                        RenderImage {IMG} at (0,0) size 100x1
+                      RenderTableCell {TD} at (440,0) size 20x17 [bgcolor=#000000] [r=0 c=10 rs=1 cs=1]
+                        RenderImage {IMG} at (0,0) size 20x1
+                        RenderText {#text} at (0,1) size 4x16
+                          text run at (0,1) width 4: ";"
+                      RenderTableCell {TD} at (460,8) size 20x1 [bgcolor=#FFFFFF] [r=0 c=11 rs=1 cs=1]
+                        RenderImage {IMG} at (0,0) size 20x1
+                      RenderTableCell {TD} at (480,8) size 20x1 [bgcolor=#000000] [r=0 c=12 rs=1 cs=1]
+                        RenderImage {IMG} at (0,0) size 20x1
+                      RenderTableCell {TD} at (500,8) size 100x1 [bgcolor=#008000] [r=0 c=13 rs=1 cs=1]
+                        RenderImage {IMG} at (0,0) size 100x1
+                      RenderTableCell {TD} at (600,8) size 20x1 [bgcolor=#000000] [r=0 c=14 rs=1 cs=1]
+                        RenderImage {IMG} at (0,0) size 20x1

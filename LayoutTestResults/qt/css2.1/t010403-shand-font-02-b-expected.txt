@@ -1,0 +1,22 @@
+layer at (0,0) size 96x232
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x232
+  RenderBlock {HTML} at (0,0) size 96x232
+    RenderBody {BODY} at (8,14) size 80x204
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 73x80
+          text run at (0,0) width 25: "The"
+          text run at (0,16) width 55: "following"
+          text run at (0,32) width 73: "paragraphs"
+          text run at (0,48) width 60: "should be"
+          text run at (0,64) width 55: "identical:"
+      RenderBlock {P} at (0,94) size 80x48
+        RenderText {#text} at (0,0) size 69x48
+          text run at (0,0) width 69: "This should"
+          text run at (0,16) width 68: "be in a bold"
+          text run at (0,32) width 28: "font."
+      RenderBlock {P} at (0,156) size 80x48
+        RenderText {#text} at (0,0) size 69x48
+          text run at (0,0) width 69: "This should"
+          text run at (0,16) width 68: "be in a bold"
+          text run at (0,32) width 28: "font."

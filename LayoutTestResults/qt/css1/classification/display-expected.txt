@@ -1,0 +1,286 @@
+layer at (0,0) size 292x3302
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 292x3302
+  RenderBlock {HTML} at (0,0) size 96x3302
+    RenderBody {BODY} at (8,8) size 80x3286 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 58: "The style"
+          text run at (0,16) width 77: "declarations"
+          text run at (0,32) width 74: "which apply"
+          text run at (0,48) width 63: "to the text"
+          text run at (0,64) width 64: "below are:"
+      RenderBlock {PRE} at (0,94) size 80x80
+        RenderText {#text} at (0,0) size 284x80
+          text run at (0,0) width 88: ".one {display: block;}"
+          text run at (88,0) width 0: " "
+          text run at (0,16) width 92: ".two {display: inline;}"
+          text run at (92,16) width 0: " "
+          text run at (0,32) width 284: ".three {display: list-item; list-style-type: square; margin-left: 3em;}"
+          text run at (284,32) width 0: " "
+          text run at (0,48) width 136: ".four {display: none; color: red;}"
+          text run at (136,48) width 0: " "
+          text run at (0,64) width 76: "I {display: block;}"
+          text run at (76,64) width 0: " "
+      RenderBlock {HR} at (0,188) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,204) size 80x80
+        RenderText {#text} at (0,0) size 72x80
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 58: "sentence"
+          text run at (0,32) width 72: "should be a"
+          text run at (0,48) width 65: "block-level"
+          text run at (0,64) width 53: "element."
+      RenderBlock (anonymous) at (0,298) size 80x496
+        RenderInline {P} at (0,0) size 76x128
+          RenderText {#text} at (0,0) size 76x128
+            text run at (0,0) width 27: "This"
+            text run at (0,16) width 58: "sentence"
+            text run at (0,32) width 60: "should be"
+            text run at (0,48) width 61: "part of an"
+            text run at (0,64) width 33: "inline"
+            text run at (0,80) width 72: "element, as"
+            text run at (0,96) width 76: "are the next"
+            text run at (0,112) width 40: "three. "
+        RenderInline {P} at (0,0) size 79x384
+          RenderText {#text} at (40,112) size 79x352
+            text run at (40,112) width 27: "This"
+            text run at (0,128) width 58: "sentence"
+            text run at (0,144) width 79: "and the next"
+            text run at (0,160) width 76: "two are part"
+            text run at (0,176) width 74: "of a second"
+            text run at (0,192) width 33: "inline"
+            text run at (0,208) width 53: "element."
+            text run at (0,224) width 77: "They should"
+            text run at (0,240) width 58: "therefore"
+            text run at (0,256) width 48: "appear,"
+            text run at (0,272) width 64: "along with"
+            text run at (0,288) width 20: "the"
+            text run at (0,304) width 58: "sentence"
+            text run at (0,320) width 76: "above, to be"
+            text run at (0,336) width 42: "all one"
+            text run at (0,352) width 66: "paragraph"
+            text run at (0,368) width 78: "which is four"
+            text run at (0,384) width 65: "sentences"
+            text run at (0,400) width 34: "long. "
+            text run at (34,400) width 34: "If this"
+            text run at (0,416) width 58: "is not the"
+            text run at (0,432) width 65: "case, then"
+            text run at (0,448) width 77: "the keyword"
+          RenderInline {CODE} at (0,0) size 24x16
+            RenderText {#text} at (0,464) size 24x16
+              text run at (0,464) width 24: "inline"
+          RenderText {#text} at (24,464) size 76x32
+            text run at (24,464) width 52: " is being"
+            text run at (0,480) width 51: "ignored."
+        RenderText {#text} at (0,0) size 0x0
+      RenderListItem {P} at (42,808) size 38x816
+        RenderListMarker at (-16,0) size 6x16: black square
+        RenderText {#text} at (0,0) size 58x320
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 58: "sentence"
+          text run at (0,32) width 41: "should"
+          text run at (0,48) width 15: "be"
+          text run at (0,64) width 45: "treated"
+          text run at (0,80) width 27: "as a"
+          text run at (0,96) width 21: "list-"
+          text run at (0,112) width 29: "item,"
+          text run at (0,128) width 24: "and"
+          text run at (0,144) width 58: "therefore"
+          text run at (0,160) width 15: "be"
+          text run at (0,176) width 58: "rendered"
+          text run at (0,192) width 54: "however"
+          text run at (0,208) width 22: "this"
+          text run at (0,224) width 27: "user"
+          text run at (0,240) width 36: "agent"
+          text run at (0,256) width 51: "displays"
+          text run at (0,272) width 17: "list"
+          text run at (0,288) width 33: "items"
+          text run at (0,304) width 16: "(if "
+        RenderInline {CODE} at (0,0) size 36x48
+          RenderText {#text} at (16,304) size 36x48
+            text run at (16,304) width 20: "list-"
+            text run at (0,320) width 24: "style-"
+            text run at (0,336) width 16: "type"
+        RenderText {#text} at (16,336) size 66x480
+          text run at (16,336) width 14: " is"
+          text run at (0,352) width 66: "supported,"
+          text run at (0,368) width 33: "there"
+          text run at (0,384) width 38: "will be"
+          text run at (0,400) width 8: "a"
+          text run at (0,416) width 43: "square"
+          text run at (0,432) width 17: "for"
+          text run at (0,448) width 20: "the"
+          text run at (0,464) width 26: "item"
+          text run at (0,480) width 52: "marker)."
+          text run at (0,496) width 9: "A"
+          text run at (0,512) width 27: "3em"
+          text run at (0,528) width 19: "left"
+          text run at (0,544) width 43: "margin"
+          text run at (0,560) width 23: "has"
+          text run at (0,576) width 31: "been"
+          text run at (0,592) width 46: "applied"
+          text run at (0,608) width 11: "in"
+          text run at (0,624) width 34: "order"
+          text run at (0,640) width 12: "to"
+          text run at (0,656) width 43: "ensure"
+          text run at (0,672) width 24: "that"
+          text run at (0,688) width 33: "there"
+          text run at (0,704) width 10: "is"
+          text run at (0,720) width 38: "space"
+          text run at (0,736) width 17: "for"
+          text run at (0,752) width 20: "the"
+          text run at (0,768) width 21: "list-"
+          text run at (0,784) width 26: "item"
+          text run at (0,800) width 47: "marker."
+      RenderBlock {P} at (0,1638) size 80x112
+        RenderText {#text} at (0,0) size 66x112
+          text run at (0,0) width 56: "The next"
+          text run at (0,16) width 66: "paragraph"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 65: "invisible (if"
+          text run at (0,64) width 62: "it's visible,"
+          text run at (0,80) width 58: "you'll see"
+          text run at (0,96) width 56: "red text)."
+      RenderBlock {P} at (0,1764) size 80x64
+        RenderText {#text} at (0,0) size 80x64
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 80: "should be no"
+          text run at (0,32) width 80: "text after the"
+          text run at (0,48) width 37: "colon:"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,1842) size 80x128
+        RenderBlock (anonymous) at (0,0) size 80x48
+          RenderText {#text} at (0,0) size 54x48
+            text run at (0,0) width 25: "The"
+            text run at (0,16) width 54: "italicized"
+            text run at (0,32) width 23: "text"
+        RenderBlock {I} at (0,48) size 80x32
+          RenderText {#text} at (0,0) size 66x32
+            text run at (0,0) width 37: "in this"
+            text run at (0,16) width 66: "paragraph"
+        RenderBlock (anonymous) at (0,80) size 80x48
+          RenderText {#text} at (0,0) size 72x48
+            text run at (0,0) width 72: "should be a"
+            text run at (0,16) width 65: "block-level"
+            text run at (0,32) width 53: "element."
+      RenderTable {TABLE} at (0,1984) size 130x1302 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 128x1300
+          RenderTableRow {TR} at (0,0) size 128x40
+            RenderTableCell {TD} at (0,0) size 128x40 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 100x32
+                RenderText {#text} at (4,4) size 100x32
+                  text run at (4,4) width 100: "TABLE Testing"
+                  text run at (4,20) width 53: "Section"
+          RenderTableRow {TR} at (0,40) size 128x1260
+            RenderTableCell {TD} at (0,658) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x16
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,40) size 116x1260 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 108x64
+                RenderText {#text} at (0,0) size 89x64
+                  text run at (0,0) width 89: "This sentence"
+                  text run at (0,16) width 72: "should be a"
+                  text run at (0,32) width 65: "block-level"
+                  text run at (0,48) width 53: "element."
+              RenderBlock (anonymous) at (4,82) size 108x336
+                RenderInline {P} at (0,0) size 105x80
+                  RenderText {#text} at (0,0) size 105x80
+                    text run at (0,0) width 89: "This sentence"
+                    text run at (0,16) width 105: "should be part of"
+                    text run at (0,32) width 53: "an inline"
+                    text run at (0,48) width 97: "element, as are"
+                    text run at (0,64) width 91: "the next three."
+                RenderInline {P} at (0,0) size 107x256
+                  RenderText {#text} at (0,80) size 107x240
+                    text run at (0,80) width 89: "This sentence"
+                    text run at (0,96) width 105: "and the next two"
+                    text run at (0,112) width 78: "are part of a"
+                    text run at (0,128) width 83: "second inline"
+                    text run at (0,144) width 57: "element. "
+                    text run at (57,144) width 32: "They"
+                    text run at (0,160) width 103: "should therefore"
+                    text run at (0,176) width 87: "appear, along"
+                    text run at (0,192) width 49: "with the"
+                    text run at (0,208) width 103: "sentence above,"
+                    text run at (0,224) width 77: "to be all one"
+                    text run at (0,240) width 106: "paragraph which"
+                    text run at (0,256) width 107: "is four sentences"
+                    text run at (0,272) width 34: "long. "
+                    text run at (34,272) width 72: "If this is not"
+                    text run at (0,288) width 89: "the case, then"
+                    text run at (0,304) width 81: "the keyword "
+                  RenderInline {CODE} at (0,0) size 24x16
+                    RenderText {#text} at (81,304) size 24x16
+                      text run at (81,304) width 24: "inline"
+                  RenderText {#text} at (0,320) size 103x16
+                    text run at (0,320) width 103: "is being ignored."
+                RenderText {#text} at (0,0) size 0x0
+              RenderListItem {P} at (46,432) size 66x528
+                RenderListMarker at (-16,0) size 6x16: black square
+                RenderText {#text} at (0,0) size 64x240
+                  text run at (0,0) width 27: "This"
+                  text run at (0,16) width 58: "sentence"
+                  text run at (0,32) width 60: "should be"
+                  text run at (0,48) width 64: "treated as"
+                  text run at (0,64) width 62: "a list-item,"
+                  text run at (0,80) width 24: "and"
+                  text run at (0,96) width 58: "therefore"
+                  text run at (0,112) width 15: "be"
+                  text run at (0,128) width 58: "rendered"
+                  text run at (0,144) width 54: "however"
+                  text run at (0,160) width 53: "this user"
+                  text run at (0,176) width 36: "agent"
+                  text run at (0,192) width 51: "displays"
+                  text run at (0,208) width 54: "list items"
+                  text run at (0,224) width 16: "(if "
+                RenderInline {CODE} at (0,0) size 60x32
+                  RenderText {#text} at (16,224) size 60x32
+                    text run at (16,224) width 44: "list-style-"
+                    text run at (0,240) width 16: "type"
+                RenderText {#text} at (16,240) size 66x288
+                  text run at (16,240) width 14: " is"
+                  text run at (0,256) width 66: "supported,"
+                  text run at (0,272) width 56: "there will"
+                  text run at (0,288) width 27: "be a"
+                  text run at (0,304) width 64: "square for"
+                  text run at (0,320) width 50: "the item"
+                  text run at (0,336) width 56: "marker). "
+                  text run at (56,336) width 9: "A"
+                  text run at (0,352) width 50: "3em left"
+                  text run at (0,368) width 43: "margin"
+                  text run at (0,384) width 58: "has been"
+                  text run at (0,400) width 61: "applied in"
+                  text run at (0,416) width 50: "order to"
+                  text run at (0,432) width 43: "ensure"
+                  text run at (0,448) width 61: "that there"
+                  text run at (0,464) width 52: "is space"
+                  text run at (0,480) width 66: "for the list-"
+                  text run at (0,496) width 26: "item"
+                  text run at (0,512) width 47: "marker."
+              RenderBlock {P} at (4,974) size 108x96
+                RenderText {#text} at (0,0) size 103x96
+                  text run at (0,0) width 56: "The next"
+                  text run at (0,16) width 66: "paragraph"
+                  text run at (0,32) width 60: "should be"
+                  text run at (0,48) width 86: "invisible (if it's"
+                  text run at (0,64) width 103: "visible, you'll see"
+                  text run at (0,80) width 56: "red text)."
+              RenderBlock {P} at (4,1084) size 108x48
+                RenderText {#text} at (0,0) size 102x48
+                  text run at (0,0) width 102: "There should be"
+                  text run at (0,16) width 100: "no text after the"
+                  text run at (0,32) width 37: "colon:"
+                RenderText {#text} at (0,0) size 0x0
+              RenderBlock {P} at (4,1146) size 108x96
+                RenderBlock (anonymous) at (0,0) size 108x32
+                  RenderText {#text} at (0,0) size 83x32
+                    text run at (0,0) width 83: "The italicized"
+                    text run at (0,16) width 23: "text"
+                RenderBlock {I} at (0,32) size 108x16
+                  RenderText {#text} at (0,0) size 107x16
+                    text run at (0,0) width 107: "in this paragraph"
+                RenderBlock (anonymous) at (0,48) size 108x48
+                  RenderText {#text} at (0,0) size 72x48
+                    text run at (0,0) width 72: "should be a"
+                    text run at (0,16) width 65: "block-level"
+                    text run at (0,32) width 53: "element."

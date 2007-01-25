@@ -1,0 +1,11 @@
+layer at (0,0) size 96x92
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x92
+  RenderBlock {HTML} at (0,0) size 96x92
+    RenderBody {BODY} at (8,14) size 80x64
+      RenderBlock {P} at (0,0) size 80x64 [bgcolor=#00FF00]
+        RenderText {#text} at (48,0) size 75x64
+          text run at (48,0) width 27: "This"
+          text run at (0,16) width 67: "line should"
+          text run at (0,32) width 54: "be bright"
+          text run at (0,48) width 40: "green."

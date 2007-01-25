@@ -1,0 +1,12 @@
+layer at (0,0) size 96x98
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x98
+  RenderBlock {HTML} at (0,0) size 96x98
+    RenderBody {BODY} at (8,8) size 80x82
+      RenderBlock {DIV} at (0,0) size 80x82
+        RenderBlock {DIV} at (0,0) size 80x82 [color=#008000] [border: (15px solid #008000) (3px solid #008000)]
+          RenderText {#text} at (3,15) size 61x64
+            text run at (3,15) width 38: "There"
+            text run at (3,31) width 60: "should be"
+            text run at (3,47) width 61: "no red on"
+            text run at (3,63) width 61: "this page."

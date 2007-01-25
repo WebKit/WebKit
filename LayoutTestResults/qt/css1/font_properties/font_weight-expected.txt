@@ -1,0 +1,219 @@
+layer at (0,0) size 128x2508
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 128x2508
+  RenderBlock {HTML} at (0,0) size 96x2508
+    RenderBody {BODY} at (8,8) size 80x2492 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 58: "The style"
+          text run at (0,16) width 77: "declarations"
+          text run at (0,32) width 74: "which apply"
+          text run at (0,48) width 63: "to the text"
+          text run at (0,64) width 64: "below are:"
+      RenderBlock {PRE} at (0,94) size 80x176
+        RenderText {#text} at (0,0) size 120x176
+          text run at (0,0) width 100: ".one {font-weight: bold;}"
+          text run at (100,0) width 0: " "
+          text run at (0,16) width 108: ".two {font-weight: bolder;}"
+          text run at (108,16) width 0: " "
+          text run at (0,32) width 120: ".three {font-weight: lighter;}"
+          text run at (120,32) width 0: " "
+          text run at (0,48) width 100: ".four {font-weight: 100;}"
+          text run at (100,48) width 0: " "
+          text run at (0,64) width 100: ".five {font-weight: 300;}"
+          text run at (100,64) width 0: " "
+          text run at (0,80) width 96: ".six {font-weight: 500;}"
+          text run at (96,80) width 0: " "
+          text run at (0,96) width 104: ".seven {font-weight: 700;}"
+          text run at (104,96) width 0: " "
+          text run at (0,112) width 104: ".eight {font-weight: 900;}"
+          text run at (104,112) width 0: " "
+          text run at (0,128) width 112: ".nine {font-weight: normal;}"
+          text run at (112,128) width 0: " "
+          text run at (0,144) width 100: "B {font-weight: lighter;}"
+          text run at (100,144) width 0: " "
+          text run at (0,160) width 0: " "
+      RenderBlock {HR} at (0,284) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,300) size 80x64
+        RenderText {#text} at (0,0) size 69x64
+          text run at (0,0) width 29: "This"
+          text run at (0,16) width 63: "sentence"
+          text run at (0,32) width 69: "should be"
+          text run at (0,48) width 35: "bold."
+      RenderBlock {P} at (0,378) size 80x80
+        RenderText {#text} at (0,0) size 80x80
+          text run at (0,0) width 29: "This"
+          text run at (0,16) width 63: "sentence"
+          text run at (0,32) width 69: "should be"
+          text run at (0,48) width 80: "bolder than"
+          text run at (0,64) width 52: "normal."
+      RenderBlock {H4} at (0,476) size 80x32
+        RenderText {#text} at (0,0) size 72x32
+          text run at (0,0) width 57: "This is a"
+          text run at (0,16) width 72: "heading-4."
+      RenderBlock {H4} at (0,526) size 80x48
+        RenderText {#text} at (0,0) size 72x48
+          text run at (0,0) width 57: "This is a"
+          text run at (0,16) width 45: "bolder"
+          text run at (0,32) width 72: "heading-4."
+      RenderBlock {P} at (0,592) size 80x112
+        RenderInline {B} at (0,0) size 60x112
+          RenderText {#text} at (0,0) size 60x112
+            text run at (0,0) width 27: "This"
+            text run at (0,16) width 58: "sentence"
+            text run at (0,32) width 60: "should be"
+            text run at (0,48) width 43: "normal"
+            text run at (0,64) width 58: "(boldface"
+            text run at (0,80) width 35: "made"
+            text run at (0,96) width 47: "lighter)."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,718) size 80x64
+        RenderText {#text} at (0,0) size 72x64
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 58: "sentence"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 72: "weight 100."
+      RenderBlock {P} at (0,796) size 80x64
+        RenderText {#text} at (0,0) size 72x64
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 58: "sentence"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 72: "weight 300."
+      RenderBlock {P} at (0,874) size 80x64
+        RenderText {#text} at (0,0) size 72x64
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 58: "sentence"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 72: "weight 500."
+      RenderBlock {P} at (0,952) size 80x64
+        RenderText {#text} at (0,0) size 77x64
+          text run at (0,0) width 29: "This"
+          text run at (0,16) width 63: "sentence"
+          text run at (0,32) width 69: "should be"
+          text run at (0,48) width 77: "weight 700."
+      RenderBlock {P} at (0,1030) size 80x64
+        RenderText {#text} at (0,0) size 77x64
+          text run at (0,0) width 29: "This"
+          text run at (0,16) width 63: "sentence"
+          text run at (0,32) width 69: "should be"
+          text run at (0,48) width 77: "weight 900."
+      RenderBlock {P} at (0,1108) size 80x144
+        RenderText {#text} at (0,0) size 77x128
+          text run at (0,0) width 29: "This"
+          text run at (0,16) width 63: "sentence"
+          text run at (0,32) width 69: "should be"
+          text run at (0,48) width 62: "bold, but"
+          text run at (0,64) width 51: "the last"
+          text run at (0,80) width 77: "word in the"
+          text run at (0,96) width 63: "sentence"
+          text run at (0,112) width 69: "should be"
+        RenderInline {SPAN} at (0,0) size 43x16
+          RenderText {#text} at (0,128) size 43x16
+            text run at (0,128) width 43: "normal"
+        RenderText {#text} at (43,128) size 4x16
+          text run at (43,128) width 4: "."
+      RenderTable {TABLE} at (0,1266) size 85x1226 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 83x1224
+          RenderTableRow {TR} at (0,0) size 83x56
+            RenderTableCell {TD} at (0,0) size 83x56 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 53x48
+                RenderText {#text} at (4,4) size 53x48
+                  text run at (4,4) width 45: "TABLE"
+                  text run at (4,20) width 51: "Testing"
+                  text run at (4,36) width 53: "Section"
+          RenderTableRow {TR} at (0,56) size 83x1168
+            RenderTableCell {TD} at (0,628) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x16
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,56) size 71x1168 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 63x64
+                RenderText {#text} at (0,0) size 63x64
+                  text run at (0,0) width 29: "This"
+                  text run at (0,16) width 63: "sentence"
+                  text run at (0,32) width 48: "should"
+                  text run at (0,48) width 56: "be bold."
+              RenderBlock {P} at (4,82) size 63x112
+                RenderText {#text} at (0,0) size 63x112
+                  text run at (0,0) width 29: "This"
+                  text run at (0,16) width 63: "sentence"
+                  text run at (0,32) width 48: "should"
+                  text run at (0,48) width 17: "be"
+                  text run at (0,64) width 45: "bolder"
+                  text run at (0,80) width 31: "than"
+                  text run at (0,96) width 52: "normal."
+              RenderBlock {H4} at (4,212) size 63x48
+                RenderText {#text} at (0,0) size 60x48
+                  text run at (0,0) width 57: "This is a"
+                  text run at (0,16) width 60: "heading-"
+                  text run at (0,32) width 12: "4."
+              RenderBlock {H4} at (4,278) size 63x64
+                RenderText {#text} at (0,0) size 60x64
+                  text run at (0,0) width 57: "This is a"
+                  text run at (0,16) width 45: "bolder"
+                  text run at (0,32) width 60: "heading-"
+                  text run at (0,48) width 12: "4."
+              RenderBlock {P} at (4,360) size 63x112
+                RenderInline {B} at (0,0) size 60x112
+                  RenderText {#text} at (0,0) size 60x112
+                    text run at (0,0) width 27: "This"
+                    text run at (0,16) width 58: "sentence"
+                    text run at (0,32) width 60: "should be"
+                    text run at (0,48) width 43: "normal"
+                    text run at (0,64) width 58: "(boldface"
+                    text run at (0,80) width 35: "made"
+                    text run at (0,96) width 47: "lighter)."
+                RenderText {#text} at (0,0) size 0x0
+              RenderBlock {P} at (4,486) size 63x80
+                RenderText {#text} at (0,0) size 60x80
+                  text run at (0,0) width 27: "This"
+                  text run at (0,16) width 58: "sentence"
+                  text run at (0,32) width 60: "should be"
+                  text run at (0,48) width 41: "weight"
+                  text run at (0,64) width 27: "100."
+              RenderBlock {P} at (4,580) size 63x80
+                RenderText {#text} at (0,0) size 60x80
+                  text run at (0,0) width 27: "This"
+                  text run at (0,16) width 58: "sentence"
+                  text run at (0,32) width 60: "should be"
+                  text run at (0,48) width 41: "weight"
+                  text run at (0,64) width 27: "300."
+              RenderBlock {P} at (4,674) size 63x80
+                RenderText {#text} at (0,0) size 60x80
+                  text run at (0,0) width 27: "This"
+                  text run at (0,16) width 58: "sentence"
+                  text run at (0,32) width 60: "should be"
+                  text run at (0,48) width 41: "weight"
+                  text run at (0,64) width 27: "500."
+              RenderBlock {P} at (4,768) size 63x96
+                RenderText {#text} at (0,0) size 63x96
+                  text run at (0,0) width 29: "This"
+                  text run at (0,16) width 63: "sentence"
+                  text run at (0,32) width 48: "should"
+                  text run at (0,48) width 17: "be"
+                  text run at (0,64) width 45: "weight"
+                  text run at (0,80) width 28: "700."
+              RenderBlock {P} at (4,878) size 63x96
+                RenderText {#text} at (0,0) size 63x96
+                  text run at (0,0) width 29: "This"
+                  text run at (0,16) width 63: "sentence"
+                  text run at (0,32) width 48: "should"
+                  text run at (0,48) width 17: "be"
+                  text run at (0,64) width 45: "weight"
+                  text run at (0,80) width 28: "900."
+              RenderBlock {P} at (4,988) size 63x176
+                RenderText {#text} at (0,0) size 63x160
+                  text run at (0,0) width 29: "This"
+                  text run at (0,16) width 63: "sentence"
+                  text run at (0,32) width 48: "should"
+                  text run at (0,48) width 56: "be bold,"
+                  text run at (0,64) width 49: "but the"
+                  text run at (0,80) width 63: "last word"
+                  text run at (0,96) width 39: "in the"
+                  text run at (0,112) width 63: "sentence"
+                  text run at (0,128) width 48: "should"
+                  text run at (0,144) width 17: "be"
+                RenderInline {SPAN} at (0,0) size 43x16
+                  RenderText {#text} at (0,160) size 43x16
+                    text run at (0,160) width 43: "normal"
+                RenderText {#text} at (43,160) size 4x16
+                  text run at (43,160) width 4: "."

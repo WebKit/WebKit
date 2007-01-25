@@ -1,0 +1,105 @@
+layer at (0,0) size 228x818
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 228x818
+  RenderBlock {HTML} at (0,0) size 96x818
+    RenderBody {BODY} at (8,8) size 80x802 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 58: "The style"
+          text run at (0,16) width 77: "declarations"
+          text run at (0,32) width 74: "which apply"
+          text run at (0,48) width 63: "to the text"
+          text run at (0,64) width 64: "below are:"
+      RenderBlock {PRE} at (0,94) size 80x48
+        RenderText {#text} at (0,0) size 220x48
+          text run at (0,0) width 220: ".one {list-style-image: url(../resources/oransqr.gif);}"
+          text run at (220,0) width 0: " "
+          text run at (0,16) width 120: ".two {list-style-image: none;}"
+          text run at (120,16) width 0: " "
+          text run at (0,32) width 0: " "
+      RenderBlock {HR} at (0,156) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {UL} at (0,172) size 80x134
+        RenderListItem {LI} at (40,0) size 40x34
+          RenderListMarker at (-22,0) size 15x15
+          RenderText {#text} at (0,2) size 27x32
+            text run at (0,2) width 27: "This"
+            text run at (0,18) width 26: "list..."
+        RenderListItem {LI} at (40,34) size 40x34
+          RenderListMarker at (-22,0) size 15x15
+          RenderText {#text} at (0,2) size 53x32
+            text run at (0,2) width 50: "...should"
+            text run at (0,18) width 53: "feature..."
+        RenderListItem {LI} at (40,68) size 40x66
+          RenderListMarker at (-22,0) size 15x15
+          RenderText {#text} at (0,2) size 54x64
+            text run at (0,2) width 54: "...images"
+            text run at (0,18) width 17: "for"
+            text run at (0,34) width 31: "each"
+            text run at (0,50) width 29: "item."
+      RenderBlock {UL} at (0,320) size 80x160
+        RenderListItem {LI} at (40,0) size 40x32
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 27x32
+            text run at (0,0) width 27: "This"
+            text run at (0,16) width 26: "list..."
+        RenderListItem {LI} at (40,32) size 40x32
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 53x32
+            text run at (0,0) width 50: "...should"
+            text run at (0,16) width 53: "feature..."
+        RenderListItem {LI} at (40,64) size 40x96
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 65x96
+            text run at (0,0) width 65: "...standard"
+            text run at (0,16) width 17: "list"
+            text run at (0,32) width 51: "markers"
+            text run at (0,48) width 17: "for"
+            text run at (0,64) width 31: "each"
+            text run at (0,80) width 29: "item."
+      RenderTable {TABLE} at (0,494) size 127x308 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 125x306
+          RenderTableRow {TR} at (0,0) size 125x40
+            RenderTableCell {TD} at (0,0) size 125x40 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 100x32
+                RenderText {#text} at (4,4) size 100x32
+                  text run at (4,4) width 100: "TABLE Testing"
+                  text run at (4,20) width 53: "Section"
+          RenderTableRow {TR} at (0,40) size 125x266
+            RenderTableCell {TD} at (0,161) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x16
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,40) size 113x266 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {UL} at (4,4) size 105x102
+                RenderListItem {LI} at (40,0) size 65x18
+                  RenderListMarker at (-22,0) size 15x15
+                  RenderText {#text} at (0,2) size 57x16
+                    text run at (0,2) width 57: "This list..."
+                RenderListItem {LI} at (40,18) size 65x34
+                  RenderListMarker at (-22,0) size 15x15
+                  RenderText {#text} at (0,2) size 53x32
+                    text run at (0,2) width 50: "...should"
+                    text run at (0,18) width 53: "feature..."
+                RenderListItem {LI} at (40,52) size 65x50
+                  RenderListMarker at (-22,0) size 15x15
+                  RenderText {#text} at (0,2) size 54x48
+                    text run at (0,2) width 54: "...images"
+                    text run at (0,18) width 52: "for each"
+                    text run at (0,34) width 29: "item."
+              RenderBlock {UL} at (4,120) size 105x128
+                RenderListItem {LI} at (40,0) size 65x16
+                  RenderListMarker at (-16,0) size 6x16: bullet
+                  RenderText {#text} at (0,0) size 57x16
+                    text run at (0,0) width 57: "This list..."
+                RenderListItem {LI} at (40,16) size 65x32
+                  RenderListMarker at (-16,0) size 6x16: bullet
+                  RenderText {#text} at (0,0) size 53x32
+                    text run at (0,0) width 50: "...should"
+                    text run at (0,16) width 53: "feature..."
+                RenderListItem {LI} at (40,48) size 65x80
+                  RenderListMarker at (-16,0) size 6x16: bullet
+                  RenderText {#text} at (0,0) size 65x80
+                    text run at (0,0) width 65: "...standard"
+                    text run at (0,16) width 17: "list"
+                    text run at (0,32) width 51: "markers"
+                    text run at (0,48) width 52: "for each"
+                    text run at (0,64) width 29: "item."

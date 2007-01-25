@@ -1,0 +1,31 @@
+layer at (0,0) size 278x440
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 278x440
+  RenderBlock {HTML} at (0,0) size 96x440
+    RenderBody {BODY} at (8,14) size 80x416
+      RenderBlock {P} at (0,0) size 80x192 [color=#000080]
+        RenderText {#text} at (0,0) size 78x192
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 72: "should be a"
+          text run at (0,32) width 57: "complete"
+          text run at (0,48) width 58: "unbroken"
+          text run at (0,64) width 78: "drawing of a"
+          text run at (0,80) width 73: "yin-yang (\x{262F})"
+          text run at (0,96) width 43: "symbol"
+          text run at (0,112) width 39: "below,"
+          text run at (0,128) width 63: "slightly on"
+          text run at (0,144) width 63: "the left (\x{21E6})"
+          text run at (0,160) width 78: "inside a blue"
+          text run at (0,176) width 25: "box."
+      RenderBlock {DIV} at (10,206) size 260x210 [border: (5px solid #0000FF)]
+        RenderBlock (floating) {P} at (5,5) size 100x100 [color=#000080]
+          RenderImage {IMG} at (0,0) size 100x100
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock (floating) {P} at (105,5) size 100x100 [color=#000080]
+          RenderImage {IMG} at (0,0) size 100x100
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock (floating) {P} at (5,105) size 100x100 [color=#000080]
+          RenderImage {IMG} at (0,0) size 100x100
+          RenderText {#text} at (0,0) size 0x0
+        RenderImage {IMG} at (105,105) size 100x100
+        RenderText {#text} at (0,0) size 0x0

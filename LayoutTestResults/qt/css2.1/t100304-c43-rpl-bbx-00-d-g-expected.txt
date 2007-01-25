@@ -1,0 +1,19 @@
+layer at (0,0) size 96x226
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x226
+  RenderBlock {HTML} at (0,0) size 96x226
+    RenderBody {BODY} at (8,14) size 80x198
+      RenderBlock {P} at (0,0) size 80x144 [color=#000080]
+        RenderText {#text} at (0,0) size 78x144
+          text run at (0,0) width 64: "Below this"
+          text run at (0,16) width 66: "paragraph"
+          text run at (0,32) width 78: "there should"
+          text run at (0,48) width 76: "be a big teal"
+          text run at (0,64) width 70: "square half"
+          text run at (0,80) width 24: "the "
+          text run at (24,80) width 49: "width of"
+          text run at (0,96) width 71: "the window"
+          text run at (0,112) width 24: "and"
+          text run at (0,128) width 59: "centered."
+      RenderBlock {P} at (0,158) size 80x40 [color=#000080]
+        RenderImage {IMG} at (20,0) size 40x40

@@ -1,0 +1,34 @@
+layer at (0,0) size 96x312
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x312
+  RenderBlock {HTML} at (0,0) size 96x312
+    RenderBody {BODY} at (8,8) size 80x296
+      RenderBlock {P} at (0,0) size 80x128
+        RenderText {#text} at (0,0) size 72x128
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 72: "should be a"
+          text run at (0,32) width 67: "big pattern"
+          text run at (0,48) width 53: "of green"
+          text run at (0,64) width 53: "and lime"
+          text run at (0,80) width 70: "dots below,"
+          text run at (0,96) width 70: "with no red"
+          text run at (0,112) width 51: "present."
+      RenderBlock {DIV} at (6,134) size 66x162 [color=#00FF00] [bgcolor=#FF0000] [border: (3px solid #000000)]
+        RenderBlock {P} at (15,9) size 48x24
+          RenderText {#text} at (0,5) size 41x14
+            text run at (0,5) width 41: "X X X X"
+        RenderBlock {P} at (15,33) size 48x24
+          RenderText {#text} at (0,5) size 41x14
+            text run at (0,5) width 41: "X X X X"
+        RenderBlock {P} at (15,57) size 48x24
+          RenderText {#text} at (0,5) size 41x14
+            text run at (0,5) width 41: "X X X X"
+        RenderBlock {P} at (15,81) size 48x24
+          RenderText {#text} at (0,5) size 41x14
+            text run at (0,5) width 41: "X X X X"
+        RenderBlock {P} at (15,105) size 48x24
+          RenderText {#text} at (0,5) size 41x14
+            text run at (0,5) width 41: "X X X X"
+        RenderBlock {P} at (15,129) size 48x24
+          RenderText {#text} at (0,5) size 41x14
+            text run at (0,5) width 41: "X X X X"

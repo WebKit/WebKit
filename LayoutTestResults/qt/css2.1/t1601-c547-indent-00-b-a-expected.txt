@@ -1,0 +1,43 @@
+layer at (0,0) size 440x372
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 440x372
+  RenderBlock {HTML} at (0,0) size 96x372
+    RenderBody {BODY} at (8,14) size 80x350
+      RenderBlock {P} at (0,0) size 80x96
+        RenderText {#text} at (0,0) size 72x96
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 72: "should be a"
+          text run at (0,32) width 51: "tall solid"
+          text run at (0,48) width 58: "unbroken"
+          text run at (0,64) width 60: "column of"
+          text run at (0,80) width 68: "blue below."
+      RenderBlock {DIV} at (0,110) size 432x24 [color=#0000FF]
+        RenderText {#text} at (0,-1) size 19x26
+          text run at (0,-1) width 19: " x"
+      RenderBlock {DIV} at (0,134) size 432x24 [color=#0000FF]
+        RenderText {#text} at (24,-1) size 12x26
+          text run at (24,-1) width 12: "x"
+      RenderBlock {DIV} at (0,158) size 432x24 [color=#0000FF]
+        RenderText {#text} at (24,-1) size 12x26
+          text run at (24,-1) width 12: "x"
+      RenderBlock {DIV} at (0,182) size 432x24 [color=#0000FF]
+        RenderText {#text} at (24,-1) size 12x26
+          text run at (24,-1) width 12: "x"
+      RenderBlock {DIV} at (0,206) size 432x24 [color=#0000FF]
+        RenderText {#text} at (24,-1) size 12x26
+          text run at (24,-1) width 12: "x"
+      RenderBlock {DIV} at (0,230) size 432x24 [color=#0000FF]
+        RenderText {#text} at (24,-1) size 12x26
+          text run at (24,-1) width 12: "x"
+      RenderBlock {DIV} at (0,254) size 432x24 [color=#0000FF]
+        RenderText {#text} at (24,-1) size 12x26
+          text run at (24,-1) width 12: "x"
+      RenderBlock {DIV} at (0,278) size 432x24 [color=#0000FF]
+        RenderText {#text} at (0,-1) size 12x26
+          text run at (0,-1) width 12: "x"
+      RenderBlock {DIV} at (0,302) size 432x24 [color=#0000FF]
+        RenderText {#text} at (24,-1) size 12x26
+          text run at (24,-1) width 12: "x"
+      RenderBlock {DIV} at (0,326) size 432x24 [color=#0000FF]
+        RenderText {#text} at (0,-1) size 19x26
+          text run at (0,-1) width 19: " x"

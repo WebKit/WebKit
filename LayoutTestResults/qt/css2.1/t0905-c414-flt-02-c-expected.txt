@@ -1,0 +1,58 @@
+layer at (0,0) size 302x499
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 302x332
+  RenderBlock {HTML} at (0,0) size 96x332
+    RenderBody {BODY} at (8,14) size 80x304
+      RenderBlock {P} at (0,0) size 80x304 [color=#000080]
+        RenderText {#text} at (0,0) size 77x304
+          text run at (0,0) width 54: "The blue"
+          text run at (0,16) width 77: "boxes below"
+          text run at (0,32) width 75: "should be in"
+          text run at (0,48) width 49: "numeric"
+          text run at (0,64) width 62: "order and"
+          text run at (0,80) width 67: "form a \"D\"."
+          text run at (0,96) width 44: "(Boxes"
+          text run at (0,112) width 71: "labelled \"A\""
+          text run at (0,128) width 75: "should be in"
+          text run at (0,144) width 47: "the first"
+          text run at (0,160) width 48: "column;"
+          text run at (0,176) width 37: "boxes"
+          text run at (0,192) width 52: "labelled "
+          text run at (52,192) width 19: "\"B\""
+          text run at (0,208) width 75: "should be in"
+          text run at (0,224) width 74: "the second;"
+          text run at (0,240) width 43: "arrows"
+          text run at (0,256) width 73: "indicate the"
+          text run at (0,272) width 44: "correct"
+          text run at (0,288) width 69: "alignment.)"
+      RenderBlock {DIV} at (14,318) size 280x0
+        RenderBlock (floating) {P} at (3,3) size 110x28 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (6,6) size 31x16
+            text run at (6,6) width 31: "\x{21E6} A 1"
+        RenderBlock (floating) {P} at (119,3) size 110x28 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (6,6) size 31x16
+            text run at (6,6) width 31: "\x{21E6} B 2"
+        RenderBlock (floating) {P} at (3,37) size 110x28 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (6,6) size 31x16
+            text run at (6,6) width 31: "\x{21E6} A 3"
+        RenderBlock (floating) {P} at (167,37) size 110x28 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (73,6) size 31x16
+            text run at (73,6) width 31: "B 4 \x{21E8}"
+        RenderBlock (floating) {P} at (3,71) size 110x28 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (6,6) size 31x16
+            text run at (6,6) width 31: "\x{21E6} A 5"
+        RenderBlock (floating) {P} at (167,71) size 110x28 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (73,6) size 31x16
+            text run at (73,6) width 31: "B 6 \x{21E8}"
+        RenderBlock (floating) {P} at (167,105) size 110x28 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (73,6) size 31x16
+            text run at (73,6) width 31: "B 8 \x{21E8}"
+        RenderBlock (floating) {P} at (3,105) size 110x28 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (6,6) size 31x16
+            text run at (6,6) width 31: "\x{21E6} A 7"
+        RenderBlock (floating) {P} at (3,139) size 110x28 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (6,6) size 31x16
+            text run at (6,6) width 31: "\x{21E6} A 9"
+        RenderBlock (floating) {P} at (119,139) size 110x28 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (6,6) size 39x16
+            text run at (6,6) width 39: "\x{21E6} B 10"

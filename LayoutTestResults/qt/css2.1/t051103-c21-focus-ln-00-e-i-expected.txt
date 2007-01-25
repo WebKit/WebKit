@@ -1,0 +1,12 @@
+layer at (0,0) size 96x92
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x92
+  RenderBlock {HTML} at (0,0) size 96x92
+    RenderBody {BODY} at (8,14) size 80x64
+      RenderBlock {P} at (0,0) size 80x64
+        RenderInline {A} at (0,0) size 71x64 [color=#0000FF]
+          RenderText {#text} at (0,0) size 71x64
+            text run at (0,0) width 71: "If you focus"
+            text run at (0,16) width 61: "this link, it"
+            text run at (0,32) width 61: "should go"
+            text run at (0,48) width 40: "green."

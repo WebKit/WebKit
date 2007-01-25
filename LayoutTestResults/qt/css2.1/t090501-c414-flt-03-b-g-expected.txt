@@ -1,0 +1,54 @@
+layer at (0,0) size 169x928
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x928
+  RenderBlock {HTML} at (0,0) size 96x928
+    RenderBody {BODY} at (8,14) size 80x900
+      RenderBlock {P} at (0,0) size 80x208 [color=#000080]
+        RenderText {#text} at (0,0) size 80x112
+          text run at (0,0) width 36: "In the"
+          text run at (0,16) width 55: "following"
+          text run at (0,32) width 50: "test, the"
+          text run at (0,48) width 39: "purple"
+          text run at (0,64) width 43: "square"
+          text run at (0,80) width 80: "should be on"
+          text run at (0,96) width 58: "the left (\x{21E6}"
+        RenderImage {IMG} at (58,96) size 16x16
+        RenderText {#text} at (0,112) size 72x64
+          text run at (0,112) width 60: "), and the"
+          text run at (0,128) width 70: "teal square"
+          text run at (0,144) width 72: "on the right"
+          text run at (0,160) width 5: "("
+        RenderImage {IMG} at (5,160) size 16x16
+        RenderText {#text} at (21,160) size 72x48
+          text run at (21,160) width 51: "\x{21E8}) of the"
+          text run at (0,176) width 25: "blue"
+          text run at (0,192) width 62: "rectangle."
+      RenderBlock {DIV} at (0,222) size 80x678
+        RenderBlock {DIV} at (14,0) size 52x678 [color=#0000FF] [bgcolor=#000080]
+          RenderImage {IMG} at (7,7) size 140x140
+          RenderImage {IMG} at (0,147) size 140x140
+          RenderText {#text} at (7,287) size 62x384
+            text run at (7,287) width 27: "Blue"
+            text run at (7,303) width 62: "rectangle."
+            text run at (7,319) width 27: "Blue"
+            text run at (7,335) width 62: "rectangle."
+            text run at (7,351) width 27: "Blue"
+            text run at (7,367) width 62: "rectangle."
+            text run at (7,383) width 27: "Blue"
+            text run at (7,399) width 62: "rectangle."
+            text run at (7,415) width 27: "Blue"
+            text run at (7,431) width 62: "rectangle."
+            text run at (7,447) width 27: "Blue"
+            text run at (7,463) width 62: "rectangle."
+            text run at (7,479) width 27: "Blue"
+            text run at (7,495) width 62: "rectangle."
+            text run at (7,511) width 27: "Blue"
+            text run at (7,527) width 62: "rectangle."
+            text run at (7,543) width 27: "Blue"
+            text run at (7,559) width 62: "rectangle."
+            text run at (7,575) width 27: "Blue"
+            text run at (7,591) width 62: "rectangle."
+            text run at (7,607) width 27: "Blue"
+            text run at (7,623) width 62: "rectangle."
+            text run at (7,639) width 27: "Blue"
+            text run at (7,655) width 62: "rectangle."

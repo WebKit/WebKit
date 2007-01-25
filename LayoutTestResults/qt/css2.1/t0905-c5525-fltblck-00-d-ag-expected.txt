@@ -1,0 +1,30 @@
+layer at (0,0) size 334x230
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x230
+  RenderBlock {HTML} at (0,0) size 96x230
+    RenderBody {BODY} at (8,8) size 80x214
+      RenderBlock {P} at (0,0) size 80x64
+        RenderText {#text} at (0,0) size 79x64
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 72: "should be a"
+          text run at (0,32) width 79: "green box to"
+          text run at (0,48) width 65: "the right. \x{2798}"
+      RenderBlock {DIV} at (0,64) size 80x150 [bgcolor=#FFFFFF]
+        RenderBlock (floating) {P} at (10,10) size 316x61 [color=#008000] [border: (3px solid #008000)]
+          RenderText {#text} at (8,7) size 288x47
+            text run at (8,7) width 140: "x x xxxx xx xxxx x x "
+            text run at (148,7) width 140: "x xx xx xxxx xx xx x "
+            text run at (288,7) width 8: "x"
+            text run at (8,22) width 128: "xxx xx xx xx xxx x "
+            text run at (136,22) width 140: "x xx xx xxxx xx xx x "
+            text run at (276,22) width 20: "x x"
+            text run at (8,37) width 112: "xxxx xx xxxx x x"
+        RenderBlock {P} at (0,0) size 80x126 [color=#FFFFFF]
+          RenderText {#text} at (72,80) size 8x17
+            text run at (72,80) width 8: "x"
+          RenderBR {BR} at (80,80) size 0x17
+          RenderText {#text} at (72,95) size 8x17
+            text run at (72,95) width 8: "x"
+          RenderBR {BR} at (80,95) size 0x17
+          RenderText {#text} at (72,110) size 8x17
+            text run at (72,110) width 8: "x"

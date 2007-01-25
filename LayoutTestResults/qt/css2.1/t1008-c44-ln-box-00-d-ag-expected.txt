@@ -1,0 +1,28 @@
+layer at (0,0) size 238x286
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 238x286
+  RenderBlock {HTML} at (0,0) size 96x286
+    RenderBody {BODY} at (8,14) size 80x264
+      RenderBlock {P} at (0,0) size 80x112
+        RenderText {#text} at (0,0) size 80x112
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 80: "should be no"
+          text run at (0,32) width 64: "red below,"
+          text run at (0,48) width 45: "just the"
+          text run at (0,64) width 77: "outline of an"
+          text run at (0,80) width 79: "empty green"
+          text run at (0,96) width 25: "box."
+      RenderBlock {DIV} at (0,126) size 230x138 [color=#FFFFFF] [bgcolor=#FF0000] [border: (10px solid #008000)]
+        RenderText {#text} at (20,19) size 181x12
+          text run at (20,19) width 92: "xxxx xxxx xxxx xxxx "
+          text run at (112,19) width 89: "xxxx xxxx xxxx xxxx"
+        RenderImage {IMG} at (20,35) size 40x40
+        RenderText {#text} at (60,63) size 26x12
+          text run at (60,63) width 3: " "
+          text run at (63,63) width 23: "xxxx "
+        RenderImage {IMG} at (86,63) size 40x40
+        RenderText {#text} at (126,63) size 175x56
+          text run at (126,63) width 3: " "
+          text run at (129,63) width 23: "xxxx "
+          text run at (152,63) width 43: "xxxx xxxx"
+          text run at (20,107) width 43: "xxxx xxxx"

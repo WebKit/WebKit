@@ -1,0 +1,16 @@
+layer at (0,0) size 96x124
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x124
+  RenderBlock {HTML} at (0,0) size 96x124
+    RenderBody {BODY} at (8,14) size 80x96
+      RenderBlock {P} at (0,0) size 80x96
+        RenderInline {A} at (0,0) size 60x48 [color=#008000]
+          RenderText {#text} at (0,0) size 60x48
+            text run at (0,0) width 52: "This link"
+            text run at (0,16) width 60: "should be"
+            text run at (0,32) width 40: "green."
+        RenderText {#text} at (40,32) size 65x64
+          text run at (40,32) width 25: " (do"
+          text run at (0,48) width 60: "not hover"
+          text run at (0,64) width 56: "over it or"
+          text run at (0,80) width 65: "activate it)"

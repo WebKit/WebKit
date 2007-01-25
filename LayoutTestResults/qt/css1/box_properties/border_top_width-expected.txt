@@ -1,0 +1,176 @@
+layer at (0,0) size 228x2048
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 228x2048
+  RenderBlock {HTML} at (0,0) size 96x2048
+    RenderBody {BODY} at (8,8) size 80x2032 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 58: "The style"
+          text run at (0,16) width 77: "declarations"
+          text run at (0,32) width 74: "which apply"
+          text run at (0,48) width 63: "to the text"
+          text run at (0,64) width 64: "below are:"
+      RenderBlock {PRE} at (0,94) size 80x96
+        RenderText {#text} at (0,0) size 220x96
+          text run at (0,0) width 216: ".zero {background-color: silver; border-top-width: 0;}"
+          text run at (216,0) width 0: " "
+          text run at (0,16) width 204: ".one {border-top-width: 25px; border-style: solid;}"
+          text run at (204,16) width 0: " "
+          text run at (0,32) width 208: ".two {border-top-width: thick; border-style: solid;}"
+          text run at (208,32) width 0: " "
+          text run at (0,48) width 220: ".three {border-top-width: medium; border-style: solid;}"
+          text run at (220,48) width 0: " "
+          text run at (0,64) width 208: ".four {border-top-width: thin; border-style: solid;}"
+          text run at (208,64) width 0: " "
+          text run at (0,80) width 124: ".five {border-top-width: 25px;}"
+          text run at (124,80) width 0: " "
+      RenderBlock {HR} at (0,204) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,220) size 80x64
+        RenderText {#text} at (0,0) size 71x32
+          text run at (0,0) width 68: "(These will"
+          text run at (0,16) width 71: "only work if"
+        RenderInline {CODE} at (0,0) size 48x16
+          RenderText {#text} at (0,32) size 48x16
+            text run at (0,32) width 48: "border-style"
+        RenderText {#text} at (48,32) size 71x32
+          text run at (48,32) width 14: " is"
+          text run at (0,48) width 71: "supported.)"
+      RenderBlock {P} at (0,298) size 80x64 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 77x64
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 77: "element has"
+          text run at (0,32) width 60: "a class of"
+          text run at (0,48) width 31: "zero."
+      RenderBlock {P} at (0,376) size 80x140 [border: (25px solid #000000) (3px solid #000000)]
+        RenderText {#text} at (3,25) size 69x112
+          text run at (3,25) width 27: "This"
+          text run at (3,41) width 66: "paragraph"
+          text run at (3,57) width 41: "should"
+          text run at (3,73) width 67: "have a top"
+          text run at (3,89) width 41: "border"
+          text run at (3,105) width 69: "width of 25"
+          text run at (3,121) width 39: "pixels."
+      RenderBlock {P} at (0,530) size 80x120 [border: (5px solid #000000) (3px solid #000000)]
+        RenderText {#text} at (3,5) size 66x112
+          text run at (3,5) width 27: "This"
+          text run at (3,21) width 66: "paragraph"
+          text run at (3,37) width 41: "should"
+          text run at (3,53) width 43: "have a"
+          text run at (3,69) width 53: "thick top"
+          text run at (3,85) width 41: "border"
+          text run at (3,101) width 36: "width."
+      RenderBlock {P} at (0,664) size 80x118 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 72x112
+          text run at (3,3) width 27: "This"
+          text run at (3,19) width 66: "paragraph"
+          text run at (3,35) width 41: "should"
+          text run at (3,51) width 43: "have a"
+          text run at (3,67) width 72: "medium top"
+          text run at (3,83) width 41: "border"
+          text run at (3,99) width 36: "width."
+      RenderBlock {P} at (0,796) size 80x100 [border: (1px solid #000000) (3px solid #000000)]
+        RenderText {#text} at (3,1) size 70x96
+          text run at (3,1) width 27: "This"
+          text run at (3,17) width 66: "paragraph"
+          text run at (3,33) width 41: "should"
+          text run at (3,49) width 70: "have a thin"
+          text run at (3,65) width 65: "top border"
+          text run at (3,81) width 36: "width."
+      RenderBlock {P} at (0,910) size 80x160
+        RenderText {#text} at (0,0) size 80x128
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 66: "paragraph"
+          text run at (0,32) width 76: "should have"
+          text run at (0,48) width 61: "no border"
+          text run at (0,64) width 80: "and no extra"
+          text run at (0,80) width 61: "\"padding\""
+          text run at (0,96) width 58: "on its top"
+          text run at (0,112) width 68: "side, as no"
+        RenderInline {CODE} at (0,0) size 48x16
+          RenderText {#text} at (0,128) size 48x16
+            text run at (0,128) width 48: "border-style"
+        RenderText {#text} at (48,128) size 77x32
+          text run at (48,128) width 29: " was"
+          text run at (0,144) width 22: "set."
+      RenderTable {TABLE} at (0,1084) size 94x948 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 92x946
+          RenderTableRow {TR} at (0,0) size 92x56
+            RenderTableCell {TD} at (0,0) size 92x56 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 53x48
+                RenderText {#text} at (4,4) size 53x48
+                  text run at (4,4) width 45: "TABLE"
+                  text run at (4,20) width 51: "Testing"
+                  text run at (4,36) width 53: "Section"
+          RenderTableRow {TR} at (0,56) size 92x890
+            RenderTableCell {TD} at (0,489) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x16
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,56) size 80x890 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 72x64
+                RenderText {#text} at (0,0) size 71x32
+                  text run at (0,0) width 68: "(These will"
+                  text run at (0,16) width 71: "only work if"
+                RenderInline {CODE} at (0,0) size 48x16
+                  RenderText {#text} at (0,32) size 48x16
+                    text run at (0,32) width 48: "border-style"
+                RenderText {#text} at (48,32) size 71x32
+                  text run at (48,32) width 14: " is"
+                  text run at (0,48) width 71: "supported.)"
+              RenderBlock {P} at (4,82) size 72x64 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 71x64
+                  text run at (0,0) width 27: "This"
+                  text run at (0,16) width 50: "element"
+                  text run at (0,32) width 71: "has a class"
+                  text run at (0,48) width 47: "of zero."
+              RenderBlock {P} at (4,160) size 72x140 [border: (25px solid #000000) (3px solid #000000)]
+                RenderText {#text} at (3,25) size 66x112
+                  text run at (3,25) width 27: "This"
+                  text run at (3,41) width 66: "paragraph"
+                  text run at (3,57) width 41: "should"
+                  text run at (3,73) width 43: "have a"
+                  text run at (3,89) width 65: "top border"
+                  text run at (3,105) width 49: "width of"
+                  text run at (3,121) width 59: "25 pixels."
+              RenderBlock {P} at (4,314) size 72x120 [border: (5px solid #000000) (3px solid #000000)]
+                RenderText {#text} at (3,5) size 66x112
+                  text run at (3,5) width 27: "This"
+                  text run at (3,21) width 66: "paragraph"
+                  text run at (3,37) width 41: "should"
+                  text run at (3,53) width 43: "have a"
+                  text run at (3,69) width 53: "thick top"
+                  text run at (3,85) width 41: "border"
+                  text run at (3,101) width 36: "width."
+              RenderBlock {P} at (4,448) size 72x118 [border: (3px solid #000000)]
+                RenderText {#text} at (3,3) size 66x112
+                  text run at (3,3) width 27: "This"
+                  text run at (3,19) width 66: "paragraph"
+                  text run at (3,35) width 41: "should"
+                  text run at (3,51) width 43: "have a"
+                  text run at (3,67) width 48: "medium"
+                  text run at (3,83) width 65: "top border"
+                  text run at (3,99) width 36: "width."
+              RenderBlock {P} at (4,580) size 72x116 [border: (1px solid #000000) (3px solid #000000)]
+                RenderText {#text} at (3,1) size 66x112
+                  text run at (3,1) width 27: "This"
+                  text run at (3,17) width 66: "paragraph"
+                  text run at (3,33) width 41: "should"
+                  text run at (3,49) width 43: "have a"
+                  text run at (3,65) width 47: "thin top"
+                  text run at (3,81) width 41: "border"
+                  text run at (3,97) width 36: "width."
+              RenderBlock {P} at (4,710) size 72x176
+                RenderText {#text} at (0,0) size 69x144
+                  text run at (0,0) width 27: "This"
+                  text run at (0,16) width 66: "paragraph"
+                  text run at (0,32) width 41: "should"
+                  text run at (0,48) width 51: "have no"
+                  text run at (0,64) width 69: "border and"
+                  text run at (0,80) width 52: "no extra"
+                  text run at (0,96) width 61: "\"padding\""
+                  text run at (0,112) width 58: "on its top"
+                  text run at (0,128) width 68: "side, as no"
+                RenderInline {CODE} at (0,0) size 48x16
+                  RenderText {#text} at (0,144) size 48x16
+                    text run at (0,144) width 48: "border-style"
+                RenderText {#text} at (0,160) size 51x16
+                  text run at (0,160) width 51: "was set."

@@ -1,0 +1,25 @@
+layer at (0,0) size 146x320
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 146x320
+  RenderBlock {HTML} at (0,0) size 96x320
+    RenderBody {BODY} at (8,14) size 80x294
+      RenderBlock {P} at (0,0) size 80x64
+        RenderText {#text} at (0,0) size 79x64
+          text run at (0,0) width 51: "The two"
+          text run at (0,16) width 79: "blocks below"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 55: "identical:"
+      RenderBlock {DIV} at (12,78) size 126x78 [color=#00FFFF] [bgcolor=#008080] [border: (3px solid #000080)]
+        RenderText {#text} at (27,26) size 85x26
+          text run at (27,26) width 85: "X X X X"
+      RenderBlock {PRE} at (12,168) size 126x126 [color=#00FFFF] [bgcolor=#008080] [border: (3px solid #000080)]
+        RenderText {#text} at (3,2) size 53x122
+          text run at (3,2) width 35: "     "
+          text run at (38,2) width 0: " "
+          text run at (3,26) width 53: " X X "
+          text run at (56,26) width 0: " "
+          text run at (3,50) width 35: "     "
+          text run at (38,50) width 0: " "
+          text run at (3,74) width 53: " X X "
+          text run at (56,74) width 0: " "
+          text run at (3,98) width 35: "     "

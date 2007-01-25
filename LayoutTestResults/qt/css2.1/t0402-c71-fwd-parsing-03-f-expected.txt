@@ -1,0 +1,33 @@
+layer at (0,0) size 96x390
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x390
+  RenderBlock {HTML} at (0,0) size 96x390
+    RenderBody {BODY} at (8,14) size 80x362 [color=#000080]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 74x80
+          text run at (0,0) width 68: "These four"
+          text run at (0,16) width 74: "lines should"
+          text run at (0,32) width 26: "look"
+          text run at (0,48) width 71: "identical, to"
+          text run at (0,64) width 56: "the pixel."
+      RenderBlock {P} at (0,94) size 80x80
+        RenderText {#text} at (0,0) size 74x80
+          text run at (0,0) width 68: "These four"
+          text run at (0,16) width 74: "lines should"
+          text run at (0,32) width 26: "look"
+          text run at (0,48) width 71: "identical, to"
+          text run at (0,64) width 56: "the pixel."
+      RenderBlock {P} at (0,188) size 80x80
+        RenderText {#text} at (0,0) size 74x80
+          text run at (0,0) width 68: "These four"
+          text run at (0,16) width 74: "lines should"
+          text run at (0,32) width 26: "look"
+          text run at (0,48) width 71: "identical, to"
+          text run at (0,64) width 56: "the pixel."
+      RenderBlock {P} at (0,282) size 80x80
+        RenderText {#text} at (0,0) size 74x80
+          text run at (0,0) width 68: "These four"
+          text run at (0,16) width 74: "lines should"
+          text run at (0,32) width 26: "look"
+          text run at (0,48) width 71: "identical, to"
+          text run at (0,64) width 56: "the pixel."

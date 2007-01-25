@@ -1,0 +1,19 @@
+layer at (0,0) size 232x215
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 232x215
+  RenderBlock {HTML} at (0,0) size 96x215
+    RenderBody {BODY} at (8,14) size 80x187
+      RenderBlock {P} at (0,0) size 80x80 [color=#000080]
+        RenderText {#text} at (0,0) size 76x80
+          text run at (0,0) width 60: "The word"
+          text run at (0,16) width 73: "\"fail\" should"
+          text run at (0,32) width 69: "not appear"
+          text run at (0,48) width 76: "below, just a"
+          text run at (0,64) width 76: "green block."
+      RenderBlock {DIV} at (14,94) size 210x93 [color=#FFFFFF] [bgcolor=#FFFFFF]
+        RenderImage {IMG} at (0,0) size 1x1
+        RenderImage {IMG} at (0,1) size 210x98
+        RenderInline {SPAN} at (0,0) size 96x86
+          RenderText {#text} at (1,3) size 96x86
+            text run at (1,3) width 96: "FAIL"
+        RenderText {#text} at (0,0) size 0x0

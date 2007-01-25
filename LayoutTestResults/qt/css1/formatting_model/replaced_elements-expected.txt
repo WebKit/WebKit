@@ -1,0 +1,208 @@
+layer at (0,0) size 260x2884
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 260x2884
+  RenderBlock {HTML} at (0,0) size 96x2884
+    RenderBody {BODY} at (8,8) size 80x2868 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 58: "The style"
+          text run at (0,16) width 77: "declarations"
+          text run at (0,32) width 74: "which apply"
+          text run at (0,48) width 63: "to the text"
+          text run at (0,64) width 64: "below are:"
+      RenderBlock {PRE} at (0,94) size 80x128
+        RenderText {#text} at (0,0) size 252x128
+          text run at (0,0) width 104: "IMG.one {display: inline;}"
+          text run at (104,0) width 0: " "
+          text run at (0,16) width 100: "IMG.two {display: block;}"
+          text run at (100,16) width 0: " "
+          text run at (0,32) width 104: "IMG.three {display: block;"
+          text run at (104,32) width 0: " "
+          text run at (0,48) width 252: "           margin-right: auto; margin-left: auto; width: auto;}"
+          text run at (252,48) width 0: " "
+          text run at (0,64) width 100: "IMG.four {display: block;"
+          text run at (100,64) width 0: " "
+          text run at (0,80) width 244: "          margin-right: auto; margin-left: auto; width: 50%;}"
+          text run at (244,80) width 0: " "
+          text run at (0,96) width 100: "IMG.five {display: block;"
+          text run at (100,96) width 0: " "
+          text run at (0,112) width 232: "          margin-right: 0; margin-left: auto; width: 50%;}"
+          text run at (232,112) width 0: " "
+      RenderBlock {HR} at (0,236) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,252) size 80x130
+        RenderImage {IMG} at (0,0) size 15x15
+        RenderText {#text} at (15,2) size 78x128
+          text run at (15,2) width 25: "The"
+          text run at (0,18) width 78: "image at the"
+          text run at (0,34) width 77: "beginning of"
+          text run at (0,50) width 22: "this"
+          text run at (0,66) width 58: "sentence"
+          text run at (0,82) width 72: "should be a"
+          text run at (0,98) width 31: "15px"
+          text run at (0,114) width 46: "square."
+      RenderImage {IMG} at (0,396) size 15x15
+      RenderBlock {P} at (0,425) size 80x128
+        RenderText {#text} at (0,0) size 78x128
+          text run at (0,0) width 67: "The above"
+          text run at (0,16) width 38: "image"
+          text run at (0,32) width 72: "should be a"
+          text run at (0,48) width 78: "15px square"
+          text run at (0,64) width 49: "with the"
+          text run at (0,80) width 57: "same left"
+          text run at (0,96) width 77: "edge as this"
+          text run at (0,112) width 26: "text."
+      RenderImage {IMG} at (32,567) size 15x15
+      RenderBlock {P} at (0,596) size 80x96
+        RenderText {#text} at (0,0) size 78x96
+          text run at (0,0) width 67: "The above"
+          text run at (0,16) width 38: "image"
+          text run at (0,32) width 72: "should be a"
+          text run at (0,48) width 78: "15px square"
+          text run at (0,64) width 62: "aligned at"
+          text run at (0,80) width 67: "the center."
+      RenderImage {IMG} at (20,706) size 40x40
+      RenderBlock {P} at (0,760) size 80x336
+        RenderText {#text} at (0,0) size 77x336
+          text run at (0,0) width 67: "The above"
+          text run at (0,16) width 38: "image"
+          text run at (0,32) width 72: "should be a"
+          text run at (0,48) width 43: "square"
+          text run at (0,64) width 65: "resized so"
+          text run at (0,80) width 65: "its width is"
+          text run at (0,96) width 68: "50% of the"
+          text run at (0,112) width 59: "its parent"
+          text run at (0,128) width 53: "element,"
+          text run at (0,144) width 24: "and"
+          text run at (0,160) width 56: "centered"
+          text run at (0,176) width 72: "horizontally"
+          text run at (0,192) width 60: "within the"
+          text run at (0,208) width 41: "parent"
+          text run at (0,224) width 57: "element: "
+          text run at (57,224) width 20: "the"
+          text run at (0,240) width 61: "document"
+          text run at (0,256) width 69: "body in the"
+          text run at (0,272) width 53: "first half,"
+          text run at (0,288) width 48: "and the"
+          text run at (0,304) width 69: "table in the"
+          text run at (0,320) width 49: "second."
+      RenderImage {IMG} at (40,1110) size 40x40
+      RenderBlock {P} at (0,1164) size 80x320
+        RenderText {#text} at (0,0) size 77x320
+          text run at (0,0) width 67: "The above"
+          text run at (0,16) width 38: "image"
+          text run at (0,32) width 72: "should be a"
+          text run at (0,48) width 43: "square"
+          text run at (0,64) width 65: "resized so"
+          text run at (0,80) width 65: "its width is"
+          text run at (0,96) width 62: "50% of its"
+          text run at (0,112) width 41: "parent"
+          text run at (0,128) width 53: "element,"
+          text run at (0,144) width 74: "and aligned"
+          text run at (0,160) width 68: "at the right"
+          text run at (0,176) width 72: "edge of the"
+          text run at (0,192) width 41: "parent"
+          text run at (0,208) width 57: "element: "
+          text run at (57,208) width 20: "the"
+          text run at (0,224) width 61: "document"
+          text run at (0,240) width 69: "body in the"
+          text run at (0,256) width 53: "first half,"
+          text run at (0,272) width 48: "and the"
+          text run at (0,288) width 69: "table in the"
+          text run at (0,304) width 49: "second."
+      RenderTable {TABLE} at (0,1498) size 94x1370 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 92x1368
+          RenderTableRow {TR} at (0,0) size 92x56
+            RenderTableCell {TD} at (0,0) size 92x56 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 53x48
+                RenderText {#text} at (4,4) size 53x48
+                  text run at (4,4) width 45: "TABLE"
+                  text run at (4,20) width 51: "Testing"
+                  text run at (4,36) width 53: "Section"
+          RenderTableRow {TR} at (0,56) size 92x1312
+            RenderTableCell {TD} at (0,700) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x16
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,56) size 80x1312 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 72x146
+                RenderImage {IMG} at (0,0) size 15x15
+                RenderText {#text} at (15,2) size 72x144
+                  text run at (15,2) width 25: "The"
+                  text run at (0,18) width 54: "image at"
+                  text run at (0,34) width 20: "the"
+                  text run at (0,50) width 61: "beginning"
+                  text run at (0,66) width 38: "of this"
+                  text run at (0,82) width 58: "sentence"
+                  text run at (0,98) width 72: "should be a"
+                  text run at (0,114) width 31: "15px"
+                  text run at (0,130) width 46: "square."
+              RenderImage {IMG} at (4,164) size 15x15
+              RenderBlock {P} at (4,193) size 72x128
+                RenderText {#text} at (0,0) size 72x128
+                  text run at (0,0) width 67: "The above"
+                  text run at (0,16) width 38: "image"
+                  text run at (0,32) width 72: "should be a"
+                  text run at (0,48) width 31: "15px"
+                  text run at (0,64) width 72: "square with"
+                  text run at (0,80) width 58: "the same"
+                  text run at (0,96) width 55: "left edge"
+                  text run at (0,112) width 71: "as this text."
+              RenderImage {IMG} at (32,335) size 15x15
+              RenderBlock {P} at (4,364) size 72x112
+                RenderText {#text} at (0,0) size 72x112
+                  text run at (0,0) width 67: "The above"
+                  text run at (0,16) width 38: "image"
+                  text run at (0,32) width 72: "should be a"
+                  text run at (0,48) width 31: "15px"
+                  text run at (0,64) width 43: "square"
+                  text run at (0,80) width 62: "aligned at"
+                  text run at (0,96) width 67: "the center."
+              RenderImage {IMG} at (22,490) size 36x36
+              RenderBlock {P} at (4,540) size 72x352
+                RenderText {#text} at (0,0) size 72x352
+                  text run at (0,0) width 67: "The above"
+                  text run at (0,16) width 38: "image"
+                  text run at (0,32) width 72: "should be a"
+                  text run at (0,48) width 43: "square"
+                  text run at (0,64) width 65: "resized so"
+                  text run at (0,80) width 65: "its width is"
+                  text run at (0,96) width 68: "50% of the"
+                  text run at (0,112) width 59: "its parent"
+                  text run at (0,128) width 53: "element,"
+                  text run at (0,144) width 24: "and"
+                  text run at (0,160) width 56: "centered"
+                  text run at (0,176) width 72: "horizontally"
+                  text run at (0,192) width 60: "within the"
+                  text run at (0,208) width 41: "parent"
+                  text run at (0,224) width 53: "element:"
+                  text run at (0,240) width 20: "the"
+                  text run at (0,256) width 61: "document"
+                  text run at (0,272) width 69: "body in the"
+                  text run at (0,288) width 53: "first half,"
+                  text run at (0,304) width 48: "and the"
+                  text run at (0,320) width 69: "table in the"
+                  text run at (0,336) width 49: "second."
+              RenderImage {IMG} at (40,906) size 36x36
+              RenderBlock {P} at (4,956) size 72x352
+                RenderText {#text} at (0,0) size 72x352
+                  text run at (0,0) width 67: "The above"
+                  text run at (0,16) width 38: "image"
+                  text run at (0,32) width 72: "should be a"
+                  text run at (0,48) width 43: "square"
+                  text run at (0,64) width 65: "resized so"
+                  text run at (0,80) width 65: "its width is"
+                  text run at (0,96) width 62: "50% of its"
+                  text run at (0,112) width 41: "parent"
+                  text run at (0,128) width 53: "element,"
+                  text run at (0,144) width 24: "and"
+                  text run at (0,160) width 62: "aligned at"
+                  text run at (0,176) width 52: "the right"
+                  text run at (0,192) width 72: "edge of the"
+                  text run at (0,208) width 41: "parent"
+                  text run at (0,224) width 53: "element:"
+                  text run at (0,240) width 20: "the"
+                  text run at (0,256) width 61: "document"
+                  text run at (0,272) width 69: "body in the"
+                  text run at (0,288) width 53: "first half,"
+                  text run at (0,304) width 48: "and the"
+                  text run at (0,320) width 69: "table in the"
+                  text run at (0,336) width 49: "second."

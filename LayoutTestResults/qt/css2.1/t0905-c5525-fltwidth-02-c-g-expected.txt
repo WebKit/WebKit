@@ -1,0 +1,24 @@
+layer at (0,0) size 109x330
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x33
+  RenderBlock {HTML} at (0,0) size 96x33
+    RenderBody {BODY} at (8,8) size 80x17
+      RenderBlock {DIV} at (0,0) size 80x17
+        RenderBlock (floating) {P} at (0,0) size 40x322
+          RenderText {#text} at (0,0) size 101x321
+            text run at (0,0) width 48: "There"
+            text run at (0,23) width 55: "should"
+            text run at (0,46) width 37: "be a"
+            text run at (0,69) width 47: "green"
+            text run at (0,92) width 57: "square"
+            text run at (0,115) width 17: "to"
+            text run at (0,138) width 26: "the"
+            text run at (0,161) width 42: "right,"
+            text run at (0,184) width 62: "roughly"
+            text run at (0,207) width 14: "in"
+            text run at (0,230) width 26: "the"
+            text run at (0,253) width 61: "middle,"
+            text run at (0,276) width 101: "horizontally."
+            text run at (0,299) width 9: "\x{21E8}"
+        RenderImage {IMG} at (40,0) size 15x15 [color=#FF0000]
+        RenderText {#text} at (0,0) size 0x0

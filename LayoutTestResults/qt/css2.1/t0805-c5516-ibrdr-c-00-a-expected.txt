@@ -1,0 +1,42 @@
+layer at (0,0) size 141x568
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 141x568
+  RenderBlock {HTML} at (0,0) size 96x568
+    RenderBody {BODY} at (8,42) size 80x484
+      RenderBlock {P} at (42,0) size 0x112
+        RenderInline {SPAN} at (0,0) size 47x118 [border: (3px solid #008000)]
+          RenderText {#text} at (3,0) size 44x112
+            text run at (3,0) width 27: "This"
+            text run at (0,16) width 22: "box"
+            text run at (0,32) width 41: "should"
+            text run at (0,48) width 31: "have"
+            text run at (0,64) width 8: "a"
+            text run at (0,80) width 37: "green"
+            text run at (0,96) width 44: "border."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (42,154) size 0x112
+        RenderInline {SPAN} at (0,0) size 47x118 [border: (3px solid #008000)]
+          RenderText {#text} at (3,0) size 44x112
+            text run at (3,0) width 27: "This"
+            text run at (0,16) width 22: "box"
+            text run at (0,32) width 41: "should"
+            text run at (0,48) width 31: "have"
+            text run at (0,64) width 8: "a"
+            text run at (0,80) width 37: "green"
+            text run at (0,96) width 44: "border."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (42,308) size 0x176
+        RenderInline {SPAN} at (0,0) size 91x232 [border: (28px solid #800080) (28px solid #008000) (28px solid #0000FF) (28px solid #FFFF00)]
+          RenderText {#text} at (28,0) size 91x176
+            text run at (28,0) width 63: "Clockwise"
+            text run at (0,16) width 28: "from"
+            text run at (0,32) width 23: "top,"
+            text run at (0,48) width 20: "the"
+            text run at (0,64) width 48: "borders"
+            text run at (0,80) width 41: "should"
+            text run at (0,96) width 18: "be:"
+            text run at (0,112) width 58: "PURPLE,"
+            text run at (0,128) width 52: "GREEN,"
+            text run at (0,144) width 39: "BLUE,"
+            text run at (0,160) width 61: "YELLOW."
+        RenderText {#text} at (0,0) size 0x0

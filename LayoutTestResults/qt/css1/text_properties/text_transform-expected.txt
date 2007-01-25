@@ -1,0 +1,258 @@
+layer at (0,0) size 144x3180
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 144x3180
+  RenderBlock {HTML} at (0,0) size 96x3180
+    RenderBody {BODY} at (8,8) size 80x3164 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 58: "The style"
+          text run at (0,16) width 77: "declarations"
+          text run at (0,32) width 74: "which apply"
+          text run at (0,48) width 63: "to the text"
+          text run at (0,64) width 64: "below are:"
+      RenderBlock {PRE} at (0,94) size 80x80
+        RenderText {#text} at (0,0) size 136x80
+          text run at (0,0) width 112: ".ttn {text-transform: none;}"
+          text run at (112,0) width 0: " "
+          text run at (0,16) width 136: ".cap {text-transform: capitalize;}"
+          text run at (136,16) width 0: " "
+          text run at (0,32) width 132: ".upp {text-transform: uppercase;}"
+          text run at (132,32) width 0: " "
+          text run at (0,48) width 132: ".low {text-transform: lowercase;}"
+          text run at (132,48) width 0: " "
+          text run at (0,64) width 0: " "
+      RenderBlock {HR} at (0,188) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,204) size 80x192
+        RenderText {#text} at (0,0) size 91x192
+          text run at (0,0) width 63: "This page"
+          text run at (0,16) width 54: "tests the"
+          text run at (0,32) width 30: "'text-"
+          text run at (0,48) width 63: "transform'"
+          text run at (0,64) width 69: "property of"
+          text run at (0,80) width 70: "CSS1. This"
+          text run at (0,96) width 66: "paragraph"
+          text run at (0,112) width 70: "has no text"
+          text run at (0,128) width 91: "transformation"
+          text run at (0,144) width 69: "and should"
+          text run at (0,160) width 45: "appear"
+          text run at (0,176) width 46: "normal."
+      RenderBlock {P} at (0,410) size 80x512
+        RenderText {#text} at (0,0) size 98x512
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 67: "Paragraph"
+          text run at (0,32) width 11: "Is"
+          text run at (0,48) width 70: "Capitalized"
+          text run at (0,64) width 54: "And The"
+          text run at (0,80) width 68: "First Letter"
+          text run at (0,96) width 48: "In Each"
+          text run at (0,112) width 34: "Word"
+          text run at (0,128) width 43: "Should"
+          text run at (0,144) width 63: "Therefore"
+          text run at (0,160) width 62: "Appear In"
+          text run at (0,176) width 72: "Uppercase."
+          text run at (0,192) width 74: "Words That"
+          text run at (0,208) width 38: "Are In"
+          text run at (0,224) width 69: "Uppercase"
+          text run at (0,240) width 41: "In The"
+          text run at (0,256) width 75: "Source (e.g."
+          text run at (0,272) width 80: "USA) Should"
+          text run at (0,288) width 72: "Remain So."
+          text run at (0,304) width 38: "There"
+          text run at (0,320) width 77: "Should Be A"
+          text run at (0,336) width 44: "Capital"
+          text run at (0,352) width 71: "Letter After"
+          text run at (0,368) width 43: "A Non-"
+          text run at (0,384) width 98: "breaking Space"
+          text run at (0,400) width 57: "(&nbsp;)."
+          text run at (0,416) width 73: "Both Those"
+          text run at (0,432) width 70: "Characters"
+          text run at (0,448) width 62: "Appear In"
+          text run at (0,464) width 25: "The"
+          text run at (0,480) width 54: "Previous"
+          text run at (0,496) width 63: "Sentence."
+      RenderBlock {P} at (0,936) size 80x288
+        RenderText {#text} at (0,0) size 76x272
+          text run at (0,0) width 70: "Words with"
+          text run at (0,16) width 33: "inline"
+          text run at (0,32) width 57: "elements"
+          text run at (0,48) width 72: "inside them"
+          text run at (0,64) width 71: "should only"
+          text run at (0,80) width 59: "capitalize"
+          text run at (0,96) width 47: "the first"
+          text run at (0,112) width 72: "letter of the"
+          text run at (0,128) width 34: "word."
+          text run at (0,144) width 66: "Therefore,"
+          text run at (0,160) width 46: "the last"
+          text run at (0,176) width 72: "word in this"
+          text run at (0,192) width 58: "sentence"
+          text run at (0,208) width 76: "should have"
+          text run at (0,224) width 55: "one, and"
+          text run at (0,240) width 57: "only one,"
+          text run at (0,256) width 41: "capital"
+        RenderInline {SPAN} at (0,0) size 37x16
+          RenderText {#text} at (0,272) size 16x16
+            text run at (0,272) width 16: "Le"
+          RenderInline {SPAN} at (0,0) size 8x16
+            RenderText {#text} at (16,272) size 8x16
+              text run at (16,272) width 8: "tt"
+          RenderText {#text} at (24,272) size 13x16
+            text run at (24,272) width 13: "er"
+        RenderText {#text} at (37,272) size 3x16
+          text run at (37,272) width 3: "."
+      RenderBlock {P} at (0,1238) size 80x352
+        RenderText {#text} at (0,0) size 95x272
+          text run at (0,0) width 32: "THIS"
+          text run at (0,16) width 86: "PARAGRAPH"
+          text run at (0,32) width 13: "IS"
+          text run at (0,48) width 94: "UPPERCASED"
+          text run at (0,64) width 79: "AND SMALL"
+          text run at (0,80) width 95: "CHARACTERS"
+          text run at (0,96) width 46: "IN THE"
+          text run at (0,112) width 59: "SOURCE"
+          text run at (0,128) width 77: "(E.G. A AND"
+          text run at (0,144) width 76: "\x{C5}) SHOULD"
+          text run at (0,160) width 85: "THEREFORE"
+          text run at (0,176) width 73: "APPEAR IN"
+          text run at (0,192) width 87: "UPPERCASE."
+          text run at (0,208) width 46: "IN THE"
+          text run at (0,224) width 35: "LAST"
+          text run at (0,240) width 78: "SENTENCE,"
+          text run at (0,256) width 74: "HOWEVER,"
+        RenderInline {SPAN} at (0,0) size 73x80
+          RenderText {#text} at (0,272) size 73x80
+            text run at (0,272) width 46: "the last"
+            text run at (0,288) width 73: "eight words"
+            text run at (0,304) width 65: "should not"
+            text run at (0,320) width 15: "be"
+            text run at (0,336) width 66: "uppercase"
+        RenderText {#text} at (66,336) size 3x16
+          text run at (66,336) width 3: "."
+      RenderBlock {P} at (0,1604) size 80x192
+        RenderText {#text} at (0,0) size 80x192
+          text run at (0,0) width 22: "this"
+          text run at (0,16) width 80: "paragraph is"
+          text run at (0,32) width 72: "lowercased"
+          text run at (0,48) width 69: "and capital"
+          text run at (0,64) width 67: "characters"
+          text run at (0,80) width 35: "in the"
+          text run at (0,96) width 73: "source (e.g."
+          text run at (0,112) width 53: "a and \x{E5})"
+          text run at (0,128) width 41: "should"
+          text run at (0,144) width 58: "therefore"
+          text run at (0,160) width 60: "appear in"
+          text run at (0,176) width 67: "lowercase."
+      RenderTable {TABLE} at (0,1810) size 120x1354 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 118x1352
+          RenderTableRow {TR} at (0,0) size 118x40
+            RenderTableCell {TD} at (0,0) size 118x40 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 100x32
+                RenderText {#text} at (4,4) size 100x32
+                  text run at (4,4) width 100: "TABLE Testing"
+                  text run at (4,20) width 53: "Section"
+          RenderTableRow {TR} at (0,40) size 118x1312
+            RenderTableCell {TD} at (0,684) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x16
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,40) size 106x1312 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 98x160
+                RenderText {#text} at (0,0) size 97x160
+                  text run at (0,0) width 97: "This page tests"
+                  text run at (0,16) width 54: "the 'text-"
+                  text run at (0,32) width 63: "transform'"
+                  text run at (0,48) width 69: "property of"
+                  text run at (0,64) width 70: "CSS1. This"
+                  text run at (0,80) width 93: "paragraph has"
+                  text run at (0,96) width 43: "no text"
+                  text run at (0,112) width 91: "transformation"
+                  text run at (0,128) width 69: "and should"
+                  text run at (0,144) width 95: "appear normal."
+              RenderBlock {P} at (4,178) size 98x400
+                RenderText {#text} at (0,0) size 98x400
+                  text run at (0,0) width 98: "This Paragraph"
+                  text run at (0,16) width 85: "Is Capitalized"
+                  text run at (0,32) width 85: "And The First"
+                  text run at (0,48) width 89: "Letter In Each"
+                  text run at (0,64) width 81: "Word Should"
+                  text run at (0,80) width 63: "Therefore"
+                  text run at (0,96) width 62: "Appear In"
+                  text run at (0,112) width 72: "Uppercase."
+                  text run at (0,128) width 74: "Words That"
+                  text run at (0,144) width 38: "Are In"
+                  text run at (0,160) width 85: "Uppercase In"
+                  text run at (0,176) width 73: "The Source"
+                  text run at (0,192) width 64: "(e.g. USA)"
+                  text run at (0,208) width 95: "Should Remain"
+                  text run at (0,224) width 62: "So. There"
+                  text run at (0,240) width 77: "Should Be A"
+                  text run at (0,256) width 85: "Capital Letter"
+                  text run at (0,272) width 77: "After A Non-"
+                  text run at (0,288) width 98: "breaking Space"
+                  text run at (0,304) width 90: "(&nbsp;). Both"
+                  text run at (0,320) width 40: "Those"
+                  text run at (0,336) width 70: "Characters"
+                  text run at (0,352) width 91: "Appear In The"
+                  text run at (0,368) width 54: "Previous"
+                  text run at (0,384) width 63: "Sentence."
+              RenderBlock {P} at (4,592) size 98x224
+                RenderText {#text} at (0,0) size 98x208
+                  text run at (0,0) width 70: "Words with"
+                  text run at (0,16) width 94: "inline elements"
+                  text run at (0,32) width 72: "inside them"
+                  text run at (0,48) width 71: "should only"
+                  text run at (0,64) width 83: "capitalize the"
+                  text run at (0,80) width 75: "first letter of"
+                  text run at (0,96) width 58: "the word."
+                  text run at (0,112) width 90: "Therefore, the"
+                  text run at (0,128) width 98: "last word in this"
+                  text run at (0,144) width 58: "sentence"
+                  text run at (0,160) width 76: "should have"
+                  text run at (0,176) width 85: "one, and only"
+                  text run at (0,192) width 72: "one, capital"
+                RenderInline {SPAN} at (0,0) size 37x16
+                  RenderText {#text} at (0,208) size 16x16
+                    text run at (0,208) width 16: "Le"
+                  RenderInline {SPAN} at (0,0) size 8x16
+                    RenderText {#text} at (16,208) size 8x16
+                      text run at (16,208) width 8: "tt"
+                  RenderText {#text} at (24,208) size 13x16
+                    text run at (24,208) width 13: "er"
+                RenderText {#text} at (37,208) size 3x16
+                  text run at (37,208) width 3: "."
+              RenderBlock {P} at (4,830) size 98x320
+                RenderText {#text} at (0,0) size 95x256
+                  text run at (0,0) width 32: "THIS"
+                  text run at (0,16) width 86: "PARAGRAPH"
+                  text run at (0,32) width 13: "IS"
+                  text run at (0,48) width 94: "UPPERCASED"
+                  text run at (0,64) width 79: "AND SMALL"
+                  text run at (0,80) width 95: "CHARACTERS"
+                  text run at (0,96) width 46: "IN THE"
+                  text run at (0,112) width 94: "SOURCE (E.G."
+                  text run at (0,128) width 60: "A AND \x{C5})"
+                  text run at (0,144) width 58: "SHOULD"
+                  text run at (0,160) width 85: "THEREFORE"
+                  text run at (0,176) width 73: "APPEAR IN"
+                  text run at (0,192) width 87: "UPPERCASE."
+                  text run at (0,208) width 85: "IN THE LAST"
+                  text run at (0,224) width 78: "SENTENCE,"
+                  text run at (0,240) width 78: "HOWEVER, "
+                RenderInline {SPAN} at (0,0) size 98x80
+                  RenderText {#text} at (78,240) size 98x80
+                    text run at (78,240) width 20: "the"
+                    text run at (0,256) width 57: "last eight"
+                    text run at (0,272) width 83: "words should"
+                    text run at (0,288) width 39: "not be"
+                    text run at (0,304) width 66: "uppercase"
+                RenderText {#text} at (66,304) size 3x16
+                  text run at (66,304) width 3: "."
+              RenderBlock {P} at (4,1164) size 98x144
+                RenderText {#text} at (0,0) size 98x144
+                  text run at (0,0) width 92: "this paragraph"
+                  text run at (0,16) width 86: "is lowercased"
+                  text run at (0,32) width 69: "and capital"
+                  text run at (0,48) width 82: "characters in"
+                  text run at (0,64) width 97: "the source (e.g."
+                  text run at (0,80) width 98: "a and \x{E5}) should"
+                  text run at (0,96) width 58: "therefore"
+                  text run at (0,112) width 60: "appear in"
+                  text run at (0,128) width 67: "lowercase."

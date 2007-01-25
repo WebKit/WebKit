@@ -1,0 +1,36 @@
+layer at (0,0) size 168x367
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 168x367
+  RenderBlock {HTML} at (0,0) size 96x367
+    RenderBody {BODY} at (8,14) size 80x345
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 62x80
+          text run at (0,0) width 62: "The three"
+          text run at (0,16) width 58: "diagrams"
+          text run at (0,32) width 36: "below"
+          text run at (0,48) width 60: "should be"
+          text run at (0,64) width 55: "identical:"
+      RenderBlock {P} at (0,96) size 160x32 [color=#FFA500] [bgcolor=#FFFF00]
+        RenderText {#text} at (0,-1) size 56x18
+          text run at (0,-1) width 56: "xxx xxx "
+        RenderInline {SPAN} at (0,0) size 52x18 [bgcolor=#00FF00]
+          RenderText {#text} at (56,-1) size 52x18
+            text run at (56,-1) width 52: "xxx xxx"
+        RenderText {#text} at (108,-1) size 136x34
+          text run at (108,-1) width 28: " xxx"
+          text run at (0,15) width 24: "xxx"
+      RenderBlock {P} at (0,144) size 160x32 [color=#FFA500] [bgcolor=#FFFF00]
+        RenderText {#text} at (0,-1) size 56x18
+          text run at (0,-1) width 56: "xxx xxx "
+        RenderInline {SPAN} at (0,0) size 52x18 [bgcolor=#00FF00]
+          RenderText {#text} at (56,-1) size 52x18
+            text run at (56,-1) width 52: "xxx xxx"
+        RenderText {#text} at (108,-1) size 136x34
+          text run at (108,-1) width 28: " xxx"
+          text run at (0,15) width 24: "xxx"
+      RenderBlock {DIV} at (0,192) size 80x153
+        RenderImage {IMG} at (0,0) size 48x48
+        RenderImage {IMG} at (48,0) size 16x48 [border: (16px solid #FFFF00) none (16px solid #FFFF00) none]
+        RenderImage {IMG} at (0,51) size 48x48
+        RenderImage {IMG} at (0,102) size 48x48
+        RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,64 @@
+layer at (0,0) size 181x880
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x880
+  RenderBlock {HTML} at (0,0) size 96x880
+    RenderBody {BODY} at (8,14) size 80x852
+      RenderBlock {P} at (0,0) size 80x160 [color=#000080]
+        RenderText {#text} at (0,0) size 77x160
+          text run at (0,0) width 36: "In the"
+          text run at (0,16) width 55: "following"
+          text run at (0,32) width 77: "test, the teal"
+          text run at (0,48) width 72: "blocks must"
+          text run at (0,64) width 40: "be just"
+          text run at (0,80) width 61: "inside the"
+          text run at (0,96) width 48: "top and"
+          text run at (0,112) width 73: "sides of the"
+          text run at (0,128) width 25: "blue"
+          text run at (0,144) width 62: "rectangle."
+      RenderBlock {DIV} at (0,174) size 80x678
+        RenderBlock {DIV} at (14,0) size 52x678 [color=#0000FF] [bgcolor=#000080] [border: (7px solid #0000FF) none (7px solid #0000FF)]
+          RenderBlock (floating) {P} at (7,7) size 152x76 [color=#00FFFF] [bgcolor=#008080] [border: (3px solid #00FFFF)]
+            RenderText {#text} at (6,6) size 138x64
+              text run at (6,6) width 138: "Teal block. Teal block."
+              text run at (6,22) width 138: "Teal block. Teal block."
+              text run at (6,38) width 138: "Teal block. Teal block."
+              text run at (6,54) width 138: "Teal block. Teal block."
+          RenderBlock (floating) {P} at (0,83) size 152x76 [color=#00FFFF] [bgcolor=#008080] [border: (3px solid #00FFFF)]
+            RenderText {#text} at (6,6) size 138x64
+              text run at (6,6) width 138: "Teal block. Teal block."
+              text run at (6,22) width 138: "Teal block. Teal block."
+              text run at (6,38) width 138: "Teal block. Teal block."
+              text run at (6,54) width 138: "Teal block. Teal block."
+          RenderText {#text} at (7,159) size 62x512
+            text run at (7,159) width 27: "Blue"
+            text run at (7,175) width 62: "rectangle."
+            text run at (7,191) width 27: "Blue"
+            text run at (7,207) width 62: "rectangle."
+            text run at (7,223) width 27: "Blue"
+            text run at (7,239) width 62: "rectangle."
+            text run at (7,255) width 27: "Blue"
+            text run at (7,271) width 62: "rectangle."
+            text run at (7,287) width 27: "Blue"
+            text run at (7,303) width 62: "rectangle."
+            text run at (7,319) width 27: "Blue"
+            text run at (7,335) width 62: "rectangle."
+            text run at (7,351) width 27: "Blue"
+            text run at (7,367) width 62: "rectangle."
+            text run at (7,383) width 27: "Blue"
+            text run at (7,399) width 62: "rectangle."
+            text run at (7,415) width 27: "Blue"
+            text run at (7,431) width 62: "rectangle."
+            text run at (7,447) width 27: "Blue"
+            text run at (7,463) width 62: "rectangle."
+            text run at (7,479) width 27: "Blue"
+            text run at (7,495) width 62: "rectangle."
+            text run at (7,511) width 27: "Blue"
+            text run at (7,527) width 62: "rectangle."
+            text run at (7,543) width 27: "Blue"
+            text run at (7,559) width 62: "rectangle."
+            text run at (7,575) width 27: "Blue"
+            text run at (7,591) width 62: "rectangle."
+            text run at (7,607) width 27: "Blue"
+            text run at (7,623) width 62: "rectangle."
+            text run at (7,639) width 27: "Blue"
+            text run at (7,655) width 62: "rectangle."

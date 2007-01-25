@@ -1,0 +1,28 @@
+layer at (0,0) size 113x183
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 113x183
+  RenderBlock {HTML} at (0,0) size 96x183
+    RenderBody {BODY} at (8,14) size 80x161
+      RenderBlock {P} at (0,0) size 80x80 [color=#000080]
+        RenderText {#text} at (0,0) size 60x80
+          text run at (0,0) width 25: "The"
+          text run at (0,16) width 55: "following"
+          text run at (0,32) width 53: "two bars"
+          text run at (0,48) width 60: "should be"
+          text run at (0,64) width 55: "identical:"
+      RenderBlock {DIV} at (30,95) size 75x15
+        RenderBlock {P} at (0,0) size 75x15 [color=#00FF00] [bgcolor=#FFFF00]
+          RenderInline {SPAN} at (0,0) size 16x17 [color=#FFA500] [bgcolor=#FF0000]
+            RenderText {#text} at (0,-1) size 16x17
+              text run at (0,-1) width 16: "xx"
+          RenderText {#text} at (-44,-1) size 44x17
+            text run at (-44,-1) width 20: " xx"
+      RenderBlock {DIV} at (0,125) size 80x36
+        RenderImage {IMG} at (0,0) size 15x15
+        RenderImage {IMG} at (15,0) size 15x15
+        RenderImage {IMG} at (30,0) size 15x15
+        RenderImage {IMG} at (45,0) size 15x15
+        RenderImage {IMG} at (60,0) size 15x15
+        RenderImage {IMG} at (0,18) size 15x15
+        RenderImage {IMG} at (15,18) size 15x15
+        RenderText {#text} at (0,0) size 0x0

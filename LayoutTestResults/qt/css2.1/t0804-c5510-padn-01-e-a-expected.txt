@@ -1,0 +1,30 @@
+layer at (0,0) size 168x354
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 168x354
+  RenderBlock {HTML} at (0,0) size 96x354
+    RenderBody {BODY} at (8,8) size 80x332
+      RenderBlock {P} at (0,0) size 80x96 [color=#000080]
+        RenderText {#text} at (0,0) size 71x96
+          text run at (0,0) width 25: "The"
+          text run at (0,16) width 55: "following"
+          text run at (0,32) width 22: "two"
+          text run at (0,48) width 58: "diagrams"
+          text run at (0,64) width 71: "should look"
+          text run at (0,80) width 55: "identical."
+      RenderBlock {DIV} at (14,110) size 146x104 [color=#008080] [bgcolor=#FFA500] [border: (3px solid #000000)]
+        RenderBlock {UL} at (3,3) size 140x98 [bgcolor=#FFFF00]
+          RenderListItem {LI} at (14,14) size 112x14
+            RenderText {#text} at (0,-1) size 4x16
+              text run at (0,-1) width 4: "-"
+          RenderListItem {LI} at (14,28) size 112x42 [bgcolor=#00FFFF]
+            RenderText {#text} at (14,13) size 4x16
+              text run at (14,13) width 4: "-"
+          RenderListItem {LI} at (14,70) size 112x14
+            RenderText {#text} at (0,-1) size 4x16
+              text run at (0,-1) width 4: "-"
+      RenderBlock {DIV} at (14,228) size 146x104 [bgcolor=#FF0000] [border: (3px solid #000000)]
+        RenderBlock {DIV} at (3,3) size 140x98 [bgcolor=#FFFF00] [border: (14px solid #FFFF00)]
+          RenderBlock {DIV} at (14,14) size 14x14 [bgcolor=#008080]
+          RenderBlock {DIV} at (14,28) size 112x42 [bgcolor=#00FFFF] [border: (14px solid #00FFFF)]
+            RenderBlock {DIV} at (14,14) size 14x14 [bgcolor=#008080]
+          RenderBlock {DIV} at (14,70) size 14x14 [bgcolor=#008080]

@@ -1,0 +1,37 @@
+layer at (0,0) size 96x494
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x494
+  RenderBlock {HTML} at (0,0) size 96x494
+    RenderBody {BODY} at (8,14) size 80x466
+      RenderBlock {P} at (0,0) size 80x64 [color=#000080]
+        RenderText {#text} at (0,0) size 80x64
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 80: "should be no"
+          text run at (0,32) width 21: "red"
+          text run at (0,48) width 65: "anywhere."
+      RenderBlock {P} at (0,78) size 80x96 [color=#000080]
+        RenderText {#text} at (0,0) size 78x96
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 60: "should be"
+          text run at (0,32) width 78: "two identical"
+          text run at (0,48) width 50: "squares"
+          text run at (0,64) width 55: "after this"
+          text run at (0,80) width 25: "line:"
+      RenderBlock {DIV} at (14,188) size 52x37
+        RenderImage {IMG} at (0,0) size 15x15
+        RenderBlock {SPAN} at (0,20) size 15x17 [color=#0000FF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 10x17
+            text run at (0,0) width 10: "X"
+      RenderBlock {P} at (0,239) size 80x96 [color=#000080]
+        RenderText {#text} at (0,0) size 78x96
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 60: "should be"
+          text run at (0,32) width 78: "two identical"
+          text run at (0,48) width 50: "squares"
+          text run at (0,64) width 55: "after this"
+          text run at (0,80) width 25: "line:"
+      RenderBlock {DIV} at (14,349) size 52x117
+        RenderImage {IMG} at (0,0) size 56x56
+        RenderBlock {SPAN} at (0,61) size 56x56 [color=#0000FF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,2) size 37x58
+            text run at (0,2) width 37: "X"

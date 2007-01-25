@@ -1,0 +1,12 @@
+layer at (0,0) size 96x86
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x86
+  RenderBlock {HTML} at (0,0) size 96x86
+    RenderBody {BODY} at (8,8) size 80x70
+      RenderBlock {DIV} at (0,0) size 80x70 [color=#000080]
+        RenderBlock {DIV} at (0,0) size 80x70 [border: (3px solid #000080) none]
+          RenderText {#text} at (0,3) size 76x64
+            text run at (0,3) width 53: "This box"
+            text run at (0,19) width 60: "should be"
+            text run at (0,35) width 76: "open ended"
+            text run at (0,51) width 62: "at the left."

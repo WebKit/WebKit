@@ -1,0 +1,19 @@
+layer at (0,0) size 96x138
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x138
+  RenderBlock {HTML} at (0,0) size 96x138
+    RenderBody {BODY} at (8,14) size 80x110
+      RenderBlock {P} at (0,0) size 80x48
+        RenderText {#text} at (0,0) size 60x48
+          text run at (0,0) width 53: "This line"
+          text run at (0,16) width 60: "should be"
+          text run at (0,32) width 40: "green."
+      RenderBlock {P} at (0,62) size 80x48
+        RenderText {#text} at (0,0) size 53x16
+          text run at (0,0) width 53: "This line"
+        RenderInline {SPAN} at (0,0) size 60x32
+          RenderText {#text} at (0,16) size 60x32
+            text run at (0,16) width 60: "should be"
+            text run at (0,32) width 37: "green"
+        RenderText {#text} at (37,32) size 27x16
+          text run at (37,32) width 27: " too."

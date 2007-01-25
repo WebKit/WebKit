@@ -1,0 +1,23 @@
+layer at (0,0) size 96x248
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x248
+  RenderBlock {HTML} at (0,0) size 96x248
+    RenderBody {BODY} at (8,14) size 80x220
+      RenderBlock {P} at (0,0) size 80x64 [color=#008000]
+        RenderText {#text} at (0,0) size 60x64
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 58: "sentence"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 40: "green."
+      RenderBlock {P} at (0,78) size 80x64 [color=#008000]
+        RenderText {#text} at (0,0) size 60x64
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 58: "sentence"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 40: "green."
+      RenderBlock {P} at (0,156) size 80x64 [color=#008000]
+        RenderText {#text} at (0,0) size 60x64
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 58: "sentence"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 40: "green."

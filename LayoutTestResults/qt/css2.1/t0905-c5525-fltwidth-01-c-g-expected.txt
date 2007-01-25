@@ -1,0 +1,17 @@
+layer at (0,0) size 96x192
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x192
+  RenderBlock {HTML} at (0,0) size 96x192
+    RenderBody {BODY} at (8,8) size 80x176
+      RenderBlock {DIV} at (0,0) size 80x176
+        RenderBlock (floating) {P} at (0,0) size 80x161
+          RenderText {#text} at (0,0) size 71x160
+            text run at (0,0) width 48: "There"
+            text run at (0,23) width 55: "should"
+            text run at (0,46) width 37: "be a"
+            text run at (0,69) width 47: "green"
+            text run at (0,92) width 71: "block on"
+            text run at (0,115) width 67: "the next"
+            text run at (0,138) width 33: "line:"
+        RenderImage {IMG} at (0,161) size 15x15 [color=#FF0000]
+        RenderText {#text} at (0,0) size 0x0

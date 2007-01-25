@@ -1,0 +1,34 @@
+layer at (0,0) size 442x292
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 442x292
+  RenderBlock {HTML} at (0,0) size 96x292
+    RenderBody {BODY} at (8,14) size 80x270
+      RenderBlock {P} at (0,0) size 80x128 [color=#000080]
+        RenderText {#text} at (0,0) size 70x128
+          text run at (0,0) width 51: "The two"
+          text run at (0,16) width 58: "diagrams"
+          text run at (0,32) width 36: "below"
+          text run at (0,48) width 60: "should be"
+          text run at (0,64) width 68: "identical to"
+          text run at (0,80) width 53: "the pixel"
+          text run at (0,96) width 70: "with no red"
+          text run at (0,112) width 51: "present."
+      RenderTable {TABLE} at (0,142) size 434x128
+        RenderTableSection {TBODY} at (0,0) size 434x128
+          RenderTableRow {TR} at (0,2) size 434x124
+            RenderTableCell {TD} at (2,26) size 214x76 [border: (2px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (12,2) size 200x72
+                RenderText {#text} at (0,6) size 117x12
+                  text run at (0,6) width 90: "1 2 3 4 5 6 7 8 9 0 "
+                  text run at (90,6) width 27: "1 2 3 "
+                RenderInline {SPAN} at (0,0) size 192x60 [border: (10px solid #0000FF)]
+                  RenderText {#text} at (177,6) size 192x36
+                    text run at (177,6) width 15: "7 8"
+                    text run at (0,30) width 18: "9 0 "
+                    text run at (18,30) width 90: "1 2 3 4 5 6 7 8 9 0 "
+                    text run at (108,30) width 33: "1 2 3 4"
+                RenderText {#text} at (0,54) size 114x12
+                  text run at (0,54) width 27: "8 9 0 "
+                  text run at (27,54) width 87: "1 2 3 4 5 6 7 8 9 0"
+            RenderTableCell {TD} at (218,2) size 214x124 [color=#FFFF00] [bgcolor=#FF0000] [border: (2px solid #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (2,2) size 210x120

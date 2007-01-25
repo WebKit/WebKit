@@ -1,0 +1,46 @@
+layer at (0,0) size 134x557
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 134x557
+  RenderBlock {HTML} at (0,0) size 96x557
+    RenderBody {BODY} at (8,14) size 80x535
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 73x80
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 72: "should be a"
+          text run at (0,32) width 59: "tall green"
+          text run at (0,48) width 65: "box below,"
+          text run at (0,64) width 73: "with no red."
+      RenderBlock {DIV} at (0,94) size 126x441 [color=#008000] [bgcolor=#FF0000] [border: (3px solid #000000)]
+        RenderBlock {P} at (18,18) size 90x15
+          RenderText {#text} at (0,-1) size 88x17
+            text run at (0,-1) width 88: "x x x xx x x x"
+        RenderBlock {P} at (18,48) size 90x45
+          RenderImage {IMG} at (0,0) size 45x45 [color=#FF0000]
+          RenderText {#text} at (45,-1) size 40x47
+            text run at (45,-1) width 32: "x x x"
+            text run at (45,14) width 40: "xx x x"
+            text run at (45,29) width 8: "x"
+        RenderBlock {P} at (18,108) size 90x90
+          RenderImage {IMG} at (30,30) size 45x45 [color=#FF0000]
+          RenderText {#text} at (75,-1) size 83x92
+            text run at (75,-1) width 8: "x"
+            text run at (75,14) width 8: "x"
+            text run at (75,29) width 8: "x"
+            text run at (0,74) width 52: "xx x x x"
+        RenderBlock {P} at (48,243) size 60x30
+          RenderImage {IMG} at (-30,-30) size 45x45 [color=#FF0000]
+          RenderText {#text} at (15,-1) size 52x32
+            text run at (15,-1) width 32: "x x x"
+            text run at (0,14) width 52: "xx x x x"
+        RenderBlock {P} at (18,288) size 90x90
+          RenderImage {IMG} at (0,0) size 45x45 [color=#FF0000]
+          RenderText {#text} at (75,-1) size 83x92
+            text run at (75,-1) width 8: "x"
+            text run at (75,14) width 8: "x"
+            text run at (75,29) width 8: "x"
+            text run at (0,74) width 52: "xx x x x"
+        RenderBlock {P} at (18,393) size 90x30
+          RenderImage {IMG} at (0,0) size 45x45 [color=#FF0000]
+          RenderText {#text} at (15,-1) size 79x32
+            text run at (15,-1) width 64: "x x x xx x"
+            text run at (0,14) width 20: "x x"

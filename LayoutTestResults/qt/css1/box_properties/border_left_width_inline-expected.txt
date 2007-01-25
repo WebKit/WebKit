@@ -1,0 +1,185 @@
+layer at (0,0) size 216x1976
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 216x1976
+  RenderBlock {HTML} at (0,0) size 96x1976
+    RenderBody {BODY} at (8,8) size 80x1960 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 58: "The style"
+          text run at (0,16) width 77: "declarations"
+          text run at (0,32) width 74: "which apply"
+          text run at (0,48) width 63: "to the text"
+          text run at (0,64) width 64: "below are:"
+      RenderBlock {PRE} at (0,94) size 80x48
+        RenderText {#text} at (0,0) size 208x48
+          text run at (0,0) width 208: ".one {border-left-width: 25px; border-style: solid;}"
+          text run at (208,0) width 0: " "
+          text run at (0,16) width 208: ".two {border-left-width: thin; border-style: solid;}"
+          text run at (208,16) width 0: " "
+          text run at (0,32) width 132: ".three {border-left-width: 25px;}"
+          text run at (132,32) width 0: " "
+      RenderBlock {HR} at (0,156) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,172) size 80x886 [border: (3px solid #000000) (25px solid #000000)]
+        RenderText {#text} at (25,3) size 50x64
+          text run at (25,3) width 27: "This"
+          text run at (25,19) width 50: "element"
+          text run at (25,35) width 35: "has a"
+          text run at (25,51) width 48: "class of"
+        RenderInline {TT} at (0,0) size 12x16
+          RenderText {#text} at (25,67) size 12x16
+            text run at (25,67) width 12: "one"
+        RenderText {#text} at (37,67) size 59x80
+          text run at (37,67) width 3: "."
+          text run at (25,83) width 59: "However,"
+          text run at (25,99) width 7: "it"
+          text run at (25,115) width 53: "contains"
+          text run at (25,131) width 16: "an"
+        RenderInline {SPAN} at (0,0) size 50x67 [border: (3px solid #000000) (1px solid #000000)]
+          RenderText {#text} at (26,147) size 50x48
+            text run at (26,147) width 33: "inline"
+            text run at (25,163) width 50: "element"
+            text run at (25,179) width 48: "of class"
+          RenderInline {TT} at (0,0) size 12x16
+            RenderText {#text} at (25,195) size 12x16
+              text run at (25,195) width 12: "two"
+        RenderText {#text} at (40,195) size 49x160
+          text run at (40,195) width 3: ","
+          text run at (25,211) width 36: "which"
+          text run at (25,227) width 41: "should"
+          text run at (25,243) width 49: "result in"
+          text run at (25,259) width 35: "a thin"
+          text run at (25,275) width 29: "solid"
+          text run at (25,291) width 41: "border"
+          text run at (25,307) width 40: "on the"
+          text run at (25,323) width 49: "left side"
+          text run at (25,339) width 36: "of the"
+        RenderInline {STRONG} at (0,0) size 27x16
+          RenderText {#text} at (25,355) size 27x16
+            text run at (25,355) width 27: "first"
+        RenderText {#text} at (25,371) size 52x240
+          text run at (25,371) width 37: "box in"
+          text run at (25,387) width 20: "the"
+          text run at (25,403) width 33: "inline"
+          text run at (25,419) width 50: "element"
+          text run at (25,435) width 29: "(and"
+          text run at (25,451) width 20: "the"
+          text run at (25,467) width 29: "UA's"
+          text run at (25,483) width 42: "default"
+          text run at (25,499) width 41: "border"
+          text run at (25,515) width 40: "on the"
+          text run at (25,531) width 33: "other"
+          text run at (25,547) width 33: "three"
+          text run at (25,563) width 41: "sides)."
+          text run at (25,579) width 52: "There is"
+          text run at (25,595) width 46: "also an"
+        RenderInline {SPAN} at (0,0) size 50x64
+          RenderText {#text} at (25,611) size 50x48
+            text run at (25,611) width 33: "inline"
+            text run at (25,627) width 50: "element"
+            text run at (25,643) width 48: "of class"
+          RenderInline {TT} at (0,0) size 20x16
+            RenderText {#text} at (25,659) size 20x16
+              text run at (25,659) width 20: "three"
+        RenderText {#text} at (45,659) size 52x224
+          text run at (45,659) width 3: ","
+          text run at (25,675) width 36: "which"
+          text run at (25,691) width 41: "should"
+          text run at (25,707) width 51: "have no"
+          text run at (25,723) width 19: "left"
+          text run at (25,739) width 41: "border"
+          text run at (25,755) width 50: "width or"
+          text run at (25,771) width 38: "visible"
+          text run at (25,787) width 41: "border"
+          text run at (25,803) width 52: "because"
+          text run at (25,819) width 16: "no"
+          text run at (25,835) width 41: "border"
+          text run at (25,851) width 29: "style"
+          text run at (25,867) width 51: "was set."
+      RenderTable {TABLE} at (0,1072) size 109x888 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 107x886
+          RenderTableRow {TR} at (0,0) size 107x56
+            RenderTableCell {TD} at (0,0) size 107x56 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 53x48
+                RenderText {#text} at (4,4) size 53x48
+                  text run at (4,4) width 45: "TABLE"
+                  text run at (4,20) width 51: "Testing"
+                  text run at (4,36) width 53: "Section"
+          RenderTableRow {TR} at (0,56) size 107x830
+            RenderTableCell {TD} at (0,459) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x16
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,56) size 95x830 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 87x822 [border: (3px solid #000000) (25px solid #000000)]
+                RenderText {#text} at (25,3) size 50x64
+                  text run at (25,3) width 27: "This"
+                  text run at (25,19) width 50: "element"
+                  text run at (25,35) width 35: "has a"
+                  text run at (25,51) width 48: "class of"
+                RenderInline {TT} at (0,0) size 12x16
+                  RenderText {#text} at (25,67) size 12x16
+                    text run at (25,67) width 12: "one"
+                RenderText {#text} at (37,67) size 59x80
+                  text run at (37,67) width 3: "."
+                  text run at (25,83) width 59: "However,"
+                  text run at (25,99) width 7: "it"
+                  text run at (25,115) width 53: "contains"
+                  text run at (25,131) width 20: "an "
+                RenderInline {SPAN} at (0,0) size 54x67 [border: (3px solid #000000) (1px solid #000000)]
+                  RenderText {#text} at (46,131) size 54x48
+                    text run at (46,131) width 33: "inline"
+                    text run at (25,147) width 50: "element"
+                    text run at (25,163) width 48: "of class"
+                  RenderInline {TT} at (0,0) size 12x16
+                    RenderText {#text} at (25,179) size 12x16
+                      text run at (25,179) width 12: "two"
+                RenderText {#text} at (40,179) size 58x144
+                  text run at (40,179) width 43: ", which"
+                  text run at (25,195) width 41: "should"
+                  text run at (25,211) width 49: "result in"
+                  text run at (25,227) width 35: "a thin"
+                  text run at (25,243) width 29: "solid"
+                  text run at (25,259) width 41: "border"
+                  text run at (25,275) width 40: "on the"
+                  text run at (25,291) width 49: "left side"
+                  text run at (25,307) width 36: "of the"
+                RenderInline {STRONG} at (0,0) size 27x16
+                  RenderText {#text} at (25,323) size 27x16
+                    text run at (25,323) width 27: "first"
+                RenderText {#text} at (52,323) size 53x224
+                  text run at (52,323) width 26: " box"
+                  text run at (25,339) width 35: "in the"
+                  text run at (25,355) width 33: "inline"
+                  text run at (25,371) width 50: "element"
+                  text run at (25,387) width 53: "(and the"
+                  text run at (25,403) width 29: "UA's"
+                  text run at (25,419) width 42: "default"
+                  text run at (25,435) width 41: "border"
+                  text run at (25,451) width 40: "on the"
+                  text run at (25,467) width 33: "other"
+                  text run at (25,483) width 33: "three"
+                  text run at (25,499) width 41: "sides)."
+                  text run at (25,515) width 52: "There is"
+                  text run at (25,531) width 46: "also an"
+                RenderInline {SPAN} at (0,0) size 50x64
+                  RenderText {#text} at (25,547) size 50x48
+                    text run at (25,547) width 33: "inline"
+                    text run at (25,563) width 50: "element"
+                    text run at (25,579) width 48: "of class"
+                  RenderInline {TT} at (0,0) size 20x16
+                    RenderText {#text} at (25,595) size 20x16
+                      text run at (25,595) width 20: "three"
+                RenderText {#text} at (45,595) size 58x224
+                  text run at (45,595) width 3: ","
+                  text run at (25,611) width 36: "which"
+                  text run at (25,627) width 41: "should"
+                  text run at (25,643) width 51: "have no"
+                  text run at (25,659) width 19: "left"
+                  text run at (25,675) width 41: "border"
+                  text run at (25,691) width 50: "width or"
+                  text run at (25,707) width 38: "visible"
+                  text run at (25,723) width 41: "border"
+                  text run at (25,739) width 52: "because"
+                  text run at (25,755) width 16: "no"
+                  text run at (25,771) width 41: "border"
+                  text run at (25,787) width 58: "style was"
+                  text run at (25,803) width 22: "set."

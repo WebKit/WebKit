@@ -1,0 +1,358 @@
+layer at (0,0) size 144x4122
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 144x4122
+  RenderBlock {HTML} at (0,0) size 96x4122
+    RenderBody {BODY} at (8,8) size 80x4106 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 58: "The style"
+          text run at (0,16) width 77: "declarations"
+          text run at (0,32) width 74: "which apply"
+          text run at (0,48) width 63: "to the text"
+          text run at (0,64) width 64: "below are:"
+      RenderBlock {PRE} at (0,94) size 80x144
+        RenderText {#text} at (0,0) size 136x144
+          text run at (0,0) width 136: ".one {border: medium black solid;}"
+          text run at (136,0) width 0: " "
+          text run at (0,16) width 132: ".two {border: thin maroon ridge;}"
+          text run at (132,16) width 0: " "
+          text run at (0,32) width 136: ".three {border: 10px teal outset;}"
+          text run at (136,32) width 0: " "
+          text run at (0,48) width 132: ".four {border: 10px olive inset;}"
+          text run at (132,48) width 0: " "
+          text run at (0,64) width 112: ".five {border: 10px maroon;}"
+          text run at (112,64) width 0: " "
+          text run at (0,80) width 116: ".six {border: maroon double;}"
+          text run at (116,80) width 0: " "
+          text run at (0,96) width 128: ".seven {border: left red solid;}"
+          text run at (128,96) width 0: " "
+          text run at (0,112) width 84: ".eight {border: 0px;}"
+          text run at (84,112) width 0: " "
+          text run at (0,128) width 116: "TD {border: 2px solid green;}"
+          text run at (116,128) width 0: " "
+      RenderBlock {HR} at (0,252) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,268) size 80x256
+        RenderText {#text} at (0,0) size 80x256
+          text run at (0,0) width 76: "Note that all"
+          text run at (0,16) width 62: "table cells"
+          text run at (0,32) width 78: "on this page"
+          text run at (0,48) width 76: "should have"
+          text run at (0,64) width 67: "a two-pixel"
+          text run at (0,80) width 70: "solid green"
+          text run at (0,96) width 80: "border along"
+          text run at (0,112) width 42: "all four"
+          text run at (0,128) width 40: "sides. "
+          text run at (40,128) width 27: "This"
+          text run at (0,144) width 41: "border"
+          text run at (0,160) width 75: "applies only"
+          text run at (0,176) width 71: "to the cells,"
+          text run at (0,192) width 78: "not the rows"
+          text run at (0,208) width 36: "which"
+          text run at (0,224) width 46: "contain"
+          text run at (0,240) width 34: "them."
+      RenderBlock {P} at (0,538) size 80x150 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 66x144
+          text run at (3,3) width 27: "This"
+          text run at (3,19) width 66: "paragraph"
+          text run at (3,35) width 41: "should"
+          text run at (3,51) width 43: "have a"
+          text run at (3,67) width 48: "medium"
+          text run at (3,83) width 65: "black solid"
+          text run at (3,99) width 59: "border all"
+          text run at (3,115) width 49: "the way"
+          text run at (3,131) width 47: "around."
+      RenderBlock {P} at (0,702) size 80x146 [border: (1px ridge #800000)]
+        RenderText {#text} at (1,1) size 76x144
+          text run at (1,1) width 27: "This"
+          text run at (1,17) width 66: "paragraph"
+          text run at (1,33) width 76: "should have"
+          text run at (1,49) width 35: "a thin"
+          text run at (1,65) width 48: "maroon"
+          text run at (1,81) width 40: "ridged"
+          text run at (1,97) width 59: "border all"
+          text run at (1,113) width 49: "the way"
+          text run at (1,129) width 47: "around."
+      RenderBlock {P} at (0,862) size 80x180 [border: (10px outset #008080)]
+        RenderText {#text} at (10,10) size 66x160
+          text run at (10,10) width 27: "This"
+          text run at (10,26) width 66: "paragraph"
+          text run at (10,42) width 41: "should"
+          text run at (10,58) width 43: "have a"
+          text run at (10,74) width 57: "ten-pixel-"
+          text run at (10,90) width 56: "wide teal"
+          text run at (10,106) width 38: "outset"
+          text run at (10,122) width 59: "border all"
+          text run at (10,138) width 49: "the way"
+          text run at (10,154) width 47: "around."
+      RenderBlock {P} at (0,1056) size 80x196 [border: (10px inset #808000)]
+        RenderText {#text} at (10,10) size 66x176
+          text run at (10,10) width 27: "This"
+          text run at (10,26) width 66: "paragraph"
+          text run at (10,42) width 41: "should"
+          text run at (10,58) width 43: "have a"
+          text run at (10,74) width 57: "ten-pixel-"
+          text run at (10,90) width 29: "wide"
+          text run at (10,106) width 29: "olive"
+          text run at (10,122) width 30: "inset"
+          text run at (10,138) width 59: "border all"
+          text run at (10,154) width 49: "the way"
+          text run at (10,170) width 47: "around."
+      RenderBlock {P} at (0,1266) size 80x160
+        RenderText {#text} at (0,0) size 77x96
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 66: "paragraph"
+          text run at (0,32) width 76: "should have"
+          text run at (0,48) width 61: "no border"
+          text run at (0,64) width 77: "around it, as"
+          text run at (0,80) width 24: "the "
+        RenderInline {TT} at (0,0) size 48x16
+          RenderText {#text} at (24,80) size 48x16
+            text run at (24,80) width 48: "border-style"
+        RenderText {#text} at (0,96) size 80x64
+          text run at (0,96) width 75: "was not set,"
+          text run at (0,112) width 80: "and it should"
+          text run at (0,128) width 78: "not be offset"
+          text run at (0,144) width 70: "in any way."
+      RenderBlock {P} at (0,1440) size 80x246 [border: (3px double #800000)]
+        RenderText {#text} at (3,3) size 66x176
+          text run at (3,3) width 27: "This"
+          text run at (3,19) width 66: "paragraph"
+          text run at (3,35) width 41: "should"
+          text run at (3,51) width 43: "have a"
+          text run at (3,67) width 48: "medium"
+          text run at (3,83) width 48: "maroon"
+          text run at (3,99) width 41: "double"
+          text run at (3,115) width 41: "border"
+          text run at (3,131) width 58: "around it,"
+          text run at (3,147) width 31: "even"
+          text run at (3,163) width 43: "though"
+        RenderInline {CODE} at (0,0) size 48x16
+          RenderText {#text} at (3,179) size 48x16
+            text run at (3,179) width 48: "border-width"
+        RenderText {#text} at (3,195) size 53x48
+          text run at (3,195) width 49: "was not"
+          text run at (3,211) width 53: "explicitly"
+          text run at (3,227) width 22: "set."
+      RenderBlock {P} at (0,1700) size 80x160
+        RenderText {#text} at (0,0) size 77x160
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 66: "paragraph"
+          text run at (0,32) width 76: "should have"
+          text run at (0,48) width 61: "no border"
+          text run at (0,64) width 77: "around it, as"
+          text run at (0,80) width 14: "its"
+          text run at (0,96) width 70: "declaration"
+          text run at (0,112) width 54: "is invalid"
+          text run at (0,128) width 69: "and should"
+          text run at (0,144) width 70: "be ignored."
+      RenderBlock {P} at (0,1874) size 80x210
+        RenderInline {A} at (0,0) size 25x16
+          RenderText {#text} at (0,0) size 25x16
+            text run at (0,0) width 25: "The"
+        RenderText {#text} at (0,16) size 78x194
+          text run at (0,16) width 55: "following"
+          text run at (0,32) width 52: "image is"
+          text run at (0,48) width 46: "also an"
+          text run at (0,64) width 44: "anchor"
+          text run at (0,80) width 78: "which points"
+          text run at (0,96) width 65: "to a target"
+          text run at (0,112) width 42: "on this"
+          text run at (0,128) width 68: "page, but it"
+          text run at (0,144) width 65: "should not"
+          text run at (0,160) width 43: "have a"
+          text run at (0,176) width 41: "border"
+          text run at (0,194) width 62: "around it: "
+        RenderInline {A} at (0,0) size 15x16 [color=#0000FF]
+          RenderImage {IMG} at (62,192) size 15x15
+        RenderText {#text} at (77,194) size 3x16
+          text run at (77,194) width 3: "."
+      RenderTable {TABLE} at (0,2098) size 110x297 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 108x295
+          RenderTableRow {TR} at (0,5) size 108x182
+            RenderTableCell {TD} at (5,5) size 98x182 [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
+              RenderText {#text} at (3,3) size 89x176
+                text run at (3,3) width 76: "Every cell in"
+                text run at (3,19) width 56: "this table"
+                text run at (3,35) width 88: "should have a"
+                text run at (3,51) width 74: "2-pixel solid"
+                text run at (3,67) width 85: "green border."
+                text run at (3,83) width 71: "This is also"
+                text run at (3,99) width 64: "true of the"
+                text run at (3,115) width 76: "table-testing"
+                text run at (3,131) width 84: "section in the"
+                text run at (3,147) width 89: "second half of"
+                text run at (3,163) width 86: "the test page."
+          RenderTableRow {TR} at (0,192) size 108x98
+            RenderTableCell {TD} at (5,222) size 30x38 [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (3,3) size 24x32
+                text run at (3,3) width 24: "Cell"
+                text run at (3,19) width 24: "one"
+            RenderTableCell {TD} at (40,192) size 63x98 [border: (2px solid #008000)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock (anonymous) at (3,3) size 57x16
+                RenderText {#text} at (0,0) size 50x16
+                  text run at (0,0) width 50: "Cell two"
+              RenderTable {TABLE} at (3,19) size 57x76 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 55x74
+                  RenderTableRow {TR} at (0,2) size 55x70
+                    RenderTableCell {TD} at (2,2) size 51x70 [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (3,3) size 45x64
+                        text run at (3,3) width 45: "Nested"
+                        text run at (3,19) width 41: "single-"
+                        text run at (3,35) width 21: "cell"
+                        text run at (3,51) width 34: "table!"
+      RenderBlock {P} at (0,2409) size 80x48
+        RenderText {#text} at (0,0) size 61x48
+          text run at (0,0) width 61: "This is an"
+          text run at (0,16) width 52: "unstyled"
+          text run at (0,32) width 53: "element."
+      RenderTable {TABLE} at (0,2471) size 136x1635 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 134x1633
+          RenderTableRow {TR} at (0,0) size 134x42
+            RenderTableCell {TD} at (0,0) size 134x42 [bgcolor=#C0C0C0] [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 100x32
+                RenderText {#text} at (5,5) size 100x32
+                  text run at (5,5) width 100: "TABLE Testing"
+                  text run at (5,21) width 53: "Section"
+          RenderTableRow {TR} at (0,42) size 134x1591
+            RenderTableCell {TD} at (0,824) size 14x26 [bgcolor=#C0C0C0] [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (5,5) size 4x16
+                text run at (5,5) width 4: " "
+            RenderTableCell {TD} at (14,42) size 120x1591 [border: (2px solid #008000)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (5,5) size 110x192
+                RenderText {#text} at (0,0) size 110x192
+                  text run at (0,0) width 110: "Note that all table"
+                  text run at (0,16) width 110: "cells on this page"
+                  text run at (0,32) width 88: "should have a"
+                  text run at (0,48) width 88: "two-pixel solid"
+                  text run at (0,64) width 82: "green border"
+                  text run at (0,80) width 81: "along all four"
+                  text run at (0,96) width 40: "sides. "
+                  text run at (40,96) width 27: "This"
+                  text run at (0,112) width 90: "border applies"
+                  text run at (0,128) width 101: "only to the cells,"
+                  text run at (0,144) width 78: "not the rows"
+                  text run at (0,160) width 86: "which contain"
+                  text run at (0,176) width 34: "them."
+              RenderBlock {P} at (5,211) size 110x86 [border: (3px solid #000000)]
+                RenderText {#text} at (3,3) size 100x80
+                  text run at (3,3) width 97: "This paragraph"
+                  text run at (3,19) width 88: "should have a"
+                  text run at (3,35) width 84: "medium black"
+                  text run at (3,51) width 92: "solid border all"
+                  text run at (3,67) width 100: "the way around."
+              RenderBlock {P} at (5,311) size 110x82 [border: (1px ridge #800000)]
+                RenderText {#text} at (1,1) size 103x80
+                  text run at (1,1) width 97: "This paragraph"
+                  text run at (1,17) width 88: "should have a"
+                  text run at (1,33) width 75: "thin maroon"
+                  text run at (1,49) width 103: "ridged border all"
+                  text run at (1,65) width 100: "the way around."
+              RenderBlock {P} at (5,407) size 110x132 [border: (10px outset #008080)]
+                RenderText {#text} at (10,10) size 88x112
+                  text run at (10,10) width 27: "This"
+                  text run at (10,26) width 66: "paragraph"
+                  text run at (10,42) width 88: "should have a"
+                  text run at (10,58) width 86: "ten-pixel-wide"
+                  text run at (10,74) width 65: "teal outset"
+                  text run at (10,90) width 83: "border all the"
+                  text run at (10,106) width 76: "way around."
+              RenderBlock {P} at (5,553) size 110x132 [border: (10px inset #808000)]
+                RenderText {#text} at (10,10) size 88x112
+                  text run at (10,10) width 27: "This"
+                  text run at (10,26) width 66: "paragraph"
+                  text run at (10,42) width 88: "should have a"
+                  text run at (10,58) width 86: "ten-pixel-wide"
+                  text run at (10,74) width 63: "olive inset"
+                  text run at (10,90) width 83: "border all the"
+                  text run at (10,106) width 76: "way around."
+              RenderBlock {P} at (5,699) size 110x112
+                RenderText {#text} at (0,0) size 103x64
+                  text run at (0,0) width 97: "This paragraph"
+                  text run at (0,16) width 96: "should have no"
+                  text run at (0,32) width 103: "border around it,"
+                  text run at (0,48) width 43: "as the "
+                RenderInline {TT} at (0,0) size 48x16
+                  RenderText {#text} at (43,48) size 48x16
+                    text run at (43,48) width 48: "border-style"
+                RenderText {#text} at (0,64) size 109x48
+                  text run at (0,64) width 103: "was not set, and"
+                  text run at (0,80) width 95: "it should not be"
+                  text run at (0,96) width 109: "offset in any way."
+              RenderBlock {P} at (5,825) size 110x134 [border: (3px double #800000)]
+                RenderText {#text} at (3,3) size 100x96
+                  text run at (3,3) width 97: "This paragraph"
+                  text run at (3,19) width 88: "should have a"
+                  text run at (3,35) width 100: "medium maroon"
+                  text run at (3,51) width 86: "double border"
+                  text run at (3,67) width 93: "around it, even"
+                  text run at (3,83) width 47: "though "
+                RenderInline {CODE} at (0,0) size 48x16
+                  RenderText {#text} at (50,83) size 48x16
+                    text run at (50,83) width 48: "border-width"
+                RenderText {#text} at (3,99) size 79x32
+                  text run at (3,99) width 49: "was not"
+                  text run at (3,115) width 79: "explicitly set."
+              RenderBlock {P} at (5,973) size 110x112
+                RenderText {#text} at (0,0) size 107x112
+                  text run at (0,0) width 97: "This paragraph"
+                  text run at (0,16) width 96: "should have no"
+                  text run at (0,32) width 103: "border around it,"
+                  text run at (0,48) width 107: "as its declaration"
+                  text run at (0,64) width 82: "is invalid and"
+                  text run at (0,80) width 60: "should be"
+                  text run at (0,96) width 51: "ignored."
+              RenderBlock {P} at (5,1099) size 110x130
+                RenderInline {A} at (0,0) size 25x16
+                  RenderText {#text} at (0,0) size 25x16
+                    text run at (0,0) width 25: "The"
+                RenderText {#text} at (25,0) size 107x130
+                  text run at (25,0) width 59: " following"
+                  text run at (0,16) width 102: "image is also an"
+                  text run at (0,32) width 84: "anchor which"
+                  text run at (0,48) width 107: "points to a target"
+                  text run at (0,64) width 103: "on this page, but"
+                  text run at (0,80) width 76: "it should not"
+                  text run at (0,96) width 88: "have a border"
+                  text run at (0,114) width 62: "around it: "
+                RenderInline {A} at (0,0) size 15x16 [color=#0000FF]
+                  RenderImage {IMG} at (62,112) size 15x15
+                RenderText {#text} at (77,114) size 3x16
+                  text run at (77,114) width 3: "."
+              RenderTable {TABLE} at (5,1243) size 110x297 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 108x295
+                  RenderTableRow {TR} at (0,5) size 108x182
+                    RenderTableCell {TD} at (5,5) size 98x182 [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
+                      RenderText {#text} at (3,3) size 89x176
+                        text run at (3,3) width 76: "Every cell in"
+                        text run at (3,19) width 56: "this table"
+                        text run at (3,35) width 88: "should have a"
+                        text run at (3,51) width 74: "2-pixel solid"
+                        text run at (3,67) width 85: "green border."
+                        text run at (3,83) width 71: "This is also"
+                        text run at (3,99) width 64: "true of the"
+                        text run at (3,115) width 76: "table-testing"
+                        text run at (3,131) width 84: "section in the"
+                        text run at (3,147) width 89: "second half of"
+                        text run at (3,163) width 86: "the test page."
+                  RenderTableRow {TR} at (0,192) size 108x98
+                    RenderTableCell {TD} at (5,222) size 30x38 [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
+                      RenderText {#text} at (3,3) size 24x32
+                        text run at (3,3) width 24: "Cell"
+                        text run at (3,19) width 24: "one"
+                    RenderTableCell {TD} at (40,192) size 63x98 [border: (2px solid #008000)] [r=1 c=1 rs=1 cs=1]
+                      RenderBlock (anonymous) at (3,3) size 57x16
+                        RenderText {#text} at (0,0) size 50x16
+                          text run at (0,0) width 50: "Cell two"
+                      RenderTable {TABLE} at (3,19) size 57x76 [border: (1px outset #808080)]
+                        RenderTableSection {TBODY} at (1,1) size 55x74
+                          RenderTableRow {TR} at (0,2) size 55x70
+                            RenderTableCell {TD} at (2,2) size 51x70 [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=1]
+                              RenderText {#text} at (3,3) size 45x64
+                                text run at (3,3) width 45: "Nested"
+                                text run at (3,19) width 41: "single-"
+                                text run at (3,35) width 21: "cell"
+                                text run at (3,51) width 34: "table!"
+              RenderBlock {P} at (5,1554) size 110x32
+                RenderText {#text} at (0,0) size 109x32
+                  text run at (0,0) width 61: "This is an"
+                  text run at (0,16) width 109: "unstyled element."

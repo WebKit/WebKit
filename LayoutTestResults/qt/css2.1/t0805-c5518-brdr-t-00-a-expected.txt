@@ -1,0 +1,22 @@
+layer at (0,0) size 96x261
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x261
+  RenderBlock {HTML} at (0,0) size 96x261
+    RenderBody {BODY} at (8,14) size 80x233
+      RenderBlock {P} at (0,0) size 80x106 [color=#0000FF] [border: (10px double #0000FF) none]
+        RenderText {#text} at (0,10) size 78x96
+          text run at (0,10) width 27: "This"
+          text run at (0,26) width 66: "paragraph"
+          text run at (0,42) width 76: "should have"
+          text run at (0,58) width 51: "two blue"
+          text run at (0,74) width 78: "lines directly"
+          text run at (0,90) width 52: "above it."
+      RenderBlock {P} at (0,120) size 80x113 [color=#0000FF] [border: (1px solid #0000FF) none]
+        RenderText {#text} at (0,1) size 76x112
+          text run at (0,1) width 27: "This"
+          text run at (0,17) width 66: "paragraph"
+          text run at (0,33) width 76: "should have"
+          text run at (0,49) width 76: "a single thin"
+          text run at (0,65) width 51: "blue line"
+          text run at (0,81) width 45: "directly"
+          text run at (0,97) width 52: "above it."

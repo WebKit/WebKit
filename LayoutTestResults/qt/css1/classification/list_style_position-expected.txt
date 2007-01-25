@@ -1,0 +1,139 @@
+layer at (0,0) size 152x1734
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 152x1734
+  RenderBlock {HTML} at (0,0) size 96x1734
+    RenderBody {BODY} at (8,8) size 80x1718 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 58: "The style"
+          text run at (0,16) width 77: "declarations"
+          text run at (0,32) width 74: "which apply"
+          text run at (0,48) width 63: "to the text"
+          text run at (0,64) width 64: "below are:"
+      RenderBlock {PRE} at (0,94) size 80x48
+        RenderText {#text} at (0,0) size 144x48
+          text run at (0,0) width 144: ".one {list-style-position: outside;}"
+          text run at (144,0) width 0: " "
+          text run at (0,16) width 140: ".two {list-style-position: inside;}"
+          text run at (140,16) width 0: " "
+          text run at (0,32) width 0: " "
+      RenderBlock {HR} at (0,156) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {UL} at (0,172) size 80x384
+        RenderListItem {LI} at (40,0) size 40x384
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 62x384
+            text run at (0,0) width 25: "The"
+            text run at (0,16) width 38: "text in"
+            text run at (0,32) width 22: "this"
+            text run at (0,48) width 26: "item"
+            text run at (0,64) width 41: "should"
+            text run at (0,80) width 46: "behave"
+            text run at (0,96) width 15: "as"
+            text run at (0,112) width 62: "expected;"
+            text run at (0,128) width 24: "that"
+            text run at (0,144) width 24: "is, it"
+            text run at (0,160) width 41: "should"
+            text run at (0,176) width 22: "line"
+            text run at (0,192) width 15: "up"
+            text run at (0,208) width 25: "with"
+            text run at (0,224) width 29: "itself"
+            text run at (0,240) width 40: "on the"
+            text run at (0,256) width 19: "left"
+            text run at (0,272) width 46: "margin,"
+            text run at (0,288) width 45: "leaving"
+            text run at (0,304) width 33: "blank"
+            text run at (0,320) width 38: "space"
+            text run at (0,336) width 51: "beneath"
+            text run at (0,352) width 20: "the"
+            text run at (0,368) width 35: "bullet."
+      RenderBlock {UL} at (0,570) size 80x432
+        RenderListItem {LI} at (40,0) size 40x432
+          RenderListMarker at (-1,0) size 6x16: bullet
+          RenderText {#text} at (13,0) size 62x432
+            text run at (13,0) width 25: "The"
+            text run at (0,16) width 38: "text in"
+            text run at (0,32) width 22: "this"
+            text run at (0,48) width 26: "item"
+            text run at (0,64) width 41: "should"
+            text run at (0,80) width 20: "not"
+            text run at (0,96) width 46: "behave"
+            text run at (0,112) width 15: "as"
+            text run at (0,128) width 62: "expected;"
+            text run at (0,144) width 24: "that"
+            text run at (0,160) width 24: "is, it"
+            text run at (0,176) width 41: "should"
+            text run at (0,192) width 22: "line"
+            text run at (0,208) width 15: "up"
+            text run at (0,224) width 25: "with"
+            text run at (0,240) width 20: "the"
+            text run at (0,256) width 32: "bullet"
+            text run at (0,272) width 40: "on the"
+            text run at (0,288) width 19: "left"
+            text run at (0,304) width 46: "margin,"
+            text run at (0,320) width 45: "leaving"
+            text run at (0,336) width 16: "no"
+            text run at (0,352) width 33: "blank"
+            text run at (0,368) width 38: "space"
+            text run at (0,384) width 51: "beneath"
+            text run at (0,400) width 20: "the"
+            text run at (0,416) width 35: "bullet."
+      RenderTable {TABLE} at (0,1016) size 124x702 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 122x700
+          RenderTableRow {TR} at (0,0) size 122x40
+            RenderTableCell {TD} at (0,0) size 122x40 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 100x32
+                RenderText {#text} at (4,4) size 100x32
+                  text run at (4,4) width 100: "TABLE Testing"
+                  text run at (4,20) width 53: "Section"
+          RenderTableRow {TR} at (0,40) size 122x660
+            RenderTableCell {TD} at (0,358) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x16
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,40) size 110x660 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {UL} at (4,4) size 102x304
+                RenderListItem {LI} at (40,0) size 62x304
+                  RenderListMarker at (-16,0) size 6x16: bullet
+                  RenderText {#text} at (0,0) size 62x304
+                    text run at (0,0) width 52: "The text"
+                    text run at (0,16) width 37: "in this"
+                    text run at (0,32) width 26: "item"
+                    text run at (0,48) width 41: "should"
+                    text run at (0,64) width 46: "behave"
+                    text run at (0,80) width 15: "as"
+                    text run at (0,96) width 62: "expected;"
+                    text run at (0,112) width 52: "that is, it"
+                    text run at (0,128) width 41: "should"
+                    text run at (0,144) width 41: "line up"
+                    text run at (0,160) width 58: "with itself"
+                    text run at (0,176) width 40: "on the"
+                    text run at (0,192) width 19: "left"
+                    text run at (0,208) width 46: "margin,"
+                    text run at (0,224) width 45: "leaving"
+                    text run at (0,240) width 33: "blank"
+                    text run at (0,256) width 38: "space"
+                    text run at (0,272) width 51: "beneath"
+                    text run at (0,288) width 59: "the bullet."
+              RenderBlock {UL} at (4,322) size 102x320
+                RenderListItem {LI} at (40,0) size 62x320
+                  RenderListMarker at (-1,0) size 6x16: bullet
+                  RenderText {#text} at (13,0) size 62x320
+                    text run at (13,0) width 25: "The"
+                    text run at (0,16) width 38: "text in"
+                    text run at (0,32) width 52: "this item"
+                    text run at (0,48) width 41: "should"
+                    text run at (0,64) width 20: "not"
+                    text run at (0,80) width 46: "behave"
+                    text run at (0,96) width 15: "as"
+                    text run at (0,112) width 62: "expected;"
+                    text run at (0,128) width 52: "that is, it"
+                    text run at (0,144) width 41: "should"
+                    text run at (0,160) width 41: "line up"
+                    text run at (0,176) width 49: "with the"
+                    text run at (0,192) width 52: "bullet on"
+                    text run at (0,208) width 43: "the left"
+                    text run at (0,224) width 46: "margin,"
+                    text run at (0,240) width 45: "leaving"
+                    text run at (0,256) width 53: "no blank"
+                    text run at (0,272) width 38: "space"
+                    text run at (0,288) width 51: "beneath"
+                    text run at (0,304) width 59: "the bullet."

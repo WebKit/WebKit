@@ -1,0 +1,21 @@
+layer at (0,0) size 143x154
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 143x154
+  RenderBlock {HTML} at (0,0) size 96x154
+    RenderBody {BODY} at (8,14) size 80x125
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 72x80
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 72: "should be a"
+          text run at (0,32) width 37: "green"
+          text run at (0,48) width 69: "vertical bar"
+          text run at (0,64) width 39: "below:"
+      RenderBlock {DIV} at (15,95) size 120x30 [color=#FFFFFF] [bgcolor=#FF0000]
+        RenderBlock {P} at (0,0) size 105x15 [bgcolor=#FFFFFF]
+          RenderText {#text} at (0,-1) size 12x17
+            text run at (0,-1) width 12: "x "
+          RenderInline {SPAN} at (0,0) size 68x17
+            RenderText {#text} at (12,-1) size 8x17
+              text run at (12,-1) width 8: "x"
+          RenderText {#text} at (80,-1) size 8x17
+            text run at (80,-1) width 8: "x"

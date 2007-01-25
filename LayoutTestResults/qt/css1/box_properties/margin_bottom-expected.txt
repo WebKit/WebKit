@@ -1,0 +1,357 @@
+layer at (0,0) size 216x4614
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 216x4614
+  RenderBlock {HTML} at (0,0) size 96x4614
+    RenderBody {BODY} at (8,8) size 80x4598 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 58: "The style"
+          text run at (0,16) width 77: "declarations"
+          text run at (0,32) width 74: "which apply"
+          text run at (0,48) width 63: "to the text"
+          text run at (0,64) width 64: "below are:"
+      RenderBlock {PRE} at (0,94) size 80x144
+        RenderText {#text} at (0,0) size 208x144
+          text run at (0,0) width 204: ".zero {background-color: silver; margin-bottom: 0;}"
+          text run at (204,0) width 0: " "
+          text run at (0,16) width 208: ".one {margin-bottom: 0.5in; background-color: aqua;}"
+          text run at (208,16) width 0: " "
+          text run at (0,32) width 204: ".two {margin-bottom: 25px; background-color: aqua;}"
+          text run at (204,32) width 0: " "
+          text run at (0,48) width 208: ".three {margin-bottom: 5em; background-color: aqua;}"
+          text run at (208,48) width 0: " "
+          text run at (0,64) width 204: ".four {margin-bottom: 25%; background-color: aqua;}"
+          text run at (204,64) width 0: " "
+          text run at (0,80) width 112: ".five {margin-bottom: 25px;}"
+          text run at (112,80) width 0: " "
+          text run at (0,96) width 208: ".six {margin-bottom: -10px; background-color: aqua;}"
+          text run at (208,96) width 0: " "
+          text run at (0,112) width 88: "P, UL {margin-top: 0;}"
+          text run at (88,112) width 0: " "
+          text run at (0,128) width 0: " "
+      RenderBlock {HR} at (0,252) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,261) size 80x64 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 77x64
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 77: "element has"
+          text run at (0,32) width 60: "a class of"
+          text run at (0,48) width 31: "zero."
+      RenderBlock {P} at (0,325) size 80x224 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 80x224
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 58: "sentence"
+          text run at (0,32) width 76: "should have"
+          text run at (0,48) width 54: "a bottom"
+          text run at (0,64) width 59: "margin of"
+          text run at (0,80) width 76: "half an inch,"
+          text run at (0,96) width 59: "which will"
+          text run at (0,112) width 80: "require extra"
+          text run at (0,128) width 76: "text in order"
+          text run at (0,144) width 50: "to make"
+          text run at (0,160) width 79: "sure that the"
+          text run at (0,176) width 72: "margin isn't"
+          text run at (0,192) width 62: "applied to"
+          text run at (0,208) width 60: "each line."
+      RenderBlock {P} at (0,597) size 80x224 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 79x224
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 58: "sentence"
+          text run at (0,32) width 76: "should have"
+          text run at (0,48) width 54: "a bottom"
+          text run at (0,64) width 79: "margin of 25"
+          text run at (0,80) width 79: "pixels, which"
+          text run at (0,96) width 67: "will require"
+          text run at (0,112) width 74: "extra text in"
+          text run at (0,128) width 50: "order to"
+          text run at (0,144) width 65: "make sure"
+          text run at (0,160) width 48: "that the"
+          text run at (0,176) width 72: "margin isn't"
+          text run at (0,192) width 62: "applied to"
+          text run at (0,208) width 60: "each line."
+      RenderBlock {P} at (0,846) size 80x224 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 76x224
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 58: "sentence"
+          text run at (0,32) width 76: "should have"
+          text run at (0,48) width 54: "a bottom"
+          text run at (0,64) width 71: "margin of 5"
+          text run at (0,80) width 62: "em, which"
+          text run at (0,96) width 67: "will require"
+          text run at (0,112) width 74: "extra text in"
+          text run at (0,128) width 50: "order to"
+          text run at (0,144) width 65: "make sure"
+          text run at (0,160) width 48: "that the"
+          text run at (0,176) width 72: "margin isn't"
+          text run at (0,192) width 62: "applied to"
+          text run at (0,208) width 60: "each line."
+      RenderBlock {P} at (0,1140) size 80x224 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 76x224
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 50: "element"
+          text run at (0,32) width 76: "should have"
+          text run at (0,48) width 54: "a bottom"
+          text run at (0,64) width 59: "margin of"
+          text run at (0,80) width 71: "25%, which"
+          text run at (0,96) width 67: "will require"
+          text run at (0,112) width 74: "extra text in"
+          text run at (0,128) width 50: "order to"
+          text run at (0,144) width 65: "make sure"
+          text run at (0,160) width 48: "that the"
+          text run at (0,176) width 72: "margin isn't"
+          text run at (0,192) width 62: "applied to"
+          text run at (0,208) width 60: "each line."
+      RenderBlock {P} at (0,1384) size 80x64 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 77x64
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 77: "element has"
+          text run at (0,32) width 60: "a class of"
+          text run at (0,48) width 31: "zero."
+      RenderBlock {P} at (0,1448) size 80x64 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 80x64
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 80: "element also"
+          text run at (0,32) width 71: "has a class"
+          text run at (0,48) width 47: "of zero."
+      RenderBlock {UL} at (0,1512) size 80x745 [bgcolor=#00FFFF]
+        RenderListItem {LI} at (40,0) size 40x176
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 76x176
+            text run at (0,0) width 27: "This"
+            text run at (0,16) width 17: "list"
+            text run at (0,32) width 35: "has a"
+            text run at (0,48) width 47: "margin-"
+            text run at (0,64) width 42: "bottom"
+            text run at (0,80) width 12: "of"
+            text run at (0,96) width 34: "25px,"
+            text run at (0,112) width 36: "and a"
+            text run at (0,128) width 26: "light"
+            text run at (0,144) width 25: "blue"
+            text run at (0,160) width 76: "background."
+        RenderListItem {LI} at (40,176) size 40x128
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 66x128
+            text run at (0,0) width 66: "Therefore,"
+            text run at (0,16) width 7: "it"
+            text run at (0,32) width 35: "ought"
+            text run at (0,48) width 12: "to"
+            text run at (0,64) width 31: "have"
+            text run at (0,80) width 29: "such"
+            text run at (0,96) width 8: "a"
+            text run at (0,112) width 46: "margin."
+        RenderListItem {LI} at (40,304) size 40x272
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 49x272
+            text run at (0,0) width 27: "This"
+            text run at (0,16) width 17: "list"
+            text run at (0,32) width 26: "item"
+            text run at (0,48) width 35: "has a"
+            text run at (0,64) width 42: "bottom"
+            text run at (0,80) width 43: "margin"
+            text run at (0,96) width 12: "of"
+            text run at (0,112) width 34: "25px,"
+            text run at (0,128) width 36: "which"
+            text run at (0,144) width 41: "should"
+            text run at (0,160) width 37: "cause"
+            text run at (0,176) width 23: "it to"
+            text run at (0,192) width 15: "be"
+            text run at (0,208) width 35: "offset"
+            text run at (0,224) width 11: "in"
+            text run at (0,240) width 34: "some"
+            text run at (0,256) width 49: "fashion."
+        RenderListItem {LI} at (40,601) size 40x144
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 46x144
+            text run at (0,0) width 27: "This"
+            text run at (0,16) width 17: "list"
+            text run at (0,32) width 26: "item"
+            text run at (0,48) width 23: "has"
+            text run at (0,64) width 16: "no"
+            text run at (0,80) width 44: "special"
+            text run at (0,96) width 36: "styles"
+            text run at (0,112) width 46: "applied"
+            text run at (0,128) width 26: "to it."
+      RenderBlock {P} at (0,2282) size 80x432 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 76x432
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 66: "paragraph"
+          text run at (0,32) width 35: "has a"
+          text run at (0,48) width 42: "bottom"
+          text run at (0,64) width 67: "margin of -"
+          text run at (0,80) width 74: "10px, which"
+          text run at (0,96) width 41: "should"
+          text run at (0,112) width 37: "cause"
+          text run at (0,128) width 57: "elements"
+          text run at (0,144) width 75: "after it to be"
+          text run at (0,160) width 42: "shifted"
+          text run at (0,176) width 76: "\"upward\" on"
+          text run at (0,192) width 59: "the page,"
+          text run at (0,208) width 68: "and no top"
+          text run at (0,224) width 50: "margin. "
+          text run at (50,224) width 18: "No"
+          text run at (0,240) width 73: "other styles"
+          text run at (0,256) width 66: "have been"
+          text run at (0,272) width 73: "applied to it"
+          text run at (0,288) width 60: "besides a"
+          text run at (0,304) width 55: "light blue"
+          text run at (0,320) width 73: "background"
+          text run at (0,336) width 38: "color. "
+          text run at (38,336) width 30: "In all"
+          text run at (0,352) width 33: "other"
+          text run at (0,368) width 57: "respects,"
+          text run at (0,384) width 74: "the element"
+          text run at (0,400) width 60: "should be"
+          text run at (0,416) width 46: "normal."
+      RenderBlock {P} at (0,2704) size 80x64 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 77x64
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 77: "element has"
+          text run at (0,32) width 60: "a class of"
+          text run at (0,48) width 31: "zero."
+      RenderBlock {P} at (0,2768) size 80x64 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 80x64
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 80: "element also"
+          text run at (0,32) width 71: "has a class"
+          text run at (0,48) width 47: "of zero."
+      RenderTable {TABLE} at (0,2832) size 138x1766 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 136x1764
+          RenderTableRow {TR} at (0,0) size 136x40
+            RenderTableCell {TD} at (0,0) size 136x40 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 100x32
+                RenderText {#text} at (4,4) size 100x32
+                  text run at (4,4) width 100: "TABLE Testing"
+                  text run at (4,20) width 53: "Section"
+          RenderTableRow {TR} at (0,40) size 136x1724
+            RenderTableCell {TD} at (0,890) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x16
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,40) size 124x1724 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 116x32 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 108x32
+                  text run at (0,0) width 108: "This element has"
+                  text run at (0,16) width 95: "a class of zero."
+              RenderBlock {P} at (4,36) size 116x160 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 116x160
+                  text run at (0,0) width 89: "This sentence"
+                  text run at (0,16) width 88: "should have a"
+                  text run at (0,32) width 105: "bottom margin of"
+                  text run at (0,48) width 116: "half an inch, which"
+                  text run at (0,64) width 103: "will require extra"
+                  text run at (0,80) width 92: "text in order to"
+                  text run at (0,96) width 93: "make sure that"
+                  text run at (0,112) width 96: "the margin isn't"
+                  text run at (0,128) width 97: "applied to each"
+                  text run at (0,144) width 25: "line."
+              RenderBlock {P} at (4,244) size 116x160 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 105x160
+                  text run at (0,0) width 89: "This sentence"
+                  text run at (0,16) width 88: "should have a"
+                  text run at (0,32) width 105: "bottom margin of"
+                  text run at (0,48) width 99: "25 pixels, which"
+                  text run at (0,64) width 103: "will require extra"
+                  text run at (0,80) width 92: "text in order to"
+                  text run at (0,96) width 93: "make sure that"
+                  text run at (0,112) width 96: "the margin isn't"
+                  text run at (0,128) width 97: "applied to each"
+                  text run at (0,144) width 25: "line."
+              RenderBlock {P} at (4,429) size 116x160 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 107x160
+                  text run at (0,0) width 89: "This sentence"
+                  text run at (0,16) width 88: "should have a"
+                  text run at (0,32) width 105: "bottom margin of"
+                  text run at (0,48) width 97: "5 em, which will"
+                  text run at (0,64) width 107: "require extra text"
+                  text run at (0,80) width 103: "in order to make"
+                  text run at (0,96) width 79: "sure that the"
+                  text run at (0,112) width 72: "margin isn't"
+                  text run at (0,128) width 97: "applied to each"
+                  text run at (0,144) width 25: "line."
+              RenderBlock {P} at (4,659) size 116x160 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 107x160
+                  text run at (0,0) width 81: "This element"
+                  text run at (0,16) width 88: "should have a"
+                  text run at (0,32) width 105: "bottom margin of"
+                  text run at (0,48) width 94: "25%, which will"
+                  text run at (0,64) width 107: "require extra text"
+                  text run at (0,80) width 103: "in order to make"
+                  text run at (0,96) width 79: "sure that the"
+                  text run at (0,112) width 72: "margin isn't"
+                  text run at (0,128) width 97: "applied to each"
+                  text run at (0,144) width 25: "line."
+              RenderBlock {P} at (4,848) size 116x32 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 108x32
+                  text run at (0,0) width 108: "This element has"
+                  text run at (0,16) width 95: "a class of zero."
+              RenderBlock {P} at (4,880) size 116x48 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 111x48
+                  text run at (0,0) width 111: "This element also"
+                  text run at (0,16) width 87: "has a class of"
+                  text run at (0,32) width 31: "zero."
+              RenderBlock {UL} at (4,928) size 116x425 [bgcolor=#00FFFF]
+                RenderListItem {LI} at (40,0) size 76x96
+                  RenderListMarker at (-16,0) size 6x16: bullet
+                  RenderText {#text} at (0,0) size 76x96
+                    text run at (0,0) width 75: "This list has"
+                    text run at (0,16) width 59: "a margin-"
+                    text run at (0,32) width 58: "bottom of"
+                    text run at (0,48) width 74: "25px, and a"
+                    text run at (0,64) width 55: "light blue"
+                    text run at (0,80) width 76: "background."
+                RenderListItem {LI} at (40,96) size 76x64
+                  RenderListMarker at (-16,0) size 6x16: bullet
+                  RenderText {#text} at (0,0) size 76x64
+                    text run at (0,0) width 66: "Therefore,"
+                    text run at (0,16) width 62: "it ought to"
+                    text run at (0,32) width 76: "have such a"
+                    text run at (0,48) width 46: "margin."
+                RenderListItem {LI} at (40,160) size 76x160
+                  RenderListMarker at (-16,0) size 6x16: bullet
+                  RenderText {#text} at (0,0) size 74x160
+                    text run at (0,0) width 48: "This list"
+                    text run at (0,16) width 65: "item has a"
+                    text run at (0,32) width 42: "bottom"
+                    text run at (0,48) width 59: "margin of"
+                    text run at (0,64) width 74: "25px, which"
+                    text run at (0,80) width 41: "should"
+                    text run at (0,96) width 64: "cause it to"
+                    text run at (0,112) width 69: "be offset in"
+                    text run at (0,128) width 34: "some"
+                    text run at (0,144) width 49: "fashion."
+                RenderListItem {LI} at (40,345) size 76x80
+                  RenderListMarker at (-16,0) size 6x16: bullet
+                  RenderText {#text} at (0,0) size 76x80
+                    text run at (0,0) width 48: "This list"
+                    text run at (0,16) width 73: "item has no"
+                    text run at (0,32) width 44: "special"
+                    text run at (0,48) width 36: "styles"
+                    text run at (0,64) width 76: "applied to it."
+              RenderBlock {P} at (4,1378) size 116x272 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 114x272
+                  text run at (0,0) width 97: "This paragraph"
+                  text run at (0,16) width 81: "has a bottom"
+                  text run at (0,32) width 101: "margin of -10px,"
+                  text run at (0,48) width 81: "which should"
+                  text run at (0,64) width 98: "cause elements"
+                  text run at (0,80) width 75: "after it to be"
+                  text run at (0,96) width 102: "shifted \"upward\""
+                  text run at (0,112) width 107: "on the page, and"
+                  text run at (0,128) width 94: "no top margin. "
+                  text run at (94,128) width 18: "No"
+                  text run at (0,144) width 108: "other styles have"
+                  text run at (0,160) width 108: "been applied to it"
+                  text run at (0,176) width 90: "besides a light"
+                  text run at (0,192) width 102: "blue background"
+                  text run at (0,208) width 38: "color. "
+                  text run at (38,208) width 67: "In all other"
+                  text run at (0,224) width 81: "respects, the"
+                  text run at (0,240) width 114: "element should be"
+                  text run at (0,256) width 46: "normal."
+              RenderBlock {P} at (4,1640) size 116x32 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 108x32
+                  text run at (0,0) width 108: "This element has"
+                  text run at (0,16) width 95: "a class of zero."
+              RenderBlock {P} at (4,1672) size 116x48 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 111x48
+                  text run at (0,0) width 111: "This element also"
+                  text run at (0,16) width 87: "has a class of"
+                  text run at (0,32) width 31: "zero."

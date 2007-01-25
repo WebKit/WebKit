@@ -1,0 +1,41 @@
+layer at (0,0) size 96x494
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x494
+  RenderBlock {HTML} at (0,0) size 96x494
+    RenderBody {BODY} at (8,14) size 80x466
+      RenderBlock {P} at (0,0) size 80x48 [color=#0000FF]
+        RenderText {#text} at (0,0) size 79x48
+          text run at (0,0) width 77: "The borders"
+          text run at (0,16) width 79: "should be as"
+          text run at (0,32) width 64: "described."
+      RenderBlock {P} at (0,62) size 80x38 [color=#0000FF] [border: (3px solid #FFA500)]
+        RenderText {#text} at (3,3) size 60x32
+          text run at (3,3) width 48: "Orange"
+          text run at (3,19) width 60: "and solid."
+      RenderBlock {P} at (0,114) size 80x42 [color=#0000FF] [border: (5px outset #FFA500)]
+        RenderText {#text} at (5,5) size 69x32
+          text run at (5,5) width 48: "Orange"
+          text run at (5,21) width 69: "and outset."
+      RenderBlock {P} at (0,170) size 80x42 [color=#0000FF] [border: (5px inset #FFA500)]
+        RenderText {#text} at (5,5) size 61x32
+          text run at (5,5) width 48: "Orange"
+          text run at (5,21) width 61: "and inset."
+      RenderBlock {P} at (0,226) size 80x68 [color=#0000FF] [border: (10px ridge #FFA500)]
+        RenderText {#text} at (10,10) size 48x48
+          text run at (10,10) width 48: "Orange"
+          text run at (10,26) width 24: "and"
+          text run at (10,42) width 43: "ridged."
+      RenderBlock {P} at (0,308) size 80x68 [color=#0000FF] [border: (10px double #FFA500)]
+        RenderText {#text} at (10,10) size 48x48
+          text run at (10,10) width 48: "Orange"
+          text run at (10,26) width 24: "and"
+          text run at (10,42) width 44: "double."
+      RenderBlock {P} at (0,390) size 80x16 [color=#0000FF]
+        RenderText {#text} at (0,0) size 66x16
+          text run at (0,0) width 66: "No border."
+      RenderBlock {P} at (0,420) size 80x16 [color=#0000FF]
+        RenderText {#text} at (0,0) size 66x16
+          text run at (0,0) width 66: "No border."
+      RenderBlock {P} at (0,450) size 80x16 [color=#0000FF]
+        RenderText {#text} at (0,0) size 66x16
+          text run at (0,0) width 66: "No border."

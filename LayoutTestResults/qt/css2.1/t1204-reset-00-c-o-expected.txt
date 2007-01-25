@@ -1,0 +1,30 @@
+layer at (0,0) size 280x84
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 280x84
+  RenderBlock {HTML} at (0,0) size 96x84
+    RenderBody {BODY} at (8,14) size 80x62
+      RenderBlock {P} at (0,0) size 80x16
+        RenderText {#text} at (0,0) size 272x16
+          text run at (0,0) width 272: "The following two lines should be the same:"
+      RenderBlock {DIV} at (0,30) size 80x16
+        RenderInline {SPAN} at (0,0) size 12x16
+          RenderInline (generated) at (0,0) size 12x16
+            RenderCounter at (0,0) size 8x16
+              text run at (0,0) width 8: "1"
+            RenderText at (8,0) size 4x16
+              text run at (8,0) width 4: "-"
+        RenderInline {SPAN} at (0,0) size 12x16
+          RenderInline (generated) at (0,0) size 12x16
+            RenderCounter at (12,0) size 8x16
+              text run at (12,0) width 8: "2"
+            RenderText at (20,0) size 4x16
+              text run at (20,0) width 4: "-"
+        RenderInline {SPAN} at (0,0) size 12x16
+          RenderInline (generated) at (0,0) size 12x16
+            RenderCounter at (24,0) size 8x16
+              text run at (24,0) width 8: "3"
+            RenderText at (32,0) size 4x16
+              text run at (32,0) width 4: "-"
+      RenderBlock {DIV} at (0,46) size 80x16
+        RenderText {#text} at (0,0) size 58x16
+          text run at (0,0) width 58: "1-1.1-1.2-"

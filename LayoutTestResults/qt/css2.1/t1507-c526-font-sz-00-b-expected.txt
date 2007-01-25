@@ -1,0 +1,123 @@
+layer at (0,0) size 134x1671
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 134x1671
+  RenderBlock {HTML} at (0,0) size 96x1671
+    RenderBody {BODY} at (8,10) size 80x1651
+      RenderBlock {P} at (10,0) size 60x64 [color=#000080]
+        RenderText {#text} at (0,0) size 60x64
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 58: "sentence"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 46: "normal."
+      RenderBlock {P} at (10,74) size 60x80 [color=#000080]
+        RenderText {#text} at (0,0) size 60x80
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 58: "sentence"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 20: "the"
+          text run at (0,64) width 37: "same."
+      RenderBlock {P} at (10,164) size 60x140 [color=#000080]
+        RenderText {#text} at (0,0) size 66x139
+          text run at (0,0) width 30: "This"
+          text run at (0,20) width 66: "sentence"
+          text run at (0,40) width 47: "should"
+          text run at (0,60) width 18: "be"
+          text run at (0,80) width 40: "larger"
+          text run at (0,100) width 32: "than"
+          text run at (0,120) width 53: "normal."
+      RenderBlock {P} at (10,314) size 60x84 [color=#000080]
+        RenderText {#text} at (0,0) size 54x84
+          text run at (0,0) width 23: "This"
+          text run at (0,14) width 50: "sentence"
+          text run at (0,28) width 54: "should be"
+          text run at (0,42) width 40: "smaller"
+          text run at (0,56) width 24: "than"
+          text run at (0,70) width 41: "normal."
+      RenderBlock {P} at (10,408) size 60x113 [color=#000080]
+        RenderText {#text} at (0,0) size 59x33
+          text run at (0,0) width 59: "This sentence"
+          text run at (0,11) width 40: "should be"
+          text run at (0,22) width 46: "very small."
+        RenderInline {SPAN} at (0,0) size 60x80
+          RenderText {#text} at (0,33) size 60x80
+            text run at (0,33) width 27: "This"
+            text run at (0,49) width 58: "sentence"
+            text run at (0,65) width 60: "should be"
+            text run at (0,81) width 45: "back to"
+            text run at (0,97) width 46: "normal."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (10,531) size 60x128 [color=#000080]
+        RenderText {#text} at (0,0) size 56x48
+          text run at (0,0) width 19: "This"
+          text run at (0,12) width 43: "sentence"
+          text run at (0,24) width 46: "should be"
+          text run at (0,36) width 56: "rather small."
+        RenderInline {SPAN} at (0,0) size 60x80
+          RenderText {#text} at (0,48) size 60x80
+            text run at (0,48) width 27: "This"
+            text run at (0,64) width 58: "sentence"
+            text run at (0,80) width 60: "should be"
+            text run at (0,96) width 45: "back to"
+            text run at (0,112) width 46: "normal."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (10,669) size 60x136 [color=#000080]
+        RenderText {#text} at (0,0) size 54x56
+          text run at (0,0) width 23: "This"
+          text run at (0,14) width 50: "sentence"
+          text run at (0,28) width 54: "should be"
+          text run at (0,42) width 32: "small."
+        RenderInline {SPAN} at (0,0) size 60x80
+          RenderText {#text} at (0,56) size 60x80
+            text run at (0,56) width 27: "This"
+            text run at (0,72) width 58: "sentence"
+            text run at (0,88) width 60: "should be"
+            text run at (0,104) width 45: "back to"
+            text run at (0,120) width 46: "normal."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (10,815) size 60x200 [color=#000080]
+        RenderText {#text} at (0,0) size 66x99
+          text run at (0,0) width 30: "This"
+          text run at (0,20) width 66: "sentence"
+          text run at (0,40) width 47: "should"
+          text run at (0,60) width 18: "be"
+          text run at (0,80) width 39: "large."
+        RenderInline {SPAN} at (0,0) size 60x96
+          RenderText {#text} at (0,103) size 60x96
+            text run at (0,103) width 27: "This"
+            text run at (0,123) width 58: "sentence"
+            text run at (0,143) width 60: "should be"
+            text run at (0,163) width 45: "back to"
+            text run at (0,183) width 46: "normal."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (10,1025) size 60x264 [color=#000080]
+        RenderText {#text} at (0,0) size 88x143
+          text run at (0,0) width 41: "This"
+          text run at (0,24) width 88: "sentence"
+          text run at (0,48) width 64: "should"
+          text run at (0,72) width 24: "be"
+          text run at (0,96) width 56: "rather"
+          text run at (0,120) width 54: "large."
+        RenderInline {SPAN} at (0,0) size 60x112
+          RenderText {#text} at (0,151) size 60x112
+            text run at (0,151) width 27: "This"
+            text run at (0,175) width 58: "sentence"
+            text run at (0,199) width 60: "should be"
+            text run at (0,223) width 45: "back to"
+            text run at (0,247) width 46: "normal."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (10,1299) size 60x352 [color=#000080]
+        RenderText {#text} at (0,1) size 116x190
+          text run at (0,1) width 53: "This"
+          text run at (0,33) width 116: "sentence"
+          text run at (0,65) width 84: "should"
+          text run at (0,97) width 32: "be"
+          text run at (0,129) width 53: "very"
+          text run at (0,161) width 71: "large."
+        RenderInline {SPAN} at (0,0) size 60x144
+          RenderText {#text} at (0,206) size 60x144
+            text run at (0,206) width 27: "This"
+            text run at (0,238) width 58: "sentence"
+            text run at (0,270) width 60: "should be"
+            text run at (0,302) width 45: "back to"
+            text run at (0,334) width 46: "normal."
+        RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,41 @@
+layer at (0,0) size 344x372
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 344x372
+  RenderBlock {HTML} at (0,0) size 96x372
+    RenderBody {BODY} at (8,14) size 80x350
+      RenderBlock {P} at (0,0) size 80x192
+        RenderText {#text} at (0,0) size 80x192
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 72: "should be a"
+          text run at (0,32) width 34: "stripy"
+          text run at (0,48) width 61: "pattern of"
+          text run at (0,64) width 67: "yellow and"
+          text run at (0,80) width 71: "aqua below"
+          text run at (0,96) width 36: "(each"
+          text run at (0,112) width 45: "vertical"
+          text run at (0,128) width 80: "stripe should"
+          text run at (0,144) width 66: "be straight"
+          text run at (0,160) width 24: "and"
+          text run at (0,176) width 66: "unbroken)."
+      RenderBlock {DIV} at (48,206) size 288x24 [color=#00FFFF] [bgcolor=#FFFF00]
+        RenderText {#text} at (0,-1) size 107x26
+          text run at (0,-1) width 107: "x  x  xx xx"
+      RenderBlock {DIV} at (48,230) size 288x24 [color=#00FFFF] [bgcolor=#FFFF00]
+        RenderText {#text} at (0,-1) size 107x26
+          text run at (0,-1) width 107: "x  x  xx xx"
+      RenderBlock {DIV} at (48,254) size 288x24 [color=#00FFFF] [bgcolor=#FFFF00]
+        RenderText {#text} at (0,-1) size 107x26
+          text run at (0,-1) width 107: "x  x  xx xx"
+      RenderBlock {DIV} at (48,278) size 288x24 [color=#00FFFF] [bgcolor=#FFFF00]
+        RenderText {#text} at (0,-1) size 86x26
+          text run at (0,-1) width 86: "x x "
+        RenderInline {SPAN} at (0,0) size 55x26
+          RenderText {#text} at (86,-1) size 55x26
+            text run at (86,-1) width 55: "xx xx"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (48,302) size 288x24 [color=#00FFFF] [bgcolor=#FFFF00]
+        RenderText {#text} at (0,-1) size 107x26
+          text run at (0,-1) width 107: "x  x  xx xx"
+      RenderBlock {DIV} at (48,326) size 288x24 [color=#00FFFF] [bgcolor=#FFFF00]
+        RenderText {#text} at (0,-1) size 56x26
+          text run at (0,-1) width 56: "x   x   xx  xx"

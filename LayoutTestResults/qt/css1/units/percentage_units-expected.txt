@@ -1,0 +1,175 @@
+layer at (0,0) size 260x2260
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 260x2260
+  RenderBlock {HTML} at (0,0) size 96x2260
+    RenderBody {BODY} at (8,8) size 80x2244 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 58: "The style"
+          text run at (0,16) width 77: "declarations"
+          text run at (0,32) width 74: "which apply"
+          text run at (0,48) width 63: "to the text"
+          text run at (0,64) width 64: "below are:"
+      RenderBlock {PRE} at (0,94) size 80x80
+        RenderText {#text} at (0,0) size 252x80
+          text run at (0,0) width 112: ".zero { background: yellow }"
+          text run at (112,0) width 0: " "
+          text run at (0,16) width 252: ".one { margin-left: 25%; margin-right: 25%; background: white }"
+          text run at (252,16) width 0: " "
+          text run at (0,32) width 248: ".two { margin-left: 50%; margin-right: 0%; background: white }"
+          text run at (248,32) width 0: " "
+          text run at (0,48) width 104: ".three {margin-left: 25%;}"
+          text run at (104,48) width 0: " "
+          text run at (0,64) width 0: " "
+      RenderBlock {HR} at (0,188) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,204) size 80x638 [bgcolor=#FFFF00]
+        RenderBlock {DIV} at (20,0) size 40x304 [bgcolor=#FFFFFF]
+          RenderBlock {P} at (0,0) size 40x304
+            RenderText {#text} at (0,0) size 66x304
+              text run at (0,0) width 27: "This"
+              text run at (0,16) width 66: "paragraph"
+              text run at (0,32) width 41: "should"
+              text run at (0,48) width 15: "be"
+              text run at (0,64) width 56: "centered"
+              text run at (0,80) width 36: "within"
+              text run at (0,96) width 14: "its"
+              text run at (0,112) width 39: "yellow"
+              text run at (0,128) width 65: "containing"
+              text run at (0,144) width 32: "block"
+              text run at (0,160) width 24: "and"
+              text run at (0,176) width 14: "its"
+              text run at (0,192) width 33: "width"
+              text run at (0,208) width 41: "should"
+              text run at (0,224) width 15: "be"
+              text run at (0,240) width 39: "half of"
+              text run at (0,256) width 20: "the"
+              text run at (0,272) width 65: "containing"
+              text run at (0,288) width 35: "block."
+        RenderBlock {DIV} at (40,318) size 40x320 [bgcolor=#FFFFFF]
+          RenderBlock {P} at (0,0) size 40x320
+            RenderText {#text} at (0,0) size 66x320
+              text run at (0,0) width 27: "This"
+              text run at (0,16) width 66: "paragraph"
+              text run at (0,32) width 41: "should"
+              text run at (0,48) width 15: "be"
+              text run at (0,64) width 32: "right-"
+              text run at (0,80) width 46: "aligned"
+              text run at (0,96) width 36: "within"
+              text run at (0,112) width 14: "its"
+              text run at (0,128) width 39: "yellow"
+              text run at (0,144) width 65: "containing"
+              text run at (0,160) width 32: "block"
+              text run at (0,176) width 24: "and"
+              text run at (0,192) width 14: "its"
+              text run at (0,208) width 33: "width"
+              text run at (0,224) width 41: "should"
+              text run at (0,240) width 15: "be"
+              text run at (0,256) width 39: "half of"
+              text run at (0,272) width 20: "the"
+              text run at (0,288) width 65: "containing"
+              text run at (0,304) width 35: "block."
+      RenderBlock {P} at (20,856) size 60x288
+        RenderText {#text} at (0,0) size 66x288
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 66: "paragraph"
+          text run at (0,32) width 41: "should"
+          text run at (0,48) width 43: "have a"
+          text run at (0,64) width 19: "left"
+          text run at (0,80) width 59: "margin of"
+          text run at (0,96) width 52: "25% the"
+          text run at (0,112) width 49: "width of"
+          text run at (0,128) width 59: "its parent"
+          text run at (0,144) width 53: "element,"
+          text run at (0,160) width 36: "which"
+          text run at (0,176) width 41: "should"
+          text run at (0,192) width 44: "require"
+          text run at (0,208) width 34: "some"
+          text run at (0,224) width 59: "extra text"
+          text run at (0,240) width 49: "in order"
+          text run at (0,256) width 39: "to test"
+          text run at (0,272) width 66: "effectively."
+      RenderTable {TABLE} at (0,1158) size 88x1086 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 86x1084
+          RenderTableRow {TR} at (0,0) size 86x56
+            RenderTableCell {TD} at (0,0) size 86x56 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 53x48
+                RenderText {#text} at (4,4) size 53x48
+                  text run at (4,4) width 45: "TABLE"
+                  text run at (4,20) width 51: "Testing"
+                  text run at (4,36) width 53: "Section"
+          RenderTableRow {TR} at (0,56) size 86x1028
+            RenderTableCell {TD} at (0,558) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x16
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,56) size 74x1028 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (4,4) size 66x670 [bgcolor=#FFFF00]
+                RenderBlock {DIV} at (16,0) size 34x320 [bgcolor=#FFFFFF]
+                  RenderBlock {P} at (0,0) size 34x320
+                    RenderText {#text} at (0,0) size 66x320
+                      text run at (0,0) width 27: "This"
+                      text run at (0,16) width 66: "paragraph"
+                      text run at (0,32) width 41: "should"
+                      text run at (0,48) width 15: "be"
+                      text run at (0,64) width 56: "centered"
+                      text run at (0,80) width 36: "within"
+                      text run at (0,96) width 14: "its"
+                      text run at (0,112) width 39: "yellow"
+                      text run at (0,128) width 65: "containing"
+                      text run at (0,144) width 32: "block"
+                      text run at (0,160) width 24: "and"
+                      text run at (0,176) width 14: "its"
+                      text run at (0,192) width 33: "width"
+                      text run at (0,208) width 41: "should"
+                      text run at (0,224) width 15: "be"
+                      text run at (0,240) width 23: "half"
+                      text run at (0,256) width 12: "of"
+                      text run at (0,272) width 20: "the"
+                      text run at (0,288) width 65: "containing"
+                      text run at (0,304) width 35: "block."
+                RenderBlock {DIV} at (33,334) size 33x336 [bgcolor=#FFFFFF]
+                  RenderBlock {P} at (0,0) size 33x336
+                    RenderText {#text} at (0,0) size 66x336
+                      text run at (0,0) width 27: "This"
+                      text run at (0,16) width 66: "paragraph"
+                      text run at (0,32) width 41: "should"
+                      text run at (0,48) width 15: "be"
+                      text run at (0,64) width 32: "right-"
+                      text run at (0,80) width 46: "aligned"
+                      text run at (0,96) width 36: "within"
+                      text run at (0,112) width 14: "its"
+                      text run at (0,128) width 39: "yellow"
+                      text run at (0,144) width 65: "containing"
+                      text run at (0,160) width 32: "block"
+                      text run at (0,176) width 24: "and"
+                      text run at (0,192) width 14: "its"
+                      text run at (0,208) width 33: "width"
+                      text run at (0,224) width 41: "should"
+                      text run at (0,240) width 15: "be"
+                      text run at (0,256) width 23: "half"
+                      text run at (0,272) width 12: "of"
+                      text run at (0,288) width 20: "the"
+                      text run at (0,304) width 65: "containing"
+                      text run at (0,320) width 35: "block."
+              RenderBlock {P} at (20,688) size 50x336
+                RenderText {#text} at (0,0) size 66x336
+                  text run at (0,0) width 27: "This"
+                  text run at (0,16) width 66: "paragraph"
+                  text run at (0,32) width 41: "should"
+                  text run at (0,48) width 43: "have a"
+                  text run at (0,64) width 19: "left"
+                  text run at (0,80) width 43: "margin"
+                  text run at (0,96) width 44: "of 25%"
+                  text run at (0,112) width 20: "the"
+                  text run at (0,128) width 49: "width of"
+                  text run at (0,144) width 14: "its"
+                  text run at (0,160) width 41: "parent"
+                  text run at (0,176) width 53: "element,"
+                  text run at (0,192) width 36: "which"
+                  text run at (0,208) width 41: "should"
+                  text run at (0,224) width 44: "require"
+                  text run at (0,240) width 34: "some"
+                  text run at (0,256) width 32: "extra"
+                  text run at (0,272) width 38: "text in"
+                  text run at (0,288) width 50: "order to"
+                  text run at (0,304) width 23: "test"
+                  text run at (0,320) width 66: "effectively."

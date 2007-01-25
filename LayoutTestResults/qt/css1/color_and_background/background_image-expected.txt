@@ -1,0 +1,230 @@
+layer at (0,0) size 196x2756
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 196x2756
+  RenderBlock {HTML} at (0,0) size 96x2756
+    RenderBody {BODY} at (8,8) size 80x2740 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 58: "The style"
+          text run at (0,16) width 77: "declarations"
+          text run at (0,32) width 74: "which apply"
+          text run at (0,48) width 63: "to the text"
+          text run at (0,64) width 64: "below are:"
+      RenderBlock {PRE} at (0,94) size 80x48
+        RenderText {#text} at (0,0) size 188x48
+          text run at (0,0) width 188: "P {background-image: url(../resources/bg.gif);}"
+          text run at (188,0) width 0: " "
+          text run at (0,16) width 120: ".one {background-image: none;}"
+          text run at (120,16) width 0: " "
+          text run at (0,32) width 0: " "
+      RenderBlock {HR} at (0,156) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,172) size 80x368
+        RenderText {#text} at (0,0) size 78x368
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 58: "sentence"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 63: "backed by"
+          text run at (0,64) width 78: "an image-- a"
+          text run at (0,80) width 65: "green grid"
+          text run at (0,96) width 63: "pattern, in"
+          text run at (0,112) width 59: "this case."
+          text run at (0,128) width 25: "The"
+          text run at (0,144) width 73: "background"
+          text run at (0,160) width 38: "image"
+          text run at (0,176) width 71: "should also"
+          text run at (0,192) width 57: "tile along"
+          text run at (0,208) width 64: "both axes,"
+          text run at (0,224) width 72: "because no"
+          text run at (0,240) width 41: "repeat"
+          text run at (0,256) width 68: "direction is"
+          text run at (0,272) width 56: "specified"
+          text run at (0,288) width 52: "(specific"
+          text run at (0,304) width 51: "tests for"
+          text run at (0,320) width 60: "repeating"
+          text run at (0,336) width 60: "are found"
+          text run at (0,352) width 73: "elsewhere)."
+      RenderBlock {P} at (0,554) size 80x624
+        RenderText {#text} at (0,0) size 75x160
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 58: "sentence"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 75: "backed by a"
+          text run at (0,64) width 57: "repeated"
+          text run at (0,80) width 65: "green-grid"
+          text run at (0,96) width 60: "image, as"
+          text run at (0,112) width 65: "should the"
+          text run at (0,128) width 59: "last three"
+          text run at (0,144) width 42: "words "
+        RenderInline {STRONG} at (0,0) size 63x48
+          RenderInline {SPAN} at (0,0) size 63x48
+            RenderText {#text} at (42,144) size 63x48
+              text run at (42,144) width 13: "in"
+              text run at (0,160) width 26: "this"
+              text run at (0,176) width 63: "sentence"
+        RenderText {#text} at (63,176) size 80x32
+          text run at (63,176) width 7: ". "
+          text run at (70,176) width 8: "If"
+          text run at (0,192) width 80: "it is not, then"
+        RenderInline {CODE} at (0,0) size 16x16
+          RenderText {#text} at (0,208) size 16x16
+            text run at (0,208) width 16: "none"
+        RenderText {#text} at (16,208) size 69x64
+          text run at (16,208) width 14: " is"
+          text run at (0,224) width 69: "interpreted"
+          text run at (0,240) width 68: "incorrectly."
+          text run at (0,256) width 5: "("
+        RenderInline {CODE} at (0,0) size 16x16
+          RenderText {#text} at (5,256) size 16x16
+            text run at (5,256) width 16: "none"
+        RenderText {#text} at (21,256) size 77x368
+          text run at (21,256) width 46: " means"
+          text run at (0,272) width 48: "that the"
+          text run at (0,288) width 77: "element has"
+          text run at (0,304) width 16: "no"
+          text run at (0,320) width 73: "background"
+          text run at (0,336) width 41: "image,"
+          text run at (0,352) width 75: "allowing the"
+          text run at (0,368) width 57: "parent to"
+          text run at (0,384) width 39: "\"shine"
+          text run at (0,400) width 71: "through\" by"
+          text run at (0,416) width 46: "default;"
+          text run at (0,432) width 57: "since the"
+          text run at (0,448) width 57: "parent of"
+          text run at (0,464) width 62: "the words"
+          text run at (0,480) width 42: "\"in this"
+          text run at (0,496) width 77: "sentence\" is"
+          text run at (0,512) width 20: "the"
+          text run at (0,528) width 69: "paragraph,"
+          text run at (0,544) width 52: "then the"
+          text run at (0,560) width 76: "paragraph's"
+          text run at (0,576) width 38: "image"
+          text run at (0,592) width 60: "should be"
+          text run at (0,608) width 46: "visible.)"
+      RenderBlock {P} at (0,1192) size 80x224
+        RenderText {#text} at (0,0) size 75x224
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 58: "sentence"
+          text run at (0,32) width 75: "should NOT"
+          text run at (0,48) width 64: "be backed"
+          text run at (0,64) width 26: "by a"
+          text run at (0,80) width 57: "repeated"
+          text run at (0,96) width 65: "green-grid"
+          text run at (0,112) width 41: "image,"
+          text run at (0,128) width 75: "allowing the"
+          text run at (0,144) width 42: "page's"
+          text run at (0,160) width 73: "background"
+          text run at (0,176) width 55: "to \"shine"
+          text run at (0,192) width 53: "through\""
+          text run at (0,208) width 49: "instead."
+      RenderTable {TABLE} at (0,1430) size 98x1310 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 96x1308
+          RenderTableRow {TR} at (0,0) size 96x56
+            RenderTableCell {TD} at (0,0) size 96x56 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 53x48
+                RenderText {#text} at (4,4) size 53x48
+                  text run at (4,4) width 45: "TABLE"
+                  text run at (4,20) width 51: "Testing"
+                  text run at (4,36) width 53: "Section"
+          RenderTableRow {TR} at (0,56) size 96x1252
+            RenderTableCell {TD} at (0,670) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x16
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,56) size 84x1252 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 76x368
+                RenderText {#text} at (0,0) size 76x368
+                  text run at (0,0) width 27: "This"
+                  text run at (0,16) width 58: "sentence"
+                  text run at (0,32) width 60: "should be"
+                  text run at (0,48) width 63: "backed by"
+                  text run at (0,64) width 66: "an image--"
+                  text run at (0,80) width 49: "a green"
+                  text run at (0,96) width 76: "grid pattern,"
+                  text run at (0,112) width 74: "in this case."
+                  text run at (0,128) width 25: "The"
+                  text run at (0,144) width 73: "background"
+                  text run at (0,160) width 38: "image"
+                  text run at (0,176) width 71: "should also"
+                  text run at (0,192) width 57: "tile along"
+                  text run at (0,208) width 64: "both axes,"
+                  text run at (0,224) width 72: "because no"
+                  text run at (0,240) width 41: "repeat"
+                  text run at (0,256) width 68: "direction is"
+                  text run at (0,272) width 56: "specified"
+                  text run at (0,288) width 52: "(specific"
+                  text run at (0,304) width 51: "tests for"
+                  text run at (0,320) width 60: "repeating"
+                  text run at (0,336) width 60: "are found"
+                  text run at (0,352) width 73: "elsewhere)."
+              RenderBlock {P} at (4,386) size 76x624
+                RenderText {#text} at (0,0) size 75x160
+                  text run at (0,0) width 27: "This"
+                  text run at (0,16) width 58: "sentence"
+                  text run at (0,32) width 60: "should be"
+                  text run at (0,48) width 75: "backed by a"
+                  text run at (0,64) width 57: "repeated"
+                  text run at (0,80) width 65: "green-grid"
+                  text run at (0,96) width 60: "image, as"
+                  text run at (0,112) width 65: "should the"
+                  text run at (0,128) width 59: "last three"
+                  text run at (0,144) width 42: "words "
+                RenderInline {STRONG} at (0,0) size 63x48
+                  RenderInline {SPAN} at (0,0) size 63x48
+                    RenderText {#text} at (42,144) size 63x48
+                      text run at (42,144) width 13: "in"
+                      text run at (0,160) width 26: "this"
+                      text run at (0,176) width 63: "sentence"
+                RenderText {#text} at (63,176) size 66x48
+                  text run at (63,176) width 3: "."
+                  text run at (0,192) width 60: "If it is not,"
+                  text run at (0,208) width 32: "then "
+                RenderInline {CODE} at (0,0) size 16x16
+                  RenderText {#text} at (32,208) size 16x16
+                    text run at (32,208) width 16: "none"
+                RenderText {#text} at (48,208) size 69x64
+                  text run at (48,208) width 14: " is"
+                  text run at (0,224) width 69: "interpreted"
+                  text run at (0,240) width 68: "incorrectly."
+                  text run at (0,256) width 5: "("
+                RenderInline {CODE} at (0,0) size 16x16
+                  RenderText {#text} at (5,256) size 16x16
+                    text run at (5,256) width 16: "none"
+                RenderText {#text} at (21,256) size 76x368
+                  text run at (21,256) width 46: " means"
+                  text run at (0,272) width 48: "that the"
+                  text run at (0,288) width 50: "element"
+                  text run at (0,304) width 43: "has no"
+                  text run at (0,320) width 73: "background"
+                  text run at (0,336) width 41: "image,"
+                  text run at (0,352) width 75: "allowing the"
+                  text run at (0,368) width 57: "parent to"
+                  text run at (0,384) width 39: "\"shine"
+                  text run at (0,400) width 71: "through\" by"
+                  text run at (0,416) width 46: "default;"
+                  text run at (0,432) width 57: "since the"
+                  text run at (0,448) width 57: "parent of"
+                  text run at (0,464) width 62: "the words"
+                  text run at (0,480) width 42: "\"in this"
+                  text run at (0,496) width 63: "sentence\""
+                  text run at (0,512) width 34: "is the"
+                  text run at (0,528) width 69: "paragraph,"
+                  text run at (0,544) width 52: "then the"
+                  text run at (0,560) width 76: "paragraph's"
+                  text run at (0,576) width 38: "image"
+                  text run at (0,592) width 60: "should be"
+                  text run at (0,608) width 46: "visible.)"
+              RenderBlock {P} at (4,1024) size 76x224
+                RenderText {#text} at (0,0) size 75x224
+                  text run at (0,0) width 27: "This"
+                  text run at (0,16) width 58: "sentence"
+                  text run at (0,32) width 75: "should NOT"
+                  text run at (0,48) width 64: "be backed"
+                  text run at (0,64) width 26: "by a"
+                  text run at (0,80) width 57: "repeated"
+                  text run at (0,96) width 65: "green-grid"
+                  text run at (0,112) width 41: "image,"
+                  text run at (0,128) width 75: "allowing the"
+                  text run at (0,144) width 42: "page's"
+                  text run at (0,160) width 73: "background"
+                  text run at (0,176) width 55: "to \"shine"
+                  text run at (0,192) width 53: "through\""
+                  text run at (0,208) width 49: "instead."

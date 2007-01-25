@@ -1,0 +1,17 @@
+layer at (0,0) size 190x152
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 190x152
+  RenderBlock {HTML} at (0,0) size 96x152
+    RenderBody {BODY} at (8,14) size 80x124
+      RenderBlock {P} at (0,0) size 80x64
+        RenderText {#text} at (0,0) size 60x64
+          text run at (0,0) width 56: "The next"
+          text run at (0,16) width 53: "two bars"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 55: "identical:"
+      RenderBlock {DIV} at (14,78) size 168x16 [color=#FFFF00] [bgcolor=#000080]
+        RenderText {#text} at (0,0) size 36x16
+          text run at (0,0) width 36: "TEST"
+      RenderBlock {DIV} at (14,108) size 168x16 [color=#FFFF00] [bgcolor=#000080]
+        RenderText {#text} at (0,0) size 36x16
+          text run at (0,0) width 36: "TEST"

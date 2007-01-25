@@ -1,0 +1,69 @@
+layer at (0,0) size 96x628
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x628
+  RenderBlock {HTML} at (0,0) size 96x628
+    RenderBody {BODY} at (8,14) size 80x606
+      RenderBlock {P} at (0,0) size 80x208 [color=#000080]
+        RenderText {#text} at (0,0) size 72x208
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 60: "should be"
+          text run at (0,32) width 31: "eight"
+          text run at (0,48) width 62: "numbered"
+          text run at (0,64) width 72: "lines below,"
+          text run at (0,80) width 70: "all identical"
+          text run at (0,96) width 63: "except for"
+          text run at (0,112) width 20: "the"
+          text run at (0,128) width 68: "numbering,"
+          text run at (0,144) width 36: "which"
+          text run at (0,160) width 41: "should"
+          text run at (0,176) width 62: "match the"
+          text run at (0,192) width 72: "description."
+      RenderListItem {DIV} at (0,222) size 80x48 [color=#000080]
+        RenderListMarker at (0,0) size 15x16: "1"
+        RenderText {#text} at (15,0) size 60x48
+          text run at (15,0) width 31: " This"
+          text run at (0,16) width 60: "should be"
+          text run at (0,32) width 53: "line one."
+      RenderBlock {DIV} at (0,270) size 80x48 [color=#000080]
+        RenderText {#text} at (0,0) size 60x48
+          text run at (0,0) width 42: "2. This"
+          text run at (0,16) width 60: "should be"
+          text run at (0,32) width 51: "line two."
+      RenderBlock (anonymous) at (0,318) size 80x48
+        RenderInline {DIV} at (0,0) size 45x32 [color=#000080]
+          RenderText {#text} at (0,0) size 45x32
+            text run at (0,0) width 42: "3. This"
+            text run at (0,16) width 45: "should "
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {DIV} at (0,0) size 62x32 [color=#000080]
+          RenderText {#text} at (45,16) size 62x32
+            text run at (45,16) width 15: "be"
+            text run at (0,32) width 62: "line three."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,366) size 80x48 [color=#000080]
+        RenderText {#text} at (0,0) size 60x48
+          text run at (0,0) width 42: "4. This"
+          text run at (0,16) width 60: "should be"
+          text run at (0,32) width 53: "line four."
+      RenderBlock {DIV} at (0,414) size 80x48 [color=#000080]
+        RenderText {#text} at (0,0) size 60x48
+          text run at (0,0) width 42: "5. This"
+          text run at (0,16) width 60: "should be"
+          text run at (0,32) width 51: "line five."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,462) size 80x144 [color=#000080]
+        RenderBlock (anonymous) at (0,0) size 80x48
+          RenderText {#text} at (0,0) size 60x48
+            text run at (0,0) width 42: "6. This"
+            text run at (0,16) width 60: "should be"
+            text run at (0,32) width 46: "line six."
+        RenderBlock {A} at (0,48) size 80x48
+          RenderText {#text} at (0,0) size 67x48
+            text run at (0,0) width 42: "7. This"
+            text run at (0,16) width 60: "should be"
+            text run at (0,32) width 67: "line seven."
+        RenderBlock (anonymous) at (0,96) size 80x48
+          RenderText {#text} at (0,0) size 60x48
+            text run at (0,0) width 42: "8. This"
+            text run at (0,16) width 60: "should be"
+            text run at (0,32) width 60: "line eight."

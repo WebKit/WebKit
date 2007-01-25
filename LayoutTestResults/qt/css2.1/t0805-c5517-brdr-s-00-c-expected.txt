@@ -1,0 +1,73 @@
+layer at (0,0) size 96x986
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x986
+  RenderBlock {HTML} at (0,0) size 96x986
+    RenderBody {BODY} at (8,14) size 80x958
+      RenderBlock {P} at (0,0) size 80x64
+        RenderText {#text} at (0,0) size 79x64
+          text run at (0,0) width 77: "The borders"
+          text run at (0,16) width 36: "below"
+          text run at (0,32) width 79: "should be as"
+          text run at (0,48) width 64: "described:"
+      RenderBlock {P} at (0,78) size 80x42 [border: (5px dotted #000080)]
+        RenderText {#text} at (5,5) size 55x32
+          text run at (5,5) width 55: "Blue and"
+          text run at (5,21) width 43: "dotted."
+      RenderBlock {P} at (0,134) size 80x42 [border: (5px dashed #000080)]
+        RenderText {#text} at (5,5) size 55x32
+          text run at (5,5) width 55: "Blue and"
+          text run at (5,21) width 50: "dashed."
+      RenderBlock {P} at (0,190) size 80x42 [border: (5px solid #000080)]
+        RenderText {#text} at (5,5) size 55x32
+          text run at (5,5) width 55: "Blue and"
+          text run at (5,21) width 32: "solid."
+      RenderBlock {P} at (0,246) size 80x42 [border: (5px double #000080)]
+        RenderText {#text} at (5,5) size 55x32
+          text run at (5,5) width 55: "Blue and"
+          text run at (5,21) width 44: "double."
+      RenderBlock {P} at (0,302) size 80x58 [border: (5px groove #FFA500)]
+        RenderText {#text} at (5,5) size 48x48
+          text run at (5,5) width 48: "Orange"
+          text run at (5,21) width 24: "and"
+          text run at (5,37) width 47: "groove."
+      RenderBlock {P} at (0,374) size 80x42 [border: (5px ridge #FFA500)]
+        RenderText {#text} at (5,5) size 63x32
+          text run at (5,5) width 48: "Orange"
+          text run at (5,21) width 63: "and ridge."
+      RenderBlock {P} at (0,430) size 80x42 [border: (5px inset #FFA500)]
+        RenderText {#text} at (5,5) size 61x32
+          text run at (5,5) width 48: "Orange"
+          text run at (5,21) width 61: "and inset."
+      RenderBlock {P} at (0,486) size 80x42 [border: (5px outset #FFA500)]
+        RenderText {#text} at (5,5) size 69x32
+          text run at (5,5) width 48: "Orange"
+          text run at (5,21) width 69: "and outset."
+      RenderBlock {P} at (0,542) size 80x138 [border: (5px double #0000FF) (5px groove #0000FF) (5px double #0000FF) (5px groove #0000FF)]
+        RenderText {#text} at (5,5) size 63x128
+          text run at (5,5) width 55: "Blue and"
+          text run at (5,21) width 61: "double on"
+          text run at (5,37) width 48: "top and"
+          text run at (5,53) width 46: "bottom;"
+          text run at (5,69) width 55: "Blue and"
+          text run at (5,85) width 52: "grooved"
+          text run at (5,101) width 63: "on the left"
+          text run at (5,117) width 59: "and right."
+      RenderBlock {P} at (0,694) size 80x170 [border: (5px dotted #0000FF) (5px double #0000FF) (5px dashed #0000FF) (5px solid #0000FF)]
+        RenderText {#text} at (5,5) size 70x160
+          text run at (5,5) width 27: "Blue"
+          text run at (5,21) width 48: "borders"
+          text run at (5,37) width 64: "which are,"
+          text run at (5,53) width 11: "in"
+          text run at (5,69) width 60: "clockwise"
+          text run at (5,85) width 66: "order from"
+          text run at (5,101) width 70: "top: dotted,"
+          text run at (5,117) width 44: "double,"
+          text run at (5,133) width 50: "dashed,"
+          text run at (5,149) width 32: "solid."
+      RenderBlock {P} at (0,878) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 66: "paragraph"
+          text run at (0,32) width 76: "should have"
+          text run at (0,48) width 77: "no border at"
+          text run at (0,64) width 17: "all."

@@ -1,0 +1,774 @@
+layer at (0,0) size 348x9306
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 348x9306
+  RenderBlock {HTML} at (0,0) size 96x9306
+    RenderBody {BODY} at (8,8) size 80x9290 [bgcolor=#CCCCCC]
+      RenderBlock (floating) {P} at (0,0) size 40x224 [bgcolor=#FFFF00]
+        RenderText {#text} at (0,0) size 66x224
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 66: "paragraph"
+          text run at (0,32) width 40: "is of"
+          text run at (0,48) width 32: "class"
+          text run at (0,64) width 37: "\"one\"."
+          text run at (0,80) width 40: "It has"
+          text run at (0,96) width 8: "a"
+          text run at (0,112) width 33: "width"
+          text run at (0,128) width 12: "of"
+          text run at (0,144) width 28: "50%"
+          text run at (0,160) width 40: "and is"
+          text run at (0,176) width 43: "floated"
+          text run at (0,192) width 40: "to the"
+          text run at (0,208) width 22: "left."
+      RenderBlock {P} at (0,0) size 80x768
+        RenderText {#text} at (40,0) size 80x768
+          text run at (40,0) width 27: "This"
+          text run at (0,224) width 66: "paragraph"
+          text run at (0,240) width 80: "should start"
+          text run at (0,256) width 80: "on the right"
+          text run at (0,272) width 80: "side of a"
+          text run at (0,288) width 80: "yellow box"
+          text run at (0,304) width 36: "which"
+          text run at (0,320) width 80: "contains the"
+          text run at (0,336) width 53: "previous"
+          text run at (0,352) width 69: "paragraph."
+          text run at (0,368) width 80: "Since the"
+          text run at (0,384) width 80: "text of this"
+          text run at (0,400) width 80: "element is"
+          text run at (0,416) width 80: "much longer"
+          text run at (0,432) width 80: "than the text"
+          text run at (0,448) width 80: "in the"
+          text run at (0,464) width 53: "previous"
+          text run at (0,480) width 80: "element, the"
+          text run at (0,496) width 80: "text will"
+          text run at (0,512) width 80: "wrap around"
+          text run at (0,528) width 80: "the yellow"
+          text run at (0,544) width 80: "box. There"
+          text run at (0,560) width 80: "is no"
+          text run at (0,576) width 54: "padding,"
+          text run at (0,592) width 80: "border or"
+          text run at (0,608) width 80: "margins on"
+          text run at (0,624) width 80: "this and the"
+          text run at (0,640) width 53: "previous"
+          text run at (0,656) width 80: "element, so"
+          text run at (0,672) width 80: "the text of"
+          text run at (0,688) width 80: "the two"
+          text run at (0,704) width 57: "elements"
+          text run at (0,720) width 80: "should be"
+          text run at (0,736) width 80: "very close to"
+          text run at (0,752) width 71: "each other."
+      RenderBlock (anonymous) at (0,768) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderBlock {HR} at (0,791) size 80x2 [border: (1px inset #000000)]
+      RenderBlock (floating) {P} at (0,800) size 80x656 [bgcolor=#FFFF00]
+        RenderText {#text} at (0,0) size 81x656
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 80: "paragraph is"
+          text run at (0,32) width 80: "of class"
+          text run at (0,48) width 80: "\"two\". Since"
+          text run at (0,64) width 80: "the width"
+          text run at (0,80) width 80: "has been"
+          text run at (0,96) width 80: "set to 100%,"
+          text run at (0,112) width 80: "it should"
+          text run at (0,128) width 81: "automatically"
+          text run at (0,144) width 80: "be as wide"
+          text run at (0,160) width 80: "as its parent"
+          text run at (0,176) width 50: "element"
+          text run at (0,192) width 80: "allows it to"
+          text run at (0,208) width 18: "be."
+          text run at (0,224) width 66: "Therefore,"
+          text run at (0,240) width 80: "even though"
+          text run at (0,256) width 80: "the element"
+          text run at (0,272) width 80: "is floated,"
+          text run at (0,288) width 80: "there is no"
+          text run at (0,304) width 80: "room for"
+          text run at (0,320) width 33: "other"
+          text run at (0,336) width 80: "content on"
+          text run at (0,352) width 80: "the sides"
+          text run at (0,368) width 80: "and a"
+          text run at (0,384) width 45: "orange"
+          text run at (0,400) width 43: "square"
+          text run at (0,416) width 38: "image"
+          text run at (0,432) width 80: "should be"
+          text run at (0,448) width 80: "seen AFTER"
+          text run at (0,464) width 20: "the"
+          text run at (0,480) width 69: "paragraph,"
+          text run at (0,496) width 80: "not next to"
+          text run at (0,512) width 80: "it. A yellow"
+          text run at (0,528) width 73: "background"
+          text run at (0,544) width 80: "has been"
+          text run at (0,560) width 80: "added to"
+          text run at (0,576) width 22: "this"
+          text run at (0,592) width 66: "paragraph"
+          text run at (0,608) width 17: "for"
+          text run at (0,624) width 64: "diagnostic"
+          text run at (0,640) width 61: "purposes."
+      RenderBlock (anonymous) at (0,800) size 80x674
+        RenderImage {IMG} at (0,656) size 15x15
+        RenderText {#text} at (15,658) size 4x16
+          text run at (15,658) width 4: " "
+        RenderBR {BR} at (19,671) size 0x0
+      RenderBlock {HR} at (0,1481) size 80x2 [border: (1px inset #000000)]
+      RenderBlock (floating) {P} at (0,1490) size 40x736 [bgcolor=#FFFF00]
+        RenderText {#text} at (0,0) size 80x736
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 66: "paragraph"
+          text run at (0,32) width 10: "is"
+          text run at (0,48) width 43: "floated"
+          text run at (0,64) width 40: "to the"
+          text run at (0,80) width 19: "left"
+          text run at (0,96) width 24: "and"
+          text run at (0,112) width 20: "the"
+          text run at (0,128) width 45: "orange"
+          text run at (0,144) width 43: "square"
+          text run at (0,160) width 38: "image"
+          text run at (0,176) width 41: "should"
+          text run at (0,192) width 45: "appear"
+          text run at (0,208) width 40: "to the"
+          text run at (0,224) width 28: "right"
+          text run at (0,240) width 40: "of the"
+          text run at (0,256) width 69: "paragraph."
+          text run at (0,272) width 27: "This"
+          text run at (0,288) width 66: "paragraph"
+          text run at (0,304) width 40: "has a"
+          text run at (0,320) width 39: "yellow"
+          text run at (0,336) width 73: "background"
+          text run at (0,352) width 24: "and"
+          text run at (0,368) width 16: "no"
+          text run at (0,384) width 54: "padding,"
+          text run at (0,400) width 43: "margin"
+          text run at (0,416) width 13: "or"
+          text run at (0,432) width 44: "border."
+          text run at (0,448) width 25: "The"
+          text run at (0,464) width 28: "right"
+          text run at (0,480) width 32: "edge"
+          text run at (0,496) width 40: "of this"
+          text run at (0,512) width 39: "yellow"
+          text run at (0,528) width 22: "box"
+          text run at (0,544) width 41: "should"
+          text run at (0,560) width 15: "be"
+          text run at (0,576) width 72: "horizontally"
+          text run at (0,592) width 46: "aligned"
+          text run at (0,608) width 25: "with"
+          text run at (0,624) width 20: "the"
+          text run at (0,640) width 19: "left"
+          text run at (0,656) width 32: "edge"
+          text run at (0,672) width 40: "of the"
+          text run at (0,688) width 39: "yellow"
+          text run at (0,704) width 22: "box"
+          text run at (0,720) width 80: "undernearth."
+      RenderBlock (anonymous) at (0,1490) size 80x736
+        RenderImage {IMG} at (40,0) size 15x15
+        RenderText {#text} at (55,2) size 4x16
+          text run at (55,2) width 4: " "
+        RenderBR {BR} at (59,15) size 0x0
+      RenderBlock {HR} at (0,2233) size 80x2 [border: (1px inset #000000)]
+      RenderBlock (floating) {P} at (40,2242) size 40x800 [bgcolor=#FFFF00]
+        RenderText {#text} at (0,0) size 73x800
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 66: "paragraph"
+          text run at (0,32) width 10: "is"
+          text run at (0,48) width 43: "floated"
+          text run at (0,64) width 40: "to the"
+          text run at (0,80) width 28: "right"
+          text run at (0,96) width 38: "(using"
+          text run at (0,112) width 8: "a"
+          text run at (0,128) width 44: "STYLE"
+          text run at (0,144) width 55: "attribute)"
+          text run at (0,160) width 24: "and"
+          text run at (0,176) width 20: "the"
+          text run at (0,192) width 45: "orange"
+          text run at (0,208) width 43: "square"
+          text run at (0,224) width 38: "image"
+          text run at (0,240) width 41: "should"
+          text run at (0,256) width 45: "appear"
+          text run at (0,272) width 40: "to the"
+          text run at (0,288) width 40: "left of"
+          text run at (0,304) width 20: "the"
+          text run at (0,320) width 69: "paragraph."
+          text run at (0,336) width 27: "This"
+          text run at (0,352) width 66: "paragraph"
+          text run at (0,368) width 40: "has a"
+          text run at (0,384) width 39: "yellow"
+          text run at (0,400) width 73: "background"
+          text run at (0,416) width 24: "and"
+          text run at (0,432) width 16: "no"
+          text run at (0,448) width 54: "padding,"
+          text run at (0,464) width 43: "margin"
+          text run at (0,480) width 13: "or"
+          text run at (0,496) width 44: "border."
+          text run at (0,512) width 25: "The"
+          text run at (0,528) width 19: "left"
+          text run at (0,544) width 32: "edge"
+          text run at (0,560) width 40: "of this"
+          text run at (0,576) width 39: "yellow"
+          text run at (0,592) width 22: "box"
+          text run at (0,608) width 41: "should"
+          text run at (0,624) width 15: "be"
+          text run at (0,640) width 68: "horizonally"
+          text run at (0,656) width 46: "aligned"
+          text run at (0,672) width 25: "with"
+          text run at (0,688) width 20: "the"
+          text run at (0,704) width 28: "right"
+          text run at (0,720) width 32: "edge"
+          text run at (0,736) width 40: "of the"
+          text run at (0,752) width 39: "yellow"
+          text run at (0,768) width 22: "box"
+          text run at (0,784) width 41: "above."
+      RenderBlock (anonymous) at (0,2242) size 80x800
+        RenderImage {IMG} at (0,0) size 15x15
+        RenderText {#text} at (15,2) size 4x16
+          text run at (15,2) width 4: " "
+        RenderBR {BR} at (19,15) size 0x0
+      RenderBlock {HR} at (0,3049) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,3058) size 80x528
+        RenderBlock (floating) {SPAN} at (0,0) size 42x32 [bgcolor=#C0C0C0]
+          RenderText {#text} at (0,1) size 17x30
+            text run at (0,1) width 17: "T"
+        RenderText {#text} at (42,0) size 80x528
+          text run at (42,0) width 16: "he"
+          text run at (42,16) width 23: "first"
+          text run at (0,32) width 80: "letter (a \"T\")"
+          text run at (0,48) width 80: "of this"
+          text run at (0,64) width 66: "paragraph"
+          text run at (0,80) width 80: "should float"
+          text run at (0,96) width 80: "left and be"
+          text run at (0,112) width 80: "twice the"
+          text run at (0,128) width 80: "font-size of"
+          text run at (0,144) width 80: "the rest of"
+          text run at (0,160) width 20: "the"
+          text run at (0,176) width 69: "paragraph,"
+          text run at (0,192) width 80: "as well as"
+          text run at (0,208) width 80: "bold, with a"
+          text run at (0,224) width 47: "content"
+          text run at (0,240) width 80: "width of"
+          text run at (0,256) width 80: "1.5em and a"
+          text run at (0,272) width 77: "background-"
+          text run at (0,288) width 80: "color of"
+          text run at (0,304) width 55: "silver. "
+          text run at (55,304) width 25: "The"
+          text run at (0,320) width 80: "top of the"
+          text run at (0,336) width 80: "big letter \"T\""
+          text run at (0,352) width 80: "should be"
+          text run at (0,368) width 55: "vertically"
+          text run at (0,384) width 80: "aligned with"
+          text run at (0,400) width 80: "the top of"
+          text run at (0,416) width 80: "the first line"
+          text run at (0,432) width 80: "of this"
+          text run at (0,448) width 69: "paragraph."
+          text run at (0,464) width 80: "This is"
+          text run at (0,480) width 63: "commonly"
+          text run at (0,496) width 80: "known as"
+          text run at (0,512) width 69: "\"drop-cap\"."
+      RenderBlock (anonymous) at (0,3586) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderBlock {HR} at (0,3609) size 80x2 [border: (1px inset #000000)]
+      RenderBlock (floating) {P} at (10,3628) size 296x208 [bgcolor=#FFFF00] [border: (3px solid #FF0000)]
+        RenderText {#text} at (8,8) size 280x192
+          text run at (8,8) width 280: "This paragraph should be floated to the"
+          text run at (8,24) width 280: "right, sort of like a 'sidebar' in a magazine"
+          text run at (8,40) width 280: "article. Its width is 20em so the box should"
+          text run at (8,56) width 280: "not be reformatted when the size of the"
+          text run at (8,72) width 280: "viewport is changed (e.g. when the window"
+          text run at (8,88) width 280: "is resized). The background color of the"
+          text run at (8,104) width 280: "element is yellow, and there should be a 3px"
+          text run at (8,120) width 280: "solid red border outside a 5px wide padding."
+          text run at (8,136) width 280: "Also, the element has a 10px wide margin"
+          text run at (8,152) width 280: "around it where the blue background of the"
+          text run at (8,168) width 280: "paragraph in the normal flow should shine"
+          text run at (8,184) width 51: "through."
+      RenderBlock {P} at (0,3618) size 80x1316 [bgcolor=#66CCFF]
+        RenderText {#text} at (0,228) size 80x1088
+          text run at (0,228) width 27: "This"
+          text run at (0,244) width 80: "paragraph is"
+          text run at (0,260) width 80: "not floating."
+          text run at (0,276) width 80: "If there is"
+          text run at (0,292) width 47: "enough"
+          text run at (0,308) width 80: "room, the"
+          text run at (0,324) width 41: "textual"
+          text run at (0,340) width 80: "content of"
+          text run at (0,356) width 20: "the"
+          text run at (0,372) width 66: "paragraph"
+          text run at (0,388) width 41: "should"
+          text run at (0,404) width 80: "appear on"
+          text run at (0,420) width 80: "the left side"
+          text run at (0,436) width 80: "of the yellow"
+          text run at (0,452) width 80: "\"sidebar\" on"
+          text run at (0,468) width 80: "the right."
+          text run at (0,484) width 80: "The content"
+          text run at (0,500) width 80: "of this"
+          text run at (0,516) width 50: "element"
+          text run at (0,532) width 80: "should flow"
+          text run at (0,548) width 80: "around the"
+          text run at (0,564) width 43: "floated"
+          text run at (0,580) width 53: "element."
+          text run at (0,596) width 59: "However,"
+          text run at (0,612) width 80: "the floated"
+          text run at (0,628) width 80: "element may"
+          text run at (0,644) width 80: "or may not"
+          text run at (0,660) width 80: "be obscured"
+          text run at (0,676) width 80: "by the blue"
+          text run at (0,692) width 73: "background"
+          text run at (0,708) width 80: "of this"
+          text run at (0,724) width 80: "element, as"
+          text run at (0,740) width 20: "the"
+          text run at (0,756) width 78: "specification"
+          text run at (0,772) width 80: "does not"
+          text run at (0,788) width 80: "say which is"
+          text run at (0,804) width 80: "drawn \"on"
+          text run at (0,820) width 34: "top.\" "
+          text run at (34,820) width 46: "Even if"
+          text run at (0,836) width 80: "the floated"
+          text run at (0,852) width 80: "element is"
+          text run at (0,868) width 80: "obscured, it"
+          text run at (0,884) width 80: "still forces"
+          text run at (0,900) width 80: "the content"
+          text run at (0,916) width 80: "of this"
+          text run at (0,932) width 80: "element to"
+          text run at (0,948) width 80: "flow around"
+          text run at (0,964) width 31: "it. "
+          text run at (31,964) width 49: "If the"
+          text run at (0,980) width 43: "floated"
+          text run at (0,996) width 80: "element is"
+          text run at (0,1012) width 20: "not"
+          text run at (0,1028) width 60: "obscured,"
+          text run at (0,1044) width 80: "then the"
+          text run at (0,1060) width 25: "blue"
+          text run at (0,1076) width 80: "rectangle of"
+          text run at (0,1092) width 22: "this"
+          text run at (0,1108) width 66: "paragraph"
+          text run at (0,1124) width 41: "should"
+          text run at (0,1140) width 80: "extend 10px"
+          text run at (0,1156) width 80: "above and"
+          text run at (0,1172) width 80: "to the right"
+          text run at (0,1188) width 80: "of the"
+          text run at (0,1204) width 56: "sidebar's"
+          text run at (0,1220) width 80: "red border,"
+          text run at (0,1236) width 80: "due to the"
+          text run at (0,1252) width 43: "margin"
+          text run at (0,1268) width 80: "styles set for"
+          text run at (0,1284) width 80: "the floated"
+          text run at (0,1300) width 53: "element."
+      RenderBlock (anonymous) at (0,4934) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderBlock {HR} at (0,4957) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,4966) size 80x342 [bgcolor=#66CCFF] [border: (4px solid #FF0000)]
+        RenderBlock (floating) {DIV} at (10,14) size 290x234 [bgcolor=#FFFF00]
+          RenderBlock {P} at (5,5) size 280x224
+            RenderText {#text} at (0,0) size 280x224
+              text run at (0,0) width 280: "This paragraph is placed inside a DIV"
+              text run at (0,16) width 280: "element which is floated to the right. The"
+              text run at (0,32) width 280: "width of the DIV element is 20em. The"
+              text run at (0,48) width 280: "background is yellow and there is a 5px"
+              text run at (0,64) width 280: "padding, a 10px margin and no border."
+              text run at (0,80) width 280: "Since it is floated, the yellow box should be"
+              text run at (0,96) width 280: "rendered on top of the background and"
+              text run at (0,112) width 280: "borders of adjacent non-floated elements."
+              text run at (0,128) width 280: "To the left of this yellow box there should be"
+              text run at (0,144) width 280: "a short paragraph with a blue background"
+              text run at (0,160) width 280: "and a red border. The yellow box should be"
+              text run at (0,176) width 280: "rendered on top of the bottom red border."
+              text run at (0,192) width 280: "I.e., the bottom red border will appear broken"
+              text run at (0,208) width 265: "where it's overlaid by the yellow rectangle."
+        RenderBlock {P} at (4,4) size 72x334
+          RenderText {#text} at (0,254) size 72x80
+            text run at (0,254) width 25: "See"
+            text run at (0,270) width 69: "description"
+            text run at (0,286) width 72: "in the box"
+            text run at (0,302) width 72: "on the right"
+            text run at (0,318) width 26: "side"
+      RenderBlock (anonymous) at (0,5308) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderBlock {HR} at (0,5331) size 80x2 [border: (1px inset #000000)]
+      RenderBlock (floating) {DIV} at (0,5340) size 20x304 [bgcolor=#66CCFF]
+        RenderBlock {P} at (0,0) size 20x304
+          RenderText {#text} at (0,0) size 73x304
+            text run at (0,0) width 27: "This"
+            text run at (0,16) width 66: "paragraph"
+            text run at (0,32) width 10: "is"
+            text run at (0,48) width 37: "inside"
+            text run at (0,64) width 8: "a"
+            text run at (0,80) width 23: "DIV"
+            text run at (0,96) width 36: "which"
+            text run at (0,112) width 10: "is"
+            text run at (0,128) width 43: "floated"
+            text run at (0,144) width 22: "left."
+            text run at (0,160) width 15: "Its"
+            text run at (0,176) width 73: "background"
+            text run at (0,192) width 10: "is"
+            text run at (0,208) width 25: "blue"
+            text run at (0,224) width 24: "and"
+            text run at (0,240) width 20: "the"
+            text run at (0,256) width 33: "width"
+            text run at (0,272) width 10: "is"
+            text run at (0,288) width 31: "25%."
+      RenderBlock (floating) {DIV} at (60,5340) size 20x304 [bgcolor=#FFFF00]
+        RenderBlock {P} at (0,0) size 20x304
+          RenderText {#text} at (0,0) size 73x304
+            text run at (0,0) width 27: "This"
+            text run at (0,16) width 66: "paragraph"
+            text run at (0,32) width 10: "is"
+            text run at (0,48) width 37: "inside"
+            text run at (0,64) width 8: "a"
+            text run at (0,80) width 23: "DIV"
+            text run at (0,96) width 36: "which"
+            text run at (0,112) width 10: "is"
+            text run at (0,128) width 43: "floated"
+            text run at (0,144) width 31: "right."
+            text run at (0,160) width 15: "Its"
+            text run at (0,176) width 73: "background"
+            text run at (0,192) width 10: "is"
+            text run at (0,208) width 39: "yellow"
+            text run at (0,224) width 24: "and"
+            text run at (0,240) width 20: "the"
+            text run at (0,256) width 33: "width"
+            text run at (0,272) width 10: "is"
+            text run at (0,288) width 31: "25%."
+      RenderBlock {P} at (0,5340) size 80x448
+        RenderText {#text} at (20,0) size 80x448
+          text run at (20,0) width 27: "This"
+          text run at (0,304) width 66: "paragraph"
+          text run at (0,320) width 41: "should"
+          text run at (0,336) width 45: "appear"
+          text run at (0,352) width 80: "between a"
+          text run at (0,368) width 80: "blue box (on"
+          text run at (0,384) width 56: "the left) "
+          text run at (56,384) width 24: "and"
+          text run at (0,400) width 80: "a yellow box"
+          text run at (0,416) width 80: "(on the"
+          text run at (0,432) width 36: "right)."
+      RenderBlock (anonymous) at (0,5788) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderBlock {HR} at (0,5811) size 80x2 [border: (1px inset #000000)]
+      RenderBlock (floating) {DIV} at (0,5820) size 60x1168 [bgcolor=#66CCFF]
+        RenderBlock (floating) {DIV} at (35,0) size 15x144 [bgcolor=#FFFF00]
+          RenderBlock {P} at (0,0) size 15x144
+            RenderText {#text} at (0,0) size 69x144
+              text run at (0,0) width 25: "See"
+              text run at (0,16) width 69: "description"
+              text run at (0,32) width 11: "in"
+              text run at (0,48) width 20: "the"
+              text run at (0,64) width 22: "box"
+              text run at (0,80) width 16: "on"
+              text run at (0,96) width 20: "the"
+              text run at (0,112) width 19: "left"
+              text run at (0,128) width 29: "side."
+        RenderBlock {P} at (0,0) size 60x1168
+          RenderText {#text} at (0,0) size 73x1168
+            text run at (0,0) width 27: "This"
+            text run at (0,144) width 66: "paragraph"
+            text run at (0,160) width 60: "is inside"
+            text run at (0,176) width 60: "a DIV"
+            text run at (0,192) width 60: "which is"
+            text run at (0,208) width 43: "floated"
+            text run at (0,224) width 60: "left. The"
+            text run at (0,240) width 73: "background"
+            text run at (0,256) width 60: "of the"
+            text run at (0,272) width 23: "DIV"
+            text run at (0,288) width 50: "element"
+            text run at (0,304) width 60: "is blue"
+            text run at (0,320) width 60: "and its"
+            text run at (0,336) width 60: "width is"
+            text run at (0,352) width 31: "75%."
+            text run at (0,368) width 37: "This "
+            text run at (37,368) width 23: "text"
+            text run at (0,384) width 60: "should all"
+            text run at (0,400) width 60: "be inside"
+            text run at (0,416) width 60: "the blue"
+            text run at (0,432) width 62: "rectangle."
+            text run at (0,448) width 60: "The blue"
+            text run at (0,464) width 23: "DIV"
+            text run at (0,480) width 50: "element"
+            text run at (0,496) width 23: "has"
+            text run at (0,512) width 49: "another"
+            text run at (0,528) width 23: "DIV"
+            text run at (0,544) width 50: "element"
+            text run at (0,560) width 60: "as a"
+            text run at (0,576) width 60: "child. It"
+            text run at (0,592) width 60: "has a"
+            text run at (0,608) width 39: "yellow"
+            text run at (0,624) width 73: "background"
+            text run at (0,640) width 60: "color and"
+            text run at (0,656) width 60: "is floated"
+            text run at (0,672) width 60: "to the"
+            text run at (0,688) width 31: "right."
+            text run at (0,704) width 60: "Since it is"
+            text run at (0,720) width 13: "a "
+            text run at (13,720) width 47: "child of"
+            text run at (0,736) width 60: "the blue"
+            text run at (0,752) width 60: "DIV, the"
+            text run at (0,768) width 39: "yellow"
+            text run at (0,784) width 23: "DIV"
+            text run at (0,800) width 41: "should"
+            text run at (0,816) width 45: "appear"
+            text run at (0,832) width 37: "inside"
+            text run at (0,848) width 35: "the "
+            text run at (35,848) width 25: "blue"
+            text run at (0,864) width 62: "rectangle."
+            text run at (0,880) width 60: "Due to it"
+            text run at (0,896) width 34: "being"
+            text run at (0,912) width 60: "floated to"
+            text run at (0,928) width 60: "the right"
+            text run at (0,944) width 24: "and"
+            text run at (0,960) width 52: "having "
+            text run at (52,960) width 8: "a"
+            text run at (0,976) width 31: "10px"
+            text run at (0,992) width 28: "right"
+            text run at (0,1008) width 46: "margin,"
+            text run at (0,1024) width 20: "the"
+            text run at (0,1040) width 39: "yellow"
+            text run at (0,1056) width 56: "rectange"
+            text run at (0,1072) width 41: "should"
+            text run at (0,1088) width 60: "have a"
+            text run at (0,1104) width 60: "10px blue"
+            text run at (0,1120) width 60: "stripe on"
+            text run at (0,1136) width 60: "its right"
+            text run at (0,1152) width 29: "side."
+      RenderBlock (anonymous) at (0,5820) size 80x1168
+        RenderBR {BR} at (60,0) size 0x16
+      RenderBlock {HR} at (0,6995) size 80x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,7004) size 340x2286 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 338x2284
+          RenderTableRow {TR} at (0,0) size 338x24
+            RenderTableCell {TD} at (0,0) size 338x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 157x16
+                RenderText {#text} at (4,4) size 157x16
+                  text run at (4,4) width 157: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,24) size 338x2260
+            RenderTableCell {TD} at (0,1142) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x16
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,24) size 326x2260 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock (floating) {P} at (4,4) size 159x64 [bgcolor=#FFFF00]
+                RenderText {#text} at (0,0) size 159x64
+                  text run at (0,0) width 159: "This paragraph is of"
+                  text run at (0,16) width 159: "class \"one\". It has a"
+                  text run at (0,32) width 159: "width of 50% and is"
+                  text run at (0,48) width 109: "floated to the left."
+              RenderBlock {P} at (4,4) size 318x160
+                RenderText {#text} at (159,0) size 318x160
+                  text run at (159,0) width 159: "This paragraph should"
+                  text run at (159,16) width 159: "start on the right side of"
+                  text run at (159,32) width 159: "a yellow box which"
+                  text run at (159,48) width 159: "contains the previous"
+                  text run at (0,64) width 318: "paragraph. Since the text of this element is much"
+                  text run at (0,80) width 318: "longer than the text in the previous element, the"
+                  text run at (0,96) width 318: "text will wrap around the yellow box. There is no"
+                  text run at (0,112) width 318: "padding, border or margins on this and the"
+                  text run at (0,128) width 318: "previous element, so the text of the two elements"
+                  text run at (0,144) width 219: "should be very close to each other."
+              RenderBlock (anonymous) at (4,164) size 318x16
+                RenderBR {BR} at (0,0) size 0x16
+              RenderBlock {HR} at (4,187) size 318x2 [border: (1px inset #000000)]
+              RenderBlock (floating) {P} at (4,196) size 318x144 [bgcolor=#FFFF00]
+                RenderText {#text} at (0,0) size 318x144
+                  text run at (0,0) width 318: "This paragraph is of class \"two\". Since the width"
+                  text run at (0,16) width 318: "has been set to 100%, it should automatically be"
+                  text run at (0,32) width 318: "as wide as its parent element allows it to be."
+                  text run at (0,48) width 318: "Therefore, even though the element is floated,"
+                  text run at (0,64) width 318: "there is no room for other content on the sides"
+                  text run at (0,80) width 318: "and a orange square image should be seen"
+                  text run at (0,96) width 318: "AFTER the paragraph, not next to it. A yellow"
+                  text run at (0,112) width 318: "background has been added to this paragraph for"
+                  text run at (0,128) width 129: "diagnostic purposes."
+              RenderBlock (anonymous) at (4,196) size 318x162
+                RenderImage {IMG} at (0,144) size 15x15
+                RenderText {#text} at (15,146) size 4x16
+                  text run at (15,146) width 4: " "
+                RenderBR {BR} at (19,159) size 0x0
+              RenderBlock {HR} at (4,365) size 318x2 [border: (1px inset #000000)]
+              RenderBlock (floating) {P} at (4,374) size 159x208 [bgcolor=#FFFF00]
+                RenderText {#text} at (0,0) size 159x208
+                  text run at (0,0) width 159: "This paragraph is floated"
+                  text run at (0,16) width 159: "to the left and the"
+                  text run at (0,32) width 159: "orange square image"
+                  text run at (0,48) width 159: "should appear to the"
+                  text run at (0,64) width 159: "right of the paragraph."
+                  text run at (0,80) width 159: "This paragraph has a"
+                  text run at (0,96) width 159: "yellow background and"
+                  text run at (0,112) width 159: "no padding, margin or"
+                  text run at (0,128) width 159: "border. The right edge of"
+                  text run at (0,144) width 159: "this yellow box should be"
+                  text run at (0,160) width 159: "horizontally aligned with"
+                  text run at (0,176) width 159: "the left edge of the"
+                  text run at (0,192) width 149: "yellow box undernearth."
+              RenderBlock (anonymous) at (4,374) size 318x208
+                RenderImage {IMG} at (159,0) size 15x15
+                RenderText {#text} at (174,2) size 4x16
+                  text run at (174,2) width 4: " "
+                RenderBR {BR} at (178,15) size 0x0
+              RenderBlock {HR} at (4,589) size 318x2 [border: (1px inset #000000)]
+              RenderBlock (floating) {P} at (163,598) size 159x224 [bgcolor=#FFFF00]
+                RenderText {#text} at (0,0) size 159x224
+                  text run at (0,0) width 159: "This paragraph is floated"
+                  text run at (0,16) width 159: "to the right (using a"
+                  text run at (0,32) width 159: "STYLE attribute) and the"
+                  text run at (0,48) width 159: "orange square image"
+                  text run at (0,64) width 159: "should appear to the left"
+                  text run at (0,80) width 159: "of the paragraph. This"
+                  text run at (0,96) width 159: "paragraph has a yellow"
+                  text run at (0,112) width 159: "background and no"
+                  text run at (0,128) width 159: "padding, margin or"
+                  text run at (0,144) width 159: "border. The left edge of"
+                  text run at (0,160) width 159: "this yellow box should be"
+                  text run at (0,176) width 159: "horizonally aligned with"
+                  text run at (0,192) width 159: "the right edge of the"
+                  text run at (0,208) width 110: "yellow box above."
+              RenderBlock (anonymous) at (4,598) size 318x224
+                RenderImage {IMG} at (0,0) size 15x15
+                RenderText {#text} at (15,2) size 4x16
+                  text run at (15,2) width 4: " "
+                RenderBR {BR} at (19,15) size 0x0
+              RenderBlock {HR} at (4,829) size 318x2 [border: (1px inset #000000)]
+              RenderBlock {P} at (4,838) size 318x112
+                RenderBlock (floating) {SPAN} at (0,0) size 42x32 [bgcolor=#C0C0C0]
+                  RenderText {#text} at (0,1) size 17x30
+                    text run at (0,1) width 17: "T"
+                RenderText {#text} at (42,0) size 318x112
+                  text run at (42,0) width 276: "he first letter (a \"T\") of this paragraph"
+                  text run at (42,16) width 276: "should float left and be twice the font-size of"
+                  text run at (0,32) width 318: "the rest of the paragraph, as well as bold, with a"
+                  text run at (0,48) width 318: "content width of 1.5em and a background-color of"
+                  text run at (0,64) width 44: "silver. "
+                  text run at (44,64) width 274: "The top of the big letter \"T\" should be"
+                  text run at (0,80) width 318: "vertically aligned with the top of the first line of this"
+                  text run at (0,96) width 318: "paragraph. This is commonly known as \"drop-cap\"."
+              RenderBlock (anonymous) at (4,950) size 318x16
+                RenderBR {BR} at (0,0) size 0x16
+              RenderBlock {HR} at (4,973) size 318x2 [border: (1px inset #000000)]
+              RenderBlock (floating) {P} at (16,992) size 296x208 [bgcolor=#FFFF00] [border: (3px solid #FF0000)]
+                RenderText {#text} at (8,8) size 280x192
+                  text run at (8,8) width 280: "This paragraph should be floated to the"
+                  text run at (8,24) width 280: "right, sort of like a 'sidebar' in a magazine"
+                  text run at (8,40) width 280: "article. Its width is 20em so the box should"
+                  text run at (8,56) width 280: "not be reformatted when the size of the"
+                  text run at (8,72) width 280: "viewport is changed (e.g. when the window"
+                  text run at (8,88) width 280: "is resized). The background color of the"
+                  text run at (8,104) width 280: "element is yellow, and there should be a 3px"
+                  text run at (8,120) width 280: "solid red border outside a 5px wide padding."
+                  text run at (8,136) width 280: "Also, the element has a 10px wide margin"
+                  text run at (8,152) width 280: "around it where the blue background of the"
+                  text run at (8,168) width 280: "paragraph in the normal flow should shine"
+                  text run at (8,184) width 51: "through."
+              RenderBlock {P} at (4,982) size 318x468 [bgcolor=#66CCFF]
+                RenderText {#text} at (0,228) size 318x240
+                  text run at (0,228) width 318: "This paragraph is not floating. If there is enough"
+                  text run at (0,244) width 318: "room, the textual content of the paragraph should"
+                  text run at (0,260) width 318: "appear on the left side of the yellow \"sidebar\" on"
+                  text run at (0,276) width 62: "the right. "
+                  text run at (62,276) width 256: "The content of this element should flow"
+                  text run at (0,292) width 184: "around the floated element. "
+                  text run at (184,292) width 134: "However, the floated"
+                  text run at (0,308) width 318: "element may or may not be obscured by the blue"
+                  text run at (0,324) width 318: "background of this element, as the specification"
+                  text run at (0,340) width 248: "does not say which is drawn \"on top.\" "
+                  text run at (248,340) width 70: "Even if the"
+                  text run at (0,356) width 318: "floated element is obscured, it still forces the"
+                  text run at (0,372) width 282: "content of this element to flow around it. "
+                  text run at (282,372) width 36: "If the"
+                  text run at (0,388) width 318: "floated element is not obscured, then the blue"
+                  text run at (0,404) width 318: "rectangle of this paragraph should extend 10px"
+                  text run at (0,420) width 318: "above and to the right of the sidebar's red border,"
+                  text run at (0,436) width 318: "due to the margin styles set for the floated"
+                  text run at (0,452) width 53: "element."
+              RenderBlock (anonymous) at (4,1450) size 318x16
+                RenderBR {BR} at (0,0) size 0x16
+              RenderBlock {HR} at (4,1473) size 318x2 [border: (1px inset #000000)]
+              RenderBlock {DIV} at (4,1482) size 318x278 [bgcolor=#66CCFF] [border: (4px solid #FF0000)]
+                RenderBlock (floating) {DIV} at (14,14) size 290x234 [bgcolor=#FFFF00]
+                  RenderBlock {P} at (5,5) size 280x224
+                    RenderText {#text} at (0,0) size 280x224
+                      text run at (0,0) width 280: "This paragraph is placed inside a DIV"
+                      text run at (0,16) width 280: "element which is floated to the right. The"
+                      text run at (0,32) width 280: "width of the DIV element is 20em. The"
+                      text run at (0,48) width 280: "background is yellow and there is a 5px"
+                      text run at (0,64) width 280: "padding, a 10px margin and no border."
+                      text run at (0,80) width 280: "Since it is floated, the yellow box should be"
+                      text run at (0,96) width 280: "rendered on top of the background and"
+                      text run at (0,112) width 280: "borders of adjacent non-floated elements."
+                      text run at (0,128) width 280: "To the left of this yellow box there should be"
+                      text run at (0,144) width 280: "a short paragraph with a blue background"
+                      text run at (0,160) width 280: "and a red border. The yellow box should be"
+                      text run at (0,176) width 280: "rendered on top of the bottom red border."
+                      text run at (0,192) width 280: "I.e., the bottom red border will appear broken"
+                      text run at (0,208) width 265: "where it's overlaid by the yellow rectangle."
+                RenderBlock {P} at (4,4) size 310x270
+                  RenderText {#text} at (0,254) size 269x16
+                    text run at (0,254) width 269: "See description in the box on the right side"
+              RenderBlock (anonymous) at (4,1760) size 318x16
+                RenderBR {BR} at (0,0) size 0x16
+              RenderBlock {HR} at (4,1783) size 318x2 [border: (1px inset #000000)]
+              RenderBlock (floating) {DIV} at (4,1792) size 79x160 [bgcolor=#66CCFF]
+                RenderBlock {P} at (0,0) size 79x160
+                  RenderText {#text} at (0,0) size 79x160
+                    text run at (0,0) width 27: "This"
+                    text run at (0,16) width 66: "paragraph"
+                    text run at (0,32) width 79: "is inside a"
+                    text run at (0,48) width 79: "DIV which is"
+                    text run at (0,64) width 79: "floated left."
+                    text run at (0,80) width 15: "Its"
+                    text run at (0,96) width 73: "background"
+                    text run at (0,112) width 79: "is blue and"
+                    text run at (0,128) width 79: "the width is"
+                    text run at (0,144) width 31: "25%."
+              RenderBlock (floating) {DIV} at (243,1792) size 79x176 [bgcolor=#FFFF00]
+                RenderBlock {P} at (0,0) size 79x176
+                  RenderText {#text} at (0,0) size 79x176
+                    text run at (0,0) width 27: "This"
+                    text run at (0,16) width 66: "paragraph"
+                    text run at (0,32) width 79: "is inside a"
+                    text run at (0,48) width 79: "DIV which is"
+                    text run at (0,64) width 79: "floated right."
+                    text run at (0,80) width 15: "Its"
+                    text run at (0,96) width 73: "background"
+                    text run at (0,112) width 79: "is yellow"
+                    text run at (0,128) width 79: "and the"
+                    text run at (0,144) width 79: "width is"
+                    text run at (0,160) width 31: "25%."
+              RenderBlock {P} at (4,1792) size 318x64
+                RenderText {#text} at (79,0) size 160x64
+                  text run at (79,0) width 160: "This paragraph should"
+                  text run at (79,16) width 160: "appear between a blue"
+                  text run at (79,32) width 119: "box (on the left) "
+                  text run at (198,32) width 41: "and a"
+                  text run at (79,48) width 154: "yellow box (on the right)."
+              RenderBlock (anonymous) at (4,1856) size 318x112
+                RenderBR {BR} at (79,0) size 0x16
+              RenderBlock {HR} at (4,1975) size 318x2 [border: (1px inset #000000)]
+              RenderBlock (floating) {DIV} at (4,1984) size 238x256 [bgcolor=#66CCFF]
+                RenderBlock (floating) {DIV} at (169,0) size 59x96 [bgcolor=#FFFF00]
+                  RenderBlock {P} at (0,0) size 59x96
+                    RenderText {#text} at (0,0) size 69x96
+                      text run at (0,0) width 25: "See"
+                      text run at (0,16) width 69: "description"
+                      text run at (0,32) width 59: "in the"
+                      text run at (0,48) width 59: "box on"
+                      text run at (0,64) width 59: "the left"
+                      text run at (0,80) width 29: "side."
+                RenderBlock {P} at (0,0) size 238x256
+                  RenderText {#text} at (0,0) size 238x256
+                    text run at (0,0) width 169: "This paragraph is inside a"
+                    text run at (0,16) width 169: "DIV which is floated left."
+                    text run at (0,32) width 29: "The "
+                    text run at (29,32) width 140: "background of the DIV"
+                    text run at (0,48) width 169: "element is blue and its"
+                    text run at (0,64) width 146: "width is 75%. This "
+                    text run at (146,64) width 23: "text"
+                    text run at (0,80) width 169: "should all be inside the"
+                    text run at (0,96) width 188: "blue rectangle. The blue DIV "
+                    text run at (188,96) width 50: "element"
+                    text run at (0,112) width 238: "has another DIV element as a child. It"
+                    text run at (0,128) width 85: "has a yellow "
+                    text run at (85,128) width 153: "background color and is"
+                    text run at (0,144) width 209: "floated to the right. Since it is a "
+                    text run at (209,144) width 29: "child"
+                    text run at (0,160) width 238: "of the blue DIV, the yellow DIV should"
+                    text run at (0,176) width 116: "appear inside the "
+                    text run at (116,176) width 122: "blue rectangle. Due"
+                    text run at (0,192) width 238: "to it being floated to the right and"
+                    text run at (0,208) width 46: "having "
+                    text run at (46,208) width 192: "a 10px right margin, the yellow"
+                    text run at (0,224) width 238: "rectange should have a 10px blue"
+                    text run at (0,240) width 138: "stripe on its right side."
+              RenderBlock (anonymous) at (4,1984) size 318x256
+                RenderBR {BR} at (238,0) size 0x16
+              RenderBlock {HR} at (4,2247) size 318x2 [border: (1px inset #000000)]

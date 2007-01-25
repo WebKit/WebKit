@@ -1,0 +1,164 @@
+layer at (0,0) size 212x1952
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 212x1952
+  RenderBlock {HTML} at (0,0) size 96x1952
+    RenderBody {BODY} at (8,8) size 80x1936 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 58: "The style"
+          text run at (0,16) width 77: "declarations"
+          text run at (0,32) width 74: "which apply"
+          text run at (0,48) width 63: "to the text"
+          text run at (0,64) width 64: "below are:"
+      RenderBlock {PRE} at (0,94) size 80x96
+        RenderText {#text} at (0,0) size 204x96
+          text run at (0,0) width 200: ".zero {background-color: silver; border-width: 0;}"
+          text run at (200,0) width 0: " "
+          text run at (0,16) width 188: ".one {border-width: 50px; border-style: solid;}"
+          text run at (188,16) width 0: " "
+          text run at (0,32) width 192: ".two {border-width: thick; border-style: solid;}"
+          text run at (192,32) width 0: " "
+          text run at (0,48) width 204: ".three {border-width: medium; border-style: solid;}"
+          text run at (204,48) width 0: " "
+          text run at (0,64) width 192: ".four {border-width: thin; border-style: solid;}"
+          text run at (192,64) width 0: " "
+          text run at (0,80) width 108: ".five {border-width: 25px;}"
+          text run at (108,80) width 0: " "
+      RenderBlock {HR} at (0,204) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,220) size 80x64
+        RenderText {#text} at (0,0) size 71x32
+          text run at (0,0) width 68: "(These will"
+          text run at (0,16) width 71: "only work if"
+        RenderInline {CODE} at (0,0) size 48x16
+          RenderText {#text} at (0,32) size 48x16
+            text run at (0,32) width 48: "border-style"
+        RenderText {#text} at (48,32) size 71x32
+          text run at (48,32) width 14: " is"
+          text run at (0,48) width 71: "supported.)"
+      RenderBlock {P} at (0,298) size 80x64 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 77x64
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 77: "element has"
+          text run at (0,32) width 60: "a class of"
+          text run at (0,48) width 31: "zero."
+      RenderBlock {P} at (0,376) size 100x276 [border: (50px solid #000000)]
+        RenderText {#text} at (50,50) size 50x176
+          text run at (50,50) width 27: "This"
+          text run at (50,66) width 50: "element"
+          text run at (50,82) width 41: "should"
+          text run at (50,98) width 31: "have"
+          text run at (50,114) width 16: "an"
+          text run at (50,130) width 42: "overall"
+          text run at (50,146) width 41: "border"
+          text run at (50,162) width 33: "width"
+          text run at (50,178) width 12: "of"
+          text run at (50,194) width 16: "50"
+          text run at (50,210) width 39: "pixels."
+      RenderBlock {P} at (0,666) size 80x138 [border: (5px solid #000000)]
+        RenderText {#text} at (5,5) size 50x128
+          text run at (5,5) width 27: "This"
+          text run at (5,21) width 50: "element"
+          text run at (5,37) width 41: "should"
+          text run at (5,53) width 43: "have a"
+          text run at (5,69) width 29: "thick"
+          text run at (5,85) width 42: "overall"
+          text run at (5,101) width 41: "border"
+          text run at (5,117) width 36: "width."
+      RenderBlock {P} at (0,818) size 80x134 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 50x128
+          text run at (3,3) width 27: "This"
+          text run at (3,19) width 50: "element"
+          text run at (3,35) width 41: "should"
+          text run at (3,51) width 43: "have a"
+          text run at (3,67) width 48: "medium"
+          text run at (3,83) width 42: "overall"
+          text run at (3,99) width 41: "border"
+          text run at (3,115) width 36: "width."
+      RenderBlock {P} at (0,966) size 80x114 [border: (1px solid #000000)]
+        RenderText {#text} at (1,1) size 76x112
+          text run at (1,1) width 27: "This"
+          text run at (1,17) width 50: "element"
+          text run at (1,33) width 76: "should have"
+          text run at (1,49) width 35: "a thin"
+          text run at (1,65) width 42: "overall"
+          text run at (1,81) width 41: "border"
+          text run at (1,97) width 36: "width."
+      RenderBlock {P} at (0,1094) size 80x144
+        RenderText {#text} at (0,0) size 80x128
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 50: "element"
+          text run at (0,32) width 76: "should have"
+          text run at (0,48) width 61: "no border"
+          text run at (0,64) width 80: "and no extra"
+          text run at (0,80) width 61: "\"padding\""
+          text run at (0,96) width 76: "on any side,"
+          text run at (0,112) width 39: "as no "
+        RenderInline {CODE} at (0,0) size 67x32
+          RenderText {#text} at (39,112) size 67x32
+            text run at (39,112) width 28: "border-"
+            text run at (0,128) width 20: "style"
+        RenderText {#text} at (20,128) size 55x16
+          text run at (20,128) width 55: " was set."
+      RenderTable {TABLE} at (0,1252) size 172x684 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 170x682
+          RenderTableRow {TR} at (0,0) size 170x24
+            RenderTableCell {TD} at (0,0) size 170x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 157x16
+                RenderText {#text} at (4,4) size 157x16
+                  text run at (4,4) width 157: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,24) size 170x658
+            RenderTableCell {TD} at (0,341) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x16
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,24) size 158x658 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 150x32
+                RenderText {#text} at (0,0) size 143x16
+                  text run at (0,0) width 143: "(These will only work if"
+                RenderInline {CODE} at (0,0) size 48x16
+                  RenderText {#text} at (0,16) size 48x16
+                    text run at (0,16) width 48: "border-style"
+                RenderText {#text} at (48,16) size 89x16
+                  text run at (48,16) width 89: " is supported.)"
+              RenderBlock {P} at (4,50) size 150x32 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 120x32
+                  text run at (0,0) width 120: "This element has a"
+                  text run at (0,16) width 83: "class of zero."
+              RenderBlock {P} at (4,96) size 150x260 [border: (50px solid #000000)]
+                RenderText {#text} at (50,50) size 50x160
+                  text run at (50,50) width 27: "This"
+                  text run at (50,66) width 50: "element"
+                  text run at (50,82) width 41: "should"
+                  text run at (50,98) width 31: "have"
+                  text run at (50,114) width 16: "an"
+                  text run at (50,130) width 42: "overall"
+                  text run at (50,146) width 41: "border"
+                  text run at (50,162) width 49: "width of"
+                  text run at (50,178) width 16: "50"
+                  text run at (50,194) width 39: "pixels."
+              RenderBlock {P} at (4,370) size 150x58 [border: (5px solid #000000)]
+                RenderText {#text} at (5,5) size 126x48
+                  text run at (5,5) width 126: "This element should"
+                  text run at (5,21) width 122: "have a thick overall"
+                  text run at (5,37) width 81: "border width."
+              RenderBlock {P} at (4,442) size 150x54 [border: (3px solid #000000)]
+                RenderText {#text} at (3,3) size 141x48
+                  text run at (3,3) width 126: "This element should"
+                  text run at (3,19) width 141: "have a medium overall"
+                  text run at (3,35) width 81: "border width."
+              RenderBlock {P} at (4,510) size 150x50 [border: (1px solid #000000)]
+                RenderText {#text} at (1,1) size 126x48
+                  text run at (1,1) width 126: "This element should"
+                  text run at (1,17) width 116: "have a thin overall"
+                  text run at (1,33) width 81: "border width."
+              RenderBlock {P} at (4,574) size 150x80
+                RenderText {#text} at (0,0) size 144x64
+                  text run at (0,0) width 126: "This element should"
+                  text run at (0,16) width 144: "have no border and no"
+                  text run at (0,32) width 144: "extra \"padding\" on any"
+                  text run at (0,48) width 72: "side, as no "
+                RenderInline {CODE} at (0,0) size 48x16
+                  RenderText {#text} at (72,48) size 48x16
+                    text run at (72,48) width 48: "border-style"
+                RenderText {#text} at (120,48) size 149x32
+                  text run at (120,48) width 29: " was"
+                  text run at (0,64) width 22: "set."

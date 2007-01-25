@@ -1,0 +1,24 @@
+layer at (0,0) size 96x186
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x186
+  RenderBlock {HTML} at (0,0) size 96x186
+    RenderBody {BODY} at (8,14) size 80x158
+      RenderBlock {P} at (0,0) size 80x80
+        RenderInline {SPAN} at (0,0) size 76x84 [border: (3px solid #000000) (1px solid #000000) (3px solid #000000)]
+          RenderText {#text} at (3,0) size 76x80
+            text run at (3,0) width 53: "This box"
+            text run at (0,16) width 76: "should have"
+            text run at (0,32) width 35: "a thin"
+            text run at (0,48) width 42: "bottom"
+            text run at (0,64) width 44: "border."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,94) size 80x64
+        RenderText {#text} at (0,0) size 80x64
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 80: "should be no"
+          text run at (0,32) width 67: "red on this"
+          text run at (0,48) width 29: "line. "
+        RenderInline {SPAN} at (0,0) size 12x16 [color=#FF0000]
+          RenderText {#text} at (29,48) size 12x16
+            text run at (29,48) width 12: "   "
+        RenderText {#text} at (0,0) size 0x0

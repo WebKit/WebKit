@@ -1,0 +1,12 @@
+layer at (0,0) size 98x78
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 98x78
+  RenderBlock {HTML} at (0,0) size 96x76
+    RenderBody {BODY} at (8,-2) size 80x80
+      RenderBlock {P} at (-10,0) size 100x80 [color=#000080]
+        RenderBR {BR} at (0,0) size 0x16
+        RenderText {#text} at (0,16) size 99x64
+          text run at (0,16) width 71: "  This page"
+          text run at (0,32) width 88: "should have a"
+          text run at (0,48) width 99: "horizontal scroll"
+          text run at (0,64) width 23: "bar."

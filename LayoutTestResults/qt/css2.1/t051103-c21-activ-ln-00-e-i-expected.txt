@@ -1,0 +1,22 @@
+layer at (0,0) size 96x236
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x236
+  RenderBlock {HTML} at (0,0) size 96x236
+    RenderBody {BODY} at (8,14) size 80x208
+      RenderBlock {P} at (0,0) size 80x208
+        RenderInline {A} at (0,0) size 61x96 [color=#0000FF]
+          RenderText {#text} at (0,0) size 61x96
+            text run at (0,0) width 61: "While you"
+            text run at (0,16) width 21: "are"
+            text run at (0,32) width 60: "activating"
+            text run at (0,48) width 61: "this link, it"
+            text run at (0,64) width 61: "should go"
+            text run at (0,80) width 40: "green."
+        RenderText {#text} at (0,96) size 74x112
+          text run at (0,96) width 68: "Check that"
+          text run at (0,112) width 57: "once you"
+          text run at (0,128) width 31: "have"
+          text run at (0,144) width 51: "stopped"
+          text run at (0,160) width 74: "activating it,"
+          text run at (0,176) width 71: "it goes blue"
+          text run at (0,192) width 38: "again."

@@ -1,0 +1,148 @@
+layer at (0,0) size 256x1882
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 256x1882
+  RenderBlock {HTML} at (0,0) size 96x1882
+    RenderBody {BODY} at (8,8) size 80x1866 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 58: "The style"
+          text run at (0,16) width 77: "declarations"
+          text run at (0,32) width 74: "which apply"
+          text run at (0,48) width 63: "to the text"
+          text run at (0,64) width 64: "below are:"
+      RenderBlock {PRE} at (0,94) size 80x32
+        RenderText {#text} at (0,0) size 248x32
+          text run at (0,0) width 152: ".one {list-style: upper-alpha inside;}"
+          text run at (152,0) width 0: " "
+          text run at (0,16) width 248: ".two {list-style: url(../resources/oransqr.gif) disc outside;}"
+          text run at (248,16) width 0: " "
+      RenderBlock {HR} at (0,140) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {UL} at (0,156) size 80x480
+        RenderListItem {LI} at (40,0) size 40x480
+          RenderListMarker at (0,0) size 16x16: "A"
+          RenderText {#text} at (0,16) size 62x464
+            text run at (0,16) width 25: "The"
+            text run at (0,32) width 38: "text in"
+            text run at (0,48) width 22: "this"
+            text run at (0,64) width 26: "item"
+            text run at (0,80) width 41: "should"
+            text run at (0,96) width 20: "not"
+            text run at (0,112) width 46: "behave"
+            text run at (0,128) width 15: "as"
+            text run at (0,144) width 62: "expected;"
+            text run at (0,160) width 24: "that"
+            text run at (0,176) width 24: "is, it"
+            text run at (0,192) width 41: "should"
+            text run at (0,208) width 22: "line"
+            text run at (0,224) width 15: "up"
+            text run at (0,240) width 25: "with"
+            text run at (0,256) width 20: "the"
+            text run at (0,272) width 45: "capital-"
+            text run at (0,288) width 29: "A on"
+            text run at (0,304) width 20: "the"
+            text run at (0,320) width 19: "left"
+            text run at (0,336) width 46: "margin,"
+            text run at (0,352) width 45: "leaving"
+            text run at (0,368) width 16: "no"
+            text run at (0,384) width 33: "blank"
+            text run at (0,400) width 38: "space"
+            text run at (0,416) width 51: "beneath"
+            text run at (0,432) width 20: "the"
+            text run at (0,448) width 45: "capital-"
+            text run at (0,464) width 12: "A."
+      RenderBlock {UL} at (0,650) size 80x450
+        RenderListItem {LI} at (40,0) size 40x450
+          RenderListMarker at (-22,0) size 15x15
+          RenderText {#text} at (0,2) size 54x448
+            text run at (0,2) width 25: "The"
+            text run at (0,18) width 38: "text in"
+            text run at (0,34) width 22: "this"
+            text run at (0,50) width 26: "item"
+            text run at (0,66) width 31: "have"
+            text run at (0,82) width 16: "an"
+            text run at (0,98) width 45: "orange"
+            text run at (0,114) width 43: "square"
+            text run at (0,130) width 35: "for its"
+            text run at (0,146) width 36: "bullet;"
+            text run at (0,162) width 37: "failing"
+            text run at (0,178) width 39: "that, a"
+            text run at (0,194) width 28: "disc."
+            text run at (0,210) width 30: "Also,"
+            text run at (0,226) width 20: "the"
+            text run at (0,242) width 32: "bullet"
+            text run at (0,258) width 41: "should"
+            text run at (0,274) width 15: "be"
+            text run at (0,290) width 45: "outside"
+            text run at (0,306) width 20: "the"
+            text run at (0,322) width 23: "text"
+            text run at (0,338) width 35: "block,"
+            text run at (0,354) width 39: "as the"
+            text run at (0,370) width 17: "list"
+            text run at (0,386) width 23: "has"
+            text run at (0,402) width 31: "been"
+            text run at (0,418) width 35: "set to"
+            text run at (0,434) width 54: "'outside'."
+      RenderTable {TABLE} at (0,1114) size 124x752 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 122x750
+          RenderTableRow {TR} at (0,0) size 122x40
+            RenderTableCell {TD} at (0,0) size 122x40 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 100x32
+                RenderText {#text} at (4,4) size 100x32
+                  text run at (4,4) width 100: "TABLE Testing"
+                  text run at (4,20) width 53: "Section"
+          RenderTableRow {TR} at (0,40) size 122x710
+            RenderTableCell {TD} at (0,383) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x16
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,40) size 110x710 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {UL} at (4,4) size 102x352
+                RenderListItem {LI} at (40,0) size 62x352
+                  RenderListMarker at (0,0) size 16x16: "A"
+                  RenderText {#text} at (16,0) size 62x352
+                    text run at (16,0) width 25: "The"
+                    text run at (0,16) width 38: "text in"
+                    text run at (0,32) width 52: "this item"
+                    text run at (0,48) width 41: "should"
+                    text run at (0,64) width 20: "not"
+                    text run at (0,80) width 46: "behave"
+                    text run at (0,96) width 15: "as"
+                    text run at (0,112) width 62: "expected;"
+                    text run at (0,128) width 52: "that is, it"
+                    text run at (0,144) width 41: "should"
+                    text run at (0,160) width 41: "line up"
+                    text run at (0,176) width 49: "with the"
+                    text run at (0,192) width 54: "capital-A"
+                    text run at (0,208) width 40: "on the"
+                    text run at (0,224) width 19: "left"
+                    text run at (0,240) width 46: "margin,"
+                    text run at (0,256) width 45: "leaving"
+                    text run at (0,272) width 53: "no blank"
+                    text run at (0,288) width 38: "space"
+                    text run at (0,304) width 51: "beneath"
+                    text run at (0,320) width 20: "the"
+                    text run at (0,336) width 57: "capital-A."
+              RenderBlock {UL} at (4,370) size 102x322
+                RenderListItem {LI} at (40,0) size 62x322
+                  RenderListMarker at (-22,0) size 15x15
+                  RenderText {#text} at (0,2) size 62x320
+                    text run at (0,2) width 52: "The text"
+                    text run at (0,18) width 37: "in this"
+                    text run at (0,34) width 61: "item have"
+                    text run at (0,50) width 16: "an"
+                    text run at (0,66) width 45: "orange"
+                    text run at (0,82) width 43: "square"
+                    text run at (0,98) width 35: "for its"
+                    text run at (0,114) width 36: "bullet;"
+                    text run at (0,130) width 37: "failing"
+                    text run at (0,146) width 39: "that, a"
+                    text run at (0,162) width 32: "disc. "
+                    text run at (32,162) width 30: "Also,"
+                    text run at (0,178) width 56: "the bullet"
+                    text run at (0,194) width 60: "should be"
+                    text run at (0,210) width 45: "outside"
+                    text run at (0,226) width 47: "the text"
+                    text run at (0,242) width 54: "block, as"
+                    text run at (0,258) width 41: "the list"
+                    text run at (0,274) width 58: "has been"
+                    text run at (0,290) width 35: "set to"
+                    text run at (0,306) width 54: "'outside'."

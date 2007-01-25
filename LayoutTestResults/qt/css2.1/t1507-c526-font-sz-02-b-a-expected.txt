@@ -1,0 +1,24 @@
+layer at (0,0) size 96x224
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x224
+  RenderBlock {HTML} at (0,0) size 96x224
+    RenderBody {BODY} at (8,14) size 80x202
+      RenderBlock {P} at (0,0) size 80x112
+        RenderText {#text} at (0,0) size 83x112
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 72: "should be a"
+          text run at (0,32) width 70: "solid single"
+          text run at (0,48) width 83: "uninterrupted"
+          text run at (0,64) width 46: "smooth"
+          text run at (0,80) width 60: "column of"
+          text run at (0,96) width 68: "blue below."
+      RenderBlock {DIV} at (0,126) size 80x76 [color=#000080]
+        RenderBlock {DIV} at (0,0) size 80x28
+          RenderText {#text} at (0,-1) size 14x30
+            text run at (0,-1) width 14: "x"
+        RenderBlock {DIV} at (0,28) size 80x20
+          RenderText {#text} at (0,-1) size 10x22
+            text run at (0,-1) width 10: "x"
+        RenderBlock {DIV} at (0,48) size 80x28
+          RenderText {#text} at (0,-1) size 14x30
+            text run at (0,-1) width 14: "x"

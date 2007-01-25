@@ -1,0 +1,99 @@
+layer at (0,0) size 383x84
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 383x84
+  RenderBlock {HTML} at (0,0) size 96x84
+    RenderBody {BODY} at (8,14) size 80x62
+      RenderBlock {P} at (0,0) size 80x16
+        RenderText {#text} at (0,0) size 222x16
+          text run at (0,0) width 222: "The following two lines should look "
+        RenderInline {EM} at (0,0) size 88x16
+          RenderText {#text} at (222,0) size 88x16
+            text run at (222,0) width 88: "approximately"
+        RenderText {#text} at (310,0) size 65x16
+          text run at (310,0) width 65: " the same:"
+      RenderBlock {DIV} at (0,30) size 80x16
+        RenderInline {SPAN} at (0,0) size 15x16
+          RenderInline (generated) at (0,0) size 15x16
+            RenderCounter at (0,0) size 15x16
+              text run at (0,0) width 15: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (15,0) size 4x16
+          text run at (15,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 15x16
+          RenderInline (generated) at (0,0) size 15x16
+            RenderCounter at (19,0) size 15x16
+              text run at (19,0) width 15: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (34,0) size 4x16
+          text run at (34,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 15x16
+          RenderInline (generated) at (0,0) size 15x16
+            RenderCounter at (38,0) size 15x16
+              text run at (38,0) width 15: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (53,0) size 4x16
+          text run at (53,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 15x16
+          RenderInline (generated) at (0,0) size 15x16
+            RenderCounter at (57,0) size 15x16
+              text run at (57,0) width 15: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (72,0) size 4x16
+          text run at (72,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 15x16
+          RenderInline (generated) at (0,0) size 15x16
+            RenderCounter at (76,0) size 15x16
+              text run at (76,0) width 15: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (91,0) size 4x16
+          text run at (91,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 15x16
+          RenderInline (generated) at (0,0) size 15x16
+            RenderCounter at (95,0) size 15x16
+              text run at (95,0) width 15: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (110,0) size 4x16
+          text run at (110,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 15x16
+          RenderInline (generated) at (0,0) size 15x16
+            RenderCounter at (114,0) size 15x16
+              text run at (114,0) width 15: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (129,0) size 4x16
+          text run at (129,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 15x16
+          RenderInline (generated) at (0,0) size 15x16
+            RenderCounter at (133,0) size 15x16
+              text run at (133,0) width 15: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (148,0) size 4x16
+          text run at (148,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 15x16
+          RenderInline (generated) at (0,0) size 15x16
+            RenderCounter at (152,0) size 15x16
+              text run at (152,0) width 15: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (167,0) size 4x16
+          text run at (167,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 15x16
+          RenderInline (generated) at (0,0) size 15x16
+            RenderCounter at (171,0) size 15x16
+              text run at (171,0) width 15: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (186,0) size 4x16
+          text run at (186,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 15x16
+          RenderInline (generated) at (0,0) size 15x16
+            RenderCounter at (190,0) size 15x16
+              text run at (190,0) width 15: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (205,0) size 4x16
+          text run at (205,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 15x16
+          RenderInline (generated) at (0,0) size 15x16
+            RenderCounter at (209,0) size 15x16
+              text run at (209,0) width 15: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,46) size 80x16
+        RenderText {#text} at (0,0) size 224x16
+          text run at (0,0) width 19: "\x{25FE}.\x{25FE} "
+          text run at (19,0) width 19: "\x{25FE}.\x{25FE} "
+          text run at (38,0) width 19: "\x{25FE}.\x{25FE} "
+          text run at (57,0) width 19: "\x{25FE}.\x{25FE} "
+          text run at (76,0) width 19: "\x{25FE}.\x{25FE} "
+          text run at (95,0) width 19: "\x{25FE}.\x{25FE} "
+          text run at (114,0) width 19: "\x{25FE}.\x{25FE} "
+          text run at (133,0) width 19: "\x{25FE}.\x{25FE} "
+          text run at (152,0) width 19: "\x{25FE}.\x{25FE} "
+          text run at (171,0) width 19: "\x{25FE}.\x{25FE} "
+          text run at (190,0) width 19: "\x{25FE}.\x{25FE} "
+          text run at (209,0) width 15: "\x{25FE}.\x{25FE}"

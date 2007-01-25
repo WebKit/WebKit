@@ -1,0 +1,191 @@
+layer at (0,0) size 292x1992
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 292x1992
+  RenderBlock {HTML} at (0,0) size 96x1992
+    RenderBody {BODY} at (8,8) size 80x1976 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 58: "The style"
+          text run at (0,16) width 77: "declarations"
+          text run at (0,32) width 74: "which apply"
+          text run at (0,48) width 63: "to the text"
+          text run at (0,64) width 64: "below are:"
+      RenderBlock {PRE} at (0,94) size 80x48
+        RenderText {#text} at (0,0) size 284x48
+          text run at (0,0) width 280: ".one {padding-right: 25px; text-align: right; background-color: aqua;}"
+          text run at (280,0) width 0: " "
+          text run at (0,16) width 284: ".two {padding-right: -10px; text-align: right; background-color: aqua;}"
+          text run at (284,16) width 0: " "
+          text run at (0,32) width 0: " "
+      RenderBlock {HR} at (0,156) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,172) size 80x400 [bgcolor=#808080]
+        RenderText {#text} at (0,0) size 73x144
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 64: "element is"
+          text run at (0,32) width 52: "unstyled"
+          text run at (0,48) width 63: "save for a"
+          text run at (0,64) width 73: "background"
+          text run at (0,80) width 47: "color of"
+          text run at (0,96) width 31: "gray."
+          text run at (0,112) width 70: "However, it"
+          text run at (0,128) width 73: "contains an"
+        RenderInline {SPAN} at (0,0) size 73x48 [bgcolor=#00FFFF]
+          RenderText {#text} at (0,144) size 66x48
+            text run at (0,144) width 33: "inline"
+            text run at (0,160) width 66: "element of"
+            text run at (0,176) width 36: "class "
+          RenderInline {TT} at (0,0) size 12x16
+            RenderText {#text} at (36,176) size 12x16
+              text run at (36,176) width 12: "one"
+        RenderText {#text} at (73,176) size 79x160
+          text run at (73,176) width 3: ","
+          text run at (0,192) width 36: "which"
+          text run at (0,208) width 79: "should result"
+          text run at (0,224) width 64: "in 25-pixel"
+          text run at (0,240) width 28: "right"
+          text run at (0,256) width 51: "padding"
+          text run at (0,272) width 41: "(which"
+          text run at (0,288) width 71: "should also"
+          text run at (0,304) width 79: "be light blue)"
+          text run at (0,320) width 65: "only in the"
+        RenderInline {STRONG} at (0,0) size 25x16
+          RenderText {#text} at (0,336) size 25x16
+            text run at (0,336) width 25: "last"
+        RenderText {#text} at (25,336) size 66x64
+          text run at (25,336) width 41: " line in"
+          text run at (0,352) width 60: "which the"
+          text run at (0,368) width 59: "inline box"
+          text run at (0,384) width 55: "appears."
+      RenderBlock {P} at (0,586) size 80x416 [bgcolor=#808080]
+        RenderText {#text} at (0,0) size 73x144
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 64: "element is"
+          text run at (0,32) width 52: "unstyled"
+          text run at (0,48) width 63: "save for a"
+          text run at (0,64) width 73: "background"
+          text run at (0,80) width 47: "color of"
+          text run at (0,96) width 31: "gray."
+          text run at (0,112) width 70: "However, it"
+          text run at (0,128) width 73: "contains an"
+        RenderInline {SPAN} at (0,0) size 66x48 [bgcolor=#00FFFF]
+          RenderText {#text} at (0,144) size 66x48
+            text run at (0,144) width 33: "inline"
+            text run at (0,160) width 66: "element of"
+            text run at (0,176) width 36: "class "
+          RenderInline {TT} at (0,0) size 12x16
+            RenderText {#text} at (36,176) size 12x16
+              text run at (36,176) width 12: "two"
+        RenderText {#text} at (48,176) size 79x176
+          text run at (48,176) width 3: ","
+          text run at (0,192) width 36: "which"
+          text run at (0,208) width 79: "should result"
+          text run at (0,224) width 63: "in no right"
+          text run at (0,240) width 54: "padding,"
+          text run at (0,256) width 33: "since"
+          text run at (0,272) width 54: "negative"
+          text run at (0,288) width 51: "padding"
+          text run at (0,304) width 65: "values are"
+          text run at (0,320) width 75: "not allowed,"
+          text run at (0,336) width 39: "in the "
+        RenderInline {STRONG} at (0,0) size 25x16
+          RenderText {#text} at (39,336) size 25x16
+            text run at (39,336) width 25: "last"
+        RenderText {#text} at (0,352) size 77x64
+          text run at (0,352) width 77: "line in which"
+          text run at (0,368) width 57: "the inline"
+          text run at (0,384) width 22: "box"
+          text run at (0,400) width 55: "appears."
+      RenderTable {TABLE} at (0,1016) size 95x960 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 93x958
+          RenderTableRow {TR} at (0,0) size 93x56
+            RenderTableCell {TD} at (0,0) size 93x56 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 53x48
+                RenderText {#text} at (4,4) size 53x48
+                  text run at (4,4) width 45: "TABLE"
+                  text run at (4,20) width 51: "Testing"
+                  text run at (4,36) width 53: "Section"
+          RenderTableRow {TR} at (0,56) size 93x902
+            RenderTableCell {TD} at (0,495) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x16
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,56) size 81x902 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 73x432 [bgcolor=#808080]
+                RenderText {#text} at (0,0) size 73x144
+                  text run at (0,0) width 27: "This"
+                  text run at (0,16) width 64: "element is"
+                  text run at (0,32) width 52: "unstyled"
+                  text run at (0,48) width 63: "save for a"
+                  text run at (0,64) width 73: "background"
+                  text run at (0,80) width 47: "color of"
+                  text run at (0,96) width 31: "gray."
+                  text run at (0,112) width 70: "However, it"
+                  text run at (0,128) width 73: "contains an"
+                RenderInline {SPAN} at (0,0) size 66x64 [bgcolor=#00FFFF]
+                  RenderText {#text} at (0,144) size 66x48
+                    text run at (0,144) width 33: "inline"
+                    text run at (0,160) width 66: "element of"
+                    text run at (0,176) width 32: "class"
+                  RenderInline {TT} at (0,0) size 12x16
+                    RenderText {#text} at (0,192) size 12x16
+                      text run at (0,192) width 12: "one"
+                RenderText {#text} at (37,192) size 73x176
+                  text run at (37,192) width 3: ","
+                  text run at (0,208) width 36: "which"
+                  text run at (0,224) width 41: "should"
+                  text run at (0,240) width 73: "result in 25-"
+                  text run at (0,256) width 61: "pixel right"
+                  text run at (0,272) width 51: "padding"
+                  text run at (0,288) width 41: "(which"
+                  text run at (0,304) width 71: "should also"
+                  text run at (0,320) width 45: "be light"
+                  text run at (0,336) width 60: "blue) only"
+                  text run at (0,352) width 39: "in the "
+                RenderInline {STRONG} at (0,0) size 25x16
+                  RenderText {#text} at (39,352) size 25x16
+                    text run at (39,352) width 25: "last"
+                RenderText {#text} at (0,368) size 60x64
+                  text run at (0,368) width 37: "line in"
+                  text run at (0,384) width 60: "which the"
+                  text run at (0,400) width 59: "inline box"
+                  text run at (0,416) width 55: "appears."
+              RenderBlock {P} at (4,450) size 73x448 [bgcolor=#808080]
+                RenderText {#text} at (0,0) size 73x144
+                  text run at (0,0) width 27: "This"
+                  text run at (0,16) width 64: "element is"
+                  text run at (0,32) width 52: "unstyled"
+                  text run at (0,48) width 63: "save for a"
+                  text run at (0,64) width 73: "background"
+                  text run at (0,80) width 47: "color of"
+                  text run at (0,96) width 31: "gray."
+                  text run at (0,112) width 70: "However, it"
+                  text run at (0,128) width 73: "contains an"
+                RenderInline {SPAN} at (0,0) size 66x48 [bgcolor=#00FFFF]
+                  RenderText {#text} at (0,144) size 66x48
+                    text run at (0,144) width 33: "inline"
+                    text run at (0,160) width 66: "element of"
+                    text run at (0,176) width 36: "class "
+                  RenderInline {TT} at (0,0) size 12x16
+                    RenderText {#text} at (36,176) size 12x16
+                      text run at (36,176) width 12: "two"
+                RenderText {#text} at (48,176) size 69x208
+                  text run at (48,176) width 3: ","
+                  text run at (0,192) width 36: "which"
+                  text run at (0,208) width 41: "should"
+                  text run at (0,224) width 69: "result in no"
+                  text run at (0,240) width 28: "right"
+                  text run at (0,256) width 54: "padding,"
+                  text run at (0,272) width 33: "since"
+                  text run at (0,288) width 54: "negative"
+                  text run at (0,304) width 51: "padding"
+                  text run at (0,320) width 65: "values are"
+                  text run at (0,336) width 20: "not"
+                  text run at (0,352) width 66: "allowed, in"
+                  text run at (0,368) width 24: "the "
+                RenderInline {STRONG} at (0,0) size 25x16
+                  RenderText {#text} at (24,368) size 25x16
+                    text run at (24,368) width 25: "last"
+                RenderText {#text} at (0,384) size 60x64
+                  text run at (0,384) width 37: "line in"
+                  text run at (0,400) width 60: "which the"
+                  text run at (0,416) width 59: "inline box"
+                  text run at (0,432) width 55: "appears."

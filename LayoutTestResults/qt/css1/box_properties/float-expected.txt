@@ -1,0 +1,128 @@
+layer at (0,0) size 96x1558
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x1558
+  RenderBlock {HTML} at (0,0) size 96x1558
+    RenderBody {BODY} at (8,8) size 80x1542 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 58: "The style"
+          text run at (0,16) width 77: "declarations"
+          text run at (0,32) width 74: "which apply"
+          text run at (0,48) width 63: "to the text"
+          text run at (0,64) width 64: "below are:"
+      RenderBlock {PRE} at (0,94) size 80x48
+        RenderText {#text} at (0,0) size 80x48
+          text run at (0,0) width 76: ".one {float: left;}"
+          text run at (76,0) width 0: " "
+          text run at (0,16) width 80: ".two {float: right;}"
+          text run at (80,16) width 0: " "
+          text run at (0,32) width 0: " "
+      RenderBlock {HR} at (0,156) size 80x2 [border: (1px inset #000000)]
+      RenderImage {IMG} at (0,165) size 15x50
+      RenderBlock {P} at (0,172) size 80x240
+        RenderText {#text} at (15,0) size 79x240
+          text run at (15,0) width 54: "This text"
+          text run at (15,16) width 60: "should be"
+          text run at (15,32) width 44: "flowing"
+          text run at (0,48) width 61: "past a tall"
+          text run at (0,64) width 45: "orange"
+          text run at (0,80) width 79: "rectangle on"
+          text run at (0,96) width 73: "the left side"
+          text run at (0,112) width 36: "of the"
+          text run at (0,128) width 50: "browser"
+          text run at (0,144) width 54: "window. "
+          text run at (54,144) width 12: "In"
+          text run at (0,160) width 70: "this case, it"
+          text run at (0,176) width 76: "is the image"
+          text run at (0,192) width 63: "which has"
+          text run at (0,208) width 78: "been floated"
+          text run at (0,224) width 62: "to the left."
+      RenderBlock (anonymous) at (0,426) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderBlock {HR} at (0,449) size 80x2 [border: (1px inset #000000)]
+      RenderImage {IMG} at (65,458) size 15x50
+      RenderBlock {P} at (0,465) size 80x240
+        RenderText {#text} at (0,0) size 79x240
+          text run at (0,0) width 54: "This text"
+          text run at (0,16) width 60: "should be"
+          text run at (0,32) width 44: "flowing"
+          text run at (0,48) width 61: "past a tall"
+          text run at (0,64) width 45: "orange"
+          text run at (0,80) width 79: "rectangle on"
+          text run at (0,96) width 52: "the right"
+          text run at (0,112) width 66: "side of the"
+          text run at (0,128) width 50: "browser"
+          text run at (0,144) width 54: "window. "
+          text run at (54,144) width 12: "In"
+          text run at (0,160) width 70: "this case, it"
+          text run at (0,176) width 76: "is the image"
+          text run at (0,192) width 63: "which has"
+          text run at (0,208) width 78: "been floated"
+          text run at (0,224) width 71: "to the right."
+      RenderTable {TABLE} at (0,719) size 81x823 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 79x821
+          RenderTableRow {TR} at (0,0) size 79x56
+            RenderTableCell {TD} at (0,0) size 79x56 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 53x48
+                RenderText {#text} at (4,4) size 53x48
+                  text run at (4,4) width 45: "TABLE"
+                  text run at (4,20) width 51: "Testing"
+                  text run at (4,36) width 53: "Section"
+          RenderTableRow {TR} at (0,56) size 79x765
+            RenderTableCell {TD} at (0,426) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x16
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,56) size 67x765 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (4,4) size 15x50
+              RenderBlock {P} at (4,4) size 59x352
+                RenderText {#text} at (15,0) size 59x352
+                  text run at (15,0) width 27: "This"
+                  text run at (15,16) width 23: "text"
+                  text run at (15,32) width 41: "should"
+                  text run at (15,48) width 15: "be"
+                  text run at (0,64) width 44: "flowing"
+                  text run at (0,80) width 39: "past a"
+                  text run at (0,96) width 18: "tall"
+                  text run at (0,112) width 45: "orange"
+                  text run at (0,128) width 59: "rectangle"
+                  text run at (0,144) width 40: "on the"
+                  text run at (0,160) width 49: "left side"
+                  text run at (0,176) width 36: "of the"
+                  text run at (0,192) width 50: "browser"
+                  text run at (0,208) width 50: "window."
+                  text run at (0,224) width 38: "In this"
+                  text run at (0,240) width 58: "case, it is"
+                  text run at (0,256) width 20: "the"
+                  text run at (0,272) width 38: "image"
+                  text run at (0,288) width 36: "which"
+                  text run at (0,304) width 58: "has been"
+                  text run at (0,320) width 59: "floated to"
+                  text run at (0,336) width 46: "the left."
+              RenderBlock (anonymous) at (4,370) size 59x16
+                RenderBR {BR} at (0,0) size 0x16
+              RenderBlock {HR} at (4,393) size 59x2 [border: (1px inset #000000)]
+              RenderImage {IMG} at (48,402) size 15x50
+              RenderBlock {P} at (4,409) size 59x352
+                RenderText {#text} at (0,0) size 59x352
+                  text run at (0,0) width 27: "This"
+                  text run at (0,16) width 23: "text"
+                  text run at (0,32) width 41: "should"
+                  text run at (0,48) width 15: "be"
+                  text run at (0,64) width 44: "flowing"
+                  text run at (0,80) width 39: "past a"
+                  text run at (0,96) width 18: "tall"
+                  text run at (0,112) width 45: "orange"
+                  text run at (0,128) width 59: "rectangle"
+                  text run at (0,144) width 40: "on the"
+                  text run at (0,160) width 58: "right side"
+                  text run at (0,176) width 36: "of the"
+                  text run at (0,192) width 50: "browser"
+                  text run at (0,208) width 50: "window."
+                  text run at (0,224) width 38: "In this"
+                  text run at (0,240) width 58: "case, it is"
+                  text run at (0,256) width 20: "the"
+                  text run at (0,272) width 38: "image"
+                  text run at (0,288) width 36: "which"
+                  text run at (0,304) width 58: "has been"
+                  text run at (0,320) width 59: "floated to"
+                  text run at (0,336) width 55: "the right."

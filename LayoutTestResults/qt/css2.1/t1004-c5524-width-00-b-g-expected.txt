@@ -1,0 +1,25 @@
+layer at (0,0) size 168x759
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 168x759
+  RenderBlock {HTML} at (0,0) size 96x759
+    RenderBody {BODY} at (8,14) size 80x737
+      RenderBlock {P} at (0,0) size 80x240
+        RenderText {#text} at (0,0) size 73x240
+          text run at (0,0) width 54: "The blue"
+          text run at (0,16) width 59: "rectangle"
+          text run at (0,32) width 36: "below"
+          text run at (0,48) width 60: "should be"
+          text run at (0,64) width 72: "exactly 200"
+          text run at (0,80) width 54: "pixels by"
+          text run at (0,96) width 28: "120 "
+          text run at (28,96) width 36: "pixels"
+          text run at (0,112) width 72: "on the ruler"
+          text run at (0,128) width 53: "(and the"
+          text run at (0,144) width 62: "aqua bars"
+          text run at (0,160) width 73: "should stick"
+          text run at (0,176) width 59: "out of the"
+          text run at (0,192) width 54: "blue box,"
+          text run at (0,208) width 70: "with no red"
+          text run at (0,224) width 56: "present)."
+      RenderBlock {DIV} at (0,254) size 80x483
+        RenderImage {IMG} at (40,40) size 120x200

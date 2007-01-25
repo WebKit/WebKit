@@ -1,0 +1,299 @@
+layer at (0,0) size 207x3762
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 207x3762
+  RenderBlock {HTML} at (0,0) size 96x3762
+    RenderBody {BODY} at (8,8) size 80x3746 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 77x80
+          text run at (0,0) width 58: "The style"
+          text run at (0,16) width 77: "declarations"
+          text run at (0,32) width 74: "which apply"
+          text run at (0,48) width 63: "to the text"
+          text run at (0,64) width 64: "below are:"
+      RenderBlock {PRE} at (0,94) size 80x176
+        RenderText {#text} at (0,0) size 192x176
+          text run at (0,0) width 176: ".one {text-indent: 0.5in; background: aqua;}"
+          text run at (176,0) width 0: " "
+          text run at (0,16) width 168: ".two {text-indent: 2cm; background: aqua;}"
+          text run at (168,16) width 0: " "
+          text run at (0,32) width 180: ".three {text-indent: 20mm; background: aqua;}"
+          text run at (180,32) width 0: " "
+          text run at (0,48) width 176: ".four {text-indent: 24pt; background: aqua;}"
+          text run at (176,48) width 0: " "
+          text run at (0,64) width 172: ".five {text-indent: 2pc; background: aqua;}"
+          text run at (172,64) width 0: " "
+          text run at (0,80) width 168: ".six {text-indent: 2em; background: aqua;}"
+          text run at (168,80) width 0: " "
+          text run at (0,96) width 176: ".seven {text-indent: 2ex; background: aqua;}"
+          text run at (176,96) width 0: " "
+          text run at (0,112) width 176: ".eight {text-indent: 50%; background: aqua;}"
+          text run at (176,112) width 0: " "
+          text run at (0,128) width 176: ".nine {text-indent: 25px; background: aqua;}"
+          text run at (176,128) width 0: " "
+          text run at (0,144) width 192: "blockquote {text-indent: 50%; background: aqua;}"
+          text run at (192,144) width 0: " "
+          text run at (0,160) width 0: " "
+      RenderBlock {HR} at (0,284) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,300) size 80x112 [bgcolor=#00FFFF]
+        RenderText {#text} at (48,0) size 76x112
+          text run at (48,0) width 25: "The"
+          text run at (0,16) width 65: "first line of"
+          text run at (0,32) width 22: "this"
+          text run at (0,48) width 58: "sentence"
+          text run at (0,64) width 60: "should be"
+          text run at (0,80) width 55: "indented"
+          text run at (0,96) width 76: "half an inch."
+      RenderBlock {P} at (0,426) size 80x128 [bgcolor=#00FFFF]
+        RenderText {#text} at (75,0) size 100x128
+          text run at (75,0) width 25: "The"
+          text run at (0,16) width 65: "first line of"
+          text run at (0,32) width 22: "this"
+          text run at (0,48) width 58: "sentence"
+          text run at (0,64) width 60: "should be"
+          text run at (0,80) width 55: "indented"
+          text run at (0,96) width 22: "two"
+          text run at (0,112) width 76: "centimeters."
+      RenderBlock {P} at (0,568) size 80x128 [bgcolor=#00FFFF]
+        RenderText {#text} at (75,0) size 100x128
+          text run at (75,0) width 25: "The"
+          text run at (0,16) width 65: "first line of"
+          text run at (0,32) width 22: "this"
+          text run at (0,48) width 58: "sentence"
+          text run at (0,64) width 60: "should be"
+          text run at (0,80) width 55: "indented"
+          text run at (0,96) width 41: "twenty"
+          text run at (0,112) width 69: "millimeters."
+      RenderBlock {P} at (0,710) size 80x128 [bgcolor=#00FFFF]
+        RenderText {#text} at (32,0) size 69x128
+          text run at (32,0) width 25: "The"
+          text run at (0,16) width 65: "first line of"
+          text run at (0,32) width 22: "this"
+          text run at (0,48) width 58: "sentence"
+          text run at (0,64) width 60: "should be"
+          text run at (0,80) width 55: "indented"
+          text run at (0,96) width 69: "twenty-four"
+          text run at (0,112) width 41: "points."
+      RenderBlock {P} at (0,852) size 80x112 [bgcolor=#00FFFF]
+        RenderText {#text} at (32,0) size 65x112
+          text run at (32,0) width 25: "The"
+          text run at (0,16) width 65: "first line of"
+          text run at (0,32) width 22: "this"
+          text run at (0,48) width 58: "sentence"
+          text run at (0,64) width 60: "should be"
+          text run at (0,80) width 55: "indented"
+          text run at (0,96) width 62: "two picas."
+      RenderBlock {P} at (0,978) size 80x96 [bgcolor=#00FFFF]
+        RenderText {#text} at (28,0) size 80x96
+          text run at (28,0) width 52: "The first"
+          text run at (0,16) width 64: "line of this"
+          text run at (0,32) width 58: "sentence"
+          text run at (0,48) width 60: "should be"
+          text run at (0,64) width 55: "indented"
+          text run at (0,80) width 48: "two em."
+      RenderBlock {P} at (0,1088) size 80x96 [bgcolor=#00FFFF]
+        RenderText {#text} at (16,0) size 68x96
+          text run at (16,0) width 52: "The first"
+          text run at (0,16) width 64: "line of this"
+          text run at (0,32) width 58: "sentence"
+          text run at (0,48) width 60: "should be"
+          text run at (0,64) width 55: "indented"
+          text run at (0,80) width 44: "two ex."
+      RenderBlock {P} at (0,1198) size 80x240 [bgcolor=#00FFFF]
+        RenderText {#text} at (40,0) size 75x240
+          text run at (40,0) width 25: "The"
+          text run at (0,16) width 65: "first line of"
+          text run at (0,32) width 22: "this"
+          text run at (0,48) width 58: "sentence"
+          text run at (0,64) width 60: "should be"
+          text run at (0,80) width 55: "indented"
+          text run at (0,96) width 48: "halfway"
+          text run at (0,112) width 66: "across the"
+          text run at (0,128) width 57: "page, but"
+          text run at (0,144) width 75: "the rest of it"
+          text run at (0,160) width 60: "should be"
+          text run at (0,176) width 58: "flush with"
+          text run at (0,192) width 67: "the normal"
+          text run at (0,208) width 66: "left margin"
+          text run at (0,224) width 75: "of the page."
+      RenderBlock {P} at (0,1452) size 80x192 [bgcolor=#00FFFF]
+        RenderText {#text} at (25,0) size 77x192
+          text run at (25,0) width 52: "The first"
+          text run at (0,16) width 64: "line of this"
+          text run at (0,32) width 58: "sentence"
+          text run at (0,48) width 60: "should be"
+          text run at (0,64) width 75: "indented 25"
+          text run at (0,80) width 61: "pixels, but"
+          text run at (0,96) width 75: "the rest of it"
+          text run at (0,112) width 60: "should be"
+          text run at (0,128) width 58: "flush with"
+          text run at (0,144) width 67: "the normal"
+          text run at (0,160) width 66: "left margin"
+          text run at (0,176) width 75: "of the page."
+      RenderBlock {P} at (0,1658) size 80x256 [bgcolor=#00FFFF]
+        RenderText {#text} at (48,0) size 77x112
+          text run at (48,0) width 29: "Only"
+          text run at (0,16) width 73: "the first line"
+          text run at (0,32) width 38: "of this"
+          text run at (0,48) width 58: "sentence"
+          text run at (0,64) width 60: "should be"
+          text run at (0,80) width 55: "indented"
+          text run at (0,96) width 76: "half an inch,"
+        RenderBR {BR} at (76,109) size 0x0
+        RenderText {#text} at (0,112) size 67x64
+          text run at (0,112) width 60: "no matter"
+          text run at (0,128) width 63: "where the"
+          text run at (0,144) width 67: "lines might"
+          text run at (0,160) width 59: "start, and"
+        RenderBR {BR} at (59,173) size 0x0
+        RenderInline {EM} at (0,0) size 76x48
+          RenderText {#text} at (0,176) size 76x48
+            text run at (0,176) width 67: "regardless"
+            text run at (0,192) width 76: "of any other"
+            text run at (0,208) width 46: "markup"
+        RenderText {#text} at (0,224) size 70x32
+          text run at (0,224) width 66: "which may"
+          text run at (0,240) width 70: "be present."
+      RenderBlock {BLOCKQUOTE} at (40,1928) size 0x656 [bgcolor=#00FFFF]
+        RenderText {#text} at (40,0) size 97x656
+          text run at (40,0) width 12: "In"
+          text run at (0,16) width 20: "the"
+          text run at (0,32) width 23: "first"
+          text run at (0,48) width 23: "half"
+          text run at (0,64) width 12: "of"
+          text run at (0,80) width 20: "the"
+          text run at (0,96) width 23: "test"
+          text run at (0,112) width 35: "page,"
+          text run at (0,128) width 22: "this"
+          text run at (0,144) width 97: "BLOCKQUOTE"
+          text run at (0,160) width 50: "element"
+          text run at (0,176) width 41: "should"
+          text run at (0,192) width 31: "have"
+          text run at (0,208) width 8: "a"
+          text run at (0,224) width 23: "text"
+          text run at (0,240) width 39: "indent"
+          text run at (0,256) width 34: "equal"
+          text run at (0,272) width 12: "to"
+          text run at (0,288) width 28: "50%"
+          text run at (0,304) width 12: "of"
+          text run at (0,320) width 20: "the"
+          text run at (0,336) width 39: "BODY"
+          text run at (0,352) width 60: "element's"
+          text run at (0,368) width 36: "width,"
+          text run at (0,384) width 33: "since"
+          text run at (0,400) width 97: "BLOCKQUOTE"
+          text run at (0,416) width 10: "is"
+          text run at (0,432) width 8: "a"
+          text run at (0,448) width 29: "child"
+          text run at (0,464) width 12: "of"
+          text run at (0,480) width 43: "BODY;"
+          text run at (0,496) width 11: "in"
+          text run at (0,512) width 20: "the"
+          text run at (0,528) width 46: "second"
+          text run at (0,544) width 26: "half,"
+          text run at (0,560) width 7: "it"
+          text run at (0,576) width 10: "is"
+          text run at (0,592) width 8: "a"
+          text run at (0,608) width 29: "child"
+          text run at (0,624) width 12: "of"
+          text run at (0,640) width 47: "TABLE."
+      RenderTable {TABLE} at (0,2598) size 199x1148 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 197x1146
+          RenderTableRow {TR} at (0,0) size 197x24
+            RenderTableCell {TD} at (0,0) size 197x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 157x16
+                RenderText {#text} at (4,4) size 157x16
+                  text run at (4,4) width 157: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,24) size 197x1122
+            RenderTableCell {TD} at (0,573) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x16
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,24) size 185x1122 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 177x48 [bgcolor=#00FFFF]
+                RenderText {#text} at (48,0) size 168x48
+                  text run at (48,0) width 120: "The first line of this"
+                  text run at (0,16) width 122: "sentence should be"
+                  text run at (0,32) width 135: "indented half an inch."
+              RenderBlock {P} at (4,66) size 177x48 [bgcolor=#00FFFF]
+                RenderText {#text} at (75,0) size 169x48
+                  text run at (75,0) width 94: "The first line of"
+                  text run at (0,16) width 148: "this sentence should be"
+                  text run at (0,32) width 161: "indented two centimeters."
+              RenderBlock {P} at (4,128) size 177x48 [bgcolor=#00FFFF]
+                RenderText {#text} at (75,0) size 173x48
+                  text run at (75,0) width 94: "The first line of"
+                  text run at (0,16) width 148: "this sentence should be"
+                  text run at (0,32) width 173: "indented twenty millimeters."
+              RenderBlock {P} at (4,190) size 177x48 [bgcolor=#00FFFF]
+                RenderText {#text} at (32,0) size 173x48
+                  text run at (32,0) width 120: "The first line of this"
+                  text run at (0,16) width 122: "sentence should be"
+                  text run at (0,32) width 173: "indented twenty-four points."
+              RenderBlock {P} at (4,252) size 177x48 [bgcolor=#00FFFF]
+                RenderText {#text} at (32,0) size 152x48
+                  text run at (32,0) width 120: "The first line of this"
+                  text run at (0,16) width 122: "sentence should be"
+                  text run at (0,32) width 121: "indented two picas."
+              RenderBlock {P} at (4,314) size 177x48 [bgcolor=#00FFFF]
+                RenderText {#text} at (28,0) size 148x48
+                  text run at (28,0) width 120: "The first line of this"
+                  text run at (0,16) width 122: "sentence should be"
+                  text run at (0,32) width 107: "indented two em."
+              RenderBlock {P} at (4,376) size 177x48 [bgcolor=#00FFFF]
+                RenderText {#text} at (16,0) size 136x48
+                  text run at (16,0) width 120: "The first line of this"
+                  text run at (0,16) width 122: "sentence should be"
+                  text run at (0,32) width 103: "indented two ex."
+              RenderBlock {P} at (4,438) size 177x112 [bgcolor=#00FFFF]
+                RenderText {#text} at (88,0) size 177x112
+                  text run at (88,0) width 78: "The first line"
+                  text run at (0,16) width 164: "of this sentence should be"
+                  text run at (0,32) width 177: "indented halfway across the"
+                  text run at (0,48) width 136: "page, but the rest of it"
+                  text run at (0,64) width 146: "should be flush with the"
+                  text run at (0,80) width 153: "normal left margin of the"
+                  text run at (0,96) width 35: "page."
+              RenderBlock {P} at (4,564) size 177x96 [bgcolor=#00FFFF]
+                RenderText {#text} at (25,0) size 177x96
+                  text run at (25,0) width 120: "The first line of this"
+                  text run at (0,16) width 122: "sentence should be"
+                  text run at (0,32) width 164: "indented 25 pixels, but the"
+                  text run at (0,48) width 177: "rest of it should be flush with"
+                  text run at (0,64) width 177: "the normal left margin of the"
+                  text run at (0,80) width 35: "page."
+              RenderBlock {P} at (4,674) size 177x128 [bgcolor=#00FFFF]
+                RenderText {#text} at (48,0) size 170x48
+                  text run at (48,0) width 122: "Only the first line of"
+                  text run at (0,16) width 148: "this sentence should be"
+                  text run at (0,32) width 135: "indented half an inch,"
+                RenderBR {BR} at (135,45) size 0x0
+                RenderText {#text} at (0,48) size 160x32
+                  text run at (0,48) width 160: "no matter where the lines"
+                  text run at (0,64) width 97: "might start, and"
+                RenderBR {BR} at (97,77) size 0x0
+                RenderInline {EM} at (0,0) size 147x32
+                  RenderText {#text} at (0,80) size 147x32
+                    text run at (0,80) width 147: "regardless of any other"
+                    text run at (0,96) width 46: "markup"
+                RenderText {#text} at (46,96) size 135x32
+                  text run at (46,96) width 89: " which may be"
+                  text run at (0,112) width 51: "present."
+              RenderBlock {BLOCKQUOTE} at (44,816) size 97x288 [bgcolor=#00FFFF]
+                RenderText {#text} at (88,0) size 100x288
+                  text run at (88,0) width 12: "In"
+                  text run at (0,16) width 90: "the first half of"
+                  text run at (0,32) width 86: "the test page,"
+                  text run at (0,48) width 22: "this"
+                  text run at (0,64) width 97: "BLOCKQUOTE"
+                  text run at (0,80) width 95: "element should"
+                  text run at (0,96) width 70: "have a text"
+                  text run at (0,112) width 93: "indent equal to"
+                  text run at (0,128) width 68: "50% of the"
+                  text run at (0,144) width 39: "BODY"
+                  text run at (0,160) width 60: "element's"
+                  text run at (0,176) width 73: "width, since"
+                  text run at (0,192) width 97: "BLOCKQUOTE"
+                  text run at (0,208) width 71: "is a child of"
+                  text run at (0,224) width 82: "BODY; in the"
+                  text run at (0,240) width 87: "second half, it"
+                  text run at (0,256) width 71: "is a child of"
+                  text run at (0,272) width 47: "TABLE."

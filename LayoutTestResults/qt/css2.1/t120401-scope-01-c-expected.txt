@@ -1,0 +1,117 @@
+layer at (0,0) size 439x84
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 439x84
+  RenderBlock {HTML} at (0,0) size 96x84
+    RenderBody {BODY} at (8,14) size 80x62
+      RenderBlock {P} at (0,0) size 80x16
+        RenderText {#text} at (0,0) size 272x16
+          text run at (0,0) width 272: "The following two lines should be the same:"
+      RenderBlock {DIV} at (0,30) size 80x16
+        RenderInline {SPAN} at (0,0) size 431x16
+          RenderInline (generated) at (0,0) size 21x16
+            RenderText at (0,0) size 9x16
+              text run at (0,0) width 9: "B"
+            RenderCounter at (9,0) size 8x16
+              text run at (9,0) width 8: "1"
+            RenderText at (17,0) size 4x16
+              text run at (17,0) width 4: "-"
+          RenderInline {SPAN} at (0,0) size 389x16
+            RenderInline (generated) at (0,0) size 21x16
+              RenderText at (21,0) size 9x16
+                text run at (21,0) width 9: "B"
+              RenderCounter at (30,0) size 8x16
+                text run at (30,0) width 8: "2"
+              RenderText at (38,0) size 4x16
+                text run at (38,0) width 4: "-"
+            RenderInline {SPAN} at (0,0) size 192x16
+              RenderInline (generated) at (0,0) size 32x16
+                RenderText at (42,0) size 9x16
+                  text run at (42,0) width 9: "B"
+                RenderCounter at (51,0) size 19x16
+                  text run at (51,0) width 19: "2.1"
+                RenderText at (70,0) size 4x16
+                  text run at (70,0) width 4: "-"
+              RenderInline {SPAN} at (0,0) size 64x16
+                RenderInline (generated) at (0,0) size 32x16
+                  RenderText at (74,0) size 9x16
+                    text run at (74,0) width 9: "B"
+                  RenderCounter at (83,0) size 19x16
+                    text run at (83,0) width 19: "2.2"
+                  RenderText at (102,0) size 4x16
+                    text run at (102,0) width 4: "-"
+                RenderInline (generated) at (0,0) size 32x16
+                  RenderText at (106,0) size 9x16
+                    text run at (106,0) width 9: "A"
+                  RenderCounter at (115,0) size 19x16
+                    text run at (115,0) width 19: "2.3"
+                  RenderText at (134,0) size 4x16
+                    text run at (134,0) width 4: "-"
+              RenderInline {SPAN} at (0,0) size 64x16
+                RenderInline (generated) at (0,0) size 32x16
+                  RenderText at (138,0) size 9x16
+                    text run at (138,0) width 9: "B"
+                  RenderCounter at (147,0) size 19x16
+                    text run at (147,0) width 19: "2.4"
+                  RenderText at (166,0) size 4x16
+                    text run at (166,0) width 4: "-"
+                RenderInline (generated) at (0,0) size 32x16
+                  RenderText at (170,0) size 9x16
+                    text run at (170,0) width 9: "A"
+                  RenderCounter at (179,0) size 19x16
+                    text run at (179,0) width 19: "2.5"
+                  RenderText at (198,0) size 4x16
+                    text run at (198,0) width 4: "-"
+              RenderInline (generated) at (0,0) size 32x16
+                RenderText at (202,0) size 9x16
+                  text run at (202,0) width 9: "A"
+                RenderCounter at (211,0) size 19x16
+                  text run at (211,0) width 19: "2.6"
+                RenderText at (230,0) size 4x16
+                  text run at (230,0) width 4: "-"
+            RenderInline {SPAN} at (0,0) size 136x16
+              RenderInline (generated) at (0,0) size 32x16
+                RenderText at (234,0) size 9x16
+                  text run at (234,0) width 9: "B"
+                RenderCounter at (243,0) size 19x16
+                  text run at (243,0) width 19: "2.7"
+                RenderText at (262,0) size 4x16
+                  text run at (262,0) width 4: "-"
+              RenderInline {SPAN} at (0,0) size 64x16
+                RenderInline (generated) at (0,0) size 32x16
+                  RenderText at (266,0) size 9x16
+                    text run at (266,0) width 9: "B"
+                  RenderCounter at (275,0) size 19x16
+                    text run at (275,0) width 19: "2.8"
+                  RenderText at (294,0) size 4x16
+                    text run at (294,0) width 4: "-"
+                RenderInline (generated) at (0,0) size 32x16
+                  RenderText at (298,0) size 9x16
+                    text run at (298,0) width 9: "A"
+                  RenderCounter at (307,0) size 19x16
+                    text run at (307,0) width 19: "2.9"
+                  RenderText at (326,0) size 4x16
+                    text run at (326,0) width 4: "-"
+              RenderInline (generated) at (0,0) size 40x16
+                RenderText at (330,0) size 9x16
+                  text run at (330,0) width 9: "A"
+                RenderCounter at (339,0) size 27x16
+                  text run at (339,0) width 27: "2.10"
+                RenderText at (366,0) size 4x16
+                  text run at (366,0) width 4: "-"
+            RenderInline (generated) at (0,0) size 40x16
+              RenderText at (370,0) size 9x16
+                text run at (370,0) width 9: "A"
+              RenderCounter at (379,0) size 27x16
+                text run at (379,0) width 27: "2.11"
+              RenderText at (406,0) size 4x16
+                text run at (406,0) width 4: "-"
+          RenderInline (generated) at (0,0) size 21x16
+            RenderText at (410,0) size 9x16
+              text run at (410,0) width 9: "A"
+            RenderCounter at (419,0) size 8x16
+              text run at (419,0) width 8: "3"
+            RenderText at (427,0) size 4x16
+              text run at (427,0) width 4: "-"
+      RenderBlock {DIV} at (0,46) size 80x16
+        RenderText {#text} at (0,0) size 431x16
+          text run at (0,0) width 431: "B1-B2-B2.1-B2.2-A2.3-B2.4-A2.5-A2.6-B2.7-B2.8-A2.9-A2.10-A2.11-A3-"
