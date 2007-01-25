@@ -1,5 +1,4 @@
 # skip these as they are currently not checked for correctness
-dom/html/level2/html
 dom/svg
 dom/xhtml
 editing
@@ -7,7 +6,6 @@ fast
 http
 plugins
 svg
-tables
 traversal
 
 # These tests hang forever

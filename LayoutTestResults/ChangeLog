@@ -1,5 +1,11 @@
 2007-01-25  Lars Knoll <lars@trolltech.com>
 
+        remove dom/html/level2/html from skipped tests.
+
+        * qt/Skipped:
+
+2007-01-25  Lars Knoll <lars@trolltech.com>
+
         Add css1 and css2.1 test results for the Qt build
 
         * qt/Skipped: Added.
