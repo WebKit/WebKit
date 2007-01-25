@@ -1,0 +1,357 @@
+This tests the parser for preserve aspect ratio attribute values.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test string: 'none'
+PASS imageElement.preserveAspectRatio.baseVal.align is 1
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMinYMin'
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMidYMin'
+PASS imageElement.preserveAspectRatio.baseVal.align is 3
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMaxYMin'
+PASS imageElement.preserveAspectRatio.baseVal.align is 4
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMinYMid'
+PASS imageElement.preserveAspectRatio.baseVal.align is 5
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMidYMid'
+PASS imageElement.preserveAspectRatio.baseVal.align is 6
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMaxYMid'
+PASS imageElement.preserveAspectRatio.baseVal.align is 7
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMinYMax'
+PASS imageElement.preserveAspectRatio.baseVal.align is 8
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMidYMax'
+PASS imageElement.preserveAspectRatio.baseVal.align is 9
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMaxYMax'
+PASS imageElement.preserveAspectRatio.baseVal.align is 10
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMinYMin meet'
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMidYMin meet'
+PASS imageElement.preserveAspectRatio.baseVal.align is 3
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMaxYMin meet'
+PASS imageElement.preserveAspectRatio.baseVal.align is 4
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMinYMid meet'
+PASS imageElement.preserveAspectRatio.baseVal.align is 5
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMidYMid meet'
+PASS imageElement.preserveAspectRatio.baseVal.align is 6
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMaxYMid meet'
+PASS imageElement.preserveAspectRatio.baseVal.align is 7
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMinYMax meet'
+PASS imageElement.preserveAspectRatio.baseVal.align is 8
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMidYMax meet'
+PASS imageElement.preserveAspectRatio.baseVal.align is 9
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMaxYMax meet'
+PASS imageElement.preserveAspectRatio.baseVal.align is 10
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMinYMin slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'xMidYMin slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 3
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'xMaxYMin slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 4
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'xMinYMid slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 5
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'xMidYMid slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 6
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'xMaxYMid slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 7
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'xMinYMax slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 8
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'xMidYMax slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 9
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'xMaxYMax slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 10
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'defer xMinYMin'
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'defer xMidYMin'
+PASS imageElement.preserveAspectRatio.baseVal.align is 3
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'defer xMaxYMin'
+PASS imageElement.preserveAspectRatio.baseVal.align is 4
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'defer xMinYMid'
+PASS imageElement.preserveAspectRatio.baseVal.align is 5
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'defer xMidYMid'
+PASS imageElement.preserveAspectRatio.baseVal.align is 6
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'defer xMaxYMid'
+PASS imageElement.preserveAspectRatio.baseVal.align is 7
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'defer xMinYMax'
+PASS imageElement.preserveAspectRatio.baseVal.align is 8
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'defer xMidYMax'
+PASS imageElement.preserveAspectRatio.baseVal.align is 9
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'defer xMaxYMax'
+PASS imageElement.preserveAspectRatio.baseVal.align is 10
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'defer xMinYMin meet'
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'defer xMidYMin meet'
+PASS imageElement.preserveAspectRatio.baseVal.align is 3
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'defer xMaxYMin meet'
+PASS imageElement.preserveAspectRatio.baseVal.align is 4
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'defer xMinYMid meet'
+PASS imageElement.preserveAspectRatio.baseVal.align is 5
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'defer xMidYMid meet'
+PASS imageElement.preserveAspectRatio.baseVal.align is 6
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'defer xMaxYMid meet'
+PASS imageElement.preserveAspectRatio.baseVal.align is 7
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'defer xMinYMax meet'
+PASS imageElement.preserveAspectRatio.baseVal.align is 8
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'defer xMidYMax meet'
+PASS imageElement.preserveAspectRatio.baseVal.align is 9
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'defer xMaxYMax meet'
+PASS imageElement.preserveAspectRatio.baseVal.align is 10
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'defer xMinYMin slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'defer xMidYMin slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 3
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'defer xMaxYMin slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 4
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'defer xMinYMid slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 5
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'defer xMidYMid slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 6
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'defer xMaxYMid slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 7
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'defer xMinYMax slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 8
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'defer xMidYMax slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 9
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'defer xMaxYMax slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 10
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Tests for some whitespace cases.
+
+Test string: ' xMinYMin'
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMinYMin '
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: ' xMinYMin '
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: '         xMinYMin        '
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMinYMin	'
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMinYMin
+'
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMinYMin
+'
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMinYMinslice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'xMinYMin slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'xMinYMinslice '
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'xMinYMin        slice        '
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: ' xMinYMinslice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: ' xMinYMin slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: ' xMinYMinslice '
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: '        xMinYMin        slice        '
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Tests for bug where "slice" parsing was based on the old value rather than the parsed value.
+
+Test string: 'none'
+PASS imageElement.preserveAspectRatio.baseVal.align is 1
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMinYMin slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 2
+
+Test string: 'xMinYMin'
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'none slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 1
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMinYMin'
+PASS imageElement.preserveAspectRatio.baseVal.align is 2
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 1
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Strings that fail to parse, and hence parse as "none".
+
+Test string: ''
+PASS imageElement.preserveAspectRatio.baseVal.align is 1
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'defer'
+PASS imageElement.preserveAspectRatio.baseVal.align is 1
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'meet'
+PASS imageElement.preserveAspectRatio.baseVal.align is 1
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 1
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xminymin'
+PASS imageElement.preserveAspectRatio.baseVal.align is 1
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'refer xMinYMin slice'
+PASS imageElement.preserveAspectRatio.baseVal.align is 1
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMinYMin defer'
+PASS imageElement.preserveAspectRatio.baseVal.align is 1
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'slice xMinYMin'
+PASS imageElement.preserveAspectRatio.baseVal.align is 1
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+Test string: 'xMinYMin '
+PASS imageElement.preserveAspectRatio.baseVal.align is 1
+PASS imageElement.preserveAspectRatio.baseVal.meetOrSlice is 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

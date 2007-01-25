@@ -29,6 +29,18 @@
 
 namespace WebCore {
 
+static bool checkString(const UChar*& ptr, const UChar*& end, const char* str)
+{
+    int length = strlen(str);
+    if (end - ptr < length)
+        return false;
+    for (int i = 0; i < length; ++i)
+        if (ptr[i] != str[i])
+            return false;
+    ptr += length;
+    return true;
+}
+
 SVGPreserveAspectRatio::SVGPreserveAspectRatio(const SVGStyledElement* context)
     : Shared<SVGPreserveAspectRatio>()
     , m_align(SVG_PRESERVEASPECTRATIO_XMIDYMID)
@@ -44,6 +56,7 @@ SVGPreserveAspectRatio::~SVGPreserveAspectRatio()
 void SVGPreserveAspectRatio::setAlign(unsigned short align)
 {
     m_align = align;
+    // FIXME: Do we need a call to notifyAttributeChange here?
 }
 
 unsigned short SVGPreserveAspectRatio::align() const
@@ -54,6 +67,7 @@ unsigned short SVGPreserveAspectRatio::align() const
 void SVGPreserveAspectRatio::setMeetOrSlice(unsigned short meetOrSlice)
 {
     m_meetOrSlice = meetOrSlice;
+    // FIXME: Do we need a call to notifyAttributeChange here?
 }
 
 unsigned short SVGPreserveAspectRatio::meetOrSlice() const
@@ -61,23 +75,8 @@ unsigned short SVGPreserveAspectRatio::meetOrSlice() const
     return m_meetOrSlice;
 }
 
-static const UChar deferDesc[] =  {'d', 'e', 'f', 'e', 'r'};
-static const UChar noneDesc[] =  {'n', 'o', 'n', 'e'};
-static const UChar meetDesc[] =  {'m', 'e', 'e', 't'};
-static const UChar sliceDesc[] =  {'s', 'l', 'i', 'c', 'e'};
-static const UChar xMinYMinDesc[] =  {'x', 'M', 'i', 'n', 'Y', 'M', 'i', 'n'};
-static const UChar xMinYMidDesc[] =  {'x', 'M', 'i', 'n', 'Y', 'M', 'i', 'd'};
-static const UChar xMinYMaxDesc[] =  {'x', 'M', 'i', 'n', 'Y', 'M', 'a', 'x'};
-static const UChar xMidYMinDesc[] =  {'x', 'M', 'i', 'd', 'Y', 'M', 'i', 'n'};
-static const UChar xMidYMidDesc[] =  {'x', 'M', 'i', 'd', 'Y', 'M', 'i', 'd'};
-static const UChar xMidYMaxDesc[] =  {'x', 'M', 'i', 'd', 'Y', 'M', 'a', 'x'};
-static const UChar xMaxYMinDesc[] =  {'x', 'M', 'a', 'x', 'Y', 'M', 'i', 'n'};
-static const UChar xMaxYMidDesc[] =  {'x', 'M', 'a', 'x', 'Y', 'M', 'i', 'd'};
-static const UChar xMaxYMaxDesc[] =  {'x', 'M', 'a', 'x', 'Y', 'M', 'a', 'x'};
-
 void SVGPreserveAspectRatio::parsePreserveAspectRatio(const String& string)
 {
-    // Spec: set the defaults
     SVGPreserveAspectRatioType align = SVG_PRESERVEASPECTRATIO_NONE;
     SVGMeetOrSliceType meetOrSlice = SVG_MEETORSLICE_MEET;
 
@@ -88,16 +87,17 @@ void SVGPreserveAspectRatio::parsePreserveAspectRatio(const String& string)
         goto bail_out;
 
     if (*currParam == 'd') {
-        if (!checkString(currParam, end, deferDesc, sizeof(deferDesc) / sizeof(UChar)))
+        if (!checkString(currParam, end, "defer"))
             goto bail_out;
-        skipOptionalSpaces(currParam, end);
+        // FIXME: We just ignore the "defer" here.
+        if (!skipOptionalSpaces(currParam, end))
+            goto bail_out;
     }
 
     if (*currParam == 'n') {
-        if (!checkString(currParam, end, noneDesc, sizeof(noneDesc) / sizeof(UChar)))
+        if (!checkString(currParam, end, "none"))
             goto bail_out;
         skipOptionalSpaces(currParam, end);
-        align = SVG_PRESERVEASPECTRATIO_NONE;
     } else if (*currParam == 'x') {
         if ((end - currParam) < 8)
             goto bail_out;
@@ -146,35 +146,34 @@ void SVGPreserveAspectRatio::parsePreserveAspectRatio(const String& string)
             goto bail_out;
         currParam += 8;
         skipOptionalSpaces(currParam, end);
+    } else
+        goto bail_out;
+
+    if (currParam < end) {
+        if (*currParam == 'm') {
+            if (!checkString(currParam, end, "meet"))
+                goto bail_out;
+            skipOptionalSpaces(currParam, end);
+        } else if (*currParam == 's') {
+            if (!checkString(currParam, end, "slice"))
+                goto bail_out;
+            skipOptionalSpaces(currParam, end);
+            if (align != SVG_PRESERVEASPECTRATIO_NONE)
+                meetOrSlice = SVG_MEETORSLICE_SLICE;    
+        }
     }
 
-    if (*currParam == 'm') {
-        if (!checkString(currParam, end, meetDesc, sizeof(meetDesc) / sizeof(UChar)))
-            goto bail_out;
-        skipOptionalSpaces(currParam, end);
-        meetOrSlice = SVG_MEETORSLICE_MEET;
-    } else if (*currParam == 's') {
-        if (!checkString(currParam, end, sliceDesc, sizeof(sliceDesc) / sizeof(UChar)))
-            goto bail_out;
-        skipOptionalSpaces(currParam, end);
-        if (m_align != SVG_PRESERVEASPECTRATIO_NONE)
-            meetOrSlice = SVG_MEETORSLICE_SLICE;    
-    }
-
-    if (end != currParam)
-        goto bail_out; // FIXME: may need to print an error here
-
-    setAlign(align);
-    setMeetOrSlice(meetOrSlice);
-
-    if (m_context)
-        m_context->notifyAttributeChange();
-    return;
-
+    if (end != currParam) {
 bail_out:
-    setAlign(SVG_PRESERVEASPECTRATIO_NONE);
-    setMeetOrSlice(SVG_MEETORSLICE_MEET);
+        align = SVG_PRESERVEASPECTRATIO_NONE;
+        meetOrSlice = SVG_MEETORSLICE_MEET;
+    }
 
+    if (m_align == align && m_meetOrSlice == meetOrSlice)
+        return;
+
+    m_align = align;
+    m_meetOrSlice = meetOrSlice;
     if (m_context)
         m_context->notifyAttributeChange();
 }
@@ -222,4 +221,3 @@ AffineTransform SVGPreserveAspectRatio::getCTM(float logicX, float logicY,
 
 // vim:ts=4:noet
 #endif // SVG_SUPPORT
-

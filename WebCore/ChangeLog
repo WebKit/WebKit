@@ -1,3 +1,32 @@
+2007-01-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12365
+          Reproducible crash in WebCore::SVGPreserveAspectRatio::parsePreserveAspectRatio
+          in svg/W3C-SVG-1.1/animate-elem-40-t.svg under guard malloc
+        - fix bug where the parser accepts "meet" or "slice" as an entire string
+        - fix bug where "slice" is ignored if the old alignment was "none"
+          even if the newly-parsed alignment is something other than "none", and
+          "slice" is not ignored if the old alignment was not "none", but the
+          newly-parsed alignment is "none"
+        - optimize to only call notifyAttributeChange if the attribute actually changed
+
+        Test: svg/dom/preserve-aspect-ratio-parser-test.html
+
+        * ksvg2/svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::checkString): Added an overload for using char* constants which is
+        much simpler than the old one, and almost as fast.
+        (WebCore::SVGPreserveAspectRatio::parsePreserveAspectRatio): Fail if there's no
+        more text after "defer". Fail if there's neither "none" nor an x/y specified.
+        Check that there's more text before looking at the "m" and "s" for "meet" and
+        "slice". Merged the failure and success cases. Only call notifyAttributeChange
+        if something changed.
+
+        I think all the "optimized" code where we check the first character before
+        calling checkString isn't really helpful, but I decided to leave it as-is
+        for now.
+
 2007-01-25  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack
