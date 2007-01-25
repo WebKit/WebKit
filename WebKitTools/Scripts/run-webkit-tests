@@ -72,6 +72,8 @@ sub pathcmp($$);
 sub processIgnoreTests($);
 sub slowestcmp($$);
 sub splitpath($);
+sub isTextOnlyTest($);
+sub expectedDirectoryForTest($);
 
 # Argument handling
 my $checkLeaks = '';
@@ -97,27 +99,8 @@ my $strictTesting = 0;
 my $generateNewResults = 1;
 
 my $expectedTag = "expected";
-if (isCygwin()) {
-    $expectedTag = "expected-win";
-} elsif (isQt()) {
-    $expectedTag = "expected-qt";
-}
-
-my $expectedTagMac = "expected";
-
 my $actualTag = "actual";
-if (isCygwin()) {
-    $actualTag = "actual-win";
-} elsif (isQt()) {
-    $actualTag = "actual-qt";
-}
-
 my $diffsTag = "diffs";
-if (isCygwin()) {
-    $diffsTag = "diffs-win";
-} elsif (isQt()) {
-    $diffsTag = "diffs-qt";
-}
 
 my $usage =
     "Usage: " . basename($0) . " [options] [testdir|testpath ...]\n" .
@@ -205,16 +188,29 @@ die "can't find executable $imageDiffTool (looked in $productDir)\n" if $pixelTe
 
 checkFrameworks();
 
-my $layoutTestsName = $testOnlySVGs ? "LayoutTests/svg" : "LayoutTests";
+my $layoutTestsName = "LayoutTests";
 my $testDirectory = File::Spec->rel2abs($layoutTestsName);
-my $expectedTestResultsDirectory = $testDirectory;
-$expectedTestResultsDirectory = $ENV{"WebKitExpectedTestResultsDirectory"} if $ENV{"WebKitExpectedTestResultsDirectory"};
+my $expectedDirectory = $testDirectory;
+my $expectedDirectoryText = $testDirectory;
+if (isQt()) {
+    $expectedDirectory = "LayoutTestResults/qt";
+} elsif (isCygwin()) {
+    $expectedDirectory = "LayoutTestResults/win";
+}
+$expectedDirectory = $ENV{"WebKitExpectedTestResultsDirectory"} if $ENV{"WebKitExpectedTestResultsDirectory"};
+
+if ($testOnlySVGs) {
+    $testDirectory .= "/svg";
+    $expectedDirectory .= "/svg";
+    $expectedDirectoryText .= "/svg";
+}
 
 my $testResults = catfile($testResultsDirectory, "results.html");
 
 print "Running tests from $testDirectory\n";
 
 my @tests = ();
+my %testType = ();
 
 my %ignoredFiles = ();
 my %ignoredDirectories = ();
@@ -234,6 +230,26 @@ if (!$testHTTP) {
 if ($ignoreTests) {
     processIgnoreTests($ignoreTests);
 }
+
+if (open SKIPPED, "<", "$expectedDirectory/Skipped") {
+    if ($verbose) {
+        print "Skipped tests:\n";
+    }
+    while (<SKIPPED>) {
+        my $skipped = $_;
+        chomp $skipped;
+        $skipped =~ s/^ +//;
+        $skipped =~ s/ +$//;
+        if ($skipped && $skipped !~ /^#/) {
+            if($verbose) {
+                print "    $skipped\n";
+            }
+            processIgnoreTests($skipped);
+        }
+    }
+    close SKIPPED;
+}
+
 
 my $directoryFilter = sub {
     return () if exists $ignoredLocalDirectories{basename($File::Find::dir)};
@@ -363,11 +379,13 @@ for my $test (@tests) {
         last if /#EOF/;
         $actual .= $_;
     }
+    my $isText = isTextOnlyTest($actual);
 
     $durations{$test} = time - $startTime if $report10Slowest;
 
     my $expected;
-    if (!$resetResults && open EXPECTED, "<", "$expectedTestResultsDirectory/$base-$expectedTag.txt") {
+    my $expectedDir = expectedDirectoryForTest($isText);
+    if (!$resetResults && open EXPECTED, "<", "$expectedDir/$base-$expectedTag.txt") {
         $expected = "";
         while (<EXPECTED>) {
             $expected .= $_;
@@ -375,8 +393,8 @@ for my $test (@tests) {
         close EXPECTED;
     }
     my $expectedMac;
-    if (isQt() && $strictTesting) {
-      if (!$resetResults && open EXPECTED, "<", "$expectedTestResultsDirectory/$base-$expectedTagMac.txt") {
+    if (isQt() && $strictTesting && !$isText) {
+      if (!$resetResults && open EXPECTED, "<", "$expectedDirectoryText/$base-$expectedTag.txt") {
         $expectedMac = "";
         while (<EXPECTED>) {
           $expectedMac .= $_;
@@ -395,7 +413,7 @@ for my $test (@tests) {
     my $diffResult = "passed";
     
     if ($pixelTests) {
-        die "Pixel tests currently don't work when using a custom expected test results directory" if $testDirectory ne $expectedTestResultsDirectory;
+        die "Pixel tests currently don't work when using a custom expected test results directory" if $testDirectory ne $expectedDir;
             
         my $actualHash = "";
         my $expectedHash = "";
@@ -451,7 +469,7 @@ for my $test (@tests) {
         }
     }
 
-    if (isQt() && $strictTesting) {
+    if (isQt() && $strictTesting && !$isText) {
       if (defined $expectedMac) {
         my $simplified_actual;
         $simplified_actual = $actual;
@@ -505,9 +523,9 @@ for my $test (@tests) {
 
         if ($generateNewResults || $resetResults) {
             # Create the path if needed
-            mkpath(catfile($expectedTestResultsDirectory, dirname($base))) if $testDirectory ne $expectedTestResultsDirectory;
+            mkpath(catfile($expectedDir, dirname($base))) if $testDirectory ne $expectedDir;
 
-            open EXPECTED, ">", "$expectedTestResultsDirectory/$base-$expectedTag.txt" or die "could not create $expectedTestResultsDirectory/$base-$expectedTag.txt\n";
+            open EXPECTED, ">", "$expectedDir/$base-$expectedTag.txt" or die "could not create $expectedDir/$base-$expectedTag.txt\n";
             print EXPECTED $actual;
             close EXPECTED;
         }
@@ -550,7 +568,7 @@ for my $test (@tests) {
         print ACTUAL $actual;
         close ACTUAL;
 
-        system "diff -u \"$expectedTestResultsDirectory/$base-$expectedTag.txt\" \"$testResultsDirectory/$base-$actualTag.txt\" > \"$testResultsDirectory/$base-$diffsTag.txt\"";
+        system "diff -u \"$expectedDir/$base-$expectedTag.txt\" \"$testResultsDirectory/$base-$actualTag.txt\" > \"$testResultsDirectory/$base-$diffsTag.txt\"";
 
         if ($pixelTests && $diffPNG && $diffPNG ne "") {
             $imagesPresent{$base} = 1;
@@ -563,7 +581,7 @@ for my $test (@tests) {
             print DIFF $diffPNG;
             close DIFF;
             
-            copy("$expectedTestResultsDirectory/$base-$expectedTag.png", "$testResultsDirectory/$base-$expectedTag.png");
+            copy("$expectedDir/$base-$expectedTag.png", "$testResultsDirectory/$base-$expectedTag.png");
 
             open DIFFHTML, ">$testResultsDirectory/$base-$diffsTag.html" or die;
             print DIFFHTML "<html>\n";
@@ -626,6 +644,7 @@ for my $test (@tests) {
     $count += 1;
     $counts{$result} += 1;
     push @{$tests{$result}}, $test;
+    $testType{$test} = $isText;
 }
 printf "\n%0.2fs total testing time\n", (time - $overallStartTime) . "";
 
@@ -667,6 +686,7 @@ if ($resetResults || ($counts{match} && $counts{match} == $count)) {
     exit;
 }
 
+
 my %text = (
     match => "succeeded",
     mismatch => "had incorrect layout",
@@ -705,7 +725,13 @@ if ($counts{mismatch}) {
     for my $test (@{$tests{mismatch}}) {
         my $base = $test;
         $base =~ s/\.[a-zA-Z]+$//;
-        copy("$expectedTestResultsDirectory/$base-$expectedTag.txt", "$testResultsDirectory/$base-$expectedTag.txt");
+        my $expectedDir;
+        if ($testType{$test}) {
+            $expectedDir = $expectedDirectoryText;
+        } else {
+            $expectedDir = $expectedDirectory;
+        }
+        copy("$expectedDir/$base-$expectedTag.txt", "$testResultsDirectory/$base-$expectedTag.txt");
         print HTML "<tr>\n";            
         print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
         if (-s "$testResultsDirectory/$base-$diffsTag.txt") {
@@ -733,6 +759,12 @@ if ($counts{fail}) {
     print HTML "<table>\n";
     for my $test (@{$tests{fail}}) {
         my $base = $test;
+        my $expectedDir;
+        if ($testType{$test}) {
+            $expectedDir = $expectedDirectoryText;
+        } else {
+            $expectedDir = $expectedDirectory;
+        }
         $base =~ s/\.[a-zA-Z]+$//;
         print HTML "<tr>\n";
         print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
@@ -746,12 +778,18 @@ if ($counts{new}) {
     print HTML "<table>\n";
     for my $test (@{$tests{new}}) {
         my $base = $test;
+        my $expectedDir;
+        if ($testType{$test}) {
+            $expectedDir = $expectedDirectoryText;
+        } else {
+            $expectedDir = $expectedDirectory;
+        }
         $base =~ s/\.[a-zA-Z]+$//;
         print HTML "<tr>\n";
-        print HTML "<td><a href=\"$expectedTestResultsDirectory/$test\">$base</a></td>\n";
-        print HTML "<td><a href=\"$expectedTestResultsDirectory/$base-$expectedTag.txt\">results</a></td>\n";
-        if ($pixelTests && -f "$expectedTestResultsDirectory/$base-$expectedTag.png") {
-            print HTML "<td><a href=\"$expectedTestResultsDirectory/$base-$expectedTag.png\">image</a></td>\n";
+        print HTML "<td><a href=\"$expectedDir/$test\">$base</a></td>\n";
+        print HTML "<td><a href=\"$expectedDir/$base-$expectedTag.txt\">results</a></td>\n";
+        if ($pixelTests && -f "$expectedDir/$base-$expectedTag.png") {
+            print HTML "<td><a href=\"$expectedDir/$base-$expectedTag.png\">image</a></td>\n";
         }
         print HTML "</tr>\n";
     }
@@ -1031,5 +1069,27 @@ sub processIgnoreTests($) {
         else {
             print "ignoring '$item' on ignore-tests list\n";
         }
+    }
+}
+
+sub isTextOnlyTest($)
+{
+    my ($actual) = @_;
+    my $isText;
+    if ($actual !~ /^layer at/) {
+        $isText = 1;
+    } else {
+        $isText = 0;
+    }
+    return $isText;
+}
+
+sub expectedDirectoryForTest($)
+{
+    my ($isText) = @_;
+    if($isText) {
+        return $expectedDirectoryText;
+    } else {
+        return $expectedDirectory;
     }
 }

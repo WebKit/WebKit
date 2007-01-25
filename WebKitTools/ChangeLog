@@ -1,3 +1,25 @@
+2007-01-25  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Darin and Zack
+        
+        Move the test results for Qt into a directory of it's own
+        (WebKit/LayoutTestResults/qt). Leave the Mac results where
+        they are for now and share the text only results between 
+        Mac and Qt.
+
+        Add support for a LayoutTestResults/platform/Skipped file
+        to run-webkit-tests to be able to ignore certain tests
+
+        Remove the old tests-skipped.txt from Qts DumpRenderTree
+        implementation. 
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::open):
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.qtproj/tests-skipped.txt: Removed.
+        * Scripts/run-webkit-tests:
+
 2007-01-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.

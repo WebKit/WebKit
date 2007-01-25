@@ -68,9 +68,6 @@ DumpRenderTree::DumpRenderTree()
     QObject::connect(frame, SIGNAL(loadDone(bool)), this, SLOT(maybeDump(bool)));
     
     page->resize(800, 800);
-
-    // Read file containing to be skipped tests...
-    readSkipFile();
 }
 
 DumpRenderTree::~DumpRenderTree()
@@ -97,14 +94,6 @@ void DumpRenderTree::open()
 void DumpRenderTree::open(const QUrl& url)
 {
     resetJSObjects();
-
-    // Ignore skipped tests
-    if (m_skipped.indexOf(url.path()) != -1) {
-        fprintf(stdout, "#EOF\n");
-        fflush(stdout);
-        return;
-    }
-
     page->open(url);
 }
 
@@ -121,36 +110,6 @@ void DumpRenderTree::readStdin(int /* socket */)
     if (line.isEmpty())
         quit();
     open(QUrl(QString(line)));
-}
-
-void DumpRenderTree::readSkipFile()
-{
-    Q_ASSERT(m_skipped.isEmpty());
-
-    QFile file("WebKitTools/DumpRenderTree/DumpRenderTree.qtproj/tests-skipped.txt");
-    if (!file.exists()) {
-        qFatal("Run DumpRenderTree from the source root directory!\n");
-        return;
-    }
-
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qFatal("Couldn't read skip file!\n");
-        return;
-    }
-
-    QString testsPath = QDir::currentPath() + "/LayoutTests/";
-    while (!file.atEnd()) {
-        QByteArray line = file.readLine();
-
-        // Remove trailing line feed
-        line.chop(1);
-
-        // Ignore comments
-        if (line.isEmpty() || line.startsWith('#'))
-            continue;
-
-        m_skipped.append(testsPath + line);
-    }
 }
 
 void DumpRenderTree::resetJSObjects()
