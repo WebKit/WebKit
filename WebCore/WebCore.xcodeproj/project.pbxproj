@@ -11207,7 +11207,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\n\nif [ \"${BUILD_STYLE}\" = \"Release\" -o \"${BUILD_STYLE}\" = \"Debug\" ] ; then\n    export CREATE_HASH_TABLE=\"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nelse\n    export CREATE_HASH_TABLE=\"${NEXT_ROOT}${SYSTEM_LIBRARY_DIR}/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nfi\n\nln -sfh \"${SRCROOT}\" WebCore\nexport WebCore=\"WebCore\"\n\nexport ENCODINGS_FILE=\"WebCore/platform/mac/mac-encodings.txt\"\nexport ENCODINGS_PREFIX=\"kTextEncoding\"\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" ]; then\n    make -f \"WebCore/DerivedSources.make\" -j `sysctl -n hw.ncpu`\nfi\n";
+			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\n\nif [ \"${BUILD_STYLE}\" = \"Release\" -o \"${BUILD_STYLE}\" = \"Debug\" ] ; then\n    export CREATE_HASH_TABLE=\"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nelse\n    export CREATE_HASH_TABLE=\"${NEXT_ROOT}${SYSTEM_LIBRARY_DIR}/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nfi\n\nln -sfh \"${SRCROOT}\" WebCore\nexport WebCore=\"WebCore\"\n\nexport ENCODINGS_FILE=\"WebCore/platform/mac/mac-encodings.txt\"\nexport ENCODINGS_PREFIX=\"kTextEncoding\"\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" ]; then\n    make -f \"WebCore/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.ncpu`\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

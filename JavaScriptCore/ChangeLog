@@ -1,3 +1,10 @@
+2007-01-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Changed to /usr/sbin/sysctl
+        so we don't rely on people's paths.
+
 2007-01-23  Alice Liu  <alice.liu@apple.com>
 
         release build fix

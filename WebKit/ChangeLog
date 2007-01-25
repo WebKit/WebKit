@@ -1,5 +1,12 @@
 2007-01-24  Darin Adler  <darin@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        * WebKit.xcodeproj/project.pbxproj: Changed to /usr/sbin/sysctl
+        so we don't rely on people's paths.
+
+2007-01-24  Darin Adler  <darin@apple.com>
+
         Reviewed by Adele.
 
         - fix small regression and GC problems noticed by code inspection
