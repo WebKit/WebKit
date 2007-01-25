@@ -1,3 +1,14 @@
+2007-01-24  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix tests and update test results.
+        
+        * fast/dom/gc-6-expected.txt:
+        * fast/dom/gc-6.html:
+        * fast/dom/gc-7-expected.txt:
+        * fast/dom/gc-7.html:
+
 2007-01-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

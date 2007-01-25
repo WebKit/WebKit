@@ -1,19 +1,14 @@
 <head>
 <script>
 
-function doit()
+function frameLoaded()
 {
-    var frame = document.getElementById("frame");
-    var spanB = frame.contentDocument.getElementById("span-B");
-    spanB.customProperty = "B";
-    frame.src="about:blank";
-
     // create lots of objects to force a garbage collection
     var i = 0;
     var s;
     while (i < 5000) {
         i = i+1.11;
-	s = s + " ";
+        s = s + " ";
     }
 
     var output= document.getElementById("output");
@@ -22,10 +17,23 @@ function doit()
     output.innerHTML += spanB + "<BR>";
     output.innerHTML += spanB.parentNode + "<BR>";
     output.innerHTML += spanB.ownerDocument + "<BR>";
+    
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function doit()
+{
+    var frame = document.getElementById("frame");
+    spanB = frame.contentDocument.getElementById("span-B");
+    spanB.customProperty = "B";
+    frame.onload = frameLoaded;    
+    frame.src = "about:blank";    
 }
 
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
 }
 
 </script>
@@ -40,7 +48,7 @@ so long as any node in the document is reachable.
 </p>
 <p>
 The output should be the following pieces of text on lines by
-themselves: "B", "[object SPAN]", "null", "[object HTMLDocument]".
+themselves: "B", "[object DOMHTMLElement]", "null", "[object HTMLDocument]".
 </p>
 </div>
 
