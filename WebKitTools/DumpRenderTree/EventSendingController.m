@@ -107,8 +107,14 @@ BOOL replayingSavedEvents;
             || aSelector == @selector(keyDown:withModifiers:)
             || aSelector == @selector(enableDOMUIEventLogging:)
             || aSelector == @selector(fireKeyboardEventsToElement:)
-            || aSelector == @selector(clearKillRing)
-            || aSelector == @selector(setDragMode:))
+            || aSelector == @selector(clearKillRing))
+        return NO;
+    return YES;
+}
+
++ (BOOL)isKeyExcludedFromWebScript:(const char*)name
+{
+    if (strcmp(name, "dragMode") == 0)
         return NO;
     return YES;
 }
@@ -134,7 +140,7 @@ BOOL replayingSavedEvents;
 {
     self = [super init];
     if (self)
-        inDragMode = YES;
+        dragMode = YES;
     return self;
 }
 
@@ -151,7 +157,7 @@ BOOL replayingSavedEvents;
 
 - (void)leapForward:(int)milliseconds
 {
-    if (inDragMode && down && !replayingSavedEvents) {
+    if (dragMode && down && !replayingSavedEvents) {
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[EventSendingController instanceMethodSignatureForSelector:@selector(leapForward:)]];
         [invocation setTarget:self];
         [invocation setSelector:@selector(leapForward:)];
@@ -168,11 +174,6 @@ BOOL replayingSavedEvents;
 - (void)clearKillRing
 {
     _NSNewKillRingSequence();
-}
-
-- (void)setDragMode:(BOOL)dragMode
-{
-    inDragMode = dragMode;
 }
 
 - (void)mouseDown
@@ -201,7 +202,7 @@ BOOL replayingSavedEvents;
 
 - (void)mouseUp
 {
-    if (inDragMode && !replayingSavedEvents) {
+    if (dragMode && !replayingSavedEvents) {
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[EventSendingController instanceMethodSignatureForSelector:@selector(mouseUp)]];
         [invocation setTarget:self];
         [invocation setSelector:@selector(mouseUp)];
@@ -249,7 +250,7 @@ BOOL replayingSavedEvents;
 
 - (void)mouseMoveToX:(int)x Y:(int)y
 {
-    if (inDragMode && down && !replayingSavedEvents) {
+    if (dragMode && down && !replayingSavedEvents) {
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[EventSendingController instanceMethodSignatureForSelector:@selector(mouseMoveToX:Y:)]];
         [invocation setTarget:self];
         [invocation setSelector:@selector(mouseMoveToX:Y:)];

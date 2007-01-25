@@ -2,6 +2,21 @@
 
         Reviewed by Maciej.
 
+        - changed dragMode to be a property instead of a function
+
+        * DumpRenderTree/EventSendingController.h: Renamed inDragMode to dragMode.
+        * DumpRenderTree/EventSendingController.m:
+        (+[EventSendingController isSelectorExcludedFromWebScript:]): Removed setDragMode.
+        (+[EventSendingController isKeyExcludedFromWebScript:]): Added dragMode.
+        (-[EventSendingController init]): Updated for name change.
+        (-[EventSendingController leapForward:]): Ditto.
+        (-[EventSendingController mouseUp]): Ditto.
+        (-[EventSendingController mouseMoveToX:Y:]): Ditto.
+
+2007-01-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - made the deferral of mouse events until drag completes conditional
           it's needed for drag testing, and harmful for selection testing
 
