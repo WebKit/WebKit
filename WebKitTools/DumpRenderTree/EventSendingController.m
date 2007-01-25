@@ -147,6 +147,7 @@ BOOL replayingSavedEvents;
 - (void)dealloc
 {
     [savedMouseEvents release];
+    savedMouseEvents = nil;
     [super dealloc];
 }
 

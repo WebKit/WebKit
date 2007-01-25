@@ -1,5 +1,15 @@
 2007-01-24  Darin Adler  <darin@apple.com>
 
+        Reviewed by Oliver.
+
+        - fix crash seen in layout tests
+
+        * DumpRenderTree/EventSendingController.m: (-[EventSendingController dealloc]):
+        Add back the line of code that sets savedMouseEvents to nil. I thought it was
+        a field of the EventSendingController, but it's actually a global.
+
+2007-01-24  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - changed dragMode to be a property instead of a function
