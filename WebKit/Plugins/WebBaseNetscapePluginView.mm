@@ -1496,11 +1496,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     free(cValues);
 }
 
-- (void)streamIsDead:(WebBaseNetscapePluginStream*)stream;
-{
-    [streams removeObjectIdenticalTo:stream];
-}
-
 - (void)dealloc
 {
     ASSERT(!isStarted);
