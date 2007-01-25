@@ -56,8 +56,6 @@
 using namespace WebCore;
 using namespace EventNames;
 
-#define TEMP_PREFIX "/tmp/XXXXXX-"
-
 #define PDFKitLaunchNotification @"PDFPreviewLaunchPreview"
 
 // QuartzPrivate.h doesn't include the PDFKit private headers, so we can't get at PDFViewPriv.h. (3957971)
@@ -76,6 +74,7 @@ using namespace EventNames;
 - (BOOL)_pointIsInSelection:(NSPoint)point;
 - (void)_receivedPDFKitLaunchNotification:(NSNotification *)notification;
 - (NSAttributedString *)_scaledAttributedString:(NSAttributedString *)unscaledAttributedString;
+- (NSString *)_temporaryPDFDirectoryPath;
 - (void)_trackFirstResponder;
 @end;
 
@@ -1049,22 +1048,31 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         return path;
     
     NSString *filename = [[dataSource response] suggestedFilename];
-    NSFileManager *manager = [NSFileManager defaultManager];    
+    NSFileManager *manager = [NSFileManager defaultManager]; 
+    NSString *temporaryPDFDirectoryPath = [self _temporaryPDFDirectoryPath];
     
-    path = [@"/tmp/" stringByAppendingPathComponent:filename];
+    if (!temporaryPDFDirectoryPath) {
+        // This should never happen; if it does we'll fail silently on non-debug builds.
+        ASSERT_NOT_REACHED();
+        return nil;
+    }
+    
+    path = [temporaryPDFDirectoryPath stringByAppendingPathComponent:filename];
     if ([manager fileExistsAtPath:path]) {
-        path = [@"" TEMP_PREFIX stringByAppendingString:filename];
-        // FIXME: Bad style to modify the path returned by fileSystemRepresentation!
-        char *cpath = (char *)[path fileSystemRepresentation];
-        int fd = mkstemps(cpath, strlen(cpath) - strlen(TEMP_PREFIX) + 1);
+        NSString *pathTemplatePrefix = [temporaryPDFDirectoryPath stringByAppendingPathComponent:@"XXXXXX-"];
+        NSString *pathTemplate = [pathTemplatePrefix stringByAppendingString:filename];
+        // fileSystemRepresentation returns a const char *; copy it into a char * so we can modify it safely
+        char *cPath = strdup([pathTemplate fileSystemRepresentation]);
+        int fd = mkstemps(cPath, strlen(cPath) - strlen([pathTemplatePrefix fileSystemRepresentation]) + 1);
         if (fd < 0) {
-            // Couldn't create a temporary file! Should never happen.
-            // Do we need an alert here?
+            // Couldn't create a temporary file! Should never happen; if it does we'll fail silently on non-debug builds.
+            ASSERT_NOT_REACHED();
             path = nil;
         } else {
             close(fd);
-            path = [manager stringWithFileSystemRepresentation:cpath length:strlen(cpath)];
+            path = [manager stringWithFileSystemRepresentation:cPath length:strlen(cPath)];
         }
+        free(cPath);
     }
     
     [path retain];
@@ -1117,6 +1125,31 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     [result endEditing];
     
     return result;
+}
+
+- (NSString *)_temporaryPDFDirectoryPath
+{
+    // Returns nil if the temporary PDF directory didn't exist and couldn't be created
+    
+    static NSString *_temporaryPDFDirectoryPath = nil;
+    
+    if (!_temporaryPDFDirectoryPath) {
+        NSString *temporaryDirectoryTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:@"WebKitPDFs-XXXXXX"];
+        char *cTemplate = strdup([temporaryDirectoryTemplate fileSystemRepresentation]);
+        
+        if (!mkdtemp(cTemplate)) {
+            // This should never happen; if it does we'll fail silently on non-debug builds.
+            ASSERT_NOT_REACHED();
+        } else {
+            // cTemplate has now been modified to be the just-created directory name. This directory has 700 permissions,
+            // so only the current user can add to it or view its contents.
+            _temporaryPDFDirectoryPath = [[[NSFileManager defaultManager] stringWithFileSystemRepresentation:cTemplate length:strlen(cTemplate)] retain];
+        }
+        
+        free(cTemplate);
+    }
+    
+    return _temporaryPDFDirectoryPath;
 }
 
 - (void)_trackFirstResponder

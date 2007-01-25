@@ -1,3 +1,20 @@
+2007-01-25  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin, Geoff, Brady, and Darin
+        
+        - fixed <rdar://problem/4918446> Safari's temp files (PDF's) should be in a sub-folder when calling Preview
+        
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView _path]):
+        use _temporaryPDFDirectoryPath method instead of #defines for hardwiring strings; stop bad practice
+        of modifying the const char* returned by fileSystemRepresentation
+        (-[WebPDFView _temporaryPDFDirectoryPath]):
+        new method, lazily creates and returns a secure temporary directory created with NSTemporaryDirectory()
+        and mkdtemp
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+        Updated for these and other recent changes
+
 2007-01-24  Oliver Hunt  <oliver@apple.com>
 
         Build fix 
