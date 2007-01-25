@@ -380,11 +380,9 @@ bool FrameLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const String
         url = completeURL(urlString);
 
     Frame* frame = m_frame->tree()->child(frameName);
-    if (frame) {
-        ResourceRequestCachePolicy policy = (m_cachePolicy == CachePolicyReload) || (m_cachePolicy == CachePolicyRefresh)
-            ? ReloadIgnoringCacheData : UseProtocolCachePolicy;
-        frame->loader()->urlSelected(ResourceRequest(url, m_outgoingReferrer, policy), 0);
-    } else
+    if (frame)
+        frame->loader()->scheduleLocationChange(url.url(), m_outgoingReferrer, false, false);
+    else
         frame = loadSubframe(ownerElement, url, frameName, m_outgoingReferrer);
     
     if (!frame)

@@ -1,3 +1,15 @@
+2007-01-24  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff and Adam.
+
+        <rdar://problem/4922655>
+        http://galeri.milliyet.com.tr/ reproducibly crashes Safari
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::requestFrame):
+        If the frame already exists, defer the navigation so that we won't end up replacing the document
+        while we're parsing it. This is similar to what setting window.location ends up doing.
+
 2007-01-25  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin.

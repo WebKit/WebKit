@@ -1,3 +1,14 @@
+2007-01-24  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff and Adam.
+
+        <rdar://problem/4922655>
+        http://galeri.milliyet.com.tr/ reproducibly crashes Safari
+
+        * fast/dom/resources/set-frame-src-while-running-script-in-frame.html: Added.
+        * fast/dom/set-frame-src-while-running-script-in-frame-expected.txt: Added.
+        * fast/dom/set-frame-src-while-running-script-in-frame.html: Added.
+
 2007-01-24  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
