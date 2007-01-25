@@ -35,6 +35,7 @@
 #include "ResourceHandleManagerQt.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceError.h"
+#include "MimeTypeRegistry.h"
 
 #include <QCoreApplication>
 #include <QHttpRequestHeader>
@@ -215,6 +216,15 @@ void ResourceHandleManager::receivedResponse(RequestQt* request)
             idx = remainder.indexOf(QLatin1Char('='), idx);
             if (idx >= 0)
                 encoding = remainder.mid(idx + 1).trimmed();
+        }
+    }
+    if (contentType.isEmpty()) {
+        // let's try to guess from the extension
+        QString extension = request->qurl.path();
+        int index = extension.lastIndexOf(QLatin1Char('.'));
+        if (index > 0) {
+            extension = extension.mid(index + 1);
+            contentType = MimeTypeRegistry::getMIMETypeForExtension(extension);
         }
     }
 //     qDebug() << "Content-Type=" << contentType;

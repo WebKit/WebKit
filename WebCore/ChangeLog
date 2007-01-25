@@ -1,3 +1,20 @@
+2007-01-25  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Trivial implementation of getMIMETypeForExtension.
+        Use the above method in the ResourceHandleManager to set
+        a mimetype on Resources that don't have one set (which
+        includes everything loaded from local disk).
+
+        Should fix quite a few test cases :)
+
+        * platform/network/qt/ResourceHandleManagerQt.cpp:
+        (WebCore::ResourceHandleManager::receivedResponse):
+        * platform/qt/MimeTypeRegistryQt.cpp:
+        (WebCore::):
+        (WebCore::MimeTypeRegistry::getMIMETypeForExtension):
+
 2007-01-25 Harald Fernengel <harald@trolltech.com>
 
         Reviewed by zack
