@@ -1,3 +1,18 @@
+2007-01-25  Darin Adler  <darin@apple.com>
+
+        Reviewed and landed by Geoffrey Garen.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12342
+          REGRESSION: destroying a frame from its own script causes various crashes
+
+        * bindings/js/kjs_window.cpp: (KJS::ScheduledAction::execute):
+        Use RefPtr for the frame and the interpreter object so they don't get deleted
+        out from underneath us.
+
+        * bindings/js/kjs_proxy.cpp: (WebCore::KJSProxy::evaluate):
+        Add a check for a page of 0. This was the only call site for the
+        addMessageToConsole function that did not have a check for a page of 0.
+
 2007-01-25 Dirk Mueller  <mueller@kde.org>
 
         Reviewed and merged by Beth.

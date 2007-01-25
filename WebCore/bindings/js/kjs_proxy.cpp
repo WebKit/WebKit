@@ -1,7 +1,7 @@
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
+ *  Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,12 @@
 #include "kjs_proxy.h"
 
 #include "Chrome.h"
-#include "kjs_events.h"
-#include "kjs_window.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "JSDOMWindow.h"
 #include "Page.h"
+#include "kjs_events.h"
+#include "kjs_window.h"
 
 #ifdef SVG_SUPPORT
 #include "JSSVGLazyEventListener.h"
@@ -45,37 +45,38 @@ KJSProxy::KJSProxy(Frame* frame)
 
 JSValue* KJSProxy::evaluate(const String& filename, int baseLine, const String& str, Node* n) 
 {
-  // evaluate code. Returns the JS return value or 0
-  // if there was none, an error occured or the type couldn't be converted.
+    // evaluate code. Returns the JS return value or 0
+    // if there was none, an error occured or the type couldn't be converted.
 
-  initScriptIfNeeded();
-  // inlineCode is true for <a href="javascript:doSomething()">
-  // and false for <script>doSomething()</script>. Check if it has the
-  // expected value in all cases.
-  // See smart window.open policy for where this is used.
-  bool inlineCode = filename.isNull();
+    initScriptIfNeeded();
+    // inlineCode is true for <a href="javascript:doSomething()">
+    // and false for <script>doSomething()</script>. Check if it has the
+    // expected value in all cases.
+    // See smart window.open policy for where this is used.
+    bool inlineCode = filename.isNull();
 
-  m_script->setInlineCode(inlineCode);
+    m_script->setInlineCode(inlineCode);
 
-  JSLock lock;
+    JSLock lock;
 
-  JSValue* thisNode = n ? Window::retrieve(m_frame) : toJS(m_script->globalExec(), n);
+    JSValue* thisNode = n ? Window::retrieve(m_frame) : toJS(m_script->globalExec(), n);
   
-  m_script->startTimeoutCheck();
-  Completion comp = m_script->evaluate(filename, baseLine, reinterpret_cast<const KJS::UChar*>(str.characters()), str.length(), thisNode);
-  m_script->stopTimeoutCheck();
+    m_script->startTimeoutCheck();
+    Completion comp = m_script->evaluate(filename, baseLine, reinterpret_cast<const KJS::UChar*>(str.characters()), str.length(), thisNode);
+    m_script->stopTimeoutCheck();
   
-  if (comp.complType() == Normal || comp.complType() == ReturnValue)
-    return comp.value();
+    if (comp.complType() == Normal || comp.complType() == ReturnValue)
+        return comp.value();
 
-  if (comp.complType() == Throw) {
-    UString errorMessage = comp.value()->toString(m_script->globalExec());
-    int lineNumber = comp.value()->toObject(m_script->globalExec())->get(m_script->globalExec(), "line")->toInt32(m_script->globalExec());
-    UString sourceURL = comp.value()->toObject(m_script->globalExec())->get(m_script->globalExec(), "sourceURL")->toString(m_script->globalExec());
-    m_frame->page()->chrome()->addMessageToConsole(errorMessage, lineNumber, sourceURL);
-  }
+    if (comp.complType() == Throw) {
+        UString errorMessage = comp.value()->toString(m_script->globalExec());
+        int lineNumber = comp.value()->toObject(m_script->globalExec())->get(m_script->globalExec(), "line")->toInt32(m_script->globalExec());
+        UString sourceURL = comp.value()->toObject(m_script->globalExec())->get(m_script->globalExec(), "sourceURL")->toString(m_script->globalExec());
+        if (Page* page = m_frame->page())
+            page->chrome()->addMessageToConsole(errorMessage, lineNumber, sourceURL);
+    }
 
-  return 0;
+    return 0;
 }
 
 void KJSProxy::clear() {
