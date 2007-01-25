@@ -53,7 +53,10 @@ void AffineTransform::setMatrix(double a, double b, double c, double d, double t
 
 void AffineTransform::map(double x, double y, double* x2, double* y2) const
 {
-    m_transform.map(x, y, x2, y2);
+    qreal tx2, ty2;
+    m_transform.map(qreal(x), qreal(y), &tx2, &ty2);
+    *x2 = tx2;
+    *y2 = ty2;
 }
 
 IntRect AffineTransform::mapRect(const IntRect& rect) const
