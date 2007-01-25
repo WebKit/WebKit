@@ -156,38 +156,11 @@ bool EventHandler::keyEvent(NSEvent *event)
 
     ASSERT([event type] == NSKeyDown || [event type] == NSKeyUp);
 
-    // Check for cases where we are too early for events -- possible unmatched key up
-    // from pressing return in the location bar.
-    Document* doc = m_frame->document();
-    if (!doc)
-        return false;
-    Node* node = doc->focusedNode();
-    if (!node) {
-        if (doc->isHTMLDocument())
-            node = doc->body();
-        else
-            node = doc->documentElement();
-        if (!node)
-            return false;
-    }
-#ifdef MULTIPLE_FORM_SUBMISSION_PROTECTION
-    if ([event type] == NSKeyDown)
-        m_frame->loader()->resetMultipleFormSubmissionProtection();
-#endif
-
     NSEvent *oldCurrentEvent = currentEvent;
     currentEvent = HardRetain(event);
 
-    result = !EventTargetNodeCast(node)->dispatchKeyEvent(event);
-
-    // We want to send both a down and a press for the initial key event.
-    // To get the rest of WebCore to do this, we send a second KeyPress with "is repeat" set to true,
-    // which causes it to send a press to the DOM.
-    // We should do this a better way.
-    if ([event type] == NSKeyDown && ![event isARepeat])
-        if (!EventTargetNodeCast(node)->dispatchKeyEvent(PlatformKeyboardEvent(event, true)))
-            result = true;
-
+    result = keyEvent(PlatformKeyboardEvent(event));
+    
     ASSERT(currentEvent == event);
     HardRelease(event);
     currentEvent = oldCurrentEvent;

@@ -1,3 +1,19 @@
+2007-01-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Brady and Oliver.
+
+        Fix for <rdar://problem/4953504> When the keydown event changes focus, the keypress event should go to the new focused node
+
+        Test: fast/events/keydown-keypress-focus-change.html
+
+        * page/EventHandler.cpp:
+        (WebCore::eventTargetNodeForDocument): Added for convenience.
+        (WebCore::EventHandler::keyEvent): Moved from EventHandlerMac.mm.  After dispatching the keyDown event,
+         recheck the target node for the keyPress event in case its changed.
+        * page/EventHandler.h:
+        * page/mac/EventHandlerMac.mm: (WebCore::EventHandler::keyEvent):
+          Moved the bulk of this code to EventHandler.cpp.
+
 2007-01-24  Geoffrey Garen  <ggaren@apple.com>
 
         New forwarding header. No review necessary.

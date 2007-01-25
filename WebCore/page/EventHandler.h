@@ -56,6 +56,7 @@ class HTMLFrameSetElement;
 class KeyboardEvent;
 class MouseEventWithHitTestResults;
 class Node;
+class PlatformKeyboardEvent;
 class PlatformScrollbar;
 class PlatformWheelEvent;
 class RenderLayer;
@@ -124,6 +125,8 @@ public:
     bool sendContextMenuEvent(PlatformMouseEvent);
 
     void setMouseDownMayStartAutoscroll() { m_mouseDownMayStartAutoscroll = true; }
+
+    bool keyEvent(const PlatformKeyboardEvent&);
 
     void defaultKeyboardEventHandler(EventTargetNode*, KeyboardEvent*);
 

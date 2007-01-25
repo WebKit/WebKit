@@ -47,6 +47,7 @@
 #include "MouseEvent.h"
 #include "MouseEventWithHitTestResults.h"
 #include "Page.h"
+#include "PlatformKeyboardEvent.h"
 #include "PlatformScrollBar.h"
 #include "PlatformWheelEvent.h"
 #include "RenderWidget.h"
@@ -1173,6 +1174,58 @@ void EventHandler::hoverTimerFired(Timer<EventHandler>*)
 {
     m_hoverTimer.stop();
     prepareMouseEvent(HitTestRequest(false, false, true), PlatformMouseEvent(PlatformMouseEvent::currentEvent));
+}
+
+static EventTargetNode* eventTargetNodeForDocument(Document* doc)
+{
+    if (!doc)
+        return 0;
+    Node* node = doc->focusedNode();
+    if (!node) {
+        if (doc->isHTMLDocument())
+            node = doc->body();
+        else
+            node = doc->documentElement();
+        if (!node)
+            return false;
+    }
+    return EventTargetNodeCast(node);
+}
+
+bool EventHandler::keyEvent(const PlatformKeyboardEvent& keyEvent)
+{
+    bool result;
+    // Check for cases where we are too early for events -- possible unmatched key up
+    // from pressing return in the location bar.
+    EventTargetNode* node = eventTargetNodeForDocument(m_frame->document());
+    if (!node)
+        return false;
+    
+#ifdef MULTIPLE_FORM_SUBMISSION_PROTECTION
+    if (!keyEvent.isKeyUp())
+        loader()->resetMultipleFormSubmissionProtection();
+#endif
+
+    result = !node->dispatchKeyEvent(keyEvent);
+
+    // Get the target node again, in case the focus has changed
+    // during the keyDown event handler 
+    node = eventTargetNodeForDocument(m_frame->document());
+    if (!node)
+        return false;
+        
+    // We want to send both a down and a press for the initial key event. (This is the behavior of other browsers)
+    // To get the rest of WebCore to do this, we send a second KeyPress with "is repeat" set to true,
+    // which causes it to send a press to the DOM.
+    // We should do this a better way.
+    if (!keyEvent.isKeyUp() && !keyEvent.isAutoRepeat()) {
+        PlatformKeyboardEvent keyPressedEvent(keyEvent);
+        keyPressedEvent.setIsAutoRepeat(true);
+        if (!node->dispatchKeyEvent(keyPressedEvent))
+            result = true;
+    }
+
+    return result;
 }
 
 void EventHandler::defaultKeyboardEventHandler(EventTargetNode* target, KeyboardEvent* event)
