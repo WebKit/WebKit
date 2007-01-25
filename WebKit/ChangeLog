@@ -1,3 +1,20 @@
+2007-01-24  Oliver Hunt  <ioliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Migrating more drag state information to WebCore
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLViewPrivate dealloc]):
+        (-[WebHTMLViewPrivate clear]):
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+        (-[WebHTMLView _mayStartDragAtEventLocation:]):
+        (-[WebHTMLView close]):
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]):
+        (-[WebHTMLView _delegateDragSourceActionMask]):
+        * WebView/WebHTMLViewInternal.h:
+
 2007-01-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

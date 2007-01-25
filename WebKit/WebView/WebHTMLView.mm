@@ -274,7 +274,6 @@ static WebHTMLView *lastHitView;
     
     [mouseDownEvent release];
     [keyDownEvent release];
-    [draggingImageURL release];
     [pluginController release];
     [toolTip release];
     [compController release];
@@ -289,7 +288,6 @@ static WebHTMLView *lastHitView;
 {
     [mouseDownEvent release];
     [keyDownEvent release];
-    [draggingImageURL release];
     [pluginController release];
     [toolTip release];
     [compController release];
@@ -299,7 +297,6 @@ static WebHTMLView *lastHitView;
 
     mouseDownEvent = nil;
     keyDownEvent = nil;
-    draggingImageURL = nil;
     pluginController = nil;
     toolTip = nil;
     compController = nil;
@@ -1315,14 +1312,12 @@ static WebHTMLView *lastHitView;
     NSURL *imageURL = [element objectForKey:WebElementImageURLKey];
     BOOL isSelected = [[element objectForKey:WebElementIsSelectedKey] boolValue];
 
-    [_private->draggingImageURL release];
-    _private->draggingImageURL = nil;
-
     NSPoint mouseDraggedPoint = [self convertPoint:[mouseDraggedEvent locationInWindow] fromView:nil];
     
     Page* page = core([self _webView]);
     ASSERT(page);
     DragController *dragController = page->dragController();
+    dragController->setDraggingImageURL(KURL());
     dragController->setDragOperation((DragOperation)op);     // will be DragNone if WebCore doesn't care
     
     NSImage *dragImage = nil;
@@ -1354,13 +1349,13 @@ static WebHTMLView *lastHitView;
     if (imageURL != nil
             && [node isKindOfClass:[DOMElement class]]
             && [(DOMElement *)node image]
-            && (_private->dragSourceActionMask & WebDragSourceActionImage)) {
+            && (dragController->dragSourceAction() & WebDragSourceActionImage)) {
         id source = self;
         if (!dhtmlWroteData) {
             // Select the image when it is dragged. This allows the image to be moved via MoveSelectionCommandImpl and this matches NSTextView's behavior.
             ASSERT(node != nil);
             [webView setSelectedDOMRange:[[node ownerDocument] _createRangeWithNode:node] affinity:NSSelectionAffinityDownstream];
-            _private->draggingImageURL = [imageURL retain];
+            dragController->setDraggingImageURL([imageURL retain]);
             
             WebArchive *archive;
             
@@ -1393,7 +1388,7 @@ static WebHTMLView *lastHitView;
                  pasteboard:pasteboard
                      source:source
                   slideBack:YES];
-    } else if (linkURL && (_private->dragSourceActionMask & WebDragSourceActionLink)) {
+    } else if (linkURL && (dragController->dragSourceAction() & WebDragSourceActionLink)) {
         if (!dhtmlWroteData) {
             NSArray *types = [NSPasteboard _web_writableTypesForURL];
             [pasteboard declareTypes:types owner:self];
@@ -1416,7 +1411,7 @@ static WebHTMLView *lastHitView;
              pasteboard:pasteboard
                  source:self
               slideBack:YES];
-    } else if (isSelected && (_private->dragSourceActionMask & WebDragSourceActionSelection)) {
+    } else if (isSelected && (dragController->dragSourceAction() & WebDragSourceActionSelection)) {
         if (!dhtmlWroteData)
             [innerHTMLView _writeSelectionToPasteboard:pasteboard];
         [[webView _UIDelegateForwarder] webView:webView willPerformDragSourceAction:WebDragSourceActionSelection fromPoint:mouseDownPoint withPasteboard:pasteboard];
@@ -1478,20 +1473,28 @@ static WebHTMLView *lastHitView;
     NSDictionary *mouseDownElement = [self elementAtPoint:mouseDownPoint allowShadowContent:YES];
 
     ASSERT([self _webView]);
-
+    
+    Page* page = core([self _webView]);
+    if (!page)
+        return NO;
+    
+    DragController* dragController = page->dragController();
+    if (!dragController)
+        return NO;
+    
     if ([mouseDownElement objectForKey:WebElementImageKey]
             && [mouseDownElement objectForKey:WebElementImageURLKey]
             && [[[self _webView] preferences] loadsImagesAutomatically]
-            && (_private->dragSourceActionMask & WebDragSourceActionImage))
+            && (dragController->dragSourceAction() & WebDragSourceActionImage))
         return YES;
     
     if ([mouseDownElement objectForKey:WebElementLinkURLKey]
-            && (_private->dragSourceActionMask & WebDragSourceActionLink)
+            && (dragController->dragSourceAction() & WebDragSourceActionLink)
             && [[mouseDownElement objectForKey:WebElementLinkIsLiveKey] boolValue])
         return YES;
     
     if ([[mouseDownElement objectForKey:WebElementIsSelectedKey] boolValue]
-            && (_private->dragSourceActionMask & WebDragSourceActionSelection))
+            && (dragController->dragSourceAction() & WebDragSourceActionSelection))
         return YES;
     
     return NO;
@@ -1825,6 +1828,9 @@ static WebHTMLView *lastHitView;
     [self removeAllToolTips];
     [_private clear];
     _private->closed = YES;
+    Page* page = core([self _webView]);
+    if (page)
+        page->dragController()->setDraggingImageURL(KURL());
 }
 
 @end
@@ -2968,9 +2974,11 @@ done:
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
 {
     ASSERT([self _isTopHTMLView]);
-    ASSERT(_private->draggingImageURL);
+    Page* page = core([self _webView]);
+    KURL imageURL = page->dragController()->draggingImageURL();
+    ASSERT(!imageURL.empty());
 
-    NSFileWrapper *wrapper = [[self _dataSource] _fileWrapperForURL:_private->draggingImageURL];
+    NSFileWrapper *wrapper = [[self _dataSource] _fileWrapperForURL:imageURL.getNSURL()];
     if (wrapper == nil) {
         LOG_ERROR("Failed to create image file. Did the source image change while dragging? (<rdar://problem/4244861>)");
         return nil;
@@ -4954,8 +4962,12 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
     WebView *webView = [self _webView];
     NSPoint point = [webView convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
-    _private->dragSourceActionMask = [[webView _UIDelegateForwarder] webView:webView dragSourceActionMaskForPoint:point];
-    return _private->dragSourceActionMask;
+    Page* page = core(webView);
+    if (!page)
+        return DragSourceActionNone;
+    DragSourceAction sourceAction = (DragSourceAction)[[webView _UIDelegateForwarder] webView:webView dragSourceActionMaskForPoint:point];
+    page->dragController()->setDragSourceAction(sourceAction);
+    return sourceAction;
 }
 
 - (BOOL)_canSmartCopyOrDelete

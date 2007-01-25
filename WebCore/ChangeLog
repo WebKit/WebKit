@@ -1,3 +1,17 @@
+2007-01-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Migrating more drag state information to WebCore
+
+        * page/DragController.cpp:
+        * page/DragController.h:
+        (WebCore::DragController::dragOperation):
+        (WebCore::DragController::setDraggingImageURL):
+        (WebCore::DragController::draggingImageURL):
+        (WebCore::DragController::setDragOffset):
+        (WebCore::DragController::dragOffset):
+
 2007-01-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

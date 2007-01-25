@@ -51,9 +51,6 @@
     NSEvent *mouseDownEvent; // Kept after handling the event.
     BOOL handlingMouseDownEvent;
     NSEvent *keyDownEvent; // Kept after handling the event.
-
-    NSURL *draggingImageURL;
-    unsigned dragSourceActionMask;
     
     NSSize lastLayoutSize;
     NSSize lastLayoutFrameSize;

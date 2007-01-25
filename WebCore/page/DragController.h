@@ -27,6 +27,8 @@
 #define DragController_h
 
 #include "DragActions.h"
+#include "IntPoint.h"
+#include "KURL.h"
 
 namespace WebCore {
 
@@ -55,11 +57,16 @@ namespace WebCore {
         void setIsHandlingDrag(bool handling) { m_isHandlingDrag = handling; }
         bool isHandlingDrag() const { return m_isHandlingDrag; }
         void setDragOperation(DragOperation dragOp) { m_dragOperation = dragOp; }
-        DragOperation dragOperation() const { return m_dragOperation; }        
+        DragOperation dragOperation() const { return m_dragOperation; }       
+        void setDraggingImageURL(const KURL& url) { m_draggingImageURL = url; }
+        const KURL& draggingImageURL() const { return m_draggingImageURL; }
         void setDragInitiator(Document* initiator) { m_dragInitiator = initiator; m_didInitiateDrag = true; }
         Document* dragInitiator() const { return m_dragInitiator; }
+        void setDragOffset(const IntPoint& offset) { m_dragOffset = offset; }
+        IntPoint dragOffset() const { return m_dragOffset; }
         void setDragSourceAction(DragSourceAction action) { m_dragSourceAction = action; }
         DragSourceAction dragSourceAction() const { return m_dragSourceAction; }
+        
         
         Document* document() const { return m_document; }
         DragDestinationAction dragDestinationAction() const { return m_dragDestinationAction; }
@@ -92,6 +99,9 @@ namespace WebCore {
         bool m_didInitiateDrag;
         bool m_isHandlingDrag;
         DragOperation m_dragOperation;
+        IntPoint m_dragOffset;
+        KURL m_draggingImageURL;
+        
     };
 
 }
