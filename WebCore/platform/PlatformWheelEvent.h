@@ -46,6 +46,10 @@ typedef long LPARAM;
 typedef union _GdkEvent GdkEvent;
 #endif
 
+#if PLATFORM(QT)
+class QWheelEvent;
+#endif
+
 namespace WebCore {
 
     class PlatformWheelEvent {
@@ -78,6 +82,9 @@ namespace WebCore {
 #endif
 #if PLATFORM(GDK)
         PlatformWheelEvent(GdkEvent*);
+#endif
+#if PLATFORM(QT)
+        PlatformWheelEvent(QWheelEvent*);
 #endif
 
     private:

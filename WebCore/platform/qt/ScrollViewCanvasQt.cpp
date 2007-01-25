@@ -43,6 +43,7 @@
 #include "SelectionController.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformKeyboardEvent.h"
+#include "PlatformWheelEvent.h"
 
 #include <QPainter>
 #include <QPaintEvent>
@@ -61,7 +62,8 @@ namespace WebCore {
 
 ScrollViewCanvasQt::ScrollViewCanvasQt(FrameView* frameView, QWidget* parent)
     : QWidget(0),
-      m_frameView(frameView)
+      m_frameView(frameView),
+      m_eventHandler(frameView->frame()->eventHandler())
 {
     setMouseTracking(true);
     setFocusPolicy(Qt::StrongFocus);
@@ -107,10 +109,10 @@ void ScrollViewCanvasQt::mouseMoveEvent(QMouseEvent* ev)
 
 void ScrollViewCanvasQt::mousePressEvent(QMouseEvent* ev)
 {
-    if (!m_frameView || !m_frameView->frame()->eventHandler())
+    if (!m_eventHandler)
         return;
 
-    m_frameView->frame()->eventHandler()->handleMousePressEvent(PlatformMouseEvent(ev, 1));
+    m_eventHandler->handleMousePressEvent(PlatformMouseEvent(ev, 1));
 }
 
 void ScrollViewCanvasQt::mouseReleaseEvent(QMouseEvent* ev)
@@ -180,4 +182,28 @@ void ScrollViewCanvasQt::handleKeyEvent(QKeyEvent* ev, bool isKeyUp)
 
 }
 
+void WebCore::ScrollViewCanvasQt::wheelEvent(QWheelEvent* e)
+{
+    PlatformWheelEvent wkEvent(e);
+    bool accepted = false;
+    if (m_eventHandler)
+        accepted = m_eventHandler->handleWheelEvent(wkEvent);
+    
+    e->setAccepted(accepted);
+    if (!accepted)
+        QWidget::wheelEvent(e);
+        
+}
+void WebCore::ScrollViewCanvasQt::dragEnterEvent(QDragEnterEvent *)
+{
+    
+}
+void WebCore::ScrollViewCanvasQt::dragLeaveEvent(QDragLeaveEvent *)
+{
+    
+}
+void WebCore::ScrollViewCanvasQt::dragMoveEvent(QDragMoveEvent *)
+{
+    
+}
 // vim: ts=4 sw=4 et

@@ -615,6 +615,7 @@ SOURCES += \
     platform/qt/PlatformMouseEventQt.cpp \
     platform/qt/PlatformKeyboardEventQt.cpp \
     platform/qt/TextBoundaries.cpp \
+    platform/qt/WheelEventQt.cpp \
     platform/graphics/GraphicsTypes.cpp \
     platform/graphics/GraphicsContext.cpp \
     platform/FontFamily.cpp \

@@ -281,7 +281,8 @@ bool ScrollView::inWindow() const
 
 void ScrollView::wheelEvent(PlatformWheelEvent&)
 {
-    notImplemented();
+    //we don't do absolutely anything here - we handled it already in ScrollViewCanvasQt
+    // internally in Qt
 }
 
 PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)

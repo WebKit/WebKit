@@ -1,3 +1,31 @@
+2007-01-25  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Lars.
+
+        Add wheel event handling and make explicit usage
+        of the EventHandler.
+
+        * WebCore.pro:
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::EventHandler::focusDocumentView):
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::passMouseDownEventToWidget):
+        (WebCore::EventHandler::lastEventIsMouseUp):
+        (WebCore::EventHandler::handleMouseUp):
+        * platform/PlatformWheelEvent.h:
+        * platform/qt/ScrollViewCanvasQt.cpp:
+        (WebCore::ScrollViewCanvasQt::ScrollViewCanvasQt):
+        (WebCore::ScrollViewCanvasQt::mousePressEvent):
+        (WebCore::ScrollViewCanvasQt::wheelEvent):
+        (WebCore::ScrollViewCanvasQt::dragEnterEvent):
+        (WebCore::ScrollViewCanvasQt::dragLeaveEvent):
+        (WebCore::ScrollViewCanvasQt::dragMoveEvent):
+        * platform/qt/ScrollViewCanvasQt.h:
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/qt/WheelEventQt.cpp: Added.
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2007-01-25  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.

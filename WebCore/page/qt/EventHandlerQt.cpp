@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "FloatPoint.h"
+#include "FocusController.h"
 #include "FrameLoader.h"
 #include "FrameQt.h"
 #include "FrameTree.h"
@@ -78,7 +79,9 @@ void EventHandler::freeClipboard()
 
 void EventHandler::focusDocumentView()
 {
-    notImplemented();
+    Page* page = m_frame->page();
+    if (page)
+        page->focusController()->setFocusedFrame(m_frame);
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
@@ -87,11 +90,7 @@ bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestR
     RenderObject* target = event.targetNode() ? event.targetNode()->renderer() : 0;
     if (!target || !target->isWidget())
         return false;
-    
-    // Double-click events don't exist in Cocoa. Since passWidgetMouseDownEventToWidget will
-    // just pass currentEvent down to the widget, we don't want to call it for events that
-    // don't correspond to Cocoa events.  The mousedown/ups will have already been passed on as
-    // part of the pressed/released handling.
+
     return passMouseDownEventToWidget(static_cast<RenderWidget*>(target)->widget());
 }
 
@@ -102,14 +101,13 @@ bool EventHandler::passWidgetMouseDownEventToWidget(RenderWidget* renderWidget)
 
 bool EventHandler::passMouseDownEventToWidget(Widget* widget)
 {
-    // FIXME: this method always returns true
     notImplemented();
     return false;
 }
 
 bool EventHandler::lastEventIsMouseUp() const
 {
-    notImplemented();
+    //this is some hack for mac. it shouldn't be platform specific at all
     return false;
 }
     
@@ -125,11 +123,11 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
     return false;
 }
 
-bool EventHandler::handleMouseUp(const MouseEventWithHitTestResults& event)
+bool EventHandler::handleMouseUp(const MouseEventWithHitTestResults&)
 {
-    notImplemented();
-    
-    return false;
+    //i don't know what this does. looks like more mac code disguised as
+    //  platform stuff
+    return true;
 }
 
 bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame* subframe)
