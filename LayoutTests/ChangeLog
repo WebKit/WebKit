@@ -1,3 +1,15 @@
+2007-01-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - test for one of the symptoms of http://bugs.webkit.org/show_bug.cgi?id=12331
+          REGRESSION(r18951): Selecting text in a textarea makes the page scroll
+
+        * fast/events/autoscroll-expected.checksum: Added.
+        * fast/events/autoscroll-expected.png: Added.
+        * fast/events/autoscroll-expected.txt: Added.
+        * fast/events/autoscroll.html: Added.
+
 2007-01-24  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff.

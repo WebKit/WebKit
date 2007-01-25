@@ -870,9 +870,8 @@ void RenderLayer::autoscroll()
         // Convert the mouse position to local layer space.
         int objectX, objectY;
         renderer()->absolutePosition(objectX, objectY);
-        currentPos.move(-objectX, -objectY);
         HitTestRequest request(true, false, true);
-        HitTestResult result(currentPos);
+        HitTestResult result(currentPos - IntSize(objectX, objectY));
         if (hitTest(request, result) && result.innerNode()->renderer()) {
             VisiblePosition pos(result.innerNode()->renderer()->positionForPoint(result.localPoint()));
             currentFrame->eventHandler()->updateSelectionForMouseDragOverPosition(pos);

@@ -1,3 +1,17 @@
+2007-01-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12331
+          REGRESSION(r18951): Selecting text in a textarea makes the page scroll
+
+        Test: fast/events/autoscroll.html
+
+        * rendering/RenderLayer.cpp: (WebCore::RenderLayer::autoscroll):
+        Adjust position to be relative to the object's corner for the hit test, but not for the
+        scrollRectToVisible call. The previous version accidentally re-used the version that was
+        adjusted for the hit test.
+
 2007-01-24  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff.
