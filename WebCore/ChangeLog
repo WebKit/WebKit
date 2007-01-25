@@ -1,3 +1,15 @@
+2007-01-23  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Maciej.
+
+        fixed <rdar://problem/4808039> REGRESSION: eBay ID check never completes
+        Also known as http://bugs.webkit.org/show_bug.cgi?id=11230
+
+        * bindings/js/kjs_window.cpp:
+        It's not necessary to check safeScript when doing a location.replace, .reload, or .assign
+        (KJS::Location::getOwnPropertySlot):
+        (KJS::LocationFunc::callAsFunction):
+
 2007-01-25  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Geoff and Adele.

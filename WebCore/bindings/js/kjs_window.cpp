@@ -2132,10 +2132,13 @@ bool Location::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNam
     return false;
   
   const Window* window = Window::retrieveWindow(m_frame);
-  if (!window || !window->isSafeScript(exec)) {
+  
+  const HashEntry *entry = Lookup::findEntry(&LocationTable, propertyName);
+  if (!entry || (entry->value != Replace && entry->value != Reload && entry->value != Assign))
+    if (!window || !window->isSafeScript(exec)) {
       slot.setUndefined(this);
       return true;
-  }
+    }
 
   return getStaticPropertySlot<LocationFunc, Location, JSObject>(exec, &LocationTable, this, propertyName, slot);
 }
@@ -2229,7 +2232,7 @@ JSValue *LocationFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const 
   if (frame) {
       
     Window* window = Window::retrieveWindow(frame);
-    if (!window->isSafeScript(exec) && id != Location::Replace)
+    if (id != Location::Replace && !window->isSafeScript(exec))
         return jsUndefined();
       
     switch (id) {

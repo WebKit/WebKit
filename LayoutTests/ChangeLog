@@ -1,3 +1,17 @@
+2007-01-22  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Maciej.
+
+        added test for 
+        <rdar://problem/4808039> REGRESSION: eBay ID check never completes
+        also known as
+        http://bugs.webkit.org/show_bug.cgi?id=11230
+
+        * http/tests/misc/location-replace-crossdomain-expected.txt: Added.
+        * http/tests/misc/location-replace-crossdomain.html: Added.
+        * http/tests/misc/resources/failure.html: Added.
+        * http/tests/misc/resources/success.html: Added.
+
 2007-01-25  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Geoff and Adele
