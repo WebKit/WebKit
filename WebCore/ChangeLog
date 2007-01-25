@@ -1,5 +1,9 @@
 2007-01-25  Darin Adler  <darin@apple.com>
 
+        * ksvg2/svg/SVGPreserveAspectRatio.cpp: Add a couple of comments.
+
+2007-01-25  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=12365
