@@ -1,0 +1,35 @@
+layer at (0,0) size 286x433
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 286x334
+  RenderBlock {HTML} at (0,0) size 96x334
+    RenderBody {BODY} at (8,8) size 80x318
+      RenderBlock {P} at (0,0) size 80x208
+        RenderText {#text} at (0,0) size 77x32
+          text run at (0,0) width 53: "This is a"
+          text run at (0,16) width 77: "pixel test for"
+        RenderInline {I} at (0,0) size 278x176
+          RenderInline {A} at (0,0) size 278x32 [color=#0000EE]
+            RenderText {#text} at (0,32) size 278x32
+              text run at (0,32) width 278: "http://bugzilla.opendarwin.org/show_bug.cgi?"
+              text run at (0,48) width 52: "id=4334"
+          RenderText {#text} at (0,64) size 95x144
+            text run at (0,64) width 95: "REGRESSION:"
+            text run at (0,80) width 60: "Flickering"
+            text run at (0,96) width 63: "when css-"
+            text run at (0,112) width 36: "hover"
+            text run at (0,128) width 41: "should"
+            text run at (0,144) width 47: "change"
+            text run at (0,160) width 65: "opacity on"
+            text run at (0,176) width 46: "floating"
+            text run at (0,192) width 57: "elements"
+        RenderText {#text} at (57,192) size 3x16
+          text run at (57,192) width 3: "."
+      RenderBlock {P} at (0,222) size 80x80
+        RenderText {#text} at (0,0) size 72x80
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 72: "should be a"
+          text run at (0,32) width 70: "solid green"
+          text run at (0,48) width 43: "square"
+          text run at (0,64) width 39: "below."
+      RenderBlock {HR} at (0,316) size 80x2 [border: (1px inset #000000)]
+      RenderBlock (floating) {DIV} at (0,325) size 100x100 [bgcolor=#008000]

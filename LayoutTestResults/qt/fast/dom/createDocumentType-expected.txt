@@ -1,0 +1,17 @@
+layer at (0,0) size 96x158
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x158
+  RenderBlock {HTML} at (0,0) size 96x158
+    RenderBody {BODY} at (8,8) size 80x142
+      RenderBlock {P} at (0,0) size 80x96
+        RenderText {#text} at (0,0) size 67x96
+          text run at (0,0) width 52: "The text"
+          text run at (0,16) width 36: "below"
+          text run at (0,32) width 67: "should say"
+          text run at (0,48) width 66: "\"document"
+          text run at (0,64) width 27: "type"
+          text run at (0,80) width 57: "created\";"
+      RenderBlock {DIV} at (0,110) size 80x32
+        RenderText {#text} at (0,0) size 79x32
+          text run at (0,0) width 61: "document"
+          text run at (0,16) width 79: "type created"

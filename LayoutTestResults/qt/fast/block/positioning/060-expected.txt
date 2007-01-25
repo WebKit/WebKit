@@ -1,0 +1,24 @@
+layer at (0,0) size 110x250
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x176
+  RenderBlock {HTML} at (0,0) size 96x176
+    RenderBody {BODY} at (8,8) size 80x160
+      RenderText {#text} at (0,0) size 75x160
+        text run at (0,0) width 38: "There"
+        text run at (0,16) width 60: "should be"
+        text run at (0,32) width 22: "two"
+        text run at (0,48) width 55: "100x100"
+        text run at (0,64) width 37: "green"
+        text run at (0,80) width 50: "squares"
+        text run at (0,96) width 43: "below. "
+        text run at (43,96) width 32: "They"
+        text run at (0,112) width 60: "should be"
+        text run at (0,128) width 55: "vertically"
+        text run at (0,144) width 52: "stacked."
+      RenderText {#text} at (0,0) size 0x0
+layer at (10,40) size 100x100
+  RenderBlock (positioned) {DIV} at (10,40) size 100x100 [bgcolor=#008000]
+    RenderBlock {DIV} at (0,0) size 100x0
+layer at (10,150) size 100x100
+  RenderBlock (positioned) {DIV} at (10,150) size 100x100 [bgcolor=#008000]
+    RenderBlock {DIV} at (0,0) size 100x0

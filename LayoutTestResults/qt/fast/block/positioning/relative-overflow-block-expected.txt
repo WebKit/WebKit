@@ -1,0 +1,23 @@
+layer at (0,0) size 814x1022
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x224
+  RenderBlock {HTML} at (0,0) size 96x224
+    RenderBody {BODY} at (8,8) size 80x208
+      RenderText {#text} at (0,0) size 78x208
+        text run at (0,0) width 63: "Document"
+        text run at (0,16) width 45: "canvas"
+        text run at (0,32) width 60: "should be"
+        text run at (0,48) width 69: "big enough"
+        text run at (0,64) width 58: "to fit both"
+        text run at (0,80) width 78: "blue and red"
+        text run at (0,96) width 51: "(relative"
+        text run at (0,112) width 70: "positioned)"
+        text run at (0,128) width 66: "rectangles"
+        text run at (0,144) width 54: "(ie. have"
+        text run at (0,160) width 71: "scrollbars if"
+        text run at (0,176) width 77: "they don't fit"
+        text run at (0,192) width 77: "to the view) "
+layer at (8,216) size 506x506
+  RenderBlock (positioned) {DIV} at (8,216) size 504x504 [border: (2px solid #0000FF)]
+layer at (310,518) size 504x504
+  RenderBlock (relative positioned) {DIV} at (2,2) size 504x504 [border: (2px solid #FF0000)]

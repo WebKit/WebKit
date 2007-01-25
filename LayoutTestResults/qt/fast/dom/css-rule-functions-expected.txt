@@ -1,0 +1,80 @@
+layer at (0,0) size 96x1014
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x1014
+  RenderBlock {HTML} at (0,0) size 96x1014
+    RenderBody {BODY} at (8,14) size 80x992
+      RenderBlock {PRE} at (0,0) size 80x0
+      RenderBlock (anonymous) at (0,0) size 80x304
+        RenderText {#text} at (0,0) size 80x304
+          text run at (0,0) width 61: "This tests"
+          text run at (0,16) width 24: "that"
+          text run at (0,32) width 66: "insertRule,"
+          text run at (0,48) width 70: "deleteRule,"
+          text run at (0,64) width 65: "and the IE"
+          text run at (0,80) width 68: "extensions"
+          text run at (0,96) width 80: "addRule and"
+          text run at (0,112) width 75: "removeRule"
+          text run at (0,128) width 67: "update the"
+          text run at (0,144) width 67: "style when"
+          text run at (0,160) width 55: "rules are"
+          text run at (0,176) width 68: "added and"
+          text run at (0,192) width 70: "removed. It"
+          text run at (0,208) width 60: "also tests"
+          text run at (0,224) width 24: "that"
+          text run at (0,240) width 67: "disabling a"
+          text run at (0,256) width 64: "stylesheet"
+          text run at (0,272) width 74: "updates the"
+          text run at (0,288) width 32: "style."
+      RenderBlock {DIV} at (0,304) size 80x128
+        RenderText {#text} at (0,0) size 80x128
+          text run at (0,0) width 74: "This is div1."
+          text run at (0,16) width 54: "This text"
+          text run at (0,32) width 65: "should not"
+          text run at (0,48) width 40: "be red"
+          text run at (0,64) width 80: "because that"
+          text run at (0,80) width 50: "rule has"
+          text run at (0,96) width 31: "been"
+          text run at (0,112) width 58: "removed."
+      RenderBlock {DIV} at (0,432) size 80x144 [color=#0000FF]
+        RenderText {#text} at (0,0) size 80x144
+          text run at (0,0) width 74: "This is div2."
+          text run at (0,16) width 54: "This text"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 25: "blue"
+          text run at (0,64) width 64: "because a"
+          text run at (0,80) width 57: "matching"
+          text run at (0,96) width 80: "rule with that"
+          text run at (0,112) width 80: "property has"
+          text run at (0,128) width 78: "been added."
+      RenderBlock {DIV} at (0,576) size 80x128
+        RenderText {#text} at (0,0) size 80x128
+          text run at (0,0) width 74: "This is div3."
+          text run at (0,16) width 54: "This text"
+          text run at (0,32) width 65: "should not"
+          text run at (0,48) width 58: "be yellow"
+          text run at (0,64) width 80: "because that"
+          text run at (0,80) width 50: "rule has"
+          text run at (0,96) width 31: "been"
+          text run at (0,112) width 58: "removed."
+      RenderBlock {DIV} at (0,704) size 80x144 [color=#008000]
+        RenderText {#text} at (0,0) size 80x144
+          text run at (0,0) width 74: "This is div4."
+          text run at (0,16) width 54: "This text"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 37: "green"
+          text run at (0,64) width 64: "because a"
+          text run at (0,80) width 57: "matching"
+          text run at (0,96) width 80: "rule with that"
+          text run at (0,112) width 80: "property has"
+          text run at (0,128) width 78: "been added."
+      RenderBlock {DIV} at (0,848) size 80x144
+        RenderText {#text} at (0,0) size 80x144
+          text run at (0,0) width 74: "This is div3."
+          text run at (0,16) width 54: "This text"
+          text run at (0,32) width 65: "should not"
+          text run at (0,48) width 58: "be purple"
+          text run at (0,64) width 76: "because the"
+          text run at (0,80) width 64: "stylesheet"
+          text run at (0,96) width 80: "with that rule"
+          text run at (0,112) width 58: "has been"
+          text run at (0,128) width 55: "disabled."

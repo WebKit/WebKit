@@ -1,0 +1,29 @@
+layer at (0,0) size 110x369
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 110x369
+  RenderBlock {HTML} at (0,0) size 96x369
+    RenderBody {BODY} at (8,8) size 80x347
+      RenderBlock (anonymous) at (0,0) size 80x240
+        RenderText {#text} at (0,0) size 70x240
+          text run at (0,0) width 61: "This tests"
+          text run at (0,16) width 70: "whether alt"
+          text run at (0,32) width 37: "text is"
+          text run at (0,48) width 62: "shown for"
+          text run at (0,64) width 38: "image"
+          text run at (0,80) width 57: "elements"
+          text run at (0,96) width 68: "with no src"
+          text run at (0,112) width 53: "attribute."
+          text run at (0,128) width 69: "You should"
+          text run at (0,144) width 23: "see"
+          text run at (0,160) width 62: "\"Success\""
+          text run at (0,176) width 35: "twice,"
+          text run at (0,192) width 70: "followed by"
+          text run at (0,208) width 37: "a blue"
+          text run at (0,224) width 62: "rectangle."
+      RenderBlock {P} at (0,254) size 80x93
+        RenderImage {IMG} at (0,0) size 52x16
+        RenderBR {BR} at (52,16) size 0x0
+        RenderImage {IMG} at (0,16) size 102x52 [border: (1px solid #000000)]
+        RenderBR {BR} at (0,0) size 0x0
+        RenderImage {IMG} at (0,68) size 75x25
+        RenderBR {BR} at (75,93) size 0x0

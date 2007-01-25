@@ -1,0 +1,42 @@
+layer at (0,0) size 96x436
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x436
+  RenderBlock {HTML} at (0,0) size 96x436
+    RenderBody {BODY} at (8,14) size 80x408
+      RenderBlock {P} at (0,0) size 80x64
+        RenderText {#text} at (0,0) size 88x64
+          text run at (0,0) width 52: "This <hr"
+          text run at (0,16) width 88: "width=\"25%\">"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 59: "centered:"
+      RenderBlock {HR} at (29,78) size 22x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,94) size 80x48
+        RenderText {#text} at (0,0) size 72x48
+          text run at (0,0) width 55: "This one"
+          text run at (0,16) width 60: "should be"
+          text run at (0,32) width 72: "left-aligned."
+      RenderBlock {HR} at (0,156) size 22x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,172) size 80x64
+        RenderText {#text} at (0,0) size 60x64
+          text run at (0,0) width 55: "This one"
+          text run at (0,16) width 60: "should be"
+          text run at (0,32) width 32: "right-"
+          text run at (0,48) width 49: "aligned."
+      RenderBlock {HR} at (58,250) size 22x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,266) size 80x48
+        RenderText {#text} at (0,0) size 60x48
+          text run at (0,0) width 55: "This one"
+          text run at (0,16) width 60: "should be"
+          text run at (0,32) width 59: "centered."
+      RenderBlock {HR} at (29,328) size 22x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,344) size 80x64
+        RenderText {#text} at (0,0) size 49x16
+          text run at (0,0) width 49: "(W3C: \x{201C}"
+        RenderInline {A} at (0,0) size 69x64 [color=#0000EE]
+          RenderText {#text} at (49,0) size 69x64
+            text run at (49,0) width 16: "By"
+            text run at (0,16) width 69: "default, the"
+            text run at (0,32) width 37: "rule is"
+            text run at (0,48) width 59: "centered."
+        RenderText {#text} at (59,48) size 11x16
+          text run at (59,48) width 11: "\x{201D})"

@@ -1,0 +1,32 @@
+layer at (0,0) size 96x462
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x160
+  RenderBlock {HTML} at (0,0) size 96x160
+    RenderBody {BODY} at (8,8) size 80x144
+      RenderText {#text} at (0,0) size 76x144
+        text run at (0,0) width 69: "You should"
+        text run at (0,16) width 76: "see a single"
+        text run at (0,32) width 76: "green stripe"
+        text run at (0,48) width 68: "below. The"
+        text run at (0,64) width 50: "test has"
+        text run at (0,80) width 71: "failed if you"
+        text run at (0,96) width 70: "don't see a"
+        text run at (0,112) width 44: "perfect"
+        text run at (0,128) width 66: "rectangle. "
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,152) size 84x310
+  RenderBlock (positioned) {DIV} at (8,152) size 84x310
+    RenderInline {A} at (0,0) size 37x306 [color=#008000] [bgcolor=#008000]
+      RenderInline {SPAN} at (0,0) size 37x58
+        RenderText {#text} at (0,2) size 37x58
+          text run at (0,2) width 37: "A"
+      RenderText {#text} at (0,64) size 37x58
+        text run at (0,64) width 37: "A"
+      RenderBR {BR} at (37,115) size 0x0
+      RenderInline {SPAN} at (0,0) size 37x58
+        RenderText {#text} at (0,126) size 37x58
+          text run at (0,126) width 37: "A"
+      RenderText {#text} at (0,188) size 37x120
+        text run at (0,188) width 37: "A"
+        text run at (0,250) width 37: "A"
+    RenderText {#text} at (0,0) size 0x0

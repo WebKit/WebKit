@@ -1,0 +1,24 @@
+layer at (0,0) size 212x168
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x112
+  RenderBlock {HTML} at (0,0) size 96x112
+    RenderBody {BODY} at (8,8) size 80x96
+      RenderText {#text} at (0,0) size 71x96
+        text run at (0,0) width 51: "The two"
+        text run at (0,16) width 32: "black"
+        text run at (0,32) width 66: "rectangles"
+        text run at (0,48) width 36: "below"
+        text run at (0,64) width 71: "should look"
+        text run at (0,80) width 55: "identical."
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,50) size 154x104
+  RenderBlock (positioned) {DIV} at (8,50) size 154x104 [border: (2px solid #000000)]
+    RenderBlock (floating) {DIV} at (2,2) size 50x50 [bgcolor=#008000]
+    RenderBlock {DIV} at (102,52) size 50x50 [bgcolor=#008000]
+layer at (8,114) size 204x54
+  RenderBlock (positioned) {DIV} at (8,114) size 204x54 [border: (2px solid #000000)]
+layer at (10,116) size 50x50
+  RenderBlock (positioned) {DIV} at (2,2) size 50x50 [bgcolor=#008000]
+layer at (160,116) size 50x50
+  RenderBlock (positioned) {DIV} at (152,2) size 50x50 [bgcolor=#008000]

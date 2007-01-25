@@ -1,0 +1,32 @@
+layer at (0,0) size 286x302
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 286x302
+  RenderBlock {HTML} at (0,0) size 96x302
+    RenderBody {BODY} at (8,14) size 80x280
+      RenderBlock {P} at (0,0) size 80x128
+        RenderText {#text} at (0,0) size 70x128
+          text run at (0,0) width 25: "The"
+          text run at (0,16) width 55: "following"
+          text run at (0,32) width 33: "three"
+          text run at (0,48) width 66: "rectangles"
+          text run at (0,64) width 60: "should be"
+          text run at (0,80) width 55: "identical,"
+          text run at (0,96) width 70: "with no red"
+          text run at (0,112) width 51: "present."
+      RenderTable {TABLE} at (0,142) size 278x138
+        RenderTableSection {TBODY} at (0,0) size 278x138
+          RenderTableRow {TR} at (0,14) size 278x48
+            RenderTableCell {TD} at (14,14) size 118x48 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (3,3) size 112x42 [bgcolor=#FFFF00]
+                RenderBlock {DIV} at (0,0) size 112x14 [border: (14px solid #00FF00) none]
+                RenderBlock {DIV} at (0,28) size 112x14 [border: (14px solid #008000) none]
+            RenderTableCell {TD} at (146,14) size 118x48 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (3,3) size 112x14 [bgcolor=#00FF00]
+              RenderBlock {DIV} at (3,17) size 112x14 [bgcolor=#FFFF00]
+              RenderBlock {DIV} at (3,31) size 112x14 [bgcolor=#008000]
+          RenderTableRow {TR} at (0,76) size 278x48
+            RenderTableCell {TD} at (14,76) size 118x48 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=1 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (3,3) size 112x14 [bgcolor=#00FF00]
+              RenderBlock {DIV} at (3,17) size 112x14 [bgcolor=#FFFF00]
+              RenderBlock {DIV} at (3,31) size 112x14 [bgcolor=#008000]
+            RenderTableCell {TD} at (146,100) size 118x0 [r=1 c=1 rs=1 cs=1]

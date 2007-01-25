@@ -1,0 +1,45 @@
+layer at (0,0) size 96x410
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x410
+  RenderBlock {HTML} at (0,0) size 96x410
+    RenderBody {BODY} at (8,8) size 80x388
+      RenderBlock {P} at (0,0) size 80x388 [border: (2px solid #FF0000)]
+        RenderBlock (anonymous) at (2,2) size 76x64
+          RenderInline {I} at (0,0) size 67x64
+            RenderText {#text} at (0,0) size 58x32
+              text run at (0,0) width 58: "Start of a"
+              text run at (0,16) width 29: "line. "
+            RenderInline {FONT} at (0,0) size 67x48 [color=#FF0000]
+              RenderText {#text} at (29,16) size 67x48
+                text run at (29,16) width 33: "More"
+                text run at (0,32) width 67: "red on this"
+                text run at (0,48) width 25: "line:"
+        RenderBlock (anonymous) at (2,82) size 76x143 [color=#FF0000]
+          RenderBlock {H3} at (0,0) size 76x54
+            RenderText {#text} at (0,0) size 73x54
+              text run at (0,0) width 73: "Suddenly"
+              text run at (0,18) width 55: "a block"
+              text run at (0,36) width 67: "appears!"
+          RenderBlock {H2} at (0,71) size 76x72
+            RenderText {#text} at (0,0) size 78x71
+              text run at (0,0) width 41: "And"
+              text run at (0,24) width 78: "another"
+              text run at (0,48) width 63: "block!"
+        RenderBlock (anonymous) at (2,242) size 76x144
+          RenderInline {I} at (0,0) size 66x112
+            RenderInline {FONT} at (0,0) size 66x48 [color=#FF0000]
+              RenderText {#text} at (0,0) size 64x32
+                text run at (0,0) width 64: "Now more"
+                text run at (0,16) width 26: "text."
+              RenderBR {BR} at (26,29) size 0x0
+              RenderText {#text} at (0,32) size 66x16
+                text run at (0,32) width 66: "This is red"
+            RenderText {#text} at (0,48) size 60x64
+              text run at (0,48) width 48: "but now"
+              text run at (0,64) width 58: "only italic"
+              text run at (0,80) width 40: "on the"
+              text run at (0,96) width 60: "same line"
+          RenderBR {BR} at (60,109) size 0x0
+          RenderText {#text} at (0,112) size 73x32
+            text run at (0,112) width 73: "Plain line at"
+            text run at (0,128) width 51: "the end."

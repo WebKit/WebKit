@@ -1,0 +1,77 @@
+layer at (0,0) size 108x916
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 108x916
+  RenderBlock {HTML} at (0,0) size 96x916
+    RenderBody {BODY} at (8,14) size 80x894
+      RenderBlock {P} at (0,0) size 80x624
+        RenderText {#text} at (0,0) size 88x624
+          text run at (0,0) width 80: "This is a test"
+          text run at (0,16) width 64: "to check if"
+          text run at (0,32) width 70: "the loading"
+          text run at (0,48) width 24: "of a"
+          text run at (0,64) width 78: "stylesheet is"
+          text run at (0,80) width 52: "properly"
+          text run at (0,96) width 60: "cancelled"
+          text run at (0,112) width 55: "(count of"
+          text run at (0,128) width 51: "pending"
+          text run at (0,144) width 75: "style sheets"
+          text run at (0,160) width 10: "is"
+          text run at (0,176) width 88: "decremented)"
+          text run at (0,192) width 77: "when its link"
+          text run at (0,208) width 34: "tag is"
+          text run at (0,224) width 55: "changed"
+          text run at (0,240) width 72: "through the"
+          text run at (0,256) width 66: "DOM after"
+          text run at (0,272) width 69: "the link tag"
+          text run at (0,288) width 78: "is appended"
+          text run at (0,304) width 36: "to the"
+          text run at (0,320) width 64: "document."
+          text run at (0,336) width 61: "When the"
+          text run at (0,352) width 80: "div with style"
+          text run at (0,368) width 70: "is moved, it"
+          text run at (0,384) width 72: "appears on"
+          text run at (0,400) width 78: "the screen if"
+          text run at (0,416) width 53: "the style"
+          text run at (0,432) width 72: "was loaded"
+          text run at (0,448) width 55: "properly,"
+          text run at (0,464) width 74: "and doesn't"
+          text run at (0,480) width 45: "appear"
+          text run at (0,496) width 71: "when there"
+          text run at (0,512) width 48: "are out-"
+          text run at (0,528) width 54: "standing"
+          text run at (0,544) width 71: "stylesheets"
+          text run at (0,560) width 78: "according to"
+          text run at (0,576) width 20: "the"
+          text run at (0,592) width 73: "DocLoader."
+          text run at (0,608) width 29: "See "
+        RenderInline {A} at (0,0) size 32x16 [color=#0000EE]
+          RenderText {#text} at (29,608) size 32x16
+            text run at (29,608) width 32: "6999"
+      RenderBlock {P} at (0,638) size 80x64
+        RenderInline {SPAN} at (0,0) size 33x16 [color=#FF0000]
+          RenderText {#text} at (0,0) size 33x16
+            text run at (0,0) width 33: "Fails"
+        RenderText {#text} at (33,0) size 44x32
+          text run at (33,0) width 11: " if"
+          text run at (0,16) width 37: "there "
+        RenderInline {SPAN} at (0,0) size 34x16 [color=#FF0000]
+          RenderText {#text} at (37,16) size 34x16
+            text run at (37,16) width 34: "is no"
+        RenderText {#text} at (0,32) size 72x32
+          text run at (0,32) width 72: "pink box on"
+          text run at (0,48) width 70: "the screen."
+      RenderBlock {P} at (0,716) size 80x64
+        RenderInline {SPAN} at (0,0) size 50x16 [color=#008000]
+          RenderText {#text} at (0,0) size 50x16
+            text run at (0,0) width 50: "Passes"
+        RenderText {#text} at (50,0) size 61x32
+          text run at (50,0) width 11: " if"
+          text run at (0,16) width 37: "there "
+        RenderInline {SPAN} at (0,0) size 12x16 [color=#008000]
+          RenderText {#text} at (37,16) size 12x16
+            text run at (37,16) width 12: "is"
+        RenderText {#text} at (49,16) size 72x48
+          text run at (49,16) width 12: " a"
+          text run at (0,32) width 72: "pink box on"
+          text run at (0,48) width 70: "the screen."
+      RenderBlock {DIV} at (0,794) size 100x100 [bgcolor=#FFCCFF]

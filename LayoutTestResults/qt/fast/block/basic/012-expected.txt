@@ -1,0 +1,13 @@
+layer at (0,0) size 96x116
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x116
+  RenderBlock {HTML} at (0,0) size 96x116
+    RenderBody {BODY} at (8,8) size 80x100
+      RenderBlock {DIV} at (0,0) size 80x100
+        RenderText {#text} at (0,0) size 77x96
+          text run at (0,0) width 73: "I should not"
+          text run at (0,16) width 43: "have a"
+          text run at (0,32) width 77: "border and I"
+          text run at (0,48) width 65: "should not"
+          text run at (0,64) width 69: "have a tiny"
+          text run at (0,80) width 36: "width."

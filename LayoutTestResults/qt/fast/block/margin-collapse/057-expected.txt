@@ -1,0 +1,50 @@
+layer at (0,0) size 376x378
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 376x378
+  RenderBlock {HTML} at (0,0) size 96x378
+    RenderBody {BODY} at (8,14) size 80x356
+      RenderBlock {P} at (0,0) size 80x96
+        RenderText {#text} at (0,0) size 77x96
+          text run at (0,0) width 59: "There six"
+          text run at (0,16) width 77: "boxes below"
+          text run at (0,32) width 71: "should look"
+          text run at (0,48) width 58: "the same"
+          text run at (0,64) width 70: "with no red"
+          text run at (0,80) width 51: "present."
+      RenderTable {TABLE} at (0,110) size 368x246
+        RenderTableSection {TBODY} at (0,0) size 368x246
+          RenderTableRow {TR} at (0,2) size 368x120
+            RenderTableCell {TD} at (2,2) size 120x120 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 118x118 [bgcolor=#FF0000] [border: (3px solid #000000)]
+                RenderBlock {DIV} at (3,3) size 112x112 [bgcolor=#00FF00]
+                  RenderBlock (floating) {DIV} at (0,0) size 56x56 [bgcolor=#00FFFF]
+                  RenderBlock {DIV} at (0,56) size 112x56 [bgcolor=#FF0000] [border: (56px solid #FFFF00) none]
+            RenderTableCell {TD} at (124,2) size 120x120 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 118x118 [bgcolor=#FF0000] [border: (3px solid #000000)]
+                RenderBlock {DIV} at (3,3) size 112x112 [bgcolor=#00FF00]
+                  RenderBlock (floating) {DIV} at (0,0) size 56x56 [bgcolor=#00FFFF]
+                  RenderBlock {DIV} at (0,56) size 112x56 [bgcolor=#FF0000] [border: (56px solid #FFFF00) none]
+            RenderTableCell {TD} at (246,2) size 120x120 [r=0 c=2 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 118x118 [bgcolor=#FF0000] [border: (3px solid #000000)]
+                RenderBlock {DIV} at (3,3) size 112x112 [bgcolor=#00FF00]
+                  RenderBlock (floating) {DIV} at (0,0) size 56x56 [bgcolor=#00FFFF]
+                  RenderBlock {DIV} at (0,56) size 112x56 [bgcolor=#FF0000] [border: (56px solid #FFFF00) none]
+          RenderTableRow {TR} at (0,124) size 368x120
+            RenderTableCell {TD} at (2,124) size 120x120 [r=1 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 118x118 [bgcolor=#FF0000] [border: (3px solid #000000)]
+                RenderBlock {DIV} at (3,3) size 112x112 [bgcolor=#00FF00]
+                  RenderBlock (floating) {DIV} at (0,0) size 56x56 [bgcolor=#00FFFF]
+                  RenderBlock {DIV} at (0,56) size 112x56 [bgcolor=#FF0000] [border: (56px solid #FFFF00) none]
+                    RenderBlock {DIV} at (14,0) size 84x0
+            RenderTableCell {TD} at (124,124) size 120x120 [r=1 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 118x118 [bgcolor=#FF0000] [border: (3px solid #000000)]
+                RenderBlock {DIV} at (3,3) size 112x112 [bgcolor=#00FF00]
+                  RenderBlock (floating) {DIV} at (0,0) size 56x56 [bgcolor=#00FFFF]
+                  RenderBlock {DIV} at (0,56) size 112x56 [bgcolor=#FF0000] [border: (56px solid #FFFF00) none]
+                    RenderBlock {DIV} at (14,0) size 84x0
+            RenderTableCell {TD} at (246,124) size 120x120 [r=1 c=2 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 118x118 [bgcolor=#FF0000] [border: (3px solid #000000)]
+                RenderBlock {DIV} at (3,3) size 112x112 [bgcolor=#00FF00]
+                  RenderBlock (floating) {DIV} at (0,0) size 56x56 [bgcolor=#00FFFF]
+                  RenderBlock {DIV} at (0,56) size 112x56 [bgcolor=#FF0000] [border: (56px solid #FFFF00) none]
+                    RenderBlock {DIV} at (14,0) size 84x0

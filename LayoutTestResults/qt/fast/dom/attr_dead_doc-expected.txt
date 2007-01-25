@@ -1,0 +1,14 @@
+layer at (0,0) size 308x166
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 308x166
+  RenderBlock {HTML} at (0,0) size 96x166
+    RenderBody {BODY} at (8,8) size 80x150
+      RenderPartObject {IFRAME} at (0,0) size 300x150
+        layer at (0,0) size 296x146
+          RenderView at (0,0) size 296x146
+        layer at (0,0) size 296x8
+          RenderBlock {HTML} at (0,0) size 296x8
+            RenderBody {BODY} at (8,8) size 280x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0

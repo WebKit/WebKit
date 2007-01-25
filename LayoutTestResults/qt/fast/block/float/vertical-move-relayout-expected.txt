@@ -1,0 +1,33 @@
+layer at (0,0) size 286x476
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 286x476
+  RenderBlock {HTML} at (0,0) size 96x476
+    RenderBody {BODY} at (8,8) size 80x460
+      RenderBlock {P} at (0,0) size 80x112
+        RenderText {#text} at (0,0) size 49x16
+          text run at (0,0) width 49: "Test for"
+        RenderInline {I} at (0,0) size 278x96
+          RenderInline {A} at (0,0) size 278x32 [color=#0000EE]
+            RenderText {#text} at (0,16) size 278x32
+              text run at (0,16) width 278: "http://bugzilla.opendarwin.org/show_bug.cgi?"
+              text run at (0,32) width 52: "id=6795"
+          RenderText {#text} at (0,48) size 75x64
+            text run at (0,48) width 72: "Slow image"
+            text run at (0,64) width 75: "load causes"
+            text run at (0,80) width 42: "render"
+            text run at (0,96) width 50: "problem"
+        RenderText {#text} at (50,96) size 3x16
+          text run at (50,96) width 3: "."
+      RenderBlock {P} at (0,126) size 80x80
+        RenderText {#text} at (0,0) size 72x80
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 60: "should be"
+          text run at (0,32) width 54: "only one"
+          text run at (0,48) width 72: "blue square"
+          text run at (0,64) width 39: "below:"
+      RenderBlock {DIV} at (0,220) size 80x240
+        RenderBlock (anonymous) at (0,0) size 80x220
+          RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#87CEEB]
+          RenderBlock {DIV} at (0,100) size 50x120
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DIV} at (0,220) size 80x20

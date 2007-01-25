@@ -1,0 +1,22 @@
+layer at (0,0) size 96x223
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x223
+  RenderBlock {HTML} at (0,0) size 96x223
+    RenderBody {BODY} at (8,8) size 80x207 [color=#FFFFFF]
+      RenderBlock {DIV} at (0,0) size 80x111 [bgcolor=#008000] [border: (1px solid #000000) none]
+        RenderBlock {P} at (0,0) size 80x96
+          RenderText {#text} at (0,0) size 78x96
+            text run at (0,0) width 49: "This div"
+            text run at (0,16) width 60: "should be"
+            text run at (0,32) width 78: "2em tall with"
+            text run at (0,48) width 67: "a 1em gap"
+            text run at (0,64) width 72: "underneath"
+            text run at (0,80) width 50: "the text."
+      RenderBlock {DIV} at (0,111) size 80x96 [bgcolor=#008000]
+        RenderText {#text} at (0,0) size 79x96
+          text run at (0,0) width 79: "I should also"
+          text run at (0,16) width 56: "be green"
+          text run at (0,32) width 57: "and flush"
+          text run at (0,48) width 49: "with the"
+          text run at (0,64) width 74: "other green"
+          text run at (0,80) width 63: "div above."

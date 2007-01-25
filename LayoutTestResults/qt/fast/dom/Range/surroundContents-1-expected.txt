@@ -1,0 +1,19 @@
+layer at (0,0) size 208x136
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 208x136
+  RenderBlock {HTML} at (0,0) size 96x136
+    RenderBody {BODY} at (8,8) size 80x114
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 200x80
+          text run at (0,0) width 61: "This tests"
+          text run at (0,16) width 17: "for"
+          text run at (0,32) width 200: "HIERARCHY_REQUEST_ERRs"
+          text run at (0,48) width 78: "when calling"
+          text run at (0,64) width 163: "Range::surroundContents."
+      RenderBlock {DIV} at (0,94) size 80x20 [border: (1px solid #0000FF)]
+        RenderBlock (anonymous) at (1,1) size 78x0
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DIV} at (1,1) size 78x18 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,1) size 73x16
+            text run at (1,1) width 73: "Hello world."
+      RenderBlock {UL} at (0,128) size 80x0

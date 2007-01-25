@@ -1,0 +1,29 @@
+layer at (0,0) size 294x346
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 294x346
+  RenderBlock {HTML} at (0,0) size 96x346
+    RenderBody {BODY} at (8,14) size 80x318
+      RenderBlock {P} at (0,0) size 80x64
+        RenderText {#text} at (0,0) size 78x64
+          text run at (0,0) width 40: "These"
+          text run at (0,16) width 39: "<h1>s"
+          text run at (0,32) width 78: "should all be"
+          text run at (0,48) width 72: "left-aligned:"
+      RenderBlock {H1} at (0,82) size 80x38 [border: (3px solid #FF0000)]
+        RenderText {#text} at (3,4) size 98x30
+          text run at (3,4) width 98: "sample"
+      RenderBlock {H1} at (0,138) size 286x38 [border: (3px solid #FF0000)]
+        RenderText {#text} at (3,4) size 98x30
+          text run at (3,4) width 98: "sample"
+      RenderBlock {P} at (0,194) size 80x64
+        RenderText {#text} at (0,0) size 75x64
+          text run at (0,0) width 75: "These <p>s"
+          text run at (0,16) width 60: "should be"
+          text run at (0,32) width 59: "(and are)"
+          text run at (0,48) width 72: "left-aligned:"
+      RenderBlock {P} at (0,272) size 80x16
+        RenderText {#text} at (0,0) size 45x16
+          text run at (0,0) width 45: "sample"
+      RenderBlock {P} at (0,302) size 140x16
+        RenderText {#text} at (0,0) size 45x16
+          text run at (0,0) width 45: "sample"

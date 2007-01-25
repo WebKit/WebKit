@@ -1,0 +1,19 @@
+layer at (0,0) size 96x92
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x92
+  RenderBlock {HTML} at (0,0) size 96x92
+    RenderBody {BODY} at (8,8) size 80x76
+      RenderTable {TABLE} at (0,0) size 88x76
+        RenderTableSection {TBODY} at (0,0) size 88x76
+          RenderTableRow {TR} at (0,2) size 88x72
+            RenderTableCell {TD} at (2,2) size 80x72 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 78x70
+                RenderTableSection {TBODY} at (0,0) size 78x70
+                  RenderTableRow {TR} at (0,2) size 78x66
+                    RenderTableCell {TD} at (2,2) size 74x66 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 72x64
+                        text run at (1,1) width 70: "Look at me"
+                        text run at (1,17) width 72: "contributing"
+                        text run at (1,33) width 34: "some"
+                        text run at (1,49) width 58: "minwidth."
+            RenderTableCell {TD} at (84,37) size 2x2 [bgcolor=#FF0000] [r=0 c=1 rs=1 cs=1]

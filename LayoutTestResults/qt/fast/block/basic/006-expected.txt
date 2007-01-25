@@ -1,0 +1,24 @@
+layer at (0,0) size 96x228
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x228
+  RenderBlock {HTML} at (0,0) size 96x228
+    RenderBody {BODY} at (8,14) size 80x206
+      RenderBlock {P} at (0,0) size 80x128
+        RenderText {#text} at (0,0) size 72x128
+          text run at (0,0) width 25: "The"
+          text run at (0,16) width 55: "following"
+          text run at (0,32) width 71: "two vertical"
+          text run at (0,48) width 72: "bars should"
+          text run at (0,64) width 55: "be at the"
+          text run at (0,80) width 34: "same"
+          text run at (0,96) width 62: "horizontal"
+          text run at (0,112) width 52: "position."
+      RenderBlock {DIV} at (0,142) size 84x32
+        RenderBlock {DIV} at (56,0) size 0x32
+          RenderInline {SPAN} at (0,0) size 7x30
+            RenderText {#text} at (0,1) size 7x30
+              text run at (0,1) width 7: "|"
+      RenderBlock {DIV} at (0,174) size 80x32
+        RenderInline {SPAN} at (0,0) size 7x30
+          RenderText {#text} at (56,1) size 7x30
+            text run at (56,1) width 7: "|"

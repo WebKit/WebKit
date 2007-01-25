@@ -1,0 +1,205 @@
+layer at (0,0) size 183x3879
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 183x3879
+  RenderBlock {HTML} at (0,0) size 96x3879
+    RenderBody {BODY} at (8,8) size 80x3841
+      RenderBlock {DIV} at (4,0) size 72x1939 [border: (4px solid #000000)]
+        RenderBlock {P} at (4,20) size 64x144
+          RenderText {#text} at (0,0) size 78x144
+            text run at (0,0) width 64: "Affected"
+            text run at (0,18) width 78: "Browsers:"
+            text run at (0,36) width 44: "Safari"
+            text run at (0,54) width 26: "2.0,"
+            text run at (0,72) width 70: "Windows"
+            text run at (0,90) width 58: "Internet"
+            text run at (0,108) width 65: "Explorer"
+            text run at (0,126) width 44: "6 SP2"
+        RenderBlock {HR} at (4,180) size 64x2 [border: (1px inset #000000)]
+        RenderBlock {P} at (4,198) size 64x342
+          RenderText {#text} at (0,0) size 154x342
+            text run at (0,0) width 32: "Bug"
+            text run at (0,18) width 93: "Description:"
+            text run at (0,36) width 50: "On the"
+            text run at (0,54) width 64: "Affected"
+            text run at (0,72) width 77: "Browsers,"
+            text run at (0,90) width 55: "if a rule"
+            text run at (0,108) width 60: "sets the"
+            text run at (0,126) width 102: "'background-"
+            text run at (0,144) width 62: "color' of"
+            text run at (0,162) width 19: "an"
+            text run at (0,180) width 64: "element,"
+            text run at (0,198) width 28: "this"
+            text run at (0,216) width 39: "color"
+            text run at (0,234) width 53: "cannot"
+            text run at (0,252) width 19: "be"
+            text run at (0,270) width 83: "overridden"
+            text run at (0,288) width 19: "by"
+            text run at (0,306) width 154: "'background:inherit'"
+            text run at (0,324) width 98: "declarations."
+        RenderBlock {HR} at (4,556) size 64x2 [border: (1px inset #000000)]
+        RenderBlock {P} at (4,574) size 64x450
+          RenderText {#text} at (0,0) size 93x324
+            text run at (0,0) width 71: "Example:"
+            text run at (0,18) width 62: "With the"
+            text run at (0,36) width 69: "following"
+            text run at (0,54) width 42: "code,"
+            text run at (0,72) width 24: "the"
+            text run at (0,90) width 93: "background"
+            text run at (0,108) width 58: "color of"
+            text run at (0,126) width 21: "H1"
+            text run at (0,144) width 69: "elements"
+            text run at (0,162) width 41: "stays"
+            text run at (0,180) width 61: "pink, no"
+            text run at (0,198) width 48: "matter"
+            text run at (0,216) width 36: "what"
+            text run at (0,234) width 93: "background"
+            text run at (0,252) width 39: "color"
+            text run at (0,270) width 24: "the"
+            text run at (0,288) width 58: "parents"
+            text run at (0,306) width 42: "have:"
+          RenderBR {BR} at (42,306) size 0x18
+          RenderText {#text} at (0,324) size 98x72
+            text run at (0,324) width 33: "  H1 "
+            text run at (33,324) width 6: "{"
+            text run at (0,342) width 98: "background-"
+            text run at (0,360) width 44: "color:"
+            text run at (0,378) width 48: "pink; }"
+          RenderBR {BR} at (48,378) size 0x18
+          RenderText {#text} at (0,396) size 98x54
+            text run at (0,396) width 33: "  H1 "
+            text run at (33,396) width 6: "{"
+            text run at (0,414) width 98: "background:"
+            text run at (0,432) width 63: "inherit; }"
+        RenderBlock {HR} at (4,1040) size 64x2 [border: (1px inset #000000)]
+        RenderBlock {P} at (4,1058) size 64x360
+          RenderText {#text} at (0,0) size 102x360
+            text run at (0,0) width 45: "Work-"
+            text run at (0,18) width 60: "around:"
+            text run at (0,36) width 29: "The"
+            text run at (0,54) width 102: "'background-"
+            text run at (0,72) width 43: "color'"
+            text run at (0,90) width 28: "can"
+            text run at (0,108) width 56: "only be"
+            text run at (0,126) width 83: "overridden"
+            text run at (0,144) width 19: "by"
+            text run at (0,162) width 59: "another"
+            text run at (0,180) width 102: "'background-"
+            text run at (0,198) width 43: "color'"
+            text run at (0,216) width 89: "declaration,"
+            text run at (0,234) width 52: "or by a"
+            text run at (0,252) width 101: "'background'"
+            text run at (0,270) width 85: "declaration"
+            text run at (0,288) width 29: "that"
+            text run at (0,306) width 38: "does"
+            text run at (0,324) width 55: "specify"
+            text run at (0,342) width 56: "a color."
+        RenderBlock {HR} at (4,1434) size 64x2 [border: (1px inset #000000)]
+        RenderBlock (anonymous) at (4,1443) size 64x112
+          RenderText {#text} at (0,0) size 81x112
+            text run at (0,0) width 56: "This is in"
+            text run at (0,16) width 81: "contradiction"
+            text run at (0,32) width 49: "with the"
+            text run at (0,48) width 36: "CSS2"
+            text run at (0,64) width 78: "specification"
+            text run at (0,80) width 36: "which"
+            text run at (0,96) width 32: "says:"
+        RenderBlock {UL} at (4,1569) size 64x352
+          RenderListItem {LI} at (40,0) size 24x352
+            RenderListMarker at (-16,0) size 6x16: bullet
+            RenderText {#text} at (0,0) size 25x16
+              text run at (0,0) width 25: "The"
+            RenderInline {A} at (0,0) size 79x16 [color=#0000EE]
+              RenderText {#text} at (0,16) size 79x16
+                text run at (0,16) width 79: "'background'"
+            RenderText {#text} at (0,32) size 73x320
+              text run at (0,32) width 53: "property"
+              text run at (0,48) width 23: "first"
+              text run at (0,64) width 26: "sets"
+              text run at (0,80) width 14: "all"
+              text run at (0,96) width 20: "the"
+              text run at (0,112) width 58: "individual"
+              text run at (0,128) width 73: "background"
+              text run at (0,144) width 64: "properties"
+              text run at (0,160) width 12: "to"
+              text run at (0,176) width 28: "their"
+              text run at (0,192) width 32: "initial"
+              text run at (0,208) width 43: "values,"
+              text run at (0,224) width 28: "then"
+              text run at (0,240) width 48: "assigns"
+              text run at (0,256) width 43: "explicit"
+              text run at (0,272) width 40: "values"
+              text run at (0,288) width 34: "given"
+              text run at (0,304) width 11: "in"
+              text run at (0,320) width 20: "the"
+              text run at (0,336) width 73: "declaration."
+      RenderBlock {DIV} at (4,1969) size 72x1872 [color=#008000] [bgcolor=#90EE90] [border: (4px solid #008000)]
+        RenderBlock (anonymous) at (4,4) size 64x64
+          RenderText {#text} at (0,0) size 76x64
+            text run at (0,0) width 54: "This DIV"
+            text run at (0,16) width 35: "has a"
+            text run at (0,32) width 37: "green"
+            text run at (0,48) width 76: "background."
+        RenderBlock {H1} at (6,86) size 59x648 [border: (4px solid #008000)]
+          RenderText {#text} at (4,5) size 161x638
+            text run at (4,5) width 58: "This"
+            text run at (4,37) width 93: "header"
+            text run at (4,69) width 92: "should"
+            text run at (4,101) width 65: "have"
+            text run at (4,133) width 16: "a"
+            text run at (4,165) width 77: "green"
+            text run at (4,197) width 161: "background"
+            text run at (4,229) width 52: "(not"
+            text run at (4,261) width 67: "pink)"
+            text run at (4,293) width 43: "but"
+            text run at (4,325) width 42: "the"
+            text run at (4,357) width 74: "inline"
+            text run at (4,389) width 65: "style"
+            text run at (4,421) width 52: "rule"
+            text run at (4,453) width 24: "is"
+            text run at (4,485) width 103: "ignored"
+            text run at (4,517) width 34: "on"
+            text run at (4,549) width 42: "the"
+            text run at (4,581) width 112: "Affected"
+            text run at (4,613) width 137: "Browsers."
+        RenderBlock (anonymous) at (4,764) size 64x48
+          RenderText {#text} at (0,0) size 60x48
+            text run at (0,0) width 52: "The DIV"
+            text run at (0,16) width 60: "continues"
+            text run at (0,32) width 32: "here."
+        RenderBlock {H1} at (6,830) size 59x616 [border: (4px solid #008000)]
+          RenderText {#text} at (4,5) size 161x606
+            text run at (4,5) width 58: "This"
+            text run at (4,37) width 93: "header"
+            text run at (4,69) width 92: "should"
+            text run at (4,101) width 65: "have"
+            text run at (4,133) width 16: "a"
+            text run at (4,165) width 77: "green"
+            text run at (4,197) width 161: "background"
+            text run at (4,229) width 52: "(not"
+            text run at (4,261) width 67: "pink)"
+            text run at (4,293) width 43: "but"
+            text run at (4,325) width 42: "the"
+            text run at (4,357) width 138: "!important"
+            text run at (4,389) width 52: "rule"
+            text run at (4,421) width 24: "is"
+            text run at (4,453) width 103: "ignored"
+            text run at (4,485) width 34: "on"
+            text run at (4,517) width 42: "the"
+            text run at (4,549) width 112: "Affected"
+            text run at (4,581) width 137: "Browsers."
+        RenderBlock (anonymous) at (4,1476) size 64x48
+          RenderText {#text} at (0,0) size 60x48
+            text run at (0,0) width 52: "The DIV"
+            text run at (0,16) width 60: "continues"
+            text run at (0,32) width 32: "here."
+        RenderBlock {H1} at (6,1542) size 59x296 [color=#FF0000] [bgcolor=#FFC0CB] [border: (4px solid #FF0000)]
+          RenderText {#text} at (4,5) size 161x286
+            text run at (4,5) width 58: "This"
+            text run at (4,37) width 93: "header"
+            text run at (4,69) width 49: "has"
+            text run at (4,101) width 16: "a"
+            text run at (4,133) width 58: "pink"
+            text run at (4,165) width 161: "background"
+            text run at (4,197) width 50: "and"
+            text run at (4,229) width 74: "that's"
+            text run at (4,261) width 76: "good."

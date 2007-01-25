@@ -1,0 +1,8 @@
+layer at (0,0) size 96x38
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x38
+  RenderBlock {HTML} at (0,0) size 96x38
+    RenderBody {BODY} at (8,8) size 80x16
+      RenderBlock {UL} at (0,0) size 80x16
+        RenderListItem {LI} at (40,0) size 40x16
+          RenderListMarker at (-16,0) size 6x16: bullet

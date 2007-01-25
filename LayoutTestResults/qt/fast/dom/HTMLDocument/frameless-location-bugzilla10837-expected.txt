@@ -1,0 +1,20 @@
+layer at (0,0) size 96x26
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x26
+  RenderBlock {HTML} at (0,0) size 96x26
+    RenderFrameSet {FRAMESET} at (0,0) size 96x26
+      RenderFrame {FRAME} at (0,0) size 46x26
+        layer at (0,0) size 63x32
+          RenderView at (0,0) size 42x22
+        layer at (0,0) size 63x32
+          RenderBlock {HTML} at (0,0) size 42x32
+            RenderBody {BODY} at (8,8) size 26x16
+              RenderBlock {DIV} at (0,0) size 26x16
+                RenderText {#text} at (0,0) size 55x16
+                  text run at (0,0) width 55: "PASSED"
+      RenderFrame {FRAME} at (50,0) size 46x26
+        layer at (0,0) size 42x22
+          RenderView at (0,0) size 42x22
+        layer at (0,0) size 42x8
+          RenderBlock {HTML} at (0,0) size 42x8
+            RenderBody {BODY} at (8,8) size 26x0

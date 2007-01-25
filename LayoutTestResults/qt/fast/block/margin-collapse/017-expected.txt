@@ -1,0 +1,39 @@
+layer at (0,0) size 96x402
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x402
+  RenderBlock {HTML} at (0,0) size 96x402
+    RenderBody {BODY} at (8,14) size 80x374
+      RenderBlock {P} at (0,0) size 80x160
+        RenderText {#text} at (0,0) size 77x160
+          text run at (0,0) width 25: "The"
+          text run at (0,16) width 55: "following"
+          text run at (0,32) width 43: "square"
+          text run at (0,48) width 41: "should"
+          text run at (0,64) width 46: "contain"
+          text run at (0,80) width 70: "exactly two"
+          text run at (0,96) width 69: "bands, one"
+          text run at (0,112) width 70: "yellow, one"
+          text run at (0,128) width 77: "lime, with no"
+          text run at (0,144) width 66: "red visible."
+      RenderTable {TABLE} at (0,174) size 80x106 [bgcolor=#FF0000] [border: (3px solid #000000)]
+        RenderTableSection {TBODY} at (3,3) size 74x100
+          RenderTableRow {TR} at (0,0) size 74x100
+            RenderTableCell {TD} at (0,0) size 37x100 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 37x50 [bgcolor=#FF0000]
+                RenderBlock {DIV} at (0,0) size 37x50 [bgcolor=#FFFF00]
+              RenderBlock {DIV} at (0,50) size 37x50 [bgcolor=#00FF00]
+            RenderTableCell {TD} at (37,0) size 37x100 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 37x50 [border: (50px solid #FFFF00) none]
+              RenderBlock {DIV} at (0,50) size 37x50 [border: (50px solid #00FF00) none]
+      RenderBlock {P} at (0,294) size 80x80
+        RenderText {#text} at (0,0) size 79x64
+          text run at (0,0) width 68: "This test is"
+          text run at (0,16) width 79: "meaningless"
+          text run at (0,32) width 68: "if you don't"
+          text run at (0,48) width 34: "pass "
+        RenderInline {A} at (0,0) size 57x32 [color=#0000EE]
+          RenderText {#text} at (34,48) size 57x32
+            text run at (34,48) width 23: "test"
+            text run at (0,64) width 24: "018"
+        RenderText {#text} at (24,64) size 3x16
+          text run at (24,64) width 3: "."

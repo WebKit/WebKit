@@ -1,0 +1,23 @@
+layer at (0,0) size 96x310
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x310
+  RenderBlock {HTML} at (0,0) size 96x310
+    RenderBody {BODY} at (8,8) size 80x288
+      RenderBlock (anonymous) at (0,0) size 80x224
+        RenderText {#text} at (0,0) size 74x224
+          text run at (0,0) width 51: "The box"
+          text run at (0,16) width 36: "below"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 73: "solid green."
+          text run at (0,64) width 70: "If there are"
+          text run at (0,80) width 72: "10 pixels of"
+          text run at (0,96) width 63: "red visible"
+          text run at (0,112) width 64: "on the top"
+          text run at (0,128) width 74: "and left, the"
+          text run at (0,144) width 73: "background"
+          text run at (0,160) width 52: "image is"
+          text run at (0,176) width 34: "being"
+          text run at (0,192) width 57: "repeated"
+          text run at (0,208) width 69: "improperly."
+      RenderBlock {P} at (0,238) size 80x0
+      RenderBlock {P} at (0,238) size 50x50 [bgcolor=#008000]

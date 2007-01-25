@@ -1,0 +1,40 @@
+layer at (0,0) size 608x324
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 608x324
+  RenderBlock {HTML} at (0,0) size 96x324
+    RenderBody {BODY} at (8,8) size 80x302
+      RenderBlock {P} at (0,0) size 80x224
+        RenderText {#text} at (0,0) size 78x160
+          text run at (0,0) width 61: "The black"
+          text run at (0,16) width 67: "outline box"
+          text run at (0,32) width 72: "should be a"
+          text run at (0,48) width 49: "50px by"
+          text run at (0,64) width 78: "50px square"
+          text run at (0,80) width 43: "with its"
+          text run at (0,96) width 74: "bottom right"
+          text run at (0,112) width 41: "corner"
+          text run at (0,128) width 76: "anchored to"
+          text run at (0,144) width 52: "the right"
+        RenderInline {SPAN} at (0,0) size 45x16 [color=#FFA500]
+          RenderText {#text} at (0,160) size 45x16
+            text run at (0,160) width 45: "orange"
+        RenderText {#text} at (0,176) size 61x48
+          text run at (0,176) width 61: "border on"
+          text run at (0,192) width 52: "the third"
+          text run at (0,208) width 25: "line."
+      RenderBlock {P} at (0,238) size 600x64
+        RenderText {#text} at (0,0) size 180x16
+          text run at (0,0) width 180: "ILorem ipsum dolor sit amet, "
+        RenderText {#text} at (496,32) size 584x32
+          text run at (496,32) width 88: "duis aute irure"
+          text run at (0,48) width 245: "dolor in reprehenderit in voluptate velit."
+layer at (8,246) size 573x50
+  RenderInline (relative positioned) {SPAN} at (0,0) size 573x50 [bgcolor=#008000] [border: (1px solid #808080) (20px solid #FFA500) (1px solid #808080) (20px solid #0000FF)]
+    RenderText {#text} at (220,0) size 553x32
+      text run at (220,0) width 333: "con a pariatur. Excepteur sint occaecat cupidatat non"
+      text run at (0,16) width 355: "proident, sunt in culp qui officia deserunt mollit animequs "
+    RenderText {#text} at (355,16) size 573x32
+      text run at (355,16) width 218: "ILOREM ipsum dol sDuis aute irure"
+      text run at (0,32) width 456: "dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nullat "
+layer at (424,244) size 50x50
+  RenderBlock (positioned) {DIV} at (226,-1) size 50x50

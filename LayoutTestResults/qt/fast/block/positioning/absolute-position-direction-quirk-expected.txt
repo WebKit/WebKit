@@ -1,0 +1,16 @@
+layer at (0,0) size 96x218
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x118
+  RenderBlock {HTML} at (0,0) size 96x118
+    RenderBody {BODY} at (8,8) size 80x96
+      RenderBlock {P} at (0,0) size 80x96
+        RenderText {#text} at (0,0) size 80x96
+          text run at (0,0) width 66: "The green"
+          text run at (0,16) width 43: "square"
+          text run at (0,32) width 80: "should be on"
+          text run at (0,48) width 52: "the right"
+          text run at (0,64) width 78: "hand side of"
+          text run at (0,80) width 59: "the page."
+      RenderBlock {DIV} at (0,110) size 80x0
+layer at (-12,118) size 100x100 backgroundClip at (0,0) size 96x218 clip at (0,0) size 96x218 outlineClip at (0,0) size 96x218
+  RenderBlock (positioned) {DIV} at (-12,118) size 100x100 [bgcolor=#90EE90]

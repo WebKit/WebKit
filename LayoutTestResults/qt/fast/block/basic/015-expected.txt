@@ -1,0 +1,232 @@
+layer at (0,0) size 138x1948
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 138x1948
+  RenderBlock {HTML} at (0,0) size 96x1948
+    RenderBody {BODY} at (8,18) size 80x1916
+      RenderBlock {H1} at (0,0) size 80x128
+        RenderText {#text} at (0,1) size 130x126
+          text run at (0,1) width 123: "Minimum"
+          text run at (0,33) width 50: "and"
+          text run at (0,65) width 130: "Maximum"
+          text run at (0,97) width 93: "Widths"
+      RenderBlock {DIV} at (0,146) size 80x134 [border: (3px solid #800080)]
+        RenderText {#text} at (3,3) size 31x16
+          text run at (3,3) width 31: "This "
+        RenderInline {CODE} at (0,0) size 12x16
+          RenderText {#text} at (34,3) size 12x16
+            text run at (34,3) width 12: "div"
+        RenderText {#text} at (3,19) size 72x112
+          text run at (3,19) width 41: "should"
+          text run at (3,35) width 43: "have a"
+          text run at (3,51) width 48: "medium"
+          text run at (3,67) width 72: "solid purple"
+          text run at (3,83) width 63: "border, as"
+          text run at (3,99) width 59: "should all"
+          text run at (3,115) width 51: "the rest."
+      RenderBlock {DIV} at (0,280) size 38x326 [border: (3px solid #800080)]
+        RenderText {#text} at (3,3) size 27x16
+          text run at (3,3) width 27: "This"
+        RenderInline {CODE} at (0,0) size 12x16
+          RenderText {#text} at (3,19) size 12x16
+            text run at (3,19) width 12: "div"
+        RenderText {#text} at (3,35) size 61x144
+          text run at (3,35) width 41: "should"
+          text run at (3,51) width 31: "have"
+          text run at (3,67) width 8: "a"
+          text run at (3,83) width 33: "width"
+          text run at (3,99) width 12: "of"
+          text run at (3,115) width 31: "40%."
+          text run at (3,131) width 27: "This"
+          text run at (3,147) width 22: "is a"
+          text run at (3,163) width 61: "reference"
+        RenderInline {CODE} at (0,0) size 12x16
+          RenderText {#text} at (3,179) size 12x16
+            text run at (3,179) width 12: "div"
+        RenderText {#text} at (3,195) size 41x96
+          text run at (3,195) width 24: "and"
+          text run at (3,211) width 41: "should"
+          text run at (3,227) width 30: "work"
+          text run at (3,243) width 15: "as"
+          text run at (3,259) width 27: "long"
+          text run at (3,275) width 15: "as"
+        RenderInline {CODE} at (0,0) size 20x16
+          RenderText {#text} at (3,291) size 20x16
+            text run at (3,291) width 20: "width"
+        RenderText {#text} at (3,307) size 40x16
+          text run at (3,307) width 40: "works."
+      RenderBlock {DIV} at (0,606) size 38x134 [border: (3px solid #800080)]
+        RenderText {#text} at (3,3) size 27x16
+          text run at (3,3) width 27: "This"
+        RenderInline {CODE} at (0,0) size 12x16
+          RenderText {#text} at (3,19) size 12x16
+            text run at (3,19) width 12: "div"
+        RenderText {#text} at (3,35) size 41x96
+          text run at (3,35) width 41: "should"
+          text run at (3,51) width 31: "have"
+          text run at (3,67) width 8: "a"
+          text run at (3,83) width 33: "width"
+          text run at (3,99) width 12: "of"
+          text run at (3,115) width 31: "40%."
+      RenderBlock {DIV} at (0,740) size 38x134 [border: (3px solid #800080)]
+        RenderText {#text} at (3,3) size 27x16
+          text run at (3,3) width 27: "This"
+        RenderInline {CODE} at (0,0) size 12x16
+          RenderText {#text} at (3,19) size 12x16
+            text run at (3,19) width 12: "div"
+        RenderText {#text} at (3,35) size 41x96
+          text run at (3,35) width 41: "should"
+          text run at (3,51) width 31: "have"
+          text run at (3,67) width 8: "a"
+          text run at (3,83) width 33: "width"
+          text run at (3,99) width 12: "of"
+          text run at (3,115) width 31: "40%."
+      RenderBlock {DIV} at (0,874) size 38x134 [border: (3px solid #800080)]
+        RenderText {#text} at (3,3) size 27x16
+          text run at (3,3) width 27: "This"
+        RenderInline {CODE} at (0,0) size 12x16
+          RenderText {#text} at (3,19) size 12x16
+            text run at (3,19) width 12: "div"
+        RenderText {#text} at (3,35) size 41x96
+          text run at (3,35) width 41: "should"
+          text run at (3,51) width 31: "have"
+          text run at (3,67) width 8: "a"
+          text run at (3,83) width 33: "width"
+          text run at (3,99) width 12: "of"
+          text run at (3,115) width 31: "40%."
+      RenderBlock {DIV} at (0,1008) size 38x134 [border: (3px solid #800080)]
+        RenderText {#text} at (3,3) size 27x16
+          text run at (3,3) width 27: "This"
+        RenderInline {CODE} at (0,0) size 12x16
+          RenderText {#text} at (3,19) size 12x16
+            text run at (3,19) width 12: "div"
+        RenderText {#text} at (3,35) size 41x96
+          text run at (3,35) width 41: "should"
+          text run at (3,51) width 31: "have"
+          text run at (3,67) width 8: "a"
+          text run at (3,83) width 33: "width"
+          text run at (3,99) width 12: "of"
+          text run at (3,115) width 31: "40%."
+      RenderBlock {DIV} at (0,1142) size 38x134 [border: (3px solid #800080)]
+        RenderText {#text} at (3,3) size 27x16
+          text run at (3,3) width 27: "This"
+        RenderInline {CODE} at (0,0) size 12x16
+          RenderText {#text} at (3,19) size 12x16
+            text run at (3,19) width 12: "div"
+        RenderText {#text} at (3,35) size 41x96
+          text run at (3,35) width 41: "should"
+          text run at (3,51) width 31: "have"
+          text run at (3,67) width 8: "a"
+          text run at (3,83) width 33: "width"
+          text run at (3,99) width 12: "of"
+          text run at (3,115) width 31: "40%."
+      RenderBlock {DIV} at (0,1276) size 38x134 [border: (3px solid #800080)]
+        RenderText {#text} at (3,3) size 27x16
+          text run at (3,3) width 27: "This"
+        RenderInline {CODE} at (0,0) size 12x16
+          RenderText {#text} at (3,19) size 12x16
+            text run at (3,19) width 12: "div"
+        RenderText {#text} at (3,35) size 41x96
+          text run at (3,35) width 41: "should"
+          text run at (3,51) width 31: "have"
+          text run at (3,67) width 8: "a"
+          text run at (3,83) width 33: "width"
+          text run at (3,99) width 12: "of"
+          text run at (3,115) width 31: "40%."
+      RenderBlock {DIV} at (0,1410) size 38x134 [border: (3px solid #800080)]
+        RenderText {#text} at (3,3) size 27x16
+          text run at (3,3) width 27: "This"
+        RenderInline {CODE} at (0,0) size 12x16
+          RenderText {#text} at (3,19) size 12x16
+            text run at (3,19) width 12: "div"
+        RenderText {#text} at (3,35) size 41x96
+          text run at (3,35) width 41: "should"
+          text run at (3,51) width 31: "have"
+          text run at (3,67) width 8: "a"
+          text run at (3,83) width 33: "width"
+          text run at (3,99) width 12: "of"
+          text run at (3,115) width 31: "40%."
+      RenderBlock {DIV} at (0,1544) size 38x134 [border: (3px solid #800080)]
+        RenderText {#text} at (3,3) size 27x16
+          text run at (3,3) width 27: "This"
+        RenderInline {CODE} at (0,0) size 12x16
+          RenderText {#text} at (3,19) size 12x16
+            text run at (3,19) width 12: "div"
+        RenderText {#text} at (3,35) size 41x96
+          text run at (3,35) width 41: "should"
+          text run at (3,51) width 31: "have"
+          text run at (3,67) width 8: "a"
+          text run at (3,83) width 33: "width"
+          text run at (3,99) width 12: "of"
+          text run at (3,115) width 31: "40%."
+      RenderBlock {P} at (0,1692) size 80x224
+        RenderText {#text} at (0,0) size 55x64
+          text run at (0,0) width 32: "If the"
+          text run at (0,16) width 50: "browser"
+          text run at (0,32) width 55: "does not"
+          text run at (0,48) width 51: "support "
+        RenderInline {CODE} at (0,0) size 67x32
+          RenderText {#text} at (51,48) size 67x32
+            text run at (51,48) width 16: "min-"
+            text run at (0,64) width 20: "width"
+        RenderText {#text} at (20,64) size 32x16
+          text run at (20,64) width 32: " and "
+        RenderInline {CODE} at (0,0) size 68x32
+          RenderText {#text} at (52,64) size 68x32
+            text run at (52,64) width 16: "max-"
+            text run at (0,80) width 20: "width"
+        RenderText {#text} at (20,80) size 79x48
+          text run at (20,80) width 59: ", then the"
+          text run at (0,96) width 40: "widths"
+          text run at (0,112) width 60: "should be"
+        RenderInline {CODE} at (0,0) size 16x16
+          RenderText {#text} at (0,128) size 16x16
+            text run at (0,128) width 16: "auto"
+        RenderText {#text} at (16,128) size 7x16
+          text run at (16,128) width 7: ", "
+        RenderInline {CODE} at (0,0) size 12x16
+          RenderText {#text} at (23,128) size 12x16
+            text run at (23,128) width 12: "40%"
+        RenderText {#text} at (35,128) size 7x16
+          text run at (35,128) width 7: ", "
+        RenderInline {CODE} at (0,0) size 12x16
+          RenderText {#text} at (42,128) size 12x16
+            text run at (42,128) width 12: "30%"
+        RenderText {#text} at (54,128) size 7x16
+          text run at (54,128) width 7: ", "
+        RenderInline {CODE} at (0,0) size 12x16
+          RenderText {#text} at (61,128) size 12x16
+            text run at (61,128) width 12: "50%"
+        RenderText {#text} at (73,128) size 3x16
+          text run at (73,128) width 3: ","
+        RenderInline {CODE} at (0,0) size 12x16
+          RenderText {#text} at (0,144) size 12x16
+            text run at (0,144) width 12: "50%"
+        RenderText {#text} at (12,144) size 7x16
+          text run at (12,144) width 7: ", "
+        RenderInline {CODE} at (0,0) size 12x16
+          RenderText {#text} at (19,144) size 12x16
+            text run at (19,144) width 12: "40%"
+        RenderText {#text} at (31,144) size 7x16
+          text run at (31,144) width 7: ", "
+        RenderInline {CODE} at (0,0) size 12x16
+          RenderText {#text} at (38,144) size 12x16
+            text run at (38,144) width 12: "30%"
+        RenderText {#text} at (50,144) size 7x16
+          text run at (50,144) width 7: ", "
+        RenderInline {CODE} at (0,0) size 12x16
+          RenderText {#text} at (57,144) size 12x16
+            text run at (57,144) width 12: "40%"
+        RenderText {#text} at (69,144) size 3x16
+          text run at (69,144) width 3: ","
+        RenderInline {CODE} at (0,0) size 16x16
+          RenderText {#text} at (0,160) size 16x16
+            text run at (0,160) width 16: "auto"
+        RenderText {#text} at (16,160) size 79x48
+          text run at (16,160) width 34: " (with"
+          text run at (0,176) width 79: "70% margin-"
+          text run at (0,192) width 64: "right), and"
+        RenderInline {CODE} at (0,0) size 16x16
+          RenderText {#text} at (0,208) size 16x16
+            text run at (0,208) width 16: "auto"
+        RenderText {#text} at (16,208) size 3x16
+          text run at (16,208) width 3: "."

@@ -1,0 +1,17 @@
+layer at (0,0) size 96x112
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x112
+  RenderBlock {HTML} at (0,0) size 96x112
+    RenderBody {BODY} at (8,14) size 80x90
+      RenderBlock {P} at (0,0) size 80x48
+        RenderText {#text} at (0,0) size 80x48
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 80: "should be no"
+          text run at (0,32) width 64: "red below."
+      RenderBlock {DIV} at (0,62) size 80x28 [bgcolor=#FF0000] [border: (14px solid #00FF00)]
+        RenderBlock {DIV} at (14,28) size 52x0
+          RenderBlock {DIV} at (0,0) size 52x0
+          RenderBlock {DIV} at (0,0) size 52x0
+        RenderBlock {DIV} at (14,14) size 52x0
+          RenderBlock {DIV} at (0,0) size 52x0
+          RenderBlock {DIV} at (0,0) size 52x0

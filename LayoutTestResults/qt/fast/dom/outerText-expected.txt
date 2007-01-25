@@ -1,0 +1,10 @@
+layer at (0,0) size 96x64
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x64
+  RenderBlock {HTML} at (0,0) size 96x64
+    RenderBody {BODY} at (8,8) size 80x48
+      RenderBlock {DIV} at (0,0) size 80x48
+        RenderText {#text} at (0,0) size 65x48
+          text run at (0,0) width 48: "this is a"
+          text run at (0,16) width 65: "mistake or"
+          text run at (0,32) width 65: "something"

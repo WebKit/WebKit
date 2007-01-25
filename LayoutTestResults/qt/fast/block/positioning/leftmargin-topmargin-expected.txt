@@ -1,0 +1,42 @@
+layer at (0,0) size 189x626
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 189x626
+  RenderBlock {HTML} at (0,0) size 96x626
+    RenderBody {BODY} at (42,42) size 12x542
+      RenderBlock {P} at (0,0) size 12x272
+        RenderText {#text} at (0,0) size 147x272
+          text run at (0,0) width 27: "This"
+          text run at (0,16) width 23: "test"
+          text run at (0,32) width 44: "checks"
+          text run at (0,48) width 17: "for"
+          text run at (0,64) width 8: "a"
+          text run at (0,80) width 67: "regression"
+          text run at (0,96) width 46: "against"
+          text run at (0,112) width 147: "rdar://problem/4364302"
+          text run at (0,128) width 62: "leftmargin"
+          text run at (0,144) width 24: "and"
+          text run at (0,160) width 63: "topmargin"
+          text run at (0,176) width 41: "should"
+          text run at (0,192) width 38: "match"
+          text run at (0,208) width 76: "marginwidth"
+          text run at (0,224) width 24: "and"
+          text run at (0,240) width 82: "marginheight"
+          text run at (0,256) width 78: "respectively."
+      RenderBlock {P} at (0,286) size 12x256
+        RenderText {#text} at (0,0) size 50x256
+          text run at (0,0) width 8: "If"
+          text run at (0,16) width 7: "it"
+          text run at (0,32) width 48: "passes,"
+          text run at (0,48) width 20: "the"
+          text run at (0,64) width 22: "left,"
+          text run at (0,80) width 23: "top,"
+          text run at (0,96) width 31: "right,"
+          text run at (0,112) width 24: "and"
+          text run at (0,128) width 42: "bottom"
+          text run at (0,144) width 50: "margins"
+          text run at (0,160) width 12: "of"
+          text run at (0,176) width 20: "the"
+          text run at (0,192) width 32: "page"
+          text run at (0,208) width 19: "will"
+          text run at (0,224) width 15: "be"
+          text run at (0,240) width 19: "42."

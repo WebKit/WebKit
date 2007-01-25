@@ -1,0 +1,32 @@
+layer at (0,0) size 112x380
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 112x380
+  RenderBlock {HTML} at (0,0) size 96x380
+    RenderBody {BODY} at (8,8) size 80x358
+      RenderBlock (anonymous) at (0,0) size 80x256
+        RenderText {#text} at (0,0) size 70x256
+          text run at (0,0) width 61: "This tests"
+          text run at (0,16) width 70: "whether alt"
+          text run at (0,32) width 37: "text is"
+          text run at (0,48) width 62: "shown for"
+          text run at (0,64) width 69: "image-type"
+          text run at (0,80) width 62: "form input"
+          text run at (0,96) width 57: "elements"
+          text run at (0,112) width 29: "with "
+          text run at (29,112) width 39: "no src"
+          text run at (0,128) width 53: "attribute."
+          text run at (0,144) width 69: "You should"
+          text run at (0,160) width 23: "see"
+          text run at (0,176) width 62: "\"Success\""
+          text run at (0,192) width 35: "twice,"
+          text run at (0,208) width 70: "followed by"
+          text run at (0,224) width 37: "a blue"
+          text run at (0,240) width 62: "rectangle."
+      RenderBlock {P} at (0,270) size 80x0
+      RenderBlock {FORM} at (0,270) size 80x88
+        RenderImage {INPUT} at (2,2) size 13x13 [bgcolor=#C0C0C0]
+        RenderBR {BR} at (17,17) size 0x0
+        RenderImage {INPUT} at (2,19) size 100x50 [bgcolor=#C0C0C0]
+        RenderBR {BR} at (0,0) size 0x0
+        RenderImage {INPUT} at (2,73) size 13x13 [bgcolor=#C0C0C0]
+        RenderBR {BR} at (17,88) size 0x0

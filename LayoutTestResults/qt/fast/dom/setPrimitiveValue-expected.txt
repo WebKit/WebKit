@@ -1,0 +1,23 @@
+layer at (0,0) size 284x166
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x166
+  RenderBlock {HTML} at (0,0) size 96x166
+    RenderBody {BODY} at (8,8) size 80x144
+      RenderBlock (anonymous) at (0,0) size 80x144
+        RenderText {#text} at (0,0) size 72x144
+          text run at (0,0) width 54: "This test"
+          text run at (0,16) width 72: "checks that"
+          text run at (0,32) width 64: "a primitive"
+          text run at (0,48) width 72: "CSS values"
+          text run at (0,64) width 65: "can be set"
+          text run at (0,80) width 44: "without"
+          text run at (0,96) width 68: "generating"
+          text run at (0,112) width 16: "an"
+          text run at (0,128) width 64: "exception."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {PRE} at (0,158) size 80x0
+layer at (250,100) size 34x32
+  RenderBlock (positioned) {DIV} at (250,100) size 34x32
+    RenderText {#text} at (0,0) size 34x32
+      text run at (0,0) width 32: "Hello"
+      text run at (0,16) width 34: "world"

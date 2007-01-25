@@ -1,0 +1,21 @@
+layer at (0,0) size 96x194
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x150
+  RenderBlock {HTML} at (0,0) size 96x150
+    RenderBody {BODY} at (8,8) size 80x128
+      RenderBlock {P} at (0,0) size 80x128
+        RenderText {#text} at (0,0) size 79x128
+          text run at (0,0) width 65: "In this test"
+          text run at (0,16) width 56: "case you"
+          text run at (0,32) width 71: "should only"
+          text run at (0,48) width 77: "see one line"
+          text run at (0,64) width 71: "green text. "
+          text run at (71,64) width 8: "If"
+          text run at (0,80) width 74: "there is any"
+          text run at (0,96) width 72: "red the test"
+          text run at (0,112) width 64: "has failed."
+layer at (8,150) size 80x32
+  RenderBlock (positioned) {DIV} at (0,0) size 80x32 [color=#008000]
+    RenderText {#text} at (0,0) size 69x32
+      text run at (0,0) width 69: "You should"
+      text run at (0,16) width 52: "see this."

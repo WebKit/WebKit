@@ -1,0 +1,22 @@
+layer at (0,0) size 96x272
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x272
+  RenderBlock {HTML} at (0,0) size 96x64
+    RenderBody {BODY} at (8,8) size 80x48 [bgcolor=#EEEEEE]
+      RenderBlock {DIV} at (24,24) size 32x0 [color=#FFFFFF] [bgcolor=#008000]
+        RenderText {#text} at (0,0) size 51x240
+          text run at (0,0) width 25: "The"
+          text run at (0,16) width 37: "green"
+          text run at (0,32) width 18: "div"
+          text run at (0,48) width 41: "should"
+          text run at (0,64) width 13: "fill"
+          text run at (0,80) width 20: "the"
+          text run at (0,96) width 47: "content"
+          text run at (0,112) width 29: "area"
+          text run at (0,128) width 47: "(except"
+          text run at (0,144) width 29: "for a"
+          text run at (0,160) width 30: "bit of"
+          text run at (0,176) width 51: "padding"
+          text run at (0,192) width 16: "on"
+          text run at (0,208) width 14: "all"
+          text run at (0,224) width 41: "sides)."

@@ -1,0 +1,25 @@
+layer at (0,0) size 198x154
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 198x154
+  RenderBlock {HTML} at (0,0) size 96x154
+    RenderBody {BODY} at (8,14) size 80x132
+      RenderBlock {P} at (0,0) size 80x64
+        RenderText {#text} at (0,0) size 77x64
+          text run at (0,0) width 51: "The two"
+          text run at (0,16) width 77: "boxes below"
+          text run at (0,32) width 71: "should look"
+          text run at (0,48) width 55: "identical."
+      RenderTable {TABLE} at (0,78) size 190x54
+        RenderTableSection {TBODY} at (0,0) size 190x54
+          RenderTableRow {TR} at (0,2) size 190x50
+            RenderTableCell {TD} at (2,2) size 92x50 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 90x48 [bgcolor=#00FFFF] [border: (3px solid #000000)]
+                RenderBlock {DIV} at (3,3) size 84x14 [bgcolor=#FF00FF]
+                RenderBlock {DIV} at (3,31) size 84x14 [bgcolor=#FF0000]
+                  RenderBlock (floating) {DIV} at (0,0) size 42x14 [bgcolor=#FFA500]
+                  RenderBlock {DIV} at (0,0) size 84x14 [bgcolor=#FFFF00]
+            RenderTableCell {TD} at (96,2) size 92x50 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 90x48 [border: (3px solid #000000)]
+                RenderBlock {DIV} at (3,3) size 84x14 [border: (14px solid #FF00FF) none]
+                RenderBlock {DIV} at (3,17) size 84x14 [border: (14px solid #00FFFF) none]
+                RenderBlock {DIV} at (3,31) size 84x14 [border: (42px solid #FFFF00) none (42px solid #FFA500)]

@@ -1,0 +1,20 @@
+layer at (0,0) size 96x224
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x224
+  RenderBlock {HTML} at (0,0) size 96x224
+    RenderBody {BODY} at (8,8) size 80x208
+      RenderText {#text} at (0,0) size 80x208
+        text run at (0,0) width 54: "This test"
+        text run at (0,16) width 73: "verifies that"
+        text run at (0,32) width 80: "JS access to"
+        text run at (0,48) width 77: "offsetParent"
+        text run at (0,64) width 36: "on an"
+        text run at (0,80) width 78: "element that"
+        text run at (0,96) width 63: "lacks one,"
+        text run at (0,112) width 72: "such as the"
+        text run at (0,128) width 33: "body,"
+        text run at (0,144) width 46: "doesn't"
+        text run at (0,160) width 61: "crash. If it"
+        text run at (0,176) width 76: "didn't crash,"
+        text run at (0,192) width 60: "it passed."
+      RenderText {#text} at (0,0) size 0x0

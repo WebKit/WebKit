@@ -1,0 +1,48 @@
+layer at (0,0) size 195x413
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 195x413
+  RenderBlock {HTML} at (0,0) size 96x413
+    RenderBody {BODY} at (8,8) size 80x391
+      RenderBlock {FORM} at (0,0) size 80x105
+        RenderTextControl {TEXTAREA} at (2,2) size 183x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderText {#text} at (0,0) size 0x0
+        RenderTextControl {TEXTAREA} at (2,40) size 183x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderText {#text} at (0,0) size 0x0
+        RenderButton {INPUT} at (2,78) size 53x25 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 37x16
+            RenderText at (0,0) size 37x16
+              text run at (0,0) width 37: "Reset"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,119) size 80x272
+        RenderText {#text} at (0,0) size 75x96
+          text run at (0,0) width 54: "This test"
+          text run at (0,16) width 73: "verifies that"
+          text run at (0,32) width 52: "textarea"
+          text run at (0,48) width 75: "controls are"
+          text run at (0,64) width 52: "properly"
+          text run at (0,80) width 39: "reset. "
+        RenderBR {BR} at (39,93) size 0x0
+        RenderText {#text} at (0,96) size 76x112
+          text run at (0,96) width 69: "You should"
+          text run at (0,112) width 49: "see two"
+          text run at (0,128) width 75: "element IDs"
+          text run at (0,144) width 67: "below, and"
+          text run at (0,160) width 55: "the word"
+          text run at (0,176) width 76: "\"SUCCESS\""
+          text run at (0,192) width 39: "twice: "
+        RenderBR {BR} at (39,205) size 0x0
+        RenderText {#text} at (0,208) size 91x32
+          text run at (0,208) width 91: "noDefaultText:"
+          text run at (0,224) width 70: "SUCCESS "
+        RenderBR {BR} at (70,237) size 0x0
+        RenderText {#text} at (0,240) size 98x32
+          text run at (0,240) width 98: "hasDefaultText:"
+          text run at (0,256) width 66: "SUCCESS"
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (11,11) size 181x32
+  RenderBlock {DIV} at (1,1) size 181x32
+layer at (11,49) size 181x32
+  RenderBlock {DIV} at (1,1) size 181x32
+    RenderText {#text} at (3,0) size 76x16
+      text run at (3,0) width 76: "Default Text"

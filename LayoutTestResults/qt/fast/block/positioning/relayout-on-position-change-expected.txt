@@ -1,0 +1,38 @@
+layer at (0,0) size 286x457
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 286x457
+  RenderBlock {HTML} at (0,0) size 96x457
+    RenderBody {BODY} at (8,8) size 80x441
+      RenderBlock {P} at (0,0) size 80x208
+        RenderText {#text} at (0,0) size 67x64
+          text run at (0,0) width 61: "This tests"
+          text run at (0,16) width 29: "for a"
+          text run at (0,32) width 67: "regression"
+          text run at (0,48) width 46: "against"
+        RenderInline {I} at (0,0) size 278x144
+          RenderInline {A} at (0,0) size 278x32 [color=#0000EE]
+            RenderText {#text} at (0,64) size 278x32
+              text run at (0,64) width 278: "http://bugzilla.opendarwin.org/show_bug.cgi?"
+              text run at (0,80) width 52: "id=7095"
+          RenderText {#text} at (0,96) size 68x112
+            text run at (0,96) width 63: "Removing"
+            text run at (0,112) width 68: "positioning"
+            text run at (0,128) width 48: "from an"
+            text run at (0,144) width 50: "element"
+            text run at (0,160) width 55: "does not"
+            text run at (0,176) width 50: "relayout"
+            text run at (0,192) width 52: "properly"
+        RenderText {#text} at (52,192) size 3x16
+          text run at (52,192) width 3: "."
+      RenderBlock {P} at (0,222) size 80x96
+        RenderText {#text} at (0,0) size 76x96
+          text run at (0,0) width 66: "The green"
+          text run at (0,16) width 43: "square"
+          text run at (0,32) width 76: "should be to"
+          text run at (0,48) width 59: "the left of"
+          text run at (0,64) width 63: "the yellow"
+          text run at (0,80) width 46: "square."
+      RenderBlock {HR} at (0,332) size 80x2 [border: (1px inset #000000)]
+layer at (8,349) size 200x100
+  RenderBlock (relative positioned) {DIV} at (0,341) size 200x100 [bgcolor=#FFFF00]
+    RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]

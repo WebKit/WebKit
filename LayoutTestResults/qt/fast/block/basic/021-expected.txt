@@ -1,0 +1,23 @@
+layer at (0,0) size 96x126
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x126
+  RenderBlock {HTML} at (0,0) size 96x126
+    RenderBody {BODY} at (8,8) size 80x110
+      RenderBlock {DIV} at (0,0) size 80x88 [border: (3px solid #FFFF00)]
+        RenderBlock (anonymous) at (3,3) size 74x16
+          RenderText {#text} at (0,0) size 41x16
+            text run at (0,0) width 41: "Yellow"
+        RenderBlock {DIV} at (3,19) size 74x66 [border: (3px solid #0000FF)]
+          RenderBlock (anonymous) at (3,3) size 68x16
+            RenderText {#text} at (0,0) size 27x16
+              text run at (0,0) width 27: "Blue"
+          RenderBlock {DIV} at (3,19) size 68x22 [border: (3px solid #008000)]
+            RenderText {#text} at (3,3) size 40x16
+              text run at (3,3) width 40: "Green"
+          RenderBlock {DIV} at (3,41) size 68x22 [border: (3px solid #FF0000)]
+            RenderText {#text} at (3,3) size 26x16
+              text run at (3,3) width 26: "Red"
+      RenderBlock {DIV} at (0,88) size 80x22 [border: (3px solid #000080)]
+        RenderBlock {DIV} at (3,3) size 74x16
+          RenderText {#text} at (0,0) size 32x16
+            text run at (0,0) width 32: "Navy"

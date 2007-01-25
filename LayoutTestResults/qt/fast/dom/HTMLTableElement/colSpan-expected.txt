@@ -1,0 +1,160 @@
+layer at (0,0) size 274x1267
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 274x1267
+  RenderBlock {HTML} at (0,0) size 96x1267
+    RenderBody {BODY} at (8,8) size 80x1251
+      RenderBlock {P} at (0,0) size 80x48
+        RenderText {#text} at (0,0) size 62x48
+          text run at (0,0) width 62: "Tests: the"
+          text run at (0,16) width 49: "colspan"
+          text run at (0,32) width 50: "attribute"
+        RenderBR {BR} at (50,45) size 0x0
+      RenderBlock {P} at (0,62) size 80x480
+        RenderText {#text} at (0,0) size 70x16
+          text run at (0,0) width 70: "Conditions:"
+        RenderBR {BR} at (70,13) size 0x0
+        RenderText {#text} at (0,16) size 90x464
+          text run at (0,16) width 80: "The colSpan"
+          text run at (0,32) width 50: "attribute"
+          text run at (0,48) width 79: "specifies the"
+          text run at (0,64) width 62: "number of"
+          text run at (0,80) width 51: "columns"
+          text run at (0,96) width 73: "spanned by"
+          text run at (0,112) width 68: "the current"
+          text run at (0,128) width 53: "cell. The"
+          text run at (0,144) width 79: "default value"
+          text run at (0,160) width 16: "of "
+          text run at (16,160) width 22: "this"
+          text run at (0,176) width 64: "attribute is"
+          text run at (0,192) width 59: "one (\"1\")."
+          text run at (0,208) width 62: "The value"
+          text run at (0,224) width 60: "zero (\"0\")"
+          text run at (0,240) width 70: "means that"
+          text run at (0,256) width 45: "the cell"
+          text run at (0,272) width 56: "spans all"
+          text run at (0,288) width 51: "columns"
+          text run at (0,304) width 52: "from the"
+          text run at (0,320) width 44: "current"
+          text run at (0,336) width 60: "column to"
+          text run at (0,352) width 46: "the last"
+          text run at (0,368) width 60: "column of"
+          text run at (0,384) width 68: "the column"
+          text run at (0,400) width 36: "group"
+          text run at (0,416) width 90: "(COLGROUP)"
+          text run at (0,432) width 75: "in which the"
+          text run at (0,448) width 35: "cell is"
+          text run at (0,464) width 50: "defined."
+      RenderBlock {P} at (0,556) size 80x480
+        RenderText {#text} at (0,0) size 80x480
+          text run at (0,0) width 52: "The first"
+          text run at (0,16) width 64: "table tests"
+          text run at (0,32) width 66: "the default"
+          text run at (0,48) width 80: "value of one,"
+          text run at (0,64) width 78: "and an input"
+          text run at (0,80) width 67: "of 7, which"
+          text run at (0,96) width 74: "is within the"
+          text run at (0,112) width 43: "normal"
+          text run at (0,128) width 53: "range of"
+          text run at (0,144) width 79: "expect input."
+          text run at (0,160) width 52: "The first"
+          text run at (0,176) width 59: "column in"
+          text run at (0,192) width 74: "the first row"
+          text run at (0,208) width 76: "should span"
+          text run at (0,224) width 74: "only column"
+          text run at (0,240) width 62: "\"one\" and"
+          text run at (0,256) width 70: "the second"
+          text run at (0,272) width 66: "cell should"
+          text run at (0,288) width 65: "span all of"
+          text run at (0,304) width 57: "the other"
+          text run at (0,320) width 54: "columns."
+          text run at (0,336) width 75: "The second"
+          text run at (0,352) width 64: "table tests"
+          text run at (0,368) width 52: "the zero"
+          text run at (0,384) width 70: "value. \"Just"
+          text run at (0,400) width 59: "A\" should"
+          text run at (0,416) width 54: "span \"A\""
+          text run at (0,432) width 76: "and \"Just B\""
+          text run at (0,448) width 76: "should span"
+          text run at (0,464) width 22: "\"B.\""
+      RenderBlock {HR} at (0,1050) size 80x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1059) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderTable {TABLE} at (0,1075) size 266x64 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 264x16
+          RenderText {#text} at (26,0) size 211x16
+            text run at (26,0) width 211: "Testing Default and Regular Input"
+        RenderTableSection {TBODY} at (1,17) size 264x46
+          RenderTableRow {TR} at (0,2) size 264x20
+            RenderTableCell {TD} at (2,2) size 31x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 27x16
+                text run at (2,2) width 27: "First"
+            RenderTableCell {TD} at (35,2) size 227x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=7]
+              RenderText {#text} at (2,2) size 72x16
+                text run at (2,2) width 72: "All the Rest"
+          RenderTableRow {TR} at (0,24) size 264x20
+            RenderTableCell {TD} at (2,24) size 31x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 24x16
+                text run at (2,2) width 24: "one"
+            RenderTableCell {TD} at (35,24) size 26x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x16
+                text run at (2,2) width 22: "two"
+            RenderTableCell {TD} at (63,24) size 37x20 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 33x16
+                text run at (2,2) width 33: "three"
+            RenderTableCell {TD} at (102,24) size 28x20 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 24x16
+                text run at (2,2) width 24: "four"
+            RenderTableCell {TD} at (132,24) size 26x20 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x16
+                text run at (2,2) width 22: "five"
+            RenderTableCell {TD} at (160,24) size 21x20 [border: (1px inset #808080)] [r=1 c=5 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 17x16
+                text run at (2,2) width 17: "six"
+            RenderTableCell {TD} at (183,24) size 42x20 [border: (1px inset #808080)] [r=1 c=6 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 38x16
+                text run at (2,2) width 38: "seven"
+            RenderTableCell {TD} at (227,24) size 35x20 [border: (1px inset #808080)] [r=1 c=7 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 31x16
+                text run at (2,2) width 31: "eight"
+      RenderBlock (anonymous) at (0,1139) size 80x16
+        RenderBR {BR} at (0,0) size 0x16
+      RenderTable {TABLE} at (0,1155) size 160x96 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 158x32
+          RenderText {#text} at (13,0) size 131x32
+            text run at (13,0) width 131: "Testing Zero Special"
+            text run at (62,16) width 33: "Case"
+        RenderTableSection {TBODY} at (1,33) size 158x62
+          RenderTableRow {TR} at (0,2) size 158x36
+            RenderTableCell {TD} at (2,2) size 29x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 25x32
+                text run at (2,2) width 25: "Just"
+                text run at (2,18) width 9: "A"
+            RenderTableCell {TD} at (33,2) size 29x36 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 25x32
+                text run at (2,2) width 25: "Just"
+                text run at (2,18) width 9: "B"
+          RenderTableRow {TR} at (0,40) size 158x20
+            RenderTableCell {TD} at (2,40) size 29x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 9x16
+                text run at (2,2) width 9: "A"
+            RenderTableCell {TD} at (33,40) size 29x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 9x16
+                text run at (2,2) width 9: "B"
+            RenderTableCell {TD} at (64,40) size 14x20 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 10x16
+                text run at (2,2) width 10: "C"
+            RenderTableCell {TD} at (80,40) size 14x20 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 10x16
+                text run at (2,2) width 10: "D"
+            RenderTableCell {TD} at (96,40) size 13x20 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 9x16
+                text run at (2,2) width 9: "E"
+            RenderTableCell {TD} at (111,40) size 12x20 [border: (1px inset #808080)] [r=1 c=5 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 8x16
+                text run at (2,2) width 8: "F"
+            RenderTableCell {TD} at (125,40) size 15x20 [border: (1px inset #808080)] [r=1 c=6 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 11x16
+                text run at (2,2) width 11: "G"
+            RenderTableCell {TD} at (142,40) size 14x20 [border: (1px inset #808080)] [r=1 c=7 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 10x16
+                text run at (2,2) width 10: "H"

@@ -1,0 +1,33 @@
+layer at (0,0) size 286x409
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 286x409
+  RenderBlock {HTML} at (0,0) size 96x409
+    RenderBody {BODY} at (8,8) size 80x393
+      RenderBlock {P} at (0,0) size 80x176
+        RenderText {#text} at (0,0) size 80x32
+          text run at (0,0) width 80: "This is a test"
+          text run at (0,16) width 17: "for"
+        RenderInline {I} at (0,0) size 278x128
+          RenderInline {A} at (0,0) size 278x32 [color=#0000EE]
+            RenderText {#text} at (0,32) size 278x32
+              text run at (0,32) width 278: "http://bugzilla.opendarwin.org/show_bug.cgi?"
+              text run at (0,48) width 52: "id=9252"
+          RenderText {#text} at (0,64) size 95x96
+            text run at (0,64) width 95: "REGRESSION:"
+            text run at (0,80) width 57: "Very odd"
+            text run at (0,96) width 51: "roll-over"
+            text run at (0,112) width 39: "issues"
+            text run at (0,128) width 52: "(content"
+            text run at (0,144) width 87: "disappearing)"
+        RenderText {#text} at (0,160) size 3x16
+          text run at (0,160) width 3: "."
+      RenderBlock {P} at (0,190) size 80x80
+        RenderText {#text} at (0,0) size 72x80
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 72: "should be a"
+          text run at (0,32) width 37: "green"
+          text run at (0,48) width 43: "square"
+          text run at (0,64) width 39: "below."
+      RenderBlock {HR} at (0,284) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,293) size 80x0
+      RenderBlock {DIV} at (0,293) size 100x100 [bgcolor=#008000]

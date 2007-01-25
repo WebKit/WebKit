@@ -1,0 +1,12 @@
+layer at (0,0) size 96x80
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x80
+  RenderBlock {HTML} at (0,0) size 96x80
+    RenderBody {BODY} at (8,8) size 80x64
+      RenderImage {IMG} at (0,9) size 4x4
+      RenderText {#text} at (4,0) size 71x64
+        text run at (4,0) width 58: " This text"
+        text run at (0,16) width 71: "should only"
+        text run at (0,32) width 45: "appear"
+        text run at (0,48) width 34: "once."
+      RenderText {#text} at (0,0) size 0x0

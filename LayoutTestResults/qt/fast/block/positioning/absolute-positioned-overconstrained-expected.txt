@@ -1,0 +1,19 @@
+layer at (0,0) size 500x286
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x86
+  RenderBlock {HTML} at (0,0) size 96x86
+    RenderBody {BODY} at (8,8) size 80x64
+      RenderBlock {P} at (0,0) size 80x64
+        RenderText {#text} at (0,0) size 77x64
+          text run at (0,0) width 51: "The two"
+          text run at (0,16) width 77: "boxes below"
+          text run at (0,32) width 71: "should look"
+          text run at (0,48) width 55: "identical."
+layer at (8,86) size 200x200
+  RenderBlock (positioned) {DIV} at (8,86) size 200x200 [bgcolor=#0000FF]
+layer at (8,86) size 100x50
+  RenderBlock (positioned) {DIV} at (0,0) size 100x50 [bgcolor=#008000]
+layer at (300,86) size 200x200
+  RenderBlock (positioned) {DIV} at (300,86) size 200x200 [bgcolor=#0000FF]
+layer at (300,86) size 100x50
+  RenderBlock (positioned) {DIV} at (0,0) size 100x50 [bgcolor=#008000]
