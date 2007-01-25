@@ -286,6 +286,8 @@ void FrameLoaderClientQt::loadedFromPageCache()
 
 void FrameLoaderClientQt::dispatchDidHandleOnloadEvents()
 {
+    if (m_webFrame)
+        emit m_webFrame->loadDone(true);
 }
 
 
@@ -347,8 +349,6 @@ void FrameLoaderClientQt::dispatchDidFinishDocumentLoad()
 
 void FrameLoaderClientQt::dispatchDidFinishLoad()
 {
-    if (m_webFrame)
-        emit m_webFrame->loadDone(true);
 }
 
 

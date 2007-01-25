@@ -1,3 +1,15 @@
+2007-01-25  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Emit the loadDone() signal from teh onload event callback
+        again. This hangs on one or two test cases, but removes
+        hundreds of failures elsewhere.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoad):
+
 2007-01-24  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack
