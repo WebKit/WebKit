@@ -1,0 +1,46 @@
+layer at (0,0) size 279x494
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 279x494
+  RenderBlock {html} at (0,0) size 96x494
+    RenderBody {body} at (8,14) size 80x472
+      RenderBlock {p} at (0,0) size 80x32
+        RenderText {#text} at (0,0) size 121x32
+          text run at (0,0) width 29: "COL"
+          text run at (0,16) width 121: "VALIGN=BOTTOM"
+      RenderTable {table} at (0,46) size 271x426 [border: (1px outset #808080)]
+        RenderTableCol {colgroup} at (0,0) size 0x0
+          RenderTableCol {col} at (0,0) size 0x0
+          RenderTableCol {col} at (0,0) size 0x0
+        RenderTableSection {tbody} at (1,1) size 269x424
+          RenderTableRow {tr} at (0,2) size 269x420
+            RenderTableCell {td} at (2,108) size 204x207 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderImage {img} at (2,2) size 200x200
+            RenderTableCell {td} at (208,2) size 59x420 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 55x416
+                text run at (2,2) width 25: "The"
+                text run at (2,18) width 42: "bottom"
+                text run at (2,34) width 38: "of this"
+                text run at (2,50) width 23: "text"
+                text run at (2,66) width 41: "should"
+                text run at (2,82) width 15: "be"
+                text run at (2,98) width 55: "vertically"
+                text run at (2,114) width 46: "aligned"
+                text run at (2,130) width 36: "to the"
+                text run at (2,146) width 42: "bottom"
+                text run at (2,162) width 36: "of the"
+                text run at (2,178) width 41: "image."
+                text run at (2,194) width 52: "x-fill x-fill"
+                text run at (2,210) width 52: "x-fill x-fill"
+                text run at (2,226) width 52: "x-fill x-fill"
+                text run at (2,242) width 52: "x-fill x-fill"
+                text run at (2,258) width 52: "x-fill x-fill"
+                text run at (2,274) width 52: "x-fill x-fill"
+                text run at (2,290) width 52: "x-fill x-fill"
+                text run at (2,306) width 28: "x-fill "
+                text run at (30,306) width 24: "x-fill"
+                text run at (2,322) width 52: "x-fill x-fill"
+                text run at (2,338) width 52: "x-fill x-fill"
+                text run at (2,354) width 52: "x-fill x-fill"
+                text run at (2,370) width 52: "x-fill x-fill"
+                text run at (2,386) width 52: "x-fill x-fill"
+                text run at (2,402) width 52: "x-fill x-fill"

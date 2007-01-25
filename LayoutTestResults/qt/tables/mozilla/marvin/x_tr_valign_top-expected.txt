@@ -1,0 +1,27 @@
+layer at (0,0) size 279x281
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 279x281
+  RenderBlock {html} at (0,0) size 96x281
+    RenderBody {body} at (8,14) size 80x259
+      RenderBlock {p} at (0,0) size 80x32
+        RenderText {#text} at (0,0) size 89x32
+          text run at (0,0) width 19: "TR"
+          text run at (0,16) width 89: "VALIGN=TOP"
+      RenderTable {table} at (0,46) size 271x213 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 269x211
+          RenderTableRow {tr} at (0,2) size 269x207
+            RenderTableCell {td} at (2,2) size 204x207 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderImage {img} at (2,2) size 200x200
+            RenderTableCell {td} at (208,2) size 59x180 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 55x176
+                text run at (2,2) width 49: "The top"
+                text run at (2,18) width 38: "of this"
+                text run at (2,34) width 23: "text"
+                text run at (2,50) width 41: "should"
+                text run at (2,66) width 15: "be"
+                text run at (2,82) width 55: "vertically"
+                text run at (2,98) width 46: "aligned"
+                text run at (2,114) width 36: "to the"
+                text run at (2,130) width 36: "top of"
+                text run at (2,146) width 20: "the"
+                text run at (2,162) width 38: "image"

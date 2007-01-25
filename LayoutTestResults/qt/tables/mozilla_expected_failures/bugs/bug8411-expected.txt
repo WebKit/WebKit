@@ -1,0 +1,33 @@
+layer at (0,0) size 96x362
+  RenderView at (0,0) size 96x26
+layer at (5,5) size 86x352
+  RenderBlock {doc} at (5,5) size 86x352
+    RenderTable at (0,0) size 53x48
+      RenderBlock {captionelement} at (0,0) size 53x48 [color=#FF0000]
+        RenderText {#text} at (0,0) size 53x48
+          text run at (0,0) width 53: "This is a"
+          text run at (3,16) width 46: "caption"
+          text run at (0,32) width 53: "element."
+    RenderBlock {p} at (0,48) size 86x176
+      RenderText {#text} at (0,0) size 84x176
+        text run at (0,0) width 84: "The following"
+        text run at (0,16) width 64: "text is in a"
+        text run at (0,32) width 46: "caption"
+        text run at (0,48) width 50: "element"
+        text run at (0,64) width 74: "whose style"
+        text run at (0,80) width 49: "is set to"
+        text run at (0,96) width 81: "display:table-"
+        text run at (0,112) width 78: "caption. The"
+        text run at (0,128) width 64: "element is"
+        text run at (0,144) width 73: "not inside a"
+        text run at (0,160) width 33: "table."
+    RenderBlock {p} at (0,224) size 86x128
+      RenderText {#text} at (0,0) size 84x128
+        text run at (0,0) width 75: "If there's no"
+        text run at (0,16) width 48: "red text"
+        text run at (0,32) width 79: "between this"
+        text run at (0,48) width 75: "text and the"
+        text run at (0,64) width 80: "previous text"
+        text run at (0,80) width 84: "the caption is"
+        text run at (0,96) width 20: "not"
+        text run at (0,112) width 63: "displayed."

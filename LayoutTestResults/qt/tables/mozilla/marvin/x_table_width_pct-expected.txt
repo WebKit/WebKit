@@ -1,0 +1,67 @@
+layer at (0,0) size 96x680
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x680
+  RenderBlock {html} at (0,0) size 96x680
+    RenderBody {body} at (8,8) size 80x664
+      RenderTable {table} at (0,0) size 80x154 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 78x152
+          RenderTableRow {tr} at (0,2) size 78x148
+            RenderTableCell {td} at (2,2) size 74x148 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x144
+                text run at (2,2) width 61: "This table"
+                text run at (2,18) width 41: "should"
+                text run at (2,34) width 43: "have a"
+                text run at (2,50) width 33: "width"
+                text run at (2,66) width 52: "100% of"
+                text run at (2,82) width 20: "the"
+                text run at (2,98) width 55: "available"
+                text run at (2,114) width 62: "horizontal"
+                text run at (2,130) width 38: "space"
+      RenderBlock (anonymous) at (0,154) size 80x16
+        RenderBR {br} at (0,0) size 0x16
+      RenderTable {table} at (0,170) size 72x154 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 70x152
+          RenderTableRow {tr} at (0,2) size 70x148
+            RenderTableCell {td} at (2,2) size 66x148 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x144
+                text run at (2,2) width 61: "This table"
+                text run at (2,18) width 41: "should"
+                text run at (2,34) width 43: "have a"
+                text run at (2,50) width 33: "width"
+                text run at (2,66) width 44: "75% of"
+                text run at (2,82) width 20: "the"
+                text run at (2,98) width 55: "available"
+                text run at (2,114) width 62: "horizontal"
+                text run at (2,130) width 38: "space"
+      RenderBlock (anonymous) at (0,324) size 80x16
+        RenderBR {br} at (0,0) size 0x16
+      RenderTable {table} at (0,340) size 72x154 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 70x152
+          RenderTableRow {tr} at (0,2) size 70x148
+            RenderTableCell {td} at (2,2) size 66x148 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x144
+                text run at (2,2) width 61: "This table"
+                text run at (2,18) width 41: "should"
+                text run at (2,34) width 43: "have a"
+                text run at (2,50) width 33: "width"
+                text run at (2,66) width 44: "50% of"
+                text run at (2,82) width 20: "the"
+                text run at (2,98) width 55: "available"
+                text run at (2,114) width 62: "horizontal"
+                text run at (2,130) width 38: "space"
+      RenderBlock (anonymous) at (0,494) size 80x16
+        RenderBR {br} at (0,0) size 0x16
+      RenderTable {table} at (0,510) size 72x154 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 70x152
+          RenderTableRow {tr} at (0,2) size 70x148
+            RenderTableCell {td} at (2,2) size 66x148 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 62x144
+                text run at (2,2) width 61: "This table"
+                text run at (2,18) width 41: "should"
+                text run at (2,34) width 43: "have a"
+                text run at (2,50) width 33: "width"
+                text run at (2,66) width 44: "25% of"
+                text run at (2,82) width 20: "the"
+                text run at (2,98) width 55: "available"
+                text run at (2,114) width 62: "horizontal"
+                text run at (2,130) width 38: "space"

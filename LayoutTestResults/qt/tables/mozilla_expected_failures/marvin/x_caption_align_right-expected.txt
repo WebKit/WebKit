@@ -1,0 +1,43 @@
+layer at (0,0) size 96x212
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x212
+  RenderBlock {html} at (0,0) size 96x212
+    RenderBody {body} at (8,14) size 80x190
+      RenderBlock {p} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 62x80
+          text run at (0,0) width 59: "The table"
+          text run at (0,16) width 46: "caption"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 62: "aligned at"
+          text run at (0,64) width 52: "the right"
+      RenderTable {table} at (0,94) size 85x96 [border: (1px outset #808080)]
+        RenderBlock {caption} at (0,0) size 83x16
+          RenderText {#text} at (10,0) size 62x16
+            text run at (10,0) width 62: "CAPTION"
+        RenderTableSection {tbody} at (1,17) size 83x78
+          RenderTableRow {tr} at (0,2) size 83x36
+            RenderTableCell {td} at (2,2) size 25x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 21x32
+                text run at (2,2) width 21: "cell"
+                text run at (2,18) width 8: "1"
+            RenderTableCell {td} at (29,2) size 25x36 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 21x32
+                text run at (2,2) width 21: "cell"
+                text run at (2,18) width 8: "2"
+            RenderTableCell {td} at (56,2) size 25x36 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 21x32
+                text run at (2,2) width 21: "cell"
+                text run at (2,18) width 8: "3"
+          RenderTableRow {tr} at (0,40) size 83x36
+            RenderTableCell {td} at (2,40) size 25x36 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 21x32
+                text run at (2,2) width 21: "cell"
+                text run at (2,18) width 8: "4"
+            RenderTableCell {td} at (29,40) size 25x36 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 21x32
+                text run at (2,2) width 21: "cell"
+                text run at (2,18) width 8: "5"
+            RenderTableCell {td} at (56,40) size 25x36 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 21x32
+                text run at (2,2) width 21: "cell"
+                text run at (2,18) width 8: "6"

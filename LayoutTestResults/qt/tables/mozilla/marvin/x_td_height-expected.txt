@@ -1,0 +1,58 @@
+layer at (0,0) size 96x1630
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x1630
+  RenderBlock {html} at (0,0) size 96x1630
+    RenderBody {body} at (8,8) size 80x1614
+      RenderTable {table} at (0,0) size 80x110 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 78x108
+          RenderTableRow {tr} at (0,2) size 78x104
+            RenderTableCell {td} at (2,20) size 74x68 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 68x64
+                text run at (2,2) width 68: "The height"
+                text run at (2,18) width 63: "of this cell"
+                text run at (2,34) width 60: "should be"
+                text run at (2,50) width 64: "100 pixels"
+      RenderBlock (anonymous) at (0,110) size 80x16
+        RenderBR {br} at (0,0) size 0x16
+      RenderTable {table} at (0,126) size 80x210 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 78x208
+          RenderTableRow {tr} at (0,2) size 78x204
+            RenderTableCell {td} at (2,70) size 74x68 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 68x64
+                text run at (2,2) width 68: "The height"
+                text run at (2,18) width 63: "of this cell"
+                text run at (2,34) width 60: "should be"
+                text run at (2,50) width 64: "200 pixels"
+      RenderBlock (anonymous) at (0,336) size 80x16
+        RenderBR {br} at (0,0) size 0x16
+      RenderTable {table} at (0,352) size 80x310 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 78x308
+          RenderTableRow {tr} at (0,2) size 78x304
+            RenderTableCell {td} at (2,120) size 74x68 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 68x64
+                text run at (2,2) width 68: "The height"
+                text run at (2,18) width 63: "of this cell"
+                text run at (2,34) width 60: "should be"
+                text run at (2,50) width 64: "300 pixels"
+      RenderBlock (anonymous) at (0,662) size 80x16
+        RenderBR {br} at (0,0) size 0x16
+      RenderTable {table} at (0,678) size 80x410 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 78x408
+          RenderTableRow {tr} at (0,2) size 78x404
+            RenderTableCell {td} at (2,170) size 74x68 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 68x64
+                text run at (2,2) width 68: "The height"
+                text run at (2,18) width 63: "of this cell"
+                text run at (2,34) width 60: "should be"
+                text run at (2,50) width 64: "400 pixels"
+      RenderBlock (anonymous) at (0,1088) size 80x16
+        RenderBR {br} at (0,0) size 0x16
+      RenderTable {table} at (0,1104) size 80x510 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 78x508
+          RenderTableRow {tr} at (0,2) size 78x504
+            RenderTableCell {td} at (2,220) size 74x68 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 68x64
+                text run at (2,2) width 68: "The height"
+                text run at (2,18) width 63: "of this cell"
+                text run at (2,34) width 60: "should be"
+                text run at (2,50) width 64: "500 pixels"

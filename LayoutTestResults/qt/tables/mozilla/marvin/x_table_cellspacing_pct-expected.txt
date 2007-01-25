@@ -1,0 +1,24 @@
+layer at (0,0) size 122x122
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 122x122
+  RenderBlock {html} at (0,0) size 96x122
+    RenderBody {body} at (8,8) size 80x106
+      RenderTable {table} at (0,0) size 114x106 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 112x104
+          RenderTableRow {tr} at (0,2) size 112x100
+            RenderTableCell {td} at (2,2) size 53x100 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 49x96
+                text run at (2,2) width 27: "This"
+                text run at (2,18) width 21: "cell"
+                text run at (2,34) width 41: "should"
+                text run at (2,50) width 31: "have"
+                text run at (2,66) width 28: "20%"
+                text run at (2,82) width 49: "spacing"
+            RenderTableCell {td} at (57,2) size 53x100 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 49x96
+                text run at (2,2) width 27: "This"
+                text run at (2,18) width 21: "cell"
+                text run at (2,34) width 41: "should"
+                text run at (2,50) width 31: "have"
+                text run at (2,66) width 28: "20%"
+                text run at (2,82) width 49: "spacing"

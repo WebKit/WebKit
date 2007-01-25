@@ -1,0 +1,13 @@
+layer at (0,0) size 96x186
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x186
+  RenderBlock {html} at (0,0) size 96x186
+    RenderBody {body} at (8,14) size 80x164
+      RenderBlock {p} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 73x80
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 72: "should be a"
+          text run at (0,32) width 73: "green block"
+          text run at (0,48) width 62: "under this"
+          text run at (0,64) width 69: "paragraph."
+      RenderTable {table} at (0,94) size 70x70 [bgcolor=#008000]

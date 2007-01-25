@@ -1,0 +1,34 @@
+layer at (0,0) size 199x164
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 199x164
+  RenderBlock {html} at (0,0) size 96x164
+    RenderBody {body} at (8,14) size 80x142
+      RenderBlock {p} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 75x80
+          text run at (0,0) width 39: "TEST:"
+          text run at (0,16) width 55: "Numbers"
+          text run at (0,32) width 75: "should align"
+          text run at (0,48) width 66: "by decimal"
+          text run at (0,64) width 38: "points"
+      RenderTable {table} at (0,94) size 191x48 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 189x46
+          RenderTableRow {tr} at (0,2) size 189x20
+            RenderTableCell {td} at (2,2) size 55x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 35x16
+                text run at (2,2) width 35: "55.00"
+            RenderTableCell {td} at (59,2) size 63x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 59x16
+                text run at (2,2) width 59: "55555.00"
+            RenderTableCell {td} at (124,2) size 63x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 43x16
+                text run at (2,2) width 43: "555.00"
+          RenderTableRow {tr} at (0,24) size 189x20
+            RenderTableCell {td} at (2,24) size 55x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 51x16
+                text run at (2,2) width 51: "1234.56"
+            RenderTableCell {td} at (59,24) size 63x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 43x16
+                text run at (2,2) width 43: "123.45"
+            RenderTableCell {td} at (124,24) size 63x20 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 59x16
+                text run at (2,2) width 59: "12345.67"

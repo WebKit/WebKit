@@ -1,0 +1,24 @@
+layer at (0,0) size 408x126
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 408x126
+  RenderBlock {html} at (0,0) size 96x126
+    RenderBody {body} at (8,14) size 80x104
+      RenderBlock {p} at (0,0) size 80x32
+        RenderText {#text} at (0,0) size 80x32
+          text run at (0,0) width 80: "COLGROUP"
+          text run at (0,16) width 74: "WIDTH=pct"
+      RenderTable {table} at (0,46) size 400x58 [border: (1px outset #808080)]
+        RenderTableCol {colgroup} at (0,0) size 0x0
+        RenderTableCol {colgroup} at (0,0) size 0x0
+        RenderTableSection {tbody} at (1,1) size 398x56
+          RenderTableRow {tr} at (0,2) size 398x52
+            RenderTableCell {td} at (2,2) size 196x52 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 182x48
+                text run at (2,2) width 167: "This column should have a"
+                text run at (2,18) width 182: "width of 25% of 400 pixels or"
+                text run at (2,34) width 39: "100px"
+            RenderTableCell {td} at (200,2) size 196x52 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 182x48
+                text run at (2,2) width 167: "This column should have a"
+                text run at (2,18) width 182: "width of 75% of 400 pixels or"
+                text run at (2,34) width 39: "300px"
