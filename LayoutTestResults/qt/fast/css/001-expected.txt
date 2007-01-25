@@ -1,0 +1,26 @@
+layer at (0,0) size 96x262
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x262
+  RenderBlock {HTML} at (0,0) size 96x262
+    RenderBody {BODY} at (8,8) size 80x240
+      RenderBlock {UL} at (0,0) size 80x240
+        RenderListItem {LI} at (40,0) size 40x240
+          RenderListMarker at (-1,0) size 6x16: bullet
+          RenderText {#text} at (13,0) size 41x128
+            text run at (13,0) width 27: "This"
+            text run at (0,16) width 17: "list"
+            text run at (0,32) width 26: "item"
+            text run at (0,48) width 41: "should"
+            text run at (0,64) width 31: "have"
+            text run at (0,80) width 16: "an"
+            text run at (0,96) width 37: "inside"
+            text run at (0,112) width 35: "bullet."
+          RenderBR {BR} at (35,125) size 0x0
+          RenderText {#text} at (0,128) size 41x112
+            text run at (0,128) width 27: "This"
+            text run at (0,144) width 22: "line"
+            text run at (0,160) width 41: "should"
+            text run at (0,176) width 34: "begin"
+            text run at (0,192) width 36: "under"
+            text run at (0,208) width 20: "the"
+            text run at (0,224) width 35: "bullet."

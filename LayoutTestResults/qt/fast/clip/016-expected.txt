@@ -1,0 +1,17 @@
+layer at (0,0) size 150x550
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x112
+  RenderBlock {HTML} at (0,0) size 96x112
+    RenderBody {BODY} at (8,8) size 80x96
+      RenderText {#text} at (0,0) size 69x96
+        text run at (0,0) width 69: "You should"
+        text run at (0,16) width 35: "see a"
+        text run at (0,32) width 55: "100x100"
+        text run at (0,48) width 37: "green"
+        text run at (0,64) width 43: "square"
+        text run at (0,80) width 39: "below."
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (50,50) size 100x500 backgroundClip at (50,50) size 100x100 clip at (50,50) size 100x100 outlineClip at (50,50) size 100x100
+  RenderBlock (positioned) {DIV} at (50,50) size 100x500 [bgcolor=#008000]

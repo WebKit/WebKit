@@ -1,0 +1,25 @@
+layer at (0,0) size 122x312
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 122x312
+  RenderBlock {HTML} at (0,0) size 96x312
+    RenderBody {BODY} at (8,14) size 80x284
+      RenderBlock {OL} at (0,0) size 80x284
+        RenderListItem {LI} at (40,0) size 40x284
+          RenderListMarker at (-19,14) size 15x16: "1"
+          RenderText {#text} at (14,14) size 60x256
+            text run at (14,14) width 9: "A"
+            text run at (14,30) width 37: "single"
+            text run at (14,46) width 41: "outline"
+            text run at (14,62) width 41: "should"
+            text run at (14,78) width 26: "only"
+            text run at (14,94) width 45: "appear"
+            text run at (14,110) width 28: "over"
+            text run at (14,126) width 20: "the"
+            text run at (14,142) width 17: "list"
+            text run at (14,158) width 53: "element,"
+            text run at (14,174) width 24: "and"
+            text run at (14,190) width 20: "not"
+            text run at (14,206) width 28: "over"
+            text run at (14,222) width 47: "internal"
+            text run at (14,238) width 23: "text"
+            text run at (14,254) width 60: "elements."

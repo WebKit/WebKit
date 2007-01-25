@@ -1,0 +1,36 @@
+layer at (0,0) size 234x290
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 234x290
+  RenderBlock {HTML} at (0,0) size 96x290
+    RenderBody {BODY} at (8,8) size 80x268
+      RenderBlock {P} at (0,0) size 80x144
+        RenderText {#text} at (0,0) size 49x16
+          text run at (0,0) width 49: "Test for"
+        RenderInline {I} at (0,0) size 226x128
+          RenderInline {A} at (0,0) size 226x32 [color=#0000EE]
+            RenderText {#text} at (0,16) size 226x32
+              text run at (0,16) width 226: "http://bugs.webkit.org/show_bug.cgi?"
+              text run at (0,32) width 60: "id=11930"
+          RenderText {#text} at (0,48) size 65x96
+            text run at (0,48) width 65: "Specifying"
+            text run at (0,64) width 45: "border-"
+            text run at (0,80) width 38: "radius"
+            text run at (0,96) width 65: "makes the"
+            text run at (0,112) width 41: "outline"
+            text run at (0,128) width 38: "shrink"
+        RenderText {#text} at (38,128) size 3x16
+          text run at (38,128) width 3: "."
+      RenderBlock {P} at (0,158) size 80x80
+        RenderText {#text} at (0,0) size 66x80
+          text run at (0,0) width 66: "These two"
+          text run at (0,16) width 50: "squares"
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 58: "the same"
+          text run at (0,64) width 28: "size:"
+      RenderBlock (anonymous) at (0,252) size 80x16
+        RenderBlock {DIV} at (0,3) size 10x10
+        RenderText {#text} at (10,0) size 4x16
+          text run at (10,0) width 4: " "
+        RenderBlock {DIV} at (14,3) size 10x10
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,282) size 80x0

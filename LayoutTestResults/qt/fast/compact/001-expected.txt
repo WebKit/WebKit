@@ -1,0 +1,24 @@
+layer at (0,0) size 224x130
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 224x130
+  RenderBlock {HTML} at (0,0) size 96x130
+    RenderBody {BODY} at (8,14) size 80x108
+      RenderBlock {P} at (0,0) size 80x48
+        RenderText {#text} at (0,0) size 80x48
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 80: "should be no"
+          text run at (0,32) width 64: "red below."
+      RenderBlock {DIV} at (140,62) size 0x46 [color=#FF0000] [bgcolor=#00FF00]
+        RenderBlock (compact) {DIV} at (-140,0) size 0x0 [color=#000000]
+          RenderText {#text} at (0,0) size 31x16
+            text run at (0,0) width 31: "Test:"
+        RenderInline {SPAN} at (0,0) size 76x49 [color=#000000]
+          RenderText {#text} at (0,0) size 76x49
+            text run at (0,0) width 27: "This"
+            text run at (0,8) width 58: "sentence"
+            text run at (0,13) width 41: "should"
+            text run at (0,18) width 31: "have"
+            text run at (0,23) width 8: "a"
+            text run at (0,28) width 37: "green"
+            text run at (0,33) width 76: "background."
+        RenderText {#text} at (0,0) size 0x0

@@ -2,11 +2,8 @@
 editing
 
 fast/AppleScript
+fast/box-shadow
 fast/box-sizing
-fast/canvas
-fast/clip
-fast/compact
-fast/css
 fast/css-generated-content
 fast/doctypes
 fast/dynamic
@@ -99,6 +96,23 @@ fast/block/positioning/absolute-with-html-border-quirks.html
 fast/block/positioning/absolute-with-html-border-strict.html
 fast/block/positioning/auto/003.html
 fast/block/positioning/auto/006.html
+
+fast/clip/006.html
+fast/clip/007.html
+fast/clip/008.html
+fast/css/absolute-poition-in-rtl-parent.html
+fast/css/apple-prefix.html
+fast/css/continuationCrash.html
+fast/css/hover-subselector.html
+fast/css/layerZOrderCrash.html
+fast/css/rtl-ordering.html
+fast/css/textCapitalizeEdgeCases.html
+fast/css/universal-hover-quirk.html
+fast/css/case-transform.html
+fast/css/computed-style.html
+fast/css/pseudostyle-anonymous-text.html
+fast/css/target-fragment-match.html
+
 
 fast/dom/blur-contenteditable.html
 fast/dom/capturing-event-listeners.html

@@ -1,0 +1,73 @@
+layer at (0,0) size 96x1610
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x1610
+  RenderBlock {HTML} at (0,0) size 96x1610
+    RenderBody {BODY} at (8,14) size 80x1582
+      RenderBlock {P} at (0,0) size 80x112
+        RenderText {#text} at (0,0) size 78x112
+          text run at (0,0) width 29: "Fails"
+          text run at (0,16) width 77: "indicate that"
+          text run at (0,32) width 48: "the font"
+          text run at (0,48) width 53: "property"
+          text run at (0,64) width 78: "specification"
+          text run at (0,80) width 69: "is invalid in"
+          text run at (0,96) width 72: "strict mode."
+      RenderBlock {P} at (0,144) size 80x144
+        RenderText {#text} at (0,1) size 64x142
+          text run at (0,1) width 63: "24pt"
+          text run at (0,37) width 64: "italic"
+          text run at (0,73) width 19: "="
+          text run at (0,109) width 63: "24pt"
+      RenderBlock {P} at (0,320) size 80x180
+        RenderText {#text} at (0,1) size 64x178
+          text run at (0,1) width 63: "24pt"
+          text run at (0,37) width 64: "italic"
+          text run at (0,73) width 64: "Arial"
+          text run at (0,109) width 19: "="
+          text run at (0,145) width 63: "24pt"
+      RenderBlock {P} at (0,532) size 80x216
+        RenderText {#text} at (0,1) size 76x214
+          text run at (0,1) width 63: "24pt"
+          text run at (0,37) width 64: "italic"
+          text run at (0,73) width 76: "'Arial'"
+          text run at (0,109) width 19: "="
+          text run at (0,145) width 63: "24pt"
+          text run at (0,181) width 64: "Arial"
+      RenderBlock {P} at (0,780) size 80x32
+        RenderText {#text} at (0,0) size 73x32
+          text run at (0,0) width 73: "italic 24pt ="
+          text run at (0,16) width 25: "fails"
+      RenderBlock {P} at (0,844) size 80x252
+        RenderText {#text} at (0,1) size 66x250
+          text run at (0,1) width 64: "italic"
+          text run at (0,37) width 63: "24pt"
+          text run at (0,73) width 64: "Arial"
+          text run at (0,109) width 19: "="
+          text run at (0,145) width 63: "24pt"
+          text run at (0,181) width 64: "Arial"
+          text run at (0,217) width 66: "Italic"
+      RenderBlock {P} at (0,1128) size 80x252
+        RenderText {#text} at (0,1) size 76x250
+          text run at (0,1) width 64: "italic"
+          text run at (0,37) width 63: "24pt"
+          text run at (0,73) width 76: "'Arial'"
+          text run at (0,109) width 19: "="
+          text run at (0,145) width 63: "24pt"
+          text run at (0,181) width 64: "Arial"
+          text run at (0,217) width 66: "Italic"
+      RenderBlock {P} at (0,1412) size 80x32
+        RenderText {#text} at (0,0) size 70x32
+          text run at (0,0) width 60: "Arial 24pt"
+          text run at (0,16) width 70: "italic = fails"
+      RenderBlock {P} at (0,1458) size 80x32
+        RenderText {#text} at (0,0) size 70x32
+          text run at (0,0) width 66: "'Arial' 24pt"
+          text run at (0,16) width 70: "italic = fails"
+      RenderBlock {P} at (0,1504) size 80x32
+        RenderText {#text} at (0,0) size 70x32
+          text run at (0,0) width 60: "Arial italic"
+          text run at (0,16) width 70: "24pt = fails"
+      RenderBlock {P} at (0,1550) size 80x32
+        RenderText {#text} at (0,0) size 70x32
+          text run at (0,0) width 66: "'Arial' italic"
+          text run at (0,16) width 70: "24pt = fails"

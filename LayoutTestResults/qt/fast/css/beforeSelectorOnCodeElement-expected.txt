@@ -1,0 +1,36 @@
+layer at (0,0) size 96x222
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x222
+  RenderBlock {HTML} at (0,0) size 96x222
+    RenderBody {BODY} at (8,8) size 80x206
+      RenderBlock {P} at (0,0) size 80x176
+        RenderText {#text} at (0,0) size 80x176
+          text run at (0,0) width 60: "The word"
+          text run at (0,16) width 65: "\"PASSED\""
+          text run at (0,32) width 60: "should be"
+          text run at (0,48) width 41: "shown"
+          text run at (0,64) width 77: "below with a"
+          text run at (0,80) width 77: "cirlce before"
+          text run at (0,96) width 36: "and a"
+          text run at (0,112) width 79: "square after."
+          text run at (0,128) width 80: "This is a test"
+          text run at (0,144) width 65: "for WebKit"
+          text run at (0,160) width 26: "bug "
+        RenderInline {A} at (0,0) size 40x16 [color=#0000EE]
+          RenderText {#text} at (26,160) size 40x16
+            text run at (26,160) width 40: "11197"
+        RenderText {#text} at (66,160) size 3x16
+          text run at (66,160) width 3: "."
+      RenderBlock (anonymous) at (0,190) size 80x16
+        RenderInline {CODE} at (0,0) size 36x16
+          RenderInline (generated) at (0,0) size 6x16
+            RenderCounter at (0,0) size 6x16
+              text run at (0,0) width 6: "\x{25E6}"
+          RenderText {#text} at (6,0) size 24x16
+            text run at (6,0) width 24: "PASSED"
+          RenderInline (generated) at (0,0) size 6x16
+            RenderCounter at (30,0) size 6x16
+              text run at (30,0) width 6: "\x{25A0}"
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

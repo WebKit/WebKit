@@ -1,0 +1,200 @@
+layer at (0,0) size 208x1839
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 208x1839
+  RenderBlock {HTML} at (0,0) size 96x1839
+    RenderBody {BODY} at (8,8) size 80x1823
+      RenderBlock {P} at (0,0) size 80x80
+        RenderText {#text} at (0,0) size 79x80
+          text run at (0,0) width 62: "Tests: the"
+          text run at (0,16) width 39: "height"
+          text run at (0,32) width 71: "attribute for"
+          text run at (0,48) width 79: "the marquee"
+          text run at (0,64) width 20: "tag"
+        RenderBR {BR} at (20,77) size 0x0
+      RenderBlock {P} at (0,94) size 80x416
+        RenderText {#text} at (0,0) size 70x16
+          text run at (0,0) width 70: "Conditions:"
+        RenderBR {BR} at (70,13) size 0x0
+        RenderText {#text} at (0,16) size 80x400
+          text run at (0,16) width 54: "Because"
+          text run at (0,32) width 69: "marquee is"
+          text run at (0,48) width 49: "a WinIE"
+          text run at (0,64) width 75: "element, we"
+          text run at (0,80) width 21: "are"
+          text run at (0,96) width 56: "honoring"
+          text run at (0,112) width 28: "their"
+          text run at (0,128) width 76: "treatment of"
+          text run at (0,144) width 59: "the heigh"
+          text run at (0,160) width 68: "attribute by"
+          text run at (0,176) width 76: "making sure"
+          text run at (0,192) width 21: "it is"
+          text run at (0,208) width 68: "overridden"
+          text run at (0,224) width 58: "when the"
+          text run at (0,240) width 38: "given "
+          text run at (38,240) width 39: "height"
+          text run at (0,256) width 59: "is smaller"
+          text run at (0,272) width 80: "than the font"
+          text run at (0,288) width 67: "height. We"
+          text run at (0,304) width 64: "also make"
+          text run at (0,320) width 79: "sure that the"
+          text run at (0,336) width 42: "default"
+          text run at (0,352) width 67: "height of a"
+          text run at (0,368) width 45: "vertical"
+          text run at (0,384) width 69: "marquee is"
+          text run at (0,400) width 42: "200px."
+      RenderBlock {P} at (0,524) size 80x384
+        RenderText {#text} at (0,0) size 79x384
+          text run at (0,0) width 79: "If successful,"
+          text run at (0,16) width 35: "in the"
+          text run at (0,32) width 62: "horizontal"
+          text run at (0,48) width 63: "group, the"
+          text run at (0,64) width 26: "pink"
+          text run at (0,80) width 55: "marquee"
+          text run at (0,96) width 60: "should be"
+          text run at (0,112) width 63: "large, and"
+          text run at (0,128) width 64: "the others"
+          text run at (0,144) width 78: "should all be"
+          text run at (0,160) width 58: "the same"
+          text run at (0,176) width 66: "size. None"
+          text run at (0,192) width 63: "of the text"
+          text run at (0,208) width 60: "should be"
+          text run at (0,224) width 57: "cut off. In"
+          text run at (0,240) width 69: "the vertical"
+          text run at (0,256) width 63: "group, the"
+          text run at (0,272) width 31: "aqua"
+          text run at (0,288) width 55: "marquee"
+          text run at (0,304) width 60: "should be"
+          text run at (0,320) width 70: "200px, and"
+          text run at (0,336) width 64: "the others"
+          text run at (0,352) width 60: "should be"
+          text run at (0,368) width 42: "100px."
+      RenderBlock {HR} at (0,922) size 80x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,931) size 80x892
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (0,160) size 0x16
+        RenderBR {BR} at (0,176) size 0x16
+        RenderBlock {DIV} at (0,192) size 80x200 [bgcolor=#008000]
+          RenderText {#text} at (0,0) size 64x32
+            text run at (0,0) width 41: "This is"
+            text run at (0,16) width 64: "200px tall."
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DIV} at (0,792) size 80x100 [bgcolor=#008000]
+          RenderText {#text} at (0,0) size 64x32
+            text run at (0,0) width 41: "This is"
+            text run at (0,16) width 64: "100px tall."
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,939) size 80x14 scrollX -80 scrollWidth 1704 scrollHeight 16
+  RenderBlock {MARQUEE} at (0,0) size 80x14 [bgcolor=#00FFFF]
+    RenderInline {B} at (0,0) size 1704x16
+      RenderText {#text} at (0,0) size 1704x16
+        text run at (0,0) width 734: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
+        text run at (734,0) width 117: "Paul O' Connell, "
+        text run at (851,0) width 853: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
+    RenderText {#text} at (0,0) size 0x0
+layer at (8,953) size 80x14 scrollX -80 scrollWidth 1704 scrollHeight 16
+  RenderBlock {MARQUEE} at (0,14) size 80x14 [bgcolor=#FFFF00]
+    RenderInline {B} at (0,0) size 1704x16
+      RenderText {#text} at (0,0) size 1704x16
+        text run at (0,0) width 734: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
+        text run at (734,0) width 117: "Paul O' Connell, "
+        text run at (851,0) width 853: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
+    RenderText {#text} at (0,0) size 0x0
+layer at (8,967) size 80x16 scrollX -80 scrollWidth 1704
+  RenderBlock {MARQUEE} at (0,28) size 80x16 [bgcolor=#FFA500]
+    RenderInline {B} at (0,0) size 1704x16
+      RenderText {#text} at (0,0) size 1704x16
+        text run at (0,0) width 734: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
+        text run at (734,0) width 117: "Paul O' Connell, "
+        text run at (851,0) width 853: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
+    RenderText {#text} at (0,0) size 0x0
+layer at (8,983) size 80x16 scrollX -80 scrollWidth 1704
+  RenderBlock {MARQUEE} at (0,44) size 80x16 [bgcolor=#A52A2A]
+    RenderInline {B} at (0,0) size 1704x16
+      RenderText {#text} at (0,0) size 1704x16
+        text run at (0,0) width 734: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
+        text run at (734,0) width 117: "Paul O' Connell, "
+        text run at (851,0) width 853: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
+    RenderText {#text} at (0,0) size 0x0
+layer at (8,999) size 80x100 scrollX -80 scrollWidth 1704
+  RenderBlock {MARQUEE} at (0,60) size 80x100 [bgcolor=#FFC0CB]
+    RenderInline {B} at (0,0) size 1704x16
+      RenderText {#text} at (0,0) size 1704x16
+        text run at (0,0) width 734: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
+        text run at (734,0) width 117: "Paul O' Connell, "
+        text run at (851,0) width 853: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
+    RenderText {#text} at (0,0) size 0x0
+layer at (8,1331) size 200x200 scrollY -200 scrollHeight 288
+  RenderBlock {MARQUEE} at (0,392) size 200x200 [bgcolor=#00FFFF]
+    RenderText {#text} at (0,0) size 200x288
+      text run at (0,0) width 172: "Lorem ipsum dolor sit amet,"
+      text run at (0,16) width 200: "consectetuer adipiscing elit, sed"
+      text run at (0,32) width 180: "diam nonummy nibh euismod"
+      text run at (0,48) width 159: "tincidunt ut laoreet dolore"
+      text run at (0,64) width 198: "magna aliquam erat volutpat. Ut"
+      text run at (0,80) width 198: "wisi enim ad minim veniam, quis"
+      text run at (0,96) width 128: "nostrud exerci tation"
+      text run at (0,112) width 197: "ullamcorper suscipit lobortis nisl"
+      text run at (0,128) width 159: "ut aliquip ex ea commodo"
+      text run at (0,144) width 193: "consequat. Duis autem vel eum"
+      text run at (0,160) width 158: "iriure dolor in hendrerit in"
+      text run at (0,176) width 175: "vulputate velit esse molestie"
+      text run at (0,192) width 184: "consequat, vel illum dolore eu"
+      text run at (0,208) width 172: "feugiat nulla facilisis at vero"
+      text run at (0,224) width 191: "eros et accumsan et iusto odio"
+      text run at (0,240) width 185: "dignissim qui blandit praesent"
+      text run at (0,256) width 198: "luptatum zzril delenit augue duis"
+      text run at (0,272) width 180: "dolore te feugait nulla facilisi."
+layer at (8,1531) size 200x100 scrollY -100 scrollHeight 288
+  RenderBlock {MARQUEE} at (0,592) size 200x100 [bgcolor=#FFFF00]
+    RenderText {#text} at (0,0) size 200x288
+      text run at (0,0) width 172: "Lorem ipsum dolor sit amet,"
+      text run at (0,16) width 200: "consectetuer adipiscing elit, sed"
+      text run at (0,32) width 180: "diam nonummy nibh euismod"
+      text run at (0,48) width 159: "tincidunt ut laoreet dolore"
+      text run at (0,64) width 198: "magna aliquam erat volutpat. Ut"
+      text run at (0,80) width 198: "wisi enim ad minim veniam, quis"
+      text run at (0,96) width 128: "nostrud exerci tation"
+      text run at (0,112) width 197: "ullamcorper suscipit lobortis nisl"
+      text run at (0,128) width 159: "ut aliquip ex ea commodo"
+      text run at (0,144) width 193: "consequat. Duis autem vel eum"
+      text run at (0,160) width 158: "iriure dolor in hendrerit in"
+      text run at (0,176) width 175: "vulputate velit esse molestie"
+      text run at (0,192) width 184: "consequat, vel illum dolore eu"
+      text run at (0,208) width 172: "feugiat nulla facilisis at vero"
+      text run at (0,224) width 191: "eros et accumsan et iusto odio"
+      text run at (0,240) width 185: "dignissim qui blandit praesent"
+      text run at (0,256) width 198: "luptatum zzril delenit augue duis"
+      text run at (0,272) width 180: "dolore te feugait nulla facilisi."
+layer at (8,1631) size 200x100 scrollY -100 scrollHeight 288
+  RenderBlock {MARQUEE} at (0,692) size 200x100 [bgcolor=#FF0000]
+    RenderText {#text} at (0,0) size 200x288
+      text run at (0,0) width 172: "Lorem ipsum dolor sit amet,"
+      text run at (0,16) width 200: "consectetuer adipiscing elit, sed"
+      text run at (0,32) width 180: "diam nonummy nibh euismod"
+      text run at (0,48) width 159: "tincidunt ut laoreet dolore"
+      text run at (0,64) width 198: "magna aliquam erat volutpat. Ut"
+      text run at (0,80) width 198: "wisi enim ad minim veniam, quis"
+      text run at (0,96) width 128: "nostrud exerci tation"
+      text run at (0,112) width 197: "ullamcorper suscipit lobortis nisl"
+      text run at (0,128) width 159: "ut aliquip ex ea commodo"
+      text run at (0,144) width 193: "consequat. Duis autem vel eum"
+      text run at (0,160) width 158: "iriure dolor in hendrerit in"
+      text run at (0,176) width 175: "vulputate velit esse molestie"
+      text run at (0,192) width 184: "consequat, vel illum dolore eu"
+      text run at (0,208) width 172: "feugiat nulla facilisis at vero"
+      text run at (0,224) width 191: "eros et accumsan et iusto odio"
+      text run at (0,240) width 185: "dignissim qui blandit praesent"
+      text run at (0,256) width 198: "luptatum zzril delenit augue duis"
+      text run at (0,272) width 180: "dolore te feugait nulla facilisi."

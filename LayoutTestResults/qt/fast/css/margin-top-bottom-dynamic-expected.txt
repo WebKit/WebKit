@@ -1,0 +1,97 @@
+layer at (0,0) size 131x934
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 131x934
+  RenderBlock {HTML} at (0,0) size 96x934
+    RenderBody {BODY} at (8,8) size 80x918
+      RenderBlock {P} at (0,0) size 80x64
+        RenderText {#text} at (0,0) size 78x64
+          text run at (0,0) width 44: "What it"
+          text run at (0,16) width 71: "should look"
+          text run at (0,32) width 78: "like (positive"
+          text run at (0,48) width 38: "case):"
+      RenderBlock {DIV} at (0,78) size 80x100 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (1,11) size 78x34 [border: (1px solid #0000FF)]
+          RenderText {#text} at (1,1) size 40x32
+            text run at (1,1) width 40: "Lorem"
+            text run at (1,17) width 36: "ipsum"
+        RenderBlock {DIV} at (1,55) size 78x34 [border: (1px dotted #0000FF)]
+          RenderText {#text} at (1,1) size 40x32
+            text run at (1,1) width 40: "Lorem"
+            text run at (1,17) width 36: "ipsum"
+      RenderBlock {P} at (0,192) size 80x80
+        RenderText {#text} at (0,0) size 71x80
+          text run at (0,0) width 44: "What it"
+          text run at (0,16) width 71: "should look"
+          text run at (0,32) width 21: "like"
+          text run at (0,48) width 59: "(negative"
+          text run at (0,64) width 38: "case):"
+      RenderBlock {DIV} at (0,286) size 80x60 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (1,11) size 78x34 [border: (1px solid #0000FF)]
+          RenderText {#text} at (1,1) size 40x32
+            text run at (1,1) width 40: "Lorem"
+            text run at (1,17) width 36: "ipsum"
+        RenderBlock {DIV} at (1,35) size 78x34 [border: (1px dotted #0000FF)]
+          RenderText {#text} at (1,1) size 40x32
+            text run at (1,1) width 40: "Lorem"
+            text run at (1,17) width 36: "ipsum"
+      RenderBlock {P} at (0,360) size 80x96
+        RenderText {#text} at (0,0) size 86x96
+          text run at (0,0) width 54: "Dynamic"
+          text run at (0,16) width 30: "case"
+          text run at (0,32) width 86: "(automatically"
+          text run at (0,48) width 42: "testing"
+          text run at (0,64) width 68: "positive -->"
+          text run at (0,80) width 62: "negative):"
+      RenderBlock {DIV} at (0,470) size 80x60 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (1,11) size 78x34 [border: (1px solid #0000FF)]
+          RenderText {#text} at (1,1) size 40x32
+            text run at (1,1) width 40: "Lorem"
+            text run at (1,17) width 36: "ipsum"
+        RenderBlock {DIV} at (1,35) size 78x34 [border: (1px dotted #0000FF)]
+          RenderText {#text} at (1,1) size 40x32
+            text run at (1,1) width 40: "Lorem"
+            text run at (1,17) width 36: "ipsum"
+      RenderBlock (anonymous) at (0,530) size 80x74
+        RenderBR {BR} at (0,0) size 0x16
+        RenderButton {INPUT} at (2,18) size 119x25 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 103x16
+            RenderText at (0,0) size 103x16
+              text run at (0,0) width 103: "Negative margin"
+        RenderText {#text} at (0,0) size 0x0
+        RenderButton {INPUT} at (2,47) size 112x25 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 96x16
+            RenderText at (0,0) size 96x16
+              text run at (0,0) width 96: "Positive margin"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,618) size 80x112
+        RenderText {#text} at (0,0) size 86x112
+          text run at (0,0) width 54: "Dynamic"
+          text run at (0,16) width 30: "case"
+          text run at (0,32) width 86: "(automatically"
+          text run at (0,48) width 42: "testing"
+          text run at (0,64) width 68: "positive -->"
+          text run at (0,80) width 74: "negative -->"
+          text run at (0,96) width 56: "positive):"
+      RenderBlock {DIV} at (0,744) size 80x100 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (1,11) size 78x34 [border: (1px solid #0000FF)]
+          RenderText {#text} at (1,1) size 40x32
+            text run at (1,1) width 40: "Lorem"
+            text run at (1,17) width 36: "ipsum"
+        RenderBlock {DIV} at (1,55) size 78x34 [border: (1px dotted #0000FF)]
+          RenderText {#text} at (1,1) size 40x32
+            text run at (1,1) width 40: "Lorem"
+            text run at (1,17) width 36: "ipsum"
+      RenderBlock (anonymous) at (0,844) size 80x74
+        RenderBR {BR} at (0,0) size 0x16
+        RenderButton {INPUT} at (2,18) size 119x25 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 103x16
+            RenderText at (0,0) size 103x16
+              text run at (0,0) width 103: "Negative margin"
+        RenderText {#text} at (0,0) size 0x0
+        RenderButton {INPUT} at (2,47) size 112x25 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 96x16
+            RenderText at (0,0) size 96x16
+              text run at (0,0) width 96: "Positive margin"
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

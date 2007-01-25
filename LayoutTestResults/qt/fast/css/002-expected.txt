@@ -1,0 +1,31 @@
+layer at (0,0) size 124x768
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 124x768
+  RenderBlock {HTML} at (0,0) size 96x768
+    RenderBody {BODY} at (8,8) size 80x732
+      RenderBlock (anonymous) at (0,0) size 80x352
+        RenderText {#text} at (0,1) size 116x350
+          text run at (0,1) width 79: "These"
+          text run at (0,33) width 44: "two"
+          text run at (0,65) width 58: "lines"
+          text run at (0,97) width 84: "should"
+          text run at (0,129) width 56: "both"
+          text run at (0,161) width 32: "be"
+          text run at (0,193) width 116: "Verdana."
+          text run at (0,225) width 63: "They"
+          text run at (0,257) width 84: "should"
+          text run at (0,289) width 32: "be"
+          text run at (0,321) width 112: "identical."
+      RenderBlock {P} at (0,380) size 80x352
+        RenderText {#text} at (0,1) size 116x350
+          text run at (0,1) width 79: "These"
+          text run at (0,33) width 44: "two"
+          text run at (0,65) width 58: "lines"
+          text run at (0,97) width 84: "should"
+          text run at (0,129) width 56: "both"
+          text run at (0,161) width 32: "be"
+          text run at (0,193) width 116: "Verdana."
+          text run at (0,225) width 63: "They"
+          text run at (0,257) width 84: "should"
+          text run at (0,289) width 32: "be"
+          text run at (0,321) width 112: "identical."

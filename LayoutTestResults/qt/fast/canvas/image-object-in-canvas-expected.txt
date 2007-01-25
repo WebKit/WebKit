@@ -1,0 +1,40 @@
+layer at (0,0) size 158x860
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 158x860
+  RenderBlock {HTML} at (0,0) size 96x860
+    RenderBody {BODY} at (8,14) size 80x832
+      RenderBlock {P} at (0,0) size 80x272
+        RenderText {#text} at (0,0) size 78x272
+          text run at (0,0) width 61: "This tests"
+          text run at (0,16) width 48: "that the"
+          text run at (0,32) width 39: "Image"
+          text run at (0,48) width 66: "JavaScript"
+          text run at (0,64) width 78: "object works"
+          text run at (0,80) width 77: "as expected"
+          text run at (0,96) width 68: "when used"
+          text run at (0,112) width 75: "in a canvas."
+          text run at (0,128) width 73: "If the test is"
+          text run at (0,144) width 67: "successful,"
+          text run at (0,160) width 60: "the Apple"
+          text run at (0,176) width 72: "logo should"
+          text run at (0,192) width 45: "appear"
+          text run at (0,208) width 44: "scaled,"
+          text run at (0,224) width 71: "normal and"
+          text run at (0,240) width 66: "finally tiled"
+          text run at (0,256) width 63: "in a circle."
+      RenderBlock {DIV} at (0,286) size 80x182
+        RenderHTMLCanvas {CANVAS} at (0,0) size 150x150
+        RenderText {#text} at (0,150) size 73x32
+          text run at (0,150) width 36: "Using"
+          text run at (0,166) width 73: "drawImage."
+      RenderBlock {DIV} at (0,468) size 80x182
+        RenderHTMLCanvas {CANVAS} at (0,0) size 150x150
+        RenderText {#text} at (0,150) size 134x32
+          text run at (0,150) width 36: "Using"
+          text run at (0,166) width 134: "drawImageFromRect."
+      RenderBlock {DIV} at (0,650) size 80x182
+        RenderHTMLCanvas {CANVAS} at (0,0) size 150x150
+        RenderText {#text} at (0,150) size 88x32
+          text run at (0,150) width 36: "Using"
+          text run at (0,166) width 88: "ImagePattern."
+      RenderBlock {PRE} at (0,846) size 80x0

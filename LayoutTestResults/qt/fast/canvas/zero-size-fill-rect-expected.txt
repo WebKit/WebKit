@@ -1,0 +1,14 @@
+layer at (0,0) size 108x196
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 108x196
+  RenderBlock {HTML} at (0,0) size 96x196
+    RenderBody {BODY} at (8,8) size 80x180
+      RenderHTMLCanvas {CANVAS} at (0,0) size 100x100
+      RenderText {#text} at (0,0) size 0x0
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (0,100) size 68x80
+        text run at (0,100) width 60: "PASS -- 0"
+        text run at (0,116) width 68: "sized rects"
+        text run at (0,132) width 43: "did not"
+        text run at (0,148) width 61: "trigger an"
+        text run at (0,164) width 61: "exception"

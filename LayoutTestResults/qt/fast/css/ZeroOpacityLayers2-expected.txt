@@ -1,0 +1,57 @@
+layer at (0,0) size 300x794
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x26
+  RenderBlock {HTML} at (0,0) size 96x26
+    RenderBody {BODY} at (8,8) size 80x10
+layer at (10,10) size 200x200
+  RenderBlock (positioned) {DIV} at (10,10) size 200x200 [bgcolor=#0000FF]
+layer at (20,20) size 180x180
+  RenderBlock (positioned) {DIV} at (10,10) size 180x180 [bgcolor=#00FF00]
+layer at (30,30) size 160x160
+  RenderBlock (positioned) {DIV} at (10,10) size 160x160 [bgcolor=#FF0000]
+    RenderText {#text} at (0,0) size 150x16
+      text run at (0,0) width 150: "Should not see this text."
+    RenderText {#text} at (0,0) size 0x0
+layer at (40,40) size 140x140
+  RenderBlock (positioned) {DIV} at (10,10) size 140x140 [bgcolor=#FFFFFF]
+    RenderText {#text} at (0,0) size 120x32
+      text run at (0,0) width 120: "Should not see this"
+      text run at (0,16) width 26: "text."
+layer at (100,100) size 200x200
+  RenderBlock (positioned) {DIV} at (80,80) size 200x200 [bgcolor=#FFFF00]
+layer at (10,314) size 86x480
+  RenderBlock (positioned) {P} at (10,314) size 86x480
+    RenderText {#text} at (0,0) size 86x480
+      text run at (0,0) width 63: "Below are"
+      text run at (0,16) width 83: "four boxes all"
+      text run at (0,32) width 71: "within each"
+      text run at (0,48) width 76: "other, and a"
+      text run at (0,64) width 22: "box"
+      text run at (0,80) width 66: "overlaping"
+      text run at (0,96) width 77: "other boxes."
+      text run at (0,112) width 86: "The 3rd inner"
+      text run at (0,128) width 64: "box is red,"
+      text run at (0,144) width 71: "and has an"
+      text run at (0,160) width 61: "opacity of"
+      text run at (0,176) width 83: "zero, and the"
+      text run at (0,192) width 73: "box within it"
+      text run at (0,208) width 74: "is black and"
+      text run at (0,224) width 43: "has an"
+      text run at (0,240) width 61: "opacity of"
+      text run at (0,256) width 66: "0.5. As the"
+      text run at (0,272) width 81: "third box has"
+      text run at (0,288) width 80: "opacity zero,"
+      text run at (0,304) width 56: "the inner"
+      text run at (0,320) width 70: "black is not"
+      text run at (0,336) width 70: "visible. The"
+      text run at (0,352) width 75: "yellow block"
+      text run at (0,368) width 72: "has opacity"
+      text run at (0,384) width 80: "of 0.5, and is"
+      text run at (0,400) width 77: "as the same"
+      text run at (0,416) width 68: "level in the"
+      text run at (0,432) width 81: "DOM tree as"
+      text run at (0,448) width 81: "the 3rd inner"
+      text run at (0,464) width 25: "box."
+    RenderText {#text} at (0,0) size 0x0
+    RenderText {#text} at (0,0) size 0x0
+    RenderText {#text} at (0,0) size 0x0

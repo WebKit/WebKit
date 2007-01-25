@@ -1,0 +1,97 @@
+layer at (0,0) size 252x4386
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 252x4386
+  RenderBlock {HTML} at (0,0) size 96x4386 [color=#FF0000] [bgcolor=#FFFFFF]
+    RenderBody {BODY} at (0,84) size 96x3102
+      RenderBlock {H2} at (72,2804) size 12x72 [color=#000080]
+        RenderText {#text} at (12,47) size 129x26
+          text run at (12,47) width 129: "Hello World!"
+layer at (36,2960) size 216x226
+  RenderBlock (relative positioned) {DIV} at (36,2876) size 60x226 [border: (12px solid #00000000)]
+    RenderTable {TABLE} at (12,12) size 1x0
+      RenderTableSection {TBODY} at (0,0) size 1x0
+        RenderTableRow {TR} at (0,0) size 1x0
+          RenderTableCell {TD} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+    RenderBlock {DIV} at (60,60) size 120x12 [bgcolor=#FF0000] [border: (12px solid #000000) none (12px solid #000000)]
+      RenderBlock {DIV} at (12,0) size 144x12
+        RenderText {#text} at (0,-1) size 90x14
+          text run at (0,-1) width 90: "                              "
+    RenderBlock (floating) {DIV} at (36,96) size 168x48 [border: none (12px solid #000000)]
+      RenderBlock {DIV} at (12,0) size 144x48 [bgcolor=#FFFF00]
+        RenderBlock {DIV} at (60,12) size 24x24 [bgcolor=#FF0000]
+          RenderBlock (generated) at (0,0) size 24x12 [border: none (12px solid #FFFF00) (12px solid #000000) (12px solid #FFFF00)]
+            RenderText at (0,0) size 0x0
+          RenderBlock (generated) at (0,12) size 24x12 [border: (12px solid #000000) (12px solid #FFFF00) none (12px solid #FFFF00)]
+            RenderText at (0,0) size 0x0
+    RenderBlock {DIV} at (87,75) size 0x0
+      RenderBlock {DIV} at (48,0) size 0x0
+    RenderBlock {DIV} at (48,132) size 0x24
+    RenderBlock {DIV} at (60,168) size 120x12 [bgcolor=#FFFF00] [border: (12px solid #000000) none (12px solid #000000)]
+      RenderInline {DIV} at (0,0) size 1x7
+        RenderText {#text} at (12,6) size 1x7
+          text run at (12,6) width 1: " "
+    RenderBlock {DIV} at (12,180) size 36x12
+      RenderBlock {DIV} at (60,0) size 96x12 [color=#FFA500] [bgcolor=#FFFF00] [border: none (24px solid #000000) none (24px solid #000000)]
+    RenderTable {UL} at (96,192) size 26x12 [bgcolor=#FF0000]
+      RenderTableSection at (0,0) size 26x12
+        RenderTableRow at (0,0) size 26x12
+          RenderTableCell {LI} at (0,12) size 1x0 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
+          RenderTableCell at (1,0) size 12x12 [r=0 c=1 rs=1 cs=1]
+            RenderTable {LI} at (0,0) size 12x12 [bgcolor=#000000]
+          RenderTableCell {LI} at (13,12) size 1x0 [bgcolor=#000000] [r=0 c=2 rs=1 cs=1]
+          RenderTableCell at (14,0) size 12x12 [r=0 c=3 rs=1 cs=1]
+            RenderListItem {LI} at (0,0) size 12x12 [bgcolor=#000000]
+layer at (48,3164) size 36x10 scrollHeight 263
+  RenderBlock {DIV} at (12,204) size 36x10
+    RenderTable {TABLE} at (0,0) size 4x263
+      RenderTableSection {TBODY} at (0,0) size 4x263
+        RenderTableRow {TR} at (0,0) size 4x263
+          RenderTableCell {TD} at (0,0) size 4x263 [r=0 c=0 rs=1 cs=1]
+            RenderImage {IMG} at (0,181) size 4x4
+layer at (132,108) size 48x18
+  RenderBlock (positioned) {P} at (132,108) size 48x18 [bgcolor=#000000] [border: none (6px solid #FFFF00) none]
+layer at (132,144) size 48x15
+  RenderBlock (positioned) {P} at (132,144) size 48x15 [bgcolor=#000000] [border: none (3px solid #FF0000) none]
+layer at (108,3008) size 96x12
+  RenderBlock (positioned) {BLOCKQUOTE} at (72,48) size 96x12 [border: none (24px solid #000000) none (24px solid #000000)]
+    RenderBlock (floating) {ADDRESS} at (24,0) size 48x12 [bgcolor=#FFFF00]
+layer at (84,3032) size 144x24
+  RenderBlock (positioned) {DIV} at (48,72) size 144x24 [bgcolor=#FF0000]
+    RenderBlock {DIV} at (0,0) size 144x0
+      RenderInline {OBJECT} at (0,0) size 35x14
+        RenderInline {OBJECT} at (0,0) size 35x14
+          RenderImage {OBJECT} at (109,24) size 35x0 [border: (12px solid #000000) none]
+    RenderBlock (floating) {DIV} at (0,0) size 144x24 [border: (12px solid #FF0000) none (12px solid #000000)]
+    RenderBlock {DIV} at (0,0) size 144x24 [border: (24px solid #FFFF00)]
+layer at (84,3104) size 144x24
+  RenderBlock (relative positioned) {DIV} at (0,0) size 144x24 [bgcolor=#000000]
+layer at (96,3104) size 120x24
+  RenderBlock (positioned) {DIV} at (12,0) size 120x24 [border: (12px solid #FFFF00)]
+    RenderBlock (floating) {SPAN} at (12,0) size 96x12 [border: none (12px solid #00000000) none (12px solid #00000000)]
+      RenderBlock (floating) {EM} at (12,0) size 72x24 [border: (12px solid #FFFF00) none (12px solid #000000) none]
+        RenderBlock {STRONG} at (0,12) size 72x0
+layer at (48,84) size 142x404
+  RenderBlock (relative positioned) zI: 2 {DIV} at (48,0) size 26x404 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {H1} at (13,13) size 0x54
+      RenderText {#text} at (0,0) size 129x53
+        text run at (0,0) width 117: "Standards"
+        text run at (0,27) width 129: "compliant?"
+    RenderBlock {P} at (13,67) size 0x324
+      RenderInline {A} at (0,0) size 59x107 [color=#0000FF]
+        RenderText {#text} at (0,0) size 59x107
+          text run at (0,0) width 53: "Take"
+          text run at (0,27) width 41: "The"
+          text run at (0,54) width 59: "Acid2"
+          text run at (0,81) width 47: "Test"
+      RenderText {#text} at (0,108) size 92x107
+        text run at (0,108) width 39: "and"
+        text run at (0,135) width 92: "compare"
+        text run at (0,162) width 12: "it"
+        text run at (0,189) width 20: "to"
+      RenderInline {A} at (0,0) size 100x80 [color=#0000FF]
+        RenderText {#text} at (0,216) size 100x80
+          text run at (0,216) width 33: "the"
+          text run at (0,243) width 100: "reference"
+          text run at (0,270) width 99: "rendering"
+      RenderText {#text} at (0,297) size 7x26
+        text run at (0,297) width 7: "."

@@ -1,0 +1,101 @@
+layer at (0,0) size 109x1172
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 109x1172
+  RenderBlock {HTML} at (0,0) size 96x1172
+    RenderBody {BODY} at (8,8) size 80x1150
+      RenderBlock {H1} at (0,0) size 80x96
+        RenderText {#text} at (0,1) size 101x94
+          text run at (0,1) width 74: "CSS2"
+          text run at (0,33) width 101: "System"
+          text run at (0,65) width 76: "Fonts"
+      RenderBlock {P} at (0,114) size 80x208
+        RenderText {#text} at (0,0) size 74x112
+          text run at (0,0) width 25: "The"
+          text run at (0,16) width 55: "following"
+          text run at (0,32) width 41: "should"
+          text run at (0,48) width 74: "appear with"
+          text run at (0,64) width 55: "the fonts"
+          text run at (0,80) width 59: "specified,"
+          text run at (0,96) width 45: "per the"
+        RenderInline {A} at (0,0) size 77x16 [color=#0000EE]
+          RenderText {#text} at (0,112) size 77x16
+            text run at (0,112) width 77: "CSS2 specs"
+        RenderText {#text} at (77,112) size 80x96
+          text run at (77,112) width 3: "."
+          text run at (0,128) width 39: "If they"
+          text run at (0,144) width 72: "appear in a"
+          text run at (0,160) width 73: "monospace"
+          text run at (0,176) width 78: "font, the test"
+          text run at (0,192) width 64: "has failed."
+      RenderBlock {UL} at (0,336) size 80x752
+        RenderListItem {LI} at (40,0) size 40x112
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 32x112
+            text run at (0,0) width 28: "Caption"
+            text run at (0,16) width 28: "(on Mac"
+            text run at (0,32) width 28: "will be"
+            text run at (0,48) width 24: "Lucida"
+            text run at (0,64) width 24: "Grande"
+            text run at (0,80) width 16: "13.0"
+            text run at (0,96) width 32: "Regular)"
+        RenderListItem {LI} at (40,112) size 40x192
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 40x192
+            text run at (0,0) width 32: "Icon (on"
+            text run at (0,16) width 32: "Mac will"
+            text run at (0,32) width 36: "be Lucida"
+            text run at (0,48) width 24: "Grande"
+            text run at (0,64) width 16: "13.0"
+            text run at (0,80) width 28: "Regular"
+            text run at (0,96) width 32: "for now,"
+            text run at (0,112) width 32: "not sure"
+            text run at (0,128) width 40: "how to get"
+            text run at (0,144) width 36: "this info"
+            text run at (0,160) width 16: "from"
+            text run at (0,176) width 28: "Finder)"
+        RenderListItem {LI} at (40,304) size 40x96
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 36x96
+            text run at (0,0) width 32: "Menu (on"
+            text run at (0,16) width 32: "Mac will"
+            text run at (0,32) width 36: "be Lucida"
+            text run at (0,48) width 24: "Grande"
+            text run at (0,64) width 16: "13.0"
+            text run at (0,80) width 32: "Regular)"
+        RenderListItem {LI} at (40,400) size 40x112
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 36x112
+            text run at (0,0) width 32: "Message-"
+            text run at (0,16) width 28: "Box (on"
+            text run at (0,32) width 32: "Mac will"
+            text run at (0,48) width 36: "be Lucida"
+            text run at (0,64) width 24: "Grande"
+            text run at (0,80) width 16: "13.0"
+            text run at (0,96) width 32: "Regular)"
+        RenderListItem {LI} at (40,512) size 40x128
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 32x128
+            text run at (0,0) width 24: "Small-"
+            text run at (0,16) width 28: "Caption"
+            text run at (0,32) width 28: "(on Mac"
+            text run at (0,48) width 28: "will be"
+            text run at (0,64) width 24: "Lucida"
+            text run at (0,80) width 24: "Grande"
+            text run at (0,96) width 16: "11.0"
+            text run at (0,112) width 32: "Regular)"
+        RenderListItem {LI} at (40,640) size 40x112
+          RenderListMarker at (-16,0) size 6x16: bullet
+          RenderText {#text} at (0,0) size 40x112
+            text run at (0,0) width 40: "Status-Bar"
+            text run at (0,16) width 28: "(on Mac"
+            text run at (0,32) width 28: "will be"
+            text run at (0,48) width 24: "Lucida"
+            text run at (0,64) width 24: "Grande"
+            text run at (0,80) width 16: "10.0"
+            text run at (0,96) width 32: "Regular)"
+      RenderBlock {P} at (0,1102) size 80x48
+        RenderInline {A} at (0,0) size 72x48 [color=#0000EE]
+          RenderText {#text} at (0,0) size 72x48
+            text run at (0,0) width 70: "\x{AB} Return to"
+            text run at (0,16) width 72: "Safari Bugs"
+            text run at (0,32) width 32: "page"

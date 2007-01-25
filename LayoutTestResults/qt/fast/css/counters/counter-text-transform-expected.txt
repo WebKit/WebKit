@@ -1,0 +1,38 @@
+layer at (0,0) size 291x84
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 291x84
+  RenderBlock {HTML} at (0,0) size 96x84
+    RenderBody {BODY} at (8,14) size 80x62
+      RenderBlock {P} at (0,0) size 80x16
+        RenderText {#text} at (0,0) size 283x16
+          text run at (0,0) width 283: "The following two lines should look the same:"
+      RenderBlock {DIV} at (0,30) size 80x16
+        RenderInline {SPAN} at (0,0) size 3x16
+          RenderInline (generated) at (0,0) size 3x16
+            RenderCounter at (0,0) size 3x16
+              text run at (0,0) width 3: "i"
+        RenderText {#text} at (3,0) size 4x16
+          text run at (3,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 6x16
+          RenderInline (generated) at (0,0) size 6x16
+            RenderCounter at (7,0) size 6x16
+              text run at (7,0) width 6: "ii"
+        RenderText {#text} at (13,0) size 4x16
+          text run at (13,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 9x16
+          RenderInline (generated) at (0,0) size 9x16
+            RenderCounter at (17,0) size 9x16
+              text run at (17,0) width 9: "iii"
+        RenderText {#text} at (26,0) size 4x16
+          text run at (26,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 10x16
+          RenderInline (generated) at (0,0) size 10x16
+            RenderCounter at (30,0) size 10x16
+              text run at (30,0) width 10: "iv"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,46) size 80x16
+        RenderText {#text} at (0,0) size 40x16
+          text run at (0,0) width 7: "i "
+          text run at (7,0) width 10: "ii "
+          text run at (17,0) width 13: "iii "
+          text run at (30,0) width 10: "iv"

@@ -1,0 +1,32 @@
+layer at (0,0) size 108x492
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 108x492
+  RenderBlock {HTML} at (0,0) size 96x492
+    RenderBody {BODY} at (8,8) size 80x434
+      RenderBlock {P} at (0,0) size 80x112
+        RenderInline {A} at (0,0) size 58x16 [color=#0000EE]
+          RenderText {#text} at (0,0) size 58x16
+            text run at (0,0) width 58: "bug 7118"
+        RenderText {#text} at (58,0) size 68x112
+          text run at (58,0) width 3: ":"
+          text run at (0,16) width 42: "Wrong"
+          text run at (0,32) width 53: "property"
+          text run at (0,48) width 60: "values do"
+          text run at (0,64) width 44: "not get"
+          text run at (0,80) width 68: "invalidated"
+          text run at (0,96) width 57: "correctly."
+      RenderBlock {P} at (0,126) size 80x96
+        RenderText {#text} at (0,0) size 75x96
+          text run at (0,0) width 51: "The two"
+          text run at (0,16) width 75: "words \"test\""
+          text run at (0,32) width 71: "should look"
+          text run at (0,48) width 61: "the same,"
+          text run at (0,64) width 45: "with no"
+          text run at (0,80) width 44: "outline:"
+      RenderBlock {DIV} at (0,272) size 80x56
+        RenderBlock {P} at (0,0) size 100x56
+          RenderText {#text} at (0,2) size 81x52
+            text run at (0,2) width 81: "test"
+      RenderBlock {P} at (0,378) size 80x56
+        RenderText {#text} at (0,2) size 81x52
+          text run at (0,2) width 81: "test"

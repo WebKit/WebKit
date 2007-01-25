@@ -1,0 +1,18 @@
+layer at (0,0) size 96x333
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x333
+  RenderBlock {HTML} at (0,0) size 96x333
+    RenderBody {BODY} at (8,8) size 80x317
+      RenderBlock {DIV} at (0,0) size 80x317 [border: (10px solid #808000)]
+        RenderText {#text} at (10,10) size 75x296
+          text run at (10,10) width 42: "You"
+          text run at (10,37) width 69: "should"
+          text run at (10,64) width 38: "see"
+          text run at (10,91) width 51: "24px"
+          text run at (10,118) width 39: "text"
+          text run at (10,145) width 61: "inside"
+          text run at (10,172) width 13: "a"
+          text run at (10,199) width 51: "10px"
+          text run at (10,226) width 48: "solid"
+          text run at (10,253) width 48: "olive"
+          text run at (10,280) width 75: "border."

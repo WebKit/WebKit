@@ -1,0 +1,34 @@
+layer at (0,0) size 187x454
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 187x454
+  RenderBlock {HTML} at (0,0) size 96x454
+    RenderBody {BODY} at (8,8) size 80x438
+      RenderBlock {P} at (0,0) size 80x96
+        RenderText {#text} at (0,0) size 53x16
+          text run at (0,0) width 53: "Test for "
+        RenderInline {A} at (0,0) size 75x32 [color=#0000EE]
+          RenderText {#text} at (53,0) size 75x32
+            text run at (53,0) width 22: "bug"
+            text run at (0,16) width 40: "11575"
+        RenderText {#text} at (40,16) size 179x80
+          text run at (40,16) width 3: ":"
+          text run at (0,32) width 95: "REGRESSION:"
+          text run at (0,48) width 59: "WebCore"
+          text run at (0,64) width 50: "crash in"
+          text run at (0,80) width 179: "CSSParser/HTMLTokenizer."
+      RenderBlock {P} at (0,110) size 80x208
+        RenderText {#text} at (0,0) size 80x208
+          text run at (0,0) width 80: "All four sides"
+          text run at (0,16) width 36: "of the"
+          text run at (0,32) width 43: "square"
+          text run at (0,48) width 36: "below"
+          text run at (0,64) width 60: "should be"
+          text run at (0,80) width 69: "present for"
+          text run at (0,96) width 65: "this test to"
+          text run at (0,112) width 71: "really pass,"
+          text run at (0,128) width 72: "and WebKit"
+          text run at (0,144) width 56: "shouldn't"
+          text run at (0,160) width 67: "crash for it"
+          text run at (0,176) width 46: "to pass"
+          text run at (0,192) width 52: "partially."
+      RenderBlock {DIV} at (0,332) size 106x106 [border: (3px solid #000000)]

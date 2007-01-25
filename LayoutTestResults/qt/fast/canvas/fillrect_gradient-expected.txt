@@ -1,0 +1,21 @@
+layer at (0,0) size 158x342
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 158x342
+  RenderBlock {HTML} at (0,0) size 96x342
+    RenderBody {BODY} at (8,8) size 80x326
+      RenderText {#text} at (0,0) size 78x176
+        text run at (0,0) width 74: "The canvas"
+        text run at (0,16) width 36: "below"
+        text run at (0,32) width 78: "should show"
+        text run at (0,48) width 67: "a gradient,"
+        text run at (0,64) width 63: "starting at"
+        text run at (0,80) width 77: "green at the"
+        text run at (0,96) width 48: "top and"
+        text run at (0,112) width 55: "fading to"
+        text run at (0,128) width 73: "white at the"
+        text run at (0,144) width 58: "bottom of"
+        text run at (0,160) width 55: "the rect. "
+      RenderHTMLCanvas {CANVAS} at (0,176) size 150x150
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0

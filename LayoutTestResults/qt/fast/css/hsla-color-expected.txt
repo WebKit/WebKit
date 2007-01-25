@@ -1,0 +1,29 @@
+layer at (0,0) size 100x638
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 100x638
+  RenderBlock {HTML} at (0,0) size 96x638
+    RenderBody {BODY} at (8,8) size 80x612 [bgcolor=#FFFF00]
+      RenderBlock {H1} at (0,0) size 80x192 [color=#FF00007F]
+        RenderText {#text} at (0,1) size 92x190
+          text run at (0,1) width 58: "This"
+          text run at (0,33) width 92: "should"
+          text run at (0,65) width 33: "be"
+          text run at (0,97) width 52: "red,"
+          text run at (0,129) width 74: "alpha"
+          text run at (0,161) width 40: "0.5"
+      RenderBlock {H1} at (0,210) size 80x192 [color=#00FF0000]
+        RenderText {#text} at (0,1) size 92x190
+          text run at (0,1) width 58: "This"
+          text run at (0,33) width 92: "should"
+          text run at (0,65) width 33: "be"
+          text run at (0,97) width 85: "green,"
+          text run at (0,129) width 74: "alpha"
+          text run at (0,161) width 40: "0.0"
+      RenderBlock {H1} at (0,420) size 80x192 [color=#00FF00]
+        RenderText {#text} at (0,1) size 92x190
+          text run at (0,1) width 58: "This"
+          text run at (0,33) width 92: "should"
+          text run at (0,65) width 33: "be"
+          text run at (0,97) width 85: "green,"
+          text run at (0,129) width 74: "alpha"
+          text run at (0,161) width 40: "1.0"

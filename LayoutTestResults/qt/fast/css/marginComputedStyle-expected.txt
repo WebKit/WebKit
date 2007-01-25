@@ -1,0 +1,38 @@
+layer at (0,0) size 96x271
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x271
+  RenderBlock {HTML} at (0,0) size 96x271
+    RenderBody {BODY} at (8,8) size 80x255
+      RenderBlock {DIV} at (10,0) size 60x47 [color=#FFFFFF] [bgcolor=#800080] [border: (10px double #000000)]
+        RenderText {#text} at (10,10) size 47x26
+          text run at (10,10) width 47: "Test"
+      RenderBlock (anonymous) at (0,47) size 80x208
+        RenderText {#text} at (0,0) size 71x16
+          text run at (0,0) width 71: "width: 40px"
+        RenderBR {BR} at (71,13) size 0x0
+        RenderText {#text} at (0,16) size 77x16
+          text run at (0,16) width 77: "height: 27px"
+        RenderBR {BR} at (77,29) size 0x0
+        RenderText {#text} at (0,32) size 69x32
+          text run at (0,32) width 69: "margin-left:"
+          text run at (0,48) width 31: "10px"
+        RenderBR {BR} at (31,61) size 0x0
+        RenderText {#text} at (0,64) size 78x32
+          text run at (0,64) width 78: "margin-right:"
+          text run at (0,80) width 31: "10px"
+        RenderBR {BR} at (31,93) size 0x0
+        RenderText {#text} at (0,96) size 70x32
+          text run at (0,96) width 70: "margin-top:"
+          text run at (0,112) width 23: "0px"
+        RenderBR {BR} at (23,125) size 0x0
+        RenderText {#text} at (0,128) size 72x32
+          text run at (0,128) width 47: "margin-"
+          text run at (0,144) width 72: "bottom: 0px"
+        RenderBR {BR} at (72,157) size 0x0
+        RenderText {#text} at (0,160) size 77x32
+          text run at (0,160) width 77: "padding-left:"
+          text run at (0,176) width 23: "0px"
+        RenderBR {BR} at (23,189) size 0x0
+        RenderText {#text} at (0,192) size 53x16
+          text run at (0,192) width 53: "left: auto"
+        RenderBR {BR} at (53,205) size 0x0

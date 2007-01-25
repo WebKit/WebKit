@@ -1,0 +1,15 @@
+layer at (0,0) size 96x54
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x54
+  RenderBlock {HTML} at (0,0) size 96x54
+    RenderBody {BODY} at (8,8) size 80x32
+      RenderBlock {DL} at (0,0) size 80x32
+        RenderBlock (compact) {DT} at (0,0) size 80x16
+          RenderText {#text} at (0,0) size 58x16
+            text run at (0,0) width 58: "Line One"
+        RenderBlock (compact) {DT} at (0,16) size 80x16
+          RenderText {#text} at (0,0) size 31x16
+            text run at (0,0) width 31: "Line "
+          RenderInline {SPAN} at (0,0) size 27x16
+            RenderText {#text} at (31,0) size 27x16
+              text run at (31,0) width 27: "Two"

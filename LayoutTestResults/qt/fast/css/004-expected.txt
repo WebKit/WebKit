@@ -1,0 +1,54 @@
+layer at (0,0) size 148x770
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 148x770
+  RenderBlock {HTML} at (0,0) size 96x770
+    RenderBody {BODY} at (8,18) size 80x738
+      RenderBlock {H1} at (0,0) size 80x128
+        RenderText {#text} at (0,1) size 140x126
+          text run at (0,1) width 140: "Shorthand"
+          text run at (0,33) width 89: "border"
+          text run at (0,65) width 138: "properties"
+          text run at (0,97) width 16: "2"
+      RenderBlock {P} at (0,146) size 80x128
+        RenderText {#text} at (0,0) size 75x128
+          text run at (0,0) width 54: "This test"
+          text run at (0,16) width 71: "was written"
+          text run at (0,32) width 51: "to test a"
+          text run at (0,48) width 39: "point I"
+          text run at (0,64) width 66: "mentioned"
+          text run at (0,80) width 60: "to Tantek"
+          text run at (0,96) width 35: "\x{C7}elik "
+          text run at (35,96) width 16: "on"
+          text run at (0,112) width 75: "2000-07-13."
+      RenderBlock {P} at (0,288) size 80x102 [color=#008000] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 66x96
+          text run at (3,3) width 27: "This"
+          text run at (3,19) width 66: "paragraph"
+          text run at (3,35) width 41: "should"
+          text run at (3,51) width 43: "have a"
+          text run at (3,67) width 37: "green"
+          text run at (3,83) width 44: "border."
+      RenderBlock {P} at (0,404) size 80x102 [color=#008000] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 66x96
+          text run at (3,3) width 27: "This"
+          text run at (3,19) width 66: "paragraph"
+          text run at (3,35) width 41: "should"
+          text run at (3,51) width 43: "have a"
+          text run at (3,67) width 37: "green"
+          text run at (3,83) width 44: "border."
+      RenderBlock {P} at (0,520) size 80x102 [color=#008000] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 66x96
+          text run at (3,3) width 27: "This"
+          text run at (3,19) width 66: "paragraph"
+          text run at (3,35) width 41: "should"
+          text run at (3,51) width 43: "have a"
+          text run at (3,67) width 37: "green"
+          text run at (3,83) width 44: "border."
+      RenderBlock {P} at (0,636) size 80x102 [color=#008000] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 66x96
+          text run at (3,3) width 27: "This"
+          text run at (3,19) width 66: "paragraph"
+          text run at (3,35) width 41: "should"
+          text run at (3,51) width 43: "have a"
+          text run at (3,67) width 37: "green"
+          text run at (3,83) width 44: "border."

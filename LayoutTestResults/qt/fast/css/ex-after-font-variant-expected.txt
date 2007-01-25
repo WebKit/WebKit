@@ -1,0 +1,29 @@
+layer at (0,0) size 286x412
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 286x412
+  RenderBlock {HTML} at (0,0) size 96x412
+    RenderBody {BODY} at (8,8) size 80x396
+      RenderBlock {P} at (0,0) size 80x128
+        RenderText {#text} at (0,0) size 49x16
+          text run at (0,0) width 49: "Test for"
+        RenderInline {I} at (0,0) size 278x112
+          RenderInline {A} at (0,0) size 278x32 [color=#0000EE]
+            RenderText {#text} at (0,16) size 278x32
+              text run at (0,16) width 278: "http://bugzilla.opendarwin.org/show_bug.cgi?"
+              text run at (0,32) width 52: "id=4227"
+          RenderText {#text} at (0,48) size 80x80
+            text run at (0,48) width 70: "The ex unit"
+            text run at (0,64) width 80: "doesn't work"
+            text run at (0,80) width 49: "for font-"
+            text run at (0,96) width 46: "variant:"
+            text run at (0,112) width 66: "small-caps"
+        RenderText {#text} at (66,112) size 3x16
+          text run at (66,112) width 3: "."
+      RenderBlock {P} at (0,142) size 80x80
+        RenderText {#text} at (0,0) size 72x80
+          text run at (0,0) width 38: "There"
+          text run at (0,16) width 72: "should be a"
+          text run at (0,32) width 37: "green"
+          text run at (0,48) width 43: "square"
+          text run at (0,64) width 39: "below:"
+      RenderBlock {DIV} at (0,236) size 160x160 [bgcolor=#008000]

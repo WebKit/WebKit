@@ -1,0 +1,41 @@
+layer at (0,0) size 180x410
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 180x410
+  RenderBlock {HTML} at (0,0) size 96x410
+    RenderBody {BODY} at (8,8) size 80x394
+      RenderBlock {DIV} at (0,0) size 80x160
+        RenderText {#text} at (0,0) size 49x16
+          text run at (0,0) width 49: "Test for"
+        RenderInline {A} at (0,0) size 76x32 [color=#0000EE]
+          RenderText {#text} at (0,16) size 76x32
+            text run at (0,16) width 76: "Bugzilla Bug"
+            text run at (0,32) width 32: "9934"
+        RenderText {#text} at (0,48) size 83x112
+          text run at (0,48) width 58: "Selecting"
+          text run at (0,64) width 65: "text in text"
+          text run at (0,80) width 55: "field with"
+          text run at (0,96) width 31: "{line-"
+          text run at (0,112) width 83: "height:100%}"
+          text run at (0,128) width 71: "causes it to"
+          text run at (0,144) width 48: "bounce."
+      RenderBlock {DIV} at (0,160) size 80x26
+        RenderTextControl {INPUT} at (2,2) size 168x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderBlock {DIV} at (0,186) size 80x208
+        RenderText {#text} at (0,0) size 80x208
+          text run at (0,0) width 63: "Select the"
+          text run at (0,16) width 62: "text in the"
+          text run at (0,32) width 53: "text field"
+          text run at (0,48) width 33: "using"
+          text run at (0,64) width 62: "horizontal"
+          text run at (0,80) width 41: "mouse"
+          text run at (0,96) width 75: "movements,"
+          text run at (0,112) width 80: "then drag up"
+          text run at (0,128) width 65: "and down."
+          text run at (0,144) width 52: "The text"
+          text run at (0,160) width 65: "should not"
+          text run at (0,176) width 34: "move"
+          text run at (0,192) width 58: "vertically."
+layer at (13,173) size 162x16
+  RenderBlock {DIV} at (3,3) size 162x16
+    RenderText {#text} at (1,0) size 81x16
+      text run at (1,0) width 81: "Lorem Ipsum"

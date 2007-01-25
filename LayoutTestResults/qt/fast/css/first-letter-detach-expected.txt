@@ -1,0 +1,43 @@
+layer at (0,0) size 286x354
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 286x354
+  RenderBlock {HTML} at (0,0) size 96x354
+    RenderBody {BODY} at (8,8) size 80x332
+      RenderBlock {P} at (0,0) size 80x176
+        RenderText {#text} at (0,0) size 49x16
+          text run at (0,0) width 49: "Test for"
+        RenderInline {I} at (0,0) size 278x144
+          RenderInline {A} at (0,0) size 278x32 [color=#0000EE]
+            RenderText {#text} at (0,16) size 278x32
+              text run at (0,16) width 278: "http://bugzilla.opendarwin.org/show_bug.cgi?"
+              text run at (0,32) width 52: "id=3560"
+          RenderText {#text} at (0,48) size 183x112
+            text run at (0,48) width 61: "page with"
+            text run at (0,64) width 69: "use of first-"
+            text run at (0,80) width 32: "letter"
+            text run at (0,96) width 50: "crashes"
+            text run at (0,112) width 76: "reproducibly"
+            text run at (0,128) width 11: "in"
+            text run at (0,144) width 183: "RenderObject::renderArena()"
+        RenderText {#text} at (0,160) size 3x16
+          text run at (0,160) width 3: "."
+      RenderBlock {P} at (0,190) size 80x96
+        RenderText {#text} at (0,0) size 67x64
+          text run at (0,0) width 56: "The next"
+          text run at (0,16) width 67: "line should"
+          text run at (0,32) width 29: "read"
+          text run at (0,48) width 6: "\x{201C}"
+        RenderInline {SPAN} at (0,0) size 9x16 [color=#0000FF]
+          RenderText {#text} at (6,48) size 9x16
+            text run at (6,48) width 9: "P"
+        RenderText {#text} at (15,48) size 80x48
+          text run at (15,48) width 65: "ASS\x{201D}, with"
+          text run at (0,64) width 47: "nothing"
+          text run at (0,80) width 80: "before the P."
+      RenderBlock {HR} at (0,300) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,316) size 80x16
+        RenderInline (generated) at (0,0) size 9x16 [color=#0000FF]
+          RenderText {#text} at (0,0) size 9x16
+            text run at (0,0) width 9: "P"
+        RenderText {#text} at (9,0) size 27x16
+          text run at (9,0) width 27: "ASS"

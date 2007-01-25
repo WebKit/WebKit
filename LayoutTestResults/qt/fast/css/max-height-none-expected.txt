@@ -1,0 +1,11 @@
+layer at (0,0) size 96x108
+  RenderView at (0,0) size 96x26
+layer at (0,0) size 96x26
+  RenderBlock {HTML} at (0,0) size 96x26
+    RenderBody {BODY} at (8,8) size 80x10
+layer at (8,8) size 88x100
+  RenderBlock (positioned) {DIV} at (8,8) size 88x100 [bgcolor=#FF0000]
+    RenderText {#text} at (0,0) size 72x48
+      text run at (0,0) width 72: "This should"
+      text run at (0,16) width 58: "be 100px"
+      text run at (0,32) width 30: "high."
