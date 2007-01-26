@@ -94,6 +94,9 @@ namespace WebCore {
         Value* current() { return m_current < m_values.size() ? &m_values[m_current] : 0; }
         Value* next() { ++m_current; return current(); }
 
+        Value* valueAt(unsigned i) { return i < m_values.size() ? &m_values[i] : 0; }
+        void deleteValueAt(unsigned i) { m_values.remove(i); }
+
     private:
         Vector<Value, 16> m_values;
         unsigned m_current;
@@ -234,6 +237,8 @@ namespace WebCore {
 
         bool inShorthand() const { return m_inParseShorthand; }
 
+        void checkForOrphanedUnits();
+        
         UChar* data;
         UChar* yytext;
         UChar* yy_c_buf_p;

@@ -421,6 +421,76 @@ bool CSSParser::validUnit(Value* value, Units unitflags, bool strict)
     return b;
 }
 
+static int unitFromString(Value* value)
+{
+    if (value->unit != CSSPrimitiveValue::CSS_IDENT || value->id)
+        return 0;
+
+    String str = domString(value->string);
+    if (str == "em")
+        return CSSPrimitiveValue::CSS_EMS;
+    if (str == "ex")
+        return CSSPrimitiveValue::CSS_EXS;
+    if (str == "px")
+        return CSSPrimitiveValue::CSS_PX;
+    if (str == "cm")
+        return CSSPrimitiveValue::CSS_CM;
+    if (str == "mm")
+        return CSSPrimitiveValue::CSS_MM;
+    if (str == "in")
+        return CSSPrimitiveValue::CSS_IN;
+    if (str == "pt")
+        return CSSPrimitiveValue::CSS_PT;
+    if (str == "pc")
+        return CSSPrimitiveValue::CSS_PC;
+    if (str == "deg")
+        return CSSPrimitiveValue::CSS_DEG;
+    if (str == "rad")
+        return CSSPrimitiveValue::CSS_RAD;
+    if (str == "grad")
+        return CSSPrimitiveValue::CSS_GRAD;
+    if (str == "ms")
+        return CSSPrimitiveValue::CSS_MS;
+    if (str == "s")
+        return CSSPrimitiveValue::CSS_S;
+    if (str == "Hz")
+        return CSSPrimitiveValue::CSS_HZ;
+    if (str == "kHz")
+        return CSSPrimitiveValue::CSS_KHZ;
+    
+    return 0;
+}
+
+void CSSParser::checkForOrphanedUnits()
+{
+    if (strict || inShorthand())
+        return;
+        
+    // The purpose of this code is to implement the WinIE quirk that allows unit types to be separated from their numeric values
+    // by whitespace, so e.g., width: 20 px instead of width:20px.  This is invalid CSS, so we don't do this in strict mode.
+    Value* numericVal = 0;
+    unsigned size = valueList->size();
+    for (unsigned i = 0; i < size; i++) {
+        Value* value = valueList->valueAt(i);
+        if (numericVal) {
+            // Change the unit type of the numeric val to match.
+            int unit = unitFromString(value);
+            if (unit) {
+                numericVal->unit = unit;
+                numericVal = 0;
+
+                // Now delete the bogus unit value.
+                valueList->deleteValueAt(i);
+                i--; // We're safe even though |i| is unsigned, since we only hit this code if we had a previous numeric value (so |i| is always > 0 here).
+                size--;
+                continue;
+            }
+        }
+        
+        numericVal = (value->unit == CSSPrimitiveValue::CSS_NUMBER) ? value : 0;
+    }
+}
+
 bool CSSParser::parseValue(int propId, bool important)
 {
     if (!valueList)
@@ -450,6 +520,10 @@ bool CSSParser::parseValue(int propId, bool important)
 
     bool valid_primitive = false;
     CSSValue *parsedValue = 0;
+
+    // In quirks mode, we will look for units that have been incorrectly separated from the number they belong to
+    // by a space.  We go ahead and associate the unit with the number even though it is invalid CSS.
+    checkForOrphanedUnits();
 
     switch(propId) {
         /* The comment to the left defines all valid value of this properties as defined
