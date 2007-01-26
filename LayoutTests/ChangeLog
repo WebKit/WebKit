@@ -1,3 +1,8 @@
+2007-01-26  Darin Adler  <darin@apple.com>
+
+        * fast/events/objc-event-api-expected.txt: Updated test result now that we no
+        longer invalidate clicks when the mouse moves a bit.
+
 2007-01-26  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

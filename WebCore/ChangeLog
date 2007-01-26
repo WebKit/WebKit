@@ -1,3 +1,12 @@
+2007-01-26  Dex Deacon  <occupant4@gmail.com>
+
+        Reviewed by Darin.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        Removed a call to invalidateClick(), since we don't want to cancel a
+        click if the mouse moves.
+
 2007-01-26  Darin Adler  <darin@apple.com>
 
         * css/MediaQueryEvaluator.cpp:

@@ -308,7 +308,6 @@ bool EventHandler::handleMouseMoveEvent(const MouseEventWithHitTestResults& even
 #endif
 
     m_mouseDownMayStartDrag = false;
-    invalidateClick();
 
     if (m_mouseDownMayStartAutoscroll) {            
         // If the selection is contained in a layer that can scroll, that layer should handle the autoscroll
