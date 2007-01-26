@@ -2,6 +2,16 @@
 
         Reviewed by Lars
 
+        Fix drawing of tiled images.
+
+        * WebCore.pro:
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::drawPattern):
+
+2007-01-26  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Lars
+
         Fixing image loading - we decode QImages
         but render QPixmaps now. Implement Icon
         class

@@ -136,21 +136,27 @@ void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, 
 
     QPixmap pixmap = *framePixmap;
     QRect tr = QRectF(tileRect).toRect();
-    if (tr.x() || tr.y() || tr.width() != pixmap.width() || tr.height() != pixmap.height())
+    if (tr.x() || tr.y() || tr.width() != pixmap.width() || tr.height() != pixmap.height()) {
         pixmap = pixmap.copy(tr);
-    
-    QBrush b(pixmap);
-    b.setMatrix(patternTransform);
-    
-    ctxt->save();
-    
-    // Set the compositing operation.
-    ctxt->setCompositeOperation(op);
-    QPainter* p = ctxt->platformContext();
-    p->setBrushOrigin(phase);
-    p->fillRect(tileRect, b);
-    
-    ctxt->restore();
+    }
+
+    if (patternTransform.isIdentity()) {
+        ctxt->save();
+        ctxt->setCompositeOperation(op);
+        QPainter* p = ctxt->platformContext();
+        p->setBrushOrigin(phase);
+        p->drawTiledPixmap(destRect, pixmap);
+        ctxt->restore();
+    } else {
+        QBrush b(pixmap);
+        b.setMatrix(patternTransform);
+        ctxt->save();
+        ctxt->setCompositeOperation(op);
+        QPainter* p = ctxt->platformContext();
+        p->setBrushOrigin(phase);
+        p->fillRect(destRect, b);
+        ctxt->restore();
+    }
 }
 
 void BitmapImage::checkForSolidColor()
