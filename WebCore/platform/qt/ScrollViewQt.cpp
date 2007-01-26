@@ -34,10 +34,12 @@
 #include "FrameView.h"
 #include "FloatRect.h"
 #include "IntPoint.h"
+#include "PlatformMouseEvent.h"
 
 #include "FrameQt.h"
 #include "ScrollViewCanvasQt.h"
 
+#include <QDebug>
 #include <QScrollBar>
 #include <QScrollArea>
 
@@ -302,6 +304,16 @@ void ScrollView::wheelEvent(PlatformWheelEvent&)
 PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
 {
     // Probably don't care about this.
+#if 0
+    // Not so sure: frames with scrollbars have the wrong mouse cursor over
+    // the scrollbar.  Is this why?  FIXME
+    if (m_area->horizontalScrollBar()->geometry().contains(mouseEvent.pos())) {
+        return m_area->horizontalScrollBar();
+    }
+    if (m_area->verticalScrollBar()->geometry().contains(mouseEvent.pos())) {
+        return m_area->verticalScrollBar();
+    }
+#endif
     return 0;
 }
 

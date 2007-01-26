@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2007 Trolltech ASA
+    Copyright (C) 2007 Staikos Computing Services Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -49,10 +50,13 @@ public:
     QString markup() const;
     QString innerText() const;
     QString renderTreeDump() const;
+    QString selectedText() const;
+    QString title() const;
 
 signals:
     void cleared();
     void loadDone(bool ok);
+    void titleChanged(const QString& title);
 
 protected:
     void resizeEvent(QResizeEvent *);

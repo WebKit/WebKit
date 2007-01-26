@@ -570,8 +570,8 @@ SOURCES += \
     platform/qt/GlyphPageTreeNodeQt.cpp \
     platform/qt/CookieJarQt.cpp \
     platform/qt/FontPlatformDataQt.cpp \
-    platform/qt/PlatformScrollBarQt.cpp \
     platform/qt/ScrollViewQt.cpp \
+    platform/qt/PlatformScrollBarQt.cpp \
     platform/qt/TemporaryLinkStubs.cpp \
     platform/qt/CursorQt.cpp \
     platform/qt/WidgetQt.cpp \

@@ -29,6 +29,7 @@
 #define FrameLoaderClientQt_H
 
 #include <qobject.h>
+#include <QUrl>
 
 #include "FrameLoaderClient.h"
 #include "KURL.h"
@@ -61,6 +62,8 @@ namespace WebCore {
         void loadStarted(QWebFrame *frame);
         void loadProgressChanged(double d);
         void loadFinished(QWebFrame *frame);
+        void titleChanged(const QString& title);
+
     public:
         FrameLoaderClientQt();
         ~FrameLoaderClientQt();
@@ -157,6 +160,7 @@ namespace WebCore {
         virtual void addHistoryItemForFragmentScroll();
         virtual void didFinishLoad();
         virtual void prepareForDataSourceReplacement();
+        virtual void setTitle(const String& title);
         virtual void setTitle(const String& title, const KURL&);
 
         virtual String userAgent();

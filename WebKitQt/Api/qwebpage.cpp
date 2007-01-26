@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2007 Trolltech ASA
+    Copyright (C) 2007 Staikos Computing Services Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -39,6 +40,8 @@
 #include "FrameLoader.h"
 #include "KURL.h"
 #include "qboxlayout.h"
+
+#include <QDebug>
 
 using namespace WebCore;
 
@@ -105,14 +108,24 @@ QWebFrame *QWebPage::createFrame(QWebFrame *parentFrame, QWebFrameData *frameDat
 {
     if (parentFrame)
         return new QWebFrame(parentFrame, frameData);
-    return new QWebFrame(this, frameData);
+    QWebFrame *f = new QWebFrame(this, frameData);
+    connect(f, SIGNAL(titleChanged(const QString&)), this, SIGNAL(titleChanged(const QString&)));
+    return f;
 }
 
 void QWebPage::open(const QUrl &url)
 {
-    d->createMainFrame();
+    mainFrame()->d->frame->loader()->load(KURL(url.toString()));
+}
 
-    d->mainFrame->d->frame->loader()->load(KURL(url.toString()));
+QUrl QWebPage::url() const
+{
+    return QUrl((QString)mainFrame()->d->frame->loader()->url().url());
+}
+
+QString QWebPage::title() const
+{
+    return mainFrame()->title();
 }
 
 QWebFrame *QWebPage::mainFrame() const
@@ -121,10 +134,22 @@ QWebFrame *QWebPage::mainFrame() const
     return d->mainFrame;
 }
 
+QWebFrame *QWebPage::focusFrame() const
+{
+    Q_ASSERT(false);
+    return mainFrame(); // FIXME: this is not correct
+}
 
 QSize QWebPage::sizeHint() const
 {
     return QSize(800, 600);
+}
+
+void QWebPage::stop()
+{
+    FrameLoader *f = mainFrame()->d->frame->loader();
+    f->cancelMainResourceLoad();
+    f->stopAllLoaders();
 }
 
 QWebPageHistory QWebPage::history() const

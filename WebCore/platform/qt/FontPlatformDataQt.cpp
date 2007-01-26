@@ -56,7 +56,12 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
     m_font->setFamily(familyName.domString());
     m_font->setPixelSize(qRound(fontDescription.computedSize()));
     m_font->setItalic(fontDescription.italic());
-    m_font->setWeight(fontDescription.weight());
+    if (fontDescription.bold()) {
+        // Qt's Bold is 75, Webkit is 63.
+        m_font->setWeight(QFont::Bold);
+    } else {
+        m_font->setWeight(fontDescription.weight());
+    }
 }
 
 FontPlatformData::~FontPlatformData()

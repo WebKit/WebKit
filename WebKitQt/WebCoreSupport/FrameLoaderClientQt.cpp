@@ -78,6 +78,8 @@ void FrameLoaderClientQt::setFrame(QWebFrame *webFrame, FrameQt *frame)
             m_webFrame->page(), SIGNAL(loadProgressChanged(double)));
     connect(this, SIGNAL(loadFinished(QWebFrame*)),
             m_webFrame->page(), SIGNAL(loadFinished(QWebFrame *)));
+    connect(this, SIGNAL(titleChanged(const QString&)),
+            m_webFrame, SIGNAL(titleChanged(const QString&)));
 }
 
 void FrameLoaderClientQt::detachFrameLoader()
@@ -85,6 +87,7 @@ void FrameLoaderClientQt::detachFrameLoader()
     disconnect(this, SIGNAL(loadStarted(QWebFrame*)));
     disconnect(this, SIGNAL(loadProgressChanged(double)));
     disconnect(this, SIGNAL(loadFinished(QWebFrame*)));
+    disconnect(this, SIGNAL(titleChanged(const QString&)));
     m_webFrame = 0;
     m_frame = 0;
 }
@@ -331,7 +334,7 @@ void FrameLoaderClientQt::dispatchDidStartProvisionalLoad()
 
 void FrameLoaderClientQt::dispatchDidReceiveTitle(const String& title)
 {
-    notImplemented();
+    setTitle(title);
 }
 
 
@@ -443,7 +446,7 @@ void FrameLoaderClientQt::willChangeTitle(DocumentLoader*)
 
 void FrameLoaderClientQt::didChangeTitle(DocumentLoader *l)
 {
-    setTitle(l->title(), l->URL());
+    setTitle(l->title());
 }
 
 
@@ -554,9 +557,17 @@ void FrameLoaderClientQt::prepareForDataSourceReplacement()
 }
 
 
-void FrameLoaderClientQt::setTitle(const String& title, const KURL&)
+void FrameLoaderClientQt::setTitle(const String& title)
 {
-    //notImplemented();
+    QString t = title;
+    emit titleChanged(t);
+}
+
+
+void FrameLoaderClientQt::setTitle(const String& title, const KURL& url)
+{
+    Q_UNUSED(url)
+    setTitle(title);
 }
 
 

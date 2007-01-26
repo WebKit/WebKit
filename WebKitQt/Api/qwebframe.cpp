@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2007 Trolltech ASA
+    Copyright (C) 2007 Staikos Computing Services Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -71,6 +72,9 @@ QWebFrame::QWebFrame(QWebFrame *parent, QWebFrameData *frameData)
     : QScrollArea(parent->widget())
     , d(new QWebFramePrivate)
 {
+    setLineWidth(0);
+    setMidLineWidth(0);
+    setFrameShape(QFrame::NoFrame);
     d->page = parent->d->page;
 
     d->frameLoaderClient = new FrameLoaderClientQt();
@@ -131,10 +135,21 @@ QString QWebFrame::renderTreeDump() const
     return externalRepresentation(d->frame->renderer());
 }
 
+QString QWebFrame::title() const
+{
+    if (d->frame->document())
+        return d->frame->document()->title();
+    else return QString();
+}
 
 QWebPage * QWebFrame::page() const
 {
     return d->page;
+}
+
+QString QWebFrame::selectedText() const
+{
+    return d->frame->selectedText();
 }
 
 void QWebFrame::resizeEvent(QResizeEvent *e)

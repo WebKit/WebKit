@@ -1,3 +1,31 @@
+2007-01-26  George Staikos  <staikos@kde.org>
+
+        Reviewed by Zack.
+
+        Qt implementation.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::QWebFrame):
+        (QWebFrame::title):
+        (QWebFrame::selectedText):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        * Api/qwebpage.cpp:
+        (QWebPage::createFrame):
+        (QWebPage::open):
+        (QWebPage::url):
+        (QWebPage::title):
+        (QWebPage::focusFrame):
+        (QWebPage::stop):
+        * Api/qwebpage.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::setFrame):
+        (WebCore::FrameLoaderClientQt::detachFrameLoader):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveTitle):
+        (WebCore::FrameLoaderClientQt::didChangeTitle):
+        (WebCore::FrameLoaderClientQt::setTitle):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-01-26  Lars Knoll <lars@trolltech.com>
 
         Make it compile again with Qt 4.2 and add the copyright
