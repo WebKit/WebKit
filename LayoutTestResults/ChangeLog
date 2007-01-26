@@ -1,3 +1,10 @@
+2007-01-26  Lars Knoll <lars@trolltech.com>
+
+        Minor update, skip two test case that are hanging
+        forever.
+
+        * qt/Skipped:
+
 2007-01-25  Lars Knoll <lars@trolltech.com>
 
         Add the next 100 test cases.

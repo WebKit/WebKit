@@ -119,6 +119,8 @@ fast/dom/capturing-event-listeners.html
 fast/dom/character-index-for-point.html
 fast/dom/clientWidthAfterDocumentIsRemoved.html
 fast/dom/css-insert-import-rule.html
+fast/dom/exception-no-frame-inline-script-crash.html
+fast/dom/exception-no-frame-timeout-crash.html
 fast/dom/focus-contenteditable.html
 fast/dom/gc-10.html
 fast/dom/inner-text-001.html
