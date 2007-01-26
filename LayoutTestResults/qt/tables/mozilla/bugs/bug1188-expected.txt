@@ -1,9 +1,9 @@
-layer at (0,0) size 610x211
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 610x211
-  RenderBlock {HTML} at (0,0) size 96x211
-    RenderBody {BODY} at (8,8) size 80x189
-      RenderBlock {FORM} at (0,0) size 80x189
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {FORM} at (0,0) size 784x189
         RenderBlock {HR} at (0,0) size 602x2 [border: (1px inset #000000)]
         RenderTable {TABLE} at (0,9) size 600x180
           RenderTableSection {TBODY} at (0,0) size 600x180

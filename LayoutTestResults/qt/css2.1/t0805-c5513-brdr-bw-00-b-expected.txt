@@ -1,18 +1,12 @@
-layer at (0,0) size 96x206
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x206
-  RenderBlock {HTML} at (0,0) size 96x206
-    RenderBody {BODY} at (8,14) size 80x184
-      RenderBlock {P} at (0,0) size 80x112
-        RenderText {#text} at (0,0) size 84x112
-          text run at (0,0) width 62: "The three"
-          text run at (0,16) width 77: "boxes below"
-          text run at (0,32) width 76: "should have"
-          text run at (0,48) width 84: "progressively"
-          text run at (0,64) width 44: "thinner"
-          text run at (0,80) width 42: "bottom"
-          text run at (0,96) width 51: "borders."
-      RenderTable {TABLE} at (0,126) size 60x58 [color=#000080]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x110
+  RenderBlock {HTML} at (0,0) size 800x110
+    RenderBody {BODY} at (8,14) size 784x88
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 460x16
+          text run at (0,0) width 460: "The three boxes below should have progressively thinner bottom borders."
+      RenderTable {TABLE} at (0,30) size 60x58 [color=#000080]
         RenderTableSection {TBODY} at (0,0) size 60x58
           RenderTableRow {TR} at (0,2) size 60x54
             RenderTableCell {TD} at (2,2) size 17x54 [r=0 c=0 rs=1 cs=1]

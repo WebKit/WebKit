@@ -1,8 +1,8 @@
-layer at (0,0) size 364x516
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 364x516
-  RenderBlock {HTML} at (0,0) size 96x516
-    RenderBody {BODY} at (8,8) size 80x494
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x516
+  RenderBlock {HTML} at (0,0) size 800x516
+    RenderBody {BODY} at (8,8) size 784x494
       RenderTable {TABLE} at (0,0) size 25x0
         RenderTableSection {TBODY} at (0,0) size 25x0
           RenderTableRow {TR} at (0,0) size 25x0
@@ -68,7 +68,7 @@ layer at (0,0) size 364x516
             RenderTableCell {TD} at (14,0) size 1x0 [r=0 c=7 rs=1 cs=1]
             RenderTableCell {TD} at (15,0) size 1x0 [r=0 c=8 rs=1 cs=1]
             RenderTableCell {TD} at (16,0) size 1x0 [r=0 c=9 rs=1 cs=1]
-      RenderBlock {PRE} at (0,14) size 80x480
+      RenderBlock {PRE} at (0,14) size 784x480
         RenderText {#text} at (0,0) size 108x16
           text run at (0,0) width 108: "Specified table width: 25px"
           text run at (108,0) width 0: " "

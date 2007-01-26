@@ -1,32 +1,32 @@
-layer at (0,0) size 508x982
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 508x982
-  RenderBlock {HTML} at (0,0) size 96x982
-    RenderBody {BODY} at (8,8) size 80x960 [bgcolor=#999999]
-      RenderTable {TABLE} at (0,0) size 120x58 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 118x32
-          RenderText {#text} at (17,0) size 87x32
-            text run at (17,0) width 84: "Table with no"
-            text run at (15,16) width 87: "width attribute"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x486
+  RenderBlock {HTML} at (0,0) size 800x486
+    RenderBody {BODY} at (8,8) size 784x464 [bgcolor=#999999]
+      RenderTable {TABLE} at (0,0) size 150x58 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 148x32
+          RenderText {#text} at (13,0) size 121x32
+            text run at (13,0) width 121: "Table with no width"
+            text run at (49,16) width 50: "attribute"
         RenderTableCol {COL} at (0,0) size 0x0
         RenderTableCol {COL} at (0,0) size 0x0
         RenderTableCol {COL} at (0,0) size 0x0
         RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableSection {TBODY} at (1,33) size 118x24
-          RenderTableRow {TR} at (0,2) size 118x20
-            RenderTableCell {TD} at (2,2) size 35x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (1,33) size 148x24
+          RenderTableRow {TR} at (0,2) size 148x20
+            RenderTableCell {TD} at (2,2) size 50x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x16
                 text run at (2,2) width 31: "50px"
-            RenderTableCell {TD} at (39,2) size 19x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (54,2) size 19x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 15x16
                 text run at (2,2) width 15: "1*"
-            RenderTableCell {TD} at (60,2) size 35x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (75,2) size 50x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x16
                 text run at (2,2) width 31: "50px"
-            RenderTableCell {TD} at (97,2) size 19x20 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (127,2) size 19x20 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 15x16
                 text run at (2,2) width 15: "3*"
-      RenderBlock {P} at (0,72) size 80x16
+      RenderBlock {P} at (0,72) size 784x16
         RenderText {#text} at (0,0) size 44x16
           text run at (0,0) width 44: "correct"
       RenderTable {TABLE} at (0,102) size 500x42 [border: (1px outset #808080)]
@@ -51,66 +51,40 @@ layer at (0,0) size 508x982
             RenderTableCell {TD} at (302,2) size 194x20 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 15x16
                 text run at (2,2) width 15: "3*"
-      RenderBlock {P} at (0,158) size 80x448
-        RenderText {#text} at (0,0) size 86x448
-          text run at (0,0) width 69: "incorrect: it"
-          text run at (0,16) width 69: "seems that"
-          text run at (0,32) width 31: "the *"
-          text run at (0,48) width 51: "columns"
-          text run at (0,64) width 57: "start with"
-          text run at (0,80) width 58: "the same"
-          text run at (0,96) width 65: "width than"
-          text run at (0,112) width 77: "the previous"
-          text run at (0,128) width 56: "example,"
-          text run at (0,144) width 74: "and then all"
-          text run at (0,160) width 20: "the"
-          text run at (0,176) width 58: "columnss"
-          text run at (0,192) width 21: "are"
-          text run at (0,208) width 63: "expanded"
-          text run at (0,224) width 86: "proportionally"
-          text run at (0,240) width 60: "to occupy"
-          text run at (0,256) width 56: "the extra"
-          text run at (0,272) width 45: "space. "
-          text run at (45,272) width 25: "The"
-          text run at (0,288) width 62: "* columns"
-          text run at (0,304) width 67: "should use"
-          text run at (0,320) width 80: "all the space"
-          text run at (0,336) width 63: "unused by"
-          text run at (0,352) width 33: "other"
-          text run at (0,368) width 73: "columns, so"
-          text run at (0,384) width 67: "no expand"
-          text run at (0,400) width 73: "are needed"
-          text run at (0,416) width 54: "for other"
-          text run at (0,432) width 54: "columns."
-      RenderTable {TABLE} at (0,620) size 120x58 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 118x32
-          RenderText {#text} at (8,0) size 101x32
-            text run at (8,0) width 101: "Table with width"
-            text run at (9,16) width 99: "attribute =100%"
+      RenderBlock {P} at (0,158) size 784x48
+        RenderText {#text} at (0,0) size 773x48
+          text run at (0,0) width 509: "incorrect: it seems that the * columns start with the same width than the previous "
+          text run at (509,0) width 245: "example, and then all the columnss are"
+          text run at (0,16) width 326: "expanded proportionally to occupy the extra space. "
+          text run at (326,16) width 447: "The * columns should use all the space unused by other columns, so no"
+          text run at (0,32) width 128: "expand are needed "
+          text run at (128,32) width 112: "for other columns."
+      RenderTable {TABLE} at (0,220) size 784x42 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 782x16
+          RenderText {#text} at (289,0) size 204x16
+            text run at (289,0) width 204: "Table with width attribute =100%"
         RenderTableCol {COL} at (0,0) size 0x0
         RenderTableCol {COL} at (0,0) size 0x0
         RenderTableCol {COL} at (0,0) size 0x0
         RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableSection {TBODY} at (1,33) size 118x24
-          RenderTableRow {TR} at (0,2) size 118x20
-            RenderTableCell {TD} at (2,2) size 35x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (1,17) size 782x24
+          RenderTableRow {TR} at (0,2) size 782x20
+            RenderTableCell {TD} at (2,2) size 50x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x16
                 text run at (2,2) width 31: "50px"
-            RenderTableCell {TD} at (39,2) size 19x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (54,2) size 336x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 15x16
                 text run at (2,2) width 15: "1*"
-            RenderTableCell {TD} at (60,2) size 35x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (392,2) size 50x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x16
                 text run at (2,2) width 31: "50px"
-            RenderTableCell {TD} at (97,2) size 19x20 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (444,2) size 336x20 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 15x16
                 text run at (2,2) width 15: "3*"
-      RenderBlock {P} at (0,692) size 80x48
-        RenderText {#text} at (0,0) size 58x48
-          text run at (0,0) width 58: "incorrect:"
-          text run at (0,16) width 53: "same as"
-          text run at (0,32) width 41: "above."
-      RenderTable {TABLE} at (0,754) size 500x42 [border: (1px outset #808080)]
+      RenderBlock {P} at (0,276) size 784x16
+        RenderText {#text} at (0,0) size 160x16
+          text run at (0,0) width 160: "incorrect: same as above."
+      RenderTable {TABLE} at (0,306) size 500x42 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 498x16
           RenderText {#text} at (145,0) size 207x16
             text run at (145,0) width 207: "Table with width attribute =500px"
@@ -132,35 +106,32 @@ layer at (0,0) size 508x982
             RenderTableCell {TD} at (374,2) size 122x20 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 15x16
                 text run at (2,2) width 15: "6*"
-      RenderBlock {P} at (0,810) size 80x16
+      RenderBlock {P} at (0,362) size 784x16
         RenderText {#text} at (0,0) size 44x16
           text run at (0,0) width 44: "correct"
-      RenderTable {TABLE} at (0,840) size 88x90 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 86x64
-          RenderText {#text} at (11,0) size 64x64
-            text run at (11,0) width 64: "Table with"
-            text run at (26,16) width 33: "width"
-            text run at (18,32) width 50: "attribute"
-            text run at (20,48) width 45: "=100%"
+      RenderTable {TABLE} at (0,392) size 784x42 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 782x16
+          RenderText {#text} at (289,0) size 204x16
+            text run at (289,0) width 204: "Table with width attribute =100%"
         RenderTableCol {COL} at (0,0) size 0x0
         RenderTableCol {COL} at (0,0) size 0x0
         RenderTableCol {COL} at (0,0) size 0x0
         RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableSection {TBODY} at (1,65) size 86x24
-          RenderTableRow {TR} at (0,2) size 86x20
-            RenderTableCell {TD} at (2,2) size 19x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (1,17) size 782x24
+          RenderTableRow {TR} at (0,2) size 782x20
+            RenderTableCell {TD} at (2,2) size 193x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 15x16
                 text run at (2,2) width 15: "1*"
-            RenderTableCell {TD} at (23,2) size 19x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (197,2) size 193x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 15x16
                 text run at (2,2) width 15: "2*"
-            RenderTableCell {TD} at (44,2) size 19x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (392,2) size 193x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 15x16
                 text run at (2,2) width 15: "1*"
-            RenderTableCell {TD} at (65,2) size 19x20 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (587,2) size 193x20 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 15x16
                 text run at (2,2) width 15: "6*"
-      RenderBlock {P} at (0,944) size 80x16
+      RenderBlock {P} at (0,448) size 784x16
         RenderText {#text} at (0,0) size 44x16
           text run at (0,0) width 44: "correct"
         RenderText {#text} at (0,0) size 0x0

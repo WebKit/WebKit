@@ -1,18 +1,12 @@
-layer at (0,0) size 126x190
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 126x190
-  RenderBlock {HTML} at (0,0) size 96x190
-    RenderBody {BODY} at (8,8) size 80x174 [bgcolor=#FF0000]
-      RenderBlock {P} at (0,0) size 80x112
-        RenderText {#text} at (0,0) size 79x112
-          text run at (0,0) width 64: "Table with"
-          text run at (0,16) width 61: "one white"
-          text run at (0,32) width 79: "row and one"
-          text run at (0,48) width 51: "red row."
-          text run at (0,64) width 61: "This tests"
-          text run at (0,80) width 55: "the color"
-          text run at (0,96) width 36: "white."
-      RenderTable {TABLE} at (0,126) size 118x48 [border: (1px outset #808080)]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FF0000]
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 431x16
+          text run at (0,0) width 431: "Table with one white row and one red row. This tests the color white."
+      RenderTable {TABLE} at (0,30) size 118x48 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 116x46
           RenderTableRow {TR} at (0,2) size 116x20 [bgcolor=#FFFFFF]
             RenderTableCell {TD} at (2,2) size 36x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

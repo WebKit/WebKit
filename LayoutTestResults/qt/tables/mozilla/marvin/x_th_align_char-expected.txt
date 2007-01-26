@@ -1,16 +1,12 @@
-layer at (0,0) size 202x164
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 202x164
-  RenderBlock {html} at (0,0) size 96x164
-    RenderBody {body} at (8,14) size 80x142
-      RenderBlock {p} at (0,0) size 80x80
-        RenderText {#text} at (0,0) size 75x80
-          text run at (0,0) width 39: "TEST:"
-          text run at (0,16) width 55: "Numbers"
-          text run at (0,32) width 75: "should align"
-          text run at (0,48) width 66: "by decimal"
-          text run at (0,64) width 38: "points"
-      RenderTable {table} at (0,94) size 194x48 [border: (1px outset #808080)]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x100
+  RenderBlock {html} at (0,0) size 800x100
+    RenderBody {body} at (8,14) size 784x78
+      RenderBlock {p} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 289x16
+          text run at (0,0) width 289: "TEST: Numbers should align by decimal points"
+      RenderTable {table} at (0,30) size 194x48 [border: (1px outset #808080)]
         RenderTableSection {tbody} at (1,1) size 192x46
           RenderTableRow {tr} at (0,2) size 192x20
             RenderTableCell {th} at (2,2) size 56x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

@@ -1,13 +1,10 @@
-layer at (0,0) size 226x204
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x80
-  RenderBlock {HTML} at (0,0) size 96x80
-    RenderBody {BODY} at (8,8) size 80x64
-      RenderText {#text} at (0,0) size 65x64
-        text run at (0,0) width 50: "The cell"
-        text run at (0,16) width 51: "padding"
-        text run at (0,32) width 65: "should not"
-        text run at (0,48) width 63: "disappear"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 241x16
+        text run at (0,0) width 241: "The cell padding should not disappear"
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

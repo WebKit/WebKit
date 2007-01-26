@@ -1,26 +1,13 @@
-layer at (0,0) size 105x398
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 105x398
-  RenderBlock {HTML} at (0,0) size 96x398
-    RenderBody {BODY} at (8,8) size 80x382
-      RenderBlock {P} at (0,0) size 80x240
-        RenderText {#text} at (0,0) size 97x240
-          text run at (0,0) width 97: "CELLSPACING"
-          text run at (0,16) width 79: "specifies the"
-          text run at (0,32) width 46: "amount"
-          text run at (0,48) width 38: "space"
-          text run at (0,64) width 53: "between"
-          text run at (0,80) width 60: "cells. The"
-          text run at (0,96) width 57: "first table"
-          text run at (0,112) width 35: "has a"
-          text run at (0,128) width 70: "cellspacing"
-          text run at (0,144) width 49: "value of"
-          text run at (0,160) width 56: "20%; the"
-          text run at (0,176) width 80: "second table"
-          text run at (0,192) width 55: "does not"
-          text run at (0,208) width 31: "have"
-          text run at (0,224) width 73: "cellspacing."
-      RenderTable {TABLE} at (0,254) size 91x48 [border: (1px outset #808080)]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x32
+        RenderText {#text} at (0,0) size 764x32
+          text run at (0,0) width 764: "CELLSPACING specifies the amount space between cells. The first table has a cellspacing value of 20%; the second table"
+          text run at (0,16) width 167: "does not have cellspacing."
+      RenderTable {TABLE} at (0,46) size 91x48 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 89x46
           RenderTableRow {TR} at (0,2) size 89x20
             RenderTableCell {TD} at (2,2) size 27x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -42,10 +29,10 @@ layer at (0,0) size 105x398
             RenderTableCell {TD} at (60,24) size 27x20 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x16
                 text run at (2,2) width 23: "text"
-      RenderBlock (anonymous) at (0,302) size 80x32
+      RenderBlock (anonymous) at (0,94) size 784x32
         RenderBR {BR} at (0,0) size 0x16
         RenderBR {BR} at (0,16) size 0x16
-      RenderTable {TABLE} at (0,334) size 91x48 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,126) size 91x48 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 89x46
           RenderTableRow {TR} at (0,2) size 89x20
             RenderTableCell {TD} at (2,2) size 27x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

@@ -1,19 +1,15 @@
-layer at (0,0) size 192x3912
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 192x3912
-  RenderBlock {HTML} at (0,0) size 96x3912
-    RenderBody {BODY} at (8,8) size 80x3896 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 80x80
+layer at (0,0) size 800x904
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x904
+  RenderBlock {HTML} at (0,0) size 800x904
+    RenderBody {BODY} at (8,8) size 784x888 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x16
         RenderInline (generated) at (0,0) size 9x16 [color=#800000]
           RenderText {#text} at (0,0) size 9x16
             text run at (0,0) width 9: "T"
-        RenderText {#text} at (9,0) size 77x80
-          text run at (9,0) width 49: "he style"
-          text run at (0,16) width 77: "declarations"
-          text run at (0,32) width 74: "which apply"
-          text run at (0,48) width 63: "to the text"
-          text run at (0,64) width 64: "below are:"
-      RenderBlock {PRE} at (0,94) size 80x112
+        RenderText {#text} at (9,0) size 343x16
+          text run at (9,0) width 343: "he style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,30) size 784x112
         RenderText {#text} at (0,0) size 184x112
           text run at (0,0) width 112: "P:first-line {color: green;}"
           text run at (112,0) width 0: " "
@@ -28,256 +24,81 @@ layer at (0,0) size 192x3912
           text run at (0,80) width 184: "P.three:first-line {font-variant: small-caps;}"
           text run at (184,80) width 0: " "
           text run at (0,96) width 0: " "
-      RenderBlock {HR} at (0,220) size 80x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,236) size 80x480
+      RenderBlock {HR} at (0,156) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,172) size 784x48
         RenderInline (generated) at (0,0) size 9x16 [color=#800000]
           RenderText {#text} at (0,0) size 9x16
             text run at (0,0) width 9: "T"
-        RenderText {#text} at (9,0) size 80x480
-          text run at (9,0) width 43: "he first"
-          text run at (0,16) width 74: "letter of this"
-          text run at (0,32) width 69: "paragraph,"
-          text run at (0,48) width 54: "and only"
-          text run at (0,64) width 55: "that one,"
-          text run at (0,80) width 60: "should be"
-          text run at (0,96) width 48: "maroon"
-          text run at (0,112) width 66: "(dark red),"
-          text run at (0,128) width 56: "while the"
-          text run at (0,144) width 63: "entire first"
-          text run at (0,160) width 67: "line should"
-          text run at (0,176) width 63: "be green. "
-          text run at (63,176) width 8: "If"
-          text run at (0,192) width 72: "this precise"
-          text run at (0,208) width 75: "combination"
-          text run at (0,224) width 55: "does not"
-          text run at (0,240) width 69: "occur, then"
-          text run at (0,256) width 51: "the user"
-          text run at (0,272) width 63: "agent has"
-          text run at (0,288) width 60: "failed this"
-          text run at (0,304) width 26: "test."
-          text run at (0,320) width 68: "Remember"
-          text run at (0,336) width 77: "that in order"
-          text run at (0,352) width 71: "to ensure a"
-          text run at (0,368) width 57: "complete"
-          text run at (0,384) width 50: "test, the"
-          text run at (0,400) width 66: "paragraph"
-          text run at (0,416) width 48: "must be"
-          text run at (0,432) width 80: "displayed on"
-          text run at (0,448) width 64: "more than"
-          text run at (0,464) width 53: "one line."
-      RenderBlock {P} at (0,730) size 80x716
+        RenderText {#text} at (9,0) size 779x48
+          text run at (9,0) width 762: "he first letter of this paragraph, and only that one, should be maroon (dark red), while the entire first line should be green. "
+          text run at (771,0) width 8: "If"
+          text run at (0,16) width 503: "this precise combination does not occur, then the user agent has failed this test. "
+          text run at (503,16) width 224: "Remember that in order to ensure a"
+          text run at (0,32) width 442: "complete test, the paragraph must be displayed on more than one line."
+      RenderBlock {P} at (0,234) size 784x156
         RenderInline (generated) at (0,0) size 60x100 [color=#800000]
           RenderText {#text} at (0,4) size 60x100
             text run at (0,4) width 60: "T"
-        RenderText {#text} at (0,108) size 80x608
-          text run at (0,108) width 79: "he first letter"
-          text run at (0,124) width 38: "of this"
-          text run at (0,140) width 69: "paragraph,"
-          text run at (0,156) width 54: "and only"
-          text run at (0,172) width 55: "that one,"
-          text run at (0,188) width 60: "should be"
-          text run at (0,204) width 79: "350% bigger"
-          text run at (0,220) width 80: "than the rest"
-          text run at (0,236) width 63: "of the first"
-          text run at (0,252) width 64: "line of this"
-          text run at (0,268) width 66: "paragraph"
-          text run at (0,284) width 76: "and maroon"
-          text run at (0,300) width 66: "(dark red),"
-          text run at (0,316) width 56: "while the"
-          text run at (0,332) width 63: "entire first"
-          text run at (0,348) width 67: "line should"
-          text run at (0,364) width 55: "be 200%"
-          text run at (0,380) width 71: "bigger than"
-          text run at (0,396) width 71: "normal and"
-          text run at (0,412) width 44: "green. "
-          text run at (44,412) width 34: "If this"
-          text run at (0,428) width 46: "precise"
-          text run at (0,444) width 75: "combination"
-          text run at (0,460) width 55: "does not"
-          text run at (0,476) width 69: "occur, then"
-          text run at (0,492) width 51: "the user"
-          text run at (0,508) width 63: "agent has"
-          text run at (0,524) width 60: "failed this"
-          text run at (0,540) width 26: "test."
-          text run at (0,556) width 68: "Remember"
-          text run at (0,572) width 77: "that in order"
-          text run at (0,588) width 71: "to ensure a"
-          text run at (0,604) width 57: "complete"
-          text run at (0,620) width 50: "test, the"
-          text run at (0,636) width 66: "paragraph"
-          text run at (0,652) width 48: "must be"
-          text run at (0,668) width 80: "displayed on"
-          text run at (0,684) width 64: "more than"
-          text run at (0,700) width 53: "one line."
-      RenderBlock {P} at (0,1460) size 80x678
+        RenderText {#text} at (60,68) size 774x88
+          text run at (60,68) width 714: "he first letter of this paragraph, and only that one, should"
+          text run at (0,108) width 754: "be 350% bigger than the rest of the first line of this paragraph and maroon (dark red), while the entire first line should be"
+          text run at (0,124) width 234: "200% bigger than normal and green. "
+          text run at (234,124) width 511: "If this precise combination does not occur, then the user agent has failed this test."
+          text run at (0,140) width 670: "Remember that in order to ensure a complete test, the paragraph must be displayed on more than one line."
+      RenderBlock {P} at (0,404) size 784x102
         RenderInline (generated) at (0,0) size 63x51 [color=#800000]
           RenderText {#text} at (0,1) size 63x51
             text run at (0,1) width 63: "\"W"
-        RenderText {#text} at (63,33) size 93x645
-          text run at (63,33) width 9: "e"
-          text run at (0,54) width 41: "should"
-          text run at (0,70) width 58: "check for"
-          text run at (0,86) width 58: "quotation"
-          text run at (0,102) width 66: "support,\" it"
-          text run at (0,118) width 58: "was said."
-          text run at (0,134) width 78: "The first two"
-          text run at (0,150) width 67: "characters"
-          text run at (0,166) width 37: "in this"
-          text run at (0,182) width 74: "paragraph--"
-          text run at (0,198) width 57: "a double-"
-          text run at (0,214) width 70: "quote mark"
-          text run at (0,230) width 36: "and a"
-          text run at (0,246) width 72: "capital 'W'--"
-          text run at (0,262) width 60: "should be"
-          text run at (0,278) width 79: "350% bigger"
-          text run at (0,294) width 80: "than the rest"
-          text run at (0,310) width 36: "of the"
-          text run at (0,326) width 69: "paragraph,"
-          text run at (0,342) width 76: "and maroon"
-          text run at (0,358) width 66: "(dark red)."
-          text run at (0,374) width 58: "Note that"
-          text run at (0,390) width 78: "the inclusion"
-          text run at (0,406) width 67: "of both the"
-          text run at (0,422) width 58: "quotation"
-          text run at (0,438) width 59: "mark and"
-          text run at (0,454) width 58: "the 'W' in"
-          text run at (0,470) width 51: "the first-"
-          text run at (0,486) width 79: "letter style is"
-          text run at (0,502) width 76: "not required"
-          text run at (0,518) width 79: "under CSS1,"
-          text run at (0,534) width 43: "but it is"
-          text run at (0,550) width 93: "recommended."
-          text run at (0,566) width 69: "In addition,"
-          text run at (0,582) width 60: "the entire"
-          text run at (0,598) width 49: "first line"
-          text run at (0,614) width 75: "should be in"
-          text run at (0,630) width 78: "a small-caps"
-          text run at (0,646) width 52: "font and"
-          text run at (0,662) width 40: "green."
-      RenderTable {TABLE} at (0,2152) size 115x1744 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 113x1742
-          RenderTableRow {TR} at (0,0) size 113x40
-            RenderTableCell {TD} at (0,0) size 113x40 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 100x32
-                RenderText {#text} at (4,4) size 100x32
-                  text run at (4,4) width 100: "TABLE Testing"
-                  text run at (4,20) width 53: "Section"
-          RenderTableRow {TR} at (0,40) size 113x1702
-            RenderTableCell {TD} at (0,879) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+        RenderText {#text} at (63,33) size 782x69
+          text run at (63,33) width 418: "e should check for quotation support,\" it was said. "
+          text run at (481,33) width 262: "The first two characters in this"
+          text run at (0,54) width 782: "paragraph-- a double-quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon (dark"
+          text run at (0,70) width 33: "red). "
+          text run at (33,70) width 742: "Note that the inclusion of both the quotation mark and the 'W' in the first-letter style is not required under CSS1, but it is"
+          text run at (0,86) width 97: "recommended. "
+          text run at (97,86) width 447: "In addition, the entire first line should be in a small-caps font and green."
+      RenderTable {TABLE} at (0,520) size 784x368 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x366
+          RenderTableRow {TR} at (0,0) size 782x24
+            RenderTableCell {TD} at (0,0) size 782x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 157x16
+                RenderText {#text} at (4,4) size 157x16
+                  text run at (4,4) width 157: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,24) size 782x342
+            RenderTableCell {TD} at (0,183) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x16
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,40) size 101x1702 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 93x416
+            RenderTableCell {TD} at (12,24) size 770x342 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x48
                 RenderInline (generated) at (0,0) size 9x16 [color=#800000]
                   RenderText {#text} at (0,0) size 9x16
                     text run at (0,0) width 9: "T"
-                RenderText {#text} at (9,0) size 93x416
-                  text run at (9,0) width 79: "he first letter"
-                  text run at (0,16) width 38: "of this"
-                  text run at (0,32) width 69: "paragraph,"
-                  text run at (0,48) width 82: "and only that"
-                  text run at (0,64) width 91: "one, should be"
-                  text run at (0,80) width 85: "maroon (dark"
-                  text run at (0,96) width 89: "red), while the"
-                  text run at (0,112) width 89: "entire first line"
-                  text run at (0,128) width 60: "should be"
-                  text run at (0,144) width 44: "green. "
-                  text run at (44,144) width 34: "If this"
-                  text run at (0,160) width 46: "precise"
-                  text run at (0,176) width 75: "combination"
-                  text run at (0,192) width 55: "does not"
-                  text run at (0,208) width 93: "occur, then the"
-                  text run at (0,224) width 67: "user agent"
-                  text run at (0,240) width 87: "has failed this"
-                  text run at (0,256) width 26: "test."
-                  text run at (0,272) width 68: "Remember"
-                  text run at (0,288) width 93: "that in order to"
-                  text run at (0,304) width 55: "ensure a"
-                  text run at (0,320) width 87: "complete test,"
-                  text run at (0,336) width 90: "the paragraph"
-                  text run at (0,352) width 48: "must be"
-                  text run at (0,368) width 80: "displayed on"
-                  text run at (0,384) width 92: "more than one"
-                  text run at (0,400) width 25: "line."
-              RenderBlock {P} at (4,434) size 93x652
+                RenderText {#text} at (9,0) size 724x48
+                  text run at (9,0) width 714: "he first letter of this paragraph, and only that one, should be maroon (dark red), while the entire first line should be"
+                  text run at (0,16) width 44: "green. "
+                  text run at (44,16) width 515: "If this precise combination does not occur, then the user agent has failed this test. "
+                  text run at (559,16) width 165: "Remember that in order to"
+                  text run at (0,32) width 501: "ensure a complete test, the paragraph must be displayed on more than one line."
+              RenderBlock {P} at (4,66) size 762x156
                 RenderInline (generated) at (0,0) size 60x100 [color=#800000]
                   RenderText {#text} at (0,4) size 60x100
                     text run at (0,4) width 60: "T"
-                RenderText {#text} at (60,68) size 93x584
-                  text run at (60,68) width 32: "he"
-                  text run at (0,108) width 75: "first letter of"
-                  text run at (0,124) width 22: "this"
-                  text run at (0,140) width 69: "paragraph,"
-                  text run at (0,156) width 82: "and only that"
-                  text run at (0,172) width 91: "one, should be"
-                  text run at (0,188) width 79: "350% bigger"
-                  text run at (0,204) width 80: "than the rest"
-                  text run at (0,220) width 89: "of the first line"
-                  text run at (0,236) width 38: "of this"
-                  text run at (0,252) width 66: "paragraph"
-                  text run at (0,268) width 76: "and maroon"
-                  text run at (0,284) width 66: "(dark red),"
-                  text run at (0,300) width 56: "while the"
-                  text run at (0,316) width 89: "entire first line"
-                  text run at (0,332) width 60: "should be"
-                  text run at (0,348) width 79: "200% bigger"
-                  text run at (0,364) width 75: "than normal"
-                  text run at (0,380) width 72: "and green. "
-                  text run at (72,380) width 8: "If"
-                  text run at (0,396) width 72: "this precise"
-                  text run at (0,412) width 75: "combination"
-                  text run at (0,428) width 55: "does not"
-                  text run at (0,444) width 93: "occur, then the"
-                  text run at (0,460) width 67: "user agent"
-                  text run at (0,476) width 87: "has failed this"
-                  text run at (0,492) width 26: "test."
-                  text run at (0,508) width 68: "Remember"
-                  text run at (0,524) width 93: "that in order to"
-                  text run at (0,540) width 55: "ensure a"
-                  text run at (0,556) width 87: "complete test,"
-                  text run at (0,572) width 90: "the paragraph"
-                  text run at (0,588) width 48: "must be"
-                  text run at (0,604) width 80: "displayed on"
-                  text run at (0,620) width 92: "more than one"
-                  text run at (0,636) width 25: "line."
-              RenderBlock {P} at (4,1100) size 93x598
+                RenderText {#text} at (60,68) size 753x88
+                  text run at (60,68) width 622: "he first letter of this paragraph, and only that one,"
+                  text run at (0,108) width 735: "should be 350% bigger than the rest of the first line of this paragraph and maroon (dark red), while the entire first line"
+                  text run at (0,124) width 298: "should be 200% bigger than normal and green. "
+                  text run at (298,124) width 455: "If this precise combination does not occur, then the user agent has failed"
+                  text run at (0,140) width 56: "this test. "
+                  text run at (56,140) width 670: "Remember that in order to ensure a complete test, the paragraph must be displayed on more than one line."
+              RenderBlock {P} at (4,236) size 762x102
                 RenderInline (generated) at (0,0) size 63x51 [color=#800000]
                   RenderText {#text} at (0,1) size 63x51
                     text run at (0,1) width 63: "\"W"
-                RenderText {#text} at (63,33) size 93x565
-                  text run at (63,33) width 9: "e"
-                  text run at (0,54) width 82: "should check"
-                  text run at (0,70) width 79: "for quotation"
-                  text run at (0,86) width 66: "support,\" it"
-                  text run at (0,102) width 62: "was said. "
-                  text run at (62,102) width 25: "The"
-                  text run at (0,118) width 49: "first two"
-                  text run at (0,134) width 82: "characters in"
-                  text run at (0,150) width 22: "this"
-                  text run at (0,166) width 86: "paragraph-- a"
-                  text run at (0,182) width 80: "double-quote"
-                  text run at (0,198) width 71: "mark and a"
-                  text run at (0,214) width 72: "capital 'W'--"
-                  text run at (0,230) width 60: "should be"
-                  text run at (0,246) width 79: "350% bigger"
-                  text run at (0,262) width 80: "than the rest"
-                  text run at (0,278) width 36: "of the"
-                  text run at (0,294) width 69: "paragraph,"
-                  text run at (0,310) width 76: "and maroon"
-                  text run at (0,326) width 66: "(dark red)."
-                  text run at (0,342) width 82: "Note that the"
-                  text run at (0,358) width 70: "inclusion of"
-                  text run at (0,374) width 51: "both the"
-                  text run at (0,390) width 93: "quotation mark"
-                  text run at (0,406) width 86: "and the 'W' in"
-                  text run at (0,422) width 83: "the first-letter"
-                  text run at (0,438) width 67: "style is not"
-                  text run at (0,454) width 92: "required under"
-                  text run at (0,470) width 86: "CSS1, but it is"
-                  text run at (0,486) width 93: "recommended."
-                  text run at (0,502) width 93: "In addition, the"
-                  text run at (0,518) width 89: "entire first line"
-                  text run at (0,534) width 87: "should be in a"
-                  text run at (0,550) width 66: "small-caps"
-                  text run at (0,566) width 52: "font and"
-                  text run at (0,582) width 40: "green."
+                RenderText {#text} at (63,33) size 745x69
+                  text run at (63,33) width 418: "e should check for quotation support,\" it was said. "
+                  text run at (481,33) width 262: "The first two characters in this"
+                  text run at (0,54) width 745: "paragraph-- a double-quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon"
+                  text run at (0,70) width 70: "(dark red). "
+                  text run at (70,70) width 652: "Note that the inclusion of both the quotation mark and the 'W' in the first-letter style is not required under"
+                  text run at (0,86) width 187: "CSS1, but it is recommended. "
+                  text run at (187,86) width 447: "In addition, the entire first line should be in a small-caps font and green."

@@ -1,29 +1,19 @@
-layer at (0,0) size 259x202
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 259x202
-  RenderBlock {HTML} at (0,0) size 96x202
-    RenderBody {BODY} at (8,8) size 80x186
-      RenderTable {TABLE} at (0,0) size 251x186
-        RenderTableSection {TBODY} at (0,0) size 251x186
-          RenderTableRow {TR} at (0,2) size 251x182
-            RenderTableCell {TD} at (2,74) size 89x38 [border: (2px solid #FF0000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 83x32
-                text run at (3,3) width 36: "Cell 1"
-                text run at (3,19) width 83: "(width=33%)."
-            RenderTableCell {TD} at (93,74) size 89x38 [border: (2px solid #008000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 83x32
-                text run at (3,3) width 36: "Cell 2"
-                text run at (3,19) width 83: "(width=33%)."
-            RenderTableCell {TD} at (184,2) size 65x182 [border: (2px solid #0000FF)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 59x176
-                text run at (3,3) width 36: "Cell 3"
-                text run at (3,19) width 59: "(width=*)"
-                text run at (3,35) width 49: "- should"
-                text run at (3,51) width 47: "be 67%"
-                text run at (3,67) width 59: "when cell"
-                text run at (3,83) width 22: "2 is"
-                text run at (3,99) width 46: "hidden,"
-                text run at (3,115) width 28: "33%"
-                text run at (3,131) width 59: "when cell"
-                text run at (3,147) width 22: "2 is"
-                text run at (3,163) width 41: "visible."
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 627x58
+        RenderTableSection {TBODY} at (0,0) size 627x58
+          RenderTableRow {TR} at (0,2) size 627x54
+            RenderTableCell {TD} at (2,18) size 204x22 [border: (2px solid #FF0000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (3,3) size 123x16
+                text run at (3,3) width 123: "Cell 1 (width=33%)."
+            RenderTableCell {TD} at (208,18) size 204x22 [border: (2px solid #008000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (3,3) size 123x16
+                text run at (3,3) width 123: "Cell 2 (width=33%)."
+            RenderTableCell {TD} at (414,2) size 211x54 [border: (2px solid #0000FF)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (3,3) size 205x48
+                text run at (3,3) width 203: "Cell 3 (width=*) - should be 67%"
+                text run at (3,19) width 205: "when cell 2 is hidden, 33% when"
+                text run at (3,35) width 92: "cell 2 is visible."

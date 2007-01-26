@@ -1,33 +1,14 @@
-layer at (0,0) size 99x476
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 99x476
-  RenderBlock {HTML} at (0,0) size 96x476
-    RenderBody {BODY} at (8,14) size 80x448
-      RenderBlock {P} at (0,0) size 80x86 [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 53x80
-          text run at (3,3) width 53: "This box"
-          text run at (3,19) width 41: "should"
-          text run at (3,35) width 43: "have a"
-          text run at (3,51) width 37: "green"
-          text run at (3,67) width 44: "border."
-      RenderBlock {P} at (0,100) size 80x102 [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 53x96
-          text run at (3,3) width 53: "This box"
-          text run at (3,19) width 41: "should"
-          text run at (3,35) width 51: "have an"
-          text run at (3,51) width 52: "identical"
-          text run at (3,67) width 37: "green"
-          text run at (3,83) width 44: "border."
-      RenderBlock {P} at (0,216) size 80x232 [border: (28px solid #800080) (28px solid #008000) (28px solid #0000FF) (28px solid #FFFF00)]
-        RenderText {#text} at (28,28) size 63x176
-          text run at (28,28) width 63: "Clockwise"
-          text run at (28,44) width 28: "from"
-          text run at (28,60) width 23: "top,"
-          text run at (28,76) width 20: "the"
-          text run at (28,92) width 48: "borders"
-          text run at (28,108) width 41: "should"
-          text run at (28,124) width 18: "be:"
-          text run at (28,140) width 58: "PURPLE,"
-          text run at (28,156) width 52: "GREEN,"
-          text run at (28,172) width 39: "BLUE,"
-          text run at (28,188) width 61: "YELLOW."
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x172
+  RenderBlock {HTML} at (0,0) size 800x172
+    RenderBody {BODY} at (8,14) size 784x144
+      RenderBlock {P} at (0,0) size 784x22 [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 234x16
+          text run at (3,3) width 234: "This box should have a green border."
+      RenderBlock {P} at (0,36) size 784x22 [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 298x16
+          text run at (3,3) width 298: "This box should have an identical green border."
+      RenderBlock {P} at (0,72) size 784x72 [border: (28px solid #800080) (28px solid #008000) (28px solid #0000FF) (28px solid #FFFF00)]
+        RenderText {#text} at (28,28) size 491x16
+          text run at (28,28) width 491: "Clockwise from top, the borders should be: PURPLE, GREEN, BLUE, YELLOW."

@@ -1,8 +1,8 @@
-layer at (0,0) size 644x641
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 644x641
-  RenderBlock {HTML} at (0,0) size 96x641
-    RenderBody {BODY} at (8,8) size 80x619 [color=#333333] [bgcolor=#FFFFFF]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578 [color=#333333] [bgcolor=#FFFFFF]
       RenderTable {TABLE} at (0,0) size 636x539 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 634x537
           RenderTableRow {TR} at (0,0) size 634x24
@@ -365,29 +365,25 @@ layer at (0,0) size 644x641
                     text run at (4,221) width 294: "For Y2K information on BLOOMBERG, download our customer"
                     text run at (4,234) width 55: "letters now."
               RenderBR {BR} at (59,244) size 0x0
-      RenderBlock {P} at (0,553) size 80x66
-        RenderInline {FONT} at (0,0) size 80x66
-          RenderText {#text} at (0,0) size 74x33
-            text run at (0,0) width 74: "\x{A9}1999 Bloomberg"
-            text run at (0,11) width 56: "L.P. All rights"
-            text run at (0,22) width 42: "reserved. "
-          RenderInline {A} at (0,0) size 80x22
-            RenderText {#text} at (42,22) size 80x22
-              text run at (42,22) width 38: "Terms of"
-              text run at (0,33) width 31: "Service"
-          RenderText {#text} at (31,33) size 6x11
-            text run at (31,33) width 6: ", "
-          RenderInline {A} at (0,0) size 68x22
-            RenderText {#text} at (37,33) size 68x22
-              text run at (37,33) width 31: "Privacy"
-              text run at (0,44) width 25: "Policy"
-          RenderText {#text} at (25,44) size 18x11
-            text run at (25,44) width 18: " and"
+      RenderBlock {P} at (0,553) size 784x11
+        RenderInline {FONT} at (0,0) size 389x11
+          RenderText {#text} at (0,0) size 178x11
+            text run at (0,0) width 178: "\x{A9}1999 Bloomberg L.P. All rights reserved. "
+          RenderInline {A} at (0,0) size 72x11
+            RenderText {#text} at (178,0) size 72x11
+              text run at (178,0) width 72: "Terms of Service"
+          RenderText {#text} at (250,0) size 6x11
+            text run at (250,0) width 6: ", "
+          RenderInline {A} at (0,0) size 59x11
+            RenderText {#text} at (256,0) size 59x11
+              text run at (256,0) width 59: "Privacy Policy"
+          RenderText {#text} at (315,0) size 21x11
+            text run at (315,0) width 21: " and "
           RenderInline {A} at (0,0) size 50x11
-            RenderText {#text} at (0,55) size 50x11
-              text run at (0,55) width 50: "Trademarks"
-          RenderText {#text} at (50,55) size 3x11
-            text run at (50,55) width 3: "."
+            RenderText {#text} at (336,0) size 50x11
+              text run at (336,0) width 50: "Trademarks"
+          RenderText {#text} at (386,0) size 3x11
+            text run at (386,0) width 3: "."
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

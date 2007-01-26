@@ -1,18 +1,13 @@
-layer at (0,0) size 166x234
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 166x234
-  RenderBlock {html} at (0,0) size 96x234
-    RenderBody {body} at (8,14) size 80x212
-      RenderBlock {p} at (0,0) size 80x112
-        RenderText {#text} at (0,0) size 74x112
-          text run at (0,0) width 64: "No side of"
-          text run at (0,16) width 60: "the frame"
-          text run at (0,32) width 74: "surrounding"
-          text run at (0,48) width 54: "the table"
-          text run at (0,64) width 36: "below"
-          text run at (0,80) width 60: "should be"
-          text run at (0,96) width 41: "visible."
-      RenderTable {table} at (0,126) size 158x86
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x138
+  RenderBlock {html} at (0,0) size 800x138
+    RenderBody {body} at (8,14) size 784x116
+      RenderBlock {p} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 413x16
+          text run at (0,0) width 372: "No side of the frame surrounding the table below should be "
+          text run at (372,0) width 41: "visible."
+      RenderTable {table} at (0,30) size 158x86
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
         RenderTableCol {colgroup} at (0,0) size 0x0

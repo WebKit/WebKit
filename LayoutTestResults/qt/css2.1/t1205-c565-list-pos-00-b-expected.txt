@@ -1,17 +1,12 @@
-layer at (0,0) size 218x165
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 218x165
-  RenderBlock {HTML} at (0,0) size 96x165
-    RenderBody {BODY} at (8,14) size 80x143
-      RenderBlock {P} at (0,0) size 80x96
-        RenderText {#text} at (0,0) size 71x96
-          text run at (0,0) width 25: "The"
-          text run at (0,16) width 55: "following"
-          text run at (0,32) width 63: "two boxes"
-          text run at (0,48) width 60: "should be"
-          text run at (0,64) width 71: "identical, to"
-          text run at (0,80) width 56: "the pixel."
-      RenderBlock {OL} at (70,110) size 140x16 [color=#FFFFFF] [bgcolor=#000080]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x85
+  RenderBlock {HTML} at (0,0) size 800x85
+    RenderBody {BODY} at (8,14) size 784x63
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 350x16
+          text run at (0,0) width 350: "The following two boxes should be identical, to the pixel."
+      RenderBlock {OL} at (70,30) size 140x16 [color=#FFFFFF] [bgcolor=#000080]
         RenderListItem {LI} at (0,0) size 140x16
           RenderListMarker at (-19,0) size 15x16: "1"
           RenderInline {SPAN} at (0,0) size 11x16 [color=#000080]
@@ -19,7 +14,7 @@ layer at (0,0) size 218x165
               text run at (0,0) width 11: "1."
           RenderText {#text} at (11,0) size 32x16
             text run at (11,0) width 32: " Test"
-      RenderBlock {OL} at (70,127) size 140x16 [color=#000080] [bgcolor=#000080]
+      RenderBlock {OL} at (70,47) size 140x16 [color=#000080] [bgcolor=#000080]
         RenderListItem {LI} at (0,0) size 140x16
           RenderListMarker at (0,0) size 15x16: "1"
           RenderInline {SPAN} at (0,0) size 32x16 [color=#FFFFFF]

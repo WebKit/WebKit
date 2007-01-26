@@ -1,13 +1,13 @@
-layer at (0,0) size 508x416
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 508x416
-  RenderBlock {HTML} at (0,0) size 96x416
-    RenderBody {BODY} at (8,8) size 80x400
-      RenderBlock {HR} at (0,0) size 80x2 [border: (1px inset #000000)]
-      RenderBlock {H3} at (0,18) size 80x18
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x416
+  RenderBlock {HTML} at (0,0) size 800x416
+    RenderBody {BODY} at (8,8) size 784x400
+      RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {H3} at (0,18) size 784x18
         RenderText {#text} at (0,0) size 55x18
           text run at (0,0) width 55: "Table 1"
-      RenderBlock {PRE} at (0,52) size 80x64
+      RenderBlock {PRE} at (0,52) size 784x64
         RenderText {#text} at (0,0) size 112x64
           text run at (0,0) width 112: "<TABLE width=\"500\" border=1>"
           text run at (112,0) width 0: " "
@@ -52,11 +52,11 @@ layer at (0,0) size 508x416
             RenderTableCell {TD} at (333,46) size 163x20 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x16
                 text run at (2,2) width 32: "Cell I"
-      RenderBlock {HR} at (0,207) size 80x2 [border: (1px inset #000000)]
-      RenderBlock {H3} at (0,225) size 80x18
+      RenderBlock {HR} at (0,207) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {H3} at (0,225) size 784x18
         RenderText {#text} at (0,0) size 55x18
           text run at (0,0) width 55: "Table 2"
-      RenderBlock {PRE} at (0,259) size 80x48
+      RenderBlock {PRE} at (0,259) size 784x48
         RenderText {#text} at (0,0) size 112x48
           text run at (0,0) width 112: "<TABLE width=\"500\" border=1>"
           text run at (112,0) width 0: " "
@@ -98,4 +98,4 @@ layer at (0,0) size 508x416
             RenderTableCell {TD} at (333,46) size 163x20 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x16
                 text run at (2,2) width 32: "Cell I"
-      RenderBlock {HR} at (0,398) size 80x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,398) size 784x2 [border: (1px inset #000000)]

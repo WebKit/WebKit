@@ -1,12 +1,11 @@
-layer at (0,0) size 96x1928
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x48
-  RenderBlock {HTML} at (0,0) size 96x48
-    RenderBody {BODY} at (8,8) size 80x32
-      RenderBlock (anonymous) at (0,0) size 80x32
-        RenderText {#text} at (0,0) size 66x32
-          text run at (0,0) width 66: "Content at"
-          text run at (0,16) width 51: "the end."
+layer at (0,0) size 800x1928
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 121x16
+          text run at (0,0) width 121: "Content at the end."
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
 layer at (8,8) size 16x1920

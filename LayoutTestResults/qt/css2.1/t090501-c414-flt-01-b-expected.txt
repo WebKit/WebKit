@@ -1,51 +1,23 @@
-layer at (0,0) size 181x672
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x672
-  RenderBlock {HTML} at (0,0) size 96x672
-    RenderBody {BODY} at (8,14) size 80x644
-      RenderBlock {P} at (0,0) size 80x144 [color=#000080]
-        RenderText {#text} at (0,0) size 80x144
-          text run at (0,0) width 36: "In the"
-          text run at (0,16) width 55: "following"
-          text run at (0,32) width 79: "test, the blue"
-          text run at (0,48) width 39: "blocks"
-          text run at (0,64) width 80: "should be on"
-          text run at (0,80) width 58: "the given"
-          text run at (0,96) width 73: "sides of the"
-          text run at (0,112) width 23: "teal"
-          text run at (0,128) width 62: "rectangle."
-      RenderBlock {DIV} at (0,158) size 80x486
-        RenderBlock {DIV} at (14,0) size 52x486 [color=#00FFFF] [bgcolor=#008080]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x120
+  RenderBlock {HTML} at (0,0) size 800x120
+    RenderBody {BODY} at (8,14) size 784x92
+      RenderBlock {P} at (0,0) size 784x16 [color=#000080]
+        RenderText {#text} at (0,0) size 537x16
+          text run at (0,0) width 537: "In the following test, the blue blocks should be on the given sides of the teal rectangle."
+      RenderBlock {DIV} at (0,30) size 784x62
+        RenderBlock {DIV} at (14,0) size 756x62 [color=#00FFFF] [bgcolor=#008080]
           RenderBlock (floating) {P} at (7,7) size 152x44 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
             RenderText {#text} at (6,6) size 130x32
               text run at (6,6) width 102: "\x{21E6} This blue block"
               text run at (6,22) width 130: "should be on the left."
-          RenderBlock (floating) {P} at (0,51) size 152x44 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderBlock (floating) {P} at (597,7) size 152x44 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
             RenderText {#text} at (6,6) size 139x32
               text run at (6,6) width 102: "\x{21E8} This blue block"
               text run at (6,22) width 139: "should be on the right."
-          RenderText {#text} at (7,95) size 62x384
-            text run at (7,95) width 28: "Teal"
-            text run at (7,111) width 62: "rectangle."
-            text run at (7,127) width 28: "Teal"
-            text run at (7,143) width 62: "rectangle."
-            text run at (7,159) width 28: "Teal"
-            text run at (7,175) width 62: "rectangle."
-            text run at (7,191) width 28: "Teal"
-            text run at (7,207) width 62: "rectangle."
-            text run at (7,223) width 28: "Teal"
-            text run at (7,239) width 62: "rectangle."
-            text run at (7,255) width 28: "Teal"
-            text run at (7,271) width 62: "rectangle."
-            text run at (7,287) width 28: "Teal"
-            text run at (7,303) width 62: "rectangle."
-            text run at (7,319) width 28: "Teal"
-            text run at (7,335) width 62: "rectangle."
-            text run at (7,351) width 28: "Teal"
-            text run at (7,367) width 62: "rectangle."
-            text run at (7,383) width 28: "Teal"
-            text run at (7,399) width 62: "rectangle."
-            text run at (7,415) width 28: "Teal"
-            text run at (7,431) width 62: "rectangle."
-            text run at (7,447) width 28: "Teal"
-            text run at (7,463) width 62: "rectangle."
+          RenderText {#text} at (159,7) size 420x48
+            text run at (159,7) width 420: "Teal rectangle. Teal rectangle. Teal rectangle. Teal rectangle. Teal"
+            text run at (159,23) width 164: "rectangle. Teal rectangle. "
+            text run at (323,23) width 224: "Teal rectangle. Teal rectangle. Teal"
+            text run at (159,39) width 356: "rectangle. Teal rectangle. Teal rectangle. Teal rectangle."

@@ -1,8 +1,8 @@
-layer at (0,0) size 286x146
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 286x146
-  RenderBlock {HTML} at (0,0) size 96x146
-    RenderBody {BODY} at (0,0) size 96x146
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x146
+  RenderBlock {HTML} at (0,0) size 800x146
+    RenderBody {BODY} at (0,0) size 800x146
 layer at (0,0) size 286x146 clip at (3,3) size 280x140 scrollHeight 155
   RenderBlock {DIV} at (0,0) size 286x146 [border: (3px solid #008000)]
     RenderTable {TABLE} at (17,3) size 32x155

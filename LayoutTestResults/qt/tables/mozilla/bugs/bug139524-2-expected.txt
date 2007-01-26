@@ -1,45 +1,19 @@
-layer at (0,0) size 131x1092
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 131x1092
-  RenderBlock {HTML} at (0,0) size 96x1092
-    RenderBody {BODY} at (8,16) size 80x1068
-      RenderBlock {H3} at (0,0) size 80x144
-        RenderText {#text} at (0,0) size 78x144
-          text run at (0,0) width 46: "SPAN"
-          text run at (0,18) width 63: "attribute"
-          text run at (0,36) width 53: "of COL"
-          text run at (0,54) width 60: "element"
-          text run at (0,72) width 43: "being"
-          text run at (0,90) width 77: "ignored in"
-          text run at (0,108) width 78: "Mozilla 1.0"
-          text run at (0,126) width 24: "rc1"
-      RenderBlock {P} at (0,160) size 80x256
-        RenderText {#text} at (0,0) size 79x256
-          text run at (0,0) width 78: "(Note: this is"
-          text run at (0,16) width 79: "a regression"
-          text run at (0,32) width 73: "bug - I don't"
-          text run at (0,48) width 71: "know when"
-          text run at (0,64) width 75: "it appeared,"
-          text run at (0,80) width 26: "but I"
-          text run at (0,96) width 63: "remember"
-          text run at (0,112) width 61: "the SPAN"
-          text run at (0,128) width 70: "attribute on"
-          text run at (0,144) width 29: "COL"
-          text run at (0,160) width 57: "elements"
-          text run at (0,176) width 73: "worked fine"
-          text run at (0,192) width 60: "sometime"
-          text run at (0,208) width 40: "before"
-          text run at (0,224) width 44: "Mozilla"
-          text run at (0,240) width 35: "0.9.6)"
-      RenderBlock {P} at (0,430) size 80x96
-        RenderText {#text} at (0,0) size 80x96
-          text run at (0,0) width 25: "The"
-          text run at (0,16) width 55: "following"
-          text run at (0,32) width 71: "TABLE has"
-          text run at (0,48) width 8: "a"
-          text run at (0,64) width 80: "COLGROUP"
-          text run at (0,80) width 73: "structure of:"
-      RenderBlock {PRE} at (15,540) size 65x64 [color=#000066]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x326
+  RenderBlock {HTML} at (0,0) size 800x326
+    RenderBody {BODY} at (8,16) size 784x302
+      RenderBlock {H3} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 472x18
+          text run at (0,0) width 472: "SPAN attribute of COL element being ignored in Mozilla 1.0 rc1"
+      RenderBlock {P} at (0,34) size 784x32
+        RenderText {#text} at (0,0) size 772x32
+          text run at (0,0) width 772: "(Note: this is a regression bug - I don't know when it appeared, but I remember the SPAN attribute on COL elements worked"
+          text run at (0,16) width 218: "fine sometime before Mozilla 0.9.6)"
+      RenderBlock {P} at (0,80) size 784x16
+        RenderText {#text} at (0,0) size 332x16
+          text run at (0,0) width 332: "The following TABLE has a COLGROUP structure of:"
+      RenderBlock {PRE} at (15,110) size 769x64 [color=#000066]
         RenderText {#text} at (0,0) size 108x64
           text run at (0,0) width 40: "<colgroup>"
           text run at (40,0) width 0: " "
@@ -49,50 +23,27 @@ layer at (0,0) size 131x1092
           text run at (72,32) width 0: " "
           text run at (0,48) width 44: "</colgroup>"
           text run at (44,48) width 0: " "
-      RenderBlock {P} at (0,618) size 80x128
-        RenderText {#text} at (0,0) size 75x128
-          text run at (0,0) width 68: "So the first"
-          text run at (0,16) width 69: "two colums"
-          text run at (0,32) width 72: "should both"
-          text run at (0,48) width 58: "be 100px"
-          text run at (0,64) width 60: "wide, and"
-          text run at (0,80) width 52: "the third"
-          text run at (0,96) width 60: "should be"
-          text run at (0,112) width 75: "200px wide."
-      RenderBlock {P} at (0,760) size 80x144
-        RenderText {#text} at (0,0) size 70x144
-          text run at (0,0) width 59: "However,"
-          text run at (0,16) width 47: "the first"
-          text run at (0,32) width 58: "column is"
-          text run at (0,48) width 66: "100px, the"
-          text run at (0,64) width 60: "second is"
-          text run at (0,80) width 70: "200px, and"
-          text run at (0,96) width 66: "the third is"
-          text run at (0,112) width 66: "the default"
-          text run at (0,128) width 36: "width."
-      RenderBlock {P} at (0,918) size 80x96
-        RenderText {#text} at (0,0) size 73x96
-          text run at (0,0) width 68: "So it would"
-          text run at (0,16) width 73: "appear that"
-          text run at (0,32) width 61: "the SPAN"
-          text run at (0,48) width 64: "attribute is"
-          text run at (0,64) width 34: "being"
-          text run at (0,80) width 51: "ignored."
-      RenderTable {TABLE} at (0,1028) size 80x40
+      RenderBlock {P} at (0,188) size 784x16
+        RenderText {#text} at (0,0) size 542x16
+          text run at (0,0) width 542: "So the first two colums should both be 100px wide, and the third should be 200px wide."
+      RenderBlock {P} at (0,218) size 784x16
+        RenderText {#text} at (0,0) size 560x16
+          text run at (0,0) width 560: "However, the first column is 100px, the second is 200px, and the third is the default width."
+      RenderBlock {P} at (0,248) size 784x16
+        RenderText {#text} at (0,0) size 371x16
+          text run at (0,0) width 371: "So it would appear that the SPAN attribute is being ignored."
+      RenderTable {TABLE} at (0,278) size 408x24
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableSection {TBODY} at (0,0) size 80x40
-          RenderTableRow {TR} at (0,2) size 80x36
-            RenderTableCell {TD} at (2,2) size 23x36 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 18x32
-                text run at (2,2) width 18: "col"
-                text run at (2,18) width 8: "1"
-            RenderTableCell {TD} at (27,2) size 23x36 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 18x32
-                text run at (2,2) width 18: "col"
-                text run at (2,18) width 8: "2"
-            RenderTableCell {TD} at (52,2) size 26x36 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 18x32
-                text run at (2,2) width 18: "col"
-                text run at (2,18) width 8: "3"
+        RenderTableSection {TBODY} at (0,0) size 408x24
+          RenderTableRow {TR} at (0,2) size 408x20
+            RenderTableCell {TD} at (2,2) size 100x20 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 30x16
+                text run at (2,2) width 30: "col 1"
+            RenderTableCell {TD} at (104,2) size 100x20 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 30x16
+                text run at (2,2) width 30: "col 2"
+            RenderTableCell {TD} at (206,2) size 200x20 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 30x16
+                text run at (2,2) width 30: "col 3"

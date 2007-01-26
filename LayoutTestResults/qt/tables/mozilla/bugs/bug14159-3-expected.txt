@@ -1,16 +1,13 @@
-layer at (0,0) size 96x90
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x90
-  RenderBlock {HTML} at (0,0) size 96x90
-    RenderBody {BODY} at (8,8) size 80x74
-      RenderTable {TABLE} at (0,0) size 80x74
-        RenderTableSection {TBODY} at (0,0) size 80x74
-          RenderTableRow {TR} at (0,2) size 80x66
-            RenderTableCell {TD} at (2,2) size 76x66 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 70x64
-                text run at (1,1) width 39: "Really"
-                text run at (1,17) width 70: "sorry about"
-                text run at (1,33) width 64: "the server"
-                text run at (1,49) width 62: "yesterday"
-          RenderTableRow {TR} at (0,70) size 80x2
-            RenderTableCell {TD} at (2,70) size 76x2 [r=1 c=0 rs=1 cs=1]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 253x26
+        RenderTableSection {TBODY} at (0,0) size 253x26
+          RenderTableRow {TR} at (0,2) size 253x18
+            RenderTableCell {TD} at (2,2) size 249x18 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 247x16
+                text run at (1,1) width 247: "Really sorry about the server yesterday"
+          RenderTableRow {TR} at (0,22) size 253x2
+            RenderTableCell {TD} at (2,22) size 249x2 [r=1 c=0 rs=1 cs=1]

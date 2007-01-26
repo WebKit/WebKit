@@ -1,9 +1,9 @@
-layer at (0,0) size 96x226
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x226
-  RenderBlock {HTML} at (0,0) size 96x226
-    RenderBody {BODY} at (8,8) size 80x204
-      RenderBlock {DIV} at (0,0) size 80x0
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {DIV} at (0,0) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 0x0
@@ -13,27 +13,19 @@ layer at (0,0) size 96x226
         RenderInline {SPAN} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,0) size 80x204
-        RenderBlock {P} at (0,0) size 80x80
-          RenderInline {B} at (0,0) size 68x64
-            RenderText {#text} at (0,0) size 68x64
-              text run at (0,0) width 68: "Expect ref"
-              text run at (0,16) width 63: "node 'D';"
-              text run at (0,32) width 50: "pointer"
-              text run at (0,48) width 31: "after"
-          RenderText {#text} at (31,48) size 75x32
-            text run at (31,48) width 44: ": A B C [D]"
-            text run at (0,64) width 44: "* E F G H I"
-        RenderBlock {P} at (0,94) size 80x16
+      RenderBlock {DIV} at (0,0) size 784x76
+        RenderBlock {P} at (0,0) size 784x16
+          RenderInline {B} at (0,0) size 224x16
+            RenderText {#text} at (0,0) size 224x16
+              text run at (0,0) width 224: "Expect ref node 'D'; pointer after"
+          RenderText {#text} at (224,0) size 92x16
+            text run at (224,0) width 92: ": A B C [D] * E F G H I"
+        RenderBlock {P} at (0,30) size 784x16
           RenderText {#text} at (0,0) size 60x16
             text run at (0,0) width 60: "remove node 'D'"
-        RenderBlock {P} at (0,124) size 80x80
-          RenderInline {B} at (0,0) size 68x64
-            RenderText {#text} at (0,0) size 68x64
-              text run at (0,0) width 68: "Expect ref"
-              text run at (0,16) width 63: "node 'C';"
-              text run at (0,32) width 50: "pointer"
-              text run at (0,48) width 31: "after"
-          RenderText {#text} at (31,48) size 75x32
-            text run at (31,48) width 44: ": A B [C] *"
-            text run at (0,64) width 36: "E F G H I"
+        RenderBlock {P} at (0,60) size 784x16
+          RenderInline {B} at (0,0) size 224x16
+            RenderText {#text} at (0,0) size 224x16
+              text run at (0,0) width 224: "Expect ref node 'C'; pointer after"
+          RenderText {#text} at (224,0) size 84x16
+            text run at (224,0) width 84: ": A B [C] * E F G H I"

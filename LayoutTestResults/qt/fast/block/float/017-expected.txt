@@ -1,8 +1,8 @@
-layer at (0,0) size 462x242
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 462x211
-  RenderBlock {HTML} at (0,0) size 96x211
-    RenderBody {BODY} at (8,8) size 80x195
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 454x145 [border: (2px solid #008000)]
         RenderImage {IMG} at (2,2) size 450x29 [bgcolor=#FFFF00]
         RenderText {#text} at (0,0) size 0x0
@@ -16,7 +16,7 @@ layer at (0,0) size 462x211
           text run at (255,95) width 188: "the scenes of its development"
           text run at (255,111) width 183: "and its transition from the PC"
           text run at (255,127) width 69: "to the PS2."
-      RenderBlock {P} at (0,159) size 80x0
+      RenderBlock {P} at (0,159) size 784x0
       RenderBlock {DIV} at (0,159) size 304x36 [border: (2px solid #008000)]
         RenderImage {IMG} at (197,5) size 105x70 [bgcolor=#800080]
         RenderText {#text} at (2,2) size 142x16

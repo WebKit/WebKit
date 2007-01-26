@@ -1,154 +1,52 @@
-layer at (0,0) size 145x2058
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 145x2058
-  RenderBlock {HTML} at (0,0) size 96x2058
-    RenderBody {BODY} at (8,14) size 80x2030 [color=#0000FF]
-      RenderBlock {P} at (0,0) size 80x192
-        RenderText {#text} at (0,0) size 79x192
-          text run at (0,0) width 38: "There"
-          text run at (0,16) width 72: "should be a"
-          text run at (0,32) width 71: "solid line to"
-          text run at (0,48) width 59: "the left of"
-          text run at (0,64) width 47: "the text"
-          text run at (0,80) width 39: "below,"
-          text run at (0,96) width 79: "having three"
-          text run at (0,112) width 61: "segments"
-          text run at (0,128) width 59: "each of a"
-          text run at (0,144) width 52: "different"
-          text run at (0,160) width 57: "colour as"
-          text run at (0,176) width 60: "indicated."
-      RenderBlock {UL} at (0,206) size 80x1824
-        RenderListItem {LI} at (40,0) size 40x128 [border: (3px solid #FFA500)]
-          RenderBlock (anonymous) at (3,0) size 37x32
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x250
+  RenderBlock {HTML} at (0,0) size 800x250
+    RenderBody {BODY} at (8,14) size 784x222 [color=#0000FF]
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 738x16
+          text run at (0,0) width 350: "There should be a solid line to the left of the text below, "
+          text run at (350,0) width 388: "having three segments each of a different colour as indicated."
+      RenderBlock {UL} at (0,30) size 784x192
+        RenderListItem {LI} at (40,0) size 744x64 [border: (3px solid #FFA500)]
+          RenderBlock (anonymous) at (3,0) size 741x16
             RenderListMarker at (-19,0) size 6x16: bullet
-            RenderText {#text} at (0,0) size 54x32
-              text run at (0,0) width 48: "Orange"
-              text run at (0,16) width 54: "orange..."
-          RenderBlock {UL} at (3,32) size 40x96
-            RenderListItem {LI} at (40,0) size 0x32
+            RenderText {#text} at (0,0) size 106x16
+              text run at (0,0) width 106: "Orange orange..."
+          RenderBlock {UL} at (3,16) size 741x48
+            RenderListItem {LI} at (40,0) size 701x16
               RenderListMarker at (-16,0) size 6x16: white bullet
-              RenderText {#text} at (0,0) size 54x32
-                text run at (0,0) width 54: "...orange"
-                text run at (0,16) width 54: "orange..."
-            RenderListItem {LI} at (40,32) size 0x32
+              RenderText {#text} at (0,0) size 112x16
+                text run at (0,0) width 112: "...orange orange..."
+            RenderListItem {LI} at (40,16) size 701x16
               RenderListMarker at (-16,0) size 6x16: white bullet
-              RenderText {#text} at (0,0) size 54x32
-                text run at (0,0) width 54: "...orange"
-                text run at (0,16) width 54: "orange..."
-            RenderListItem {LI} at (40,64) size 0x32
+              RenderText {#text} at (0,0) size 112x16
+                text run at (0,0) width 112: "...orange orange..."
+            RenderListItem {LI} at (40,32) size 701x16
               RenderListMarker at (-16,0) size 6x16: white bullet
-              RenderText {#text} at (0,0) size 54x32
-                text run at (0,0) width 54: "...orange"
-                text run at (0,16) width 48: "orange."
-        RenderListItem {LI} at (40,128) size 40x16 [border: (3px solid #00FF00)]
+              RenderText {#text} at (0,0) size 106x16
+                text run at (0,0) width 106: "...orange orange."
+        RenderListItem {LI} at (40,64) size 744x16 [border: (3px solid #00FF00)]
           RenderListMarker at (-16,0) size 6x16: bullet
           RenderText {#text} at (3,0) size 33x16
             text run at (3,0) width 33: "Lime."
-        RenderListItem {LI} at (40,144) size 40x1680 [border: (3px solid #FFFF00)]
+        RenderListItem {LI} at (40,80) size 744x112 [border: (3px solid #FFFF00)]
           RenderListMarker at (-16,0) size 6x16: bullet
-          RenderText {#text} at (3,0) size 42x1680
-            text run at (3,0) width 41: "Yellow"
-            text run at (3,16) width 39: "yellow"
-            text run at (3,32) width 39: "yellow"
-            text run at (3,48) width 39: "yellow"
-            text run at (3,64) width 39: "yellow"
-            text run at (3,80) width 39: "yellow"
-            text run at (3,96) width 39: "yellow"
-            text run at (3,112) width 39: "yellow"
-            text run at (3,128) width 39: "yellow"
-            text run at (3,144) width 39: "yellow"
-            text run at (3,160) width 39: "yellow"
-            text run at (3,176) width 39: "yellow"
-            text run at (3,192) width 39: "yellow"
-            text run at (3,208) width 39: "yellow"
-            text run at (3,224) width 39: "yellow"
-            text run at (3,240) width 39: "yellow"
-            text run at (3,256) width 39: "yellow"
-            text run at (3,272) width 39: "yellow"
-            text run at (3,288) width 39: "yellow"
-            text run at (3,304) width 39: "yellow"
-            text run at (3,320) width 39: "yellow"
-            text run at (3,336) width 39: "yellow"
-            text run at (3,352) width 39: "yellow"
-            text run at (3,368) width 39: "yellow"
-            text run at (3,384) width 39: "yellow"
-            text run at (3,400) width 39: "yellow"
-            text run at (3,416) width 39: "yellow"
-            text run at (3,432) width 39: "yellow"
-            text run at (3,448) width 39: "yellow"
-            text run at (3,464) width 39: "yellow"
-            text run at (3,480) width 39: "yellow"
-            text run at (3,496) width 39: "yellow"
-            text run at (3,512) width 39: "yellow"
-            text run at (3,528) width 39: "yellow"
-            text run at (3,544) width 39: "yellow"
-            text run at (3,560) width 39: "yellow"
-            text run at (3,576) width 39: "yellow"
-            text run at (3,592) width 39: "yellow"
-            text run at (3,608) width 39: "yellow"
-            text run at (3,624) width 39: "yellow"
-            text run at (3,640) width 39: "yellow"
-            text run at (3,656) width 39: "yellow"
-            text run at (3,672) width 39: "yellow"
-            text run at (3,688) width 39: "yellow"
-            text run at (3,704) width 39: "yellow"
-            text run at (3,720) width 39: "yellow"
-            text run at (3,736) width 39: "yellow"
-            text run at (3,752) width 39: "yellow"
-            text run at (3,768) width 39: "yellow"
-            text run at (3,784) width 39: "yellow"
-            text run at (3,800) width 39: "yellow"
-            text run at (3,816) width 39: "yellow"
-            text run at (3,832) width 39: "yellow"
-            text run at (3,848) width 39: "yellow"
-            text run at (3,864) width 39: "yellow"
-            text run at (3,880) width 39: "yellow"
-            text run at (3,896) width 39: "yellow"
-            text run at (3,912) width 39: "yellow"
-            text run at (3,928) width 39: "yellow"
-            text run at (3,944) width 39: "yellow"
-            text run at (3,960) width 39: "yellow"
-            text run at (3,976) width 39: "yellow"
-            text run at (3,992) width 39: "yellow"
-            text run at (3,1008) width 39: "yellow"
-            text run at (3,1024) width 39: "yellow"
-            text run at (3,1040) width 39: "yellow"
-            text run at (3,1056) width 39: "yellow"
-            text run at (3,1072) width 39: "yellow"
-            text run at (3,1088) width 39: "yellow"
-            text run at (3,1104) width 39: "yellow"
-            text run at (3,1120) width 39: "yellow"
-            text run at (3,1136) width 39: "yellow"
-            text run at (3,1152) width 39: "yellow"
-            text run at (3,1168) width 39: "yellow"
-            text run at (3,1184) width 39: "yellow"
-            text run at (3,1200) width 39: "yellow"
-            text run at (3,1216) width 39: "yellow"
-            text run at (3,1232) width 39: "yellow"
-            text run at (3,1248) width 39: "yellow"
-            text run at (3,1264) width 39: "yellow"
-            text run at (3,1280) width 39: "yellow"
-            text run at (3,1296) width 39: "yellow"
-            text run at (3,1312) width 39: "yellow"
-            text run at (3,1328) width 39: "yellow"
-            text run at (3,1344) width 39: "yellow"
-            text run at (3,1360) width 39: "yellow"
-            text run at (3,1376) width 39: "yellow"
-            text run at (3,1392) width 39: "yellow"
-            text run at (3,1408) width 39: "yellow"
-            text run at (3,1424) width 39: "yellow"
-            text run at (3,1440) width 39: "yellow"
-            text run at (3,1456) width 39: "yellow"
-            text run at (3,1472) width 39: "yellow"
-            text run at (3,1488) width 39: "yellow"
-            text run at (3,1504) width 39: "yellow"
-            text run at (3,1520) width 39: "yellow"
-            text run at (3,1536) width 39: "yellow"
-            text run at (3,1552) width 39: "yellow"
-            text run at (3,1568) width 39: "yellow"
-            text run at (3,1584) width 39: "yellow"
-            text run at (3,1600) width 39: "yellow"
-            text run at (3,1616) width 39: "yellow"
-            text run at (3,1632) width 39: "yellow"
-            text run at (3,1648) width 39: "yellow"
-            text run at (3,1664) width 42: "yellow."
+          RenderText {#text} at (3,0) size 729x112
+            text run at (3,0) width 303: "Yellow yellow yellow yellow yellow yellow yellow "
+            text run at (306,0) width 387: "yellow yellow yellow yellow yellow yellow yellow yellow yellow "
+            text run at (693,0) width 39: "yellow"
+            text run at (3,16) width 344: "yellow yellow yellow yellow yellow yellow yellow yellow "
+            text run at (347,16) width 383: "yellow yellow yellow yellow yellow yellow yellow yellow yellow"
+            text run at (3,32) width 387: "yellow yellow yellow yellow yellow yellow yellow yellow yellow "
+            text run at (390,32) width 340: "yellow yellow yellow yellow yellow yellow yellow yellow"
+            text run at (3,48) width 43: "yellow "
+            text run at (46,48) width 387: "yellow yellow yellow yellow yellow yellow yellow yellow yellow "
+            text run at (433,48) width 297: "yellow yellow yellow yellow yellow yellow yellow"
+            text run at (3,64) width 86: "yellow yellow "
+            text run at (89,64) width 387: "yellow yellow yellow yellow yellow yellow yellow yellow yellow "
+            text run at (476,64) width 254: "yellow yellow yellow yellow yellow yellow"
+            text run at (3,80) width 129: "yellow yellow yellow "
+            text run at (132,80) width 387: "yellow yellow yellow yellow yellow yellow yellow yellow yellow "
+            text run at (519,80) width 211: "yellow yellow yellow yellow yellow"
+            text run at (3,96) width 128: "yellow yellow yellow."

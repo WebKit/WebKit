@@ -1,21 +1,17 @@
-layer at (0,0) size 96x112
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x112
-  RenderBlock {HTML} at (0,0) size 96x112
-    RenderBody {BODY} at (8,8) size 80x96
-      RenderBlock (anonymous) at (0,0) size 80x64
-        RenderText {#text} at (0,0) size 74x64
-          text run at (0,0) width 74: "The vertical"
-          text run at (0,16) width 52: "grey bar"
-          text run at (0,32) width 72: "should be 1"
-          text run at (0,48) width 62: "pixel wide"
-      RenderTable {TABLE} at (0,64) size 80x32
-        RenderTableSection {TBODY} at (0,0) size 80x32
-          RenderTableRow {TR} at (0,0) size 80x32
-            RenderTableCell {TD} at (0,15) size 1x2 [bgcolor=#999999] [r=0 c=0 rs=1 cs=1]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 272x16
+          text run at (0,0) width 272: "The vertical grey bar should be 1 pixel wide"
+      RenderTable {TABLE} at (0,16) size 140x16
+        RenderTableSection {TBODY} at (0,0) size 140x16
+          RenderTableRow {TR} at (0,0) size 140x16
+            RenderTableCell {TD} at (0,7) size 1x2 [bgcolor=#999999] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 1x2
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (1,0) size 79x32 [bgcolor=#FFFFCC] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 74x32
-                text run at (0,0) width 74: " D A I LY  C"
-                text run at (0,16) width 50: "H E C K"
+            RenderTableCell {TD} at (1,0) size 139x16 [bgcolor=#FFFFCC] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 128x16
+                text run at (0,0) width 128: " D A I LY  C H E C K"

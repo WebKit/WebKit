@@ -1,34 +1,31 @@
-layer at (0,0) size 96x308
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x308
-  RenderBlock {HTML} at (0,0) size 96x308
-    RenderBody {BODY} at (8,14) size 80x280
-      RenderBlock {P} at (0,0) size 80x64
-        RenderText {#text} at (0,0) size 80x64
-          text run at (0,0) width 38: "There"
-          text run at (0,16) width 80: "should be no"
-          text run at (0,32) width 67: "red on this"
-          text run at (0,48) width 35: "page."
-      RenderTable {TABLE} at (0,78) size 80x156 [bgcolor=#FF0000] [border: (3px solid #000000)]
-        RenderTableSection {TBODY} at (3,3) size 74x150
-          RenderTableRow {TR} at (0,0) size 74x150
-            RenderTableCell {TD} at (0,0) size 24x150 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (0,0) size 24x105 [bgcolor=#00FF00]
-                RenderBlock {DIV} at (0,0) size 24x50
-              RenderBlock {DIV} at (0,105) size 24x45 [bgcolor=#00FF00]
-            RenderTableCell {TD} at (24,0) size 25x150 [r=0 c=1 rs=1 cs=1]
-              RenderBlock {DIV} at (0,0) size 25x100 [bgcolor=#00FF00]
-                RenderBlock {DIV} at (0,0) size 25x50
-              RenderBlock {DIV} at (0,100) size 25x50 [bgcolor=#00FF00]
-            RenderTableCell {TD} at (49,0) size 25x150 [r=0 c=2 rs=1 cs=1]
-              RenderBlock {DIV} at (0,0) size 25x95 [bgcolor=#00FF00]
-                RenderBlock {DIV} at (0,0) size 25x50
-              RenderBlock {DIV} at (0,95) size 25x55 [bgcolor=#00FF00]
-      RenderBlock {P} at (0,248) size 80x32
-        RenderText {#text} at (0,0) size 58x16
-          text run at (0,0) width 58: "See also:"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x244
+  RenderBlock {HTML} at (0,0) size 800x244
+    RenderBody {BODY} at (8,14) size 784x216
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 232x16
+          text run at (0,0) width 232: "There should be no red on this page."
+      RenderTable {TABLE} at (0,30) size 156x156 [bgcolor=#FF0000] [border: (3px solid #000000)]
+        RenderTableSection {TBODY} at (3,3) size 150x150
+          RenderTableRow {TR} at (0,0) size 150x150
+            RenderTableCell {TD} at (0,0) size 50x150 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 50x105 [bgcolor=#00FF00]
+                RenderBlock {DIV} at (0,0) size 50x50
+              RenderBlock {DIV} at (0,105) size 50x45 [bgcolor=#00FF00]
+            RenderTableCell {TD} at (50,0) size 50x150 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 50x100 [bgcolor=#00FF00]
+                RenderBlock {DIV} at (0,0) size 50x50
+              RenderBlock {DIV} at (0,100) size 50x50 [bgcolor=#00FF00]
+            RenderTableCell {TD} at (100,0) size 50x150 [r=0 c=2 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 50x95 [bgcolor=#00FF00]
+                RenderBlock {DIV} at (0,0) size 50x50
+              RenderBlock {DIV} at (0,95) size 50x55 [bgcolor=#00FF00]
+      RenderBlock {P} at (0,200) size 784x16
+        RenderText {#text} at (0,0) size 62x16
+          text run at (0,0) width 62: "See also: "
         RenderInline {A} at (0,0) size 74x16 [color=#0000EE]
-          RenderText {#text} at (0,16) size 74x16
-            text run at (0,16) width 74: "prerequisite"
-        RenderText {#text} at (74,16) size 3x16
-          text run at (74,16) width 3: "."
+          RenderText {#text} at (62,0) size 74x16
+            text run at (62,0) width 74: "prerequisite"
+        RenderText {#text} at (136,0) size 3x16
+          text run at (136,0) width 3: "."

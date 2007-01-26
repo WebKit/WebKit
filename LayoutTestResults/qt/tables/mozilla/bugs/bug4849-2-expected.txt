@@ -1,10 +1,10 @@
-layer at (0,0) size 608x130
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 608x130
-  RenderBlock {HTML} at (0,0) size 96x130
-    RenderBody {BODY} at (8,8) size 80x114 [bgcolor=#FFFCCC]
-      RenderBlock {CENTER} at (0,0) size 80x114
-        RenderTable {TABLE} at (0,0) size 600x114
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFCCC]
+      RenderBlock {CENTER} at (0,0) size 784x114
+        RenderTable {TABLE} at (92,0) size 600x114
           RenderTableSection {TBODY} at (0,0) size 600x114
             RenderTableRow {TR} at (0,0) size 600x83
               RenderTableCell {TD} at (0,0) size 150x32 [r=0 c=0 rs=1 cs=1]

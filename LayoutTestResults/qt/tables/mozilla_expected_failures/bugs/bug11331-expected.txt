@@ -1,32 +1,22 @@
-layer at (0,0) size 136x322
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 136x322
-  RenderBlock {HTML} at (0,0) size 96x322
-    RenderBody {BODY} at (8,8) size 80x300
-      RenderBlock {P} at (0,0) size 80x300
-        RenderBlock (anonymous) at (0,0) size 80x224
-          RenderText {#text} at (0,0) size 79x80
-            text run at (0,0) width 79: "In the yellow"
-            text run at (0,16) width 54: "table the"
-            text run at (0,32) width 37: "\"W\" is"
-            text run at (0,48) width 65: "clipped on"
-            text run at (0,64) width 76: "its left edge."
-          RenderBR {BR} at (76,77) size 0x0
-          RenderText {#text} at (0,80) size 77x48
-            text run at (0,80) width 55: "The only"
-            text run at (0,96) width 77: "difference is"
-            text run at (0,112) width 27: "that:"
-          RenderBR {BR} at (27,125) size 0x0
-          RenderText {#text} at (0,128) size 125x48
-            text run at (0,128) width 73: "yellow table"
-            text run at (0,144) width 23: "has"
-            text run at (0,160) width 125: "CELLPADDING=\"0\""
-          RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,176) size 128x48
-            text run at (0,176) width 62: "grey table"
-            text run at (0,192) width 23: "has"
-            text run at (0,208) width 128: "CELLPADDING=\"1\"."
-        RenderTable {TABLE} at (0,224) size 40x37 [bgcolor=#FFFF00]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {P} at (0,0) size 784x140
+        RenderBlock (anonymous) at (0,0) size 784x64
+          RenderText {#text} at (0,0) size 327x16
+            text run at (0,0) width 327: "In the yellow table the \"W\" is clipped on its left edge."
+          RenderBR {BR} at (327,13) size 0x0
+          RenderText {#text} at (0,16) size 167x16
+            text run at (0,16) width 167: "The only difference is that:"
+          RenderBR {BR} at (167,29) size 0x0
+          RenderText {#text} at (0,32) size 229x16
+            text run at (0,32) width 229: "yellow table has CELLPADDING=\"0\""
+          RenderBR {BR} at (229,45) size 0x0
+          RenderText {#text} at (0,48) size 221x16
+            text run at (0,48) width 221: "grey table has CELLPADDING=\"1\"."
+        RenderTable {TABLE} at (0,64) size 40x37 [bgcolor=#FFFF00]
           RenderTableSection {TBODY} at (0,0) size 40x37
             RenderTableRow {TR} at (0,2) size 40x33
               RenderTableCell {TD} at (2,2) size 36x33 [r=0 c=0 rs=1 cs=1]
@@ -35,7 +25,7 @@ layer at (0,0) size 136x322
                     text run at (0,0) width 26: "Online"
                     text run at (0,11) width 22: "Web-"
                     text run at (0,22) width 22: "Store"
-        RenderTable {TABLE} at (0,261) size 40x39 [bgcolor=#EEEEEE]
+        RenderTable {TABLE} at (0,101) size 40x39 [bgcolor=#EEEEEE]
           RenderTableSection {TBODY} at (0,0) size 40x39
             RenderTableRow {TR} at (0,2) size 40x35
               RenderTableCell {TD} at (2,2) size 36x35 [r=0 c=0 rs=1 cs=1]

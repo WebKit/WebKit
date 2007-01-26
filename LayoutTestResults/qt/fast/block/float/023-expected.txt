@@ -1,20 +1,13 @@
-layer at (0,0) size 208x350
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x150
-  RenderBlock {HTML} at (0,0) size 96x150
-    RenderBody {BODY} at (8,8) size 80x128
-      RenderBlock {P} at (0,0) size 80x128
-        RenderText {#text} at (0,0) size 78x128
-          text run at (0,0) width 69: "You should"
-          text run at (0,16) width 76: "see a single"
-          text run at (0,32) width 55: "100x100"
-          text run at (0,48) width 73: "green block"
-          text run at (0,64) width 43: "below. "
-          text run at (43,64) width 34: "If you"
-          text run at (0,80) width 78: "see any red,"
-          text run at (0,96) width 74: "the test has"
-          text run at (0,112) width 37: "failed."
-      RenderBlock {UL} at (0,142) size 80x0
-        RenderBlock (floating) {LI} at (0,100) size 100x100 [bgcolor=#FF0000]
-layer at (108,150) size 100x100
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 567x16
+          text run at (0,0) width 332: "You should see a single 100x100 green block below. "
+          text run at (332,0) width 235: "If you see any red, the test has failed."
+      RenderBlock {UL} at (0,30) size 784x0
+        RenderBlock (floating) {LI} at (100,0) size 100x100 [bgcolor=#FF0000]
+layer at (108,38) size 100x100
   RenderBlock (floating) {LI} at (0,0) size 100x100 [bgcolor=#008000]

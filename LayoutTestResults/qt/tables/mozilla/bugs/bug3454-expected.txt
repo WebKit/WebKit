@@ -1,54 +1,31 @@
-layer at (0,0) size 214x268
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 214x268
-  RenderBlock {HTML} at (0,0) size 96x268
-    RenderBody {BODY} at (8,14) size 80x240
-      RenderTable {TABLE} at (14,0) size 192x240 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 190x238
-          RenderTableRow {TR} at (0,2) size 190x36
-            RenderTableCell {TH} at (2,2) size 68x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (9,2) size 49x32
-                text run at (9,2) width 49: "Header"
-                text run at (19,18) width 29: "One"
-            RenderTableCell {TH} at (72,2) size 61x36 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (6,2) size 49x32
-                text run at (6,2) width 49: "Header"
-                text run at (17,18) width 27: "Two"
-            RenderTableCell {TH} at (135,2) size 53x36 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 49x32
-                text run at (2,2) width 49: "Header"
-                text run at (7,18) width 39: "Three"
-          RenderTableRow {TR} at (0,40) size 190x196
-            RenderTableCell {TD} at (2,96) size 68x84 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 64x80
-                text run at (2,2) width 61: "This table"
-                text run at (2,18) width 53: "uses the"
-                text run at (2,34) width 64: "separated"
-                text run at (2,50) width 48: "borders"
-                text run at (2,66) width 41: "model."
-            RenderTableCell {TD} at (72,56) size 61x164 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 57x160
-                text run at (2,2) width 27: "This"
-                text run at (2,18) width 42: "means"
-                text run at (2,34) width 24: "that"
-                text run at (2,50) width 57: "elements"
-                text run at (2,66) width 36: "within"
-                text run at (2,82) width 45: "the cell"
-                text run at (2,98) width 31: "have"
-                text run at (2,114) width 45: "border-"
-                text run at (2,130) width 49: "spacing"
-                text run at (2,146) width 46: "of 1em."
-            RenderTableCell {TD} at (135,40) size 53x196 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 48x192
-                text run at (2,2) width 25: "The"
-                text run at (2,18) width 48: "borders"
-                text run at (2,34) width 40: "on the"
-                text run at (2,50) width 45: "header"
-                text run at (2,66) width 31: "cells,"
-                text run at (2,82) width 34: "on all"
-                text run at (2,98) width 36: "sides,"
-                text run at (2,114) width 41: "should"
-                text run at (2,130) width 15: "be"
-                text run at (2,146) width 48: "medium"
-                text run at (2,162) width 29: "solid"
-                text run at (2,178) width 42: "purple."
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,14) size 784x572
+      RenderTable {TABLE} at (14,0) size 756x64 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 754x62
+          RenderTableRow {TR} at (0,2) size 754x20
+            RenderTableCell {TH} at (2,2) size 177x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (47,2) size 82x16
+                text run at (47,2) width 82: "Header One"
+            RenderTableCell {TH} at (181,2) size 270x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (95,2) size 80x16
+                text run at (95,2) width 80: "Header Two"
+            RenderTableCell {TH} at (453,2) size 299x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (103,2) size 92x16
+                text run at (103,2) width 92: "Header Three"
+          RenderTableRow {TR} at (0,24) size 754x36
+            RenderTableCell {TD} at (2,24) size 177x36 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 161x32
+                text run at (2,2) width 118: "This table uses the"
+                text run at (2,18) width 161: "separated borders model."
+            RenderTableCell {TD} at (181,24) size 270x36 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 251x32
+                text run at (2,2) width 251: "This means that elements within the cell"
+                text run at (2,18) width 179: "have border-spacing of 1em."
+            RenderTableCell {TD} at (453,24) size 299x36 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 283x32
+                text run at (2,2) width 209: "The borders on the header cells, "
+                text run at (211,2) width 74: "on all sides,"
+                text run at (2,18) width 191: "should be medium solid purple."

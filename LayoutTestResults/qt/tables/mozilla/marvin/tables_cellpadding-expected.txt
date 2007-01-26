@@ -1,42 +1,19 @@
-layer at (0,0) size 271x704
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 271x704
-  RenderBlock {HTML} at (0,0) size 96x704
-    RenderBody {BODY} at (8,8) size 80x688
-      RenderBlock (anonymous) at (0,0) size 80x480
-        RenderText {#text} at (0,0) size 98x464
-          text run at (0,0) width 98: "CELLPADDING"
-          text run at (0,16) width 74: "controls the"
-          text run at (0,32) width 66: "padding in"
-          text run at (0,48) width 36: "pixels"
-          text run at (0,64) width 77: "between the"
-          text run at (0,80) width 57: "border of"
-          text run at (0,96) width 63: "each cells"
-          text run at (0,112) width 48: "and the"
-          text run at (0,128) width 31: "cell's"
-          text run at (0,144) width 82: "contents.The"
-          text run at (0,160) width 57: "first table"
-          text run at (0,176) width 35: "has a"
-          text run at (0,192) width 72: "cellpadding"
-          text run at (0,208) width 67: "of 8 pixels."
-          text run at (0,224) width 75: "The second"
-          text run at (0,240) width 68: "table is not"
-          text run at (0,256) width 58: "using cell"
-          text run at (0,272) width 54: "padding."
-          text run at (0,288) width 64: "Notice the"
-          text run at (0,304) width 66: "difference."
-          text run at (0,320) width 38: "There"
-          text run at (0,336) width 72: "should be a"
-          text run at (0,352) width 65: "larger gap"
-          text run at (0,368) width 77: "between the"
-          text run at (0,384) width 66: "cell border"
-          text run at (0,400) width 45: "and it's"
-          text run at (0,416) width 69: "contents in"
-          text run at (0,432) width 47: "the first"
-          text run at (0,448) width 37: "table. "
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x64
+        RenderText {#text} at (0,0) size 768x48
+          text run at (0,0) width 586: "CELLPADDING controls the padding in pixels between the border of each cells and the cell's "
+          text run at (586,0) width 182: "contents.The first table has a"
+          text run at (0,16) width 360: "cellpadding of 8 pixels. The second table is not using cell "
+          text run at (360,16) width 379: "padding. Notice the difference. There should be a larger gap"
+          text run at (0,32) width 200: "between the cell border and it's "
+          text run at (200,32) width 161: "contents in the first table. "
         RenderBR {BR} at (0,0) size 0x0
-        RenderBR {BR} at (0,464) size 0x16
-      RenderTable {TABLE} at (0,480) size 263x78 [border: (2px outset #808080)]
+        RenderBR {BR} at (0,48) size 0x16
+      RenderTable {TABLE} at (0,64) size 263x78 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 259x74
           RenderTableRow {TR} at (0,2) size 259x34
             RenderTableCell {TD} at (2,2) size 83x34 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -58,14 +35,12 @@ layer at (0,0) size 271x704
             RenderTableCell {TD} at (178,38) size 79x34 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (9,9) size 61x16
                 text run at (9,9) width 61: "Netcaster"
-      RenderBlock (anonymous) at (0,558) size 80x80
+      RenderBlock (anonymous) at (0,142) size 784x48
         RenderBR {BR} at (0,0) size 0x16
         RenderBR {BR} at (0,16) size 0x16
-        RenderText {#text} at (0,32) size 75x48
-          text run at (0,32) width 61: "This table"
-          text run at (0,48) width 73: "contains no"
-          text run at (0,64) width 75: "cellpadding."
-      RenderTable {TABLE} at (0,638) size 221x50 [border: (2px outset #808080)]
+        RenderText {#text} at (0,32) size 217x16
+          text run at (0,32) width 217: "This table contains no cellpadding."
+      RenderTable {TABLE} at (0,190) size 221x50 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 217x46
           RenderTableRow {TR} at (0,2) size 217x20
             RenderTableCell {TD} at (2,2) size 69x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

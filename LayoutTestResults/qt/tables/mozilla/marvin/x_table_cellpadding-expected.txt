@@ -1,24 +1,14 @@
-layer at (0,0) size 162x140
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 162x140
-  RenderBlock {html} at (0,0) size 96x140
-    RenderBody {body} at (8,8) size 80x124
-      RenderTable {table} at (0,0) size 154x124 [border: (1px outset #808080)]
-        RenderTableSection {tbody} at (1,1) size 152x122
-          RenderTableRow {tr} at (0,2) size 152x118
-            RenderTableCell {td} at (2,2) size 73x118 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 51x96
-                text run at (11,11) width 27: "This"
-                text run at (11,27) width 21: "cell"
-                text run at (11,43) width 41: "should"
-                text run at (11,59) width 51: "have an"
-                text run at (11,75) width 31: "10px"
-                text run at (11,91) width 51: "padding"
-            RenderTableCell {td} at (77,2) size 73x118 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 51x96
-                text run at (11,11) width 27: "This"
-                text run at (11,27) width 21: "cell"
-                text run at (11,43) width 41: "should"
-                text run at (11,59) width 51: "have an"
-                text run at (11,75) width 31: "10px"
-                text run at (11,91) width 51: "padding"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x60
+  RenderBlock {html} at (0,0) size 800x60
+    RenderBody {body} at (8,8) size 784x44
+      RenderTable {table} at (0,0) size 536x44 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 534x42
+          RenderTableRow {tr} at (0,2) size 534x38
+            RenderTableCell {td} at (2,2) size 264x38 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 242x16
+                text run at (11,11) width 242: "This cell should have an 10px padding"
+            RenderTableCell {td} at (268,2) size 264x38 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 242x16
+                text run at (11,11) width 242: "This cell should have an 10px padding"

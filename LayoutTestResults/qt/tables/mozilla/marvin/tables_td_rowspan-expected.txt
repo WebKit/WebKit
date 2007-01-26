@@ -1,34 +1,23 @@
-layer at (0,0) size 173x272
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 173x272
-  RenderBlock {HTML} at (0,0) size 96x272
-    RenderBody {BODY} at (8,8) size 80x256
-      RenderBlock (anonymous) at (0,0) size 80x160
-        RenderText {#text} at (0,0) size 77x144
-          text run at (0,0) width 61: "This table"
-          text run at (0,16) width 41: "uses a"
-          text run at (0,32) width 71: "ROWSPAN"
-          text run at (0,48) width 65: "attribute in"
-          text run at (0,64) width 70: "the first TD"
-          text run at (0,80) width 52: "tag. The"
-          text run at (0,96) width 71: "ROWSPAN"
-          text run at (0,112) width 77: "attribute has"
-          text run at (0,128) width 76: "a value of 2."
-        RenderBR {BR} at (76,141) size 0x0
-        RenderBR {BR} at (0,144) size 0x16
-      RenderTable {TABLE} at (0,160) size 165x96 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 163x94
-          RenderTableRow {TR} at (0,2) size 163x52
-            RenderTableCell {TD} at (2,37) size 63x20 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x32
+        RenderText {#text} at (0,0) size 616x16
+          text run at (0,0) width 616: "This table uses a ROWSPAN attribute in the first TD tag. The ROWSPAN attribute has a value of 2."
+        RenderBR {BR} at (616,13) size 0x0
+        RenderBR {BR} at (0,16) size 0x16
+      RenderTable {TABLE} at (0,32) size 263x48 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 261x46
+          RenderTableRow {TR} at (0,2) size 261x20
+            RenderTableCell {TD} at (2,13) size 63x20 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
               RenderText {#text} at (2,2) size 59x16
                 text run at (2,2) width 59: "Platforms"
-            RenderTableCell {TD} at (67,2) size 94x52 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 90x48
-                text run at (2,2) width 60: "Netscape"
-                text run at (2,18) width 90: "Communicator"
-                text run at (2,34) width 30: "4.0.6"
-          RenderTableRow {TR} at (0,56) size 163x36
-            RenderTableCell {TD} at (67,56) size 94x36 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 75x32
-                text run at (2,2) width 56: "Available"
-                text run at (2,18) width 75: "Everywhere"
+            RenderTableCell {TD} at (67,2) size 192x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 188x16
+                text run at (2,2) width 188: "Netscape Communicator 4.0.6"
+          RenderTableRow {TR} at (0,24) size 261x20
+            RenderTableCell {TD} at (67,24) size 192x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 135x16
+                text run at (2,2) width 135: "Available Everywhere"

@@ -1,37 +1,32 @@
-layer at (0,0) size 96x144
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x144
-  RenderBlock {html} at (0,0) size 96x144
-    RenderBody {body} at (8,8) size 80x128 [color=#008000]
-      RenderInline {tests} at (0,0) size 78x128
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x32
+  RenderBlock {html} at (0,0) size 800x32
+    RenderBody {body} at (8,8) size 784x16 [color=#008000]
+      RenderInline {tests} at (0,0) size 535x16
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {first-child} at (0,0) size 76x16
-          RenderText {#text} at (0,0) size 76x16
-            text run at (0,0) width 76: "None of this"
+        RenderInline {first-child} at (0,0) size 80x16
+          RenderText {#text} at (0,0) size 80x16
+            text run at (0,0) width 80: "None of this "
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {element} at (0,0) size 68x32
-          RenderText {#text} at (0,16) size 68x32
-            text run at (0,16) width 68: "text should"
-            text run at (0,32) width 19: "be "
+        RenderInline {element} at (0,0) size 91x16
+          RenderText {#text} at (80,0) size 91x16
+            text run at (80,0) width 91: "text should be "
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {attribute} at (0,0) size 76x32
-          RenderText {#text} at (19,32) size 76x32
-            text run at (19,32) width 57: "matching"
-            text run at (0,48) width 53: "the style"
+        RenderInline {attribute} at (0,0) size 118x16
+          RenderText {#text} at (171,0) size 118x16
+            text run at (171,0) width 118: "matching the style "
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {span} at (0,0) size 61x32
-          RenderText {#text} at (0,64) size 61x32
-            text run at (0,64) width 61: "rules, and"
-            text run at (0,80) width 30: "thus "
+        RenderInline {span} at (0,0) size 95x16
+          RenderText {#text} at (289,0) size 95x16
+            text run at (289,0) width 95: "rules, and thus "
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {universal} at (0,0) size 78x32
-          RenderText {#text} at (30,80) size 78x32
-            text run at (30,80) width 48: "none of"
-            text run at (0,96) width 11: "it "
+        RenderInline {universal} at (0,0) size 63x16
+          RenderText {#text} at (384,0) size 63x16
+            text run at (384,0) width 63: "none of it "
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {span} at (0,0) size 71x32
-          RenderText {#text} at (11,96) size 71x32
-            text run at (11,96) width 60: "should be"
-            text run at (0,112) width 24: "red."
+        RenderInline {span} at (0,0) size 88x16
+          RenderText {#text} at (447,0) size 88x16
+            text run at (447,0) width 88: "should be red."
         RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

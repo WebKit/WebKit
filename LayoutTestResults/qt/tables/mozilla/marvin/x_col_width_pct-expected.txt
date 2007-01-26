@@ -1,13 +1,12 @@
-layer at (0,0) size 408x158
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 408x158
-  RenderBlock {html} at (0,0) size 96x158
-    RenderBody {body} at (8,14) size 80x136
-      RenderBlock {p} at (0,0) size 80x32
-        RenderText {#text} at (0,0) size 74x32
-          text run at (0,0) width 29: "COL"
-          text run at (0,16) width 74: "WIDTH=pct"
-      RenderTable {table} at (0,46) size 400x90 [border: (1px outset #808080)]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x142
+  RenderBlock {html} at (0,0) size 800x142
+    RenderBody {body} at (8,14) size 784x120
+      RenderBlock {p} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 107x16
+          text run at (0,0) width 107: "COL WIDTH=pct"
+      RenderTable {table} at (0,30) size 400x90 [border: (1px outset #808080)]
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0

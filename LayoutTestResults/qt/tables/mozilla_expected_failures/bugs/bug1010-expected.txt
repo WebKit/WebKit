@@ -1,128 +1,93 @@
-layer at (0,0) size 209x776
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 209x776
-  RenderBlock {HTML} at (0,0) size 96x776
-    RenderBody {BODY} at (8,8) size 80x760
-      RenderTable {TABLE} at (0,0) size 201x760 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 199x758
-          RenderTableRow {TR} at (0,2) size 199x36
-            RenderTableCell {TD} at (2,2) size 135x754 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderBlock {UL} at (2,2) size 131x736
-                RenderListItem {LI} at (40,0) size 91x32
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x232 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x230
+          RenderTableRow {TR} at (0,2) size 782x20
+            RenderTableCell {TD} at (2,2) size 667x226 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderBlock {UL} at (2,2) size 663x208
+                RenderListItem {LI} at (40,0) size 623x16
                   RenderListMarker at (-16,0) size 6x16: bullet
-                  RenderInline {A} at (0,0) size 86x32 [color=#0000EE]
-                    RenderText {#text} at (0,0) size 86x32
-                      text run at (0,0) width 82: "500 list items"
-                      text run at (0,16) width 86: "in a single UL"
-                RenderListItem {LI} at (40,32) size 91x48
+                  RenderInline {A} at (0,0) size 172x16 [color=#0000EE]
+                    RenderText {#text} at (0,0) size 172x16
+                      text run at (0,0) width 172: "500 list items in a single UL"
+                RenderListItem {LI} at (40,16) size 623x16
                   RenderListMarker at (-16,0) size 6x16: bullet
-                  RenderInline {A} at (0,0) size 88x48 [color=#0000EE]
-                    RenderText {#text} at (0,0) size 88x48
-                      text run at (0,0) width 82: "500 list items"
-                      text run at (0,16) width 88: "in 25 top-level"
-                      text run at (0,32) width 25: "ULs"
-                RenderListItem {LI} at (40,80) size 91x48
+                  RenderInline {A} at (0,0) size 203x16 [color=#0000EE]
+                    RenderText {#text} at (0,0) size 203x16
+                      text run at (0,0) width 203: "500 list items in 25 top-level ULs"
+                RenderListItem {LI} at (40,32) size 623x16
                   RenderListMarker at (-16,0) size 6x16: bullet
-                  RenderInline {A} at (0,0) size 82x48 [color=#0000EE]
-                    RenderText {#text} at (0,0) size 82x48
-                      text run at (0,0) width 82: "500 list items"
-                      text run at (0,16) width 76: "in a 25-level"
-                      text run at (0,32) width 47: "nested "
-                      text run at (47,32) width 18: "UL"
-                RenderListItem {LI} at (40,128) size 91x32
+                  RenderInline {A} at (0,0) size 231x16 [color=#0000EE]
+                    RenderText {#text} at (0,0) size 231x16
+                      text run at (0,0) width 213: "500 list items in a 25-level nested "
+                      text run at (213,0) width 18: "UL"
+                RenderListItem {LI} at (40,48) size 623x16
                   RenderListMarker at (-16,0) size 6x16: bullet
-                  RenderInline {A} at (0,0) size 85x32 [color=#0000EE]
-                    RenderText {#text} at (0,0) size 85x32
-                      text run at (0,0) width 85: "300 text input"
-                      text run at (0,16) width 65: "form fields"
-                RenderListItem {LI} at (40,160) size 91x32
+                  RenderInline {A} at (0,0) size 154x16 [color=#0000EE]
+                    RenderText {#text} at (0,0) size 154x16
+                      text run at (0,0) width 154: "300 text input form fields"
+                RenderListItem {LI} at (40,64) size 623x16
                   RenderListMarker at (-16,0) size 6x16: bullet
-                  RenderInline {A} at (0,0) size 84x32 [color=#0000EE]
-                    RenderText {#text} at (0,0) size 84x32
-                      text run at (0,0) width 62: "Massively"
-                      text run at (0,16) width 84: "nested tables"
-                RenderListItem {LI} at (40,192) size 91x64
+                  RenderInline {A} at (0,0) size 150x16 [color=#0000EE]
+                    RenderText {#text} at (0,0) size 150x16
+                      text run at (0,0) width 150: "Massively nested tables"
+                RenderListItem {LI} at (40,80) size 623x16
                   RenderListMarker at (-16,0) size 6x16: bullet
-                  RenderInline {A} at (0,0) size 80x64 [color=#0000EE]
-                    RenderText {#text} at (0,0) size 80x64
-                      text run at (0,0) width 62: "Massively"
-                      text run at (0,16) width 77: "nested DIVs"
-                      text run at (0,32) width 80: "with padding"
-                      text run at (0,48) width 28: "and "
-                      text run at (28,48) width 48: "borders"
-                RenderListItem {LI} at (40,256) size 91x80
+                  RenderInline {A} at (0,0) size 307x16 [color=#0000EE]
+                    RenderText {#text} at (0,0) size 307x16
+                      text run at (0,0) width 259: "Massively nested DIVs with padding and "
+                      text run at (259,0) width 48: "borders"
+                RenderListItem {LI} at (40,96) size 623x16
                   RenderListMarker at (-16,0) size 6x16: bullet
-                  RenderInline {A} at (0,0) size 88x80 [color=#0000EE]
-                    RenderText {#text} at (0,0) size 88x80
-                      text run at (0,0) width 32: "1000"
-                      text run at (0,16) width 88: "OPTIONs in a"
-                      text run at (0,32) width 37: "single"
-                      text run at (0,48) width 86: "SELECT form"
-                      text run at (0,64) width 50: "element"
-                RenderListItem {LI} at (40,336) size 91x48
+                  RenderInline {A} at (0,0) size 309x16 [color=#0000EE]
+                    RenderText {#text} at (0,0) size 309x16
+                      text run at (0,0) width 309: "1000 OPTIONs in a single SELECT form element"
+                RenderListItem {LI} at (40,112) size 623x16
                   RenderListMarker at (-16,0) size 6x16: bullet
-                  RenderInline {A} at (0,0) size 86x48 [color=#0000EE]
-                    RenderText {#text} at (0,0) size 86x48
-                      text run at (0,0) width 68: "10,000 cell"
-                      text run at (0,16) width 86: "table with text"
-                      text run at (0,32) width 71: "in each cell"
-                RenderListItem {LI} at (40,384) size 91x64
+                  RenderInline {A} at (0,0) size 233x16 [color=#0000EE]
+                    RenderText {#text} at (0,0) size 233x16
+                      text run at (0,0) width 233: "10,000 cell table with text in each cell"
+                RenderListItem {LI} at (40,128) size 623x16
                   RenderListMarker at (-16,0) size 6x16: bullet
-                  RenderInline {A} at (0,0) size 86x64 [color=#0000EE]
-                    RenderText {#text} at (0,0) size 86x64
-                      text run at (0,0) width 68: "10,000 cell"
-                      text run at (0,16) width 86: "table with text"
-                      text run at (0,32) width 74: "and color in"
-                      text run at (0,48) width 35: "each "
-                      text run at (35,48) width 21: "cell"
-                RenderListItem {LI} at (40,448) size 91x64
+                  RenderInline {A} at (0,0) size 296x16 [color=#0000EE]
+                    RenderText {#text} at (0,0) size 296x16
+                      text run at (0,0) width 275: "10,000 cell table with text and color in each "
+                      text run at (275,0) width 21: "cell"
+                RenderListItem {LI} at (40,144) size 623x16
                   RenderListMarker at (-16,0) size 6x16: bullet
-                  RenderInline {A} at (0,0) size 87x64 [color=#0000EE]
-                    RenderText {#text} at (0,0) size 87x64
-                      text run at (0,0) width 87: "A 713k HTML"
-                      text run at (0,16) width 61: "document"
-                      text run at (0,32) width 83: "packed full of"
-                      text run at (0,48) width 28: "links"
-                RenderListItem {LI} at (40,512) size 91x64
+                  RenderInline {A} at (0,0) size 271x16 [color=#0000EE]
+                    RenderText {#text} at (0,0) size 271x16
+                      text run at (0,0) width 271: "A 713k HTML document packed full of links"
+                RenderListItem {LI} at (40,160) size 623x16
                   RenderListMarker at (-16,0) size 6x16: bullet
-                  RenderInline {A} at (0,0) size 91x64 [color=#0000EE]
-                    RenderText {#text} at (0,0) size 91x64
-                      text run at (0,0) width 91: "Extraordinarily"
-                      text run at (0,16) width 70: "long HTML"
-                      text run at (0,32) width 88: "doc (approx 1"
-                      text run at (0,48) width 33: "Meg)"
-                RenderListItem {LI} at (40,576) size 91x64
+                  RenderInline {A} at (0,0) size 294x16 [color=#0000EE]
+                    RenderText {#text} at (0,0) size 294x16
+                      text run at (0,0) width 261: "Extraordinarily long HTML doc (approx 1 "
+                      text run at (261,0) width 33: "Meg)"
+                RenderListItem {LI} at (40,176) size 623x16
                   RenderListMarker at (-16,0) size 6x16: bullet
-                  RenderInline {A} at (0,0) size 86x64 [color=#0000EE]
-                    RenderText {#text} at (0,0) size 86x64
-                      text run at (0,0) width 86: "Another large"
-                      text run at (0,16) width 69: "HTML doc,"
-                      text run at (0,32) width 76: "with colored"
-                      text run at (0,48) width 23: "text"
-                RenderListItem {LI} at (40,640) size 91x96
+                  RenderInline {A} at (0,0) size 266x16 [color=#0000EE]
+                    RenderText {#text} at (0,0) size 266x16
+                      text run at (0,0) width 266: "Another large HTML doc, with colored text"
+                RenderListItem {LI} at (40,192) size 623x16
                   RenderListMarker at (-16,0) size 6x16: bullet
-                  RenderInline {A} at (0,0) size 90x96 [color=#0000EE]
-                    RenderText {#text} at (0,0) size 90x96
-                      text run at (0,0) width 69: "A relatively"
-                      text run at (0,16) width 77: "large (150k)"
-                      text run at (0,32) width 90: "document with"
-                      text run at (0,48) width 72: "an average"
-                      text run at (0,64) width 80: "mix of HTML"
-                      text run at (0,80) width 47: "content"
-            RenderTableCell {TD} at (139,2) size 28x36 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 20x32
-                text run at (2,2) width 20: "foo"
-                text run at (2,18) width 8: "1"
-            RenderTableCell {TD} at (169,2) size 28x36 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 20x32
-                text run at (2,2) width 20: "foo"
-                text run at (2,18) width 8: "2"
-          RenderTableRow {TR} at (0,40) size 199x716
-            RenderTableCell {TD} at (139,380) size 28x36 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 24x32
-                text run at (2,2) width 24: "Foo"
-                text run at (2,18) width 8: "3"
-            RenderTableCell {TD} at (169,380) size 28x36 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 24x32
-                text run at (2,2) width 24: "Foo"
-                text run at (2,18) width 8: "4"
+                  RenderInline {A} at (0,0) size 455x16 [color=#0000EE]
+                    RenderText {#text} at (0,0) size 455x16
+                      text run at (0,0) width 324: "A relatively large (150k) document with an average "
+                      text run at (324,0) width 131: "mix of HTML content"
+            RenderTableCell {TD} at (671,2) size 53x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 32x16
+                text run at (2,2) width 32: "foo 1"
+            RenderTableCell {TD} at (726,2) size 54x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 32x16
+                text run at (2,2) width 32: "foo 2"
+          RenderTableRow {TR} at (0,24) size 782x204
+            RenderTableCell {TD} at (671,116) size 53x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 36x16
+                text run at (2,2) width 36: "Foo 3"
+            RenderTableCell {TD} at (726,116) size 54x20 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 36x16
+                text run at (2,2) width 36: "Foo 4"

@@ -1,70 +1,25 @@
-layer at (0,0) size 114x1012
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x1012
-  RenderBlock {HTML} at (0,0) size 96x1012
-    RenderBody {BODY} at (8,14) size 80x984
-      RenderBlock (floating) {DIV} at (0,0) size 102x104 [bgcolor=#CC6666]
-        RenderText {#text} at (20,20) size 62x64
-          text run at (20,20) width 23: "DIV"
-          text run at (20,36) width 60: "NUMBER"
-          text run at (20,52) width 11: "1:"
-          text run at (20,68) width 62: "float:right;"
-      RenderBlock (floating) {DIV} at (0,104) size 106x120 [bgcolor=#99CC66]
-        RenderText {#text} at (20,20) size 66x80
-          text run at (20,20) width 23: "DIV"
-          text run at (20,36) width 60: "NUMBER"
-          text run at (20,52) width 11: "2:"
-          text run at (20,68) width 66: "clear:right;"
-          text run at (20,84) width 62: "float:right;"
-      RenderBlock (floating) {DIV} at (0,224) size 100x104 [bgcolor=#6699FF]
-        RenderText {#text} at (20,20) size 60x64
-          text run at (20,20) width 23: "DIV"
-          text run at (20,36) width 60: "NUMBER"
-          text run at (20,52) width 11: "3:"
-          text run at (20,68) width 53: "float:left;"
-      RenderBlock {P} at (0,0) size 80x984
-        RenderText {#text} at (0,328) size 75x576
-          text run at (0,328) width 52: "The first"
-          text run at (0,344) width 64: "element is"
-          text run at (0,360) width 59: "floated to"
-          text run at (0,376) width 55: "the right."
-          text run at (0,392) width 75: "The second"
-          text run at (0,408) width 50: "element"
-          text run at (0,424) width 62: "clears the"
-          text run at (0,440) width 59: "right float"
-          text run at (0,456) width 54: "and also"
-          text run at (0,472) width 69: "floats right."
-          text run at (0,488) width 57: "The third"
-          text run at (0,504) width 64: "element is"
-          text run at (0,520) width 59: "floated to"
-          text run at (0,536) width 68: "the left, but"
-          text run at (0,552) width 54: "is forced"
-          text run at (0,568) width 60: "below the"
-          text run at (0,584) width 58: "bottom of"
-          text run at (0,600) width 47: "the first"
-          text run at (0,616) width 53: "element."
-          text run at (0,632) width 24: "Yet,"
-          text run at (0,648) width 60: "somehow"
-          text run at (0,664) width 22: "this"
-          text run at (0,680) width 66: "paragraph"
-          text run at (0,696) width 57: "comes at"
-          text run at (0,712) width 64: "the end of"
-          text run at (0,728) width 73: "the markup,"
-          text run at (0,744) width 24: "and"
-          text run at (0,760) width 74: "manages to"
-          text run at (0,776) width 63: "rise to the"
-          text run at (0,792) width 60: "top of the"
-          text run at (0,808) width 66: "page. This"
-          text run at (0,824) width 68: "behavior is"
-          text run at (0,840) width 63: "present in"
-          text run at (0,856) width 46: "Firefox,"
-          text run at (0,872) width 65: "Safari and"
-          text run at (0,888) width 43: "Opera."
-        RenderInline {A} at (0,0) size 73x80 [color=#0000EE]
-          RenderInline {STRONG} at (0,0) size 73x80
-            RenderText {#text} at (0,904) size 73x80
-              text run at (0,904) width 70: "Click here"
-              text run at (0,920) width 61: "for a real"
-              text run at (0,936) width 38: "world"
-              text run at (0,952) width 73: "example of"
-              text run at (0,968) width 61: "this bug."
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x108
+  RenderBlock {HTML} at (0,0) size 800x108
+    RenderBody {BODY} at (8,14) size 784x80
+      RenderBlock (floating) {DIV} at (576,0) size 208x56 [bgcolor=#CC6666]
+        RenderText {#text} at (20,20) size 168x16
+          text run at (20,20) width 168: "DIV NUMBER 1: float:right;"
+      RenderBlock (floating) {DIV} at (506,56) size 278x56 [bgcolor=#99CC66]
+        RenderText {#text} at (20,20) size 238x16
+          text run at (20,20) width 238: "DIV NUMBER 2: clear:right; float:right;"
+      RenderBlock (floating) {DIV} at (0,56) size 199x56 [bgcolor=#6699FF]
+        RenderText {#text} at (20,20) size 159x16
+          text run at (20,20) width 159: "DIV NUMBER 3: float:left;"
+      RenderBlock {P} at (0,0) size 784x80
+        RenderText {#text} at (0,0) size 568x64
+          text run at (0,0) width 562: "The first element is floated to the right. The second element clears the right float and also"
+          text run at (0,16) width 568: "floats right. The third element is floated to the left, but is forced below the bottom of the first"
+          text run at (0,32) width 553: "element. Yet, somehow this paragraph comes at the end of the markup, and manages to"
+          text run at (0,48) width 506: "rise to the top of the page. This behavior is present in Firefox, Safari and Opera. "
+        RenderInline {A} at (0,0) size 377x32 [color=#0000EE]
+          RenderInline {STRONG} at (0,0) size 377x32
+            RenderText {#text} at (506,48) size 377x32
+              text run at (506,48) width 70: "Click here"
+              text run at (199,64) width 245: "for a real world example of this bug."

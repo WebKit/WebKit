@@ -1,20 +1,13 @@
-layer at (0,0) size 160x241
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 160x241
-  RenderBlock {html} at (0,0) size 96x241
-    RenderBody {body} at (8,14) size 80x219
-      RenderBlock {p} at (0,0) size 80x128
-        RenderText {#text} at (0,0) size 80x128
-          text run at (0,0) width 38: "There"
-          text run at (0,16) width 60: "should be"
-          text run at (0,32) width 30: "rules"
-          text run at (0,48) width 71: "between all"
-          text run at (0,64) width 63: "rows (and"
-          text run at (0,80) width 80: "only rows) in"
-          text run at (0,96) width 24: "the "
-          text run at (24,96) width 30: "table"
-          text run at (0,112) width 39: "below."
-      RenderTable {table} at (0,142) size 152x77 [border: none]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x129
+  RenderBlock {html} at (0,0) size 800x129
+    RenderBody {body} at (8,14) size 784x107
+      RenderBlock {p} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 463x16
+          text run at (0,0) width 390: "There should be rules between all rows (and only rows) in the "
+          text run at (390,0) width 73: "table below."
+      RenderTable {table} at (0,30) size 152x77 [border: none]
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
         RenderTableCol {colgroup} at (0,0) size 0x0

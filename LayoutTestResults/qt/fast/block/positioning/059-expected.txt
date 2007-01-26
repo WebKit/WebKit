@@ -1,49 +1,26 @@
-layer at (0,0) size 108x610
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x0
-  RenderBlock {HTML} at (0,0) size 96x0
-layer at (8,8) size 80x496
-  RenderBody {BODY} at (8,8) size 80x496
-    RenderBlock {DIV} at (0,0) size 80x496
-      RenderText {#text} at (0,0) size 69x32
-        text run at (0,0) width 69: "You should"
-        text run at (0,16) width 49: "see two"
-      RenderInline {I} at (0,0) size 55x32
-        RenderText {#text} at (0,32) size 55x32
-          text run at (0,32) width 55: "vertically"
-          text run at (0,48) width 49: "stacked"
-      RenderText {#text} at (0,64) size 80x432
-        text run at (0,64) width 37: "green"
-        text run at (0,80) width 66: "rectangles"
-        text run at (0,96) width 43: "below. "
-        text run at (43,96) width 32: "Each"
-        text run at (0,112) width 66: "one is 100"
-        text run at (0,128) width 69: "pixels wide"
-        text run at (0,144) width 44: "and 50"
-        text run at (0,160) width 65: "pixels tall. "
-        text run at (65,160) width 8: "If"
-        text run at (0,176) width 46: "the two"
-        text run at (0,192) width 37: "green"
-        text run at (0,208) width 66: "rectangles"
-        text run at (0,224) width 65: "are on the"
-        text run at (0,240) width 63: "same line,"
-        text run at (0,256) width 79: "then the test"
-        text run at (0,272) width 64: "has failed."
-        text run at (0,288) width 80: "This is a test"
-        text run at (0,304) width 61: "of section"
-        text run at (0,320) width 53: "10.3.7 in"
-        text run at (0,336) width 54: "CSS2.1. "
-        text run at (54,336) width 12: "In"
-        text run at (0,352) width 69: "particular it"
-        text run at (0,368) width 65: "is a test of"
-        text run at (0,384) width 66: "the shrink-"
-        text run at (0,400) width 27: "to-fit"
-        text run at (0,416) width 68: "algorithm's"
-        text run at (0,432) width 59: "preferred"
-        text run at (0,448) width 54: "minimum"
-        text run at (0,464) width 33: "width"
-        text run at (0,480) width 79: "computation."
-layer at (8,504) size 100x106
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x0
+  RenderBlock {HTML} at (0,0) size 800x0
+layer at (8,8) size 784x48
+  RenderBody {BODY} at (8,8) size 784x48
+    RenderBlock {DIV} at (0,0) size 784x48
+      RenderText {#text} at (0,0) size 126x16
+        text run at (0,0) width 126: "You should see two "
+      RenderInline {I} at (0,0) size 108x16
+        RenderText {#text} at (126,0) size 108x16
+          text run at (126,0) width 108: "vertically stacked"
+      RenderText {#text} at (234,0) size 783x48
+        text run at (234,0) width 158: " green rectangles below. "
+        text run at (392,0) width 179: "Each one is 100 pixels wide "
+        text run at (571,0) width 113: "and 50 pixels tall. "
+        text run at (684,0) width 99: "If the two green"
+        text run at (0,16) width 357: "rectangles are on the same line, then the test has failed. "
+        text run at (357,16) width 260: "This is a test of section 10.3.7 in CSS2.1. "
+        text run at (617,16) width 154: "In particular it is a test of"
+        text run at (0,32) width 169: "the shrink-to-fit algorithm's "
+        text run at (169,32) width 237: "preferred minimum width computation."
+layer at (8,56) size 100x106
   RenderBlock (positioned) {DIV} at (0,0) size 100x106
     RenderBlock {SPAN} at (0,0) size 100x50 [bgcolor=#008000]
     RenderText {#text} at (0,0) size 0x0

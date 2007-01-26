@@ -1,18 +1,13 @@
-layer at (0,0) size 162x225
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 162x225
-  RenderBlock {html} at (0,0) size 96x225
-    RenderBody {body} at (8,14) size 80x203
-      RenderBlock {p} at (0,0) size 80x112
-        RenderText {#text} at (0,0) size 78x112
-          text run at (0,0) width 38: "There"
-          text run at (0,16) width 60: "should be"
-          text run at (0,32) width 78: "rules around"
-          text run at (0,48) width 58: "each row"
-          text run at (0,64) width 72: "and column"
-          text run at (0,80) width 75: "group in the"
-          text run at (0,96) width 73: "table below."
-      RenderTable {table} at (0,126) size 154x77 [border: none]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x129
+  RenderBlock {html} at (0,0) size 800x129
+    RenderBody {body} at (8,14) size 784x107
+      RenderBlock {p} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 478x16
+          text run at (0,0) width 405: "There should be rules around each row and column group in the "
+          text run at (405,0) width 73: "table below."
+      RenderTable {table} at (0,30) size 154x77 [border: none]
         RenderTableCol {colgroup} at (0,0) size 0x0 [border: (1px solid #000000) none (1px solid #000000)]
           RenderTableCol {col} at (0,0) size 0x0
         RenderTableCol {colgroup} at (0,0) size 0x0 [border: (1px solid #000000) none (1px solid #000000)]

@@ -1,8 +1,8 @@
-layer at (0,0) size 100x208
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 100x208
-  RenderBlock {HTML} at (0,0) size 96x208
-    RenderBody {BODY} at (0,0) size 96x208
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 100x32 [bgcolor=#0000FF]
         RenderTableSection {TBODY} at (0,0) size 100x32
           RenderTableRow {TR} at (0,0) size 100x32
@@ -13,7 +13,7 @@ layer at (0,0) size 100x208
               RenderText {#text} at (0,16) size 95x16
                 text run at (0,16) width 95: "ALIGN=\"LEFT\""
               RenderBR {BR} at (95,29) size 0x0
-      RenderTable {TABLE} at (0,32) size 100x32 [bgcolor=#0000FF]
+      RenderTable {TABLE} at (100,0) size 100x32 [bgcolor=#0000FF]
         RenderTableSection {TBODY} at (0,0) size 100x32
           RenderTableRow {TR} at (0,0) size 100x32
             RenderTableCell {TD} at (0,0) size 100x32 [r=0 c=0 rs=1 cs=1]
@@ -23,7 +23,7 @@ layer at (0,0) size 100x208
               RenderText {#text} at (0,16) size 95x16
                 text run at (0,16) width 95: "ALIGN=\"LEFT\""
               RenderBR {BR} at (95,29) size 0x0
-      RenderTable {TABLE} at (0,64) size 100x32 [bgcolor=#0000FF]
+      RenderTable {TABLE} at (200,0) size 100x32 [bgcolor=#0000FF]
         RenderTableSection {TBODY} at (0,0) size 100x32
           RenderTableRow {TR} at (0,0) size 100x32
             RenderTableCell {TD} at (0,0) size 100x32 [r=0 c=0 rs=1 cs=1]
@@ -33,14 +33,9 @@ layer at (0,0) size 100x208
               RenderText {#text} at (0,16) size 95x16
                 text run at (0,16) width 95: "ALIGN=\"LEFT\""
               RenderBR {BR} at (95,29) size 0x0
-      RenderBR {BR} at (100,0) size 0x16
-      RenderBR {BR} at (0,96) size 0x16
-      RenderText {#text} at (0,112) size 92x96
-        text run at (0,112) width 62: "The three"
-        text run at (0,128) width 79: "tables above"
-        text run at (0,144) width 71: "should abut"
-        text run at (0,160) width 91: "each other. (in"
-        text run at (0,176) width 68: "NN3/4 and"
-        text run at (0,192) width 92: "IE4/5 they do)."
+      RenderBR {BR} at (300,0) size 0x16
+      RenderBR {BR} at (0,32) size 0x16
+      RenderText {#text} at (0,48) size 483x16
+        text run at (0,48) width 483: "The three tables above should abut each other. (in NN3/4 and IE4/5 they do)."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

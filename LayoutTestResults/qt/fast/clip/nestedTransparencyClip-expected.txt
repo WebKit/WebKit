@@ -1,44 +1,25 @@
-layer at (0,0) size 96x408
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x384
-  RenderBlock {HTML} at (0,0) size 96x384
-    RenderBody {BODY} at (8,8) size 80x368
-      RenderBlock (anonymous) at (0,0) size 80x352
-        RenderText {#text} at (0,0) size 83x336
-          text run at (0,0) width 68: "This test is"
-          text run at (0,16) width 77: "for a bug we"
-          text run at (0,32) width 53: "had with"
-          text run at (0,48) width 48: "clipping"
-          text run at (0,64) width 83: "transparency"
-          text run at (0,80) width 70: "layers. The"
-          text run at (0,96) width 78: "bug is visual,"
-          text run at (0,112) width 72: "so the pixel"
-          text run at (0,128) width 73: "test is more"
-          text run at (0,144) width 70: "worthwhile."
-          text run at (0,160) width 41: "Below,"
-          text run at (0,176) width 53: "\"Peach,\""
-          text run at (0,192) width 71: "\"Plum,\" and"
-          text run at (0,208) width 40: "\"Pear\""
-          text run at (0,224) width 41: "should"
-          text run at (0,240) width 48: "appear."
-          text run at (0,256) width 67: "Before, we"
-          text run at (0,272) width 31: "were"
-          text run at (0,288) width 71: "clipping out"
-          text run at (0,304) width 68: "\"Plum\" and"
-          text run at (0,320) width 43: "\"Pear.\""
-        RenderBR {BR} at (43,333) size 0x0
-        RenderBR {BR} at (0,336) size 0x16
-layer at (8,360) size 80x16
-  RenderBlock {DIV} at (0,352) size 80x16
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x48
+        RenderText {#text} at (0,0) size 773x32
+          text run at (0,0) width 773: "This test is for a bug we had with clipping transparency layers. The bug is visual, so the pixel test is more worthwhile. Below,"
+          text run at (0,16) width 569: "\"Peach,\" \"Plum,\" and \"Pear\" should appear. Before, we were clipping out \"Plum\" and \"Pear.\""
+        RenderBR {BR} at (569,29) size 0x0
+        RenderBR {BR} at (0,32) size 0x16
+layer at (8,56) size 784x16
+  RenderBlock {DIV} at (0,48) size 784x16
     RenderText {#text} at (0,0) size 44x16
       text run at (0,0) width 44: "Peach "
     RenderText {#text} at (0,0) size 0x0
-layer at (8,376) size 30x16
-  RenderBlock (positioned) {DIV} at (8,376) size 30x16
+layer at (8,72) size 30x16
+  RenderBlock (positioned) {DIV} at (8,72) size 30x16
     RenderText {#text} at (0,0) size 30x16
       text run at (0,0) width 30: "Plum"
     RenderText {#text} at (0,0) size 0x0
-layer at (8,392) size 30x16
+layer at (8,88) size 30x16
   RenderBlock (positioned) {DIV} at (0,16) size 30x16
     RenderText {#text} at (0,0) size 30x16
       text run at (0,0) width 30: "Pear"

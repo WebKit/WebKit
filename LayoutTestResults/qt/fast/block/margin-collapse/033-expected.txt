@@ -1,16 +1,12 @@
-layer at (0,0) size 286x206
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 286x206
-  RenderBlock {HTML} at (0,0) size 96x206
-    RenderBody {BODY} at (8,14) size 80x184
-      RenderBlock {P} at (0,0) size 80x80
-        RenderText {#text} at (0,0) size 76x80
-          text run at (0,0) width 25: "The"
-          text run at (0,16) width 55: "following"
-          text run at (0,32) width 76: "two squares"
-          text run at (0,48) width 60: "should be"
-          text run at (0,64) width 55: "identical."
-      RenderTable {TABLE} at (0,94) size 278x90
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x142
+  RenderBlock {HTML} at (0,0) size 800x142
+    RenderBody {BODY} at (8,14) size 784x120
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 287x16
+          text run at (0,0) width 287: "The following two squares should be identical."
+      RenderTable {TABLE} at (0,30) size 278x90
         RenderTableSection {TBODY} at (0,0) size 278x90
           RenderTableRow {TR} at (0,14) size 278x62
             RenderTableCell {TD} at (14,14) size 118x62 [bgcolor=#00FF00] [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]

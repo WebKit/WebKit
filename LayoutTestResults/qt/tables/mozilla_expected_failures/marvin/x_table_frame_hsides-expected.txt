@@ -1,20 +1,13 @@
-layer at (0,0) size 166x268
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 166x268
-  RenderBlock {html} at (0,0) size 96x268
-    RenderBody {body} at (8,14) size 80x246
-      RenderBlock {p} at (0,0) size 80x144
-        RenderText {#text} at (0,0) size 77x144
-          text run at (0,0) width 77: "Only the top"
-          text run at (0,16) width 70: "and bottom"
-          text run at (0,32) width 73: "sides of the"
-          text run at (0,48) width 36: "frame"
-          text run at (0,64) width 74: "surrounding"
-          text run at (0,80) width 54: "the table"
-          text run at (0,96) width 36: "below"
-          text run at (0,112) width 60: "should be"
-          text run at (0,128) width 41: "visible."
-      RenderTable {table} at (0,158) size 158x88 [border: (1px solid #808080) none (1px solid #808080) none]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x140
+  RenderBlock {html} at (0,0) size 800x140
+    RenderBody {body} at (8,14) size 784x118
+      RenderBlock {p} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 553x16
+          text run at (0,0) width 408: "Only the top and bottom sides of the frame surrounding the table "
+          text run at (408,0) width 145: "below should be visible."
+      RenderTable {table} at (0,30) size 158x88 [border: (1px solid #808080) none (1px solid #808080) none]
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
         RenderTableCol {colgroup} at (0,0) size 0x0

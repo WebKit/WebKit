@@ -1,39 +1,18 @@
-layer at (0,0) size 114x534
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 114x534
-  RenderBlock {HTML} at (0,0) size 96x534
-    RenderBody {BODY} at (8,8) size 80x518
-      RenderBlock {P} at (0,0) size 80x176
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x16
         RenderText {#text} at (0,0) size 53x16
           text run at (0,0) width 53: "Test for "
-        RenderInline {A} at (0,0) size 75x32 [color=#0000EE]
-          RenderText {#text} at (53,0) size 75x32
-            text run at (53,0) width 22: "bug"
-            text run at (0,16) width 40: "11590"
-        RenderText {#text} at (40,16) size 92x160
-          text run at (40,16) width 3: ":"
-          text run at (0,32) width 92: "REGRESSION"
-          text run at (0,48) width 54: "(r17726-"
-          text run at (0,64) width 53: "r17742):"
-          text run at (0,80) width 61: "Wikipedia"
-          text run at (0,96) width 32: "page"
-          text run at (0,112) width 80: "intermittently"
-          text run at (0,128) width 56: "loads but"
-          text run at (0,144) width 46: "doesn't"
-          text run at (0,160) width 45: "render."
-      RenderBlock {P} at (0,190) size 80x208
-        RenderText {#text} at (0,0) size 80x208
-          text run at (0,0) width 80: "All four sides"
-          text run at (0,16) width 36: "of the"
-          text run at (0,32) width 43: "square"
-          text run at (0,48) width 36: "below"
-          text run at (0,64) width 60: "should be"
-          text run at (0,80) width 69: "present for"
-          text run at (0,96) width 65: "this test to"
-          text run at (0,112) width 71: "really pass,"
-          text run at (0,128) width 72: "and WebKit"
-          text run at (0,144) width 56: "shouldn't"
-          text run at (0,160) width 67: "crash for it"
-          text run at (0,176) width 46: "to pass"
-          text run at (0,192) width 52: "partially."
-      RenderBlock {DIV} at (0,412) size 106x106 [border: (3px solid #000000)]
+        RenderInline {A} at (0,0) size 66x16 [color=#0000EE]
+          RenderText {#text} at (53,0) size 66x16
+            text run at (53,0) width 66: "bug 11590"
+        RenderText {#text} at (119,0) size 554x16
+          text run at (119,0) width 554: ": REGRESSION (r17726-r17742): Wikipedia page intermittently loads but doesn't render."
+      RenderBlock {P} at (0,30) size 784x32
+        RenderText {#text} at (0,0) size 745x32
+          text run at (0,0) width 745: "All four sides of the square below should be present for this test to really pass, and WebKit shouldn't crash for it to pass"
+          text run at (0,16) width 52: "partially."
+      RenderBlock {DIV} at (0,76) size 106x106 [border: (3px solid #000000)]

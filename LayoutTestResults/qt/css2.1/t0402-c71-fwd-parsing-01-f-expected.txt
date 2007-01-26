@@ -1,24 +1,20 @@
-layer at (0,0) size 96x252
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x252
-  RenderBlock {HTML} at (0,0) size 96x252
-    RenderBody {BODY} at (8,14) size 80x224 [color=#000080]
-      RenderBlock {P} at (0,0) size 80x80
-        RenderText {#text} at (0,0) size 71x80
-          text run at (0,0) width 56: "The next"
-          text run at (0,16) width 67: "four blocks"
-          text run at (0,32) width 71: "should look"
-          text run at (0,48) width 71: "identical, to"
-          text run at (0,64) width 56: "the pixel."
-      RenderBlock {P} at (0,94) size 80x22 [border: (3px solid #000080)]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x188
+  RenderBlock {HTML} at (0,0) size 800x188
+    RenderBody {BODY} at (8,14) size 784x160 [color=#000080]
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 337x16
+          text run at (0,0) width 337: "The next four blocks should look identical, to the pixel."
+      RenderBlock {P} at (0,30) size 784x22 [border: (3px solid #000080)]
         RenderText {#text} at (3,3) size 28x16
           text run at (3,3) width 28: "Test"
-      RenderBlock {P} at (0,130) size 80x22 [border: (3px solid #000080)]
+      RenderBlock {P} at (0,66) size 784x22 [border: (3px solid #000080)]
         RenderText {#text} at (3,3) size 28x16
           text run at (3,3) width 28: "Test"
-      RenderBlock {P} at (0,166) size 80x22 [border: (3px solid #000080)]
+      RenderBlock {P} at (0,102) size 784x22 [border: (3px solid #000080)]
         RenderText {#text} at (3,3) size 28x16
           text run at (3,3) width 28: "Test"
-      RenderBlock {P} at (0,202) size 80x22 [border: (3px solid #000080)]
+      RenderBlock {P} at (0,138) size 784x22 [border: (3px solid #000080)]
         RenderText {#text} at (3,3) size 28x16
           text run at (3,3) width 28: "Test"

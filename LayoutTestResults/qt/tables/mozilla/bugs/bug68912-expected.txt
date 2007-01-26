@@ -1,24 +1,16 @@
-layer at (0,0) size 96x225
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x225
-  RenderBlock {HTML} at (0,0) size 96x225
-    RenderBody {BODY} at (8,8) size 80x203
-      RenderBlock {P} at (0,0) size 80x128
-        RenderText {#text} at (0,0) size 75x128
-          text run at (0,0) width 54: "This test"
-          text run at (0,16) width 30: "case"
-          text run at (0,32) width 59: "creates a"
-          text run at (0,48) width 73: "TR element"
-          text run at (0,64) width 75: "then tries to"
-          text run at (0,80) width 57: "assign to"
-          text run at (0,96) width 52: "the cells"
-          text run at (0,112) width 53: "property"
-      RenderBlock {P} at (0,142) size 80x61
-        RenderText {#text} at (0,0) size 42x16
-          text run at (0,0) width 42: "Crash "
-        RenderButton {BUTTON} at (2,18) size 76x41 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 60x32
-            RenderText {#text} at (5,0) size 50x32
-              text run at (5,0) width 50: "TR.cells"
-              text run at (13,16) width 34: "= null"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 481x16
+          text run at (0,0) width 481: "This test case creates a TR element then tries to assign to the cells property"
+      RenderBlock {P} at (0,30) size 784x29
+        RenderText {#text} at (0,6) size 42x16
+          text run at (0,6) width 42: "Crash "
+        RenderButton {BUTTON} at (44,2) size 104x25 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 88x16
+            RenderText {#text} at (0,0) size 88x16
+              text run at (0,0) width 88: "TR.cells = null"
         RenderText {#text} at (0,0) size 0x0

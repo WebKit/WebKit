@@ -1,56 +1,23 @@
-layer at (0,0) size 175x582
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 175x582
-  RenderBlock {HTML} at (0,0) size 96x582
-    RenderBody {BODY} at (8,8) size 80x566
-      RenderTable {TABLE} at (0,0) size 167x566 [border: (4px outset #808080)]
-        RenderTableSection {TBODY} at (4,4) size 159x558
-          RenderTableRow {TR} at (0,2) size 159x276
-            RenderTableCell {TD} at (2,221) size 70x116 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 66x112
-                text run at (2,2) width 48: "1 Some"
-                text run at (2,18) width 45: "sample"
-                text run at (2,34) width 44: "text for"
-                text run at (2,50) width 47: "the first"
-                text run at (2,66) width 47: "column."
-                text run at (2,82) width 58: "Notice its"
-                text run at (2,98) width 66: "formatting."
-            RenderTableCell {TD} at (74,2) size 83x276 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 79x272
-                text run at (2,2) width 57: "2 Here is"
-                text run at (2,18) width 34: "some"
-                text run at (2,34) width 72: "sample text"
-                text run at (2,50) width 12: "to"
-                text run at (2,66) width 79: "demonstrate"
-                text run at (2,82) width 77: "the problem."
-                text run at (2,98) width 48: "Is there"
-                text run at (2,114) width 34: "some"
-                text run at (2,130) width 57: "setting in"
-                text run at (2,146) width 61: "Navigator"
-                text run at (2,162) width 47: "that will"
-                text run at (2,178) width 60: "make this"
-                text run at (2,194) width 30: "work"
-                text run at (2,210) width 78: "correctly ? If"
-                text run at (2,226) width 73: "so I haven't"
-                text run at (2,242) width 64: "found it. Is"
-                text run at (2,258) width 72: "this a bug ?"
-          RenderTableRow {TR} at (0,280) size 159x276
-            RenderTableCell {TD} at (74,280) size 83x276 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 79x272
-                text run at (2,2) width 57: "3 Here is"
-                text run at (2,18) width 34: "some"
-                text run at (2,34) width 72: "sample text"
-                text run at (2,50) width 12: "to"
-                text run at (2,66) width 79: "demonstrate"
-                text run at (2,82) width 77: "the problem."
-                text run at (2,98) width 48: "Is there"
-                text run at (2,114) width 34: "some"
-                text run at (2,130) width 57: "setting in"
-                text run at (2,146) width 61: "Navigator"
-                text run at (2,162) width 47: "that will"
-                text run at (2,178) width 60: "make this"
-                text run at (2,194) width 30: "work"
-                text run at (2,210) width 78: "correctly ? If"
-                text run at (2,226) width 73: "so I haven't"
-                text run at (2,242) width 64: "found it. Is"
-                text run at (2,258) width 72: "this a bug ?"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 622x400 [border: (4px outset #808080)]
+        RenderTableSection {TBODY} at (4,4) size 614x392
+          RenderTableRow {TR} at (0,2) size 614x193
+            RenderTableCell {TD} at (2,178) size 204x36 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 196x32
+                text run at (2,2) width 196: "1 Some sample text for the first"
+                text run at (2,18) width 179: "column. Notice its formatting."
+            RenderTableCell {TD} at (208,72) size 404x52 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 366x48
+                text run at (2,2) width 366: "2 Here is some sample text to demonstrate the problem. Is"
+                text run at (2,18) width 346: "there some setting in Navigator that will make this work"
+                text run at (2,34) width 299: "correctly ? If so I haven't found it. Is this a bug ?"
+          RenderTableRow {TR} at (0,197) size 614x193
+            RenderTableCell {TD} at (208,267) size 404x52 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 366x48
+                text run at (2,2) width 366: "3 Here is some sample text to demonstrate the problem. Is"
+                text run at (2,18) width 346: "there some setting in Navigator that will make this work"
+                text run at (2,34) width 299: "correctly ? If so I haven't found it. Is this a bug ?"

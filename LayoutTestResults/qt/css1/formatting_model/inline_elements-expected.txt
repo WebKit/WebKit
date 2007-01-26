@@ -1,16 +1,12 @@
-layer at (0,0) size 288x5235
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 288x5235
-  RenderBlock {HTML} at (0,0) size 96x5235
-    RenderBody {BODY} at (8,8) size 80x5219 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 80x80
-        RenderText {#text} at (0,0) size 77x80
-          text run at (0,0) width 58: "The style"
-          text run at (0,16) width 77: "declarations"
-          text run at (0,32) width 74: "which apply"
-          text run at (0,48) width 63: "to the text"
-          text run at (0,64) width 64: "below are:"
-      RenderBlock {PRE} at (0,94) size 80x112
+layer at (0,0) size 800x743
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x743
+  RenderBlock {HTML} at (0,0) size 800x743
+    RenderBody {BODY} at (8,8) size 784x727 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 352x16
+          text run at (0,0) width 352: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,30) size 784x112
         RenderText {#text} at (0,0) size 280x112
           text run at (0,0) width 104: "P.one {line-height: 200%;}"
           text run at (104,0) width 0: " "
@@ -25,258 +21,77 @@ layer at (0,0) size 288x5235
           text run at (0,80) width 96: "          padding: 2pt;}"
           text run at (96,80) width 0: " "
           text run at (0,96) width 0: " "
-      RenderBlock {HR} at (0,220) size 80x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,236) size 80x1792
-        RenderText {#text} at (0,6) size 66x72
-          text run at (0,6) width 53: "This is a"
-          text run at (0,34) width 66: "paragraph"
-          text run at (0,62) width 63: "that has a"
-        RenderInline {SPAN} at (0,0) size 80x1524 [border: (10px solid #FF0000)]
-          RenderText {#text} at (52,90) size 80x1500
-            text run at (52,90) width 27: "very"
-            text run at (0,118) width 77: "long span in"
-            text run at (0,146) width 62: "it, and the"
-            text run at (0,174) width 70: "span has a"
-            text run at (0,202) width 56: "10px red"
-            text run at (0,230) width 41: "border"
-            text run at (0,258) width 64: "separated"
-            text run at (0,286) width 52: "from the"
-            text run at (0,314) width 76: "span by 2pt,"
-            text run at (0,342) width 36: "and a"
-            text run at (0,370) width 59: "margin of"
-            text run at (0,398) width 35: "30pt. "
-            text run at (35,398) width 25: "The"
-            text run at (0,426) width 79: "padding and"
-            text run at (0,454) width 41: "border"
-            text run at (0,482) width 60: "should be"
-            text run at (0,510) width 68: "present on"
-            text run at (0,538) width 67: "all sides of"
-            text run at (0,566) width 55: "the span"
-            text run at (0,594) width 59: "(although"
-            text run at (0,622) width 78: "vertical lines"
-            text run at (0,650) width 41: "should"
-            text run at (0,678) width 75: "appear only"
-            text run at (0,706) width 36: "at the"
-            text run at (0,734) width 61: "beginning"
-            text run at (0,762) width 76: "and the end"
-            text run at (0,790) width 77: "of the whole"
-            text run at (0,818) width 78: "span, not on"
-            text run at (0,846) width 65: "each line)."
-            text run at (0,874) width 25: "The"
-            text run at (0,902) width 54: "padding,"
-            text run at (0,930) width 72: "border, and"
-            text run at (0,958) width 43: "margin"
-            text run at (0,986) width 78: "should all be"
-            text run at (0,1014) width 80: "noticeable at"
-            text run at (0,1042) width 20: "the"
-            text run at (0,1070) width 61: "beginning"
-            text run at (0,1098) width 68: "and end of"
-            text run at (0,1126) width 58: "the span."
-            text run at (0,1154) width 59: "However,"
-            text run at (0,1182) width 46: "the line"
-            text run at (0,1210) width 39: "height"
-            text run at (0,1238) width 65: "should not"
-            text run at (0,1266) width 74: "be changed"
-            text run at (0,1294) width 57: "by any of"
-            text run at (0,1322) width 77: "them, so the"
-            text run at (0,1350) width 43: "margin"
-            text run at (0,1378) width 60: "should be"
-            text run at (0,1406) width 79: "unnoticeable"
-            text run at (0,1434) width 48: "and the"
-            text run at (0,1462) width 41: "border"
-            text run at (0,1490) width 41: "should"
-            text run at (0,1518) width 74: "overlap text"
-            text run at (0,1546) width 53: "on other"
-            text run at (0,1574) width 32: "lines."
-        RenderText {#text} at (0,1602) size 76x184
-          text run at (0,1602) width 51: "The line"
-          text run at (0,1630) width 64: "spacing in"
-          text run at (0,1658) width 61: "the whole"
-          text run at (0,1686) width 66: "paragraph"
-          text run at (0,1714) width 60: "should be"
-          text run at (0,1742) width 76: "200% of the"
-          text run at (0,1770) width 56: "font size."
-      RenderBlock {P} at (0,2042) size 80x704
-        RenderText {#text} at (0,0) size 58x47
-          text run at (0,0) width 50: "This is a"
-          text run at (0,16) width 57: "paragraph"
-          text run at (0,32) width 58: "that has a"
-        RenderInline {SPAN} at (0,0) size 80x571 [border: (12px solid #FF0000)]
-          RenderText {#text} at (14,48) size 80x543
-            text run at (14,48) width 53: "very long"
-            text run at (0,64) width 57: "span in it,"
-            text run at (0,80) width 75: "and the span"
-            text run at (0,96) width 64: "has a 12px"
-            text run at (0,112) width 58: "red border"
-            text run at (0,128) width 57: "separated"
-            text run at (0,144) width 80: "from the span"
-            text run at (0,160) width 51: "by 2pt of"
-            text run at (0,176) width 71: "padding (the"
-            text run at (0,192) width 57: "difference"
-            text run at (0,208) width 70: "between the"
-            text run at (0,224) width 59: "line-height"
-            text run at (0,240) width 73: "and the font-"
-            text run at (0,256) width 69: "size), which"
-            text run at (0,272) width 38: "should"
-            text run at (0,288) width 69: "overlap with"
-            text run at (0,304) width 64: "the lines of"
-            text run at (0,320) width 61: "text above"
-            text run at (0,336) width 80: "and below the"
-            text run at (0,352) width 67: "span, since"
-            text run at (0,368) width 67: "the padding"
-            text run at (0,384) width 61: "and border"
-            text run at (0,400) width 60: "should not"
-            text run at (0,416) width 79: "effect the line"
-            text run at (0,432) width 43: "height. "
-            text run at (43,432) width 22: "The"
-            text run at (0,448) width 77: "span's border"
-            text run at (0,464) width 70: "should have"
-            text run at (0,480) width 73: "vertical lines"
-            text run at (0,496) width 61: "only at the"
-            text run at (0,512) width 80: "beginning and"
-            text run at (0,528) width 58: "end of the"
-            text run at (0,544) width 69: "whole span,"
-            text run at (0,560) width 68: "not on each"
-            text run at (0,576) width 24: "line."
-        RenderText {#text} at (38,576) size 69x127
-          text run at (38,576) width 4: " "
-          text run at (42,576) width 22: "The"
-          text run at (0,592) width 69: "line spacing"
-          text run at (0,608) width 69: "in the whole"
-          text run at (0,624) width 57: "paragraph"
-          text run at (0,640) width 56: "should be"
-          text run at (0,656) width 56: "12pt, with"
-          text run at (0,672) width 50: "font-size"
-          text run at (0,688) width 29: "10pt."
-      RenderTable {TABLE} at (0,2759) size 106x2460 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 104x2458
-          RenderTableRow {TR} at (0,0) size 104x56
-            RenderTableCell {TD} at (0,0) size 104x56 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 53x48
-                RenderText {#text} at (4,4) size 53x48
-                  text run at (4,4) width 45: "TABLE"
-                  text run at (4,20) width 51: "Testing"
-                  text run at (4,36) width 53: "Section"
-          RenderTableRow {TR} at (0,56) size 104x2402
-            RenderTableCell {TD} at (0,1245) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+      RenderBlock {HR} at (0,156) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,172) size 784x168
+        RenderText {#text} at (0,6) size 194x16
+          text run at (0,6) width 194: "This is a paragraph that has a "
+        RenderInline {SPAN} at (0,0) size 784x152 [border: (10px solid #FF0000)]
+          RenderText {#text} at (246,6) size 784x128
+            text run at (246,6) width 530: "very long span in it, and the span has a 10px red border separated from the span by"
+            text run at (0,34) width 165: "2pt, and a margin of 30pt. "
+            text run at (165,34) width 609: "The padding and border should be present on all sides of the span (although vertical lines should"
+            text run at (0,62) width 496: "appear only at the beginning and the end of the whole span, not on each line). "
+            text run at (496,62) width 288: "The padding, border, and margin should all be"
+            text run at (0,90) width 307: "noticeable at the beginning and end of the span. "
+            text run at (307,90) width 441: "However, the line height should not be changed by any of them, so the"
+            text run at (0,118) width 503: "margin should be unnoticeable and the border should overlap text on other lines."
+        RenderText {#text} at (555,118) size 743x44
+          text run at (555,118) width 4: " "
+          text run at (559,118) width 184: "The line spacing in the whole"
+          text run at (0,146) width 270: "paragraph should be 200% of the font size."
+      RenderBlock {P} at (0,354) size 784x64
+        RenderText {#text} at (0,0) size 177x15
+          text run at (0,0) width 177: "This is a paragraph that has a "
+        RenderInline {SPAN} at (0,0) size 769x91 [border: (12px solid #FF0000)]
+          RenderText {#text} at (191,0) size 769x63
+            text run at (191,0) width 572: "very long span in it, and the span has a 12px red border separated from the span by 2pt of padding"
+            text run at (0,16) width 769: "(the difference between the line-height and the font-size), which should overlap with the lines of text above and below the span, since"
+            text run at (0,32) width 326: "the padding and border should not effect the line height. "
+            text run at (326,32) width 443: "The span's border should have vertical lines only at the beginning and end of"
+            text run at (0,48) width 191: "the whole span, not on each line."
+        RenderText {#text} at (205,48) size 440x15
+          text run at (205,48) width 4: " "
+          text run at (209,48) width 436: "The line spacing in the whole paragraph should be 12pt, with font-size 10pt."
+      RenderTable {TABLE} at (0,431) size 784x296 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x294
+          RenderTableRow {TR} at (0,0) size 782x24
+            RenderTableCell {TD} at (0,0) size 782x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 157x16
+                RenderText {#text} at (4,4) size 157x16
+                  text run at (4,4) width 157: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,24) size 782x270
+            RenderTableCell {TD} at (0,147) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x16
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,56) size 92x2402 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 84x1708
-                RenderText {#text} at (0,6) size 66x72
-                  text run at (0,6) width 53: "This is a"
-                  text run at (0,34) width 66: "paragraph"
-                  text run at (0,62) width 63: "that has a"
-                RenderInline {SPAN} at (0,0) size 84x1440 [border: (10px solid #FF0000)]
-                  RenderText {#text} at (52,90) size 84x1416
-                    text run at (52,90) width 27: "very"
-                    text run at (0,118) width 77: "long span in"
-                    text run at (0,146) width 62: "it, and the"
-                    text run at (0,174) width 70: "span has a"
-                    text run at (0,202) width 56: "10px red"
-                    text run at (0,230) width 41: "border"
-                    text run at (0,258) width 64: "separated"
-                    text run at (0,286) width 52: "from the"
-                    text run at (0,314) width 76: "span by 2pt,"
-                    text run at (0,342) width 83: "and a margin"
-                    text run at (0,370) width 51: "of 30pt. "
-                    text run at (51,370) width 25: "The"
-                    text run at (0,398) width 79: "padding and"
-                    text run at (0,426) width 41: "border"
-                    text run at (0,454) width 60: "should be"
-                    text run at (0,482) width 68: "present on"
-                    text run at (0,510) width 67: "all sides of"
-                    text run at (0,538) width 55: "the span"
-                    text run at (0,566) width 59: "(although"
-                    text run at (0,594) width 78: "vertical lines"
-                    text run at (0,622) width 41: "should"
-                    text run at (0,650) width 75: "appear only"
-                    text run at (0,678) width 36: "at the"
-                    text run at (0,706) width 61: "beginning"
-                    text run at (0,734) width 76: "and the end"
-                    text run at (0,762) width 77: "of the whole"
-                    text run at (0,790) width 78: "span, not on"
-                    text run at (0,818) width 65: "each line)."
-                    text run at (0,846) width 83: "The padding,"
-                    text run at (0,874) width 72: "border, and"
-                    text run at (0,902) width 43: "margin"
-                    text run at (0,930) width 78: "should all be"
-                    text run at (0,958) width 80: "noticeable at"
-                    text run at (0,986) width 20: "the"
-                    text run at (0,1014) width 61: "beginning"
-                    text run at (0,1042) width 68: "and end of"
-                    text run at (0,1070) width 58: "the span."
-                    text run at (0,1098) width 83: "However, the"
-                    text run at (0,1126) width 65: "line height"
-                    text run at (0,1154) width 84: "should not be"
-                    text run at (0,1182) width 73: "changed by"
-                    text run at (0,1210) width 77: "any of them,"
-                    text run at (0,1238) width 39: "so the"
-                    text run at (0,1266) width 43: "margin"
-                    text run at (0,1294) width 60: "should be"
-                    text run at (0,1322) width 79: "unnoticeable"
-                    text run at (0,1350) width 48: "and the"
-                    text run at (0,1378) width 41: "border"
-                    text run at (0,1406) width 41: "should"
-                    text run at (0,1434) width 74: "overlap text"
-                    text run at (0,1462) width 53: "on other"
-                    text run at (0,1490) width 32: "lines."
-                RenderText {#text} at (0,1518) size 76x184
-                  text run at (0,1518) width 51: "The line"
-                  text run at (0,1546) width 64: "spacing in"
-                  text run at (0,1574) width 61: "the whole"
-                  text run at (0,1602) width 66: "paragraph"
-                  text run at (0,1630) width 60: "should be"
-                  text run at (0,1658) width 76: "200% of the"
-                  text run at (0,1686) width 56: "font size."
-              RenderBlock {P} at (4,1726) size 84x672
-                RenderText {#text} at (0,0) size 83x47
-                  text run at (0,0) width 50: "This is a"
-                  text run at (0,16) width 83: "paragraph that"
-                  text run at (0,32) width 36: "has a "
-                RenderInline {SPAN} at (0,0) size 84x571 [border: (12px solid #FF0000)]
-                  RenderText {#text} at (50,32) size 84x543
-                    text run at (50,32) width 25: "very"
-                    text run at (0,48) width 70: "long span in"
-                    text run at (0,64) width 58: "it, and the"
-                    text run at (0,80) width 64: "span has a"
-                    text run at (0,96) width 50: "12px red"
-                    text run at (0,112) width 36: "border"
-                    text run at (0,128) width 57: "separated"
-                    text run at (0,144) width 80: "from the span"
-                    text run at (0,160) width 51: "by 2pt of"
-                    text run at (0,176) width 71: "padding (the"
-                    text run at (0,192) width 57: "difference"
-                    text run at (0,208) width 70: "between the"
-                    text run at (0,224) width 84: "line-height and"
-                    text run at (0,240) width 80: "the font-size),"
-                    text run at (0,256) width 75: "which should"
-                    text run at (0,272) width 69: "overlap with"
-                    text run at (0,288) width 64: "the lines of"
-                    text run at (0,304) width 61: "text above"
-                    text run at (0,320) width 80: "and below the"
-                    text run at (0,336) width 67: "span, since"
-                    text run at (0,352) width 67: "the padding"
-                    text run at (0,368) width 61: "and border"
-                    text run at (0,384) width 60: "should not"
-                    text run at (0,400) width 79: "effect the line"
-                    text run at (0,416) width 43: "height. "
-                    text run at (43,416) width 22: "The"
-                    text run at (0,432) width 77: "span's border"
-                    text run at (0,448) width 70: "should have"
-                    text run at (0,464) width 73: "vertical lines"
-                    text run at (0,480) width 61: "only at the"
-                    text run at (0,496) width 80: "beginning and"
-                    text run at (0,512) width 58: "end of the"
-                    text run at (0,528) width 69: "whole span,"
-                    text run at (0,544) width 68: "not on each"
-                    text run at (0,560) width 24: "line."
-                RenderText {#text} at (38,560) size 83x111
-                  text run at (38,560) width 4: " "
-                  text run at (42,560) width 22: "The"
-                  text run at (0,576) width 83: "line spacing in"
-                  text run at (0,592) width 55: "the whole"
-                  text run at (0,608) width 57: "paragraph"
-                  text run at (0,624) width 56: "should be"
-                  text run at (0,640) width 56: "12pt, with"
-                  text run at (0,656) width 83: "font-size 10pt."
+            RenderTableCell {TD} at (12,24) size 770x270 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x168
+                RenderText {#text} at (0,6) size 194x16
+                  text run at (0,6) width 194: "This is a paragraph that has a "
+                RenderInline {SPAN} at (0,0) size 758x152 [border: (10px solid #FF0000)]
+                  RenderText {#text} at (246,6) size 758x128
+                    text run at (246,6) width 512: "very long span in it, and the span has a 10px red border separated from the span"
+                    text run at (0,34) width 183: "by 2pt, and a margin of 30pt. "
+                    text run at (183,34) width 564: "The padding and border should be present on all sides of the span (although vertical lines"
+                    text run at (0,62) width 541: "should appear only at the beginning and the end of the whole span, not on each line). "
+                    text run at (541,62) width 206: "The padding, border, and margin"
+                    text run at (0,90) width 389: "should all be noticeable at the beginning and end of the span. "
+                    text run at (389,90) width 360: "However, the line height should not be changed by any of"
+                    text run at (0,118) width 584: "them, so the margin should be unnoticeable and the border should overlap text on other lines."
+                RenderText {#text} at (636,118) size 759x44
+                  text run at (636,118) width 4: " "
+                  text run at (640,118) width 119: "The line spacing in"
+                  text run at (0,146) width 335: "the whole paragraph should be 200% of the font size."
+              RenderBlock {P} at (4,186) size 762x80
+                RenderText {#text} at (0,0) size 177x15
+                  text run at (0,0) width 177: "This is a paragraph that has a "
+                RenderInline {SPAN} at (0,0) size 747x91 [border: (12px solid #FF0000)]
+                  RenderText {#text} at (191,0) size 747x63
+                    text run at (191,0) width 523: "very long span in it, and the span has a 12px red border separated from the span by 2pt of"
+                    text run at (0,16) width 747: "padding (the difference between the line-height and the font-size), which should overlap with the lines of text above and below the"
+                    text run at (0,32) width 397: "span, since the padding and border should not effect the line height. "
+                    text run at (397,32) width 319: "The span's border should have vertical lines only at the"
+                    text run at (0,48) width 315: "beginning and end of the whole span, not on each line."
+                RenderText {#text} at (329,48) size 736x31
+                  text run at (329,48) width 4: " "
+                  text run at (333,48) width 403: "The line spacing in the whole paragraph should be 12pt, with font-size"
+                  text run at (0,64) width 29: "10pt."

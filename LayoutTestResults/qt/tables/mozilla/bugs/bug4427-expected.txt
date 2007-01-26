@@ -1,24 +1,13 @@
-layer at (0,0) size 708x619
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 708x619
-  RenderBlock {HTML} at (0,0) size 96x619
-    RenderBody {BODY} at (8,8) size 80x603
-      RenderBlock (anonymous) at (0,0) size 80x208
-        RenderText {#text} at (0,0) size 79x208
-          text run at (0,0) width 79: "the following"
-          text run at (0,16) width 58: "is not the"
-          text run at (0,32) width 58: "bug but is"
-          text run at (0,48) width 76: "related. Nav"
-          text run at (0,64) width 53: "put's the"
-          text run at (0,80) width 60: "images in"
-          text run at (0,96) width 73: "the 2nd cell"
-          text run at (0,112) width 78: "on the same"
-          text run at (0,128) width 72: "line. Border"
-          text run at (0,144) width 56: "widths of"
-          text run at (0,160) width 53: "cells are"
-          text run at (0,176) width 48: "suspect"
-          text run at (0,192) width 32: "here."
-      RenderTable {TABLE} at (0,208) size 26x8 [border: (1px outset #808080)]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x32
+        RenderText {#text} at (0,0) size 756x32
+          text run at (0,0) width 756: "the following is not the bug but is related. Nav put's the images in the 2nd cell on the same line. Border widths of cells are"
+          text run at (0,16) width 84: "suspect here."
+      RenderTable {TABLE} at (0,32) size 26x8 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 24x6
           RenderTableRow {TR} at (0,0) size 24x6
             RenderTableCell {TD} at (0,1) size 4x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -26,19 +15,11 @@ layer at (0,0) size 708x619
             RenderTableCell {TD} at (4,0) size 20x6 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 10x2
               RenderImage {IMG} at (1,3) size 10x2
-      RenderBlock (anonymous) at (0,216) size 80x160
+      RenderBlock (anonymous) at (0,40) size 784x32
         RenderBR {BR} at (0,0) size 0x16
-        RenderText {#text} at (0,16) size 79x144
-          text run at (0,16) width 79: "the following"
-          text run at (0,32) width 74: "is related to"
-          text run at (0,48) width 78: "the bug. Nav"
-          text run at (0,64) width 53: "put's the"
-          text run at (0,80) width 60: "images in"
-          text run at (0,96) width 71: "the last cell"
-          text run at (0,112) width 62: "of the last"
-          text run at (0,128) width 74: "table on the"
-          text run at (0,144) width 63: "same line."
-      RenderTable {TABLE} at (0,376) size 700x32
+        RenderText {#text} at (0,16) size 646x16
+          text run at (0,16) width 646: "the following is related to the bug. Nav put's the images in the last cell of the last table on the same line."
+      RenderTable {TABLE} at (0,72) size 700x32
         RenderTableSection {TBODY} at (0,0) size 700x32
           RenderTableRow {TR} at (0,0) size 700x32
             RenderTableCell {TD} at (0,0) size 175x32 [r=0 c=0 rs=1 cs=1]
@@ -91,9 +72,9 @@ layer at (0,0) size 708x619
                       RenderImage {IMG} at (0,18) size 525x1
                       RenderBR {BR} at (525,19) size 0x0
                       RenderImage {IMG} at (0,19) size 525x2
-      RenderBlock (anonymous) at (0,408) size 80x16
+      RenderBlock (anonymous) at (0,104) size 784x16
         RenderBR {BR} at (0,0) size 0x16
-      RenderTable {TABLE} at (0,424) size 426x179 [bgcolor=#CCCCCC] [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,120) size 426x179 [bgcolor=#CCCCCC] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 424x177
           RenderTableRow {TR} at (0,1) size 424x68
             RenderTableCell {TD} at (1,1) size 19x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

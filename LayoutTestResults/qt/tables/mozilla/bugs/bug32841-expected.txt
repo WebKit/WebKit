@@ -1,8 +1,8 @@
-layer at (0,0) size 508x67
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 508x67
-  RenderBlock {HTML} at (0,0) size 96x67
-    RenderBody {BODY} at (8,8) size 80x51
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
       RenderTable {TABLE} at (0,0) size 500x42 [bgcolor=#FF0000] [border: (1px outset #808080)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0

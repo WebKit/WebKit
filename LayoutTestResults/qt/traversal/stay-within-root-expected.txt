@@ -1,106 +1,66 @@
-layer at (0,0) size 162x916
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 162x916
-  RenderBlock {HTML} at (0,0) size 96x916
-    RenderBody {BODY} at (8,8) size 80x894
-      RenderBlock {DIV} at (0,0) size 80x208
-        RenderBlock (anonymous) at (0,0) size 80x208
-          RenderText {#text} at (0,0) size 80x208
-            text run at (0,0) width 54: "This test"
-            text run at (0,16) width 72: "checks that"
-            text run at (0,32) width 20: "the"
-            text run at (0,48) width 80: "NodeIterator"
-            text run at (0,64) width 24: "and"
-            text run at (0,80) width 74: "TreeWalker"
-            text run at (0,96) width 76: "functions do"
-            text run at (0,112) width 71: "not go past"
-            text run at (0,128) width 49: "the root"
-            text run at (0,144) width 78: "element that"
-            text run at (0,160) width 52: "they are"
-            text run at (0,176) width 77: "supposed to"
-            text run at (0,192) width 69: "stay within."
-        RenderBlock {DIV} at (0,208) size 80x0
-          RenderBlock {DIV} at (0,0) size 80x0
-          RenderBlock {DIV} at (0,0) size 80x0
-      RenderBlock {OL} at (0,222) size 80x672
-        RenderListItem {LI} at (40,0) size 40x112
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {DIV} at (0,0) size 784x32
+        RenderBlock (anonymous) at (0,0) size 784x32
+          RenderText {#text} at (0,0) size 771x32
+            text run at (0,0) width 771: "This test checks that the NodeIterator and TreeWalker functions do not go past the root element that they are supposed to"
+            text run at (0,16) width 69: "stay within."
+        RenderBlock {DIV} at (0,32) size 784x0
+          RenderBlock {DIV} at (0,0) size 784x0
+          RenderBlock {DIV} at (0,0) size 784x0
+      RenderBlock {OL} at (0,46) size 784x208
+        RenderListItem {LI} at (40,0) size 744x16
           RenderListMarker at (-19,0) size 15x16: "1"
-          RenderText {#text} at (0,0) size 83x112
-            text run at (0,0) width 83: "NodeIterator:"
-            text run at (0,16) width 42: "testing"
-            text run at (0,32) width 71: "nextNode()"
-            text run at (0,48) width 13: "(5"
-            text run at (0,64) width 41: "should"
-            text run at (0,80) width 15: "be"
-            text run at (0,96) width 26: "null)"
-        RenderListItem {LI} at (40,112) size 40x32
+          RenderText {#text} at (0,0) size 315x16
+            text run at (0,0) width 315: "NodeIterator: testing nextNode() (5 should be null)"
+        RenderListItem {LI} at (40,16) size 744x16
           RenderListMarker at (-19,0) size 15x16: "2"
-          RenderText {#text} at (0,0) size 114x32
-            text run at (0,0) width 41: "[object"
-            text run at (0,16) width 114: "HTMLDivElement]"
-        RenderListItem {LI} at (40,144) size 40x32
+          RenderText {#text} at (0,0) size 159x16
+            text run at (0,0) width 159: "[object HTMLDivElement]"
+        RenderListItem {LI} at (40,32) size 744x16
           RenderListMarker at (-19,0) size 15x16: "3"
-          RenderText {#text} at (0,0) size 114x32
-            text run at (0,0) width 41: "[object"
-            text run at (0,16) width 114: "HTMLDivElement]"
-        RenderListItem {LI} at (40,176) size 40x32
+          RenderText {#text} at (0,0) size 159x16
+            text run at (0,0) width 159: "[object HTMLDivElement]"
+        RenderListItem {LI} at (40,48) size 744x16
           RenderListMarker at (-19,0) size 15x16: "4"
-          RenderText {#text} at (0,0) size 114x32
-            text run at (0,0) width 41: "[object"
-            text run at (0,16) width 114: "HTMLDivElement]"
-        RenderListItem {LI} at (40,208) size 40x16
+          RenderText {#text} at (0,0) size 159x16
+            text run at (0,0) width 159: "[object HTMLDivElement]"
+        RenderListItem {LI} at (40,64) size 744x16
           RenderListMarker at (-19,0) size 15x16: "5"
           RenderText {#text} at (0,0) size 21x16
             text run at (0,0) width 21: "null"
-        RenderListItem {LI} at (40,224) size 40x112
+        RenderListItem {LI} at (40,80) size 744x16
           RenderListMarker at (-19,0) size 15x16: "6"
-          RenderText {#text} at (0,0) size 97x112
-            text run at (0,0) width 83: "NodeIterator:"
-            text run at (0,16) width 42: "testing"
-            text run at (0,32) width 97: "previousNode()"
-            text run at (0,48) width 13: "(7"
-            text run at (0,64) width 41: "should"
-            text run at (0,80) width 15: "be"
-            text run at (0,96) width 26: "null)"
-        RenderListItem {LI} at (40,336) size 40x16
+          RenderText {#text} at (0,0) size 341x16
+            text run at (0,0) width 341: "NodeIterator: testing previousNode() (7 should be null)"
+        RenderListItem {LI} at (40,96) size 744x16
           RenderListMarker at (-19,0) size 15x16: "7"
           RenderText {#text} at (0,0) size 21x16
             text run at (0,0) width 21: "null"
-        RenderListItem {LI} at (40,352) size 40x112
+        RenderListItem {LI} at (40,112) size 744x16
           RenderListMarker at (-19,0) size 15x16: "8"
-          RenderText {#text} at (0,0) size 77x112
-            text run at (0,0) width 77: "TreeWalker:"
-            text run at (0,16) width 42: "testing"
-            text run at (0,32) width 71: "nextNode()"
-            text run at (0,48) width 21: "(11"
-            text run at (0,64) width 41: "should"
-            text run at (0,80) width 15: "be"
-            text run at (0,96) width 26: "null)"
-        RenderListItem {LI} at (40,464) size 40x32
+          RenderText {#text} at (0,0) size 317x16
+            text run at (0,0) width 317: "TreeWalker: testing nextNode() (11 should be null)"
+        RenderListItem {LI} at (40,128) size 744x16
           RenderListMarker at (-19,0) size 15x16: "9"
-          RenderText {#text} at (0,0) size 114x32
-            text run at (0,0) width 41: "[object"
-            text run at (0,16) width 114: "HTMLDivElement]"
-        RenderListItem {LI} at (40,496) size 40x32
+          RenderText {#text} at (0,0) size 159x16
+            text run at (0,0) width 159: "[object HTMLDivElement]"
+        RenderListItem {LI} at (40,144) size 744x16
           RenderListMarker at (-27,0) size 23x16: "10"
-          RenderText {#text} at (0,0) size 114x32
-            text run at (0,0) width 41: "[object"
-            text run at (0,16) width 114: "HTMLDivElement]"
-        RenderListItem {LI} at (40,528) size 40x16
+          RenderText {#text} at (0,0) size 159x16
+            text run at (0,0) width 159: "[object HTMLDivElement]"
+        RenderListItem {LI} at (40,160) size 744x16
           RenderListMarker at (-27,0) size 23x16: "11"
           RenderText {#text} at (0,0) size 21x16
             text run at (0,0) width 21: "null"
-        RenderListItem {LI} at (40,544) size 40x112
+        RenderListItem {LI} at (40,176) size 744x16
           RenderListMarker at (-27,0) size 23x16: "12"
-          RenderText {#text} at (0,0) size 97x112
-            text run at (0,0) width 77: "TreeWalker:"
-            text run at (0,16) width 42: "testing"
-            text run at (0,32) width 97: "previousNode()"
-            text run at (0,48) width 21: "(13"
-            text run at (0,64) width 41: "should"
-            text run at (0,80) width 15: "be"
-            text run at (0,96) width 26: "null)"
-        RenderListItem {LI} at (40,656) size 40x16
+          RenderText {#text} at (0,0) size 343x16
+            text run at (0,0) width 343: "TreeWalker: testing previousNode() (13 should be null)"
+        RenderListItem {LI} at (40,192) size 744x16
           RenderListMarker at (-27,0) size 23x16: "13"
           RenderText {#text} at (0,0) size 21x16
             text run at (0,0) width 21: "null"

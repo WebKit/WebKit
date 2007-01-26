@@ -1,7 +1,7 @@
-layer at (0,0) size 190x45
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 190x45
-  RenderBlock {HTML} at (0,0) size 96x45
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x45
+  RenderBlock {HTML} at (0,0) size 800x45
     RenderTable {BODY} at (8,8) size 182x29
       RenderTableSection at (0,0) size 182x29
         RenderTableRow at (0,0) size 182x29

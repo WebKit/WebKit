@@ -1,16 +1,12 @@
-layer at (0,0) size 608x128
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 608x128
-  RenderBlock {HTML} at (0,0) size 96x128
-    RenderBody {BODY} at (8,8) size 80x112
-      RenderBlock (anonymous) at (0,0) size 80x80
-        RenderText {#text} at (0,0) size 80x80
-          text run at (0,0) width 50: "two and"
-          text run at (0,16) width 38: "words"
-          text run at (0,32) width 80: "should be on"
-          text run at (0,48) width 58: "the same"
-          text run at (0,64) width 22: "line"
-      RenderTable {TABLE} at (0,80) size 600x32
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 264x16
+          text run at (0,0) width 264: "two and words should be on the same line"
+      RenderTable {TABLE} at (0,16) size 600x32
         RenderTableSection {TBODY} at (0,0) size 600x32
           RenderTableRow {TR} at (0,0) size 600x16
             RenderTableCell {TD} at (0,0) size 150x16 [r=0 c=0 rs=1 cs=1]

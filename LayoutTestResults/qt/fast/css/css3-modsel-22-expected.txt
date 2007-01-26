@@ -1,68 +1,27 @@
-layer at (0,0) size 106x826
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 106x826
-  RenderBlock {HTML} at (0,0) size 96x826
-    RenderBody {BODY} at (8,14) size 80x798
-      RenderBlock {UL} at (0,0) size 80x400
-        RenderListItem {LI} at (40,0) size 40x192 [bgcolor=#00FF00]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x106
+  RenderBlock {HTML} at (0,0) size 800x106
+    RenderBody {BODY} at (8,14) size 784x78
+      RenderBlock {UL} at (0,0) size 784x32
+        RenderListItem {LI} at (40,0) size 744x16 [bgcolor=#00FF00]
           RenderListMarker at (-16,0) size 6x16: bullet
-          RenderText {#text} at (0,0) size 58x192
-            text run at (0,0) width 27: "This"
-            text run at (0,16) width 17: "list"
-            text run at (0,32) width 26: "item"
-            text run at (0,48) width 41: "should"
-            text run at (0,64) width 15: "be"
-            text run at (0,80) width 37: "green"
-            text run at (0,96) width 52: "because"
-            text run at (0,112) width 14: "its"
-            text run at (0,128) width 58: "language"
-            text run at (0,144) width 10: "is"
-            text run at (0,160) width 39: "British"
-            text run at (0,176) width 46: "English"
-        RenderListItem {LI} at (40,192) size 40x208 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 426x16
+            text run at (0,0) width 337: "This list item should be green because its language is "
+            text run at (337,0) width 89: "British English"
+        RenderListItem {LI} at (40,16) size 744x16 [bgcolor=#00FF00]
           RenderListMarker at (-16,0) size 6x16: bullet
-          RenderText {#text} at (0,0) size 58x208
-            text run at (0,0) width 27: "This"
-            text run at (0,16) width 17: "list"
-            text run at (0,32) width 26: "item"
-            text run at (0,48) width 41: "should"
-            text run at (0,64) width 15: "be"
-            text run at (0,80) width 37: "green"
-            text run at (0,96) width 52: "because"
-            text run at (0,112) width 14: "its"
-            text run at (0,128) width 58: "language"
-            text run at (0,144) width 10: "is"
-            text run at (0,160) width 39: "British"
-            text run at (0,176) width 46: "English"
-            text run at (0,192) width 49: "(Wales)"
-      RenderBlock {OL} at (0,414) size 80x384
-        RenderListItem {LI} at (40,0) size 40x192
+          RenderText {#text} at (0,0) size 479x16
+            text run at (0,0) width 323: "This list item should be green because its language "
+            text run at (323,0) width 156: "is British English (Wales)"
+      RenderBlock {OL} at (0,46) size 784x32
+        RenderListItem {LI} at (40,0) size 744x16
           RenderListMarker at (-19,0) size 15x16: "1"
-          RenderText {#text} at (0,0) size 58x192
-            text run at (0,0) width 27: "This"
-            text run at (0,16) width 17: "list"
-            text run at (0,32) width 26: "item"
-            text run at (0,48) width 41: "should"
-            text run at (0,64) width 30: "NOT"
-            text run at (0,80) width 15: "be"
-            text run at (0,96) width 37: "green"
-            text run at (0,112) width 52: "because"
-            text run at (0,128) width 14: "its"
-            text run at (0,144) width 58: "language"
-            text run at (0,160) width 33: "is US"
-            text run at (0,176) width 46: "English"
-        RenderListItem {LI} at (40,192) size 40x192
+          RenderText {#text} at (0,0) size 440x16
+            text run at (0,0) width 357: "This list item should NOT be green because its language "
+            text run at (357,0) width 83: "is US English"
+        RenderListItem {LI} at (40,16) size 744x16
           RenderListMarker at (-19,0) size 15x16: "2"
-          RenderText {#text} at (0,0) size 58x192
-            text run at (0,0) width 27: "This"
-            text run at (0,16) width 17: "list"
-            text run at (0,32) width 26: "item"
-            text run at (0,48) width 41: "should"
-            text run at (0,64) width 30: "NOT"
-            text run at (0,80) width 15: "be"
-            text run at (0,96) width 37: "green"
-            text run at (0,112) width 52: "because"
-            text run at (0,128) width 14: "its"
-            text run at (0,144) width 58: "language"
-            text run at (0,160) width 10: "is"
-            text run at (0,176) width 44: "French"
+          RenderText {#text} at (0,0) size 415x16
+            text run at (0,0) width 371: "This list item should NOT be green because its language is "
+            text run at (371,0) width 44: "French"

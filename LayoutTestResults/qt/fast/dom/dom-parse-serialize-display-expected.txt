@@ -1,36 +1,22 @@
-layer at (0,0) size 356x762
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 356x762
-  RenderBlock {HTML} at (0,0) size 96x762
-    RenderBody {BODY} at (8,8) size 80x746
-      RenderBlock {H1} at (0,0) size 80x64
-        RenderText {#text} at (0,1) size 348x62
-          text run at (0,1) width 348: "DOMParser/XMLSerializer"
-          text run at (0,33) width 50: "test"
-      RenderBlock {DIV} at (0,82) size 80x224
-        RenderText {#text} at (0,0) size 80x224
-          text run at (0,0) width 73: "The \"text to"
-          text run at (0,16) width 69: "parse\" and"
-          text run at (0,32) width 66: "\"document"
-          text run at (0,48) width 37: "object"
-          text run at (0,64) width 65: "serialized\""
-          text run at (0,80) width 37: "boxes"
-          text run at (0,96) width 78: "should show"
-          text run at (0,112) width 58: "the same"
-          text run at (0,128) width 65: "text, and it"
-          text run at (0,144) width 80: "should be an"
-          text run at (0,160) width 29: "XML"
-          text run at (0,176) width 64: "document,"
-          text run at (0,192) width 73: "not \"@@No"
-          text run at (0,208) width 68: "result@@\"."
-      RenderBlock {DIV} at (0,306) size 80x206 [border: (1px solid #000000)]
-        RenderBlock (anonymous) at (1,1) size 78x32
-          RenderInline {SPAN} at (0,0) size 43x32 [color=#800000]
-            RenderText {#text} at (0,0) size 43x32
-              text run at (0,0) width 43: "text to"
-              text run at (0,16) width 39: "parse"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {H1} at (0,0) size 784x32
+        RenderText {#text} at (0,1) size 406x30
+          text run at (0,1) width 406: "DOMParser/XMLSerializer test"
+      RenderBlock {DIV} at (0,50) size 784x32
+        RenderText {#text} at (0,0) size 765x32
+          text run at (0,0) width 765: "The \"text to parse\" and \"document object serialized\" boxes should show the same text, and it should be an XML document,"
+          text run at (0,16) width 145: "not \"@@No result@@\"."
+      RenderBlock {DIV} at (0,82) size 784x190 [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (1,1) size 782x16
+          RenderInline {SPAN} at (0,0) size 86x16 [color=#800000]
+            RenderText {#text} at (0,0) size 86x16
+              text run at (0,0) width 86: "text to parse"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {PRE} at (29,47) size 50x144
+        RenderBlock {PRE} at (29,31) size 754x144
           RenderText {#text} at (0,0) size 268x144
             text run at (0,0) width 84: "<?xml version=\"1.0\"?>"
             text run at (84,0) width 0: " "
@@ -50,25 +36,22 @@ layer at (0,0) size 356x762
             text run at (92,112) width 0: " "
             text run at (0,128) width 24: "</doc>"
             text run at (24,128) width 0: " "
-      RenderBlock {DIV} at (0,519) size 80x78 [border: (1px solid #000000)]
-        RenderBlock (anonymous) at (1,1) size 78x32
-          RenderInline {SPAN} at (0,0) size 69x32 [color=#800000]
-            RenderText {#text} at (0,0) size 69x32
-              text run at (0,0) width 69: "document"
-              text run at (0,16) width 43: "object"
+      RenderBlock {DIV} at (0,279) size 784x62 [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (1,1) size 782x16
+          RenderInline {SPAN} at (0,0) size 116x16 [color=#800000]
+            RenderText {#text} at (0,0) size 116x16
+              text run at (0,0) width 116: "document object"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {PRE} at (29,47) size 50x16
+        RenderBlock {PRE} at (29,31) size 754x16
           RenderText {#text} at (0,0) size 68x16
             text run at (0,0) width 68: "[object Document]"
-      RenderBlock {DIV} at (0,604) size 80x142 [border: (1px solid #000000)]
-        RenderBlock (anonymous) at (1,1) size 78x48
-          RenderInline {SPAN} at (0,0) size 69x48 [color=#800000]
-            RenderText {#text} at (0,0) size 69x48
-              text run at (0,0) width 69: "document"
-              text run at (0,16) width 43: "object"
-              text run at (0,32) width 65: "serialized"
+      RenderBlock {DIV} at (0,348) size 784x110 [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (1,1) size 782x16
+          RenderInline {SPAN} at (0,0) size 185x16 [color=#800000]
+            RenderText {#text} at (0,0) size 185x16
+              text run at (0,0) width 185: "document object serialized"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {PRE} at (29,63) size 50x64
+        RenderBlock {PRE} at (29,31) size 754x64
           RenderText {#text} at (0,0) size 288x64
             text run at (0,0) width 288: "<!DOCTYPE doc><?xml-stylesheet href=\"display.css\" type=\"text/css\"?><doc>"
             text run at (288,0) width 0: " "

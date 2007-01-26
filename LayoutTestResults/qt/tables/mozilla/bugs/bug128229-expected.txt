@@ -1,72 +1,23 @@
-layer at (0,0) size 133x2186
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 133x2186
-  RenderBlock {HTML} at (0,0) size 96x2186
-    RenderBody {BODY} at (8,8) size 80x2170
-      RenderTable {TABLE} at (0,0) size 72x2170 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 70x2168
-          RenderTableRow {TR} at (0,2) size 70x2164
-            RenderTableCell {TD} at (2,2) size 66x2164 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x242
+  RenderBlock {HTML} at (0,0) size 800x242
+    RenderBody {BODY} at (8,8) size 784x226
+      RenderTable {TABLE} at (0,0) size 705x226 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 703x224
+          RenderTableRow {TR} at (0,2) size 703x220
+            RenderTableCell {TD} at (2,2) size 699x220 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderInline {A} at (0,0) size 120x34 [color=#0000EE]
                 RenderText {#text} at (2,3) size 120x34
                   text run at (2,3) width 120: "Xandros"
-              RenderText {#text} at (2,39) size 84x2122
-                text run at (2,39) width 25: "in"
-                text run at (2,75) width 45: "the"
-                text run at (2,111) width 84: "news."
-                text run at (2,147) width 52: "text"
-                text run at (2,183) width 52: "text"
-                text run at (2,219) width 52: "text"
-                text run at (2,255) width 52: "text"
-                text run at (2,291) width 52: "text"
-                text run at (2,327) width 52: "text"
-                text run at (2,363) width 52: "text"
-                text run at (2,399) width 52: "text"
-                text run at (2,435) width 52: "text"
-                text run at (2,471) width 52: "text"
-                text run at (2,507) width 52: "text"
-                text run at (2,543) width 52: "text"
-                text run at (2,579) width 52: "text"
-                text run at (2,615) width 52: "text"
-                text run at (2,651) width 52: "text"
-                text run at (2,687) width 52: "text"
-                text run at (2,723) width 52: "text"
-                text run at (2,759) width 52: "text"
-                text run at (2,795) width 52: "text"
-                text run at (2,831) width 52: "text"
-                text run at (2,867) width 52: "text"
-                text run at (2,903) width 52: "text"
-                text run at (2,939) width 52: "text"
-                text run at (2,975) width 52: "text"
-                text run at (2,1011) width 52: "text"
-                text run at (2,1047) width 52: "text"
-                text run at (2,1083) width 52: "text"
-                text run at (2,1119) width 52: "text"
-                text run at (2,1155) width 52: "text"
-                text run at (2,1191) width 52: "text"
-                text run at (2,1227) width 52: "text"
-                text run at (2,1263) width 52: "text"
-                text run at (2,1299) width 52: "text"
-                text run at (2,1335) width 52: "text"
-                text run at (2,1371) width 52: "text"
-                text run at (2,1407) width 52: "text"
-                text run at (2,1443) width 52: "text"
-                text run at (2,1479) width 52: "text"
-                text run at (2,1515) width 52: "text"
-                text run at (2,1551) width 52: "text"
-                text run at (2,1587) width 52: "text"
-                text run at (2,1623) width 52: "text"
-                text run at (2,1659) width 52: "text"
-                text run at (2,1695) width 52: "text"
-                text run at (2,1731) width 52: "text"
-                text run at (2,1767) width 52: "text"
-                text run at (2,1803) width 52: "text"
-                text run at (2,1839) width 52: "text"
-                text run at (2,1875) width 52: "text"
-                text run at (2,1911) width 52: "text"
-                text run at (2,1947) width 52: "text"
-                text run at (2,1983) width 52: "text"
-                text run at (2,2019) width 52: "text"
-                text run at (2,2055) width 52: "text"
-                text run at (2,2091) width 52: "text"
-                text run at (2,2127) width 61: "text."
+              RenderText {#text} at (122,3) size 667x214
+                text run at (122,3) width 9: " "
+                text run at (131,3) width 538: "in the news. text text text text text text"
+                text run at (2,39) width 366: "text text text text text text "
+                text run at (368,39) width 296: "text text text text text"
+                text run at (2,75) width 610: "text text text text text text text text text text "
+                text run at (612,75) width 52: "text"
+                text run at (2,111) width 662: "text text text text text text text text text text text"
+                text run at (2,147) width 183: "text text text "
+                text run at (185,147) width 479: "text text text text text text text text"
+                text run at (2,183) width 366: "text text text text text text."

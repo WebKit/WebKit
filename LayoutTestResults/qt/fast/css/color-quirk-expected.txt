@@ -1,13 +1,11 @@
-layer at (0,0) size 96x100
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x100
-  RenderBlock {HTML} at (0,0) size 96x100
-    RenderBody {BODY} at (8,8) size 80x78
-      RenderBlock {P} at (0,0) size 80x32 [color=#FF0000]
-        RenderText {#text} at (0,0) size 67x32
-          text run at (0,0) width 67: "this should"
-          text run at (0,16) width 40: "be red"
-      RenderBlock {P} at (0,46) size 80x32 [color=#0000FF]
-        RenderText {#text} at (0,0) size 67x32
-          text run at (0,0) width 67: "this should"
-          text run at (0,16) width 44: "be blue"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {P} at (0,0) size 784x16 [color=#FF0000]
+        RenderText {#text} at (0,0) size 111x16
+          text run at (0,0) width 111: "this should be red"
+      RenderBlock {P} at (0,30) size 784x16 [color=#0000FF]
+        RenderText {#text} at (0,0) size 115x16
+          text run at (0,0) width 115: "this should be blue"

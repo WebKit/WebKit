@@ -1,23 +1,13 @@
-layer at (0,0) size 508x514
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x214
-  RenderBlock {HTML} at (0,0) size 96x214
-    RenderBody {BODY} at (8,8) size 80x192
-      RenderBlock {P} at (0,0) size 80x192
-        RenderText {#text} at (0,0) size 79x192
-          text run at (0,0) width 69: "You should"
-          text run at (0,16) width 35: "see a"
-          text run at (0,32) width 55: "500x300"
-          text run at (0,48) width 59: "rectangle"
-          text run at (0,64) width 77: "with orange,"
-          text run at (0,80) width 67: "yellow and"
-          text run at (0,96) width 67: "olive rects."
-          text run at (0,112) width 43: "No red"
-          text run at (0,128) width 60: "should be"
-          text run at (0,144) width 79: "visible or the"
-          text run at (0,160) width 50: "test has"
-          text run at (0,176) width 37: "failed."
-      RenderBlock (floating) {DIV} at (0,206) size 500x300 [bgcolor=#FF0000]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 742x16
+          text run at (0,0) width 457: "You should see a 500x300 rectangle with orange, yellow and olive rects. "
+          text run at (457,0) width 285: "No red should be visible or the test has failed."
+      RenderBlock (floating) {DIV} at (0,30) size 500x300 [bgcolor=#FF0000]
         RenderBlock (floating) {DIV} at (0,0) size 250x300 [bgcolor=#FFA500]
         RenderBlock (floating) {DIV} at (250,0) size 250x300
           RenderBlock (floating) {DIV} at (0,0) size 250x40 [bgcolor=#FFFF00]

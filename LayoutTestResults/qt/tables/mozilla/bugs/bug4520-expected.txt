@@ -1,27 +1,25 @@
-layer at (0,0) size 96x144
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x144
-  RenderBlock {HTML} at (0,0) size 96x144
-    RenderBody {BODY} at (8,8) size 80x128
-      RenderTable {TABLE} at (0,0) size 80x64 [border: (5px outset #808080)]
-        RenderTableSection {TBODY} at (5,5) size 70x54
-          RenderTableRow {TR} at (0,2) size 70x50
-            RenderTableCell {TD} at (2,2) size 66x50 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 62x46 [border: (3px outset #808080)]
-                RenderTableSection {TBODY} at (3,3) size 56x40
-                  RenderTableRow {TR} at (0,2) size 56x36
-                    RenderTableCell {TD} at (2,2) size 52x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 33x32
-                        text run at (2,2) width 33: "Inner"
-                        text run at (2,18) width 33: "Right"
-      RenderTable {TABLE} at (0,64) size 80x64 [border: (5px outset #808080)]
-        RenderTableSection {TBODY} at (5,5) size 70x54
-          RenderTableRow {TR} at (0,2) size 70x50
-            RenderTableCell {TD} at (2,2) size 66x50 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 62x46 [border: (3px outset #808080)]
-                RenderTableSection {TBODY} at (3,3) size 56x40
-                  RenderTableRow {TR} at (0,2) size 56x36
-                    RenderTableCell {TD} at (2,2) size 52x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 33x32
-                        text run at (2,2) width 33: "Inner"
-                        text run at (2,18) width 24: "Left"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 102x48 [border: (5px outset #808080)]
+        RenderTableSection {TBODY} at (5,5) size 92x38
+          RenderTableRow {TR} at (0,2) size 92x34
+            RenderTableCell {TD} at (2,2) size 88x34 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 84x30 [border: (3px outset #808080)]
+                RenderTableSection {TBODY} at (3,3) size 78x24
+                  RenderTableRow {TR} at (0,2) size 78x20
+                    RenderTableCell {TD} at (2,2) size 74x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 70x16
+                        text run at (2,2) width 70: "Inner Right"
+      RenderTable {TABLE} at (0,48) size 93x48 [border: (5px outset #808080)]
+        RenderTableSection {TBODY} at (5,5) size 83x38
+          RenderTableRow {TR} at (0,2) size 83x34
+            RenderTableCell {TD} at (2,2) size 79x34 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 75x30 [border: (3px outset #808080)]
+                RenderTableSection {TBODY} at (3,3) size 69x24
+                  RenderTableRow {TR} at (0,2) size 69x20
+                    RenderTableCell {TD} at (2,2) size 65x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 61x16
+                        text run at (2,2) width 61: "Inner Left"

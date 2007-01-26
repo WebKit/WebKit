@@ -1,38 +1,26 @@
-layer at (0,0) size 286x541
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 286x541
-  RenderBlock {HTML} at (0,0) size 96x541
-    RenderBody {BODY} at (8,8) size 80x525
-      RenderBlock {P} at (0,0) size 80x208
-        RenderText {#text} at (0,0) size 67x64
-          text run at (0,0) width 61: "This tests"
-          text run at (0,16) width 29: "for a"
-          text run at (0,32) width 67: "regression"
-          text run at (0,48) width 46: "against"
-        RenderInline {I} at (0,0) size 278x144
-          RenderInline {A} at (0,0) size 278x32 [color=#0000EE]
-            RenderText {#text} at (0,64) size 278x32
-              text run at (0,64) width 278: "http://bugzilla.opendarwin.org/show_bug.cgi?"
-              text run at (0,80) width 52: "id=5813"
-          RenderText {#text} at (0,96) size 74x112
-            text run at (0,96) width 65: "positioned"
-            text run at (0,112) width 74: "blocks don't"
-            text run at (0,128) width 43: "update"
-            text run at (0,144) width 34: "when"
-            text run at (0,160) width 73: "resizing the"
-            text run at (0,176) width 47: "window"
-            text run at (0,192) width 55: "vertically"
-        RenderText {#text} at (55,192) size 3x16
-          text run at (55,192) width 3: "."
-      RenderBlock {P} at (0,222) size 80x80
-        RenderText {#text} at (0,0) size 73x80
-          text run at (0,0) width 51: "The two"
-          text run at (0,16) width 50: "squares"
-          text run at (0,32) width 36: "below"
-          text run at (0,48) width 60: "should be"
-          text run at (0,64) width 73: "solid green."
-      RenderBlock {HR} at (0,316) size 80x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,325) size 80x200
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x32
+        RenderText {#text} at (0,0) size 219x16
+          text run at (0,0) width 219: "This tests for a regression against "
+        RenderInline {I} at (0,0) size 781x32
+          RenderInline {A} at (0,0) size 330x16 [color=#0000EE]
+            RenderText {#text} at (219,0) size 330x16
+              text run at (219,0) width 330: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5813"
+          RenderText {#text} at (549,0) size 781x32
+            text run at (549,0) width 4: " "
+            text run at (553,0) width 228: "positioned blocks don't update when"
+            text run at (0,16) width 183: "resizing the window vertically"
+        RenderText {#text} at (183,16) size 3x16
+          text run at (183,16) width 3: "."
+      RenderBlock {P} at (0,46) size 784x16
+        RenderText {#text} at (0,0) size 286x16
+          text run at (0,0) width 286: "The two squares below should be solid green."
+      RenderBlock {HR} at (0,76) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,85) size 784x103
         RenderPartObject {IFRAME} at (0,0) size 100x100
           layer at (0,0) size 100x96
             RenderView at (0,0) size 96x96
@@ -41,8 +29,9 @@ layer at (0,0) size 286x541
               RenderBody {BODY} at (8,8) size 80x0 [bgcolor=#FF0000]
           layer at (0,0) size 100x96
             RenderBlock (positioned) {DIV} at (0,0) size 100x96 [bgcolor=#008000]
-        RenderText {#text} at (0,0) size 0x0
-        RenderPartObject {IFRAME} at (0,100) size 100x100
+        RenderText {#text} at (100,87) size 4x16
+          text run at (100,87) width 4: " "
+        RenderPartObject {IFRAME} at (104,0) size 100x100
           layer at (0,0) size 100x96
             RenderView at (0,0) size 96x96
           layer at (0,0) size 96x16

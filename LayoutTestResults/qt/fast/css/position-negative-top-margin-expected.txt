@@ -1,17 +1,10 @@
-layer at (0,0) size 96x142
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x46
-  RenderBlock {HTML} at (0,0) size 96x46
-    RenderBody {BODY} at (8,8) size 80x30
-      RenderBlock {DIV} at (0,0) size 80x30 [bgcolor=#F5F5DC]
-layer at (8,14) size 88x128
-  RenderBlock (positioned) {DIV} at (8,14) size 88x128
-    RenderText {#text} at (0,0) size 86x128
-      text run at (0,0) width 54: "This text"
-      text run at (0,16) width 41: "should"
-      text run at (0,32) width 86: "appear inside"
-      text run at (0,48) width 85: "the beige bar,"
-      text run at (0,64) width 71: "due the the"
-      text run at (0,80) width 60: "element's"
-      text run at (0,96) width 54: "negative"
-      text run at (0,112) width 70: "margin-top."
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x30 [bgcolor=#F5F5DC]
+layer at (8,14) size 549x16
+  RenderBlock (positioned) {DIV} at (8,14) size 549x16
+    RenderText {#text} at (0,0) size 549x16
+      text run at (0,0) width 549: "This text should appear inside the beige bar, due the the element's negative margin-top."

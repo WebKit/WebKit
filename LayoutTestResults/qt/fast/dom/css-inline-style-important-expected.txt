@@ -1,28 +1,15 @@
-layer at (0,0) size 96x324
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x324
-  RenderBlock {HTML} at (0,0) size 96x324
-    RenderBody {BODY} at (8,8) size 80x302
-      RenderBlock {P} at (0,0) size 80x224
-        RenderText {#text} at (0,0) size 79x224
-          text run at (0,0) width 54: "This test"
-          text run at (0,16) width 60: "checks to"
-          text run at (0,32) width 78: "see whether"
-          text run at (0,48) width 79: "setting a css"
-          text run at (0,64) width 33: "value"
-          text run at (0,80) width 55: "including"
-          text run at (0,96) width 63: "!important"
-          text run at (0,112) width 73: "on an inline"
-          text run at (0,128) width 29: "style"
-          text run at (0,144) width 53: "property"
-          text run at (0,160) width 69: "works. The"
-          text run at (0,176) width 68: "text should"
-          text run at (0,192) width 67: "be green if"
-          text run at (0,208) width 67: "successful."
-      RenderBlock {HR} at (0,238) size 80x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,254) size 80x32 [color=#008000]
-        RenderText {#text} at (0,0) size 80x32
-          text run at (0,0) width 65: "This is the"
-          text run at (0,16) width 80: "test element."
-      RenderBlock {HR} at (0,300) size 80x2 [border: (1px inset #000000)]
-      RenderBlock {OL} at (0,316) size 80x0
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {P} at (0,0) size 784x32
+        RenderText {#text} at (0,0) size 777x32
+          text run at (0,0) width 777: "This test checks to see whether setting a css value including !important on an inline style property works. The text should be"
+          text run at (0,16) width 119: "green if successful."
+      RenderBlock {HR} at (0,46) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,62) size 784x16 [color=#008000]
+        RenderText {#text} at (0,0) size 149x16
+          text run at (0,0) width 149: "This is the test element."
+      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {OL} at (0,108) size 784x0

@@ -1,15 +1,11 @@
-layer at (0,0) size 96x106
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x106
-  RenderBlock {html} at (0,0) size 96x106
-    RenderBody {body} at (8,8) size 80x90
-      RenderTable {table} at (0,0) size 80x90 [border: (1px outset #808080)]
-        RenderTableSection {tbody} at (1,1) size 78x88
-          RenderTableRow {tr} at (0,2) size 78x84
-            RenderTableCell {td} at (2,2) size 74x84 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 66x80
-                text run at (2,2) width 61: "This table"
-                text run at (2,18) width 60: "should be"
-                text run at (2,34) width 40: "center"
-                text run at (2,50) width 66: "aligned on"
-                text run at (2,66) width 56: "the page"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x42
+  RenderBlock {html} at (0,0) size 800x42
+    RenderBody {body} at (8,8) size 784x26
+      RenderTable {table} at (237,0) size 309x26 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 307x24
+          RenderTableRow {tr} at (0,2) size 307x20
+            RenderTableCell {td} at (2,2) size 303x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 299x16
+                text run at (2,2) width 299: "This table should be center aligned on the page"

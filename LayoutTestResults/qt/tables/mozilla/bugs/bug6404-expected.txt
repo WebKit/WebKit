@@ -1,107 +1,51 @@
-layer at (0,0) size 313x1278
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 313x1278
-  RenderBlock {HTML} at (0,0) size 96x1278
-    RenderBody {BODY} at (8,8) size 80x1262
-      RenderBlock (anonymous) at (0,0) size 80x100
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x103
         RenderImage {IMG} at (0,0) size 220x100
-        RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,100) size 305x1162
-        RenderTableSection {TBODY} at (0,0) size 305x1162
-          RenderTableRow {TR} at (0,2) size 305x18
-            RenderTableCell {TD} at (2,2) size 119x18 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
+        RenderText {#text} at (220,87) size 4x16
+          text run at (220,87) width 4: " "
+        RenderBR {BR} at (224,100) size 0x0
+      RenderTable {TABLE} at (0,103) size 784x154
+        RenderTableSection {TBODY} at (0,0) size 784x154
+          RenderTableRow {TR} at (0,2) size 784x18
+            RenderTableCell {TD} at (2,2) size 149x18 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 9x16
                 text run at (1,1) width 9: "X"
-            RenderTableCell {TD} at (123,2) size 119x18 [bgcolor=#DDDDDD] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (153,2) size 149x18 [bgcolor=#DDDDDD] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 9x16
                 text run at (1,1) width 9: "X"
-            RenderTableCell {TD} at (244,2) size 59x18 [bgcolor=#00FF00] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (304,2) size 478x18 [bgcolor=#00FF00] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 9x16
                 text run at (1,1) width 9: "X"
-          RenderTableRow {TR} at (0,22) size 305x1138
-            RenderTableCell {TD} at (2,22) size 240x98 [bgcolor=#DDDD00] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 238x96
-                text run at (1,1) width 238: "this_word_has_no_breakable_spaces"
-                text run at (1,17) width 203: "... if this bug is still active and the"
-                text run at (1,33) width 235: "window is >250px wide, you can't see"
-                text run at (1,49) width 52: "that the "
-                text run at (53,49) width 178: "word above is 33 characters"
-                text run at (1,65) width 195: "long. (I could have used a table"
-                text run at (1,81) width 50: "instead "
-                text run at (51,81) width 115: "but this is simpler)."
-            RenderTableCell {TD} at (244,22) size 59x1138 [bgcolor=#9999FF] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 57x224
-                text run at (1,1) width 21: "Try"
-                text run at (1,17) width 57: "shrinking"
-                text run at (1,33) width 56: "this table"
-                text run at (1,49) width 12: "to"
-                text run at (1,65) width 47: "~250px"
-                text run at (1,81) width 32: "wide."
-                text run at (1,97) width 48: "The left"
-                text run at (1,113) width 32: "hand"
-                text run at (1,129) width 37: "(gold)"
-                text run at (1,145) width 44: "column"
-                text run at (1,161) width 19: "will"
-                text run at (1,177) width 56: "suddenly"
-                text run at (1,193) width 47: "expand"
-                text run at (1,209) width 51: "in width."
-              RenderBR {BR} at (52,222) size 0x0
-              RenderBR {BR} at (1,225) size 0x16
-              RenderText {#text} at (1,241) size 43x896
-                text run at (1,241) width 43: "mozilla"
-                text run at (1,257) width 16: "qa"
-                text run at (1,273) width 41: "smoke"
-                text run at (1,289) width 30: "tests"
-                text run at (1,305) width 41: "smoke"
-                text run at (1,321) width 16: "qa"
-                text run at (1,337) width 43: "mozilla"
-                text run at (1,353) width 43: "mozilla"
-                text run at (1,369) width 16: "qa"
-                text run at (1,385) width 41: "smoke"
-                text run at (1,401) width 30: "tests"
-                text run at (1,417) width 41: "smoke"
-                text run at (1,433) width 16: "qa"
-                text run at (1,449) width 43: "mozilla"
-                text run at (1,465) width 43: "mozilla"
-                text run at (1,481) width 16: "qa"
-                text run at (1,497) width 41: "smoke"
-                text run at (1,513) width 30: "tests"
-                text run at (1,529) width 41: "smoke"
-                text run at (1,545) width 16: "qa"
-                text run at (1,561) width 43: "mozilla"
-                text run at (1,577) width 43: "mozilla"
-                text run at (1,593) width 16: "qa"
-                text run at (1,609) width 41: "smoke"
-                text run at (1,625) width 30: "tests"
-                text run at (1,641) width 41: "smoke"
-                text run at (1,657) width 16: "qa"
-                text run at (1,673) width 43: "mozilla"
-                text run at (1,689) width 43: "mozilla"
-                text run at (1,705) width 16: "qa"
-                text run at (1,721) width 41: "smoke"
-                text run at (1,737) width 30: "tests"
-                text run at (1,753) width 41: "smoke"
-                text run at (1,769) width 16: "qa"
-                text run at (1,785) width 43: "mozilla"
-                text run at (1,801) width 43: "mozilla"
-                text run at (1,817) width 16: "qa"
-                text run at (1,833) width 41: "smoke"
-                text run at (1,849) width 30: "tests"
-                text run at (1,865) width 41: "smoke"
-                text run at (1,881) width 16: "qa"
-                text run at (1,897) width 43: "mozilla"
-                text run at (1,913) width 43: "mozilla"
-                text run at (1,929) width 16: "qa"
-                text run at (1,945) width 41: "smoke"
-                text run at (1,961) width 30: "tests"
-                text run at (1,977) width 41: "smoke"
-                text run at (1,993) width 16: "qa"
-                text run at (1,1009) width 43: "mozilla"
-                text run at (1,1025) width 43: "mozilla"
-                text run at (1,1041) width 16: "qa"
-                text run at (1,1057) width 41: "smoke"
-                text run at (1,1073) width 30: "tests"
-                text run at (1,1089) width 41: "smoke"
-                text run at (1,1105) width 16: "qa"
-                text run at (1,1121) width 43: "mozilla"
+          RenderTableRow {TR} at (0,22) size 784x130
+            RenderTableCell {TD} at (2,22) size 300x82 [bgcolor=#DDDD00] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 288x80
+                text run at (1,1) width 242: "this_word_has_no_breakable_spaces "
+                text run at (243,1) width 46: "... if this"
+                text run at (1,17) width 269: "bug is still active and the window is >250px"
+                text run at (1,33) width 175: "wide, you can't see that the "
+                text run at (176,33) width 107: "word above is 33"
+                text run at (1,49) width 266: "characters long. (I could have used a table"
+                text run at (1,65) width 50: "instead "
+                text run at (51,65) width 115: "but this is simpler)."
+            RenderTableCell {TD} at (304,22) size 478x130 [bgcolor=#9999FF] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 445x32
+                text run at (1,1) width 445: "Try shrinking this table to ~250px wide. The left hand (gold) column will"
+                text run at (1,17) width 162: "suddenly expand in width."
+              RenderBR {BR} at (163,30) size 0x0
+              RenderBR {BR} at (1,33) size 0x16
+              RenderText {#text} at (1,49) size 465x80
+                text run at (1,49) width 258: "mozilla qa smoke tests smoke qa mozilla "
+                text run at (259,49) width 207: "mozilla qa smoke tests smoke qa"
+                text run at (1,65) width 47: "mozilla "
+                text run at (48,65) width 258: "mozilla qa smoke tests smoke qa mozilla "
+                text run at (306,65) width 142: "mozilla qa smoke tests"
+                text run at (1,81) width 112: "smoke qa mozilla "
+                text run at (113,81) width 258: "mozilla qa smoke tests smoke qa mozilla "
+                text run at (371,81) width 63: "mozilla qa"
+                text run at (1,97) width 191: "smoke tests smoke qa mozilla "
+                text run at (192,97) width 254: "mozilla qa smoke tests smoke qa mozilla"
+                text run at (1,113) width 254: "mozilla qa smoke tests smoke qa mozilla"

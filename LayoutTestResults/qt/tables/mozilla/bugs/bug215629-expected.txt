@@ -1,35 +1,27 @@
-layer at (0,0) size 219x638
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 219x638
-  RenderBlock {HTML} at (0,0) size 96x638
-    RenderBody {BODY} at (8,8) size 80x622
-      RenderBlock {P} at (0,0) size 80x48
-        RenderText {#text} at (0,0) size 78x48
-          text run at (0,0) width 78: "Image URLs"
-          text run at (0,16) width 75: "intentionally"
-          text run at (0,32) width 43: "broken"
-      RenderTable {TABLE} at (0,62) size 211x210
-        RenderTableSection {TBODY} at (0,0) size 211x210
-          RenderTableRow {TR} at (0,2) size 211x206
-            RenderTableCell {TD} at (2,2) size 207x206 [r=0 c=0 rs=1 cs=1]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 204x16
+          text run at (0,0) width 204: "Image URLs intentionally broken"
+      RenderTable {TABLE} at (0,30) size 732x57
+        RenderTableSection {TBODY} at (0,0) size 732x57
+          RenderTableRow {TR} at (0,2) size 732x53
+            RenderTableCell {TD} at (2,2) size 728x53 [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 167x51
-              RenderImage {IMG} at (1,52) size 181x51
-              RenderImage {IMG} at (1,103) size 205x51
-              RenderImage {IMG} at (1,154) size 173x51
-      RenderBlock {P} at (0,286) size 80x112
-        RenderText {#text} at (0,0) size 88x112
-          text run at (0,0) width 69: "Identical to"
-          text run at (0,16) width 62: "the above"
-          text run at (0,32) width 70: "except that"
-          text run at (0,48) width 88: "width=\"100%\""
-          text run at (0,64) width 25: "was"
-          text run at (0,80) width 55: "removed"
-          text run at (0,96) width 51: "from TD"
-      RenderTable {TABLE} at (0,412) size 211x210
-        RenderTableSection {TBODY} at (0,0) size 211x210
-          RenderTableRow {TR} at (0,2) size 211x206
-            RenderTableCell {TD} at (2,2) size 207x206 [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (168,1) size 181x51
+              RenderImage {IMG} at (349,1) size 205x51
+              RenderImage {IMG} at (554,1) size 173x51
+      RenderBlock {P} at (0,101) size 784x16
+        RenderText {#text} at (0,0) size 444x16
+          text run at (0,0) width 444: "Identical to the above except that width=\"100%\" was removed from TD"
+      RenderTable {TABLE} at (0,131) size 732x57
+        RenderTableSection {TBODY} at (0,0) size 732x57
+          RenderTableRow {TR} at (0,2) size 732x53
+            RenderTableCell {TD} at (2,2) size 728x53 [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 167x51
-              RenderImage {IMG} at (1,52) size 181x51
-              RenderImage {IMG} at (1,103) size 205x51
-              RenderImage {IMG} at (1,154) size 173x51
+              RenderImage {IMG} at (168,1) size 181x51
+              RenderImage {IMG} at (349,1) size 205x51
+              RenderImage {IMG} at (554,1) size 173x51

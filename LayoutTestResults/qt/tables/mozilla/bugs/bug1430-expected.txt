@@ -1,104 +1,44 @@
-layer at (0,0) size 504x1174
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 504x1174
-  RenderBlock {HTML} at (0,0) size 96x1174
-    RenderBody {BODY} at (8,8) size 80x1158
-      RenderBlock (anonymous) at (0,0) size 80x1056
-        RenderText {#text} at (0,0) size 87x1056
-          text run at (0,0) width 65: "Here's the"
-          text run at (0,16) width 66: "HTML test"
-          text run at (0,32) width 33: "case,"
-          text run at (0,48) width 59: "extracted"
-          text run at (0,64) width 52: "from the"
-          text run at (0,80) width 62: "Netcenter"
-          text run at (0,96) width 52: "Address"
-          text run at (0,112) width 71: "Book page."
-          text run at (0,128) width 17: "At "
-          text run at (17,128) width 60: "the top of"
-          text run at (0,144) width 75: "the address"
-          text run at (0,160) width 56: "book is a"
-          text run at (0,176) width 57: "\"tool bar\""
-          text run at (0,192) width 75: "with options"
-          text run at (0,208) width 66: "like \"New,\""
-          text run at (0,224) width 70: "\"Directory,\""
-          text run at (0,240) width 64: "\"Sign-out,\""
-          text run at (0,256) width 78: "\"Customize,\""
-          text run at (0,272) width 66: "etc. These"
-          text run at (0,288) width 76: "are areas in"
-          text run at (0,304) width 75: "a client side"
-          text run at (0,320) width 72: "image map."
-          text run at (0,336) width 69: "You should"
-          text run at (0,352) width 61: "be able to"
-          text run at (0,368) width 47: "click on"
-          text run at (0,384) width 75: "these areas"
-          text run at (0,400) width 70: "of the map,"
-          text run at (0,416) width 79: "including the"
-          text run at (0,432) width 80: "areas on the"
-          text run at (0,448) width 74: "right side of"
-          text run at (0,464) width 54: "the map."
-          text run at (0,480) width 74: "However, in"
-          text run at (0,496) width 66: "NGLayout,"
-          text run at (0,512) width 52: "the right"
-          text run at (0,528) width 66: "side of the"
-          text run at (0,544) width 56: "map isn't"
-          text run at (0,560) width 75: "\"clickable\" --"
-          text run at (0,576) width 63: "the cursor"
-          text run at (0,592) width 46: "doesn't"
-          text run at (0,608) width 75: "change and"
-          text run at (0,624) width 45: "the link"
-          text run at (0,640) width 62: "cannot be"
-          text run at (0,656) width 74: "\"activated.\" "
-          text run at (74,656) width 4: "I"
-          text run at (0,672) width 30: "think"
-          text run at (0,688) width 73: "somewhere"
-          text run at (0,704) width 34: "we're"
-          text run at (0,720) width 87: "miscalculating"
-          text run at (0,736) width 63: "where the"
-          text run at (0,752) width 75: "imagemap's"
-          text run at (0,768) width 64: "areas are,"
-          text run at (0,784) width 56: "because "
-          text run at (56,784) width 20: "the"
-          text run at (0,800) width 80: "areas on the"
-          text run at (0,816) width 80: "left still work,"
-          text run at (0,832) width 54: "although"
-          text run at (0,848) width 66: "clicking on"
-          text run at (0,864) width 31: "them"
-          text run at (0,880) width 67: "sometimes"
-          text run at (0,896) width 57: "crashes. "
-          text run at (57,896) width 18: "It's"
-          text run at (0,912) width 62: "as though"
-          text run at (0,928) width 63: "NGLayout"
-          text run at (0,944) width 61: "thinks the"
-          text run at (0,960) width 66: "Imagemap"
-          text run at (0,976) width 61: "areas are"
-          text run at (0,992) width 58: "located a"
-          text run at (0,1008) width 26: "few "
-          text run at (26,1008) width 52: "hundred"
-          text run at (0,1024) width 76: "pixels to the"
-          text run at (0,1040) width 26: "left. "
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x96
+        RenderText {#text} at (0,0) size 783x96
+          text run at (0,0) width 509: "Here's the HTML test case, extracted from the Netcenter Address Book page. At "
+          text run at (509,0) width 260: "the top of the address book is a \"tool bar\""
+          text run at (0,16) width 149: "with options like \"New,\" "
+          text run at (149,16) width 453: "\"Directory,\" \"Sign-out,\" \"Customize,\" etc. These are areas in a client side "
+          text run at (602,16) width 164: "image map. You should be"
+          text run at (0,32) width 333: "able to click on these areas of the map, including the "
+          text run at (333,32) width 450: "areas on the right side of the map. However, in NGLayout, the right side"
+          text run at (0,48) width 40: "of the "
+          text run at (40,48) width 450: "map isn't \"clickable\" -- the cursor doesn't change and the link cannot be "
+          text run at (490,48) width 74: "\"activated.\" "
+          text run at (564,48) width 153: "I think somewhere we're"
+          text run at (0,64) width 361: "miscalculating where the imagemap's areas are, because "
+          text run at (361,64) width 422: "the areas on the left still work, although clicking on them sometimes"
+          text run at (0,80) width 57: "crashes. "
+          text run at (57,80) width 443: "It's as though NGLayout thinks the Imagemap areas are located a few "
+          text run at (500,80) width 162: "hundred pixels to the left. "
         RenderBR {BR} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,1056) size 496x102
-        RenderTableSection {TBODY} at (0,0) size 496x102
-          RenderTableRow {TR} at (0,2) size 496x98
-            RenderTableCell {TD} at (2,2) size 40x98 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 38x96
-                text run at (1,1) width 30: "Let's"
-                text run at (1,17) width 19: "put"
-                text run at (1,33) width 34: "some"
-                text run at (1,49) width 38: "space"
-                text run at (1,65) width 11: "in"
-                text run at (1,81) width 33: "here!"
-            RenderTableCell {TD} at (44,21) size 450x60 [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 448x58
-                RenderTableSection {TBODY} at (0,0) size 448x58
-                  RenderTableRow {TR} at (0,2) size 448x54
-                    RenderTableCell {TD} at (2,2) size 444x54 [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (1,1) size 442x52
-                        RenderTableSection {TBODY} at (0,0) size 442x52
-                          RenderTableRow {TR} at (0,2) size 442x48
-                            RenderTableCell {TD} at (2,2) size 438x48 [r=0 c=0 rs=1 cs=1]
-                              RenderImage {IMG} at (1,1) size 4x1
-                              RenderImage {IMG} at (1,7) size 436x35
+      RenderTable {TABLE} at (0,96) size 647x63
+        RenderTableSection {TBODY} at (0,0) size 647x63
+          RenderTableRow {TR} at (0,2) size 647x59
+            RenderTableCell {TD} at (2,22) size 187x18 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 185x16
+                text run at (1,1) width 185: "Let's put some space in here!"
+            RenderTableCell {TD} at (191,2) size 454x59 [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 452x57
+                RenderTableSection {TBODY} at (0,0) size 452x57
+                  RenderTableRow {TR} at (0,2) size 452x53
+                    RenderTableCell {TD} at (2,2) size 448x53 [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (1,1) size 446x51
+                        RenderTableSection {TBODY} at (0,0) size 446x51
+                          RenderTableRow {TR} at (0,2) size 446x47
+                            RenderTableCell {TD} at (2,2) size 442x47 [r=0 c=0 rs=1 cs=1]
+                              RenderImage {IMG} at (1,45) size 4x1
+                              RenderImage {IMG} at (5,6) size 436x35
                               RenderText {#text} at (0,0) size 0x0
                               RenderInline {MAP} at (0,0) size 0x0
                                 RenderText {#text} at (0,0) size 0x0

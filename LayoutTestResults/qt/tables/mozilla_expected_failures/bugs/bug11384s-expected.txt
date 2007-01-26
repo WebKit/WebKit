@@ -1,23 +1,14 @@
-layer at (0,0) size 161x294
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 161x294
-  RenderBlock {HTML} at (0,0) size 96x294
-    RenderBody {BODY} at (8,18) size 80x268
-      RenderBlock {H1} at (0,0) size 80x128
-        RenderText {#text} at (0,1) size 153x126
-          text run at (0,1) width 97: "<BODY"
-          text run at (0,33) width 153: "style=\"text-"
-          text run at (2,65) width 75: "align:"
-          text run at (0,97) width 114: "center\">"
-      RenderTable {TABLE} at (0,146) size 64x122 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 62x120
-          RenderTableRow {TR} at (0,2) size 62x116
-            RenderTableCell {TD} at (2,2) size 58x116 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 52x112
-                text run at (2,2) width 52: "The text"
-                text run at (2,18) width 41: "should"
-                text run at (2,34) width 15: "be"
-                text run at (2,50) width 44: "center-"
-                text run at (2,66) width 46: "aligned"
-                text run at (2,82) width 44: "not the"
-                text run at (2,98) width 30: "table"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x102
+  RenderBlock {HTML} at (0,0) size 800x102
+    RenderBody {BODY} at (8,18) size 784x76
+      RenderBlock {H1} at (0,0) size 784x32
+        RenderText {#text} at (164,1) size 455x30
+          text run at (164,1) width 455: "<BODY style=\"text-align: center\">"
+      RenderTable {TABLE} at (0,50) size 627x26 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 625x24
+          RenderTableRow {TR} at (0,2) size 625x20
+            RenderTableCell {TD} at (2,2) size 621x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 292x16
+                text run at (2,2) width 292: "The text should be center-aligned not the table"

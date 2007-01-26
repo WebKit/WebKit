@@ -1,24 +1,18 @@
-layer at (0,0) size 96x106
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x106
-  RenderBlock {html} at (0,0) size 96x106
-    RenderBody {body} at (8,8) size 80x90
-      RenderTable {table} at (0,0) size 80x90 [border: (1px outset #808080)]
-        RenderTableSection {tbody} at (1,1) size 78x88
-          RenderTableRow {tr} at (0,2) size 78x36
-            RenderTableCell {td} at (2,2) size 47x84 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 38x80
-                text run at (2,2) width 27: "This"
-                text run at (2,18) width 21: "cell"
-                text run at (2,34) width 38: "spans"
-                text run at (2,50) width 22: "two"
-                text run at (2,66) width 30: "rows"
-            RenderTableCell {td} at (51,2) size 25x36 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x32
-                text run at (2,2) width 21: "xxx"
-                text run at (2,18) width 21: "xxx"
-          RenderTableRow {tr} at (0,40) size 78x46
-            RenderTableCell {td} at (51,45) size 25x36 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x32
-                text run at (2,2) width 21: "xxx"
-                text run at (2,18) width 21: "xxx"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x64
+  RenderBlock {html} at (0,0) size 800x64
+    RenderBody {body} at (8,8) size 784x48
+      RenderTable {table} at (0,0) size 216x48 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 214x46
+          RenderTableRow {tr} at (0,2) size 214x20
+            RenderTableCell {td} at (2,13) size 158x20 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 154x16
+                text run at (2,2) width 154: "This cell spans two rows"
+            RenderTableCell {td} at (162,2) size 50x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 46x16
+                text run at (2,2) width 46: "xxx xxx"
+          RenderTableRow {tr} at (0,24) size 214x20
+            RenderTableCell {td} at (162,24) size 50x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 46x16
+                text run at (2,2) width 46: "xxx xxx"

@@ -44,6 +44,9 @@ plugins
 svg
 
 # Failing tests or tests that need closer inspection
+css2.1/t0801-c412-hz-box-00-b-a.html
+css2.1/t040302-c61-ex-len-00-b-a.html
+
 dom/svg/level3/xpath/Conformance_ID.svg
 
 dom/xhtml/level2/html/HTMLBaseElement01.xhtml
@@ -155,6 +158,7 @@ tables/mozilla/bugs/bug50695-2.html
 tables/mozilla/bugs/bug51037.html
 tables/mozilla/bugs/bug51727.html
 tables/mozilla/bugs/bug60749.html
+tables/mozilla/bugs/bug92647-2.html
 tables/mozilla/bugs/bug96334.html
 tables/mozilla/bugs/bug145572.html
 tables/mozilla/bugs/bug149275-1.html

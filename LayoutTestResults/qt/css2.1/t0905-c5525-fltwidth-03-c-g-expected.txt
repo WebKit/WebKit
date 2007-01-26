@@ -1,24 +1,15 @@
-layer at (0,0) size 98x184
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x32
-  RenderBlock {HTML} at (0,0) size 96x32
-    RenderBody {BODY} at (8,8) size 80x16
-      RenderBlock {DIV} at (0,0) size 80x16
-        RenderBlock {DIV} at (0,0) size 80x16
-          RenderBlock (floating) {P} at (40,0) size 40x176
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x32
+  RenderBlock {HTML} at (0,0) size 800x32
+    RenderBody {BODY} at (8,8) size 784x16
+      RenderBlock {DIV} at (0,0) size 784x16
+        RenderBlock {DIV} at (0,0) size 784x16
+          RenderBlock (floating) {P} at (392,0) size 392x32
             RenderImage {IMG} at (0,0) size 15x15 [color=#FF0000]
-            RenderText {#text} at (15,0) size 50x176
+            RenderText {#text} at (15,0) size 358x32
               text run at (15,0) width 4: " "
-              text run at (19,0) width 6: "\x{21E6}"
-              text run at (0,16) width 38: "There"
-              text run at (0,32) width 41: "should"
-              text run at (0,48) width 27: "be a"
-              text run at (0,64) width 37: "green"
-              text run at (0,80) width 43: "square"
-              text run at (0,96) width 36: "at the"
-              text run at (0,112) width 20: "top"
-              text run at (0,128) width 35: "left of"
-              text run at (0,144) width 20: "the"
-              text run at (0,160) width 50: "window."
+              text run at (19,0) width 339: "\x{21E6} There should be a green square at the top left of the"
+              text run at (0,16) width 50: "window."
           RenderImage {IMG} at (0,0) size 15x15 [color=#FF0000]
           RenderText {#text} at (0,0) size 0x0

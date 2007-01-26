@@ -1,29 +1,12 @@
-layer at (0,0) size 270x540
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 270x540
-  RenderBlock {HTML} at (0,0) size 96x540
-    RenderBody {BODY} at (112,8) size 0x524
-      RenderBlock {P} at (0,0) size 0x288
-        RenderText {#text} at (0,0) size 66x288
-          text run at (0,0) width 23: "text"
-          text run at (0,16) width 23: "text"
-          text run at (0,32) width 23: "text"
-          text run at (0,48) width 53: "previous"
-          text run at (0,64) width 66: "paragraph"
-          text run at (0,80) width 23: "text"
-          text run at (0,96) width 23: "text"
-          text run at (0,112) width 38: "above"
-          text run at (0,128) width 20: "the"
-          text run at (0,144) width 30: "table"
-          text run at (0,160) width 32: "more"
-          text run at (0,176) width 23: "text"
-          text run at (0,192) width 23: "text"
-          text run at (0,208) width 23: "text"
-          text run at (0,224) width 43: "normal"
-          text run at (0,240) width 66: "paragraph"
-          text run at (0,256) width 22: "etc."
-          text run at (0,272) width 22: "etc."
-      RenderTable {TABLE} at (0,302) size 158x222
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (112,8) size 680x584
+      RenderBlock {P} at (0,0) size 680x16
+        RenderText {#text} at (0,0) size 644x16
+          text run at (0,0) width 644: "text text text previous paragraph text text above the table more text text text normal paragraph etc. etc."
+      RenderTable {TABLE} at (261,30) size 158x222
         RenderBlock {CAPTION} at (-112,0) size 112x80
           RenderText {#text} at (47,0) size 107x80
             text run at (47,0) width 65: "This is the"

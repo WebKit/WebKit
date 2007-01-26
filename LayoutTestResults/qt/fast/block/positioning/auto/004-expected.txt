@@ -1,42 +1,21 @@
-layer at (0,0) size 248x778
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x438
-  RenderBlock {HTML} at (0,0) size 96x438
-    RenderBody {BODY} at (8,8) size 80x416
-      RenderBlock {P} at (0,0) size 80x416
-        RenderText {#text} at (0,0) size 80x416
-          text run at (0,0) width 68: "In this test,"
-          text run at (0,16) width 67: "you should"
-          text run at (0,32) width 60: "see three"
-          text run at (0,48) width 67: "blocks that"
-          text run at (0,64) width 71: "are aligned"
-          text run at (0,80) width 80: "right within a"
-          text run at (0,96) width 61: "black box."
-          text run at (0,112) width 77: "They should"
-          text run at (0,128) width 68: "be stacked"
-          text run at (0,144) width 55: "vertically"
-          text run at (0,160) width 49: "with the"
-          text run at (0,176) width 78: "green box in"
-          text run at (0,192) width 79: "between two"
-          text run at (0,208) width 73: "olive boxes."
-          text run at (0,224) width 58: "The olive"
-          text run at (0,240) width 65: "boxes and"
-          text run at (0,256) width 61: "the green"
-          text run at (0,272) width 67: "box should"
-          text run at (0,288) width 77: "be 100x100,"
-          text run at (0,304) width 61: "and there"
-          text run at (0,320) width 60: "should be"
-          text run at (0,336) width 80: "100 pixels of"
-          text run at (0,352) width 71: "padding on"
-          text run at (0,368) width 52: "the right"
-          text run at (0,384) width 66: "side of the"
-          text run at (0,400) width 62: "box stack."
-layer at (8,438) size 240x340
-  RenderBlock (positioned) {DIV} at (8,438) size 240x340 [border: (20px solid #000000)]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {P} at (0,0) size 784x48
+        RenderText {#text} at (0,0) size 783x48
+          text run at (0,0) width 502: "In this test, you should see three blocks that are aligned right within a black box. "
+          text run at (502,0) width 261: "They should be stacked vertically with the"
+          text run at (0,16) width 242: "green box in between two olive boxes. "
+          text run at (242,16) width 541: "The olive boxes and the green box should be 100x100, and there should be 100 pixels"
+          text run at (0,32) width 279: "of padding on the right side of the box stack."
+layer at (8,70) size 240x340
+  RenderBlock (positioned) {DIV} at (8,70) size 240x340 [border: (20px solid #000000)]
     RenderBlock {DIV} at (120,70) size 100x0
-layer at (128,558) size 100x100
+layer at (128,190) size 100x100
   RenderBlock (positioned) {DIV} at (120,120) size 100x100 [bgcolor=#008000]
-layer at (128,458) size 100x100
+layer at (128,90) size 100x100
   RenderBlock (positioned) {DIV} at (120,20) size 100x100 [bgcolor=#808000]
-layer at (128,658) size 100x100
+layer at (128,290) size 100x100
   RenderBlock (positioned) {DIV} at (120,220) size 100x100 [bgcolor=#808000]

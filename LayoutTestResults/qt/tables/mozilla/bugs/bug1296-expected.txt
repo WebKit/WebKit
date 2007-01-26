@@ -1,30 +1,25 @@
-layer at (0,0) size 504x118
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 504x118
-  RenderBlock {HTML} at (0,0) size 96x118
-    RenderBody {BODY} at (8,8) size 80x102
-      RenderTable {TABLE} at (0,0) size 496x102
-        RenderTableSection {TBODY} at (0,0) size 496x102
-          RenderTableRow {TR} at (0,2) size 496x98
-            RenderTableCell {TD} at (2,2) size 40x98 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 38x96
-                text run at (1,1) width 30: "Let's"
-                text run at (1,17) width 19: "put"
-                text run at (1,33) width 34: "some"
-                text run at (1,49) width 38: "space"
-                text run at (1,65) width 11: "in"
-                text run at (1,81) width 33: "here!"
-            RenderTableCell {TD} at (44,21) size 450x60 [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 448x58
-                RenderTableSection {TBODY} at (0,0) size 448x58
-                  RenderTableRow {TR} at (0,2) size 448x54
-                    RenderTableCell {TD} at (2,2) size 444x54 [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (1,1) size 442x52
-                        RenderTableSection {TBODY} at (0,0) size 442x52
-                          RenderTableRow {TR} at (0,2) size 442x48
-                            RenderTableCell {TD} at (2,2) size 438x48 [r=0 c=0 rs=1 cs=1]
-                              RenderImage {IMG} at (1,1) size 4x1
-                              RenderImage {IMG} at (1,7) size 436x35
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 647x63
+        RenderTableSection {TBODY} at (0,0) size 647x63
+          RenderTableRow {TR} at (0,2) size 647x59
+            RenderTableCell {TD} at (2,22) size 187x18 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 185x16
+                text run at (1,1) width 185: "Let's put some space in here!"
+            RenderTableCell {TD} at (191,2) size 454x59 [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 452x57
+                RenderTableSection {TBODY} at (0,0) size 452x57
+                  RenderTableRow {TR} at (0,2) size 452x53
+                    RenderTableCell {TD} at (2,2) size 448x53 [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (1,1) size 446x51
+                        RenderTableSection {TBODY} at (0,0) size 446x51
+                          RenderTableRow {TR} at (0,2) size 446x47
+                            RenderTableCell {TD} at (2,2) size 442x47 [r=0 c=0 rs=1 cs=1]
+                              RenderImage {IMG} at (1,45) size 4x1
+                              RenderImage {IMG} at (5,6) size 436x35
                               RenderText {#text} at (0,0) size 0x0
                               RenderInline {MAP} at (0,0) size 0x0
                                 RenderText {#text} at (0,0) size 0x0

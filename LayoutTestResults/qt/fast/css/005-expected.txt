@@ -1,167 +1,74 @@
-layer at (0,0) size 148x2224
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 148x2224
-  RenderBlock {HTML} at (0,0) size 96x2224
-    RenderBody {BODY} at (8,18) size 80x2192
-      RenderBlock {H1} at (0,0) size 80x96
-        RenderText {#text} at (0,1) size 140x94
-          text run at (0,1) width 140: "Shorthand"
-          text run at (0,33) width 89: "border"
-          text run at (0,65) width 114: "property"
-      RenderBlock {P} at (0,114) size 80x118 [color=#008000] [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 70x112
-          text run at (3,3) width 27: "This"
-          text run at (3,19) width 66: "paragraph"
-          text run at (3,35) width 41: "should"
-          text run at (3,51) width 43: "have a"
-          text run at (3,67) width 48: "medium"
-          text run at (3,83) width 70: "solid green"
-          text run at (3,99) width 44: "border."
-      RenderBlock {P} at (0,246) size 80x118 [color=#008000] [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 70x112
-          text run at (3,3) width 27: "This"
-          text run at (3,19) width 66: "paragraph"
-          text run at (3,35) width 41: "should"
-          text run at (3,51) width 43: "have a"
-          text run at (3,67) width 48: "medium"
-          text run at (3,83) width 70: "solid green"
-          text run at (3,99) width 44: "border."
-      RenderBlock {P} at (0,378) size 80x80 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 66x80
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 66: "paragraph"
-          text run at (0,32) width 65: "should not"
-          text run at (0,48) width 43: "have a"
-          text run at (0,64) width 44: "border."
-      RenderBlock {P} at (0,472) size 80x118 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 66x96
-          text run at (3,3) width 27: "This"
-          text run at (3,19) width 66: "paragraph"
-          text run at (3,35) width 41: "should"
-          text run at (3,51) width 43: "have a"
-          text run at (3,67) width 48: "medium"
-          text run at (3,83) width 33: "solid "
+layer at (0,0) size 800x656
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x656
+  RenderBlock {HTML} at (0,0) size 800x656
+    RenderBody {BODY} at (8,18) size 784x624
+      RenderBlock {H1} at (0,0) size 784x32
+        RenderText {#text} at (0,1) size 359x30
+          text run at (0,1) width 359: "Shorthand border property"
+      RenderBlock {P} at (0,50) size 784x22 [color=#008000] [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 363x16
+          text run at (3,3) width 363: "This paragraph should have a medium solid green border."
+      RenderBlock {P} at (0,86) size 784x22 [color=#008000] [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 363x16
+          text run at (3,3) width 363: "This paragraph should have a medium solid green border."
+      RenderBlock {P} at (0,122) size 784x16 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 261x16
+          text run at (0,0) width 261: "This paragraph should not have a border."
+      RenderBlock {P} at (0,152) size 784x22 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 278x16
+          text run at (3,3) width 278: "This paragraph should have a medium solid "
         RenderInline {EM} at (0,0) size 32x16
-          RenderText {#text} at (36,83) size 32x16
-            text run at (36,83) width 32: "black"
-        RenderText {#text} at (3,99) size 44x16
-          text run at (3,99) width 44: "border."
-      RenderBlock {P} at (0,604) size 80x80 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 66x80
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 66: "paragraph"
-          text run at (0,32) width 65: "should not"
-          text run at (0,48) width 43: "have a"
-          text run at (0,64) width 44: "border."
-      RenderBlock {P} at (0,698) size 80x80 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 66x80
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 66: "paragraph"
-          text run at (0,32) width 65: "should not"
-          text run at (0,48) width 43: "have a"
-          text run at (0,64) width 44: "border."
-      RenderBlock {P} at (0,792) size 80x118 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 66x96
-          text run at (3,3) width 27: "This"
-          text run at (3,19) width 66: "paragraph"
-          text run at (3,35) width 41: "should"
-          text run at (3,51) width 43: "have a"
-          text run at (3,67) width 48: "medium"
-          text run at (3,83) width 33: "solid "
+          RenderText {#text} at (281,3) size 32x16
+            text run at (281,3) width 32: "black"
+        RenderText {#text} at (313,3) size 48x16
+          text run at (313,3) width 48: " border."
+      RenderBlock {P} at (0,188) size 784x16 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 261x16
+          text run at (0,0) width 261: "This paragraph should not have a border."
+      RenderBlock {P} at (0,218) size 784x16 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 261x16
+          text run at (0,0) width 261: "This paragraph should not have a border."
+      RenderBlock {P} at (0,248) size 784x22 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 278x16
+          text run at (3,3) width 278: "This paragraph should have a medium solid "
         RenderInline {EM} at (0,0) size 32x16
-          RenderText {#text} at (36,83) size 32x16
-            text run at (36,83) width 32: "black"
-        RenderText {#text} at (3,99) size 44x16
-          text run at (3,99) width 44: "border."
-      RenderBlock {P} at (0,924) size 80x118 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 66x96
-          text run at (3,3) width 27: "This"
-          text run at (3,19) width 66: "paragraph"
-          text run at (3,35) width 41: "should"
-          text run at (3,51) width 43: "have a"
-          text run at (3,67) width 48: "medium"
-          text run at (3,83) width 33: "solid "
+          RenderText {#text} at (281,3) size 32x16
+            text run at (281,3) width 32: "black"
+        RenderText {#text} at (313,3) size 48x16
+          text run at (313,3) width 48: " border."
+      RenderBlock {P} at (0,284) size 784x22 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 278x16
+          text run at (3,3) width 278: "This paragraph should have a medium solid "
         RenderInline {EM} at (0,0) size 32x16
-          RenderText {#text} at (36,83) size 32x16
-            text run at (36,83) width 32: "black"
-        RenderText {#text} at (3,99) size 44x16
-          text run at (3,99) width 44: "border."
-      RenderBlock {P} at (0,1056) size 80x118 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 70x112
-          text run at (3,3) width 27: "This"
-          text run at (3,19) width 66: "paragraph"
-          text run at (3,35) width 41: "should"
-          text run at (3,51) width 43: "have a"
-          text run at (3,67) width 48: "medium"
-          text run at (3,83) width 70: "solid green"
-          text run at (3,99) width 44: "border."
-      RenderBlock {P} at (0,1188) size 80x118 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 70x112
-          text run at (3,3) width 27: "This"
-          text run at (3,19) width 66: "paragraph"
-          text run at (3,35) width 41: "should"
-          text run at (3,51) width 43: "have a"
-          text run at (3,67) width 48: "medium"
-          text run at (3,83) width 70: "solid green"
-          text run at (3,99) width 44: "border."
-      RenderBlock {P} at (0,1320) size 80x80 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 66x80
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 66: "paragraph"
-          text run at (0,32) width 65: "should not"
-          text run at (0,48) width 43: "have a"
-          text run at (0,64) width 44: "border."
-      RenderBlock {P} at (0,1414) size 80x118 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 70x112
-          text run at (3,3) width 27: "This"
-          text run at (3,19) width 66: "paragraph"
-          text run at (3,35) width 41: "should"
-          text run at (3,51) width 43: "have a"
-          text run at (3,67) width 48: "medium"
-          text run at (3,83) width 70: "solid green"
-          text run at (3,99) width 44: "border."
-      RenderBlock {P} at (0,1546) size 80x118 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 70x112
-          text run at (3,3) width 27: "This"
-          text run at (3,19) width 66: "paragraph"
-          text run at (3,35) width 41: "should"
-          text run at (3,51) width 43: "have a"
-          text run at (3,67) width 48: "medium"
-          text run at (3,83) width 70: "solid green"
-          text run at (3,99) width 44: "border."
-      RenderBlock {P} at (0,1678) size 80x118 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 70x112
-          text run at (3,3) width 27: "This"
-          text run at (3,19) width 66: "paragraph"
-          text run at (3,35) width 41: "should"
-          text run at (3,51) width 43: "have a"
-          text run at (3,67) width 48: "medium"
-          text run at (3,83) width 70: "solid green"
-          text run at (3,99) width 44: "border."
-      RenderBlock {P} at (0,1810) size 80x118 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 70x112
-          text run at (3,3) width 27: "This"
-          text run at (3,19) width 66: "paragraph"
-          text run at (3,35) width 41: "should"
-          text run at (3,51) width 43: "have a"
-          text run at (3,67) width 48: "medium"
-          text run at (3,83) width 70: "solid green"
-          text run at (3,99) width 44: "border."
-      RenderBlock {P} at (0,1942) size 80x118 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 70x112
-          text run at (3,3) width 27: "This"
-          text run at (3,19) width 66: "paragraph"
-          text run at (3,35) width 41: "should"
-          text run at (3,51) width 43: "have a"
-          text run at (3,67) width 48: "medium"
-          text run at (3,83) width 70: "solid green"
-          text run at (3,99) width 44: "border."
-      RenderBlock {P} at (0,2074) size 80x118 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 70x112
-          text run at (3,3) width 27: "This"
-          text run at (3,19) width 66: "paragraph"
-          text run at (3,35) width 41: "should"
-          text run at (3,51) width 43: "have a"
-          text run at (3,67) width 48: "medium"
-          text run at (3,83) width 70: "solid green"
-          text run at (3,99) width 44: "border."
+          RenderText {#text} at (281,3) size 32x16
+            text run at (281,3) width 32: "black"
+        RenderText {#text} at (313,3) size 48x16
+          text run at (313,3) width 48: " border."
+      RenderBlock {P} at (0,320) size 784x22 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 363x16
+          text run at (3,3) width 363: "This paragraph should have a medium solid green border."
+      RenderBlock {P} at (0,356) size 784x22 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 363x16
+          text run at (3,3) width 363: "This paragraph should have a medium solid green border."
+      RenderBlock {P} at (0,392) size 784x16 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 261x16
+          text run at (0,0) width 261: "This paragraph should not have a border."
+      RenderBlock {P} at (0,422) size 784x22 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 363x16
+          text run at (3,3) width 363: "This paragraph should have a medium solid green border."
+      RenderBlock {P} at (0,458) size 784x22 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 363x16
+          text run at (3,3) width 363: "This paragraph should have a medium solid green border."
+      RenderBlock {P} at (0,494) size 784x22 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 363x16
+          text run at (3,3) width 363: "This paragraph should have a medium solid green border."
+      RenderBlock {P} at (0,530) size 784x22 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 363x16
+          text run at (3,3) width 363: "This paragraph should have a medium solid green border."
+      RenderBlock {P} at (0,566) size 784x22 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 363x16
+          text run at (3,3) width 363: "This paragraph should have a medium solid green border."
+      RenderBlock {P} at (0,602) size 784x22 [bgcolor=#FFFFFF] [border: (3px solid #008000)]
+        RenderText {#text} at (3,3) size 363x16
+          text run at (3,3) width 363: "This paragraph should have a medium solid green border."

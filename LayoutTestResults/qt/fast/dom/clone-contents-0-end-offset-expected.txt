@@ -1,23 +1,14 @@
-layer at (0,0) size 96x212
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x212
-  RenderBlock {HTML} at (0,0) size 96x212
-    RenderBody {BODY} at (8,8) size 80x190
-      RenderBlock {BLOCKQUOTE} at (40,0) size 0x80
-        RenderInline {SPAN} at (0,0) size 38x80
-          RenderText {#text} at (0,0) size 38x80
-            text run at (0,0) width 35: "Heck,"
-            text run at (0,16) width 26: "son,"
-            text run at (0,32) width 38: "you're"
-            text run at (0,48) width 8: "a"
-            text run at (0,64) width 38: "failure"
-      RenderBlock {P} at (0,94) size 80x96
-        RenderText {#text} at (0,0) size 73x96
-          text run at (0,0) width 63: "The result"
-          text run at (0,16) width 52: "appears"
-          text run at (0,32) width 73: "below here;"
-          text run at (0,48) width 65: "should not"
-          text run at (0,64) width 71: "include any"
-          text run at (0,80) width 26: "text:"
-      RenderBlock {P} at (0,204) size 80x0
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {BLOCKQUOTE} at (40,0) size 704x16
+        RenderInline {SPAN} at (0,0) size 161x16
+          RenderText {#text} at (0,0) size 161x16
+            text run at (0,0) width 161: "Heck, son, you're a failure"
+      RenderBlock {P} at (0,30) size 784x16
+        RenderText {#text} at (0,0) size 370x16
+          text run at (0,0) width 370: "The result appears below here; should not include any text:"
+      RenderBlock {P} at (0,60) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0

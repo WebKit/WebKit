@@ -1,9 +1,9 @@
-layer at (0,0) size 96x32
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x32
-  RenderBlock {HTML} at (0,0) size 96x32
-    RenderBody {BODY} at (8,8) size 80x16
-      RenderBlock (anonymous) at (0,0) size 80x0
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x0
         RenderInline {WINDOW} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
           RenderInline {WINDOW} at (0,0) size 0x0
@@ -15,7 +15,7 @@ layer at (0,0) size 96x32
                 RenderText {#text} at (0,0) size 0x0
                 RenderInline {XUL:TOOLBAR} at (0,0) size 0x0
                   RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,0) size 80x16
+      RenderBlock (anonymous) at (0,0) size 784x16
         RenderTable at (0,0) size 32x16
           RenderTableSection at (0,0) size 32x16
             RenderTableRow at (0,0) size 32x16
@@ -30,7 +30,7 @@ layer at (0,0) size 96x32
               RenderTableCell {HTML:SPAN} at (31,0) size 1x0 [r=0 c=1 rs=1 cs=1]
                 RenderInline {HTML:INPUT} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,16) size 80x0
+      RenderBlock (anonymous) at (0,16) size 784x0
         RenderInline {WINDOW} at (0,0) size 0x0
           RenderInline {WINDOW} at (0,0) size 0x0
             RenderInline {WINDOW} at (0,0) size 0x0

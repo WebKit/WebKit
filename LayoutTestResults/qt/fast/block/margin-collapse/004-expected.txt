@@ -1,15 +1,11 @@
-layer at (0,0) size 96x178
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x178
-  RenderBlock {HTML} at (0,0) size 96x116
-    RenderBody {BODY} at (8,14) size 80x164
-      RenderBlock {P} at (0,0) size 80x80
-        RenderText {#text} at (0,0) size 76x80
-          text run at (0,0) width 63: "This page"
-          text run at (0,16) width 76: "should have"
-          text run at (0,32) width 71: "one square"
-          text run at (0,48) width 73: "green block"
-          text run at (0,64) width 72: "and no red."
-      RenderBlock {DIV} at (0,94) size 70x70 [bgcolor=#FF0000]
-      RenderBlock (floating) {DIV} at (0,94) size 70x70 [bgcolor=#008000]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x114
+  RenderBlock {HTML} at (0,0) size 800x52
+    RenderBody {BODY} at (8,14) size 784x100
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 371x16
+          text run at (0,0) width 371: "This page should have one square green block and no red."
+      RenderBlock {DIV} at (0,30) size 70x70 [bgcolor=#FF0000]
+      RenderBlock (floating) {DIV} at (0,30) size 70x70 [bgcolor=#008000]
         RenderBlock {DIV} at (35,70) size 0x0 [bgcolor=#FF0000]

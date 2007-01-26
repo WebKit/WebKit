@@ -1,22 +1,18 @@
-layer at (0,0) size 116x128
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 116x128
-  RenderBlock {HTML} at (0,0) size 96x128
-    RenderBody {BODY} at (8,8) size 80x112
-      RenderBlock {CENTER} at (0,0) size 80x112
-        RenderTable {TABLE} at (0,0) size 108x112 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 106x110
-            RenderTableRow {TR} at (0,2) size 106x84
-              RenderTableCell {TD} at (2,2) size 102x84 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (13,2) size 98x80
-                  text run at (13,2) width 75: "This table is"
-                  text run at (10,18) width 82: "wrapped in a"
-                  text run at (2,34) width 97: "<CENTER> tag"
-                  text run at (38,50) width 25: "with"
-                  text run at (2,66) width 98: "HEIGHT=100%"
-            RenderTableRow {TR} at (0,88) size 106x20
-              RenderTableCell {TD} at (2,88) size 102x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {CENTER} at (0,0) size 784x584
+        RenderTable {TABLE} at (0,0) size 784x584 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 782x582
+            RenderTableRow {TR} at (0,2) size 782x288
+              RenderTableCell {TD} at (2,136) size 778x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (192,2) size 393x16
+                  text run at (192,2) width 393: "This table is wrapped in a <CENTER> tag with HEIGHT=100%"
+            RenderTableRow {TR} at (0,292) size 782x288
+              RenderTableCell {TD} at (2,426) size 778x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                 RenderInline {A} at (0,0) size 93x16 [color=#0000EE]
-                  RenderText {#text} at (4,2) size 93x16
-                    text run at (4,2) width 93: "This one is not"
+                  RenderText {#text} at (342,2) size 93x16
+                    text run at (342,2) width 93: "This one is not"
                 RenderText {#text} at (0,0) size 0x0

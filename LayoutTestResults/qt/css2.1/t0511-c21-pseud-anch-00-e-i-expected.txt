@@ -1,17 +1,11 @@
-layer at (0,0) size 96x156
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x156
-  RenderBlock {HTML} at (0,0) size 96x156
-    RenderBody {BODY} at (8,14) size 80x128
-      RenderBlock {P} at (0,0) size 80x128
-        RenderInline {A} at (0,0) size 60x64 [color=#008000]
-          RenderText {#text} at (0,0) size 60x64
-            text run at (0,0) width 27: "This"
-            text run at (0,16) width 58: "sentence"
-            text run at (0,32) width 60: "should be"
-            text run at (0,48) width 40: "green."
-        RenderText {#text} at (0,64) size 79x64
-          text run at (0,64) width 79: "Check that it"
-          text run at (0,80) width 50: "remains"
-          text run at (0,96) width 74: "green if you"
-          text run at (0,112) width 41: "click it."
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x44
+  RenderBlock {HTML} at (0,0) size 800x44
+    RenderBody {BODY} at (8,14) size 784x16
+      RenderBlock {P} at (0,0) size 784x16
+        RenderInline {A} at (0,0) size 197x16 [color=#008000]
+          RenderText {#text} at (0,0) size 197x16
+            text run at (0,0) width 197: "This sentence should be green."
+        RenderText {#text} at (197,0) size 260x16
+          text run at (197,0) width 260: " Check that it remains green if you click it."

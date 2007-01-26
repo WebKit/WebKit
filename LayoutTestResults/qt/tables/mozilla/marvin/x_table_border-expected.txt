@@ -1,22 +1,13 @@
-layer at (0,0) size 174x308
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 174x308
-  RenderBlock {html} at (0,0) size 96x308
-    RenderBody {body} at (8,14) size 80x286
-      RenderBlock {p} at (0,0) size 80x176
-        RenderText {#text} at (0,0) size 78x176
-          text run at (0,0) width 74: "No 'number'"
-          text run at (0,16) width 78: "specification"
-          text run at (0,32) width 69: "is given for"
-          text run at (0,48) width 44: "border."
-          text run at (0,64) width 38: "There"
-          text run at (0,80) width 72: "should be a"
-          text run at (0,96) width 41: "2 pixel"
-          text run at (0,112) width 41: "border"
-          text run at (0,128) width 68: "around the"
-          text run at (0,144) width 76: "frame of the"
-          text run at (0,160) width 73: "table below."
-      RenderTable {table} at (0,190) size 166x96 [border: (1px outset #808080)]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x148
+  RenderBlock {html} at (0,0) size 800x148
+    RenderBody {body} at (8,14) size 784x126
+      RenderBlock {p} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 714x16
+          text run at (0,0) width 399: "No 'number' specification is given for border. There should be a "
+          text run at (399,0) width 315: "2 pixel border around the frame of the table below."
+      RenderTable {table} at (0,30) size 166x96 [border: (1px outset #808080)]
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
         RenderTableCol {colgroup} at (0,0) size 0x0

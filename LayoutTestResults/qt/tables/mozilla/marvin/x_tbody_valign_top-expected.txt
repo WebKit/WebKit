@@ -1,43 +1,33 @@
-layer at (0,0) size 279x329
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 279x329
-  RenderBlock {html} at (0,0) size 96x329
-    RenderBody {body} at (8,14) size 80x307
-      RenderBlock {p} at (0,0) size 80x32
-        RenderText {#text} at (0,0) size 89x32
-          text run at (0,0) width 48: "TBODY"
-          text run at (0,16) width 89: "VALIGN=TOP"
-      RenderTable {table} at (0,46) size 271x261 [border: (1px outset #808080)]
-        RenderTableSection {thead} at (1,1) size 269x24
-          RenderTableRow {tr} at (0,2) size 269x20
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x313
+  RenderBlock {html} at (0,0) size 800x313
+    RenderBody {body} at (8,14) size 784x291
+      RenderBlock {p} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 141x16
+          text run at (0,0) width 141: "TBODY VALIGN=TOP"
+      RenderTable {table} at (0,30) size 653x261 [border: (1px outset #808080)]
+        RenderTableSection {thead} at (1,1) size 651x24
+          RenderTableRow {tr} at (0,2) size 651x20
             RenderTableCell {td} at (2,2) size 204x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 47x16
                 text run at (2,2) width 47: "THEAD"
-            RenderTableCell {td} at (208,2) size 59x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (208,2) size 441x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 47x16
                 text run at (2,2) width 47: "THEAD"
-        RenderTableSection {tfoot} at (1,236) size 269x24
-          RenderTableRow {tr} at (0,2) size 269x20
+        RenderTableSection {tfoot} at (1,236) size 651x24
+          RenderTableRow {tr} at (0,2) size 651x20
             RenderTableCell {td} at (2,2) size 204x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 48x16
                 text run at (2,2) width 48: "TFOOT"
-            RenderTableCell {td} at (208,2) size 59x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (208,2) size 441x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 48x16
                 text run at (2,2) width 48: "TFOOT"
-        RenderTableSection {tbody} at (1,25) size 269x211
-          RenderTableRow {tr} at (0,2) size 269x207
+        RenderTableSection {tbody} at (1,25) size 651x211
+          RenderTableRow {tr} at (0,2) size 651x207
             RenderTableCell {td} at (2,2) size 204x207 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {img} at (2,2) size 200x200
-            RenderTableCell {td} at (208,2) size 59x180 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 55x176
-                text run at (2,2) width 49: "The top"
-                text run at (2,18) width 38: "of this"
-                text run at (2,34) width 23: "text"
-                text run at (2,50) width 41: "should"
-                text run at (2,66) width 15: "be"
-                text run at (2,82) width 55: "vertically"
-                text run at (2,98) width 46: "aligned"
-                text run at (2,114) width 36: "to the"
-                text run at (2,130) width 36: "top of"
-                text run at (2,146) width 20: "the"
-                text run at (2,162) width 38: "image"
+            RenderTableCell {td} at (208,2) size 441x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 437x16
+                text run at (2,2) width 375: "The top of this text should be vertically aligned to the top of "
+                text run at (377,2) width 62: "the image"

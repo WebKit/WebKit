@@ -1,20 +1,15 @@
-layer at (0,0) size 96x179
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x179
-  RenderBlock {HTML} at (0,0) size 96x179
-    RenderBody {BODY} at (8,14) size 80x157
-      RenderBlock {P} at (0,0) size 80x96
-        RenderText {#text} at (0,0) size 73x96
-          text run at (0,0) width 38: "There"
-          text run at (0,16) width 72: "should be a"
-          text run at (0,32) width 73: "single small"
-          text run at (0,48) width 60: "column of"
-          text run at (0,64) width 65: "blue below"
-          text run at (0,80) width 73: "with no red:"
-      RenderBlock {DIV} at (0,110) size 80x15
-        RenderImage {IMG} at (32,0) size 15x15
-      RenderBlock {DIV} at (0,125) size 80x15
-        RenderImage {IMG} at (32,0) size 15x15
-      RenderBlock {DIV} at (0,140) size 80x17 [color=#0000FF]
-        RenderText {#text} at (35,0) size 10x17
-          text run at (35,0) width 10: "X"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x99
+  RenderBlock {HTML} at (0,0) size 800x99
+    RenderBody {BODY} at (8,14) size 784x77
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 401x16
+          text run at (0,0) width 401: "There should be a single small column of blue below with no red:"
+      RenderBlock {DIV} at (0,30) size 784x15
+        RenderImage {IMG} at (384,0) size 15x15
+      RenderBlock {DIV} at (0,45) size 784x15
+        RenderImage {IMG} at (384,0) size 15x15
+      RenderBlock {DIV} at (0,60) size 784x17 [color=#0000FF]
+        RenderText {#text} at (387,0) size 10x17
+          text run at (387,0) width 10: "X"

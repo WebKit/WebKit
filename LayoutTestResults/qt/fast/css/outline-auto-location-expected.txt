@@ -1,41 +1,19 @@
-layer at (0,0) size 96x504
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x504
-  RenderBlock {HTML} at (0,0) size 96x504
-    RenderBody {BODY} at (8,20) size 80x464
-      RenderBlock {DIV} at (20,0) size 40x222 [bgcolor=#ADD8E6]
-        RenderBlock {P} at (0,0) size 40x144
-          RenderText {#text} at (0,0) size 44x144
-            text run at (0,0) width 38: "There"
-            text run at (0,16) width 41: "should"
-            text run at (0,32) width 15: "be"
-            text run at (0,48) width 24: "one"
-            text run at (0,64) width 41: "outline"
-            text run at (0,80) width 44: "around"
-            text run at (0,96) width 20: "the"
-            text run at (0,112) width 37: "whole"
-            text run at (0,128) width 18: "div"
-        RenderBlock {P} at (-20,158) size 60x64
-          RenderText {#text} at (0,0) size 50x64
-            text run at (0,0) width 22: "Not"
-            text run at (0,16) width 44: "around"
-            text run at (0,32) width 31: "each"
-            text run at (0,48) width 50: "element"
-      RenderBlock {DIV} at (20,242) size 40x222 [bgcolor=#ADD8E6]
-        RenderBlock {P} at (0,0) size 40x144
-          RenderText {#text} at (0,0) size 44x144
-            text run at (0,0) width 38: "There"
-            text run at (0,16) width 41: "should"
-            text run at (0,32) width 15: "be"
-            text run at (0,48) width 24: "one"
-            text run at (0,64) width 41: "outline"
-            text run at (0,80) width 44: "around"
-            text run at (0,96) width 20: "the"
-            text run at (0,112) width 37: "whole"
-            text run at (0,128) width 18: "div"
-        RenderBlock {P} at (-20,158) size 60x64
-          RenderText {#text} at (0,0) size 50x64
-            text run at (0,0) width 22: "Not"
-            text run at (0,16) width 44: "around"
-            text run at (0,32) width 31: "each"
-            text run at (0,48) width 50: "element"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,20) size 784x560
+      RenderBlock {DIV} at (20,0) size 744x46 [bgcolor=#ADD8E6]
+        RenderBlock {P} at (0,0) size 744x16
+          RenderText {#text} at (0,0) size 310x16
+            text run at (0,0) width 310: "There should be one outline around the whole div"
+        RenderBlock {P} at (-20,30) size 764x16
+          RenderText {#text} at (0,0) size 159x16
+            text run at (0,0) width 159: "Not around each element"
+      RenderBlock {DIV} at (20,66) size 744x46 [bgcolor=#ADD8E6]
+        RenderBlock {P} at (0,0) size 744x16
+          RenderText {#text} at (0,0) size 310x16
+            text run at (0,0) width 310: "There should be one outline around the whole div"
+        RenderBlock {P} at (-20,30) size 764x16
+          RenderText {#text} at (0,0) size 159x16
+            text run at (0,0) width 159: "Not around each element"

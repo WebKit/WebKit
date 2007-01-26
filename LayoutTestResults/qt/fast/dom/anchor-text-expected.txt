@@ -1,19 +1,13 @@
-layer at (0,0) size 96x128
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x128
-  RenderBlock {HTML} at (0,0) size 96x128
-    RenderBody {BODY} at (8,8) size 80x112
-      RenderInline {A} at (0,0) size 77x64 [color=#0000EE]
-        RenderInline {B} at (0,0) size 77x64
-          RenderText {#text} at (0,0) size 77x64
-            text run at (0,0) width 77: "the second"
-            text run at (0,16) width 34: "copy"
-            text run at (0,32) width 75: "should not"
-            text run at (0,48) width 52: "be bold"
-      RenderText {#text} at (52,48) size 4x16
-        text run at (52,48) width 4: " "
-      RenderText {#text} at (56,48) size 80x64
-        text run at (56,48) width 20: "the"
-        text run at (0,64) width 80: "second copy"
-        text run at (0,80) width 65: "should not"
-        text run at (0,96) width 45: "be bold"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderInline {A} at (0,0) size 250x16 [color=#0000EE]
+        RenderInline {B} at (0,0) size 250x16
+          RenderText {#text} at (0,0) size 250x16
+            text run at (0,0) width 250: "the second copy should not be bold"
+      RenderText {#text} at (250,0) size 4x16
+        text run at (250,0) width 4: " "
+      RenderText {#text} at (254,0) size 222x16
+        text run at (254,0) width 222: "the second copy should not be bold"

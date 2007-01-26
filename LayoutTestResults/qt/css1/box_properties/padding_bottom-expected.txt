@@ -1,16 +1,12 @@
-layer at (0,0) size 224x4216
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 224x4216
-  RenderBlock {HTML} at (0,0) size 96x4216
-    RenderBody {BODY} at (8,8) size 80x4200 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 80x80
-        RenderText {#text} at (0,0) size 77x80
-          text run at (0,0) width 58: "The style"
-          text run at (0,16) width 77: "declarations"
-          text run at (0,32) width 74: "which apply"
-          text run at (0,48) width 63: "to the text"
-          text run at (0,64) width 64: "below are:"
-      RenderBlock {PRE} at (0,94) size 80x96
+layer at (0,0) size 800x1444
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x1444
+  RenderBlock {HTML} at (0,0) size 800x1444
+    RenderBody {BODY} at (8,8) size 784x1428 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 352x16
+          text run at (0,0) width 352: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,30) size 784x96
         RenderText {#text} at (0,0) size 216x96
           text run at (0,0) width 208: ".zero {background-color: silver; padding-bottom: 0;}"
           text run at (208,0) width 0: " "
@@ -24,266 +20,79 @@ layer at (0,0) size 224x4216
           text run at (208,64) width 0: " "
           text run at (0,80) width 216: ".five {padding-bottom: -20px; background-color: aqua;}"
           text run at (216,80) width 0: " "
-      RenderBlock {HR} at (0,204) size 80x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,220) size 80x64 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 77x64
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 77: "element has"
-          text run at (0,32) width 60: "a class of"
-          text run at (0,48) width 31: "zero."
-      RenderBlock {P} at (0,298) size 80x320 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,0) size 80x272
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 50: "element"
-          text run at (0,32) width 76: "should have"
-          text run at (0,48) width 54: "a bottom"
-          text run at (0,64) width 67: "padding of"
-          text run at (0,80) width 76: "half an inch,"
-          text run at (0,96) width 59: "which will"
-          text run at (0,112) width 80: "require extra"
-          text run at (0,128) width 76: "text in order"
-          text run at (0,144) width 46: "to test. "
-          text run at (46,144) width 29: "Both"
-          text run at (0,160) width 71: "the content"
-          text run at (0,176) width 73: "background"
-          text run at (0,192) width 48: "and the"
-          text run at (0,208) width 51: "padding"
-          text run at (0,224) width 60: "should be"
-          text run at (0,240) width 66: "aqua (light"
-          text run at (0,256) width 33: "blue)."
-      RenderBlock {P} at (0,632) size 80x297 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,0) size 80x272
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 50: "element"
-          text run at (0,32) width 76: "should have"
-          text run at (0,48) width 54: "a bottom"
-          text run at (0,64) width 67: "padding of"
-          text run at (0,80) width 59: "25 pixels,"
-          text run at (0,96) width 59: "which will"
-          text run at (0,112) width 80: "require extra"
-          text run at (0,128) width 76: "text in order"
-          text run at (0,144) width 46: "to test. "
-          text run at (46,144) width 29: "Both"
-          text run at (0,160) width 71: "the content"
-          text run at (0,176) width 73: "background"
-          text run at (0,192) width 48: "and the"
-          text run at (0,208) width 51: "padding"
-          text run at (0,224) width 60: "should be"
-          text run at (0,240) width 66: "aqua (light"
-          text run at (0,256) width 33: "blue)."
-      RenderBlock {P} at (0,943) size 80x342 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,0) size 80x272
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 50: "element"
-          text run at (0,32) width 76: "should have"
-          text run at (0,48) width 54: "a bottom"
-          text run at (0,64) width 79: "padding of 5"
-          text run at (0,80) width 62: "em, which"
-          text run at (0,96) width 67: "will require"
-          text run at (0,112) width 74: "extra text in"
-          text run at (0,128) width 80: "order to test."
-          text run at (0,144) width 53: "Both the"
-          text run at (0,160) width 47: "content"
-          text run at (0,176) width 73: "background"
-          text run at (0,192) width 48: "and the"
-          text run at (0,208) width 51: "padding"
-          text run at (0,224) width 60: "should be"
-          text run at (0,240) width 66: "aqua (light"
-          text run at (0,256) width 33: "blue)."
-      RenderBlock {P} at (0,1299) size 80x388 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,0) size 80x368
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 50: "element"
-          text run at (0,32) width 76: "should have"
-          text run at (0,48) width 54: "a bottom"
-          text run at (0,64) width 67: "padding of"
-          text run at (0,80) width 71: "25%, which"
-          text run at (0,96) width 77: "is calculated"
-          text run at (0,112) width 76: "with respect"
-          text run at (0,128) width 73: "to the width"
-          text run at (0,144) width 36: "of the"
-          text run at (0,160) width 41: "parent"
-          text run at (0,176) width 53: "element."
-          text run at (0,192) width 50: "This will"
-          text run at (0,208) width 80: "require extra"
-          text run at (0,224) width 76: "text in order"
-          text run at (0,240) width 46: "to test. "
-          text run at (46,240) width 29: "Both"
-          text run at (0,256) width 71: "the content"
-          text run at (0,272) width 73: "background"
-          text run at (0,288) width 48: "and the"
-          text run at (0,304) width 51: "padding"
-          text run at (0,320) width 60: "should be"
-          text run at (0,336) width 66: "aqua (light"
-          text run at (0,352) width 33: "blue)."
-      RenderBlock {P} at (0,1701) size 80x64 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 77x64
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 77: "element has"
-          text run at (0,32) width 60: "a class of"
-          text run at (0,48) width 31: "zero."
-      RenderBlock {P} at (0,1779) size 80x304 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,0) size 76x304
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 50: "element"
-          text run at (0,32) width 76: "should have"
-          text run at (0,48) width 62: "no bottom"
-          text run at (0,64) width 54: "padding,"
-          text run at (0,80) width 33: "since"
-          text run at (0,96) width 54: "negative"
-          text run at (0,112) width 51: "padding"
-          text run at (0,128) width 65: "values are"
-          text run at (0,144) width 75: "not allowed."
-          text run at (0,160) width 53: "Both the"
-          text run at (0,176) width 47: "content"
-          text run at (0,192) width 73: "background"
-          text run at (0,208) width 48: "and the"
-          text run at (0,224) width 43: "normal"
-          text run at (0,240) width 51: "padding"
-          text run at (0,256) width 60: "should be"
-          text run at (0,272) width 66: "aqua (light"
-          text run at (0,288) width 33: "blue)."
-      RenderTable {TABLE} at (0,2097) size 95x2103 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 93x2101
-          RenderTableRow {TR} at (0,0) size 93x56
-            RenderTableCell {TD} at (0,0) size 93x56 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 53x48
-                RenderText {#text} at (4,4) size 53x48
-                  text run at (4,4) width 45: "TABLE"
-                  text run at (4,20) width 51: "Testing"
-                  text run at (4,36) width 53: "Section"
-          RenderTableRow {TR} at (0,56) size 93x2045
-            RenderTableCell {TD} at (0,1066) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+      RenderBlock {HR} at (0,140) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,156) size 784x16 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 207x16
+          text run at (0,0) width 207: "This element has a class of zero."
+      RenderBlock {P} at (0,186) size 784x80 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 751x32
+          text run at (0,0) width 647: "This element should have a bottom padding of half an inch, which will require extra text in order to test. "
+          text run at (647,0) width 104: "Both the content"
+          text run at (0,16) width 351: "background and the padding should be aqua (light blue)."
+      RenderBlock {P} at (0,280) size 784x57 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 734x32
+          text run at (0,0) width 630: "This element should have a bottom padding of 25 pixels, which will require extra text in order to test. "
+          text run at (630,0) width 104: "Both the content"
+          text run at (0,16) width 351: "background and the padding should be aqua (light blue)."
+      RenderBlock {P} at (0,351) size 784x102 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 709x32
+          text run at (0,0) width 605: "This element should have a bottom padding of 5 em, which will require extra text in order to test. "
+          text run at (605,0) width 104: "Both the content"
+          text run at (0,16) width 351: "background and the padding should be aqua (light blue)."
+      RenderBlock {P} at (0,467) size 784x228 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 776x32
+          text run at (0,0) width 749: "This element should have a bottom padding of 25%, which is calculated with respect to the width of the parent element. "
+          text run at (749,0) width 27: "This"
+          text run at (0,16) width 233: "will require extra text in order to test. "
+          text run at (233,16) width 459: "Both the content background and the padding should be aqua (light blue)."
+      RenderBlock {P} at (0,709) size 784x16 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 207x16
+          text run at (0,0) width 207: "This element has a class of zero."
+      RenderBlock {P} at (0,739) size 784x32 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 768x32
+          text run at (0,0) width 587: "This element should have no bottom padding, since negative padding values are not allowed. "
+          text run at (587,0) width 181: "Both the content background"
+          text run at (0,16) width 321: "and the normal padding should be aqua (light blue)."
+      RenderTable {TABLE} at (0,785) size 784x643 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x641
+          RenderTableRow {TR} at (0,0) size 782x24
+            RenderTableCell {TD} at (0,0) size 782x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 157x16
+                RenderText {#text} at (4,4) size 157x16
+                  text run at (4,4) width 157: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,24) size 782x617
+            RenderTableCell {TD} at (0,320) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x16
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,56) size 81x2045 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 73x64 [bgcolor=#C0C0C0]
-                RenderText {#text} at (0,0) size 71x64
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 50: "element"
-                  text run at (0,32) width 71: "has a class"
-                  text run at (0,48) width 47: "of zero."
-              RenderBlock {P} at (4,82) size 73x352 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 73x304
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 50: "element"
-                  text run at (0,32) width 41: "should"
-                  text run at (0,48) width 43: "have a"
-                  text run at (0,64) width 42: "bottom"
-                  text run at (0,80) width 67: "padding of"
-                  text run at (0,96) width 43: "half an"
-                  text run at (0,112) width 69: "inch, which"
-                  text run at (0,128) width 67: "will require"
-                  text run at (0,144) width 59: "extra text"
-                  text run at (0,160) width 65: "in order to"
-                  text run at (0,176) width 30: "test. "
-                  text run at (30,176) width 29: "Both"
-                  text run at (0,192) width 71: "the content"
-                  text run at (0,208) width 73: "background"
-                  text run at (0,224) width 48: "and the"
-                  text run at (0,240) width 51: "padding"
-                  text run at (0,256) width 60: "should be"
-                  text run at (0,272) width 66: "aqua (light"
-                  text run at (0,288) width 33: "blue)."
-              RenderBlock {P} at (4,448) size 73x329 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 73x304
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 50: "element"
-                  text run at (0,32) width 41: "should"
-                  text run at (0,48) width 43: "have a"
-                  text run at (0,64) width 42: "bottom"
-                  text run at (0,80) width 67: "padding of"
-                  text run at (0,96) width 59: "25 pixels,"
-                  text run at (0,112) width 59: "which will"
-                  text run at (0,128) width 44: "require"
-                  text run at (0,144) width 59: "extra text"
-                  text run at (0,160) width 65: "in order to"
-                  text run at (0,176) width 30: "test. "
-                  text run at (30,176) width 29: "Both"
-                  text run at (0,192) width 71: "the content"
-                  text run at (0,208) width 73: "background"
-                  text run at (0,224) width 48: "and the"
-                  text run at (0,240) width 51: "padding"
-                  text run at (0,256) width 60: "should be"
-                  text run at (0,272) width 66: "aqua (light"
-                  text run at (0,288) width 33: "blue)."
-              RenderBlock {P} at (4,791) size 73x374 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 73x304
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 50: "element"
-                  text run at (0,32) width 41: "should"
-                  text run at (0,48) width 43: "have a"
-                  text run at (0,64) width 42: "bottom"
-                  text run at (0,80) width 67: "padding of"
-                  text run at (0,96) width 34: "5 em,"
-                  text run at (0,112) width 59: "which will"
-                  text run at (0,128) width 44: "require"
-                  text run at (0,144) width 59: "extra text"
-                  text run at (0,160) width 65: "in order to"
-                  text run at (0,176) width 30: "test. "
-                  text run at (30,176) width 29: "Both"
-                  text run at (0,192) width 71: "the content"
-                  text run at (0,208) width 73: "background"
-                  text run at (0,224) width 48: "and the"
-                  text run at (0,240) width 51: "padding"
-                  text run at (0,256) width 60: "should be"
-                  text run at (0,272) width 66: "aqua (light"
-                  text run at (0,288) width 33: "blue)."
-              RenderBlock {P} at (4,1179) size 73x434 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 73x416
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 50: "element"
-                  text run at (0,32) width 41: "should"
-                  text run at (0,48) width 43: "have a"
-                  text run at (0,64) width 42: "bottom"
-                  text run at (0,80) width 67: "padding of"
-                  text run at (0,96) width 71: "25%, which"
-                  text run at (0,112) width 10: "is"
-                  text run at (0,128) width 63: "calculated"
-                  text run at (0,144) width 25: "with"
-                  text run at (0,160) width 63: "respect to"
-                  text run at (0,176) width 73: "the width of"
-                  text run at (0,192) width 65: "the parent"
-                  text run at (0,208) width 53: "element."
-                  text run at (0,224) width 50: "This will"
-                  text run at (0,240) width 44: "require"
-                  text run at (0,256) width 59: "extra text"
-                  text run at (0,272) width 65: "in order to"
-                  text run at (0,288) width 30: "test. "
-                  text run at (30,288) width 29: "Both"
-                  text run at (0,304) width 71: "the content"
-                  text run at (0,320) width 73: "background"
-                  text run at (0,336) width 48: "and the"
-                  text run at (0,352) width 51: "padding"
-                  text run at (0,368) width 60: "should be"
-                  text run at (0,384) width 66: "aqua (light"
-                  text run at (0,400) width 33: "blue)."
-              RenderBlock {P} at (4,1627) size 73x64 [bgcolor=#C0C0C0]
-                RenderText {#text} at (0,0) size 71x64
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 50: "element"
-                  text run at (0,32) width 71: "has a class"
-                  text run at (0,48) width 47: "of zero."
-              RenderBlock {P} at (4,1705) size 73x336 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 73x336
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 50: "element"
-                  text run at (0,32) width 41: "should"
-                  text run at (0,48) width 51: "have no"
-                  text run at (0,64) width 42: "bottom"
-                  text run at (0,80) width 54: "padding,"
-                  text run at (0,96) width 33: "since"
-                  text run at (0,112) width 54: "negative"
-                  text run at (0,128) width 51: "padding"
-                  text run at (0,144) width 65: "values are"
-                  text run at (0,160) width 20: "not"
-                  text run at (0,176) width 51: "allowed."
-                  text run at (0,192) width 53: "Both the"
-                  text run at (0,208) width 47: "content"
-                  text run at (0,224) width 73: "background"
-                  text run at (0,240) width 48: "and the"
-                  text run at (0,256) width 43: "normal"
-                  text run at (0,272) width 51: "padding"
-                  text run at (0,288) width 60: "should be"
-                  text run at (0,304) width 66: "aqua (light"
-                  text run at (0,320) width 33: "blue)."
+            RenderTableCell {TD} at (12,24) size 770x617 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x16 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 207x16
+                  text run at (0,0) width 207: "This element has a class of zero."
+              RenderBlock {P} at (4,34) size 762x80 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 751x32
+                  text run at (0,0) width 647: "This element should have a bottom padding of half an inch, which will require extra text in order to test. "
+                  text run at (647,0) width 104: "Both the content"
+                  text run at (0,16) width 351: "background and the padding should be aqua (light blue)."
+              RenderBlock {P} at (4,128) size 762x57 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 734x32
+                  text run at (0,0) width 630: "This element should have a bottom padding of 25 pixels, which will require extra text in order to test. "
+                  text run at (630,0) width 104: "Both the content"
+                  text run at (0,16) width 351: "background and the padding should be aqua (light blue)."
+              RenderBlock {P} at (4,199) size 762x102 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 709x32
+                  text run at (0,0) width 605: "This element should have a bottom padding of 5 em, which will require extra text in order to test. "
+                  text run at (605,0) width 104: "Both the content"
+                  text run at (0,16) width 351: "background and the padding should be aqua (light blue)."
+              RenderBlock {P} at (4,315) size 762x222 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 745x32
+                  text run at (0,0) width 745: "This element should have a bottom padding of 25%, which is calculated with respect to the width of the parent element."
+                  text run at (0,16) width 264: "This will require extra text in order to test. "
+                  text run at (264,16) width 459: "Both the content background and the padding should be aqua (light blue)."
+              RenderBlock {P} at (4,551) size 762x16 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 207x16
+                  text run at (0,0) width 207: "This element has a class of zero."
+              RenderBlock {P} at (4,581) size 762x32 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 691x32
+                  text run at (0,0) width 587: "This element should have no bottom padding, since negative padding values are not allowed. "
+                  text run at (587,0) width 104: "Both the content"
+                  text run at (0,16) width 398: "background and the normal padding should be aqua (light blue)."

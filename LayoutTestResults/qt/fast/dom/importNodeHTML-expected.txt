@@ -1,53 +1,39 @@
-layer at (0,0) size 96x450
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x450
-  RenderBlock {HTML} at (0,0) size 96x450
-    RenderBody {BODY} at (8,8) size 80x434
-      RenderBlock {DIV} at (0,0) size 80x434
-        RenderBlock {P} at (0,0) size 80x192
-          RenderText {#text} at (0,0) size 87x192
-            text run at (0,0) width 53: "This is a"
-            text run at (0,16) width 67: "simple test"
-            text run at (0,32) width 43: "of both"
-            text run at (0,48) width 73: "importNode"
-            text run at (0,64) width 24: "and"
-            text run at (0,80) width 71: "cloneNode,"
-            text run at (0,96) width 80: "created from"
-            text run at (0,112) width 73: "an example"
-            text run at (0,128) width 24: "that"
-            text run at (0,144) width 87: "demonstrated"
-            text run at (0,160) width 49: "a bug in"
-            text run at (0,176) width 76: "importNode."
-        RenderBlock {DIV} at (0,206) size 80x32 [bgcolor=#FFFF00]
-          RenderText {#text} at (0,0) size 75x32
-            text run at (0,0) width 75: "The original"
-            text run at (0,16) width 35: "node:"
-        RenderBlock {DIV} at (0,238) size 80x44 [bgcolor=#7F7FFF]
-          RenderBlock (anonymous) at (3,3) size 74x16
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x210
+        RenderBlock {P} at (0,0) size 784x16
+          RenderText {#text} at (0,0) size 764x16
+            text run at (0,0) width 764: "This is a simple test of both importNode and cloneNode, created from an example that demonstrated a bug in importNode."
+        RenderBlock {DIV} at (0,30) size 784x16 [bgcolor=#FFFF00]
+          RenderText {#text} at (0,0) size 114x16
+            text run at (0,0) width 114: "The original node:"
+        RenderBlock {DIV} at (0,46) size 784x44 [bgcolor=#7F7FFF]
+          RenderBlock (anonymous) at (3,3) size 778x16
             RenderText {#text} at (0,0) size 53x16
               text run at (0,0) width 53: "Outer bit"
-          RenderBlock {DIV} at (6,22) size 68x16 [color=#FFFF00] [bgcolor=#0000FF]
+          RenderBlock {DIV} at (6,22) size 772x16 [color=#FFFF00] [bgcolor=#0000FF]
             RenderText {#text} at (0,0) size 54x16
               text run at (0,0) width 54: "Inner bit."
-        RenderBlock {DIV} at (0,282) size 80x32 [bgcolor=#FFFF00]
-          RenderText {#text} at (0,0) size 86x32
-            text run at (0,0) width 74: "Copied with"
-            text run at (0,16) width 86: "importNode():"
-        RenderBlock {DIV} at (0,314) size 80x44 [bgcolor=#7F7FFF]
-          RenderBlock (anonymous) at (3,3) size 74x16
+        RenderBlock {DIV} at (0,90) size 784x16 [bgcolor=#FFFF00]
+          RenderText {#text} at (0,0) size 164x16
+            text run at (0,0) width 164: "Copied with importNode():"
+        RenderBlock {DIV} at (0,106) size 784x44 [bgcolor=#7F7FFF]
+          RenderBlock (anonymous) at (3,3) size 778x16
             RenderText {#text} at (0,0) size 53x16
               text run at (0,0) width 53: "Outer bit"
-          RenderBlock {DIV} at (6,22) size 68x16 [color=#FFFF00] [bgcolor=#0000FF]
+          RenderBlock {DIV} at (6,22) size 772x16 [color=#FFFF00] [bgcolor=#0000FF]
             RenderText {#text} at (0,0) size 54x16
               text run at (0,0) width 54: "Inner bit."
-        RenderBlock {DIV} at (0,358) size 80x32 [bgcolor=#FFFF00]
-          RenderText {#text} at (0,0) size 81x32
-            text run at (0,0) width 74: "Copied with"
-            text run at (0,16) width 81: "cloneNode():"
-        RenderBlock {DIV} at (0,390) size 80x44 [bgcolor=#7F7FFF]
-          RenderBlock (anonymous) at (3,3) size 74x16
+        RenderBlock {DIV} at (0,150) size 784x16 [bgcolor=#FFFF00]
+          RenderText {#text} at (0,0) size 159x16
+            text run at (0,0) width 159: "Copied with cloneNode():"
+        RenderBlock {DIV} at (0,166) size 784x44 [bgcolor=#7F7FFF]
+          RenderBlock (anonymous) at (3,3) size 778x16
             RenderText {#text} at (0,0) size 53x16
               text run at (0,0) width 53: "Outer bit"
-          RenderBlock {DIV} at (6,22) size 68x16 [color=#FFFF00] [bgcolor=#0000FF]
+          RenderBlock {DIV} at (6,22) size 772x16 [color=#FFFF00] [bgcolor=#0000FF]
             RenderText {#text} at (0,0) size 54x16
               text run at (0,0) width 54: "Inner bit."

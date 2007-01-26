@@ -1,21 +1,12 @@
-layer at (0,0) size 408x390
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 408x390
-  RenderBlock {HTML} at (0,0) size 96x390
-    RenderBody {BODY} at (8,8) size 80x374
-      RenderBlock {P} at (0,0) size 80x160
-        RenderText {#text} at (0,0) size 75x160
-          text run at (0,0) width 32: "If the"
-          text run at (0,16) width 45: "canvas"
-          text run at (0,32) width 50: "below is"
-          text run at (0,48) width 67: "black, then"
-          text run at (0,64) width 18: "we"
-          text run at (0,80) width 75: "managed to"
-          text run at (0,96) width 75: "draw before"
-          text run at (0,112) width 46: "loading"
-          text run at (0,128) width 74: "stylesheets."
-          text run at (0,144) width 50: "Hooray!"
-      RenderBlock (anonymous) at (0,174) size 80x200
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 568x16
+          text run at (0,0) width 568: "If the canvas below is black, then we managed to draw before loading stylesheets. Hooray!"
+      RenderBlock (anonymous) at (0,30) size 784x200
         RenderHTMLCanvas {CANVAS} at (0,0) size 400x200
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

@@ -1,19 +1,12 @@
-layer at (0,0) size 108x364
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 108x364
-  RenderBlock {HTML} at (0,0) size 96x364
-    RenderBody {BODY} at (8,14) size 80x342
-      RenderBlock {P} at (0,0) size 80x128
-        RenderText {#text} at (0,0) size 78x128
-          text run at (0,0) width 38: "There"
-          text run at (0,16) width 72: "should be a"
-          text run at (0,32) width 57: "complete"
-          text run at (0,48) width 58: "unbroken"
-          text run at (0,64) width 78: "drawing of a"
-          text run at (0,80) width 73: "yin-yang (\x{262F})"
-          text run at (0,96) width 43: "symbol"
-          text run at (0,112) width 39: "below."
-      RenderBlock {DIV} at (0,142) size 80x200
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x252
+  RenderBlock {HTML} at (0,0) size 800x252
+    RenderBody {BODY} at (8,14) size 784x230
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 486x16
+          text run at (0,0) width 486: "There should be a complete unbroken drawing of a yin-yang (\x{262F}) symbol below."
+      RenderBlock {DIV} at (0,30) size 784x200
         RenderBlock (floating) {DIV} at (0,0) size 100x100
         RenderBlock (floating) {DIV} at (0,100) size 100x100
-        RenderBlock {DIV} at (100,0) size 0x200
+        RenderBlock {DIV} at (100,0) size 684x200

@@ -1,12 +1,8 @@
-layer at (0,0) size 96x103
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x103
-  RenderBlock {HTML} at (0,0) size 96x103
-    RenderBody {BODY} at (8,8) size 80x81
-      RenderBlock {P} at (0,0) size 80x81 [border: (1px solid #FF0000) none]
-        RenderText {#text} at (0,0) size 60x80
-          text run at (0,0) width 49: "Nothing"
-          text run at (0,16) width 41: "should"
-          text run at (0,32) width 45: "appear"
-          text run at (0,48) width 60: "below the"
-          text run at (0,64) width 50: "red line."
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {P} at (0,0) size 784x17 [border: (1px solid #FF0000) none]
+        RenderText {#text} at (0,0) size 261x16
+          text run at (0,0) width 261: "Nothing should appear below the red line."

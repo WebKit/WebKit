@@ -1,34 +1,19 @@
-layer at (0,0) size 608x476
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 608x476
-  RenderBlock {HTML} at (0,0) size 96x476
-    RenderBody {BODY} at (8,8) size 80x454 [bgcolor=#FFFFFF]
-      RenderBlock {P} at (0,0) size 80x288
-        RenderText {#text} at (0,0) size 78x288
-          text run at (0,0) width 62: "Click on a"
-          text run at (0,16) width 65: "link on the"
-          text run at (0,32) width 55: "left hand"
-          text run at (0,48) width 78: "column. Also"
-          text run at (0,64) width 52: "note the"
-          text run at (0,80) width 63: "overlap of"
-          text run at (0,96) width 24: "the "
-          text run at (24,96) width 49: "text box"
-          text run at (0,112) width 49: "with the"
-          text run at (0,128) width 39: "submit"
-          text run at (0,144) width 78: "button. (And,"
-          text run at (0,160) width 58: "removing"
-          text run at (0,176) width 72: "the font tag"
-          text run at (0,192) width 38: "that is"
-          text run at (0,208) width 55: "wrapped"
-          text run at (0,224) width 68: "around the"
-          text run at (0,240) width 49: "text box"
-          text run at (0,256) width 57: "clears up"
-          text run at (0,272) width 45: "layout)."
-      RenderBlock (anonymous) at (0,302) size 80x16
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578 [bgcolor=#FFFFFF]
+      RenderBlock {P} at (0,0) size 784x32
+        RenderText {#text} at (0,0) size 764x32
+          text run at (0,0) width 423: "Click on a link on the left hand column. Also note the overlap of the "
+          text run at (423,0) width 341: "text box with the submit button. (And, removing the font"
+          text run at (0,16) width 125: "tag that is wrapped "
+          text run at (125,16) width 231: "around the text box clears up layout)."
+      RenderBlock (anonymous) at (0,46) size 784x16
         RenderBR {BR} at (0,0) size 0x16
-      RenderBlock {FORM} at (0,318) size 80x136
-        RenderBlock {CENTER} at (0,0) size 80x136
-          RenderTable {TABLE} at (0,0) size 600x136 [bgcolor=#EEEEEE] [border: (1px outset #808080)]
+      RenderBlock {FORM} at (0,62) size 784x136
+        RenderBlock {CENTER} at (0,0) size 784x136
+          RenderTable {TABLE} at (92,0) size 600x136 [bgcolor=#EEEEEE] [border: (1px outset #808080)]
             RenderTableSection {TBODY} at (1,1) size 598x134
               RenderTableRow {TR} at (0,3) size 598x128
                 RenderTableCell {TD} at (3,3) size 123x128 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -91,5 +76,5 @@ layer at (0,0) size 608x476
                         RenderTableCell {TD} at (346,47) size 106x26 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
                           RenderText {#text} at (5,5) size 27x16
                             text run at (5,5) width 27: "asdf"
-layer at (157,369) size 248x13
+layer at (249,113) size 248x13
   RenderBlock {DIV} at (3,3) size 248x13

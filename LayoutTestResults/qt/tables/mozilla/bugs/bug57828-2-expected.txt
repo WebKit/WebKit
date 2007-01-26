@@ -1,17 +1,12 @@
-layer at (0,0) size 683x351
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 683x351
-  RenderBlock {HTML} at (0,0) size 96x351
-    RenderBody {BODY} at (8,8) size 80x335
-      RenderBlock {P} at (0,0) size 80x96
-        RenderText {#text} at (0,0) size 76x96
-          text run at (0,0) width 59: "The table"
-          text run at (0,16) width 74: "below takes"
-          text run at (0,32) width 43: "out the"
-          text run at (0,48) width 76: "nowrap with"
-          text run at (0,64) width 61: "the cell of"
-          text run at (0,80) width 60: "1% width."
-      RenderTable {TABLE} at (0,110) size 675x59
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 393x16
+          text run at (0,0) width 393: "The table below takes out the nowrap with the cell of 1% width."
+      RenderTable {TABLE} at (0,30) size 675x59
         RenderTableSection {TBODY} at (0,0) size 675x59
           RenderTableRow {TR} at (0,0) size 675x59 [bgcolor=#9999CC]
             RenderTableCell {TD} at (0,17) size 636x24 [r=0 c=0 rs=1 cs=1]
@@ -37,16 +32,10 @@ layer at (0,0) size 683x351
                             text run at (3,30) width 13: "My"
                             text run at (3,41) width 29: "Yahoo!"
                       RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,183) size 80x112
-        RenderText {#text} at (0,0) size 80x112
-          text run at (0,0) width 59: "The table"
-          text run at (0,16) width 36: "below"
-          text run at (0,32) width 80: "leaves in the"
-          text run at (0,48) width 69: "nowrap but"
-          text run at (0,64) width 74: "take out the"
-          text run at (0,80) width 72: "1% width in"
-          text run at (0,96) width 48: "the cell."
-      RenderTable {TABLE} at (0,309) size 675x26
+      RenderBlock {P} at (0,103) size 784x16
+        RenderText {#text} at (0,0) size 462x16
+          text run at (0,0) width 462: "The table below leaves in the nowrap but take out the 1% width in the cell."
+      RenderTable {TABLE} at (0,133) size 675x26
         RenderTableSection {TBODY} at (0,0) size 675x26
           RenderTableRow {TR} at (0,0) size 675x26 [bgcolor=#9999CC]
             RenderTableCell {TD} at (0,1) size 497x24 [r=0 c=0 rs=1 cs=1]

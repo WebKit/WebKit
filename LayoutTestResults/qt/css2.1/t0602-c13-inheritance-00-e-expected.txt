@@ -1,25 +1,20 @@
-layer at (0,0) size 96x246
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x246
-  RenderBlock {HTML} at (0,0) size 96x246
-    RenderBody {BODY} at (8,14) size 80x218 [color=#008000]
-      RenderBlock {P} at (0,0) size 80x64
-        RenderText {#text} at (0,0) size 60x64
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 58: "sentence"
-          text run at (0,32) width 60: "should be"
-          text run at (0,48) width 40: "green."
-      RenderBlock {P} at (0,78) size 80x80 [color=#FFFFFF] [bgcolor=#008000]
-        RenderText {#text} at (0,0) size 58x32
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 58: "sentence"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x134
+  RenderBlock {HTML} at (0,0) size 800x134
+    RenderBody {BODY} at (8,14) size 784x106 [color=#008000]
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 197x16
+          text run at (0,0) width 197: "This sentence should be green."
+      RenderBlock {P} at (0,30) size 784x16 [color=#FFFFFF] [bgcolor=#008000]
+        RenderText {#text} at (0,0) size 93x16
+          text run at (0,0) width 93: "This sentence "
         RenderInline {SPAN} at (0,0) size 60x16
-          RenderText {#text} at (0,32) size 60x16
-            text run at (0,32) width 60: "should be"
-        RenderText {#text} at (0,48) size 53x32
-          text run at (0,48) width 53: "white on"
-          text run at (0,64) width 40: "green."
-      RenderBlock {P} at (0,172) size 80x16 [color=#FFFFFF]
+          RenderText {#text} at (93,0) size 60x16
+            text run at (93,0) width 60: "should be"
+        RenderText {#text} at (153,0) size 101x16
+          text run at (153,0) width 101: " white on green."
+      RenderBlock {P} at (0,60) size 784x16 [color=#FFFFFF]
         RenderInline {EM} at (0,0) size 36x16 [color=#008000]
           RenderText {#text} at (0,0) size 36x16
             text run at (0,0) width 36: "PASS"
@@ -29,7 +24,7 @@ layer at (0,0) size 96x246
           RenderText {#text} at (40,0) size 31x16
             text run at (40,0) width 31: "FAIL"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,202) size 80x16
+      RenderBlock {P} at (0,90) size 784x16
         RenderText {#text} at (0,0) size 40x16
           text run at (0,0) width 40: "PASS "
         RenderInline {DFN} at (0,0) size 29x16 [color=#FFFFFF]

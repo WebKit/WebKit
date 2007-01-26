@@ -1,36 +1,33 @@
-layer at (0,0) size 286x425
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 286x425
-  RenderBlock {HTML} at (0,0) size 96x425
-    RenderBody {BODY} at (8,8) size 80x409
-      RenderBlock {HR} at (0,0) size 80x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,16) size 80x128
-        RenderText {#text} at (0,0) size 49x16
-          text run at (0,0) width 49: "Test for"
-        RenderInline {I} at (0,0) size 278x112
-          RenderInline {A} at (0,0) size 278x32 [color=#0000EE]
-            RenderText {#text} at (0,16) size 278x32
-              text run at (0,16) width 278: "http://bugzilla.opendarwin.org/show_bug.cgi?"
-              text run at (0,32) width 52: "id=9547"
-          RenderText {#text} at (0,48) size 79x80
-            text run at (0,48) width 43: "Resize"
-            text run at (0,64) width 76: "corner does"
-            text run at (0,80) width 79: "not track the"
-            text run at (0,96) width 41: "mouse"
-            text run at (0,112) width 64: "accurately"
-        RenderText {#text} at (64,112) size 3x16
-          text run at (64,112) width 3: "."
-      RenderBlock {HR} at (0,158) size 80x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,271) size 80x138
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,16) size 784x16
+        RenderText {#text} at (0,0) size 53x16
+          text run at (0,0) width 53: "Test for "
+        RenderInline {I} at (0,0) size 653x16
+          RenderInline {A} at (0,0) size 330x16 [color=#0000EE]
+            RenderText {#text} at (53,0) size 330x16
+              text run at (53,0) width 330: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9547"
+          RenderText {#text} at (383,0) size 323x16
+            text run at (383,0) width 4: " "
+            text run at (387,0) width 319: "Resize corner does not track the mouse accurately"
+        RenderText {#text} at (706,0) size 3x16
+          text run at (706,0) width 3: "."
+      RenderBlock {HR} at (0,46) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,159) size 784x141
         RenderTextControl {TEXTAREA} at (0,0) size 150x100 [bgcolor=#FFFFFF] [border: (2px solid #0000FF)]
-        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (150,87) size 4x16
+          text run at (150,87) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderTextControl {TEXTAREA} at (2,102) size 183x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderTextControl {TEXTAREA} at (2,105) size 183x34 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (8,175) size 154x104 clip at (10,177) size 150x100
-  RenderBlock {DIV} at (0,167) size 154x104 [border: (2px solid #0000FF)]
-layer at (10,281) size 146x96
+layer at (8,63) size 154x104 clip at (10,65) size 150x100
+  RenderBlock {DIV} at (0,55) size 154x104 [border: (2px solid #0000FF)]
+layer at (10,169) size 146x96
   RenderBlock {DIV} at (2,2) size 146x96
-layer at (11,382) size 181x32
+layer at (11,273) size 181x32
   RenderBlock {DIV} at (1,1) size 181x32

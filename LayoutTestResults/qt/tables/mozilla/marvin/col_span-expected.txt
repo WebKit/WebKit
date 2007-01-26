@@ -1,48 +1,23 @@
-layer at (0,0) size 127x478
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 127x478
-  RenderBlock {HTML} at (0,0) size 96x478
-    RenderBody {BODY} at (8,8) size 80x462
-      RenderBlock {P} at (0,0) size 80x240
-        RenderText {#text} at (0,0) size 78x240
-          text run at (0,0) width 58: "The COL"
-          text run at (0,16) width 50: "element"
-          text run at (0,32) width 55: "specifies"
-          text run at (0,48) width 78: "attributes for"
-          text run at (0,64) width 42: "a table"
-          text run at (0,80) width 63: "column. In"
-          text run at (0,96) width 49: "this test"
-          text run at (0,112) width 57: "case, the"
-          text run at (0,128) width 29: "COL"
-          text run at (0,144) width 64: "element is"
-          text run at (0,160) width 45: "used in"
-          text run at (0,176) width 71: "conjunction"
-          text run at (0,192) width 49: "with the"
-          text run at (0,208) width 37: "SPAN"
-          text run at (0,224) width 53: "attribute."
-      RenderTable {TABLE} at (0,254) size 119x208 [border: (1px outset #808080)]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x32
+        RenderText {#text} at (0,0) size 758x32
+          text run at (0,0) width 758: "The COL element specifies attributes for a table column. In this test case, the COL element is used in conjunction with the"
+          text run at (0,16) width 94: "SPAN attribute."
+      RenderTable {TABLE} at (0,46) size 570x48 [border: (1px outset #808080)]
         RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableSection {TBODY} at (1,1) size 117x206
-          RenderTableRow {TR} at (0,2) size 117x148
-            RenderTableCell {TH} at (2,2) size 63x148 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (17,2) size 59x144
-                text run at (17,2) width 29: "This"
-                text run at (3,18) width 56: "heading"
-                text run at (7,34) width 48: "should"
-                text run at (14,50) width 34: "span"
-                text run at (8,66) width 47: "across"
-                text run at (6,82) width 50: "the two"
-                text run at (2,98) width 59: "columns"
-                text run at (10,114) width 43: "in this"
-                text run at (12,130) width 38: "table."
-          RenderTableRow {TR} at (0,152) size 117x52
-            RenderTableCell {TD} at (2,152) size 63x52 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 44x48
-                text run at (2,2) width 41: "This is"
-                text run at (2,18) width 44: "column"
-                text run at (2,34) width 27: "one."
-            RenderTableCell {TD} at (67,152) size 48x52 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 44x48
-                text run at (2,2) width 41: "This is"
-                text run at (2,18) width 44: "column"
-                text run at (2,34) width 25: "two."
+        RenderTableSection {TBODY} at (1,1) size 568x46
+          RenderTableRow {TR} at (0,2) size 568x20
+            RenderTableCell {TH} at (2,2) size 440x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 436x16
+                text run at (2,2) width 436: "This heading should span across the two columns in this table."
+          RenderTableRow {TR} at (0,24) size 568x20
+            RenderTableCell {TD} at (2,24) size 440x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 120x16
+                text run at (2,2) width 120: "This is column one."
+            RenderTableCell {TD} at (444,24) size 122x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 118x16
+                text run at (2,2) width 118: "This is column two."

@@ -1,15 +1,12 @@
-layer at (0,0) size 648x548
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 648x548
-  RenderBlock {HTML} at (0,0) size 96x548
-    RenderBody {BODY} at (8,8) size 80x532
-      RenderBlock (anonymous) at (0,0) size 80x64
-        RenderText {#text} at (0,0) size 58x64
-          text run at (0,0) width 25: "The"
-          text run at (0,16) width 58: "simplified"
-          text run at (0,32) width 46: "original"
-          text run at (0,48) width 53: "testcase"
-      RenderBlock {P} at (0,78) size 80x90
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 194x16
+          text run at (0,0) width 194: "The simplified original testcase"
+      RenderBlock {P} at (0,30) size 784x90
         RenderTable {TABLE} at (0,0) size 640x90 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 638x88
             RenderTableRow {TR} at (0,2) size 638x62
@@ -22,17 +19,11 @@ layer at (0,0) size 648x548
               RenderTableCell {TD} at (337,66) size 299x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 42x16
                   text run at (2,2) width 42: "SLmail"
-      RenderBlock {HR} at (0,182) size 130x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,191) size 80x112
-        RenderText {#text} at (0,0) size 80x112
-          text run at (0,0) width 25: "The"
-          text run at (0,16) width 58: "simplified"
-          text run at (0,32) width 46: "original"
-          text run at (0,48) width 53: "testcase"
-          text run at (0,64) width 67: "with image"
-          text run at (0,80) width 80: "size reduced"
-          text run at (0,96) width 51: "to190px"
-      RenderBlock {P} at (0,317) size 80x50
+      RenderBlock {HR} at (0,134) size 130x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,143) size 784x16
+        RenderText {#text} at (0,0) size 404x16
+          text run at (0,0) width 404: "The simplified original testcase with image size reduced to190px"
+      RenderBlock {P} at (0,173) size 784x50
         RenderTable {TABLE} at (0,0) size 640x50 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 638x48
             RenderTableRow {TR} at (0,2) size 638x22
@@ -45,13 +36,11 @@ layer at (0,0) size 648x548
               RenderTableCell {TD} at (131,26) size 505x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 42x16
                   text run at (2,2) width 42: "SLmail"
-      RenderBlock {HR} at (0,381) size 130x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,390) size 80x48
-        RenderText {#text} at (0,0) size 58x48
-          text run at (0,0) width 58: "Testcase"
-          text run at (0,16) width 44: "without"
-          text run at (0,32) width 38: "image"
-      RenderBlock {P} at (0,452) size 80x64
+      RenderBlock {HR} at (0,237) size 130x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,246) size 784x16
+        RenderText {#text} at (0,0) size 148x16
+          text run at (0,0) width 148: "Testcase without image"
+      RenderBlock {P} at (0,276) size 784x64
         RenderTable {TABLE} at (0,0) size 640x64 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 638x62
             RenderTableRow {TR} at (0,2) size 638x36
@@ -66,4 +55,4 @@ layer at (0,0) size 648x548
               RenderTableCell {TD} at (131,40) size 505x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 42x16
                   text run at (2,2) width 42: "SLmail"
-      RenderBlock {HR} at (0,530) size 130x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,354) size 130x2 [border: (1px inset #000000)]

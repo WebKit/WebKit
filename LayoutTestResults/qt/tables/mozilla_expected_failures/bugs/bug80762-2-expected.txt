@@ -1,302 +1,77 @@
-layer at (0,0) size 113x4272
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 113x4272
-  RenderBlock {HTML} at (0,0) size 96x4272
-    RenderBody {BODY} at (8,8) size 80x4256
-      RenderTable {TABLE} at (0,0) size 105x4256 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 103x4254
-          RenderTableRow {TR} at (0,0) size 103x18
+layer at (0,0) size 800x656
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x656
+  RenderBlock {HTML} at (0,0) size 800x656
+    RenderBody {BODY} at (8,8) size 784x640
+      RenderTable {TABLE} at (0,0) size 784x640 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x638
+          RenderTableRow {TR} at (0,0) size 782x18
             RenderTableCell {TD} at (0,0) size 73x18 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 20x16
                 text run at (1,1) width 20: "foo"
-            RenderTableCell {TD} at (73,0) size 30x18 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (73,0) size 709x18 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 20x16
                 text run at (1,1) width 20: "bar"
-          RenderTableRow {TR} at (0,18) size 103x4236
-            RenderTableCell {TD} at (0,18) size 103x4236 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
-              RenderTable {TABLE} at (1,1) size 101x4234 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 99x4232
-                  RenderTableRow {TR} at (0,2) size 99x4228
-                    RenderTableCell {TD} at (2,2) size 95x4228 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 91x256
-                        text run at (2,2) width 61: "When the"
-                        text run at (2,18) width 86: "Whiten house"
-                        text run at (2,34) width 81: "burned down"
-                        text run at (2,50) width 68: "in Renfrew"
-                        text run at (2,66) width 74: "Ontario, the"
-                        text run at (2,82) width 90: "insurer denied"
-                        text run at (2,98) width 44: "liability,"
-                        text run at (2,114) width 86: "asserting that"
-                        text run at (2,130) width 70: "the Plaintiff"
-                        text run at (2,146) width 50: "Daphne"
-                        text run at (2,162) width 73: "Whiten was"
-                        text run at (2,178) width 77: "the cause of"
-                        text run at (2,194) width 91: "the fire herself"
-                        text run at (2,210) width 52: "and had"
-                        text run at (2,226) width 64: "committed"
-                        text run at (2,242) width 39: "arson."
-                      RenderBR {BR} at (41,255) size 0x0
-                      RenderBR {BR} at (2,258) size 0x16
-                      RenderText {#text} at (2,274) size 91x656
-                        text run at (2,274) width 90: "The insurance"
-                        text run at (2,290) width 85: "company had"
-                        text run at (2,306) width 50: "not only"
-                        text run at (2,322) width 63: "refused to"
-                        text run at (2,338) width 76: "pay, but had"
-                        text run at (2,354) width 54: "received"
-                        text run at (2,370) width 85: "opinions from"
-                        text run at (2,386) width 89: "its adjuster, its"
-                        text run at (2,402) width 40: "expert"
-                        text run at (2,418) width 84: "engineer and"
-                        text run at (2,434) width 16: "an"
-                        text run at (2,450) width 78: "investigative"
-                        text run at (2,466) width 74: "agency that"
-                        text run at (2,482) width 73: "the fire was"
-                        text run at (2,498) width 86: "accidental. Its"
-                        text run at (2,514) width 80: "own adjuster"
-                        text run at (2,530) width 24: "had"
-                        text run at (2,546) width 90: "recommended"
-                        text run at (2,562) width 75: "the claim be"
-                        text run at (2,578) width 59: "paid. The"
-                        text run at (2,594) width 74: "defendant's"
-                        text run at (2,610) width 70: "counsel, as"
-                        text run at (2,626) width 55: "the court"
-                        text run at (2,642) width 66: "found, had"
-                        text run at (2,658) width 63: "pressured"
-                        text run at (2,674) width 63: "experts to"
-                        text run at (2,690) width 47: "provide"
-                        text run at (2,706) width 53: "opinions"
-                        text run at (2,722) width 86: "supporting an"
-                        text run at (2,738) width 91: "arson defence"
-                        text run at (2,754) width 80: "and withheld"
-                        text run at (2,770) width 51: "relevant"
-                        text run at (2,786) width 70: "information"
-                        text run at (2,802) width 52: "from the"
-                        text run at (2,818) width 75: "experts and"
-                        text run at (2,834) width 66: "gave them"
-                        text run at (2,850) width 67: "misleading"
-                        text run at (2,866) width 86: "information to"
-                        text run at (2,882) width 73: "buttress the"
-                        text run at (2,898) width 36: "arson"
-                        text run at (2,914) width 54: "defence."
-                      RenderBR {BR} at (56,927) size 0x0
-                      RenderBR {BR} at (2,930) size 0x16
-                      RenderText {#text} at (2,946) size 85x144
-                        text run at (2,946) width 78: "After the fire"
-                        text run at (2,962) width 70: "the Plaintiff"
-                        text run at (2,978) width 49: "and her"
-                        text run at (2,994) width 56: "husband,"
-                        text run at (2,1010) width 80: "Keith Whiten"
-                        text run at (2,1026) width 48: "needed"
-                        text run at (2,1042) width 46: "welfare"
-                        text run at (2,1058) width 83: "assistance to"
-                        text run at (2,1074) width 85: "support them."
-                      RenderBR {BR} at (87,1087) size 0x0
-                      RenderBR {BR} at (2,1090) size 0x16
-                      RenderText {#text} at (2,1106) size 90x368
-                        text run at (2,1106) width 54: "The jury,"
-                        text run at (2,1122) width 84: "however, in a"
-                        text run at (2,1138) width 75: "4 week trial,"
-                        text run at (2,1154) width 63: "disagreed"
-                        text run at (2,1170) width 49: "with the"
-                        text run at (2,1186) width 89: "position of the"
-                        text run at (2,1202) width 61: "insurance"
-                        text run at (2,1218) width 72: "company. It"
-                        text run at (2,1234) width 79: "awarded not"
-                        text run at (2,1250) width 90: "only the policy"
-                        text run at (2,1266) width 75: "sum against"
-                        text run at (2,1282) width 70: "the insurer,"
-                        text run at (2,1298) width 77: "but also was"
-                        text run at (2,1314) width 65: "sufficiently"
-                        text run at (2,1330) width 84: "annoyed with"
-                        text run at (2,1346) width 89: "the conduct of"
-                        text run at (2,1362) width 81: "the company"
-                        text run at (2,1378) width 67: "to award a"
-                        text run at (2,1394) width 41: "further"
-                        text run at (2,1410) width 48: "punitive"
-                        text run at (2,1426) width 51: "damage"
-                        text run at (2,1442) width 75: "award of $1"
-                        text run at (2,1458) width 42: "million."
-                      RenderBR {BR} at (44,1471) size 0x0
-                      RenderBR {BR} at (2,1474) size 0x16
-                      RenderText {#text} at (2,1490) size 91x368
-                        text run at (2,1490) width 86: "The company"
-                        text run at (2,1506) width 79: "appealed. At"
-                        text run at (2,1522) width 90: "the time of the"
-                        text run at (2,1538) width 70: "appeal, the"
-                        text run at (2,1554) width 57: "company"
-                        text run at (2,1570) width 91: "acknowledged"
-                        text run at (2,1586) width 72: "that the fire"
-                        text run at (2,1602) width 25: "was"
-                        text run at (2,1618) width 67: "accidental."
-                        text run at (2,1634) width 76: "The Ontario"
-                        text run at (2,1650) width 50: "Court of"
-                        text run at (2,1666) width 44: "Appeal"
-                        text run at (2,1682) width 80: "reversed the"
-                        text run at (2,1698) width 65: "jury award"
-                        text run at (2,1714) width 75: "and in a 2-1"
-                        text run at (2,1730) width 52: "decision"
-                        text run at (2,1746) width 71: "determined"
-                        text run at (2,1762) width 61: "that there"
-                        text run at (2,1778) width 72: "should be a"
-                        text run at (2,1794) width 43: "cap on"
-                        text run at (2,1810) width 48: "punitive"
-                        text run at (2,1826) width 74: "damages of"
-                        text run at (2,1842) width 62: "$100,000."
-                      RenderBR {BR} at (64,1855) size 0x0
-                      RenderBR {BR} at (2,1858) size 0x16
-                      RenderText {#text} at (2,1874) size 91x736
-                        text run at (2,1874) width 53: "Lawyers"
-                        text run at (2,1890) width 82: "became hard"
-                        text run at (2,1906) width 67: "pressed to"
-                        text run at (2,1922) width 83: "reconcile this"
-                        text run at (2,1938) width 81: "decision with"
-                        text run at (2,1954) width 78: "a prior case,"
-                        text run at (2,1970) width 89: "Hill vs. Church"
-                        text run at (2,1986) width 12: "of"
-                        text run at (2,2002) width 76: "Scientology."
-                        text run at (2,2018) width 79: "Hill, a Crown"
-                        text run at (2,2034) width 84: "Attorney, had"
-                        text run at (2,2050) width 54: "sued the"
-                        text run at (2,2066) width 66: "Church for"
-                        text run at (2,2082) width 67: "libel due to"
-                        text run at (2,2098) width 69: "statements"
-                        text run at (2,2114) width 35: "made"
-                        text run at (2,2130) width 81: "accusing him"
-                        text run at (2,2146) width 90: "of breaching a"
-                        text run at (2,2162) width 85: "judge's order."
-                        text run at (2,2178) width 18: "He"
-                        text run at (2,2194) width 71: "succeeded."
-                        text run at (2,2210) width 67: "The jury at"
-                        text run at (2,2226) width 64: "trial, aside"
-                        text run at (2,2242) width 90: "from awarding"
-                        text run at (2,2258) width 89: "compensatory"
-                        text run at (2,2274) width 91: "damages, also"
-                        text run at (2,2290) width 67: "awarded a"
-                        text run at (2,2306) width 48: "punitive"
-                        text run at (2,2322) width 80: "damage sum"
-                        text run at (2,2338) width 78: "of $800,000."
-                        text run at (2,2354) width 81: "The decision"
-                        text run at (2,2370) width 88: "was appealed"
-                        text run at (2,2386) width 44: "without"
-                        text run at (2,2402) width 90: "success to the"
-                        text run at (2,2418) width 85: "Ontario Court"
-                        text run at (2,2434) width 88: "of Appeal and"
-                        text run at (2,2450) width 75: "again to the"
-                        text run at (2,2466) width 56: "Supreme"
-                        text run at (2,2482) width 50: "Court of"
-                        text run at (2,2498) width 82: "Canada. The"
-                        text run at (2,2514) width 55: "award of"
-                        text run at (2,2530) width 48: "punitive"
-                        text run at (2,2546) width 87: "damages was"
-                        text run at (2,2562) width 76: "sustained at"
-                        text run at (2,2578) width 89: "both appellate"
-                        text run at (2,2594) width 39: "levels."
-                      RenderBR {BR} at (41,2607) size 0x0
-                      RenderBR {BR} at (2,2610) size 0x16
-                      RenderText {#text} at (2,2626) size 91x352
-                        text run at (2,2626) width 84: "In the Whiten"
-                        text run at (2,2642) width 57: "case, the"
-                        text run at (2,2658) width 61: "insurance"
-                        text run at (2,2674) width 63: "industry is"
-                        text run at (2,2690) width 75: "mounting all"
-                        text run at (2,2706) width 89: "its ammunition"
-                        text run at (2,2722) width 69: "to maintain"
-                        text run at (2,2738) width 91: "the notion of a"
-                        text run at (2,2754) width 43: "cap on"
-                        text run at (2,2770) width 48: "punitive"
-                        text run at (2,2786) width 87: "damages. It is"
-                        text run at (2,2802) width 86: "expected that"
-                        text run at (2,2818) width 74: "the Court of"
-                        text run at (2,2834) width 44: "Appeal"
-                        text run at (2,2850) width 75: "decision will"
-                        text run at (2,2866) width 58: "receive a"
-                        text run at (2,2882) width 79: "rough ride in"
-                        text run at (2,2898) width 80: "the Supreme"
-                        text run at (2,2914) width 75: "Court, given"
-                        text run at (2,2930) width 43: "the Hill"
-                        text run at (2,2946) width 90: "decision a few"
-                        text run at (2,2962) width 71: "years prior."
-                      RenderBR {BR} at (73,2975) size 0x0
-                      RenderBR {BR} at (2,2978) size 0x16
-                      RenderText {#text} at (2,2994) size 91x480
-                        text run at (2,2994) width 79: "The concept"
-                        text run at (2,3010) width 64: "of punitive"
-                        text run at (2,3026) width 72: "damages is"
-                        text run at (2,3042) width 74: "designed to"
-                        text run at (2,3058) width 65: "act as civil"
-                        text run at (2,3074) width 46: "penalty"
-                        text run at (2,3090) width 85: "imposed on a"
-                        text run at (2,3106) width 75: "wrong doer,"
-                        text run at (2,3122) width 63: "which has"
-                        text run at (2,3138) width 65: "conducted"
-                        text run at (2,3154) width 56: "itself in a"
-                        text run at (2,3170) width 58: "vindictive"
-                        text run at (2,3186) width 91: "manner, which"
-                        text run at (2,3202) width 85: "offends one's"
-                        text run at (2,3218) width 54: "sense of"
-                        text run at (2,3234) width 64: "propriety -"
-                        text run at (2,3250) width 79: "high handed"
-                        text run at (2,3266) width 56: "shocking"
-                        text run at (2,3282) width 64: "behaviour."
-                        text run at (2,3298) width 77: "Traditionally"
-                        text run at (2,3314) width 76: "the financial"
-                        text run at (2,3330) width 86: "abilities of the"
-                        text run at (2,3346) width 72: "wrong doer"
-                        text run at (2,3362) width 81: "are a factor -"
-                        text run at (2,3378) width 69: "the deeper"
-                        text run at (2,3394) width 73: "the pockets"
-                        text run at (2,3410) width 56: "the more"
-                        text run at (2,3426) width 90: "substantial the"
-                        text run at (2,3442) width 60: "sum to be"
-                        text run at (2,3458) width 58: "awarded."
-                      RenderBR {BR} at (60,3471) size 0x0
-                      RenderBR {BR} at (2,3474) size 0x16
-                      RenderText {#text} at (2,3490) size 91x720
-                        text run at (2,3490) width 61: "Canadian"
-                        text run at (2,3506) width 73: "courts have"
-                        text run at (2,3522) width 89: "been reluctant"
-                        text run at (2,3538) width 70: "to embrace"
-                        text run at (2,3554) width 82: "the concept -"
-                        text run at (2,3570) width 79: "awards such"
-                        text run at (2,3586) width 63: "as Hill are"
-                        text run at (2,3602) width 55: "rare. It is"
-                        text run at (2,3618) width 90: "worthy of note"
-                        text run at (2,3634) width 48: "that the"
-                        text run at (2,3650) width 64: "dissenting"
-                        text run at (2,3666) width 67: "reasons of"
-                        text run at (2,3682) width 88: "Justice Laskin"
-                        text run at (2,3698) width 59: "in Whiten"
-                        text run at (2,3714) width 83: "were much in"
-                        text run at (2,3730) width 55: "favour of"
-                        text run at (2,3746) width 72: "maintaining"
-                        text run at (2,3762) width 90: "the trial award"
-                        text run at (2,3778) width 76: "- a lucid and"
-                        text run at (2,3794) width 53: "powerful"
-                        text run at (2,3810) width 91: "dissent written"
-                        text run at (2,3826) width 63: "by a much"
-                        text run at (2,3842) width 63: "respected"
-                        text run at (2,3858) width 70: "jurist. Much"
-                        text run at (2,3874) width 78: "attention will"
-                        text run at (2,3890) width 69: "be given to"
-                        text run at (2,3906) width 81: "this decision."
-                        text run at (2,3922) width 90: "Oral argument"
-                        text run at (2,3938) width 78: "is set for the"
-                        text run at (2,3954) width 49: "week of"
-                        text run at (2,3970) width 64: "December"
-                        text run at (2,3986) width 44: "11th. A"
-                        text run at (2,4002) width 75: "decision will"
-                        text run at (2,4018) width 50: "likely be"
-                        text run at (2,4034) width 89: "forthcoming in"
-                        text run at (2,4050) width 90: "March to June"
-                        text run at (2,4066) width 73: "time period."
-                        text run at (2,4082) width 83: "This decision"
-                        text run at (2,4098) width 58: "will be no"
-                        text run at (2,4114) width 83: "doubt a much"
-                        text run at (2,4130) width 43: "quoted"
-                        text run at (2,4146) width 73: "decision for"
-                        text run at (2,4162) width 76: "many years,"
-                        text run at (2,4178) width 83: "regardless of"
-                        text run at (2,4194) width 80: "the outcome."
-                      RenderBR {BR} at (82,4207) size 0x0
-                      RenderBR {BR} at (2,4210) size 0x16
+          RenderTableRow {TR} at (0,18) size 782x620
+            RenderTableCell {TD} at (0,18) size 782x620 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+              RenderTable {TABLE} at (1,1) size 780x618 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 778x616
+                  RenderTableRow {TR} at (0,2) size 778x612
+                    RenderTableCell {TD} at (2,2) size 774x612 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 746x32
+                        text run at (2,2) width 746: "When the Whiten house burned down in Renfrew Ontario, the insurer denied liability, asserting that the Plaintiff Daphne"
+                        text run at (2,18) width 416: "Whiten was the cause of the fire herself and had committed arson."
+                      RenderBR {BR} at (418,31) size 0x0
+                      RenderBR {BR} at (2,34) size 0x16
+                      RenderText {#text} at (2,50) size 769x64
+                        text run at (2,50) width 752: "The insurance company had not only refused to pay, but had received opinions from its adjuster, its expert engineer and"
+                        text run at (2,66) width 769: "an investigative agency that the fire was accidental. Its own adjuster had recommended the claim be paid. The defendant's"
+                        text run at (2,82) width 765: "counsel, as the court found, had pressured experts to provide opinions supporting an arson defence and withheld relevant"
+                        text run at (2,98) width 611: "information from the experts and gave them misleading information to buttress the arson defence."
+                      RenderBR {BR} at (613,111) size 0x0
+                      RenderBR {BR} at (2,114) size 0x16
+                      RenderText {#text} at (2,130) size 627x16
+                        text run at (2,130) width 627: "After the fire the Plaintiff and her husband, Keith Whiten needed welfare assistance to support them."
+                      RenderBR {BR} at (629,143) size 0x0
+                      RenderBR {BR} at (2,146) size 0x16
+                      RenderText {#text} at (2,162) size 752x48
+                        text run at (2,162) width 752: "The jury, however, in a 4 week trial, disagreed with the position of the insurance company. It awarded not only the policy"
+                        text run at (2,178) width 733: "sum against the insurer, but also was sufficiently annoyed with the conduct of the company to award a further punitive"
+                        text run at (2,194) width 176: "damage award of $1 million."
+                      RenderBR {BR} at (178,207) size 0x0
+                      RenderBR {BR} at (2,210) size 0x16
+                      RenderText {#text} at (2,226) size 763x48
+                        text run at (2,226) width 749: "The company appealed. At the time of the appeal, the company acknowledged that the fire was accidental. The Ontario"
+                        text run at (2,242) width 763: "Court of Appeal reversed the jury award and in a 2-1 decision determined that there should be a cap on punitive damages"
+                        text run at (2,258) width 78: "of $100,000."
+                      RenderBR {BR} at (80,271) size 0x0
+                      RenderBR {BR} at (2,274) size 0x16
+                      RenderText {#text} at (2,290) size 760x80
+                        text run at (2,290) width 736: "Lawyers became hard pressed to reconcile this decision with a prior case, Hill vs. Church of Scientology. Hill, a Crown"
+                        text run at (2,306) width 667: "Attorney, had sued the Church for libel due to statements made accusing him of breaching a judge's order. "
+                        text run at (669,306) width 93: "He succeeded."
+                        text run at (2,322) width 735: "The jury at trial, aside from awarding compensatory damages, also awarded a punitive damage sum of $800,000. The"
+                        text run at (2,338) width 746: "decision was appealed without success to the Ontario Court of Appeal and again to the Supreme Court of Canada. The"
+                        text run at (2,354) width 414: "award of punitive damages was sustained at both appellate levels."
+                      RenderBR {BR} at (416,367) size 0x0
+                      RenderBR {BR} at (2,370) size 0x16
+                      RenderText {#text} at (2,386) size 737x48
+                        text run at (2,386) width 716: "In the Whiten case, the insurance industry is mounting all its ammunition to maintain the notion of a cap on punitive"
+                        text run at (2,402) width 737: "damages. It is expected that the Court of Appeal decision will receive a rough ride in the Supreme Court, given the Hill"
+                        text run at (2,418) width 165: "decision a few years prior."
+                      RenderBR {BR} at (167,431) size 0x0
+                      RenderBR {BR} at (2,434) size 0x16
+                      RenderText {#text} at (2,450) size 767x48
+                        text run at (2,450) width 757: "The concept of punitive damages is designed to act as civil penalty imposed on a wrong doer, which has conducted itself"
+                        text run at (2,466) width 767: "in a vindictive manner, which offends one's sense of propriety - high handed shocking behaviour. Traditionally the financial"
+                        text run at (2,482) width 677: "abilities of the wrong doer are a factor - the deeper the pockets the more substantial the sum to be awarded."
+                      RenderBR {BR} at (679,495) size 0x0
+                      RenderBR {BR} at (2,498) size 0x16
+                      RenderText {#text} at (2,514) size 768x80
+                        text run at (2,514) width 746: "Canadian courts have been reluctant to embrace the concept - awards such as Hill are rare. It is worthy of note that the"
+                        text run at (2,530) width 743: "dissenting reasons of Justice Laskin in Whiten were much in favour of maintaining the trial award - a lucid and powerful"
+                        text run at (2,546) width 768: "dissent written by a much respected jurist. Much attention will be given to this decision. Oral argument is set for the week of"
+                        text run at (2,562) width 745: "December 11th. A decision will likely be forthcoming in March to June time period. This decision will be no doubt a much"
+                        text run at (2,578) width 371: "quoted decision for many years, regardless of the outcome."
+                      RenderBR {BR} at (373,591) size 0x0
+                      RenderBR {BR} at (2,594) size 0x16

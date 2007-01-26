@@ -1,28 +1,25 @@
-layer at (0,0) size 96x1829
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x32
-  RenderBlock {HTML} at (0,0) size 96x32
-    RenderBody {BODY} at (8,8) size 80x16
+layer at (0,0) size 800x1813
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,0) size 20x16
         text run at (0,0) width 20: "foo"
-      RenderTable {TABLE} at (0,16) size 80x1805
-        RenderTableSection {TBODY} at (0,0) size 80x1805
-          RenderTableRow {TR} at (0,2) size 80x998
-            RenderTableCell {TD} at (2,2) size 76x82 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (668,0) size 116x1805
+        RenderTableSection {TBODY} at (0,0) size 116x1805
+          RenderTableRow {TR} at (0,2) size 116x998
+            RenderTableCell {TD} at (2,2) size 112x66 [r=0 c=0 rs=1 cs=1]
               RenderBR {BR} at (1,1) size 0x16
-              RenderText {#text} at (1,17) size 65x64
-                text run at (1,17) width 55: "Create a"
-                text run at (1,33) width 65: "cool home"
-                text run at (1,49) width 61: "page with"
-                text run at (1,65) width 20: "the"
-          RenderTableRow {TR} at (0,1002) size 80x801
-            RenderTableCell {TD} at (2,1002) size 76x82 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,17) size 100x48
+                text run at (1,17) width 85: "Create a cool"
+                text run at (1,33) width 100: "home page with"
+                text run at (1,49) width 20: "the"
+          RenderTableRow {TR} at (0,1002) size 116x801
+            RenderTableCell {TD} at (2,1002) size 112x50 [r=1 c=0 rs=1 cs=1]
               RenderBR {BR} at (1,1) size 0x16
-              RenderText {#text} at (1,17) size 67x64
-                text run at (1,17) width 23: "Get"
-                text run at (1,33) width 63: "organized"
-                text run at (1,49) width 67: "online with"
-                text run at (1,65) width 20: "the"
+              RenderText {#text} at (1,17) size 91x32
+                text run at (1,17) width 90: "Get organized"
+                text run at (1,33) width 91: "online with the"
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

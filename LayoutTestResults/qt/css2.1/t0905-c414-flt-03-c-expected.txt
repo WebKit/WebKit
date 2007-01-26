@@ -1,31 +1,15 @@
-layer at (0,0) size 302x515
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 302x348
-  RenderBlock {HTML} at (0,0) size 96x348
-    RenderBody {BODY} at (8,14) size 80x320
-      RenderBlock {P} at (0,0) size 80x320 [color=#000080]
-        RenderText {#text} at (0,0) size 77x320
-          text run at (0,0) width 54: "The blue"
-          text run at (0,16) width 77: "boxes below"
-          text run at (0,32) width 75: "should be in"
-          text run at (0,48) width 49: "numeric"
-          text run at (0,64) width 62: "order and"
-          text run at (0,80) width 40: "form a"
-          text run at (0,96) width 67: "backwards"
-          text run at (0,112) width 71: "\"D\". (Boxes"
-          text run at (0,128) width 71: "labelled \"A\""
-          text run at (0,144) width 75: "should be in"
-          text run at (0,160) width 47: "the first"
-          text run at (0,176) width 48: "column;"
-          text run at (0,192) width 37: "boxes"
-          text run at (0,208) width 71: "labelled \"B\""
-          text run at (0,224) width 75: "should be in"
-          text run at (0,240) width 74: "the second;"
-          text run at (0,256) width 43: "arrows"
-          text run at (0,272) width 73: "indicate the"
-          text run at (0,288) width 44: "correct"
-          text run at (0,304) width 69: "alignment.)"
-      RenderBlock {DIV} at (14,334) size 280x0
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x60
+  RenderBlock {HTML} at (0,0) size 800x60
+    RenderBody {BODY} at (8,14) size 784x32
+      RenderBlock {P} at (0,0) size 784x32 [color=#000080]
+        RenderText {#text} at (0,0) size 780x32
+          text run at (0,0) width 381: "The blue boxes below should be in numeric order and form a "
+          text run at (381,0) width 399: "backwards \"D\". (Boxes labelled \"A\" should be in the first column;"
+          text run at (0,16) width 397: "boxes labelled \"B\" should be in the second; arrows indicate the "
+          text run at (397,16) width 117: "correct alignment.)"
+      RenderBlock {DIV} at (14,46) size 280x0
         RenderBlock (floating) {P} at (167,3) size 110x28 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
           RenderText {#text} at (73,6) size 31x16
             text run at (73,6) width 31: "B 2 \x{21E8}"

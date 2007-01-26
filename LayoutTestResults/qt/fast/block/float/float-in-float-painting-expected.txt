@@ -1,47 +1,27 @@
-layer at (0,0) size 108x542
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 108x525
-  RenderBlock {HTML} at (0,0) size 96x525
-    RenderBody {BODY} at (8,8) size 80x509
-      RenderBlock {DIV} at (0,0) size 80x384
-        RenderText {#text} at (0,0) size 74x64
-          text run at (0,0) width 54: "This test"
-          text run at (0,16) width 65: "checks for"
-          text run at (0,32) width 74: "regressions"
-          text run at (0,48) width 46: "against"
-        RenderInline {A} at (0,0) size 95x144 [color=#0000EE]
-          RenderText {#text} at (0,64) size 95x144
-            text run at (0,64) width 39: "Radar"
-            text run at (0,80) width 59: "4279765:"
-            text run at (0,96) width 95: "REGRESSION:"
-            text run at (0,112) width 52: "\"More...\""
-            text run at (0,128) width 48: "links on"
-            text run at (0,144) width 76: "flickr groups"
-            text run at (0,160) width 74: "pages have"
-            text run at (0,176) width 79: "hover issues"
-            text run at (0,192) width 68: "(flickr.com)"
-        RenderText {#text} at (68,192) size 71x192
-          text run at (68,192) width 3: ","
-          text run at (0,208) width 70: "or rather, a"
-          text run at (0,224) width 44: "related"
-          text run at (0,240) width 50: "painting"
-          text run at (0,256) width 64: "issue. The"
-          text run at (0,272) width 31: "word"
-          text run at (0,288) width 46: "\"PASS\""
-          text run at (0,304) width 41: "should"
-          text run at (0,320) width 45: "appear"
-          text run at (0,336) width 51: "below in"
-          text run at (0,352) width 69: "translucent"
-          text run at (0,368) width 28: "blue."
-layer at (8,392) size 100x125
-  RenderBlock {DIV} at (0,384) size 80x125
-    RenderBlock (floating) {DIV} at (0,0) size 100x125
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x32
+        RenderText {#text} at (0,0) size 255x16
+          text run at (0,0) width 255: "This test checks for regressions against "
+        RenderInline {A} at (0,0) size 762x32 [color=#0000EE]
+          RenderText {#text} at (255,0) size 762x32
+            text run at (255,0) width 507: "Radar 4279765: REGRESSION: \"More...\" links on flickr groups pages have hover"
+            text run at (0,16) width 111: "issues (flickr.com)"
+        RenderText {#text} at (111,16) size 586x16
+          text run at (111,16) width 586: ", or rather, a related painting issue. The word \"PASS\" should appear below in translucent blue."
+layer at (8,40) size 784x125
+  RenderBlock {DIV} at (0,32) size 784x125
+    RenderBlock (floating) {DIV} at (0,0) size 104x125
       RenderImage {IMG} at (0,0) size 100x100
-      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (100,87) size 4x16
+        text run at (100,87) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderBlock (floating) {H1} at (23,118) size 77x32
+      RenderBlock (floating) {H1} at (27,121) size 77x32
         RenderInline {A} at (0,0) size 77x30 [color=#0000EE]
           RenderText {#text} at (0,1) size 77x30
             text run at (0,1) width 77: "PASS"
         RenderText {#text} at (0,0) size 0x0
-    RenderBR {BR} at (100,0) size 0x16
+    RenderBR {BR} at (104,0) size 0x16

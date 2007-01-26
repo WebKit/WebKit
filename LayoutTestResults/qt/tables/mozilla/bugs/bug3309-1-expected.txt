@@ -1,28 +1,28 @@
-layer at (0,0) size 139x116
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 139x116
-  RenderBlock {HTML} at (0,0) size 96x116
-    RenderBody {BODY} at (8,8) size 80x100
-      RenderBlock {DIV} at (0,0) size 80x100
-        RenderBlock {CENTER} at (0,0) size 80x100
-          RenderTable {TABLE} at (0,0) size 131x36 [bgcolor=#000000]
-            RenderTableSection {TBODY} at (0,0) size 131x36
-              RenderTableRow {TR} at (0,5) size 131x26
-                RenderTableCell {TD} at (5,5) size 18x26 [bgcolor=#FFCC33] [r=0 c=0 rs=1 cs=1]
-                  RenderText {#text} at (5,5) size 8x16
-                    text run at (5,5) width 8: "1"
-                RenderTableCell {TD} at (28,5) size 56x26 [bgcolor=#FFCC33] [r=0 c=1 rs=1 cs=1]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x84
+        RenderBlock {CENTER} at (0,0) size 784x84
+          RenderTable {TABLE} at (78,0) size 627x36 [bgcolor=#000000]
+            RenderTableSection {TBODY} at (0,0) size 627x36
+              RenderTableRow {TR} at (0,5) size 627x26
+                RenderTableCell {TD} at (5,5) size 40x26 [bgcolor=#FFCC33] [r=0 c=0 rs=1 cs=1]
+                  RenderText {#text} at (27,5) size 8x16
+                    text run at (27,5) width 8: "1"
+                RenderTableCell {TD} at (50,5) size 516x26 [bgcolor=#FFCC33] [r=0 c=1 rs=1 cs=1]
                   RenderInline {A} at (0,0) size 46x16 [color=#0000EE]
                     RenderText {#text} at (5,5) size 46x16
                       text run at (5,5) width 46: "Believe"
-                RenderTableCell {TD} at (89,5) size 37x26 [bgcolor=#FFCC33] [r=0 c=2 rs=1 cs=1]
-                  RenderText {#text} at (5,5) size 27x16
-                    text run at (5,5) width 27: "4:53"
-          RenderBlock {DIV} at (0,36) size 80x64
-            RenderBR {BR} at (80,0) size 0x16
-            RenderBR {BR} at (80,16) size 0x16
-            RenderInline {A} at (0,0) size 71x32 [color=#0000EE]
-              RenderInline {FONT} at (0,0) size 71x32 [color=#FFCC33]
-                RenderText {#text} at (9,32) size 71x32
-                  text run at (9,32) width 71: "Back to the"
-                  text run at (37,48) width 43: "index..."
+                RenderTableCell {TD} at (571,5) size 51x26 [bgcolor=#FFCC33] [r=0 c=2 rs=1 cs=1]
+                  RenderText {#text} at (19,5) size 27x16
+                    text run at (19,5) width 27: "4:53"
+          RenderBlock {DIV} at (0,36) size 784x48
+            RenderBR {BR} at (784,0) size 0x16
+            RenderBR {BR} at (784,16) size 0x16
+            RenderInline {A} at (0,0) size 118x16 [color=#0000EE]
+              RenderInline {FONT} at (0,0) size 118x16 [color=#FFCC33]
+                RenderText {#text} at (666,32) size 118x16
+                  text run at (666,32) width 75: "Back to the "
+                  text run at (741,32) width 43: "index..."

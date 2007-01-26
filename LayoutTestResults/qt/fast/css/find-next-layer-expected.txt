@@ -1,27 +1,22 @@
-layer at (0,0) size 286x275
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 286x176
-  RenderBlock {HTML} at (0,0) size 96x176
-    RenderBody {BODY} at (8,8) size 80x160
-      RenderBlock {P} at (0,0) size 80x144
-        RenderText {#text} at (0,0) size 49x16
-          text run at (0,0) width 49: "Test for"
-        RenderInline {I} at (0,0) size 278x128
-          RenderInline {A} at (0,0) size 278x32 [color=#0000EE]
-            RenderText {#text} at (0,16) size 278x32
-              text run at (0,16) width 278: "http://bugzilla.opendarwin.org/show_bug.cgi?"
-              text run at (0,32) width 52: "id=9124"
-          RenderText {#text} at (0,48) size 74x96
-            text run at (0,48) width 31: "Drop"
-            text run at (0,64) width 49: "shadow"
-            text run at (0,80) width 56: "obscures"
-            text run at (0,96) width 65: "\"add more"
-            text run at (0,112) width 74: "stuff\" bubble"
-            text run at (0,128) width 66: "at live.com"
-        RenderText {#text} at (66,128) size 3x16
-          text run at (66,128) width 3: "."
-      RenderBlock {HR} at (0,158) size 80x2 [border: (1px inset #000000)]
-layer at (8,175) size 100x100
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 53x16
+          text run at (0,0) width 53: "Test for "
+        RenderInline {I} at (0,0) size 695x16
+          RenderInline {A} at (0,0) size 330x16 [color=#0000EE]
+            RenderText {#text} at (53,0) size 330x16
+              text run at (53,0) width 330: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9124"
+          RenderText {#text} at (383,0) size 365x16
+            text run at (383,0) width 4: " "
+            text run at (387,0) width 361: "Drop shadow obscures \"add more stuff\" bubble at live.com"
+        RenderText {#text} at (748,0) size 3x16
+          text run at (748,0) width 3: "."
+      RenderBlock {HR} at (0,30) size 784x2 [border: (1px inset #000000)]
+layer at (8,47) size 100x100
   RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#FF0000]
-layer at (8,175) size 100x100
+layer at (8,47) size 100x100
   RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]

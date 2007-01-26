@@ -1,16 +1,12 @@
-layer at (0,0) size 218x169
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 218x169
-  RenderBlock {HTML} at (0,0) size 96x169
-    RenderBody {BODY} at (8,14) size 80x140
-      RenderBlock {P} at (0,0) size 80x80
-        RenderText {#text} at (0,0) size 72x80
-          text run at (0,0) width 38: "There"
-          text run at (0,16) width 72: "should be a"
-          text run at (0,32) width 37: "green"
-          text run at (0,48) width 62: "horizontal"
-          text run at (0,64) width 63: "bar below:"
-      RenderBlock {DIV} at (15,95) size 195x45 [bgcolor=#008000]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x105
+  RenderBlock {HTML} at (0,0) size 800x105
+    RenderBody {BODY} at (8,14) size 784x76
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 288x16
+          text run at (0,0) width 288: "There should be a green horizontal bar below:"
+      RenderBlock {DIV} at (15,31) size 195x45 [bgcolor=#008000]
         RenderBlock {P} at (0,0) size 195x15 [color=#FFFFFF] [bgcolor=#FFFFFF]
           RenderText {#text} at (0,-1) size 12x17
             text run at (0,-1) width 12: "x "

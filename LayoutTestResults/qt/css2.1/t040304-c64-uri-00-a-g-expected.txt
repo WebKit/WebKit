@@ -1,26 +1,17 @@
-layer at (0,0) size 96x278
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x278
-  RenderBlock {HTML} at (0,0) size 96x278
-    RenderBody {BODY} at (8,14) size 80x250
-      RenderBlock {P} at (0,0) size 80x64
-        RenderText {#text} at (0,0) size 74x64
-          text run at (0,0) width 38: "There"
-          text run at (0,16) width 60: "should be"
-          text run at (0,32) width 74: "three green"
-          text run at (0,48) width 72: "lines below."
-      RenderBlock {P} at (0,78) size 80x48 [color=#FFFFFF] [bgcolor=#FF0000]
-        RenderText {#text} at (0,0) size 60x48
-          text run at (0,0) width 53: "This line"
-          text run at (0,16) width 60: "should be"
-          text run at (0,32) width 40: "green."
-      RenderBlock {P} at (0,140) size 80x48 [color=#FFFFFF] [bgcolor=#FF0000]
-        RenderText {#text} at (0,0) size 60x48
-          text run at (0,0) width 53: "This line"
-          text run at (0,16) width 60: "should be"
-          text run at (0,32) width 40: "green."
-      RenderBlock {P} at (0,202) size 80x48 [color=#FFFFFF] [bgcolor=#FF0000]
-        RenderText {#text} at (0,0) size 60x48
-          text run at (0,0) width 53: "This line"
-          text run at (0,16) width 60: "should be"
-          text run at (0,32) width 40: "green."
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x134
+  RenderBlock {HTML} at (0,0) size 800x134
+    RenderBody {BODY} at (8,14) size 784x106
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 256x16
+          text run at (0,0) width 256: "There should be three green lines below."
+      RenderBlock {P} at (0,30) size 784x16 [color=#FFFFFF] [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 161x16
+          text run at (0,0) width 161: "This line should be green."
+      RenderBlock {P} at (0,60) size 784x16 [color=#FFFFFF] [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 161x16
+          text run at (0,0) width 161: "This line should be green."
+      RenderBlock {P} at (0,90) size 784x16 [color=#FFFFFF] [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 161x16
+          text run at (0,0) width 161: "This line should be green."

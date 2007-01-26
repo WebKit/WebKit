@@ -1,30 +1,15 @@
-layer at (0,0) size 348x488
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 348x488
-  RenderBlock {HTML} at (0,0) size 96x488
-    RenderBody {BODY} at (8,8) size 80x472
-      RenderBlock {P} at (0,0) size 80x272
-        RenderText {#text} at (0,0) size 179x272
-          text run at (0,0) width 54: "This test"
-          text run at (0,16) width 72: "makes sure"
-          text run at (0,32) width 24: "that"
-          text run at (0,48) width 178: "HTMLObjectElement.vspace"
-          text run at (0,64) width 24: "and"
-          text run at (0,80) width 179: "HTMLObjectElement.hspace"
-          text run at (0,96) width 79: "are exposed"
-          text run at (0,112) width 72: "as numbers"
-          text run at (0,128) width 62: "instead of"
-          text run at (0,144) width 70: "strings, per"
-          text run at (0,160) width 57: "the DOM"
-          text run at (0,176) width 46: "Level 2"
-          text run at (0,192) width 76: "HTML spec:"
-          text run at (0,208) width 174: "http://www.w3.org/TR/DOM-"
-          text run at (0,224) width 50: "Level-2-"
-          text run at (0,240) width 124: "HTML/html.html#ID-"
-          text run at (0,256) width 56: "9893177"
-      RenderBlock (anonymous) at (0,286) size 80x170
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x32
+        RenderText {#text} at (0,0) size 776x32
+          text run at (0,0) width 776: "This test makes sure that HTMLObjectElement.vspace and HTMLObjectElement.hspace are exposed as numbers instead of"
+          text run at (0,16) width 669: "strings, per the DOM Level 2 HTML spec: http://www.w3.org/TR/DOM-Level-2-HTML/html.html#ID-9893177"
+      RenderBlock (anonymous) at (0,46) size 784x170
         RenderPartObject {OBJECT} at (20,10) size 300x150
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,456) size 80x16
+      RenderBlock {DIV} at (0,216) size 784x16
         RenderText {#text} at (0,0) size 70x16
           text run at (0,0) width 70: "SUCCESS!"

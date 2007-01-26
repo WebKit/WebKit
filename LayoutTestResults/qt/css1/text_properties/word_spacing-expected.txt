@@ -1,16 +1,12 @@
-layer at (0,0) size 132x4072
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 132x4072
-  RenderBlock {HTML} at (0,0) size 96x4072
-    RenderBody {BODY} at (8,8) size 80x4056 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 80x80
-        RenderText {#text} at (0,0) size 77x80
-          text run at (0,0) width 58: "The style"
-          text run at (0,16) width 77: "declarations"
-          text run at (0,32) width 74: "which apply"
-          text run at (0,48) width 63: "to the text"
-          text run at (0,64) width 64: "below are:"
-      RenderBlock {PRE} at (0,94) size 80x192
+layer at (0,0) size 800x920
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x920
+  RenderBlock {HTML} at (0,0) size 800x920
+    RenderBody {BODY} at (8,8) size 784x904 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 352x16
+          text run at (0,0) width 352: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,30) size 784x192
         RenderText {#text} at (0,0) size 124x192
           text run at (0,0) width 108: ".one {word-spacing: 0.3in;}"
           text run at (108,0) width 0: " "
@@ -35,279 +31,86 @@ layer at (0,0) size 132x4072
           text run at (0,160) width 124: ".eleven {word-spacing: -0.2em;}"
           text run at (124,160) width 0: " "
           text run at (0,176) width 0: " "
-      RenderBlock {HR} at (0,300) size 80x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,316) size 80x160
-        RenderText {#text} at (0,0) size 65x160
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 38: "words"
-          text run at (0,32) width 65: "in this"
-          text run at (0,48) width 58: "sentence"
-          text run at (0,64) width 41: "should"
-          text run at (0,80) width 31: "have"
-          text run at (0,96) width 32: "extra"
-          text run at (0,112) width 38: "space"
-          text run at (0,128) width 53: "between"
-          text run at (0,144) width 34: "them."
-      RenderBlock {P} at (0,490) size 80x160
-        RenderText {#text} at (0,0) size 71x160
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 71: "words in"
-          text run at (0,32) width 22: "this"
-          text run at (0,48) width 58: "sentence"
-          text run at (0,64) width 41: "should"
-          text run at (0,80) width 31: "have"
-          text run at (0,96) width 32: "extra"
-          text run at (0,112) width 38: "space"
-          text run at (0,128) width 53: "between"
-          text run at (0,144) width 34: "them."
-      RenderBlock {P} at (0,664) size 80x160
-        RenderText {#text} at (0,0) size 71x160
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 71: "words in"
-          text run at (0,32) width 22: "this"
-          text run at (0,48) width 58: "sentence"
-          text run at (0,64) width 41: "should"
-          text run at (0,80) width 31: "have"
-          text run at (0,96) width 32: "extra"
-          text run at (0,112) width 38: "space"
-          text run at (0,128) width 53: "between"
-          text run at (0,144) width 34: "them."
-      RenderBlock {P} at (0,838) size 80x112
-        RenderText {#text} at (0,0) size 80x112
-          text run at (0,0) width 73: "This words"
-          text run at (0,16) width 41: "in this"
-          text run at (0,32) width 58: "sentence"
-          text run at (0,48) width 80: "should have"
-          text run at (0,64) width 78: "extra space"
-          text run at (0,80) width 53: "between"
-          text run at (0,96) width 34: "them."
-      RenderBlock {P} at (0,964) size 80x112
-        RenderText {#text} at (0,0) size 80x112
-          text run at (0,0) width 73: "This words"
-          text run at (0,16) width 41: "in this"
-          text run at (0,32) width 58: "sentence"
-          text run at (0,48) width 80: "should have"
-          text run at (0,64) width 78: "extra space"
-          text run at (0,80) width 53: "between"
-          text run at (0,96) width 34: "them."
-      RenderBlock {P} at (0,1090) size 80x160
-        RenderText {#text} at (0,0) size 67x160
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 67: "words in"
-          text run at (0,32) width 22: "this"
-          text run at (0,48) width 58: "sentence"
-          text run at (0,64) width 41: "should"
-          text run at (0,80) width 31: "have"
-          text run at (0,96) width 32: "extra"
-          text run at (0,112) width 38: "space"
-          text run at (0,128) width 53: "between"
-          text run at (0,144) width 34: "them."
-      RenderBlock {P} at (0,1264) size 80x128
-        RenderText {#text} at (0,0) size 77x128
-          text run at (0,0) width 77: "This words"
-          text run at (0,16) width 45: "in this"
-          text run at (0,32) width 58: "sentence"
-          text run at (0,48) width 41: "should"
-          text run at (0,64) width 75: "have extra"
-          text run at (0,80) width 38: "space"
-          text run at (0,96) width 53: "between"
-          text run at (0,112) width 34: "them."
-      RenderBlock {P} at (0,1406) size 80x240
-        RenderText {#text} at (0,0) size 74x192
-          text run at (0,0) width 74: "This words"
-          text run at (0,16) width 42: "in this"
-          text run at (0,32) width 58: "sentence"
-          text run at (0,48) width 41: "should"
-          text run at (0,64) width 72: "have extra"
-          text run at (0,80) width 38: "space"
-          text run at (0,96) width 53: "between"
-          text run at (0,112) width 61: "them, but"
-          text run at (0,128) width 51: "the last"
-          text run at (0,144) width 69: "few words"
-          text run at (0,160) width 40: "in the"
-          text run at (0,176) width 58: "sentence"
-        RenderInline {SPAN} at (0,0) size 76x48
-          RenderText {#text} at (0,192) size 76x48
-            text run at (0,192) width 76: "should have"
-            text run at (0,208) width 43: "normal"
-            text run at (0,224) width 49: "spacing"
-        RenderText {#text} at (49,224) size 3x16
-          text run at (49,224) width 3: "."
-      RenderBlock {P} at (0,1660) size 80x192
-        RenderText {#text} at (0,0) size 76x192
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 58: "sentence"
-          text run at (0,32) width 76: "should have"
-          text run at (0,48) width 43: "normal"
-          text run at (0,64) width 35: "word-"
-          text run at (0,80) width 52: "spacing,"
-          text run at (0,96) width 33: "since"
-          text run at (0,112) width 72: "percentage"
-          text run at (0,128) width 65: "values are"
-          text run at (0,144) width 72: "not allowed"
-          text run at (0,160) width 42: "on this"
-          text run at (0,176) width 56: "property."
-      RenderBlock {P} at (0,1866) size 80x192
-        RenderText {#text} at (0,0) size 80x192
-          text run at (0,0) width 80: "This words in"
-          text run at (0,16) width 22: "this"
-          text run at (0,32) width 58: "sentence"
-          text run at (0,48) width 74: "should have"
-          text run at (0,64) width 51: "reduced"
-          text run at (0,80) width 38: "space"
-          text run at (0,96) width 53: "between"
-          text run at (0,112) width 69: "them, since"
-          text run at (0,128) width 54: "negative"
-          text run at (0,144) width 63: "values are"
-          text run at (0,160) width 66: "allowed on"
-          text run at (0,176) width 80: "this property."
-      RenderTable {TABLE} at (0,2072) size 94x1984 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 92x1982
-          RenderTableRow {TR} at (0,0) size 92x56
-            RenderTableCell {TD} at (0,0) size 92x56 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 53x48
-                RenderText {#text} at (4,4) size 53x48
-                  text run at (4,4) width 45: "TABLE"
-                  text run at (4,20) width 51: "Testing"
-                  text run at (4,36) width 53: "Section"
-          RenderTableRow {TR} at (0,56) size 92x1926
-            RenderTableCell {TD} at (0,1007) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+      RenderBlock {HR} at (0,236) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,252) size 784x16
+        RenderText {#text} at (0,0) size 705x16
+          text run at (0,0) width 705: "This words in this sentence should have extra space between them."
+      RenderBlock {P} at (0,282) size 784x16
+        RenderText {#text} at (0,0) size 605x16
+          text run at (0,0) width 605: "This words in this sentence should have extra space between them."
+      RenderBlock {P} at (0,312) size 784x16
+        RenderText {#text} at (0,0) size 605x16
+          text run at (0,0) width 605: "This words in this sentence should have extra space between them."
+      RenderBlock {P} at (0,342) size 784x16
+        RenderText {#text} at (0,0) size 465x16
+          text run at (0,0) width 465: "This words in this sentence should have extra space between them."
+      RenderBlock {P} at (0,372) size 784x16
+        RenderText {#text} at (0,0) size 465x16
+          text run at (0,0) width 465: "This words in this sentence should have extra space between them."
+      RenderBlock {P} at (0,402) size 784x16
+        RenderText {#text} at (0,0) size 565x16
+          text run at (0,0) width 565: "This words in this sentence should have extra space between them."
+      RenderBlock {P} at (0,432) size 784x16
+        RenderText {#text} at (0,0) size 505x16
+          text run at (0,0) width 505: "This words in this sentence should have extra space between them."
+      RenderBlock {P} at (0,462) size 784x32
+        RenderText {#text} at (0,0) size 756x16
+          text run at (0,0) width 756: "This words in this sentence should have extra space between them, but the last few words in the sentence"
+        RenderInline {SPAN} at (0,0) size 176x16
+          RenderText {#text} at (0,16) size 176x16
+            text run at (0,16) width 176: "should have normal spacing"
+        RenderText {#text} at (176,16) size 3x16
+          text run at (176,16) width 3: "."
+      RenderBlock {P} at (0,508) size 784x16
+        RenderText {#text} at (0,0) size 671x16
+          text run at (0,0) width 671: "This sentence should have normal word-spacing, since percentage values are not allowed on this property."
+      RenderBlock {P} at (0,538) size 784x16
+        RenderText {#text} at (0,0) size 730x16
+          text run at (0,0) width 730: "This words in this sentence should have reduced space between them, since negative values are allowed on this property."
+      RenderTable {TABLE} at (0,568) size 784x336 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x334
+          RenderTableRow {TR} at (0,0) size 782x24
+            RenderTableCell {TD} at (0,0) size 782x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 157x16
+                RenderText {#text} at (4,4) size 157x16
+                  text run at (4,4) width 157: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,24) size 782x310
+            RenderTableCell {TD} at (0,167) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x16
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,56) size 80x1926 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 72x160
-                RenderText {#text} at (0,0) size 65x160
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 38: "words"
-                  text run at (0,32) width 65: "in this"
-                  text run at (0,48) width 58: "sentence"
-                  text run at (0,64) width 41: "should"
-                  text run at (0,80) width 31: "have"
-                  text run at (0,96) width 32: "extra"
-                  text run at (0,112) width 38: "space"
-                  text run at (0,128) width 53: "between"
-                  text run at (0,144) width 34: "them."
-              RenderBlock {P} at (4,178) size 72x160
-                RenderText {#text} at (0,0) size 71x160
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 71: "words in"
-                  text run at (0,32) width 22: "this"
-                  text run at (0,48) width 58: "sentence"
-                  text run at (0,64) width 41: "should"
-                  text run at (0,80) width 31: "have"
-                  text run at (0,96) width 32: "extra"
-                  text run at (0,112) width 38: "space"
-                  text run at (0,128) width 53: "between"
-                  text run at (0,144) width 34: "them."
-              RenderBlock {P} at (4,352) size 72x160
-                RenderText {#text} at (0,0) size 71x160
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 71: "words in"
-                  text run at (0,32) width 22: "this"
-                  text run at (0,48) width 58: "sentence"
-                  text run at (0,64) width 41: "should"
-                  text run at (0,80) width 31: "have"
-                  text run at (0,96) width 32: "extra"
-                  text run at (0,112) width 38: "space"
-                  text run at (0,128) width 53: "between"
-                  text run at (0,144) width 34: "them."
-              RenderBlock {P} at (4,526) size 72x144
-                RenderText {#text} at (0,0) size 71x144
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 57: "words in"
-                  text run at (0,32) width 22: "this"
-                  text run at (0,48) width 58: "sentence"
-                  text run at (0,64) width 41: "should"
-                  text run at (0,80) width 71: "have extra"
-                  text run at (0,96) width 38: "space"
-                  text run at (0,112) width 53: "between"
-                  text run at (0,128) width 34: "them."
-              RenderBlock {P} at (4,684) size 72x144
-                RenderText {#text} at (0,0) size 71x144
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 57: "words in"
-                  text run at (0,32) width 22: "this"
-                  text run at (0,48) width 58: "sentence"
-                  text run at (0,64) width 41: "should"
-                  text run at (0,80) width 71: "have extra"
-                  text run at (0,96) width 38: "space"
-                  text run at (0,112) width 53: "between"
-                  text run at (0,128) width 34: "them."
-              RenderBlock {P} at (4,842) size 72x160
-                RenderText {#text} at (0,0) size 67x160
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 67: "words in"
-                  text run at (0,32) width 22: "this"
-                  text run at (0,48) width 58: "sentence"
-                  text run at (0,64) width 41: "should"
-                  text run at (0,80) width 31: "have"
-                  text run at (0,96) width 32: "extra"
-                  text run at (0,112) width 38: "space"
-                  text run at (0,128) width 53: "between"
-                  text run at (0,144) width 34: "them."
-              RenderBlock {P} at (4,1016) size 72x160
-                RenderText {#text} at (0,0) size 61x160
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 61: "words in"
-                  text run at (0,32) width 22: "this"
-                  text run at (0,48) width 58: "sentence"
-                  text run at (0,64) width 41: "should"
-                  text run at (0,80) width 31: "have"
-                  text run at (0,96) width 32: "extra"
-                  text run at (0,112) width 38: "space"
-                  text run at (0,128) width 53: "between"
-                  text run at (0,144) width 34: "them."
-              RenderBlock {P} at (4,1190) size 72x272
-                RenderText {#text} at (0,0) size 72x208
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 58: "words in"
-                  text run at (0,32) width 22: "this"
-                  text run at (0,48) width 58: "sentence"
-                  text run at (0,64) width 41: "should"
-                  text run at (0,80) width 72: "have extra"
-                  text run at (0,96) width 38: "space"
-                  text run at (0,112) width 53: "between"
-                  text run at (0,128) width 61: "them, but"
-                  text run at (0,144) width 51: "the last"
-                  text run at (0,160) width 69: "few words"
-                  text run at (0,176) width 40: "in the"
-                  text run at (0,192) width 58: "sentence"
-                RenderInline {SPAN} at (0,0) size 49x64
-                  RenderText {#text} at (0,208) size 49x64
-                    text run at (0,208) width 41: "should"
-                    text run at (0,224) width 31: "have"
-                    text run at (0,240) width 43: "normal"
-                    text run at (0,256) width 49: "spacing"
-                RenderText {#text} at (49,256) size 3x16
-                  text run at (49,256) width 3: "."
-              RenderBlock {P} at (4,1476) size 72x208
-                RenderText {#text} at (0,0) size 72x208
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 58: "sentence"
-                  text run at (0,32) width 41: "should"
-                  text run at (0,48) width 31: "have"
-                  text run at (0,64) width 43: "normal"
-                  text run at (0,80) width 35: "word-"
-                  text run at (0,96) width 52: "spacing,"
-                  text run at (0,112) width 33: "since"
-                  text run at (0,128) width 72: "percentage"
-                  text run at (0,144) width 65: "values are"
-                  text run at (0,160) width 72: "not allowed"
-                  text run at (0,176) width 42: "on this"
-                  text run at (0,192) width 56: "property."
-              RenderBlock {P} at (4,1698) size 72x224
-                RenderText {#text} at (0,0) size 69x224
-                  text run at (0,0) width 67: "This words"
-                  text run at (0,16) width 35: "in this"
-                  text run at (0,32) width 58: "sentence"
-                  text run at (0,48) width 41: "should"
-                  text run at (0,64) width 31: "have"
-                  text run at (0,80) width 51: "reduced"
-                  text run at (0,96) width 38: "space"
-                  text run at (0,112) width 53: "between"
-                  text run at (0,128) width 69: "them, since"
-                  text run at (0,144) width 54: "negative"
-                  text run at (0,160) width 63: "values are"
-                  text run at (0,176) width 66: "allowed on"
-                  text run at (0,192) width 22: "this"
-                  text run at (0,208) width 56: "property."
+            RenderTableCell {TD} at (12,24) size 770x310 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x16
+                RenderText {#text} at (0,0) size 705x16
+                  text run at (0,0) width 705: "This words in this sentence should have extra space between them."
+              RenderBlock {P} at (4,34) size 762x16
+                RenderText {#text} at (0,0) size 605x16
+                  text run at (0,0) width 605: "This words in this sentence should have extra space between them."
+              RenderBlock {P} at (4,64) size 762x16
+                RenderText {#text} at (0,0) size 605x16
+                  text run at (0,0) width 605: "This words in this sentence should have extra space between them."
+              RenderBlock {P} at (4,94) size 762x16
+                RenderText {#text} at (0,0) size 465x16
+                  text run at (0,0) width 465: "This words in this sentence should have extra space between them."
+              RenderBlock {P} at (4,124) size 762x16
+                RenderText {#text} at (0,0) size 465x16
+                  text run at (0,0) width 465: "This words in this sentence should have extra space between them."
+              RenderBlock {P} at (4,154) size 762x16
+                RenderText {#text} at (0,0) size 565x16
+                  text run at (0,0) width 565: "This words in this sentence should have extra space between them."
+              RenderBlock {P} at (4,184) size 762x16
+                RenderText {#text} at (0,0) size 505x16
+                  text run at (0,0) width 505: "This words in this sentence should have extra space between them."
+              RenderBlock {P} at (4,214) size 762x32
+                RenderText {#text} at (0,0) size 756x16
+                  text run at (0,0) width 756: "This words in this sentence should have extra space between them, but the last few words in the sentence"
+                RenderInline {SPAN} at (0,0) size 176x16
+                  RenderText {#text} at (0,16) size 176x16
+                    text run at (0,16) width 176: "should have normal spacing"
+                RenderText {#text} at (176,16) size 3x16
+                  text run at (176,16) width 3: "."
+              RenderBlock {P} at (4,260) size 762x16
+                RenderText {#text} at (0,0) size 671x16
+                  text run at (0,0) width 671: "This sentence should have normal word-spacing, since percentage values are not allowed on this property."
+              RenderBlock {P} at (4,290) size 762x16
+                RenderText {#text} at (0,0) size 730x16
+                  text run at (0,0) width 730: "This words in this sentence should have reduced space between them, since negative values are allowed on this property."

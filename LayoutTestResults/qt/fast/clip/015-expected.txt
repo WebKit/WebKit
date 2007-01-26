@@ -1,23 +1,11 @@
-layer at (0,0) size 108x324
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 108x324
-  RenderBlock {HTML} at (0,0) size 96x324
-    RenderBody {BODY} at (8,8) size 80x308
-      RenderBlock (anonymous) at (0,0) size 80x208
-        RenderText {#text} at (0,0) size 77x208
-          text run at (0,0) width 69: "You should"
-          text run at (0,16) width 35: "see a"
-          text run at (0,32) width 55: "100x100"
-          text run at (0,48) width 37: "green"
-          text run at (0,64) width 43: "square"
-          text run at (0,80) width 43: "below. "
-          text run at (43,80) width 27: "This"
-          text run at (0,96) width 68: "test makes"
-          text run at (0,112) width 27: "sure"
-          text run at (0,128) width 53: "overflow"
-          text run at (0,144) width 29: "uses"
-          text run at (0,160) width 65: "containing"
-          text run at (0,176) width 77: "blocks when"
-          text run at (0,192) width 51: "clipping."
-layer at (8,216) size 100x100 scrollWidth 200 scrollHeight 200
-  RenderBlock {DIV} at (0,208) size 100x100 [bgcolor=#008000]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x132
+  RenderBlock {HTML} at (0,0) size 800x132
+    RenderBody {BODY} at (8,8) size 784x116
+      RenderBlock (anonymous) at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 727x16
+          text run at (0,0) width 302: "You should see a 100x100 green square below. "
+          text run at (302,0) width 425: "This test makes sure overflow uses containing blocks when clipping."
+layer at (8,24) size 100x100 scrollWidth 200 scrollHeight 200
+  RenderBlock {DIV} at (0,16) size 100x100 [bgcolor=#008000]

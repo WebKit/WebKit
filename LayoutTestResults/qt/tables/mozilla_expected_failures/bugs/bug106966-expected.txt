@@ -1,8 +1,8 @@
-layer at (0,0) size 245x1349
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 245x1349
-  RenderBlock {HTML} at (0,0) size 96x1349
-    RenderBody {BODY} at (8,8) size 80x1333
+layer at (0,0) size 800x1349
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x1349
+  RenderBlock {HTML} at (0,0) size 800x1349
+    RenderBody {BODY} at (8,8) size 784x1333
       RenderTable {TABLE} at (0,0) size 200x114 [bgcolor=#FFA500] [border: (10px solid #0000FF)]
         RenderBlock {CAPTION} at (0,0) size 150x16
           RenderText {#text} at (21,0) size 107x16
@@ -15,7 +15,7 @@ layer at (0,0) size 245x1349
             RenderTableCell {TD} at (82,15) size 53x18 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 129x16
                 text run at (1,1) width 129: "contentwithoutspace"
-      RenderBlock (anonymous) at (0,114) size 80x16
+      RenderBlock (anonymous) at (0,114) size 784x16
         RenderBR {BR} at (0,0) size 0x16
       RenderTable {TABLE} at (0,244) size 200x147 [bgcolor=#FFA500] [border: (10px solid #0000FF)]
         RenderBlock {CAPTION} at (0,0) size 150x16

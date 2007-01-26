@@ -1,67 +1,42 @@
-layer at (0,0) size 96x680
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x680
-  RenderBlock {html} at (0,0) size 96x680
-    RenderBody {body} at (8,8) size 80x664
-      RenderTable {table} at (0,0) size 80x154 [border: (1px outset #808080)]
-        RenderTableSection {tbody} at (1,1) size 78x152
-          RenderTableRow {tr} at (0,2) size 78x148
-            RenderTableCell {td} at (2,2) size 74x148 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 62x144
-                text run at (2,2) width 61: "This table"
-                text run at (2,18) width 41: "should"
-                text run at (2,34) width 43: "have a"
-                text run at (2,50) width 33: "width"
-                text run at (2,66) width 52: "100% of"
-                text run at (2,82) width 20: "the"
-                text run at (2,98) width 55: "available"
-                text run at (2,114) width 62: "horizontal"
-                text run at (2,130) width 38: "space"
-      RenderBlock (anonymous) at (0,154) size 80x16
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x216
+  RenderBlock {html} at (0,0) size 800x216
+    RenderBody {body} at (8,8) size 784x200
+      RenderTable {table} at (0,0) size 784x26 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 782x24
+          RenderTableRow {tr} at (0,2) size 782x20
+            RenderTableCell {td} at (2,2) size 778x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 437x16
+                text run at (2,2) width 399: "This table should have a width 100% of the available horizontal "
+                text run at (401,2) width 38: "space"
+      RenderBlock (anonymous) at (0,26) size 784x16
         RenderBR {br} at (0,0) size 0x16
-      RenderTable {table} at (0,170) size 72x154 [border: (1px outset #808080)]
-        RenderTableSection {tbody} at (1,1) size 70x152
-          RenderTableRow {tr} at (0,2) size 70x148
-            RenderTableCell {td} at (2,2) size 66x148 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 62x144
-                text run at (2,2) width 61: "This table"
-                text run at (2,18) width 41: "should"
-                text run at (2,34) width 43: "have a"
-                text run at (2,50) width 33: "width"
-                text run at (2,66) width 44: "75% of"
-                text run at (2,82) width 20: "the"
-                text run at (2,98) width 55: "available"
-                text run at (2,114) width 62: "horizontal"
-                text run at (2,130) width 38: "space"
-      RenderBlock (anonymous) at (0,324) size 80x16
+      RenderTable {table} at (0,42) size 588x26 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 586x24
+          RenderTableRow {tr} at (0,2) size 586x20
+            RenderTableCell {td} at (2,2) size 582x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 429x16
+                text run at (2,2) width 391: "This table should have a width 75% of the available horizontal "
+                text run at (393,2) width 38: "space"
+      RenderBlock (anonymous) at (0,68) size 784x16
         RenderBR {br} at (0,0) size 0x16
-      RenderTable {table} at (0,340) size 72x154 [border: (1px outset #808080)]
-        RenderTableSection {tbody} at (1,1) size 70x152
-          RenderTableRow {tr} at (0,2) size 70x148
-            RenderTableCell {td} at (2,2) size 66x148 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 62x144
-                text run at (2,2) width 61: "This table"
-                text run at (2,18) width 41: "should"
-                text run at (2,34) width 43: "have a"
-                text run at (2,50) width 33: "width"
-                text run at (2,66) width 44: "50% of"
-                text run at (2,82) width 20: "the"
-                text run at (2,98) width 55: "available"
-                text run at (2,114) width 62: "horizontal"
-                text run at (2,130) width 38: "space"
-      RenderBlock (anonymous) at (0,494) size 80x16
+      RenderTable {table} at (0,84) size 392x42 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 390x40
+          RenderTableRow {tr} at (0,2) size 390x36
+            RenderTableCell {td} at (2,2) size 386x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 321x32
+                text run at (2,2) width 321: "This table should have a width 50% of the available"
+                text run at (2,18) width 66: "horizontal "
+                text run at (68,18) width 38: "space"
+      RenderBlock (anonymous) at (0,126) size 784x16
         RenderBR {br} at (0,0) size 0x16
-      RenderTable {table} at (0,510) size 72x154 [border: (1px outset #808080)]
-        RenderTableSection {tbody} at (1,1) size 70x152
-          RenderTableRow {tr} at (0,2) size 70x148
-            RenderTableCell {td} at (2,2) size 66x148 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 62x144
-                text run at (2,2) width 61: "This table"
-                text run at (2,18) width 41: "should"
-                text run at (2,34) width 43: "have a"
-                text run at (2,50) width 33: "width"
-                text run at (2,66) width 44: "25% of"
-                text run at (2,82) width 20: "the"
-                text run at (2,98) width 55: "available"
-                text run at (2,114) width 62: "horizontal"
-                text run at (2,130) width 38: "space"
+      RenderTable {table} at (0,142) size 196x58 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 194x56
+          RenderTableRow {tr} at (0,2) size 194x52
+            RenderTableCell {td} at (2,2) size 190x52 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 164x48
+                text run at (2,2) width 153: "This table should have a"
+                text run at (2,18) width 164: "width 25% of the available"
+                text run at (2,34) width 66: "horizontal "
+                text run at (68,34) width 38: "space"

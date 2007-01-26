@@ -1,16 +1,12 @@
-layer at (0,0) size 372x1512
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 372x1512
-  RenderBlock {HTML} at (0,0) size 96x1512
-    RenderBody {BODY} at (8,8) size 80x1496 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 80x80
-        RenderText {#text} at (0,0) size 77x80
-          text run at (0,0) width 58: "The style"
-          text run at (0,16) width 77: "declarations"
-          text run at (0,32) width 74: "which apply"
-          text run at (0,48) width 63: "to the text"
-          text run at (0,64) width 64: "below are:"
-      RenderBlock {PRE} at (0,94) size 80x48
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 352x16
+          text run at (0,0) width 352: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,30) size 784x48
         RenderText {#text} at (0,0) size 364x48
           text run at (0,0) width 196: ".one {border-color: purple; border-style: solid;}"
           text run at (196,0) width 0: " "
@@ -18,102 +14,36 @@ layer at (0,0) size 372x1512
           text run at (284,16) width 0: " "
           text run at (0,32) width 364: ".three {border-color: purple green blue yellow; border-width: medium; border-style: solid;}"
           text run at (364,32) width 0: " "
-      RenderBlock {HR} at (0,156) size 80x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,172) size 80x134 [border: (3px solid #800080)]
-        RenderText {#text} at (3,3) size 74x128
-          text run at (3,3) width 27: "This"
-          text run at (3,19) width 50: "element"
-          text run at (3,35) width 41: "should"
-          text run at (3,51) width 43: "have a"
-          text run at (3,67) width 39: "purple"
-          text run at (3,83) width 41: "border"
-          text run at (3,99) width 74: "surrounding"
-          text run at (3,115) width 10: "it."
-      RenderBlock {P} at (0,320) size 80x166 [border: (3px solid #800080)]
-        RenderText {#text} at (3,3) size 74x160
-          text run at (3,3) width 27: "This"
-          text run at (3,19) width 50: "element"
-          text run at (3,35) width 41: "should"
-          text run at (3,51) width 43: "have a"
-          text run at (3,67) width 52: "medium-"
-          text run at (3,83) width 33: "width"
-          text run at (3,99) width 39: "purple"
-          text run at (3,115) width 41: "border"
-          text run at (3,131) width 74: "surrounding"
-          text run at (3,147) width 10: "it."
-      RenderBlock {P} at (0,500) size 80x294 [border: (3px solid #800080) (3px solid #008000) (3px solid #0000FF) (3px solid #FFFF00)]
-        RenderText {#text} at (3,3) size 73x288
-          text run at (3,3) width 27: "This"
-          text run at (3,19) width 50: "element"
-          text run at (3,35) width 60: "should be"
-          text run at (3,51) width 71: "surrounded"
-          text run at (3,67) width 26: "by a"
-          text run at (3,83) width 48: "medium"
-          text run at (3,99) width 33: "width"
-          text run at (3,115) width 41: "border"
-          text run at (3,131) width 50: "which is"
-          text run at (3,147) width 59: "purple on"
-          text run at (3,163) width 64: "top, green"
-          text run at (3,179) width 72: "on the right"
-          text run at (3,195) width 58: "side, blue"
-          text run at (3,211) width 40: "on the"
-          text run at (3,227) width 73: "bottom, and"
-          text run at (3,243) width 59: "yellow on"
-          text run at (3,259) width 43: "the left"
-          text run at (3,275) width 29: "side."
-      RenderTable {TABLE} at (0,808) size 102x688 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 100x686
-          RenderTableRow {TR} at (0,0) size 100x56
-            RenderTableCell {TD} at (0,0) size 100x56 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 53x48
-                RenderText {#text} at (4,4) size 53x48
-                  text run at (4,4) width 45: "TABLE"
-                  text run at (4,20) width 51: "Testing"
-                  text run at (4,36) width 53: "Section"
-          RenderTableRow {TR} at (0,56) size 100x630
-            RenderTableCell {TD} at (0,359) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,108) size 784x22 [border: (3px solid #800080)]
+        RenderText {#text} at (3,3) size 353x16
+          text run at (3,3) width 353: "This element should have a purple border surrounding it."
+      RenderBlock {P} at (0,144) size 784x22 [border: (3px solid #800080)]
+        RenderText {#text} at (3,3) size 442x16
+          text run at (3,3) width 442: "This element should have a medium-width purple border surrounding it."
+      RenderBlock {P} at (0,180) size 784x38 [border: (3px solid #800080) (3px solid #008000) (3px solid #0000FF) (3px solid #FFFF00)]
+        RenderText {#text} at (3,3) size 751x32
+          text run at (3,3) width 751: "This element should be surrounded by a medium width border which is purple on top, green on the right side, blue on the"
+          text run at (3,19) width 216: "bottom, and yellow on the left side."
+      RenderTable {TABLE} at (0,232) size 784x144 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x142
+          RenderTableRow {TR} at (0,0) size 782x24
+            RenderTableCell {TD} at (0,0) size 782x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 157x16
+                RenderText {#text} at (4,4) size 157x16
+                  text run at (4,4) width 157: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,24) size 782x118
+            RenderTableCell {TD} at (0,71) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x16
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,56) size 88x630 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 80x134 [border: (3px solid #800080)]
-                RenderText {#text} at (3,3) size 74x128
-                  text run at (3,3) width 27: "This"
-                  text run at (3,19) width 50: "element"
-                  text run at (3,35) width 41: "should"
-                  text run at (3,51) width 43: "have a"
-                  text run at (3,67) width 39: "purple"
-                  text run at (3,83) width 41: "border"
-                  text run at (3,99) width 74: "surrounding"
-                  text run at (3,115) width 10: "it."
-              RenderBlock {P} at (4,152) size 80x166 [border: (3px solid #800080)]
-                RenderText {#text} at (3,3) size 74x160
-                  text run at (3,3) width 27: "This"
-                  text run at (3,19) width 50: "element"
-                  text run at (3,35) width 41: "should"
-                  text run at (3,51) width 43: "have a"
-                  text run at (3,67) width 52: "medium-"
-                  text run at (3,83) width 33: "width"
-                  text run at (3,99) width 39: "purple"
-                  text run at (3,115) width 41: "border"
-                  text run at (3,131) width 74: "surrounding"
-                  text run at (3,147) width 10: "it."
-              RenderBlock {P} at (4,332) size 80x294 [border: (3px solid #800080) (3px solid #008000) (3px solid #0000FF) (3px solid #FFFF00)]
-                RenderText {#text} at (3,3) size 73x288
-                  text run at (3,3) width 27: "This"
-                  text run at (3,19) width 50: "element"
-                  text run at (3,35) width 60: "should be"
-                  text run at (3,51) width 71: "surrounded"
-                  text run at (3,67) width 26: "by a"
-                  text run at (3,83) width 48: "medium"
-                  text run at (3,99) width 33: "width"
-                  text run at (3,115) width 41: "border"
-                  text run at (3,131) width 50: "which is"
-                  text run at (3,147) width 59: "purple on"
-                  text run at (3,163) width 64: "top, green"
-                  text run at (3,179) width 72: "on the right"
-                  text run at (3,195) width 58: "side, blue"
-                  text run at (3,211) width 40: "on the"
-                  text run at (3,227) width 73: "bottom, and"
-                  text run at (3,243) width 59: "yellow on"
-                  text run at (3,259) width 43: "the left"
-                  text run at (3,275) width 29: "side."
+            RenderTableCell {TD} at (12,24) size 770x118 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x22 [border: (3px solid #800080)]
+                RenderText {#text} at (3,3) size 353x16
+                  text run at (3,3) width 353: "This element should have a purple border surrounding it."
+              RenderBlock {P} at (4,40) size 762x22 [border: (3px solid #800080)]
+                RenderText {#text} at (3,3) size 442x16
+                  text run at (3,3) width 442: "This element should have a medium-width purple border surrounding it."
+              RenderBlock {P} at (4,76) size 762x38 [border: (3px solid #800080) (3px solid #008000) (3px solid #0000FF) (3px solid #FFFF00)]
+                RenderText {#text} at (3,3) size 751x32
+                  text run at (3,3) width 751: "This element should be surrounded by a medium width border which is purple on top, green on the right side, blue on the"
+                  text run at (3,19) width 216: "bottom, and yellow on the left side."

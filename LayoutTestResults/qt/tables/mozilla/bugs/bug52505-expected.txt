@@ -1,9 +1,9 @@
-layer at (0,0) size 314x132
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 314x132
-  RenderBlock {HTML} at (0,0) size 96x132
-    RenderBody {BODY} at (8,8) size 80x116
-      RenderBlock {FORM} at (0,0) size 80x52
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x132
+  RenderBlock {HTML} at (0,0) size 800x132
+    RenderBody {BODY} at (8,8) size 784x116
+      RenderBlock {FORM} at (0,0) size 784x52
         RenderButton {INPUT} at (2,0) size 299x25 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 283x16
             RenderText at (0,0) size 283x16

@@ -1,9 +1,9 @@
-layer at (0,0) size 621x112
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 621x112
-  RenderBlock {HTML} at (0,0) size 96x112
-    RenderBody {BODY} at (8,8) size 80x96 [bgcolor=#000066]
-      RenderBlock (anonymous) at (0,0) size 80x0
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#000066]
+      RenderBlock (anonymous) at (0,0) size 784x0
         RenderInline {BASEFONT} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,0) size 613x96

@@ -1,50 +1,25 @@
-layer at (0,0) size 336x1468
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 336x1468
-  RenderBlock {HTML} at (0,0) size 96x1468
-    RenderBody {BODY} at (28,28) size 40x1412
-      RenderBlock {DIV} at (28,0) size 2x86 [border: (1px solid #008000)]
-        RenderBlock {DIV} at (29,29) size 2x28 [border: (1px solid #FF0000)]
-          RenderImage {IMG} at (1,1) size 250x26
+layer at (0,0) size 970x2964
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 970x2964
+  RenderBlock {HTML} at (0,0) size 800x2964
+    RenderBody {BODY} at (28,28) size 744x2908
+      RenderBlock {DIV} at (28,0) size 688x660 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (29,29) size 630x602 [border: (1px solid #FF0000)]
+          RenderImage {IMG} at (1,1) size 628x600
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,114) size 40x224
-        RenderText {#text} at (0,0) size 72x224
-          text run at (0,0) width 72: "percentage"
-          text run at (0,16) width 39: "height"
-          text run at (0,32) width 45: "images"
-          text run at (0,48) width 38: "in DIV"
-          text run at (0,64) width 25: "with"
-          text run at (0,80) width 16: "no"
-          text run at (0,96) width 39: "height"
-          text run at (0,112) width 31: "(red)"
-          text run at (0,128) width 23: "in a"
-          text run at (0,144) width 23: "DIV"
-          text run at (0,160) width 25: "with"
-          text run at (0,176) width 16: "no"
-          text run at (0,192) width 39: "height"
-          text run at (0,208) width 47: "(green)"
-      RenderBlock {DIV} at (28,366) size 6x90 [border: (3px dotted #008000)]
-        RenderBlock {DIV} at (31,31) size 2x28 [border: (1px solid #FF0000)]
-          RenderImage {IMG} at (1,1) size 38x26
+      RenderBlock {P} at (0,688) size 744x16
+        RenderText {#text} at (0,0) size 530x16
+          text run at (0,0) width 530: "percentage height images in DIV with no height (red) in a DIV with no height (green)"
+      RenderBlock {DIV} at (28,732) size 688x664 [border: (3px dotted #008000)]
+        RenderBlock {DIV} at (31,31) size 626x602 [border: (1px solid #FF0000)]
+          RenderImage {IMG} at (1,1) size 882x600
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,484) size 40x208
-        RenderText {#text} at (0,0) size 72x208
-          text run at (0,0) width 72: "percentage"
-          text run at (0,16) width 39: "height"
-          text run at (0,32) width 38: "image"
-          text run at (0,48) width 11: "in"
-          text run at (0,64) width 30: "table"
-          text run at (0,80) width 21: "cell"
-          text run at (0,96) width 34: "(red),"
-          text run at (0,112) width 23: "in a"
-          text run at (0,128) width 23: "DIV"
-          text run at (0,144) width 25: "with"
-          text run at (0,160) width 16: "no"
-          text run at (0,176) width 39: "height"
-          text run at (0,192) width 47: "(green)"
-      RenderBlock {DIV} at (28,720) size 0x692
-        RenderTable {TABLE} at (0,0) size 260x692 [border: (1px solid #FF0000)]
-          RenderTableSection {TBODY} at (1,1) size 258x690
-            RenderTableRow {TR} at (0,2) size 258x686
-              RenderTableCell {TD} at (2,258) size 254x174 [border: (1px solid #FF0000)] [r=0 c=0 rs=1 cs=1]
+      RenderBlock {P} at (0,1424) size 744x16
+        RenderText {#text} at (0,0) size 466x16
+          text run at (0,0) width 466: "percentage height image in table cell (red), in a DIV with no height (green)"
+      RenderBlock {DIV} at (28,1468) size 688x1440
+        RenderTable {TABLE} at (0,0) size 260x1440 [border: (1px solid #FF0000)]
+          RenderTableSection {TBODY} at (1,1) size 258x1438
+            RenderTableRow {TR} at (0,2) size 258x1434
+              RenderTableCell {TD} at (2,632) size 254x174 [border: (1px solid #FF0000)] [r=0 c=0 rs=1 cs=1]
                 RenderImage {IMG} at (2,2) size 250x170

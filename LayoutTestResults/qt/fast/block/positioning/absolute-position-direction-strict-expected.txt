@@ -1,16 +1,11 @@
-layer at (0,0) size 108x224
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x124
-  RenderBlock {HTML} at (0,0) size 96x124
-    RenderBody {BODY} at (8,14) size 80x96
-      RenderBlock {P} at (0,0) size 80x96
-        RenderText {#text} at (0,0) size 80x96
-          text run at (0,0) width 66: "The green"
-          text run at (0,16) width 43: "square"
-          text run at (0,32) width 80: "should be on"
-          text run at (0,48) width 79: "the left hand"
-          text run at (0,64) width 66: "side of the"
-          text run at (0,80) width 35: "page."
-      RenderBlock {DIV} at (0,110) size 80x0
-layer at (8,124) size 100x100
-  RenderBlock (positioned) {DIV} at (8,124) size 100x100 [bgcolor=#90EE90]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x44
+  RenderBlock {HTML} at (0,0) size 800x44
+    RenderBody {BODY} at (8,14) size 784x16
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 389x16
+          text run at (0,0) width 389: "The green square should be on the left hand side of the page."
+      RenderBlock {DIV} at (0,30) size 784x0
+layer at (8,44) size 100x100
+  RenderBlock (positioned) {DIV} at (8,44) size 100x100 [bgcolor=#90EE90]

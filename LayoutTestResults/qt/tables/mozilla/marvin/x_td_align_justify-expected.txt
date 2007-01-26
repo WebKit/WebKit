@@ -1,44 +1,20 @@
-layer at (0,0) size 127x442
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 127x442
-  RenderBlock {html} at (0,0) size 96x442
-    RenderBody {body} at (8,8) size 80x426
-      RenderTable {table} at (0,0) size 119x426 [border: (1px outset #808080)]
-        RenderTableSection {tbody} at (1,1) size 117x424
-          RenderTableRow {tr} at (0,2) size 117x420
-            RenderTableCell {td} at (2,2) size 60x420 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 56x416
-                text run at (2,2) width 56: "This cell"
-                text run at (2,18) width 23: "text"
-                text run at (2,34) width 41: "should"
-                text run at (2,50) width 15: "be"
-                text run at (2,66) width 47: "justified"
-                text run at (2,82) width 36: "which"
-                text run at (2,98) width 42: "means"
-                text run at (2,114) width 56: "that the"
-                text run at (2,130) width 56: "right and"
-                text run at (2,146) width 19: "left"
-                text run at (2,162) width 50: "margins"
-                text run at (2,178) width 41: "should"
-                text run at (2,194) width 56: "line up,"
-                text run at (2,210) width 16: "no"
-                text run at (2,226) width 40: "matter"
-                text run at (2,242) width 26: "how"
-                text run at (2,258) width 56: "long the"
-                text run at (2,274) width 47: "content"
-                text run at (2,290) width 56: "becomes"
-                text run at (2,306) width 47: "(except"
-                text run at (2,322) width 56: "the last"
-                text run at (2,338) width 22: "line"
-                text run at (2,354) width 36: "which"
-                text run at (2,370) width 41: "should"
-                text run at (2,386) width 56: "be left"
-                text run at (2,402) width 51: "aligned)"
-            RenderTableCell {td} at (64,162) size 51x100 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 47x96
-                text run at (2,2) width 27: "This"
-                text run at (2,18) width 21: "cell"
-                text run at (2,34) width 23: "text"
-                text run at (2,50) width 41: "should"
-                text run at (2,66) width 38: "be left"
-                text run at (2,82) width 47: "justified"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x90
+  RenderBlock {html} at (0,0) size 800x90
+    RenderBody {body} at (8,8) size 784x74
+      RenderTable {table} at (0,0) size 784x74 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 782x72
+          RenderTableRow {tr} at (0,2) size 782x68
+            RenderTableCell {td} at (2,2) size 388x68 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 384x64
+                text run at (2,2) width 210: "This cell text should be justified "
+                text run at (212,2) width 174: "which means that the right"
+                text run at (2,18) width 246: "and left margins should line up, no "
+                text run at (248,18) width 138: "matter how long the"
+                text run at (2,34) width 295: "content becomes (except the last line which "
+                text run at (297,34) width 89: "should be left"
+                text run at (2,50) width 51: "aligned)"
+            RenderTableCell {td} at (392,26) size 388x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 217x16
+                text run at (2,2) width 217: "This cell text should be left justified"

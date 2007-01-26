@@ -1,126 +1,64 @@
-layer at (0,0) size 126x1466
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 126x1466
-  RenderBlock {HTML} at (0,0) size 96x1466
-    RenderBody {BODY} at (8,8) size 80x1450
-      RenderBlock {P} at (0,0) size 80x320
-        RenderInline {B} at (0,0) size 80x320
-          RenderText {#text} at (0,0) size 80x320
-            text run at (0,0) width 53: "original"
-            text run at (0,16) width 38: "page,"
-            text run at (0,32) width 58: "stripped"
-            text run at (0,48) width 55: "down to"
-            text run at (0,64) width 22: "the"
-            text run at (0,80) width 57: "problem"
-            text run at (0,96) width 34: "table"
-            text run at (0,112) width 60: "(pattern:"
-            text run at (0,128) width 72: "auto width"
-            text run at (0,144) width 66: "table with"
-            text run at (0,160) width 56: "first row"
-            text run at (0,176) width 25: "has"
-            text run at (0,192) width 62: "specified"
-            text run at (0,208) width 67: "width and"
-            text run at (0,224) width 76: "colspan=2,"
-            text run at (0,240) width 80: "second row"
-            text run at (0,256) width 53: "has two"
-            text run at (0,272) width 62: "specified"
-            text run at (0,288) width 37: "width"
-            text run at (0,304) width 64: "columns)"
-      RenderTable {TABLE} at (0,334) size 118x640 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 116x638
-          RenderTableRow {TR} at (0,2) size 116x388
-            RenderTableCell {TD} at (2,2) size 112x388 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (2,2) size 106x384
-                text run at (2,2) width 58: "Cons For"
-                text run at (2,18) width 59: "Pokemon"
-                text run at (2,34) width 53: "\"They're"
-                text run at (2,50) width 91: "Pokemon card"
-                text run at (2,66) width 105: "sharks out there."
-                text run at (2,82) width 45: "This is "
-                text run at (47,82) width 38: "worse"
-                text run at (2,98) width 52: "than the"
-                text run at (2,114) width 96: "Cabbage Patch"
-                text run at (2,130) width 59: "Kid craze"
-                text run at (2,146) width 103: "because now it's"
-                text run at (2,162) width 83: "the kids who "
-                text run at (85,162) width 21: "are"
-                text run at (2,178) width 97: "actually fighting"
-                text run at (2,194) width 68: "each other"
-                text run at (2,210) width 87: "instead of just"
-                text run at (2,226) width 84: "the parents.\" "
-                text run at (86,226) width 8: "--"
-                text run at (2,242) width 78: "Children are"
-                text run at (2,258) width 96: "doing anything,"
-                text run at (2,274) width 55: "including"
-                text run at (2,290) width 106: "breaking the law,"
-                text run at (2,306) width 40: "to get "
-                text run at (42,306) width 28: "their"
-                text run at (2,322) width 104: "grubby hands on"
-                text run at (2,338) width 82: "some trading"
-                text run at (2,354) width 92: "cards, observe"
-                text run at (2,370) width 40: "police."
-          RenderTableRow {TR} at (0,392) size 116x244
-            RenderTableCell {TD} at (2,392) size 40x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x32
+        RenderInline {B} at (0,0) size 777x32
+          RenderText {#text} at (0,0) size 777x32
+            text run at (0,0) width 777: "original page, stripped down to the problem table (pattern: auto width table with first row has specified width and"
+            text run at (0,16) width 392: "colspan=2, second row has two specified width columns)"
+      RenderTable {TABLE} at (0,46) size 506x176 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 504x174
+          RenderTableRow {TR} at (0,2) size 504x84
+            RenderTableCell {TD} at (2,2) size 500x84 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderText {#text} at (2,2) size 487x80
+                text run at (2,2) width 431: "Cons For Pokemon \"They're Pokemon card sharks out there. This is "
+                text run at (433,2) width 38: "worse"
+                text run at (2,18) width 409: "than the Cabbage Patch Kid craze because now it's the kids who "
+                text run at (411,18) width 72: "are actually"
+                text run at (2,34) width 297: "fighting each other instead of just the parents.\" "
+                text run at (299,34) width 190: "-- Children are doing anything,"
+                text run at (2,50) width 209: "including breaking the law, to get "
+                text run at (211,50) width 264: "their grubby hands on some trading cards,"
+                text run at (2,66) width 94: "observe police."
+          RenderTableRow {TR} at (0,88) size 504x84
+            RenderTableCell {TD} at (2,88) size 272x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 36x16
                 text run at (2,2) width 36: "ASDF"
-            RenderTableCell {TD} at (44,392) size 70x244 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 66x240
+            RenderTableCell {TD} at (276,88) size 226x84 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 186x80
                 text run at (2,2) width 31: "Sat., "
-                text run at (33,2) width 25: "Dec"
-                text run at (2,18) width 55: "11, 1999"
-                text run at (2,34) width 26: "Gay"
-                text run at (2,50) width 37: "Union"
-                text run at (2,66) width 42: "Kibosh"
-                text run at (2,82) width 42: "Hawaii"
-                text run at (2,98) width 56: "Supreme"
-                text run at (2,114) width 34: "Court"
-                text run at (2,130) width 60: "slams the"
-                text run at (2,146) width 49: "door on"
-                text run at (2,162) width 60: "same-sex"
-                text run at (2,178) width 66: "marriages."
-                text run at (2,194) width 49: "All eyes"
-                text run at (2,210) width 42: "look to"
-                text run at (2,226) width 56: "Vermont."
-      RenderBlock (anonymous) at (0,974) size 80x16
+                text run at (33,2) width 88: "Dec 11, 1999 "
+                text run at (121,2) width 67: "Gay Union"
+                text run at (2,18) width 186: "Kibosh Hawaii Supreme Court"
+                text run at (2,34) width 64: "slams the "
+                text run at (66,34) width 113: "door on same-sex"
+                text run at (2,50) width 165: "marriages. All eyes look to"
+                text run at (2,66) width 56: "Vermont."
+      RenderBlock (anonymous) at (0,222) size 784x16
         RenderBR {BR} at (0,0) size 0x16
-      RenderBlock {P} at (0,1004) size 80x80
-        RenderInline {B} at (0,0) size 78x80
-          RenderText {#text} at (0,0) size 78x80
-            text run at (0,0) width 78: "same table,"
-            text run at (0,16) width 55: "but less"
-            text run at (0,32) width 53: "content"
-            text run at (0,48) width 78: "(text) in the"
-            text run at (0,64) width 71: "first cell ..."
-      RenderTable {TABLE} at (0,1098) size 118x352 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 116x350
-          RenderTableRow {TR} at (0,2) size 116x100
-            RenderTableCell {TD} at (2,2) size 112x100 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (2,2) size 105x96
-                text run at (2,2) width 58: "Cons For"
-                text run at (2,18) width 59: "Pokemon"
-                text run at (2,34) width 53: "\"They're"
-                text run at (2,50) width 91: "Pokemon card"
-                text run at (2,66) width 105: "sharks out there."
-                text run at (2,82) width 41: "This is"
-          RenderTableRow {TR} at (0,104) size 116x244
-            RenderTableCell {TD} at (2,104) size 40x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+      RenderBlock {P} at (0,252) size 784x16
+        RenderInline {B} at (0,0) size 351x16
+          RenderText {#text} at (0,0) size 351x16
+            text run at (0,0) width 351: "same table, but less content (text) in the first cell ..."
+      RenderTable {TABLE} at (0,282) size 506x112 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 504x110
+          RenderTableRow {TR} at (0,2) size 504x20
+            RenderTableCell {TD} at (2,2) size 500x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderText {#text} at (2,2) size 427x16
+                text run at (2,2) width 427: "Cons For Pokemon \"They're Pokemon card sharks out there. This is"
+          RenderTableRow {TR} at (0,24) size 504x84
+            RenderTableCell {TD} at (2,24) size 272x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 36x16
                 text run at (2,2) width 36: "ASDF"
-            RenderTableCell {TD} at (44,104) size 70x244 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 66x240
+            RenderTableCell {TD} at (276,24) size 226x84 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 186x80
                 text run at (2,2) width 31: "Sat., "
-                text run at (33,2) width 25: "Dec"
-                text run at (2,18) width 55: "11, 1999"
-                text run at (2,34) width 26: "Gay"
-                text run at (2,50) width 37: "Union"
-                text run at (2,66) width 42: "Kibosh"
-                text run at (2,82) width 42: "Hawaii"
-                text run at (2,98) width 56: "Supreme"
-                text run at (2,114) width 34: "Court"
-                text run at (2,130) width 60: "slams the"
-                text run at (2,146) width 49: "door on"
-                text run at (2,162) width 60: "same-sex"
-                text run at (2,178) width 66: "marriages."
-                text run at (2,194) width 49: "All eyes"
-                text run at (2,210) width 42: "look to"
-                text run at (2,226) width 56: "Vermont."
+                text run at (33,2) width 88: "Dec 11, 1999 "
+                text run at (121,2) width 67: "Gay Union"
+                text run at (2,18) width 186: "Kibosh Hawaii Supreme Court"
+                text run at (2,34) width 64: "slams the "
+                text run at (66,34) width 113: "door on same-sex"
+                text run at (2,50) width 165: "marriages. All eyes look to"
+                text run at (2,66) width 56: "Vermont."

@@ -1,82 +1,50 @@
-layer at (0,0) size 136x808
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 136x808
-  RenderBlock {HTML} at (0,0) size 96x808
-    RenderBody {BODY} at (8,8) size 80x792 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 80x80
-        RenderText {#text} at (0,0) size 77x80
-          text run at (0,0) width 58: "The style"
-          text run at (0,16) width 77: "declarations"
-          text run at (0,32) width 74: "which apply"
-          text run at (0,48) width 63: "to the text"
-          text run at (0,64) width 64: "below are:"
-      RenderBlock {PRE} at (0,94) size 80x48
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 352x16
+          text run at (0,0) width 352: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,30) size 784x48
         RenderText {#text} at (0,0) size 128x48
           text run at (0,0) width 128: ".one {font-variant: small-caps;}"
           text run at (128,0) width 0: " "
           text run at (0,16) width 112: ".two {font-variant: normal;}"
           text run at (112,16) width 0: " "
           text run at (0,32) width 0: " "
-      RenderBlock {HR} at (0,156) size 80x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,172) size 80x80
-        RenderText {#text} at (0,0) size 86x80
-          text run at (0,0) width 32: "This"
-          text run at (0,16) width 86: "Paragraph"
-          text run at (0,32) width 80: "should be"
-          text run at (0,48) width 64: "in Small"
-          text run at (0,64) width 40: "Caps."
-      RenderBlock {P} at (0,266) size 80x176
-        RenderText {#text} at (0,0) size 86x160
-          text run at (0,0) width 32: "This"
-          text run at (0,16) width 86: "Paragraph"
-          text run at (0,32) width 80: "should be"
-          text run at (0,48) width 64: "in Small"
-          text run at (0,64) width 72: "Caps, but"
-          text run at (0,80) width 67: "the Last"
-          text run at (0,96) width 62: "Word in"
-          text run at (0,112) width 28: "the"
-          text run at (0,128) width 75: "Sentence"
-          text run at (0,144) width 80: "should be"
+      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,108) size 784x16
+        RenderText {#text} at (0,0) size 318x16
+          text run at (0,0) width 318: "This Paragraph should be in Small Caps."
+      RenderBlock {P} at (0,138) size 784x16
+        RenderText {#text} at (0,0) size 686x16
+          text run at (0,0) width 686: "This Paragraph should be in Small Caps, but the Last Word in the Sentence should be "
         RenderInline {SPAN} at (0,0) size 45x16
-          RenderText {#text} at (0,160) size 45x16
-            text run at (0,160) width 45: "Normal"
-        RenderText {#text} at (45,160) size 3x16
-          text run at (45,160) width 3: "."
-      RenderTable {TABLE} at (0,456) size 108x336 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 106x334
-          RenderTableRow {TR} at (0,0) size 106x56
-            RenderTableCell {TD} at (0,0) size 106x56 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 53x48
-                RenderText {#text} at (4,4) size 53x48
-                  text run at (4,4) width 45: "TABLE"
-                  text run at (4,20) width 51: "Testing"
-                  text run at (4,36) width 53: "Section"
-          RenderTableRow {TR} at (0,56) size 106x278
-            RenderTableCell {TD} at (0,183) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderText {#text} at (686,0) size 45x16
+            text run at (686,0) width 45: "Normal"
+        RenderText {#text} at (731,0) size 3x16
+          text run at (731,0) width 3: "."
+      RenderTable {TABLE} at (0,168) size 756x80 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 754x78
+          RenderTableRow {TR} at (0,0) size 754x24
+            RenderTableCell {TD} at (0,0) size 754x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 157x16
+                RenderText {#text} at (4,4) size 157x16
+                  text run at (4,4) width 157: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,24) size 754x54
+            RenderTableCell {TD} at (0,39) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x16
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,56) size 94x278 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 86x80
-                RenderText {#text} at (0,0) size 86x80
-                  text run at (0,0) width 32: "This"
-                  text run at (0,16) width 86: "Paragraph"
-                  text run at (0,32) width 80: "should be"
-                  text run at (0,48) width 64: "in Small"
-                  text run at (0,64) width 40: "Caps."
-              RenderBlock {P} at (4,98) size 86x176
-                RenderText {#text} at (0,0) size 86x160
-                  text run at (0,0) width 32: "This"
-                  text run at (0,16) width 86: "Paragraph"
-                  text run at (0,32) width 80: "should be"
-                  text run at (0,48) width 64: "in Small"
-                  text run at (0,64) width 72: "Caps, but"
-                  text run at (0,80) width 67: "the Last"
-                  text run at (0,96) width 62: "Word in"
-                  text run at (0,112) width 28: "the"
-                  text run at (0,128) width 75: "Sentence"
-                  text run at (0,144) width 80: "should be"
+            RenderTableCell {TD} at (12,24) size 742x54 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 734x16
+                RenderText {#text} at (0,0) size 318x16
+                  text run at (0,0) width 318: "This Paragraph should be in Small Caps."
+              RenderBlock {P} at (4,34) size 734x16
+                RenderText {#text} at (0,0) size 686x16
+                  text run at (0,0) width 686: "This Paragraph should be in Small Caps, but the Last Word in the Sentence should be "
                 RenderInline {SPAN} at (0,0) size 45x16
-                  RenderText {#text} at (0,160) size 45x16
-                    text run at (0,160) width 45: "Normal"
-                RenderText {#text} at (45,160) size 3x16
-                  text run at (45,160) width 3: "."
+                  RenderText {#text} at (686,0) size 45x16
+                    text run at (686,0) width 45: "Normal"
+                RenderText {#text} at (731,0) size 3x16
+                  text run at (731,0) width 3: "."

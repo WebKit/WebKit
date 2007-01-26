@@ -1,71 +1,20 @@
-layer at (0,0) size 96x570
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x570
-  RenderBlock {HTML} at (0,0) size 96x570
-    RenderBody {BODY} at (8,8) size 80x554
-      RenderTable {TABLE} at (0,0) size 80x554 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 78x552
-          RenderTableRow {TR} at (0,2) size 78x548
-            RenderTableCell {TD} at (2,101) size 35x350 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 31x346 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 29x344
-                  RenderTableRow {TR} at (0,2) size 29x340
-                    RenderTableCell {TD} at (2,2) size 25x340 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 21x336
-                        text run at (2,2) width 21: "yyy"
-                        text run at (2,18) width 21: "yyy"
-                        text run at (2,34) width 21: "yyy"
-                        text run at (2,50) width 21: "yyy"
-                        text run at (2,66) width 21: "yyy"
-                        text run at (2,82) width 21: "yyy"
-                        text run at (2,98) width 21: "yyy"
-                        text run at (2,114) width 21: "yyy"
-                        text run at (2,130) width 21: "yyy"
-                        text run at (2,146) width 21: "yyy"
-                        text run at (2,162) width 21: "yyy"
-                        text run at (2,178) width 21: "yyy"
-                        text run at (2,194) width 21: "yyy"
-                        text run at (2,210) width 21: "yyy"
-                        text run at (2,226) width 21: "yyy"
-                        text run at (2,242) width 21: "yyy"
-                        text run at (2,258) width 21: "yyy"
-                        text run at (2,274) width 21: "yyy"
-                        text run at (2,290) width 21: "yyy"
-                        text run at (2,306) width 21: "yyy"
-                        text run at (2,322) width 21: "yyy"
-            RenderTableCell {TD} at (39,2) size 37x548 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 23x544
-                text run at (2,2) width 23: "text"
-                text run at (2,18) width 23: "text"
-                text run at (2,34) width 23: "text"
-                text run at (2,50) width 23: "text"
-                text run at (2,66) width 23: "text"
-                text run at (2,82) width 23: "text"
-                text run at (2,98) width 23: "text"
-                text run at (2,114) width 23: "text"
-                text run at (2,130) width 23: "text"
-                text run at (2,146) width 23: "text"
-                text run at (2,162) width 23: "text"
-                text run at (2,178) width 23: "text"
-                text run at (2,194) width 23: "text"
-                text run at (2,210) width 23: "text"
-                text run at (2,226) width 23: "text"
-                text run at (2,242) width 23: "text"
-                text run at (2,258) width 23: "text"
-                text run at (2,274) width 23: "text"
-                text run at (2,290) width 23: "text"
-                text run at (2,306) width 23: "text"
-                text run at (2,322) width 23: "text"
-                text run at (2,338) width 23: "text"
-                text run at (2,354) width 23: "text"
-                text run at (2,370) width 23: "text"
-                text run at (2,386) width 23: "text"
-                text run at (2,402) width 23: "text"
-                text run at (2,418) width 23: "text"
-                text run at (2,434) width 23: "text"
-                text run at (2,450) width 23: "text"
-                text run at (2,466) width 23: "text"
-                text run at (2,482) width 23: "text"
-                text run at (2,498) width 23: "text"
-                text run at (2,514) width 23: "text"
-                text run at (2,530) width 23: "text"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x52 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x50
+          RenderTableRow {TR} at (0,2) size 782x46
+            RenderTableCell {TD} at (2,2) size 285x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 281x42 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 279x40
+                  RenderTableRow {TR} at (0,2) size 279x36
+                    RenderTableCell {TD} at (2,2) size 275x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 271x32
+                        text run at (2,2) width 271: "yyy yyy yyy yyy yyy yyy yyy yyy yyy yyy yyy"
+                        text run at (2,18) width 246: "yyy yyy yyy yyy yyy yyy yyy yyy yyy yyy"
+            RenderTableCell {TD} at (289,7) size 491x36 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 482x32
+                text run at (2,2) width 482: "text text text text text text text text text text text text text text text text text text"
+                text run at (2,18) width 428: "text text text text text text text text text text text text text text text text"

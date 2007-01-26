@@ -1,20 +1,12 @@
-layer at (0,0) size 178x190
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 178x190
-  RenderBlock {HTML} at (0,0) size 96x190
-    RenderBody {BODY} at (8,8) size 80x174
-      RenderBlock {P} at (0,0) size 80x144
-        RenderText {#text} at (0,0) size 170x144
-          text run at (0,0) width 44: "Test of"
-          text run at (0,16) width 170: "createContextualFragment."
-          text run at (0,32) width 59: "If the test"
-          text run at (0,48) width 59: "succeeds"
-          text run at (0,64) width 72: "you will see"
-          text run at (0,80) width 55: "the word"
-          text run at (0,96) width 60: "\"success\""
-          text run at (0,112) width 51: "below in"
-          text run at (0,128) width 29: "bold."
-      RenderBlock {DIV} at (0,158) size 80x16
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 631x16
+          text run at (0,0) width 631: "Test of createContextualFragment. If the test succeeds you will see the word \"success\" below in bold."
+      RenderBlock {DIV} at (0,30) size 784x16
         RenderInline {B} at (0,0) size 72x16
           RenderText {#text} at (0,0) size 72x16
             text run at (0,0) width 72: "SUCCESS"

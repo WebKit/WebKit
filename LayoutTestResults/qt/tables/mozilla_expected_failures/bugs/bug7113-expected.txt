@@ -1,33 +1,33 @@
-layer at (0,0) size 96x131
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x131
-  RenderBlock {HTML} at (0,0) size 96x131
-    RenderBody {BODY} at (8,8) size 80x115
-      RenderTable {TABLE} at (0,0) size 80x56 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 78x54
-          RenderTableRow {TR} at (0,2) size 78x50
-            RenderTableCell {TD} at (2,2) size 74x50 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=4]
-              RenderImage {IMG} at (54,2) size 18x15
-              RenderImage {IMG} at (23,2) size 28x15
-              RenderImage {IMG} at (54,17) size 18x15
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 151x26 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 149x24
+          RenderTableRow {TR} at (0,2) size 149x20
+            RenderTableCell {TD} at (2,2) size 145x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=4]
+              RenderImage {IMG} at (125,2) size 18x15
+              RenderImage {IMG} at (94,2) size 28x15
+              RenderImage {IMG} at (73,2) size 18x15
               RenderInline {B} at (0,0) size 68x16
                 RenderInline {B} at (0,0) size 68x16
-                  RenderText {#text} at (2,32) size 68x16
-                    text run at (2,32) width 68: "Portfolios"
+                  RenderText {#text} at (2,2) size 68x16
+                    text run at (2,2) width 68: "Portfolios"
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,56) size 80x16
+      RenderBlock (anonymous) at (0,26) size 784x16
         RenderBR {BR} at (0,0) size 0x16
-      RenderTable {TABLE} at (0,72) size 80x43 [bgcolor=#EEEEEE] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 78x41
-          RenderTableRow {TR} at (0,0) size 78x41 [bgcolor=#CCCCFF]
-            RenderTableCell {TD} at (0,0) size 78x41 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,42) size 784x28 [bgcolor=#EEEEEE] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x26
+          RenderTableRow {TR} at (0,0) size 782x26 [bgcolor=#CCCCFF]
+            RenderTableCell {TD} at (0,0) size 782x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
                 RenderText {#text} at (0,0) size 0x0
-                RenderImage {IMG} at (55,5) size 18x15
+                RenderImage {IMG} at (759,5) size 18x15
               RenderText {#text} at (0,0) size 0x0
               RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
                 RenderText {#text} at (0,0) size 0x0
-                RenderImage {IMG} at (24,5) size 28x15
-              RenderText {#text} at (5,20) size 63x16
-                text run at (5,20) width 63: "Some text"
+                RenderImage {IMG} at (728,5) size 28x15
+              RenderText {#text} at (5,5) size 63x16
+                text run at (5,5) width 63: "Some text"
               RenderText {#text} at (0,0) size 0x0

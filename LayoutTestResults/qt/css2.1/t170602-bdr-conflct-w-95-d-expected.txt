@@ -1,16 +1,12 @@
-layer at (0,0) size 130x268
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 127x268
-  RenderBlock {HTML} at (0,0) size 96x268
-    RenderBody {BODY} at (8,14) size 80x246
-      RenderBlock {P} at (0,0) size 80x80
-        RenderText {#text} at (0,0) size 80x80
-          text run at (0,0) width 38: "There"
-          text run at (0,16) width 80: "should be no"
-          text run at (0,32) width 73: "red borders"
-          text run at (0,48) width 74: "on the table"
-          text run at (0,64) width 36: "below"
-      RenderTable {TABLE} at (0,94) size 122x152 [border: (2px none #808080)]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x204
+  RenderBlock {HTML} at (0,0) size 800x204
+    RenderBody {BODY} at (8,14) size 784x182
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 317x16
+          text run at (0,0) width 317: "There should be no red borders on the table below"
+      RenderTable {TABLE} at (0,30) size 122x152 [border: (2px none #808080)]
         RenderTableSection {TBODY} at (2,2) size 117x147
           RenderTableRow {TR} at (0,0) size 117x49
             RenderTableCell {TD} at (0,13) size 39x23 [border: (3px ridge #00FF00)] [r=0 c=0 rs=1 cs=1]

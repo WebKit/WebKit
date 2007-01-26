@@ -1,31 +1,16 @@
-layer at (0,0) size 308x368
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 308x368
-  RenderBlock {HTML} at (0,0) size 96x368
-    RenderBody {BODY} at (8,8) size 80x352
-      RenderBlock (anonymous) at (0,0) size 80x304
-        RenderText {#text} at (0,0) size 78x304
-          text run at (0,0) width 59: "The table"
-          text run at (0,16) width 74: "displayed is"
-          text run at (0,32) width 74: "two rows by"
-          text run at (0,48) width 33: "three"
-          text run at (0,64) width 54: "columns."
-          text run at (0,80) width 66: "Each table"
-          text run at (0,96) width 50: "row has"
-          text run at (0,112) width 31: "been"
-          text run at (0,128) width 46: "aligned"
-          text run at (0,144) width 60: "right. The"
-          text run at (0,160) width 57: "table has"
-          text run at (0,176) width 31: "been"
-          text run at (0,192) width 69: "assigned a"
-          text run at (0,208) width 61: "width and"
-          text run at (0,224) width 78: "border value"
-          text run at (0,240) width 68: "so that it is"
-          text run at (0,256) width 55: "easier to"
-          text run at (0,272) width 47: "see the"
-          text run at (0,288) width 64: "alignment."
-        RenderBR {BR} at (64,301) size 0x0
-      RenderTable {TABLE} at (0,304) size 300x48 [border: (1px outset #808080)]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x32
+        RenderText {#text} at (0,0) size 752x32
+          text run at (0,0) width 523: "The table displayed is two rows by three columns. Each table row has been aligned "
+          text run at (523,0) width 229: "right. The table has been assigned a"
+          text run at (0,16) width 278: "width and border value so that it is easier to "
+          text run at (278,16) width 115: "see the alignment."
+        RenderBR {BR} at (393,29) size 0x0
+      RenderTable {TABLE} at (0,32) size 300x48 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 298x46
           RenderTableRow {TR} at (0,2) size 298x20
             RenderTableCell {TD} at (2,2) size 95x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

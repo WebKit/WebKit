@@ -1,20 +1,13 @@
-layer at (0,0) size 162x241
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 162x241
-  RenderBlock {html} at (0,0) size 96x241
-    RenderBody {body} at (8,14) size 80x219
-      RenderBlock {p} at (0,0) size 80x128
-        RenderText {#text} at (0,0) size 80x128
-          text run at (0,0) width 38: "There"
-          text run at (0,16) width 80: "should be no"
-          text run at (0,32) width 30: "rules"
-          text run at (0,48) width 80: "between any"
-          text run at (0,64) width 58: "rows and"
-          text run at (0,80) width 66: "columns in"
-          text run at (0,96) width 24: "the "
-          text run at (24,96) width 30: "table"
-          text run at (0,112) width 39: "below."
-      RenderTable {table} at (0,142) size 154x77 [border: none]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x129
+  RenderBlock {html} at (0,0) size 800x129
+    RenderBody {body} at (8,14) size 784x107
+      RenderBlock {p} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 473x16
+          text run at (0,0) width 400: "There should be no rules between any rows and columns in the "
+          text run at (400,0) width 73: "table below."
+      RenderTable {table} at (0,30) size 154x77 [border: none]
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
         RenderTableCol {colgroup} at (0,0) size 0x0

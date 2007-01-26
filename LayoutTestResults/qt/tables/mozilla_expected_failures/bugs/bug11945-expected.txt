@@ -1,8 +1,8 @@
-layer at (0,0) size 124x502
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 124x502
-  RenderBlock {HTML} at (0,0) size 96x502
-    RenderBody {BODY} at (8,8) size 80x486 [bgcolor=#C0C0C0]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#C0C0C0]
       RenderTable {TABLE} at (0,0) size 116x70 [border: (10px outset #808080)]
         RenderTableSection {TBODY} at (10,10) size 96x50
           RenderTableRow {TR} at (0,10) size 96x20
@@ -13,14 +13,10 @@ layer at (0,0) size 124x502
               RenderText {#text} at (2,2) size 29x16
                 text run at (2,2) width 29: "cell2"
           RenderTableRow {TR} at (0,40) size 96x0
-      RenderBlock {P} at (0,84) size 80x80
-        RenderText {#text} at (0,0) size 74x80
-          text run at (0,0) width 49: "See the"
-          text run at (0,16) width 61: "behaviour"
-          text run at (0,32) width 71: "when there"
-          text run at (0,48) width 74: "is one more"
-          text run at (0,64) width 26: "row:"
-      RenderTable {TABLE} at (0,178) size 116x100 [border: (10px outset #808080)]
+      RenderBlock {P} at (0,84) size 784x16
+        RenderText {#text} at (0,0) size 297x16
+          text run at (0,0) width 297: "See the behaviour when there is one more row:"
+      RenderTable {TABLE} at (0,114) size 116x100 [border: (10px outset #808080)]
         RenderTableSection {TBODY} at (10,10) size 96x80
           RenderTableRow {TR} at (0,10) size 96x20
             RenderTableCell {TD} at (10,15) size 33x20 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
@@ -37,14 +33,10 @@ layer at (0,0) size 124x502
             RenderTableCell {TD} at (53,50) size 33x20 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 29x16
                 text run at (2,2) width 29: "cell4"
-      RenderBlock {P} at (0,292) size 80x80
-        RenderText {#text} at (0,0) size 78x80
-          text run at (0,0) width 66: "Now move"
-          text run at (0,16) width 78: "the rowspan"
-          text run at (0,32) width 61: "to cell2 to"
-          text run at (0,48) width 66: "have even"
-          text run at (0,64) width 58: "more fun:"
-      RenderTable {TABLE} at (0,386) size 116x100 [border: (10px outset #808080)]
+      RenderBlock {P} at (0,228) size 784x16
+        RenderText {#text} at (0,0) size 345x16
+          text run at (0,0) width 345: "Now move the rowspan to cell2 to have even more fun:"
+      RenderTable {TABLE} at (0,258) size 116x100 [border: (10px outset #808080)]
         RenderTableSection {TBODY} at (10,10) size 96x80
           RenderTableRow {TR} at (0,10) size 96x20
             RenderTableCell {TD} at (10,10) size 33x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

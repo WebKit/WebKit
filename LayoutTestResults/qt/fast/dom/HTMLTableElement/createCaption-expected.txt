@@ -1,69 +1,36 @@
-layer at (0,0) size 154x927
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 154x927
-  RenderBlock {HTML} at (0,0) size 96x927
-    RenderBody {BODY} at (8,8) size 80x911
-      RenderBlock {P} at (0,0) size 80x48
-        RenderText {#text} at (0,0) size 146x48
-          text run at (0,0) width 62: "Tests: the"
-          text run at (0,16) width 146: "TABLE.createCaption()"
-          text run at (0,32) width 47: "method"
-        RenderBR {BR} at (47,45) size 0x0
-      RenderBlock {P} at (0,62) size 80x288
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 263x16
+          text run at (0,0) width 263: "Tests: the TABLE.createCaption() method"
+        RenderBR {BR} at (263,13) size 0x0
+      RenderBlock {P} at (0,30) size 784x48
         RenderText {#text} at (0,0) size 70x16
           text run at (0,0) width 70: "Conditions:"
         RenderBR {BR} at (70,13) size 0x0
-        RenderText {#text} at (0,16) size 78x272
-          text run at (0,16) width 78: "If no caption"
-          text run at (0,32) width 63: "exists, the"
-          text run at (0,48) width 47: "method"
-          text run at (0,64) width 41: "should"
-          text run at (0,80) width 60: "create an"
-          text run at (0,96) width 38: "empty"
-          text run at (0,112) width 77: "caption, add"
-          text run at (0,128) width 47: "it to the"
-          text run at (0,144) width 61: "table, and"
-          text run at (0,160) width 49: "return a"
-          text run at (0,176) width 74: "pointer to it."
-          text run at (0,192) width 70: "If a caption"
-          text run at (0,208) width 67: "does exist,"
-          text run at (0,224) width 71: "the method"
-          text run at (0,240) width 41: "should"
-          text run at (0,256) width 49: "return a"
-          text run at (0,272) width 74: "pointer to it."
-      RenderBlock {P} at (0,364) size 80x336
-        RenderText {#text} at (0,0) size 79x80
-          text run at (0,0) width 79: "If successful,"
-          text run at (0,16) width 47: "the first"
-          text run at (0,32) width 75: "table should"
-          text run at (0,48) width 55: "have the"
-          text run at (0,64) width 46: "caption"
+        RenderText {#text} at (0,16) size 784x32
+          text run at (0,16) width 679: "If no caption exists, the method should create an empty caption, add it to the table, and return a pointer to it. "
+          text run at (679,16) width 105: "If a caption does"
+          text run at (0,32) width 283: "exist, the method should return a pointer to it."
+      RenderBlock {P} at (0,92) size 784x32
+        RenderText {#text} at (0,0) size 322x16
+          text run at (0,0) width 322: "If successful, the first table should have the caption "
         RenderInline {B} at (0,0) size 41x16
-          RenderText {#text} at (0,80) size 41x16
-            text run at (0,80) width 41: "Fruity"
-        RenderText {#text} at (41,80) size 75x80
-          text run at (41,80) width 31: ", and"
-          text run at (0,96) width 70: "the second"
-          text run at (0,112) width 75: "table should"
-          text run at (0,128) width 55: "have the"
-          text run at (0,144) width 46: "caption"
+          RenderText {#text} at (322,0) size 41x16
+            text run at (322,0) width 41: "Fruity"
+        RenderText {#text} at (363,0) size 297x16
+          text run at (363,0) width 297: ", and the second table should have the caption "
         RenderInline {B} at (0,0) size 77x16
-          RenderText {#text} at (0,160) size 77x16
-            text run at (0,160) width 77: "Vegetabley"
-        RenderText {#text} at (77,160) size 80x176
-          text run at (77,160) width 3: "."
-          text run at (0,176) width 79: "Upon failure,"
-          text run at (0,192) width 47: "the first"
-          text run at (0,208) width 53: "table will"
-          text run at (0,224) width 51: "have no"
-          text run at (0,240) width 77: "caption, and"
-          text run at (0,256) width 70: "the second"
-          text run at (0,272) width 53: "table will"
-          text run at (0,288) width 55: "have the"
-          text run at (0,304) width 46: "caption"
-          text run at (0,320) width 46: "Things."
-      RenderBlock {HR} at (0,714) size 80x2 [border: (1px inset #000000)]
-      RenderTable {TABLE} at (0,723) size 106x86 [border: (1px outset #808080)]
+          RenderText {#text} at (660,0) size 77x16
+            text run at (660,0) width 77: "Vegetabley"
+        RenderText {#text} at (737,0) size 778x32
+          text run at (737,0) width 41: ". Upon"
+          text run at (0,16) width 575: "failure, the first table will have no caption, and the second table will have the caption Things."
+      RenderBlock {HR} at (0,138) size 784x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,147) size 106x86 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 104x16
           RenderInline {B} at (0,0) size 41x16
             RenderText {#text} at (31,0) size 41x16
@@ -90,9 +57,9 @@ layer at (0,0) size 154x927
             RenderTableCell {TD} at (57,46) size 45x20 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 40x16
                 text run at (2,2) width 40: "Purple"
-      RenderBlock (anonymous) at (0,809) size 80x16
+      RenderBlock (anonymous) at (0,233) size 784x16
         RenderBR {BR} at (0,0) size 0x16
-      RenderTable {TABLE} at (0,825) size 133x86 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,249) size 133x86 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 131x16
           RenderInline {B} at (0,0) size 77x16
             RenderText {#text} at (27,0) size 77x16

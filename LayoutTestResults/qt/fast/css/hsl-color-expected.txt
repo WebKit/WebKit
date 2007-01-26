@@ -1,217 +1,70 @@
-layer at (0,0) size 114x5120
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 114x5120
-  RenderBlock {HTML} at (0,0) size 96x5120
-    RenderBody {BODY} at (8,8) size 80x5094
-      RenderBlock {H1} at (0,0) size 80x224 [color=#FF0000]
-        RenderText {#text} at (0,1) size 92x222
-          text run at (0,1) width 58: "This"
-          text run at (0,33) width 92: "should"
-          text run at (0,65) width 33: "be"
-          text run at (0,97) width 53: "red:"
-          text run at (0,129) width 74: "hsl(0,"
-          text run at (0,161) width 81: "100%,"
-          text run at (0,193) width 66: "50%)"
-      RenderBlock {H1} at (0,242) size 80x224 [color=#00FF00]
-        RenderText {#text} at (0,1) size 106x222
-          text run at (0,1) width 58: "This"
-          text run at (0,33) width 92: "should"
-          text run at (0,65) width 33: "be"
-          text run at (0,97) width 86: "green:"
-          text run at (0,129) width 106: "hsl(120,"
-          text run at (0,161) width 81: "100%,"
-          text run at (0,193) width 66: "50%)"
-      RenderBlock {H1} at (0,484) size 80x224 [color=#00FFFF]
-        RenderText {#text} at (0,1) size 106x222
-          text run at (0,1) width 58: "This"
-          text run at (0,33) width 92: "should"
-          text run at (0,65) width 33: "be"
-          text run at (0,97) width 75: "aqua:"
-          text run at (0,129) width 106: "hsl(180,"
-          text run at (0,161) width 81: "100%,"
-          text run at (0,193) width 66: "50%)"
-      RenderBlock {H1} at (0,726) size 80x224 [color=#0000FF]
-        RenderText {#text} at (0,1) size 106x222
-          text run at (0,1) width 58: "This"
-          text run at (0,33) width 92: "should"
-          text run at (0,65) width 33: "be"
-          text run at (0,97) width 67: "blue:"
-          text run at (0,129) width 106: "hsl(240,"
-          text run at (0,161) width 81: "100%,"
-          text run at (0,193) width 66: "50%)"
-      RenderBlock {H1} at (0,968) size 80x256 [color=#7FFF7F]
-        RenderText {#text} at (0,1) size 106x254
-          text run at (0,1) width 58: "This"
-          text run at (0,33) width 92: "should"
-          text run at (0,65) width 33: "be"
-          text run at (0,97) width 59: "light"
-          text run at (0,129) width 86: "green:"
-          text run at (0,161) width 106: "hsl(120,"
-          text run at (0,193) width 81: "100%,"
-          text run at (0,225) width 66: "75%)"
-      RenderBlock {H1} at (0,1242) size 80x256 [color=#007F00]
-        RenderText {#text} at (0,1) size 106x254
-          text run at (0,1) width 58: "This"
-          text run at (0,33) width 92: "should"
-          text run at (0,65) width 33: "be"
-          text run at (0,97) width 60: "dark"
-          text run at (0,129) width 86: "green:"
-          text run at (0,161) width 106: "hsl(120,"
-          text run at (0,193) width 81: "100%,"
-          text run at (0,225) width 66: "25%)"
-      RenderBlock {H1} at (0,1516) size 80x256 [color=#3FBF3F]
-        RenderText {#text} at (0,1) size 106x254
-          text run at (0,1) width 58: "This"
-          text run at (0,33) width 92: "should"
-          text run at (0,65) width 33: "be"
-          text run at (0,97) width 82: "pastel"
-          text run at (0,129) width 86: "green:"
-          text run at (0,161) width 106: "hsl(120,"
-          text run at (0,193) width 65: "50%,"
-          text run at (0,225) width 66: "50%)"
-      RenderBlock (anonymous) at (0,1790) size 80x160
-        RenderInline {B} at (0,0) size 53x48
-          RenderText {#text} at (0,0) size 53x48
-            text run at (0,0) width 43: "Out of"
-            text run at (0,16) width 53: "bounds"
-            text run at (0,32) width 45: "cases:"
-        RenderBR {BR} at (45,45) size 0x0
-        RenderText {#text} at (0,48) size 79x112
-          text run at (0,48) width 40: "Check"
-          text run at (0,64) width 79: "percentages"
-          text run at (0,80) width 69: "larger than"
-          text run at (0,96) width 39: "100%,"
-          text run at (0,112) width 60: "should be"
-          text run at (0,128) width 56: "limited to"
-          text run at (0,144) width 36: "100%"
-      RenderBlock {H1} at (0,1968) size 80x224 [color=#00FF00]
-        RenderText {#text} at (0,1) size 106x222
-          text run at (0,1) width 58: "This"
-          text run at (0,33) width 92: "should"
-          text run at (0,65) width 33: "be"
-          text run at (0,97) width 86: "green:"
-          text run at (0,129) width 106: "hsl(120,"
-          text run at (0,161) width 81: "100%,"
-          text run at (0,193) width 66: "50%)"
-      RenderBlock {H1} at (0,2210) size 80x256 [color=#00FF00]
-        RenderText {#text} at (0,1) size 106x254
-          text run at (0,1) width 58: "This"
-          text run at (0,33) width 92: "should"
-          text run at (0,65) width 33: "be"
-          text run at (0,97) width 77: "green"
-          text run at (0,129) width 52: "too:"
-          text run at (0,161) width 106: "hsl(120,"
-          text run at (0,193) width 81: "200%,"
-          text run at (0,225) width 66: "50%)"
-      RenderBlock (anonymous) at (0,2484) size 80x128
-        RenderText {#text} at (0,0) size 80x128
-          text run at (0,0) width 40: "Check"
-          text run at (0,16) width 79: "percentages"
-          text run at (0,32) width 57: "less than"
-          text run at (0,48) width 20: "0%"
-          text run at (0,64) width 59: "(negative"
-          text run at (0,80) width 48: "values),"
-          text run at (0,96) width 60: "should be"
-          text run at (0,112) width 80: "limited to 0%"
-      RenderBlock {H1} at (0,2630) size 80x224 [color=#7F7F7F]
-        RenderText {#text} at (0,1) size 106x222
-          text run at (0,1) width 58: "This"
-          text run at (0,33) width 92: "should"
-          text run at (0,65) width 33: "be"
-          text run at (0,97) width 69: "grey:"
-          text run at (0,129) width 106: "hsl(120,"
-          text run at (0,161) width 49: "0%,"
-          text run at (0,193) width 66: "50%)"
-      RenderBlock {H1} at (0,2872) size 80x288 [color=#7F7F7F]
-        RenderText {#text} at (0,1) size 106x286
-          text run at (0,1) width 58: "This"
-          text run at (0,33) width 92: "should"
-          text run at (0,65) width 33: "be"
-          text run at (0,97) width 68: "grey,"
-          text run at (0,129) width 52: "too:"
-          text run at (0,161) width 106: "hsl(120,"
-          text run at (0,193) width 9: "-"
-          text run at (0,225) width 81: "100%,"
-          text run at (0,257) width 66: "50%)"
-      RenderBlock (anonymous) at (0,3178) size 80x304
-        RenderText {#text} at (0,0) size 82x304
-          text run at (0,0) width 69: "Check Hue"
-          text run at (0,16) width 68: "values that"
-          text run at (0,32) width 62: "are larger"
-          text run at (0,48) width 59: "than 360,"
-          text run at (0,64) width 60: "should be"
-          text run at (0,80) width 69: "normalized"
-          text run at (0,96) width 57: "back to a"
-          text run at (0,112) width 33: "value"
-          text run at (0,128) width 65: "between 0"
-          text run at (0,144) width 75: "and 360. As"
-          text run at (0,160) width 69: "Hue values"
-          text run at (0,176) width 36: "are in"
-          text run at (0,192) width 55: "degrees,"
-          text run at (0,208) width 67: "there is no"
-          text run at (0,224) width 58: "maximum"
-          text run at (0,240) width 21: "like"
-          text run at (0,256) width 82: "percentages,"
-          text run at (0,272) width 52: "they are"
-          text run at (0,288) width 78: "loop around."
-      RenderBlock {H1} at (0,3500) size 80x256 [color=#007F00]
-        RenderText {#text} at (0,1) size 106x254
-          text run at (0,1) width 58: "This"
-          text run at (0,33) width 92: "should"
-          text run at (0,65) width 33: "be"
-          text run at (0,97) width 60: "dark"
-          text run at (0,129) width 86: "green:"
-          text run at (0,161) width 106: "hsl(120,"
-          text run at (0,193) width 81: "100%,"
-          text run at (0,225) width 66: "25%)"
-      RenderBlock {H1} at (0,3774) size 80x288 [color=#007F00]
-        RenderText {#text} at (0,1) size 106x286
-          text run at (0,1) width 58: "This"
-          text run at (0,33) width 92: "should"
-          text run at (0,65) width 33: "be"
-          text run at (0,97) width 60: "dark"
-          text run at (0,129) width 85: "green,"
-          text run at (0,161) width 52: "too:"
-          text run at (0,193) width 106: "hsl(480,"
-          text run at (0,225) width 81: "100%,"
-          text run at (0,257) width 66: "25%)"
-      RenderBlock (anonymous) at (0,4080) size 80x64
-        RenderText {#text} at (0,0) size 69x64
-          text run at (0,0) width 69: "Check Hue"
-          text run at (0,16) width 69: "values with"
-          text run at (0,32) width 66: "a negative"
-          text run at (0,48) width 38: "angle."
-      RenderBlock {H1} at (0,4162) size 80x256 [color=#7FFF7F]
-        RenderText {#text} at (0,1) size 106x254
-          text run at (0,1) width 58: "This"
-          text run at (0,33) width 92: "should"
-          text run at (0,65) width 33: "be"
-          text run at (0,97) width 59: "light"
-          text run at (0,129) width 86: "green:"
-          text run at (0,161) width 106: "hsl(120,"
-          text run at (0,193) width 81: "100%,"
-          text run at (0,225) width 66: "75%)"
-      RenderBlock {H1} at (0,4436) size 80x320 [color=#7FFF7F]
-        RenderText {#text} at (0,1) size 92x318
-          text run at (0,1) width 58: "This"
-          text run at (0,33) width 92: "should"
-          text run at (0,65) width 33: "be"
-          text run at (0,97) width 59: "light"
-          text run at (0,129) width 85: "green,"
-          text run at (0,161) width 52: "too:"
-          text run at (0,193) width 59: "hsl(-"
-          text run at (0,225) width 56: "240,"
-          text run at (0,257) width 81: "100%,"
-          text run at (0,289) width 66: "75%)"
-      RenderBlock {H1} at (0,4774) size 80x320 [color=#7FFF7F]
-        RenderText {#text} at (0,1) size 92x318
-          text run at (0,1) width 58: "This"
-          text run at (0,33) width 92: "should"
-          text run at (0,65) width 33: "be"
-          text run at (0,97) width 59: "light"
-          text run at (0,129) width 85: "green,"
-          text run at (0,161) width 52: "too:"
-          text run at (0,193) width 59: "hsl(-"
-          text run at (0,225) width 56: "600,"
-          text run at (0,257) width 81: "100%,"
-          text run at (0,289) width 66: "75%)"
+layer at (0,0) size 800x976
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x976
+  RenderBlock {HTML} at (0,0) size 800x976
+    RenderBody {BODY} at (8,8) size 784x950
+      RenderBlock {H1} at (0,0) size 784x32 [color=#FF0000]
+        RenderText {#text} at (0,1) size 505x30
+          text run at (0,1) width 505: "This should be red: hsl(0, 100%, 50%)"
+      RenderBlock {H1} at (0,50) size 784x32 [color=#00FF00]
+        RenderText {#text} at (0,1) size 570x30
+          text run at (0,1) width 570: "This should be green: hsl(120, 100%, 50%)"
+      RenderBlock {H1} at (0,100) size 784x32 [color=#00FFFF]
+        RenderText {#text} at (0,1) size 559x30
+          text run at (0,1) width 559: "This should be aqua: hsl(180, 100%, 50%)"
+      RenderBlock {H1} at (0,150) size 784x32 [color=#0000FF]
+        RenderText {#text} at (0,1) size 551x30
+          text run at (0,1) width 551: "This should be blue: hsl(240, 100%, 50%)"
+      RenderBlock {H1} at (0,200) size 784x32 [color=#7FFF7F]
+        RenderText {#text} at (0,1) size 637x30
+          text run at (0,1) width 637: "This should be light green: hsl(120, 100%, 75%)"
+      RenderBlock {H1} at (0,250) size 784x32 [color=#007F00]
+        RenderText {#text} at (0,1) size 638x30
+          text run at (0,1) width 638: "This should be dark green: hsl(120, 100%, 25%)"
+      RenderBlock {H1} at (0,300) size 784x32 [color=#3FBF3F]
+        RenderText {#text} at (0,1) size 644x30
+          text run at (0,1) width 644: "This should be pastel green: hsl(120, 50%, 50%)"
+      RenderBlock (anonymous) at (0,350) size 784x32
+        RenderInline {B} at (0,0) size 149x16
+          RenderText {#text} at (0,0) size 149x16
+            text run at (0,0) width 149: "Out of bounds cases:"
+        RenderBR {BR} at (149,13) size 0x0
+        RenderText {#text} at (0,16) size 403x16
+          text run at (0,16) width 403: "Check percentages larger than 100%, should be limited to 100%"
+      RenderBlock {H1} at (0,400) size 784x32 [color=#00FF00]
+        RenderText {#text} at (0,1) size 570x30
+          text run at (0,1) width 570: "This should be green: hsl(120, 100%, 50%)"
+      RenderBlock {H1} at (0,450) size 784x32 [color=#00FF00]
+        RenderText {#text} at (0,1) size 621x30
+          text run at (0,1) width 621: "This should be green too: hsl(120, 200%, 50%)"
+      RenderBlock (anonymous) at (0,500) size 784x16
+        RenderText {#text} at (0,0) size 471x16
+          text run at (0,0) width 471: "Check percentages less than 0% (negative values), should be limited to 0%"
+      RenderBlock {H1} at (0,534) size 784x32 [color=#7F7F7F]
+        RenderText {#text} at (0,1) size 521x30
+          text run at (0,1) width 521: "This should be grey: hsl(120, 0%, 50%)"
+      RenderBlock {H1} at (0,584) size 784x32 [color=#7F7F7F]
+        RenderText {#text} at (0,1) size 621x30
+          text run at (0,1) width 621: "This should be grey, too: hsl(120, -100%, 50%)"
+      RenderBlock (anonymous) at (0,634) size 784x32
+        RenderText {#text} at (0,0) size 766x32
+          text run at (0,0) width 766: "Check Hue values that are larger than 360, should be normalized back to a value between 0 and 360. As Hue values are in"
+          text run at (0,16) width 437: "degrees, there is no maximum like percentages, they are loop around."
+      RenderBlock {H1} at (0,684) size 784x32 [color=#007F00]
+        RenderText {#text} at (0,1) size 638x30
+          text run at (0,1) width 638: "This should be dark green: hsl(120, 100%, 25%)"
+      RenderBlock {H1} at (0,734) size 784x32 [color=#007F00]
+        RenderText {#text} at (0,1) size 697x30
+          text run at (0,1) width 697: "This should be dark green, too: hsl(480, 100%, 25%)"
+      RenderBlock (anonymous) at (0,784) size 784x16
+        RenderText {#text} at (0,0) size 254x16
+          text run at (0,0) width 254: "Check Hue values with a negative angle."
+      RenderBlock {H1} at (0,818) size 784x32 [color=#7FFF7F]
+        RenderText {#text} at (0,1) size 637x30
+          text run at (0,1) width 637: "This should be light green: hsl(120, 100%, 75%)"
+      RenderBlock {H1} at (0,868) size 784x32 [color=#7FFF7F]
+        RenderText {#text} at (0,1) size 705x30
+          text run at (0,1) width 705: "This should be light green, too: hsl(-240, 100%, 75%)"
+      RenderBlock {H1} at (0,918) size 784x32 [color=#7FFF7F]
+        RenderText {#text} at (0,1) size 705x30
+          text run at (0,1) width 705: "This should be light green, too: hsl(-600, 100%, 75%)"

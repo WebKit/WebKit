@@ -1,9 +1,9 @@
-layer at (0,0) size 610x1709
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 610x1709
-  RenderBlock {HTML} at (0,0) size 96x1709
-    RenderBody {BODY} at (8,20) size 80x1669 [bgcolor=#A6A972]
-      RenderBlock {DIV} at (0,0) size 602x1669 [bgcolor=#FDFDE9] [border: (1px solid #000000)]
+layer at (0,0) size 800x1709
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x1709
+  RenderBlock {HTML} at (0,0) size 800x1709
+    RenderBody {BODY} at (8,20) size 784x1669 [bgcolor=#A6A972]
+      RenderBlock {DIV} at (91,0) size 602x1669 [bgcolor=#FDFDE9] [border: (1px solid #000000)]
         RenderBlock {DIV} at (1,31) size 600x70
         RenderBlock {DIV} at (1,114) size 600x1483
           RenderBlock {P} at (20,0) size 560x80 [color=#333333]
@@ -166,17 +166,17 @@ layer at (0,0) size 610x1709
           RenderBlock {SPAN} at (0,16) size 600x20 [color=#333333]
             RenderText {#text} at (244,2) size 112x15
               text run at (244,2) width 112: "\x{A9}2003 Kevin Davis"
-layer at (357,301) size 180x16
+layer at (448,301) size 180x16
   RenderBlock {DIV} at (3,3) size 180x16
-layer at (357,325) size 180x16
+layer at (448,325) size 180x16
   RenderBlock {DIV} at (3,3) size 180x16
-layer at (30,773) size 500x100
+layer at (121,773) size 500x100
   RenderBlock {DIV} at (1,1) size 500x100
-layer at (30,1055) size 500x100
+layer at (121,1055) size 500x100
   RenderBlock {DIV} at (1,1) size 500x100
-layer at (30,1182) size 500x100
+layer at (121,1182) size 500x100
   RenderBlock {DIV} at (1,1) size 500x100
-layer at (30,1309) size 500x100
+layer at (121,1309) size 500x100
   RenderBlock {DIV} at (1,1) size 500x100
-layer at (30,1482) size 500x100
+layer at (121,1482) size 500x100
   RenderBlock {DIV} at (1,1) size 500x100

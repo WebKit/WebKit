@@ -1,28 +1,15 @@
-layer at (0,0) size 108x364
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x272
-  RenderBlock {HTML} at (0,0) size 96x272
-    RenderBody {BODY} at (8,8) size 80x256
-      RenderText {#text} at (0,0) size 78x256
-        text run at (0,0) width 69: "You should"
-        text run at (0,16) width 35: "see a"
-        text run at (0,32) width 55: "100x100"
-        text run at (0,48) width 37: "green"
-        text run at (0,64) width 43: "square"
-        text run at (0,80) width 43: "below. "
-        text run at (43,80) width 34: "If you"
-        text run at (0,96) width 78: "see any red,"
-        text run at (0,112) width 74: "the test has"
-        text run at (0,128) width 41: "failed. "
-        text run at (41,128) width 27: "This"
-        text run at (0,144) width 37: "test is"
-        text run at (0,160) width 72: "checking to"
-        text run at (0,176) width 65: "make sure"
-        text run at (0,192) width 67: "overflow is"
-        text run at (0,208) width 69: "done using"
-        text run at (0,224) width 77: "a containing"
-        text run at (0,240) width 77: "block model."
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x48
+  RenderBlock {HTML} at (0,0) size 800x48
+    RenderBody {BODY} at (8,8) size 784x32
+      RenderText {#text} at (0,0) size 754x32
+        text run at (0,0) width 302: "You should see a 100x100 green square below. "
+        text run at (302,0) width 239: "If you see any red, the test has failed. "
+        text run at (541,0) width 213: "This test is checking to make sure"
+        text run at (0,16) width 144: "overflow is done using "
+        text run at (144,16) width 162: "a containing block model. "
       RenderText {#text} at (0,0) size 0x0
-layer at (8,264) size 100x100 scrollWidth 200 scrollHeight 400
-  RenderBlock (positioned) {DIV} at (8,264) size 100x100 [bgcolor=#008000]
+layer at (8,40) size 100x100 scrollWidth 200 scrollHeight 400
+  RenderBlock (positioned) {DIV} at (8,40) size 100x100 [bgcolor=#008000]
     RenderBlock {DIV} at (100,100) size 100x100 [bgcolor=#FF0000]

@@ -1,17 +1,14 @@
-layer at (0,0) size 685x2134
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 685x2134
-  RenderBlock {HTML} at (0,0) size 96x2134
-    RenderBody {BODY} at (8,8) size 80x2112
-      RenderBlock {CENTER} at (0,0) size 80x2112
-        RenderBlock (anonymous) at (0,0) size 80x64
-          RenderText {#text} at (25,0) size 92x64
-            text run at (25,0) width 30: "Build"
-            text run at (0,16) width 92: "1999/10/27/08"
-            text run at (16,32) width 48: "Win95 -"
-            text run at (7,48) width 65: "Daily Build"
-          RenderBR {BR} at (72,61) size 0x0
-        RenderTable {TABLE} at (0,64) size 677x1154 [border: (10px outset #808080)]
+layer at (0,0) size 800x1302
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x1302
+  RenderBlock {HTML} at (0,0) size 800x1302
+    RenderBody {BODY} at (8,8) size 784x1280
+      RenderBlock {CENTER} at (0,0) size 784x1280
+        RenderBlock (anonymous) at (0,0) size 784x16
+          RenderText {#text} at (268,0) size 247x16
+            text run at (268,0) width 247: "Build 1999/10/27/08 Win95 - Daily Build"
+          RenderBR {BR} at (515,13) size 0x0
+        RenderTable {TABLE} at (53,16) size 677x1154 [border: (10px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 657x16
             RenderText {#text} at (285,0) size 86x16
               text run at (285,0) width 86: "January 2000"
@@ -506,62 +503,14 @@ layer at (0,0) size 685x2134
               RenderTableCell {TD} at (556,1096) size 101x22 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=4 c=6 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x18
                   text run at (2,2) width 5: "-"
-        RenderBlock (anonymous) at (0,1218) size 80x208
-          RenderBR {BR} at (40,0) size 0x16
-          RenderText {#text} at (8,16) size 78x192
-            text run at (8,16) width 64: "Notice the"
-            text run at (8,32) width 63: "scrollbars,"
-            text run at (14,48) width 52: "they are"
-            text run at (11,64) width 58: "rendered"
-            text run at (9,80) width 61: "outside of"
-            text run at (13,96) width 54: "the table"
-            text run at (13,112) width 54: "columns,"
-            text run at (16,128) width 48: "and the"
-            text run at (7,144) width 66: "yellow day"
-            text run at (1,160) width 78: "numbers are"
-            text run at (18,176) width 43: "hidden"
-            text run at (3,192) width 74: "under them."
-        RenderBlock {P} at (0,1440) size 80x672
-          RenderText {#text} at (19,0) size 80x672
-            text run at (19,0) width 41: "This is"
-            text run at (13,16) width 53: "probably"
-            text run at (2,32) width 75: "another bug"
-            text run at (16,48) width 47: "already"
-            text run at (4,64) width 71: "covered, or"
-            text run at (12,80) width 55: "fixed, but"
-            text run at (5,96) width 69: "day 3 & 16"
-            text run at (2,112) width 76: "should have"
-            text run at (2,128) width 76: "no scrollbar,"
-            text run at (2,144) width 75: "but the area"
-            text run at (8,160) width 63: "where the"
-            text run at (23,176) width 33: "other"
-            text run at (10,192) width 60: "scrollbars"
-            text run at (1,208) width 78: "are drawn is"
-            text run at (0,224) width 80: "drawn funny."
-            text run at (11,240) width 57: "They are"
-            text run at (30,256) width 20: "not"
-            text run at (9,272) width 61: "rendered."
-            text run at (5,288) width 70: "They seem"
-            text run at (24,304) width 31: "to be"
-            text run at (11,320) width 58: "whatever"
-            text run at (6,336) width 68: "was drawn"
-            text run at (0,352) width 80: "there before,"
-            text run at (12,368) width 56: "or drawn"
-            text run at (3,384) width 73: "somewhere"
-            text run at (1,400) width 78: "else. Day 16"
-            text run at (7,416) width 66: "(contaings"
-            text run at (15,432) width 50: "only the"
-            text run at (10,448) width 59: "letter \"?\")"
-            text run at (0,464) width 79: "has a region"
-            text run at (4,480) width 72: "below the ?"
-            text run at (3,496) width 73: "mark that is"
-            text run at (22,512) width 36: "never"
-            text run at (9,528) width 61: "rendered."
-            text run at (6,544) width 67: "Resize the"
-            text run at (7,560) width 66: "window so"
-            text run at (4,576) width 71: "the window"
-            text run at (10,592) width 60: "can scroll"
-            text run at (9,608) width 62: "down and"
-            text run at (11,624) width 57: "scroll the"
-            text run at (7,640) width 65: "page up &"
-            text run at (21,656) width 37: "down."
+        RenderBlock (anonymous) at (0,1170) size 784x32
+          RenderBR {BR} at (392,0) size 0x16
+          RenderText {#text} at (12,16) size 759x16
+            text run at (12,16) width 759: "Notice the scrollbars, they are rendered outside of the table columns, and the yellow day numbers are hidden under them."
+        RenderBlock {P} at (0,1216) size 784x64
+          RenderText {#text} at (3,0) size 778x64
+            text run at (3,0) width 778: "This is probably another bug already covered, or fixed, but day 3 & 16 should have no scrollbar, but the area where the other"
+            text run at (10,16) width 380: "scrollbars are drawn is drawn funny. They are not rendered. "
+            text run at (390,16) width 383: "They seem to be whatever was drawn there before, or drawn"
+            text run at (15,32) width 754: "somewhere else. Day 16 (contaings only the letter \"?\") has a region below the ? mark that is never rendered. Resize the"
+            text run at (171,48) width 442: "window so the window can scroll down and scroll the page up & down."

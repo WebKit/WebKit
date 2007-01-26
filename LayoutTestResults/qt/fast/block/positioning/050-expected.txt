@@ -1,8 +1,8 @@
-layer at (0,0) size 132x132
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x26
-  RenderBlock {HTML} at (0,0) size 96x26
-    RenderBody {BODY} at (8,8) size 80x10
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
 layer at (8,8) size 124x124
   RenderBlock (positioned) {DIV} at (8,8) size 124x124 [border: (2px solid #0000FF)]
     RenderBlock {DIV} at (12,12) size 100x100 [bgcolor=#808080]

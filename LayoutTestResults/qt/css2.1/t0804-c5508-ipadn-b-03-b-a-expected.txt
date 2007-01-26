@@ -1,17 +1,14 @@
-layer at (0,0) size 96x210
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x210
-  RenderBlock {HTML} at (0,0) size 96x210
-    RenderBody {BODY} at (8,8) size 80x194
-      RenderBlock {P} at (0,0) size 80x64
-        RenderText {#text} at (0,0) size 77x64
-          text run at (0,0) width 56: "The next"
-          text run at (0,16) width 77: "two columns"
-          text run at (0,32) width 60: "should be"
-          text run at (0,48) width 55: "identical."
-      RenderTable {TABLE} at (0,64) size 80x130
-        RenderTableSection {TBODY} at (0,0) size 80x130
-          RenderTableRow {TR} at (0,2) size 80x126
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x162
+  RenderBlock {HTML} at (0,0) size 800x162
+    RenderBody {BODY} at (8,8) size 784x146
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 260x16
+          text run at (0,0) width 260: "The next two columns should be identical."
+      RenderTable {TABLE} at (0,16) size 138x130
+        RenderTableSection {TBODY} at (0,0) size 138x130
+          RenderTableRow {TR} at (0,2) size 138x126
             RenderTableCell {TD} at (2,2) size 66x126 [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (3,3) size 60x120
                 RenderBlock {P} at (0,0) size 60x12 [color=#0000FF] [bgcolor=#FFA500]
@@ -32,14 +29,14 @@ layer at (0,0) size 96x210
                 RenderBlock {P} at (0,108) size 60x12 [color=#00FF00] [bgcolor=#FF00FF]
                   RenderText {#text} at (0,-1) size 30x14
                     text run at (0,-1) width 30: "xxxxx"
-            RenderTableCell {TD} at (70,2) size 8x126 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderBlock {DIV} at (3,3) size 2x12 [border: (12px solid #0000FF) none]
-              RenderBlock {DIV} at (3,15) size 2x12 [border: (12px solid #00FFFF) none]
-              RenderBlock {DIV} at (3,27) size 2x12 [border: (12px solid #FFFF00) none]
-              RenderBlock {DIV} at (3,39) size 2x12 [border: (12px solid #FF00FF) none]
-              RenderBlock {DIV} at (3,51) size 2x12 [border: (12px solid #00FF00) none]
-              RenderBlock {DIV} at (3,63) size 2x12 [border: (12px solid #FFA500) none]
-              RenderBlock {DIV} at (3,75) size 2x12 [border: (12px solid #0000FF) none]
-              RenderBlock {DIV} at (3,87) size 2x12 [border: (12px solid #FFFF00) none]
-              RenderBlock {DIV} at (3,99) size 2x12 [border: (12px solid #00FFFF) none]
-              RenderBlock {DIV} at (3,111) size 2x12 [border: (12px solid #00FF00) none]
+            RenderTableCell {TD} at (70,2) size 66x126 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (3,3) size 60x12 [border: (12px solid #0000FF) none]
+              RenderBlock {DIV} at (3,15) size 60x12 [border: (12px solid #00FFFF) none]
+              RenderBlock {DIV} at (3,27) size 60x12 [border: (12px solid #FFFF00) none]
+              RenderBlock {DIV} at (3,39) size 60x12 [border: (12px solid #FF00FF) none]
+              RenderBlock {DIV} at (3,51) size 60x12 [border: (12px solid #00FF00) none]
+              RenderBlock {DIV} at (3,63) size 60x12 [border: (12px solid #FFA500) none]
+              RenderBlock {DIV} at (3,75) size 60x12 [border: (12px solid #0000FF) none]
+              RenderBlock {DIV} at (3,87) size 60x12 [border: (12px solid #FFFF00) none]
+              RenderBlock {DIV} at (3,99) size 60x12 [border: (12px solid #00FFFF) none]
+              RenderBlock {DIV} at (3,111) size 60x12 [border: (12px solid #00FF00) none]

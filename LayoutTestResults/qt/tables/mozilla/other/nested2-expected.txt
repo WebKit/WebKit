@@ -1,24 +1,20 @@
-layer at (0,0) size 305x126
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 305x126
-  RenderBlock {HTML} at (0,0) size 96x126
-    RenderBody {BODY} at (8,8) size 80x110
-      RenderTable {TABLE} at (0,0) size 297x110 [border: (2px outset #808080)]
-        RenderTableSection {TBODY} at (2,2) size 293x106
-          RenderTableRow {TR} at (0,3) size 293x100
-            RenderTableCell {TD} at (3,3) size 168x46 [bgcolor=#DDDDDD] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 164x42 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 162x40
-                  RenderTableRow {TR} at (0,3) size 162x34
-                    RenderTableCell {TD} at (3,3) size 156x34 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x56 [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 780x52
+          RenderTableRow {TR} at (0,3) size 780x46
+            RenderTableCell {TD} at (3,3) size 270x46 [bgcolor=#DDDDDD] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 266x42 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 264x40
+                  RenderTableRow {TR} at (0,3) size 264x34
+                    RenderTableCell {TD} at (3,3) size 258x34 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 154x32
                         text run at (1,1) width 154: "TheMozillaOrganization-"
                         text run at (1,17) width 150: "TheMozillaOrganization"
-            RenderTableCell {TD} at (174,3) size 116x100 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 112x96
-                text run at (2,2) width 51: "Checkin"
-                text run at (2,18) width 111: "Guidelines for the"
-                text run at (2,34) width 108: "Seamonkey Tree"
-                text run at (2,50) width 98: "xxxxxxxxxxxxxx"
-                text run at (2,66) width 112: "xxxxxxxxxxxxxxxx"
-                text run at (2,82) width 84: "xxxxxxxxxxxx"
+            RenderTableCell {TD} at (276,8) size 501x36 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 496x32
+                text run at (2,2) width 496: "Checkin Guidelines for the Seamonkey Tree xxxxxxxxxxxxxx xxxxxxxxxxxxxxxx"
+                text run at (2,18) width 84: "xxxxxxxxxxxx"

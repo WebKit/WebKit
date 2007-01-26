@@ -1,16 +1,12 @@
-layer at (0,0) size 208x208
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 208x208
-  RenderBlock {HTML} at (0,0) size 96x208
-    RenderBody {BODY} at (8,14) size 80x184 [color=#000080]
-      RenderBlock {P} at (0,0) size 80x80
-        RenderText {#text} at (0,0) size 63x80
-          text run at (0,0) width 51: "The five"
-          text run at (0,16) width 63: "\"matches\""
-          text run at (0,32) width 36: "below"
-          text run at (0,48) width 60: "should be"
-          text run at (0,64) width 55: "identical."
-      RenderBlock {DIV} at (0,94) size 200x90 [color=#FFA500]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x144
+  RenderBlock {HTML} at (0,0) size 800x144
+    RenderBody {BODY} at (8,14) size 784x120 [color=#000080]
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 281x16
+          text run at (0,0) width 281: "The five \"matches\" below should be identical."
+      RenderBlock {DIV} at (0,30) size 200x90 [color=#FFA500]
         RenderBlock {P} at (0,0) size 200x10 [bgcolor=#A52A2A]
           RenderImage {IMG} at (0,0) size 48x10
           RenderText {#text} at (48,-1) size 5x12

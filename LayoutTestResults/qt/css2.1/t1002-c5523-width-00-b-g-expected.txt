@@ -1,15 +1,10 @@
-layer at (0,0) size 96x226
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x226
-  RenderBlock {HTML} at (0,0) size 96x226
-    RenderBody {BODY} at (8,14) size 80x204
-      RenderBlock {P} at (0,0) size 80x96
-        RenderText {#text} at (0,0) size 75x96
-          text run at (0,0) width 72: "The square"
-          text run at (0,16) width 36: "below"
-          text run at (0,32) width 60: "should be"
-          text run at (0,48) width 64: "exactly 50"
-          text run at (0,64) width 69: "pixels wide"
-          text run at (0,80) width 75: "on the ruler."
-      RenderBlock {DIV} at (0,110) size 80x94
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x146
+  RenderBlock {HTML} at (0,0) size 800x146
+    RenderBody {BODY} at (8,14) size 784x124
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 396x16
+          text run at (0,0) width 396: "The square below should be exactly 50 pixels wide on the ruler."
+      RenderBlock {DIV} at (0,30) size 784x94
         RenderImage {IMG} at (0,0) size 50x50

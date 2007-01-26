@@ -1,8 +1,8 @@
-layer at (0,0) size 308x316
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 308x316
-  RenderBlock {HTML} at (0,0) size 96x316
-    RenderBody {BODY} at (8,8) size 80x300
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
       RenderPartObject {IFRAME} at (0,0) size 300x150
         layer at (0,0) size 296x146
           RenderView at (0,0) size 296x146
@@ -14,8 +14,9 @@ layer at (0,0) size 308x316
                 text run at (0,16) width 269: "the frame to the right. If the bug still occurs,"
                 text run at (0,32) width 277: "pop-up blocking will prevent it from doing so."
               RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
-      RenderPartObject {IFRAME} at (0,150) size 300x150
+      RenderText {#text} at (300,137) size 4x16
+        text run at (300,137) width 4: " "
+      RenderPartObject {IFRAME} at (304,0) size 300x150
         layer at (0,0) size 296x146
           RenderView at (0,0) size 296x146
         layer at (0,0) size 296x146

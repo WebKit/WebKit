@@ -1,11 +1,8 @@
-layer at (0,0) size 96x92
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x92
-  RenderBlock {HTML} at (0,0) size 96x92
-    RenderBody {BODY} at (8,14) size 80x64
-      RenderBlock {P} at (0,0) size 80x64 [color=#FFFFFF]
-        RenderText {#text} at (0,0) size 76x64
-          text run at (0,0) width 72: "This should"
-          text run at (0,16) width 43: "have a"
-          text run at (0,32) width 37: "green"
-          text run at (0,48) width 76: "background."
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x44
+  RenderBlock {HTML} at (0,0) size 800x44
+    RenderBody {BODY} at (8,14) size 784x16
+      RenderBlock {P} at (0,0) size 784x16 [color=#FFFFFF]
+        RenderText {#text} at (0,0) size 240x16
+          text run at (0,0) width 240: "This should have a green background."

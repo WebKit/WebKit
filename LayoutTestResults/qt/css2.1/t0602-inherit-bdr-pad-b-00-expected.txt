@@ -1,30 +1,18 @@
-layer at (0,0) size 96x282
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x282
-  RenderBlock {HTML} at (0,0) size 96x282
-    RenderBody {BODY} at (8,14) size 80x254
-      RenderBlock {P} at (0,0) size 80x144
-        RenderText {#text} at (0,0) size 76x64
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 58: "sentence"
-          text run at (0,32) width 76: "should have"
-          text run at (0,48) width 64: "no border."
-        RenderInline {SPAN} at (0,0) size 76x90 [border: (5px solid #00FF00)]
-          RenderText {#text} at (5,64) size 76x80
-            text run at (5,64) width 27: "This"
-            text run at (0,80) width 58: "sentence"
-            text run at (0,96) width 76: "should have"
-            text run at (0,112) width 49: "a green"
-            text run at (0,128) width 44: "border."
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x74
+  RenderBlock {HTML} at (0,0) size 800x74
+    RenderBody {BODY} at (8,14) size 784x46
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 241x16
+          text run at (0,0) width 241: "This sentence should have no border. "
+        RenderInline {SPAN} at (0,0) size 280x26 [border: (5px solid #00FF00)]
+          RenderText {#text} at (246,0) size 270x16
+            text run at (246,0) width 270: "This sentence should have a green border."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,158) size 80x96
-        RenderInline {SPAN} at (0,0) size 76x112 [bgcolor=#FF0000]
-          RenderInline {SPAN} at (0,0) size 76x112 [bgcolor=#00FF00]
-            RenderText {#text} at (0,0) size 76x96
-              text run at (0,0) width 27: "This"
-              text run at (0,16) width 58: "sentence"
-              text run at (0,32) width 75: "should be in"
-              text run at (0,48) width 76: "a green bar,"
-              text run at (0,64) width 70: "with no red"
-              text run at (0,80) width 51: "present."
+      RenderBlock {P} at (0,30) size 784x16
+        RenderInline {SPAN} at (0,0) size 377x32 [bgcolor=#FF0000]
+          RenderInline {SPAN} at (0,0) size 377x32 [bgcolor=#00FF00]
+            RenderText {#text} at (0,0) size 377x16
+              text run at (0,0) width 377: "This sentence should be in a green bar, with no red present."
         RenderText {#text} at (0,0) size 0x0

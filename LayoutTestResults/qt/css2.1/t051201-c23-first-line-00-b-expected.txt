@@ -1,221 +1,94 @@
-layer at (0,0) size 96x2632
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x2632
-  RenderBlock {HTML} at (0,0) size 96x2632
-    RenderBody {BODY} at (8,14) size 80x2604 [color=#0000FF]
-      RenderBlock {P} at (0,0) size 80x848
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x344
+  RenderBlock {HTML} at (0,0) size 800x344
+    RenderBody {BODY} at (8,14) size 784x316 [color=#0000FF]
+      RenderBlock {P} at (0,0) size 784x80
         RenderText {#text} at (0,0) size 29x16
           text run at (0,0) width 29: "The "
-        RenderInline {STRONG} at (0,0) size 56x32
-          RenderText {#text} at (29,0) size 56x32
-            text run at (29,0) width 27: "first"
-            text run at (0,16) width 25: "line"
-        RenderText {#text} at (25,16) size 69x80
-          text run at (25,16) width 42: " of this"
-          text run at (0,32) width 69: "paragraph,"
-          text run at (0,48) width 54: "and only"
-          text run at (0,64) width 28: "that "
-          text run at (28,64) width 27: "one,"
-          text run at (0,80) width 60: "should be"
-        RenderInline {STRONG} at (0,0) size 40x16
-          RenderText {#text} at (0,96) size 40x16
-            text run at (0,96) width 40: "green"
-        RenderText {#text} at (40,96) size 80x752
-          text run at (40,96) width 15: ". If"
-          text run at (0,112) width 72: "this precise"
-          text run at (0,128) width 75: "combination"
-          text run at (0,144) width 55: "does not"
-          text run at (0,160) width 69: "occur, then"
-          text run at (0,176) width 51: "the user"
-          text run at (0,192) width 63: "agent has"
-          text run at (0,208) width 60: "failed this"
-          text run at (0,224) width 26: "test."
-          text run at (0,240) width 68: "Remember"
-          text run at (0,256) width 77: "that in order"
-          text run at (0,272) width 71: "to ensure a"
-          text run at (0,288) width 57: "complete"
-          text run at (0,304) width 50: "test, the"
-          text run at (0,320) width 66: "paragraph"
-          text run at (0,336) width 48: "must be"
-          text run at (0,352) width 80: "displayed on"
-          text run at (0,368) width 64: "more than"
-          text run at (0,384) width 53: "one line."
-          text run at (0,400) width 76: "Dummy text."
-          text run at (0,416) width 76: "Dummy text."
-          text run at (0,432) width 50: "Dummy "
-          text run at (50,432) width 26: "text."
-          text run at (0,448) width 76: "Dummy text."
-          text run at (0,464) width 76: "Dummy text."
-          text run at (0,480) width 76: "Dummy text."
-          text run at (0,496) width 76: "Dummy text."
-          text run at (0,512) width 76: "Dummy text."
-          text run at (0,528) width 76: "Dummy text."
-          text run at (0,544) width 76: "Dummy text."
-          text run at (0,560) width 76: "Dummy text."
-          text run at (0,576) width 76: "Dummy text."
-          text run at (0,592) width 76: "Dummy text."
-          text run at (0,608) width 50: "Dummy "
-          text run at (50,608) width 26: "text."
-          text run at (0,624) width 76: "Dummy text."
-          text run at (0,640) width 76: "Dummy text."
-          text run at (0,656) width 76: "Dummy text."
-          text run at (0,672) width 76: "Dummy text."
-          text run at (0,688) width 76: "Dummy text."
-          text run at (0,704) width 76: "Dummy text."
-          text run at (0,720) width 76: "Dummy text."
-          text run at (0,736) width 76: "Dummy text."
-          text run at (0,752) width 76: "Dummy text."
-          text run at (0,768) width 76: "Dummy text."
-          text run at (0,784) width 50: "Dummy "
-          text run at (50,784) width 26: "text."
-          text run at (0,800) width 76: "Dummy text."
-          text run at (0,816) width 76: "Dummy text."
-          text run at (0,832) width 76: "Dummy text."
-      RenderBlock {P} at (0,862) size 80x912
-        RenderText {#text} at (0,1) size 49x30
-          text run at (0,1) width 49: "The"
         RenderInline {STRONG} at (0,0) size 56x16
-          RenderText {#text} at (0,32) size 56x16
-            text run at (0,32) width 56: "first line"
-        RenderText {#text} at (56,32) size 72x96
-          text run at (56,32) width 16: " of"
-          text run at (0,48) width 22: "this"
-          text run at (0,64) width 69: "paragraph,"
-          text run at (0,80) width 54: "and only"
-          text run at (0,96) width 28: "that "
-          text run at (28,96) width 27: "one,"
-          text run at (0,112) width 72: "should be a"
-        RenderInline {STRONG} at (0,0) size 41x16
-          RenderText {#text} at (0,128) size 41x16
-            text run at (0,128) width 41: "larger"
-        RenderText {#text} at (41,128) size 72x48
-          text run at (41,128) width 28: " font"
-          text run at (0,144) width 72: "size as well"
-          text run at (0,160) width 19: "as "
+          RenderText {#text} at (29,0) size 56x16
+            text run at (29,0) width 56: "first line"
+        RenderText {#text} at (85,0) size 300x16
+          text run at (85,0) width 205: " of this paragraph, and only that "
+          text run at (290,0) width 95: "one, should be "
         RenderInline {STRONG} at (0,0) size 40x16
-          RenderText {#text} at (19,160) size 40x16
-            text run at (19,160) width 40: "green"
-        RenderText {#text} at (59,160) size 80x752
-          text run at (59,160) width 15: ". If"
-          text run at (0,176) width 72: "this precise"
-          text run at (0,192) width 75: "combination"
-          text run at (0,208) width 55: "does not"
-          text run at (0,224) width 41: "occur, "
-          text run at (41,224) width 28: "then"
-          text run at (0,240) width 51: "the user"
-          text run at (0,256) width 63: "agent has"
-          text run at (0,272) width 60: "failed this"
-          text run at (0,288) width 26: "test."
-          text run at (0,304) width 68: "Remember"
-          text run at (0,320) width 77: "that in order"
-          text run at (0,336) width 16: "to "
-          text run at (16,336) width 55: "ensure a"
-          text run at (0,352) width 57: "complete"
-          text run at (0,368) width 50: "test, the"
-          text run at (0,384) width 66: "paragraph"
-          text run at (0,400) width 48: "must be"
-          text run at (0,416) width 80: "displayed on"
-          text run at (0,432) width 36: "more "
-          text run at (36,432) width 28: "than"
-          text run at (0,448) width 53: "one line."
-          text run at (0,464) width 76: "Dummy text."
-          text run at (0,480) width 76: "Dummy text."
-          text run at (0,496) width 76: "Dummy text."
-          text run at (0,512) width 76: "Dummy text."
-          text run at (0,528) width 76: "Dummy text."
-          text run at (0,544) width 76: "Dummy text."
-          text run at (0,560) width 76: "Dummy text."
-          text run at (0,576) width 76: "Dummy text."
-          text run at (0,592) width 76: "Dummy text."
-          text run at (0,608) width 50: "Dummy "
-          text run at (50,608) width 26: "text."
-          text run at (0,624) width 76: "Dummy text."
-          text run at (0,640) width 76: "Dummy text."
-          text run at (0,656) width 76: "Dummy text."
-          text run at (0,672) width 76: "Dummy text."
-          text run at (0,688) width 76: "Dummy text."
-          text run at (0,704) width 76: "Dummy text."
-          text run at (0,720) width 76: "Dummy text."
-          text run at (0,736) width 76: "Dummy text."
-          text run at (0,752) width 76: "Dummy text."
-          text run at (0,768) width 76: "Dummy text."
-          text run at (0,784) width 50: "Dummy "
-          text run at (50,784) width 26: "text."
-          text run at (0,800) width 76: "Dummy text."
-          text run at (0,816) width 76: "Dummy text."
-          text run at (0,832) width 76: "Dummy text."
-          text run at (0,848) width 76: "Dummy text."
-          text run at (0,864) width 76: "Dummy text."
-          text run at (0,880) width 76: "Dummy text."
-          text run at (0,896) width 76: "Dummy text."
-      RenderBlock {P} at (0,1788) size 80x816
+          RenderText {#text} at (385,0) size 40x16
+            text run at (385,0) width 40: "green"
+        RenderText {#text} at (425,0) size 782x80
+          text run at (425,0) width 174: ". If this precise combination "
+          text run at (599,0) width 183: "does not occur, then the user"
+          text run at (0,16) width 233: "agent has failed this test. Remember "
+          text run at (233,16) width 393: "that in order to ensure a complete test, the paragraph must be "
+          text run at (626,16) width 148: "displayed on more than"
+          text run at (0,32) width 267: "one line. Dummy text. Dummy text. Dummy "
+          text run at (267,32) width 430: "text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. "
+          text run at (697,32) width 76: "Dummy text."
+          text run at (0,48) width 370: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy "
+          text run at (370,48) width 396: "text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy"
+          text run at (0,64) width 30: "text. "
+          text run at (30,64) width 450: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy "
+          text run at (480,64) width 266: "text. Dummy text. Dummy text. Dummy text."
+      RenderBlock {P} at (0,94) size 784x112
+        RenderText {#text} at (0,1) size 57x30
+          text run at (0,1) width 57: "The "
+        RenderInline {STRONG} at (0,0) size 110x30
+          RenderText {#text} at (57,1) size 110x30
+            text run at (57,1) width 110: "first line"
+        RenderText {#text} at (167,1) size 765x47
+          text run at (167,1) width 410: " of this paragraph, and only that "
+          text run at (577,1) width 188: "one, should be"
+          text run at (0,32) width 12: "a "
+        RenderInline {STRONG} at (0,0) size 41x16
+          RenderText {#text} at (12,32) size 41x16
+            text run at (12,32) width 41: "larger"
+        RenderText {#text} at (53,32) size 127x16
+          text run at (53,32) width 127: " font size as well as "
+        RenderInline {STRONG} at (0,0) size 40x16
+          RenderText {#text} at (180,32) size 40x16
+            text run at (180,32) width 40: "green"
+        RenderText {#text} at (220,32) size 766x80
+          text run at (220,32) width 274: ". If this precise combination does not occur, "
+          text run at (494,32) width 244: "then the user agent has failed this test."
+          text run at (0,48) width 169: "Remember that in order to "
+          text run at (169,48) width 416: "ensure a complete test, the paragraph must be displayed on more "
+          text run at (585,48) width 165: "than one line. Dummy text."
+          text run at (0,64) width 240: "Dummy text. Dummy text. Dummy text. "
+          text run at (240,64) width 450: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy "
+          text run at (690,64) width 76: "text. Dummy"
+          text run at (0,80) width 350: "text. Dummy text. Dummy text. Dummy text. Dummy text. "
+          text run at (350,80) width 396: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."
+          text run at (0,96) width 50: "Dummy "
+          text run at (50,96) width 430: "text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. "
+          text run at (480,96) width 156: "Dummy text. Dummy text."
+      RenderBlock {P} at (0,220) size 784x96
         RenderText {#text} at (0,0) size 32x16
           text run at (0,0) width 32: "The "
-        RenderInline {STRONG} at (0,0) size 74x32
-          RenderText {#text} at (32,0) size 74x32
-            text run at (32,0) width 42: "first"
-            text run at (0,16) width 25: "line"
-        RenderText {#text} at (25,16) size 75x96
-          text run at (25,16) width 42: " of this"
-          text run at (0,32) width 69: "paragraph,"
-          text run at (0,48) width 54: "and only"
-          text run at (0,64) width 28: "that "
-          text run at (28,64) width 27: "one,"
-          text run at (0,80) width 60: "should be"
-          text run at (0,96) width 75: "displayed in"
-        RenderInline {STRONG} at (0,0) size 73x16
-          RenderText {#text} at (0,112) size 73x16
-            text run at (0,112) width 73: "small-caps"
-        RenderText {#text} at (0,128) size 76x32
-          text run at (0,128) width 52: "style as "
-          text run at (52,128) width 24: "well"
-          text run at (0,144) width 19: "as "
+        RenderInline {STRONG} at (0,0) size 78x16
+          RenderText {#text} at (32,0) size 78x16
+            text run at (32,0) width 78: "first line"
+        RenderText {#text} at (110,0) size 492x16
+          text run at (110,0) width 272: " of this paragraph, and only that "
+          text run at (382,0) width 220: "one, should be displayed in "
+        RenderInline {STRONG} at (0,0) size 94x16
+          RenderText {#text} at (602,0) size 94x16
+            text run at (602,0) width 94: "small-caps"
+        RenderText {#text} at (696,0) size 766x32
+          text run at (696,0) width 70: " style as"
+          text run at (0,16) width 47: "well as "
         RenderInline {STRONG} at (0,0) size 40x16
-          RenderText {#text} at (19,144) size 40x16
-            text run at (19,144) width 40: "green"
-        RenderText {#text} at (59,144) size 76x672
-          text run at (59,144) width 3: "."
-          text run at (0,160) width 69: "Thus, if the"
-          text run at (0,176) width 63: "first line is"
-          text run at (0,192) width 39: "not in "
-          text run at (39,192) width 36: "small-"
-          text run at (0,208) width 66: "caps style,"
-          text run at (0,224) width 48: "or if the"
-          text run at (0,240) width 36: "entire"
-          text run at (0,256) width 66: "paragraph"
-          text run at (0,272) width 69: "turns out in"
-          text run at (0,288) width 69: "small-caps,"
-          text run at (0,304) width 52: "then the"
-          text run at (0,320) width 67: "user agent"
-          text run at (0,336) width 61: "has failed"
-          text run at (0,352) width 52: "this test."
-          text run at (0,368) width 76: "Dummy text."
-          text run at (0,384) width 76: "Dummy text."
-          text run at (0,400) width 76: "Dummy text."
-          text run at (0,416) width 76: "Dummy text."
-          text run at (0,432) width 76: "Dummy text."
-          text run at (0,448) width 76: "Dummy text."
-          text run at (0,464) width 50: "Dummy "
-          text run at (50,464) width 26: "text."
-          text run at (0,480) width 76: "Dummy text."
-          text run at (0,496) width 76: "Dummy text."
-          text run at (0,512) width 76: "Dummy text."
-          text run at (0,528) width 76: "Dummy text."
-          text run at (0,544) width 76: "Dummy text."
-          text run at (0,560) width 76: "Dummy text."
-          text run at (0,576) width 76: "Dummy text."
-          text run at (0,592) width 76: "Dummy text."
-          text run at (0,608) width 76: "Dummy text."
-          text run at (0,624) width 76: "Dummy text."
-          text run at (0,640) width 50: "Dummy "
-          text run at (50,640) width 26: "text."
-          text run at (0,656) width 76: "Dummy text."
-          text run at (0,672) width 76: "Dummy text."
-          text run at (0,688) width 76: "Dummy text."
-          text run at (0,704) width 76: "Dummy text."
-          text run at (0,720) width 76: "Dummy text."
-          text run at (0,736) width 76: "Dummy text."
-          text run at (0,752) width 76: "Dummy text."
-          text run at (0,768) width 76: "Dummy text."
-          text run at (0,784) width 76: "Dummy text."
-          text run at (0,800) width 76: "Dummy text."
+          RenderText {#text} at (47,16) size 40x16
+            text run at (47,16) width 40: "green"
+        RenderText {#text} at (87,16) size 770x80
+          text run at (87,16) width 186: ". Thus, if the first line is not in "
+          text run at (273,16) width 341: "small-caps style, or if the entire paragraph turns out in "
+          text run at (614,16) width 156: "small-caps, then the user"
+          text run at (0,32) width 241: "agent has failed this test. Dummy text. "
+          text run at (241,32) width 450: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy "
+          text run at (691,32) width 76: "text. Dummy"
+          text run at (0,48) width 350: "text. Dummy text. Dummy text. Dummy text. Dummy text. "
+          text run at (350,48) width 396: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."
+          text run at (0,64) width 50: "Dummy "
+          text run at (50,64) width 430: "text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. "
+          text run at (480,64) width 286: "Dummy text. Dummy text. Dummy text. Dummy"
+          text run at (0,80) width 106: "text. Dummy text."

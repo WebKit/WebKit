@@ -1,9 +1,9 @@
-layer at (0,0) size 658x728
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 658x728
-  RenderBlock {HTML} at (0,0) size 96x728
-    RenderBody {BODY} at (8,8) size 80x712
-      RenderBlock {PRE} at (0,0) size 80x224
+layer at (0,0) size 800x728
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x728
+  RenderBlock {HTML} at (0,0) size 800x728
+    RenderBody {BODY} at (8,8) size 784x712
+      RenderBlock {PRE} at (0,0) size 784x224
         RenderText {#text} at (0,0) size 328x192
           text run at (0,0) width 184: "These tables below all have the HTML + CSS ..."
           text run at (184,0) width 0: " "

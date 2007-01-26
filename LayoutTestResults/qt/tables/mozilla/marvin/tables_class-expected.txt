@@ -1,49 +1,20 @@
-layer at (0,0) size 176x478
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 176x478
-  RenderBlock {HTML} at (0,0) size 96x478
-    RenderBody {BODY} at (8,8) size 80x456
-      RenderTable {TABLE} at (0,0) size 168x138 [bgcolor=#00FF00] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 166x136
-          RenderTableRow {TR} at (0,2) size 166x132
-            RenderTableCell {TD} at (2,2) size 80x132 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 76x128
-                text run at (2,2) width 57: "Here is a"
-                text run at (2,18) width 67: "table using"
-                text run at (2,34) width 69: "the CLASS"
-                text run at (2,50) width 53: "attribute."
-                text run at (2,66) width 59: "The table"
-                text run at (2,82) width 76: "should have"
-                text run at (2,98) width 37: "a lime"
-                text run at (2,114) width 76: "background."
-            RenderTableCell {TD} at (84,2) size 80x132 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 76x128
-                text run at (2,2) width 57: "Here is a"
-                text run at (2,18) width 67: "table using"
-                text run at (2,34) width 69: "the CLASS"
-                text run at (2,50) width 53: "attribute."
-                text run at (2,66) width 59: "The table"
-                text run at (2,82) width 76: "should have"
-                text run at (2,98) width 37: "a lime"
-                text run at (2,114) width 76: "background."
-      RenderBlock {P} at (0,152) size 80x304 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 76x304
-          text run at (0,0) width 53: "This is a"
-          text run at (0,16) width 66: "paragraph"
-          text run at (0,32) width 57: "using the"
-          text run at (0,48) width 45: "CLASS"
-          text run at (0,64) width 53: "attribute."
-          text run at (0,80) width 25: "The"
-          text run at (0,96) width 66: "paragraph"
-          text run at (0,112) width 76: "should have"
-          text run at (0,128) width 37: "a lime"
-          text run at (0,144) width 76: "background."
-          text run at (0,160) width 27: "This"
-          text run at (0,176) width 66: "paragraph"
-          text run at (0,192) width 56: "validates"
-          text run at (0,208) width 48: "that the"
-          text run at (0,224) width 45: "CLASS"
-          text run at (0,240) width 50: "attribute"
-          text run at (0,256) width 58: "works for"
-          text run at (0,272) width 47: "multiple"
-          text run at (0,288) width 60: "elements."
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderTable {TABLE} at (0,0) size 784x42 [bgcolor=#00FF00] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x40
+          RenderTableRow {TR} at (0,2) size 782x36
+            RenderTableCell {TD} at (2,2) size 388x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 366x32
+                text run at (2,2) width 366: "Here is a table using the CLASS attribute. The table should"
+                text run at (2,18) width 152: "have a lime background."
+            RenderTableCell {TD} at (392,2) size 388x36 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 366x32
+                text run at (2,2) width 366: "Here is a table using the CLASS attribute. The table should"
+                text run at (2,18) width 152: "have a lime background."
+      RenderBlock {P} at (0,56) size 784x32 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 779x32
+          text run at (0,0) width 779: "This is a paragraph using the CLASS attribute. The paragraph should have a lime background. This paragraph validates that"
+          text run at (0,16) width 300: "the CLASS attribute works for multiple elements."

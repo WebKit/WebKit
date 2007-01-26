@@ -1,24 +1,14 @@
-layer at (0,0) size 161x300
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 161x300
-  RenderBlock {HTML} at (0,0) size 96x300
-    RenderBody {BODY} at (8,8) size 80x284
-      RenderBlock {H1} at (0,0) size 80x128
-        RenderText {#text} at (0,1) size 153x126
-          text run at (0,1) width 97: "<BODY"
-          text run at (0,33) width 153: "style=\"text-"
-          text run at (2,65) width 75: "align:"
-          text run at (0,97) width 114: "center\">"
-      RenderTable {TABLE} at (0,146) size 64x138 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 62x136
-          RenderTableRow {TR} at (0,2) size 62x132
-            RenderTableCell {TD} at (2,2) size 58x132 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 46x128
-                text run at (2,2) width 25: "The"
-                text run at (2,18) width 30: "table"
-                text run at (2,34) width 41: "should"
-                text run at (2,50) width 15: "be"
-                text run at (2,66) width 44: "center-"
-                text run at (2,82) width 46: "aligned"
-                text run at (2,98) width 44: "not the"
-                text run at (2,114) width 23: "text"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {H1} at (0,0) size 784x32
+        RenderText {#text} at (164,1) size 455x30
+          text run at (164,1) width 455: "<BODY style=\"text-align: center\">"
+      RenderTable {TABLE} at (0,50) size 627x26 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 625x24
+          RenderTableRow {TR} at (0,2) size 625x20
+            RenderTableCell {TD} at (2,2) size 621x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 292x16
+                text run at (2,2) width 292: "The table should be center-aligned not the text"

@@ -1,25 +1,14 @@
-layer at (0,0) size 96x195
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x195
-  RenderBlock {HTML} at (0,0) size 96x195
-    RenderBody {BODY} at (8,8) size 80x179
-      RenderBlock {UL} at (0,0) size 84x179 [color=#FF0000]
-        RenderListItem {LI} at (42,42) size 0x95
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x115
+  RenderBlock {HTML} at (0,0) size 800x115
+    RenderBody {BODY} at (8,8) size 784x99
+      RenderBlock {UL} at (0,0) size 784x99 [color=#FF0000]
+        RenderListItem {LI} at (42,42) size 700x15
           RenderListMarker at (-22,0) size 15x15
-          RenderImage {IMG} at (15,15) size 15x15
-          RenderText {#text} at (0,0) size 0x0
-          RenderInline {SPAN} at (0,0) size 43x76 [color=#000000]
-            RenderText {#text} at (0,22) size 43x76
-              text run at (0,22) width 6: "\x{21E6}"
-              text run at (0,27) width 38: "There"
-              text run at (0,32) width 41: "should"
-              text run at (0,37) width 15: "be"
-              text run at (0,42) width 8: "a"
-              text run at (0,47) width 37: "green"
-              text run at (0,52) width 43: "square"
-              text run at (0,57) width 12: "to"
-              text run at (0,62) width 20: "the"
-              text run at (0,67) width 22: "left,"
-              text run at (0,72) width 24: "and"
-              text run at (0,77) width 16: "no"
-              text run at (0,82) width 24: "red."
+          RenderImage {IMG} at (15,0) size 15x15
+          RenderText {#text} at (30,2) size 4x16
+            text run at (30,2) width 4: " "
+          RenderInline {SPAN} at (0,0) size 354x16 [color=#000000]
+            RenderText {#text} at (34,2) size 354x16
+              text run at (34,2) width 354: "\x{21E6} There should be a green square to the left, and no red."

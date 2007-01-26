@@ -1,47 +1,23 @@
-layer at (0,0) size 96x514
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x514
-  RenderBlock {HTML} at (0,0) size 96x514
-    RenderBody {BODY} at (8,8) size 80x492
-      RenderBlock {P} at (0,0) size 80x32
-        RenderText {#text} at (0,0) size 66x32
-          text run at (0,0) width 27: "First"
-          text run at (0,16) width 66: "paragraph"
-      RenderBlock {P} at (0,46) size 80x272
-        RenderText {#text} at (0,0) size 66x80
-          text run at (0,0) width 45: "Here is"
-          text run at (0,16) width 34: "some"
-          text run at (0,32) width 44: "regular"
-          text run at (0,48) width 66: "paragraph"
-          text run at (0,64) width 27: "text "
-        RenderText {#text} at (0,240) size 72x32
-          text run at (0,240) width 72: "Some more"
-          text run at (0,256) width 26: "text."
-      RenderBlock {P} at (0,332) size 80x160
-        RenderText {#text} at (0,0) size 74x160
-          text run at (0,0) width 67: "The image"
-          text run at (0,16) width 27: "gets"
-          text run at (0,32) width 74: "erroneously"
-          text run at (0,48) width 65: "positioned"
-          text run at (0,64) width 36: "to the"
-          text run at (0,80) width 43: "top/left"
-          text run at (0,96) width 57: "corner of"
-          text run at (0,112) width 20: "the"
-          text run at (0,128) width 66: "paragraph"
-          text run at (0,144) width 49: "instead."
-layer at (8,54) size 78x176
-  RenderInline (relative positioned) {SPAN} at (0,0) size 78x176 [bgcolor=#90EE90]
-    RenderText {#text} at (27,64) size 78x176
-      text run at (27,64) width 25: "The"
-      text run at (0,80) width 38: "image"
-      text run at (0,96) width 57: "(found or"
-      text run at (0,112) width 70: "not) should"
-      text run at (0,128) width 15: "be"
-      text run at (0,144) width 65: "positioned"
-      text run at (0,160) width 36: "at the"
-      text run at (0,176) width 43: "top/left"
-      text run at (0,192) width 57: "corner of"
-      text run at (0,208) width 67: "this green-"
-      text run at (0,224) width 78: "shaded text "
-layer at (35,118) size 42x42
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 97x16
+          text run at (0,0) width 97: "First paragraph"
+      RenderBlock {P} at (0,30) size 784x32
+        RenderText {#text} at (0,0) size 232x16
+          text run at (0,0) width 232: "Here is some regular paragraph text "
+        RenderText {#text} at (78,16) size 102x16
+          text run at (78,16) width 102: "Some more text."
+      RenderBlock {P} at (0,76) size 784x16
+        RenderText {#text} at (0,0) size 540x16
+          text run at (0,0) width 540: "The image gets erroneously positioned to the top/left corner of the paragraph instead."
+layer at (8,38) size 741x32
+  RenderInline (relative positioned) {SPAN} at (0,0) size 741x32 [bgcolor=#90EE90]
+    RenderText {#text} at (232,0) size 741x32
+      text run at (232,0) width 509: "The image (found or not) should be positioned at the top/left corner of this green-"
+      text run at (0,16) width 78: "shaded text "
+layer at (240,38) size 42x42
   RenderImage {IMG} at (0,0) size 42x42 [border: (1px solid #000000)]

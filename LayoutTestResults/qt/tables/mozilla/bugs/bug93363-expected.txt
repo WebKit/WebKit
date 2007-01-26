@@ -1,108 +1,24 @@
-layer at (0,0) size 243x1584
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 243x1584
-  RenderBlock {HTML} at (0,0) size 96x1584
-    RenderBody {BODY} at (8,8) size 80x1568
-      RenderTable {TABLE} at (0,0) size 235x1472 [border: (4px solid #0000FF)]
-        RenderTableSection {TBODY} at (4,4) size 227x1464
-          RenderTableRow {TR} at (0,2) size 227x1460
-            RenderTableCell {TD} at (2,2) size 57x1460 [border: (1px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 53x1456 [border: (4px solid #008000)]
-                RenderTableSection {TBODY} at (4,4) size 45x1448
-                  RenderTableRow {TR} at (0,2) size 45x1444
-                    RenderTableCell {TD} at (2,2) size 41x1444 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 37x1440
-                        text run at (2,2) width 36: "this is"
-                        text run at (2,18) width 8: "a"
-                        text run at (2,34) width 37: "bunch"
-                        text run at (2,50) width 12: "of"
-                        text run at (2,66) width 26: "text."
-                        text run at (2,82) width 36: "this is"
-                        text run at (2,98) width 8: "a"
-                        text run at (2,114) width 37: "bunch"
-                        text run at (2,130) width 12: "of"
-                        text run at (2,146) width 26: "text."
-                        text run at (2,162) width 36: "this is"
-                        text run at (2,178) width 8: "a"
-                        text run at (2,194) width 37: "bunch"
-                        text run at (2,210) width 12: "of"
-                        text run at (2,226) width 26: "text."
-                        text run at (2,242) width 36: "this is"
-                        text run at (2,258) width 8: "a"
-                        text run at (2,274) width 37: "bunch"
-                        text run at (2,290) width 12: "of"
-                        text run at (2,306) width 26: "text."
-                        text run at (2,322) width 36: "this is"
-                        text run at (2,338) width 8: "a"
-                        text run at (2,354) width 37: "bunch"
-                        text run at (2,370) width 12: "of"
-                        text run at (2,386) width 26: "text."
-                        text run at (2,402) width 36: "this is"
-                        text run at (2,418) width 8: "a"
-                        text run at (2,434) width 37: "bunch"
-                        text run at (2,450) width 12: "of"
-                        text run at (2,466) width 26: "text."
-                        text run at (2,482) width 36: "this is"
-                        text run at (2,498) width 8: "a"
-                        text run at (2,514) width 37: "bunch"
-                        text run at (2,530) width 12: "of"
-                        text run at (2,546) width 26: "text."
-                        text run at (2,562) width 36: "this is"
-                        text run at (2,578) width 8: "a"
-                        text run at (2,594) width 37: "bunch"
-                        text run at (2,610) width 12: "of"
-                        text run at (2,626) width 26: "text."
-                        text run at (2,642) width 36: "this is"
-                        text run at (2,658) width 8: "a"
-                        text run at (2,674) width 37: "bunch"
-                        text run at (2,690) width 12: "of"
-                        text run at (2,706) width 26: "text."
-                        text run at (2,722) width 36: "this is"
-                        text run at (2,738) width 8: "a"
-                        text run at (2,754) width 37: "bunch"
-                        text run at (2,770) width 12: "of"
-                        text run at (2,786) width 26: "text."
-                        text run at (2,802) width 36: "this is"
-                        text run at (2,818) width 8: "a"
-                        text run at (2,834) width 37: "bunch"
-                        text run at (2,850) width 12: "of"
-                        text run at (2,866) width 26: "text."
-                        text run at (2,882) width 36: "this is"
-                        text run at (2,898) width 8: "a"
-                        text run at (2,914) width 37: "bunch"
-                        text run at (2,930) width 12: "of"
-                        text run at (2,946) width 26: "text."
-                        text run at (2,962) width 36: "this is"
-                        text run at (2,978) width 8: "a"
-                        text run at (2,994) width 37: "bunch"
-                        text run at (2,1010) width 12: "of"
-                        text run at (2,1026) width 26: "text."
-                        text run at (2,1042) width 36: "this is"
-                        text run at (2,1058) width 8: "a"
-                        text run at (2,1074) width 37: "bunch"
-                        text run at (2,1090) width 12: "of"
-                        text run at (2,1106) width 26: "text."
-                        text run at (2,1122) width 36: "this is"
-                        text run at (2,1138) width 8: "a"
-                        text run at (2,1154) width 37: "bunch"
-                        text run at (2,1170) width 12: "of"
-                        text run at (2,1186) width 26: "text."
-                        text run at (2,1202) width 36: "this is"
-                        text run at (2,1218) width 8: "a"
-                        text run at (2,1234) width 37: "bunch"
-                        text run at (2,1250) width 12: "of"
-                        text run at (2,1266) width 26: "text."
-                        text run at (2,1282) width 36: "this is"
-                        text run at (2,1298) width 8: "a"
-                        text run at (2,1314) width 37: "bunch"
-                        text run at (2,1330) width 12: "of"
-                        text run at (2,1346) width 26: "text."
-                        text run at (2,1362) width 36: "this is"
-                        text run at (2,1378) width 8: "a"
-                        text run at (2,1394) width 37: "bunch"
-                        text run at (2,1410) width 12: "of"
-                        text run at (2,1426) width 26: "text."
-            RenderTableCell {TD} at (61,2) size 164x240 [border: (1px solid #0000FF)] [r=0 c=1 rs=1 cs=1]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x252 [border: (4px solid #0000FF)]
+        RenderTableSection {TBODY} at (4,4) size 776x244
+          RenderTableRow {TR} at (0,2) size 776x240
+            RenderTableCell {TD} at (2,2) size 606x100 [border: (1px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 602x96 [border: (4px solid #008000)]
+                RenderTableSection {TBODY} at (4,4) size 594x88
+                  RenderTableRow {TR} at (0,2) size 594x84
+                    RenderTableCell {TD} at (2,2) size 590x84 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 578x80
+                        text run at (2,2) width 578: "this is a bunch of text. this is a bunch of text. this is a bunch of text. this is a bunch of text. this"
+                        text run at (2,18) width 530: "is a bunch of text. this is a bunch of text. this is a bunch of text. this is a bunch of text. "
+                        text run at (532,18) width 48: "this is a"
+                        text run at (2,34) width 552: "bunch of text. this is a bunch of text. this is a bunch of text. this is a bunch of text. this is a"
+                        text run at (2,50) width 552: "bunch of text. this is a bunch of text. this is a bunch of text. this is a bunch of text. this is a"
+                        text run at (2,66) width 222: "bunch of text. this is a bunch of text."
+            RenderTableCell {TD} at (610,2) size 164x240 [border: (1px solid #0000FF)] [r=0 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (2,2) size 160x236 [border: (4px solid #008000)]
                 RenderTableSection {TBODY} at (4,4) size 152x228
                   RenderTableRow {TR} at (0,2) size 152x224
@@ -132,13 +48,9 @@ layer at (0,0) size 243x1584
                                   text run at (0,48) width 70: "be cause is"
                                   text run at (0,64) width 102: "contained in a P"
                                   text run at (0,80) width 88: "that's nowrap."
-      RenderBlock (anonymous) at (0,1472) size 80x96
+      RenderBlock (anonymous) at (0,252) size 784x32
         RenderBR {BR} at (0,0) size 0x16
-        RenderText {#text} at (0,16) size 77x80
-          text run at (0,16) width 77: "Tables have"
-          text run at (0,32) width 41: "a thick"
-          text run at (0,48) width 76: "border, cells"
-          text run at (0,64) width 70: "have a thin"
-          text run at (0,80) width 44: "border."
+        RenderText {#text} at (0,16) size 324x16
+          text run at (0,16) width 324: "Tables have a thick border, cells have a thin border."
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

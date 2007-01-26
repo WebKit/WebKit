@@ -1,35 +1,26 @@
-layer at (0,0) size 286x417
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 286x417
-  RenderBlock {HTML} at (0,0) size 96x417
-    RenderBody {BODY} at (8,8) size 80x401
-      RenderBlock {P} at (0,0) size 80x176
-        RenderText {#text} at (0,0) size 67x48
-          text run at (0,0) width 53: "This is a"
-          text run at (0,16) width 67: "regression"
-          text run at (0,32) width 44: "test for"
-        RenderInline {I} at (0,0) size 278x128
-          RenderInline {A} at (0,0) size 278x32 [color=#0000EE]
-            RenderText {#text} at (0,48) size 278x32
-              text run at (0,48) width 278: "http://bugzilla.opendarwin.org/show_bug.cgi?"
-              text run at (0,64) width 52: "id=7395"
-          RenderText {#text} at (0,80) size 79x96
-            text run at (0,80) width 59: "Table not"
-            text run at (0,96) width 73: "properly re-"
-            text run at (0,112) width 79: "flowed when"
-            text run at (0,128) width 65: "floated div"
-            text run at (0,144) width 55: "removed"
-            text run at (0,160) width 69: "from layout"
-        RenderText {#text} at (69,160) size 3x16
-          text run at (69,160) width 3: "."
-      RenderBlock {P} at (0,190) size 80x64
-        RenderText {#text} at (0,0) size 77x64
-          text run at (0,0) width 51: "The two"
-          text run at (0,16) width 77: "boxes below"
-          text run at (0,32) width 60: "should be"
-          text run at (0,48) width 55: "identical."
-      RenderBlock {HR} at (0,268) size 80x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,277) size 200x54 [bgcolor=#C0C0C0]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x32
+        RenderText {#text} at (0,0) size 176x16
+          text run at (0,0) width 176: "This is a regression test for "
+        RenderInline {I} at (0,0) size 772x32
+          RenderInline {A} at (0,0) size 330x16 [color=#0000EE]
+            RenderText {#text} at (176,0) size 330x16
+              text run at (176,0) width 330: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7395"
+          RenderText {#text} at (506,0) size 772x32
+            text run at (506,0) width 4: " "
+            text run at (510,0) width 262: "Table not properly re-flowed when floated"
+            text run at (0,16) width 150: "div removed from layout"
+        RenderText {#text} at (150,16) size 3x16
+          text run at (150,16) width 3: "."
+      RenderBlock {P} at (0,46) size 784x16
+        RenderText {#text} at (0,0) size 255x16
+          text run at (0,0) width 255: "The two boxes below should be identical."
+      RenderBlock {HR} at (0,76) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,85) size 200x54 [bgcolor=#C0C0C0]
         RenderTable {TABLE} at (0,0) size 200x54
           RenderTableSection {TBODY} at (0,0) size 200x54
             RenderTableRow {TR} at (0,2) size 200x50
@@ -38,9 +29,9 @@ layer at (0,0) size 286x417
                   text run at (1,1) width 172: "Lorem ipsum dolor sit amet,"
                   text run at (1,17) width 173: "consectetuer adipiscing elit."
                   text run at (1,33) width 78: "Nunc neque."
-      RenderBlock (anonymous) at (0,331) size 80x16
+      RenderBlock (anonymous) at (0,139) size 784x16
         RenderBR {BR} at (0,0) size 0x16
-      RenderBlock {DIV} at (0,347) size 200x54 [bgcolor=#C0C0C0]
+      RenderBlock {DIV} at (0,155) size 200x54 [bgcolor=#C0C0C0]
         RenderTable {TABLE} at (0,0) size 200x54
           RenderTableSection {TBODY} at (0,0) size 200x54
             RenderTableRow {TR} at (0,2) size 200x50

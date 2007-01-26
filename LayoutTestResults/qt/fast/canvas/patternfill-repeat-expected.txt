@@ -1,50 +1,13 @@
-layer at (0,0) size 344x1037
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 344x1037
-  RenderBlock {HTML} at (0,0) size 96x1037
-    RenderBody {BODY} at (8,14) size 80x1009
-      RenderBlock {P} at (0,0) size 80x656
-        RenderText {#text} at (0,0) size 80x656
-          text run at (0,0) width 38: "There"
-          text run at (0,16) width 60: "should be"
-          text run at (0,32) width 46: "one big"
-          text run at (0,48) width 43: "square"
-          text run at (0,64) width 36: "below"
-          text run at (0,80) width 65: "containing"
-          text run at (0,96) width 24: "four"
-          text run at (0,112) width 53: "squares."
-          text run at (0,128) width 48: "Top left"
-          text run at (0,144) width 43: "square"
-          text run at (0,160) width 60: "should be"
-          text run at (0,176) width 70: "filled with 3"
-          text run at (0,192) width 58: "rows of 2"
-          text run at (0,208) width 42: "and bit"
-          text run at (0,224) width 36: "Apple"
-          text run at (0,240) width 77: "images. Top"
-          text run at (0,256) width 75: "right square"
-          text run at (0,272) width 72: "should be 2"
-          text run at (0,288) width 54: "and a bit"
-          text run at (0,304) width 59: "rows with"
-          text run at (0,320) width 64: "one Apple"
-          text run at (0,336) width 38: "image"
-          text run at (0,352) width 44: "column"
-          text run at (0,368) width 59: "along the"
-          text run at (0,384) width 71: "left edge of"
-          text run at (0,400) width 70: "the square."
-          text run at (0,416) width 67: "Bottom left"
-          text run at (0,432) width 43: "square"
-          text run at (0,448) width 60: "should be"
-          text run at (0,464) width 80: "one row with"
-          text run at (0,480) width 73: "three Apple"
-          text run at (0,496) width 45: "images"
-          text run at (0,512) width 59: "along the"
-          text run at (0,528) width 60: "top of the"
-          text run at (0,544) width 46: "square."
-          text run at (0,560) width 76: "Bottom right"
-          text run at (0,576) width 43: "square"
-          text run at (0,592) width 60: "should be"
-          text run at (0,608) width 64: "one Apple"
-          text run at (0,624) width 77: "image in top"
-          text run at (0,640) width 67: "left corner."
-      RenderBlock {P} at (0,670) size 80x339
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x445
+  RenderBlock {HTML} at (0,0) size 800x445
+    RenderBody {BODY} at (8,14) size 784x417
+      RenderBlock {P} at (0,0) size 784x64
+        RenderText {#text} at (0,0) size 778x64
+          text run at (0,0) width 778: "There should be one big square below containing four squares. Top left square should be filled with 3 rows of 2 and bit Apple"
+          text run at (0,16) width 771: "images. Top right square should be 2 and a bit rows with one Apple image column along the left edge of the square. Bottom"
+          text run at (0,32) width 776: "left square should be one row with three Apple images along the top of the square. Bottom right square should be one Apple"
+          text run at (0,48) width 148: "image in top left corner."
+      RenderBlock {P} at (0,78) size 784x339
         RenderHTMLCanvas {CANVAS} at (0,0) size 336x336 [border: (3px solid #000000)]

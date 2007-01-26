@@ -1,50 +1,35 @@
-layer at (0,0) size 120x416
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 120x416
-  RenderBlock {HTML} at (0,0) size 96x416
-    RenderBody {BODY} at (8,8) size 80x400
-      RenderBlock (anonymous) at (0,0) size 80x144
-        RenderText {#text} at (0,0) size 72x144
-          text run at (0,0) width 72: "The TH tag"
-          text run at (0,16) width 53: "uses the"
-          text run at (0,32) width 46: "WIDTH"
-          text run at (0,48) width 53: "attribute."
-          text run at (0,64) width 52: "The first"
-          text run at (0,80) width 63: "table's TH"
-          text run at (0,96) width 70: "width is set"
-          text run at (0,112) width 40: "to 500"
-          text run at (0,128) width 39: "pixels."
-        RenderBR {BR} at (39,141) size 0x0
-      RenderTable {TABLE} at (0,144) size 112x80 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 110x78
-          RenderTableRow {TR} at (0,2) size 110x52
-            RenderTableCell {TH} at (2,2) size 106x52 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (20,2) size 102x48
-                text run at (20,2) width 65: "Netscape"
-                text run at (2,18) width 102: "Communicator"
-                text run at (8,34) width 90: "Version 4.0.6"
-          RenderTableRow {TR} at (0,56) size 110x20
-            RenderTableCell {TD} at (2,56) size 106x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 520x16
+          text run at (0,0) width 520: "The TH tag uses the WIDTH attribute. The first table's TH width is set to 500 pixels."
+        RenderBR {BR} at (520,13) size 0x0
+      RenderTable {TABLE} at (0,16) size 610x48 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 608x46
+          RenderTableRow {TR} at (0,2) size 608x20
+            RenderTableCell {TH} at (2,2) size 604x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (169,2) size 265x16
+                text run at (169,2) width 265: "Netscape Communicator Version 4.0.6"
+          RenderTableRow {TR} at (0,24) size 608x20
+            RenderTableCell {TD} at (2,24) size 604x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 59x16
                 text run at (2,2) width 59: "Platforms"
-      RenderBlock (anonymous) at (0,224) size 80x96
+      RenderBlock (anonymous) at (0,64) size 784x32
         RenderBR {BR} at (0,0) size 0x16
-        RenderText {#text} at (0,16) size 77x80
-          text run at (0,16) width 77: "This second"
-          text run at (0,32) width 63: "table's TH"
-          text run at (0,48) width 70: "width is set"
-          text run at (0,64) width 40: "to 200"
-          text run at (0,80) width 39: "pixels."
-        RenderBR {BR} at (39,93) size 0x0
-      RenderTable {TABLE} at (0,320) size 112x80 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 110x78
-          RenderTableRow {TR} at (0,2) size 110x52
-            RenderTableCell {TH} at (2,2) size 106x52 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (20,2) size 102x48
-                text run at (20,2) width 65: "Netscape"
-                text run at (2,18) width 102: "Communicator"
-                text run at (8,34) width 90: "Version 4.0.6"
-          RenderTableRow {TR} at (0,56) size 110x20
-            RenderTableCell {TD} at (2,56) size 106x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+        RenderText {#text} at (0,16) size 305x16
+          text run at (0,16) width 305: "This second table's TH width is set to 200 pixels."
+        RenderBR {BR} at (305,29) size 0x0
+      RenderTable {TABLE} at (0,96) size 210x64 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 208x62
+          RenderTableRow {TR} at (0,2) size 208x36
+            RenderTableCell {TH} at (2,2) size 204x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (16,2) size 171x32
+                text run at (16,2) width 171: "Netscape Communicator"
+                text run at (57,18) width 90: "Version 4.0.6"
+          RenderTableRow {TR} at (0,40) size 208x20
+            RenderTableCell {TD} at (2,40) size 204x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 59x16
                 text run at (2,2) width 59: "Platforms"

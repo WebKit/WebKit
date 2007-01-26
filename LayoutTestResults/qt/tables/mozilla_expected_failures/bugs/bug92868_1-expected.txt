@@ -1,19 +1,17 @@
-layer at (0,0) size 96x102
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x102
-  RenderBlock {HTML} at (0,0) size 96x102
-    RenderBody {BODY} at (8,8) size 80x86
-      RenderBlock (anonymous) at (0,0) size 80x48
-        RenderText {#text} at (0,0) size 75x48
-          text run at (0,0) width 47: "the text"
-          text run at (0,16) width 60: "should be"
-          text run at (0,32) width 75: "courier 24pt"
-      RenderTable {TABLE} at (0,48) size 80x22
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x70
+  RenderBlock {HTML} at (0,0) size 800x70
+    RenderBody {BODY} at (8,8) size 784x54
+      RenderBlock (anonymous) at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 190x16
+          text run at (0,0) width 190: "the text should be courier 24pt"
+      RenderTable {TABLE} at (0,16) size 80x22
         RenderTableSection {TBODY} at (0,0) size 80x22
           RenderTableRow {TR} at (0,2) size 80x18
             RenderTableCell {TD} at (2,2) size 76x18 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 74x16
                 text run at (1,1) width 74: "inside a cell"
-      RenderBlock {DIV} at (0,70) size 80x16
+      RenderBlock {DIV} at (0,38) size 784x16
         RenderText {#text} at (0,0) size 71x16
           text run at (0,0) width 71: "inside a div"

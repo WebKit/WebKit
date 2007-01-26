@@ -1,16 +1,12 @@
-layer at (0,0) size 96x101
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x101
-  RenderBlock {HTML} at (0,0) size 96x101
-    RenderBody {BODY} at (8,8) size 80x85
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
       RenderInline {A} at (0,0) size 21x16 [color=#0000EE]
         RenderImage {IMG} at (0,0) size 21x21 [bgcolor=#008000]
       RenderText {#text} at (21,1) size 4x16
         text run at (21,1) width 4: " "
       RenderImage {IMG} at (25,0) size 21x21 [bgcolor=#008000]
-      RenderText {#text} at (46,1) size 77x84
-        text run at (46,1) width 29: " The"
-        text run at (0,21) width 63: "two green"
-        text run at (0,37) width 39: "blocks"
-        text run at (0,53) width 67: "should line"
-        text run at (0,69) width 77: "up vertically."
+      RenderText {#text} at (46,1) size 291x16
+        text run at (46,1) width 291: " The two green blocks should line up vertically."

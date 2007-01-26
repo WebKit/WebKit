@@ -1,32 +1,21 @@
-layer at (0,0) size 312x420
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x224
-  RenderBlock {HTML} at (0,0) size 96x224
-    RenderBody {BODY} at (8,8) size 80x208
-      RenderText {#text} at (0,0) size 80x208
-        text run at (0,0) width 61: "This tests"
-        text run at (0,16) width 64: "clipping of"
-        text run at (0,32) width 72: "the outline. "
-        text run at (72,32) width 8: "It"
-        text run at (0,48) width 65: "should not"
-        text run at (0,64) width 64: "be clipped"
-        text run at (0,80) width 38: "by the"
-        text run at (0,96) width 53: "overflow"
-        text run at (0,112) width 31: "rect. "
-        text run at (31,112) width 25: "The"
-        text run at (0,128) width 54: "inner div"
-        text run at (0,144) width 76: "has a green"
-        text run at (0,160) width 69: "outline and"
-        text run at (0,176) width 33: "a red"
-        text run at (0,192) width 48: "border. "
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 757x32
+        text run at (0,0) width 205: "This tests clipping of the outline. "
+        text run at (205,0) width 279: "It should not be clipped by the overflow rect. "
+        text run at (484,0) width 273: "The inner div has a green outline and a red"
+        text run at (0,16) width 48: "border. "
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (8,216) size 304x204 backgroundClip at (83,216) size 229x204 clip at (83,216) size 229x204 outlineClip at (83,216) size 229x204
-  RenderBlock (positioned) {DIV} at (8,216) size 304x204 [border: (2px solid #0000FF)]
+layer at (8,40) size 304x204 backgroundClip at (83,40) size 229x204 clip at (83,40) size 229x204 outlineClip at (83,40) size 229x204
+  RenderBlock (positioned) {DIV} at (8,40) size 304x204 [border: (2px solid #0000FF)]
     RenderText {#text} at (2,2) size 100x16
       text run at (2,2) width 100: "text in outer div "
     RenderText {#text} at (0,0) size 0x0
-layer at (60,234) size 102x22 backgroundClip at (83,234) size 79x22 clip at (83,237) size 76x16 outlineClip at (83,216) size 229x204 scrollWidth 97
+layer at (60,58) size 102x22 backgroundClip at (83,58) size 79x22 clip at (83,61) size 76x16 outlineClip at (83,40) size 229x204 scrollWidth 97
   RenderBlock (positioned) {DIV} at (52,18) size 102x22 [bgcolor=#EEEEEE] [border: (3px solid #FF0000)]
     RenderText {#text} at (3,3) size 96x16
       text run at (3,3) width 96: "text in inner div"

@@ -1,39 +1,16 @@
-layer at (0,0) size 128x660
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x448
-  RenderBlock {HTML} at (0,0) size 96x448
-    RenderBody {BODY} at (8,8) size 80x432
-      RenderText {#text} at (0,0) size 80x432
-        text run at (0,0) width 69: "You should"
-        text run at (0,16) width 35: "see a"
-        text run at (0,32) width 55: "100x100"
-        text run at (0,48) width 37: "green"
-        text run at (0,64) width 72: "square with"
-        text run at (0,80) width 65: "a scrollbar"
-        text run at (0,96) width 43: "below. "
-        text run at (43,96) width 34: "If you"
-        text run at (0,112) width 78: "see any red,"
-        text run at (0,128) width 74: "the test has"
-        text run at (0,144) width 41: "failed. "
-        text run at (41,144) width 27: "This"
-        text run at (0,160) width 37: "test is"
-        text run at (0,176) width 72: "checking to"
-        text run at (0,192) width 65: "make sure"
-        text run at (0,208) width 70: "clip applies"
-        text run at (0,224) width 36: "to the"
-        text run at (0,240) width 50: "element"
-        text run at (0,256) width 71: "itself, starts"
-        text run at (0,272) width 52: "from the"
-        text run at (0,288) width 80: "border edge,"
-        text run at (0,304) width 79: "and clips out"
-        text run at (0,320) width 63: "scrollbars."
-        text run at (0,336) width 71: "The bottom"
-        text run at (0,352) width 36: "of the"
-        text run at (0,368) width 52: "scrolling"
-        text run at (0,384) width 71: "mechanism"
-        text run at (0,400) width 60: "should be"
-        text run at (0,416) width 52: "clipped. "
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x64
+  RenderBlock {HTML} at (0,0) size 800x64
+    RenderBody {BODY} at (8,8) size 784x48
+      RenderText {#text} at (0,0) size 783x48
+        text run at (0,0) width 400: "You should see a 100x100 green square with a scrollbar below. "
+        text run at (400,0) width 239: "If you see any red, the test has failed. "
+        text run at (639,0) width 144: "This test is checking to"
+        text run at (0,16) width 602: "make sure clip applies to the element itself, starts from the border edge, and clips out scrollbars. "
+        text run at (602,16) width 167: "The bottom of the scrolling"
+        text run at (0,32) width 191: "mechanism should be clipped. "
       RenderText {#text} at (0,0) size 0x0
-layer at (8,440) size 120x220 backgroundClip at (18,450) size 100x100 clip at (18,450) size 100x100 outlineClip at (18,450) size 100x100 scrollHeight 1000
-  RenderBlock (positioned) {DIV} at (8,440) size 120x220 [bgcolor=#008000] [border: (10px solid #FF0000)]
+layer at (8,56) size 120x220 backgroundClip at (18,66) size 100x100 clip at (18,66) size 100x100 outlineClip at (18,66) size 100x100 scrollHeight 1000
+  RenderBlock (positioned) {DIV} at (8,56) size 120x220 [bgcolor=#008000] [border: (10px solid #FF0000)]
     RenderBlock {DIV} at (10,10) size 100x1000

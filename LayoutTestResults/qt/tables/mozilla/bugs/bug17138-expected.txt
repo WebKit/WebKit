@@ -1,17 +1,15 @@
-layer at (0,0) size 458x276
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 458x276
-  RenderBlock {HTML} at (0,0) size 96x276
-    RenderBody {BODY} at (8,8) size 80x260 [bgcolor=#FFFFFF]
-      RenderBlock {H4} at (0,0) size 80x64
-        RenderText {#text} at (0,0) size 61x48
-          text run at (0,0) width 61: "Testcase"
-          text run at (0,16) width 55: "distilled"
-          text run at (0,32) width 31: "from"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
+      RenderBlock {H4} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 159x16
+          text run at (0,0) width 159: "Testcase distilled from "
         RenderInline {A} at (0,0) size 162x16 [color=#0000EE]
-          RenderText {#text} at (0,48) size 162x16
-            text run at (0,48) width 162: "http://www.weather.com"
-      RenderTable {TABLE} at (0,82) size 450x178
+          RenderText {#text} at (159,0) size 162x16
+            text run at (159,0) width 162: "http://www.weather.com"
+      RenderTable {TABLE} at (0,34) size 450x178
         RenderTableSection {TBODY} at (0,0) size 450x178
           RenderTableRow {TR} at (0,0) size 450x17
             RenderTableCell {TD} at (0,0) size 325x17 [r=0 c=0 rs=1 cs=3]

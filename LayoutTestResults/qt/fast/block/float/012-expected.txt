@@ -1,16 +1,14 @@
-layer at (0,0) size 139x96
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x26
-  RenderBlock {HTML} at (0,0) size 96x26
-    RenderBody {BODY} at (8,8) size 80x10
-      RenderBlock (floating) {DIV} at (0,0) size 131x52 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 127x48 [border: (50px solid #0000FF) none (50px solid #0000FF)]
-          RenderText {#text} at (102,2) size 127x48
-            text run at (102,2) width 27: "This"
-            text run at (2,18) width 48: "is some"
-            text run at (2,34) width 26: "text."
-      RenderBlock {P} at (0,0) size 80x0
-      RenderBlock (floating) {DIV} at (0,52) size 88x36 [border: (2px solid #FF0000)]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (floating) {DIV} at (0,0) size 313x20 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 309x16 [border: (50px solid #0000FF) none (50px solid #0000FF)]
+          RenderText {#text} at (102,2) size 109x16
+            text run at (102,2) width 109: "This is some text."
+      RenderBlock {P} at (0,0) size 784x0
+      RenderBlock (floating) {DIV} at (696,0) size 88x36 [border: (2px solid #FF0000)]
         RenderInline {SPAN} at (0,0) size 84x32 [border: (10px solid #008000) none (10px solid #008000)]
           RenderText {#text} at (12,2) size 74x32
             text run at (12,2) width 53: "First line"

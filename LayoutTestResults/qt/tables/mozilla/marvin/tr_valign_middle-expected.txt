@@ -1,32 +1,21 @@
-layer at (0,0) size 440x243
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 440x243
-  RenderBlock {HTML} at (0,0) size 96x243
-    RenderBody {BODY} at (8,8) size 80x227
-      RenderBlock (anonymous) at (0,0) size 80x32
-        RenderText {#text} at (0,0) size 113x32
-          text run at (0,0) width 19: "TR"
-          text run at (0,16) width 113: "VALIGN=MIDDLE"
-      RenderTable {TABLE} at (0,32) size 432x195 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 430x193
-          RenderTableRow {TR} at (0,2) size 430x189
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 136x16
+          text run at (0,0) width 136: "TR VALIGN=MIDDLE"
+      RenderTable {TABLE} at (0,16) size 784x195 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x193
+          RenderTableRow {TR} at (0,2) size 782x189
             RenderTableCell {TD} at (2,2) size 304x189 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 300x185
-            RenderTableCell {TD} at (308,38) size 59x116 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 55x112
-                text run at (2,2) width 54: "This text"
-                text run at (2,18) width 41: "should"
-                text run at (2,34) width 15: "be"
-                text run at (2,50) width 55: "vertically"
-                text run at (2,66) width 46: "aligned"
-                text run at (2,82) width 36: "to the"
-                text run at (2,98) width 41: "middle"
-            RenderTableCell {TD} at (369,38) size 59x116 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 55x112
-                text run at (2,2) width 54: "This text"
-                text run at (2,18) width 41: "should"
-                text run at (2,34) width 15: "be"
-                text run at (2,50) width 55: "vertically"
-                text run at (2,66) width 46: "aligned"
-                text run at (2,82) width 36: "to the"
-                text run at (2,98) width 41: "middle"
+            RenderTableCell {TD} at (308,78) size 235x36 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 227x32
+                text run at (2,2) width 227: "This text should be vertically aligned"
+                text run at (2,18) width 81: "to the middle"
+            RenderTableCell {TD} at (545,78) size 235x36 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 227x32
+                text run at (2,2) width 227: "This text should be vertically aligned"
+                text run at (2,18) width 81: "to the middle"

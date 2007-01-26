@@ -1,39 +1,28 @@
-layer at (0,0) size 608x368
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 608x368
-  RenderBlock {HTML} at (0,0) size 96x368
-    RenderBody {BODY} at (8,8) size 80x352
-      RenderTable {TABLE} at (0,0) size 80x282 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 78x280
-          RenderTableRow {TR} at (0,0) size 78x260
-            RenderTableCell {TD} at (0,0) size 78x260 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (2,2) size 74x256
-                text run at (2,2) width 25: "The"
-                text run at (2,18) width 56: "Supreme"
-                text run at (2,34) width 67: "Court says"
-                text run at (2,50) width 64: "Wisconsin"
-                text run at (2,66) width 23: "can"
-                text run at (2,82) width 53: "continue"
-                text run at (2,98) width 74: "using tuition"
-                text run at (2,114) width 73: "vouchers to"
-                text run at (2,130) width 60: "help poor"
-                text run at (2,146) width 48: "parents"
-                text run at (2,162) width 63: "send their"
-                text run at (2,178) width 66: "children to"
-                text run at (2,194) width 66: "church-run"
-                text run at (2,210) width 51: "schools."
-                text run at (2,226) width 74: "What's your"
-                text run at (2,242) width 43: "stand?"
-          RenderTableRow {TR} at (0,260) size 78x20
-            RenderTableCell {TD} at (0,260) size 39x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x58 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x56
+          RenderTableRow {TR} at (0,0) size 782x36
+            RenderTableCell {TD} at (0,0) size 782x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderText {#text} at (2,2) size 766x32
+                text run at (2,2) width 160: "The Supreme Court says "
+                text run at (162,2) width 490: "Wisconsin can continue using tuition vouchers to help poor parents send their "
+                text run at (652,2) width 116: "children to church-"
+                text run at (2,18) width 79: "run schools. "
+                text run at (81,18) width 121: "What's your stand?"
+          RenderTableRow {TR} at (0,36) size 782x20
+            RenderTableCell {TD} at (0,36) size 391x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x16
                 text run at (2,2) width 30: "hello"
-            RenderTableCell {TD} at (39,260) size 39x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (391,36) size 391x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x16
                 text run at (2,2) width 30: "hello"
-      RenderBlock (anonymous) at (0,282) size 80x16
+      RenderBlock (anonymous) at (0,58) size 784x16
         RenderBR {BR} at (0,0) size 0x16
-      RenderTable {TABLE} at (0,298) size 600x38 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,74) size 600x38 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 598x36
           RenderTableRow {TR} at (0,0) size 598x36
             RenderTableCell {TD} at (0,8) size 34x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -47,5 +36,5 @@ layer at (0,0) size 608x368
                 text run at (121,18) width 195: "children to church-run schools. "
                 text run at (316,18) width 121: "What's your stand?"
           RenderTableRow {TR} at (0,36) size 598x0
-      RenderBlock (anonymous) at (0,336) size 80x16
+      RenderBlock (anonymous) at (0,112) size 784x16
         RenderBR {BR} at (0,0) size 0x16

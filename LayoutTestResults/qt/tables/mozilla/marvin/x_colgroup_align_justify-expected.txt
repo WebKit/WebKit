@@ -1,8 +1,8 @@
-layer at (0,0) size 608x106
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 608x106
-  RenderBlock {html} at (0,0) size 96x106
-    RenderBody {body} at (8,8) size 80x90
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x106
+  RenderBlock {html} at (0,0) size 800x106
+    RenderBody {body} at (8,8) size 784x90
       RenderTable {table} at (0,0) size 600x90 [border: (1px outset #808080)]
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0

@@ -1,23 +1,9 @@
-layer at (0,0) size 96x306
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x306
-  RenderBlock {HTML} at (0,0) size 96x306 [bgcolor=#800080]
-    RenderBody {BODY} at (25,25) size 46x256 [color=#FFFFFF] [bgcolor=#000080]
-      RenderBlock {P} at (0,0) size 46x256
-        RenderText {#text} at (0,0) size 66x256
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 66: "paragraph"
-          text run at (0,32) width 41: "should"
-          text run at (0,48) width 42: "be in a"
-          text run at (0,64) width 25: "blue"
-          text run at (0,80) width 32: "block"
-          text run at (0,96) width 29: "near"
-          text run at (0,112) width 44: "the top"
-          text run at (0,128) width 36: "of the"
-          text run at (0,144) width 35: "page."
-          text run at (0,160) width 45: "Around"
-          text run at (0,176) width 45: "it on all"
-          text run at (0,192) width 33: "sides"
-          text run at (0,208) width 41: "should"
-          text run at (0,224) width 15: "be"
-          text run at (0,240) width 42: "purple."
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x66
+  RenderBlock {HTML} at (0,0) size 800x66 [bgcolor=#800080]
+    RenderBody {BODY} at (25,25) size 750x16 [color=#FFFFFF] [bgcolor=#000080]
+      RenderBlock {P} at (0,0) size 750x16
+        RenderText {#text} at (0,0) size 658x16
+          text run at (0,0) width 378: "This paragraph should be in a blue block near the top of the "
+          text run at (378,0) width 280: "page. Around it on all sides should be purple."

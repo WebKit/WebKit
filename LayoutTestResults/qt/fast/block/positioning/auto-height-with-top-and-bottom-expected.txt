@@ -1,23 +1,14 @@
-layer at (0,0) size 412x318
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 412x294
-  RenderBlock {HTML} at (0,0) size 96x294
-    RenderBody {BODY} at (8,8) size 80x278
-      RenderBlock {P} at (0,0) size 80x160
-        RenderText {#text} at (0,0) size 76x160
-          text run at (0,0) width 76: "The red box"
-          text run at (0,16) width 60: "should be"
-          text run at (0,32) width 46: "entirely"
-          text run at (0,48) width 61: "inside the"
-          text run at (0,64) width 58: "black box"
-          text run at (0,80) width 76: "with the text"
-          text run at (0,96) width 47: "content"
-          text run at (0,112) width 66: "spilling out"
-          text run at (0,128) width 59: "of both of"
-          text run at (0,144) width 34: "them."
-layer at (8,182) size 404x104
-  RenderBlock (relative positioned) {DIV} at (0,174) size 404x104 [border: (2px solid #000000)]
-layer at (10,204) size 400x114
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 619x16
+          text run at (0,0) width 619: "The red box should be entirely inside the black box with the text content spilling out of both of them."
+layer at (8,38) size 404x104
+  RenderBlock (relative positioned) {DIV} at (0,30) size 404x104 [border: (2px solid #000000)]
+layer at (10,60) size 400x114
   RenderBlock (positioned) {DIV} at (2,22) size 400x60 [border: (2px solid #FF0000)]
     RenderText {#text} at (2,2) size 395x112
       text run at (2,2) width 391: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do"

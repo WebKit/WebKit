@@ -1,44 +1,18 @@
-layer at (0,0) size 781x1006
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 781x1006
-  RenderBlock {HTML} at (0,0) size 96x1006
-    RenderBody {BODY} at (8,8) size 80x990
-      RenderBlock {P} at (0,0) size 80x496
-        RenderText {#text} at (0,0) size 77x496
-          text run at (0,0) width 61: "This table"
-          text run at (0,16) width 73: "contains an"
-          text run at (0,32) width 55: "<applet>"
-          text run at (0,48) width 71: "that will not"
-          text run at (0,64) width 65: "load -- you"
-          text run at (0,80) width 74: "can see the"
-          text run at (0,96) width 62: "space get"
-          text run at (0,112) width 57: "allocated"
-          text run at (0,128) width 56: "and then"
-          text run at (0,144) width 41: "reflow."
-          text run at (0,160) width 68: "Notice that"
-          text run at (0,176) width 50: "the final"
-          text run at (0,192) width 44: "table is"
-          text run at (0,208) width 65: "clipped on"
-          text run at (0,224) width 52: "the right"
-          text run at (0,240) width 74: "hand side --"
-          text run at (0,256) width 77: "try shrinking"
-          text run at (0,272) width 71: "the window"
-          text run at (0,288) width 66: "and notice"
-          text run at (0,304) width 50: "how the"
-          text run at (0,320) width 48: "clipping"
-          text run at (0,336) width 77: "increases. (I"
-          text run at (0,352) width 48: "couldn't"
-          text run at (0,368) width 34: "really"
-          text run at (0,384) width 72: "simplify this"
-          text run at (0,400) width 41: "further"
-          text run at (0,416) width 44: "without"
-          text run at (0,432) width 75: "losing some"
-          text run at (0,448) width 36: "of the"
-          text run at (0,464) width 46: "original"
-          text run at (0,480) width 56: "'flavour'.)"
-      RenderBlock (anonymous) at (0,510) size 80x16
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x48
+        RenderText {#text} at (0,0) size 777x48
+          text run at (0,0) width 777: "This table contains an <applet> that will not load -- you can see the space get allocated and then reflow. Notice that the final"
+          text run at (0,16) width 583: "table is clipped on the right hand side -- try shrinking the window and notice how the clipping "
+          text run at (583,16) width 167: "increases. (I couldn't really"
+          text run at (0,32) width 288: "simplify this further without losing some of the "
+          text run at (288,32) width 106: "original 'flavour'.)"
+      RenderBlock (anonymous) at (0,62) size 784x16
         RenderBR {BR} at (0,0) size 0x16
-      RenderTable {TABLE} at (0,526) size 773x130 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,78) size 773x130 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 771x128
           RenderTableRow {TR} at (0,2) size 771x124
             RenderTableCell {TD} at (2,2) size 767x124 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -88,21 +62,15 @@ layer at (0,0) size 781x1006
                             RenderTableCell {TD} at (663,8) size 88x28 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
                               RenderText {#text} at (6,6) size 76x16
                                 text run at (6,6) width 76: "17/07 - 27/8"
-      RenderBlock (anonymous) at (0,656) size 80x16
+      RenderBlock (anonymous) at (0,208) size 784x16
         RenderBR {BR} at (0,0) size 0x16
-      RenderBlock {P} at (0,686) size 80x128
-        RenderText {#text} at (0,0) size 78x128
-          text run at (0,0) width 61: "This table"
-          text run at (0,16) width 72: "repeats the"
-          text run at (0,32) width 53: "previous"
-          text run at (0,48) width 55: "table, but"
-          text run at (0,64) width 78: "removes the"
-          text run at (0,80) width 75: "'bad applet'."
-          text run at (0,96) width 64: "Table lays"
-          text run at (0,112) width 46: "out OK."
-      RenderBlock (anonymous) at (0,828) size 80x16
+      RenderBlock {P} at (0,238) size 784x16
+        RenderText {#text} at (0,0) size 532x16
+          text run at (0,0) width 418: "This table repeats the previous table, but removes the 'bad applet'. "
+          text run at (418,0) width 114: "Table lays out OK."
+      RenderBlock (anonymous) at (0,268) size 784x16
         RenderBR {BR} at (0,0) size 0x16
-      RenderTable {TABLE} at (0,844) size 773x146 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,284) size 773x146 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 771x144
           RenderTableRow {TR} at (0,2) size 771x140
             RenderTableCell {TD} at (2,2) size 767x140 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

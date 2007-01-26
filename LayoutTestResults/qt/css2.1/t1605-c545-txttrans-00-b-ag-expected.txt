@@ -1,15 +1,12 @@
-layer at (0,0) size 334x186
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 334x186
-  RenderBlock {HTML} at (0,0) size 96x186
-    RenderBody {BODY} at (8,8) size 80x170
-      RenderBlock {P} at (0,0) size 80x64
-        RenderText {#text} at (0,0) size 72x64
-          text run at (0,0) width 38: "There"
-          text run at (0,16) width 72: "should be a"
-          text run at (0,32) width 63: "green box"
-          text run at (0,48) width 39: "below."
-      RenderBlock {DIV} at (0,64) size 326x106 [color=#008000] [bgcolor=#FF0000] [border: (3px solid #000000)]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x138
+  RenderBlock {HTML} at (0,0) size 800x138
+    RenderBody {BODY} at (8,8) size 784x122
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 224x16
+          text run at (0,0) width 224: "There should be a green box below."
+      RenderBlock {DIV} at (0,16) size 326x106 [color=#008000] [bgcolor=#FF0000] [border: (3px solid #000000)]
         RenderBlock {P} at (3,3) size 320x20
           RenderText {#text} at (0,-1) size 97x12
             text run at (0,-1) width 97: "Xx xx x. (x.x. XX) x x "

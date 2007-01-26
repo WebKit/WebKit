@@ -1,16 +1,12 @@
-layer at (0,0) size 240x4376
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 240x4376
-  RenderBlock {HTML} at (0,0) size 96x4376
-    RenderBody {BODY} at (8,8) size 80x4360 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 80x80
-        RenderText {#text} at (0,0) size 77x80
-          text run at (0,0) width 58: "The style"
-          text run at (0,16) width 77: "declarations"
-          text run at (0,32) width 74: "which apply"
-          text run at (0,48) width 63: "to the text"
-          text run at (0,64) width 64: "below are:"
-      RenderBlock {PRE} at (0,94) size 80x128
+layer at (0,0) size 800x1048
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x1048
+  RenderBlock {HTML} at (0,0) size 800x1048
+    RenderBody {BODY} at (8,8) size 784x1032 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 352x16
+          text run at (0,0) width 352: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,30) size 784x128
         RenderText {#text} at (0,0) size 232x128
           text run at (0,0) width 136: ".one {text-decoration: underline;}"
           text run at (136,0) width 0: " "
@@ -27,358 +23,176 @@ layer at (0,0) size 240x4376
           text run at (0,96) width 232: ".seven {text-decoration: underline overline line-through;}"
           text run at (232,96) width 0: " "
           text run at (0,112) width 0: " "
-      RenderBlock {HR} at (0,236) size 80x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,252) size 80x64
-        RenderText {#text} at (0,0) size 69x64
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 58: "sentence"
-          text run at (0,32) width 60: "should be"
-          text run at (0,48) width 69: "underlined."
-      RenderBlock {P} at (0,330) size 80x64
-        RenderText {#text} at (0,0) size 61x64
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 58: "sentence"
-          text run at (0,32) width 60: "should be"
-          text run at (0,48) width 61: "overlined."
-      RenderBlock {P} at (0,408) size 80x80
-        RenderText {#text} at (0,0) size 83x80
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 58: "sentence"
-          text run at (0,32) width 76: "should have"
-          text run at (0,48) width 76: "stricken text"
-          text run at (0,64) width 83: "(linethrough)."
-      RenderBlock {P} at (0,502) size 80x160
-        RenderText {#text} at (0,0) size 73x160
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 50: "element"
-          text run at (0,32) width 60: "should be"
-          text run at (0,48) width 54: "blinking. "
-          text run at (54,48) width 13: "(It"
-          text run at (0,64) width 34: "is not"
-          text run at (0,80) width 55: "required,"
-          text run at (0,96) width 57: "however,"
-          text run at (0,112) width 54: "that UAs"
-          text run at (0,128) width 73: "support this"
-          text run at (0,144) width 62: "behavior.)"
-      RenderBlock {P} at (0,676) size 80x368
-        RenderText {#text} at (0,0) size 76x128
-          text run at (0,0) width 67: "The text in"
-          text run at (0,16) width 76: "this element"
-          text run at (0,32) width 60: "should be"
-          text run at (0,48) width 69: "underlined."
-          text run at (0,64) width 25: "The"
-          text run at (0,80) width 61: "boldfaced"
-          text run at (0,96) width 64: "text in this"
-          text run at (0,112) width 50: "element"
-        RenderInline {B} at (0,0) size 75x48
-          RenderText {#text} at (0,128) size 75x48
-            text run at (0,128) width 48: "should"
-            text run at (0,144) width 50: "also be"
-            text run at (0,160) width 75: "underlined"
-        RenderText {#text} at (75,160) size 78x208
-          text run at (75,160) width 3: "."
-          text run at (0,176) width 41: "This is"
-          text run at (0,192) width 76: "because the"
-          text run at (0,208) width 51: "parent's"
-          text run at (0,224) width 58: "underline"
-          text run at (0,240) width 60: "will 'span'"
-          text run at (0,256) width 20: "the"
-          text run at (0,272) width 61: "boldfaced"
-          text run at (0,288) width 72: "text, even if"
-          text run at (0,304) width 57: "the inline"
-          text run at (0,320) width 77: "element has"
-          text run at (0,336) width 78: "no underline"
-          text run at (0,352) width 63: "of its own."
-      RenderBlock {P} at (0,1058) size 80x96
-        RenderText {#text} at (0,0) size 66x96
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 58: "sentence"
-          text run at (0,32) width 60: "should be"
-          text run at (0,48) width 66: "underlined"
-          text run at (0,64) width 24: "and"
-          text run at (0,80) width 61: "overlined."
-      RenderBlock {P} at (0,1168) size 80x96
-        RenderText {#text} at (0,0) size 80x96
-          text run at (0,0) width 27: "This"
-          text run at (0,16) width 58: "sentence"
-          text run at (0,32) width 60: "should be"
-          text run at (0,48) width 69: "underlined,"
-          text run at (0,64) width 61: "overlined,"
-          text run at (0,80) width 80: "and stricken."
-      RenderBlock {P} at (0,1278) size 80x0
-      RenderBlock {P} at (0,1278) size 80x208
-        RenderText {#text} at (0,0) size 80x208
-          text run at (0,0) width 38: "There"
-          text run at (0,16) width 60: "should be"
-          text run at (0,32) width 47: "nothing"
-          text run at (0,48) width 38: "visible"
-          text run at (0,64) width 79: "between this"
-          text run at (0,80) width 58: "sentence"
-          text run at (0,96) width 76: "and the one"
-          text run at (0,112) width 80: "above (there"
-          text run at (0,128) width 72: "is an empty"
-          text run at (0,144) width 66: "paragraph"
-          text run at (0,160) width 79: "element with"
-          text run at (0,176) width 48: "class of"
-          text run at (0,192) width 46: "seven)."
-      RenderBlock {P} at (0,1500) size 80x370
-        RenderText {#text} at (0,0) size 80x160
-          text run at (0,0) width 28: "Text"
-          text run at (0,16) width 74: "decorations"
-          text run at (0,32) width 80: "only apply to"
-          text run at (0,48) width 63: "the text of"
-          text run at (0,64) width 73: "an element,"
-          text run at (0,80) width 39: "so the"
-          text run at (0,96) width 78: "image at the"
-          text run at (0,112) width 66: "end of this"
-          text run at (0,128) width 58: "sentence"
-          text run at (0,144) width 45: "should "
+      RenderBlock {HR} at (0,172) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,188) size 784x16
+        RenderText {#text} at (0,0) size 226x16
+          text run at (0,0) width 226: "This sentence should be underlined."
+      RenderBlock {P} at (0,218) size 784x16
+        RenderText {#text} at (0,0) size 218x16
+          text run at (0,0) width 218: "This sentence should be overlined."
+      RenderBlock {P} at (0,248) size 784x16
+        RenderText {#text} at (0,0) size 336x16
+          text run at (0,0) width 336: "This sentence should have stricken text (linethrough)."
+      RenderBlock {P} at (0,278) size 784x16
+        RenderText {#text} at (0,0) size 575x16
+          text run at (0,0) width 203: "This element should be blinking. "
+          text run at (203,0) width 372: "(It is not required, however, that UAs support this behavior.)"
+      RenderBlock {P} at (0,308) size 784x32
+        RenderText {#text} at (0,0) size 504x16
+          text run at (0,0) width 288: "The text in this element should be underlined. "
+          text run at (288,0) width 216: "The boldfaced text in this element "
+        RenderInline {B} at (0,0) size 181x16
+          RenderText {#text} at (504,0) size 181x16
+            text run at (504,0) width 181: "should also be underlined"
+        RenderText {#text} at (685,0) size 733x32
+          text run at (685,0) width 7: ". "
+          text run at (692,0) width 41: "This is"
+          text run at (0,16) width 713: "because the parent's underline will 'span' the boldfaced text, even if the inline element has no underline of its own."
+      RenderBlock {P} at (0,354) size 784x16
+        RenderText {#text} at (0,0) size 316x16
+          text run at (0,0) width 316: "This sentence should be underlined and overlined."
+      RenderBlock {P} at (0,384) size 784x16
+        RenderText {#text} at (0,0) size 375x16
+          text run at (0,0) width 375: "This sentence should be underlined, overlined, and stricken."
+      RenderBlock {P} at (0,414) size 784x0
+      RenderBlock {P} at (0,414) size 784x32
+        RenderText {#text} at (0,0) size 769x32
+          text run at (0,0) width 769: "There should be nothing visible between this sentence and the one above (there is an empty paragraph element with class"
+          text run at (0,16) width 62: "of seven)."
+      RenderBlock {P} at (0,460) size 784x50
+        RenderText {#text} at (0,2) size 640x16
+          text run at (0,2) width 640: "Text decorations only apply to the text of an element, so the image at the end of this sentence should "
         RenderInline {EM} at (0,0) size 20x16
-          RenderText {#text} at (45,144) size 20x16
-            text run at (45,144) width 20: "not"
-        RenderText {#text} at (0,160) size 80x16
-          text run at (0,160) width 80: "be overlined:"
-        RenderImage {IMG} at (0,176) size 15x15
-        RenderText {#text} at (15,178) size 79x192
-          text run at (15,178) width 7: ". "
-          text run at (22,178) width 25: "The"
-          text run at (0,194) width 74: "underline of"
-          text run at (0,210) width 65: "the parent"
-          text run at (0,226) width 50: "element"
-          text run at (0,242) width 72: "should hold"
-          text run at (0,258) width 79: "true beneath"
-          text run at (0,274) width 65: "the image,"
-          text run at (0,290) width 57: "however,"
-          text run at (0,306) width 64: "since text-"
-          text run at (0,322) width 67: "decoration"
-          text run at (0,338) width 77: "'spans' child"
-          text run at (0,354) width 60: "elements."
-      RenderBlock {P} at (0,1884) size 80x160 [color=#008000]
-        RenderText {#text} at (0,0) size 69x32
-          text run at (0,0) width 25: "The"
-          text run at (0,16) width 69: "underlining"
-        RenderInline {SPAN} at (0,0) size 58x32 [color=#0000FF]
-          RenderText {#text} at (0,32) size 58x32
-            text run at (0,32) width 37: "in this"
-            text run at (0,48) width 58: "sentence"
-        RenderText {#text} at (0,64) size 74x64
-          text run at (0,64) width 60: "should be"
-          text run at (0,80) width 60: "green, no"
-          text run at (0,96) width 74: "matter what"
-          text run at (0,112) width 24: "the "
-        RenderInline {SPAN} at (0,0) size 61x48 [color=#000000]
-          RenderText {#text} at (24,112) size 61x48
-            text run at (24,112) width 23: "text"
-            text run at (0,128) width 61: "color may"
-            text run at (0,144) width 15: "be"
-        RenderText {#text} at (15,144) size 3x16
-          text run at (15,144) width 3: "."
-      RenderBlock {P} at (0,2058) size 80x256
-        RenderText {#text} at (0,0) size 67x32
-          text run at (0,0) width 67: "The colors"
-          text run at (0,16) width 36: "of the"
+          RenderText {#text} at (640,2) size 20x16
+            text run at (640,2) width 20: "not"
+        RenderText {#text} at (660,2) size 88x16
+          text run at (660,2) width 88: " be overlined: "
+        RenderImage {IMG} at (748,0) size 15x15
+        RenderText {#text} at (763,2) size 766x48
+          text run at (763,2) width 3: "."
+          text run at (0,18) width 731: "The underline of the parent element should hold true beneath the image, however, since text-decoration 'spans' child"
+          text run at (0,34) width 60: "elements."
+      RenderBlock {P} at (0,524) size 784x16 [color=#008000]
+        RenderText {#text} at (0,0) size 102x16
+          text run at (0,0) width 102: "The underlining "
+        RenderInline {SPAN} at (0,0) size 99x16 [color=#0000FF]
+          RenderText {#text} at (102,0) size 99x16
+            text run at (102,0) width 99: "in this sentence"
+        RenderText {#text} at (201,0) size 234x16
+          text run at (201,0) width 234: " should be green, no matter what the "
+        RenderInline {SPAN} at (0,0) size 107x16 [color=#000000]
+          RenderText {#text} at (435,0) size 107x16
+            text run at (435,0) width 107: "text color may be"
+        RenderText {#text} at (542,0) size 3x16
+          text run at (542,0) width 3: "."
+      RenderBlock {P} at (0,554) size 784x32
+        RenderText {#text} at (0,0) size 111x16
+          text run at (0,0) width 111: "The colors of the "
         RenderInline {SPAN} at (0,0) size 69x16 [color=#800080]
-          RenderText {#text} at (0,32) size 69x16
-            text run at (0,32) width 69: "underlining"
-        RenderText {#text} at (0,48) size 15x16
-          text run at (0,48) width 15: "in "
-        RenderInline {SPAN} at (0,0) size 58x32 [color=#0000FF]
-          RenderText {#text} at (15,48) size 58x32
-            text run at (15,48) width 22: "this"
-            text run at (0,64) width 58: "sentence"
-        RenderText {#text} at (0,80) size 60x16
-          text run at (0,80) width 60: "should be"
-        RenderInline {SPAN} at (0,0) size 77x48 [color=#808080]
-          RenderText {#text} at (0,96) size 77x48
-            text run at (0,96) width 77: "the same as"
-            text run at (0,112) width 64: "that of the"
-            text run at (0,128) width 68: "parent text"
-        RenderText {#text} at (0,144) size 73x112
-          text run at (0,144) width 70: "(that is, the"
-          text run at (0,160) width 73: "first word in"
-          text run at (0,176) width 20: "the"
-          text run at (0,192) width 61: "sentence,"
-          text run at (0,208) width 36: "which"
-          text run at (0,224) width 60: "should be"
-          text run at (0,240) width 40: "black)."
-      RenderTable {TABLE} at (0,2328) size 105x2032 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 103x2030
-          RenderTableRow {TR} at (0,0) size 103x56
-            RenderTableCell {TD} at (0,0) size 103x56 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 53x48
-                RenderText {#text} at (4,4) size 53x48
-                  text run at (4,4) width 45: "TABLE"
-                  text run at (4,20) width 51: "Testing"
-                  text run at (4,36) width 53: "Section"
-          RenderTableRow {TR} at (0,56) size 103x1974
-            RenderTableCell {TD} at (0,1031) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderText {#text} at (111,0) size 69x16
+            text run at (111,0) width 69: "underlining"
+        RenderText {#text} at (180,0) size 19x16
+          text run at (180,0) width 19: " in "
+        RenderInline {SPAN} at (0,0) size 84x16 [color=#0000FF]
+          RenderText {#text} at (199,0) size 84x16
+            text run at (199,0) width 84: "this sentence"
+        RenderText {#text} at (283,0) size 68x16
+          text run at (283,0) width 68: " should be "
+        RenderInline {SPAN} at (0,0) size 217x16 [color=#808080]
+          RenderText {#text} at (351,0) size 217x16
+            text run at (351,0) width 217: "the same as that of the parent text"
+        RenderText {#text} at (568,0) size 743x32
+          text run at (568,0) width 175: " (that is, the first word in the"
+          text run at (0,16) width 209: "sentence, which should be black)."
+      RenderTable {TABLE} at (0,600) size 784x432 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x430
+          RenderTableRow {TR} at (0,0) size 782x24
+            RenderTableCell {TD} at (0,0) size 782x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 157x16
+                RenderText {#text} at (4,4) size 157x16
+                  text run at (4,4) width 157: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,24) size 782x406
+            RenderTableCell {TD} at (0,215) size 12x24 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x16
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,56) size 91x1974 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 83x64
-                RenderText {#text} at (0,0) size 69x64
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 58: "sentence"
-                  text run at (0,32) width 60: "should be"
-                  text run at (0,48) width 69: "underlined."
-              RenderBlock {P} at (4,82) size 83x64
-                RenderText {#text} at (0,0) size 61x64
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 58: "sentence"
-                  text run at (0,32) width 60: "should be"
-                  text run at (0,48) width 61: "overlined."
-              RenderBlock {P} at (4,160) size 83x80
-                RenderText {#text} at (0,0) size 83x80
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 58: "sentence"
-                  text run at (0,32) width 76: "should have"
-                  text run at (0,48) width 76: "stricken text"
-                  text run at (0,64) width 83: "(linethrough)."
-              RenderBlock {P} at (4,254) size 83x128
-                RenderText {#text} at (0,0) size 81x128
-                  text run at (0,0) width 81: "This element"
-                  text run at (0,16) width 60: "should be"
-                  text run at (0,32) width 54: "blinking. "
-                  text run at (54,32) width 27: "(It is"
-                  text run at (0,48) width 79: "not required,"
-                  text run at (0,64) width 57: "however,"
-                  text run at (0,80) width 54: "that UAs"
-                  text run at (0,96) width 73: "support this"
-                  text run at (0,112) width 62: "behavior.)"
-              RenderBlock {P} at (4,396) size 83x352
-                RenderText {#text} at (0,0) size 76x128
-                  text run at (0,0) width 67: "The text in"
-                  text run at (0,16) width 76: "this element"
-                  text run at (0,32) width 60: "should be"
-                  text run at (0,48) width 69: "underlined."
-                  text run at (0,64) width 25: "The"
-                  text run at (0,80) width 61: "boldfaced"
-                  text run at (0,96) width 64: "text in this"
-                  text run at (0,112) width 50: "element"
-                RenderInline {B} at (0,0) size 81x48
-                  RenderText {#text} at (0,128) size 81x48
-                    text run at (0,128) width 81: "should also"
-                    text run at (0,144) width 17: "be"
-                    text run at (0,160) width 75: "underlined"
-                RenderText {#text} at (75,160) size 81x192
-                  text run at (75,160) width 3: "."
-                  text run at (0,176) width 41: "This is"
-                  text run at (0,192) width 76: "because the"
-                  text run at (0,208) width 51: "parent's"
-                  text run at (0,224) width 81: "underline will"
-                  text run at (0,240) width 61: "'span' the"
-                  text run at (0,256) width 61: "boldfaced"
-                  text run at (0,272) width 72: "text, even if"
-                  text run at (0,288) width 57: "the inline"
-                  text run at (0,304) width 77: "element has"
-                  text run at (0,320) width 78: "no underline"
-                  text run at (0,336) width 63: "of its own."
-              RenderBlock {P} at (4,762) size 83x96
-                RenderText {#text} at (0,0) size 66x96
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 58: "sentence"
-                  text run at (0,32) width 60: "should be"
-                  text run at (0,48) width 66: "underlined"
-                  text run at (0,64) width 24: "and"
-                  text run at (0,80) width 61: "overlined."
-              RenderBlock {P} at (4,872) size 83x96
-                RenderText {#text} at (0,0) size 80x96
-                  text run at (0,0) width 27: "This"
-                  text run at (0,16) width 58: "sentence"
-                  text run at (0,32) width 60: "should be"
-                  text run at (0,48) width 69: "underlined,"
-                  text run at (0,64) width 61: "overlined,"
-                  text run at (0,80) width 80: "and stricken."
-              RenderBlock {P} at (4,982) size 83x0
-              RenderBlock {P} at (4,982) size 83x192
-                RenderText {#text} at (0,0) size 83x192
-                  text run at (0,0) width 83: "There should"
-                  text run at (0,16) width 66: "be nothing"
-                  text run at (0,32) width 38: "visible"
-                  text run at (0,48) width 79: "between this"
-                  text run at (0,64) width 58: "sentence"
-                  text run at (0,80) width 76: "and the one"
-                  text run at (0,96) width 80: "above (there"
-                  text run at (0,112) width 72: "is an empty"
-                  text run at (0,128) width 66: "paragraph"
-                  text run at (0,144) width 79: "element with"
-                  text run at (0,160) width 48: "class of"
-                  text run at (0,176) width 46: "seven)."
-              RenderBlock {P} at (4,1188) size 83x370
-                RenderText {#text} at (0,0) size 83x160
-                  text run at (0,0) width 28: "Text"
-                  text run at (0,16) width 74: "decorations"
-                  text run at (0,32) width 80: "only apply to"
-                  text run at (0,48) width 83: "the text of an"
-                  text run at (0,64) width 72: "element, so"
-                  text run at (0,80) width 78: "the image at"
-                  text run at (0,96) width 64: "the end of"
-                  text run at (0,112) width 22: "this"
-                  text run at (0,128) width 58: "sentence"
-                  text run at (0,144) width 45: "should "
+            RenderTableCell {TD} at (12,24) size 770x406 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x16
+                RenderText {#text} at (0,0) size 226x16
+                  text run at (0,0) width 226: "This sentence should be underlined."
+              RenderBlock {P} at (4,34) size 762x16
+                RenderText {#text} at (0,0) size 218x16
+                  text run at (0,0) width 218: "This sentence should be overlined."
+              RenderBlock {P} at (4,64) size 762x16
+                RenderText {#text} at (0,0) size 336x16
+                  text run at (0,0) width 336: "This sentence should have stricken text (linethrough)."
+              RenderBlock {P} at (4,94) size 762x16
+                RenderText {#text} at (0,0) size 575x16
+                  text run at (0,0) width 203: "This element should be blinking. "
+                  text run at (203,0) width 372: "(It is not required, however, that UAs support this behavior.)"
+              RenderBlock {P} at (4,124) size 762x32
+                RenderText {#text} at (0,0) size 504x16
+                  text run at (0,0) width 288: "The text in this element should be underlined. "
+                  text run at (288,0) width 216: "The boldfaced text in this element "
+                RenderInline {B} at (0,0) size 181x16
+                  RenderText {#text} at (504,0) size 181x16
+                    text run at (504,0) width 181: "should also be underlined"
+                RenderText {#text} at (685,0) size 733x32
+                  text run at (685,0) width 7: ". "
+                  text run at (692,0) width 41: "This is"
+                  text run at (0,16) width 713: "because the parent's underline will 'span' the boldfaced text, even if the inline element has no underline of its own."
+              RenderBlock {P} at (4,170) size 762x16
+                RenderText {#text} at (0,0) size 316x16
+                  text run at (0,0) width 316: "This sentence should be underlined and overlined."
+              RenderBlock {P} at (4,200) size 762x16
+                RenderText {#text} at (0,0) size 375x16
+                  text run at (0,0) width 375: "This sentence should be underlined, overlined, and stricken."
+              RenderBlock {P} at (4,230) size 762x0
+              RenderBlock {P} at (4,230) size 762x32
+                RenderText {#text} at (0,0) size 733x32
+                  text run at (0,0) width 733: "There should be nothing visible between this sentence and the one above (there is an empty paragraph element with"
+                  text run at (0,16) width 98: "class of seven)."
+              RenderBlock {P} at (4,276) size 762x50
+                RenderText {#text} at (0,0) size 640x16
+                  text run at (0,0) width 640: "Text decorations only apply to the text of an element, so the image at the end of this sentence should "
                 RenderInline {EM} at (0,0) size 20x16
-                  RenderText {#text} at (45,144) size 20x16
-                    text run at (45,144) width 20: "not"
-                RenderText {#text} at (0,160) size 80x16
-                  text run at (0,160) width 80: "be overlined:"
-                RenderImage {IMG} at (0,176) size 15x15
-                RenderText {#text} at (15,178) size 79x192
-                  text run at (15,178) width 7: ". "
-                  text run at (22,178) width 25: "The"
-                  text run at (0,194) width 74: "underline of"
-                  text run at (0,210) width 65: "the parent"
-                  text run at (0,226) width 50: "element"
-                  text run at (0,242) width 72: "should hold"
-                  text run at (0,258) width 79: "true beneath"
-                  text run at (0,274) width 65: "the image,"
-                  text run at (0,290) width 57: "however,"
-                  text run at (0,306) width 64: "since text-"
-                  text run at (0,322) width 67: "decoration"
-                  text run at (0,338) width 77: "'spans' child"
-                  text run at (0,354) width 60: "elements."
-              RenderBlock {P} at (4,1572) size 83x144 [color=#008000]
-                RenderText {#text} at (0,0) size 69x32
-                  text run at (0,0) width 25: "The"
-                  text run at (0,16) width 69: "underlining"
-                RenderInline {SPAN} at (0,0) size 58x32 [color=#0000FF]
-                  RenderText {#text} at (0,32) size 58x32
-                    text run at (0,32) width 37: "in this"
-                    text run at (0,48) width 58: "sentence"
-                RenderText {#text} at (0,64) size 74x64
-                  text run at (0,64) width 60: "should be"
-                  text run at (0,80) width 60: "green, no"
-                  text run at (0,96) width 74: "matter what"
-                  text run at (0,112) width 24: "the "
-                RenderInline {SPAN} at (0,0) size 82x32 [color=#000000]
-                  RenderText {#text} at (24,112) size 82x32
-                    text run at (24,112) width 58: "text color"
-                    text run at (0,128) width 45: "may be"
-                RenderText {#text} at (45,128) size 3x16
-                  text run at (45,128) width 3: "."
-              RenderBlock {P} at (4,1730) size 83x240
-                RenderText {#text} at (0,0) size 83x32
-                  text run at (0,0) width 83: "The colors of"
-                  text run at (0,16) width 20: "the"
+                  RenderText {#text} at (640,0) size 20x16
+                    text run at (640,0) width 20: "not"
+                RenderText {#text} at (660,0) size 88x16
+                  text run at (660,0) width 88: " be overlined: "
+                RenderImage {IMG} at (0,16) size 15x15
+                RenderText {#text} at (15,18) size 753x32
+                  text run at (15,18) width 7: ". "
+                  text run at (22,18) width 731: "The underline of the parent element should hold true beneath the image, however, since text-decoration 'spans' child"
+                  text run at (0,34) width 60: "elements."
+              RenderBlock {P} at (4,340) size 762x16 [color=#008000]
+                RenderText {#text} at (0,0) size 102x16
+                  text run at (0,0) width 102: "The underlining "
+                RenderInline {SPAN} at (0,0) size 99x16 [color=#0000FF]
+                  RenderText {#text} at (102,0) size 99x16
+                    text run at (102,0) width 99: "in this sentence"
+                RenderText {#text} at (201,0) size 234x16
+                  text run at (201,0) width 234: " should be green, no matter what the "
+                RenderInline {SPAN} at (0,0) size 107x16 [color=#000000]
+                  RenderText {#text} at (435,0) size 107x16
+                    text run at (435,0) width 107: "text color may be"
+                RenderText {#text} at (542,0) size 3x16
+                  text run at (542,0) width 3: "."
+              RenderBlock {P} at (4,370) size 762x32
+                RenderText {#text} at (0,0) size 111x16
+                  text run at (0,0) width 111: "The colors of the "
                 RenderInline {SPAN} at (0,0) size 69x16 [color=#800080]
-                  RenderText {#text} at (0,32) size 69x16
-                    text run at (0,32) width 69: "underlining"
-                RenderText {#text} at (0,48) size 15x16
-                  text run at (0,48) width 15: "in "
-                RenderInline {SPAN} at (0,0) size 58x32 [color=#0000FF]
-                  RenderText {#text} at (15,48) size 58x32
-                    text run at (15,48) width 22: "this"
-                    text run at (0,64) width 58: "sentence"
-                RenderText {#text} at (0,80) size 60x16
-                  text run at (0,80) width 60: "should be"
-                RenderInline {SPAN} at (0,0) size 77x48 [color=#808080]
-                  RenderText {#text} at (0,96) size 77x48
-                    text run at (0,96) width 77: "the same as"
-                    text run at (0,112) width 64: "that of the"
-                    text run at (0,128) width 68: "parent text"
-                RenderText {#text} at (0,144) size 81x96
-                  text run at (0,144) width 70: "(that is, the"
-                  text run at (0,160) width 73: "first word in"
-                  text run at (0,176) width 20: "the"
-                  text run at (0,192) width 61: "sentence,"
-                  text run at (0,208) width 81: "which should"
-                  text run at (0,224) width 59: "be black)."
+                  RenderText {#text} at (111,0) size 69x16
+                    text run at (111,0) width 69: "underlining"
+                RenderText {#text} at (180,0) size 19x16
+                  text run at (180,0) width 19: " in "
+                RenderInline {SPAN} at (0,0) size 84x16 [color=#0000FF]
+                  RenderText {#text} at (199,0) size 84x16
+                    text run at (199,0) width 84: "this sentence"
+                RenderText {#text} at (283,0) size 68x16
+                  text run at (283,0) width 68: " should be "
+                RenderInline {SPAN} at (0,0) size 217x16 [color=#808080]
+                  RenderText {#text} at (351,0) size 217x16
+                    text run at (351,0) width 217: "the same as that of the parent text"
+                RenderText {#text} at (568,0) size 743x32
+                  text run at (568,0) width 175: " (that is, the first word in the"
+                  text run at (0,16) width 209: "sentence, which should be black)."

@@ -1,89 +1,83 @@
-layer at (0,0) size 410x284
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 410x284
-  RenderBlock {HTML} at (0,0) size 96x284
-    RenderBody {BODY} at (8,14) size 80x262
-      RenderBlock {P} at (0,0) size 80x112
-        RenderText {#text} at (0,0) size 80x112
-          text run at (0,0) width 39: "All the"
-          text run at (0,16) width 55: "following"
-          text run at (0,32) width 71: "should look"
-          text run at (0,48) width 58: "the same"
-          text run at (0,64) width 47: "(and all"
-          text run at (0,80) width 71: "should look"
-          text run at (0,96) width 25: "like "
-          text run at (25,96) width 55: "the first)."
-      RenderTable {TABLE} at (0,126) size 402x136
-        RenderTableSection {TBODY} at (0,0) size 402x136
-          RenderTableRow {TR} at (0,2) size 402x132
-            RenderTableCell {TD} at (2,2) size 48x132 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (3,3) size 42x126 [color=#FFFF00] [bgcolor=#FFA500]
-                RenderBlock {DIV} at (0,0) size 42x42 [bgcolor=#00FF00]
-                  RenderText {#text} at (0,-1) size 42x44
-                    text run at (0,-1) width 42: "A"
-                RenderBlock {DIV} at (0,84) size 42x42 [bgcolor=#00FFFF]
-                  RenderText {#text} at (0,-1) size 42x44
-                    text run at (0,-1) width 42: "C"
-            RenderTableCell {TD} at (52,2) size 48x132 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderBlock {DIV} at (3,3) size 42x126 [color=#FFFF00] [bgcolor=#FFA500]
-                RenderBlock {DIV} at (0,0) size 42x42 [bgcolor=#00FF00]
-                  RenderText {#text} at (0,-1) size 42x44
-                    text run at (0,-1) width 42: "A"
-                RenderBlock {DIV} at (0,84) size 42x0
-                RenderBlock {DIV} at (0,84) size 42x42 [bgcolor=#00FFFF]
-                  RenderText {#text} at (0,-1) size 42x44
-                    text run at (0,-1) width 42: "C"
-            RenderTableCell {TD} at (102,2) size 48x132 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=2 rs=1 cs=1]
-              RenderBlock {DIV} at (3,3) size 42x126 [color=#FFFF00] [bgcolor=#FFA500]
-                RenderBlock {DIV} at (0,0) size 42x42 [bgcolor=#00FF00]
-                  RenderText {#text} at (0,-1) size 42x44
-                    text run at (0,-1) width 42: "A"
-                RenderBlock {DIV} at (0,84) size 42x0
-                RenderBlock {DIV} at (0,84) size 42x42 [bgcolor=#00FFFF]
-                  RenderText {#text} at (0,-1) size 42x44
-                    text run at (0,-1) width 42: "C"
-            RenderTableCell {TD} at (152,2) size 48x132 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=3 rs=1 cs=1]
-              RenderBlock {DIV} at (3,3) size 42x126 [color=#FFFF00] [bgcolor=#FFA500]
-                RenderBlock {DIV} at (0,0) size 42x42 [bgcolor=#00FF00]
-                  RenderText {#text} at (0,-1) size 42x44
-                    text run at (0,-1) width 42: "A"
-                RenderBlock {DIV} at (0,84) size 42x0
-                RenderBlock {DIV} at (0,84) size 42x42 [bgcolor=#00FFFF]
-                  RenderText {#text} at (0,-1) size 42x44
-                    text run at (0,-1) width 42: "C"
-            RenderTableCell {TD} at (202,2) size 48x132 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=4 rs=1 cs=1]
-              RenderBlock {DIV} at (3,3) size 42x126 [color=#FFFF00] [bgcolor=#FFA500]
-                RenderBlock {DIV} at (0,0) size 42x42 [bgcolor=#00FF00]
-                  RenderText {#text} at (0,-1) size 42x44
-                    text run at (0,-1) width 42: "A"
-                RenderBlock {DIV} at (0,84) size 42x0
-                RenderBlock {DIV} at (0,84) size 42x42 [bgcolor=#00FFFF]
-                  RenderText {#text} at (0,-1) size 42x44
-                    text run at (0,-1) width 42: "C"
-            RenderTableCell {TD} at (252,2) size 48x132 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=5 rs=1 cs=1]
-              RenderBlock {DIV} at (3,3) size 42x126 [color=#FFFF00] [bgcolor=#FFA500]
-                RenderBlock {DIV} at (0,0) size 42x42 [bgcolor=#00FF00]
-                  RenderText {#text} at (0,-1) size 42x44
-                    text run at (0,-1) width 42: "A"
-                RenderBlock {DIV} at (0,84) size 42x0
-                RenderBlock {DIV} at (0,84) size 42x42 [bgcolor=#00FFFF]
-                  RenderText {#text} at (0,-1) size 42x44
-                    text run at (0,-1) width 42: "C"
-            RenderTableCell {TD} at (302,2) size 48x132 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=6 rs=1 cs=1]
-              RenderBlock {DIV} at (3,3) size 42x126 [color=#FFFF00] [bgcolor=#FFA500]
-                RenderBlock {DIV} at (0,0) size 42x42 [bgcolor=#00FF00]
-                  RenderText {#text} at (0,-1) size 42x44
-                    text run at (0,-1) width 42: "A"
-                RenderBlock {DIV} at (0,84) size 42x0
-                RenderBlock {DIV} at (0,84) size 42x42 [bgcolor=#00FFFF]
-                  RenderText {#text} at (0,-1) size 42x44
-                    text run at (0,-1) width 42: "C"
-            RenderTableCell {TD} at (352,2) size 48x132 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=7 rs=1 cs=1]
-              RenderBlock {DIV} at (3,3) size 42x126 [color=#FFFF00] [bgcolor=#FFA500]
-                RenderBlock {DIV} at (0,0) size 42x42 [bgcolor=#00FF00]
-                  RenderText {#text} at (0,-1) size 42x44
-                    text run at (0,-1) width 42: "A"
-                RenderBlock {DIV} at (0,84) size 42x0
-                RenderBlock {DIV} at (0,84) size 42x42 [bgcolor=#00FFFF]
-                  RenderText {#text} at (0,-1) size 42x44
-                    text run at (0,-1) width 42: "C"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x188
+  RenderBlock {HTML} at (0,0) size 800x188
+    RenderBody {BODY} at (8,14) size 784x166
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 445x16
+          text run at (0,0) width 390: "All the following should look the same (and all should look like "
+          text run at (390,0) width 55: "the first)."
+      RenderTable {TABLE} at (0,30) size 306x136
+        RenderTableSection {TBODY} at (0,0) size 306x136
+          RenderTableRow {TR} at (0,2) size 306x132
+            RenderTableCell {TD} at (2,2) size 36x132 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (3,3) size 30x126 [color=#FFFF00] [bgcolor=#FFA500]
+                RenderBlock {DIV} at (0,0) size 30x42 [bgcolor=#00FF00]
+                  RenderText {#text} at (0,-1) size 28x44
+                    text run at (0,-1) width 28: "A"
+                RenderBlock {DIV} at (0,84) size 30x42 [bgcolor=#00FFFF]
+                  RenderText {#text} at (0,-1) size 30x44
+                    text run at (0,-1) width 30: "C"
+            RenderTableCell {TD} at (40,2) size 36x132 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (3,3) size 30x126 [color=#FFFF00] [bgcolor=#FFA500]
+                RenderBlock {DIV} at (0,0) size 30x42 [bgcolor=#00FF00]
+                  RenderText {#text} at (0,-1) size 28x44
+                    text run at (0,-1) width 28: "A"
+                RenderBlock {DIV} at (0,84) size 30x0
+                RenderBlock {DIV} at (0,84) size 30x42 [bgcolor=#00FFFF]
+                  RenderText {#text} at (0,-1) size 30x44
+                    text run at (0,-1) width 30: "C"
+            RenderTableCell {TD} at (78,2) size 36x132 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=2 rs=1 cs=1]
+              RenderBlock {DIV} at (3,3) size 30x126 [color=#FFFF00] [bgcolor=#FFA500]
+                RenderBlock {DIV} at (0,0) size 30x42 [bgcolor=#00FF00]
+                  RenderText {#text} at (0,-1) size 28x44
+                    text run at (0,-1) width 28: "A"
+                RenderBlock {DIV} at (0,84) size 30x0
+                RenderBlock {DIV} at (0,84) size 30x42 [bgcolor=#00FFFF]
+                  RenderText {#text} at (0,-1) size 30x44
+                    text run at (0,-1) width 30: "C"
+            RenderTableCell {TD} at (116,2) size 36x132 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=3 rs=1 cs=1]
+              RenderBlock {DIV} at (3,3) size 30x126 [color=#FFFF00] [bgcolor=#FFA500]
+                RenderBlock {DIV} at (0,0) size 30x42 [bgcolor=#00FF00]
+                  RenderText {#text} at (0,-1) size 28x44
+                    text run at (0,-1) width 28: "A"
+                RenderBlock {DIV} at (0,84) size 30x0
+                RenderBlock {DIV} at (0,84) size 30x42 [bgcolor=#00FFFF]
+                  RenderText {#text} at (0,-1) size 30x44
+                    text run at (0,-1) width 30: "C"
+            RenderTableCell {TD} at (154,2) size 36x132 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=4 rs=1 cs=1]
+              RenderBlock {DIV} at (3,3) size 30x126 [color=#FFFF00] [bgcolor=#FFA500]
+                RenderBlock {DIV} at (0,0) size 30x42 [bgcolor=#00FF00]
+                  RenderText {#text} at (0,-1) size 28x44
+                    text run at (0,-1) width 28: "A"
+                RenderBlock {DIV} at (0,84) size 30x0
+                RenderBlock {DIV} at (0,84) size 30x42 [bgcolor=#00FFFF]
+                  RenderText {#text} at (0,-1) size 30x44
+                    text run at (0,-1) width 30: "C"
+            RenderTableCell {TD} at (192,2) size 36x132 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=5 rs=1 cs=1]
+              RenderBlock {DIV} at (3,3) size 30x126 [color=#FFFF00] [bgcolor=#FFA500]
+                RenderBlock {DIV} at (0,0) size 30x42 [bgcolor=#00FF00]
+                  RenderText {#text} at (0,-1) size 28x44
+                    text run at (0,-1) width 28: "A"
+                RenderBlock {DIV} at (0,84) size 30x0
+                RenderBlock {DIV} at (0,84) size 30x42 [bgcolor=#00FFFF]
+                  RenderText {#text} at (0,-1) size 30x44
+                    text run at (0,-1) width 30: "C"
+            RenderTableCell {TD} at (230,2) size 36x132 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=6 rs=1 cs=1]
+              RenderBlock {DIV} at (3,3) size 30x126 [color=#FFFF00] [bgcolor=#FFA500]
+                RenderBlock {DIV} at (0,0) size 30x42 [bgcolor=#00FF00]
+                  RenderText {#text} at (0,-1) size 28x44
+                    text run at (0,-1) width 28: "A"
+                RenderBlock {DIV} at (0,84) size 30x0
+                RenderBlock {DIV} at (0,84) size 30x42 [bgcolor=#00FFFF]
+                  RenderText {#text} at (0,-1) size 30x44
+                    text run at (0,-1) width 30: "C"
+            RenderTableCell {TD} at (268,2) size 36x132 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=7 rs=1 cs=1]
+              RenderBlock {DIV} at (3,3) size 30x126 [color=#FFFF00] [bgcolor=#FFA500]
+                RenderBlock {DIV} at (0,0) size 30x42 [bgcolor=#00FF00]
+                  RenderText {#text} at (0,-1) size 28x44
+                    text run at (0,-1) width 28: "A"
+                RenderBlock {DIV} at (0,84) size 30x0
+                RenderBlock {DIV} at (0,84) size 30x42 [bgcolor=#00FFFF]
+                  RenderText {#text} at (0,-1) size 30x44
+                    text run at (0,-1) width 30: "C"

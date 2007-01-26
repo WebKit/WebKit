@@ -1,28 +1,24 @@
-layer at (0,0) size 176x262
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 176x262
-  RenderBlock {HTML} at (0,0) size 96x262
-    RenderBody {BODY} at (8,14) size 80x240
-      RenderBlock {P} at (0,0) size 80x80
-        RenderText {#text} at (0,0) size 76x80
-          text run at (0,0) width 25: "The"
-          text run at (0,16) width 55: "following"
-          text run at (0,32) width 76: "two squares"
-          text run at (0,48) width 60: "should be"
-          text run at (0,64) width 55: "identical."
-      RenderTable {TABLE} at (0,94) size 168x146
-        RenderTableSection {TBODY} at (0,0) size 168x146
-          RenderTableRow {TR} at (0,14) size 168x118
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x198
+  RenderBlock {HTML} at (0,0) size 800x198
+    RenderBody {BODY} at (8,14) size 784x176
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 287x16
+          text run at (0,0) width 287: "The following two squares should be identical."
+      RenderTable {TABLE} at (0,30) size 278x146
+        RenderTableSection {TBODY} at (0,0) size 278x146
+          RenderTableRow {TR} at (0,14) size 278x118
             RenderTableCell {TD} at (14,14) size 118x118 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (3,3) size 112x112 [bgcolor=#00FF00]
                 RenderBlock (floating) {DIV} at (0,0) size 56x56 [bgcolor=#00FFFF]
                 RenderBlock {DIV} at (0,56) size 112x0 [bgcolor=#FF0000]
                 RenderBlock {DIV} at (0,56) size 112x56 [border: (28px solid #FFFF00)]
-            RenderTableCell {TD} at (146,14) size 8x118 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (3,3) size 2x112
-                RenderTableSection {TBODY} at (0,0) size 2x112
-                  RenderTableRow {TR} at (0,0) size 2x56
-                    RenderTableCell {TD} at (0,28) size 1x0 [bgcolor=#00FFFF] [r=0 c=0 rs=1 cs=1]
-                    RenderTableCell {TD} at (1,28) size 1x0 [bgcolor=#00FF00] [r=0 c=1 rs=1 cs=1]
-                  RenderTableRow {TR} at (0,56) size 2x56
-                    RenderTableCell {TD} at (0,84) size 2x0 [bgcolor=#FFFF00] [r=1 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (146,14) size 118x118 [bgcolor=#FF0000] [border: (3px solid #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (3,3) size 112x112
+                RenderTableSection {TBODY} at (0,0) size 112x112
+                  RenderTableRow {TR} at (0,0) size 112x56
+                    RenderTableCell {TD} at (0,28) size 56x0 [bgcolor=#00FFFF] [r=0 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (56,28) size 56x0 [bgcolor=#00FF00] [r=0 c=1 rs=1 cs=1]
+                  RenderTableRow {TR} at (0,56) size 112x56
+                    RenderTableCell {TD} at (0,84) size 112x0 [bgcolor=#FFFF00] [r=1 c=0 rs=1 cs=2]

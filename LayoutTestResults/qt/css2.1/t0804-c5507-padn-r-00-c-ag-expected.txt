@@ -1,15 +1,12 @@
-layer at (0,0) size 114x192
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 114x192
-  RenderBlock {HTML} at (0,0) size 96x192
-    RenderBody {BODY} at (8,14) size 80x168 [color=#000080]
-      RenderBlock {P} at (0,0) size 80x64
-        RenderText {#text} at (0,0) size 67x64
-          text run at (0,0) width 51: "The five"
-          text run at (0,16) width 67: "bars below"
-          text run at (0,32) width 60: "should be"
-          text run at (0,48) width 55: "identical."
-      RenderBlock {DIV} at (0,78) size 106x90 [color=#0000FF]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x144
+  RenderBlock {HTML} at (0,0) size 800x144
+    RenderBody {BODY} at (8,14) size 784x120 [color=#000080]
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 245x16
+          text run at (0,0) width 245: "The five bars below should be identical."
+      RenderBlock {DIV} at (0,30) size 106x90 [color=#0000FF]
         RenderBlock {P} at (0,0) size 106x10 [bgcolor=#000080]
           RenderText {#text} at (50,-1) size 5x12
             text run at (50,-1) width 5: "x"

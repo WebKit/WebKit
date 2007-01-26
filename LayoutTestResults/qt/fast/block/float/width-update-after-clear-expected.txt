@@ -1,81 +1,29 @@
-layer at (0,0) size 96x1081
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x1081
-  RenderBlock {HTML} at (0,0) size 96x1081
-    RenderBody {BODY} at (8,8) size 80x1065
-      RenderBlock (floating) {P} at (0,14) size 80x128
-        RenderText {#text} at (0,0) size 79x128
-          text run at (0,0) width 48: "The 'hr'"
-          text run at (0,16) width 36: "below"
-          text run at (0,32) width 76: "should span"
-          text run at (0,48) width 73: "the width of"
-          text run at (0,64) width 59: "the page,"
-          text run at (0,80) width 61: "not just to"
-          text run at (0,96) width 79: "the left edge"
-          text run at (0,112) width 68: "of this text."
-      RenderBlock {HR} at (0,156) size 80x2 [border: (1px inset #000000)]
-      RenderBlock (floating) {P} at (0,179) size 80x128
-        RenderText {#text} at (0,0) size 79x128
-          text run at (0,0) width 59: "The table"
-          text run at (0,16) width 36: "below"
-          text run at (0,32) width 76: "should span"
-          text run at (0,48) width 73: "the width of"
-          text run at (0,64) width 59: "the page,"
-          text run at (0,80) width 61: "not just to"
-          text run at (0,96) width 79: "the left edge"
-          text run at (0,112) width 68: "of this text."
-      RenderTable {TABLE} at (0,321) size 80x396 [border: (10px outset #808080)]
-        RenderTableSection {TBODY} at (10,10) size 60x376
-          RenderTableRow {TR} at (0,2) size 60x372
-            RenderTableCell {TD} at (2,2) size 56x372 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 51x368
-                text run at (2,2) width 41: "This is"
-                text run at (2,18) width 42: "a table"
-                text run at (2,34) width 24: "that"
-                text run at (2,50) width 41: "should"
-                text run at (2,66) width 37: "fill the"
-                text run at (2,82) width 36: "entire"
-                text run at (2,98) width 49: "width of"
-                text run at (2,114) width 20: "the"
-                text run at (2,130) width 39: "page. "
-                text run at (41,130) width 8: "It"
-                text run at (2,146) width 41: "should"
-                text run at (2,162) width 31: "clear"
-                text run at (2,178) width 51: "the float"
-                text run at (2,194) width 24: "and"
-                text run at (2,210) width 28: "then"
-                text run at (2,226) width 46: "take up"
-                text run at (2,242) width 20: "the"
-                text run at (2,258) width 49: "width of"
-                text run at (2,274) width 20: "the"
-                text run at (2,290) width 47: "page. If"
-                text run at (2,306) width 7: "it"
-                text run at (2,322) width 46: "doesn't"
-                text run at (2,338) width 49: "then it's"
-                text run at (2,354) width 37: "a bug."
-      RenderBlock (floating) {P} at (0,731) size 80x112
-        RenderText {#text} at (0,0) size 76x112
-          text run at (0,0) width 25: "The"
-          text run at (0,16) width 53: "overflow"
-          text run at (0,32) width 76: "auto section"
-          text run at (0,48) width 36: "below"
-          text run at (0,64) width 76: "should span"
-          text run at (0,80) width 73: "the width of"
-          text run at (0,96) width 59: "the page."
-layer at (8,865) size 80x208
-  RenderBlock {DIV} at (0,857) size 80x208
-    RenderText {#text} at (0,0) size 79x208
-      text run at (0,0) width 75: "This is a div"
-      text run at (0,16) width 69: "that should"
-      text run at (0,32) width 77: "fill the entire"
-      text run at (0,48) width 73: "width of the"
-      text run at (0,64) width 39: "page. "
-      text run at (39,64) width 8: "It"
-      text run at (0,80) width 76: "should clear"
-      text run at (0,96) width 79: "the float and"
-      text run at (0,112) width 78: "then take up"
-      text run at (0,128) width 73: "the width of"
-      text run at (0,144) width 71: "the page. If"
-      text run at (0,160) width 57: "it doesn't"
-      text run at (0,176) width 61: "then it's a"
-      text run at (0,192) width 25: "bug."
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (floating) {P} at (256,14) size 528x16
+        RenderText {#text} at (0,0) size 528x16
+          text run at (0,0) width 528: "The 'hr' below should span the width of the page, not just to the left edge of this text."
+      RenderBlock {HR} at (0,44) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (floating) {P} at (245,67) size 539x16
+        RenderText {#text} at (0,0) size 539x16
+          text run at (0,0) width 539: "The table below should span the width of the page, not just to the left edge of this text."
+      RenderTable {TABLE} at (0,97) size 784x60 [border: (10px outset #808080)]
+        RenderTableSection {TBODY} at (10,10) size 764x40
+          RenderTableRow {TR} at (0,2) size 764x36
+            RenderTableCell {TD} at (2,2) size 760x36 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 754x32
+                text run at (2,2) width 361: "This is a table that should fill the entire width of the page. "
+                text run at (363,2) width 393: "It should clear the float and then take up the width of the page."
+                text run at (2,18) width 163: "If it doesn't then it's a bug."
+      RenderBlock (floating) {P} at (362,171) size 422x16
+        RenderText {#text} at (0,0) size 422x16
+          text run at (0,0) width 422: "The overflow auto section below should span the width of the page."
+layer at (8,209) size 784x32
+  RenderBlock {DIV} at (0,201) size 784x32
+    RenderText {#text} at (0,0) size 765x32
+      text run at (0,0) width 349: "This is a div that should fill the entire width of the page. "
+      text run at (349,0) width 416: "It should clear the float and then take up the width of the page. If it"
+      text run at (0,16) width 140: "doesn't then it's a bug."

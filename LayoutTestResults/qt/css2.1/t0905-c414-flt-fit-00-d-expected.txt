@@ -1,22 +1,12 @@
-layer at (0,0) size 248x280
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 248x280
-  RenderBlock {HTML} at (0,0) size 96x280
-    RenderBody {BODY} at (8,14) size 80x256
-      RenderBlock {P} at (0,0) size 80x176 [color=#000080]
-        RenderText {#text} at (0,0) size 80x176
-          text run at (0,0) width 38: "There"
-          text run at (0,16) width 60: "should be"
-          text run at (0,32) width 22: "five"
-          text run at (0,48) width 71: "numbers, in"
-          text run at (0,64) width 60: "numerical"
-          text run at (0,80) width 80: "order, below:"
-          text run at (0,96) width 67: "on the first"
-          text run at (0,112) width 77: "line 1, 2 and"
-          text run at (0,128) width 55: "3, on the"
-          text run at (0,144) width 61: "second, 4"
-          text run at (0,160) width 39: "and 5."
-      RenderBlock {DIV} at (10,190) size 230x66 [color=#000080] [border: (3px solid #0000FF)]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x120
+  RenderBlock {HTML} at (0,0) size 800x120
+    RenderBody {BODY} at (8,14) size 784x96
+      RenderBlock {P} at (0,0) size 784x16 [color=#000080]
+        RenderText {#text} at (0,0) size 670x16
+          text run at (0,0) width 670: "There should be five numbers, in numerical order, below: on the first line 1, 2 and 3, on the second, 4 and 5."
+      RenderBlock {DIV} at (10,30) size 230x66 [color=#000080] [border: (3px solid #0000FF)]
         RenderBlock (floating) {P} at (17,17) size 70x16
           RenderText {#text} at (0,0) size 8x16
             text run at (0,0) width 8: "1"

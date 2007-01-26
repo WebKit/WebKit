@@ -1,20 +1,7 @@
-layer at (0,0) size 96x240
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x240
-  RenderBlock {foo} at (0,0) size 96x240
-    RenderText {#text} at (0,0) size 96x240
-      text run at (0,0) width 89: "This tests that"
-      text run at (0,16) width 89: "xml-stylesheet"
-      text run at (0,32) width 69: "processing"
-      text run at (0,48) width 71: "instructions"
-      text run at (0,64) width 90: "have no effect"
-      text run at (0,80) width 81: "when they're"
-      text run at (0,96) width 59: "not in the"
-      text run at (0,112) width 89: "prolog (before"
-      text run at (0,128) width 49: "the root"
-      text run at (0,144) width 96: "element). If this"
-      text run at (0,160) width 37: "test is"
-      text run at (0,176) width 93: "successful, this"
-      text run at (0,192) width 68: "text should"
-      text run at (0,208) width 77: "NOT have a"
-      text run at (0,224) width 80: "black border."
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x32
+  RenderBlock {foo} at (0,0) size 800x32
+    RenderText {#text} at (0,0) size 792x32
+      text run at (0,0) width 792: "This tests that xml-stylesheet processing instructions have no effect when they're not in the prolog (before the root element). If"
+      text run at (0,16) width 397: "this test is successful, this text should NOT have a black border."

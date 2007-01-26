@@ -1,72 +1,36 @@
-layer at (0,0) size 134x992
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 134x992
-  RenderBlock {HTML} at (0,0) size 96x992
-    RenderBody {BODY} at (8,8) size 80x976
-      RenderBlock {P} at (0,0) size 80x80
-        RenderText {#text} at (0,0) size 74x80
-          text run at (0,0) width 70: "this table is"
-          text run at (0,16) width 74: "regular html"
-          text run at (0,32) width 73: "and the cell"
-          text run at (0,48) width 71: "has a class"
-          text run at (0,64) width 53: "attribute:"
-      RenderTable {TABLE} at (0,94) size 126x78 [border: (2px outset #808080)]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 357x16
+          text run at (0,0) width 357: "this table is regular html and the cell has a class attribute:"
+      RenderTable {TABLE} at (0,30) size 126x78 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 122x74
           RenderTableRow {TR} at (0,2) size 122x68
             RenderTableCell {TD} at (2,2) size 118x68 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (26,26) size 66x16
                 text run at (26,26) width 66: "padding?"
           RenderTableRow {TR} at (0,72) size 122x0
-      RenderBlock {P} at (0,186) size 80x256
-        RenderText {#text} at (0,0) size 79x256
-          text run at (0,0) width 70: "this table is"
-          text run at (0,16) width 35: "partly"
-          text run at (0,32) width 66: "created by"
-          text run at (0,48) width 60: "javascript"
-          text run at (0,64) width 59: "code and"
-          text run at (0,80) width 72: "the cell has"
-          text run at (0,96) width 44: "a class"
-          text run at (0,112) width 57: "attribute. "
-          text run at (57,112) width 22: "this"
-          text run at (0,128) width 77: "is where the"
-          text run at (0,144) width 79: "text appears"
-          text run at (0,160) width 75: "to the left of"
-          text run at (0,176) width 43: "the left"
-          text run at (0,192) width 43: "margin"
-          text run at (0,208) width 66: "created by"
-          text run at (0,224) width 20: "the"
-          text run at (0,240) width 75: "cellpadding:"
-      RenderTable {TABLE} at (0,456) size 126x78 [border: (2px outset #808080)]
+      RenderBlock {P} at (0,122) size 784x32
+        RenderText {#text} at (0,0) size 780x32
+          text run at (0,0) width 491: "this table is partly created by javascript code and the cell has a class attribute. "
+          text run at (491,0) width 289: "this is where the text appears to the left of the"
+          text run at (0,16) width 239: "left margin created by the cellpadding:"
+      RenderTable {TABLE} at (0,168) size 126x78 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 122x74
           RenderTableRow {TR} at (0,2) size 122x68
             RenderTableCell {TD} at (2,2) size 118x68 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (26,26) size 66x16
                 text run at (26,26) width 66: "padding?"
           RenderTableRow {TR} at (0,72) size 122x0
-      RenderBlock {P} at (0,548) size 80x336
-        RenderText {#text} at (0,0) size 80x336
-          text run at (0,0) width 70: "this table is"
-          text run at (0,16) width 35: "partly"
-          text run at (0,32) width 66: "created by"
-          text run at (0,48) width 60: "javascript"
-          text run at (0,64) width 59: "code and"
-          text run at (0,80) width 72: "the cell has"
-          text run at (0,96) width 52: "no class"
-          text run at (0,112) width 53: "attribute."
-          text run at (0,128) width 80: "here the text"
-          text run at (0,144) width 61: "obeys the"
-          text run at (0,160) width 72: "cellpadding"
-          text run at (0,176) width 36: "value,"
-          text run at (0,192) width 54: "although"
-          text run at (0,208) width 47: "there is"
-          text run at (0,224) width 49: "another"
-          text run at (0,240) width 79: "problem with"
-          text run at (0,256) width 56: "this table"
-          text run at (0,272) width 78: "that i'm filing"
-          text run at (0,288) width 48: "under a"
-          text run at (0,304) width 56: "separate"
-          text run at (0,320) width 67: "bug report:"
-      RenderTable {TABLE} at (0,898) size 119x78 [border: (2px outset #808080)]
+      RenderBlock {P} at (0,260) size 784x32
+        RenderText {#text} at (0,0) size 760x32
+          text run at (0,0) width 499: "this table is partly created by javascript code and the cell has no class attribute. "
+          text run at (499,0) width 261: "here the text obeys the cellpadding value,"
+          text run at (0,16) width 566: "although there is another problem with this table that i'm filing under a separate bug report:"
+      RenderTable {TABLE} at (0,306) size 119x78 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 115x74
           RenderTableRow {TR} at (0,2) size 115x68
             RenderTableCell {TD} at (2,2) size 111x68 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

@@ -1,8 +1,8 @@
-layer at (0,0) size 96x272
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x272
-  RenderBlock {HTML} at (0,0) size 96x272
-    RenderBody {BODY} at (8,8) size 80x256
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
       RenderTable {TABLE} at (0,0) size 64x48 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 62x46
           RenderTableRow {TR} at (0,2) size 62x0
@@ -39,13 +39,11 @@ layer at (0,0) size 96x272
             RenderTableCell {TD} at (2,24) size 58x20 [border: (1px inset #808080)] [r=4 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 54x16
                 text run at (2,2) width 54: "Last row"
-      RenderBlock (anonymous) at (0,144) size 80x64
+      RenderBlock (anonymous) at (0,144) size 784x32
         RenderBR {BR} at (0,0) size 0x16
-        RenderText {#text} at (0,16) size 61x48
-          text run at (0,16) width 16: "an"
-          text run at (0,32) width 61: "additional"
-          text run at (0,48) width 23: "test"
-      RenderTable {TABLE} at (0,208) size 32x48 [border: (1px outset #808080)]
+        RenderText {#text} at (0,16) size 108x16
+          text run at (0,16) width 108: "an additional test"
+      RenderTable {TABLE} at (0,176) size 32x48 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 30x46
           RenderTableRow {TR} at (0,2) size 30x0
             RenderTableCell {TD} at (2,2) size 26x20 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]

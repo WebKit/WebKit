@@ -1,10 +1,9 @@
-layer at (0,0) size 96x48
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x48
-  RenderBlock {HTML} at (0,0) size 96x48
-    RenderBody {BODY} at (8,8) size 80x32
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,0) size 28x16
         text run at (0,0) width 28: "Foo "
-      RenderText {#text} at (28,0) size 60x32
-        text run at (28,0) width 32: "Hello"
-        text run at (0,16) width 34: "world"
+      RenderText {#text} at (28,0) size 70x16
+        text run at (28,0) width 70: "Hello world"

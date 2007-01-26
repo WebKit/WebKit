@@ -1,24 +1,16 @@
-layer at (0,0) size 192x106
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 192x106
-  RenderBlock {html} at (0,0) size 96x106
-    RenderBody {body} at (8,8) size 80x90
-      RenderTable {table} at (0,0) size 184x90 [border: (1px outset #808080)]
-        RenderTableSection {tbody} at (1,1) size 182x88
-          RenderTableRow {tr} at (0,2) size 182x84
-            RenderTableCell {th} at (2,2) size 88x84 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (29,2) size 84x80
-                text run at (29,2) width 29: "This"
-                text run at (2,18) width 84: "heading cell"
-                text run at (20,34) width 48: "should"
-                text run at (5,50) width 49: "have a "
-                text run at (54,50) width 28: "lime"
-                text run at (2,66) width 84: "background"
-            RenderTableCell {th} at (92,2) size 88x84 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (29,2) size 84x80
-                text run at (29,2) width 29: "This"
-                text run at (2,18) width 84: "heading cell"
-                text run at (20,34) width 48: "should"
-                text run at (5,50) width 49: "have a "
-                text run at (54,50) width 28: "lime"
-                text run at (2,66) width 84: "background"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x42
+  RenderBlock {html} at (0,0) size 800x42
+    RenderBody {body} at (8,8) size 784x26
+      RenderTable {table} at (0,0) size 692x26 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 690x24
+          RenderTableRow {tr} at (0,2) size 690x20
+            RenderTableCell {th} at (2,2) size 342x20 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 338x16
+                text run at (2,2) width 222: "This heading cell should have a "
+                text run at (224,2) width 116: "lime background"
+            RenderTableCell {th} at (346,2) size 342x20 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 338x16
+                text run at (2,2) width 222: "This heading cell should have a "
+                text run at (224,2) width 116: "lime background"

@@ -1,24 +1,20 @@
-layer at (0,0) size 286x196
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 286x196
-  RenderBlock {HTML} at (0,0) size 96x196
-    RenderBody {BODY} at (8,8) size 80x174
-      RenderBlock {P} at (0,0) size 80x128
-        RenderText {#text} at (0,0) size 49x16
-          text run at (0,0) width 49: "Test for"
-        RenderInline {I} at (0,0) size 278x96
-          RenderInline {A} at (0,0) size 278x32 [color=#0000EE]
-            RenderText {#text} at (0,16) size 278x32
-              text run at (0,16) width 278: "http://bugzilla.opendarwin.org/show_bug.cgi?"
-              text run at (0,32) width 52: "id=9341"
-          RenderText {#text} at (0,48) size 101x64
-            text run at (0,48) width 95: "REGRESSION:"
-            text run at (0,64) width 78: "Repro crash"
-            text run at (0,80) width 63: "caused by"
-            text run at (0,96) width 101: "style=\"font:bold\""
-        RenderText {#text} at (0,112) size 3x16
-          text run at (0,112) width 3: "."
-      RenderBlock {P} at (0,142) size 80x32
-        RenderText {#text} at (0,0) size 79x32
-          text run at (0,0) width 79: "PASS (didn\x{2019}t"
-          text run at (0,16) width 40: "crash)"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 53x16
+          text run at (0,0) width 53: "Test for "
+        RenderInline {I} at (0,0) size 683x16
+          RenderInline {A} at (0,0) size 330x16 [color=#0000EE]
+            RenderText {#text} at (53,0) size 330x16
+              text run at (53,0) width 330: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9341"
+          RenderText {#text} at (383,0) size 353x16
+            text run at (383,0) width 4: " "
+            text run at (387,0) width 349: "REGRESSION: Repro crash caused by style=\"font:bold\""
+        RenderText {#text} at (736,0) size 3x16
+          text run at (736,0) width 3: "."
+      RenderBlock {P} at (0,30) size 784x16
+        RenderText {#text} at (0,0) size 123x16
+          text run at (0,0) width 123: "PASS (didn\x{2019}t crash)"

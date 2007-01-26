@@ -1,24 +1,14 @@
-layer at (0,0) size 408x404
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 408x404
-  RenderBlock {HTML} at (0,0) size 96x404
-    RenderBody {BODY} at (8,8) size 80x388
-      RenderBlock (anonymous) at (0,0) size 80x208
-        RenderText {#text} at (0,0) size 77x208
-          text run at (0,0) width 54: "This test"
-          text run at (0,16) width 74: "case shows"
-          text run at (0,32) width 76: "how WIDTH"
-          text run at (0,48) width 70: "can set the"
-          text run at (0,64) width 73: "width of the"
-          text run at (0,80) width 58: "table to a"
-          text run at (0,96) width 59: "fixed size"
-          text run at (0,112) width 33: "using"
-          text run at (0,128) width 51: "PIXELS."
-          text run at (0,144) width 54: "This first"
-          text run at (0,160) width 69: "table has a"
-          text run at (0,176) width 77: "width of 400"
-          text run at (0,192) width 39: "pixels."
-      RenderTable {TABLE} at (0,208) size 400x42
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x32
+        RenderText {#text} at (0,0) size 764x32
+          text run at (0,0) width 584: "This test case shows how WIDTH can set the width of the table to a fixed size using PIXELS. "
+          text run at (584,0) width 180: "This first table has a width of"
+          text run at (0,16) width 67: "400 pixels."
+      RenderTable {TABLE} at (0,32) size 400x42
         RenderTableSection {TBODY} at (0,0) size 400x42
           RenderTableRow {TR} at (0,2) size 400x18
             RenderTableCell {TD} at (2,2) size 129x18 [r=0 c=0 rs=1 cs=1]
@@ -40,15 +30,11 @@ layer at (0,0) size 408x404
             RenderTableCell {TD} at (276,22) size 122x18 [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 61x16
                 text run at (1,1) width 61: "Netcaster"
-      RenderBlock (anonymous) at (0,250) size 80x96
+      RenderBlock (anonymous) at (0,74) size 784x32
         RenderBR {BR} at (0,0) size 0x16
-        RenderText {#text} at (0,16) size 80x80
-          text run at (0,16) width 64: "While, this"
-          text run at (0,32) width 80: "second table"
-          text run at (0,48) width 72: "has a width"
-          text run at (0,64) width 40: "of 300"
-          text run at (0,80) width 39: "pixels."
-      RenderTable {TABLE} at (0,346) size 300x42
+        RenderText {#text} at (0,16) size 311x16
+          text run at (0,16) width 311: "While, this second table has a width of 300 pixels."
+      RenderTable {TABLE} at (0,106) size 300x42
         RenderTableSection {TBODY} at (0,0) size 300x42
           RenderTableRow {TR} at (0,2) size 300x18
             RenderTableCell {TD} at (2,2) size 96x18 [r=0 c=0 rs=1 cs=1]

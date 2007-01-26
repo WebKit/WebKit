@@ -1,228 +1,139 @@
-layer at (0,0) size 96x2090
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x2090
-  RenderBlock {HTML} at (0,0) size 96x2090
-    RenderBody {BODY} at (8,14) size 80x2068 [color=#0000FF]
-      RenderBlock {P} at (0,0) size 80x810
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x410
+  RenderBlock {HTML} at (0,0) size 800x410
+    RenderBody {BODY} at (8,14) size 784x388 [color=#0000FF]
+      RenderBlock {P} at (0,0) size 784x202
         RenderInline (generated) at (0,0) size 77x128 [color=#00FFFF]
           RenderText {#text} at (0,5) size 77x128
             text run at (0,5) width 77: "T"
-        RenderText {#text} at (0,138) size 20x16
-          text run at (0,138) width 20: "he "
-        RenderInline {STRONG} at (0,0) size 47x32
-          RenderText {#text} at (20,138) size 47x32
-            text run at (20,138) width 27: "first"
-            text run at (0,154) width 36: "letter"
-        RenderText {#text} at (36,154) size 78x80
-          text run at (36,154) width 42: " of this"
-          text run at (0,170) width 69: "paragraph,"
-          text run at (0,186) width 54: "and only"
-          text run at (0,202) width 28: "that "
-          text run at (28,202) width 27: "one,"
-          text run at (0,218) width 60: "should be"
-        RenderInline {STRONG} at (0,0) size 45x32
-          RenderText {#text} at (0,234) size 45x32
-            text run at (0,234) width 37: "600%"
-            text run at (0,250) width 45: "bigger"
-        RenderText {#text} at (45,250) size 77x144
-          text run at (45,250) width 32: " than"
-          text run at (0,266) width 67: "the normal"
-          text run at (0,282) width 27: "text "
-          text run at (27,282) width 41: "(300%"
-          text run at (0,298) width 71: "bigger than"
-          text run at (0,314) width 64: "the rest of"
-          text run at (0,330) width 65: "first line of"
-          text run at (0,346) width 22: "this"
-          text run at (0,362) width 71: "paragraph)"
-          text run at (0,378) width 28: "and "
+        RenderText {#text} at (77,81) size 58x44
+          text run at (77,81) width 58: "he "
+        RenderInline {STRONG} at (0,0) size 193x44
+          RenderText {#text} at (135,81) size 193x44
+            text run at (135,81) width 193: "first letter"
+        RenderText {#text} at (328,81) size 746x73
+          text run at (328,81) width 418: " of this paragraph, and"
+          text run at (0,138) width 58: "only that "
+          text run at (58,138) width 95: "one, should be "
+        RenderInline {STRONG} at (0,0) size 86x16
+          RenderText {#text} at (153,138) size 86x16
+            text run at (153,138) width 86: "600% bigger"
+        RenderText {#text} at (239,138) size 516x16
+          text run at (239,138) width 134: " than the normal text "
+          text run at (373,138) width 382: "(300% bigger than the rest of first line of this paragraph) and"
         RenderInline {STRONG} at (0,0) size 34x16
-          RenderText {#text} at (28,378) size 34x16
-            text run at (28,378) width 34: "aqua"
-        RenderText {#text} at (62,378) size 65x48
-          text run at (62,378) width 3: ","
-          text run at (0,394) width 56: "while the"
-          text run at (0,410) width 40: "entire "
-        RenderInline {STRONG} at (0,0) size 67x32
-          RenderText {#text} at (40,410) size 67x32
-            text run at (40,410) width 27: "first"
-            text run at (0,426) width 25: "line"
-        RenderText {#text} at (25,426) size 70x32
-          text run at (25,426) width 4: " "
-          text run at (29,426) width 41: "should"
-          text run at (0,442) width 19: "be "
-        RenderInline {STRONG} at (0,0) size 56x32
-          RenderText {#text} at (19,442) size 56x32
-            text run at (19,442) width 37: "300%"
-            text run at (0,458) width 45: "bigger"
-        RenderText {#text} at (45,458) size 77x32
-          text run at (45,458) width 32: " than"
-          text run at (0,474) width 71: "normal and"
+          RenderText {#text} at (0,154) size 34x16
+            text run at (0,154) width 34: "aqua"
+        RenderText {#text} at (34,154) size 107x16
+          text run at (34,154) width 107: ", while the entire "
+        RenderInline {STRONG} at (0,0) size 56x16
+          RenderText {#text} at (141,154) size 56x16
+            text run at (141,154) width 56: "first line"
+        RenderText {#text} at (197,154) size 68x16
+          text run at (197,154) width 4: " "
+          text run at (201,154) width 64: "should be "
+        RenderInline {STRONG} at (0,0) size 86x16
+          RenderText {#text} at (265,154) size 86x16
+            text run at (265,154) width 86: "300% bigger"
+        RenderText {#text} at (351,154) size 111x16
+          text run at (351,154) width 111: " than normal and "
         RenderInline {STRONG} at (0,0) size 25x16
-          RenderText {#text} at (0,490) size 25x16
-            text run at (0,490) width 25: "teal"
-        RenderText {#text} at (25,490) size 80x320
-          text run at (25,490) width 41: ". If this"
-          text run at (0,506) width 46: "precise"
-          text run at (0,522) width 75: "combination"
-          text run at (0,538) width 55: "does not"
-          text run at (0,554) width 41: "occur, "
-          text run at (41,554) width 28: "then"
-          text run at (0,570) width 51: "the user"
-          text run at (0,586) width 63: "agent has"
-          text run at (0,602) width 60: "failed this"
-          text run at (0,618) width 26: "test."
-          text run at (0,634) width 68: "Remember"
-          text run at (0,650) width 77: "that in order"
-          text run at (0,666) width 16: "to "
-          text run at (16,666) width 55: "ensure a"
-          text run at (0,682) width 57: "complete"
-          text run at (0,698) width 50: "test, the"
-          text run at (0,714) width 66: "paragraph"
-          text run at (0,730) width 48: "must be"
-          text run at (0,746) width 80: "displayed on"
-          text run at (0,762) width 36: "more "
-          text run at (36,762) width 28: "than"
-          text run at (0,778) width 53: "one line."
-          text run at (0,794) width 54: "(TEST1)"
-      RenderBlock {P} at (0,824) size 80x560
+          RenderText {#text} at (462,154) size 25x16
+            text run at (462,154) width 25: "teal"
+        RenderText {#text} at (487,154) size 773x48
+          text run at (487,154) width 270: ". If this precise combination does not occur,"
+          text run at (0,170) width 417: "then the user agent has failed this test. Remember that in order to "
+          text run at (417,170) width 356: "ensure a complete test, the paragraph must be displayed"
+          text run at (0,186) width 56: "on more "
+          text run at (56,186) width 143: "than one line. (TEST1)"
+      RenderBlock {P} at (0,216) size 784x80
         RenderInline (generated) at (0,0) size 27x30 [color=#00FFFF]
           RenderText {#text} at (0,1) size 27x30
             text run at (0,1) width 27: "\"T"
-        RenderText {#text} at (27,14) size 62x34
-          text run at (27,14) width 35: "est\":"
-          text run at (0,32) width 56: "The first "
-        RenderInline {STRONG} at (0,0) size 80x32
-          RenderText {#text} at (56,32) size 80x32
-            text run at (56,32) width 24: "two"
-            text run at (0,48) width 74: "characters"
-        RenderText {#text} at (0,64) size 70x112
-          text run at (0,64) width 37: "in this"
-          text run at (0,80) width 66: "paragraph"
-          text run at (0,96) width 62: "(a double-"
-          text run at (0,112) width 70: "quote mark"
-          text run at (0,128) width 36: "and a"
-          text run at (0,144) width 65: "capital 'T')"
-          text run at (0,160) width 60: "should be"
-        RenderInline {STRONG} at (0,0) size 45x32
-          RenderText {#text} at (0,176) size 45x32
-            text run at (0,176) width 37: "200%"
-            text run at (0,192) width 45: "bigger"
-        RenderText {#text} at (45,192) size 77x80
-          text run at (45,192) width 32: " than"
-          text run at (0,208) width 64: "the rest of"
-          text run at (0,224) width 20: "the"
-          text run at (0,240) width 69: "paragraph,"
-          text run at (0,256) width 28: "and "
+        RenderText {#text} at (27,14) size 115x16
+          text run at (27,14) width 115: "est\": The first "
+        RenderInline {STRONG} at (0,0) size 139x16
+          RenderText {#text} at (142,14) size 139x16
+            text run at (142,14) width 139: "two characters"
+        RenderText {#text} at (281,14) size 734x34
+          text run at (281,14) width 148: " in this paragraph "
+          text run at (429,14) width 305: "(a double-quote mark and a capital 'T')"
+          text run at (0,32) width 64: "should be "
+        RenderInline {STRONG} at (0,0) size 86x16
+          RenderText {#text} at (64,32) size 86x16
+            text run at (64,32) width 41: "200% "
+            text run at (105,32) width 45: "bigger"
+        RenderText {#text} at (150,32) size 229x16
+          text run at (150,32) width 229: " than the rest of the paragraph, and "
         RenderInline {STRONG} at (0,0) size 34x16
-          RenderText {#text} at (28,256) size 34x16
-            text run at (28,256) width 34: "aqua"
-        RenderText {#text} at (62,256) size 69x48
-          text run at (62,256) width 3: "."
-          text run at (0,272) width 69: "In addition,"
-          text run at (0,288) width 60: "the entire"
+          RenderText {#text} at (379,32) size 34x16
+            text run at (379,32) width 34: "aqua"
+        RenderText {#text} at (413,32) size 144x16
+          text run at (413,32) width 144: ". In addition, the entire "
         RenderInline {STRONG} at (0,0) size 56x16
-          RenderText {#text} at (0,304) size 56x16
-            text run at (0,304) width 31: "first "
-            text run at (31,304) width 25: "line"
-        RenderText {#text} at (0,320) size 75x32
-          text run at (0,320) width 75: "should be in"
-          text run at (0,336) width 12: "a "
-        RenderInline {STRONG} at (0,0) size 64x48
-          RenderText {#text} at (12,336) size 64x48
-            text run at (12,336) width 40: "small-"
-            text run at (0,352) width 64: "caps font"
-            text run at (0,368) width 30: "and "
-            text run at (30,368) width 25: "teal"
-        RenderText {#text} at (55,368) size 80x192
-          text run at (55,368) width 3: "."
-          text run at (0,384) width 68: "Remember"
-          text run at (0,400) width 77: "that in order"
-          text run at (0,416) width 71: "to ensure a"
-          text run at (0,432) width 57: "complete"
-          text run at (0,448) width 30: "test, "
-          text run at (30,448) width 20: "the"
-          text run at (0,464) width 66: "paragraph"
-          text run at (0,480) width 48: "must be"
-          text run at (0,496) width 80: "displayed on"
-          text run at (0,512) width 64: "more than"
-          text run at (0,528) width 53: "one line."
-          text run at (0,544) width 54: "(TEST2)"
-      RenderBlock {P} at (0,1398) size 80x480
+          RenderText {#text} at (557,32) size 56x16
+            text run at (557,32) width 31: "first "
+            text run at (588,32) width 25: "line"
+        RenderText {#text} at (613,32) size 95x16
+          text run at (613,32) width 95: " should be in a "
+        RenderInline {STRONG} at (0,0) size 781x32
+          RenderText {#text} at (708,32) size 781x32
+            text run at (708,32) width 73: "small-caps"
+            text run at (0,48) width 61: "font and "
+            text run at (61,48) width 25: "teal"
+        RenderText {#text} at (86,48) size 763x32
+          text run at (86,48) width 326: ". Remember that in order to ensure a complete test, "
+          text run at (412,48) width 351: "the paragraph must be displayed on more than one line."
+          text run at (0,64) width 54: "(TEST2)"
+      RenderBlock {P} at (0,310) size 784x48
         RenderInline (generated) at (0,0) size 9x16 [color=#00FFFF]
           RenderText {#text} at (0,0) size 9x16
             text run at (0,0) width 9: "T"
         RenderText {#text} at (9,0) size 20x16
           text run at (9,0) width 20: "he "
-        RenderInline {STRONG} at (0,0) size 56x32
-          RenderText {#text} at (29,0) size 56x32
-            text run at (29,0) width 27: "first"
-            text run at (0,16) width 36: "letter"
-        RenderText {#text} at (36,16) size 78x80
-          text run at (36,16) width 42: " of this"
-          text run at (0,32) width 69: "paragraph,"
-          text run at (0,48) width 54: "and only"
-          text run at (0,64) width 28: "that "
-          text run at (28,64) width 27: "one,"
-          text run at (0,80) width 60: "should be"
+        RenderInline {STRONG} at (0,0) size 67x16
+          RenderText {#text} at (29,0) size 67x16
+            text run at (29,0) width 67: "first letter"
+        RenderText {#text} at (96,0) size 300x16
+          text run at (96,0) width 205: " of this paragraph, and only that "
+          text run at (301,0) width 95: "one, should be "
         RenderInline {STRONG} at (0,0) size 34x16
-          RenderText {#text} at (0,96) size 34x16
-            text run at (0,96) width 34: "aqua"
-        RenderText {#text} at (34,96) size 73x32
-          text run at (34,96) width 39: ", while"
-          text run at (0,112) width 60: "the entire"
+          RenderText {#text} at (396,0) size 34x16
+            text run at (396,0) width 34: "aqua"
+        RenderText {#text} at (430,0) size 107x16
+          text run at (430,0) width 107: ", while the entire "
         RenderInline {STRONG} at (0,0) size 56x16
-          RenderText {#text} at (0,128) size 56x16
-            text run at (0,128) width 56: "first line"
-        RenderText {#text} at (0,144) size 60x16
-          text run at (0,144) width 60: "should be"
+          RenderText {#text} at (537,0) size 56x16
+            text run at (537,0) width 56: "first line"
+        RenderText {#text} at (593,0) size 68x16
+          text run at (593,0) width 68: " should be "
         RenderInline {STRONG} at (0,0) size 25x16
-          RenderText {#text} at (0,160) size 25x16
-            text run at (0,160) width 25: "teal"
-        RenderText {#text} at (25,160) size 80x320
-          text run at (25,160) width 19: ". If "
-          text run at (44,160) width 22: "this"
-          text run at (0,176) width 46: "precise"
-          text run at (0,192) width 75: "combination"
-          text run at (0,208) width 55: "does not"
-          text run at (0,224) width 69: "occur, then"
-          text run at (0,240) width 51: "the user"
-          text run at (0,256) width 63: "agent has"
-          text run at (0,272) width 60: "failed this"
-          text run at (0,288) width 26: "test."
-          text run at (0,304) width 68: "Remember"
-          text run at (0,320) width 77: "that in order"
-          text run at (0,336) width 71: "to ensure a"
-          text run at (0,352) width 57: "complete"
-          text run at (0,368) width 30: "test, "
-          text run at (30,368) width 20: "the"
-          text run at (0,384) width 66: "paragraph"
-          text run at (0,400) width 48: "must be"
-          text run at (0,416) width 80: "displayed on"
-          text run at (0,432) width 64: "more than"
-          text run at (0,448) width 53: "one line."
-          text run at (0,464) width 54: "(TEST3)"
-      RenderBlock {DIV} at (0,1892) size 80x176
-        RenderText {#text} at (0,0) size 69x48
-          text run at (0,0) width 69: "You should"
-          text run at (0,16) width 47: "see the"
-          text run at (0,32) width 38: "words"
+          RenderText {#text} at (661,0) size 25x16
+            text run at (661,0) width 25: "teal"
+        RenderText {#text} at (686,0) size 777x48
+          text run at (686,0) width 19: ". If "
+          text run at (705,0) width 72: "this precise"
+          text run at (0,16) width 333: "combination does not occur, then the user agent has "
+          text run at (333,16) width 413: "failed this test. Remember that in order to ensure a complete test, "
+          text run at (746,16) width 20: "the"
+          text run at (0,32) width 385: "paragraph must be displayed on more than one line. (TEST3)"
+      RenderBlock {DIV} at (0,372) size 784x16
+        RenderText {#text} at (0,0) size 166x16
+          text run at (0,0) width 166: "You should see the words "
         RenderInline {STRONG} at (0,0) size 57x16
-          RenderText {#text} at (0,48) size 57x16
-            text run at (0,48) width 57: "\"TEST1\""
-        RenderText {#text} at (57,48) size 3x16
-          text run at (57,48) width 3: ","
+          RenderText {#text} at (166,0) size 57x16
+            text run at (166,0) width 57: "\"TEST1\""
+        RenderText {#text} at (223,0) size 7x16
+          text run at (223,0) width 7: ", "
         RenderInline {STRONG} at (0,0) size 57x16
-          RenderText {#text} at (0,64) size 57x16
-            text run at (0,64) width 57: "\"TEST2\""
-        RenderText {#text} at (57,64) size 60x32
-          text run at (57,64) width 3: ","
-          text run at (0,80) width 24: "and"
+          RenderText {#text} at (230,0) size 57x16
+            text run at (230,0) width 57: "\"TEST2\""
+        RenderText {#text} at (287,0) size 35x16
+          text run at (287,0) width 35: ", and "
         RenderInline {STRONG} at (0,0) size 57x16
-          RenderText {#text} at (0,96) size 57x16
-            text run at (0,96) width 57: "\"TEST3\""
-        RenderText {#text} at (57,96) size 73x80
-          text run at (57,96) width 16: " at"
-          text run at (0,112) width 64: "the end of"
-          text run at (0,128) width 33: "three"
-          text run at (0,144) width 73: "paragraphs"
-          text run at (0,160) width 41: "above."
+          RenderText {#text} at (322,0) size 57x16
+            text run at (322,0) width 57: "\"TEST3\""
+        RenderText {#text} at (379,0) size 243x16
+          text run at (379,0) width 88: " at the end of "
+          text run at (467,0) width 155: "three paragraphs above."

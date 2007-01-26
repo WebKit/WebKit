@@ -1,15 +1,12 @@
-layer at (0,0) size 180x158
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 180x158
-  RenderBlock {HTML} at (0,0) size 96x158
-    RenderBody {BODY} at (8,8) size 80x142
-      RenderBlock {P} at (0,0) size 80x64
-        RenderText {#text} at (0,0) size 76x64
-          text run at (0,0) width 75: "The caption"
-          text run at (0,16) width 76: "should be at"
-          text run at (0,32) width 60: "the top of"
-          text run at (0,48) width 54: "the table"
-      RenderTable {TABLE} at (0,78) size 172x64 [border: (1px outset #808080)]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 277x16
+          text run at (0,0) width 277: "The caption should be at the top of the table"
+      RenderTable {TABLE} at (0,30) size 172x64 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 170x16
           RenderText {#text} at (55,0) size 60x16
             text run at (55,0) width 60: "Wild Cats"

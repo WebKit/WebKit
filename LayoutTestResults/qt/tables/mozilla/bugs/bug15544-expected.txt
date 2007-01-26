@@ -1,8 +1,8 @@
-layer at (0,0) size 96x282
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x282
-  RenderBlock {HTML} at (0,0) size 96x282
-    RenderBody {BODY} at (8,8) size 80x266
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
       RenderTable {TABLE} at (0,0) size 80x93
         RenderTableSection {TBODY} at (0,0) size 80x93
           RenderTableRow {TR} at (0,0) size 80x28
@@ -19,14 +19,10 @@ layer at (0,0) size 96x282
             RenderTableCell {TD} at (30,53) size 50x40 [r=2 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 25x40
               RenderImage {IMG} at (25,0) size 25x40
-      RenderBlock (anonymous) at (0,93) size 80x80
-        RenderText {#text} at (0,0) size 68x80
-          text run at (0,0) width 65: "Here's the"
-          text run at (0,16) width 68: "same table"
-          text run at (0,32) width 68: "without the"
-          text run at (0,48) width 62: "off-by-one"
-          text run at (0,64) width 34: "error."
-      RenderTable {TABLE} at (0,173) size 80x93
+      RenderBlock (anonymous) at (0,93) size 784x16
+        RenderText {#text} at (0,0) size 313x16
+          text run at (0,0) width 313: "Here's the same table without the off-by-one error."
+      RenderTable {TABLE} at (0,109) size 80x93
         RenderTableSection {TBODY} at (0,0) size 80x93
           RenderTableRow {TR} at (0,0) size 80x28
             RenderTableCell {TD} at (0,0) size 30x93 [r=0 c=0 rs=3 cs=1]

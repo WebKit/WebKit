@@ -1,16 +1,15 @@
-layer at (0,0) size 652x358
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 652x358
-  RenderBlock {HTML} at (0,0) size 96x358
-    RenderBody {BODY} at (8,8) size 80x342 [bgcolor=#FFFFFF]
-      RenderBlock {P} at (0,0) size 80x48
-        RenderText {#text} at (0,0) size 79x32
-          text run at (0,0) width 58: "Testcase"
-          text run at (0,16) width 79: "distilled from"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
+      RenderBlock {P} at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 145x16
+          text run at (0,0) width 145: "Testcase distilled from "
         RenderInline {A} at (0,0) size 177x16 [color=#0000EE]
-          RenderText {#text} at (0,32) size 177x16
-            text run at (0,32) width 177: "http://webdeveloper.com/xml"
-      RenderTable {TABLE} at (0,62) size 644x94 [border: (1px outset #808080)]
+          RenderText {#text} at (145,0) size 177x16
+            text run at (145,0) width 177: "http://webdeveloper.com/xml"
+      RenderTable {TABLE} at (0,30) size 644x94 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 642x92
           RenderTableRow {TR} at (0,0) size 642x92
             RenderTableCell {TD} at (0,0) size 510x92 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -36,15 +35,13 @@ layer at (0,0) size 652x358
                           text run at (30,28) width 64: " Site Map "
                       RenderText {#text} at (94,28) size 4x16
                         text run at (94,28) width 4: "]"
-      RenderBlock {P} at (0,170) size 80x64
-        RenderText {#text} at (0,0) size 63x48
-          text run at (0,0) width 55: "Same as"
-          text run at (0,16) width 63: "above, but"
-          text run at (0,32) width 55: "removed"
+      RenderBlock {P} at (0,138) size 784x16
+        RenderText {#text} at (0,0) size 185x16
+          text run at (0,0) width 185: "Same as above, but removed "
         RenderInline {CODE} at (0,0) size 68x16
-          RenderText {#text} at (0,48) size 68x16
-            text run at (0,48) width 68: "<SCRIPT></SCRIPT>"
-      RenderTable {TABLE} at (0,248) size 644x94 [border: (1px outset #808080)]
+          RenderText {#text} at (185,0) size 68x16
+            text run at (185,0) width 68: "<SCRIPT></SCRIPT>"
+      RenderTable {TABLE} at (0,168) size 644x94 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 642x92
           RenderTableRow {TR} at (0,0) size 642x92
             RenderTableCell {TD} at (0,0) size 510x92 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

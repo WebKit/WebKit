@@ -1,19 +1,11 @@
-layer at (0,0) size 96x182
-  RenderView at (0,0) size 96x26
-layer at (0,0) size 96x182
-  RenderBlock {HTML} at (0,0) size 96x182
-    RenderBody {BODY} at (8,8) size 80x166
-      RenderBlock (anonymous) at (0,0) size 80x144
-        RenderText {#text} at (0,0) size 70x144
-          text run at (0,0) width 61: "This tests"
-          text run at (0,16) width 69: "that border"
-          text run at (0,32) width 61: "radius will"
-          text run at (0,48) width 70: "choose the"
-          text run at (0,64) width 69: "foreground"
-          text run at (0,80) width 69: "color when"
-          text run at (0,96) width 61: "no border"
-          text run at (0,112) width 45: "color is"
-          text run at (0,128) width 59: "specified."
-      RenderBlock {DIV} at (0,144) size 56x22 [color=#FF0000] [bgcolor=#ADD8E6] [border: (3px solid #FF0000)]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x16
+        RenderText {#text} at (0,0) size 596x16
+          text run at (0,0) width 596: "This tests that border radius will choose the foreground color when no border color is specified."
+      RenderBlock {DIV} at (0,16) size 56x22 [color=#FF0000] [bgcolor=#ADD8E6] [border: (3px solid #FF0000)]
         RenderText {#text} at (3,3) size 23x16
           text run at (3,3) width 23: "test"
