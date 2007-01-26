@@ -276,7 +276,7 @@ KURL::KURL(const KURL& base, const DeprecatedString& relative, const TextEncodin
 
 void KURL::init(const KURL &base, const DeprecatedString &relative, const TextEncoding& encoding)
 {
-    // Allow at lest absolute URLs to resolve against an empty URL.
+    // Allow at least absolute URLs to resolve against an empty URL.
     if (!base.m_isValid && !base.isEmpty()) {
         m_isValid = false;
         return;
@@ -350,14 +350,11 @@ void KURL::init(const KURL &base, const DeprecatedString &relative, const TextEn
     if (absolute) {
         parse(str, (allASCII && !strippedStart && (charsToChopOffEnd == 0)) ? &rel : 0);
     } else {
-        // if the base is invalid, just append the relative
-        // portion. The RFC does not specify what to do in this case.
-        if (!base.m_isValid) {
-            DeprecatedString newURL = base.urlString + str;
-            parse(newURL.ascii(), &newURL);
-            if (strBuffer) {
+        // If the base is empty or opaque (e.g. data: or javascript:), then the URL is invalid.
+        if (!base.isHierarchical()) {
+            m_isValid = false;
+            if (strBuffer)
                 fastFree(strBuffer);
-            }
             return;
         }
 

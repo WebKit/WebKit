@@ -1,3 +1,13 @@
+2007-01-26  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12385
+        Assertion failure when loading subresources from "data:" frames
+
+        * fast/loader/opaque-base-url-expected.txt: Added.
+        * fast/loader/opaque-base-url.html: Added.
+
 2007-01-26  Darin Adler  <darin@apple.com>
 
         * fast/events/objc-event-api-expected.txt: Updated test result now that we no
