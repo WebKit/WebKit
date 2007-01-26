@@ -31,6 +31,7 @@
 #include "CString.h"
 #include "FrameQt.h"
 #include "ResourceHandle.h"
+#include "ResourceHandleClient.h"
 #include "ResourceResponse.h"
 #include "ResourceHandleManagerQt.h"
 #include "ResourceHandleInternal.h"
@@ -82,8 +83,8 @@ ResourceHandleManager* ResourceHandleManager::self()
     return s_self;
 }
 
-RequestQt::RequestQt(ResourceHandle* res, FrameQtClient *c)
-    : client(c), resource(res), redirected(false), cancelled(false)
+RequestQt::RequestQt(ResourceHandle* res)
+    : resource(res), redirected(false), cancelled(false)
 {
     setURL(res->url());
     request = QHttpRequestHeader(resource->method(), url.path() + url.query());
@@ -134,7 +135,7 @@ void RequestQt::setURL(const KURL &u)
     qurl = url.url();
 }
 
-void ResourceHandleManager::add(ResourceHandle* resource, FrameQtClient* client)
+void ResourceHandleManager::add(ResourceHandle* resource)
 {
     ASSERT(resource);
 
@@ -144,7 +145,7 @@ void ResourceHandleManager::add(ResourceHandle* resource, FrameQtClient* client)
         return;
     }
 
-    RequestQt* request = new RequestQt(resource, client);
+    RequestQt* request = new RequestQt(resource);
     add(request);
 }
 

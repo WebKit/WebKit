@@ -472,7 +472,6 @@ SOURCES += \
     page/DragController.cpp \
     page/qt/EventHandlerQt.cpp \
     page/qt/FrameQt.cpp \
-    page/qt/FrameQtClient.cpp \
     page/qt/DragControllerQt.cpp \
     xml/XPathUtil.cpp \
     xml/XPathPredicate.cpp \

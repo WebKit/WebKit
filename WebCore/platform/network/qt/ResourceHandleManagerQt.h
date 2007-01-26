@@ -56,13 +56,12 @@ struct HostInfo {
 class RequestQt
 {
 public:
-    RequestQt(ResourceHandle*, FrameQtClient*);
+    RequestQt(ResourceHandle*);
     void setURL(const KURL &url);
     // not thread safe, don't use in other threads
     KURL url;
 
     QUrl qurl;
-    FrameQtClient* client;
     ResourceHandle* resource;
 
     // to be used by other threads
@@ -83,7 +82,7 @@ class ResourceHandleManager : public QObject {
 public:
     static ResourceHandleManager* self();
 
-    void add(ResourceHandle*, FrameQtClient*);
+    void add(ResourceHandle*);
     void add(RequestQt* request);
     void cancel(ResourceHandle*);
 

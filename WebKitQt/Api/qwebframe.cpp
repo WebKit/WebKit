@@ -27,7 +27,6 @@
 #include <qdebug.h>
 
 #include "FrameLoaderClientQt.h"
-#include "FrameQtClient.h"
 #include "FrameQt.h"
 #include "FrameView.h"
 #include "ResourceRequest.h"
@@ -54,7 +53,7 @@ QWebFrame::QWebFrame(QWebPage *parent, QWebFrameData *frameData)
     d->page = parent;
 
     d->frameLoaderClient = new FrameLoaderClientQt();
-    d->frame = new FrameQt(parent->d->page, frameData->ownerElement, new FrameQtClient(), d->frameLoaderClient);
+    d->frame = new FrameQt(parent->d->page, frameData->ownerElement, d->frameLoaderClient);
     d->frameLoaderClient->setFrame(this, d->frame.get());
 
     d->frameView = new FrameView(d->frame.get());
@@ -75,7 +74,7 @@ QWebFrame::QWebFrame(QWebFrame *parent, QWebFrameData *frameData)
     d->page = parent->d->page;
 
     d->frameLoaderClient = new FrameLoaderClientQt();
-    d->frame = new FrameQt(parent->d->page->d->page, frameData->ownerElement, new FrameQtClient(), d->frameLoaderClient);
+    d->frame = new FrameQt(parent->d->page->d->page, frameData->ownerElement, d->frameLoaderClient);
     d->frameLoaderClient->setFrame(this, d->frame.get());
 
     d->frameView = new FrameView(d->frame.get());

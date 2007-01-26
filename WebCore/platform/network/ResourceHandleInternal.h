@@ -61,6 +61,7 @@ class NSURLConnection;
 // WebCoreResourceLoaderImp which avoids doing work in dealloc).
 
 namespace WebCore {
+    class ResourceHandleClient;
 
     class ResourceHandleInternal : Noncopyable {
     public:

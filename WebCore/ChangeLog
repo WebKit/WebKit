@@ -1,3 +1,24 @@
+2007-01-26  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Get rid of FrameQtClient. It's unused since we moved over
+        to the loader.
+
+        * WebCore.pro:
+        * page/qt/FrameQt.cpp:
+        (WebCore::FrameQt::FrameQt):
+        * page/qt/FrameQt.h:
+        * page/qt/FrameQtClient.cpp: Removed.
+        * page/qt/FrameQtClient.h: Removed.
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/qt/ResourceHandleManagerQt.cpp:
+        (WebCore::RequestQt::RequestQt):
+        (WebCore::ResourceHandleManager::add):
+        * platform/network/qt/ResourceHandleManagerQt.h:
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::start):
+
 2007-01-26  Zack Rusin  <zack@kde.org>
 
         Fix the compile

@@ -34,7 +34,6 @@
 #define FrameQt_h
 
 #include "Frame.h"
-#include "FrameQtClient.h"
 #include "WindowFeatures.h"
 
 class QWidget;
@@ -53,7 +52,7 @@ class EditorClient;
 
 class FrameQt : public Frame {
 public:
-    FrameQt(Page*, HTMLFrameOwnerElement*, FrameQtClient*, FrameLoaderClient*);
+    FrameQt(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
     virtual ~FrameQt();
 
     virtual KJS::Bindings::Instance* getEmbedInstanceForWidget(Widget*);
@@ -91,8 +90,6 @@ public:
 
     void setFrameGeometry(const IntRect&);
 
-    FrameQtClient* client() const;
-
     void createNewWindow(const FrameLoadRequest&, const WindowFeatures&, Frame*&);
     void goBackOrForward(int);
 
@@ -103,7 +100,6 @@ private:
     virtual bool isLoadTypeReload();
     virtual bool passMouseDownEventToWidget(Widget*);
 
-    FrameQtClient* m_client;
     bool m_beginCalled : 1;    
 
     KJS::Bindings::RootObject* m_bindingRoot;  // The root object used for objects

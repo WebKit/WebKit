@@ -58,7 +58,7 @@ bool ResourceHandle::start(Frame* frame)
     ASSERT(frame);
     FrameQt* f = QtFrame(frame);
 
-    ResourceHandleManager::self()->add(this, f ? f->client() : 0);
+    ResourceHandleManager::self()->add(this);
     return true;
 }
 
