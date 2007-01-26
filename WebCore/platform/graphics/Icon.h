@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,10 +22,10 @@
 #define Icon_h
 
 #include "Shared.h"
-
-#include <wtf/PassRefPtr.h>
+#include <wtf/Forward.h>
 
 #if PLATFORM(MAC)
+#include "RetainPtr.h"
 #ifdef __OBJC__
 @class NSImage;
 #else
@@ -58,7 +58,10 @@ public:
 
 private:
 #if PLATFORM(MAC)
-    NSImage* m_nsImage;
+    Icon(NSImage*);
+#endif
+#if PLATFORM(MAC)
+    RetainPtr<NSImage> m_nsImage;
 #elif PLATFORM(WIN)
     HICON m_hIcon;
 #elif PLATFORM(QT)

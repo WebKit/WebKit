@@ -50,10 +50,6 @@ void FileChooser::chooseFile(const String& filename)
 
 PassRefPtr<Icon> FileChooser::chooseIcon(const String& filename)
 {
-    // FIXME: Should the special cases be in Icon::newIconForFile?
-    // Need unsigned 0 here to disambiguate String::operator[] from operator(NSString*, int)[]
-    if (filename.isEmpty() || filename[0U] != '/')
-        return 0;
     return Icon::newIconForFile(filename);
 }
 

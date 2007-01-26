@@ -1,3 +1,24 @@
+2007-01-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady.
+
+        - fix <rdar://problem/4956688> move Mac-specific part of icon code into IconMac
+        - fix a GC-compatibility problem in the icon code I noticed by code inspection
+
+        * platform/FileChooser.cpp: (WebCore::FileChooser::chooseIcon): Removed Mac-specific
+        path check -- that's in newIconForFile now.
+
+        * platform/graphics/Icon.h: Changed the image to be a RetainPtr. The old code was
+        using -[NSObject retain] which is not good enough for a pointer in a C++ object.
+        * platform/graphics/mac/IconMac.mm:
+        (WebCore::Icon::Icon): Got rid of unneeded code to do what RetainPtr does for us.
+        (WebCore::Icon::~Icon): Ditto.
+        (WebCore::Icon::newIconForFile): Added check for non-absolute file names. Updated
+        for use of RetainPtr. Use constructor that takes NSImage.
+        (WebCore::Icon::paint): Add get() calls needed now that we are using a RetainPtr.
+
+        * WebCore.xcodeproj/project.pbxproj: Let Xcode do its thing.
+
 2007-01-26  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

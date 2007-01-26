@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,45 +24,48 @@
 #import "GraphicsContext.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "PlatformString.h"
-#import <AppKit/NSImage.h>
+#import <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
 Icon::Icon()
-    : m_nsImage(0)
 {
+}
+
+Icon::Icon(NSImage *image)
+    : m_nsImage(image)
+{
+    // Need this because WebCore uses AppKit's flipped coordinate system exclusively.
+    [image setFlipped:YES];
 }
 
 Icon::~Icon()
 {
-    [m_nsImage release];
 }
 
 PassRefPtr<Icon> Icon::newIconForFile(const String& filename)
 {
-    NSImage* fileIcon = [[[NSWorkspace sharedWorkspace] iconForFile:filename] retain];
-    if (!fileIcon)
+    // Don't pass relative filenames -- we don't want a result that depends on the current directory.
+    // Need 0U here to disambiguate String::operator[] from operator(NSString*, int)[]
+    if (filename.isEmpty() || filename[0U] != '/')
         return 0;
-    
-    Icon* icon = new Icon();
 
-    icon->m_nsImage = fileIcon;
-    
-    // Need this because WebCore uses AppKit's flipped coordinate system.
-    [icon->m_nsImage setFlipped:YES];
-    
-    return icon;
+    NSImage* image = [[NSWorkspace sharedWorkspace] iconForFile:filename];
+    if (!image)
+        return 0;
+
+    return new Icon(image);
 }
 
-void Icon::paint(GraphicsContext* context, const IntRect& r)
+void Icon::paint(GraphicsContext* context, const IntRect& rect)
 {
     if (context->paintingDisabled())
         return;
-    
+
     LocalCurrentGraphicsContext localCurrentGC(context);
-    
-    [m_nsImage drawInRect:r
-        fromRect:NSMakeRect(0, 0, [m_nsImage size].width, [m_nsImage size].height)
+
+    [m_nsImage.get() drawInRect:rect
+        fromRect:NSMakeRect(0, 0, [m_nsImage.get() size].width, [m_nsImage.get() size].height)
         operation:NSCompositeSourceOver fraction:1.0];
 }
 
