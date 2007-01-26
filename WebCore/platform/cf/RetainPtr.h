@@ -41,7 +41,7 @@ namespace WebCore {
 
     enum AdoptTag { Adopt };
     
-    template <typename T> inline void adoptCFReference(T* ptr)
+    template <typename T> inline void adoptCFReference(T*)
     {
     }
 

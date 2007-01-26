@@ -1,3 +1,12 @@
+2007-01-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders' rubberstamp
+        
+        Warning about unreferenced formal parameter caused compile to fail
+
+        * platform/cf/RetainPtr.h:
+        (WebCore::adoptCFReference):
+
 2007-01-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady.
