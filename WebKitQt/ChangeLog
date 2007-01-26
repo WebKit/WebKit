@@ -1,3 +1,24 @@
+2007-01-26  Lars Knoll <lars@trolltech.com>
+
+        Make it compile again with Qt 4.2 and add the copyright
+        headers where forgotten in the last submit.
+
+        * Api/qwebpagehistory.cpp:
+        * Api/qwebpagehistory.h:
+        (QExplicitlySharedDataPointer::operator*):
+        (QExplicitlySharedDataPointer::operator->):
+        (QExplicitlySharedDataPointer::operator T *):
+        (QExplicitlySharedDataPointer::operator const T *):
+        (QExplicitlySharedDataPointer::data):
+        (QExplicitlySharedDataPointer::constData):
+        (QExplicitlySharedDataPointer::operator==):
+        (QExplicitlySharedDataPointer::operator!=):
+        (QExplicitlySharedDataPointer::QExplicitlySharedDataPointer):
+        (QExplicitlySharedDataPointer::~QExplicitlySharedDataPointer):
+        (QExplicitlySharedDataPointer::operator=):
+        (QExplicitlySharedDataPointer::operator!):
+        (::QExplicitlySharedDataPointer):
+
 2007-01-26  Zack Rusin  <zrusin@trolltech.com>
 
         Reviewed by Lars
