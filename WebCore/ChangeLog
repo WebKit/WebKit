@@ -1,3 +1,15 @@
+2007-01-26  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Maciej.
+
+        Fixed an issue on tivofaq.com where you could never tab forward into
+        the left frame after tabbing out of the document.
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocus): Clear the focused frame
+        before passing off focus to Chrome so that when we re-enter the
+        document we start at the main frame instead of the last focused frame.
+
 2007-01-25  Rob Buis  <buis@kde.org>
 
         Reviewed by olliej.
