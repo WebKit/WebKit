@@ -142,7 +142,7 @@ public:
     virtual int staticX() const { return m_staticX; }
     virtual int staticY() const { return m_staticY; }
     virtual void setStaticX(int staticX) { m_staticX = staticX; }
-    virtual void setStaticY(int staticY) { m_staticY = staticY; }
+    virtual void setStaticY(int staticY);
 
     virtual IntRect getOverflowClipRect(int tx, int ty);
     virtual IntRect getClipRect(int tx, int ty);

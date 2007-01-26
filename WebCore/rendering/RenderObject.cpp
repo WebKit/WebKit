@@ -682,6 +682,8 @@ void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout)
 
     while (o) {
         if (!last->isText() && (last->style()->position() == FixedPosition || last->style()->position() == AbsolutePosition)) {
+            if (last->hasStaticY())
+                last->parent()->setChildNeedsLayout(true);
             if (o->m_posChildNeedsLayout)
                 return;
             o->m_posChildNeedsLayout = true;

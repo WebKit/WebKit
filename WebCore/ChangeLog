@@ -1,3 +1,25 @@
+2007-01-26  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Reviewed by Darin and Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=10983
+          REGRESSION (r12290): Drop shadow of flickr photo note is positioned incorrectly the second time it's shown
+
+        Test: fast/dynamic/staticY.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutPositionedObjects): Avoid marking the object's
+        parents, since they have already been laid out.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setStaticY): Added a call to setChildNeedsLayout() to
+        ensure relayout by this box's container (third and fourth cases in the
+        layout test).
+        * rendering/RenderBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::markContainingBlocksForLayout): For positioned objects
+        with static y, also mark the object's parent to ensure that it recomputes
+        the static y value (first case in the layout test).
+
 2007-01-26  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack

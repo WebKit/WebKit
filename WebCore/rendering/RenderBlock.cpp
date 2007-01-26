@@ -1207,7 +1207,7 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
             // objects that are positioned implicitly like this.  Such objects are rare, and so in typical DHTML menu usage (where everything is
             // positioned explicitly) this should not incur a performance penalty.
             if (relayoutChildren || (r->hasStaticY() && r->parent() != this && r->parent()->isBlockFlow()))
-                r->setChildNeedsLayout(true);
+                r->setChildNeedsLayout(true, false);
             r->layoutIfNeeded();
         }
     }

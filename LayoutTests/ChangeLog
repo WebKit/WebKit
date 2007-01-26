@@ -1,3 +1,18 @@
+2007-01-26  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin and Maciej.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=10983
+          REGRESSION (r12290): Drop shadow of flickr photo note is positioned incorrectly the second time it's shown
+
+        Tests three cases that the patch fixes and another one that was fixed in
+        r8284 but did not have a test.
+
+        * fast/dynamic/staticY-expected.checksum: Added.
+        * fast/dynamic/staticY-expected.png: Added.
+        * fast/dynamic/staticY-expected.txt: Added.
+        * fast/dynamic/staticY.html: Added.
+
 2007-01-25  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by oliver

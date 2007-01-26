@@ -1450,6 +1450,15 @@ void RenderBox::calcVerticalMargins()
     m_marginBottom = style()->marginBottom().calcMinValue(cw);
 }
 
+void RenderBox::setStaticY(int staticY)
+{
+    if (staticY == m_staticY)
+        return;
+    
+    m_staticY = staticY;
+    setChildNeedsLayout(true);
+}
+
 int RenderBox::containingBlockWidthForPositioned(const RenderObject* containingBlock) const
 {
     if (containingBlock->isInline()) {
