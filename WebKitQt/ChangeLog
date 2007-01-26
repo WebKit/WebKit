@@ -1,3 +1,14 @@
+2007-01-26  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Lars
+
+        Display pages inside a mainwindow instead
+        of a custom qwidget.
+
+        * QtLauncher/main.cpp:
+        (MainWindow::MainWindow):
+        (main):
+
 2007-01-25  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack

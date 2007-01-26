@@ -37,12 +37,14 @@
 #include <QUrl>
 
 #include <QProgressBar>
+#include <QMainWindow>
 #include <QWidget>
 #include <QPainter>
 #include <QPen>
 #include <QBrush>
 #include <QTimer>
 #include <QDebug>
+
 
 
 class InfoWidget :public QProgressBar {
@@ -81,6 +83,34 @@ protected:
     qreal m_progress;
 };
 
+class MainWindow : public QMainWindow
+{
+    Q_OBJECT
+public:
+    MainWindow(const QUrl &url)
+    {
+        page = new QWebPage(this);
+        InfoWidget *info = new InfoWidget(page);
+        info->setGeometry(20, 20, info->sizeHint().width(),
+                          info->sizeHint().height());
+        connect(page, SIGNAL(loadStarted(QWebFrame*)),
+                         info, SLOT(startLoad()));
+        connect(page, SIGNAL(loadProgressChanged(double)),
+                         info, SLOT(changeLoad(double)));
+        connect(page, SIGNAL(loadFinished(QWebFrame*)),
+                         info, SLOT(endLoad()));
+    
+    
+        setCentralWidget(page);
+
+        page->open(url);
+
+        info->raise();
+    }
+private:
+    QWebPage *page;
+};
+
 #include "main.moc"
 
 int main(int argc, char **argv)
@@ -91,30 +121,9 @@ int main(int argc, char **argv)
     const QStringList args = app.arguments();
     if (args.count() > 1)
         url = args.at(1);
-     
-    QWidget topLevel;
-    QBoxLayout *l = new QVBoxLayout(&topLevel);
 
-    QWebPage *page = new QWebPage(&topLevel);
-    InfoWidget *info = new InfoWidget(page);
-    info->setGeometry(20, 20, info->sizeHint().width(),
-                      info->sizeHint().height());
-    QObject::connect(page, SIGNAL(loadStarted(QWebFrame*)),
-                     info, SLOT(startLoad()));
-    QObject::connect(page, SIGNAL(loadProgressChanged(double)),
-                     info, SLOT(changeLoad(double)));
-    QObject::connect(page, SIGNAL(loadFinished(QWebFrame*)),
-                     info, SLOT(endLoad()));
-    
-    
-    l->addWidget(page);
+    MainWindow window(url);
+    window.show();
 
-    topLevel.show();
-
-    page->open(url);
-
-    info->raise();
-    
-    app.exec();
-    return 0;
+    return app.exec();
 }
