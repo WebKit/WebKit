@@ -111,10 +111,11 @@
             
             function mouseDownOnSelect(selId, index, shift, meta) {
                 var sl = document.getElementById(selId);
-                var itemHeight = 15;
-                var y = 10 + index * itemHeight - window.pageYOffset;
+                var itemHeight = 14;
+                var border = 1;
+                var y = border + index * itemHeight - window.pageYOffset;
                 var event = document.createEvent("MouseEvent");
-                event.initMouseEvent("mousedown", true, true, document.defaultView, 1, sl.offsetLeft + 10, sl.offsetTop + y, sl.offsetLeft + 10, sl.offsetTop + y, false, false, shift, meta, 0, document);
+                event.initMouseEvent("mousedown", true, true, document.defaultView, 1, sl.offsetLeft + border, sl.offsetTop + y, sl.offsetLeft + border, sl.offsetTop + y, false, false, shift, meta, 0, document);
                 sl.dispatchEvent(event);
             }
             

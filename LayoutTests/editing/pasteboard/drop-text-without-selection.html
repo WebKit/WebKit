@@ -25,12 +25,8 @@ function runTest() {
 
     var link = document.getElementById("link");
 
-    // The 8 here is the default margin on the body element.
-    var xOff = 8;
-    var yOff = 8;
-    
-    var x = xOff + link.offsetLeft + link.offsetWidth / 2;
-    var y = yOff + link.offsetTop + link.offsetHeight / 2;
+    var x = link.offsetLeft + link.offsetWidth / 2;
+    var y = link.offsetTop + link.offsetHeight / 2;
 
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseDown();
@@ -38,8 +34,8 @@ function runTest() {
     eventSender.leapForward(400);
     var field = document.getElementById("field");
     
-    x = xOff + field.offsetLeft + field.offsetWidth / 2;
-    y = yOff + field.offsetTop + field.offsetHeight / 2;
+    x = field.offsetLeft + field.offsetWidth / 2;
+    y = field.offsetTop + field.offsetHeight / 2;
 
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseUp();

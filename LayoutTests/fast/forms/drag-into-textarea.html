@@ -2,12 +2,12 @@
 
 function runTest() {
     var input = document.getElementById("input");
-    var x = 8 + input.offsetLeft + input.offsetWidth / 2;
-    var y = 8 + input.offsetTop + input.offsetHeight / 2;
+    var x = input.offsetLeft + input.offsetWidth / 2;
+    var y = input.offsetTop + input.offsetHeight / 2;
 
     var textarea = document.getElementById("textarea");
-    var tx = 8 + textarea.offsetLeft + textarea.offsetWidth / 2;
-    var ty = 8 + textarea.offsetTop + textarea.offsetHeight / 2;
+    var tx = textarea.offsetLeft + textarea.offsetWidth / 2;
+    var ty = textarea.offsetTop + textarea.offsetHeight / 2;
 
     input.select();
 

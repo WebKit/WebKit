@@ -1,5 +1,33 @@
 2007-01-26  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Darin.
+
+        - test and updated tests and results for
+          http://bugs.webkit.org/show_bug.cgi?id=11109
+          REGRESSION (r15471): menus are offset on eink.com
+          <rdar://problem/4824760>
+
+        * editing/execCommand/findString-2.html:
+        * editing/pasteboard/4947130.html:
+        * editing/pasteboard/drop-text-without-selection.html:
+        * editing/selection/anchor-focus1-expected.txt:
+        * editing/selection/click-before-and-after-table.html:
+        * editing/selection/drag-select-1.html:
+        * editing/selection/editable-links-expected.txt:
+        * editing/selection/mixed-editability-1.html:
+        * editing/selection/paragraph-granularity.html:
+        * editing/selection/selection-actions.html:
+        * editing/selection/word-granularity.html:
+        * fast/dom/Element/offsetLeft-offsetTop-body-quirk-expected.txt: Added.
+        * fast/dom/Element/offsetLeft-offsetTop-body-quirk.html: Added.
+        * fast/forms/drag-into-textarea.html:
+        * fast/forms/listbox-selection-2.html:
+        * fast/forms/listbox-selection.html:
+        * fast/table/click-near-anonymous-table-expected.txt:
+        * fast/table/click-near-anonymous-table.html:
+
+2007-01-26  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin and Maciej.
 
         - test for http://bugs.webkit.org/show_bug.cgi?id=10983

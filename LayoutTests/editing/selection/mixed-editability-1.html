@@ -13,9 +13,8 @@ if (window.layoutTestController) {
     
     var x, y;
     
-    // The 8 here is the default margin on the body element.
-    x = 8 + start.offsetLeft + start.offsetWidth / 2;
-    y = 8 + start.offsetTop + start.offsetHeight / 2;
+    x = start.offsetLeft + start.offsetWidth / 2;
+    y = start.offsetTop + start.offsetHeight / 2;
     
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseDown();

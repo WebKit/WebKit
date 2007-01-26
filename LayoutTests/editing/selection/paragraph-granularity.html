@@ -11,7 +11,7 @@ if (window.layoutTestController)
 function editingTest() {
     var start = document.getElementById("start");
     
-    x = start.offsetLeft + 10;
+    x = start.offsetLeft + 2;
     y = start.offsetTop + 10;
     
     eventSender.mouseMoveTo(x, y);
@@ -23,7 +23,7 @@ function editingTest() {
     
     var end = document.getElementById("end");
     
-    x = end.offsetLeft + end.offsetWidth + 10;
+    x = end.offsetLeft + end.offsetWidth + 2;
     y = end.offsetTop + 10;
     
     eventSender.mouseMoveTo(x, y);

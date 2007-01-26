@@ -9,9 +9,8 @@ if (window.layoutTestController)
 <script>
 if (window.layoutTestController) {
     var e = document.getElementById("selectme");
-    // The 8 here is the default margin on the body element.
-    var x = 8 + e.offsetLeft + e.offsetWidth / 2;
-    var y = 8 + e.offsetTop + e.offsetHeight / 2;
+    var x = e.offsetLeft + e.offsetWidth / 2;
+    var y = e.offsetTop + e.offsetHeight / 2;
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseDown();
     eventSender.mouseUp();

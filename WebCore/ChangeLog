@@ -1,6 +1,26 @@
 2007-01-26  Mitz Pettel  <mitz@webkit.org>
 
-        Reviewed by Reviewed by Darin and Maciej.
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11109
+          REGRESSION (r15471): menus are offset on eink.com
+          <rdar://problem/4824760>
+
+        Changed offset{Left,Top} to match Firefox. If the body element is statically
+        positioned, it is still returned as the offsetParent of elements whose containing
+        block is the initial containing block (the root), but their offset{Left,Top} are
+        relative to the root. If the body element is positioned, then offsets are relative
+        to it. The body's own offset{Left,Top} are always 0. 
+
+        Test: fast/dom/Element/offsetLeft-offsetTop-body-quirk.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::offsetLeft):
+        (WebCore::RenderObject::offsetTop):
+
+2007-01-26  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin and Maciej.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=10983
           REGRESSION (r12290): Drop shadow of flickr photo note is positioned incorrectly the second time it's shown

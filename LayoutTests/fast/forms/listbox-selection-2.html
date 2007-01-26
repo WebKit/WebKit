@@ -57,9 +57,9 @@
                 var itemHeight = 14;
                 var borderPaddingTop = 15;
                 var borderPaddingLeft = 15;
-                var y = 8 + index * itemHeight - window.pageYOffset + borderPaddingTop;
+                var y = index * itemHeight - window.pageYOffset + borderPaddingTop;
                 var event = document.createEvent("MouseEvent");
-                event.initMouseEvent("mousedown", true, true, document.defaultView, 1, sl.offsetLeft + 8 + borderPaddingLeft, sl.offsetTop + y, sl.offsetLeft + 8 + borderPaddingLeft, sl.offsetTop + y, false, false, shift, meta, 0, document);
+                event.initMouseEvent("mousedown", true, true, document.defaultView, 1, sl.offsetLeft +  borderPaddingLeft, sl.offsetTop + y, sl.offsetLeft + borderPaddingLeft, sl.offsetTop + y, false, false, shift, meta, 0, document);
                 sl.dispatchEvent(event);
             }
             

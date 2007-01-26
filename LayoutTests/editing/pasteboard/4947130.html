@@ -17,8 +17,8 @@ function runTest() {
 function step2() {
 
     var img = document.getElementById("img");
-    var left = img.offsetParent.offsetLeft + img.offsetLeft;
-    var top = img.offsetParent.offsetTop + img.offsetTop;
+    var left = img.offsetLeft;
+    var top = img.offsetTop;
     var x = left + img.offsetWidth / 2;
     var y = top + img.offsetHeight / 2;
     
@@ -26,7 +26,7 @@ function step2() {
     eventSender.mouseDown();
     eventSender.leapForward(1300);
 
-    eventSender.mouseMoveTo(left - 20, y);
+    eventSender.mouseMoveTo(left - 28, y);
     eventSender.mouseUp();
 
     window.layoutTestController.notifyDone();

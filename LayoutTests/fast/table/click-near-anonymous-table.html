@@ -7,13 +7,11 @@
             if (!window.layoutTestController)
                 return;
             var target = document.getElementById("target");
-            // The 8 here is the default margin on the body element.
-            var baseX = 8 + target.offsetLeft;
-            var baseY = 8 + target.offsetTop;
+
             for (i = 0; i < target.children.length; i++) {
                 var div = target.children[i];
-                var clickX = baseX + target.offsetLeft + target.offsetWidth + 5;
-                var clickY = baseY + target.offsetTop + target.offsetHeight + 5;
+                var clickX = div.offsetLeft + div.offsetWidth + 5;
+                var clickY = div.offsetTop + 5;
                 eventSender.mouseMoveTo(clickX, clickY);
                 eventSender.mouseDown();
                 eventSender.mouseUp();
