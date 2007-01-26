@@ -1,3 +1,9 @@
+2007-01-26  Zack Rusin  <zack@kde.org>
+
+        Fix the compile
+
+        * WebCore.pro:
+
 2007-01-26  Adam Roben  <aroben@apple.com>
 
         Reviewed by Maciej.

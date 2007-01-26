@@ -1019,6 +1019,7 @@ contains(DEFINES, SVG_SUPPORT=1) {
         rendering/RenderSVGText.cpp \
         rendering/RenderSVGTSpan.cpp \
         rendering/SVGInlineFlowBox.cpp \
+        rendering/SVGInlineTextBox.cpp \
         rendering/SVGRootInlineBox.cpp \
         history/BackForwardList.cpp \
         history/HistoryItem.cpp \
