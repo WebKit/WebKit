@@ -1,3 +1,31 @@
+2007-01-26  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Lars
+
+        Introduce PlatformScrollBar and try to make 
+        the scrollbar behavior a little more sane.
+
+        * WebCore.pro:
+        * platform/qt/PlatformScrollBarQt.cpp: Added.
+        (WebCore::Scrollbar::Scrollbar):
+        (WebCore::Scrollbar::setSteps):
+        (WebCore::Scrollbar::scroll):
+        (WebCore::Scrollbar::setValue):
+        (WebCore::Scrollbar::setProportion):
+        (WebCore::PlatformScrollbar::PlatformScrollbar):
+        (WebCore::PlatformScrollbar::~PlatformScrollbar):
+        (WebCore::PlatformScrollbar::width):
+        (WebCore::PlatformScrollbar::height):
+        (WebCore::PlatformScrollbar::setEnabled):
+        (WebCore::PlatformScrollbar::paint):
+        (WebCore::PlatformScrollbar::updateThumbPosition):
+        (WebCore::PlatformScrollbar::updateThumbProportion):
+        (WebCore::PlatformScrollbar::setRect):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::addChild):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+
 2007-01-26  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

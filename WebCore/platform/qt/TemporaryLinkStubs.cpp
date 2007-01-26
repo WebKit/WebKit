@@ -44,10 +44,7 @@
 #include "loader.h"
 #include "FrameView.h"
 #include "KURL.h"
-#include "ScrollBar.h"
-#include "PlatformScrollBar.h"
 #include "CachedResource.h"
-#include "ScrollBar.h"
 #include "Path.h"
 #include "PlatformMouseEvent.h"
 #include "CookieJar.h"
@@ -72,32 +69,13 @@ using namespace WebCore;
 FloatRect Font::selectionRectForComplexText(const TextRun&, const TextStyle&, const IntPoint&, int) const { notImplemented(); return FloatRect(); }
 int Font::offsetForPositionForComplexText(const TextRun&, const TextStyle&, int, bool) const { notImplemented(); return 0; }
 
+namespace WebCore {
+PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&) { notImplemented(); }
+}
 
 void WebCore::refreshPlugins(bool) { notImplemented(); }
 
 Color WebCore::focusRingColor() { notImplemented(); return 0xFF0000FF; }
-
-namespace WebCore {    
-
-Scrollbar::Scrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize) { notImplemented(); }
-void Scrollbar::setSteps(int, int) { notImplemented(); }
-bool Scrollbar::scroll(ScrollDirection, ScrollGranularity, float) { notImplemented(); return 0; }
-bool Scrollbar::setValue(int) { notImplemented(); return 0; }
-void Scrollbar::setProportion(int, int) { notImplemented(); }
-
-PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize) : Scrollbar(client, orientation, controlSize) { notImplemented(); }
-PlatformScrollbar::~PlatformScrollbar() { notImplemented(); }
-int PlatformScrollbar::width() const { notImplemented(); return 0; }
-int PlatformScrollbar::height() const { notImplemented(); return 0; }
-void PlatformScrollbar::setEnabled(bool) { notImplemented(); }
-void PlatformScrollbar::paint(GraphicsContext*, const IntRect& damageRect) { notImplemented(); }
-void PlatformScrollbar::updateThumbPosition() { notImplemented(); }
-void PlatformScrollbar::updateThumbProportion() { notImplemented(); }
-void PlatformScrollbar::setRect(const IntRect&) { notImplemented(); }
-
-PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&) { notImplemented(); }
-
-}
 
 bool WebCore::historyContains(DeprecatedString const&) { return false; }
 
