@@ -1,3 +1,19 @@
+2007-01-26  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Make sure we resize the HTML when resizing a 
+        QWebFrame. Also ensure that the render tree
+        is up to date before dumping it.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::innerText):
+        (QWebFrame::renderTreeDump):
+        (QWebFrame::resizeEvent):
+        * Api/qwebframe.h:
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::createMainFrame):
+
 2007-01-26  Zack Rusin  <zack@kde.org>
 
         Reviewed by Lars

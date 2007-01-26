@@ -53,6 +53,9 @@ public:
 signals:
     void cleared();
     void loadDone(bool ok);
+
+protected:
+    void resizeEvent(QResizeEvent *);
     
 private:
     friend class QWebPage;

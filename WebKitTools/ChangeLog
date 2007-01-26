@@ -1,3 +1,14 @@
+2007-01-26  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Small hack to ensure that our top level frame actually has the
+        correct size. Unfortunately this means I'll have to regenerate 
+        all test cases :/
+
+        * DumpRenderTree/DumpRenderTree.qtproj/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+
 2007-01-25  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Darin and Zack

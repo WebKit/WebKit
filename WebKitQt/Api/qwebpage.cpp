@@ -77,8 +77,8 @@ void QWebPagePrivate::createMainFrame()
         QWebFrameData frameData;
         frameData.ownerElement = 0;
         frameData.allowsScrolling = true;
-        frameData.marginWidth = 5;
-        frameData.marginHeight = 5;
+        frameData.marginWidth = 0;
+        frameData.marginHeight = 0;
         mainFrame = q->createFrame(0, &frameData);
         layout->addWidget(mainFrame);
     }

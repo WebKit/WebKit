@@ -56,9 +56,14 @@ DumpRenderTree::DumpRenderTree()
     , m_loading(false)
 {
     page = new QWebPage(0);
+    page->resize(maxViewWidth, maxViewHeight);
     frame = page->mainFrame();
     frame->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     frame->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    frame->setFrameShape(QFrame::NoFrame);
+
+    // hack to force the right size on the frame
+    page->layout()->activate();
 
     
     m_controller = new LayoutTestController();
@@ -67,7 +72,7 @@ DumpRenderTree::DumpRenderTree()
     QObject::connect(frame, SIGNAL(cleared()), this, SLOT(initJSObjects()));
     QObject::connect(frame, SIGNAL(loadDone(bool)), this, SLOT(maybeDump(bool)));
     
-    page->resize(800, 800);
+//     page->resize(800, 800);
 }
 
 DumpRenderTree::~DumpRenderTree()
