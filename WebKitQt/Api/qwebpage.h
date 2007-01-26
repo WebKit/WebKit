@@ -23,6 +23,8 @@
 #ifndef QWEBPAGE_H
 #define QWEBPAGE_H
 
+#include "qwebpagehistory.h"
+
 #include <qwidget.h>
 class QWebFrame;
 class QUrl;
@@ -46,9 +48,15 @@ public:
 
 
     QWebFrame *mainFrame() const;
-    
+
+    QWebPageHistory history() const;
+
     QSize sizeHint() const;
 
+public slots:
+    void goBack();
+    void goForward();
+    void goToHistoryItem(const QWebHistoryItem &item);
 signals:
     /**
      * Signal is emitted when load is started on one of the child

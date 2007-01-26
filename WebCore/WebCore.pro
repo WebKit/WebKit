@@ -687,7 +687,8 @@ SOURCES += \
     ../WebKitQt/WebCoreSupport/ContextMenuClientQt.cpp \
     ../WebKitQt/WebCoreSupport/DragClientQt.cpp \
     ../WebKitQt/Api/qwebpage.cpp \
-    ../WebKitQt/Api/qwebframe.cpp
+    ../WebKitQt/Api/qwebframe.cpp \
+    ../WebKitQt/Api/qwebpagehistory.cpp
 
 contains(DEFINES, XPATH_SUPPORT=1) {
     FEATURE_DEFINES_JAVASCRIPT += XPATH_SUPPORT

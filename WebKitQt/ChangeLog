@@ -1,3 +1,42 @@
+2007-01-26  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Lars
+
+        Implement history support on platform Qt.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::history):
+        (QWebPage::goBack):
+        (QWebPage::goForward):
+        (QWebPage::goToHistoryItem):
+        * Api/qwebpage.h:
+        * Api/qwebpagehistory.cpp: Added.
+        (QWebHistoryItem::~QWebHistoryItem):
+        (QWebHistoryItem::originalUrl):
+        (QWebHistoryItem::currentUrl):
+        (QWebHistoryItem::title):
+        (QWebHistoryItem::lastVisited):
+        (QWebHistoryItem::icon):
+        (QWebHistoryItem::QWebHistoryItem):
+        (QWebPageHistory::QWebPageHistory):
+        (QWebPageHistory::itemAtIndex):
+        (QWebPageHistory::~QWebPageHistory):
+        (QWebPageHistory::items):
+        (QWebPageHistory::backItems):
+        (QWebPageHistory::forwardItems):
+        (QWebPageHistory::goBack):
+        (QWebPageHistory::goForward):
+        (QWebPageHistory::goToItem):
+        (QWebPageHistory::backItem):
+        (QWebPageHistory::currentItem):
+        (QWebPageHistory::forwardItem):
+        * Api/qwebpagehistory.h: Added.
+        * Api/qwebpagehistory_p.h: Added.
+        (QWebHistoryItemPrivate::QWebHistoryItemPrivate):
+        (QWebHistoryItemPrivate::~QWebHistoryItemPrivate):
+        (QWebPageHistoryPrivate::QWebPageHistoryPrivate):
+        (QWebPageHistoryPrivate::~QWebPageHistoryPrivate):
+
 2007-01-26  Lars Knoll <lars@trolltech.com>
 
         Get rid of FrameQtClient. It's unused since we moved over
