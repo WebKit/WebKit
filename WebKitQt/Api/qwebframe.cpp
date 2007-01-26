@@ -69,7 +69,7 @@ QWebFrame::QWebFrame(QWebPage *parent, QWebFrameData *frameData)
 
 
 QWebFrame::QWebFrame(QWebFrame *parent, QWebFrameData *frameData)
-    : QScrollArea(parent)
+    : QScrollArea(parent->widget())
     , d(new QWebFramePrivate)
 {
     d->page = parent->d->page;

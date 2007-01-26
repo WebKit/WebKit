@@ -1,3 +1,14 @@
+2007-01-26  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Lars
+
+        Correctly position child frames within the 
+        toplevel frame. We were placed it on the widget
+        itself instead of the vieweport.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::QWebFrame):
+
 2007-01-26  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack
