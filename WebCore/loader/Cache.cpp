@@ -89,7 +89,7 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
 
     if (!resource) {
         // The resource does not exist.  Create it.
-        resource = createResource(type, docLoader, url.url(), expireDate, charset);
+        resource = createResource(type, docLoader, url, expireDate, charset);
         ASSERT(resource);
         resource->setInCache(!disabled());
         if (!disabled())

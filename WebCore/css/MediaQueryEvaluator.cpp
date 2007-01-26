@@ -46,14 +46,12 @@
 #include <wtf/HashMap.h>
 
 namespace WebCore {
+
 using namespace MediaFeatureNames;
 
-enum MediaFeaturePrefix
-{
-    MinPrefix, MaxPrefix, NoPrefix
-};
+enum MediaFeaturePrefix { MinPrefix, MaxPrefix, NoPrefix };
 
-typedef bool (*EvalFunc)(CSSValue* value, RenderStyle* style, Page* page,  MediaFeaturePrefix op);
+typedef bool (*EvalFunc)(CSSValue*, RenderStyle*, Page*,  MediaFeaturePrefix);
 typedef HashMap<AtomicStringImpl*, EvalFunc> FunctionMap;
 static FunctionMap* gFunctionMap;
 
@@ -69,7 +67,7 @@ static FunctionMap* gFunctionMap;
  * support CSS_DIMENSION
  */
 
-MediaQueryEvaluator:: MediaQueryEvaluator(bool mediaFeatureResult)
+MediaQueryEvaluator::MediaQueryEvaluator(bool mediaFeatureResult)
     : m_page(0)
     , m_style(0)
     , m_expResult(mediaFeatureResult)
@@ -109,6 +107,15 @@ bool MediaQueryEvaluator::mediaTypeMatch(const String& mediaTypeToMatch) const
     return mediaTypeToMatch.isEmpty()
         || equalIgnoringCase(mediaTypeToMatch, "all")
         || equalIgnoringCase(mediaTypeToMatch, m_mediaType);
+}
+
+bool MediaQueryEvaluator::mediaTypeMatchSpecific(const char* mediaTypeToMatch) const
+{
+    // Like mediaTypeMatch, but without the special cases for "" and "all".
+    ASSERT(mediaTypeToMatch);
+    ASSERT(mediaTypeToMatch[0] != '\0');
+    ASSERT(equalIgnoringCase(mediaTypeToMatch, String("all")));
+    return equalIgnoringCase(mediaTypeToMatch, m_mediaType);
 }
 
 static bool applyRestrictor(MediaQuery::Restrictor r, bool value)

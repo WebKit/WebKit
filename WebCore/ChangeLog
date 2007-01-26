@@ -1,3 +1,27 @@
+2007-01-26  Darin Adler  <darin@apple.com>
+
+        Patch by Nate Begeman.
+        Reviewed by Darin and Maciej.
+
+        - <rdar://problem/4946877> Avoid unnecessary allocations in CSS, patch attached (12401)
+          http://bugs.webkit.org/show_bug.cgi?id=12401
+
+        * css/MediaQueryEvaluator.h: Add mediaTypeMatchSpecific, a function that
+        takes a char* to avoid creating and destroying a String for simple media
+        type queries.
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::mediaTypeMatchSpecific): Added. Besides
+        avoiding the conversion to String, this also doesn't have the special
+        case code to handle "" and "all".
+
+        * css/cssstyleselector.cpp: (WebCore::CSSStyleSelector::matchUARules):
+        Call mediaTypeMatchSpecific here when deciding whether to use the
+        print version of the user agent style sheet.
+
+        * loader/Cache.cpp: (WebCore::Cache::requestResource): Don't convert to
+        a string and back to a KURL when calling createResource. Avoids reparsing
+        the URL string.
+
 2007-01-26  Zack Rusin  <zrusin@trolltech.com>
 
         Reviewed by Lars
