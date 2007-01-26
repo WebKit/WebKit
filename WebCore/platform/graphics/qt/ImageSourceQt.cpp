@@ -161,7 +161,7 @@ NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
         return 0;
 
     
-    const QPixmap* source = m_decoder->imageAtIndex( index);
+    const QPixmap* source = m_decoder->imageAtIndex(index);
     if (!source)
         return 0;
 

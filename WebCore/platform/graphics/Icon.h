@@ -33,6 +33,8 @@ class NSImage;
 #endif
 #elif PLATFORM(WIN)
 typedef struct HICON__* HICON;
+#elif PLATFORM(QT)
+#include <QIcon>
 #endif
 
 namespace WebCore {
@@ -59,6 +61,8 @@ private:
     NSImage* m_nsImage;
 #elif PLATFORM(WIN)
     HICON m_hIcon;
+#elif PLATFORM(QT)
+    QIcon m_icon;
 #endif
 };
 

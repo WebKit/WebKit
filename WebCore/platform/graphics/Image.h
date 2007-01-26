@@ -47,6 +47,10 @@ struct CGContext;
 typedef struct HBITMAP__ *HBITMAP;
 #endif
 
+#if PLATFORM(QT)
+class QPixmap;
+#endif
+
 namespace WebCore {
 
 class AffineTransform;
@@ -101,6 +105,10 @@ public:
 
 #if PLATFORM(CG)
     virtual CGImageRef getCGImageRef() { return 0; }
+#endif
+
+#if PLATFORM(QT)
+    virtual QPixmap* getPixmap() const { return 0; }
 #endif
 
 #if PLATFORM(WIN)

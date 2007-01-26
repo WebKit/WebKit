@@ -110,6 +110,10 @@ public:
 #if PLATFORM(CG)
     virtual CGImageRef getCGImageRef();
 #endif
+
+#if PLATFORM(QT)
+    virtual QPixmap* getPixmap() const;
+#endif
     
 #if PLATFORM(WIN)
     virtual bool getHBITMAP(HBITMAP);

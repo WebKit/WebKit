@@ -1,3 +1,33 @@
+2007-01-26  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Lars
+
+        Fixing image loading - we decode QImages
+        but render QPixmaps now. Implement Icon
+        class
+
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Icon.h:
+        * platform/graphics/Image.h:
+        (WebCore::Image::getPixmap):
+        * platform/graphics/qt/IconQt.cpp:
+        (WebCore::Icon::Icon):
+        (WebCore::Icon::~Icon):
+        (WebCore::Icon::newIconForFile):
+        (WebCore::Icon::paint):
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::ImageData::ImageData):
+        (WebCore::ImageDecoderQt::ReadContext::read):
+        (WebCore::ImageDecoderQt::ReadContext::readImageLines):
+        (WebCore::ImageDecoderQt::reset):
+        (WebCore::ImageDecoderQt::imageAtIndex):
+        * platform/graphics/qt/ImageDecoderQt.h:
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::drawPattern):
+        (WebCore::BitmapImage::getPixmap):
+        * platform/graphics/qt/ImageSourceQt.cpp:
+        (WebCore::ImageSource::createFrameAtIndex):
+
 2007-01-25  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by oliver

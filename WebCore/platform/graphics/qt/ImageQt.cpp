@@ -133,7 +133,7 @@ void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, 
     QPixmap* framePixmap = nativeImageForCurrentFrame();
     if (!framePixmap) // If it's too early we won't have an image yet.
         return;
-    
+
     QPixmap pixmap = *framePixmap;
     QRect tr = QRectF(tileRect).toRect();
     if (tr.x() || tr.y() || tr.width() != pixmap.width() || tr.height() != pixmap.height())
@@ -157,6 +157,11 @@ void BitmapImage::checkForSolidColor()
 {
     // FIXME: It's easy to implement this optimization. Just need to check the RGBA32 buffer to see if it is 1x1.
     m_isSolidColor = false;
+}
+
+QPixmap* BitmapImage::getPixmap() const
+{
+    return const_cast<BitmapImage*>(this)->frameAtIndex(0);
 }
 
 }
