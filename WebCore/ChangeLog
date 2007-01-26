@@ -1,5 +1,11 @@
 2007-01-26  Darin Adler  <darin@apple.com>
 
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::mediaTypeMatchSpecific):
+        Oops, forgot a !.
+
+2007-01-26  Darin Adler  <darin@apple.com>
+
         Patch by Nate Begeman.
         Reviewed by Darin and Maciej.
 
