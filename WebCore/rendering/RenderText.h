@@ -51,6 +51,7 @@ public:
     StringImpl* text() const { return m_text.get(); }
 
     virtual InlineBox* createInlineBox(bool makePlaceHolderBox, bool isRootLineBox, bool isOnlyRun = false);
+    virtual InlineTextBox* createInlineTextBox();
     virtual void dirtyLineBoxes(bool fullLayout, bool isRootInlineBox = false);
 
     virtual void paint(PaintInfo&, int tx, int ty) { ASSERT_NOT_REACHED(); }

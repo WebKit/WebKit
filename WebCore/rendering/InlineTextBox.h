@@ -67,6 +67,9 @@ public:
 
     void destroy(RenderArena*);
 
+    virtual int selectionTop();
+    virtual int selectionHeight();
+
     IntRect selectionRect(int absx, int absy, int startPos, int endPos);
     bool isSelected(int startPos, int endPos) const;
     void selectionStartEnd(int& sPos, int& ePos);

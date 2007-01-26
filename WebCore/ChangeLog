@@ -1,3 +1,36 @@
+2007-01-25  Rob Buis  <buis@kde.org>
+
+        Reviewed by olliej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11911
+        SVG exhibits double-text-selection behavior
+
+        Fix selection height of the inline text boxes for svg.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionTop):
+        (WebCore::InlineTextBox::selectionHeight):
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintMarkedTextBackground):
+        (WebCore::InlineTextBox::paintCustomHighlight):
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::createInlineTextBox):
+        * rendering/RenderSVGInlineText.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::createInlineTextBox):
+        (WebCore::RenderText::createInlineBox):
+        * rendering/RenderText.h:
+        * rendering/SVGInlineTextBox.cpp: Added.
+        (WebCore::SVGInlineTextBox::selectionTop):
+        (WebCore::SVGInlineTextBox::selectionHeight):
+        * rendering/SVGInlineTextBox.h: Added.
+        (WebCore::SVGInlineTextBox::SVGInlineTextBox):
+
 2007-01-26  Zack Rusin  <zack@kde.org>
 
         Reviewed by Lars

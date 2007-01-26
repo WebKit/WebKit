@@ -914,10 +914,15 @@ void RenderText::dirtyLineBoxes(bool fullLayout, bool)
     m_linesDirty = false;
 }
 
+InlineTextBox* RenderText::createInlineTextBox()
+{
+    return new (renderArena()) InlineTextBox(this);
+}
+
 InlineBox* RenderText::createInlineBox(bool, bool isRootLineBox, bool)
 {
     ASSERT(!isRootLineBox);
-    InlineTextBox* textBox = new (renderArena()) InlineTextBox(this);
+    InlineTextBox* textBox = createInlineTextBox();
     if (!m_firstTextBox)
         m_firstTextBox = m_lastTextBox = textBox;
     else {

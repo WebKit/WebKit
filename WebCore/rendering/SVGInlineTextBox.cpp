@@ -1,8 +1,7 @@
-/*
- * This file is part of the WebKit project.
+/**
+ * This file is part of the DOM implementation for KDE.
  *
- * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
- *           (C) 2006 Apple Computer Inc.
+ * Copyright (C) 2007 Rob Buis <buis@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,26 +20,19 @@
  *
  */
 
-#ifndef RenderSVGInlineText_h
-#define RenderSVGInlineText_h
-
-#ifdef SVG_SUPPORT
-
-#include "RenderText.h"
+#include "config.h"
+#include "SVGInlineTextBox.h"
 
 namespace WebCore {
-class RenderSVGInlineText : public RenderText {
-public:
-    RenderSVGInlineText(Node*, StringImpl*);
-    virtual const char* renderName() const { return "RenderSVGInlineText"; }
-    virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty);
-    virtual bool requiresLayer() { return false; }
-    virtual IntRect selectionRect();
-    virtual bool isSVGText() const { return true; }
-    virtual InlineTextBox* createInlineTextBox();
-};
+
+int SVGInlineTextBox::selectionTop()
+{
+    return m_y - 1;
 }
 
-#endif // SVG_SUPPORT
+int SVGInlineTextBox::selectionHeight()
+{
+    return m_height;
+}
 
-#endif // !RenderSVGInlineText_h
+} // namespace WebCore

@@ -26,9 +26,10 @@
 #include "config.h"
 #include "RenderSVGInlineText.h"
 
-#include "GraphicsContext.h"
-#include "KCanvasRenderingStyle.h"
 #include "AffineTransform.h"
+#include "GraphicsContext.h"
+#include "SVGInlineTextBox.h"
+#include "KCanvasRenderingStyle.h"
 
 namespace WebCore {
     
@@ -48,6 +49,11 @@ IntRect RenderSVGInlineText::selectionRect()
     IntRect rect = RenderText::selectionRect();
     rect = parent()->absoluteTransform().mapRect(rect);
     return rect;
+}
+
+InlineTextBox* RenderSVGInlineText::createInlineTextBox()
+{
+    return new (renderArena()) SVGInlineTextBox(this);
 }
 
 }
