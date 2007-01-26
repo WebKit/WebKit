@@ -1,3 +1,14 @@
+2007-01-25  Jan Kraemer  <camel@gmx.de>
+
+        Reviewed by Maciej
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=12382
+
+        Fix crash on architectures with 32 bit ints and
+        64 bit longs (For example Linux on AMD64)
+
+        * kjs/dtoa.cpp: #define Long int as suggested in comment
+
 2007-01-24  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed up #include order for style. No review necessary.
