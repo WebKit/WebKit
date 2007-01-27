@@ -747,14 +747,6 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
             swallowEvent = true;
         else
             swallowEvent = handleMousePressEvent(mev);
-        
-        // Many AK widgets run their own event loops and consume events while the mouse is down.
-        // When they finish, currentEvent is the mouseUp that they exited on.  We need to update
-        // the khtml state with this mouseUp, which khtml never saw.
-        // If this event isn't a mouseUp, we assume that the mouseUp will be coming later.  There
-        // is a hole here if the widget consumes the mouseUp and subsequent events.
-        if (lastEventIsMouseUp())
-            m_mousePressed = false;
     }
 
     return swallowEvent;

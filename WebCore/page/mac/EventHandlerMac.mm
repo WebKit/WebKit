@@ -202,6 +202,24 @@ bool EventHandler::passWidgetMouseDownEventToWidget(RenderWidget* renderWidget)
     return passMouseDownEventToWidget(renderWidget->widget());
 }
 
+static bool lastEventIsMouseUp()
+{
+    // Many AK widgets run their own event loops and consume events while the mouse is down.
+    // When they finish, currentEvent is the mouseUp that they exited on.  We need to update
+    // the khtml state with this mouseUp, which khtml never saw.  This method lets us detect
+    // that state.
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    NSEvent *currentEventAfterHandlingMouseDown = [NSApp currentEvent];
+    if (currentEvent != currentEventAfterHandlingMouseDown &&
+        [currentEventAfterHandlingMouseDown type] == NSLeftMouseUp &&
+        [currentEventAfterHandlingMouseDown timestamp] >= [currentEvent timestamp])
+            return true;
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    return false;
+}
+
 bool EventHandler::passMouseDownEventToWidget(Widget* widget)
 {
     // FIXME: this method always returns true
@@ -272,28 +290,18 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
     // Remember which view we sent the event to, so we can direct the release event properly.
     m_mouseDownView = view;
     m_mouseDownWasInSubframe = false;
+    
+    // Many AppKit widgets run their own event loops and consume events while the mouse is down.
+    // When they finish, currentEvent is the mouseUp that they exited on.  We need to update
+    // the EventHandler state with this mouseUp, which we never saw.
+    // If this event isn't a mouseUp, we assume that the mouseUp will be coming later.  There
+    // is a hole here if the widget consumes both the mouseUp and subsequent events.
+    if (lastEventIsMouseUp())
+        m_mousePressed = false;
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
     return true;
-}
-
-bool EventHandler::lastEventIsMouseUp() const
-{
-    // Many AK widgets run their own event loops and consume events while the mouse is down.
-    // When they finish, currentEvent is the mouseUp that they exited on.  We need to update
-    // the khtml state with this mouseUp, which khtml never saw.  This method lets us detect
-    // that state.
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    NSEvent *currentEventAfterHandlingMouseDown = [NSApp currentEvent];
-    if (currentEvent != currentEventAfterHandlingMouseDown &&
-        [currentEventAfterHandlingMouseDown type] == NSLeftMouseUp &&
-        [currentEventAfterHandlingMouseDown timestamp] >= [currentEvent timestamp])
-            return true;
-    END_BLOCK_OBJC_EXCEPTIONS;
-
-    return false;
 }
     
 // Note that this does the same kind of check as [target isDescendantOf:superview].

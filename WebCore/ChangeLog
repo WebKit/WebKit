@@ -1,3 +1,26 @@
+2007-01-26  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/4956565> REGRESSION: After scrolling frame, 
+        hovering over link in this frame doesn't change cursor to pointing 
+        hand
+
+        The mouseMove event was not being propagated correctly after using 
+        the mouse to scroll the frame because m_mousePressed was never 
+        getting set to false.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent): This code does not 
+        belong here.
+        * page/EventHandler.h: lastEventIsMouseUp() is only ever relevant 
+        in EventHandlerMac, so it can just be a static function there.
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::lastEventIsMouseUp): Make this static.
+        (WebCore::EventHandler::passMouseDownEventToWidget): Here is where 
+        we need to set m_mousePressed to false if lastEventIsMouseUp() is 
+        true.
+
 2007-01-26  David Hyatt  <hyatt@apple.com>
 
         Fix for style regression caused by strictness checking of the number of properties.  This caused code like:
