@@ -162,7 +162,7 @@ FloatPoint SVGSVGElement::currentTranslate() const
     return FloatPoint();
 }
 
-void SVGSVGElement::addSVGWindowEventListner(const AtomicString& eventType, const Attribute* attr)
+void SVGSVGElement::addSVGWindowEventListener(const AtomicString& eventType, const Attribute* attr)
 {
     // FIXME: None of these should be window events long term.
     // Once we propertly support SVGLoad, etc.
@@ -177,17 +177,17 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute* attr)
     if (!nearestViewportElement()) {
         // Only handle events if we're the outermost <svg> element
         if (attr->name() == onunloadAttr)
-            addSVGWindowEventListner(unloadEvent, attr);
+            addSVGWindowEventListener(unloadEvent, attr);
         else if (attr->name() == onabortAttr)
-            addSVGWindowEventListner(abortEvent, attr);
+            addSVGWindowEventListener(abortEvent, attr);
         else if (attr->name() == onerrorAttr)
-            addSVGWindowEventListner(errorEvent, attr);
+            addSVGWindowEventListener(errorEvent, attr);
         else if (attr->name() == onresizeAttr)
-            addSVGWindowEventListner(resizeEvent, attr);
+            addSVGWindowEventListener(resizeEvent, attr);
         else if (attr->name() == onscrollAttr)
-            addSVGWindowEventListner(scrollEvent, attr);
+            addSVGWindowEventListener(scrollEvent, attr);
         else if (attr->name() == SVGNames::onzoomAttr)
-            addSVGWindowEventListner(zoomEvent, attr);
+            addSVGWindowEventListener(zoomEvent, attr);
     }
     if (attr->name() == SVGNames::xAttr)
         setXBaseValue(SVGLength(this, LengthModeWidth, value));

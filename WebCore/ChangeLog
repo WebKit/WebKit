@@ -1,3 +1,12 @@
+2007-01-27  Rob Buis  <buis@kde.org>
+
+        Reviewed by NOBODY (typo in method name fix).
+
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::addSVGWindowEventListener):
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+        * ksvg2/svg/SVGSVGElement.h:
+
 2007-01-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by olliej.
