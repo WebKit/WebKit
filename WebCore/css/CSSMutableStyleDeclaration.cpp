@@ -33,9 +33,6 @@
 #include "Node.h"
 #include "StyledElement.h"
 
-// Not in any header, so just declare it here for now.
-WebCore::String getPropertyName(unsigned short id);
-
 namespace WebCore {
 
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration()
@@ -535,7 +532,7 @@ String CSSMutableStyleDeclaration::item(unsigned i) const
 {
     if (i >= m_values.count())
        return String();
-    return getPropertyName(m_values[i].id());
+    return getPropertyName(static_cast<CSSPropertyID>(m_values[i].id()));
 }
 
 String CSSMutableStyleDeclaration::cssText() const

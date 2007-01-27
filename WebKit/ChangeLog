@@ -1,3 +1,9 @@
+2007-01-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth.
+
+        * WebInspector/webInspector/inspector.js: Updated for new computed style properties.
+
 2007-01-26  Kevin Decker <kdecker@apple.com>
 
         Reviewed by andersca.

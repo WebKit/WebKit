@@ -1,3 +1,57 @@
+2007-01-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12412
+          "unimplemented propertyID: 46" seen at dojotoolkit.org
+
+        Covered by fast/css/computed-style.html
+
+        * css/CSSPropertyNames.in: Sorted the file into two separate sections, one
+        for properties without the -webkit- prefix and another for properties with.
+
+        * css/makeprop: Generate a CSSPropertyID enum instead of a set of #defines.
+        Removed unused CSS_PROP_MIN and CSS_PROP_MAX. Renamed CSS_PROP_TOTAL to
+        numCSSProperties and changed it to a const int instead of #define.
+        Added a declaration of getPropertyName in the header. Changed the return
+        type of getPropertyName to const char* and the parameter type to CSSPropertyID.
+
+        * css/CSSComputedStyleDeclaration.cpp: Sort the lists of properties in
+        an easier to maintain order -- properties without a WebKit prefix first.
+        (WebCore::valueForLength): Changed return value to PassRefPtr.
+        (WebCore::valueForMaxLength): Ditto.
+        (WebCore::valueForBorderStyle): Ditto.
+        (WebCore::valueForTextAlign): Ditto.
+        (WebCore::valueForAppearance): Added.
+        (WebCore::valueForMarginCollapse): Added.
+        (WebCore::valueForShadow): Changed return value to PassRefPtr.
+        (WebCore::getPositionOffsetValue): Ditto.
+        (WebCore::currentColorOrValidColor): Ditto.
+        (WebCore::CSSComputedStyleDeclaration::cssText): Added cast since
+        getPropertyName now takes an enum value.
+        (WebCore::primitiveValueFromLength): Changed return value to PassRefPtr.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        Added cast to CSSPropertyID so that gcc will detect missing enums in the
+        switch statement. Simplified the background-size and border-spacing
+        implementations so they don't have local variables. Added lots of cases
+        to the switch statement for unimplemented properties. Implemented the
+        outline-width, box-sizing, -webkit-appearance, -webkit-rtl-ordering,
+        -webkit-user-drag, and -webkit-user-select properties.
+        (WebCore::CSSComputedStyleDeclaration::item): Added cast since
+        getPropertyName now takes an enum value.
+
+        * css/CSSMutableStyleDeclaration.cpp: Removed declaration of getPropertyName.
+        (WebCore::CSSMutableStyleDeclaration::item): Added cast since
+        getPropertyName now takes an enum value.
+
+        * css/CSSProperty.cpp: Removed declaration of getPropertyName.
+        (WebCore::CSSProperty::cssText): Added cast since
+        getPropertyName now takes an enum value and returns a const char*.
+
+        * css/CSSStyleDeclaration.cpp: Removed declaration of getPropertyName.
+        (WebCore::CSSStyleDeclaration::getPropertyShorthand): Added cast since
+        getPropertyName now takes an enum value and returns a const char*.
+
 2007-01-26  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Brady.

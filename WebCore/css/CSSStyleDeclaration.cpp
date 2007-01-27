@@ -30,9 +30,6 @@
 #include "DeprecatedValueList.h"
 #include "ksvgcssproperties.h"
 
-// Not in any header, so just declare it here for now.
-WebCore::String getPropertyName(unsigned short id);
-
 namespace WebCore {
 
 // Defined in CSSGrammar.y, but not in any header, so just declare it here for now.
@@ -103,7 +100,7 @@ String CSSStyleDeclaration::getPropertyShorthand(const String& propertyName)
     int shorthandID = getPropertyShorthand(propID);
     if (!shorthandID)
         return String();
-    return getPropertyName(shorthandID);
+    return getPropertyName(static_cast<CSSPropertyID>(shorthandID));
 }
 
 bool CSSStyleDeclaration::isPropertyImplicit(const String& propertyName)

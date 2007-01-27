@@ -23,16 +23,14 @@
 #include "config.h"
 #include "CSSProperty.h"
 
+#include "CSSPropertyNames.h"
 #include "PlatformString.h"
-
-// Not in any header, so just declare it here for now.
-WebCore::String getPropertyName(unsigned short id);
 
 namespace WebCore {
 
 String CSSProperty::cssText() const
 {
-    return getPropertyName(id()) + ": " + m_value->cssText() + (isImportant() ? " !important" : "") + "; ";
+    return String(getPropertyName(static_cast<CSSPropertyID>(id()))) + ": " + m_value->cssText() + (isImportant() ? " !important" : "") + "; ";
 }
 
 bool operator==(const CSSProperty& a, const CSSProperty& b)

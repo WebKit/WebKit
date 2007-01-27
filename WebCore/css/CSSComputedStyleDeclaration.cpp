@@ -1,7 +1,7 @@
 /**
  *
  * Copyright (C) 2004 Zack Rusin <zack@kde.org>
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,63 +35,35 @@
 #include "RenderObject.h"
 #include "ShadowValue.h"
 
-extern WebCore::String getPropertyName(unsigned short id);
-
 namespace WebCore {
 
 // List of all properties we know how to compute, omitting shorthands.
 static const int computedProperties[] = {
+    CSS_PROP_BACKGROUND_ATTACHMENT,
     CSS_PROP_BACKGROUND_COLOR,
     CSS_PROP_BACKGROUND_IMAGE,
-    CSS_PROP__WEBKIT_BACKGROUND_SIZE,
-    CSS_PROP_BACKGROUND_REPEAT,
-    CSS_PROP__WEBKIT_BACKGROUND_COMPOSITE,
-    CSS_PROP_BACKGROUND_ATTACHMENT,
-    CSS_PROP__WEBKIT_BACKGROUND_CLIP,
-    CSS_PROP__WEBKIT_BACKGROUND_ORIGIN,
     CSS_PROP_BACKGROUND_POSITION_X,
     CSS_PROP_BACKGROUND_POSITION_Y,
-    CSS_PROP_BORDER_COLLAPSE,
-    CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING,
-    CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING,
-    CSS_PROP_BORDER_TOP_COLOR,
-    CSS_PROP_BORDER_RIGHT_COLOR,
+    CSS_PROP_BACKGROUND_REPEAT,
     CSS_PROP_BORDER_BOTTOM_COLOR,
-    CSS_PROP_BORDER_LEFT_COLOR,
-    CSS_PROP_BORDER_TOP_STYLE,
-    CSS_PROP_BORDER_RIGHT_STYLE,
     CSS_PROP_BORDER_BOTTOM_STYLE,
-    CSS_PROP_BORDER_LEFT_STYLE,
-    CSS_PROP_BORDER_TOP_WIDTH,
-    CSS_PROP_BORDER_RIGHT_WIDTH,
     CSS_PROP_BORDER_BOTTOM_WIDTH,
+    CSS_PROP_BORDER_COLLAPSE,
+    CSS_PROP_BORDER_LEFT_COLOR,
+    CSS_PROP_BORDER_LEFT_STYLE,
     CSS_PROP_BORDER_LEFT_WIDTH,
+    CSS_PROP_BORDER_RIGHT_COLOR,
+    CSS_PROP_BORDER_RIGHT_STYLE,
+    CSS_PROP_BORDER_RIGHT_WIDTH,
+    CSS_PROP_BORDER_TOP_COLOR,
+    CSS_PROP_BORDER_TOP_STYLE,
+    CSS_PROP_BORDER_TOP_WIDTH,
     CSS_PROP_BOTTOM,
-    CSS_PROP__WEBKIT_BOX_ALIGN,
-    CSS_PROP__WEBKIT_BOX_DIRECTION,
-    CSS_PROP__WEBKIT_BOX_FLEX,
-    CSS_PROP__WEBKIT_BOX_FLEX_GROUP,
-    CSS_PROP__WEBKIT_BOX_LINES,
-    CSS_PROP__WEBKIT_BOX_ORDINAL_GROUP,
-    CSS_PROP__WEBKIT_BOX_ORIENT,
-    CSS_PROP__WEBKIT_BOX_PACK,
-    CSS_PROP__WEBKIT_BOX_SHADOW,
+    CSS_PROP_BOX_SIZING,
     CSS_PROP_CAPTION_SIDE,
     CSS_PROP_CLEAR,
     CSS_PROP_COLOR,
-    CSS_PROP__WEBKIT_COLUMN_COUNT,
-    CSS_PROP__WEBKIT_COLUMN_GAP,
-    CSS_PROP__WEBKIT_COLUMN_RULE_COLOR,
-    CSS_PROP__WEBKIT_COLUMN_RULE_STYLE,
-    CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH,
-    CSS_PROP__WEBKIT_COLUMN_BREAK_BEFORE,
-    CSS_PROP__WEBKIT_COLUMN_BREAK_AFTER,
-    CSS_PROP__WEBKIT_COLUMN_BREAK_INSIDE,
-    CSS_PROP__WEBKIT_COLUMN_WIDTH,
     CSS_PROP_CURSOR,
-#if PLATFORM(MAC)
-    CSS_PROP__WEBKIT_DASHBOARD_REGION,
-#endif
     CSS_PROP_DIRECTION,
     CSS_PROP_DISPLAY,
     CSS_PROP_EMPTY_CELLS,
@@ -102,38 +74,31 @@ static const int computedProperties[] = {
     CSS_PROP_FONT_VARIANT,
     CSS_PROP_FONT_WEIGHT,
     CSS_PROP_HEIGHT,
-    CSS_PROP__WEBKIT_HIGHLIGHT,
     CSS_PROP_LEFT,
     CSS_PROP_LETTER_SPACING,
-    CSS_PROP__WEBKIT_LINE_BREAK,
-    CSS_PROP__WEBKIT_LINE_CLAMP,
     CSS_PROP_LINE_HEIGHT,
     CSS_PROP_LIST_STYLE_IMAGE,
     CSS_PROP_LIST_STYLE_POSITION,
     CSS_PROP_LIST_STYLE_TYPE,
-    CSS_PROP_MARGIN_TOP,
-    CSS_PROP_MARGIN_RIGHT,
     CSS_PROP_MARGIN_BOTTOM,
     CSS_PROP_MARGIN_LEFT,
-    CSS_PROP__WEBKIT_MARQUEE_DIRECTION,
-    CSS_PROP__WEBKIT_MARQUEE_INCREMENT,
-    CSS_PROP__WEBKIT_MARQUEE_REPETITION,
-    CSS_PROP__WEBKIT_MARQUEE_STYLE,
+    CSS_PROP_MARGIN_RIGHT,
+    CSS_PROP_MARGIN_TOP,
     CSS_PROP_MAX_HEIGHT,
     CSS_PROP_MAX_WIDTH,
     CSS_PROP_MIN_HEIGHT,
     CSS_PROP_MIN_WIDTH,
-    CSS_PROP__WEBKIT_NBSP_MODE,
     CSS_PROP_OPACITY,
     CSS_PROP_ORPHANS,
     CSS_PROP_OUTLINE_COLOR,
     CSS_PROP_OUTLINE_STYLE,
+    CSS_PROP_OUTLINE_WIDTH,
     CSS_PROP_OVERFLOW_X,
     CSS_PROP_OVERFLOW_Y,
-    CSS_PROP_PADDING_TOP,
-    CSS_PROP_PADDING_RIGHT,
     CSS_PROP_PADDING_BOTTOM,
     CSS_PROP_PADDING_LEFT,
+    CSS_PROP_PADDING_RIGHT,
+    CSS_PROP_PADDING_TOP,
     CSS_PROP_PAGE_BREAK_AFTER,
     CSS_PROP_PAGE_BREAK_BEFORE,
     CSS_PROP_PAGE_BREAK_INSIDE,
@@ -143,17 +108,11 @@ static const int computedProperties[] = {
     CSS_PROP_TABLE_LAYOUT,
     CSS_PROP_TEXT_ALIGN,
     CSS_PROP_TEXT_DECORATION,
-    CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT,
-    CSS_PROP__WEBKIT_TEXT_FILL_COLOR,
     CSS_PROP_TEXT_INDENT,
     CSS_PROP_TEXT_SHADOW,
-    CSS_PROP__WEBKIT_TEXT_SECURITY,
-    CSS_PROP__WEBKIT_TEXT_STROKE_COLOR,
-    CSS_PROP__WEBKIT_TEXT_STROKE_WIDTH,
     CSS_PROP_TEXT_TRANSFORM,
     CSS_PROP_TOP,
     CSS_PROP_UNICODE_BIDI,
-    CSS_PROP__WEBKIT_USER_MODIFY,
     CSS_PROP_VERTICAL_ALIGN,
     CSS_PROP_VISIBILITY,
     CSS_PROP_WHITE_SPACE,
@@ -162,11 +121,60 @@ static const int computedProperties[] = {
     CSS_PROP_WORD_SPACING,
     CSS_PROP_WORD_WRAP,
     CSS_PROP_Z_INDEX,
+
+    CSS_PROP__WEBKIT_APPEARANCE,
+    CSS_PROP__WEBKIT_BACKGROUND_CLIP,
+    CSS_PROP__WEBKIT_BACKGROUND_COMPOSITE,
+    CSS_PROP__WEBKIT_BACKGROUND_ORIGIN,
+    CSS_PROP__WEBKIT_BACKGROUND_SIZE,
+    CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING,
+    CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING,
+    CSS_PROP__WEBKIT_BOX_ALIGN,
+    CSS_PROP__WEBKIT_BOX_DIRECTION,
+    CSS_PROP__WEBKIT_BOX_FLEX,
+    CSS_PROP__WEBKIT_BOX_FLEX_GROUP,
+    CSS_PROP__WEBKIT_BOX_LINES,
+    CSS_PROP__WEBKIT_BOX_ORDINAL_GROUP,
+    CSS_PROP__WEBKIT_BOX_ORIENT,
+    CSS_PROP__WEBKIT_BOX_PACK,
+    CSS_PROP__WEBKIT_BOX_SHADOW,
+    CSS_PROP__WEBKIT_COLUMN_BREAK_AFTER,
+    CSS_PROP__WEBKIT_COLUMN_BREAK_BEFORE,
+    CSS_PROP__WEBKIT_COLUMN_BREAK_INSIDE,
+    CSS_PROP__WEBKIT_COLUMN_COUNT,
+    CSS_PROP__WEBKIT_COLUMN_GAP,
+    CSS_PROP__WEBKIT_COLUMN_RULE_COLOR,
+    CSS_PROP__WEBKIT_COLUMN_RULE_STYLE,
+    CSS_PROP__WEBKIT_COLUMN_RULE_WIDTH,
+    CSS_PROP__WEBKIT_COLUMN_WIDTH,
+    CSS_PROP__WEBKIT_HIGHLIGHT,
+    CSS_PROP__WEBKIT_LINE_BREAK,
+    CSS_PROP__WEBKIT_LINE_CLAMP,
+    CSS_PROP__WEBKIT_MARGIN_BOTTOM_COLLAPSE,
+    CSS_PROP__WEBKIT_MARGIN_TOP_COLLAPSE,
+    CSS_PROP__WEBKIT_MARQUEE_DIRECTION,
+    CSS_PROP__WEBKIT_MARQUEE_INCREMENT,
+    CSS_PROP__WEBKIT_MARQUEE_REPETITION,
+    CSS_PROP__WEBKIT_MARQUEE_STYLE,
+    CSS_PROP__WEBKIT_NBSP_MODE,
+    CSS_PROP__WEBKIT_RTL_ORDERING,
+    CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT,
+    CSS_PROP__WEBKIT_TEXT_FILL_COLOR,
+    CSS_PROP__WEBKIT_TEXT_SECURITY,
+    CSS_PROP__WEBKIT_TEXT_STROKE_COLOR,
+    CSS_PROP__WEBKIT_TEXT_STROKE_WIDTH,
+    CSS_PROP__WEBKIT_USER_DRAG,
+    CSS_PROP__WEBKIT_USER_MODIFY,
+    CSS_PROP__WEBKIT_USER_SELECT,
+
+#if PLATFORM(MAC)
+    CSS_PROP__WEBKIT_DASHBOARD_REGION,
+#endif
 };
 
 const unsigned numComputedProperties = sizeof(computedProperties) / sizeof(computedProperties[0]);
 
-static CSSValue* valueForLength(const Length& length)
+static PassRefPtr<CSSValue> valueForLength(const Length& length)
 {
     switch (length.type()) {
         case Auto:
@@ -188,14 +196,14 @@ static CSSValue* valueForLength(const Length& length)
 }
 
 // Handles special value for "none".
-static CSSValue* valueForMaxLength(const Length& length)
+static PassRefPtr<CSSValue> valueForMaxLength(const Length& length)
 {
     if (length.isFixed() && length.value() == undefinedLength)
         return new CSSPrimitiveValue(CSS_VAL_NONE);
     return valueForLength(length);
 }
 
-static CSSValue* valueForBorderStyle(EBorderStyle style)
+static PassRefPtr<CSSValue> valueForBorderStyle(EBorderStyle style)
 {
     switch (style) {
         case BNONE:
@@ -223,7 +231,7 @@ static CSSValue* valueForBorderStyle(EBorderStyle style)
     return 0;
 }
 
-static CSSValue* valueForTextAlign(ETextAlign align)
+static PassRefPtr<CSSValue> valueForTextAlign(ETextAlign align)
 {
     switch (align) {
         case TAAUTO:
@@ -247,7 +255,99 @@ static CSSValue* valueForTextAlign(ETextAlign align)
     return 0;
 }
 
-static CSSValue* valueForShadow(const ShadowData* shadow)
+static PassRefPtr<CSSValue> valueForAppearance(EAppearance appearance)
+{
+    switch (appearance) {
+        case NoAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_NONE);
+        case CheckboxAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_CHECKBOX);
+        case RadioAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_RADIO);
+        case PushButtonAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_PUSH_BUTTON);
+        case SquareButtonAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SQUARE_BUTTON);
+        case ButtonAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_BUTTON);
+        case ButtonBevelAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_BUTTON_BEVEL);
+        case ListboxAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_LISTBOX);
+        case ListItemAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_LISTITEM);
+        case MenulistAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_MENULIST);
+        case MenulistButtonAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_MENULIST_BUTTON);
+        case MenulistTextAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_MENULIST_TEXT);
+        case MenulistTextFieldAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_MENULIST_TEXTFIELD);
+        case ScrollbarButtonUpAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SCROLLBARBUTTON_UP);
+        case ScrollbarButtonDownAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SCROLLBARBUTTON_DOWN);
+        case ScrollbarButtonLeftAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SCROLLBARBUTTON_LEFT);
+        case ScrollbarButtonRightAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SCROLLBARBUTTON_RIGHT);
+        case ScrollbarTrackHorizontalAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SCROLLBARTRACK_HORIZONTAL);
+        case ScrollbarTrackVerticalAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SCROLLBARTRACK_VERTICAL);
+        case ScrollbarThumbHorizontalAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SCROLLBARTHUMB_HORIZONTAL);
+        case ScrollbarThumbVerticalAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SCROLLBARTHUMB_VERTICAL);
+        case ScrollbarGripperHorizontalAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SCROLLBARGRIPPER_HORIZONTAL);
+        case ScrollbarGripperVerticalAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SCROLLBARGRIPPER_VERTICAL);
+        case SliderHorizontalAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SLIDER_HORIZONTAL);
+        case SliderVerticalAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SLIDER_VERTICAL);
+        case SliderThumbHorizontalAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SLIDERTHUMB_HORIZONTAL);
+        case SliderThumbVerticalAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SLIDERTHUMB_VERTICAL);
+        case CaretAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_CARET);
+        case SearchFieldAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SEARCHFIELD);
+        case SearchFieldDecorationAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SEARCHFIELD_DECORATION);
+        case SearchFieldResultsDecorationAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SEARCHFIELD_RESULTS_DECORATION);
+        case SearchFieldResultsButtonAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SEARCHFIELD_RESULTS_BUTTON);
+        case SearchFieldCancelButtonAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_SEARCHFIELD_CANCEL_BUTTON);
+        case TextFieldAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_TEXTFIELD);
+        case TextAreaAppearance:
+            return new CSSPrimitiveValue(CSS_VAL_TEXTAREA);
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+static PassRefPtr<CSSValue> valueForMarginCollapse(EMarginCollapse collapse)
+{
+    switch (collapse) {
+        case MCOLLAPSE:
+            return new CSSPrimitiveValue(CSS_VAL_COLLAPSE);
+        case MSEPARATE:
+            return new CSSPrimitiveValue(CSS_VAL_SEPARATE);
+        case MDISCARD:
+            return new CSSPrimitiveValue(CSS_VAL_DISCARD);
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+static PassRefPtr<CSSValue> valueForShadow(const ShadowData* shadow)
 {
     if (!shadow)
         return new CSSPrimitiveValue(CSS_VAL_NONE);
@@ -263,7 +363,7 @@ static CSSValue* valueForShadow(const ShadowData* shadow)
     return list;
 }
 
-static CSSValue* getPositionOffsetValue(RenderObject* renderer, int propertyID)
+static PassRefPtr<CSSValue> getPositionOffsetValue(RenderObject* renderer, int propertyID)
 {
     if (!renderer)
         return 0;
@@ -302,7 +402,7 @@ static CSSValue* getPositionOffsetValue(RenderObject* renderer, int propertyID)
     return new CSSPrimitiveValue(CSS_VAL_AUTO);
 }
 
-static CSSPrimitiveValue* currentColorOrValidColor(RenderStyle* style, const Color& color)
+static PassRefPtr<CSSPrimitiveValue> currentColorOrValidColor(RenderStyle* style, const Color& color)
 {
     if (!color.isValid())
         return new CSSPrimitiveValue(style->color().rgb());
@@ -325,7 +425,7 @@ String CSSComputedStyleDeclaration::cssText() const
     for (unsigned i = 0; i < numComputedProperties; i++) {
         if (i)
             result += " ";
-        result += getPropertyName(computedProperties[i]);
+        result += getPropertyName(static_cast<CSSPropertyID>(computedProperties[i]));
         result += ": ";
         result += getPropertyValue(computedProperties[i]);
         result += ";";
@@ -351,7 +451,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
     return getPropertyCSSValue(propertyID, UpdateLayout);
 }
 
-CSSPrimitiveValue* primitiveValueFromLength(Length length, RenderObject* renderer, RenderStyle* style)
+PassRefPtr<CSSPrimitiveValue> primitiveValueFromLength(Length length)
 {
     String string;
     switch (length.type()) {
@@ -389,21 +489,19 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
     if (!style)
         return 0;
 
-    switch (propertyID) {
+    switch (static_cast<CSSPropertyID>(propertyID)) {
+        case CSS_PROP_INVALID:
+            break;
+
         case CSS_PROP_BACKGROUND_COLOR:
             return new CSSPrimitiveValue(style->backgroundColor().rgb());
         case CSS_PROP_BACKGROUND_IMAGE:
             if (style->backgroundImage())
                 return new CSSPrimitiveValue(style->backgroundImage()->url(), CSSPrimitiveValue::CSS_URI);
             return new CSSPrimitiveValue(CSS_VAL_NONE);
-        case CSS_PROP__WEBKIT_BACKGROUND_SIZE: {
-            Length widthLength = style->backgroundSize().width;
-            Length heightLength = style->backgroundSize().height;
-            CSSPrimitiveValue* bgWidth = primitiveValueFromLength(widthLength, renderer, style);
-            CSSPrimitiveValue* bgHeight = primitiveValueFromLength(heightLength, renderer, style);
-            Pair* pair = new Pair(bgWidth, bgHeight);
-            return new CSSPrimitiveValue(pair);
-        }
+        case CSS_PROP__WEBKIT_BACKGROUND_SIZE:
+            return new CSSPrimitiveValue(new Pair(primitiveValueFromLength(style->backgroundSize().width),
+                primitiveValueFromLength(style->backgroundSize().height)));
         case CSS_PROP_BACKGROUND_REPEAT:
             switch (style->backgroundRepeat()) {
                 case REPEAT:
@@ -487,19 +585,18 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return valueForLength(style->backgroundXPosition());
         case CSS_PROP_BACKGROUND_POSITION_Y:
             return valueForLength(style->backgroundYPosition());
-#ifdef XBL_SUPPORT
         case CSS_PROP__WEBKIT_BINDING:
+#ifdef XBL_SUPPORT
             // FIXME: unimplemented
-            break;
 #endif
+            break;
         case CSS_PROP_BORDER_COLLAPSE:
             if (style->borderCollapse())
                 return new CSSPrimitiveValue(CSS_VAL_COLLAPSE);
             return new CSSPrimitiveValue(CSS_VAL_SEPARATE);
-        case CSS_PROP_BORDER_SPACING: {
-            String string(numberAsString(style->horizontalBorderSpacing()) + "px " + numberAsString(style->verticalBorderSpacing()) + "px");
-            return new CSSPrimitiveValue(string, CSSPrimitiveValue::CSS_STRING);
-        }
+        case CSS_PROP_BORDER_SPACING:
+            return new CSSPrimitiveValue(numberAsString(style->horizontalBorderSpacing()) + "px "
+                + numberAsString(style->verticalBorderSpacing()) + "px", CSSPrimitiveValue::CSS_STRING);
         case CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING:
             return new CSSPrimitiveValue(style->horizontalBorderSpacing(), CSSPrimitiveValue::CSS_PX);
         case CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING:
@@ -1076,8 +1173,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 return new CSSPrimitiveValue(CSS_VAL_AUTO);
             return valueForBorderStyle(style->outlineStyle());
         case CSS_PROP_OUTLINE_WIDTH:
-            // FIXME: unimplemented
-            break;
+            return new CSSPrimitiveValue(style->outlineWidth(), CSSPrimitiveValue::CSS_PX);
         case CSS_PROP_OVERFLOW:
         case CSS_PROP_OVERFLOW_X:
         case CSS_PROP_OVERFLOW_Y: {
@@ -1396,6 +1492,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (style->hasAutoZIndex())
                 return new CSSPrimitiveValue(CSS_VAL_NORMAL);
             return new CSSPrimitiveValue(style->zIndex(), CSSPrimitiveValue::CSS_NUMBER);
+        case CSS_PROP_BOX_SIZING:
+            if (style->boxSizing() == CONTENT_BOX)
+                new CSSPrimitiveValue(CSS_VAL_CONTENT_BOX);
+            return new CSSPrimitiveValue(CSS_VAL_BORDER_BOX);
         case CSS_PROP_BACKGROUND:
             // FIXME: unimplemented
             break;
@@ -1469,6 +1569,146 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return new CSSPrimitiveValue(firstRegion.release());
         }
 #endif
+        case CSS_PROP__WEBKIT_APPEARANCE:
+            return valueForAppearance(style->appearance());
+        case CSS_PROP__WEBKIT_BORDER_IMAGE:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP__WEBKIT_BORDER_RADIUS:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP__WEBKIT_BORDER_TOP_LEFT_RADIUS:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP__WEBKIT_BORDER_TOP_RIGHT_RADIUS:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP__WEBKIT_COLUMN_RULE:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP__WEBKIT_COLUMNS:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP__WEBKIT_FONT_SIZE_DELTA:
+            // Not a real style property -- used by the editing engine -- so has no computed value.
+            break;
+        case CSS_PROP__WEBKIT_MARGIN_BOTTOM_COLLAPSE:
+            return valueForMarginCollapse(style->marginBottomCollapse());
+        case CSS_PROP__WEBKIT_MARGIN_COLLAPSE:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP__WEBKIT_MARGIN_START:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP__WEBKIT_MARGIN_TOP_COLLAPSE:
+            return valueForMarginCollapse(style->marginTopCollapse());
+        case CSS_PROP__WEBKIT_PADDING_START:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP__WEBKIT_RTL_ORDERING:
+            if (style->visuallyOrdered())
+                return new CSSPrimitiveValue(CSS_VAL_VISUAL);
+            return new CSSPrimitiveValue(CSS_VAL_LOGICAL);
+        case CSS_PROP__WEBKIT_TEXT_STROKE:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP__WEBKIT_USER_DRAG:
+            switch (style->userDrag()) {
+                case DRAG_AUTO:
+                    return new CSSPrimitiveValue(CSS_VAL_AUTO);
+                case DRAG_NONE:
+                    return new CSSPrimitiveValue(CSS_VAL_NONE);
+                case DRAG_ELEMENT:
+                    return new CSSPrimitiveValue(CSS_VAL_ELEMENT);
+            }
+            break;
+        case CSS_PROP__WEBKIT_USER_SELECT:
+            switch (style->userSelect()) {
+                case SELECT_AUTO:
+                    return new CSSPrimitiveValue(CSS_VAL_AUTO);
+                case SELECT_NONE:
+                    return new CSSPrimitiveValue(CSS_VAL_NONE);
+                case SELECT_TEXT:
+                    return new CSSPrimitiveValue(CSS_VAL_TEXT);
+                case SELECT_IGNORE:
+                    return new CSSPrimitiveValue(CSS_VAL_IGNORE);
+            }
+            break;
+        case CSS_PROP_SCROLLBAR_3DLIGHT_COLOR:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_SCROLLBAR_ARROW_COLOR:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_SCROLLBAR_DARKSHADOW_COLOR:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_SCROLLBAR_FACE_COLOR:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_SCROLLBAR_HIGHLIGHT_COLOR:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_SCROLLBAR_SHADOW_COLOR:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_SCROLLBAR_TRACK_COLOR:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_TEXT_LINE_THROUGH:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_TEXT_LINE_THROUGH_COLOR:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_TEXT_LINE_THROUGH_MODE:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_TEXT_LINE_THROUGH_STYLE:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_TEXT_LINE_THROUGH_WIDTH:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_TEXT_OVERFLOW:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_TEXT_OVERLINE:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_TEXT_OVERLINE_COLOR:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_TEXT_OVERLINE_MODE:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_TEXT_OVERLINE_STYLE:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_TEXT_OVERLINE_WIDTH:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_TEXT_UNDERLINE:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_TEXT_UNDERLINE_COLOR:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_TEXT_UNDERLINE_MODE:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_TEXT_UNDERLINE_STYLE:
+            // FIXME: unimplemented
+            break;
+        case CSS_PROP_TEXT_UNDERLINE_WIDTH:
+            // FIXME: unimplemented
+            break;
     }
 
     LOG_ERROR("unimplemented propertyID: %d", propertyID);
@@ -1522,7 +1762,7 @@ String CSSComputedStyleDeclaration::item(unsigned i) const
     if (i >= length())
         return String();
 
-    return getPropertyName(computedProperties[i]);
+    return getPropertyName(static_cast<CSSPropertyID>(computedProperties[i]));
 }
 
 // This is the list of properties we want to copy in the copyInheritableProperties() function.
@@ -1530,8 +1770,6 @@ String CSSComputedStyleDeclaration::item(unsigned i) const
 // properties for which we have a computed implementation in this file.
 const int inheritableProperties[] = {
     CSS_PROP_BORDER_COLLAPSE,
-    CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING,
-    CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING,
     CSS_PROP_COLOR,
     CSS_PROP_FONT_FAMILY,
     CSS_PROP_FONT_SIZE,
@@ -1540,18 +1778,20 @@ const int inheritableProperties[] = {
     CSS_PROP_FONT_WEIGHT,
     CSS_PROP_LETTER_SPACING,
     CSS_PROP_LINE_HEIGHT,
-    CSS_PROP_TEXT_ALIGN,
-    CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT,
-    CSS_PROP__WEBKIT_TEXT_FILL_COLOR,
-    CSS_PROP_TEXT_INDENT,
-    CSS_PROP__WEBKIT_TEXT_SIZE_ADJUST,
-    CSS_PROP__WEBKIT_TEXT_STROKE_COLOR,
-    CSS_PROP__WEBKIT_TEXT_STROKE_WIDTH,
-    CSS_PROP_TEXT_TRANSFORM,
     CSS_PROP_ORPHANS,
+    CSS_PROP_TEXT_ALIGN,
+    CSS_PROP_TEXT_INDENT,
+    CSS_PROP_TEXT_TRANSFORM,
     CSS_PROP_WHITE_SPACE,
     CSS_PROP_WIDOWS,
     CSS_PROP_WORD_SPACING,
+    CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING,
+    CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING,
+    CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT,
+    CSS_PROP__WEBKIT_TEXT_FILL_COLOR,
+    CSS_PROP__WEBKIT_TEXT_SIZE_ADJUST,
+    CSS_PROP__WEBKIT_TEXT_STROKE_COLOR,
+    CSS_PROP__WEBKIT_TEXT_STROKE_WIDTH,
 };
 
 const unsigned numInheritableProperties = sizeof(inheritableProperties) / sizeof(inheritableProperties[0]);

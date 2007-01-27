@@ -1,3 +1,15 @@
+2007-01-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth.
+
+        - updated test results for change to computed style
+
+        * editing/pasteboard/paste-table-002-expected.txt:
+        Updated for change to order of style properties.
+
+        * fast/css/computed-style-expected.txt:
+        Updated for change to order of style properties and to add new ones.
+
 2007-01-26  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Ada.
