@@ -224,8 +224,15 @@ JSValue *add(ExecState *exec, JSValue *v1, JSValue *v2, char oper)
     JSValue *p1 = v1->toPrimitive(exec, preferred);
     JSValue *p2 = v2->toPrimitive(exec, preferred);
     
-    if ((p1->isString() || p2->isString()) && oper == '+')
-        return jsString(p1->toString(exec) + p2->toString(exec));
+    if ((p1->isString() || p2->isString()) && oper == '+') {
+        UString value = p1->toString(exec) + p2->toString(exec);
+        if (value.isNull()) {
+            JSObject *error = Error::create(exec, GeneralError, "Out of memory");
+            exec->setException(error);
+            return error;
+        } else
+            return jsString(value);
+    }
     
     if (oper == '+')
         return jsNumber(p1->toNumber(exec) + p2->toNumber(exec));

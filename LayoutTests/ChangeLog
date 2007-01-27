@@ -1,3 +1,14 @@
+2007-01-27  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Maciej.
+        
+        Test for "Repeated string concatenation results in OOM crash"
+        http://bugs.webkit.org/show_bug.cgi?id=11131
+
+        * fast/js/resources/string-concatenate-outofmemory.js: Added.
+        * fast/js/string-concatenate-outofmemory-expected.txt: Added.
+        * fast/js/string-concatenate-outofmemory.html: Added.
+
 2007-01-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Beth.

@@ -1,0 +1,10 @@
+This test checks if repeated string concatenation causes an exception (and not a crash). From WebKit Bug Repeated string concatenation results in OOM crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS s = "a"; while (1) { s += s; } threw exception Error: Out of memory.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

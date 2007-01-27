@@ -1,3 +1,15 @@
+2007-01-27  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Maciej.
+        
+        Fix for Repeated string concatenation results in OOM crash
+        http://bugs.webkit.org/show_bug.cgi?id=11131
+
+        * kjs/operations.cpp:
+        (KJS::add): Throw exception if string addition result is null
+        * kjs/ustring.cpp:
+        (KJS::UString::UString): Don't call memcpy when malloc failed
+
 2007-01-25  Jan Kraemer  <camel@gmx.de>
 
         Reviewed by Maciej
