@@ -27,6 +27,8 @@
 #include "FloatSize.h"
 #include "SVGTransform.h"
 
+#include <math.h>
+
 namespace WebCore {
     
 SVGTransformDistance::SVGTransformDistance()

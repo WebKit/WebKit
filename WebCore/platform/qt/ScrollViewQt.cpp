@@ -258,7 +258,7 @@ void ScrollView::addChild(Widget* child)
 {
 //     Q_ASSERT(child != 0);
 //     Q_ASSERT(m_area && m_area->widget());
-
+#if 0
     if (child && child->qwidget()) {
         QWidget* w = child->qwidget();
         QScrollBar *bar = qobject_cast<QScrollBar*>(w);
@@ -271,6 +271,7 @@ void ScrollView::addChild(Widget* child)
             return;//done
         }
     }
+#endif
     //anything but the scrollbar is currently a noop
     notImplemented();
         

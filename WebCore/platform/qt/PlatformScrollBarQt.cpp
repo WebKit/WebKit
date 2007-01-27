@@ -57,6 +57,7 @@ PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientati
                                      ScrollbarControlSize controlSize)
     : Scrollbar(client, orientation, controlSize)
 {
+#if 0
     QScrollBar *bar = 0;
     if (orientation == HorizontalScrollbar)
         bar = new QScrollBar(Qt::Horizontal);
@@ -64,6 +65,7 @@ PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientati
         bar = new QScrollBar(Qt::Vertical);
     
     setQWidget(bar);
+#endif
 }
 
 PlatformScrollbar::~PlatformScrollbar()

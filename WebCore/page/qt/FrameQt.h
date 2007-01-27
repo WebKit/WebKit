@@ -40,6 +40,7 @@ class QWidget;
 class QPaintEvent;
 
 namespace KJS {
+    class Interpreter;
     namespace Bindings {
         class Instance;
         class RootObject;
@@ -60,7 +61,7 @@ public:
     virtual KJS::Bindings::Instance* getAppletInstanceForWidget(Widget*);
     virtual KJS::Bindings::RootObject* bindingRootObject();
 
-    void addPluginRootObject(KJS::Bindings::RootObject*);
+    PassRefPtr<KJS::Bindings::RootObject> createRootObject(void* nativeHandle, PassRefPtr<KJS::Interpreter>);
 
     //should be in Chrome
     virtual void runJavaScriptAlert(const String& message);
@@ -102,10 +103,8 @@ private:
 
     bool m_beginCalled : 1;    
 
-    KJS::Bindings::RootObject* m_bindingRoot;  // The root object used for objects
-                                               // bound outside the context of a plugin.
-
-    Vector<KJS::Bindings::RootObject*> m_rootObjects;
+    RefPtr<KJS::Bindings::RootObject> m_bindingRoot; // The root object used for objects bound outside the context of a plugin.
+    Vector<RefPtr<KJS::Bindings::RootObject> > m_rootObjects;
 
 };
 

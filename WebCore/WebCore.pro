@@ -852,6 +852,7 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/css/SVGRenderStyleDefs.cpp \
         ksvg2/css/SVGRenderStyle.cpp \
         ksvg2/css/SVGCSSStyleSelector.cpp \
+        ksvg2/svg/ColorDistance.cpp \
         ksvg2/svg/SVGFEFuncBElement.cpp \
         ksvg2/svg/SVGColor.cpp \
         ksvg2/svg/SVGSwitchElement.cpp \
@@ -874,6 +875,7 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/svg/SVGStyledLocatableElement.cpp \
         ksvg2/svg/SVGLineElement.cpp \
         ksvg2/svg/SVGTransform.cpp \
+        ksvg2/svg/SVGTransformDistance.cpp \
         ksvg2/svg/SVGPathSegLinetoVertical.cpp \
         ksvg2/svg/SVGFitToViewBox.cpp \
         ksvg2/svg/SVGRadialGradientElement.cpp \

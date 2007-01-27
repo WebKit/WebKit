@@ -1,3 +1,21 @@
+2007-01-27  Lars Knoll <lars@trolltech.com>
+
+        Fix the Qt build and disable the usage
+        of QScrollbars for PlatformScrollBar for 
+        now as it causes crashes in the layout tests.
+
+        * WebCore.pro:
+        * ksvg2/svg/SVGTransformDistance.cpp:
+        * page/qt/FrameQt.cpp:
+        (WebCore::FrameQt::FrameQt):
+        (WebCore::FrameQt::bindingRootObject):
+        (WebCore::FrameQt::createRootObject):
+        * page/qt/FrameQt.h:
+        * platform/qt/PlatformScrollBarQt.cpp:
+        (WebCore::PlatformScrollbar::PlatformScrollbar):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::addChild):
+
 2007-01-27  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by NOBODY (buildbot build fix).

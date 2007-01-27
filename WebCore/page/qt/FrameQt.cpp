@@ -100,7 +100,6 @@ static void doScroll(const RenderObject* r, bool isHorizontal, int multiplier)
 
 FrameQt::FrameQt(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* frameLoader)
     : Frame(page, ownerElement, frameLoader)
-    , m_bindingRoot(0)
 {
 }
 
@@ -293,16 +292,16 @@ KJS::Bindings::RootObject* FrameQt::bindingRootObject()
     if (!m_bindingRoot) {
         JSLock lock;
         // The root gets deleted by JavaScriptCore.
-        m_bindingRoot = new KJS::Bindings::RootObject(0,
-                                                      scriptProxy()->interpreter());
-        addPluginRootObject(m_bindingRoot);
+        m_bindingRoot = KJS::Bindings::RootObject::create(0, scriptProxy()->interpreter());
     }
-    return m_bindingRoot;
+    return m_bindingRoot.get();
 }
 
-void FrameQt::addPluginRootObject(KJS::Bindings::RootObject* root)
+PassRefPtr<KJS::Bindings::RootObject> FrameQt::createRootObject(void* nativeHandle, PassRefPtr<KJS::Interpreter> interpreter)
 {
-    m_rootObjects.append(root);
+    RefPtr<KJS::Bindings::RootObject> rootObject = KJS::Bindings::RootObject::create(nativeHandle, interpreter);
+    m_rootObjects.append(rootObject);
+    return rootObject.release();
 }
 
 }
