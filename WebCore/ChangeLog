@@ -1,3 +1,13 @@
+2007-01-26  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Ada.
+
+        Fixed <rdar://problem/4919097> REGRESSION: Ctrl-Y fails to yank (11076)
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::deleteWithDirection):
+        If there's no selection, locally create a range that is to the end of the granularity unit and pass that to deleteRange(). 
+
 2007-01-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej.
@@ -197,6 +207,7 @@
         * platform/cf/RetainPtr.h:
         (WebCore::adoptCFReference):
 
+>>>>>>> .r19171
 2007-01-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady.

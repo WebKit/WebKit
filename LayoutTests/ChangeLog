@@ -1,3 +1,21 @@
+2007-01-26  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Ada.
+
+        Added tests for <rdar://problem/4919097> REGRESSION: Ctrl-Y fails to yank (11076)
+
+        * editing/pasteboard/emacs-ctrl-a-k-y-expected.checksum: Added.
+        * editing/pasteboard/emacs-ctrl-a-k-y-expected.png: Added.
+        * editing/pasteboard/emacs-ctrl-a-k-y-expected.txt: Added.
+        * editing/pasteboard/emacs-ctrl-a-k-y.html: Added.
+        Test for <rdar://problem/4919097>
+
+        * editing/deleting/delete-by-word-001-expected.txt:
+        * editing/deleting/delete-by-word-002-expected.txt:
+        * editing/deleting/delete-to-end-of-paragraph-expected.txt:
+        * editing/pasteboard/emacs-cntl-y-001-expected.txt:
+        The expected results of these tests were affected by the WebCore checkin of the same number.  The results are the same, but there were more editing delegates that were called, as expected.  I suspect these tests were created during the time that <rdar://problem/4919097> was broken
+
 2007-01-26  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.
