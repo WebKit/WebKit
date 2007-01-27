@@ -1,3 +1,13 @@
+2007-01-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12389
+        Chinese decoding error at hk.antispam.yahoo.com
+
+        * fast/encoding/noscript-in-head-expected.txt: Added.
+        * fast/encoding/noscript-in-head.html: Added.
+
 2007-01-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

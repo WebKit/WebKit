@@ -1,3 +1,16 @@
+2007-01-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12389
+        Chinese decoding error at hk.antispam.yahoo.com
+
+        Test: fast/encoding/noscript-in-head.html
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::checkForHeadCharset): We were already allowing 
+        NOSCRIPT tags in head, let's actually skip over their content.
+
 2007-01-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
@@ -326,7 +339,6 @@
         * platform/cf/RetainPtr.h:
         (WebCore::adoptCFReference):
 
->>>>>>> .r19171
 2007-01-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady.
