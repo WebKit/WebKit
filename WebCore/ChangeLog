@@ -508,8 +508,9 @@
 
         Reviewed by Maciej.
 
-        Fixed an issue on tivofaq.com where you could never tab forward into
-        the left frame after tabbing out of the document.
+        Fixed <rdar://problem/4946499>, which made it impossible to tab
+        forward into the left frame of tivofaq.com after tabbing out of the
+        document.
 
         * page/FocusController.cpp:
         (WebCore::FocusController::advanceFocus): Clear the focused frame
