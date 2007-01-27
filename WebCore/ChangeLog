@@ -1,3 +1,13 @@
+2007-01-26  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Brady.
+
+        Fixed <rdar://problem/4838076> CrashTracer: 10 crashes in Mail at com.apple.WebCore: WTF::HashMap<WebCore::String
+
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestResource):
+        Added nil check around resource from cache.
+
 2007-01-26  Adam Roben  <aroben@apple.com>
 
         Reviewed by Oliver.

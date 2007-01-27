@@ -129,10 +129,10 @@ CachedResource* DocLoader::requestResource(CachedResource::Type type, const Stri
     checkForReload(fullURL);
 
     CachedResource* resource = cache()->requestResource(this, type, fullURL, m_expireDate, charset);
-    m_docResources.set(resource->url(), resource);
-    
-    checkCacheObjectStatus(resource);
-
+    if (resource) {
+        m_docResources.set(resource->url(), resource);
+        checkCacheObjectStatus(resource);
+    }
     return resource;
 }
 
