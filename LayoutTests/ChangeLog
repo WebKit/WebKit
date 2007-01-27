@@ -1,3 +1,15 @@
+2007-01-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        - Test for http://bugs.webkit.org/show_bug.cgi?id=11957
+          Unordered List Bullets too big and changing from size
+
+        * fast/lists/big-list-marker-expected.checksum: Added.
+        * fast/lists/big-list-marker-expected.png: Added.
+        * fast/lists/big-list-marker-expected.txt: Added.
+        * fast/lists/big-list-marker.html: Added.
+
 2007-01-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

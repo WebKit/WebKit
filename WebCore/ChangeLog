@@ -1,3 +1,13 @@
+2007-01-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mitz.
+
+        - Patch for http://bugs.webkit.org/show_bug.cgi?id=11957
+          REGRESSION: Unordered List Bullets too big and changing from size
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint): Explicitly set the stroke size to 1.0f.
+
 2007-01-27  Lars Knoll <lars@trolltech.com>
 
         Fix the Qt build and disable the usage
