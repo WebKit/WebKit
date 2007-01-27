@@ -118,7 +118,7 @@ using KJS::Bindings::RootObject;
 
 NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
 
-static RootObject* createRootObject(void* nativeHandle)
+static PassRefPtr<RootObject> createRootObject(void* nativeHandle)
 {
     NSView *view = (NSView *)nativeHandle;
     WebCoreFrameBridge *bridge = [[WebCoreViewFactory sharedFactory] bridgeForView:view];
@@ -126,9 +126,7 @@ static RootObject* createRootObject(void* nativeHandle)
         return 0;
 
     FrameMac* frame = [bridge _frame];
-    RootObject* rootObject = new RootObject(nativeHandle, frame->scriptProxy()->interpreter());
-    frame->addPluginRootObject(rootObject); // The Frame owns the RootObject.
-    return rootObject;
+    return frame->createRootObject(nativeHandle, frame->scriptProxy()->interpreter());
 }
 
 static pthread_t mainThread = 0;

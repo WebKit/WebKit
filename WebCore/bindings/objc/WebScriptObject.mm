@@ -46,22 +46,26 @@ using namespace KJS::Bindings;
 
 static void _didExecute(WebScriptObject *obj)
 {
+    if (![obj _rootObject] || [obj _rootObject]->isValid())
+        return;
+
     ExecState* exec = [obj _rootObject]->interpreter()->globalExec();
     KJSDidExecuteFunctionPtr func = Instance::didExecuteFunction();
     if (func)
         func(exec, static_cast<JSObject*>([obj _rootObject]->interpreter()->globalObject()));
 }
 
-- (void)_initializeWithObjectImp:(JSObject*)imp originRootObject:(const RootObject*)originRootObject rootObject:(const RootObject*)rootObject
+- (void)_initializeWithObjectImp:(JSObject*)imp originRootObject:(PassRefPtr<RootObject>)originRootObject rootObject:(PassRefPtr<RootObject>)rootObject
 {
     _private->imp = imp;
-    _private->rootObject = rootObject;    
-    _private->originRootObject = originRootObject;    
+    _private->rootObject = rootObject.releaseRef();
+    _private->originRootObject = originRootObject.releaseRef();
 
-    addNativeReference(rootObject, imp);
+    if(_private->rootObject)
+        _private->rootObject->gcProtect(imp);
 }
 
-- _initWithJSObject:(JSObject*)imp originRootObject:(const RootObject*)originRootObject rootObject:(const RootObject*)rootObject
+- _initWithJSObject:(KJS::JSObject*)imp originRootObject:(PassRefPtr<KJS::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<KJS::Bindings::RootObject>)rootObject
 {
     ASSERT(imp);
 
@@ -81,48 +85,54 @@ static void _didExecute(WebScriptObject *obj)
     return _private->imp;
 }
 
-- (const RootObject*)_rootObject
+- (RootObject*)_rootObject
 {
-    return _private->rootObject;
+    return _private->rootObject && _private->rootObject->isValid() ? _private->rootObject : 0;
 }
 
-- (void)_setRootObject:(const RootObject*)rootObject
+- (RootObject *)_originRootObject
 {
-    _private->rootObject = rootObject;
-}
-
-- (const RootObject *)_originRootObject
-{
-    return _private->originRootObject;
-}
-
-- (void)_setOriginRootObject:(const RootObject *)originRootObject
-{
-    _private->originRootObject = originRootObject;
+    return _private->originRootObject && _private->originRootObject->isValid() ? _private->originRootObject : 0;
 }
 
 - (BOOL)_isSafeScript
 {
-    if ([self _originRootObject]) {
-        Interpreter* originInterpreter = [self _originRootObject]->interpreter();
-        if (originInterpreter)
-            return originInterpreter->isSafeScript([self _rootObject]->interpreter());
-    }
-    return true;
+    if (!_private->originRootObject || !_private->rootObject)
+        return true;
+
+    if (!_private->originRootObject->isValid() || !_private->rootObject->isValid())
+        return false;
+        
+    return _private->originRootObject->interpreter()->isSafeScript(_private->rootObject->interpreter());
 }
 
 - (void)dealloc
 {
-    removeNativeReference(_private->imp);
+    if (_private->rootObject && _private->rootObject->isValid())
+        _private->rootObject->gcUnprotect(_private->imp);
+
+    if (_private->rootObject)
+        _private->rootObject->deref();
+
+    if (_private->originRootObject)
+        _private->originRootObject->deref();
+
     [_private release];
-        
+
     [super dealloc];
 }
 
 - (void)finalize
 {
-    removeNativeReference(_private->imp);
-        
+    if (_private->rootObject && _private->rootObject->isValid())
+        _private->rootObject->gcUnprotect(_private->imp);
+
+    if (_private->rootObject)
+        _private->rootObject->deref();
+
+    if (_private->originRootObject)
+        _private->originRootObject->deref();
+
     [super finalize];
 }
 
@@ -324,6 +334,10 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
 - (NSString *)stringRepresentation
 {
+    if (![self _rootObject])
+        // This is a workaround for a gcc 3.3 internal compiler error.
+        return @"Undefined";
+
     if (![self _isSafeScript])
         // This is a workaround for a gcc 3.3 internal compiler error.
         return @"Undefined";
@@ -392,18 +406,19 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
 - (void)setException:(NSString *)description
 {
-    if (const RootObject* root = [self _rootObject]) {
-        if (root->interpreter()->context()) {
-            ExecState *exec = root->interpreter()->context()->execState();
+    if (![self _rootObject])
+        return;
 
-            ASSERT(exec);
-            throwError(exec, GeneralError, description);
-        } else
-            throwError(root->interpreter()->globalExec(), GeneralError, description);
-    }
+    if ([self _rootObject]->interpreter()->context()) {
+        ExecState *exec = [self _rootObject]->interpreter()->context()->execState();
+
+        ASSERT(exec);
+        throwError(exec, GeneralError, description);
+    } else
+        throwError([self _rootObject]->interpreter()->globalExec(), GeneralError, description);
 }
 
-+ (id)_convertValueToObjcValue:(JSValue*)value originRootObject:(const RootObject*)originRootObject rootObject:(const RootObject*)rootObject
++ (id)_convertValueToObjcValue:(JSValue*)value originRootObject:(RootObject*)originRootObject rootObject:(RootObject*)rootObject
 {
     if (value->isObject()) {
         JSObject* object = static_cast<JSObject*>(value);

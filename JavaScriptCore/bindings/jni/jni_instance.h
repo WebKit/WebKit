@@ -66,9 +66,8 @@ private:
 class JavaInstance : public Instance
 {
 public:
-    JavaInstance (jobject instance, const RootObject *r);
-        
-    ~JavaInstance ();
+    JavaInstance(jobject instance);
+    ~JavaInstance();
     
     virtual Class *getClass() const;
     
@@ -87,7 +86,6 @@ public:
     JSValue *booleanValue() const;
         
 private:
-    JavaInstance ();                         // prevent default construction
     JavaInstance (JavaInstance &);           // prevent copying
     JavaInstance &operator=(JavaInstance &); // prevent copying
     

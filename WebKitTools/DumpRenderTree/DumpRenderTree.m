@@ -78,6 +78,10 @@
 @end
 
 @interface LayoutTestController : NSObject
+{
+    WebScriptObject *storedWebScriptObject;
+}
+- (void)dealloc;
 @end
 
 @interface LocalPasteboard : NSPasteboard
@@ -779,7 +783,9 @@ static void dump(void)
             || aSelector == @selector(queueLoad:target:)
             || aSelector == @selector(clearBackForwardList)
             || aSelector == @selector(keepWebHistory)
-            || aSelector == @selector(setAcceptsEditing:))
+            || aSelector == @selector(setAcceptsEditing:)
+            || aSelector == @selector(storeWebScriptObject:)
+            || aSelector == @selector(accessStoredWebScriptObject))
         return NO;
     return YES;
 }
@@ -800,6 +806,8 @@ static void dump(void)
         return @"queueLoad";
     if (aSelector == @selector(setAcceptsEditing:))
         return @"setAcceptsEditing";
+    if (aSelector == @selector(storeWebScriptObject:))
+        return @"storeWebScriptObject";
     return nil;
 }
 
@@ -983,6 +991,34 @@ static void dump(void)
 - (void)setAcceptsEditing:(BOOL)newAcceptsEditing
 {
     [(EditingDelegate *)[[frame webView] editingDelegate] setAcceptsEditing:newAcceptsEditing];
+}
+
+- (void)storeWebScriptObject:(WebScriptObject *)webScriptObject
+{
+    if (webScriptObject == storedWebScriptObject)
+        return;
+
+    [storedWebScriptObject release];
+    storedWebScriptObject = [webScriptObject retain];
+}
+
+- (void)accessStoredWebScriptObject
+{
+    [storedWebScriptObject callWebScriptMethod:@"" withArguments:nil];
+    [storedWebScriptObject evaluateWebScript:@""];
+    [storedWebScriptObject setValue:[WebUndefined undefined] forKey:@"key"];
+    [storedWebScriptObject valueForKey:@"key"];
+    [storedWebScriptObject removeWebScriptKey:@"key"];
+    [storedWebScriptObject stringRepresentation];
+    [storedWebScriptObject webScriptValueAtIndex:0];
+    [storedWebScriptObject setWebScriptValueAtIndex:0 value:[WebUndefined undefined]];
+    [storedWebScriptObject setException:@"exception"];
+}
+
+- (void)dealloc
+{
+    [storedWebScriptObject release];
+    [super dealloc];
 }
 
 @end

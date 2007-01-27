@@ -1,3 +1,25 @@
+2007-01-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Fixed <rdar://problem/4608404> WebScriptObject's _executionContext lack 
+        of ownership policy causes crashes (e.g., in Dashcode)
+
+        Added RootObject ref-counting goodness.
+
+        * page/mac/FrameMac.h:
+        * page/mac/FrameMac.mm:
+        (WebCore::FrameMac::cleanupPluginObjects): Invalidate our RootObjects 
+        instead of detroying them. Track _bindingRootObject separately from the
+        rest of our RootObjects, since it has its own variable.
+
+        * page/mac/WebCoreFrameBridge.mm:
+        (createRootObject): Use the Frame's new, more encapsulated function to
+        create a RootObject.
+
+        * bindings/objc/WebScriptObject.mm: Nixed rootObject setters, since they
+        were unused and they complicated reference-counting.
+
 2007-01-26  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Eric.

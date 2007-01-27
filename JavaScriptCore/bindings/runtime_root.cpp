@@ -27,110 +27,44 @@
 #include "object.h"
 #include "runtime_root.h"
 #include <wtf/HashCountedSet.h>
+#include <wtf/HashSet.h>
 
 namespace KJS { namespace Bindings {
 
-// Java does NOT always call finalize (and thus KJS_JSObject_JSFinalize) when
-// it collects an objects.  This presents some difficulties.  We must ensure
-// the a JavaJSObject's corresponding JavaScript object doesn't get collected.  We
-// do this by incrementing the JavaScript's reference count the first time we
-// create a JavaJSObject for it, and decrementing the JavaScript reference count when
-// the last JavaJSObject that refers to it is finalized, or when the applet is
-// shutdown.
-//
-// To do this we keep a map that maps each applet instance
-// to the JavaScript objects it is referencing.  For each JavaScript instance
-// we also maintain a secondary reference count.  When that reference count reaches
-// 1 OR the applet is shutdown we deref the JavaScript instance.  Applet instances
-// are represented by a jlong.
+// This code attempts to solve two problems: (1) plug-ins leaking references to 
+// JS and the DOM; (2) plug-ins holding stale references to JS and the DOM. Previous 
+// comments in this file claimed that problem #1 was an issue in Java, in particular, 
+// because Java, allegedly, didn't always call finalize when collecting an object.
 
-typedef HashMap<const RootObject*, ProtectCountSet*> RootObjectMap;
+typedef HashSet<RootObject*> RootObjectSet;
 
-static RootObjectMap* rootObjectMap()
+static RootObjectSet* rootObjectSet()
 {
-    static RootObjectMap staticRootObjectMap;
-    return &staticRootObjectMap;
-}
-
-static ProtectCountSet* getProtectCountSet(const RootObject* rootObject)
-{
-    ProtectCountSet* protectCountSet = rootObjectMap()->get(rootObject);
-
-    if (!protectCountSet) {
-        protectCountSet = new ProtectCountSet;
-        rootObjectMap()->add(rootObject, protectCountSet);
-    }
-    return protectCountSet;
-}
-
-static void destroyProtectCountSet(const RootObject* rootObject, ProtectCountSet* protectCountSet)
-{
-    rootObjectMap()->remove(rootObject);
-    delete protectCountSet;
+    static RootObjectSet staticRootObjectSet;
+    return &staticRootObjectSet;
 }
 
 // FIXME:  These two functions are a potential performance problem.  We could 
 // fix them by adding a JSObject to RootObject dictionary.
 
-ProtectCountSet* findProtectCountSet(JSObject* jsObject)
+RootObject* findRootObject(JSObject* jsObject)
 {
-    const RootObject* rootObject = findRootObject(jsObject);
-    return rootObject ? getProtectCountSet(rootObject) : 0;
-}
-
-const RootObject* findRootObject(JSObject* jsObject)
-{
-    RootObjectMap::const_iterator end = rootObjectMap()->end();
-    for (RootObjectMap::const_iterator it = rootObjectMap()->begin(); it != end; ++it) {
-        ProtectCountSet* set = it->second;
-        if (set->contains(jsObject))
-            return it->first;
+    RootObjectSet::const_iterator end = rootObjectSet()->end();
+    for (RootObjectSet::const_iterator it = rootObjectSet()->begin(); it != end; ++it) {
+        if ((*it)->gcIsProtected(jsObject))
+            return *it;
     }
-    
     return 0;
 }
 
-const RootObject* findRootObject(Interpreter* interpreter)
+RootObject* findRootObject(Interpreter* interpreter)
 {
-    RootObjectMap::const_iterator end = rootObjectMap()->end();
-    for (RootObjectMap::const_iterator it = rootObjectMap()->begin(); it != end; ++it) {
-        const RootObject* aRootObject = it->first;
-        
-        if (aRootObject->interpreter() == interpreter)
-            return aRootObject;
+    RootObjectSet::const_iterator end = rootObjectSet()->end();
+    for (RootObjectSet::const_iterator it = rootObjectSet()->begin(); it != end; ++it) {
+        if ((*it)->interpreter() == interpreter)
+            return *it;
     }
-    
     return 0;
-}
-
-void addNativeReference(const RootObject* rootObject, JSObject* jsObject)
-{
-    if (!rootObject)
-        return;
-    
-    ProtectCountSet* protectCountSet = getProtectCountSet(rootObject);
-    if (!protectCountSet->contains(jsObject)) {
-        JSLock lock;
-        gcProtect(jsObject);
-    }
-    protectCountSet->add(jsObject);
-}
-
-void removeNativeReference(JSObject* jsObject)
-{
-    if (!jsObject)
-        return;
-
-    // We might have manually detroyed the root object and its protect set already
-    ProtectCountSet* protectCountSet = findProtectCountSet(jsObject);
-    if (!protectCountSet)
-        return;
-
-    if (protectCountSet->count(jsObject) == 1) {
-        JSLock lock;
-        gcUnprotect(jsObject);
-    }
-    protectCountSet->remove(jsObject);
 }
 
 #if PLATFORM(MAC)
@@ -255,24 +189,91 @@ void RootObject::setCreateRootObject(CreateRootObjectFunction createRootObject) 
     RootObject::_performJavaScriptSource = CFRunLoopSourceCreate(NULL, 0, &sourceContext);
     CFRunLoopAddSource(RootObject::_runLoop, RootObject::_performJavaScriptSource, kCFRunLoopDefaultMode);
 }
+
 #endif
 
-// Destroys the RootObject and unprotects all JSObjects associated with it.
-void RootObject::destroy()
+PassRefPtr<RootObject> RootObject::create(const void* nativeHandle, PassRefPtr<Interpreter> interpreter)
 {
-    ProtectCountSet* protectCountSet = getProtectCountSet(this);
-    
-    if (protectCountSet) {
-        ProtectCountSet::iterator end = protectCountSet->end();
-        for (ProtectCountSet::iterator it = protectCountSet->begin(); it != end; ++it) {
-            JSLock lock;
-            gcUnprotect(it->first);            
-        }
+    return new RootObject(nativeHandle, interpreter);
+}
 
-        destroyProtectCountSet(this, protectCountSet);
+RootObject::RootObject(const void* nativeHandle, PassRefPtr<Interpreter> interpreter)
+    : m_refCount(0)
+    , m_isValid(true)
+    , m_nativeHandle(nativeHandle)
+    , m_interpreter(interpreter)
+{
+    ASSERT(m_interpreter);
+    rootObjectSet()->add(this);
+}
+
+RootObject::~RootObject()
+{
+    if (m_isValid)
+        invalidate();
+}
+
+void RootObject::invalidate()
+{
+    if (!m_isValid)
+        return;
+
+    m_isValid = false;
+
+    m_nativeHandle = 0;
+    m_interpreter = 0;
+
+    ProtectCountSet::iterator end = m_protectCountSet.end();
+    for (ProtectCountSet::iterator it = m_protectCountSet.begin(); it != end; ++it) {
+        JSLock lock;
+        KJS::gcUnprotect(it->first);
     }
+    m_protectCountSet.clear();
 
-    delete this;
+    rootObjectSet()->remove(this);
+}
+
+void RootObject::gcProtect(JSObject* jsObject)
+{
+    ASSERT(m_isValid);
+    
+    if (!m_protectCountSet.contains(jsObject)) {
+        JSLock lock;
+        KJS::gcProtect(jsObject);
+    }
+    m_protectCountSet.add(jsObject);
+}
+
+void RootObject::gcUnprotect(JSObject* jsObject)
+{
+    ASSERT(m_isValid);
+    
+    if (!jsObject)
+        return;
+
+    if (m_protectCountSet.count(jsObject) == 1) {
+        JSLock lock;
+        KJS::gcUnprotect(jsObject);
+    }
+    m_protectCountSet.remove(jsObject);
+}
+
+bool RootObject::gcIsProtected(JSObject* jsObject)
+{
+    ASSERT(m_isValid);
+    return m_protectCountSet.contains(jsObject);
+}
+
+const void* RootObject::nativeHandle() const 
+{ 
+    ASSERT(m_isValid);
+    return m_nativeHandle; 
+}
+
+Interpreter* RootObject::interpreter() const 
+{ 
+    ASSERT(m_isValid);
+    return m_interpreter.get(); 
 }
 
 } } // namespace KJS::Bindings

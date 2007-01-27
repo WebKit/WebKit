@@ -10,24 +10,22 @@
 #include <JavaScriptCore/runtime_root.h>
 
 @interface WebScriptObject (Private)
-+ (id)_convertValueToObjcValue:(KJS::JSValue*)value originRootObject:(const KJS::Bindings::RootObject*)originRootObject rootObject:(const KJS::Bindings::RootObject*)rootObject;
++ (id)_convertValueToObjcValue:(KJS::JSValue*)value originRootObject:(KJS::Bindings::RootObject*)originRootObject rootObject:(KJS::Bindings::RootObject*)rootObject;
 - _init;
-- _initWithJSObject:(KJS::JSObject*)imp originRootObject:(const KJS::Bindings::RootObject*)originRootObject rootObject:(const KJS::Bindings::RootObject*)rootObject;
-- (void)_initializeWithObjectImp:(KJS::JSObject*)imp originRootObject:(const KJS::Bindings::RootObject*)originRootObject rootObject:(const KJS::Bindings::RootObject*)rotObject;
+- _initWithJSObject:(KJS::JSObject*)imp originRootObject:(PassRefPtr<KJS::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<KJS::Bindings::RootObject>)rootObject;
+- (void)_initializeWithObjectImp:(KJS::JSObject*)imp originRootObject:(PassRefPtr<KJS::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<KJS::Bindings::RootObject>)rootObject;
 - (void)_initializeScriptDOMNodeImp;
 - (KJS::JSObject *)_imp;
-- (void)_setrootObject:(const KJS::Bindings::RootObject *)context;
-- (const KJS::Bindings::RootObject*)_rootObject;
-- (void)_setOriginRootObject:(const KJS::Bindings::RootObject*)originRootObject;
-- (const KJS::Bindings::RootObject*)_originRootObject;
+- (KJS::Bindings::RootObject*)_rootObject;
+- (KJS::Bindings::RootObject*)_originRootObject;
 @end
 
 @interface WebScriptObjectPrivate : NSObject
 {
 @public
     KJS::JSObject *imp;
-    const KJS::Bindings::RootObject* rootObject;
-    const KJS::Bindings::RootObject* originRootObject;
+    KJS::Bindings::RootObject* rootObject;
+    KJS::Bindings::RootObject* originRootObject;
     BOOL isCreatedByDOMWrapper;
 }
 @end

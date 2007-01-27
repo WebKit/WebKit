@@ -1,3 +1,111 @@
+2007-01-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Fixed <rdar://problem/4608404> WebScriptObject's _rootObject lack 
+        of ownership policy causes crashes (e.g., in Dashcode)
+        
+        The old model for RootObject ownership was either to (1) leak them or (2) assign
+        them to a single owner -- the WebCore::Frame -- which would destroy them 
+        when it believed that all of its plug-ins had unloaded.
+        
+        This model was broken because of (1) and also because plug-ins are not the only 
+        RootObject clients. All Bindings clients are RootObjects clients, including 
+        applications, which outlive any particular WebCore::Frame.
+        
+        The new model for RootObject ownership is to reference-count them, with a
+        throw-back to the old model: The WebCore::Frame tracks the RootObjects
+        it creates, and invalidates them when it believes that all of its plug-ins 
+        have unloaded.
+        
+        We maintain this throw-back to avoid plug-in leaks, particularly from Java.
+        Java is completely broken when it comes to releasing JavaScript objects. 
+        Comments in our code allege that Java does not always call finalize when 
+        collecting objects. Moreoever, my own testing reveals that, when Java does 
+        notify JavaScript of a finalize, the data it provides is totally bogus.
+        
+        This setup is far from ideal, but I don't think we can do better without
+        completely rewriting the bindings code, and possibly part of the Java
+        plug-in / VM.
+        
+        Layout tests pass. No additional leaks reported. WebCore/manual-tests/*liveconnect*
+        and a few LiveConnect demos on the web also run without a hitch.
+        
+        const RootObject* => RootObject*, since we need to ref/deref
+        
+        * bindings/NP_jsobject.cpp:
+        (jsDeallocate): deref our RootObjects. Also unprotect or JSObject, instead
+        of just relying on the RootObject to do it for us when it's invalidated.
+        (_isSafeScript): Check RootObject validity.
+        (_NPN_CreateScriptObject): ditto
+        (_NPN_Invoke): ditto
+        (_NPN_Evaluate): ditto
+        (_NPN_GetProperty): ditto
+        (_NPN_SetProperty): ditto
+        (_NPN_RemoveProperty): ditto
+        (_NPN_HasProperty): ditto
+        (_NPN_HasMethod): ditto
+        (_NPN_SetException): ditto
+
+        * bindings/runtime_root.cpp: 
+        Revived bit-rotted LIAR LIAR LIAR comment.
+        
+        LOOK: Added support for invalidating RootObjects without deleting them, 
+        which is the main goal of this patch. 
+
+        Moved protect counting into the RootObject class, to emphasize that 
+        the RootObject protects the JSObject, and unprotects it upon being invalidated.
+            addNativeReference => RootObject::gcProtect
+            removeNativeReference => RootObject::gcUnprotect
+            ProtectCountSet::contains => RootObject::gcIsProtected
+            
+        I know we'll all be sad to see the word "native" go.
+        
+        * bindings/runtime_root.h: Added ref-counting support to RootObject, with
+        all the standard accoutrements.
+
+        * bindings/c/c_utility.cpp:
+        (KJS::Bindings::convertValueToNPVariant): If we can't find a valid RootObject,
+        return void instead of just leaking.
+
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::JavaInstance): Don't take a RootObject in our constructor;
+        be like other Instances and require the caller to call setRootObject. This
+        reduces the number of ownership code paths.
+        (JavaInstance::invokeMethod): Check RootObject for validity.
+        * bindings/jni/jni_instance.h: Removed private no-arg constructor. Having
+        an arg constructor accomplishes the same thing.
+
+        * bindings/jni/jni_jsobject.cpp:
+        (JavaJSObject::invoke): No need to call findProtectCountSet, because finalize()
+        checks for RootObject validity.
+        (JavaJSObject::JavaJSObject): check RootObject for validity
+        (JavaJSObject::call): ditto
+        (JavaJSObject::eval): ditto
+        (JavaJSObject::getMember): ditto
+        (JavaJSObject::setMember): ditto
+        (JavaJSObject::removeMember): ditto
+        (JavaJSObject::getSlot): ditto
+        (JavaJSObject::setSlot): ditto
+        (JavaJSObject::toString): ditto
+        (JavaJSObject::finalize): ditto
+        (JavaJSObject::createNative): No need to tell the RootObject to protect 
+        the global object, since the RootObject already owns the interpreter.
+
+        * bindings/jni/jni_runtime.cpp:
+        (JavaArray::JavaArray): Removed copy construcutor becaue it was unused.
+        Dead code is dangerous code.
+
+        * bindings/objc/objc_runtime.mm: Added WebUndefined protocol. Previous use
+        of WebScriptObject was bogus, because WebUndefined is not a subclass of
+        WebScriptObject.
+        (convertValueToObjcObject): If we can't find a valid RootObject,
+        return nil instead of just leaking.
+
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertValueToObjcValue): If we can't find a valid RootObject,
+        return nil instead of just leaking.
+
 2007-01-27  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Maciej.

@@ -36,8 +36,9 @@
 #include "kjs_proxy.h"
 
 #if USE(NPOBJECT)
-#include <JavaScriptCore/npruntime_impl.h>
 #include <JavaScriptCore/NP_jsobject.h>
+#include <JavaScriptCore/npruntime_impl.h>
+#include <JavaScriptCore/runtime_root.h>
 #endif
 
 using KJS::ExecState;
@@ -190,7 +191,7 @@ NPObject* HTMLPlugInElement::createNPObject()
         return _NPN_CreateNoScriptObject();
 
     // Wrap the JSObject in an NPObject
-    const RootObject* rootObject = frame->bindingRootObject();
+    RootObject* rootObject = frame->bindingRootObject();
     return _NPN_CreateScriptObject(0, jsElementValue->getObject(), rootObject, rootObject);
 }
 

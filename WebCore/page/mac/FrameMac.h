@@ -31,6 +31,8 @@
 class NPObject;
 
 namespace KJS {
+    class Interpreter;
+        
     namespace Bindings {
         class Instance;
         class RootObject;
@@ -95,7 +97,7 @@ public:
     virtual KJS::Bindings::Instance* getAppletInstanceForWidget(Widget*);
     virtual KJS::Bindings::RootObject* bindingRootObject();
 
-    void addPluginRootObject(KJS::Bindings::RootObject*);
+    PassRefPtr<KJS::Bindings::RootObject> createRootObject(void* nativeHandle, PassRefPtr<KJS::Interpreter>);
 
     KJS::Bindings::RootObject* rootObjectForDOM();
     
@@ -115,8 +117,8 @@ public:
 private:    
     NSImage* imageFromRect(NSRect) const;
 
-    KJS::Bindings::RootObject* _bindingRootObject; // The root object used for objects bound outside the context of a plugin.
-    Vector<KJS::Bindings::RootObject*> m_rootObjects;
+    RefPtr<KJS::Bindings::RootObject> _bindingRootObject; // The root object used for objects bound outside the context of a plugin.
+    Vector<RefPtr<KJS::Bindings::RootObject> > m_rootObjects;
     WebScriptObject* _windowScriptObject;
     NPObject* _windowScriptNPObject;
 

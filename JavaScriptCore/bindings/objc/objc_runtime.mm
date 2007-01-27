@@ -42,7 +42,7 @@ extern ClassStructPtr KJS::Bindings::webScriptObjectClass()
 
 extern ClassStructPtr KJS::Bindings::webUndefinedClass()
 {
-    static ClassStructPtr<WebScriptObject> webUndefinedClass = NSClassFromString(@"WebUndefined");
+    static ClassStructPtr<WebUndefined> webUndefinedClass = NSClassFromString(@"WebUndefined");
     return webUndefinedClass;
 }
 
@@ -141,12 +141,10 @@ JSValue* ObjcField::valueFromInstance(ExecState* exec, const Instance* instance)
 
 static id convertValueToObjcObject(ExecState* exec, JSValue* value)
 {
-    const RootObject* rootObject = findRootObject(exec->dynamicInterpreter());
-    if (!rootObject) {
-        RootObject* newRootObject = new RootObject(0, exec->dynamicInterpreter());
-        rootObject = newRootObject;
-    }
-    return [webScriptObjectClass() _convertValueToObjcValue:value originRootObject:rootObject rootObject:rootObject ];
+    RefPtr<RootObject> rootObject = findRootObject(exec->dynamicInterpreter());
+    if (!rootObject)
+        return nil;
+    return [webScriptObjectClass() _convertValueToObjcValue:value originRootObject:rootObject.get() rootObject:rootObject.get()];
 }
 
 void ObjcField::setValueToInstance(ExecState* exec, const Instance* instance, JSValue* aValue) const

@@ -48,8 +48,19 @@ static NPObject* jsAllocate(NPP, NPClass*)
     return (NPObject*)malloc(sizeof(JavaScriptObject));
 }
 
-static void jsDeallocate(NPObject* obj)
+static void jsDeallocate(NPObject* npObj)
 {
+    JavaScriptObject* obj = (JavaScriptObject*)npObj;
+
+    if (obj->rootObject && obj->rootObject->isValid())
+        obj->rootObject->gcUnprotect(obj->imp);
+
+    if (obj->rootObject)
+        obj->rootObject->deref();
+
+    if (obj->originRootObject)
+        obj->originRootObject->deref();
+
     free(obj);
 }
 
@@ -61,25 +72,27 @@ static NPClass* NPNoScriptObjectClass = &noScriptClass;
 
 static bool _isSafeScript(JavaScriptObject* obj)
 {
-    if (obj->originRootObject) {
-        Interpreter* originInterpreter = obj->originRootObject->interpreter();
-        if (originInterpreter)
-            return originInterpreter->isSafeScript(obj->rootObject->interpreter());
-    }
-    return true;
+    if (!obj->originRootObject || !obj->rootObject)
+        return true;
+    
+    if (!obj->originRootObject->isValid() || !obj->rootObject->isValid())
+        return false;
+        
+    return obj->originRootObject->interpreter()->isSafeScript(obj->rootObject->interpreter());
 }
 
-NPObject* _NPN_CreateScriptObject (NPP npp, JSObject* imp, const RootObject* originRootObject, const RootObject* rootObject)
+NPObject* _NPN_CreateScriptObject(NPP npp, JSObject* imp, PassRefPtr<RootObject> originRootObject, PassRefPtr<RootObject> rootObject)
 {
     JavaScriptObject* obj = (JavaScriptObject*)_NPN_CreateObject(npp, NPScriptObjectClass);
 
+    obj->originRootObject = originRootObject.releaseRef();
+    obj->rootObject = rootObject.releaseRef();
+
+    if (obj->rootObject)
+        obj->rootObject->gcProtect(imp);
     obj->imp = imp;
-    obj->originRootObject = originRootObject;    
-    obj->rootObject = rootObject;    
 
-    addNativeReference(rootObject, imp);
-
-    return (NPObject *)obj;
+    return (NPObject*)obj;
 }
 
 NPObject *_NPN_CreateNoScriptObject(void)
@@ -119,7 +132,11 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
         }
 
         // Lookup the function object.
-        ExecState* exec = obj->rootObject->interpreter()->globalExec();
+        RootObject* rootObject = obj->rootObject;
+        if (!rootObject || !rootObject->isValid())
+            return false;
+
+        ExecState* exec = rootObject->interpreter()->globalExec();
         JSLock lock;
         JSValue* func = obj->imp->get(exec, identifierFromNPIdentifier(i->value.string));
         if (func->isNull()) {
@@ -156,13 +173,17 @@ bool _NPN_Evaluate(NPP, NPObject* o, NPString* s, NPVariant* variant)
         if (!_isSafeScript(obj))
             return false;
 
-        ExecState* exec = obj->rootObject->interpreter()->globalExec();
+        RootObject* rootObject = obj->rootObject;
+        if (!rootObject || !rootObject->isValid())
+            return false;
+
+        ExecState* exec = rootObject->interpreter()->globalExec();
         
         JSLock lock;
         NPUTF16* scriptString;
         unsigned int UTF16Length;
         convertNPStringToUTF16(s, &scriptString, &UTF16Length); // requires free() of returned memory
-        Completion completion = obj->rootObject->interpreter()->evaluate(UString(), 0, UString((const UChar*)scriptString,UTF16Length));
+        Completion completion = rootObject->interpreter()->evaluate(UString(), 0, UString((const UChar*)scriptString,UTF16Length));
         ComplType type = completion.complType();
         
         JSValue* result;
@@ -191,7 +212,11 @@ bool _NPN_GetProperty(NPP, NPObject* o, NPIdentifier propertyName, NPVariant* va
         if (!_isSafeScript(obj))
             return false;
 
-        ExecState* exec = obj->rootObject->interpreter()->globalExec();
+        RootObject* rootObject = obj->rootObject;
+        if (!rootObject || !rootObject->isValid())
+            return false;
+
+        ExecState* exec = rootObject->interpreter()->globalExec();
         PrivateIdentifier* i = (PrivateIdentifier*)propertyName;
         
         JSLock lock;
@@ -230,7 +255,11 @@ bool _NPN_SetProperty(NPP, NPObject* o, NPIdentifier propertyName, const NPVaria
         if (!_isSafeScript(obj))
             return false;
 
-        ExecState* exec = obj->rootObject->interpreter()->globalExec();
+        RootObject* rootObject = obj->rootObject;
+        if (!rootObject || !rootObject->isValid())
+            return false;
+
+        ExecState* exec = rootObject->interpreter()->globalExec();
         JSLock lock;
         PrivateIdentifier* i = (PrivateIdentifier*)propertyName;
         if (i->isString)
@@ -253,7 +282,11 @@ bool _NPN_RemoveProperty(NPP, NPObject* o, NPIdentifier propertyName)
         if (!_isSafeScript(obj))
             return false;
 
-        ExecState* exec = obj->rootObject->interpreter()->globalExec();
+        RootObject* rootObject = obj->rootObject;
+        if (!rootObject || !rootObject->isValid())
+            return false;
+
+        ExecState* exec = rootObject->interpreter()->globalExec();
         PrivateIdentifier* i = (PrivateIdentifier*)propertyName;
         if (i->isString) {
             if (!obj->imp->hasProperty(exec, identifierFromNPIdentifier(i->value.string)))
@@ -281,7 +314,11 @@ bool _NPN_HasProperty(NPP, NPObject* o, NPIdentifier propertyName)
         if (!_isSafeScript(obj))
             return false;
 
-        ExecState* exec = obj->rootObject->interpreter()->globalExec();
+        RootObject* rootObject = obj->rootObject;
+        if (!rootObject || !rootObject->isValid())
+            return false;
+
+        ExecState* exec = rootObject->interpreter()->globalExec();
         PrivateIdentifier* i = (PrivateIdentifier*)propertyName;
         JSLock lock;
         if (i->isString)
@@ -306,7 +343,11 @@ bool _NPN_HasMethod(NPP, NPObject* o, NPIdentifier methodName)
         if (!i->isString)
             return false;
 
-        ExecState* exec = obj->rootObject->interpreter()->globalExec();
+        RootObject* rootObject = obj->rootObject;
+        if (!rootObject || !rootObject->isValid())
+            return false;
+
+        ExecState* exec = rootObject->interpreter()->globalExec();
         JSLock lock;
         JSValue* func = obj->imp->get(exec, identifierFromNPIdentifier(i->value.string));
         return !func->isUndefined();
@@ -322,7 +363,11 @@ void _NPN_SetException(NPObject* o, const NPUTF8* message)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = (JavaScriptObject*)o; 
-        ExecState* exec = obj->rootObject->interpreter()->globalExec();
+        RootObject* rootObject = obj->rootObject;
+        if (!rootObject || !rootObject->isValid())
+            return;
+
+        ExecState* exec = rootObject->interpreter()->globalExec();
         JSLock lock;
         throwError(exec, GeneralError, message);
     }

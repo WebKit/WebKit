@@ -38,29 +38,34 @@ namespace Bindings {
 
 class RootObject;
 
-typedef RootObject* (*CreateRootObjectFunction)(void* nativeHandle);
+typedef PassRefPtr<RootObject> (*CreateRootObjectFunction)(void* nativeHandle);
 typedef HashCountedSet<JSObject*> ProtectCountSet;
 
-extern ProtectCountSet* findProtectCountSet(JSObject*);
-extern const RootObject* findRootObject(JSObject*);
-extern const RootObject* findRootObject(Interpreter*);
-extern void addNativeReference(const RootObject*, JSObject*);
-extern void removeNativeReference(JSObject*);
+extern RootObject* findRootObject(JSObject*);
+extern RootObject* findRootObject(Interpreter*);
 
 class RootObject
 {
 friend class JavaJSObject;
 public:
-    RootObject(const void* nativeHandle, PassRefPtr<Interpreter> interpreter)
-        : m_nativeHandle(nativeHandle)
-        , m_interpreter(interpreter)
-    {
-    }
-    
-    const void *nativeHandle() const { return m_nativeHandle; }
-    Interpreter *interpreter() const { return m_interpreter.get(); }
+    static PassRefPtr<RootObject> create(const void* nativeHandle, PassRefPtr<Interpreter> interpreter);
 
-    void destroy();
+    void ref() { m_refCount++; }
+    void deref()
+    {
+        if (--m_refCount == 0)
+            delete this;
+    }
+
+    bool isValid() { return m_isValid; }
+    void invalidate();
+    
+    void gcProtect(JSObject*);
+    void gcUnprotect(JSObject*);
+    bool gcIsProtected(JSObject*);
+
+    const void* nativeHandle() const;
+    Interpreter* interpreter() const;
 
 #if PLATFORM(MAC)
     // Must be called from the thread that will be used to access JavaScript.
@@ -76,8 +81,19 @@ public:
 #endif
 
 private:
+    RootObject(const void* nativeHandle, PassRefPtr<Interpreter> interpreter);
+    ~RootObject();
+    
+    // Uncopyable
+    RootObject(const RootObject&);
+    RootObject& operator=(const RootObject&);
+    
+    unsigned m_refCount;
+    bool m_isValid;
+    
     const void* m_nativeHandle;
     RefPtr<Interpreter> m_interpreter;
+    ProtectCountSet m_protectCountSet;
 
 #if PLATFORM(MAC)
     static CreateRootObjectFunction _createRootObject;

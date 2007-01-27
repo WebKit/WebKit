@@ -31,8 +31,9 @@
 #include "c_utility.h"
 #include "list.h"
 #include "npruntime_impl.h"
-#include <wtf/Vector.h>
+#include "runtime_root.h"
 #include <wtf/StringExtras.h>
+#include <wtf/Vector.h>
 
 namespace KJS {
 namespace Bindings {

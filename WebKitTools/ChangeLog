@@ -1,3 +1,17 @@
+2007-01-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Added support for test for <rdar://problem/4608404> WebScriptObject's 
+        _rootObject lack of ownership policy causes crashes (e.g., in Dashcode)
+        
+        * DumpRenderTree/DumpRenderTree.m:
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (+[LayoutTestController webScriptNameForSelector:]):
+        (-[LayoutTestController storeWebScriptObject:]):
+        (-[LayoutTestController accessStoredWebScriptObject]):
+        (-[LayoutTestController dealloc]):
+
 2007-01-26  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack

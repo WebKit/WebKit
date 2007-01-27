@@ -372,7 +372,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
     return reinterpret_cast<WebCore::Node*>(_internal);
 }
 
-- (const KJS::Bindings::RootObject*)_rootObject
+- (KJS::Bindings::RootObject*)_rootObject
 {
     if (WebCore::Node *n = [self _node]) {
         if (WebCore::FrameMac* frame = Mac(n->document()->frame()))

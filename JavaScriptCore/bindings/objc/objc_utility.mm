@@ -136,7 +136,7 @@ ObjcValue convertValueToObjcValue(ExecState *exec, JSValue *value, ObjcValueType
     switch (type) {
         case ObjcObjectType: {
             Interpreter *originInterpreter = exec->dynamicInterpreter();
-            const RootObject* originRootObject = findRootObject(originInterpreter);
+            RootObject* originRootObject = findRootObject(originInterpreter);
 
             Interpreter *interpreter = 0;
             if (originInterpreter->isGlobalObject(value))
@@ -145,13 +145,10 @@ ObjcValue convertValueToObjcValue(ExecState *exec, JSValue *value, ObjcValueType
             if (!interpreter)
                 interpreter = originInterpreter;
                 
-            const RootObject* rootObject = findRootObject(interpreter);
-            if (!rootObject) {
-                RootObject* newRootObject = new RootObject(0, interpreter);
-                rootObject = newRootObject;
-            }
-
-            result.objectValue = [webScriptObjectClass() _convertValueToObjcValue:value originRootObject:originRootObject rootObject:rootObject];
+            RootObject* rootObject = findRootObject(interpreter);
+            result.objectValue =  rootObject
+                ? [webScriptObjectClass() _convertValueToObjcValue:value originRootObject:originRootObject rootObject:rootObject]
+                : nil;
         }
         break;
 

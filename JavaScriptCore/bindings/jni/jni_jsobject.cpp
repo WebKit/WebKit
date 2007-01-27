@@ -126,11 +126,7 @@ jvalue JavaJSObject::invoke (JSObjectCallContext *context)
                 }
     
                 case Finalize: {
-                    JSObject *imp = jlong_to_impptr(nativeHandle);
-                    // We may have received a finalize method call from the VM 
-                    // AFTER removing our last reference to the Java instance.
-                    if (findProtectCountSet(imp))
-                        JavaJSObject(nativeHandle).finalize();
+                    JavaJSObject(nativeHandle).finalize();
                     break;
                 }
                 
@@ -150,31 +146,32 @@ JavaJSObject::JavaJSObject(jlong nativeJSObject)
 {
     _imp = jlong_to_impptr(nativeJSObject);
     
-    // If we are unable to cast the nativeJSObject to an JSObject something is
-    // terribly wrong.
-    assert (_imp != 0);
-    
+    ASSERT(_imp);
     _rootObject = findRootObject(_imp);
-    
-    // If we can't find the root for the object something is terribly wrong.
-    assert (_rootObject != 0);
+    ASSERT(_rootObject);
 }
 
+RootObject* JavaJSObject::rootObject() const
+{ 
+    return _rootObject && _rootObject->isValid() ? _rootObject.get() : 0; 
+}
 
 jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
 {
     JS_LOG ("methodName = %s\n", JavaString(methodName).UTF8String());
 
+    RootObject* rootObject = this->rootObject();
+    if (!rootObject)
+        return 0;
+    
     // Lookup the function object.
-    ExecState* exec = _rootObject->interpreter()->globalExec();
+    ExecState* exec = rootObject->interpreter()->globalExec();
     JSLock lock;
     
     Identifier identifier(JavaString(methodName).ustring());
     JSValue *func = _imp->get (exec, identifier);
-    if (func->isUndefinedOrNull()) {
-        // Maybe throw an exception here?
+    if (func->isUndefinedOrNull())
         return 0;
-    }
 
     // Call the function object.
     JSObject *funcImp = static_cast<JSObject*>(func);
@@ -194,7 +191,11 @@ jobject JavaJSObject::eval(jstring script) const
     
     JSLock lock;
     
-    Completion completion = _rootObject->interpreter()->evaluate(UString(), 0, JavaString(script).ustring(),thisObj);
+    RootObject* rootObject = this->rootObject();
+    if (!rootObject)
+        return 0;
+
+    Completion completion = rootObject->interpreter()->evaluate(UString(), 0, JavaString(script).ustring(),thisObj);
     ComplType type = completion.complType();
     
     if (type == Normal) {
@@ -211,7 +212,11 @@ jobject JavaJSObject::getMember(jstring memberName) const
 {
     JS_LOG ("(%p) memberName = %s\n", _imp, JavaString(memberName).UTF8String());
 
-    ExecState* exec = _rootObject->interpreter()->globalExec();
+    RootObject* rootObject = this->rootObject();
+    if (!rootObject)
+        return 0;
+
+    ExecState* exec = rootObject->interpreter()->globalExec();
     
     JSLock lock;
     JSValue *result = _imp->get (exec, Identifier (JavaString(memberName).ustring()));
@@ -222,7 +227,12 @@ jobject JavaJSObject::getMember(jstring memberName) const
 void JavaJSObject::setMember(jstring memberName, jobject value) const
 {
     JS_LOG ("memberName = %s, value = %p\n", JavaString(memberName).UTF8String(), value);
-    ExecState* exec = _rootObject->interpreter()->globalExec();
+
+    RootObject* rootObject = this->rootObject();
+    if (!rootObject)
+        return;
+
+    ExecState* exec = rootObject->interpreter()->globalExec();
     JSLock lock;
     _imp->put(exec, Identifier (JavaString(memberName).ustring()), convertJObjectToValue(value));
 }
@@ -232,7 +242,11 @@ void JavaJSObject::removeMember(jstring memberName) const
 {
     JS_LOG ("memberName = %s\n", JavaString(memberName).UTF8String());
 
-    ExecState* exec = _rootObject->interpreter()->globalExec();
+    RootObject* rootObject = this->rootObject();
+    if (!rootObject)
+        return;
+
+    ExecState* exec = rootObject->interpreter()->globalExec();
     JSLock lock;
     _imp->deleteProperty(exec, Identifier (JavaString(memberName).ustring()));
 }
@@ -246,7 +260,11 @@ jobject JavaJSObject::getSlot(jint index) const
     JS_LOG ("index = %ld\n", index);
 #endif
 
-    ExecState* exec = _rootObject->interpreter()->globalExec();
+    RootObject* rootObject = this->rootObject();
+    if (!rootObject)
+        return 0;
+
+    ExecState* exec = rootObject->interpreter()->globalExec();
 
     JSLock lock;
     JSValue *result = _imp->get (exec, (unsigned)index);
@@ -263,7 +281,11 @@ void JavaJSObject::setSlot(jint index, jobject value) const
     JS_LOG ("index = %ld, value = %p\n", index, value);
 #endif
 
-    ExecState* exec = _rootObject->interpreter()->globalExec();
+    RootObject* rootObject = this->rootObject();
+    if (!rootObject)
+        return;
+
+    ExecState* exec = rootObject->interpreter()->globalExec();
     JSLock lock;
     _imp->put(exec, (unsigned)index, convertJObjectToValue(value));
 }
@@ -273,18 +295,21 @@ jstring JavaJSObject::toString() const
 {
     JS_LOG ("\n");
     
+    RootObject* rootObject = this->rootObject();
+    if (!rootObject)
+        return 0;
+
     JSLock lock;
     JSObject *thisObj = const_cast<JSObject*>(_imp);
-    ExecState* exec = _rootObject->interpreter()->globalExec();
+    ExecState* exec = rootObject->interpreter()->globalExec();
     
     return (jstring)convertValueToJValue (exec, thisObj, object_type, "java.lang.String").l;
 }
 
 void JavaJSObject::finalize() const
 {
-    JS_LOG ("\n");
-
-    removeNativeReference (_imp);
+    if (RootObject* rootObject = this->rootObject())
+        rootObject->gcUnprotect(_imp);
 }
 
 // We're either creating a 'Root' object (via a call to JavaJSObject.getWindow()), or
@@ -303,22 +328,24 @@ jlong JavaJSObject::createNative(jlong nativeHandle)
     if (!createRootObject)
         return ptr_to_jlong(0);
 
-    RootObject* rootObject = createRootObject(jlong_to_ptr(nativeHandle));
+    RefPtr<RootObject> rootObject = createRootObject(jlong_to_ptr(nativeHandle));
+
     // If rootObject is !NULL We must have been called via netscape.javascript.JavaJSObject.getWindow(),
     // otherwise we are being called after creating a JavaJSObject in
     // JavaJSObject::convertValueToJObject().
-    if (rootObject) {
-        JSObject* globalObject = rootObject->interpreter()->globalObject();
-        addNativeReference(rootObject, globalObject);
-        return ptr_to_jlong(globalObject);
-    }
+    if (rootObject)
+        return ptr_to_jlong(rootObject->interpreter()->globalObject());
 
     return nativeHandle;
 }
 
 jobject JavaJSObject::convertValueToJObject (JSValue *value) const
 {
-    ExecState* exec = _rootObject->interpreter()->globalExec();
+    RootObject* rootObject = this->rootObject();
+    if (!rootObject)
+        return 0;
+
+    ExecState* exec = rootObject->interpreter()->globalExec();
     JNIEnv *env = getJNIEnv();
     jobject result = 0;
     
@@ -368,10 +395,7 @@ jobject JavaJSObject::convertValueToJObject (JSValue *value) const
             }
             else {
                 nativeHandle = ptr_to_jlong(imp);
-                
-                // Bump our 'meta' reference count for the imp.  We maintain the reference
-                // until either finalize is called or the applet shuts down.
-                addNativeReference(_rootObject, imp);
+                rootObject->gcProtect(imp);
             }
         }
         // All other types will result in an undefined object.
@@ -429,7 +453,9 @@ JSValue *JavaJSObject::convertJObjectToValue (jobject theObject) const
     }
 
     JSLock lock;
-    RuntimeObjectImp* newImp = new RuntimeObjectImp(new JavaInstance(theObject, _rootObject));
+    JavaInstance* javaInstance = new JavaInstance(theObject);
+    javaInstance->setRootObject(rootObject());
+    RuntimeObjectImp* newImp = new RuntimeObjectImp(javaInstance);
 
     return newImp;
 }

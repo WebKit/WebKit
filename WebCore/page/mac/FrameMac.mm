@@ -133,7 +133,6 @@ static SEL selectorForKeyEvent(KeyboardEvent* event)
 FrameMac::FrameMac(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* frameLoaderClient)
     : Frame(page, ownerElement, frameLoaderClient)
     , _bridge(nil)
-    , _bindingRootObject(0)
     , _windowScriptObject(0)
     , _windowScriptNPObject(0)
 {
@@ -401,13 +400,12 @@ RootObject* FrameMac::rootObjectForDOM()
 
 RootObject* FrameMac::bindingRootObject()
 {
-    assert(settings()->isJavaScriptEnabled());
+    ASSERT(settings()->isJavaScriptEnabled());
     if (!_bindingRootObject) {
         JSLock lock;
-        _bindingRootObject = new RootObject(0, scriptProxy()->interpreter()); // Deleted by cleanupPluginObjects().
-        addPluginRootObject(_bindingRootObject);
+        _bindingRootObject = RootObject::create(0, scriptProxy()->interpreter());
     }
-    return _bindingRootObject;
+    return _bindingRootObject.get();
 }
 
 WebScriptObject *FrameMac::windowScriptObject()
@@ -646,8 +644,8 @@ Instance* FrameMac::getAppletInstanceForWidget(Widget* widget)
         // off ownership to the APPLET element.
         void* nativeHandle = aView;
         CreateRootObjectFunction createRootObject = RootObject::createRootObject();
-        RootObject* rootObject = createRootObject(nativeHandle);
-        Instance* instance = Instance::createBindingForLanguageInstance(Instance::JavaLanguage, applet, rootObject);
+        RefPtr<RootObject> rootObject = createRootObject(nativeHandle);
+        Instance* instance = Instance::createBindingForLanguageInstance(Instance::JavaLanguage, applet, rootObject.release());
         return instance;
     }
     
@@ -662,16 +660,16 @@ static Instance* getPluginInstanceForWidget(Widget* widget)
 
     void* nativeHandle = aView;
     CreateRootObjectFunction createRootObject = RootObject::createRootObject();
-    RootObject* rootObject = createRootObject(nativeHandle);
+    RefPtr<RootObject> rootObject = createRootObject(nativeHandle);
 
     if ([aView respondsToSelector:@selector(objectForWebScript)]) {
         id objectForWebScript = [aView objectForWebScript];
         if (objectForWebScript)
-            return Instance::createBindingForLanguageInstance(Instance::ObjectiveCLanguage, objectForWebScript, rootObject);
+            return Instance::createBindingForLanguageInstance(Instance::ObjectiveCLanguage, objectForWebScript, rootObject.release());
     } else if ([aView respondsToSelector:@selector(createPluginScriptableObject)]) {
         NPObject* npObject = [aView createPluginScriptableObject];
         if (npObject) {
-            Instance* instance = Instance::createBindingForLanguageInstance(Instance::CLanguage, npObject, rootObject);
+            Instance* instance = Instance::createBindingForLanguageInstance(Instance::CLanguage, npObject, rootObject.release());
 
             // -createPluginScriptableObject returns a retained NPObject.  The caller is expected to release it.
             _NPN_ReleaseObject(npObject);
@@ -692,22 +690,27 @@ Instance* FrameMac::getObjectInstanceForWidget(Widget* widget)
     return getPluginInstanceForWidget(widget);
 }
 
-void FrameMac::addPluginRootObject(RootObject* root)
+PassRefPtr<RootObject> FrameMac::createRootObject(void* nativeHandle, PassRefPtr<KJS::Interpreter> interpreter)
 {
-    m_rootObjects.append(root);
+    RefPtr<RootObject> rootObject = RootObject::create(nativeHandle, interpreter);
+    m_rootObjects.append(rootObject);
+    return rootObject.release();
 }
 
 void FrameMac::cleanupPluginObjects()
 {
-    // Delete old plug-in data structures
     JSLock lock;
     
     unsigned count = m_rootObjects.size();
     for (unsigned i = 0; i < count; i++)
-        m_rootObjects[i]->destroy();
+        m_rootObjects[i]->invalidate();
     m_rootObjects.clear();
-    
-    _bindingRootObject = 0;
+
+    if (_bindingRootObject) {
+        _bindingRootObject->invalidate();
+        _bindingRootObject = 0;
+    }
+
     HardRelease(_windowScriptObject);
     _windowScriptObject = 0;
     

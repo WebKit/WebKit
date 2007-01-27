@@ -91,9 +91,11 @@ public:
     JSValue* convertJObjectToValue(jobject) const;
     List listFromJArray(jobjectArray) const;
     
+    RootObject* rootObject() const;
+    
 private:
-    const RootObject* _rootObject;
-    JSObject *_imp;
+    RefPtr<RootObject> _rootObject;
+    JSObject* _imp;
 };
 
 

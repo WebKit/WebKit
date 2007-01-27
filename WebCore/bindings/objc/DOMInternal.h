@@ -325,7 +325,7 @@ namespace WebCore {
 // Helper functions for DOM wrappers and gluing to Objective-C
 
 namespace KJS {
-    id createDOMWrapper(KJS::JSObject*, const KJS::Bindings::RootObject*, const KJS::Bindings::RootObject*);
+    id createDOMWrapper(KJS::JSObject*, PassRefPtr<Bindings::RootObject> origin, PassRefPtr<Bindings::RootObject> current);
 } // namespace KJS
 
 namespace WebCore {

@@ -39,7 +39,7 @@
 
 namespace KJS {
 
-id createDOMWrapper(JSObject* object, const Bindings::RootObject* origin, const Bindings::RootObject* current)
+id createDOMWrapper(JSObject* object, PassRefPtr<Bindings::RootObject> origin, PassRefPtr<Bindings::RootObject> current)
 {
     id newObj = nil;
     

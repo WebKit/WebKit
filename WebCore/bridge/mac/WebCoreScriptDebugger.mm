@@ -225,16 +225,20 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 
 - (id)_convertValueToObjcValue:(JSValue *)value
 {
-    if (!value) {
+    if (!value)
         return nil;
-    }
 
-    if (value == [_globalObj _imp]) {
+    if (value == [_globalObj _imp])
         return _globalObj;
-    }
 
-    const Bindings::RootObject* root1 = [_globalObj _originRootObject];
-    const Bindings::RootObject* root2 = [_globalObj _rootObject];
+    Bindings::RootObject* root1 = [_globalObj _originRootObject];
+    if (!root1)
+        return nil;
+
+    Bindings::RootObject* root2 = [_globalObj _rootObject];
+    if (!root2)
+        return nil;
+
     return [WebScriptObject _convertValueToObjcValue:value originRootObject:root1 rootObject:root2];
 }
 

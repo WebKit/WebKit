@@ -1,3 +1,17 @@
+2007-01-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Added test for <rdar://problem/4608404> WebScriptObject's _rootObject lack 
+        of ownership policy causes crashes (e.g., in Dashcode)
+        
+        No test for Java or NPP versions of this bug because there's no reliable way to
+        make Java and NPP objects outlive their RootObjects (although Java objects
+        sometimes do).
+
+        * plugins/root-object-premature-delete-crash-expected.txt: Added.
+        * plugins/root-object-premature-delete-crash.html: Added.
+
 2007-01-27  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Maciej.

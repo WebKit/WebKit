@@ -28,13 +28,19 @@
 #include "internal.h"
 #include "runtime_root.h"
 
+@class WebUndefined;
+
 @protocol WebScriptObject
 + (NSString *)webScriptNameForSelector:(SEL)aSelector;
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector;
 + (NSString *)webScriptNameForKey:(const char *)name;
 + (BOOL)isKeyExcludedFromWebScript:(const char *)name;
 
-+ (id)_convertValueToObjcValue:(KJS::JSValue *)value originRootObject:(const KJS::Bindings::RootObject*)originRootObject rootObject:(const KJS::Bindings::RootObject *)rootObject;
-- _initWithJSObject:(KJS::JSObject *)imp originRootObject:(const KJS::Bindings::RootObject*)originRootObject rootObject:(const KJS::Bindings::RootObject*)rootObject;
++ (id)_convertValueToObjcValue:(KJS::JSValue *)value originRootObject:(KJS::Bindings::RootObject*)originRootObject rootObject:(KJS::Bindings::RootObject*)rootObject;
+- _initWithJSObject:(KJS::JSObject*)imp originRootObject:(PassRefPtr<KJS::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<KJS::Bindings::RootObject>)rootObject;
 - (KJS::JSObject *)_imp;
+@end
+
+@protocol WebUndefined
++ (WebUndefined *)undefined;
 @end

@@ -27,6 +27,7 @@
 #define NP_JSOBJECT_H
 
 #include "npruntime.h"
+#include <wtf/Forward.h>
 
 namespace KJS {
     class JSObject;
@@ -41,11 +42,11 @@ struct JavaScriptObject
 {
     NPObject object;
     KJS::JSObject* imp;
-    const KJS::Bindings::RootObject* originRootObject;
-    const KJS::Bindings::RootObject* rootObject;
+    KJS::Bindings::RootObject* originRootObject;
+    KJS::Bindings::RootObject* rootObject;
 };
 
-NPObject* _NPN_CreateScriptObject(NPP npp, KJS::JSObject*, const KJS::Bindings::RootObject* originRootObject, const KJS::Bindings::RootObject* rootObject);
+NPObject* _NPN_CreateScriptObject(NPP npp, KJS::JSObject*, PassRefPtr<KJS::Bindings::RootObject> originRootObject, PassRefPtr<KJS::Bindings::RootObject> rootObject);
 NPObject* _NPN_CreateNoScriptObject(void);
 
 #endif
