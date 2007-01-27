@@ -1,3 +1,112 @@
+2007-01-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by olliej.
+
+        Add support for calcMode, keyTimes and (nearly) keySplines.
+        http://bugs.webkit.org/show_bug.cgi?id=12350
+        Re-architect much of the animation system to remove huge sections of code.
+        Added new ColorDistance, SVGTransformDistance to simplify animateColor, animateTransform calculations.
+        I also added basic <animateMotion> support since it was so easy w/ the new architecture.
+        
+        Adding manual animation tests until bug 12074 is fixed.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/misc/SVGTimer.cpp:
+        (WebCore::SVGTimer::applyAnimations):
+        * ksvg2/svg/ColorDistance.cpp: Added.
+        (WebCore::ColorDistance::ColorDistance):
+        (WebCore::clampColorValue):
+        (WebCore::ColorDistance::scaledDistance):
+        (WebCore::ColorDistance::addColorsAndClamp):
+        (WebCore::ColorDistance::addToColorAndClamp):
+        (WebCore::ColorDistance::isZero):
+        (WebCore::ColorDistance::distance):
+        * ksvg2/svg/ColorDistance.h: Added.
+        * ksvg2/svg/SVGAnimateColorElement.cpp:
+        (WebCore::SVGAnimateColorElement::SVGAnimateColorElement):
+        (WebCore::SVGAnimateColorElement::updateAnimationBaseValueFromElement):
+        (WebCore::SVGAnimateColorElement::applyAnimatedValueToElement):
+        (WebCore::SVGAnimateColorElement::updateAnimatedValue):
+        (WebCore::SVGAnimateColorElement::calculateFromAndToValues):
+        * ksvg2/svg/SVGAnimateColorElement.h:
+        (WebCore::SVGAnimateColorElement::contextElement):
+        * ksvg2/svg/SVGAnimateElement.h:
+        (WebCore::SVGAnimateElement::updateAnimatedValue):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        * ksvg2/svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::hasValidTarget):
+        (WebCore::SVGAnimateMotionElement::updateAnimatedValue):
+        (WebCore::parsePoint):
+        (WebCore::SVGAnimateMotionElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateMotionElement::updateAnimationBaseValueFromElement):
+        (WebCore::SVGAnimateMotionElement::applyAnimatedValueToElement):
+        * ksvg2/svg/SVGAnimateMotionElement.h:
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::SVGAnimateTransformElement):
+        (WebCore::SVGAnimateTransformElement::updateAnimatedValue):
+        (WebCore::SVGAnimateTransformElement::updateAnimationBaseValueFromElement):
+        (WebCore::SVGAnimateTransformElement::applyAnimatedValueToElement):
+        (WebCore::SVGAnimateTransformElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateTransformElement::parseTransformValue):
+        * ksvg2/svg/SVGAnimateTransformElement.h:
+        (WebCore::SVGAnimateTransformElement::contextElement):
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::parseKeyNumbers):
+        (WebCore::parseValues):
+        (WebCore::parseKeySplines):
+        (WebCore::SVGAnimationElement::parseMappedAttribute):
+        (WebCore::SVGAnimationElement::targetAttributeAnimatedValue):
+        (WebCore::SVGAnimationElement::setTargetAttributeAnimatedValue):
+        (WebCore::SVGAnimationElement::detectAnimationMode):
+        (WebCore::adjustPercentagePastForKeySplines):
+        (WebCore::SVGAnimationElement::valueIndexAndPercentagePastForDistance):
+        (WebCore::SVGAnimationElement::calculateTotalDistance):
+        (WebCore::caculateValueIndexForKeyTimes):
+        (WebCore::SVGAnimationElement::isValidAnimation):
+        (WebCore::SVGAnimationElement::calculateValueIndexAndPercentagePast):
+        (WebCore::SVGAnimationElement::updateAnimationBaseValueFromElement):
+        (WebCore::SVGAnimationElement::applyAnimatedValueToElement):
+        (WebCore::SVGAnimationElement::handleTimerEvent):
+        (WebCore::SVGAnimationElement::updateAnimatedValueForElapsedSeconds):
+        * ksvg2/svg/SVGAnimationElement.h:
+        * ksvg2/svg/SVGParserUtilities.cpp:
+        (WebCore::SVGPolyParser::parsePoints):
+        * ksvg2/svg/SVGParserUtilities.h:
+        * ksvg2/svg/SVGSetElement.cpp:
+        * ksvg2/svg/SVGSetElement.h:
+        (WebCore::SVGSetElement::updateAnimatedValue):
+        (WebCore::SVGSetElement::calculateFromAndToValues):
+        * ksvg2/svg/SVGTransform.cpp:
+        (SVGTransform::type):
+        (SVGTransform::translate):
+        (SVGTransform::scale):
+        (SVGTransform::setSkewX):
+        (SVGTransform::setSkewY):
+        * ksvg2/svg/SVGTransform.h:
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        * ksvg2/svg/SVGTransformDistance.cpp: Added.
+        (WebCore::SVGTransformDistance::SVGTransformDistance):
+        (WebCore::SVGTransformDistance::scaledDistance):
+        (WebCore::SVGTransformDistance::addSVGTransforms):
+        (WebCore::SVGTransformDistance::addSVGTransform):
+        (WebCore::SVGTransformDistance::addToSVGTransform):
+        (WebCore::SVGTransformDistance::isZero):
+        (WebCore::SVGTransformDistance::distance):
+        * ksvg2/svg/SVGTransformDistance.h: Added.
+        * ksvg2/svg/SVGTransformList.cpp:
+        (SVGTransformList::concatenateForType):
+        * ksvg2/svg/SVGTransformList.h:
+        * manual-tests/animation/animateColor-by.svg: Added.
+        * manual-tests/animation/animateColor-from-by.svg: Added.
+        * manual-tests/animation/animateColor-repeat-indefinite.svg: Added.
+        * manual-tests/animation/animateColor-to-from.svg: Added.
+        * manual-tests/animation/animateColor-to.svg: Added.
+        * manual-tests/animation/animateColor-values-simple.svg: Added.
+        * manual-tests/animation/animateMotion-to.svg: Added.
+        * manual-tests/animation/animateTransform-keyTimes.svg: Added.
+        * manual-tests/animation/animateTransform-repeat-once.svg: Added.
+
 2007-01-26  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.

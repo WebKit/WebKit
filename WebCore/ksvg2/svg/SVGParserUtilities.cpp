@@ -116,7 +116,8 @@ bool SVGPolyParser::parsePoints(const String& s) const
     const UChar* cur = s.characters();
     const UChar* end = cur + s.length();
 
-    skipOptionalSpaces(cur, end);
+    if (!skipOptionalSpaces(cur, end))
+        return false;
 
     int segmentNum = 0;
     while (1) {

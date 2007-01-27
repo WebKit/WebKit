@@ -26,7 +26,7 @@
 
 namespace WebCore
 {
-    bool parseNumber(const UChar*& ptr, const UChar *end, double& number, bool skip = true);
+    bool parseNumber(const UChar*& ptr, const UChar* end, double& number, bool skip = true);
     bool parseNumberOptionalNumber(const String& s, double& h, double& v);
 
     // SVG allows several different whitespace characters:

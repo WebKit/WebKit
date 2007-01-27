@@ -39,30 +39,6 @@ SVGSetElement::~SVGSetElement()
 {
 }
 
-bool SVGSetElement::updateCurrentValue(double timePercentage)
-{
-    if (m_savedTo.isEmpty()) {
-        m_savedTo = targetAttribute();
-        setTargetAttribute(m_to);
-    }
-    return false;
-}
-
-bool SVGSetElement::handleStartCondition()
-{
-    return true;
-}
-
-void SVGSetElement::handleEndCondition()
-{
-    disconnectTimer();
-    
-    if (!isFrozen())
-        setTargetAttribute(m_savedTo);
-    
-    m_savedTo = String();
-}
-
 }
 
 // vim:ts=4:noet

@@ -28,12 +28,15 @@
 #include "SVGTransformList.h"
 
 namespace WebCore {
+    
+using namespace SVGNames;
 
 SVGAnimateMotionElement::SVGAnimateMotionElement(const QualifiedName& tagName, Document* doc)
     : SVGAnimationElement(tagName, doc)
     , m_rotateMode(AngleMode)
     , m_angle(0)
 {
+    m_calcMode = CALCMODE_PACED;
 }
 
 SVGAnimateMotionElement::~SVGAnimateMotionElement()
@@ -42,7 +45,30 @@ SVGAnimateMotionElement::~SVGAnimateMotionElement()
 
 bool SVGAnimateMotionElement::hasValidTarget() const
 {
-    return (SVGAnimationElement::hasValidTarget() && targetElement()->isStyledTransformable());
+    if (!SVGAnimationElement::hasValidTarget())
+        return false;
+    if (!targetElement()->isStyledTransformable())
+        return false;
+    // Spec: SVG 1.1 section 19.2.15
+    if (targetElement()->hasTagName(gTag)
+        || targetElement()->hasTagName(defsTag)
+        || targetElement()->hasTagName(useTag)
+        || targetElement()->hasTagName(imageTag)
+        || targetElement()->hasTagName(switchTag)
+        || targetElement()->hasTagName(pathTag)
+        || targetElement()->hasTagName(rectTag)
+        || targetElement()->hasTagName(circleTag)
+        || targetElement()->hasTagName(ellipseTag)
+        || targetElement()->hasTagName(lineTag)
+        || targetElement()->hasTagName(polylineTag)
+        || targetElement()->hasTagName(polygonTag)
+        || targetElement()->hasTagName(textTag)
+        || targetElement()->hasTagName(clipPathTag)
+        || targetElement()->hasTagName(maskTag)
+        || targetElement()->hasTagName(aTag)
+        || targetElement()->hasTagName(foreignObjectTag))
+        return true;
+    return false;
 }
 
 void SVGAnimateMotionElement::parseMappedAttribute(MappedAttribute* attr)
@@ -88,21 +114,114 @@ Path SVGAnimateMotionElement::animationPath()
     return Path();
 }
 
-bool SVGAnimateMotionElement::updateCurrentValue(double timePercentage)
+bool SVGAnimateMotionElement::updateAnimatedValue(EAnimationMode animationMode, float timePercentage, unsigned valueIndex, float percentagePast)
 {
+    if (animationMode == TO_ANIMATION) {
+        // to-animations have a special equation: value = (to - base) * (time/duration) + base
+        m_animatedTranslation.setWidth((m_toPoint.x() - m_basePoint.x()) * timePercentage + m_basePoint.x());
+        m_animatedTranslation.setHeight((m_toPoint.y() - m_basePoint.y()) * timePercentage + m_basePoint.y());
+        m_animatedAngle = 0;
+    } else {
+        m_animatedTranslation.setWidth(m_pointDiff.width() * percentagePast + m_fromPoint.x());
+        m_animatedTranslation.setHeight(m_pointDiff.height() * percentagePast + m_fromPoint.y());
+        m_animatedAngle = m_angleDiff * percentagePast + m_fromAngle;
+    }
     return true;
 }
 
-bool SVGAnimateMotionElement::handleStartCondition()
+static bool parsePoint(const String& s, FloatPoint& point)
 {
+    if (s.isEmpty())
+        return false;
+    const UChar* cur = s.characters();
+    const UChar* end = cur + s.length();
+    
+    if (!skipOptionalSpaces(cur, end))
+        return false;
+    
+    double x = 0;
+    if (!parseNumber(cur, end, x))
+        return false;
+    
+    double y = 0;
+    if (!parseNumber(cur, end, y))
+        return false;
+    
+    point = FloatPoint(x, y);
+    
+    // disallow anying except spaces at the end
+    return !skipOptionalSpaces(cur, end);
+}
+
+bool SVGAnimateMotionElement::calculateFromAndToValues(EAnimationMode animationMode, unsigned valueIndex)
+{
+    m_fromAngle = 0;
+    m_toAngle = 0;
+    switch (animationMode) {
+    case FROM_TO_ANIMATION:
+        parsePoint(m_from, m_fromPoint);
+        // fall through
+    case TO_ANIMATION:
+        parsePoint(m_to, m_toPoint);
+        break;
+    case FROM_BY_ANIMATION:
+        parsePoint(m_from, m_fromPoint);
+        parsePoint(m_to, m_toPoint);
+        break;
+    case BY_ANIMATION:
+    {
+        parsePoint(m_from, m_fromPoint);
+        FloatPoint byPoint;
+        parsePoint(m_by, byPoint);
+        m_toPoint = FloatPoint(m_fromPoint.x() + byPoint.x(), m_fromPoint.y() + byPoint.y());
+        break;
+    }
+    case VALUES_ANIMATION:
+        parsePoint(m_values[valueIndex], m_fromPoint);
+        if ((valueIndex + 1) < m_values.size())
+            parsePoint(m_values[valueIndex + 1], m_toPoint);
+        else
+            m_toPoint = m_fromPoint;
+        break;
+    case NO_ANIMATION:
+        ASSERT_NOT_REACHED();
+    }
+    
+    m_pointDiff = m_toPoint - m_fromPoint;
+    m_angleDiff = 0;
+    return (m_pointDiff.width() != 0 || m_pointDiff.height() != 0);
+}
+
+bool SVGAnimateMotionElement::updateAnimationBaseValueFromElement()
+{
+    if (!targetElement()->isStyledTransformable())
+        return false;
+    
+    m_basePoint = static_cast<SVGStyledTransformableElement*>(targetElement())->getBBox().location();
     return true;
 }
 
-void SVGAnimateMotionElement::applyAnimationToValue(SVGTransformList* targetTransforms)
+void SVGAnimateMotionElement::applyAnimatedValueToElement()
 {
+    if (!targetElement()->isStyledTransformable())
+        return;
+    
+    SVGStyledTransformableElement* transformableElement = static_cast<SVGStyledTransformableElement*>(targetElement());
+    RefPtr<SVGTransformList> transformList = transformableElement->transform();
+    if (!transformList)
+        return;
+    
     ExceptionCode ec;
     if (!isAdditive())
-        targetTransforms->clear(ec);
+        transformList->clear(ec);
+    
+    AffineTransform transform;
+    transform.rotate(m_animatedAngle);
+    transform.translate(m_animatedTranslation.width(), m_animatedTranslation.height());
+    if (!transform.isIdentity()) {
+        transformList->appendItem(SVGTransform(transform), ec);
+        transformableElement->updateLocalTransform(transformList.get());
+    }
 }
 
 }

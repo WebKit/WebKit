@@ -41,6 +41,7 @@ namespace WebCore {
 
         // Internal use only
         SVGTransform concatenate() const;
+        SVGTransform concatenateForType(SVGTransform::SVGTransformType) const;
     };
 
 } // namespace WebCore

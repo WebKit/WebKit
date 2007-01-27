@@ -53,7 +53,7 @@ bool SVGTransform::isValid()
     return (m_type != SVG_TRANSFORM_UNKNOWN);
 }
 
-unsigned short SVGTransform::type() const
+SVGTransform::SVGTransformType SVGTransform::type() const
 {
     return m_type;
 }
@@ -85,6 +85,11 @@ void SVGTransform::setTranslate(double tx, double ty)
     m_matrix.translate(tx, ty);
 }
 
+FloatPoint SVGTransform::translate() const
+{
+    return FloatPoint(m_matrix.e(), m_matrix.f());
+}
+
 void SVGTransform::setScale(double sx, double sy)
 {
     m_type = SVG_TRANSFORM_SCALE;
@@ -92,6 +97,11 @@ void SVGTransform::setScale(double sx, double sy)
 
     m_matrix.reset();
     m_matrix.scale(sx, sy);
+}
+
+FloatSize SVGTransform::scale() const
+{
+    return FloatSize(m_matrix.a(), m_matrix.d());
 }
 
 void SVGTransform::setRotate(double angle, double cx, double cy)
@@ -112,7 +122,7 @@ void SVGTransform::setSkewX(double angle)
     m_angle = angle;
 
     m_matrix.reset();
-    m_matrix.shear(tan(SVGAngle::torad(angle)), 0.0f);
+    m_matrix.skewX(angle);
 }
 
 void SVGTransform::setSkewY(double angle)
@@ -121,7 +131,7 @@ void SVGTransform::setSkewY(double angle)
     m_angle = angle;
 
     m_matrix.reset();
-    m_matrix.shear(0.0f, tan(SVGAngle::torad(angle)));
+    m_matrix.skewY(angle);
 }
 
 // vim:ts=4:noet

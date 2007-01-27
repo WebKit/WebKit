@@ -36,9 +36,8 @@ namespace WebCore {
     protected:
         virtual const SVGElement* contextElement() const { return this; }
         
-        virtual bool updateCurrentValue(double timePercentage) { return false; }
-        virtual bool handleStartCondition() { return false; }
-        virtual void handleEndCondition() { }
+        virtual bool updateAnimatedValue(EAnimationMode, float timePercentage, unsigned valueIndex, float percentagePast) { return false; }
+        virtual bool calculateFromAndToValues(EAnimationMode, unsigned valueIndex) { return false; }
 
     private:
         int m_currentItem;

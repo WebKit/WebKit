@@ -83,81 +83,36 @@ SVGTimer::TargetAnimationMap SVGTimer::animationsByElement(double elapsedSeconds
     return targetMap;
 }
 
-// FIXME: Eventually this logic will move into an AnimationCompositor class
-// FIXME: I also think this also violates the spec.  We should probably just copy the baseValue and not consolidate
-static PassRefPtr<SVGTransformList> baseValueTransformList(SVGElement* targetElement)
-{
-    ASSERT(targetElement->isStyledTransformable());
-    SVGStyledTransformableElement* transform = static_cast<SVGStyledTransformableElement*>(targetElement);
-    RefPtr<SVGTransformList> targetTransforms = new SVGTransformList();
-    SVGTransformList* transformList = transform->transformBaseValue();
-    if (transformList) {
-        SVGTransform initialTransform = transformList->concatenate();
-        if (initialTransform.isValid()) {
-            ExceptionCode ec;
-            targetTransforms->appendItem(initialTransform, ec);
-            return targetTransforms.release();
-        }
-    }
-    return targetTransforms;
-}
-
 // FIXME: This funtion will eventually become part of the AnimationCompositor
 void SVGTimer::applyAnimations(double elapsedSeconds, const SVGTimer::TargetAnimationMap& targetMap)
 {    
     TargetAnimationMap::const_iterator targetIterator = targetMap.begin();
     TargetAnimationMap::const_iterator tend = targetMap.end();
     for (; targetIterator != tend; ++targetIterator) {
-        HashMap<String, Color> attributeToColorMap; // special <animateColor> case
-        RefPtr<SVGTransformList> targetTransforms; // special <animateTransform> case
-        
         // FIXME: This is still not 100% correct.  Correct would be:
         // 1. Walk backwards through the priority list until a replace (!isAdditive()) is found
+        // -- This optimization is not possible without careful consideration for dependent values (such as cx and fx in SVGRadialGradient)
         // 2. Set the initial value (or last replace) as the new animVal
         // 3. Call each enabled animation in turn, to have it apply its changes
         // 4. After building a new animVal, set it on the element.
+        
+        // Currenly we use the actual animVal on the element as "temporary storage"
+        // and abstract the getting/setting of the attributes into the SVGAnimate* classes
         
         unsigned count = targetIterator->second.size();
         for (unsigned i = 0; i < count; ++i) {
             SVGAnimationElement* animation = targetIterator->second[i];
             
-            if (!animation->hasValidTarget())
+            if (!animation->isValidAnimation())
                 continue;
             
-            if (!animation->updateForElapsedSeconds(elapsedSeconds))
+            if (!animation->updateAnimationBaseValueFromElement())
                 continue;
             
-            if (!targetTransforms && (animation->hasTagName(SVGNames::animateTransformTag) || animation->hasTagName(SVGNames::animateMotionTag)))
-                targetTransforms = baseValueTransformList(animation->targetElement());
+            if (!animation->updateAnimatedValueForElapsedSeconds(elapsedSeconds))
+                continue;
             
-            if (animation->hasTagName(SVGNames::animateTransformTag))
-                static_cast<SVGAnimateTransformElement*>(animation)->applyAnimationToValue(targetTransforms.get());
-            else if (animation->hasTagName(SVGNames::animateMotionTag))
-                static_cast<SVGAnimateMotionElement*>(animation)->applyAnimationToValue(targetTransforms.get());
-            else if (animation->hasTagName(SVGNames::animateColorTag)) {
-                SVGAnimateColorElement* animColor = static_cast<SVGAnimateColorElement*>(animation);
-                String name = animColor->attributeName();
-                Color currentColor = attributeToColorMap.contains(name) ? attributeToColorMap.get(name) : animColor->initialColor();
-                animColor->applyAnimationToValue(currentColor);
-                attributeToColorMap.set(name, currentColor);
-            }
-        }
-        
-        // Apply any transform changes (animateTransform & animateMotion)
-        if (targetTransforms) {
-            SVGElement* key = targetIterator->first;
-            if (key && key->isStyledTransformable()) {
-                SVGStyledTransformableElement* transform = static_cast<SVGStyledTransformableElement*>(key);
-                transform->setTransform(targetTransforms.get());
-                transform->updateLocalTransform(transform->transform());
-            }
-        }
-        
-        // Apply any color changes (animateColor)
-        HashMap<String, Color>::iterator colorIteratorEnd = attributeToColorMap.end();
-        for (HashMap<String, Color>::iterator colorIterator = attributeToColorMap.begin(); colorIterator != colorIteratorEnd; ++colorIterator) {
-            if (colorIterator->second.isValid())
-                SVGAnimationElement::setTargetAttribute(targetIterator->first, colorIterator->first, colorIterator->second.name());
+            animation->applyAnimatedValueToElement();
         }
     }
     

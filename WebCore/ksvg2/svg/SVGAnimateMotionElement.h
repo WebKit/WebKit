@@ -36,19 +36,33 @@ namespace WebCore {
         
         virtual bool hasValidTarget() const;
         
+        virtual bool updateAnimationBaseValueFromElement();
+        virtual void applyAnimatedValueToElement();
+        
         virtual void parseMappedAttribute(MappedAttribute*);
-        
-        void applyAnimationToValue(SVGTransformList*);
-        
+                
         Path animationPath();
         
     protected:
         virtual const SVGElement* contextElement() const { return this; }
         
-        virtual bool updateCurrentValue(double timePercentage);
-        virtual bool handleStartCondition();
+        virtual bool updateAnimatedValue(EAnimationMode, float timePercentage, unsigned valueIndex, float percentagePast);
+        virtual bool calculateFromAndToValues(EAnimationMode, unsigned valueIndex);
         
     private:
+        FloatPoint m_basePoint;
+        FloatSize m_animatedTranslation;
+        float m_animatedAngle;
+        
+        // Note: we do not support percentage values for to/from coords as the spec implies we should (opera doesn't either)
+        FloatPoint m_fromPoint;
+        float m_fromAngle;
+        FloatPoint m_toPoint;
+        float m_toAngle;
+        
+        FloatSize m_pointDiff;
+        float m_angleDiff;
+        
         Path m_path;
         Vector<float> m_keyPoints;
         enum RotateMode {

@@ -26,6 +26,7 @@
 #ifdef SVG_SUPPORT
 
 #include "SVGAnimationElement.h"
+#include "ColorDistance.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -36,38 +37,24 @@ namespace WebCore {
     public:
         SVGAnimateColorElement(const QualifiedName&, Document*);
         virtual ~SVGAnimateColorElement();
-
-        void applyAnimationToValue(Color& currentColor);
-
-        // Helper
-        Color addColorsAndClamp(const Color&, const Color&);
-        Color clampColor(int r, int g, int b) const; // deprecated
-        void calculateColor(double time, int &r, int &g, int &b) const;
-
-        Color color() const;
-        Color initialColor() const;
+        
+        virtual bool updateAnimationBaseValueFromElement();
+        virtual void applyAnimatedValueToElement();
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
-        void storeInitialValue();
-        virtual void resetValues();
         
-        virtual bool updateCurrentValue(double timePercentage);
-        virtual bool handleStartCondition();
-        virtual void updateLastValueWithCurrent();
+        virtual bool updateAnimatedValue(EAnimationMode, float timePercentage, unsigned valueIndex, float percentagePast);
+        virtual bool calculateFromAndToValues(EAnimationMode, unsigned valueIndex);
 
     private:
-        Color m_lastColor;
-        Color m_currentColor;
-        Color m_initialColor;
+        Color m_baseColor;
+        Color m_animatedColor;
 
-        RefPtr<SVGColor> m_toColor;
-        RefPtr<SVGColor> m_fromColor;
+        Color m_toColor;
+        Color m_fromColor;
 
-        int m_currentItem;
-        int m_redDiff;
-        int m_greenDiff;
-        int m_blueDiff;
+        ColorDistance m_colorDistance;
     };
 
 } // namespace WebCore

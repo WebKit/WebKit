@@ -41,11 +41,7 @@ namespace WebCore {
 
 SVGAnimateTransformElement::SVGAnimateTransformElement(const QualifiedName& tagName, Document* doc)
     : SVGAnimationElement(tagName, doc)
-    , m_currentItem(-1)
     , m_type(SVGTransform::SVG_TRANSFORM_UNKNOWN)
-    , m_rotateSpecialCase(false)
-    , m_toRotateSpecialCase(false)
-    , m_fromRotateSpecialCase(false)
 {
 }
 
@@ -76,222 +72,86 @@ void SVGAnimateTransformElement::parseMappedAttribute(MappedAttribute* attr)
         SVGAnimationElement::parseMappedAttribute(attr);
 }
 
-void SVGAnimateTransformElement::storeInitialValue()
+bool SVGAnimateTransformElement::updateAnimatedValue(EAnimationMode animationMode, float timePercentage, unsigned valueIndex, float percentagePast)
 {
-    m_initialTransform = SVGTransform();
-    
-    // Save initial transform... (needed for fill="remove" or additve="sum")
-    if (targetElement()->isStyledTransformable()) {
-        SVGStyledTransformableElement* transform = static_cast<SVGStyledTransformableElement*>(targetElement());
-        RefPtr<SVGTransformList> transformList = transform->transformBaseValue();
-        if (transformList) {
-            ExceptionCode ec = 0;
-            for (unsigned long i = 0; i < transformList->numberOfItems(); i++) {
-                SVGTransform value = transformList->getItem(i, ec);
-                
-                // FIXME: This is wrong if the initial transform list has not been normalized
-                if (value.type() == m_type) {
-                    m_initialTransform = value;
-                    break;
-                }
-            }
-        }
-    }
+    if (animationMode == TO_ANIMATION)
+        // to-animations have a special equation: value = (to - base) * (time/duration) + base
+        m_animatedTransform = SVGTransformDistance(m_baseTransform, m_toTransform).scaledDistance(timePercentage).addToSVGTransform(m_baseTransform);
+    else
+        m_animatedTransform = m_transformDistance.scaledDistance(percentagePast).addToSVGTransform(m_fromTransform);
+    return (m_animatedTransform != m_baseTransform);
 }
 
-void SVGAnimateTransformElement::resetValues()
+bool SVGAnimateTransformElement::updateAnimationBaseValueFromElement()
 {
-    m_currentItem = -1;
+    m_baseTransform = SVGTransform();
     m_toTransform = SVGTransform();
     m_fromTransform = SVGTransform();
-    m_initialTransform = SVGTransform();
-}
-
-bool SVGAnimateTransformElement::updateCurrentValue(double timePercentage)
-{
-    AffineTransform qToMatrix, qFromMatrix;
-    double useTimePercentage = timePercentage;
+    m_animatedTransform = SVGTransform();
     
-    if (m_values) {
-        int itemByPercentage = calculateCurrentValueItem(timePercentage);
+    if (!targetElement()->isStyledTransformable())
+        return false;
+    
+    SVGStyledTransformableElement* transform = static_cast<SVGStyledTransformableElement*>(targetElement());
+    RefPtr<SVGTransformList> transformList = transform->transform();
+    if (!transformList)
+        return false;
+    
+    m_baseTransform = transformList->concatenateForType(m_type);
         
-        if (itemByPercentage == -1)
-            return false;
-        
-        if (m_currentItem != itemByPercentage) { // Item changed...
-            ExceptionCode ec = 0;
-            
-            // Extract current 'from' / 'to' values
-            String value1 = m_values->getItem(itemByPercentage, ec);
-            String value2 = m_values->getItem(itemByPercentage + 1, ec);
-            
-            // Calculate new from/to transform values...
-            if (!value1.isEmpty() && !value2.isEmpty()) {
-                bool apply = false;
-                if (m_toTransform.isValid() && m_fromTransform.isValid()) {
-                    qToMatrix = m_toTransform.matrix();
-                    qFromMatrix = m_fromTransform.matrix();
-                    
-                    apply = true;
-                    useTimePercentage = 1.0;
-                }
-                
-                m_toTransform = parseTransformValue(value2);
-                m_toRotateSpecialCase = m_rotateSpecialCase;
-                
-                m_fromTransform = parseTransformValue(value1);
-                m_fromRotateSpecialCase = m_rotateSpecialCase;
-                
-                m_currentItem = itemByPercentage;
-                
-                if (!apply)
-                    return false;
-            }
-        }
-        else if (m_toTransform.isValid() && m_fromTransform.isValid())
-            useTimePercentage = calculateRelativeTimePercentage(timePercentage, m_currentItem);
-    }
-    
-    if (m_toTransform.isValid() && qToMatrix.isIdentity())
-        qToMatrix = m_toTransform.matrix();
-    
-    if (m_fromTransform.isValid() && qFromMatrix.isIdentity())
-        qFromMatrix = m_fromTransform.matrix();
-    
-    m_currentTransform.reset();
-    
-    if (isAccumulated() && repeations() != 0.0)
-        m_currentTransform.multiply(m_lastTransform);
-    
-    switch (m_type) {
-        case SVGTransform::SVG_TRANSFORM_TRANSLATE:
-        {
-            double dx = ((qToMatrix.e() - qFromMatrix.e()) * useTimePercentage) + qFromMatrix.e();
-            double dy = ((qToMatrix.f() - qFromMatrix.f()) * useTimePercentage) + qFromMatrix.f();
-            
-            m_currentTransform.translate(dx, dy);
-            break;
-        }
-        case SVGTransform::SVG_TRANSFORM_SCALE:
-        {
-            double sx = ((qToMatrix.a() - qFromMatrix.a()) * useTimePercentage) + qFromMatrix.a();
-            double sy = ((qToMatrix.d() - qFromMatrix.d()) * useTimePercentage) + qFromMatrix.d();
-            
-            m_currentTransform.scale(sx, sy);
-            break;
-        }
-        case SVGTransform::SVG_TRANSFORM_ROTATE:
-        {
-            double toAngle, toCx, toCy, fromAngle, fromCx, fromCy;
-            calculateRotationFromMatrix(qToMatrix, toAngle, toCx, toCy);
-            calculateRotationFromMatrix(qFromMatrix, fromAngle, fromCx, fromCy);
-            
-            if (m_toRotateSpecialCase)
-                toAngle = (lround(toAngle) == 1) ? 0.0 : 360.0;
-            
-            if (m_fromRotateSpecialCase)
-                fromAngle = (lround(fromAngle) == 1) ? 0.0 : 360.0;
-            
-            double angle = ((toAngle - fromAngle) * useTimePercentage) + fromAngle;
-            double cx = (toCx - fromCx) * useTimePercentage + fromCx;
-            double cy = (toCy - fromCy) * useTimePercentage + fromCy;
-            
-            m_currentTransform.translate(cx, cy);
-            m_currentTransform.rotate(angle);
-            m_currentTransform.translate(-cx, -cy);
-            break;
-        }
-        case SVGTransform::SVG_TRANSFORM_SKEWX:
-        {
-            double sx = (SVGAngle::todeg(atan(qToMatrix.c()) - atan(qFromMatrix.c())) *
-                         useTimePercentage) + SVGAngle::todeg(atan(qFromMatrix.c()));
-            
-            m_currentTransform.shear(sx, 1.0);
-            break;
-        }
-        case SVGTransform::SVG_TRANSFORM_SKEWY:
-        {
-            double sy = (SVGAngle::todeg(atan(qToMatrix.b()) - atan(qFromMatrix.b())) *
-                         useTimePercentage) + SVGAngle::todeg(atan(qFromMatrix.b()));
-            
-            m_currentTransform.shear(1.0, sy);
-            break;
-        }
-        default:
-            break;
-    }
     return true;
 }
 
-bool SVGAnimateTransformElement::handleStartCondition()
+void SVGAnimateTransformElement::applyAnimatedValueToElement()
 {
-    storeInitialValue();
+    if (!targetElement()->isStyledTransformable())
+        return;
     
-    switch (detectAnimationMode()) {
-        case TO_ANIMATION:
-        case FROM_TO_ANIMATION:
-        {        
-            m_toTransform = parseTransformValue(m_to);
-            m_toRotateSpecialCase = m_rotateSpecialCase;
-            
-            if (!m_from.isEmpty()) { // from-to animation
-                m_fromTransform = parseTransformValue(m_from);
-                m_fromRotateSpecialCase = m_rotateSpecialCase;
-            } else { // to animation
-                m_fromTransform = m_initialTransform;
-                m_fromRotateSpecialCase = false;
-            }
-            
-            if (!m_fromTransform.isValid())
-                m_fromTransform = SVGTransform();
-            
-            break;
-        }
-        case BY_ANIMATION:
-        case FROM_BY_ANIMATION:
-        {
-            m_toTransform = parseTransformValue(m_by);
-            m_toRotateSpecialCase = m_rotateSpecialCase;
-            
-            if (!m_from.isEmpty()) { // from-by animation
-                m_fromTransform = parseTransformValue(m_from);
-                m_fromRotateSpecialCase = m_rotateSpecialCase;
-            } else { // by animation
-                m_fromTransform = m_initialTransform;
-                m_fromRotateSpecialCase = false;
-            }
-            
-            if (!m_fromTransform.isValid())
-                m_fromTransform = SVGTransform();
-            break;
-        }
-        case VALUES_ANIMATION:
-            break;
-        default:
-        {
-            //kdError() << k_funcinfo << " Unable to detect animation mode! Aborting creation!" << endl;
-            return false;
-        }
-    }
-    return true;
-}
-
-void SVGAnimateTransformElement::updateLastValueWithCurrent()
-{
-    m_lastTransform = m_currentTransform;
-}
-
-void SVGAnimateTransformElement::applyAnimationToValue(SVGTransformList* targetTransforms)
-{
+    SVGStyledTransformableElement* transform = static_cast<SVGStyledTransformableElement*>(targetElement());
+    RefPtr<SVGTransformList> transformList = transform->transform();
+    if (!transformList)
+        return;
+    
     ExceptionCode ec;
     if (!isAdditive())
-        targetTransforms->clear(ec);
+        transformList->clear(ec);
     
-    targetTransforms->appendItem(SVGTransform(m_currentTransform), ec);
+    transformList->appendItem(m_animatedTransform, ec);
+    transform->updateLocalTransform(transformList.get());
+}
+
+bool SVGAnimateTransformElement::calculateFromAndToValues(EAnimationMode animationMode, unsigned valueIndex)
+{
+    switch (detectAnimationMode()) {
+    case FROM_TO_ANIMATION:
+        m_fromTransform = parseTransformValue(m_from);
+        // fall through
+    case TO_ANIMATION:
+        m_toTransform = parseTransformValue(m_to);
+        break;
+    case FROM_BY_ANIMATION:
+        m_fromTransform = parseTransformValue(m_from);
+        m_toTransform = parseTransformValue(m_by);
+        break;
+    case BY_ANIMATION:
+        m_fromTransform = parseTransformValue(m_from);
+        m_toTransform = SVGTransformDistance::addSVGTransforms(m_fromTransform, parseTransformValue(m_by));
+        break;
+    case VALUES_ANIMATION:
+        m_fromTransform = parseTransformValue(m_values[valueIndex]);
+        m_toTransform = ((valueIndex + 1) < m_values.size()) ? parseTransformValue(m_values[valueIndex + 1]) : m_fromTransform;
+        break;
+    case NO_ANIMATION:
+        ASSERT_NOT_REACHED();
+    }
+    m_transformDistance = SVGTransformDistance(m_fromTransform, m_toTransform);
+    return !m_transformDistance.isZero();
 }
 
 SVGTransform SVGAnimateTransformElement::parseTransformValue(const String& data) const
 {
+    // FIXME: This parser should be combined with the one in SVGTransformable::parseTransformAttribute
+    
     String parse = data.stripWhiteSpace();
     if (parse.isEmpty())
         return SVGTransform();
@@ -342,21 +202,6 @@ SVGTransform SVGAnimateTransformElement::parseTransformValue(const String& data)
             else 
                 angle = parse.toDouble();
 
-            // Ok now here's a hack to make it possible to calculate cx/cy values, if angle = 0 
-            // or angle=360 -> for angle=0 our matrix is m11: 1 m12: 0 m21: 0 m22: 1 dx: 0 dy: 0
-            // As you can see there is no way to retrieve the cx/cy values for these angles.
-            // -> set 'm_rotateSpecialCase' to true, and save angle = 1/359 -> this way we can calculate
-            //    the cx/cy values, while keeping this uber-optimized way of handling <animateTransform>!
-            m_rotateSpecialCase = false;
-            
-            if (angle == 0.0) {
-                angle = angle + 1.0;
-                m_rotateSpecialCase = true;
-            } else if (angle == 360.0) {
-                angle = angle - 1.0;
-                m_rotateSpecialCase = true;
-            }
-            
             parsedTransform.setRotate(angle, cx, cy);
             break;    
         }
@@ -377,36 +222,6 @@ SVGTransform SVGAnimateTransformElement::parseTransformValue(const String& data)
     }
     
     return parsedTransform;
-}
-
-void SVGAnimateTransformElement::calculateRotationFromMatrix(const AffineTransform& matrix, double& angle, double& cx, double& cy) const
-{
-    double cosa = matrix.a();
-    double sina = -matrix.c();
-
-    if (cosa != 1.0) {
-        // Calculate the angle via magic ;)
-        double temp = SVGAngle::todeg(asin(sina));
-        angle = SVGAngle::todeg(acos(cosa));
-        if (temp < 0)
-            angle = 360.0 - angle;
-        
-        double res = (1 - cosa) + ((sina * sina) / (1 - cosa));
-        
-        cx = (matrix.e() - ((sina * matrix.f()) / (1 - cosa))) / res;
-        cy = (matrix.f() + ((sina * matrix.e()) / (1 - cosa))) / res;
-
-        return;
-    }
-
-    cx = 0.0;
-    cy = 0.0;
-    angle = 0.0;
-}
-
-AffineTransform SVGAnimateTransformElement::currentTransform() const
-{
-    return m_currentTransform;
 }
 
 }

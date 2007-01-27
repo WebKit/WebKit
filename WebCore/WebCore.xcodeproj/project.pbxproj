@@ -1795,6 +1795,10 @@
 		A833C80C0A2CF25600D57664 /* XMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A833C80A0A2CF25600D57664 /* XMLNames.cpp */; };
 		A833C80D0A2CF25600D57664 /* XMLNames.h in Headers */ = {isa = PBXBuildFile; fileRef = A833C80B0A2CF25600D57664 /* XMLNames.h */; };
 		A833C8520A2CF52800D57664 /* SVGElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581E609D1508D000E61D7 /* SVGElementFactory.cpp */; };
+		A84942D90B64A9CA0069F00F /* ColorDistance.h in Headers */ = {isa = PBXBuildFile; fileRef = A84942D70B64A9CA0069F00F /* ColorDistance.h */; };
+		A84942DA0B64A9CA0069F00F /* ColorDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A84942D80B64A9CA0069F00F /* ColorDistance.cpp */; };
+		A84947AD0B67F4A10069F00F /* SVGTransformDistance.h in Headers */ = {isa = PBXBuildFile; fileRef = A84947AB0B67F4A10069F00F /* SVGTransformDistance.h */; };
+		A84947AE0B67F4A10069F00F /* SVGTransformDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A84947AC0B67F4A10069F00F /* SVGTransformDistance.cpp */; };
 		A86629CF09DA2B47009633A5 /* JSUIEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A86629C909DA2B47009633A5 /* JSUIEvent.h */; };
 		A86629D009DA2B48009633A5 /* JSUIEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */; };
 		A86629D109DA2B48009633A5 /* JSMouseEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A86629CB09DA2B47009633A5 /* JSMouseEvent.h */; };
@@ -4816,6 +4820,10 @@
 		A833C7F60A2CF1D800D57664 /* xmlattrs.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = xmlattrs.in; sourceTree = "<group>"; };
 		A833C80A0A2CF25600D57664 /* XMLNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XMLNames.cpp; sourceTree = "<group>"; };
 		A833C80B0A2CF25600D57664 /* XMLNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XMLNames.h; sourceTree = "<group>"; };
+		A84942D70B64A9CA0069F00F /* ColorDistance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorDistance.h; sourceTree = "<group>"; };
+		A84942D80B64A9CA0069F00F /* ColorDistance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorDistance.cpp; sourceTree = "<group>"; };
+		A84947AB0B67F4A10069F00F /* SVGTransformDistance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTransformDistance.h; sourceTree = "<group>"; };
+		A84947AC0B67F4A10069F00F /* SVGTransformDistance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTransformDistance.cpp; sourceTree = "<group>"; };
 		A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		A86629C909DA2B47009633A5 /* JSUIEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSUIEvent.h; sourceTree = "<group>"; };
 		A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSUIEvent.cpp; sourceTree = "<group>"; };
@@ -8184,6 +8192,8 @@
 		A8C0F7FC089701F300BA5114 /* svg */ = {
 			isa = PBXGroup;
 			children = (
+				A84942D80B64A9CA0069F00F /* ColorDistance.cpp */,
+				A84942D70B64A9CA0069F00F /* ColorDistance.h */,
 				B2DDF0660B482A030064A4B1 /* GradientAttributes.h */,
 				B25AE55D0B49D6630074C726 /* LinearGradientAttributes.h */,
 				B2DDF0640B4829FA0064A4B1 /* PatternAttributes.h */,
@@ -8527,6 +8537,8 @@
 				A8C0F8DD089701F400BA5114 /* SVGTransformable.cpp */,
 				A8C0F8DE089701F400BA5114 /* SVGTransformable.h */,
 				B2CB415B0AB75904004D9C45 /* SVGTransformable.idl */,
+				A84947AC0B67F4A10069F00F /* SVGTransformDistance.cpp */,
+				A84947AB0B67F4A10069F00F /* SVGTransformDistance.h */,
 				A8C0F8E1089701F400BA5114 /* SVGTransformList.cpp */,
 				A8C0F8E2089701F400BA5114 /* SVGTransformList.h */,
 				B2CB415C0AB75904004D9C45 /* SVGTransformList.idl */,
@@ -11056,7 +11068,9 @@
 				B24055660B5BE640002A28C0 /* DOMSVGElementInstanceListInternal.h in Headers */,
 				1A2A68240B5BEDE70002A480 /* ProgressTracker.h in Headers */,
 				A80CEBAC0B60FC49007637C1 /* SVGMPathElement.h in Headers */,
+				A84942D90B64A9CA0069F00F /* ColorDistance.h in Headers */,
 				E1E6EEA80B628DB3005F2F70 /* JSHTMLSelectElement.h in Headers */,
+				A84947AD0B67F4A10069F00F /* SVGTransformDistance.h in Headers */,
 				AA0972CD0B6947A800A705E9 /* SVGInlineTextBox.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12403,9 +12417,11 @@
 				A784941B0B5FE507001E237A /* Clipboard.cpp in Sources */,
 				934FE9E50B5CA539003E4A73 /* FileChooser.cpp in Sources */,
 				A80CEBAD0B60FC49007637C1 /* SVGMPathElement.cpp in Sources */,
+				A84942DA0B64A9CA0069F00F /* ColorDistance.cpp in Sources */,
 				E1E6EEA40B628DA8005F2F70 /* JSHTMLSelectElement.cpp in Sources */,
 				929264770B61FC7200B41D34 /* JSDocumentCustom.cpp in Sources */,
 				BC17F9660B64EBB8004A65CB /* JSHTMLSelectElementCustom.cpp in Sources */,
+				A84947AE0B67F4A10069F00F /* SVGTransformDistance.cpp in Sources */,
 				AA0972CC0B6947A800A705E9 /* SVGInlineTextBox.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

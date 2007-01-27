@@ -1,0 +1,8 @@
+<svg xmlns='http://www.w3.org/2000/svg'>
+  <rect width='100' height='100'>
+    <animateMotion to='100,0' dur='3s' />
+  </rect>
+  <text x='10' y='120'>
+    The rect should from 0,0 to 100,0 over 3 seconds.
+  </text>  
+</svg>
