@@ -670,7 +670,7 @@ void SVGAnimationElement::calculateValueIndexAndPercentagePast(float timePercent
         caculateValueIndexForKeyTimes(timePercentage, m_keyTimes, valueIndex, lastKeyTimePercentage, nextKeyTimePercentage);
     else {
         unsigned lastPossibleIndex = (m_values.size() ? m_values.size() - 1: 1);
-        unsigned flooredValueIndex = timePercentage * lastPossibleIndex;
+        unsigned flooredValueIndex = static_cast<unsigned>(timePercentage * lastPossibleIndex);
         valueIndex = flooredValueIndex;
         lastKeyTimePercentage = flooredValueIndex / (float)lastPossibleIndex;
         nextKeyTimePercentage = (flooredValueIndex + 1) / (float)lastPossibleIndex;
