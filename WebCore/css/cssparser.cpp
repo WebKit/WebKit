@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2003 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -525,7 +525,7 @@ bool CSSParser::parseValue(int propId, bool important)
     // by a space.  We go ahead and associate the unit with the number even though it is invalid CSS.
     checkForOrphanedUnits();
 
-    switch(propId) {
+    switch (static_cast<CSSPropertyID>(propId)) {
         /* The comment to the left defines all valid value of this properties as defined
          * in CSS 2, Appendix F. Property index
          */
@@ -537,8 +537,6 @@ bool CSSParser::parseValue(int propId, bool important)
 
     case CSS_PROP_SIZE:                 // <length>{1,2} | auto | portrait | landscape | inherit
     case CSS_PROP_QUOTES:               // [<string> <string>]+ | none | inherit
-//     case CSS_PROP_PAGE:                 // <identifier> | auto // ### CHECK
-        // ### To be done
         if (id)
             valid_primitive = true;
         break;
@@ -1471,17 +1469,19 @@ bool CSSParser::parseValue(int propId, bool important)
         const int properties[2] = { CSS_PROP__WEBKIT_TEXT_STROKE_WIDTH, CSS_PROP__WEBKIT_TEXT_STROKE_COLOR };
         return parseShorthand(propId, properties, 2, important);
     }
-    default:
-#ifdef SVG_SUPPORT
-        if (parseSVGValue(propId, important))
-            return true;
-#endif
-        break;
+    case CSS_PROP_INVALID:
+        return false;
+    case CSS_PROP_FONT_STRETCH:
+    case CSS_PROP_PAGE:
+    case CSS_PROP_TEXT_LINE_THROUGH:
+    case CSS_PROP_TEXT_OVERLINE:
+    case CSS_PROP_TEXT_UNDERLINE:
+        return false;
     }
 
     if (valid_primitive) {
-        if (id != 0) {
-            parsedValue = new CSSPrimitiveValue(id); }
+        if (id != 0)
+            parsedValue = new CSSPrimitiveValue(id);
         else if (value->unit == CSSPrimitiveValue::CSS_STRING)
             parsedValue = new CSSPrimitiveValue(domString(value->string), (CSSPrimitiveValue::UnitTypes) value->unit);
         else if (value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
@@ -1497,6 +1497,10 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         delete parsedValue;
     }
+#ifdef SVG_SUPPORT
+    if (parseSVGValue(propId, important))
+        return true;
+#endif
     return false;
 }
 

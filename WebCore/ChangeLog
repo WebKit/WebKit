@@ -1,5 +1,18 @@
 2007-01-26  Darin Adler  <darin@apple.com>
 
+        - checked in slightly newer revision of the patch below
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        Grouped all the unimplemented values at the bottom. Fixed the ifdef for
+        CSS_PROP__WEBKIT_DASHBOARD_REGION so that it compiles on all platforms.
+
+        * css/cssparser.cpp: (WebCore::CSSParser::parseValue): Removed default
+        case and added type so that the compiler warns about missing properties.
+        * css/cssstyleselector.cpp: (WebCore::CSSStyleSelector::applyProperty): Ditto.
+
+2007-01-26  Darin Adler  <darin@apple.com>
+
         Reviewed by Beth.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=12412
