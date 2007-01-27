@@ -337,9 +337,11 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
 
 - (void)cancelLoadAndDestroyStreamWithError:(NSError *)error
 {
+    [self retain];
     [self cancelLoadWithError:error];
     [self destroyStreamWithError:error];
     [self setPlugin:NULL];
+    [self release];
 }
 
 - (void)finishedLoadingWithData:(NSData *)data

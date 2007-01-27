@@ -1,5 +1,14 @@
 2007-01-26  Darin Adler  <darin@apple.com>
 
+        Reviewed by Timothy.
+
+        Fixes crash drawing avatar on mail.yahoo.com.
+
+        * Plugins/WebBaseNetscapePluginStream.m: Retain the object since destroyStreamWithError: might
+        release the last reference to it.
+
+2007-01-26  Darin Adler  <darin@apple.com>
+
         Reviewed by Beth.
 
         * WebInspector/webInspector/inspector.js: Updated for new computed style properties.
