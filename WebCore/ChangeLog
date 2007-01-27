@@ -1,3 +1,11 @@
+2007-01-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej.
+
+        Qt build fix.
+
+        * page/qt/EventHandlerQt.cpp:
+
 2007-01-26  Dex Deacon  <occupant4@gmail.com>
 
         Reviewed by Hyatt.

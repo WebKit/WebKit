@@ -105,12 +105,6 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
     return false;
 }
 
-bool EventHandler::lastEventIsMouseUp() const
-{
-    //this is some hack for mac. it shouldn't be platform specific at all
-    return false;
-}
-    
 bool EventHandler::dragHysteresisExceeded(const FloatPoint& floatDragViewportLocation) const
 {
     notImplemented();
