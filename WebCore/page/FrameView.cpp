@@ -349,7 +349,7 @@ void FrameView::layout(bool allowSubtree)
             Node* body = static_cast<HTMLDocument*>(document)->body();
             if (body && body->renderer()) {
                 if (body->hasTagName(framesetTag)) {
-                    body->renderer()->setNeedsLayout(true);
+                    body->renderer()->setChildNeedsLayout(true);
                     vMode = ScrollbarAlwaysOff;
                     hMode = ScrollbarAlwaysOff;
                 } else if (body->hasTagName(bodyTag)) {
