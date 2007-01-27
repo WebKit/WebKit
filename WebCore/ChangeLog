@@ -1,3 +1,13 @@
+2007-01-26  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Oliver.
+
+        Build fix.
+
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::calculateValueIndexAndPercentagePast):
+        Keep index variables as unsigned until we need to convert to float.
+
 2007-01-26  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Ada.

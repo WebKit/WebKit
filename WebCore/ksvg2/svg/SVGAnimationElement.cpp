@@ -669,11 +669,11 @@ void SVGAnimationElement::calculateValueIndexAndPercentagePast(float timePercent
     if (m_keyTimes.size() && (m_keyTimes.size() == m_values.size()))
         caculateValueIndexForKeyTimes(timePercentage, m_keyTimes, valueIndex, lastKeyTimePercentage, nextKeyTimePercentage);
     else {
-        float lastPossibleIndex = (m_values.size() ? m_values.size() - 1: 1);
-        float flooredValueIndex = floorf(timePercentage * lastPossibleIndex);
+        unsigned lastPossibleIndex = (m_values.size() ? m_values.size() - 1: 1);
+        unsigned flooredValueIndex = timePercentage * lastPossibleIndex;
         valueIndex = flooredValueIndex;
-        lastKeyTimePercentage = flooredValueIndex / lastPossibleIndex;
-        nextKeyTimePercentage = (flooredValueIndex + 1) / lastPossibleIndex;
+        lastKeyTimePercentage = flooredValueIndex / (float)lastPossibleIndex;
+        nextKeyTimePercentage = (flooredValueIndex + 1) / (float)lastPossibleIndex;
     }
     
     // No further caculation is needed if we're exactly on an index.
