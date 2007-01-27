@@ -1,3 +1,21 @@
+2007-01-27  David Harrison  <harrison@apple.com>
+
+        Reviewed by Kevin.
+
+        <rdar://problem/4958902> REGRESSION: Dashboard widgets fail to load
+        
+        This was caused by the WebView preferences rework in r18417. Specifically, in
+        _updateWebCoreSettingsFromPreferences when calling setUserStyleSheetLocation,
+        [NSURL URLWithString:] is now messaged directly with the result of
+        [[preferences userStyleSheetLocation] _web_originalDataAsString]], which will
+        be nil if the userStyleSheetLocation has not been set yet. [NSURL URLWithString:]
+        throws an exception when the string is nil. DashboardClient.app calls
+        setUserStyleSheetEnabled *before* calling setUserStyleSheetLocation.
+
+        * WebView/WebView.mm:
+        (-[WebView _updateWebCoreSettingsFromPreferences:]):
+        Pass empty string instead of nil string to [NSURL URLWithString:].
+
 2007-01-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Timothy.

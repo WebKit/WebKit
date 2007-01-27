@@ -823,9 +823,11 @@ static bool debugWidget = true;
     settings->setShouldPrintBackgrounds([preferences shouldPrintBackgrounds]);
     settings->setTextAreasAreResizable([preferences textAreasAreResizable]);
     settings->setEditableLinkBehavior(core([preferences editableLinkBehavior]));
-    settings->setUserStyleSheetLocation([preferences userStyleSheetEnabled] 
-        ? [NSURL URLWithString:[[preferences userStyleSheetLocation] _web_originalDataAsString]]
-        : [NSURL URLWithString:@""]);
+    if ([preferences userStyleSheetEnabled]) {
+        NSString* location = [[preferences userStyleSheetLocation] _web_originalDataAsString];
+        settings->setUserStyleSheetLocation([NSURL URLWithString:(location ? location : @"")]);
+    } else
+        settings->setUserStyleSheetLocation([NSURL URLWithString:@""]);
 }
 
 - (void)_preferencesChangedNotification: (NSNotification *)notification
