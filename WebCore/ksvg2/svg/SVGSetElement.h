@@ -37,8 +37,8 @@ namespace WebCore
     protected:
         virtual const SVGElement* contextElement() const { return this; }
         
-        virtual bool updateAnimatedValue(EAnimationMode, float timePercentage, unsigned valueIndex, float percentagePast) { return true; }
-        virtual bool calculateFromAndToValues(EAnimationMode, unsigned valueIndex) { return true; }
+        virtual bool updateAnimatedValue(EAnimationMode, float timePercentage, unsigned valueIndex, float percentagePast);
+        virtual bool calculateFromAndToValues(EAnimationMode, unsigned valueIndex);
 
     private:
         String m_savedTo;

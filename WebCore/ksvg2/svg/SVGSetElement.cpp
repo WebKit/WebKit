@@ -39,6 +39,17 @@ SVGSetElement::~SVGSetElement()
 {
 }
 
+bool SVGSetElement::updateAnimatedValue(EAnimationMode, float timePercentage, unsigned valueIndex, float percentagePast)
+{
+    m_animatedValue = m_to;
+    return true;
+}
+
+bool SVGSetElement::calculateFromAndToValues(EAnimationMode, unsigned valueIndex)
+{
+    return true;
+}
+
 }
 
 // vim:ts=4:noet

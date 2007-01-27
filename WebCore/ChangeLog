@@ -1,3 +1,17 @@
+2007-01-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by olliej.
+
+        Fix support for SVG's <set> element.
+
+        Manual test added.
+
+        * ksvg2/svg/SVGSetElement.cpp:
+        (WebCore::SVGSetElement::updateAnimatedValue):
+        (WebCore::SVGSetElement::calculateFromAndToValues):
+        * ksvg2/svg/SVGSetElement.h:
+        * manual-tests/animation/set-to.svg: Added.
+
 2007-01-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Release build fix.
