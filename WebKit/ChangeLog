@@ -1,3 +1,18 @@
+2007-01-26  Kevin Decker <kdecker@apple.com>
+
+        Reviewed by andersca.
+
+        Fixed: <rdar://problem/4946922> WebBaseNetscapePluginView leaks memory
+        http://bugs.webkit.org/show_bug.cgi?id=11523
+
+        * Plugins/WebBaseNetscapePluginStream.m:
+       (-[WebBaseNetscapePluginStream setPlugin:]): Calls -[WebBaseNetscapePluginView disconnectStream:]
+        * Plugins/WebBaseNetscapePluginView.h: Added disconnectStream: to header.
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView stop]): Make a copy of the streams collection prior to calling stop all streams.
+        This is necessary because calling stop has the side effect of removing the stream from this same collection.
+        (-[WebBaseNetscapePluginView disconnectStream:]): Added. Removes the stream from the streams collection.
+
 2007-01-25  Kevin Decker <kdecker@apple.com>
 
         Backed out my last patch because it crashes espn.com. Stay tuned for a newer version..

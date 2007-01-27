@@ -151,6 +151,7 @@ typedef union PluginPort {
 - (void)setMode:(int)theMode;
 - (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow;
 - (void)viewDidMoveToHostWindow;
+- (void)disconnectStream:(WebBaseNetscapePluginStream*)stream;
 
 // Returns the NPObject that represents the plugin interface.
 // The return value is expected to be retained.

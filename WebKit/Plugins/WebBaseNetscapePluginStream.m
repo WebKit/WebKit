@@ -174,15 +174,19 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
         NPP_DestroyStream = [pluginPackage NPP_DestroyStream];
         NPP_URLNotify = [pluginPackage NPP_URLNotify];
     } else {
+        WebBaseNetscapePluginView *view = pluginView;
+
         plugin = NULL;
-        [pluginView release];
-        pluginView = nil;
         NPP_NewStream = NULL;
         NPP_WriteReady = NULL;
         NPP_Write = NULL;
         NPP_StreamAsFile = NULL;
         NPP_DestroyStream = NULL;
         NPP_URLNotify = NULL;
+        pluginView = nil;
+
+        [view disconnectStream:self];
+        [view release];
     }
 }
 

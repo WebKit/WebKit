@@ -1290,10 +1290,13 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         return;
     
     isStarted = NO;
-    
-    // Stop any active streams
-    [streams makeObjectsPerformSelector:@selector(stop)];
-    
+    // To stop active streams it's necessary to invoke makeObjectsPerformSelector on a copy 
+    // of streams. This is because calling -[WebNetscapePluginStream stop] also has the side effect
+    // of removing a stream from this collection.
+    NSArray *streamsCopy = [streams copy];
+    [streamsCopy makeObjectsPerformSelector:@selector(stop)];
+    [streamsCopy release];
+   
     // Stop the null events
     [self stopNullEvents];
 
@@ -1494,6 +1497,11 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     }
     free(cAttributes);
     free(cValues);
+}
+
+- (void)disconnectStream:(WebBaseNetscapePluginStream*)stream
+{
+    [streams removeObjectIdenticalTo:stream];    
 }
 
 - (void)dealloc
