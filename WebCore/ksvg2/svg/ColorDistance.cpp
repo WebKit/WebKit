@@ -59,7 +59,9 @@ static inline int clampColorValue(int v)
 
 ColorDistance ColorDistance::scaledDistance(float scaleFactor) const
 {
-    return ColorDistance(scaleFactor * m_redDiff, scaleFactor * m_greenDiff, scaleFactor * m_blueDiff);
+    return ColorDistance(static_cast<int>(scaleFactor * m_redDiff),
+                         static_cast<int>(scaleFactor * m_greenDiff),
+                         static_cast<int>(scaleFactor * m_blueDiff));
 }
 
 Color ColorDistance::addColorsAndClamp(const Color& first, const Color& second)

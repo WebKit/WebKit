@@ -1,3 +1,10 @@
+2007-01-27  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by NOBODY (buildbot build fix).
+
+        * ksvg2/svg/ColorDistance.cpp:
+        (WebCore::ColorDistance::scaledDistance): Added static cast of arguments to int.
+
 2007-01-27  Rob Buis  <buis@kde.org>
 
         Reviewed by NOBODY (typo in method name fix).
