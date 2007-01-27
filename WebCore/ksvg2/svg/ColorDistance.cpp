@@ -23,6 +23,7 @@
 #ifdef SVG_SUPPORT
 #include "ColorDistance.h"
 #include "Color.h"
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 

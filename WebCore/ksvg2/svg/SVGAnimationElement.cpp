@@ -707,7 +707,7 @@ void SVGAnimationElement::applyAnimatedValueToElement()
 
 void SVGAnimationElement::handleTimerEvent(double elapsedSeconds, double timePercentage)
 {
-    timePercentage = fmin(timePercentage, 1.0);
+    timePercentage = min(timePercentage, 1.0);
     if (!connectedToTimer()) {
         connectTimer();
         return;
