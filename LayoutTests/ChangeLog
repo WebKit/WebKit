@@ -1,3 +1,12 @@
+2007-01-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Fixed a broken test to actually work (and fail).
+
+        * dom/svg/level3/xpath/Conformance_ID-expected.checksum: Removed.
+        * dom/svg/level3/xpath/Conformance_ID-expected.png: Removed.
+        * dom/svg/level3/xpath/Conformance_ID-expected.txt:
+        * dom/svg/level3/xpath/Conformance_ID.svg:
+
 2007-01-27  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by NOBODY (missing pixel test results).
