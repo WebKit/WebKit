@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "ResourceHandle.h"
+#include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceHandleWin.h"
 

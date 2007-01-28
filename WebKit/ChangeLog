@@ -1,3 +1,51 @@
+2007-01-27  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Adam.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12260
+          Windows platform build is not maintained
+
+        * COM/ChromeClientWin.cpp:
+        (ChromeClientWin::canTakeFocus):
+        (ChromeClientWin::takeFocus):
+        * COM/ChromeClientWin.h:
+        * COM/ContextMenuClientWin.cpp:
+        (ContextMenuClientWin::getCustomMenuFromDefaultItems):
+        (ContextMenuClientWin::searchWithGoogle):
+        * COM/ContextMenuClientWin.h:
+        * COM/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebFrameLoaderClient::dispatchWillSendRequest):
+        (WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge):
+        (WebFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebFrameLoaderClient::dispatchDidFinishLoading):
+        (WebFrameLoaderClient::dispatchDidFailLoading):
+        (WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache):
+        (WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebFrameLoaderClient::dispatchDidFailLoad):
+        (WebFrameLoaderClient::dispatchCreatePage):
+        (WebFrameLoaderClient::dispatchDecidePolicyForMIMEType):
+        (WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebFrameLoaderClient::dispatchUnableToImplementPolicy):
+        (WebFrameLoaderClient::setMainDocumentError):
+        (WebFrameLoaderClient::incrementProgress):
+        (WebFrameLoaderClient::completeProgress):
+        (WebFrameLoaderClient::startDownload):
+        (WebFrameLoaderClient::committedLoad):
+        (WebFrameLoaderClient::cancelledError):
+        (WebFrameLoaderClient::cannotShowURLError):
+        (WebFrameLoaderClient::interruptForPolicyChangeError):
+        (WebFrameLoaderClient::cannotShowMIMETypeError):
+        (WebFrameLoaderClient::fileDoesNotExistError):
+        (WebFrameLoaderClient::shouldFallBack):
+        (WebFrameLoaderClient::willUseArchive):
+        (WebFrameLoaderClient::createDocumentLoader):
+        (WebFrameLoaderClient::download):
+        * COM/WebFrameLoaderClient.h:
+
 2007-01-27  David Harrison  <harrison@apple.com>
 
         Reviewed by Kevin.

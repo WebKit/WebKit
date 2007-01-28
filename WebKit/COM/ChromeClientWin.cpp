@@ -74,6 +74,17 @@ void ChromeClientWin::unfocus()
     notImplemented();
 }
 
+bool ChromeClientWin::canTakeFocus(WebCore::FocusDirection)
+{
+    notImplemented();
+    return false;
+}
+
+void ChromeClientWin::takeFocus(WebCore::FocusDirection)
+{
+    notImplemented();
+}
+
 WebCore::Page* ChromeClientWin::createWindow(const WebCore::FrameLoadRequest&)
 {
     notImplemented();

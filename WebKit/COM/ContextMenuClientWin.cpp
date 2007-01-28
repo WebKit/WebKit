@@ -44,6 +44,11 @@ void ContextMenuClientWin::addCustomContextMenuItems(WebCore::ContextMenu*)
     notImplemented();
 }
 
+WebCore::PlatformMenuDescription ContextMenuClientWin::getCustomMenuFromDefaultItems(WebCore::ContextMenu*)
+{
+    notImplemented();
+}
+
 void ContextMenuClientWin::contextMenuItemSelected(WebCore::ContextMenuItem*,
                                                    const WebCore::ContextMenu*)
 {
@@ -56,6 +61,11 @@ void ContextMenuClientWin::downloadURL(const WebCore::KURL&)
 }
 
 void ContextMenuClientWin::copyImageToClipboard(const WebCore::HitTestResult&)
+{
+    notImplemented();
+}
+
+void ContextMenuClientWin::searchWithGoogle(const WebCore::Frame*)
 {
     notImplemented();
 }

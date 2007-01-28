@@ -59,39 +59,64 @@ public:
 
     virtual void loadedFromPageCache();
 
+    virtual void assignIdentifierToInitialRequest(unsigned long identifier, WebCore::DocumentLoader*, const WebCore::ResourceRequest&);
+
+    virtual void dispatchWillSendRequest(WebCore::DocumentLoader*, unsigned long identifier, WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
+    virtual void dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::AuthenticationChallenge&);
+    virtual void dispatchDidCancelAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::AuthenticationChallenge&);        
+    virtual void dispatchDidReceiveResponse(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ResourceResponse&);
+    virtual void dispatchDidReceiveContentLength(WebCore::DocumentLoader*, unsigned long identifier, int lengthReceived);
+    virtual void dispatchDidFinishLoading(WebCore::DocumentLoader*, unsigned long identifier);
+    virtual void dispatchDidFailLoading(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ResourceError&);
+    virtual bool dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, int length);
+
     virtual void dispatchDidHandleOnloadEvents();
     virtual void dispatchDidReceiveServerRedirectForProvisionalLoad();
     virtual void dispatchDidCancelClientRedirect();
-    virtual void dispatchWillPerformClientRedirect(const WebCore::KURL&,
-                                                   double, double);
+    virtual void dispatchWillPerformClientRedirect(const WebCore::KURL&, double interval, double fireDate);
     virtual void dispatchDidChangeLocationWithinPage();
     virtual void dispatchWillClose();
     virtual void dispatchDidReceiveIcon();
     virtual void dispatchDidStartProvisionalLoad();
-    virtual void dispatchDidReceiveTitle(const WebCore::String&);
+    virtual void dispatchDidReceiveTitle(const WebCore::String& title);
     virtual void dispatchDidCommitLoad();
+    virtual void dispatchDidFailProvisionalLoad(const WebCore::ResourceError&);
+    virtual void dispatchDidFailLoad(const WebCore::ResourceError&);
     virtual void dispatchDidFinishLoad();
     virtual void dispatchDidFirstLayout();
 
+    virtual WebCore::Frame* dispatchCreatePage();
     virtual void dispatchShow();
 
+    virtual void dispatchDecidePolicyForMIMEType(WebCore::FramePolicyFunction, const WebCore::String& MIMEType, const WebCore::ResourceRequest&);
+    virtual void dispatchDecidePolicyForNewWindowAction(WebCore::FramePolicyFunction, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::String& frameName);
+    virtual void dispatchDecidePolicyForNavigationAction(WebCore::FramePolicyFunction, const WebCore::NavigationAction&, const WebCore::ResourceRequest&);
     virtual void cancelPolicyCheck();
 
-    virtual void dispatchWillSubmitForm(WebCore::FramePolicyFunction,
-                                        PassRefPtr<WebCore::FormState>);
+    virtual void dispatchUnableToImplementPolicy(const WebCore::ResourceError&);
+
+    virtual void dispatchWillSubmitForm(WebCore::FramePolicyFunction, PassRefPtr<WebCore::FormState>);
 
     virtual void dispatchDidLoadMainResource(WebCore::DocumentLoader*);
     virtual void revertToProvisionalState(WebCore::DocumentLoader*);
+    virtual void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&);
     virtual void clearUnarchivingState(WebCore::DocumentLoader*);
 
     virtual void progressStarted();
     virtual void progressCompleted();
 
+    virtual void incrementProgress(unsigned long identifier, const WebCore::ResourceResponse&);
+    virtual void incrementProgress(unsigned long identifier, const char*, int);
+    virtual void completeProgress(unsigned long identifier);
+
     virtual void setMainFrameDocumentReady(bool);
+
+    virtual void startDownload(const WebCore::ResourceRequest&);
 
     virtual void willChangeTitle(WebCore::DocumentLoader*);
     virtual void didChangeTitle(WebCore::DocumentLoader*);
 
+    virtual void committedLoad(WebCore::DocumentLoader*, const char*, int);
     virtual void finishedLoading(WebCore::DocumentLoader*);
     virtual void finalSetupForReplace(WebCore::DocumentLoader*);
 
@@ -99,16 +124,26 @@ public:
     virtual void updateGlobalHistoryForReload(const WebCore::KURL&);
     virtual bool shouldGoToHistoryItem(WebCore::HistoryItem*) const;
 
+    virtual WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&);
+    virtual WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&);
+    virtual WebCore::ResourceError interruptForPolicyChangeError(const WebCore::ResourceRequest&);
+
+    virtual WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&);
+    virtual WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&);
+
+    virtual bool shouldFallBack(const WebCore::ResourceError&);
+
     virtual void setDefersLoading(bool);
 
+    virtual bool willUseArchive(WebCore::ResourceLoader*, const WebCore::ResourceRequest&, const WebCore::KURL& originalURL) const;
     virtual bool isArchiveLoadPending(WebCore::ResourceLoader*) const;
     virtual void cancelPendingArchiveLoad(WebCore::ResourceLoader*);
     virtual void clearArchivedResources();
 
     virtual bool canHandleRequest(const WebCore::ResourceRequest&) const;
-    virtual bool canShowMIMEType(const WebCore::String&) const;
-    virtual bool representationExistsForURLScheme(const WebCore::String&) const;
-    virtual WebCore::String generatedMIMETypeForURLScheme(const WebCore::String&) const;
+    virtual bool canShowMIMEType(const WebCore::String& MIMEType) const;
+    virtual bool representationExistsForURLScheme(const WebCore::String& URLScheme) const;
+    virtual WebCore::String generatedMIMETypeForURLScheme(const WebCore::String& URLScheme) const;
 
     virtual void frameLoadCompleted();
     virtual void saveScrollPositionAndViewStateToItem(WebCore::HistoryItem*);
@@ -117,12 +152,14 @@ public:
     virtual void didFinishLoad();
     virtual void prepareForDataSourceReplacement();
 
+    virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&);
     virtual void setTitle(const WebCore::String& title, const WebCore::KURL&);
 
     virtual WebCore::String userAgent();
 
     virtual void saveDocumentViewToPageCache(WebCore::PageCache*);
     virtual bool canCachePage() const;
+    virtual void download(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
 protected:
     // The WebFrame that owns this object and manages its lifetime. Therefore,

@@ -135,6 +135,53 @@ void WebFrameLoaderClient::loadedFromPageCache()
     notImplemented();
 }
 
+
+void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long, WebCore::DocumentLoader*, const WebCore::ResourceRequest&)
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::dispatchWillSendRequest(WebCore::DocumentLoader*, unsigned long, WebCore::ResourceRequest&, const WebCore::ResourceResponse&)
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long, const WebCore::AuthenticationChallenge&)
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long, const WebCore::AuthenticationChallenge&)        
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::dispatchDidReceiveResponse(WebCore::DocumentLoader*, unsigned long, const WebCore::ResourceResponse&)
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::dispatchDidReceiveContentLength(WebCore::DocumentLoader*, unsigned long, int)
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::dispatchDidFinishLoading(WebCore::DocumentLoader*, unsigned long)
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::dispatchDidFailLoading(WebCore::DocumentLoader*, unsigned long, const WebCore::ResourceError&)
+{
+    notImplemented();
+}
+
+bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const ResourceRequest&, const WebCore::ResourceResponse&, int)
+{
+    notImplemented();
+    return false;
+}
+
 void WebFrameLoaderClient::dispatchDidHandleOnloadEvents()
 {
     notImplemented();
@@ -186,6 +233,16 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
     notImplemented();
 }
 
+void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const WebCore::ResourceError&)
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::dispatchDidFailLoad(const WebCore::ResourceError&)
+{
+    notImplemented();
+}
+
 void WebFrameLoaderClient::dispatchDidFinishLoad()
 {
     notImplemented();
@@ -196,12 +253,38 @@ void WebFrameLoaderClient::dispatchDidFirstLayout()
     notImplemented();
 }
 
+Frame* WebFrameLoaderClient::dispatchCreatePage()
+{
+    notImplemented();
+    return 0;
+}
+
 void WebFrameLoaderClient::dispatchShow()
 {
     notImplemented();
 }
 
+void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(WebCore::FramePolicyFunction, const WebCore::String&, const WebCore::ResourceRequest&)
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(WebCore::FramePolicyFunction, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::String&)
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(WebCore::FramePolicyFunction, const WebCore::NavigationAction&, const WebCore::ResourceRequest&)
+{
+    notImplemented();
+}
+
 void WebFrameLoaderClient::cancelPolicyCheck()
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::dispatchUnableToImplementPolicy(const WebCore::ResourceError&)
 {
     notImplemented();
 }
@@ -222,6 +305,11 @@ void WebFrameLoaderClient::revertToProvisionalState(WebCore::DocumentLoader*)
     notImplemented();
 }
 
+void WebFrameLoaderClient::setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&)
+{
+    notImplemented();
+}
+
 void WebFrameLoaderClient::clearUnarchivingState(WebCore::DocumentLoader*)
 {
     notImplemented();
@@ -237,7 +325,27 @@ void WebFrameLoaderClient::progressCompleted()
     notImplemented();
 }
 
+void WebFrameLoaderClient::incrementProgress(unsigned long, const WebCore::ResourceResponse&)
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::incrementProgress(unsigned long, const char*, int)
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::completeProgress(unsigned long)
+{
+    notImplemented();
+}
+
 void WebFrameLoaderClient::setMainFrameDocumentReady(bool)
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::startDownload(const WebCore::ResourceRequest&)
 {
     notImplemented();
 }
@@ -248,6 +356,11 @@ void WebFrameLoaderClient::willChangeTitle(WebCore::DocumentLoader*)
 }
 
 void WebFrameLoaderClient::didChangeTitle(WebCore::DocumentLoader*)
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::committedLoad(WebCore::DocumentLoader*, const char*, int)
 {
     notImplemented();
 }
@@ -278,9 +391,46 @@ bool WebFrameLoaderClient::shouldGoToHistoryItem(WebCore::HistoryItem*) const
     return false;
 }
 
+ResourceError WebFrameLoaderClient::cancelledError(const WebCore::ResourceRequest&)
+{
+    notImplemented();
+}
+
+ResourceError WebFrameLoaderClient::cannotShowURLError(const WebCore::ResourceRequest&)
+{
+    notImplemented();
+}
+
+ResourceError WebFrameLoaderClient::interruptForPolicyChangeError(const WebCore::ResourceRequest&)
+{
+    notImplemented();
+}
+
+ResourceError WebFrameLoaderClient::cannotShowMIMETypeError(const WebCore::ResourceResponse&)
+{
+    notImplemented();
+}
+
+ResourceError WebFrameLoaderClient::fileDoesNotExistError(const WebCore::ResourceResponse&)
+{
+    notImplemented();
+}
+
+bool WebFrameLoaderClient::shouldFallBack(const WebCore::ResourceError&)
+{
+    notImplemented();
+    return false;
+}
+
 void WebFrameLoaderClient::setDefersLoading(bool)
 {
     notImplemented();
+}
+
+bool WebFrameLoaderClient::willUseArchive(ResourceLoader*, const WebCore::ResourceRequest&, const WebCore::KURL&) const
+{
+    notImplemented();
+    return false;
 }
 
 bool WebFrameLoaderClient::isArchiveLoadPending(WebCore::ResourceLoader*) const
@@ -356,6 +506,11 @@ void WebFrameLoaderClient::prepareForDataSourceReplacement()
     notImplemented();
 }
 
+PassRefPtr<WebCore::DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const WebCore::ResourceRequest&)
+{
+    notImplemented();
+}
+
 void WebFrameLoaderClient::setTitle(const WebCore::String&,
                                     const WebCore::KURL&)
 {
@@ -376,4 +531,9 @@ bool WebFrameLoaderClient::canCachePage() const
 {
     notImplemented();
     return false;
+}
+
+void WebFrameLoaderClient::download(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&)
+{
+    notImplemented();
 }
