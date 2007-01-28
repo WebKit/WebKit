@@ -1,3 +1,28 @@
+2007-01-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        Added some missing JSLocks, which might fix <rdar://problem/4889707>.
+
+        We need to lock whenever we might allocate memory because our FastMalloc
+        implementation requires clients to register their threads, which we do
+        through JSLock. 
+        
+        We also need to lock whenever modifying ref-counts because they're not 
+        thread-safe.
+
+        * API/JSObjectRef.cpp:
+        (JSClassCreate): Allocates memory
+        (JSClassRetain): Modifies a ref-count
+        (JSClassRelease): Modifies a ref-count
+        (JSPropertyNameArrayRetain): Modifies a ref-count
+        (JSPropertyNameArrayRelease): Modifies a ref-count
+        * API/JSStringRef.cpp:
+        (JSStringRetain): Modifies a ref-count
+        * API/JSValueRef.cpp:
+        (JSValueIsInstanceOfConstructor): Might allocate memory if an exception
+        is thrown.
+
 2007-01-27  Lars Knoll <lars@trolltech.com>
 
         Fix the Qt build.

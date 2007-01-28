@@ -140,6 +140,7 @@ bool JSValueIsStrictEqual(JSContextRef ctx, JSValueRef a, JSValueRef b)
 
 bool JSValueIsInstanceOfConstructor(JSContextRef ctx, JSValueRef value, JSObjectRef constructor, JSValueRef* exception)
 {
+    JSLock lock;
     ExecState* exec = toJS(ctx);
     JSValue* jsValue = toJS(value);
     JSObject* jsConstructor = toJS(constructor);

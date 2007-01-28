@@ -44,6 +44,7 @@ using namespace KJS;
 
 JSClassRef JSClassCreate(JSClassDefinition* definition)
 {
+    JSLock lock;
     JSClassRef jsClass = (definition->attributes & kJSClassAttributeNoAutomaticPrototype)
         ? OpaqueJSClass::createNoAutomaticPrototype(definition)
         : OpaqueJSClass::create(definition);
@@ -53,12 +54,14 @@ JSClassRef JSClassCreate(JSClassDefinition* definition)
 
 JSClassRef JSClassRetain(JSClassRef jsClass)
 {
+    JSLock lock;
     ++jsClass->refCount;
     return jsClass;
 }
 
 void JSClassRelease(JSClassRef jsClass)
 {
+    JSLock lock;
     if (--jsClass->refCount == 0)
         delete jsClass;
 }
@@ -331,12 +334,14 @@ JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef ctx, JSObjectRef o
 
 JSPropertyNameArrayRef JSPropertyNameArrayRetain(JSPropertyNameArrayRef array)
 {
+    JSLock lock;
     ++array->refCount;
     return array;
 }
 
 void JSPropertyNameArrayRelease(JSPropertyNameArrayRef array)
 {
+    JSLock lock;
     if (--array->refCount == 0)
         delete array;
 }

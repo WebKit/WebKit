@@ -52,6 +52,7 @@ JSStringRef JSStringCreateWithUTF8CString(const char* string)
 
 JSStringRef JSStringRetain(JSStringRef string)
 {
+    JSLock lock;
     UString::Rep* rep = toJS(string);
     return toRef(rep->ref());
 }
