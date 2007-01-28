@@ -341,8 +341,6 @@ void PopupMenu::hide() { notImplemented(); }
 void PopupMenu::updateFromElement() { notImplemented(); }
 
 void RenderThemeWin::systemFont(int propId, FontDescription& fontDescription) const { notImplemented(); }
-bool RenderThemeWin::paintMenuList(RenderObject *, const RenderObject::PaintInfo&, const IntRect&) { notImplemented(); return false; }
-void RenderThemeWin::adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const { notImplemented(); }
 
 bool ResourceHandle::willLoadFromCache(ResourceRequest&) { notImplemented(); return false; }
 bool ResourceHandle::loadsBlocked() { notImplemented(); return false; }

@@ -51,6 +51,9 @@
 #define TFP_TEXTFIELD 1
 #define TFS_READONLY  6
 
+// Combobox constants
+#define CP_DROPDOWNBUTTON 1
+
 typedef HANDLE (WINAPI*openThemeDataPtr)(HWND hwnd, LPCWSTR pszClassList);
 typedef HRESULT (WINAPI*closeThemeDataPtr)(HANDLE hTheme);
 typedef HRESULT (WINAPI*drawThemeBackgroundPtr)(HANDLE hTheme, HDC hdc, int iPartId, 
@@ -88,7 +91,7 @@ RenderTheme* theme()
 }
 
 RenderThemeWin::RenderThemeWin()
-:m_themeDLL(0), m_buttonTheme(0), m_textFieldTheme(0)
+:m_themeDLL(0), m_buttonTheme(0), m_textFieldTheme(0), m_menuListTheme(0)
 {
     m_themeDLL = ::LoadLibrary(L"uxtheme.dll");
     if (m_themeDLL) {
@@ -120,7 +123,9 @@ void RenderThemeWin::close()
         closeTheme(m_buttonTheme);
     if (m_textFieldTheme)
         closeTheme(m_textFieldTheme);
-    m_buttonTheme = m_textFieldTheme = 0;
+    if (m_menuListTheme)
+        closeTheme(m_menuListTheme);
+    m_buttonTheme = m_textFieldTheme = m_menuListTheme = 0;
 }
 
 Color RenderThemeWin::platformActiveSelectionBackgroundColor() const
@@ -179,6 +184,20 @@ unsigned RenderThemeWin::determineState(RenderObject* o)
     return result;
 }
 
+unsigned RenderThemeWin::determineClassicState(RenderObject* o)
+{
+    unsigned result = 0;
+    if (!isEnabled(o) || isReadOnlyControl(o))
+        result = DFCS_INACTIVE;
+    else if (isPressed(o)) // Active supersedes hover
+        result = DFCS_PUSHED;
+    else if (isHovered(o))
+        result = DFCS_HOT;
+    if (isChecked(o))
+        result |= DFCS_CHECKED;
+    return result;
+}
+
 ThemeData RenderThemeWin::getThemeData(RenderObject* o)
 {
     ThemeData result;
@@ -186,28 +205,28 @@ ThemeData RenderThemeWin::getThemeData(RenderObject* o)
         case PushButtonAppearance:
         case ButtonAppearance:
             result.m_part = BP_BUTTON;
-            result.m_state = determineState(o);
+            result.m_classicState = DFCS_BUTTONPUSH;
             break;
         case CheckboxAppearance:
             result.m_part = BP_CHECKBOX;
-            result.m_state = determineState(o);
+            result.m_classicState = DFCS_BUTTONCHECK;
             break;
         case RadioAppearance:
             result.m_part = BP_RADIO;
-            result.m_state = determineState(o);
+            result.m_classicState = DFCS_BUTTONRADIO;
             break;
+        case ListboxAppearance:
+        case MenulistAppearance:
         case TextFieldAppearance:
         case TextAreaAppearance:
             result.m_part = TFP_TEXTFIELD;
-            result.m_state = determineState(o);
             break;
     }
 
-    return result;
-}
+    result.m_state = determineState(o);
+    result.m_classicState |= determineClassicState(o);
 
-void RenderThemeWin::adjustButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
-{
+    return result;
 }
 
 // May need to add stuff to these later, so keep the graphics context retrieval/release in some helpers.
@@ -223,24 +242,30 @@ static void doneDrawing(GraphicsContext* g, HDC hdc)
 
 bool RenderThemeWin::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
-    // FIXME: Need to fall back to painting a Win2k "Classic" look.  We will hit this situation if
-    // a Windows XP user has turned on the Win2k "Classic" appearance or is running Win2k.
-    if (!m_themeDLL)
-        return true;
-
-    if (!m_buttonTheme)
-        m_buttonTheme = openTheme(0, L"Button");
-
-    if (!m_buttonTheme || !drawThemeBG)
-        return true;
-
     // Get the correct theme data for a button
     ThemeData themeData = getThemeData(o);
-    
+
     // Now paint the button.
     HDC hdc = prepareForDrawing(i.context);  
     RECT widgetRect = r;
-    drawThemeBG(m_buttonTheme, hdc, themeData.m_part, themeData.m_state, &widgetRect, NULL);
+    if (m_themeDLL && !m_buttonTheme)
+        m_buttonTheme = openTheme(0, L"Button");
+    if (m_buttonTheme && drawThemeBG) {
+        drawThemeBG(m_buttonTheme, hdc, themeData.m_part, themeData.m_state, &widgetRect, NULL);
+    } else {
+        if ((themeData.m_part == BP_BUTTON) && isFocused(o)) {
+            // Draw black focus rect around button outer edge
+            HBRUSH brush = GetSysColorBrush(COLOR_3DDKSHADOW);
+            if (brush) {
+                FrameRect(hdc, &widgetRect, brush);
+                InflateRect(&widgetRect, -1, -1);
+            }
+        }
+        DrawFrameControl(hdc, &widgetRect, DFC_BUTTON, themeData.m_classicState);
+        if ((themeData.m_part != BP_BUTTON) && isFocused(o)) {
+            DrawFocusRect(hdc, &widgetRect);
+        }
+    }
     doneDrawing(i.context, hdc);
 
     return false;
@@ -262,48 +287,56 @@ void RenderThemeWin::setCheckboxSize(RenderStyle* style) const
         style->setHeight(Length(13, Fixed));
 }
 
-void RenderThemeWin::setRadioSize(RenderStyle* style) const
-{
-    // This is the same as checkboxes.
-    setCheckboxSize(style);
-}
-
-void RenderThemeWin::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
-{
-}
-
 bool RenderThemeWin::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
-    // FIXME: Need to fall back to painting a Win2k "Classic" look.  We will hit this situation if
-    // a Windows XP user has turned on the Win2k "Classic" appearance or is running Win2k.
-    if (!m_themeDLL)
-        return true;
-
-    if (!m_textFieldTheme)
-        m_textFieldTheme = openTheme(0, L"Edit");
-
-    if (!m_textFieldTheme || !drawThemeBG)
-        return true;
-
-    // Get the correct theme data for a button
+    // Get the correct theme data for a textfield
     ThemeData themeData = getThemeData(o);
-    
+
     // Now paint the text field.
     HDC hdc = prepareForDrawing(i.context);
     RECT widgetRect = r;
-    drawThemeBG(m_textFieldTheme, hdc, themeData.m_part, themeData.m_state, &widgetRect, NULL);
+    if (m_themeDLL && !m_textFieldTheme)
+        m_textFieldTheme = openTheme(0, L"Edit");
+    if (m_textFieldTheme && drawThemeBG) {
+        drawThemeBG(m_textFieldTheme, hdc, themeData.m_part, themeData.m_state, &widgetRect, NULL);
+    } else {
+        DrawEdge(hdc, &widgetRect, EDGE_SUNKEN, BF_RECT | BF_ADJUST);
+        FillRect(hdc, &widgetRect, reinterpret_cast<HBRUSH>(((themeData.m_classicState & DFCS_INACTIVE) ? COLOR_BTNFACE : COLOR_WINDOW) + 1));
+    }
     doneDrawing(i.context, hdc);
 
     return false;
 }
 
-void RenderThemeWin::adjustTextAreaStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+bool RenderThemeWin::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
+    // FIXME: All these inflate() calls are bogus, causing painting problems,
+    // as well as sizing wackiness in Classic mode
+    IntRect editRect(r);
+    editRect.inflateY(2);
+    paintTextField(o, i, editRect);
+
+    const int buttonWidth = GetSystemMetrics(SM_CXVSCROLL);
+    IntRect buttonRect(r.right() - buttonWidth - 1, r.y(), buttonWidth, r.height());
+    buttonRect.inflateY(1);
+    paintMenuListButton(o, i, buttonRect);
+
+    return false;
 }
 
-bool RenderThemeWin::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeWin::paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
-    return paintTextField(o, i, r);
+    HDC hdc = prepareForDrawing(i.context);
+    RECT widgetRect = r;
+    if (m_themeDLL && !m_menuListTheme)
+        m_menuListTheme = openTheme(0, L"Combobox");
+    if (m_menuListTheme && drawThemeBG)
+        drawThemeBG(m_menuListTheme, hdc, CP_DROPDOWNBUTTON, determineState(o), &widgetRect, NULL);
+    else
+        DrawFrameControl(hdc, &widgetRect, DFC_SCROLL, DFCS_SCROLLCOMBOBOX | determineClassicState(o));
+    doneDrawing(i.context, hdc);
+
+    return false;
 }
 
 }

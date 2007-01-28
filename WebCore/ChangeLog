@@ -1,3 +1,30 @@
+2007-01-27  Don Gibson  <dgibson77@gmail.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11880: Improve some egregious
+        Windows form control drawing issues:
+        Provide Classic mode fallbacks for the button/textfield drawing
+        routines.
+        Provide some basic drawing of menulists (still relatively broken).
+        Some cleanup.
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::RenderThemeWin::systemFont):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::m_menuListTheme):
+        (WebCore::RenderThemeWin::close):
+        (WebCore::RenderThemeWin::determineClassicState):
+        (WebCore::RenderThemeWin::getThemeData):
+        (WebCore::RenderThemeWin::paintButton):
+        (WebCore::RenderThemeWin::paintTextField):
+        (WebCore::RenderThemeWin::paintMenuList):
+        (WebCore::RenderThemeWin::paintMenuListButton):
+        * rendering/RenderThemeWin.h:
+        (WebCore::ThemeData::m_classicState):
+        (WebCore::RenderThemeWin::setRadioSize):
+        (WebCore::RenderThemeWin::paintTextArea):
+
 2007-01-27  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Adam.

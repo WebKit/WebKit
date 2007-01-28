@@ -34,10 +34,11 @@ typedef HINSTANCE HMODULE;
 namespace WebCore {
 
 struct ThemeData {
-    ThemeData() :m_part(0), m_state(0) {}
+    ThemeData() :m_part(0), m_state(0), m_classicState(0) {}
 
     unsigned m_part;
     unsigned m_state;
+    unsigned m_classicState;
 };
 
 class RenderThemeWin : public RenderTheme {
@@ -62,25 +63,26 @@ public:
 
     virtual bool paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
     { return paintButton(o, i, r); }
-    virtual void setRadioSize(RenderStyle*) const;
+    virtual void setRadioSize(RenderStyle* style) const
+    { return setCheckboxSize(style); }
 
-    virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
-    virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
-    virtual void adjustTextAreaStyle(CSSStyleSelector*, RenderStyle*, WebCore::Element*) const;
-    virtual bool paintTextArea(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintTextArea(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+    { return paintTextField(o, i, r); }
 
     virtual bool paintMenuList(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
-    virtual void adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+
+    virtual bool paintMenuListButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
 private:
     void addIntrinsicMargins(RenderStyle*) const;
     void close();
 
     unsigned determineState(RenderObject*);
+    unsigned determineClassicState(RenderObject*);
     bool supportsFocus(EAppearance);
 
     ThemeData getThemeData(RenderObject*);
@@ -88,6 +90,7 @@ private:
     HMODULE m_themeDLL;
     mutable HANDLE m_buttonTheme;
     mutable HANDLE m_textFieldTheme;
+    mutable HANDLE m_menuListTheme;
 };
 
 };
