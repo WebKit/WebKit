@@ -77,11 +77,9 @@ void FocusController::setFocusedFrame(PassRefPtr<Frame> frame)
 
 Frame* FocusController::focusedOrMainFrame()
 {
-    Frame* frame = focusedFrame();
-    if (!frame)
-        setFocusedFrame(m_page->mainFrame());
-    ASSERT(focusedFrame());
-    return focusedFrame();
+    if (Frame* frame = focusedFrame())
+        return frame;
+    return m_page->mainFrame();
 }
 
 static Node* deepFocusableNode(FocusDirection direction, Node* node, KeyboardEvent* event)

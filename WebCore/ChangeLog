@@ -1,3 +1,25 @@
+2007-01-27  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Ada.
+
+        Fix <rdar://problem/4957184> REGRESSION: After creating a new mail
+        message, the caret is automatically in message body
+
+        -[WebHTMLView _updateActiveState] was calling
+        FocusController::focusedOrMainFrame, which had the surprising
+        side-effect of setting the focused frame if there was none. The fix
+        was to remove this side-effect.
+
+        No tests possible, as this bug involves focus outside the WebView,
+        which we have no support for in DRT.
+
+        Change inspired by Dave Harrison.
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::focusedOrMainFrame): Removed this method's
+        non-obvious side-effect of setting the focused frame.
+        * WebCore.xcodeproj/project.pbxproj: Version wars.
+
 2007-01-27  Don Gibson  <dgibson77@gmail.com>
 
         Reviewed by Maciej.
