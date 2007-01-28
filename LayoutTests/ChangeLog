@@ -1,3 +1,12 @@
+2007-01-27  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by NOBODY (missing pixel test results).
+
+        * fast/dom/gc-10-expected.checksum: Added.
+        * fast/dom/gc-10-expected.png: Added.
+        * http/tests/misc/location-replace-crossdomain-expected.checksum: Added.
+        * http/tests/misc/location-replace-crossdomain-expected.png: Added.
+
 2007-01-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mitz.
