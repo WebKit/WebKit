@@ -1,3 +1,18 @@
+2007-01-28  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Adele.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=12453
+        REGRESSION(r19197): Tabbing into web page requires two key presses
+
+        All layout tests pass.
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocus): If there's no focused frame,
+        actually go ahead and find a focusable node instead of just focusing
+        the main frame and quitting. This behavior was a holdover from a
+        previous desired tabbing behavior with respect to frames.
+
 2007-01-28  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Darin and David Hyatt.

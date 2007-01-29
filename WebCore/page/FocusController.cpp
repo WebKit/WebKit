@@ -113,16 +113,9 @@ bool FocusController::advanceFocus(KeyboardEvent* event)
 {
     ASSERT(event);
     
-    if (!focusedFrame()) {
-        setFocusedFrame(m_page->mainFrame());
-        if (Document* document = focusedFrame()->document())
-            document->setFocusedNode(0);
-
-        return true;
-    }
-
-    Frame* focusedFrame = this->focusedFrame();
-    Document* document = focusedFrame->document();
+    Frame* frame = focusedOrMainFrame();
+    ASSERT(frame);
+    Document* document = frame->document();
     if (!document)
         return false;
 
@@ -133,7 +126,6 @@ bool FocusController::advanceFocus(KeyboardEvent* event)
         : document->previousFocusableNode(document->focusedNode(), event);
             
     // If there's no focusable node to advance to, move up the frame tree until we find one.
-    Frame* frame = focusedFrame;
     while (!node && frame) {
         Frame* parentFrame = frame->tree()->parent();
         if (!parentFrame)
