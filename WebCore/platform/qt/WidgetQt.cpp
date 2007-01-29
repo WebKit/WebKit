@@ -166,7 +166,7 @@ void Widget::unlockDrawingFocus(GraphicsContext*)
     notImplemented();
 }
 
-void Widget::paint(GraphicsContext*, IntRect const&)
+void Widget::paint(GraphicsContext*, const IntRect&)
 {
     notImplemented();
 }

@@ -1,3 +1,14 @@
+2007-01-29  Zack Rusin  <zrusin@trolltech.com>
+
+        Cosmetic fixes - don't resize the widget in the constructor
+        (it was a hack from the initial port) and fix the paint
+        signature.
+
+        * platform/qt/ScrollViewCanvasQt.cpp:
+        (WebCore::ScrollViewCanvasQt::ScrollViewCanvasQt):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::paint):
+
 2007-01-29  Maciej Stachowiak  <mjs@apple.com>
 
         - change from struct to class to make picky compilers happy

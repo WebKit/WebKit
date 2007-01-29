@@ -67,7 +67,6 @@ ScrollViewCanvasQt::ScrollViewCanvasQt(FrameView* frameView, QWidget* parent)
 {
     setMouseTracking(true);
     setFocusPolicy(Qt::StrongFocus);
-    resize(500, 500);
 }
 
 
