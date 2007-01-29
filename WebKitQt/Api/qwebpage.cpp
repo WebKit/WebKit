@@ -189,5 +189,9 @@ void QWebPage::runJavaScriptAlert(QWebFrame *frame, const QString& msg)
 {
 }
 
-#include "qwebpage.moc"
+QWebPage *QWebPage::createWindow()
+{
+    return 0;
+}
 
+#include "qwebpage.moc"

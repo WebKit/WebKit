@@ -33,6 +33,7 @@
 #include "FrameLoadRequest.h"
 
 #include "qwebpage.h"
+#include "qwebpage_p.h"
 
 #define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
@@ -117,9 +118,10 @@ void ChromeClientQt::takeFocus(FocusDirection)
 
 Page* ChromeClientQt::createWindow(const FrameLoadRequest& request)
 {
-    //QWebPage *newPage = m_webPage->createWindow(...);
-    notImplemented();
-    return 0;
+    QWebPage *newPage = m_webPage->createWindow();
+    if (!newPage)
+        return 0;
+    return newPage->d->page;
 }
 
 
