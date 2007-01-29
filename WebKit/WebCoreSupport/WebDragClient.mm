@@ -45,6 +45,13 @@ void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAct
     [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragDestinationAction:(WebDragDestinationAction)action forDraggingInfo:dragData->platformData()];
 }
 
+
+WebCore::DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint)
+{
+    NSPoint viewPoint = [m_webView convertPoint:windowPoint fromView:nil];
+    return (WebCore::DragSourceAction)[[m_webView _UIDelegateForwarder] webView:m_webView dragSourceActionMaskForPoint:viewPoint];
+}
+
 void WebDragClient::dragControllerDestroyed() 
 {
     delete this;

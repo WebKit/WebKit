@@ -30,6 +30,7 @@
 #include "CachedImage.h"
 #include "Cursor.h"
 #include "Document.h"
+#include "DragController.h"
 #include "Editor.h"
 #include "EventNames.h"
 #include "FocusController.h"
@@ -430,6 +431,18 @@ void EventHandler::setAutoscrollRenderer(RenderObject* renderer)
     m_autoscrollRenderer = renderer;
 }
 
+void EventHandler::allowDHTMLDrag(bool& flagDHTML, bool& flagUA) const
+{
+    if (!m_frame || !m_frame->document()) {
+        flagDHTML = false;
+        flagUA = false;
+    }
+    
+    unsigned mask = m_frame->page()->dragController()->delegateDragSourceAction(m_frame->view()->contentsToWindow(m_mouseDownPos));
+    flagDHTML = (mask & DragSourceActionDHTML) != DragSourceActionNone;
+    flagUA = ((mask & DragSourceActionImage) || (mask & DragSourceActionLink) || (mask & DragSourceActionSelection));
+}
+    
 HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool allowShadowContent)
 {
     HitTestResult result(point);

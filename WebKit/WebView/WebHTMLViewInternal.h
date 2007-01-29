@@ -42,8 +42,6 @@
     BOOL showsURLsInToolTips;
     BOOL ignoringMouseDraggedEvents;
     BOOL printing;
-    // Offset from lower left corner of dragged image to mouse location (when we're the drag source)
-    NSPoint dragOffset;
     
     id savedSubviews;
     BOOL subviewsSetAside;
@@ -96,7 +94,6 @@
 - (void)_formControlIsBecomingFirstResponder:(NSView *)formControl;
 - (void)_formControlIsResigningFirstResponder:(NSView *)formControl;
 - (void)_updateFontPanel;
-- (unsigned int)_delegateDragSourceActionMask;
 - (BOOL)_canSmartCopyOrDelete;
 - (BOOL)_textViewWasFirstResponderAtMouseDownTime:(NSTextView *)textView;
 - (void)_pauseNullEventsForAllNetscapePlugins;

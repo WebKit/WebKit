@@ -33,6 +33,7 @@ public:
                                                   DragData*);
     virtual WebCore::DragDestinationAction actionMaskForDrag(DragData*);
     virtual void dragControllerDestroyed();
+    virtual DragSourceAction dragSourceActionMaskForPoint(const IntPoint&);
 private:
 };
 

@@ -350,8 +350,8 @@ bool EventHandler::eventMayStartDrag(NSEvent *event) const
         return false;
     }
     
-    BOOL DHTMLFlag, UAFlag;
-    [Mac(m_frame)->bridge() allowDHTMLDrag:&DHTMLFlag UADrag:&UAFlag];
+    bool DHTMLFlag, UAFlag;
+    allowDHTMLDrag(DHTMLFlag, UAFlag);
     if (!DHTMLFlag && !UAFlag) {
         return false;
     }
@@ -401,8 +401,8 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
         // Careful that the drag starting logic stays in sync with eventMayStartDrag()
     
         if (m_mouseDownMayStartDrag && !dragState().m_dragSrc) {
-            BOOL tempFlag1, tempFlag2;
-            [Mac(m_frame)->bridge() allowDHTMLDrag:&tempFlag1 UADrag:&tempFlag2];
+            bool tempFlag1, tempFlag2;
+            allowDHTMLDrag(tempFlag1, tempFlag2);
             dragState().m_dragSrcMayBeDHTML = tempFlag1;
             dragState().m_dragSrcMayBeUA = tempFlag2;
             if (!dragState().m_dragSrcMayBeDHTML && !dragState().m_dragSrcMayBeUA)

@@ -1,3 +1,33 @@
+2007-01-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Migrated more drag logic and state to WebCore
+                                              
+        * page/DragClient.h:       
+
+        * page/DragController.cpp:
+        (WebCore::DragController::delegateDragSourceAction):
+          New forwarding method for the UI delegate
+        * page/DragController.h:
+        (WebCore::DragController::dragOffset):
+          Now store the drag offset -- the offset of the cursor relative to the drag image)
+          in DragController
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::allowDHTMLDrag):
+          Moved from WebFrameBridge
+        * page/EventHandler.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::eventMayStartDrag):
+        (WebCore::EventHandler::handleDrag):                  
+          EventHandlerMac now uses EventHandler::allowDHTMLDrag rather than the 
+          implementation in WebFrameBridge
+        * page/mac/WebCoreFrameBridge.h:
+          removed definition of allowDHTMLDrag from WebFrameBridge
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyDragClient::dragSourceActionMaskForPoint):
+          Updated empty DragClient
+
 2007-01-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

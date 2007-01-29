@@ -726,15 +726,6 @@ static BOOL loggedObjectCacheSize = NO;
     return [type length] == 0 ? (NSString *)@"application/octet-stream" : type;
 }
 
-- (void)allowDHTMLDrag:(BOOL *)flagDHTML UADrag:(BOOL *)flagUA
-{
-    WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
-    ASSERT([docView isKindOfClass:[WebHTMLView class]]);
-    unsigned int mask = [docView _delegateDragSourceActionMask];
-    *flagDHTML = (mask & WebDragSourceActionDHTML) != 0;
-    *flagUA = ((mask & WebDragSourceActionImage) || (mask & WebDragSourceActionLink) || (mask & WebDragSourceActionSelection));
-}
-
 - (BOOL)startDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc operation:(NSDragOperation)op
     event:(NSEvent *)event sourceIsDHTML:(BOOL)flag DHTMLWroteData:(BOOL)dhtmlWroteData
 {

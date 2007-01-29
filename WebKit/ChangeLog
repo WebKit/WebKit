@@ -1,3 +1,26 @@
+2007-01-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Migrated drag state and logic to WebCore, removed superfluous methods
+
+        * ChangeLog:
+        * WebCoreSupport/WebDragClient.h:
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::dragSourceActionMaskForPoint):
+        * WebCoreSupport/WebFrameBridge.mm:
+           allowDHTMLDrag move to WebCore::EventHandler
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+        (-[WebHTMLView draggedImage:movedTo:]):
+        (-[WebHTMLView draggedImage:endedAt:operation:]):
+          dragOffset and dragSourecAction is now stored in WebCore::DragController
+          migrated _delegateDragSourceActionMask to WebCore::DragController
+        * WebView/WebHTMLViewInternal.h:
+          Removed dragOffset declaration, migrated to WebCore::DragController
+        * WebView/WebView.mm:
+          removed unnecessary method, _loadingDragOperationForDraggingInfo
+
 2007-01-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark.

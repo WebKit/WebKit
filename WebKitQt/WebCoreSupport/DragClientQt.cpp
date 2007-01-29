@@ -42,6 +42,11 @@ void DragClientQt::dragControllerDestroyed()
 {    
 }
 
+DragSourceAction DragClientQt::dragSourceActionMaskForPoint(const IntPoint&)
+{
+    return DragSourceActionAny;
+}
+
 }
 
 

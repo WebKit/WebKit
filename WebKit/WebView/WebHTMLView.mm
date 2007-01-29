@@ -1345,7 +1345,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
             dragLoc = NSMakePoint(mouseDraggedPoint.x - wcDragLoc.x, mouseDraggedPoint.y + wcDragLoc.y);
         else
             dragLoc = NSMakePoint(mouseDownPoint.x - wcDragLoc.x, mouseDownPoint.y + wcDragLoc.y);
-        _private->dragOffset = wcDragLoc;
+        dragController->setDragOffset(IntPoint(wcDragLoc));
     }
     
     WebView *webView = [self _webView];
@@ -1383,14 +1383,16 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
                                                                   source:self];
         }
         [[webView _UIDelegateForwarder] webView:webView willPerformDragSourceAction:WebDragSourceActionImage fromPoint:mouseDownPoint withPasteboard:pasteboard];
-        if (dragImage == nil)
+        if (dragImage == nil) {
+            NSPoint point = dragController->dragOffset();
             [self _web_DragImageForElement:(DOMElement *)node
                                       rect:[self convertRect:[[element objectForKey:WebElementImageRectKey] rectValue] fromView:innerHTMLView]
                                      event:_private->mouseDownEvent
                                 pasteboard:pasteboard
                                     source:source
-                                    offset:&_private->dragOffset];
-        else
+                                    offset:&point];
+            dragController->setDragOffset(IntPoint(point));
+        } else
             [self dragImage:dragImage
                          at:dragLoc
                      offset:NSZeroSize
@@ -1409,8 +1411,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
             dragImage = [self _dragImageForLinkElement:element];
             NSSize offset = NSMakeSize([dragImage size].width / 2, -DRAG_LABEL_BORDER_Y);
             dragLoc = NSMakePoint(mouseDraggedPoint.x - offset.width, mouseDraggedPoint.y - offset.height);
-            _private->dragOffset.x = offset.width;
-            _private->dragOffset.y = -offset.height;        // inverted because we are flipped
+            dragController->setDragOffset(IntPoint(offset.width, -offset.height)); // height inverted because we are flipped
         }
         // HACK:  We should pass the mouseDown event instead of the mouseDragged!  This hack gets rid of
         // a flash of the image at the mouseDown location when the drag starts.
@@ -1429,8 +1430,8 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
             dragImage = [innerHTMLView _selectionDraggingImage];
             NSRect draggingRect = [self convertRect:[innerHTMLView _selectionDraggingRect] fromView:innerHTMLView];
             dragLoc = NSMakePoint(NSMinX(draggingRect), NSMaxY(draggingRect));
-            _private->dragOffset.x = mouseDownPoint.x - dragLoc.x;
-            _private->dragOffset.y = dragLoc.y - mouseDownPoint.y;        // inverted because we are flipped
+            dragController->setDragOffset(IntPoint(mouseDownPoint.x - dragLoc.x,
+                                                   dragLoc.y - mouseDownPoint.y));        // y inverted because we are flipped
         }
         [self dragImage:dragImage
                      at:dragLoc
@@ -1449,8 +1450,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
             dragImage = [[[NSImage alloc] initWithContentsOfFile:imagePath] autorelease];
             NSSize imageSize = [dragImage size];
             dragLoc = NSMakePoint(mouseDownPoint.x - imageSize.width / 2, mouseDownPoint.y + imageSize.height / 2);
-            _private->dragOffset.x = imageSize.width / 2;
-            _private->dragOffset.y = imageSize.height / 2;
+            dragController->setDragOffset(IntPoint(imageSize.width / 2, imageSize.height / 2));
         }
         [self dragImage:dragImage
                      at:dragLoc
@@ -2946,22 +2946,25 @@ done:
 - (void)draggedImage:(NSImage *)image movedTo:(NSPoint)screenLoc
 {
     ASSERT([self _isTopHTMLView]);
-
+    Page* page = core([self _webView]);
+    ASSERT(page);
+    DragController* dragController = page->dragController();
     NSPoint windowImageLoc = [[self window] convertScreenToBase:screenLoc];
-    NSPoint windowMouseLoc = NSMakePoint(windowImageLoc.x + _private->dragOffset.x, windowImageLoc.y + _private->dragOffset.y);
+    NSPoint windowMouseLoc = NSMakePoint(windowImageLoc.x + dragController->dragOffset().x(), windowImageLoc.y + dragController->dragOffset().y());
     [[self _bridge] dragSourceMovedTo:windowMouseLoc];
 }
 
 - (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
 {
     ASSERT(![self _webView] || [self _isTopHTMLView]);
+    Page* page = core([self _webView]);
+    ASSERT(page);
+    DragController* dragController = page->dragController();
 
     NSPoint windowImageLoc = [[self window] convertScreenToBase:aPoint];
-    NSPoint windowMouseLoc = NSMakePoint(windowImageLoc.x + _private->dragOffset.x, windowImageLoc.y + _private->dragOffset.y);
+    NSPoint windowMouseLoc = NSMakePoint(windowImageLoc.x + dragController->dragOffset().x(), windowImageLoc.y + dragController->dragOffset().y());
     [[self _bridge] dragSourceEndedAt:windowMouseLoc operation:operation];
-    Page *page = core([self _webView]);
-    ASSERT(page);
-    page->dragController()->dragEnded();
+    dragController->dragEnded();
     
     // Prevent queued mouseDragged events from coming after the drag and fake mouseUp event.
     _private->ignoringMouseDraggedEvents = YES;
@@ -4957,27 +4960,6 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     // FIXME: we don't keep track of selected attributes, or set them on the font panel. This
     // appears to have no effect on the UI. E.g., underlined text in Mail or TextEdit is
     // not reflected in the font panel. Maybe someday this will change.
-}
-
-- (unsigned)_delegateDragSourceActionMask
-{
-    ASSERT(_private->mouseDownEvent != nil);
-    WebHTMLView *topHTMLView = [self _topHTMLView];
-    if (self != topHTMLView) {
-        [topHTMLView _setMouseDownEvent:_private->mouseDownEvent];
-        unsigned result = [topHTMLView _delegateDragSourceActionMask];
-        [topHTMLView _setMouseDownEvent:nil];
-        return result;
-    }
-
-    WebView *webView = [self _webView];
-    NSPoint point = [webView convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
-    Page* page = core(webView);
-    if (!page)
-        return DragSourceActionNone;
-    DragSourceAction sourceAction = (DragSourceAction)[[webView _UIDelegateForwarder] webView:webView dragSourceActionMaskForPoint:point];
-    page->dragController()->setDragSourceAction(sourceAction);
-    return sourceAction;
 }
 
 - (BOOL)_canSmartCopyOrDelete

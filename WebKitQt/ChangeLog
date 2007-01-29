@@ -1,3 +1,13 @@
+2007-01-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Stub for new DragClient method
+
+        * WebCoreSupport/DragClientQt.cpp:
+        (WebCore::DragClientQt::dragSourceActionMaskForPoint):
+        * WebCoreSupport/DragClientQt.h:
+
 2007-01-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark.

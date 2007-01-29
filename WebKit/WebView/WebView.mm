@@ -294,8 +294,6 @@ macro(yankAndSelect) \
 
     NSString *mediaStyle;
     
-    unsigned int dragDestinationActionMask;
-    
     BOOL hasSpellCheckerDocumentTag;
     WebNSInteger spellCheckerDocumentTag;
 
@@ -2096,20 +2094,6 @@ NS_ENDHANDLER
 - (NSDictionary *)elementAtPoint:(NSPoint)point
 {
     return [self _elementAtWindowPoint:[self convertPoint:point toView:nil]];
-}
-
-- (NSDragOperation)_loadingDragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
-{
-    if (_private->dragDestinationActionMask & WebDragDestinationActionLoad) {
-        NSPoint windowPoint = [draggingInfo draggingLocation];
-        NSView *view = [self hitTest:[[self superview] convertPoint:windowPoint toView:nil]];
-        // Don't accept the drag over a plug-in since plug-ins may want to handle it.
-        if (![view isKindOfClass:[WebBaseNetscapePluginView class]] && !_private->editable && [self page]->dragController()->didInitiateDrag()) {
-            // If not editing or dragging, use _web_dragOperationForDraggingInfo to find a URL to load on the pasteboard.
-            return [self _web_dragOperationForDraggingInfo:draggingInfo];
-        }
-    }
-    return NSDragOperationNone;
 }
 
 // The following 2 internal NSView methods are called on the drag destination by make scrolling while dragging work.

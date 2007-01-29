@@ -273,6 +273,12 @@ DragOperation DragController::tryDocumentDrag(DragData* dragData, DragDestinatio
     m_page->dragCaretController()->clear();
     return operation;
 }
+
+DragSourceAction DragController::delegateDragSourceAction(const IntPoint& windowPoint)
+{  
+    m_dragSourceAction = m_client->dragSourceActionMaskForPoint(windowPoint);
+    return m_dragSourceAction;
+}
     
 DragOperation DragController::operationForLoad(DragData* dragData)
 {

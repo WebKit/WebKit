@@ -63,13 +63,12 @@ namespace WebCore {
         void setDragInitiator(Document* initiator) { m_dragInitiator = initiator; m_didInitiateDrag = true; }
         Document* dragInitiator() const { return m_dragInitiator; }
         void setDragOffset(const IntPoint& offset) { m_dragOffset = offset; }
-        IntPoint dragOffset() const { return m_dragOffset; }
-        void setDragSourceAction(DragSourceAction action) { m_dragSourceAction = action; }
+        const IntPoint& dragOffset() const { return m_dragOffset; }
         DragSourceAction dragSourceAction() const { return m_dragSourceAction; }
-        
         
         Document* document() const { return m_document; }
         DragDestinationAction dragDestinationAction() const { return m_dragDestinationAction; }
+        DragSourceAction delegateDragSourceAction(const IntPoint& pagePoint);
         
         void dragEnded() { m_dragInitiator = 0; m_didInitiateDrag = false; }
         

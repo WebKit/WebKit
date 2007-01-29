@@ -345,6 +345,7 @@ public:
     virtual ~SVGEmptyDragClient() {}
     virtual void willPerformDragDestinationAction(DragDestinationAction, DragData*) { }
     virtual DragDestinationAction actionMaskForDrag(DragData*) { return DragDestinationActionNone; }
+    virtual DragSourceAction dragSourceActionMaskForPoint(const IntPoint&) { return DragSourceActionNone; }
     virtual void dragControllerDestroyed() { }
 };
     
