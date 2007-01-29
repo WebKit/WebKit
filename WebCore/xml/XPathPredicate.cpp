@@ -183,6 +183,7 @@ Value LogicalOp::doEvaluate() const
 
 Value Union::doEvaluate() const
 {
+    // FIXME: This algorithm doesn't return nodes in document order, as it should.
     Value lhs = subExpr(0)->evaluate();
     Value rhs = subExpr(1)->evaluate();
     if (!lhs.isNodeVector() || !rhs.isNodeVector())
@@ -193,14 +194,13 @@ Value Union::doEvaluate() const
     NodeVector result = lhsNodes;
     
     HashSet<Node*> nodes;
+    for (size_t i = 0; i < result.size(); ++i)
+        nodes.add(result[i].get());
     
-    for (unsigned i = 0; i < rhsNodes.size(); i++) {
+    for (size_t i = 0; i < rhsNodes.size(); ++i) {
         Node* node = rhsNodes[i].get();
-        
-        if (!nodes.contains(node)) {
+        if (nodes.add(node).second)
             result.append(node);
-            nodes.add(node);
-        }
     }
     
     return result;

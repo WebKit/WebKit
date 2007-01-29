@@ -94,7 +94,7 @@ void LocationPath::optimize()
 
 Value LocationPath::doEvaluate() const
 {
-    NodeVector inDomNodes, outDomNodes;
+    NodeVector inDOMNodes;
 
     /* For absolute location paths, the context node is ignored - the
      * document's root node is used instead.
@@ -103,22 +103,27 @@ Value LocationPath::doEvaluate() const
     if (m_absolute && context->nodeType() != Node::DOCUMENT_NODE) 
         context = context->ownerDocument();
 
-    inDomNodes.append(context);
+    inDOMNodes.append(context);
     
     for (unsigned i = 0; i < m_steps.size(); i++) {
         Step* step = m_steps[i];
+        NodeVector outDOMNodes;
+        HashSet<Node*> outDOMNodesSet;
 
-        for (unsigned j = 0; j < inDomNodes.size(); j++) {
-            NodeVector matches = step->evaluate(inDomNodes[j].get());
+        for (unsigned j = 0; j < inDOMNodes.size(); j++) {
+            NodeVector matches = step->evaluate(inDOMNodes[j].get());
             
-            outDomNodes.append(matches);
+            for (size_t nodeIndex = 0; nodeIndex < matches.size(); ++nodeIndex) {
+                Node* node = matches[nodeIndex].get();
+                if (outDOMNodesSet.add(node).second)
+                    outDOMNodes.append(node);
+            }
         }
         
-        inDomNodes = outDomNodes;
-        outDomNodes.clear();
+        inDOMNodes = outDOMNodes;
     }
 
-    return inDomNodes;
+    return inDOMNodes;
 }
 
 Path::Path(Filter* filter, LocationPath* path)

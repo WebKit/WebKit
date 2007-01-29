@@ -2,6 +2,16 @@
 
         Reviewed by Darin.
 
+        http://bugs.webkit.org/show_bug.cgi?id=12359
+        XPathEvaluator may return some nodes more than once in a result set
+
+        * fast/xpath/nodeset-duplicates-expected.txt: Added.
+        * fast/xpath/nodeset-duplicates.html: Added.
+
+2007-01-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         http://bugs.webkit.org/show_bug.cgi?id=12340
         XPathEvaluator behavior does not match Firefox - name() and attribute nodes
 
