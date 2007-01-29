@@ -77,6 +77,8 @@ public slots:
     void goForward();
     void goToHistoryItem(const QWebHistoryItem &item);
 
+    virtual void setWindowGeometry(const QRect& geom);
+
 signals:
     /**
      * Signal is emitted when load is started on one of the child

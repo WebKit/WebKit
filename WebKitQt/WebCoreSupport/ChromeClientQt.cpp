@@ -57,8 +57,8 @@ void ChromeClientQt::setWindowRect(const FloatRect& rect)
 {
     if (!m_webPage)
         return;
-//     m_webPage->emit setWindowRect(QRect(qRound(r.x()), qRound(r.y()),
-//                                         qRound(r.width()), qRound(r.height())));
+    m_webPage->setWindowGeometry(QRect(qRound(rect.x()), qRound(rect.y()),
+                            qRound(rect.width()), qRound(rect.height())));
 }
 
 
