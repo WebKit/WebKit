@@ -3,14 +3,14 @@
     <script>
 function debug(str) {
     var d = document.getElementById('console');
-	d.appendChild(document.createTextNode(str + "\n"));
+    d.appendChild(document.createTextNode(str + "\n"));
 }
     
 function runTests () {
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
         
-    var xmlString = '<ns:foo xmlns:ns="http://www.example.org">';
+    var xmlString = '<ns:foo xmlns:ns="http://www.example.org"/>';
 
     var doc = (new DOMParser()).parseFromString(xmlString, "text/xml");
     var contextNode = doc.documentElement;

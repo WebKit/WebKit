@@ -2,6 +2,25 @@
 
         Reviewed by Darin.
 
+        http://bugs.webkit.org/show_bug.cgi?id=12340
+        XPathEvaluator behavior does not match Firefox - name() and attribute nodes
+
+        * fast/xpath/name-null-namespace-expected.txt: Added.
+        * fast/xpath/name-null-namespace.html: Added.
+        Test for the bug.
+
+        * fast/dom/xpath-empty-string-expected.txt: Removed.
+        * fast/dom/xpath-empty-string.html: Removed.
+        Moved these to fast/xpath.
+
+        * fast/xpath/xpath-namespaces.html: Fixed an inline document to be well-formed, so the test now passes in Firefox.
+        This is really a quirk of our DOMParser that the test passed in WebKit: on error, a descriptive message is appended to
+        the partially parsed document, instead of replacing it.
+
+2007-01-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         http://bugs.webkit.org/show_bug.cgi?id=11815
         XPathEvaluator behavior does not match Firefox - substring() and empty element
 
