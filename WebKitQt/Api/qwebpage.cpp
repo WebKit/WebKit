@@ -174,5 +174,17 @@ void QWebPage::goToHistoryItem(const QWebHistoryItem &item)
     d->page->goToItem(item.d->item, FrameLoadTypeIndexedBackForward);
 }
 
+void QWebPage::javaScriptConsoleMessage(const QString& message, unsigned int lineNumber, const QString& sourceID)
+{
+}
+
+void QWebPage::statusTextChanged(const QString& text)
+{
+}
+
+void QWebPage::runJavaScriptAlert(QWebFrame *frame, const QString& msg)
+{
+}
+
 #include "qwebpage.moc"
 

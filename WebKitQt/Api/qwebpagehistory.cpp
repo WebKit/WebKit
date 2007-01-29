@@ -128,6 +128,16 @@ QList<QWebHistoryItem> QWebPageHistory::forwardItems(int maxItems) const
     return ret;
 }
 
+bool QWebPageHistory::canGoBack() const
+{
+    return d->lst->backListCount() > 0;
+}
+
+bool QWebPageHistory::canGoForward() const
+{
+    return d->lst->forwardListCount() > 0;
+}
+
 void QWebPageHistory::goBack()
 {
     d->lst->goBack();

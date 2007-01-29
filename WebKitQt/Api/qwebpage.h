@@ -59,6 +59,12 @@ public:
 
     QUrl url() const;
 
+    virtual void javaScriptConsoleMessage(const QString& message, unsigned int lineNumber, const QString& sourceID);
+
+    virtual void statusTextChanged(const QString& text);
+
+    virtual void runJavaScriptAlert(QWebFrame *frame, const QString& msg);
+
 public slots:
     /**
      * Stops loading of the page, if loading.
