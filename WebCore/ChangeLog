@@ -1,3 +1,25 @@
+2007-01-28  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8360
+          Repro crash when onscroll handler deletes the scrolled object
+
+        Test: fast/layers/removed-by-scroll-handler.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::FrameViewPrivate): Added a m_enqueueEvents count.
+        (WebCore::FrameView::layout): Raise the enqueue count before starting layout and
+        until after enqueued events are dispatched.
+        (WebCore::FrameView::scheduleEvent): Made this function dispatch the event
+        immediately unless the enqueue count is positive.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToOffset): Schedule the scroll event through the
+        FrameView.
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        (WebCore::Marquee::start):
+
 2007-01-28  Charles Ying  <charles_ying@yahoo.com>
 
         Reviewed by eseidel.  Landed by eseidel.

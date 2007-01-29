@@ -718,8 +718,9 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
             m_vBar->setValue(m_scrollY);
     }
 
-    // Fire the scroll DOM event.
-    EventTargetNodeCast(m_object->element())->dispatchHTMLEvent(scrollEvent, true, false);
+    // Schedule the scroll DOM event.
+    if (FrameView* frameView = renderer()->view()->frameView())
+        frameView->scheduleEvent(new Event(scrollEvent, true, false), EventTargetNodeCast(renderer()->element()), true);
 }
 
 void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
@@ -746,8 +747,6 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment
             int diffX = scrollXOffset();
             int diffY = scrollYOffset();
             scrollToOffset(xOffset, yOffset);
-            // FIXME: At this point a scroll event fired, which could have deleted this layer.
-            // Need to handle this case.
             diffX = scrollXOffset() - diffX;
             diffY = scrollYOffset() - diffY;
             newRect.setX(rect.x() - diffX);
@@ -1183,8 +1182,6 @@ RenderLayer::updateScrollInfoAfterLayout()
         int newY = max(0, min(m_scrollY, scrollHeight() - m_object->clientHeight()));
         if (newX != scrollXOffset() || newY != m_scrollY)
             scrollToOffset(newX, newY);
-        // FIXME: At this point a scroll event fired, which could have deleted this layer.
-        // Need to handle this case.
     }
 
     bool haveHorizontalBar = m_hBar;
@@ -2155,8 +2152,6 @@ void Marquee::start()
             m_layer->scrollToOffset(m_start, 0, false, false);
         else
             m_layer->scrollToOffset(0, m_start, false, false);
-        // FIXME: At this point a scroll event fired, which could have deleted this layer,
-        // including the marquee. Need to handle this case.
     }
     else {
         m_suspended = false;
