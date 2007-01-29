@@ -89,8 +89,8 @@ QWebFrame::QWebFrame(QWebFrame *parent, QWebFrameData *frameData)
 
 QWebFrame::~QWebFrame()
 {
-    if (d->frameView)
-        d->frameView->setScrollArea(0);
+    Q_ASSERT(d->frame == 0);
+    Q_ASSERT(d->frameView == 0);
     delete d;
 }
 

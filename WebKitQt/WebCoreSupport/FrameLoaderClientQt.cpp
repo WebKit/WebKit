@@ -82,16 +82,6 @@ void FrameLoaderClientQt::setFrame(QWebFrame *webFrame, FrameQt *frame)
             m_webFrame, SIGNAL(titleChanged(const QString&)));
 }
 
-void FrameLoaderClientQt::detachFrameLoader()
-{
-    disconnect(this, SIGNAL(loadStarted(QWebFrame*)));
-    disconnect(this, SIGNAL(loadProgressChanged(double)));
-    disconnect(this, SIGNAL(loadFinished(QWebFrame*)));
-    disconnect(this, SIGNAL(titleChanged(const QString&)));
-    m_webFrame = 0;
-    m_frame = 0;
-}
-
 void FrameLoaderClientQt::callPolicyFunction(FramePolicyFunction function, PolicyAction action)
 {
     qDebug() << "FrameLoaderClientQt::callPolicyFunction";
@@ -265,17 +255,15 @@ void FrameLoaderClientQt::detachedFromParent2()
 
 void FrameLoaderClientQt::detachedFromParent3()
 {
-    if (!m_webFrame)
-        return;
-    if (m_webFrame->d->frameView)
-        m_webFrame->d->frameView->setScrollArea(0);
-    m_webFrame->d->frameView = 0;
 }
 
 
 void FrameLoaderClientQt::detachedFromParent4()
 {
-    delete m_webFrame;
+    if (!m_webFrame)
+        return;
+    m_webFrame->d->frame = 0;
+    m_webFrame->d->frameView = 0;
     m_webFrame = 0;
     m_frame = 0;
 }
@@ -583,8 +571,8 @@ void FrameLoaderClientQt::dispatchDidReceiveIcon()
 
 void FrameLoaderClientQt::frameLoaderDestroyed()
 {
-    m_webFrame = 0;
-    m_frame = 0;
+    Q_ASSERT(m_webFrame == 0);
+    Q_ASSERT(m_frame == 0);
     delete this;
 }
 

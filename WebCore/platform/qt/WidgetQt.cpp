@@ -46,12 +46,11 @@ namespace WebCore {
 
 struct WidgetPrivate
 {
-    WidgetPrivate() : m_parent(0), m_widget(0), m_client(0) { }
-    ~WidgetPrivate() { }
+    WidgetPrivate() : m_widget(0), m_client(0) { }
+    ~WidgetPrivate() { delete m_widget; }
 
-    WidgetClient *m_client;
+    WidgetClient* m_client;
 
-    QWidget* m_parent;
     QWidget* m_widget;
 
     Font     m_font;
@@ -143,7 +142,7 @@ void Widget::setQWidget(QWidget* child)
     data->m_widget = child;
 }
 
-QWidget* Widget::qwidget()
+QWidget* Widget::qwidget() const
 {
     return data->m_widget;
 }

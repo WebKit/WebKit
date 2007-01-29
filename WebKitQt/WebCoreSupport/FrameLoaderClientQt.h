@@ -68,7 +68,6 @@ namespace WebCore {
         FrameLoaderClientQt();
         ~FrameLoaderClientQt();
         void setFrame(QWebFrame *webFrame, FrameQt *frame);
-        virtual void detachFrameLoader();
 
         virtual bool hasWebView() const; // mainly for assertions
         virtual bool hasFrameView() const; // ditto

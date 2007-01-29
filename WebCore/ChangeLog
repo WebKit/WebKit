@@ -1,3 +1,27 @@
+2007-01-29  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Zack
+
+        Fix the way we handle native widgets (QWidget) inside
+        WebCore. Now WebCore::Widget owns the QWidget in all
+        cases. This is the only way to get well defined semantics
+        for all teh native widgets we have (currently ScrollView
+        and ScrollBar, but plugins will follow).
+
+        This has the side effect that one cannot rely on a defined 
+        lifetime of a QWebFrame when using the API. 
+
+        * platform/Widget.h:
+        * platform/qt/PlatformScrollBarQt.cpp:
+        (WebCore::PlatformScrollbar::PlatformScrollbar):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::addChild):
+        (WebCore::ScrollView::removeChild):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::WidgetPrivate::WidgetPrivate):
+        (WebCore::WidgetPrivate::~WidgetPrivate):
+        (WebCore::Widget::qwidget):
+
 2007-01-28  George Staikos  <staikos@kde.org>
 
         Reviewed by Maciej.
