@@ -1,5 +1,17 @@
 2007-01-29  Maciej Stachowiak  <mjs@apple.com>
 
+        - added new file that I forgot in the last commit
+
+        * loader/SubstituteData.h: Added.
+        (WebCore::SubstituteData::SubstituteData):
+        (WebCore::SubstituteData::isValid):
+        (WebCore::SubstituteData::content):
+        (WebCore::SubstituteData::mimeType):
+        (WebCore::SubstituteData::textEncoding):
+        (WebCore::SubstituteData::failingURL):
+
+2007-01-29  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Mark.
 
         - made data loading cross-platform
