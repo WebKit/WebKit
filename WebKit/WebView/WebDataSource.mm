@@ -358,7 +358,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (id)initWithRequest:(NSURLRequest *)request
 {
-    return [self _initWithDocumentLoader:new WebDocumentLoaderMac(request)];
+    return [self _initWithDocumentLoader:new WebDocumentLoaderMac(request, SubstituteData())];
 }
 
 - (void)dealloc

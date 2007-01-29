@@ -36,10 +36,6 @@
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 
-#if PLATFORM(MAC)
-#import "WebDataProtocol.h"
-#endif
-
 // FIXME: More that is in common with SubresourceLoader should move up into ResourceLoader.
 
 namespace WebCore {
@@ -158,15 +154,10 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
     if (newRequest.cachePolicy() == UseProtocolCachePolicy && isPostOrRedirectAfterPost(newRequest, redirectResponse))
         newRequest.setCachePolicy(ReloadIgnoringCacheData);
 
-#if PLATFORM(MAC)
-    ResourceRequest r([newRequest.nsURLRequest() _webDataRequestExternalRequest]);
-    if (!r.isNull()) {
-        ResourceLoader::willSendRequest(r, redirectResponse);
-        if (request() == r)
-            setRequest(newRequest);
-    } else
-#endif
-    ResourceLoader::willSendRequest(newRequest, redirectResponse);
+    if (!newRequest.isNull()) {
+        ResourceLoader::willSendRequest(newRequest, redirectResponse);
+        setRequest(newRequest);
+    }
     
     // Don't set this on the first request. It is set when the main load was started.
     frameLoader()->setRequest(newRequest);
@@ -189,9 +180,7 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
     case PolicyUse: {
         // Prevent remote web archives from loading because they can claim to be from any domain and thus avoid cross-domain security checks (4120255).
         bool isRemote = !url.isLocalFile();
-#if PLATFORM(MAC)
-        isRemote = isRemote && ![WebDataProtocol _webIsDataProtocolURL:url.getNSURL()];
-#endif
+        isRemote = isRemote && !m_substituteData.isValid();
         bool isRemoteWebArchive = isRemote && equalIgnoringCase("application/x-webarchive", mimeType);
         if (!frameLoader()->canShowMIMEType(mimeType) || isRemoteWebArchive) {
             frameLoader()->cannotShowMIMEType(r);
@@ -233,22 +222,16 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
     }
 
     // we may have cancelled this load as part of switching to fallback content
-    if (!reachedTerminalState()) {
-#if PLATFORM(MAC) 
-        // If the URL is one of our whacky applewebdata URLs then
-        // fake up a substitute URL to present to the delegate.
-        if ([WebDataProtocol _webIsDataProtocolURL:[r.nsURLResponse() URL]]) 
-            ResourceLoader::didReceiveResponse([[[NSURLResponse alloc] initWithURL:[request().nsURLRequest() _webDataRequestExternalURL] MIMEType:r.mimeType()
-                                                 expectedContentLength:r.expectedContentLength() textEncodingName:r.textEncodingName()] autorelease]);
-        else
-#endif
+    if (!reachedTerminalState())
         ResourceLoader::didReceiveResponse(r);
-    }
 
-    if (frameLoader() && !frameLoader()->isStopping()
-            && (shouldLoadAsEmptyDocument(url)
-                || frameLoader()->representationExistsForURLScheme(url.protocol())))
-        didFinishLoading();
+    if (frameLoader() && !frameLoader()->isStopping())
+        if (m_substituteData.isValid()) {
+            didReceiveData(m_substituteData.content()->data(), m_substituteData.content()->size(), m_substituteData.content()->size(), true);
+            if (frameLoader() && !frameLoader()->isStopping()) 
+                didFinishLoading();
+        } else if (shouldLoadAsEmptyDocument(url) || frameLoader()->representationExistsForURLScheme(url.protocol()))
+            didFinishLoading();
 }
 
 void MainResourceLoader::callContinueAfterContentPolicy(void* argument, PolicyAction policy)
@@ -323,6 +306,26 @@ void MainResourceLoader::didFail(const ResourceError& error)
     receivedError(error);
 }
 
+void MainResourceLoader::handleEmptyLoad(const KURL& url, bool forURLScheme)
+{
+    String mimeType;
+    if (forURLScheme)
+        mimeType = frameLoader()->generatedMIMETypeForURLScheme(url.protocol());
+    else
+        mimeType = "text/html";
+    
+    ResourceResponse response(url, mimeType, 0, String(), String());
+    didReceiveResponse(response);
+}
+
+void MainResourceLoader::handleDataLoad(ResourceRequest& r)
+{
+    RefPtr<MainResourceLoader> protect(this);
+
+    ResourceResponse response(r.url(), m_substituteData.mimeType(), m_substituteData.content()->size(), m_substituteData.textEncoding(), "");
+    didReceiveResponse(response);
+}
+
 bool MainResourceLoader::loadNow(ResourceRequest& r)
 {
     bool shouldLoadEmptyBeforeRedirect = shouldLoadAsEmptyDocument(r.url());
@@ -346,25 +349,21 @@ bool MainResourceLoader::loadNow(ResourceRequest& r)
     if (shouldLoadEmptyBeforeRedirect && !shouldLoadEmpty && defersLoading())
         return true;
 
-    if (shouldLoadEmpty || frameLoader()->representationExistsForURLScheme(url.protocol())) {
-        String mimeType;
-        if (shouldLoadEmpty)
-            mimeType = "text/html";
-        else
-            mimeType = frameLoader()->generatedMIMETypeForURLScheme(url.protocol());
-
-        ResourceResponse response(url, mimeType, 0, String(), String());
-        didReceiveResponse(response);
-    } else {
+    if (m_substituteData.isValid())
+        handleDataLoad(r);
+    else if (shouldLoadEmpty || frameLoader()->representationExistsForURLScheme(url.protocol()))
+        handleEmptyLoad(url, !shouldLoadEmpty);
+    else
         m_handle = ResourceHandle::create(r, this, m_frame.get(), false, true);
-    }
 
     return false;
 }
 
-bool MainResourceLoader::load(const ResourceRequest& r)
+bool MainResourceLoader::load(const ResourceRequest& r, const SubstituteData&  substituteData)
 {
     ASSERT(!m_handle);
+
+    m_substituteData = substituteData;
 
     ResourceRequest request(r);
     bool defer = defersLoading();
@@ -380,7 +379,7 @@ bool MainResourceLoader::load(const ResourceRequest& r)
             defer = true;
         }
     }
-    if (defer) 
+    if (defer)
         m_initialRequest = request;
 
     return true;

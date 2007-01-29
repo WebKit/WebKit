@@ -43,13 +43,6 @@
 
 namespace WebCore {
 
-const KURL DocumentLoader::unreachableURL() const
-{
-    KURL url;
-    notImplemented();
-    return url;
-}
-
 bool DocumentLoader::getResponseModifiedHeader(WebCore::String&) const
 {
     notImplemented();

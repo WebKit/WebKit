@@ -1,3 +1,27 @@
+2007-01-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark.
+
+        - updated for cross-platform data loading support
+        
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createDocumentLoader):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource initWithRequest:]):
+        * WebView/WebDocumentLoaderMac.h:
+        * WebView/WebDocumentLoaderMac.mm:
+        (WebDocumentLoaderMac::WebDocumentLoaderMac):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _loadData:MIMEType:textEncodingName:baseURL:unreachableURL:]):
+        (-[WebFrame loadData:MIMEType:textEncodingName:baseURL:]):
+        (-[WebFrame _loadHTMLString:baseURL:unreachableURL:]):
+        (-[WebFrame loadArchive:]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebHTMLView.mm:
+        (uniqueURLWithRelativePart):
+        (-[WebHTMLView _documentFragmentFromPasteboard:inContext:allowPlainText:chosePlainText:]):
+
 2007-01-27  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Adam.

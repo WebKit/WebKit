@@ -176,7 +176,8 @@ private:
     virtual void provisionalLoadStarted();
     virtual void didFinishLoad();
     virtual void prepareForDataSourceReplacement();
-    virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&);
+    virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
+
     virtual void setTitle(const WebCore::String& title, const WebCore::KURL&);
 
     virtual WebCore::Frame* createFrame(const WebCore::KURL& url, const WebCore::String& name, WebCore::HTMLFrameOwnerElement*,

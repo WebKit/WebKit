@@ -34,19 +34,8 @@
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SubstituteData.h"
 #include <wtf/Vector.h>
-
-#if PLATFORM(MAC)
-
-#include "RetainPtr.h"
-
-#ifndef __OBJC__
-
-class NSData;
-
-#endif
-
-#endif
 
 namespace WebCore {
 
@@ -56,12 +45,13 @@ namespace WebCore {
     class KURL;
     class PageCache;
     class SharedBuffer;
+    class SubstituteData;
 
     typedef Vector<ResourceResponse> ResponseVector;
 
     class DocumentLoader : public Shared<DocumentLoader> {
     public:
-        DocumentLoader(const ResourceRequest&);
+        DocumentLoader(const ResourceRequest&, const SubstituteData&);
         virtual ~DocumentLoader();
 
         void setFrame(Frame*);
@@ -81,8 +71,10 @@ namespace WebCore {
         ResourceRequest& actualRequest();
         const ResourceRequest& initialRequest() const;
 
+        const SubstituteData& substituteData() const { return m_substituteData; }
+
         const KURL& URL() const;
-        const KURL unreachableURL() const;
+        const KURL& unreachableURL() const;
 
         KURL originalURL() const;
         KURL requestURL() const;
@@ -149,7 +141,9 @@ namespace WebCore {
         // This should only be used by the resourceLoadDelegate's
         // identifierForInitialRequest:fromDatasource: method. It is
         // not guaranteed to remain unchanged, as requests are mutable.
-        ResourceRequest m_originalRequest;    
+        ResourceRequest m_originalRequest;   
+
+        SubstituteData m_substituteData;
 
         // A copy of the original request used to create the data source.
         // We have to copy the request because requests are mutable.

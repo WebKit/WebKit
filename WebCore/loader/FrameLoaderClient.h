@@ -52,6 +52,8 @@ namespace WebCore {
     class ResourceLoader;
     class ResourceRequest;
     class ResourceResponse;
+    class SharedBuffer;
+    class SubstituteData;
     class String;
     class Widget;
 
@@ -175,7 +177,7 @@ namespace WebCore {
         virtual void didFinishLoad() = 0;
         virtual void prepareForDataSourceReplacement() = 0;
 
-        virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&) = 0;
+        virtual PassRefPtr<DocumentLoader> createDocumentLoader(const ResourceRequest&, const SubstituteData&) = 0;
         virtual void setTitle(const String& title, const KURL&) = 0;
 
         virtual String userAgent() = 0;

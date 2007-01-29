@@ -87,7 +87,6 @@
 #import <WebCore/Range.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/WebCoreTextRenderer.h>
-#import <WebCore/WebDataProtocol.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
@@ -402,6 +401,17 @@ static WebHTMLView *lastHitView;
     return elements;
 }
 
+static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
+{
+    CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
+    NSString *UUIDString = (NSString *)CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
+    CFRelease(UUIDRef);
+    NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"-webkit-fake-url://%@/%@", UUIDString, relativePart]];
+    CFRelease(UUIDString);
+
+    return URL;
+}
+
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard
                                                inContext:(DOMRange *)context
                                           allowPlainText:(BOOL)allowPlainText
@@ -467,7 +477,7 @@ static WebHTMLView *lastHitView;
     
     if ([types containsObject:NSTIFFPboardType]) {
         WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSTIFFPboardType]
-                                                              URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.tiff"]
+                                                              URL:uniqueURLWithRelativePart(@"image.tiff")
                                                          MIMEType:@"image/tiff" 
                                                  textEncodingName:nil
                                                         frameName:nil];
@@ -478,7 +488,7 @@ static WebHTMLView *lastHitView;
     
     if ([types containsObject:NSPICTPboardType]) {
         WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSPICTPboardType]
-                                                              URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.pict"]
+                                                              URL:uniqueURLWithRelativePart(@"image.pict")
                                                          MIMEType:@"image/pict" 
                                                  textEncodingName:nil
                                                         frameName:nil];

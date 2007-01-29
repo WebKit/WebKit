@@ -69,7 +69,7 @@
 #import <WebCore/HTMLFrameOwnerElement.h>
 #import <WebCore/Page.h>
 #import <WebCore/SelectionController.h>
-#import <WebCore/WebDataProtocol.h>
+#import <WebCore/SharedBuffer.h>
 #import <WebCore/FormState.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebKit/DOMDocument.h>
@@ -262,19 +262,6 @@ WebView *getWebView(WebFrame *webFrame)
         return nil;
     return kit(coreFrame->page());
 }
-
-- (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
-{
-    NSURL *fakeURL = [NSURL _web_uniqueWebDataURL];
-    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:fakeURL] autorelease];
-    [request _webDataRequestSetData:data];
-    [request _webDataRequestSetEncoding:encodingName];
-    [request _webDataRequestSetBaseURL:URL];
-    [request _webDataRequestSetUnreachableURL:unreachableURL];
-    [request _webDataRequestSetMIMEType: MIMEType ? MIMEType : (NSString *)@"text/html"];
-    return request;
-}
-
 
 /*
     In the case of saving state about a page with frames, we store a tree of items that mirrors the frame tree.  
@@ -748,24 +735,26 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (void)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
 {
-    NSURLRequest *request = [self _webDataRequestForData:data 
-                                                MIMEType:MIMEType 
-                                        textEncodingName:encodingName 
-                                                 baseURL:URL
-                                          unreachableURL:unreachableURL];
-    [self loadRequest:request];
+    if (!URL)
+        URL = [NSURL URLWithString:@""];
+    ResourceRequest request(URL);
+    SubstituteData substituteData(WebCore::SharedBuffer::wrapNSData(data), MIMEType, encodingName, unreachableURL);
+
+    [self _frameLoader]->load(request, substituteData);
 }
 
 
 - (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL
 {
+    if (!MIMEType)
+        MIMEType = @"text/html";
     [self _loadData:data MIMEType:MIMEType textEncodingName:encodingName baseURL:URL unreachableURL:nil];
 }
 
 - (void)_loadHTMLString:(NSString *)string baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
 {
     NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
-    [self _loadData:data MIMEType:nil textEncodingName:@"UTF-8" baseURL:URL unreachableURL:unreachableURL];
+    [self _loadData:data MIMEType:@"text/html" textEncodingName:@"UTF-8" baseURL:URL unreachableURL:unreachableURL];
 }
 
 - (void)loadHTMLString:(NSString *)string baseURL:(NSURL *)URL
@@ -782,13 +771,12 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     WebResource *mainResource = [archive mainResource];
     if (mainResource) {
-        NSURLRequest *request = [self _webDataRequestForData:[mainResource data] 
-                                                    MIMEType:[mainResource MIMEType]
-                                            textEncodingName:[mainResource textEncodingName]
-                                                     baseURL:[mainResource URL]
-                                              unreachableURL:nil];
-        RefPtr<DocumentLoader> documentLoader = core(self)->loader()->client()->createDocumentLoader(request);
+        SubstituteData substituteData(WebCore::SharedBuffer::wrapNSData([mainResource data]), [mainResource MIMEType], [mainResource textEncodingName], KURL());
+        ResourceRequest request([mainResource URL]);
+        RefPtr<DocumentLoader> documentLoader = core(self)->loader()->client()->createDocumentLoader(request, substituteData);
+
         [dataSource(documentLoader.get()) _addToUnarchiveState:archive];
+
         [self _frameLoader]->load(documentLoader.get());
     }
 }

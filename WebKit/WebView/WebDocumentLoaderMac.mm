@@ -29,11 +29,12 @@
 #import "WebDocumentLoaderMac.h"
 
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/SubstituteData.h>
 
 using namespace WebCore;
 
-WebDocumentLoaderMac::WebDocumentLoaderMac(const ResourceRequest& request)
-    : DocumentLoader(request)
+WebDocumentLoaderMac::WebDocumentLoaderMac(const ResourceRequest& request, const SubstituteData& substituteData)
+    : DocumentLoader(request, substituteData)
     , m_detachedDataSource(nil)
 {
 }

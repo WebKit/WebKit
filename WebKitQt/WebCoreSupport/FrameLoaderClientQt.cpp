@@ -685,9 +685,9 @@ bool FrameLoaderClientQt::shouldFallBack(const WebCore::ResourceError&)
     return false;
 }
 
-WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClientQt::createDocumentLoader(const WebCore::ResourceRequest& request)
+WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClientQt::createDocumentLoader(const WebCore::ResourceRequest& request, const SubstituteData& substituteData)
 {
-    RefPtr<DocumentLoader> loader = new DocumentLoader(request);
+    RefPtr<DocumentLoader> loader = new DocumentLoader(request, substituteData);
     return loader.release();
 }
 

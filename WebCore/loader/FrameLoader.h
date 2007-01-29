@@ -72,6 +72,7 @@ namespace WebCore {
     class ResourceResponse;
     class SharedBuffer;
     class SubresourceLoader;
+    class SubstituteData;
     class TextResourceDecoder;
     class Widget;
 
@@ -142,6 +143,7 @@ namespace WebCore {
             Event*, HTMLFormElement*, const HashMap<String, String>& formValues);
 
         void load(const ResourceRequest&);
+        void load(const ResourceRequest&, const SubstituteData&);
         void load(const ResourceRequest&, const String& frameName);
         void load(const ResourceRequest&, const NavigationAction&, FrameLoadType, PassRefPtr<FormState>);
         
@@ -468,7 +470,7 @@ namespace WebCore {
 
         // Also not cool.
         void startLoading();
-        bool startLoadingMainResource(ResourceRequest&, unsigned long identifier);
+        bool startLoadingMainResource(DocumentLoader*, unsigned long identifier);
         void stopLoadingSubframes();
 
         void clearProvisionalLoad();
@@ -518,7 +520,7 @@ namespace WebCore {
         void opened();
         void updateHistoryAfterClientRedirect();
 
-        bool shouldReloadToHandleUnreachableURL(const ResourceRequest&);
+        bool shouldReloadToHandleUnreachableURL(DocumentLoader* docLoader);
         void handleUnimplementablePolicy(const ResourceError&);
 
         void applyUserAgent(ResourceRequest& request);

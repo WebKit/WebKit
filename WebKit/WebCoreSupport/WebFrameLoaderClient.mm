@@ -91,7 +91,7 @@
 #import <WebCore/ResourceLoader.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/WebCoreFrameBridge.h>
-#import <WebCore/WebDataProtocol.h>
+#import <WebCore/SharedBuffer.h>
 #import <WebCore/Widget.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMHTMLFormElement.h>
@@ -894,9 +894,9 @@ void WebFrameLoaderClient::prepareForDataSourceReplacement()
     core(m_webFrame.get())->loader()->detachChildren();
 }
 
-PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request)
+PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
 {
-    RefPtr<WebDocumentLoaderMac> loader = new WebDocumentLoaderMac(request);
+    RefPtr<WebDocumentLoaderMac> loader = new WebDocumentLoaderMac(request, substituteData);
 
     WebDataSource *dataSource = [[WebDataSource alloc] _initWithDocumentLoader:loader.get()];
     loader->setDataSource(dataSource);

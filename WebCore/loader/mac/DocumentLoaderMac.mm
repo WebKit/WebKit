@@ -29,15 +29,9 @@
 #import "config.h"
 #import "DocumentLoader.h"
 
-#import "WebDataProtocol.h"
 #import "WebCoreSystemInterface.h"
 
 namespace WebCore {
-
-const KURL DocumentLoader::unreachableURL() const
-{
-    return [m_originalRequest.nsURLRequest() _webDataRequestUnreachableURL];
-}
 
 bool DocumentLoader::getResponseModifiedHeader(String& modified) const
 {

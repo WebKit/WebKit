@@ -1,3 +1,49 @@
+2007-01-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark.
+
+        - made data loading cross-platform
+        - fixed <rdar://problem/4910106>
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/CachedResource.cpp:
+        * loader/CachedResource.h:
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestResource):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader):
+        (WebCore::DocumentLoader::setRequest):
+        (WebCore::DocumentLoader::urlForHistory):
+        (WebCore::DocumentLoader::unreachableURL):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::substituteData):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::shouldReloadToHandleUnreachableURL):
+        (WebCore::FrameLoader::reloadAllowingStaleData):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::startLoadingMainResource):
+        (WebCore::FrameLoader::startLoading):
+        (WebCore::FrameLoader::checkNavigationPolicy):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::willSendRequest):
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        (WebCore::MainResourceLoader::handleEmptyLoad):
+        (WebCore::MainResourceLoader::handleDataLoad):
+        (WebCore::MainResourceLoader::loadNow):
+        (WebCore::MainResourceLoader::load):
+        * loader/MainResourceLoader.h:
+        * loader/mac/DocumentLoaderMac.mm:
+        * loader/mac/WebDataProtocol.h: Removed.
+        * loader/mac/WebDataProtocol.mm: Removed.
+        * loader/qt/DocumentLoaderQt.cpp:
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::createDocumentLoader):
+
 2007-01-29  Zack Rusin  <zrusin@trolltech.com>
 
         Order the build files alphabetically instead of

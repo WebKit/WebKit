@@ -40,11 +40,6 @@
 #include "XMLTokenizer.h"
 #include <wtf/Assertions.h>
 
-#if PLATFORM(MAC)
-#import "WebCoreSystemInterface.h"
-#import "WebDataProtocol.h"
-#endif
-
 namespace WebCore {
 
 /*
@@ -104,9 +99,10 @@ static inline String canonicalizedTitle(const String& title, Frame* frame)
     return String::adopt(stringBuilder);
 }
 
-DocumentLoader::DocumentLoader(const ResourceRequest& req)
+DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData& substituteData)
     : m_frame(0)
     , m_originalRequest(req)
+    , m_substituteData(substituteData)
     , m_originalRequestCopy(req)
     , m_request(req)
     , m_committed(false)
@@ -192,10 +188,7 @@ void DocumentLoader::setRequest(const ResourceRequest& req)
     // redirect at this point, but we can replace a committed dataSource.
     bool handlingUnreachableURL = false;
 
-#if PLATFORM(MAC)
-    // FIXME: need a better way to handle data loads
-    handlingUnreachableURL = [req.nsURLRequest() _webDataRequestUnreachableURL];
-#endif
+    handlingUnreachableURL = substituteData().isValid();
 
     if (handlingUnreachableURL)
         m_committed = false;
@@ -516,10 +509,8 @@ KURL DocumentLoader::urlForHistory() const
     // Return the URL to be used for history and B/F list.
     // Returns nil for WebDataProtocol URLs that aren't alternates 
     // for unreachable URLs, because these can't be stored in history.
-#if PLATFORM(MAC)        
-    if (!m_originalRequestCopy.url().isEmpty() && [WebDataProtocol _webIsDataProtocolURL:m_originalRequestCopy.url().getNSURL()])
-        return [m_originalRequestCopy.nsURLRequest() _webDataRequestUnreachableURL];
-#endif
+    if (m_substituteData.isValid())
+        return unreachableURL();
 
     return m_originalRequestCopy.url();
 }
@@ -580,6 +571,11 @@ KURL DocumentLoader::responseURL() const
 String DocumentLoader::responseMIMEType() const
 {
     return m_response.mimeType();
+}
+
+const KURL& DocumentLoader::unreachableURL() const
+{
+    return m_substituteData.failingURL();
 }
 
 }

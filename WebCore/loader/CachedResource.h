@@ -36,17 +36,6 @@
 #include <wtf/Vector.h>
 #include <time.h>
 
-#if PLATFORM(MAC)
-#include "RetainPtr.h"
-
-#ifdef __OBJC__
-@class NSURLRequest;
-#else
-class NSURLRequest;
-#endif
-
-#endif // PLATFORM(MAC)
-
 namespace WebCore {
 
 class Cache;
