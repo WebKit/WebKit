@@ -28,7 +28,8 @@
 #include <pthread.h>
 
 namespace WTF {
-    void fastMallocRegisterThread(pthread_t thread);
+    // Clients must call this function before allocating memory on a secondary thread.
+    void fastMallocSetIsMultiThreaded();
 }
 
 #endif

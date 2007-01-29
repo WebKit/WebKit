@@ -103,7 +103,7 @@ void *fastRealloc(void* p, size_t n)
 }
 
 #if !PLATFORM(WIN_OS)
-void fastMallocRegisterThread(pthread_t) 
+void fastMallocSetIsMultiThreaded() 
 {
 }
 #endif
@@ -381,7 +381,7 @@ template <class T>
 class PageHeapAllocator {
  private:
   // How much to allocate from system at a time
-  static const int kAllocIncrement = 32 << 10;
+  static const size_t kAllocIncrement = 32 << 10;
 
   // Aligned size of T
   static const size_t kAlignedSize
@@ -1393,23 +1393,22 @@ inline void TCMalloc_ThreadCache::Scavenge() {
 
 bool isMultiThreaded;
 TCMalloc_ThreadCache *mainThreadCache;
-pthread_t mainThreadID;
-static SpinLock multiThreadedLock = SPINLOCK_INITIALIZER;
 
-void fastMallocRegisterThread(pthread_t thread) 
+void fastMallocSetIsMultiThreaded() 
 {
-    if (thread != mainThreadID) {
-        // We lock when writing isMultiThreaded but not when reading it.
-        // It's ok if the main thread gets it wrong - for the main thread, the
-        // global variable cache is the same as the thread-specific cache.
-        // And other threads can't get it wrong because they must have gone through 
-        // this function before allocating so they've synchronized.
-        // Also, mainThreadCache is only set when isMultiThreaded is false, 
-        // to save a branch in some cases.
-        SpinLockHolder lock(&multiThreadedLock);
-        isMultiThreaded = true;
-        mainThreadCache = 0;
-    }
+    // We lock when writing mainThreadCache but not when reading it. It's OK if
+    // the main thread reads a stale, non-NULL value for mainThreadCache because
+    // mainThreadCache is the same as the main thread's thread-specific cache.
+    // Other threads can't read a stale, non-NULL value for mainThreadCache because
+    // clients must call this function before allocating on other threads, so they'll 
+    // have synchronized before reading mainThreadCache.
+
+    // mainThreadCache is only set when isMultiThreaded is false, to save a 
+    // branch in some cases.
+
+    SpinLockHolder lock(&pageheap_lock);
+    isMultiThreaded = true;
+    mainThreadCache = 0;
 }
 
 ALWAYS_INLINE TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetCache() {
@@ -1523,10 +1522,8 @@ void* TCMalloc_ThreadCache::CreateCacheIfNecessary() {
       thread_heaps = heap;
       thread_heap_count++;
       RecomputeThreadCacheSize(); 
-      if (!isMultiThreaded) {
-          mainThreadCache = heap;
-          mainThreadID = pthread_self();
-      }
+      if (!isMultiThreaded)
+        mainThreadCache = heap;
     }
   }
 
@@ -1856,14 +1853,17 @@ static Span* DoSampledAllocation(size_t size) {
 
 static ALWAYS_INLINE void* do_malloc(size_t size) {
 
+#ifdef WTF_CHANGES
+    ASSERT(isMultiThreaded || pthread_main_np());
+#endif
+
 #ifndef WTF_CHANGES
   if (TCMallocDebug::level >= TCMallocDebug::kVerbose) 
     MESSAGE("In tcmalloc do_malloc(%" PRIuS")\n", size);
 #endif
-
-#ifndef WTF_CHANGES
   // The following call forces module initialization
   TCMalloc_ThreadCache* heap = TCMalloc_ThreadCache::GetCache();
+#ifndef WTF_CHANGES
   if (heap->SampleAllocation(size)) {
     Span* span = DoSampledAllocation(size);
     if (span == NULL) return NULL;
@@ -1872,20 +1872,12 @@ static ALWAYS_INLINE void* do_malloc(size_t size) {
 #endif
   if (size > kMaxSize) {
     // Use page-level allocator
-    if (!tsd_inited && !phinited)
-      TCMalloc_ThreadCache::InitModule();
-
     SpinLockHolder h(&pageheap_lock);
-
-
     Span* span = pageheap->New(pages(size));
     if (span == NULL) return NULL;
     return reinterpret_cast<void*>(span->start << kPageShift);
   } else {
-#ifdef WTF_CHANGES
-      TCMalloc_ThreadCache* heap = TCMalloc_ThreadCache::GetCache();
-#endif
-      return heap->Allocate(size);
+    return heap->Allocate(size);
   }
 }
 

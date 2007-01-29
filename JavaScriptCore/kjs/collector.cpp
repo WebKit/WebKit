@@ -261,8 +261,9 @@ void Collector::registerThread()
   pthread_once(&registeredThreadKeyOnce, initializeRegisteredThreadKey);
 
   if (!pthread_getspecific(registeredThreadKey)) {
+    if (!pthread_main_np())
+        WTF::fastMallocSetIsMultiThreaded();
     pthread_t pthread = pthread_self();
-    WTF::fastMallocRegisterThread(pthread);
     Collector::Thread *thread = new Collector::Thread(pthread, pthread_mach_thread_np(pthread));
     thread->next = registeredThreads;
     registeredThreads = thread;

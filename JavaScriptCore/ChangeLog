@@ -1,3 +1,37 @@
+2007-01-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        First step in fixing <rdar://problem/4485644> REGRESSION: JavaScriptCore 
+        has init routines
+        
+        Don't rely on a static initializer to store the main thread's ID (which
+        we would use to detect allocations on secondary threads). Instead, require 
+        the caller to notify fastMalloc if it might allocate on a secondary thread.
+        
+        Also fixed what seemed like a race condition in do_malloc.
+        
+        tcmalloc_unittest and my custom versions of JS iBench and PLT show no
+        regressions.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMallocSetIsMultiThreaded): 
+        (1) Renamed from "fastMallocRegisterThread", which was a misleading name because 
+        not all threads need to register with fastMalloc -- only secondary threads 
+        need to, and only for the purpose of disabling its single-threaded optimization. 
+
+        (2) Use the pageheap_lock instead of a custom one, since we need to synchronize
+        with the read of isMultiThreaded inside CreateCacheIfNecessary. This is a new
+        requirement, now that we can't guarantee that the first call to CreateCacheIfNecessary
+        will occur on the main thread at init time, before any other threads have been created.
+
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+        (WTF::do_malloc): Reverted WTF change only to call GetCache() if size <= kMaxSize.
+        The WTF code would read phinited without holding the pageheap_lock, which
+        seemed like a race condition. Regardless, calling GetCache reduces the number 
+        of code paths to module initialization, which will help in writing the 
+        final fix for this bug.
+
 2007-01-28  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Darin.
