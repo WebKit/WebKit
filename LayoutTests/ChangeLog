@@ -1,3 +1,13 @@
+2007-01-29  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Geoff and Oliver.
+
+        - rdar://problem/4955561
+        - missusing JavaScript shouldn't crash webkit.  Now it doesn't in this case.
+
+        * plugins/call-as-function-test-expected.txt: Added.
+        * plugins/call-as-function-test.html: Added.
+
 2007-01-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

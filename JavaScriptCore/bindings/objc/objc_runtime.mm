@@ -276,29 +276,30 @@ bool ObjcFallbackObjectImp::implementsCall() const
 
 JSValue* ObjcFallbackObjectImp::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
 {
-    JSValue* result = jsUndefined();
-    
-    RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(thisObj);
-    if (imp) {
-        Instance* instance = imp->getInternalInstance();
-        
-        instance->begin();
+    if (thisObj->classInfo() != &KJS::RuntimeObjectImp::info)
+        return throwError(exec, TypeError);
 
-        ObjcInstance* objcInstance = static_cast<ObjcInstance*>(instance);
-        id targetObject = objcInstance->getObject();
-        
-        if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]){
-            MethodList methodList;
-            ObjcClass* objcClass = static_cast<ObjcClass*>(instance->getClass());
-            ObjcMethod* fallbackMethod = new ObjcMethod (objcClass->isa(), sel_getName(@selector(invokeUndefinedMethodFromWebScript:withArguments:)));
-            fallbackMethod->setJavaScriptName((CFStringRef)[NSString stringWithCString:_item.ascii() encoding:NSASCIIStringEncoding]);
-            methodList.addMethod ((Method*)fallbackMethod);
-            result = instance->invokeMethod(exec, methodList, args);
-            delete fallbackMethod;
-        }
-                
-        instance->end();
+    JSValue* result = jsUndefined();
+
+    RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(thisObj);
+    Instance* instance = imp->getInternalInstance();
+
+    instance->begin();
+
+    ObjcInstance* objcInstance = static_cast<ObjcInstance*>(instance);
+    id targetObject = objcInstance->getObject();
+    
+    if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]){
+        MethodList methodList;
+        ObjcClass* objcClass = static_cast<ObjcClass*>(instance->getClass());
+        ObjcMethod* fallbackMethod = new ObjcMethod (objcClass->isa(), sel_getName(@selector(invokeUndefinedMethodFromWebScript:withArguments:)));
+        fallbackMethod->setJavaScriptName((CFStringRef)[NSString stringWithCString:_item.ascii() encoding:NSASCIIStringEncoding]);
+        methodList.addMethod ((Method*)fallbackMethod);
+        result = instance->invokeMethod(exec, methodList, args);
+        delete fallbackMethod;
     }
+            
+    instance->end();
 
     return result;
 }

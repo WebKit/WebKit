@@ -1,0 +1,3 @@
+TypeError: function dumpAsText() { [native code] }
+TypeError: function dumpAsText() { [native code] }
+

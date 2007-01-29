@@ -1,3 +1,17 @@
+2007-01-29  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Geoff and Oliver.
+
+        - rdar://problem/4955561
+        - missusing JavaScript shouldn't crash webkit.  Now it doesn't, in this case.
+
+        * bindings/objc/objc_runtime.mm:
+        (ObjcFallbackObjectImp::callAsFunction):
+        * bindings/runtime_method.cpp:
+        (RuntimeMethod::callAsFunction):
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::callAsFunction):
+
 2007-01-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
