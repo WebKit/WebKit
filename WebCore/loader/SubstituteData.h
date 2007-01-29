@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-    struct SubstituteData {
+    class SubstituteData {
     public:
         SubstituteData() { }
 
