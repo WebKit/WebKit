@@ -642,9 +642,33 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
     return source;
 }
 
+// FIXME: This should really be in a possible ElementFactory class
+PassRefPtr<Element> Document::createElement(const QualifiedName& qName, bool createdByParser, ExceptionCode& ec)
+{
+    RefPtr<Element> e;
+
+    // FIXME: Use registered namespaces and look up in a hash to find the right factory.
+    if (qName.namespaceURI() == xhtmlNamespaceURI)
+        e = HTMLElementFactory::createHTMLElement(qName.localName(), this, 0, createdByParser);
+#ifdef SVG_SUPPORT
+    else if (qName.namespaceURI() == SVGNames::svgNamespaceURI)
+        e = SVGElementFactory::createSVGElement(qName, this, createdByParser);
+#endif
+    
+    if (!e)
+        e = new Element(qName, document());
+    
+    if (e && !qName.prefix().isNull()) {
+        e->setPrefix(qName.prefix(), ec);
+        if (ec)
+            return 0;
+    }    
+    
+    return e.release();
+}
+
 PassRefPtr<Element> Document::createElementNS(const String &_namespaceURI, const String &qualifiedName, ExceptionCode& ec)
 {
-    // FIXME: We'd like a faster code path that skips this check for calls from inside the engine where the name is known to be valid.
     String prefix, localName;
     if (!parseQualifiedName(qualifiedName, prefix, localName)) {
         ec = INVALID_CHARACTER_ERR;
@@ -654,24 +678,7 @@ PassRefPtr<Element> Document::createElementNS(const String &_namespaceURI, const
     RefPtr<Element> e;
     QualifiedName qName = QualifiedName(AtomicString(prefix), AtomicString(localName), AtomicString(_namespaceURI));
     
-    // FIXME: Use registered namespaces and look up in a hash to find the right factory.
-    if (_namespaceURI == xhtmlNamespaceURI) {
-        e = HTMLElementFactory::createHTMLElement(qName.localName(), this, 0, false);
-        if (e && !prefix.isNull()) {
-            e->setPrefix(qName.prefix(), ec);
-            if (ec)
-                return 0;
-        }
-    }
-#ifdef SVG_SUPPORT
-    else if (_namespaceURI == SVGNames::svgNamespaceURI)
-        e = SVGElementFactory::createSVGElement(qName, this, false);
-#endif
-    
-    if (!e)
-        e = new Element(qName, document());
-    
-    return e.release();
+    return createElement(qName, false, ec);
 }
 
 Element *Document::getElementById(const AtomicString& elementId) const

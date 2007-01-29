@@ -1,3 +1,14 @@
+2007-01-29  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4960097>
+        http://bugs.webkit.org/show_bug.cgi?id=12444
+        Assertion failure in -[WebCoreFrameBridge installInFrame:]
+
+        * fast/parser/xhtml-document-with-html-object-expected.txt: Added.
+        * fast/parser/xhtml-document-with-html-object.xhtml: Added.
+
 2007-01-29  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Geoff and Oliver.

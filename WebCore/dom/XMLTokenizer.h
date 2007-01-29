@@ -32,6 +32,7 @@
 #include <libxml/tree.h>
 #include <libxml/xmlstring.h>
 #include <wtf/HashMap.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -126,10 +127,10 @@ namespace WebCore {
         bool m_parsingFragment;
         String m_defaultNamespaceURI;
 
-        typedef HashMap<StringImpl*, StringImpl*> PrefixForNamespaceMap;
+        typedef HashMap<String, String> PrefixForNamespaceMap;
         PrefixForNamespaceMap m_prefixToNamespaceMap;
 
-        PendingCallbacks* m_pendingCallbacks;
+        OwnPtr<PendingCallbacks> m_pendingCallbacks;
         SegmentedString m_pendingSrc;
     };
 

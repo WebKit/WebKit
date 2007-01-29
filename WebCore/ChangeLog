@@ -1,3 +1,31 @@
+2007-01-29  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4960097>
+        http://bugs.webkit.org/show_bug.cgi?id=12444
+        Assertion failure in -[WebCoreFrameBridge installInFrame:]
+        
+        The problem was that the XML tokenizer didn't create elements with 
+        createdByParser set to true.
+        
+        * dom/Document.cpp:
+        (WebCore::Document::createElement):
+        New method which takes a QName. This is used by both the XML tokenizer and createElementNS.
+        
+        (WebCore::Document::createElementNS):
+        Call new createElement method.
+        
+        * dom/XMLTokenizer.h:        
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        (WebCore::XMLTokenizer::~XMLTokenizer):
+        Use an OwnPtr for the pending callbacks object. Also, use String instead of StringImpl in the hash map.
+        
+        (WebCore::toString):
+        (WebCore::XMLTokenizer::startElementNs):
+        Call createElement.
+        
 2007-01-29  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Oliver

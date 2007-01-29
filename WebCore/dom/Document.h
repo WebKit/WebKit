@@ -171,6 +171,7 @@ public:
     PassRefPtr<EntityReference> createEntityReference(const String& name, ExceptionCode&);
     PassRefPtr<Node> importNode(Node* importedNode, bool deep, ExceptionCode&);
     virtual PassRefPtr<Element> createElementNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode&);
+    PassRefPtr<Element> createElement(const QualifiedName&, bool createdByParser, ExceptionCode& ec);
     Element* getElementById(const AtomicString&) const;
 
     Element* elementFromPoint(int x, int y) const;
