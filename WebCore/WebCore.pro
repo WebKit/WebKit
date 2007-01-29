@@ -78,7 +78,6 @@ LIBS += -lsqlite3
 FEATURE_DEFINES_JAVASCRIPT = LANGUAGE_JAVASCRIPT
 
 
-
 TOKENIZER = $$PWD/css/tokenizer.flex
 
 CSSBISON = $$PWD/css/CSSGrammar.y
@@ -100,62 +99,62 @@ SVGCSSVALUES = $$PWD/ksvg2/css/CSSValueKeywords.in
 STYLESHEETS_EMBED = $$PWD/css/html4.css
 
 MANUALMOC += \
-    $$PWD/platform/qt/SharedTimerQt.h \
-    $$PWD/platform/qt/ScrollViewCanvasQt.h \
     $$PWD/platform/network/qt/ResourceHandleManagerQt.h \
-    $$PWD/../WebKitQt/Api/qwebpage.h \
+    $$PWD/platform/qt/ScrollViewCanvasQt.h \
+    $$PWD/platform/qt/SharedTimerQt.h \
     $$PWD/../WebKitQt/Api/qwebframe.h \
+    $$PWD/../WebKitQt/Api/qwebpage.h \
     $$PWD/../WebKitQt/WebCoreSupport/FrameLoaderClientQt.h
 
 LUT_FILES += \
-    bindings/js/kjs_window.cpp \
+    bindings/js/JSXMLHttpRequest.cpp \
+    bindings/js/JSXSLTProcessor.cpp \
     bindings/js/kjs_css.cpp \
     bindings/js/kjs_dom.cpp \
-    bindings/js/kjs_html.cpp \
     bindings/js/kjs_events.cpp \
+    bindings/js/kjs_html.cpp \
     bindings/js/kjs_navigator.cpp \
     bindings/js/kjs_traversal.cpp \
-    bindings/js/JSXMLHttpRequest.cpp \
-    bindings/js/JSXSLTProcessor.cpp
+    bindings/js/kjs_window.cpp
 
 LUT_TABLE_FILES += \
     bindings/js/JSHTMLInputElementBase.cpp
 
 IDL_BINDINGS += \
-    css/CSSValue.idl \
-    css/CSSRuleList.idl \
-    css/CSSValueList.idl \
-    css/CSSStyleDeclaration.idl \
+    css/Counter.idl \
     css/CSSPrimitiveValue.idl \
     css/CSSRule.idl \
-    css/Counter.idl \
+    css/CSSRuleList.idl \
+    css/CSSStyleDeclaration.idl \
+    css/CSSValue.idl \
+    css/CSSValueList.idl \
     css/MediaList.idl \
+    dom/Attr.idl \
+    dom/CharacterData.idl \
+    dom/DocumentFragment.idl \
+    dom/Document.idl \
+    dom/DocumentType.idl \
+    dom/DOMImplementation.idl \
+    dom/Element.idl \
+    dom/Entity.idl \
     dom/Event.idl \
 #    dom/EventListener.idl \
 #    dom/EventTarget.idl \
+    dom/KeyboardEvent.idl \
+    dom/MouseEvent.idl \
+    dom/MutationEvent.idl \
+    dom/NodeFilter.idl \
+    dom/Node.idl \
+    dom/NodeIterator.idl \
+    dom/Notation.idl \
+    dom/OverflowEvent.idl \
+    dom/ProcessingInstruction.idl \
+    dom/RangeException.idl \
     dom/Range.idl \
     dom/Text.idl \
-    dom/DOMImplementation.idl \
-    dom/NodeFilter.idl \
-    dom/MouseEvent.idl \
-    dom/CharacterData.idl \
-    dom/DocumentFragment.idl \
-    dom/Entity.idl \
-    dom/UIEvent.idl \
-    dom/Node.idl \
-    dom/ProcessingInstruction.idl \
-    dom/Notation.idl \
-    dom/Element.idl \
-    dom/DocumentType.idl \
-    dom/Document.idl \
-    dom/Attr.idl \
-    dom/MutationEvent.idl \
-    dom/KeyboardEvent.idl \
-    dom/WheelEvent.idl \
-    dom/OverflowEvent.idl \
-    dom/NodeIterator.idl \
     dom/TreeWalker.idl \
-    dom/RangeException.idl \
+    dom/UIEvent.idl \
+    dom/WheelEvent.idl \
     html/CanvasGradient.idl \
     html/CanvasPattern.idl \
     html/CanvasRenderingContext2D.idl \
@@ -195,6 +194,7 @@ IDL_BINDINGS += \
     html/HTMLOListElement.idl \
     html/HTMLOptGroupElement.idl \
     html/HTMLOptionElement.idl \
+    html/HTMLOptionsCollection.idl \
     html/HTMLParagraphElement.idl \
     html/HTMLParamElement.idl \
     html/HTMLPreElement.idl \
@@ -205,21 +205,12 @@ IDL_BINDINGS += \
     html/HTMLTextAreaElement.idl \
     html/HTMLTitleElement.idl \
     html/HTMLUListElement.idl \
-    html/HTMLOptionsCollection.idl \
+    page/DOMWindow.idl \
     xml/DOMParser.idl \
-    xml/XMLSerializer.idl \
-    page/DOMWindow.idl
+    xml/XMLSerializer.idl
+
 
 SOURCES += \
-    bindings/js/kjs_binding.cpp \
-    bindings/js/kjs_css.cpp \
-    bindings/js/kjs_dom.cpp \
-    bindings/js/kjs_events.cpp \
-    bindings/js/kjs_html.cpp \
-    bindings/js/kjs_navigator.cpp \
-    bindings/js/kjs_proxy.cpp \
-    bindings/js/kjs_traversal.cpp \
-    bindings/js/kjs_window.cpp \
     bindings/js/JSCanvasRenderingContext2DCustom.cpp \
     bindings/js/JSDocumentCustom.cpp \
     bindings/js/JSHTMLElementWrapperFactory.cpp \
@@ -232,463 +223,477 @@ SOURCES += \
     bindings/js/JSTreeWalkerCustom.cpp \
     bindings/js/JSXMLHttpRequest.cpp \
     bindings/js/JSXSLTProcessor.cpp \
-    css/cssparser.cpp \
-    css/cssstyleselector.cpp \
-    css/csshelper.cpp \
-    css/FontValue.cpp \
-    css/CSSSelector.cpp \
-    css/MediaFeatureNames.cpp \
-    css/CSSRuleList.cpp \
+    bindings/js/kjs_binding.cpp \
+    bindings/js/kjs_css.cpp \
+    bindings/js/kjs_dom.cpp \
+    bindings/js/kjs_events.cpp \
+    bindings/js/kjs_html.cpp \
+    bindings/js/kjs_navigator.cpp \
+    bindings/js/kjs_proxy.cpp \
+    bindings/js/kjs_traversal.cpp \
+    bindings/js/kjs_window.cpp \
+    css/CSSBorderImageValue.cpp \
     css/CSSCharsetRule.cpp \
-    css/MediaQueryExp.cpp \
+    css/CSSComputedStyleDeclaration.cpp \
+    css/CSSCursorImageValue.cpp \
+    css/CSSFontFaceRule.cpp \
+    css/csshelper.cpp \
+    css/CSSImageValue.cpp \
     css/CSSImportRule.cpp \
-    css/CSSValueList.cpp \
-    css/CSSStyleDeclaration.cpp \
+    css/CSSInheritedValue.cpp \
+    css/CSSInitialValue.cpp \
+    css/CSSMediaRule.cpp \
+    css/CSSMutableStyleDeclaration.cpp \
+    css/CSSPageRule.cpp \
+    css/cssparser.cpp \
     css/CSSPrimitiveValue.cpp \
     css/CSSProperty.cpp \
-    css/CSSCursorImageValue.cpp \
-    css/CSSBorderImageValue.cpp \
-    css/MediaQuery.cpp \
-    css/StyleSheet.cpp \
-    css/CSSPageRule.cpp \
-    css/StyleSheetList.cpp \
-    css/MediaQueryEvaluator.cpp \
-    css/StyleBase.cpp \
     css/CSSRule.cpp \
-    css/CSSStyleSheet.cpp \
-    css/CSSInitialValue.cpp \
-    css/CSSImageValue.cpp \
+    css/CSSRuleList.cpp \
+    css/CSSSelector.cpp \
+    css/CSSStyleDeclaration.cpp \
     css/CSSStyleRule.cpp \
-    css/CSSInheritedValue.cpp \
-    css/StyleList.cpp \
+    css/cssstyleselector.cpp \
+    css/CSSStyleSheet.cpp \
+    css/CSSValueList.cpp \
     css/FontFamilyValue.cpp \
-    css/CSSMediaRule.cpp \
-    css/CSSComputedStyleDeclaration.cpp \
-    css/CSSMutableStyleDeclaration.cpp \
+    css/FontValue.cpp \
+    css/MediaFeatureNames.cpp \
     css/MediaList.cpp \
-    css/CSSFontFaceRule.cpp \
+    css/MediaQuery.cpp \
+    css/MediaQueryEvaluator.cpp \
+    css/MediaQueryExp.cpp \
     css/ShadowValue.cpp \
-    dom/Clipboard.cpp \
-    dom/Event.cpp \
-    dom/EventTarget.cpp \
-    dom/Range.cpp \
-    dom/Text.cpp \
-    dom/DOMImplementation.cpp \
-    dom/NodeFilter.cpp \
-    dom/MouseEvent.cpp \
-    dom/EntityReference.cpp \
-    dom/NameNodeList.cpp \
-    dom/CharacterData.cpp \
-    dom/XMLTokenizer.cpp \
-    dom/StyleElement.cpp \
-    dom/StyledElement.cpp \
-    dom/MappedAttribute.cpp \
-    dom/NamedAttrMap.cpp \
-    dom/ContainerNode.cpp \
-    dom/NamedMappedAttrMap.cpp \
-    dom/EventNames.cpp \
-    dom/Comment.cpp \
-    dom/EditingText.cpp \
-    dom/DocumentFragment.cpp \
-    dom/ChildNodeList.cpp \
-    dom/Entity.cpp \
-    dom/BeforeTextInsertedEvent.cpp \
-    dom/UIEvent.cpp \
-    dom/Node.cpp \
+    css/StyleBase.cpp \
+    css/StyleList.cpp \
+    css/StyleSheet.cpp \
+    css/StyleSheetList.cpp \
+    dom/Attr.cpp \
     dom/Attribute.cpp \
+    dom/BeforeTextInsertedEvent.cpp \
+    dom/BeforeUnloadEvent.cpp \
+    dom/CDATASection.cpp \
+    dom/CharacterData.cpp \
+    dom/ChildNodeList.cpp \
+    dom/Clipboard.cpp \
+    dom/ClipboardEvent.cpp \
+    dom/Comment.cpp \
+    dom/ContainerNode.cpp \
+    dom/CSSMappedAttributeDeclaration.cpp \
+    dom/Document.cpp \
+    dom/DocumentFragment.cpp \
+    dom/DocumentType.cpp \
+    dom/DOMImplementation.cpp \
+    dom/EditingText.cpp \
+    dom/Element.cpp \
+    dom/Entity.cpp \
+    dom/EntityReference.cpp \
+    dom/Event.cpp \
+    dom/EventNames.cpp \
+    dom/EventTarget.cpp \
+    dom/EventTargetNode.cpp \
+    dom/KeyboardEvent.cpp \
+    dom/MappedAttribute.cpp \
+    dom/MouseEvent.cpp \
+    dom/MouseRelatedEvent.cpp \
+    dom/MutationEvent.cpp \
+    dom/NamedAttrMap.cpp \
+    dom/NamedMappedAttrMap.cpp \
+    dom/NameNodeList.cpp \
+    dom/Node.cpp \
+    dom/NodeFilterCondition.cpp \
+    dom/NodeFilter.cpp \
+    dom/NodeIterator.cpp \
+    dom/NodeList.cpp \
+    dom/Notation.cpp \
+    dom/OverflowEvent.cpp \
     dom/Position.cpp \
     dom/ProcessingInstruction.cpp \
-    dom/TreeWalker.cpp \
-    dom/Notation.cpp \
-    dom/Element.cpp \
-    dom/NodeFilterCondition.cpp \
-    dom/CDATASection.cpp \
-    dom/DocumentType.cpp \
-    dom/NodeList.cpp \
-    dom/CSSMappedAttributeDeclaration.cpp \
     dom/QualifiedName.cpp \
-    dom/Document.cpp \
-    dom/Attr.cpp \
-    dom/OverflowEvent.cpp \
+    dom/Range.cpp \
     dom/RegisteredEventListener.cpp \
-    dom/EventTargetNode.cpp \
-    dom/BeforeUnloadEvent.cpp \
-    dom/MutationEvent.cpp \
-    dom/MouseRelatedEvent.cpp \
-    dom/KeyboardEvent.cpp \
-    dom/NodeIterator.cpp \
-    dom/ClipboardEvent.cpp \
+    dom/StyledElement.cpp \
+    dom/StyleElement.cpp \
+    dom/Text.cpp \
     dom/Traversal.cpp \
-    dom/WheelEvent.cpp \
+    dom/TreeWalker.cpp \
+    dom/UIEvent.cpp \
     dom/UIEventWithKeyState.cpp \
+    dom/WheelEvent.cpp \
+    dom/XMLTokenizer.cpp \
+    editing/AppendNodeCommand.cpp \
+    editing/ApplyStyleCommand.cpp \
+    editing/BreakBlockquoteCommand.cpp \
+    editing/CommandByName.cpp \
+    editing/CompositeEditCommand.cpp \
+    editing/CreateLinkCommand.cpp \
     editing/DeleteButtonController.cpp \
     editing/DeleteButton.cpp \
-    editing/Editor.cpp \
-    editing/CommandByName.cpp \
-    editing/InsertIntoTextNodeCommand.cpp \
-    editing/WrapContentsInDummySpanCommand.cpp \
-    editing/ReplaceSelectionCommand.cpp \
-    editing/MoveSelectionCommand.cpp \
-    editing/RemoveNodePreservingChildrenCommand.cpp \
-    editing/HTMLInterchange.cpp \
-    editing/UnlinkCommand.cpp \
-    editing/InsertLineBreakCommand.cpp \
-    editing/FormatBlockCommand.cpp \
-    editing/AppendNodeCommand.cpp \
-    editing/BreakBlockquoteCommand.cpp \
-    editing/htmlediting.cpp \
-    editing/markup.cpp \
-    editing/InsertParagraphSeparatorCommand.cpp \
-    editing/ModifySelectionListLevel.cpp \
-    editing/JSEditor.cpp \
-    editing/Selection.cpp \
-    editing/TextIterator.cpp \
-    editing/InsertListCommand.cpp \
-    editing/IndentOutdentCommand.cpp \
-    editing/InsertNodeBeforeCommand.cpp \
-    editing/SplitTextNodeContainingElementCommand.cpp \
-    editing/TypingCommand.cpp \
-    editing/MergeIdenticalElementsCommand.cpp \
-    editing/EditCommand.cpp \
-    editing/SplitTextNodeCommand.cpp \
-    editing/RemoveCSSPropertyCommand.cpp \
-    editing/JoinTextNodesCommand.cpp \
-    editing/InsertTextCommand.cpp \
-    editing/SelectionController.cpp \
-    editing/DeleteSelectionCommand.cpp \
-    editing/SplitElementCommand.cpp \
-    editing/VisiblePosition.cpp \
-    editing/ApplyStyleCommand.cpp \
-    editing/visible_units.cpp \
-    editing/RemoveNodeAttributeCommand.cpp \
     editing/DeleteFromTextNodeCommand.cpp \
-    editing/RemoveNodeCommand.cpp \
-    editing/CompositeEditCommand.cpp \
-    editing/SetNodeAttributeCommand.cpp \
-    editing/CreateLinkCommand.cpp \
+    editing/DeleteSelectionCommand.cpp \
+    editing/EditCommand.cpp \
+    editing/Editor.cpp \
+    editing/FormatBlockCommand.cpp \
+    editing/htmlediting.cpp \
+    editing/HTMLInterchange.cpp \
+    editing/IndentOutdentCommand.cpp \
+    editing/InsertIntoTextNodeCommand.cpp \
+    editing/InsertLineBreakCommand.cpp \
+    editing/InsertListCommand.cpp \
+    editing/InsertNodeBeforeCommand.cpp \
+    editing/InsertParagraphSeparatorCommand.cpp \
+    editing/InsertTextCommand.cpp \
+    editing/JoinTextNodesCommand.cpp \
+    editing/JSEditor.cpp \
+    editing/markup.cpp \
+    editing/MergeIdenticalElementsCommand.cpp \
+    editing/ModifySelectionListLevel.cpp \
+    editing/MoveSelectionCommand.cpp \
     editing/qt/EditorQt.cpp \
-    xml/XSLStyleSheet.cpp \
-    xml/XSLTProcessor.cpp \
-    xml/XSLImportRule.cpp \
-    xml/DOMParser.cpp \
-    xml/XMLSerializer.cpp \
-    xml/xmlhttprequest.cpp \
-#    icon/IconDatabase.cpp \
-#    icon/SQLTransaction.cpp \
-#    icon/SQLStatement.cpp \
-#    icon/SiteIcon.cpp \
-#    icon/SQLDatabase.cpp \
-    html/HTMLParser.cpp \
-    html/HTMLFontElement.cpp \
-    html/HTMLEmbedElement.cpp \
-    html/HTMLLinkElement.cpp \
-    html/HTMLOptGroupElement.cpp \
-    html/HTMLCanvasElement.cpp \
-    html/HTMLTitleElement.cpp \
+    editing/RemoveCSSPropertyCommand.cpp \
+    editing/RemoveNodeAttributeCommand.cpp \
+    editing/RemoveNodeCommand.cpp \
+    editing/RemoveNodePreservingChildrenCommand.cpp \
+    editing/ReplaceSelectionCommand.cpp \
+    editing/SelectionController.cpp \
+    editing/Selection.cpp \
+    editing/SetNodeAttributeCommand.cpp \
+    editing/SplitElementCommand.cpp \
+    editing/SplitTextNodeCommand.cpp \
+    editing/SplitTextNodeContainingElementCommand.cpp \
+    editing/TextIterator.cpp \
+    editing/TypingCommand.cpp \
+    editing/UnlinkCommand.cpp \
+    editing/VisiblePosition.cpp \
+    editing/visible_units.cpp \
+    editing/WrapContentsInDummySpanCommand.cpp \
+    history/BackForwardList.cpp \
+    history/HistoryItem.cpp \
+    history/HistoryItemTimer.cpp \
+    history/PageCache.cpp \
+    history/qt/PageCacheQt.cpp \
+    html/CanvasGradient.cpp \
+    html/CanvasPattern.cpp \
     html/CanvasRenderingContext2D.cpp \
-    html/HTMLObjectElement.cpp \
-    html/HTMLAppletElement.cpp \
-    html/HTMLKeygenElement.cpp \
-    html/HTMLDivElement.cpp \
-    html/HTMLMapElement.cpp \
-    html/HTMLScriptElement.cpp \
-    html/HTMLHtmlElement.cpp \
-    html/HTMLTokenizer.cpp \
-    html/HTMLOptionElement.cpp \
-    html/HTMLTableCaptionElement.cpp \
-    html/HTMLImageLoader.cpp \
+    html/CanvasStyle.cpp \
     html/FormDataList.cpp \
-    html/HTMLLabelElement.cpp \
-    html/HTMLTableColElement.cpp \
+    html/HTMLAnchorElement.cpp \
+    html/HTMLAppletElement.cpp \
+    html/HTMLAreaElement.cpp \
+    html/HTMLBaseElement.cpp \
+    html/HTMLBaseFontElement.cpp \
+    html/HTMLBlockquoteElement.cpp \
+    html/HTMLBodyElement.cpp \
+    html/HTMLBRElement.cpp \
+    html/HTMLButtonElement.cpp \
+    html/HTMLCanvasElement.cpp \
+    html/HTMLCollection.cpp \
+    html/HTMLDirectoryElement.cpp \
+    html/HTMLDivElement.cpp \
     html/HTMLDListElement.cpp \
+    html/HTMLDocument.cpp \
+    html/HTMLElement.cpp \
+    html/HTMLElementFactory.cpp \
+    html/HTMLEmbedElement.cpp \
+    html/HTMLFieldSetElement.cpp \
+    html/HTMLFontElement.cpp \
+    html/HTMLFormCollection.cpp \
+    html/HTMLFormElement.cpp \
+    html/HTMLFrameElementBase.cpp \
+    html/HTMLFrameElement.cpp \
+    html/HTMLFrameOwnerElement.cpp \
+    html/HTMLFrameSetElement.cpp \
+    html/HTMLGenericFormElement.cpp \
+    html/HTMLHeadElement.cpp \
+    html/HTMLHeadingElement.cpp \
+    html/HTMLHRElement.cpp \
+    html/HTMLHtmlElement.cpp \
+    html/HTMLIFrameElement.cpp \
+    html/HTMLImageElement.cpp \
+    html/HTMLImageLoader.cpp \
+    html/HTMLInputElement.cpp \
+    html/HTMLIsIndexElement.cpp \
+    html/HTMLKeygenElement.cpp \
+    html/HTMLLabelElement.cpp \
+    html/HTMLLegendElement.cpp \
+    html/HTMLLIElement.cpp \
+    html/HTMLLinkElement.cpp \
+    html/HTMLMapElement.cpp \
+    html/HTMLMarqueeElement.cpp \
+    html/HTMLMenuElement.cpp \
+    html/HTMLMetaElement.cpp \
+    html/HTMLModElement.cpp \
+    html/HTMLNameCollection.cpp \
+    html/HTMLObjectElement.cpp \
+    html/HTMLOListElement.cpp \
+    html/HTMLOptGroupElement.cpp \
+    html/HTMLOptionElement.cpp \
+    html/HTMLOptionsCollection.cpp \
+    html/HTMLParagraphElement.cpp \
+    html/HTMLParamElement.cpp \
+    html/HTMLParser.cpp \
+    html/HTMLPlugInElement.cpp \
+    html/HTMLPreElement.cpp \
+    html/HTMLQuoteElement.cpp \
+    html/HTMLScriptElement.cpp \
+    html/HTMLSelectElement.cpp \
+    html/HTMLStyleElement.cpp \
+    html/HTMLTableCaptionElement.cpp \
+    html/HTMLTableCellElement.cpp \
+    html/HTMLTableColElement.cpp \
+    html/HTMLTableElement.cpp \
     html/HTMLTablePartElement.cpp \
+    html/HTMLTableRowElement.cpp \
     html/HTMLTableSectionElement.cpp \
     html/HTMLTextAreaElement.cpp \
     html/HTMLTextFieldInnerElement.cpp \
-    html/HTMLAreaElement.cpp \
-    html/CanvasStyle.cpp \
-    html/HTMLIsIndexElement.cpp \
-    html/HTMLHeadElement.cpp \
-    html/HTMLFrameSetElement.cpp \
-    html/HTMLBodyElement.cpp \
-    html/HTMLBRElement.cpp \
-    html/HTMLFrameOwnerElement.cpp \
-    html/HTMLNameCollection.cpp \
-    html/HTMLLegendElement.cpp \
-    html/HTMLLIElement.cpp \
-    html/HTMLParamElement.cpp \
-    html/HTMLMetaElement.cpp \
-    html/HTMLHeadingElement.cpp \
+    html/HTMLTitleElement.cpp \
+    html/HTMLTokenizer.cpp \
     html/HTMLUListElement.cpp \
-    html/HTMLInputElement.cpp \
-    html/HTMLElementFactory.cpp \
-    html/HTMLPlugInElement.cpp \
-    html/HTMLFieldSetElement.cpp \
-    html/HTMLParagraphElement.cpp \
-    html/HTMLStyleElement.cpp \
-    html/HTMLMarqueeElement.cpp \
-    html/HTMLGenericFormElement.cpp \
-    html/HTMLElement.cpp \
-    html/HTMLDocument.cpp \
-    html/HTMLOListElement.cpp \
-    html/HTMLFormElement.cpp \
-    html/HTMLPreElement.cpp \
-    html/HTMLTableElement.cpp \
-    html/CanvasGradient.cpp \
     html/HTMLViewSourceDocument.cpp \
-    html/HTMLFrameElement.cpp \
-    html/HTMLFrameElementBase.cpp \
-    html/HTMLAnchorElement.cpp \
-    html/HTMLTableCellElement.cpp \
-    html/CanvasPattern.cpp \
-    html/HTMLBlockquoteElement.cpp \
-    html/HTMLIFrameElement.cpp \
-    html/HTMLMenuElement.cpp \
-    html/HTMLCollection.cpp \
-    html/HTMLModElement.cpp \
-    html/HTMLQuoteElement.cpp \
-    html/HTMLDirectoryElement.cpp \
-    html/HTMLSelectElement.cpp \
-    html/HTMLImageElement.cpp \
-    html/HTMLOptionsCollection.cpp \
-    html/HTMLTableRowElement.cpp \
-    html/HTMLBaseFontElement.cpp \
-    html/HTMLHRElement.cpp \
-    html/HTMLButtonElement.cpp \
-    html/HTMLFormCollection.cpp \
-    html/HTMLBaseElement.cpp \
-    page/FrameTree.cpp \
-    page/FocusController.cpp \
-    page/DOMWindow.cpp \
-    page/MouseEventWithHitTestResults.cpp \
-    page/Frame.cpp \
-    page/Settings.cpp \
-    page/Page.cpp \
-    page/Chrome.cpp \
-    page/FrameView.cpp \
-    page/PageState.cpp \
-    page/ContextMenuController.cpp \
-    page/EventHandler.cpp \
-    page/DragController.cpp \
-    page/qt/EventHandlerQt.cpp \
-    page/qt/FrameQt.cpp \
-    page/qt/DragControllerQt.cpp \
-    xml/XPathUtil.cpp \
-    xml/XPathPredicate.cpp \
-    xml/XPathVariableReference.cpp \
-    xml/XPathValue.cpp \
-    xml/XPathPath.cpp \
-    xml/XPathFunctions.cpp \
-    xml/XPathParser.cpp \
-    xml/XPathStep.cpp \
-    xml/XPathExpressionNode.cpp \
-    xml/XPathNamespace.cpp \
-    xml/XPathNSResolver.cpp \
-    xml/XPathExpression.cpp \
-    xml/XPathResult.cpp \
-    xml/XPathEvaluator.cpp \
+#    icon/IconDatabase.cpp \
+#    icon/SiteIcon.cpp \
+#    icon/SQLDatabase.cpp \
+#    icon/SQLStatement.cpp \
+#    icon/SQLTransaction.cpp \
     loader/Cache.cpp \
     loader/CachedCSSStyleSheet.cpp \
     loader/CachedImage.cpp \
-    loader/CachedResource.cpp \
     loader/CachedResourceClientWalker.cpp \
+    loader/CachedResource.cpp \
     loader/CachedScript.cpp \
     loader/CachedXSLStyleSheet.cpp \
     loader/DocLoader.cpp \
     loader/DocumentLoader.cpp \
     loader/FormState.cpp \
     loader/FrameLoader.cpp \
+    loader/icon/IconDatabase.cpp \
+    loader/icon/IconDataCache.cpp \
+    loader/icon/IconLoader.cpp \
+    loader/icon/SQLDatabase.cpp \
+    loader/icon/SQLStatement.cpp \
+    loader/icon/SQLTransaction.cpp \
     loader/ImageDocument.cpp \
+    loader/loader.cpp \
     loader/MainResourceLoader.cpp \
     loader/NavigationAction.cpp \
     loader/NetscapePlugInStreamLoader.cpp \
     loader/PluginDocument.cpp \
     loader/ProgressTracker.cpp \
+    loader/qt/DocumentLoaderQt.cpp \
     loader/Request.cpp \
     loader/ResourceLoader.cpp \
     loader/SubresourceLoader.cpp \
     loader/TextDocument.cpp \
     loader/TextResourceDecoder.cpp \
-    loader/loader.cpp \
-    loader/icon/IconLoader.cpp \
-    loader/icon/IconDatabase.cpp \ 
-    loader/icon/IconDataCache.cpp \
-    loader/icon/SQLTransaction.cpp \
-    loader/icon/SQLStatement.cpp \
-    loader/icon/SQLDatabase.cpp \
-    loader/qt/DocumentLoaderQt.cpp \
-    platform/CString.cpp \
-    platform/DragData.cpp \
-    platform/AtomicString.cpp \
-    platform/Base64.cpp \
-    platform/graphics/AffineTransform.cpp \
-    platform/TextStream.cpp \
-    platform/Widget.cpp \
-    platform/GlyphWidthMap.cpp \
-    platform/graphics/Pen.cpp \
-    platform/graphics/Image.cpp \
-    platform/DeprecatedStringList.cpp \
-    platform/graphics/FloatSize.cpp \
-    platform/graphics/PathTraversalState.cpp \
-    platform/String.cpp \
-    platform/DeprecatedValueListImpl.cpp \
-    platform/graphics/IntRect.cpp \
+    page/Chrome.cpp \
+    page/ContextMenuController.cpp \
+    page/DOMWindow.cpp \
+    page/DragController.cpp \
+    page/EventHandler.cpp \
+    page/FocusController.cpp \
+    page/Frame.cpp \
+    page/FrameTree.cpp \
+    page/FrameView.cpp \
+    page/MouseEventWithHitTestResults.cpp \
+    page/Page.cpp \
+    page/PageState.cpp \
+    page/qt/DragControllerQt.cpp \
+    page/qt/EventHandlerQt.cpp \
+    page/qt/FrameQt.cpp \
+    page/Settings.cpp \
     platform/Arena.cpp \
     platform/ArrayImpl.cpp \
+    platform/AtomicString.cpp \
+    platform/Base64.cpp \
+    platform/ContextMenu.cpp \
+    platform/CString.cpp \
+    platform/DeprecatedCString.cpp \
+    platform/DeprecatedPtrListImpl.cpp \
+    platform/DeprecatedString.cpp \
+    platform/DeprecatedStringList.cpp \
+    platform/DeprecatedValueListImpl.cpp \
+    platform/DragData.cpp \
+    platform/FileChooser.cpp \
+    platform/FontCache.cpp \
+    platform/Font.cpp \
+    platform/FontData.cpp \
+    platform/FontFallbackList.cpp \
+    platform/FontFamily.cpp \
+    platform/GlyphPageTreeNode.cpp \
+    platform/GlyphWidthMap.cpp \
+    platform/graphics/AffineTransform.cpp \
+    platform/graphics/BitmapImage.cpp \
+    platform/graphics/Color.cpp \
     platform/graphics/FloatPoint3D.cpp \
     platform/graphics/FloatPoint.cpp \
-    platform/SegmentedString.cpp \
-    platform/TextCodec.cpp \
-    platform/qt/TextCodecQt.cpp \
-    platform/DeprecatedString.cpp \
-    platform/DeprecatedCString.cpp \
-    platform/SharedBuffer.cpp \
+    platform/graphics/FloatRect.cpp \
+    platform/graphics/FloatSize.cpp \
+    platform/graphics/GraphicsContext.cpp \
+    platform/graphics/GraphicsTypes.cpp \
+    platform/graphics/ImageBuffer.cpp \
+    platform/graphics/Image.cpp \
+    platform/graphics/IntRect.cpp \
+    platform/graphics/Path.cpp \
+    platform/graphics/PathTraversalState.cpp \
+    platform/graphics/Pen.cpp \
+    platform/graphics/qt/AffineTransformQt.cpp \
+    platform/graphics/qt/ColorQt.cpp \
+    platform/graphics/qt/FloatPointQt.cpp \
+    platform/graphics/qt/FloatRectQt.cpp \
+    platform/graphics/qt/GraphicsContextQt.cpp \
+    platform/graphics/qt/IconQt.cpp \
+    platform/graphics/qt/ImageBufferQt.cpp \
+    platform/graphics/qt/ImageDecoderQt.cpp \
+    platform/graphics/qt/ImageQt.cpp \
+    platform/graphics/qt/ImageSourceQt.cpp \
+    platform/graphics/qt/IntPointQt.cpp \
+    platform/graphics/qt/IntRectQt.cpp \
+    platform/graphics/qt/IntSizeQt.cpp \
+    platform/graphics/qt/PathQt.cpp \
+    platform/KURL.cpp \
+    platform/Logging.cpp \
+    platform/MimeTypeRegistry.cpp \
+    platform/network/AuthenticationChallenge.cpp \
+    platform/network/Credential.cpp \
+    platform/network/FormData.cpp \
+    platform/network/HTTPParsers.cpp \
+    platform/network/ProtectionSpace.cpp \
+    platform/network/qt/ResourceHandleManagerQt.cpp \
+    platform/network/qt/ResourceHandleQt.cpp \
+    platform/network/ResourceHandle.cpp \
+    platform/network/ResourceRequest.cpp \
+    platform/network/ResourceResponse.cpp \
+    platform/qt/ContextMenuItemQt.cpp \
+    platform/qt/ContextMenuQt.cpp \
+    platform/qt/CookieJarQt.cpp \
+    platform/qt/CursorQt.cpp \
+    platform/qt/DragDataQt.cpp \
+    platform/qt/FileChooserQt.cpp \
+    platform/qt/FontCacheQt.cpp \
+    platform/qt/FontDataQt.cpp \
+    platform/qt/FontPlatformDataQt.cpp \
+    platform/qt/FontQt.cpp \
+    platform/qt/GlyphPageTreeNodeQt.cpp \
+    platform/qt/MimeTypeRegistryQt.cpp \
+    platform/qt/PasteboardQt.cpp \
+    platform/qt/PlatformKeyboardEventQt.cpp \
+    platform/qt/PlatformMouseEventQt.cpp \
+    platform/qt/PlatformScrollBarQt.cpp \
+    platform/qt/PopupMenuQt.cpp \
+    platform/qt/RenderThemeQt.cpp \
+    platform/qt/ScreenQt.cpp \
+    platform/qt/ScrollViewCanvasQt.cpp \
+    platform/qt/ScrollViewQt.cpp \
+    platform/qt/SearchPopupMenuQt.cpp \
+    platform/qt/SharedTimerQt.cpp \
+    platform/qt/SoundQt.cpp \
+    platform/qt/StringQt.cpp \
+    platform/qt/SystemTimeQt.cpp \
+    platform/qt/TemporaryLinkStubs.cpp \
+    platform/qt/TextBoundaries.cpp \
     platform/qt/TextBreakIteratorQt.cpp \
+    platform/qt/TextCodecQt.cpp \
+    platform/qt/WheelEventQt.cpp \
+    platform/qt/WidgetQt.cpp \
+    platform/RegularExpression.cpp \
+    platform/ScrollBar.cpp \
+#    platform/SearchPopupMenu.cpp \
+    platform/SegmentedString.cpp \
+    platform/SharedBuffer.cpp \
+    platform/String.cpp \
+    platform/StringImpl.cpp \
+    platform/TextCodec.cpp \
     platform/TextCodecLatin1.cpp \
     platform/TextCodecUTF16.cpp \
     platform/TextDecoder.cpp \
     platform/TextEncoding.cpp \
     platform/TextEncodingRegistry.cpp \
-    platform/Logging.cpp \
-    platform/ScrollBar.cpp \
-    platform/graphics/Color.cpp \
-    platform/graphics/ImageBuffer.cpp \
-    platform/DeprecatedPtrListImpl.cpp \
-    platform/KURL.cpp \
-    platform/StringImpl.cpp \
-    platform/graphics/FloatRect.cpp \
-    platform/graphics/Path.cpp \
-    platform/MimeTypeRegistry.cpp \
-    platform/qt/MimeTypeRegistryQt.cpp \
-    platform/qt/SoundQt.cpp \
-    platform/qt/FileChooserQt.cpp \
-    platform/FileChooser.cpp \
-    platform/graphics/qt/IconQt.cpp \
-    platform/graphics/qt/ImageBufferQt.cpp \
-    platform/graphics/qt/AffineTransformQt.cpp \
-    platform/qt/StringQt.cpp \
-    platform/graphics/qt/ColorQt.cpp \
-    platform/qt/GlyphPageTreeNodeQt.cpp \
-    platform/qt/CookieJarQt.cpp \
-    platform/qt/FontPlatformDataQt.cpp \
-    platform/qt/ScrollViewQt.cpp \
-    platform/qt/PlatformScrollBarQt.cpp \
-    platform/qt/TemporaryLinkStubs.cpp \
-    platform/qt/CursorQt.cpp \
-    platform/qt/WidgetQt.cpp \
-    platform/qt/SystemTimeQt.cpp \
-    platform/qt/RenderThemeQt.cpp \
-    platform/qt/FontDataQt.cpp \
-    platform/qt/SharedTimerQt.cpp \
-    platform/qt/PopupMenuQt.cpp \
-    platform/qt/ContextMenuQt.cpp \
-    platform/qt/ContextMenuItemQt.cpp \
-    platform/qt/PasteboardQt.cpp \
-    platform/qt/DragDataQt.cpp \
-    platform/ContextMenu.cpp \
-#    platform/SearchPopupMenu.cpp \ 
-    platform/qt/SearchPopupMenuQt.cpp \ 
-    platform/network/AuthenticationChallenge.cpp \
-    platform/network/Credential.cpp \
-    platform/network/FormData.cpp \
-    platform/network/ProtectionSpace.cpp \
-    platform/network/ResourceHandle.cpp \
-    platform/network/ResourceRequest.cpp \
-    platform/network/ResourceResponse.cpp \
-    platform/network/qt/ResourceHandleQt.cpp \
-    platform/network/qt/ResourceHandleManagerQt.cpp \
-    platform/network/HTTPParsers.cpp \
-    platform/graphics/BitmapImage.cpp \
-    platform/graphics/qt/FloatPointQt.cpp \
-    platform/graphics/qt/FloatRectQt.cpp \
-    platform/graphics/qt/GraphicsContextQt.cpp \
-    platform/graphics/qt/IntPointQt.cpp \
-    platform/graphics/qt/IntRectQt.cpp \
-    platform/graphics/qt/IntSizeQt.cpp \
-    platform/graphics/qt/PathQt.cpp \
-    platform/graphics/qt/ImageQt.cpp \
-    platform/graphics/qt/ImageSourceQt.cpp \
-    platform/graphics/qt/ImageDecoderQt.cpp \
-    platform/qt/FontCacheQt.cpp \
-    platform/qt/FontQt.cpp \
-    platform/qt/ScreenQt.cpp \
-    platform/qt/ScrollViewCanvasQt.cpp \
-    platform/qt/PlatformMouseEventQt.cpp \
-    platform/qt/PlatformKeyboardEventQt.cpp \
-    platform/qt/TextBoundaries.cpp \
-    platform/qt/WheelEventQt.cpp \
-    platform/graphics/GraphicsTypes.cpp \
-    platform/graphics/GraphicsContext.cpp \
-    platform/FontFamily.cpp \
+    platform/TextStream.cpp \
     platform/Timer.cpp \
-    platform/FontCache.cpp \
-    platform/FontFallbackList.cpp \
-    platform/RegularExpression.cpp \
-    platform/GlyphPageTreeNode.cpp \
-    platform/Font.cpp \
-    platform/FontData.cpp \
-    rendering/HitTestResult.cpp \
-    rendering/RenderCounter.cpp \
+    platform/Widget.cpp \
+    rendering/AutoTableLayout.cpp \
+    rendering/bidi.cpp \
+    rendering/break_lines.cpp \
     rendering/CounterNode.cpp \
     rendering/CounterResetNode.cpp \
-    rendering/RenderListBox.cpp \
-    rendering/RenderReplaced.cpp \
-    rendering/RenderPartObject.cpp \
-    rendering/RenderView.cpp \
-    rendering/RenderMenuList.cpp \
-    rendering/InlineFlowBox.cpp \
-    rendering/RenderListMarker.cpp \
-    rendering/RenderImage.cpp \
-    rendering/RenderTheme.cpp \
-    rendering/RenderLayer.cpp \
-    rendering/RenderTableCell.cpp \
-    rendering/RenderListItem.cpp \
-    rendering/AutoTableLayout.cpp \
-    rendering/RenderArena.cpp \
-    rendering/RenderWidget.cpp \
-    rendering/break_lines.cpp \
-    rendering/RenderStyle.cpp \
-    rendering/RenderContainer.cpp \
     rendering/EllipsisBox.cpp \
-    rendering/RenderFieldset.cpp \
-    rendering/RenderFrameSet.cpp \
-    rendering/RenderTable.cpp \
-    rendering/RenderPart.cpp \
-    rendering/RenderBlock.cpp \
-    rendering/InlineBox.cpp \
-    rendering/RenderText.cpp \
-    rendering/RenderFrame.cpp \
     rendering/FixedTableLayout.cpp \
-    rendering/RenderTableCol.cpp \
-    rendering/RenderObject.cpp \
-    rendering/RenderTreeAsText.cpp \
-    rendering/SVGRenderTreeAsText.cpp \
-    rendering/RootInlineBox.cpp \
-    rendering/RenderBox.cpp \
-    rendering/RenderButton.cpp \
-    rendering/RenderTableSection.cpp \
-    rendering/ListMarkerBox.cpp \
-    rendering/RenderTableRow.cpp \
-    rendering/RenderInline.cpp \
-    rendering/RenderFileUploadControl.cpp \
-    rendering/RenderHTMLCanvas.cpp \
-    rendering/bidi.cpp \
-    rendering/RenderFlexibleBox.cpp \
-    rendering/RenderApplet.cpp \
-    rendering/RenderLegend.cpp \
-    rendering/RenderTextControl.cpp \
-    rendering/RenderTextFragment.cpp \
-    rendering/RenderBR.cpp \
+    rendering/HitTestResult.cpp \
+    rendering/InlineBox.cpp \
+    rendering/InlineFlowBox.cpp \
     rendering/InlineTextBox.cpp \
+    rendering/ListMarkerBox.cpp \
+    rendering/RenderApplet.cpp \
+    rendering/RenderArena.cpp \
+    rendering/RenderBlock.cpp \
+    rendering/RenderBox.cpp \
+    rendering/RenderBR.cpp \
+    rendering/RenderButton.cpp \
+    rendering/RenderContainer.cpp \
+    rendering/RenderCounter.cpp \
+    rendering/RenderFieldset.cpp \
+    rendering/RenderFileUploadControl.cpp \
+    rendering/RenderFlexibleBox.cpp \
     rendering/RenderFlow.cpp \
+    rendering/RenderFrame.cpp \
+    rendering/RenderFrameSet.cpp \
+    rendering/RenderHTMLCanvas.cpp \
+    rendering/RenderImage.cpp \
+    rendering/RenderInline.cpp \
+    rendering/RenderLayer.cpp \
+    rendering/RenderLegend.cpp \
+    rendering/RenderListBox.cpp \
+    rendering/RenderListItem.cpp \
+    rendering/RenderListMarker.cpp \
+    rendering/RenderMenuList.cpp \
+    rendering/RenderObject.cpp \
+    rendering/RenderPart.cpp \
+    rendering/RenderPartObject.cpp \
+    rendering/RenderReplaced.cpp \
     rendering/RenderSlider.cpp \
-    ../WebKitQt/WebCoreSupport/FrameLoaderClientQt.cpp \
-    ../WebKitQt/WebCoreSupport/EditorClientQt.cpp \
+    rendering/RenderStyle.cpp \
+    rendering/RenderTableCell.cpp \
+    rendering/RenderTableCol.cpp \
+    rendering/RenderTable.cpp \
+    rendering/RenderTableRow.cpp \
+    rendering/RenderTableSection.cpp \
+    rendering/RenderTextControl.cpp \
+    rendering/RenderText.cpp \
+    rendering/RenderTextFragment.cpp \
+    rendering/RenderTheme.cpp \
+    rendering/RenderTreeAsText.cpp \
+    rendering/RenderView.cpp \
+    rendering/RenderWidget.cpp \
+    rendering/RootInlineBox.cpp \
+    rendering/SVGRenderTreeAsText.cpp \
+    xml/DOMParser.cpp \
+    xml/xmlhttprequest.cpp \
+    xml/XMLSerializer.cpp \
+    xml/XPathEvaluator.cpp \
+    xml/XPathExpression.cpp \
+    xml/XPathExpressionNode.cpp \
+    xml/XPathFunctions.cpp \
+    xml/XPathNamespace.cpp \
+    xml/XPathNSResolver.cpp \
+    xml/XPathParser.cpp \
+    xml/XPathPath.cpp \
+    xml/XPathPredicate.cpp \
+    xml/XPathResult.cpp \
+    xml/XPathStep.cpp \
+    xml/XPathUtil.cpp \
+    xml/XPathValue.cpp \
+    xml/XPathVariableReference.cpp \
+    xml/XSLImportRule.cpp \
+    xml/XSLStyleSheet.cpp \
+    xml/XSLTProcessor.cpp \
     ../WebKitQt/WebCoreSupport/ChromeClientQt.cpp \
     ../WebKitQt/WebCoreSupport/ContextMenuClientQt.cpp \
     ../WebKitQt/WebCoreSupport/DragClientQt.cpp \
-    ../WebKitQt/Api/qwebpage.cpp \
+    ../WebKitQt/WebCoreSupport/EditorClientQt.cpp \
+    ../WebKitQt/WebCoreSupport/FrameLoaderClientQt.cpp \
     ../WebKitQt/Api/qwebframe.cpp \
+    ../WebKitQt/Api/qwebpage.cpp \
     ../WebKitQt/Api/qwebpagehistory.cpp
 
 contains(DEFINES, XPATH_SUPPORT=1) {
@@ -720,11 +725,10 @@ contains(DEFINES, SVG_SUPPORT=1) {
 
     XLINK_NAMES = $$PWD/ksvg2/misc/xlinkattrs.in
 
-    IDL_BINDINGS += ksvg2/svg/SVGAElement.idl \
+    IDL_BINDINGS += ksvg2/events/SVGZoomEvent.idl \
+        ksvg2/svg/SVGAElement.idl \
         ksvg2/svg/SVGAngle.idl \
         ksvg2/svg/SVGAnimateColorElement.idl \
-        ksvg2/svg/SVGAnimateElement.idl \
-        ksvg2/svg/SVGAnimateTransformElement.idl \
         ksvg2/svg/SVGAnimatedAngle.idl \
         ksvg2/svg/SVGAnimatedBoolean.idl \
         ksvg2/svg/SVGAnimatedEnumeration.idl \
@@ -737,6 +741,8 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/svg/SVGAnimatedRect.idl \
         ksvg2/svg/SVGAnimatedString.idl \
         ksvg2/svg/SVGAnimatedTransformList.idl \
+        ksvg2/svg/SVGAnimateElement.idl \
+        ksvg2/svg/SVGAnimateTransformElement.idl \
         ksvg2/svg/SVGAnimationElement.idl \
         ksvg2/svg/SVGCircleElement.idl \
         ksvg2/svg/SVGClipPathElement.idl \
@@ -747,6 +753,8 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/svg/SVGDescElement.idl \
         ksvg2/svg/SVGDocument.idl \
         ksvg2/svg/SVGElement.idl \
+        ksvg2/svg/SVGElementInstance.idl \
+        ksvg2/svg/SVGElementInstanceList.idl \
         ksvg2/svg/SVGEllipseElement.idl \
         ksvg2/svg/SVGFEBlendElement.idl \
         ksvg2/svg/SVGFEColorMatrixElement.idl \
@@ -777,16 +785,16 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/svg/SVGImageElement.idl \
         ksvg2/svg/SVGLength.idl \
         ksvg2/svg/SVGLengthList.idl \
-        ksvg2/svg/SVGLineElement.idl \
         ksvg2/svg/SVGLinearGradientElement.idl \
-        ksvg2/svg/SVGMaskElement.idl \
+        ksvg2/svg/SVGLineElement.idl \
         ksvg2/svg/SVGMarkerElement.idl \
+        ksvg2/svg/SVGMaskElement.idl \
         ksvg2/svg/SVGMatrix.idl \
         ksvg2/svg/SVGMetadataElement.idl \
+        ksvg2/svg/SVGNumber.idl \
         ksvg2/svg/SVGNumberList.idl \
         ksvg2/svg/SVGPaint.idl \
         ksvg2/svg/SVGPathElement.idl \
-        ksvg2/svg/SVGPathSeg.idl \
         ksvg2/svg/SVGPathSegArcAbs.idl \
         ksvg2/svg/SVGPathSegArcRel.idl \
         ksvg2/svg/SVGPathSegClosePath.idl \
@@ -798,6 +806,7 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/svg/SVGPathSegCurvetoQuadraticRel.idl \
         ksvg2/svg/SVGPathSegCurvetoQuadraticSmoothAbs.idl \
         ksvg2/svg/SVGPathSegCurvetoQuadraticSmoothRel.idl \
+        ksvg2/svg/SVGPathSeg.idl \
         ksvg2/svg/SVGPathSegLinetoAbs.idl \
         ksvg2/svg/SVGPathSegLinetoHorizontalAbs.idl \
         ksvg2/svg/SVGPathSegLinetoHorizontalRel.idl \
@@ -808,39 +817,34 @@ contains(DEFINES, SVG_SUPPORT=1) {
         ksvg2/svg/SVGPathSegMovetoAbs.idl \
         ksvg2/svg/SVGPathSegMovetoRel.idl \
         ksvg2/svg/SVGPatternElement.idl \
+        ksvg2/svg/SVGPoint.idl \
         ksvg2/svg/SVGPointList.idl \
         ksvg2/svg/SVGPolygonElement.idl \
         ksvg2/svg/SVGPolylineElement.idl \
         ksvg2/svg/SVGPreserveAspectRatio.idl \
         ksvg2/svg/SVGRadialGradientElement.idl \
         ksvg2/svg/SVGRectElement.idl \
+        ksvg2/svg/SVGRect.idl \
         ksvg2/svg/SVGRenderingIntent.idl \
-        ksvg2/svg/SVGSetElement.idl \
         ksvg2/svg/SVGScriptElement.idl \
-        ksvg2/svg/SVGStyleElement.idl \
-        ksvg2/svg/SVGSwitchElement.idl \
+        ksvg2/svg/SVGSetElement.idl \
         ksvg2/svg/SVGStopElement.idl \
         ksvg2/svg/SVGStringList.idl \
-        ksvg2/svg/SVGSymbolElement.idl \
+        ksvg2/svg/SVGStyleElement.idl \
         ksvg2/svg/SVGSVGElement.idl \
-        ksvg2/svg/SVGTRefElement.idl \
-        ksvg2/svg/SVGTSpanElement.idl \
-        ksvg2/svg/SVGTextElement.idl \
+        ksvg2/svg/SVGSwitchElement.idl \
+        ksvg2/svg/SVGSymbolElement.idl \
         ksvg2/svg/SVGTextContentElement.idl \
+        ksvg2/svg/SVGTextElement.idl \
         ksvg2/svg/SVGTextPositioningElement.idl \
         ksvg2/svg/SVGTitleElement.idl \
         ksvg2/svg/SVGTransform.idl \
         ksvg2/svg/SVGTransformList.idl \
+        ksvg2/svg/SVGTRefElement.idl \
+        ksvg2/svg/SVGTSpanElement.idl \
         ksvg2/svg/SVGUnitTypes.idl \
         ksvg2/svg/SVGUseElement.idl \
-        ksvg2/svg/SVGViewElement.idl \
-        ksvg2/events/SVGZoomEvent.idl \
-        ksvg2/svg/SVGNumber.idl \
-        ksvg2/svg/SVGPoint.idl \
-        ksvg2/svg/SVGRect.idl \
-        ksvg2/svg/SVGElementInstance.idl \
-        ksvg2/svg/SVGElementInstanceList.idl
-
+        ksvg2/svg/SVGViewElement.idl 
 
     SOURCES += \
 # TODO: this-one-is-not-auto-added! FIXME! tmp/SVGElementFactory.cpp \
@@ -850,142 +854,131 @@ contains(DEFINES, SVG_SUPPORT=1) {
         bindings/js/JSSVGPathSegListCustom.cpp \
         bindings/js/JSSVGPointListCustom.cpp \
         ksvg2/css/SVGCSSParser.cpp \
-        ksvg2/css/SVGRenderStyleDefs.cpp \
-        ksvg2/css/SVGRenderStyle.cpp \
         ksvg2/css/SVGCSSStyleSelector.cpp \
-        ksvg2/svg/ColorDistance.cpp \
-        ksvg2/svg/SVGFEFuncBElement.cpp \
-        ksvg2/svg/SVGColor.cpp \
-        ksvg2/svg/SVGSwitchElement.cpp \
-        ksvg2/svg/SVGFETileElement.cpp \
-        ksvg2/svg/SVGDOMImplementation.cpp \
-        ksvg2/svg/SVGMarkerElement.cpp \
-        ksvg2/svg/SVGFECompositeElement.cpp \
-        ksvg2/svg/SVGImageElement.cpp \
-        ksvg2/svg/SVGAnimateElement.cpp \
-        ksvg2/svg/SVGAnimateMotionElement.cpp \
-        ksvg2/svg/SVGURIReference.cpp \
-        ksvg2/svg/SVGLength.cpp \
-        ksvg2/svg/SVGPathSegCurvetoCubic.cpp \
-        ksvg2/svg/SVGExternalResourcesRequired.cpp \
-        ksvg2/svg/SVGPolylineElement.cpp \
-        ksvg2/svg/SVGFEOffsetElement.cpp \
-        ksvg2/svg/SVGFETurbulenceElement.cpp \
-        ksvg2/svg/SVGZoomAndPan.cpp \
-        ksvg2/svg/SVGFilterPrimitiveStandardAttributes.cpp \
-        ksvg2/svg/SVGStyledLocatableElement.cpp \
-        ksvg2/svg/SVGLineElement.cpp \
-        ksvg2/svg/SVGTransform.cpp \
-        ksvg2/svg/SVGTransformDistance.cpp \
-        ksvg2/svg/SVGPathSegLinetoVertical.cpp \
-        ksvg2/svg/SVGFitToViewBox.cpp \
-        ksvg2/svg/SVGRadialGradientElement.cpp \
-        ksvg2/svg/SVGMaskElement.cpp \
-        ksvg2/svg/SVGTitleElement.cpp \
-        ksvg2/svg/SVGTRefElement.cpp \
-        ksvg2/svg/SVGLangSpace.cpp \
-        ksvg2/svg/SVGTransformList.cpp \
-        ksvg2/svg/SVGStylable.cpp \
-        ksvg2/svg/SVGPolyElement.cpp \
-        ksvg2/svg/SVGPolygonElement.cpp \
-        ksvg2/svg/SVGElementInstanceList.cpp \
-        ksvg2/svg/SVGTSpanElement.cpp \
-        ksvg2/svg/SVGFEFuncRElement.cpp \
-        ksvg2/svg/SVGFEFloodElement.cpp \
-        ksvg2/svg/SVGPointList.cpp \
-        ksvg2/svg/SVGAnimatedPoints.cpp \
-        ksvg2/svg/SVGAnimatedPathData.cpp \
-        ksvg2/svg/SVGUseElement.cpp \
-        ksvg2/svg/SVGNumberList.cpp \
-        ksvg2/svg/SVGFEPointLightElement.cpp \
-        ksvg2/svg/SVGPathSegLineto.cpp \
-        ksvg2/svg/SVGRectElement.cpp \
-        ksvg2/svg/SVGTextContentElement.cpp \
-        ksvg2/svg/SVGFESpotLightElement.cpp \
-        ksvg2/svg/SVGLocatable.cpp \
-        ksvg2/svg/SVGEllipseElement.cpp \
-        ksvg2/svg/SVGPathElement.cpp \
-        ksvg2/svg/SVGMPathElement.cpp \
-        ksvg2/svg/SVGStyledElement.cpp \
-        ksvg2/svg/SVGFEMergeNodeElement.cpp \
-        ksvg2/svg/SVGFEGaussianBlurElement.cpp \
-        ksvg2/svg/SVGLinearGradientElement.cpp \
-        ksvg2/svg/SVGFEDisplacementMapElement.cpp \
-        ksvg2/svg/SVGFEImageElement.cpp \
-        ksvg2/svg/SVGFEDiffuseLightingElement.cpp \
-        ksvg2/svg/SVGSymbolElement.cpp \
-        ksvg2/svg/SVGForeignObjectElement.cpp \
-        ksvg2/svg/SVGAngle.cpp \
-        ksvg2/svg/SVGPathSegCurvetoQuadratic.cpp \
-        ksvg2/svg/SVGSVGElement.cpp \
-        ksvg2/svg/SVGFESpecularLightingElement.cpp \
-        ksvg2/svg/SVGAnimateColorElement.cpp \
-        ksvg2/svg/SVGGElement.cpp \
-        ksvg2/svg/SVGFEFuncGElement.cpp \
-        ksvg2/svg/SVGFEComponentTransferElement.cpp \
-        ksvg2/svg/SVGSetElement.cpp \
-        ksvg2/svg/SVGFEBlendElement.cpp \
-        ksvg2/svg/SVGFEMergeElement.cpp \
-        ksvg2/svg/SVGCursorElement.cpp \
-        ksvg2/svg/SVGStringList.cpp \
-        ksvg2/svg/SVGElementInstance.cpp \
-        ksvg2/svg/SVGFilterElement.cpp \
-        ksvg2/svg/SVGPathSegCurvetoCubicSmooth.cpp \
-        ksvg2/svg/SVGPatternElement.cpp \
-        ksvg2/svg/SVGPathSegList.cpp \
-        ksvg2/svg/SVGStyleElement.cpp \
-        ksvg2/svg/SVGPaint.cpp \
-        ksvg2/svg/SVGFEDistantLightElement.cpp \
-        ksvg2/svg/SVGTextPositioningElement.cpp \
-        ksvg2/svg/SVGPreserveAspectRatio.cpp \
-        ksvg2/svg/SVGScriptElement.cpp \
-        ksvg2/svg/SVGComponentTransferFunctionElement.cpp \
-        ksvg2/svg/SVGTextElement.cpp \
-        ksvg2/svg/SVGViewElement.cpp \
-        ksvg2/svg/SVGLengthList.cpp \
-        ksvg2/svg/SVGStyledTransformableElement.cpp \
-        ksvg2/svg/SVGPathSegArc.cpp \
-        ksvg2/svg/SVGDescElement.cpp \
-        ksvg2/svg/SVGTransformable.cpp \
-        ksvg2/svg/SVGDocument.cpp \
-        ksvg2/svg/SVGClipPathElement.cpp \
-        ksvg2/svg/SVGPathSegMoveto.cpp \
-        ksvg2/svg/SVGAElement.cpp \
-        ksvg2/svg/SVGCircleElement.cpp \
-        ksvg2/svg/SVGFEFuncAElement.cpp \
-        ksvg2/svg/SVGTests.cpp \
-        ksvg2/svg/SVGPathSegCurvetoQuadraticSmooth.cpp \
-        ksvg2/svg/SVGElement.cpp \
-        ksvg2/svg/SVGAnimateTransformElement.cpp \
-        ksvg2/svg/SVGFEColorMatrixElement.cpp \
-        ksvg2/svg/SVGGradientElement.cpp \
-        ksvg2/svg/SVGAnimationElement.cpp \
-        ksvg2/svg/SVGFELightElement.cpp \
-        ksvg2/svg/SVGPathSegClosePath.cpp \
-        ksvg2/svg/SVGPathSegLinetoHorizontal.cpp \
-        ksvg2/svg/SVGStopElement.cpp \
-        ksvg2/svg/SVGDefsElement.cpp \
-        ksvg2/svg/SVGMetadataElement.cpp \
-        ksvg2/svg/SVGParserUtilities.cpp \
-        ksvg2/misc/SVGImageLoader.cpp \
-        ksvg2/misc/SVGDocumentExtensions.cpp \
-        ksvg2/misc/SVGTimer.cpp \
-        ksvg2/misc/TimeScheduler.cpp \
-        ksvg2/misc/KCanvasRenderingStyle.cpp \
-        ksvg2/misc/PointerEventsHitRules.cpp \
+        ksvg2/css/SVGRenderStyle.cpp \
+        ksvg2/css/SVGRenderStyleDefs.cpp \
         ksvg2/events/JSSVGLazyEventListener.cpp \
         ksvg2/events/SVGZoomEvent.cpp \
-        platform/graphics/svg/SVGPaintServer.cpp \
-        platform/graphics/svg/SVGPaintServerGradient.cpp \
-        platform/graphics/svg/SVGPaintServerLinearGradient.cpp \
-        platform/graphics/svg/SVGPaintServerPattern.cpp \
-        platform/graphics/svg/SVGPaintServerRadialGradient.cpp \
-        platform/graphics/svg/SVGPaintServerSolid.cpp \
-        platform/graphics/svg/SVGResource.cpp \
-        platform/graphics/svg/SVGResourceClipper.cpp \
-        platform/graphics/svg/SVGResourceFilter.cpp \
-        platform/graphics/svg/SVGResourceMarker.cpp \
-        platform/graphics/svg/SVGResourceMasker.cpp \
+        ksvg2/misc/KCanvasRenderingStyle.cpp \
+        ksvg2/misc/PointerEventsHitRules.cpp \
+        ksvg2/misc/SVGDocumentExtensions.cpp \
+        ksvg2/misc/SVGImageLoader.cpp \
+        ksvg2/misc/SVGTimer.cpp \
+        ksvg2/misc/TimeScheduler.cpp \
+        ksvg2/svg/ColorDistance.cpp \
+        ksvg2/svg/SVGAElement.cpp \
+        ksvg2/svg/SVGAngle.cpp \
+        ksvg2/svg/SVGAnimateColorElement.cpp \
+        ksvg2/svg/SVGAnimatedPathData.cpp \
+        ksvg2/svg/SVGAnimatedPoints.cpp \
+        ksvg2/svg/SVGAnimateElement.cpp \
+        ksvg2/svg/SVGAnimateMotionElement.cpp \
+        ksvg2/svg/SVGAnimateTransformElement.cpp \
+        ksvg2/svg/SVGAnimationElement.cpp \
+        ksvg2/svg/SVGCircleElement.cpp \
+        ksvg2/svg/SVGClipPathElement.cpp \
+        ksvg2/svg/SVGColor.cpp \
+        ksvg2/svg/SVGComponentTransferFunctionElement.cpp \
+        ksvg2/svg/SVGCursorElement.cpp \
+        ksvg2/svg/SVGDefsElement.cpp \
+        ksvg2/svg/SVGDescElement.cpp \
+        ksvg2/svg/SVGDocument.cpp \
+        ksvg2/svg/SVGDOMImplementation.cpp \
+        ksvg2/svg/SVGElement.cpp \
+        ksvg2/svg/SVGElementInstance.cpp \
+        ksvg2/svg/SVGElementInstanceList.cpp \
+        ksvg2/svg/SVGEllipseElement.cpp \
+        ksvg2/svg/SVGExternalResourcesRequired.cpp \
+        ksvg2/svg/SVGFEBlendElement.cpp \
+        ksvg2/svg/SVGFEColorMatrixElement.cpp \
+        ksvg2/svg/SVGFEComponentTransferElement.cpp \
+        ksvg2/svg/SVGFECompositeElement.cpp \
+        ksvg2/svg/SVGFEDiffuseLightingElement.cpp \
+        ksvg2/svg/SVGFEDisplacementMapElement.cpp \
+        ksvg2/svg/SVGFEDistantLightElement.cpp \
+        ksvg2/svg/SVGFEFloodElement.cpp \
+        ksvg2/svg/SVGFEFuncAElement.cpp \
+        ksvg2/svg/SVGFEFuncBElement.cpp \
+        ksvg2/svg/SVGFEFuncGElement.cpp \
+        ksvg2/svg/SVGFEFuncRElement.cpp \
+        ksvg2/svg/SVGFEGaussianBlurElement.cpp \
+        ksvg2/svg/SVGFEImageElement.cpp \
+        ksvg2/svg/SVGFELightElement.cpp \
+        ksvg2/svg/SVGFEMergeElement.cpp \
+        ksvg2/svg/SVGFEMergeNodeElement.cpp \
+        ksvg2/svg/SVGFEOffsetElement.cpp \
+        ksvg2/svg/SVGFEPointLightElement.cpp \
+        ksvg2/svg/SVGFESpecularLightingElement.cpp \
+        ksvg2/svg/SVGFESpotLightElement.cpp \
+        ksvg2/svg/SVGFETileElement.cpp \
+        ksvg2/svg/SVGFETurbulenceElement.cpp \
+        ksvg2/svg/SVGFilterElement.cpp \
+        ksvg2/svg/SVGFilterPrimitiveStandardAttributes.cpp \
+        ksvg2/svg/SVGFitToViewBox.cpp \
+        ksvg2/svg/SVGForeignObjectElement.cpp \
+        ksvg2/svg/SVGGElement.cpp \
+        ksvg2/svg/SVGGradientElement.cpp \
+        ksvg2/svg/SVGImageElement.cpp \
+        ksvg2/svg/SVGLangSpace.cpp \
+        ksvg2/svg/SVGLength.cpp \
+        ksvg2/svg/SVGLengthList.cpp \
+        ksvg2/svg/SVGLinearGradientElement.cpp \
+        ksvg2/svg/SVGLineElement.cpp \
+        ksvg2/svg/SVGLocatable.cpp \
+        ksvg2/svg/SVGMarkerElement.cpp \
+        ksvg2/svg/SVGMaskElement.cpp \
+        ksvg2/svg/SVGMetadataElement.cpp \
+        ksvg2/svg/SVGMPathElement.cpp \
+        ksvg2/svg/SVGNumberList.cpp \
+        ksvg2/svg/SVGPaint.cpp \
+        ksvg2/svg/SVGParserUtilities.cpp \
+        ksvg2/svg/SVGPathElement.cpp \
+        ksvg2/svg/SVGPathSegArc.cpp \
+        ksvg2/svg/SVGPathSegClosePath.cpp \
+        ksvg2/svg/SVGPathSegCurvetoCubic.cpp \
+        ksvg2/svg/SVGPathSegCurvetoCubicSmooth.cpp \
+        ksvg2/svg/SVGPathSegCurvetoQuadratic.cpp \
+        ksvg2/svg/SVGPathSegCurvetoQuadraticSmooth.cpp \
+        ksvg2/svg/SVGPathSegLineto.cpp \
+        ksvg2/svg/SVGPathSegLinetoHorizontal.cpp \
+        ksvg2/svg/SVGPathSegLinetoVertical.cpp \
+        ksvg2/svg/SVGPathSegList.cpp \
+        ksvg2/svg/SVGPathSegMoveto.cpp \
+        ksvg2/svg/SVGPatternElement.cpp \
+        ksvg2/svg/SVGPointList.cpp \
+        ksvg2/svg/SVGPolyElement.cpp \
+        ksvg2/svg/SVGPolygonElement.cpp \
+        ksvg2/svg/SVGPolylineElement.cpp \
+        ksvg2/svg/SVGPreserveAspectRatio.cpp \
+        ksvg2/svg/SVGRadialGradientElement.cpp \
+        ksvg2/svg/SVGRectElement.cpp \
+        ksvg2/svg/SVGScriptElement.cpp \
+        ksvg2/svg/SVGSetElement.cpp \
+        ksvg2/svg/SVGStopElement.cpp \
+        ksvg2/svg/SVGStringList.cpp \
+        ksvg2/svg/SVGStylable.cpp \
+        ksvg2/svg/SVGStyledElement.cpp \
+        ksvg2/svg/SVGStyledLocatableElement.cpp \
+        ksvg2/svg/SVGStyledTransformableElement.cpp \
+        ksvg2/svg/SVGStyleElement.cpp \
+        ksvg2/svg/SVGSVGElement.cpp \
+        ksvg2/svg/SVGSwitchElement.cpp \
+        ksvg2/svg/SVGSymbolElement.cpp \
+        ksvg2/svg/SVGTests.cpp \
+        ksvg2/svg/SVGTextContentElement.cpp \
+        ksvg2/svg/SVGTextElement.cpp \
+        ksvg2/svg/SVGTextPositioningElement.cpp \
+        ksvg2/svg/SVGTitleElement.cpp \
+        ksvg2/svg/SVGTransformable.cpp \
+        ksvg2/svg/SVGTransform.cpp \
+        ksvg2/svg/SVGTransformDistance.cpp \
+        ksvg2/svg/SVGTransformList.cpp \
+        ksvg2/svg/SVGTRefElement.cpp \
+        ksvg2/svg/SVGTSpanElement.cpp \
+        ksvg2/svg/SVGURIReference.cpp \
+        ksvg2/svg/SVGUseElement.cpp \
+        ksvg2/svg/SVGViewElement.cpp \
+        ksvg2/svg/SVGZoomAndPan.cpp \
         platform/graphics/svg/filters/SVGFEBlend.cpp \
         platform/graphics/svg/filters/SVGFEColorMatrix.cpp \
         platform/graphics/svg/filters/SVGFEComponentTransfer.cpp \
@@ -1011,8 +1004,19 @@ contains(DEFINES, SVG_SUPPORT=1) {
         platform/graphics/svg/qt/SVGPaintServerRadialGradientQt.cpp \
         platform/graphics/svg/qt/SVGPaintServerSolidQt.cpp \
         platform/graphics/svg/qt/SVGResourceClipperQt.cpp \
-        platform/graphics/svg/qt/SVGResourceMaskerQt.cpp \
         platform/graphics/svg/qt/SVGResourceFilterQt.cpp \
+        platform/graphics/svg/qt/SVGResourceMaskerQt.cpp \
+        platform/graphics/svg/SVGPaintServer.cpp \
+        platform/graphics/svg/SVGPaintServerGradient.cpp \
+        platform/graphics/svg/SVGPaintServerLinearGradient.cpp \
+        platform/graphics/svg/SVGPaintServerPattern.cpp \
+        platform/graphics/svg/SVGPaintServerRadialGradient.cpp \
+        platform/graphics/svg/SVGPaintServerSolid.cpp \
+        platform/graphics/svg/SVGResourceClipper.cpp \
+        platform/graphics/svg/SVGResource.cpp \
+        platform/graphics/svg/SVGResourceFilter.cpp \
+        platform/graphics/svg/SVGResourceMarker.cpp \
+        platform/graphics/svg/SVGResourceMasker.cpp \
         rendering/RenderForeignObject.cpp \
         rendering/RenderPath.cpp \
         rendering/RenderSVGBlock.cpp \
@@ -1024,12 +1028,7 @@ contains(DEFINES, SVG_SUPPORT=1) {
         rendering/RenderSVGTSpan.cpp \
         rendering/SVGInlineFlowBox.cpp \
         rendering/SVGInlineTextBox.cpp \
-        rendering/SVGRootInlineBox.cpp \
-        history/BackForwardList.cpp \
-        history/HistoryItem.cpp \
-        history/HistoryItemTimer.cpp \
-        history/PageCache.cpp \
-        history/qt/PageCacheQt.cpp \
+        rendering/SVGRootInlineBox.cpp
 
         # GENERATOR 5-B:
         svgnames_a.output = tmp/SVGNames.cpp

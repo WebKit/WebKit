@@ -1,3 +1,10 @@
+2007-01-29  Zack Rusin  <zrusin@trolltech.com>
+
+        Order the build files alphabetically instead of
+        the random mess we had before.
+
+        * WebCore.pro:
+
 2007-01-29  Zack Rusin  <zack@kde.org>
 
         Reviewed by Lars
