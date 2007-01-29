@@ -211,7 +211,7 @@ void ChromeClientQt::addMessageToConsole(const String& message, unsigned int lin
 {
     QString x = message;
     QString y = sourceID;
-    m_webPage->consoleMessage(x, lineNumber, y);
+    m_webPage->javaScriptConsoleMessage(x, lineNumber, y);
 }
 
 void ChromeClientQt::chromeDestroyed()
