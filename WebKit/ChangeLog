@@ -1,3 +1,10 @@
+2007-01-29  Oliver Hunt  <oliver@apple.com>
+
+        build fix  
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+
 2007-01-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

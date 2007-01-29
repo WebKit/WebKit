@@ -1411,7 +1411,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
             dragImage = [self _dragImageForLinkElement:element];
             NSSize offset = NSMakeSize([dragImage size].width / 2, -DRAG_LABEL_BORDER_Y);
             dragLoc = NSMakePoint(mouseDraggedPoint.x - offset.width, mouseDraggedPoint.y - offset.height);
-            dragController->setDragOffset(IntPoint(offset.width, -offset.height)); // height inverted because we are flipped
+            dragController->setDragOffset(IntPoint((int)offset.width, -(int)offset.height)); // height inverted because we are flipped
         }
         // HACK:  We should pass the mouseDown event instead of the mouseDragged!  This hack gets rid of
         // a flash of the image at the mouseDown location when the drag starts.
@@ -1430,8 +1430,8 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
             dragImage = [innerHTMLView _selectionDraggingImage];
             NSRect draggingRect = [self convertRect:[innerHTMLView _selectionDraggingRect] fromView:innerHTMLView];
             dragLoc = NSMakePoint(NSMinX(draggingRect), NSMaxY(draggingRect));
-            dragController->setDragOffset(IntPoint(mouseDownPoint.x - dragLoc.x,
-                                                   dragLoc.y - mouseDownPoint.y));        // y inverted because we are flipped
+            dragController->setDragOffset(IntPoint((int)(mouseDownPoint.x - dragLoc.x),
+                                                   (int)(dragLoc.y - mouseDownPoint.y)));        // y inverted because we are flipped
         }
         [self dragImage:dragImage
                      at:dragLoc
@@ -1450,7 +1450,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
             dragImage = [[[NSImage alloc] initWithContentsOfFile:imagePath] autorelease];
             NSSize imageSize = [dragImage size];
             dragLoc = NSMakePoint(mouseDownPoint.x - imageSize.width / 2, mouseDownPoint.y + imageSize.height / 2);
-            dragController->setDragOffset(IntPoint(imageSize.width / 2, imageSize.height / 2));
+            dragController->setDragOffset(IntPoint((int)(imageSize.width / 2), (int)(imageSize.height / 2)));
         }
         [self dragImage:dragImage
                      at:dragLoc
