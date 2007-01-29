@@ -1,3 +1,20 @@
+2007-01-28  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=9815
+          JavaScript TypeError loading Dean Edwards' JS compressor/obfuscator
+
+        Creating a function using 'new Function()' was not setting its prototype with the
+        same flags as 'function() { }'.
+
+        Test: fast/js/function-prototype.html
+
+        * kjs/function_object.cpp:
+        (FunctionObjectImp::construct): Change flags from DontEnum|DontDelete|ReadOnly to
+        Internal|DontDelete to match FuncDeclNode::processFuncDecl() and
+        FuncExprNode::evaluate() in kjs/nodes.cpp.
+
 2007-01-27  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.
