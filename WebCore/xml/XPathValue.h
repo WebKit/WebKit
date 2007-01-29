@@ -47,6 +47,7 @@ namespace WebCore {
             Value(unsigned);
             Value(unsigned long);
             Value(double);
+            Value(const char*);
             Value(const String&);
             
             Type type() const { return m_type; }

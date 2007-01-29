@@ -72,6 +72,11 @@ Value::Value(double value)
 {
 }
 
+Value::Value(const char* value)
+    : m_type(StringValue), m_string(value)
+{
+}
+
 Value::Value(const String& value)
     : m_type(StringValue), m_string(value)
 {

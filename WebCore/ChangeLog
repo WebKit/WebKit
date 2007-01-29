@@ -1,3 +1,18 @@
+2007-01-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11815
+        XPathEvaluator behavior does not match Firefox - substring() and empty element
+
+        Test: fast/xpath/empty-string-substring.html
+
+        * xml/XPathValue.cpp:
+        (WebCore::XPath::Value::Value):
+        * xml/XPathValue.h:
+        Added a constructor taking const char*, so that string literals and arrays don't 
+        get converted to boolean values.
+
 2007-01-29  Zack Rusin  <zrusin@trolltech.com>
 
         Cosmetic fixes - don't resize the widget in the constructor
