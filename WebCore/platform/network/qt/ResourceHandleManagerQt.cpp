@@ -262,7 +262,7 @@ void ResourceHandleManager::receivedResponse(RequestQt* request)
 
 void ResourceHandleManager::receivedData(RequestQt* request, const QByteArray& data)
 {
-    if (request->cancelled)
+    if (request->cancelled || request->redirected)
         return;
     Q_ASSERT(pendingRequests.value(request->resource) == request);
 
