@@ -550,6 +550,7 @@ SOURCES += \
     platform/TextEncoding.cpp \
     platform/TextEncodingRegistry.cpp \
     platform/Logging.cpp \
+    platform/ScrollBar.cpp \
     platform/graphics/Color.cpp \
     platform/graphics/ImageBuffer.cpp \
     platform/DeprecatedPtrListImpl.cpp \

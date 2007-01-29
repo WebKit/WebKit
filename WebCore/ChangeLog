@@ -1,3 +1,16 @@
+2007-01-29  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Lars
+
+        Use the platform independent scrollbar code.
+        Remove the redundant empty stubs and forward
+        few missing platform scrollbar calls.
+
+        * WebCore.pro:
+        * platform/qt/PlatformScrollBarQt.cpp:
+        (WebCore::PlatformScrollbar::paint):
+        (WebCore::PlatformScrollbar::setRect):
+
 2007-01-29  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Zack

@@ -27,32 +27,6 @@
 
 namespace WebCore {    
 
-Scrollbar::Scrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize)
-{
-}
-    
-void Scrollbar::setSteps(int, int)
-{
-    notImplemented();
-}
-
-bool Scrollbar::scroll(ScrollDirection, ScrollGranularity, float)
-{
-    notImplemented();
-    return 0;
-}
-
-bool Scrollbar::setValue(int)
-{
-    notImplemented();
-    return 0;
-}
-
-void Scrollbar::setProportion(int, int)
-{
-    notImplemented();
-}
-
 PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation,
                                      ScrollbarControlSize controlSize)
     : Scrollbar(client, orientation, controlSize)
@@ -82,7 +56,7 @@ void PlatformScrollbar::setEnabled(bool e)
 
 void PlatformScrollbar::paint(GraphicsContext* ctxt, const IntRect& damageRect)
 {
-    //Widget::paint(ctxt, damageRect);
+    Widget::paint(ctxt, damageRect);
 }
 
 void PlatformScrollbar::updateThumbPosition()
@@ -95,9 +69,9 @@ void PlatformScrollbar::updateThumbProportion()
     notImplemented();
 }
 
-void PlatformScrollbar::setRect(const IntRect&)
+void PlatformScrollbar::setRect(const IntRect& rect)
 {
-    notImplemented();
+    setFrameGeometry(rect);
 }
 
 
