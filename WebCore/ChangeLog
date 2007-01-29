@@ -1,3 +1,13 @@
+2007-01-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver
+
+        http://bugs.webkit.org/show_bug.cgi?id=12465
+        Only set the iconURL port for non-zero ports
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::iconURL):
+
 2007-01-29  John Sullivan  <sullivan@apple.com>
 
         * platform/network/mac/ResourceRequestMac.mm:
