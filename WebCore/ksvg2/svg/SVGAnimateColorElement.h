@@ -53,8 +53,6 @@ namespace WebCore {
 
         Color m_toColor;
         Color m_fromColor;
-
-        ColorDistance m_colorDistance;
     };
 
 } // namespace WebCore

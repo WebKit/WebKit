@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+animateTransform parsing code coverage for translate, rotate, skewX
+
+TODO: does not test e/E exponent notation
+
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="800px" height="600px">
+	<g transform="translate(-90, -90)">
+		<circle fill="none" stroke="black" stroke-width="3" cx="200" cy="200" r="100" />
+		<line x1="200" y1="200" x2="300" y2="200" stroke="red" stroke-width="30" stroke-linecap="round">
+			<animateTransform attributeName="transform" type="rotate" from=" 0, 200, 200" to=" 360, 200, 200"
+				dur="5s" />
+		</line>
+		<line x1="200" y1="200" x2="300" y2="200" stroke="green" stroke-width="20" stroke-linecap="round">
+			<animateTransform attributeName="transform" type="rotate" from=" 0 200 200" to=" 360 200 200"
+				dur="5s" />
+		</line>
+		<line x1="200" y1="200" x2="300" y2="200" stroke="blue" stroke-width="10" stroke-linecap="round">
+			<animateTransform attributeName="transform" type="rotate" from=" 0,200,200" to=" 360,200,200"
+				dur="5s" />
+		</line>
+		<line x1="200" y1="200" x2="300" y2="200" stroke="white" stroke-width="5" stroke-linecap="round">
+			<animateTransform attributeName="transform" type="rotate" from=" 0,+200 +200" to=" 360 +200 +200"
+				dur="5s" />
+		</line>
+	</g>
+	<g transform="translate(300, 10)">
+		<rect fill="none" stroke="black" stroke-width="3" x="0" y="0" width="200" height="200" />
+		<circle fill="red" cx="0" cy="0" r="30">
+			<animateTransform attributeName="transform" type="translate" from="0, 0" to="200, 200" dur="5s" />
+		</circle>
+		<circle fill="green" cx="0" cy="0" r="20">
+			<animateTransform attributeName="transform" type="translate" from="0 0" to="200 200" dur="5s" />
+		</circle>
+		<circle fill="blue" cx="0" cy="0" r="10">
+			<animateTransform attributeName="transform" type="translate" from="0,0" to="200,200" dur="5s" />
+		</circle>
+		<circle fill="yellow" cx="0" cy="0" r="5">
+			<animateTransform attributeName="transform" type="translate" from=" +0,+0" to=" +200 +200" dur="5s" />
+		</circle>
+	</g>
+	<g transform="translate(10, 300)">
+		<rect fill="none" stroke="black" stroke-width="3" x="0" y="0" width="200" height="200" />
+		<rect fill="red" x="0" y="0" width="40" height="100">
+			<animateTransform attributeName="transform" type="scale" from="1,1" by="0,1" dur="5s" />
+		</rect>
+		<rect fill="green" x="0" y="0" width="30" height="100">
+			<animateTransform attributeName="transform" type="scale" from="1 1" by="0 1" dur="5s" />
+		</rect>
+		<rect fill="blue" x="0" y="0" width="20" height="100">
+			<animateTransform attributeName="transform" type="scale" from="1, 1" by="0, 1" dur="5s" />
+		</rect>
+		<rect fill="yellow" x="0" y="0" width="10" height="100">
+			<animateTransform attributeName="transform" type="scale" from="+1,+1" by=" +0, +1" dur="5s" />
+		</rect>
+
+		<rect fill="red" x="0" y="0" width="100" height="40">
+			<animateTransform attributeName="transform" type="scale" from="1,1" by="1,0" dur="5s" />
+		</rect>
+		<rect fill="green" x="0" y="0" width="100" height="30">
+			<animateTransform attributeName="transform" type="scale" from="1 1" by="1 0" dur="5s" />
+		</rect>
+		<rect fill="blue" x="0" y="0" width="100" height="20">
+			<animateTransform attributeName="transform" type="scale" from="1, 1" by="1, 0" dur="5s" />
+		</rect>
+		<rect fill="yellow" x="0" y="0" width="100" height="10">
+			<animateTransform attributeName="transform" type="scale" from="+1,+1" by=" +1, +0" dur="5s" />
+		</rect>
+	</g>
+
+	<g transform="translate(300, 300)">
+		<rect fill="none" stroke="black" stroke-width="3" x="0" y="0" width="200" height="200" />
+		<rect fill="red" x="0" y="0" width="100" height="100">
+			<animateTransform attributeName="transform" type="skewX" from="0" by="45" dur="5s" />
+		</rect>
+		<rect fill="green" x="0" y="0" width="50" height="100">
+			<animateTransform attributeName="transform" type="skewX" from="0" by=" 45" dur="5s" />
+		</rect>
+		<rect fill="blue" x="0" y="0" width="25" height="100">
+			<animateTransform attributeName="transform" type="skewX" from="0" by=" +45.0" dur="5s" />
+		</rect>
+	</g>
+</svg>
+

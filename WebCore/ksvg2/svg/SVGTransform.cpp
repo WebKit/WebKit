@@ -37,6 +37,14 @@ SVGTransform::SVGTransform()
 {
 }
 
+SVGTransform::SVGTransform(SVGTransformType type)
+    : m_type(type)
+    , m_angle(0)
+    , m_center(FloatPoint())
+    , m_matrix(AffineTransform())
+{
+}
+
 SVGTransform::SVGTransform(const AffineTransform& matrix)
     : m_type(SVG_TRANSFORM_MATRIX)
     , m_angle(0)
@@ -63,9 +71,14 @@ AffineTransform SVGTransform::matrix() const
     return m_matrix;
 }
 
-double SVGTransform::angle() const
+float SVGTransform::angle() const
 {
     return m_angle;
+}
+
+FloatPoint SVGTransform::rotationCenter() const
+{
+    return m_center;
 }
 
 void SVGTransform::setMatrix(const AffineTransform& matrix)
@@ -76,7 +89,7 @@ void SVGTransform::setMatrix(const AffineTransform& matrix)
     m_matrix = matrix;
 }
 
-void SVGTransform::setTranslate(double tx, double ty)
+void SVGTransform::setTranslate(float tx, float ty)
 {
     m_type = SVG_TRANSFORM_TRANSLATE;
     m_angle = 0;
@@ -90,10 +103,11 @@ FloatPoint SVGTransform::translate() const
     return FloatPoint(m_matrix.e(), m_matrix.f());
 }
 
-void SVGTransform::setScale(double sx, double sy)
+void SVGTransform::setScale(float sx, float sy)
 {
     m_type = SVG_TRANSFORM_SCALE;
     m_angle = 0;
+    m_center = FloatPoint();
 
     m_matrix.reset();
     m_matrix.scale(sx, sy);
@@ -104,10 +118,11 @@ FloatSize SVGTransform::scale() const
     return FloatSize(m_matrix.a(), m_matrix.d());
 }
 
-void SVGTransform::setRotate(double angle, double cx, double cy)
+void SVGTransform::setRotate(float angle, float cx, float cy)
 {
     m_type = SVG_TRANSFORM_ROTATE;
     m_angle = angle;
+    m_center = FloatPoint(cx, cy);
 
     // TODO: toString() implementation, which can show cx, cy (need to be stored?)
     m_matrix.reset();
@@ -116,7 +131,7 @@ void SVGTransform::setRotate(double angle, double cx, double cy)
     m_matrix.translate(-cx, -cy);
 }
 
-void SVGTransform::setSkewX(double angle)
+void SVGTransform::setSkewX(float angle)
 {
     m_type = SVG_TRANSFORM_SKEWX;
     m_angle = angle;
@@ -125,7 +140,7 @@ void SVGTransform::setSkewX(double angle)
     m_matrix.skewX(angle);
 }
 
-void SVGTransform::setSkewY(double angle)
+void SVGTransform::setSkewY(float angle)
 {
     m_type = SVG_TRANSFORM_SKEWY;
     m_angle = angle;

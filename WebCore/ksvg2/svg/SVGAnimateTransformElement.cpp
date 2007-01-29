@@ -32,6 +32,7 @@
 #include "SVGStyledTransformableElement.h"
 #include "SVGTransform.h"
 #include "SVGTransformList.h"
+#include "SVGParserUtilities.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
 
@@ -78,7 +79,7 @@ bool SVGAnimateTransformElement::updateAnimatedValue(EAnimationMode animationMod
         // to-animations have a special equation: value = (to - base) * (time/duration) + base
         m_animatedTransform = SVGTransformDistance(m_baseTransform, m_toTransform).scaledDistance(timePercentage).addToSVGTransform(m_baseTransform);
     else
-        m_animatedTransform = m_transformDistance.scaledDistance(percentagePast).addToSVGTransform(m_fromTransform);
+        m_animatedTransform = SVGTransformDistance(m_fromTransform, m_toTransform).scaledDistance(percentagePast).addToSVGTransform(m_fromTransform);
     return (m_animatedTransform != m_baseTransform);
 }
 
@@ -98,6 +99,11 @@ bool SVGAnimateTransformElement::updateAnimationBaseValueFromElement()
         return false;
     
     m_baseTransform = transformList->concatenateForType(m_type);
+    
+    // If a base value is empty, its type should match m_type instead of being unknown.
+    // It's not certain whether this should be part of SVGTransformList or not -- cying
+    if (m_baseTransform.type() == SVGTransform::SVG_TRANSFORM_UNKNOWN)
+        m_baseTransform = SVGTransform(m_type);
         
     return true;
 }
@@ -122,7 +128,7 @@ void SVGAnimateTransformElement::applyAnimatedValueToElement()
 
 bool SVGAnimateTransformElement::calculateFromAndToValues(EAnimationMode animationMode, unsigned valueIndex)
 {
-    switch (detectAnimationMode()) {
+    switch (animationMode) {
     case FROM_TO_ANIMATION:
         m_fromTransform = parseTransformValue(m_from);
         // fall through
@@ -144,8 +150,8 @@ bool SVGAnimateTransformElement::calculateFromAndToValues(EAnimationMode animati
     case NO_ANIMATION:
         ASSERT_NOT_REACHED();
     }
-    m_transformDistance = SVGTransformDistance(m_fromTransform, m_toTransform);
-    return !m_transformDistance.isZero();
+    
+    return true;
 }
 
 SVGTransform SVGAnimateTransformElement::parseTransformValue(const String& data) const
@@ -155,20 +161,23 @@ SVGTransform SVGAnimateTransformElement::parseTransformValue(const String& data)
     String parse = data.stripWhiteSpace();
     if (parse.isEmpty())
         return SVGTransform();
-    
-    int commaPos = parse.find(','); // In case two values are passed...
 
+    // Careful, cur changes as parseNumber is called. 
+    const UChar* cur = parse.characters();
+    const UChar* end = cur + parse.length();
+    
     SVGTransform parsedTransform;
     
     switch (m_type) {
         case SVGTransform::SVG_TRANSFORM_TRANSLATE:
         {
             double tx = 0.0, ty = 0.0;
-            if (commaPos != - 1) {
-                tx = parse.substring(0, commaPos).toDouble();
-                ty = parse.substring(commaPos + 1).toDouble();
-            } else
-                tx = parse.toDouble();
+            
+            if (!parseNumber(cur, end, tx))
+                tx = 0.0;
+            
+            if (!parseNumber(cur, end, ty))
+                ty = 0.0;
 
             parsedTransform.setTranslate(tx, ty);
             break;
@@ -176,31 +185,27 @@ SVGTransform SVGAnimateTransformElement::parseTransformValue(const String& data)
         case SVGTransform::SVG_TRANSFORM_SCALE:
         {
             double sx = 1.0, sy = 1.0;
-            if (commaPos != - 1) {
-                sx = parse.substring(0, commaPos).toDouble();
-                sy = parse.substring(commaPos + 1).toDouble();
-            } else {
-                sx = parse.toDouble();
-                sy = sx;
-            }
 
+            if (!parseNumber(cur, end, sx))
+                sx = 1.0;
+            
+            if (!parseNumber(cur, end, sy))
+                sy = sx;
+            
             parsedTransform.setScale(sx, sy);
             break;
         }
         case SVGTransform::SVG_TRANSFORM_ROTATE:
         {
             double angle = 0, cx = 0, cy = 0;
-            if (commaPos != - 1) {
-                angle = parse.substring(0, commaPos).toDouble(); // TODO: probably needs it's own 'angle' parser
-    
-                int commaPosTwo = parse.find(',', commaPos + 1); // In case three values are passed...
-                if (commaPosTwo != -1) {
-                    cx = parse.substring(commaPos + 1, commaPosTwo - commaPos - 1).toDouble();
-                    cy = parse.substring(commaPosTwo + 1).toDouble();
+
+            if (parseNumber(cur, end, angle)) {
+                // Successful, try to read cx and cy. It's either both cx and cy or none
+                if (!parseNumber(cur, end, cx) || !parseNumber(cur, end, cy)) {
+                    cx = 0;
+                    cy = 0;
                 }
             }
-            else 
-                angle = parse.toDouble();
 
             parsedTransform.setRotate(angle, cx, cy);
             break;    
@@ -208,7 +213,10 @@ SVGTransform SVGAnimateTransformElement::parseTransformValue(const String& data)
         case SVGTransform::SVG_TRANSFORM_SKEWX:
         case SVGTransform::SVG_TRANSFORM_SKEWY:
         {
-            double angle = parse.toDouble(); // TODO: probably needs it's own 'angle' parser
+            double angle = 0;
+            
+            if (!parseNumber(cur, end, angle))
+                angle = 0;
             
             if (m_type == SVGTransform::SVG_TRANSFORM_SKEWX)
                 parsedTransform.setSkewX(angle);

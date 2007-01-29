@@ -44,10 +44,12 @@ namespace WebCore {
         
         float distance() const;
     private:
-        SVGTransformDistance(SVGTransform::SVGTransformType, double angle, const AffineTransform&);
+        SVGTransformDistance(SVGTransform::SVGTransformType, double angle, double cx, double cy, const AffineTransform&);
             
         SVGTransform::SVGTransformType m_type;
         double m_angle;
+        double m_cx;
+        double m_cy;
         AffineTransform m_transform; // for storing scale, translation or matrix transforms
     };
 }

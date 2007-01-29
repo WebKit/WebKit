@@ -25,12 +25,12 @@
 #ifdef SVG_SUPPORT
 
 #include "AffineTransform.h"
+#include "FloatPoint.h"
 #include "Shared.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
     
-    class FloatPoint;
     class FloatSize;
 
     class SVGTransform {
@@ -46,6 +46,7 @@ namespace WebCore {
         };
  
         SVGTransform();
+        SVGTransform(SVGTransformType type);
         explicit SVGTransform(const AffineTransform&);
         virtual ~SVGTransform();
                
@@ -53,14 +54,15 @@ namespace WebCore {
 
         AffineTransform matrix() const;
     
-        double angle() const;
+        float angle() const;
+        FloatPoint rotationCenter() const;
 
         void setMatrix(const AffineTransform&);
-        void setTranslate(double tx, double ty);
-        void setScale(double sx, double sy);
-        void setRotate(double angle, double cx, double cy);
-        void setSkewX(double angle);
-        void setSkewY(double angle);
+        void setTranslate(float tx, float ty);
+        void setScale(float sx, float sy);
+        void setRotate(float angle, float cx, float cy);
+        void setSkewX(float angle);
+        void setSkewY(float angle);
         
         // Internal use only (animation system)
         FloatPoint translate() const;
@@ -70,7 +72,8 @@ namespace WebCore {
 
     private:
         SVGTransformType m_type;
-        double m_angle;
+        float m_angle;
+        FloatPoint m_center;
         AffineTransform m_matrix;
     };
 

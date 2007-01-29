@@ -1,3 +1,63 @@
+2007-01-28  Charles Ying  <charles_ying@yahoo.com>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=12429
+            animateTransform rotate, with cx/cy is broken
+            
+        SVGTransform now contains a float point to store the rotation center, needed
+            to track rotation center for interpolation by animateTransform.
+            
+        SVGTransform now has an additional constructor:
+            SVGTransform(type) to make empty base value transforms that match their
+            distanced values.
+            
+        Removed m_colorDistance and m_transformDistance from their respective classes
+            as they are now computed at update time.
+
+        Fix a case where animateTransform did not parse transform values correctly
+            according to BNF in W3C spec:
+
+        Test case in:
+        * manual-tests/animation/animateTransform-toanimation.svg: Added.
+
+        Fix a case where animateTransform only specified a to animation only.
+
+        Test case in:
+        * manual-tests/animation/animateTransform-parser.svg: Added.
+
+        * ksvg2/svg/SVGAnimateColorElement.cpp:
+        (WebCore::SVGAnimateColorElement::updateAnimationBaseValueFromElement):
+        (WebCore::SVGAnimateColorElement::updateAnimatedValue):
+        (WebCore::SVGAnimateColorElement::calculateFromAndToValues):
+        * ksvg2/svg/SVGAnimateColorElement.h:
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::updateAnimatedValue):
+        (WebCore::SVGAnimateTransformElement::updateAnimationBaseValueFromElement):
+        (WebCore::SVGAnimateTransformElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateTransformElement::parseTransformValue):
+        * ksvg2/svg/SVGAnimateTransformElement.h:
+        * ksvg2/svg/SVGTransform.cpp:
+        (SVGTransform::SVGTransform):
+        (SVGTransform::angle):
+        (SVGTransform::rotationCenter):
+        (SVGTransform::setTranslate):
+        (SVGTransform::setScale):
+        (SVGTransform::setRotate):
+        (SVGTransform::setSkewX):
+        (SVGTransform::setSkewY):
+        * ksvg2/svg/SVGTransform.h:
+        * ksvg2/svg/SVGTransformDistance.cpp:
+        (WebCore::SVGTransformDistance::SVGTransformDistance):
+        (WebCore::SVGTransformDistance::scaledDistance):
+        (WebCore::SVGTransformDistance::addSVGTransforms):
+        (WebCore::SVGTransformDistance::addSVGTransform):
+        (WebCore::SVGTransformDistance::addToSVGTransform):
+        (WebCore::SVGTransformDistance::distance):
+        * ksvg2/svg/SVGTransformDistance.h:
+        * manual-tests/animation/animateTransform-parser.svg: Added.
+        * manual-tests/animation/animateTransform-toanimation.svg: Added.
+
 2007-01-27  Adam Roben  <aroben@apple.com>
 
         Reviewed by Ada.
