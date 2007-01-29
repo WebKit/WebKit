@@ -1,3 +1,13 @@
+2007-01-29  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Brady.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11085
+        Bug 11085: REGRESSION: favicon.ico always looked for on port 80
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::iconURL): Copy the port over to the favicon URL.
+
 2007-01-28  Adam Roben  <aroben@apple.com>
 
         Reviewed by Adele.
