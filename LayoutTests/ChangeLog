@@ -5,8 +5,6 @@
         - test for http://bugs.webkit.org/show_bug.cgi?id=8360
           Repro crash when onscroll handler deletes the scrolled object
 
-        * fast/layers/removed-by-scroll-handler-expected.checksum: Added.
-        * fast/layers/removed-by-scroll-handler-expected.png: Added.
         * fast/layers/removed-by-scroll-handler-expected.txt: Added.
         * fast/layers/removed-by-scroll-handler.html: Added.
 
