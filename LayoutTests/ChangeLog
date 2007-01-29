@@ -1,3 +1,15 @@
+2007-01-28  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Darin and David Hyatt.
+
+        - Test for http://bugs.webkit.org/show_bug.cgi?id=12423
+          Mixing white-space:pre text with non white-space:pre text does not wrap properly
+
+        * fast/block/basic/white-space-pre-wraps-expected.checksum: Added.
+        * fast/block/basic/white-space-pre-wraps-expected.png: Added.
+        * fast/block/basic/white-space-pre-wraps-expected.txt: Added.
+        * fast/block/basic/white-space-pre-wraps.html: Added.
+
 2007-01-28  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

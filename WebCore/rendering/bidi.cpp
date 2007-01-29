@@ -1997,6 +1997,8 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
 
     bool prevLineBrokeCleanly = previousLineBrokeCleanly;
     previousLineBrokeCleanly = false;
+
+    bool autoWrapWasEverTrueOnLine = false;
     
     EWhiteSpace currWS = style()->whiteSpace();
     EWhiteSpace lastWS = currWS;
@@ -2005,6 +2007,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
         lastWS = last->isReplaced() ? last->parent()->style()->whiteSpace() : last->style()->whiteSpace();
         
         bool autoWrap = RenderStyle::autoWrap(currWS);
+        autoWrapWasEverTrueOnLine = autoWrapWasEverTrueOnLine || autoWrap;
         bool preserveNewline = RenderStyle::preserveNewline(currWS);
         bool collapseWhiteSpace = RenderStyle::collapseWhiteSpace(currWS);
             
@@ -2396,7 +2399,10 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                             // keep adding to |tmpW|.  Just update and continue.
                             checkForBreak = true;
                     }
-                    bool canPlaceOnLine = (w + tmpW <= width) || !autoWrap;
+                    bool willFitOnLine = (w + tmpW <= width);
+                    bool canPlaceOnLine = willFitOnLine || !autoWrap;
+                    if (!willFitOnLine && !autoWrap && autoWrapWasEverTrueOnLine)
+                        canPlaceOnLine = false;
                     if (canPlaceOnLine && checkForBreak) {
                         w += tmpW;
                         tmpW = 0;
