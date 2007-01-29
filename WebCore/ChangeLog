@@ -1,5 +1,11 @@
 2007-01-29  Maciej Stachowiak  <mjs@apple.com>
 
+        - fix includes
+
+        * loader/SubstituteData.h:
+
+2007-01-29  Maciej Stachowiak  <mjs@apple.com>
+
         - added new file that I forgot in the last commit
 
         * loader/SubstituteData.h: Added.

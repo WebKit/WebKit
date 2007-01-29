@@ -29,14 +29,11 @@
 
 #include "KURL.h"
 #include "SharedBuffer.h"
-#include "String.h"
+#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-
-    class KURL;
-    class String;
 
     struct SubstituteData {
     public:
