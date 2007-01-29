@@ -27,8 +27,6 @@
 #import "config.h"
 #import "ResourceRequest.h"
 #import "WebCoreSystemInterface.h"
-#import "WebDataProtocol.h"
-#import "WebCoreSystemInterface.h"
 
 #import "FormDataStreamMac.h"
 

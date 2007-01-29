@@ -1,3 +1,9 @@
+2007-01-29  John Sullivan  <sullivan@apple.com>
+
+        * platform/network/mac/ResourceRequestMac.mm:
+        Build fix -- removed #import of no-longer-extant WebDataProtocol.h (and also one of the
+        two #imports for WebCoreSystemInterface.h, while I was at it)
+
 2007-01-29  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Oliver.
