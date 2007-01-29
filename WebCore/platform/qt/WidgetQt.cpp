@@ -224,12 +224,14 @@ Widget::FocusPolicy Widget::focusPolicy() const
 
 void Widget::invalidate()
 {
-    notImplemented();
+    if (data->m_widget)
+        data->m_widget->update();
 }
 
 void Widget::invalidateRect(const IntRect& r)
 {
-    notImplemented();
+    if (data->m_widget)
+        data->m_widget->update(r);
 }
 
 void Widget::removeFromParent()

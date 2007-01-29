@@ -56,7 +56,7 @@ void PlatformScrollbar::setEnabled(bool e)
 
 void PlatformScrollbar::paint(GraphicsContext* ctxt, const IntRect& damageRect)
 {
-    Widget::paint(ctxt, damageRect);
+    //Widget::paint(ctxt, damageRect);
 }
 
 void PlatformScrollbar::updateThumbPosition()

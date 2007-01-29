@@ -1,3 +1,20 @@
+2007-01-29  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Lars.
+
+        Take the scrollbars into considation when computing
+        the contents size of the main frame.
+
+        * platform/qt/PlatformScrollBarQt.cpp:
+        (WebCore::PlatformScrollbar::paint):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::visibleWidth):
+        (WebCore::ScrollView::visibleHeight):
+        (WebCore::ScrollView::visibleContentRect):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::invalidate):
+        (WebCore::Widget::invalidateRect):
+
 2007-01-29  Maciej Stachowiak  <mjs@apple.com>
 
         - fix includes
