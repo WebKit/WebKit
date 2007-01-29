@@ -1,3 +1,14 @@
+2007-01-30  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12458
+        Bug 12458: Crash in W3C-SVG-1.1/animate-elem-09-t.svg running layout tests under guard malloc
+
+        * ksvg2/svg/SVGAnimationElement.cpp: 
+        (WebCore::parseValues): ptr either points to a ';' or off the end of the buffer.  We're
+        interested in what comes before the ';', so start there instead.
+
 2007-01-29  Zack Rusin  <zrusin@trolltech.com>
 
         Reviewed by Lars.

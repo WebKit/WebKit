@@ -149,7 +149,7 @@ static void parseValues(Vector<String>& values, const String& value)
             break;
         
         // walk backwards from the ; to ignore any whitespace
-        const UChar* valueEnd = ptr;
+        const UChar* valueEnd = ptr - 1;
         while (valueStart < valueEnd && isWhitespace(*valueEnd))
             valueEnd--;
         
