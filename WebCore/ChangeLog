@@ -1,3 +1,11 @@
+2007-01-29  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Oliver.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::dragEnteredOrUpdated):
+        Only try a drag operation if the drag client explicitly specified that it is OK
+
 2007-01-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.
