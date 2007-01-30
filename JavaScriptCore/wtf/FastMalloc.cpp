@@ -1391,10 +1391,11 @@ inline void TCMalloc_ThreadCache::Scavenge() {
 #endif
 }
 
+#ifdef WTF_CHANGES
 bool isMultiThreaded;
 TCMalloc_ThreadCache *mainThreadCache;
 
-void fastMallocSetIsMultiThreaded() 
+void fastMallocSetIsMultiThreaded()
 {
     // We lock when writing mainThreadCache but not when reading it. It's OK if
     // the main thread reads a stale, non-NULL value for mainThreadCache because
@@ -1402,25 +1403,42 @@ void fastMallocSetIsMultiThreaded()
     // Other threads can't read a stale, non-NULL value for mainThreadCache because
     // clients must call this function before allocating on other threads, so they'll 
     // have synchronized before reading mainThreadCache.
+    
+    // A similar principle applies to isMultiThreaded. It's OK for the main thread
+    // in GetCache() to read a stale, false value for isMultiThreaded because 
+    // doing so will just cause it to make an unnecessary call to InitModule(),
+    // which will synchronize it.
 
-    // mainThreadCache is only set when isMultiThreaded is false, to save a 
-    // branch in some cases.
+    // To save a branch in some cases, mainThreadCache is only set when 
+    // isMultiThreaded is false.
 
-    SpinLockHolder lock(&pageheap_lock);
-    isMultiThreaded = true;
-    mainThreadCache = 0;
+    {
+        SpinLockHolder lock(&pageheap_lock);
+        isMultiThreaded = true;
+        mainThreadCache = 0;
+    }
+
+    TCMalloc_ThreadCache::InitModule();
 }
+#endif
 
 ALWAYS_INLINE TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetCache() {
   void* ptr = NULL;
+#ifndef WTF_CHANGES
   if (!tsd_inited) {
     InitModule();
   } else {
-      if (mainThreadCache)
-          ptr = mainThreadCache;
-      else
-          ptr = pthread_getspecific(heap_key);
+    ptr = pthread_getspecific(heap_key);
   }
+#else
+  if (mainThreadCache) // fast path for single-threaded mode
+    return mainThreadCache;
+
+  if (isMultiThreaded) // fast path for multi-threaded mode -- heap_key already initialized
+    ptr = pthread_getspecific(heap_key);
+  else // slow path for possible first-time init
+    InitModule();
+#endif
   if (ptr == NULL) ptr = CreateCacheIfNecessary();
   return reinterpret_cast<TCMalloc_ThreadCache*>(ptr);
 }
@@ -1457,6 +1475,9 @@ void TCMalloc_ThreadCache::InitModule() {
   // object declared below.
   SpinLockHolder h(&pageheap_lock);
   if (!phinited) {
+#ifdef WTF_CHANGES
+    InitTSD();
+#endif
     InitSizeClasses();
     threadheap_allocator.Init();
     span_allocator.Init();
@@ -1480,7 +1501,11 @@ void TCMalloc_ThreadCache::InitTSD() {
   // We may have used a fake pthread_t for the main thread.  Fix it.
   pthread_t zero;
   memset(&zero, 0, sizeof(zero));
+#ifndef WTF_CHANGES
   SpinLockHolder h(&pageheap_lock);
+#else
+  ASSERT(pageheap_lock.IsLocked());
+#endif
   for (TCMalloc_ThreadCache* h = thread_heaps; h != NULL; h = h->next_) {
     if (h->tid_ == zero) {
       h->tid_ = pthread_self();
@@ -2052,8 +2077,9 @@ class TCMallocGuard {
 #endif
 };
 
+#ifndef WTF_CHANGES
 static TCMallocGuard module_enter_exit_hook;
-
+#endif
 
 //-------------------------------------------------------------------
 // Exported routines

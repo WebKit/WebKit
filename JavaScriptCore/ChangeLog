@@ -1,3 +1,32 @@
+2007-01-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fixed <rdar://problem/4485644> REGRESSION: JavaScriptCore has init routines
+        
+        The TCMalloc module now initializes, if needed, inside GetCache() and 
+        fastMallocSetIsMultiThreaded(). We leverage the same synchronization 
+        technique used for enabling / disabling the single-threaded optimization 
+        to synchronize initialization of the library without requiring a lock 
+        for every malloc.
+        
+        1,251 runs of tcmalloc_unittest, 2 runs of a custom, massively multi-threaded 
+        tcmalloc_unittest, and my custom version of the PLT show no regressions.
+        Super-accurate JS iBench reports a .24% regression, which is right at the
+        limit of its error range, so I'm declaring victory.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMallocSetIsMultiThreaded): Initialize, if needed. (InitModule()
+        checks the "if needed" part.)
+        (WTF::TCMalloc_ThreadCache::GetCache): Restored original TCMalloc code
+        inside #ifdef, for posterity. Added new initialization logic.
+        (WTF::TCMalloc_ThreadCache::InitModule): Call InitTSD(), since we don't
+        have a static initializer to call it for us, now. This means that fastMalloc
+        is not usable as a general libc allocator, but it never was, and if it were
+        the general libc allocator, we wouldn't be here in the first place, so whatever.
+        (WTF::TCMalloc_ThreadCache::InitTSD): Don't try to take the pageheap_lock, 
+        since InitModule already has it.
+
 2007-01-29  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Geoff and Oliver.
