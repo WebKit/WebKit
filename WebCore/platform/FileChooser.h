@@ -60,6 +60,7 @@ public:
     ~FileChooser();
 
     void disconnectClient() { m_client = 0; }
+    bool disconnected() { return !m_client; }
 
     // FIXME: It's a layering violation that we pass a Document in here.
     // The platform directory is underneath the DOM, so it can't use the DOM.

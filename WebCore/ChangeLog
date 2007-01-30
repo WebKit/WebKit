@@ -1,3 +1,16 @@
+2007-01-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        <rdar://problem/4928646> REGRESSION: manual-tests/remove-input-file-onchange.html crashes
+        
+        * platform/FileChooser.h:
+        (WebCore::FileChooser::disconnected): New method, so the RenderFileControl can tell when it's
+        gotten disconected.
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::valueChanged): Avoid calling repainted() when onChange()
+        handler destroyed us.
+
 2007-01-30  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack.

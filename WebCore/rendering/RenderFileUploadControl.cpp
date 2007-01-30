@@ -89,9 +89,15 @@ void RenderFileUploadControl::setStyle(RenderStyle* newStyle)
 
 void RenderFileUploadControl::valueChanged()
 {
+    // onChange may destroy this renderer
+    RefPtr<FileChooser> fileChooser = m_fileChooser;
+
     static_cast<HTMLInputElement*>(node())->setValueFromRenderer(m_fileChooser->filename());
     static_cast<HTMLInputElement*>(node())->onChange();
-    repaint();
+ 
+    // only repaint if it doesn't seem we have been destroyed
+    if (!fileChooser->disconnected())
+        repaint();
 }
 
 void RenderFileUploadControl::click()
