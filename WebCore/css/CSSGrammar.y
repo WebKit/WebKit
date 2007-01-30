@@ -723,8 +723,10 @@ specifier_list:
         $$ = $1;
     }
     | specifier_list specifier {
-        $$ = $1;
-        if ($$) {
+        if (!$2)
+            $$ = 0;
+        else if ($1) {
+            $$ = $1;
             CSSParser* p = static_cast<CSSParser*>(parser);
             CSSSelector* end = $1;
             while (end->m_tagHistory)
@@ -841,8 +843,11 @@ pseudo:
         $$->m_match = CSSSelector::PseudoClass;
         $2.lower();
         $$->m_value = atomicString($2);
-        if ($$->m_value == "empty" || $$->m_value == "only-child" ||
-            $$->m_value == "first-child" || $$->m_value == "last-child") {
+        CSSSelector::PseudoType type = $$->pseudoType();
+        if (type == CSSSelector::PseudoUnknown)
+            $$ = 0;
+        else if (type == CSSSelector::PseudoEmpty || type == CSSSelector::PseudoOnlyChild ||
+                 type == CSSSelector::PseudoFirstChild || type == CSSSelector::PseudoLastChild) {
             CSSParser* p = static_cast<CSSParser*>(parser);
             Document* doc = p->document();
             if (doc)
@@ -854,6 +859,8 @@ pseudo:
         $$->m_match = CSSSelector::PseudoElement;
         $3.lower();
         $$->m_value = atomicString($3);
+        if ($$->pseudoType() == CSSSelector::PseudoUnknown)
+            $$ = 0;
     }
     // used by :lang
     | ':' FUNCTION IDENT ')' {
@@ -862,15 +869,21 @@ pseudo:
         $$->m_argument = atomicString($3);
         $2.lower();
         $$->m_value = atomicString($2);
+        if ($$->pseudoType() == CSSSelector::PseudoUnknown)
+            $$ = 0;
     }
     // used by :not
     | ':' NOTFUNCTION maybe_space simple_selector ')' {
-        CSSParser* p = static_cast<CSSParser*>(parser);
-        $$ = p->createFloatingSelector();
-        $$->m_match = CSSSelector::PseudoClass;
-        $$->m_simpleSelector = p->sinkFloatingSelector($4);
-        $2.lower();
-        $$->m_value = atomicString($2);
+        if (!$4)
+            $$ = 0;
+        else {
+            CSSParser* p = static_cast<CSSParser*>(parser);
+            $$ = p->createFloatingSelector();
+            $$->m_match = CSSSelector::PseudoClass;
+            $$->m_simpleSelector = p->sinkFloatingSelector($4);
+            $2.lower();
+            $$->m_value = atomicString($2);
+        }
     }
   ;
 

@@ -108,7 +108,7 @@ void CSSSelector::extractPseudoType() const
     bool element = false; // pseudo-element
     bool compat = false; // single colon compatbility mode
 
-    m_pseudoType = PseudoOther;
+    m_pseudoType = PseudoUnknown;
     if (m_value == active)
         m_pseudoType = PseudoActive;
     else if (m_value == after) {
@@ -195,11 +195,11 @@ void CSSSelector::extractPseudoType() const
 
     if (m_match == PseudoClass && element) {
         if (!compat) 
-            m_pseudoType = PseudoOther;
+            m_pseudoType = PseudoUnknown;
         else 
            m_match = PseudoElement;
     } else if (m_match == PseudoElement && !element)
-        m_pseudoType = PseudoOther;
+        m_pseudoType = PseudoUnknown;
 }
 
 bool CSSSelector::operator==(const CSSSelector& other)

@@ -1624,7 +1624,8 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSub
                 }
                 break;
             }
-            case CSSSelector::PseudoOther:
+            case CSSSelector::PseudoUnknown:
+                ASSERT_NOT_REACHED();
                 break;
             
             // Pseudo-elements:

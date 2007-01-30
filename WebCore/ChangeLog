@@ -1,3 +1,30 @@
+2007-01-30  David Hyatt  <hyatt@apple.com>
+
+        Fix for Radar bug #4679426, golden gate bridge Web site layout broken.
+        
+        This is a regression caused by the addition of :lang support.  This
+        feature caused us to accept any pseudo-class/element with function
+        arguments, even ones we couldn't handle.  The site used such a construct
+        in conjunction with :not, which turned :not(something-crazy) into not(false).
+        This ended up being "true", and so we started matching a rule we used to
+        reject.
+
+        The fix is to now aggressively parse pseudo-elements and classes and to
+        cause the rejection of an entire rule if any pseudoclass or element within
+        any simple selector of that rule is unrecognized.
+
+        Reviewed by darin
+
+        fast/css/invalid-pseudo-classes.html
+
+        * css/CSSGrammar.y:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::checkOneSelector):
+
 2007-01-30  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
