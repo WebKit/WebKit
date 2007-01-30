@@ -1,3 +1,14 @@
+2007-01-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12486
+        XPathNSResolver.lookupNamespaceURI should return null if no URI is found
+
+        * dom/svg/level3/xpath/XPathNSResolver_lookupNamespaceURI_nist_dmstc-expected.txt:
+        * dom/svg/level3/xpath/XPathNSResolver_lookupNamespaceURI_null-expected.txt:
+        These tests now pass.
+
 2007-01-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

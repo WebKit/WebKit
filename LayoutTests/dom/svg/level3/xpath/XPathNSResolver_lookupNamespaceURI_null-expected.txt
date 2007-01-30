@@ -1,2 +1,1 @@
-XPathNSResolver_lookupNamespaceURI_null
-notnull: assertNull failed, actual
+XPathNSResolver_lookupNamespaceURI_null: Success

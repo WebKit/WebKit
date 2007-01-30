@@ -1,3 +1,12 @@
+2007-01-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12486
+        XPathNSResolver.lookupNamespaceURI should return null if no URI is found
+
+        * xml/XPathNSResolver.idl: added [ConvertNullStringTo=Null].
+
 2007-01-30  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.
