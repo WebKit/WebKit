@@ -33,5 +33,17 @@ module svg {
         readonly attribute SVGElementInstance lastChild;
         readonly attribute SVGElementInstance previousSibling;
         readonly attribute SVGElementInstance nextSibling;
+
+#if defined(LANGUAGE_OBJECTIVE_JAVASCRIPT)
+        // A manual copy of the EventTarget interface - including it in
+        // the class inheritance above gives troubles. This works.
+        void addEventListener(in DOMString type, 
+                              in EventListener listener, 
+                              in boolean useCapture);
+        void removeEventListener(in DOMString type, 
+                                 in EventListener listener, 
+                                 in boolean useCapture);
+        boolean dispatchEvent(in Event event)  raises(EventException); 
+#endif
     };
 }

@@ -549,6 +549,12 @@ void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* defaultParen
     pseudoStyle = RenderStyle::NOPSEUDO;
 
     parentNode = e->parentNode();
+
+#ifdef SVG_SUPPORT
+    if (!parentNode && e->isSVGElement() && e->isShadowNode())
+        parentNode = e->shadowParentNode();
+#endif
+
     if (defaultParent)
         parentStyle = defaultParent;
     else
@@ -1135,12 +1141,12 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
             style->setOverflowY(OHIDDEN);
         else if (style->overflowY() == OAUTO)
             style->setOverflowY(OVISIBLE);
-        
+
         if (style->overflowX() == OSCROLL)
             style->setOverflowX(OHIDDEN);
         else if (style->overflowX() == OAUTO)
             style->setOverflowX(OVISIBLE);
-        
+
         // Only the root <svg> element in an SVG document fragment tree honors css position
         if (!(e->hasTagName(SVGNames::svgTag) && e->parentNode() && !e->parentNode()->isSVGElement()))
             style->setPosition(RenderStyle::initialPosition());

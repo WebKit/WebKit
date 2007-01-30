@@ -1178,6 +1178,8 @@ sub TypeCanFailConversion
                 $type eq "Node" or
                 $type eq "Element" or
                 $type eq "DocumentType" or
+                $type eq "Event" or
+                $type eq "EventListener" or
                 $type eq "EventTarget" or
                 $type eq "Range" or
                 $type eq "NodeFilter" or

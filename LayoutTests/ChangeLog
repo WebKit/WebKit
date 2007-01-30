@@ -1,3 +1,51 @@
+2007-01-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric & Oliver.
+
+        Update SVG baseline after the <use> rewrite.
+
+        * svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-use-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/text-text-05-t-expected.txt:
+        * svg/custom/deep-dynamic-updates-expected.png:
+        * svg/custom/use-modify-container-in-target-expected.checksum: Added.
+        * svg/custom/use-modify-container-in-target-expected.png: Added.
+        * svg/custom/use-modify-container-in-target-expected.txt: Added.
+        * svg/custom/use-modify-container-in-target.svg: Added.
+        * svg/custom/use-modify-target-container-expected.checksum: Added.
+        * svg/custom/use-modify-target-container-expected.png: Added.
+        * svg/custom/use-modify-target-container-expected.txt: Added.
+        * svg/custom/use-modify-target-container.svg: Added.
+        * svg/custom/use-modify-target-symbol-expected.checksum: Added.
+        * svg/custom/use-modify-target-symbol-expected.png: Added.
+        * svg/custom/use-modify-target-symbol-expected.txt: Added.
+        * svg/custom/use-modify-target-symbol.svg: Added.
+        * svg/custom/use-on-g-containing-use-expected.checksum: Added.
+        * svg/custom/use-on-g-containing-use-expected.png: Added.
+        * svg/custom/use-on-g-containing-use-expected.txt: Added.
+        * svg/custom/use-on-g-containing-use.svg: Added.
+        * svg/custom/use-on-symbol.svg:
+        * svg/custom/use-on-use-expected.checksum: Added.
+        * svg/custom/use-on-use-expected.png: Added.
+        * svg/custom/use-on-use-expected.txt: Added.
+        * svg/custom/use-on-use.svg: Added.
+        * svg/custom/use-recursion-1-expected.checksum: Added.
+        * svg/custom/use-recursion-1-expected.png: Added.
+        * svg/custom/use-recursion-1-expected.txt: Added.
+        * svg/custom/use-recursion-1.svg: Added.
+        * svg/custom/use-recursion-2-expected.checksum: Added.
+        * svg/custom/use-recursion-2-expected.png: Added.
+        * svg/custom/use-recursion-2-expected.txt: Added.
+        * svg/custom/use-recursion-2.svg: Added.
+        * svg/custom/use-recursion-3-expected.checksum: Added.
+        * svg/custom/use-recursion-3-expected.png: Added.
+        * svg/custom/use-recursion-3-expected.txt: Added.
+        * svg/custom/use-recursion-3.svg: Added.
+        * svg/custom/use-recursion-4-expected.checksum: Added.
+        * svg/custom/use-recursion-4-expected.png: Added.
+        * svg/custom/use-recursion-4-expected.txt: Added.
+        * svg/custom/use-recursion-4.svg: Added.
+
 2007-01-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

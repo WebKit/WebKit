@@ -219,22 +219,23 @@ void SVGStyledElement::updateElementInstance(SVGDocumentExtensions* extensions) 
     if (!set || set->isEmpty())
         return;
 
-    HashSet<SVGElementInstance*>::const_iterator it = set->begin();
-    const HashSet<SVGElementInstance*>::const_iterator end = set->end();
+    // We need to be careful here, as the instancesForElement
+    // hash set may be modified after we call updateInstance! 
+    HashSet<SVGElementInstance*> localCopy;
 
-    for (; it != end; ++it)
-        (*it)->updateInstance(nonConstThis);
+    // First create a local copy of the hashset
+    HashSet<SVGElementInstance*>::const_iterator it1 = set->begin();
+    const HashSet<SVGElementInstance*>::const_iterator end1 = set->end();
 
-    if (hasChildNodes()) {
-        for (Node* child = firstChild(); child; child = child->nextSibling()) {
-            SVGElement* element = svg_dynamic_cast(child);
-            if (!element || !element->isStyled())
-                continue;
+    for (; it1 != end1; ++it1)
+        localCopy.add(*it1);
 
-            SVGStyledElement* styled = static_cast<SVGStyledElement*>(element);
-            styled->updateElementInstance(extensions);
-        }
-    }
+    // Actually nofify instances to update
+    HashSet<SVGElementInstance*>::const_iterator it2 = localCopy.begin();
+    const HashSet<SVGElementInstance*>::const_iterator end2 = localCopy.end();
+
+    for (; it2 != end2; ++it2)
+        (*it2)->updateInstance(nonConstThis);
 }
 
 void SVGStyledElement::attributeChanged(Attribute* attr, bool preserveDecls)

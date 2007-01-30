@@ -45,6 +45,7 @@ using namespace EventNames;
 
 SVGElement::SVGElement(const QualifiedName& tagName, Document* doc)
     : StyledElement(tagName, doc)
+    , m_shadowParent(0)
 {
 }
 
@@ -95,13 +96,15 @@ SVGSVGElement* SVGElement::ownerSVGElement() const
 
 SVGElement* SVGElement::viewportElement() const
 {
-    Node* n = parentNode();
+    // This function needs shadow tree support - as RenderSVGContainer uses this function
+    // to determine the "overflow" property. <use> on <symbol> wouldn't work otherwhise.
+    Node* n = isShadowNode() ? const_cast<SVGElement*>(this)->shadowParentNode() : parentNode();
     while (n) {
         if (n->isElementNode() &&
             (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::imageTag) || n->hasTagName(SVGNames::symbolTag)))
             return static_cast<SVGElement*>(n);
 
-        n = n->parentNode();
+        n = n->isShadowNode() ? n->shadowParentNode() : n->parentNode();
     }
 
     return 0;

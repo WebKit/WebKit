@@ -204,6 +204,10 @@ namespace WebCore {
         virtual bool isFilterEffect() const { return false; }
         virtual bool isGradientStop() const { return false; }
 
+        virtual bool isShadowNode() const { return m_shadowParent; }
+        virtual Node* shadowParentNode() { return m_shadowParent; }
+        void setShadowParentNode(Node* node) { m_shadowParent = node; }
+
         // For SVGTests
         virtual bool isValid() const { return true; }
   
@@ -232,6 +236,8 @@ namespace WebCore {
     private:
         void addSVGEventListener(const AtomicString& eventType, const Attribute*);
         virtual bool haveLoadedRequiredResources();
+
+        Node* m_shadowParent;
     };
 
     static inline SVGElement* svg_dynamic_cast(Node* node)

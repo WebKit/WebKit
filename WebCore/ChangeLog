@@ -1,3 +1,96 @@
+2007-01-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric & Oliver. Leak related fixes reviewed by Mark.
+
+        Finally make the SVG <use> implementation use the proper "shadow tree" concept,
+        which is also used by the HTML forms implementation. It's the first time in ksvg
+        history that <use> is not implement as a crude hack, but proper & sane.
+
+        Implement deep expansion of use trees both for the instance & shadow tree.
+        (<use> on a <symbol> containing a <g> containg a <use> element referencing a <rect>)
+ 
+        The shadow tree is free of any symbol/use tags, but is properly expanded to the
+        actual referenced content. The instance tree (SVGElementInstance objects) now exactly
+        exposes the "expanded" shadow tree, as required by the specification. Previously
+        we cloned referenced <use> elements, so our faked use shadow tree itself contained
+        <use> elements. That lead to very nasty bugs - finally these dirty pieces are gone.
+
+        Checked twice that the updating logic works for all weird "deep expansions" cases. Example:
+        <rect id="someRect"/> <g id="g"> <symbol> <use xlink:href="#someRect"/> </g> <use xlink:href="#g" id="use"/>
+ 
+        If you walk through the instanceRoot using JavasScript, and explicitely modify some propertties of "someRect"
+        -> all instances get updated correctly. For such simple cases it doesn't even involve recloning the shadow tree!
+
+        SVGElementInstance is now an EventTarget, as demanded by the specification - sending events to <use> instances
+        will be implemented in a follow-up patch - as well as the "share event listeners with referenced target" logic.
+
+        Fixes all updating/stability issues with svg/carto.net/window.svg.
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=6000 (<use> does not handle recursion safely)
+
+        Added test: svg/custom/use-on-use.svg (deep use referencing)
+        Added test: svg/custom/use-on-g-containing-use.svg (nested deep use referencing)
+        Added test: svg/custom/use-modify-target-container.svg (instanceRoot scripting, modifying <g> target)
+        Added test: svg/custom/use-modify-target-symbol.svg (instanceRoot scripting, modfiying <symbol> target)
+        Added test: svg/custom/use-modify-container-in-target.svg (modify <g> within referenced use target -> needs to update instances)
+        Added test: svg/custom/use-recursion-1.svg (referencing container, whose children reference itself)
+        Added test: svg/custom/use-recursion-2.svg (<use> self referencing)
+        Added test: svg/custom/use-recursion-3.svg (<use> self rerencing, within <use> target)
+        Added test: svg/custom/use-recursion-4.svg (cyclic referencing, within <use> target)
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::initForStyleResolve):
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        * ksvg2/misc/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::removeTimeContainer):
+        * ksvg2/svg/SVGElement.cpp:
+        (WebCore::SVGElement::SVGElement):
+        (WebCore::SVGElement::viewportElement):
+        * ksvg2/svg/SVGElement.h:
+        (WebCore::SVGElement::isShadowNode):
+        (WebCore::SVGElement::shadowParentNode):
+        (WebCore::SVGElement::setShadowParentNode):
+        * ksvg2/svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::SVGElementInstance):
+        (WebCore::SVGElementInstance::correspondingUseElement):
+        (WebCore::SVGElementInstance::shadowTreeElement):
+        (WebCore::SVGElementInstance::setShadowTreeElement):
+        (WebCore::containsUseChildNode):
+        (WebCore::SVGElementInstance::updateInstance):
+        (WebCore::SVGElementInstance::addEventListener):
+        (WebCore::SVGElementInstance::removeEventListener):
+        (WebCore::SVGElementInstance::dispatchEvent):
+        * ksvg2/svg/SVGElementInstance.h:
+        (WebCore::SVGElementInstance::refEventTarget):
+        (WebCore::SVGElementInstance::derefEventTarget):
+        (WebCore::SVGElementInstance::hasOneRef):
+        (WebCore::SVGElementInstance::refCount):
+        (WebCore::SVGElementInstance::setParent):
+        (WebCore::SVGElementInstance::parent):
+        * ksvg2/svg/SVGElementInstance.idl:
+        * ksvg2/svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::localMatrix):
+        * ksvg2/svg/SVGGElement.h:
+        * ksvg2/svg/SVGHiddenElement.h: Removed.
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::~SVGSVGElement):
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::updateElementInstance):
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::removedFromDocument):
+        (WebCore::SVGUseElement::notifyAttributeChange):
+        (WebCore::dumpInstanceTree):
+        (WebCore::SVGUseElement::buildPendingResource):
+        (WebCore::SVGUseElement::attach):
+        (WebCore::SVGUseElement::buildInstanceTree):
+        (WebCore::SVGUseElement::handleDeepUseReferencing):
+        (WebCore::SVGUseElement::buildShadowTree):
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree):
+        (WebCore::SVGUseElement::attachShadowTree):
+        (WebCore::SVGUseElement::associateInstancesWithShadowTreeElements):
+        (WebCore::SVGUseElement::transferUseAttributesToReplacedElement):
+        * ksvg2/svg/SVGUseElement.h:
+
 2007-01-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

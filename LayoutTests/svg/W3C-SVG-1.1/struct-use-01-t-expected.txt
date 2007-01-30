@@ -94,9 +94,8 @@ layer at (0,0) size 480x360
                 RenderPath {rect} at (340,25) size 10x20 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,0.00L20.00,0.00L20.00,20.00L10.00,20.00"]
           RenderSVGContainer {use} at (330,55) size 20x20
             RenderSVGContainer {g} at (330,55) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,30.00)}]
-              RenderSVGContainer {use} at (330,55) size 20x20
-                RenderSVGContainer {g} at (330,55) size 20x20
-                  RenderPath {rect} at (330,55) size 20x20 [fill={[type=SOLID] [color=#00CC00]}] [data="M0.00,0.00L20.00,0.00L20.00,20.00L0.00,20.00"]
+              RenderSVGContainer {g} at (330,55) size 20x20
+                RenderPath {rect} at (330,55) size 20x20 [fill={[type=SOLID] [color=#00CC00]}] [data="M0.00,0.00L20.00,0.00L20.00,20.00L0.00,20.00"]
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 284x46
           text run at (0,-36) width 284: "$Revision: 1.14 $"

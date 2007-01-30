@@ -52,7 +52,6 @@ namespace WebCore
         virtual bool isValid() const { return SVGTests::isValid(); }
 
         // Derived from: 'Element'
-        virtual bool hasChildNodes() const;
         virtual void insertedIntoDocument();
         virtual void removedFromDocument();
         virtual void buildPendingResource();
@@ -63,6 +62,7 @@ namespace WebCore
 
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+        virtual void attach();
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -77,10 +77,21 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGUseElement, SVGLength, SVGLength, Height, height)
 
     private:
-        void recursiveShadowTreeBuilder(SVGElement* target, SVGElement* clonedTarget, SVGElementInstance* targetInstance);
-        void buildShadowTree(SVGElement* target);
-        void addShadowTree(SVGElement* target, bool onlyAddChildren = false);
+        // Instance tree handling
+        void buildInstanceTree(SVGElement* target, SVGElementInstance* targetInstance, bool& foundCycle);
+        void handleDeepUseReferencing(SVGElement* use, SVGElementInstance* targetInstance, bool& foundCycle);
 
+        // Shadow tree handling
+        void buildShadowTree(SVGElement* target, SVGElementInstance* targetInstance);
+        void expandUseElementsInShadowTree(Node* element);
+        void attachShadowTree();
+
+        // "Tree connector" 
+        void associateInstancesWithShadowTreeElements(Node* target, SVGElementInstance* targetInstance);
+
+        void transferUseAttributesToReplacedElement(SVGElement* from, SVGElement* to) const;
+
+        RefPtr<SVGElement> m_shadowTreeRootElement;
         RefPtr<SVGElementInstance> m_targetElementInstance;
     };
 

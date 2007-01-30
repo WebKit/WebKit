@@ -31,10 +31,12 @@
 
 namespace WebCore {
 
-SVGElementInstance::SVGElementInstance(PassRefPtr<SVGUseElement> useElement, PassRefPtr<SVGElement> clonedElement, PassRefPtr<SVGElement> originalElement)
-    : m_useElement(useElement)
+SVGElementInstance::SVGElementInstance(SVGUseElement* useElement, PassRefPtr<SVGElement> originalElement)
+    : m_refCount(0)
+    , m_parent(0)
+    , m_useElement(useElement)
     , m_element(originalElement)
-    , m_clonedElement(clonedElement)
+    , m_shadowTreeElement(0)
     , m_previousSibling(0)
     , m_nextSibling(0)
     , m_firstChild(0)
@@ -42,7 +44,6 @@ SVGElementInstance::SVGElementInstance(PassRefPtr<SVGUseElement> useElement, Pas
 {
     ASSERT(m_useElement);
     ASSERT(m_element);
-    ASSERT(m_clonedElement);
 
     // Register as instance for passed element.
     if (Document* document = m_element->document())
@@ -59,11 +60,6 @@ SVGElementInstance::~SVGElementInstance()
         document->accessSVGExtensions()->removeInstanceMapping(this, m_element.get());
 }
 
-SVGElement* SVGElementInstance::clonedElement() const
-{
-    return m_clonedElement.get();
-}
-
 SVGElement* SVGElementInstance::correspondingElement() const
 {
     return m_element.get();
@@ -71,7 +67,7 @@ SVGElement* SVGElementInstance::correspondingElement() const
 
 SVGUseElement* SVGElementInstance::correspondingUseElement() const
 {
-    return m_useElement.get();
+    return m_useElement;
 }
 
 SVGElementInstance* SVGElementInstance::parentNode() const
@@ -104,6 +100,17 @@ SVGElementInstance* SVGElementInstance::lastChild() const
     return m_lastChild;
 }
 
+SVGElement* SVGElementInstance::shadowTreeElement() const
+{
+    return m_shadowTreeElement;
+}
+
+void SVGElementInstance::setShadowTreeElement(SVGElement* element)
+{
+    ASSERT(element);
+    m_shadowTreeElement = element;
+}
+
 void SVGElementInstance::appendChild(PassRefPtr<SVGElementInstance> child)
 {
     child->setParent(this);
@@ -117,22 +124,71 @@ void SVGElementInstance::appendChild(PassRefPtr<SVGElementInstance> child)
     m_lastChild = child.get();
 }
 
+// Helper function for updateInstance
+bool containsUseChildNode(Node* start)
+{
+    if (start->hasTagName(SVGNames::useTag))
+        return true;
+
+    for (Node* current = start->firstChild(); current; current = current->nextSibling()) {
+        if (containsUseChildNode(current))
+            return true;
+    }
+
+    return false;
+}
+
 void SVGElementInstance::updateInstance(SVGElement* element)
 {
     ASSERT(element == m_element);
+    ASSERT(m_shadowTreeElement);
 
-    RefPtr<Node> clone = m_element->cloneNode(false);
+    // TODO: Eventually come up with a more optimized updating logic for the cases below:
+    //
+    // <symbol>: We can't just clone the original element, we need to apply
+    // the same "replace by generated content" logic that SVGUseElement does.
+    //
+    // <svg>: <use> on <svg> is too rare to actually implement it faster.
+    // If someone still wants to do it: recloning, adjusting width/height attributes is enough.
+    //
+    // <use>: Too hard to get it right in a fast way. Recloning seems the only option.
+
+    if (m_element->hasTagName(SVGNames::symbolTag) ||
+        m_element->hasTagName(SVGNames::svgTag) ||
+        containsUseChildNode(m_element.get())) {
+        m_useElement->buildPendingResource();
+        return;
+    }
+
+    // For all other nodes this logic is sufficient.
+    RefPtr<Node> clone = m_element->cloneNode(true);
     SVGElement* svgClone = svg_dynamic_cast(clone.get());
     ASSERT(svgClone);
 
-    // Replace node in the hidden use tree.
+    // Replace node in the <use> shadow tree
     ExceptionCode ec = 0;
-    m_clonedElement->parentNode()->replaceChild(clone, m_clonedElement.get(), ec);
+    m_shadowTreeElement->parentNode()->replaceChild(clone.release(), m_shadowTreeElement, ec);
     ASSERT(ec == 0);
 
-    m_clonedElement = svgClone;
+    m_shadowTreeElement = svgClone;
 }
 
+void SVGElementInstance::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool useCapture)
+{
+    // FIXME!
+}
+
+void SVGElementInstance::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool useCapture)
+{
+    // FIXME!
+}
+
+bool SVGElementInstance::dispatchEvent(PassRefPtr<Event>, ExceptionCode& ec, bool tempEvent)
+{
+    // FIXME!
+    return false;
+}
+ 
 }
 
 #endif // SVG_SUPPORT

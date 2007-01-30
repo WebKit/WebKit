@@ -66,7 +66,6 @@ void SVGDocumentExtensions::addTimeContainer(SVGSVGElement* element)
 
 void SVGDocumentExtensions::removeTimeContainer(SVGSVGElement* element)
 {
-    ASSERT(m_timeContainers.contains(element));
     m_timeContainers.remove(element);
 }
 
