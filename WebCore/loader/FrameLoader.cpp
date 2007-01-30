@@ -4267,6 +4267,8 @@ void FrameLoader::didChangeTitle(DocumentLoader* loader)
     // The title doesn't get communicated to the WebView until we are committed.
     if (loader->isCommitted()) {
         // Must update the entries in the back-forward list too.
+        if (m_currentHistoryItem)
+            m_currentHistoryItem->setTitle(loader->title());
         // This must go through the WebFrame because it has the right notion of the current b/f item.
         m_client->setTitle(loader->title(), loader->urlForHistory());
         m_client->setMainFrameDocumentReady(true); // update observers with new DOMDocument

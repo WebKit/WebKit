@@ -914,8 +914,6 @@ void WebFrameLoaderClient::setTitle(const String& title, const KURL& URL)
         return;
     NSString *titleNSString = title;
     [[[WebHistory optionalSharedHistory] itemForURL:nsURL] setTitle:titleNSString];
-    if (HistoryItem* item = core(m_webFrame.get())->loader()->currentHistoryItem())
-        item->setTitle(title);
 }
 
 // The following 2 functions are copied from [NSHTTPURLProtocol _cachedResponsePassesValidityChecks] and modified for our needs.

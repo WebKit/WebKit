@@ -1,3 +1,12 @@
+2007-01-29  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Brady.
+
+        Moved the update of the title of the current entry in the backforward list to WebCore.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::setTitle):
+
 2007-01-29  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
