@@ -738,6 +738,10 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!URL)
         URL = [NSURL URLWithString:@""];
     ResourceRequest request(URL);
+
+    // hack because Mail checks for this property to detect data / archive loads
+    [NSURLProtocol setProperty:@"" forKey:@"WebDataRequest" inRequest:(NSMutableURLRequest *)request.nsURLRequest()];
+
     SubstituteData substituteData(WebCore::SharedBuffer::wrapNSData(data), MIMEType, encodingName, unreachableURL);
 
     [self _frameLoader]->load(request, substituteData);

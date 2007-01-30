@@ -1,3 +1,13 @@
+2007-01-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        <rdar://problem/4964407> REGRESSION: Mail hangs when replying, forwarding , or creating a new message
+        
+        * WebView/WebFrame.mm:
+        (-[WebFrame _loadData:MIMEType:textEncodingName:baseURL:unreachableURL:]): Set WebDataRequest property on data
+        load requests since Mail specifically checks for this.
+
 2007-01-30  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by Maciej.
