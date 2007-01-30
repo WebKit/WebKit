@@ -1,3 +1,13 @@
+2007-01-30  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4961953> Stop using NSString deprecated methods like initWithCString:
+
+        * Misc/WebNSImageExtras.m:
+        (-[NSImage _web_saveAndOpen]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2007-01-30  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Geoff.

@@ -84,7 +84,7 @@
         NSData *data = [self TIFFRepresentation];
         write(fd, [data bytes], [data length]);
         close(fd);
-        [[NSWorkspace sharedWorkspace] openFile:[NSString stringWithCString:path]];
+        [[NSWorkspace sharedWorkspace] openFile:[NSString stringWithUTF8String:path]];
     }
 }
 
