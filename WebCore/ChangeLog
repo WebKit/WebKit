@@ -1,3 +1,18 @@
+2007-01-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12452
+        XPath id() function is not supported
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::isWhitespace): A helper to detect XML whitespace.
+
+        (WebCore::XPath::FunId::isConstant):
+        (WebCore::XPath::FunId::doEvaluate):
+        (WebCore::XPath::FunctionMapping::):
+        Implemented id().
+
 2007-01-30  Zack Rusin  <zrusin@trolltech.com>
 
         Reviewed by Sam.

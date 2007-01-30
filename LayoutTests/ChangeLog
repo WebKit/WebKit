@@ -1,3 +1,17 @@
+2007-01-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12452
+        XPath id() function is not supported
+
+        * dom/svg/level3/xpath/Conformance_ID-expected.txt:
+        This test now passes.
+
+        * fast/xpath/complex-id-expected.txt: Added.
+        * fast/xpath/complex-id.html: Added.
+        A test for more advanced id() capabilities.
+
 2007-01-31  Mark Rowe  <mrowe@apple.com>
 
         Disable editing/pasteboard/paste-{RTFD,TIFF}.html so tests run to completion until a fix is landed for:

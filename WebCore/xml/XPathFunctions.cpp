@@ -1,6 +1,7 @@
 /*
  * Copyright 2005 Frerich Raabe <raabe@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +30,20 @@
 
 #ifdef XPATH_SUPPORT
 
+#include "Document.h"
 #include "NamedAttrMap.h"
 #include "XPathValue.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
 namespace XPath {
-        
+
+static inline bool isWhitespace(UChar c)
+{
+    return c == ' ' || c == '\n' || c == '\r' || c == '\t';
+}
+
+
 #define DEFINE_FUNCTION_CREATOR(Class) static Function* create##Class() { return new Class; }
 
 class Interval {
@@ -72,6 +80,11 @@ class FunPosition : public Function {
 };
 
 class FunCount : public Function {
+    virtual bool isConstant() const;
+    virtual Value doEvaluate() const;
+};
+
+class FunId : public Function {
     virtual bool isConstant() const;
     virtual Value doEvaluate() const;
 };
@@ -177,6 +190,7 @@ class FunRound : public Function {
 DEFINE_FUNCTION_CREATOR(FunLast)
 DEFINE_FUNCTION_CREATOR(FunPosition)
 DEFINE_FUNCTION_CREATOR(FunCount)
+DEFINE_FUNCTION_CREATOR(FunId)
 DEFINE_FUNCTION_CREATOR(FunLocalName)
 DEFINE_FUNCTION_CREATOR(FunNamespaceURI)
 DEFINE_FUNCTION_CREATOR(FunName)
@@ -286,6 +300,59 @@ Value FunPosition::doEvaluate() const
 bool FunPosition::isConstant() const
 {
     return false;
+}
+
+bool FunId::isConstant() const
+{
+    return false;
+}
+
+Value FunId::doEvaluate() const
+{
+    // FIXME: this algorithm does not produce an ordered node-set, as it should.
+
+    Value a = arg(0)->evaluate();
+    Vector<UChar> idList; // A whitespace-separated list of IDs
+
+    if (a.isNodeVector()) {
+        const NodeVector& nodes = a.toNodeVector();
+        for (size_t i = 0; i < nodes.size(); ++i) {
+            String str = stringValue(nodes[i].get());
+            idList.append(str.characters(), str.length());
+            idList.append(' ');
+        }
+    } else {
+        String str = a.toString();
+        idList.append(str.characters(), str.length());
+    }
+    
+    Document* contextDocument = evaluationContext().node->document();
+    NodeVector result;
+    HashSet<Node*> resultSet;
+
+    size_t startPos = 0;
+    size_t length = idList.size();
+    while (true) {
+        while (startPos < length && isWhitespace(idList[startPos]))
+            ++startPos;
+        
+        size_t endPos = startPos;
+        while (endPos < length && !isWhitespace(idList[endPos]))
+            ++endPos;
+
+        if (endPos == length)
+            break;
+
+        // If there are several nodes with the same id, id() should return the first one.
+        // In WebKit, getElementById behaves so, too, although its behavior in this case is formally undefined.
+        Node* node = contextDocument->getElementById(String(&idList[startPos], endPos - startPos));
+        if (node && resultSet.add(node).second)
+            result.append(node);
+        
+        startPos = endPos;
+    }
+    
+    return result;
 }
 
 bool FunLocalName::isConstant() const
@@ -615,6 +682,7 @@ static void createFunctionMap()
         { "count", { &createFunCount, 1 } },
         { "false", { &createFunFalse, 0 } },
         { "floor", { &createFunFloor, 1 } },
+        { "id", { &createFunId, 1 } },
         { "lang", { &createFunLang, 1 } },
         { "last", { &createFunLast, 0 } },
         { "local-name", { &createFunLocalName, Interval(0, 1) } },
