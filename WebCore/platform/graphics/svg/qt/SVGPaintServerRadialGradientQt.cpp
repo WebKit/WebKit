@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-bool SVGPaintServerRadialGradient::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
+QGradient SVGPaintServerRadialGradient::setupGradient(GraphicsContext*& context, const RenderObject* object) const
 {
     QPainter* painter(context ? context->platformContext() : 0);
     Q_ASSERT(painter);
@@ -44,8 +44,6 @@ bool SVGPaintServerRadialGradient::setup(GraphicsContext*& context, const Render
 
     RenderStyle* renderStyle = object->style();
 
-    painter->setPen(Qt::NoPen);
-    painter->setBrush(Qt::NoBrush);
     QMatrix mat = painter->matrix();
 
     double cx, fx, cy, fy, r;
@@ -89,45 +87,8 @@ bool SVGPaintServerRadialGradient::setup(GraphicsContext*& context, const Render
     }
 
     QRadialGradient gradient(QPointF(cx, cy), gradientRadius(), QPointF(fx + cx, fy + cy));
-    if (spreadMethod() == SPREADMETHOD_REPEAT)
-        gradient.setSpread(QGradient::RepeatSpread);
-    else if (spreadMethod() == SPREADMETHOD_REFLECT)
-        gradient.setSpread(QGradient::ReflectSpread);
-    else
-        gradient.setSpread(QGradient::PadSpread);
 
-    double opacity = 1.0;
-
-    // TODO: Gradient transform + opacity fixes!
-
-    // AffineTransform gradientTrans = gradientTransform();
-    // gradientTrans.map(cx, cy, &cx, &cy);
-    // painter->setMatrix(mat);
-
-    if ((type & ApplyToFillTargetType) && renderStyle->svgStyle()->hasFill()) {
-        fillColorArray(gradient, gradientStops(), opacity);
-
-        QBrush brush(gradient);
-        brush.setMatrix(gradientTransform());
-
-        painter->setBrush(brush);
-        context->setFillRule(renderStyle->svgStyle()->fillRule());
-    }
-
-    if ((type & ApplyToStrokeTargetType) && renderStyle->svgStyle()->hasStroke()) {
-        fillColorArray(gradient, gradientStops(), opacity);
-
-        QPen pen;
-        QBrush brush(gradient);
-        brush.setMatrix(gradientTransform());
-
-        setPenProperties(object, renderStyle, pen);
-        pen.setBrush(brush);
-
-        painter->setPen(pen);
-    }
-
-    return true;
+    return gradient;
 }
 
 } // namespace WebCore

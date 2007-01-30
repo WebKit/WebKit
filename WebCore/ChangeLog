@@ -1,3 +1,20 @@
+2007-01-30  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Sam.
+
+        Make the gradients work on the Qt platform.
+
+        * platform/graphics/svg/SVGPaintServerGradient.h:
+        * platform/graphics/svg/SVGPaintServerLinearGradient.h:
+        * platform/graphics/svg/SVGPaintServerRadialGradient.h:
+        * platform/graphics/svg/qt/SVGPaintServerGradientQt.cpp:
+        (WebCore::SVGPaintServerGradient::fillColorArray):
+        (WebCore::SVGPaintServerGradient::setup):
+        * platform/graphics/svg/qt/SVGPaintServerLinearGradientQt.cpp:
+        (WebCore::SVGPaintServerLinearGradient::setupGradient):
+        * platform/graphics/svg/qt/SVGPaintServerRadialGradientQt.cpp:
+        (WebCore::SVGPaintServerRadialGradient::setupGradient):
+
 2007-01-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric & Oliver. Leak related fixes reviewed by Mark.

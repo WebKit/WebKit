@@ -77,11 +77,10 @@ namespace WebCore {
 
         virtual TextStream& externalRepresentation(TextStream&) const;
 
+        virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const;
 #if PLATFORM(CG)
         virtual void teardown(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const;
         virtual void renderPath(GraphicsContext*&, const RenderPath*, SVGPaintTargetType) const;
-
-        virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const;
 
         virtual void invalidate();
 
@@ -94,6 +93,7 @@ namespace WebCore {
 #if PLATFORM(QT)
     protected:
         void fillColorArray(QGradient&, const Vector<SVGGradientStop>&, float opacity) const;
+        virtual QGradient setupGradient(GraphicsContext*&, const RenderObject*) const = 0;
 #endif
 
     private:

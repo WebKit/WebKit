@@ -24,13 +24,21 @@
 #ifdef SVG_SUPPORT
 #include "SVGPaintServerGradient.h"
 
+#include "GraphicsContext.h"
+#include "RenderObject.h"
+#include "RenderStyle.h"
+#include "SVGGradientElement.h"
+
+#include <QPainter>
+#include <QPainterPath>
 #include <QColor>
 #include <QGradient>
 
 namespace WebCore {
 
 // Helper function used by linear & radial gradient
-void SVGPaintServerGradient::fillColorArray(QGradient& gradient, const Vector<SVGGradientStop>& stops, float opacity) const
+void SVGPaintServerGradient::fillColorArray(QGradient& gradient, const Vector<SVGGradientStop>& stops,
+                                            float opacity) const
 {
     for (unsigned i = 0; i < stops.size(); ++i) {
         float offset = stops[i].first;
@@ -41,6 +49,58 @@ void SVGPaintServerGradient::fillColorArray(QGradient& gradient, const Vector<SV
 
         gradient.setColorAt(offset, c);
     }
+}
+
+bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject* object,
+                                   SVGPaintTargetType type, bool isPaintingText) const
+{
+    m_ownerElement->buildGradient();
+
+    QPainter* painter(context ? context->platformContext() : 0);
+    Q_ASSERT(painter);
+
+    QPainterPath* path(context ? context->currentPath() : 0);
+    Q_ASSERT(path);
+
+    RenderStyle* renderStyle = object->style();
+
+    QGradient gradient = setupGradient(context, object);
+
+    painter->setPen(Qt::NoPen);
+    painter->setBrush(Qt::NoBrush);
+
+    if (spreadMethod() == SPREADMETHOD_REPEAT)
+        gradient.setSpread(QGradient::RepeatSpread);
+    else if (spreadMethod() == SPREADMETHOD_REFLECT)
+        gradient.setSpread(QGradient::ReflectSpread);
+    else
+        gradient.setSpread(QGradient::PadSpread);    
+    double opacity = 1.0;
+
+    if ((type & ApplyToFillTargetType) && renderStyle->svgStyle()->hasFill()) {
+        fillColorArray(gradient, gradientStops(), opacity);
+
+        QBrush brush(gradient);
+        brush.setMatrix(gradientTransform());
+
+        painter->setBrush(brush);
+        context->setFillRule(renderStyle->svgStyle()->fillRule());
+    }
+
+    if ((type & ApplyToStrokeTargetType) && renderStyle->svgStyle()->hasStroke()) {
+        fillColorArray(gradient, gradientStops(), opacity);
+
+        QPen pen;
+        QBrush brush(gradient);
+        brush.setMatrix(gradientTransform());
+
+        setPenProperties(object, renderStyle, pen);
+        pen.setBrush(brush);
+
+        painter->setPen(pen);
+    }
+
+    return true;
 }
 
 } // namespace WebCore

@@ -52,7 +52,7 @@ namespace WebCore {
         virtual TextStream& externalRepresentation(TextStream&) const;
 
 #if PLATFORM(QT)
-        virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText=false) const;
+        virtual QGradient setupGradient(GraphicsContext*&, const RenderObject*) const;
 #endif
 
     private:
