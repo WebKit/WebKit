@@ -1,3 +1,16 @@
+2007-01-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4960137>
+        ASSERTION FAILURE calling SelectionController::setBaseAndExtent (11833)
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection): Hand off the selection
+        to the selectionController responsible for it, instead of asserting.
+        A selection object can't be constructed with endpoints in different 
+        documents, so this code is only necessary for one endpoint.
+
 2007-01-29  Ada Chan  <adachan@apple.com>
 
         Reviewed by Brady.

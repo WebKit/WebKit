@@ -1,3 +1,15 @@
+2007-01-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+ 
+        <rdar://problem/4960137>
+        ASSERTION FAILURE calling SelectionController::setBaseAndExtent (11833)
+
+        * editing/selection/4960137-expected.checksum: Added.
+        * editing/selection/4960137-expected.png: Added.
+        * editing/selection/4960137-expected.txt: Added.
+        * editing/selection/4960137.html: Added.
+
 2007-01-29  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

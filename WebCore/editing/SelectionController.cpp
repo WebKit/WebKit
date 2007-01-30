@@ -105,10 +105,10 @@ void SelectionController::setSelection(const Selection& s, bool closeTyping, boo
         return;
     }
     
-    ASSERT(!s.base().node() || s.base().node()->document() == m_frame->document());
-    ASSERT(!s.extent().node() || s.extent().node()->document() == m_frame->document());
-    ASSERT(!s.start().node() || s.start().node()->document() == m_frame->document());
-    ASSERT(!s.end().node() || s.end().node()->document() == m_frame->document());
+    if (s.base().node() && s.base().node()->document() != m_frame->document()) {
+        s.base().node()->document()->frame()->selectionController()->setSelection(s, closeTyping, clearTypingStyle, userTriggered);
+        return;
+    }
     
     if (closeTyping)
         TypingCommand::closeTyping(m_frame->editor()->lastEditCommand());
