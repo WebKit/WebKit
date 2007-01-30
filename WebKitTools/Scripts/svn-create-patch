@@ -242,6 +242,7 @@ sub generateFileList($\%\%)
         chomp $line;
         my $stat = substr($line, 0, 7);
         my $path = substr($line, 7);
+        next if -d $path;
         my $modificationType = findModificationType($stat);
         if ($modificationType) {
             if (isBinaryMimeType($path)) {

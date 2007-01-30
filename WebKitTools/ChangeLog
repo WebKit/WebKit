@@ -1,3 +1,13 @@
+2007-01-30  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12470
+        svn-create-patch creates duplicate patches for files within an added/modified directory
+
+        * Scripts/svn-create-patch:
+        (sub generateFileList($\%\%)): Ignore directories when generating the file list.
+
 2007-01-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
