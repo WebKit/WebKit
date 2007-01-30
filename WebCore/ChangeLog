@@ -1,3 +1,17 @@
+2007-01-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fix for <rdar://problem/4911504> REGRESSION: With a image selected, ctrl-clicking
+          on page displays the wrong contextual menu items "Search in Google", "Search in Spotlight"
+          and "Look up in Dictionary"
+
+        * platform/ContextMenu.cpp:
+        (WebCore::selectionContainsPossibleWord): Added. Returns true if there are some
+        non-whitespace characters in the selection.
+        (WebCore::ContextMenu::populate): Don't add SearchSpotlightItem, SearchWebItem,
+        or LookInDictionaryItem if selectionContainsPossibleWord returns false.
+
 2007-01-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

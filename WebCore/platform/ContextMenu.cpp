@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,10 @@
 #include "Page.h"
 #include "ResourceRequest.h"
 #include "SelectionController.h"
+#include "TextIterator.h"
 
+using namespace WTF;
+using namespace Unicode;
 
 namespace WebCore {
 
@@ -158,6 +161,19 @@ static void createAndAppendWritingDirectionSubMenu(const HitTestResult& result, 
     writingDirectionMenuItem.setSubMenu(writingDirectionMenu);
 }
 
+static bool selectionContainsPossibleWord(Frame* frame)
+{
+    // Current algorithm: look for a character that's not just a separator.
+    for (TextIterator it(frame->selectionController()->toRange().get()); !it.atEnd(); it.advance()) {
+        int length = it.length();
+        const UChar* characters = it.characters();
+        for (int i = 0; i < length; ++i)
+            if (!(category(characters[i]) & (Separator_Space | Separator_Line | Separator_Paragraph)))
+                return true;
+    }
+    return false;
+}
+
 void ContextMenu::populate()
 {
     ContextMenuItem OpenLinkItem(ActionType, ContextMenuItemTagOpenLink, contextMenuItemTagOpenLink());
@@ -232,13 +248,15 @@ void ContextMenu::populate()
 
         if (imageURL.isEmpty() && linkURL.isEmpty()) {
             if (result.isSelected()) {
+                if (selectionContainsPossibleWord(frame)) {
 #if PLATFORM(MAC)
-                appendItem(SearchSpotlightItem);
+                    appendItem(SearchSpotlightItem);
 #endif
-                appendItem(SearchWebItem);
-                appendItem(*separatorItem());
-                appendItem(LookInDictionaryItem);
-                appendItem(*separatorItem());
+                    appendItem(SearchWebItem);
+                    appendItem(*separatorItem());
+                    appendItem(LookInDictionaryItem);
+                    appendItem(*separatorItem());
+                }
                 appendItem(CopyItem);
             } else {
                 if (loader->canGoBackOrForward(-1))
@@ -297,7 +315,7 @@ void ContextMenu::populate()
             }
         }
 
-        if (result.isSelected() && !inPasswordField) {
+        if (result.isSelected() && !inPasswordField && selectionContainsPossibleWord(frame)) {
 #if PLATFORM(MAC)
             appendItem(SearchSpotlightItem);
 #endif
