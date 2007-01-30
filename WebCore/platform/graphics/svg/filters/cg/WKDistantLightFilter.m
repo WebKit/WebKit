@@ -53,7 +53,7 @@ static CIKernel *distantLightFilter = nil;
     if (!distantLightFilter) {
         NSBundle *bundle = [NSBundle bundleForClass:[self class]];
         NSString *kernelFile = [bundle pathForResource:@"WKDistantLightFilter" ofType:@"cikernel"];
-        NSString *code = [NSString stringWithContentsOfFile:kernelFile];
+        NSString *code = [NSString stringWithContentsOfFile:kernelFile encoding:NSUTF8StringEncoding error:0];
         NSArray *kernels = [CIKernel kernelsWithString:code];
         distantLightFilter = [[kernels objectAtIndex:0] retain];
     }

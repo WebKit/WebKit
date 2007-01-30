@@ -61,7 +61,7 @@ static CIKernel *spotLightFilter = nil;
     if (!spotLightFilter) {
         NSBundle *bundle = [NSBundle bundleForClass:[self class]];
         NSString *kernelFile = [bundle pathForResource:@"WKSpotLightFilter" ofType:@"cikernel"];
-        NSString *code = [NSString stringWithContentsOfFile:kernelFile];
+        NSString *code = [NSString stringWithContentsOfFile:kernelFile encoding:NSUTF8StringEncoding error:0];
         NSArray *kernels = [CIKernel kernelsWithString:code];
         spotLightFilter = [[kernels objectAtIndex:0] retain];
     }

@@ -49,7 +49,7 @@ static CIKernel *discreteTransferFilter = nil;
     if (!discreteTransferFilter) {
         NSBundle *bundle = [NSBundle bundleForClass:[self class]];
         NSString *kernelFile = [bundle pathForResource:@"WKDiscreteTransferFilter" ofType:@"cikernel"];
-        NSString *code = [NSString stringWithContentsOfFile:kernelFile];
+        NSString *code = [NSString stringWithContentsOfFile:kernelFile encoding:NSUTF8StringEncoding error:0];
         NSArray *kernels = [CIKernel kernelsWithString:code];
         discreteTransferFilter = [[kernels objectAtIndex:0] retain];
     }

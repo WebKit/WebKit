@@ -61,7 +61,7 @@ static CIKernel *displacementMapFilter = nil;
     if (!displacementMapFilter) {
         NSBundle *bundle = [NSBundle bundleForClass:[self class]];
         NSString *kernelFile = [bundle pathForResource:@"WKDisplacementMapFilter" ofType:@"cikernel"];
-        NSString *code = [NSString stringWithContentsOfFile:kernelFile];
+        NSString *code = [NSString stringWithContentsOfFile:kernelFile encoding:NSUTF8StringEncoding error:0];
         NSArray *kernels = [CIKernel kernelsWithString:code];
         displacementMapFilter = [[kernels objectAtIndex:0] retain];
     }

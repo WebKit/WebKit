@@ -1,3 +1,37 @@
+2007-01-30  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4961953> Stop using NSString deprecated methods like initWithCString:
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/svg/filters/cg/WKArithmeticFilter.m:
+        (-[WKArithmeticFilter init]):
+        * platform/graphics/svg/filters/cg/WKComponentMergeFilter.m:
+        (-[WKComponentMergeFilter init]):
+        * platform/graphics/svg/filters/cg/WKDiffuseLightingFilter.m:
+        (-[WKDiffuseLightingFilter init]):
+        * platform/graphics/svg/filters/cg/WKDiscreteTransferFilter.m:
+        (-[WKDiscreteTransferFilter init]):
+        * platform/graphics/svg/filters/cg/WKDisplacementMapFilter.m:
+        (-[WKDisplacementMapFilter init]):
+        * platform/graphics/svg/filters/cg/WKDistantLightFilter.m:
+        (-[WKDistantLightFilter init]):
+        * platform/graphics/svg/filters/cg/WKGammaTransferFilter.m:
+        (-[WKGammaTransferFilter init]):
+        * platform/graphics/svg/filters/cg/WKLinearTransferFilter.m:
+        (-[WKLinearTransferFilter init]):
+        * platform/graphics/svg/filters/cg/WKNormalMapFilter.m:
+        (-[WKNormalMapFilter init]):
+        * platform/graphics/svg/filters/cg/WKPointLightFilter.m:
+        (-[WKPointLightFilter init]):
+        * platform/graphics/svg/filters/cg/WKSpecularLightingFilter.m:
+        (-[WKSpecularLightingFilter init]):
+        * platform/graphics/svg/filters/cg/WKSpotLightFilter.m:
+        (-[WKSpotLightFilter init]):
+        * platform/graphics/svg/filters/cg/WKTableTransferFilter.m:
+        (-[WKTableTransferFilter init]):
+
 2007-01-30  David Hyatt  <hyatt@apple.com>
 
         Fix for Radar bug #4679426, golden gate bridge Web site layout broken.

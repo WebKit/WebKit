@@ -57,7 +57,7 @@ static CIKernel *normalMapKernel = nil;
     if (!normalMapKernel) {
         NSBundle *bundle = [NSBundle bundleForClass:[self class]];
         NSString *kernelFile = [bundle pathForResource:@"WKNormalMapFilter" ofType:@"cikernel"];
-        NSString *code = [NSString stringWithContentsOfFile:kernelFile];
+        NSString *code = [NSString stringWithContentsOfFile:kernelFile encoding:NSUTF8StringEncoding error:0];
         NSArray *kernels = [CIKernel kernelsWithString:code];
         convolveKernel = [[kernels objectAtIndex:0] retain];
         normalMapKernel = [[kernels objectAtIndex:1] retain];
