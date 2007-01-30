@@ -1,3 +1,14 @@
+2007-01-31  Mark Rowe  <mrowe@apple.com>
+
+        Disable editing/pasteboard/paste-{RTFD,TIFF}.html so tests run to completion until a fix is landed for:
+        http://bugs.webkit.org/show_bug.cgi?id=12474
+        REGRESSION(r19244): Assertion failure in layout tests: ASSERTION FAILED: loader->handle()
+
+        * editing/pasteboard/paste-RTFD.html: Removed.
+        * editing/pasteboard/paste-RTFD.html-disabled: Added.
+        * editing/pasteboard/paste-TIFF.html: Removed.
+        * editing/pasteboard/paste-TIFF.html-disabled: Added.
+
 2007-01-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric & Oliver.
