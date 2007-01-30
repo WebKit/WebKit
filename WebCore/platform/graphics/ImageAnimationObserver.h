@@ -32,8 +32,9 @@ class Image;
 
 // This class gets notified when an image advances animation frames.
 class ImageAnimationObserver {
+protected:
+    virtual ~ImageAnimationObserver() {}
 public:
-    virtual ~ImageAnimationObserver() {};
     virtual bool shouldStopAnimation(const Image*) = 0;
     virtual void animationAdvanced(const Image*) = 0;
 };

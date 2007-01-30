@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,7 +37,7 @@ public:
     virtual ~EventTargetNode();
 
     virtual bool isEventTargetNode() const { return true; }
-    virtual Node* toNode() { return this; }
+    virtual EventTargetNode* toNode() { return this; }
 
     virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
     virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
@@ -49,7 +47,7 @@ public:
     void setHTMLEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);
     void removeHTMLEventListener(const AtomicString& eventType);
     bool dispatchHTMLEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
-    EventListener *getHTMLEventListener(const AtomicString& eventType);
+    EventListener* getHTMLEventListener(const AtomicString& eventType);
 
     bool dispatchGenericEvent(PassRefPtr<Event>, ExceptionCode&, bool tempEvent = false);
     bool dispatchSubtreeModifiedEvent(bool childrenChanged = true);
@@ -73,7 +71,7 @@ public:
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
-    
+
     // Handlers to do/undo actions on the target node before an event is dispatched to it and after the event
     // has been dispatched.  The data pointer is handed back by the preDispatch and passed to postDispatch.
     virtual void* preDispatchEventHandler(Event*) { return 0; }

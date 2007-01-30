@@ -1,3 +1,26 @@
+2007-01-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        * dom/EventTarget.h:
+        * dom/EventTarget.cpp: (WebCore::EventTarget::toNode):
+        Use EventTargetNode instead of Node. Removed unneeded includes.
+        Make EventTarget's destructor protected to make it clear that you
+        should never delete one.
+
+        * dom/EventTargetNode.h:
+        (WebCore::EventTargetNode::toNode):
+        Tweaked formatting. Updated for change to return value.
+
+        * platform/graphics/BitmapImage.h: Updated comment for clarity.
+        Marked FrameData Noncopyable.
+
+        * platform/graphics/Image.h: Tweaked formatting.
+
+        * platform/graphics/ImageAnimationObserver.h:
+        Make ImageAnimationObserver's destructor protected to make it clear that you
+        should never delete one.
+
 2007-01-30  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin (by way of Hyatt).
