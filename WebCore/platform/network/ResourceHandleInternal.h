@@ -110,7 +110,7 @@ namespace WebCore {
         bool m_defersLoading;
         bool m_mightDownloadFromHandle;
 #if USE(CFNETWORK)
-        CFURLConnectionRef m_connection;
+        RetainPtr<CFURLConnectionRef> m_connection;
 #elif PLATFORM(MAC)
         RetainPtr<NSURLConnection> m_connection;
         RetainPtr<WebCoreResourceHandleAsDelegate> m_delegate;

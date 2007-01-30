@@ -1,3 +1,11 @@
+2007-01-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Alice
+
+        Lets use smart pointers, shall we?
+
+        * platform/network/ResourceHandleInternal.h:
+
 2007-01-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
