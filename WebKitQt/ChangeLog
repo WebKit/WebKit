@@ -1,4 +1,13 @@
-2007-01-25  Oliver Hunt  <oliver@apple.com>
+2007-01-29  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Lars
+
+        Set the allows-scrolling property on the view.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::QWebFrame):
+
+2007-01-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.
 

@@ -60,6 +60,7 @@ QWebFrame::QWebFrame(QWebPage *parent, QWebFrameData *frameData)
     d->frameView = new FrameView(d->frame.get());
     d->frameView->deref();
     d->frameView->setScrollArea(this);
+    d->frameView->setAllowsScrolling(frameData->allowsScrolling);
     d->frame->setView(d->frameView.get());
     if (!frameData->url.isEmpty()) {
         ResourceRequest request(frameData->url, frameData->referrer);
@@ -84,6 +85,7 @@ QWebFrame::QWebFrame(QWebFrame *parent, QWebFrameData *frameData)
     d->frameView = new FrameView(d->frame.get());
     d->frameView->deref();
     d->frameView->setScrollArea(this);
+    d->frameView->setAllowsScrolling(frameData->allowsScrolling);
     d->frame->setView(d->frameView.get());
 }
 

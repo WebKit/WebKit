@@ -48,7 +48,7 @@
 namespace WebCore {
 
 ScrollView::ScrollView()
-    : m_area(0)
+    : m_area(0), m_allowsScrolling(true)
 {
 }
 
@@ -217,7 +217,7 @@ void ScrollView::suppressScrollbars(bool suppressed, bool /* repaintOnSuppress *
 
 void ScrollView::setHScrollbarMode(ScrollbarMode newMode)
 {
-    if (!m_area)
+    if (!m_area || !m_allowsScrolling)
         return;
     switch (newMode)
     {
@@ -235,7 +235,7 @@ void ScrollView::setHScrollbarMode(ScrollbarMode newMode)
 
 void ScrollView::setVScrollbarMode(ScrollbarMode newMode)
 {
-    if (!m_area)
+    if (!m_area || !m_allowsScrolling)
         return;
     switch (newMode)
     {
@@ -306,6 +306,13 @@ PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mou
     }
 #endif
     return 0;
+}
+
+void ScrollView::setAllowsScrolling(bool allows)
+{
+    if (!allows)
+        suppressScrollbars(true);
+    m_allowsScrolling = allows;
 }
 
 }
