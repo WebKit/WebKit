@@ -1,3 +1,11 @@
+2007-01-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Oliver.
+
+        Add missing includes.
+
+        * ksvg2/svg/SVGElementInstance.cpp:
+
 2007-01-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

@@ -24,6 +24,8 @@
 #ifdef SVG_SUPPORT
 #include "SVGElementInstance.h"
 
+#include "Event.h"
+#include "EventListener.h"
 #include "SVGElementInstanceList.h"
 #include "SVGUseElement.h"
 
