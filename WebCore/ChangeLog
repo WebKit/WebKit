@@ -1,3 +1,31 @@
+2007-01-30  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        Revert the parts of 19244 that removed deferring NSURLConnections, that was not a correct change.
+        Remove ASSERTS from loader.cpp that aren't true anymore since the callbacks are invoked without a handle
+        when loading a subresource from an archive.
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::loadNow):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::releaseResources):
+        (WebCore::ResourceLoader::load):
+        (WebCore::ResourceLoader::setDefersLoading):
+        * loader/loader.cpp:
+        (WebCore::Loader::didFail):
+        (WebCore::Loader::didReceiveResponse):
+        (WebCore::Loader::didReceiveData):
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::ResourceHandle):
+        (WebCore::ResourceHandle::create):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::setDefersLoading):
+
 2007-01-30  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

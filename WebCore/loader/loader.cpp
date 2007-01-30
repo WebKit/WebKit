@@ -116,7 +116,6 @@ void Loader::didFinishLoading(SubresourceLoader* loader)
 
 void Loader::didFail(SubresourceLoader* loader, const ResourceError& error)
 {
-    ASSERT(loader->handle());
     RequestMap::iterator i = m_requestsLoading.find(loader);
     if (i == m_requestsLoading.end())
         return;
@@ -139,7 +138,6 @@ void Loader::didFail(SubresourceLoader* loader, const ResourceError& error)
 
 void Loader::didReceiveResponse(SubresourceLoader* loader, const ResourceResponse& response)
 {
-    ASSERT(loader->handle());
     Request* req = m_requestsLoading.get(loader);
     ASSERT(req);
     req->cachedResource()->setResponse(response);
@@ -155,6 +153,8 @@ void Loader::didReceiveResponse(SubresourceLoader* loader, const ResourceRespons
             req->docLoader()->frame()->loader()->checkCompleted();
     } else if (response.isMultipart()) {
         req->setIsMultipart(true);
+        // If we get a multipart response, we must have a handle
+        ASSERT(loader->handle());
         if (!req->cachedResource()->isImage())
             loader->handle()->cancel();
     }
@@ -162,7 +162,6 @@ void Loader::didReceiveResponse(SubresourceLoader* loader, const ResourceRespons
 
 void Loader::didReceiveData(SubresourceLoader* loader, const char* data, int size)
 {
-    ASSERT(loader->handle());
     Request* request = m_requestsLoading.get(loader);
     if (!request)
         return;

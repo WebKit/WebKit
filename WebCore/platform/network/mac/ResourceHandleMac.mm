@@ -108,6 +108,8 @@ bool ResourceHandle::start(Frame* frame)
 #endif
     d->m_connection = connection;
     [connection release];
+    if (d->m_defersLoading)
+        wkSetNSURLConnectionDefersCallbacks(d->m_connection.get(), YES);
     
     if (d->m_connection)
         return true;
@@ -120,6 +122,12 @@ bool ResourceHandle::start(Frame* frame)
 void ResourceHandle::cancel()
 {
     [d->m_connection.get() cancel];
+}
+
+void ResourceHandle::setDefersLoading(bool defers)
+{
+    d->m_defersLoading = defers;
+    wkSetNSURLConnectionDefersCallbacks(d->m_connection.get(), defers);
 }
 
 WebCoreResourceHandleAsDelegate *ResourceHandle::delegate()
