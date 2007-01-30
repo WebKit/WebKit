@@ -563,7 +563,7 @@ void EventTargetNode::defaultEventHandler(Event* event)
     if (eventType == keypressEvent) {
         if (event->isKeyboardEvent())
             if (Frame* frame = document()->frame())
-                frame->eventHandler()->defaultKeyboardEventHandler(this, static_cast<KeyboardEvent*>(event));
+                frame->eventHandler()->defaultKeyboardEventHandler(static_cast<KeyboardEvent*>(event));
     } else if (eventType == clickEvent) {
         int detail = event->isUIEvent() ? static_cast<UIEvent*>(event)->detail() : 0;
         dispatchUIEvent(DOMActivateEvent, detail, event);

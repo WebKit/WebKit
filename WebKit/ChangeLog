@@ -1,3 +1,22 @@
+2007-01-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        More preparation for event handling fixes.
+
+        * WebCoreSupport/WebEditorClient.h: Removed EventTargetNode parameter, since you can
+          just get this from the KeyboardEvent.
+        * WebCoreSupport/WebEditorClient.mm: (WebEditorClient::handleKeyPress): ditto.
+
+        * WebView/WebHTMLViewInternal.h: Added interpretKeyEventsParameters struct.
+        * WebView/WebViewInternal.h: Changed parameter from NSEvent to WebCoreKeyboardEvent in _interceptEditingKeyEvent.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView yankAndSelect:]): Updated for new triggeringEvent parameter.
+        (-[WebHTMLView _interceptEditingKeyEvent:]): Set the WebHTMLViewInterpretKeyEventsParameters.
+        (-[WebHTMLView doCommandBySelector:]): Access WebHTMLViewInterpretKeyEventsParameters.
+        (-[WebHTMLView insertText:]): ditto.
+        (-[WebHTMLView _insertText:selectInsertedText:triggeringEvent:]): Added parameter for triggeringEvent.
+
 2007-01-29  Oliver Hunt  <oliver@apple.com>
 
         build fix  

@@ -1179,15 +1179,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
 }
 
-- (void)insertText:(NSString *)text selectInsertedText:(BOOL)selectInsertedText
-{
-    if (m_frame->selectionController()->isNone())
-        return;
-    
-    TypingCommand::insertText(m_frame->document(), text, selectInsertedText);
-    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
-}
-
 - (void)setSelectionToDragCaret
 {
     m_frame->selectionController()->setSelection(m_frame->dragCaretController()->selection());

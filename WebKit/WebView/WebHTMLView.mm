@@ -84,6 +84,7 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MimeTypeRegistry.h>
 #import <WebCore/Page.h>
+#import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/Range.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/WebCoreTextRenderer.h>
@@ -227,7 +228,7 @@ static WebHTMLView *lastHitView;
 
 @interface WebHTMLView (WebNSTextInputSupport) <NSTextInput>
 - (void)_updateSelectionForInputManager;
-- (void)_insertText:(NSString *)text selectInsertedText:(BOOL)selectText;
+- (BOOL)_insertText:(NSString *)text selectInsertedText:(BOOL)selectText triggeringEvent:(KeyboardEvent*)event;
 @end
 
 @interface WebHTMLView (WebEditingStyleSupport)
@@ -263,6 +264,11 @@ static WebHTMLView *lastHitView;
 - (BOOL)filterKeyDown:(NSEvent *)event;
 - (void)_reflectSelection;
 @end
+
+struct WebHTMLViewInterpretKeyEventsParameters {
+    KeyboardEvent* event;
+    BOOL eventWasHandled;
+};
 
 @implementation WebHTMLViewPrivate
 
@@ -4586,7 +4592,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
     NSString* yankee = _NSYankPreviousFromKillRing();
     if ([yankee length])
-        [self _insertText:yankee selectInsertedText:YES];
+        [self _insertText:yankee selectInsertedText:YES triggeringEvent:0];
     else
         [self deleteBackward:nil];
         
@@ -5241,14 +5247,18 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     [self _updateMouseoverWithFakeEvent];
 }
 
-- (BOOL)_interceptEditingKeyEvent:(NSEvent *)event
+- (BOOL)_interceptEditingKeyEvent:(KeyboardEvent *)event
 {
     // Ask AppKit to process the key event -- it will call back with either insertText or doCommandBySelector.
-    BOOL wasInterpreted = NO;
-    _private->keyEventWasInterpreted = &wasInterpreted;
-    [self interpretKeyEvents:[NSArray arrayWithObject:event]];
-    _private->keyEventWasInterpreted = 0;
-    return wasInterpreted;
+    WebHTMLViewInterpretKeyEventsParameters parameters;
+    parameters.eventWasHandled = false;
+    if (const PlatformKeyboardEvent* platformEvent = event->keyEvent()) {
+        parameters.event = event;
+        _private->interpretKeyEventsParameters = &parameters;
+        [self interpretKeyEvents:[NSArray arrayWithObject:platformEvent->macEvent()]];
+        _private->interpretKeyEventsParameters = 0;
+    }
+    return parameters.eventWasHandled;
 }
 
 @end
@@ -5451,15 +5461,19 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (void)doCommandBySelector:(SEL)aSelector
 {
+    // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
+    WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
+    _private->interpretKeyEventsParameters = 0;
+
     if (aSelector == @selector(noop:))
         return;
-    if (_private->keyEventWasInterpreted) {
-        *_private->keyEventWasInterpreted = YES;
-        _private->keyEventWasInterpreted = 0;
-    }
+
     WebView *webView = [self _webView];
     if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:aSelector])
         [super doCommandBySelector:aSelector];
+
+    if (parameters)
+        parameters->eventWasHandled = YES;
 }
 
 - (void)_discardMarkedText
@@ -5479,14 +5493,14 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     _private->ignoreMarkedTextSelectionChange = NO;
 }
 
-- (void)_insertText:(NSString *)text selectInsertedText:(BOOL)selectText
+- (BOOL)_insertText:(NSString *)text selectInsertedText:(BOOL)selectText triggeringEvent:(KeyboardEvent*)event
 {
     if (text == nil || [text length] == 0 || (![self _isEditable] && ![self hasMarkedText]))
-        return;
+        return NO;
 
     if (![self _shouldReplaceSelectionWithText:text givenAction:WebViewInsertActionTyped]) {
         [self _discardMarkedText];
-        return;
+        return NO;
     }
 
     _private->ignoreMarkedTextSelectionChange = YES;
@@ -5494,27 +5508,36 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     // If we had marked text, we replace that, instead of the selection/caret.
     [self _selectMarkedText];
 
-    [[self _bridge] insertText:text selectInsertedText:selectText];
+    bool eventHandled = false;
 
+    if (Frame* coreFrame = core([self _frame]))
+        eventHandled = coreFrame->editor()->insertText(text, selectText, event);
+        
     _private->ignoreMarkedTextSelectionChange = NO;
 
     // Inserting unmarks any marked text.
     [self unmarkText];
+
+    return eventHandled;
 }
 
 - (void)insertText:(id)string
 {
-    if (_private->keyEventWasInterpreted) {
-        *_private->keyEventWasInterpreted = YES;
-        _private->keyEventWasInterpreted = 0;
-    }
+    // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
+    WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
+    _private->interpretKeyEventsParameters = 0;
+
     // We don't yet support inserting an attributed string but input methods don't appear to require this.
     NSString *text;
     if ([string isKindOfClass:[NSAttributedString class]])
         text = [string string];
     else
         text = string;
-    [self _insertText:text selectInsertedText:NO];
+    BOOL eventHandled = [self _insertText:text selectInsertedText:NO
+        triggeringEvent:parameters ? parameters->event : 0];
+
+    if (parameters)
+        parameters->eventWasHandled = eventHandled;
 }
 
 - (BOOL)_selectionIsInsideMarkedText

@@ -1,3 +1,26 @@
+2007-01-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        More preparation for event handling fixes.
+
+        * bridge/EditorClient.h: Removed EventTargetNode parameter from handleKeyPress since we can just get that from the event.
+        * dom/EventTargetNode.cpp: (WebCore::EventTargetNode::defaultEventHandler): ditto.
+        * page/EventHandler.cpp: (WebCore::EventHandler::defaultKeyboardEventHandler): ditto.
+        * page/EventHandler.h: ditto.
+        * platform/graphics/svg/SVGImageEmptyClients.h: (WebCore::SVGEmptyEditorClient::handleKeyPress): ditto.
+
+        * editing/Editor.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::handleKeyPress): Removed EventTargetNode parameter.
+        (WebCore::Editor::execCommand): Made commandMap use AtomicStringImpls instead of Strings.
+        (WebCore::Editor::insertText): Moved from the bridge.
+
+        * page/mac/WebCoreFrameBridge.h: Moved insertText method to Editor.
+        * page/mac/WebCoreFrameBridge.mm:
+
+        * WebCore.exp: Updated exports.
+
 2007-01-29  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

@@ -66,7 +66,7 @@ public:
     DeleteButtonController* deleteButtonController() const { return m_deleteButtonController.get(); }
     EditCommand* lastEditCommand() { return m_lastEditCommand.get(); }
 
-    void handleKeyPress(EventTargetNode*, KeyboardEvent*);
+    void handleKeyPress(KeyboardEvent*);
 
     bool canEdit() const;
     bool canEditRichly() const;
@@ -136,7 +136,9 @@ public:
     bool selectWordBeforeMenuEvent() const;
     bool clientIsEditable() const;
     
-    bool execCommand(const String&);
+    bool execCommand(const AtomicString&);
+    
+    bool insertText(const String&, bool selectInsertedText, Event* triggeringEvent = 0);
     
     bool isContinuousSpellCheckingEnabled();
     void toggleContinuousSpellChecking();

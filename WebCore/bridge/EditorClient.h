@@ -93,7 +93,7 @@ public:
     virtual void undo() = 0;
     virtual void redo() = 0;
 
-    virtual void handleKeyPress(EventTargetNode*, KeyboardEvent*) = 0;
+    virtual void handleKeyPress(KeyboardEvent*) = 0;
 
 #if PLATFORM(MAC)
     // FIXME: This should become SelectionController::toWebArchive()

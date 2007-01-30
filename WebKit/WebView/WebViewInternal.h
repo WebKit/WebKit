@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,23 +33,21 @@
 
 #ifdef __cplusplus
 namespace WebCore {
+    class KeyboardEvent;
     class Page;
+    class String;
 }
+typedef WebCore::KeyboardEvent WebCoreKeyboardEvent;
 typedef WebCore::Page WebCorePage;
 #else
+@class WebCoreKeyboardEvent;
 @class WebCorePage;
 #endif
 
 @class WebBasePluginPackage;
 
-#ifdef __cplusplus
-namespace WebCore {
-    class String;
-}
-#endif
-
 @interface WebView (WebViewEditingExtras)
-- (BOOL)_interceptEditingKeyEvent:(NSEvent *)event;
+- (BOOL)_interceptEditingKeyEvent:(WebCoreKeyboardEvent *)event;
 - (BOOL)_shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag;
 @end
 
