@@ -1766,7 +1766,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 - (NPObject *)createPluginScriptableObject
 {
-    if (!NPP_GetValue)
+    if (!NPP_GetValue || ![self isStarted])
         return NULL;
         
     NPObject *value = NULL;

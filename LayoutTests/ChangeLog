@@ -1,5 +1,15 @@
 2007-01-30  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Geoff.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12050
+          REGRESSION: Assertion failure in -[WebBaseNetscapePluginView willCallPlugInFunction] (plugin)
+
+        * plugins/createScriptableObject-before-start-expected.txt: Added.
+        * plugins/createScriptableObject-before-start.html: Added.
+
+2007-01-30  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin.
 
         - test for http://bugs.webkit.org/show_bug.cgi?id=12487

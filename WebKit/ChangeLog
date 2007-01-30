@@ -1,3 +1,16 @@
+2007-01-30  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Geoff.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12050
+          REGRESSION: Assertion failure in -[WebBaseNetscapePluginView willCallPlugInFunction] (plugin)
+
+        Test: plugins/createScriptableObject-before-start.html
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView createPluginScriptableObject]): Return NULL if
+        the plugin is not started.
+
 2007-01-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.
