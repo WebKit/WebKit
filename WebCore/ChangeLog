@@ -1,3 +1,12 @@
+2007-01-30  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        Combine libJavaScriptCore into libWebKitQt.
+        Build with ELF visibility if possible.
+
+        * WebCore.pro:
+
 2007-01-30  Zack Rusin  <zack@kde.org>
 
         The method has been removed from the header

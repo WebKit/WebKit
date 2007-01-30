@@ -28,6 +28,8 @@
 #include <QDateTime>
 #include <QSharedData>
 
+#include <qwebkitglobal.h>
+
 #if QT_VERSION < 0x040300
 template <class T> class QExplicitlySharedDataPointer
 {
@@ -91,7 +93,7 @@ Q_INLINE_TEMPLATE QExplicitlySharedDataPointer<T>::QExplicitlySharedDataPointer(
 class QWebPage;
 
 class QWebHistoryItemPrivate;
-class QWebHistoryItem
+class QWEBKIT_EXPORT QWebHistoryItem
 {
 public:
     ~QWebHistoryItem();
@@ -115,7 +117,7 @@ private:
 };
 
 class QWebPageHistoryPrivate;
-class QWebPageHistory
+class QWEBKIT_EXPORT QWebPageHistory
 {
 public:
     QWebPageHistory(const QWebPageHistory &other);

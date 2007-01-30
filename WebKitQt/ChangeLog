@@ -1,3 +1,15 @@
+2007-01-30  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        Added import/export macros needed for build with ELF visibility and
+        for a build on Windows (in the future).
+
+        * Api/qwebframe.h:
+        * Api/qwebkitglobal.h: Added.
+        * Api/qwebpage.h:
+        * Api/qwebpagehistory.h:
+
 2007-01-30  Zack Rusin  <zack@kde.org>
 
         Change the signature of handleKeyPress

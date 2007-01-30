@@ -26,6 +26,8 @@
 
 #include <qscrollarea.h>
 
+#include <qwebkitglobal.h>
+
 class QWebFramePrivate;
 class QWebPage;
 
@@ -34,7 +36,7 @@ namespace WebCore {
 }
 class QWebFrameData;
 
-class QWebFrame : public QScrollArea
+class QWEBKIT_EXPORT QWebFrame : public QScrollArea
 {
     Q_OBJECT
 protected:

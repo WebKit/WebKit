@@ -1,3 +1,10 @@
+2007-01-30  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack.
+
+        * WebKit.pri: libJavaScriptCore is gone with the Qt build
+        * WebKit.pro:
+
 2007-01-26  George Staikos  <staikos@kde.org>
 
         Remove headers - not needed now.

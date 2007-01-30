@@ -1,17 +1,10 @@
 # JavaScriptCore - Qt4 build info
 VPATH += $$PWD
-TEMPLATE = lib
-TARGET = JavaScriptCore
-DESTDIR = ../lib
-OBJECTS_DIR = tmp
+
 INCLUDEPATH += tmp
 INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/bindings $$PWD/bindings/c $$PWD/bindings/qt $$PWD/wtf
 DEFINES -= KJS_IDENTIFIER_HIDE_GLOBALS 
 DEFINES += BUILDING_QT__
-QT -= gui
-
-isEmpty(OUTPUT_DIR):OUTPUT_DIR=$$PWD
-include($$OUTPUT_DIR/config.pri)
 
 include(pcre/pcre.pri)
 

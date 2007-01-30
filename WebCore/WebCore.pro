@@ -13,12 +13,17 @@ include($$OUTPUT_DIR/config.pri)
 CONFIG -= warn_on
 #QMAKE_CXXFLAGS_RELEASE += -Wall -Wno-undef -Wno-unused-parameter
 
+contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
+unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
+
 # PRE-BUILD: make the required config.h file
 #config_h.target = config.h
 #config_h.commands = cp config.h.qmake config.h
 #config_h.depends = config.h.qmake
 #QMAKE_EXTRA_TARGETS += config_h
 #PRE_TARGETDEPS += config.h
+
+DEFINES += BUILD_WEBKIT
 
 # Optional components (look for defs in config.h and included files!)
 DEFINES += XPATH_SUPPORT=1
@@ -28,8 +33,10 @@ DEFINES += SVG_SUPPORT=1
 
 DEFINES += WTF_CHANGES=1 BUILDING_QT__=1
 
-INCLUDEPATH += $$PWD/../JavaScriptCore
-LIBS += -L$$OUTPUT_DIR/lib -lJavaScriptCore
+include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
+
+#INCLUDEPATH += $$PWD/../JavaScriptCore
+#LIBS += -L$$OUTPUT_DIR/lib -lJavaScriptCore
 
 macx {
     INCLUDEPATH += /opt/local/include /opt/local/include/libxml2
@@ -1080,12 +1087,12 @@ idl.clean = tmp/JS${QMAKE_FILE_BASE}.h ${QMAKE_FILE_OUT}
 QMAKE_EXTRA_COMPILERS += idl
 
 # GENERATOR 2-A: LUT creator
-lut.output = tmp/${QMAKE_FILE_BASE}.lut.h
-lut.commands = perl $$PWD/../JavaScriptCore/kjs/create_hash_table ${QMAKE_FILE_NAME} -i > ${QMAKE_FILE_OUT}
-lut.depend = ${QMAKE_FILE_NAME}
-lut.input = LUT_FILES
-lut.CONFIG += no_link
-QMAKE_EXTRA_COMPILERS += lut
+#lut.output = tmp/${QMAKE_FILE_BASE}.lut.h
+#lut.commands = perl $$PWD/../JavaScriptCore/kjs/create_hash_table ${QMAKE_FILE_NAME} -i > ${QMAKE_FILE_OUT}
+#lut.depend = ${QMAKE_FILE_NAME}
+#lut.input = LUT_FILES
+#lut.CONFIG += no_link
+#QMAKE_EXTRA_COMPILERS += lut
 
 # GENERATOR 2-B: like JavaScriptCore/LUT Generator, but rename output
 luttable.output = tmp/${QMAKE_FILE_BASE}Table.cpp
