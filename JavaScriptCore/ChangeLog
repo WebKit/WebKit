@@ -1,3 +1,9 @@
+2007-01-30  Darin Adler  <darin@apple.com>
+
+        * kjs/DateMath.cpp: Fix license header to reflect LGPL as the first license
+        mentioned. We still mention the option of using under MPL or GPL since some
+        of this code came from the Mozilla project with those license terms.
+
 2007-01-30  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack.
