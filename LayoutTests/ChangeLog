@@ -1,3 +1,15 @@
+2007-01-30  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin (by way of Hyatt).
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12373
+          ASSERTION FAILURE: !child->needsLayout() on paypal.com
+
+        * fast/table/inline-form-assert-expected.checksum: Added.
+        * fast/table/inline-form-assert-expected.png: Added.
+        * fast/table/inline-form-assert-expected.txt: Added.
+        * fast/table/inline-form-assert.html: Added.
+
 2007-01-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

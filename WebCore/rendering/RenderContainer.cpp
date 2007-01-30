@@ -476,7 +476,7 @@ void RenderContainer::layout()
     RenderObject* child = m_firstChild;
     while (child) {
         child->layoutIfNeeded();
-        ASSERT(!child->needsLayout());
+        ASSERT(child->isRenderInline() || !child->needsLayout());
         child = child->nextSibling();
     }
     setNeedsLayout(false);

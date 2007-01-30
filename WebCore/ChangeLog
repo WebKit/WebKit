@@ -1,3 +1,15 @@
+2007-01-30  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin (by way of Hyatt).
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12373
+          ASSERTION FAILURE: !child->needsLayout() on paypal.com
+
+        Test: fast/table/inline-form-assert.html
+
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::layout): Changed the assertion to ignore inlines.
+
 2007-01-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
