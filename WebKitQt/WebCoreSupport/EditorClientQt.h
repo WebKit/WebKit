@@ -39,43 +39,44 @@ namespace WebCore {
 
 class EditorClientQt : public EditorClient {
 public:
+    
     virtual void pageDestroyed();
-
+    
     virtual bool shouldDeleteRange(Range*);
     virtual bool shouldShowDeleteInterface(HTMLElement*);
-
+    virtual bool smartInsertDeleteEnabled(); 
     virtual bool isContinuousSpellCheckingEnabled();
+    virtual void toggleContinuousSpellChecking();
     virtual bool isGrammarCheckingEnabled();
-    virtual int  spellCheckerDocumentTag();
+    virtual void toggleGrammarChecking();
+    virtual int spellCheckerDocumentTag();
+    
+    virtual bool selectWordBeforeMenuEvent();
+    virtual bool isEditable();
 
-    virtual bool smartInsertDeleteEnabled();
-    virtual bool shouldBeginEditing(WebCore::Range*);
-    virtual bool shouldEndEditing(WebCore::Range*);
-    virtual bool shouldInsertText(String, Range*, EditorInsertAction);
+    virtual bool shouldBeginEditing(Range*);
+    virtual bool shouldEndEditing(Range*);
     virtual bool shouldInsertNode(Node*, Range*, EditorInsertAction);
-    virtual bool shouldApplyStyle(WebCore::CSSStyleDeclaration*,
-                                  WebCore::Range*);
+    virtual bool shouldInsertText(String, Range*, EditorInsertAction);
+    virtual bool shouldApplyStyle(CSSStyleDeclaration*, Range*);
 
     virtual void didBeginEditing();
     virtual void respondToChangedContents();
     virtual void didEndEditing();
     virtual void didWriteSelectionToPasteboard();
     virtual void didSetSelectionTypesForPasteboard();
-
-    virtual bool selectWordBeforeMenuEvent();
-    virtual bool isEditable();
-    virtual void registerCommandForUndo(PassRefPtr<WebCore::EditCommand>);
-    virtual void registerCommandForRedo(PassRefPtr<WebCore::EditCommand>);
+    
+    virtual void registerCommandForUndo(PassRefPtr<EditCommand>);
+    virtual void registerCommandForRedo(PassRefPtr<EditCommand>);
     virtual void clearUndoRedoOperations();
+
     virtual bool canUndo() const;
     virtual bool canRedo() const;
+    
     virtual void undo();
     virtual void redo();
 
-    virtual void toggleContinuousSpellChecking();
-    virtual void toggleGrammarChecking();
-
-    virtual void handleKeyPress(EventTargetNode*, KeyboardEvent*);
+    virtual void handleKeyPress(KeyboardEvent*);
 
 };
 
