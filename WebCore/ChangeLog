@@ -1,3 +1,13 @@
+2007-01-30  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by aroben
+
+        Compile fix. 
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::releaseResources):
+        (WebCore::ResourceLoader::setDefersLoading):
+
 2007-01-29  Zack Rusin  <zack@kde.org>
 
         Reviewed by Lars

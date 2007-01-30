@@ -88,7 +88,7 @@ void ResourceLoader::releaseResources()
 #endif
     m_handle = 0;
     m_resourceData = 0;
-    m_deferredRequest = 0;
+    m_deferredRequest = ResourceRequest();
 }
 
 bool ResourceLoader::load(const ResourceRequest& r)
@@ -124,7 +124,7 @@ void ResourceLoader::setDefersLoading(bool defers)
     m_defersLoading = defers;
     if (!defers && !m_deferredRequest.isNull()) {
         ResourceRequest request(m_deferredRequest);
-        m_deferredRequest = 0;
+        m_deferredRequest = ResourceRequest();
         load(request);
     }
 }
