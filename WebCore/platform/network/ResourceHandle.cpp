@@ -31,14 +31,14 @@
 
 namespace WebCore {
 
-ResourceHandle::ResourceHandle(const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool mightDownloadFromHandle)
-    : d(new ResourceHandleInternal(this, request, client, defersLoading, mightDownloadFromHandle))
+ResourceHandle::ResourceHandle(const ResourceRequest& request, ResourceHandleClient* client, bool mightDownloadFromHandle)
+    : d(new ResourceHandleInternal(this, request, client, mightDownloadFromHandle))
 {
 }
 
-PassRefPtr<ResourceHandle> ResourceHandle::create(const ResourceRequest& request, ResourceHandleClient* client, Frame* frame, bool defersLoading, bool mightDownloadFromHandle)
+PassRefPtr<ResourceHandle> ResourceHandle::create(const ResourceRequest& request, ResourceHandleClient* client, Frame* frame, bool mightDownloadFromHandle)
 {
-    RefPtr<ResourceHandle> newLoader(new ResourceHandle(request, client, defersLoading, mightDownloadFromHandle));
+    RefPtr<ResourceHandle> newLoader(new ResourceHandle(request, client, mightDownloadFromHandle));
     
     if (newLoader->start(frame))
         return newLoader.release();

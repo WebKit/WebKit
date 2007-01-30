@@ -1,3 +1,17 @@
+2007-01-29  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by Maciej.
+        
+        Enables layout test for: http://bugs.webkit.org/show_bug.cgi?id=10725
+        Image data in from RTFD clipboard data thrown away
+        
+        - This method is needed because NSArray's ar bridged to JS Array's,
+          which in turn are bridged back to WebScriptObject's when passed from
+          JS to ObjC. Hence it is not possbile to pass an NSArray from JS.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (-[DumpRenderTreePasteboard declareType:owner:]): Added a convenience method for JS.
+
 2007-01-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

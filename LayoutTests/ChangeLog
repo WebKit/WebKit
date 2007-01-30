@@ -1,3 +1,21 @@
+2007-01-29  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by Maciej.
+        
+        - test for http://bugs.webkit.org/show_bug.cgi?id=10725
+          Image data in from RTFD clipboard data thrown away
+
+        * editing/pasteboard/paste-RTFD-expected.checksum: Added.
+        * editing/pasteboard/paste-RTFD-expected.png: Added.
+        * editing/pasteboard/paste-RTFD-expected.txt: Added.
+        * editing/pasteboard/paste-RTFD.html: Added.
+        * editing/pasteboard/paste-TIFF-expected.checksum: Added.
+        * editing/pasteboard/paste-TIFF-expected.png: Added.
+        * editing/pasteboard/paste-TIFF-expected.txt: Added.
+        * editing/pasteboard/paste-TIFF.html: Added.
+        * editing/resources/RTFD-pasteboard-data.dat: Added.
+        * editing/resources/TIFF-pasteboard-data.dat: Added.
+
 2007-01-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

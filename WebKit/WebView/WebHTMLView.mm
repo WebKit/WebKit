@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
- *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
+ *           (C) 2006, 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -97,6 +97,9 @@
 using namespace WebCore;
 
 extern "C" {
+
+// Fake URL scheme.
+static NSString *WebDataProtocolScheme = @"webkit-fake-url";
 
 // need to declare this because AppKit does not make it available as API or SPI
 extern NSString *NSMarkedClauseSegmentAttributeName; 
@@ -412,7 +415,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
     NSString *UUIDString = (NSString *)CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
     CFRelease(UUIDRef);
-    NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"-webkit-fake-url://%@/%@", UUIDString, relativePart]];
+    NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@/%@", WebDataProtocolScheme, UUIDString, relativePart]];
     CFRelease(UUIDString);
 
     return URL;
@@ -472,10 +475,25 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
             [[self class] _excludedElementsForAttributedStringConversion], NSExcludedElementsDocumentAttribute,
             self, @"WebResourceHandler", nil];
         NSArray *subresources;
+        
+        BOOL wasDeferringCallbacks = [[self _webView] defersCallbacks];
+        if (!wasDeferringCallbacks)
+            [[self _webView] setDefersCallbacks:YES];
+            
         DOMDocumentFragment *fragment = [string _documentFromRange:NSMakeRange(0, [string length]) 
                                                           document:[[self _frame] DOMDocument] 
                                                 documentAttributes:documentAttributes
                                                       subresources:&subresources];
+        
+        NSEnumerator *e = [subresources objectEnumerator];
+        WebResource *r;
+        while ((r = [e nextObject])) {
+            [[self _dataSource] addSubresource:r];
+        }
+        
+        if (!wasDeferringCallbacks)
+            [[self _webView] setDefersCallbacks:NO];
+        
         [documentAttributes release];
         [string release];
         return fragment;
@@ -5989,6 +6007,21 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     if (coreframe) 
         return [[[WebElementDictionary alloc] initWithHitTestResult:coreframe->eventHandler()->hitTestResultAtPoint(IntPoint(point), allow)] autorelease];
     return nil;
+}
+
+@end
+
+// This is used by AppKit and is included here so that WebDataProtocolScheme is only defined once.
+@implementation NSURL (WebDataURL)
+
++ (NSURL *)_web_uniqueWebDataURL
+{
+    CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
+    NSString *UUIDString = (NSString *)CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
+    CFRelease(UUIDRef);
+    NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@", WebDataProtocolScheme, UUIDString]];
+    CFRelease(UUIDString);
+    return URL;
 }
 
 @end

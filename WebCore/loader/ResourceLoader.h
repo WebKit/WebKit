@@ -140,6 +140,7 @@ protected:
         KURL m_originalURL;
         RefPtr<SharedBuffer> m_resourceData;
         bool m_defersLoading;
+        ResourceRequest m_deferredRequest;
     };
 
 }

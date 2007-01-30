@@ -1,3 +1,22 @@
+2007-01-30  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by Maciej.
+
+        Part of fix for http://bugs.webkit.org/show_bug.cgi?id=10725
+        Image data in from RTFD clipboard data thrown away
+        
+        The URLs for images in RTFD data must not be loaded until the resources
+        have been added to the WebUnarchivingState. This can't happen until
+        after the RTFD data has been parsed, so we must delay loading while this
+        RTFD data is being parsed to a document fragment.
+
+        * WebView/WebHTMLView.mm:
+        (uniqueURLWithRelativePart):
+        (-[WebHTMLView _documentFragmentFromPasteboard:inContext:allowPlainText:chosePlainText:]): defer loading the resources while RTFD data is being parsed.
+        (+[NSURL _web_uniqueWebDataURL]): Added this back because AppKit uses it.
+        * WebView/WebUnarchivingState.m:
+        (-[WebUnarchivingState archivedResourceForURL:]): orkaround for workaround for rdar://problem/4699166 so that other people can use archivedResourceForURL: too.
+
 2007-01-29  Jim Correia  <jim.correia@pobox.com>
 
         Reviewed by Mark.
@@ -15,6 +34,7 @@
         (-[WebView undoManager]):
         * WebView/WebViewPrivate.h:
 
+>>>>>>> .r19243
 2007-01-29  Ada Chan  <adachan@apple.com>
 
         Reviewed by Brady.

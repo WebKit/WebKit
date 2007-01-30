@@ -1,3 +1,30 @@
+2007-01-30  Graham Dennis  <graham.dennis@gmail.com>
+
+        Reviewed by Maciej.
+
+        Part of fix for http://bugs.webkit.org/show_bug.cgi?id=10725
+        Image data in from RTFD clipboard data thrown away
+        
+        ResourceHandles no longer need to be able to defer loading as that is
+        now handled by the ResourceLoader.
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::loadNow): updated to remove defersLoading argument.
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::releaseResources): release the deferred request.
+        (WebCore::ResourceLoader::load): defer creating the ResourceHandle instead of
+        asking the ResourceHandle to defer loading.
+        (WebCore::ResourceLoader::setDefersLoading): create the ResourceHandle if we have deferred creating it.
+        * loader/ResourceLoader.h:
+        * platform/network/ResourceHandle.cpp: ResourceHandle's don't need to know about deferLoading.
+        (WebCore::ResourceHandle::ResourceHandle):
+        (WebCore::ResourceHandle::create):
+        * platform/network/ResourceHandle.h: ditto.
+        * platform/network/ResourceHandleInternal.h: ditto.
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/mac/ResourceHandleMac.mm: ditto.
+        (WebCore::ResourceHandle::start):
+
 2007-01-29  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Alice

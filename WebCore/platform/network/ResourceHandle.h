@@ -84,11 +84,11 @@ template <typename T> class Timer;
 
 class ResourceHandle : public Shared<ResourceHandle> {
 private:
-    ResourceHandle(const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool mightDownloadFromHandle);
+    ResourceHandle(const ResourceRequest&, ResourceHandleClient*, bool mightDownloadFromHandle);
 
 public:
     // FIXME: should not need the Frame
-    static PassRefPtr<ResourceHandle> create(const ResourceRequest&, ResourceHandleClient*, Frame*, bool defersLoading, bool mightDownloadFromHandle = false);
+    static PassRefPtr<ResourceHandle> create(const ResourceRequest&, ResourceHandleClient*, Frame*, bool mightDownloadFromHandle = false);
 
     static void loadResourceSynchronously(const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>& data);
     static bool willLoadFromCache(ResourceRequest&);
@@ -139,7 +139,6 @@ public:
     void cancel();
     
     ResourceHandleClient* client() const;
-    void setDefersLoading(bool);
       
     const HTTPHeaderMap& requestHeaders() const;
     const KURL& url() const;

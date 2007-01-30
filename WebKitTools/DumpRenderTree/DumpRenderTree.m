@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,6 +70,7 @@
 @end
 
 @interface DumpRenderTreePasteboard : NSPasteboard
+- (int)declareType:(NSString *)type owner:(id)newOwner;
 @end
 
 @interface DumpRenderTreeEvent : NSEvent
@@ -1127,6 +1129,13 @@ static NSString *md5HashStringForBitmap(CGImageRef bitmap)
     [localPasteboards setObject:pasteboard forKey:name];
     [pasteboard release];
     return pasteboard;
+}
+
+// Convenience method for JS so that it doesn't have to try and create a NSArray on the objc side instead
+// of the usual WebScriptObject that is passed around
+- (int)declareType:(NSString *)type owner:(id)newOwner
+{
+    return [self declareTypes:[NSArray arrayWithObject:type] owner:newOwner];
 }
 
 @end
