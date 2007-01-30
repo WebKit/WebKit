@@ -1,7 +1,7 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {g} at (5,14) size 463x271
+      RenderSVGContainer {g} at (5,14) size 465x276
         RenderSVGText {text} at (5,50) size 480x44
           RenderSVGInlineText {#text} at (0,-36) size 403x44
             text run at (0,-36) width 403: "Test 'altGlyph' facilities"
@@ -9,7 +9,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-27) size 463x33
             text run at (0,-27) width 463: "and many-to-many chars to glyphs"
         RenderSVGContainer {defs} at (0,0) size 0x0
-        RenderSVGContainer {g} at (50,216) size 415x69
+        RenderSVGContainer {g} at (45,185) size 425x105
           RenderSVGText {text} at (140,190) size 480x0
           RenderSVGText {text} at (50,270) size 480x69
             RenderSVGInlineText {#text} at (0,-54) size 43x69

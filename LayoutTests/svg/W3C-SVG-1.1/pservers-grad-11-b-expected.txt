@@ -5,7 +5,7 @@ KRenderingPaintServer {id="Grad4" [type=RADIAL-GRADIENT] [stops=[(0.00,#000000),
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {g} at (10,10) size 460x278
+      RenderSVGContainer {g} at (8,10) size 464x278
         RenderPath {rect} at (10,10) size 210x140 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#000000), (1.00,#FF0000)]] [bounding box mode=0] [center=(75,100)] [focal=(75,100)] [radius=130.00]}] [data="M10.00,10.00L220.00,10.00L220.00,150.00L10.00,150.00"]
         RenderSVGText {text} at (10,165) size 480x14
           RenderSVGInlineText {#text} at (0,-11) size 183x14

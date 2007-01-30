@@ -3,7 +3,7 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
       RenderSVGContainer {defs} at (0,0) size 0x0
-      RenderSVGContainer {g} at (20,13.50) size 420x247.50 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
+      RenderSVGContainer {g} at (17,13.50) size 423x252 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
         RenderSVGText {text} at (20,70) size 480x78
           RenderSVGInlineText {#text} at (0,-61) size 420x78
             text run at (0,-61) width 420: "Gradient on fill"

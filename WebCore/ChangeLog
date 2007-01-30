@@ -1,3 +1,13 @@
+2007-01-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Respect stroke-width in absolute repaint rect calculations for SVG text.
+        Added test: svg/custom/text-repaint-including-stroke.svg
+
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::relativeBBox):
+
 2007-01-30  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Oliver.

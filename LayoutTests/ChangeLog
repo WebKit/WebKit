@@ -1,3 +1,23 @@
+2007-01-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Update svg baseline after svg text repaint rect fixes.
+
+        * svg/W3C-SVG-1.1/pservers-grad-08-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-11-b-expected.txt:
+        * svg/W3C-SVG-1.1/render-elems-07-t-expected.txt:
+        * svg/W3C-SVG-1.1/render-elems-08-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-use-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/text-altglyph-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-deco-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-text-08-b-expected.txt:
+        * svg/custom/text-repaint-including-stroke-expected.checksum: Added.
+        * svg/custom/text-repaint-including-stroke-expected.png: Added.
+        * svg/custom/text-repaint-including-stroke-expected.txt: Added.
+        * svg/custom/text-repaint-including-stroke.svg: Added.
+        * svg/custom/use-on-text-expected.txt:
+
 2007-01-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

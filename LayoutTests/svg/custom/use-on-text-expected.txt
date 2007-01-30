@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    RenderSVGContainer {svg} at (0,-52) size 500x180
-      RenderSVGContainer {defs} at (0,-52) size 138x92
+    RenderSVGContainer {svg} at (-4,-56) size 504x184
+      RenderSVGContainer {defs} at (-4,-56) size 146x100
         RenderSVGText {text} at (0,10) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 69x46
             text run at (0,-36) width 69: "Test"
-      RenderSVGContainer {g} at (250,-2) size 138x92 [transform={m=((1.00,0.00)(0.00,1.00)) t=(125.00,25.00)}]
+      RenderSVGContainer {g} at (246,-6) size 146x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(125.00,25.00)}]
         RenderSVGText {text} at (0,10) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 69x46
             text run at (0,-36) width 69: "Test"
       RenderSVGText {text} at (10,60) size 800x18
         RenderSVGInlineText {#text} at (0,-14) size 240x18
           text run at (0,-14) width 240: "The two objects should look identical."
-      RenderSVGContainer {use} at (50,-2) size 138x92
-        RenderSVGContainer {g} at (50,-2) size 138x92 [transform={m=((1.00,0.00)(0.00,1.00)) t=(25.00,25.00)}]
+      RenderSVGContainer {use} at (46,-6) size 146x100
+        RenderSVGContainer {g} at (46,-6) size 146x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(25.00,25.00)}]
           RenderSVGText {text} at (0,10) size 800x46
             RenderSVGInlineText {#text} at (0,-36) size 69x46
               text run at (0,-36) width 69: "Test"
