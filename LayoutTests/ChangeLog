@@ -1,3 +1,16 @@
+2007-01-31  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Mitz.
+
+        Re-enable editing/pasteboard/paste-{RTFD,TIFF}.html now that a fix has been landed for:
+        http://bugs.webkit.org/show_bug.cgi?id=12474
+        REGRESSION(r19244): Assertion failure in layout tests: ASSERTION FAILED: loader->handle()
+
+        * editing/pasteboard/paste-RTFD.html: Added.
+        * editing/pasteboard/paste-RTFD.html-disabled: Removed.
+        * editing/pasteboard/paste-TIFF.html: Added.
+        * editing/pasteboard/paste-TIFF.html-disabled: Removed.
+
 2007-01-30  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin (by way of Hyatt).
