@@ -1,3 +1,20 @@
+2007-01-29  Jim Correia  <jim.correia@pobox.com>
+
+        Reviewed by Mark.
+
+        Added support for -allowsUndo/-setAllowsUndo: to allow editable WebView
+        clients to completely disable undo registration. This is functionally
+        equivalent to the methods with the same names on NSTextView.
+
+        * WebView/WebView.mm:
+        (-[WebViewPrivate init]):
+        (-[WebView initWithCoder:]):
+        (-[WebView encodeWithCoder:]):
+        (-[WebView allowsUndo]):
+        (-[WebView setAllowsUndo:]):
+        (-[WebView undoManager]):
+        * WebView/WebViewPrivate.h:
+
 2007-01-29  Ada Chan  <adachan@apple.com>
 
         Reviewed by Brady.

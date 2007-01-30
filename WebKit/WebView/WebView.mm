@@ -262,6 +262,7 @@ macro(yankAndSelect) \
     id scriptDebugDelegateForwarder;
     
     BOOL useBackForwardList;
+    BOOL allowsUndo;
         
     float textSizeMultiplier;
 
@@ -352,7 +353,7 @@ NSString * const WebViewDidEndEditingNotification =           @"WebViewDidEndEdi
 NSString * const WebViewDidChangeTypingStyleNotification =    @"WebViewDidChangeTypingStyleNotification";
 NSString * const WebViewDidChangeSelectionNotification =      @"WebViewDidChangeSelectionNotification";
 
-enum { WebViewVersion = 2 };
+enum { WebViewVersion = 3 };
 
 #define timedLayoutSize 4096
 
@@ -391,6 +392,7 @@ static BOOL grammarCheckingEnabled;
     if (!self)
         return nil;
     
+    allowsUndo = YES;
     textSizeMultiplier = 1;
     dashboardBehaviorAllowWheelScrolling = YES;
     shouldCloseWithWindow = objc_collecting_enabled();
@@ -1667,7 +1669,8 @@ NS_DURING
     NSString *frameName;
     NSString *groupName;
     WebPreferences *preferences;
-    BOOL useBackForwardList;
+    BOOL useBackForwardList = NO;
+    BOOL allowsUndo = YES;
     
     result = [super initWithCoder:decoder];
     result->_private = [[WebViewPrivate alloc] init];
@@ -1681,6 +1684,8 @@ NS_DURING
         groupName = [decoder decodeObjectForKey:@"GroupName"];
         preferences = [decoder decodeObjectForKey:@"Preferences"];
         useBackForwardList = [decoder decodeBoolForKey:@"UseBackForwardList"];
+        if ([decoder containsValueForKey:@"AllowsUndo"])
+            allowsUndo = [decoder decodeBoolForKey:@"AllowsUndo"];
     } else {
         int version;
         [decoder decodeValueOfObjCType:@encode(int) at:&version];
@@ -1689,6 +1694,8 @@ NS_DURING
         preferences = [decoder decodeObject];
         if (version > 1)
             [decoder decodeValuesOfObjCTypes:"c", &useBackForwardList];
+        if (version > 2)
+            [decoder decodeValuesOfObjCTypes:"c", &allowsUndo];
     }
 
     if (![frameName isKindOfClass:[NSString class]])
@@ -1701,6 +1708,7 @@ NS_DURING
     LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", frameName, groupName, (int)useBackForwardList);
     [result _commonInitializationWithFrameName:frameName groupName:groupName];
     result->_private->useBackForwardList = useBackForwardList;
+    result->_private->allowsUndo = allowsUndo;
     if (preferences)
         [result setPreferences:preferences];
 
@@ -1723,6 +1731,7 @@ NS_ENDHANDLER
         [encoder encodeObject:[self groupName] forKey:@"GroupName"];
         [encoder encodeObject:[self preferences] forKey:@"Preferences"];
         [encoder encodeBool:_private->useBackForwardList forKey:@"UseBackForwardList"];
+        [encoder encodeBool:_private->allowsUndo forKey:@"AllowsUndo"];
     } else {
         int version = WebViewVersion;
         [encoder encodeValueOfObjCType:@encode(int) at:&version];
@@ -1730,6 +1739,7 @@ NS_ENDHANDLER
         [encoder encodeObject:[self groupName]];
         [encoder encodeObject:[self preferences]];
         [encoder encodeValuesOfObjCTypes:"c", &_private->useBackForwardList];
+        [encoder encodeValuesOfObjCTypes:"c", &_private->allowsUndo];
     }
 
     LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", [[self mainFrame] name], [self groupName], (int)_private->useBackForwardList);
@@ -2772,6 +2782,16 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     [[[range startContainer] _bridge] scrollDOMRangeToVisible:range];
 }
 
+- (BOOL)allowsUndo
+{
+    return _private->allowsUndo;
+}
+
+- (void)setAllowsUndo:(BOOL)flag
+{
+    _private->allowsUndo = flag;
+}
+
 @end
 
 @implementation WebView (WebViewPrintingPrivate)
@@ -3031,10 +3051,13 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (NSUndoManager *)undoManager
 {
+    if (!_private->allowsUndo)
+        return nil;
+
     NSUndoManager *undoManager = [[self _editingDelegateForwarder] undoManagerForWebView:self];
-    if (undoManager) {
+    if (undoManager)
         return undoManager;
-    }
+
     return [super undoManager];
 }
 

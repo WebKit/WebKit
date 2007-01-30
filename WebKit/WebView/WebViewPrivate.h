@@ -167,6 +167,10 @@ typedef enum {
 - (void)unmarkAllTextMatches;
 - (NSArray *)rectsForTextMatches;
 
+// Support for disabling registration with the undo manager. This is equivalent to the methods with the same names on NSTextView.
+- (BOOL)allowsUndo;
+- (void)setAllowsUndo:(BOOL)flag;
+
 @end
 
 @interface WebView (WebPrivate)
