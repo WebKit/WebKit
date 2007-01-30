@@ -27,22 +27,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#include <QApplication>
 #include <qwebpage.h>
 #include <qwebframe.h>
 
-#include <QVBoxLayout>
-#include <QDir>
-#include <QUrl>
-
-#include <QProgressBar>
-#include <QMainWindow>
-#include <QWidget>
-#include <QPainter>
-#include <QPen>
-#include <QBrush>
-#include <QTimer>
+#include <QtGui>
 #include <QDebug>
 
 
@@ -71,7 +59,6 @@ public slots:
     {
         m_progress = change;
         setValue(int(change*100));
-        //update();
     }
     void endLoad()
     {
@@ -81,6 +68,87 @@ public slots:
 
 protected:
     qreal m_progress;
+};
+
+class SearchEdit;
+
+class ClearButton : public QPushButton {
+    Q_OBJECT
+public:
+    ClearButton(QWidget *w)
+        : QPushButton(w)
+    {
+        setMinimumSize(24, 24);
+        setFixedSize(24, 24);
+        setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        
+    }
+    void paintEvent(QPaintEvent *event)
+    {
+        Q_UNUSED(event);
+        QPainter painter(this);
+        int height = parentWidget()->geometry().height();
+        int width = height; //parentWidget()->geometry().width();
+        
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.setPen(Qt::lightGray);
+        painter.setBrush(isDown() ?
+                         QColor(140, 140, 190) :
+                         underMouse() ? QColor(220, 220, 255) : QColor(200, 200, 230)
+            );
+        painter.drawEllipse(4, 4, width - 8, height - 8);
+        painter.setPen(Qt::white);
+        int border = 8;
+        painter.drawLine(border, border, width - border, height - border);
+        painter.drawLine(border, height - border, width - border, border);
+    }
+};
+
+class SearchEdit : public QLineEdit
+{
+    Q_OBJECT
+public:
+    SearchEdit(const QString &str, QWidget *parent = 0)
+        : QLineEdit(str, parent)
+    {
+        setMinimumSize(QSize(300, 24));
+        setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        
+        setStyleSheet(":enabled { padding-right: 27px }");
+        clearButton = new ClearButton(this);
+        clearButton->setGeometry(QRect(geometry().right() - 27,
+                                       geometry().top() - 2,
+                                       geometry().right(), geometry().bottom()));
+        clearButton->setVisible(true);
+        clearButton->setCursor(Qt::ArrowCursor);
+        connect(clearButton, SIGNAL(clicked()), this, SLOT(clear()));
+        clearButton->setToolTip("Clear");
+        
+    }
+    ~SearchEdit() { }
+protected:
+    virtual void paintEvent(QPaintEvent *e) {
+        QLineEdit::paintEvent(e);
+        if(text().isEmpty())
+            clearButton->setVisible(false);
+        else
+            clearButton->setVisible(true);
+    }
+    virtual void resizeEvent(QResizeEvent *e) {
+        clearButton->setParent(this);
+        qDebug()<<"geometry = "<<geometry();
+        clearButton->setGeometry(QRect(width()-27,
+                                       0,
+                                       24, 24));
+    }
+    virtual void moveEvent(QMoveEvent *) {
+        clearButton->setParent(this);
+        qDebug()<<"moveevent = "<<geometry();
+        clearButton->setGeometry(QRect(width()-27, 1,
+                                       24, 24));
+    }
+        
+    QPushButton *clearButton;
 };
 
 class MainWindow : public QMainWindow
@@ -94,21 +162,45 @@ public:
         info->setGeometry(20, 20, info->sizeHint().width(),
                           info->sizeHint().height());
         connect(page, SIGNAL(loadStarted(QWebFrame*)),
-                         info, SLOT(startLoad()));
+                info, SLOT(startLoad()));
         connect(page, SIGNAL(loadProgressChanged(double)),
-                         info, SLOT(changeLoad(double)));
+                info, SLOT(changeLoad(double)));
         connect(page, SIGNAL(loadFinished(QWebFrame*)),
-                         info, SLOT(endLoad()));
-    
+                info, SLOT(endLoad()));
+        connect(page, SIGNAL(loadFinished(QWebFrame*)),
+                this, SLOT(loadFinished()));
+        connect(page, SIGNAL(titleChanged(const QString&)),
+                this, SLOT(setWindowTitle(const QString&)));
     
         setCentralWidget(page);
+
+        QToolBar *bar = addToolBar("Navigation");
+        urlEdit = new SearchEdit(url.toString());
+        connect(urlEdit, SIGNAL(returnPressed()),
+                SLOT(changeLocation()));
+        bar->addAction("Go back", page, SLOT(goBack()));
+        bar->addAction("Stop", page, SLOT(stop()));
+        bar->addAction("Go forward", page, SLOT(goForward()));
+        bar->addWidget(urlEdit);
+        
 
         page->open(url);
 
         info->raise();
     }
+protected slots:
+    void changeLocation()
+    {
+        QUrl url(urlEdit->text());
+        page->open(url);
+    }
+    void loadFinished()
+    {
+        urlEdit->setText(page->url().toString());
+    }
 private:
     QWebPage *page;
+    QLineEdit *urlEdit;
 };
 
 #include "main.moc"

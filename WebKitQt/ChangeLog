@@ -1,3 +1,19 @@
+2007-01-30  Zack Rusin  <zrusin@trolltech.com>
+
+        Improve QtLauncher to make it more useful as a testing tool.
+
+        * QtLauncher/main.cpp:
+        (ClearButton::ClearButton):
+        (ClearButton::paintEvent):
+        (SearchEdit::SearchEdit):
+        (SearchEdit::~SearchEdit):
+        (SearchEdit::paintEvent):
+        (SearchEdit::resizeEvent):
+        (SearchEdit::moveEvent):
+        (MainWindow::MainWindow):
+        (MainWindow::changeLocation):
+        (MainWindow::loadFinished):
+
 2007-01-30  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack.
