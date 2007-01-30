@@ -1,3 +1,115 @@
+2007-01-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12464
+        Fix XPath test suite conversion problems
+
+        * dom/svg/level3/xpath/svgunit.js: Fixed createXPathEvaluator() to work in Firefox (whose
+        document.getFeature returns null for XPath). Changed load() to use XMLHttpRequest, instead of
+        merely cloning the current document.
+
+        * dom/svg/level3/xpath/resources/internaldtd.xml: Added.
+        * dom/svg/level3/xpath/resources/staff.dtd: Added.
+        * dom/svg/level3/xpath/resources/staff.xml: Added.
+        * dom/svg/level3/xpath/resources/staffNS.dtd: Added.
+        * dom/svg/level3/xpath/resources/staffNS.xml: Added.
+        Added external test documents.
+
+        * dom/svg/level3/xpath/XPathEvaluator_evaluate_WRONG_DOCUMENT_ERR-expected.txt:
+        * dom/svg/level3/xpath/XPathExpression_evaluate_WRONG_DOCUMENT_ERR-expected.txt:
+        These tests now run, but fail. They also fail in Firefox, but pass in Opera.
+
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_ANY_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_ORDERED_NODE_ITERATOR_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_UNORDERED_NODE_ITERATOR_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_iterateNext_INVALID_STATE_ERR-expected.txt:
+        These now fail, because XPathResult relies on DOMSubtreeModified event for invalidation,
+        but event listeners cannot be registered on nodes in documents that aren't attached (such as
+        XHR.responseXML). Not yet sure what exactly the bug is, but I think it's good to have the tests
+        fail, as it appears to be a genuine issue.
+
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_ANY_TYPE.js:
+        * dom/svg/level3/xpath/XPathResult_numberValue.js:
+        Updated these tests to use /staff instead of /svg paths.
+
+        * dom/svg/level3/xpath/XPathResult_booleanValue_true-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_iteratorNext_ORDERED_NODE_ITERATOR_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_singleNodeValue_ANY_UNORDERED_NODE_TYPE.js:
+        * dom/svg/level3/xpath/XPathResult_singleNodeValue_FIRST_ORDERED_NODE_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_snapshotItem_ORDERED_NODE_SNAPSHOT_TYPE_order-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_snapshotItem_UNORDERED_NODE_SNAPSHOT_TYPE_count-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_snapshotLength_ORDERED_NODE_SNAPSHOT_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_snapshotLength_UNORDERED_NODE_SNAPSHOT_TYPE-expected.txt:
+        * dom/svg/level3/xpath/XPathResult_stringValue-expected.txt:
+        These tests now pass.
+
+        * dom/svg/level3/xpath/Attribute_Nodes.svg:
+        * dom/svg/level3/xpath/Attribute_Nodes_xmlns.svg:
+        * dom/svg/level3/xpath/Comment_Nodes.svg:
+        * dom/svg/level3/xpath/Conformance_Expressions.svg:
+        * dom/svg/level3/xpath/Conformance_ID.svg:
+        * dom/svg/level3/xpath/Conformance_hasFeature_3.svg:
+        * dom/svg/level3/xpath/Conformance_hasFeature_empty.svg:
+        * dom/svg/level3/xpath/Conformance_hasFeature_null.svg:
+        * dom/svg/level3/xpath/Conformance_isSupported_3.svg:
+        * dom/svg/level3/xpath/Conformance_isSupported_empty.svg:
+        * dom/svg/level3/xpath/Conformance_isSupported_null.svg:
+        * dom/svg/level3/xpath/Element_Nodes.svg:
+        * dom/svg/level3/xpath/Processing_Instruction_Nodes.svg:
+        * dom/svg/level3/xpath/Text_Nodes.svg:
+        * dom/svg/level3/xpath/XPathEvaluatorCast01.svg:
+        * dom/svg/level3/xpath/XPathEvaluator_createExpression_INVALID_EXPRESSION_ERR.svg:
+        * dom/svg/level3/xpath/XPathEvaluator_createExpression_NAMESPACE_ERR_01.svg:
+        * dom/svg/level3/xpath/XPathEvaluator_createExpression_NAMESPACE_ERR_02.svg:
+        * dom/svg/level3/xpath/XPathEvaluator_createExpression_NS.svg:
+        * dom/svg/level3/xpath/XPathEvaluator_createExpression_no_NS.svg:
+        * dom/svg/level3/xpath/XPathEvaluator_createNSResolver_all.svg:
+        * dom/svg/level3/xpath/XPathEvaluator_createNSResolver_document.svg:
+        * dom/svg/level3/xpath/XPathEvaluator_createNSResolver_documentElement.svg:
+        * dom/svg/level3/xpath/XPathEvaluator_evaluate_INVALID_EXPRESSION_ERR.svg:
+        * dom/svg/level3/xpath/XPathEvaluator_evaluate_NAMESPACE_ERR.svg:
+        * dom/svg/level3/xpath/XPathEvaluator_evaluate_NOT_SUPPORTED_ERR.svg:
+        * dom/svg/level3/xpath/XPathEvaluator_evaluate_TYPE_ERR.svg:
+        * dom/svg/level3/xpath/XPathEvaluator_evaluate_WRONG_DOCUMENT_ERR.svg:
+        * dom/svg/level3/xpath/XPathEvaluator_evaluate_document.svg:
+        * dom/svg/level3/xpath/XPathEvaluator_evaluate_documentElement.svg:
+        * dom/svg/level3/xpath/XPathExpression_evaluate_NOT_SUPPORTED_ERR.svg:
+        * dom/svg/level3/xpath/XPathExpression_evaluate_WRONG_DOCUMENT_ERR.svg:
+        * dom/svg/level3/xpath/XPathExpression_evaluate_document.svg:
+        * dom/svg/level3/xpath/XPathExpression_evaluate_documentElement.svg:
+        * dom/svg/level3/xpath/XPathNSResolver_lookupNamespaceURI_nist_dmstc.svg:
+        * dom/svg/level3/xpath/XPathNSResolver_lookupNamespaceURI_null.svg:
+        * dom/svg/level3/xpath/XPathNSResolver_lookupNamespaceURI_prefix.svg:
+        * dom/svg/level3/xpath/XPathNSResolver_lookupNamespaceURI_xml.svg:
+        * dom/svg/level3/xpath/XPathResult_TYPE_ERR.svg:
+        * dom/svg/level3/xpath/XPathResult_booleanValue_false.svg:
+        * dom/svg/level3/xpath/XPathResult_booleanValue_true.svg:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_ANY_TYPE.svg:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_ANY_UNORDERED_NODE_TYPE.svg:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_BOOLEAN_TYPE.svg:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_FIRST_ORDERED_NODE_TYPE.svg:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_NUMBER_TYPE.svg:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_ORDERED_NODE_ITERATOR_TYPE.svg:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_ORDERED_NODE_SNAPSHOT_TYPE.svg:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_STRING_TYPE.svg:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_UNORDERED_NODE_ITERATOR_TYPE.svg:
+        * dom/svg/level3/xpath/XPathResult_invalidIteratorState_UNORDERED_NODE_SNAPSHOT_TYPE.svg:
+        * dom/svg/level3/xpath/XPathResult_iterateNext_INVALID_STATE_ERR.svg:
+        * dom/svg/level3/xpath/XPathResult_iteratorNext_ORDERED_NODE_ITERATOR_TYPE.svg:
+        * dom/svg/level3/xpath/XPathResult_numberValue.svg:
+        * dom/svg/level3/xpath/XPathResult_resultType.svg:
+        * dom/svg/level3/xpath/XPathResult_singleNodeValue_ANY_UNORDERED_NODE_TYPE.svg:
+        * dom/svg/level3/xpath/XPathResult_singleNodeValue_FIRST_ORDERED_NODE_TYPE.svg:
+        * dom/svg/level3/xpath/XPathResult_snapshotItem_ORDERED_NODE_SNAPSHOT_TYPE_null.svg:
+        * dom/svg/level3/xpath/XPathResult_snapshotItem_ORDERED_NODE_SNAPSHOT_TYPE_order.svg:
+        * dom/svg/level3/xpath/XPathResult_snapshotItem_UNORDERED_NODE_SNAPSHOT_TYPE_count.svg:
+        * dom/svg/level3/xpath/XPathResult_snapshotItem_UNORDERED_NODE_SNAPSHOT_TYPE_null.svg:
+        * dom/svg/level3/xpath/XPathResult_snapshotLength_ORDERED_NODE_SNAPSHOT_TYPE.svg:
+        * dom/svg/level3/xpath/XPathResult_snapshotLength_UNORDERED_NODE_SNAPSHOT_TYPE.svg:
+        * dom/svg/level3/xpath/XPathResult_stringValue.svg:
+        Removed unneeded inline test data.
+
 2007-01-29  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by Maciej.

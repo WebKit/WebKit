@@ -1,2 +1,1 @@
-XPathResult_booleanValue_true
-true: assertTrue failed
+XPathResult_booleanValue_true: Success

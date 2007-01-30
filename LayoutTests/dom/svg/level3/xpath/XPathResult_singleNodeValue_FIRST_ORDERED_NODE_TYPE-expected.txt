@@ -1,2 +1,1 @@
-XPathResult_singleNodeValue_FIRST_ORDERED_NODE_TYPE
-TypeError: Null value
+XPathResult_singleNodeValue_FIRST_ORDERED_NODE_TYPE: Success

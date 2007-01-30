@@ -1,2 +1,2 @@
-Tests with multiple loads of different documents are not currently supported
 XPathEvaluator_evaluate_WRONG_DOCUMENT_ERR
+throw_WRONG_DOCUMENT_ERR: assertTrue failed

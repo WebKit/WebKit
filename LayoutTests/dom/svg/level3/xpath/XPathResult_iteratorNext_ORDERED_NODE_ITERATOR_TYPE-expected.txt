@@ -1,2 +1,1 @@
-XPathResult_iteratorNext_ORDERED_NODE_ITERATOR_TYPE
-count: assertEquals failed, actual 0, expected 5.
+XPathResult_iteratorNext_ORDERED_NODE_ITERATOR_TYPE: Success

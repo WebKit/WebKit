@@ -49,7 +49,7 @@ function setUpPage() {
           setUpPage = 'complete';
        }
     } catch(ex) {
-    	catchInitializationError(builder, ex);
+        catchInitializationError(builder, ex);
         setUpPage = 'complete';
     }
 }
@@ -104,7 +104,7 @@ function XPathResult_invalidIteratorState_ANY_TYPE() {
 
       var outresult = null;
 
-      var expression = "/svg/employee";
+      var expression = "/staff/employee";
       var xpathType = ANY_TYPE;
       var employee;
       var docElement;

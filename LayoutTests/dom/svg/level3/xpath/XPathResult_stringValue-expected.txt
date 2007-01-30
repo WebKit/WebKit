@@ -1,2 +1,1 @@
-XPathResult_stringValue
-same: assertEquals failed, actual , expected 56,000.
+XPathResult_stringValue: Success

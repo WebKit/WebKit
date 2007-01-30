@@ -22,15 +22,15 @@ if (window.layoutTestController)
   }
 
   function assertEqualsAutoCase(context, descr, expected, actual) {
-  	if (builder.contentType == "text/html") {
-  	    if(context == "attribute") {
-  	    	assertEquals(descr, expected.toLowerCase(), actual.toLowerCase());
-  	    } else {
-  	        assertEquals(descr, expected.toUpperCase(), actual);
-  	    }
-  	} else {
-  		assertEquals(descr, expected, actual); 
-  	}
+      if (builder.contentType == "text/html") {
+          if(context == "attribute") {
+              assertEquals(descr, expected.toLowerCase(), actual.toLowerCase());
+          } else {
+              assertEquals(descr, expected.toUpperCase(), actual);
+          }
+      } else {
+          assertEquals(descr, expected, actual); 
+      }
   }
   
 
@@ -52,19 +52,19 @@ if (window.layoutTestController)
         matches = 0;
         expectedValue = expected[i];
         for(j = 0; j < actualLen; j++) {
-        	if (builder.contentType == "text/html") {
-        		if (context == "attribute") {
-        			if (expectedValue.toLowerCase() == actual[j].toLowerCase()) {
-        				matches++;
-        			}
-        		} else {
-        			if (expectedValue.toUpperCase() == actual[j]) {
-        				matches++;
-        			}
-        		}
-        	} else {
-            	if(expectedValue == actual[j]) {
-                	matches++;
+            if (builder.contentType == "text/html") {
+                if (context == "attribute") {
+                    if (expectedValue.toLowerCase() == actual[j].toLowerCase()) {
+                        matches++;
+                    }
+                } else {
+                    if (expectedValue.toUpperCase() == actual[j]) {
+                        matches++;
+                    }
+                }
+            } else {
+                if(expectedValue == actual[j]) {
+                    matches++;
                 }
             }
         }
@@ -109,13 +109,13 @@ if (window.layoutTestController)
 
 
   function assertEqualsListAutoCase(context, descr, expected, actual) {
-	var minLength = expected.length;
-	if (actual.length < minLength) {
-	    minLength = actual.length;
-	}
+    var minLength = expected.length;
+    if (actual.length < minLength) {
+        minLength = actual.length;
+    }
     //
     for(var i = 0; i < minLength; i++) {
-		assertEqualsAutoCase(context, descr, expected[i], actual[i]);
+        assertEqualsAutoCase(context, descr, expected[i], actual[i]);
     }
     //
     //  if they aren't the same size, they aren't equal
@@ -124,14 +124,14 @@ if (window.layoutTestController)
 
 
   function assertEqualsList(descr, expected, actual) {
-	var minLength = expected.length;
-	if (actual.length < minLength) {
-	    minLength = actual.length;
-	}
+    var minLength = expected.length;
+    if (actual.length < minLength) {
+        minLength = actual.length;
+    }
     //
     for(var i = 0; i < minLength; i++) {
         if(expected[i] != actual[i]) {
-			assertEquals(descr, expected[i], actual[i]);
+            assertEquals(descr, expected[i], actual[i]);
         }
     }
     //
@@ -249,19 +249,19 @@ function getSuffix(contentType) {
 }
 
 function equalsAutoCase(context, expected, actual) {
-	if (builder.contentType == "text/html") {
-		if (context == "attribute") {
-			return expected.toLowerCase() == actual;
-		}
-		return expected.toUpperCase() == actual;
-	}
-	return expected == actual;
+    if (builder.contentType == "text/html") {
+        if (context == "attribute") {
+            return expected.toLowerCase() == actual;
+        }
+        return expected.toUpperCase() == actual;
+    }
+    return expected == actual;
 }
 
 
 function createTempURI(scheme) {
    if (scheme == "http") {
-   	  return "http://localhost:8080/webdav/tmp" + Math.floor(Math.random() * 100000) + ".xml";
+         return "http://localhost:8080/webdav/tmp" + Math.floor(Math.random() * 100000) + ".xml";
    }
    return "file:///tmp/domts" + Math.floor(Math.random() * 100000) + ".xml";
 }
@@ -328,7 +328,7 @@ function UserDataNotification(operation, key, data, src, dst) {
 }
 
 function UserDataMonitor() {
-	this.allNotifications = new Array();
+    this.allNotifications = new Array();
 }
 
 UserDataMonitor.prototype.handle = function(operation, key, data, src, dst) {
@@ -380,6 +380,7 @@ SVGBuilder.prototype.preload = function(frame, varname, url) {
   var i;
   this.documentVarnames[this.documentVarnames.length] = varname;
   this.documentURLs[this.documentURLs.length] = url;
+/*
   if (this.documentURLs.length > 1) {
      //
      //   if all the urls are not the same
@@ -390,6 +391,7 @@ SVGBuilder.prototype.preload = function(frame, varname, url) {
          }
      }
   }
+*/
   return 1;
 }
 
@@ -441,66 +443,10 @@ SVGBuilder.prototype.cloneNode = function(srcNode, doc) {
 
 
 SVGBuilder.prototype.load = function(frame, varname, url) {
-  if (this.documentVarnames[0] == varname) {
-  	return document;
-  }
-  //
-  //
-  //  not a perfect way to do this
-  //    Document.cloneNode is implementation dependent but exists in L1
-  //       and implemented in IE.  The alternative brute force copy
-  //       only works in L2 or higher implementations and can't copy
-  //       entity and notation definitions, etc.
-  var clone = null;
-  try {
-      clone = document.cloneNode(true);
-  } catch(ex) {
-  }
-  if (clone == null) {
-      clone = document.implementation.createDocument(
-          document.documentElement.namespaceURI,
-          document.documentElement.nodeName,
-          null);
-      //
-      //   Work-around since
-      //   Safari does not create document element 
-      //      create document.      
-      if (clone.documentElement == null) {
-           clone.appendChild(clone.createElementNS(
-              document.documentElement.namespaceURI, 
-              document.documentElement.nodeName));
-      }
-      var attrs = document.documentElement.attributes;
-      for(var i = 0; i < attrs.length; i++) {
-          var srcAttr = attrs.item(i);
-          clone.documentElement.setAttributeNS(
-             srcAttr.namespaceURI, srcAttr.nodeName, srcAttr.nodeValue);
-      }
-
-      var srcNode = document.firstChild;
-      while(srcNode != null && srcNode.nodeType != 1) {
-          if (srcNode.nodeType != 10) {
-          	 var cloneNode = this.cloneNode(srcNode, clone);
-             clone.insertBefore(cloneNode, clone.documentElement);
-           }
-           srcNode = srcNode.nextSibling; 
-      }
-      srcNode = document.documentElement.nextSibling;
-      while(srcNode != null) {
-          var cloneNode = this.cloneNode(srcNode, clone);
-          clone.appendChild(cloneNode);
-          srcNode = srcNode.nextSibling;
-      }
-      srcNode = document.documentElement.firstChild;
-      while(srcNode != null) {
-          var cloneNode = this.cloneNode(srcNode, clone);
-          if (cloneNode != null) {
-             clone.documentElement.appendChild(cloneNode);
-          }
-          srcNode = srcNode.nextSibling;
-      }
-  }
-  return clone;
+  req = new XMLHttpRequest;
+  req.open("GET", "resources/" + url + ".xml", false);
+  req.send(null);
+  return req.responseXML;
 }
 
 SVGBuilder.prototype.getImplementationAttribute = function(attr) {
@@ -590,11 +536,6 @@ function setImplementationAttribute(attribute, value) {
 }
 
 function createXPathEvaluator(doc) {
-    try {
-        return doc.getFeature("XPath", null);
-    }
-    catch(ex) {
-    }
     return doc;
 }
 
@@ -675,30 +616,30 @@ function getResourceURI(name, scheme, contentType) {
     if (base == null) {
        base = "";
     } else {
-	   base = base.substring(0, base.lastIndexOf('/') + 1) + "files/";
+       base = base.substring(0, base.lastIndexOf('/') + 1) + "files/";
     }
     return base + name + getSuffix(contentType);
 }
 
 function onloadHandler() {
-	//
-	//   invoke test setup
-	//
-	setUpPage();
+    //
+    //   invoke test setup
+    //
+    setUpPage();
 
-	try {
-		runTest();
-		if (builder.initializationError == null) {
-	   		changeColor("green");
-	   		addMessage("0", "120", exposeTestFunctionNames()[0] + ": Success");
-		} else {
-			addMessage("0", "120", exposeTestFunctionNames()[0]);
-		}
-	} catch(ex) {
-		addMessage("0", "120", exposeTestFunctionNames()[0]);
-    	changeColor("red");
-    	addMessage("0", "140", ex);    
-	}	
+    try {
+        runTest();
+        if (builder.initializationError == null) {
+               changeColor("green");
+               addMessage("0", "120", exposeTestFunctionNames()[0] + ": Success");
+        } else {
+            addMessage("0", "120", exposeTestFunctionNames()[0]);
+        }
+    } catch(ex) {
+        addMessage("0", "120", exposeTestFunctionNames()[0]);
+        changeColor("red");
+        addMessage("0", "140", ex);    
+    }    
 }
 // Add loader
 window.addEventListener('load', onloadHandler, false)

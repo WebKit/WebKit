@@ -49,7 +49,7 @@ function setUpPage() {
           setUpPage = 'complete';
        }
     } catch(ex) {
-    	catchInitializationError(builder, ex);
+        catchInitializationError(builder, ex);
         setUpPage = 'complete';
     }
 }
@@ -103,7 +103,7 @@ function XPathResult_numberValue() {
 
       var outresult = null;
 
-      var expression = "substring-before(/svg/employee/salary[text() = '56,000'], ',')";
+      var expression = "substring-before(/staff/employee/salary[text() = '56,000'], ',')";
       var xpathType = NUMBER_TYPE;
       var numberValue;
       

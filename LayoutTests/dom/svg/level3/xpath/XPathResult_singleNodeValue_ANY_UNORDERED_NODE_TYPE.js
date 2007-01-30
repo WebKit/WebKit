@@ -49,7 +49,7 @@ function setUpPage() {
           setUpPage = 'complete';
        }
     } catch(ex) {
-    	catchInitializationError(builder, ex);
+        catchInitializationError(builder, ex);
         setUpPage = 'complete';
     }
 }
@@ -100,7 +100,7 @@ function XPathResult_singleNodeValue_ANY_UNORDERED_NODE_TYPE() {
 
       var outresult = null;
 
-      var expression = "/svg/employee/employeeId";
+      var expression = "/staff/employee/employeeId";
       var xpathType = ANY_UNORDERED_NODE_TYPE;
       var outNode;
       var employeeId;
