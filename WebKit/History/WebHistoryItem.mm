@@ -93,6 +93,7 @@ void WKNotifyHistoryItemChanged()
 
 - (void)dealloc
 {
+    ASSERT_MAIN_THREAD();
     if (_private) {
         HistoryItem* coreItem = core(_private);
         coreItem->deref();
@@ -103,6 +104,7 @@ void WKNotifyHistoryItemChanged()
 
 - (void)finalize
 {
+    ASSERT_MAIN_THREAD();
     // FIXME: The WebCore::HistoryItem d'tor is what releases the history item's icon from the icon database
     // It's probably not good to release icons from the database only when the object is garbage-collected. 
     // Need to change design so this happens at a predictable time.
@@ -116,6 +118,7 @@ void WKNotifyHistoryItemChanged()
 
 - (id)copyWithZone:(NSZone *)zone
 {
+    ASSERT_MAIN_THREAD();
     WebHistoryItem *copy = (WebHistoryItem *)NSCopyObject(self, 0, zone);
     RefPtr<HistoryItem> item = core(_private)->copy();
     copy->_private = kitPrivate(item.get());
@@ -127,6 +130,7 @@ void WKNotifyHistoryItemChanged()
 // FIXME: Need to decide if this class ever returns URLs and decide on the name of this method
 - (NSString *)URLString
 {
+    ASSERT_MAIN_THREAD();
     return nsStringNilIfEmpty(core(_private)->urlString());
 }
 
@@ -134,11 +138,13 @@ void WKNotifyHistoryItemChanged()
 // and server redirects.
 - (NSString *)originalURLString
 {
+    ASSERT_MAIN_THREAD();
     return nsStringNilIfEmpty(core(_private)->originalURLString());
 }
 
 - (NSString *)title
 {
+    ASSERT_MAIN_THREAD();
     return nsStringNilIfEmpty(core(_private)->title());
 }
 
@@ -165,6 +171,7 @@ void WKNotifyHistoryItemChanged()
 
 - (NSTimeInterval)lastVisitedTimeInterval
 {
+    ASSERT_MAIN_THREAD();
     return core(_private)->lastVisitedTime();
 }
 
@@ -175,6 +182,7 @@ void WKNotifyHistoryItemChanged()
 
 - (BOOL)isEqual:(id)anObject
 {
+    ASSERT_MAIN_THREAD();
     if (![anObject isMemberOfClass:[WebHistoryItem class]]) {
         return NO;
     }
@@ -184,6 +192,7 @@ void WKNotifyHistoryItemChanged()
 
 - (NSString *)description
 {
+    ASSERT_MAIN_THREAD();
     HistoryItem* coreItem = core(_private);
     NSMutableString *result = [NSMutableString stringWithFormat:@"%@ %@", [super description], (NSString*)coreItem->urlString()];
     if (coreItem->target()) {
@@ -263,6 +272,7 @@ static WebWindowWatcher *_windowWatcher = nil;
 
 - (id)initWithWebCoreHistoryItem:(PassRefPtr<HistoryItem>)item
 {   
+    ASSERT_MAIN_THREAD();
     // Need to tell WebCore what function to call for the 
     // "History Item has Changed" notification - no harm in doing this
     // everytime a WebHistoryItem is created
@@ -301,6 +311,7 @@ static WebWindowWatcher *_windowWatcher = nil;
 
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict
 {
+    ASSERT_MAIN_THREAD();
     NSString *URLString = [dict _webkit_stringForKey:@""];
     NSString *title = [dict _webkit_stringForKey:WebTitleKey];
 
@@ -338,6 +349,7 @@ static WebWindowWatcher *_windowWatcher = nil;
 
 - (NSPoint)scrollPoint
 {
+    ASSERT_MAIN_THREAD();
     return core(_private)->scrollPoint();
 }
 
@@ -362,6 +374,7 @@ static WebWindowWatcher *_windowWatcher = nil;
 
 - (NSDictionary *)dictionaryRepresentation
 {
+    ASSERT_MAIN_THREAD();
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:6];
 
     HistoryItem* coreItem = core(_private);
@@ -397,6 +410,7 @@ static WebWindowWatcher *_windowWatcher = nil;
 
 - (NSString *)target
 {
+    ASSERT_MAIN_THREAD();
     return nsStringNilIfEmpty(core(_private)->target());
 }
 
@@ -407,6 +421,7 @@ static WebWindowWatcher *_windowWatcher = nil;
 
 - (int)visitCount
 {
+    ASSERT_MAIN_THREAD();
     return core(_private)->visitCount();
 }
 
@@ -422,6 +437,7 @@ static WebWindowWatcher *_windowWatcher = nil;
 
 - (NSArray *)children
 {
+    ASSERT_MAIN_THREAD();
     const HistoryItemVector& children = core(_private)->children();
     if (!children.size())
         return nil;
@@ -442,6 +458,7 @@ static WebWindowWatcher *_windowWatcher = nil;
 
 - (NSURL *)URL
 {
+    ASSERT_MAIN_THREAD();
     WebCore::KURL url = core(_private)->url();
     return url.isEmpty() ? nil : url.getNSURL();
 }
@@ -457,11 +474,13 @@ static WebWindowWatcher *_windowWatcher = nil;
 // Once that task is complete, this accessor can go away
 - (NSCalendarDate *)_lastVisitedDate
 {
+    ASSERT_MAIN_THREAD();
     return [[[NSCalendarDate alloc] initWithTimeIntervalSinceReferenceDate:core(_private)->lastVisitedTime()] autorelease];
 }
 
 - (WebHistoryItem *)targetItem
 {    
+    ASSERT_MAIN_THREAD();
     HistoryItem* coreItem = core(_private);
     if (coreItem->isTargetItem() || !coreItem->hasChildren())
         return self;

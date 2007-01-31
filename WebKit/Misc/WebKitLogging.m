@@ -97,3 +97,8 @@ void WebKitInitializeLoggingChannelsIfNecessary()
     initializeLogChannel(&WebKitLogIconDatabase);
 }
 
+BOOL WebKitRunningOnMainThread()
+{
+    return pthread_main_np() == 1;
+}
+

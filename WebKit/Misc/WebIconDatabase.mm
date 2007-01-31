@@ -131,6 +131,7 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size cache:(BOOL)cache
 {
+    ASSERT_MAIN_THREAD();
     ASSERT(size.width);
     ASSERT(size.height);
 
@@ -156,12 +157,14 @@ NSSize WebIconLargeSize = {128, 128};
 {
     if (![self _isEnabled])
         return nil;
-        
+    ASSERT_MAIN_THREAD();
+
     return IconDatabase::sharedIconDatabase()->iconURLForPageURL(URL);
 }
 
 - (NSImage *)defaultIconWithSize:(NSSize)size
 {
+    ASSERT_MAIN_THREAD();
     ASSERT(size.width);
     ASSERT(size.height);
     
@@ -178,6 +181,7 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (void)retainIconForURL:(NSString *)URL
 {
+    ASSERT_MAIN_THREAD();
     ASSERT(URL);
     if (![self _isEnabled])
         return;
@@ -187,6 +191,7 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (void)releaseIconForURL:(NSString *)pageURL
 {
+    ASSERT_MAIN_THREAD();
     ASSERT(pageURL);
     if (![self _isEnabled])
         return;
@@ -212,6 +217,7 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (void)removeAllIcons
 {
+    ASSERT_MAIN_THREAD();
     if (![self _isEnabled])
         return;
     IconDatabase::sharedIconDatabase()->removeAllIcons();
@@ -269,6 +275,7 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (NSImage *)_iconForFileURL:(NSString *)file withSize:(NSSize)size
 {
+    ASSERT_MAIN_THREAD();
     ASSERT(size.width);
     ASSERT(size.height);
 
@@ -552,6 +559,7 @@ static NSData* iconDataFromPathForIconURL(NSString *databasePath, NSString *icon
 
 NSImage *webGetNSImage(Image* image, NSSize size)
 {
+    ASSERT_MAIN_THREAD();
     ASSERT(size.width);
     ASSERT(size.height);
 

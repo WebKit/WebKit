@@ -1,3 +1,48 @@
+2007-01-30  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver
+
+        This is a corollary to <rdar://problem/4944887> where certain things happened on an alternate thread.
+        To help catch such behavior in the future, add ASSERT_MAIN_THREAD() to key WebKit API points
+
+        * History/WebHistoryItem.mm: Added ASSERT_MAIN_THREAD() to suspected API entry points
+        (-[WebHistoryItem dealloc]):
+        (-[WebHistoryItem finalize]):
+        (-[WebHistoryItem copyWithZone:]):
+        (-[WebHistoryItem URLString]):
+        (-[WebHistoryItem originalURLString]):
+        (-[WebHistoryItem title]):
+        (-[WebHistoryItem lastVisitedTimeInterval]):
+        (-[WebHistoryItem isEqual:]):
+        (-[WebHistoryItem description]):
+        (-[WebHistoryItem initWithWebCoreHistoryItem:]):
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        (-[WebHistoryItem scrollPoint]):
+        (-[WebHistoryItem dictionaryRepresentation]):
+        (-[WebHistoryItem target]):
+        (-[WebHistoryItem visitCount]):
+        (-[WebHistoryItem children]):
+        (-[WebHistoryItem URL]):
+        (-[WebHistoryItem _lastVisitedDate]):
+        (-[WebHistoryItem targetItem]):
+
+        * Misc/WebIconDatabase.mm: Added ASSERT_MAIN_THREAD() to suspected API entry points
+        (-[WebIconDatabase iconForURL:withSize:cache:]):
+        (-[WebIconDatabase iconURLForURL:]):
+        (-[WebIconDatabase defaultIconWithSize:]):
+        (-[WebIconDatabase retainIconForURL:]):
+        (-[WebIconDatabase releaseIconForURL:]):
+        (-[WebIconDatabase removeAllIcons]):
+        (-[WebIconDatabase _iconForFileURL:withSize:]):
+        (webGetNSImage):
+
+        * Misc/WebKitLogging.h: Added ASSERT_MAIN_THREAD()
+        * Misc/WebKitLogging.m:
+        (WebKitRunningOnMainThread): Added
+
+        * WebKit.xcodeproj/project.pbxproj: Define DISABLE_THREAD_CHECK until it is
+          safe to run with ASSERT_MAIN_THREAD() active
+
 2007-01-30  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
