@@ -517,7 +517,7 @@ int WebCoreHttp::getConnection()
         Q_ASSERT(o == connection[1].http);
         c = 1;
     }
-    Q_ASSERT(connection[c].current);
+    //Q_ASSERT(connection[c].current);
     return c;
 }
 
@@ -549,6 +549,10 @@ void WebCoreHttp::onRequestFinished(int, bool error)
 {
     int c = getConnection();
     RequestQt *req = connection[c].current;
+    if (!req) {
+        scheduleNextRequest();
+        return;
+    }
     QHttp *http = connection[c].http;
     DEBUG() << "WebCoreHttp::slotFinished connection=" << c << error << req;
 
@@ -578,14 +582,19 @@ void WebCoreHttp::onStateChanged(int state)
 
 void WebCoreHttp::cancel(RequestQt* request)
 {
+    bool doEmit = true;
     m_inCancel = true;
-    for (int i = 0; i < 2; ++i)
-        if (request == connection[i].current)
+    for (int i = 0; i < 2; ++i) {
+        if (request == connection[i].current) {
             connection[i].http->abort();
+            doEmit = false;
+        }
+    }
     m_pendingRequests.removeAll(request);
     m_inCancel = false;
 
-    emit m_loader->receivedFinished(request, 1);
+    if (doEmit)
+        emit m_loader->receivedFinished(request, 1);
 
     if (m_pendingRequests.isEmpty()
         && !connection[0].current && !connection[1].current)

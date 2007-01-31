@@ -1,3 +1,14 @@
+2007-01-31  George Staikos  <staikos@kde.org>
+
+        Reviewed by Zack and Lars.
+
+        Fix double delete on cancel as well as assertion with proxy.
+
+        * platform/network/qt/ResourceHandleManagerQt.cpp:
+        (WebCore::WebCoreHttp::getConnection):
+        (WebCore::WebCoreHttp::onRequestFinished):
+        (WebCore::WebCoreHttp::cancel):
+
 2007-01-31  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver.
