@@ -526,12 +526,31 @@ void GraphicsContext::clip(const IntRect& rect)
     m_data->p().setClipRect(rect, Qt::UniteClip);
 }
 
+/**
+ * Focus ring handling is not handled here. Qt style in 
+ * RenderTheme handles drawing focus on widgets which 
+ * need it.
+ */
+void setFocusRingColorChangeFunction(void (*)()) { }
+Color focusRingColor() { return 0x00000000; }
 void GraphicsContext::drawFocusRing(const Color& color)
 {
     if (paintingDisabled())
         return;
 
-    notImplemented();
+    return;
+
+    const Vector<IntRect>& rects = focusRingRects();
+    unsigned rectCount = rects.size();
+
+    QVector<QRect> qrects(rectCount);
+    for (int i = 0; i < rectCount; ++i)
+        qrects[i] = rects[i];
+    m_data->p().save();
+    m_data->p().setClipRect(m_data->focusRingClip);
+    m_data->p().setPen(color);
+    m_data->p().drawRects(qrects);
+    m_data->p().restore();
 }
 
 void GraphicsContext::setFocusRingClip(const IntRect& rect)

@@ -75,8 +75,6 @@ PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&) { notImplemented(
 
 void WebCore::refreshPlugins(bool) { notImplemented(); }
 
-Color WebCore::focusRingColor() { notImplemented(); return 0xFF0000FF; }
-
 bool WebCore::historyContains(DeprecatedString const&) { return false; }
 
 // LocalizedStrings
@@ -151,8 +149,6 @@ FloatRect WebCore::screenAvailableRect(Widget *w)
 {
     return (QRectF)QApplication::desktop()->availableGeometry(w->qwidget());
 }
-
-void WebCore::setFocusRingColorChangeFunction(void (*)()) { notImplemented(); }
 
 void FrameView::updateBorder() { notImplemented(); }
 

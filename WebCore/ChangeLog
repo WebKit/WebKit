@@ -1,3 +1,15 @@
+2007-01-31  Zack Rusin  <zack@kde.org>
+
+        Adding comments explaining how the focus ring implementation
+        works on the Qt platform and just move focus ring rendering
+        related code to the same spot.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::setFocusRingColorChangeFunction):
+        (WebCore::focusRingColor):
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/qt/TemporaryLinkStubs.cpp:
+
 2007-01-31  Zack Rusin  <zrusin@trolltech.com>
 
         Reviewed by Lars
