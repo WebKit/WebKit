@@ -46,6 +46,7 @@ namespace WebCore {
     class Frame;
     class Node;
     class ProgressTracker;
+    class Selection;
     class SelectionController;
     class Settings;
 
@@ -93,6 +94,8 @@ namespace WebCore {
         void setTabKeyCyclesThroughElements(bool b) { m_tabKeyCyclesThroughElements = b; }
         bool tabKeyCyclesThroughElements() const { return m_tabKeyCyclesThroughElements; }
         
+        const Selection& selection() const;
+
         void setDefersLoading(bool);
         bool defersLoading() const { return m_defersLoading; }
 

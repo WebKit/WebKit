@@ -1,3 +1,15 @@
+2007-01-31  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        WebKit part of fix for <rdar://problem/4521461> REGRESSION: when keyPress event changes form focus, inserted key goes to wrong control
+
+        * WebCoreSupport/WebEditorClient.mm: (WebEditorClient::handleKeyPress): Instead of using the selected frame, use the
+          frame for the target of the keyboard event.  Also, don't do the canEdit check here, since the target's frame might not
+          have a selection at this point.  Do the canEdit check within Editor::insertText, where we determine which selection to use
+          for inserting text.
+        * WebView/WebEditingDelegatePrivate.h: Added forward declaration of DOMHTMLElement. This is needed after reordering includes in WebEditorClient.mm.
+
 2007-01-31  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Tim Hatcher.

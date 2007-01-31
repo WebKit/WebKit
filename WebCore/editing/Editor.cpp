@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,9 +43,12 @@
 #include "EditorClient.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "FocusController.h"
 #include "FontData.h"
 #include "HTMLElement.h"
+#include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLTextAreaElement.h"
 #include "HitTestResult.h"
 #include "IndentOutdentCommand.h"
 #include "KURL.h"
@@ -1178,12 +1181,50 @@ bool Editor::execCommand(const AtomicString& command)
     return handled;
 }
 
+// When an event handler has moved the selection outside of a text control
+// we should use the target control's selection for this editing operation.
+static Selection selectionForEvent(Frame* frame, Event* event)
+{
+    Page* page = frame->page();
+    if (!page)
+        return Selection();
+    Selection selection = page->selection();
+    if (!event)
+        return selection;
+    Node* target = event->target()->toNode();
+    Node* selectionStart = selection.start().node();
+    
+    // If the target is a text control, and the current selection is outside of its shadow tree,
+    // then use the saved selection for that text control.
+    if (target && (!selectionStart || target->shadowAncestorNode() != selectionStart->shadowAncestorNode())) {
+        if (target->hasTagName(inputTag) && static_cast<HTMLInputElement*>(target)->isTextField())
+            return static_cast<HTMLInputElement*>(target)->selection();
+        if (target->hasTagName(textareaTag))
+            return static_cast<HTMLTextAreaElement*>(target)->selection();
+    }
+    return selection;
+}
+
 bool Editor::insertText(const String& text, bool selectInsertedText, Event* triggeringEvent)
 {
-    if (m_frame->selectionController()->isNone())
+    // Get the selection to use for the event that triggered this insertText.
+    // If the event handler changed the selection, we may want to use a different selection
+    // that is contained in the event target.
+    Selection selection = selectionForEvent(m_frame, triggeringEvent);
+    if (!selection.isCaretOrRange() || !selection.isContentEditable())
         return false;
-    TypingCommand::insertText(m_frame->document(), text, selectInsertedText);
-    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+    Node* selectionStart = selection.start().node();
+    if (!selectionStart)
+        return false;
+    RefPtr<Document> document = selectionStart->document();
+    
+    // Insert the text
+    TypingCommand::insertText(document.get(), text, selection, selectInsertedText);
+
+    // Reveal the current selection 
+    if (Frame* editedFrame = document->frame())
+        if (Page* page = editedFrame->page())
+            page->focusController()->focusedOrMainFrame()->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
     return true;
 }
 

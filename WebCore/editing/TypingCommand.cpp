@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -91,18 +91,31 @@ void TypingCommand::forwardDeleteKeyPressed(Document *document, bool smartDelete
     typingCommand->apply();
 }
 
-void TypingCommand::insertText(Document *document, const String &text, bool selectInsertedText)
+void TypingCommand::insertText(Document* document, const String& text, bool selectInsertedText)
 {
     ASSERT(document);
     
-    Frame *frame = document->frame();
+    Frame* frame = document->frame();
+    ASSERT(frame);
+
+    insertText(document, text, frame->selectionController()->selection(), selectInsertedText);
+}
+
+void TypingCommand::insertText(Document* document, const String& text, const Selection& selectionForInsertion, bool selectInsertedText)
+{
+    ASSERT(document);
+    
+    RefPtr<Frame> frame = document->frame();
     ASSERT(frame);
     
+    Selection currentSelection = frame->selectionController()->selection();
+    bool changeSelection = currentSelection != selectionForInsertion;
+    
     String newText = text;
-    Node* startNode = frame->selectionController()->start().node();
+    Node* startNode = selectionForInsertion.start().node();
     
     if (startNode && startNode->rootEditableElement()) {        
-        // Send khtmlBeforeTextInsertedEvent.  The event handler will update text if necessary.
+        // Send BeforeTextInsertedEvent. The event handler will update text if necessary.
         ExceptionCode ec = 0;
         RefPtr<BeforeTextInsertedEvent> evt = new BeforeTextInsertedEvent(text);
         startNode->rootEditableElement()->dispatchEvent(evt, ec, true);
@@ -112,13 +125,32 @@ void TypingCommand::insertText(Document *document, const String &text, bool sele
     if (newText.isEmpty())
         return;
     
-    EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
-    if (isOpenForMoreTypingCommand(lastEditCommand)) {
-        static_cast<TypingCommand*>(lastEditCommand)->insertText(newText, selectInsertedText);
+    // Set the starting and ending selection appropriately if we are using a selection
+    // that is different from the current selection.  In the future, we should change EditCommand
+    // to deal with custom selections in a general way that can be used by all of the commands.
+    RefPtr<EditCommand> lastEditCommand = frame->editor()->lastEditCommand();
+    if (isOpenForMoreTypingCommand(lastEditCommand.get())) {
+        TypingCommand* lastTypingCommand = static_cast<TypingCommand*>(lastEditCommand.get());
+        if (changeSelection)
+            lastTypingCommand->setStartingSelection(selectionForInsertion);
+            lastTypingCommand->setEndingSelection(selectionForInsertion);
+        lastTypingCommand->insertText(newText, selectInsertedText);
+        if (changeSelection) {
+            lastTypingCommand->setEndingSelection(currentSelection);
+            frame->selectionController()->setSelection(currentSelection);
+        }
         return;
     }
 
-    applyCommand(new TypingCommand(document, InsertText, newText, selectInsertedText));
+    RefPtr<TypingCommand> cmd = new TypingCommand(document, InsertText, newText, selectInsertedText);
+    if (changeSelection)
+        cmd->setStartingSelection(selectionForInsertion);
+        cmd->setEndingSelection(selectionForInsertion);
+    applyCommand(cmd);
+    if (changeSelection) {
+        cmd->setEndingSelection(currentSelection);
+        frame->selectionController()->setSelection(currentSelection);
+    }
 }
 
 void TypingCommand::insertLineBreak(Document *document)

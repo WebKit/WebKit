@@ -1,3 +1,32 @@
+2007-01-31  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        WebCore part of fix for <rdar://problem/4521461> REGRESSION: when keyPress event changes form focus, inserted key goes to wrong control
+
+        Test: fast/events/keypress-focus-change.html
+
+        * editing/Editor.cpp:
+        (WebCore::selectionForEvent): Added.  This computes a selection that considers the case where an event handler 
+         has moved the selection outside of a text control.  In that case, we use the target control's selection.
+        (WebCore::Editor::insertText): This gets the selectionForEvent, checks that the selection is editable,
+         and calls TypingCommand::insertText with the correct selection.
+
+        * editing/TypingCommand.h: Added a version of insertText that takes a selection.  The old version of insertText will call this, and pass
+          in the frame's selection.
+        * editing/TypingCommand.cpp: (WebCore::TypingCommand::insertText): Added. Uses the passed in selection to 
+          set the starting and ending selections correctly so that the editing machinery will insert the text in the correct place.
+
+        * page/Page.h: Added convenience method to get selection from focused or main frame.
+        * page/Page.cpp: (WebCore::Page::selection):
+
+        * html/HTMLInputElement.h: Added selection methods to get selection for text controls.
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::selection):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextAreaElement.cpp: (WebCore::HTMLTextAreaElement::selection):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControl.cpp: (WebCore::RenderTextControl::selection):
+
 2007-01-31  Darin Adler  <darin@apple.com>
 
         - fix build

@@ -28,23 +28,24 @@
 
 #import "WebEditorClient.h"
 
+#import "WebArchive.h"
+#import "WebArchiver.h"
 #import "WebDataSourceInternal.h"
 #import "WebDocument.h"
+#import "WebEditingDelegatePrivate.h"
 #import "WebFrameInternal.h"
 #import "WebHTMLView.h"
 #import "WebHTMLViewInternal.h"
 #import "WebLocalizableStrings.h"
-#import "WebViewInternal.h"
-#import "WebEditingDelegatePrivate.h"
-#import "WebArchive.h"
-#import "WebArchiver.h"
 #import "WebNSURLExtras.h"
-#import <WebCore/PlatformString.h>
-#import <wtf/PassRefPtr.h>
+#import "WebViewInternal.h"
+#import <WebCore/Document.h>
 #import <WebCore/EditAction.h>
 #import <WebCore/EditCommand.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/PlatformKeyboardEvent.h>
+#import <WebCore/PlatformString.h>
+#import <wtf/PassRefPtr.h>
 
 using namespace WebCore;
 
@@ -389,10 +390,9 @@ void WebEditorClient::redo()
 
 void WebEditorClient::handleKeyPress(KeyboardEvent* event)
 {
-    // FIXME: Instead of using the selectedFrame, we may want to use the frame for the
-    // target node.
-    WebHTMLView *webHTMLView = [[[m_webView selectedFrame] frameView] documentView];
-    if ([webHTMLView _canEdit] && [webHTMLView _interceptEditingKeyEvent:event])
+    Frame* frame = event->target()->toNode()->document()->frame();
+    WebHTMLView *webHTMLView = [[kit(frame) frameView] documentView];
+    if ([webHTMLView _interceptEditingKeyEvent:event])
         event->setDefaultHandled();
 }
 

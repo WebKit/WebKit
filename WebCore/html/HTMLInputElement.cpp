@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  *
@@ -1538,6 +1538,13 @@ void HTMLInputElement::onSearch()
 {
     ASSERT(isSearchField());
     dispatchHTMLEvent(searchEvent, true, false);
+}
+
+Selection HTMLInputElement::selection() const
+{
+    if (!renderer())
+        return Selection();
+   return static_cast<RenderTextControl*>(renderer())->selection(cachedSelStart, cachedSelEnd);
 }
     
 } // namespace

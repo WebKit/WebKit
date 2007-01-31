@@ -31,6 +31,7 @@ class HTMLTextFieldInnerTextElement;
 class HTMLSearchFieldCancelButtonElement;
 class HTMLSearchFieldResultsButtonElement;
 class SearchPopupMenu;
+class Selection;
 
 class RenderTextControl : public RenderBlock, private PopupMenuClient {
 public:
@@ -61,6 +62,7 @@ public:
     void setSelectionEnd(int);
     void select();
     void setSelectionRange(int start, int end);
+    Selection selection(int start, int end) const;
 
     void subtreeHasChanged();
     String text();
@@ -104,7 +106,7 @@ private:
     virtual void setTextFromItem(unsigned listIndex);
     virtual bool shouldPopOver() const { return false; }
     virtual bool valueShouldChangeOnHotTrack() const { return false; }
-
+    
     RenderStyle* createInnerBlockStyle(RenderStyle* startStyle);
     RenderStyle* createInnerTextStyle(RenderStyle* startStyle);
     RenderStyle* createCancelButtonStyle(RenderStyle* startStyle);
