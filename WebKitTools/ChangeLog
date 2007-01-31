@@ -1,3 +1,11 @@
+2007-01-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Backing out the CFRunLoopRunSpecific exclude command because it was overly
+        broad. We'll either need to work around this leak in DRT, or do some
+        custom grep-based leak ignoring.
+
+        * Scripts/run-webkit-tests:
+
 2007-01-30  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.

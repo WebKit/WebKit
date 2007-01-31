@@ -825,7 +825,7 @@ sub countAndPrintLeaks($$$)
         "Flash_EnforceLocalSecurity", # leaks in flash plugin code, Radar 4449747
         "ICCFPrefWrapper::GetPrefDictionary()", # leaks in quicktime plugin code, Radar 4449794
         "GetLineDirectionPreference", "InitUnicodeUtilities", # leak apparently in CFNotificationCenterAddObserver, Radar 4964790
-        "CFRunLoopRunSpecific", # leak in CFRunLoopRunSpecific, Radar 4670839
+        # "CFRunLoopRunSpecific", # leak in CFRunLoopRunSpecific, Radar 4670839
         "_objc_msgForward" # leak apparently in NSSpellChecker, Radar 4965278
     );
 
