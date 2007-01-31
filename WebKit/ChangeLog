@@ -1,3 +1,12 @@
+2007-01-31  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        - add back no-op version of silly method so that shipping Safari can still run the PLT
+
+        * Misc/WebNSWindowExtras.m:
+        (-[NSWindow _webkit_displayThrottledWindows]):
+
 2007-01-31  Mark Rowe  <mrowe@apple.com>
 
         More build fixing.

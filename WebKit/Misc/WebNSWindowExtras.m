@@ -49,4 +49,9 @@
     [self setFrameOrigin:origin];
 }
 
+- (void)_webkit_displayThrottledWindows
+{
+    // this is needed only to keep PLT working on Safari 2.0.4
+}
+
 @end
