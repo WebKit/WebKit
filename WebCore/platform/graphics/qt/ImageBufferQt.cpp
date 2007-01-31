@@ -28,20 +28,45 @@
 
 #include "GraphicsContext.h"
 
+#include <QPainter>
+#include <QPixmap>
+
 namespace WebCore {
 
-std::auto_ptr<ImageBuffer> ImageBuffer::create(const IntSize&, bool grayScale)
+std::auto_ptr<ImageBuffer> ImageBuffer::create(const IntSize& size, bool grayScale)
 {
-    return std::auto_ptr<ImageBuffer>(new ImageBuffer());
+    QPixmap px(size);
+    return std::auto_ptr<ImageBuffer>(new ImageBuffer(px));
+}
+
+ImageBuffer::ImageBuffer(const QPixmap& px)
+    : m_pixmap(px),
+      m_painter(0)
+{
+    m_painter = new QPainter(&m_pixmap);
+    m_context.set(new GraphicsContext(m_painter));
 }
 
 ImageBuffer::~ImageBuffer()
 {
+    delete m_painter;
 }
 
 GraphicsContext* ImageBuffer::context() const
 {
-    return 0;
+    if (!m_painter->isActive())
+        m_painter->begin(&m_pixmap);
+
+    return m_context.get();
+}
+
+QPixmap* ImageBuffer::pixmap() const
+{
+    if (!m_painter)
+        return &m_pixmap;
+    if (m_painter->isActive())
+        m_painter->end();
+    return &m_pixmap;
 }
 
 }

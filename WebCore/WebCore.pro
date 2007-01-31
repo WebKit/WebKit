@@ -1013,6 +1013,7 @@ contains(DEFINES, SVG_SUPPORT=1) {
         platform/graphics/svg/qt/SVGResourceClipperQt.cpp \
         platform/graphics/svg/qt/SVGResourceFilterQt.cpp \
         platform/graphics/svg/qt/SVGResourceMaskerQt.cpp \
+        platform/graphics/svg/SVGImage.cpp \
         platform/graphics/svg/SVGPaintServer.cpp \
         platform/graphics/svg/SVGPaintServerGradient.cpp \
         platform/graphics/svg/SVGPaintServerLinearGradient.cpp \

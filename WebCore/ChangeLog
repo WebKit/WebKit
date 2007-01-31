@@ -1,3 +1,23 @@
+2007-01-31  Zack Rusin  <zack@kde.org>
+
+        Reviewed by Eric.
+
+        Implement SVGImage on the Qt platform.
+
+        * WebCore.pro:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::createImage):
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::create):
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::~ImageBuffer):
+        (WebCore::ImageBuffer::context):
+        (WebCore::ImageBuffer::pixmap):
+        * platform/graphics/svg/SVGImage.cpp:
+        (WebCore::SVGImage::nativeImageForCurrentFrame):
+        (WebCore::SVGImage::setData):
+
 2007-01-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Brady.
