@@ -1,3 +1,10 @@
+2007-01-31  Lars Knoll <lars@trolltech.com>
+
+        Fix the Qt build.
+
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::setDefersLoading):
+
 2007-01-31  Zack Rusin  <zack@kde.org>
 
         Reviewed by Eric.

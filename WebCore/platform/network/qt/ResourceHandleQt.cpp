@@ -96,4 +96,10 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
     notImplemented();
 }
 
+ 
+void ResourceHandle::setDefersLoading(bool defers)
+{
+    d->m_defersLoading = defers;
+}
+
 } // namespace WebCore
