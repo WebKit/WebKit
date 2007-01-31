@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple, Inc.  All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -120,6 +120,7 @@ static WebFrame *topLoadingFrame;     // !nil iff a load is in progress
 static BOOL waitToDump;     // TRUE if waitUntilDone() has been called, but notifyDone() has not yet been called
 
 static BOOL dumpAsText;
+static BOOL dumpAsWebArchive;
 static BOOL dumpSelectionRect;
 static BOOL dumpTitleChanges;
 static BOOL dumpBackForwardList;
@@ -505,6 +506,103 @@ static void dumpFrameScrollPosition(WebFrame *f)
     }
 }
 
+static void convertWebResourceDataToString(NSMutableDictionary *resource)
+{
+    NSString *mimeType = [resource objectForKey:@"WebResourceMIMEType"];
+    if ([mimeType hasPrefix:@"text/"] || [mimeType isEqualToString:@"application/x-javascript"]) {
+        NSData *data = [resource objectForKey:@"WebResourceData"];
+        NSString *dataAsString = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+        [resource setObject:dataAsString forKey:@"WebResourceData"];
+    }
+}
+
+static void normalizeWebResourceURL(NSMutableString *webResourceURL, NSString *oldURLBase)
+{
+    [webResourceURL replaceOccurrencesOfString:oldURLBase
+                                    withString:@"file://"
+                                       options:NSLiteralSearch
+                                         range:NSMakeRange(0, [webResourceURL length])];
+}
+
+static void normalizeWebResourceResponse(NSMutableDictionary *propertyList, NSString *oldURLBase)
+{
+    NSURLResponse *response = nil;
+    NSData *responseData = [propertyList objectForKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
+    if ([responseData isKindOfClass:[NSData class]]) {
+        // Decode NSURLResponse
+        NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:responseData];
+        response = [unarchiver decodeObjectForKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
+        [unarchiver finishDecoding];
+        [unarchiver release];
+
+        // Create replacement NSURLReponse
+        NSMutableString *URL = [[[NSMutableString alloc] initWithContentsOfURL:[response URL]] autorelease];
+        normalizeWebResourceURL(URL, oldURLBase);
+        NSURLResponse *newResponse = [[NSURLResponse alloc] initWithURL:[[[NSURL alloc] initWithString:URL] autorelease]
+                                                               MIMEType:[response MIMEType]
+                                                  expectedContentLength:[response expectedContentLength]
+                                                       textEncodingName:[response textEncodingName]];
+        [newResponse autorelease];
+
+        // Encode replacement NSURLResponse
+        NSMutableData *newResponseData = [[NSMutableData alloc] init];
+        NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:newResponseData];
+        [archiver encodeObject:newResponse forKey:@"WebResourceResponse"];
+        [archiver finishEncoding];
+        [archiver release];
+        [propertyList setObject:newResponseData forKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
+        [newResponseData release];
+    }
+}
+
+static NSString *serializeWebArchiveToXML(WebArchive *webArchive)
+{
+    NSString *errorString;
+    NSMutableDictionary *propertyList = [NSPropertyListSerialization propertyListFromData:[webArchive data]
+                                                                         mutabilityOption:NSPropertyListMutableContainersAndLeaves
+                                                                                   format:NULL
+                                                                         errorDescription:&errorString];
+    if (!propertyList)
+        return errorString;
+
+    // Normalize WebResourceResponse and WebResourceURL values in plist for testing
+    NSString *cwdURL = [@"file://" stringByAppendingString:[[[NSFileManager defaultManager] currentDirectoryPath] stringByExpandingTildeInPath]];
+
+    NSMutableArray *resources = [NSMutableArray arrayWithCapacity:1];
+    [resources addObject:propertyList];
+
+    while ([resources count]) {
+        NSMutableDictionary *resourcePropertyList = [resources objectAtIndex:0];
+        [resources removeObjectAtIndex:0];
+
+        NSMutableDictionary *mainResource = [resourcePropertyList objectForKey:@"WebMainResource"];
+        normalizeWebResourceURL([mainResource objectForKey:@"WebResourceURL"], cwdURL);
+        convertWebResourceDataToString(mainResource);
+
+        // Add subframeArchives to list for processing
+        NSMutableArray *subframeArchives = [resourcePropertyList objectForKey:@"WebSubframeArchives"]; // WebSubframeArchivesKey in WebArchive.m
+        if (subframeArchives)
+            [resources addObjectsFromArray:subframeArchives];
+
+        NSMutableArray *subresources = [resourcePropertyList objectForKey:@"WebSubresources"]; // WebSubresourcesKey in WebArchive.m
+        NSEnumerator *enumerator = [subresources objectEnumerator];
+        NSMutableDictionary *subresourcePropertyList;
+        while ((subresourcePropertyList = [enumerator nextObject])) {
+            normalizeWebResourceURL([subresourcePropertyList objectForKey:@"WebResourceURL"], cwdURL);
+            normalizeWebResourceResponse(subresourcePropertyList, cwdURL);
+            convertWebResourceDataToString(subresourcePropertyList);
+        }
+    }
+
+    NSData *xmlData = [NSPropertyListSerialization dataFromPropertyList:propertyList
+                                                                 format:NSPropertyListXMLFormat_v1_0
+                                                       errorDescription:&errorString];
+    if (!xmlData)
+        return errorString;
+
+    return [[[NSMutableString alloc] initWithData:xmlData encoding:NSUTF8StringEncoding] autorelease];
+}
+
 static void dump(void)
 {
     NSString *result = nil;
@@ -513,6 +611,9 @@ static void dump(void)
         if (dumpAsText) {
             DOMElement *documentElement = [[frame DOMDocument] documentElement];
             result = [[(DOMElement *)documentElement innerText] stringByAppendingString:@"\n"];
+        } else if (dumpAsWebArchive) {
+            WebArchive *webArchive = [[frame DOMDocument] webArchive];
+            result = serializeWebArchiveToXML(webArchive);
         } else {
             bool isSVGW3CTest = ([currentTest rangeOfString:@"svg/W3C-SVG-1.1"].length);
             if (isSVGW3CTest)
@@ -521,12 +622,19 @@ static void dump(void)
                 [[frame webView] setFrameSize:NSMakeSize(maxViewWidth, maxViewHeight)];
             result = [frame renderTreeAsExternalRepresentation];
         }
-        
-        if (!result)
-            printf("ERROR: nil result from %s", dumpAsText ? "[documentElement innerText]" : "[frame renderTreeAsExternalRepresentation]");
-        else {
+
+        if (!result) {
+            const char *errorMessage;
+            if (dumpAsText)
+                errorMessage = "[documentElement innerText]";
+            else if (dumpAsWebArchive)
+                errorMessage = "[[frame DOMDocument] webArchive]";
+            else
+                errorMessage = "[frame renderTreeAsExternalRepresentation]";
+            printf("ERROR: nil result from %s", errorMessage);
+        } else {
             fputs([result UTF8String], stdout);
-            if (!dumpAsText)
+            if (!dumpAsText && !dumpAsWebArchive)
                 dumpFrameScrollPosition(frame);
         }
 
@@ -567,7 +675,7 @@ static void dump(void)
     }
     
     if (dumpPixels) {
-        if (!dumpAsText) {
+        if (!dumpAsText && !dumpAsWebArchive) {
             // grab a bitmap from the view
             WebView* view = [frame webView];
             NSSize webViewSize = [view frame].size;
@@ -768,6 +876,7 @@ static void dump(void)
     if (aSelector == @selector(waitUntilDone)
             || aSelector == @selector(notifyDone)
             || aSelector == @selector(dumpAsText)
+            || aSelector == @selector(dumpAsWebArchive)
             || aSelector == @selector(dumpTitleChanges)
             || aSelector == @selector(dumpBackForwardList)
             || aSelector == @selector(dumpChildFrameScrollPositions)
@@ -852,6 +961,11 @@ static void dump(void)
 - (void)dumpAsText
 {
     dumpAsText = YES;
+}
+
+- (void)dumpAsWebArchive
+{
+    dumpAsWebArchive = YES;
 }
 
 - (void)dumpSelectionRect
@@ -1050,6 +1164,7 @@ static void runTest(const char *pathOrURL)
     topLoadingFrame = nil;
     waitToDump = NO;
     dumpAsText = NO;
+    dumpAsWebArchive = NO;
     dumpChildFrameScrollPositions = NO;
     shouldDumpEditingCallbacks = NO;
     dumpSelectionRect = NO;

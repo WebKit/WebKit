@@ -1,5 +1,29 @@
 2007-01-30  David Kilzer  <ddkilzer@webkit.org>
 
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11882
+        Need a way to regression test .webarchive output files
+
+        Implement layoutTestController.dumpAsWebArchive() to test WebArchive format.
+        Alters WebResourceResponse and WebResourceURL properties within WebArchive format
+        to normalize URLs to remove path where WebKit was checked out.  Also converts
+        WebDataResource properties from data to string if the corresponding
+        WebResourceMIMEType property starts with "text/" or equals
+        "application/x-javascript".
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (convertWebResourceDataToString): Added.
+        (normalizeWebResourceURL): Added.
+        (normalizeWebResourceResponse): Added.
+        (serializeWebArchiveToXML): Added.
+        (dump):
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (-[LayoutTestController dumpAsWebArchive]): Added.
+        (runTest):
+
+2007-01-30  David Kilzer  <ddkilzer@webkit.org>
+
         Reviewed by Mark Rowe.
 
         http://bugs.webkit.org/show_bug.cgi?id=12470

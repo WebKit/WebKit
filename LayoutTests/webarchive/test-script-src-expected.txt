@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WebMainResource</key>
+	<dict>
+		<key>WebResourceData</key>
+		<string>&lt;html&gt;&lt;head&gt;
+&lt;script src="resources/dump-webarchive.js" type="text/javascript"&gt;&lt;/script&gt;
+&lt;/head&gt;&lt;body&gt;
+
+
+&lt;/body&gt;&lt;/html&gt;</string>
+		<key>WebResourceFrameName</key>
+		<string></string>
+		<key>WebResourceMIMEType</key>
+		<string>text/html</string>
+		<key>WebResourceTextEncodingName</key>
+		<string>UTF-8</string>
+		<key>WebResourceURL</key>
+		<string>file:///LayoutTests/webarchive/test-script-src.html</string>
+	</dict>
+	<key>WebSubresources</key>
+	<array>
+		<dict>
+			<key>WebResourceData</key>
+			<string>if (window.layoutTestController)
+    layoutTestController.dumpAsWebArchive();
+</string>
+			<key>WebResourceMIMEType</key>
+			<string>application/x-javascript</string>
+			<key>WebResourceResponse</key>
+			<data>
+			YnBsaXN0MDDUAQIDBAUGBwpZJGFyY2hpdmVyWCR2ZXJzaW9uVCR0
+			b3BYJG9iamVjdHNfEA9OU0tleWVkQXJjaGl2ZXISAAGGoNEICV8Q
+			E1dlYlJlc291cmNlUmVzcG9uc2WAAaQLDBscVSRudWxs1w0ODxAR
+			EhMUFRYXGBkVUiQyUiQzUiQ0UiQwViRjbGFzc1IkNVIkMYACgAAQ
+			ThAHgAMjf+////////+AAF8QGGFwcGxpY2F0aW9uL3gtamF2YXNj
+			cmlwdNIdHh8gWCRjbGFzc2VzWiRjbGFzc25hbWWiICFdTlNVUkxS
+			ZXNwb25zZVhOU09iamVjdAgRGyQpMkRJTGJkaW9+gYSHipGUl5mb
+			nZ+hqqzHzNXg4/EAAAAAAAABAQAAAAAAAAAiAAAAAAAAAAAAAAAA
+			AAAA+g==
+			</data>
+			<key>WebResourceURL</key>
+			<string>file:///LayoutTests/webarchive/resources/dump-webarchive.js</string>
+		</dict>
+	</array>
+</dict>
+</plist>

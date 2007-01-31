@@ -1,3 +1,37 @@
+2007-01-30  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11882
+        Need a way to regression test .webarchive output files
+
+        Created webarchive tests that exercise various features of the WebArchive format.
+
+        * webarchive/resources/apple.gif: Copied from fast/canvas/resources/apple.gif.
+        * webarchive/resources/dump-webarchive.js: Added.
+        * webarchive/resources/test-frame.html: Added.
+        * webarchive/resources/test-style.css: Added.
+        * webarchive/test-body-background-expected.txt: Added.
+        * webarchive/test-body-background.html: Added.
+        * webarchive/test-duplicate-resources-expected.txt: Added.
+        * webarchive/test-duplicate-resources.html: Added.
+        * webarchive/test-frameset-expected.txt: Added.
+        * webarchive/test-frameset.html: Added.
+        * webarchive/test-img-src-expected.txt: Added.
+        * webarchive/test-img-src.html: Added.
+        * webarchive/test-input-src-expected.txt: Added.
+        * webarchive/test-input-src.html: Added.
+        * webarchive/test-link-href-expected.txt: Added.
+        * webarchive/test-link-href.html: Added.
+        * webarchive/test-object-data-expected.txt: Added.
+        * webarchive/test-object-data.html: Added.
+        * webarchive/test-script-src-expected.txt: Added.
+        * webarchive/test-script-src.html: Added.
+        * webarchive/test-table-background-expected.txt: Added.
+        * webarchive/test-table-background.html: Added.
+        * webarchive/test-td-background-expected.txt: Added.
+        * webarchive/test-td-background.html: Added.
+
 2007-01-30  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Geoff.
