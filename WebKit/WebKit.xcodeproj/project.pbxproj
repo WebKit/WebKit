@@ -1719,6 +1719,7 @@
 					"-Wwrite-strings",
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
+					"-Wundef",
 				);
 			};
 			name = Debug;
@@ -1763,6 +1764,7 @@
 					"-Wwrite-strings",
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
+					"-Wundef",
 				);
 			};
 			name = Release;
@@ -1800,6 +1802,7 @@
 					"-Wwrite-strings",
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
+					"-Wundef",
 				);
 			};
 			name = Production;

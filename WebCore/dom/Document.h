@@ -575,7 +575,7 @@ public:
 
     int docID() const { return m_docID; }
 
-#if XSLT_SUPPORT
+#ifdef XSLT_SUPPORT
     void applyXSLTransform(ProcessingInstruction* pi);
     void setTransformSource(void* doc) { m_transformSource = doc; }
     const void* transformSource() { return m_transformSource; }
@@ -714,7 +714,7 @@ protected:
     double m_startTime;
     bool m_overMinimumLayoutThreshold;
     
-#if XSLT_SUPPORT
+#ifdef XSLT_SUPPORT
     void* m_transformSource;
     RefPtr<Document> m_transformSourceDocument;
 #endif

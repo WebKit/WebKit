@@ -117,7 +117,7 @@ struct WebCoreHistoryItem;
 - (void)_updateBackground;
 - (void)_setInternalLoadDelegate:(id)internalLoadDelegate;
 - (id)_internalLoadDelegate;
-#if !BUILDING_ON_TIGER
+#ifndef BUILDING_ON_TIGER
 - (void)_unmarkAllBadGrammar;
 #endif
 - (void)_unmarkAllMisspellings;

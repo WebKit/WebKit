@@ -2127,7 +2127,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         return [self _canEdit];
     
     if (action == @selector(showGuessPanel:)) {
-#if !BUILDING_ON_TIGER
+#ifndef BUILDING_ON_TIGER
         // Match OS X AppKit behavior for post-Tiger. Don't change Tiger behavior.
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
@@ -2263,7 +2263,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         return [self _hasSelection];
     } 
     
-#if !BUILDING_ON_TIGER
+#ifndef BUILDING_ON_TIGER
     if (action == @selector(toggleGrammarChecking:)) {
         // FIXME 4799134: WebView is the bottleneck for this grammar-checking logic, but we must validate 
         // the selector here because we implement it here, and we must implement it here because the AppKit 
@@ -3761,7 +3761,7 @@ done:
 
 - (void)delete:(id)sender
 {
-#if USING_WEBCORE_DELETE
+#ifdef USING_WEBCORE_DELETE
     Frame* coreFrame = core([self _frame]);
     if (coreFrame)
         coreFrame->editor()->performDelete();
@@ -4471,7 +4471,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     }
     
     NSPanel *spellingPanel = [checker spellingPanel];
-#if !BUILDING_ON_TIGER
+#ifndef BUILDING_ON_TIGER
     // Post-Tiger, this menu item is a show/hide toggle, to match AppKit. Leave Tiger behavior alone
     // to match rest of OS X.
     if ([spellingPanel isVisible]) {
@@ -5060,7 +5060,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)copy:(id)sender
 {
-#if USING_WEBCORE_COPY
+#ifdef USING_WEBCORE_COPY
     Frame* coreFrame = core([self _frame]);
     if (coreFrame)
         coreFrame->editor()->copy();
@@ -5078,7 +5078,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)cut:(id)sender
 {
-#if USING_WEBCORE_CUT
+#ifdef USING_WEBCORE_CUT
     Frame* coreFrame = core([self _frame]);
     if (coreFrame)
         coreFrame->editor()->cut();
@@ -5101,7 +5101,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)paste:(id)sender
 {
-#if USING_WEBCORE_PASTE
+#ifdef USING_WEBCORE_PASTE
     Frame* coreFrame = core([self _frame]);
     if (coreFrame)
         coreFrame->editor()->paste();
@@ -5137,7 +5137,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     return [self _documentFragmentFromPasteboard:pasteboard inContext:nil allowPlainText:NO chosePlainText:&discard];
 }
 
-#if !BUILDING_ON_TIGER
+#ifndef BUILDING_ON_TIGER
 
 - (BOOL)isGrammarCheckingEnabled
 {
@@ -5160,9 +5160,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     [[self _webView] toggleGrammarChecking:sender];
 }
 
-#endif /* !BUILDING_ON_TIGER */
 
-#if !BUILDING_ON_TIGER
 static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 {
     NSRect allScreensFrame = NSZeroRect;

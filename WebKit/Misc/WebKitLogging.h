@@ -66,7 +66,7 @@ BOOL WebKitRunningOnMainThread(void);
 
 // The ASSERT_MAIN_THREAD() check should be on by default in DEBUG builds
 // To disable it, even in a debug build, define DISABLE_THREAD_CHECK in your project file (or elsewhere globally)
-#if (!NDEBUG && !DISABLE_THREAD_CHECK)
+#if (!defined(NDEBUG) && !DISABLE_THREAD_CHECK)
 #define ASSERT_MAIN_THREAD() do \
     if (!WebKitRunningOnMainThread()) { \
         WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, "<not running on main thread>"); \

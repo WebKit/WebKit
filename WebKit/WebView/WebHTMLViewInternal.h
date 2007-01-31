@@ -116,7 +116,7 @@ struct WebHTMLViewInterpretKeyEventsParameters;
 - (void)_hoverFeedbackSuspendedChanged;
 - (BOOL)_interceptEditingKeyEvent:(WebCore::KeyboardEvent *)event;
 - (DOMDocumentFragment*)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard;
-#if !BUILDING_ON_TIGER
+#ifndef BUILDING_ON_TIGER
 - (BOOL)isGrammarCheckingEnabled;
 - (void)setGrammarCheckingEnabled:(BOOL)flag;
 - (void)toggleGrammarChecking:(id)sender;

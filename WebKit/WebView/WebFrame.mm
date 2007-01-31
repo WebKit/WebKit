@@ -452,7 +452,7 @@ WebView *getWebView(WebFrame *webFrame)
     return _private->internalLoadDelegate;
 }
 
-#if !BUILDING_ON_TIGER
+#ifndef BUILDING_ON_TIGER
 - (void)_unmarkAllBadGrammar
 {
     Frame* coreFrame = core(self);

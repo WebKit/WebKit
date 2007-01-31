@@ -1,3 +1,9 @@
+2007-01-31  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver.
+
+        * dom/Document.h: Change #if XSLT_SUPPORT to #ifdef XSLT_SUPPORT.
+
 2007-01-31  Lars Knoll <lars@trolltech.com>
 
         Fix the Qt build.

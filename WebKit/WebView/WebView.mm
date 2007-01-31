@@ -380,7 +380,7 @@ NSString *_WebMainFrameDocumentKey =    @"mainFrameDocument";
 @end
 
 static BOOL continuousSpellCheckingEnabled;
-#if !BUILDING_ON_TIGER
+#ifndef BUILDING_ON_TIGER
 static BOOL grammarCheckingEnabled;
 #endif
 
@@ -397,7 +397,7 @@ static BOOL grammarCheckingEnabled;
     dashboardBehaviorAllowWheelScrolling = YES;
     shouldCloseWithWindow = objc_collecting_enabled();
     continuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled];
-#if !BUILDING_ON_TIGER
+#ifndef BUILDING_ON_TIGER
     grammarCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebGrammarCheckingEnabled];
 #endif
     userAgent = new String;
@@ -2547,7 +2547,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
             [menuItem setState:checkMark ? NSOnState : NSOffState];
         }
         return retVal;
-#if !BUILDING_ON_TIGER
+#ifndef BUILDING_ON_TIGER
     } else if (action == @selector(toggleGrammarChecking:)) {
         BOOL checkMark = [self isGrammarCheckingEnabled];
         if ([(NSObject *)item isKindOfClass:[NSMenuItem class]]) {
@@ -3121,7 +3121,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 #endif
 }
 
-#if !BUILDING_ON_TIGER
+#ifndef BUILDING_ON_TIGER
 // FIXME: This method should be merged into WebViewEditing when we're not in API freeze
 - (void)setGrammarCheckingEnabled:(BOOL)flag
 {
