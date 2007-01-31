@@ -1,5 +1,16 @@
 2007-01-31  Mark Rowe  <mrowe@apple.com>
 
+        More build fixing.
+
+        * Misc/WebKitLogging.h: Use !defined() rather than !.
+        * Plugins/WebNetscapePluginStream.h: Remove #if __cplusplus as this file is only included from Obj-C++ files.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]): Use #ifdef rather than #if.
+        * WebView/WebView.mm:
+        (-[WebView isGrammarCheckingEnabled]): Ditto.
+
+2007-01-31  Mark Rowe  <mrowe@apple.com>
+
         Build fix.
 
         * WebView/WebView.mm:

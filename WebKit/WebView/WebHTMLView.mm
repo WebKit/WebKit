@@ -5192,7 +5192,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     // We soft link to get the function that displays the dictionary (either pop-up window or app) to avoid the performance
     // penalty of linking to another framework. This function changed signature as well as framework between Tiger and Leopard,
     // so the two cases are handled separately.
-#if BUILDING_ON_TIGER
+#ifdef BUILDING_ON_TIGER
     static bool lookedForFunction = false;
     
     typedef OSStatus (*ServiceWindowShowFunction)(id inWordString, NSRect inWordBoundary, UInt16 inLineDirection);

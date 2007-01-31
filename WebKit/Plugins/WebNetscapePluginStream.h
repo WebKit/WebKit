@@ -30,14 +30,10 @@
 #import <WebKit/WebBaseNetscapePluginStream.h>
 #import <WebKit/npapi.h>
 
-#if __cplusplus
 namespace WebCore {
     class NetscapePlugInStreamLoader;
 }
 typedef WebCore::NetscapePlugInStreamLoader WebCoreNetscapePlugInStreamLoader;
-#else
-@class WebCoreNetscapePlugInStreamLoader;
-#endif
 
 @class NSURLRequest;
 @class NSURLConnection;

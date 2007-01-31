@@ -3114,7 +3114,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 // FIXME: This method should be merged into WebViewEditing when we're not in API freeze
 - (BOOL)isGrammarCheckingEnabled
 {
-#if BUILDING_ON_TIGER
+#ifdef BUILDING_ON_TIGER
     return NO;
 #else
     return grammarCheckingEnabled;
