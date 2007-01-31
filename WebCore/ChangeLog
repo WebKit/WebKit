@@ -1,3 +1,16 @@
+2007-01-31  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Lars
+
+        Return the correct selection color.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::supportsFocusRing):
+        (WebCore::RenderThemeQt::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeQt::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeQt::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeQt::platformInactiveSelectionForegroundColor):
+
 2007-01-31  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark.
