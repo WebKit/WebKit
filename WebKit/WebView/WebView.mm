@@ -1642,7 +1642,7 @@ NSMutableDictionary *countInvocations;
     if (!self)
         return nil;
 
-#if ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH
+#ifdef ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH
     // DYLD_FRAMEWORK_PATH is used so Safari will load the development version of WebKit, which
     // may not work with other WebKit applications.  Unsetting DYLD_FRAMEWORK_PATH removes the
     // need for Safari to unset it to prevent it from being passed to applications it launches.

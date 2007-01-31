@@ -1,5 +1,12 @@
 2007-01-31  Mark Rowe  <mrowe@apple.com>
 
+        Build fix.
+
+        * WebView/WebView.mm:
+        (-[WebView initWithFrame:frameName:groupName:]):
+
+2007-01-31  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Oliver.
 
         Enable -Wundef in WebKit, and change misuses of #if to #ifdef or #ifndef as appropriate.
