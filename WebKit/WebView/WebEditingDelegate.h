@@ -48,8 +48,6 @@ typedef enum {
 - (BOOL)webView:(WebView *)webView shouldApplyStyle:(DOMCSSStyleDeclaration *)style toElementsInDOMRange:(DOMRange *)range;
 - (BOOL)webView:(WebView *)webView shouldChangeTypingStyle:(DOMCSSStyleDeclaration *)currentStyle toStyle:(DOMCSSStyleDeclaration *)proposedStyle;
 - (BOOL)webView:(WebView *)webView doCommandBySelector:(SEL)selector;
-- (void)webView:(WebView *)webView didWriteSelectionToPasteboard:(NSPasteboard *)pasteboard;
-- (void)webView:(WebView *)webView didSetSelectionTypesForPasteboard:(NSPasteboard *)pasteboard;
 - (void)webViewDidBeginEditing:(NSNotification *)notification;
 - (void)webViewDidChange:(NSNotification *)notification;
 - (void)webViewDidEndEditing:(NSNotification *)notification;
