@@ -2,6 +2,9 @@
 
         Reviewed by Mitz.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12490
+          Clean up canPlaceOnLine logic in bidi.cpp
+
         No test cases since there is no change in functionality.
 
         * rendering/bidi.cpp:
