@@ -36,6 +36,7 @@
 #import "NavigationController.h"
 #import "ObjCPlugin.h"
 #import "ObjCPluginFunction.h"
+#import "ResourceLoadDelegate.h"
 #import "TextInputController.h"
 #import "UIDelegate.h"
 #import <ApplicationServices/ApplicationServices.h> // for CMSetDefaultProfileBySpace
@@ -57,6 +58,7 @@
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
+#import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebView.h>
 #import <getopt.h>
 #import <malloc/malloc.h>
@@ -98,6 +100,7 @@
 BOOL windowIsKey = YES;
 WebFrame *frame = 0;
 BOOL shouldDumpEditingCallbacks;
+BOOL shouldDumpResourceLoadCallbacks;
 
 static void runTest(const char *pathOrURL);
 static NSString *md5HashStringForBitmap(CGImageRef bitmap);
@@ -357,6 +360,9 @@ void dumpRenderTree(int argc, const char *argv[])
     EditingDelegate *editingDelegate = [[EditingDelegate alloc] init];
     [webView setEditingDelegate:editingDelegate];
     
+    ResourceLoadDelegate *resourceLoadDelegate = [[ResourceLoadDelegate alloc] init];
+    [webView setResourceLoadDelegate:resourceLoadDelegate];
+    
     NSString *pwd = [[NSString stringWithUTF8String:argv[0]] stringByDeletingLastPathComponent];
     [WebPluginDatabase setAdditionalWebPlugInPaths:[NSArray arrayWithObject:pwd]];
     [[WebPluginDatabase sharedDatabase] refresh];
@@ -438,6 +444,7 @@ void dumpRenderTree(int argc, const char *argv[])
     [webView release];
     [waitUntilDoneDelegate release];
     [editingDelegate release];
+    [resourceLoadDelegate release];
     [uiDelegate release];
     
     [localPasteboards release];
@@ -881,6 +888,7 @@ static void dump(void)
             || aSelector == @selector(dumpBackForwardList)
             || aSelector == @selector(dumpChildFrameScrollPositions)
             || aSelector == @selector(dumpEditingCallbacks)
+            || aSelector == @selector(dumpResourceLoadCallbacks)
             || aSelector == @selector(setWindowIsKey:)
             || aSelector == @selector(setMainFrameIsFirstResponder:)
             || aSelector == @selector(dumpSelectionRect)
@@ -991,6 +999,11 @@ static void dump(void)
 - (void)dumpEditingCallbacks
 {
     shouldDumpEditingCallbacks = YES;
+}
+
+- (void)dumpResourceLoadCallbacks
+{
+    shouldDumpResourceLoadCallbacks = YES;
 }
 
 - (void)setWindowIsKey:(BOOL)flag
@@ -1167,6 +1180,7 @@ static void runTest(const char *pathOrURL)
     dumpAsWebArchive = NO;
     dumpChildFrameScrollPositions = NO;
     shouldDumpEditingCallbacks = NO;
+    shouldDumpResourceLoadCallbacks = NO;
     dumpSelectionRect = NO;
     dumpTitleChanges = NO;
     dumpBackForwardList = NO;

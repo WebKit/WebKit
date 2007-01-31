@@ -38,6 +38,7 @@
 		14770FE30A22ADF7009342EE /* GCController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 14770FE10A22ADF7009342EE /* GCController.mm */; };
 		14A6FB8A0971CAE5008B014F /* NavigationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A6FB880971CAE5008B014F /* NavigationController.h */; };
 		14A6FB8B0971CAE5008B014F /* NavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14A6FB890971CAE5008B014F /* NavigationController.m */; };
+		1A6CA8DE0B7122D100A24B62 /* ResourceLoadDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6CA8640B7120CF00A24B62 /* ResourceLoadDelegate.m */; };
 		22181BD109DC8C4B008342E8 /* ObjCPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 22181BCD09DC8C4B008342E8 /* ObjCPlugin.h */; };
 		22181BD209DC8C4B008342E8 /* ObjCPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 22181BCE09DC8C4B008342E8 /* ObjCPlugin.m */; };
 		22181BD309DC8C4B008342E8 /* ObjCPluginFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 22181BCF09DC8C4B008342E8 /* ObjCPluginFunction.h */; };
@@ -102,6 +103,8 @@
 		14770FE10A22ADF7009342EE /* GCController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GCController.mm; sourceTree = "<group>"; };
 		14A6FB880971CAE5008B014F /* NavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationController.h; sourceTree = "<group>"; };
 		14A6FB890971CAE5008B014F /* NavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavigationController.m; sourceTree = "<group>"; };
+		1A6CA8630B7120CF00A24B62 /* ResourceLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadDelegate.h; sourceTree = "<group>"; };
+		1A6CA8640B7120CF00A24B62 /* ResourceLoadDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResourceLoadDelegate.m; sourceTree = "<group>"; };
 		22181BCD09DC8C4B008342E8 /* ObjCPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ObjCPlugin.h; sourceTree = "<group>"; };
 		22181BCE09DC8C4B008342E8 /* ObjCPlugin.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ObjCPlugin.m; sourceTree = "<group>"; };
 		22181BCF09DC8C4B008342E8 /* ObjCPluginFunction.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ObjCPluginFunction.h; sourceTree = "<group>"; };
@@ -222,6 +225,8 @@
 			children = (
 				A803FFF309CAAFE0009B2A37 /* EditingDelegate.h */,
 				A803FFF409CAAFE0009B2A37 /* EditingDelegate.m */,
+				1A6CA8630B7120CF00A24B62 /* ResourceLoadDelegate.h */,
+				1A6CA8640B7120CF00A24B62 /* ResourceLoadDelegate.m */,
 				1422A1B80AF6EDD600E1A883 /* UIDelegate.h */,
 				1422A1B90AF6EDD600E1A883 /* UIDelegate.m */,
 			);
@@ -399,6 +404,7 @@
 				22181BD209DC8C4B008342E8 /* ObjCPlugin.m in Sources */,
 				22181BD409DC8C4B008342E8 /* ObjCPluginFunction.m in Sources */,
 				14770FE30A22ADF7009342EE /* GCController.mm in Sources */,
+				1A6CA8DE0B7122D100A24B62 /* ResourceLoadDelegate.m in Sources */,
 				1422A1BB0AF6EDD600E1A883 /* UIDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

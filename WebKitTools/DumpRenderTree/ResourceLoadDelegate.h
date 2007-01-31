@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007, Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class DumpRenderTreeDraggingInfo;
-@class WebFrame;
+#import <Cocoa/Cocoa.h>
 
-extern BOOL windowIsKey;
-extern WebFrame *frame;
-extern DumpRenderTreeDraggingInfo *draggingInfo;
-extern volatile BOOL done;
-extern BOOL shouldDumpResourceLoadCallbacks;
 
+@interface ResourceLoadDelegate : NSObject {
+}
+
+@end

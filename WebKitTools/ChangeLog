@@ -1,3 +1,23 @@
+2007-01-31  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        Add dumping of resource loads. This isn't completely tweaked yet since the test results would
+        rely on resources being delivered in the same order which might not always be true. However, it works good
+        enough for the simple webarchive tests I want to do right now.
+        
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.m:
+        (dumpRenderTree):
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (-[LayoutTestController dumpResourceLoadCallbacks]):
+        (runTest):
+        
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/ResourceLoadDelegate.h: Added.
+        * DumpRenderTree/ResourceLoadDelegate.m: Added.
+        Add new resource load delegate.
+        
 2007-01-31  Geoffrey Garen  <ggaren@apple.com>
 
         Backing out the CFRunLoopRunSpecific exclude command because it was overly
