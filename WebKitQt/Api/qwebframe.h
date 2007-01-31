@@ -55,6 +55,8 @@ public:
     QString selectedText() const;
     QString title() const;
 
+    QList<QWebFrame*> childFrames() const;
+
 signals:
     void cleared();
     void loadDone(bool ok);

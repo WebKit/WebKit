@@ -1,3 +1,20 @@
+2007-01-31  George Staikos  <staikos@kde.org>
+
+        Remove focusFrame() - misguided - and add childFrames().  Fix a crash
+        on exit.
+
+        Reviewed by Zack.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::resizeEvent):
+        (QWebFrame::childFrames):
+        * Api/qwebframe.h:
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::webFrame):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-01-30  Zack Rusin  <zrusin@trolltech.com>
 
         Improve QtLauncher to make it more useful as a testing tool.

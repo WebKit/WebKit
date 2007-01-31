@@ -29,6 +29,7 @@
 
 #include "FrameLoaderClientQt.h"
 #include "FrameQt.h"
+#include "FrameTree.h"
 #include "FrameView.h"
 #include "ResourceRequest.h"
 
@@ -157,10 +158,26 @@ QString QWebFrame::selectedText() const
 void QWebFrame::resizeEvent(QResizeEvent *e)
 {
     QScrollArea::resizeEvent(e);
-    RenderObject *renderer = d->frame->renderer();
-    if (renderer)
-        renderer->setNeedsLayout(true);
-    d->frameView->scheduleRelayout();
+    if (d->frame && d->frameView) {
+        RenderObject *renderer = d->frame->renderer();
+        if (renderer)
+            renderer->setNeedsLayout(true);
+        d->frameView->scheduleRelayout();
+    }
+}
+
+QList<QWebFrame*> QWebFrame::childFrames() const
+{
+    QList<QWebFrame*> rc;
+    if (d->frame) {
+        FrameTree *tree = d->frame->tree();
+        for (Frame *child = tree->firstChild(); child; child = child->tree()->nextSibling()) {
+            FrameLoaderClientQt *loader = (FrameLoaderClientQt*)child->loader();
+            rc.append(loader->webFrame());
+        }
+
+    }
+    return rc;
 }
 
 #include "qwebframe.moc"

@@ -52,8 +52,6 @@ public:
 
     QWebFrame *mainFrame() const;
 
-    QWebFrame *focusFrame() const;
-
     QWebPageHistory history() const;
 
     QSize sizeHint() const;
