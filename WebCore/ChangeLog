@@ -1,3 +1,21 @@
+2007-01-31  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark.
+
+        - fixed <rdar://problem/4751164> REGRESSION: Safari places text on incorrect button when returning to a page via back [10541]
+        http://bugs.webkit.org/show_bug.cgi?id=10541
+
+        * dom/Document.cpp:
+        (WebCore::Document::formElementsState):
+        * dom/Document.h:
+        
+        I couldn't figure out the back/forward support in the tests enough
+        to make an automated test, but this maual test reproduces the
+        problem 100% without this patch:
+        
+        * manual-tests/back.html: Added.
+        * manual-tests/form-control-madness.html: Added.
+
 2007-01-31  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Mitz.

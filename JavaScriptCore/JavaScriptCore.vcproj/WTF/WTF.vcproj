@@ -224,6 +224,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\ListHashSet.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\ListRefPtr.h"
 			>
 		</File>

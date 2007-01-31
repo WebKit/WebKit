@@ -36,6 +36,7 @@
 #include "StringHash.h"
 #include "Timer.h"
 #include <wtf/HashCountedSet.h>
+#include <wtf/ListHashSet.h>
 
 namespace WebCore {
 
@@ -673,7 +674,7 @@ protected:
     RegisteredEventListenerList m_windowEventListeners;
 
     typedef HashMap<FormElementKey, Vector<String>, FormElementKeyHash, FormElementKeyHashTraits> FormElementStateMap;
-    HashSet<HTMLGenericFormElement*> m_formElementsWithState;
+    ListHashSet<HTMLGenericFormElement*> m_formElementsWithState;
     FormElementStateMap m_stateForNewFormElements;
 
     Color m_linkColor;

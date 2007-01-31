@@ -1,3 +1,67 @@
+2007-01-31  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark with help from Lars.
+        
+        - added new ListHashSet class, which combines a hashtable and a linked list to provide a set
+        that keeps elements in inserted order
+        
+        This is to assist in fixing the following:
+        <rdar://problem/4751164> REGRESSION: Safari places text on incorrect button when returning to a page via back [10541]
+        http://bugs.webkit.org/show_bug.cgi?id=10541
+
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/HashTable.h:
+        (WTF::HashTable::find):
+        (WTF::HashTable::contains):
+        (WTF::::find):
+        (WTF::::contains):
+        * wtf/ListHashSet.h: Added.
+        (WTF::ListHashSetNode::ListHashSetNode):
+        (WTF::ListHashSetNodeHashFunctions::hash):
+        (WTF::ListHashSetNodeHashFunctions::equal):
+        (WTF::ListHashSetIterator::ListHashSetIterator):
+        (WTF::ListHashSetIterator::get):
+        (WTF::ListHashSetIterator::operator*):
+        (WTF::ListHashSetIterator::operator->):
+        (WTF::ListHashSetIterator::operator++):
+        (WTF::ListHashSetIterator::operator--):
+        (WTF::ListHashSetIterator::operator==):
+        (WTF::ListHashSetIterator::operator!=):
+        (WTF::ListHashSetIterator::operator const_iterator):
+        (WTF::ListHashSetIterator::node):
+        (WTF::ListHashSetConstIterator::ListHashSetConstIterator):
+        (WTF::ListHashSetConstIterator::get):
+        (WTF::ListHashSetConstIterator::operator*):
+        (WTF::ListHashSetConstIterator::operator->):
+        (WTF::ListHashSetConstIterator::operator++):
+        (WTF::ListHashSetConstIterator::operator--):
+        (WTF::ListHashSetConstIterator::operator==):
+        (WTF::ListHashSetConstIterator::operator!=):
+        (WTF::ListHashSetConstIterator::node):
+        (WTF::ListHashSetTranslator::hash):
+        (WTF::ListHashSetTranslator::equal):
+        (WTF::ListHashSetTranslator::translate):
+        (WTF::::ListHashSet):
+        (WTF::::operator):
+        (WTF::::~ListHashSet):
+        (WTF::::size):
+        (WTF::::capacity):
+        (WTF::::isEmpty):
+        (WTF::::begin):
+        (WTF::::end):
+        (WTF::::find):
+        (WTF::::contains):
+        (WTF::::add):
+        (WTF::::remove):
+        (WTF::::clear):
+        (WTF::::unlinkAndDelete):
+        (WTF::::appendNode):
+        (WTF::::deleteAllNodes):
+        (WTF::::makeIterator):
+        (WTF::::makeConstIterator):
+        (WTF::deleteAllValues):
+
 2007-01-30  Darin Adler  <darin@apple.com>
 
         * kjs/DateMath.cpp: Fix license header to reflect LGPL as the first license

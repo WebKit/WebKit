@@ -291,9 +291,13 @@ namespace WTF {
         // in the table.
         template<typename T, typename Extra, typename HashTranslator> pair<iterator, bool> add(const T& key, const Extra&);
 
-        iterator find(const KeyType&);
-        const_iterator find(const KeyType&) const;
-        bool contains(const KeyType&) const;
+        iterator find(const KeyType& key) { return find<KeyType, IdentityTranslatorType>(key); }
+        const_iterator find(const KeyType& key) const { return find<KeyType, IdentityTranslatorType>(key); }
+        bool contains(const KeyType& key) const { return contains<KeyType, IdentityTranslatorType>(key); }
+
+        template <typename T, typename HashTranslator> iterator find(const T&);
+        template <typename T, typename HashTranslator> const_iterator find(const T&) const;
+        template <typename T, typename HashTranslator> bool contains(const T&) const;
 
         void remove(const KeyType&);
         void remove(iterator);
@@ -467,36 +471,39 @@ namespace WTF {
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::iterator HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::find(const Key& key)
+    template <typename T, typename HashTranslator> 
+    typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::iterator HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::find(const T& key)
     {
         if (!m_table)
             return end();
 
-        LookupType result = lookup(key);
+        LookupType result = lookup<T, HashTranslator>(key).first;
         if (!result.second)
             return end();
         return makeIterator(result.first);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::const_iterator HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::find(const Key& key) const
+    template <typename T, typename HashTranslator> 
+    typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::const_iterator HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::find(const T& key) const
     {
         if (!m_table)
             return end();
 
-        LookupType result = const_cast<HashTable *>(this)->lookup(key);
+        LookupType result = const_cast<HashTable *>(this)->lookup<T, HashTranslator>(key).first;
         if (!result.second)
             return end();
         return makeConstIterator(result.first);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    bool HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::contains(const KeyType& key) const
+    template <typename T, typename HashTranslator> 
+    bool HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::contains(const T& key) const
     {
         if (!m_table)
             return false;
 
-        return const_cast<HashTable *>(this)->lookup(key).second;
+        return const_cast<HashTable *>(this)->lookup<T, HashTranslator>(key).first.second;
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
