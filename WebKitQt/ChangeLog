@@ -1,3 +1,22 @@
+2007-01-31  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Lars
+
+        Properly propagate key events.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::addToJSWindowObject):
+        (QWebFrame::innerText):
+        (QWebFrame::renderTreeDump):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * Api/qwebpage.h:
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::pageDestroyed):
+        (WebCore::EditorClientQt::handleKeyPress):
+        (WebCore::EditorClientQt::EditorClientQt):
+        * WebCoreSupport/EditorClientQt.h:
+
 2007-01-31  George Staikos  <staikos@kde.org>
 
         Remove focusFrame() - misguided - and add childFrames().  Fix a crash

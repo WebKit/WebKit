@@ -1,3 +1,14 @@
+2007-01-31  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Lars
+
+        Properly propagate key events. 
+
+        * page/qt/FrameQt.cpp:
+        * page/qt/FrameQt.h: Remove redundant method.
+        * platform/qt/ScrollViewCanvasQt.cpp:
+        (WebCore::ScrollViewCanvasQt::handleKeyEvent):
+
 2007-01-31  George Staikos  <staikos@kde.org>
 
         Reviewed by Zack and Lars.

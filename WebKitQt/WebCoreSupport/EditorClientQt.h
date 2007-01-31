@@ -35,10 +35,13 @@
 
 #include <wtf/Forward.h>
 
+class QWebPage;
+
 namespace WebCore {
 
 class EditorClientQt : public EditorClient {
 public:
+    EditorClientQt(QWebPage* page);
     
     virtual void pageDestroyed();
     
@@ -77,7 +80,8 @@ public:
     virtual void redo();
 
     virtual void handleKeyPress(KeyboardEvent*);
-
+private:
+    QWebPage* m_page;
 };
 
 }

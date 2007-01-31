@@ -49,7 +49,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
 {
     chromeClient = new ChromeClientQt(q);
     contextMenuClient = new ContextMenuClientQt();
-    editorClient = new EditorClientQt();
+    editorClient = new EditorClientQt(q);
     page = new Page(chromeClient, contextMenuClient, editorClient,
                     new DragClientQt());
 

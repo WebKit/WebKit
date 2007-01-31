@@ -136,47 +136,12 @@ void ScrollViewCanvasQt::handleKeyEvent(QKeyEvent* ev, bool isKeyUp)
 {
     PlatformKeyboardEvent kevent(ev, isKeyUp);
 
-    if (!m_frameView)
+    if (!m_eventHandler)
         return;
 
-    FrameQt* frame = static_cast<FrameQt*>(m_frameView->frame());
-    if (!frame)
-        return;
+    bool handled = m_eventHandler->keyEvent(kevent);
 
-    bool handled = frame->keyEvent(kevent);
-
-    if (!handled && !kevent.isKeyUp()) {
-        Node* start = frame->selectionController()->start().node();
-        if (start && start->isContentEditable()) {
-            switch(kevent.WindowsKeyCode()) {
-                case VK_BACK:
-                    TypingCommand::deleteKeyPressed(frame->document());
-                    break;
-                case VK_DELETE:
-                    TypingCommand::forwardDeleteKeyPressed(frame->document());
-                    break;
-                case VK_LEFT:
-                    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::LEFT, CharacterGranularity);
-                    break;
-                case VK_RIGHT:
-                    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::RIGHT, CharacterGranularity);
-                    break;
-                case VK_UP:
-                    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::BACKWARD, ParagraphGranularity);
-                    break;
-                case VK_DOWN:
-                    frame->selectionController()->modify(SelectionController::MOVE, SelectionController::FORWARD, ParagraphGranularity);
-                    break;
-                default:
-                    TypingCommand::insertText(frame->document(), kevent.text(), false);
-
-            }
-
-            handled = true;
-        }
-
-        // FIXME: doScroll stuff()!
-    }
+    ev->setAccepted(handled);
 }
 
 }

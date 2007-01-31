@@ -218,38 +218,6 @@ bool FrameQt::shouldInterruptJavaScript()
     return false;
 }
 
-bool FrameQt::keyEvent(const PlatformKeyboardEvent& keyEvent)
-{
-    bool result;
-
-    // Check for cases where we are too early for events -- possible unmatched key up
-    // from pressing return in the location bar.
-    Document* doc = document();
-    if (!doc)
-        return false;
-
-    Node* node = doc->focusedNode();
-    if (!node) {
-        if (doc->isHTMLDocument())
-            node = doc->body();
-        else
-            node = doc->documentElement();
-
-        if (!node)
-            return false;
-    }
-
-#ifdef MULTIPLE_FORM_SUBMISSION_PROTECTION
-    if (!keyEvent.isKeyUp())
-        loader()->resetMultipleFormSubmissionProtection();
-#endif
-    
-    result = !EventTargetNodeCast(node)->dispatchKeyEvent(keyEvent);
-
-    // FIXME: FrameMac has a keyDown/keyPress hack here which we are not copying.
-    return result;
-}
-
 void FrameQt::setFrameGeometry(const IntRect& r)
 {
     setFrameGeometry(QRect(r));

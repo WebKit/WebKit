@@ -107,7 +107,7 @@ void QWebFrame::addToJSWindowObject(const QByteArray &name, QObject *object)
         qDebug() << "Warning: couldn't get window object";
         return;
     }
-            
+
     KJS::JSObject *testController =
         KJS::Bindings::Instance::createRuntimeObject(KJS::Bindings::Instance::QtLanguage,
                                                      object, root);
@@ -125,7 +125,7 @@ QString QWebFrame::innerText() const
 {
     if (d->frameView->layoutPending())
         d->frameView->layout();
-    
+
     Element *documentElement = d->frame->document()->documentElement();
     return documentElement->innerText();
 }
@@ -134,7 +134,7 @@ QString QWebFrame::renderTreeDump() const
 {
     if (d->frameView->layoutPending())
         d->frameView->layout();
-    
+
     return externalRepresentation(d->frame->renderer());
 }
 
