@@ -110,7 +110,7 @@ void EditorClientQt::didBeginEditing()
 
 void EditorClientQt::respondToChangedContents()
 {
-    notImplemented();
+    m_page->d->modified = true;
 }
 
 void EditorClientQt::didEndEditing()
@@ -136,8 +136,10 @@ bool EditorClientQt::selectWordBeforeMenuEvent()
 
 bool EditorClientQt::isEditable()
 {
-    notImplemented();
-    return false;
+    Frame* frame = m_page->d->page->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return false;
+    return frame->selectionController()->isContentEditable();
 }
 
 void EditorClientQt::registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand>)

@@ -53,6 +53,8 @@ public:
     QVBoxLayout *layout;
 
     QWebPage *q;
+
+    bool modified;
 };
 
 #endif

@@ -1,5 +1,19 @@
 2007-01-31  Zack Rusin  <zrusin@trolltech.com>
 
+        Expose the fact that the form has been edited
+        in the public api.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPage::isModified):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::respondToChangedContents):
+        (WebCore::EditorClientQt::isEditable):
+
+2007-01-31  Zack Rusin  <zrusin@trolltech.com>
+
         Reviewed by Lars
 
         Properly propagate key events.

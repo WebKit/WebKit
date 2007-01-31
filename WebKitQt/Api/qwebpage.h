@@ -44,6 +44,8 @@ namespace WebCore {
 class QWEBKIT_EXPORT QWebPage : public QWidget
 {
     Q_OBJECT
+
+    Q_PROPERTY(bool modified READ isModified)
 public:
     QWebPage(QWidget *parent);
     ~QWebPage();
@@ -60,6 +62,8 @@ public:
     QString title() const;
 
     QUrl url() const;
+
+    bool isModified() const;
 
     virtual void javaScriptConsoleMessage(const QString& message, unsigned int lineNumber, const QString& sourceID);
 
