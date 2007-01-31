@@ -1,3 +1,9 @@
+2007-01-31  Darin Adler  <darin@apple.com>
+
+        - fix build
+
+        * ForwardingHeaders/wtf/ListHashSet.h: Added.
+
 2007-01-31  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
