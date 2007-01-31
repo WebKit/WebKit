@@ -42,6 +42,7 @@ namespace WebCore {
 
 MainResourceLoader::MainResourceLoader(Frame* frame)
     : ResourceLoader(frame)
+    , m_dataLoadTimer(this, &MainResourceLoader::handleDataLoadNow)
     , m_loadingMultipartContent(false)
     , m_waitingForContentPolicy(false)
 {
@@ -76,6 +77,8 @@ void MainResourceLoader::receivedError(const ResourceError& error)
 
 void MainResourceLoader::didCancel(const ResourceError& error)
 {
+    m_dataLoadTimer.stop();
+
     // Calling receivedMainResourceError will likely result in the last reference to this object to go away.
     RefPtr<MainResourceLoader> protect(this);
 
@@ -318,12 +321,18 @@ void MainResourceLoader::handleEmptyLoad(const KURL& url, bool forURLScheme)
     didReceiveResponse(response);
 }
 
-void MainResourceLoader::handleDataLoad(ResourceRequest& r)
+void MainResourceLoader::handleDataLoadNow(Timer<MainResourceLoader>*)
 {
     RefPtr<MainResourceLoader> protect(this);
 
-    ResourceResponse response(r.url(), m_substituteData.mimeType(), m_substituteData.content()->size(), m_substituteData.textEncoding(), "");
+    ResourceResponse response(m_initialRequest.url(), m_substituteData.mimeType(), m_substituteData.content()->size(), m_substituteData.textEncoding(), "");
     didReceiveResponse(response);
+}
+
+void MainResourceLoader::handleDataLoadSoon(ResourceRequest& r)
+{
+    m_initialRequest = r;
+    m_dataLoadTimer.startOneShot(0);
 }
 
 bool MainResourceLoader::loadNow(ResourceRequest& r)
@@ -350,7 +359,7 @@ bool MainResourceLoader::loadNow(ResourceRequest& r)
         return true;
 
     if (m_substituteData.isValid())
-        handleDataLoad(r);
+        handleDataLoadSoon(r);
     else if (shouldLoadEmpty || frameLoader()->representationExistsForURLScheme(url.protocol()))
         handleEmptyLoad(url, !shouldLoadEmpty);
     else

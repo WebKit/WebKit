@@ -1,3 +1,20 @@
+2007-01-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+
+        - fixed <rdar://problem/4963871> REGRESSION: Crash occurs at WebCore::Frame::loader() when attempting to open a saved archive file
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::request): Removed obsolete FIXME.
+        (WebCore::DocumentLoader::initialRequest): Ditto.
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::MainResourceLoader): Handle data loads from a timer, otherwise bad things happen.
+        (WebCore::MainResourceLoader::handleDataLoadNow):
+        (WebCore::MainResourceLoader::handleDataLoadSoon):
+        (WebCore::MainResourceLoader::loadNow):
+        (WebCore::MainResourceLoader::didCancel): cancel data load timer
+        * loader/MainResourceLoader.h:
+
 2007-01-30  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

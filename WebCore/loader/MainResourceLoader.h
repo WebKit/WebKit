@@ -29,6 +29,7 @@
 #include "FrameLoaderTypes.h"
 #include "ResourceLoader.h"
 #include "SubstituteData.h"
+#include "Timer.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -52,6 +53,8 @@ namespace WebCore {
         virtual void didFinishLoading();
         virtual void didFail(const ResourceError&);
 
+        void handleDataLoadNow(Timer<MainResourceLoader>*);
+
     private:
         MainResourceLoader(Frame*);
 
@@ -60,6 +63,8 @@ namespace WebCore {
         bool loadNow(ResourceRequest&);
 
         void handleEmptyLoad(const KURL&, bool forURLScheme);
+        void handleDataLoadSoon(ResourceRequest& r);
+
         void handleDataLoad(ResourceRequest&);
 
         void receivedError(const ResourceError&);
@@ -76,6 +81,7 @@ namespace WebCore {
 
         ResourceRequest m_initialRequest;
         SubstituteData m_substituteData;
+        Timer<MainResourceLoader> m_dataLoadTimer;
 
         bool m_loadingMultipartContent;
         bool m_waitingForContentPolicy;

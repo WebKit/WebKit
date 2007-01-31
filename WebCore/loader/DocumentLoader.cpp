@@ -150,19 +150,16 @@ const ResourceRequest& DocumentLoader::originalRequestCopy() const
 
 const ResourceRequest& DocumentLoader::request() const
 {
-    // FIXME: need a better way to handle data loads
     return m_request;
 }
 
 ResourceRequest& DocumentLoader::request()
 {
-    // FIXME: need a better way to handle data loads
     return m_request;
 }
 
 const ResourceRequest& DocumentLoader::initialRequest() const
 {
-    // FIXME: need a better way to handle data loads
     return m_originalRequest;
 }
 
