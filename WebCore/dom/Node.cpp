@@ -94,12 +94,16 @@ bool TagNodeList::nodeMatches(Node *testNode) const
 
 
 #ifndef NDEBUG
-struct NodeImplCounter { 
-    static int count; 
-    ~NodeImplCounter() { if (count != 0) fprintf(stderr, "LEAK: %d Node\n", count); }
+struct NodeCounter { 
+    static unsigned count; 
+    ~NodeCounter() 
+    { 
+        if (count) 
+            fprintf(stderr, "LEAK: %u Node\n", count); 
+    }
 };
-int NodeImplCounter::count = 0;
-static NodeImplCounter nodeImplCounter;
+unsigned NodeCounter::count = 0;
+static NodeCounter nodeCounter;
 #endif
 
 Node::Node(Document *doc)
@@ -126,7 +130,7 @@ Node::Node(Document *doc)
       m_inDetach(false)
 {
 #ifndef NDEBUG
-    ++NodeImplCounter::count;
+    ++NodeCounter::count;
 #endif
 }
 
@@ -142,7 +146,7 @@ void Node::setDocument(Document* doc)
 Node::~Node()
 {
 #ifndef NDEBUG
-    --NodeImplCounter::count;
+    --NodeCounter::count;
 #endif
     if (renderer())
         detach();

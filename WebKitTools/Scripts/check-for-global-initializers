@@ -82,6 +82,7 @@ for my $file (sort @files) {
                 next if $shortName eq "Frame.o";
                 next if $shortName eq "Node.o";
                 next if $shortName eq "RenderObject.o";
+                next if $shortName eq "Range.o"
             }
         }
 

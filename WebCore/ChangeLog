@@ -1,3 +1,37 @@
+2007-01-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Added a Range counter to detect leaks. Tweaked the Node counter.
+        
+        Also fixed a TextIterator destructive modification bug that I noticed along the
+        way. No test case for this bug because no clients have been bitten by it
+        yet.
+
+        * dom/Node.cpp: Renamed NodeImplCounter to NodeCounter, changed counter
+        to unsigned, fixed formatting to match style guidelines.
+        (WebCore::NodeCounter::~NodeCounter):
+        (WebCore::Node::Node):
+        (WebCore::Node::~Node):
+
+        * dom/Range.cpp:
+        (WebCore::RangeCounter::~RangeCounter): Added.
+        (WebCore::Range::Range):
+        (WebCore::Range::~Range):
+        (WebCore::Range::ownerDocument): New accessor, used by TextIterator to avoid
+        annoying NULL checks.
+        * dom/Range.h:
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::subrange): 
+        (1) Don't initialize result with entireRange --  doing so would create a 
+        PassRefPtr that pointed to entireRange, so this function would destructively 
+        modify the Range you passed it. Initialize it with a new Range instead.
+        (2) Don't use a PassRefPtr as a local variable, because they have sneaky
+        semantics. Use a RefPtr instead.
+        (3) Don't call CharacterIterator::range() willy-nilly, since it does 
+        non-trivial work. Use a local variable instead.
+
 2007-01-31  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

@@ -1,3 +1,16 @@
+2007-01-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Added Selection::toRange to the leaks -exclude list, since it comes up
+        as a false positive (Radar 4967949).
+        
+        Also added RangeCounter to the global initializer exclude list. I added
+        a RangeCounter since leaks won't detect all Range leaks anymore.
+
+        * Scripts/check-for-global-initializers:
+        * Scripts/run-webkit-tests:
+
 2007-01-31  Anders Carlsson  <acarlsson@apple.com>
 
         * DumpRenderTree/ResourceLoadDelegate.m:

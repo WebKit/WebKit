@@ -43,6 +43,20 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+#ifndef NDEBUG
+class RangeCounter {
+public:
+    static unsigned count;
+    ~RangeCounter()
+    {
+        if (count)
+            fprintf(stderr, "LEAK: %u Range\n", count);
+    }
+};
+unsigned RangeCounter::count = 0;
+static RangeCounter rangeCounter;
+#endif
+
 Range::Range(Document* ownerDocument)
     : m_ownerDocument(ownerDocument)
     , m_startContainer(ownerDocument)
@@ -51,6 +65,9 @@ Range::Range(Document* ownerDocument)
     , m_endOffset(0)
     , m_detached(false)
 {
+#ifndef NDEBUG
+    ++RangeCounter::count;
+#endif
 }
 
 Range::Range(Document* ownerDocument,
@@ -63,6 +80,9 @@ Range::Range(Document* ownerDocument,
     , m_endOffset(0)
     , m_detached(false)
 {
+#ifndef NDEBUG
+    ++RangeCounter::count;
+#endif
     // Simply setting the containers and offsets directly would not do any of the checking
     // that setStart and setEnd do, so we must call those functions.
     ExceptionCode ec = 0;
@@ -80,6 +100,9 @@ Range::Range(Document* ownerDocument, const Position& start, const Position& end
     , m_endOffset(0)
     , m_detached(false)
 {
+#ifndef NDEBUG
+    ++RangeCounter::count;
+#endif
     // Simply setting the containers and offsets directly would not do any of the checking
     // that setStart and setEnd do, so we must call those functions.
     ExceptionCode ec = 0;
@@ -91,6 +114,9 @@ Range::Range(Document* ownerDocument, const Position& start, const Position& end
 
 Range::~Range()
 {
+#ifndef NDEBUG
+    --RangeCounter::count;
+#endif
 }
 
 Node *Range::startContainer(ExceptionCode& ec) const
