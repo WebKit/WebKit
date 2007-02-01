@@ -106,7 +106,7 @@
     if (shouldDumpResourceLoadCallbacks && !done)
         return [[request URL] _drt_descriptionSuitableForTestResult];
     
-    return [[[NSObject alloc] init] autorelease];
+    return @"<unknown>";
 }
 
 -(NSURLRequest *)webView: (WebView *)wv resource:identifier willSendRequest: (NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource
