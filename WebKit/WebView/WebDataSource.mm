@@ -459,6 +459,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSArray *)subresources
 {
+    if (!_private->loader->isCommitted())
+        return [NSMutableArray array];
+
     NSArray *datas;
     NSArray *responses;
     [[self _bridge] getAllResourceDatas:&datas andResponses:&responses];
@@ -475,6 +478,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (WebResource *)subresourceForURL:(NSURL *)URL
 {
+    if (!_private->loader->isCommitted())
+        return nil;
+
     NSData *data;
     NSURLResponse *response;
     if (![[self _bridge] getData:&data andResponse:&response forURL:URL])
