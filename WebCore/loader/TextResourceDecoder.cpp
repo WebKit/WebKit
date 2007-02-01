@@ -559,13 +559,26 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
                     enclosingTagName = noscriptTag.localName().impl();
             }
             
+            // Find where the opening tag ends.
+            const char* tagContentStart = ptr;
+            if (!end) {
+                while (*ptr != '>') {
+                    if (*ptr == '\0')
+                        return false;
+                    if (*ptr == '\'' || *ptr == '"') {
+                        char quoteMark = *ptr;
+                        while (*ptr != quoteMark) {
+                            if (*ptr == '\0')
+                                return false;
+                            ++ptr;
+                        }
+                    }
+                    ++ptr;
+                }
+            }
+            
             if (!end && tag == metaTag) {
-                const char* end = ptr;
-                while (*end != '>' && *end != '\0')
-                    end++;
-                if (*end == '\0')
-                    break;
-                DeprecatedCString str(ptr, (end-ptr)+1);
+                DeprecatedCString str(tagContentStart, tagContentStart - ptr);
                 str = str.lower();
                 int pos = 0;
                 while (pos < (int)str.length()) {
