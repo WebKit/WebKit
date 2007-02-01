@@ -368,8 +368,8 @@ namespace WTF {
         if (it == end())
             return;
 
-        unlinkAndDelete(it.node());
         m_impl.remove(it.node());
+        unlinkAndDelete(it.node());
     }
 
     template<typename T, typename U>

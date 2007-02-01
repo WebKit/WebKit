@@ -1,5 +1,14 @@
 2007-01-31  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Adam.
+        
+        - fix sporadic crash
+
+        * wtf/ListHashSet.h:
+        (WTF::::remove): remove before deleting
+
+2007-01-31  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Mark with help from Lars.
         
         - added new ListHashSet class, which combines a hashtable and a linked list to provide a set
