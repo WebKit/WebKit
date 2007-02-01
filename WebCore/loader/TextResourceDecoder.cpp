@@ -578,7 +578,7 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
             }
             
             if (!end && tag == metaTag) {
-                DeprecatedCString str(tagContentStart, tagContentStart - ptr);
+                DeprecatedCString str(tagContentStart, ptr - tagContentStart);
                 str = str.lower();
                 int pos = 0;
                 while (pos < (int)str.length()) {
