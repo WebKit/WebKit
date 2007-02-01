@@ -51,6 +51,7 @@
 #include "HTMLTextAreaElement.h"
 #include "HitTestResult.h"
 #include "IndentOutdentCommand.h"
+#include "KeyboardEvent.h"
 #include "KURL.h"
 #include "Page.h"
 #include "Pasteboard.h"
@@ -68,6 +69,30 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
+// When an event handler has moved the selection outside of a text control
+// we should use the target control's selection for this editing operation.
+static Selection selectionForEvent(Frame* frame, Event* event)
+{
+    Page* page = frame->page();
+    if (!page)
+        return Selection();
+    Selection selection = page->selection();
+    if (!event)
+        return selection;
+    Node* target = event->target()->toNode();
+    Node* selectionStart = selection.start().node();
+    
+    // If the target is a text control, and the current selection is outside of its shadow tree,
+    // then use the saved selection for that text control.
+    if (target && (!selectionStart || target->shadowAncestorNode() != selectionStart->shadowAncestorNode())) {
+        if (target->hasTagName(inputTag) && static_cast<HTMLInputElement*>(target)->isTextField())
+            return static_cast<HTMLInputElement*>(target)->selection();
+        if (target->hasTagName(textareaTag))
+            return static_cast<HTMLTextAreaElement*>(target)->selection();
+    }
+    return selection;
+}
+
 EditorClient* Editor::client() const
 {
     if (Page* page = m_frame->page())
@@ -77,8 +102,11 @@ EditorClient* Editor::client() const
 
 void Editor::handleKeyPress(KeyboardEvent* event)
 {
-    if (EditorClient* c = client())
-        c->handleKeyPress(event);
+    if (EditorClient* c = client()) {
+        Selection selection = selectionForEvent(m_frame, event);
+        if (selection.isCaretOrRange() && selection.isContentEditable())
+            c->handleKeyPress(event);
+    }
 }
 
 bool Editor::canEdit() const
@@ -1179,30 +1207,6 @@ bool Editor::execCommand(const AtomicString& command)
     }
     
     return handled;
-}
-
-// When an event handler has moved the selection outside of a text control
-// we should use the target control's selection for this editing operation.
-static Selection selectionForEvent(Frame* frame, Event* event)
-{
-    Page* page = frame->page();
-    if (!page)
-        return Selection();
-    Selection selection = page->selection();
-    if (!event)
-        return selection;
-    Node* target = event->target()->toNode();
-    Node* selectionStart = selection.start().node();
-    
-    // If the target is a text control, and the current selection is outside of its shadow tree,
-    // then use the saved selection for that text control.
-    if (target && (!selectionStart || target->shadowAncestorNode() != selectionStart->shadowAncestorNode())) {
-        if (target->hasTagName(inputTag) && static_cast<HTMLInputElement*>(target)->isTextField())
-            return static_cast<HTMLInputElement*>(target)->selection();
-        if (target->hasTagName(textareaTag))
-            return static_cast<HTMLTextAreaElement*>(target)->selection();
-    }
-    return selection;
 }
 
 bool Editor::insertText(const String& text, bool selectInsertedText, Event* triggeringEvent)

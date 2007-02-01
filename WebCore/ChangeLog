@@ -1,3 +1,16 @@
+2007-01-31  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=12516
+        REGRESSION (r19313): All keyboard navigation has stopped working
+
+        For non-editable selections, handleKeyPress doesn't need to call _interceptEditingKeyEvent. 
+
+        * editing/Editor.cpp:
+        (WebCore::selectionForEvent): Moved this to the top of the file.
+        (WebCore::Editor::handleKeyPress): Do the equivalent of the _canEdit check that used to be in WebKit WebEditorClient::handleKeyPress.
+
 2007-01-31  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
