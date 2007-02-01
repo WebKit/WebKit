@@ -103,7 +103,10 @@
 
 - webView: (WebView *)wv identifierForInitialRequest: (NSURLRequest *)request fromDataSource: (WebDataSource *)dataSource
 {
-    return [[request URL] _drt_descriptionSuitableForTestResult];
+    if (shouldDumpResourceLoadCallbacks && !done)
+        return [[request URL] _drt_descriptionSuitableForTestResult];
+    
+    return [[[NSObject alloc] init] autorelease];
 }
 
 -(NSURLRequest *)webView: (WebView *)wv resource:identifier willSendRequest: (NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource

@@ -1,5 +1,11 @@
 2007-01-31  Anders Carlsson  <acarlsson@apple.com>
 
+        * DumpRenderTree/ResourceLoadDelegate.m:
+        (-[ResourceLoadDelegate webView:identifierForInitialRequest:fromDataSource:]):
+        Don't try to create an identifier if resource loads shouldn't be dumped.
+
+2007-01-31  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Geoff.
 
         Add dumping of resource loads. This isn't completely tweaked yet since the test results would
