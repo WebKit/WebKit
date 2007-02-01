@@ -54,7 +54,7 @@ public:
     {
         return paintButton(o, i, r);
     }
- 
+
     virtual void setCheckboxSize(RenderStyle*) const;
 
     virtual bool paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
@@ -82,6 +82,9 @@ public:
     virtual Color platformInactiveSelectionBackgroundColor() const;
     virtual Color platformActiveSelectionForegroundColor() const;
     virtual Color platformInactiveSelectionForegroundColor() const;
+
+    void adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    bool paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
 private:
     void addIntrinsicMargins(RenderStyle*) const;
     void close();
@@ -229,22 +232,27 @@ void RenderThemeQt::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* s
     addIntrinsicMargins(style);
 }
 
+void RenderThemeQt::adjustMenuListStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+{
+    addIntrinsicMargins(style);
+}
+
 bool RenderThemeQt::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
     QStyle* style = 0;
     QPainter* painter = 0;
     QWidget* widget = 0;
-    
+
     if (!getStylePainterAndWidgetFromPaintInfo(i, style, painter, widget))
         return true;
-    
+
     QStyleOptionButton option;
     option.initFrom(widget);
     option.rect = r;
 
     // Get the correct theme data for a button
     EAppearance appearance = applyTheme(option, o);
-  
+
     if(appearance == PushButtonAppearance || appearance == ButtonAppearance)
         style->drawControl(QStyle::CE_PushButton, &option, painter);
     else if(appearance == RadioAppearance)
@@ -265,10 +273,10 @@ bool RenderThemeQt::paintTextField(RenderObject* o, const RenderObject::PaintInf
     QStyle* style = 0;
     QPainter* painter = 0;
     QWidget* widget = 0;
-    
+
     if (!getStylePainterAndWidgetFromPaintInfo(i, style, painter, widget))
         return true;
-    
+
     QStyleOptionFrameV2 panel;
     panel.initFrom(widget);
     panel.rect = r;
@@ -305,6 +313,22 @@ Color RenderThemeQt::platformInactiveSelectionForegroundColor() const
 {
     QPalette pal = QApplication::palette();
     return pal.brush(QPalette::Inactive, QPalette::HighlightedText).color();
+}
+
+bool RenderThemeQt::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+{
+    QStyle* style = 0;
+    QPainter* painter = 0;
+    QWidget* widget = 0;
+
+    if (!getStylePainterAndWidgetFromPaintInfo(i, style, painter, widget))
+        return true;
+
+    QStyleOptionComboBox opt;
+    opt.initFrom(widget);
+    opt.rect = r;
+    style->drawComplexControl(QStyle::CC_ComboBox, &opt, painter, widget);
+    return false;
 }
 
 }

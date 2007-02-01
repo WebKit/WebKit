@@ -38,6 +38,10 @@ class NSPopUpButtonCell;
 typedef struct HWND__* HWND;
 typedef struct HDC__* HDC;
 typedef struct HBITMAP__* HBITMAP;
+#elif PLATFORM(QT)
+#include <QHash>
+class QMenu;
+class QListWidgetItem;
 #endif
 
 namespace WebCore {
@@ -102,6 +106,11 @@ private:
     void populate();
 
     RetainPtr<NSPopUpButtonCell> m_popup;
+#elif PLATFORM(QT)
+    void clear();
+    void populate(const IntRect&);
+    QMenu* m_popup;
+    QHash<QListWidgetItem*, int> m_actions;
 #elif PLATFORM(WIN)
     void calculatePositionAndSize(const IntRect&, FrameView*);
     void invalidateItem(int index);

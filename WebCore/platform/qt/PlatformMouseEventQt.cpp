@@ -28,6 +28,8 @@
 #include "config.h"
 #include "PlatformMouseEvent.h"
 
+#include "SystemTime.h"
+
 #include <QMouseEvent>
 
 namespace WebCore {
@@ -38,6 +40,21 @@ PlatformMouseEvent::PlatformMouseEvent(QMouseEvent* event, int clickCount)
 {
     m_position = IntPoint(event->pos());
     m_globalPosition = IntPoint(event->globalPos());
+    
+    m_timestamp = WebCore::currentTime();
+    switch(event->type()) {
+    case QEvent::MouseMove:
+        m_eventType = MouseEventMoved;
+        break;
+    case QEvent::MouseButtonPress:
+        m_eventType = MouseEventPressed;
+        break;
+    case QEvent::MouseButtonRelease:
+        m_eventType = MouseEventReleased;
+        break;
+    default:
+        m_eventType = MouseEventMoved;
+    }
 
     if (event->button() == Qt::LeftButton || (event->buttons() & Qt::LeftButton))
         m_button = LeftButton;
