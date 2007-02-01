@@ -89,8 +89,8 @@ QWebFrame *FrameLoaderClientQt::webFrame() const
 
 void FrameLoaderClientQt::callPolicyFunction(FramePolicyFunction function, PolicyAction action)
 {
-    qDebug() << "FrameLoaderClientQt::callPolicyFunction";
     ASSERT(!m_policyFunction);
+    ASSERT(function);
 
     m_policyFunction = function;
     emit sigCallPolicyFunction(action);
@@ -98,11 +98,11 @@ void FrameLoaderClientQt::callPolicyFunction(FramePolicyFunction function, Polic
 
 void FrameLoaderClientQt::slotCallPolicyFunction(int action)
 {
-    qDebug() << "FrameLoaderClientQt::slotCallPolicyFunction";
     if (!m_frame || !m_policyFunction)
         return;
-    (m_frame->loader()->*m_policyFunction)(WebCore::PolicyAction(action));
+    FramePolicyFunction function = m_policyFunction;
     m_policyFunction = 0;
+    (m_frame->loader()->*function)(WebCore::PolicyAction(action));
 }
 
 bool FrameLoaderClientQt::hasWebView() const
@@ -371,6 +371,7 @@ void FrameLoaderClientQt::dispatchWillSubmitForm(FramePolicyFunction function,
                                                  PassRefPtr<FormState>)
 {
     notImplemented();
+    Q_ASSERT(!m_policyFunction);
     // FIXME: This is surely too simple
     callPolicyFunction(function, PolicyUse);
 }
@@ -771,6 +772,7 @@ WebCore::Frame* FrameLoaderClientQt::dispatchCreatePage()
 void FrameLoaderClientQt::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const WebCore::String&, const WebCore::ResourceRequest&)
 {
     // we need to call directly here
+    Q_ASSERT(!m_policyFunction);
     m_policyFunction = function;
     slotCallPolicyFunction(PolicyUse);
 }
@@ -778,12 +780,13 @@ void FrameLoaderClientQt::dispatchDecidePolicyForMIMEType(FramePolicyFunction fu
 void FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::String&)
 {
     notImplemented();
+    Q_ASSERT(!m_policyFunction);
     callPolicyFunction(function, PolicyIgnore);
 }
 
 void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const WebCore::NavigationAction&, const WebCore::ResourceRequest& request)
 {
-
+    Q_ASSERT(!m_policyFunction);
     KURL url = request.url();
     if (url.isEmpty() || url.protocol() == "about") {
         m_policyFunction = function;

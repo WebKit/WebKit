@@ -1,3 +1,17 @@
+2007-02-01  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Adam.
+
+        Fix form loading for the Qt build.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::callPolicyFunction):
+        (WebCore::FrameLoaderClientQt::slotCallPolicyFunction):
+        (WebCore::FrameLoaderClientQt::dispatchWillSubmitForm):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForMIMEType):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+
 2007-01-31  Zack Rusin  <zrusin@trolltech.com>
 
         Expose the fact that the form has been edited
