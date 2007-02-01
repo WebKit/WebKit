@@ -1,3 +1,23 @@
+2007-02-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix <rdar://problem/4887428> REGRESSION: Implement slight delay for firing incremental onSearch event
+
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::RenderTextControl): Set up timer.
+        (WebCore::RenderTextControl::subtreeHasChanged): Start timer here instead of immediately sending event.
+        (WebCore::RenderTextControl::searchEventTimerFired): Added. Sends search event.
+        (WebCore::RenderTextControl::stopSearchEventTimer): Added.
+        (WebCore::RenderTextControl::startSearchEventTimer): Added. Sends search event right away if there is
+        no text. If there is some text, sets the timer using the same delay rule as NSSearchField. If you keep
+        typing, then the timer keeps getting reset 0.2 seconds into the future until you pause.
+
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::onSearch): Tell the renderer to
+        stop the timer, since we're sending a search event. This helps when a caller other than
+        the timer decides to send an explicit search event.
+
 2007-02-01  Maciej Stachowiak  <mjs@apple.com>
 
         Fix by Darin, reviewed by Maciej.

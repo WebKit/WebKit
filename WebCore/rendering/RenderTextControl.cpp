@@ -58,6 +58,7 @@ RenderTextControl::RenderTextControl(Node* node, bool multiLine)
     , m_placeholderVisible(false)
     , m_searchPopup(0)
     , m_searchPopupIsVisible(false)
+    , m_searchEventTimer(this, &RenderTextControl::searchEventTimerFired)
 {
 }
 
@@ -479,7 +480,7 @@ void RenderTextControl::subtreeHasChanged()
 
         // If the incremental attribute is set, then dispatch the search event
         if (!input->getAttribute(incrementalAttr).isNull())
-            input->onSearch();
+            startSearchEventTimer();
 
         if (!wasDirty) {
             if (Frame* frame = document()->frame())
@@ -994,6 +995,32 @@ bool RenderTextControl::scroll(ScrollDirection direction, ScrollGranularity gran
     if (layer && layer->scroll(direction, granularity, multiplier))
         return true;
     return RenderObject::scroll(direction, granularity, multiplier);
+}
+
+void RenderTextControl::searchEventTimerFired(Timer<RenderTextControl>*)
+{
+    static_cast<HTMLInputElement*>(node())->onSearch();
+}
+
+void RenderTextControl::stopSearchEventTimer()
+{
+    m_searchEventTimer.stop();
+}
+
+void RenderTextControl::startSearchEventTimer()
+{
+    unsigned length = text().length();
+
+    // If there's no text, fire the event right away.
+    if (!length) {
+        m_searchEventTimer.stop();
+        static_cast<HTMLInputElement*>(node())->onSearch();
+        return;
+    }
+
+    // After typing the first key, we wait 0.5 seconds.
+    // After the second key, 0.4 seconds, then 0.3, then 0.2 from then on.
+    m_searchEventTimer.startOneShot(max(0.2, 0.6 - 0.1 * length));
 }
 
 } // namespace WebCore

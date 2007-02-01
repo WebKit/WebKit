@@ -1537,6 +1537,8 @@ void HTMLInputElement::addSearchResult()
 void HTMLInputElement::onSearch()
 {
     ASSERT(isSearchField());
+    if (renderer())
+        static_cast<RenderTextControl*>(renderer())->stopSearchEventTimer();
     dispatchHTMLEvent(searchEvent, true, false);
 }
 

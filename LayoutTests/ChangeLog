@@ -1,3 +1,12 @@
+2007-02-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - test for <rdar://problem/4887428> REGRESSION: Implement slight delay for firing incremental onSearch event
+
+        * fast/forms/search-event-delay-expected.txt: Added.
+        * fast/forms/search-event-delay.html: Added.
+
 2007-01-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam and Geoff.

@@ -23,6 +23,7 @@
 
 #include "PopupMenuClient.h"
 #include "RenderBlock.h"
+#include "Timer.h"
 
 namespace WebCore {
 
@@ -88,6 +89,8 @@ public:
     void showPopup();
     void hidePopup();
 
+    void stopSearchEventTimer();
+
 private:
     // PopupMenuClient methods
     virtual void valueChanged(unsigned listIndex, bool fireEvents = true);
@@ -116,6 +119,8 @@ private:
     void createSubtreeIfNeeded();
     void updateCancelButtonVisibility(RenderStyle*);
     const AtomicString& autosaveName() const;
+    void startSearchEventTimer();
+    void searchEventTimerFired(Timer<RenderTextControl>*);
 
     RefPtr<HTMLTextFieldInnerElement> m_innerBlock;
     RefPtr<HTMLTextFieldInnerTextElement> m_innerText;
@@ -129,6 +134,8 @@ private:
     RefPtr<SearchPopupMenu> m_searchPopup;
     bool m_searchPopupIsVisible;
     mutable Vector<String> m_recentSearches;
+
+    Timer<RenderTextControl> m_searchEventTimer;
 };
 
 } // namespace WebCore
