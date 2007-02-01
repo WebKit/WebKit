@@ -41,7 +41,7 @@ namespace WebCore {
     // State available during IE's events for drag and drop and copy/paste
     class Clipboard : public Shared<Clipboard> {
     public:
-        Clipboard(ClipboardAccessPolicy policy) : m_policy(policy) { }
+        Clipboard(ClipboardAccessPolicy policy) : m_policy(policy), m_dragStarted(false) { }
         virtual ~Clipboard() { }
 
         // Is this operation a drag-drop or a copy-paste?
@@ -73,13 +73,15 @@ namespace WebCore {
         void setSourceOperation(DragOperation);
         void setDestinationOperation(DragOperation);
         
+        void setDragHasStarted() { m_dragStarted = true; }
     protected:
         ClipboardAccessPolicy policy() const { return m_policy; }
-        
+        bool dragStarted() const { return m_dragStarted; }
     private:
         ClipboardAccessPolicy m_policy;
         String m_dropEffect;
         String m_effectAllowed;
+        bool m_dragStarted;
     };
 
 } // namespace WebCore

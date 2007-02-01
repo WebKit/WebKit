@@ -301,7 +301,6 @@ typedef enum ObjectElementType {
 - (NSString *)MIMETypeForPath:(NSString *)path;
 
 - (BOOL)startDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc operation:(NSDragOperation)op event:(NSEvent *)event sourceIsDHTML:(BOOL)flag DHTMLWroteData:(BOOL)dhtmlWroteData;
-- (BOOL)mayStartDragAtEventLocation:(NSPoint)location;
 
 - (void)textFieldDidBeginEditing:(DOMHTMLInputElement *)element;
 - (void)textFieldDidEndEditing:(DOMHTMLInputElement *)element;

@@ -737,13 +737,6 @@ static BOOL loggedObjectCacheSize = NO;
         sourceIsDHTML:flag DHTMLWroteData:dhtmlWroteData];
 }
 
-- (BOOL)mayStartDragAtEventLocation:(NSPoint)location
-{
-    WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
-    ASSERT([docView isKindOfClass:[WebHTMLView class]]);
-    return [docView _mayStartDragAtEventLocation:location];
-}
-
 static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 {
     ASSERT(self->_frame != nil);

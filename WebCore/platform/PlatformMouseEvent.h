@@ -57,34 +57,39 @@ class QMouseEvent;
 #endif
 
 namespace WebCore {
-
+    
     // These button numbers match the ones used in the DOM API, 0 through 2, except for NoButton which isn't specified.
     enum MouseButton { NoButton = -1, LeftButton, MiddleButton, RightButton };
-
+    enum MouseEventType { MouseEventMoved, MouseEventPressed, MouseEventReleased, MouseEventScroll };
+    
     class PlatformMouseEvent {
     public:
         static const struct CurrentEventTag {} currentEvent;
     
         PlatformMouseEvent()
-            : m_button(LeftButton)
+            : m_button(NoButton)
+            , m_eventType(MouseEventMoved)
             , m_clickCount(0)
             , m_shiftKey(false)
             , m_ctrlKey(false)
             , m_altKey(false)
             , m_metaKey(false)
+            , m_timestamp(0)
         {
         }
 
         PlatformMouseEvent(const CurrentEventTag&);
 
-        PlatformMouseEvent(const IntPoint& pos, const IntPoint& globalPos, MouseButton button,
-                           int clickCount, bool shift, bool ctrl, bool alt, bool meta)
+        PlatformMouseEvent(const IntPoint& pos, const IntPoint& globalPos, MouseButton button, MouseEventType eventType,
+                           int clickCount, bool shift, bool ctrl, bool alt, bool meta, double timestamp)
             : m_position(pos), m_globalPosition(globalPos), m_button(button)
+            , m_eventType(eventType)
             , m_clickCount(clickCount)
             , m_shiftKey(shift)
             , m_ctrlKey(ctrl)
             , m_altKey(alt)
             , m_metaKey(meta)
+            , m_timestamp(timestamp)
         {
         }
 
@@ -94,19 +99,23 @@ namespace WebCore {
         int globalX() const { return m_globalPosition.x(); }
         int globalY() const { return m_globalPosition.y(); }
         MouseButton button() const { return m_button; }
+        MouseEventType eventType() const { return m_eventType; }
         int clickCount() const { return m_clickCount; }
         bool shiftKey() const { return m_shiftKey; }
         bool ctrlKey() const { return m_ctrlKey; }
         bool altKey() const { return m_altKey; }
         bool metaKey() const { return m_metaKey; }
+        
+        //time in seconds
+        double timestamp() const { return m_timestamp; }
 
 #if PLATFORM(MAC)
         PlatformMouseEvent(NSEvent*);
+        int eventNumber() const { return m_eventNumber; }
 #endif
 #if PLATFORM(WIN)
         PlatformMouseEvent(HWND, UINT, WPARAM, LPARAM, bool activatedWebView = false);
         void setClickCount(int count) { m_clickCount = count; }
-        double timestamp() const { return m_timestamp; }
         bool activatedWebView() const { return m_activatedWebView; }
 #endif
 #if PLATFORM(GDK) 
@@ -120,14 +129,17 @@ namespace WebCore {
         IntPoint m_position;
         IntPoint m_globalPosition;
         MouseButton m_button;
+        MouseEventType m_eventType;
         int m_clickCount;
         bool m_shiftKey;
         bool m_ctrlKey;
         bool m_altKey;
         bool m_metaKey;
-
-#if PLATFORM(WIN)
         double m_timestamp; // unit: seconds
+#if PLATFORM(MAC)
+        int m_eventNumber;
+#endif
+#if PLATFORM(WIN)
         bool m_activatedWebView;
 #endif
     };

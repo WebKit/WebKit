@@ -28,7 +28,6 @@
 
 namespace WebCore {
 
-
 void Clipboard::setAccessPolicy(ClipboardAccessPolicy policy)
 {
     // once you go numb, can never go back

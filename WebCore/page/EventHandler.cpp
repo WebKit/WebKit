@@ -69,10 +69,10 @@ using namespace HTMLNames;
 // The link drag hysteresis is much larger than the others because there
 // needs to be enough space to cancel the link press without starting a link drag,
 // and because dragging links is rare.
-const float LinkDragHysteresis = 40.0;
-const float ImageDragHysteresis = 5.0;
-const float TextDragHysteresis = 3.0;
-const float GeneralDragHysteresis = 3.0;
+const int LinkDragHysteresis = 40;
+const int ImageDragHysteresis = 5;
+const int TextDragHysteresis = 3;
+const int GeneralDragHysteresis = 3;
 const double TextDragDelay = 0.15;
 
 #ifdef SVG_SUPPORT
@@ -109,7 +109,13 @@ EventHandler::EventHandler(Frame* frame)
 EventHandler::~EventHandler()
 {
 }
-
+    
+EventHandler::EventHandlerDragState& EventHandler::dragState()
+{
+    static EventHandlerDragState state;
+    return state;
+}
+    
 void EventHandler::clear()
 {
     m_hoverTimer.stop();
@@ -301,7 +307,7 @@ bool EventHandler::handleMouseMoveEvent(const MouseEventWithHitTestResults& even
 
     Node* innerNode = event.targetNode();
 
-    if (event.event().button() != 0 || !innerNode || !innerNode->renderer())
+    if (event.event().button() != LeftButton || !innerNode || !innerNode->renderer())
         return false;
 
 #if PLATFORM(MAC) // FIXME: Why does this assertion fire on other platforms?
@@ -338,6 +344,29 @@ bool EventHandler::handleMouseMoveEvent(const MouseEventWithHitTestResults& even
     updateSelectionForMouseDragOverPosition(pos);
 
     return true;
+}
+    
+bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
+{
+    // This is a pre-flight check of whether the event might lead to a drag being started.  Be careful
+    // that its logic needs to stay in sync with handleMouseMoveEvent() and the way we setMouseDownMayStartDrag
+    // in handleMousePressEvent
+    
+    if (!m_frame->renderer() || !m_frame->renderer()->layer()
+        || event.button() != LeftButton || event.clickCount() != 1)
+        return false;
+    
+    bool DHTMLFlag;
+    bool UAFlag;
+    allowDHTMLDrag(DHTMLFlag, UAFlag);
+    if (!DHTMLFlag && !UAFlag)
+        return false;
+    
+    HitTestRequest request(true, false);
+    HitTestResult result(event.pos());
+    m_frame->renderer()->layer()->hitTest(request, result);
+    bool srcIsDHTML;
+    return result.innerNode() && result.innerNode()->renderer()->draggableNode(DHTMLFlag, UAFlag, event.x(), event.y(), srcIsDHTML);
 }
 
 void EventHandler::updateSelectionForMouseDragOverPosition(const VisiblePosition& pos)
@@ -713,6 +742,11 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 
     m_mousePressed = true;
     m_currentMousePosition = mouseEvent.pos();
+    m_mouseDownTimestamp = mouseEvent.timestamp();
+    m_mouseDownMayStartDrag = false;
+    m_mouseDownMayStartSelect = false;
+    m_mouseDownMayStartAutoscroll = false;
+    m_mouseDownPos = m_frame->view()->windowToContents(mouseEvent.pos());
     m_mouseDownWasInSubframe = false;
     
     MouseEventWithHitTestResults mev = prepareMouseEvent(HitTestRequest(false, true), mouseEvent);
@@ -1243,6 +1277,42 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
                 }
         m_frame->editor()->handleKeyPress(event);
     }
+}
+    
+bool EventHandler::dragHysteresisExceeded(const FloatPoint& floatDragViewportLocation) const
+{
+    IntPoint dragViewportLocation((int)floatDragViewportLocation.x(), (int)floatDragViewportLocation.y());
+    return dragHysteresisExceeded(dragViewportLocation);
+}
+    
+bool EventHandler::dragHysteresisExceeded(const IntPoint& dragViewportLocation) const
+{
+    IntPoint dragLocation = m_frame->view()->windowToContents(dragViewportLocation);
+    IntSize delta = dragLocation - m_mouseDownPos;
+    
+    int threshold = GeneralDragHysteresis;
+    if (dragState().m_dragSrcIsImage)
+        threshold = ImageDragHysteresis;
+    else if (dragState().m_dragSrcIsLink)
+        threshold = LinkDragHysteresis;
+    else if (dragState().m_dragSrcInSelection)
+        threshold = TextDragHysteresis;
+    
+    return abs(delta.width()) >= threshold || abs(delta.height()) >= threshold;
+}
+    
+void EventHandler::freeClipboard()
+{
+    if (dragState().m_dragClipboard)
+        dragState().m_dragClipboard->setAccessPolicy(ClipboardNumb);
+}
+
+bool EventHandler::shouldDragAutoNode(Node* node, const IntPoint& point) const
+{
+    ASSERT(node);
+    if (node->hasChildNodes() || !m_frame->view())
+        return false;
+    return m_frame->page() && m_frame->page()->dragController()->mayStartDragAtEventLocation(m_frame, point);
 }
 
 }

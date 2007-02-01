@@ -49,6 +49,8 @@
 #include "ReplaceSelectionCommand.h"
 #include "ResourceRequest.h"
 #include "SelectionController.h"
+#include "Settings.h"
+#include "SystemTime.h"
 #include "Text.h"
 #include "wtf/RefPtr.h"
 
@@ -58,7 +60,7 @@ static PlatformMouseEvent createMouseEvent(DragData* dragData)
 {
     // FIXME: We should fake modifier keys here.
     return PlatformMouseEvent(dragData->clientPosition(), dragData->globalPosition(),
-                              LeftButton, 0, false, false, false, false);
+                              LeftButton, MouseEventMoved, 0, false, false, false, false, currentTime());
 
 }
     
@@ -415,6 +417,36 @@ DragOperation DragController::tryDHTMLDrag(DragData* dragData)
         return op;
     }
     return op;
+}
+
+bool DragController::mayStartDragAtEventLocation(const Frame* frame, const IntPoint& framePos)
+{
+    ASSERT(frame);
+
+    if (!frame->view() || !frame->renderer())
+        return false;
+
+    HitTestResult mouseDownTarget = HitTestResult(framePos);
+
+    mouseDownTarget = frame->eventHandler()->hitTestResultAtPoint(framePos, true);
+
+    if (mouseDownTarget.image() 
+        && !mouseDownTarget.absoluteImageURL().isEmpty()
+        && frame->settings()->loadsImagesAutomatically()
+        && m_dragSourceAction & DragSourceActionImage)
+        return true;
+
+    if (!mouseDownTarget.absoluteLinkURL().isEmpty()
+        && m_dragSourceAction & DragSourceActionLink
+        && mouseDownTarget.isLiveLink())
+        return true;
+
+    if (mouseDownTarget.isSelected()
+        && m_dragSourceAction & DragSourceActionSelection)
+        return true;
+
+    return false;
+
 }
 
 }

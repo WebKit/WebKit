@@ -67,13 +67,24 @@ class Widget;
 
 struct HitTestRequest;
 
-extern const float LinkDragHysteresis;
-extern const float ImageDragHysteresis;
-extern const float TextDragHysteresis;
-extern const float GeneralDragHysteresis;
+extern const int LinkDragHysteresis;
+extern const int ImageDragHysteresis;
+extern const int TextDragHysteresis;
+extern const int GeneralDragHysteresis;
 extern const double TextDragDelay;
 
 class EventHandler : Noncopyable {
+    struct EventHandlerDragState {
+        RefPtr<Node> m_dragSrc; // element that may be a drag source, for the current mouse gesture
+        bool m_dragSrcIsLink;
+        bool m_dragSrcIsImage;
+        bool m_dragSrcInSelection;
+        bool m_dragSrcMayBeDHTML;
+        bool m_dragSrcMayBeUA; // Are DHTML and/or the UserAgent allowed to drag out?
+        bool m_dragSrcIsDHTML;
+        RefPtr<Clipboard> m_dragClipboard; // used on only the source side of dragging
+    };
+    static EventHandlerDragState& dragState();
 public:
     EventHandler(Frame*);
     ~EventHandler();
@@ -129,6 +140,8 @@ public:
     bool keyEvent(const PlatformKeyboardEvent&);
 
     void defaultKeyboardEventHandler(KeyboardEvent*);
+    
+    bool eventMayStartDrag(const PlatformMouseEvent&) const;
 
 #if PLATFORM(MAC)
     PassRefPtr<KeyboardEvent> currentKeyboardEvent() const;
@@ -140,7 +153,6 @@ public:
     bool keyEvent(NSEvent*);
     bool wheelEvent(NSEvent*);
 
-    bool eventMayStartDrag(NSEvent*) const;
 
     void sendFakeEventsAfterWidgetTracking(NSEvent* initiatingEvent);
 
@@ -153,6 +165,7 @@ public:
 #endif
 
 private:
+    bool eventActivatedView(const PlatformMouseEvent&) const;
     void selectClosestWordFromMouseEvent(const MouseEventWithHitTestResults& event);
 
     bool handleMouseDoubleClickEvent(const PlatformMouseEvent&);

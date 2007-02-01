@@ -1,3 +1,87 @@
+2007-01-31  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Migrate more drag and drop logic to WebCore, start preparing
+        to move EventHandler::handleDrag from EventHandlerMac to EventHandler 
+
+        * WebCore.exp:   
+          updating methods
+                    
+        * dom/Clipboard.cpp:
+        * dom/Clipboard.h:
+        (WebCore::Clipboard::Clipboard):
+        (WebCore::Clipboard::setDragHasStarted):
+        (WebCore::Clipboard::dragStarted): 
+          Moving from ClipboardMac to Clipboard 
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchMouseEvent):
+          PlatformMouseEvent no longer lies about button state, however 
+          DOM Events don't allow NoButton, so we need to convert NoButton 
+          to LeftButton when we create a DOM Event from PlatformMouseEvent
+
+        * page/DragClient.h:
+          Tidying comment 
+
+        * page/DragController.cpp:
+        (WebCore::createMouseEvent):
+          Updated for new PlatformMouseEvent constructors
+        (WebCore::DragController::mayStartDragAtEventLocation):
+          Migrated from WebKit
+
+        * page/DragController.h:
+          Added above function declarations
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dragState): 
+        (WebCore::EventHandler::dragHysteresisExceeded):
+        (WebCore::EventHandler::freeClipboard):
+        (WebCore::EventHandler::shouldDragAutoNode):
+          Moved from EventHandlerMac
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::eventMayStartDrag):
+        (WebCore::EventHandler::handleMousePressEvent):
+          Use DragController     
+
+        * page/EventHandler.h:
+          Added DragState struct definition to EventHandler
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::eventActivatedView):
+        (WebCore::EventHandler::handleDrag):
+        (WebCore::EventHandler::handleMouseUp):
+        (WebCore::EventHandler::mouseDown):
+          Update to use DragController and PlatformMouseEvent
+
+        * page/mac/WebCoreFrameBridge.h:
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge dragSourceMovedTo:]):
+        (-[WebCoreFrameBridge dragSourceEndedAt:operation:]):
+          Use DragController for state
+
+        * platform/PlatformMouseEvent.h:
+        (WebCore::):
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        (WebCore::PlatformMouseEvent::eventType):
+        (WebCore::PlatformMouseEvent::timestamp):
+        (WebCore::PlatformMouseEvent::eventNumber):
+        (WebCore::PlatformMouseEvent::setClickCount):
+          Exposing necessary data for Drag logic
+
+        * platform/mac/ClipboardMac.h:
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::ClipboardMac):
+        (WebCore::ClipboardMac::setDragImage):
+          Have moved a number of fields from ClipboardMac to Clipboard
+          so need to use accessors in a few places now
+
+        * platform/mac/PlatformMouseEventMac.mm:
+        (WebCore::mouseButtonForEvent):
+        (WebCore::mouseEventForNSEvent):
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+          Determine MouseEventType, and provide event time info
+
 2007-01-31  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

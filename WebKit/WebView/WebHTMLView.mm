@@ -1497,43 +1497,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     [self _startAutoscrollTimer:event]; 
 } 
 
-- (BOOL)_mayStartDragAtEventLocation:(NSPoint)location
-{
-    WebHTMLView *topHTMLView = [self _topHTMLView];
-    if (self != topHTMLView)
-        return [topHTMLView _mayStartDragAtEventLocation:location];
-
-    NSPoint mouseDownPoint = [self convertPoint:location fromView:nil];
-    NSDictionary *mouseDownElement = [self elementAtPoint:mouseDownPoint allowShadowContent:YES];
-
-    ASSERT([self _webView]);
-    
-    Page* page = core([self _webView]);
-    if (!page)
-        return NO;
-    
-    DragController* dragController = page->dragController();
-    if (!dragController)
-        return NO;
-    
-    if ([mouseDownElement objectForKey:WebElementImageKey]
-            && [mouseDownElement objectForKey:WebElementImageURLKey]
-            && [[[self _webView] preferences] loadsImagesAutomatically]
-            && (dragController->dragSourceAction() & WebDragSourceActionImage))
-        return YES;
-    
-    if ([mouseDownElement objectForKey:WebElementLinkURLKey]
-            && (dragController->dragSourceAction() & WebDragSourceActionLink)
-            && [[mouseDownElement objectForKey:WebElementLinkIsLiveKey] boolValue])
-        return YES;
-    
-    if ([[mouseDownElement objectForKey:WebElementIsSelectedKey] boolValue]
-            && (dragController->dragSourceAction() & WebDragSourceActionSelection))
-        return YES;
-    
-    return NO;
-}
-
 - (WebPluginController *)_pluginController
 {
     return _private->pluginController;
