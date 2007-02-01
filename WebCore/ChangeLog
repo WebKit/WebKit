@@ -1,3 +1,14 @@
+2007-01-31  David Carson  <dacarson@gmail.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12510
+        Initialize the variable m_totalLoops
+        Is tested by LayoutTests/fast/css/MarqueeLayoutTest.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::Marquee::Marquee):
+
 2007-01-31  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.
