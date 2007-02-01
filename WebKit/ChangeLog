@@ -37,6 +37,16 @@
 
 2007-01-31  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Anders.
+
+        - related fix for <rdar://problem/4964407> REGRESSION: Mail hangs when replying, forwarding , or creating a new message
+        
+        * WebView/WebFrame.mm:
+        (-[WebFrame loadArchive:]): This method also needs to add the lame WebDataRequest property or other things, like
+        Mail Contents of Page, break.
+
+2007-01-31  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Eric.
         
         - add back no-op version of silly method so that shipping Safari can still run the PLT
