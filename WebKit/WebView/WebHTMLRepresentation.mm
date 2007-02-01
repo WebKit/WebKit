@@ -46,6 +46,7 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
+#import <WebCore/FrameLoader.h>
 #import <WebCore/FrameMac.h>
 #import <WebCore/MimeTypeRegistry.h>
 #import <WebCore/Range.h>
@@ -189,10 +190,29 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
     }
 }
 
-- (void)loadArchive
+- (void)_loadDataSourceAsWebArchive
 {
     WebArchive *archive = [[WebArchive alloc] initWithData:[_private->dataSource data]];
-    [[_private->dataSource webFrame] loadArchive:archive];
+    WebResource *mainResource = [archive mainResource];
+    if (!mainResource) {
+        [archive release];
+        return;
+    }
+    
+    NSData *data = [mainResource data];
+    [data retain];
+    [_private->parsedArchiveData release];
+    _private->parsedArchiveData = data;
+    
+    [_private->dataSource _addToUnarchiveState:archive];
+    [archive release];
+    
+    WebFrame *webFrame = [_private->dataSource webFrame];
+    
+    if (!webFrame)
+        return;
+    
+    core(webFrame)->loader()->continueLoadWithData(SharedBuffer::wrapNSData(data).get(), [mainResource MIMEType], [mainResource textEncodingName], [mainResource URL]);
 }
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
@@ -206,7 +226,7 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
 
     if (frame) {
         if ([self _isDisplayingWebArchive])
-            [self loadArchive];
+            [self _loadDataSourceAsWebArchive];
         else
             // Telling the bridge we received some data and passing nil as the data is our
             // way to get work done that is normally done when the first bit of data is
@@ -231,6 +251,9 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
 
 - (NSString *)documentSource
 {
+    if ([self _isDisplayingWebArchive])
+        return [[[NSString alloc] initWithData:_private->parsedArchiveData encoding:NSUTF8StringEncoding] autorelease]; 
+
     return [_private->bridge stringWithData:[_private->dataSource data]];
 }
 

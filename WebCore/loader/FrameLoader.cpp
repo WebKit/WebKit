@@ -4278,4 +4278,23 @@ void FrameLoader::didChangeTitle(DocumentLoader* loader)
     }
 }
 
+void FrameLoader::continueLoadWithData(SharedBuffer* buffer, const String& mimeType, const String& textEncoding, const KURL& url)
+{
+    m_responseMIMEType = mimeType;
+    didOpenURL(url);
+
+    String encoding;
+    if (m_frame)
+        encoding = documentLoader()->overrideEncoding();
+    bool userChosen = !encoding.isNull();
+    if (encoding.isNull())
+        encoding = textEncoding;
+    setEncoding(encoding, userChosen);
+
+    if (!m_frame->document())
+        return;
+
+    addData(buffer->data(), buffer->size());
+}
+
 } // namespace WebCore

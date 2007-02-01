@@ -1,3 +1,16 @@
+2007-01-31  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4886776>
+        REGRESSION: After opening a web archive, location shows the actual URL, not the webarchive file
+
+        * WebCore.exp:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadWithData):
+        * loader/FrameLoader.h:
+        New function which continues a load but using a given buffer instead.
+        
 2007-01-31  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.

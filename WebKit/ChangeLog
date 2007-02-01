@@ -1,3 +1,17 @@
+2007-01-31  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4886776>
+        REGRESSION: After opening a web archive, location shows the actual URL, not the webarchive file
+        
+        "Revert" the change done in 13734.
+        
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation loadArchive]):
+        Don't do a new load here, as this would cancel the current load and call the resource load
+        delegate's didFailLoadingWithError: method. Instead, call continueLoadWithData.
+
 2007-02-01  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Maciej.
