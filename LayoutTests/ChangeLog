@@ -1,3 +1,12 @@
+2007-01-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam and Geoff.
+
+        - test for <rdar://problem/4786767> REGRESSION: <select> controls are not resized when zooming text
+
+        * fast/forms/select-width-font-change-expected.txt: Added.
+        * fast/forms/select-width-font-change.html: Added.
+
 2007-01-31  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

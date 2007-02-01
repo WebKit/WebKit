@@ -1,7 +1,7 @@
 /**
  * This file is part of the select element renderer in WebCore.
  *
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -90,41 +90,57 @@ void RenderMenuList::removeChild(RenderObject* oldChild)
         m_innerBlock->removeChild(oldChild);
 }
 
-void RenderMenuList::setStyle(RenderStyle* style)
+void RenderMenuList::setStyle(RenderStyle* newStyle)
 {
-    RenderBlock::setStyle(style);
+    bool fontChanged = !style() || style()->font() != newStyle->font();
+
+    RenderBlock::setStyle(newStyle);
+
     if (m_buttonText)
-        m_buttonText->setStyle(style);
+        m_buttonText->setStyle(newStyle);
     if (m_innerBlock) // RenderBlock handled updating the anonymous block's style.
         m_innerBlock->style()->setBoxFlex(1.0f);
     setReplaced(isInline());
+    if (fontChanged)
+        updateOptionsWidth();
+}
+
+void RenderMenuList::updateOptionsWidth()
+{
+    // FIXME: There is no longer any reason to use a text style with the font hacks disabled.
+    // It is a leftover from when the text was not drawn with the engine -- now that we render
+    // with the engine, we can just use the default style as the engine does.
+    TextStyle textStyle(0, 0, 0, false, false, false, false);
+
+    float maxOptionWidth = 0;
+    const Vector<HTMLElement*>& listItems = static_cast<HTMLSelectElement*>(node())->listItems();
+    int size = listItems.size();    
+    for (int i = 0; i < size; ++i) {
+        HTMLElement* element = listItems[i];
+        if (element->hasTagName(optionTag)) {
+            String text = static_cast<HTMLOptionElement*>(element)->optionText();
+            if (!text.isEmpty())
+                maxOptionWidth = max(maxOptionWidth, style()->font().floatWidth(text.impl(), textStyle));
+        }
+    }
+
+    int width = static_cast<int>(ceilf(maxOptionWidth));
+    if (m_optionsWidth == width)
+        return;
+
+    m_optionsWidth = width;
+    setNeedsLayoutAndMinMaxRecalc();
 }
 
 void RenderMenuList::updateFromElement()
 {
-    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
-
     if (m_optionsChanged) {
-        const Vector<HTMLElement*>& listItems = select->listItems();
-        int size = listItems.size();
-        
-        float width = 0;
-        TextStyle textStyle(0, 0, 0, false, false, false, false);
-        for (int i = 0; i < size; ++i) {
-            HTMLElement* element = listItems[i];
-            if (element->hasTagName(optionTag)) {
-                String text = static_cast<HTMLOptionElement*>(element)->optionText();
-                if (!text.isEmpty())
-                    width = max(width, style()->font().floatWidth(TextRun(text.impl()), textStyle));
-            }
-        }
-        m_optionsWidth = static_cast<int>(ceilf(width));
+        updateOptionsWidth();
         m_optionsChanged = false;
-        setNeedsLayoutAndMinMaxRecalc();
     }
 
-    setTextFromOption(select->selectedIndex());
-    
+    setTextFromOption(static_cast<HTMLSelectElement*>(node())->selectedIndex());
+
     if (m_popupIsVisible)
         m_popup->updateFromElement();
 }
@@ -163,8 +179,7 @@ void RenderMenuList::setText(const String& s)
     }
 }
 
-
-String RenderMenuList::text()
+String RenderMenuList::text() const
 {
     return m_buttonText ? m_buttonText->text() : 0;
 }

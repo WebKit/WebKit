@@ -1,3 +1,23 @@
+2007-01-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam and Geoff.
+
+        - fix <rdar://problem/4786767> REGRESSION: <select> controls are not resized when zooming text
+
+        Test: fast/forms/select-width-font-change.html
+
+        * rendering/RenderMenuList.h: Cleaned up formatting a bit. Removed unneeded include of PopupMenu.h.
+        Made a lot more things private, including the PopupMenuClient base class, all of the virtual
+        functions from PopupMenuClient, and the setTextFromOption function. Added updateOptionsWidth.
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::setStyle): Added code to call updateOptionsWidth when the font changes.
+        (WebCore::RenderMenuList::updateOptionsWidth): Added. Factored code out of updateFromElement.
+        Changed to do nothing when m_optionsWidth is already correct.
+        (WebCore::RenderMenuList::updateFromElement): Moved code to recomputed options width to the new
+        updateOptionsWidth function.
+        (WebCore::RenderMenuList::text): Made const.
+
 2007-01-31  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.
