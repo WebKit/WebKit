@@ -72,11 +72,6 @@ bool EventHandler::tabsToAllControls(KeyboardEvent* event) const
     return handlingOptionTab;
 }
 
-void EventHandler::freeClipboard()
-{
-    notImplemented();
-}
-
 void EventHandler::focusDocumentView()
 {
     Page* page = m_frame->page();
@@ -105,12 +100,6 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
     return false;
 }
 
-bool EventHandler::dragHysteresisExceeded(const FloatPoint& floatDragViewportLocation) const
-{
-    notImplemented();
-    return false;
-}
-
 bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
 {
     //notImplemented();
@@ -131,13 +120,6 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
 }
 
 bool EventHandler::passWheelEventToWidget(Widget* widget)
-{
-    notImplemented();
-    return false;
-}
-
-// Called as we walk up the element chain for nodes with CSS property -webkit-user-drag == auto
-bool EventHandler::shouldDragAutoNode(Node* node, const IntPoint& point) const
 {
     notImplemented();
     return false;
