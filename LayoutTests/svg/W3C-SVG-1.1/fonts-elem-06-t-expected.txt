@@ -1,11 +1,11 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    RenderSVGContainer {svg} at (-4,-20) size 483.50x379.50
-      RenderSVGContainer {g} at (-4,-20) size 359x228
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (20,22) size 335x186
         RenderSVGText {text} at (240,50) size 480x36
           RenderSVGInlineText {#text} at (-114,-28) size 229x36
             text run at (-114,-28) width 229: "<font> horiz-adv-x"
-        RenderSVGContainer {defs} at (-4,-20) size 8x24
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGContainer {g} at (-4,-20) size 8x24
             RenderPath {line} at (-0.50,-20) size 1x20 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00L0.00,-20.00"]
             RenderPath {rect} at (-4,-4) size 8x8 [fill={[type=SOLID] [color=#8888FF]}] [data="M-4.00,-4.00L4.00,-4.00L4.00,4.00L-4.00,4.00"]

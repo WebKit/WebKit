@@ -1,8 +1,8 @@
 KRenderingPaintServer {id="Pattern" [type=PATTERN] [bbox=at (0,0) size 1x1]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    RenderSVGContainer {svg} at (0,5) size 440x175
-      RenderSVGContainer {defs} at (0,5) size 15x15
+    RenderSVGContainer {svg} at (10,10) size 430x170
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGContainer {pattern} at (0,5) size 15x15
           RenderPath {rect} at (5,5) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [data="M5.00,5.00L15.00,5.00L15.00,15.00L5.00,15.00"]
           RenderPath {rect} at (0,10) size 10x10 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,10.00L10.00,10.00L10.00,20.00L0.00,20.00"]

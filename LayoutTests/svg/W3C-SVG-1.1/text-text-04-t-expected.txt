@@ -1,8 +1,8 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    RenderSVGContainer {svg} at (-4,-4) size 483.50x363.50
-      RenderSVGContainer {defs} at (0,0) size 0x0
-      RenderSVGContainer {g} at (-4,-4) size 458x313
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGContainer {g} at (36,22) size 418x287
         RenderSVGContainer {g} at (36,22) size 143x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,40.00)}]
           RenderSVGText {text} at (-30,0) size 480x18
             RenderSVGInlineText {#text} at (-64,-14) size 64x18
@@ -23,7 +23,7 @@ layer at (0,0) size 480x360
             RenderSVGText {text} at (0,0) size 480x23
               RenderSVGInlineText {#text} at (0,-18) size 40x23
                 text run at (0,-18) width 40: "1234"
-        RenderSVGContainer {defs} at (-4,-4) size 8x8
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderPath {rect} at (-4,-4) size 8x8 [fill={[type=SOLID] [color=#000000]}] [data="M-4.00,-4.00L4.00,-4.00L4.00,4.00L-4.00,4.00"]
         RenderSVGContainer {g} at (73,62) size 141x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,80.00)}]
           RenderSVGText {text} at (-30,0) size 480x18

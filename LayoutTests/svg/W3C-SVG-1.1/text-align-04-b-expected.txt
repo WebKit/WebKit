@@ -1,11 +1,11 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    RenderSVGContainer {svg} at (0,-14) size 479.50x373.50
-      RenderSVGContainer {g} at (0,-14) size 468x274
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
+      RenderSVGContainer {g} at (5,4) size 463x256
         RenderSVGText {text} at (5,40) size 480x44
           RenderSVGInlineText {#text} at (0,-36) size 346x44
             text run at (0,-36) width 346: "Test of 'text-anchor'"
-        RenderSVGContainer {defs} at (0,-14) size 75x18
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGText {text} at (0,0) size 480x18
             RenderSVGInlineText {#text} at (0,-14) size 75x18
               text run at (0,-14) width 75: "end text tref"

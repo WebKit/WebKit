@@ -2,8 +2,8 @@ KRenderingPaintServer {id="cycle2" [type=PATTERN] [bbox=at (20,20) size 1x1]}
 KRenderingPaintServer {id="cycle1" [type=PATTERN] [bbox=at (20,20) size 1x1]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    RenderSVGContainer {svg} at (-0.50,-0.50) size 810.50x154.50
-      RenderSVGContainer {defs} at (-0.50,-0.50) size 51x31
+    RenderSVGContainer {svg} at (0,0) size 810x154
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGContainer {pattern} at (-0.50,-0.50) size 51x31
           RenderPath {rect} at (-0.50,-0.50) size 51x31 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L50.00,0.00L50.00,30.00L0.00,30.00"]
         RenderSVGContainer {pattern} at (0,0) size 0x0

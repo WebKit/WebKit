@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    RenderSVGContainer {svg} at (-4,-56) size 504x184
-      RenderSVGContainer {defs} at (-4,-56) size 146x100
+    RenderSVGContainer {svg} at (20,-6) size 480x134
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGText {text} at (0,10) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 69x46
             text run at (0,-36) width 69: "Test"

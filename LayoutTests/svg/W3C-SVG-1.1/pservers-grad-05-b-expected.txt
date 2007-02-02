@@ -7,10 +7,24 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (70,80) size 480x67
           RenderSVGInlineText {#text} at (0,-54) size 318x67
             text run at (0,-54) width 318: "Background"
+        RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderPath {rect} at (20,20) size 440x80 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#EE82EE), (0.20,#0000FF00), (0.40,#00FF007F), (0.60,#FFFF0033), (0.80,#FFA500CC), (1.00,#FF0000)]] [start=(0,0)] [end=(1,1)]}] [data="M20.00,20.00L460.00,20.00L460.00,100.00L20.00,100.00"]
         RenderSVGText {text} at (70,210) size 480x67
           RenderSVGInlineText {#text} at (0,-54) size 318x67
             text run at (0,-54) width 318: "Background"
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderPath {rect} at (20,150) size 440x80 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#000000), (0.20,#FFFF0000), (0.40,#FF00007F), (0.60,#0000FF33), (0.80,#FFFFFFCC), (1.00,#008000)]] [bounding box mode=0] [center=(240,210)] [focal=(240,210)] [radius=220.00]}] [data="M20.00,150.00L460.00,150.00L460.00,230.00L20.00,230.00"]
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46

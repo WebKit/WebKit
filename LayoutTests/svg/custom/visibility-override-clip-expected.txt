@@ -2,7 +2,7 @@ KCanvasResource {id="myclip" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     RenderSVGContainer {svg} at (0,0) size 200x200
-      RenderSVGContainer {defs} at (0,0) size 0x0
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
       RenderSVGContainer {g} at (0,0) size 200x200 [clip path="#myclip"]
         RenderSVGContainer {g} at (0,0) size 200x200

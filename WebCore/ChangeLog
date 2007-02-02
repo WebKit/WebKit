@@ -1,3 +1,41 @@
+2007-02-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mitz.
+
+        Fix gradient stop style resolution to be less of a hack, fixing style invalidation:
+        http://bugs.webkit.org/show_bug.cgi?id=12193
+        and fix stop-color and stop-opacity not to inherit:
+        http://bugs.webkit.org/show_bug.cgi?id=12193
+        
+        Tests:
+        * svg/custom/gradient-stops-style-change.svg: added
+        * svg/W3C-SVG-1.1/pservers-grad-18-b.svg: updated
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * ksvg2/css/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::inheritedNotEqual):
+        (WebCore::SVGRenderStyle::inheritFrom):
+        * ksvg2/css/SVGRenderStyle.h:
+        * ksvg2/svg/SVGDefsElement.cpp:
+        (WebCore::SVGDefsElement::createRenderer):
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::createRenderer):
+        (WebCore::SVGGradientElement::buildStops):
+        * ksvg2/svg/SVGGradientElement.h:
+        (WebCore::SVGGradientElement::rendererIsNeeded):
+        * ksvg2/svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::createRenderer):
+        * ksvg2/svg/SVGStopElement.h:
+        (WebCore::SVGStopElement::rendererIsNeeded):
+        * rendering/RenderSVGGradientStop.cpp: Added.
+        * rendering/RenderSVGGradientStop.h: Added.
+        * rendering/RenderSVGHiddenContainer.cpp: Added.
+        * rendering/RenderSVGHiddenContainer.h: Added.
+        * rendering/RenderSVGContainer.cpp:
+        * rendering/RenderSVGContainer.h:
+
 2007-02-02  Zack Rusin  <zrusin@trolltech.com>
 
         Reviewed by Lars

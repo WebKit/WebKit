@@ -2,8 +2,8 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
       RenderSVGContainer {g} at (30,4) size 372x238.54
-        RenderSVGContainer {defs} at (0,0) size 0x0
-        RenderSVGContainer {defs} at (0,0) size 0x0
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGText {text} at (56,35) size 480x40
           RenderSVGInlineText {#text} at (0,-31) size 346x40
             text run at (0,-31) width 346: "Basic SVG font element"

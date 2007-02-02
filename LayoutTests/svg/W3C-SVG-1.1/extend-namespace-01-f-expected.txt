@@ -3,7 +3,7 @@ layer at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
       RenderSVGContainer {g} at (66,16) size 349x259.39
         RenderSVGContainer {g} at (66,16) size 349x17
-          RenderSVGContainer {defs} at (0,0) size 0x0
+          RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGText {text} at (240,30) size 480x17
             RenderSVGInlineText {#text} at (-174,-14) size 349x17
               text run at (-174,-14) width 349: "Pie chart built from data in a different namespace."

@@ -24,7 +24,7 @@
 #ifdef SVG_SUPPORT
 #include "SVGDefsElement.h"
 
-#include "RenderSVGContainer.h"
+#include "RenderSVGHiddenContainer.h"
 
 namespace WebCore {
 
@@ -52,9 +52,7 @@ bool SVGDefsElement::rendererIsNeeded(RenderStyle* style)
 
 RenderObject* SVGDefsElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
-    RenderSVGContainer* defsContainer = new (arena) RenderSVGContainer(this);
-    defsContainer->setDrawsContents(false); // defs contents will be explicitly referenced and individually drawn.
-    return defsContainer;
+    return new (arena) RenderSVGHiddenContainer(this);
 }
 
 }

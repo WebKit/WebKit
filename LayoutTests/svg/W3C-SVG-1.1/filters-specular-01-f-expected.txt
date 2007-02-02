@@ -17,7 +17,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (240,20) size 480x14
           RenderSVGInlineText {#text} at (-71,-11) size 142x14
             text run at (-71,-11) width 142: "Filters: feSpecularLighting"
-        RenderSVGContainer {defs} at (0,0) size 0x0
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGContainer {g} at (90,31) size 291x49 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,20.00)}]
           RenderSVGText {text} at (90,25) size 480x18
             RenderSVGInlineText {#text} at (0,-14) size 291x18

@@ -41,8 +41,8 @@ layer at (0,0) size 480x360
               RenderSVGInlineText {#text} at (-12,-13) size 24x17
                 text run at (-12,-13) width 24: "> 0s"
         RenderSVGContainer {g} at (243.50,113.50) size 93x143 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,20.00)}]
-          RenderSVGContainer {defs} at (243.50,113.50) size 13x13
-            RenderPath {rect} at (243.50,113.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
+          RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+            RenderPath {rect} at (-6.50,-6.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
           RenderSVGContainer {g} at (243.50,113.50) size 93x13
             RenderSVGContainer {use} at (243.50,113.50) size 13x13
               RenderSVGContainer {g} at (243.50,113.50) size 13x13

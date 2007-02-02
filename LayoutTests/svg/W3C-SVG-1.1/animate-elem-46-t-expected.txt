@@ -30,21 +30,21 @@ layer at (0,0) size 480x360
               text run at (-11,-13) width 22: "<a>"
         RenderSVGContainer {g} at (138,77) size 324x176 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,5.00)}]
           RenderSVGContainer {g} at (138,77) size 324x36
-            RenderSVGContainer {defs} at (138,77) size 104x36
-              RenderSVGContainer {g} at (138,77) size 104x36
+            RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+              RenderSVGContainer {g} at (-22,-8) size 104x36
                 RenderSVGText {text} at (0,20) size 480x36
                   RenderSVGInlineText {#text} at (-22,-28) size 22x36
                     text run at (-22,-28) width 22: "A"
-                RenderPath {rect} at (158,103) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [data="M-2.00,18.00L2.00,18.00L2.00,22.00L-2.00,22.00"]
+                RenderPath {rect} at (-2,18) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [data="M-2.00,18.00L2.00,18.00L2.00,22.00L-2.00,22.00"]
                 RenderSVGText {text} at (0,20) size 480x36
                   RenderSVGInlineText {#text} at (-11,-28) size 22x36
                     text run at (-11,-28) width 22: "A"
-                RenderPath {rect} at (188,103) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [data="M-2.00,18.00L2.00,18.00L2.00,22.00L-2.00,22.00"]
+                RenderPath {rect} at (28,18) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [data="M-2.00,18.00L2.00,18.00L2.00,22.00L-2.00,22.00"]
                 RenderSVGText {text} at (0,20) size 480x36
                   RenderSVGInlineText {#text} at (0,-28) size 22x36
                     text run at (0,-28) width 22: "A"
-                RenderPath {rect} at (218,103) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [data="M-2.00,18.00L2.00,18.00L2.00,22.00L-2.00,22.00"]
-                RenderPath {rect} at (158,103) size 4x4 [fill={[type=SOLID] [color=#CC0066]}] [data="M-2.00,18.00L2.00,18.00L2.00,22.00L-2.00,22.00"]
+                RenderPath {rect} at (58,18) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [data="M-2.00,18.00L2.00,18.00L2.00,22.00L-2.00,22.00"]
+                RenderPath {rect} at (-2,18) size 4x4 [fill={[type=SOLID] [color=#CC0066]}] [data="M-2.00,18.00L2.00,18.00L2.00,22.00L-2.00,22.00"]
             RenderSVGContainer {use} at (138,77) size 104x36
               RenderSVGContainer {g} at (138,77) size 104x36
                 RenderSVGContainer {g} at (138,77) size 104x36
@@ -105,8 +105,8 @@ layer at (0,0) size 480x360
                 RenderSVGInlineText {#text} at (-22,-28) size 22x36
                   text run at (-22,-28) width 22: "A"
           RenderSVGContainer {g} at (160,112) size 302x36 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,35.00)}]
-            RenderSVGContainer {defs} at (160,112) size 82x36
-              RenderSVGContainer {g} at (160,112) size 82x36
+            RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+              RenderSVGContainer {g} at (0,-8) size 82x36
                 RenderSVGText {text} at (0,20) size 480x36
                   RenderSVGInlineText {#text} at (0,-28) size 22x36
                     text run at (0,-28) width 22: "A"
@@ -164,8 +164,8 @@ layer at (0,0) size 480x360
                 RenderSVGInlineText {#text} at (0,-11) size 9x14
                   text run at (0,-11) width 9: "A"
           RenderSVGContainer {g} at (160,147) size 302x36 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,70.00)}]
-            RenderSVGContainer {defs} at (160,147) size 82x36
-              RenderSVGContainer {g} at (160,147) size 82x36
+            RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+              RenderSVGContainer {g} at (0,-8) size 82x36
                 RenderSVGText {text} at (0,20) size 480x35
                   RenderSVGInlineText {#text} at (0,-28) size 22x35
                     text run at (0,-28) width 22: "A"
@@ -223,8 +223,8 @@ layer at (0,0) size 480x360
                 RenderSVGInlineText {#text} at (0,-28) size 22x36
                   text run at (0,-28) width 22: "A"
           RenderSVGContainer {g} at (160,182) size 302x36 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,105.00)}]
-            RenderSVGContainer {defs} at (160,182) size 82x36
-              RenderSVGContainer {g} at (160,182) size 82x36
+            RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+              RenderSVGContainer {g} at (0,-8) size 82x36
                 RenderSVGText {text} at (0,20) size 480x36
                   RenderSVGInlineText {#text} at (0,-28) size 22x36
                     text run at (0,-28) width 22: "A"
@@ -282,8 +282,8 @@ layer at (0,0) size 480x360
                 RenderSVGInlineText {#text} at (0,-28) size 22x36
                   text run at (0,-28) width 22: "A"
           RenderSVGContainer {g} at (160,217) size 302x36 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,140.00)}]
-            RenderSVGContainer {defs} at (160,217) size 82x36
-              RenderSVGContainer {g} at (160,217) size 82x36
+            RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+              RenderSVGContainer {g} at (0,-8) size 82x36
                 RenderSVGText {text} at (0,20) size 480x36
                   RenderSVGInlineText {#text} at (0,-28) size 22x36
                     text run at (0,-28) width 22: "A"

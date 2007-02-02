@@ -8,7 +8,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (240,25) size 480x18
         RenderSVGInlineText {#text} at (-76,-14) size 152x18
           text run at (-76,-14) width 152: "<animate> on xlink:href"
-      RenderSVGContainer {g} at (17,59.50) size 444x214.50
+      RenderSVGContainer {g} at (17,59.50) size 442x214.50
         RenderSVGContainer {g} at (38,82) size 45x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,90.00)}]
           RenderSVGText {text} at (0,10) size 480x23
             RenderSVGInlineText {#text} at (-22,-18) size 45x23
@@ -30,8 +30,8 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,60) size 480x18
             RenderSVGInlineText {#text} at (-28,-14) size 56x18
               text run at (-28,-14) width 56: "<image>"
-        RenderSVGContainer {g} at (382,62) size 79x92 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,90.00)}]
-          RenderSVGContainer {defs} at (420,76) size 41x18
+        RenderSVGContainer {g} at (382,62) size 77x92 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,90.00)}]
+          RenderSVGHiddenContainer {defs} at (0,0) size 0x0
             RenderSVGText {text} at (0,0) size 480x18
               RenderSVGInlineText {#text} at (0,-14) size 41x18
                 text run at (0,-14) width 41: "Use A"

@@ -3,7 +3,10 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
       RenderSVGContainer {g} at (49.85,81.85) size 374.30x172.15
-        RenderSVGContainer {defs} at (0,0) size 0x0
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+          RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
+            RenderSVGGradientStop {stop} at (0,0) size 0x0
+            RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderSVGContainer {g} at (49.85,81.85) size 144.30x144.30 [transform={m=((0.30,0.00)(0.00,0.30)) t=(50.00,100.00)}]
           RenderPath {rect} at (49.85,81.85) size 144.30x144.30 [stroke={[type=SOLID] [color=#000000]}] [data="M0.00,-60.00L480.00,-60.00L480.00,420.00L0.00,420.00"]
           RenderPath {line} at (50,151) size 144x6 [stroke={[type=LINEAR-GRADIENT] [stops=[(0.00,#000000), (1.00,#FFFFFF)]] [start=(0,0)] [end=(1,0)] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,180.00L480.00,180.00"]

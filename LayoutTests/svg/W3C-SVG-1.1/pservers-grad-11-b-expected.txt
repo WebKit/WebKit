@@ -6,20 +6,32 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
       RenderSVGContainer {g} at (8,10) size 464x278
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderPath {rect} at (10,10) size 210x140 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#000000), (1.00,#FF0000)]] [bounding box mode=0] [center=(75,100)] [focal=(75,100)] [radius=130.00]}] [data="M10.00,10.00L220.00,10.00L220.00,150.00L10.00,150.00"]
         RenderSVGText {text} at (10,165) size 480x14
           RenderSVGInlineText {#text} at (0,-11) size 183x14
             text run at (0,-11) width 183: "Radial gradient on fill of rectangle"
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderPath {rect} at (230,10) size 210x140 [stroke={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFFF00)]] [bounding box mode=0] [center=(295,100)] [focal=(295,100)] [radius=150.00] [stroke width=40.00]}] [data="M250.00,30.00L420.00,30.00L420.00,130.00L250.00,130.00"]
         RenderSVGText {text} at (230,165) size 480x14
           RenderSVGInlineText {#text} at (0,-11) size 204x14
             text run at (0,-11) width 204: "Radial gradient on stroke of rectangle"
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderSVGText {text} at (10,210) size 480x56
           RenderSVGInlineText {#text} at (0,-45) size 419x56
             text run at (0,-45) width 419: "Gradient on text fill"
         RenderSVGText {text} at (10,225) size 480x14
           RenderSVGInlineText {#text} at (0,-11) size 209x14
             text run at (0,-11) width 209: "Radial gradient on text, black to yellow"
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderSVGText {text} at (10,270) size 480x51
           RenderSVGInlineText {#text} at (0,-41) size 460x51
             text run at (0,-41) width 460: "Gradient on text stroke"

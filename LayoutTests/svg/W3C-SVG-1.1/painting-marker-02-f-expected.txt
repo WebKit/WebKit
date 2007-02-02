@@ -8,7 +8,7 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (-4,-4) size 483.50x363.50
       RenderSVGContainer {g} at (-4,-4) size 455.20x276
-        RenderSVGContainer {defs} at (0,0) size 0x0
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGText {text} at (125,30) size 480x16
           RenderSVGInlineText {#text} at (0,-13) size 184x16
             text run at (0,-13) width 184: "Marker Rendering Properties"

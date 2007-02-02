@@ -26,6 +26,7 @@
 #include "SVGStopElement.h"
 
 #include "Document.h"
+#include "RenderSVGGradientStop.h"
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -52,6 +53,11 @@ void SVGStopElement::parseMappedAttribute(MappedAttribute* attr)
             setOffsetBaseValue(value.toDouble());
     } else
         SVGStyledElement::parseMappedAttribute(attr);
+}
+
+RenderObject* SVGStopElement::createRenderer(RenderArena* arena, RenderStyle* style)
+{
+    return new (arena) RenderSVGGradientStop(this);
 }
 
 void SVGStopElement::notifyAttributeChange() const

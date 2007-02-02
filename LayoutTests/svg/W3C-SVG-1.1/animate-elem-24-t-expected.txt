@@ -1,7 +1,7 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {defs} at (0,0) size 0x0
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (41,35.91) size 283x249.09
         RenderSVGContainer {g} at (70,92) size 149x133
           RenderSVGText {text} at (70,110) size 480x23

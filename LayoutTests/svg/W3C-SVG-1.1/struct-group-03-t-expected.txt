@@ -9,9 +9,9 @@ layer at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
       RenderSVGContainer {g} at (55.50,43.00) size 375x212.50
         RenderSVGContainer {g} at (55.50,44.50) size 375x211 [transform={m=((-0.00,-1.00)(1.00,-0.00)) t=(70.00,150.00)}]
-          RenderSVGContainer {defs} at (55.50,44.50) size 23x111
-            RenderPath {rect} at (55.50,44.50) size 23x111 [stroke={[type=SOLID] [color=#000000]}] [data="M-5.00,-14.00L105.00,-14.00L105.00,8.00L-5.00,8.00"]
-            RenderPath {rect} at (55.50,104.50) size 23x51 [stroke={[type=SOLID] [color=#000000]}] [data="M-5.00,-14.00L45.00,-14.00L45.00,8.00L-5.00,8.00"]
+          RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+            RenderPath {rect} at (-5.50,-14.50) size 111x23 [stroke={[type=SOLID] [color=#000000]}] [data="M-5.00,-14.00L105.00,-14.00L105.00,8.00L-5.00,8.00"]
+            RenderPath {rect} at (-5.50,-14.50) size 51x23 [stroke={[type=SOLID] [color=#000000]}] [data="M-5.00,-14.00L45.00,-14.00L45.00,8.00L-5.00,8.00"]
           RenderSVGContainer {use} at (55.50,44.50) size 23x111
             RenderSVGContainer {g} at (55.50,44.50) size 23x111
               RenderPath {rect} at (55.50,44.50) size 23x111 [stroke={[type=SOLID] [color=#000000]}] [data="M-5.00,-14.00L105.00,-14.00L105.00,8.00L-5.00,8.00"]

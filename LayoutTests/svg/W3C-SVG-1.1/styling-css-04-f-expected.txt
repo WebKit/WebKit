@@ -5,7 +5,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (240,35) size 480x22
           RenderSVGInlineText {#text} at (-77,-18) size 155x22
             text run at (-77,-18) width 155: "CSS selector test"
-        RenderSVGContainer {defs} at (0,0) size 0x0
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGContainer {g} at (29.50,69.50) size 208.50x68.50
           RenderPath {rect} at (29.50,69.50) size 68.50x68.50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M30.00,70.00L97.50,70.00L97.50,137.50L30.00,137.50"]
           RenderSVGContainer {g} at (99.50,69.50) size 68.50x68.50

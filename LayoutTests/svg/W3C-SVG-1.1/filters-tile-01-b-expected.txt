@@ -6,7 +6,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (240,25) size 480x17
           RenderSVGInlineText {#text} at (-94,-14) size 189x17
             text run at (-94,-14) width 189: "feTile filter test: a tiled pattern"
-        RenderSVGContainer {defs} at (0,0) size 0x0
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGContainer {g} at (0,0) size 0x0 [filter=#feTileFilter]
         RenderPath {rect} at (114,39) size 252x252 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M115.00,40.00L365.00,40.00L365.00,290.00L115.00,290.00"]
         RenderPath {rect} at (214.50,114.50) size 51x26 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF] [opacity=0.50]}] [data="M215.00,115.00L265.00,115.00L265.00,140.00L215.00,140.00"]

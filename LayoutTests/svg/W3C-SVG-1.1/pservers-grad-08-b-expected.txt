@@ -2,8 +2,11 @@ KRenderingPaintServer {id="Gradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000F
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {defs} at (0,0) size 0x0
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (17,13.50) size 423x252 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
+        RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderSVGText {text} at (20,70) size 480x78
           RenderSVGInlineText {#text} at (0,-61) size 420x78
             text run at (0,-61) width 420: "Gradient on fill"

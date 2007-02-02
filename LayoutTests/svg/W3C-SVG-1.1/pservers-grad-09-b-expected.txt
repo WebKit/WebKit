@@ -8,6 +8,9 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (10,25) size 480x17
           RenderSVGInlineText {#text} at (0,-14) size 194x17
             text run at (0,-14) width 194: "Testing gradientUnits attribute"
+        RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderPath {rect} at (125,35) size 200x50 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(1,0)]}] [data="M125.00,35.00L325.00,35.00L325.00,85.00L125.00,85.00"]
         RenderSVGText {text} at (10,100) size 480x14
           RenderSVGInlineText {#text} at (0,-11) size 397x14
@@ -15,6 +18,9 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (10,115) size 480x14
           RenderSVGInlineText {#text} at (0,-11) size 363x14
             text run at (0,-11) width 363: "Gradient is from the object left edge (red) to object right edge (blue)"
+        RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderPath {rect} at (10,125) size 430x50 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [start=(0,0)] [end=(0,1)]}] [data="M10.00,125.00L440.00,125.00L440.00,175.00L10.00,175.00"]
         RenderSVGText {text} at (10,190) size 480x14
           RenderSVGInlineText {#text} at (0,-11) size 187x14
@@ -22,6 +28,9 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (10,205) size 480x14
           RenderSVGInlineText {#text} at (0,-11) size 377x14
             text run at (0,-11) width 377: "Gradient is from the object top edge (blue) to object bottom edge (red)"
+        RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderPath {rect} at (10.00,210.00) size 430x50 [transform={m=((-0.00,-1.00)(1.00,-0.00)) t=(10.00,260.00)}] [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [start=(0,0)] [end=(0,430)]}] [data="M0.00,0.00L50.00,0.00L50.00,430.00L0.00,430.00"]
         RenderSVGText {text} at (10,275) size 480x14
           RenderSVGInlineText {#text} at (0,-11) size 177x14

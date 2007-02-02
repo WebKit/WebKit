@@ -2,9 +2,9 @@ KCanvasResource {id="blur" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) siz
 KCanvasResource {id="blurxy" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%] [effects=[[type=GAUSSIAN-BLUR]  [subregion="at (0,0) size 480x360"] [std dev. x=20.00 y=1.00]]]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    RenderSVGContainer {svg} at (-13.75,-13.75) size 493.25x373.25
-      RenderSVGContainer {g} at (-13.75,-13.75) size 472.50x362.50
-        RenderSVGContainer {defs} at (-13.75,-13.75) size 162.50x162.50
+    RenderSVGContainer {svg} at (0,0) size 479.50x359.50
+      RenderSVGContainer {g} at (0,0) size 458.75x348.75
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGContainer {g} at (0,0) size 135x135
             RenderPath {rect} at (0,0) size 90x90 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L90.00,0.00L90.00,90.00L0.00,90.00"]
             RenderPath {rect} at (45,45) size 90x90 [fill={[type=SOLID] [color=#FFFF00]}] [data="M45.00,45.00L135.00,45.00L135.00,135.00L45.00,135.00"]

@@ -87,7 +87,7 @@ layer at (0,0) size 480x360
             RenderSVGInlineText {#text} at (-12,-14) size 25x18
               text run at (-12,-14) width 25: "<a>"
         RenderSVGContainer {g} at (150,184) size 60x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,220.00)}]
-          RenderSVGContainer {defs} at (180,220) size 0x0
+          RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGText {text} at (0,0) size 480x46
             RenderSVGInlineText {#text} at (-30,-36) size 60x46
               text run at (-30,-36) width 60: "123"

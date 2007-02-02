@@ -2,7 +2,7 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
       RenderSVGContainer {g} at (9.50,9) size 461x291.50
-        RenderSVGContainer {defs} at (0,0) size 0x0
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGText {text} at (60,45) size 480x44
           RenderSVGInlineText {#text} at (0,-36) size 320x44
             text run at (0,-36) width 320: "Event bubbling - b"

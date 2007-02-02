@@ -1653,6 +1653,10 @@
 		A7CA595E0B27BD9E00FA021D /* DragController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7CA595C0B27BD9E00FA021D /* DragController.cpp */; };
 		A7CA59630B27C1F200FA021D /* DragClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CA59620B27C1F200FA021D /* DragClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7D3C5240B576B4B002CA450 /* PasteboardHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A809F1470B73793A002E4D7F /* RenderSVGGradientStop.h in Headers */ = {isa = PBXBuildFile; fileRef = A809F1450B73793A002E4D7F /* RenderSVGGradientStop.h */; };
+		A809F1480B73793B002E4D7F /* RenderSVGGradientStop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A809F1460B73793A002E4D7F /* RenderSVGGradientStop.cpp */; };
+		A809F1AA0B737FB6002E4D7F /* RenderSVGHiddenContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = A809F1A80B737FB6002E4D7F /* RenderSVGHiddenContainer.h */; };
+		A809F1AB0B737FB6002E4D7F /* RenderSVGHiddenContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A809F1A90B737FB6002E4D7F /* RenderSVGHiddenContainer.cpp */; };
 		A80CEBAC0B60FC49007637C1 /* SVGMPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A80CEBAA0B60FC49007637C1 /* SVGMPathElement.h */; };
 		A80CEBAD0B60FC49007637C1 /* SVGMPathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80CEBAB0B60FC49007637C1 /* SVGMPathElement.cpp */; };
 		A80E6CE40A1989CA007FB8C5 /* CSSValueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */; };
@@ -4653,6 +4657,10 @@
 		A7CA595C0B27BD9E00FA021D /* DragController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DragController.cpp; sourceTree = "<group>"; };
 		A7CA59620B27C1F200FA021D /* DragClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragClient.h; sourceTree = "<group>"; };
 		A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardHelper.h; sourceTree = "<group>"; };
+		A809F1450B73793A002E4D7F /* RenderSVGGradientStop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGGradientStop.h; sourceTree = "<group>"; };
+		A809F1460B73793A002E4D7F /* RenderSVGGradientStop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGGradientStop.cpp; sourceTree = "<group>"; };
+		A809F1A80B737FB6002E4D7F /* RenderSVGHiddenContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGHiddenContainer.h; sourceTree = "<group>"; };
+		A809F1A90B737FB6002E4D7F /* RenderSVGHiddenContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGHiddenContainer.cpp; sourceTree = "<group>"; };
 		A80CEBAA0B60FC49007637C1 /* SVGMPathElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGMPathElement.h; sourceTree = "<group>"; };
 		A80CEBAB0B60FC49007637C1 /* SVGMPathElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGMPathElement.cpp; sourceTree = "<group>"; };
 		A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueList.cpp; sourceTree = "<group>"; };
@@ -9294,8 +9302,6 @@
 		F523D2F302DE443B018635CA /* rendering */ = {
 			isa = PBXGroup;
 			children = (
-				AA0972CA0B6947A800A705E9 /* SVGInlineTextBox.cpp */,
-				AA0972CB0B6947A800A705E9 /* SVGInlineTextBox.h */,
 				A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */,
 				A8CFF0490A154F09000A4234 /* AutoTableLayout.h */,
 				BCEA4813097D93020094C9E4 /* bidi.cpp */,
@@ -9392,6 +9398,10 @@
 				A7352C180B1BB89D00A986D0 /* RenderSVGBlock.h */,
 				853CA9CA0AEEC5E9002372DC /* RenderSVGContainer.cpp */,
 				853CA9CB0AEEC5E9002372DC /* RenderSVGContainer.h */,
+				A809F1460B73793A002E4D7F /* RenderSVGGradientStop.cpp */,
+				A809F1450B73793A002E4D7F /* RenderSVGGradientStop.h */,
+				A809F1A90B737FB6002E4D7F /* RenderSVGHiddenContainer.cpp */,
+				A809F1A80B737FB6002E4D7F /* RenderSVGHiddenContainer.h */,
 				853CA9CC0AEEC5E9002372DC /* RenderSVGImage.cpp */,
 				853CA9CD0AEEC5E9002372DC /* RenderSVGImage.h */,
 				853CA9CE0AEEC5E9002372DC /* RenderSVGInline.cpp */,
@@ -9420,8 +9430,8 @@
 				BCEA484F097D93020094C9E4 /* RenderTextFragment.h */,
 				BCEA484A097D93020094C9E4 /* RenderTheme.cpp */,
 				BCEA484B097D93020094C9E4 /* RenderTheme.h */,
-				BCEA4849097D93020094C9E4 /* RenderThemeMac.mm */,
 				BCEA4848097D93020094C9E4 /* RenderThemeMac.h */,
+				BCEA4849097D93020094C9E4 /* RenderThemeMac.mm */,
 				93955A4203D72932008635CE /* RenderTreeAsText.cpp */,
 				93955A4103D72932008635CE /* RenderTreeAsText.h */,
 				BCEA4828097D93020094C9E4 /* RenderView.cpp */,
@@ -9432,6 +9442,8 @@
 				A8CFF5DA0A155A05000A4234 /* RootInlineBox.h */,
 				853CA9E20AEEC608002372DC /* SVGInlineFlowBox.cpp */,
 				853CA9E30AEEC608002372DC /* SVGInlineFlowBox.h */,
+				AA0972CA0B6947A800A705E9 /* SVGInlineTextBox.cpp */,
+				AA0972CB0B6947A800A705E9 /* SVGInlineTextBox.h */,
 				B2EBDC9A0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp */,
 				B2EBDC9B0AF77E3400AE4A68 /* SVGRenderTreeAsText.h */,
 				853CA9E40AEEC608002372DC /* SVGRootInlineBox.cpp */,
@@ -11069,6 +11081,8 @@
 				A84947AD0B67F4A10069F00F /* SVGTransformDistance.h in Headers */,
 				AA0972CD0B6947A800A705E9 /* SVGInlineTextBox.h in Headers */,
 				659A7D130B6DB4D9001155B3 /* SubstituteData.h in Headers */,
+				A809F1470B73793A002E4D7F /* RenderSVGGradientStop.h in Headers */,
+				A809F1AA0B737FB6002E4D7F /* RenderSVGHiddenContainer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12419,6 +12433,8 @@
 				BC17F9660B64EBB8004A65CB /* JSHTMLSelectElementCustom.cpp in Sources */,
 				A84947AE0B67F4A10069F00F /* SVGTransformDistance.cpp in Sources */,
 				AA0972CC0B6947A800A705E9 /* SVGInlineTextBox.cpp in Sources */,
+				A809F1480B73793B002E4D7F /* RenderSVGGradientStop.cpp in Sources */,
+				A809F1AB0B737FB6002E4D7F /* RenderSVGHiddenContainer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

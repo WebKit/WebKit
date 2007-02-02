@@ -8,8 +8,8 @@ KRenderingPaintServer {id="pattern1" [type=PATTERN] [bbox=at (0,0) size 1x1]}
 KRenderingPaintServer {id="pattern2" [type=PATTERN] [bbox=at (0,0) size 1x1]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    RenderSVGContainer {svg} at (-0.50,-0.50) size 446.50x154.50
-      RenderSVGContainer {defs} at (-0.50,-0.50) size 51x31
+    RenderSVGContainer {svg} at (10,10) size 436x144
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGContainer {pattern} at (0,0) size 0x0
         RenderSVGContainer {pattern} at (0,0) size 0x0
         RenderSVGContainer {pattern} at (0,0) size 0x0

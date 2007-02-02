@@ -8,14 +8,23 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (10,25) size 480x17
           RenderSVGInlineText {#text} at (0,-14) size 201x17
             text run at (0,-14) width 201: "Testing spreadMethod attribute"
+        RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderPath {rect} at (10,35) size 460x55 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [start=(0.40,0)] [end=(0.60,0)]}] [data="M10.00,35.00L470.00,35.00L470.00,90.00L10.00,90.00"]
         RenderSVGText {text} at (10,105) size 480x14
           RenderSVGInlineText {#text} at (0,-11) size 107x14
             text run at (0,-11) width 107: "spreadMethod=pad"
+        RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderPath {rect} at (10,120) size 460x55 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]][method=REFLECT] [start=(0.40,0)] [end=(0.60,0)]}] [data="M10.00,120.00L470.00,120.00L470.00,175.00L10.00,175.00"]
         RenderSVGText {text} at (10,190) size 480x14
           RenderSVGInlineText {#text} at (0,-11) size 119x14
             text run at (0,-11) width 119: "spreadMethod=reflect"
+        RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderPath {rect} at (10,205) size 460x55 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]][method=REPEAT] [start=(0.40,0)] [end=(0.60,0)]}] [data="M10.00,205.00L470.00,205.00L470.00,260.00L10.00,260.00"]
         RenderSVGText {text} at (10,275) size 480x14
           RenderSVGInlineText {#text} at (0,-11) size 121x14

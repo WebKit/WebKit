@@ -1,8 +1,8 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    RenderSVGContainer {svg} at (-2,-12) size 485x371.50
-      RenderSVGContainer {g} at (-2,-12) size 485x288
-        RenderSVGContainer {defs} at (-2,-12) size 202.50x62.50
+    RenderSVGContainer {svg} at (0.50,0.50) size 482.50x359
+      RenderSVGContainer {g} at (9.50,12) size 473.50x264
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGContainer {g} at (-2,-12) size 14x14
             RenderPath {line} at (-0.50,-12) size 1x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00L0.00,-12.00"]
             RenderPath {line} at (0,-0.50) size 12x1 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00L12.00,0.00"]
@@ -281,7 +281,7 @@ layer at (0,0) size 480x360
                 RenderSVGInlineText {#text} at (0,-10) size 10x13
                   text run at (0,-10) width 10: "12"
         RenderSVGContainer {g} at (320,100) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(320.00,100.00)}]
-      RenderSVGContainer {defs} at (0,0) size 0x0
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
           text run at (0,-36) width 264: "$Revision: 1.9 $"

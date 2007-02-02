@@ -27,6 +27,7 @@
 
 #include "cssstyleselector.h"
 #include "RenderPath.h"
+#include "RenderSVGHiddenContainer.h"
 #include "RenderView.h"
 #include "SVGNames.h"
 #include "SVGStopElement.h"
@@ -96,6 +97,11 @@ void SVGGradientElement::notifyAttributeChange() const
     m_resource->repaintClients();
 }
 
+RenderObject* SVGGradientElement::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    return new (arena) RenderSVGHiddenContainer(this);
+}
+
 SVGResource* SVGGradientElement::canvasResource()
 {
     if (!m_resource) {
@@ -111,25 +117,38 @@ SVGResource* SVGGradientElement::canvasResource()
 Vector<SVGGradientStop> SVGGradientElement::buildStops() const
 {
     Vector<SVGGradientStop> stops;
-
+    
     // FIXME: Manual style resolution is a hack
-    RenderStyle* gradientStyle = const_cast<SVGGradientElement*>(this)->styleForRenderer(parent()->renderer());
+    RenderStyle* gradientStyle = 0;
     for (Node* n = firstChild(); n; n = n->nextSibling()) {
         SVGElement* element = svg_dynamic_cast(n);
         if (element && element->isGradientStop()) {
             SVGStopElement* stop = static_cast<SVGStopElement*>(element);
             float stopOffset = stop->offset();
-                
-            RenderStyle* stopStyle = document()->styleSelector()->styleForElement(stop, gradientStyle);
+            
+            RenderStyle* stopStyle;
+            if (stop->renderer())
+                stopStyle = stop->renderer()->style();
+            else {
+                if (!gradientStyle)
+                    gradientStyle = const_cast<SVGGradientElement*>(this)->styleForRenderer(parent()->renderer());
+                // FIXME: The renderer tree has no way for us to force stops to always have a renderer
+                // (display: none) on a parent will cause them to not.  Until we have a way to force renderers
+                // we have a manual style resolution hack.
+                stopStyle = document()->styleSelector()->styleForElement(stop, gradientStyle);
+            }
+            
             Color c = stopStyle->svgStyle()->stopColor();
             float opacity = stopStyle->svgStyle()->stopOpacity();
-                
+            
             stops.append(makeGradientStop(stopOffset, makeRGBA(c.red(), c.green(), c.blue(), int(opacity * 255.))));
-            stopStyle->deref(view()->renderArena());
+            if (!stop->renderer())
+                stopStyle->deref(view()->renderArena());
         }
     }
 
-    gradientStyle->deref(view()->renderArena());
+    if (gradientStyle)
+        gradientStyle->deref(view()->renderArena());
     return stops;
 }
 

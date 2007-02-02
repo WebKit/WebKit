@@ -57,11 +57,6 @@ HANDLE_INHERIT(prop, Prop) \
 else if (isInitial) \
     svgstyle->set##Prop(SVGRenderStyle::initial##Prop());
 
-#define HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(prop, Prop, Value) \
-HANDLE_INHERIT(prop, Prop) \
-else if (isInitial) \
-    svgstyle->set##Prop(SVGRenderStyle::initial##Value());
-
 #define HANDLE_INHERIT_COND(propID, prop, Prop) \
 if (id == propID) \
 {\
@@ -73,13 +68,6 @@ if (id == propID) \
 if (id == propID) \
 {\
     svgstyle->set##Prop(SVGRenderStyle::initial##Prop());\
-    return;\
-}
-
-#define HANDLE_INITIAL_COND_WITH_VALUE(propID, Prop, Value) \
-if (id == propID) \
-{\
-    svgstyle->set##Prop(SVGRenderStyle::initial##Value());\
     return;\
 }
 
@@ -659,23 +647,17 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
 #endif
         case SVGCSS_PROP_STOP_COLOR:
         {
+            HANDLE_INHERIT_AND_INITIAL(stopColor, StopColor);
+
+            SVGColor* c = static_cast<SVGColor*>(value);
+            if (!c)
+                return CSSStyleSelector::applyProperty(id, value);
+
             Color col;
-            if (isInherit) {
-                style->setColor(parentStyle->color());
-                return;
-            } else if (isInitial)
-                col = SVGRenderStyle::initialStopColor();
-            else {
-                SVGColor *c = static_cast<SVGColor*>(value);
-                if (!c)
-                    return CSSStyleSelector::applyProperty(id, value);
-
-                if (c->colorType() == SVGColor::SVG_COLORTYPE_CURRENTCOLOR)
-                    col = style->color();
-                else
-                    col = c->color();
-            }
-
+            if (c->colorType() == SVGColor::SVG_COLORTYPE_CURRENTCOLOR)
+                col = style->color();
+            else
+                col = c->color();
             svgstyle->setStopColor(col);
             break;
         }

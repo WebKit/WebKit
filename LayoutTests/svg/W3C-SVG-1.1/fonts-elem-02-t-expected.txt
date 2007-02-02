@@ -2,7 +2,7 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
       RenderSVGContainer {g} at (7,4) size 416x241
-        RenderSVGContainer {defs} at (0,0) size 0x0
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGText {text} at (28,35) size 480x40
           RenderSVGInlineText {#text} at (0,-31) size 395x40
             text run at (0,-31) width 395: "SVG font element accuracy"

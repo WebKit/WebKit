@@ -69,11 +69,6 @@ void RenderSVGContainer::setLocalTransform(const AffineTransform& matrix)
     m_matrix = matrix;
 }
 
-bool RenderSVGContainer::canHaveChildren() const
-{
-    return true;
-}
-    
 bool RenderSVGContainer::requiresLayer()
 {
     // Only allow an <svg> element to generate a layer when it's positioned in a non-SVG context

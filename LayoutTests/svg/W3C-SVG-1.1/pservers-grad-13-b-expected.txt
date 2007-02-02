@@ -16,11 +16,11 @@ KRenderingPaintServer {id="grad4d" [type=RADIAL-GRADIENT] [stops=[(0.00,#0000000
 KRenderingPaintServer {id="grad6d" [type=RADIAL-GRADIENT] [stops=[(0.00,#00000000), (0.50,#00008B), (1.00,#00000000)]] [center=(0.10,0.10)] [focal=(0.83,0.75)] [radius=0.75]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    RenderSVGContainer {svg} at (0,0) size 479.50x359.50
+    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
       RenderSVGText {text} at (240,30) size 480x23
         RenderSVGInlineText {#text} at (-109,-18) size 218x23
           text run at (-109,-18) width 218: "Radial gradient focal point"
-      RenderSVGContainer {defs} at (0,0) size 100x60
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGContainer {g} at (0,0) size 100x60
           RenderPath {rect} at (0,0) size 100x60 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00L100.00,0.00L100.00,60.00L0.00,60.00"]
           RenderPath {rect} at (0,0) size 10x60 [fill={[type=SOLID] [color=#FFD700]}] [data="M0.00,0.00L10.00,0.00L10.00,60.00L0.00,60.00"]
@@ -31,7 +31,71 @@ layer at (0,0) size 480x360
           RenderPath {rect} at (75,0) size 10x60 [fill={[type=SOLID] [color=#FFA500]}] [data="M75.00,0.00L85.00,0.00L85.00,60.00L75.00,60.00"]
           RenderPath {rect} at (90,0) size 10x60 [fill={[type=SOLID] [color=#FFD700]}] [data="M90.00,0.00L100.00,0.00L100.00,60.00L90.00,60.00"]
           RenderPath {rect} at (0,0) size 100x60 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00L100.00,0.00L100.00,60.00L0.00,60.00"]
-      RenderSVGContainer {defs} at (0,0) size 0x0
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
       RenderSVGContainer {g} at (17.25,44.75) size 438x255.50
         RenderSVGContainer {use} at (17.25,44.75) size 100.50x60.50
           RenderSVGContainer {g} at (17.25,44.75) size 100.50x60.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(17.50,45.00)}]

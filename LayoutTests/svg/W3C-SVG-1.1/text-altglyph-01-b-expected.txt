@@ -8,7 +8,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (5,90) size 480x33
           RenderSVGInlineText {#text} at (0,-27) size 463x33
             text run at (0,-27) width 463: "and many-to-many chars to glyphs"
-        RenderSVGContainer {defs} at (0,0) size 0x0
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGContainer {g} at (45,185) size 425x105
           RenderSVGText {text} at (140,190) size 480x0
           RenderSVGText {text} at (50,270) size 480x69

@@ -4,7 +4,7 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0) size 479x359.50
       RenderSVGContainer {g} at (40,0) size 435x280
-        RenderSVGContainer {defs} at (0,0) size 0x0
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGText {text} at (40,14) size 480x17
           RenderSVGInlineText {#text} at (0,-14) size 245x17
             text run at (0,-14) width 245: "Rectangle should be red not green"

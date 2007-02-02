@@ -48,9 +48,11 @@ namespace WebCore {
         SVGGradientElement(const QualifiedName&, Document*);
         virtual ~SVGGradientElement();
 
-        // 'SVGGradientElement' functions
         virtual void parseMappedAttribute(MappedAttribute*);
         virtual void notifyAttributeChange() const;
+        
+        virtual bool rendererIsNeeded(RenderStyle*) { return true; }
+        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
         virtual SVGResource* canvasResource();
 
