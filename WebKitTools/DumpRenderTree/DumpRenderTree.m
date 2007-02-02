@@ -197,14 +197,22 @@ static void stopJavaScriptThread(void)
 
 static BOOL shouldIgnoreWebCoreNodeLeaks(CFStringRef URLString)
 {
-    static CFStringRef ignoreSet[] = {
-        CFSTR("editing/pasteboard/block-wrappers-necessary.html"), // NSAttributedString leak, Radar 4970608
-        CFSTR("editing/pasteboard/paste-text-012.html"), // ditto
-        CFSTR("editing/pasteboard/paste-text-013.html"), // ditto
-        CFSTR("editing/pasteboard/paste-text-014.html"), // ditto
-        CFSTR("editing/pasteboard/paste-4039777-fix.html") // ditto
+    static const char* const ignoreSetCStrings[] = {
+        "editing/pasteboard/block-wrappers-necessary.html", // NSAttributedString leak, Radar 4970608
+        "editing/pasteboard/paste-text-012.html", // ditto
+        "editing/pasteboard/paste-text-013.html", // ditto
+        "editing/pasteboard/paste-text-014.html", // ditto
+        "editing/pasteboard/paste-4039777-fix.html" // ditto
     };
-    static const int ignoreSetCount = sizeof(ignoreSet) / sizeof(CFStringRef);
+    static const int ignoreSetCount = sizeof(ignoreSetCStrings) / sizeof(const char* const);
+
+    // Work around GCC bug that treats the constant CFSTR macro as a non-constant expression
+    static CFStringRef* ignoreSet;
+    if (!ignoreSet) {
+        ignoreSet = malloc(sizeof(CFStringRef) * ignoreSetCount);
+        for (int i = 0; i < ignoreSetCount; i++)
+            ignoreSet[i] = CFStringCreateWithCString(kCFAllocatorDefault, ignoreSetCStrings[i], kCFStringEncodingUTF8);
+    }
     
     for (int i = 0; i < ignoreSetCount; i++) {
         CFStringRef ignoreString = ignoreSet[i];

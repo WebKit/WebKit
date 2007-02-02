@@ -1,3 +1,10 @@
+2007-02-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Fixed build. Added work-around for GCC bug.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (shouldIgnoreWebCoreNodeLeaks):
+
 2007-02-01  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
