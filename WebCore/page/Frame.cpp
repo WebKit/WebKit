@@ -242,8 +242,11 @@ void Frame::setView(FrameView* view)
     // Detach the document now, so any onUnload handlers get run - if
     // we wait until the view is destroyed, then things won't be
     // hooked up enough for some JavaScript calls to work.
-    if (d->m_doc && view == 0)
+    if (d->m_doc && view == 0) {
         d->m_doc->detach();
+        if (d->m_view)
+            d->m_view->unscheduleRelayout();
+    }
 
     d->m_view = view;
 
