@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 100: ReferenceError: Can't find variable: isBigEnoughAndException
 1.0 Single Argument Testing
 The following tests every with one argument, the callback. It should print whether the arrays [2, 5, 8, 1, 4] and [12, 5, 8, 1, 44] contain any numbers >= to 10 (false and true, respectively).
 

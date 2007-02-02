@@ -1,2 +1,3 @@
+CONSOLE MESSAGE: line 11: TypeError: Value -1 (result of expression document.getElementById("t").selectedIndex) is not object.
 This tests for a regression against http://bugzilla.opendarwin.org/show_bug.cgi?id=6942 Assertion failure in HTMLSelectElementImpl::selectedIndex (m_multiple)
 No assertion failure (on a debug build) means test PASS. 

@@ -1,3 +1,13 @@
+CONSOLE MESSAGE: line 111: Error: Problem parsing points="116,36 116,68 148,36"
+CONSOLE MESSAGE: line 112: Error: Problem parsing points="364,36 364,68 332,36"
+CONSOLE MESSAGE: line 113: Error: Problem parsing points="364,280 332,280 364,248"
+CONSOLE MESSAGE: line 114: Error: Problem parsing points="116,280 148,280 116,248"
+CONSOLE MESSAGE: line 115: Error: Problem parsing points="340,134 340,182 364,158"
+CONSOLE MESSAGE: line 116: Error: Problem parsing points="116,158 140,134 140,182"
+CONSOLE MESSAGE: line 117: Error: Problem parsing points="240,36 264,63.3 214,63.3"
+CONSOLE MESSAGE: line 118: Error: Problem parsing points="240,280 264,252.7 214,252.7"
+CONSOLE MESSAGE: line 125: Error: Problem parsing points="390,295 390,335"
+CONSOLE MESSAGE: line 126: Error: Problem parsing points="370,315 410,315"
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359

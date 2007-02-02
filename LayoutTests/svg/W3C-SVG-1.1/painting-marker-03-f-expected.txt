@@ -1,3 +1,7 @@
+CONSOLE MESSAGE: line 59: Error: Problem parsing points="100,60 120,140 140,60 160,140 180,60 180,100 100,100"
+CONSOLE MESSAGE: line 60: Error: Problem parsing points="190,60 210,140 230,60 250,140 270,60 270,100 190,100"
+CONSOLE MESSAGE: line 68: Error: Problem parsing points="100,60 120,140 140,60 160,140 180,60 180,100 100,100"
+CONSOLE MESSAGE: line 69: Error: Problem parsing points="190,60 210,140 230,60 250,140 270,60 270,100 190,100"
 KCanvasResource {id="marker1" [type=MARKER] [angle=0.00] [ref x=50.00 y=50.00]}
 KCanvasResource {id="marker2" [type=MARKER] [angle=0.00] [ref x=100.00 y=100.00]}
 layer at (0,0) size 480x360

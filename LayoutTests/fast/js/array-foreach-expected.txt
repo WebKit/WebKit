@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 100: ReferenceError: Can't find variable: exception
 1.0 Single Argument Testing
 The following tests forEach with one argument, the callback. It should print the contents of the array [2, 5, 9] alongside each index.
 

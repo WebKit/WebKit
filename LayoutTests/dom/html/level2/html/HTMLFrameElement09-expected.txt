@@ -1,2 +1,3 @@
+CONSOLE MESSAGE: line 692: Value complete (result of expression setUpPage) is not object.
 Test:	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLFrameElement09
 Status:	Success

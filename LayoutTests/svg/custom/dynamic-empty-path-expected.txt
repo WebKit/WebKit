@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 9: Error: Problem parsing d=""
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     RenderSVGContainer {svg} at (37.75,37.75) size 75.50x75.50

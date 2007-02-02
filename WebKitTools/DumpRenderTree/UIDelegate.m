@@ -39,6 +39,14 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 @implementation UIDelegate
 
+- (void)webView:(WebView *)sender addMessageToConsole:(NSDictionary *)dictionary
+{
+    NSString *message = [dictionary objectForKey:@"message"];
+    NSNumber *lineNumber = [dictionary objectForKey:@"lineNumber"];
+    
+    printf ("CONSOLE MESSAGE: line %d: %s\n", [lineNumber intValue], [message UTF8String]);
+}
+
 - (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message
 {
     if (!done)

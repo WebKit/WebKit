@@ -1,3 +1,7 @@
+CONSOLE MESSAGE: line 36: Null value
+CONSOLE MESSAGE: line 40: Null value
+CONSOLE MESSAGE: line 36: Null value
+CONSOLE MESSAGE: line 40: Null value
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

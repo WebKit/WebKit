@@ -1,3 +1,9 @@
+CONSOLE MESSAGE: line 33: Error: Problem parsing points="200,20 200,40 220,40 220,60"
+CONSOLE MESSAGE: line 34: Error: Problem parsing points="200,120 200,140 220,140 220,160"
+CONSOLE MESSAGE: line 84: Error: Problem parsing points="200,20 200,40 220,40 220,60"
+CONSOLE MESSAGE: line 91: Error: Problem parsing points="240,20 240,40 260,40 260,20"
+CONSOLE MESSAGE: line 117: Error: Problem parsing points="200,20 200,40 220,40 220,60"
+CONSOLE MESSAGE: line 121: Error: Problem parsing points="240,20 240,40 260,40 260,20"
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359

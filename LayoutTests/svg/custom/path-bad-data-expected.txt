@@ -1,3 +1,10 @@
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="M 0 0 L 10 10 10"
+CONSOLE MESSAGE: line 10: Error: Problem parsing d="M 602.7771 261.4254 A 318.0399 308.0491 0  1 602.7771 261.4253"
+CONSOLE MESSAGE: line 11: Error: Problem parsing d="M 0 0 L 10,, 10"
+CONSOLE MESSAGE: line 13: Error: Problem parsing d="M 0 0 L 10 10% Z"
+CONSOLE MESSAGE: line 14: Error: Problem parsing d="M"
+CONSOLE MESSAGE: line 15: Error: Problem parsing d="M 0"
+CONSOLE MESSAGE: line 16: Error: Problem parsing d="M 0 0 0"
 layer at (0,0) size 800x755
   RenderView at (0,0) size 800x600
     RenderSVGContainer {svg} at (-0.35,-0.35) size 200.35x200.35

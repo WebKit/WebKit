@@ -1,3 +1,13 @@
+CONSOLE MESSAGE: line 20: Warning: Problem parsing viewBox="0"
+CONSOLE MESSAGE: line 23: Warning: Problem parsing viewBox="0 0"
+CONSOLE MESSAGE: line 26: Warning: Problem parsing viewBox="0 0 30"
+CONSOLE MESSAGE: line 29: Warning: Problem parsing viewBox="0 0 30 40 50"
+CONSOLE MESSAGE: line 32: Warning: Problem parsing viewBox="0 0 30 40,"
+CONSOLE MESSAGE: line 35: Warning: Problem parsing viewBox=",0 0 30 40"
+CONSOLE MESSAGE: line 38: Error: A negative value for ViewBox width is not allowed
+CONSOLE MESSAGE: line 41: Error: A negative value for ViewBox height is not allowed
+CONSOLE MESSAGE: line 44: Warning: Problem parsing viewBox="0 0 30, , 40"
+CONSOLE MESSAGE: line 47: Warning: Problem parsing viewBox="0 0 30% 40"
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     RenderSVGContainer {svg} at (0,36.67) size 800x363.33

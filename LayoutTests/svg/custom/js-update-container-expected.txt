@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 9: Can't find variable: hello
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     RenderSVGContainer {svg} at (-1.25,-1.25) size 40.30x40.30

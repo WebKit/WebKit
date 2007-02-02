@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 9: Can't find variable: byebye
 KRenderingPaintServer {id="Gradient" [type=LINEAR-GRADIENT] [stops=[(0.30,#0080007F), (1.00,#FF0000)]] [bounding box mode=0] [start=(150,10)] [end=(440,10)]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600

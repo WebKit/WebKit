@@ -1,3 +1,16 @@
+CONSOLE MESSAGE: line 1: Refused to set unsafe header ACCEPT-CHARSET
+CONSOLE MESSAGE: line 1: Refused to set unsafe header ACCEPT-ENCODING
+CONSOLE MESSAGE: line 1: Refused to set unsafe header CONTENT-LENGTH
+CONSOLE MESSAGE: line 1: Refused to set unsafe header EXPECT
+CONSOLE MESSAGE: line 1: Refused to set unsafe header DATE
+CONSOLE MESSAGE: line 1: Refused to set unsafe header HOST
+CONSOLE MESSAGE: line 1: Refused to set unsafe header KEEP-ALIVE
+CONSOLE MESSAGE: line 1: Refused to set unsafe header REFERER
+CONSOLE MESSAGE: line 1: Refused to set unsafe header TE
+CONSOLE MESSAGE: line 1: Refused to set unsafe header TRAILER
+CONSOLE MESSAGE: line 1: Refused to set unsafe header TRANSFER-ENCODING
+CONSOLE MESSAGE: line 1: Refused to set unsafe header UPGRADE
+CONSOLE MESSAGE: line 1: Refused to set unsafe header VIA
 Test that setRequestHeader cannot be used to alter security-sensitive headers.
 
 SUCCESS
