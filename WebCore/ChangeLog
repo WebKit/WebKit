@@ -2,6 +2,17 @@
 
         Reviewed by Lars
 
+        Fix scrolling-on-selection bug by correctly
+        scrolling to the offset instead of trying to 
+        ensure visibility with margins.
+
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::scrollPointRecursively):
+
+2007-02-02  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Lars
+
         Fix drawing of dashed and colored lines. Pen
         has to be inherited for stroke to stay consistent.
 

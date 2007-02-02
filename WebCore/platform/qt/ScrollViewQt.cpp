@@ -278,7 +278,8 @@ void ScrollView::scrollPointRecursively(int x, int y)
     x = (x < 0) ? 0 : x;
     y = (y < 0) ? 0 : y;
 
-    m_area->ensureVisible(x, y);
+    m_area->horizontalScrollBar()->setValue(x);
+    m_area->verticalScrollBar()->setValue(y);
 }
 
 bool ScrollView::inWindow() const
