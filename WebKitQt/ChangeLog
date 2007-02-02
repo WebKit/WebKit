@@ -1,3 +1,23 @@
+2007-02-01  George Staikos  <staikos@kde.org>
+
+        Reviewed by Zack and Lars.
+
+        Add a cookie interface for the Qt build.
+
+        * Api/qcookiejar.cpp: Added.
+        (QCookieJarPrivate::QCookieJarPrivate):
+        (qHash):
+        (QCookieJar::QCookieJar):
+        (QCookieJar::~QCookieJar):
+        (QCookieJar::setCookies):
+        (QCookieJar::cookies):
+        (QCookieJar::isEnabled):
+        (QCookieJar::setEnabled):
+        (gCleanupJar):
+        (QCookieJar::setCookieJar):
+        (QCookieJar::cookieJar):
+        * Api/qcookiejar.h: Added.
+
 2007-02-01  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Adam.

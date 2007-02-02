@@ -31,26 +31,27 @@
 #include "DeprecatedString.h"
 #include "KURL.h"
 #include "PlatformString.h"
-#include "StringHash.h"
-#include <wtf/HashMap.h>
+
+#include <qcookiejar.h>
 
 namespace WebCore {
 
-static HashMap<String, String> cookieJar;
-
-void setCookies(const KURL& url, const KURL& /*policyURL*/, const String& value)
+void setCookies(const KURL& url, const KURL& policyURL, const String& value)
 {
-    cookieJar.set(url.url(), value);
+    QUrl u((QString)url.url());
+    QUrl p((QString)policyURL.url());
+    QCookieJar::cookieJar()->setCookies(u, p, (QString)value);
 }
 
 String cookies(const KURL& url)
 {
-    return cookieJar.get(url.url());
+    QUrl u((QString)url.url());
+    return (String)QCookieJar::cookieJar()->cookies(u);
 }
 
 bool cookiesEnabled()
 {
-    return true;
+    return QCookieJar::cookieJar()->isEnabled();
 }
 
 }

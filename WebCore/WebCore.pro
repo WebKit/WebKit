@@ -111,6 +111,7 @@ MANUALMOC += \
     $$PWD/platform/qt/SharedTimerQt.h \
     $$PWD/../WebKitQt/Api/qwebframe.h \
     $$PWD/../WebKitQt/Api/qwebpage.h \
+    $$PWD/../WebKitQt/Api/qcookiejar.h \
     $$PWD/../WebKitQt/WebCoreSupport/FrameLoaderClientQt.h
 
 LUT_FILES += \
@@ -700,6 +701,7 @@ SOURCES += \
     ../WebKitQt/WebCoreSupport/EditorClientQt.cpp \
     ../WebKitQt/WebCoreSupport/FrameLoaderClientQt.cpp \
     ../WebKitQt/Api/qwebframe.cpp \
+    ../WebKitQt/Api/qcookiejar.cpp \
     ../WebKitQt/Api/qwebpage.cpp \
     ../WebKitQt/Api/qwebpagehistory.cpp
 
