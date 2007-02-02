@@ -1,3 +1,10 @@
+2007-02-02  Maciej Stachowiak  <mjs@apple.com>
+
+        - not reviewed, build fix
+
+        * wtf/ListHashSet.h:
+        (WTF::ListHashSetNodeAllocator::ListHashSetNodeAllocator): ummm, use union correctly
+
 2007-02-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
