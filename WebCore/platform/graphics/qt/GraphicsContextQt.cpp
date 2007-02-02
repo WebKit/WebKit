@@ -889,7 +889,7 @@ void GraphicsContext::setPlatformStrokeColor(const Color& color)
         return;
     QPen newPen(m_data->p().pen());
     newPen.setColor(color);
-    m_data->p().setPen(color);
+    m_data->p().setPen(newPen);
 }
 
 void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle& strokeStyle)
