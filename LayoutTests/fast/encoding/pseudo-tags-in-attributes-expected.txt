@@ -1,7 +1,7 @@
 Test for bug 12506: REGRESSION: Safari doesn't display hebrew text on a web page, displayed correctly on Tiger.
 
-SUÐ¡Ð¡Ð•SS
+SUССЕSS
 
-Charset: ISO-8859-1
+Charset: UTF-8
 
 

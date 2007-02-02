@@ -1,3 +1,13 @@
+2007-02-01  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12506
+        REGRESSION: Safari doesn't display hebrew text on a web page,
+        displayed correctly on Tiger
+
+        * fast/encoding/pseudo-tags-in-attributes-expected.txt: Changing back to success.
+
 2007-02-01  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

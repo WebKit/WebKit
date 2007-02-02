@@ -567,6 +567,7 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
                         return false;
                     if (*ptr == '\'' || *ptr == '"') {
                         char quoteMark = *ptr;
+                        ++ptr;
                         while (*ptr != quoteMark) {
                             if (*ptr == '\0')
                                 return false;
