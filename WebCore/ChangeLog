@@ -1,3 +1,15 @@
+2007-02-02  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Lars
+
+        Fix drawing of dashed and colored lines. Pen
+        has to be inherited for stroke to stay consistent.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::setAlpha):
+        (WebCore::GraphicsContext::setPlatformStrokeColor):
+        (WebCore::GraphicsContext::setPlatformStrokeStyle):
+
 2007-02-01  Nicholas Shanks  <webkit@nickshanks.com>
 
         Reviewed by Mark.
