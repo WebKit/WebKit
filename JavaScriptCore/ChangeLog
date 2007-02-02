@@ -1,4 +1,18 @@
-2007-02-01  Geoffrey Garen  <ggaren@apple.com>
+2007-02-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - fix copying and assigning a ListHashSet
+
+        No test because the code path with bugs I am fixing is not used yet.
+
+        * wtf/ListHashSet.h: Tweaked ListHashSetNodeAllocator a little bit for clarity.
+        Changed m_allocator to be an OwnPtr instead of doing an explicit delete.
+        Fixed bug in copy constructor where we'd have an uninitialized m_allocator.
+        Fixed bug in assignment operator where it would swap only the hash table, and
+        not the head, tail, and allocator pointers.
+
+2007-02-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
         

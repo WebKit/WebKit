@@ -22,8 +22,8 @@
 #ifndef WTF_ListHashSet_h
 #define WTF_ListHashSet_h
 
-#include "HashTable.h"
 #include "HashSet.h"
+#include "OwnPtr.h"
 
 namespace WTF {
 
@@ -75,6 +75,8 @@ namespace WTF {
         ListHashSet& operator=(const ListHashSet&);
         ~ListHashSet();
 
+        void swap(ListHashSet&);
+
         int size() const;
         int capacity() const;
         bool isEmpty() const;
@@ -108,9 +110,8 @@ namespace WTF {
         ImplType m_impl;
         Node* m_head;
         Node* m_tail;
-        NodeAllocator* m_allocator;
+        OwnPtr<NodeAllocator> m_allocator;
     };
-
 
     template<typename ValueArg> struct ListHashSetNodeAllocator {
         typedef ListHashSetNode<ValueArg> Node;
@@ -119,10 +120,10 @@ namespace WTF {
         ListHashSetNodeAllocator() 
             : m_freeList(pool())
         { 
-            memset(m_pool.pool, 0, sizeof(m_pool));  
+            memset(m_pool.pool, 0, sizeof(m_pool.pool));
         }
 
-        Node* allocate() 
+        Node* allocate()
         { 
             Node* result = m_freeList;
 
@@ -147,13 +148,13 @@ namespace WTF {
 
             fastFree(node);
         }
-        
 
     private:
         Node* pool() { return reinterpret_cast<Node*>(m_pool.pool); }
-        bool inPool(Node* node) 
-        { 
-            return reinterpret_cast<char*>(node) >= m_pool.pool && reinterpret_cast<char*>(node) < m_pool.pool + sizeof(m_pool.pool); 
+
+        bool inPool(Node* node)
+        {
+            return node >= pool() && node < pool() + m_poolSize;
         }
 
         Node* m_freeList;
@@ -185,8 +186,7 @@ namespace WTF {
         static bool equal(Node* const& a, Node* const& b) { return HashArg::equal(a->m_value, b->m_value); }
     };
 
-    template<typename ValueArg, typename HashArg> class ListHashSetIterator
-    {
+    template<typename ValueArg, typename HashArg> class ListHashSetIterator {
     private:
         typedef ListHashSet<ValueArg, HashArg> ListHashSetType;
         typedef ListHashSetIterator<ValueArg, HashArg> iterator;
@@ -229,8 +229,7 @@ namespace WTF {
         const_iterator m_iterator;
     };
 
-    template<typename ValueArg, typename HashArg> class ListHashSetConstIterator
-    {
+    template<typename ValueArg, typename HashArg> class ListHashSetConstIterator {
     private:
         typedef ListHashSet<ValueArg, HashArg> ListHashSetType;
         typedef ListHashSetIterator<ValueArg, HashArg> iterator;
@@ -253,8 +252,6 @@ namespace WTF {
         ListHashSetConstIterator()
         {
         }
-
-        // default copy, assignment and destructor are OK if CHECK_HASHTABLE_ITERATORS is 0
 
         PointerType get() const
         {
@@ -325,6 +322,7 @@ namespace WTF {
     inline ListHashSet<T, U>::ListHashSet(const ListHashSet& other)
         : m_head(0)
         , m_tail(0)
+        , m_allocator(new NodeAllocator)
     {
         const_iterator end = other.end();
         for (const_iterator it = other.begin(); it != end; ++it)
@@ -335,7 +333,17 @@ namespace WTF {
     inline ListHashSet<T, U>& ListHashSet<T, U>::operator=(const ListHashSet& other)
     {
         ListHashSet tmp(other);
-        m_impl.swap(tmp.m_impl); 
+        swap(tmp);
+        return *this;
+    }
+
+    template<typename T, typename U>
+    inline void ListHashSet<T, U>::swap(ListHashSet& other)
+    {
+        m_impl.swap(other.m_impl);
+        std::swap(m_head, other.m_head);
+        std::swap(m_tail, other.m_tail);
+        m_allocator.swap(other.m_allocator);
         return *this;
     }
 
@@ -343,7 +351,6 @@ namespace WTF {
     inline ListHashSet<T, U>::~ListHashSet()
     {
         deleteAllNodes();
-        delete m_allocator;
     }
 
     template<typename T, typename U>
@@ -395,7 +402,6 @@ namespace WTF {
         typename ImplType::iterator it = m_impl.template find<ValueType, Translator>(value);
         if (it == m_impl.end())
             return end();
-
         return makeIterator(*it); 
     }
 
@@ -406,7 +412,7 @@ namespace WTF {
         typename ImplType::const_iterator it = m_impl.template find<ValueType, Translator>(value);
         if (it == m_impl.end())
             return end();
-        return makeConstIterator(*(m_impl.template find<ValueType, Translator>(value))); 
+        return makeConstIterator(*it);
     }
 
     template<typename T, typename U>
@@ -420,11 +426,10 @@ namespace WTF {
     pair<typename ListHashSet<T, U>::iterator, bool> ListHashSet<T, U>::add(const ValueType &value)
     {
         typedef ListHashSetTranslator<ValueType, HashFunctions> Translator;
-        pair<typename ImplType::iterator, bool> result =  m_impl.template add<ValueType, NodeAllocator*, Translator>(value, m_allocator);
+        pair<typename ImplType::iterator, bool> result = m_impl.template add<ValueType, NodeAllocator*, Translator>(value, m_allocator.get());
         if (result.second)
-            appendNode(*(result.first));
-
-        return std::make_pair(makeIterator(*(result.first)), result.second);
+            appendNode(*result.first);
+        return std::make_pair(makeIterator(*result.first), result.second);
     }
 
     template<typename T, typename U>
@@ -432,7 +437,6 @@ namespace WTF {
     {
         if (it == end())
             return;
-
         m_impl.remove(it.node());
         unlinkAndDelete(it.node());
     }
@@ -471,7 +475,7 @@ namespace WTF {
             node->m_next->m_prev = node->m_prev;
         }
 
-        node->destroy(m_allocator);
+        node->destroy(m_allocator.get());
     }
 
     template<typename T, typename U>
@@ -498,7 +502,7 @@ namespace WTF {
             return;
 
         for (Node* node = m_head, *next = m_head->m_next; node; node = next, next = node ? node->m_next : 0)
-            node->destroy(m_allocator);
+            node->destroy(m_allocator.get());
     }
 
     template<typename T, typename U>
