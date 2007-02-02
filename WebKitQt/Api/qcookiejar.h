@@ -24,6 +24,8 @@
 #include <QUrl>
 #include <qwebkitglobal.h>
 
+class QCookieJarPrivate;
+
 class QWEBKIT_EXPORT QCookieJar : public QObject
 {
     Q_OBJECT
