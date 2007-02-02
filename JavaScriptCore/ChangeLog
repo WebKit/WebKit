@@ -2,7 +2,7 @@
 
         Reviewed by Darin.
         
-        - use a custom allocator for ListHashSet, to fix ~1% per regression using it for form control
+        - use a custom allocator for ListHashSet, to fix ~1% perf regression using it for form control
 
         * wtf/ListHashSet.h:
         (WTF::ListHashSetNodeAllocator::ListHashSetNodeAllocator):
