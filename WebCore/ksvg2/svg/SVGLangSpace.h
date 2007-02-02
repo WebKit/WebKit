@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,6 +22,7 @@
 
 #ifndef SVGLangSpace_h
 #define SVGLangSpace_h
+
 #ifdef SVG_SUPPORT
 
 #include "AtomicString.h"

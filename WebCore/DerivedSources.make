@@ -600,6 +600,10 @@ HTMLNames.cpp : ksvg2/scripts/make_names.pl html/HTMLTagNames.in html/HTMLAttrib
 	perl $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in \
             --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xhtml" --attrsNullNamespace --output .
 
+XMLNames.cpp : ksvg2/scripts/make_names.pl xml/xmlattrs.in
+	perl $< --attrs $(WebCore)/xml/xmlattrs.in \
+            --namespace XML --cppNamespace WebCore --namespaceURI "http://www.w3.org/XML/1998/namespace" --output .
+
 ifeq ($(findstring SVG_SUPPORT,$(FEATURE_DEFINES)), SVG_SUPPORT)
 
 # SVG tag and attribute names
@@ -610,10 +614,6 @@ SVGElementFactory.cpp SVGNames.cpp : ksvg2/scripts/make_names.pl ksvg2/svg/svgta
 XLinkNames.cpp : ksvg2/scripts/make_names.pl ksvg2/misc/xlinkattrs.in
 	perl $< --attrs $(WebCore)/ksvg2/misc/xlinkattrs.in \
             --namespace XLink --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xlink" --output .
-
-XMLNames.cpp : ksvg2/scripts/make_names.pl xml/xmlattrs.in
-	perl $< --attrs $(WebCore)/xml/xmlattrs.in \
-            --namespace XML --cppNamespace WebCore --namespaceURI "http://www.w3.org/XML/1998/namespace" --output .
 
 # SVG CSS property names and value keywords
 
@@ -638,9 +638,6 @@ SVGNames.cpp :
 
 XLinkNames.cpp :
 	echo > XLinkNames.cpp
-
-XMLNames.cpp :
-	echo > XMLNames.cpp
 
 ksvgcssproperties.h :
 	echo > ksvgcssproperties.h

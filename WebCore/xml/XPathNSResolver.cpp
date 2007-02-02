@@ -30,6 +30,7 @@
 #ifdef XPATH_SUPPORT
 
 #include "Node.h"
+#include "XMLNames.h"
 
 namespace WebCore {
 
@@ -47,7 +48,7 @@ String XPathNSResolver::lookupNamespaceURI(const String& prefix)
     // This is not done by Node::lookupNamespaceURI as per the DOM3 Core spec,
     // but the XPath spec says that we should do it for XPathNSResolver.
     if (prefix == "xml")
-        return "http://www.w3.org/XML/1998/namespace";
+        return XMLNames::xmlNamespaceURI;
     
     return m_node ? m_node->lookupNamespaceURI(prefix) : String();
 }

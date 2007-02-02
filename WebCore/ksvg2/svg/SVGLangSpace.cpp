@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -21,11 +21,12 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGLangSpace.h"
 
 #include "SVGElement.h"
-#include "SVGNames.h"
+#include "XMLNames.h"
 
 namespace WebCore {
 
@@ -49,6 +50,11 @@ void SVGLangSpace::setXmllang(const AtomicString& xmlLang)
 
 const AtomicString& SVGLangSpace::xmlspace() const
 {
+    if (!m_space) {
+        static const AtomicString defaultString("default");
+        return defaultString;
+    }
+
     return m_space;
 }
 
@@ -59,10 +65,10 @@ void SVGLangSpace::setXmlspace(const AtomicString& xmlSpace)
 
 bool SVGLangSpace::parseMappedAttribute(MappedAttribute* attr)
 {
-    if (attr->name() == SVGNames::langAttr) {
+    if (attr->name().matches(XMLNames::langAttr)) {
         setXmllang(attr->value());
         return true;
-    } else if (attr->name() == SVGNames::spaceAttr) {
+    } else if (attr->name().matches(XMLNames::spaceAttr)) {
         setXmlspace(attr->value());
         return true;
     }
@@ -72,6 +78,6 @@ bool SVGLangSpace::parseMappedAttribute(MappedAttribute* attr)
 
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet
