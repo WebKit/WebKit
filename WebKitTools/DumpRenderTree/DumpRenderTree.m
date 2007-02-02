@@ -197,7 +197,7 @@ static void stopJavaScriptThread(void)
 
 static BOOL shouldIgnoreWebCoreNodeLeaks(CFStringRef URLString)
 {
-    static CFStringRef const ignoreSet[] = {
+    static CFStringRef ignoreSet[] = {
         CFSTR("editing/pasteboard/block-wrappers-necessary.html"), // NSAttributedString leak, Radar 4970608
         CFSTR("editing/pasteboard/paste-text-012.html"), // ditto
         CFSTR("editing/pasteboard/paste-text-013.html"), // ditto
