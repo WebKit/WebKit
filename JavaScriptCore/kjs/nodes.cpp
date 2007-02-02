@@ -83,14 +83,22 @@ using namespace KJS;
 
 // ------------------------------ Node -----------------------------------------
 
-
 #ifndef NDEBUG
+#ifndef LOG_CHANNEL_PREFIX
+#define LOG_CHANNEL_PREFIX Log
+#endif
+static WTFLogChannel LogKJSNodeLeaks = { 0x00000000, "", WTFLogChannelOn };
+
 struct NodeCounter { 
-    static int count; 
-    ~NodeCounter() { if (count != 0) fprintf(stderr, "LEAK: %d KJS::Node\n", count); }
+    static unsigned count; 
+    ~NodeCounter() 
+    { 
+        if (count) 
+            LOG(KJSNodeLeaks, "LEAK: %u KJS::Node\n", count); 
+    }
 };
-int NodeCounter::count = 0;
-static NodeCounter nodeImplCounter;
+unsigned NodeCounter::count = 0;
+static NodeCounter nodeCounter;
 #endif
 
 static HashSet<Node*>* newNodes;

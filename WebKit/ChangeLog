@@ -1,3 +1,15 @@
+2007-02-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Added support for selectively ignoring WebCore::Node leaks during layout
+        tests, so that we can ignore known leaks in other components.
+
+        * Misc/WebCoreStatistics.h:
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics startIgnoringWebCoreNodeLeaks]):
+        (+[WebCoreStatistics stopIgnoringWebCoreNodeLeaks]):
+
 2007-02-01  Nicholas Shanks  <webkit@nickshanks.com>
 
         Reviewed by Mark.

@@ -32,6 +32,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "HTMLNames.h"
+#include "Logging.h"
 #include "NamedAttrMap.h"
 #include "RenderObject.h"
 #include "Text.h"
@@ -93,18 +94,43 @@ bool TagNodeList::nodeMatches(Node *testNode) const
 }
 
 
+bool Node::isSupported(const String& feature, const String& version)
+{
+    return DOMImplementation::instance()->hasFeature(feature, version);
+}
+
 #ifndef NDEBUG
-struct NodeCounter { 
+WTFLogChannel LogWebCoreNodeLeaks =  { 0x00000000, "", WTFLogChannelOn };
+
+struct NodeCounter {
     static unsigned count; 
+
     ~NodeCounter() 
     { 
         if (count) 
-            fprintf(stderr, "LEAK: %u Node\n", count); 
+            LOG(WebCoreNodeLeaks, "LEAK: %u Node\n", count); 
     }
 };
 unsigned NodeCounter::count = 0;
 static NodeCounter nodeCounter;
+
+static bool shouldIgnoreLeaks = false;
+static HashSet<Node*> ignoreSet;
 #endif
+
+void Node::startIgnoringLeaks()
+{
+#ifndef NDEBUG
+    shouldIgnoreLeaks = true;
+#endif
+}
+
+void Node::stopIgnoringLeaks()
+{
+#ifndef NDEBUG
+    shouldIgnoreLeaks = false;
+#endif
+}
 
 Node::Node(Document *doc)
     : m_document(doc),
@@ -130,7 +156,10 @@ Node::Node(Document *doc)
       m_inDetach(false)
 {
 #ifndef NDEBUG
-    ++NodeCounter::count;
+    if (shouldIgnoreLeaks)
+        ignoreSet.add(this);
+    else
+        ++NodeCounter::count;
 #endif
 }
 
@@ -146,7 +175,11 @@ void Node::setDocument(Document* doc)
 Node::~Node()
 {
 #ifndef NDEBUG
-    --NodeCounter::count;
+    HashSet<Node*>::iterator it = ignoreSet.find(this);
+    if (it != ignoreSet.end())
+        ignoreSet.remove(it);
+    else
+        --NodeCounter::count;
 #endif
     if (renderer())
         detach();
@@ -1077,11 +1110,6 @@ PassRefPtr<NodeList> Node::getElementsByTagNameNS(const String &namespaceURI, co
     if (document()->isHTMLDocument())
         name = localName.lower();
     return new TagNodeList(this, AtomicString(namespaceURI), AtomicString(name));
-}
-
-bool Node::isSupported(const String &feature, const String &version)
-{
-    return DOMImplementation::instance()->hasFeature(feature, version);
 }
 
 Document *Node::ownerDocument() const

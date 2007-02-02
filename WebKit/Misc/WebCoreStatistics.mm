@@ -28,11 +28,13 @@
 
 #import "WebCoreStatistics.h"
 
-#import <WebCore/WebCoreJavaScript.h>
-
 #import "WebCache.h"
+#import <WebCore/Node.h>
+#import <WebCore/WebCoreJavaScript.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebFrameInternal.h>
+
+using namespace WebCore;
 
 @implementation WebCoreStatistics
 
@@ -104,6 +106,16 @@
 + (void)setCacheDisabled:(BOOL)disabled
 {
     [WebCache setDisabled:disabled];
+}
+
++ (void)startIgnoringWebCoreNodeLeaks
+{
+    WebCore::Node::startIgnoringLeaks();
+}
+
++ (void)stopIgnoringWebCoreNodeLeaks;
+{
+    WebCore::Node::stopIgnoringLeaks();
 }
 
 @end

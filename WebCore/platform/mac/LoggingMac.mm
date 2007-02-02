@@ -27,9 +27,8 @@
 
 namespace WebCore {
 
-static inline void initializeLogChannel(WTFLogChannel &channel)
+static inline void initializeWithUserDefault(WTFLogChannel& channel)
 {
-    channel.state = WTFLogChannelOff;
     NSString *logLevelString = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithUTF8String:channel.defaultName]];
     if (logLevelString) {
         unsigned logLevel;
@@ -37,6 +36,8 @@ static inline void initializeLogChannel(WTFLogChannel &channel)
             NSLog(@"unable to parse hex value for %s (%@), logging is off", channel.defaultName, logLevelString);
         if ((logLevel & channel.mask) == channel.mask)
             channel.state = WTFLogChannelOn;
+        else
+            channel.state = WTFLogChannelOff;
     }
 }
 
@@ -47,20 +48,20 @@ void InitializeLoggingChannelsIfNecessary()
         return;
     haveInitializedLoggingChannels = true;
     
-    initializeLogChannel(LogNotYetImplemented);
-    initializeLogChannel(LogFrames);
-    initializeLogChannel(LogLoading);
-    initializeLogChannel(LogPopupBlocking);
-    initializeLogChannel(LogEvents);
-    initializeLogChannel(LogEditing);
-    initializeLogChannel(LogTextConversion);
-    initializeLogChannel(LogIconDatabase);
-    initializeLogChannel(LogSQLDatabase);
-    initializeLogChannel(LogSpellingAndGrammar);
-    initializeLogChannel(LogBackForward);
-    initializeLogChannel(LogHistory);
-    initializeLogChannel(LogPageCache);
-    initializeLogChannel(LogNetwork);
+    initializeWithUserDefault(LogNotYetImplemented);
+    initializeWithUserDefault(LogFrames);
+    initializeWithUserDefault(LogLoading);
+    initializeWithUserDefault(LogPopupBlocking);
+    initializeWithUserDefault(LogEvents);
+    initializeWithUserDefault(LogEditing);
+    initializeWithUserDefault(LogTextConversion);
+    initializeWithUserDefault(LogIconDatabase);
+    initializeWithUserDefault(LogSQLDatabase);
+    initializeWithUserDefault(LogSpellingAndGrammar);
+    initializeWithUserDefault(LogBackForward);
+    initializeWithUserDefault(LogHistory);
+    initializeWithUserDefault(LogPageCache);
+    initializeWithUserDefault(LogNetwork);
 }
 
 } // namespace WebCore

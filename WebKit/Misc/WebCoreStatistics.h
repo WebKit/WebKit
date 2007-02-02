@@ -55,6 +55,9 @@
 + (BOOL)shouldPrintExceptions;
 + (void)setShouldPrintExceptions:(BOOL)print;
 
++ (void)startIgnoringWebCoreNodeLeaks;
++ (void)stopIgnoringWebCoreNodeLeaks;
+
 @end
 
 @interface WebFrame (WebKitDebug)

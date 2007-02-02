@@ -195,6 +195,27 @@ static void stopJavaScriptThread(void)
     javaScriptThread = NULL;
 }
 
+static BOOL shouldIgnoreWebCoreNodeLeaks(CFStringRef URLString)
+{
+    static CFStringRef const ignoreSet[] = {
+        CFSTR("editing/pasteboard/block-wrappers-necessary.html"), // NSAttributedString leak, Radar 4970608
+        CFSTR("editing/pasteboard/paste-text-012.html"), // ditto
+        CFSTR("editing/pasteboard/paste-text-013.html"), // ditto
+        CFSTR("editing/pasteboard/paste-text-014.html"), // ditto
+        CFSTR("editing/pasteboard/paste-4039777-fix.html") // ditto
+    };
+    static const int ignoreSetCount = sizeof(ignoreSet) / sizeof(CFStringRef);
+    
+    for (int i = 0; i < ignoreSetCount; i++) {
+        CFStringRef ignoreString = ignoreSet[i];
+        CFRange range = CFRangeMake(0, CFStringGetLength(URLString));
+        CFOptionFlags flags = kCFCompareAnchored | kCFCompareBackwards | kCFCompareCaseInsensitive;
+        if (CFStringFindWithOptions(URLString, ignoreString, range, flags, NULL))
+            return YES;
+    }
+    return NO;
+}
+
 static CMProfileRef currentColorProfile = 0;
 static void restoreColorSpace(int ignored)
 {
@@ -1199,6 +1220,10 @@ static void runTest(const char *pathOrURL)
     [workQueue removeAllObjects];
     workQueueFrozen = NO;
 
+    BOOL _shouldIgnoreWebCoreNodeLeaks = shouldIgnoreWebCoreNodeLeaks(CFURLGetString(URL));
+    if (_shouldIgnoreWebCoreNodeLeaks)
+        [WebCoreStatistics startIgnoringWebCoreNodeLeaks];
+
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [frame loadRequest:[NSURLRequest requestWithURL:(NSURL *)URL]];
     CFRelease(URL);
@@ -1211,6 +1236,9 @@ static void runTest(const char *pathOrURL)
     pool = [[NSAutoreleasePool alloc] init];
     [[frame webView] setSelectedDOMRange:nil affinity:NSSelectionAffinityDownstream];
     [pool release];
+    
+    if (_shouldIgnoreWebCoreNodeLeaks)
+        [WebCoreStatistics stopIgnoringWebCoreNodeLeaks];
 }
 
 /* Hashes a bitmap and returns a text string for comparison and saving to a file */

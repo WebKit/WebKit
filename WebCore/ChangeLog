@@ -1,3 +1,39 @@
+2007-02-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Added support for selectively ignoring WebCore::Node leaks during layout
+        tests, so that we can ignore known leaks in other components.
+
+        * WebCore.exp:
+        * dom/Node.cpp:
+        (WebCore::Node::isSupported): Moved isSupported up with the rest of the static functions.
+
+        (WebCore::): Added an ignoreSet, which collects WebCore::Nodes whose lifetime
+        we want to ignore. We need to track which nodes to ignore rather than, say,
+        just suspending the count, because node destruction depends on lots of
+        different variables, so it would be nearly impossible to know when exactly 
+        to suspend the count and when exactly to resume it.
+
+        (WebCore::NodeCounter::~NodeCounter): Changed to use WTFLog instead of fprintf.
+
+        (WebCore::Node::startIgnoringLeaks): Do the ignoring.
+        (WebCore::Node::stopIgnoringLeaks): ditto
+        (WebCore::Node::Node): ditto
+        (WebCore::Node::~Node): ditto
+
+        * dom/Node.h: Moved isSupported up with the rest of the static functions.
+
+        * platform/mac/LoggingMac.mm:
+        (WebCore::initializeWithUserDefault): Renamed from "initializeLoggingChannel"
+        because the real goal here is to honor a user default -- WTFLoggingChannels
+        need no run-time initialization. Also replaced "off by default, on if a 
+        user default says so" behavior with "only override existing setting if a
+        user default says so" behavior. It seemed like a bug that you would specify 
+        a channel's on/off state in its definition, but this function would unconditionally
+        blow that state away.
+        (WebCore::InitializeLoggingChannelsIfNecessary):
+
 2007-02-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mitz.
