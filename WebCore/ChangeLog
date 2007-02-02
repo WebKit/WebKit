@@ -1,3 +1,12 @@
+2007-02-01  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/4969201> REGRESSION: Safari applies the wrong font to BODY element at http://www.apple.com/downloads/dashboard/
+
+        * platform/mac/WebFontCache.mm:
+        (+[WebFontCache fontWithFamily:traits:size:]): Don't call [NSFont fontWithName:] with the desiredFamily on Tiger.
+
 2007-02-01  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

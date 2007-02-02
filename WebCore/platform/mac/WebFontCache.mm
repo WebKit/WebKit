@@ -133,13 +133,16 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
         }
     }
 
+    NSFont *font = nil;
+#ifndef BUILDING_ON_TIGER
     // font was not immediately available, try auto activated fonts <rdar://problem/4564955>
-    NSFont *font = [NSFont fontWithName:desiredFamily size:size];
+    font = [NSFont fontWithName:desiredFamily size:size];
     if (font) {
         NSFontTraitMask traits = [fontManager traitsOfFont:font];
         if ((traits & desiredTraits) == desiredTraits)
             return [fontManager convertFont:font toHaveTrait:desiredTraits];
     }
+#endif
 
     // Do a simple case insensitive search for a matching font family.
     // NSFontManager requires exact name matches.
