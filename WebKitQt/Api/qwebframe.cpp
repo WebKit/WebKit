@@ -77,6 +77,9 @@ QWebFrame::QWebFrame(QWebFrame *parent, QWebFrameData *frameData)
     setLineWidth(0);
     setMidLineWidth(0);
     setFrameShape(QFrame::NoFrame);
+    QPalette pal = palette();
+    pal.setBrush(QPalette::Background, Qt::white);
+    setPalette(pal);
     d->page = parent->d->page;
 
     d->frameLoaderClient = new FrameLoaderClientQt();

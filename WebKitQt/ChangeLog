@@ -1,3 +1,17 @@
+2007-02-02  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Lars
+
+        Make the frames white by default and get the
+        files that WebCore can handle render inside
+        the frames.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::QWebFrame):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createFrame):
+        (WebCore::FrameLoaderClientQt::objectContentType):
+
 2007-02-01  George Staikos  <staikos@kde.org>
 
         Reviewed by Zack and Lars.
