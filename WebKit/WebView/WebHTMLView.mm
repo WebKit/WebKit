@@ -3997,8 +3997,8 @@ done:
 
     BOOL aIsBold = aWeight >= MIN_BOLD_WEIGHT;
 
-    BOOL aIsItalic = ([fm traitsOfFont:a] & NSItalicFontMask) != 0;
-    BOOL bIsItalic = ([fm traitsOfFont:b] & NSItalicFontMask) != 0;
+    unsigned aTraits = [fm traitsOfFont:a];
+    unsigned bTraits = [fm traitsOfFont:b];
 
     if ([aFamilyName isEqualToString:bFamilyName]) {
         NSString *familyNameForCSS = aFamilyName;
@@ -4011,8 +4011,9 @@ done:
         NSFontTraitMask traits = 0;
         if (aIsBold)
             traits |= NSBoldFontMask;
-        if (aIsItalic)
-            traits |= NSItalicFontMask;
+        traits |= (aTraits & NSFontItalicTrait);
+        traits |= (aTraits & NSFontCondensedTrait);
+        traits |= (aTraits & NSFontExpandedTrait);
         NSFont *foundFont = WebCoreFindFont(aFamilyName, traits, aPointSize);
 
         // If we don't find a font with the same Postscript name, then we'll have to use the
@@ -4022,7 +4023,7 @@ done:
         }
 
         // FIXME: Need more sophisticated escaping code if we want to handle family names
-        // with characters like single quote or backslash in their names.
+        // with characters like apostrophe or backslash in their names.
         [style setFontFamily:[NSString stringWithFormat:@"'%@'", familyNameForCSS]];
     }
 
@@ -4037,8 +4038,12 @@ done:
     if (aWeight == bWeight)
         [style setFontWeight:aIsBold ? @"bold" : @"normal"];
 
-    if (aIsItalic == bIsItalic)
-        [style setFontStyle:aIsItalic ? @"italic" :  @"normal"];
+    if ((aTraits & NSFontItalicTrait) == (bTraits & NSFontItalicTrait))
+        [style setFontStyle:(aTraits & NSFontItalicTrait) ? @"italic" :  @"normal"];
+    if ((aTraits & NSFontCondensedTrait) == (bTraits & NSFontCondensedTrait))
+        [style setFontStretch:(aTraits & NSFontCondensedTrait) ? @"condensed" :  @"normal"];
+    else if ((aTraits & NSFontExpandedTrait) == (bTraits & NSFontExpandedTrait))
+        [style setFontStretch:(aTraits & NSFontExpandedTrait) ? @"extended" :  @"normal"];
 }
 
 - (DOMCSSStyleDeclaration *)_styleFromFontManagerOperation

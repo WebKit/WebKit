@@ -28,11 +28,12 @@
 
 #import "config.h"
 #import "WebFontCache.h"
+#import "FontDescription.h"
 
 #import <math.h>
 
 #define SYNTHESIZED_FONT_TRAITS (NSBoldFontMask | NSItalicFontMask)
-
+#define ACCEPTABLE_FONT_TRAITS (NSFontCondensedTrait | NSFontExpandedTrait)
 #define IMPORTANT_FONT_TRAITS (0 \
     | NSBoldFontMask \
     | NSCompressedFontMask \
@@ -44,12 +45,11 @@
     | NSSmallCapsFontMask \
 )
 
-#define DESIRED_WEIGHT 5
-
 static BOOL acceptableChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     NSFontTraitMask candidateTraits, int candidateWeight)
 {
     desiredTraits &= ~SYNTHESIZED_FONT_TRAITS;
+    desiredTraits &= ~ACCEPTABLE_FONT_TRAITS;
     return (candidateTraits & desiredTraits) == desiredTraits;
 }
 
@@ -57,9 +57,17 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     NSFontTraitMask chosenTraits, int chosenWeight,
     NSFontTraitMask candidateTraits, int candidateWeight)
 {
-    if (!acceptableChoice(desiredTraits, desiredWeight, candidateTraits, candidateWeight)) {
+    if (!acceptableChoice(desiredTraits, desiredWeight, candidateTraits, candidateWeight))
         return NO;
-    }
+    
+    unsigned chosenWeightDelta = abs(chosenWeight - desiredWeight);
+    unsigned candidateWeightDelta = abs(candidateWeight - desiredWeight);
+    
+    // prefer a closer weight regardless of traits
+    if (candidateWeightDelta < chosenWeightDelta)
+        return YES;
+    if (candidateWeightDelta > chosenWeightDelta)
+        return NO;
     
     // A list of the traits we care about.
     // The top item in the list is the worst trait to mismatch; if a font has this
@@ -86,21 +94,13 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
             return NO;
     }
     
-    int chosenWeightDelta = chosenWeight - desiredWeight;
-    int candidateWeightDelta = candidateWeight - desiredWeight;
-    
-    int chosenWeightDeltaMagnitude = abs(chosenWeightDelta);
-    int candidateWeightDeltaMagnitude = abs(candidateWeightDelta);
-    
     // Smaller magnitude wins.
     // If both have same magnitude, tie breaker is that the smaller weight wins.
     // Otherwise, first font in the array wins (should almost never happen).
-    if (candidateWeightDeltaMagnitude < chosenWeightDeltaMagnitude) {
+    if (candidateWeightDelta < chosenWeightDelta)
         return YES;
-    }
-    if (candidateWeightDeltaMagnitude == chosenWeightDeltaMagnitude && candidateWeight < chosenWeight) {
+    if (candidateWeightDelta == chosenWeightDelta && candidateWeight < chosenWeight)
         return YES;
-    }
     
     return NO;
 }
@@ -113,6 +113,7 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
 + (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits size:(float)size
 {
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
+    int desiredWeight = (desiredTraits & NSFontBoldTrait)? 9 : 5;
 
     // Look for an exact match first.
     NSEnumerator *availableFonts = [[fontManager availableFonts] objectEnumerator];
@@ -171,16 +172,16 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
 
         BOOL newWinner;
         if (!choseFont)
-            newWinner = acceptableChoice(desiredTraits, DESIRED_WEIGHT, fontTraits, fontWeight);
+            newWinner = acceptableChoice(desiredTraits, desiredWeight, fontTraits, fontWeight);
         else
-            newWinner = betterChoice(desiredTraits, DESIRED_WEIGHT, chosenTraits, chosenWeight, fontTraits, fontWeight);
+            newWinner = betterChoice(desiredTraits, desiredWeight, chosenTraits, chosenWeight, fontTraits, fontWeight);
 
         if (newWinner) {
             choseFont = YES;
             chosenWeight = fontWeight;
             chosenTraits = fontTraits;
 
-            if (chosenWeight == DESIRED_WEIGHT && (chosenTraits & IMPORTANT_FONT_TRAITS) == (desiredTraits & IMPORTANT_FONT_TRAITS))
+            if (chosenWeight == desiredWeight && (chosenTraits & IMPORTANT_FONT_TRAITS) == (desiredTraits & IMPORTANT_FONT_TRAITS))
                 break;
         }
     }

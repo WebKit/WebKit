@@ -1,3 +1,39 @@
+2007-02-01  Nicholas Shanks  <webkit@nickshanks.com>
+
+        Reviewed by Mark.
+
+        Add support for CSS2 font-stretch property.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * platform/FontCache.cpp:
+        (WebCore::FontPlatformDataCacheKey::FontPlatformDataCacheKey):
+        (WebCore::FontPlatformDataCacheKey::operator==):
+        (WebCore::computeHash):
+        (WebCore::FontPlatformDataCacheKeyTraits::deletedValue):
+        (WebCore::FontPlatformDataCacheKeyTraits::emptyValue):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        * platform/FontDescription.h:
+        (WebCore::):
+        (WebCore::FontDescription::FontDescription):
+        (WebCore::FontDescription::stretch):
+        (WebCore::FontDescription::narrowerStretch):
+        (WebCore::FontDescription::widerStretch):
+        (WebCore::FontDescription::setStretch):
+        (WebCore::FontDescription::operator==):
+        * platform/mac/FontCacheMac.mm:
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/mac/WebFontCache.mm:
+        (acceptableChoice):
+        (betterChoice):
+        (+[WebFontCache fontWithFamily:traits:size:]):
+
 2007-02-01  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.

@@ -1821,8 +1821,9 @@ void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
                     case CSS_PROP_FONT_STYLE:
                     case CSS_PROP_FONT_FAMILY:
                     case CSS_PROP_FONT_WEIGHT:
-                    case CSS_PROP__WEBKIT_TEXT_SIZE_ADJUST:
+                    case CSS_PROP_FONT_STRETCH:
                     case CSS_PROP_FONT_VARIANT:
+                    case CSS_PROP__WEBKIT_TEXT_SIZE_ADJUST:
                         // these have to be applied first, because other properties use the computed
                         // values of these porperties.
                         first = true;
@@ -2148,6 +2149,46 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
         
+    case CSS_PROP_FONT_STRETCH: {
+        FontDescription fontDescription = style->fontDescription();
+        if (isInherit)
+            fontDescription.setStretch(parentStyle->fontDescription().stretch());
+        else if (isInitial)
+            fontDescription.setStretch(FontStretchNormal);
+        else {
+            if (!primitiveValue || !primitiveValue->getIdent())
+                return;
+            switch (primitiveValue->getIdent()) {
+                case CSS_VAL_WIDER:
+                    fontDescription.setStretch(fontDescription.widerStretch());
+                    break;
+                case CSS_VAL_NARROWER:
+                    fontDescription.setStretch(fontDescription.narrowerStretch());
+                    break;
+                case CSS_VAL_NORMAL:
+                    fontDescription.setStretch(FontStretchNormal);
+                    break;
+                case CSS_VAL_SEMI_EXPANDED:
+                case CSS_VAL_EXPANDED:
+                case CSS_VAL_EXTRA_EXPANDED:
+                case CSS_VAL_ULTRA_EXPANDED:
+                    fontDescription.setStretch(FontStretchExpanded);
+                    break;
+                case CSS_VAL_ULTRA_CONDENSED:
+                case CSS_VAL_EXTRA_CONDENSED:
+                case CSS_VAL_CONDENSED:
+                case CSS_VAL_SEMI_CONDENSED:
+                    fontDescription.setStretch(FontStretchCondensed);
+                    break;
+                default:
+                    return;
+            }
+        }
+        if (style->setFontDescription(fontDescription))
+            fontDirty = true;
+        return;
+    }
+    
     case CSS_PROP_LIST_STYLE_POSITION:
     {
         HANDLE_INHERIT_AND_INITIAL(listStylePosition, ListStylePosition)
@@ -4371,7 +4412,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
     case CSS_PROP_INVALID:
         return;
-    case CSS_PROP_FONT_STRETCH:
     case CSS_PROP_PAGE:
     case CSS_PROP_QUOTES:
     case CSS_PROP_SCROLLBAR_3DLIGHT_COLOR:

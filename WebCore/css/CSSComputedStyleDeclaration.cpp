@@ -70,6 +70,7 @@ static const int computedProperties[] = {
     CSS_PROP_FLOAT,
     CSS_PROP_FONT_FAMILY,
     CSS_PROP_FONT_SIZE,
+    CSS_PROP_FONT_STRETCH,
     CSS_PROP_FONT_STYLE,
     CSS_PROP_FONT_VARIANT,
     CSS_PROP_FONT_WEIGHT,
@@ -962,6 +963,12 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return new CSSPrimitiveValue(style->fontDescription().computedPixelSize(), CSSPrimitiveValue::CSS_PX);
         case CSS_PROP__WEBKIT_BINDING:
             break;
+        case CSS_PROP_FONT_STRETCH:
+            if (style->fontDescription().stretch() == FontStretchCondensed)
+                return new CSSPrimitiveValue(CSS_VAL_CONDENSED);
+            if (style->fontDescription().stretch() == FontStretchExpanded)
+                return new CSSPrimitiveValue(CSS_VAL_EXPANDED);
+            return new CSSPrimitiveValue(CSS_VAL_NORMAL);
         case CSS_PROP_FONT_STYLE:
             if (style->fontDescription().italic())
                 return new CSSPrimitiveValue(CSS_VAL_ITALIC);
@@ -1541,7 +1548,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSS_PROP_COUNTER_INCREMENT:
         case CSS_PROP_COUNTER_RESET:
         case CSS_PROP_FONT:
-        case CSS_PROP_FONT_STRETCH:
         case CSS_PROP_LIST_STYLE:
         case CSS_PROP_MARGIN:
         case CSS_PROP_OUTLINE:
@@ -1653,6 +1659,7 @@ const int inheritableProperties[] = {
     CSS_PROP_COLOR,
     CSS_PROP_FONT_FAMILY,
     CSS_PROP_FONT_SIZE,
+    CSS_PROP_FONT_STRETCH,
     CSS_PROP_FONT_STYLE,
     CSS_PROP_FONT_VARIANT,
     CSS_PROP_FONT_WEIGHT,

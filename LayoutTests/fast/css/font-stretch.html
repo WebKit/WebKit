@@ -1,0 +1,164 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <title>Test case for the CSS font-stretch property</title>
+    <style type="text/css">
+        table { border-spacing: 1em; }
+        td { vertical-align: top; }
+        p { margin: 0; }
+        .at { font-family: 'American Typewriter'; }
+        .hn { font-family: 'Helvetica Neue'; }
+        .bold { font-weight: bold; }
+        .norm { font-stretch: normal; }
+        .cond { font-stretch: condensed; }
+        .expn { font-stretch: expanded; }
+        .narr { font-stretch: narrower; }
+        .wide { font-stretch: wider; }
+    </style>
+
+<table>
+    <tr><th>Expected<th>Actual
+    <tr><td style="font-family: 'AmericanTypewriter';">
+        <p>American Typewriter
+        <div>
+            <p>American Typewriter Normal
+            <p style="font-family: 'AmericanTypewriter-Condensed';">&raquo; American Typewriter Narrower
+            <p>&raquo; American Typewriter Wider
+        </div>
+        <div style="font-family: 'AmericanTypewriter-Condensed';">
+            <p>American Typewriter Condensed
+            <p>&raquo; American Typewriter Narrower
+            <p style="font-family: 'AmericanTypewriter';">&raquo; American Typewriter Wider
+        </div>
+        <div>
+            <p>American Typewriter Expanded
+            <p style="font-family: 'AmericanTypewriter-Condensed';">&raquo; American Typewriter Narrower
+            <p>&raquo; American Typewriter Wider
+        </div>
+    </td><td>
+        <p class="at">American Typewriter
+        <div class="at norm">
+            <p>American Typewriter Normal
+            <p class="narr">&raquo; American Typewriter Narrower
+            <p class="wide">&raquo; American Typewriter Wider
+        </div>
+        <div class="at cond">
+            <p>American Typewriter Condensed
+            <p class="narr">&raquo; American Typewriter Narrower
+            <p class="wide">&raquo; American Typewriter Wider
+        </div>
+        <div class="at expn">
+            <p>American Typewriter Expanded
+            <p class="narr">&raquo; American Typewriter Narrower
+            <p class="wide">&raquo; American Typewriter Wider
+        </div>
+    </td></tr>
+    
+    <tr><td style="font-family: 'AmericanTypewriter-Bold';">
+        <p>American Typewriter
+        <div>
+            <p>American Typewriter Normal
+            <p style="font-family: 'AmericanTypewriter-CondensedBold';">&raquo; American Typewriter Narrower
+            <p>&raquo; American Typewriter Wider
+        </div>
+        <div style="font-family: 'AmericanTypewriter-CondensedBold';">
+            <p>American Typewriter Condensed
+            <p>&raquo; American Typewriter Narrower
+            <p style="font-family: 'AmericanTypewriter-Bold';">&raquo; American Typewriter Wider
+        </div>
+        <div>
+            <p>American Typewriter Expanded
+            <p style="font-family: 'AmericanTypewriter-CondensedBold';">&raquo; American Typewriter Narrower
+            <p>&raquo; American Typewriter Wider
+        </div>
+    </td><td class="at bold">
+        <p>American Typewriter
+        <div class="norm">
+            <p>American Typewriter Normal
+            <p class="narr">&raquo; American Typewriter Narrower
+            <p class="wide">&raquo; American Typewriter Wider
+        </div>
+        <div class="cond">
+            <p>American Typewriter Condensed
+            <p class="narr">&raquo; American Typewriter Narrower
+            <p class="wide">&raquo; American Typewriter Wider
+        </div>
+        <div class="expn">
+            <p>American Typewriter Expanded
+            <p class="narr">&raquo; American Typewriter Narrower
+            <p class="wide">&raquo; American Typewriter Wider
+        </div>
+    </td></tr>
+    
+    <tr><td style="font-family: 'HelveticaNeue';">
+        <p>Helvetica Neue
+        <div>
+            <p>Helvetica Neue Normal
+            <p>&raquo; Helvetica Neue Narrower
+            <p>&raquo; Helvetica Neue Wider
+        </div>
+        <div>
+            <p>Helvetica Neue Condensed
+            <p>&raquo; Helvetica Neue Narrower
+            <p>&raquo; Helvetica Neue Wider
+        </div>
+        <div>
+            <p>Helvetica Neue Expanded
+            <p>&raquo; Helvetica Neue Narrower
+            <p>&raquo; Helvetica Neue Wider
+        </div>
+    </td><td>
+        <p class="hn">Helvetica Neue
+        <div class="hn norm">
+            <p>Helvetica Neue Normal
+            <p class="narr">&raquo; Helvetica Neue Narrower
+            <p class="wide">&raquo; Helvetica Neue Wider
+        </div>
+        <div class="hn cond">
+            <p>Helvetica Neue Condensed
+            <p class="narr">&raquo; Helvetica Neue Narrower
+            <p class="wide">&raquo; Helvetica Neue Wider
+        </div>
+        <div class="hn expn">
+            <p>Helvetica Neue Expanded
+            <p class="narr">&raquo; Helvetica Neue Narrower
+            <p class="wide">&raquo; Helvetica Neue Wider
+        </div>
+    </td></tr>
+    
+    <tr><td style="font-family: 'HelveticaNeue-Bold';">
+        <p>Helvetica Neue
+        <div>
+            <p>Helvetica Neue Normal
+            <p style="font-family: 'HelveticaNeue-CondensedBold';">&raquo; Helvetica Neue Narrower
+            <p>&raquo; Helvetica Neue Wider
+        </div>
+        <div style="font-family: 'HelveticaNeue-CondensedBold';">
+            <p>Helvetica Neue Condensed
+            <p>&raquo; Helvetica Neue Narrower
+            <p style="font-family: 'HelveticaNeue-Bold';">&raquo; Helvetica Neue Wider
+        </div>
+        <div>
+            <p>Helvetica Neue Expanded
+            <p style="font-family: 'HelveticaNeue-CondensedBold';">&raquo; Helvetica Neue Narrower
+            <p>&raquo; Helvetica Neue Wider
+        </div>
+    </td><td class="bold">
+        <p class="hn">Helvetica Neue
+        <div class="hn norm">
+            <p>Helvetica Neue Normal
+            <p class="narr">&raquo; Helvetica Neue Narrower
+            <p class="wide">&raquo; Helvetica Neue Wider
+        </div>
+        <div class="hn cond">
+            <p>Helvetica Neue Condensed
+            <p class="narr">&raquo; Helvetica Neue Narrower
+            <p class="wide">&raquo; Helvetica Neue Wider
+        </div>
+        <div class="hn expn">
+            <p>Helvetica Neue Expanded
+            <p class="narr">&raquo; Helvetica Neue Narrower
+            <p class="wide">&raquo; Helvetica Neue Wider
+        </div>
+    </td></tr>
+</table>
+</html>

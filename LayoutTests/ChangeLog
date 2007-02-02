@@ -1,3 +1,16 @@
+2007-02-01  Nicholas Shanks  <webkit@nickshanks.com>
+
+        Reviewed by Mark.
+
+        CSS2 font-stretch property; uses American Typewriter and Helvetica Neue fonts,
+        requiring Regular, Condensed, Bold and Bold Condensed faces.
+
+        * fast/css/computed-style-expected.txt: Updated.
+        * fast/css/font-stretch-expected.checksum: Added.
+        * fast/css/font-stretch-expected.png: Added.
+        * fast/css/font-stretch-expected.txt: Added.
+        * fast/css/font-stretch.html: Added.
+
 2007-02-01  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
