@@ -2619,8 +2619,7 @@ void FrameLoader::stopPolicyCheck()
     m_client->cancelPolicyCheck();
     PolicyCheck check = m_policyCheck;
     m_policyCheck.clear();
-    check.clearRequest();
-    check.call(false);
+    check.cancel();
 }
 
 void FrameLoader::checkLoadCompleteForThisFrame()
@@ -4216,6 +4215,17 @@ void PolicyCheck::clearRequest()
     m_request = ResourceRequest();
     m_formState = 0;
     m_frameName = String();
+}
+
+void PolicyCheck::cancel()
+{
+    clearRequest();
+    if (m_navigationFunction)
+        m_navigationFunction(m_argument, m_request, m_formState.get(), false);
+    if (m_newWindowFunction)
+        m_newWindowFunction(m_argument, m_request, m_formState.get(), m_frameName, false);
+    if (m_contentFunction)
+        m_contentFunction(m_argument, PolicyIgnore);
 }
 
 void FrameLoader::setTitle(const String& title)
