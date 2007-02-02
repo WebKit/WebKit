@@ -137,13 +137,10 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             m_client->copyImageToClipboard(result);
             break;
         case ContextMenuItemTagOpenFrameInNewWindow: {
-            // FIXME: The DocumentLoader is all-Mac right now
-#if PLATFORM(MAC)
-            KURL unreachableURL = frame->loader()->documentLoader()->unreachableURL();
-            if (frame && unreachableURL.isEmpty())
-                unreachableURL = frame->loader()->documentLoader()->URL();
-            openNewWindow(unreachableURL, frame);
-#endif
+            KURL url = frame->loader()->documentLoader()->unreachableURL();
+            if (frame && url.isEmpty())
+                url = frame->loader()->documentLoader()->URL();
+            openNewWindow(url, frame);
             break;
         }
         case ContextMenuItemTagCopy:
