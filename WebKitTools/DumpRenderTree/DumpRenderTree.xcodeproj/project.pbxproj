@@ -355,11 +355,13 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C29C308902C6D008A9EFC /* Build configuration list for PBXProject "DumpRenderTree" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 08FB7794FE84155DC02AAC07 /* DumpRenderTree */;
 			productRefGroup = 9340995508540CAF007F3BC8 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				A84F608D08B1370600E9745F /* All */,
 				9340994A08540CAE007F3BC8 /* DumpRenderTree */,

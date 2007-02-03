@@ -1,5 +1,15 @@
 2007-02-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Added some more known leaks to the leaks ignore list.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Why does XCode
+        hate itself so much?
+        * Scripts/run-webkit-tests:
+
+2007-02-02  Geoffrey Garen  <ggaren@apple.com>
+
         Even better build fix than the last.
 
         * ChangeLog:
