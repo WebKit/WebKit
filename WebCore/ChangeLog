@@ -1,3 +1,15 @@
+2007-02-03  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12549
+        Wrong character encoding at www.ravmilim.co.il
+
+        Test: fast/encoding/meta-charset.html
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::checkForHeadCharset): Fix an off by one error.
+
 2007-02-02  Maciej Stachowiak  <mjs@apple.com>
         
         Reviewed by Hyatt & Adele.
