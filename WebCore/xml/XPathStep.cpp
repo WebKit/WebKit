@@ -200,11 +200,14 @@ NodeVector Step::nodeTestMatches(const NodeVector& nodes) const
         }
         return nodes;
     } else if (m_nodeTest == "text()") {
+        HashSet<Node*> nodeSet;
         for (unsigned i = 0; i < nodes.size(); i++) {
             Node* node = nodes[i].get();
-            if (node->nodeType() == Node::TEXT_NODE ||
-                node->nodeType() == Node::CDATA_SECTION_NODE) 
-                matches.append(node);
+            if ((node->nodeType() == Node::TEXT_NODE || node->nodeType() == Node::CDATA_SECTION_NODE)) {
+                nodeSet.add(node);
+                if (!nodeSet.contains(node->previousSibling())) // See <http://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#TextNodes>
+                    matches.append(node);
+            }
         }
         return matches;
     } else if (m_nodeTest == "comment()") {

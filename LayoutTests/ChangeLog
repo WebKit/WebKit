@@ -2,6 +2,16 @@
 
         Reviewed by Darin.
 
+        http://bugs.webkit.org/show_bug.cgi?id=12560
+        W3C XPath test Text_Nodes.svg fails
+
+        * dom/svg/level3/xpath/Text_Nodes-expected.txt: Test now passes.
+        * dom/svg/level3/xpath/Text_Nodes.js: Invert the success condition, as the test appears incorrect.
+
+2007-02-03  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         http://bugs.webkit.org/show_bug.cgi?id=12485
         XPath id() function doesn't work as root in paths
 

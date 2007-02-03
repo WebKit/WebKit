@@ -49,7 +49,7 @@ function setUpPage() {
           setUpPage = 'complete';
        }
     } catch(ex) {
-    	catchInitializationError(builder, ex);
+        catchInitializationError(builder, ex);
         setUpPage = 'complete';
     }
 }
@@ -128,67 +128,59 @@ outresult = evaluator.evaluate(expression,contextNode,resolver,xpathType,inresul
       currNode = outresult.iterateNext();
       
     while(
-	
-	(currNode != null)
+    
+    (currNode != null)
 
-	) {
-	nodeType = currNode.nodeType;
+    ) {
+    nodeType = currNode.nodeType;
 
       isTextNode = "true";
 
-	if(
-	
-	(!(3 == nodeType) && !(4 == nodeType))
+    if(
+    
+    (!(3 == nodeType) && !(4 == nodeType))
 
-	) {
-	isTextNode = "false";
+    ) {
+    isTextNode = "false";
 
-	}
-	assertEquals("S1.2.4-Text-Nodes-nodeType","true".toLowerCase(),isTextNode.toLowerCase());
+    }
+    assertEquals("S1.2.4-Text-Nodes-nodeType","true".toLowerCase(),isTextNode.toLowerCase());
        nextNode = outresult.iterateNext();
       
-	if(
-	
-	(nextNode != null)
+    if(
+    
+    (nextNode != null)
 
-	) {
-	currNodeNextSibling = currNode.nextSibling;
-
-      
-	if(
-	
-	same(nextNode,currNodeNextSibling)
-
-	) {
-	/* dummy statement */
-
-	}
-	
-		else {
-			assertTrue("S1.2.4-Text-Nodes-Adjacent-Next",false);
-
-		}
-	nextNodePrevSibling = nextNode.previousSibling;
+    ) {
+    currNodeNextSibling = currNode.nextSibling;
 
       
-	if(
-	
-	same(nextNodePrevSibling,currNode)
+    // WebKit fix: inverted the condition: <http://bugs.webkit.org/show_bug.cgi?id=12560>.
+    if(
+    
+    same(nextNode,currNodeNextSibling)
 
-	) {
-	/* dummy statement */
+    ) {
+            assertTrue("S1.2.4-Text-Nodes-Adjacent-Next",false);
 
-	}
-	
-		else {
-			assertTrue("S1.2.4-Text-Nodes-Adjacent-Prev",false);
+        }
+    nextNodePrevSibling = nextNode.previousSibling;
 
-		}
-	
-	}
-	currNode =  nextNode;
+      
+    // WebKit fix: inverted the condition: <http://bugs.webkit.org/show_bug.cgi?id=12560>.
+    if(
+    
+    same(nextNodePrevSibling,currNode)
 
-	}
+    ) {
+            assertTrue("S1.2.4-Text-Nodes-Adjacent-Prev",false);
+
+        }
+    
+    }
+    currNode =  nextNode;
+
+    }
 
 }
 
