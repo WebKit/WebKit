@@ -1,5 +1,13 @@
 2007-02-03  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Build fix, not reviewed.
+
+        Blind attempt to fix Qt build.
+
+        * WebCore.pro: Add RenderSVGGradientStop.cpp / RenderSVGHiddenContainer.cpp
+
+2007-02-03  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Eric & Maciej.
 
         Fix serveral <use> issues:

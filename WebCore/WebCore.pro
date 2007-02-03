@@ -1031,6 +1031,8 @@ contains(DEFINES, SVG_SUPPORT=1) {
         rendering/RenderPath.cpp \
         rendering/RenderSVGBlock.cpp \
         rendering/RenderSVGContainer.cpp \
+        rendering/RenderSVGGradientStop.cpp \
+        rendering/RenderSVGHiddenContainer.cpp \ 
         rendering/RenderSVGImage.cpp \
         rendering/RenderSVGInline.cpp \
         rendering/RenderSVGInlineText.cpp \
