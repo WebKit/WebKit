@@ -1,3 +1,14 @@
+2007-02-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff.
+
+        Add guard around accessing [NSEvent eventNumber] to ensure
+        we don't attempt to access it on on non-mouse related NSEvent.
+
+        * platform/mac/PlatformMouseEventMac.mm:
+        (WebCore::eventNumberForEvent):
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+
 2007-02-02  Adam Roben  <aroben@apple.com>
 
         Reviewed by Anders.

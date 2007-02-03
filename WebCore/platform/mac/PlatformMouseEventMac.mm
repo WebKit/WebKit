@@ -117,6 +117,26 @@ IntPoint globalPointForEvent(NSEvent *event)
             return IntPoint();
     }
 }
+
+int eventNumberForEvent(NSEvent *event)
+{
+    switch ([event type]) {
+        case NSLeftMouseDown:
+        case NSLeftMouseUp:
+        case NSLeftMouseDragged:
+        case NSRightMouseDown:
+        case NSRightMouseUp:
+        case NSRightMouseDragged:
+        case NSOtherMouseDown:
+        case NSOtherMouseUp:
+        case NSOtherMouseDragged:
+        case NSMouseMoved:
+        case NSScrollWheel:
+            return [event eventNumber];
+        default:
+            return 0;
+    }
+}
     
 static MouseEventType mouseEventForNSEvent(NSEvent* event) 
 {
@@ -159,6 +179,8 @@ PlatformMouseEvent::PlatformMouseEvent(NSEvent* event)
 PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&)
     : m_button(LeftButton), m_clickCount(0), m_shiftKey(false), m_ctrlKey(false), m_altKey(false), m_metaKey(false)
 {
+    //Note: [NSApp currentEvent] is not guaranteed to return a mouse event here
+    //so care should be taken when accessing mouse event specific properties
     NSEvent* event = [NSApp currentEvent];
     if (event) {
         m_position = pointForEvent(event);
@@ -171,7 +193,7 @@ PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&)
         m_altKey = [event modifierFlags] & NSAlternateKeyMask;
         m_metaKey = [event modifierFlags] & NSCommandKeyMask;
         m_timestamp = [event timestamp];
-        m_eventNumber = [event eventNumber];
+        m_eventNumber = eventNumberForEvent(event);
     }
 }
 
