@@ -1,3 +1,14 @@
+2007-02-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=12555
+        Drosera doesn't handle CR ( carriage returns ) well
+
+        - Normalize all the line endings.
+
+        * Drosera/debugger.js:
+
 2007-02-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

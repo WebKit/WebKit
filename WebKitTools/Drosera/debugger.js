@@ -990,7 +990,7 @@ function loadFile(fileIndex, manageNavLists)
         var table = sourcesDocument.createElement("table");
         sourceDiv.appendChild(table);
 
-        var normalizedSource = file.source.replace(/\r\n|\r/, "\n"); // normalize line endings
+        var normalizedSource = file.source.replace(/\r\n|\r/g, "\n"); // normalize line endings
         var lines = syntaxHighlight(normalizedSource, file).split("\n");
         for( var i = 0; i < lines.length; i++ ) {
             var tr = sourcesDocument.createElement("tr");
