@@ -2,6 +2,23 @@
 
         Reviewed by Darin.
 
+        http://bugs.webkit.org/show_bug.cgi?id=12485
+        XPath id() function doesn't work as root in paths
+
+        Test: fast/xpath/id-path.html
+
+        * xml/XPathPath.cpp:
+        (WebCore::XPath::Path::doEvaluate): Implemented.
+        (WebCore::XPath::LocationPath::evaluate): A new overload that takes an initial NodeVector.
+        (WebCore::XPath::LocationPath::doEvaluate): Moved most of the logic to the new evaluate().
+
+        * xml/XPathPath.h: Added a new evaluate() overload and a using declaration to keep the
+        generic one visible.
+
+2007-02-03  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         http://bugs.webkit.org/show_bug.cgi?id=12559
         REGRESSION: Crash in checkForHeadCharset() under GuardMalloc
 

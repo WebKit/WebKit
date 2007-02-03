@@ -30,6 +30,7 @@
 #ifdef XPATH_SUPPORT
 
 #include "XPathExpressionNode.h"
+#include "XPathUtil.h"
 
 int xpathyyparse(void*);
 
@@ -56,6 +57,9 @@ namespace WebCore {
         public:
             LocationPath();
             virtual ~LocationPath();
+
+            using Expression::evaluate;
+            Value evaluate(const NodeVector& startNodes) const;
 
             void optimize();
 
