@@ -33,6 +33,7 @@
 #include "DragController.h"
 #include "Editor.h"
 #include "EventNames.h"
+#include "FloatPoint.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameTree.h"

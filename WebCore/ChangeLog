@@ -1,3 +1,9 @@
+2007-02-03  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by NOBODY (no-svg build fix).
+
+        * page/EventHandler.cpp: Include FloatPoint.h.
+
 2007-02-03  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Mitz.
