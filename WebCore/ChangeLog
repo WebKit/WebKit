@@ -1,3 +1,15 @@
+2007-02-02  Maciej Stachowiak  <mjs@apple.com>
+        
+        Reviewed by Hyatt & Adele.
+        
+        - <rdar://problem/4896972> TV guide listings page doesn't finish loading (11674)
+        
+        Test case: fast/forms/disabled-select-change-index.html
+        
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::setSelected): Allow changing selected state of a disabled
+        option.
+        
 2007-02-03  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Build fix, not reviewed.

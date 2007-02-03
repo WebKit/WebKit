@@ -171,7 +171,7 @@ void HTMLOptionElement::setValue(const String& value)
 
 void HTMLOptionElement::setSelected(bool selected)
 {
-    if (m_selected == selected || disabled())
+    if (m_selected == selected)
         return;
     m_selected = selected;
     if (HTMLSelectElement* select = getSelect())
