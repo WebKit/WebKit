@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -33,9 +33,11 @@
 #include "HTMLNames.h"
 #include "PlatformString.h"
 #include "SVGDocumentExtensions.h"
+#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
 #include "SVGURIReference.h"
+#include "SVGUseElement.h"
 #include "XMLNames.h"
 
 namespace WebCore {
@@ -202,6 +204,36 @@ void SVGElement::insertedIntoDocument()
 
         SVGResource::repaintClients(*clients);
     }
+}
+
+static Node* shadowTreeParentElementForShadowTreeElement(Node* node)
+{
+    for (Node* n = node; n; n = n->parentNode()) {
+        if (n->isShadowNode())
+            return n->shadowParentNode();
+    }
+
+    return 0;
+}
+
+bool SVGElement::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec, bool tempEvent)
+{
+    EventTarget* target = this;
+    Node* useNode = shadowTreeParentElementForShadowTreeElement(this);
+
+    // If we are a hidden shadow tree element, the target must
+    // point to our corresponding SVGElementInstance object
+    if (useNode) {
+        ASSERT(useNode->hasTagName(SVGNames::useTag));
+        SVGUseElement* use = static_cast<SVGUseElement*>(useNode);
+
+        SVGElementInstance* instance = use->instanceForShadowTreeElement(this);
+
+        if (instance)
+            target = instance;
+    }
+
+    return EventTargetNode::dispatchEvent(e, ec, tempEvent, target);
 }
 
 }

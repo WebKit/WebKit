@@ -1001,6 +1001,15 @@ int Node::nextOffset (int current) const
 
 Node* Node::shadowAncestorNode()
 {
+#ifdef SVG_SUPPORT
+    // SVG elements living in a shadow tree only occour when <use> created them.
+    // For these cases we do NOT want to return the shadowParentNode() here
+    // but the actual shadow tree element - as main difference to the HTML forms
+    // shadow tree concept. (This function _could_ be made virtual - opinions?)
+    if (isSVGElement())
+        return this;
+#endif
+
     Node *n = this;    
     while (n) {
         if (n->isShadowNode())

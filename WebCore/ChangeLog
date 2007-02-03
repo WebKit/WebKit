@@ -1,3 +1,49 @@
+2007-02-03  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric & Maciej.
+
+        Fix serveral <use> issues:
+        - When events are dispatch to a referenced element, the actual event.target
+          has to be set to the corresponding SVGElementInstance object
+
+        - Node::shadowAncestorNode() should _not_ return the shadowParentNode for SVG elements
+          This is only needed for the HTML forms concept and breaks event dispatching for SVG shadow tree elements.
+
+        - Add SVGElementInstance as possible EventTarget in bindings/js/kjs_dom.cpp
+          (Now event.target returns the actual SVGElementInstance object for a shadow tree element)
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12502 (Reproducible crash when browsing SVG map.)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12511 (<use> has event dispatching issues)
+
+        Added test: svg/custom/use-event-handler-on-use-element.svg
+        Added test: svg/custom/use-event-handler-on-referenced-element.svg
+        Added test: svg/custom/use-elementInstance-event-target.svg
+        Added test: svg/custom/use-elementInstance-methods.svg
+
+        * bindings/js/kjs_dom.cpp:
+        (KJS::toJS):
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toSVGElementInstance):
+        * dom/EventTarget.h:
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::handleLocalEvents):
+        (WebCore::EventTargetNode::dispatchGenericEvent):
+        (WebCore::EventTargetNode::dispatchEvent):
+        * dom/EventTargetNode.h:
+        * dom/Node.cpp:
+        (WebCore::Node::shadowAncestorNode):
+        * ksvg2/svg/SVGElement.cpp:
+        (WebCore::shadowTreeParentElementForShadowTreeElement):
+        (WebCore::SVGElement::dispatchEvent):
+        * ksvg2/svg/SVGElement.h:
+        * ksvg2/svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::toSVGElementInstance):
+        * ksvg2/svg/SVGElementInstance.h:
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::notifyAttributeChange):
+        (WebCore::SVGUseElement::instanceForShadowTreeElement):
+        * ksvg2/svg/SVGUseElement.h:
+
 2007-02-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff.

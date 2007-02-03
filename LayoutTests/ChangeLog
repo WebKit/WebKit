@@ -1,3 +1,28 @@
+2007-02-03  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric & Maciej.
+
+        Add new SVG <use> tests regarding JS scripting.
+        The use-elementInstance-event-target.svg basically works, but shows
+        a repainting issue, which has to be tackled later.
+
+        * svg/custom/use-elementInstance-event-target-expected.checksum: Added.
+        * svg/custom/use-elementInstance-event-target-expected.png: Added.
+        * svg/custom/use-elementInstance-event-target-expected.txt: Added.
+        * svg/custom/use-elementInstance-event-target.svg: Added.
+        * svg/custom/use-elementInstance-methods-expected.checksum: Added.
+        * svg/custom/use-elementInstance-methods-expected.png: Added.
+        * svg/custom/use-elementInstance-methods-expected.txt: Added.
+        * svg/custom/use-elementInstance-methods.svg: Added.
+        * svg/custom/use-event-handler-on-referenced-element-expected.checksum: Added.
+        * svg/custom/use-event-handler-on-referenced-element-expected.png: Added.
+        * svg/custom/use-event-handler-on-referenced-element-expected.txt: Added.
+        * svg/custom/use-event-handler-on-referenced-element.svg: Added.
+        * svg/custom/use-event-handler-on-use-element-expected.checksum: Added.
+        * svg/custom/use-event-handler-on-use-element-expected.png: Added.
+        * svg/custom/use-event-handler-on-use-element-expected.txt: Added.
+        * svg/custom/use-event-handler-on-use-element.svg: Added.
+
 2007-02-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mitz.

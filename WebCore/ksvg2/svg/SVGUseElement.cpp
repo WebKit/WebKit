@@ -141,8 +141,10 @@ void SVGUseElement::notifyAttributeChange() const
 
     // NOTE: A lot of room for improvments here. This is too slow.
     // It has to be done correctly, by implementing attributeChanged().
-    renderer()->setNeedsLayout(true);
     const_cast<SVGUseElement*>(this)->buildPendingResource();
+
+    if (renderer())
+        renderer()->setNeedsLayout(true); 
 
     SVGStyledElement::notifyAttributeChange();
 }
@@ -535,6 +537,29 @@ void SVGUseElement::associateInstancesWithShadowTreeElements(Node* target, SVGEl
         associateInstancesWithShadowTreeElements(node, instance);
         node = node->nextSibling();
     }
+}
+
+SVGElementInstance* SVGUseElement::instanceForShadowTreeElement(Node* element) const
+{
+    return instanceForShadowTreeElement(element, m_targetElementInstance.get());
+}
+
+SVGElementInstance* SVGUseElement::instanceForShadowTreeElement(Node* element, SVGElementInstance* instance) const
+{
+    ASSERT(element);
+    ASSERT(instance);
+    ASSERT(instance->shadowTreeElement());
+
+    if (element == instance->shadowTreeElement())
+        return instance;
+
+    for (SVGElementInstance* current = instance->firstChild(); current; current = current->nextSibling()) {
+        SVGElementInstance* search = instanceForShadowTreeElement(element, current);
+        if (search)
+            return search;
+    }
+
+    return 0;
 }
 
 void SVGUseElement::transferUseAttributesToReplacedElement(SVGElement* from, SVGElement* to) const

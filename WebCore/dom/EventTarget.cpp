@@ -45,4 +45,11 @@ XMLHttpRequest* EventTarget::toXMLHttpRequest()
     return 0;
 }
 
+#ifdef SVG_SUPPORT
+SVGElementInstance* EventTarget::toSVGElementInstance()
+{
+    return 0;
+}
+#endif
+
 } // end namespace

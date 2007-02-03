@@ -66,6 +66,8 @@ namespace WebCore {
         void setParent(SVGElementInstance* parent) { m_parent = parent; }
         SVGElementInstance* parent() const { return m_parent; }
 
+        virtual SVGElementInstance* toSVGElementInstance();
+
         virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
         virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
         virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&, bool tempEvent = false);

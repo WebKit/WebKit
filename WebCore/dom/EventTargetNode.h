@@ -95,6 +95,10 @@ public:
     using Node::ref;
     using Node::deref;
 
+private:
+    friend class SVGElement;
+    bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&, bool tempEvent, EventTarget* target);
+ 
 protected:
     typedef DeprecatedValueList<RefPtr<RegisteredEventListener> > RegisteredEventListenerList;
     RegisteredEventListenerList* m_regdListeners;

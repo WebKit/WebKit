@@ -162,8 +162,8 @@ void EventTargetNode::handleLocalEvents(Event *evt, bool useCapture)
         return;
     
     RegisteredEventListenerList listenersCopy = *m_regdListeners;
-    RegisteredEventListenerList::Iterator end = listenersCopy.end();    
-    
+    RegisteredEventListenerList::Iterator end = listenersCopy.end();
+
     for (RegisteredEventListenerList::Iterator it = listenersCopy.begin(); it != end; ++it)
         if ((*it)->eventType() == evt->type() && (*it)->useCapture() == useCapture && !(*it)->removed())
             (*it)->listener()->handleEvent(evt, false);
@@ -179,7 +179,9 @@ bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> e, ExceptionCode&, 
     // work out what nodes to send event to
     DeprecatedPtrList<Node> nodeChain;
     Node *n;
-    for (n = this; n; n = n->parentNode()) {
+
+    // For SVG we have to dispatch "beyond" shadow tree boundaries.
+    for (n = this; n; n = n->isShadowNode() ? n->shadowParentNode() : n->parentNode()) {
         n->ref();
         nodeChain.prepend(n);
     }
@@ -284,13 +286,19 @@ bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> e, ExceptionCode&, 
 
 bool EventTargetNode::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec, bool tempEvent)
 {
+    return dispatchEvent(e, ec, tempEvent, this);
+}
+
+bool EventTargetNode::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec, bool tempEvent, EventTarget* target)
+{
     RefPtr<Event> evt(e);
     ASSERT(!eventDispatchForbidden());
     if (!evt || evt->type().isEmpty()) { 
         ec = UNSPECIFIED_EVENT_TYPE_ERR;
         return false;
     }
-    evt->setTarget(this);
+
+    evt->setTarget(target);
     
     RefPtr<FrameView> view = document()->view();
     
