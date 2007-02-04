@@ -45,6 +45,7 @@ static String keyIdentifierForQtKeyCode(int keyCode)
             return "Down";
         case Qt::Key_End:
             return "End";
+        case Qt::Key_Return:
         case Qt::Key_Enter:
             return "Enter";
 #if QT_VERSION >= 0x040200
@@ -171,6 +172,7 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
             return VK_TAB; // (09) TAB key
         case Qt::Key_Clear:
             return VK_CLEAR; // (0C) CLEAR key
+        case Qt::Key_Enter:
         case Qt::Key_Return:
             return VK_RETURN; //(0D) Return key
         case Qt::Key_Shift:

@@ -131,8 +131,8 @@ void RenderThemeQt::systemFont(int propId, FontDescription& fontDescription) con
 void RenderThemeQt::addIntrinsicMargins(RenderStyle* style) const
 {
     // Cut out the intrinsic margins completely if we end up using a small font size
-    if (style->fontSize() < 11)
-        return;
+    //if (style->fontSize() < 11)
+    //    return;
 
     // Intrinsic margin value.
     const int m = 2;
@@ -174,11 +174,16 @@ void RenderThemeQt::setCheckboxSize(RenderStyle* style) const
     // At different DPI settings on Windows, querying the theme gives you a larger size that accounts for
     // the higher DPI.  Until our entire engine honors a DPI setting other than 96, we can't rely on the theme's
     // metrics.
+#ifdef Q_WS_MAC
+    const int ff = 16;
+#else
+    const int ff = 13;
+#endif
     if (style->width().isIntrinsicOrAuto())
-        style->setWidth(Length(13, Fixed));
+        style->setWidth(Length(ff, Fixed));
 
     if (style->height().isAuto())
-        style->setHeight(Length(13, Fixed));
+        style->setHeight(Length(ff, Fixed));
 }
 
 void RenderThemeQt::setRadioSize(RenderStyle* style) const
@@ -193,6 +198,7 @@ bool RenderThemeQt::supportsFocus(EAppearance appearance) const
         case PushButtonAppearance:
         case ButtonAppearance:
         case TextFieldAppearance:
+        case MenulistAppearance:
             return true;
         default: // No for all others...
             return false;
@@ -217,10 +223,13 @@ EAppearance RenderThemeQt::applyTheme(QStyleOption& option, RenderObject* o) con
     if (isHovered(o))
         option.state |= QStyle::State_MouseOver;
 
+    EAppearance result = o->style()->appearance();
+
     if (isPressed(o))
         option.state |= QStyle::State_Sunken;
+    else if (result == PushButtonAppearance)
+        option.state |= QStyle::State_Raised;
 
-    EAppearance result = o->style()->appearance();
     if(result == RadioAppearance || result == CheckboxAppearance)
         option.state |= (isChecked(o) ? QStyle::State_On : QStyle::State_Off);
 
@@ -327,6 +336,7 @@ bool RenderThemeQt::paintMenuList(RenderObject* o, const RenderObject::PaintInfo
     QStyleOptionComboBox opt;
     opt.initFrom(widget);
     opt.rect = r;
+    opt.frame = false;
     style->drawComplexControl(QStyle::CC_ComboBox, &opt, painter, widget);
     return false;
 }
