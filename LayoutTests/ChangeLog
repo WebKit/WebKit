@@ -1,3 +1,20 @@
+2007-02-04  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam.
+
+        Update SVG baseline after xml:space fixes.
+
+        * svg/W3C-SVG-1.1/styling-css-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.png:
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-ws-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/text-ws-02-t-expected.png:
+        * svg/W3C-SVG-1.1/text-ws-02-t-expected.txt:
+        * svg/custom/text-whitespace-handling-expected.checksum: Added.
+        * svg/custom/text-whitespace-handling-expected.png: Added.
+        * svg/custom/text-whitespace-handling-expected.txt: Added.
+        * svg/custom/text-whitespace-handling.svg: Added.
+
 2007-02-03  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -21,13 +21,17 @@
 */
 
 #include "config.h"
+
 #ifdef SVG_SUPPORT
 #include "SVGTextContentElement.h"
 
+#include "CSSPropertyNames.h"
+#include "CSSValueKeywords.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
+#include "XMLNames.h"
 
 namespace WebCore {
 
@@ -105,8 +109,17 @@ void SVGTextContentElement::parseMappedAttribute(MappedAttribute* attr)
     } else {
         if (SVGTests::parseMappedAttribute(attr))
             return;
-        if (SVGLangSpace::parseMappedAttribute(attr))
+        if (SVGLangSpace::parseMappedAttribute(attr)) {
+            if (attr->name().matches(XMLNames::spaceAttr)) {
+                static const AtomicString preserveString("preserve");
+
+                if (attr->value() == preserveString)
+                    addCSSProperty(attr, CSS_PROP_WHITE_SPACE, CSS_VAL_PRE);
+                else
+                    addCSSProperty(attr, CSS_PROP_WHITE_SPACE, CSS_VAL_NOWRAP);
+            }
             return;
+        }
         if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
             return;
 
@@ -116,6 +129,6 @@ void SVGTextContentElement::parseMappedAttribute(MappedAttribute* attr)
 
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

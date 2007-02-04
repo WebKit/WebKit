@@ -20,8 +20,7 @@ layer at (0,0) size 480x360
             text run at (0,-36) width 337: "xml:space='default'"
         RenderSVGText {text} at (15,225) size 480x44
           RenderSVGInlineText {#text} at (0,-36) size 411x44
-            text run at (0,-36) width 76: "WS "
-            text run at (76,-36) width 335: "non-indented lines."
+            text run at (0,-36) width 411: "WS non-indented lines."
         RenderSVGText {text} at (15,260) size 480x44
           RenderSVGInlineText {#text} at (0,-36) size 411x44
             text run at (0,-36) width 411: "WS non-indented lines."

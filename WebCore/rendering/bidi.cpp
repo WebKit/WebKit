@@ -1912,6 +1912,16 @@ static inline bool shouldCollapseWhiteSpace(const RenderStyle* style)
     return style->collapseWhiteSpace() || (style->whiteSpace() == PRE_WRAP && (!isLineEmpty || !previousLineBrokeCleanly));
 }
 
+static inline bool shouldPreserveNewline(RenderObject* object)
+{
+#ifdef SVG_SUPPORT
+    if (object->isSVGText())
+        return false;
+#endif
+
+    return object->style()->preserveNewline();
+}
+
 int RenderBlock::skipWhitespace(BidiIterator &it, BidiState &bidi)
 {
     // FIXME: The entire concept of the skipWhitespace function is flawed, since we really need to be building
@@ -1920,7 +1930,7 @@ int RenderBlock::skipWhitespace(BidiIterator &it, BidiState &bidi)
     // object iteration process.
     int w = lineWidth(m_height);
     while (!it.atEnd() && (it.obj->isInlineFlow() || (shouldCollapseWhiteSpace(it.obj->style()) && !it.obj->isBR() &&
-          (it.current() == ' ' || it.current() == '\t' || (!it.obj->style()->preserveNewline() && it.current() == '\n') ||
+          (it.current() == ' ' || it.current() == '\t' || (!shouldPreserveNewline(it.obj) && it.current() == '\n') ||
           it.current() == softHyphen || skipNonBreakingSpace(it) || it.obj->isFloatingOrPositioned())))) {
         if (it.obj->isFloatingOrPositioned()) {
             RenderObject *o = it.obj;
@@ -2008,7 +2018,13 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
         
         bool autoWrap = RenderStyle::autoWrap(currWS);
         autoWrapWasEverTrueOnLine = autoWrapWasEverTrueOnLine || autoWrap;
+
+#ifdef SVG_SUPPORT
+        bool preserveNewline = o->isSVGText() ? false : RenderStyle::preserveNewline(currWS);
+#else
         bool preserveNewline = RenderStyle::preserveNewline(currWS);
+#endif
+
         bool collapseWhiteSpace = RenderStyle::collapseWhiteSpace(currWS);
             
         if (o->isBR()) {
@@ -2276,7 +2292,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                             }
                         }
                         if (lineWasTooWide || w + tmpW > width) {
-                            if (lBreak.obj && lBreak.obj->style()->preserveNewline() && lBreak.obj->isText() && static_cast<RenderText*>(lBreak.obj)->characters()[lBreak.pos] == '\n') {
+                            if (lBreak.obj && shouldPreserveNewline(lBreak.obj) && lBreak.obj->isText() && static_cast<RenderText*>(lBreak.obj)->characters()[lBreak.pos] == '\n') {
                                 if (!stoppedIgnoringSpaces && pos > 0) {
                                     // We need to stop right before the newline and then start up again.
                                     BidiIterator midpoint(0, o, pos);
@@ -2393,7 +2409,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                     RenderText* nextText = static_cast<RenderText*>(next);
                     if (nextText->textLength() != 0) {
                         UChar c = nextText->characters()[0];
-                        if (c == ' ' || c == '\t' || (c == '\n' && !next->style()->preserveNewline()))
+                        if (c == ' ' || c == '\t' || (c == '\n' && !shouldPreserveNewline(next)))
                             // If the next item on the line is text, and if we did not end with
                             // a space, then the next text run continues our word (and so it needs to
                             // keep adding to |tmpW|.  Just update and continue.
@@ -2470,7 +2486,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
 
     if (lBreak == start && !lBreak.obj->isBR()) {
         // we just add as much as possible
-        if (style()->preserveNewline()) {
+        if (shouldPreserveNewline(this)) {
             // FIXME: Don't really understand this case.
             if (pos != 0) {
                 lBreak.obj = o;

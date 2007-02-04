@@ -85,9 +85,14 @@ void RenderText::setStyle(RenderStyle* newStyle)
 
     RenderObject::setStyle(newStyle);
 
-    if (oldTransform != newStyle->textTransform() || oldSecurity != newStyle->textSecurity())
+    if (oldTransform != newStyle->textTransform() || oldSecurity != newStyle->textSecurity()
+#ifdef SVG_SUPPORT
+        || isSVGText() /* All SVG text has to be transformed */
+#endif
+       ) {
         if (RefPtr<StringImpl> textToTransform = originalText())
             setText(textToTransform.release(), true);
+    }
 
     if (fontChanged)
         updateMonospaceCharacterWidth();
@@ -825,6 +830,37 @@ void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
 
     if (m_text) {
         m_text = m_text->replace('\\', backslashAsCurrencySymbol());
+
+#ifdef SVG_SUPPORT
+        if (isSVGText()) {
+            if (style() && style()->whiteSpace() == PRE) {
+                // Spec: When xml:space="preserve", the SVG user agent will do the following using a
+                // copy of the original character data content. It will convert all newline and tab
+                // characters into space characters. Then, it will draw all space characters, including
+                // leading, trailing and multiple contiguous space characters.
+
+                m_text = m_text->replace('\n', ' ');
+
+                // If xml:space="preserve" is set, white-space is set to "pre", which
+                // preserves leading, trailing & contiguous space character for us.
+           } else {
+                // Spec: When xml:space="default", the SVG user agent will do the following using a
+                // copy of the original character data content. First, it will remove all newline
+                // characters. Then it will convert all tab characters into space characters.
+                // Then, it will strip off all leading and trailing space characters.
+                // Then, all contiguous space characters will be consolidated.    
+
+                static StringImpl empty("", 0);
+                m_text = m_text->replace('\n', &empty);
+    
+                // If xml:space="default" is set, white-space is set to "nowrap", which handles
+                // leading, trailing & contiguous space character removal for us.
+            }
+
+            m_text = m_text->replace('\t', ' ');
+        }
+#endif
+
         if (style()) {
             switch (style()->textTransform()) {
                 case TTNONE:

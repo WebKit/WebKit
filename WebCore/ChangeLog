@@ -1,3 +1,26 @@
+2007-02-04  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam.
+
+        Add support for xml:space="preserve" for SVG text.
+        It can be modeled by using white-space="pre" and replace \n by spaces.
+
+        Handle xml:space="default" correctly.
+        Always remove tabs from SVG text - as demanded by spec.
+
+        Added test: svg/custom/text-whitespace-handling.svg
+
+        * css/svg.css:
+        * ksvg2/svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::parseMappedAttribute):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setStyle):
+        (WebCore::RenderText::setTextInternal):
+        * rendering/bidi.cpp:
+        (WebCore::shouldPreserveNewline):
+        (WebCore::RenderBlock::skipWhitespace):
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2007-02-03  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

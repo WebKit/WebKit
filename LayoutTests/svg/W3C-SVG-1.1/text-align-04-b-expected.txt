@@ -1,7 +1,7 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {g} at (5,4) size 463x256
+      RenderSVGContainer {g} at (5,4) size 471x256
         RenderSVGText {text} at (5,40) size 480x44
           RenderSVGInlineText {#text} at (0,-36) size 346x44
             text run at (0,-36) width 346: "Test of 'text-anchor'"
@@ -14,19 +14,19 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-27) size 218x33
             text run at (0,-27) width 218: "Tspan, tref, toap"
         RenderPath {line} at (219.50,120) size 1x140 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M220.00,120.00L220.00,260.00"]
-        RenderSVGContainer {g} at (62,113) size 406x113
+        RenderSVGContainer {g} at (62,113) size 414x113
           RenderSVGText {text} at (220,140) size 480x33
             RenderSVGInlineText {#text} at (0,-27) size 122x33
               text run at (0,-27) width 122: "start text "
-            RenderSVGTSpan {tspan} at (0,0) size 126x33
-              RenderSVGInlineText {#text} at (122,-27) size 126x33
-                text run at (122,-27) width 126: "red tspan"
+            RenderSVGTSpan {tspan} at (0,0) size 134x33
+              RenderSVGInlineText {#text} at (122,-27) size 134x33
+                text run at (122,-27) width 134: " red tspan"
           RenderSVGText {text} at (220,180) size 480x33
-            RenderSVGInlineText {#text} at (-152,-27) size 154x33
-              text run at (-152,-27) width 154: "middle text "
-            RenderSVGTSpan {tspan} at (0,0) size 150x33
-              RenderSVGInlineText {#text} at (2,-27) size 150x33
-                text run at (2,-27) width 150: "bold tspan"
+            RenderSVGInlineText {#text} at (-156,-27) size 156x33
+              text run at (-156,-27) width 154: "middle text "
+            RenderSVGTSpan {tspan} at (0,0) size 158x33
+              RenderSVGInlineText {#text} at (-2,-27) size 158x33
+                text run at (-2,-27) width 158: " bold tspan"
           RenderSVGText {text} at (220,220) size 480x33
             RenderSVGInline {tref} at (0,0) size 158x33
               RenderSVGInlineText {#text} at (-158,-27) size 158x33
