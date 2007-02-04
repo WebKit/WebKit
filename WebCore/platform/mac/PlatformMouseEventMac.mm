@@ -131,7 +131,6 @@ int eventNumberForEvent(NSEvent *event)
         case NSOtherMouseUp:
         case NSOtherMouseDragged:
         case NSMouseMoved:
-        case NSScrollWheel:
             return [event eventNumber];
         default:
             return 0;
