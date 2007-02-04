@@ -1,3 +1,13 @@
+2007-02-03  George Staikos  <staikos@kde.org>
+
+        Reviewed by Alexey.
+
+        -1 is not a valid point.  We can't handle anything > 0xffff anyway.
+        Fixes crash on cases like eval("x");
+
+        * wtf/unicode/qt4/UnicodeQt4.h:
+        (WTF::Unicode::category):
+
 2007-02-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

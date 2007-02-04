@@ -470,7 +470,7 @@ namespace WTF {
     inline CharCategory category(UChar32 c)
     {
       if (c > 0xffff)
-        return (CharCategory) U_MASK(QChar::Letter_Other);
+        return NoCategory;
       return (CharCategory) U_MASK(QChar(c).category());
     }
 
