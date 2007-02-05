@@ -220,6 +220,7 @@ IDL_BINDINGS += \
 
 SOURCES += \
     bindings/js/JSCanvasRenderingContext2DCustom.cpp \
+    bindings/js/JSCustomXPathNSResolver.cpp \
     bindings/js/JSDocumentCustom.cpp \
     bindings/js/JSHTMLElementWrapperFactory.cpp \
     bindings/js/JSHTMLFormElementCustom.cpp \
@@ -676,6 +677,7 @@ SOURCES += \
     rendering/RootInlineBox.cpp \
     rendering/SVGRenderTreeAsText.cpp \
     xml/DOMParser.cpp \
+    xml/NativeXPathNSResolver.cpp \
     xml/xmlhttprequest.cpp \
     xml/XMLSerializer.cpp \
     xml/XPathEvaluator.cpp \

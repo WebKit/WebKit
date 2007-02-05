@@ -1,3 +1,19 @@
+2007-02-04  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=8791
+        XPath should support custom node resolvers
+
+        * fast/xpath/nsresolver-bad-object-expected.txt: Added.
+        * fast/xpath/nsresolver-bad-object.xhtml: Added.
+        * fast/xpath/nsresolver-exception-expected.txt: Added.
+        * fast/xpath/nsresolver-exception.xhtml: Added.
+        * fast/xpath/nsresolver-function-expected.txt: Added.
+        * fast/xpath/nsresolver-function.xhtml: Added.
+        * fast/xpath/nsresolver-object-expected.txt: Added.
+        * fast/xpath/nsresolver-object.xhtml: Added.
+
 2007-02-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin.

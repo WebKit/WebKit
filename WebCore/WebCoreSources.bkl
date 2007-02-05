@@ -458,6 +458,7 @@
 
     <set append="1" var="WEBCORE_SOURCES_XML">
         xml/DOMParser.cpp
+        xml/CustomXPathNSResolver.cpp
         xml/XMLSerializer.cpp
         xml/XPathEvaluator.cpp
         xml/XPathExpression.cpp
@@ -679,6 +680,7 @@
 
     <set append="1" var="WEBCORE_SOURCES_JS">
         bindings/js/JSCanvasRenderingContext2DCustom.cpp
+        bindings/js/JSCustomXPathNSResolver.cpp
         bindings/js/JSDocumentCustom.cpp
         bindings/js/JSHTMLElementWrapperFactory.cpp
         bindings/js/JSHTMLFormElementCustom.cpp

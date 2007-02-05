@@ -1,3 +1,43 @@
+2007-02-04  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=8791
+        XPath should support custom node resolvers
+
+        * bindings/js/JSCustomXPathNSResolver.cpp: Added.
+        (WebCore::JSCustomXPathNSResolver::create):
+        (WebCore::JSCustomXPathNSResolver::JSCustomXPathNSResolver):
+        (WebCore::JSCustomXPathNSResolver::~JSCustomXPathNSResolver):
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSCustomXPathNSResolver.h: Added.
+        * bindings/objc/DOMCustomXPathNSResolver.h: Added.
+        * bindings/objc/DOMCustomXPathNSResolver.mm: Added.
+        (WebCore::DOMCustomXPathNSResolver::DOMCustomXPathNSResolver):
+        (WebCore::DOMCustomXPathNSResolver::~DOMCustomXPathNSResolver):
+        (WebCore::DOMCustomXPathNSResolver::lookupNamespaceURI):
+        Wrappers for JS/ObjC objects that can be used as resolvers.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        Use the above wrappers to support custom resolvers.
+
+        * xml/XPathNSResolver.cpp:
+        * xml/XPathNSResolver.h:
+        Turned this class into an abstract one.
+
+        * xml/NativeXPathNSResolver.cpp: Added.
+        (WebCore::NativeXPathNSResolver::NativeXPathNSResolver):
+        (WebCore::NativeXPathNSResolver::~NativeXPathNSResolver):
+        (WebCore::NativeXPathNSResolver::lookupNamespaceURI):
+        * xml/NativeXPathNSResolver.h: Added.
+        A XPathNSResolver subclass, doing what XPathNSResolver used to do.
+
+        * xml/XPathEvaluator.cpp:
+        (WebCore::XPathEvaluator::createNSResolver): Create a NativeXPathNSResolver.
+
+        * WebCore.xcodeproj/project.pbxproj: Added new files.
+
 2007-02-04  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

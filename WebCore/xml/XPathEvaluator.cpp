@@ -30,9 +30,9 @@
 #ifdef XPATH_SUPPORT
 
 #include "ExceptionCode.h"
+#include "NativeXPathNSResolver.h"
 #include "Node.h"
 #include "XPathExpression.h"
-#include "XPathNSResolver.h"
 #include "XPathResult.h"
 #include "XPathUtil.h"
 
@@ -49,7 +49,7 @@ PassRefPtr<XPathExpression> XPathEvaluator::createExpression(const String& expre
 
 PassRefPtr<XPathNSResolver> XPathEvaluator::createNSResolver(Node* nodeResolver)
 {
-    return new XPathNSResolver(nodeResolver);
+    return new NativeXPathNSResolver(nodeResolver);
 }
 
 PassRefPtr<XPathResult> XPathEvaluator::evaluate(const String& expression,

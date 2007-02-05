@@ -29,28 +29,10 @@
 
 #ifdef XPATH_SUPPORT
 
-#include "Node.h"
-#include "XMLNames.h"
-
 namespace WebCore {
-
-XPathNSResolver::XPathNSResolver(PassRefPtr<Node> node)
-    : m_node(node)
-{
-}
 
 XPathNSResolver::~XPathNSResolver()
 {
-}
-
-String XPathNSResolver::lookupNamespaceURI(const String& prefix)
-{
-    // This is not done by Node::lookupNamespaceURI as per the DOM3 Core spec,
-    // but the XPath spec says that we should do it for XPathNSResolver.
-    if (prefix == "xml")
-        return XMLNames::xmlNamespaceURI;
-    
-    return m_node ? m_node->lookupNamespaceURI(prefix) : String();
 }
 
 }

@@ -440,7 +440,7 @@ sub GetObjCTypeGetter
 
     my $typeGetterMethodName = GetObjCTypeGetterName($type);
 
-    return "[nativeResolver $typeGetterMethodName]" if $type eq "XPathNSResolver";
+    return "nativeResolver" if $type eq "XPathNSResolver";
     return "[$argName $typeGetterMethodName]";
 }
 
@@ -543,6 +543,9 @@ sub AddIncludesForType
         return;
     }
 
+    if ($type eq "XPathNSResolver") {
+        $implIncludes{"DOMCustomXPathNSResolver.h"} = 1;
+    }
 
     # FIXME: won't compile without these
     $implIncludes{"CSSMutableStyleDeclaration.h"} = 1 if $type eq "CSSStyleDeclaration";
@@ -1131,9 +1134,16 @@ sub GenerateImplementation
             # special case the XPathNSResolver
             if (defined $needsCustom{"XPathNSResolver"}) {
                 my $paramName = $needsCustom{"XPathNSResolver"};
-                push(@functionContent, "    if ($paramName && ![$paramName isMemberOfClass:[DOMNativeXPathNSResolver class]])\n");
-                push(@functionContent, "        [NSException raise:NSGenericException format:\@\"createExpression currently does not work with custom NS resolvers\"];\n");
-                push(@functionContent, "    DOMNativeXPathNSResolver *nativeResolver = (DOMNativeXPathNSResolver *)$paramName;\n\n");
+                push(@functionContent, "    WebCore::XPathNSResolver* nativeResolver = 0;\n");
+                push(@functionContent, "    RefPtr<WebCore::XPathNSResolver> customResolver;\n");
+                push(@functionContent, "    if ($paramName) {\n");
+                push(@functionContent, "        if ([$paramName isMemberOfClass:[DOMNativeXPathNSResolver class]])\n");
+                push(@functionContent, "            nativeResolver = [(DOMNativeXPathNSResolver *)$paramName _xpathNSResolver];\n");
+                push(@functionContent, "        else {\n");
+                push(@functionContent, "            customResolver = new WebCore::DOMCustomXPathNSResolver($paramName);\n");
+                push(@functionContent, "            nativeResolver = customResolver.get();\n");
+                push(@functionContent, "        }\n");
+                push(@functionContent, "    }\n");
             }
 
             # special case the EventTarget

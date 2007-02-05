@@ -2852,6 +2852,12 @@
 		DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */; };
 		DD763BB20992C2C900740B8E /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD763BB10992C2C900740B8E /* libxml2.dylib */; };
 		DD7CDF250A23CF9800069928 /* CSSUnknownRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CCE0A1989CA007FB8C5 /* CSSUnknownRule.h */; };
+		E10B937C0B73C00A003ED890 /* JSCustomXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E10B937B0B73C00A003ED890 /* JSCustomXPathNSResolver.h */; };
+		E10B93C30B73C291003ED890 /* JSCustomXPathNSResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E10B93C20B73C291003ED890 /* JSCustomXPathNSResolver.cpp */; };
+		E10B9B6C0B747599003ED890 /* NativeXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E10B9B6A0B747599003ED890 /* NativeXPathNSResolver.h */; };
+		E10B9B6D0B747599003ED890 /* NativeXPathNSResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E10B9B6B0B747599003ED890 /* NativeXPathNSResolver.cpp */; };
+		E10B9CCC0B747A44003ED890 /* DOMCustomXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E10B9CCA0B747A44003ED890 /* DOMCustomXPathNSResolver.h */; };
+		E10B9CCD0B747A44003ED890 /* DOMCustomXPathNSResolver.mm in Sources */ = {isa = PBXBuildFile; fileRef = E10B9CCB0B747A44003ED890 /* DOMCustomXPathNSResolver.mm */; };
 		E11D51930B2E7A5F0056C188 /* Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = E11D51910B2E7A5F0056C188 /* Base64.h */; };
 		E11D51940B2E7A5F0056C188 /* Base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E11D51920B2E7A5F0056C188 /* Base64.cpp */; };
 		E12EDB7B0B308A78002704B6 /* EventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = E12EDB7A0B308A78002704B6 /* EventTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6023,6 +6029,12 @@
 		DB23C2C90A508D29002489EB /* IndentOutdentCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IndentOutdentCommand.cpp; sourceTree = "<group>"; };
 		DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IndentOutdentCommand.h; sourceTree = "<group>"; };
 		DD763BB10992C2C900740B8E /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = /usr/lib/libxml2.dylib; sourceTree = "<absolute>"; };
+		E10B937B0B73C00A003ED890 /* JSCustomXPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomXPathNSResolver.h; sourceTree = "<group>"; };
+		E10B93C20B73C291003ED890 /* JSCustomXPathNSResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomXPathNSResolver.cpp; sourceTree = "<group>"; };
+		E10B9B6A0B747599003ED890 /* NativeXPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeXPathNSResolver.h; sourceTree = "<group>"; };
+		E10B9B6B0B747599003ED890 /* NativeXPathNSResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NativeXPathNSResolver.cpp; sourceTree = "<group>"; };
+		E10B9CCA0B747A44003ED890 /* DOMCustomXPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMCustomXPathNSResolver.h; sourceTree = "<group>"; };
+		E10B9CCB0B747A44003ED890 /* DOMCustomXPathNSResolver.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMCustomXPathNSResolver.mm; sourceTree = "<group>"; };
 		E11D51910B2E7A5F0056C188 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
 		E11D51920B2E7A5F0056C188 /* Base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base64.cpp; sourceTree = "<group>"; };
 		E12EDB7A0B308A78002704B6 /* EventTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTarget.h; sourceTree = "<group>"; };
@@ -8836,6 +8848,8 @@
 				14DFB33F0A7DF7630018F769 /* Derived Sources */,
 				93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */,
 				1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */,
+				E10B937B0B73C00A003ED890 /* JSCustomXPathNSResolver.h */,
+				E10B93C20B73C291003ED890 /* JSCustomXPathNSResolver.cpp */,
 				929264760B61FC7200B41D34 /* JSDocumentCustom.cpp */,
 				938E65F609F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp */,
 				938E65F009F09840008A48EC /* JSHTMLElementWrapperFactory.h */,
@@ -8897,6 +8911,8 @@
 				BC1A3799097C715F0019F3D8 /* DOMCore.h */,
 				BC1A379A097C715F0019F3D8 /* DOMCSS.h */,
 				BC1A379B097C715F0019F3D8 /* DOMCSS.mm */,
+				E10B9CCA0B747A44003ED890 /* DOMCustomXPathNSResolver.h */,
+				E10B9CCB0B747A44003ED890 /* DOMCustomXPathNSResolver.mm */,
 				BC1A379C097C715F0019F3D8 /* DOMEvents.h */,
 				BC1A379D097C715F0019F3D8 /* DOMEvents.mm */,
 				BC1A379F097C715F0019F3D8 /* DOMExtensions.h */,
@@ -9123,6 +9139,8 @@
 				1ACE53E10A8D18E70022947D /* DOMParser.cpp */,
 				1ACE53E20A8D18E70022947D /* DOMParser.h */,
 				1ACE53E30A8D18E70022947D /* DOMParser.idl */,
+				E10B9B6A0B747599003ED890 /* NativeXPathNSResolver.h */,
+				E10B9B6B0B747599003ED890 /* NativeXPathNSResolver.cpp */,
 				1ACE53E40A8D18E70022947D /* XMLSerializer.cpp */,
 				1ACE53E50A8D18E70022947D /* XMLSerializer.h */,
 				1ACE53E60A8D18E70022947D /* XMLSerializer.idl */,
@@ -11083,6 +11101,9 @@
 				659A7D130B6DB4D9001155B3 /* SubstituteData.h in Headers */,
 				A809F1470B73793A002E4D7F /* RenderSVGGradientStop.h in Headers */,
 				A809F1AA0B737FB6002E4D7F /* RenderSVGHiddenContainer.h in Headers */,
+				E10B937C0B73C00A003ED890 /* JSCustomXPathNSResolver.h in Headers */,
+				E10B9B6C0B747599003ED890 /* NativeXPathNSResolver.h in Headers */,
+				E10B9CCC0B747A44003ED890 /* DOMCustomXPathNSResolver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11120,7 +11141,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -11135,7 +11155,6 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -12437,6 +12456,9 @@
 				AA0972CC0B6947A800A705E9 /* SVGInlineTextBox.cpp in Sources */,
 				A809F1480B73793B002E4D7F /* RenderSVGGradientStop.cpp in Sources */,
 				A809F1AB0B737FB6002E4D7F /* RenderSVGHiddenContainer.cpp in Sources */,
+				E10B93C30B73C291003ED890 /* JSCustomXPathNSResolver.cpp in Sources */,
+				E10B9B6D0B747599003ED890 /* NativeXPathNSResolver.cpp in Sources */,
+				E10B9CCD0B747A44003ED890 /* DOMCustomXPathNSResolver.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

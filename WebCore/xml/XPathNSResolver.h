@@ -30,23 +30,15 @@
 #ifdef XPATH_SUPPORT
 
 #include "Shared.h"
-#include <wtf/Forward.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-    class Node;
     class String;
 
     class XPathNSResolver : public Shared<XPathNSResolver> {
     public:
-        XPathNSResolver(PassRefPtr<Node>);
-        ~XPathNSResolver();
-
-        String lookupNamespaceURI(const String& prefix);
-
-    private:
-        RefPtr<Node> m_node;
+        virtual ~XPathNSResolver();
+        virtual String lookupNamespaceURI(const String& prefix) = 0;
     };
 
 }
@@ -54,4 +46,3 @@ namespace WebCore {
 #endif // XPATH_SUPPORT
 
 #endif // XPathNSResolver_h
-

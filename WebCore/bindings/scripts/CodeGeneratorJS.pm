@@ -178,6 +178,9 @@ sub AddIncludesForType
         $joinedName = $type;
         $joinedName =~ s/Abs|Rel//;
         $implIncludes{"${joinedName}.h"} = 1;
+    } elsif ($type eq "XPathNSResolver") {
+        $implIncludes{"JSXPathNSResolver.h"} = 1;
+        $implIncludes{"JSCustomXPathNSResolver.h"} = 1;
     } else {
         # default, include the same named file
         $implIncludes{"${type}.h"} = 1;
@@ -1009,21 +1012,33 @@ sub GenerateImplementation
                 }
 
                 my $name = $parameter->name;
-                push(@implContent, "        bool ${name}Ok;\n") if TypeCanFailConversion($parameter);
-                push(@implContent, "        " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, "args[$paramIndex]", TypeCanFailConversion($parameter) ? "${name}Ok" : undef) . ";\n");
-                if (TypeCanFailConversion($parameter)) {
-                    push(@implContent, "        if (!${name}Ok) {\n");
-                    push(@implContent, "            setDOMException(exec, TYPE_MISMATCH_ERR);\n");
-                    push(@implContent, "            return jsUndefined();\n        }\n");
-                }
+                
+                if ($parameter->type eq "XPathNSResolver") {
+                    push(@implContent, "        RefPtr<XPathNSResolver> customResolver;\n");
+                    push(@implContent, "        XPathNSResolver* resolver = toXPathNSResolver(args[$paramIndex]);\n");
+                    push(@implContent, "        if (!resolver) {\n");
+                    push(@implContent, "            customResolver = JSCustomXPathNSResolver::create(exec, args[$paramIndex]);\n");
+                    push(@implContent, "            if (exec->hadException())\n");
+                    push(@implContent, "                return jsUndefined();\n");
+                    push(@implContent, "            resolver = customResolver.get();\n");
+                    push(@implContent, "        }\n");
+                } else {
+                    push(@implContent, "        bool ${name}Ok;\n") if TypeCanFailConversion($parameter);
+                    push(@implContent, "        " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, "args[$paramIndex]", TypeCanFailConversion($parameter) ? "${name}Ok" : undef) . ";\n");
+                    if (TypeCanFailConversion($parameter)) {
+                        push(@implContent, "        if (!${name}Ok) {\n");
+                        push(@implContent, "            setDOMException(exec, TYPE_MISMATCH_ERR);\n");
+                        push(@implContent, "            return jsUndefined();\n        }\n");
+                    }
 
-                # If a parameter is "an index", it should throw an INDEX_SIZE_ERR
-                # exception
-                if ($parameter->extendedAttributes->{"IsIndex"}) {
-                    $implIncludes{"ExceptionCode.h"} = 1;
-                    push(@implContent, "        if ($name < 0) {\n");
-                    push(@implContent, "            setDOMException(exec, INDEX_SIZE_ERR);\n");
-                    push(@implContent, "            return jsUndefined();\n        }\n");
+                    # If a parameter is "an index", it should throw an INDEX_SIZE_ERR
+                    # exception
+                    if ($parameter->extendedAttributes->{"IsIndex"}) {
+                        $implIncludes{"ExceptionCode.h"} = 1;
+                        push(@implContent, "        if ($name < 0) {\n");
+                        push(@implContent, "            setDOMException(exec, INDEX_SIZE_ERR);\n");
+                        push(@implContent, "            return jsUndefined();\n        }\n");
+                    }
                 }
 
                 $functionString .= ", " if $paramIndex;
