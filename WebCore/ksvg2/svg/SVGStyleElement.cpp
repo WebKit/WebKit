@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
+#include "XMLNames.h"
 
 namespace WebCore {
 

@@ -1,5 +1,11 @@
 2007-02-05  Eric Seidel  <eric@webkit.org>
 
+        No review, build fix only.
+
+        * ksvg2/svg/SVGStyleElement.cpp: add forgotten header.
+
+2007-02-05  Eric Seidel  <eric@webkit.org>
+
         Reviewed by bdash.
 
         Fix style name testcase which I broke in my last commit.
