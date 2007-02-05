@@ -1,3 +1,14 @@
+2007-02-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=11535
+          <rdar://problem/4946959> REGRESSION: onclick="this.select();"
+          not working on new forms (11535)
+
+        * fast/forms/input-select-on-click-expected.txt: Added.
+        * fast/forms/input-select-on-click.html: Added.
+
 2007-02-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Mitz and Anders.

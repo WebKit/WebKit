@@ -1,3 +1,24 @@
+2007-02-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11535
+          <rdar://problem/4946959> REGRESSION: onclick="this.select();" not working on new forms (11535)
+
+        Test: fast/forms/input-select-on-click.html
+
+        * page/EventHandler.h: Added m_mouseDownWasSingleClickInSelection boolean.
+        Organized other booleans a bit more logically.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler): Rearrange order to match EventHandler.h, add
+        m_mouseDownWasSingleClickInSelection initialization.
+        (WebCore::EventHandler::handleMousePressEventSingleClick): Set m_mouseDownWasSingleClickInSelection
+        to true in the appropriate special case.
+        (WebCore::EventHandler::handleMousePressEvent): Set m_mouseDownWasSingleClickInSelection to false.
+        (WebCore::EventHandler::handleMouseReleaseEvent): Change code to clear selection or set to caret to
+        only fire if m_mouseDownWasSingleClickInSelection was true rather than firing for any
+        m_mouseDownMayStartSelect case.
+
 2007-02-05  George Staikos  <staikos@kde.org>
 
         Reviewed by Maciej.

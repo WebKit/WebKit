@@ -251,6 +251,9 @@ private:
     bool m_mousePressed;
     RefPtr<Node> m_mousePressNode;
 
+    bool m_mouseDownMayStartSelect;
+    bool m_mouseDownMayStartDrag;
+    bool m_mouseDownWasSingleClickInSelection;
     bool m_beganSelectingText;
 
     IntPoint m_dragStartPos;
@@ -260,7 +263,7 @@ private:
     Timer<EventHandler> m_autoscrollTimer;
     RenderObject* m_autoscrollRenderer;
     bool m_mouseDownMayStartAutoscroll;
-    bool m_mouseDownMayStartDrag;
+    bool m_mouseDownWasInSubframe;
 
     RenderLayer* m_resizeLayer;
 
@@ -283,9 +286,6 @@ private:
     IntPoint m_currentMousePosition;
     IntPoint m_mouseDownPos; // in our view's coords
     double m_mouseDownTimestamp;
-
-    bool m_mouseDownWasInSubframe;
-    bool m_mouseDownMayStartSelect;
 
 #if PLATFORM(MAC)
     NSView *m_mouseDownView;
