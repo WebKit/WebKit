@@ -2,6 +2,28 @@
 
         Reviewed by Adele.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11916
+          REGRESSION (SearchField): RTL search fields are mixed up
+
+        Test: fast/forms/search-rtl.html
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::createInnerBlockStyle): Always make the inner
+        block LTR so that the results button will be on the left and the cancel
+        button will be on the right.
+        (WebCore::RenderTextControl::createInnerTextStyle): Inherit the direction
+        property directly from the control so that it won't be masked by the inner
+        block's LTR override.
+        (WebCore::RenderTextControl::nodeAtPoint): Removed code that swapped the
+        results and cancel buttons for RTL.
+        (WebCore::RenderTextControl::forwardEvent): Ditto.
+        (WebCore::RenderTextControl::clientPaddingLeft): Ditto.
+        (WebCore::RenderTextControl::clientPaddingRight): Ditto.
+
+2007-02-05  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=12618
           REGRESSION (SearchField): Dragging across the text and releasing over the clear button clears the field
 
