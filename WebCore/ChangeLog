@@ -165,12 +165,11 @@
 
         - remove obsolete code that has an annoying space in the directory name
 
-        * WebCore.vcproj/Image Viewer.cpp: Removed.
-        * WebCore.vcproj/Image Viewer.h: Removed.
-        * WebCore.vcproj/Image Viewer.ico: Removed.
-        * WebCore.vcproj/Image Viewer.rc: Removed.
-        * WebCore.vcproj/Image Viewer.reg: Removed.
-        * WebCore.vcproj/Image Viewer.vcproj: Removed.
+        * WebCore.vcproj/Image Viewer/Image Viewer.cpp: Removed.
+        * WebCore.vcproj/Image Viewer/Image Viewer.h: Removed.
+        * WebCore.vcproj/Image Viewer/Image Viewer.rc: Removed.
+        * WebCore.vcproj/Image Viewer/Image Viewer.reg: Removed.
+        * WebCore.vcproj/Image Viewer/Image Viewer.vcproj: Removed.
         * WebCore.vcproj/Image Viewer/ImageDocument.cpp: Removed.
         * WebCore.vcproj/Image Viewer/ImageDocument.h: Removed.
         * WebCore.vcproj/Image Viewer/ImageMainFrame.cpp: Removed.
@@ -178,11 +177,12 @@
         * WebCore.vcproj/Image Viewer/ImageView.cpp: Removed.
         * WebCore.vcproj/Image Viewer/ImageView.h: Removed.
         * WebCore.vcproj/Image Viewer/Resource.h: Removed.
+        * WebCore.vcproj/Image Viewer/res/Image Viewer.ico: Removed.
+        * WebCore.vcproj/Image Viewer/res/Image ViewerDoc.ico: Removed.
         * WebCore.vcproj/Image Viewer/res/ImageViewer.rc2: Removed.
         * WebCore.vcproj/Image Viewer/res/Toolbar.bmp: Removed.
         * WebCore.vcproj/Image Viewer/stdafx.cpp: Removed.
         * WebCore.vcproj/Image Viewer/stdafx.h: Removed.
-        * WebCore.vcproj/Image iewerDoc.ico: Removed.
 
 2007-02-04  Mitz Pettel  <mitz@webkit.org>
 
