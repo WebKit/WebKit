@@ -168,7 +168,7 @@ NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu*
 {
     id delegate = [m_webView UIDelegate];
     if (![delegate respondsToSelector:@selector(webView:contextMenuItemsForElement:defaultMenuItems:)])
-        return nil;
+        return defaultMenu->platformDescription();
     
     NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:defaultMenu->hitTestResult()] autorelease];
     NSMutableArray *defaultMenuItems = fixMenusForOldClients(defaultMenu->platformDescription());
