@@ -27,7 +27,10 @@
 #include "HTMLTextFieldInnerElement.h"
 
 #include "BeforeTextInsertedEvent.h"
+#include "Document.h"
+#include "EventHandler.h"
 #include "EventNames.h"
+#include "Frame.h"
 #include "HTMLInputElement.h"
 #include "HTMLTextAreaElement.h"
 #include "RenderTextControl.h"
@@ -88,6 +91,7 @@ void HTMLSearchFieldResultsButtonElement::defaultEventHandler(Event* evt)
 
 HTMLSearchFieldCancelButtonElement::HTMLSearchFieldCancelButtonElement(Document* doc)
     : HTMLTextFieldInnerElement(doc)
+    , m_capturing(false)
 {
 }
 
@@ -99,11 +103,19 @@ void HTMLSearchFieldCancelButtonElement::defaultEventHandler(Event* evt)
         input->focus();
         input->select();
         evt->setDefaultHandled();
+        if (Frame* frame = document()->frame())
+            frame->eventHandler()->setCapturingMouseEventsNode(this);
+        m_capturing = true;
     } else if (evt->type() == mouseupEvent) {
-        if (renderer() && renderer()->style()->visibility() == VISIBLE) {
-            input->setValue("");
-            input->onSearch();
-            evt->setDefaultHandled();
+        if (m_capturing && renderer() && renderer()->style()->visibility() == VISIBLE) {
+            if (hovered()) {
+                input->setValue("");
+                input->onSearch();
+                evt->setDefaultHandled();
+            }
+            if (Frame* frame = document()->frame())
+                frame->eventHandler()->setCapturingMouseEventsNode(0);
+            m_capturing = false;
         }
     }
     if (!evt->defaultHandled())
