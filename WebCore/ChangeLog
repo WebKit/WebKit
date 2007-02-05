@@ -1,3 +1,35 @@
+2007-02-05  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=6626
+          Arabic & Farsi rendered with no shaping (all glyphs separate, unreadable!)
+
+        No test possible since Mac OS X only ships with fonts that contain shaping
+        information.
+
+        * icu/unicode/ushape.h: Added from
+        http://www.opensource.apple.com/darwinsource/10.4.8.ppc/ICU-6.2.9/icuSources/common/unicode/
+        * platform/FontData.h:
+        (WebCore::FontData::shapesArabic): Added. Returns whether the font contains
+        shaping information for Arabic or not.
+        * platform/mac/FontDataMac.mm:
+        (WebCore::FontData::platformInit):
+        (WebCore::FontData::checkShapesArabic): Added. Checks whether the font contains
+        a glyph metamorphosis table. The heuristic is that if a font contains Arabic glyphs
+        and a metamorphosis table, then it includes shaping information for Arabic.
+        * platform/mac/FontMac.mm:
+        (WebCore::overrideLayoutOperation): Changed to use the same character buffer passed
+        to ATSUI instead of the original character buffer and to give zero-width spaces zero
+        width.
+        (WebCore::isArabicLamWithAlefLigature): Added. Checks if the character is one
+        of the Arabic presentation forms of Lam with Alef.
+        (WebCore::shapeArabic): Added. This is a wrapper around the ICU Arabic shaping routine
+        that replaces each space following a Lam with Alef ligature resulting from shaping
+        with a zero-width space.
+        (WebCore::ATSULayoutParameters::initialize): Changed to allocate the auxiliary buffer
+        lazily for mirroring and Arabic shaping. Added a call to shapeArabic() when required.
+
 2007-02-05  Eric Seidel  <eric@webkit.org>
 
         No review, build fix only.

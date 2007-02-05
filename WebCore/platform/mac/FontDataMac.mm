@@ -95,6 +95,8 @@ void FontData::platformInit()
     m_styleGroup = 0;
     m_ATSUStyleInitialized = false;
     m_ATSUMirrors = false;
+    m_checkedShapesArabic = false;
+    m_shapesArabic = false;
     
     m_syntheticBoldOffset = m_font.syntheticBold ? 1.0f : 0.f;
     
@@ -275,6 +277,35 @@ float FontData::platformWidthForGlyph(Glyph glyph) const
         advance.width = 0;
     }
     return advance.width + m_syntheticBoldOffset;
+}
+
+void FontData::checkShapesArabic() const
+{
+    ASSERT(!m_checkedShapesArabic);
+
+    m_checkedShapesArabic = true;
+    
+    ATSUFontID fontID = wkGetNSFontATSUFontId(m_font.font);
+    if (!fontID) {
+        LOG_ERROR("unable to get ATSUFontID for %@", m_font.font);
+        return;
+    }
+
+    // This function is called only on fonts that contain Arabic glyphs. Our
+    // heuristic is that if such a font has a glyph metamorphosis table, then
+    // it includes shaping information for Arabic.
+    FourCharCode tables[] = { 'morx', 'mort' };
+    for (unsigned i = 0; i < sizeof(tables) / sizeof(tables[0]); ++i) {
+        ByteCount tableSize;
+        OSStatus status = ATSFontGetTable(fontID, tables[i], 0, 0, 0, &tableSize);
+        if (status == noErr) {
+            m_shapesArabic = true;
+            return;
+        }
+
+        if (status != kATSInvalidFontTableAccess)
+            LOG_ERROR("ATSFontGetTable failed (%d)", status);
+    }
 }
 
 }

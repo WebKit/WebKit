@@ -39,6 +39,8 @@
 #import "WebCoreSystemInterface.h"
 #import "WebCoreTextRenderer.h"
 
+#import <unicode/ushape.h>
+
 #define SYNTHETIC_OBLIQUE_ANGLE 14
 
 #ifdef __LP64__
@@ -165,7 +167,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
         
         Fixed lastNativePos = 0;
         float lastAdjustedPos = 0;
-        const UChar *characters = params->m_run.data(params->m_run.from());
+        const UChar* characters = params->m_charBuffer ? params->m_charBuffer + params->m_run.from() : params->m_run.data(params->m_run.from());
         const FontData **renderers = params->m_fonts + params->m_run.from();
         const FontData *renderer;
         const FontData *lastRenderer = 0;
@@ -196,13 +198,18 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
                     spaceGlyph = renderer->m_spaceGlyph;
                 }
             }
-            float width = FixedToFloat(layoutRecords[i].realPos - lastNativePos);
+            float width;
+            if (nextCh == zeroWidthSpace)
+                width = 0;
+            else {
+                width = FixedToFloat(layoutRecords[i].realPos - lastNativePos);
+                if (shouldRound)
+                    width = roundf(width);
+                width += renderer->m_syntheticBoldOffset;
+                if (renderer->m_treatAsFixedPitch ? width == renderer->m_spaceWidth : (layoutRecords[i-1].flags & kATSGlyphInfoIsWhiteSpace))
+                    width = renderer->m_adjustedSpaceWidth;
+            }
             lastNativePos = layoutRecords[i].realPos;
-            if (shouldRound)
-                width = roundf(width);
-            width += renderer->m_syntheticBoldOffset;
-            if (renderer->m_treatAsFixedPitch ? width == renderer->m_spaceWidth : (layoutRecords[i-1].flags & kATSGlyphInfoIsWhiteSpace))
-                width = renderer->m_adjustedSpaceWidth;
 
             if (hasExtraSpacing) {
                 if (width && params->m_font->letterSpacing())
@@ -263,15 +270,57 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
     return noErr;
 }
 
+static inline bool isArabicLamWithAlefLigature(UChar c)
+{
+    return c >= 0xfef5 && c <= 0xfefc;
+}
+
+static void shapeArabic(const UChar* source, UChar* dest, unsigned totalLength, unsigned shapingStart)
+{
+    while (shapingStart < totalLength) {
+        unsigned shapingEnd;
+        // We do not want to pass a Lam with Alef ligature followed by a space to the shaper,
+        // since we want to be able to identify this sequence as the result of shaping a Lam
+        // followed by an Alef and padding with a space.
+        bool foundLigatureSpace = false;
+        for (shapingEnd = shapingStart; !foundLigatureSpace && shapingEnd < totalLength - 1; ++shapingEnd)
+            foundLigatureSpace = isArabicLamWithAlefLigature(source[shapingEnd]) && source[shapingEnd + 1] == ' ';
+        shapingEnd++;
+
+        UErrorCode shapingError = U_ZERO_ERROR;
+        unsigned charsWritten = u_shapeArabic(source + shapingStart, shapingEnd - shapingStart, dest + shapingStart, shapingEnd - shapingStart, U_SHAPE_LETTERS_SHAPE | U_SHAPE_LENGTH_FIXED_SPACES_NEAR, &shapingError);
+
+        if (U_SUCCESS(shapingError) && charsWritten == shapingEnd - shapingStart) {
+            for (unsigned j = shapingStart; j < shapingEnd - 1; ++j) {
+                if (isArabicLamWithAlefLigature(dest[j]) && dest[j + 1] == ' ')
+                    dest[++j] = zeroWidthSpace;
+            }
+            if (foundLigatureSpace) {
+                dest[shapingEnd] = ' ';
+                shapingEnd++;
+            } else if (isArabicLamWithAlefLigature(dest[shapingEnd - 1])) {
+                // u_shapeArabic quirk: if the last two characters in the source string are a Lam and an Alef,
+                // the space is put at the beginning of the string, despite U_SHAPE_LENGTH_FIXED_SPACES_NEAR.
+                ASSERT(dest[shapingStart] == ' ');
+                dest[shapingStart] = zeroWidthSpace;
+            }
+        } else {
+            // Something went wrong. Abandon shaping and just copy the rest of the buffer.
+            LOG_ERROR("u_shapeArabic failed(%d)", shapingError);
+            shapingEnd = totalLength;
+            memcpy(dest + shapingStart, source + shapingStart, (shapingEnd - shapingStart) * sizeof(UChar));
+        }
+        shapingStart = shapingEnd;
+    }
+}
+
 void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* graphicsContext)
 {
     m_font = font;
     
-    // FIXME: It is probably best to always allocate a buffer for RTL, since even if for this
-    // fontData ATSUMirrors is true, for a substitute fontData it might be false.
     const FontData* fontData = font->primaryFont();
     m_fonts = new const FontData*[m_run.length()];
-    m_charBuffer = (UChar*)((font->isSmallCaps() || (m_style.rtl() && !fontData->m_ATSUMirrors)) ? new UChar[m_run.length()] : 0);
+    m_charBuffer = font->isSmallCaps() ? new UChar[m_run.length()] : 0;
     
     ATSUTextLayout layout;
     OSStatus status;
@@ -352,6 +401,7 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
             substituteLength = 0;
         }
 
+        bool shapedArabic = false;
         bool isSmallCap = false;
         UniCharArrayOffset firstSmallCap = 0;
         const FontData *r = fontData;
@@ -368,8 +418,26 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
                 else
                     break;
             }
-            if (m_style.rtl() && m_charBuffer && !r->m_ATSUMirrors)
-                m_charBuffer[i] = u_charMirror(m_charBuffer[i]);
+            if (!shapedArabic && ublock_getCode(m_run[i]) == UBLOCK_ARABIC && !r->shapesArabic()) {
+                shapedArabic = true;
+                if (!m_charBuffer) {
+                    m_charBuffer = new UChar[totalLength];
+                    memcpy(m_charBuffer, m_run.characters(), i * sizeof(UChar));
+                    ATSUTextMoved(layout, m_charBuffer);
+                }
+                shapeArabic(m_run.characters(), m_charBuffer, totalLength, i);
+            }
+            if (m_style.rtl() && !r->m_ATSUMirrors) {
+                UChar mirroredChar = u_charMirror(m_run[i]);
+                if (mirroredChar != m_run[i]) {
+                    if (!m_charBuffer) {
+                        m_charBuffer = new UChar[totalLength];
+                        memcpy(m_charBuffer, m_run.characters(), totalLength * sizeof(UChar));
+                        ATSUTextMoved(layout, m_charBuffer);
+                    }
+                    m_charBuffer[i] = mirroredChar;
+                }
+            }
             if (m_font->isSmallCaps()) {
                 const FontData* smallCapsData = r->smallCapsFontData(m_font->fontDescription());
                 UChar c = m_charBuffer[i];
