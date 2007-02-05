@@ -11,22 +11,13 @@ function print(message, color)
     document.getElementById("console").appendChild(paragraph);
 }
 
-function shouldBe(a, b)
-{
-    var evalA = eval(a);
-    if (evalA == b)
-        print("PASS: " + a + " should be " + b + " and is.", "green");
-    else
-        print("FAIL: " + a + " should be " + b + " but instead is " + evalA + ".", "red");
-}
-
 function test() 
 {
     if (!window.layoutTestController) {
         print("FAIL: This test can only run from inside DumpRenderTree.", "red");
         return;
     }
-    
+
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
     
@@ -34,7 +25,7 @@ function test()
     new Date(); // allocate another object to create heap entropy
     // Collecting on a timeout seems to make the crash more reproducible -- not exactly sure why
     setTimeout('GCController.collectOnAlternateThread(true);', 0);
-    setTimeout('shouldBe("document.body.style.myCustomProperty", "1"); layoutTestController.notifyDone();', 1);
+    setTimeout('document.body.style.myCustomProperty; print("PASS: you didn\'t crash"); layoutTestController.notifyDone();', 1);
     
     // fail-safe
     setTimeout('print("FAIL: Test hung -- bailing out"); layoutTestController.notifyDone();', 2);
