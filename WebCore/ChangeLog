@@ -1,3 +1,12 @@
+2007-02-05  George Staikos  <staikos@kde.org>
+
+        Reviewed by Maciej.
+
+        Send HTTP cookies.
+
+        * platform/network/qt/ResourceHandleManagerQt.cpp:
+        (WebCore::RequestQt::RequestQt):
+
 2007-02-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Mitz and Anders.
