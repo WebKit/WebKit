@@ -1336,7 +1336,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         // FIXME: Fake modifier keys here.
         PlatformMouseEvent event(IntPoint(windowLoc), globalPoint(windowLoc, [self window]),
             LeftButton, MouseEventMoved, 0, false, false, false, false, currentTime());
-        m_frame->eventHandler()->dragSourceEndedAt(event, operation);
+        m_frame->eventHandler()->dragSourceEndedAt(event, (DragOperation)operation);
     }
 }
 

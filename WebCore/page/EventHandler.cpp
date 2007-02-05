@@ -393,6 +393,19 @@ void EventHandler::updateSelectionForMouseDragOverPosition(const VisiblePosition
     if (m_frame->shouldChangeSelection(newSelection))
         m_frame->selectionController()->setSelection(newSelection);
 }
+    
+bool EventHandler::handleMouseUp(const MouseEventWithHitTestResults& event)
+{
+    if (eventLoopHandleMouseUp(event))
+        return true;
+    
+    // If this was the first click in the window, we don't even want to clear the selection.
+    // This case occurs when the user clicks on a draggable element, since we have to process
+    // the mouse down and drag events to see if we might start a drag.  For other first clicks
+    // in a window, we just don't acceptFirstMouse, and the whole down-drag-up sequence gets
+    // ignored upstream of this layer.
+    return eventActivatedView(event.event());
+}    
 
 bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& event)
 {
@@ -1314,6 +1327,30 @@ bool EventHandler::shouldDragAutoNode(Node* node, const IntPoint& point) const
     if (node->hasChildNodes() || !m_frame->view())
         return false;
     return m_frame->page() && m_frame->page()->dragController()->mayStartDragAtEventLocation(m_frame, point);
+}
+    
+void EventHandler::dragSourceMovedTo(const PlatformMouseEvent& event)
+{
+    if (dragState().m_dragSrc && dragState().m_dragSrcMayBeDHTML)
+        // for now we don't care if event handler cancels default behavior, since there is none
+        dispatchDragSrcEvent(dragEvent, event);
+}
+    
+void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperation operation)
+{
+    if (dragState().m_dragSrc && dragState().m_dragSrcMayBeDHTML) {
+        dragState().m_dragClipboard->setDestinationOperation(operation);
+        // for now we don't care if event handler cancels default behavior, since there is none
+        dispatchDragSrcEvent(dragendEvent, event);
+    }
+    freeClipboard();
+    dragState().m_dragSrc = 0;
+}
+    
+// returns if we should continue "default processing", i.e., whether eventhandler canceled
+bool EventHandler::dispatchDragSrcEvent(const AtomicString& eventType, const PlatformMouseEvent& event)
+{
+    return !dispatchDragEvent(eventType, dragState().m_dragSrc.get(), event, dragState().m_dragClipboard.get());
 }
 
 }

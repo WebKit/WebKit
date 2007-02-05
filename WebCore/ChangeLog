@@ -1,3 +1,36 @@
+2007-02-04  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Tidying up EventHandler, and moving more of
+        EventHandlerMac.mm to EventHandler.cpp
+
+        Also added EventHandler::eventLoopHandleMouse[Dragged,Up]
+        these are basically helper functions to allow correct event
+        handling on MacOS.        
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseUp):
+        (WebCore::EventHandler::dragSourceMovedTo):
+        (WebCore::EventHandler::dragSourceEndedAt):
+        (WebCore::EventHandler::dispatchDragSrcEvent):
+           Moved from EventHandlerMac to EventHandler
+
+        * page/EventHandler.h:
+        (WebCore::EventHandler::eventLoopHandleMouseUp):
+        (WebCore::EventHandler::eventLoopHandleMouseDragged):
+          Null implementations of two Mac helper functions
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::eventLoopHandleMouseDragged):           
+        (WebCore::EventHandler::handleDrag):
+          Much tidying, reduced nesting, made less dependent on NS types   
+        (WebCore::EventHandler::eventLoopHandleMouseDragged):
+        (WebCore::EventHandler::eventLoopHandleMouseUp):  
+          Helper functions to let us process events properly on MacOS
+
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge dragSourceEndedAt:operation:]):
+
 2007-02-04  George Staikos  <staikos@kde.org>
 
         Reviewed by Zack.

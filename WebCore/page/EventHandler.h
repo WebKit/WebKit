@@ -26,6 +26,7 @@
 #ifndef EventHandler_h
 #define EventHandler_h
 
+#include "DragActions.h"
 #include "PlatformMouseEvent.h"
 #include "ScrollTypes.h"
 #include "Timer.h"
@@ -64,7 +65,7 @@ class RenderObject;
 class RenderWidget;
 class VisiblePosition;
 class Widget;
-
+    
 struct HitTestRequest;
 
 extern const int LinkDragHysteresis;
@@ -142,7 +143,22 @@ public:
     void defaultKeyboardEventHandler(KeyboardEvent*);
     
     bool eventMayStartDrag(const PlatformMouseEvent&) const;
-
+    
+    void dragSourceMovedTo(const PlatformMouseEvent&);
+    void dragSourceEndedAt(const PlatformMouseEvent&, DragOperation);
+    
+    //The following methods are needed to allow correct event modelling on Mac
+    //they are called at the beginning of handleMouseUp and handleDrag.  
+    //If they return true it indicates that they have consumed the event
+#if PLATFORM(MAC)
+    bool eventLoopHandleMouseUp(const MouseEventWithHitTestResults&);
+    bool eventLoopHandleMouseDragged(const MouseEventWithHitTestResults&);
+#else
+    bool eventLoopHandleMouseUp(const MouseEventWithHitTestResults&) { return false; }
+    bool eventLoopHandleMouseDragged(const MouseEventWithHitTestResults&) { return false; }    
+#endif
+    
+    
 #if PLATFORM(MAC)
     PassRefPtr<KeyboardEvent> currentKeyboardEvent() const;
 
@@ -157,9 +173,6 @@ public:
     void sendFakeEventsAfterWidgetTracking(NSEvent* initiatingEvent);
 
     void setActivationEventNumber(int num) { m_activationEventNumber = num; }
-
-    void dragSourceMovedTo(const PlatformMouseEvent&);
-    void dragSourceEndedAt(const PlatformMouseEvent&, NSDragOperation);
 
     NSEvent *currentNSEvent();
 #endif
