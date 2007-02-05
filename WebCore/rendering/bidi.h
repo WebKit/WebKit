@@ -117,6 +117,9 @@ namespace WebCore {
         bool compact : 1;
 
         BidiRun* nextRun;
+        
+        bool reversed(bool visuallyOrdered) { return level % 2 && !visuallyOrdered; }
+        bool dirOverride(bool visuallyOrdered) { return override || visuallyOrdered; }
     };
 
     struct BidiIterator;

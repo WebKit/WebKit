@@ -37,6 +37,9 @@ enum CaretType { CursorCaret, DragCaret };
 
 class RenderBlock : public RenderFlow {
 public:
+    typedef Vector<UChar, 1024> CharacterBuffer;
+    static void bidiReorderCharacters(Document*, RenderStyle*, CharacterBuffer&);
+
     RenderBlock(Node*);
     virtual ~RenderBlock();
 

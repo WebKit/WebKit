@@ -111,6 +111,68 @@ static int numSpaces;
 static void embed(Direction, BidiState&);
 static void appendRun(BidiState&);
 
+void RenderBlock::bidiReorderCharacters(Document* document, RenderStyle* style, CharacterBuffer& characterBuffer)
+{
+    unsigned bufferLength = characterBuffer.size();
+    // Create a local copy of the buffer.
+    String string(characterBuffer.data(), bufferLength);
+
+    // Create anonymous RenderBlock    
+    RenderStyle* blockStyle = new (document->renderArena()) RenderStyle();
+    blockStyle->inheritFrom(style);
+    blockStyle->setDisplay(BLOCK);
+    blockStyle->setWhiteSpace(PRE);
+    RenderBlock* block = new (document->renderArena()) RenderBlock(document);
+    block->setStyle(blockStyle);
+    
+    // Create RenderText
+    RenderText* text = new (document->renderArena()) RenderText(document, string.impl());
+    text->setStyle(blockStyle);
+    block->addChild(text);
+    
+    // Call bidiReorderLine
+    BidiState bidi;
+    BidiContext* startEmbed;
+    if (style->direction() == LTR) {
+        startEmbed = new BidiContext(0, LeftToRight, NULL, style->unicodeBidi() == Override);
+        bidi.status.eor = LeftToRight;
+    } else {
+        startEmbed = new BidiContext(1, RightToLeft, NULL, style->unicodeBidi() == Override);
+        bidi.status.eor = RightToLeft;
+    }
+    bidi.status.lastStrong = startEmbed->dir();
+    bidi.status.last = startEmbed->dir();
+    bidi.status.eor = startEmbed->dir();
+    bidi.context = startEmbed;
+    bidi.dir = OtherNeutral;
+    betweenMidpoints = false;
+    
+    block->bidiReorderLine(BidiIterator(block, text, 0), BidiIterator(block, text, bufferLength), bidi);
+    
+    // Fill the characterBuffer.
+    int index = 0;
+    BidiRun* r = sFirstBidiRun; 
+    while (r) {
+        bool reversed = r->reversed(style->visuallyOrdered());
+        // If there's only one run, and it doesn't need to be reversed, return early
+        if (sBidiRunCount == 1 && !reversed)
+            break;
+        for (int i = r->start; i < r->stop; ++i) {
+            if (reversed)
+                characterBuffer[index] = string[r->stop + r->start - i - 1];
+            else
+                characterBuffer[index] = string[i];
+            ++index;
+        }
+        r = r->nextRun;
+    }
+
+    // Tear down temporary RenderBlock and RenderText
+    block->removeChild(text);
+    text->destroy();
+    block->destroy();
+}
+
 static int getBPMWidth(int childValue, Length cssUnit)
 {
     if (!cssUnit.isIntrinsicOrAuto())
@@ -816,8 +878,8 @@ RootInlineBox* RenderBlock::constructLine(const BidiIterator& start, const BidiI
                 text->setStart(r->start);
                 text->setLen(r->stop - r->start);
                 bool visuallyOrdered = r->obj->style()->visuallyOrdered();
-                text->m_reversed = r->level % 2 && !visuallyOrdered;
-                text->m_dirOverride = r->override || visuallyOrdered;
+                text->m_reversed = r->reversed(visuallyOrdered);
+                text->m_dirOverride = r->dirOverride(visuallyOrdered);
             }
         }
     }

@@ -295,9 +295,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, in
         itemText = static_cast<HTMLOptionElement*>(element)->optionText();
     else if (element->hasTagName(optgroupTag))
         itemText = static_cast<HTMLOptGroupElement*>(element)->groupLabelText();
-   
-    TextRun textRun(itemText.characters(), itemText.length());
-    
+       
     // Determine where the item text should be placed
     IntRect r = itemBoundingBoxRect(tx, ty, listIndex);
     r.move(optionsSpacingHorizontal, style()->font().ascent());
@@ -326,9 +324,24 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, in
     }
     paintInfo.context->setFont(itemFont);
     
+    unsigned length = itemText.length();
+    const UChar* string = itemText.characters();
+    TextStyle textStyle(0, 0, 0, false, true);
+
+    if (itemStyle->direction() == RTL && itemStyle->unicodeBidi() == Override)
+        textStyle.setRTL(true);
+    else if ((itemStyle->direction() == RTL || itemStyle->unicodeBidi() != Override) && !itemStyle->visuallyOrdered()) {
+        // If necessary, reorder characters by running the string through the bidi algorithm
+        RenderBlock::CharacterBuffer characterBuffer;
+        characterBuffer.append(string, length);
+        RenderBlock::bidiReorderCharacters(document(), itemStyle, characterBuffer);
+        string = characterBuffer.data();
+    }
+    TextRun textRun(string, length);
+
     // Draw the item text
     if (itemStyle->visibility() != HIDDEN)
-        paintInfo.context->drawText(textRun, r.location());
+        paintInfo.context->drawText(textRun, r.location(), textStyle);
 }
 
 void RenderListBox::paintItemBackground(PaintInfo& paintInfo, int tx, int ty, int listIndex)

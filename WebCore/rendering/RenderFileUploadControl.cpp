@@ -159,9 +159,22 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
     }
 
     if (paintInfo.phase == PaintPhaseForeground) {
-        const String& displayedFilename = m_fileChooser->basenameForWidth(style()->font(), maxFilenameWidth());
-        TextRun textRun(displayedFilename.characters(), displayedFilename.length());
+        const String& displayedFilename = m_fileChooser->basenameForWidth(style()->font(), maxFilenameWidth());        
+        unsigned length = displayedFilename.length();
+        const UChar* string = displayedFilename.characters();
+        TextStyle textStyle(0, 0, 0, false, true);
 
+        if (style()->direction() == RTL && style()->unicodeBidi() == Override)
+            textStyle.setRTL(true);
+        else if ((style()->direction() == RTL || style()->unicodeBidi() != Override) && !style()->visuallyOrdered()) {
+            // If necessary, reorder characters by running the string through the bidi algorithm
+            RenderBlock::CharacterBuffer characterBuffer;
+            characterBuffer.append(string, length);
+            RenderBlock::bidiReorderCharacters(document(), style(), characterBuffer);
+            string = characterBuffer.data();
+        }
+        TextRun textRun(string, length);
+        
         // Determine where the filename should be placed
         int contentLeft = tx + borderLeft() + paddingLeft();
         int buttonAndIconWidth = m_button->renderer()->width() + afterButtonSpacing
@@ -179,10 +192,10 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
 
         paintInfo.context->setFont(style()->font());
         paintInfo.context->setFillColor(style()->color());
-
+        
         // Draw the filename
-        paintInfo.context->drawText(textRun, IntPoint(textX, textY));
-
+        paintInfo.context->drawText(textRun, IntPoint(textX, textY), textStyle);
+        
         if (m_fileChooser->icon()) {
             // Determine where the icon should be placed
             int iconY = ty + borderTop() + paddingTop() + (contentHeight() - iconHeight) / 2;

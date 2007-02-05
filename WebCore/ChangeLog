@@ -1,3 +1,29 @@
+2007-02-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Mitz and Anders.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11811
+        <rdar://problem/4947184> REGRESSION (r11783): Hebrew text in list boxes is reversed
+
+        http://bugs.webkit.org/show_bug.cgi?id=11812
+        <rdar://problem/4960269> REGRESSION (Native file upload): Hebrew filenames are reversed
+
+        Tests: 
+        fast/text/international/bidi-listbox.html
+        fast/text/international/bidi-listbox-atsui.html
+
+        * rendering/RenderBlock.h: Added static bidiReorderCharacters that will run the bidi algorithm on a character buffer.
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::bidiReorderCharacters): Added. Creates an anonymous RenderBlock and RenderText to feed into bidiReorderLines.
+        (WebCore::RenderBlock::constructLine): Uses the new convenience methods on BidiRun.
+        * rendering/bidi.h:
+        (WebCore::BidiRun::reversed): Added convenience method.
+        (WebCore::BidiRun::dirOverride): ditto.
+
+        * rendering/RenderFileUploadControl.cpp: (WebCore::RenderFileUploadControl::paintObject): Creates a buffer and calls bidiReorderCharacters
+          to get a correctly ordered character buffer for drawText.
+        * rendering/RenderListBox.cpp: (WebCore::RenderListBox::paintItemForeground): ditto.
+
 2007-02-05  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

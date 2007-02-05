@@ -1,3 +1,20 @@
+2007-02-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Mitz and Anders.
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=11811
+        <rdar://problem/4947184> REGRESSION (r11783): Hebrew text in list boxes is reversed
+
+        * fast/text/international/bidi-listbox-expected.checksum: Added.
+        * fast/text/international/bidi-listbox-expected.png: Added.
+        * fast/text/international/bidi-listbox-expected.txt: Added.
+        * fast/text/international/bidi-listbox.html: Added.
+
+        * fast/text/international/bidi-listbox-atsui-expected.checksum: Added.
+        * fast/text/international/bidi-listbox-atsui-expected.png: Added.
+        * fast/text/international/bidi-listbox-atsui-expected.txt: Added.
+        * fast/text/international/bidi-listbox-atsui.html: Added.
+
 2007-02-05  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

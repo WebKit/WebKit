@@ -1,0 +1,67 @@
+layer at (0,0) size 785x643
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x643
+  RenderBlock {HTML} at (0,0) size 785x643
+    RenderBody {BODY} at (8,8) size 769x627
+      RenderBlock {P} at (0,0) size 769x36
+        RenderText {#text} at (0,0) size 580x18
+          text run at (0,0) width 580: "This tests that bidirectional text is correctly rendered when using ATSUI in list box controls."
+        RenderBR {BR} at (580,14) size 0x0
+        RenderText {#text} at (0,18) size 566x18
+          text run at (0,18) width 566: "The order of the text below each list box should match the order of the select's option text."
+      RenderBlock (anonymous) at (0,52) size 769x79
+        RenderText {#text} at (0,0) size 270x18
+          text run at (0,0) width 270: "1) direction: rtl; -webkit-rtl-ordering: visual"
+        RenderBR {BR} at (270,14) size 0x0
+        RenderListBox {SELECT} at (2,20) size 77x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderBR {BR} at (81,72) size 0x0
+      RenderBlock {DIV} at (0,131) size 100x18
+        RenderText {#text} at (18,0) size 82x18
+          text run at (18,0) width 22 LTR override: "a\x{300}bc"
+          text run at (40,0) width 60 LTR override: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+      RenderBlock (anonymous) at (0,149) size 769x97
+        RenderBR {BR} at (0,0) size 0x18
+        RenderText {#text} at (0,18) size 275x18
+          text run at (0,18) width 275: "2) direction: rtl; -webkit-rtl-ordering: logical"
+        RenderBR {BR} at (275,32) size 0x0
+        RenderListBox {SELECT} at (2,38) size 77x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderBR {BR} at (81,90) size 0x0
+      RenderBlock {DIV} at (0,246) size 100x18
+        RenderText {#text} at (18,0) size 82x18
+          text run at (18,0) width 60 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+          text run at (78,0) width 22: "a\x{300}bc"
+      RenderBlock (anonymous) at (0,264) size 769x97
+        RenderBR {BR} at (0,0) size 0x18
+        RenderText {#text} at (0,18) size 270x18
+          text run at (0,18) width 270: "3) direction: ltr; -webkit-rtl-ordering: visual"
+        RenderBR {BR} at (270,32) size 0x0
+        RenderListBox {SELECT} at (2,38) size 77x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderBR {BR} at (81,90) size 0x0
+      RenderBlock {DIV} at (0,361) size 100x18
+        RenderText {#text} at (0,0) size 82x18
+          text run at (0,0) width 22 LTR override: "a\x{300}bc"
+          text run at (22,0) width 60 LTR override: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+      RenderBlock (anonymous) at (0,379) size 769x97
+        RenderBR {BR} at (0,0) size 0x18
+        RenderText {#text} at (0,18) size 275x18
+          text run at (0,18) width 275: "4) direction: ltr; -webkit-rtl-ordering: logical"
+        RenderBR {BR} at (275,32) size 0x0
+        RenderListBox {SELECT} at (2,38) size 77x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderBR {BR} at (81,90) size 0x0
+      RenderBlock {DIV} at (0,476) size 100x18
+        RenderText {#text} at (0,0) size 82x18
+          text run at (0,0) width 22: "a\x{300}bc"
+          text run at (22,0) width 60 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+      RenderBlock (anonymous) at (0,494) size 769x97
+        RenderBR {BR} at (0,0) size 0x18
+        RenderText {#text} at (0,18) size 70x18
+          text run at (0,18) width 70: "5) No style"
+        RenderBR {BR} at (70,32) size 0x0
+        RenderListBox {SELECT} at (2,38) size 77x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderBR {BR} at (81,90) size 0x0
+      RenderBlock {DIV} at (0,591) size 100x18
+        RenderText {#text} at (0,0) size 82x18
+          text run at (0,0) width 22: "a\x{300}bc"
+          text run at (22,0) width 60 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
+      RenderBlock (anonymous) at (0,609) size 769x18
+        RenderBR {BR} at (0,0) size 0x18
