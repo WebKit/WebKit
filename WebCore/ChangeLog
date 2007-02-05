@@ -2,6 +2,22 @@
 
         Reviewed by Darin.
 
+        http://bugs.webkit.org/show_bug.cgi?id=12602
+        XPath functions string(), normalize-space() and string-length() don't work
+        without arguments
+
+        Test: fast/xpath/implicit-node-args.html
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunString::doEvaluate):
+        (WebCore::XPath::FunStringLength::doEvaluate):
+        (WebCore::XPath::FunNormalizeSpace::doEvaluate):
+        Don't try to pass RefPtr<Node> to the Value ctor.
+
+2007-02-04  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         http://bugs.webkit.org/show_bug.cgi?id=8791
         XPath should support custom node resolvers
 

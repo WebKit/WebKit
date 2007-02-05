@@ -1,0 +1,4 @@
+Test for bug 12602:
+
+//div[string() = '123']: SUCCESS
+
