@@ -609,12 +609,17 @@ String HTMLElement::id() const
     return getAttribute(idAttr);
 }
 
-void HTMLElement::setId(const String &value)
+void HTMLElement::setId(const String& value)
 {
     setAttribute(idAttr, value);
 }
 
-void HTMLElement::setTitle(const String &value)
+String HTMLElement::title() const
+{
+    return getAttribute(titleAttr);
+}
+
+void HTMLElement::setTitle(const String& value)
 {
     setAttribute(titleAttr, value);
 }
@@ -624,7 +629,7 @@ String HTMLElement::lang() const
     return getAttribute(langAttr);
 }
 
-void HTMLElement::setLang(const String &value)
+void HTMLElement::setLang(const String& value)
 {
     setAttribute(langAttr, value);
 }

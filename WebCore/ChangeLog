@@ -1,3 +1,41 @@
+2007-02-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
+        Fix hand cursor on link hover for SVG
+        Fix status text on link hover for SVG
+        Fix tooltips on link hover for SVG
+        Fix link dragging for SVG
+        http://bugs.webkit.org/show_bug.cgi?id=12575
+        
+        Test: added manual-tests/svg-links.svg
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareMouseEvent):
+        * dom/Element.cpp:
+        (WebCore::Element::title):
+        * dom/Element.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setId):
+        (WebCore::HTMLElement::title):
+        (WebCore::HTMLElement::setTitle):
+        (WebCore::HTMLElement::setLang):
+        * html/HTMLElement.h:
+        * ksvg2/svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::title):
+        (WebCore::SVGAElement::parseMappedAttribute):
+        (WebCore::SVGAElement::defaultEventHandler):
+        * ksvg2/svg/SVGAElement.h:
+        * ksvg2/svg/SVGTitleElement.cpp:
+        * ksvg2/svg/SVGTitleElement.h:
+        * manual-tests/svg-links.svg: Added.
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::title):
+        (WebCore::HitTestResult::absoluteImageURL):
+        (WebCore::HitTestResult::absoluteLinkURL):
+        (WebCore::HitTestResult::isLiveLink):
+        (WebCore::HitTestResult::titleDisplayString):
+
 2007-02-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

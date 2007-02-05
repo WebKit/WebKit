@@ -947,7 +947,7 @@ String Element::outerText() const
 
 String Element::title() const
 {
-    return getAttribute(titleAttr);
+    return String();
 }
 
 }

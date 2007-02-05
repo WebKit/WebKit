@@ -1716,7 +1716,7 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& r
     if (!request.readonly)
         updateRendering();
 
-    bool isOverLink = result.URLElement() && !result.URLElement()->getAttribute(hrefAttr).isNull();
+    bool isOverLink = result.URLElement() && result.URLElement()->isLink();
     return MouseEventWithHitTestResults(event, result.innerNode(), result.localPoint(), result.scrollbar(), isOverLink);
 }
 

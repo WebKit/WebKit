@@ -35,6 +35,7 @@
 #include "RenderSVGContainer.h"
 #include "ResourceRequest.h"
 #include "SVGNames.h"
+#include "XLinkNames.h"
 #include "csshelper.h"
 
 namespace WebCore {
@@ -52,16 +53,23 @@ SVGAElement::~SVGAElement()
 {
 }
 
+String SVGAElement::title() const
+{
+    return getAttribute(XLinkNames::titleAttr);
+}
+
 ANIMATED_PROPERTY_DEFINITIONS(SVGAElement, String, String, string, Target, target, SVGNames::targetAttr.localName(), m_target)
 
-void SVGAElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGAElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    const AtomicString& value(attr->value());
-    if (attr->name() == SVGNames::targetAttr) {
-        setTargetBaseValue(value);
-    } else {
+    if (attr->name() == SVGNames::targetAttr)
+        setTargetBaseValue(attr->value());
+    else {
         if (SVGURIReference::parseMappedAttribute(attr)) {
-            m_isLink = attr->value() != 0;
+            bool wasLink = m_isLink;
+            m_isLink = !attr->isNull();
+            if (wasLink != m_isLink)
+                setChanged();
             return;
         }
         if (SVGTests::parseMappedAttribute(attr))
@@ -79,11 +87,11 @@ RenderObject* SVGAElement::createRenderer(RenderArena* arena, RenderStyle* style
     return new (arena) RenderSVGContainer(this);
 }
 
-void SVGAElement::defaultEventHandler(Event *evt)
+void SVGAElement::defaultEventHandler(Event* evt)
 {
     // TODO : should use CLICK instead
     if ((evt->type() == EventNames::mouseupEvent && m_isLink)) {
-        MouseEvent *e = static_cast<MouseEvent*>(evt);
+        MouseEvent* e = static_cast<MouseEvent*>(evt);
 
         if (e && e->button() == 2) {
             SVGStyledTransformableElement::defaultEventHandler(evt);

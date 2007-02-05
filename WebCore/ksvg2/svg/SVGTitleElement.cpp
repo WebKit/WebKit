@@ -33,11 +33,6 @@ SVGTitleElement::SVGTitleElement(const QualifiedName& tagName, Document* doc)
 {
 }
 
-String SVGTitleElement::title() const
-{
-    return textContent();
-}
-
 void SVGTitleElement::insertedIntoDocument()
 {
     SVGStyledElement::insertedIntoDocument();
