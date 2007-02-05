@@ -6,7 +6,8 @@ function print(str) {
     document.writeln(str+"<br/>");
 }
 
-if (window.layoutTestController)  layoutTestController.dumpAsText();
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
 </script>
 </head>
 <body>
@@ -74,7 +75,7 @@ This test changes elements in the array, these elements should appear in their m
 <script>
 function printEltAndChange(element, index, array) {
     print("[" + index + "] is " + element);
-    array[array.length-1-index]= "changed";
+    array[array.length - 1 - index] = "changed";
 }
 
 [2, 5, 9].forEach(printEltAndChange);
@@ -85,33 +86,56 @@ This test uses a function that throws an exception, and thus halts the execution
 <script>
 function printEltAndException(element, index, array) {
     print("[" + index + "] is " + element);
-    if(index==1) throw exception();
+    if (index == 1)
+        throw "Exception thrown, execution halted!";
 }
-
-[2, 5, 9].forEach(printEltAndException);
+try {
+    [2, 5, 9].forEach(printEltAndException);
+} catch (e) {
+    print(e);
+}
 </script>
+
 <br/>
 5.0 Wrong Type for Callback Test
 This test sends in incorrect types for the callback parameter of forEach.  An exception should be thrown in each case.  There should be 6 type errors (and no crashes!):<br/><br/>
 <script>
 
-try { [2, 5, 9].forEach(5); }
-catch (e) { print(e); }
+try {
+    [2, 5, 9].forEach(5);
+} catch (e) {
+    print(e);
+}
 
-try { [2, 5, 9].forEach("wrong"); }
-catch (e) { print(e); }
+try {
+    [2, 5, 9].forEach("wrong");
+} catch (e) {
+    print(e);
+}
 
-try { [2, 5, 9].forEach(new Object()); }
-catch (e) { print(e); }
+try {
+    [2, 5, 9].forEach(new Object());
+} catch (e) {
+    print(e);
+}
 
-try { [2, 5, 9].forEach(null); }
-catch (e) { print(e); }
+try {
+    [2, 5, 9].forEach(null);
+} catch (e) {
+    print(e);
+}
 
-try { [2, 5, 9].forEach(undefined); }
-catch (e) { print(e) }
+try {
+    [2, 5, 9].forEach(undefined);
+} catch (e) {
+    print(e)
+}
 
-try { [2, 5, 9].forEach(); }
-catch (e) { print(e); }
+try {
+    [2, 5, 9].forEach();
+} catch (e) {
+    print(e);
+}
 
 </script>
 

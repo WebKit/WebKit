@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 19: ReferenceError: Can't find variable: nil
 This test checks that onload events fire on iframe and object elements when their contents finish loading, and that these are separate event objects from those that fire on the body inside the frame. If it passes, you will see 6 blocks below, each with a three-line message that ends in false.
 Fired load event on body inside iframe
 Fired event on iframe

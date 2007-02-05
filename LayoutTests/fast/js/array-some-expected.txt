@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 100: ReferenceError: Can't find variable: isBigEnoughAndException
 1.0 Single Argument Testing
 The following tests every with one argument, the callback. It should print whether the arrays [2, 5, 8, 1, 4] and [12, 5, 8, 1, 44] contain any numbers >= to 10 (false and true, respectively).
 
@@ -33,8 +32,10 @@ true
 true
 
 4.0 Exception Test
-This test uses a function that throws an exception, and thus halts the execution of some. There should thus be no output.
+This test uses a function that throws an exception, and thus halts the execution of some. There should be 2 exceptions thrown.
 
+Exception thrown, execution halted!
+Exception thrown, execution halted!
 
 5.0 Wrong Type for Callback Test
 This test sends in incorrect types for the callback parameter of every. An exception should be thrown in each case. There should be 6 type errors (and no crashes!):

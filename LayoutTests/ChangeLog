@@ -1,3 +1,33 @@
+2007-02-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Patch for http://bugs.webkit.org/show_bug.cgi?id=12562
+        Fix test cases that are now spewing console errors that 
+        they are not testing for
+
+        * fast/events/iframe-object-onload-expected.txt:
+        * fast/events/iframe-object-onload.html: Change nil to null.
+        * fast/forms/display-none-in-onchange-keyboard-expected.txt:
+        * fast/forms/display-none-in-onchange-keyboard.html: Add missing id to div, change 
+        its text, and change the resulting text.
+        * fast/forms/input-text-click-inside-expected.checksum:
+        * fast/forms/input-text-click-inside-expected.png:
+        * fast/forms/input-text-click-inside-expected.txt:
+        * fast/forms/input-text-click-inside.html: Change moveTo(x,y) to mouseMoveTo(x,y).
+        * fast/forms/input-text-click-outside-expected.txt:
+        * fast/forms/input-text-click-outside.html: Ditto.
+        * fast/js/array-foreach-expected.txt:
+        * fast/js/array-foreach.html: Add try-catch blocks to catch exceptions and print them and 
+        general cleanup.
+        * fast/js/array-some-expected.txt:
+        * fast/js/array-some.html: Ditto.
+        * fast/table/click-near-anonymous-table-expected.checksum:
+        * fast/table/click-near-anonymous-table-expected.png:
+        * fast/table/click-near-anonymous-table-expected.txt:
+        * fast/table/click-near-anonymous-table.html: Change timeForward(ms) to leapForward(ms) and
+        change the amount of time from 500ms to 1000ms to avoid clicking.
+
 2007-02-03  Geoffrey Garen  <ggaren@apple.com>
 
         Landing results that I think Maciej intended to land, to get the buildbot

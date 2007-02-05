@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 100: ReferenceError: Can't find variable: exception
 1.0 Single Argument Testing
 The following tests forEach with one argument, the callback. It should print the contents of the array [2, 5, 9] alongside each index.
 
@@ -41,6 +40,7 @@ This test uses a function that throws an exception, and thus halts the execution
 
 [0] is 2
 [1] is 5
+Exception thrown, execution halted!
 
 5.0 Wrong Type for Callback Test This test sends in incorrect types for the callback parameter of forEach. An exception should be thrown in each case. There should be 6 type errors (and no crashes!):
 

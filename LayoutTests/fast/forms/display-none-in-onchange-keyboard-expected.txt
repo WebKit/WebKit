@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 20: Null value
 
 This tests that setting display to 'none' for an element that's about to get focus doesn't crash.
 

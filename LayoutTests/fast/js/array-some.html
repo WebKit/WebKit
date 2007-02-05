@@ -6,7 +6,8 @@ function print(str) {
     document.writeln(str+"<br/>");
 }
 
-if (window.layoutTestController)  layoutTestController.dumpAsText();
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
 </script>
 </head>
 <body>
@@ -71,7 +72,7 @@ print([12, 5, 8, 1, 44].some(isBigEnoughAndPush));
 This test is equivalent to 1.0, with the exception that it changes elements in the array to be > 10 in reverse order. These elements should appear in their mutated form when reached by every, and thus both tests should result in "true".<br/><br/>
 <script>
 function isBigEnoughAndChange(element, index, array) {
-    array[array.length-1-index]= 10;
+    array[array.length - 1 - index] = 10;
     return (element >= 10);
 }
 
@@ -80,15 +81,24 @@ print([12, 5, 8, 1, 44].some(isBigEnoughAndChange));
 </script>
 <br/>
 4.0 Exception Test<br/>
-This test uses a function that throws an exception, and thus halts the execution of some.  There should thus be no output.<br/><br/>
+This test uses a function that throws an exception, and thus halts the execution of some.  There should be 2 exceptions thrown.<br/><br/>
 <script>
-function isBigEnough(element, index, array) {
-    throw exception();
+function isBigEnoughAndException(element, index, array) {
+    throw "Exception thrown, execution halted!";
     return (element >= 10);
 }
 
-print([2, 5, 8, 1, 4].some(isBigEnoughAndException));
-print([12, 5, 8, 1, 44].some(isBigEnoughAndException));
+try {
+    [2, 5, 8, 1, 4].some(isBigEnoughAndException);
+} catch (e) {
+    print(e);
+}
+
+try {
+    [12, 5, 8, 1, 44].some(isBigEnoughAndException);
+} catch (e) {
+    print(e);
+}
 
 </script>
 <br/>
@@ -96,23 +106,41 @@ print([12, 5, 8, 1, 44].some(isBigEnoughAndException));
 This test sends in incorrect types for the callback parameter of every.  An exception should be thrown in each case.  There should be 6 type errors (and no crashes!):<br/><br/>
 <script>
 
-try { [12, 5, 8, 1, 44].some(5) }
-catch (e) { print(e); }
+try {
+    [12, 5, 8, 1, 44].some(5)
+} catch (e) {
+    print(e);
+}
 
-try { [12, 5, 8, 1, 44].some("wrong"); }
-catch (e) { print(e); }
+try {
+    [12, 5, 8, 1, 44].some("wrong");
+} catch (e) {
+    print(e);
+}
 
-try { [12, 5, 8, 1, 44].some(new Object()); }
-catch (e) { print(e); }
+try {
+    [12, 5, 8, 1, 44].some(new Object());
+} catch (e) {
+    print(e);
+}
 
-try { [12, 5, 8, 1, 44].some(null); }
-catch (e) { print(e); }
+try {
+    [12, 5, 8, 1, 44].some(null);
+} catch (e) {
+    print(e);
+}
 
-try { [12, 5, 8, 1, 44].some(undefined); }
-catch (e) { print(e) }
+try {
+    [12, 5, 8, 1, 44].some(undefined);
+} catch (e) {
+    print(e)
+}
 
-try { [12, 5, 8, 1, 44].some(); }
-catch (e) { print(e); }
+try {
+    [12, 5, 8, 1, 44].some();
+} catch (e) {
+    print(e);
+}
 
 </script>
 <br/>
@@ -120,7 +148,7 @@ catch (e) { print(e); }
 This test is nearly identical to 1.0, except that it prints upon every call to the designated callback function.  Since some aborts as soon as it finds one qualifying element, the first array should print 5 times, and the second only once.<br/><br/>
 <script>
 function isBigEnough(element, index, array) {
-    print("Testing element "+element+"...");
+    print("Testing element " + element + "...");
     return (element >= 10);
 }
 

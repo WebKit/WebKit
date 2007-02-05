@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 5: TypeError: Value undefined (result of expression eventSender.moveTo) is not object.
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
@@ -12,3 +11,4 @@ layer at (0,0) size 800x600
           text run at (0,18) width 182: "should not have a focus ring."
 layer at (38,38) size 142x13
   RenderBlock {DIV} at (3,3) size 142x13
+caret: position 1 of child 0 {INPUT} of child 0 {DIV} of child 0 {BODY} of child 0 {HTML} of document
