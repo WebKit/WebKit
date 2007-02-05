@@ -1,3 +1,15 @@
+2007-02-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by bdash.
+
+        Fix style name testcase which I broke in my last commit.
+
+        * ksvg2/svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::xmlspace):
+        (WebCore::SVGStyleElement::title): override Element::title()
+        (WebCore::SVGStyleElement::parseMappedAttribute):
+        * ksvg2/svg/SVGStyleElement.h:
+
 2007-02-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.

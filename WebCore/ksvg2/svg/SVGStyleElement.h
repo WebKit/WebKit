@@ -49,6 +49,7 @@ namespace WebCore {
         const AtomicString& media() const;
         void setMedia(const AtomicString&, ExceptionCode&);
 
+        virtual String title() const;
         void setTitle(const AtomicString&, ExceptionCode&);
     };
 

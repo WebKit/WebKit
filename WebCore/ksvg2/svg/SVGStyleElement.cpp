@@ -41,8 +41,7 @@ SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document* doc)
 
 const AtomicString& SVGStyleElement::xmlspace() const
 {
-    static const AtomicString defaultValue("xml:space");
-    return getAttribute(defaultValue);
+    return getAttribute(XMLNames::spaceAttr);
 }
 
 void SVGStyleElement::setXmlspace(const AtomicString&, ExceptionCode& ec)
@@ -74,12 +73,17 @@ void SVGStyleElement::setMedia(const AtomicString&, ExceptionCode& ec)
     ec = NO_MODIFICATION_ALLOWED_ERR;
 }
 
+String SVGStyleElement::title() const
+{
+    return getAttribute(titleAttr);
+}
+
 void SVGStyleElement::setTitle(const AtomicString&, ExceptionCode& ec)
 {
     ec = NO_MODIFICATION_ALLOWED_ERR;
 }
 
-void SVGStyleElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGStyleElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == titleAttr && m_sheet)
         m_sheet->setTitle(attr->value());
