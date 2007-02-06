@@ -1,3 +1,15 @@
+2007-02-06  Adam Roben  <aroben@apple.com>
+
+        Rubberstamped by Brady.
+
+        Revert the log channel constants to their old values for all you pretty
+        people out there who were using the old ones. I also renamed
+        LogResources to LogPlatformLeaks to be a bit more specific.
+
+        * platform/Logging.cpp:
+        (WebCore::):
+        * platform/Logging.h:
+
 2007-02-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

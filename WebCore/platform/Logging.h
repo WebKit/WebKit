@@ -47,8 +47,8 @@ namespace WebCore {
     extern WTFLogChannel LogBackForward;
     extern WTFLogChannel LogHistory;
     extern WTFLogChannel LogPageCache;
+    extern WTFLogChannel LogPlatformLeaks;
     extern WTFLogChannel LogNetwork;
-    extern WTFLogChannel LogResources;
 
     void InitializeLoggingChannelsIfNecessary();
 
