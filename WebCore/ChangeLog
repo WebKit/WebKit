@@ -1,3 +1,12 @@
+2007-02-06  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Ada and Oliver.
+
+        Adding a new LogResources channel for tracking platform resource usage.
+
+        * platform/Logging.cpp: Added new channel, cleaned up constants to be more readable.
+        * platform/Logging.h: Declare new channel.
+
 2007-02-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff.

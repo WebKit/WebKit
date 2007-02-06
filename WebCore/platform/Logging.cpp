@@ -28,26 +28,28 @@
 
 namespace WebCore {
 
-WTFLogChannel LogNotYetImplemented = { 0x00000001, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogNotYetImplemented = { 1 << 0, "WebCoreLogLevel", WTFLogChannelOff };
 
-WTFLogChannel LogFrames =            { 0x00000010, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogLoading =           { 0x00000020, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogFrames =            { 1 << 1, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogLoading =           { 1 << 2, "WebCoreLogLevel", WTFLogChannelOff };
 
-WTFLogChannel LogPopupBlocking =     { 0x00000040, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogPopupBlocking =     { 1 << 3, "WebCoreLogLevel", WTFLogChannelOff };
 
-WTFLogChannel LogEvents =            { 0x00000080, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogEditing =           { 0x00000100, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogTextConversion =    { 0x00000200, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogEvents =            { 1 << 4, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogEditing =           { 1 << 5, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogTextConversion =    { 1 << 6, "WebCoreLogLevel", WTFLogChannelOff };
 
-WTFLogChannel LogIconDatabase =      { 0x00000400, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogSQLDatabase =       { 0x00000800, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogIconDatabase =      { 1 << 7, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogSQLDatabase =       { 1 << 8, "WebCoreLogLevel", WTFLogChannelOff };
 
-WTFLogChannel LogSpellingAndGrammar ={ 0x00001000, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogBackForward =       { 0x00002000, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogHistory =           { 0x00004000, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogPageCache =         { 0x00008000, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogSpellingAndGrammar ={ 1 << 9, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogBackForward =       { 1 << 10, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogHistory =           { 1 << 11, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogPageCache =         { 1 << 12, "WebCoreLogLevel", WTFLogChannelOff };
 
-WTFLogChannel LogNetwork =           { 0x00100000, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogNetwork =           { 1 << 13, "WebCoreLogLevel", WTFLogChannelOff };
+
+WTFLogChannel LogResources =         { 1 << 14, "WebCoreLogLevel", WTFLogChannelOff };
 
 
 }
