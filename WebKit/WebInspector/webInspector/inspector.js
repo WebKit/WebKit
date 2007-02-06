@@ -106,7 +106,6 @@ var typicalStylePropertyValue = {
     "direction": "ltr",
     "empty-cells": "show",
     "float": "none",
-    "font-stretch": "normal",
     "font-style": "normal",
     "font-variant": "normal",
     "font-weight": "normal",

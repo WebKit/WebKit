@@ -203,16 +203,6 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
         traits |= NSItalicFontMask;
     if (fontDescription.bold())
         traits |= NSBoldFontMask;
-    switch (fontDescription.stretch()) {
-        case FontStretchCondensed:
-            traits |= NSFontCondensedTrait;
-            break;
-        case FontStretchExpanded:
-            traits |= NSFontExpandedTrait;
-            break;
-        case FontStretchNormal:
-            break;
-    }
     float size = fontDescription.computedPixelSize();
     
     NSFont* nsFont = [WebFontCache fontWithFamily:family traits:traits size:size];
@@ -220,7 +210,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
         return 0;
 
     NSFontTraitMask actualTraits = 0;
-    if ((traits & NSFontBoldTrait) || (traits & NSFontItalicTrait))
+    if (fontDescription.bold() || fontDescription.italic())
         actualTraits = [[NSFontManager sharedFontManager] traitsOfFont:nsFont];
     
     FontPlatformData* result = new FontPlatformData;

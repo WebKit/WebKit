@@ -31,7 +31,6 @@ empty-cells: show;
 float: none;
 font-family: Times;
 font-size: 16px;
-font-stretch: normal;
 font-style: normal;
 font-variant: normal;
 font-weight: normal;

@@ -716,11 +716,6 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         break;
 
-    case CSS_PROP_FONT_STRETCH:  // normal | wider | narrower | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded | inherit
-        if (id == CSS_VAL_NORMAL || (id >= CSS_VAL_WIDER && id <= CSS_VAL_ULTRA_EXPANDED))
-            valid_primitive = true;
-        break;
-
     case CSS_PROP_BORDER_SPACING: {
         const int properties[2] = { CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING,
                                     CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING };
@@ -1476,6 +1471,7 @@ bool CSSParser::parseValue(int propId, bool important)
     }
     case CSS_PROP_INVALID:
         return false;
+    case CSS_PROP_FONT_STRETCH:
     case CSS_PROP_PAGE:
     case CSS_PROP_TEXT_LINE_THROUGH:
     case CSS_PROP_TEXT_OVERLINE:

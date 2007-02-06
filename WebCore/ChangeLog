@@ -1,3 +1,35 @@
+2007-02-06  Mark Rowe  <mrowe@apple.com>
+
+        Roll out incomplete support for font-stretch (r19350) at Dave Hyatt's request.
+        See http://bugs.webkit.org/show_bug.cgi?id=12530#c9 for more info.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * platform/FontCache.cpp:
+        (WebCore::FontPlatformDataCacheKey::FontPlatformDataCacheKey):
+        (WebCore::FontPlatformDataCacheKey::operator==):
+        (WebCore::computeHash):
+        (WebCore::FontPlatformDataCacheKeyTraits::deletedValue):
+        (WebCore::FontPlatformDataCacheKeyTraits::emptyValue):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        * platform/FontDescription.h:
+        (WebCore::FontDescription::FontDescription):
+        (WebCore::FontDescription::weight):
+        (WebCore::FontDescription::setWeight):
+        (WebCore::FontDescription::operator==):
+        * platform/mac/FontCacheMac.mm:
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/mac/WebFontCache.mm:
+        (acceptableChoice):
+        (betterChoice):
+        (+[WebFontCache fontWithFamily:traits:size:]):
+
 2007-02-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
