@@ -112,6 +112,7 @@ Position Position::previous(EUsingComposedCharacters usingComposedCharacters) co
         return *this;
     
     int o = offset();
+    // FIXME: Negative offsets shouldn't be allowed. We should catch this earlier.
     assert(o >= 0);
 
     if (o > 0) {
@@ -141,6 +142,7 @@ Position Position::next(EUsingComposedCharacters usingComposedCharacters) const
         return *this;
     
     int o = offset();
+    // FIXME: Negative offsets shouldn't be allowed. We should catch this earlier.
     assert(o >= 0);
 
     Node* child = n->childNode(o);

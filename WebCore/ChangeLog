@@ -1,3 +1,24 @@
+2007-02-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        Fix for assertion failure in fast/events/objc-keyboard-event-creation.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::selectionStart): Check that the selection offsets are not equal to -1 (which is means the selection has never been set) instead of checking for >= 0.
+        (WebCore::HTMLInputElement::selectionEnd): ditto.
+        (WebCore::HTMLInputElement::setValue): ditto.
+        (WebCore::HTMLInputElement::selection): Return an empty selection if the input is not a text field or if no selection has ever been set in the text field.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::selectionStart): Check that the selection offsets are not equal to -1.
+        (WebCore::HTMLTextAreaElement::selectionEnd): ditto.
+        (WebCore::HTMLTextAreaElement::setValue): ditto.
+        (WebCore::HTMLTextAreaElement::selection): Return an empty selection if no selection has ever been set in the textarea.
+
+        * dom/Position.cpp: Added FIXMEs that we should catch the negative offset earlier.
+        (WebCore::Position::previous):
+        (WebCore::Position::next):
+
 2007-02-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
