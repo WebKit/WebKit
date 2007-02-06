@@ -1,3 +1,10 @@
+2007-02-06  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix by ggaren
+
+        * pcre/pcre_exec.c:
+        (match):
+
 2007-02-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

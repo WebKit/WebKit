@@ -3391,6 +3391,7 @@ RRETURN_37:
 #endif
 
 abort();
+return 0;
 
 #endif
 #endif
