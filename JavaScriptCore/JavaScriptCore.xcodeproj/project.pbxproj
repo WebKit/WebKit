@@ -119,12 +119,12 @@
 		65FB3F5009D11B2400F49DEB /* grammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FB3F4809D11B2400F49DEB /* grammar.cpp */; };
 		65FB3F5109D11B2400F49DEB /* grammar.h in Headers */ = {isa = PBXBuildFile; fileRef = 65FB3F4909D11B2400F49DEB /* grammar.h */; };
 		65FB3F5409D11B2400F49DEB /* regexp_object.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65FB3F4C09D11B2400F49DEB /* regexp_object.lut.h */; };
+		9302043B0B790750000C6115 /* FastMallocPCRE.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9302043A0B790750000C6115 /* FastMallocPCRE.cpp */; };
 		9303F568099118FA00AD71B8 /* OwnPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 9303F567099118FA00AD71B8 /* OwnPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9303F56A0991190000AD71B8 /* Noncopyable.h in Headers */ = {isa = PBXBuildFile; fileRef = 9303F5690991190000AD71B8 /* Noncopyable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9303F5A509911A5800AD71B8 /* OwnArrayPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 9303F5A409911A5800AD71B8 /* OwnArrayPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		930754C108B0F68000AB3056 /* pcre_compile.c in Sources */ = {isa = PBXBuildFile; fileRef = 930754BF08B0F68000AB3056 /* pcre_compile.c */; };
 		930754D008B0F74600AB3056 /* pcre_tables.c in Sources */ = {isa = PBXBuildFile; fileRef = 930754CE08B0F74500AB3056 /* pcre_tables.c */; };
-		930754D308B0F76300AB3056 /* pcre_globals.c in Sources */ = {isa = PBXBuildFile; fileRef = 930754D108B0F76200AB3056 /* pcre_globals.c */; };
 		930754E808B0F77700AB3056 /* pcre_fullinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 930754E608B0F77700AB3056 /* pcre_fullinfo.c */; };
 		930754EB08B0F78500AB3056 /* pcre_exec.c in Sources */ = {isa = PBXBuildFile; fileRef = 930754E908B0F78500AB3056 /* pcre_exec.c */; };
 		932F5B400822A1C700736975 /* array_object.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A84E0255597D01FF60F7 /* array_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -565,12 +565,12 @@
 		70B16A260569A10900DB756D /* runtime_object.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = runtime_object.cpp; path = bindings/runtime_object.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		70B16A270569A10900DB756D /* runtime_object.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = runtime_object.h; path = bindings/runtime_object.h; sourceTree = "<group>"; tabWidth = 8; };
 		84ABF1DE070B628C00A3AC05 /* npruntime_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = npruntime_impl.h; path = bindings/npruntime_impl.h; sourceTree = "<group>"; tabWidth = 8; };
+		9302043A0B790750000C6115 /* FastMallocPCRE.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastMallocPCRE.cpp; sourceTree = "<group>"; };
 		9303F567099118FA00AD71B8 /* OwnPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnPtr.h; sourceTree = "<group>"; };
 		9303F5690991190000AD71B8 /* Noncopyable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Noncopyable.h; sourceTree = "<group>"; };
 		9303F5A409911A5800AD71B8 /* OwnArrayPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnArrayPtr.h; sourceTree = "<group>"; };
 		930754BF08B0F68000AB3056 /* pcre_compile.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = pcre_compile.c; path = pcre/pcre_compile.c; sourceTree = "<group>"; tabWidth = 8; };
 		930754CE08B0F74500AB3056 /* pcre_tables.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = pcre_tables.c; path = pcre/pcre_tables.c; sourceTree = "<group>"; tabWidth = 8; };
-		930754D108B0F76200AB3056 /* pcre_globals.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = pcre_globals.c; path = pcre/pcre_globals.c; sourceTree = "<group>"; tabWidth = 8; };
 		930754E608B0F77700AB3056 /* pcre_fullinfo.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = pcre_fullinfo.c; path = pcre/pcre_fullinfo.c; sourceTree = "<group>"; tabWidth = 8; };
 		930754E908B0F78500AB3056 /* pcre_exec.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = pcre_exec.c; path = pcre/pcre_exec.c; sourceTree = "<group>"; tabWidth = 8; };
 		931C6CEF038EE8DE008635CE /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -889,7 +889,6 @@
 		65162EF108E6A21C007556CD /* wtf */ = {
 			isa = PBXGroup;
 			children = (
-				657EB7450B708F540063461B /* ListHashSet.h */,
 				E195678D09E7CF1200B89D13 /* unicode */,
 				93AA4F770957251F0084B3A7 /* AlwaysInline.h */,
 				65E217B808E7EECC0023E5F6 /* Assertions.cpp */,
@@ -897,6 +896,7 @@
 				65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */,
 				65E217BA08E7EECC0023E5F6 /* FastMalloc.h */,
 				65D7D19B08F10B5B0015ABD8 /* FastMallocInternal.h */,
+				9302043A0B790750000C6115 /* FastMallocPCRE.cpp */,
 				935AF46909E9D9DB00ACD1D8 /* Forward.h */,
 				93B6A0DE0AA64DA40076DE27 /* GetPtr.h */,
 				657EEBBF094E445E008C9C7B /* HashCountedSet.h */,
@@ -906,6 +906,7 @@
 				65DFC92D08EA173A00F7300B /* HashTable.cpp */,
 				65DFC92E08EA173A00F7300B /* HashTable.h */,
 				65DFC92F08EA173A00F7300B /* HashTraits.h */,
+				657EB7450B708F540063461B /* ListHashSet.h */,
 				148A1626095D16BB00666D0D /* ListRefPtr.h */,
 				BCF6553B0A2048DE0038A194 /* MathExtras.h */,
 				9303F5690991190000AD71B8 /* Noncopyable.h */,
@@ -1030,7 +1031,6 @@
 				930754E908B0F78500AB3056 /* pcre_exec.c */,
 				930754E608B0F77700AB3056 /* pcre_fullinfo.c */,
 				93E26CF608B29A1C00F85226 /* pcre_get.c */,
-				930754D108B0F76200AB3056 /* pcre_globals.c */,
 				93E26BE508B1517100F85226 /* pcre_internal.h */,
 				93E26BC908B1511900F85226 /* pcre_ord2utf8.c */,
 				93E26DDB08B2A4F400F85226 /* pcre_printint.src */,
@@ -1491,7 +1491,6 @@
 				65621E6D089E859700760F35 /* property_slot.cpp in Sources */,
 				930754C108B0F68000AB3056 /* pcre_compile.c in Sources */,
 				930754D008B0F74600AB3056 /* pcre_tables.c in Sources */,
-				930754D308B0F76300AB3056 /* pcre_globals.c in Sources */,
 				930754E808B0F77700AB3056 /* pcre_fullinfo.c in Sources */,
 				930754EB08B0F78500AB3056 /* pcre_exec.c in Sources */,
 				93E26BCA08B1511900F85226 /* pcre_ord2utf8.c in Sources */,
@@ -1522,6 +1521,7 @@
 				65C7A1730A8EAACB00FA37EA /* JSWrapperObject.cpp in Sources */,
 				D212022A0AD4310D00ED79B6 /* DateMath.cpp in Sources */,
 				146AAB380B66A94400E55F16 /* JSStringRefCF.cpp in Sources */,
+				9302043B0B790750000C6115 /* FastMallocPCRE.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

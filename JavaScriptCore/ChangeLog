@@ -1,3 +1,48 @@
+2007-02-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fix <rdar://problem/4687840> 9A241: JavaScript RegExp 25-30x slower than on 10.4.7
+
+        I used Shark to figure out what to do. The test case is now 15% faster than with
+        stock Safari. Some other regular expression cases might still be a few % slower
+        than before, but the >10x slowdown is now completely gone.
+
+        1) Fix slowness caused by setjmp/longjmp by using computed goto instead.
+
+        Use GCC extensions - locally declared labels, labels as values, and computed goto -
+        instead of using setjmp/longjmp to implemement non-recursive version of the regular
+        expression system. We could probably make this even faster if we reduced the use
+        of malloc a bit too.
+
+        2) Fix slowness caused by allocating heapframe objects by allocating the first
+           16 of them from the stack.
+
+        3) Speed up use of malloc and free in PCRE by making it use fastMalloc and fastFree.
+
+        4) Speed up the test case by adding a special case to a UString function.
+
+        5) Made a small improvement to the innermost hottest loop of match by hoisting
+           the conversion from int to pcre_uchar out of the loop.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Compile FastMallocPCRE.cpp, and don't
+        compile pcre_globals.c.
+
+        * wtf/FastMallocPCRE.cpp: Added. A copy of pcre_globals.c that uses FastMalloc.h.
+        This is better than code that sets the PCRE allocation globals because by doing it
+        this way there's guaranteed to be no problem with order of initialization.
+
+        * kjs/ustring.cpp: (KJS::UString::spliceSubstringsWithSeparators): Add a fast
+        special case when this is called for only one subrange and no seaprators. This
+        was happening a lot in the test case and it seems quite reasonable to optimize this.
+
+        * pcre/pcre_exec.c: Create a copy of the RMATCH and RRETURN macros that use goto
+        instead of setjmp/longjmp. Change code that calls pcre_stack_malloc to first use
+        storage on the stack inside the match function.
+        (match): Move initialization of utf8 up a couple lines to avoid "possibly used
+        uninitialized" warning. Use a local variable so we compare with pcre_uchar instead
+        of with int inside the inner "find a character" loop.
+
 2007-02-03  George Staikos  <staikos@kde.org>
 
         Reviewed by Alexey.

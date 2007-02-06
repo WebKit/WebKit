@@ -43,6 +43,7 @@
 #include <wtf/Vector.h>
 
 using std::max;
+using std::min;
 
 namespace KJS {
 
@@ -616,18 +617,24 @@ UString UString::from(double d)
   return UString(buf);
 }
 
-UString UString::spliceSubstringsWithSeparators(const Range *substringRanges, int rangeCount, const UString *separators, int separatorCount) const
+UString UString::spliceSubstringsWithSeparators(const Range* substringRanges, int rangeCount, const UString* separators, int separatorCount) const
 {
+  if (rangeCount == 1 && separatorCount == 0) {
+    int thisSize = size();
+    int position = substringRanges[0].position;
+    int length = substringRanges[0].length;
+    if (position <= 0 && length >= thisSize)
+      return *this;
+    return UString::Rep::create(m_rep, max(0, position), min(thisSize, length));
+  }
+
   int totalLength = 0;
-
-  for (int i = 0; i < rangeCount; i++) {
+  for (int i = 0; i < rangeCount; i++)
     totalLength += substringRanges[i].length;
-  }
-  for (int i = 0; i < separatorCount; i++) {
+  for (int i = 0; i < separatorCount; i++)
     totalLength += separators[i].size();
-  }
 
-  UChar *buffer = static_cast<UChar *>(fastMalloc(totalLength * sizeof(UChar)));
+  UChar* buffer = static_cast<UChar*>(fastMalloc(totalLength * sizeof(UChar)));
 
   int maxCount = max(rangeCount, separatorCount);
   int bufferPos = 0;
@@ -642,10 +649,8 @@ UString UString::spliceSubstringsWithSeparators(const Range *substringRanges, in
     }
   }
 
-  return UString(UString::Rep::create(buffer, totalLength));
+  return UString::Rep::create(buffer, totalLength);
 }
-
-
 
 UString &UString::append(const UString &t)
 {

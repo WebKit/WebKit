@@ -8,6 +8,8 @@ and semantics are as close as possible to those of the Perl 5 language.
                        Written by Philip Hazel
            Copyright (c) 1997-2005 University of Cambridge
 
+    Copyright (C) 2002, 2004, 2006, 2007 Apple Inc. All rights reserved.
+
 -----------------------------------------------------------------------------
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -212,9 +214,17 @@ match(), which never changes. */
 
 #define REGISTER
 
+#ifndef __GNUC__
+
+/* Use setjmp/longjmp. */
+
 #define RMATCH(rx,ra,rb,rc,rd,re,rf,rg)\
   {\
-  heapframe *newframe = (pcre_stack_malloc)(sizeof(heapframe));\
+  heapframe *newframe;\
+  if (frame >= stackframes && frame + 1 < stackframesend)\
+    newframe = frame + 1;\
+  else\
+    newframe = (pcre_stack_malloc)(sizeof(heapframe));\
   if (setjmp(frame->Xwhere) == 0)\
     {\
     newframe->Xeptr = ra;\
@@ -240,7 +250,8 @@ match(), which never changes. */
   {\
   heapframe *newframe = frame;\
   frame = newframe->Xprevframe;\
-  (pcre_stack_free)(newframe);\
+  if (!(newframe >= stackframes && newframe < stackframesend))\
+    (pcre_stack_free)(newframe);\
   if (frame != NULL)\
     {\
     frame->Xresult = ra;\
@@ -250,6 +261,51 @@ match(), which never changes. */
   return ra;\
   }
 
+#else
+
+/* Use locally declared labels, labels as values, and computed goto. */
+
+#define RMATCH(rx,ra,rb,rc,rd,re,rf,rg)\
+  {\
+  __label__ where;\
+  heapframe *newframe;\
+  if (frame >= stackframes && frame + 1 < stackframesend)\
+    newframe = frame + 1;\
+  else\
+    newframe = (pcre_stack_malloc)(sizeof(heapframe));\
+  frame->Xwhere = &&where;\
+  newframe->Xeptr = ra;\
+  newframe->Xecode = rb;\
+  newframe->Xoffset_top = rc;\
+  newframe->Xims = re;\
+  newframe->Xeptrb = rf;\
+  newframe->Xflags = rg;\
+  newframe->Xprevframe = frame;\
+  frame = newframe;\
+  DPRINTF(("restarting from line %d\n", __LINE__));\
+  goto HEAP_RECURSE;\
+where:\
+  DPRINTF(("did a goto back to line %d\n", __LINE__));\
+  frame = md->thisframe;\
+  rx = frame->Xresult;\
+  }
+
+#define RRETURN(ra)\
+  {\
+  heapframe *newframe = frame;\
+  frame = newframe->Xprevframe;\
+  if (!(newframe >= stackframes && newframe < stackframesend))\
+    (pcre_stack_free)(newframe);\
+  if (frame != NULL)\
+    {\
+    frame->Xresult = ra;\
+    md->thisframe = frame;\
+    goto *frame->Xwhere;\
+    }\
+  return ra;\
+  }
+
+#endif
 
 /* Structure for remembering the local variables in a private frame */
 
@@ -312,7 +368,11 @@ typedef struct heapframe {
   /* Place to pass back result, and where to jump back to */
 
   int  Xresult;
+#ifndef __GNUC__
   jmp_buf Xwhere;
+#else
+  void *Xwhere;
+#endif
 
 } heapframe;
 
@@ -378,7 +438,14 @@ heap storage. Set up the top-level frame here; others are obtained from the
 heap whenever RMATCH() does a "recursion". See the macro definitions above. */
 
 #ifdef NO_RECURSE
-heapframe *frame = (pcre_stack_malloc)(sizeof(heapframe));
+
+/* The value 16 here is large enough that most regular expressions don't require
+any calls to pcre_stack_malloc, yet the amount of stack used for the array is
+modest enough that we don't run out of stack. */
+heapframe stackframes[16];
+heapframe *stackframesend = stackframes + sizeof(stackframes) / sizeof(stackframes[0]);
+
+heapframe *frame = stackframes;
 frame->Xprevframe = NULL;            /* Marks the top level */
 
 /* Copy in the original argument variables */
@@ -521,10 +588,11 @@ However, RMATCH isn't like a function call because it's quite a complicated
 macro. It has to be used in one particular way. This shouldn't, however, impact
 performance when true recursion is being used. */
 
+utf8 = md->utf8;       /* Local copy of the flag */
+
 if (md->match_call_count++ >= md->match_limit) RRETURN(PCRE_ERROR_MATCHLIMIT);
 
 original_ims = ims;    /* Save for resetting on ')' */
-utf8 = md->utf8;       /* Local copy of the flag */
 
 /* At the start of a bracketed group, add the current subject pointer to the
 stack of such pointers, to be re-instated at the end of the group when we hit
@@ -3610,6 +3678,7 @@ do
 
   if (first_byte >= 0)
     {
+    pcre_uchar first_char = first_byte;
     if (first_byte_caseless)
       while (start_match < end_subject)
         {
@@ -3618,12 +3687,12 @@ do
         if (sm > 127)
           break;
 #endif
-        if (match_block.lcc[sm] == first_byte)
+        if (match_block.lcc[sm] == first_char)
           break;
         start_match++;
         }
     else
-      while (start_match < end_subject && *start_match != first_byte)
+      while (start_match < end_subject && *start_match != first_char)
         start_match++;
     }
 
