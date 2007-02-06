@@ -1,5 +1,15 @@
 2007-02-05  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Darin.
+
+        A few small updates to my bidi patch.
+
+        * rendering/RenderFileUploadControl.cpp: (WebCore::RenderFileUploadControl::paintObject): Moved the declaration of the CharacterBuffer outside the if statement since we use its data outside that scope.
+        * rendering/RenderListBox.cpp: (WebCore::RenderListBox::paintItemForeground): ditto.
+        * rendering/bidi.cpp: (WebCore::RenderBlock::bidiReorderCharacters): Used a PassRefPtr for the BidiContext.
+
+2007-02-05  Adele Peterson  <adele@apple.com>
+
         Reviewed by Adam.
 
         Fix for assertion failure in fast/events/objc-keyboard-event-creation.html
