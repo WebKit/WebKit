@@ -89,6 +89,7 @@ using namespace WebCore;
     
     NSMutableArray *subframeArchives = [[NSMutableArray alloc] init];
     NSMutableArray *subresources = [[NSMutableArray alloc] init];
+    NSMutableSet *uniqueSubresources = [[NSMutableSet alloc] init];
     NSEnumerator *enumerator = [nodes objectEnumerator];
     DOMNode *node;
     while ((node = [enumerator nextObject]) != nil) {
@@ -102,6 +103,9 @@ using namespace WebCore;
             NSEnumerator *enumerator = [[node _subresourceURLs] objectEnumerator];
             NSURL *URL;
             while ((URL = [enumerator nextObject]) != nil) {
+                if ([uniqueSubresources containsObject:URL])
+                    continue;
+                [uniqueSubresources addObject:URL];
                 WebResource *subresource = [[frame dataSource] subresourceForURL:URL];
                 if (subresource)
                     [subresources addObject:subresource];
@@ -114,6 +118,7 @@ using namespace WebCore;
     
     WebArchive *archive = [[[WebArchive alloc] initWithMainResource:mainResource subresources:subresources subframeArchives:subframeArchives] autorelease];
     [mainResource release];
+    [uniqueSubresources release];
     [subresources release];
     [subframeArchives release];
     

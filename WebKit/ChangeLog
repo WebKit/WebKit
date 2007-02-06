@@ -1,3 +1,17 @@
+2007-02-05  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=7266
+        Webarchive format saves duplicate WebSubresources to .webarchive file
+
+        Tests: webarchive/test-duplicate-resources.html
+               webarchive/test-frameset.html
+
+        * WebView/WebArchiver.mm:
+        (+[WebArchiver _archiveWithMarkupString:fromFrame:nodes:]): Use an NSMutableSet to prevent
+        duplicate subresources from being added to the webarchive.
+
 2007-02-06  Mark Rowe  <mrowe@apple.com>
 
         Roll out incomplete support for font-stretch (r19350) at Dave Hyatt's request.
