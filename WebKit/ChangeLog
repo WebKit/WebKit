@@ -1,5 +1,21 @@
 2007-02-06  Darin Adler  <darin@apple.com>
 
+        Reviewed by John Sullivan.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11080
+          <rdar://problem/4826648> REGRESSION: Incorrect vertical positioning of Safari
+          status bar text containing @ character (11080)
+
+        * Misc/WebKitNSStringExtras.m:
+        (canUseFastRenderer): Fix code that mistakenly used the slow renderer for strings
+        that have a direction of "other neutral", which includes the "@" character.
+        (-[NSString _web_drawAtPoint:font:textColor:]): Add code to make the baseline of
+        the text in the status bar right. AppKit's rule for rounding is complicated enough
+        that this is obviously not perfectly correct, but it does make both code paths
+        use the same baseline in all the places this is currently used in AppKit.
+
+2007-02-06  Darin Adler  <darin@apple.com>
+
         Spotted by Steve F.
 
         * Misc/WebNSURLExtras.m:

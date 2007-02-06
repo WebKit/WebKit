@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,21 +26,17 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import <WebKit/WebBaseNetscapePluginStream.h>
 #import <WebKit/npapi.h>
 
 namespace WebCore {
     class NetscapePlugInStreamLoader;
 }
-typedef WebCore::NetscapePlugInStreamLoader WebCoreNetscapePlugInStreamLoader;
-
 @class NSURLRequest;
-@class NSURLConnection;
 
 @interface WebNetscapePluginStream : WebBaseNetscapePluginStream 
 {    
-    WebCoreNetscapePlugInStreamLoader *_loader;
+    WebCore::NetscapePlugInStreamLoader* _loader;
     NSURLRequest *request;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,23 +42,28 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
     unsigned i;
     for (i = 0; i < length; i++) {
         UCharDirection direction = u_charDirection(buffer[i]);
-        if (direction == U_RIGHT_TO_LEFT || direction > U_WHITE_SPACE_NEUTRAL) {
+        if (direction == U_RIGHT_TO_LEFT || direction > U_OTHER_NEUTRAL)
             return NO;
-        }
     }
     return YES;
 }
 
 - (void)_web_drawAtPoint:(NSPoint)point font:(NSFont *)font textColor:(NSColor *)textColor;
 {
+    // FIXME: Would be more efficient to change this to C++ and use Vector<UChar, 2048>.
     unsigned length = [self length];
-    UniChar *buffer = (UniChar *)malloc(sizeof(UniChar) * length);
+    UniChar *buffer = malloc(sizeof(UniChar) * length);
 
     [self getCharacters:buffer];
     
-    if (canUseFastRenderer(buffer, length))
+    if (canUseFastRenderer(buffer, length)) {
+        // The following is a half-assed attempt to match AppKit's rounding rules for drawAtPoint.
+        // It's probably incorrect for high DPI.
+        // If you change this, be sure to test all the text drawn this way in Safari, including
+        // the status bar, bookmarks bar, tab bar, and activity window.
+        point.y = ceilf(point.y);
         WebCoreDrawTextAtPoint(buffer, length, point, font, textColor);
-    else {
+    } else {
         // WebTextRenderer assumes drawing from baseline.
         if ([[NSView focusView] isFlipped])
             point.y -= [font ascender];
