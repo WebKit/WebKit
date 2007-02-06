@@ -987,7 +987,7 @@ PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientat
 {
     if (Scrollbar::hasPlatformScrollbars()) {
         RefPtr<PlatformScrollbar> widget = new PlatformScrollbar(this, orientation, RegularScrollbar);
-        m_object->element()->document()->view()->addChild(widget.get());
+        m_object->document()->view()->addChild(widget.get());
         return widget.release();
     }
     
@@ -1161,7 +1161,7 @@ void RenderLayer::updateOverflowStatus(bool horizontalOverflow, bool verticalOve
         m_horizontalOverflow = horizontalOverflow;
         m_verticalOverflow = verticalOverflow;
         
-        if (FrameView* frameView = m_object->element()->document()->view())
+        if (FrameView* frameView = m_object->document()->view())
             frameView->scheduleEvent(new OverflowEvent(horizontalOverflowChanged, horizontalOverflow, verticalOverflowChanged, verticalOverflow),
             EventTargetNodeCast(m_object->element()), true);
     }

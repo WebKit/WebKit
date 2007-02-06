@@ -1,3 +1,13 @@
+2007-02-06  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12518
+          Betsson.com crashes browser
+
+        * fast/layers/generated-layer-scrollbar-crash-expected.txt: Added.
+        * fast/layers/generated-layer-scrollbar-crash.html: Added.
+
 2007-02-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mitz.
