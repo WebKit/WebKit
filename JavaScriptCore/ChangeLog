@@ -1,5 +1,11 @@
 2007-02-06  Steve Falkenburg  <sfalken@apple.com>
 
+        Disable testkjs in sln until we figure out mysterious compiler warning.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.sln:
+
+2007-02-06  Steve Falkenburg  <sfalken@apple.com>
+
         Build fix by ggaren
 
         * pcre/pcre_exec.c:
