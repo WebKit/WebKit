@@ -1,3 +1,12 @@
+2007-02-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Anders Carlsson.
+        
+        Disabled support for SVG image because it crashes all the time.
+
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::createImage):
+
 2007-02-06  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
