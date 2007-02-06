@@ -423,6 +423,7 @@ int Parser::lex(void* data)
     switch (tok.type) {
         case AXISNAME:
             yylval->axis = tok.axis;
+            break;
         case MULOP:
         case RELOP:
             yylval->numop = tok.numop;

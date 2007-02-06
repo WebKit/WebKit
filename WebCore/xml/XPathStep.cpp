@@ -198,7 +198,7 @@ NodeVector Step::nodeTestMatches(const NodeVector& nodes) const
                 (m_namespaceURI.isEmpty() || m_namespaceURI == node->namespaceURI()))
                 matches.append(node);
         }
-        return nodes;
+        return matches;
     } else if (m_nodeTest == "text()") {
         HashSet<Node*> nodeSet;
         for (unsigned i = 0; i < nodes.size(); i++) {

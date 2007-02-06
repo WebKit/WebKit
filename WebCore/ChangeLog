@@ -1,3 +1,17 @@
+2007-02-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12619
+        Non-abbreviated XPaths don't work
+
+        Test: fast/xpath/ancestor-axis.html
+
+        * xml/XPathParser.cpp:
+        (WebCore::XPath::Parser::lex): Fix axis name parsing to actually work.
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::nodeTestMatches): Fix "*" node test to actually work.
+
 2007-02-06  Mark Rowe  <mrowe@apple.com>
 
         Roll out incomplete support for font-stretch (r19350) at Dave Hyatt's request.
