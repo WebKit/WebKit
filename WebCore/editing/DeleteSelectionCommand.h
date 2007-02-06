@@ -32,8 +32,8 @@ namespace WebCore {
 
 class DeleteSelectionCommand : public CompositeEditCommand { 
 public:
-    DeleteSelectionCommand(Document*, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true);
-    DeleteSelectionCommand(const Selection&, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true);
+    DeleteSelectionCommand(Document*, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = false);
+    DeleteSelectionCommand(const Selection&, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = false);
 
     virtual void doApply();
     virtual EditAction editingAction() const;

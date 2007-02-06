@@ -51,8 +51,8 @@ protected:
     void applyStyledElement(Element*);
     void removeStyledElement(Element*);
     void deleteKeyPressed();
-    void deleteSelection(bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false);
-    void deleteSelection(const Selection&, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false);
+    void deleteSelection(bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true);
+    void deleteSelection(const Selection&, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = true);
     virtual void deleteTextFromNode(Text* node, int offset, int count);
     void inputText(const String&, bool selectInsertedText = false);
     void insertNodeAfter(Node* insertChild, Node* refChild);

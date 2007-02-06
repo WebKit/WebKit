@@ -299,16 +299,16 @@ void CompositeEditCommand::insertNodeAtTabSpanPosition(Node* node, const Positio
     insertNodeAt(node, insertPos.node(), insertPos.offset());
 }
 
-void CompositeEditCommand::deleteSelection(bool smartDelete, bool mergeBlocksAfterDelete, bool replace)
+void CompositeEditCommand::deleteSelection(bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements)
 {
     if (endingSelection().isRange())
-        applyCommandToComposite(new DeleteSelectionCommand(document(), smartDelete, mergeBlocksAfterDelete, replace));
+        applyCommandToComposite(new DeleteSelectionCommand(document(), smartDelete, mergeBlocksAfterDelete, replace, expandForSpecialElements));
 }
 
-void CompositeEditCommand::deleteSelection(const Selection &selection, bool smartDelete, bool mergeBlocksAfterDelete, bool replace)
+void CompositeEditCommand::deleteSelection(const Selection &selection, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements)
 {
     if (selection.isRange())
-        applyCommandToComposite(new DeleteSelectionCommand(selection, smartDelete, mergeBlocksAfterDelete, replace));
+        applyCommandToComposite(new DeleteSelectionCommand(selection, smartDelete, mergeBlocksAfterDelete, replace, expandForSpecialElements));
 }
 
 void CompositeEditCommand::removeCSSProperty(CSSStyleDeclaration *decl, int property)
@@ -745,7 +745,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     RefPtr<DocumentFragment> fragment = startOfParagraphToMove != endOfParagraphToMove ? createFragmentFromMarkup(document(), range->toHTML(), "") : 0;
     
     setEndingSelection(Selection(start, end, DOWNSTREAM));
-    applyCommandToComposite(new DeleteSelectionCommand(document(), false, false, false, false));
+    deleteSelection(false, false, false, false);
 
     ASSERT(destination.deepEquivalent().node()->inDocument());
     

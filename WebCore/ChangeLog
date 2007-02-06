@@ -1,3 +1,29 @@
+2007-02-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        <rdar://problem/4959067>
+        Bullets get erased or moved down to another line
+        <rdar://problem/4912529>
+        Seed: Bulleted list in Note in Mail.app does not work with Japanese input mode
+        
+        Do not expand the selection to include fully selected 
+        special elements when insering text over a selection.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::deleteSelection): Pass
+        expandForSpecialElements through to DeleteSelectionCommand's constructor.
+        (WebCore::CompositeEditCommand::moveParagraphs): Use the 
+        convenience function.
+        * editing/CompositeEditCommand.h:
+        * editing/DeleteSelectionCommand.h:
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input): Do not expand the selection
+        to be deleted for special elements.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Added a FIXME about 
+        when we should expand the selection.
+
 2007-02-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Anders Carlsson.

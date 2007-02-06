@@ -1,3 +1,17 @@
+2007-02-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        <rdar://problem/4959067>
+        Bullets get erased or moved down to another line
+        <rdar://problem/4912529>
+        Seed: Bulleted list in Note in Mail.app does not work with Japanese input mode
+
+        * editing/inserting/4959067-expected.checksum: Added.
+        * editing/inserting/4959067-expected.png: Added.
+        * editing/inserting/4959067-expected.txt: Added.
+        * editing/inserting/4959067.html: Added.
+
 2007-02-06  Geoffrey Garen  <ggaren@apple.com>
 
         At Darin's request, checked in new (failing) results instead of disabling test.

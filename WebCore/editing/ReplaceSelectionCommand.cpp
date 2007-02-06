@@ -508,6 +508,8 @@ void ReplaceSelectionCommand::doApply()
         // When the start of the selection being pasted into is at the start of a block, not merging 
         // will leave hanging block(s).
         bool mergeBlocksAfterDelete = isEndOfParagraph(visibleEnd) || isStartOfBlock(visibleStart);
+        // FIXME: We should only expand to include fully selected special elements if we are copying a 
+        // selection and pasting it on top of itself.
         deleteSelection(false, mergeBlocksAfterDelete, true);
         visibleStart = endingSelection().visibleStart();
         if (fragment.hasInterchangeNewlineAtStart()) {

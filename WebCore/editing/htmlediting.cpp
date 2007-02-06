@@ -304,7 +304,7 @@ Position rangeCompliantEquivalent(const Position& pos)
     Node *node = pos.node();
     
     if (pos.offset() <= 0) {
-        if (node->parentNode() && (node->hasTagName(brTag) || editingIgnoresContent(node)))
+        if (node->parentNode() && (node->hasTagName(brTag) || editingIgnoresContent(node)) || isTableElement(node))
             return positionBeforeNode(node);
         return Position(node, 0);
     }
@@ -327,6 +327,9 @@ Position rangeCompliantEquivalent(const Position& pos)
         ASSERT_NOT_REACHED();
         return node->parentNode() ? positionBeforeNode(node) : Position(node, 0);
     }
+    
+    if (pos.offset() == maxCompliantOffset && (editingIgnoresContent(node) || isTableElement(node)))
+        return positionAfterNode(node);
     
     return Position(pos);
 }
