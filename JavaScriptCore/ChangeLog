@@ -1,5 +1,25 @@
 2007-02-06  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff.
+
+        - fix <rdar://problem/4979089> PCRE should avoid setjmp/longjmp even when compiler
+          is not GCC
+
+        Added a new code path that's slower and way uglier but doesn't rely on GCC's
+        computed gotos.
+
+        * pcre/pcre_exec.c: Added a numeric parameter to the RMATCH function. It must be
+        different at every RMATCH call site. Changed the non-GCC NO_RECURSE version of
+        the macro to use a label incorporating the number. Changed the RRETURN macro to
+        use a goto instead of longjmp.
+        (match): Added a different number at each callsite, using a perl script for the
+        first-time task. Going forward it should be easy to maintain by hand. Added a
+        switch statement at the bottom of the function. We'll get compile time errors
+        if we have anything in the switch statement that's never used in an RMATCH,
+        but errors in the other direction are silent except at runtime.
+
+2007-02-06  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
         - fix <rdar://problem/4687840> 9A241: JavaScript RegExp 25-30x slower than on 10.4.7
