@@ -1,3 +1,20 @@
+2007-02-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mitz.
+
+        WebKit ignores floating point values for stroke-miterlimit
+        http://bugs.webkit.org/show_bug.cgi?id=12577
+        
+        Test: svg/W3C-SVG-1.1/painting-stroke-07-t.svg
+
+        * ksvg2/css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * ksvg2/css/SVGRenderStyle.h:
+        * ksvg2/css/SVGRenderStyleDefs.h:
+        (WebCore::StyleStrokeData::operator!=):
+
 2007-02-06  Adam Roben  <aroben@apple.com>
 
         Reviewed by Ada and Oliver.

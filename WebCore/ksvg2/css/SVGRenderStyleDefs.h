@@ -120,16 +120,16 @@ namespace WebCore {
     class StyleStrokeData : public Shared<StyleStrokeData> {
     public:
         StyleStrokeData();
-        StyleStrokeData(const StyleStrokeData &other);
+        StyleStrokeData(const StyleStrokeData&);
 
-        bool operator==(const StyleStrokeData &other) const;
-        bool operator!=(const StyleStrokeData &other) const
+        bool operator==(const StyleStrokeData&) const;
+        bool operator!=(const StyleStrokeData& other) const
         {
             return !(*this == other);
         }
 
         float opacity;
-        unsigned int miterLimit;
+        float miterLimit;
 
         RefPtr<CSSValue> width;
         RefPtr<CSSValue> dashOffset;
@@ -138,7 +138,7 @@ namespace WebCore {
         RefPtr<CSSValueList> dashArray;
 
     private:
-        StyleStrokeData &operator=(const StyleStrokeData &);
+        StyleStrokeData &operator=(const StyleStrokeData&);
     };
 
     class StyleStopData : public Shared<StyleStopData> {

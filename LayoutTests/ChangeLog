@@ -1,3 +1,18 @@
+2007-02-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mitz.
+        
+        http://bugs.webkit.org/show_bug.cgi?id=12577
+        Update test results now that stroke-miterlimit is a float.
+
+        * svg/W3C-SVG-1.1/animate-elem-41-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-78-t-expected.txt:
+        * svg/W3C-SVG-1.1/painting-stroke-03-t-expected.txt:
+        * svg/W3C-SVG-1.1/painting-stroke-07-t-expected.checksum:
+        * svg/W3C-SVG-1.1/painting-stroke-07-t-expected.png:
+        * svg/W3C-SVG-1.1/painting-stroke-07-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-group-03-t-expected.txt:
+
 2007-02-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff.

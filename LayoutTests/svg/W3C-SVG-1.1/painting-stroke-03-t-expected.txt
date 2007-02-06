@@ -6,7 +6,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-33) size 474x41
             text run at (0,-33) width 474: "Basic paint: stroke properties."
         RenderPath {path} at (144.25,54.25) size 217.24x71.50 [stroke={[type=SOLID] [color=#FF0000] [stroke width=30.00] [line cap=ROUND]}] [data="M160.00,70.00L360.00,90.00L160.00,110.00"]
-        RenderPath {path} at (158.51,175.07) size 202.99x69.85 [stroke={[type=SOLID] [color=#FF0000] [stroke width=30.00] [miter limit=1]}] [data="M160.00,190.00L360.00,210.00L160.00,230.00"]
+        RenderPath {path} at (158.51,175.07) size 202.99x69.85 [stroke={[type=SOLID] [color=#FF0000] [stroke width=30.00] [miter limit=1.00]}] [data="M160.00,190.00L360.00,210.00L160.00,230.00"]
         RenderSVGText {text} at (60,160) size 480x44
           RenderSVGInlineText {#text} at (0,-36) size 399x44
             text run at (0,-36) width 399: "stroke-linecap=\"round\""

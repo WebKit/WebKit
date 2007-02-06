@@ -126,7 +126,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
         break;
 
     case SVGCSS_PROP_STROKE_MITERLIMIT:   // <miterlimit> | inherit
-        valid_primitive = validUnit(value, FInteger|FNonNeg, false);
+        valid_primitive = validUnit(value, FNumber|FNonNeg, false);
         break;
 
     case SVGCSS_PROP_STROKE_LINEJOIN:   // miter | round | bevel | inherit
