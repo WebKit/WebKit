@@ -921,6 +921,7 @@ static BOOL allCharactersInIDNScriptWhiteList(const UChar *buffer, int32_t lengt
         NSString *substring = [self substringWithRange:range];
         substring = WebCFAutorelease(CFURLCreateStringByReplacingPercentEscapes(NULL, (CFStringRef)substring, CFSTR("")));
         if (substring != nil) {
+            string = substring;
             range = NSMakeRange(0, [string length]);
         }
     }
