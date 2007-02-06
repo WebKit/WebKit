@@ -29,13 +29,14 @@
 
 var inputElement = null;
 var mainWindow = window.opener;
-var historyIndex = -1;
-var storedInput = null;
+var history = [""];
+var historyIndex = 0;
 
 function loaded()
 {
     inputElement = document.getElementById("input");
     inputElement.addEventListener("keydown", inputKeyDown, false);
+    inputElement.addEventListener("keyup", inputKeyUp, false);
     inputElement.focus();
 }
 
@@ -43,55 +44,41 @@ function inputKeyDown(event)
 {
     if (event.keyCode == 13 && !event.altKey) {
         if (mainWindow.isPaused() && mainWindow.currentStack) {
+            history[history.length - 1] = inputElement.innerText;
             sendScript(inputElement.innerText);
             inputElement.innerText = "";
+            history.push("");
+            historyIndex = history.length - 1;
             inputElement.focus();
         } else
             alert("The debugger needs to be paused.\tIn order to evaluate your script input you need to pause the debugger in the context of another script.");
         event.preventDefault();
-    } else if (event.keyCode == 38 && !event.altKey) {
-        var history = document.getElementById("history");
-        if (historyIndex == -1)
-            storedInput = inputElement.innerText;
-        var historyArray = history.childNodes;
-        var historySize = historyArray.length - 1;
-        if (historyIndex < historySize) {
-            historyIndex++;
-            var item = historyArray[historySize - historyIndex].childNodes[0];
-            while(item.className.indexOf("expression") == -1) {
-                historyIndex++;
-                item = historyArray[historySize - historyIndex].childNodes[0];
-            }
-            inputElement.innerText = item.innerText;
-        }
+    } else if (event.keyCode == 38 && !event.altKey && historyIndex > 0) {
+        historyIndex--;
+        inputElement.innerText = history[historyIndex];
+        inputElement.focus()
         event.preventDefault();
-    } else if (event.keyCode == 40 && !event.altKey) {
-        if (historyIndex >= 0) {
-            var history = document.getElementById("history");
-            historyIndex--;
-            if (historyIndex == -1)
-                inputElement.innerText = storedInput;
-            else {
-                var historyArray = history.childNodes;
-                var historySize = historyArray.length - 1;
-                var item = historyArray[historySize - historyIndex].childNodes[0];
-                while(item.className.indexOf("expression") == -1) {
-                    historyIndex--;
-                    item = historyArray[historySize - historyIndex].childNodes[0];
-                }
-                inputElement.innerText = item.innerText;
-            }
-        }
+    } else if (event.keyCode == 40 && !event.altKey && historyIndex < (history.length - 1)) {
+        historyIndex++;
+        inputElement.innerText = history[historyIndex];
+        inputElement.focus()
         event.preventDefault();
+    }
+}
+
+function inputKeyUp(event)
+{
+    if (event.keyCode != 38 && event.keyCode != 40 && event.keyCode != 13) {
+        history[historyIndex] = inputElement.innerText;
     }
 }
 
 function appendMessage(exp, msg)
 {
-    var history = document.getElementById("history");
+    var historyDisplay = document.getElementById("history");
     var row = document.createElement("div");
     row.className = "row";
-    if (history.childNodes.length % 2)
+    if (historyDisplay.childNodes.length % 2)
         row.className += " alt";
     
     if (exp.length > 0) {
@@ -107,8 +94,8 @@ function appendMessage(exp, msg)
     
     row.appendChild(result);
     
-    history.appendChild(row);
-    history.scrollTop = history.scrollHeight;
+    historyDisplay.appendChild(row);
+    historyDisplay.scrollTop = historyDisplay.scrollHeight;
 }
 
 function sendScript(script)
