@@ -97,7 +97,7 @@ public:
     Frame(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
     virtual void setView(FrameView*);
     virtual ~Frame();
-
+    
     Page* page() const;
     HTMLFrameOwnerElement* ownerElement() const;
 
@@ -157,7 +157,7 @@ public:
     virtual Vector<IntRect> computePageRects(const IntRect& printRect, float userScaleFactor) { return Vector<IntRect>(); }
 
     void keepAlive(); // Used to keep the frame alive when running a script that might destroy it.
-    static void endAllLifeSupport();
+    void cancelKeepAlive();
 
     virtual KJS::Bindings::Instance* getEmbedInstanceForWidget(Widget*) = 0;
     virtual KJS::Bindings::Instance* getObjectInstanceForWidget(Widget*) = 0;
@@ -199,7 +199,6 @@ protected:
 
 private:
     void lifeSupportTimerFired(Timer<Frame>*);
-    void endLifeSupport();
 
 // === to be moved into Chrome
 

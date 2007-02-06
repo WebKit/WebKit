@@ -81,14 +81,14 @@ Page::~Page()
     
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
         frame->pageDestroyed();
-    
-    if (allPages->isEmpty()) {
-        Frame::endAllLifeSupport();
+
 #ifndef NDEBUG
-        // Force garbage collection, to release all Nodes before exiting.
-        m_mainFrame = 0;
+    // Cancel keepAlive timers, to ensure we release all Frames before exiting.
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+        frame->cancelKeepAlive();
+    // Force garbage collection, to ensure we release all Nodes before exiting.
+    m_mainFrame = 0;
 #endif
-    }
     
     m_editorClient->pageDestroyed();
     m_backForwardList->close();

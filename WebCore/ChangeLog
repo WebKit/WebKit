@@ -1,3 +1,26 @@
+2007-02-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixed Frame/RenderObject/Node leak report seen while running SVG image tests.
+        (We'll need this fix if we ever re-enable SVG image.)
+        
+        The extra reference belonged to the Frame keepAlive timer (so this was
+        not a "real" leak, in the end). The Page destructor has code to cancel all 
+        Frame keepAlive timers upon the destruction of the last Page, but an SVG 
+        image puts a Page within a Page, making this condition impossible to meet.
+        
+        The fix here is to have each individual page cancel the keepAlive timers 
+        belonging to its child frames.
+        
+        * page/Frame.cpp: Changed the FrameCounter to use WTF logging.
+        (WebCore::): Nixed the lifeSupportSet, since it's no longer used.
+        (WebCore::Frame::cancelKeepAlive): Renamed from "endLifeSupport" to match
+        the name "keepAlive".
+        * page/Page.cpp:
+        (WebCore::Page::~Page): Made each page cancel its child keepAlive timers 
+        and clear its mainFrame, since we may never reach the condition of having 0 Pages.
+
 2007-02-06  Adam Roben  <aroben@apple.com>
 
         Rubberstamped by Brady.
