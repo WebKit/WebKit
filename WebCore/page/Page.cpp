@@ -84,12 +84,13 @@ Page::~Page()
 
 #ifndef NDEBUG
     // Cancel keepAlive timers, to ensure we release all Frames before exiting.
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
-        frame->cancelKeepAlive();
+    // It's safe to do this because we prohibit closing a Page while JavaScript
+    // is executing.
+    Frame::cancelAllKeepAlive();
     // Force garbage collection, to ensure we release all Nodes before exiting.
     m_mainFrame = 0;
 #endif
-    
+
     m_editorClient->pageDestroyed();
     m_backForwardList->close();
 }

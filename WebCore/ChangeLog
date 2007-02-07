@@ -1,3 +1,22 @@
+2007-02-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Restoring some of the functionality I removed in r19445. It's insufficient for
+        each page to cancel keepAlive only for its child frames, because a frame
+        can be removed from the page before we get a chance to cancel its keepAlive.
+        So, the page destructor has to cancel keepAlive for all frames. This is safe
+        because we prohibit closing a WebView while JavaScript is executing.
+
+        * page/Frame.cpp:
+        (WebCore::keepAliveSet):
+        (WebCore::Frame::keepAlive):
+        (WebCore::Frame::cancelAllKeepAlive):
+        (WebCore::Frame::lifeSupportTimerFired):
+        * page/Frame.h:
+        * page/Page.cpp:
+        (WebCore::Page::~Page):
+
 2007-02-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
