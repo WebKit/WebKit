@@ -2,6 +2,20 @@
 
         Reviewed by Adam Roben.
 
+        Linux/gdk build fixes - add new files based on qt implementation.
+
+        * page/gdk/DragControllerGdk.cpp: Added.
+        (WebCore::DragController::dragOperation):
+        * page/gdk/EventHandlerGdk.cpp: Added.
+        (WebCore::EventHandler::focusDocumentView):
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::handleDrag):
+        (WebCore::EventHandler::eventActivatedView):
+
+2007-02-07  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Adam Roben.
+
         Linux/gdk build fixes - add new files based on Qt implementation.
 
         * loader/gdk/DocumentLoaderGdk.cpp: Added.
