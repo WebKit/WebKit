@@ -1,3 +1,18 @@
+2007-02-06  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4977952>
+        REGRESSION: Yahoo Messenger IM is totally blank
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkContentPolicy):
+        Don't ask the policy delegate for content that has valid substitute data.
+        
+        (WebCore::FrameLoader::checkNavigationPolicy):
+        If the loader has substitute data but doesn't have an unreachable URL, let the policy
+        delegate decide what to do.
+
 2007-02-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

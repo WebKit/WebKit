@@ -1954,6 +1954,14 @@ void FrameLoader::checkNavigationPolicy(const ResourceRequest& newRequest, Navig
 
 void FrameLoader::checkContentPolicy(const String& MIMEType, ContentPolicyDecisionFunction function, void* argument)
 {
+    ASSERT(activeDocumentLoader());
+    
+    // Always show content with valid substitute data.
+    if (activeDocumentLoader()->substituteData().isValid()) {
+        function(argument, PolicyUse);
+        return;
+    }
+
     m_policyCheck.set(function, argument);
     m_client->dispatchDecidePolicyForMIMEType(&FrameLoader::continueAfterContentPolicy,
         MIMEType, activeDocumentLoader()->request());
@@ -3268,7 +3276,7 @@ void FrameLoader::checkNavigationPolicy(const ResourceRequest& request, Document
     
     // We are always willing to show alternate content for unreachable URLs;
     // treat it like a reload so it maintains the right state for b/f list.
-    if (loader->substituteData().isValid()) {
+    if (loader->substituteData().isValid() && !loader->substituteData().failingURL().isEmpty()) {
         if (isBackForwardLoadType(m_policyLoadType))
             m_policyLoadType = FrameLoadTypeReload;
         function(argument, request, 0, true);
