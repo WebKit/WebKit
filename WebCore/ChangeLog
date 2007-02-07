@@ -2,6 +2,29 @@
 
         Reviewed by Maciej.
 
+        Linux/gdk build fixes related to networking.
+
+        * platform/network/ResourceHandleInternal.h: Add accessor for m_client.
+        (WebCore::ResourceHandleInternal::client):
+        * platform/network/gdk/ResourceHandleCurl.cpp: Add missing functions and
+        massage for changed APIs.
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::cancel):
+        (WebCore::ResourceHandle::bufferedData):
+        (WebCore::ResourceHandle::supportsBufferedData):
+        (WebCore::ResourceHandle::setDefersLoading):
+        * platform/network/gdk/ResourceHandleManager.cpp: Rename get() to
+        sharedInstance(). Massaged for changed APIs.
+        (WebCore::ResourceHandleManager::sharedInstance):
+        (WebCore::writeCallback):
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        (WebCore::ResourceHandleManager::remove):
+        * platform/network/gdk/ResourceHandleManager.h: Ditto.
+
+2007-02-07  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Maciej.
+
         Mismatched type of alloc/free function crashes gdk build.
 
         * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:

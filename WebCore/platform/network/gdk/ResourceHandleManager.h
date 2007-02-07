@@ -37,7 +37,7 @@ namespace WebCore {
 
 class ResourceHandleManager {
 public:
-    static ResourceHandleManager* get();
+    static ResourceHandleManager* sharedInstance();
     void add(ResourceHandle*);
     void cancel(ResourceHandle*);
 

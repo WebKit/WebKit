@@ -101,6 +101,7 @@ namespace WebCore {
         
         ~ResourceHandleInternal();
 
+        ResourceHandleClient* client() { return m_client; }
         ResourceHandleClient* m_client;
         
         ResourceRequest m_request;

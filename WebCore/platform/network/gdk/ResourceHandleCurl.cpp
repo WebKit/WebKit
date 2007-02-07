@@ -32,6 +32,8 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceHandleManager.h"
 
+#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
+
 namespace WebCore {
 
 ResourceHandleInternal::~ResourceHandleInternal()
@@ -43,16 +45,33 @@ ResourceHandle::~ResourceHandle()
     cancel();
 }
 
-bool ResourceHandle::start(DocLoader* docLoader)
+bool ResourceHandle::start(Frame* frame)
 {
+    ASSERT(frame);
     ref();
-    ResourceHandleManager::get()->add(this);
+    ResourceHandleManager::sharedInstance()->add(this);
     return true;
 }
 
 void ResourceHandle::cancel()
 {
-    ResourceHandleManager::get()->cancel(this);
+    ResourceHandleManager::sharedInstance()->cancel(this);
+}
+
+PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()
+{
+    return 0;
+}
+
+bool ResourceHandle::supportsBufferedData()
+{
+    return false;
+}
+
+void ResourceHandle::setDefersLoading(bool defers)
+{
+    d->m_defersLoading = defers;
+    notImplemented();
 }
 
 } // namespace WebCore
