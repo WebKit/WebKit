@@ -1,5 +1,14 @@
 2007-02-07  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
+        Reviewed by Maciej.
+
+        Mismatched type of alloc/free function crashes gdk build.
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageReader::close):
+
+2007-02-07  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
         Reviewed by Adam Roben.
 
         Linux/gdk build fixes - add file based on qt implementation.

@@ -128,7 +128,7 @@ public:
     void close() {
         decoder_source_mgr* src = (decoder_source_mgr*)m_info.src;
         if (src)
-            free(src);
+            fastFree(src);
         m_info.src = 0;
 
         jpeg_destroy_decompress(&m_info);
