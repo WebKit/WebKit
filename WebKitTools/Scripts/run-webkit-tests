@@ -817,29 +817,30 @@ sub countAndPrintLeaks($$$)
 
     # We are excluding the following reported leaks so they don't get in our way when looking for WebKit leaks:
 
-    my @exclude = (
+    my @callStacksToExclude = (
         "pthread_create", # false positive leak of 'THRD', Radar 3387783
         "_CFPreferencesDomainDeepCopyDictionary", # leak apparently in CFPreferences, Radar 4220786
         "FOGetCoveredUnicodeChars", # leak apparently in ATS, Radar 3943604
         "PCFragPrepareClosureFromFile", # leak in Code Fragment Manager, Radar 3426998
         "Flash_EnforceLocalSecurity", # leaks in flash plugin code, Radar 4449747
-        "ICCFPrefWrapper::GetPrefDictionary()", # leaks in quicktime plugin code, Radar 4449794
+        "ICCFPrefWrapper::GetPrefDictionary", # leaks in quicktime plugin code, Radar 4449794
         "GetLineDirectionPreference", "InitUnicodeUtilities", # leak apparently in CFNotificationCenterAddObserver, Radar 4964790
         # "CFRunLoopRunSpecific", # leak in CFRunLoopRunSpecific, Radar 4670839
         "_objc_msgForward", # leak apparently in NSSpellChecker, Radar 4965278
-        "WebCore::Selection::toRange() const", # bug in 'leaks', Radar 4967949
-        "-[NSURLCache cachedResponseForRequest:]", # leak in CFURL cache, Radar 4768430
-        "-[NSAttributedString(NSAttributedStringKitAdditions) _initWithDOMRange:]",  # leak apparently in NSAttributedString, Radar 4970608
-        "-[NSAttributedString(NSAttributedStringKitAdditions) dataFromRange:documentAttributes:error:]"  # leak apparently in NSAttributedString, Radar 4973752
+        "WebCore::Selection::toRange", # bug in 'leaks', Radar 4967949
+        "NSURLCache cachedResponseForRequest", # leak in CFURL cache, Radar 4768430
+        "NSAttributedString\(NSAttributedStringKitAdditions\) _initWithDOMRange:", # leak apparently in NSAttributedString, Radar 4970608
+        "NSAttributedString\(NSAttributedStringKitAdditions\) dataFromRange:documentAttributes:error:" # leak apparently in NSAttributedString, Radar 4973752
     );
 
     # Note that the exclusion for bug 3387783 doesn't quite work right; sometimes a leak of 'THRD' will
     # still appear in the leaks output.
 
-    my $excludes = "-exclude '" . (join "' -exclude '", @exclude) . "'";
+    my $leaksTool = sourceDir() . "/WebKitTools/Scripts/run-leaks";
+    my $excludeString = "--exclude-callstack '" . (join "' --exclude-callstack '", @callStacksToExclude) . "'";
 
     print " ? checking for leaks in $toolName\n";
-    my $leaksOutput = `leaks $excludes $toolPID`;
+    my $leaksOutput = `$leaksTool $excludeString $toolPID`;
     my ($count, $bytes) = $leaksOutput =~ /Process $toolPID: (\d+) leaks? for (\d+) total/;
     my ($excluded) = $leaksOutput =~ /(\d+) leaks? excluded/;
 
