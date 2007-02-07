@@ -2,6 +2,14 @@
 
         Reviewed by Bethany P. Dakin.
         
+        The 's' is optional when the leaks tool reports 'leaks'.
+        
+        * Scripts/run-leaks:
+
+2007-02-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Bethany P. Dakin.
+        
         Hooked up run-webkit-tests to the run-leaks script. No change in behavior yet.
 
         * Scripts/run-webkit-tests: Changed symbol names to valid regular expressions.

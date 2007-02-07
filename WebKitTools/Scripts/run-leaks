@@ -132,7 +132,7 @@ sub parseLeaksOutput(\@)
     #
     #   We treat every line except for  Process 00000: and Leak: as optional
 
-    my ($leakCount) = ($leaksOutput->[1] =~ /[[:blank:]]+([0-9]+)[[:blank:]]+leaks/);
+    my ($leakCount) = ($leaksOutput->[1] =~ /[[:blank:]]+([0-9]+)[[:blank:]]+leaks?/);
     if (!defined($leakCount)) {
         reportError("Could not parse leak count reported by leaks tool.");
         return;
