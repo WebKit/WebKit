@@ -1,3 +1,30 @@
+2007-02-06  Kevin Decker <kdecker@apple.com>
+
+        Fixed: <rdar://problem/4976681> ASSERTION failure on quit @ talkcrunch.com in _NPN_ReleaseObject
+        
+        Reviewed by Anders.
+
+        * Plugins/WebPluginDatabase.m:
+        (+[WebPluginDatabase sharedDatabase]): Removed NSApplicationWillTerminateNotification observer and thus
+        also removed code that would unload the entire plug-in database when receiving that notification. 
+        
+        The bug here was that this notification callback would happen first before anything else thus unloading
+        plug-ins and releasing plug-in memory. That was crash prone because the JavaScriptCore collector would at
+        a later time attempt to release its CInstance references (references that point to plug-in memory)
+        without knowing WebKit already unloaded the plug-in out from underneath it. The WebPluginDatabase simply
+        does not have enough context to make this decision.
+        
+        * WebView/WebView.mm: Added two statics: applicationIsTerminating, pluginDatabaseClientCount.
+        (+[WebView initialize]): Added NSApplicationWillTerminateNotification observer.
+        (+[WebView _applicationWillTerminate]): Added. 
+        (-[WebView _close]): WebKit has both a global plug-in database and a separate, per WebView plug-in database. 
+         We need to release both sets of plug-ins because Netscape plug-ins have "destructor functions" that should be
+         called when the browser unloads the plug-in.  These functions can do important things, such as closing/deleting
+         files so it is important to ensure that they are properly called when the application terminates.
+         
+         The new change is that on app shutdown, we unload WebKit's global plug-in database if and only if the last WebView
+         was closed. To do so otherwise would unload plug-ins out from underneath other WebViews.
+         
 2007-02-06  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

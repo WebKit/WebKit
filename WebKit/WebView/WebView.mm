@@ -231,6 +231,9 @@ macro(uppercaseWord) \
 macro(yank) \
 macro(yankAndSelect) \
 
+static BOOL applicationIsTerminating;
+static int pluginDatabaseClientCount = 0;
+
 @interface NSSpellChecker (AppKitSecretsIKnow)
 - (void)_preflightChosenSpellServer;
 @end
@@ -307,6 +310,7 @@ macro(yankAndSelect) \
     
     BOOL selectWordBeforeMenuEvent;
     
+    // WebKit has both a global plug-in database and a separate, per WebView plug-in database. Dashboard uses the per WebView database.
     WebPluginDatabase *pluginDatabase;
     
     HashMap<unsigned long, RetainPtr<id> >* identifierMap;
@@ -391,18 +395,19 @@ static BOOL grammarCheckingEnabled;
     self = [super init];
     if (!self)
         return nil;
-    
     allowsUndo = YES;
     textSizeMultiplier = 1;
     dashboardBehaviorAllowWheelScrolling = YES;
     shouldCloseWithWindow = objc_collecting_enabled();
     continuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled];
+
 #ifndef BUILDING_ON_TIGER
     grammarCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebGrammarCheckingEnabled];
 #endif
     userAgent = new String;
     
     identifierMap = new HashMap<unsigned long, RetainPtr<id> >();
+    pluginDatabaseClientCount++;
 
     return self;
 }
@@ -651,16 +656,23 @@ static bool debugWidget = true;
         [[NSSpellChecker sharedSpellChecker] closeSpellDocumentWithTag:_private->spellCheckerDocumentTag];
         _private->hasSpellCheckerDocumentTag = NO;
     }
-
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [WebPreferences _removeReferenceForIdentifier: [self preferencesIdentifier]];
+    pluginDatabaseClientCount--;
+    
+    // Make sure to close both sets of plug-ins databases because plug-ins need an opportunity to clean up files, etc.
+    
+    // Unload the WebView local plug-in database. 
     if (_private->pluginDatabase) {
         [_private->pluginDatabase close];
         [_private->pluginDatabase release];
         _private->pluginDatabase = nil;
     }
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-
-    [WebPreferences _removeReferenceForIdentifier: [self preferencesIdentifier]];
+    
+    // Keep the global plug-in database active until the app terminates to avoid having to reload plug-in bundles.
+    if (!pluginDatabaseClientCount && applicationIsTerminating)
+        [[WebPluginDatabase sharedDatabase] close];
 }
 
 + (NSString *)_MIMETypeForFile:(NSString *)path
@@ -1443,17 +1455,26 @@ NSMutableDictionary *countInvocations;
 #ifdef REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM
 // this prevents open source users from crashing when using the Show DOM Tree menu item in Safari
 // FIXME: remove this when it is no longer needed to prevent Safari from crashing
-+(void)initialize
++ (void)initialize
 {
     static BOOL tooLate = NO;
     if (!tooLate) {
         if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Safari"] && [[NSUserDefaults standardUserDefaults] boolForKey:@"IncludeDebugMenu"])
             [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_finishedLaunching) name:NSApplicationDidFinishLaunchingNotification object:NSApp];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate) name:NSApplicationWillTerminateNotification object:NSApp];
         tooLate = YES;
     }
 }
 
-+(void)_finishedLaunching
++ (void)_applicationWillTerminate
+{   
+    applicationIsTerminating = YES;
+    if (!pluginDatabaseClientCount)
+        [[WebPluginDatabase sharedDatabase] close];
+}
+
++ (void)_finishedLaunching
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_removeDOMTreeMenuItem:) name:NSMenuDidAddItemNotification object:[NSApp mainMenu]];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationDidFinishLaunchingNotification object:NSApp];

@@ -47,7 +47,6 @@
 - (void)_addPlugin:(WebBasePluginPackage *)plugin;
 - (void)_removePlugin:(WebBasePluginPackage *)plugin;
 - (NSMutableSet *)_scanForNewPlugins;
-- (void)_applicationWillTerminate;
 @end
 
 @implementation WebPluginDatabase
@@ -60,12 +59,6 @@ static WebPluginDatabase *sharedDatabase = nil;
         sharedDatabase = [[WebPluginDatabase alloc] init];
         [sharedDatabase setPlugInPaths:[self _defaultPlugInPaths]];
         [sharedDatabase refresh];
-        
-        // Clear the global plug-in database on app exit
-        [[NSNotificationCenter defaultCenter] addObserver:sharedDatabase
-                                                 selector:@selector(_applicationWillTerminate)
-                                                     name:NSApplicationWillTerminateNotification
-                                                   object:NSApp];
     }
     
     return sharedDatabase;
@@ -372,15 +365,6 @@ static NSArray *additionalWebPlugInPaths;
     [uniqueFilenames release];
     
     return newPlugins;
-}
-
-- (void)_applicationWillTerminate
-{
-    ASSERT(self == sharedDatabase);
-    // Remove all plug-ins from database.  Netscape plug-ins have "destructor functions" that should be called
-    // when the browser unloads the plug-in.  These functions can do important things, such as closing/deleting files,
-    // so it is important to ensure that they are properly called when the application terminates.
-    [self close];
 }
 
 @end
