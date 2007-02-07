@@ -1,3 +1,15 @@
+2007-02-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12582
+        REGRESSION: Unclosed <title> makes the window display garbage or empty title
+
+        Automatic testing is not possible, and manual testing probably doesn't make sense.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::canonicalizedTitle): Bail out early if the passed in string is all whitespace.
+
 2007-02-06  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by John Sullivan.
