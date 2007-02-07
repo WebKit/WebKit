@@ -2,6 +2,15 @@
 
         Reviewed by Adam Roben.
 
+        Linux/gdk build fixes - add file based on qt implementation.
+
+        * platform/DragData.h:
+        * platform/gdk/DragDataGdk.cpp: Added.
+
+2007-02-07  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Adam Roben.
+
         Linux/gdk build fixes - add new files based on qt implementation.
 
         * page/gdk/DragControllerGdk.cpp: Added.
