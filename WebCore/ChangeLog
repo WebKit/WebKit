@@ -1,5 +1,118 @@
 2007-02-07  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
+        Reviewed by Adam Roben.
+
+        Linux/gdk build fixes - add new files based on Qt implementation.
+
+        * loader/gdk/DocumentLoaderGdk.cpp: Added.
+        (WebCore::DocumentLoader::getResponseModifiedHeader):
+        * loader/gdk/FrameLoaderClientGdk.cpp: Added.
+        (WebCore::FrameLoaderClientGdk::FrameLoaderClientGdk):
+        (WebCore::FrameLoaderClientGdk::frame):
+        (WebCore::FrameLoaderClientGdk::userAgent):
+        (WebCore::FrameLoaderClientGdk::createDocumentLoader):
+        (WebCore::FrameLoaderClientGdk::dispatchWillSubmitForm):
+        (WebCore::FrameLoaderClientGdk::committedLoad):
+        (WebCore::FrameLoaderClientGdk::dispatchDidReceiveAuthenticationChallenge):
+        (WebCore::FrameLoaderClientGdk::dispatchDidCancelAuthenticationChallenge):
+        (WebCore::FrameLoaderClientGdk::dispatchWillSendRequest):
+        (WebCore::FrameLoaderClientGdk::assignIdentifierToInitialRequest):
+        (WebCore::FrameLoaderClientGdk::postProgressStartedNotification):
+        (WebCore::FrameLoaderClientGdk::postProgressEstimateChangedNotification):
+        (WebCore::FrameLoaderClientGdk::postProgressFinishedNotification):
+        (WebCore::FrameLoaderClientGdk::frameLoaderDestroyed):
+        (WebCore::FrameLoaderClientGdk::dispatchDidReceiveResponse):
+        (WebCore::FrameLoaderClientGdk::dispatchDecidePolicyForMIMEType):
+        (WebCore::FrameLoaderClientGdk::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientGdk::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientGdk::createPlugin):
+        (WebCore::FrameLoaderClientGdk::createFrame):
+        (WebCore::FrameLoaderClientGdk::redirectDataToPlugin):
+        (WebCore::FrameLoaderClientGdk::createJavaAppletWidget):
+        (WebCore::FrameLoaderClientGdk::objectContentType):
+        (WebCore::FrameLoaderClientGdk::overrideMediaType):
+        (WebCore::FrameLoaderClientGdk::windowObjectCleared):
+        (WebCore::FrameLoaderClientGdk::setMainFrameDocumentReady):
+        (WebCore::FrameLoaderClientGdk::hasWebView):
+        (WebCore::FrameLoaderClientGdk::hasFrameView):
+        (WebCore::FrameLoaderClientGdk::dispatchDidFinishLoad):
+        (WebCore::FrameLoaderClientGdk::frameLoadCompleted):
+        (WebCore::FrameLoaderClientGdk::privateBrowsingEnabled):
+        (WebCore::FrameLoaderClientGdk::makeDocumentView):
+        (WebCore::FrameLoaderClientGdk::makeRepresentation):
+        (WebCore::FrameLoaderClientGdk::forceLayout):
+        (WebCore::FrameLoaderClientGdk::forceLayoutForNonHTML):
+        (WebCore::FrameLoaderClientGdk::setCopiesOnScroll):
+        (WebCore::FrameLoaderClientGdk::detachedFromParent1):
+        (WebCore::FrameLoaderClientGdk::detachedFromParent2):
+        (WebCore::FrameLoaderClientGdk::detachedFromParent3):
+        (WebCore::FrameLoaderClientGdk::detachedFromParent4):
+        (WebCore::FrameLoaderClientGdk::loadedFromPageCache):
+        (WebCore::FrameLoaderClientGdk::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientGdk::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebCore::FrameLoaderClientGdk::dispatchDidCancelClientRedirect):
+        (WebCore::FrameLoaderClientGdk::dispatchWillPerformClientRedirect):
+        (WebCore::FrameLoaderClientGdk::dispatchDidChangeLocationWithinPage):
+        (WebCore::FrameLoaderClientGdk::dispatchWillClose):
+        (WebCore::FrameLoaderClientGdk::dispatchDidReceiveIcon):
+        (WebCore::FrameLoaderClientGdk::dispatchDidStartProvisionalLoad):
+        (WebCore::FrameLoaderClientGdk::dispatchDidReceiveTitle):
+        (WebCore::FrameLoaderClientGdk::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientGdk::dispatchDidFinishDocumentLoad):
+        (WebCore::FrameLoaderClientGdk::dispatchDidFirstLayout):
+        (WebCore::FrameLoaderClientGdk::dispatchShow):
+        (WebCore::FrameLoaderClientGdk::cancelPolicyCheck):
+        (WebCore::FrameLoaderClientGdk::dispatchDidLoadMainResource):
+        (WebCore::FrameLoaderClientGdk::revertToProvisionalState):
+        (WebCore::FrameLoaderClientGdk::clearUnarchivingState):
+        (WebCore::FrameLoaderClientGdk::willChangeTitle):
+        (WebCore::FrameLoaderClientGdk::didChangeTitle):
+        (WebCore::FrameLoaderClientGdk::finishedLoading):
+        (WebCore::FrameLoaderClientGdk::finalSetupForReplace):
+        (WebCore::FrameLoaderClientGdk::setDefersLoading):
+        (WebCore::FrameLoaderClientGdk::isArchiveLoadPending):
+        (WebCore::FrameLoaderClientGdk::cancelPendingArchiveLoad):
+        (WebCore::FrameLoaderClientGdk::clearArchivedResources):
+        (WebCore::FrameLoaderClientGdk::canHandleRequest):
+        (WebCore::FrameLoaderClientGdk::canShowMIMEType):
+        (WebCore::FrameLoaderClientGdk::representationExistsForURLScheme):
+        (WebCore::FrameLoaderClientGdk::generatedMIMETypeForURLScheme):
+        (WebCore::FrameLoaderClientGdk::restoreScrollPositionAndViewState):
+        (WebCore::FrameLoaderClientGdk::provisionalLoadStarted):
+        (WebCore::FrameLoaderClientGdk::didFinishLoad):
+        (WebCore::FrameLoaderClientGdk::prepareForDataSourceReplacement):
+        (WebCore::FrameLoaderClientGdk::setTitle):
+        (WebCore::FrameLoaderClientGdk::setDocumentViewFromPageCache):
+        (WebCore::FrameLoaderClientGdk::dispatchDidReceiveContentLength):
+        (WebCore::FrameLoaderClientGdk::dispatchDidFinishLoading):
+        (WebCore::FrameLoaderClientGdk::dispatchDidFailLoading):
+        (WebCore::FrameLoaderClientGdk::dispatchDidLoadResourceFromMemoryCache):
+        (WebCore::FrameLoaderClientGdk::dispatchDidFailProvisionalLoad):
+        (WebCore::FrameLoaderClientGdk::dispatchDidFailLoad):
+        (WebCore::FrameLoaderClientGdk::download):
+        (WebCore::FrameLoaderClientGdk::cancelledError):
+        (WebCore::FrameLoaderClientGdk::cannotShowURLError):
+        (WebCore::FrameLoaderClientGdk::interruptForPolicyChangeError):
+        (WebCore::FrameLoaderClientGdk::cannotShowMIMETypeError):
+        (WebCore::FrameLoaderClientGdk::fileDoesNotExistError):
+        (WebCore::FrameLoaderClientGdk::shouldFallBack):
+        (WebCore::FrameLoaderClientGdk::willUseArchive):
+        (WebCore::FrameLoaderClientGdk::saveScrollPositionAndViewStateToItem):
+        (WebCore::FrameLoaderClientGdk::saveDocumentViewToPageCache):
+        (WebCore::FrameLoaderClientGdk::canCachePage):
+        (WebCore::FrameLoaderClientGdk::dispatchCreatePage):
+        (WebCore::FrameLoaderClientGdk::dispatchUnableToImplementPolicy):
+        (WebCore::FrameLoaderClientGdk::setMainDocumentError):
+        (WebCore::FrameLoaderClientGdk::startDownload):
+        (WebCore::FrameLoaderClientGdk::updateGlobalHistoryForStandardLoad):
+        (WebCore::FrameLoaderClientGdk::updateGlobalHistoryForReload):
+        (WebCore::FrameLoaderClientGdk::shouldGoToHistoryItem):
+        * loader/gdk/FrameLoaderClientGdk.h: Added.
+        (WebCore::FrameLoaderClientGdk::~FrameLoaderClientGdk):
+        (WebCore::FrameLoaderClientGdk::setFrame):
+
+2007-02-07  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
         Reviewed by Maciej.
 
         Linux/gdk fixes related to fonts.
