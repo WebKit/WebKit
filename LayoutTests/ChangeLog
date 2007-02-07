@@ -1,3 +1,34 @@
+2007-02-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        <rdar://problem/4922367>
+        WebView selectLine: followed by deleteBackward: deletes TABLE element of following line
+        
+        Added:
+        * editing/deleting/4922367-expected.checksum: Added.
+        * editing/deleting/4922367-expected.png: Added.
+        * editing/deleting/4922367-expected.txt: Added.
+        * editing/deleting/4922367.html: Added.
+        
+        Fixed:
+        * editing/deleting/delete-block-table-expected.txt:
+        * editing/deleting/delete-select-all-001-expected.txt:
+        * editing/deleting/delete-to-select-table-expected.txt:
+        * editing/inserting/insert-paragraph-02-expected.txt:
+        * editing/pasteboard/4641033-expected.txt:
+        * editing/pasteboard/paste-table-001-expected.txt:
+        * editing/pasteboard/select-element-1-expected.txt:
+        * editing/selection/3690719-expected.txt:
+        * editing/selection/7152-1-expected.txt:
+        * editing/selection/7152-2-expected.txt:
+        * editing/selection/click-before-and-after-table-expected.txt:
+        * editing/selection/replaced-boundaries-3-expected.txt:
+        * editing/style/apple-style-editable-mix-expected.txt:
+        * editing/unsupported-content/table-delete-001-expected.txt:
+        * editing/unsupported-content/table-type-after-expected.txt:
+        * editing/unsupported-content/table-type-before-expected.txt:
+
 2007-02-06  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Mark.

@@ -1,3 +1,26 @@
+2007-02-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        <rdar://problem/4922367>
+        WebView selectLine: followed by deleteBackward: deletes TABLE element of following line
+
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::doApply): Don't ASSERT when manipulating
+        non-editable content that is embedded in editable content.  We'll do 
+        this kind of manipulation when removing redundant style spans after
+        pasting content that has non-editable pieces.
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::doApply): Ditto.
+        * editing/htmlediting.cpp:
+        (WebCore::isContentEditable): Added, wrapper for Node::isContentEditable
+        (WebCore::rangeCompliantEquivalent): Although legal, 
+        [{table, select, etc.}, {0, numChildren}] don't refer to children of the element, 
+        but positions before and after the element.  So, rangeCompliantEquivalent is 
+        really responsible for converting illegal positions *and* legal positions 
+        that have a special meaning internally.
+        * editing/htmlediting.h:
+
 2007-02-06  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Brady.
