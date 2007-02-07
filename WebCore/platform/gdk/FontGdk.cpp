@@ -41,18 +41,19 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, co
 
     // Set the text color to use for drawing.
     float red, green, blue, alpha;
-    Color penColor = graphicsContext->pen().color();
+    Color penColor = graphicsContext->fillColor();
     penColor.getRGBA(red, green, blue, alpha);
     cairo_set_source_rgba(context, red, green, blue, alpha);
 
-    // Select the scaled font.
-    font->setFont(context);
+    // FIXME: this should probably be here but right now it makes some text
+    // invisible, probably due to breakage in other place
+    //font->setFont(context);
 
     GlyphBufferGlyph* glyphs = (GlyphBufferGlyph*) glyphBuffer.glyphs(from);
 
     float offset = point.x();
 
-    for (unsigned i = 0; i < numGlyphs; i++) {
+    for (int i = 0; i < numGlyphs; i++) {
         glyphs[i].x = offset;
         glyphs[i].y = point.y();
         offset += glyphBuffer.advanceAt(from + i);

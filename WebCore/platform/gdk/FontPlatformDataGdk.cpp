@@ -47,7 +47,7 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
     int fcsize = (int)fontDescription.computedSize();
     if (fontDescription.italic())
         fcslant = FC_SLANT_ITALIC;
-    if (fontDescription.weight() == cBoldWeight)
+    if (fontDescription.bold())
         fcweight = FC_WEIGHT_BOLD;
 
     int type = fontDescription.genericFamily();
@@ -79,14 +79,12 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
 
     FcResult fcresult;
     m_pattern = FcFontMatch(NULL, pattern, &fcresult);
+    // FIXME: should we set some default font?
     if (!m_pattern)
         goto freePattern;
-
     m_fontFace = cairo_ft_font_face_create_for_pattern(m_pattern);
     m_fontMatrix = (cairo_matrix_t*)malloc(sizeof(cairo_matrix_t));
     cairo_matrix_t ctm;
-    cairo_font_extents_t font_extents;
-    cairo_text_extents_t text_extents;
     cairo_matrix_init_scale(m_fontMatrix, m_fontDescription.computedPixelSize(), m_fontDescription.computedPixelSize());
     cairo_matrix_init_identity(&ctm);
     m_options = cairo_font_options_create();

@@ -1,3 +1,17 @@
+2007-02-07  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Maciej.
+
+        Linux/gdk fixes related to fonts.
+
+        * platform/gdk/FontDataGdk.cpp:
+        (WebCore::FontData::platformInit): remove a work-around for older cairo versions
+        since Ubuntu 6.10 ships with cairo that is new enough
+        * platform/gdk/FontGdk.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/gdk/FontPlatformDataGdk.cpp: Remove unused variables.
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2007-02-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

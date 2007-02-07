@@ -43,8 +43,6 @@
 
 namespace WebCore {
 
-#define USE_OLD_CAIRO 1
-
 void FontData::platformInit()
 {
     cairo_font_extents_t font_extents;
@@ -53,15 +51,10 @@ void FontData::platformInit()
     m_ascent = static_cast<int>(font_extents.ascent);
     m_descent = static_cast<int>(font_extents.descent);
     m_lineSpacing = static_cast<int>(font_extents.height);
-#ifdef USE_OLD_CAIRO
-    m_xHeight = 13;
-    m_spaceWidth = 10;
-#else
     cairo_scaled_font_text_extents(m_font.m_scaledFont, "x", &text_extents);
     m_xHeight = text_extents.height;
     cairo_scaled_font_text_extents(m_font.m_scaledFont, " ", &text_extents);
     m_spaceWidth =  static_cast<int>(text_extents.x_advance);
-#endif
     assert(m_spaceWidth != 0);
     m_lineGap = m_lineSpacing - m_ascent - m_descent;
 }
