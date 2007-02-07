@@ -316,6 +316,8 @@ typedef struct heapframe {
   int Xprop_othercase;
   int Xprop_test_against;
   int *Xprop_test_variable;
+
+  int Xrepeat_othercase;
 #endif
 
   int Xctype;
@@ -460,6 +462,7 @@ HEAP_RECURSE:
 #define original_ims       frame->Xoriginal_ims
 
 #ifdef SUPPORT_UCP
+
 #define prop_type          frame->Xprop_type
 #define prop_fail_result   frame->Xprop_fail_result
 #define prop_category      frame->Xprop_category
@@ -467,6 +470,9 @@ HEAP_RECURSE:
 #define prop_othercase     frame->Xprop_othercase
 #define prop_test_against  frame->Xprop_test_against
 #define prop_test_variable frame->Xprop_test_variable
+
+#define repeat_othercase   frame->Xrepeat_othercase
+
 #endif
 
 #define ctype              frame->Xctype
@@ -517,6 +523,7 @@ BOOL prev_is_word;
 unsigned long int original_ims;
 
 #ifdef SUPPORT_UCP
+
 int prop_type;
 int prop_fail_result;
 int prop_category;
@@ -524,6 +531,9 @@ int prop_chartype;
 int prop_othercase;
 int prop_test_against;
 int *prop_test_variable;
+
+int repeat_othercase;
+
 #endif
 
 int ctype;
@@ -1996,12 +2006,10 @@ for (;;)
 
       if (fc <= 0xFFFF)
         {
-#ifdef SUPPORT_UCP
         int othercase;
         int chartype;
         if ((ims & PCRE_CASELESS) == 0 || _pcre_ucp_findchar(fc, &chartype, &othercase) < 0)
           othercase = -1; /* Guaranteed to not match any character */
-#endif  /* SUPPORT_UCP */
 
         for (i = 1; i <= min; i++)
           {
@@ -2013,12 +2021,13 @@ for (;;)
 
         if (minimize)
           {
+          repeat_othercase = othercase;
           for (fi = min;; fi++)
             {
             RMATCH(28, rrc, eptr, ecode, offset_top, md, ims, eptrb, 0);
             if (rrc != MATCH_NOMATCH) RRETURN(rrc);
             if (fi >= max || eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);
-            if (*eptr != fc && *eptr != othercase) RRETURN(MATCH_NOMATCH);
+            if (*eptr != fc && *eptr != repeat_othercase) RRETURN(MATCH_NOMATCH);
             ++eptr;
             }
           /* Control never gets here */
@@ -2137,6 +2146,7 @@ for (;;)
           {
           for (fi = min;; fi++)
             {
+            // FIXME: This could blow away occhars and occlength in the NO_RECURSE case.
             RMATCH(32, rrc, eptr, ecode, offset_top, md, ims, eptrb, 0);
             if (rrc != MATCH_NOMATCH) RRETURN(rrc);
             if (fi >= max || eptr >= md->end_subject) RRETURN(MATCH_NOMATCH);

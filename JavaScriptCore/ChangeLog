@@ -1,3 +1,20 @@
+2007-02-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - another build fix; this time for sure
+
+        * pcre/pcre_exec.c: (match):
+        The compiler caught an incorrect use of the othercase variable across
+        a call to RMATCH in character repeat processing. Local variables can
+        change in the crazy NO_RECURSE mode that we use, so we instead need
+        the value in othercase to be in one of the special stack frame variables.
+        Added a new stack frame variable for this purpose named repeat_othercase.
+        Also noted a similar error in the non-UTF-16 side of the #ifdef, but
+        didn't try to fix that one. Also removed a SUPPORT_UCP #ifdef from the
+        PCRE_UTF16 side; that code doesn't work without the Unicde properties
+        table, and we don't try to use it that way.
+
 2007-02-06  Steve Falkenburg  <sfalken@apple.com>
 
         Disable testkjs in sln until we figure out mysterious compiler warning.
