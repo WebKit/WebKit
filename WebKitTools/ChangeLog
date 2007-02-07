@@ -1,5 +1,17 @@
 2007-02-06  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Beth Dakin, evil twin to Bethany P. Dakin.
+        
+        Ignore known leaks in CFRunLoop. Exclude THRD leaks by type so that we can
+        catch all reports of them, not just those inside pthread_create.
+        
+        Also, use "\\" instead of "\" because we need the actual \ to get into the
+        regexp string if it's going to do any escaping. (Oops!)
+
+        * Scripts/run-webkit-tests:
+
+2007-02-06  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Bethany P. Dakin.
         
         The 's' is optional when the leaks tool reports 'leaks'.
