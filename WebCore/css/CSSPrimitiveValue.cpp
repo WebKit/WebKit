@@ -46,13 +46,13 @@ static bool isCSSTokenizerIdentifier(const String& string)
         ++p;
 
     // {nmstart}
-    if (p == end || !(p[0] == '_' || isalpha(p[0]) || p[0] >= 128))
+    if (p == end || !(p[0] == '_' || p[0] >= 128 || isalpha(p[0])))
         return false;
     ++p;
 
     // {nmchar}*
     for (; p != end; ++p) {
-        if (!(p[0] == '_' || p[0] == '-' || isalnum(p[0]) || p[0] >= 128))
+        if (!(p[0] == '_' || p[0] == '-' || p[0] >= 128 || isalnum(p[0])))
             return false;
     }
 
