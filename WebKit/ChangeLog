@@ -1,3 +1,17 @@
+2007-02-07  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+
+        - added some clarity to some menu-handling shenanigans
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (fixMenusToSendToOldClients):
+        renamed from fixMenusForOldClients; added comments, FIXME, and assertion
+        (fixMenusReceivedFromOldClients):
+        renamed from fixMenusFromOldClients; added comments, FIXME, and assertion
+        (WebContextMenuClient::getCustomMenuFromDefaultItems):
+        updated for name changes
+
 2007-02-06  Kevin Decker <kdecker@apple.com>
 
         Fixed: <rdar://problem/4976681> ASSERTION failure on quit @ talkcrunch.com in _NPN_ReleaseObject

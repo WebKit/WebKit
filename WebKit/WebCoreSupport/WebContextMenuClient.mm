@@ -58,22 +58,31 @@ void WebContextMenuClient::contextMenuDestroyed()
     delete this;
 }
 
-static NSMutableArray *fixMenusForOldClients(NSMutableArray *defaultMenuItems)
+static NSMutableArray *fixMenusToSendToOldClients(NSMutableArray *defaultMenuItems)
 {
-    // Here we change all SPI tags listed in WebUIDelegatePrivate.h to WebMenuItemTagOther
+    // Here we change all editing-related SPI tags listed in WebUIDelegatePrivate.h to WebMenuItemTagOther
     // to match our old WebKit context menu behavior.
+
+    // FIXME 4950029: This is a temporary solution to make Mail's context menus continue working until
+    // they've updated their code to expect the new tags. We'll have to coordinate a WebKit update with
+    // that Mail update to start sending the new tags again. At that point, this code should be changed
+    // to run only for clients that were linked against old versions of WebKit.
     
     unsigned defaultItemsCount = [defaultMenuItems count];
     for (unsigned i = 0; i < defaultItemsCount; ++i) {
         NSMenuItem *item = [defaultMenuItems objectAtIndex:i];
         if ([item tag] >= WEBMENUITEMTAG_SPI_START)
             [item setTag:WebMenuItemTagOther];
+        else {
+            // All items should have useful tags coming into this method.
+            ASSERT([item tag] != WebMenuItemTagOther);
+        }
     }
     
     return defaultMenuItems;
 }
 
-static NSMutableArray *fixMenusFromOldClients(NSMutableArray *newMenuItems, NSMutableArray *defaultMenuItems)
+static NSMutableArray *fixMenusReceivedFromOldClients(NSMutableArray *newMenuItems, NSMutableArray *defaultMenuItems)
 {    
     // The WebMenuItemTag enum has changed since Tiger, so clients built against Tiger WebKit might reference incorrect values for tags.
     // Here we fix up Tiger Mail and Tiger Safari.
@@ -107,9 +116,18 @@ static NSMutableArray *fixMenusFromOldClients(NSMutableArray *newMenuItems, NSMu
             }
     }
     
+    // Restore the new-style tags to the editing-related menu items. This is the 2nd part of the
+    // workaround whose first part is in fixMenusToSendToOldClients.
+    
+    // FIXME 4950029: This is a temporary solution to make Mail's context menus continue working until
+    // they've updated their code to expect the new tags. We'll have to coordinate a WebKit update with
+    // that Mail update to start sending the new tags again. At that point, this code should be changed
+    // to run only for clients that were linked against old versions of WebKit.
     unsigned defaultItemsCount = [defaultMenuItems count];
     for (unsigned i = 0; i < defaultItemsCount; ++i) {
         NSMenuItem *item = [defaultMenuItems objectAtIndex:i];
+        // Items with a useful tag can be left alone. Items with WebMenuItemTagOther should be only the
+        // ones whose tags we changed in fixMenusToSendToOldClients.
         if ([item tag] != WebMenuItemTagOther)
             continue;
         
@@ -159,6 +177,10 @@ static NSMutableArray *fixMenusFromOldClients(NSMutableArray *newMenuItems, NSMu
             [item setTag:WebMenuItemTagLeftToRight];
         else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagRightToLeft])
             [item setTag:WebMenuItemTagRightToLeft];
+        else {
+            // We don't expect WebMenuItemTagOther for any items other than the ones we explicitly handle
+            ASSERT_NOT_REACHED();
+        }
     }
 
     return [newMenuItems autorelease];
@@ -171,10 +193,10 @@ NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu*
         return defaultMenu->platformDescription();
     
     NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:defaultMenu->hitTestResult()] autorelease];
-    NSMutableArray *defaultMenuItems = fixMenusForOldClients(defaultMenu->platformDescription());
+    NSMutableArray *defaultMenuItems = fixMenusToSendToOldClients(defaultMenu->platformDescription());
     NSMutableArray *newMenuItems = [[delegate webView:m_webView contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems] mutableCopy];
 
-    return fixMenusFromOldClients(newMenuItems, defaultMenuItems);
+    return fixMenusReceivedFromOldClients(newMenuItems, defaultMenuItems);
 }
 
 void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const ContextMenu* parentMenu)
