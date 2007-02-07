@@ -7,11 +7,11 @@
         if (window.layoutTestController)
             layoutTestController.dumpAsText();
 
-// The commented out cases cause a crash; see <http://bugs.webkit.org/show_bug.cgi?id=12603>.
         var tests = [
               "//div[string() = '123']"
-//            , "//div[normalize-space() = '123']"
-//            , "//div[string-length() = 3]"
+              , "//div[normalize-space() = '123']"
+              , "//div[string-length() = 3]"
+              , "//div[number() = 123]"
         ];
 
         while (test = tests.pop()) {

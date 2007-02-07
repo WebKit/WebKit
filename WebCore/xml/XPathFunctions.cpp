@@ -439,7 +439,7 @@ bool FunCount::isConstant() const
 
 Value FunString::doEvaluate() const
 {
-    if (argCount() == 0)
+    if (!argCount())
         return Value(Expression::evaluationContext().node.get()).toString();
     return arg(0)->evaluate().toString();
 }
@@ -531,14 +531,14 @@ Value FunSubstring::doEvaluate() const
 
 Value FunStringLength::doEvaluate() const
 {
-    if (argCount() == 0)
+    if (!argCount())
         return Value(Expression::evaluationContext().node.get()).toString().length();
     return arg(0)->evaluate().toString().length();
 }
 
 Value FunNormalizeSpace::doEvaluate() const
 {
-    if (argCount() == 0) {
+    if (!argCount()) {
         String s = Value(Expression::evaluationContext().node.get()).toString();
         return Value(s.simplifyWhiteSpace());
     }
@@ -635,6 +635,8 @@ bool FunFalse::isConstant() const
 
 Value FunNumber::doEvaluate() const
 {
+    if (!argCount())
+        return Value(Expression::evaluationContext().node.get()).toNumber();
     return arg(0)->evaluate().toNumber();
 }
 
@@ -688,14 +690,14 @@ static void createFunctionMap()
         { "local-name", { &createFunLocalName, Interval(0, 1) } },
         { "name", { &createFunName, Interval(0, 1) } },
         { "namespace-uri", { &createFunNamespaceURI, Interval(0, 1) } },
-        { "normalize-space", { &createFunNormalizeSpace, 1 } },
+        { "normalize-space", { &createFunNormalizeSpace, Interval(0, 1) } },
         { "not", { &createFunNot, 1 } },
-        { "number", { &createFunNumber, 1 } },
+        { "number", { &createFunNumber, Interval(0, 1) } },
         { "position", { &createFunPosition, 0 } },
         { "round", { &createFunRound, 1 } },
         { "starts-with", { &createFunStartsWith, 2 } },
         { "string", { &createFunString, Interval(0, 1) } },
-        { "string-length", { &createFunStringLength, 1 } },
+        { "string-length", { &createFunStringLength, Interval(0, 1) } },
         { "substring", { &createFunSubstring, Interval(2, 3) } },
         { "substring-after", { &createFunSubstringAfter, 2 } },
         { "substring-before", { &createFunSubstringBefore, 2 } },
@@ -715,7 +717,10 @@ Function* createFunction(const String& name, const Vector<Expression*>& args)
     if (!functionMap)
         createFunctionMap();
 
-    if (!functionMap->contains(name)) {
+    HashMap<String, FunctionRec>::iterator functionMapIter = functionMap->find(name);
+    FunctionRec* functionRec = 0;
+
+    if (functionMapIter == functionMap->end() || !(functionRec = &functionMapIter->second)->args.contains(args.size())) {
         deleteAllValues(args);
 
         // Return a dummy function instead of 0.
@@ -724,13 +729,7 @@ Function* createFunction(const String& name, const Vector<Expression*>& args)
         return funcTrue;
     }
 
-    FunctionRec functionRec = functionMap->get(name);
-    if (!functionRec.args.contains(args.size())) {
-        deleteAllValues(args);
-        return 0;
-    }
-
-    Function* function = functionRec.factoryFn();
+    Function* function = functionRec->factoryFn();
     function->setArguments(args);
     function->setName(name);
     return function;
