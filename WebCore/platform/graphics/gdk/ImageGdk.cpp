@@ -26,30 +26,35 @@
 #include "config.h"
 #include "Image.h"
 
-#if PLATFORM(CAIRO)
+#include "BitmapImage.h"
 #include <cairo.h>
-#else
-#error "GDK port requires PLATFORM(CAIRO)"
-#endif
+
+#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
 
 // This function loads resources from WebKit
 Vector<char> loadResourceIntoArray(const char*);
 
 namespace WebCore {
 
-    void Image::initPlatformData()
-    {
-    }
+void BitmapImage::initPlatformData()
+{
+}
 
-    void Image::invalidatePlatformData()
-    {
-    }
+void BitmapImage::invalidatePlatformData()
+{
+}
 
-    Image* Image::loadPlatformResource(const char *name)
-    {
-        Vector<char> arr = loadResourceIntoArray(name);
-        Image* img = new Image;
-        img->setNativeData(&arr, true);
-        return img;
-    }
+Image* Image::loadPlatformResource(const char *name)
+{
+    Vector<char> arr = loadResourceIntoArray(name);
+    BitmapImage* img = new BitmapImage;
+    img->setNativeData(&arr, true);
+    return img;
+}
+
+void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
+                        const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect)
+{
+    notImplemented();
+}
 }

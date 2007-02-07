@@ -104,6 +104,7 @@ void ImageSource::setData(const Vector<char>* data, bool allDataReceived)
     // This method will examine the data and instantiate an instance of the appropriate decoder plugin.
     // If insufficient bytes are available to determine the image type, no decoder plugin will be
     // made.
+    delete m_decoder;
     m_decoder = createDecoder(*data);
     if (!m_decoder)
         return;

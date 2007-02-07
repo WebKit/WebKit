@@ -1,5 +1,21 @@
 2007-02-07  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
+        Reviewed by Adam Roben.
+
+        Linux/gdk build fixes for graphics-related stuff.
+
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::checkForSolidColor):
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+        (WebCore::ImageSource::setData):
+        * platform/graphics/gdk/ImageGdk.cpp:
+        (WebCore::BitmapImage::initPlatformData):
+        (WebCore::BitmapImage::invalidatePlatformData):
+        (WebCore::Image::loadPlatformResource):
+        (WebCore::Image::drawPattern):
+
+2007-02-07  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
         Reviewed by Maciej.
 
         Linux/gdk build fixes related to networking.

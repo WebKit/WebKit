@@ -65,12 +65,6 @@ static void setCompositingOperation(cairo_t* context, CompositeOperator op, bool
         cairo_set_operator(context, CAIRO_OPERATOR_OVER);
 }
 
-void BitmapImage::checkForSolidColor()
-{
-    // FIXME: It's easy to implement this optimization. Just need to check the RGBA32 buffer to see if it is 1x1.
-    m_isSolidColor = false;
-}
-
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatRect& src, CompositeOperator op)
 {
     cairo_t* context = ctxt->platformContext();
@@ -113,76 +107,10 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatR
 
 }
 
-void BitmapImage::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatPoint& srcPoint,
-    const FloatSize& tileSize, CompositeOperator op)
+void BitmapImage::checkForSolidColor()
 {
-    if (!m_source.initialized())
-        return;
-
-    cairo_surface_t* image = frameAtIndex(m_currentFrame);
-    if (!image) // If it's too early we won't have an image yet.
-        return;
-
-    IntSize intrinsicImageSize = size();                       
-    FloatRect srcRect(srcPoint, intrinsicImageSize);
-    FloatPoint point = srcPoint;
-
-    // Check and see if a single draw of the image can cover the entire area we are supposed to tile.
-    float tileWidth = size().width();
-    float tileHeight = size().height();
-    
-    // If the scale is not equal to the intrinsic size of the image, set transform matrix
-    // to the appropriate scalar matrix, scale the source point, and set the size of the
-    // scaled tile. 
-    float scaleX = 1.0;
-    float scaleY = 1.0;
-    cairo_matrix_t mat;
-    cairo_matrix_init_identity(&mat);
-    if (tileSize.width() != intrinsicImageSize.width() || tileSize.height() != intrinsicImageSize.height()) {
-        scaleX = intrinsicImageSize.width() / tileSize.width();
-        scaleY = intrinsicImageSize.height() / tileSize.height();
-        cairo_matrix_init_scale(&mat, scaleX, scaleY);
-        
-        tileWidth = tileSize.width();
-        tileHeight = tileSize.height();
-    }
-   
-    // We could get interesting source offsets (negative ones or positive ones.  Deal with both
-    // out of bounds cases.
-    float dstTileX = dstRect.x() + fmodf(fmodf(-point.x(), tileWidth) - tileWidth, tileWidth);
-    float dstTileY = dstRect.y() + fmodf(fmodf(-point.y(), tileHeight) - tileHeight, tileHeight);
-    FloatRect dstTileRect(dstTileX, dstTileY, tileWidth, tileHeight);
-    
-    float srcX = dstRect.x() - dstTileRect.x();
-    float srcY = dstRect.y() - dstTileRect.y();
-
-    // If the single image draw covers the whole area, then just draw once.
-    if (dstTileRect.contains(dstRect)) {
-        draw(ctxt, dstRect,
-             FloatRect(srcX * scaleX, srcY * scaleY, dstRect.width() * scaleX, dstRect.height() * scaleY), op);
-        return;
-    }
-
-    // We have to tile.
-    cairo_t* context = ctxt->platformContext();
-
-    cairo_save(context);
-
-    // Set the compositing operation.
-    setCompositingOperation(context, op, frameHasAlphaAtIndex(m_currentFrame));
-
-    cairo_translate(context, dstTileRect.x(), dstTileRect.y());
-    cairo_pattern_t* pattern = cairo_pattern_create_for_surface(image);
-    cairo_pattern_set_matrix(pattern, &mat);
-    cairo_pattern_set_extend(pattern, CAIRO_EXTEND_REPEAT);
-
-    // Draw the image.
-    cairo_set_source(context, pattern);
-    cairo_rectangle(context, srcX, srcY, dstRect.width(), dstRect.height());
-    cairo_fill(context);
-    cairo_restore(context);
-
-    startAnimation();
+    // FIXME: It's easy to implement this optimization. Just need to check the RGBA32 buffer to see if it is 1x1.
+    m_isSolidColor = false;
 }
 
 }
