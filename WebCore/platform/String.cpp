@@ -422,10 +422,10 @@ Vector<char> String::ascii() const
         return m_impl->ascii();
     
     const char* nullMsg = "(null impl)";
-    Vector<char> buffer(strlen(nullMsg) + 1);
-    for (int i = 0; nullMsg[i]; ++i) {
+    Vector<char, 2048> buffer;
+    for (int i = 0; nullMsg[i]; ++i)
         buffer.append(nullMsg[i]);
-    }
+    
     buffer.append('\0');
     return buffer;
 }
