@@ -42,7 +42,7 @@ String WebPasteboardHelper::urlFromPasteboard(const NSPasteboard* pasteboard, St
         if (NSString *URLTitleString = [pasteboard stringForType:WebURLNamePboardType])
             *title = URLTitleString;
 
-    return [URL _web_userVisibleString];
+    return [URL _web_originalDataAsString];
 }
 
 String WebPasteboardHelper::plainTextFromPasteboard(const NSPasteboard *pasteboard) const

@@ -2,6 +2,18 @@
 
         Reviewed by Darin
 
+        - fixed <rdar://problem/4974420> REGRESSION: Dragging a saved image into the browser window 
+        displays a error (No File exists at the address "null") (12662)
+
+        * WebCoreSupport/WebPasteboardHelper.mm:
+        (WebPasteboardHelper::urlFromPasteboard):
+        use _web_originalDataAsString instead of _web_userVisibleString, since _web_userVisibleString
+        can return a string with non-ASCII characters -- suitable for display but not for code
+
+2007-02-07  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+
         - added some clarity to some menu-handling shenanigans
 
         * WebCoreSupport/WebContextMenuClient.mm:
