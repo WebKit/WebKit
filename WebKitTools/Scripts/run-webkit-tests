@@ -61,12 +61,12 @@ use lib $FindBin::Bin;
 use webkitdirs;
 use POSIX;
 
-sub closeDumpRenderTree();
+sub openDumpTool();
+sub closeDumpTool();
 sub closeHTTPD();
 sub countAndPrintLeaks($$$);
 sub fileNameWithNumber($$);
 sub numericcmp($$);
-sub openDumpRenderTreeIfNeeded();
 sub openHTTPDIfNeeded();
 sub pathcmp($$);
 sub processIgnoreTests($);
@@ -76,7 +76,7 @@ sub isTextOnlyTest($);
 sub expectedDirectoryForTest($);
 
 # Argument handling
-my $checkLeaks = '';
+my $shouldCheckLeaks = '';
 my $guardMalloc = '';
 my $httpdPort = 8000;
 my $ignoreTests = '';
@@ -88,7 +88,7 @@ my $repaintTests = '';
 my $report10Slowest = 0;
 my $resetResults = 0;
 my $showHelp = 0;
-my $singly = 0;
+my $testsPerDumpTool = 1000;
 my $testHTTP = 1;
 my $testOnlySVGs = '';
 my $testResultsDirectory = "/tmp/layout-test-results";
@@ -139,7 +139,7 @@ my $getOptionsResult = GetOptions(
     'http!' => \$testHTTP,
     'ignore-tests|i=s' => \$ignoreTests,
     'launch-safari!' => \$launchSafari,
-    'leaks|l' => \$checkLeaks,
+    'leaks|l' => \$shouldCheckLeaks,
     'pixel-tests|p' => \$pixelTests,
     'port=i' => \$httpdPort,
     'quiet|q' => \$quiet,
@@ -147,7 +147,8 @@ my $getOptionsResult = GetOptions(
     'reset-results' => \$resetResults,
     'new-test-results!' => \$generateNewResults,
     'results-directory|o=s' => \$testResultsDirectory,
-    'singly|1' => \$singly,
+    'singly|1' => sub { $testsPerDumpTool = 1; },
+    'nthly=i' => \$testsPerDumpTool,
     'slowest' => \$report10Slowest,
     'svg' => \$testOnlySVGs, 
     'threaded|t' => \$threaded,
@@ -166,7 +167,11 @@ $repaintTests = 1 if $repaintSweepHorizontally;
 $pixelTests = 1 if $testOnlySVGs;
 $pixelTests = 1 if $repaintTests;
 
-$verbose = 1 if $singly;
+$verbose = 1 if $testsPerDumpTool == 1;
+
+if ($shouldCheckLeaks && $testsPerDumpTool > 1000) {
+    die "Running more than 1000 tests at a time with MallocStackLogging enabled may cause a crash.\n";
+}
 
 # Force --no-http for Qt/Linux, for now.
 $testHTTP = 0 if isQt();
@@ -180,8 +185,8 @@ my $buildResult = system "WebKitTools/Scripts/build-dumprendertree", $configurat
 exit WEXITSTATUS($buildResult) if $buildResult;
 
 my $dumpToolName = "DumpRenderTree";
-my $tool = "$productDir/$dumpToolName";
-die "can't find executable $dumpToolName (looked in $productDir)\n" if !-x $tool;
+my $dumpTool = "$productDir/$dumpToolName";
+die "can't find executable $dumpToolName (looked in $productDir)\n" unless -x $dumpTool;
 
 my $imageDiffTool = "$productDir/ImageDiff";
 die "can't find executable $imageDiffTool (looked in $productDir)\n" if $pixelTests && !-x $imageDiffTool;
@@ -298,7 +303,6 @@ my %tests;
 my %imagesPresent;
 my %durations;
 my $count = 0;
-my $maxTestsPerLeaksRun = 1000; # more than 3000 and malloc logging will normally run out of memory
 my $leaksOutputFileNumber = 1;
 my $totalLeaks = 0;
 
@@ -315,17 +319,17 @@ $| = 1;
 my $imageDiffToolPID;
 if ($pixelTests) {
     local %ENV;
-    $ENV{MallocStackLogging} = 1 if $checkLeaks;
+    $ENV{MallocStackLogging} = 1 if $shouldCheckLeaks;
     $imageDiffToolPID = open2(\*DIFFIN, \*DIFFOUT, $imageDiffTool, "") or die "unable to open $imageDiffTool\n";
 }
 
 my $dumpToolPID;
-my $toolOpen = 0;
+my $isDumpToolOpen = 0;
 
 my $atLineStart = 1;
 my $lastDirectory = "";
 
-my $httpdOpen = 0;
+my $isHttpdOpen = 0;
 
 print "Testing ", scalar @tests, " test cases.\n";
 my $overallStartTime = time;
@@ -333,7 +337,7 @@ my $overallStartTime = time;
 for my $test (@tests) {
     next if $test eq 'results.html';
 
-    openDumpRenderTreeIfNeeded();
+    openDumpTool();
 
     my $base = $test;
     $base =~ s/\.[a-zA-Z]+$//;
@@ -403,7 +407,7 @@ for my $test (@tests) {
       }
     }
 
-    if ($checkLeaks && $singly) {
+    if ($shouldCheckLeaks && $testsPerDumpTool == 1) {
         print "        $test -> ";
     }
 
@@ -625,39 +629,35 @@ for my $test (@tests) {
         }
     }
 
-    if ($checkLeaks && $toolOpen) {
-        if ($singly) {
-            $totalLeaks += countAndPrintLeaks($dumpToolName, $dumpToolPID, "$testResultsDirectory/$base-leaks.txt");
-        } elsif ($count && (($count % $maxTestsPerLeaksRun) == 0)) {
-            my $leaksFileName = fileNameWithNumber($dumpToolName, $leaksOutputFileNumber);
-            my $leaksCount = countAndPrintLeaks($dumpToolName, $dumpToolPID, "$testResultsDirectory/$leaksFileName-leaks.txt");
-            $leaksOutputFileNumber++ if ($leaksCount);
-            $totalLeaks += $leaksCount;
-            closeDumpRenderTree();
+    $count++;
+    if ($count % $testsPerDumpTool == 0 || $count == @tests) {
+        if ($shouldCheckLeaks) {
+            my $fileName;
+            if ($testsPerDumpTool == 1) {
+                $fileName = "$testResultsDirectory/$base-leaks.txt";
+            } else {
+                $fileName = "$testResultsDirectory/" . fileNameWithNumber($dumpToolName, $leaksOutputFileNumber) . "-leaks.txt";
+            }
+            my $leakCount = countAndPrintLeaks($dumpToolName, $dumpToolPID, $fileName);
+            $totalLeaks += $leakCount;
+            $leaksOutputFileNumber++ if ($leakCount);
         }
+
+        closeDumpTool();
     }
 
-    if ($singly && $toolOpen) {
-        closeDumpRenderTree();
-    }
-
-    $count += 1;
-    $counts{$result} += 1;
+    $counts{$result}++;
     push @{$tests{$result}}, $test;
     $testType{$test} = $isText;
 }
 printf "\n%0.2fs total testing time\n", (time - $overallStartTime) . "";
 
+!$isDumpToolOpen || die "Failed to close $dumpToolName.\n";
+
 closeHTTPD();
 
-if ($checkLeaks && !$singly && $toolOpen) {
-    my $leaksFileName = fileNameWithNumber($dumpToolName, $leaksOutputFileNumber);
-    $totalLeaks += countAndPrintLeaks($dumpToolName, $dumpToolPID, "$testResultsDirectory/$leaksFileName-leaks.txt");
-    $leaksOutputFileNumber++;
-}
-
 # FIXME: Do we really want to check the image-comparison tool for leaks every time?
-if ($checkLeaks && $pixelTests) {
+if ($shouldCheckLeaks && $pixelTests) {
     $totalLeaks += countAndPrintLeaks("ImageDiff", $imageDiffToolPID, "$testResultsDirectory/ImageDiff-leaks.txt");
 }
 
@@ -810,7 +810,7 @@ exit 1;
 
 sub countAndPrintLeaks($$$)
 {
-    my ($toolName, $toolPID, $leaksFilePath) = @_;
+    my ($dumpToolName, $dumpToolPID, $leaksFilePath) = @_;
 
     print "\n" unless $atLineStart;
     $atLineStart = 1;
@@ -845,9 +845,9 @@ sub countAndPrintLeaks($$$)
     my $excludeString = "--exclude-callstack '" . (join "' --exclude-callstack '", @callStacksToExclude) . "' " .
                         "--exclude-type '" . (join "' --exclude-type '", @typesToExclude) . "'";
 
-    print " ? checking for leaks in $toolName\n";
-    my $leaksOutput = `$leaksTool $excludeString $toolPID`;
-    my ($count, $bytes) = $leaksOutput =~ /Process $toolPID: (\d+) leaks? for (\d+) total/;
+    print " ? checking for leaks in $dumpToolName\n";
+    my $leaksOutput = `$leaksTool $excludeString $dumpToolPID`;
+    my ($count, $bytes) = $leaksOutput =~ /Process $dumpToolPID: (\d+) leaks? for (\d+) total/;
     my ($excluded) = $leaksOutput =~ /(\d+) leaks? excluded/;
 
     my $adjustedCount = $count;
@@ -939,9 +939,9 @@ sub slowestcmp($$)
     return pathcmp($testa, $testb);
 }
 
-sub openDumpRenderTreeIfNeeded()
+sub openDumpTool()
 {
-    return if $toolOpen;
+    return if $isDumpToolOpen;
 
     # Save some requires variables for the linux environment...
     my $homeDir = $ENV{'HOME'};
@@ -967,33 +967,33 @@ sub openDumpRenderTreeIfNeeded()
     }
     $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
     $ENV{XML_CATALOG_FILES} = ""; # work around missing /etc/catalog <rdar://problem/4292995>
-    $ENV{MallocStackLogging} = 1 if $checkLeaks;
+    $ENV{MallocStackLogging} = 1 if $shouldCheckLeaks;
     $ENV{DYLD_INSERT_LIBRARIES} = "/usr/lib/libgmalloc.dylib" if $guardMalloc;
     my @args = ();
     if ($useValgrind) {
-      push @args, $tool;
+      push @args, $dumpTool;
     }
     push @args, @toolArgs;
     if ($useValgrind) {
-      $tool = "valgrind";
+      $dumpTool = "valgrind";
     }
-    $dumpToolPID = open2(\*IN, \*OUT, $tool, @args) or die "Failed to start tool: $tool\n";
-    $toolOpen = 1;
+    $dumpToolPID = open2(\*IN, \*OUT, $dumpTool, @args) or die "Failed to start tool: $dumpTool\n";
+    $isDumpToolOpen = 1;
 }
 
-sub closeDumpRenderTree()
+sub closeDumpTool()
 {
-    return if !$toolOpen;
+    return if !$isDumpToolOpen;
 
     close IN;
     close OUT;
     waitpid $dumpToolPID, 0;
-    $toolOpen = 0;
+    $isDumpToolOpen = 0;
 }
 
 sub openHTTPDIfNeeded()
 {
-    return if $httpdOpen;
+    return if $isHttpdOpen;
 
     mkdir "/tmp/WebKit";
     
@@ -1042,19 +1042,19 @@ sub openHTTPDIfNeeded()
     
     die "Timed out waiting for httpd to start" unless $retryCount;
     
-    $httpdOpen = 1;
+    $isHttpdOpen = 1;
 }
 
 sub closeHTTPD()
 {
-    return if !$httpdOpen;
+    return if !$isHttpdOpen;
 
     close HTTPDIN;
     close HTTPDOUT;
 
     kill 15, `cat /tmp/WebKit/httpd.pid` if -f "/tmp/WebKit/httpd.pid";
 
-    $httpdOpen = 0;
+    $isHttpdOpen = 0;
 }
 
 sub fileNameWithNumber($$)

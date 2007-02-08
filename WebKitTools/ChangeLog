@@ -1,3 +1,32 @@
+2007-02-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak, Adam Roben.
+        
+        Added 'nthly' support to run-webkit-tests. It's like 'singly', for an
+        arbitrary number n.
+        
+        Plus some renames:
+            - DumpRenderTree => "dumpTool" (to match abstraction elsewhere)
+            - checkLeaks => "shouldCheckLeaks" (to match style guidelines)
+            - tool => dumpTool (to match abstraction elsewhere)
+            - httpdOpen => isHttpdOpen (to match style guidelines)
+        
+        Plus a few logic fixups:
+            - Don't check isDumpToolOpen when we know we've called openDumpTool().
+            - Use a single code path to decide when to shut down dumpTool and
+              when to check for leaks, since the operations are coincidental. 
+            - Use a single code path for running the leaks tool, since the only 
+              thing that varies between configurations is the output file name.
+            - Increment $count after each test finishes, instead of at the end
+              of the loop, to help with comparing to the length of the array
+              and %-ing by n.
+            - Use a more robust test inside the loop to determine if we need to
+              close dumpTool, instead of copying the closing code outside the loop.
+        
+        Layout tests pass.
+
+        * Scripts/run-webkit-tests:
+
 2007-02-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin, evil twin to Bethany P. Dakin.
