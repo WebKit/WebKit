@@ -287,15 +287,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return [[_frame frameView] window];
 }
 
-- (BOOL)shouldInterruptJavaScript
-{
-    WebView *wv = [self webView];
-    id wd = [wv UIDelegate];
-    if ([wd respondsToSelector:@selector(webViewShouldInterruptJavaScript:)])
-        return [wd webViewShouldInterruptJavaScript:wv];
-    return NO;
-}
-
 - (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result
 {
     WebView *wv = [self webView];

@@ -322,4 +322,11 @@ void WebChromeClient::setStatusbarText(const WebCore::String& status)
     }
 }
 
+bool WebChromeClient::shouldInterruptJavaScript()
+{
+    id wd = [m_webView UIDelegate];
+    if ([wd respondsToSelector:@selector(webViewShouldInterruptJavaScript:)])
+        return [wd webViewShouldInterruptJavaScript:m_webView];
 
+    return NO;
+}

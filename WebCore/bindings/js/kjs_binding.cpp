@@ -29,6 +29,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "Page.h"
 #include "PlatformString.h"
 #include "Range.h"
 #include "RangeException.h"
@@ -293,7 +294,10 @@ Interpreter* ScriptInterpreter::interpreterForGlobalObject(const JSValue* imp)
 
 bool ScriptInterpreter::shouldInterruptScript() const
 {
-    return m_frame->shouldInterruptJavaScript();
+    if (Page *page = m_frame->page())
+        return page->chrome()->shouldInterruptJavaScript();
+    
+    return false;
 }
     
 //////

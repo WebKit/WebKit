@@ -248,5 +248,10 @@ void Chrome::setStatusbarText(Frame* frame, const String& status)
     m_client->setStatusbarText(text);
 }
 
+bool Chrome::shouldInterruptJavaScript()
+{
+    return m_client->shouldInterruptJavaScript();
+}
+
 } // namespace WebCore
 

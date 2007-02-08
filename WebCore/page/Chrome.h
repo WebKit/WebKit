@@ -89,6 +89,7 @@ namespace WebCore {
         bool runJavaScriptConfirm(Frame*, const String&);
         bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result);        
         void setStatusbarText(Frame*, const String&);
+        bool shouldInterruptJavaScript();
     private:
         Page* m_page;
         ChromeClient* m_client;

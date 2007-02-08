@@ -441,15 +441,6 @@ NPObject *FrameMac::windowScriptNPObject()
     return _windowScriptNPObject;
 }
 
-bool FrameMac::shouldInterruptJavaScript()
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [_bridge shouldInterruptJavaScript];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    
-    return false;
-}
-
 NSImage *FrameMac::imageFromRect(NSRect rect) const
 {
     NSView *view = d->m_view->getDocumentView();

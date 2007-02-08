@@ -205,7 +205,6 @@ private:
 // === to be moved into Chrome
 
 public:
-    virtual bool shouldInterruptJavaScript() = 0;
     virtual void focusWindow() = 0;
     virtual void unfocusWindow() = 0;
     virtual void print() = 0;

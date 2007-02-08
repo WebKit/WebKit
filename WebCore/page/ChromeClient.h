@@ -82,7 +82,7 @@ namespace WebCore {
         virtual bool runJavaScriptConfirm(Frame*, const String&) = 0;
         virtual bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result) = 0;
         virtual void setStatusbarText(const String&) = 0;
-
+        virtual bool shouldInterruptJavaScript() = 0;
 };
 
 }

@@ -273,7 +273,6 @@ typedef enum ObjectElementType {
 
 - (BOOL)textViewWasFirstResponderAtMouseDownTime:(NSTextView *)textView;
 
-- (BOOL)shouldInterruptJavaScript;
 - (void)runOpenPanelForFileButtonWithResultListener:(id <WebCoreOpenPanelResultListener>)resultListener;
 
 - (void)formControlIsBecomingFirstResponder:(NSView *)formControl;

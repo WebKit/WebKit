@@ -128,8 +128,6 @@ public:
     virtual void focusWindow();
     virtual void unfocusWindow();
 
-    virtual bool shouldInterruptJavaScript();    
-
     FloatRect customHighlightLineRect(const AtomicString& type, const FloatRect& lineRect);
     void paintCustomHighlight(const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect, bool text, bool line);
 

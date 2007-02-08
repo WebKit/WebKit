@@ -84,6 +84,7 @@ public:
     virtual bool runJavaScriptConfirm(WebCore::Frame*, const WebCore::String&);
     virtual bool runJavaScriptPrompt(WebCore::Frame*, const WebCore::String& message, const WebCore::String& defaultValue, WebCore::String& result);
     virtual void setStatusbarText(const WebCore::String&);
+    virtual bool shouldInterruptJavaScript();
 
 private:
     WebView *m_webView;

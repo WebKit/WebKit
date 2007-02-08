@@ -100,6 +100,7 @@ public:
     virtual bool runJavaScriptConfirm(Frame*, const String&) { return false; }
     virtual bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result) { return false; }
     virtual void setStatusbarText(const String&) { }
+    virtual bool shouldInterruptJavaScript() { return false; }
 };
 
 class SVGEmptyFrameLoaderClient : public FrameLoaderClient {

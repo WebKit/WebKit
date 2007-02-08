@@ -1,3 +1,22 @@
+2007-02-07  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        Move shouldInterruptJavaScript to the Chrome.
+
+        * bindings/js/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::shouldInterruptScript):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::shouldInterruptJavaScript):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/Frame.h:
+        * page/mac/FrameMac.h:
+        * page/mac/FrameMac.mm:
+        * page/mac/WebCoreFrameBridge.h:
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyChromeClient::shouldInterruptJavaScript):
+
 2007-02-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
