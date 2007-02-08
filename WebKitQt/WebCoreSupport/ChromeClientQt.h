@@ -93,6 +93,7 @@ namespace WebCore {
         virtual bool runJavaScriptConfirm(Frame*, const String&);
         virtual bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result);
         virtual void setStatusbarText(const String&);
+        virtual bool shouldInterruptJavaScript();
 
         QWebPage* m_webPage;
     };

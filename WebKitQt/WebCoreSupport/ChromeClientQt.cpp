@@ -257,6 +257,11 @@ void ChromeClientQt::setStatusbarText(const String&)
     notImplemented();
 }
 
+bool ChromeClientQt::shouldInterruptJavaScript()
+{
+    notImplemented();
+}
+
 }
 
 
