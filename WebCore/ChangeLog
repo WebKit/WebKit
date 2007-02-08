@@ -1,5 +1,17 @@
 2007-02-07  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12608
+          Incorrect min. width calculation of a series of floats with clear:both and white-space:nowrap
+
+        Test: fast/block/float/nowrap-clear-min-width.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::calcInlineMinMaxWidth):
+
+2007-02-07  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Dave Hyatt.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=10522

@@ -3505,23 +3505,26 @@ void RenderBlock::calcInlineMinMaxWidth()
                 childMin += child->minWidth();
                 childMax += child->maxWidth();
 
+                bool clearPreviousFloat;
+                if (child->isFloating()) {
+                    clearPreviousFloat = (prevFloat
+                        && (prevFloat->style()->floating() == FLEFT && (child->style()->clear() & CLEFT)
+                            || prevFloat->style()->floating() == FRIGHT && (child->style()->clear() & CRIGHT)));
+                    prevFloat = child;
+                } else
+                    clearPreviousFloat = false;
+                
                 bool growForPrevious = shouldGrowTableCellForImage(this, child, previousLeaf);
-                if (!growForPrevious && (autoWrap || oldAutoWrap)) {
+                if (!growForPrevious && (autoWrap || oldAutoWrap) || clearPreviousFloat) {
                     if (m_minWidth < inlineMin)
                         m_minWidth = inlineMin;
                     inlineMin = 0;
                 }
 
-                // Check our "clear" setting.  If we're supposed to clear the previous float, then
-                // go ahead and terminate maxwidth as well.
-                if (child->isFloating()) {
-                    if (prevFloat &&
-                        ((prevFloat->style()->floating() == FLEFT && (child->style()->clear() & CLEFT)) ||
-                         (prevFloat->style()->floating() == FRIGHT && (child->style()->clear() & CRIGHT)))) {
-                        m_maxWidth = max(inlineMax, m_maxWidth);
-                        inlineMax = 0;
-                    }
-                    prevFloat = child;
+                // If we're supposed to clear the previous float, then terminate maxwidth as well.
+                if (clearPreviousFloat) {
+                    m_maxWidth = max(inlineMax, m_maxWidth);
+                    inlineMax = 0;
                 }
                 
                 // Add in text-indent.  This is added in only once.

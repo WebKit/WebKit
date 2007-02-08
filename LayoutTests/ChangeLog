@@ -1,5 +1,17 @@
 2007-02-07  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Maciej.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12608
+          Incorrect min. width calculation of a series of floats with clear:both and white-space:nowrap
+
+        * fast/block/float/nowrap-clear-min-width-expected.checksum: Added.
+        * fast/block/float/nowrap-clear-min-width-expected.png: Added.
+        * fast/block/float/nowrap-clear-min-width-expected.txt: Added.
+        * fast/block/float/nowrap-clear-min-width.html: Added.
+
+2007-02-07  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Dave Hyatt.
 
         - repaint test for http://bugs.webkit.org/show_bug.cgi?id=10522
