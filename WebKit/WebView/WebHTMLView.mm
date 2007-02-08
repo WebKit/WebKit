@@ -1924,6 +1924,8 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     if (!self)
         return nil;
     
+    [self setFocusRingType:NSFocusRingTypeNone];
+    
     // Make all drawing go through us instead of subviews.
     if (NSAppKitVersionNumber >= 711) {
         [self _setDrawsOwnDescendants:YES];

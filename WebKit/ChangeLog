@@ -1,3 +1,17 @@
+2007-02-07  David Harrison  <harrison@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/4943650> REGRESSION: insertion point blink redraws entire web page, making everything slow
+
+        Problem is that AppKit recently changed NSControl to trigger a full redraw if the control has a focus ring.
+        WebHTMLView is a subclass of NSControl, but the focus ring type was the default value, though we actually
+        draw no focus ring. Fix is to formally set our focus ring type.
+        
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView initWithFrame:]):
+        Send [self setFocusRingType:NSFocusRingTypeNone].
+
 2007-02-07  John Sullivan  <sullivan@apple.com>
 
         Undid changes that I hadn't intended to check in
