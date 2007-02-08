@@ -378,7 +378,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
             }
         } else {
             // Non-image file types
-            NSString *url = [[[NSURL fileURLWithPath:path] _webkit_canonicalize] _web_originalDataAsString];
+            NSString *url = [[[NSURL fileURLWithPath:path] _webkit_canonicalize] _web_userVisibleString];
             [domNodes addObject:[[[self _frame] DOMDocument] createTextNode: url]];
         }
     }
@@ -526,7 +526,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         ASSERT(document);
         if (document) {
             DOMHTMLAnchorElement* anchor = (DOMHTMLAnchorElement*)[document createElement:@"a"];
-            NSString *URLString = [URL _web_originalDataAsString];
+            NSString *URLString = [URL _web_userVisibleString];
             NSString *URLTitleString = [pasteboard stringForType:WebURLNamePboardType];
             DOMText* text = [document createTextNode:URLTitleString];
             [anchor setHref:URLString];
