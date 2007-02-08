@@ -1,3 +1,25 @@
+2007-02-07  Charles Ying  <charles_ying@yahoo.com>
+
+        Reviewed by Adam.
+
+        Code suggestion by aroben
+        
+        Fix http://bugs.webkit.org/show_bug.cgi?id=12688
+
+        REGRESSION (r19469): ASSERT when right clicking on hyperlinks! in TOT webkit
+        
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (fixMenusReceivedFromOldClients):
+
+        - fixMenusReceivedFromOldClients was hitting an ASSERT incorrectly
+        because it could not match [item title] to any of the contentMenuItemTags
+        using pointer comparison ==. Instead, it needs to do a string comparison
+        between [item title] and the various contentMenuItemTags using
+        isEqualToString instead of ==. You would encounter this whenever the
+        context menu was activated, e.g., from a hyperlink right click (or
+        control click).
+
+
 2007-02-07  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

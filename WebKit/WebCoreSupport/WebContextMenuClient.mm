@@ -132,50 +132,50 @@ static NSMutableArray *fixMenusReceivedFromOldClients(NSMutableArray *newMenuIte
             continue;
         
         NSString *title = [item title];
-        if (title == [[WebViewFactory sharedFactory] contextMenuItemTagOpenLink])
+        if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagOpenLink]])
             [item setTag:WebMenuItemTagOpenLink];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagIgnoreGrammar])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagIgnoreGrammar]])
             [item setTag:WebMenuItemTagIgnoreGrammar];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagSpellingMenu])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagSpellingMenu]])
             [item setTag:WebMenuItemTagSpellingMenu];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagShowSpellingPanel:true]
-            || title == [[WebViewFactory sharedFactory] contextMenuItemTagShowSpellingPanel:false])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowSpellingPanel:true]]
+            || [title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowSpellingPanel:false]])
             [item setTag:WebMenuItemTagShowSpellingPanel];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagCheckSpelling])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagCheckSpelling]])
             [item setTag:WebMenuItemTagCheckSpelling];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagCheckSpellingWhileTyping])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagCheckSpellingWhileTyping]])
             [item setTag:WebMenuItemTagCheckSpellingWhileTyping];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagCheckGrammarWithSpelling])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagCheckGrammarWithSpelling]])
             [item setTag:WebMenuItemTagCheckGrammarWithSpelling];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagFontMenu])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagFontMenu]])
             [item setTag:WebMenuItemTagFontMenu];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagShowFonts])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowFonts]])
             [item setTag:WebMenuItemTagShowFonts];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagBold])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagBold]])
             [item setTag:WebMenuItemTagBold];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagItalic])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagItalic]])
             [item setTag:WebMenuItemTagItalic];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagUnderline])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagUnderline]])
             [item setTag:WebMenuItemTagUnderline];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagOutline])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagOutline]])
             [item setTag:WebMenuItemTagOutline];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagStyles])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagStyles]])
             [item setTag:WebMenuItemTagStyles];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagShowColors])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowColors]])
             [item setTag:WebMenuItemTagShowColors];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagSpeechMenu])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagSpeechMenu]])
             [item setTag:WebMenuItemTagSpeechMenu];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagStartSpeaking])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagStartSpeaking]])
             [item setTag:WebMenuItemTagStartSpeaking];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagStopSpeaking])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagStopSpeaking]])
             [item setTag:WebMenuItemTagStopSpeaking];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagWritingDirectionMenu])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagWritingDirectionMenu]])
             [item setTag:WebMenuItemTagWritingDirectionMenu];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagDefaultDirection])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagDefaultDirection]])
             [item setTag:WebMenuItemTagDefaultDirection];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagLeftToRight])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagLeftToRight]])
             [item setTag:WebMenuItemTagLeftToRight];
-        else if (title == [[WebViewFactory sharedFactory] contextMenuItemTagRightToLeft])
+        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagRightToLeft]])
             [item setTag:WebMenuItemTagRightToLeft];
         else {
             // We don't expect WebMenuItemTagOther for any items other than the ones we explicitly handle
