@@ -217,6 +217,8 @@ print "Running tests from $testDirectory\n";
 my @tests = ();
 my %testType = ();
 
+system "ln -s $testDirectory /tmp/LayoutTests";
+
 my %ignoredFiles = ();
 my %ignoredDirectories = ();
 my %ignoredLocalDirectories = map { $_ => 1 } qw(.svn _svn resources);
