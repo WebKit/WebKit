@@ -1,5 +1,9 @@
 2007-02-07  Darin Adler  <darin@apple.com>
 
+        * JavaScriptCore.vcproj/JavaScriptCore.sln: Reenable testkjs.
+
+2007-02-07  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff.
 
         - another build fix; this time for sure
