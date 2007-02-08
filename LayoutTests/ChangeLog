@@ -1,3 +1,26 @@
+2007-02-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adam Roben, Darin Adler.
+        
+        Updated results for tests that started failing after my run-webkit-tests
+        check-in.
+        
+        These failures were not regressions. My check-in just caused the regular
+        bot to behave more like the leaks bot, so it started reporting the results
+        that the leaks bot had been reporting all along.
+
+        There does seem to be an underlying bug in the way XHTML documents report
+        line numbers for JavaScript exceptions. I've file that bug along with a 
+        reduction:
+        
+        http://bugs.webkit.org/show_bug.cgi?id=12700
+        JavaScript errors in XML documents have incorrect line numbers
+        
+        However, that bug is not a regression, so I think we should treat it separately.
+
+        * dom/xhtml/level2/html/frame-expected.txt:
+        * dom/xhtml/level2/html/iframe-expected.txt:
+
 2007-02-08  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Maciej, Darin and Mark.

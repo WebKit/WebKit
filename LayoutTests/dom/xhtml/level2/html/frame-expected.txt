@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 4: Value undefined (result of expression parent.loadComplete) is not object.
+CONSOLE MESSAGE: line 1: Value undefined (result of expression parent.loadComplete) is not object.
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
