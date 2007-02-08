@@ -1,3 +1,49 @@
+2007-02-07  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5399
+          no-repeat on negatively positioned background images are ignored
+
+        Test: fast/backgrounds/repeat/negative-offset-repeat.html
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=5821
+          Changing background of <col> doesn't repaint the column
+
+        Test: fast/repaint/table-col-background.html
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11720
+          REGRESSION: large amounts of CPU consumed viewing this site
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::imageChanged): Added. Finds the border and/or background
+        layer(s) that use the image and invalidates only the rect in which the image
+        actually paints. There are two special cases in this function: 1) for the body
+        element, the background is propagated to the root; 2) inline flows do a full
+        repaint.
+        (WebCore::RenderBox::calculateBackgroundImageGeometry): Added. Factored out,
+        simplified and corrected the calculation of the rectangle into which the background
+        image paints, the tile size and the pattern phase.
+        (WebCore::RenderBox::paintBackgroundExtended):
+        * rendering/RenderBox.h:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::imageChanged): Moved the implementation to RenderBox.
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::getAbsoluteRepaintRect): Overridden to return the
+        table's repaint rect.
+        (WebCore::RenderTableCol::imageChanged): Overridden to do a full repaint, which
+        currently repaints the entire table.
+        * rendering/RenderTableCol.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::imageChanged): Overridden to do a full repaint
+        of the row, since the backgrounds are painted by the cells.
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::imageChanged): Overridden to do a full
+        repaint of the section, since the backgrounds are painted by the cells.
+        * rendering/RenderTableSection.h:
+
 2007-02-07  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

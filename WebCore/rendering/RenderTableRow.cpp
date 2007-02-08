@@ -27,6 +27,7 @@
 #include "config.h"
 #include "RenderTableRow.h"
 
+#include "CachedImage.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include "RenderTableCell.h"
@@ -172,6 +173,15 @@ void RenderTableRow::paint(PaintInfo& paintInfo, int tx, int ty)
                 child->paint(paintInfo, tx, ty);
         }
     }
+}
+
+void RenderTableRow::imageChanged(CachedImage* image)
+{
+    if (!image || !image->canRender() || !parent())
+        return;
+    
+    // FIXME: Examine cells and repaint only the rect the image paints in.
+    repaint();
 }
 
 } // namespace WebCore

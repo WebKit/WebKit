@@ -28,6 +28,7 @@
 #include "config.h"
 #include "RenderTableSection.h"
 
+#include "CachedImage.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include "RenderTableCell.h"
@@ -915,6 +916,15 @@ void RenderTableSection::paint(PaintInfo& paintInfo, int tx, int ty)
             }
         }
     }
+}
+
+void RenderTableSection::imageChanged(CachedImage* image)
+{
+    if (!image || !image->canRender() || !parent())
+        return;
+    
+    // FIXME: Examine cells and repaint only the rect the image paints in.
+    repaint();
 }
 
 void RenderTableSection::recalcCells()

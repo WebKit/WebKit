@@ -27,6 +27,7 @@
 #include "config.h"
 #include "RenderTableCol.h"
 
+#include "CachedImage.h"
 #include "HTMLNames.h"
 #include "HTMLTableColElement.h"
 #include "TextStream.h"
@@ -61,6 +62,29 @@ bool RenderTableCol::canHaveChildren() const
     // Cols cannot have children. This is actually necessary to fix a bug
     // with libraries.uc.edu, which makes a <p> be a table-column.
     return style()->display() == TABLE_COLUMN_GROUP;
+}
+
+IntRect RenderTableCol::getAbsoluteRepaintRect()
+{
+    // For now, just repaint the whole table.
+    // FIXME: Find a better way to do this, e.g., need to repaint all the cells that we
+    // might have propagated a background color or borders into.
+    RenderObject* table = parent();
+    if (table && !table->isTable())
+        table = table->parent();
+    if (table && table->isTable())
+        return table->getAbsoluteRepaintRect();
+
+    return IntRect();
+}
+
+void RenderTableCol::imageChanged(CachedImage* image)
+{
+    if (!image || !image->canRender() || !parent())
+        return;
+
+    // FIXME: Repaint only the rect the image paints in.
+    repaint();
 }
 
 #ifndef NDEBUG

@@ -56,6 +56,7 @@ public:
     virtual bool requiresLayer() { return isTransparent() || hasOverflowClip(); }
 
     virtual void paint(PaintInfo&, int tx, int ty);
+    virtual void imageChanged(CachedImage*);
 };
 
 } // namespace WebCore

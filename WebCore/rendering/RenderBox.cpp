@@ -425,6 +425,140 @@ static void cacluateBackgroundSize(const BackgroundLayer* bgLayer, int& scaledWi
     }
 }
 
+void RenderBox::imageChanged(CachedImage* image)
+{
+    if (!image || !image->canRender() || !parent())
+        return;
+
+    if (isInlineFlow() || style()->borderImage().image() == image) {
+        repaint();
+        return;
+    }
+
+    bool didFullRepaint = false;
+    IntRect absoluteRect;
+    RenderBox* backgroundRenderer;
+
+    if (view() && (isBody() || isRoot())) {
+        // Our background propagates to the root.
+        backgroundRenderer = view();
+
+        int rw;
+        int rh;
+
+        if (FrameView* frameView = static_cast<RenderView*>(backgroundRenderer)->frameView()) {
+            rw = frameView->contentsWidth();
+            rh = frameView->contentsHeight();
+        } else {
+            rw = backgroundRenderer->width();
+            rh = backgroundRenderer->height();
+        }
+        absoluteRect = IntRect(-backgroundRenderer->marginLeft(),
+            -backgroundRenderer->marginTop(),
+            max(backgroundRenderer->width() + backgroundRenderer->marginLeft() + backgroundRenderer->marginRight() + backgroundRenderer->borderLeft() + backgroundRenderer->borderRight(), rw),
+            max(backgroundRenderer->height() + backgroundRenderer->marginTop() + backgroundRenderer->marginBottom() + backgroundRenderer->borderTop() + backgroundRenderer->borderBottom(), rh));
+    } else {
+        backgroundRenderer = this;
+        absoluteRect = borderBox();
+    }
+
+    backgroundRenderer->computeAbsoluteRepaintRect(absoluteRect);
+
+    for (const BackgroundLayer* bgLayer = style()->backgroundLayers(); bgLayer && !didFullRepaint; bgLayer = bgLayer->next()) {
+        if (image == bgLayer->backgroundImage()) {
+            IntRect repaintRect;
+            IntPoint phase;
+            IntSize tileSize;
+            backgroundRenderer->calculateBackgroundImageGeometry(bgLayer, absoluteRect.x(), absoluteRect.y(), absoluteRect.width(), absoluteRect.height(), repaintRect, phase, tileSize);
+            view()->repaintViewRectangle(repaintRect);
+            if (repaintRect == absoluteRect)
+                didFullRepaint = true;
+        }
+    }
+}
+
+void RenderBox::calculateBackgroundImageGeometry(const BackgroundLayer* bgLayer, int tx, int ty, int w, int h, IntRect& destRect, IntPoint& phase, IntSize& tileSize)
+{
+    int pw;
+    int ph;
+    int left = 0;
+    int right = 0;
+    int top = 0;
+    int bottom = 0;
+    int cx;
+    int cy;
+
+    // CSS2 chapter 14.2.1
+
+    if (bgLayer->backgroundAttachment()) {
+        // Scroll
+        if (bgLayer->backgroundOrigin() != BGBORDER) {
+            left = borderLeft();
+            right = borderRight();
+            top = borderTop();
+            bottom = borderBottom();
+            if (bgLayer->backgroundOrigin() == BGCONTENT) {
+                left += paddingLeft();
+                right += paddingRight();
+                top += paddingTop();
+                bottom += paddingBottom();
+            }
+        }
+        cx = tx;
+        cy = ty;
+        pw = w - left - right;
+        ph = h - top - bottom;
+    } else {
+        // Fixed
+        IntRect vr = viewRect();
+        cx = vr.x();
+        cy = vr.y();
+        pw = vr.width();
+        ph = vr.height();
+    }
+
+    int sx = 0;
+    int sy = 0;
+    int cw;
+    int ch;
+    int scaledImageWidth = pw;
+    int scaledImageHeight = ph;
+
+    cacluateBackgroundSize(bgLayer, scaledImageWidth, scaledImageHeight);
+
+    EBackgroundRepeat backgroundRepeat = bgLayer->backgroundRepeat();
+    
+    int xPosition = bgLayer->backgroundXPosition().calcMinValue(pw - scaledImageWidth);
+    if (backgroundRepeat == REPEAT || backgroundRepeat == REPEAT_X) {
+        cw = pw + left + right;
+        sx = scaledImageWidth ? scaledImageWidth - (xPosition + left) % scaledImageWidth : 0;
+    } else {
+        cx += max(xPosition + left, 0);
+        sx = -min(xPosition + left, 0);
+        cw = scaledImageWidth + min(xPosition + left, 0);
+    }
+
+    int yPosition = bgLayer->backgroundYPosition().calcMinValue(ph - scaledImageHeight);
+    if (backgroundRepeat == REPEAT || backgroundRepeat == REPEAT_Y) {
+        ch = ph + top + bottom;
+        sy = scaledImageHeight ? scaledImageHeight - (yPosition + top) % scaledImageHeight : 0;
+    } else {
+        cy += max(yPosition + top, 0);
+        sy = -min(yPosition + top, 0);
+        ch = scaledImageHeight + min(yPosition + top, 0);
+    }
+
+    if (!bgLayer->backgroundAttachment()) {
+        sx += max(tx - cx, 0);
+        sy += max(ty - cy, 0);
+    }
+
+    destRect = IntRect(cx, cy, cw, ch);
+    destRect.intersect(IntRect(tx, ty, w, h));
+    phase = IntPoint(sx, sy);
+    tileSize = IntSize(scaledImageWidth, scaledImageHeight);
+}
+
 void RenderBox::paintBackgroundExtended(GraphicsContext* context, const Color& c, const BackgroundLayer* bgLayer, int clipY, int clipH,
                                         int tx, int ty, int w, int h, bool includeLeftEdge, bool includeRightEdge)
 {
@@ -516,144 +650,13 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* context, const Color& c
 
     // no progressive loading of the background image
     if (shouldPaintBackgroundImage) {
-        int sx = 0;
-        int sy = 0;
-        int cw;
-        int ch;
-        int cx;
-        int cy;
-        int scaledImageWidth;
-        int scaledImageHeight;
+        IntRect destRect;
+        IntPoint phase;
+        IntSize tileSize;
 
-        // CSS2 chapter 14.2.1
-
-        if (bgLayer->backgroundAttachment()) {
-            // scroll
-            int horizontalPaddingPlusBorder = 0;
-            int verticalPaddingPlusBorder = 0;
-            int left = 0;
-            int top = 0; // Init to 0 for background-origin of 'border'
-            if (bgLayer->backgroundOrigin() != BGBORDER) {
-                horizontalPaddingPlusBorder += bLeft + bRight;
-                verticalPaddingPlusBorder += borderTop() + borderBottom();
-                left += bLeft;
-                top += borderTop();
-                if (bgLayer->backgroundOrigin() == BGCONTENT) {
-                    horizontalPaddingPlusBorder += pLeft + pRight;
-                    verticalPaddingPlusBorder += paddingTop() + paddingBottom();
-                    left += pLeft;
-                    top += paddingTop();
-                }
-            }
-
-            int pw = w - horizontalPaddingPlusBorder;
-            int ph = h - verticalPaddingPlusBorder;
-            scaledImageWidth = pw;
-            scaledImageHeight = ph;
-            cacluateBackgroundSize(bgLayer, scaledImageWidth, scaledImageHeight);
-
-            EBackgroundRepeat bgr = bgLayer->backgroundRepeat();
-            if ((bgr == NO_REPEAT || bgr == REPEAT_Y) && w > scaledImageWidth) {
-                cw = scaledImageWidth;
-                int xPosition = bgLayer->backgroundXPosition().calcMinValue(pw - scaledImageWidth);
-                if (xPosition >= 0)
-                    cx = tx + xPosition;
-                else {
-                    cx = tx;
-                    if (scaledImageWidth > 0) {
-                        sx = -xPosition;
-                        cw += xPosition;
-                    }
-                }
-                cx += left;
-            } else {
-                // repeat over x or background is wider than box
-                cw = w;
-                cx = tx;
-                if (scaledImageWidth > 0) {
-                    int xPosition = bgLayer->backgroundXPosition().calcMinValue(pw - scaledImageWidth);
-                    if ((xPosition > 0) && (bgr == NO_REPEAT)) {
-                        cx += xPosition;
-                        cw -= xPosition;
-                    } else {
-                        sx = scaledImageWidth - (xPosition % scaledImageWidth);
-                        sx -= left % scaledImageWidth;
-                    }
-                }
-            }
-
-            if ((bgr == NO_REPEAT || bgr == REPEAT_X) && h > scaledImageHeight) {
-                ch = scaledImageHeight;
-                int yPosition = bgLayer->backgroundYPosition().calcMinValue(ph - scaledImageHeight);
-                if (yPosition >= 0)
-                    cy = ty + yPosition;
-                else {
-                    cy = ty;
-                    if (scaledImageHeight > 0) {
-                        sy = -yPosition;
-                        ch += yPosition;
-                    }
-                }
-
-                cy += top;
-            } else {
-                // repeat over y or background is taller than box
-                ch = h;
-                cy = ty;
-                if (scaledImageHeight > 0) {
-                    int yPosition = bgLayer->backgroundYPosition().calcMinValue(ph - scaledImageHeight);
-                    if ((yPosition > 0) && (bgr == NO_REPEAT)) {
-                        cy += yPosition;
-                        ch -= yPosition;
-                    } else {
-                        sy = scaledImageHeight - (yPosition % scaledImageHeight);
-                        sy -= top % scaledImageHeight;
-                    }
-                }
-            }
-        } else {
-            // fixed
-            IntRect vr = viewRect();
-            int pw = vr.width();
-            int ph = vr.height();
-            scaledImageWidth = pw;
-            scaledImageHeight = ph;
-            cacluateBackgroundSize(bgLayer, scaledImageWidth, scaledImageHeight);
-            EBackgroundRepeat bgr = bgLayer->backgroundRepeat();
-
-            if ((bgr == NO_REPEAT || bgr == REPEAT_Y) && pw > scaledImageWidth) {
-                cw = scaledImageWidth;
-                cx = vr.x() + bgLayer->backgroundXPosition().calcMinValue(pw - scaledImageWidth);
-            } else {
-                cw = pw;
-                cx = vr.x();
-                if (scaledImageWidth > 0)
-                    sx = scaledImageWidth - bgLayer->backgroundXPosition().calcMinValue(pw - scaledImageWidth) % scaledImageWidth;
-            }
-
-            if ((bgr == NO_REPEAT || bgr == REPEAT_X) && ph > scaledImageHeight) {
-                ch = scaledImageHeight;
-                cy = vr.y() + bgLayer->backgroundYPosition().calcMinValue(ph - scaledImageHeight);
-            } else {
-                ch = ph;
-                cy = vr.y();
-                if (scaledImageHeight > 0)
-                    sy = scaledImageHeight - bgLayer->backgroundYPosition().calcMinValue(ph - scaledImageHeight) % scaledImageHeight;
-            }
-
-            IntRect b = intersection(IntRect(cx, cy, cw, ch), IntRect(tx, ty, w, h));
-            sx += b.x() - cx;
-            sy += b.y() - cy;
-            cx = b.x();
-            cy = b.y();
-            cw = b.width();
-            ch = b.height();
-        }
-
-        if (cw > 0 && ch > 0) {
-            context->drawTiledImage(bg->image(), IntRect(cx, cy, cw, ch), IntPoint(sx, sy), IntSize(scaledImageWidth, scaledImageHeight),
-                bgLayer->backgroundComposite());
-        }
+        calculateBackgroundImageGeometry(bgLayer, tx, ty, w, h, destRect, phase, tileSize);
+        if (!destRect.isEmpty())
+            context->drawTiledImage(bg->image(), destRect, phase, tileSize, bgLayer->backgroundComposite());
     }
 
     if (bgLayer->backgroundClip() != BGBORDER)

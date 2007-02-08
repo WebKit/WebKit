@@ -1,3 +1,49 @@
+2007-02-07  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - pixel test and updated results for http://bugs.webkit.org/show_bug.cgi?id=5399
+          no-repeat on negatively positioned background images are ignored
+
+        - repaint test for http://bugs.webkit.org/show_bug.cgi?id=5821
+          Changing background of <col> doesn't repaint the column
+        
+        * fast/backgrounds/repeat/negative-offset-repeat-expected.checksum: Added.
+        * fast/backgrounds/repeat/negative-offset-repeat-expected.png: Added.
+        * fast/backgrounds/repeat/negative-offset-repeat-expected.txt: Added.
+        * fast/backgrounds/repeat/negative-offset-repeat.html: Added. Based on a test by Mark Rowe.
+        * fast/backgrounds/repeat/resources/gradient.gif: Added.
+        * fast/repaint/table-col-background-expected.checksum: Added.
+        * fast/repaint/table-col-background-expected.png: Added.
+        * fast/repaint/table-col-background-expected.txt: Added.
+        * fast/repaint/table-col-background.html: Added.
+        * tables/mozilla/marvin/backgr_position-table-expected.checksum:
+        * tables/mozilla/marvin/backgr_position-table-expected.png:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.png:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.png:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.png:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-expected.png:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.png:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.png:
+        * tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.png:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.png:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.png:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-column-group-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-column-group-expected.png:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.png:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.png:
+
 2007-02-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
