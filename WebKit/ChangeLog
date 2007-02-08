@@ -1,5 +1,16 @@
 2007-02-07  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Ollie and Geoff
+
+        - fixed <rdar://problem/4982345> KURL::createCFURL leak inside -[WebFrameBridge startDraggingImage...] 
+        reported by buildbot
+
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+        don't retain the imageURL we pass to the drag controller -- it's just automagically
+        converted to a KURL anyway
+
+2007-02-07  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Darin
 
         - fixed <rdar://problem/4974420> REGRESSION: Dragging a saved image into the browser window 

@@ -378,7 +378,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
             }
         } else {
             // Non-image file types
-            NSString *url = [[[NSURL fileURLWithPath:path] _webkit_canonicalize] _web_userVisibleString];
+            NSString *url = [[[NSURL fileURLWithPath:path] _webkit_canonicalize] _web_originalDataAsString];
             [domNodes addObject:[[[self _frame] DOMDocument] createTextNode: url]];
         }
     }
@@ -526,7 +526,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         ASSERT(document);
         if (document) {
             DOMHTMLAnchorElement* anchor = (DOMHTMLAnchorElement*)[document createElement:@"a"];
-            NSString *URLString = [URL _web_userVisibleString];
+            NSString *URLString = [URL _web_originalDataAsString];
             NSString *URLTitleString = [pasteboard stringForType:WebURLNamePboardType];
             DOMText* text = [document createTextNode:URLTitleString];
             [anchor setHref:URLString];
@@ -1389,7 +1389,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
             // Select the image when it is dragged. This allows the image to be moved via MoveSelectionCommandImpl and this matches NSTextView's behavior.
             ASSERT(node != nil);
             [webView setSelectedDOMRange:[[node ownerDocument] _createRangeWithNode:node] affinity:NSSelectionAffinityDownstream];
-            dragController->setDraggingImageURL([imageURL retain]);
+            dragController->setDraggingImageURL(imageURL);
             
             WebArchive *archive;
             
