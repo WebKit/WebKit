@@ -631,7 +631,7 @@ for my $test (@tests) {
         }
     }
 
-    if (($count + 1) % $testsPerDumpTool == 0 || $count == @#tests) {
+    if (($count + 1) % $testsPerDumpTool == 0 || $count == $#tests) {
         if ($shouldCheckLeaks) {
             my $fileName;
             if ($testsPerDumpTool == 1) {
