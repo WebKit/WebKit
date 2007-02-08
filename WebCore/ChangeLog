@@ -2,6 +2,22 @@
 
         Reviewed by Tim Hatcher
 
+        Tweaked the thread violation behavior to be disabled by default, and to provide
+        an easy breakpoint to set.  
+        The possibilities for the "WebCoreThreadCheck" user defaults key are -
+          - The value "None" disables thread checking
+          - The value "Log" causes an NSLog on a violation
+          - The value "Exception" causes exceptions to be raised on a violation
+
+        * platform/Logging.h:
+        * platform/mac/LoggingMac.mm:
+        (WebCore::_WebCoreThreadViolationCheck):
+        (WebCoreReportThreadViolation):  In the global namespace, making breakpoints cake!
+
+2007-02-08  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher
+
         <rdar://problem/4983515> Need mechanism to protect against WebKit calls from secondary threads
         This initial landing is a conservative move until we can be certain of performance impact.
         By writing to the user defaults key @"WebCoreThreadCheck" for the WebKit app you're running -

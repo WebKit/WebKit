@@ -55,6 +55,8 @@ namespace WebCore {
     void _WebCoreThreadViolationCheck(const char* function);
 } // namespace WebCore
 
+extern "C" void WebCoreReportThreadViolation(const char* funciton, bool threadViolationIsException);
+
 #define WebCoreThreadViolationCheck() do \
 WebCore::_WebCoreThreadViolationCheck(WTF_PRETTY_FUNCTION); \
 while (0)
