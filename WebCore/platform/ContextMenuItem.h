@@ -40,7 +40,8 @@ class NSMenuItem;
 #endif
 #elif PLATFORM(WIN)
 typedef struct tagMENUITEMINFOW* LPMENUITEMINFO;
-#elif PLATFORM(QT)
+#elif PLATFORM(GDK)
+typedef struct _GtkMenuItem GtkMenuItem;
 #endif
 
 namespace WebCore {
@@ -53,6 +54,8 @@ namespace WebCore {
     typedef LPMENUITEMINFO PlatformMenuItemDescription;
 #elif PLATFORM(QT)
     typedef void* PlatformMenuItemDescription;
+#elif PLATFORM(GDK)
+    typedef GtkMenuItem* PlatformMenuItemDescription;
 #endif
 
     // This enum needs to be in sync with WebMenuItemTag, which is defined in WebUIDelegate.h

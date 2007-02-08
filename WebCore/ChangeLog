@@ -1,3 +1,18 @@
+2007-02-07  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Maciej.
+
+        Linux/gdk build fixes.
+
+        * platform/ContextMenuItem.h:
+        * platform/PlatformMenuDescription.h:
+        * platform/gdk/PopupMenuGdk.cpp: Added. Renamed from RenderPopupMenuGdk.cpp for
+        consistency with other platforms.
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+        * platform/gdk/RenderPopupMenuGdk.cpp: Removed.
+        * platform/gdk/RenderPopupMenuGdk.h: Removed.
+
 2007-02-07  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.

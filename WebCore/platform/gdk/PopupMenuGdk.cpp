@@ -26,16 +26,18 @@
 
 #include <stdio.h>
 
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); } while(0)
+#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
 
 namespace WebCore {
 
-PopupMenu::PopupMenu(RenderMenuList* menuList)
+PopupMenu::PopupMenu(PopupMenuClient* menuList)
 {
+    notImplemented();
 }
 
 PopupMenu::~PopupMenu()
 {
+    notImplemented();
 }
 
 void PopupMenu::show(const IntRect&, FrameView*, int)
