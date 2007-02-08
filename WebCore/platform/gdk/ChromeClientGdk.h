@@ -28,22 +28,24 @@
 
 namespace WebCore {
 
-    class ChromeClientGdk : public ChromeClient, public Shared<ChromeClientGdk> {
+    class ChromeClientGdk : public ChromeClient {
     public:
         virtual ~ChromeClientGdk() { }
-            
-        virtual void setWindowRect(const FloatRect& r);
+
+        virtual void chromeDestroyed();
+
+        virtual void setWindowRect(const FloatRect&);
         virtual FloatRect windowRect();
 
         virtual FloatRect pageRect();
 
         virtual float scaleFactor();
 
-        virtual void ref() { Shared<ChromeClientGdk>::ref(); }
-        virtual void deref() { Shared<ChromeClientGdk>::deref(); }
-
         virtual void focus();
         virtual void unfocus();
+
+        virtual bool canTakeFocus(FocusDirection);
+        virtual void takeFocus(FocusDirection);
 
         virtual Page* createWindow(const FrameLoadRequest&);
         virtual Page* createModalDialog(const FrameLoadRequest&);
@@ -54,20 +56,33 @@ namespace WebCore {
 
         virtual void setToolbarsVisible(bool);
         virtual bool toolbarsVisible();
-        
+
         virtual void setStatusbarVisible(bool);
         virtual bool statusbarVisible();
-        
+
         virtual void setScrollbarsVisible(bool);
         virtual bool scrollbarsVisible();
-        
+
         virtual void setMenubarVisible(bool);
         virtual bool menubarVisible();
 
         virtual void setResizable(bool);
 
-    };
+        virtual void addMessageToConsole(const String& message, unsigned int lineNumber,
+                                         const String& sourceID);
 
+        virtual bool canRunBeforeUnloadConfirmPanel();
+        virtual bool runBeforeUnloadConfirmPanel(const String& message, Frame* frame);
+
+        virtual void closeWindowSoon();
+
+        virtual void runJavaScriptAlert(Frame*, const String&);
+        virtual bool runJavaScriptConfirm(Frame*, const String&);
+        virtual bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result);
+        virtual void setStatusbarText(const String&);
+        virtual bool shouldInterruptJavaScript();
+
+    };
 }
 
 #endif // ChromeClientGdk_h

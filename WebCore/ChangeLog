@@ -2,6 +2,44 @@
 
         Reviewed by Adam Roben.
 
+        Linux/gdk build fixes.
+
+        * platform/GlyphPageTreeNode.h: Fix header guard name.
+        * platform/gdk/ChromeClientGdk.h:
+        * platform/gdk/CursorGdk.cpp:
+        (WebCore::verticalTextCursor):
+        (WebCore::cellCursor):
+        (WebCore::contextMenuCursor):
+        (WebCore::noDropCursor):
+        (WebCore::copyCursor):
+        (WebCore::progressCursor):
+        (WebCore::aliasCursor):
+        * platform/gdk/MouseEventGdk.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/gdk/PageGdk.cpp: Removed. No longer used.
+        * platform/gdk/RenderThemeGdk.cpp:
+        (WebCore::RenderThemeGdk::getThemeData):
+        (WebCore::RenderThemeGdk::setCheckboxSize):
+        (WebCore::RenderThemeGdk::paintCheckbox):
+        (WebCore::RenderThemeGdk::setRadioSize):
+        (WebCore::RenderThemeGdk::paintRadio):
+        (WebCore::RenderThemeGdk::paintButton):
+        (WebCore::RenderThemeGdk::adjustTextFieldStyle):
+        (WebCore::RenderThemeGdk::paintTextField):
+        (WebCore::RenderThemeGdk::paintTextArea):
+        (WebCore::RenderThemeGdk::systemFont):
+        * platform/gdk/RenderThemeGdk.h:
+        * platform/gdk/ScreenGdk.cpp:
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+
+2007-02-08  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Adam Roben.
+
         Linux/gdk build fixes for cairo.
 
         * platform/graphics/GraphicsContext.cpp:

@@ -27,6 +27,7 @@
 #include "config.h"
 #include "PlatformMouseEvent.h"
 
+#include "SystemTime.h"
 #include <assert.h>
 #include <gdk/gdk.h>
 
@@ -38,23 +39,30 @@ const PlatformMouseEvent::CurrentEventTag PlatformMouseEvent::currentEvent = {};
 
 PlatformMouseEvent::PlatformMouseEvent(GdkEvent* event)
 {
+    m_timestamp = currentTime();
+    m_position = IntPoint((int)event->motion.x, (int)event->motion.y);
+    m_globalPosition = IntPoint((int)event->motion.x_root, (int)event->motion.y_root);
+    m_shiftKey = event->button.state & GDK_SHIFT_MASK;
+    m_ctrlKey = event->button.state & GDK_CONTROL_MASK;
+    m_altKey = event->button.state & GDK_MOD1_MASK;
+    m_metaKey = event->button.state & GDK_MOD2_MASK;
+
     switch (event->type) {
         case GDK_MOTION_NOTIFY:
-            m_position = IntPoint((int)event->motion.x, (int)event->motion.y);
-            m_globalPosition = IntPoint((int)event->motion.x_root, (int)event->motion.y_root);
-            m_button = (MouseButton)(-1);
+            m_eventType = MouseEventMoved;
+            m_button = NoButton;
             m_clickCount = 0;
-            m_shiftKey =  event->motion.state & GDK_SHIFT_MASK != 0;
-            m_ctrlKey = event->motion.state & GDK_CONTROL_MASK != 0;
-            m_altKey =  event->motion.state & GDK_MOD1_MASK != 0;
-            m_metaKey = event->motion.state & GDK_MOD2_MASK != 0;
             break;
 
         case GDK_BUTTON_PRESS:
         case GDK_2BUTTON_PRESS:
         case GDK_3BUTTON_PRESS:
         case GDK_BUTTON_RELEASE:
-            if (event->type == GDK_BUTTON_PRESS)
+            m_eventType = MouseEventPressed;
+            if (event->type == GDK_BUTTON_RELEASE) {
+                m_eventType = MouseEventReleased;
+                m_clickCount = 0;
+            } else if (event->type == GDK_BUTTON_PRESS)
                 m_clickCount = 1;
             else if (event->type == GDK_2BUTTON_PRESS)
                 m_clickCount = 2;
@@ -67,13 +75,6 @@ PlatformMouseEvent::PlatformMouseEvent(GdkEvent* event)
                 m_button = MiddleButton;
             else if (event->button.button == 3)
                 m_button = RightButton;
-
-            m_position = IntPoint((int)event->button.x, (int)event->button.y);
-            m_globalPosition = IntPoint((int)event->button.x_root, (int)event->button.y_root);
-            m_shiftKey = event->button.state & GDK_SHIFT_MASK != 0;
-            m_ctrlKey = event->button.state & GDK_CONTROL_MASK != 0;
-            m_altKey = event->button.state & GDK_MOD1_MASK != 0;
-            m_metaKey = event->button.state & GDK_MOD2_MASK != 0;
             break;
 
         default:

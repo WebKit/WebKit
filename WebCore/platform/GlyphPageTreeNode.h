@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GlyphMap_h
-#define GlyphMap_h
+#ifndef GlyphPageTreeNode_h
+#define GlyphPageTreeNode_h
 
 #include <wtf/unicode/Unicode.h>
 #include <wtf/Noncopyable.h>

@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <wtf/Assertions.h>
 
-#define notImplemented() do { fprintf(stderr, "%s FIXME: UNIMPLEMENTED %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
+#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
 
 namespace WebCore {
 
@@ -195,6 +195,50 @@ const Cursor& columnResizeCursor()
 const Cursor& rowResizeCursor()
 {
     static Cursor c = gdk_cursor_new(GDK_DOUBLE_ARROW);
+    return c;
+}
+
+const Cursor& verticalTextCursor()
+{
+    // FIXME: optimize the way CursorQt is optmized: only one copy of a given
+    // cursor type
+    static Cursor c = gdk_cursor_new(GDK_LEFT_PTR);
+    return c;
+}
+
+const Cursor& cellCursor()
+{
+    static Cursor c = gdk_cursor_new(GDK_LEFT_PTR);
+    return c;
+}
+
+const Cursor& contextMenuCursor()
+{
+    static Cursor c = gdk_cursor_new(GDK_LEFT_PTR);
+    return c;
+}
+
+const Cursor& noDropCursor()
+{
+    static Cursor c = gdk_cursor_new(GDK_LEFT_PTR);
+    return c;
+}
+
+const Cursor& copyCursor()
+{
+    static Cursor c = gdk_cursor_new(GDK_LEFT_PTR);
+    return c;
+}
+
+const Cursor& progressCursor()
+{
+    static Cursor c = gdk_cursor_new(GDK_LEFT_PTR);
+    return c;
+}
+
+const Cursor& aliasCursor()
+{
+    static Cursor c = gdk_cursor_new(GDK_LEFT_PTR);
     return c;
 }
 

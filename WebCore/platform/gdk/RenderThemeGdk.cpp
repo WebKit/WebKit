@@ -24,11 +24,11 @@
 
 #include "config.h"
 #include "RenderThemeGdk.h"
-#include "RenderPopupMenuGdk.h"
-#include "Document.h"
 
 #include "GraphicsContext.h"
-#include <cairo.h>
+#include "RenderObject.h"
+
+#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
 
 #define THEME_COLOR 204
 #define THEME_FONT  210
@@ -139,9 +139,56 @@ ThemeData RenderThemeGdk::getThemeData(RenderObject* o)
             result.m_part = TFP_TEXTFIELD;
             result.m_state = determineState(o);
             break;
+        default:
+            // FIXME: much more?
+            break;
     }
 
     return result;
+}
+
+void RenderThemeGdk::setCheckboxSize(RenderStyle*) const 
+{ 
+    notImplemented(); 
+}
+
+bool RenderThemeGdk::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+{
+    // FIXME: is it the right thing to do?
+    return paintButton(o, i, r); 
+}
+
+void RenderThemeGdk::setRadioSize(RenderStyle*) const 
+{ 
+    notImplemented(); 
+}
+
+bool RenderThemeGdk::paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+{ 
+    // FIXME: is it the right thing to do?
+    return paintButton(o, i, r); 
+}
+
+bool RenderThemeGdk::paintButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) 
+{ 
+    // FIXME: should use theme-aware drawing
+    return true;
+}
+
+void RenderThemeGdk::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element* e) const 
+{ 
+    notImplemented(); 
+}
+
+bool RenderThemeGdk::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+{
+    // FIXME: should use theme-aware drawing
+    return true;
+}
+
+bool RenderThemeGdk::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+{
+    return paintTextField(o, i, r);
 }
 
 void RenderThemeGdk::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const
@@ -151,7 +198,6 @@ void RenderThemeGdk::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* 
 
 void RenderThemeGdk::systemFont(int propId, FontDescription&) const
 {
-
 }
 
 }

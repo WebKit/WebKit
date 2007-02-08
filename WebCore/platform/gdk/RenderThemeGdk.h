@@ -43,12 +43,14 @@ public:
     // A method asking if the theme's controls actually care about redrawing when hovered.
     virtual bool supportsHover(const RenderStyle* style) const { return true; }
 
-    virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
-    { return paintButton(o, i, r); }
+    // System fonts.
+    virtual void systemFont(int propId, FontDescription&) const;
+
+protected:
+    virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
     virtual void setCheckboxSize(RenderStyle* style) const;
 
-    virtual bool paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
-    { return paintButton(o, i, r); }
+    virtual bool paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
     virtual void setRadioSize(RenderStyle* style) const;
 
     virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
@@ -57,8 +59,7 @@ public:
     virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
-    // System fonts.
-    virtual void systemFont(int propId, FontDescription&) const;
+    virtual bool paintTextArea(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
 private:
     void addIntrinsicMargins(RenderStyle*) const;
