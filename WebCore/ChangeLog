@@ -2,6 +2,18 @@
 
         Reviewed by Maciej.
 
+        Add updateGeometry() to gdk's ScrollView. Needed to fix resizing of the window
+        in gdk.
+
+        * platform/ScrollView.h:
+        * platform/gdk/ScrollViewGdk.cpp:
+        (WebCore::ScrollView::updateGeometry):
+        (WebCore::ScrollView::setDrawable):
+
+2007-02-07  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Maciej.
+
         Linux/gdk build fixes.
 
         * platform/ContextMenuItem.h:

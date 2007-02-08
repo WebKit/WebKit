@@ -129,11 +129,13 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(GDK)
+        ScrollView();
+        ~ScrollView();
+
         void updateView(const IntRect&, bool now = false);
         virtual void setDrawable(GdkDrawable* drawable);
         virtual void setFrameGeometry(const IntRect&);
-        ScrollView();
-        ~ScrollView();
+        void updateGeometry();
     private:
         void updateScrollbars();
         IntSize maximumScroll() const;
