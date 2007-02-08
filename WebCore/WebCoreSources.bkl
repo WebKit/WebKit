@@ -68,6 +68,7 @@
         DerivedSources/WebCore/JSHTMLPreElement.cpp
         DerivedSources/WebCore/JSHTMLQuoteElement.cpp
         DerivedSources/WebCore/JSHTMLScriptElement.cpp
+        DerivedSources/WebCore/JSHTMLSelectElement.cpp
         DerivedSources/WebCore/JSHTMLStyleElement.cpp
         DerivedSources/WebCore/JSHTMLTextAreaElement.cpp
         DerivedSources/WebCore/JSHTMLTitleElement.cpp
@@ -98,15 +99,29 @@
         DerivedSources/WebCore/XPathGrammar.cpp
     </set>
 
+    <set append="1" var="WEBCORE_SOURCES_HISTORY">
+        history/BackForwardList.cpp
+        history/HistoryItem.cpp
+        history/HistoryItemTimer.cpp
+        history/PageCache.cpp
+    </set>
+
     <set append="1" var="WEBCORE_SOURCES_PAGE">
         page/Chrome.cpp
+        page/ContextMenuController.cpp
         page/DOMWindow.cpp
+        page/DragController.cpp
+        page/EventHandler.cpp
+        page/FocusController.cpp
         page/Frame.cpp
         page/FrameTree.cpp
         page/FrameView.cpp
         page/MouseEventWithHitTestResults.cpp
         page/Page.cpp
         page/PageState.cpp
+        page/Settings.cpp
+        page/gdk/EventHandlerGdk.cpp
+        page/gdk/DragControllerGdk.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_LOADER">
@@ -123,21 +138,27 @@
         loader/FrameLoader.cpp
         loader/ImageDocument.cpp
         loader/MainResourceLoader.cpp
+        loader/NavigationAction.cpp
         loader/NetscapePlugInStreamLoader.cpp
         loader/PluginDocument.cpp
+        loader/ProgressTracker.cpp
         loader/Request.cpp
         loader/ResourceLoader.cpp
         loader/SubresourceLoader.cpp
         loader/TextDocument.cpp
         loader/TextResourceDecoder.cpp
         loader/loader.cpp
+        loader/gdk/DocumentLoaderGdk.cpp
+        loader/gdk/FrameLoaderClientGdk.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_PLATFORM">
         platform/Arena.cpp
         platform/ArrayImpl.cpp
         platform/AtomicString.cpp
+        platform/Base64.cpp
         platform/CString.cpp
+        platform/ContextMenu.cpp
         platform/DeprecatedCString.cpp
         platform/DeprecatedPtrListImpl.cpp
         platform/DeprecatedString.cpp
@@ -157,8 +178,10 @@
         platform/RegularExpression.cpp
         platform/ScrollBar.cpp
         platform/SegmentedString.cpp
+        platform/SharedBuffer.cpp
         platform/String.cpp
         platform/StringImpl.cpp
+        platform/TextBreakIteratorICU.cpp
         platform/TextCodec.cpp
         platform/TextCodecICU.cpp
         platform/TextCodecLatin1.cpp
@@ -170,6 +193,7 @@
         platform/Timer.cpp
         platform/Widget.cpp
         platform/graphics/AffineTransform.cpp
+        platform/graphics/BitmapImage.cpp
         platform/graphics/Color.cpp
         platform/graphics/FloatPoint.cpp
         platform/graphics/FloatRect.cpp
@@ -179,9 +203,16 @@
         platform/graphics/Image.cpp
         platform/graphics/IntRect.cpp
         platform/graphics/Path.cpp
+        platform/graphics/PathTraversalState.cpp
         platform/graphics/Pen.cpp
+        platform/network/AuthenticationChallenge.cpp
+        platform/network/Credential.cpp
+        platform/network/HTTPParsers.cpp
         platform/network/FormData.cpp
+        platform/network/ProtectionSpace.cpp
         platform/network/ResourceHandle.cpp
+        platform/network/ResourceRequest.cpp
+        platform/network/ResourceResponse.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_WIN">
@@ -293,6 +324,7 @@
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_PLATFORM_CAIRO">
+        platform/graphics/cairo/AffineTransformCairo.cpp
         platform/graphics/cairo/GraphicsContextCairo.cpp
         platform/graphics/cairo/ImageCairo.cpp
         platform/graphics/cairo/ImageSourceCairo.cpp
@@ -403,7 +435,6 @@
         rendering/AutoTableLayout.cpp
         rendering/CounterNode.cpp
         rendering/CounterResetNode.cpp
-        rendering/DeprecatedSlider.cpp
         rendering/EllipsisBox.cpp
         rendering/FixedTableLayout.cpp
         rendering/HitTestResult.cpp
@@ -438,6 +469,7 @@
         rendering/RenderPart.cpp
         rendering/RenderPartObject.cpp
         rendering/RenderReplaced.cpp
+        rendering/RenderSlider.cpp
         rendering/RenderStyle.cpp
         rendering/RenderTable.cpp
         rendering/RenderTableCell.cpp
@@ -458,7 +490,7 @@
 
     <set append="1" var="WEBCORE_SOURCES_XML">
         xml/DOMParser.cpp
-        xml/CustomXPathNSResolver.cpp
+        xml/NativeXPathNSResolver.cpp
         xml/XMLSerializer.cpp
         xml/XPathEvaluator.cpp
         xml/XPathExpression.cpp
@@ -489,6 +521,7 @@
         dom/CSSMappedAttributeDeclaration.cpp
         dom/CharacterData.cpp
         dom/ChildNodeList.cpp
+        dom/Clipboard.cpp
         dom/ClipboardEvent.cpp
         dom/Comment.cpp
         dom/ContainerNode.cpp
@@ -502,6 +535,7 @@
         dom/EntityReference.cpp
         dom/Event.cpp
         dom/EventNames.cpp
+        dom/EventTarget.cpp
         dom/EventTargetNode.cpp
         dom/KeyboardEvent.cpp
         dom/MappedAttribute.cpp
@@ -523,6 +557,7 @@
         dom/QualifiedName.cpp
         dom/Range.cpp
         dom/RegisteredEventListener.cpp
+        dom/StyleElement.cpp
         dom/StyledElement.cpp
         dom/Text.cpp
         dom/Traversal.cpp
@@ -574,7 +609,6 @@
         editing/MergeIdenticalElementsCommand.cpp
         editing/ModifySelectionListLevel.cpp
         editing/MoveSelectionCommand.cpp
-        editing/RebalanceWhitespaceCommand.cpp
         editing/RemoveCSSPropertyCommand.cpp
         editing/RemoveNodeAttributeCommand.cpp
         editing/RemoveNodeCommand.cpp
@@ -687,6 +721,7 @@
         bindings/js/JSHTMLInputElementBase.cpp
         bindings/js/JSHTMLOptionElementConstructor.cpp
         bindings/js/JSHTMLOptionsCollectionCustom.cpp
+        bindings/js/JSHTMLSelectElementCustom.cpp
         bindings/js/JSNodeIteratorCustom.cpp
         bindings/js/JSTreeWalkerCustom.cpp
         bindings/js/JSXMLHttpRequest.cpp

@@ -1,3 +1,11 @@
+2007-02-08  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Adam Roben..
+
+        Linux/gdk build fixes.
+
+        * GdkLauncher/gdklauncher.bkl:
+
 2007-02-08  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by

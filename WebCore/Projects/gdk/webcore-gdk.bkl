@@ -47,7 +47,6 @@
         <define>BUILDING_CAIRO__</define>
         <include>platform/gdk</include>
         <include>platform/graphics/cairo</include>
-        <include>$(SRCDIR)/kcanvas/device/cairo</include>
         <define>XPATH_SUPPORT</define>
         <!-- gdk build broken with without NDEBUG defined -->
         <define>NDEBUG</define>
@@ -55,18 +54,20 @@
         <sources>
             platform/gdk/CookieJarGdk.cpp
             platform/gdk/CursorGdk.cpp
+            platform/gdk/DragDataGdk.cpp
+            platform/gdk/EditorClientGdk.cpp
             platform/gdk/FontCacheGdk.cpp
             platform/gdk/FontDataGdk.cpp
             platform/gdk/FontGdk.cpp
             platform/gdk/FontPlatformDataGdk.cpp
             platform/gdk/FrameGdk.cpp
-            platform/gdk/GlyphMapGdk.cpp
+            platform/gdk/GlyphPageTreeNodeGdk.cpp
             platform/gdk/KeyEventGdk.cpp
             platform/gdk/MouseEventGdk.cpp
-            platform/gdk/PageGdk.cpp
             platform/gdk/RenderPopupMenuGdk.cpp
             platform/gdk/RenderThemeGdk.cpp
             platform/gdk/ScrollViewGdk.cpp
+            platform/gdk/ScreenGdk.cpp
             platform/gdk/SharedTimerLinux.cpp
             platform/gdk/SystemTimeLinux.cpp
             platform/gdk/TemporaryLinkStubs.cpp

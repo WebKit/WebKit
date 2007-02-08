@@ -38,9 +38,11 @@
         <include>$(TOPDIR)/WebCore/css</include>
         <include>$(TOPDIR)/WebCore/dom</include>
         <include>$(TOPDIR)/WebCore/editing</include>
+        <include>$(TOPDIR)/WebCore/history</include>
         <include>$(TOPDIR)/WebCore/html</include>
         <include>$(TOPDIR)/WebCore/include</include>
         <include>$(TOPDIR)/WebCore/loader</include>
+        <include>$(TOPDIR)/WebCore/loader/gdk</include>
         <include>$(TOPDIR)/WebCore/page</include>
         <include>$(TOPDIR)/WebCore/platform/gdk</include>
         <include>$(TOPDIR)/WebCore/platform/graphics/cairo</include>
