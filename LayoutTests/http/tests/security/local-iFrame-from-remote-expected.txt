@@ -1,0 +1,4 @@
+This test is to see if a remote file can include a local page in an iFrame.
+
+Test Passed.
+

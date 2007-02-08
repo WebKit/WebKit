@@ -1,3 +1,27 @@
+2007-02-08  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Maciej, Darin and Mark.
+
+        rdar://problem/4922454
+        - No longer allow remote sites to access local resources.
+
+        * fast/loader/local-JavaScript-from-local-expected.txt: Added.
+        * fast/loader/local-JavaScript-from-local.html: Added.
+        * fast/loader/local-iFrame-source-from-local-expected.txt: Added.
+        * fast/loader/local-iFrame-source-from-local.html: Added.
+        * fast/loader/local-image-from-local-expected.txt: Added.
+        * fast/loader/local-image-from-local.html: Added.
+        * http/tests/security/local-JavaScript-from-remote-expected.txt: Added.
+        * http/tests/security/local-JavaScript-from-remote.html: Added.
+        * http/tests/security/local-iFrame-from-remote-expected.txt: Added.
+        * http/tests/security/local-iFrame-from-remote.html: Added.
+        * http/tests/security/local-image-from-remote-expected.txt: Added.
+        * http/tests/security/local-image-from-remote.html: Added.
+        * http/tests/security/resources/compass.jpg: Added.
+        * http/tests/security/resources/localPage.html: Added.
+        * http/tests/security/resources/localPage.html.orig: Added.
+        * http/tests/security/resources/localScript.js: Added.
+
 2007-02-07  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.

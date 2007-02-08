@@ -1261,7 +1261,6 @@ void XMLTokenizer::insertErrorMessageBlock()
 void XMLTokenizer::notifyFinished(CachedResource* finishedObj)
 {
     ASSERT(m_pendingScript == finishedObj);
-    ASSERT(m_pendingScript->accessCount() > 0);
         
     String cachedScriptUrl = m_pendingScript->url();
     String scriptSource = m_pendingScript->script();

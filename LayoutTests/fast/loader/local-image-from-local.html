@@ -1,0 +1,30 @@
+<html>
+<head>
+    <script>        
+        function imgTest() {
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+            
+            var result = document.getElementById("result");
+            
+            var myImg = document.getElementById("myImg");
+            if (myImg.width > 0 && myImg.height > 0) {
+                result.innerHTML = "Test Passed";
+            } else {
+                result.innerHTML = "Test Failed: Image width or height <= 0";
+            }
+        }
+    </script>
+</head>
+<body onload="imgTest()">
+    <div id="div0">
+        This test is to see if a local file can include a local image.
+    </div>
+    </br>
+    <div id="result">
+        Test has not run.
+    </div>
+    </br>
+    <img id="myImg" src="file:///tmp/LayoutTests/http/tests/security/resources/compass.jpg" />
+</body>
+</html>

@@ -121,16 +121,25 @@ CachedResource* DocLoader::requestResource(CachedResource::Type type, const Stri
 {
     KURL fullURL = m_doc->completeURL(url.deprecatedString());
 
-    if (m_frame && m_frame->loader()->isReloading())
+    FrameLoader* fl = 0;
+    if (m_frame)
+        fl = m_frame->loader();
+    if (fl && fl->isReloading())
         setCachePolicy(CachePolicyReload);
 
     checkForReload(fullURL);
 
-    CachedResource* resource = cache()->requestResource(this, type, fullURL, m_expireDate, charset);
-    if (resource) {
-        m_docResources.set(resource->url(), resource);
-        checkCacheObjectStatus(resource);
+    bool hideReferrer;
+    CachedResource* resource = 0;
+    //If you are not allowed to load you may not get from the cache either.
+    if (fl && fl->canLoad(fullURL, fl->outgoingReferrer(), hideReferrer)) {
+        resource = cache()->requestResource(this, type, fullURL, m_expireDate, charset);
+        if (resource) {
+            m_docResources.set(resource->url(), resource);
+            checkCacheObjectStatus(resource);
+        }
     }
+
     return resource;
 }
 
@@ -172,7 +181,7 @@ void DocLoader::removeCachedResource(CachedResource* resource) const
 void DocLoader::setLoadInProgress(bool load)
 {
     m_loadInProgress = load;
-    if (!load)
+    if (!load && m_frame)
         m_frame->loader()->loadDone();
 }
 

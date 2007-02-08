@@ -196,7 +196,6 @@ void HTMLTokenizer::reset()
 
     while (!pendingScripts.isEmpty()) {
       CachedScript *cs = pendingScripts.dequeue();
-      ASSERT(cs->accessCount() > 0);
       cs->deref(this);
     }
     
@@ -1634,7 +1633,6 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
         kdDebug( 6036 ) << "Finished loading an external script" << endl;
 #endif
         CachedScript* cs = pendingScripts.dequeue();
-        ASSERT(cs->accessCount() > 0);
 
         String scriptSource = cs->script();
 #ifdef TOKEN_DEBUG

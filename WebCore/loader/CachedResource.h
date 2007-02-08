@@ -75,6 +75,8 @@ public:
     virtual void data(Vector<char>&, bool allDataReceived) = 0;
     virtual void error() = 0;
 
+    bool errorOccurred() const { return m_errorOccurred; }
+
     const String &url() const { return m_url; }
     Type type() const { return m_type; }
 
@@ -142,6 +144,7 @@ protected:
     Type m_type;
     Status m_status;
 
+    bool m_errorOccurred;
 private:
     unsigned m_size;
     unsigned m_accessCount;

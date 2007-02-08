@@ -1,3 +1,52 @@
+2007-02-08  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Maciej, Darin, and Mark.
+
+        rdar://problem/4922454
+        - Prevents remote sites from executing local scripts.
+
+        * bindings/objc/DOM.mm: - renamed a function that is now in the base class
+        (-[DOMElement image]):
+        (-[DOMElement _imageTIFFRepresentation]):
+        * dom/XMLTokenizer.cpp: - removed needless asserts
+        (WebCore::XMLTokenizer::notifyFinished):
+        * html/HTMLImageLoader.cpp: - renamed a function that is now in the base class
+        (WebCore::HTMLImageLoader::dispatchLoadEvent):
+        * html/HTMLTokenizer.cpp: - removed needless asserts
+        (WebCore::HTMLTokenizer::reset):
+        (WebCore::HTMLTokenizer::notifyFinished):
+        * ksvg2/misc/SVGImageLoader.cpp: - renamed a function that is now in the base class
+        (WebCore::SVGImageLoader::dispatchLoadEvent):
+        * loader/Cache.cpp: - return early if an error occured
+        (WebCore::Cache::requestResource):
+        (WebCore::Cache::remove):
+        * loader/CachedImage.h: - renamed a function that is now in the base class
+        (WebCore::CachedImage::canRender):
+        * loader/CachedResource.h: - renamed a function that is now in the base class
+        (WebCore::CachedResource::errorOccurred):
+        * loader/CachedScript.h: - renamed a function that is now in the base class 
+        (WebCore::CachedScript::schedule):
+        * loader/DocLoader.cpp: - The heart of the fix, prevents resources from being created or retrieved from the cache if a remote site is requesting the local resource.
+        (WebCore::DocLoader::requestResource):
+        (WebCore::DocLoader::setLoadInProgress):
+        * page/EventHandler.cpp: - renamed a function that is now in the base class
+        (WebCore::selectCursor):
+        * rendering/HitTestResult.cpp: - renamed a function that is now in the base class
+        (WebCore::HitTestResult::image):
+        * rendering/RenderImage.cpp: - renamed a function that is now in the base class
+        (WebCore::RenderImage::setCachedImage):
+        (WebCore::RenderImage::imageChanged):
+        (WebCore::RenderImage::paint):
+        (WebCore::RenderImage::layout):
+        (WebCore::RenderImage::calcAspectRatioWidth):
+        (WebCore::RenderImage::calcAspectRatioHeight):
+        * rendering/RenderImage.h: - renamed a function that is now in the base class
+        (WebCore::RenderImage::errorOccurred):
+        * rendering/RenderListItem.cpp: - renamed a function that is now in the base class
+        (WebCore::RenderListItem::setStyle):
+        * rendering/RenderListMarker.cpp: - renamed a function that is now in the base class
+        (WebCore::RenderListMarker::isImage):
+
 2007-02-07  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Maciej.
