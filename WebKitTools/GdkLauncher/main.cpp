@@ -1,18 +1,14 @@
-#include <assert.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <gdk/gdk.h>
-#include <gtk/gtk.h>
 #include "config.h"
-#include "FrameGdk.h"
-#include "Page.h"
+#include "ChromeClientGdk.h"
 #include "Document.h"
-#include "DocLoader.h"
-#include "DOMImplementation.h"
-
-#include "Cache.h"
-#include "EventNames.h"
+#include "EditorClientGdk.h"
+#include "FrameGdk.h"
+#include "FrameLoader.h"
+#include "FrameLoaderClientGdk.h"
+#include "FrameView.h"
+#include "KURL.h"
+#include "Page.h"
+#include "PlatformString.h"
 
 #if SVG_SUPPORT
 #include "SVGNames.h"
@@ -20,29 +16,12 @@
 #include "SVGDocumentExtensions.h"
 #endif
 
-#include "RenderObject.h"
-#include "GraphicsContext.h"
+#include <gdk/gdk.h>
+#include <gtk/gtk.h>
 
 using namespace WebCore;
 
-class LauncherFrameGdk : public FrameGdk
-{
-public:
-    LauncherFrameGdk(Page* page, Element* element, PassRefPtr<EditorClient> editorClient) : FrameGdk(page, element, editorClient), m_exitAfterLoading(false) {}
-    LauncherFrameGdk(GdkDrawable* drawable) : FrameGdk(drawable), m_exitAfterLoading(false) {}
-    virtual void handledOnloadEvents();
-    void setExitAfterLoading(bool exitAfterLoading) { m_exitAfterLoading = exitAfterLoading; }
-private:
-    bool m_exitAfterLoading;
-};
-
-void LauncherFrameGdk::handledOnloadEvents()
-{
-    if (m_exitAfterLoading)
-        gtk_main_quit();
-}
-
-static  LauncherFrameGdk *frame;
+static  FrameGdk *frame;
 static  GdkWindow *win;
 
 static void handle_event(GdkEvent *event)
@@ -54,44 +33,74 @@ static void handle_event(GdkEvent *event)
     frame->handleGdkEvent(event);
 }
 
+int strEq(const char *str1, const char *str2)
+{
+    if (0 == strcmp(str1, str2))
+        return 1;
+    return 0;
+}
+
 int main(int argc, char *argv[]) 
 {
-    GdkWindowAttr attr;
-    char *url;
     gdk_init(&argc,&argv);
-    gdk_event_handler_set ((GdkEventFunc)handle_event, NULL, NULL);
+    gdk_event_handler_set((GdkEventFunc)handle_event, NULL, NULL);
 
+    GdkWindowAttr attr;
     attr.width = 800;
     attr.height = 600;
     attr.window_type = GDK_WINDOW_TOPLEVEL;
     attr.wclass = GDK_INPUT_OUTPUT;
-    //see how where we handle motion here need to do the hint stuff
     attr.event_mask = ((GDK_ALL_EVENTS_MASK^GDK_POINTER_MOTION_HINT_MASK)); 
-    win = gdk_window_new(NULL,&attr,0);
-    frame = new LauncherFrameGdk(win);
+    win = gdk_window_new(NULL, &attr, 0);
     gdk_window_show(win);
-    url = "http://www.google.com";
+
+    // parse command-line arguments
+    char *url = "http://www.google.com";
     bool exitAfterLoading = false;
+    bool dumpRenderTree = false;
     for (int argPos = 1; argPos < argc; ++argPos) {
-        if (0 == strcmp(argv[argPos], "-exit-after-loading"))
+        char *currArg = argv[argPos];
+        if (strEq(currArg, "-exit-after-loading"))
             exitAfterLoading = true;
+        else if (strEq(currArg, "-exitafterloading"))
+            exitAfterLoading = true;
+        else if (strEq(currArg, "-exitafterload"))
+            exitAfterLoading = true;
+        else if (strEq(currArg, "-exit-after-load"))
+            exitAfterLoading = true;
+        else if (strEq(currArg, "-drt"))
+            dumpRenderTree = true;
+        else if (strEq(currArg, "-dump-render-tree"))
+            dumpRenderTree = true;
+        else if (strEq(currArg, "-dumprendertree"))
+            dumpRenderTree = true;
         else
-            url = argv[argPos];
+            url = currArg;
     }
+
+    EditorClientGdk *editorClient = new EditorClientGdk();
+    Page* page = new Page(new ChromeClientGdk(), 0, editorClient, 0);
+    editorClient->setPage(page);
+    FrameLoaderClientGdk* frameLoaderClient = new FrameLoaderClientGdk();
+    frame = new FrameGdk(page, 0, frameLoaderClient);
     frame->setExitAfterLoading(exitAfterLoading);
-    if (url) {
-        printf("OPENING URL == %s \n", url);
-        frame->client()->openURL(url);
-    } else {
+    frame->setDumpRenderTreeAfterLoading(dumpRenderTree);
+    FrameView* frameView = new FrameView(frame);
+    frame->setView(frameView);
+    frameView->ScrollView::setDrawable(win);
+
 #if 0
-        char *pg = " <html><head><title>Google</title> <body bgcolor=#ffffff text=#000000> <p><font size=-2/>2006 Google Hello bigworld from mike</p></body></html> ";
-        frame->createEmptyDocument();
-        frame->document()->open();
-        frame->write(pg,strlen(pg));
-        frame->document()->close();
+    String pg(" <html><head><title>Google</title> <body bgcolor=#ffffff text=#000000> <p><font size=-2/>2006 Google Hello bigworld from mike</p></body></html> ");
+    frame->loader()->begin();
+    frame->document()->open();
+    frame->document()->write(pg);
+    frame->document()->close();
+#else
+    printf("OPENING URL == %s \n", url);
+    KURL kurl(url);
+    frame->loader()->load(kurl, 0);
 #endif
-    }
-    
+
     gtk_main();
     delete frame;
     gdk_window_destroy(win);
