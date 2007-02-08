@@ -1,3 +1,11 @@
+2007-02-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        * Scripts/check-for-global-initializers: For speed, only check files that
+        have been modified since the last time we linked. For tidiness, capture
+        stderr from nm, and prevent "nm: no name list" messages from going out.
+
 2007-02-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak, Adam Roben.

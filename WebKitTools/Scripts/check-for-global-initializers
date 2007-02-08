@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -42,6 +42,8 @@ my $variant = $ENV{'CURRENT_VARIANT'};
 $arch = $ENV{'NATIVE_ARCH'} if !$arch; # for Xcode 2.1, which does not have CURRENT_ARCH
 $variant = "normal" if !$variant; # for Xcode 2.1, which does not have CURRENT_VARIANT
 
+my $executableAge = -M "$ENV{'TARGET_BUILD_DIR'}/$ENV{'EXECUTABLE_PATH'}";
+
 my $list = $ENV{"LINK_FILE_LIST_${variant}_${arch}"};
 
 if (!open LIST, $list) {
@@ -56,16 +58,18 @@ close LIST;
 my $sawError = 0;
 
 for my $file (sort @files) {
-    if (!open NM, "-|", "nm", $file) {
+    next if defined $executableAge && -M $file > $executableAge;
+    if (!open NM, "(nm '$file' | sed 's/^/STDOUT:/') 2>&1 |") {
         print "Could not open $file\n";
         $sawError = 1;
         next;
     }
     my $sawGlobal = 0;
     while (<NM>) {
-        if (/__GLOBAL__I/) {
-            $sawGlobal = 1;
-            last;
+        if (/^STDOUT:/) {
+            $sawGlobal = 1 if /__GLOBAL__I/;
+        } else {
+            print STDERR if $_ ne "nm: no name list\n";
         }
     }
     close NM;
