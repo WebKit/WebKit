@@ -30,12 +30,26 @@
 
 #include "FloatRect.h"
 #include "Font.h"
+#include "FontData.h"
 #include "IntRect.h"
 #include <cairo.h>
 #include <math.h>
+#include <stdio.h>
 #include <wtf/MathExtras.h>
-#if WIN32
+#if PLATFORM(WIN)
 #include <cairo-win32.h>
+#endif
+
+#if COMPILER(GCC)
+#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
+#endif
+
+#if COMPILER(MSVC)
+#define notImplemented() do { \
+    char buf[256] = {0}; \
+    _snprintf(buf, sizeof(buf), "FIXME: UNIMPLEMENTED: %s:%d\n", __FILE__, __LINE__); \
+    OutputDebugStringA(buf); \
+} while (0)
 #endif
 
 #ifndef M_PI
@@ -78,7 +92,7 @@ GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
     cairo_destroy(context);
 }
 
-#if WIN32
+#if PLATFORM(WIN)
 GraphicsContext::GraphicsContext(HDC dc)
     : m_common(createGraphicsContextPrivate())
     , m_data(new GraphicsContextPlatformPrivate)
@@ -88,14 +102,12 @@ GraphicsContext::GraphicsContext(HDC dc)
 }
 #endif
 
-#if PLATFORM(GDK) || WIN32
 GraphicsContext::GraphicsContext(PlatformGraphicsContext* context)
     : m_common(createGraphicsContextPrivate())
     , m_data(new GraphicsContextPlatformPrivate)
 {
     m_data->context = cairo_reference(context);
 }
-#endif
 
 GraphicsContext::~GraphicsContext()
 {
@@ -297,10 +309,11 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
     int x = rect.x();
     int y = rect.y();
     float w = (float)rect.width();
+#if 0 // FIXME: unused so far
     float h = (float)rect.height();
     float scaleFactor = h / w;
     float reverseScaleFactor = w / h;
-    
+#endif
     cairo_t* context = m_data->context;
     if (strokeStyle() != NoStroke) {        
         float r = w / 2;
@@ -377,6 +390,7 @@ void GraphicsContext::drawFocusRing(const Color& color)
 {
     if (paintingDisabled())
         return;
+
     int radius = (focusRingWidth() - 1) / 2;
     int offset = radius + focusRingOffset();
     
@@ -399,10 +413,14 @@ void GraphicsContext::drawFocusRing(const Color& color)
 
 void GraphicsContext::setFocusRingClip(const IntRect&)
 {
+    // hopefully a no-op. Comment in CG version says that it exists
+    // to work around bugs in Mac focus ring clipping
 }
 
 void GraphicsContext::clearFocusRingClip()
 {
+    // hopefully a no-op. Comment in CG version says that it exists
+    // to work around bugs in Mac focus ring clipping
 }
 
 void GraphicsContext::drawLineForText(const IntPoint& point, int yOffset, int width, bool printing)
@@ -417,7 +435,7 @@ void GraphicsContext::drawLineForText(const IntPoint& point, int yOffset, int wi
 
 void GraphicsContext::drawLineForMisspellingOrBadGrammar(const IntPoint&, int width, bool grammar)
 {
-    // FIXME: Implement.
+    notImplemented();
 }
 
 FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect)
@@ -454,11 +472,202 @@ IntPoint GraphicsContext::origin()
     cairo_matrix_t matrix;
     cairo_t* context = m_data->context;
     cairo_get_matrix(context, &matrix);
-    return IntPoint(matrix.x0, matrix.y0);
+    return IntPoint((int)matrix.x0, (int)matrix.y0);
+}
+
+void GraphicsContext::setPlatformFillColor(const Color& col)
+{
+    // FIXME: this is probably a no-op but I'm not sure
+    notImplemented();
+}
+
+void GraphicsContext::setPlatformStrokeColor(const Color& col)
+{
+    // FIXME: this is probably a no-op but I'm not sure
+    notImplemented();
+}
+
+void GraphicsContext::setPlatformStrokeThickness(float strokeThickness)
+{
+    cairo_set_line_width(m_data->context, strokeThickness);
+}
+
+void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle& strokeStyle)
+{
+    static double dashPattern[] = {5.0, 5.0};
+    static double dotPattern[] = {1.0, 1.0};
+
+    if (paintingDisabled())
+        return;
+
+    switch (strokeStyle) {
+    case NoStroke:
+        // FIXME: is it the right way to emulate NoStroke?
+        cairo_set_line_width(m_data->context, 0);
+        break;
+    case SolidStroke:
+        cairo_set_dash(m_data->context, 0, 0, 0);
+        break;
+    case DottedStroke:
+        cairo_set_dash(m_data->context, dotPattern, 2, 0);
+        break;
+    case DashedStroke:
+        cairo_set_dash(m_data->context, dashPattern, 2, 0);
+        break;
+    default:
+        notImplemented();
+        break;
+    }
+}
+
+void GraphicsContext::setPlatformFont(const Font& font)
+{
+    if (paintingDisabled())
+        return;
+
+#if PLATFORM(GDK)
+    // FIXME: is it the right thing to do? Also, doesn't work on Win because
+    // there FontData doesn't have ::setFont()
+    const FontData *fontData = font.primaryFont();
+    fontData->setFont(m_data->context);
+#endif
 }
 
 void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
 {
+    notImplemented();
+}
+
+void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
+        const IntSize& bottomLeft, const IntSize& bottomRight) 
+{
+    notImplemented(); 
+}
+
+void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness) 
+{ 
+    notImplemented(); 
+}
+
+void GraphicsContext::setShadow(IntSize const&, int, Color const&)
+{
+    notImplemented();
+}
+
+void GraphicsContext::clearShadow()
+{
+    notImplemented();
+}
+
+void GraphicsContext::beginTransparencyLayer(float)
+{
+    notImplemented();
+}
+
+void GraphicsContext::endTransparencyLayer()
+{
+    notImplemented();
+}
+
+void GraphicsContext::clearRect(const FloatRect&)
+{
+    notImplemented();
+}
+
+void GraphicsContext::strokeRect(const FloatRect&, float)
+{
+    notImplemented();
+}
+
+void GraphicsContext::setLineCap(LineCap)
+{
+    notImplemented();
+}
+
+void GraphicsContext::setLineJoin(LineJoin)
+{
+    notImplemented();
+}
+
+void GraphicsContext::setMiterLimit(float)
+{
+    notImplemented();
+}
+
+void GraphicsContext::setAlpha(float)
+{
+    notImplemented();
+}
+
+static inline cairo_operator_t toCairoOperator(CompositeOperator op)
+{
+    switch (op) {
+        case CompositeClear:
+            return CAIRO_OPERATOR_CLEAR;
+        case CompositeCopy:
+            return CAIRO_OPERATOR_SOURCE;
+        case CompositeSourceOver:
+            return CAIRO_OPERATOR_OVER;
+        case CompositeSourceIn:
+            return CAIRO_OPERATOR_IN;
+        case CompositeSourceOut:
+            return CAIRO_OPERATOR_OUT;
+        case CompositeSourceAtop:
+            return CAIRO_OPERATOR_ATOP;
+        case CompositeDestinationOver:
+            return CAIRO_OPERATOR_DEST_OVER;
+        case CompositeDestinationIn:
+            return CAIRO_OPERATOR_DEST_IN;
+        case CompositeDestinationOut:
+            return CAIRO_OPERATOR_DEST_OUT;
+        case CompositeDestinationAtop:
+            return CAIRO_OPERATOR_DEST_ATOP;
+        case CompositeXOR:
+            return CAIRO_OPERATOR_XOR;
+        case CompositePlusDarker:
+            return CAIRO_OPERATOR_OVER;
+        case CompositeHighlight:
+            return CAIRO_OPERATOR_OVER;
+        case CompositePlusLighter:
+            return CAIRO_OPERATOR_OVER;
+    }
+
+    return CAIRO_OPERATOR_OVER;
+}
+
+void GraphicsContext::setCompositeOperation(CompositeOperator op)
+{
+    cairo_set_operator(m_data->context, toCairoOperator(op));
+}
+
+void GraphicsContext::clip(const Path&)
+{
+    notImplemented();
+}
+
+void GraphicsContext::rotate(float)
+{
+    notImplemented();
+}
+
+void GraphicsContext::scale(const FloatSize&)
+{
+    notImplemented();
+}
+
+void GraphicsContext::clipOut(const IntRect&)
+{
+    notImplemented();
+}
+
+void GraphicsContext::clipOutEllipseInRect(const IntRect&)
+{
+    notImplemented();
+}
+
+void GraphicsContext::fillRoundedRect(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color&)
+{
+    notImplemented();
 }
 
 } // namespace WebCore
