@@ -28,37 +28,35 @@
 #include "config.h"
 #include "FrameGdk.h"
 
-#include "ChromeClientGdk.h"
-#include "DOMImplementation.h"
-#include "DOMWindow.h"
+#include "CString.h"
 #include "Document.h"
-#include "EditorClient.h"
-#include "Element.h"
-#include "FrameLoadRequest.h"
+#include "DocumentLoader.h"
+#include "EventHandler.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClientGdk.h"
 #include "FramePrivate.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "HTMLDocument.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "KeyboardCodes.h"
-#include "MouseEventWithHitTestResults.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
+#include "PlatformString.h"
 #include "PlatformWheelEvent.h"
-#include "Plugin.h"
-#include "RenderLayer.h"
 #include "RenderObject.h"
-#include "RenderWidget.h"
+#include "RenderTreeAsText.h"
 #include "ResourceHandle.h"
-#include "ResourceHandleInternal.h"
-#include "SSLKeyGenerator.h"
+#include "ResourceResponse.h"
 #include "SelectionController.h"
 #include "Settings.h"
 #include "TypingCommand.h"
+
 #include <gdk/gdk.h>
+#include <gtk/gtk.h>
+
+#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
 
 // This function loads resources from WebKit
 // This does not belong here and I'm not sure where
@@ -74,73 +72,6 @@ Vector<char> loadResourceIntoArray(const char* resourceName)
 }
 
 namespace WebCore {
-
-FrameGdkClientDefault::FrameGdkClientDefault()
-    : ResourceHandleClient()
-    , m_frame(0)
-    , m_beginCalled(false)
-{
-}
-
-FrameGdkClientDefault::~FrameGdkClientDefault()
-{
-}
-
-void FrameGdkClientDefault::setFrame(const FrameGdk* frame)
-{
-    m_frame = const_cast<FrameGdk*>(frame);
-}
-
-void FrameGdkClientDefault::openURL(const KURL& url)
-{
-    m_frame->loader()->didOpenURL(url);
-    m_beginCalled = false;
-
-    ResourceRequest request(url);
-    RefPtr<ResourceHandle> loader = ResourceHandle::create(request, this, 0);
-}
-
-void FrameGdkClientDefault::submitForm(const String& method, const KURL& url, const FormData* postData)
-{
-    m_beginCalled = false;
-
-    ResourceRequest request(url);
-    request.setHTTPMethod(method);
-    request.setHTTPBody(*postData);
-
-    RefPtr<ResourceHandle> loader = ResourceHandle::create(request, this, 0);
-}
-
-void FrameGdkClientDefault::receivedResponse(ResourceHandle*, PlatformResponse)
-{
-    // no-op
-}
-
-void FrameGdkClientDefault::didReceiveData(ResourceHandle* job, const char* data, int length)
-{
-    if (!m_beginCalled) {
-        m_beginCalled = true;
-
-#if 0  // FIXME: This is from Qt version, need to be removed or Gdk equivalent written
-        // Assign correct mimetype _before_ calling begin()!
-        ResourceHandleInternal* d = job->getInternal();
-        if (d) {
-            ResourceRequest request(m_frame->resourceRequest());
-            request.m_responseMIMEType = d->m_mimetype;
-            m_frame->setResourceRequest(request);
-        }
-#endif
-        m_frame->loader()->begin(job->url());
-    }
-
-    m_frame->loader()->write(data, length);
-}
-
-void FrameGdkClientDefault::receivedAllData(ResourceHandle* job, PlatformData data)
-{
-    m_frame->loader()->end();
-    m_beginCalled = false;
-}
 
 static void doScroll(const RenderObject* r, float deltaX, float deltaY)
 {
@@ -160,40 +91,28 @@ static void doScroll(const RenderObject* r, float deltaX, float deltaY)
     r->layer()->scrollToOffset(x, y, true, true);
 }
 
-FrameGdk::FrameGdk(GdkDrawable* gdkdrawable)
-    : Frame(new Page(new ChromeClientGdk()), 0, 0), m_drawable(gdkdrawable)
+FrameGdk::FrameGdk(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClientGdk* frameLoader)
+    : Frame(page, ownerElement, frameLoader)
 {
+    m_exitAfterLoading = false;
+    m_dumpRenderTreeAfterLoading = false;
+
     Settings* settings = new Settings;
-    settings->setAutoLoadImages(true);
-    settings->setMinFontSize(5);
-    settings->setMinLogicalFontSize(5);
+    settings->setLoadsImagesAutomatically(true);
+    settings->setMinimumFontSize(5);
+    settings->setMinimumLogicalFontSize(5);
     settings->setShouldPrintBackgrounds(true);
+    settings->setJavaScriptEnabled(true);
 
-    settings->setMediumFixedFontSize(14);
-    settings->setMediumFontSize(14);
-    settings->setSerifFontName("Times New Roman");
-    settings->setSansSerifFontName("Arial");
-    settings->setFixedFontName("Courier");
-    settings->setStdFontName("Arial");
+    settings->setDefaultFixedFontSize(14);
+    settings->setDefaultFontSize(14);
+    settings->setSerifFontFamily("Times New Roman");
+    settings->setSansSerifFontFamily("Arial");
+    settings->setFixedFontFamily("Courier");
+    settings->setStandardFontFamily("Arial");
+
     setSettings(settings);
-    FrameView* view = new FrameView(this);
-    setView(view);
-    IntRect geom = frameGeometry();
-    view->resize(geom.width(), geom.height());
-    view->ScrollView::setDrawable(gdkdrawable);
-
-    m_client = new FrameGdkClientDefault();
-    m_client->setFrame(this);
-}
-
-FrameGdk::FrameGdk(Page* page, Element* element, PassRefPtr<EditorClient> editorClient)
-    : Frame(page,element, editorClient)
-{
-    Settings* settings = new Settings;
-    settings->setAutoLoadImages(true);
-    setSettings(settings);
-    m_client = new FrameGdkClientDefault();
-    m_client->setFrame(this);
+    frameLoader->setFrame(this);
 }
 
 FrameGdk::~FrameGdk()
@@ -201,56 +120,100 @@ FrameGdk::~FrameGdk()
     loader()->cancelAndClear();
 }
 
-
-void FrameGdk::urlSelected(const FrameLoadRequest& frameLoadRequest, Event*)
+void FrameGdk::onDidFinishLoad()
 {
-    ResourceRequest request = frameLoadRequest.resourceRequest();
-
-    if (!client())
-        return;
-
-    client()->openURL(request.url());
+    if (dumpRenderTreeAfterLoading())
+        dumpRenderTree();
+    if (exitAfterLoading())
+        gtk_main_quit();  // FIXME: a bit drastic?
 }
 
-String FrameGdk::userAgent() const
+void FrameGdk::dumpRenderTree() const
 {
-    return "Mozilla/5.0 (PC; U; Intel; Linux; en) AppleWebKit/420+ (KHTML, like Gecko)";
+    if (view()->layoutPending())
+        view()->layout();
+    
+    String txt = externalRepresentation(renderer());
+    CString utf8Str = txt.utf8();
+    const char *utf8 = utf8Str.data();
+    if (utf8)
+        printf("%s\n", utf8);
+    else
+        printf("FrameGdk::dumpRenderTree() no data\n");
 }
 
-void FrameGdk::runJavaScriptAlert(String const& message)
+bool FrameGdk::keyPress(const PlatformKeyboardEvent& keyEvent)
 {
-}
+    if (!eventHandler())
+        return false;
 
-bool FrameGdk::runJavaScriptConfirm(String const& message)
-{
+    bool handled = eventHandler()->keyEvent(keyEvent);
+    if (handled)
+        return handled;
+
+    switch (keyEvent.WindowsKeyCode()) {
+        case VK_LEFT:
+            doScroll(renderer(), true, -120);
+            break;
+        case VK_RIGHT:
+            doScroll(renderer(), true, 120);
+            break;
+        case VK_UP:
+            doScroll(renderer(), false, -120);
+            break;
+        case VK_PRIOR:
+            // FIXME: implement me
+            break;
+        case VK_NEXT:
+            // FIXME: implement me
+            break;
+        case VK_DOWN:
+            doScroll(renderer(), false, 120);
+            break;
+        case VK_HOME:
+            renderer()->layer()->scrollToOffset(0, 0, true, true);
+            doScroll(renderer(), false, 120);
+            break;
+        case VK_END:
+            renderer()->layer()->scrollToOffset(0, renderer()->height(), true, true);
+            break;
+        case VK_SPACE:
+            if (keyEvent.shiftKey())
+                doScroll(renderer(), false, -120);
+            else
+                doScroll(renderer(), false, 120);
+            break;
+    }
     return true;
-}
-
-void FrameGdk::setTitle(const String &title)
-{
 }
 
 void FrameGdk::handleGdkEvent(GdkEvent* event)
 {
     switch (event->type) {
+
         case GDK_EXPOSE: {
             GdkRectangle clip;
             gdk_region_get_clipbox(event->expose.region, &clip);
-            gdk_window_begin_paint_region (event->any.window, event->expose.region);
-            cairo_t* cr = gdk_cairo_create (event->any.window);
-            GraphicsContext* ctx = new GraphicsContext(cr);
-            paint(ctx, IntRect(clip.x, clip.y, clip.width, clip.height));
-            delete ctx;
+            gdk_window_begin_paint_region(event->any.window, event->expose.region);
+            cairo_t* cr = gdk_cairo_create(event->any.window);
+            GraphicsContext ctx(cr);
+            paint(&ctx, IntRect(clip.x, clip.y, clip.width, clip.height));
             cairo_destroy(cr);
-            gdk_window_end_paint (event->any.window);
+            gdk_window_end_paint(event->any.window);
             break;
         }
+
+        case GDK_CONFIGURE: {
+            view()->updateGeometry();
+            forceLayout();
+            break;
+        }
+
         case GDK_SCROLL: {
             PlatformWheelEvent wheelEvent(event);
-            view()->handleWheelEvent(wheelEvent);
-            if (wheelEvent.isAccepted()) {
+            view()->wheelEvent(wheelEvent);
+            if (wheelEvent.isAccepted())
                 return;
-            }
 
             HitTestRequest hitTestRequest(true, true);
             HitTestResult hitTestResult(wheelEvent.pos());
@@ -276,134 +239,112 @@ void FrameGdk::handleGdkEvent(GdkEvent* event)
             break;
         }
         case GDK_MOTION_NOTIFY:
-            view()->handleMouseMoveEvent(event);
+            eventHandler()->handleMouseMoveEvent(PlatformMouseEvent(event));
             break;
         case GDK_BUTTON_PRESS:
         case GDK_2BUTTON_PRESS:
         case GDK_3BUTTON_PRESS:
-            view()->handleMousePressEvent(event);
+            eventHandler()->handleMousePressEvent(PlatformMouseEvent(event));
             break;
         case GDK_BUTTON_RELEASE:
-            view()->handleMouseReleaseEvent(event);
+            eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(event));
             break;
         case GDK_KEY_PRESS:
         case GDK_KEY_RELEASE: {
-            PlatformKeyboardEvent kevent(event);
-            bool handled = false;
-            if (!kevent.isKeyUp()) {
-                Node* start = selectionController()->start().node();
-                if (start && start->isContentEditable()) {
-                    switch(kevent.WindowsKeyCode()) {
-                        case VK_BACK:
-                            TypingCommand::deleteKeyPressed(document());
-                            break;
-                        case VK_DELETE:
-                            TypingCommand::forwardDeleteKeyPressed(document());
-                            break;
-                        case VK_LEFT:
-                            selectionController()->modify(SelectionController::MOVE, SelectionController::LEFT, CharacterGranularity);
-                            break;
-                        case VK_RIGHT:
-                            selectionController()->modify(SelectionController::MOVE, SelectionController::RIGHT, CharacterGranularity);
-                            break;
-                        case VK_UP:
-                            selectionController()->modify(SelectionController::MOVE, SelectionController::BACKWARD, ParagraphGranularity);
-                            break;
-                        case VK_DOWN:
-                            selectionController()->modify(SelectionController::MOVE, SelectionController::FORWARD, ParagraphGranularity);
-                            break;
-                        default:
-                            TypingCommand::insertText(document(), kevent.text(), false);
-
-                    }
-                    handled = true;
-                }
-                if (!handled) {
-                    switch (kevent.WindowsKeyCode()) {
-                        case VK_LEFT:
-                            doScroll(renderer(), true, -120);
-                            break;
-                        case VK_RIGHT:
-                            doScroll(renderer(), true, 120);
-                            break;
-                        case VK_UP:
-                            doScroll(renderer(), false, -120);
-                            break;
-                        case VK_PRIOR:
-                            //return SB_PAGEUP;
-                            break;
-                        case VK_NEXT:
-                            //return SB_PAGEDOWN;
-                            break;
-                        case VK_DOWN:
-                            doScroll(renderer(), false, 120);
-                            break;
-                        case VK_HOME:
-                            renderer()->layer()->scrollToOffset(0, 0, true, true);
-                            doScroll(renderer(), false, 120);
-                            break;
-                        case VK_END:
-                            renderer()->layer()->scrollToOffset(0,
-                                                                renderer()->height(), true, true);
-                            break;
-                        case VK_SPACE:
-                            if (kevent.shiftKey())
-                                doScroll(renderer(), false, -120);
-                            else
-                                doScroll(renderer(), false, 120);
-                            break;
-                    }
-
-                }
-            }
+            PlatformKeyboardEvent keyEvent(event);
+            keyPress(keyEvent);
         }
         default:
             break;
     }
 }
 
-void FrameGdk::setFrameGeometry(const IntRect &r)
+void FrameGdk::focusWindow()
 {
-    if (!m_drawable || !GDK_IS_WINDOW(m_drawable))
-        return;
-    GdkWindow* window = GDK_WINDOW(m_drawable);
-    gdk_window_move_resize(window, r.x(), r.y(), r.width(), r.height());
+    notImplemented();
 }
 
-IntRect FrameGdk::frameGeometry() const
+void FrameGdk::unfocusWindow()
 {
-    gint x, y, width, height, depth;
-    if (!m_drawable)
-        return IntRect();
-
-    if (!GDK_IS_WINDOW(m_drawable)) {
-        gdk_drawable_get_size(m_drawable, &width, &height);
-        return IntRect(0, 0, width, height);
-    }
-
-    GdkWindow* window = GDK_WINDOW(m_drawable);
-    gdk_window_get_geometry(window, &x, &y, &width, &height, &depth);
-    return IntRect(x, y, width, height);
+    notImplemented();
 }
 
-bool FrameGdk::passWheelEventToChildWidget(Node* node)
+KJS::Bindings::Instance* FrameGdk::getObjectInstanceForWidget(Widget *)
 {
-    if (!node)
-        return false;
-    RenderObject* renderer = node->renderer();
-    if (!renderer || !renderer->isWidget())
-        return false;
-    Widget* widget = static_cast<RenderWidget*>(renderer)->widget();
-    if (!widget)
-        return false;
+    notImplemented();
+    return 0;
+}
+
+KJS::Bindings::Instance* FrameGdk::getEmbedInstanceForWidget(Widget *) 
+{
+    notImplemented();
+    return 0;
+}
+
+KJS::Bindings::RootObject* FrameGdk::bindingRootObject()
+{
+    notImplemented();
+    return 0;
+}
+
+void FrameGdk::print() 
+{
+    notImplemented();
+}
+
+KJS::Bindings::Instance* FrameGdk::getAppletInstanceForWidget(Widget*)
+{
+    notImplemented();
+    return 0;
+}
+
+void FrameGdk::issueCutCommand()
+{
+    notImplemented();
+}
+
+void FrameGdk::issueCopyCommand()
+{
+    notImplemented();
+}
+
+void FrameGdk::issuePasteCommand()
+{
+    notImplemented();
+}
+
+void FrameGdk::issueTransposeCommand()
+{
+    notImplemented();
+}
+
+void FrameGdk::issuePasteAndMatchStyleCommand()
+{
+    notImplemented();
+}
+
+Range* FrameGdk::markedTextRange() const
+{
+    // FIXME: Handle selections.
+    notImplemented();
+    return 0;
+}
+
+bool FrameGdk::shouldChangeSelection(const Selection&, const Selection&, WebCore::EAffinity, bool) const
+{
+    // no-op
     return true;
 }
 
-bool FrameGdk::passSubframeEventToSubframe(MouseEventWithHitTestResults& mev, Frame*)
+void FrameGdk::respondToChangedSelection(WebCore::Selection const&, bool)
 {
-    if (mev.targetNode() == 0)
-        return true;
-    return false;
+    // FIXME: If we want continous spell checking, we need to implement this.
+}
+
+String FrameGdk::mimeTypeForFileName(String const&) const
+{
+    notImplemented();
+    return String();
 }
 
 }
