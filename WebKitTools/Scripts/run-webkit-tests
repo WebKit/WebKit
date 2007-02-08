@@ -631,8 +631,7 @@ for my $test (@tests) {
         }
     }
 
-    $count++;
-    if ($count % $testsPerDumpTool == 0 || $count == @tests) {
+    if (($count + 1) % $testsPerDumpTool == 0 || $count == @#tests) {
         if ($shouldCheckLeaks) {
             my $fileName;
             if ($testsPerDumpTool == 1) {
@@ -648,6 +647,7 @@ for my $test (@tests) {
         closeDumpTool();
     }
 
+    $count++;
     $counts{$result}++;
     push @{$tests{$result}}, $test;
     $testType{$test} = $isText;
