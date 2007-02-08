@@ -253,9 +253,11 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
 
     IntRect oldBounds;
     bool checkForRepaint = checkForRepaintDuringLayout();
-    if (checkForRepaint)
+    if (checkForRepaint) {
         oldBounds = getAbsoluteRepaintRect();
-    
+        oldBounds.move(view()->layoutDelta());
+    }
+
     int previousWidth = m_width;
     int previousHeight = m_height;
     

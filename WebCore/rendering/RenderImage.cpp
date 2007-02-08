@@ -304,8 +304,10 @@ void RenderImage::layout()
 
     IntRect oldBounds;
     bool checkForRepaint = checkForRepaintDuringLayout();
-    if (checkForRepaint)
+    if (checkForRepaint) {
         oldBounds = getAbsoluteRepaintRect();
+        oldBounds.move(view()->layoutDelta());
+    }
 
     // minimum height
     m_height = m_cachedImage && m_cachedImage->isErrorImage() ? intrinsicHeight() : 0;

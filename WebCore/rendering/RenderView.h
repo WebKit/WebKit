@@ -93,6 +93,9 @@ public:
     void setFlexBoxInFirstLayout(RenderObject* r) { m_flexBoxInFirstLayout = r; }
     RenderObject* flexBoxInFirstLayout() { return m_flexBoxInFirstLayout; }
 
+    const IntSize& layoutDelta() const { return m_layoutDelta; }
+    void addLayoutDelta(const IntSize& delta) { m_layoutDelta += delta; }
+
 protected:
     FrameView* m_frameView;
 
@@ -118,6 +121,7 @@ private:
     int m_bestTruncatedAt;
     int m_truncatorWidth;
     bool m_forcedPageBreak;
+    IntSize m_layoutDelta;
 };
 
 } // namespace WebCore

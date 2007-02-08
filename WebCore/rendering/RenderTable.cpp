@@ -278,8 +278,11 @@ void RenderTable::layout()
     IntRect oldBounds;
     IntRect oldFullBounds;
     bool checkForRepaint = checkForRepaintDuringLayout();
-    if (checkForRepaint)
+    if (checkForRepaint) {
         getAbsoluteRepaintRectIncludingFloats(oldBounds, oldFullBounds);
+        oldBounds.move(view()->layoutDelta());
+        oldFullBounds.move(view()->layoutDelta());
+    }
     
     m_height = 0;
     m_overflowHeight = 0;

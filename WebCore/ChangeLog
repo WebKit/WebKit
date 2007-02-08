@@ -1,3 +1,36 @@
+2007-02-07  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=10522
+          REGRESSION: Incomplete repaint after table relayout that decreases height
+
+        Test: fast/repaint/intermediate-layout-position.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock): Adjust the old bounds by the layout delta,
+        to get the block's absolute bounds as they were before its ancestors moved it
+        during layout.
+        (WebCore::RenderBlock::collapseMargins): Update the layout delta for the child
+        when moving it.
+        (WebCore::RenderBlock::clearFloatsIfNeeded): Ditto.
+        (WebCore::RenderBlock::determineHorizontalPosition): Ditto.
+        (WebCore::RenderBlock::layoutBlockChildren): Ditto.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock): Adjust the old bounds by the current
+        layout delta.
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::layout): Ditto.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::layout): Ditto.
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout): Ditto.
+        * rendering/RenderView.h:
+        (WebCore::RenderView::layoutDelta): Added. Keeps track of the offset between
+        the position of the object currently being laid out and its position at the
+        end of the last layout.
+        (WebCore::RenderView::addLayoutDelta): Added.
+
 2007-02-07  Christopher Brichford  <chrisb@adobe.com>
 
         Reviewed by Brady.
