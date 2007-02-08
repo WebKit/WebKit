@@ -1,3 +1,27 @@
+2007-02-07  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin Decker
+
+        - fixed all places in WebKit where _web_userVisibleString was used where
+        _web_originalDataAsString should have been used instead.
+
+        * History/WebURLsWithTitles.m:
+        (+[WebURLsWithTitles writeURLs:andTitles:toPasteboard:]):
+        use _web_originalDataAsString when writing since these aren't displayed to the user
+        (+[WebURLsWithTitles URLsFromPasteboard:]):
+        use _web_URLWithDataAsString when reading, to match what we used when writing
+
+        * Misc/WebNSPasteboardExtras.mm:
+        (-[NSPasteboard _web_writeURL:andTitle:types:]):
+        use _web_originalDataAsString when writing the NSURL type; continue using
+        _web_userVisibleString when writing the plain text type
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _documentFragmentWithPaths:]):
+        added comment about why _web_userVisibleString is appropriate here
+        (-[WebHTMLView _documentFragmentFromPasteboard:inContext:allowPlainText:chosePlainText:]):
+        use _web_originalDataAsString when setting the href attribute of an anchor tag
+
 2007-02-07  David Harrison  <harrison@apple.com>
 
         Reviewed by Adam.
@@ -7,7 +31,7 @@
         Problem is that AppKit recently changed NSControl to trigger a full redraw if the control has a focus ring.
         WebHTMLView is a subclass of NSControl, but the focus ring type was the default value, though we actually
         draw no focus ring. Fix is to formally set our focus ring type.
-        
+
         * WebView/WebHTMLView.mm:
         (-[WebHTMLView initWithFrame:]):
         Send [self setFocusRingType:NSFocusRingTypeNone].

@@ -67,7 +67,7 @@
     URLStrings = [NSMutableArray arrayWithCapacity:count];
     titlesOrEmptyStrings = [NSMutableArray arrayWithCapacity:count];
     for (index = 0; index < count; ++index) {
-        [URLStrings addObject:[[URLs objectAtIndex:index] _web_userVisibleString]];
+        [URLStrings addObject:[[URLs objectAtIndex:index] _web_originalDataAsString]];
         [titlesOrEmptyStrings addObject:(titles == nil) ? @"" : [[titles objectAtIndex:index] _webkit_stringByTrimmingWhitespace]];
     }
 
@@ -98,7 +98,7 @@
     count = [URLStrings count];
     URLs = [NSMutableArray arrayWithCapacity:count];
     for (index = 0; index < count; ++index) {
-        [URLs addObject:[NSURL _web_URLWithUserTypedString:[URLStrings objectAtIndex:index]]];
+        [URLs addObject:[NSURL _web_URLWithDataAsString:[URLStrings objectAtIndex:index]]];
     }
 
     return URLs;

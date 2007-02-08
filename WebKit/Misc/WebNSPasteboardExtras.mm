@@ -188,7 +188,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
         [URL writeToPasteboard:self];
     }
     if ([types containsObject:WebURLPboardType]) {
-        [self setString:[URL _web_userVisibleString] forType:WebURLPboardType];
+        [self setString:[URL _web_originalDataAsString] forType:WebURLPboardType];
     }
     if ([types containsObject:WebURLNamePboardType]) {
         [self setString:title forType:WebURLNamePboardType];
