@@ -78,10 +78,59 @@ my $buildingForLeopardOrLater = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"
 my $exceptionInit = "WebCore::ExceptionCode ec = 0;";
 my $exceptionRaiseOnError = "WebCore::raiseOnDOMError(ec);";
 
+my %conflictMethod = (
+    # FIXME: Add C language keywords?
+    # FIXME: Add other predefined types like "id"?
+
+    "callWebScriptMethod:withArguments:" => "WebScriptObject",
+    "evaluateWebScript:" => "WebScriptObject",
+    "removeWebScriptKey:" => "WebScriptObject",
+    "setException:" => "WebScriptObject",
+    "setWebScriptValueAtIndex:value:" => "WebScriptObject",
+    "stringRepresentation" => "WebScriptObject",
+    "webScriptValueAtIndex:" => "WebScriptObject",
+
+    "autorelease" => "NSObject",
+    "awakeAfterUsingCoder:" => "NSObject",
+    "class" => "NSObject",
+    "classForCoder" => "NSObject",
+    "conformsToProtocol:" => "NSObject",
+    "copy" => "NSObject",
+    "copyWithZone:" => "NSObject",
+    "dealloc" => "NSObject",
+    "description" => "NSObject",
+    "doesNotRecognizeSelector:" => "NSObject",
+    "encodeWithCoder:" => "NSObject",
+    "finalize" => "NSObject",
+    "forwardInvocation:" => "NSObject",
+    "hash" => "NSObject",
+    "init" => "NSObject",
+    "initWithCoder:" => "NSObject",
+    "isEqual:" => "NSObject",
+    "isKindOfClass:" => "NSObject",
+    "isMemberOfClass:" => "NSObject",
+    "isProxy" => "NSObject",
+    "methodForSelector:" => "NSObject",
+    "methodSignatureForSelector:" => "NSObject",
+    "mutableCopy" => "NSObject",
+    "mutableCopyWithZone:" => "NSObject",
+    "performSelector:" => "NSObject",
+    "release" => "NSObject",
+    "replacementObjectForCoder:" => "NSObject",
+    "respondsToSelector:" => "NSObject",
+    "retain" => "NSObject",
+    "retainCount" => "NSObject",
+    "self" => "NSObject",
+    "superclass" => "NSObject",
+    "zone" => "NSObject",
+);
+
+my $sawConflict = 0;
+
 # Default Licence Templates
 my $headerLicenceTemplate = << "EOF";
 /*
- * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig\@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -196,7 +245,7 @@ sub ReadPublicInterfaces
         }
     }
 
-    # If this class was not found in PublicDOMInterfaces.h then it should be considered as an entirly new public class.
+    # If this class was not found in PublicDOMInterfaces.h then it should be considered as an entirely new public class.
     $newPublicClass = ! $found;
 }
 
@@ -206,6 +255,8 @@ sub GenerateInterface
     my $object = shift;
     my $dataNode = shift;
     my $defines = shift;
+
+    $sawConflict = 0;
 
     my $name = $dataNode->name;
     my $className = GetClassName($name);
@@ -227,6 +278,8 @@ sub GenerateInterface
         my $missing = join("\n", keys %publicInterfaces);
         die "error: Public API change. There are missing public properties and/or methods from the \"$className\" class.\n$missing\n";
     }
+
+    die if $sawConflict;
 }
 
 # Params: 'idlDocument' struct
@@ -661,8 +714,8 @@ sub GenerateHeader
         foreach my $attribute (@{$dataNode->attributes}) {
             my $attributeName = $attribute->signature->name;
 
-            if ($attributeName eq "id") {
-                # Special case attribute id to be idName to avoid Obj-C nameing conflict.
+            if ($attributeName eq "id" or $attributeName eq "hash") {
+                # Special case attributes id and hash to be idName and hashName to avoid ObjC naming conflict.
                 $attributeName .= "Name";
             } elsif ($attributeName eq "frame") {
                 # Special case attribute frame to be frameBorders.
@@ -679,6 +732,19 @@ sub GenerateHeader
 
             AddForwardDeclarationsForType($attribute->signature->type, $public);
 
+            my $setterName = "set" . WK_ucfirst($attributeName) . ":";
+
+            my $conflict = $conflictMethod{$attributeName};
+            if ($conflict) {
+                warn "$className conflicts with $conflict method $attributeName\n";
+                $sawConflict = 1;
+            }
+            $conflict = $conflictMethod{$setterName};
+            if ($conflict) {
+                warn "$className conflicts with $conflict method $setterName\n";
+                $sawConflict = 1;
+            }
+
             if ($buildingForLeopardOrLater) {
                 $property .= "\n";
                 push(@headerAttributes, $property) if $public;
@@ -691,7 +757,7 @@ sub GenerateHeader
 
                 # - SETTER
                 if (!$attributeIsReadonly) {
-                    my $setter = "- (void)set" . WK_ucfirst($attributeName) . ":(" . $attributeType . ")new" . WK_ucfirst($attributeName) . ";\n";
+                    my $setter = "- (void)$setterName(" . $attributeType . ")new" . WK_ucfirst($attributeName) . ";\n";
                     push(@headerAttributes, $setter) if $public;
                     push(@privateHeaderAttributes, $setter) unless $public;
                 }
@@ -709,6 +775,7 @@ sub GenerateHeader
     if ($numFunctions > 0) {
         foreach my $function (@{$dataNode->functions}) {
             my $functionName = $function->signature->name;
+
             my $returnType = GetObjCType($function->signature->type);
             my $needsDeprecatedVersion = (@{$function->parameters} > 1 and $function->signature->extendedAttributes->{"OldStyleObjC"});
             my $numberOfParameters = @{$function->parameters};
@@ -716,6 +783,7 @@ sub GenerateHeader
 
             my $parameterIndex = 0;
             my $functionSig = "- ($returnType)$functionName";
+            my $methodName = $functionName;
             foreach my $param (@{$function->parameters}) {
                 my $paramName = $param->name;
                 my $paramType = GetObjCType($param->type);
@@ -726,14 +794,22 @@ sub GenerateHeader
                     my $paramPrefix = $param->extendedAttributes->{"ObjCPrefix"};
                     $paramPrefix = $paramName unless defined($paramPrefix);
                     $functionSig .= " $paramPrefix";
+                    $methodName .= $paramPrefix;
                 }
 
                 $functionSig .= ":($paramType)$paramName";
+                $methodName .= ":";
 
                 $parameterIndex++;
             }
 
             $functionSig .= ";";
+
+            my $conflict = $conflictMethod{$methodName};
+            if ($conflict) {
+                warn "$className conflicts with $conflict method $methodName\n";
+                $sawConflict = 1;
+            }
 
             my $public = ($publicInterfaces{$functionSig} or $newPublicClass);
             delete $publicInterfaces{$functionSig};
@@ -925,8 +1001,8 @@ sub GenerateImplementation
             my $attributeClassName = GetClassName($attribute->signature->type);
 
             my $attributeInterfaceName = $attributeName;
-            if ($attributeName eq "id") {
-                # Special case attribute id to be idName to avoid Obj-C nameing conflict.
+            if ($attributeName eq "id" or $attributeName eq "hash") {
+                # Special case attributes id and hash to be idName and hashName to avoid ObjC naming conflict.
                 $attributeInterfaceName .= "Name";
             } elsif ($attributeName eq "frame") {
                 # Special case attribute frame to be frameBorders.

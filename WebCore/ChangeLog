@@ -1,3 +1,13 @@
+2007-02-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - <rdar://problem/4826861> WebKit tests show memory leaks in NSHTMLReader, caused by method named "hash"
+
+        * bindings/scripts/CodeGeneratorObjC.pm: Added a list of method names we should never use, since they
+        are in base classes WebScriptObject and NSObject. Luckily, only "hash" is causing trouble. Added
+        "hash" to the existing special case for "id". Now "hash" is "hashName" just as "id" is "idName".
+
 2007-02-07  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Adam Roben.
