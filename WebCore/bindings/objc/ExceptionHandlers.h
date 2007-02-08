@@ -27,6 +27,17 @@
 #define ExceptionHandlers_h
 
 #include "TextAffinity.h"
+#include <JavaScriptCore/Assertions.h>
+
+#if !defined(NDEBUG) && !defined(DISABLE_THREAD_CHECK)
+#define DOM_ASSERT_MAIN_THREAD() do \
+    if (!pthread_main_np()) { \
+        WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, "DOM access on non-main thread -- you will probably crash soon!"); \
+    } \
+while (0)
+#else
+#define DOM_ASSERT_MAIN_THREAD() ((void)0)
+#endif
 
 namespace WebCore {
     

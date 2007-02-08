@@ -77,6 +77,7 @@ my $buildingForTigerOrEarlier = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"
 my $buildingForLeopardOrLater = 1 if $ENV{"MACOSX_DEPLOYMENT_TARGET"} and $ENV{"MACOSX_DEPLOYMENT_TARGET"} >= 10.5;
 my $exceptionInit = "WebCore::ExceptionCode ec = 0;";
 my $exceptionRaiseOnError = "WebCore::raiseOnDOMError(ec);";
+my $assertMainThread = "{ DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheck(); }";
 
 my %conflictMethod = (
     # FIXME: Add C language keywords?
@@ -907,6 +908,7 @@ sub GenerateImplementation
 
     # - INCLUDES -
     push(@implContentHeader, "\n#import \"config.h\"\n");
+    push(@implContentHeader, "\n#import \"logging.h\"\n");
     push(@implContentHeader, "\n#ifdef ${conditional}_SUPPORT\n\n") if $conditional;
     push(@implContentHeader, "#import \"$classHeaderName.h\"\n\n");
     push(@implContentHeader, "#import <wtf/GetPtr.h>\n\n");
@@ -953,6 +955,7 @@ sub GenerateImplementation
 
         push(@implContent, "- (void)dealloc\n");
         push(@implContent, "{\n");
+        push(@implContent, "    $assertMainThread\n");
         push(@implContent, @ivarsToRelease);
         if ($interfaceName eq "NodeIterator") {
             push(@implContent, "    if (_internal) {\n");
@@ -1439,6 +1442,7 @@ sub GenerateImplementation
             # FIXME: Implement Caching
             push(@implContent, "$initWithSig\n");
             push(@implContent, "{\n");
+            push(@implContent, "    $assertMainThread;\n");
             push(@implContent, "    [super _init];\n");
             push(@implContent, "    $podTypeWithNamespace* _impl = new $podTypeWithNamespace(impl);\n");
             push(@implContent, "    _internal = reinterpret_cast<DOMObjectInternal*>(_impl);\n");
@@ -1448,6 +1452,7 @@ sub GenerateImplementation
             # - (DOMFooBar)_FooBarWith:(WebCore::FooBar)impl for implementation class FooBar
             push(@implContent, "$typeMakerSig\n");
             push(@implContent, "{\n");
+            push(@implContent, "    $assertMainThread;\n");
             push(@implContent, "    return [[[self alloc] $initWithImplName:impl] autorelease];\n");
             push(@implContent, "}\n\n");
         } elsif ($parentImplClassName eq "Object") {        
@@ -1457,6 +1462,7 @@ sub GenerateImplementation
 
             push(@implContent, "$initWithSig\n");
             push(@implContent, "{\n");
+            push(@implContent, "    $assertMainThread;\n");
             push(@implContent, "    [super _init];\n");
             push(@implContent, "    _internal = reinterpret_cast<DOMObjectInternal*>(impl);\n");
             push(@implContent, "    impl->ref();\n");
@@ -1468,6 +1474,7 @@ sub GenerateImplementation
             # - (DOMFooBar)_FooBarWith:(WebCore::FooBar *)impl for implementation class FooBar
             push(@implContent, "$typeMakerSig\n");
             push(@implContent, "{\n");
+            push(@implContent, "    $assertMainThread;\n");
             push(@implContent, "    if (!impl)\n");
             push(@implContent, "        return nil;\n");
             push(@implContent, "    id cachedInstance;\n");
@@ -1483,6 +1490,7 @@ sub GenerateImplementation
             # - (DOMFooBar)_FooBarWith:(WebCore::FooBar *)impl for implementation class FooBar
             push(@implContent, "$typeMakerSig\n");
             push(@implContent, "{\n");
+            push(@implContent, "    $assertMainThread;\n");
             push(@implContent, "    return static_cast<$className*>([$internalBaseType $internalBaseTypeMaker:impl]);\n");
             push(@implContent, "}\n\n");
         }

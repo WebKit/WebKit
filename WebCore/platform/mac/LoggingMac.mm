@@ -64,4 +64,31 @@ void InitializeLoggingChannelsIfNecessary()
     initializeWithUserDefault(LogNetwork);
 }
 
+
+void _WebCoreThreadViolationCheck(const char* function)
+{
+    static bool fetchDefault = true;
+    static bool performThreadCheck = true;
+    static bool threadViolationIsException = false;
+    if (fetchDefault) {
+        NSString *threadCheckLevel = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebCoreThreadCheck"];
+        if ([threadCheckLevel isEqualToString:@"None"])
+            performThreadCheck = false;
+        else if ([threadCheckLevel isEqualToString:@"Exception"])
+            threadViolationIsException = true;
+        fetchDefault = false;
+    }
+    
+    if (!performThreadCheck)
+        return;
+        
+    if (pthread_main_np())
+        return;
+        
+    if (threadViolationIsException)
+        [NSException raise:@"WebKitThreadingException" format:@"%s was called from a secondary thread", function];
+    else
+        NSLog(@"WebKit Threading Violation - %s called from secondary thread", function);
+}
+
 } // namespace WebCore

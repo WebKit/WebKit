@@ -1,3 +1,21 @@
+2007-02-08  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        <rdar://problem/4983515> Need mechanism to protect against WebKit calls from secondary threads
+        This initial landing is a conservative move until we can be certain of performance impact.
+        By writing to the user defaults key @"WebCoreThreadCheck" for the WebKit app you're running -
+          - The value "None" disables thread checking
+          - The value "Exception" causes exceptions to be raised on a violation
+          - The default is to do the check, and NSLog each violation
+
+        * bindings/objc/ExceptionHandlers.h:  Add a "Is Main Thread" assert macro
+        * bindings/scripts/CodeGeneratorObjC.pm: Use new mechanism in allocs and deallocs for now
+
+        * platform/Logging.h: Added WebCoreThreadViolationCheck macro
+        * platform/mac/LoggingMac.mm:
+        (WebCore::_WebCoreThreadViolationCheck): Check for main-threadedness, and do some stuff
+
 2007-02-08  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by Maciej, Darin, and Mark.
