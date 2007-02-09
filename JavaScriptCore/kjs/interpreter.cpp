@@ -57,143 +57,17 @@
 #include <signal.h>
 #include <stdio.h>
 
+#if PLATFORM(WIN_OS)
+#include <windows.h>
+#endif
+
 namespace KJS {
 
-class TimeoutChecker {
-public:
-    void startTimeoutCheck(Interpreter*);
-    void stopTimeoutCheck(Interpreter*);
-    void pauseTimeoutCheck(Interpreter*);
-    void resumeTimeoutCheck(Interpreter*);
+// Default number of ticks before a timeout check should be done.
+static const int initialTickCountThreshold = 255;
 
-private:
-#if HAVE(SYS_TIME_H)
-    static Interpreter* s_executingInterpreter;
-    static void alarmHandler(int);
-    
-    Interpreter* m_oldInterpreter;
-    itimerval m_oldtv;
-    itimerval m_pausetv;    
-    void (*m_oldAlarmHandler)(int);
-#endif
-};
-
-#if HAVE(SYS_TIME_H)
-Interpreter* TimeoutChecker::s_executingInterpreter = 0;
-#endif
-
-void TimeoutChecker::startTimeoutCheck(Interpreter *interpreter)
-{    
-    if (!interpreter->m_timeoutTime)
-        return;
-    
-    interpreter->m_startTimeoutCheckCount++;
-    
-#if HAVE(SYS_TIME_H)
-    if (s_executingInterpreter == interpreter)
-        return;
-    
-    // Block signals
-    m_oldAlarmHandler = signal(SIGALRM, SIG_IGN);
-
-    m_oldInterpreter = s_executingInterpreter;
-    s_executingInterpreter = interpreter;
-    
-    itimerval tv = {
-      { interpreter->m_timeoutTime / 1000, (interpreter->m_timeoutTime % 1000) * 1000 },
-      { interpreter->m_timeoutTime / 1000, (interpreter->m_timeoutTime % 1000) * 1000 }
-    };
-    setitimer(ITIMER_REAL, &tv, &m_oldtv);
-    
-    // Unblock signals
-    signal(SIGALRM, alarmHandler);
-#endif
-}
-
-void TimeoutChecker::stopTimeoutCheck(Interpreter* interpreter)
-{
-    if (!interpreter->m_timeoutTime)
-        return;
-
-    ASSERT(interpreter->m_startTimeoutCheckCount > 0);
-    
-    interpreter->m_startTimeoutCheckCount--;
-    
-    if (interpreter->m_startTimeoutCheckCount != 0)
-        return;
-        
-#if HAVE(SYS_TIME_H)
-    signal(SIGALRM, SIG_IGN);
-
-    s_executingInterpreter = m_oldInterpreter;
-        
-    setitimer(ITIMER_REAL, &m_oldtv, 0L);
-    signal(SIGALRM, m_oldAlarmHandler);
-#endif    
-}
-
-#if HAVE(SYS_TIME_H)
-void TimeoutChecker::alarmHandler(int) 
-{
-    s_executingInterpreter->m_timedOut = true;
-}
-#endif
-
-void TimeoutChecker::pauseTimeoutCheck(Interpreter* interpreter)
-{
-    if (interpreter->m_startTimeoutCheckCount == 0)
-        return;
-
-#if HAVE(SYS_TIME_H)    
-    ASSERT(interpreter == s_executingInterpreter);
-
-    void (*currentSignalHandler)(int);
-   
-    // Block signal
-    currentSignalHandler = signal(SIGALRM, SIG_IGN);
-    
-    if (currentSignalHandler != alarmHandler) {
-        signal(SIGALRM, currentSignalHandler);
-        return;
-    }
-
-    setitimer(ITIMER_REAL, 0L, &m_pausetv);
-#endif
-
-    interpreter->m_pauseTimeoutCheckCount++;
-}
-
-void TimeoutChecker::resumeTimeoutCheck(Interpreter* interpreter)
-{
-    if (interpreter->m_startTimeoutCheckCount == 0)
-        return;
-
-#if HAVE(SYS_TIME_H)
-    ASSERT(interpreter == s_executingInterpreter);
-#endif
-
-    interpreter->m_pauseTimeoutCheckCount--;
-
-    if (interpreter->m_pauseTimeoutCheckCount != 0)
-        return;
-
-#if HAVE(SYS_TIME_H)
-    void (*currentSignalHandler)(int);
-   
-    // Check so we have the right handler
-    currentSignalHandler = signal(SIGALRM, SIG_IGN);
-    
-    if (currentSignalHandler != SIG_IGN) {
-        signal(SIGALRM, currentSignalHandler);
-        return;
-    }
-
-    setitimer(ITIMER_REAL, &m_pausetv, 0L);
-
-    // Unblock signal
-    currentSignalHandler = signal(SIGALRM, alarmHandler);    
-#endif
-}
+// Preferred number of milliseconds between each timeout check
+static const int preferredScriptCheckTimeInterval = 1000;
 
 Interpreter* Interpreter::s_hook = 0;
     
@@ -227,10 +101,10 @@ void Interpreter::init()
     m_recursion = 0;
     m_debugger= 0;
     m_context = 0;
-    m_timedOut = false;
-    m_timeoutChecker = 0;
-    m_startTimeoutCheckCount = 0;
-    m_pauseTimeoutCheckCount = 0;
+
+    resetTimeoutCheck();
+    m_timeoutCheckCount = 0;
+    
     m_compatMode = NativeMode;
     m_argumentsPropertyName = &argumentsPropertyName;
     m_specialPrototypePropertyName = &specialPrototypePropertyName;
@@ -253,11 +127,6 @@ void Interpreter::init()
 Interpreter::~Interpreter()
 {
     JSLock lock;
-    
-    ASSERT (m_startTimeoutCheckCount == 0);
-    ASSERT (m_pauseTimeoutCheckCount == 0);
-    
-    delete m_timeoutChecker;
     
     if (m_debugger)
         m_debugger->detach(this);
@@ -774,42 +643,77 @@ void Interpreter::restoreBuiltins (const SavedBuiltins& builtins)
 
 void Interpreter::startTimeoutCheck()
 {
-    if (!m_timeoutChecker)
-        m_timeoutChecker = new TimeoutChecker;
+    if (m_timeoutCheckCount == 0)
+        resetTimeoutCheck();
     
-    m_timeoutChecker->startTimeoutCheck(this);
+    m_timeoutCheckCount++;
 }
 
 void Interpreter::stopTimeoutCheck()
 {
-    ASSERT(m_timeoutChecker);
-    
-    m_timeoutChecker->stopTimeoutCheck(this);
+    m_timeoutCheckCount--;
 }
 
-void Interpreter::pauseTimeoutCheck()
+void Interpreter::resetTimeoutCheck()
 {
-    ASSERT(m_timeoutChecker);
-    
-    m_timeoutChecker->pauseTimeoutCheck(this);
+    m_tickCount = 0;
+    m_ticksUntilNextTimeoutCheck = initialTickCountThreshold;
+    m_timeAtLastCheckTimeout = 0;
+    m_timeExecuting = 0;
 }
 
-void Interpreter::resumeTimeoutCheck()
-{
-    ASSERT(m_timeoutChecker);
-
-    m_timeoutChecker->resumeTimeoutCheck(this);
+// Returns the current time in milliseconds
+// It doesn't matter what "current time" is here, just as long as
+// it's possible to measure the time difference correctly.
+static inline unsigned getCurrentTime() {
+#if HAVE(SYS_TIME_H)
+    struct timeval tv;
+    gettimeofday(&tv, 0);
+    return tv.tv_sec * 1000 + tv.tv_usec / 1000;
+#elif PLATFORM(WIN_OS)
+    return timeGetTime();
+#else
+#error Platform does not have getCurrentTime function
+#endif
 }
 
-bool Interpreter::handleTimeout()
-{
-    m_timedOut = false;
-
-    pauseTimeoutCheck();
-    bool retval = shouldInterruptScript();
-    resumeTimeoutCheck();
+bool Interpreter::checkTimeout()
+{    
+    m_tickCount = 0;
     
-    return retval;
+    unsigned currentTime = getCurrentTime();
+
+    if (!m_timeAtLastCheckTimeout) {
+        // Suspicious amount of looping in a script -- start timing it
+        m_timeAtLastCheckTimeout = currentTime;
+        return false;
+    }
+
+    unsigned timeDiff = currentTime - m_timeAtLastCheckTimeout;
+
+    if (timeDiff == 0)
+        timeDiff = 1;
+    
+    m_timeExecuting += timeDiff;
+    m_timeAtLastCheckTimeout = currentTime;
+    
+    // Adjust the tick threshold so we get the next checkTimeout call in the interval specified in 
+    // preferredScriptCheckTimeInterval
+    m_ticksUntilNextTimeoutCheck = (unsigned)((float)preferredScriptCheckTimeInterval / timeDiff) * m_ticksUntilNextTimeoutCheck;
+
+    // If the new threshold is 0 reset it to the default threshold. This can happen if the timeDiff is higher than the
+    // preferred script check time interval.
+    if (m_ticksUntilNextTimeoutCheck == 0)
+        m_ticksUntilNextTimeoutCheck = initialTickCountThreshold;
+
+    if (m_timeoutTime && m_timeExecuting > m_timeoutTime) {
+        if (shouldInterruptScript())
+            return true;
+        
+        resetTimeoutCheck();
+    }
+    
+    return false;
 }
 
 

@@ -1732,7 +1732,7 @@ Completion DoWhileNode::execute(ExecState *exec)
     c = statement->execute(exec);
     exec->context()->popIteration();
     
-    if (exec->dynamicInterpreter()->checkTimeout())
+    if (exec->dynamicInterpreter()->timedOut())
         return Completion(Interrupted);
 
     if (!((c.complType() == Continue) && ls.contains(c.target()))) {
@@ -1780,7 +1780,7 @@ Completion WhileNode::execute(ExecState *exec)
     c = statement->execute(exec);
     exec->context()->popIteration();
 
-    if (exec->dynamicInterpreter()->checkTimeout())
+    if (exec->dynamicInterpreter()->timedOut())
         return Completion(Interrupted);
     
     if (c.isValueCompletion())
@@ -1835,7 +1835,7 @@ Completion ForNode::execute(ExecState *exec)
       return c;
     }
     
-    if (exec->dynamicInterpreter()->checkTimeout())
+    if (exec->dynamicInterpreter()->timedOut())
         return Completion(Interrupted);
     
     if (expr3) {

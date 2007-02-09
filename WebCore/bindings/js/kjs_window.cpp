@@ -1536,10 +1536,8 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
   case Window::Alert:
     if (frame && frame->document())
       frame->document()->updateRendering();
-    exec->dynamicInterpreter()->pauseTimeoutCheck();
     if (page)
         page->chrome()->runJavaScriptAlert(frame, str);
-    exec->dynamicInterpreter()->resumeTimeoutCheck();
     return jsUndefined();
   case Window::AToB:
   case Window::BToA: {
@@ -1568,11 +1566,9 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
   case Window::Confirm: {
     if (frame && frame->document())
       frame->document()->updateRendering();
-    exec->dynamicInterpreter()->pauseTimeoutCheck();
     bool result = false;
     if (page)
         result = page->chrome()->runJavaScriptConfirm(frame, str);
-    exec->dynamicInterpreter()->resumeTimeoutCheck();
     return jsBoolean(result);
   }
   case Window::Prompt:
@@ -1801,9 +1797,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
                 doc->removeWindowEventListener(AtomicString(args[0]->toString(exec)), listener, args[2]->toBoolean(exec));
         return jsUndefined();
   case Window::ShowModalDialog: {
-    exec->dynamicInterpreter()->pauseTimeoutCheck();
     JSValue* result = showModalDialog(exec, window, args);
-    exec->dynamicInterpreter()->resumeTimeoutCheck();      
     return result;
   }
   }

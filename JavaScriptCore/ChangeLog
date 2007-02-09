@@ -1,3 +1,42 @@
+2007-02-08  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4930614>
+        Safari complains about "Slow Script" if GMail is left open and machine is busy
+        
+        <rdar://problem/4649516>
+        Turn off slow script dialog or crank up time that makes it come up
+        
+        <rdar://problem/4963589>
+        Slow script warning is displayed after closing of PROMPT or PRINT dialog
+        
+        Re-do the way script timeouts are handled. No longer use a unix timer that sends signals. Instead, add a 
+        tick count and increment it in loop bodies. If the tick count reaches a threshold, do a timeout check. If the total time executing
+        is higher than the timeout value, (possibly) interrupt the script. The timeout checker also adjusts the threshold dynamically
+        to prevent doing the timeout check too often.
+         
+        * JavaScriptCore.exp:
+        Remove pause and resume calls.
+        
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        Add winmm.lib.
+
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::init):
+        (KJS::Interpreter::~Interpreter):
+        (KJS::Interpreter::startTimeoutCheck):
+        (KJS::Interpreter::stopTimeoutCheck):
+        (KJS::Interpreter::resetTimeoutCheck):
+        (KJS::getCurrentTime):
+        (KJS::Interpreter::checkTimeout):
+        * kjs/interpreter.h:
+        (KJS::Interpreter::timedOut):
+        * kjs/nodes.cpp:
+        (DoWhileNode::execute):
+        (WhileNode::execute):
+        (ForNode::execute):
+
 2007-02-07  Darin Adler  <darin@apple.com>
 
         * JavaScriptCore.vcproj/JavaScriptCore.sln: Reenable testkjs.
