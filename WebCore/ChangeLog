@@ -1,3 +1,17 @@
+2007-02-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mitz.
+
+        <rdar://problem/4971224> REGRESSION: ASSERT in WebCore with Mail (12491)
+        http://bugs.webkit.org/show_bug.cgi?id=12491
+
+        No test case. Not testable since there is no way to do substitute
+        data loads from layout tests.
+        
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::continueAfterContentPolicy): Don't dispatch data load
+        callback when loading empty data.
+
 2007-02-09  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej.
