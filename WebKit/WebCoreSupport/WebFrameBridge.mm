@@ -325,20 +325,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     _frame = nil;
 }
 
-- (void)formControlIsBecomingFirstResponder:(NSView *)formControl
-{
-    // When a form element becomes first responder, its enclosing WebHTMLView might need to
-    // change its focus-displaying state, but isn't otherwise notified.
-    [(WebHTMLView *)[[_frame frameView] documentView] _formControlIsBecomingFirstResponder:formControl];
-}
-
-- (void)formControlIsResigningFirstResponder:(NSView *)formControl
-{
-    // When a form element resigns first responder, its enclosing WebHTMLView might need to
-    // change its focus-displaying state, but isn't otherwise notified.
-    [(WebHTMLView *)[[_frame frameView] documentView] _formControlIsResigningFirstResponder:formControl];
-}
-
 - (Frame*)createChildFrameNamed:(NSString *)frameName 
                                       withURL:(NSURL *)URL
                                      referrer:(const String&)referrer

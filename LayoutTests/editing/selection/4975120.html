@@ -1,0 +1,29 @@
+<body>
+<p>This tests for a bug that caused the parent of an active frame to paint as though it were active when its window becomes key.  To run manually, make another window active and then make this window active. Only the subframe should appear active.</p>
+<input id="input" type="text" value="foo"><br>
+<iframe src="../resources/contenteditable-iframe-src.html"></iframe></body>
+
+<script>
+function step2() {
+    var input = document.getElementById("input");
+    input.setSelectionRange(0, 3);
+    var frame = frames[0];
+    frame.focus();
+    frame.getSelection().setPosition(frame.document.body, 0);
+    
+    if (!window.layoutTestController)
+        return;
+    
+    window.layoutTestController.setWindowIsKey(false);
+    window.layoutTestController.setWindowIsKey(true);
+    window.layoutTestController.notifyDone();
+}
+
+function runTest() {
+    if (window.layoutTestController)
+        window.layoutTestController.waitUntilDone();
+    window.setTimeout(step2, 200);
+}
+
+runTest();
+</script>

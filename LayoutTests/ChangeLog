@@ -1,5 +1,14 @@
 2007-02-09  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by darin
+
+        * editing/selection/4975120-expected.checksum: Added.
+        * editing/selection/4975120-expected.png: Added.
+        * editing/selection/4975120-expected.txt: Added.
+        * editing/selection/4975120.html: Added.
+
+2007-02-09  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by john
         
         <rdar://problem/4960116>

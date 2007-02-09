@@ -1731,7 +1731,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 - (BOOL)_web_firstResponderCausesFocusDisplay
 {
-    return [self _web_firstResponderIsSelfOrDescendantView] || [[self window] firstResponder] == [self _frameView];
+    return [[self window] firstResponder] == self || [[self window] firstResponder] == [self _frameView];
 }
 
 - (void)_updateActiveState
@@ -1762,7 +1762,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     BOOL windowIsKey = [window isKeyWindow];
     BOOL windowOrSheetIsKey = windowIsKey || [[window attachedSheet] isKeyWindow];
 
-    BOOL isActive = !_private->resigningFirstResponder && windowIsKey && (_private->descendantBecomingFirstResponder || [self _web_firstResponderCausesFocusDisplay]);
+    BOOL isActive = !_private->resigningFirstResponder && windowIsKey && [self _web_firstResponderCausesFocusDisplay];
     frame->setIsActive(isActive);            
 
     Frame* focusedFrame = page->focusController()->focusedOrMainFrame();
@@ -4900,26 +4900,6 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     [self _updateFontPanel];
     if (core([self _frame]))
         core([self _frame])->editor()->setStartNewKillRingSequence(true);
-}
-
-- (void)_formControlIsBecomingFirstResponder:(NSView *)formControl
-{
-    if (![formControl isDescendantOf:self])
-        return;
-    _private->descendantBecomingFirstResponder = YES;
-    [self _updateActiveState];
-    _private->descendantBecomingFirstResponder = NO;
-}
-
-- (void)_formControlIsResigningFirstResponder:(NSView *)formControl
-{
-    // set resigningFirstResponder so _updateActiveState behaves the same way it does when
-    // the WebHTMLView itself is resigningFirstResponder; don't use the primary selection feedback.
-    // If the first responder is in the process of being set on the WebHTMLView itself, it will
-    // get another chance at _updateActiveState in its own becomeFirstResponder method.
-    _private->resigningFirstResponder = YES;
-    [self _updateActiveState];
-    _private->resigningFirstResponder = NO;
 }
 
 - (void)_updateFontPanel
