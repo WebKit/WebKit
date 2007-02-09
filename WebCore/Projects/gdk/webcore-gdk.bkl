@@ -64,7 +64,7 @@
             platform/gdk/GlyphPageTreeNodeGdk.cpp
             platform/gdk/KeyEventGdk.cpp
             platform/gdk/MouseEventGdk.cpp
-            platform/gdk/RenderPopupMenuGdk.cpp
+            platform/gdk/PopupMenuGdk.cpp
             platform/gdk/RenderThemeGdk.cpp
             platform/gdk/ScrollViewGdk.cpp
             platform/gdk/ScreenGdk.cpp

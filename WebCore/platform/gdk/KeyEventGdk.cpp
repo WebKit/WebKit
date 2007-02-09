@@ -131,6 +131,8 @@ static String keyIdentifierForGdkKeyCode(guint keyCode)
             // Standard says that DEL becomes U+00007F.
         case GDK_Delete:
             return "U+00007F";
+        case GDK_Tab:
+            return "U+000009";
         default:
             return String::format("U+%06X", toupper(keyCode));
     }

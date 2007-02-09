@@ -1,3 +1,14 @@
+2007-02-08  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Darin.
+
+        Linux/gdk build fixes.
+
+        * Projects/gdk/webcore-gdk.bkl: Account for file renaming.
+        * platform/gdk/KeyEventGdk.cpp: Make gdk's tab key recognized as tab so that
+        keyboard link walking works on gdk.
+        (WebCore::keyIdentifierForGdkKeyCode):
+
 2007-02-08  Adele Peterson  <adele@apple.com>
 
         Reviewed by Brady.
