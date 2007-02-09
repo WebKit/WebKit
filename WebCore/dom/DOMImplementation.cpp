@@ -171,7 +171,7 @@ bool DOMImplementation::hasFeature (const String& feature, const String& version
             || lower == "uievents"
             || lower == "views")
         return version.isEmpty() || version == "2.0";
-    if (lower == "xpath")
+    if (lower == "xpath" || lower == "textevents")
         return version.isEmpty() || version == "3.0";
 
 #ifdef SVG_SUPPORT

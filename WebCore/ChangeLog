@@ -1,3 +1,49 @@
+2007-02-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - Add TextEvent to the DOM (based on the proposed DOM level 3)
+          to be used to fix some international input bugs soon.
+          At this point, we don't send any text events.
+
+        - Remove some obsolete files.
+
+        * CMakeLists.txt:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        Add new files, remove obsolete files.
+
+        * DerivedSources.make: Add TextEvent to the Objective-C and JavaScript bindings lists.
+        * WebCore.exp: Export DOMTextEvent Objective-C wrapper.
+
+        * bindings/js/kjs_events.cpp: (KJS::toJS): Added TextEvent to the list of Event subclasses
+        so we make the right kind of JS wrapper.
+        * bindings/objc/DOMEvents.mm: (+[DOMEvent _eventWith:]): Same thing, for Objective-C.
+
+        * bindings/objc/DOMInternal.h: Added DOMTextEventInternal.h.
+
+        * dom/DOMImplementation.cpp: (WebCore::DOMImplementation::hasFeature):
+        Added "TextEvents", "3.0" to the list of things we'll answer true for
+        (as specified in the DOM Level 3 documentation).
+        This isn't so great until we actually send textInput events, but that's coming soon.
+
+        * dom/Document.cpp: (WebCore::Document::createEvent): Add "TextEvent" as a way to make
+        a TextEvent (as specified in the DOM Level 3 documentation).
+
+        * dom/Event.h:
+        * dom/Event.cpp: (WebCore::Event::isTextEvent): Added virtual function to be used
+        for runtime type checking of Event objects (as for other event types).
+
+        * dom/TextEvent.cpp: Added.
+        * dom/TextEvent.h: Added.
+        * dom/TextEvent.idl: Added.
+
+        * platform/mac/WebCoreWidgetHolder.h: Removed.
+        * rendering/CounterListItem.h: Removed.
+        * rendering/CounterResetNode.cpp: Removed.
+        * rendering/CounterResetNode.h: Removed.
+
 2007-02-09  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

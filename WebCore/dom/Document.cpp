@@ -87,6 +87,7 @@
 #include "StringHash.h"
 #include "StyleSheetList.h"
 #include "SystemTime.h"
+#include "TextEvent.h"
 #include "TextIterator.h"
 #include "TextResourceDecoder.h"
 #include "TreeWalker.h"
@@ -2166,20 +2167,22 @@ DOMWindow* Document::defaultView() const
 PassRefPtr<Event> Document::createEvent(const String &eventType, ExceptionCode& ec)
 {
     if (eventType == "UIEvents" || eventType == "UIEvent")
-        return new UIEvent();
+        return new UIEvent;
     if (eventType == "MouseEvents" || eventType == "MouseEvent")
-        return new MouseEvent();
+        return new MouseEvent;
     if (eventType == "MutationEvents" || eventType == "MutationEvent")
-        return new MutationEvent();
+        return new MutationEvent;
     if (eventType == "KeyboardEvents" || eventType == "KeyboardEvent")
-        return new KeyboardEvent();
+        return new KeyboardEvent;
     if (eventType == "HTMLEvents" || eventType == "Event" || eventType == "Events")
-        return new Event();
+        return new Event;
+    if (eventType == "TextEvent")
+        return new TextEvent;
 #ifdef SVG_SUPPORT
     if (eventType == "SVGEvents")
-        return new Event();
+        return new Event;
     if (eventType == "SVGZoomEvents")
-        return new SVGZoomEvent();
+        return new SVGZoomEvent;
 #endif
     ec = NOT_SUPPORTED_ERR;
     return 0;

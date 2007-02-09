@@ -251,6 +251,7 @@ set(IDL_BINDINGS
     dom/RangeException.idl
     dom/Range.idl
     dom/Text.idl
+    dom/TextEvent.idl
     dom/TreeWalker.idl
     dom/UIEvent.idl
     dom/WheelEvent.idl
@@ -798,6 +799,7 @@ set(WebCore_SRCS
     dom/StyleElement.cpp
     dom/StyledElement.cpp
     dom/Text.cpp
+    dom/TextEvent.cpp
     dom/Traversal.cpp
     dom/TreeWalker.cpp
     dom/UIEvent.cpp
@@ -1218,7 +1220,6 @@ set(WebCore_SRCS
     rendering/bidi.cpp
     rendering/break_lines.cpp
     rendering/CounterNode.cpp
-    rendering/CounterResetNode.cpp
     rendering/EllipsisBox.cpp
     rendering/FixedTableLayout.cpp
     rendering/HitTestResult.cpp

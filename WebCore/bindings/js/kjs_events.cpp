@@ -37,6 +37,7 @@
 #include "JSMouseEvent.h"
 #include "JSMutationEvent.h"
 #include "JSOverflowEvent.h"
+#include "JSTextEvent.h"
 #include "JSWheelEvent.h"
 #include "KURL.h"
 #include "KeyboardEvent.h"
@@ -44,6 +45,7 @@
 #include "MutationEvent.h"
 #include "OverflowEvent.h"
 #include "Page.h"
+#include "TextEvent.h"
 #include "UIEvent.h"
 #include "WheelEvent.h"
 #include "kjs_proxy.h"
@@ -468,26 +470,29 @@ JSValue *DOMEventPrototypeFunction::callAsFunction(ExecState *exec, JSObject * t
   return jsUndefined();
 }
 
-JSValue *toJS(ExecState *exec, Event *e)
+JSValue* toJS(ExecState* exec, Event* e)
 {
   if (!e)
     return jsNull();
-  ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
+
+  ScriptInterpreter* interp = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter());
 
   JSLock lock;
 
-  DOMObject *ret = interp->getDOMObject(e);
+  DOMObject* ret = interp->getDOMObject(e);
   if (!ret) {
     if (e->isKeyboardEvent())
-      ret = new JSKeyboardEvent(exec, static_cast<KeyboardEvent *>(e));
+      ret = new JSKeyboardEvent(exec, static_cast<KeyboardEvent*>(e));
+    else if (e->isTextEvent())
+      ret = new JSTextEvent(exec, static_cast<TextEvent*>(e));
     else if (e->isMouseEvent())
-      ret = new JSMouseEvent(exec, static_cast<MouseEvent *>(e));
+      ret = new JSMouseEvent(exec, static_cast<MouseEvent*>(e));
     else if (e->isWheelEvent())
-      ret = new JSWheelEvent(exec, static_cast<WheelEvent *>(e));
+      ret = new JSWheelEvent(exec, static_cast<WheelEvent*>(e));
     else if (e->isUIEvent())
-      ret = new JSUIEvent(exec, static_cast<UIEvent *>(e));
+      ret = new JSUIEvent(exec, static_cast<UIEvent*>(e));
     else if (e->isMutationEvent())
-      ret = new JSMutationEvent(exec, static_cast<MutationEvent *>(e));
+      ret = new JSMutationEvent(exec, static_cast<MutationEvent*>(e));
     else if (e->isOverflowEvent())
       ret = new JSOverflowEvent(exec, static_cast<OverflowEvent*>(e));
     else

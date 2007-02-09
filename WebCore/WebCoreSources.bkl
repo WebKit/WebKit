@@ -85,6 +85,7 @@
         DerivedSources/WebCore/JSRange.cpp
         DerivedSources/WebCore/JSRangeException.cpp
         DerivedSources/WebCore/JSText.cpp
+        DerivedSources/WebCore/JSTextEvent.cpp
         DerivedSources/WebCore/JSTreeWalker.cpp
         DerivedSources/WebCore/JSUIEvent.cpp
         DerivedSources/WebCore/JSWheelEvent.cpp
@@ -434,7 +435,6 @@
     <set append="1" var="WEBCORE_SOURCES_RENDERING">
         rendering/AutoTableLayout.cpp
         rendering/CounterNode.cpp
-        rendering/CounterResetNode.cpp
         rendering/EllipsisBox.cpp
         rendering/FixedTableLayout.cpp
         rendering/HitTestResult.cpp
@@ -560,6 +560,7 @@
         dom/StyleElement.cpp
         dom/StyledElement.cpp
         dom/Text.cpp
+        dom/TextEvent.cpp
         dom/Traversal.cpp
         dom/TreeWalker.cpp
         dom/UIEvent.cpp

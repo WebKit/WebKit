@@ -101,6 +101,7 @@
 .objc_class_name_DOMStyleSheet
 .objc_class_name_DOMStyleSheetList
 .objc_class_name_DOMText
+.objc_class_name_DOMTextEvent
 .objc_class_name_DOMTreeWalker
 .objc_class_name_DOMUIEvent
 .objc_class_name_DOMWheelEvent

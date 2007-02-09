@@ -160,6 +160,7 @@ IDL_BINDINGS += \
     dom/RangeException.idl \
     dom/Range.idl \
     dom/Text.idl \
+    dom/TextEvent.idl \
     dom/TreeWalker.idl \
     dom/UIEvent.idl \
     dom/WheelEvent.idl \
@@ -324,6 +325,7 @@ SOURCES += \
     dom/StyledElement.cpp \
     dom/StyleElement.cpp \
     dom/Text.cpp \
+    dom/TextEvent.cpp \
     dom/Traversal.cpp \
     dom/TreeWalker.cpp \
     dom/UIEvent.cpp \
@@ -625,7 +627,6 @@ SOURCES += \
     rendering/bidi.cpp \
     rendering/break_lines.cpp \
     rendering/CounterNode.cpp \
-    rendering/CounterResetNode.cpp \
     rendering/EllipsisBox.cpp \
     rendering/FixedTableLayout.cpp \
     rendering/HitTestResult.cpp \

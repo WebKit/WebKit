@@ -82,6 +82,8 @@
         wrapperClass = [DOMMutationEvent class];
     else if (impl->isKeyboardEvent())
         wrapperClass = [DOMKeyboardEvent class];
+    else if (impl->isTextEvent())
+        wrapperClass = [DOMTextEvent class];
 #ifdef SVG_SUPPORT
     else if (impl->isSVGZoomEvent())
         wrapperClass = [DOMSVGZoomEvent class];

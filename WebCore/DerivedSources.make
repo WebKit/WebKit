@@ -279,6 +279,7 @@ all : \
     DOMStyleSheet.h \
     DOMStyleSheetList.h \
     DOMText.h \
+    DOMTextEvent.h \
     DOMTreeWalker.h \
     DOMUIEvent.h \
     DOMWheelEvent.h \
@@ -499,6 +500,7 @@ all : \
     JSSVGMarkerElement.h \
     JSSVGTransform.h \
     JSText.h \
+    JSTextEvent.h \
     JSTreeWalker.h \
     JSUIEvent.h \
     JSXPathEvaluator.h \

@@ -90,6 +90,11 @@ bool Event::isKeyboardEvent() const
     return false;
 }
 
+bool Event::isTextEvent() const
+{
+    return false;
+}
+
 bool Event::isDragEvent() const
 {
     return false;

@@ -138,6 +138,7 @@
 #import "DOMStyleSheetInternal.h"
 #import "DOMStyleSheetListInternal.h"
 #import "DOMTextInternal.h"
+#import "DOMTextEventInternal.h"
 #import "DOMTreeWalkerInternal.h"
 #import "DOMUIEventInternal.h"
 #import "DOMWheelEventInternal.h"
