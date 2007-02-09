@@ -1459,6 +1459,9 @@ EventHandler* Frame::eventHandler() const
 
 void Frame::pageDestroyed()
 {
+    if (d->m_page && d->m_page->focusController()->focusedFrame() == this)
+        d->m_page->focusController()->setFocusedFrame(0);
+
     d->m_page = 0;
 
     // This will stop any JS timers
