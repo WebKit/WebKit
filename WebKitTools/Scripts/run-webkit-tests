@@ -217,7 +217,7 @@ print "Running tests from $testDirectory\n";
 my @tests = ();
 my %testType = ();
 
-system "ln -s $testDirectory /tmp/LayoutTests";
+system "ln -s $testDirectory /tmp/LayoutTests" unless -x "/tmp/LayoutTests";
 
 my %ignoredFiles = ();
 my %ignoredDirectories = ();
@@ -658,6 +658,8 @@ printf "\n%0.2fs total testing time\n", (time - $overallStartTime) . "";
 
 closeHTTPD();
 
+system "rm /tmp/LayoutTests";
+
 # FIXME: Do we really want to check the image-comparison tool for leaks every time?
 if ($shouldCheckLeaks && $pixelTests) {
     $totalLeaks += countAndPrintLeaks("ImageDiff", $imageDiffToolPID, "$testResultsDirectory/ImageDiff-leaks.txt");
@@ -835,6 +837,7 @@ sub countAndPrintLeaks($$$)
         "CFRunLoopRunSpecific \\| CFAllocatorAllocate ", # ditto
         "_objc_msgForward", # leak apparently in NSSpellChecker, Radar 4965278
         "WebCore::Selection::toRange", # bug in 'leaks', Radar 4967949
+        "WebCore::SubresourceLoader::create", # bug in 'leaks', Radar 4985806
         "NSURLCache cachedResponseForRequest", # leak in CFURL cache, Radar 4768430
         "NSAttributedString\\(NSAttributedStringKitAdditions\\) _initWithDOMRange:", # leak apparently in NSAttributedString, Radar 4970608
         "NSAttributedString\\(NSAttributedStringKitAdditions\\) dataFromRange:documentAttributes:error:" # leak apparently in NSAttributedString, Radar 4973752

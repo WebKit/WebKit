@@ -31,12 +31,12 @@
 
 #include "ApplyStyleCommand.h"
 #include "BeforeUnloadEvent.h"
-#include "Chrome.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "Cache.h"
 #include "CachedCSSStyleSheet.h"
+#include "Chrome.h"
 #include "DOMWindow.h"
 #include "DocLoader.h"
 #include "DocumentType.h"
@@ -61,6 +61,7 @@
 #include "IconLoader.h"
 #include "ImageDocument.h"
 #include "IndentOutdentCommand.h"
+#include "Logging.h"
 #include "MediaFeatureNames.h"
 #include "MouseEventWithHitTestResults.h"
 #include "NodeList.h"
@@ -145,9 +146,6 @@ private:
 };
 
 #ifndef NDEBUG
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
-#endif
 WTFLogChannel LogWebCoreFrameLeaks =  { 0x00000000, "", WTFLogChannelOn };
 
 struct FrameCounter { 

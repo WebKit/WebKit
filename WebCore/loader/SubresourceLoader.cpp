@@ -31,6 +31,7 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "Logging.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "SubresourceLoaderClient.h"
@@ -39,16 +40,38 @@
 
 namespace WebCore {
 
+#ifndef NDEBUG
+WTFLogChannel LogWebCoreSubresourceLoaderLeaks =  { 0x00000000, "", WTFLogChannelOn };
+
+struct SubresourceLoaderCounter {
+    static unsigned count; 
+
+    ~SubresourceLoaderCounter() 
+    { 
+        if (count) 
+            LOG(WebCoreSubresourceLoaderLeaks, "LEAK: %u SubresourceLoader\n", count); 
+    }
+};
+unsigned SubresourceLoaderCounter::count = 0;
+static SubresourceLoaderCounter subresourceLoaderCounter;
+#endif
+
 SubresourceLoader::SubresourceLoader(Frame* frame, SubresourceLoaderClient* client)
     : ResourceLoader(frame)
     , m_client(client)
     , m_loadingMultipartContent(false)
 {
+#ifndef NDEBUG
+    ++SubresourceLoaderCounter::count;
+#endif
     frameLoader()->addSubresourceLoader(this);
 }
 
 SubresourceLoader::~SubresourceLoader()
 {
+#ifndef NDEBUG
+    --SubresourceLoaderCounter::count;
+#endif
 }
 
 bool SubresourceLoader::load(const ResourceRequest& r)

@@ -2,6 +2,20 @@
 
         Reviewed by Beth Dakin.
 
+        Added a hard counter for SubresourceLoaders because the leaks tool now
+        ignores them.
+        
+        * loader/SubresourceLoader.cpp:
+        (WebCore::):
+        (WebCore::SubresourceLoaderCounter::~SubresourceLoaderCounter):
+        (WebCore::SubresourceLoader::SubresourceLoader):
+        (WebCore::SubresourceLoader::~SubresourceLoader):
+        * page/Frame.cpp: Removed unnecessary #define
+
+2007-02-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+
         Fixed <rdar://problem/4982374> CSSComputedStyleDeclaration::getPropertyCSSValue 
         leak reported by buildbot
         
