@@ -1,3 +1,11 @@
+2007-02-09  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Dave Harrison
+
+        Disable the thread-check assertion in WebCore, as well as Webkit
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2007-02-08  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

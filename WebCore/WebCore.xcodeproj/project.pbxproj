@@ -12490,6 +12490,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(DEBUG_DEFINES)",
 					"$(FEATURE_DEFINES)",
+					DISABLE_THREAD_CHECK,
 				);
 				HEADER_SEARCH_PATHS = (
 					ForwardingHeaders,
