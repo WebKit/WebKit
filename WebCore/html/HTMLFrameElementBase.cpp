@@ -37,6 +37,7 @@
 #include "KURL.h"
 #include "Page.h"
 #include "RenderFrame.h"
+#include "Settings.h"
 #include "csshelper.h"
 
 namespace WebCore {
@@ -197,6 +198,11 @@ void HTMLFrameElementBase::willRemove()
 
 void HTMLFrameElementBase::setLocation(const String& str)
 {
+    if (m_URL == str)
+        if (Frame* frame = document()->frame())
+            if (frame->settings()->needsAcrobatFrameReloadingQuirk())
+                return;
+
     m_URL = AtomicString(str);
 
     if (inDocument())

@@ -65,6 +65,7 @@
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitStatisticsPrivate.h"
+#import "WebKitVersionChecks.h"
 #import "WebLocalizableStrings.h"
 #import "WebNSDataExtras.h"
 #import "WebNSDataExtrasPrivate.h"
@@ -840,6 +841,8 @@ static bool debugWidget = true;
         settings->setUserStyleSheetLocation([NSURL URLWithString:(location ? location : @"")]);
     } else
         settings->setUserStyleSheetLocation([NSURL URLWithString:@""]);
+    settings->setNeedsAcrobatFrameReloadingQuirk(!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_ACROBAT_QUIRK)
+        && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.adobe.Acrobat.Pro"]);
 }
 
 - (void)_preferencesChangedNotification: (NSNotification *)notification

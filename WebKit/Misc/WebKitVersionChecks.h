@@ -34,6 +34,7 @@
 
 // FIXME 4927747: We should make the framework version numbers match the info.plist version numbers
 #define WEBKIT_FIRST_VERSION_WITH_3_0_CONTEXT_MENU_TAGS 0x00020000
+#define WEBKIT_FIRST_VERSION_WITHOUT_ACROBAT_QUIRK 0x00020000
 
 #ifdef __cplusplus
 extern "C" {
