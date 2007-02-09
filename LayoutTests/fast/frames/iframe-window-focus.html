@@ -1,0 +1,28 @@
+<html><head>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function init() {
+    var iframe = document.getElementById("rte");
+    iframe.contentDocument.designMode = "on";
+    iframe.contentWindow.focus();
+    
+    if (window.layoutTestController) {
+        eventSender.keyDown("P");
+        eventSender.keyDown("A");
+        eventSender.keyDown("S");
+        eventSender.keyDown("S");
+    }
+    document.getElementById('res').innerHTML = iframe.contentDocument.body.innerText;
+}
+
+
+</script>
+</head>
+<body onload="init()">
+This tests that focusing an editable iframe's window works correctly.<br>
+<iframe id="rte" style="border: 1px solid black"></iframe>
+<div id="res"></div>
+</body>
+</html>

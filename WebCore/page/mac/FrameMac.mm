@@ -341,11 +341,9 @@ NSString *FrameMac::matchLabelsAgainstElement(NSArray *labels, Element *element)
 
 void FrameMac::focusWindow()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    Frame::focusWindow();
 
-    // If we're a top level window, bring the window to the front.
-    if (!tree()->parent())
-        page()->chrome()->focus();
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     // Might not have a view yet: this could be a child frame that has not yet received its first byte of data.
     // FIXME: Should remember that the frame needs focus.  See <rdar://problem/4645685>.
@@ -360,6 +358,8 @@ void FrameMac::focusWindow()
 
 void FrameMac::unfocusWindow()
 {
+    Frame::unfocusWindow();
+
     // Might not have a view yet: this could be a child frame that has not yet received its first byte of data.
     // FIXME: Should remember that the frame needs to unfocus.  See <rdar://problem/4645685>.
     if (!d->m_view)
@@ -368,11 +368,8 @@ void FrameMac::unfocusWindow()
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSView *view = d->m_view->getDocumentView();
     if ([_bridge firstResponder] == view) {
-        // If we're a top level window, deactivate the window.
-        if (!tree()->parent())
-            page()->chrome()->unfocus();
-        else {
-            // We want to shift focus to our parent.
+        if (tree()->parent()) {
+            // If we're not the top level window, we want to shift focus to our parent.
             FrameMac* parentFrame = static_cast<FrameMac*>(tree()->parent());
             NSView* parentView = parentFrame->d->m_view->getDocumentView();
             [parentFrame->_bridge makeFirstResponder:parentView];

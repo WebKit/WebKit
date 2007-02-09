@@ -2,6 +2,16 @@
 
         Reviewed by Brady.
 
+        Test for http://bugs.webkit.org/show_bug.cgi?id=12599
+        <rdar://problem/4973507> REGRESSION: When replying in Gmail, the caret disappears when you start to type (12599)
+
+        * fast/frames/iframe-window-focus-expected.txt: Added.
+        * fast/frames/iframe-window-focus.html: Added.
+
+2007-02-08  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Brady.
+
         Test for http://bugs.webkit.org/show_bug.cgi?id=12480
         <rdar://problem/4971222> REGRESSION (NativeListBox): Deselecting option causes list to jump to top
 

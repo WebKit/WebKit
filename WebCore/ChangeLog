@@ -2,6 +2,26 @@
 
         Reviewed by Brady.
 
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=12599
+        <rdar://problem/4973507> REGRESSION: When replying in Gmail, the caret disappears when you start to type (12599)
+
+        When a frame's window was focused, the page didn't get updated about the new frame getting focus.
+        This was causing handleKeyPress to fail because it kept getting a selection for the wrong frame (which wasn't editable).
+
+        Test: fast/frames/iframe-window-focus.html
+
+        * page/Frame.cpp:
+        (WebCore::Frame::focusWindow):
+        (WebCore::Frame::unfocusWindow):
+        * page/Frame.h:
+        * page/mac/FrameMac.mm:
+        (WebCore::FrameMac::focusWindow):
+        (WebCore::FrameMac::unfocusWindow):
+
+2007-02-08  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Brady.
+
         Fix for http://bugs.webkit.org/show_bug.cgi?id=12480
         <rdar://problem/4971222> REGRESSION (NativeListBox): Deselecting option causes list to jump to top
 

@@ -205,8 +205,8 @@ private:
 // === to be moved into Chrome
 
 public:
-    virtual void focusWindow() = 0;
-    virtual void unfocusWindow() = 0;
+    virtual void focusWindow();
+    virtual void unfocusWindow();
     virtual void print() = 0;
     bool shouldClose();
     void scheduleClose();

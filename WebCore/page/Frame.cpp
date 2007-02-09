@@ -44,6 +44,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "FloatRect.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
@@ -1493,6 +1494,28 @@ bool Frame::prohibitsScrolling() const
 void Frame::setProhibitsScrolling(bool prohibit)
 {
     d->m_prohibitsScrolling = prohibit;
+}
+
+void Frame::focusWindow()
+{
+    if (!page())
+        return;
+
+    // If we're a top level window, bring the window to the front.
+    if (!tree()->parent())
+        page()->chrome()->focus();
+
+    page()->focusController()->setFocusedFrame(this);
+}
+
+void Frame::unfocusWindow()
+{
+    if (!page())
+        return;
+    
+    // If we're a top level window, deactivate the window.
+    if (!tree()->parent())
+        page()->chrome()->unfocus();
 }
 
 bool Frame::shouldClose()
