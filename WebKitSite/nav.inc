@@ -19,8 +19,9 @@
         <li><a href="/coding/coding-style.html">Code Style Guidelines</a></li>
         <li><a href="http://trac.webkit.org/projects/webkit/wiki/Drosera">Drosera</a></li>
         <li><a href="http://trac.webkit.org/projects/webkit/wiki/WebDevelopers">Web developer resources</a></li>
+        <li><a href='/docs/'>DOM interfaces</a></li>
         <li><a href="http://trac.webkit.org/projects/webkit/wiki">Wiki</a></li>
-                
+
         <li class="subtitle">Testing</li>
 
         <li><a href="/quality/testing.html">Regression Testing</a></li>
