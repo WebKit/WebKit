@@ -1,3 +1,18 @@
+2007-02-09  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4816376> 
+        REGRESSION: NetNewsWire 3.0 - Crashes in WebDocumentLoaderMac::attachToFrame() (12674)
+        
+        The bug was that the NNW policy delegate never calls back on the policy listener so we'll try to do a load
+        while there's a policy decision underway. The extra call to setPolicyDocumentLoader would cause a detached (and deallocated)
+        WebDataSource to be reattached and thus causing a crash.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load):
+        Remove extra call to setPolicyDocumentLoader.
+
 2007-02-09  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.
