@@ -261,7 +261,7 @@ void RenderListBox::paintObject(PaintInfo& paintInfo, int tx, int ty)
     // Paint the children.
     RenderBlock::paintObject(paintInfo, tx, ty);
 
-    if (paintInfo.phase == PaintPhaseBlockBackground) {
+    if (paintInfo.phase == PaintPhaseChildBlockBackground || paintInfo.phase == PaintPhaseChildBlockBackgrounds) {
         int index = m_indexOffset;
         while (index < listItemsSize && index <= m_indexOffset + numVisibleItems()) {
             paintItemBackground(paintInfo, tx, ty, index);

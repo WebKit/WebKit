@@ -1,3 +1,14 @@
+2007-02-08  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/4963411> Items of SELECT element are incorrectly highlighted when display:block is set
+
+        Test: fast/forms/select-block-background.html
+
+        * rendering/RenderListBox.cpp: (WebCore::RenderListBox::paintObject):
+          Paint the item backgrounds during the PaintPhaseChildBlockBackground or PaintPhaseChildBlockBackgrounds phase.
+
 2007-02-08  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adele.
