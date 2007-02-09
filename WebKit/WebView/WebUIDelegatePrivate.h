@@ -28,10 +28,15 @@
 
 #import <WebKit/WebUIDelegate.h>
 
-// FIXME: These should move to WebUIDelegate.h as part of the WebMenuItemTag enum there, when we're not in API freeze 
-#define WEBMENUITEMTAG_SPI_START 1000
+#define WEBMENUITEMTAG_WEBKIT_3_0_SPI_START 2000
 enum { 
-    WebMenuItemTagOpenLink = WEBMENUITEMTAG_SPI_START,
+    // The next three values were used in WebKit 2.0 for SPI. In WebKit 3.0 these are API, with different values.
+    OldWebMenuItemTagSearchInSpotlight = 1000,
+    OldWebMenuItemTagSearchWeb,
+    OldWebMenuItemTagLookUpInDictionary,
+    // FIXME: These should move to WebUIDelegate.h as part of the WebMenuItemTag enum there, when we're not in API freeze 
+    // Note that these values must be kept aligned with values in WebCore/ContextMenuItem.h
+    WebMenuItemTagOpenLink = WEBMENUITEMTAG_WEBKIT_3_0_SPI_START,
     WebMenuItemTagIgnoreGrammar,
     WebMenuItemTagSpellingMenu,
     WebMenuItemTagShowSpellingPanel,

@@ -1,3 +1,42 @@
+2007-02-09  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Beth
+
+        - WebKit part of fix for radar 4939636, problems with context menu items and binaries linked
+          against WebKit 2.0.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Changed DYLIB_CURRENT_VERSION to 2 (was 1)
+
+        * Misc/WebKitVersionChecks.h:
+        Added constant WEBKIT_FIRST_VERSION_WITH_3_0_CONTEXT_MENU_TAGS, which is 2 but in the weird
+        format that these version checks use.
+
+        * WebView/WebUIDelegatePrivate.h:
+        Tweaked comments; included the old values for three tags for context menu items that changed
+        from SPI to API in 3.0; renamed WEBMENUITEMTAG_SPI_START to WEBMENUITEMTAG_WEBKIT_3_0_SPI_START 
+        for clarity, and bumped its value to avoid conflict with the three old values
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (isAppleMail):
+        new helper function that checks the bundle identifier
+        (fixMenusToSendToOldClients):
+        Removed return value for clarity; now checks linked-on version and also makes special case
+        for Mail; now replaces three API tags with their old SPI values for clients that linked
+        against old WebKit version, in addition to replacing new API with WebMenuItemTagOther for
+        items that had no specific tag before.
+        (fixMenusReceivedFromOldClients):
+        Removed return value for clarity; removed defaultMenuItems parameter because it's no longer 
+        necessary; removed code that tried to recognize menus that got confused by the SPI -> API 
+        change (we now pass the old SPI values to these clients to avoid confusing them); now 
+        restores the tags for the items whose tags were replaced in fixMenusToSendToOldClients 
+        (this used to restore the tags of the default items rather than the new items, which was 
+        incorrect but happened to work since the clients we tested were using the objects from the
+        default items array in their new items array)
+        (WebContextMenuClient::getCustomMenuFromDefaultItems):
+        Updated to account for the removed return values for the two fix-up methods; moved the
+        autorelease of newItems here, which is clearer and was the source of a leak before.
+
 2007-02-08  Kevin McCullough  <KMcCullough@apple.com>
 
         Reviewed by

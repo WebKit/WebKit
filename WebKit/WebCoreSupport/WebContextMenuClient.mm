@@ -33,6 +33,7 @@
 #import "WebFrameInternal.h"
 #import "WebHTMLView.h"
 #import "WebHTMLViewInternal.h"
+#import "WebKitVersionChecks.h"
 #import "WebNSPasteboardExtras.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
@@ -58,132 +59,157 @@ void WebContextMenuClient::contextMenuDestroyed()
     delete this;
 }
 
-static NSMutableArray *fixMenusToSendToOldClients(NSMutableArray *defaultMenuItems)
+// FIXME 4950029: This function can be removed when 4950029 is addressed.
+static BOOL isAppleMail(void)
 {
-    // Here we change all editing-related SPI tags listed in WebUIDelegatePrivate.h to WebMenuItemTagOther
-    // to match our old WebKit context menu behavior.
-
-    // FIXME 4950029: This is a temporary solution to make Mail's context menus continue working until
-    // they've updated their code to expect the new tags. We'll have to coordinate a WebKit update with
-    // that Mail update to start sending the new tags again. At that point, this code should be changed
-    // to run only for clients that were linked against old versions of WebKit.
-    
-    unsigned defaultItemsCount = [defaultMenuItems count];
-    for (unsigned i = 0; i < defaultItemsCount; ++i) {
-        NSMenuItem *item = [defaultMenuItems objectAtIndex:i];
-        if ([item tag] >= WEBMENUITEMTAG_SPI_START)
-            [item setTag:WebMenuItemTagOther];
-        else {
-            // All items should have useful tags coming into this method.
-            ASSERT([item tag] != WebMenuItemTagOther);
-        }
-    }
-    
-    return defaultMenuItems;
+    return [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mail"];
 }
 
-static NSMutableArray *fixMenusReceivedFromOldClients(NSMutableArray *newMenuItems, NSMutableArray *defaultMenuItems)
-{    
-    // The WebMenuItemTag enum has changed since Tiger, so clients built against Tiger WebKit might reference incorrect values for tags.
-    // Here we fix up Tiger Mail and Tiger Safari.
-    
-    if ([newMenuItems count] && [[newMenuItems objectAtIndex:0] isSeparatorItem]) {
-        if ([[newMenuItems objectAtIndex:1] isSeparatorItem]) {
-            // Versions of Mail compiled with older WebKits will end up without three context menu items, 
-            // though with the separators between them. Here we check for that problem and reinsert the 
-            // three missing items. This shouldn't affect any clients other than Mail since the tags for 
-            // the three items were not public API. We can remove this code when we no longer support 
-            // previously-built versions of Mail on Tiger. See 4498606 for more details.
-            ASSERT([[newMenuItems objectAtIndex:1] isSeparatorItem]);
-            ASSERT([[defaultMenuItems objectAtIndex:1] tag] == WebMenuItemTagSearchWeb);
-            ASSERT([[defaultMenuItems objectAtIndex:2] isSeparatorItem]);
-            ASSERT([[defaultMenuItems objectAtIndex:3] tag] == WebMenuItemTagLookUpInDictionary);
-            ASSERT([[defaultMenuItems objectAtIndex:4] isSeparatorItem]);
-            [newMenuItems insertObject:[defaultMenuItems objectAtIndex:0] atIndex:0];
-            [newMenuItems insertObject:[defaultMenuItems objectAtIndex:1] atIndex:1];
-            [newMenuItems insertObject:[defaultMenuItems objectAtIndex:3] atIndex:3];
-            
-            return [newMenuItems autorelease];
-        }
+static void fixMenusToSendToOldClients(NSMutableArray *defaultMenuItems)
+{
+    BOOL preVersion3Client = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_3_0_CONTEXT_MENU_TAGS);
+    BOOL isMail = isAppleMail();
+
+    // FIXME 4950029: The isAppleMail() check is a temporary solution to make Leopard Mail's context menus 
+    // continue working until they've updated their code to expect the new tags. We'll have to coordinate 
+    // a WebKit submission with that Mail submission to start sending the new tags again. At that point, 
+    // this code should be changed to only check preVersion3Client.
+    if (!preVersion3Client && !isMail)
+        return;
         
-        unsigned defaultItemsCount = [defaultMenuItems count];
-        for (unsigned i = 0; i < defaultItemsCount; ++i)
-            if ([[defaultMenuItems objectAtIndex:i] tag] == WebMenuItemTagSpellingMenu) {
-                // Tiger Safari doesn't realize we're popping up an editing menu.
-                // http://bugs.webkit.org/show_bug.cgi?id=12134 has details.
-                [newMenuItems release];
-                return defaultMenuItems;
-            }
-    }
-    
-    // Restore the new-style tags to the editing-related menu items. This is the 2nd part of the
-    // workaround whose first part is in fixMenusToSendToOldClients.
-    
-    // FIXME 4950029: This is a temporary solution to make Mail's context menus continue working until
-    // they've updated their code to expect the new tags. We'll have to coordinate a WebKit update with
-    // that Mail update to start sending the new tags again. At that point, this code should be changed
-    // to run only for clients that were linked against old versions of WebKit.
     unsigned defaultItemsCount = [defaultMenuItems count];
     for (unsigned i = 0; i < defaultItemsCount; ++i) {
         NSMenuItem *item = [defaultMenuItems objectAtIndex:i];
-        // Items with a useful tag can be left alone. Items with WebMenuItemTagOther should be only the
-        // ones whose tags we changed in fixMenusToSendToOldClients.
-        if ([item tag] != WebMenuItemTagOther)
-            continue;
+        int tag = [item tag];
+        int oldStyleTag = tag;
         
-        NSString *title = [item title];
-        if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagOpenLink]])
-            [item setTag:WebMenuItemTagOpenLink];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagIgnoreGrammar]])
-            [item setTag:WebMenuItemTagIgnoreGrammar];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagSpellingMenu]])
-            [item setTag:WebMenuItemTagSpellingMenu];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowSpellingPanel:true]]
-            || [title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowSpellingPanel:false]])
-            [item setTag:WebMenuItemTagShowSpellingPanel];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagCheckSpelling]])
-            [item setTag:WebMenuItemTagCheckSpelling];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagCheckSpellingWhileTyping]])
-            [item setTag:WebMenuItemTagCheckSpellingWhileTyping];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagCheckGrammarWithSpelling]])
-            [item setTag:WebMenuItemTagCheckGrammarWithSpelling];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagFontMenu]])
-            [item setTag:WebMenuItemTagFontMenu];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowFonts]])
-            [item setTag:WebMenuItemTagShowFonts];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagBold]])
-            [item setTag:WebMenuItemTagBold];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagItalic]])
-            [item setTag:WebMenuItemTagItalic];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagUnderline]])
-            [item setTag:WebMenuItemTagUnderline];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagOutline]])
-            [item setTag:WebMenuItemTagOutline];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagStyles]])
-            [item setTag:WebMenuItemTagStyles];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowColors]])
-            [item setTag:WebMenuItemTagShowColors];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagSpeechMenu]])
-            [item setTag:WebMenuItemTagSpeechMenu];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagStartSpeaking]])
-            [item setTag:WebMenuItemTagStartSpeaking];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagStopSpeaking]])
-            [item setTag:WebMenuItemTagStopSpeaking];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagWritingDirectionMenu]])
-            [item setTag:WebMenuItemTagWritingDirectionMenu];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagDefaultDirection]])
-            [item setTag:WebMenuItemTagDefaultDirection];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagLeftToRight]])
-            [item setTag:WebMenuItemTagLeftToRight];
-        else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagRightToLeft]])
-            [item setTag:WebMenuItemTagRightToLeft];
-        else {
-            // We don't expect WebMenuItemTagOther for any items other than the ones we explicitly handle
-            ASSERT_NOT_REACHED();
+        if (tag >= WEBMENUITEMTAG_WEBKIT_3_0_SPI_START) {
+            // Change all editing-related SPI tags listed in WebUIDelegatePrivate.h to WebMenuItemTagOther
+            // to match our old WebKit context menu behavior.
+            oldStyleTag = WebMenuItemTagOther;
+        } else {
+            // All items are expected to have useful tags coming into this method.
+            ASSERT(tag != WebMenuItemTagOther);
+            
+            // Use the pre-3.0 tags for the few items that changed tags as they moved from SPI to API. We
+            // do this only for old clients; new Mail already expects the new symbols in this case.
+            if (preVersion3Client) {
+                switch (tag) {
+                    case WebMenuItemTagSearchInSpotlight:
+                        oldStyleTag = OldWebMenuItemTagSearchInSpotlight;
+                        break;
+                    case WebMenuItemTagSearchWeb:
+                        oldStyleTag = OldWebMenuItemTagSearchWeb;
+                        break;
+                    case WebMenuItemTagLookUpInDictionary:
+                        oldStyleTag = OldWebMenuItemTagLookUpInDictionary;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
-    }
 
-    return [newMenuItems autorelease];
+        if (oldStyleTag != tag)
+            [item setTag:oldStyleTag];
+    }
+}
+
+static void fixMenusReceivedFromOldClients(NSMutableArray *newMenuItems)
+{   
+    BOOL preVersion3Client = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_3_0_CONTEXT_MENU_TAGS);
+    
+    // FIXME 4950029: The isAppleMail() check is a temporary solution to make Leopard Mail's context menus 
+    // continue working until they've updated their code to expect the new tags. We'll have to coordinate 
+    // a WebKit submission with that Mail submission to start sending the new tags again. At that point, 
+    // this code should be changed to only check preVersion3Client.
+    if (!preVersion3Client && !isAppleMail())
+        return;
+    
+    // Restore the modern tags to the menu items whose tags we altered in fixMenusToSendToOldClients. 
+    unsigned newItemsCount = [newMenuItems count];
+    for (unsigned i = 0; i < newItemsCount; ++i) {
+        NSMenuItem *item = [newMenuItems objectAtIndex:i];
+        
+        int tag = [item tag];
+        int modernTag = tag;
+        
+        if (tag == WebMenuItemTagOther) {
+            // Restore the specific tag for items on which we temporarily set WebMenuItemTagOther to match old behavior.
+            NSString *title = [item title];
+            if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagOpenLink]])
+                modernTag = WebMenuItemTagOpenLink;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagIgnoreGrammar]])
+                modernTag = WebMenuItemTagIgnoreGrammar;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagSpellingMenu]])
+                modernTag = WebMenuItemTagSpellingMenu;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowSpellingPanel:true]]
+                     || [title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowSpellingPanel:false]])
+                modernTag = WebMenuItemTagShowSpellingPanel;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagCheckSpelling]])
+                modernTag = WebMenuItemTagCheckSpelling;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagCheckSpellingWhileTyping]])
+                modernTag = WebMenuItemTagCheckSpellingWhileTyping;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagCheckGrammarWithSpelling]])
+                modernTag = WebMenuItemTagCheckGrammarWithSpelling;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagFontMenu]])
+                modernTag = WebMenuItemTagFontMenu;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowFonts]])
+                modernTag = WebMenuItemTagShowFonts;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagBold]])
+                modernTag = WebMenuItemTagBold;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagItalic]])
+                modernTag = WebMenuItemTagItalic;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagUnderline]])
+                modernTag = WebMenuItemTagUnderline;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagOutline]])
+                modernTag = WebMenuItemTagOutline;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagStyles]])
+                modernTag = WebMenuItemTagStyles;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagShowColors]])
+                modernTag = WebMenuItemTagShowColors;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagSpeechMenu]])
+                modernTag = WebMenuItemTagSpeechMenu;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagStartSpeaking]])
+                modernTag = WebMenuItemTagStartSpeaking;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagStopSpeaking]])
+                modernTag = WebMenuItemTagStopSpeaking;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagWritingDirectionMenu]])
+                modernTag = WebMenuItemTagWritingDirectionMenu;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagDefaultDirection]])
+                modernTag = WebMenuItemTagDefaultDirection;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagLeftToRight]])
+                modernTag = WebMenuItemTagLeftToRight;
+            else if ([title isEqualToString:[[WebViewFactory sharedFactory] contextMenuItemTagRightToLeft]])
+                modernTag = WebMenuItemTagRightToLeft;
+            else {
+            // We don't expect WebMenuItemTagOther for any items other than the ones we explicitly handle.
+            // There's nothing to prevent an app from applying this tag, but they are supposed to only
+            // use tags in the range starting with WebMenuItemBaseApplicationTag=10000
+                ASSERT_NOT_REACHED();
+            }
+        } else if (preVersion3Client) {
+            // Restore the new API tag for items on which we temporarily set the old SPI tag. The old SPI tag was
+            // needed to avoid confusing clients linked against earlier WebKits; the new API tag is needed for
+            // WebCore to handle the menu items appropriately (without needing to know about the old SPI tags).
+            switch (tag) {
+                case OldWebMenuItemTagSearchInSpotlight:
+                    modernTag = WebMenuItemTagSearchInSpotlight;
+                    break;
+                case OldWebMenuItemTagSearchWeb:
+                    modernTag = WebMenuItemTagSearchWeb;
+                    break;
+                case OldWebMenuItemTagLookUpInDictionary:
+                    modernTag = WebMenuItemTagLookUpInDictionary;
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        if (modernTag != tag)
+            [item setTag:modernTag];        
+    }
 }
 
 NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* defaultMenu)
@@ -193,10 +219,11 @@ NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu*
         return defaultMenu->platformDescription();
     
     NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:defaultMenu->hitTestResult()] autorelease];
-    NSMutableArray *defaultMenuItems = fixMenusToSendToOldClients(defaultMenu->platformDescription());
-    NSMutableArray *newMenuItems = [[delegate webView:m_webView contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems] mutableCopy];
-
-    return fixMenusReceivedFromOldClients(newMenuItems, defaultMenuItems);
+    NSMutableArray *defaultMenuItems = defaultMenu->platformDescription();
+    fixMenusToSendToOldClients(defaultMenuItems);
+    NSMutableArray *newMenuItems = [[[delegate webView:m_webView contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems] mutableCopy] autorelease];
+    fixMenusReceivedFromOldClients(newMenuItems);
+    return newMenuItems;
 }
 
 void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const ContextMenu* parentMenu)
