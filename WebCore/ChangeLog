@@ -1,3 +1,18 @@
+2007-02-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Fixed <rdar://problem/4982374> CSSComputedStyleDeclaration::getPropertyCSSValue 
+        leak reported by buildbot
+        
+        The leak was a typo: "new" instead of "return new". I also generously
+        deployed RefPtr in places that were holding ref-counted objects in
+        bare pointers.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForShadow):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2007-02-08  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Adam Roben.
