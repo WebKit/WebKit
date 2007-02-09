@@ -1,3 +1,28 @@
+2007-02-09  Nicholas Shanks  <webkit@nickshanks.com>
+
+        Reviewed by Dave Hyatt.
+
+        Removed broken recognition of :last-* and :only-* selectors
+        Test results show red indicating property unsupported
+        Previous behaviour was to erroneously make everything green
+
+        * css3/expected_failures/css3-modsel-33-expected.checksum: Added.
+        * css3/expected_failures/css3-modsel-33-expected.png: Added.
+        * css3/expected_failures/css3-modsel-33-expected.txt: Added.
+        * css3/expected_failures/css3-modsel-33.html: Added.
+        * css3/expected_failures/css3-modsel-35-expected.checksum: Added.
+        * css3/expected_failures/css3-modsel-35-expected.png: Added.
+        * css3/expected_failures/css3-modsel-35-expected.txt: Added.
+        * css3/expected_failures/css3-modsel-35.html: Added.
+        * css3/expected_failures/css3-modsel-36-expected.checksum: Added.
+        * css3/expected_failures/css3-modsel-36-expected.png: Added.
+        * css3/expected_failures/css3-modsel-36-expected.txt: Added.
+        * css3/expected_failures/css3-modsel-36.html: Added.
+        * css3/expected_failures/css3-modsel-37-expected.checksum: Added.
+        * css3/expected_failures/css3-modsel-37-expected.png: Added.
+        * css3/expected_failures/css3-modsel-37-expected.txt: Added.
+        * css3/expected_failures/css3-modsel-37.html: Added.
+
 2007-02-08  Adele Peterson  <adele@apple.com>
 
         Reviewed by Brady.

@@ -1,3 +1,17 @@
+2007-02-09  Nicholas Shanks  <webkit@nickshanks.com>
+
+        Reviewed by Dave Hyatt.
+
+        Removed broken recognition of :last-* and :only-* selectors
+
+        * css/CSSGrammar.y:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::checkOneSelector):
+
 2007-02-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark.

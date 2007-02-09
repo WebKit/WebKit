@@ -90,11 +90,7 @@ void CSSSelector::extractPseudoType() const
     static AtomicString indeterminate("indeterminate");
     static AtomicString link("link");
     static AtomicString lang("lang(");
-    static AtomicString lastChild("last-child");
-    static AtomicString lastOfType("last-of-type");
     static AtomicString notStr("not(");
-    static AtomicString onlyChild("only-child");
-    static AtomicString onlyOfType("only-of-type");
     static AtomicString root("root");
     static AtomicString searchCancelButton("-webkit-search-cancel-button");
     static AtomicString searchDecoration("-webkit-search-decoration");
@@ -158,16 +154,8 @@ void CSSSelector::extractPseudoType() const
         m_pseudoType = PseudoLink;
     else if (m_value == lang)
         m_pseudoType = PseudoLang;
-    else if (m_value == lastChild)
-        m_pseudoType = PseudoLastChild;
-    else if (m_value == lastOfType)
-        m_pseudoType = PseudoLastOfType;
     else if (m_value == notStr)
         m_pseudoType = PseudoNot;
-    else if (m_value == onlyChild)
-        m_pseudoType = PseudoOnlyChild;
-    else if (m_value == onlyOfType)
-        m_pseudoType = PseudoOnlyOfType;
     else if (m_value == root)
         m_pseudoType = PseudoRoot;
     else if (m_value == searchCancelButton) {

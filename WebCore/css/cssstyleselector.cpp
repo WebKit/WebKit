@@ -1452,65 +1452,6 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSub
                 }
                 break;
             }
-            case CSSSelector::PseudoLastChild: {
-                // last-child matches the last child that is an element!
-                if (e->parentNode() && e->parentNode()->isElementNode()) {
-                    Node *n = e->nextSibling();
-                    while (n && !n->isElementNode())
-                        n = n->nextSibling();
-                    if (!n)
-                        return true;
-                }
-                break;
-            }
-            case CSSSelector::PseudoLastOfType: {
-                // last-of-type matches the last element of its type!
-                if (e->parentNode() && e->parentNode()->isElementNode()) {
-                    const QualifiedName& type = e->tagQName();
-                    Node *n = e->nextSibling();
-                    while (n) {
-                        if (n->isElementNode() && static_cast<Element*>(n)->hasTagName(type))
-                            break;
-                        n = n->nextSibling();
-                    }
-                    if (!n)
-                        return true;
-                }
-                break;
-            }
-            case CSSSelector::PseudoOnlyChild: {
-                // If both first-child and last-child apply, then only-child applies.
-                if (e->parentNode() && e->parentNode()->isElementNode()) {
-                    Node *n = e->previousSibling();
-                    while (n && !n->isElementNode())
-                        n = n->previousSibling();
-                    if (!n) {
-                        n = e->nextSibling();
-                        while (n && !n->isElementNode())
-                            n = n->nextSibling();
-                        if (!n)
-                            return true;
-                    }
-                }
-                break;
-            }
-            case CSSSelector::PseudoOnlyOfType: {
-                // If both first-of-type and last-of-type apply, then only-of-type applies.
-                if (e->parentNode() && e->parentNode()->isElementNode()) {
-                    const QualifiedName& type = e->tagQName();
-                    Node *n = e->previousSibling();
-                    while (n && !static_cast<Element*>(n)->hasTagName(type))
-                        n = n->previousSibling();
-                    if (!n) {
-                        n = e->nextSibling();
-                        while (n && !static_cast<Element*>(n)->hasTagName(type))
-                            n = n->nextSibling();
-                        if (!n)
-                            return true;
-                    }
-                }
-                break;
-            }
             case CSSSelector::PseudoTarget:
                 if (e == e->document()->getCSSTarget())
                     return true;
