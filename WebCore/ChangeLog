@@ -1,3 +1,17 @@
+2007-02-09  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin Decker
+        
+        - fixed <rdar://problem/4960095> REPRODUCIBLE HANG: WebKit freezes when printing as PDF
+          a certain kind of code (12449)
+ 
+        No test case because I don't know how to make the bug occur without printing.
+
+        * rendering/bidi.cpp:
+        (WebCore::bidiNext):
+        reset loop's "next" variable after using it; we were setting "current" to the same value
+        of "next" each subsequent time through the loop, which is not helpful.
+
 2007-02-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
