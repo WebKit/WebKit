@@ -1,3 +1,19 @@
+2007-02-08  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11047
+          REGRESSION: Empty options cause the entire select to collapse
+        
+        Test: fast/forms/select-empty-option-height.html
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=10783
+          REGRESSION (r16044): Clicking a popup changes layout around it
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::setText): If the option text is empty, use a RenderBR
+        as inner text, to ensure that the inner div has line height.
+
 2007-02-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.

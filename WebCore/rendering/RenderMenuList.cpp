@@ -31,6 +31,7 @@
 #include "HTMLOptGroupElement.h"
 #include "HTMLSelectElement.h"
 #include "PopupMenu.h"
+#include "RenderBR.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "TextStyle.h"
@@ -164,14 +165,19 @@ void RenderMenuList::setTextFromOption(int optionIndex)
 void RenderMenuList::setText(const String& s)
 {
     if (s.isEmpty()) {
-        if (m_buttonText) {
-            m_buttonText->destroy();
-            m_buttonText = 0;
+        if (!m_buttonText || !m_buttonText->isBR()) {
+            if (m_buttonText)
+                m_buttonText->destroy();
+            m_buttonText = new (renderArena()) RenderBR(document());
+            m_buttonText->setStyle(style());
+            addChild(m_buttonText);
         }
     } else {
-        if (m_buttonText)
+        if (m_buttonText && !m_buttonText->isBR())
             m_buttonText->setText(s.impl());
         else {
+            if (m_buttonText)
+                m_buttonText->destroy();
             m_buttonText = new (renderArena()) RenderText(document(), s.impl());
             m_buttonText->setStyle(style());
             addChild(m_buttonText);

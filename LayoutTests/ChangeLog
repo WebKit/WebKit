@@ -1,3 +1,22 @@
+2007-02-08  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=11047
+          REGRESSION: Empty options cause the entire select to collapse
+        
+        - updated results for http://bugs.webkit.org/show_bug.cgi?id=10783
+          REGRESSION (r16044): Clicking a popup changes layout around it
+
+        * fast/forms/HTMLOptionElement_label07-expected.txt:
+        * fast/forms/form-element-geometry-expected.txt:
+        * fast/forms/select-baseline-expected.txt:
+        * fast/forms/select-empty-option-height-expected.checksum: Added.
+        * fast/forms/select-empty-option-height-expected.png: Added.
+        * fast/forms/select-empty-option-height-expected.txt: Added.
+        * fast/forms/select-empty-option-height.html: Added.
+        * fast/replaced/three-selects-break-expected.txt:
+
 2007-02-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.
