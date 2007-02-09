@@ -1,6 +1,18 @@
 2007-02-09  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john
+        
+        <rdar://problem/4983858>
+        REGRESSION: In a new mail message, attempting to select a single word causes the selection to extend to the previous line
+        
+        * editing/selection/4983858-expected.checksum: Added.
+        * editing/selection/4983858-expected.png: Added.
+        * editing/selection/4983858-expected.txt: Added.
+        * editing/selection/4983858.html: Added.
+
+2007-02-09  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
 
         <rdar://problem/4916541>
         Some of the selection isn't preserved during an Indent opreration

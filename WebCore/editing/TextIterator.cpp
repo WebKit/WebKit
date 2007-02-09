@@ -742,12 +742,12 @@ bool SimplifiedBackwardsTextIterator::handleNonTextNode()
 
 void SimplifiedBackwardsTextIterator::exitNode()
 {
-    // Left this function in so that the name and usage patterns remain similar to 
-    // TextIterator. However, the needs of this iterator are much simpler, and
-    // the handleNonTextNode() function does just what we want (i.e. insert a
-    // BR for certain node types to "break up" text so that it does not seem
-    // like content is next to other text when it really isn't). 
-    handleNonTextNode();
+    if (shouldEmitNewlineForNode(m_node) ||
+        shouldEmitNewlineBeforeNode(m_node) ||
+        shouldEmitTabBeforeNode(m_node))
+        emitNewline();
+    
+    return;
 }
 
 void SimplifiedBackwardsTextIterator::emitCharacter(UChar c, Node *node, int startOffset, int endOffset)
