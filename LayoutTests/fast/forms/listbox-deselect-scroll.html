@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <script>
+            function test() {
+                var sl = document.getElementById('sl');
+                sl.focus();
+                document.execCommand("SelectAll");
+                sl.scrollTop = 60;
+                mouseDownOnSelect("sl", 3, false, true);
+            }
+            
+            function mouseDownOnSelect(selId, index, shift, meta) {
+                var sl = document.getElementById(selId);
+                var itemHeight = 14;
+                var border = 1;
+                var y = border + index * itemHeight - window.pageYOffset;
+                var event = document.createEvent("MouseEvent");
+                event.initMouseEvent("mousedown", true, true, document.defaultView, 1, sl.offsetLeft + border, sl.offsetTop + y, sl.offsetLeft + border, sl.offsetTop + y, false, false, shift, meta, 0, document);
+                sl.dispatchEvent(event);
+            }
+        </script>
+    </head>
+    <body onload="test()">
+        This tests that deselecting an option won't cause unnecessary scrolling.<br>
+        <select id="sl" multiple="multiple" size="5">
+            <option value="Accessibility">Accessibility</option>
+            <option value="CSS">CSS</option>
+            <option value="Drosera">Drosera</option>
+            <option value="Evangelism">Evangelism</option>
+            <option value="Forms">Forms</option>
+            <option value="Frames">Frames</option>
+            <option value="History">History</option>
+            <option value="HTML DOM">HTML DOM</option>
+            <option value="HTML Editing">HTML Editing</option>
+            <option value="Images">Images</option>
+            <option>SCROLL UP</option>
+        </select>
+    </body>
+</html>

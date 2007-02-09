@@ -1,5 +1,23 @@
 2007-02-08  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Brady.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=12480
+        <rdar://problem/4971222> REGRESSION (NativeListBox): Deselecting option causes list to jump to top
+
+        Test: fast/forms/listbox-deselect-scroll.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::activeSelectionStartListIndex): Added.  Returns the index for the active selection.  If there is no active selection,
+         it returns the first selected index.
+        (WebCore::HTMLSelectElement::activeSelectionEndListIndex): Added.  If there is no active selection, it returns the last selected index.
+        * html/HTMLSelectElement.h:
+        * rendering/RenderListBox.cpp: (WebCore::RenderListBox::scrollToRevealSelection): Instead of using the first and last selected indices,
+          use the active selection indices to determine which item to reveal.  This way, when you're selecting with the keyboard, or the mouse,
+          no unnecessary scrolling will occur if the end of your active selection is already visible.
+
+2007-02-08  Adele Peterson  <adele@apple.com>
+
         Reviewed by Hyatt.
 
         Fix for <rdar://problem/4963411> Items of SELECT element are incorrectly highlighted when display:block is set

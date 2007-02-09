@@ -146,8 +146,8 @@ void RenderListBox::scrollToRevealSelection()
 
     m_scrollToRevealSelectionAfterLayout = false;
 
-    int firstIndex = select->optionToListIndex(select->selectedIndex());
-    if (firstIndex >= 0 && !listIndexIsVisible(select->lastSelectedListIndex()))
+    int firstIndex = select->activeSelectionStartListIndex();
+    if (firstIndex >= 0 && !listIndexIsVisible(select->activeSelectionEndListIndex()))
         scrollToRevealElementAtListIndex(firstIndex);
 }
 

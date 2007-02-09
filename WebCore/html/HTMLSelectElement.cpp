@@ -188,6 +188,20 @@ void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect, bool fi
     }
 }
 
+int HTMLSelectElement::activeSelectionStartListIndex() const
+{
+    if (m_activeSelectionAnchorIndex >= 0)
+        return m_activeSelectionAnchorIndex;
+    return optionToListIndex(selectedIndex());
+}
+
+int HTMLSelectElement::activeSelectionEndListIndex() const
+{
+    if (m_activeSelectionEndIndex >= 0)
+        return m_activeSelectionEndIndex;
+    return lastSelectedListIndex();
+}
+
 unsigned HTMLSelectElement::length() const
 {
     unsigned len = 0;

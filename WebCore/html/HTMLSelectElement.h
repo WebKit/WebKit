@@ -131,6 +131,9 @@ public:
     void setActiveSelectionEndIndex(int index) { m_activeSelectionEndIndex = index; }
     void updateListBoxSelection(bool deselectOtherOptions);
     void listBoxOnChange();
+    
+    int activeSelectionStartListIndex() const;
+    int activeSelectionEndListIndex() const;
 
 private:
     void recalcListItems() const;

@@ -1,5 +1,17 @@
 2007-02-08  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Brady.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=12480
+        <rdar://problem/4971222> REGRESSION (NativeListBox): Deselecting option causes list to jump to top
+
+        * fast/forms/listbox-deselect-scroll-expected.checksum: Added.
+        * fast/forms/listbox-deselect-scroll-expected.png: Added.
+        * fast/forms/listbox-deselect-scroll-expected.txt: Added.
+        * fast/forms/listbox-deselect-scroll.html: Added.
+
+2007-02-08  Adele Peterson  <adele@apple.com>
+
         Reviewed by Hyatt.
 
         Test for: <rdar://problem/4963411> Items of SELECT element are incorrectly highlighted when display:block is set
