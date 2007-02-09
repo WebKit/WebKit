@@ -48,8 +48,6 @@
         <include>platform/gdk</include>
         <include>platform/graphics/cairo</include>
         <define>XPATH_SUPPORT</define>
-        <!-- gdk build broken with without NDEBUG defined -->
-        <define>NDEBUG</define>
  
         <sources>
             platform/gdk/CookieJarGdk.cpp

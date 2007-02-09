@@ -1,3 +1,11 @@
+2007-02-09  Krzysztof  <kkowalczyk@gmail.com>
+
+        Reviewed by Maciej.
+
+        gdklauncher crashes when compiled with NDEBUG defined.
+
+        * Projects/gdk/webcore-gdk.bkl:
+
 2007-02-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mitz.
