@@ -1,3 +1,28 @@
+2007-02-09  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        <rdar://problem/4916541>
+        Some of the selection isn't preserved during an Indent opreration
+        
+        Added:
+        * editing/execCommand/4916541-expected.checksum: Added.
+        * editing/execCommand/4916541-expected.png: Added.
+        * editing/execCommand/4916541-expected.txt: Added.
+        * editing/execCommand/4916541.html: Added.
+        Fixed:
+        * editing/execCommand/4641880-2-expected.checksum:
+        * editing/execCommand/4641880-2-expected.png:
+        * editing/execCommand/4641880-2-expected.txt:
+        * editing/execCommand/indent-selection-expected.checksum:
+        * editing/execCommand/indent-selection-expected.png:
+        * editing/execCommand/indent-selection-expected.txt:
+        Added a FIXME:
+        * editing/execCommand/indent-list-item-expected.checksum:
+        * editing/execCommand/indent-list-item-expected.png:
+        * editing/execCommand/indent-list-item-expected.txt:
+        * editing/execCommand/indent-list-item.html:
+
 2007-02-09  Nicholas Shanks  <webkit@nickshanks.com>
 
         Reviewed by Dave Hyatt.

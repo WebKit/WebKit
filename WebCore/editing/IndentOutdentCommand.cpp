@@ -34,6 +34,7 @@
 #include "InsertLineBreakCommand.h"
 #include "Range.h"
 #include "SplitElementCommand.h"
+#include "TextIterator.h"
 #include "visible_units.h"
 
 namespace WebCore {
@@ -118,10 +119,21 @@ Node* IndentOutdentCommand::splitTreeToNode(Node* start, Node* end, bool splitAn
     return node;
 }
 
+static int indexForVisiblePosition(VisiblePosition& visiblePosition)
+{
+    if (visiblePosition.isNull())
+        return 0;
+    Position p(visiblePosition.deepEquivalent());
+    RefPtr<Range> range = new Range(p.node()->document(), Position(p.node()->document(), 0), p);
+    return TextIterator::rangeLength(range.get());
+}
+
 void IndentOutdentCommand::indentRegion()
 {
     VisiblePosition startOfSelection = endingSelection().visibleStart();
     VisiblePosition endOfSelection = endingSelection().visibleEnd();
+    int startIndex = indexForVisiblePosition(startOfSelection);
+    int endIndex = indexForVisiblePosition(endOfSelection);
 
     ASSERT(!startOfSelection.isNull());
     ASSERT(!endOfSelection.isNull());
@@ -182,6 +194,10 @@ void IndentOutdentCommand::indentRegion()
         moveParagraph(startOfParagraph(endOfCurrentParagraph), endOfCurrentParagraph, VisiblePosition(Position(insertionPoint, 0)), true);
         endOfCurrentParagraph = endOfNextParagraph;
     }
+    
+    RefPtr<Range> startRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), 0, startIndex);
+    RefPtr<Range> endRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), 0, endIndex);
+    setEndingSelection(Selection(startRange->endPosition(), endRange->endPosition(), DOWNSTREAM));
 }
 
 void IndentOutdentCommand::outdentParagraph()
