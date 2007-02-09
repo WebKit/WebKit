@@ -2,6 +2,20 @@
 
         Reviewed by john
         
+        <rdar://problem/4960116>
+        REGRESSION: Nightly Safari crashes in WebCore::SelectionController::xPosForVerticalArrowNavigation (12416)
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::xPosForVerticalArrowNavigation):
+        Null check.  VisiblePosition creation can fail if a node that 
+        contains the selection was made invisible after the selection 
+        was made and before this function is called during a selection 
+        modification operation.
+
+2007-02-09  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
         <rdar://problem/4983858>
         REGRESSION: In a new mail message, attempting to select a single word causes the selection to extend to the previous line
 
