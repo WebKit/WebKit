@@ -195,6 +195,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
                     frame->loader()->outgoingReferrer())), true, 0, 0, HashMap<String, String>());
             else
                 openNewWindow(result.absoluteLinkURL(), frame);
+            break;
         }
         case ContextMenuItemTagBold:
             frame->editor()->execCommand("ToggleBold");
