@@ -93,9 +93,14 @@ CachedImage* DocLoader::requestImage(const String& url)
     return resource;
 }
 
-CachedCSSStyleSheet* DocLoader::requestCSSStyleSheet(const String& url, const String& charset)
+CachedCSSStyleSheet* DocLoader::requestCSSStyleSheet(const String& url, const String& charset, bool isUserStyleSheet)
 {
-    return static_cast<CachedCSSStyleSheet*>(requestResource(CachedResource::CSSStyleSheet, url, &charset));
+    return static_cast<CachedCSSStyleSheet*>(requestResource(CachedResource::CSSStyleSheet, url, &charset, isUserStyleSheet));
+}
+
+CachedCSSStyleSheet* DocLoader::requestUserCSSStyleSheet(const String& url, const String& charset)
+{
+    return requestCSSStyleSheet(url, charset, true);
 }
 
 CachedScript* DocLoader::requestScript(const String& url, const String& charset)
@@ -117,7 +122,7 @@ CachedXBLDocument* DocLoader::requestXBLDocument(const String& url)
 }
 #endif
 
-CachedResource* DocLoader::requestResource(CachedResource::Type type, const String& url, const String* charset)
+CachedResource* DocLoader::requestResource(CachedResource::Type type, const String& url, const String* charset, bool skipCanLoadCheck)
 {
     KURL fullURL = m_doc->completeURL(url.deprecatedString());
 
@@ -132,7 +137,7 @@ CachedResource* DocLoader::requestResource(CachedResource::Type type, const Stri
     bool hideReferrer;
     CachedResource* resource = 0;
     //If you are not allowed to load you may not get from the cache either.
-    if (fl && fl->canLoad(fullURL, fl->outgoingReferrer(), hideReferrer)) {
+    if (skipCanLoadCheck || (fl && fl->canLoad(fullURL, fl->outgoingReferrer(), hideReferrer))) {
         resource = cache()->requestResource(this, type, fullURL, m_expireDate, charset);
         if (resource) {
             m_docResources.set(resource->url(), resource);

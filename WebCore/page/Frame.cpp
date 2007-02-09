@@ -129,7 +129,7 @@ class UserStyleSheetLoader : public CachedResourceClient {
 public:
     UserStyleSheetLoader(Frame* frame, const String& url, DocLoader* docLoader)
         : m_frame(frame)
-        , m_cachedSheet(docLoader->requestCSSStyleSheet(url, ""))
+        , m_cachedSheet(docLoader->requestUserCSSStyleSheet(url, ""))
     {
         m_cachedSheet->ref(this);
     }

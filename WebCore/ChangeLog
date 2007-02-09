@@ -1,3 +1,21 @@
+2007-02-09  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12705
+        REGRESSION: Crash with user stylesheet set
+
+        Allow the Frame::canLoad check to skipped so that user stylesheets can be loaded in remote documents.
+
+        * ChangeLog:
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestCSSStyleSheet): Skip canLoad check if this is a user stylesheet.
+        (WebCore::DocLoader::requestUserCSSStyleSheet):
+        (WebCore::DocLoader::requestResource): Allow canLoad check to be skipped.
+        * loader/DocLoader.h:
+        * page/Frame.cpp:
+        (WebCore::UserStyleSheetLoader::UserStyleSheetLoader):
+
 2007-02-08  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Darin.

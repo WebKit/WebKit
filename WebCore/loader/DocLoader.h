@@ -56,7 +56,8 @@ public:
     ~DocLoader();
 
     CachedImage* requestImage(const String& url);
-    CachedCSSStyleSheet* requestCSSStyleSheet(const String& url, const String& charset);
+    CachedCSSStyleSheet* requestCSSStyleSheet(const String& url, const String& charset, bool isUserStyleSheet = false);
+    CachedCSSStyleSheet* requestUserCSSStyleSheet(const String& url, const String& charset);
     CachedScript* requestScript(const String& url, const String& charset);
 
 #ifdef XSLT_SUPPORT
@@ -87,7 +88,7 @@ public:
     bool loadInProgress() const { return m_loadInProgress; }
 
 private:
-    CachedResource* requestResource(CachedResource::Type, const String& url, const String* charset = 0);
+    CachedResource* requestResource(CachedResource::Type, const String& url, const String* charset = 0, bool skipCanLoadCheck = false);
 
     void checkForReload(const KURL&);
     void checkCacheObjectStatus(CachedResource*);
