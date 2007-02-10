@@ -1,5 +1,13 @@
 2007-02-10  Maciej Stachowiak  <mjs@apple.com>
 
+        - add missing result and update tests to work right from DumpRenderTree
+
+        * fast/dom/Window/resources/window-appendages-cleared-results.html:
+        * fast/dom/Window/window-appendages-cleared-expected.txt: Added.
+        * fast/dom/Window/window-appendages-cleared.html:
+
+2007-02-10  Maciej Stachowiak  <mjs@apple.com>
+
         Regression not reviewed, based loosely on test case from Ian Eng.
 
         - test case for <rdar://problem/4988091> objects attached to Window not cleared (memory leak)

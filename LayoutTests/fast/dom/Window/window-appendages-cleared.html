@@ -1,6 +1,9 @@
 <html>
 <body onload="test()">
 <script type="text/javascript">
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
 function test()
 {
 history.go = "LEFTOVER";

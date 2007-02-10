@@ -53,6 +53,10 @@ shouldBeUndefined('window.event');
 var successfullyParsed = true;
 </script>
 <script src="../../../js/resources/js-test-post.js"></script>
+<script>
+if (window.layoutTestController)
+    layoutTestController.notifyDone();
+</script>
 </body>
 </html>
 
