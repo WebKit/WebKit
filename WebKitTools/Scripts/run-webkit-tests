@@ -374,10 +374,21 @@ for my $test (@tests) {
         print OUT "$testPath\n";
     } else {
         openHTTPDIfNeeded();
-        
-        my $path = canonpath($test);
-        $path =~ s/^http\/tests\///;
-        print OUT "http://127.0.0.1:$httpdPort/$path\n";
+        if ($test !~ /^http\/tests\/local\//) {
+            my $path = canonpath($test);
+            $path =~ s/^http\/tests\///;
+            print OUT "http://127.0.0.1:$httpdPort/$path\n";
+        }
+        else {
+            my $testPath = "$testDirectory/$test";
+            if (isCygwin()) {
+                $testPath = `cygpath -m -s "$testPath"`;
+            }
+            else {
+                $testPath = canonpath($testPath);
+            }
+            print OUT "$testPath\n";
+        }
     }
 
     my $actual = "";

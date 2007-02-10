@@ -129,6 +129,7 @@ namespace WebCore {
         
         String httpReferrer() const { return httpHeaderField("Referer"); }
         void setHTTPReferrer(const String& httpReferrer) { setHTTPHeaderField("Referer", httpReferrer); }
+        void clearHTTPReferrer() { m_httpHeaderFields.remove("Referer"); }
         
         String httpUserAgent() const { return httpHeaderField("User-Agent"); }
         void setHTTPUserAgent(const String& httpUserAgent) { setHTTPHeaderField("User-Agent", httpUserAgent); }

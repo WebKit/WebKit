@@ -1,3 +1,24 @@
+2007-02-10  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        <rdar://problem/4965133> WebKit sends file:// url referrers
+
+        Added a new category of http tests - "local" where the test is run as a local file but
+        the test involves remote resources from the httpd.
+        This test had to be done with cached subresources to tickle the code path that was failing before,
+        hence the bizarre different-sized images instead of simple success/failure text  
+
+        * http/tests/local/file-url-sent-as-referer-expected.txt: Added.
+        * http/tests/local/file-url-sent-as-referer.html: Added - document.writes an img source
+          that ends up testing the http-referer
+
+        * http/tests/security/resources/green250x50.png: Added.
+        * http/tests/security/resources/red200x100.png: Added.
+
+        * http/tests/security/resources/showRefererImage.php: Added - By scanning the referrer,
+          sends back either the success or failure image
+
 2007-02-10  Maciej Stachowiak  <mjs@apple.com>
 
         - add missing result and update tests to work right from DumpRenderTree

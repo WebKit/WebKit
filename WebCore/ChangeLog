@@ -1,3 +1,16 @@
+2007-02-09  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        <rdar://problem/4965133> WebKit sends file:// url referrers
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create): In SubresourceLoader::create(), we make a copy of the original request
+        to use for the load.  We then call FrameLoader::canLoad() which tells us if we should hide the referer.  Before 
+        this fix if it said to hide the referrer, we would simply not apply a new referrer to our copy of the request.
+        But if the original request already had a referrer, so did our copy.  We simply have to clear the referrer from
+        the copied request.
+
 2007-02-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by me, patch from Ian Eng (cleaned up by me some).

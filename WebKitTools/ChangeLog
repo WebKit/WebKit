@@ -1,3 +1,12 @@
+2007-02-10  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        <rdar://problem/4965133> WebKit sends file:// url referrers
+
+        * Scripts/run-webkit-tests: Enhanced the http tests so that we can run layout tests
+          on local files, but have an httpd for remote resources
+
 2007-02-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.

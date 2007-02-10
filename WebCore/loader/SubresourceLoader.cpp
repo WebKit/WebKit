@@ -97,7 +97,9 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
     // FIXME: is that really the rule we want for subresources?
     bool hideReferrer;
     fl->canLoad(request.url(), fl->outgoingReferrer(), hideReferrer);
-    if (!hideReferrer && !request.httpReferrer())
+    if (hideReferrer)
+        newRequest.clearHTTPReferrer();
+    else if (!request.httpReferrer())
         newRequest.setHTTPReferrer(fl->outgoingReferrer());
 
     // Use the original request's cache policy for two reasons:
