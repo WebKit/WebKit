@@ -1,3 +1,13 @@
+2007-02-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        <rdar://problem/4985497> - Plugs a potential null DocumentLoader deref when 
+        transitioning out of the Bookmarks View
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::recursiveGoToItem): add a null check
+
 2007-02-09  Beth Dakin  <bdakin@apple.com>
 
         Rubber-stamped by John . . . and Adam.

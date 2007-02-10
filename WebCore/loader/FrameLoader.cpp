@@ -3883,7 +3883,9 @@ void FrameLoader::recursiveGoToItem(HistoryItem* item, HistoryItem* fromItem, Fr
     ASSERT(fromItem);
     
     KURL itemURL = item->url();
-    KURL currentURL = documentLoader()->URL();
+    KURL currentURL;
+    if (documentLoader())
+        currentURL = documentLoader()->URL();
     
     // Always reload the target frame of the item we're going to.  This ensures that we will
     // do -some- load for the transition, which means a proper notification will be posted
