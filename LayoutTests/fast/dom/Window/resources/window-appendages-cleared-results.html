@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../js/resources/js-test-style.css">
+<script src="../../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+for (var prop in window.history) {
+    shouldBeFalse('history.' + prop + ' == "LEFTOVER"', "false");
+}
+
+for (var prop in screen) {
+    shouldBeFalse('screen.' + prop + ' == "LEFTOVER"', "false");
+}
+
+for (var prop in frames) {
+    shouldBeFalse('frames.' + prop + ' == "LEFTOVER"', "false");
+}
+
+for (var prop in location) {
+    shouldBeFalse('location.' + prop + ' == "LEFTOVER"', "false");
+}
+
+for (var prop in locationbar) {
+    shouldBeFalse('locationbar.' + prop + ' == "LEFTOVER"', "false");
+}
+
+for (var prop in menubar) {
+    shouldBeFalse('menubar.' + prop + ' == "LEFTOVER"', "false");
+}
+
+for (var prop in personalbar) {
+    shouldBeFalse('personalbar.' + prop + ' == "LEFTOVER"', "false");
+}
+
+for (var prop in scrollbars) {
+    shouldBeFalse('scrollbars.' + prop + ' == "LEFTOVER"', "false");
+}
+
+for (var prop in statusbar) {
+    shouldBeFalse('statusbar.' + prop + ' == "LEFTOVER"', "false");
+}
+
+for (var prop in toolbar) {
+    shouldBeFalse('toolbar.' + prop + ' == "LEFTOVER"', "false");
+}
+
+shouldBeUndefined('window.event');
+
+var successfullyParsed = true;
+</script>
+<script src="../../../js/resources/js-test-post.js"></script>
+</body>
+</html>
+
+

@@ -182,6 +182,7 @@ namespace KJS {
 
     void updateLayout() const;
 
+    void clearHelperObjectProperties();
     void clearAllTimeouts();
     int installTimeout(ScheduledAction*, int interval, bool singleShot);
 
