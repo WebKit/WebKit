@@ -1446,7 +1446,7 @@
 		933A142E0B7D188600A53FFD /* TextEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 933A142B0B7D188600A53FFD /* TextEvent.cpp */; };
 		933A142F0B7D188600A53FFD /* TextEvent.idl in Resources */ = {isa = PBXBuildFile; fileRef = 933A142C0B7D188600A53FFD /* TextEvent.idl */; };
 		933A14300B7D188600A53FFD /* TextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 933A142D0B7D188600A53FFD /* TextEvent.h */; };
-		933A14760B7D1BAF00A53FFD /* DOMTextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 933A14750B7D1BAF00A53FFD /* DOMTextEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		933A14760B7D1BAF00A53FFD /* DOMTextEvent.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 933A14750B7D1BAF00A53FFD /* DOMTextEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		933A14AA0B7D1D0900A53FFD /* DOMTextEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 933A14A90B7D1D0900A53FFD /* DOMTextEvent.mm */; };
 		933A14B80B7D1D5200A53FFD /* JSTextEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 933A14B60B7D1D5200A53FFD /* JSTextEvent.cpp */; };
 		933A14B90B7D1D5200A53FFD /* JSTextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 933A14B70B7D1D5200A53FFD /* JSTextEvent.h */; };
@@ -2855,6 +2855,7 @@
 		DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */; };
 		DD763BB20992C2C900740B8E /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD763BB10992C2C900740B8E /* libxml2.dylib */; };
 		DD7CDF250A23CF9800069928 /* CSSUnknownRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CCE0A1989CA007FB8C5 /* CSSUnknownRule.h */; };
+		DDE63ED50B7D45A800226998 /* DOMTextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 933A14750B7D1BAF00A53FFD /* DOMTextEvent.h */; };
 		E10B937C0B73C00A003ED890 /* JSCustomXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E10B937B0B73C00A003ED890 /* JSCustomXPathNSResolver.h */; };
 		E10B93C30B73C291003ED890 /* JSCustomXPathNSResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E10B93C20B73C291003ED890 /* JSCustomXPathNSResolver.cpp */; };
 		E10B9B6C0B747599003ED890 /* NativeXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E10B9B6A0B747599003ED890 /* NativeXPathNSResolver.h */; };
@@ -3062,6 +3063,7 @@
 				85DF82740AA78C7300486AD7 /* DOMHTMLTableElement.h in Copy Generated Headers */,
 				85DF82320AA7866800486AD7 /* DOMHTMLTableRowElement.h in Copy Generated Headers */,
 				85DF82330AA7866800486AD7 /* DOMHTMLTableSectionElement.h in Copy Generated Headers */,
+				933A14760B7D1BAF00A53FFD /* DOMTextEvent.h in Copy Generated Headers */,
 			);
 			name = "Copy Generated Headers";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -11111,8 +11113,8 @@
 				E10B9B6C0B747599003ED890 /* NativeXPathNSResolver.h in Headers */,
 				E10B9CCC0B747A44003ED890 /* DOMCustomXPathNSResolver.h in Headers */,
 				933A14300B7D188600A53FFD /* TextEvent.h in Headers */,
-				933A14760B7D1BAF00A53FFD /* DOMTextEvent.h in Headers */,
 				933A14B90B7D1D5200A53FFD /* JSTextEvent.h in Headers */,
+				DDE63ED50B7D45A800226998 /* DOMTextEvent.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11150,6 +11152,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -11164,6 +11167,7 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
