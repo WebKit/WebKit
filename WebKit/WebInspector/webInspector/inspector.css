@@ -94,6 +94,7 @@ button {
     width: 90px;
     -webkit-user-select: text;
     text-shadow: none;
+    -webkit-dashboard-region: dashboard-region(control rectangle);
 }
 
 #searchCount {
