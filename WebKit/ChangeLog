@@ -1,3 +1,15 @@
+2007-02-09  Kevin Decker <kdecker@apple.com>
+
+        Reviewed by Darin & Maciej.
+
+        Fixed: <rdar://problem/4930688> REGRESSION: missing images when reloading webarchives (11962)
+        
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::canUseArchivedResource): The bug here is that because a reload sets a cache
+        policy of NSURLRequestReloadIgnoringCacheData (rightfully so), this method was refusing to load
+        subresources in WebArchives. It's OK to use archive subresources for the NSURLRequestReloadIgnoringCacheData
+        cache policy because we're not worried about the actual contents of a WebArchive changing on disk. 
+
 2007-02-09  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

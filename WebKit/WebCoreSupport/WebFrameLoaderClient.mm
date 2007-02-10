@@ -925,8 +925,6 @@ bool WebFrameLoaderClient::canUseArchivedResource(NSURLRequest *request) const
         return true;
     if (policy == NSURLRequestReturnCacheDataDontLoad)
         return true;
-    if (policy == NSURLRequestReloadIgnoringCacheData)
-        return false;
     if ([request valueForHTTPHeaderField:@"must-revalidate"] != nil)
         return false;
     if ([request valueForHTTPHeaderField:@"proxy-revalidate"] != nil)
