@@ -1,3 +1,8 @@
+2007-02-11  Darin Adler  <darin@apple.com>
+
+        * Scripts/check-for-global-initializers: Fix case where executable doesn't exist at all
+        so it doesn't give a perl exception (happens in clean builds, for example).
+
 2007-02-10  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Adam.

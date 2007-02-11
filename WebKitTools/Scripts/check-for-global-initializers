@@ -58,7 +58,10 @@ close LIST;
 my $sawError = 0;
 
 for my $file (sort @files) {
-    next if defined $executableAge && -M $file > $executableAge;
+    if (defined $executableAge) {
+        my $fileAge = -M $file;
+        next if defined $fileAge && $fileAge > $executableAge;
+    }
     if (!open NM, "(nm '$file' | sed 's/^/STDOUT:/') 2>&1 |") {
         print "Could not open $file\n";
         $sawError = 1;
