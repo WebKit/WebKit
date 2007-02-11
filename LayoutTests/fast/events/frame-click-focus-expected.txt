@@ -3,6 +3,7 @@ This page tests that frames receive focus events when a click occurs within thei
 
 To test, click in the frame and then click on this text.
 
+main frame blurred
 iframe focused
 iframe blurred
 main frame focused

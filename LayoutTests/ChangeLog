@@ -1,3 +1,13 @@
+2007-02-10  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Adam.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12727
+          Layout test failure: fast/events/frame-click-focus.html
+
+        * fast/events/frame-click-focus-expected.txt: Update results to include main frame blur.
+        * fast/events/frame-click-focus.html: Update to click in main frame first.
+
 2007-02-10  Brady Eidson <beidson@apple.com>
 
         Reviewed by Maciej

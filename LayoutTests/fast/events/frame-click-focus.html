@@ -18,10 +18,15 @@
             w.onblur = function() { log('iframe blurred'); }
 
             if (window.eventSender) {
+                eventSender.mouseMoveTo(1, 300);
+                eventSender.mouseClick();
+
+                // We need to "wait" a bit before the next click -- otherwise it is ignored
+                eventSender.leapForward(2000);
+
                 eventSender.mouseMoveTo(50, 50);
                 eventSender.mouseClick();
 
-                // We need to "wait" a bit before the second click -- otherwise it is ignored
                 eventSender.leapForward(2000);
 
                 eventSender.mouseMoveTo(1, 300);
