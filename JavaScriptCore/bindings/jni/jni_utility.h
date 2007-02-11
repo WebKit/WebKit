@@ -33,6 +33,7 @@ typedef enum {
     invalid_type = 0,
     void_type,
     object_type,
+    array_type,
     boolean_type,
     byte_type,
     char_type,

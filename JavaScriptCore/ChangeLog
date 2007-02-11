@@ -1,3 +1,30 @@
+2007-02-10  David Carson  <dacarson@gmail.com>
+
+        Reviewed by Maciej.
+
+        - fix for http://bugs.webkit.org/show_bug.cgi?id=12636
+        Corrected the generation of method signatures when the parameter
+        is an Array. 
+        Added support for converting a Javascript array to a Java array.
+
+        * bindings/jni/jni_utility.h: added new type for array, array_type
+        * bindings/jni/jni_runtime.cpp: add support for new array type
+        (JavaField::valueFromInstance):
+        (JavaField::setValueToInstance):
+        (JavaMethod::JavaMethod):
+        (JavaMethod::signature):
+        * bindings/jni/jni_utility.cpp: add support for new array type
+        (KJS::Bindings::callJNIMethod):
+        (KJS::Bindings::callJNIStaticMethod):
+        (KJS::Bindings::callJNIMethodIDA):
+        (KJS::Bindings::JNITypeFromClassName):
+        (KJS::Bindings::signatureFromPrimitiveType):
+        (KJS::Bindings::JNITypeFromPrimitiveType):
+        (KJS::Bindings::getJNIField):
+        (KJS::Bindings::convertArrayInstanceToJavaArray): new method
+        converts the Javascript array to the requested Java array.
+        (KJS::Bindings::convertValueToJValue):
+
 2007-02-08  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.
