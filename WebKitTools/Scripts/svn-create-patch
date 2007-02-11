@@ -154,7 +154,7 @@ sub findSourceFileAndRevision($)
     open INFO, "svn info '$file' |" or die;
     while (<INFO>) {
         if (/^Copied From URL: (.+)/) {
-            $sourceFile = substr($1, length($baseUrl) + 1);
+            $sourceFile = File::Spec->abs2rel($1, $baseUrl);
         } elsif (/^Copied From Rev: ([0-9]+)/) {
             $sourceRevision = $1;
         }
