@@ -259,7 +259,7 @@ sub fixChangeLogPatch($)
 sub handleBinaryChange($$)
 {
     my ($fullPath, $contents) = @_;
-    if ($contents =~ m#((\n[A-Za-z0-9+/]{76})+\n[A-Za-z0-9+/=]{4,76}\n)\n#) {
+    if ($contents =~ m#((\n[A-Za-z0-9+/]{76})+\n[A-Za-z0-9+/=]{4,76}\n)#) {
         # Addition or Modification
         open FILE, ">", $fullPath or die;
         print FILE decode_base64($1);
