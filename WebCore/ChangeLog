@@ -1,3 +1,15 @@
+2007-02-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Hyatt.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12581
+        XPath //title shouldn't match <title> in XHTML
+
+        Test: fast/xpath/ensure-null-namespace.xhtml
+
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::nodeTestMatches): Only let a null namespace match any for HTML.
+
 2007-02-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam.

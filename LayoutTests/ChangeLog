@@ -1,3 +1,13 @@
+2007-02-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Hyatt.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12581
+        XPath //title shouldn't match <title> in XHTML
+
+        * fast/xpath/ensure-null-namespace-expected.txt: Added.
+        * fast/xpath/ensure-null-namespace.xhtml: Added.
+
 2007-02-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.
