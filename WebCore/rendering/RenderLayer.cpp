@@ -1230,6 +1230,12 @@ RenderLayer::updateScrollInfoAfterLayout()
             }
         }
     }
+    
+    // If overflow:scroll is turned into overflow:auto a bar might still be disabled (Bug 11985).
+    if (m_hBar && m_object->hasAutoHorizontalScrollbar())
+        m_hBar->setEnabled(true);
+    if (m_vBar && m_object->hasAutoVerticalScrollbar())
+        m_vBar->setEnabled(true);
 
     // Set up the range (and page step/line step).
     if (m_hBar) {

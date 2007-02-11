@@ -1,3 +1,15 @@
+2007-02-11  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
+        
+        Test for REGRESSION: No day/week scrollbar in Google Calendar
+        http://bugs.webkit.org/show_bug.cgi?id=11985
+
+        * fast/layers/overflow-scroll-auto-switch-expected.checksum: Added.
+        * fast/layers/overflow-scroll-auto-switch-expected.png: Added.
+        * fast/layers/overflow-scroll-auto-switch-expected.txt: Added.
+        * fast/layers/overflow-scroll-auto-switch.html: Added.
+
 2007-02-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Hyatt.

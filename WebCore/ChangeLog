@@ -1,3 +1,16 @@
+2007-02-10  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed REGRESSION: No day/week scrollbar in Google Calendar
+        http://bugs.webkit.org/show_bug.cgi?id=11985
+
+        Make sure overflow:auto scrollbars are always enabled. If they were overflow:scroll
+        and dynamically changed to auto they might still be disabled.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+
 2007-02-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Hyatt.
