@@ -1,3 +1,14 @@
+2007-02-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12724
+        Crash when enumerating XPath namespace axis
+
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::nodesInAxis): Namespace axis enumeration was broken in that it crashed, and also in that
+        it returned attribute nodes instead of XPath namespace ones. Removed it altogether.
+
 2007-02-10  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adam.

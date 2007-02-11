@@ -145,28 +145,8 @@ NodeVector Step::nodesInAxis(Node* context) const
             return nodes;
         }
         case NamespaceAxis: {
-            if (context->nodeType() != Node::ELEMENT_NODE)
-                return NodeVector();
-
-            bool foundXmlNsNode = false;
-            for (Node* node = context; node; node = node->parentNode()) {
-                NamedAttrMap* attrs = node->attributes();
-                if (!attrs)
-                    continue;
-
-                for (unsigned long i = 0; i < attrs->length(); ++i) {
-                    Node* n = attrs->item(i).get();
-                    if (n->nodeName().startsWith("xmlns:")) {
-                        nodes.append(n);
-                    } else if (n->nodeName() == "xmlns" &&
-                               !foundXmlNsNode) {
-                        foundXmlNsNode = true;
-                        if (!n->nodeValue().isEmpty())
-                            nodes.append(n);
-                    }
-                }
-            }
-            return nodes;
+            // XPath namespace nodes are not implemented yet.
+            return NodeVector();
         }
         case SelfAxis:
             nodes.append(context);
