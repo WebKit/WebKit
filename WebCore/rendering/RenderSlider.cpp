@@ -365,6 +365,7 @@ void RenderSlider::setCurrentPosition(int pos)
     else
         m_thumb->renderer()->style()->setLeft(Length(pos, Fixed));
 
+    m_thumb->renderer()->layer()->updateLayerPosition();
     repaint();
     m_thumb->renderer()->repaint();
 }
