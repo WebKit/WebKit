@@ -1,3 +1,9 @@
+2007-02-10  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        * Drosera/Drosera.icns: updated the icon with 512px and 256px variants
+
 2007-02-10  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Timothy.
