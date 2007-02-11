@@ -2,6 +2,18 @@
 
         Reviewed by Adam.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12565
+          ASSERTION failure on some declarative animations <rdar://problem/4975132>
+
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (WebCore::parseValues): Changed the string length math to avoid truncating
+        the last character of each value.
+        * manual-tests/svg-animation-parseValues.svg: Added.
+
+2007-02-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adam.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=11621
           REGRESSION (Native slider): slider thumb not updated when the mouse is dragged/released out of range
 

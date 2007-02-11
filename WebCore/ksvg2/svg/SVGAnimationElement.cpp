@@ -153,7 +153,7 @@ static void parseValues(Vector<String>& values, const String& value)
         while (valueStart < valueEnd && isWhitespace(*valueEnd))
             valueEnd--;
         
-        values.append(String(valueStart, valueEnd - valueStart));
+        values.append(String(valueStart, valueEnd - valueStart + 1));
         
         skipOptionalSpacesOrDelimiter(ptr, end, ';');
     }
