@@ -1,3 +1,17 @@
+2007-02-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12701
+        REGRESSION: After javascript, onChange not triggered when selecting same option
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setSelectedIndex): Remember m_lastOnChangeIndex value,
+        as it can change from setSelected() now.
+        (WebCore::HTMLSelectElement::notifyOptionSelected): Update m_lastOnChangeIndex.
+
+        * manual-tests/select-onchange-after-js.html: Added. Also tests for bug 11402.
+
 2007-02-10  David Carson  <dacarson@gmail.com>`
 
         Reviewed by Maciej.

@@ -166,6 +166,9 @@ void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect, bool fi
     int listIndex = optionToListIndex(optionIndex);
     HTMLOptionElement* element = 0;
 
+    // Make a local copy, since setSelected() can update m_lastOnChangeIndex.
+    int lastOnChangeIndex = m_lastOnChangeIndex;
+
     if (listIndex >= 0) {
         element = static_cast<HTMLOptionElement*>(items[listIndex]);
         element->setSelected(true);
@@ -181,11 +184,9 @@ void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect, bool fi
             setActiveSelectionEndIndex(listIndex);
     }
 
-    if (usesMenuList() && m_lastOnChangeIndex != optionIndex) {
-        m_lastOnChangeIndex = optionIndex;
-        if (fireOnChange)
-            onChange();
-    }
+    ASSERT(m_lastOnChangeIndex == -1 || m_lastOnChangeIndex == optionIndex);
+    if (fireOnChange && usesMenuList() && lastOnChangeIndex != optionIndex)
+        onChange();
 }
 
 int HTMLSelectElement::activeSelectionStartListIndex() const
@@ -556,14 +557,15 @@ void HTMLSelectElement::reset()
     m_lastOnChangeIndex = -1;
 }
 
-void HTMLSelectElement::notifyOptionSelected(HTMLOptionElement *selectedOption, bool selected)
- {
+void HTMLSelectElement::notifyOptionSelected(HTMLOptionElement* selectedOption, bool selected)
+{
     if (selected && !m_multiple)
         deselectItems(selectedOption);
 
     if (renderer() && !usesMenuList())
         static_cast<RenderListBox*>(renderer())->selectionChanged();
 
+    m_lastOnChangeIndex = selectedOption->index();
     setChanged(true);
 }
 
