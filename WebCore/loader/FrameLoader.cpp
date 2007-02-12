@@ -2101,13 +2101,21 @@ void FrameLoader::stopAllLoaders()
     stopPolicyCheck();
 
     stopLoadingSubframes();
-    if (m_provisionalDocumentLoader)
-        m_provisionalDocumentLoader->stopLoading();
-    if (m_documentLoader)
-        m_documentLoader->stopLoading();
-    setProvisionalDocumentLoader(0);
-    m_client->clearArchivedResources();
+    RefPtr<DocumentLoader> provisionalDocumentLoader = m_provisionalDocumentLoader;
+    RefPtr<DocumentLoader> documentLoader = m_documentLoader;
+    if (provisionalDocumentLoader)
+        provisionalDocumentLoader->stopLoading();
 
+    // Calling stopLoading() on the provisional loader results in a delegate callback, 
+    // which may kick off a brand new provisional load. So only nil out the provisional loader
+    // if we're dealing with the exact same loader. 
+    if (provisionalDocumentLoader == m_provisionalDocumentLoader)
+        setProvisionalDocumentLoader(0);
+
+    if (documentLoader)
+        documentLoader->stopLoading();
+    
+    m_client->clearArchivedResources();
     m_inStopAllLoaders = false;    
 }
 
@@ -3361,7 +3369,17 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
     }
 
     FrameLoadType type = m_policyLoadType;
-    stopAllLoaders();
+    {
+        RefPtr<DocumentLoader> previousProvisionalDocumentLoader = m_provisionalDocumentLoader;
+        stopAllLoaders();
+        
+        // stopAllLoaders cancels loads and informs the frame load delegate accordingly. The delegate however,
+        // may decide to kick off a new provisional load as the result of the cancel, and if it does, we need
+        // to bail out now and avoid prematurely destroying the new provisional load in progress. 
+        if (m_provisionalDocumentLoader != previousProvisionalDocumentLoader)
+            return;
+    }
+    
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
     m_loadType = type;
     setState(FrameStateProvisional);

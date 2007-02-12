@@ -1,3 +1,18 @@
+2007-02-12  Kevin Decker <kdecker@apple.com>
+
+        Reviewed by Anders.
+
+        Fixed: <rdar://problem/4874059> REGRESSION: Painter IX:register - Crash in WebCore:: ResourceLoader::willSendRequest()
+        
+        What happened here was that a WebDataSource was being dealloced *while* a load for that resource is still in progress. 
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopAllLoaders): Calling stopAllLoaders cancels loads and informs the frame load delegate accordingly.
+        The delegate however may decide to kick off a new provisional load as the result of the cancel. Therefore a local variable 
+        for the provisional and main doucment loader is introduced, and we now only nil out the provisional loader if the local and
+        member provisional variables represent the exact same load.
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy): Added the same check here, too.
+
 2007-02-12  Lars Knoll  <lars@trolltech.com>
 
         Reviewed by Mitz.
