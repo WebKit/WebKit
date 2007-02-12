@@ -1,6 +1,19 @@
+2007-02-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Antti.
+
+        - fixed <rdar://problem/4928675> REGRESSION: Crash in CGBlt_copyBytes under WebCore::Font::drawGlyphs (12083)
+        http://bugs.webkit.org/show_bug.cgi?id=12083
+        
+        Test: fast/text/text-shadow-extreme-value.html
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setShadow): Clamp shadow value to 1000px, anything more seems to 
+        make CG unhappy.
+
 2007-02-11  Brady Eidson <beidson@apple.com>
 
-        Reviewed by Maciej
+        Reviewed by Maciej.
 
         First in what will be a series of HistoryItem enhancements to help debugging
 

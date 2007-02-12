@@ -1,3 +1,13 @@
+2007-02-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Antti.
+        
+        - test case for <rdar://problem/4928675> REGRESSION: Crash in CGBlt_copyBytes under WebCore::Font::drawGlyphs (12083)
+        http://bugs.webkit.org/show_bug.cgi?id=12083
+        
+        * fast/text/text-shadow-extreme-value.html: Added.
+        * fast/text/text-shadow-extreme-value-expected.txt: Added.
+
 2007-02-11  Maciej Stachowiak  <mjs@apple.com>
 
         Test case not reviewed; based on manual test by David Kilzer.
