@@ -1,3 +1,27 @@
+2007-02-12  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4846962>
+        Aperture: Aperture 1.5 - DOM exception occurs when exporting a web gallery
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::replaceChild):
+        Call checkReplaceChild here.
+        
+        * dom/Document.cpp:
+        (WebCore::Document::canReplaceChild):
+        * dom/Document.h:
+        Add implementation of canReplaceChild that makes sure that doing the replacement won't cause
+        more than one element and document type node to end up in the document.
+        
+        * dom/Node.cpp:
+        (WebCore::Node::canReplaceChild):
+        Base implementation of canReplaceChild.
+        
+        (WebCore::Node::checkReplaceChild):
+        New function that does what checAddChild does but calls canReplaceChild.
+        
 2007-02-12  Kevin Decker <kdecker@apple.com>
 
         Reviewed by Anders.

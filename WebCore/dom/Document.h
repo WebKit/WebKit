@@ -398,6 +398,8 @@ public:
     virtual bool childTypeAllowed(NodeType);
     virtual PassRefPtr<Node> cloneNode(bool deep);
 
+    virtual bool canReplaceChild(Node* newChild, Node* oldChild);
+    
     StyleSheetList* styleSheets();
 
     /* Newly proposed CSS3 mechanism for selecting alternate

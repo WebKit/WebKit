@@ -1750,6 +1750,87 @@ bool Document::childTypeAllowed(NodeType type)
     return false;
 }
 
+bool Document::canReplaceChild(Node* newChild, Node* oldChild)
+{
+    if (oldChild->nodeType() == newChild->nodeType())
+        return true;
+
+    int numDoctypes = 0;
+    int numElements = 0;
+
+    // First, check how many doctypes and elements we have, not counting
+    // the child we're about to remove.
+    for (Node* c = firstChild(); c; c = c->nextSibling()) {
+        if (c == oldChild)
+            continue;
+        
+        switch (c->nodeType()) {
+            case DOCUMENT_TYPE_NODE:
+                numDoctypes++;
+                break;
+            case ELEMENT_NODE:
+                numElements++;
+                break;
+            default:
+                break;
+        }
+    }
+    
+    // Then, see how many doctypes and elements might be added by the new child.
+    if (newChild->nodeType() == DOCUMENT_FRAGMENT_NODE) {
+        for (Node* c = firstChild(); c; c = c->nextSibling()) {
+            switch (c->nodeType()) {
+                case ATTRIBUTE_NODE:
+                case CDATA_SECTION_NODE:
+                case DOCUMENT_FRAGMENT_NODE:
+                case DOCUMENT_NODE:
+                case ENTITY_NODE:
+                case ENTITY_REFERENCE_NODE:
+                case NOTATION_NODE:
+                case TEXT_NODE:
+                case XPATH_NAMESPACE_NODE:
+                    return false;
+                case COMMENT_NODE:
+                case PROCESSING_INSTRUCTION_NODE:
+                    break;
+                case DOCUMENT_TYPE_NODE:
+                    numDoctypes++;
+                    break;
+                case ELEMENT_NODE:
+                    numElements++;
+                    break;
+            }
+        }
+    } else {
+        switch (newChild->nodeType()) {
+            case ATTRIBUTE_NODE:
+            case CDATA_SECTION_NODE:
+            case DOCUMENT_FRAGMENT_NODE:
+            case DOCUMENT_NODE:
+            case ENTITY_NODE:
+            case ENTITY_REFERENCE_NODE:
+            case NOTATION_NODE:
+            case TEXT_NODE:
+            case XPATH_NAMESPACE_NODE:
+                return false;
+            case COMMENT_NODE:
+            case PROCESSING_INSTRUCTION_NODE:
+                return true;
+            case DOCUMENT_TYPE_NODE:
+                numDoctypes++;
+                break;
+            case ELEMENT_NODE:
+                numElements++;
+                break;
+        }                
+    }
+        
+    if (numElements > 1 || numDoctypes > 1)
+        return false;
+    
+    return true;
+}
+
 PassRefPtr<Node> Document::cloneNode(bool /*deep*/)
 {
     // Spec says cloning Document nodes is "implementation dependent"
