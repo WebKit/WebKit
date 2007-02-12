@@ -1,3 +1,18 @@
+2007-02-12  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Mitz.
+
+        Do not create child renderers for table column groups
+        if the child has not a table column display type.
+
+        * dom/Node.cpp:
+        (WebCore::Node::createRendererIfNeeded):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isChildAllowed):
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::isChildAllowed):
+        * rendering/RenderTableCol.h:
+
 2007-02-12  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mitz

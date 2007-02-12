@@ -5,6 +5,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -928,11 +929,13 @@ void Node::createRendererIfNeeded()
         ) {
         RenderStyle* style = styleForRenderer(parentRenderer);
         if (rendererIsNeeded(style)) {
-            setRenderer(createRenderer(document()->renderArena(), style));
-            if (renderer()) {
+            RenderObject* r = createRenderer(document()->renderArena(), style);
+            if (r && parentRenderer->isChildAllowed(r, style)) {
+                setRenderer(r);
                 renderer()->setStyle(style);
                 parentRenderer->addChild(renderer(), nextRenderer());
-            }
+            } else 
+                r->destroy();
         }
         style->deref(document()->renderArena());
     }

@@ -128,16 +128,6 @@ layer at (0,0) size 785x682
                           text run at (1,1) width 113: "display: table-row"
       RenderTable at (0,526) size 0x0
         RenderTableCol {DIV} at (0,0) size 0x0
-          RenderBlock {FORM} at (0,0) size 0x78
-            RenderTable {TABLE} at (0,0) size 58x78
-              RenderTableSection {TBODY} at (0,0) size 58x78
-                RenderTableRow {TR} at (0,2) size 58x74
-                  RenderTableCell {TD} at (2,2) size 54x74 [r=0 c=0 rs=1 cs=1]
-                    RenderText {#text} at (1,1) size 52x72
-                      text run at (1,1) width 49: "display:"
-                      text run at (1,19) width 35: "table-"
-                      text run at (1,37) width 52: "column-"
-                      text run at (1,55) width 37: "group"
       RenderBlock (anonymous) at (0,526) size 769x40
         RenderTable {DIV} at (0,0) size 129x40
           RenderTableSection at (0,0) size 129x40

@@ -7,6 +7,7 @@
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,6 +41,8 @@ public:
     virtual bool isTableCol() const { return true; }
     virtual short lineHeight(bool) const { return 0; }
     virtual void updateFromElement();
+
+    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
     virtual bool canHaveChildren() const;
     virtual bool requiresLayer() { return false; }
 

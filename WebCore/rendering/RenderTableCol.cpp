@@ -7,6 +7,7 @@
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -55,6 +56,11 @@ void RenderTableCol::updateFromElement()
         m_span = !(style() && style()->display() == TABLE_COLUMN_GROUP);
     if (m_span != oldSpan && style() && parent())
         setNeedsLayoutAndMinMaxRecalc();
+}
+
+bool RenderTableCol::isChildAllowed(RenderObject* child, RenderStyle* style) const
+{
+    return !child->isText() && style && (style->display() == TABLE_COLUMN);
 }
 
 bool RenderTableCol::canHaveChildren() const

@@ -1,3 +1,15 @@
+2007-02-12  Lars Knoll  <lars@trolltech.com>
+
+        Reviewed by Mitz.
+
+        Do not create child renderers for table column groups
+        if the child has not a table column display type.
+
+        * fast/forms/form-hides-table-expected.txt:
+        * fast/table/div-as-col-span-expected.txt: Added.
+        * fast/table/div-as-col-span.html: Added.
+        * fast/table/form-with-table-style-expected.txt:
+
 2007-02-12  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin
