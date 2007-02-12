@@ -1,3 +1,15 @@
+2007-02-11  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=10144
+          REGRESSION: Reproducible assertion failure in DeleteSelectionCommand::fixupWhitespace()
+
+        * fast/text/delete-hard-break-character-expected.checksum: Added.
+        * fast/text/delete-hard-break-character-expected.png: Added.
+        * fast/text/delete-hard-break-character-expected.txt: Added.
+        * fast/text/delete-hard-break-character.html: Added.
+
 2007-02-12  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.

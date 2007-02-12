@@ -1,3 +1,26 @@
+2007-02-11  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=10144
+          REGRESSION: Reproducible assertion failure in DeleteSelectionCommand::fixupWhitespace()
+
+        Test: fast/text/delete-hard-break-character.html
+
+        The bug was caused by not updating a line whose line break object and offset
+        has been deleted. When deleting text, all lines containing the deleted text
+        are marked dirty. However, if the first character being deleted is a newline
+        which serves as a hard line break for the previous line, then that line will
+        not be marked, and since it will be a clean line ending with a line break,
+        relayout will begin at the next line. The fix is to check for this when
+        determining where to relayout from. 
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::determineStartPosition): Changed the condition for
+        including the last clean line in relayout to include the case where the
+        last clean line ends with a line break, but that line break is a newline that
+        has been deleted.
+
 2007-02-12  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.

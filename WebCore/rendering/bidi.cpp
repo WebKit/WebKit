@@ -1846,10 +1846,12 @@ RootInlineBox* RenderBlock::determineStartPosition(bool fullLayout, BidiIterator
         for (curr = firstRootBox(); curr && !curr->isDirty(); curr = curr->nextRootBox());
         if (curr) {
             // We have a dirty line.
-            if (curr->prevRootBox()) {
+            if (RootInlineBox* prevRootBox = curr->prevRootBox()) {
                 // We have a previous line.
-                if (!curr->prevRootBox()->endsWithBreak())
-                    curr = curr->prevRootBox();  // The previous line didn't break cleanly, so treat it as dirty also.
+                if (!prevRootBox->endsWithBreak() || prevRootBox->lineBreakObj()->isText() && prevRootBox->lineBreakPos() >= static_cast<RenderText*>(prevRootBox->lineBreakObj())->textLength())
+                    // The previous line didn't break cleanly or broke at a newline
+                    // that has been deleted, so treat it as dirty too.
+                    curr = prevRootBox;
             }
         } else {
             // No dirty lines were found.
