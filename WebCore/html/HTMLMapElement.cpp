@@ -88,7 +88,7 @@ void HTMLMapElement::parseMappedAttribute(MappedAttribute* attr)
         doc->removeImageMap(this);
         String mapName = attr->value();
         if (mapName[0] == '#')
-            mapName.remove(0, 1);
+            mapName = mapName.substring(1);
         m_name = doc->htmlMode() == Document::XHtml ? mapName : mapName.lower();
         doc->addImageMap(this);
     } else
