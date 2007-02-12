@@ -1,8 +1,3 @@
-layer at (0,0) size 506742501x506742511
-  RenderView at (0,0) size 785x585
-layer at (0,0) size 506742501x506742511
-  RenderBlock {HTML} at (0,0) size 785x585
-    RenderBody {BODY} at (8,8) size 769x561
-      RenderBlock {P} at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 8x18
-          text run at (0,0) width 8: "p"
+Extreme text-shadow blur values should not crash.
+
+

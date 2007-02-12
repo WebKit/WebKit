@@ -1,3 +1,10 @@
+2007-02-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Updated results for this failing test. It looks like Maciej generated
+        the original results before he made the test "dump as text."
+
+        * fast/text/text-shadow-extreme-value-expected.txt:
+
 2007-02-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Antti.
