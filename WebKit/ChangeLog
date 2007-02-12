@@ -1,3 +1,11 @@
+2007-02-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark.
+
+        Switch the initial value of box-sizing property from "border-box" to "content-box".
+
+        * WebInspector/webInspector/inspector.js:
+
 2007-02-10  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.

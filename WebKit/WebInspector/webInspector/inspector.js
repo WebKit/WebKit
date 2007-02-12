@@ -98,7 +98,7 @@ var typicalStylePropertyValue = {
     "border-top-style": "none",
     "border-top-width": "0px",
     "bottom": "auto",
-    "box-sizing": "border-box",
+    "box-sizing": "content-box",
     "caption-side": "top",
     "clear": "none",
     "color": "rgb(0, 0, 0)",
