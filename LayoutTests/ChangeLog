@@ -1,3 +1,26 @@
+2007-02-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - update pixel results in cases where overline and line-through were used,
+          because our old code put them 1px too low
+
+        * css1/cascade/cascade_order-expected.checksum: Updated because this has
+        line-through style.
+        * css1/cascade/cascade_order-expected.png: Ditto.
+        * css1/text_properties/text_decoration-expected.checksum: Updated because
+        this has overline and line-through.
+        * css1/text_properties/text_decoration-expected.png: Ditto.
+        * css2.1/t1504-c543-txt-decor-00-d-g-expected.checksum: Ditto.
+        * css2.1/t1504-c543-txt-decor-00-d-g-expected.png: Ditto.
+        * fast/text/stroking-decorations-expected.checksum: Ditto.
+        * fast/text/stroking-decorations-expected.png: Ditto.
+
+        - added some missing pixel-test results
+
+        * fast/forms/disabled-select-change-index-expected.checksum: Added.
+        * fast/forms/disabled-select-change-index-expected.png: Added.
+
 2007-02-12  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

@@ -1,9 +1,7 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -573,16 +571,16 @@ void InlineTextBox::paintCustomHighlight(int tx, int ty, const AtomicString& typ
 }
 #endif
 
-void InlineTextBox::paintDecoration(GraphicsContext* context, int _tx, int _ty, int deco)
+void InlineTextBox::paintDecoration(GraphicsContext* context, int tx, int ty, int deco)
 {
-    _tx += m_x;
-    _ty += m_y;
+    tx += m_x;
+    ty += m_y;
 
     if (m_truncation == cFullTruncation)
         return;
     
-    int width = (m_truncation == cNoTruncation) ? 
-                m_width : static_cast<RenderText*>(m_object)->width(m_start, m_truncation - m_start, textPos(), m_firstLine);
+    int width = (m_truncation == cNoTruncation) ? m_width
+        : static_cast<RenderText*>(m_object)->width(m_start, m_truncation - m_start, textPos(), m_firstLine);
     
     // Get the text decoration colors.
     Color underline, overline, linethrough;
@@ -593,27 +591,28 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, int _tx, int _ty, 
     context->setStrokeThickness(1.0f); // FIXME: We should improve this rule and not always just assume 1.
     if (deco & UNDERLINE) {
         context->setStrokeColor(underline);
-        context->drawLineForText(IntPoint(_tx, _ty), m_baseline, width, isPrinting);
+        // Leave one pixel of white between the baseline and the underline.
+        context->drawLineForText(IntPoint(tx, ty + m_baseline + 1), width, isPrinting);
     }
     if (deco & OVERLINE) {
         context->setStrokeColor(overline);
-        context->drawLineForText(IntPoint(_tx, _ty), 0, width, isPrinting);
+        context->drawLineForText(IntPoint(tx, ty), width, isPrinting);
     }
     if (deco & LINE_THROUGH) {
         context->setStrokeColor(linethrough);
-        context->drawLineForText(IntPoint(_tx, _ty), 2*m_baseline/3, width, isPrinting);
+        context->drawLineForText(IntPoint(tx, ty + 2 * m_baseline / 3), width, isPrinting);
     }
 }
 
-void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int _tx, int _ty, DocumentMarker marker, RenderStyle* style, const Font* f, bool grammar)
+void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int tx, int ty, DocumentMarker marker, RenderStyle* style, const Font* f, bool grammar)
 {
-    _tx += m_x;
-    _ty += m_y;
+    tx += m_x;
+    ty += m_y;
     
     if (m_truncation == cFullTruncation)
         return;
     
-    int start = 0;                  // start of line to draw, relative to _tx
+    int start = 0;                  // start of line to draw, relative to tx
     int width = m_width;            // how much line to draw
     bool useWholeWidth = true;
     unsigned paintStart = m_start;
@@ -639,7 +638,7 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int _tx, i
     // display a toolTip. We don't do this for misspelling markers.
     if (grammar) {
         int y = selectionTop();
-        IntPoint startPoint = IntPoint(m_x + _tx, y + _ty);
+        IntPoint startPoint = IntPoint(m_x + tx, y + ty);
         TextStyle textStyle = TextStyle(textObject()->tabWidth(), textPos(), m_toAdd, m_reversed, m_dirOverride || style->visuallyOrdered());
         int startPosition = max(marker.startOffset - m_start, (unsigned)0);
         int endPosition = min(marker.endOffset - m_start, (unsigned)m_len);    
@@ -664,10 +663,10 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int _tx, i
         // in larger fonts, tho, place the underline up near the baseline to prevent big gap
         underlineOffset = m_baseline + 2;
     }
-    pt->drawLineForMisspellingOrBadGrammar(IntPoint(_tx + start, _ty + underlineOffset), width, grammar);
+    pt->drawLineForMisspellingOrBadGrammar(IntPoint(tx + start, ty + underlineOffset), width, grammar);
 }
 
-void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int _tx, int _ty, DocumentMarker marker, RenderStyle* style, const Font* f)
+void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int tx, int ty, DocumentMarker marker, RenderStyle* style, const Font* f)
 {
    // Use same y positioning and height as for selection, so that when the selection and this highlight are on
    // the same word there are no pieces sticking out.
@@ -678,7 +677,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int _tx, int _ty, 
     int ePos = min(marker.endOffset - m_start, (unsigned)m_len);    
     TextRun run = TextRun(textObject()->text(), m_start, m_len, sPos, ePos);
     TextStyle renderStyle = TextStyle(textObject()->tabWidth(), textPos(), m_toAdd, m_reversed, m_dirOverride || style->visuallyOrdered());
-    IntPoint startPoint = IntPoint(m_x + _tx, y + _ty);
+    IntPoint startPoint = IntPoint(m_x + tx, y + ty);
     
     // Always compute and store the rect associated with this marker
     IntRect markerRect = enclosingIntRect(f->selectionRectForText(run, renderStyle, startPoint, h));
@@ -689,13 +688,13 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int _tx, int _ty, 
         Color yellow = Color(255, 255, 0);
         pt->save();
         updateGraphicsContext(pt, yellow, yellow, 0);  // Don't draw text at all!
-        pt->clip(IntRect(_tx + m_x, _ty + y, m_width, h));
+        pt->clip(IntRect(tx + m_x, ty + y, m_width, h));
         pt->drawHighlightForText(run, startPoint, h, renderStyle, yellow);
         pt->restore();
     }
 }
 
-void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, int _tx, int _ty, RenderStyle* style, const Font* f, bool background)
+void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, int tx, int ty, RenderStyle* style, const Font* f, bool background)
 {
     Vector<DocumentMarker> markers = object()->document()->markersForNode(object()->node());
     Vector<DocumentMarker>::iterator markerIt = markers.begin();
@@ -734,13 +733,13 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, int _tx, int _ty, 
         // marker intersects this run.  Paint it.
         switch (marker.type) {
             case DocumentMarker::Spelling:
-                paintSpellingOrGrammarMarker(pt, _tx, _ty, marker, style, f, false);
+                paintSpellingOrGrammarMarker(pt, tx, ty, marker, style, f, false);
                 break;
             case DocumentMarker::Grammar:
-                paintSpellingOrGrammarMarker(pt, _tx, _ty, marker, style, f, true);
+                paintSpellingOrGrammarMarker(pt, tx, ty, marker, style, f, true);
                 break;
             case DocumentMarker::TextMatch:
-                paintTextMatchMarker(pt, _tx, _ty, marker, style, f);
+                paintTextMatchMarker(pt, tx, ty, marker, style, f);
                 break;
             default:
                 ASSERT_NOT_REACHED();
@@ -753,19 +752,19 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, int _tx, int _ty, 
 }
 
 
-void InlineTextBox::paintMarkedTextUnderline(GraphicsContext* pt, int _tx, int _ty, const MarkedTextUnderline& underline)
+void InlineTextBox::paintMarkedTextUnderline(GraphicsContext* ctx, int tx, int ty, const MarkedTextUnderline& underline)
 {
-    _tx += m_x;
-    _ty += m_y;
+    tx += m_x;
+    ty += m_y;
 
     if (m_truncation == cFullTruncation)
         return;
     
-    int start = 0;                  // start of line to draw, relative to _tx
-    int width = m_width;            // how much line to draw
+    int start = 0;                 // start of line to draw, relative to tx
+    int width = m_width;           // how much line to draw
     bool useWholeWidth = true;
     unsigned paintStart = m_start;
-    unsigned paintEnd = end()+1;      // end points at the last char, not past it
+    unsigned paintEnd = end() + 1; // end points at the last char, not past it
     if (paintStart <= underline.startOffset) {
         paintStart = underline.startOffset;
         useWholeWidth = false;
@@ -783,13 +782,15 @@ void InlineTextBox::paintMarkedTextUnderline(GraphicsContext* pt, int _tx, int _
         width = static_cast<RenderText*>(m_object)->width(paintStart, paintEnd - paintStart, textPos() + start, m_firstLine);
     }
 
-    int lineThickness = 0;
-    if (underline.thick)
-        lineThickness = ((m_height - m_baseline) > 2) ? 2 : 1;
-    int underlineOffset = m_height - lineThickness;
-    pt->setStrokeColor(underline.color);
-    pt->setStrokeThickness(lineThickness);
-    pt->drawLineForText(IntPoint(_tx + start, _ty), underlineOffset, width, textObject()->document()->printing());
+    // Thick marked text underlines are 2px thick as long as there is room for 1px space under the baseline.
+    // All other marked text underlines are 1px thick, and if there's not enough space they will touch or overlap characters.
+    int lineThickness = 1;
+    if (underline.thick && m_height - m_baseline > 2)
+        lineThickness = 2;
+
+    ctx->setStrokeColor(underline.color);
+    ctx->setStrokeThickness(lineThickness);
+    ctx->drawLineForText(IntPoint(tx + start, ty + m_height - lineThickness), width, textObject()->document()->printing());
 }
 
 int InlineTextBox::caretMinOffset() const

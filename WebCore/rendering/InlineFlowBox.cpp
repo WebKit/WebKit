@@ -1,7 +1,5 @@
-/**
-* This file is part of the html renderer for KDE.
- *
- * Copyright (C) 2003, 2006 Apple Computer, Inc.
+/*
+ * Copyright (C) 2003, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -793,15 +791,16 @@ void InlineFlowBox::paintTextDecorations(RenderObject::PaintInfo& paintInfo, int
         context->setStrokeThickness(1.0f); // FIXME: We should improve this rule and not always just assume 1.
         if (deco & UNDERLINE && !paintedChildren) {
             context->setStrokeColor(underline);
-            context->drawLineForText(IntPoint(tx, ty), m_baseline, w, isPrinting);
+            // Leave one pixel of white between the baseline and the underline.
+            context->drawLineForText(IntPoint(tx, ty + m_baseline + 1), w, isPrinting);
         }
         if (deco & OVERLINE && !paintedChildren) {
             context->setStrokeColor(overline);
-            context->drawLineForText(IntPoint(tx, ty), 0, w, isPrinting);
+            context->drawLineForText(IntPoint(tx, ty), w, isPrinting);
         }
         if (deco & LINE_THROUGH && paintedChildren) {
             context->setStrokeColor(linethrough);
-            context->drawLineForText(IntPoint(tx, ty), 2 * m_baseline / 3, w, isPrinting);
+            context->drawLineForText(IntPoint(tx, ty + 2 * m_baseline / 3), w, isPrinting);
         }
 
         if (setShadow)

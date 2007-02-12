@@ -1,3 +1,36 @@
+2007-02-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12668
+          <rdar://problem/4893344> REGRESSION: underline not visible for the international
+          input inline hole in most text fields (12668)
+
+        - fix bug where overline and line-through were 1px lower than we intended
+
+        * platform/graphics/GraphicsContext.h: Removed unneeded y offset parameter.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLineForText): Removed bogus y offset and +1.
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLineForText): Ditto.
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawLineForText): Ditto.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintTextDecorations): Added the "+1" that used to be
+        inside drawLineForText to the underline-drawing code. Changed the other callers
+        of drawLineForText to include the y offset in the y coordinate.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDecoration): Ditto. Also renamed _tx and _ty to
+        remove the gratuitious underscores.
+        (WebCore::InlineTextBox::paintMarkedTextUnderline): Made the default thickness
+        be 1px instead of 0 (which ends up being roughly 1px in the CG code path anyway).
+        Fixed the code computing the position to put the underline at the bottom of the
+        line (different from regular underlines which are put 1px under the baseline).
+        The old code used to put the underline 1px further down in the thick case, and
+        2px further down in the non-thick case. Both of those are bad, because they
+        could be completely clipped out in many cases.
+
 2007-02-12  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

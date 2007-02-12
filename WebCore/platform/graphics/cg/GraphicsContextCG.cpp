@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -767,18 +767,14 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)
     return FloatRect(roundedOrigin, roundedLowerRight - roundedOrigin);
 }
 
-void GraphicsContext::drawLineForText(const IntPoint& point, int yOffset, int width, bool printing)
+void GraphicsContext::drawLineForText(const IntPoint& point, int width, bool printing)
 {
     if (paintingDisabled())
         return;
     
     // Note: This function assumes that point.x and point.y are integers (and that's currently always the case).
     float x = point.x();
-    float y = point.y() + yOffset;
-
-    // Leave 1.0 in user space between the baseline of the text and the top of the underline.
-    // FIXME: Is this the right distance for space above the underline? Even for thick underlines on large sized text?
-    y += 1;
+    float y = point.y();
 
     float thickness = strokeThickness();
     if (printing) {
