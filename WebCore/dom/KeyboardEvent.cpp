@@ -1,10 +1,8 @@
 /**
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,6 +19,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "KeyboardEvent.h"
 
@@ -124,6 +123,14 @@ int KeyboardEvent::which() const
     // Netscape's "which" returns a virtual key code for keydown and keyup, and a character code for keypress.
     // That's exactly what IE's "keyCode" returns. So they are the same for keyboard events.
     return keyCode();
+}
+
+KeyboardEvent* findKeyboardEvent(Event* event)
+{
+    for (Event* e = event; e; e = e->underlyingEvent())
+        if (e->isKeyboardEvent())
+            return static_cast<KeyboardEvent*>(e);
+    return 0;
 }
 
 } // namespace WebCore

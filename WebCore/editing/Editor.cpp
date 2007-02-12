@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -102,23 +102,19 @@ EditorClient* Editor::client() const
 
 void Editor::handleKeyPress(KeyboardEvent* event)
 {
-    if (EditorClient* c = client()) {
-        Selection selection = selectionForEvent(m_frame, event);
-        if (selection.isCaretOrRange() && selection.isContentEditable())
+    if (EditorClient* c = client())
+        if (selectionForEvent(m_frame, event).isContentEditable())
             c->handleKeyPress(event);
-    }
 }
 
 bool Editor::canEdit() const
 {
-    SelectionController* selectionController = m_frame->selectionController();
-    return selectionController->isCaretOrRange() && selectionController->isContentEditable();
+    return m_frame->selectionController()->isContentEditable();
 }
 
 bool Editor::canEditRichly() const
 {
-    SelectionController* selectionController = m_frame->selectionController();
-    return canEdit() && selectionController->isContentRichlyEditable();
+    return m_frame->selectionController()->isContentRichlyEditable();
 }
 
 // WinIE uses onbeforecut and onbeforepaste to enables the cut and paste menu items.  They
@@ -154,8 +150,7 @@ bool Editor::canCopy() const
 
 bool Editor::canPaste() const
 {
-    SelectionController* selectionController = m_frame->selectionController();
-    return selectionController->isCaretOrRange() && selectionController->isContentEditable();
+    return canEdit();
 }
 
 bool Editor::canDelete() const
@@ -332,7 +327,7 @@ void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment,
     m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
 }
 
-void Editor::replaceSelectionWithText(String text, bool selectReplacement, bool smartReplace)
+void Editor::replaceSelectionWithText(const String& text, bool selectReplacement, bool smartReplace)
 {
     replaceSelectionWithFragment(createFragmentFromText(selectedRange().get(), text), selectReplacement, smartReplace, true); 
 }
@@ -392,7 +387,7 @@ void Editor::writeSelectionToPasteboard(Pasteboard* pasteboard)
     pasteboard->writeSelection(selectedRange().get(), canSmartCopyOrDelete(), m_frame);
 }
 
-bool Editor::shouldInsertText(String text, Range* range, EditorInsertAction action) const
+bool Editor::shouldInsertText(const String& text, Range* range, EditorInsertAction action) const
 {
     if (client())
         return client()->shouldInsertText(text, range, action);
@@ -1102,7 +1097,7 @@ static bool canPaste(Frame* frame)
 
 static bool hasEditableSelection(Frame* frame)
 {
-    return frame->selectionController()->isCaretOrRange() && frame->selectionController()->isContentEditable();
+    return frame->selectionController()->isContentEditable();
 }
 
 static bool hasEditableRangeSelection(Frame* frame)
@@ -1213,6 +1208,7 @@ static CommandMap* createCommandMap()
 Editor::Editor(Frame* frame)
     : m_frame(frame)
     , m_deleteButtonController(new DeleteButtonController(frame))
+    , m_ignoreMarkedTextSelectionChange(false)
 { 
 }
 
@@ -1241,24 +1237,79 @@ bool Editor::execCommand(const AtomicString& command)
 
 bool Editor::insertText(const String& text, bool selectInsertedText, Event* triggeringEvent)
 {
+    if (text.isEmpty())
+        return false;
+
+    RefPtr<Range> range = m_frame->markedTextRange();
+    if (!range) {
+        Selection selection = selectionForEvent(m_frame, triggeringEvent);
+        if (!selection.isContentEditable())
+            return false;
+        range = selection.toRange();
+    }
+
+    if (!shouldInsertText(text, range.get(), EditorInsertActionTyped)) {
+        discardMarkedText();
+        return true;
+    }
+
+    setIgnoreMarkedTextSelectionChange(true);
+
+    // If we had marked text, replace that instead of the selection/caret.
+    selectMarkedText();
+
     // Get the selection to use for the event that triggered this insertText.
     // If the event handler changed the selection, we may want to use a different selection
     // that is contained in the event target.
     Selection selection = selectionForEvent(m_frame, triggeringEvent);
-    if (!selection.isCaretOrRange() || !selection.isContentEditable())
-        return false;
-    Node* selectionStart = selection.start().node();
-    if (!selectionStart)
-        return false;
-    RefPtr<Document> document = selectionStart->document();
-    
-    // Insert the text
-    TypingCommand::insertText(document.get(), text, selection, selectInsertedText);
+    if (selection.isContentEditable()) {
+        if (Node* selectionStart = selection.start().node()) {
+            RefPtr<Document> document = selectionStart->document();
+            
+            // Insert the text
+            TypingCommand::insertText(document.get(), text, selection, selectInsertedText);
 
-    // Reveal the current selection 
-    if (Frame* editedFrame = document->frame())
-        if (Page* page = editedFrame->page())
-            page->focusController()->focusedOrMainFrame()->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+            // Reveal the current selection 
+            if (Frame* editedFrame = document->frame())
+                if (Page* page = editedFrame->page())
+                    page->focusController()->focusedOrMainFrame()->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+        }
+    }
+
+    setIgnoreMarkedTextSelectionChange(false);
+
+    // Inserting unmarks any marked text.
+    unmarkText();
+
+    return true;
+}
+
+bool Editor::insertLineBreak()
+{
+    if (!canEdit())
+        return false;
+
+    if (!shouldInsertText("\n", m_frame->selectionController()->toRange().get(), EditorInsertActionTyped))
+        return true;
+
+    TypingCommand::insertLineBreak(m_frame->document());
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
+    return true;
+}
+
+bool Editor::insertParagraphSeparator()
+{
+    if (!canEdit())
+        return false;
+
+    if (!canEditRichly())
+        return insertLineBreak();
+
+    if (!shouldInsertText("\n", m_frame->selectionController()->toRange().get(), EditorInsertActionTyped))
+        return true;
+
+    TypingCommand::insertParagraphSeparator(m_frame->document());
+    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
     return true;
 }
 
@@ -1437,5 +1488,38 @@ void Editor::setBaseWritingDirection(String direction)
     style->setProperty(CSS_PROP_DIRECTION, direction, false, ec);
     applyParagraphStyleToSelection(style.get(), EditActionSetWritingDirection);
 }
+
+void Editor::selectMarkedText()
+{
+    Range* range = m_frame->markedTextRange();
+    if (!range)
+        return;
+    ExceptionCode ec = 0;
+    m_frame->selectionController()->setSelectedRange(m_frame->markedTextRange(), DOWNSTREAM, false, ec);
+}
+
+void Editor::discardMarkedText()
+{
+    if (!m_frame->markedTextRange())
+        return;
+
+    setIgnoreMarkedTextSelectionChange(true);
+
+    selectMarkedText();
+    unmarkText();
+#if PLATFORM(MAC)
+    if (EditorClient* c = client())
+        c->markedTextAbandoned(m_frame);
+#endif
+    deleteSelectionWithSmartDelete(false);
+
+    setIgnoreMarkedTextSelectionChange(false);
+}
+
+#if !PLATFORM(MAC)
+void Editor::unmarkText()
+{
+}
+#endif
 
 } // namespace WebCore

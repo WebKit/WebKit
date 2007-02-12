@@ -396,15 +396,8 @@ void WebEditorClient::handleKeyPress(KeyboardEvent* event)
         event->setDefaultHandled();
 }
 
-/*
-bool WebEditorClient::shouldChangeSelectedRange(Range *currentRange, Range *toProposedRange, NSSelectionAffinity selectionAffinity, bool stillSelecting) { return false; }
-bool WebEditorClient::shouldChangeTypingStyle(CSSStyleDeclaration *currentStyle, CSSStyleDeclaration *toProposedStyle) { return false; }
-bool WebEditorClient::doCommandBySelector(SEL selector) { return false; }
-
-void WebEditorClient::webViewDidBeginEditing:(NSNotification *)notification { }
-void WebEditorClient::webViewDidChange:(NSNotification *)notification { }
-void WebEditorClient::webViewDidEndEditing:(NSNotification *)notification { }
-void WebEditorClient::webViewDidChangeTypingStyle:(NSNotification *)notification { }
-void WebEditorClient::webViewDidChangeSelection:(NSNotification *)notification { }
-NSUndoManager* WebEditorClient::undoManagerForWebView:(WebView *)webView { return NULL; }
-*/
+void WebEditorClient::markedTextAbandoned(Frame* frame)
+{
+    WebHTMLView *webHTMLView = [[kit(frame) frameView] documentView];
+    [[NSInputManager currentInputManager] markedTextAbandoned:webHTMLView];
+}

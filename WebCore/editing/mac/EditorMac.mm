@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #import "EditorClient.h"
 #import "Element.h"
 #import "ExceptionHandlers.h"
+#import "FrameMac.h"
 #import "PlatformString.h"
 #import "Selection.h"
 #import "SelectionController.h"
@@ -643,6 +644,11 @@ void Editor::showStylesPanel()
 void Editor::showColorPanel()
 {
     [[NSApplication sharedApplication] orderFrontColorPanel:nil];
+}
+
+void Editor::unmarkText()
+{
+    Mac(m_frame)->setMarkedTextRange(0, nil, nil);
 }
 
 } // namespace WebCore

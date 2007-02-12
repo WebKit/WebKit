@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  *
@@ -51,6 +49,7 @@
 #include "RenderSlider.h"
 #include "SelectionController.h"
 #include "TextBreakIterator.h"
+#include "TextEvent.h"
 
 using namespace std;
 
@@ -452,178 +451,65 @@ void HTMLInputElement::restoreState(const String& state)
 
 bool HTMLInputElement::canHaveSelection() const
 {
-    switch (inputType()) {
-        case BUTTON:
-        case CHECKBOX:
-        case FILE:
-        case HIDDEN:
-        case IMAGE:
-        case RADIO:
-        case RANGE:
-        case RESET:
-        case SUBMIT:
-            return false;
-        case PASSWORD:
-        case SEARCH:
-        case ISINDEX:
-        case TEXT:
-            return true;
-    }
-    return false;
+    return isTextField();
 }
 
 int HTMLInputElement::selectionStart() const
 {
+    if (!isTextField())
+        return 0;
+    if (document()->focusedNode() != this && cachedSelStart != -1)
+        return cachedSelStart;
     if (!renderer())
         return 0;
-    
-    switch (inputType()) {
-        case BUTTON:
-        case CHECKBOX:
-        case FILE:
-        case HIDDEN:
-        case IMAGE:
-        case RADIO:
-        case RANGE:
-        case RESET:
-        case SUBMIT:
-            break;
-        case ISINDEX:
-        case PASSWORD:
-        case SEARCH:
-        case TEXT:
-            if (document()->focusedNode() != this && cachedSelStart != -1)
-                return cachedSelStart;
-            return static_cast<RenderTextControl*>(renderer())->selectionStart();
-    }
-    return 0;
+    return static_cast<RenderTextControl*>(renderer())->selectionStart();
 }
 
 int HTMLInputElement::selectionEnd() const
 {
+    if (!isTextField())
+        return 0;
+    if (document()->focusedNode() != this && cachedSelEnd != -1)
+        return cachedSelEnd;
     if (!renderer())
         return 0;
-
-    switch (inputType()) {
-        case BUTTON:
-        case CHECKBOX:
-        case FILE:
-        case HIDDEN:
-        case IMAGE:
-        case RADIO:
-        case RANGE:
-        case RESET:
-        case SUBMIT:
-            break;
-        case ISINDEX:
-        case PASSWORD:
-        case TEXT:
-        case SEARCH:
-            if (document()->focusedNode() != this && cachedSelEnd != -1)
-                return cachedSelEnd;
-            return static_cast<RenderTextControl*>(renderer())->selectionEnd();
-    }
-    return 0;
+    return static_cast<RenderTextControl*>(renderer())->selectionEnd();
 }
 
 void HTMLInputElement::setSelectionStart(int start)
 {
+    if (!isTextField())
+        return;
     if (!renderer())
         return;
-
-    switch (inputType()) {
-        case BUTTON:
-        case CHECKBOX:
-        case FILE:
-        case HIDDEN:
-        case IMAGE:
-        case RADIO:
-        case RANGE:
-        case RESET:
-        case SUBMIT:
-            break;
-        case ISINDEX:
-        case PASSWORD:
-        case TEXT:
-        case SEARCH:
-            static_cast<RenderTextControl*>(renderer())->setSelectionStart(start);
-            break;
-    }
+    static_cast<RenderTextControl*>(renderer())->setSelectionStart(start);
 }
 
 void HTMLInputElement::setSelectionEnd(int end)
 {
+    if (!isTextField())
+        return;
     if (!renderer())
         return;
-    
-    switch (inputType()) {
-        case BUTTON:
-        case CHECKBOX:
-        case FILE:
-        case HIDDEN:
-        case IMAGE:
-        case RADIO:
-        case RANGE:
-        case RESET:
-        case SUBMIT:
-            break;
-        case ISINDEX:
-        case PASSWORD:
-        case TEXT:
-        case SEARCH:
-            static_cast<RenderTextControl*>(renderer())->setSelectionEnd(end);
-            break;
-    }
+    static_cast<RenderTextControl*>(renderer())->setSelectionEnd(end);
 }
 
 void HTMLInputElement::select()
 {
+    if (!isTextField())
+        return;
     if (!renderer())
         return;
-
-    switch (inputType()) {
-        case BUTTON:
-        case CHECKBOX:
-        case HIDDEN:
-        case IMAGE:
-        case RADIO:
-        case RANGE:
-        case RESET:
-        case SUBMIT:
-        case FILE:
-            break;
-        case ISINDEX:
-        case PASSWORD:
-        case TEXT:
-        case SEARCH:
-            static_cast<RenderTextControl*>(renderer())->select();
-            break;
-    }
+    static_cast<RenderTextControl*>(renderer())->select();
 }
 
 void HTMLInputElement::setSelectionRange(int start, int end)
 {
+    if (!isTextField())
+        return;
     if (!renderer())
         return;
-    
-    switch (inputType()) {
-        case BUTTON:
-        case CHECKBOX:
-        case FILE:
-        case HIDDEN:
-        case IMAGE:
-        case RADIO:
-        case RANGE:
-        case RESET:
-        case SUBMIT:
-            break;
-        case ISINDEX:
-        case PASSWORD:
-        case TEXT:
-        case SEARCH:
-            static_cast<RenderTextControl*>(renderer())->setSelectionRange(start, end);
-            break;
-    }
+    static_cast<RenderTextControl*>(renderer())->setSelectionRange(start, end);
 }
 
 void HTMLInputElement::accessKeyAction(bool sendToAnyElement)
@@ -825,8 +711,8 @@ RenderObject *HTMLInputElement::createRenderer(RenderArena *arena, RenderStyle *
             return new (arena) RenderSlider(this);
         case ISINDEX:
         case PASSWORD:
-        case TEXT:
         case SEARCH:
+        case TEXT:
             return new (arena) RenderTextControl(this, false);             
     }
     assert(false);
@@ -1212,6 +1098,11 @@ void HTMLInputElement::postDispatchEventHandler(Event *evt, void* data)
 
 void HTMLInputElement::defaultEventHandler(Event* evt)
 {
+    bool clickDefaultFormButton = false;
+
+    if (isTextField() && evt->type() == textInputEvent && evt->isTextEvent() && static_cast<TextEvent*>(evt)->data() == "\n")
+        clickDefaultFormButton = true;
+
     if (inputType() == IMAGE && evt->isMouseEvent() && evt->type() == clickEvent) {
         // record the mouse position for when we get the DOMActivate event
         MouseEvent* me = static_cast<MouseEvent*>(evt);
@@ -1224,8 +1115,15 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
             int offsetX, offsetY;
             renderer()->absolutePosition(offsetX, offsetY);
             xPos = me->pageX() - offsetX;
+            // FIXME: Why is yPos a short?
             yPos = me->pageY() - offsetY;
         }
+    }
+
+    if (!clickDefaultFormButton) {
+        HTMLGenericFormElement::defaultEventHandler(evt);
+        if (evt->defaultHandled())
+            return;
     }
 
     // DOMActivate events cause the input to be "activated" - in the case of image and submit inputs, this means
@@ -1240,6 +1138,10 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
                 form()->reset();
             else {
                 m_activeSubmit = true;
+                // FIXME: Would be cleaner to get xPos and yPos out of the underlying mouse
+                // event (if any) here instead of relying on the variables set above when
+                // processing the click event. Even better, appendFormData could pass the
+                // event in, and then we could get rid of xPos and yPos altogether!
                 if (!form()->prepareSubmit(evt)) {
                     xPos = 0;
                     yPos = 0;
@@ -1254,15 +1156,14 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
     // on key down blocks the proper sending of the key press event.
     if (evt->type() == keypressEvent && evt->isKeyboardEvent()) {
         bool clickElement = false;
-        bool clickDefaultFormButton = false;
-    
+
         if (isTextField() && document()->frame()
                 && document()->frame()->doTextFieldCommandFromEvent(this, static_cast<KeyboardEvent*>(evt))) {
             evt->setDefaultHandled();
             return;
         }
 
-        String key = static_cast<KeyboardEvent *>(evt)->keyIdentifier();
+        String key = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
 
         if (key == "U+000020") {
             switch (inputType()) {
@@ -1297,16 +1198,13 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
                 case BUTTON:
                 case CHECKBOX:
                 case HIDDEN:
-                case RANGE:
-                    // Simulate mouse click on the default form button for enter for these types of elements.
-                    clickDefaultFormButton = true;
                 case ISINDEX:
                 case PASSWORD:
+                case RANGE:
                 case SEARCH:
                 case TEXT:
-                    if (!document()->frame()->eventHandler()->inputManagerHasMarkedText())
-                        // Simulate mouse click on the default form button for enter for these types of elements.
-                        clickDefaultFormButton = true;
+                    // Simulate mouse click on the default form button for enter for these types of elements.
+                    clickDefaultFormButton = true;
                     break;
                 case FILE:
                 case IMAGE:
@@ -1358,17 +1256,21 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         if (clickElement) {
             dispatchSimulatedClick(evt);
             evt->setDefaultHandled();
-        } else if (clickDefaultFormButton) {
-            if (isSearchField()) {
-                addSearchResult();
-                onSearch();
-            }
-            blur();
-            // Form may never have been present, or may have been destroyed by the blur event.
-            if (form())
-                form()->submitClick(evt);
-            evt->setDefaultHandled();
+            return;
+        }        
+    }
+
+    if (clickDefaultFormButton) {
+        if (isSearchField()) {
+            addSearchResult();
+            onSearch();
         }
+        blur();
+        // Form may never have been present, or may have been destroyed by the blur event.
+        if (form())
+            form()->submitClick(evt);
+        evt->setDefaultHandled();
+        return;
     }
 
     if (evt->isBeforeTextInsertedEvent()) {
@@ -1398,9 +1300,6 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         if (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent())
             slider->forwardEvent(evt);
     }
-
-    if (!evt->defaultHandled())
-        HTMLGenericFormElement::defaultEventHandler(evt);
 }
 
 bool HTMLInputElement::isURLAttribute(Attribute *attr) const

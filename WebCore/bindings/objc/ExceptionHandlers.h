@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #ifndef ExceptionHandlers_h
 #define ExceptionHandlers_h
 
-#include "TextAffinity.h"
 #include <JavaScriptCore/Assertions.h>
 
 #if !defined(NDEBUG) && !defined(DISABLE_THREAD_CHECK)
@@ -53,8 +52,6 @@ namespace WebCore {
         if (ec) 
             raiseDOMException(ec);
     }
-
-    void selectRange(SelectionController*, Range*, EAffinity, bool closeTyping);
 
 } // namespace WebCore
 

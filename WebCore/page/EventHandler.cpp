@@ -55,6 +55,7 @@
 #include "RenderWidget.h"
 #include "SelectionController.h"
 #include "Settings.h"
+#include "TextEvent.h"
 
 #ifdef SVG_SUPPORT
 #include "SVGCursorElement.h"
@@ -1169,7 +1170,7 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
     return e.isAccepted();
 }
 
-bool EventHandler::sendContextMenuEvent(PlatformMouseEvent event)
+bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
 {
     Document* doc = m_frame->document();
     FrameView* v = m_frame->view();
@@ -1214,13 +1215,6 @@ bool EventHandler::canMouseDownStartSelect(Node* node)
     
     return true;
 }
-
-#if !PLATFORM(MAC)
-bool EventHandler::inputManagerHasMarkedText() const
-{
-    return false;
-}
-#endif
 
 void EventHandler::setResizingFrameSet(HTMLFrameSetElement* frameSet)
 {
@@ -1288,16 +1282,14 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& keyEvent)
 void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
 {
     if (event->type() == keypressEvent) {
-        if (Page* page = event->target()->toNode()->document()->page())
-            if (page->tabKeyCyclesThroughElements() && event->keyIdentifier() == "U+000009")
-                if (page->focusController()->advanceFocus(event)) {
-                    event->setDefaultHandled();
-                    return;
-                }
         m_frame->editor()->handleKeyPress(event);
+        if (event->defaultHandled())
+            return;
+        if (event->keyIdentifier() == "U+000009")
+            defaultTabEventHandler(event, false);
     }
 }
-    
+
 bool EventHandler::dragHysteresisExceeded(const FloatPoint& floatDragViewportLocation) const
 {
     IntPoint dragViewportLocation((int)floatDragViewportLocation.x(), (int)floatDragViewportLocation.y());
@@ -1356,6 +1348,57 @@ void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperat
 bool EventHandler::dispatchDragSrcEvent(const AtomicString& eventType, const PlatformMouseEvent& event)
 {
     return !dispatchDragEvent(eventType, dragState().m_dragSrc.get(), event, dragState().m_dragClipboard.get());
+}
+
+bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEvent,
+    bool isLineBreak, bool isBackTab)
+{
+    if (!m_frame)
+        return false;
+    EventTargetNode* target = eventTargetNodeForDocument(m_frame->document());
+    if (!target)
+        return false;
+    RefPtr<TextEvent> event = new TextEvent(m_frame->domWindow(), text);
+    event->setUnderlyingEvent(underlyingEvent);
+    event->setIsLineBreak(isLineBreak);
+    event->setIsBackTab(isBackTab);
+    ExceptionCode ec;
+    return target->dispatchEvent(event.release(), ec, true);
+}
+
+void EventHandler::defaultTextInputEventHandler(TextEvent* event)
+{
+    String data = event->data();
+    if (data == "\t")
+        defaultTabEventHandler(event, event->isBackTab());
+    else if (data == "\n") {
+        if (event->isLineBreak()) {
+            if (m_frame->editor()->insertLineBreak())
+                event->setDefaultHandled();
+        } else {
+            if (m_frame->editor()->insertParagraphSeparator())
+                event->setDefaultHandled();
+        }
+    } else {
+        if (m_frame->editor()->insertText(data, false, event))
+            event->setDefaultHandled();
+    }
+}
+
+void EventHandler::defaultTabEventHandler(Event* event, bool isBackTab)
+{
+    Page* page = m_frame->page();
+    if (!page ||! page->tabKeyCyclesThroughElements())
+        return;
+    FocusController* focus = page->focusController();
+    KeyboardEvent* keyboardEvent = findKeyboardEvent(event);
+    bool handled;
+    if (isBackTab)
+        handled = focus->advanceFocus(FocusDirectionBackward, keyboardEvent);
+    else
+        handled = focus->advanceFocus(keyboardEvent); // get direction from keyboard event
+    if (handled)
+        event->setDefaultHandled();
 }
 
 }

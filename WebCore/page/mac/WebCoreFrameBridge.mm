@@ -1153,24 +1153,6 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
 }
 
-- (void)insertLineBreak
-{
-    if (m_frame->selectionController()->isNone())
-        return;
-    
-    TypingCommand::insertLineBreak(m_frame->document());
-    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
-}
-
-- (void)insertParagraphSeparator
-{
-    if (m_frame->selectionController()->isNone())
-        return;
-    
-    TypingCommand::insertParagraphSeparator(m_frame->document());
-    m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
-}
-
 - (void)insertParagraphSeparatorInQuotedContent
 {
     if (m_frame->selectionController()->isNone())

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "EditorInsertAction.h"
 #include <wtf/Forward.h>
+
 #if PLATFORM(MAC)
 class NSArray;
 class NSData;
@@ -39,7 +40,6 @@ namespace WebCore {
 
 class CSSStyleDeclaration;
 class EditCommand;
-class EventTargetNode;
 class Frame;
 class HTMLElement;
 class KeyboardEvent;
@@ -67,21 +67,20 @@ public:
     virtual bool shouldBeginEditing(Range*) = 0;
     virtual bool shouldEndEditing(Range*) = 0;
     virtual bool shouldInsertNode(Node*, Range*, EditorInsertAction) = 0;
-//  virtual bool shouldInsertNode(Node*, Range* replacingRange, WebViewInsertAction) = 0;
     virtual bool shouldInsertText(String, Range*, EditorInsertAction) = 0;
 //  virtual bool shouldChangeSelectedRange(Range* fromRange, Range* toRange, NSSelectionAffinity, bool stillSelecting) = 0;
     virtual bool shouldApplyStyle(CSSStyleDeclaration*, Range*) = 0;
 //  virtual bool shouldChangeTypingStyle(CSSStyleDeclaration* fromStyle, CSSStyleDeclaration* toStyle) = 0;
 //  virtual bool doCommandBySelector(SEL selector) = 0;
-//
+
     virtual void didBeginEditing() = 0;
     virtual void respondToChangedContents() = 0;
     virtual void didEndEditing() = 0;
     virtual void didWriteSelectionToPasteboard() = 0;
     virtual void didSetSelectionTypesForPasteboard() = 0;
-//  virtual void webViewDidChangeTypingStyle:(NSNotification *)notification = 0;
-//  virtual void webViewDidChangeSelection:(NSNotification *)notification = 0;
-//  virtual NSUndoManager* undoManagerForWebView:(WebView *)webView = 0;
+//  virtual void didChangeTypingStyle:(NSNotification *)notification = 0;
+//  virtual void didChangeSelection:(NSNotification *)notification = 0;
+//  virtual NSUndoManager* undoManager:(WebView *)webView = 0;
     
     virtual void registerCommandForUndo(PassRefPtr<EditCommand>) = 0;
     virtual void registerCommandForRedo(PassRefPtr<EditCommand>) = 0;
@@ -96,6 +95,8 @@ public:
     virtual void handleKeyPress(KeyboardEvent*) = 0;
 
 #if PLATFORM(MAC)
+    virtual void markedTextAbandoned(Frame*) = 0;
+
     // FIXME: This should become SelectionController::toWebArchive()
     virtual NSData* dataForArchivedSelection(Frame*) = 0; 
 

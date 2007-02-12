@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,24 +26,10 @@
 #include "config.h"
 #include "ExceptionHandlers.h"
 
-#include "Document.h"
-#include "Node.h"
-#include "SelectionController.h"
-#include "PlatformString.h"
-#include "RangeException.h"
 #include "Event.h"
+#include "RangeException.h"
 #include "SVGException.h"
 #include "XPathEvaluator.h"
-
-NSString * const DOMException = @"DOMException";
-NSString * const DOMRangeException = @"DOMRangeException";
-NSString * const DOMEventException = @"DOMEventException";
-#ifdef SVG_SUPPORT
-NSString * const DOMSVGException = @"DOMSVGException";
-#endif // SVG_SUPPORT
-#ifdef XPATH_SUPPORT
-NSString * const DOMXPathException = @"DOMXPathException";
-#endif // XPATH_SUPPORT
 
 namespace WebCore {
 
@@ -51,38 +37,31 @@ void raiseDOMException(ExceptionCode ec)
 {
     ASSERT(ec);
 
-    NSString *name = ::DOMException;
+    NSString *name = @"DOMException";
 
     int code = ec;
     if (ec >= RangeExceptionOffset && ec <= RangeExceptionMax) {
-        name = DOMRangeException;
+        name = @"DOMRangeException";
         code -= RangeExceptionOffset;
     } else if (ec >= EventExceptionOffset && ec <= EventExceptionMax) {
-        name = DOMEventException;
+        name = @"DOMEventException";
         code -= EventExceptionOffset;
 #ifdef SVG_SUPPORT
     } else if (ec >= SVGExceptionOffset && ec <= SVGExceptionMax) {
-        name = DOMSVGException;
+        name = @"DOMSVGException";
         code -= SVGExceptionOffset;
-#endif // SVG_SUPPORT
+#endif
 #ifdef XPATH_SUPPORT
     } else if (ec >= XPathExceptionOffset && ec <= XPathExceptionMax) {
-        name = DOMXPathException;
+        name = @"DOMXPathException";
         code -= XPathExceptionOffset;
-#endif // XPATH_SUPPORT
+#endif
     }
 
     NSString *reason = [NSString stringWithFormat:@"*** Exception received from DOM API: %d", code];
     NSException *exception = [NSException exceptionWithName:name reason:reason
         userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:code] forKey:name]];
     [exception raise];
-}
-
-void selectRange(SelectionController* selectionController, Range* range, EAffinity affinity, bool closeTyping)
-{
-    ExceptionCode ec = 0;
-    selectionController->setSelectedRange(range, affinity, closeTyping, ec);
-    raiseOnDOMError(ec);
 }
 
 } // namespace WebCore

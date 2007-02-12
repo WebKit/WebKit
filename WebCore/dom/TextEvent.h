@@ -43,8 +43,18 @@ namespace WebCore {
 
         virtual bool isTextEvent() const;
 
+        // If true, any newline characters in the text are line breaks only, not paragraph separators.
+        bool isLineBreak() const { return m_isLineBreak; }
+        void setIsLineBreak(bool isLineBreak) { m_isLineBreak = isLineBreak; }
+
+        // If true, any tab characters in the text are backtabs.
+        bool isBackTab() const { return m_isBackTab; }
+        void setIsBackTab(bool isBackTab) { m_isBackTab = isBackTab; }
+
     private:
         String m_data;
+        bool m_isLineBreak;
+        bool m_isBackTab;
     };
 
 } // namespace WebCore

@@ -85,6 +85,7 @@
 #import <WebCore/MimeTypeRegistry.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformKeyboardEvent.h>
+#import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/Range.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/WebCoreTextRenderer.h>
@@ -231,7 +232,8 @@ static WebHTMLView *lastHitView;
 
 @interface WebHTMLView (WebNSTextInputSupport) <NSTextInput>
 - (void)_updateSelectionForInputManager;
-- (BOOL)_insertText:(NSString *)text selectInsertedText:(BOOL)selectText triggeringEvent:(KeyboardEvent*)event;
+- (BOOL)_insertNewlineWithEvent:(KeyboardEvent*)event isLineBreak:(BOOL)isLineBreak;
+- (BOOL)_insertTabWithEvent:(KeyboardEvent*)event isBackTab:(BOOL)isBackTab;
 @end
 
 @interface WebHTMLView (WebEditingStyleSupport)
@@ -2565,7 +2567,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         return nil;
     }
 
-    handledEvent = coreFrame->eventHandler()->sendContextMenuEvent(event);
+    handledEvent = coreFrame->eventHandler()->sendContextMenuEvent(PlatformMouseEvent(event));
     _private->handlingMouseDownEvent = NO;
 
     if (!handledEvent)
@@ -3052,22 +3054,7 @@ done:
     page->focusController()->setFocusedFrame(frame);
     if (Document* document = frame->document())
         document->setFocusedNode(0);
-    
-    BOOL createdFakeEvent = NO;
-    KeyboardEvent* currentEvent = frame->eventHandler()->currentKeyboardEvent().get();
-    if (!currentEvent) {
-        // If we didn't get an event (for example, when using eventSender.keyDown() under DumpRenderTree), just fake a Tab keydown.
-        currentEvent = new KeyboardEvent(EventNames::keydownEvent, true, true,
-                                         frame->document() ? frame->document()->defaultView() : 0,
-                                         "U+000009", KeyboardEvent::DOM_KEY_LOCATION_STANDARD, false, false, false, false, false);
-        createdFakeEvent = YES;
-    }
-    
-    page->focusController()->advanceFocus(currentEvent);
-    
-    if (createdFakeEvent)
-        delete currentEvent;
-
+    page->focusController()->advanceFocus(frame->eventHandler()->currentKeyboardEvent().get());
     return YES;
 }
 
@@ -3701,8 +3688,10 @@ done:
 
     EAffinity affinity = coreFrame->selectionController()->affinity();
     WebView *webView = [self _webView];
-    if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:domRange affinity:kit(affinity) stillSelecting:NO])
-        selectRange(coreFrame->selectionController(), range.get(), affinity, true);
+    if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:domRange affinity:kit(affinity) stillSelecting:NO]) {
+        ExceptionCode ec = 0;
+        coreFrame->selectionController()->setSelectedRange(range.get(), affinity, true, ec);
+    }
 }
 
 - (void)selectParagraph:(id)sender
@@ -4255,54 +4244,27 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)insertTab:(id)sender
 {
-    [self insertText:@"\t"];
+    [self _insertTabWithEvent:0 isBackTab:NO];
 }
 
 - (void)insertBacktab:(id)sender
 {
-    // Doing nothing matches normal NSTextView behavior. If we ever use WebView for a field-editor-type purpose
-    // we might add code here.
+    [self _insertTabWithEvent:0 isBackTab:YES];
 }
 
 - (void)insertNewline:(id)sender
 {
-    if (![self _canEdit])
-        return;
-        
-    // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
-    WebFrameBridge *bridge = [self _bridge];
-    if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped]) {
-        if ([self _canEditRichly])
-            [bridge insertParagraphSeparator];
-        else
-            [bridge insertLineBreak];
-    }
+    [self _insertNewlineWithEvent:0 isLineBreak:NO];
 }
 
 - (void)insertLineBreak:(id)sender
 {
-    if (![self _canEdit])
-        return;
-        
-    // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
-    WebFrameBridge *bridge = [self _bridge];
-    if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped])
-        [bridge insertLineBreak];
+    [self _insertNewlineWithEvent:0 isLineBreak:YES];
 }
 
 - (void)insertParagraphSeparator:(id)sender
 {
-    if (![self _canEdit])
-        return;
-
-    // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
-    WebFrameBridge *bridge = [self _bridge];
-    if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped]) {
-        if ([self _canEditRichly])
-            [bridge insertParagraphSeparator];
-        else
-            [bridge insertLineBreak];
-    }
+    [self _insertNewlineWithEvent:0 isLineBreak:NO];
 }
 
 - (void)_changeWordCaseWithSelector:(SEL)selector
@@ -4512,12 +4474,12 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)insertNewlineIgnoringFieldEditor:(id)sender
 {
-    [self insertNewline:sender];
+    [self _insertNewlineWithEvent:0 isLineBreak:NO];
 }
 
 - (void)insertTabIgnoringFieldEditor:(id)sender
 {
-    [self insertTab:sender];
+    [self _insertTabWithEvent:0 isBackTab:NO];
 }
 
 - (void)subscript:(id)sender
@@ -4561,9 +4523,10 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         return;
     
     NSString* yankee = _NSYankFromKillRing();
-    if ([yankee length])
-        [self insertText:yankee];
-    else
+    if ([yankee length]) {
+        if (Frame* coreFrame = core([self _frame]))
+            coreFrame->editor()->insertText(yankee, false);
+    } else
         [self deleteBackward:nil];
 
     _NSSetKillRingToYankedState();
@@ -4575,9 +4538,10 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         return;
 
     NSString* yankee = _NSYankPreviousFromKillRing();
-    if ([yankee length])
-        [self _insertText:yankee selectInsertedText:YES triggeringEvent:0];
-    else
+    if ([yankee length]) {
+        if (Frame* coreFrame = core([self _frame]))
+            coreFrame->editor()->insertText(yankee, true);
+    } else
         [self deleteBackward:nil];
         
     _NSSetKillRingToYankedState();
@@ -4628,40 +4592,31 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 {
     WebFrameBridge *bridge = [self _bridge];
     DOMRange *mark = [bridge markDOMRange];
-    if (mark == nil) {
+    DOMRange *selection = [self _selectedRange];
+    Frame* coreFrame = core([self _frame]);
+    if (!mark || !selection || !coreFrame) {
         NSBeep();
         return;
     }
-    DOMRange *selection = [self _selectedRange];
-    Frame* coreFrame = core([self _frame]);
-    NS_DURING
-        if (coreFrame)
-            selectRange(coreFrame->selectionController(), core(unionDOMRanges(mark, selection)), DOWNSTREAM, true);
-    NS_HANDLER
-        NSBeep();
-    NS_ENDHANDLER
+    ExceptionCode ec = 0;
+    coreFrame->selectionController()->setSelectedRange(core(unionDOMRanges(mark, [self _selectedRange])), DOWNSTREAM, true, ec);
 }
 
 - (void)swapWithMark:(id)sender
 {
     WebFrameBridge *bridge = [self _bridge];
     DOMRange *mark = [bridge markDOMRange];
-
-    if (mark == nil) {
+    DOMRange *selection = [self _selectedRange];
+    Frame* coreFrame = core([self _frame]);
+    if (!mark || !selection || !coreFrame) {
         NSBeep();
         return;
     }
 
-    DOMRange *selection = [self _selectedRange];
-    Frame* coreFrame = core([self _frame]);
-    NS_DURING
-        if (coreFrame)
-            selectRange(coreFrame->selectionController(), core(mark), DOWNSTREAM, true);
-    NS_HANDLER
-        NSBeep();
-        return;
-    NS_ENDHANDLER
-    [bridge setMarkDOMRange:selection];
+    ExceptionCode ec = 0;
+    coreFrame->selectionController()->setSelectedRange(core(mark), DOWNSTREAM, true, ec);
+    if (ec == 0)
+        [bridge setMarkDOMRange:selection];
 }
 
 - (void)transpose:(id)sender
@@ -4683,8 +4638,11 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         return;
 
     Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
-        selectRange(coreFrame->selectionController(), core(r), DOWNSTREAM, true);
+    if (!coreFrame)
+        return;
+
+    ExceptionCode ec = 0;
+    coreFrame->selectionController()->setSelectedRange(core(r), DOWNSTREAM, true, ec);
     if ([self _shouldReplaceSelectionWithText:transposed givenAction:WebViewInsertActionTyped])
         [bridge replaceSelectionWithText:transposed selectReplacement:NO smartReplace:NO];
 }
@@ -5328,18 +5286,15 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (void)unmarkText
 {
-    [[self _bridge] setMarkedTextDOMRange:nil customAttributes:nil ranges:nil];
-}
+    // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
+    WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
+    _private->interpretKeyEventsParameters = 0;
 
-- (void)_selectMarkedText
-{
-    if ([self hasMarkedText]) {
-        WebFrameBridge *bridge = [self _bridge];
-        DOMRange *markedTextRange = [bridge markedTextDOMRange];
-        Frame* coreFrame = core([self _frame]);
-        if (coreFrame)
-            selectRange(coreFrame->selectionController(), core(markedTextRange), DOWNSTREAM, false);
-    }
+    if (parameters)
+        parameters->eventWasHandled = YES;
+
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->unmarkText();
 }
 
 - (void)_selectRangeInMarkedText:(NSRange)range
@@ -5359,8 +5314,10 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     [selectedRange setEnd:[markedTextRange startContainer] offset:selectionEnd];
 
     Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
-        selectRange(coreFrame->selectionController(), core(selectedRange), DOWNSTREAM, false);
+    if (coreFrame) {
+        ExceptionCode ec = 0;
+        coreFrame->selectionController()->setSelectedRange(core(selectedRange), DOWNSTREAM, false, ec);
+    }
 }
 
 - (void)_extractAttributes:(NSArray **)a ranges:(NSArray **)r fromAttributedString:(NSAttributedString *)string
@@ -5382,6 +5339,17 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (void)setMarkedText:(id)string selectedRange:(NSRange)newSelRange
 {
+    // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
+    WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
+    _private->interpretKeyEventsParameters = 0;
+
+    if (parameters)
+        parameters->eventWasHandled = YES;
+
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return;
+
     WebFrameBridge *bridge = [self _bridge];
 
     if (![self _isEditable])
@@ -5399,11 +5367,11 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
             [[self _bridge] selectNSRange:NSRangeFromString(rangeString)];
     }
 
-    _private->ignoreMarkedTextSelectionChange = YES;
+    coreFrame->editor()->setIgnoreMarkedTextSelectionChange(true);
 
     // if we had marked text already, we need to make sure to replace
     // that, instead of the selection/caret
-    [self _selectMarkedText];
+    coreFrame->editor()->selectMarkedText();
 
     NSString *text = string;
     NSArray *attributes = nil;
@@ -5418,7 +5386,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     if ([self hasMarkedText])
         [self _selectRangeInMarkedText:newSelRange];
 
-    _private->ignoreMarkedTextSelectionChange = NO;
+    coreFrame->editor()->setIgnoreMarkedTextSelectionChange(false);
 }
 
 - (void)doCommandBySelector:(SEL)aSelector
@@ -5430,57 +5398,25 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     if (aSelector == @selector(noop:))
         return;
 
+    KeyboardEvent* event = parameters ? parameters->event : 0;
+    bool eventWasHandled = true;
+
     WebView *webView = [self _webView];
-    if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:aSelector])
-        [super doCommandBySelector:aSelector];
-
-    if (parameters)
-        parameters->eventWasHandled = YES;
-}
-
-- (void)_discardMarkedText
-{
-    if (![self hasMarkedText])
-        return;
-
-    _private->ignoreMarkedTextSelectionChange = YES;
-
-    [self _selectMarkedText];
-    [self unmarkText];
-    [[NSInputManager currentInputManager] markedTextAbandoned:self];
-    // FIXME: Should we be calling the delegate here?
-    if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->deleteSelectionWithSmartDelete(false);
-
-    _private->ignoreMarkedTextSelectionChange = NO;
-}
-
-- (BOOL)_insertText:(NSString *)text selectInsertedText:(BOOL)selectText triggeringEvent:(KeyboardEvent*)event
-{
-    if (text == nil || [text length] == 0 || (![self _isEditable] && ![self hasMarkedText]))
-        return NO;
-
-    if (![self _shouldReplaceSelectionWithText:text givenAction:WebViewInsertActionTyped]) {
-        [self _discardMarkedText];
-        return NO;
+    if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:aSelector]) {
+        if (aSelector == @selector(insertNewline:) || aSelector == @selector(insertParagraphSeparator:) || aSelector == @selector(insertNewlineIgnoringFieldEditor:))
+            eventWasHandled = [self _insertNewlineWithEvent:event isLineBreak:NO];
+        else if (aSelector == @selector(insertLineBreak:))
+            eventWasHandled = [self _insertNewlineWithEvent:event isLineBreak:YES];
+        else if (aSelector == @selector(insertTab:) || aSelector == @selector(insertTabIgnoringFieldEditor:))
+            eventWasHandled = [self _insertTabWithEvent:event isBackTab:NO];
+        else if (aSelector == @selector(insertBacktab:))
+            eventWasHandled = [self _insertTabWithEvent:event isBackTab:YES];
+        else
+            [super doCommandBySelector:aSelector];
     }
 
-    _private->ignoreMarkedTextSelectionChange = YES;
-
-    // If we had marked text, we replace that, instead of the selection/caret.
-    [self _selectMarkedText];
-
-    bool eventHandled = false;
-
-    if (Frame* coreFrame = core([self _frame]))
-        eventHandled = coreFrame->editor()->insertText(text, selectText, event);
-        
-    _private->ignoreMarkedTextSelectionChange = NO;
-
-    // Inserting unmarks any marked text.
-    [self unmarkText];
-
-    return eventHandled;
+    if (parameters)
+        parameters->eventWasHandled = eventWasHandled;
 }
 
 - (void)insertText:(id)string
@@ -5489,17 +5425,36 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
     _private->interpretKeyEventsParameters = 0;
 
-    // We don't yet support inserting an attributed string but input methods don't appear to require this.
+    // We don't support inserting an attributed string but input methods don't appear to require this.
     NSString *text;
     if ([string isKindOfClass:[NSAttributedString class]])
         text = [string string];
     else
         text = string;
-    BOOL eventHandled = [self _insertText:text selectInsertedText:NO
-        triggeringEvent:parameters ? parameters->event : 0];
+
+    bool eventHandled = false;
+    if ([text length]) {
+        Frame* coreFrame = core([self _frame]);
+        KeyboardEvent* event = parameters ? parameters->event : 0;
+        String eventText = text;
+        eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
+        eventHandled = coreFrame && coreFrame->eventHandler()->handleTextInputEvent(eventText, event);
+    }
 
     if (parameters)
         parameters->eventWasHandled = eventHandled;
+}
+
+- (BOOL)_insertNewlineWithEvent:(KeyboardEvent*)event isLineBreak:(BOOL)isLineBreak
+{
+    Frame* coreFrame = core([self _frame]);
+    return coreFrame && coreFrame->eventHandler()->handleTextInputEvent("\n", event, isLineBreak);
+}
+
+- (BOOL)_insertTabWithEvent:(KeyboardEvent*)event isBackTab:(BOOL)isBackTab
+{
+    Frame* coreFrame = core([self _frame]);
+    return coreFrame && coreFrame->eventHandler()->handleTextInputEvent("\t", event, false, isBackTab);
 }
 
 - (BOOL)_selectionIsInsideMarkedText
@@ -5527,7 +5482,14 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (void)_updateSelectionForInputManager
 {
-    if (![self hasMarkedText] || _private->ignoreMarkedTextSelectionChange)
+    if (![self hasMarkedText])
+        return;
+
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return;
+
+    if (coreFrame->editor()->ignoreMarkedTextSelectionChange())
         return;
 
     if ([self _selectionIsInsideMarkedText]) {

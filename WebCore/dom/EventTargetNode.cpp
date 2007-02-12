@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -45,6 +43,7 @@
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 #include "RegisteredEventListener.h"
+#include "TextEvent.h"
 #include "UIEvent.h"
 #include "WheelEvent.h"
 #include "kjs_proxy.h"
@@ -571,6 +570,8 @@ bool EventTargetNode::disabled() const
 
 void EventTargetNode::defaultEventHandler(Event* event)
 {
+    if (event->target() != this)
+        return;
     const AtomicString& eventType = event->type();
     if (eventType == keypressEvent) {
         if (event->isKeyboardEvent())
@@ -583,6 +584,10 @@ void EventTargetNode::defaultEventHandler(Event* event)
         if (Frame* frame = document()->frame())
             if (Page* page = frame->page())
                 page->contextMenuController()->handleContextMenuEvent(event);
+    } else if (eventType == textInputEvent) {
+        if (event->isTextEvent())
+            if (Frame* frame = document()->frame())
+                frame->eventHandler()->defaultTextInputEventHandler(static_cast<TextEvent*>(event));
     }
 }
 

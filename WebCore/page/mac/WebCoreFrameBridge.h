@@ -222,8 +222,6 @@ typedef enum ObjectElementType {
 - (DOMNode *)increaseSelectionListLevelUnordered;
 - (void)decreaseSelectionListLevel;
 
-- (void)insertLineBreak;
-- (void)insertParagraphSeparator;
 - (void)insertParagraphSeparatorInQuotedContent;
 
 - (void)setSelectionToDragCaret;

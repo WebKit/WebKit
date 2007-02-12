@@ -55,7 +55,6 @@ namespace WebCore {
 
 using namespace EventNames;
 
-
 static NSEvent *currentEvent;
 
 NSEvent *EventHandler::currentNSEvent()
@@ -435,7 +434,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
         } 
         
         m_mouseDownMayStartDrag = dispatchDragSrcEvent(dragstartEvent, m_mouseDown)
-        && !m_frame->selectionController()->isInPasswordField();
+            && !m_frame->selectionController()->isInPasswordField();
         
         // Invalidate clipboard here against anymore pasteboard writing for security.  The drag
         // image can still be changed as we drag, but not the pasteboard data.
@@ -739,23 +738,6 @@ void EventHandler::mouseMoved(NSEvent *event)
     currentEvent = oldCurrentEvent;
 
     END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-KeyboardUIMode EventHandler::keyboardUIMode() const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [Mac(m_frame)->bridge() keyboardUIMode];
-    END_BLOCK_OBJC_EXCEPTIONS;
-
-    return KeyboardAccessDefault;
-}
-
-bool EventHandler::inputManagerHasMarkedText() const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[NSInputManager currentInputManager] hasMarkedText];
-    END_BLOCK_OBJC_EXCEPTIONS
-    return false;
 }
 
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)

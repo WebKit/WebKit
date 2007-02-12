@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #define EventHandler_h
 
 #include "DragActions.h"
+#include "FocusDirection.h"
 #include "PlatformMouseEvent.h"
 #include "ScrollTypes.h"
 #include "Timer.h"
@@ -38,7 +39,7 @@
 #if PLATFORM(MAC)
 #include "WebCoreKeyboardUIMode.h"
 #ifndef __OBJC__
-typedef unsigned NSDragOperation;
+class NSEvent;
 class NSView;
 #endif
 #endif
@@ -63,6 +64,8 @@ class PlatformWheelEvent;
 class RenderLayer;
 class RenderObject;
 class RenderWidget;
+class String;
+class TextEvent;
 class VisiblePosition;
 class Widget;
     
@@ -75,17 +78,6 @@ extern const int GeneralDragHysteresis;
 extern const double TextDragDelay;
 
 class EventHandler : Noncopyable {
-    struct EventHandlerDragState {
-        RefPtr<Node> m_dragSrc; // element that may be a drag source, for the current mouse gesture
-        bool m_dragSrcIsLink;
-        bool m_dragSrcIsImage;
-        bool m_dragSrcInSelection;
-        bool m_dragSrcMayBeDHTML;
-        bool m_dragSrcMayBeUA; // Are DHTML and/or the UserAgent allowed to drag out?
-        bool m_dragSrcIsDHTML;
-        RefPtr<Clipboard> m_dragClipboard; // used on only the source side of dragging
-    };
-    static EventHandlerDragState& dragState();
 public:
     EventHandler(Frame*);
     ~EventHandler();
@@ -127,38 +119,28 @@ public:
     bool tabsToAllControls(KeyboardEvent*) const;
 
     bool mouseDownMayStartSelect() const { return m_mouseDownMayStartSelect; }
-    bool inputManagerHasMarkedText() const;
 
     bool handleMousePressEvent(const PlatformMouseEvent&);
     bool handleMouseMoveEvent(const PlatformMouseEvent&);
     bool handleMouseReleaseEvent(const PlatformMouseEvent&);
     bool handleWheelEvent(PlatformWheelEvent&);
 
-    bool sendContextMenuEvent(PlatformMouseEvent);
+    bool sendContextMenuEvent(const PlatformMouseEvent&);
 
     void setMouseDownMayStartAutoscroll() { m_mouseDownMayStartAutoscroll = true; }
 
     bool keyEvent(const PlatformKeyboardEvent&);
-
     void defaultKeyboardEventHandler(KeyboardEvent*);
-    
+
+    bool handleTextInputEvent(const String& text, Event* underlyingEvent = 0,
+        bool isLineBreak = false, bool isBackTab = false);
+    void defaultTextInputEventHandler(TextEvent*);
+
     bool eventMayStartDrag(const PlatformMouseEvent&) const;
     
     void dragSourceMovedTo(const PlatformMouseEvent&);
     void dragSourceEndedAt(const PlatformMouseEvent&, DragOperation);
-    
-    //The following methods are needed to allow correct event modelling on Mac
-    //they are called at the beginning of handleMouseUp and handleDrag.  
-    //If they return true it indicates that they have consumed the event
-#if PLATFORM(MAC)
-    bool eventLoopHandleMouseUp(const MouseEventWithHitTestResults&);
-    bool eventLoopHandleMouseDragged(const MouseEventWithHitTestResults&);
-#else
-    bool eventLoopHandleMouseUp(const MouseEventWithHitTestResults&) { return false; }
-    bool eventLoopHandleMouseDragged(const MouseEventWithHitTestResults&) { return false; }    
-#endif
-    
-    
+
 #if PLATFORM(MAC)
     PassRefPtr<KeyboardEvent> currentKeyboardEvent() const;
 
@@ -169,7 +151,6 @@ public:
     bool keyEvent(NSEvent*);
     bool wheelEvent(NSEvent*);
 
-
     void sendFakeEventsAfterWidgetTracking(NSEvent* initiatingEvent);
 
     void setActivationEventNumber(int num) { m_activationEventNumber = num; }
@@ -178,6 +159,18 @@ public:
 #endif
 
 private:
+    struct EventHandlerDragState {
+        RefPtr<Node> m_dragSrc; // element that may be a drag source, for the current mouse gesture
+        bool m_dragSrcIsLink;
+        bool m_dragSrcIsImage;
+        bool m_dragSrcInSelection;
+        bool m_dragSrcMayBeDHTML;
+        bool m_dragSrcMayBeUA; // Are DHTML and/or the UserAgent allowed to drag out?
+        bool m_dragSrcIsDHTML;
+        RefPtr<Clipboard> m_dragClipboard; // used on only the source side of dragging
+    };
+    static EventHandlerDragState& dragState();
+
     bool eventActivatedView(const PlatformMouseEvent&) const;
     void selectClosestWordFromMouseEvent(const MouseEventWithHitTestResults& event);
 
@@ -204,7 +197,7 @@ private:
 
     Node* nodeUnderMouse() const;
 
-    MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest& hitTestRequest, const PlatformMouseEvent& mev);
+    MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest&, const PlatformMouseEvent&);
 
     bool dispatchMouseEvent(const AtomicString& eventType, Node* target,
         bool cancelable, int clickCount, const PlatformMouseEvent&, bool setUnder);
@@ -237,13 +230,19 @@ private:
 
     bool passMouseDownEventToWidget(Widget*);
     bool passWheelEventToWidget(Widget*);
-    
-    void allowDHTMLDrag(bool& flagDHTML, bool& flagUA) const;
-    
-#if PLATFORM(MAC)
-    KeyboardUIMode keyboardUIMode() const;
 
+    void defaultTabEventHandler(Event*, bool isBackTab);
+
+    void allowDHTMLDrag(bool& flagDHTML, bool& flagUA) const;
+
+    // The following are called at the beginning of handleMouseUp and handleDrag.  
+    // If they return true it indicates that they have consumed the event.
+#if PLATFORM(MAC)
+    bool eventLoopHandleMouseUp(const MouseEventWithHitTestResults&);
+    bool eventLoopHandleMouseDragged(const MouseEventWithHitTestResults&);
     NSView *mouseDownViewIfStillGood();
+#else
+    bool eventLoopHandleMouseUp(const MouseEventWithHitTestResults&) { return false; }
 #endif
 
     Frame* m_frame;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,6 @@
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
-#include "FocusDirection.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "FrameTree.h"
@@ -108,18 +107,18 @@ static Node* deepFocusableNode(FocusDirection direction, Node* node, KeyboardEve
     return node;
 }
 
-
 bool FocusController::advanceFocus(KeyboardEvent* event)
 {
-    ASSERT(event);
-    
+    return advanceFocus((event && event->shiftKey()) ? FocusDirectionBackward : FocusDirectionForward, event);
+}
+
+bool FocusController::advanceFocus(FocusDirection direction, KeyboardEvent* event)
+{
     Frame* frame = focusedOrMainFrame();
     ASSERT(frame);
     Document* document = frame->document();
     if (!document)
         return false;
-
-    FocusDirection direction = event->shiftKey() ? FocusDirectionBackward : FocusDirectionForward;
 
     Node* node = (direction == FocusDirectionForward)
         ? document->nextFocusableNode(document->focusedNode(), event)
