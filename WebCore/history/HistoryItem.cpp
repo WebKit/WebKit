@@ -502,11 +502,34 @@ void HistoryItem::cancelRelease()
     m_pageCacheIsPendingRelease = false;
 }
 #ifndef NDEBUG
-void HistoryItem::print() const
+int HistoryItem::showTree() const
 {
-    fprintf(stderr, "%s\n", m_urlString.ascii().data());
+    return showTreeWithIndent(0);
+}
+
+int HistoryItem::showTreeWithIndent(unsigned indentLevel) const
+{
+    String prefix("");
+    int totalSubItems = 0;
+    unsigned i;
+    for (i = 0; i < indentLevel; ++i)
+        prefix.append("  ");
+
+    fprintf(stderr, "%s+-%s (%p)\n", prefix.ascii().data(), m_urlString.ascii().data(), this);
+    
+    for (unsigned int i = 0; i < m_subItems.size(); ++i) {
+        totalSubItems += m_subItems[i]->showTreeWithIndent(indentLevel + 1);
+    }
+    return totalSubItems + 1;
 }
 #endif
                 
 }; //namespace WebCore
+
+#ifndef NDEBUG
+int showTree(const WebCore::HistoryItem* item)
+{
+    return item->showTree();
+}
+#endif
 

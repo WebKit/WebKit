@@ -147,7 +147,8 @@ public:
     void releasePageCache();  
     
 #ifndef NDEBUG
-    void print() const;
+    int showTree() const;
+    int showTreeWithIndent(unsigned indentLevel) const;
 #endif
 
 private:
@@ -189,5 +190,10 @@ private:
 }; //class HistoryItem
 
 } //namespace WebCore
+
+#ifndef NDEBUG
+// Outside the WebCore namespace for ease of invocation from gdb.
+extern "C" int showTree(const WebCore::HistoryItem*);
+#endif
 
 #endif // HISTORYITEM_H
