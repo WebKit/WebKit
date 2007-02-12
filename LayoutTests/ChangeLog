@@ -1,3 +1,15 @@
+2007-02-12  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin
+
+        - test for Imagemap not clickable in www.toptenbooks.net/
+        http://bugs.webkit.org/show_bug.cgi?id=12738
+
+        * fast/images/imagemap-case-expected.checksum: Added.
+        * fast/images/imagemap-case-expected.png: Added.
+        * fast/images/imagemap-case-expected.txt: Added.
+        * fast/images/imagemap-case.html: Added.
+
 2007-02-12  Geoffrey Garen  <ggaren@apple.com>
 
         Updated results for this failing test. It looks like Maciej generated

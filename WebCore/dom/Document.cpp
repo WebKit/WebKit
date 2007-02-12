@@ -2481,8 +2481,9 @@ HTMLMapElement *Document::getImageMap(const String& URL) const
     if (URL.isNull())
         return 0;
     int hashPos = URL.find('#');
-    AtomicString name = (hashPos < 0 ? URL : URL.substring(hashPos + 1)).impl();
-    return m_imageMapsByName.get(name.impl());
+    String name = (hashPos < 0 ? URL : URL.substring(hashPos + 1)).impl();
+    AtomicString mapName = hMode == XHtml ? name : name.lower();
+    return m_imageMapsByName.get(mapName.impl());
 }
 
 void Document::setDecoder(TextResourceDecoder *decoder)

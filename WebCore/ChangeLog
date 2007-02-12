@@ -1,3 +1,17 @@
+2007-02-12  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+
+        - fixed Imagemap not clickable in www.toptenbooks.net/
+        http://bugs.webkit.org/show_bug.cgi?id=12738
+        
+        Make imagemap names case insensitive in HTML mode
+
+        * dom/Document.cpp:
+        (WebCore::Document::getImageMap):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::parseMappedAttribute):
+
 2007-02-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Antti.

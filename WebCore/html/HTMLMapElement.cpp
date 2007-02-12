@@ -86,12 +86,10 @@ void HTMLMapElement::parseMappedAttribute(MappedAttribute* attr)
                 return;
         }
         doc->removeImageMap(this);
-        m_name = attr->value();
-        if (m_name[0] == '#') {
-            String mapName(m_name.domString().copy());
+        String mapName = attr->value();
+        if (mapName[0] == '#')
             mapName.remove(0, 1);
-            m_name = mapName;
-        }
+        m_name = doc->htmlMode() == Document::XHtml ? mapName : mapName.lower();
         doc->addImageMap(this);
     } else
         HTMLElement::parseMappedAttribute(attr);
