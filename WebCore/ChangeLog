@@ -1,3 +1,18 @@
+2007-02-12  Kevin McCulough  <kmccullough@apple.com>
+
+        Reviewed by Brady.
+
+        - Fixing a performance regression caused by r19500.  The heart of the matter
+        is that we now call canLoad on every resource request even ones in the cache,
+        to avoid a security issue. So I could not take out the canLoad call, but I
+        but I could try to make it more efficient.
+
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestResource):
+        (WebCore::DocLoader::setLoadInProgress):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::canLoad):
+
 2007-02-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.

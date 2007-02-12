@@ -1894,11 +1894,11 @@ void FrameLoader::load(DocumentLoader* loader, FrameLoadType type, PassRefPtr<Fo
 
 bool FrameLoader::canLoad(const KURL& url, const String& referrer, bool& hideReferrer)
 {
-    bool referrerIsWebURL = referrer.startsWith("http:", false) || referrer.startsWith("https:", false);
+    bool referrerIsSecureURL = referrer.startsWith("https:", false);
+    bool referrerIsWebURL = referrerIsSecureURL || referrer.startsWith("http:", false);
     bool referrerIsLocalURL = referrer.startsWith("file:", false) || referrer.startsWith("applewebdata:");
     bool URLIsFileURL = url.protocol().startsWith("file", false);
-    bool referrerIsSecureURL = referrer.startsWith("https:", false);
-    bool URLIsSecureURL = url.protocol().startsWith("https", false);
+    bool URLIsSecureURL = url.protocol().startsWith("https", false);    
     
     hideReferrer = !referrerIsWebURL || (referrerIsSecureURL && !URLIsSecureURL);
     return !URLIsFileURL || referrerIsLocalURL;
