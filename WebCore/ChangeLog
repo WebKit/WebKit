@@ -1,3 +1,17 @@
+2007-02-12  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
+        
+        REGRESSION: Google Calendar cell highlight misplaced
+        http://bugs.webkit.org/show_bug.cgi?id=12687
+        
+        Make offsetLeft/offsetTop/offsetParent behavior match Firefox.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::offsetLeft):
+        (WebCore::RenderObject::offsetTop):
+        (WebCore::RenderObject::offsetParent):
+
 2007-02-10  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.
