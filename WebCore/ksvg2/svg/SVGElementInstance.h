@@ -66,6 +66,8 @@ namespace WebCore {
         void setParent(SVGElementInstance* parent) { m_parent = parent; }
         SVGElementInstance* parent() const { return m_parent; }
 
+        // SVGElementInstance supports both toSVGElementInstance and toNode since so much mouse handling code depends on toNode returning a valid node.
+        virtual EventTargetNode* toNode();
         virtual SVGElementInstance* toSVGElementInstance();
 
         virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);

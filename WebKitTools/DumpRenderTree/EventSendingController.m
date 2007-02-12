@@ -102,6 +102,7 @@ BOOL replayingSavedEvents;
     if (aSelector == @selector(mouseDown)
             || aSelector == @selector(mouseUp)
             || aSelector == @selector(mouseClick)
+            || aSelector == @selector(contextClick)
             || aSelector == @selector(mouseMoveToX:Y:)
             || aSelector == @selector(leapForward:)
             || aSelector == @selector(keyDown:withModifiers:)
@@ -321,6 +322,28 @@ BOOL replayingSavedEvents;
         [subView mouseDown:mouseDownEvent];
         lastClick = [mouseUpEvent timestamp];
     }
+}
+
+- (void)contextClick
+{
+    [[[frame frameView] documentView] layout];
+    if ([self currentEventTime] - lastClick >= 1)
+        clickCount = 1;
+    else
+        clickCount++;
+    NSEvent *event = [NSEvent mouseEventWithType:NSRightMouseDown 
+                                        location:lastMousePosition 
+                                   modifierFlags:0 
+                                       timestamp:[self currentEventTime]
+                                    windowNumber:[[[frame webView] window] windowNumber] 
+                                         context:[NSGraphicsContext currentContext] 
+                                     eventNumber:++eventNumber 
+                                      clickCount:clickCount 
+                                        pressure:0.0];
+
+    NSView *subView = [[frame webView] hitTest:[event locationInWindow]];
+    if (subView)
+        [subView menuForEvent:event];
 }
 
 + (void)saveEvent:(NSInvocation *)event

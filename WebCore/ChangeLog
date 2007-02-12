@@ -1,3 +1,18 @@
+2007-02-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Anders.
+
+        - fixed <rdar://problem/4975133> ASSERT failure and crash right-clicking on image in SVG use test
+        http://bugs.webkit.org/show_bug.cgi?id=12580
+        
+        Test: svg/cust/use-events-crash.svg
+
+        * bindings/js/kjs_dom.cpp:
+        (KJS::toJS):
+        * ksvg2/svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::toNode):
+        * ksvg2/svg/SVGElementInstance.h:
+
 2007-02-11  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.

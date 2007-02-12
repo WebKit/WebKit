@@ -180,6 +180,11 @@ SVGElementInstance* SVGElementInstance::toSVGElementInstance()
     return this;
 }
 
+EventTargetNode* SVGElementInstance::toNode()
+{
+    return m_element.get();
+}
+
 void SVGElementInstance::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool useCapture)
 {
     // FIXME!
