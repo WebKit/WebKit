@@ -1,3 +1,124 @@
+2007-02-12  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - repaint test for http://bugs.webkit.org/show_bug.cgi?id=12123
+          REGRESSION: Incomplete repaint of floats' overflows
+
+        - updated results for http://bugs.webkit.org/show_bug.cgi?id=10116
+          REGRESSION: Menu item drawn 2 pixels short on WWDC 2006 Attendee Site
+
+        * css1/formatting_model/inline_elements-expected.checksum:
+        * css1/formatting_model/inline_elements-expected.png:
+        * css1/formatting_model/inline_elements-expected.txt:
+        * css2.1/t0905-c414-flt-00-d-expected.txt:
+        * css2.1/t0905-c414-flt-01-d-g-expected.txt:
+        * css2.1/t0905-c414-flt-02-c-expected.txt:
+        * css2.1/t0905-c414-flt-03-c-expected.txt:
+        * css2.1/t0905-c414-flt-04-c-expected.txt:
+        * css2.1/t0905-c414-flt-wrap-01-d-g-expected.txt:
+        * css2.1/t0905-c5525-fltcont-00-d-g-expected.txt:
+        * css2.1/t0905-c5525-fltwidth-02-c-g-expected.txt:
+        * css2.1/t0905-c5525-fltwidth-03-c-g-expected.txt:
+        * css2.1/t090501-c414-flt-02-d-g-expected.txt:
+        * css2.1/t090501-c414-flt-03-b-g-expected.txt:
+        * fast/backgrounds/repeat/negative-offset-repeat-expected.txt:
+        * fast/block/float/008-expected.txt:
+        * fast/block/float/013-expected.checksum:
+        * fast/block/float/013-expected.txt:
+        * fast/block/float/029-expected.txt:
+        * fast/block/float/031-expected.txt:
+        * fast/block/float/float-in-float-painting-expected.txt:
+        * fast/block/margin-collapse/059-expected.checksum:
+        * fast/block/margin-collapse/059-expected.png:
+        * fast/block/margin-collapse/059-expected.txt:
+        * fast/block/margin-collapse/062-expected.txt:
+        * fast/block/margin-collapse/063-expected.txt:
+        * fast/box-shadow/basic-shadows-expected.txt:
+        * fast/forms/floating-textfield-relayout-expected.checksum:
+        * fast/forms/floating-textfield-relayout-expected.txt:
+        * fast/lists/003-expected.txt:
+        * fast/media/mq-relative-constraints-08-expected.txt:
+        * fast/multicol/float-multicol-expected.txt:
+        * fast/repaint/float-overflow-expected.checksum: Added.
+        * fast/repaint/float-overflow-expected.png: Added.
+        * fast/repaint/float-overflow-expected.txt: Added.
+        * fast/repaint/float-overflow-right-expected.checksum: Added.
+        * fast/repaint/float-overflow-right-expected.png: Added.
+        * fast/repaint/float-overflow-right-expected.txt: Added.
+        * fast/repaint/float-overflow-right.html: Added.
+        * fast/repaint/float-overflow.html: Added.
+        * fast/table/009-expected.checksum:
+        * fast/table/009-expected.png:
+        * fast/table/009-expected.txt:
+        * fast/text/text-shadow-extreme-value.html:
+        * fast/text/whitespace/012-expected.txt:
+        * tables/mozilla/bugs/bug120364-expected.txt:
+        * tables/mozilla/bugs/bug196870-expected.checksum:
+        * tables/mozilla/bugs/bug196870-expected.png:
+        * tables/mozilla/bugs/bug196870-expected.txt:
+        * tables/mozilla/bugs/bug45055-2-expected.txt:
+        * tables/mozilla/bugs/bug72359-expected.txt:
+        * tables/mozilla/marvin/x_table_align_left-expected.txt:
+        * tables/mozilla/marvin/x_table_align_right-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_table-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_table-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_table-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_table-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_table-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_table-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell_sibling-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell_sibling-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell_sibling-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row_sibling-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row_sibling-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row_sibling-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table_caption-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table_caption-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table_caption-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody_sibling-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody_sibling-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody_sibling-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_td_align_right-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_td_align_right-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_td_align_right-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_td_valign_bottom-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_td_valign_bottom-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_td_valign_bottom-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_td_valign_middle-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_td_valign_middle-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_td_valign_middle-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_td_valign_top-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_td_valign_top-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_td_valign_top-expected.txt:
+
 2007-02-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

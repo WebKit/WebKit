@@ -97,7 +97,7 @@ void RenderForeignObject::layout()
     m_absoluteBounds = getAbsoluteRepaintRect();
 
     if (checkForRepaint)
-        repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
+        repaintAfterLayoutIfNeeded(oldBounds);
 
     setNeedsLayout(false);
 }

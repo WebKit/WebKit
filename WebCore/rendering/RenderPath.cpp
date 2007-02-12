@@ -131,7 +131,7 @@ void RenderPath::layout()
     setHeight(m_absoluteBounds.height());
 
     if (selfNeedsLayout() && checkForRepaint)
-        repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
+        repaintAfterLayoutIfNeeded(oldBounds);
 
     setNeedsLayout(false);
 }

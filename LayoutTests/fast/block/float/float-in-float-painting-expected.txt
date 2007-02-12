@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
             text run at (0,18) width 115: "issues (flickr.com)"
         RenderText {#text} at (115,18) size 597x18
           text run at (115,18) width 597: ", or rather, a related painting issue. The word \"PASS\" should appear below in translucent blue."
-layer at (8,44) size 784x125
+layer at (8,44) size 784x162
   RenderBlock {DIV} at (0,36) size 784x125
     RenderBlock (floating) {DIV} at (0,0) size 104x125
       RenderImage {IMG} at (0,0) size 100x100

@@ -1734,22 +1734,21 @@ void RenderObject::repaintRectangle(const IntRect& r, bool immediate)
     view->repaintViewRectangle(absRect, immediate);
 }
 
-bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const IntRect& oldFullBounds)
+bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds)
 {
     RenderView* v = view();
     if (v->printing())
         return false; // Don't repaint if we're printing.
 
-    IntRect newBounds, newFullBounds;
-    getAbsoluteRepaintRectIncludingFloats(newBounds, newFullBounds);
+    IntRect newBounds = getAbsoluteRepaintRect();
     if (newBounds == oldBounds && !selfNeedsLayout())
         return false;
 
     bool fullRepaint = selfNeedsLayout() || newBounds.location() != oldBounds.location() || mustRepaintBackgroundOrBorder();
     if (fullRepaint) {
-        v->repaintViewRectangle(oldFullBounds);
+        v->repaintViewRectangle(oldBounds);
         if (newBounds != oldBounds)
-            v->repaintViewRectangle(newFullBounds);
+            v->repaintViewRectangle(newBounds);
         return true;
     }
 
@@ -1829,11 +1828,6 @@ IntRect RenderObject::getAbsoluteRepaintRect()
     if (parent())
         return parent()->getAbsoluteRepaintRect();
     return IntRect();
-}
-
-void RenderObject::getAbsoluteRepaintRectIncludingFloats(IntRect& bounds, IntRect& fullBounds)
-{
-    bounds = fullBounds = getAbsoluteRepaintRect();
 }
 
 void RenderObject::computeAbsoluteRepaintRect(IntRect& r, bool f)

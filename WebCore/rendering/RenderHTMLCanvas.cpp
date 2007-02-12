@@ -90,7 +90,7 @@ void RenderHTMLCanvas::layout()
     calcWidth();
     calcHeight();
     if (checkForRepaint)
-        repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
+        repaintAfterLayoutIfNeeded(oldBounds);
 
     setNeedsLayout(false);
 }
