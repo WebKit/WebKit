@@ -1,7 +1,7 @@
 2007-02-14  Alexey Proskuryakov  <ap@webkit.org>
 
-        Actually removed pixel results that were supposed to be removed three
-        weeks ago, in r12290.
+        Actually removed pixel results that were supposed to be removed
+        a year ago, in r12290.
 
         * fast/parser/entity-surrogate-pairs-expected.checksum: Removed.
         * fast/parser/entity-surrogate-pairs-expected.png: Removed.
