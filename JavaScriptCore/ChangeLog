@@ -1,3 +1,12 @@
+2007-02-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+        
+        Tweaked vector a bit
+
+        * wtf/Vector.h:
+        (WTF::operator==):
+
 2007-02-13  Dex Deacon  <occupant4@gmail.com>
 
         Reviewed by Darin.

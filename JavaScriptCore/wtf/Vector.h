@@ -669,7 +669,7 @@ namespace WTF {
             return false;
 
         for (size_t i = 0; i < a.size(); ++i)
-            if (a[i] != b[i])
+            if (a.at(i) != b.at(i))
                 return false;
 
         return true;
