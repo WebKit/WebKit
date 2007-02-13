@@ -199,24 +199,27 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
     if (m_hasVisibleContent) {
         int x, y;
         m_object->absolutePosition(x, y);
-        IntRect newRect = m_object->getAbsoluteRepaintRect();
+        IntRect newRect, newFullRect;
+        m_object->getAbsoluteRepaintRectIncludingFloats(newRect, newFullRect);
         if (checkForRepaint) {
             RenderView *c = m_object->view();
             if (c && !c->printing()) {
                 bool didMove = x != m_repaintX || y != m_repaintY;
                 if (!didMove && !m_repaintOverflowOnResize)
-                    m_object->repaintAfterLayoutIfNeeded(m_repaintRect);
+                    m_object->repaintAfterLayoutIfNeeded(m_repaintRect, m_fullRepaintRect);
                 else if (didMove || newRect != m_repaintRect) {
-                    c->repaintViewRectangle(m_repaintRect);
-                    c->repaintViewRectangle(newRect);
+                    c->repaintViewRectangle(m_fullRepaintRect);
+                    c->repaintViewRectangle(newFullRect);
                 }
             }
         }
         m_repaintRect = newRect;
+        m_fullRepaintRect = newFullRect;
         m_repaintX = x;
         m_repaintY = y;
     } else {
         m_repaintRect = IntRect();
+        m_fullRepaintRect = IntRect();
     }
     
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
@@ -1799,6 +1802,9 @@ IntRect RenderLayer::absoluteBoundingBox() const
         IntRect overflowRect = renderer()->overflowRect(false);
         if (bbox != overflowRect)
             result.unite(overflowRect);
+        IntRect floatRect = renderer()->floatRect();
+        if (bbox != floatRect)
+            result.unite(floatRect);
         
         // We have to adjust the x/y of this result so that it is in the coordinate space of the layer.
         // We also have to add in borderTopExtra here, since borderBox(), in order to play well with methods like

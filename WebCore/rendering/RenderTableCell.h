@@ -67,6 +67,7 @@ public:
     virtual void setStyle(RenderStyle*);
 
     virtual bool expandsToEncloseOverhangingFloats() const { return true; }
+    virtual bool expandsToEncloseOverflow() const { return true; }
 
     int borderLeft() const;
     int borderRight() const;

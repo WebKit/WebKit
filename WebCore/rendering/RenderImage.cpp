@@ -316,7 +316,7 @@ void RenderImage::layout()
     calcHeight();
 
     if (checkForRepaint)
-        repaintAfterLayoutIfNeeded(oldBounds);
+        repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
     
     setNeedsLayout(false);
 }
