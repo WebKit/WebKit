@@ -1,3 +1,14 @@
+2007-02-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by The Spirit of Layout Test Fixing!
+
+        Re-added a directory and some files Darin removed that one of my layout tests 
+        relied on.
+
+        * http/tests/security/resources/green250x50.png: Added.
+        * http/tests/security/resources/red200x100.png: Added.
+        * http/tests/security/resources/showRefererImage.php: Added.
+
 2007-02-13  Darin Adler  <darin@apple.com>
 
         - update test results for Hyatt's focus node enhancement (fix for 12149)
