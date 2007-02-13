@@ -2925,10 +2925,13 @@ done:
 
 - (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal
 {
-    ASSERT([self _isTopHTMLView]);
+    ASSERT(![self _webView] || [self _isTopHTMLView]);
     
     Page *page = core([self _webView]);
-    ASSERT(page);
+    
+    if (!page)
+        return NSDragOperationNone;
+    
     if (page->dragController()->dragOperation() == DragOperationNone)
         return NSDragOperationGeneric | NSDragOperationCopy;
     
@@ -2937,26 +2940,33 @@ done:
 
 - (void)draggedImage:(NSImage *)image movedTo:(NSPoint)screenLoc
 {
-    ASSERT([self _isTopHTMLView]);
-    Page* page = core([self _webView]);
-    ASSERT(page);
-    DragController* dragController = page->dragController();
+    ASSERT(![self _webView] || [self _isTopHTMLView]);
+    
     NSPoint windowImageLoc = [[self window] convertScreenToBase:screenLoc];
-    NSPoint windowMouseLoc = NSMakePoint(windowImageLoc.x + dragController->dragOffset().x(), windowImageLoc.y + dragController->dragOffset().y());
+    NSPoint windowMouseLoc = windowImageLoc;
+    
+    if (Page* page = core([self _webView])) {
+        DragController* dragController = page->dragController();
+        NSPoint windowMouseLoc = NSMakePoint(windowImageLoc.x + dragController->dragOffset().x(), windowImageLoc.y + dragController->dragOffset().y());
+    }
+    
     [[self _bridge] dragSourceMovedTo:windowMouseLoc];
 }
 
 - (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
 {
     ASSERT(![self _webView] || [self _isTopHTMLView]);
-    Page* page = core([self _webView]);
-    ASSERT(page);
-    DragController* dragController = page->dragController();
-
+    
     NSPoint windowImageLoc = [[self window] convertScreenToBase:aPoint];
-    NSPoint windowMouseLoc = NSMakePoint(windowImageLoc.x + dragController->dragOffset().x(), windowImageLoc.y + dragController->dragOffset().y());
+    NSPoint windowMouseLoc = windowImageLoc;
+    
+    if (Page* page = core([self _webView])) {
+        DragController* dragController = page->dragController();
+        windowMouseLoc = NSMakePoint(windowImageLoc.x + dragController->dragOffset().x(), windowImageLoc.y + dragController->dragOffset().y());
+        dragController->dragEnded();
+    }
+    
     [[self _bridge] dragSourceEndedAt:windowMouseLoc operation:operation];
-    dragController->dragEnded();
     
     // Prevent queued mouseDragged events from coming after the drag and fake mouseUp event.
     _private->ignoringMouseDraggedEvents = YES;
@@ -2978,11 +2988,18 @@ done:
 
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
 {
-    ASSERT([self _isTopHTMLView]);
+    ASSERT(![self _webView] || [self _isTopHTMLView]);
     Page* page = core([self _webView]);
+    
+    //If a load occurs midway through a drag, the view may be detached, which gives
+    //us no ability to get to the original Page, so we cannot access any drag state
+    //FIXME: is there a way to recover?
+    if (!page) 
+        return nil; 
+    
     KURL imageURL = page->dragController()->draggingImageURL();
     ASSERT(!imageURL.isEmpty());
-
+    
     NSFileWrapper *wrapper = [[self _dataSource] _fileWrapperForURL:imageURL.getNSURL()];
     if (wrapper == nil) {
         LOG_ERROR("Failed to create image file. Did the source image change while dragging? (<rdar://problem/4244861>)");

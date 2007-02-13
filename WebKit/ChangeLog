@@ -1,3 +1,25 @@
+2007-02-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by John.
+
+        Modify entry point ASSERTs for dragging functions to allow for the case
+        where a load has occurred mid-drag.  The load may detach the HTMLView 
+        from the WebView so it is no longer possible to check _isTopHTMLView.
+
+        The assertion changes match that of revision 14897 which fixed the 
+        more common case ([WebHTMLView draggedImage:endedAt:operation:])
+
+        It's also necessary to check for a null Page now prior to accessing 
+        the DragController, which is necessary in all of these methods.
+
+        See rdar://problem/4994870
+                                             
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView draggingSourceOperationMaskForLocal:]):
+        (-[WebHTMLView draggedImage:movedTo:]):
+        (-[WebHTMLView draggedImage:endedAt:operation:]):
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]):
+
 2007-02-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.
