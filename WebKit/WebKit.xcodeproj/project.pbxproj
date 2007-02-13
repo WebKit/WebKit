@@ -1572,7 +1572,12 @@
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
-				OTHER_LDFLAGS = "$(STYLE_LDFLAGS)";
+				OTHER_LDFLAGS = (
+					"$(STYLE_LDFLAGS)",
+					"-lobjc",
+					"-sub_library",
+					libobjc,
+				);
 				PRODUCT_NAME = WebKit;
 				STYLE_LDFLAGS = "";
 				UMBRELLA_FRAMEWORKS_DIR = "$(BUILT_PRODUCTS_DIR)";
@@ -1619,7 +1624,12 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";
-				OTHER_LDFLAGS = "$(STYLE_LDFLAGS)";
+				OTHER_LDFLAGS = (
+					"$(STYLE_LDFLAGS)",
+					"-lobjc",
+					"-sub_library",
+					libobjc,
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = WebKit;
 				STYLE_LDFLAGS = "";

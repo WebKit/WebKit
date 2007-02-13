@@ -1,3 +1,15 @@
+2007-02-13  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=12745
+        Bug 12745: REGRESSION: Webkit will not load a plugin that Safari can load (symbol missing _objc_msgSend_fpret)
+
+        Treat libobjc as a sub-library of WebKit in Debug/Release so that plugins and applications linked against an
+        umbrella framework version of WebKit that expect to find libobjc symbols in WebKit can do so.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2007-02-12  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by .
