@@ -144,6 +144,8 @@ void ResourceHandle::releaseDelegate()
 {
     if (!d->m_delegate)
         return;
+    if (d->m_proxy)
+        [d->m_proxy.get() setDelegate:nil];
     [d->m_delegate.get() detachHandle];
     d->m_delegate = nil;
 }

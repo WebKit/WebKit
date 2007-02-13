@@ -1,3 +1,15 @@
+2007-02-13  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/4990049> 
+        http://bugs.webkit.org/show_bug.cgi?id=12718
+        REGRESSION: Segmentation fault when loading abc.go.com (12718)
+
+        * http/tests/misc/redirect-to-about-blank-expected.txt: Added.
+        * http/tests/misc/redirect-to-about-blank.html: Added.
+        * http/tests/misc/resources/redirect-to-about-blank.php: Added.
+
 2007-02-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Actually removed pixel results that were supposed to be removed

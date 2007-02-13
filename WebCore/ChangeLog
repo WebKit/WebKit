@@ -1,3 +1,19 @@
+2007-02-13  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/4990049> 
+        http://bugs.webkit.org/show_bug.cgi?id=12718
+        REGRESSION: Segmentation fault when loading abc.go.com (12718)
+
+        The problem is that redirecting to about:blank causes the delegate to be released even though the load wasn't finished.
+        This is usally not a problem since NSURLConnection retains its delegate. However, the proxy delegate does not retain _it's_ 
+        delegate. The solution is to make releaseDelegate clear out the proxy delegate's delegate.
+        
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::releaseDelegate):
+        If there's a proxy, nil out its delegate too.
+
 2007-02-13  Dex Deacon  <occupant4@gmail.com>
 
         Reviewed by Darin.
