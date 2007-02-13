@@ -1,3 +1,11 @@
+2007-02-13  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+        
+        - fixed to still be a valid test (wouldn't crash without the relevant fix).
+
+        * fast/text/text-shadow-extreme-value.html:
+
 2007-02-12  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by .

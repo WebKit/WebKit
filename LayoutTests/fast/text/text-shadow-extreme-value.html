@@ -2,14 +2,20 @@
 <head>
     <title>Test HTML Page</title>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+function test()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        document.body.offsetTop;
+        layoutTestController.display();
+    }
+}
 </script>
     <style type="text/css">
     p { text-shadow: purple 0px 0px 38005685px; }
     </style>
 </head>
-<body>
+<body onload="test()">
     <p>Extreme text-shadow blur values should not crash.</p>
 </body>
 </html>
