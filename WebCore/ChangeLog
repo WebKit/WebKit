@@ -98,9 +98,8 @@
 
 2007-02-12  Kevin McCullough  <kmccullough@apple.com>
 
-        Reviewed by .
-
-        - reverting change to not cause regressions and performance problems.
+        - reverting fix for rdar://problem/4922454 because it caused regressions
+          and performance problems
 
         * bindings/objc/DOM.mm:
         (-[DOMElement image]):
