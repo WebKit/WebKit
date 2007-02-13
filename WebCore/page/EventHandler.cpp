@@ -799,7 +799,11 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 
     bool swallowEvent = dispatchMouseEvent(mousedownEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
 
-    if (!swallowEvent) {
+    if (swallowEvent) {
+        // scrollbars should get events anyway, even disabled controls might be scrollable
+        if (mev.scrollbar())
+            passMousePressEventToScrollbar(mev, mev.scrollbar());
+    } else {
         // Refetch the event target node if it currently is the shadow node inside an <input> element.
         // If a mouse event handler changes the input element type to one that has a widget associated,
         // we'd like to EventHandler::handleMousePressEvent to pass the event to the widget and thus the
