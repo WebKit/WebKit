@@ -1,11 +1,11 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (-0.50,-0.50) size 480x360
-      RenderSVGContainer {g} at (-0.50,-0.50) size 400.50x277
+      RenderSVGContainer {g} at (-0.50,-0.50) size 181x277
         RenderPath {rect} at (-0.50,45.50) size 51x81 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,46.00L50.00,46.00L50.00,126.00L0.00,126.00"]
         RenderPath {rect} at (129.50,-0.50) size 51x81 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M130.00,0.00L180.00,0.00L180.00,80.00L130.00,80.00"]
-        RenderPath {rect} at (249.50,46) size 1x80 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M250.00,46.00L250.00,46.00L250.00,126.00L250.00,126.00"]
-        RenderPath {rect} at (350,45.50) size 50x1 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M350.00,46.00L400.00,46.00L400.00,46.00L350.00,46.00"]
+        RenderPath {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [data=""]
+        RenderPath {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [data=""]
         RenderPath {rect} at (29.50,195.50) size 51x81 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M50.00,196.00L60.00,196.00C71.04,196.00,80.00,204.96,80.00,216.00L80.00,256.00C80.00,267.04,71.04,276.00,60.00,276.00L50.00,276.00C38.96,276.00,30.00,267.04,30.00,256.00L30.00,216.00C30.00,204.96,38.96,196.00,50.00,196.00"]
         RenderPath {rect} at (129.50,195.50) size 51x81 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M150.00,196.00L160.00,196.00C171.04,196.00,180.00,204.96,180.00,216.00L180.00,256.00C180.00,267.04,171.04,276.00,160.00,276.00L150.00,276.00C138.96,276.00,130.00,267.04,130.00,256.00L130.00,216.00C130.00,204.96,138.96,196.00,150.00,196.00"]
       RenderSVGText {text} at (10,340) size 480x46

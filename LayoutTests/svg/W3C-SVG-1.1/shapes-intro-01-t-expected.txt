@@ -39,10 +39,10 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (235,290) size 480x10
             RenderSVGInlineText {#text} at (0,-8) size 63x10
               text run at (0,-8) width 63: "Zero length line"
-        RenderPath {rect} at (54.50,55) size 1x50 [stroke={[type=SOLID] [color=#000000]}] [data="M55.00,55.00L55.00,55.00L55.00,105.00L55.00,105.00"]
-        RenderPath {rect} at (55,160) size 0x50 [fill={[type=SOLID] [color=#FF0000]}] [data="M55.00,160.00L55.00,160.00L55.00,210.00L55.00,210.00"]
-        RenderPath {rect} at (135,54.50) size 25x1 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#00FF00]}] [data="M135.00,55.00L160.00,55.00L160.00,55.00L135.00,55.00"]
-        RenderPath {rect} at (135,160) size 25x0 [fill={[type=SOLID] [color=#00FF00]}] [data="M135.00,160.00L160.00,160.00L160.00,160.00L135.00,160.00"]
+        RenderPath {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000]}] [data=""]
+        RenderPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [data=""]
+        RenderPath {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#00FF00]}] [data=""]
+        RenderPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#00FF00]}] [data=""]
         RenderPath {circle} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000]}] [data=""]
         RenderPath {circle} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [data=""]
         RenderPath {ellipse} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#00FF00]}] [data=""]

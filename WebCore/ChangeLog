@@ -2,6 +2,18 @@
 
         Reviewed by Maciej.
 
+        http://bugs.webkit.org/show_bug.cgi?id=12578
+        WebKit incorrectly strokes zero-width/height rectangles
+
+        Create an empty path when encountering zero-width/height rectangles, similar to circles with zero radius.
+
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::createRectangle):
+
+2007-02-13  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
         Remove SVGDOMImplementation from the project.
 
         * CMakeLists.txt:

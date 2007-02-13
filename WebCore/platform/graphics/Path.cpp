@@ -161,7 +161,7 @@ Path Path::createRectangle(const FloatRect& rectangle)
     double y = rectangle.y();
     double width = rectangle.width();
     double height = rectangle.height();
-    if (width < 0.0 || height < 0.0)
+    if (width <= 0.0 || height <= 0.0)
         return path;
     
     path.moveTo(FloatPoint(x, y));
