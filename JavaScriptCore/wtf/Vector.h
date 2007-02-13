@@ -663,12 +663,12 @@ namespace WTF {
     }
 
     template<typename T, size_t inlineCapacity>
-    void operator==(Vector<T, inlineCapacity>& a, Vector<T, inlineCapacity>& b)
+    bool operator==(const Vector<T, inlineCapacity>& a, const Vector<T, inlineCapacity>& b)
     {
         if (a.size() != b.size())
             return false;
 
-        for (int i = 0; i < a.size(); ++i)
+        for (size_t i = 0; i < a.size(); ++i)
             if (a[i] != b[i])
                 return false;
 
@@ -676,7 +676,7 @@ namespace WTF {
     }
 
     template<typename T, size_t inlineCapacity>
-    inline void operator!=(Vector<T, inlineCapacity>& a, Vector<T, inlineCapacity>& b)
+    inline bool operator!=(const Vector<T, inlineCapacity>& a, const Vector<T, inlineCapacity>& b)
     {
         return !(a == b);
     }

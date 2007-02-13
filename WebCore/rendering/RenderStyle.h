@@ -381,6 +381,11 @@ struct StyleDashboardRegion {
     {
         return type == o.type && offset == o.offset && label == o.label;
     }
+
+   bool operator!=(const StyleDashboardRegion& o) const
+   {
+       return !(*this == o);
+   }
 };
 
 //------------------------------------------------

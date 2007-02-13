@@ -1,3 +1,15 @@
+2007-02-13  Dex Deacon  <occupant4@gmail.com>
+
+        Reviewed by Darin.
+
+        - fix for http://bugs.webkit.org/show_bug.cgi?id=12750
+          Vector operator== was not defined correctly. It returned void,
+          did not accept const Vectors, and used an int instead of size_t. 
+
+        * wtf/Vector.h: fixed comparison operators
+        (WTF::operator==):
+        (WTF::operator!=):
+
 2007-02-10  David Carson  <dacarson@gmail.com>
 
         Reviewed by Maciej.
