@@ -1,3 +1,17 @@
+2007-02-13  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12746
+        REGRESSION (r13853): List item's first line overflows containing div
+
+        Test: fast/lists/item-not-in-list-line-wrapping.html
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::findNextLineBreak): Use the list marker's isInside()
+        instead of looking at its style()->listStylePosition(), since if the
+        list item is not in a list, the marker is inside regardless of the style.
+
 2007-02-13  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.

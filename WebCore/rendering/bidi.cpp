@@ -31,6 +31,7 @@
 #include "InlineTextBox.h"
 #include "RenderArena.h"
 #include "RenderLayer.h"
+#include "RenderListMarker.h"
 #include "RenderView.h"
 #include "break_lines.h"
 #include <wtf/AlwaysInline.h>
@@ -2191,7 +2192,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             currentCharacterIsWS = false;
             trailingSpaceObject = 0;
             
-            if (o->isListMarker() && o->style()->listStylePosition() == OUTSIDE) {
+            if (o->isListMarker() && !static_cast<RenderListMarker*>(o)->isInside()) {
                 // The marker must not have an effect on whitespace at the start
                 // of the line.  We start ignoring spaces to make sure that any additional
                 // spaces we see will be discarded. 
@@ -2525,7 +2526,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
         o = next;
 
         if (!last->isFloatingOrPositioned() && last->isReplaced() && autoWrap && 
-            (!last->isListMarker() || last->style()->listStylePosition()==INSIDE)) {
+            (!last->isListMarker() || static_cast<RenderListMarker*>(last)->isInside())) {
             // Go ahead and add in tmpW.
             w += tmpW;
             tmpW = 0;
