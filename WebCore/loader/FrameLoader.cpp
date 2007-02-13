@@ -3726,7 +3726,9 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
 {
     KURL itemURL = item->url();
     KURL itemOriginalURL = item->originalURL();
-    KURL currentURL = documentLoader()->URL();
+    KURL currentURL;
+    if (documentLoader())
+        currentURL = documentLoader()->URL();
     RefPtr<FormData> formData = item->formData();
 
     // Are we navigating to an anchor within the page?
