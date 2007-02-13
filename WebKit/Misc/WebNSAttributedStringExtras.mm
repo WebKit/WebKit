@@ -98,7 +98,7 @@ static NSFileWrapper *fileWrapperForElement(Element* e)
     }
     if (!wrapper) {
         RenderImage* renderer = static_cast<RenderImage*>(e->renderer());
-        if (renderer->cachedImage() && !renderer->cachedImage()->errorOccurred()) {
+        if (renderer->cachedImage() && !renderer->cachedImage()->isErrorImage()) {
             wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:(NSData *)(renderer->cachedImage()->image()->getTIFFRepresentation())];
             [wrapper setPreferredFilename:@"image.tiff"];
             [wrapper autorelease];

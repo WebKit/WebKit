@@ -70,7 +70,7 @@ void RenderImage::setCachedImage(CachedImage* newImage)
     m_cachedImage = newImage;
     if (m_cachedImage) {
         m_cachedImage->ref(this);
-        if (m_cachedImage->errorOccurred())
+        if (m_cachedImage->isErrorImage())
             imageChanged(m_cachedImage);
     }
 }
@@ -136,14 +136,14 @@ void RenderImage::imageChanged(CachedImage* newImage)
     bool imageSizeChanged = false;
 
     // Set image dimensions, taking into account the size of the alt text.
-    if (newImage->errorOccurred())
+    if (newImage->isErrorImage())
         imageSizeChanged = setImageSizeForAltText(newImage);
     
     bool ensureLayout = false;
 
     // Image dimensions have been changed, see what needs to be done
     if (newImage->imageSize().width() != intrinsicWidth() || newImage->imageSize().height() != intrinsicHeight() || imageSizeChanged) {
-        if (!newImage->errorOccurred()) {
+        if (!newImage->isErrorImage()) {
             setIntrinsicWidth(newImage->imageSize().width());
             setIntrinsicHeight(newImage->imageSize().height());
         }
@@ -226,12 +226,12 @@ void RenderImage::paint(PaintInfo& paintInfo, int tx, int ty)
     if (isPrinting && !view()->printImages())
         return;
 
-    if (!m_cachedImage || image()->isNull() || errorOccurred()) {
+    if (!m_cachedImage || image()->isNull() || isErrorImage()) {
         if (paintInfo.phase == PaintPhaseSelection)
             return;
 
         if (cWidth > 2 && cHeight > 2) {
-            if (!errorOccurred()) {
+            if (!isErrorImage()) {
                 context->setStrokeStyle(SolidStroke);
                 context->setStrokeColor(Color::lightGray);
                 context->setFillColor(Color::transparent);
@@ -244,7 +244,7 @@ void RenderImage::paint(PaintInfo& paintInfo, int tx, int ty)
             int usableWidth = cWidth;
             int usableHeight = cHeight;
 
-            if (errorOccurred() && !image()->isNull() && (usableWidth >= image()->width()) && (usableHeight >= image()->height())) {
+            if (isErrorImage() && !image()->isNull() && (usableWidth >= image()->width()) && (usableHeight >= image()->height())) {
                 // Center the error image, accounting for border and padding.
                 int centerX = (usableWidth - image()->width()) / 2;
                 if (centerX < 0)
@@ -310,7 +310,7 @@ void RenderImage::layout()
     }
 
     // minimum height
-    m_height = m_cachedImage && m_cachedImage->errorOccurred() ? intrinsicHeight() : 0;
+    m_height = m_cachedImage && m_cachedImage->isErrorImage() ? intrinsicHeight() : 0;
 
     calcWidth();
     calcHeight();
@@ -415,7 +415,7 @@ int RenderImage::calcAspectRatioWidth() const
 {
     if (!intrinsicHeight())
         return 0;
-    if (!m_cachedImage || m_cachedImage->errorOccurred())
+    if (!m_cachedImage || m_cachedImage->isErrorImage())
         return intrinsicWidth(); // Don't bother scaling.
     return RenderReplaced::calcReplacedHeight() * intrinsicWidth() / intrinsicHeight();
 }
@@ -424,7 +424,7 @@ int RenderImage::calcAspectRatioHeight() const
 {
     if (!intrinsicWidth())
         return 0;
-    if (!m_cachedImage || m_cachedImage->errorOccurred())
+    if (!m_cachedImage || m_cachedImage->isErrorImage())
         return intrinsicHeight(); // Don't bother scaling.
     return RenderReplaced::calcReplacedWidth() * intrinsicHeight() / intrinsicWidth();
 }

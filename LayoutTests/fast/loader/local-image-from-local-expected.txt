@@ -1,5 +1,0 @@
-This test is to see if a local file can include a local image.
-
-Test Passed
-
-

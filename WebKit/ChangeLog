@@ -1,3 +1,12 @@
+2007-02-12  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by .
+
+        - reverting change to not cause regressions and performance problems.
+
+        * Misc/WebNSAttributedStringExtras.mm:
+        (fileWrapperForElement):
+
 2007-02-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.
@@ -665,7 +674,6 @@
         (-[WebView undoManager]):
         * WebView/WebViewPrivate.h:
 
->>>>>>> .r19243
 2007-01-29  Ada Chan  <adachan@apple.com>
 
         Reviewed by Brady.

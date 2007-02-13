@@ -1,3 +1,53 @@
+2007-02-12  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by .
+
+        - reverting change to not cause regressions and performance problems.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMElement image]):
+        (-[DOMElement _imageTIFFRepresentation]):
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::notifyFinished):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::dispatchLoadEvent):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::reset):
+        (WebCore::HTMLTokenizer::notifyFinished):
+        * ksvg2/misc/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::dispatchLoadEvent):
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestResource):
+        (WebCore::Cache::remove):
+        * loader/CachedImage.h:
+        (WebCore::CachedImage::canRender):
+        (WebCore::CachedImage::isErrorImage):
+        * loader/CachedResource.h:
+        * loader/CachedScript.h:
+        (WebCore::CachedScript::errorOccurred):
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestResource):
+        (WebCore::DocLoader::setLoadInProgress):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::canLoad):
+        * page/EventHandler.cpp:
+        (WebCore::selectCursor):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::image):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::setCachedImage):
+        (WebCore::RenderImage::imageChanged):
+        (WebCore::RenderImage::paint):
+        (WebCore::RenderImage::layout):
+        (WebCore::RenderImage::calcAspectRatioWidth):
+        (WebCore::RenderImage::calcAspectRatioHeight):
+        * rendering/RenderImage.h:
+        (WebCore::RenderImage::isErrorImage):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::setStyle):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::isImage):
+
 2007-02-12  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.

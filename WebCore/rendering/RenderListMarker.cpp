@@ -506,7 +506,7 @@ InlineBox* RenderListMarker::createInlineBox(bool, bool isRootLineBox, bool)
 
 bool RenderListMarker::isImage() const
 {
-    return m_image && !m_image->errorOccurred();
+    return m_image && !m_image->isErrorImage();
 }
 
 void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)

@@ -49,12 +49,15 @@ namespace WebCore {
         virtual void error();
 
         virtual bool schedule() const { return false; }
+        
+        bool errorOccurred() const { return m_errorOccurred; }
 
         void checkNotify();
 
     private:
         String m_script;
         TextEncoding m_encoding;
+        bool m_errorOccurred;
     };
 }
 

@@ -485,7 +485,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
     WebCore::RenderObject* renderer = [self _element]->renderer();
     if (renderer && renderer->isImage()) {
         WebCore::RenderImage* img = static_cast<WebCore::RenderImage*>(renderer);
-        if (img->cachedImage() && !img->cachedImage()->errorOccurred())
+        if (img->cachedImage() && !img->cachedImage()->isErrorImage())
             return img->cachedImage()->image()->getNSImage();
     }
     return nil;
@@ -510,7 +510,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
     WebCore::RenderObject* renderer = [self _element]->renderer();
     if (renderer && renderer->isImage()) {
         WebCore::RenderImage* img = static_cast<WebCore::RenderImage*>(renderer);
-        if (img->cachedImage() && !img->cachedImage()->errorOccurred())
+        if (img->cachedImage() && !img->cachedImage()->isErrorImage())
             return (NSData*)(img->cachedImage()->image()->getTIFFRepresentation());
     }
     return nil;

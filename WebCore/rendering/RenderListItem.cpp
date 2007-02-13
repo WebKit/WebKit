@@ -52,7 +52,7 @@ void RenderListItem::setStyle(RenderStyle* newStyle)
     RenderBlock::setStyle(newStyle);
 
     if (style()->listStyleType() != LNONE ||
-        (style()->listStyleImage() && !style()->listStyleImage()->errorOccurred())) {
+        (style()->listStyleImage() && !style()->listStyleImage()->isErrorImage())) {
         RenderStyle* newStyle = new (renderArena()) RenderStyle;
         newStyle->ref();
         // The marker always inherits from the list item, regardless of where it might end
