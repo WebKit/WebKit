@@ -29,6 +29,7 @@
 #include "BeforeTextInsertedEvent.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
+#include "Editor.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -204,8 +205,10 @@ void HTMLInputElement::updateFocusAppearance()
 {
     if (isTextField()) {
         select();
-        if (document() && document()->frame())
+        if (document() && document()->frame()) {
+            document()->frame()->editor()->didBeginEditing();
             document()->frame()->revealSelection();
+        }
     } else
         HTMLGenericFormElement::updateFocusAppearance();
 }

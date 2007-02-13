@@ -1,3 +1,28 @@
+2007-02-12  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 12149 (Radar Bug#4928692), external CSS causes incomplete
+        text field focus.
+
+        Make sure to clear out the focus node in willRemove() rather than in
+        detach(), since detach/attach caused by style recalc should not affect
+        the focused node.
+
+        Reviewed by aroben
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::willRemove):
+        * dom/Document.cpp:
+        (WebCore::Document::focusedNodeRemoved):
+        (WebCore::Document::setFocusedNode):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::updateFocusAppearance):
+        * dom/Node.cpp:
+        (WebCore::Node::willRemove):
+        (WebCore::Node::detach):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateFocusAppearance):
+
 2007-02-12  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by .

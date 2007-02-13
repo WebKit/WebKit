@@ -419,7 +419,7 @@ public:
     void setActiveNode(PassRefPtr<Node>);
     Node* activeNode() const { return m_activeNode.get(); }
 
-    void focusedNodeDetached(Node*);
+    void focusedNodeRemoved(Node*);
     void hoveredNodeDetached(Node*);
     void activeChainNodeDetached(Node*);
 
