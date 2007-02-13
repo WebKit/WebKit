@@ -2216,7 +2216,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         return;
     }
 
-    CFStringRef status = CFStringCreateWithCString(NULL, message, kCFStringEncodingWindowsLatin1);
+    CFStringRef status = CFStringCreateWithCString(NULL, message, kCFStringEncodingUTF8);
     LOG(Plugins, "NPN_Status: %@", status);
     WebView *wv = [self webView];
     [[wv _UIDelegateForwarder] webView:wv setStatusText:(NSString *)status];
