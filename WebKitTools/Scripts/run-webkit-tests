@@ -556,8 +556,8 @@ for my $test (@tests) {
                 print "$test -> ";
             }
             print "new\n";
+            $atLineStart = 1;
         }
-        $atLineStart = 1;
     } elsif ($actual eq $expected && $diffResult eq "passed") {
         if ($verbose) {
             print "succeeded\n";
