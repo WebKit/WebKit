@@ -564,7 +564,6 @@ set (SVG_SOURCES
     ksvg2/svg/SVGDefsElement.cpp
     ksvg2/svg/SVGDescElement.cpp
     ksvg2/svg/SVGDocument.cpp
-    ksvg2/svg/SVGDOMImplementation.cpp
     ksvg2/svg/SVGElement.cpp
 #   ksvg2/svg/SVGElementInstance.cpp
 #   ksvg2/svg/SVGElementInstanceList.cpp
