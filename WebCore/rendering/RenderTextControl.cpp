@@ -217,6 +217,8 @@ RenderStyle* RenderTextControl::createCancelButtonStyle(RenderStyle* startStyle)
 
 void RenderTextControl::updatePlaceholder()
 {
+    bool oldPlaceholderVisible = m_placeholderVisible;
+    
     String placeholder;
     if (!m_multiLine) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
@@ -239,10 +241,21 @@ void RenderTextControl::updatePlaceholder()
         color = disabledTextColor(style()->color(), style()->backgroundColor());
 
     RenderObject* renderer = m_innerText->renderer();
-    RenderStyle* style = renderer->style();
-    if (style->color() != color) {
-        style->setColor(color);
+    RenderStyle* innerStyle = renderer->style();
+    if (innerStyle->color() != color) {
+        innerStyle->setColor(color);
         renderer->repaint();
+    }
+
+    // temporary disable textSecurity if placeholder is visible
+    if (style()->textSecurity() != TSNONE && oldPlaceholderVisible != m_placeholderVisible) {
+        RenderStyle* newInnerStyle = new (renderArena()) RenderStyle(*innerStyle);
+        newInnerStyle->setTextSecurity(m_placeholderVisible ? TSNONE : style()->textSecurity());
+        renderer->setStyle(newInnerStyle);
+        for (Node* n = m_innerText->firstChild(); n; n = n->traverseNextNode(m_innerText.get())) {
+            if (n->renderer())
+                n->renderer()->setStyle(newInnerStyle);
+        }
     }
 }
 

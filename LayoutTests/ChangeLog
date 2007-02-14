@@ -1,3 +1,16 @@
+2007-02-14  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Hyatt.
+        
+        - layout test for http://bugs.webkit.org/show_bug.cgi?id=11923
+        REGRESSION: Placeholder text in password field shows as bullets
+        <rdar://problem/4960257>        
+
+        * fast/forms/password-placeholder-expected.checksum: Added.
+        * fast/forms/password-placeholder-expected.png: Added.
+        * fast/forms/password-placeholder-expected.txt: Added.
+        * fast/forms/password-placeholder.html: Added.
+
 2007-02-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Mark Rowe.
