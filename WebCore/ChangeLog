@@ -1,3 +1,29 @@
+2007-02-14  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4960112>
+        http://bugs.webkit.org/show_bug.cgi?id=12417
+        REGRESSION: "Are you sure you want to send a form again?" sheet is displayed twice (validator.w3.org)
+        
+        The problem was that doing a reload would cause the "Cache-Control" HTTP header to be set on the request _after_ the first
+        navigation policy delegate callback was called. This would break the request equality check that's used to prevent multiple policy
+        delegate callbacks from getting called for the same request. The solution is to set the header as early as possible.
+        
+        This patch also fixes some bugs in the ResourceRequest equality operator.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::reload):
+        Set the "Cache-Control" header field on the request here.
+        
+        * platform/network/FormData.h:
+        (WebCore::operator==):
+        Short-circuit if the pointers are the same.
+        
+        * platform/network/ResourceRequest.cpp:
+        (WebCore::operator==):
+        Check the equality of the objects, not the pointers.
+
 2007-02-14  David Hyatt  <hyatt@apple.com>
 
         Move setPlatformData out of FontFallbackListMac.mm and delete the file.  The function was completely

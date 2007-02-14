@@ -231,16 +231,24 @@ bool operator==(const ResourceRequest& a, const ResourceRequest& b)
     if (a.httpMethod() != b.httpMethod())
         return false;
 
-    if (a.httpBody() != b.httpBody())
-        return false;
-
     if (a.allowHTTPCookies() != b.allowHTTPCookies())
         return false;
 
     if (a.httpHeaderFields() != b.httpHeaderFields())
         return false;
 
-     return true;
+    FormData* formDataA = a.httpBody();
+    FormData* formDataB = b.httpBody();
+    
+    if (!formDataA)
+        return !formDataB;
+    if (!formDataB)
+        return !formDataA;
+    
+    if (*formDataA != *formDataB)
+        return false;
+    
+    return true;
 }
 
 bool ResourceRequest::isConditional() const

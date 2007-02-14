@@ -2033,6 +2033,7 @@ void FrameLoader::reload()
     ResourceRequest& request = loader->request();
 
     request.setCachePolicy(ReloadIgnoringCacheData);
+    request.setHTTPHeaderField("Cache-Control", "max-age=0");
 
     // If we're about to re-post, set up action so the application can warn the user.
     if (request.httpMethod() == "POST")

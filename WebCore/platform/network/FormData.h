@@ -39,6 +39,9 @@ public:
 
 inline bool operator==(const FormDataElement& a, const FormDataElement& b)
 {
+    if (&a == &b)
+        return true;
+    
     if (a.m_type != b.m_type)
         return false;
     if (a.m_data != b.m_data)
