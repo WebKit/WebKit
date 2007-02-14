@@ -34,6 +34,7 @@ namespace WebCore { namespace EventNames {
     macro(beforecopy) \
     macro(beforecut) \
     macro(beforepaste) \
+    macro(beforeunload) \
     macro(blur) \
     macro(change) \
     macro(click) \
@@ -62,7 +63,6 @@ namespace WebCore { namespace EventNames {
     macro(mouseup) \
     macro(mousewheel) \
     macro(overflowchanged) \
-    macro(beforeunload) \
     macro(paste) \
     macro(readystatechange) \
     macro(reset) \
@@ -90,9 +90,7 @@ namespace WebCore { namespace EventNames {
     macro(khtmlBeforeTextInserted) \
     macro(khtmlDragdrop) \
     macro(khtmlEditableContentChanged) \
-    macro(khtmlHorizontalmousewheel) \
     macro(khtmlMove) \
-    macro(khtmlOrigclickMouseup) \
     \
 // end of DOM_EVENT_NAMES_FOR_EACH
 
