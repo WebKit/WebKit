@@ -87,4 +87,10 @@ const FontData* FontFallbackList::fontDataForCharacters(const Font* font, const 
     return fontData;
 }
 
+void FontFallbackList::setPlatformFont(const FontPlatformData& platformData)
+{
+    m_familyIndex = cAllFamiliesScanned;
+    m_fontList.append(FontCache::getCachedFontData(&platformData));
+}
+
 }
