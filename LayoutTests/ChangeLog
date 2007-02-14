@@ -1,3 +1,15 @@
+2007-02-14  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12726
+          REGRESSION (r12073): Text wraps in the middle of a word instead of wrapping at the space before the word
+
+        * fast/text/break-word-expected.checksum: Added.
+        * fast/text/break-word-expected.png: Added.
+        * fast/text/break-word-expected.txt: Added.
+        * fast/text/break-word.html: Added.
+
 2007-02-14  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Hyatt.

@@ -1,3 +1,26 @@
+2007-02-14  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12726
+          REGRESSION (r12073): Text wraps in the middle of a word instead of wrapping at the space before the word
+
+        Test: fast/text/break-word.html
+
+        The wrapW variable used to keep track of the width of the characters scanned
+        so far by adding up the widths of individual characters. Because of the
+        rounding hack, the total ended up being bigger than the width of the same characters
+        when measured together as a single run.
+
+        The fix is to use wrapW only as an upper bound, and once it overflows the line's width,
+        fall back on measuring everything from the beginning of the line as one run.
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::findNextLineBreak): Implemented the above fix, including not measuring
+        additional single characters once wrapW overflows the line. Also moved the assignment
+        to breakNBSP out of the loop since it is constant for the entire text object, made breakWords and
+        midWordBreak update only when they might change, and cleaned up a few things.
+
 2007-02-14  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Hyatt.
