@@ -1,3 +1,18 @@
+2007-02-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        Blind attempt to make this test more reliable. (It fails intermittently
+        on the buildbot.)
+
+        * editing/execCommand/find-after-replace-expected.checksum:
+        * editing/execCommand/find-after-replace-expected.png:
+        * editing/execCommand/find-after-replace-expected.txt:
+        * editing/execCommand/find-after-replace.html: Use a load event handler
+        instead of a 100ms timer. There's no guarantee that everything will be
+        done loading in under 100ms (and there's no reason to wait that long all
+        the time, either!).
+
 2007-02-14  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.
