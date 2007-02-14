@@ -2217,6 +2217,11 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     }
 
     CFStringRef status = CFStringCreateWithCString(NULL, message, kCFStringEncodingUTF8);
+    if (!status) {
+        LOG_ERROR("NPN_Status: the message was not valid UTF-8");
+        return;
+    }
+    
     LOG(Plugins, "NPN_Status: %@", status);
     WebView *wv = [self webView];
     [[wv _UIDelegateForwarder] webView:wv setStatusText:(NSString *)status];
