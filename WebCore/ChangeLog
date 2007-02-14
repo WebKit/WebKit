@@ -1,5 +1,33 @@
 2007-02-13  Darin Adler  <darin@apple.com>
 
+        Reviewed by Hyatt.
+
+        - removed some bogus names (Hyatt smacked me since this doesn't fix a P1)
+
+        * dom/EventNames.h: Removed half-implemented khtmlDragdrop and khtmlMove
+        (you could add listeners, but nobody ever sent the events). Renamed the
+        other two khtml-prefixed internal event names to use the webkit prefix.
+
+        * bindings/js/kjs_dom.cpp:
+        (KJS::DOMEventTargetNode::getValueProperty): Removed ondragdrop and onmove.
+        (KJS::DOMEventTargetNode::putValueProperty): Ditto.
+        * bindings/js/kjs_dom.h:
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getValueProperty): Ditto.
+        (KJS::Window::put): Ditto.
+        * bindings/js/kjs_window.h:
+
+        * dom/BeforeTextInsertedEvent.cpp:
+        (WebCore::BeforeTextInsertedEvent::BeforeTextInsertedEvent): Renamed to webkit.
+        * editing/Editor.cpp:
+        (WebCore::dispatchEditableContentChangedEvents): Ditto.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment): Ditto.
+        * html/HTMLTextFieldInnerElement.cpp:
+        (WebCore::HTMLTextFieldInnerTextElement::defaultEventHandler): Ditto.
+
+2007-02-13  Darin Adler  <darin@apple.com>
+
         Rubber stamped by Maciej.
 
         * dom/EventNames.h: Resort names. Removed unused names.

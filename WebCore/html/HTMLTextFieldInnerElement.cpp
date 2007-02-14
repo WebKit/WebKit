@@ -60,7 +60,7 @@ void HTMLTextFieldInnerTextElement::defaultEventHandler(Event* evt)
                 static_cast<HTMLInputElement*>(shadowAncestor)->defaultEventHandler(evt);
             else
                 static_cast<HTMLTextAreaElement*>(shadowAncestor)->defaultEventHandler(evt);
-        if (evt->type() == khtmlEditableContentChangedEvent)
+        if (evt->type() == webkitEditableContentChangedEvent)
             static_cast<RenderTextControl*>(shadowAncestor->renderer())->subtreeHasChanged();
     }
     if (!evt->defaultHandled())

@@ -1,7 +1,5 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
- * Copyright (C) 2005 Apple Computer, Inc.
+ * Copyright (C) 2005, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Jon Shier (jshier@iastate.edu)
  *
  * This library is free software; you can redistribute it and/or
@@ -87,10 +85,8 @@ namespace WebCore { namespace EventNames {
     macro(DOMNodeRemovedFromDocument) \
     macro(DOMSubtreeModified) \
     \
-    macro(khtmlBeforeTextInserted) \
-    macro(khtmlDragdrop) \
-    macro(khtmlEditableContentChanged) \
-    macro(khtmlMove) \
+    macro(webkitBeforeTextInserted) \
+    macro(webkitEditableContentChanged) \
     \
 // end of DOM_EVENT_NAMES_FOR_EACH
 

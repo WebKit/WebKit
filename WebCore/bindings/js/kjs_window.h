@@ -1,7 +1,6 @@
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reseved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -165,9 +164,9 @@ namespace KJS {
            Focus, GetSelection, Blur, Close, SetInterval, ClearInterval, CaptureEvents, 
            ReleaseEvents, AddEventListener, RemoveEventListener,
            XMLHttpRequest, XSLTProcessor_,
-           Onabort, Onblur, Onchange, Onclick, Ondblclick, Ondragdrop, Onerror, 
+           Onabort, Onblur, Onchange, Onclick, Ondblclick, Onerror, 
            Onfocus, Onkeydown, Onkeypress, Onkeyup, Onload, Onmousedown, Onmousemove,
-           Onmouseout, Onmouseover, Onmouseup, OnWindowMouseWheel, Onmove, Onreset, Onresize, Onscroll, Onsearch,
+           Onmouseout, Onmouseover, Onmouseup, OnWindowMouseWheel, Onreset, Onresize, Onscroll, Onsearch,
            Onselect, Onsubmit, Onunload, Onbeforeunload,
            Statusbar, Toolbar, FrameElement, ShowModalDialog };
 
