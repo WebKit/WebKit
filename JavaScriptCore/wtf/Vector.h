@@ -176,6 +176,30 @@ namespace WTF {
         }
     };
     
+    template<bool canCompareWithMemcmp, typename T>
+    class VectorComparer;
+    
+    template<typename T>
+    struct VectorComparer<false, T>
+    {
+        static bool compare(const T* a, const T* b, size_t size)
+        {
+            for (size_t i = 0; i < size; ++i)
+                if (a[i] != b[i])
+                    return false;
+            return false;
+        }
+    };
+
+    template<typename T>
+    struct VectorComparer<true, T>
+    {
+        static bool compare(const T* a, const T* b, size_t size)
+        {
+            return memcmp(a, b, sizeof(T) * size) == 0;
+        }
+    };
+    
     template<typename T>
     struct VectorTypeOperations
     {
@@ -207,6 +231,11 @@ namespace WTF {
         static void uninitializedFill(T* dst, T* dstEnd, const T& val)
         {
             VectorFiller<VectorTraits<T>::canFillWithMemset, T>::uninitializedFill(dst, dstEnd, val);
+        }
+        
+        static bool compare(const T* a, const T* b, size_t size)
+        {
+            return VectorComparer<VectorTraits<T>::canCompareWithMemcmp, T>::compare(a, b, size);
         }
     };
 
@@ -668,11 +697,7 @@ namespace WTF {
         if (a.size() != b.size())
             return false;
 
-        for (size_t i = 0; i < a.size(); ++i)
-            if (a.at(i) != b.at(i))
-                return false;
-
-        return true;
+        return VectorTypeOperations<T>::compare(a.data(), b.data(), a.size());
     }
 
     template<typename T, size_t inlineCapacity>
