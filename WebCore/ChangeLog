@@ -1,3 +1,15 @@
+2007-02-14  David Hyatt  <hyatt@apple.com>
+
+        Make the Font constructor that takes a FontPlatformData cross-platform, since the implementation was already
+        completely cross-platform.
+
+        Reviewed by Ada
+
+        * platform/Font.cpp:
+        (WebCore::Font::Font):
+        * platform/Font.h:
+        * platform/mac/FontMac.mm:
+
 2007-02-14  Antti Koivisto  <antti@apple.com>
 
         Reverting http://bugs.webkit.org/show_bug.cgi?id=11974, it causes repainting problems in some cases.

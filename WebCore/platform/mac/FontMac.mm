@@ -488,16 +488,6 @@ static void disposeATSULayoutParameters(ATSULayoutParameters *params)
     delete []params->m_fonts;
 }
 
-Font::Font(const FontPlatformData& fontData, bool isPrinterFont)
-    : m_pageZero(0)
-    , m_letterSpacing(0)
-    , m_wordSpacing(0)
-{
-    m_fontDescription.setUsePrinterFont(isPrinterFont);
-    m_fontList = new FontFallbackList();
-    m_fontList->setPlatformFont(fontData);
-}
-
 FloatRect Font::selectionRectForComplexText(const TextRun& run, const TextStyle& style, const IntPoint& point, int h) const
 {
     int from = run.from();
