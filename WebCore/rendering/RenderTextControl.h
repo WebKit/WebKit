@@ -51,6 +51,7 @@ public:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     virtual void layout();
     virtual bool avoidsFloats() const { return true; }
+    virtual bool hasControlClip() const { return !m_innerBlock; }
 
     virtual bool isEdited() const { return m_dirty; }
     virtual void setEdited(bool isEdited) { m_dirty = isEdited; }
