@@ -1,3 +1,18 @@
+2007-02-14  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin Adler, tweaked and committed by Geoff Garen.
+        
+        Reverting my fix for find-after-replace.html and committing this one because 
+        its results don't rely on an editing bug and because stomping bugzilla patches
+        is just plain uncivilized.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=12770
+          editing/execCommand/find-after-replace fails intermittently on buildbot
+
+        * editing/execCommand/find-after-replace.html: Use the frame's onload
+        handler instead of relying on a timeout. Force a layout to get a correct
+        render tree when dumping. (This requirement may be an editing bug.)
+
 2007-02-14  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.
