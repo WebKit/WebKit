@@ -1,5 +1,12 @@
 2007-02-14  Antti Koivisto  <antti@apple.com>
 
+        Reverting http://bugs.webkit.org/show_bug.cgi?id=11974, it causes repainting problems in some cases.
+
+        * rendering/RenderTextControl.h:
+        (WebCore::RenderTextControl::avoidsFloats):
+
+2007-02-14  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Maciej.
         
         - fix http://bugs.webkit.org/show_bug.cgi?id=11974
