@@ -1,3 +1,13 @@
+2007-02-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12763
+        REGRESSION: button title is displayed incorrectly at quotes.burntelectrons.org
+
+        * fast/parser/entities-in-attributes-expected.txt: Added.
+        * fast/parser/entities-in-attributes.xhtml: Added.
+
 2007-02-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark.

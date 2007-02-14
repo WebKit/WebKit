@@ -1,3 +1,16 @@
+2007-02-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12763
+        REGRESSION: button title is displayed incorrectly at quotes.burntelectrons.org
+
+        Test: fast/parser/entities-in-attributes.xhtml
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::getEntityHandler): Set a correct type for the found entity (I'm not really
+        sure if XML_INTERNAL_GENERAL_ENTITY is _the_ correct one, but it fixes the problem).
+
 2007-02-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
