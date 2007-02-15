@@ -735,6 +735,15 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* evt)
             return;
         String keyIdentifier = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
         
+        if (form() && keyIdentifier == "Enter") {
+            blur();
+            // Make sure the form hasn't been destroyed during the blur.
+            if (form())
+                form()->submitClick(evt);
+            evt->setDefaultHandled();
+            return;
+        }
+
         int endIndex = 0;        
         if (m_activeSelectionEndIndex < 0) {
             // Initialize the end index

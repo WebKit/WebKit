@@ -1,3 +1,17 @@
+2007-02-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - test or http://bugs.webkit.org/show_bug.cgi?id=12417
+          <rdar://problem/4990046> REGRESSION: pressing "Return" in a <select>
+          box does not submit the form (12697)
+
+        Test: fast/forms/select-enter-key.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        Add code to submit when someone hits the Enter key.
+
 2007-02-14  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

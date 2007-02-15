@@ -1,0 +1,7 @@
+This test checks to see if hitting the Enter key on a select box submits the form or checks the check box.
+
+If the test passes, the text below should say "tried to submit form".
+
+
+Tried to submit form.
+

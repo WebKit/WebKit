@@ -1,0 +1,35 @@
+<head>
+<script>
+function print(message)
+{
+    var paragraph = document.createElement("li");
+    paragraph.appendChild(document.createTextNode(message));
+    document.getElementById("console").appendChild(paragraph);
+}
+function submitHandler(e)
+{
+    e.preventDefault();
+    print("Tried to submit form.");
+}
+function test()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    document.getElementById("form").onsubmit = submitHandler;
+    var event = document.createEvent("KeyboardEvents");
+    event.initKeyboardEvent("keypress", true, true, document.defaultView, "Enter", 0, false, false, false, false, false);
+    document.getElementById("select").dispatchEvent(event);
+}
+</script>
+</head>
+<body onload="test()">
+<p>This test checks to see if hitting the Enter key on a select box submits the form or checks the check box.</p>
+<p>If the test passes, the text below should say "tried to submit form".</p>
+<hr>
+<form id=form>
+<select id=select size=3><option>a</option></select>
+</form>
+<hr>
+<p><ol id=console></ol></p>
+</body>

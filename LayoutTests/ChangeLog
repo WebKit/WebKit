@@ -1,3 +1,14 @@
+2007-02-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12417
+          <rdar://problem/4990046> REGRESSION: pressing "Return" in a <select>
+          box does not submit the form (12697)
+
+        * fast/forms/select-enter-key-expected.txt: Added.
+        * fast/forms/select-enter-key.html: Added.
+
 2007-02-14  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin Adler, tweaked and committed by Geoff Garen.
