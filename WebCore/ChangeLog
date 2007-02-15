@@ -2,6 +2,18 @@
 
         Reviewed by adele
         
+        <rdar://problem/4976800>
+        Outdent combines 2 separate strings on 2 different lines
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::outdentParagraph): Add line breaks
+        if removing the indented node causes content before or after it to
+        collapse into the same paragraph as its content.
+
+2007-02-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by adele
+        
         <rdar://problem/4960120>
         REGRESSION: First Enter key ignored on initial focus of textarea after page load (11967)
         
