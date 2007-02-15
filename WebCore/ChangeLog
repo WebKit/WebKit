@@ -1,3 +1,17 @@
+2007-02-14  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Sam Weinig!
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12773
+          REGRESSION (r19490): Crash on ipx-server.de
+
+        * manual-tests/background-image-change-in-page-cache.html: Added.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::imageChanged): Bail out if the object is not in a view,
+        which can happen if the document is in the page cache and the same cached
+        image used for its background is also being used in another document that
+        is currently in view.
+
 2007-02-14  Adam Roben  <aroben@apple.com>
 
         Reviewed by Darin.
