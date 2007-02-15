@@ -2,6 +2,26 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=10127
+          REGRESSION: Crash undoing delete in textarea
+
+        Document::removeMarkers() was using a Vector iterator (which is just a
+        pointer) and inserting into the Vector at the same time, which made the
+        iterator invalid as the Vector's data buffer was relocated.
+        
+        Replaced all instances of Vector<DocumentMarker>::iterator with indices.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addMarker):
+        (WebCore::Document::copyMarkers):
+        (WebCore::Document::removeMarkers):
+        (WebCore::Document::repaintMarkers):
+        (WebCore::Document::shiftMarkers):
+
+2007-02-15  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - http://bugs.webkit.org/show_bug.cgi?id=12777
           REGRESSION (r18574): User profile pages display incorrectly at ebay.ca
 
