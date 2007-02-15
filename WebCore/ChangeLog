@@ -1,3 +1,19 @@
+2007-02-15  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=12777
+          REGRESSION (r18574): User profile pages display incorrectly at ebay.ca
+
+        Fixes existing layout tests: tables/mozilla/bugs/bug45486.html
+                                     tables/mozilla_expected_failures/core/col_span2.html
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::calcEffectiveWidth): Fixed a mismatch between which
+        columns count as percentage columns when adding up the total percent and
+        which columns count as percentage columns when converting non-percentage
+        columns to effectively-percentage.
+
 2007-02-14  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Sam Weinig!
