@@ -192,21 +192,6 @@ namespace WebCore {
     { 
         return a != b.get(); 
     }
-    
-    template <typename T, typename U> inline RetainPtr<T> static_pointer_cast(const RetainPtr<U>& p)
-    { 
-        return RetainPtr<T>(static_cast<typename RetainPtr<T>::PtrType>(p.get())); 
-    }
-
-    template <typename T, typename U> inline RetainPtr<T> const_pointer_cast(const RetainPtr<U>& p)
-    { 
-        return RetainPtr<T>(const_cast<typename RetainPtr<T>::PtrType>(p.get())); 
-    }
-
-    template <typename T> inline typename RemovePointer<T>::type getPtr(const RetainPtr<T>& p)
-    {
-        return p.get();
-    }
 
 }
 

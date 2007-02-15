@@ -31,9 +31,11 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "FocusController.h"
 #include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLNames.h"
+#include "Page.h"
 #include "RenderStyle.h"
 #include "RenderTextControl.h"
 #include "Selection.h"
@@ -206,7 +208,8 @@ void HTMLTextAreaElement::focus()
     doc->updateLayout();
     if (!supportsFocus())
         return;
-    doc->setFocusedNode(this);
+    if (Page* page = doc->page())
+        page->focusController()->setFocusedNode(this);
     // FIXME: Should isFocusable do the updateLayout?
     if (!isFocusable()) {
         setNeedsFocusAppearanceUpdate(true);

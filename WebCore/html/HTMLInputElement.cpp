@@ -33,6 +33,7 @@
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
+#include "FocusController.h"
 #include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLFormElement.h"
@@ -41,6 +42,7 @@
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "Page.h"
 #include "RenderButton.h"
 #include "RenderFileUploadControl.h"
 #include "RenderImage.h"
@@ -189,7 +191,8 @@ void HTMLInputElement::focus()
         doc->updateLayout();
         if (!supportsFocus())
             return;
-        doc->setFocusedNode(this);
+        if (Page* page = doc->page())
+            page->focusController()->setFocusedNode(this);
         // FIXME: Should isFocusable do the updateLayout?
         if (!isFocusable()) {
             setNeedsFocusAppearanceUpdate(true);

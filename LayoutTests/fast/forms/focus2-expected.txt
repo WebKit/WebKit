@@ -49,8 +49,6 @@ blur event: [to] ANCHOR
 IFRAME DOCUMENT:
 focus event: [to] BUTTON
 keypress event: [to] BUTTON
-focus event: [to] BUTTON
-keypress event: [to] BUTTON
 blur event: [to] BUTTON
 focus event: [to] CHECKBOX
 keypress event: [to] CHECKBOX
@@ -86,4 +84,7 @@ focus event: [to] TEXTAREA
 keypress event: [to] TEXTAREA
 blur event: [to] TEXTAREA
 focus event: [to] DIV
+keypress event: [to] DIV
+blur event: [to] DIV
+focus event: [to] ANCHOR
 

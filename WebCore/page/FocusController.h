@@ -34,6 +34,7 @@ namespace WebCore {
 
     class Frame;
     class KeyboardEvent;
+    class Node;
     class Page;
 
     class FocusController {
@@ -46,6 +47,8 @@ namespace WebCore {
 
         bool advanceFocus(KeyboardEvent*);
         bool advanceFocus(FocusDirection, KeyboardEvent*);
+        
+        bool setFocusedNode(Node*);
 
     private:
         Page* m_page;

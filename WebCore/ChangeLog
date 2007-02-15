@@ -1,3 +1,30 @@
+2007-02-14  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Darin.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=12517
+        <rdar://problem/4971227> REGRESSION: Tab order incorrect when input
+        inside frame/iframe gets initial focus (12517)
+
+        Test: fast/events/frame-programmatic-focus.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::focus): Call FocusController::setFocusedNode to set
+        the focus for the whole page.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::focus): Ditto.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::focus): Ditto.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTextInputEvent): Send the textInput
+        event to the same target that was sent the keypress event before it.
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocus): Added a FIXME.
+        (WebCore::FocusController::setFocusedNode): Added. Sets the focused
+        node for a whole page.
+        * page/FocusController.h: Added declaration.
+        * platform/cf/RetainPtr.h: Removed unused pointer_cast functions.
+
 2007-02-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by adele

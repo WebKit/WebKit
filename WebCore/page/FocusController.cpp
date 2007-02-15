@@ -189,6 +189,10 @@ bool FocusController::advanceFocus(FocusDirection direction, KeyboardEvent* even
         setFocusedFrame(owner->contentFrame());
         return true;
     }
+    
+    // FIXME: It would be nice to just be able to call setFocusedNode(node) here, but we can't do
+    // that because some elements (e.g. HTMLInputElement and HTMLTextAreaElement) do extra work in
+    // their focus() methods.
 
     Document* newDocument = node->document();
 
@@ -200,6 +204,34 @@ bool FocusController::advanceFocus(FocusDirection direction, KeyboardEvent* even
         setFocusedFrame(newDocument->frame());
 
     static_cast<Element*>(node)->focus();
+    return true;
+}
+
+bool FocusController::setFocusedNode(Node* node)
+{
+    RefPtr<Frame> oldFocusedFrame = focusedFrame();
+    RefPtr<Document> oldDocument = oldFocusedFrame ? oldFocusedFrame->document() : 0;
+    
+    if (!node) {
+        if (oldDocument)
+            oldDocument->setFocusedNode(0);
+        return true;
+    }
+    
+    RefPtr<Document> newDocument = node ? node->document() : 0;
+    RefPtr<Frame> newFocusedFrame = newDocument ? newDocument->frame() : 0;
+    
+    if (newDocument && newDocument->focusedNode() == node)
+        return true;
+    
+    if (oldDocument && oldDocument != newDocument)
+        oldDocument->setFocusedNode(0);
+    
+    setFocusedFrame(newFocusedFrame);
+    
+    if (newDocument)
+        newDocument->setFocusedNode(node);
+    
     return true;
 }
 
