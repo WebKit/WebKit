@@ -1,3 +1,19 @@
+2007-02-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by adele
+        
+        <rdar://problem/4960120>
+        REGRESSION: First Enter key ignored on initial focus of textarea after page load (11967)
+        
+        We'd insert a newline, but into an empty div.  We need two newlines
+        in that case.
+
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::lineBreakExistsAtPosition): Returns true if there is a
+        br or a '\n' in text that preserves newlines at the incoming position.
+        (WebCore::InsertLineBreakCommand::doApply): Fixed to handle the empty
+        block case, the anonymous block case.
+
 2007-02-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

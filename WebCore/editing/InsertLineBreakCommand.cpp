@@ -77,15 +77,27 @@ void InsertLineBreakCommand::insertNodeBeforePosition(Node *node, const Position
         insertNodeBefore(node, pos.node());
 }
 
+static bool lineBreakExistsAtPosition(VisiblePosition& visiblePosition)
+{
+    if (visiblePosition.isNull())
+        return false;
+        
+    Position downstream(visiblePosition.deepEquivalent().downstream());
+    return downstream.node()->hasTagName(brTag) ||
+           downstream.node()->isTextNode() && downstream.node()->renderer()->style()->preserveNewline() && visiblePosition.characterAfter() == '\n';
+}
+
 void InsertLineBreakCommand::doApply()
 {
     deleteSelection();
     Selection selection = endingSelection();
     if (selection.isNone())
         return;
+    
+    VisiblePosition caret(selection.visibleStart());
 
-    Position pos(selection.start().upstream());
-    Position canonicalPos(VisiblePosition(pos).deepEquivalent());
+    Position pos(caret.deepEquivalent().upstream());
+    Position canonicalPos(caret.deepEquivalent());
 
     pos = positionAvoidingSpecialElementBoundary(pos);
 
@@ -120,16 +132,10 @@ void InsertLineBreakCommand::doApply()
         } else
             // There aren't any VisiblePositions like this yet.
             ASSERT_NOT_REACHED();
-    // FIXME: The following doesn't handle positions at the ends of anonymous blocks, and
-    // those cases are buggy.
-    } else if (isEndOfBlock(selection.visibleStart())) {
+    } else if (isEndOfParagraph(caret) && !lineBreakExistsAtPosition(caret)) {
         insertNodeAt(nodeToInsert.get(), pos.node(), pos.offset());
-        VisiblePosition endingPosition(endOfBlock(VisiblePosition(pos)));
-        
-        // Insert an extra br or '\n' if the inserted one collapsed.
-        if (!isStartOfParagraph(endingPosition))
-            insertNodeBefore(nodeToInsert->cloneNode(false).get(), nodeToInsert.get());
-        
+        insertNodeBefore(nodeToInsert->cloneNode(false).get(), nodeToInsert.get());
+        VisiblePosition endingPosition(Position(nodeToInsert.get(), 0));
         setEndingSelection(Selection(endingPosition));
     } else if (pos.offset() <= pos.node()->caretMinOffset()) {
         // Insert node before downstream position, and place caret there as well. 

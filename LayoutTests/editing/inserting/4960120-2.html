@@ -1,0 +1,12 @@
+<p>This tests for a bug where a newline inserted at the end of an anonymous block would be lost.</p>
+<div id="div" contenteditable="true">foo<div>bar</div></div>
+
+<script>
+var div = document.getElementById("div");
+var sel = window.getSelection();
+
+sel.setPosition(div, 0);
+sel.modify("move", "forward", "word");
+
+document.execCommand("InsertLineBreak");
+</script>
