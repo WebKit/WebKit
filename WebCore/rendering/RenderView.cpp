@@ -231,6 +231,8 @@ RenderObject* rendererAfterPosition(RenderObject* object, unsigned offset)
 
 IntRect RenderView::selectionRect() const
 {
+    document()->updateRendering();
+
     typedef HashMap<RenderObject*, SelectionInfo*> SelectionMap;
     SelectionMap selectedObjects;
 

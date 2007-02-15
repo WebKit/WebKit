@@ -2,6 +2,29 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12625
+          REGRESSION: Crash when closing the web inspector with text selected
+
+        The problem was that selectionRect() was being called on a render tree that
+        had pending style changes. The changes were committed as a side effect in
+        the middle of traversing the render tree, and the current object got
+        deleted as a result. The solution is to update the render tree before
+        starting to traverse it.
+
+        The inspector was affected because it makes style changes in response to
+        an AppKit notification that's sent right before the windowDidResignKey:
+        notification, under which WebKit calls selectionRect(). I couldn't recreate
+        the same conditions (having uncommitted style changes in the tree when the
+        window becomes inactive) using HTML/JS in Safari, hence the lack of
+        a regression test to go with this patch.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::selectionRect): Added call to updateRendering().
+
+2007-02-15  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=10127
           REGRESSION: Crash undoing delete in textarea
 
