@@ -1,3 +1,23 @@
+2007-02-15  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Add gdk version of ContextMenuClient based on qt version.
+
+        * WebCoreSources.bkl:
+        * page/gdk/ContextMenuClientGdk.cpp: Added.
+        (WebCore::ContextMenuClientGdk::contextMenuDestroyed):
+        (WebCore::ContextMenuClientGdk::getCustomMenuFromDefaultItems):
+        (WebCore::ContextMenuClientGdk::contextMenuItemSelected):
+        (WebCore::ContextMenuClientGdk::downloadURL):
+        (WebCore::ContextMenuClientGdk::copyImageToClipboard):
+        (WebCore::ContextMenuClientGdk::searchWithGoogle):
+        (WebCore::ContextMenuClientGdk::lookUpInDictionary):
+        (WebCore::ContextMenuClientGdk::speak):
+        (WebCore::ContextMenuClientGdk::stopSpeaking):
+        * page/gdk/ContextMenuClientGdk.h: Added.
+        * webcore-base.bkl: curl is needed when building webcore_base files.
+
 2007-02-15  Kevin Decker  <kdecker@apple.com>
 
        Reviewed by Darin.

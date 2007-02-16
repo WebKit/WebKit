@@ -122,6 +122,7 @@
         page/PageState.cpp
         page/Settings.cpp
         page/gdk/EventHandlerGdk.cpp
+        page/gdk/ContextMenuClientGdk.cpp
         page/gdk/DragControllerGdk.cpp
     </set>
 
