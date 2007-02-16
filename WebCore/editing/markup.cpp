@@ -387,8 +387,18 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
     Node *lastClosed = 0;
     Vector<Node*> ancestorsToClose;
 
-    // Calculate the "default style" for this markup.
-    Position pos(doc->documentElement(), 0);
+    // Calculate the "default style" for this markup and put those styles
+    // in a top level span instead of inlining them.
+    Node* root = highestEditableRoot(range->startPosition());
+    if (!root) {
+        root = range->startPosition().node();
+        while (root && !root->hasTagName(bodyTag))
+            root = root->parentNode();
+        ASSERT(root);
+        if (!root)
+            root = doc->documentElement();
+    }
+    Position pos(root, 0);
     RefPtr<CSSComputedStyleDeclaration> computedStyle = pos.computedStyle();
     RefPtr<CSSMutableStyleDeclaration> defaultStyle = computedStyle->copyInheritableProperties();
     
@@ -525,7 +535,7 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
     }
     
     // FIXME: Do this for all fully selected blocks, not just a body.
-    Node* root = range->startPosition().node();
+    root = range->startPosition().node();
     while (root && !root->hasTagName(bodyTag))
         root = root->parentNode();
     if (root && *Selection::selectionFromContentsOfNode(root).toRange() == *range) {

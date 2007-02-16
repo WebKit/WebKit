@@ -1,3 +1,22 @@
+2007-02-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4989774>
+        REGRESSION: Pasting a image into a plain text message can place image on a new line
+
+        <span><img><span><img></span></span> will appear as two
+        images on different lines because of a layout/rendering
+        bug.  This patch avoids the bug by producing cleaner
+        markup so that the paste code can safely remove the style 
+        spans.
+
+        * editing/markup.cpp:
+        (WebCore::createMarkup): Get the default style from the
+        editable root or body instead of the document element.
+        This produces cleaner markup since we don't inline the 
+        root's styles.
+
 2007-02-15  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Adam Roben.
