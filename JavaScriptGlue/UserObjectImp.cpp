@@ -391,25 +391,19 @@ UString UserObjectImp::toString(ExecState *exec) const
             }
             else
             {
-                CFStringRef cfNumStr = 0;
+                CFStringRef cfNumStr;
+                double d = 0;
+                CFNumberGetValue((CFNumberRef)cfValue, kCFNumberDoubleType, &d);
                 if (CFNumberIsFloatType((CFNumberRef)cfValue))
                 {
-                    double d = 0;
-                    CFNumberGetValue((CFNumberRef)cfValue, kCFNumberDoubleType, &d);
-                    cfNumStr = CFStringCreateWithFormat(0, 0, CFSTR("%f"), (float)d);
+                    cfNumStr = CFStringCreateWithFormat(0, 0, CFSTR("%f"), d);
                 }
                 else
                 {
-                    int i = 0;
-                    CFNumberGetValue((CFNumberRef)cfValue, kCFNumberIntType, &i);
-                    cfNumStr = CFStringCreateWithFormat(0, 0, CFSTR("%d"), (int)i);
+                    cfNumStr = CFStringCreateWithFormat(0, 0, CFSTR("%.0f"), d);
                 }
-
-                if (cfNumStr)
-                {
-                    result = CFStringToUString(cfNumStr);
-                    ReleaseCFType(cfNumStr);
-                }
+                result = CFStringToUString(cfNumStr);
+                ReleaseCFType(cfNumStr);
             }
         }
         else if (cfType == CFArrayGetTypeID())

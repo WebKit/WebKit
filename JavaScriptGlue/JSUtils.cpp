@@ -162,32 +162,15 @@ JSValue *JSObjectKJSValue(JSUserObject* ptr)
                     }
                     else if (typeID == CFNumberGetTypeID())
                     {
-                        if (CFNumberIsFloatType((CFNumberRef)cfType))
-                        {
-                            double num;
-                            if (CFNumberGetValue((CFNumberRef)cfType, kCFNumberDoubleType, &num))
-                            {
-                                result = jsNumber(num);
-                                handled = true;
-                            }
-                        }
-                        else
-                        {
-                            long num;
-                            if (CFNumberGetValue((CFNumberRef)cfType, kCFNumberLongType, &num))
-                            {
-                                result = jsNumber(num);
-                                handled = true;
-                            }
-                        }
+                        double num;
+                        CFNumberGetValue((CFNumberRef)cfType, kCFNumberDoubleType, &num);
+                        result = jsNumber(num);
+                        handled = true;
                     }
                     else if (typeID == CFBooleanGetTypeID())
                     {
                         result = jsBoolean(CFBooleanGetValue((CFBooleanRef)cfType));
                         handled = true;
-                    }
-                    else if (typeID == CFDateGetTypeID())
-                    {
                     }
                     else if (typeID == CFNullGetTypeID())
                     {

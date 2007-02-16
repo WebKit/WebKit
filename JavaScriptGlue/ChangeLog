@@ -1,3 +1,26 @@
+2007-02-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - fix <rdar://problem/5000216> JavaScriptGlue framework started turning all CFNumbers
+          into signed 32bit values
+
+        Circumstantial evidence seems to indicate that JavaScriptGlue was depending on a bug
+        in CFNumber where CFNumberIsFloatType was returning true for 64-bit integer values.
+
+        * JSUtils.cpp: (JSObjectKJSValue): Removed the call to CFNumberIsFloatType in the
+        conversion of numeric values, and always use kCFNumberDoubleType, since double is
+        the internal format of numbers in JavaScriptCore. There's no value to having a
+        separate code path for integers. There's also no reason to check the return value
+        from CFNumberGetValue -- if it returns false it still does the best it can to convert
+        to a double, which is what we want.
+
+        * UserObjectImp.cpp: (UserObjectImp::toString): Removed a similar code path that
+        tried to handle integers separate from double. Instead, always use a double. For
+        compatibility, use a format without a decimal point when CFNumberIsFloatType returns
+        false. Also removed a bogus cast to float; the "%f" format string takes a double,
+        not a float, so all the cast did was cut down on precision.
+
 2007-01-25  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej.
