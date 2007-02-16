@@ -1,5 +1,14 @@
 2007-02-15  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Adam's complaint
+
+        Adam wanted me to do an early return, instead.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::saveScrollPositionAndViewStateToItem):
+
+2007-02-15  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Adele
 
         Forgot to bring the null check with me when I backed this code out of 
