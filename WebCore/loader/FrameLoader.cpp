@@ -3617,7 +3617,7 @@ PassRefPtr<HistoryItem> FrameLoader::createHistoryItemTree(Frame* targetFrame, b
 
 void FrameLoader::saveScrollPositionAndViewStateToItem(HistoryItem* item)
 {
-    if (!item)
+    if (!item || !m_frame->view())
         return;
         
     item->setScrollPoint(IntPoint(m_frame->view()->contentsX(), m_frame->view()->contentsY()));

@@ -1,5 +1,14 @@
 2007-02-15  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Lost Objective-C Hippyness (or hippiness)
+
+        Oh boy, did I ever botch this one up...
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::saveScrollPositionAndViewStateToItem): Null check the FrameView
+
+2007-02-15  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Adam's complaint
 
         Adam wanted me to do an early return, instead.
