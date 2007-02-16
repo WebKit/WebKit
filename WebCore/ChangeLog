@@ -1,3 +1,19 @@
+2007-02-16  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/4943985> 
+        REGRESSION: Dragging standalone images to Finder fails to download the image file
+        
+        Set the data and response on the image resource. Also, since this is platform-independent we don't need to do it in 
+        ImageDocumentMac.mm
+        
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageTokenizer::finish):
+        * loader/mac/ImageDocumentMac.h:
+        * loader/mac/ImageDocumentMac.mm:
+        (WebCore::finishImageLoad):
+
 2007-02-16  David Harrison  <harrison@apple.com>
 
         Reviewed by Adam.

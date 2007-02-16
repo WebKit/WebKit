@@ -26,7 +26,10 @@
 #include "ImageDocument.h"
 
 #include "CachedImage.h"
+#include "DocumentLoader.h"
 #include "Element.h"
+#include "Frame.h"
+#include "FrameLoader.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "SegmentedString.h"
@@ -113,9 +116,12 @@ void ImageTokenizer::finish()
         cachedImage->data(buffer, true);
         cachedImage->finish();
 
+        cachedImage->setAllData(m_doc->frame()->loader()->mainResourceData());
+        cachedImage->setResponse(m_doc->frame()->loader()->documentLoader()->response());
+        
         // FIXME: Need code to set the title for platforms other than Mac OS X.
 #if PLATFORM(MAC)
-        finishImageLoad(m_doc, cachedImage, buffer.data(), buffer.size());
+        finishImageLoad(m_doc, cachedImage);
 #endif
     }
 
