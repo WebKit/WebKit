@@ -27,7 +27,9 @@
 #include "PageState.h"
 
 #include "Document.h"
+#include "Element.h"
 #include "EventHandler.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
@@ -109,6 +111,14 @@ void PageState::restore(Page* page)
 #endif
 
     mainFrame->eventHandler()->setMousePressNode(mousePressNode());
+        
+    // Restore the focus appearance for the focused element.
+    // FIXME: Right now we don't support pages w/ frames in the b/f cache.  This may need to be tweaked when we add support for that.
+    Document* focusedDocument = page->focusController()->focusedOrMainFrame()->document();
+    if (Node* node = focusedDocument->focusedNode()) {
+        if (node->isElementNode())
+            static_cast<Element*>(node)->updateFocusAppearance(true);
+    }
 }
 
 void PageState::clear()

@@ -218,12 +218,11 @@ void HTMLTextAreaElement::focus()
     updateFocusAppearance();
 }
 
-void HTMLTextAreaElement::updateFocusAppearance()
+void HTMLTextAreaElement::updateFocusAppearance(bool restorePreviousSelection)
 {
     ASSERT(renderer());
     
-    if (cachedSelStart == -1) {
-        ASSERT(cachedSelEnd == -1);
+    if (!restorePreviousSelection || cachedSelStart == -1) {
         // If this is the first focus, set a caret at the beginning of the text.  
         // This matches some browsers' behavior; see Bugzilla Bug 11746 Comment #15.
         // http://bugs.webkit.org/show_bug.cgi?id=11746#c15

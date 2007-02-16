@@ -204,10 +204,15 @@ void HTMLInputElement::focus()
     HTMLGenericFormElement::focus();
 }
 
-void HTMLInputElement::updateFocusAppearance()
-{
+void HTMLInputElement::updateFocusAppearance(bool restorePreviousSelection)
+{        
     if (isTextField()) {
-        select();
+        if (!restorePreviousSelection || cachedSelStart == -1)
+            select();
+        else
+            // Restore the cached selection.
+            setSelectionRange(cachedSelStart, cachedSelEnd); 
+        
         if (document() && document()->frame()) {
             document()->frame()->editor()->didBeginEditing();
             document()->frame()->revealSelection();

@@ -157,7 +157,7 @@ public:
     virtual String target() const { return String(); }
         
     virtual void focus();
-    virtual void updateFocusAppearance();
+    virtual void updateFocusAppearance(bool restorePreviousSelection = false);
     void blur();
     bool needsFocusAppearanceUpdate() const { return m_needsFocusAppearanceUpdate; }
     void setNeedsFocusAppearanceUpdate(bool b) { m_needsFocusAppearanceUpdate = b; }

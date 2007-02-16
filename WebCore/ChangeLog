@@ -1,3 +1,34 @@
+2007-02-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Mitz.
+
+        Fixed: http://bugs.webkit.org/show_bug.cgi?id=12768
+        <rdar://problem/4995250> REGRESSION: Crash occurs at WebCore::RenderLayer::scrollToOffset() when leaving page that has focus in field
+
+        No test case added.  This crash doesn't occur in DumpRenderTree because the B/F cache is turned off.
+
+        * dom/Node.cpp: (WebCore::Node::willRemove): Check that the document is not in the page cache before 
+
+        * dom/Element.cpp: (WebCore::Element::updateFocusAppearance): Added restorePreviousSelection argument, with appropriate default values.
+        * dom/Element.h: ditto.
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::updateFocusAppearance): ditto.
+        * html/HTMLInputElement.h: ditto.
+        * html/HTMLTextAreaElement.cpp: (WebCore::HTMLTextAreaElement::updateFocusAppearance): ditto.
+        * html/HTMLTextAreaElement.h: ditto.
+
+        * page/PageState.cpp: (WebCore::PageState::restore): Call updateFocusAppearance on the focused node for this page.  Pass true for the
+          restorePreviousSelection argument.
+
+        * rendering/RenderLayer.cpp: Added ASSERTS and nil checks on the RenderView.  It shouldn't be null, but if it is, 
+          we'll fail silently on release builds.
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::scrollToOffset):
+        (WebCore::RenderLayer::windowClipRect):
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::calculateRects):
+        (WebCore::RenderLayer::intersectsDamageRect):
+        (WebCore::RenderLayer::absoluteBoundingBox):
+
 2007-02-16  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

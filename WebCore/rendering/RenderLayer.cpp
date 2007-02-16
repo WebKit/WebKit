@@ -203,6 +203,7 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
         m_object->getAbsoluteRepaintRectIncludingFloats(newRect, newFullRect);
         if (checkForRepaint) {
             RenderView *c = m_object->view();
+            ASSERT(c);
             if (c && !c->printing()) {
                 bool didMove = x != m_repaintX || y != m_repaintY;
                 if (!didMove && !m_repaintOverflowOnResize)
@@ -697,6 +698,9 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
         child->updateLayerPositions(false, false);
     
     RenderView* view = renderer()->view();
+    
+    // We should have a RenderView if we're trying to scroll.
+    ASSERT(view);
     if (view) {
 #if PLATFORM(MAC)
         // Update dashboard regions, scrolling may change the clip of a
@@ -704,7 +708,7 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
         view->frameView()->updateDashboardRegions();
 #endif
 
-        m_object->view()->updateWidgetPositions();
+        view->updateWidgetPositions();
     }
 
     // Just schedule a full repaint of our object.
@@ -719,8 +723,9 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
     }
 
     // Schedule the scroll DOM event.
-    if (FrameView* frameView = renderer()->view()->frameView())
-        frameView->scheduleEvent(new Event(scrollEvent, true, false), EventTargetNodeCast(renderer()->element()), true);
+    if (view)
+        if (FrameView* frameView = view->frameView())
+            frameView->scheduleEvent(new Event(scrollEvent, true, false), EventTargetNodeCast(renderer()->element()), true);
 }
 
 void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
@@ -977,7 +982,9 @@ void RenderLayer::valueChanged(Scrollbar*)
 
 IntRect RenderLayer::windowClipRect() const
 {
-    FrameView* frameView = renderer()->view()->frameView();
+    RenderView* view = renderer()->view();
+    ASSERT(view);
+    FrameView* frameView = view->frameView();
     if (!frameView)
         return IntRect();
     return frameView->windowClipRectForLayer(this, false);
@@ -1647,9 +1654,11 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer)
         int x = 0;
         int y = 0;
         convertToLayerCoords(rootLayer, x, y);
-        if (fixed) {
-            x -= renderer()->view()->frameView()->contentsX();
-            y -= renderer()->view()->frameView()->contentsY();
+        RenderView* view = renderer()->view();
+        ASSERT(view);
+        if (view && fixed) {
+            x -= view->frameView()->contentsX();
+            y -= view->frameView()->contentsY();
         }
         
         if (m_object->hasOverflowClip()) {
@@ -1687,8 +1696,10 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
         backgroundRect = m_object->style()->position() == FixedPosition ? parent()->clipRects()->fixedClipRect() :
                          (m_object->isPositioned() ? parent()->clipRects()->posClipRect() : 
                                                      parent()->clipRects()->overflowClipRect());
-        if (parent()->clipRects()->fixed())
-            backgroundRect.move(renderer()->view()->frameView()->contentsX(), renderer()->view()->frameView()->contentsY());
+        RenderView* view = renderer()->view();
+        ASSERT(view);
+        if (view && parent()->clipRects()->fixed())
+            backgroundRect.move(view->frameView()->contentsX(), view->frameView()->contentsY());
 
         backgroundRect.intersect(paintDirtyRect);
     } else
@@ -1746,9 +1757,11 @@ bool RenderLayer::intersectsDamageRect(const IntRect& layerBounds, const IntRect
 
     // If we aren't an inline flow, and our layer bounds do intersect the damage rect, then we 
     // can go ahead and return true.
-    if (!renderer()->isInlineFlow()) {
+    RenderView* view = renderer()->view();
+    ASSERT(view);
+    if (view && !renderer()->isInlineFlow()) {
         IntRect b = layerBounds;
-        b.inflate(renderer()->view()->maximalOutlineSize());
+        b.inflate(view->maximalOutlineSize());
         if (b.intersects(damageRect))
             return true;
     }
@@ -1820,7 +1833,10 @@ IntRect RenderLayer::absoluteBoundingBox() const
     int absX = 0, absY = 0;
     convertToLayerCoords(root(), absX, absY);
     result.move(absX - m_x, absY - m_y);
-    result.inflate(renderer()->view()->maximalOutlineSize());
+    RenderView* view = renderer()->view();
+    ASSERT(view);
+    if (view)
+        result.inflate(view->maximalOutlineSize());
     return result;
 }
 
