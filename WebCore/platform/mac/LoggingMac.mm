@@ -68,7 +68,7 @@ void InitializeLoggingChannelsIfNecessary()
 void _WebCoreThreadViolationCheck(const char* function)
 {
     static bool fetchDefault = true;
-    static bool performThreadCheck = false;
+    static bool performThreadCheck = true;
     static bool threadViolationIsException = false;
     if (fetchDefault) {
         NSString *threadCheckLevel = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebCoreThreadCheck"];

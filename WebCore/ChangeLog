@@ -1,3 +1,13 @@
+2007-02-16  David Harrison  <harrison@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5004746> Need mechanism to protect against WebKit calls from secondary threads (DOM APIs)
+
+        * platform/mac/LoggingMac.mm:
+        (WebCore::_WebCoreThreadViolationCheck):
+        Change the default to log the violations.
+
 2007-02-16  Adele Peterson  <adele@apple.com>
 
         Reviewed by Mitz.
