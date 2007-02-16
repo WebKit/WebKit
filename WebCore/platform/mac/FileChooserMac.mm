@@ -96,7 +96,7 @@ FileChooser::FileChooser(FileChooserClient* client, const String& filename)
     : m_client(client)
     , m_filename(filename)
     , m_icon(chooseIcon(filename))
-    , m_controller(Adopt, [[OpenPanelController alloc] initWithFileChooser:this])
+    , m_controller(AdoptNS, [[OpenPanelController alloc] initWithFileChooser:this])
 {
 }
 

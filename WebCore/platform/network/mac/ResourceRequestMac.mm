@@ -91,7 +91,7 @@ void ResourceRequest::doUpdatePlatformRequest()
     if (formData && !formData->isEmpty())
         WebCore::setHTTPBody(nsRequest, formData);
     
-    m_nsRequest.adopt(nsRequest);
+    m_nsRequest.adoptNS(nsRequest);
 }
 
 }

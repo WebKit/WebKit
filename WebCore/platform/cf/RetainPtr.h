@@ -39,17 +39,16 @@ namespace WebCore {
     // Unlike most most of our smart pointers, RetainPtr can take either the pointer type or the pointed-to type,
     // so both RetainPtr<NSDictionary> and RetainPtr<CFDictionaryRef> will work.
 
-    enum AdoptTag { Adopt };
+    enum AdoptCFTag { AdoptCF };
+    enum AdoptNSTag { AdoptNS };
     
-    template <typename T> inline void adoptCFReference(T*)
-    {
-    }
-
 #ifdef __OBJC__
-    inline void adoptCFReference(id ptr)
+    inline void adoptNSReference(id ptr)
     {
-        CFRetain(ptr);
-        [ptr release];
+        if (ptr) {
+            CFRetain(ptr);
+            [ptr release];
+        }
     }
 #endif
 
@@ -63,8 +62,9 @@ namespace WebCore {
         RetainPtr() : m_ptr(0) {}
         RetainPtr(PtrType ptr) : m_ptr(ptr) { if (ptr) CFRetain(ptr); }
 
-        RetainPtr(AdoptTag, PtrType ptr) : m_ptr(ptr) { adoptCFReference(ptr); }
-
+        RetainPtr(AdoptCFTag, PtrType ptr) : m_ptr(ptr) { }
+        RetainPtr(AdoptNSTag, PtrType ptr) : m_ptr(ptr) { adoptNSReference(ptr); }
+        
         RetainPtr(const RetainPtr& o) : m_ptr(o.m_ptr) { if (PtrType ptr = m_ptr) CFRetain(ptr); }
 
         ~RetainPtr() { if (PtrType ptr = m_ptr) CFRelease(ptr); }
@@ -89,8 +89,9 @@ namespace WebCore {
         RetainPtr& operator=(PtrType);
         template <typename U> RetainPtr& operator=(U*);
 
-        void adopt(PtrType);
-
+        void adoptCF(PtrType);
+        void adoptNS(PtrType);
+        
         void swap(RetainPtr&);
 
     private:
@@ -132,16 +133,24 @@ namespace WebCore {
         return *this;
     }
 
-    template <typename T> inline void RetainPtr<T>::adopt(PtrType optr)
+    template <typename T> inline void RetainPtr<T>::adoptCF(PtrType optr)
     {
-        if (optr)
-            adoptCFReference(optr);
         PtrType ptr = m_ptr;
         m_ptr = optr;
         if (ptr)
             CFRelease(ptr);
     }
 
+    template <typename T> inline void RetainPtr<T>::adoptNS(PtrType optr)
+    {
+        adoptNSReference(optr);
+        
+        PtrType ptr = m_ptr;
+        m_ptr = optr;
+        if (ptr)
+            CFRelease(ptr);
+    }
+    
     template <typename T> template <typename U> inline RetainPtr<T>& RetainPtr<T>::operator=(U* optr)
     {
         if (optr)

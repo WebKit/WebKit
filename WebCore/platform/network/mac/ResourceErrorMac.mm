@@ -57,7 +57,7 @@ ResourceError::operator NSError*() const
     }
     
     if (!m_platformError) {
-        RetainPtr<NSMutableDictionary> userInfo(Adopt, [[NSMutableDictionary alloc] init]);
+        RetainPtr<NSMutableDictionary> userInfo(AdoptNS, [[NSMutableDictionary alloc] init]);
 
         if (!m_localizedDescription.isEmpty())
             [userInfo.get() setValue:m_localizedDescription forKey:NSLocalizedDescriptionKey];
@@ -67,7 +67,7 @@ ResourceError::operator NSError*() const
             [userInfo.get() setValue:KURL(m_failingURL.deprecatedString()).getNSURL() forKey:@"NSErrorFailingURLKey"];
         }
 
-        m_platformError.adopt([[NSError alloc] initWithDomain:m_domain code:m_errorCode userInfo:userInfo.get()]);
+        m_platformError.adoptNS([[NSError alloc] initWithDomain:m_domain code:m_errorCode userInfo:userInfo.get()]);
     }
 
     return m_platformError.get();

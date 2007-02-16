@@ -1,3 +1,26 @@
+2007-02-16  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4993055> auto_refcount_underflow_error: WebCore::FrameLoader::continueAfterNavigationPolicy () over-releases under GC
+
+        Add ::adoptNS and ::adoptCF methods to RetainPtr to indicate what type of reference to adopt.
+        
+        * platform/cf/RetainPtr.h:
+        (WebCore::):
+        (WebCore::adoptNSReference):
+        (WebCore::RetainPtr::RetainPtr):
+        (WebCore::::adoptCF):
+        (WebCore::::adoptNS):
+        * platform/mac/FileChooserMac.mm:
+        (WebCore::FileChooser::FileChooser):
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::ResourceError::operator NSError*):
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::nsURLResponse):
+
 2007-02-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Lost Objective-C Hippyness (or hippiness)
