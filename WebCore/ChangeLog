@@ -1,3 +1,20 @@
+2007-02-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam
+
+        Save scroll state for back/forward navigation in FrameLoader, not the client
+
+       * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::saveScrollPositionAndViewStateToItem): Actually save the scroll position
+         here instead of asking the FrameLoaderClient
+        (WebCore::FrameLoader::restoreScrollPositionAndViewState): Ditto
+
+        * loader/FrameLoaderClient.h: Renamed/repurposed 2 methods
+
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::restoreViewState): Ditto
+        (WebCore::SVGEmptyFrameLoaderClient::saveViewStateToItem): Ditto
+
 2007-02-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

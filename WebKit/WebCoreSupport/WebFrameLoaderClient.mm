@@ -789,44 +789,20 @@ void WebFrameLoaderClient::frameLoadCompleted()
 }
 
 
-void WebFrameLoaderClient::saveScrollPositionAndViewStateToItem(HistoryItem* item)
+void WebFrameLoaderClient::saveViewStateToItem(HistoryItem* item)
 {
     if (!item)
         return;
     
     NSView <WebDocumentView> *docView = [m_webFrame->_private->webFrameView documentView];
-    NSView *parent = [docView superview];
 
     // we might already be detached when this is called from detachFromParent, in which
     // case we don't want to override real data earlier gathered with (0,0)
-    if (parent) {
-        NSPoint point;
-        if ([docView conformsToProtocol:@protocol(_WebDocumentViewState)]) {
-            // The view has it's own idea of where it is scrolled to, perhaps because it contains its own
-            // ScrollView instead of using the one provided by the WebFrame
-            point = [(id <_WebDocumentViewState>)docView scrollPoint];
-            item->setViewState([(id <_WebDocumentViewState>)docView viewState]);
-        } else {
-            // Parent is the clipview of the DynamicScrollView the WebFrame installs
-            ASSERT([parent isKindOfClass:[NSClipView class]]);
-            point = [parent bounds].origin;
-        }
-        item->setScrollPoint(IntPoint(point));
-    }
+    if ([docView superview] && [docView conformsToProtocol:@protocol(_WebDocumentViewState)])
+        item->setViewState([(id <_WebDocumentViewState>)docView viewState]);
 }
 
-/*
- There is a race condition between the layout and load completion that affects restoring the scroll position.
- We try to restore the scroll position at both the first layout and upon load completion.
- 
- 1) If first layout happens before the load completes, we want to restore the scroll position then so that the
- first time we draw the page is already scrolled to the right place, instead of starting at the top and later
- jumping down.  It is possible that the old scroll position is past the part of the doc laid out so far, in
- which case the restore silent fails and we will fix it in when we try to restore on doc completion.
- 2) If the layout happens after the load completes, the attempt to restore at load completion time silently
- fails.  We then successfully restore it when the layout happens.
-*/
-void WebFrameLoaderClient::restoreScrollPositionAndViewState()
+void WebFrameLoaderClient::restoreViewState()
 {
     HistoryItem* currentItem = core(m_webFrame.get())->loader()->currentHistoryItem();
     ASSERT(currentItem);
@@ -840,16 +816,11 @@ void WebFrameLoaderClient::restoreScrollPositionAndViewState()
         return;
     
     NSView <WebDocumentView> *docView = [m_webFrame->_private->webFrameView documentView];
-    NSPoint point = currentItem->scrollPoint();
     if ([docView conformsToProtocol:@protocol(_WebDocumentViewState)]) {        
         id state = currentItem->viewState();
         if (state) {
             [(id <_WebDocumentViewState>)docView setViewState:state];
         }
-        
-        [(id <_WebDocumentViewState>)docView setScrollPoint:point];
-    } else {
-        [docView scrollPoint:point];
     }
 }
 

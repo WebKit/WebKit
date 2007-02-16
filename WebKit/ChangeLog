@@ -1,3 +1,14 @@
+2007-02-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam
+
+        Save scroll state for back/forward navigation in FrameLoader, not the client
+
+        * WebCoreSupport/WebFrameLoaderClient.h: Renamed the save/restore methods
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::saveViewStateToItem): Save viewstate only
+        (WebFrameLoaderClient::restoreViewState): Restore viewstate only
+
 2007-02-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

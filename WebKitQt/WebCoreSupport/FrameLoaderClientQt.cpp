@@ -517,7 +517,7 @@ void FrameLoaderClientQt::frameLoadCompleted()
 }
 
 
-void FrameLoaderClientQt::restoreScrollPositionAndViewState()
+void FrameLoaderClientQt::restoreViewState()
 {
     notImplemented();
 }
@@ -619,7 +619,7 @@ bool FrameLoaderClientQt::shouldGoToHistoryItem(WebCore::HistoryItem *item) cons
     return false;
 }
 
-void FrameLoaderClientQt::saveScrollPositionAndViewStateToItem(WebCore::HistoryItem*)
+void FrameLoaderClientQt::saveViewStateToItem(WebCore::HistoryItem*)
 {
     notImplemented();
 }

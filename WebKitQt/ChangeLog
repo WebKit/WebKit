@@ -1,3 +1,15 @@
+2007-02-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam
+
+        Moved scroll state down into the cross platform FrameLoader - 
+        Blind attempt at keeping Qt building
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::restoreViewState):
+        (WebCore::FrameLoaderClientQt::saveViewStateToItem):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-02-07  Anders Carlsson  <acarlsson@apple.com>
 
         Try fixing the Qt build.

@@ -228,7 +228,7 @@ public:
     virtual String generatedMIMETypeForURLScheme(const String& URLScheme) const { return ""; }
     
     virtual void frameLoadCompleted() { }
-    virtual void restoreScrollPositionAndViewState() { }
+    virtual void restoreViewState() { }
     virtual void provisionalLoadStarted() { }
     virtual bool shouldTreatURLAsSameAsCurrent(const KURL&) const { return false; }
     virtual void addHistoryItemForFragmentScroll() { }
@@ -244,7 +244,7 @@ public:
     virtual void updateGlobalHistoryForStandardLoad(const KURL&) { }
     virtual void updateGlobalHistoryForReload(const KURL&) { }
     virtual bool shouldGoToHistoryItem(HistoryItem*) const { return false; }
-    virtual void saveScrollPositionAndViewStateToItem(HistoryItem*) { }
+    virtual void saveViewStateToItem(HistoryItem*) { }
     virtual void saveDocumentViewToPageCache(PageCache*) { }
     virtual bool canCachePage() const { return false; }
 

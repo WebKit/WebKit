@@ -3617,14 +3617,33 @@ PassRefPtr<HistoryItem> FrameLoader::createHistoryItemTree(Frame* targetFrame, b
 
 void FrameLoader::saveScrollPositionAndViewStateToItem(HistoryItem* item)
 {
+    item->setScrollPoint(IntPoint(m_frame->view()->contentsX(), m_frame->view()->contentsY()));
+
     // FIXME: It would be great to work out a way to put this code in WebCore instead of calling through to the client.
-    m_client->saveScrollPositionAndViewStateToItem(item);
+    m_client->saveViewStateToItem(item);
 }
 
+/*
+ There is a race condition between the layout and load completion that affects restoring the scroll position.
+ We try to restore the scroll position at both the first layout and upon load completion.
+ 
+ 1) If first layout happens before the load completes, we want to restore the scroll position then so that the
+ first time we draw the page is already scrolled to the right place, instead of starting at the top and later
+ jumping down.  It is possible that the old scroll position is past the part of the doc laid out so far, in
+ which case the restore silent fails and we will fix it in when we try to restore on doc completion.
+ 2) If the layout happens after the load completes, the attempt to restore at load completion time silently
+ fails.  We then successfully restore it when the layout happens.
+*/
 void FrameLoader::restoreScrollPositionAndViewState()
 {
     // FIXME: It would be great to work out a way to put this code in WebCore instead of calling through to the client.
-    m_client->restoreScrollPositionAndViewState();
+    m_client->restoreViewState();
+    
+    ASSERT(m_currentHistoryItem);
+    if (m_frame->view()) {
+        const IntPoint& scrollPoint = m_currentHistoryItem->scrollPoint();
+        m_frame->view()->setContentsPos(scrollPoint.x(), scrollPoint.y());
+    }
 }
 
 void FrameLoader::purgePageCache()
