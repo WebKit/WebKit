@@ -1,3 +1,11 @@
+2007-02-16  Mark Rowe  <mrowe@apple.com>
+
+        Not reviewed.
+
+        <rdar://problem/4982312> leaks bot should run in normal mode, rather than quiet mode
+
+        * BuildSlaveSupport/build.webkit.org-config/webkit/steps.py: Switch back to default verbosity for output of leaks tests.
+
 2007-02-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.

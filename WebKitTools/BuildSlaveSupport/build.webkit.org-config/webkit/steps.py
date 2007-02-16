@@ -91,7 +91,7 @@ class LeakTest(Test):
     name = "leak-test"
     description = ["leak-tests running"]
     descriptionDone = ["leak-tests"]
-    command = ["./WebKitTools/Scripts/run-webkit-tests", "--no-launch-safari", "--quiet", "--leaks", "--results-directory", "layout-test-results"]
+    command = ["./WebKitTools/Scripts/run-webkit-tests", "--no-launch-safari", "--leaks", "--results-directory", "layout-test-results"]
 
     def commandComplete(self, cmd):
         Test.commandComplete(self, cmd)
