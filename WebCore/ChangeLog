@@ -1,3 +1,15 @@
+2007-02-17  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Fix crashes on ARM due to different struct packing. Based on a patch
+        from Mike Emmel.
+
+        * platform/DeprecatedString.cpp: compile-time assert to make sure sizeof(DeprecatedChar) == 2
+        * platform/DeprecatedString.h: pack DeprecatedChar struct to ensure that
+        sizeof(DeprecatedChar) == 2. Move _internalBuffer in DeprecatedStringData
+        to the end, to avoid crashes on ARM due to different struct packing.
+
 2007-02-16  Adele Peterson  <adele@apple.com>
 
         Reviewed by Mitz.

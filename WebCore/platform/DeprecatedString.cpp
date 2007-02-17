@@ -51,6 +51,8 @@ using namespace KJS;
 
 namespace WebCore {
 
+COMPILE_ASSERT(sizeof(DeprecatedChar) == 2, deprecated_char_is_2_bytes)
+
 #define CHECK_FOR_HANDLE_LEAKS 0
 
 #if PLATFORM(SYMBIAN)

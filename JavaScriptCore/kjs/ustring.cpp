@@ -50,6 +50,8 @@ namespace KJS {
 extern const double NaN;
 extern const double Inf;
 
+COMPILE_ASSERT(sizeof(UChar) == 2, uchar_is_2_bytes)
+
 CString::CString(const char *c)
 {
   length = strlen(c);

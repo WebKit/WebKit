@@ -26,9 +26,19 @@
 #ifndef DeprecatedString_h
 #define DeprecatedString_h
 
-#include <ctype.h>
-#include <wtf/unicode/Unicode.h>
 #include "DeprecatedCString.h"
+
+#include <wtf/unicode/Unicode.h>
+
+#include <ctype.h>
+
+/* On ARM some versions of GCC don't pack structures by default so sizeof(DeprecatedChar)
+   will end up being != 2 which causes crashes since the code depends on that. */
+#if COMPILER(GCC) && PLATFORM(ARM)
+#define PACK_STRUCT __attribute__((packed))
+#else
+#define PACK_STRUCT
+#endif
 
 #if PLATFORM(CF)
 typedef const struct __CFString * CFStringRef;
@@ -73,7 +83,7 @@ public:
 
 private:
     unsigned short c;
-};
+} PACK_STRUCT;
 
 inline DeprecatedChar::DeprecatedChar() : c(0)
 {
@@ -227,13 +237,16 @@ struct DeprecatedStringData
     unsigned _length;
     mutable DeprecatedChar *_unicode;
     mutable char *_ascii;
-    char _internalBuffer[WEBCORE_DS_INTERNAL_BUFFER_SIZE]; // Pad out to a (((size + 1) & ~15) + 14) size
 
     unsigned _maxUnicode : 30;
     bool _isUnicodeValid : 1;
     bool _isHeapAllocated : 1; // Fragile, but the only way we can be sure the instance was created with 'new'.
     unsigned _maxAscii : 31;
     bool _isAsciiValid : 1;
+
+    // _internalBuffer must be at the end - otherwise it breaks on archs that
+    // don't pack structs on byte boundary, like some versions of gcc on ARM
+    char _internalBuffer[WEBCORE_DS_INTERNAL_BUFFER_SIZE]; // Pad out to a (((size + 1) & ~15) + 14) size
     
 private:
     DeprecatedStringData(const DeprecatedStringData &);
