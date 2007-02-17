@@ -477,13 +477,13 @@ IntPoint GraphicsContext::origin()
 void GraphicsContext::setPlatformFillColor(const Color& col)
 {
     // FIXME: this is probably a no-op but I'm not sure
-    notImplemented();
+    // notImplemented(); // commented-out because it's chatty and clutters output
 }
 
 void GraphicsContext::setPlatformStrokeColor(const Color& col)
 {
     // FIXME: this is probably a no-op but I'm not sure
-    notImplemented();
+    //notImplemented(); // commented-out because it's chatty and clutters output
 }
 
 void GraphicsContext::setPlatformStrokeThickness(float strokeThickness)
@@ -578,19 +578,51 @@ void GraphicsContext::strokeRect(const FloatRect&, float)
     notImplemented();
 }
 
-void GraphicsContext::setLineCap(LineCap)
+void GraphicsContext::setLineCap(LineCap lineCap)
 {
-    notImplemented();
+    if (paintingDisabled())
+        return;
+
+    cairo_line_cap_t cairoCap = CAIRO_LINE_CAP_BUTT;
+    switch (lineCap) {
+        case ButtCap:
+            // no-op
+            break;
+        case RoundCap:
+            cairoCap = CAIRO_LINE_CAP_ROUND;
+            break;
+        case SquareCap:
+            cairoCap = CAIRO_LINE_CAP_SQUARE;
+            break;
+    }
+    cairo_set_line_cap(m_data->context, cairoCap);
 }
 
-void GraphicsContext::setLineJoin(LineJoin)
+void GraphicsContext::setLineJoin(LineJoin lineJoin)
 {
-    notImplemented();
+    if (paintingDisabled())
+        return;
+
+    cairo_line_join_t cairoJoin = CAIRO_LINE_JOIN_MITER;
+    switch (lineJoin) {
+        case MiterJoin:
+            // no-op
+            break;
+        case RoundJoin:
+            cairoJoin = CAIRO_LINE_JOIN_ROUND;
+            break;
+        case BevelJoin:
+            cairoJoin = CAIRO_LINE_JOIN_BEVEL;
+            break;
+    }
+    cairo_set_line_join(m_data->context, cairoJoin);
 }
 
-void GraphicsContext::setMiterLimit(float)
+void GraphicsContext::setMiterLimit(float miter)
 {
-    notImplemented();
+    if (paintingDisabled())
+        return;
+    cairo_set_miter_limit(m_data->context, miter);
 }
 
 void GraphicsContext::setAlpha(float)

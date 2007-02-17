@@ -1,3 +1,40 @@
+2007-02-16  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Move Path implementation from TemporaryLinkStubs.cpp to
+        its own file.
+        Implement setLineCap, setLineJoin and setMiterLimit for
+        cairo's GraphicsContext.
+
+        * WebCoreSources.bkl:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setPlatformFillColor):
+        (WebCore::GraphicsContext::setPlatformStrokeColor):
+        (WebCore::GraphicsContext::setLineCap):
+        (WebCore::GraphicsContext::setLineJoin):
+        (WebCore::GraphicsContext::setMiterLimit):
+        * platform/graphics/cairo/PathCairo.cpp: Added.
+        (WebCore::Path::Path):
+        (WebCore::Path::~Path):
+        (WebCore::Path::contains):
+        (WebCore::Path::translate):
+        (WebCore::Path::boundingRect):
+        (WebCore::Path::operator=):
+        (WebCore::Path::clear):
+        (WebCore::Path::moveTo):
+        (WebCore::Path::addLineTo):
+        (WebCore::Path::addQuadCurveTo):
+        (WebCore::Path::addBezierCurveTo):
+        (WebCore::Path::addArcTo):
+        (WebCore::Path::closeSubpath):
+        (WebCore::Path::addArc):
+        (WebCore::Path::addRect):
+        (WebCore::Path::addEllipse):
+        (WebCore::Path::transform):
+        (WebCore::Path::apply):
+
 2007-02-16  Ada Chan  <adachan@apple.com>
 
         Reviewed by Adam and Maciej.

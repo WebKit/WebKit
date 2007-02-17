@@ -62,7 +62,6 @@
 #include "Node.h"
 #include "PageCache.h"
 #include "Pasteboard.h"
-#include "Path.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformScrollBar.h"
 #include "PlugInInfoStore.h"
@@ -229,26 +228,6 @@ int ScrollView::updateScrollInfo(short type, int current, int max, int pageSize)
 IntPoint ScrollView::windowToContents(const IntPoint& point) const { return point; }
 IntPoint ScrollView::contentsToWindow(const IntPoint& point) const { return point; }
 PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent) { return 0; }
-
-Path::Path(){ }
-Path::~Path(){ }
-Path::Path(const Path&){ }
-bool Path::contains(const FloatPoint&, WindRule rule) const{ return false; }
-void Path::translate(const FloatSize&){ }
-FloatRect Path::boundingRect() const { return FloatRect(); }
-Path& Path::operator=(const Path&){ return * this; }
-void Path::clear() { }
-void Path::moveTo(const FloatPoint&) { }
-void Path::addLineTo(const FloatPoint&) { }
-void Path::addQuadCurveTo(const FloatPoint&, const FloatPoint&) { }
-void Path::addBezierCurveTo(const FloatPoint&, const FloatPoint&, const FloatPoint&) { }
-void Path::addArcTo(const FloatPoint&, const FloatPoint&, float) { }
-void Path::closeSubpath() { }
-void Path::addArc(const FloatPoint&, float, float, float, bool) { }
-void Path::addRect(const FloatRect&) { }
-void Path::addEllipse(const FloatRect&) { }
-void Path::transform(const AffineTransform& transform) {}
-void Path::apply(void* info, PathApplierFunction) const {}
 
 PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize) : Scrollbar(client, orientation, controlSize) { notImplemented(); }
 PlatformScrollbar::~PlatformScrollbar() { notImplemented(); }
