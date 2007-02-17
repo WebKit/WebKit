@@ -774,6 +774,13 @@ void RenderTextControl::selectionChanged(bool userTriggered)
             element->dispatchHTMLEvent(selectEvent, true, false);
 }
 
+void RenderTextControl::autoscroll()
+{
+    RenderLayer* layer = m_innerText->renderer()->layer();
+    if (layer)
+        layer->autoscroll();
+}
+
 int RenderTextControl::scrollWidth() const
 {
     if (m_innerText)

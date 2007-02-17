@@ -1,3 +1,17 @@
+2007-02-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Mitz.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11534
+        <rdar://problem/4946947> REGRESSION: Readonly text fields don't scroll when selecting content
+
+        Test: fast/forms/input-readonly-autoscroll.html
+
+        Implemented autoscroll methods for RenderTextControl, so this works on non-editable text controls.
+
+        * rendering/RenderTextControl.cpp: (WebCore::RenderTextControl::autoscroll):
+        * rendering/RenderTextControl.h: (WebCore::RenderTextControl::shouldAutoscroll):
+
 2007-02-17  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Adam Roben.

@@ -1,3 +1,15 @@
+2007-02-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Mitz.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=11534
+        <rdar://problem/4946947> REGRESSION: Readonly text fields don't scroll when selecting content
+
+        * fast/forms/input-readonly-autoscroll-expected.checksum: Added.
+        * fast/forms/input-readonly-autoscroll-expected.png: Added.
+        * fast/forms/input-readonly-autoscroll-expected.txt: Added.
+        * fast/forms/input-readonly-autoscroll.html: Added.
+
 2007-02-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
