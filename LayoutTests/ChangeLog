@@ -1,3 +1,14 @@
+2007-02-17  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12479
+          ASSERTION FAILURE: resource->inCache() in WebCore::Cache::remove
+
+        * fast/loader/resources/simultaneous-reloads-assert-frame.html: Added.
+        * fast/loader/simultaneous-reloads-assert-expected.txt: Added.
+        * fast/loader/simultaneous-reloads-assert.html: Added.
+
 2007-02-16  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

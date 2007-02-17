@@ -160,25 +160,27 @@ void Cache::setMaximumSize(unsigned bytes)
 
 void Cache::remove(CachedResource* resource)
 {
-    ASSERT(resource->inCache());
+    // The resource may have already been removed by someone other than our caller,
+    // who needed a fresh copy for a reload. See <http://bugs.webkit.org/show_bug.cgi?id=12479#c6>.
+    if (resource->inCache()) {
+        // Remove from the resource map.
+        m_resources.remove(resource->url());
+        resource->setInCache(false);
 
-    // Remove from the resource map.
-    m_resources.remove(resource->url());
-    resource->setInCache(false);
+        // Remove from the appropriate LRU list.
+        removeFromLRUList(resource);
 
-    // Remove from the appropriate LRU list.
-    removeFromLRUList(resource);
+        // Notify all doc loaders that might be observing this object still that it has been
+        // extracted from the set of resources.
+        HashSet<DocLoader*>::iterator end = m_docLoaders.end();
+        for (HashSet<DocLoader*>::iterator itr = m_docLoaders.begin(); itr != end; ++itr)
+            (*itr)->removeCachedResource(resource);
 
-    // Notify all doc loaders that might be observing this object still that it has been
-    // extracted from the set of resources.
-    HashSet<DocLoader*>::iterator end = m_docLoaders.end();
-    for (HashSet<DocLoader*>::iterator itr = m_docLoaders.begin(); itr != end; ++itr)
-        (*itr)->removeCachedResource(resource);
-
-    // Subtract from our size totals.
-    m_currentSize -= resource->size();
-    if (resource->referenced())
-        m_liveResourcesSize -= resource->size();
+        // Subtract from our size totals.
+        m_currentSize -= resource->size();
+        if (resource->referenced())
+            m_liveResourcesSize -= resource->size();
+    }
 
     if (resource->canDelete())
         delete resource;
