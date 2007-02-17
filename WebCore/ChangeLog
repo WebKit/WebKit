@@ -1,3 +1,12 @@
+2007-02-17  Dave Hyatt <hyatt@apple.com>
+
+        Change how textarea resizers paint to more closely match the way the main window resizer paints.
+        
+        Reviewed by olliej
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintOverflowControls):
+
 2007-02-17  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Adam Roben.

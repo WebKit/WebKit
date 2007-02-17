@@ -1285,24 +1285,50 @@ void RenderLayer::paintOverflowControls(GraphicsContext* p, int tx, int ty, cons
     if (m_vBar)
         m_vBar->paint(p, damageRect);
     
-    // We fill our scroll corner with white if we have a resizer control and at least one scrollbar
-    // or if we have two scrollbars.
-    if ((m_hBar && m_vBar) || m_object->style()->resize() != RESIZE_NONE)  {
+    // We fill our scroll corner with white if we have a scrollbar that doesn't run all the way up to the
+    // edge of the box.
+    IntRect paddingBox(m_object->xPos() + m_object->borderLeft() + tx, 
+                       m_object->yPos() + m_object->borderTop() + ty, 
+                       m_object->width() - m_object->borderLeft() - m_object->borderRight(),
+                       m_object->height() - m_object->borderTop() - m_object->borderBottom());
+    IntRect hCorner;
+    if (m_hBar && paddingBox.width() - m_hBar->width() > 0) {
+        hCorner = IntRect(paddingBox.x() + m_hBar->width(),
+                          paddingBox.y() + paddingBox.height() - m_hBar->height(),
+                          paddingBox.width() - m_hBar->width(),
+                          m_hBar->height());
+        if (hCorner.intersects(damageRect))
+            p->fillRect(hCorner, Color::white);
+    }
+    if (m_vBar && paddingBox.height() - m_vBar->height() > 0) {
+        IntRect vCorner(paddingBox.x() + paddingBox.width() - m_vBar->width(),
+                        paddingBox.y() + m_vBar->height(),
+                        m_vBar->width(),
+                        paddingBox.height() - m_vBar->height());
+        if (vCorner != hCorner && vCorner.intersects(damageRect))
+            p->fillRect(vCorner, Color::white);
+    }
+
+    if (m_object->style()->resize() != RESIZE_NONE)  {
         IntRect absBounds(m_object->xPos() + tx, m_object->yPos() + ty, m_object->width(), m_object->height());
         IntRect scrollCorner = scrollCornerRect(m_object, absBounds);
         if (!scrollCorner.intersects(damageRect))
             return;
-        
-        if (m_hBar || m_vBar)
-            p->fillRect(scrollCorner, Color::white);
-   
-        if (m_object->style()->resize() != RESIZE_NONE) {
-            // Paint the resizer control.
-            static Image* resizeCornerImage;
-            if (!resizeCornerImage)
-                resizeCornerImage = Image::loadPlatformResource("textAreaResizeCorner");
-            IntPoint imagePoint(scrollCorner.right() - resizeCornerImage->width(), scrollCorner.bottom() - resizeCornerImage->height());
-            p->drawImage(resizeCornerImage, imagePoint);
+
+        // Paint the resizer control.
+        static Image* resizeCornerImage;
+        if (!resizeCornerImage)
+            resizeCornerImage = Image::loadPlatformResource("textAreaResizeCorner");
+        IntPoint imagePoint(scrollCorner.right() - resizeCornerImage->width(), scrollCorner.bottom() - resizeCornerImage->height());
+        p->drawImage(resizeCornerImage, imagePoint);
+
+        // Draw a frame around the resizer (1px grey line) if there are any scrollbars present.
+        // Clipping will exclude the right and bottom edges of this frame.
+        if (m_hBar || m_vBar) {
+            scrollCorner.setSize(IntSize(scrollCorner.width() + 1, scrollCorner.height() + 1));
+            p->setStrokeColor(Color(makeRGB(217, 217, 217)));
+            p->setStrokeThickness(1.0f);
+            p->drawRect(scrollCorner);
         }
     }
 }
