@@ -746,7 +746,7 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
         case CURSOR_NONE:
             return noneCursor();
         case CURSOR_NOT_ALLOWED:
-            return noDropCursor();
+            return notAllowedCursor();
         case CURSOR_DEFAULT:
             return pointerCursor();
     }

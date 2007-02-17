@@ -111,7 +111,7 @@ const Cursor& pointerCursor()
 
 const Cursor& crossCursor()
 {
-    static Cursor c = [NSCursor crosshairCursor];
+    static Cursor c = leakNamedCursor("crossHairCursor", 11, 11);
     return c;
 }
 
@@ -172,6 +172,12 @@ const Cursor& progressCursor()
 const Cursor& noDropCursor()
 {
     static Cursor c = leakNamedCursor("noDropCursor", 1, 1);
+    return c;
+}
+
+const Cursor& notAllowedCursor()
+{
+    static Cursor c = leakNamedCursor("notAllowedCursor", 11, 11);
     return c;
 }
 

@@ -89,7 +89,6 @@ namespace WebCore {
     const Cursor& iBeamCursor();
     const Cursor& waitCursor();
     const Cursor& helpCursor();
-
     const Cursor& eastResizeCursor();
     const Cursor& northResizeCursor();
     const Cursor& northEastResizeCursor();
@@ -108,6 +107,7 @@ namespace WebCore {
     const Cursor& cellCursor();
     const Cursor& contextMenuCursor();
     const Cursor& noDropCursor();
+    const Cursor& notAllowedCursor();
     const Cursor& progressCursor();
     const Cursor& aliasCursor();
     const Cursor& copyCursor();
