@@ -2,6 +2,43 @@
 
         Reviewed by Adam Roben.
 
+        Curl networking improvements inspired by Mike Emmel's patches in
+        http://bugs.webkit.org/show_bug.cgi?id=11332.
+        Fix FrameLoaderClientGdk due to changed FrameLoaderClient API.
+
+        * loader/gdk/FrameLoaderClientGdk.cpp: Massage for changed API.
+        (WebCore::FrameLoaderClientGdk::saveViewStateToItem):
+        (WebCore::FrameLoaderClientGdk::restoreViewState):
+        (WebCore::FrameLoaderClientGdk::generatedMIMETypeForURLScheme):
+        (WebCore::FrameLoaderClientGdk::willUseArchive):
+        * loader/gdk/FrameLoaderClientGdk.h: Ditto.
+        * platform/network/ResourceHandleInternal.h: Remember url and custom headers
+        for the request lifetime and free them at the end.
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/gdk/ResourceHandleCurl.cpp: Ditto.
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        * platform/network/gdk/ResourceHandleManager.cpp: url improvements:
+        - remove m_useSimple code-path since it wasn't used anywhere
+        - don't use hashmap for keeping track of outstanding jobs - curl does it anyway
+        - set custom headers from request
+        - enable gzip and deflate through Accept-Encoding
+        - setup curl to share cookies and DNS cache between requests
+        - enable persisting of cookies in a file (if client provides file name
+          for cookies via ResourceHandleManager::setCookieJarFileName())
+        (WebCore::ResourceHandleManager::ResourceHandleManager):
+        (WebCore::ResourceHandleManager::setCookieJarFileName):
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        (WebCore::ResourceHandleManager::removeFromCurl):
+        (WebCore::ResourceHandleManager::setupPUT):
+        (WebCore::ResourceHandleManager::setupPOST):
+        (WebCore::ResourceHandleManager::add):
+        (WebCore::ResourceHandleManager::cancel):
+        * platform/network/gdk/ResourceHandleManager.h:
+
+2007-02-17  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Adam Roben.
+
         Gdk fixes.
 
         * page/gdk/EventHandlerGdk.cpp: Comment out chatty message.

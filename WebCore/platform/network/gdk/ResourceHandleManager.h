@@ -40,30 +40,22 @@ public:
     static ResourceHandleManager* sharedInstance();
     void add(ResourceHandle*);
     void cancel(ResourceHandle*);
+    void setCookieJarFileName(const char* cookieJarFileName);
 
-    // If true, don't multiplex downloads: download completely one at a time.
-    void useSimpleTransfer(bool useSimple);
+    void setupPOST(ResourceHandle*);
+    void setupPUT(ResourceHandle*);
 
 private:
     ResourceHandleManager();
     void downloadTimerCallback(Timer<ResourceHandleManager>*);
-    void remove(ResourceHandle*);
+    void removeFromCurl(ResourceHandle*);
 
-    bool m_useSimple;
-    HashSet<ResourceHandle*>* jobs;
     Timer<ResourceHandleManager> m_downloadTimer;
-    CURLM* curlMultiHandle; // not freed
+    CURLM* m_curlMultiHandle; // FIXME: never freed
+    CURLSH* m_curlShareHandle; // FIXME: never freed
+    char* m_cookieJarFileName; // FIXME: never freed
 
-    // curl filehandles to poll with select
-    fd_set fdread;
-    fd_set fdwrite;
-    fd_set fdexcep;
-
-    int maxfd;
-    char error_buffer[CURL_ERROR_SIZE];
-
-    // NULL-terminated list of supported protocols
-    const char* const* curl_protocols; // not freed
+    char m_curlErrorBuffer[CURL_ERROR_SIZE];
 };
 
 }

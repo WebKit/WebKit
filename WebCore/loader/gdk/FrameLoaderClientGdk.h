@@ -161,8 +161,8 @@ namespace WebCore {
         virtual String generatedMIMETypeForURLScheme(const String&) const;
 
         virtual void frameLoadCompleted();
-        virtual void saveScrollPositionAndViewStateToItem(HistoryItem*);
-        virtual void restoreScrollPositionAndViewState();
+        virtual void saveViewStateToItem(HistoryItem*);
+        virtual void restoreViewState();
         virtual void provisionalLoadStarted();
         virtual void didFinishLoad();
         virtual void prepareForDataSourceReplacement();

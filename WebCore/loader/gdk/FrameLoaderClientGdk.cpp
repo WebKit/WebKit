@@ -223,8 +223,17 @@ void FrameLoaderClientGdk::dispatchDidFinishLoad()
     frameGdk->onDidFinishLoad();
 }
 
-
 void FrameLoaderClientGdk::frameLoadCompleted() 
+{
+    notImplemented(); 
+}
+
+void FrameLoaderClientGdk::saveViewStateToItem(HistoryItem*)
+{
+    notImplemented(); 
+}
+
+void FrameLoaderClientGdk::restoreViewState()
 {
     notImplemented(); 
 }
@@ -269,7 +278,6 @@ bool FrameLoaderClientGdk::canHandleRequest(const ResourceRequest&) const { notI
 bool FrameLoaderClientGdk::canShowMIMEType(const String&) const { notImplemented(); return false; }
 bool FrameLoaderClientGdk::representationExistsForURLScheme(const String&) const { notImplemented(); return false; }
 String FrameLoaderClientGdk::generatedMIMETypeForURLScheme(const String&) const { notImplemented(); return String(); }
-void FrameLoaderClientGdk::restoreScrollPositionAndViewState() { notImplemented(); }
 void FrameLoaderClientGdk::provisionalLoadStarted() { notImplemented(); }
 void FrameLoaderClientGdk::didFinishLoad() { notImplemented(); }
 void FrameLoaderClientGdk::prepareForDataSourceReplacement() { notImplemented(); }
@@ -289,7 +297,6 @@ ResourceError FrameLoaderClientGdk::cannotShowMIMETypeError(const ResourceRespon
 ResourceError FrameLoaderClientGdk::fileDoesNotExistError(const ResourceResponse&) { notImplemented(); return ResourceError(); }
 bool FrameLoaderClientGdk::shouldFallBack(const ResourceError&) { notImplemented(); return false; }
 bool FrameLoaderClientGdk::willUseArchive(ResourceLoader*, const ResourceRequest&, const KURL& originalURL) const { notImplemented(); return false; }
-void FrameLoaderClientGdk::saveScrollPositionAndViewStateToItem(HistoryItem*) { notImplemented(); }
 void FrameLoaderClientGdk::saveDocumentViewToPageCache(PageCache*) { notImplemented(); }
 bool FrameLoaderClientGdk::canCachePage() const { notImplemented(); return false; }
 Frame* FrameLoaderClientGdk::dispatchCreatePage() { notImplemented(); return 0; }
