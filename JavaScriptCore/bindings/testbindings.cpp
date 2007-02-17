@@ -302,6 +302,7 @@ NPObject *myAllocate ()
     newInstance->doubleValue = 666.666;
     newInstance->intValue = 1234;
     newInstance->boolValue = true;
+    newInstance->stringValue.type = NPVariantType_String;
     newInstance->stringValue.value.stringValue.UTF8Length = strlen ("Hello world");
     newInstance->stringValue.value.stringValue.UTF8Characters = strdup ("Hello world");
     
