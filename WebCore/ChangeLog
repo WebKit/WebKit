@@ -1,3 +1,12 @@
+2007-02-16  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Adam and Maciej.
+
+        Use a RefPtr to store the old hover node.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateHoverActiveState):
+
 2007-02-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
