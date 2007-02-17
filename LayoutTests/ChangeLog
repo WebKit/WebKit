@@ -1,3 +1,15 @@
+2007-02-17  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Adam.
+
+        test for http://bugs.webkit.org/show_bug.cgi?id=11476
+        <img> tags nested inside <map> where not showing up
+
+        * fast/images/image-in-map-expected.checksum: Added.
+        * fast/images/image-in-map-expected.png: Added.
+        * fast/images/image-in-map-expected.txt: Added.
+        * fast/images/image-in-map.html: Added.
+
 2007-02-17  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

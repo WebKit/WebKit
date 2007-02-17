@@ -1,3 +1,15 @@
+2007-02-17  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Adam.
+
+        fix http://bugs.webkit.org/show_bug.cgi?id=11476
+        <img> tags nested inside <map> where not showing up
+
+        Test: fast/images/image-in-map.html
+
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::checkDTD):
+
 2007-02-17  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

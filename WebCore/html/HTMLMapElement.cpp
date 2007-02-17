@@ -49,7 +49,8 @@ HTMLMapElement::~HTMLMapElement()
 bool HTMLMapElement::checkDTD(const Node* newChild)
 {
     // FIXME: This seems really odd, allowing only blocks inside map elements.
-    return newChild->hasTagName(areaTag) || newChild->hasTagName(scriptTag) || inBlockTagList(newChild);
+    return newChild->hasTagName(areaTag) || newChild->hasTagName(scriptTag) || inBlockTagList(newChild)
+        || (!document()->inStrictMode() && newChild->hasTagName(imgTag));
 }
 
 bool HTMLMapElement::mapMouseEvent(int x, int y, const IntSize& size, HitTestResult& result)
