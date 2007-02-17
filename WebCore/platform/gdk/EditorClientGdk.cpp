@@ -89,7 +89,7 @@ bool EditorClientGdk::shouldEndEditing(WebCore::Range*)
 bool EditorClientGdk::shouldInsertText(String, Range*, EditorInsertAction)
 {
     notImplemented();
-    return false;
+    return true;
 }
 
 bool EditorClientGdk::shouldApplyStyle(WebCore::CSSStyleDeclaration*,

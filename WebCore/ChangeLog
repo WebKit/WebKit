@@ -1,3 +1,14 @@
+2007-02-17  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Gdk fixes.
+
+        * page/gdk/EventHandlerGdk.cpp: Comment out chatty message.
+        (WebCore::EventHandler::handleDrag):
+        * platform/gdk/EditorClientGdk.cpp: Enable entering text into text field.
+        (WebCore::EditorClientGdk::shouldInsertText):
+
 2007-02-16  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Adam Roben.
