@@ -116,6 +116,9 @@ namespace WebCore {
         
         IntRect windowResizerRect();
         bool resizerOverlapsContent() const;
+        void adjustOverlappingScrollbarCount(int overlapDelta);
+        
+        virtual void setParent(ScrollView*);
 
         void addToDirtyRegion(const IntRect&);
         void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);

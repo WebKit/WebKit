@@ -116,7 +116,7 @@ namespace WebCore {
         void setContainingWindow(HWND);
         HWND containingWindow() const;
 
-        void setParent(ScrollView*);
+        virtual void setParent(ScrollView*);
         ScrollView* parent() const;
 
         virtual void geometryChanged() const {};
