@@ -223,7 +223,7 @@ void HTMLInputElement::updateFocusAppearance(bool restorePreviousSelection)
 
 void HTMLInputElement::aboutToUnload()
 {
-    if (isTextField() && document()->frame())
+    if (isTextField() && focused() && document()->frame())
         document()->frame()->textFieldDidEndEditing(this);
 }
 
@@ -242,7 +242,7 @@ void HTMLInputElement::dispatchBlurEvent()
     if (isTextField() && document()->frame()) {
         if (inputType() == PASSWORD)
             document()->frame()->setSecureKeyboardEntry(false);
-        document()->frame()->textFieldDidEndEditing(static_cast<Element*>(this));
+        document()->frame()->textFieldDidEndEditing(this);
     }
     HTMLGenericFormElement::dispatchBlurEvent();
 }
@@ -1168,7 +1168,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
     if (evt->type() == keypressEvent && evt->isKeyboardEvent()) {
         bool clickElement = false;
 
-        if (isTextField() && document()->frame()
+        if (isTextField() && focused() && document()->frame()
                 && document()->frame()->doTextFieldCommandFromEvent(this, static_cast<KeyboardEvent*>(evt))) {
             evt->setDefaultHandled();
             return;

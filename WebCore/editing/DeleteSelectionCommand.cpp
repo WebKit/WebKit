@@ -558,7 +558,9 @@ void DeleteSelectionCommand::doApply()
     if (!m_replace) {
         Node* startNode = m_selectionToDelete.start().node();
         Node* ancestorNode = startNode ? startNode->shadowAncestorNode() : 0;
-        if (ancestorNode && ancestorNode->hasTagName(inputTag) && static_cast<HTMLInputElement*>(ancestorNode)->isTextField())
+        if (ancestorNode && ancestorNode->hasTagName(inputTag)
+                && static_cast<HTMLInputElement*>(ancestorNode)->isTextField()
+                && ancestorNode->focused())
             document()->frame()->textWillBeDeletedInTextField(static_cast<Element*>(ancestorNode));
     }
 

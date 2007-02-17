@@ -487,8 +487,9 @@ void RenderTextControl::subtreeHasChanged()
     HTMLGenericFormElement* element = static_cast<HTMLGenericFormElement*>(node());
     if (m_multiLine) {
         element->setValueMatchesRenderer(false);
-        if (Frame* frame = document()->frame())
-            frame->textDidChangeInTextArea(element);
+        if (element->focused())
+            if (Frame* frame = document()->frame())
+                frame->textDidChangeInTextArea(element);
     } else {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(element);
         input->setValueFromRenderer(input->constrainValue(text()));
@@ -500,11 +501,13 @@ void RenderTextControl::subtreeHasChanged()
             startSearchEventTimer();
 
         if (!wasDirty) {
-            if (Frame* frame = document()->frame())
-                frame->textFieldDidBeginEditing(input);
+            if (input->focused())
+                if (Frame* frame = document()->frame())
+                    frame->textFieldDidBeginEditing(input);
         }
-        if (Frame* frame = document()->frame())
-            frame->textDidChangeInTextField(input);
+        if (input->focused())
+            if (Frame* frame = document()->frame())
+                frame->textDidChangeInTextField(input);
     }
 }
 

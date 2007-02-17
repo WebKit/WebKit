@@ -1,3 +1,24 @@
+2007-02-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix <rdar://problem/4990864> ASSERT in FormDelegate.m while dragging text between frames
+
+        This symptom is specific to Safari, so no layout test.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::doApply): Only call textWillBeDeletedInTextField if the
+        text field is focused.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::aboutToUnload): Only call textFieldDidEndEditing if the text
+        field is focused.
+        (WebCore::HTMLInputElement::dispatchBlurEvent): Remove unneeded type cast.
+        (WebCore::HTMLInputElement::defaultEventHandler): Only call doTextFieldCommandFromEvent if
+        the text field is focused.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::subtreeHasChanged): Only call textDidChangeInTextArea,
+        textFieldDidBeginEditing, and textDidChangeInTextField if the element is focused.
+
 2007-02-16  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam.
