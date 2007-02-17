@@ -179,8 +179,7 @@ bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> e, ExceptionCode&, 
     DeprecatedPtrList<Node> nodeChain;
     Node *n;
 
-    // For SVG we have to dispatch "beyond" shadow tree boundaries.
-    for (n = this; n; n = n->isShadowNode() ? n->shadowParentNode() : n->parentNode()) {
+    for (n = this; n; n = n->eventParentNode()) {
         n->ref();
         nodeChain.prepend(n);
     }

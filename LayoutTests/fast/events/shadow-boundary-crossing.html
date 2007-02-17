@@ -1,0 +1,42 @@
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript">
+        var fired = false;
+
+        function selectStart(event)
+        {
+            fired = true;
+        }
+
+        function test()
+        {
+            if (!window.layoutTestController)
+                return;
+            layoutTestController.dumpAsText();
+
+            var target = document.getElementById("target");
+            var x = target.offsetLeft + target.offsetWidth / 2;
+            var y = target.offsetTop + target.offsetHeight / 2;
+
+            eventSender.mouseMoveTo(x, y);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+
+            document.getElementById("result").innerText = fired ? "FAIL" : "PASS";
+        }
+
+        addEventListener("selectstart", selectStart, true);
+    </script>
+</head>
+<body onload="test()">
+    <p>
+        Test for <i><a href="http://bugs.webkit.org/show_bug.cgi?id=12780">http://bugs.webkit.org/show_bug.cgi?id=12780</a>
+        REGRESSION (r19341-r19385): Reproducible crash in "onselectstart" event</i>.
+    </p>
+    <p>
+        Result: <span id="result">cannot run interactively</span>
+    </p>
+    <input id="target">
+</body>
+</html>

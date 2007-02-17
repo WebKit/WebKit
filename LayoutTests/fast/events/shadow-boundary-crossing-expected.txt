@@ -1,0 +1,5 @@
+Test for http://bugs.webkit.org/show_bug.cgi?id=12780 REGRESSION (r19341-r19385): Reproducible crash in "onselectstart" event.
+
+Result: PASS
+
+

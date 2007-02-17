@@ -1,3 +1,25 @@
+2007-02-16  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12780
+          REGRESSION (r19341-r19385): Reproducible crash in "onselectstart" event
+
+        Test: fast/events/shadow-boundary-crossing.html
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchGenericEvent): Changed to use the new
+        eventParentNode() function for constructing the chain of ancestors for
+        capture and bubbling.
+        * dom/Node.h:
+        (WebCore::Node::eventParentNode): Added. Returns the node's parent for the
+        purpose of of event capture and bubbling. The base class implementation is
+        to return the parent node.
+        * ksvg2/svg/SVGElement.h:
+        (WebCore::SVGElement::eventParentNode): Added. Since in SVG events bubble
+        to and can be captured across the shadow DOM boundary, returns the shadow parent
+        for shadow nodes.
+
 2007-02-17  Dave Hyatt <hyatt@apple.com>
 
         Change how textarea resizers paint to more closely match the way the main window resizer paints.
