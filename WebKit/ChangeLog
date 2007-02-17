@@ -1,3 +1,15 @@
+2007-02-16  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        - fixed <rdar://problem/4811446> "Check Grammar" checkbox in Spelling+Grammar window doesn't 
+        live update with menu change in WebKit
+
+        * WebView/WebView.mm:
+        (-[WebView setGrammarCheckingEnabled:]):
+        Use sekrit AppKit knowledge to tell NSSpellChecker about the change, since there's no API
+        for this yet. Also restructured a little to avoid extra work when the value hasn't changed.
+
 2007-02-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam

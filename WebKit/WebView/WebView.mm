@@ -3150,10 +3150,16 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 // FIXME: This method should be merged into WebViewEditing when we're not in API freeze
 - (void)setGrammarCheckingEnabled:(BOOL)flag
 {
-    if (grammarCheckingEnabled != flag) {
-        grammarCheckingEnabled = flag;
-        [[NSUserDefaults standardUserDefaults] setBool:grammarCheckingEnabled forKey:WebGrammarCheckingEnabled];
-    }
+    if (grammarCheckingEnabled == flag)
+        return;
+    
+    grammarCheckingEnabled = flag;
+    [[NSUserDefaults standardUserDefaults] setBool:grammarCheckingEnabled forKey:WebGrammarCheckingEnabled];    
+    
+    // FIXME 4811447: workaround for lack of API
+    NSSpellChecker *spellChecker = [NSSpellChecker sharedSpellChecker];
+    if ([spellChecker respondsToSelector:@selector(_updateGrammar)])
+        [spellChecker performSelector:@selector(_updateGrammar)];
     
     // We call _preflightSpellChecker when turning continuous spell checking on, but we don't need to do that here
     // because grammar checking only occurs on code paths that already preflight spell checking appropriately.
