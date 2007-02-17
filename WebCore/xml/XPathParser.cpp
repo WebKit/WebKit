@@ -446,6 +446,22 @@ int Parser::lex(void* data)
     return tok.type;
 }
 
+bool Parser::expandQName(const String& qName, String& localName, String& namespaceURI)
+{
+    int colon = qName.find(':');
+    if (colon >= 0) {
+        if (!m_resolver)
+            return false;
+        namespaceURI = m_resolver->lookupNamespaceURI(qName.left(colon));
+        if (namespaceURI.isNull())
+            return false;
+        localName = qName.substring(colon + 1);
+    } else
+        localName = qName;
+    
+    return true;
+}
+
 Expression* Parser::parseStatement(const String& statement, PassRefPtr<XPathNSResolver> resolver, ExceptionCode& ec)
 {
     reset(statement);

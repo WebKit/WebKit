@@ -1,6 +1,7 @@
 /*
  * Copyright 2005 Frerich Raabe <raabe@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,6 +91,7 @@ void xpathyyerror(const char *str) { }
 %type <step> DescendantOrSelf
 %type <str> NodeTest
 %type <expr> Predicate
+%type <predList> OptionalPredicateList
 %type <predList> PredicateList
 %type <step> AbbreviatedStep
 %type <expr> Expr
@@ -174,33 +176,61 @@ RelativeLocationPath:
     ;
 
 Step:
-    NodeTest
+    NodeTest OptionalPredicateList
     {
-        $$ = new Step(Step::ChildAxis, *$1);
+        if ($2) {
+            $$ = new Step(Step::ChildAxis, *$1, *$2);
+            PARSER->deletePredicateVector($2);
+        } else
+            $$ = new Step(Step::ChildAxis, *$1);
         PARSER->deleteString($1);
         PARSER->registerParseNode($$);
     }
     |
-    NodeTest PredicateList
+    NAMETEST OptionalPredicateList
     {
-        $$ = new Step(Step::ChildAxis, *$1, *$2);
+        String localName;
+        String namespaceURI;
+        if (!PARSER->expandQName(*$1, localName, namespaceURI)) {
+            PARSER->m_gotNamespaceError = true;
+            YYABORT;
+        }
+        
+        if ($2) {
+            $$ = new Step(Step::ChildAxis, localName, namespaceURI, *$2);
+            PARSER->deletePredicateVector($2);
+        } else
+            $$ = new Step(Step::ChildAxis, localName, namespaceURI);
         PARSER->deleteString($1);
-        PARSER->deletePredicateVector($2);
         PARSER->registerParseNode($$);
     }
     |
-    AxisSpecifier NodeTest
+    AxisSpecifier NodeTest OptionalPredicateList
     {
-        $$ = new Step($1, *$2);
+        if ($3) {
+            $$ = new Step($1, *$2, *$3);
+            PARSER->deletePredicateVector($3);
+        } else
+            $$ = new Step($1, *$2);
         PARSER->deleteString($2);
         PARSER->registerParseNode($$);
     }
     |
-    AxisSpecifier NodeTest PredicateList
+    AxisSpecifier NAMETEST OptionalPredicateList
     {
-        $$ = new Step($1, *$2, *$3);
+        String localName;
+        String namespaceURI;
+        if (!PARSER->expandQName(*$2, localName, namespaceURI)) {
+            PARSER->m_gotNamespaceError = true;
+            YYABORT;
+        }
+
+        if ($3) {
+            $$ = new Step($1, localName, namespaceURI, *$3);
+            PARSER->deletePredicateVector($3);
+        } else
+            $$ = new Step($1, localName, namespaceURI);
         PARSER->deleteString($2);
-        PARSER->deletePredicateVector($3);
         PARSER->registerParseNode($$);
     }
     |
@@ -217,26 +247,6 @@ AxisSpecifier:
     ;
 
 NodeTest:
-    NAMETEST
-    {
-        int colon = $$->find(':');
-        if (colon >= 0) {
-            XPathNSResolver* resolver = PARSER->resolver();
-            if (!resolver) {
-                PARSER->m_gotNamespaceError = true;
-                YYABORT;
-            }
-            PARSER->m_currentNamespaceURI = resolver->lookupNamespaceURI($$->left(colon));
-            if (PARSER->m_currentNamespaceURI.isNull()) {
-                PARSER->m_gotNamespaceError = true;
-                YYABORT;
-            }
-            $$ = new String($1->substring(colon + 1));
-            PARSER->deleteString($1);
-            PARSER->registerString($$);
-        }
-    }
-    |
     NODETYPE '(' ')'
     {
         $$ = new String(*$1 + "()");
@@ -254,6 +264,15 @@ NodeTest:
         PARSER->deleteString($3);
         PARSER->registerString($$);
     }
+    ;
+
+OptionalPredicateList:
+    /* empty */
+    {
+        $$ = 0;
+    }
+    |
+    PredicateList
     ;
 
 PredicateList:

@@ -1,6 +1,7 @@
 /*
  * Copyright 2005 Frerich Raabe <raabe@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,12 +39,18 @@ namespace WebCore {
 namespace XPath {
 
 Step::Step(Axis axis, const String& nodeTest, const Vector<Predicate*>& predicates)
-    : m_axis(axis), m_nodeTest(nodeTest), m_predicates(predicates)
+    : m_axis(axis)
+    , m_nodeTest(nodeTest)
+    , m_predicates(predicates)
 {
-    Parser* parser = Parser::current();
-    ASSERT(parser);
-    m_namespaceURI = parser->m_currentNamespaceURI;
-    parser->m_currentNamespaceURI = String();
+}
+
+Step::Step(Axis axis, const String& nodeTest, const String& namespaceURI, const Vector<Predicate*>& predicates)
+    : m_axis(axis)
+    , m_nodeTest(nodeTest)
+    , m_namespaceURI(namespaceURI)
+    , m_predicates(predicates)
+{
 }
 
 Step::~Step()

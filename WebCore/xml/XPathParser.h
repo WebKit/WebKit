@@ -63,6 +63,8 @@ namespace WebCore {
             Parser();
 
             XPathNSResolver* resolver() const { return m_resolver.get(); }
+            bool expandQName(const String& qName, String& localName, String& namespaceURI);
+
             Expression* parseStatement(const String& statement, PassRefPtr<XPathNSResolver>, ExceptionCode&);
 
             static Parser* current() { return currentParser; }
@@ -71,7 +73,6 @@ namespace WebCore {
 
             Expression* m_topExpr;
             bool m_gotNamespaceError;
-            String m_currentNamespaceURI;
 
             void registerParseNode(ParseNode*);
             void unregisterParseNode(ParseNode*);

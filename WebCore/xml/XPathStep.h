@@ -50,6 +50,7 @@ namespace WebCore {
             };
 
             Step(Axis, const String& nodeTest, const Vector<Predicate*>& predicates = Vector<Predicate*>());
+            Step(Axis, const String& nodeTest, const String& namespaceURI, const Vector<Predicate*>& predicates = Vector<Predicate*>());
             ~Step();
 
             NodeVector evaluate(Node* context) const;
