@@ -3,7 +3,8 @@
         Reviewed by Adam.
 
         fix http://bugs.webkit.org/show_bug.cgi?id=11476
-        <img> tags nested inside <map> where not showing up
+        <rdar://problem/4960247> REGRESSION: Nesting the IMG tag inside of a
+        MAP fails to render correctly in ToT
 
         Test: fast/images/image-in-map.html
 
