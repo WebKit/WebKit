@@ -28,7 +28,7 @@
 
 #include <math.h>
 
-#if PLATFORM(WIN)
+#if COMPILER(MSVC)
 
 #include "kjs/operations.h"
 #include "kjs/value.h"
@@ -83,17 +83,13 @@ inline double wtf_atan2(double x, double y)
     return result;
 }
 
-#if COMPILER(MSVC)
-
 // Work around a bug in the Microsoft CRT, where fmod(x, +-infinity) yields NaN instead of x.
 inline double wtf_fmod(double x, double y) { return (!isinf(x) && isinf(y)) ? x : fmod(x, y); }
 
 #define fmod(x, y) wtf_fmod(x, y)
 
-#endif // #if COMPILER(MSVC)
-
 #define atan2(x, y) wtf_atan2(x, y)
 
-#endif // #if PLATFORM(WIN)
+#endif // #if COMPILER(MSVC)
 
 #endif // #ifndef WTF_MathExtras_h

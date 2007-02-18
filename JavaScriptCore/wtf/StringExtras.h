@@ -29,7 +29,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#if PLATFORM(WIN)
+#if COMPILER(MSVC)
 
 inline int snprintf(char *str, size_t size, const char* format, ...) 
 {

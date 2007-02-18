@@ -1,3 +1,15 @@
+2007-02-18  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Adam Roben.
+
+        Fix cases where MSVC-specific code was identified as Win32 platform
+        code. (as it should be compiled for e.g. wx port when using MSVC too)
+        
+        * wtf/Assertions.h: 
+        * wtf/MathExtras.h:
+        * wtf/StringExtras.h:
+        changed PLATFORM(WIN) sections to COMPILER(MSVC) as necessary
+
 2007-02-17  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Adam Roben.
