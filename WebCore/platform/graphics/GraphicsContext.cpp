@@ -38,7 +38,7 @@ struct GraphicsContextState {
     : strokeStyle(SolidStroke)
     , strokeThickness(0)
     , strokeColor(Color::black)
-    , fillColor(Color::black)
+    , fillColor(Color::transparent)
     , textDrawingMode(cTextFill)
     , paintingDisabled(false)
     {}

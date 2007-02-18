@@ -1,3 +1,13 @@
+2007-02-17  David Hyatt  <hyatt@apple.com>
+
+        Fix textarea resizers to not fill with black by making sure the fill color starts off as
+        transparent instead of black.
+
+        Reviewed by aroben
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+
 2007-02-17  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Adam.
