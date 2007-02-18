@@ -34,21 +34,26 @@
 namespace WebCore {
 
 // true if there is more to parse
-static inline bool skipWhiteSpace(const String& str, int& pos)
+static inline bool skipWhiteSpace(const String& str, int& pos, bool fromHttpEquivMeta)
 {
     int len = str.length();
 
-    while (pos != len && (str[pos] == '\t' || str[pos] == ' '))
-        ++pos;
+    if (fromHttpEquivMeta)
+        while (pos != len && str[pos] <= ' ')
+            ++pos;
+    else
+        while (pos != len && (str[pos] == '\t' || str[pos] == ' '))
+            ++pos;
+
     return pos != len;
 }
 
-bool parseHTTPRefresh(const String& refresh, double& delay, String& url)
+bool parseHTTPRefresh(const String& refresh, bool fromHttpEquivMeta, double& delay, String& url)
 {
     int len = refresh.length();
     int pos = 0;
     
-    if (!skipWhiteSpace(refresh, pos))
+    if (!skipWhiteSpace(refresh, pos, fromHttpEquivMeta))
         return false;
     
     while (pos != len && refresh[pos] != ',' && refresh[pos] != ';')
@@ -66,14 +71,14 @@ bool parseHTTPRefresh(const String& refresh, double& delay, String& url)
             return false;
         
         ++pos;
-        skipWhiteSpace(refresh, pos);
+        skipWhiteSpace(refresh, pos, fromHttpEquivMeta);
         int urlStartPos = pos;
         if (refresh.find("url", urlStartPos, false) == urlStartPos) {
             urlStartPos += 3;
-            skipWhiteSpace(refresh, urlStartPos);
+            skipWhiteSpace(refresh, urlStartPos, fromHttpEquivMeta);
             if (refresh[urlStartPos] == '=') {
                 ++urlStartPos;
-                skipWhiteSpace(refresh, urlStartPos);
+                skipWhiteSpace(refresh, urlStartPos, fromHttpEquivMeta);
             } else
                 urlStartPos = pos;  // e.g. "Refresh: 0; url.html"
         }

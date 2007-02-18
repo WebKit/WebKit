@@ -1,3 +1,26 @@
+2007-02-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Hyatt.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12799
+        REGRESSION: Webpage doesn't load correctly (www.cincinnati.com
+        redirects to the wrong URL)
+
+        Test: http/tests/misc/refresh-meta-with-newline.html
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::skipWhiteSpace):
+        (WebCore::parseHTTPRefresh):
+        * platform/network/HTTPParsers.h:
+        In HTML, all characters with codes <= 0x20 are whitespace, while in
+        HTTP, only space and tab are such.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedFirstData):
+        Pass parseHTTPRefresh() a flag telling about the source of data.
+
 2007-02-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).

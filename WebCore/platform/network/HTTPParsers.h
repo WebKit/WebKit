@@ -33,7 +33,7 @@ namespace WebCore {
 
     class String;
 
-    bool parseHTTPRefresh(const String& refresh, double& delay, String& url);
+    bool parseHTTPRefresh(const String& refresh, bool fromHttpEquivMeta, double& delay, String& url);
 }
 
 #endif

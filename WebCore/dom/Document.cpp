@@ -1686,7 +1686,7 @@ void Document::processHttpEquiv(const String &equiv, const String &content)
     } else if (equalIgnoringCase(equiv, "refresh")) {
         double delay;
         String url;
-        if (frame && parseHTTPRefresh(content, delay, url)) {
+        if (frame && parseHTTPRefresh(content, true, delay, url)) {
             if (url.isEmpty())
                 frame->loader()->scheduleRedirection(delay, frame->loader()->url().url(), delay <= 1);
             else

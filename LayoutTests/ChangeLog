@@ -1,3 +1,14 @@
+2007-02-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Hyatt.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12799
+        REGRESSION: Webpage doesn't load correctly (www.cincinnati.com
+        redirects to the wrong URL)
+
+        * http/tests/misc/refresh-meta-with-newline-expected.txt: Added.
+        * http/tests/misc/refresh-meta-with-newline.html: Added.
+
 2007-02-17  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Adam.
