@@ -56,6 +56,8 @@ RenderTableSection::RenderTableSection(Node* node)
     , m_outerBorderBottom(0)
     , m_overflowLeft(0)
     , m_overflowWidth(0)
+    , m_overflowTop(0)
+    , m_overflowHeight(0)
     , m_hasOverflowingCell(false)
 {
     // init RenderObject attributes
@@ -371,6 +373,8 @@ int RenderTableSection::layoutRows(int toAdd)
     m_width = table()->contentWidth();
     m_overflowLeft = 0;
     m_overflowWidth = m_width;
+    m_overflowTop = 0;
+    m_overflowHeight = 0;
     m_hasOverflowingCell = false;
 
     if (table()->collapseBorders())
@@ -539,7 +543,9 @@ int RenderTableSection::layoutRows(int toAdd)
 
             m_overflowLeft = min(m_overflowLeft, cell->xPos() + cell->overflowLeft(false));
             m_overflowWidth = max(m_overflowWidth, cell->xPos() + cell->overflowWidth(false));
-            m_hasOverflowingCell |= cell->overflowLeft(false) || cell->overflowWidth(false) > cell->width();
+            m_overflowTop = min(m_overflowTop, cell->yPos() + cell->overflowTop(false));
+            m_overflowHeight = max(m_overflowHeight, cell->yPos() + cell->overflowHeight(false));
+            m_hasOverflowingCell |= cell->overflowLeft(false) || cell->overflowWidth(false) > cell->width() || cell->overflowTop(false) || cell->overflowHeight(false) > cell->height();
 
             // If the cell moved, we have to repaint it as well as any floating/positioned
             // descendants.  An exception is if we need a layout.  In this case, we know we're going to
@@ -550,6 +556,7 @@ int RenderTableSection::layoutRows(int toAdd)
     }
 
     m_height = m_rowPos[totalRows];
+    m_overflowHeight = max(m_overflowHeight, m_height);
     return m_height;
 }
 
@@ -833,23 +840,26 @@ void RenderTableSection::paint(PaintInfo& paintInfo, int tx, int ty)
     int os = 2 * maximalOutlineSize(paintPhase);
     unsigned startrow = 0;
     unsigned endrow = totalRows;
-    for (; startrow < totalRows; startrow++) {
-        if (ty + m_rowPos[startrow + 1] >= y - os)
-            break;
-    }
-    if (startrow == totalRows && ty + m_rowPos[totalRows] + table()->outerBorderBottom() >= y - os)
-        startrow--;
+    
+    // If some cell overflows, just paint all of them.
+    if (!m_hasOverflowingCell) {
+        for (; startrow < totalRows; startrow++) {
+            if (ty + m_rowPos[startrow + 1] >= y - os)
+                break;
+        }
+        if (startrow == totalRows && ty + m_rowPos[totalRows] + table()->outerBorderBottom() >= y - os)
+            startrow--;
 
-    for (; endrow > 0; endrow--) {
-        if (ty + m_rowPos[endrow - 1] <= y + h + os)
-            break;
+        for (; endrow > 0; endrow--) {
+            if (ty + m_rowPos[endrow - 1] <= y + h + os)
+                break;
+        }
+        if (!endrow && ty + m_rowPos[0] - table()->outerBorderTop() <= y + h + os)
+            endrow++;
     }
-    if (!endrow && ty + m_rowPos[0] - table()->outerBorderTop() <= y + h + os)
-        endrow++;
 
     unsigned startcol = 0;
     unsigned endcol = totalCols;
-    // If some cell overflows, just paint all of them.
     // FIXME: Implement RTL.
     if (!m_hasOverflowingCell && style()->direction() == LTR) {
         for (; startcol < totalCols; startcol++) {

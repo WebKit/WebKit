@@ -299,8 +299,8 @@ int InlineFlowBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPo
             } else if (!curr->object()->isCompact() && (!curr->object()->isListMarker() || static_cast<RenderListMarker*>(curr->object())->isInside())) {
                 x += curr->object()->marginLeft();
                 curr->setXPos(x);
-                leftPosition = min(x, leftPosition);
-                rightPosition = max(x + curr->width(), rightPosition);
+                leftPosition = min(x + curr->object()->overflowLeft(false), leftPosition);
+                rightPosition = max(x + curr->object()->overflowWidth(false), rightPosition);
                 x += curr->width() + curr->object()->marginRight();
             }
         }

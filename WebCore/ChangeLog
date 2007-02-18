@@ -1,3 +1,87 @@
+2007-02-18  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12123
+          REGRESSION: Incomplete repaint of floats' overflows
+
+        Tests: fast/repaint/float-overflow.html
+               fast/repaint/float-overflow-right.html
+               fast/repaint/table-cell-vertical-overflow.html
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=10116
+          REGRESSION: Menu item drawn 2 pixels short on WWDC 2006 Attendee Site
+
+        Reflected in existing test results.
+
+        Unified floats and overflow for the purposes of painting and hit-testing.
+        Overhanging and overflowing floats are now factored into a block's overflow
+        unless their painting has been propagated to an ancestor.
+
+        Changed table cells to no longer expand to enclose overflow, thus making
+        it purely "visual overflow", having no effect on layout in WebCore. It
+        still determines scrolling dimensions.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally): Include inline blocks'
+        horizontal overflow in the inline box's dimensions.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock): Removed the expand to enclose overflows
+        behavior. Added code to add this block's floats (and their overflow) to its
+        overflow rect if it is not in a block formatting context. Otherwise, the
+        inclusion of floats in the overflow is deferred until this block's parent
+        examines its floats and possibly adopts overhanging floats.
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::paint): 
+        (WebCore::RenderBlock::floatRect): Made non-virtual and changed to return an empty
+        rect if there are no floats or the floats are clipped, instead of returning the border
+        box.
+        (WebCore::RenderBlock::addOverhangingFloats): Any floats of the child that
+        are not to be painted by the parent are added to the child's overflow rect.
+        (WebCore::RenderBlock::addVisualOverflow): Added. Adjusts the overflow
+        bounds to include the given rect.
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderBlock.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock): 
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox): After placing a normal
+        child, add its floats to its overflow, since painting of floats does not
+        propagate to flexible boxes. 
+        (WebCore::RenderFlexibleBox::layoutVerticalBox): Ditto.
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::layout):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::layout):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::layout):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::absoluteBoundingBox):
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::expandsToEncloseOverhangingFloats):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::layout):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+        * rendering/RenderTable.h: Removed the override of overflowHeight() since now tables can have
+        vertical overflow.
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paint): Made sure that overflow is repainted.
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::expandsToEncloseOverhangingFloats): Removed.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::RenderTableSection):
+        (WebCore::RenderTableSection::layoutRows): Factor in vertical overflow from cells.
+        (WebCore::RenderTableSection::paint):
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::overflowHeight):
+        (WebCore::RenderTableSection::overflowTop):
+
 2007-02-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Buildfix).

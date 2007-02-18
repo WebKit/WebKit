@@ -276,12 +276,10 @@ void RenderTable::layout()
     }
 
     IntRect oldBounds;
-    IntRect oldFullBounds;
     bool checkForRepaint = checkForRepaintDuringLayout();
     if (checkForRepaint) {
-        getAbsoluteRepaintRectIncludingFloats(oldBounds, oldFullBounds);
+        oldBounds = getAbsoluteRepaintRect();
         oldBounds.move(view()->layoutDelta());
-        oldFullBounds.move(view()->layoutDelta());
     }
     
     m_height = 0;
@@ -389,13 +387,15 @@ void RenderTable::layout()
     while (section) {
         if (!sectionMoved && section->yPos() != m_height) {
             sectionMoved = true;
-            movedSectionTop = min(m_height, section->yPos());
+            movedSectionTop = min(m_height, section->yPos()) + section->overflowTop(false);
         }
         section->setPos(bl, m_height);
 
         m_height += section->height();
         m_overflowLeft = min(m_overflowLeft, section->xPos() + section->overflowLeft(false));
         m_overflowWidth = max(m_overflowWidth, section->xPos() + section->overflowWidth(false));
+        m_overflowTop = min(m_overflowTop, section->yPos() + section->overflowTop(false));
+        m_overflowHeight = max(m_overflowHeight, section->yPos() + section->overflowHeight(false));
         section = sectionBelow(section);
     }
 
@@ -425,7 +425,7 @@ void RenderTable::layout()
     bool didFullRepaint = true;
     // Repaint with our new bounds if they are different from our old bounds.
     if (checkForRepaint)
-        didFullRepaint = repaintAfterLayoutIfNeeded(oldBounds, oldFullBounds);
+        didFullRepaint = repaintAfterLayoutIfNeeded(oldBounds);
     if (!didFullRepaint && sectionMoved) {
         IntRect repaintRect(m_overflowLeft, movedSectionTop, m_overflowWidth - m_overflowLeft, m_overflowHeight - movedSectionTop);
         if (FrameView* frameView = view()->frameView())
@@ -451,9 +451,9 @@ void RenderTable::paint(PaintInfo& paintInfo, int tx, int ty)
     PaintPhase paintPhase = paintInfo.phase;
 
     int os = 2 * maximalOutlineSize(paintPhase);
-    if (ty + overflowTop() >= paintInfo.rect.bottom() + os || ty + overflowHeight() <= paintInfo.rect.y() - os)
+    if (ty + overflowTop(false) >= paintInfo.rect.bottom() + os || ty + overflowHeight(false) <= paintInfo.rect.y() - os)
         return;
-    if (tx + overflowLeft() >= paintInfo.rect.right() + os || tx + overflowWidth() <= paintInfo.rect.x() - os)
+    if (tx + overflowLeft(false) >= paintInfo.rect.right() + os || tx + overflowWidth(false) <= paintInfo.rect.x() - os)
         return;
 
     if ((paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) && hasBoxDecorations() && style()->visibility() == VISIBLE)

@@ -466,12 +466,11 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         return;
     }
     
-    IntRect oldBounds, oldFullBounds;
+    IntRect oldBounds;
     bool checkForRepaint = checkForRepaintDuringLayout();
     if (checkForRepaint) {
-        getAbsoluteRepaintRectIncludingFloats(oldBounds, oldFullBounds);
+        oldBounds = getAbsoluteRepaintRect();
         oldBounds.move(view()->layoutDelta());
-        oldFullBounds.move(view()->layoutDelta());
     }
 
     int oldWidth = m_width;
@@ -555,16 +554,15 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     if (previousHeight != m_height)
         relayoutChildren = true;
 
-    // Table cells need to grow to accommodate blocks that have overflowed content.
-    if (m_overflowHeight > m_height && !hasOverflowClip() && expandsToEncloseOverflow())
-        m_height = m_overflowHeight + borderBottom() + paddingBottom();
-
     // Some classes of objects (floats and fieldsets with no specified heights and table cells) expand to encompass
     // overhanging floats.
     if (hasOverhangingFloats() && expandsToEncloseOverhangingFloats()) {
         m_height = floatBottom();
         m_height += borderBottom() + paddingBottom();
     }
+
+    if ((isTableCell() || isInline() || isFloatingOrPositioned() || isRoot()) && !hasOverflowClip() && !hasControlClip())
+        addVisualOverflow(floatRect());
 
     layoutPositionedObjects(relayoutChildren || isRoot());
 
@@ -583,7 +581,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     // Repaint with our new bounds if they are different from our old bounds.
     bool didFullRepaint = false;
     if (checkForRepaint)
-        didFullRepaint = repaintAfterLayoutIfNeeded(oldBounds, oldFullBounds);
+        didFullRepaint = repaintAfterLayoutIfNeeded(oldBounds);
     if (!didFullRepaint && !repaintRect.isEmpty()) {
         // FIXME: Deal with multiple column repainting.  We have to split the repaint
         // rect up into multiple rects if it spans columns.
@@ -1154,24 +1152,19 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren)
         // Now place the child in the correct horizontal position
         determineHorizontalPosition(child);
 
-        // Update our top overflow in case the child spills out the top of the block.
-        m_overflowTop = min(m_overflowTop, child->yPos() + child->overflowTop(false));
-        
         // Update our height now that the child has been placed in the correct position.
         m_height += child->height();
         if (child->style()->marginBottomCollapse() == MSEPARATE) {
             m_height += child->marginBottom();
             marginInfo.clearMargin();
         }
-        int overflowDelta = child->overflowHeight(false) - child->height();
-        if (m_height + overflowDelta > m_overflowHeight)
-            m_overflowHeight = m_height + overflowDelta;
-
         // If the child has overhanging floats that intrude into following siblings (or possibly out
         // of this block), then the parent gets notified of the floats now.
         addOverhangingFloats(static_cast<RenderBlock *>(child), -child->xPos(), -child->yPos());
 
-        // See if this child has made our overflow need to grow.
+        // Update our overflow in case the child spills out the block.
+        m_overflowTop = min(m_overflowTop, child->yPos() + child->overflowTop(false));
+        m_overflowHeight = max(m_overflowHeight, m_height + child->overflowHeight(false) - child->height());
         m_overflowWidth = max(child->xPos() + child->overflowWidth(false), m_overflowWidth);
         m_overflowLeft = min(child->xPos() + child->overflowLeft(false), m_overflowLeft);
         
@@ -1234,29 +1227,6 @@ void RenderBlock::markPositionedObjectsForLayout()
     }
 }
 
-void RenderBlock::getAbsoluteRepaintRectIncludingFloats(IntRect& bounds, IntRect& fullBounds)
-{
-    bounds = fullBounds = getAbsoluteRepaintRect();
-
-    // Include any overhanging floats (if we know we're the one to paint them).
-    // We null-check m_floatingObjects here to catch any cases where m_height ends up negative
-    // for some reason.  I think I've caught all those cases, but this way we stay robust and don't
-    // crash.
-    if (hasOverhangingFloats() && m_floatingObjects) {
-        FloatingObject* r;
-        DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
-        for ( ; (r = it.current()); ++it) {
-            // Only repaint the object if our noPaint flag isn't set and if it isn't in
-            // its own layer.
-            if (!r->noPaint && !r->node->layer()) {
-                IntRect childRect, childFullRect;
-                r->node->getAbsoluteRepaintRectIncludingFloats(childRect, childFullRect);
-                fullBounds.unite(childFullRect);
-            }
-        }
-    }
-}
-
 void RenderBlock::repaintOverhangingFloats(bool paintAllDescendants)
 {
     // Repaint any overhanging floats (if we know we're the one to paint them).
@@ -1308,17 +1278,8 @@ void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
         IntRect overflowBox = overflowRect(false);
         overflowBox.inflate(maximalOutlineSize(paintInfo.phase));
         overflowBox.move(tx, ty);
-        bool intersectsOverflowBox = overflowBox.intersects(paintInfo.rect);
-        if (!intersectsOverflowBox) {
-            // Check floats next.
-            if (paintInfo.phase != PaintPhaseFloat && paintInfo.phase != PaintPhaseSelection)
-                return;
-            IntRect floatBox = floatRect();
-            floatBox.inflate(maximalOutlineSize(paintInfo.phase));
-            floatBox.move(tx, ty);
-            if (!floatBox.intersects(paintInfo.rect))
-                return;
-        }
+        if (!overflowBox.intersects(paintInfo.rect))
+            return;
     }
 
     // Push a clip.
@@ -2249,14 +2210,14 @@ RenderBlock::floatBottom() const
 
 IntRect RenderBlock::floatRect() const
 {
-    IntRect result(borderBox());
+    IntRect result;
     if (!m_floatingObjects || hasOverflowClip())
         return result;
     FloatingObject* r;
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for (; (r = it.current()); ++it) {
         if (!r->noPaint && !r->node->layer()) {
-            IntRect childRect = unionRect(r->node->floatRect(), r->node->overflowRect());
+            IntRect childRect = r->node->overflowRect(false);
             childRect.move(r->left + r->node->marginLeft(), r->startY + r->node->marginTop());
             result.unite(childRect);
         }
@@ -2490,31 +2451,17 @@ RenderBlock::clearFloats()
 void RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff)
 {
     // Prevent floats from being added to the canvas by the root element, e.g., <html>.
-    if (child->hasOverflowClip() || !child->hasOverhangingFloats() || child->isRoot())
-        return;
-    
-    // We think that we must be in a bad state if child->m_floatingObjects is nil at this point, 
-    // so we assert on Debug builds and nil-check Release builds.
-    ASSERT(child->m_floatingObjects);
-    if (!child->m_floatingObjects)
+    if (child->hasOverflowClip() || !child->containsFloats() || child->isRoot())
         return;
 
+    // Floats that will remain the child's responsiblity to paint should factor into its
+    // visual overflow.
+    IntRect floatsOverflowRect;
     DeprecatedPtrListIterator<FloatingObject> it(*child->m_floatingObjects);
-    for (FloatingObject *r; (r = it.current()); ++it) {
+    for (FloatingObject* r; (r = it.current()); ++it) {
         if (child->yPos() + r->endY > height()) {
-            // The object may already be in our list. Check for it up front to avoid
-            // creating duplicate entries.
-            FloatingObject* f = 0;
-            if (m_floatingObjects) {
-                DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
-                while ((f = it.current())) {
-                    if (f->node == r->node) break;
-                    ++it;
-                }
-            }
-
             // If the object is not in the list, we add it now.
-            if (!f) {
+            if (!containsFloat(r->node)) {
                 FloatingObject *floatingObj = new FloatingObject(r->type());
                 floatingObj->startY = r->startY - yoff;
                 floatingObj->endY = r->endY - yoff;
@@ -2539,7 +2486,13 @@ void RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff)
                 m_floatingObjects->append(floatingObj);
             }
         }
+        if (!r->noPaint && !r->node->layer()) {
+            IntRect floatOverflowRect = r->node->overflowRect(false);
+            floatOverflowRect.move(r->left + r->node->marginLeft(), r->startY + r->node->marginTop());
+            floatsOverflowRect.unite(floatOverflowRect);
+        }
     }
+    child->addVisualOverflow(floatsOverflowRect);
 }
 
 void RenderBlock::addIntrudingFloats(RenderBlock* prev, int xoff, int yoff)
@@ -2661,6 +2614,16 @@ int RenderBlock::getClearDelta(RenderObject *child)
     return result;
 }
 
+void RenderBlock::addVisualOverflow(const IntRect& r)
+{
+    if (r.isEmpty())
+        return;
+    m_overflowLeft = min(m_overflowLeft, r.x());
+    m_overflowWidth = max(m_overflowWidth, r.right());
+    m_overflowTop = min(m_overflowTop, r.y());
+    m_overflowHeight = max(m_overflowHeight, r.bottom());
+}
+
 bool RenderBlock::isPointInScrollbar(HitTestResult& result, int _x, int _y, int _tx, int _ty)
 {
     if (!scrollsOverflow())
@@ -2702,16 +2665,8 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         // Check if we need to do anything at all.
         IntRect overflowBox = overflowRect(false);
         overflowBox.move(tx, ty);
-        bool insideOverflowBox = overflowBox.contains(_x, _y);
-        if (!insideOverflowBox) {
-            // Check floats next.
-            if (hitTestAction != HitTestFloat)
-                return false;
-            IntRect floatBox = floatRect();
-            floatBox.move(tx, ty);
-            if (!floatBox.contains(_x, _y))
-                return false;
-        }
+        if (!overflowBox.contains(_x, _y))
+            return false;
     }
 
     if (isPointInScrollbar(result, _x, _y, tx, ty)) {

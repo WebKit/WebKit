@@ -717,7 +717,7 @@ public:
     void repaintRectangle(const IntRect&, bool immediate = false);
 
     // Repaint only if our old bounds and new bounds are different.
-    bool repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const IntRect& oldFullBounds);
+    bool repaintAfterLayoutIfNeeded(const IntRect& oldBounds);
 
     // Repaint only if the object moved.
     virtual void repaintDuringLayoutIfMoved(const IntRect& rect);
@@ -736,8 +736,6 @@ public:
 
     IntRect getAbsoluteRepaintRectWithOutline(int ow);
 
-    virtual void getAbsoluteRepaintRectIncludingFloats(IntRect& bounds, IntRect& boundsWithChildren);
-
     // Given a rect in the object's coordinate space, this method converts the rectangle to the view's
     // coordinate space.
     virtual void computeAbsoluteRepaintRect(IntRect&, bool fixed = false);
@@ -749,9 +747,6 @@ public:
     virtual bool containsFloat(RenderObject*) { return false; }
     virtual bool hasOverhangingFloats() { return false; }
     virtual bool expandsToEncloseOverhangingFloats() const { return isFloating() && style()->height().isAuto(); }
-    virtual IntRect floatRect() const { return borderBox(); }
-
-    virtual bool expandsToEncloseOverflow() const { return false; }
 
     virtual void removePositionedObjects(RenderBlock*) { }
 

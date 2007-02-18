@@ -604,7 +604,7 @@ void RenderTableCell::paint(PaintInfo& paintInfo, int tx, int ty)
         int h = height() + borderTopExtra() + borderBottomExtra();
         paintCollapsedBorder(paintInfo.context, tx, ty, w, h);
     } else {
-        if (ty >= paintInfo.rect.bottom() + os || ty + m_topExtra + m_height + m_bottomExtra <= paintInfo.rect.y() - os)
+        if (ty + overflowTop(false) >= paintInfo.rect.bottom() + os || ty + m_topExtra + overflowHeight(false) + m_bottomExtra <= paintInfo.rect.y() - os)
             return;
         RenderBlock::paintObject(paintInfo, tx, ty + m_topExtra);
     }
