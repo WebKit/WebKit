@@ -1,5 +1,19 @@
 2007-02-18  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Build fix).
+
+        Adding platform/DragImage.cpp and platform/qt/DragImageQt.cpp to the Qt
+        project files
+
+        Stubbed method for WebCore::notAllowedCursor -- not sure what it should return, 
+        have returned blank cursor, possibly needs to return something else
+
+        * WebCore.pro:
+        * platform/qt/CursorQt.cpp:
+        (WebCore::notAllowedCursor):
+
+2007-02-18  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (Buildfix).
 
         Sigh, obnoxious occasional auto conversion from float to int

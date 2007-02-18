@@ -525,6 +525,7 @@ SOURCES += \
     platform/DeprecatedStringList.cpp \
     platform/DeprecatedValueListImpl.cpp \
     platform/DragData.cpp \
+    platform/DragImage.cpp \
     platform/FileChooser.cpp \
     platform/FontCache.cpp \
     platform/Font.cpp \
@@ -580,6 +581,7 @@ SOURCES += \
     platform/qt/CookieJarQt.cpp \
     platform/qt/CursorQt.cpp \
     platform/qt/DragDataQt.cpp \
+    platform/qt/DragImageQt.cpp \
     platform/qt/FileChooserQt.cpp \
     platform/qt/FontCacheQt.cpp \
     platform/qt/FontDataQt.cpp \
