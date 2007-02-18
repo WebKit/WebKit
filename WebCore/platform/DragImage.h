@@ -27,9 +27,9 @@
 #define DragImage_h
 
 #include "IntSize.h"
-#include "RetainPtr.h"
 
 #if PLATFORM(MAC)
+#include "RetainPtr.h"
 #ifdef __OBJC__
 @class NSImage;
 #else
