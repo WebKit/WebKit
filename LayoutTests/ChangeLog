@@ -1,3 +1,13 @@
+2007-02-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adele.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12807
+        XPath incorrectly converts NaN to boolean
+
+        * fast/xpath/nan-to-boolean-expected.txt: Added.
+        * fast/xpath/nan-to-boolean.html: Added.
+
 2007-02-18  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

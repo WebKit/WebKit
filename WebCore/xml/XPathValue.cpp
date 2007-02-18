@@ -95,7 +95,7 @@ bool Value::toBoolean() const
         case BooleanValue:
             return m_bool;
         case NumberValue:
-            return m_number != 0;
+            return m_number != 0 && !isnan(m_number);
         case StringValue:
             return !m_string.isEmpty();
     }

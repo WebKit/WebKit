@@ -504,7 +504,7 @@ Value FunSubstringAfter::doEvaluate() const
     if (i == -1)
         return "";
 
-    return s1.substring(i + 1);
+    return s1.substring(s2.length());
 }
 
 Value FunSubstring::doEvaluate() const
