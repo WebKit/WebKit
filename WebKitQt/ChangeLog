@@ -1,3 +1,15 @@
+2007-02-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Buildfix).
+
+        Build fix -- adding DragClientQt method stubs
+
+        * WebCoreSupport/DragClientQt.cpp:
+        (WebCore::DragClientQt::willPerformDragSourceAction):
+        (WebCore::DragClientQt::startDrag):
+        (WebCore::DragClientQt::createDragImageForLink):
+        * WebCoreSupport/DragClientQt.h:
+
 2007-02-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam
