@@ -1,3 +1,12 @@
+2007-02-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Buildfix).
+
+        Sigh, obnoxious occasional auto conversion from float to int
+
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::createDragImage):
+
 2007-02-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Hyatt.

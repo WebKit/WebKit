@@ -361,7 +361,7 @@ DragImageRef ClipboardMac::createDragImage(IntPoint& loc) const
 {
     NSPoint nsloc = {loc.x(), loc.y()};
     DragImageRef result = dragNSImage(nsloc);
-    loc = IntPoint(nsloc.x, nsloc.y);
+    loc = (IntPoint)nsloc;
     return result;
 }
     
