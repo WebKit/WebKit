@@ -170,7 +170,9 @@ private:
         RefPtr<Clipboard> m_dragClipboard; // used on only the source side of dragging
     };
     static EventHandlerDragState& dragState();
-
+    
+    Clipboard* createDraggingClipboard() const;
+    
     bool eventActivatedView(const PlatformMouseEvent&) const;
     void selectClosestWordFromMouseEvent(const MouseEventWithHitTestResults& event);
 
@@ -243,6 +245,7 @@ private:
     NSView *mouseDownViewIfStillGood();
 #else
     bool eventLoopHandleMouseUp(const MouseEventWithHitTestResults&) { return false; }
+    bool eventLoopHandleMouseDragged(const MouseEventWithHitTestResults&) { return false; }
 #endif
 
     Frame* m_frame;
@@ -285,11 +288,11 @@ private:
     IntPoint m_currentMousePosition;
     IntPoint m_mouseDownPos; // in our view's coords
     double m_mouseDownTimestamp;
+    PlatformMouseEvent m_mouseDown;
 
 #if PLATFORM(MAC)
     NSView *m_mouseDownView;
     bool m_sendingEventToSubview;
-    PlatformMouseEvent m_mouseDown;
     int m_activationEventNumber;
 #endif
 

@@ -982,5 +982,12 @@ void FrameMac::paintCustomHighlight(const AtomicString& type, const FloatRect& b
 {
     [_bridge paintCustomHighlight:type forBox:boxRect onLine:lineRect behindText:text entireLine:line];
 }
+    
+DragImageRef Frame::dragImageForSelection() 
+{
+    if (!selectionController()->isRange())
+        return nil;
+    return static_cast<FrameMac*>(this)->selectionImage();
+}
 
 } // namespace WebCore

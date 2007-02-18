@@ -23,21 +23,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebCore/DragClient.h>
+#include "config.h"
+#include "DragImage.h"
 
-@class WebView;
+#include "CachedImage.h"
+#include "Image.h"
 
-class WebDragClient : public WebCore::DragClient {
-public:
-    WebDragClient(WebView*);
-    virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData*);
-    virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::Clipboard*);
-    virtual WebCore::DragDestinationAction actionMaskForDrag(WebCore::DragData*);
-    virtual void dragControllerDestroyed();
-    virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint);
-    virtual void startDrag(WebCore::DragImageRef dragImage, const WebCore::IntPoint& dragPos, const WebCore::IntPoint& eventPos, WebCore::Clipboard*, WebCore::Frame*, bool linkDrag);
-    virtual WebCore::DragImageRef createDragImageForLink(WebCore::KURL& url, const WebCore::String& label, WebCore::Frame*);
-    virtual void declareAndWriteDragImage(NSPasteboard*, DOMElement*, NSURL*, NSString*, WebCore::Frame*, bool canSaveAsWebArchive);
-private:
-    WebView* m_webView;
-};
+namespace WebCore {
+
+IntSize dragImageSize(DragImageRef)
+{
+    return IntSize(0, 0);
+}
+
+void deleteDragImage(DragImageRef)
+{
+}
+
+DragImageRef scaleDragImage(DragImageRef image, float)
+{
+    return image;
+}
+    
+DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
+{
+    return image;
+}
+        
+DragImageRef createDragImageFromImage(Image*)
+{
+    return 0;
+}
+    
+DragImageRef createDragImageIconForCachedImage(CachedImage*)
+{
+    return 0;     
+}
+    
+}

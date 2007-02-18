@@ -23,21 +23,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebCore/DragClient.h>
+#include "config.h"
+#include "DragImage.h"
+#include "DragController.h"
 
-@class WebView;
+#include "Frame.h"
 
-class WebDragClient : public WebCore::DragClient {
-public:
-    WebDragClient(WebView*);
-    virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData*);
-    virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::Clipboard*);
-    virtual WebCore::DragDestinationAction actionMaskForDrag(WebCore::DragData*);
-    virtual void dragControllerDestroyed();
-    virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint);
-    virtual void startDrag(WebCore::DragImageRef dragImage, const WebCore::IntPoint& dragPos, const WebCore::IntPoint& eventPos, WebCore::Clipboard*, WebCore::Frame*, bool linkDrag);
-    virtual WebCore::DragImageRef createDragImageForLink(WebCore::KURL& url, const WebCore::String& label, WebCore::Frame*);
-    virtual void declareAndWriteDragImage(NSPasteboard*, DOMElement*, NSURL*, NSString*, WebCore::Frame*, bool canSaveAsWebArchive);
-private:
-    WebView* m_webView;
-};
+namespace WebCore {
+    
+DragImageRef fitDragImageToMaxSize(DragImageRef image, const IntSize& size)
+{
+    float heightResizeRatio = 0.0f;
+    float widthResizeRatio = 0.0f;
+    float resizeRatio = 0.0f;
+    IntSize originalSize = dragImageSize(image);
+    
+    if (originalSize.width() > size.width()) {
+        widthResizeRatio = size.width() / (float)originalSize.width();
+        resizeRatio = widthResizeRatio;
+    }
+    
+    if (originalSize.height() > size.height()) {
+        heightResizeRatio = size.height() / (float)originalSize.height();
+        if ((resizeRatio == 0.0) || (resizeRatio > heightResizeRatio))
+            resizeRatio = heightResizeRatio;
+    }
+    
+    if (resizeRatio > 0.0)
+        return scaleDragImage(image, resizeRatio);
+    return image;
+    
+}
+    
+DragImageRef createDragImageForSelection(Frame* frame)
+{
+    DragImageRef image = frame->dragImageForSelection();
+    if (image)
+        dissolveDragImageToFraction(image, DragController::DragImageAlpha);
+    return image;
+}
+
+}

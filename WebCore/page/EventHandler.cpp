@@ -1353,9 +1353,133 @@ bool EventHandler::dispatchDragSrcEvent(const AtomicString& eventType, const Pla
 {
     return !dispatchDragEvent(eventType, dragState().m_dragSrc.get(), event, dragState().m_dragClipboard.get());
 }
-
+    
+bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
+{
+    if (event.event().button() != LeftButton || event.event().eventType() != MouseEventMoved) {
+        // If we allowed the other side of the bridge to handle a drag
+        // last time, then m_mousePressed might still be set. So we
+        // clear it now to make sure the next move after a drag
+        // doesn't look like a drag.
+        m_mousePressed = false;
+        return false;
+    }
+    
+    if (eventLoopHandleMouseDragged(event))
+        return true;
+    
+    // Careful that the drag starting logic stays in sync with eventMayStartDrag()
+    
+    if (m_mouseDownMayStartDrag && !dragState().m_dragSrc) {
+        allowDHTMLDrag(dragState().m_dragSrcMayBeDHTML, dragState().m_dragSrcMayBeUA);
+        if (!dragState().m_dragSrcMayBeDHTML && !dragState().m_dragSrcMayBeUA)
+            m_mouseDownMayStartDrag = false;     // no element is draggable
+    }
+    
+    if (m_mouseDownMayStartDrag && !dragState().m_dragSrc) {
+        // try to find an element that wants to be dragged
+        HitTestRequest request(true, false);
+        HitTestResult result(m_mouseDownPos);
+        m_frame->renderer()->layer()->hitTest(request, result);
+        Node* node = result.innerNode();
+        if (node && node->renderer())
+            dragState().m_dragSrc = node->renderer()->draggableNode(dragState().m_dragSrcMayBeDHTML, dragState().m_dragSrcMayBeUA,
+                                                                    m_mouseDownPos.x(), m_mouseDownPos.y(), dragState().m_dragSrcIsDHTML);
+        else
+            dragState().m_dragSrc = 0;
+        
+        if (!dragState().m_dragSrc)
+            m_mouseDownMayStartDrag = false;     // no element is draggable
+        else {
+            // remember some facts about this source, while we have a HitTestResult handy
+            node = result.URLElement();
+            dragState().m_dragSrcIsLink = node && node->isLink();
+            
+            node = result.innerNonSharedNode();
+            dragState().m_dragSrcIsImage = node && node->renderer() && node->renderer()->isImage();
+            
+            dragState().m_dragSrcInSelection = m_frame->selectionController()->contains(m_mouseDownPos);
+        }                
+    }
+    
+    // For drags starting in the selection, the user must wait between the mousedown and mousedrag,
+    // or else we bail on the dragging stuff and allow selection to occur
+    if (m_mouseDownMayStartDrag && dragState().m_dragSrcInSelection && event.event().timestamp() - m_mouseDownTimestamp < TextDragDelay) {
+        m_mouseDownMayStartDrag = false;
+        // ...but if this was the first click in the window, we don't even want to start selection
+        if (eventActivatedView(event.event()))
+            m_mouseDownMayStartSelect = false;
+    }
+    
+    if (!m_mouseDownMayStartDrag)
+        return !mouseDownMayStartSelect() && !m_mouseDownMayStartAutoscroll;
+    
+    // We are starting a text/image/url drag, so the cursor should be an arrow
+    m_frame->view()->setCursor(pointerCursor());
+    
+    if (!dragHysteresisExceeded(event.event().pos())) 
+        return true;
+    
+    // Once we're past the hysteresis point, we don't want to treat this gesture as a click
+    invalidateClick();
+    
+    DragOperation srcOp = DragOperationNone;        
+    if (dragState().m_dragSrcMayBeDHTML) {
+        freeClipboard();    // would only happen if we missed a dragEnd.  Do it anyway, just
+                            // to make sure it gets numbified
+        
+        dragState().m_dragClipboard = createDraggingClipboard();
+        
+        // Check to see if the is a DOM based drag, if it is get the DOM specified drag 
+        // image and offset
+        if (dragState().m_dragSrcIsDHTML) {
+            int srcX, srcY;
+            dragState().m_dragSrc->renderer()->absolutePosition(srcX, srcY);
+            IntSize delta = m_mouseDownPos - IntPoint(srcX, srcY);
+            dragState().m_dragClipboard->setDragImageElement(dragState().m_dragSrc.get(), IntPoint() + delta);
+        } 
+        
+        m_mouseDownMayStartDrag = dispatchDragSrcEvent(dragstartEvent, m_mouseDown)
+            && !m_frame->selectionController()->isInPasswordField();
+        
+        // Invalidate clipboard here against anymore pasteboard writing for security.  The drag
+        // image can still be changed as we drag, but not the pasteboard data.
+        dragState().m_dragClipboard->setAccessPolicy(ClipboardImageWritable);
+        
+        if (m_mouseDownMayStartDrag) {
+            // gather values from DHTML element, if it set any
+            dragState().m_dragClipboard->sourceOperation(srcOp);
+            
+            // Yuck, dragSourceMovedTo() can be called as a result of kicking off the drag with
+            // dragImage!  Because of that dumb reentrancy, we may think we've not started the
+            // drag when that happens.  So we have to assume it's started before we kick it off.
+            dragState().m_dragClipboard->setDragHasStarted();
+        }
+    }
+    
+    if (m_mouseDownMayStartDrag) {
+        DragController* dragController = m_frame->page() ? m_frame->page()->dragController() : 0;
+        bool startedDrag = dragController && dragController->startDrag(m_frame, dragState().m_dragClipboard.get(), srcOp, event.event(), m_mouseDownPos, dragState().m_dragSrcIsDHTML);
+        if (!startedDrag && dragState().m_dragSrcMayBeDHTML) {
+            // Drag was canned at the last minute - we owe m_dragSrc a DRAGEND event
+            PlatformMouseEvent event(PlatformMouseEvent::currentEvent);
+            dispatchDragSrcEvent(dragendEvent, event);
+            m_mouseDownMayStartDrag = false;
+        }
+    } 
+    
+    if (!m_mouseDownMayStartDrag) {
+        // something failed to start the drag, cleanup
+        freeClipboard();
+        dragState().m_dragSrc = 0;
+    }
+    
+    // No more default handling (like selection), whether we're past the hysteresis bounds or not
+    return true;
+}
+  
 bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEvent,
-    bool isLineBreak, bool isBackTab)
+                                        bool isLineBreak, bool isBackTab)
 {
     if (!m_frame)
         return false;
@@ -1373,7 +1497,8 @@ bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEve
     ExceptionCode ec;
     return target->dispatchEvent(event.release(), ec, true);
 }
-
+    
+    
 void EventHandler::defaultTextInputEventHandler(TextEvent* event)
 {
     String data = event->data();

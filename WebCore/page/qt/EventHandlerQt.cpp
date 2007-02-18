@@ -100,12 +100,6 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
     return false;
 }
 
-bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
-{
-    //notImplemented();
-    return false;
-}
-
 bool EventHandler::eventActivatedView(const PlatformMouseEvent&) const
 {
     //Qt has an activation event which is sent independently
@@ -124,6 +118,12 @@ bool EventHandler::passWheelEventToWidget(Widget* widget)
 {
     notImplemented();
     return false;
+}
+    
+Clipboard* EventHandler::createDraggingClipboard() const 
+{
+    notImplemented();
+    return 0;
 }
 
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)

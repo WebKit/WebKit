@@ -27,7 +27,9 @@
 #define DragController_h
 
 #include "DragActions.h"
+#include "DragImage.h"
 #include "IntPoint.h"
+#include "IntRect.h"
 #include "KURL.h"
 
 namespace WebCore {
@@ -36,8 +38,13 @@ namespace WebCore {
     class Document;
     class DragClient;
     class DragData;
+    class Element;
     class Frame;
+    class Image;
+    class Node;
     class Page;
+    class PlatformMouseEvent;
+    class Range;
     class SelectionController;
     
     class DragController {
@@ -74,6 +81,14 @@ namespace WebCore {
         bool mayStartDragAtEventLocation(const Frame*, const IntPoint& framePos);
         void dragEnded() { m_dragInitiator = 0; m_didInitiateDrag = false; }
         
+        bool startDrag(Frame* src, Clipboard*, DragOperation srcOp, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin, bool isDHTMLDrag);
+        
+        static const int LinkDragBorderInset;
+        static const IntSize MaxDragImageSize;
+        static const int MaxOriginalImageArea;
+        static const int DragIconRightInset;
+        static const int DragIconBottomInset;        
+        static const float DragImageAlpha;
     private:
         bool canProcessDrag(DragData*);
         bool concludeDrag(DragData*, DragDestinationAction);
@@ -85,7 +100,11 @@ namespace WebCore {
         void cancelDrag();
         bool dragIsMove(SelectionController*, DragData*);
         bool isCopyKeyDown();
-        
+
+        IntRect selectionDraggingRect(Frame*);
+        bool doDrag(Frame* src, Clipboard* clipboard, DragImageRef dragImage, const KURL& linkURL, const KURL& imageURL, Node* node, IntPoint& dragLoc, IntPoint& dragImageOffset);
+        void doImageDrag(Element*, const IntPoint&, const IntRect&, Clipboard*, Frame*, IntPoint&);
+        void doSystemDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard*, Frame*, bool forLink);
         Page* m_page;
         DragClient* m_client;
         

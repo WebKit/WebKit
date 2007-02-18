@@ -1,3 +1,152 @@
+2007-02-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        More drag and drop migration, now the entirety of the
+        drag initiation logic has been rendered platform independent
+        This has required a number of new interfaces, and a reasonable
+        amount of logic migration.
+
+        As a side effect, this patch also fixes rdar://problem/4945341
+
+        There are some basic Qt stubs that should stop the build from failing,
+        however the absence of ClipboardQt means any attempt to initiate a drag 
+        may cause a crash.
+
+        * WebCore.exp:
+           Exporting new symbols
+
+        * WebCore.xcodeproj/project.pbxproj:
+           New files
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::canSaveAsWebArchive):
+          Migrated from WebKit
+
+        * dom/Clipboard.h:
+          Added more methods to allow Clipboard to be used as a 
+          platform independent container for drag and drop
+
+        * page/DragClient.h:
+        (WebCore::DragClient::declareAndWriteDragImage):
+          This is a mac only helper function, so i've made it have an empty implementation,
+          that way we won't need a PLATFORM(MAC) block in SVGImageEmptyClients
+
+        * page/DragController.cpp:
+        (WebCore::DragController::dragExited):
+        (WebCore::DragController::performDrag):
+        (WebCore::DragController::tryDocumentDrag): 
+        (WebCore::DragController::tryDHTMLDrag):
+          Using RefPtrs now
+        (WebCore::getCachedImage):
+        (WebCore::getImage):
+          Helper functions                   
+        (WebCore::dragLocForDHTMLDrag):
+        (WebCore::dragLocForSelectionDrag):
+        (WebCore::DragController::startDrag):
+        (WebCore::DragController::doImageDrag):
+        (WebCore::DragController::doSystemDrag):
+          Logic that generates drag images and clipboard content, and
+          initiates the actual system drag operation
+
+        * page/DragController.h:
+          Method and variable declarations
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleDrag):
+          handleDrag is now platform independent
+        (WebCore::EventHandler::handleTextInputEvent):
+           formatting
+
+        * page/EventHandler.h:
+        (WebCore::EventHandler::eventLoopHandleMouseDragged):
+          Forgot to define this stub function 
+
+        * page/Frame.h:
+          Declaring dragImageForSelection to provide drag image for selected content
+
+        * page/mac/DragControllerMac.mm:
+          Defining drag images control vars
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::createDraggingClipboard):
+          Migrated old clipboard creation to here
+
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::dragImageForSelection):
+          Wrap FrameMac::selectionImage
+
+        * page/qt/DragControllerQt.cpp:
+          Defining drag images control vars
+
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+          stub
+
+        * page/qt/FrameQt.cpp:
+        (WebCore::Frame::dragImageForSelection):
+          stub
+
+        * platform/DragImage.cpp: Added.
+        (WebCore::fitDragImageToMaxSize):
+        (WebCore::createDragImageForSelection):
+           Platform independent processing for drag images
+
+        * platform/DragImage.h: Added.
+           Declaring typedefs and wrapper functions to abstract the handling
+           of drag images 
+
+        * platform/Pasteboard.h:
+          Declaring extracted writeURL and writeSelection methods
+
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyDragClient::willPerformDragSourceAction):
+        (WebCore::SVGEmptyDragClient::startDrag):
+        (WebCore::SVGEmptyDragClient::createDragImageForLink):
+          Stubs FTW!
+
+        * platform/mac/ClipboardMac.h:
+        (WebCore::ClipboardMac::pasteboard):
+          Provide accessor for underlying NSPasteboard
+
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::hasData):
+        (WebCore::ClipboardMac::writeRange):
+        (WebCore::ClipboardMac::writeURL):
+        (WebCore::ClipboardMac::declareAndWriteDragImage):
+        (WebCore::ClipboardMac::createDragImage):
+           Implemented new Clipboarid functionality.
+        (WebCore::ClipboardMac::dragNSImage):
+           Made this a const method
+
+        * platform/mac/DragImageMac.mm: Added.
+        (WebCore::dragImageSize):
+        (WebCore::deleteDragImage):
+        (WebCore::scaleDragImage):
+        (WebCore::dissolveDragImageToFraction):
+        (WebCore::createDragImageFromImage):
+        (WebCore::createDragImageIconForCachedImage):
+           Implemented platform specific DragImage functions
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::writeSelection):
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::writeURL):
+        (WebCore::Pasteboard::writeURL):
+           Extracted member implementations of these functions, so that
+           Clipboard could also make use of this functionality.
+           Pasteboard methods now call the new non-member implementations.
+           Also fixed implementations to respect the list of requested types.
+
+        * platform/qt/DragImageQt.cpp: Added.
+        (WebCore::dragImageSize):
+        (WebCore::deleteDragImage):
+        (WebCore::scaleDragImage):
+        (WebCore::dissolveDragImageToFraction):
+        (WebCore::createDragImageFromImage):
+        (WebCore::createDragImageIconForCachedImage):  
+          Stubs
+
 2007-02-17  David Hyatt  <hyatt@apple.com>
 
         Fix textarea resizers to not fill with black by making sure the fill color starts off as

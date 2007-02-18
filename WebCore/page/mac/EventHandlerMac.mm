@@ -30,6 +30,7 @@
 #include "ClipboardMac.h"
 #include "Cursor.h"
 #include "Document.h"
+#include "DragController.h"
 #include "EventNames.h"
 #include "FloatPoint.h"
 #include "FocusController.h"
@@ -340,148 +341,14 @@ bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResult
     return true;
 }
     
-bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
+Clipboard* EventHandler::createDraggingClipboard() const 
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    if (event.event().button() != LeftButton || event.event().eventType() != MouseEventMoved) {
-        // If we allowed the other side of the bridge to handle a drag
-        // last time, then m_mousePressed might still be set. So we
-        // clear it now to make sure the next move after a drag
-        // doesn't look like a drag.
-        m_mousePressed = false;
-        return false;
-    }
-    
-    if (eventLoopHandleMouseDragged(event))
-        return true;
-    
-    // Careful that the drag starting logic stays in sync with eventMayStartDrag()
-    
-    if (m_mouseDownMayStartDrag && !dragState().m_dragSrc) {
-        allowDHTMLDrag(dragState().m_dragSrcMayBeDHTML, dragState().m_dragSrcMayBeUA);
-        if (!dragState().m_dragSrcMayBeDHTML && !dragState().m_dragSrcMayBeUA)
-            m_mouseDownMayStartDrag = false;     // no element is draggable
-    }
-    
-    if (m_mouseDownMayStartDrag && !dragState().m_dragSrc) {
-        // try to find an element that wants to be dragged
-        HitTestRequest request(true, false);
-        HitTestResult result(m_mouseDownPos);
-        m_frame->renderer()->layer()->hitTest(request, result);
-        Node* node = result.innerNode();
-        if (node && node->renderer())
-            dragState().m_dragSrc = node->renderer()->draggableNode(dragState().m_dragSrcMayBeDHTML, dragState().m_dragSrcMayBeUA,
-                                                                    m_mouseDownPos.x(), m_mouseDownPos.y(), dragState().m_dragSrcIsDHTML);
-        else
-            dragState().m_dragSrc = 0;
-        
-        if (!dragState().m_dragSrc)
-            m_mouseDownMayStartDrag = false;     // no element is draggable
-        else {
-            // remember some facts about this source, while we have a HitTestResult handy
-            node = result.URLElement();
-            dragState().m_dragSrcIsLink = node && node->isLink();
-            
-            node = result.innerNonSharedNode();
-            dragState().m_dragSrcIsImage = node && node->renderer() && node->renderer()->isImage();
-            
-            dragState().m_dragSrcInSelection = m_frame->selectionController()->contains(m_mouseDownPos);
-        }                
-    }
-    
-    // For drags starting in the selection, the user must wait between the mousedown and mousedrag,
-    // or else we bail on the dragging stuff and allow selection to occur
-    if (m_mouseDownMayStartDrag && dragState().m_dragSrcInSelection && event.event().timestamp() - m_mouseDownTimestamp < TextDragDelay) {
-        m_mouseDownMayStartDrag = false;
-        // ...but if this was the first click in the window, we don't even want to start selection
-        if (eventActivatedView(event.event()))
-            m_mouseDownMayStartSelect = false;
-    }
-    
-    if (!m_mouseDownMayStartDrag)
-        return !mouseDownMayStartSelect() && !m_mouseDownMayStartAutoscroll;
-    
-    // We are starting a text/image/url drag, so the cursor should be an arrow
-    m_frame->view()->setCursor(pointerCursor());
-    
-    if (!dragHysteresisExceeded(event.event().pos())) 
-        return true;
-    
-    // Once we're past the hysteresis point, we don't want to treat this gesture as a click
-    invalidateClick();
-    
-    NSImage *dragImage = nil;       // we use these values if WC is out of the loop
-    NSPoint dragLoc = NSZeroPoint;
-    DragOperation srcOp = DragOperationNone;                
-    BOOL wcWrotePasteboard = NO;
-    if (dragState().m_dragSrcMayBeDHTML) {
-        NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-        // Must be done before ondragstart adds types and data to the pboard,
-        // also done for security, as it erases data from the last drag
-        [pasteboard declareTypes:[NSArray array] owner:nil];
-        
-        freeClipboard();    // would only happen if we missed a dragEnd.  Do it anyway, just
-        // to make sure it gets numbified
-        dragState().m_dragClipboard = new ClipboardMac(true, pasteboard, ClipboardWritable, Mac(m_frame));
-        
-        // If this is drag of an element, get set up to generate a default image.  Otherwise
-        // WebKit will generate the default, the element doesn't override.
-        if (dragState().m_dragSrcIsDHTML) {
-            int srcX, srcY;
-            dragState().m_dragSrc->renderer()->absolutePosition(srcX, srcY);
-            IntSize delta = m_mouseDownPos - IntPoint(srcX, srcY);
-            dragState().m_dragClipboard->setDragImageElement(dragState().m_dragSrc.get(), IntPoint() + delta);
-        } 
-        
-        m_mouseDownMayStartDrag = dispatchDragSrcEvent(dragstartEvent, m_mouseDown)
-            && !m_frame->selectionController()->isInPasswordField();
-        
-        // Invalidate clipboard here against anymore pasteboard writing for security.  The drag
-        // image can still be changed as we drag, but not the pasteboard data.
-        dragState().m_dragClipboard->setAccessPolicy(ClipboardImageWritable);
-        
-        if (m_mouseDownMayStartDrag) {
-            // gather values from DHTML element, if it set any
-            dragState().m_dragClipboard->sourceOperation(srcOp);
-            
-            NSArray *types = [pasteboard types];
-            wcWrotePasteboard = types && [types count] > 0;
-            
-            if (dragState().m_dragSrcMayBeDHTML)
-                dragImage = static_cast<ClipboardMac*>(dragState().m_dragClipboard.get())->dragNSImage(dragLoc);
-            
-            // Yuck, dragSourceMovedTo() can be called as a result of kicking off the drag with
-            // dragImage!  Because of that dumb reentrancy, we may think we've not started the
-            // drag when that happens.  So we have to assume it's started before we kick it off.
-            dragState().m_dragClipboard->setDragHasStarted();
-        }
-    }
-    
-    if (m_mouseDownMayStartDrag) {
-        bool startedDrag = [Mac(m_frame)->bridge() startDraggingImage:dragImage at:dragLoc operation:srcOp event:currentEvent sourceIsDHTML:dragState().m_dragSrcIsDHTML DHTMLWroteData:wcWrotePasteboard];
-        if (!startedDrag && dragState().m_dragSrcMayBeDHTML) {
-            // WebKit canned the drag at the last minute - we owe m_dragSrc a DRAGEND event
-            PlatformMouseEvent event(PlatformMouseEvent::currentEvent);
-            dispatchDragSrcEvent(dragendEvent, event);
-            m_mouseDownMayStartDrag = false;
-        }
-    } 
-    
-    if (!m_mouseDownMayStartDrag) {
-        // something failed to start the drag, cleanup
-        freeClipboard();
-        dragState().m_dragSrc = 0;
-    }
-    
-    // No more default handling (like selection), whether we're past the hysteresis bounds or not
-    return true;   
-    
-    END_BLOCK_OBJC_EXCEPTIONS;
-    
-    return false;
-    
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+    // Must be done before ondragstart adds types and data to the pboard,
+    // also done for security, as it erases data from the last drag
+    [pasteboard declareTypes:[NSArray array] owner:nil];
+    return new ClipboardMac(true, pasteboard, ClipboardWritable, Mac(m_frame));
 }
-
     
 bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
 {

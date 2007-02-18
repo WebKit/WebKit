@@ -272,5 +272,11 @@ PassRefPtr<KJS::Bindings::RootObject> FrameQt::createRootObject(void* nativeHand
     return rootObject.release();
 }
 
+DragImageRef Frame::dragImageForSelection() 
+{
+    return 0;
+}
+    
+
 }
 // vim: ts=4 sw=4 et

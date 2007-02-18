@@ -26,8 +26,24 @@
 #include "config.h"
 #include "Clipboard.h"
 
+#include "DOMImplementation.h"
+#include "Frame.h"
+#include "FrameLoader.h"
+#include "Image.h"
+#include "PlugInInfoStore.h"
+
 namespace WebCore {
 
+bool Clipboard::canSaveAsWebArchive(Frame* frame)
+{
+    ASSERT(frame);
+    String mimeType = frame->loader()->responseMIMEType();
+    
+    return !(DOMImplementation::isTextMIMEType(mimeType) ||
+             Image::supportsType(mimeType) ||
+             PlugInInfoStore::supportsMIMEType(mimeType));
+}
+    
 void Clipboard::setAccessPolicy(ClipboardAccessPolicy policy)
 {
     // once you go numb, can never go back

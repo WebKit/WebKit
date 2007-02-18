@@ -1,3 +1,39 @@
+2007-02-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Moving the drag initiation logic to WebCore.
+        The redundant code in webkit will be moved out in a later patch.
+
+        * WebCoreSupport/WebDragClient.h:
+        * WebCoreSupport/WebDragClient.mm:
+        (getTopHTMLView):
+          Helper function
+        (WebDragClient::willPerformDragSourceAction):
+        (WebDragClient::startDrag):
+        (WebDragClient::createDragImageForLink):
+          Implemented new DragClient methods
+        (WebDragClient::declareAndWriteDragImage):
+          Helper function for the Mac to allow new drag and drop
+          code to match behaviour
+          
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _dragImageForURL:withLabel:]):
+        (-[WebHTMLView _dragImageForLinkElement:]):
+          Refactoring old _dragImageForLinkElement function so that 
+          the link drag image can be created with just a URL and label, 
+          rather than requiring the original element
+        (-[WebHTMLView dragImage:at:offset:event:pasteboard:source:slideBack:]):
+          Removed logic that is no longer necessary                 
+        (-[WebHTMLView _mouseDownEvent]):
+          The WebDragClient may need the original mouseDownEvent of a drag when initiating
+          a drag
+        * WebView/WebHTMLViewInternal.h:
+          Declaring _mouseDownEvent
+
+        * WebView/WebHTMLViewPrivate.h:
+          Declaring _dragImageForURL
+
 2007-02-16  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Hatcher

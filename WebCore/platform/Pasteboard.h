@@ -36,6 +36,7 @@
 
 #if PLATFORM(MAC)
 class NSPasteboard;
+class NSArray;
 #endif
 
 #if PLATFORM(WIN)
@@ -59,9 +60,15 @@ class Frame;
 class KURL;
 class Range;
 class String;
-
+    
 class Pasteboard : Noncopyable {
 public:
+#if PLATFORM(MAC)
+    //Helper functions to allow Clipboard to share code
+    static void writeSelection(NSPasteboard* pasteboard, Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame);
+    static void writeURL(NSPasteboard* pasteboard, NSArray* types, const KURL& url, const String& titleStr, Frame* frame);
+#endif
+    
     static Pasteboard* generalPasteboard();
     void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*);
     void writeURL(const KURL&, const String&, Frame* = 0);

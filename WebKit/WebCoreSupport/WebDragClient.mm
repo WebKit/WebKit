@@ -25,14 +25,38 @@
 
 #import "WebDragClient.h"
 
+#import "WebArchive.h"
+#import "WebArchiver.h"
+#import "WebDOMOperations.h"
 #import "WebFrame.h"
+#import "WebFrameInternal.h"
+#import "WebHTMLViewInternal.h"
+#import "WebHTMLViewPrivate.h"
+#import "WebNSPasteboardExtras.h"
+#import "WebNSURLExtras.h"
 #import "WebUIDelegate.h"
+#import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
+#import <WebCore/ClipboardMac.h>
 #import <WebCore/DragData.h>
+#import <WebCore/EventHandler.h>
+#import <WebCore/FrameMac.h>
+#import <WebCore/FrameView.h>
+#import <WebCore/Image.h>
+#import <WebCore/Page.h>
+
+using namespace WebCore;
 
 WebDragClient::WebDragClient(WebView* webView)
     : m_webView(webView) 
 {
+}
+
+static WebHTMLView *getTopHTMLView(Frame* frame)
+{
+    ASSERT(frame);
+    ASSERT(frame->page());
+    return (WebHTMLView*)[[kit(frame->page()->mainFrame()) frameView] documentView];
 }
 
 WebCore::DragDestinationAction WebDragClient::actionMaskForDrag(WebCore::DragData* dragData)
@@ -46,10 +70,70 @@ void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAct
 }
 
 
-WebCore::DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint)
+WebCore::DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint& windowPoint)
 {
     NSPoint viewPoint = [m_webView convertPoint:windowPoint fromView:nil];
-    return (WebCore::DragSourceAction)[[m_webView _UIDelegateForwarder] webView:m_webView dragSourceActionMaskForPoint:viewPoint];
+    return (DragSourceAction)[[m_webView _UIDelegateForwarder] webView:m_webView dragSourceActionMaskForPoint:viewPoint];
+}
+
+void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction action, const WebCore::IntPoint& mouseDownPoint, WebCore::Clipboard* clipboard)
+{
+    ASSERT(clipboard);
+    [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragSourceAction:(WebDragSourceAction)action fromPoint:mouseDownPoint withPasteboard:static_cast<WebCore::ClipboardMac*>(clipboard)->pasteboard()];
+}
+
+void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& at, const IntPoint& eventPos, Clipboard* clipboard, Frame* frame, bool linkDrag)
+{
+    if (!frame)
+        return;
+    ASSERT(clipboard);
+    RetainPtr<WebHTMLView> htmlView = (WebHTMLView*)[[kit(frame) frameView] documentView];
+    if (![htmlView.get() isKindOfClass:[WebHTMLView class]])
+        return;
+    
+    NSEvent *event = linkDrag ? frame->eventHandler()->currentNSEvent() : [htmlView.get() _mouseDownEvent];
+    WebHTMLView* topHTMLView = getTopHTMLView(frame);
+    RetainPtr<WebHTMLView> topViewProtector = topHTMLView;
+    
+    [topHTMLView _stopAutoscrollTimer];
+    NSPasteboard *pasteboard = static_cast<ClipboardMac*>(clipboard)->pasteboard();
+    
+    // note per kwebster, the offset arg below is always ignored in positioning the image
+    id UIDelegate = [m_webView UIDelegate];
+    if ([UIDelegate respondsToSelector:@selector(webView:dragImage:at:offset:event:pasteboard:source:slideBack:forView:)])
+        [UIDelegate webView:m_webView dragImage:dragImage.get() at:(NSPoint)at offset:NSMakeSize(0, 0) event:event pasteboard:pasteboard source:htmlView.get() slideBack:YES forView:topHTMLView];
+    else
+        [topHTMLView dragImage:dragImage.get() at:(NSPoint)at offset:NSMakeSize(0, 0) event:event pasteboard:pasteboard source:htmlView.get() slideBack:YES];
+}
+
+DragImageRef WebDragClient::createDragImageForLink(KURL& url, const String& title, Frame* frame)
+{
+    if (!frame)
+        return nil;
+    WebHTMLView* htmlView = (WebHTMLView*)[[kit(frame) frameView] documentView];
+    NSString *label = 0;
+    if (!title.isEmpty())
+        label = (NSString*)title;
+    return [htmlView _dragImageForURL:[url.getNSURL() _web_userVisibleString] withLabel:label];
+}
+
+
+void WebDragClient::declareAndWriteDragImage(NSPasteboard* pasteboard, DOMElement* element, NSURL* URL, NSString* title, WebCore::Frame* frame, bool canSaveAsWebArchive) 
+{
+    ASSERT(pasteboard);
+    ASSERT(element);
+    id source = (WebHTMLView*)[[kit(frame) frameView] documentView];        
+    
+    WebArchive *archive;
+    
+    // If the image element comes from an ImageDocument, we don't want to 
+    // create a web archive from the image element.
+    if (canSaveAsWebArchive)
+        archive = [element webArchive];
+    else
+        archive = [WebArchiver archiveMainResourceForFrame:kit(frame)];
+    ASSERT(archive);
+    [pasteboard _web_declareAndWriteDragImageForElement:element URL:URL title:title archive:archive source:source];
 }
 
 void WebDragClient::dragControllerDestroyed() 

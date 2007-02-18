@@ -347,8 +347,11 @@ class SVGEmptyDragClient : public DragClient {
 public:
     virtual ~SVGEmptyDragClient() {}
     virtual void willPerformDragDestinationAction(DragDestinationAction, DragData*) { }
+    virtual void willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard*) { }
     virtual DragDestinationAction actionMaskForDrag(DragData*) { return DragDestinationActionNone; }
     virtual DragSourceAction dragSourceActionMaskForPoint(const IntPoint&) { return DragSourceActionNone; }
+    virtual void startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard*, Frame*, bool) { }
+    virtual DragImageRef createDragImageForLink(KURL&, const String& label, Frame*) { return 0; } 
     virtual void dragControllerDestroyed() { }
 };
     

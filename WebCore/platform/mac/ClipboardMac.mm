@@ -27,12 +27,25 @@
 #import "ClipboardMac.h"
 
 #import "CachedImage.h"
+#import "Document.h"
+#import "DOMElementInternal.h"
+#import "DragClient.h"
+#import "DragController.h"
+#import "Editor.h"
 #import "EventHandler.h"
 #import "FloatRect.h"
 #import "FoundationExtras.h"
 #import "FrameMac.h"
+#import "HTMLImageElement.h"
 #import "Image.h"
+#import "Page.h"
+#import "Pasteboard.h"
+#import "Range.h"
+#import "RenderImage.h"
+#import "WebCoreFrameBridge.h"
 #import "WebCoreSystemInterface.h"
+
+@class WebArchive;
 
 namespace WebCore {
 
@@ -50,6 +63,11 @@ ClipboardMac::~ClipboardMac()
 {
 }
 
+bool ClipboardMac::hasData()
+{
+    return m_pasteboard && [m_pasteboard.get() types] && [[m_pasteboard.get() types] count] > 0;
+}
+    
 bool ClipboardMac::isForDragging() const
 {
     return m_forDragging;
@@ -317,8 +335,37 @@ void ClipboardMac::setDragImage(CachedImage* image, Node *node, const IntPoint &
         // set the image way too late.
     }
 }
-
-NSImage *ClipboardMac::dragNSImage(NSPoint& loc)
+    
+void ClipboardMac::writeRange(Range* range, Frame* frame)
+{
+    ASSERT(range);
+    ASSERT(frame);
+    Pasteboard::writeSelection(m_pasteboard.get(), range, frame->editor()->smartInsertDeleteEnabled() && frame->selectionGranularity() == WordGranularity, frame);
+}
+    
+void ClipboardMac::writeURL(const KURL& url, const String& title, Frame* frame)
+{   
+    ASSERT(frame);
+    ASSERT(m_pasteboard);
+    Pasteboard::writeURL(m_pasteboard.get(), nil, url, title, frame);
+}
+    
+void ClipboardMac::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame)
+{
+    ASSERT(frame);
+    if (Page* page = frame->page())
+        page->dragController()->client()->declareAndWriteDragImage(m_pasteboard.get(), [DOMElement _elementWith:element], url.getNSURL(), title, frame, Clipboard::canSaveAsWebArchive(frame));
+}
+    
+DragImageRef ClipboardMac::createDragImage(IntPoint& loc) const
+{
+    NSPoint nsloc = {loc.x(), loc.y()};
+    DragImageRef result = dragNSImage(nsloc);
+    loc = IntPoint(nsloc.x, nsloc.y);
+    return result;
+}
+    
+NSImage *ClipboardMac::dragNSImage(NSPoint& loc) const
 {
     NSImage *result = nil;
     if (m_dragImageElement) {

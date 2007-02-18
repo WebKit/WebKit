@@ -174,6 +174,7 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
 #define AUTOSCROLL_INTERVAL             0.1f
 
 #define DRAG_LABEL_BORDER_X             4.0f
+//Keep border_y in synch with DragController::LinkDragBorderInset
 #define DRAG_LABEL_BORDER_Y             2.0f
 #define DRAG_LABEL_RADIUS               5.0f
 #define DRAG_LABEL_BORDER_Y_OFFSET              2.0f
@@ -1255,15 +1256,10 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     return [NSArray arrayWithObjects:WebArchivePboardType, NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, nil];
 }
 
-- (NSImage *)_dragImageForLinkElement:(NSDictionary *)element
+- (NSImage *)_dragImageForURL:(NSString*)urlString withLabel:(NSString*)label
 {
-    NSURL *linkURL = [element objectForKey: WebElementLinkURLKey];
-
     BOOL drawURLString = YES;
     BOOL clipURLString = NO, clipLabelString = NO;
-    
-    NSString *label = [element objectForKey: WebElementLinkLabelKey];
-    NSString *urlString = [linkURL _web_userVisibleString];
     
     if (!label) {
         drawURLString = NO;
@@ -1271,7 +1267,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     }
     
     NSFont *labelFont = [[NSFontManager sharedFontManager] convertFont:[NSFont systemFontOfSize:DRAG_LINK_LABEL_FONT_SIZE]
-                                                   toHaveTrait:NSBoldFontMask];
+                                                           toHaveTrait:NSBoldFontMask];
     NSFont *urlFont = [NSFont systemFontOfSize: DRAG_LINK_URL_FONT_SIZE];
     NSSize labelSize;
     labelSize.width = [label _web_widthWithFont: labelFont];
@@ -1311,25 +1307,34 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     [path appendBezierPathWithRect: NSMakeRect(0.0f, DRAG_LABEL_RADIUS, DRAG_LABEL_RADIUS + 10.0f, imageSize.height - 2.0f * DRAG_LABEL_RADIUS)];
     [path appendBezierPathWithRect: NSMakeRect(imageSize.width - DRAG_LABEL_RADIUS - 20.0f, DRAG_LABEL_RADIUS, DRAG_LABEL_RADIUS + 20.0f, imageSize.height - 2.0f * DRAG_LABEL_RADIUS)];
     [path fill];
-        
+    
     NSColor *topColor = [NSColor colorWithCalibratedWhite:0.0f alpha:0.75f];
     NSColor *bottomColor = [NSColor colorWithCalibratedWhite:1.0f alpha:0.5f];
     if (drawURLString) {
         if (clipURLString)
             urlString = [WebStringTruncator centerTruncateString: urlString toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2.0f) withFont:urlFont];
-
+        
         [urlString _web_drawDoubledAtPoint:NSMakePoint(DRAG_LABEL_BORDER_X, DRAG_LABEL_BORDER_Y - [urlFont descender]) 
-             withTopColor:topColor bottomColor:bottomColor font:urlFont];
+                              withTopColor:topColor bottomColor:bottomColor font:urlFont];
     }
-
+    
     if (clipLabelString)
         label = [WebStringTruncator rightTruncateString: label toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2.0f) withFont:labelFont];
     [label _web_drawDoubledAtPoint:NSMakePoint (DRAG_LABEL_BORDER_X, imageSize.height - DRAG_LABEL_BORDER_Y_OFFSET - [labelFont pointSize])
-             withTopColor:topColor bottomColor:bottomColor font:labelFont];
+                      withTopColor:topColor bottomColor:bottomColor font:labelFont];
     
     [dragImage unlockFocus];
     
     return dragImage;
+}
+
+- (NSImage *)_dragImageForLinkElement:(NSDictionary *)element
+{
+    NSURL *linkURL = [element objectForKey: WebElementLinkURLKey];
+    
+    NSString *label = [element objectForKey: WebElementLinkLabelKey];
+    NSString *urlString = [linkURL _web_userVisibleString];
+    return [self _dragImageForURL:urlString withLabel:label];
 }
 
 - (BOOL)_startDraggingImage:(NSImage *)wcDragImage at:(NSPoint)wcDragLoc operation:(NSDragOperation)op event:(NSEvent *)mouseDraggedEvent sourceIsDHTML:(BOOL)srcIsDHTML DHTMLWroteData:(BOOL)dhtmlWroteData
@@ -2883,29 +2888,8 @@ done:
            source:(id)source
         slideBack:(BOOL)slideBack
 {
-    [self _stopAutoscrollTimer];
-
-    WebHTMLView *topHTMLView = [self _topHTMLView];
-    if (self != topHTMLView) {
-        [topHTMLView dragImage:dragImage at:[self convertPoint:at toView:topHTMLView]
-            offset:offset event:event pasteboard:pasteboard source:source slideBack:slideBack];
-        return;
-    }
-
-    WebView *webView = [self _webView];
-    Page *page = core(webView);
-    ASSERT(page);
-    page->dragController()->setDidInitiateDrag(true);
-    
-    // Retain this view during the drag because it may be released before the drag ends.
-    [self retain];
-
-    id UIDelegate = [webView UIDelegate];
-    // If a delegate takes over the drag but never calls draggedImage: endedAt:, we'll leak the WebHTMLView.
-    if ([UIDelegate respondsToSelector:@selector(webView:dragImage:at:offset:event:pasteboard:source:slideBack:forView:)])
-        [UIDelegate webView:webView dragImage:dragImage at:at offset:offset event:event pasteboard:pasteboard source:source slideBack:slideBack forView:self];
-    else
-        [super dragImage:dragImage at:at offset:offset event:event pasteboard:pasteboard source:source slideBack:slideBack];
+    ASSERT(self == [self _topHTMLView]);
+    [super dragImage:dragImage at:at offset:offset event:event pasteboard:pasteboard source:source slideBack:slideBack];
 }
 
 - (void)mouseDragged:(NSEvent *)event
@@ -2981,9 +2965,6 @@ done:
                                              context:[[NSApp currentEvent] context]
                                          eventNumber:0 clickCount:0 pressure:0];
     [self mouseUp:fakeEvent]; // This will also update the mouseover state.
-    
-    // Balance the previous retain from when the drag started.
-    [self release];
 }
 
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
@@ -4936,6 +4917,12 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 - (BOOL)_textViewWasFirstResponderAtMouseDownTime:(NSTextView *)textView
 {
     return textView == _private->firstResponderTextViewAtMouseDownTime;
+}
+
+
+- (NSEvent *)_mouseDownEvent
+{
+    return _private->mouseDownEvent;
 }
 
 - (void)_pauseNullEventsForAllNetscapePlugins

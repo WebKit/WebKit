@@ -58,7 +58,9 @@ public:
     void clearAllData();
     String getData(const String& type, bool& success) const;
     bool setData(const String& type, const String& data);
-        
+    
+    virtual bool hasData();
+    
     // extensions beyond IE's API
     virtual HashSet<String> types() const;
 
@@ -67,10 +69,15 @@ public:
     void setDragImage(CachedImage*, const IntPoint&);
     Node* dragImageElement();
     void setDragImageElement(Node *, const IntPoint&);
-
-    // Methods for getting info in Cocoa's type system
-    NSImage *dragNSImage(NSPoint&); // loc converted from dragLoc, based on whole image size
     
+    virtual DragImageRef createDragImage(IntPoint& dragLoc) const;
+    virtual void declareAndWriteDragImage(Element*, const KURL&, const String& title, Frame*);
+    virtual void writeRange(Range*, Frame* frame);
+    virtual void writeURL(const KURL&, const String&, Frame* frame);
+    
+    // Methods for getting info in Cocoa's type system
+    NSImage *dragNSImage(NSPoint&) const; // loc converted from dragLoc, based on whole image size
+    NSPasteboard *pasteboard() { return m_pasteboard.get(); }
 private:
     void setDragImage(CachedImage*, Node*, const IntPoint&);
 
