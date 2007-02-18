@@ -1,5 +1,14 @@
 2007-02-18  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Buildfix).
+
+        Build fix for the build fix -- can't call something that isn't a function
+
+        * platform/qt/CursorQt.cpp:
+        (WebCore::notAllowedCursor):
+
+2007-02-18  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (Build fix).
 
         Adding platform/DragImage.cpp and platform/qt/DragImageQt.cpp to the Qt

@@ -273,7 +273,7 @@ const Cursor& noneCursor()
 const Cursor& notAllowedCursor()
 {
    //FIXME: Build fix -- what is correct here?
-   return Cursors::self()->BlankCursor();
+   return Cursors::self()->BlankCursor;
 }
 
 
