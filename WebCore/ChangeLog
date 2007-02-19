@@ -1,3 +1,18 @@
+2007-02-18  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Hyatt.
+
+        - really fix http://bugs.webkit.org/show_bug.cgi?id=11974
+        REGRESSION: Caret drawn over input when smaller than font size on initial focus
+        <rdar://problem/4960258>
+        
+        Avoid double painting caret when it is on a block element.
+        
+        Layout test for this already went in previous try (it only fails in pixel mode) in r19626.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintCaret):
+
 2007-02-19  Lars Knoll <lars@trolltech.com>
 
         Added a one line patch from Olliej to create the
