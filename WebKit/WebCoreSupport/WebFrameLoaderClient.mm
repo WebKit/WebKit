@@ -74,7 +74,7 @@
 #import <WebCore/FormState.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderTypes.h>
-#import <WebCore/FrameMac.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>

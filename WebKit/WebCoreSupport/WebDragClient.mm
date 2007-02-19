@@ -40,7 +40,7 @@
 #import <WebCore/ClipboardMac.h>
 #import <WebCore/DragData.h>
 #import <WebCore/EventHandler.h>
-#import <WebCore/FrameMac.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/Image.h>
 #import <WebCore/Page.h>
