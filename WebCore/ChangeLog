@@ -1,3 +1,17 @@
+2007-02-19  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Oliver.
+
+        Make DragController::maxDragImageSize a function to get rid of the global initializer.
+        
+        * page/DragController.cpp:
+        (WebCore::DragController::doImageDrag):
+        * page/DragController.h:
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::maxDragImageSize):
+        * page/qt/DragControllerQt.cpp:
+        (WebCore::DragController::maxDragImageSize):
+
 2007-02-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
