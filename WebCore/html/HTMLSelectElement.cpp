@@ -939,7 +939,7 @@ int HTMLSelectElement::previousSelectableListIndex(int startIndex)
 
 void HTMLSelectElement::accessKeyAction(bool sendToAnyElement)
 {
-    // send the mouse button events iff the caller specified sendToAnyElement
+    focus();
     dispatchSimulatedClick(0, sendToAnyElement);
 }
 

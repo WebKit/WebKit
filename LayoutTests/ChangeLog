@@ -1,3 +1,16 @@
+2007-02-19  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Mitz.
+        
+        - test for http://bugs.webkit.org/show_bug.cgi?id=10990
+          REGRESSION: Pressing a pop-up's access key doesn't focus it
+          <rdar://problem/4823138>
+
+        * fast/forms/select-accesskey-expected.checksum: Added.
+        * fast/forms/select-accesskey-expected.png: Added.
+        * fast/forms/select-accesskey-expected.txt: Added.
+        * fast/forms/select-accesskey.html: Added.
+
 2007-02-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adele.
