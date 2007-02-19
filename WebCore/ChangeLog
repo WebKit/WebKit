@@ -1,5 +1,41 @@
 2007-02-19  Lars Knoll <lars@trolltech.com>
 
+        Added a one line patch from Olliej to create the
+        clipboard on demand (to stop things from crashing), 
+        and added lots of notImplemented() warnings all 
+        over the place.
+
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::ClipboardQt):
+        (WebCore::ClipboardQt::clearData):
+        (WebCore::ClipboardQt::clearAllData):
+        (WebCore::ClipboardQt::getData):
+        (WebCore::ClipboardQt::setData):
+        (WebCore::ClipboardQt::types):
+        (WebCore::ClipboardQt::dragLocation):
+        (WebCore::ClipboardQt::dragImage):
+        (WebCore::ClipboardQt::setDragImage):
+        (WebCore::ClipboardQt::dragImageElement):
+        (WebCore::ClipboardQt::setDragImageElement):
+        (WebCore::ClipboardQt::createDragImage):
+        (WebCore::ClipboardQt::declareAndWriteDragImage):
+        (WebCore::ClipboardQt::writeURL):
+        (WebCore::ClipboardQt::writeRange):
+        (WebCore::ClipboardQt::hasData):
+        * platform/qt/DragDataQt.cpp:
+        (WebCore::DragData::canSmartReplace):
+        (WebCore::DragData::containsColor):
+        (WebCore::DragData::containsPlainText):
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::asColor):
+        (WebCore::DragData::createClipboard):
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asFragment):
+
+2007-02-19  Lars Knoll <lars@trolltech.com>
+
         Compile again.
 
         * platform/qt/ClipboardQt.cpp:

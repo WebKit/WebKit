@@ -30,80 +30,98 @@
 #include "PlatformString.h"
 #include "StringHash.h"
 
+#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
+
 namespace WebCore {
     
 ClipboardQt::ClipboardQt(ClipboardAccessPolicy policy, bool forDragging) 
     : Clipboard(policy)
     , m_isForDragging(forDragging)
 {
+    notImplemented();
 }
 
 void ClipboardQt::clearData(const String& type)
 {
+    notImplemented();
 }
 
 void ClipboardQt::clearAllData() 
 {
+    notImplemented();
 }
 
 String ClipboardQt::getData(const String& type, bool& success) const 
 {
+    notImplemented();
     return ""; 
 }
 
 bool ClipboardQt::setData(const String& type, const String& data) 
 {
+    notImplemented();
 }
 
 // extensions beyond IE's API
 HashSet<String> ClipboardQt::types() const 
 {
+    notImplemented();
     HashSet<String> result;
     return result;
 }
 
 IntPoint ClipboardQt::dragLocation() const 
 { 
+    notImplemented();
     return IntPoint(0,0);
 }
 
 CachedImage* ClipboardQt::dragImage() const 
 {
+    notImplemented();
     return 0; 
 }
 
 void ClipboardQt::setDragImage(CachedImage*, const IntPoint&) 
 {
+    notImplemented();
 }
 
 Node* ClipboardQt::dragImageElement() 
 {
+    notImplemented();
     return 0; 
 }
 
 void ClipboardQt::setDragImageElement(Node*, const IntPoint&)
 {
+    notImplemented();
 }
 
 DragImageRef ClipboardQt::createDragImage(IntPoint& dragLoc) const
 { 
+    notImplemented();
     return 0;
 }
 
 void ClipboardQt::declareAndWriteDragImage(Element*, const KURL&, const String&, Frame*) 
 {
+    notImplemented();
 }
 
 void ClipboardQt::writeURL(const KURL&, const String&, Frame*) 
 {
+    notImplemented();
 }
 
 void ClipboardQt::writeRange(Range*, Frame*) 
 {
+    notImplemented();
 }
 
 bool ClipboardQt::hasData() 
 {
+    notImplemented();
     return false;
 }
 

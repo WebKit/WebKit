@@ -28,57 +28,70 @@
 
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "ClipboardQt.h"
+
+#define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
 namespace WebCore {
 
 bool DragData::canSmartReplace() const
 {
+    notImplemented();
     return false;
 }
     
 bool DragData::containsColor() const
 {
+    notImplemented();
     return false;
 }
 
 bool DragData::containsPlainText() const
 {
+    notImplemented();
     return false;
 }
 
 String DragData::asPlainText() const
 {
+    notImplemented();
     return String();
 }
     
 Color DragData::asColor() const
 {
+    notImplemented();
     return Color();
 }
 
-Clipboard* DragData::createClipboard(ClipboardAccessPolicy) const
+Clipboard* DragData::createClipboard(ClipboardAccessPolicy policy) const
 {
-    return 0;
+    notImplemented();
+    return new ClipboardQt(policy, true);
 }
     
 bool DragData::containsCompatibleContent() const
 {
+    notImplemented();
     return false;
 }
     
 bool DragData::containsURL() const
 {
+    notImplemented();
     return false;
 }
     
 String DragData::asURL(String* title) const
 {
+    notImplemented();
     return String();
 }
     
     
 PassRefPtr<DocumentFragment> DragData::asFragment(Document*) const
 {
+    notImplemented();
     return 0;
 }
     
