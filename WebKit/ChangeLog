@@ -1,3 +1,14 @@
+2007-02-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver
+
+        <rdar://problem/4985321> - Can't edit templates for Web Gallery/Web Page Export in Aperture
+
+        * Misc/WebKitVersionChecks.h: Add a #define for this APERTURE quirk
+        * WebView/WebView.mm:
+        (-[WebView _shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting:]):
+         If the current app is Aperture and it was linked against Tiger WebKit, always allow selection change
+
 2007-02-17  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Maciej.
