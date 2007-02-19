@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,15 +29,20 @@
 
 #import "WebEditorClient.h"
 
+#import "DOMHTMLInputElementInternal.h"
+#import "DOMHTMLTextAreaElementInternal.h"
+#import "DOMRangeInternal.h"
 #import "WebArchive.h"
 #import "WebArchiver.h"
 #import "WebDataSourceInternal.h"
 #import "WebDocument.h"
 #import "WebEditingDelegatePrivate.h"
+#import "WebFormDelegate.h"
 #import "WebFrameInternal.h"
 #import "WebHTMLView.h"
 #import "WebHTMLViewInternal.h"
 #import "WebLocalizableStrings.h"
+#import "WebKitLogging.h"
 #import "WebNSURLExtras.h"
 #import "WebViewInternal.h"
 #import <WebCore/Document.h>
@@ -227,6 +233,11 @@ bool WebEditorClient::shouldInsertText(String text, Range* range, EditorInsertAc
     return [[webView _editingDelegateForwarder] webView:webView shouldInsertText:text replacingDOMRange:kit(range) givenAction:kit(action)];
 }
 
+bool WebEditorClient::shouldChangeSelectedRange(WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity selectionAffinity, bool stillSelecting)
+{
+    return [m_webView _shouldChangeSelectedDOMRange:kit(fromRange) toDOMRange:kit(toRange) affinity:kit(selectionAffinity) stillSelecting:stillSelecting];
+}
+
 void WebEditorClient::didBeginEditing()
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidBeginEditingNotification object:m_webView];
@@ -400,4 +411,80 @@ void WebEditorClient::markedTextAbandoned(Frame* frame)
 {
     WebHTMLView *webHTMLView = [[kit(frame) frameView] documentView];
     [[NSInputManager currentInputManager] markedTextAbandoned:webHTMLView];
+}
+
+#define FormDelegateLog(ctrl)  LOG(FormDelegate, "control=%@", ctrl)
+
+void WebEditorClient::textFieldDidBeginEditing(WebCore::Element* element)
+{
+    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _HTMLInputElementWith:(WebCore::HTMLInputElement*)element];
+    FormDelegateLog(inputElement);
+    [[m_webView _formDelegate] textFieldDidBeginEditing:inputElement inFrame:kit(element->document()->frame())];
+}
+
+void WebEditorClient::textFieldDidEndEditing(WebCore::Element* element)
+{
+    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _HTMLInputElementWith:(WebCore::HTMLInputElement*)element];
+    FormDelegateLog(inputElement);
+    [[m_webView _formDelegate] textFieldDidEndEditing:inputElement inFrame:kit(element->document()->frame())];
+}
+    
+void WebEditorClient::textDidChangeInTextField(WebCore::Element* element)
+{
+    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _HTMLInputElementWith:(WebCore::HTMLInputElement*)element];
+    FormDelegateLog(inputElement);
+    [[m_webView _formDelegate] textDidChangeInTextField:(DOMHTMLInputElement *)inputElement inFrame:kit(element->document()->frame())];
+}
+
+static SEL selectorForKeyEvent(KeyboardEvent* event)
+{
+    // FIXME: This helper function is for the auto-fill code so the bridge can pass a selector to the form delegate.  
+    // Eventually, we should move all of the auto-fill code down to WebKit and remove the need for this function by
+    // not relying on the selector in the new implementation.
+    String key = event->keyIdentifier();
+    if (key == "Up")
+        return @selector(moveUp:);
+    if (key == "Down")
+        return @selector(moveDown:);
+    if (key == "U+00001B")
+        return @selector(cancel:);
+    if (key == "U+000009") {
+        if (event->shiftKey())
+            return @selector(insertBacktab:);
+        return @selector(insertTab:);
+    }
+    if (key == "Enter")
+        return @selector(insertNewline:);
+    return 0;
+}
+
+bool WebEditorClient::doTextFieldCommandFromEvent(WebCore::Element* element, WebCore::KeyboardEvent* event)
+{
+    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _HTMLInputElementWith:(WebCore::HTMLInputElement*)element];
+
+    bool result = false;
+    FormDelegateLog(inputElement);
+
+    SEL selector = selectorForKeyEvent(event);
+    if (selector)
+        result = [[m_webView _formDelegate] textField:inputElement doCommandBySelector:selector inFrame:kit(element->document()->frame())];
+
+    return result;
+}
+
+void WebEditorClient::textWillBeDeletedInTextField(WebCore::Element* element)
+{
+    DOMHTMLInputElement* inputElement = [DOMHTMLInputElement _HTMLInputElementWith:(WebCore::HTMLInputElement*)element];
+
+    // We're using the deleteBackward selector for all deletion operations since the autofill code treats all deletions the same way.
+    FormDelegateLog(inputElement);
+    [[m_webView _formDelegate] textField:inputElement doCommandBySelector:@selector(deleteBackward:) inFrame:kit(element->document()->frame())];
+}
+
+void WebEditorClient::textDidChangeInTextArea(WebCore::Element* element)
+{
+    DOMHTMLTextAreaElement* textAreaElement = [DOMHTMLTextAreaElement _HTMLTextAreaElementWith:(WebCore::HTMLTextAreaElement*)element];
+
+    FormDelegateLog(textAreaElement);
+    [[m_webView _formDelegate] textDidChangeInTextArea:textAreaElement inFrame:kit(element->document()->frame())];
 }

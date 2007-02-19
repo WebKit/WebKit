@@ -1,3 +1,181 @@
+2007-02-17  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Maciej.
+        
+        Additional coding by Maciej, additional review by Oliver.
+
+        Get rid of the FrameMac and FrameQt classes. Instead
+        move all methods into Frame directly, and implement
+        some platform specific methods in foo/FrameFoo.cpp.
+
+        Some general cleanup in Frame:
+        * Move some methods out of Frame, to the place where they 
+        belong.
+        * Unify the different ways of creating the JavaScript wrappers
+        for <object>, <embed> and <applet>
+        * Some cleanup of the WebCoreFrameBridge
+
+        * ForwardingHeaders/bindings/NP_jsobject.h: Added.
+        * ForwardingHeaders/bindings/npruntime_impl.h: Added.
+        * ForwardingHeaders/bindings/runtime_root.h: Added.
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::shouldInterruptScript):
+        * bindings/objc/DOM.mm:
+        (-[DOMNode KJS::Bindings::]):
+        * bindings/objc/DOMInternal.mm:
+        (-[WebScriptObject _initializeScriptDOMNodeImp]):
+        * bridge/EditorClient.h:
+        * bridge/mac/FrameViewMac.mm:
+        (WebCore::FrameView::updateBorder):
+        (WebCore::FrameView::updateDashboardRegions):
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject rendererForView:]):
+        * dom/Position.cpp:
+        (WebCore::Position::next):
+        * editing/CommandByName.cpp:
+        (WebCore::Frame::execCopy):
+        (WebCore::Frame::execCut):
+        (WebCore::Frame::execPaste):
+        * editing/Editor.cpp:
+        (WebCore::Editor::canEdit):
+        (WebCore::Editor::pasteWithPasteboard):
+        (WebCore::Editor::paste):
+        (WebCore::Editor::pasteAsPlainText):
+        * editing/Editor.h:
+        * editing/JSEditor.cpp:
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::getInstance):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::getInstance):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formData):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::getInstance):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+        (WebCore::FrameLoader::detachFromParent):
+        * loader/mac/ImageDocumentMac.mm:
+        (WebCore::finishImageLoad):
+        * loader/qt/DocumentLoaderQt.cpp:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::shouldInterruptJavaScript):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame):
+        (WebCore::Frame::markedTextRange):
+        (WebCore::Frame::shouldChangeSelection):
+        (WebCore::Frame::shouldDeleteSelection):
+        (WebCore::Frame::isContentEditable):
+        (WebCore::Frame::setSecureKeyboardEntry):
+        (WebCore::Frame::isSecureKeyboardEntry):
+        (WebCore::Frame::bindingRootObject):
+        (WebCore::Frame::createRootObject):
+        (WebCore::Frame::windowScriptNPObject):
+        (WebCore::Frame::cleanupScriptObjects):
+        (WebCore::FramePrivate::FramePrivate):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/FrameView.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::tabsToLinks):
+        (WebCore::EventHandler::tabsToAllControls):
+        (WebCore::EventHandler::focusDocumentView):
+        (WebCore::EventHandler::passMouseDownEventToWidget):
+        (WebCore::EventHandler::handleDrag):
+        (WebCore::EventHandler::sendFakeEventsAfterWidgetTracking):
+        (WebCore::EventHandler::keyboardUIMode):
+        * page/mac/FrameMac.h: Removed.
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::setBridge):
+        (WebCore::Frame::bridge):
+        (WebCore::Frame::searchForLabelsAboveCell):
+        (WebCore::Frame::searchForLabelsBeforeElement):
+        (WebCore::Frame::matchLabelsAgainstElement):
+        (WebCore::Frame::focusWindow):
+        (WebCore::Frame::unfocusWindow):
+        (WebCore::Frame::imageFromRect):
+        (WebCore::Frame::selectionImage):
+        (WebCore::Frame::snapshotDragImage):
+        (WebCore::Frame::fontAttributesForSelectionStart):
+        (WebCore::Frame::baseWritingDirectionForSelectionStart):
+        (WebCore::Frame::print):
+        (WebCore::Frame::issuePasteCommand):
+        (WebCore::Frame::issueTransposeCommand):
+        (WebCore::Frame::respondToChangedSelection):
+        (WebCore::Frame::textFieldDidBeginEditing):
+        (WebCore::Frame::textFieldDidEndEditing):
+        (WebCore::Frame::textDidChangeInTextField):
+        (WebCore::Frame::textDidChangeInTextArea):
+        (WebCore::Frame::doTextFieldCommandFromEvent):
+        (WebCore::Frame::textWillBeDeletedInTextField):
+        (WebCore::Frame::setSecureKeyboardEntry):
+        (WebCore::Frame::isSecureKeyboardEntry):
+        (WebCore::Frame::setMarkedTextRange):
+        (WebCore::Frame::dashboardRegionsDictionary):
+        (WebCore::Frame::dashboardRegionsChanged):
+        (WebCore::Frame::willPopupMenu):
+        (WebCore::Frame::isCharacterSmartReplaceExempt):
+        (WebCore::Frame::setNeedsReapplyStyles):
+        (WebCore::Frame::customHighlightLineRect):
+        (WebCore::Frame::paintCustomHighlight):
+        (WebCore::Frame::createScriptInstanceForWidget):
+        (WebCore::Frame::windowScriptObject):
+        (WebCore::Frame::cleanupPlatformScriptObjects):
+        * page/mac/WebCoreFrameBridge.h:
+        * page/mac/WebCoreFrameBridge.mm:
+        (createRootObject):
+        (bridge):
+        (-[WebCoreFrameBridge _frame]):
+        * page/qt/EventHandlerQt.cpp:
+        * page/qt/FrameQt.cpp:
+        (WebCore::Frame::unfocusWindow):
+        (WebCore::Frame::focusWindow):
+        (WebCore::Frame::issueTransposeCommand):
+        (WebCore::Frame::respondToChangedSelection):
+        (WebCore::Frame::print):
+        (WebCore::Frame::createScriptInstanceForWidget):
+        (WebCore::Frame::cleanupPlatformScriptObjects):
+        (WebCore::Frame::isCharacterSmartReplaceExempt):
+        * page/qt/FrameQt.h: Removed.
+        * platform/MimeTypeRegistry.h:
+        * platform/graphics/svg/SVGImage.cpp:
+        (WebCore::SVGImage::setData):
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyChromeClient::shouldInterruptJavaScript):
+        (WebCore::SVGEmptyEditorClient::shouldChangeSelectedRange):
+        * platform/mac/ClipboardMac.h:
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::ClipboardMac):
+        * platform/mac/FileChooserMac.mm:
+        (-[OpenPanelController beginSheetWithFrame:]):
+        * platform/mac/MimeTypeRegistryMac.mm:
+        (WebCore::MimeTypeRegistry::getMIMETypeForPath):
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::show):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::setFocus):
+        (WebCore::Widget::setIsSelected):
+        * platform/network/mac/ResourceHandleMac.mm:
+        * platform/network/qt/ResourceHandleManagerQt.cpp:
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::start):
+        * platform/qt/MimeTypeRegistryQt.cpp:
+        (WebCore::MimeTypeRegistry::getMIMETypeForPath):
+        * platform/qt/PopupMenuQt.cpp:
+        * platform/qt/ScrollViewCanvasQt.cpp:
+        * platform/qt/ScrollViewQt.cpp:
+        * platform/win/TemporaryLinkStubs.cpp:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintCustomHighlight):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintCustomHighlight):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::addHighlightOverflow):
+        (WebCore::RootInlineBox::paintCustomHighlight):
+
 2007-02-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Buildfix).

@@ -44,7 +44,7 @@
 #import "ExceptionHandlers.h"
 #import "FontData.h"
 #import "FoundationExtras.h"
-#import "FrameMac.h"
+#import "Frame.h"
 #import "HTMLDocument.h"
 #import "HTMLNames.h"
 #import "HTMLPlugInElement.h"
@@ -375,8 +375,8 @@ static NSArray *kit(const Vector<IntRect>& rects)
 - (KJS::Bindings::RootObject*)_rootObject
 {
     if (WebCore::Node *n = [self _node]) {
-        if (WebCore::FrameMac* frame = Mac(n->document()->frame()))
-            return frame->rootObjectForDOM();
+        if (WebCore::Frame* frame = n->document()->frame())
+            return frame->bindingRootObject();
     }
     return 0;
 }

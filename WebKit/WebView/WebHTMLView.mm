@@ -79,7 +79,7 @@
 #import <WebCore/DragController.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FocusController.h>
-#import <WebCore/FrameMac.h>
+#import <WebCore/Frame.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MimeTypeRegistry.h>
@@ -1191,14 +1191,14 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
                          windowNumber:[[view window] windowNumber]
                          context:[[NSApp currentEvent] context]
                          eventNumber:0 clickCount:0 pressure:0];
-        if (FrameMac* lastHitCoreFrame = core([lastHitView _frame]))
+        if (Frame* lastHitCoreFrame = core([lastHitView _frame]))
             lastHitCoreFrame->eventHandler()->mouseMoved(event);
     }
 
     lastHitView = view;
 
     if (view) {
-        if (FrameMac* coreFrame = core([view _frame]))
+        if (Frame* coreFrame = core([view _frame]))
             coreFrame->eventHandler()->mouseMoved(event);
 
         NSPoint point = [view convertPoint:[event locationInWindow] fromView:nil];
@@ -1646,7 +1646,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 - (BOOL)_isEditable
 {
-    FrameMac* coreFrame = core([self _frame]);
+    Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return NO;
     return coreFrame->selectionController()->isContentEditable();
@@ -2028,7 +2028,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item 
 {
     SEL action = [item action];
-    FrameMac* frame = core([self _frame]);
+    Frame* frame = core([self _frame]);
 
     if (action == @selector(changeSpelling:)
             || action == @selector(_changeSpellingFromMenu:)
@@ -2298,7 +2298,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     if (nextResponder == self)
         return YES;
 
-    FrameMac* coreFrame = core([self _frame]);
+    Frame* coreFrame = core([self _frame]);
     bool selectionIsEditable = coreFrame && coreFrame->selectionController()->isContentEditable();
     bool nextResponderIsInWebView = [nextResponder isKindOfClass:[NSView class]]
         && [nextResponder isDescendantOf:[[[self _webView] mainFrame] frameView]];
@@ -2791,7 +2791,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 - (void)scrollWheel:(NSEvent *)event
 {
     [self retain];
-    FrameMac* frame = core([self _frame]);
+    Frame* frame = core([self _frame]);
     if (!frame || !frame->eventHandler()->wheelEvent(event))
         [[self nextResponder] scrollWheel:event];    
     [self release];
@@ -2813,7 +2813,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     
     if (hitHTMLView) {
         bool result = false;
-        if (FrameMac* coreFrame = core([hitHTMLView _frame])) {
+        if (Frame* coreFrame = core([hitHTMLView _frame])) {
             coreFrame->eventHandler()->setActivationEventNumber([event eventNumber]);
             [hitHTMLView _setMouseDownEvent:event];
             if ([hitHTMLView _isSelectionEvent:event])
@@ -2832,7 +2832,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     if (hitHTMLView) {
         bool result = false;
         if ([hitHTMLView _isSelectionEvent:event])
-            if (FrameMac* coreFrame = core([hitHTMLView _frame])) {
+            if (Frame* coreFrame = core([hitHTMLView _frame])) {
                 [hitHTMLView _setMouseDownEvent:event];
                 result = coreFrame->eventHandler()->eventMayStartDrag(event);
                 [hitHTMLView _setMouseDownEvent:nil];
@@ -4991,7 +4991,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     if (coreFrame)
         coreFrame->editor()->cut();
 #else
-    FrameMac* coreFrame = core([self _frame]);
+    Frame* coreFrame = core([self _frame]);
     if (coreFrame && coreFrame->editor()->tryDHTMLCut())
         return; // DHTML did the whole operation
     if (!coreFrame->editor()->canCut()) {
@@ -5014,7 +5014,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     if (coreFrame)
         coreFrame->editor()->paste();
 #else
-    FrameMac* coreFrame = core([self _frame]);
+    Frame* coreFrame = core([self _frame]);
     if (coreFrame && coreFrame->editor()->tryDHTMLPaste())
         return; // DHTML did the whole operation
     if (!coreFrame->editor()->canPaste())
@@ -5022,7 +5022,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     if (coreFrame && coreFrame->selectionController()->isContentRichlyEditable())
         [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
     else
-        [self _pasteAsPlainTextWithPasteboard:[NSPasteboard generalPasteboard]];
+        coreFrame->editor()->pasteAsPlainText();
 #endif
 }
 
@@ -5880,7 +5880,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 {
     NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[self _selectedRange]];
     if (!attributedString) {
-        FrameMac* coreFrame = core([self _frame]);
+        Frame* coreFrame = core([self _frame]);
         if (coreFrame) {
             RefPtr<Range> range = coreFrame->selectionController()->selection().toRange();
             attributedString = [NSAttributedString _web_attributedStringFromRange:range.get()];

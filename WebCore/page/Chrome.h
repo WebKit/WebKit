@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006-2007 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,6 +31,7 @@ namespace WebCore {
     class ContextMenu;
     class FloatRect;
     class Frame;
+    class IntRect;
     class Page;
     class String;
     
@@ -87,9 +88,15 @@ namespace WebCore {
 
         void runJavaScriptAlert(Frame*, const String&);
         bool runJavaScriptConfirm(Frame*, const String&);
-        bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result);        
+        bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result);                
         void setStatusbarText(Frame*, const String&);
         bool shouldInterruptJavaScript();
+
+        IntRect windowResizerRect() const;
+        void addToDirtyRegion(const IntRect&);
+        void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);
+        void updateBackingStore();
+
     private:
         Page* m_page;
         ChromeClient* m_client;

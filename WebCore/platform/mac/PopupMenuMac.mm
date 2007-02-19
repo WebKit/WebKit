@@ -22,7 +22,7 @@
 
 #import "EventHandler.h"
 #import "FontData.h"
-#import "FrameMac.h"
+#import "Frame.h"
 #import "FrameView.h"
 #import "HTMLNames.h"
 #import "HTMLOptGroupElement.h"
@@ -138,7 +138,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 
     // Save the current event that triggered the popup, so we can clean up our event
     // state after the NSMenu goes away.
-    RefPtr<FrameMac> frame = Mac(v->frame());
+    RefPtr<Frame> frame = v->frame();
     NSEvent* event = [frame->eventHandler()->currentNSEvent() retain];
     
     RefPtr<PopupMenu> protector(this);

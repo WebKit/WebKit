@@ -28,7 +28,7 @@
 #include "CachedImage.h"
 #include "Document.h"
 #include "FrameLoader.h"
-#include "FrameMac.h"
+#include "Frame.h"
 #include "WebCoreFrameBridge.h"
 #include "DocumentLoader.h"
 
@@ -41,7 +41,7 @@ void finishImageLoad(Document* document, CachedImage* image)
 
     IntSize size = image->imageSize();
     if (size.width())
-        document->setTitle([Mac(frame)->bridge() imageTitleForFilename:response.suggestedFilename() size:size]);
+        document->setTitle([frame->bridge() imageTitleForFilename:response.suggestedFilename() size:size]);
 }
     
 }

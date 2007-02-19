@@ -28,7 +28,7 @@
 
 #import "BlockExceptions.h"
 #import "Document.h"
-#import "FrameMac.h"
+#import "Frame.h"
 #import "MouseEventWithHitTestResults.h"
 #import "PlatformScrollBar.h"
 #import "RenderObject.h"
@@ -39,7 +39,7 @@ namespace WebCore {
 void FrameView::updateBorder()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [Mac(m_frame.get())->bridge() setHasBorder:hasBorder()];
+    [m_frame.get()->bridge() setHasBorder:hasBorder()];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
@@ -50,7 +50,7 @@ void FrameView::updateDashboardRegions()
         Vector<DashboardRegionValue> newRegions;
         doc->renderer()->collectDashboardRegions(newRegions);
         doc->setDashboardRegions(newRegions);
-        Mac(m_frame.get())->dashboardRegionsChanged();
+        m_frame.get()->dashboardRegionsChanged();
     }
 }
 

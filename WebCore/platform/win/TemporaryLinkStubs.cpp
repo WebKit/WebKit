@@ -50,7 +50,6 @@
 #include "FrameLoader.h"
 #include "FrameLoadRequest.h"
 #include "FrameView.h"
-#include "FrameWin.h"
 #include "GraphicsContext.h"
 #include "History.h"
 #include "HTMLFormElement.h"

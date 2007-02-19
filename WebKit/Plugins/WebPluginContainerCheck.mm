@@ -41,9 +41,9 @@
 #import <Foundation/NSURL.h>
 #import <Foundation/NSURLRequest.h>
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderTypes.h>
-#import <WebCore/FrameMac.h>
 #import <objc/objc-runtime.h>
 
 using namespace WebCore;

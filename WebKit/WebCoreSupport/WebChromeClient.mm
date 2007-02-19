@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,8 +38,10 @@
 #import "WebUIDelegatePrivate.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
+#import <WebCore/BlockExceptions.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FrameLoadRequest.h>
+#import <WebCore/IntRect.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/Screen.h>
@@ -307,6 +310,18 @@ bool WebChromeClient::runJavaScriptPrompt(Frame* frame, const String& prompt, co
     return !result.isNull();
 }
 
+bool WebChromeClient::shouldInterruptJavaScript()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    id wd = [m_webView UIDelegate];
+    if ([wd respondsToSelector:@selector(webViewShouldInterruptJavaScript:)])
+        return [wd webViewShouldInterruptJavaScript:m_webView];
+    return false;
+    END_BLOCK_OBJC_EXCEPTIONS;
+    
+    return false;
+}
+
 void WebChromeClient::setStatusbarText(const WebCore::String& status)
 {
     id wd = [m_webView UIDelegate];
@@ -322,11 +337,24 @@ void WebChromeClient::setStatusbarText(const WebCore::String& status)
     }
 }
 
-bool WebChromeClient::shouldInterruptJavaScript()
+bool WebChromeClient::tabsToLinks() const
 {
-    id wd = [m_webView UIDelegate];
-    if ([wd respondsToSelector:@selector(webViewShouldInterruptJavaScript:)])
-        return [wd webViewShouldInterruptJavaScript:m_webView];
+    return [[m_webView preferences] tabsToLinks];
+}
 
-    return NO;
+IntRect WebChromeClient::windowResizerRect() const
+{
+    return IntRect();
+}
+
+void WebChromeClient::addToDirtyRegion(const IntRect&)
+{
+}
+
+void WebChromeClient::scrollBackingStore(int, int, const IntRect&, const IntRect&)
+{
+}
+
+void WebChromeClient::updateBackingStore()
+{
 }

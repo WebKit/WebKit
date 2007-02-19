@@ -1,3 +1,28 @@
+2007-02-17  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Maciej.
+
+        Additional coding by Maciej, additional review by Oliver.
+
+        Add stubs for the new methods in ChormeClient and EditorClient,
+        remove all references to FrameQt.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::QWebFrame):
+        * Api/qwebframe_p.h:
+        * Api/qwebpage.cpp:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::shouldInterruptJavaScript):
+        * WebCoreSupport/ChromeClientQt.h:
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::shouldChangeSelectedRange):
+        (WebCore::EditorClientQt::isEditable):
+        * WebCoreSupport/EditorClientQt.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::setFrame):
+        (WebCore::FrameLoaderClientQt::webFrame):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-02-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Buildfix).

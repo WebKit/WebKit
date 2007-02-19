@@ -36,7 +36,7 @@
 #include "IntPoint.h"
 #include "PlatformMouseEvent.h"
 
-#include "FrameQt.h"
+#include "Frame.h"
 #include "ScrollViewCanvasQt.h"
 
 #include <QDebug>

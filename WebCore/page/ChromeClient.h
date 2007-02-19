@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006-2007 Apple, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,6 +27,7 @@ namespace WebCore {
 
     class FloatRect;
     class Frame;
+    class IntRect;
     class Page;
     class String;
     
@@ -81,8 +82,15 @@ namespace WebCore {
         virtual void runJavaScriptAlert(Frame*, const String&) = 0;
         virtual bool runJavaScriptConfirm(Frame*, const String&) = 0;
         virtual bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result) = 0;
+        
         virtual void setStatusbarText(const String&) = 0;
         virtual bool shouldInterruptJavaScript() = 0;
+        virtual bool tabsToLinks() const = 0;
+
+        virtual IntRect windowResizerRect() const = 0;
+        virtual void addToDirtyRegion(const IntRect&) = 0;
+        virtual void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect) = 0;
+        virtual void updateBackingStore() = 0;
 };
 
 }

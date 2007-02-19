@@ -35,6 +35,7 @@ namespace WebCore {
 class MimeTypeRegistry {
 public:
     static String getMIMETypeForExtension(const String& ext);
+    static String getMIMETypeForPath(const String& path);
     
     // Check to see if a mime type is suitable for being loaded inline as an
     // image (e.g., <img> tags).

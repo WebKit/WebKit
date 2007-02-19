@@ -37,7 +37,7 @@
 
 #import <WebKit/DOMCore.h>
 #import <WebKit/DOMExtensions.h>
-#import <WebCore/FrameMac.h>
+#import <WebCore/Frame.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Image.h>
 #import <WebCore/KURL.h>

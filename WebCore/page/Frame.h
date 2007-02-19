@@ -8,6 +8,7 @@
  *                     2000-2001 Dirk Mueller <mueller@kde.org>
  *                     2000 Stefan Schimanski <1Stein@gmx.de>
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,12 +38,45 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
+class NPObject;
+
 namespace KJS {
+    class Interpreter;
+    class JSObject;
+    
     namespace Bindings {
         class Instance;
         class RootObject;
     }
 }
+
+#if PLATFORM(MAC)
+#ifdef __OBJC__
+@class WebCoreFrameBridge;
+@class WebScriptObject;
+@class NSArray;
+@class NSDictionary;
+@class NSFont;
+@class NSImage;
+@class NSMenu;
+@class NSMutableDictionary;
+@class NSString;
+@class WebCoreFrameBridge;
+#else
+class WebCoreFrameBridge;
+class WebScriptObject;
+class NSArray;
+class NSDictionary;
+class NSFont;
+class NSImage;
+class NSMenu;
+class NSMutableDictionary;
+class NSString;
+class WebCoreFrameBridge;
+typedef unsigned int NSDragOperation;
+typedef int NSWritingDirection;
+#endif
+#endif
 
 namespace WebCore {
 
@@ -59,6 +93,7 @@ class FloatRect;
 class FrameLoader;
 class FrameLoaderClient;
 class HTMLFrameOwnerElement;
+class HTMLTableCellElement;
 class FramePrivate;
 class FrameTree;
 class FrameView;
@@ -99,6 +134,11 @@ public:
     virtual void setView(FrameView*);
     virtual ~Frame();
     
+#if PLATFORM(MAC)    
+    void setBridge(WebCoreFrameBridge*);
+    WebCoreFrameBridge* bridge() const;
+#endif
+
     Page* page() const;
     HTMLFrameOwnerElement* ownerElement() const;
 
@@ -119,18 +159,14 @@ public:
     RenderObject* renderer() const; // root renderer for the document contained in this frame
     RenderPart* ownerRenderer(); // renderer for the element that contains this frame
 
-    friend class FrameGdk;
     friend class FrameLoader;
-    friend class FrameMac;
     friend class FramePrivate;
-    friend class FrameQt;
-    friend class FrameWin;
 
     DragImageRef dragImageForSelection();
     
 private:
     FramePrivate* d;
-
+    
 // === undecided, may or may not belong here
 
 public:
@@ -140,7 +176,9 @@ public:
     const Settings* settings() const;
     void reparseConfiguration();
 
+    // should move to FrameView
     void paint(GraphicsContext*, const IntRect&);
+    void setPaintRestriction(PaintRestriction pr);
 
     void setUserStyleSheetLocation(const KURL&);
     void setUserStyleSheet(const String& styleSheetData);
@@ -156,19 +194,21 @@ public:
     String jsStatusBarText() const;
     String jsDefaultStatusBarText() const;
 
-    virtual void setupRootForPrinting(bool onOrOff) { }
-    virtual Vector<IntRect> computePageRects(const IntRect& printRect, float userScaleFactor) { return Vector<IntRect>(); }
-
     void keepAlive(); // Used to keep the frame alive when running a script that might destroy it.
 #ifndef NDEBUG
     static void cancelAllKeepAlive();
 #endif
 
-    virtual KJS::Bindings::Instance* getEmbedInstanceForWidget(Widget*) = 0;
-    virtual KJS::Bindings::Instance* getObjectInstanceForWidget(Widget*) = 0;
-    virtual KJS::Bindings::Instance* getAppletInstanceForWidget(Widget*) = 0;
-    virtual KJS::Bindings::RootObject* bindingRootObject() = 0;
+    KJS::Bindings::Instance* createScriptInstanceForWidget(Widget*);
+    KJS::Bindings::RootObject* bindingRootObject();
+    
+    PassRefPtr<KJS::Bindings::RootObject> createRootObject(void* nativeHandle, PassRefPtr<KJS::Interpreter>);
 
+#if PLATFORM(MAC)
+    WebScriptObject* windowScriptObject();
+#endif
+    NPObject* windowScriptNPObject();
+    
     void setDocument(Document*);
 
     KJSProxy* scriptProxy();
@@ -187,7 +227,7 @@ public:
     static void clearTimers(FrameView*);
 
     bool isActive() const;
-    virtual void setIsActive(bool flag);
+    void setIsActive(bool flag);
     void setWindowHasFocus(bool flag);
 
     // Convenience, to avoid repeating the code to dig down to get this.
@@ -199,25 +239,25 @@ public:
     bool prohibitsScrolling() const;
     void setProhibitsScrolling(const bool);
 
-protected:
-    virtual void cleanupPluginObjects() { }
-
 private:
-    void lifeSupportTimerFired(Timer<Frame>*);
+    void cleanupScriptObjects();
+    void cleanupPlatformScriptObjects();
 
+    void lifeSupportTimerFired(Timer<Frame>*);
+    
 // === to be moved into Chrome
 
 public:
-    virtual void focusWindow();
-    virtual void unfocusWindow();
-    virtual void print() = 0;
+    void focusWindow();
+    void unfocusWindow();
+    void print();
     bool shouldClose();
     void scheduleClose();
 
 // === to be moved into Editor
 
 public:
-    virtual String selectedText() const;  
+    String selectedText() const;  
     bool findString(const String&, bool forward, bool caseFlag, bool wrapFlag, bool startInSelection);
 
     const Selection& mark() const; // Mark, to be used as emacs uses it.
@@ -225,10 +265,6 @@ public:
 
     void transpose();
 
-    void copyToPasteboard();
-    void cutToPasteboard();
-    void pasteFromPasteboard();
-    void pasteAndMatchStyle();
     void computeAndSetTypingStyle(CSSStyleDeclaration* , EditAction = EditActionUnspecified);
     enum TriState { falseTriState, trueTriState, mixedTriState };
     TriState selectionHasStyle(CSSStyleDeclaration*) const;
@@ -238,14 +274,13 @@ public:
     void applyEditingStyleToElement(Element*) const;
     void removeEditingStyleFromElement(Element*) const;
 
-    virtual Range* markedTextRange() const = 0;
-    virtual void issueCutCommand() = 0;
-    virtual void issueCopyCommand() = 0;
-    virtual void issuePasteCommand() = 0;
-    virtual void issuePasteAndMatchStyleCommand() = 0;
-    virtual void issueTransposeCommand() = 0;
-    virtual void respondToChangedSelection(const Selection& oldSelection, bool closeTyping) = 0;
-    virtual bool shouldChangeSelection(const Selection& oldSelection, const Selection& newSelection, EAffinity, bool stillSelecting) const = 0;
+    Range* markedTextRange() const;
+#if PLATFORM(MAC)
+    void issuePasteCommand();
+#endif
+    void issueTransposeCommand();
+    void respondToChangedSelection(const Selection& oldSelection, bool closeTyping);
+    bool shouldChangeSelection(const Selection& oldSelection, const Selection& newSelection, EAffinity, bool stillSelecting) const;
 
     RenderStyle* styleForSelectionStart(Node*& nodeToRemove) const;
 
@@ -258,12 +293,12 @@ public:
 
     CSSComputedStyleDeclaration* selectionComputedStyle(Node*& nodeToRemove) const;
 
-    virtual void textFieldDidBeginEditing(Element*);
-    virtual void textFieldDidEndEditing(Element*);
-    virtual void textDidChangeInTextField(Element*);
-    virtual bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*);
-    virtual void textWillBeDeletedInTextField(Element* input);
-    virtual void textDidChangeInTextArea(Element*);
+    void textFieldDidBeginEditing(Element*);
+    void textFieldDidEndEditing(Element*);
+    void textDidChangeInTextField(Element*);
+    bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*);
+    void textWillBeDeletedInTextField(Element* input);
+    void textDidChangeInTextArea(Element*);
 
 // === to be moved into SelectionController
 
@@ -272,7 +307,7 @@ public:
     void setSelectionGranularity(TextGranularity) const;
 
     bool shouldChangeSelection(const Selection&) const;
-    virtual bool shouldDeleteSelection(const Selection&) const;
+    bool shouldDeleteSelection(const Selection&) const;
     void clearCaretRectIfNeeded();
     void setFocusedNodeIfNeeded();
     void selectionLayoutChanged();
@@ -287,10 +322,10 @@ public:
     void setXPosForVerticalArrowNavigation(int);
     int xPosForVerticalArrowNavigation() const;
 
-    virtual bool isContentEditable() const; // if true, everything in frame is editable
+    bool isContentEditable() const; // if true, everything in frame is editable
 
-    virtual void setSecureKeyboardEntry(bool) { }
-    virtual bool isSecureKeyboardEntry() { return false; }
+    void setSecureKeyboardEntry(bool);
+    bool isSecureKeyboardEntry();
 
     CSSMutableStyleDeclaration* typingStyle() const;
     void setTypingStyle(CSSMutableStyleDeclaration*);
@@ -311,14 +346,52 @@ private:
 // === to be moved into the Platform directory
 
 public:
-    virtual String mimeTypeForFileName(const String&) const = 0;
-    virtual bool isCharacterSmartReplaceExempt(UChar, bool);
+    bool isCharacterSmartReplaceExempt(UChar, bool);
 
 // === to be deleted
 
 public:
     SelectionController* dragCaretController() const;
 
+    String searchForLabelsAboveCell(RegularExpression*, HTMLTableCellElement*);
+    String searchForLabelsBeforeElement(const Vector<String>& labels, Element*);
+    String matchLabelsAgainstElement(const Vector<String>& labels, Element*);
+
+#if PLATFORM(MAC)
+// === undecided, may or may not belong here
+
+public:
+    NSString* searchForNSLabelsAboveCell(RegularExpression*, HTMLTableCellElement*);
+    NSString* searchForLabelsBeforeElement(NSArray* labels, Element*);
+    NSString* matchLabelsAgainstElement(NSArray* labels, Element*);
+
+    NSMutableDictionary* dashboardRegionsDictionary();
+    void dashboardRegionsChanged();
+
+    void willPopupMenu(NSMenu*);
+
+    NSImage* selectionImage(bool forceWhiteText = false) const;
+    NSImage* snapshotDragImage(Node*, NSRect* imageRect, NSRect* elementRect) const;
+
+private:    
+    NSImage* imageFromRect(NSRect) const;
+
+// === to be moved into Chrome
+
+public:
+
+    FloatRect customHighlightLineRect(const AtomicString& type, const FloatRect& lineRect);
+    void paintCustomHighlight(const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect, bool text, bool line);
+
+// === to be moved into Editor
+
+public:
+
+    NSDictionary* fontAttributesForSelectionStart() const;
+    NSWritingDirection baseWritingDirectionForSelectionStart() const;
+
+    void setMarkedTextRange(const Range* , NSArray* attributes, NSArray* ranges);
+#endif
 };
 
 } // namespace WebCore

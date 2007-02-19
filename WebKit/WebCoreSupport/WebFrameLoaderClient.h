@@ -146,7 +146,6 @@ private:
     virtual void updateGlobalHistoryForReload(const WebCore::KURL&);
     virtual bool shouldGoToHistoryItem(WebCore::HistoryItem*) const;
 
-
     virtual WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&);
     virtual WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&);
     virtual WebCore::ResourceError interruptForPolicyChangeError(const WebCore::ResourceRequest&);

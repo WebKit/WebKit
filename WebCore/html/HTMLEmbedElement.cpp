@@ -5,6 +5,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -71,15 +72,9 @@ KJS::Bindings::Instance *HTMLEmbedElement::getInstance() const
             r = p->renderer();
     }
 
-    if (r && r->isWidget()){
-        if (Widget* widget = static_cast<RenderWidget*>(r)->widget()) {
-            // Call into the frame (and over the bridge) to pull the Bindings::Instance
-            // from the guts of the Java VM.
-            m_instance = frame->getEmbedInstanceForWidget(widget);
-            // Applet may specified with <embed> tag.
-            if (!m_instance)
-                m_instance = frame->getAppletInstanceForWidget(widget);
-        }
+    if (r && r->isWidget()) {
+        if (Widget* widget = static_cast<RenderWidget*>(r)->widget()) 
+            m_instance = frame->createScriptInstanceForWidget(widget);
     }
     return m_instance.get();
 }

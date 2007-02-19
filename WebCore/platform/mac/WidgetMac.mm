@@ -30,7 +30,7 @@
 #import "Cursor.h"
 #import "Document.h"
 #import "Font.h"
-#import "FrameMac.h"
+#import "Frame.h"
 #import "GraphicsContext.h"
 #import "RetainPtr.h"
 #import "WebCoreFrameBridge.h"
@@ -119,7 +119,7 @@ void Widget::setFocus()
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
  
     NSView *view = [getView() _webcore_effectiveFirstResponder];
-    WebCoreFrameBridge *bridge = Mac(frame)->bridge();
+    WebCoreFrameBridge *bridge = frame->bridge();
     id firstResponder = [bridge firstResponder];
     if (firstResponder && firstResponder == view)
         return;
@@ -292,7 +292,7 @@ void Widget::sendConsumedMouseUp()
 void Widget::setIsSelected(bool isSelected)
 {
     if (Frame* frame = Frame::frameForWidget(this))
-        [Mac(frame)->bridge() setIsSelected:isSelected forView:getView()];
+        [frame->bridge() setIsSelected:isSelected forView:getView()];
 }
 
 void Widget::addToSuperview(NSView *superview)

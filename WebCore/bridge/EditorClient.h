@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +28,7 @@
 #define EditorClient_h
 
 #include "EditorInsertAction.h"
+#include "TextAffinity.h"
 #include <wtf/Forward.h>
 
 #if PLATFORM(MAC)
@@ -40,6 +42,7 @@ namespace WebCore {
 
 class CSSStyleDeclaration;
 class EditCommand;
+class Element;
 class Frame;
 class HTMLElement;
 class KeyboardEvent;
@@ -68,7 +71,8 @@ public:
     virtual bool shouldEndEditing(Range*) = 0;
     virtual bool shouldInsertNode(Node*, Range*, EditorInsertAction) = 0;
     virtual bool shouldInsertText(String, Range*, EditorInsertAction) = 0;
-//  virtual bool shouldChangeSelectedRange(Range* fromRange, Range* toRange, NSSelectionAffinity, bool stillSelecting) = 0;
+    virtual bool shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity, bool stillSelecting) = 0;
+    
     virtual bool shouldApplyStyle(CSSStyleDeclaration*, Range*) = 0;
 //  virtual bool shouldChangeTypingStyle(CSSStyleDeclaration* fromStyle, CSSStyleDeclaration* toStyle) = 0;
 //  virtual bool doCommandBySelector(SEL selector) = 0;
@@ -93,6 +97,13 @@ public:
     virtual void redo() = 0;
 
     virtual void handleKeyPress(KeyboardEvent*) = 0;
+    
+    virtual void textFieldDidBeginEditing(Element*) = 0;
+    virtual void textFieldDidEndEditing(Element*) = 0;
+    virtual void textDidChangeInTextField(Element*) = 0;
+    virtual bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*) = 0;
+    virtual void textWillBeDeletedInTextField(Element*) = 0;
+    virtual void textDidChangeInTextArea(Element*) = 0;
 
 #if PLATFORM(MAC)
     virtual void markedTextAbandoned(Frame*) = 0;

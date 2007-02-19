@@ -34,7 +34,7 @@
 #import "WebFrameInternal.h"
 #import "WebScriptDebugServerPrivate.h"
 #import "WebViewInternal.h"
-#import <WebCore/FrameMac.h>
+#import <WebCore/Frame.h>
 #import <WebCore/WebCoreScriptDebugger.h>
 
 using namespace WebCore;

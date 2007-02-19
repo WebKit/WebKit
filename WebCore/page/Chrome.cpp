@@ -1,6 +1,7 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -251,6 +252,26 @@ void Chrome::setStatusbarText(Frame* frame, const String& status)
 bool Chrome::shouldInterruptJavaScript()
 {
     return m_client->shouldInterruptJavaScript();
+}
+
+IntRect Chrome::windowResizerRect() const
+{
+    return m_client->windowResizerRect();
+}
+
+void Chrome::addToDirtyRegion(const IntRect& rect)
+{
+    m_client->addToDirtyRegion(rect);
+}
+
+void Chrome::scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect)
+{
+    m_client->scrollBackingStore(dx, dy, scrollViewRect, clipRect);
+}
+
+void Chrome::updateBackingStore()
+{
+    m_client->updateBackingStore();
 }
 
 } // namespace WebCore

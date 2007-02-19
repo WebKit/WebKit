@@ -74,15 +74,18 @@
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
 #import <JavaScriptCore/Assertions.h>
+#import <JavaScriptCore/JSLock.h>
+#import <JavaScriptCore/object.h>
 #import <JavaVM/jni.h>
 #import <WebCore/Cache.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/DragController.h>
 #import <WebCore/Element.h>
+#import <WebCore/FoundationExtras.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderClient.h>
-#import <WebCore/FrameMac.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/HTMLFrameOwnerElement.h>
 #import <WebCore/Page.h>
@@ -133,7 +136,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
     _frame = [[WebFrame alloc] _initWithWebFrameView:frameView webView:webView bridge:self];
 
-    m_frame = new FrameMac(page, ownerElement, new WebFrameLoaderClient(_frame));
+    m_frame = new Frame(page, ownerElement, new WebFrameLoaderClient(_frame));
     m_frame->setBridge(self);
     m_frame->tree()->setName(name);
     
@@ -170,6 +173,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         [[NSNotificationCenter defaultCenter] 
             removeObserver:self name:WebPreferencesChangedNotification object:nil];
     }
+
     ASSERT(_frame == nil);
     --WebBridgeCount;
 }
@@ -695,14 +699,6 @@ static BOOL loggedObjectCacheSize = NO;
     return ObjectElementNone;
 }
 
-- (NSString *)MIMETypeForPath:(NSString *)path
-{
-    ASSERT(path);
-    NSString *extension = [path pathExtension];
-    NSString *type = WKGetMIMETypeForExtension(extension);
-    return [type length] == 0 ? (NSString *)@"application/octet-stream" : type;
-}
-
 - (BOOL)startDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc operation:(NSDragOperation)op
     event:(NSEvent *)event sourceIsDHTML:(BOOL)flag DHTMLWroteData:(BOOL)dhtmlWroteData
 {
@@ -712,50 +708,6 @@ static BOOL loggedObjectCacheSize = NO;
         core([docView _webView])->dragController()->setDragInitiator(core(_frame) ? core(_frame)->document() : 0);
     return [docView _startDraggingImage:dragImage at:dragLoc operation:op event:event
         sourceIsDHTML:flag DHTMLWroteData:dhtmlWroteData];
-}
-
-static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
-{
-    ASSERT(self->_frame != nil);
-    return [[self->_frame webView] _formDelegate];
-}
-
-#define FormDelegateLog(ctrl)  LOG(FormDelegate, "control=%@", ctrl)
-
-- (void)textFieldDidBeginEditing:(DOMHTMLInputElement *)element
-{
-    FormDelegateLog(element);
-    [formDelegate(self) textFieldDidBeginEditing:element inFrame:_frame];
-}
-
-- (void)textFieldDidEndEditing:(DOMHTMLInputElement *)element
-{
-    FormDelegateLog(element);
-    [formDelegate(self) textFieldDidEndEditing:element inFrame:_frame];
-}
-
-- (void)textDidChangeInTextField:(DOMHTMLInputElement *)element
-{
-    FormDelegateLog(element);
-    [formDelegate(self) textDidChangeInTextField:(DOMHTMLInputElement *)element inFrame:_frame];
-}
-
-- (void)textDidChangeInTextArea:(DOMHTMLTextAreaElement *)element
-{
-    FormDelegateLog(element);
-    [formDelegate(self) textDidChangeInTextArea:element inFrame:_frame];
-}
-
-- (BOOL)textField:(DOMHTMLInputElement *)element doCommandBySelector:(SEL)commandSelector
-{
-    FormDelegateLog(element);
-    return [formDelegate(self) textField:element doCommandBySelector:commandSelector inFrame:_frame];
-}
-
-- (BOOL)textField:(DOMHTMLInputElement *)element shouldHandleEvent:(NSEvent *)event
-{
-    FormDelegateLog(element);
-    return [formDelegate(self) textField:element shouldHandleEvent:event inFrame:_frame];
 }
 
 - (void)setHasBorder:(BOOL)hasBorder
@@ -815,32 +767,11 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     return [[self webView] undoManager];
 }
 
-- (void)issueCutCommand
-{
-    NSView* documentView = [[_frame frameView] documentView];
-    if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView*)documentView cut:nil];
-}
-
-- (void)issueCopyCommand
-{
-    NSView* documentView = [[_frame frameView] documentView];
-    if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView*)documentView copy:nil];
-}
-
 - (void)issuePasteCommand
 {
     NSView* documentView = [[_frame frameView] documentView];
     if ([documentView isKindOfClass:[WebHTMLView class]])
         [(WebHTMLView*)documentView paste:nil];
-}
-
-- (void)issuePasteAndMatchStyleCommand
-{
-    NSView <WebDocumentView> *documentView = [[_frame frameView] documentView];
-    if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView*)documentView pasteAsPlainText:nil];
 }
 
 - (void)issueTransposeCommand
@@ -861,22 +792,6 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 - (NSString *)overrideMediaType
 {
     return [[self webView] mediaStyle];
-}
-
-- (BOOL)isEditable
-{
-    return [[self webView] isEditable];
-}
-
-- (BOOL)shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(EAffinity)selectionAffinity stillSelecting:(BOOL)flag
-{
-    return [[self webView] _shouldChangeSelectedDOMRange:currentRange toDOMRange:proposedRange affinity:kit(selectionAffinity) stillSelecting:flag];
-}
-
-- (BOOL)shouldDeleteSelectedDOMRange:(DOMRange *)range
-{
-    WebView *webView = [self webView];
-    return [[webView _editingDelegateForwarder] webView:webView shouldDeleteDOMRange:range];
 }
 
 - (void)windowObjectCleared

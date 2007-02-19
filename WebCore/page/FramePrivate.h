@@ -7,6 +7,7 @@
  *                     2000-2001 Dirk Mueller <mueller@kde.org>
  *                     2000 Stefan Schimanski <1Stein@gmx.de>
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,8 +32,32 @@
 #include "Editor.h"
 #include "EventHandler.h"
 #include "FrameTree.h"
+#include "Range.h"
 #include "SelectionController.h"
 #include "StringHash.h"
+
+namespace KJS {
+    class Interpreter;
+        
+    namespace Bindings {
+        class Instance;
+        class RootObject;
+    }
+}
+
+#if PLATFORM(MAC)
+#ifdef __OBJC__
+@class WebCoreFrameBridge;
+@class WebScriptObject;
+#else
+class WebCoreFrameBridge;
+class WebScriptObject;
+#endif
+#endif
+
+#if PLATFORM(WIN)
+#include "FrameWin.h"
+#endif
 
 namespace WebCore {
 
@@ -79,6 +104,7 @@ namespace WebCore {
         Timer<Frame> m_lifeSupportTimer;
 
         FrameLoader* m_loader;
+        
         UserStyleSheetLoader* m_userStyleSheetLoader;
         
         RefPtr<Node> m_elementToDraw;
@@ -94,6 +120,17 @@ namespace WebCore {
         unsigned frameCount;
 
         bool m_prohibitsScrolling;
+
+        RefPtr<Range> m_markedTextRange;
+
+        // The root object used for objects bound outside the context of a plugin.
+        RefPtr<KJS::Bindings::RootObject> m_bindingRootObject; 
+        Vector<RefPtr<KJS::Bindings::RootObject> > m_rootObjects;
+        NPObject* m_windowScriptNPObject;
+#if PLATFORM(MAC)
+        WebScriptObject* m_windowScriptObject;
+        WebCoreFrameBridge* m_bridge;
+#endif
     };
 }
 

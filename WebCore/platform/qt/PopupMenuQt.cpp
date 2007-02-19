@@ -1,7 +1,7 @@
 /*
  * This file is part of the popup menu implementation for <select> elements in WebCore.
  *
- * Copyright (C) 2007 Trolltech
+ * Copyright (C) 2007 Trolltech ASA
  * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
  * Coypright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PopupMenu.h"
 
-#include "FrameQt.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "PopupMenuClient.h"
 

@@ -54,7 +54,7 @@ namespace WebCore {
     class DocumentLoader;
     class Element;
     class Frame;
-    class FrameMac;
+    class Frame;
     class FrameLoader;
     class HistoryItem;
     class HTMLElement;
@@ -68,7 +68,7 @@ typedef WebCore::HistoryItem WebCoreHistoryItem;
 WebCore::CSSStyleDeclaration* core(DOMCSSStyleDeclaration *);
 DOMCSSStyleDeclaration *kit(WebCore::CSSStyleDeclaration*);
 
-WebCore::FrameMac* core(WebFrame *);
+WebCore::Frame* core(WebFrame *);
 WebFrame *kit(WebCore::Frame *);
 
 WebCore::Element* core(DOMElement *);

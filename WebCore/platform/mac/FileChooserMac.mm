@@ -32,7 +32,7 @@
 
 #import "Document.h"
 #import "FontData.h"
-#import "FrameMac.h"
+#import "Frame.h"
 #import "Icon.h"
 #import "LocalizedStrings.h"
 #import "WebCoreFrameBridge.h"
@@ -71,7 +71,7 @@ using namespace WebCore;
     if (!_fileChooser)
         return;
     
-    _bridge = Mac(frame)->bridge();
+    _bridge = frame->bridge();
     [_bridge retain];
     [_bridge runOpenPanelForFileButtonWithResultListener:self];
 }

@@ -248,6 +248,8 @@ private:
     bool eventLoopHandleMouseDragged(const MouseEventWithHitTestResults&) { return false; }
 #endif
 
+    bool invertSenseOfTabsToLinks(KeyboardEvent*) const;
+
     Frame* m_frame;
 
     bool m_mousePressed;

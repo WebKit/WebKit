@@ -98,8 +98,8 @@
 #import <WebCore/DragData.h>
 #import <WebCore/Editor.h>
 #import <WebCore/ExceptionHandlers.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
-#import <WebCore/FrameMac.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HistoryItem.h>
@@ -1211,7 +1211,7 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 - (NSDictionary *)_dashboardRegions
 {
     // Only return regions from main frame.
-    FrameMac* mainFrame = [[[self mainFrame] _bridge] _frame];
+    Frame* mainFrame = [[[self mainFrame] _bridge] _frame];
     if (!mainFrame)
         return nil;
     NSMutableDictionary *regions = mainFrame->dashboardRegionsDictionary();
@@ -1324,7 +1324,7 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 
 - (void)setProhibitsMainFrameScrolling:(BOOL)prohibits
 {
-    FrameMac* mainFrame = [[[self mainFrame] _bridge] _frame];
+    Frame* mainFrame = [[[self mainFrame] _bridge] _frame];
     if (mainFrame)
         mainFrame->setProhibitsScrolling(prohibits);
 }
@@ -1337,14 +1337,14 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 
 - (void)_setInViewSourceMode:(BOOL)flag
 {
-    FrameMac* mainFrame = [[[self mainFrame] _bridge] _frame];
+    Frame* mainFrame = [[[self mainFrame] _bridge] _frame];
     if (mainFrame)
         mainFrame->setInViewSourceMode(flag);
 }
 
 - (BOOL)_inViewSourceMode
 {
-    FrameMac* mainFrame = [[[self mainFrame] _bridge] _frame];
+    Frame* mainFrame = [[[self mainFrame] _bridge] _frame];
     return mainFrame && mainFrame->inViewSourceMode();
 }
 
@@ -2721,7 +2721,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (BOOL)shouldClose
 {
-    FrameMac* coreFrame = core([self mainFrame]);
+    Frame* coreFrame = core([self mainFrame]);
     if (!coreFrame)
         return YES;
     return coreFrame->shouldClose();
@@ -3006,7 +3006,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         _private->editable = flag;
         if (!_private->tabKeyCyclesThroughElementsChanged)
             _private->page->setTabKeyCyclesThroughElements(!flag);
-        FrameMac* mainFrame = [[[self mainFrame] _bridge] _frame];
+        Frame* mainFrame = [[[self mainFrame] _bridge] _frame];
         if (mainFrame) {
             if (flag) {
                 mainFrame->applyEditingStyleToBodyElement();

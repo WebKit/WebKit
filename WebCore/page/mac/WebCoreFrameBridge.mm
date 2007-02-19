@@ -43,9 +43,9 @@
 #import "EventHandler.h"
 #import "FloatRect.h"
 #import "FontData.h"
+#import "Frame.h"
 #import "FrameLoader.h"
 #import "FrameLoaderClient.h"
-#import "FrameMac.h"
 #import "FrameTree.h"
 #import "FrameView.h"
 #import "GraphicsContext.h"
@@ -126,7 +126,7 @@ static PassRefPtr<RootObject> createRootObject(void* nativeHandle)
     if (!bridge)
         return 0;
 
-    FrameMac* frame = [bridge _frame];
+    Frame* frame = [bridge _frame];
     return frame->createRootObject(nativeHandle, frame->scriptProxy()->interpreter());
 }
 
@@ -227,7 +227,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 {
     if (!frame)
         return nil;
-    return Mac(frame)->bridge();
+    return frame->bridge();
 }
 
 - (NSString *)domain
@@ -1484,7 +1484,7 @@ static NSCharacterSet *_getPostSmartSet(void)
 
 // -------------------
 
-- (FrameMac*)_frame
+- (Frame*)_frame
 {
     return m_frame;
 }

@@ -62,7 +62,7 @@
 #import <WebCore/Document.h>
 #import <WebCore/Event.h>
 #import <WebCore/FrameLoader.h>
-#import <WebCore/FrameMac.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HTMLFormElement.h>
@@ -228,7 +228,7 @@ static inline WebFrame *frame(WebCoreFrameBridge *bridge)
     return ((WebFrameBridge *)bridge)->_frame;
 }
 
-FrameMac* core(WebFrame *frame)
+Frame* core(WebFrame *frame)
 {
     if (!frame)
         return 0;
@@ -241,7 +241,7 @@ FrameMac* core(WebFrame *frame)
 
 WebFrame *kit(Frame* frame)
 {
-    return frame ? ((WebFrameBridge *)Mac(frame)->bridge())->_frame : nil;
+    return frame ? ((WebFrameBridge *)frame->bridge())->_frame : nil;
 }
 
 Page* core(WebView *webView)
@@ -425,7 +425,7 @@ WebView *getWebView(WebFrame *webFrame)
 
     Frame* coreFrame = core(self);
     for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
-        WebFrameBridge *bridge = (WebFrameBridge *)Mac(frame)->bridge();
+        WebFrameBridge *bridge = (WebFrameBridge *)frame->bridge();
         WebFrame *webFrame = [bridge webFrame];
         // Never call setDrawsBackground:YES here on the scroll view or the background color will
         // flash between pages loads. setDrawsBackground:YES will be called in _frameLoadCompleted.

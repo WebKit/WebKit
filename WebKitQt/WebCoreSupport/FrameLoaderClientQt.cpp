@@ -66,7 +66,7 @@ FrameLoaderClientQt::~FrameLoaderClientQt()
 {
 }
 
-void FrameLoaderClientQt::setFrame(QWebFrame *webFrame, FrameQt *frame)
+void FrameLoaderClientQt::setFrame(QWebFrame* webFrame, Frame* frame)
 {
     m_webFrame = webFrame;
     m_frame = frame;
@@ -85,7 +85,7 @@ void FrameLoaderClientQt::setFrame(QWebFrame *webFrame, FrameQt *frame)
             m_webFrame, SIGNAL(titleChanged(const QString&)));
 }
 
-QWebFrame *FrameLoaderClientQt::webFrame() const
+QWebFrame* FrameLoaderClientQt::webFrame() const
 {
     return m_webFrame;
 }

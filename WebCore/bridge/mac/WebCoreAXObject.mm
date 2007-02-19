@@ -31,7 +31,7 @@
 #import "EventNames.h"
 #import "FontData.h"
 #import "FrameLoader.h"
-#import "FrameMac.h"
+#import "Frame.h"
 #import "FrameView.h"
 #import "HTMLAreaElement.h"
 #import "HTMLCollection.h"
@@ -2345,11 +2345,11 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
         bridge = [bridgeHolder webCoreBridge];
     }
 
-    FrameMac* frameMac = [bridge _frame];
-    if (!frameMac)
+    Frame* frame = [bridge _frame];
+    if (!frame)
         return NULL;
         
-    Document* document = frameMac->document();
+    Document* document = frame->document();
     if (!document)
         return NULL;
         

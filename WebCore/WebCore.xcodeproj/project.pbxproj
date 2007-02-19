@@ -403,6 +403,8 @@
 		6593923709AE4346002C531F /* KURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6593923509AE4346002C531F /* KURL.cpp */; };
 		6593923809AE4346002C531F /* KURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 6593923609AE4346002C531F /* KURL.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6593923A09AE435C002C531F /* KURLMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6593923909AE435C002C531F /* KURLMac.mm */; };
+		6596F2B30B8731DF001326BD /* DOMHTMLInputElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85E711640AC5D5350053270F /* DOMHTMLInputElementInternal.h */; };
+		6596F2C10B87325C001326BD /* DOMHTMLTextAreaElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85E7117F0AC5D5350053270F /* DOMHTMLTextAreaElementInternal.h */; };
 		659A7D130B6DB4D9001155B3 /* SubstituteData.h in Headers */ = {isa = PBXBuildFile; fileRef = 659A7D120B6DB4D9001155B3 /* SubstituteData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		659DDC8209E198BA001BF3C6 /* JSDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 659DDC8009E198BA001BF3C6 /* JSDocument.cpp */; };
 		659DDC8309E198BA001BF3C6 /* JSDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 659DDC8109E198BA001BF3C6 /* JSDocument.h */; };
@@ -413,7 +415,6 @@
 		65BF022E0974816300C43196 /* Frame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65BF02290974816300C43196 /* Frame.cpp */; };
 		65BF022F0974816300C43196 /* Frame.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF022A0974816300C43196 /* Frame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65BF02300974816300C43196 /* FramePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF022B0974816300C43196 /* FramePrivate.h */; };
-		65BF02440974819000C43196 /* FrameMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF023B0974819000C43196 /* FrameMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65BF02450974819000C43196 /* FrameMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65BF023C0974819000C43196 /* FrameMac.mm */; };
 		65C97AF308EA908800ACD273 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C97AF208EA908800ACD273 /* config.h */; };
 		65CBFEF90974F607001DAC25 /* FrameView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65CBFEF70974F607001DAC25 /* FrameView.cpp */; };
@@ -2923,6 +2924,8 @@
 			dstPath = Versions/A/PrivateHeaders;
 			dstSubfolderSpec = 1;
 			files = (
+				6596F2C10B87325C001326BD /* DOMHTMLTextAreaElementInternal.h in Copy Generated Headers */,
+				6596F2B30B8731DF001326BD /* DOMHTMLInputElementInternal.h in Copy Generated Headers */,
 				A8D06B390A265DCD005E7203 /* HTMLNames.h in Copy Generated Headers */,
 				1ACD1B630B029739007E5016 /* DOMCSSStyleDeclarationInternal.h in Copy Generated Headers */,
 				1CB4214A0AF2B2CA0085AD91 /* DOMDocumentInternal.h in Copy Generated Headers */,
@@ -3528,7 +3531,6 @@
 		65BF02290974816300C43196 /* Frame.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Frame.cpp; sourceTree = "<group>"; };
 		65BF022A0974816300C43196 /* Frame.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Frame.h; sourceTree = "<group>"; };
 		65BF022B0974816300C43196 /* FramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FramePrivate.h; sourceTree = "<group>"; };
-		65BF023B0974819000C43196 /* FrameMac.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameMac.h; sourceTree = "<group>"; };
 		65BF023C0974819000C43196 /* FrameMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FrameMac.mm; sourceTree = "<group>"; };
 		65C97AF208EA908800ACD273 /* config.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65CBFEF70974F607001DAC25 /* FrameView.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FrameView.cpp; sourceTree = "<group>"; };
@@ -7921,7 +7923,6 @@
 			children = (
 				93C09A7E0B064EEF005ABD4D /* EventHandlerMac.mm */,
 				A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */,
-				65BF023B0974819000C43196 /* FrameMac.h */,
 				65BF023C0974819000C43196 /* FrameMac.mm */,
 				654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */,
 				654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */,
@@ -9828,7 +9829,6 @@
 				A8136D380973A8E700D74463 /* FormDataList.h in Headers */,
 				65BF022F0974816300C43196 /* Frame.h in Headers */,
 				65BF02300974816300C43196 /* FramePrivate.h in Headers */,
-				65BF02440974819000C43196 /* FrameMac.h in Headers */,
 				FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */,
 				65CBFEFA0974F607001DAC25 /* FrameView.h in Headers */,
 				A8185F3909765766005826D9 /* DocumentType.h in Headers */,

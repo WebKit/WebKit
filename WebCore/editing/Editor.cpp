@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -294,9 +295,10 @@ void Editor::pasteAsPlainTextWithPasteboard(Pasteboard* pasteboard)
 
 void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
 {
+    RefPtr<Range> range = selectedRange();
     bool chosePlainText;
-    RefPtr<DocumentFragment> fragment = pasteboard->documentFragment(m_frame, selectedRange(), allowPlainText, chosePlainText);
-    if (fragment && shouldInsertFragment(fragment, selectedRange(), EditorInsertActionPasted))
+    RefPtr<DocumentFragment> fragment = pasteboard->documentFragment(m_frame, range, allowPlainText, chosePlainText);
+    if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
         replaceSelectionWithFragment(fragment, false, canSmartReplaceWithPasteboard(pasteboard), chosePlainText);
 }
 
@@ -1343,14 +1345,27 @@ void Editor::copy()
 
 void Editor::paste()
 {
+#if PLATFORM(MAC)
+    // using the platform independent code below requires moving all of
+    // WEBHTMLView: _documentFragmentFromPasteboard over to PasteboardMac.
+    m_frame->issuePasteCommand();
+#else
     if (tryDHTMLPaste())
         return;     // DHTML did the whole operation
     if (!canPaste())
         return;
-    if (canEditRichly()) // or should we call m_frame->selectionController()->isContentRichlyEditable()
+    if (m_frame->selectionController()->isContentRichlyEditable())
         pasteWithPasteboard(Pasteboard::generalPasteboard(), true);
     else
         pasteAsPlainTextWithPasteboard(Pasteboard::generalPasteboard());
+#endif
+}
+
+void Editor::pasteAsPlainText()
+{
+   if (!canPaste())
+        return;
+   pasteAsPlainTextWithPasteboard(Pasteboard::generalPasteboard());
 }
 
 void Editor::performDelete()

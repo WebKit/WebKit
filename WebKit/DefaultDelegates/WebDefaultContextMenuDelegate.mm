@@ -46,8 +46,8 @@
 #import <Foundation/NSURLRequest.h>
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/Editor.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
-#import <WebCore/FrameMac.h>
 #import <WebCore/KURL.h>
 #import <WebCore/WebCoreFrameBridge.h>
 #import <WebKit/DOM.h>

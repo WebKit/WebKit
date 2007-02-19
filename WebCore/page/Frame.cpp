@@ -8,6 +8,7 @@
  *                     2001 George Staikos <staikos@kde.org>
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  * Copyright (C) 2005 Alexey Proskuryakov <ap@nypop.com>
+ * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,6 +42,7 @@
 #include "DocLoader.h"
 #include "DocumentType.h"
 #include "EditingText.h"
+#include "EditorClient.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FloatRect.h"
@@ -56,6 +58,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
+#include "HTMLTableCellElement.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "IconDatabase.h"
@@ -68,9 +71,11 @@
 #include "NodeList.h"
 #include "Page.h"
 #include "PlatformScrollBar.h"
+#include "RegularExpression.h"
 #include "RenderListBox.h"
 #include "RenderObject.h"
 #include "RenderPart.h"
+#include "RenderTableCell.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -90,9 +95,9 @@
 #include <sys/types.h>
 #include <wtf/Platform.h>
 
-#if PLATFORM(MAC)
-#include "FrameMac.h"
-#endif
+#include "bindings/NP_jsobject.h"
+#include "bindings/npruntime_impl.h"
+#include "bindings/runtime_root.h"
 
 #if !PLATFORM(WIN_OS)
 #include <unistd.h>
@@ -203,6 +208,15 @@ Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient*
 
 Frame::~Frame()
 {
+    setView(0);
+    loader()->clearRecordedFormValues();
+
+#if PLATFORM(MAC)
+    setBridge(0);
+#endif
+    
+    loader()->cancelAndClear();
+    
     // FIXME: We should not be doing all this work inside the destructor
 
     ASSERT(!d->m_lifeSupportTimer.isActive());
@@ -323,6 +337,11 @@ String Frame::selectedText() const
     return plainText(selectionController()->toRange().get());
 }
 
+Range* Frame::markedTextRange() const
+{
+    return d->m_markedTextRange.get();
+}
+
 SelectionController* Frame::selectionController() const
 {
     return &d->m_selectionController;
@@ -351,6 +370,159 @@ void Frame::setSelectionGranularity(TextGranularity granularity) const
 SelectionController* Frame::dragCaretController() const
 {
     return d->m_page->dragCaretController();
+}
+
+
+// Either get cached regexp or build one that matches any of the labels.
+// The regexp we build is of the form:  (STR1|STR2|STRN)
+static RegularExpression *regExpForLabels(const Vector<String>& labels)
+{
+    // REVIEW- version of this call in FrameMac.mm caches based on the NSArray ptrs being
+    // the same across calls.  We can't do that.
+
+    static RegularExpression wordRegExp = RegularExpression("\\w");
+    DeprecatedString pattern("(");
+    unsigned int numLabels = labels.size();
+    unsigned int i;
+    for (i = 0; i < numLabels; i++) {
+        DeprecatedString label = labels[i].deprecatedString();
+
+        bool startsWithWordChar = false;
+        bool endsWithWordChar = false;
+        if (label.length() != 0) {
+            startsWithWordChar = wordRegExp.search(label.at(0)) >= 0;
+            endsWithWordChar = wordRegExp.search(label.at(label.length() - 1)) >= 0;
+        }
+        
+        if (i != 0)
+            pattern.append("|");
+        // Search for word boundaries only if label starts/ends with "word characters".
+        // If we always searched for word boundaries, this wouldn't work for languages
+        // such as Japanese.
+        if (startsWithWordChar) {
+            pattern.append("\\b");
+        }
+        pattern.append(label);
+        if (endsWithWordChar) {
+            pattern.append("\\b");
+        }
+    }
+    pattern.append(")");
+    return new RegularExpression(pattern, false);
+}
+
+String Frame::searchForLabelsAboveCell(RegularExpression* regExp, HTMLTableCellElement* cell)
+{
+    RenderTableCell* cellRenderer = static_cast<RenderTableCell*>(cell->renderer());
+
+    if (cellRenderer && cellRenderer->isTableCell()) {
+        RenderTableCell* cellAboveRenderer = cellRenderer->table()->cellAbove(cellRenderer);
+
+        if (cellAboveRenderer) {
+            HTMLTableCellElement* aboveCell =
+                static_cast<HTMLTableCellElement*>(cellAboveRenderer->element());
+
+            if (aboveCell) {
+                // search within the above cell we found for a match
+                for (Node* n = aboveCell->firstChild(); n; n = n->traverseNextNode(aboveCell)) {
+                    if (n->isTextNode() && n->renderer() && n->renderer()->style()->visibility() == VISIBLE) {
+                        // For each text chunk, run the regexp
+                        DeprecatedString nodeString = n->nodeValue().deprecatedString();
+                        int pos = regExp->searchRev(nodeString);
+                        if (pos >= 0)
+                            return nodeString.mid(pos, regExp->matchedLength());
+                    }
+                }
+            }
+        }
+    }
+    // Any reason in practice to search all cells in that are above cell?
+    return String();
+}
+
+String Frame::searchForLabelsBeforeElement(const Vector<String>& labels, Element* element)
+{
+    RegularExpression* regExp = regExpForLabels(labels);
+    // We stop searching after we've seen this many chars
+    const unsigned int charsSearchedThreshold = 500;
+    // This is the absolute max we search.  We allow a little more slop than
+    // charsSearchedThreshold, to make it more likely that we'll search whole nodes.
+    const unsigned int maxCharsSearched = 600;
+    // If the starting element is within a table, the cell that contains it
+    HTMLTableCellElement* startingTableCell = 0;
+    bool searchedCellAbove = false;
+
+    // walk backwards in the node tree, until another element, or form, or end of tree
+    int unsigned lengthSearched = 0;
+    Node* n;
+    for (n = element->traversePreviousNode();
+         n && lengthSearched < charsSearchedThreshold;
+         n = n->traversePreviousNode())
+    {
+        if (n->hasTagName(formTag)
+            || (n->isHTMLElement()
+                && static_cast<HTMLElement*>(n)->isGenericFormElement()))
+        {
+            // We hit another form element or the start of the form - bail out
+            break;
+        } else if (n->hasTagName(tdTag) && !startingTableCell) {
+            startingTableCell = static_cast<HTMLTableCellElement*>(n);
+        } else if (n->hasTagName(trTag) && startingTableCell) {
+            String result = searchForLabelsAboveCell(regExp, startingTableCell);
+            if (!result.isEmpty())
+                return result;
+            searchedCellAbove = true;
+        } else if (n->isTextNode() && n->renderer() && n->renderer()->style()->visibility() == VISIBLE) {
+            // For each text chunk, run the regexp
+            DeprecatedString nodeString = n->nodeValue().deprecatedString();
+            // add 100 for slop, to make it more likely that we'll search whole nodes
+            if (lengthSearched + nodeString.length() > maxCharsSearched)
+                nodeString = nodeString.right(charsSearchedThreshold - lengthSearched);
+            int pos = regExp->searchRev(nodeString);
+            if (pos >= 0)
+                return nodeString.mid(pos, regExp->matchedLength());
+            else
+                lengthSearched += nodeString.length();
+        }
+    }
+
+    // If we started in a cell, but bailed because we found the start of the form or the
+    // previous element, we still might need to search the row above us for a label.
+    if (startingTableCell && !searchedCellAbove) {
+         return searchForLabelsAboveCell(regExp, startingTableCell);
+    }
+    return String();
+}
+
+String Frame::matchLabelsAgainstElement(const Vector<String>& labels, Element* element)
+{
+    DeprecatedString name = element->getAttribute(nameAttr).deprecatedString();
+    // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
+    name.replace(RegularExpression("[[:digit:]]"), " ");
+    name.replace('_', ' ');
+    
+    RegularExpression* regExp = regExpForLabels(labels);
+    // Use the largest match we can find in the whole name string
+    int pos;
+    int length;
+    int bestPos = -1;
+    int bestLength = -1;
+    int start = 0;
+    do {
+        pos = regExp->search(name, start);
+        if (pos != -1) {
+            length = regExp->matchedLength();
+            if (length >= bestLength) {
+                bestPos = pos;
+                bestLength = length;
+            }
+            start = pos+1;
+        }
+    } while (pos != -1);
+
+    if (bestPos != -1)
+        return name.mid(bestPos, bestLength);
+    return String();
 }
 
 const Selection& Frame::mark() const
@@ -573,42 +745,37 @@ bool Frame::shouldChangeSelection(const Selection& newSelection) const
     return shouldChangeSelection(selectionController()->selection(), newSelection, newSelection.affinity(), false);
 }
 
-bool Frame::shouldDeleteSelection(const Selection& newSelection) const
+bool Frame::shouldChangeSelection(const Selection& oldSelection, const Selection& newSelection, EAffinity affinity, bool stillSelecting) const
 {
-    return true;
+    return editor()->client()->shouldChangeSelectedRange(oldSelection.toRange().get(), newSelection.toRange().get(),
+                                                         affinity, stillSelecting);
+}
+
+bool Frame::shouldDeleteSelection(const Selection& selection) const
+{
+    return editor()->client()->shouldDeleteRange(selection.toRange().get());
 }
 
 bool Frame::isContentEditable() const 
 {
+    if (d->m_editor.clientIsEditable())
+        return true;
     if (!d->m_doc)
         return false;
     return d->m_doc->inDesignMode();
 }
 
-void Frame::textFieldDidBeginEditing(Element* input)
+#if !PLATFORM(MAC)
+void Frame::setSecureKeyboardEntry(bool)
 {
 }
 
-void Frame::textFieldDidEndEditing(Element* input)
-{
-}
-
-void Frame::textDidChangeInTextField(Element* input)
-{
-}
-
-bool Frame::doTextFieldCommandFromEvent(Element*, KeyboardEvent*)
+bool Frame::isSecureKeyboardEntry()
 {
     return false;
 }
 
-void Frame::textWillBeDeletedInTextField(Element* input)
-{
-}
-
-void Frame::textDidChangeInTextArea(Element* input)
-{
-}
+#endif
 
 CSSMutableStyleDeclaration *Frame::typingStyle() const
 {
@@ -623,26 +790,6 @@ void Frame::setTypingStyle(CSSMutableStyleDeclaration *style)
 void Frame::clearTypingStyle()
 {
     d->m_typingStyle = 0;
-}
-
-void Frame::copyToPasteboard()
-{
-    issueCopyCommand();
-}
-
-void Frame::cutToPasteboard()
-{
-    issueCutCommand();
-}
-
-void Frame::pasteFromPasteboard()
-{
-    issuePasteCommand();
-}
-
-void Frame::pasteAndMatchStyle()
-{
-    issuePasteAndMatchStyleCommand();
 }
 
 void Frame::transpose()
@@ -798,6 +945,44 @@ CSSComputedStyleDeclaration *Frame::selectionComputedStyle(Node *&nodeToRemove) 
     return new CSSComputedStyleDeclaration(styleElement);
 }
 
+void Frame::textFieldDidBeginEditing(Element* e)
+{
+    if (editor()->client())
+        editor()->client()->textFieldDidBeginEditing(e);
+}
+
+void Frame::textFieldDidEndEditing(Element* e)
+{
+    if (editor()->client())
+        editor()->client()->textFieldDidEndEditing(e);
+}
+
+void Frame::textDidChangeInTextField(Element* e)
+{
+    if (editor()->client())
+        editor()->client()->textDidChangeInTextField(e);
+}
+
+bool Frame::doTextFieldCommandFromEvent(Element* e, KeyboardEvent* ke)
+{
+    if (editor()->client())
+        return editor()->client()->doTextFieldCommandFromEvent(e, ke);
+
+    return false;
+}
+
+void Frame::textWillBeDeletedInTextField(Element* input)
+{
+    if (editor()->client())
+        editor()->client()->textWillBeDeletedInTextField(input);
+}
+
+void Frame::textDidChangeInTextArea(Element* e)
+{
+    if (editor()->client())
+        editor()->client()->textDidChangeInTextArea(e);
+}
+
 void Frame::applyEditingStyleToBodyElement() const
 {
     if (!d->m_doc)
@@ -843,12 +1028,6 @@ void Frame::removeEditingStyleFromElement(Element*) const
 {
 }
 
-bool Frame::isCharacterSmartReplaceExempt(UChar, bool)
-{
-    // no smart replace
-    return true;
-}
-
 #ifndef NDEBUG
 static HashSet<Frame*>& keepAliveSet()
 {
@@ -888,6 +1067,71 @@ void Frame::lifeSupportTimerFired(Timer<Frame>*)
 #endif
     deref();
 }
+
+KJS::Bindings::RootObject* Frame::bindingRootObject()
+{
+    if (!settings()->isJavaScriptEnabled())
+        return 0;
+
+    if (!d->m_bindingRootObject) {
+        JSLock lock;
+        d->m_bindingRootObject = KJS::Bindings::RootObject::create(0, scriptProxy()->interpreter());
+    }
+    return d->m_bindingRootObject.get();
+}
+
+PassRefPtr<KJS::Bindings::RootObject> Frame::createRootObject(void* nativeHandle, PassRefPtr<KJS::Interpreter> interpreter)
+{
+    RefPtr<KJS::Bindings::RootObject> rootObject = KJS::Bindings::RootObject::create(nativeHandle, interpreter);
+    d->m_rootObjects.append(rootObject);
+    return rootObject.release();
+}
+
+NPObject* Frame::windowScriptNPObject()
+{
+    if (!d->m_windowScriptNPObject) {
+        if (settings()->isJavaScriptEnabled()) {
+            // JavaScript is enabled, so there is a JavaScript window object.  Return an NPObject bound to the window
+            // object.
+            KJS::JSObject* win = KJS::Window::retrieveWindow(this);
+            ASSERT(win);
+            KJS::Bindings::RootObject* root = bindingRootObject();
+            d->m_windowScriptNPObject = _NPN_CreateScriptObject(0, win, root, root);
+        } else {
+            // JavaScript is not enabled, so we cannot bind the NPObject to the JavaScript window object.
+            // Instead, we create an NPObject of a different class, one which is not bound to a JavaScript object.
+            d->m_windowScriptNPObject = _NPN_CreateNoScriptObject();
+        }
+    }
+
+    return d->m_windowScriptNPObject;
+}
+
+void Frame::cleanupScriptObjects()
+{
+    cleanupPlatformScriptObjects();
+    JSLock lock;
+    
+    unsigned count = d->m_rootObjects.size();
+    for (unsigned i = 0; i < count; i++)
+        d->m_rootObjects[i]->invalidate();
+    d->m_rootObjects.clear();
+
+    if (d->m_bindingRootObject) {
+        d->m_bindingRootObject->invalidate();
+        d->m_bindingRootObject = 0;
+    }
+
+    if (d->m_windowScriptNPObject) {
+        // Call _NPN_DeallocateObject() instead of _NPN_ReleaseObject() so that we don't leak if a plugin fails to release the window
+        // script object properly.
+        // This shouldn't cause any problems for plugins since they should have already been stopped and destroyed at this point.
+        _NPN_DeallocateObject(d->m_windowScriptNPObject);
+        d->m_windowScriptNPObject = 0;
+    }
+}
+
+
 
 void Frame::setSettings(Settings *settings)
 {
@@ -1060,6 +1304,11 @@ void Frame::paint(GraphicsContext* p, const IntRect& rect)
 #endif
     } else
         LOG_ERROR("called Frame::paint with nil renderer");
+}
+
+void Frame::setPaintRestriction(PaintRestriction pr)
+{
+  d->m_paintRestriction = pr;
 }
 
 void Frame::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, float bottomLimit)
@@ -1559,7 +1808,8 @@ void Frame::scheduleClose()
         chrome->closeWindowSoon();
 }
 
-FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* frameLoaderClient)
+FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFrameOwnerElement* ownerElement,
+                           FrameLoaderClient* frameLoaderClient)
     : m_page(page)
     , m_treeNode(thisFrame, parent)
     , m_ownerElement(ownerElement)
@@ -1584,6 +1834,11 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_inViewSourceMode(false)
     , frameCount(0)
     , m_prohibitsScrolling(false)
+    , m_windowScriptNPObject(0)
+#if PLATFORM(MAC)
+    , m_windowScriptObject(nil)
+    , m_bridge(nil)
+#endif
 {
 }
 

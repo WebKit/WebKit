@@ -33,7 +33,7 @@
 
 #include "FrameLoaderClient.h"
 #include "KURL.h"
-#include "FrameQt.h"
+#include "Frame.h"
 #include "FrameLoader.h"
 #include "Shared.h"
 #include "ResourceResponse.h"
@@ -67,8 +67,8 @@ namespace WebCore {
     public:
         FrameLoaderClientQt();
         ~FrameLoaderClientQt();
-        void setFrame(QWebFrame *webFrame, FrameQt *frame);
-        QWebFrame *webFrame() const;
+        void setFrame(QWebFrame* webFrame, Frame* frame);
+        QWebFrame* webFrame() const;
 
         virtual bool hasWebView() const; // mainly for assertions
         virtual bool hasFrameView() const; // ditto

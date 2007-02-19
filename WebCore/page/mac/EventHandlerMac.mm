@@ -36,7 +36,7 @@
 #include "FocusController.h"
 #include "FoundationExtras.h"
 #include "FrameLoader.h"
-#include "FrameMac.h"
+#include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
@@ -92,24 +92,22 @@ PassRefPtr<KeyboardEvent> EventHandler::currentKeyboardEvent() const
     }
 }
 
-static bool isKeyboardOptionTab(KeyboardEvent* event)
+static inline bool isKeyboardOptionTab(KeyboardEvent* event)
 {
     return event
-        && (event->type() == keydownEvent || event->type() == keypressEvent)
-        && event->altKey()
-        && event->keyIdentifier() == "U+000009";
+    && (event->type() == keydownEvent || event->type() == keypressEvent)
+    && event->altKey()
+    && event->keyIdentifier() == "U+000009";    
 }
 
-bool EventHandler::tabsToLinks(KeyboardEvent* event) const
+bool EventHandler::invertSenseOfTabsToLinks(KeyboardEvent* event) const
 {
-    if ([Mac(m_frame)->bridge() keyboardUIMode] & KeyboardAccessTabsToLinks)
-        return !isKeyboardOptionTab(event);
     return isKeyboardOptionTab(event);
 }
 
 bool EventHandler::tabsToAllControls(KeyboardEvent* event) const
 {
-    KeyboardUIMode keyboardUIMode = [Mac(m_frame)->bridge() keyboardUIMode];
+    KeyboardUIMode keyboardUIMode = [m_frame->bridge() keyboardUIMode];
     bool handlingOptionTab = isKeyboardOptionTab(event);
 
     // If tab-to-links is off, option-tab always highlights all controls
@@ -154,8 +152,8 @@ void EventHandler::focusDocumentView()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSView *view = m_frame->view()->getDocumentView();
-    if ([Mac(m_frame)->bridge() firstResponder] != view)
-        [Mac(m_frame)->bridge() makeFirstResponder:view];
+    if ([m_frame->bridge() firstResponder] != view)
+        [m_frame->bridge() makeFirstResponder:view];
     END_BLOCK_OBJC_EXCEPTIONS;
     if (Page* page = m_frame->page())
         page->focusController()->setFocusedFrame(m_frame);
@@ -217,7 +215,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
         // We probably hit the border of a RenderWidget
         return true;
     
-    if ([Mac(m_frame)->bridge() firstResponder] == view) {
+    if ([m_frame->bridge() firstResponder] == view) {
         // In the case where we just became first responder, we should send the mouseDown:
         // to the NSTextField, not the NSTextField's editor. This code makes sure that happens.
         // If we don't do this, we see a flash of selected text when clicking in a text field.
@@ -225,7 +223,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
         // eliminate all use of NSTextField/NSTextView in form fields we can eliminate this code,
         // and textViewWasFirstResponderAtMouseDownTime:, and the instance variable WebHTMLView
         // keeps solely to support textViewWasFirstResponderAtMouseDownTime:.
-        if ([view isKindOfClass:[NSTextView class]] && ![Mac(m_frame)->bridge() textViewWasFirstResponderAtMouseDownTime:(NSTextView *)view]) {
+        if ([view isKindOfClass:[NSTextView class]] && ![m_frame->bridge() textViewWasFirstResponderAtMouseDownTime:(NSTextView *)view]) {
             NSView *superview = view;
             while (superview != nodeView) {
                 superview = [superview superview];
@@ -242,7 +240,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
         // Normally [NSWindow sendEvent:] handles setting the first responder.
         // But in our case, the event was sent to the view representing the entire web page.
         if ([currentEvent clickCount] <= 1 && [view acceptsFirstResponder] && [view needsPanelToBecomeKey]) {
-            [Mac(m_frame)->bridge() makeFirstResponder:view];
+            [m_frame->bridge() makeFirstResponder:view];
         }
     }
 
@@ -347,7 +345,7 @@ Clipboard* EventHandler::createDraggingClipboard() const
     // Must be done before ondragstart adds types and data to the pboard,
     // also done for security, as it erases data from the last drag
     [pasteboard declareTypes:[NSArray array] owner:nil];
-    return new ClipboardMac(true, pasteboard, ClipboardWritable, Mac(m_frame));
+    return new ClipboardMac(true, pasteboard, ClipboardWritable, m_frame);
 }
     
 bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
@@ -572,7 +570,7 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
         // them in Cocoa, and because the event stream was stolen by the Carbon menu code we have
         // no up-to-date cache of them anywhere.
         fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
-                                       location:[[Mac(m_frame)->bridge() window] convertScreenToBase:[NSEvent mouseLocation]]
+                                       location:[[m_frame->bridge() window] convertScreenToBase:[NSEvent mouseLocation]]
                                   modifierFlags:[initiatingEvent modifierFlags]
                                       timestamp:[initiatingEvent timestamp]
                                    windowNumber:[initiatingEvent windowNumber]

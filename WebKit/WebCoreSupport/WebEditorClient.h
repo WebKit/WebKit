@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,6 +57,7 @@ public:
     virtual bool shouldEndEditing(WebCore::Range*);
     virtual bool shouldInsertNode(WebCore::Node*, WebCore::Range*, WebCore::EditorInsertAction);
     virtual bool shouldInsertText(WebCore::String, WebCore::Range*, WebCore::EditorInsertAction);
+    virtual bool shouldChangeSelectedRange(WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity, bool stillSelecting);
 
     virtual bool shouldApplyStyle(WebCore::CSSStyleDeclaration*, WebCore::Range*);
 
@@ -81,11 +83,18 @@ public:
     
     virtual void undo();
     virtual void redo();
-
+    
     virtual void handleKeyPress(WebCore::KeyboardEvent*);
 
     virtual void markedTextAbandoned(WebCore::Frame*);
 
+    virtual void textFieldDidBeginEditing(WebCore::Element*);
+    virtual void textFieldDidEndEditing(WebCore::Element*);
+    virtual void textDidChangeInTextField(WebCore::Element*);
+    virtual bool doTextFieldCommandFromEvent(WebCore::Element*, WebCore::KeyboardEvent*);
+    virtual void textWillBeDeletedInTextField(WebCore::Element*);
+    virtual void textDidChangeInTextArea(WebCore::Element*);
+    
 private:
     void registerCommandForUndoOrRedo(PassRefPtr<WebCore::EditCommand>, bool isRedo);
     WebEditorClient();

@@ -61,6 +61,8 @@ public:
     virtual bool shouldEndEditing(Range*);
     virtual bool shouldInsertNode(Node*, Range*, EditorInsertAction);
     virtual bool shouldInsertText(String, Range*, EditorInsertAction);
+    virtual bool shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity, bool stillSelecting);
+
     virtual bool shouldApplyStyle(CSSStyleDeclaration*, Range*);
 
     virtual void didBeginEditing();
@@ -80,6 +82,14 @@ public:
     virtual void redo();
 
     virtual void handleKeyPress(KeyboardEvent*);
+
+    virtual void textFieldDidBeginEditing(Element*);
+    virtual void textFieldDidEndEditing(Element*);
+    virtual void textDidChangeInTextField(Element*);
+    virtual bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*);
+    virtual void textWillBeDeletedInTextField(Element*);
+    virtual void textDidChangeInTextArea(Element*);
+
 private:
     QWebPage* m_page;
 };

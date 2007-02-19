@@ -34,10 +34,6 @@
 #include "break_lines.h"
 #include <wtf/AlwaysInline.h>
 
-#if PLATFORM(MAC)
-#include "FrameMac.h"
-#endif
-
 using namespace std;
 
 namespace WebCore {
@@ -567,7 +563,7 @@ void InlineTextBox::paintCustomHighlight(int tx, int ty, const AtomicString& typ
     FloatRect rootRect(tx + r->xPos(), ty + selectionTop(), r->width(), selectionHeight());
     FloatRect textRect(tx + xPos(), rootRect.y(), width(), rootRect.height());
 
-    Mac(object()->document()->frame())->paintCustomHighlight(type, textRect, rootRect, true, false);
+    object()->document()->frame()->paintCustomHighlight(type, textRect, rootRect, true, false);
 }
 #endif
 

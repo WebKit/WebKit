@@ -34,7 +34,7 @@
 namespace WebCore
 {
     class FrameLoaderClientQt;
-    class FrameQt;
+    class Frame;
     class FrameView;
     class HTMLFrameOwnerElement;
 }
@@ -50,7 +50,7 @@ public:
         , page(0)
         {}
     WebCore::FrameLoaderClientQt *frameLoaderClient;
-    WTF::RefPtr<WebCore::FrameQt> frame;
+    WTF::RefPtr<WebCore::Frame> frame;
     WTF::RefPtr<WebCore::FrameView> frameView;
     QWebPage *page;
 };

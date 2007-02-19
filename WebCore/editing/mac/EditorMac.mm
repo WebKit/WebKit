@@ -33,7 +33,7 @@
 #import "EditorClient.h"
 #import "Element.h"
 #import "ExceptionHandlers.h"
-#import "FrameMac.h"
+#import "Frame.h"
 #import "PlatformString.h"
 #import "Selection.h"
 #import "SelectionController.h"
@@ -648,7 +648,7 @@ void Editor::showColorPanel()
 
 void Editor::unmarkText()
 {
-    Mac(m_frame)->setMarkedTextRange(0, nil, nil);
+    m_frame->setMarkedTextRange(0, nil, nil);
 }
 
 } // namespace WebCore

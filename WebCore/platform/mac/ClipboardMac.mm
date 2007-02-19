@@ -35,7 +35,7 @@
 #import "EventHandler.h"
 #import "FloatRect.h"
 #import "FoundationExtras.h"
-#import "FrameMac.h"
+#import "Frame.h"
 #import "HTMLImageElement.h"
 #import "Image.h"
 #import "Page.h"
@@ -49,7 +49,7 @@
 
 namespace WebCore {
 
-ClipboardMac::ClipboardMac(bool forDragging, NSPasteboard *pasteboard, ClipboardAccessPolicy policy, FrameMac *frame)
+ClipboardMac::ClipboardMac(bool forDragging, NSPasteboard *pasteboard, ClipboardAccessPolicy policy, Frame *frame)
     : Clipboard(policy)
     , m_pasteboard(pasteboard)
     , m_forDragging(forDragging)

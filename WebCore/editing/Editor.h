@@ -86,6 +86,7 @@ public:
     void cut();
     void copy();
     void paste();
+    void pasteAsPlainText();
     void performDelete();
 
     void copyURL(const KURL&, const String&);

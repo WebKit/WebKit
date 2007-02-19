@@ -33,7 +33,7 @@
 
 #include <QRegExp>
 
-#include "FrameQt.h"
+#include "Frame.h"
 #include "DocLoader.h"
 #include "ResourceHandle.h"
 #include "DeprecatedString.h"
@@ -56,7 +56,6 @@ ResourceHandle::~ResourceHandle()
 bool ResourceHandle::start(Frame* frame)
 {
     ASSERT(frame);
-    FrameQt* f = QtFrame(frame);
 
     ResourceHandleManager::self()->add(this);
     return true;

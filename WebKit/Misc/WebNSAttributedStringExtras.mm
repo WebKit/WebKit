@@ -38,8 +38,8 @@
 #import <WebCore/Document.h>
 #import <WebCore/Element.h>
 #import <WebCore/FontData.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
-#import <WebCore/FrameMac.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/Image.h>
 #import <WebCore/InlineTextBox.h>

@@ -28,7 +28,7 @@
 
 #import "Document.h"
 #import "Event.h"
-#import "FrameMac.h"
+#import "Frame.h"
 #import "Node.h"
 #import "PlatformString.h"
 #import "Range.h"
@@ -113,7 +113,7 @@ void removeDOMWrapper(DOMObjectInternal* impl)
     // Get (or create) a cached JS object for the DOM node.
     KJS::JSObject *scriptImp = static_cast<KJS::JSObject*>(KJS::toJS(exec, nodeImpl));
 
-    KJS::Bindings::RootObject* rootObject = WebCore::Mac(frame)->bindingRootObject();
+    KJS::Bindings::RootObject* rootObject = frame->bindingRootObject();
 
     [self _initializeWithObjectImp:scriptImp originRootObject:rootObject rootObject:rootObject];
 }

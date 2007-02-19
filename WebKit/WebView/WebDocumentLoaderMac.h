@@ -30,6 +30,10 @@
 
 @class WebDataSource;
 
+namespace WebCore {
+    class ResourceRequest;
+}
+
 class WebDocumentLoaderMac : public WebCore::DocumentLoader
 {
 public:

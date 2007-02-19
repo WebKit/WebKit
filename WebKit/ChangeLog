@@ -1,3 +1,60 @@
+2007-02-17  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Maciej.
+
+        Additional coding by Maciej, additional review by Oliver.
+
+        Added implementations for the new callbacks in EditorClient
+        and ChromeClient (basically moved from WebFrameBridge).
+        Cleaned up some code paths that are not called anymore
+        and done fully inside WebCore now.
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.mm:
+        * Misc/WebElementDictionary.mm:
+        * Misc/WebNSAttributedStringExtras.mm:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView getVariable:value:]):
+        * Plugins/WebNetscapePluginEmbeddedView.mm:
+        * Plugins/WebNetscapePluginStream.mm:
+        * Plugins/WebPluginContainerCheck.mm:
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::shouldInterruptJavaScript):
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::shouldChangeSelectedRange):
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge finishInitializingWithPage:frameName:frameView:ownerElement:]):
+        (-[WebFrameBridge fini]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebView/WebArchiver.mm:
+        * WebView/WebFrame.mm:
+        (core):
+        (kit):
+        (-[WebFrame _updateBackground]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFrameView.mm:
+        * WebView/WebHTMLRepresentation.mm:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _updateMouseoverWithEvent:]):
+        (-[WebHTMLView _isEditable]):
+        (-[WebHTMLView validateUserInterfaceItem:]):
+        (-[WebHTMLView maintainsInactiveSelection]):
+        (-[WebHTMLView scrollWheel:]):
+        (-[WebHTMLView acceptsFirstMouse:]):
+        (-[WebHTMLView shouldDelayWindowOrderingForEvent:]):
+        (-[WebHTMLView cut:]):
+        (-[WebHTMLView paste:]):
+        (-[WebHTMLView selectedAttributedString]):
+        * WebView/WebScriptDebugDelegate.mm:
+        * WebView/WebView.mm:
+        (-[WebView _dashboardRegions]):
+        (-[WebView setProhibitsMainFrameScrolling:]):
+        (-[WebView _setInViewSourceMode:]):
+        (-[WebView _inViewSourceMode]):
+        (-[WebView shouldClose]):
+        (-[WebView setEditable:]):
+
 2007-02-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

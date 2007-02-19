@@ -5,6 +5,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -153,9 +154,7 @@ KJS::Bindings::Instance *HTMLAppletElement::getInstance() const
     if (r) {
         r->createWidgetIfNecessary();
         if (r->widget())
-            // Call into the frame (and over the bridge) to pull the Bindings::Instance
-            // from the guts of the plugin.
-            m_instance = frame->getAppletInstanceForWidget(r->widget());
+            m_instance = frame->createScriptInstanceForWidget(r->widget());
     }
     return m_instance.get();
 }

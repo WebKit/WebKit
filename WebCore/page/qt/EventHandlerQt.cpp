@@ -32,8 +32,8 @@
 #include "EventNames.h"
 #include "FloatPoint.h"
 #include "FocusController.h"
+#include "Frame.h"
 #include "FrameLoader.h"
-#include "FrameQt.h"
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLFrameSetElement.h"
@@ -61,7 +61,7 @@ static bool isKeyboardOptionTab(KeyboardEvent* event)
         && event->keyIdentifier() == "U+000009";
 }
 
-bool EventHandler::tabsToLinks(KeyboardEvent* event) const
+bool EventHandler::invertSenseOfTabsToLinks(KeyboardEvent* event) const
 {
     return isKeyboardOptionTab(event);
 }

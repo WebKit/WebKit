@@ -72,8 +72,6 @@ public:
     virtual void setHScrollbarMode(ScrollbarMode);
     virtual void setScrollbarsMode(ScrollbarMode);
     
-    void print();
-
     void layout(bool allowSubtree = true);
     bool didFirstLayout() const;
     void layoutTimerFired(Timer<FrameView>*);

@@ -30,7 +30,6 @@
 
 #include "CString.h"
 #include "CookieJar.h"
-#include "FrameQt.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleClient.h"
 #include "ResourceResponse.h"

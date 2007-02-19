@@ -31,7 +31,7 @@
 
 #include "Document.h"
 #include "FrameLoader.h"
-#include "FrameQt.h"
+#include "Frame.h"
 #include "PlatformString.h"
 #include "SharedBuffer.h"
 #include "XMLTokenizer.h"

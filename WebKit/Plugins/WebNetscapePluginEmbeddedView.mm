@@ -41,7 +41,7 @@
 #import "WebNetscapePluginStream.h"
 #import "WebView.h"
 #import <JavaScriptCore/Assertions.h>
-#import <WebCore/FrameMac.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 
 @implementation WebNetscapePluginEmbeddedView

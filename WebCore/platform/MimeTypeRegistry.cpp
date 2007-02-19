@@ -126,6 +126,16 @@ static void initialiseMimeTypeRegistry()
     initialiseSupportedImageMIMETypes();
 }
 
+String MimeTypeRegistry::getMIMETypeForPath(const String& path)
+{
+    int pos = path.reverseFind('.');
+    if(pos >= 0) {
+        String extension = path.substring(pos + 1);
+        return getMIMETypeForExtension(extension);
+    }
+    return "application/octet-stream";
+}
+
 bool MimeTypeRegistry::isSupportedImageMIMEType(const String &mimeType)
 { 
     if (!supportedImageMIMETypes)

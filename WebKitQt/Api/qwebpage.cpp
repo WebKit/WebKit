@@ -28,7 +28,7 @@
 #include "qwebpagehistory.h"
 #include "qwebpagehistory_p.h"
 
-#include "FrameQt.h"
+#include "Frame.h"
 #include "ChromeClientQt.h"
 #include "ContextMenuClientQt.h"
 #include "DragClientQt.h"

@@ -37,7 +37,7 @@
 #import "WebFrameInternal.h"
 #import "WebResource.h"
 #import <JavaScriptCore/Assertions.h>
-#import <WebCore/FrameMac.h>
+#import <WebCore/Frame.h>
 #import <WebCore/SelectionController.h>
 #import <WebKit/DOM.h>
 

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,8 +84,16 @@ public:
     virtual void runJavaScriptAlert(WebCore::Frame*, const WebCore::String&);
     virtual bool runJavaScriptConfirm(WebCore::Frame*, const WebCore::String&);
     virtual bool runJavaScriptPrompt(WebCore::Frame*, const WebCore::String& message, const WebCore::String& defaultValue, WebCore::String& result);
-    virtual void setStatusbarText(const WebCore::String&);
     virtual bool shouldInterruptJavaScript();
+
+    virtual bool tabsToLinks() const;
+    
+    virtual WebCore::IntRect windowResizerRect() const;
+    virtual void addToDirtyRegion(const WebCore::IntRect&);
+    virtual void scrollBackingStore(int dx, int dy, const WebCore::IntRect& scrollViewRect, const WebCore::IntRect& clipRect);
+    virtual void updateBackingStore();
+    
+    virtual void setStatusbarText(const WebCore::String&);
 
 private:
     WebView *m_webView;

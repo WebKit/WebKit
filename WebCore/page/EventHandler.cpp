@@ -28,6 +28,7 @@
 #include "EventHandler.h"
 
 #include "CachedImage.h"
+#include "ChromeClient.h"
 #include "Cursor.h"
 #include "Document.h"
 #include "DragController.h"
@@ -1499,6 +1500,25 @@ bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEve
 }
     
     
+#if !PLATFORM(MAC) && !PLATFORM(QT)
+bool EventHandler::invertSenseOfTabsToLinks(KeyboardEvent*) const
+{
+    return false;
+}
+#endif
+
+bool EventHandler::tabsToLinks(KeyboardEvent* event) const
+{
+    Page* page = m_frame->page();
+    if (!page)
+        return false;
+
+    if (page->chrome()->client()->tabsToLinks())
+        return !invertSenseOfTabsToLinks(event);
+
+    return invertSenseOfTabsToLinks(event);
+}
+
 void EventHandler::defaultTextInputEventHandler(TextEvent* event)
 {
     String data = event->data();

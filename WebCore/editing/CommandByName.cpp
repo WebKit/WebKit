@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,13 +66,13 @@ const CommandImp* commandImp(const String& command)
 
 bool execCopy(Frame* frame)
 {
-    frame->copyToPasteboard();
+    frame->editor()->copy();
     return true;
 }
 
 bool execCut(Frame* frame)
 {
-    frame->cutToPasteboard();
+    frame->editor()->cut();
     return true;
 }
 
@@ -89,7 +90,7 @@ bool execForwardDelete(Frame* frame)
 
 bool execPaste(Frame* frame)
 {
-    frame->pasteFromPasteboard();
+    frame->editor()->paste();
     return true;
 }
 

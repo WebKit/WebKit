@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,10 +81,6 @@
 #include "xmlhttprequest.h"
 #include <kjs/JSLock.h>
 #include <kjs/object.h>
-
-#if PLATFORM(MAC)
-#include "FrameMac.h"
-#endif
 
 using namespace KJS;
 
@@ -726,7 +723,7 @@ void FrameLoader::clear(bool clearWindowProperties)
     // urlsBridgeKnowsAbout.clear();
 
 #if PLATFORM(MAC)
-    Mac(m_frame)->setMarkedTextRange(0, nil, nil);
+    m_frame->setMarkedTextRange(0, nil, nil);
 #endif
 
     if (!m_needsClear)
@@ -754,7 +751,7 @@ void FrameLoader::clear(bool clearWindowProperties)
     m_decoder = 0;
 
     m_containsPlugIns = false;
-    m_frame->cleanupPluginObjects();
+    m_frame->cleanupScriptObjects();
   
     m_redirectionTimer.stop();
     m_scheduledRedirection.clear();
@@ -2893,7 +2890,7 @@ void FrameLoader::detachFromParent()
         m_frame->pageDestroyed();
     }
 #if PLATFORM(MAC)
-    [Mac(m_frame)->bridge() close];
+    [m_frame->bridge() close];
 #endif
     m_client->detachedFromParent4();
 }

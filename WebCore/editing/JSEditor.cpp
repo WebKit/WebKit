@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -211,7 +212,7 @@ bool execBold(Frame* frame, bool, const String&)
 
 bool execCopy(Frame* frame, bool, const String&)
 {
-    frame->copyToPasteboard();
+    frame->editor()->copy();
     return true;
 }
 
@@ -230,7 +231,7 @@ bool execCreateLink(Frame* frame, bool userInterface, const String& value)
 
 bool execCut(Frame* frame, bool, const String&)
 {
-    frame->cutToPasteboard();
+    frame->editor()->cut();
     return true;
 }
 
@@ -403,13 +404,13 @@ bool execOutdent(Frame* frame, bool, const String&)
 
 bool execPaste(Frame* frame, bool, const String&)
 {
-    frame->pasteFromPasteboard();
+    frame->editor()->paste();
     return true;
 }
 
 bool execPasteAndMatchStyle(Frame* frame, bool, const String&)
 {
-    frame->pasteAndMatchStyle();
+    frame->editor()->pasteAsPlainText();
     return true;
 }
 

@@ -111,6 +111,7 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLImageElementPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLInputElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLInputElementPrivate.h \
+    $(INTERNAL_HEADERS_DIR)/DOMHTMLInputElementInternal.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLIsIndexElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLLIElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLLabelElement.h \
@@ -146,6 +147,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLTableSectionElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLTextAreaElement.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLTextAreaElementPrivate.h \
+    $(INTERNAL_HEADERS_DIR)/DOMHTMLTextAreaElementInternal.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLTitleElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMHTMLUListElement.h \
     $(PUBLIC_HEADERS_DIR)/DOMKeyboardEvent.h \

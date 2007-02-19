@@ -46,8 +46,8 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
-#import <WebCore/FrameMac.h>
 #import <WebCore/MimeTypeRegistry.h>
 #import <WebCore/Range.h>
 

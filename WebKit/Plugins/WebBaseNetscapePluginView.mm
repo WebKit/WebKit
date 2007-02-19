@@ -52,8 +52,8 @@
 #import <JavaScriptCore/npruntime_impl.h>
 #import <WebCore/Document.h>
 #import <WebCore/Element.h>
+#import <WebCore/Frame.h> 
 #import <WebCore/FrameLoader.h> 
-#import <WebCore/FrameMac.h> 
 #import <WebCore/FrameTree.h> 
 #import <WebCore/Page.h> 
 #import <WebKit/DOMPrivate.h>
@@ -2278,7 +2278,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     switch (variable) {
         case NPNVWindowNPObject:
         {
-            FrameMac* frame = core([self webFrame]);
+            Frame* frame = core([self webFrame]);
             NPObject* windowScriptObject = frame ? frame->windowScriptNPObject() : 0;
 
             // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugins/npruntime.html#browseraccess>

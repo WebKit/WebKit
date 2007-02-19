@@ -35,7 +35,7 @@
 #include "ScrollViewCanvasQt.moc"
 
 #include "EventHandler.h"
-#include "FrameQt.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "TypingCommand.h"
 #include "KeyboardCodes.h"
