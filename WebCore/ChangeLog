@@ -2,6 +2,37 @@
 
         Reviewed by Adam.
 
+        Adding stubbed out implementation of Clipboard for Qt to stop
+        it crashing whenever someone drags the mouse.
+
+        * WebCore.pro:
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * platform/qt/ClipboardQt.cpp: Added.
+        (WebCore::ClipboardQt::ClipboardQt):
+        (WebCore::ClipboardQt::clearData):
+        (WebCore::ClipboardQt::clearAllData):
+        (WebCore::ClipboardQt::getData):
+        (WebCore::ClipboardQt::setData):
+        (WebCore::ClipboardQt::types):
+        (WebCore::ClipboardQt::dragLocation):
+        (WebCore::ClipboardQt::dragImage):
+        (WebCore::ClipboardQt::setDragImage):
+        (WebCore::ClipboardQt::dragImageElement):
+        (WebCore::ClipboardQt::setDragImageElement):
+        (WebCore::ClipboardQt::createDragImage):
+        (WebCore::ClipboardQt::declareAndWriteDragImage):
+        (WebCore::ClipboardQt::writeURL):
+        (WebCore::ClipboardQt::writeRange):
+        (WebCore::ClipboardQt::hasData):
+        * platform/qt/ClipboardQt.h: Added.
+        (WebCore::ClipboardQt::~ClipboardQt):
+        (WebCore::ClipboardQt::isForDragging):
+
+2007-02-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
         Don't even attempt to do a document based drag if there isn't a document
         Fixes rdar://problem/4960109
 

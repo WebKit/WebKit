@@ -26,6 +26,7 @@
 #include "config.h"
 #include "EventHandler.h"
 
+#include "ClipboardQt.h"
 #include "Cursor.h"
 #include "Document.h"
 #include "EventNames.h"
@@ -122,8 +123,7 @@ bool EventHandler::passWheelEventToWidget(Widget* widget)
     
 Clipboard* EventHandler::createDraggingClipboard() const 
 {
-    notImplemented();
-    return 0;
+    return new ClipboardQt(ClipboardWritable, true);
 }
 
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)

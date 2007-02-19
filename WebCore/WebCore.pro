@@ -576,6 +576,7 @@ SOURCES += \
     platform/network/ResourceHandle.cpp \
     platform/network/ResourceRequest.cpp \
     platform/network/ResourceResponse.cpp \
+    platform/qt/ClipboardQt.cpp \
     platform/qt/ContextMenuItemQt.cpp \
     platform/qt/ContextMenuQt.cpp \
     platform/qt/CookieJarQt.cpp \
