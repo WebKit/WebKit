@@ -1,3 +1,18 @@
+2007-02-19  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/4868242>
+        http://bugs.webkit.org/show_bug.cgi?id=12670
+        REGRESSION: Many 3rd Party Apps crash in WebCore::DocumentLoader::frameLoader() (12670)
+        
+        Bring back the semantic we had that a web view should be retained for as long as something is loading. Use the identifier
+        to object hash map for this.
+
+        * WebView/WebView.mm:
+        (-[WebView _addObject:forIdentifier:]):
+        (-[WebView _removeObjectForIdentifier:]):
+
 2007-02-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Oliver

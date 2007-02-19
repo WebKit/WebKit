@@ -3520,6 +3520,13 @@ static WebFrameView *containingFrameView(NSView *view)
 - (void)_addObject:(id)object forIdentifier:(unsigned long)identifier
 {
     ASSERT(!_private->identifierMap->contains(identifier));
+
+    // If the identifier map is initially empty it means we're starting a load
+    // of something. The semantic is that the web view should be around as long 
+    // as something is loading. Because of that we retain the web view.
+    if (_private->identifierMap->isEmpty())
+        CFRetain(self);
+    
     _private->identifierMap->set(identifier, object);
 }
 
@@ -3531,6 +3538,11 @@ static WebFrameView *containingFrameView(NSView *view)
 - (void)_removeObjectForIdentifier:(unsigned long)identifier
 {
     _private->identifierMap->remove(identifier);
+    
+    // If the identifier map is now empty it means we're no longer loading anything
+    // and we should release the web view.
+    if (_private->identifierMap->isEmpty())
+        CFRelease(self);
 }
 
 @end
