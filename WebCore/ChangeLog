@@ -1,3 +1,14 @@
+2007-02-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - <rdar://problem/5006414> REGRESSION: Crash occurs at WebCore::Frame::loader()
+          when loading AFL Ladder widget
+
+        * html/HTMLFrameElementBase.cpp: (WebCore::HTMLFrameElementBase::openURL):
+        Add missing null check so this fails without crashing when called on an element
+        that's no longer in a frame.
+
 2007-02-19  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mitz.

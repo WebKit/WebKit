@@ -101,8 +101,11 @@ void HTMLFrameElementBase::openURL()
     if (m_URL.isEmpty())
         m_URL = "about:blank";
 
-    document()->frame()->loader()->requestFrame(this, m_URL, m_name);
+    Frame* parentFrame = document()->frame();
+    if (!parentFrame)
+        return;
 
+    parentFrame->loader()->requestFrame(this, m_URL, m_name);
     if (contentFrame())
         contentFrame()->setInViewSourceMode(viewSourceMode());
 }
