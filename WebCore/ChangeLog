@@ -1,3 +1,11 @@
+2007-02-18  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Hyatt.
+
+        A little preparation for <rdar://problem/5006872>.
+
+        * platform/PopupMenu.h:
+
 2007-02-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adele.

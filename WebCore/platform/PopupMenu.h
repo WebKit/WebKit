@@ -35,6 +35,8 @@
 class NSPopUpButtonCell;
 #endif
 #elif PLATFORM(WIN)
+#include "ScrollBar.h"
+#include <wtf/RefPtr.h>
 typedef struct HWND__* HWND;
 typedef struct HDC__* HDC;
 typedef struct HBITMAP__* HBITMAP;
@@ -47,8 +49,13 @@ class QListWidgetItem;
 namespace WebCore {
 
 class FrameView;
+class PlatformScrollbar;
 
-class PopupMenu : public Shared<PopupMenu> {
+class PopupMenu : public Shared<PopupMenu>
+#if PLATFORM(WIN)
+                , private ScrollbarClient
+#endif
+{
 public:
     static PassRefPtr<PopupMenu> create(PopupMenuClient* client) { return new PopupMenu(client); }
     ~PopupMenu();
@@ -63,6 +70,8 @@ public:
     PopupMenuClient* client() const { return m_popupClient; }
 
 #if PLATFORM(WIN)
+    PlatformScrollbar* scrollBar() const { return m_scrollBar.get(); }
+
     bool up(unsigned lines = 1);
     bool down(unsigned lines = 1);
 
@@ -70,7 +79,9 @@ public:
     const IntRect& windowRect() const { return m_windowRect; }
     IntRect clientRect() const;
 
-    int listIndexAtPoint(const IntPoint& point) { return (point.y() + m_scrollOffset) / m_itemHeight; }
+    int visibleItems() const;
+
+    int listIndexAtPoint(const IntPoint&) const;
 
     bool setFocusedIndex(int index, bool hotTracking = false, bool fireOnChange = false);
     int focusedIndex() const;
@@ -87,7 +98,6 @@ public:
     void setScrollOffset(int offset) { m_scrollOffset = offset; }
     int scrollOffset() const { return m_scrollOffset; }
 
-    bool scrollTo(int);
     bool scrollToRevealSelection();
 
     void incrementWheelDelta(int delta);
@@ -97,6 +107,12 @@ public:
 
 protected:
     PopupMenu(PopupMenuClient* client);
+
+#if PLATFORM(WIN)
+    // ScrollBarClient
+    virtual void valueChanged(Scrollbar*);
+    virtual IntRect windowClipRect() const;
+#endif
     
 private:
     PopupMenuClient* m_popupClient;
@@ -115,6 +131,7 @@ private:
     void calculatePositionAndSize(const IntRect&, FrameView*);
     void invalidateItem(int index);
 
+    RefPtr<PlatformScrollbar> m_scrollBar;
     HWND m_popup;
     HDC m_DC;
     HBITMAP m_bmp;
