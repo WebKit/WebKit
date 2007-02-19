@@ -42,7 +42,8 @@ my $variant = $ENV{'CURRENT_VARIANT'};
 $arch = $ENV{'NATIVE_ARCH'} if !$arch; # for Xcode 2.1, which does not have CURRENT_ARCH
 $variant = "normal" if !$variant; # for Xcode 2.1, which does not have CURRENT_VARIANT
 
-my $executableAge = -M "$ENV{'TARGET_BUILD_DIR'}/$ENV{'EXECUTABLE_PATH'}";
+my $executablePath = "$ENV{'TARGET_BUILD_DIR'}/$ENV{'EXECUTABLE_PATH'}";
+my $executableAge = -M $executablePath;
 
 my $list = $ENV{"LINK_FILE_LIST_${variant}_${arch}"};
 
@@ -98,4 +99,7 @@ for my $file (sort @files) {
     }
 }
 
-exit $sawError;
+if ($sawError) {
+    unlink $executablePath;
+    exit 1;
+}
