@@ -250,6 +250,10 @@ DragOperation DragController::dragEnteredOrUpdated(DragData* dragData)
 DragOperation DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction actionMask)
 {
     ASSERT(dragData);
+    
+    if (!m_document)
+        return DragOperationNone;
+    
     DragOperation operation = DragOperationNone;
     if (actionMask & DragDestinationActionDHTML)
         operation = tryDHTMLDrag(dragData);
@@ -389,6 +393,7 @@ bool DragController::canProcessDrag(DragData* dragData)
 DragOperation DragController::tryDHTMLDrag(DragData* dragData)
 {   
     ASSERT(dragData);
+    ASSERT(m_document);
     DragOperation op = DragOperationNone;
     RefPtr<Frame> frame = m_page->mainFrame();
     RefPtr<FrameView> viewProtector = frame->view();
