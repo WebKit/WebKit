@@ -1,3 +1,13 @@
+2007-02-19  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/4841078> Remove the Mail.app editable link clicking behavior workaround when it is no longer needed
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebView.mm:
+        (-[WebView setPreferences:]):
+
 2007-02-19  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam.

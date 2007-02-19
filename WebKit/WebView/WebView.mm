@@ -1493,18 +1493,6 @@ NSMutableDictionary *countInvocations;
 }
 #endif
 
-#ifdef DISABLE_EDITABLE_LINKS_IN_MAIL
-+(void)initialize
-{
-    static BOOL tooLate = NO;
-    if (!tooLate) {
-        if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mail"] && [[WebPreferences standardPreferences] editableLinkBehavior] == WebKitEditableLinkDefaultBehavior)
-            [[WebPreferences standardPreferences] setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
-        tooLate = YES;
-    }
-}
-#endif
-
 + (BOOL)canShowMIMEType:(NSString *)MIMEType
 {
     return [self _viewClass:nil andRepresentationClass:nil forMIMEType:MIMEType];
@@ -1836,10 +1824,6 @@ NS_ENDHANDLER
 - (void)setPreferences:(WebPreferences *)prefs
 {
     if (_private->preferences != prefs) {
-#ifdef DISABLE_EDITABLE_LINKS_IN_MAIL
-        if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mail"] && [prefs editableLinkBehavior] == WebKitEditableLinkDefaultBehavior)
-            [prefs setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
-#endif
         [[NSNotificationCenter defaultCenter] removeObserver:self name:WebPreferencesChangedNotification object:[self preferences]];
         [WebPreferences _removeReferenceForIdentifier:[_private->preferences identifier]];
         [_private->preferences release];
