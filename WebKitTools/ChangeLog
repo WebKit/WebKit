@@ -1,5 +1,9 @@
 2007-02-20  Geoffrey Garen  <ggaren@apple.com>
 
+        * Scripts/parse-malloc-history: Added copyright info.
+
+2007-02-20  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin Adler.
         
         New script to parse the output from malloc_history, so we can determine
