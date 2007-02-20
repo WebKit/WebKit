@@ -1,9 +1,7 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,18 +25,16 @@
 
 #include "CachedResourceClient.h"
 #include "Document.h"
-#include "HTMLCollection.h"
 
 namespace WebCore {
 
 class FrameView;
 class HTMLElement;
 
-class HTMLDocument : public Document, public CachedResourceClient
-{
+class HTMLDocument : public Document, public CachedResourceClient {
 public:
     HTMLDocument(DOMImplementation*, FrameView* = 0);
-    ~HTMLDocument();
+    virtual ~HTMLDocument();
 
     virtual bool isHTMLDocument() const { return true; }
 
@@ -65,10 +61,6 @@ public:
     bool hasDocExtraNamedItem(const String& name);
 
     typedef HashMap<StringImpl*, int> NameCountMap;
-    
-protected:
-    HTMLElement* bodyElement;
-    HTMLElement* htmlElement;
 
 private:
     NameCountMap namedItemCounts;

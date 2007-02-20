@@ -374,7 +374,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
                                                      pluginPageURL:nil
                                                         pluginName:nil // FIXME: Get this from somewhere
                                                           MIMEType:[response MIMEType]];
-        [_dataSource _documentLoader]->frameLoader()->cancelMainResourceLoad(error);
+        [_dataSource _documentLoader]->cancelMainResourceLoad(error);
         [error release];
     }        
 }

@@ -183,30 +183,30 @@ void DocLoader::setLoadInProgress(bool load)
 
 void DocLoader::checkCacheObjectStatus(CachedResource* resource)
 {
-        // Return from the function for objects that we didn't load from the cache.
-        if (!resource)
+    // Return from the function for objects that we didn't load from the cache.
+    if (!resource)
+        return;
+    switch (resource->status()) {
+        case CachedResource::Cached:
+            break;
+        case CachedResource::NotCached:
+        case CachedResource::Unknown:
+        case CachedResource::New:
+        case CachedResource::Pending:
             return;
-        switch (resource->status()) {
-            case CachedResource::Cached:
-                break;
-            case CachedResource::NotCached:
-            case CachedResource::Unknown:
-            case CachedResource::New:
-            case CachedResource::Pending:
-                return;
-        }
-        
-        // Notify the caller that we "loaded".
-        if (!m_frame || m_frame->loader()->haveToldBridgeAboutLoad(resource->url()))
-            return;
-        
-        ResourceRequest request(resource->url());
-        const ResourceResponse& response = resource->response();
-        SharedBuffer* data = resource->allData();
-        
-        // FIXME: If the WebKit client changes or cancels the request, WebCore does not respect this and continues the load.
-        m_frame->loader()->loadedResourceFromMemoryCache(request, response, data ? data->size() : 0);
-        m_frame->loader()->didTellBridgeAboutLoad(resource->url());
+    }
+    
+    // Notify the caller that we "loaded".
+    if (!m_frame || m_frame->loader()->haveToldBridgeAboutLoad(resource->url()))
+        return;
+    
+    ResourceRequest request(resource->url());
+    const ResourceResponse& response = resource->response();
+    SharedBuffer* data = resource->allData();
+    
+    // FIXME: If the WebKit client changes or cancels the request, WebCore does not respect this and continues the load.
+    m_frame->loader()->loadedResourceFromMemoryCache(request, response, data ? data->size() : 0);
+    m_frame->loader()->didTellBridgeAboutLoad(resource->url());
 }
 
 }

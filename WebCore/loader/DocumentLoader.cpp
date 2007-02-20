@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HistoryItem.h"
+#include "MainResourceLoader.h"
 #include "PageCache.h"
 #include "PlatformString.h"
 #include "SharedBuffer.h"
@@ -102,6 +103,22 @@ static inline String canonicalizedTitle(const String& title, Frame* frame)
     return String::adopt(stringBuilder);
 }
 
+static void cancelAll(const ResourceLoaderSet& loaders)
+{
+    const ResourceLoaderSet copy = loaders;
+    ResourceLoaderSet::const_iterator end = copy.end();
+    for (ResourceLoaderSet::const_iterator it = copy.begin(); it != end; ++it)
+        (*it)->cancel();
+}
+
+static void setAllDefersLoading(const ResourceLoaderSet& loaders, bool defers)
+{
+    const ResourceLoaderSet copy = loaders;
+    ResourceLoaderSet::const_iterator end = copy.end();
+    for (ResourceLoaderSet::const_iterator it = copy.begin(); it != end; ++it)
+        (*it)->setDefersLoading(defers);
+}
+
 DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData& substituteData)
     : m_frame(0)
     , m_originalRequest(req)
@@ -131,14 +148,13 @@ DocumentLoader::~DocumentLoader()
     ASSERT(!m_frame || frameLoader()->activeDocumentLoader() != this || !frameLoader()->isLoading());
 }
 
-void DocumentLoader::setMainResourceData(PassRefPtr<SharedBuffer> data)
-{
-    m_mainResourceData = data;
-}
-
 PassRefPtr<SharedBuffer> DocumentLoader::mainResourceData() const
 {
-    return m_mainResourceData ? m_mainResourceData.get() : frameLoader()->mainResourceData();
+    if (m_mainResourceData)
+        return m_mainResourceData;
+    if (m_mainResourceLoader)
+        return m_mainResourceLoader->resourceData();
+    return 0;
 }
 
 const ResourceRequest& DocumentLoader::originalRequest() const
@@ -248,21 +264,20 @@ void DocumentLoader::stopLoading()
 
     FrameLoader* frameLoader = DocumentLoader::frameLoader();
     
-    if (frameLoader->hasMainResourceLoader())
+    if (m_mainResourceLoader)
         // Stop the main resource loader and let it send the cancelled message.
-        frameLoader->cancelMainResourceLoad();
-    else if (frameLoader->isLoadingSubresources())
+        m_mainResourceLoader->cancel();
+    else if (!m_subresourceLoaders.isEmpty())
         // The main resource loader already finished loading. Set the cancelled error on the 
         // document and let the subresourceLoaders send individual cancelled messages below.
-
         setMainDocumentError(frameLoader->cancelledError(m_request));
     else
         // If there are no resource loaders, we need to manufacture a cancelled message.
         // (A back/forward navigation has no resource loaders because its resources are cached.)
         mainReceivedError(frameLoader->cancelledError(m_request), true);
     
-    frameLoader->stopLoadingSubresources();
-    frameLoader->stopLoadingPlugIns();
+    stopLoadingSubresources();
+    stopLoadingPlugIns();
     
     m_isStopping = false;
 }
@@ -357,8 +372,8 @@ void DocumentLoader::setupForReplaceByMIMEType(const String& newMIMEType)
         setupForReplace();
     }
     
-    frameLoader()->stopLoadingSubresources();
-    frameLoader()->stopLoadingPlugIns();
+    stopLoadingSubresources();
+    stopLoadingPlugIns();
 
     frameLoader()->finalSetupForReplace(this);
 }
@@ -415,9 +430,9 @@ void DocumentLoader::setPrimaryLoadComplete(bool flag)
 {
     m_primaryLoadComplete = flag;
     if (flag) {
-        if (frameLoader()->hasMainResourceLoader()) {
-            setMainResourceData(frameLoader()->mainResourceData());
-            frameLoader()->releaseMainResourceLoader();
+        if (m_mainResourceLoader) {
+            m_mainResourceData = m_mainResourceLoader->resourceData();
+            m_mainResourceLoader = 0;
         }
         updateLoading();
     }
@@ -430,7 +445,7 @@ bool DocumentLoader::isLoadingInAPISense() const
     if (frameLoader()->state() != FrameStateComplete) {
         if (!m_primaryLoadComplete && isLoading())
             return true;
-        if (frameLoader()->isLoadingSubresources())
+        if (!m_subresourceLoaders.isEmpty())
             return true;
         if (Document* doc = m_frame->document())
             if (Tokenizer* tok = doc->tokenizer())
@@ -576,6 +591,91 @@ String DocumentLoader::responseMIMEType() const
 const KURL& DocumentLoader::unreachableURL() const
 {
     return m_substituteData.failingURL();
+}
+
+void DocumentLoader::setDefersLoading(bool defers)
+{
+    if (m_mainResourceLoader)
+        m_mainResourceLoader->setDefersLoading(defers);
+    setAllDefersLoading(m_subresourceLoaders, defers);
+    setAllDefersLoading(m_plugInStreamLoaders, defers);
+}
+
+void DocumentLoader::stopLoadingPlugIns()
+{
+    cancelAll(m_plugInStreamLoaders);
+}
+
+void DocumentLoader::stopLoadingSubresources()
+{
+    cancelAll(m_subresourceLoaders);
+}
+
+void DocumentLoader::addSubresourceLoader(ResourceLoader* loader)
+{
+    m_subresourceLoaders.add(loader);
+    setLoading(true);
+}
+
+void DocumentLoader::removeSubresourceLoader(ResourceLoader* loader)
+{
+    m_subresourceLoaders.remove(loader);
+    updateLoading();
+    if (Frame* frame = m_frame)
+        frame->loader()->checkLoadComplete();
+}
+
+void DocumentLoader::addPlugInStreamLoader(ResourceLoader* loader)
+{
+    m_plugInStreamLoaders.add(loader);
+    setLoading(true);
+}
+
+void DocumentLoader::removePlugInStreamLoader(ResourceLoader* loader)
+{
+    m_plugInStreamLoaders.remove(loader);
+    updateLoading();
+}
+
+bool DocumentLoader::isLoadingMainResource() const
+{
+    return !!m_mainResourceLoader;
+}
+
+bool DocumentLoader::isLoadingSubresources() const
+{
+    return !m_subresourceLoaders.isEmpty();
+}
+
+bool DocumentLoader::isLoadingPlugIns() const
+{
+    return !m_plugInStreamLoaders.isEmpty();
+}
+
+bool DocumentLoader::startLoadingMainResource(unsigned long identifier)
+{
+    ASSERT(!m_mainResourceLoader);
+    m_mainResourceLoader = MainResourceLoader::create(m_frame);
+    m_mainResourceLoader->setIdentifier(identifier);
+
+    // FIXME: Is there any way the extra fields could have not been added by now?
+    // If not, it would be great to remove this line of code.
+    frameLoader()->addExtraFieldsToRequest(m_request, true, false);
+
+    if (!m_mainResourceLoader->load(m_request, substituteData())) {
+        // FIXME: If this should really be caught, we should just ASSERT this doesn't happen;
+        // should it be caught by other parts of WebKit or other parts of the app?
+        LOG_ERROR("could not create WebResourceHandle for URL %s -- should be caught by policy handler level", m_request.url().url().ascii());
+        m_mainResourceLoader = 0;
+        return false;
+    }
+
+    return true;
+}
+
+void DocumentLoader::cancelMainResourceLoad(const ResourceError& error)
+{
+    m_mainResourceLoader->cancel(error);
 }
 
 }

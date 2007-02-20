@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef DocumentLoader_h
 #define DocumentLoader_h
 
@@ -35,6 +36,8 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SubstituteData.h"
+#include <wtf/HashSet.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -43,10 +46,13 @@ namespace WebCore {
     class FrameLoader;
     class HistoryItem;
     class KURL;
+    class MainResourceLoader;
     class PageCache;
+    class ResourceLoader;
     class SharedBuffer;
     class SubstituteData;
 
+    typedef HashSet<RefPtr<ResourceLoader> > ResourceLoaderSet;
     typedef Vector<ResourceResponse> ResponseVector;
 
     class DocumentLoader : public Shared<DocumentLoader> {
@@ -124,8 +130,24 @@ namespace WebCore {
         void setLoadingFromPageCache(bool);
         bool isLoadingFromPageCache() const;
         
+        void setDefersLoading(bool);
+
+        bool startLoadingMainResource(unsigned long identifier);
+        void cancelMainResourceLoad(const ResourceError&);
+
+        bool isLoadingMainResource() const;
+        bool isLoadingSubresources() const;
+        bool isLoadingPlugIns() const;
+
+        void stopLoadingPlugIns();
+        void stopLoadingSubresources();
+
+        void addSubresourceLoader(ResourceLoader*);
+        void removeSubresourceLoader(ResourceLoader*);
+        void addPlugInStreamLoader(ResourceLoader*);
+        void removePlugInStreamLoader(ResourceLoader*);
+
     private:
-        void setMainResourceData(PassRefPtr<SharedBuffer>);
         void setupForReplace();
         void commitIfReady();
         void clearErrors();
@@ -134,6 +156,10 @@ namespace WebCore {
         bool doesProgressiveLoad(const String& MIMEType) const;
 
         Frame* m_frame;
+
+        RefPtr<MainResourceLoader> m_mainResourceLoader;
+        ResourceLoaderSet m_subresourceLoaders;
+        ResourceLoaderSet m_plugInStreamLoaders;
 
         RefPtr<SharedBuffer> m_mainResourceData;
 

@@ -1,3 +1,10 @@
+2007-02-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        * Plugins/WebPluginController.mm: (-[WebPluginController pluginView:receivedResponse:]):
+        Call cancelMainResourceLoad on the document loader instead of the frame loader.
+
 2007-02-20  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Mitz.

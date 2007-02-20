@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef FrameLoader_h
 #define FrameLoader_h
 
@@ -60,7 +61,6 @@ namespace WebCore {
     class HTMLFrameOwnerElement;
     class IconLoader;
     class IntSize;
-    class MainResourceLoader;
     class NavigationAction;
     class Node;
     class PageCache;
@@ -71,7 +71,6 @@ namespace WebCore {
     class ResourceRequest;
     class ResourceResponse;
     class SharedBuffer;
-    class SubresourceLoader;
     class SubstituteData;
     class TextResourceDecoder;
     class Widget;
@@ -82,8 +81,6 @@ namespace WebCore {
     struct WindowFeatures;
 
     template <typename T> class Timer;
-
-    typedef HashSet<RefPtr<ResourceLoader> > ResourceLoaderSet;
 
     bool isBackForwardLoadType(FrameLoadType);
 
@@ -160,23 +157,15 @@ namespace WebCore {
         bool canHandleRequest(const ResourceRequest&);
 
         // Also not cool.
-        void stopLoadingPlugIns();
-        void stopLoadingSubresources();
-        void cancelMainResourceLoad(const ResourceError&);
         void stopAllLoaders();
-        void cancelMainResourceLoad();
         void cancelPendingArchiveLoad(ResourceLoader*);
 
         void addPlugInStreamLoader(ResourceLoader*);
         void removePlugInStreamLoader(ResourceLoader*);
-        bool hasMainResourceLoader() const;
         bool isLoadingMainResource() const;
-        bool isLoadingSubresources() const;
         bool isLoading() const;
         void addSubresourceLoader(ResourceLoader*);
         void removeSubresourceLoader(ResourceLoader*);
-        PassRefPtr<SharedBuffer> mainResourceData() const;
-        void releaseMainResourceLoader();
 
         int numPendingOrLoadingRequests(bool recurse) const;
         bool isReloading() const;
@@ -328,8 +317,6 @@ namespace WebCore {
 
         void tokenizerProcessedData();
 
-        String lastModified() const;
-
         void handledOnloadEvents();
         String userAgent() const;
 
@@ -472,7 +459,6 @@ namespace WebCore {
 
         // Also not cool.
         void startLoading();
-        bool startLoadingMainResource(DocumentLoader*, unsigned long identifier);
         void stopLoadingSubframes();
 
         void clearProvisionalLoad();
@@ -513,8 +499,6 @@ namespace WebCore {
         void setPolicyDocumentLoader(DocumentLoader*);
         void setProvisionalDocumentLoader(DocumentLoader*);
 
-        bool isLoadingPlugIns() const;
-
         void setState(FrameState);
 
         void closeOldDataSources();
@@ -522,7 +506,7 @@ namespace WebCore {
         void opened();
         void updateHistoryAfterClientRedirect();
 
-        bool shouldReloadToHandleUnreachableURL(DocumentLoader* docLoader);
+        bool shouldReloadToHandleUnreachableURL(DocumentLoader*);
         void handleUnimplementablePolicy(const ResourceError&);
 
         void applyUserAgent(ResourceRequest& request);
@@ -540,10 +524,6 @@ namespace WebCore {
 
         FrameState m_state;
         FrameLoadType m_loadType;
-
-        RefPtr<MainResourceLoader> m_mainResourceLoader;
-        ResourceLoaderSet m_subresourceLoaders;
-        ResourceLoaderSet m_plugInStreamLoaders;
 
         RefPtr<DocumentLoader> m_documentLoader;
         RefPtr<DocumentLoader> m_provisionalDocumentLoader;
@@ -572,8 +552,6 @@ namespace WebCore {
         bool m_isExecutingJavaScriptFormAction;
         bool m_isRunningScript;
 
-        String m_responseRefreshHeader;
-        String m_responseModifiedHeader;
         String m_responseMIMEType;
 
         bool m_wasLoadEventEmitted;
@@ -611,7 +589,7 @@ namespace WebCore {
         HashSet<Frame*> m_openedFrames;
 
         bool m_openedByJavaScript;
-        
+
         RefPtr<HistoryItem> m_currentHistoryItem;
         RefPtr<HistoryItem> m_previousHistoryItem;
         RefPtr<HistoryItem> m_provisionalHistoryItem;

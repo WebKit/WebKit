@@ -1,3 +1,80 @@
+2007-02-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - prepare to fix some "stop loading" bugs by moving state from the
+          FrameLoader class to the DocumentLoader class
+
+        * WebCore.exp: Update since cancelMainResourceLoad is now on the document loader.
+
+        * html/HTMLDocument.h:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::HTMLDocument): Removed unused bodyElement and htmlElement
+        data members.
+        (WebCore::HTMLDocument::lastModified): Call getResponseModifiedHeader directly on
+        the document loader.
+
+        * loader/DocumentLoader.h: Moved m_mainResourceLoader, m_subresourceLoaders, and
+        m_plugInStreamLoaders here.
+        * loader/DocumentLoader.cpp:
+        (WebCore::cancelAll): Moved here from FrameLoader.
+        (WebCore::setAllDefersLoading): Ditto.
+        (WebCore::DocumentLoader::mainResourceData): Moved the body of FrameLoader's
+        mainResourceData function here.
+        (WebCore::DocumentLoader::stopLoading): Replaced calls to hasMainResourceLoader
+        and cancelMainResourceLoad with code that works directly on m_mainResourceLoader.
+        Call the stop functions moved from FrameLoader here on ourselves.
+        (WebCore::DocumentLoader::setupForReplaceByMIMEType): Ditto.
+        (WebCore::DocumentLoader::setPrimaryLoadComplete): Moved the code to store the
+        main resource data here; it doesn't require separate functions.
+        (WebCore::DocumentLoader::isLoadingInAPISense): Removed call to isLoadingSubresources
+        and instead just check if the m_subresourceLoaders set is empty.
+        (WebCore::DocumentLoader::setDefersLoading): Moved code here from FrameLoader.
+        (WebCore::DocumentLoader::stopLoadingPlugIns): Ditto.
+        (WebCore::DocumentLoader::stopLoadingSubresources): Ditto.
+        (WebCore::DocumentLoader::addSubresourceLoader): Ditto.
+        (WebCore::DocumentLoader::removeSubresourceLoader): Ditto.
+        (WebCore::DocumentLoader::addPlugInStreamLoader): Ditto.
+        (WebCore::DocumentLoader::removePlugInStreamLoader): Ditto.
+        (WebCore::DocumentLoader::isLoadingSubresources): Ditto.
+        (WebCore::DocumentLoader::isLoadingPlugIns): Ditto.
+        (WebCore::DocumentLoader::startLoadingMainResource): Ditto.
+        (WebCore::DocumentLoader::cancelMainResourceLoad): Ditto.
+
+        * loader/FrameLoader.h: Removed stopLoadingPlugIns, stopLoadingSubresources,
+        cancelMainResourceLoad, hasMainResourceLoader, isLoadingSubresources,
+        mainResourceData, releaseMainResourceLoader, lastModified, startLoadingMainResource,
+        isLoadingPlugIns, m_mainResourceLoader, m_subresourceLoaders, m_plugInStreamLoaders,
+        m_responseRefreshHeader, and m_responseModifiedHeader.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::setDefersLoading): Call setDefersLoading on all the document
+        loaders.
+        (WebCore::FrameLoader::stopLoading): Get rid of code to set m_responseRefreshHeader
+        and m_responseModifiedHeader.
+        (WebCore::FrameLoader::receivedFirstData): Call httpHeaderField on the response
+        here to get the Refresh, instead of storing it in a data member.
+        (WebCore::FrameLoader::addPlugInStreamLoader): Change to just call this on the
+        document loader.
+        (WebCore::FrameLoader::removePlugInStreamLoader): Ditto.
+        (WebCore::FrameLoader::isLoading): Change to call isLoadingSubresources and
+        isLoadingPlugIns on the document loader.
+        (WebCore::FrameLoader::addSubresourceLoader): Change to just call this on the
+        document loader.
+        (WebCore::FrameLoader::removeSubresourceLoader): Ditto.
+        (WebCore::FrameLoader::commitProvisionalLoad): Call stopLoadingSubresources and
+        stopLoadingPlugIns on the document loader. Removed code to set
+        m_responseModifiedHeader.
+        (WebCore::FrameLoader::startLoading): Call isLoadingMainResource and
+        startLoadingMainResource on the document loader.
+
+        * loader/ImageDocument.cpp: (WebCore::ImageTokenizer::finish): Call
+        mainResourceData() on the document loader instead of the frame loader.
+
+        - other changes
+
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::checkCacheObjectStatus): Fixed indentation.
+
 2007-02-20  Zack Rusin  <zrusin@trolltech.com>
 
         Reviewed by Lars

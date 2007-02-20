@@ -1,9 +1,7 @@
 /**
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -58,6 +56,7 @@
 #include "CSSPropertyNames.h"
 #include "CString.h"
 #include "CookieJar.h"
+#include "DocumentLoader.h"
 #include "DocumentType.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
@@ -75,12 +74,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLDocument::HTMLDocument(DOMImplementation *_implementation, FrameView *v)
-  : Document(_implementation, v)
+HTMLDocument::HTMLDocument(DOMImplementation* implementation, FrameView* view)
+    : Document(implementation, view)
 {
     m_xmlVersion = String();
-    bodyElement = 0;
-    htmlElement = 0;
 }
 
 HTMLDocument::~HTMLDocument()
@@ -89,9 +86,11 @@ HTMLDocument::~HTMLDocument()
 
 String HTMLDocument::lastModified() const
 {
-    if (frame())
-        return frame()->loader()->lastModified();
-    return String();
+    String modifiedHeader;
+    if (Frame* f = frame())
+        if (DocumentLoader* documentLoader = f->loader()->documentLoader())
+            documentLoader->getResponseModifiedHeader(modifiedHeader);
+    return modifiedHeader;
 }
 
 String HTMLDocument::cookie() const
@@ -104,17 +103,17 @@ void HTMLDocument::setCookie(const String& value)
     setCookies(URL(), m_policyBaseURL.deprecatedString(), value);
 }
 
-void HTMLDocument::setBody(HTMLElement *_body, ExceptionCode& ec)
+void HTMLDocument::setBody(HTMLElement* newBody, ExceptionCode& ec)
 {
-    if (!_body) { 
+    if (!newBody) { 
         ec = HIERARCHY_REQUEST_ERR;
         return;
     }
     HTMLElement* b = body();
     if (!b)
-        documentElement()->appendChild(_body, ec);
+        documentElement()->appendChild(newBody, ec);
     else
-        documentElement()->replaceChild(_body, b, ec);
+        documentElement()->replaceChild(newBody, b, ec);
 }
 
 Tokenizer *HTMLDocument::createTokenizer()
