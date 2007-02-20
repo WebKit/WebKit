@@ -44,6 +44,22 @@
 #endif
 #endif // ifndef WEBCORE_NAVIGATOR_PLATFORM
 
+#ifndef WEBCORE_NAVIGATOR_PRODUCT
+#define WEBCORE_NAVIGATOR_PRODUCT "Gecko"
+#endif // ifndef WEBCORE_NAVIGATOR_PRODUCT
+
+#ifndef WEBCORE_NAVIGATOR_PRODUCT_SUB
+#define WEBCORE_NAVIGATOR_PRODUCT_SUB "20030107"
+#endif // ifndef WEBCORE_NAVIGATOR_PRODUCT_SUB
+
+#ifndef WEBCORE_NAVIGATOR_VENDOR
+#define WEBCORE_NAVIGATOR_VENDOR "Apple Computer, Inc."
+#endif // ifndef WEBCORE_NAVIGATOR_VENDOR
+
+#ifndef WEBCORE_NAVIGATOR_VENDOR_SUB
+#define WEBCORE_NAVIGATOR_VENDOR_SUB ""
+#endif // ifndef WEBCORE_NAVIGATOR_VENDOR_SUB
+
 using namespace WebCore;
 
 namespace KJS {
@@ -178,13 +194,13 @@ JSValue* Navigator::getValueProperty(ExecState* exec, int token) const
     return jsString(userAgent.substring(userAgent.find('/') + 1));
   }
   case Product:
-    return jsString("Gecko");
+    return jsString(WEBCORE_NAVIGATOR_PRODUCT);
   case ProductSub:
-    return jsString("20030107");
+    return jsString(WEBCORE_NAVIGATOR_PRODUCT_SUB);
   case Vendor:
-    return jsString("Apple Computer, Inc.");
+    return jsString(WEBCORE_NAVIGATOR_VENDOR);
   case VendorSub:
-    return jsString("");
+    return jsString(WEBCORE_NAVIGATOR_VENDOR_SUB);
   case Language:
     return jsString(defaultLanguage());
   case UserAgent:
