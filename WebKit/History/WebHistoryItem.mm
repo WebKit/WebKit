@@ -48,6 +48,7 @@
 #import <WebCore/KURL.h>
 #import <WebCore/PageState.h>
 #import <WebCore/PlatformString.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <WebKitSystemInterface.h>
 
 // Private keys used in the WebHistoryItem's dictionary representation.
@@ -80,6 +81,13 @@ void WKNotifyHistoryItemChanged()
 }
 
 @implementation WebHistoryItem
+
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
 
 - (id)init
 {

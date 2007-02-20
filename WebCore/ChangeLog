@@ -1,3 +1,24 @@
+2007-02-20  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4900579> WebKit -finalize methods are not thread-safe; design change needed
+
+        Call WebCoreObjCFinalizeOnMainThread from the initialize method of all the classes
+        that have a finalizer that needs called on the main thread.
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject initialize]):
+        * bridge/mac/WebCoreScriptDebugger.mm:
+        (+[WebCoreScriptDebugger initialize]):
+        * platform/mac/SharedBufferMac.mm:
+        (+[SharedBufferData initialize]):
+        * platform/mac/WebCoreObjCExtras.c: Added.
+        (WebCoreObjCFinalizeOnMainThread):
+        * platform/mac/WebCoreObjCExtras.h: Added.
+
 2007-02-20  Geoffrey Garen  <ggaren@apple.com>
 
         Not not reviewed by Mitz Pettel.

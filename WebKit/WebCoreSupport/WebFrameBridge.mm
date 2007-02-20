@@ -91,6 +91,7 @@
 #import <WebCore/Page.h>
 #import <WebCore/ResourceLoader.h>
 #import <WebCore/SubresourceLoader.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/RefPtr.h>
 #import <WebCore/MimeTypeRegistry.h>
@@ -119,6 +120,13 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 #define UniversalAccessDomain CFSTR("com.apple.universalaccess")
 
 @implementation WebFrameBridge
+
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
 
 - (WebView *)webView
 {
@@ -189,6 +197,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)finalize
 {
+    ASSERT_MAIN_THREAD();
     [self fini];
     [super finalize];
 }

@@ -32,6 +32,7 @@
 #import "DeprecatedString.h"
 #import "KURL.h"
 #import "PlatformString.h"
+#import "WebCoreObjCExtras.h"
 #import "WebScriptObjectPrivate.h"
 #import <JavaScriptCore/context.h>
 #import <JavaScriptCore/debugger.h>
@@ -144,6 +145,13 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 // forwarding the KJS debugger callbacks to the delegate.
 
 @implementation WebCoreScriptDebugger
+
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
 
 - (WebCoreScriptDebugger *)initWithDelegate:(id<WebScriptDebugger>)delegate
 {

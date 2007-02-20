@@ -51,6 +51,7 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PlatformString.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/PassRefPtr.h>
 
 using namespace WebCore;
@@ -80,6 +81,13 @@ WebViewInsertAction kit(EditorInsertAction coreAction)
 
 @implementation WebEditCommand
 
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
+
 - (id)initWithEditCommand:(PassRefPtr<WebCore::EditCommand>)command
 {
     ASSERT(command);
@@ -96,6 +104,7 @@ WebViewInsertAction kit(EditorInsertAction coreAction)
 
 - (void)finalize
 {
+    ASSERT_MAIN_THREAD();
     m_command->deref();
     [super finalize];
 }

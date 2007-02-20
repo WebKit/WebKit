@@ -40,6 +40,7 @@
 #import <WebCore/BackForwardList.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/RetainPtr.h>
+#import <WebCore/WebCoreObjCExtras.h>
 
 #define COMPUTE_DEFAULT_PAGE_CACHE_SIZE UINT_MAX
 
@@ -111,6 +112,13 @@ WebBackForwardList *kit(BackForwardList* list)
 
 @implementation WebBackForwardList
 
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
+
 - (id)init
 {
     self = [super init];
@@ -139,6 +147,7 @@ WebBackForwardList *kit(BackForwardList* list)
 
 - (void)finalize
 {
+    ASSERT_MAIN_THREAD();
     BackForwardList* coreList = core(_private);
     ASSERT(coreList->closed());
     backForwardListWrappers().remove(coreList);

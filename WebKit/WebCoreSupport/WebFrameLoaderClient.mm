@@ -55,6 +55,7 @@
 #import "WebHistoryPrivate.h"
 #import "WebIconDatabaseInternal.h"
 #import "WebKitErrorsPrivate.h"
+#import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebPanelAuthenticationHandler.h"
@@ -91,6 +92,7 @@
 #import <WebCore/ResourceLoader.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/WebCoreFrameBridge.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/Widget.h>
 #import <WebKit/DOMElement.h>
@@ -1129,6 +1131,13 @@ void WebFrameLoaderClient::windowObjectCleared() const
 
 @implementation WebFramePolicyListener
 
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
+
 - (id)initWithWebCoreFrame:(Frame*)frame
 {
     self = [self init];
@@ -1156,6 +1165,7 @@ void WebFrameLoaderClient::windowObjectCleared() const
 
 - (void)finalize
 {
+    ASSERT_MAIN_THREAD();
     if (m_frame)
         m_frame->deref();
     [super finalize];

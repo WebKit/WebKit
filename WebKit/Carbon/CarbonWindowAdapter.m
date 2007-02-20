@@ -70,6 +70,9 @@
 #import <HIToolbox/HIView.h>
 #import <assert.h>
 
+#import <WebCore/WebCoreObjCExtras.h>
+
+#import "WebKitLogging.h"
 #import "WebNSObjectExtras.h"
 #import "WebTypesInternal.h"
 
@@ -260,6 +263,13 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 	}
 }
 
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
+
 // Given a reference to a Carbon window that is to be encapsulated, and an indicator of whether or not this object should take responsibility for disposing of the Carbon window, initialize.
 - (id)initWithCarbonWindowRef:(WindowRef)inWindowRef takingOwnership:(BOOL)inWindowRefIsOwned {
     // for now, set disableOrdering to YES because that is what we've been doing and is therefore lower risk. However, I think it would be correct to set it to NO.
@@ -280,6 +290,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 }
 
 - (void)finalize {
+    ASSERT_MAIN_THREAD();
     if (_eventHandler) RemoveEventHandler(_eventHandler);
     [super finalize];
 }

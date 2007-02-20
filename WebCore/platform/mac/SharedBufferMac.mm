@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "SharedBuffer.h"
+#include "WebCoreObjCExtras.h"
 #include <string.h>
 #include <wtf/PassRefPtr.h>
 
@@ -39,6 +40,13 @@ using namespace WebCore;
 @end
 
 @implementation SharedBufferData
+
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
 
 - (void)dealloc
 {

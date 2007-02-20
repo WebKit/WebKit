@@ -56,6 +56,7 @@
 #import <WebCore/FrameLoader.h> 
 #import <WebCore/FrameTree.h> 
 #import <WebCore/Page.h> 
+#import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 #import <WebKitSystemInterface.h>
@@ -149,6 +150,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 + (void)initialize
 {
+#ifndef BUILDING_ON_TIGER
+    WebCoreObjCFinalizeOnMainThread(self);
+#endif
     WKSendUserChangeNotifications();
 }
 
@@ -1530,6 +1534,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 - (void)finalize
 {
+    ASSERT_MAIN_THREAD();
     ASSERT(!isStarted);
 
     [self freeAttributeKeysAndValues];

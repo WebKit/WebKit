@@ -32,6 +32,7 @@
 #import "WebFrame.h"
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
+#import "WebKitLogging.h"
 #import "WebView.h"
 #import "WebViewPrivate.h"
 
@@ -41,6 +42,7 @@
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Image.h>
 #import <WebCore/KURL.h>
+#import <WebCore/WebCoreObjCExtras.h>
 
 using namespace WebCore;
 
@@ -58,6 +60,13 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 }
 
 @implementation WebElementDictionary
+
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
 
 + (void)initializeLookupTable
 {
@@ -101,6 +110,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 
 - (void)finalize
 {
+    ASSERT_MAIN_THREAD();
     delete _result;
     [super finalize];
 }

@@ -33,9 +33,11 @@
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebPluginPackage.h>
+#import <WebCore/WebCoreObjCExtras.h>
 
 #import <WebKitSystemInterface.h>
 
+#import "WebKitLogging.h"
 #import "WebTypesInternal.h"
 
 #import <mach-o/arch.h>
@@ -53,6 +55,13 @@
 @end;
 
 @implementation WebBasePluginPackage
+
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
 
 + (WebBasePluginPackage *)pluginWithPath:(NSString *)pluginPath
 {
@@ -248,6 +257,7 @@
 
 - (void)finalize
 {
+    ASSERT_MAIN_THREAD();
     ASSERT(!pluginDatabases || [pluginDatabases count] == 0);
     [pluginDatabases release];
 

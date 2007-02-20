@@ -42,11 +42,19 @@
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebCore/ResourceError.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/PassRefPtr.h>
 
 using namespace WebCore;
 
 @implementation WebNetscapePluginStream
+
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
 
 - initWithRequest:(NSURLRequest *)theRequest
            plugin:(NPP)thePlugin
@@ -90,6 +98,7 @@ using namespace WebCore;
 
 - (void)finalize
 {
+    ASSERT_MAIN_THREAD();
     if (_loader)
         _loader->deref();
     [super finalize];

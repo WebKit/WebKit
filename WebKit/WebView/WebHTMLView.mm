@@ -88,6 +88,7 @@
 #import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/Range.h>
 #import <WebCore/SelectionController.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreTextRenderer.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
@@ -1962,6 +1963,9 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     [NSApp registerServicesMenuSendTypes:[[self class] _selectionPasteboardTypes] 
                              returnTypes:[[self class] _insertablePasteboardTypes]];
     _NSInitializeKillRing();
+#ifndef BUILDING_ON_TIGER
+    WebCoreObjCFinalizeOnMainThread(self);
+#endif
 }
 
 - (void)_resetCachedWebPreferences:(NSNotification *)ignored
@@ -2012,6 +2016,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 - (void)finalize
 {
+    ASSERT_MAIN_THREAD();
     // We can't assert that close has already been called because
     // this view can be removed from it's superview, even though
     // it could be needed later, so close if needed.

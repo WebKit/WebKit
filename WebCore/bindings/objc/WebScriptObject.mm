@@ -27,6 +27,7 @@
 #import "WebScriptObjectPrivate.h"
 
 #import "DOMInternal.h"
+#import "WebCoreObjCExtras.h"
 #import <JavaScriptCore/context.h>
 #import <JavaScriptCore/objc_instance.h>
 #import <JavaScriptCore/runtime_object.h>
@@ -43,6 +44,13 @@ using namespace KJS::Bindings;
 @end
 
 @implementation WebScriptObject
+
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
 
 static void _didExecute(WebScriptObject *obj)
 {

@@ -111,6 +111,7 @@
 #import <WebCore/Settings.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebCore/WebCoreFrameBridge.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreTextRenderer.h>
 #import <WebCore/WebCoreView.h>
 #import <WebKit/DOM.h>
@@ -391,6 +392,13 @@ static BOOL grammarCheckingEnabled;
 
 @implementation WebViewPrivate
 
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
+
 - init 
 {
     self = [super init];
@@ -440,6 +448,7 @@ static BOOL grammarCheckingEnabled;
 
 - (void)finalize
 {
+    ASSERT_MAIN_THREAD();
     delete userAgent;
     [super finalize];
 }

@@ -1,3 +1,51 @@
+2007-02-20  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4900579> WebKit -finalize methods are not thread-safe; design change needed
+
+        Call WebCoreObjCFinalizeOnMainThread from the initialize method of all the classes
+        that have a finalizer that needs called on the main thread. Assert in finalize that we
+        are on the main thread.
+
+        * Carbon/CarbonWindowAdapter.m:
+        (+[CarbonWindowAdapter initialize]):
+        (-[CarbonWindowAdapter finalize]):
+        * History/WebBackForwardList.mm:
+        (+[WebBackForwardList initialize]):
+        (-[WebBackForwardList finalize]):
+        * History/WebHistoryItem.mm:
+        (+[WebHistoryItem initialize]):
+        * Misc/WebElementDictionary.mm:
+        (+[WebElementDictionary initialize]):
+        (-[WebElementDictionary finalize]):
+        * Plugins/WebBaseNetscapePluginStream.m:
+        (+[WebBaseNetscapePluginStream initialize]):
+        (-[WebBaseNetscapePluginStream finalize]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (+[WebBaseNetscapePluginView initialize]):
+        (-[WebBaseNetscapePluginView finalize]):
+        * Plugins/WebBasePluginPackage.m:
+        (+[WebBasePluginPackage initialize]):
+        (-[WebBasePluginPackage finalize]):
+        * Plugins/WebNetscapePluginStream.mm:
+        (-[WebNetscapePluginStream finalize]):
+        * WebCoreSupport/WebEditorClient.mm:
+        (+[WebEditCommand initialize]):
+        (-[WebEditCommand finalize]):
+        * WebCoreSupport/WebFrameBridge.mm:
+        (+[WebFrameBridge initialize]):
+        (-[WebFrameBridge finalize]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (+[WebFramePolicyListener initialize]):
+        (-[WebFramePolicyListener finalize]):
+        * WebView/WebHTMLView.mm:
+        (+[WebHTMLView initialize]):
+        (-[WebHTMLView finalize]):
+        * WebView/WebView.mm:
+        (+[WebViewPrivate initialize]):
+        (-[WebViewPrivate finalize]):
+
 2007-02-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

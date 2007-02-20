@@ -118,6 +118,7 @@
 .objc_class_name_WebUndefined
 _WebCoreDrawTextAtPoint
 _WebCoreFindFont
+_WebCoreObjCFinalizeOnMainThread
 _WebCorePageCacheStateKey
 _WebCoreSetAlwaysUseATSU
 _WebCoreSetShouldUseFontSmoothing

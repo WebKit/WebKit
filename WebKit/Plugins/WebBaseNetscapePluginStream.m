@@ -36,6 +36,8 @@
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKitSystemInterface.h>
 
+#import <WebCore/WebCoreObjCExtras.h>
+
 #import <Foundation/NSURLResponse.h>
 
 static char *CarbonPathFromPOSIXPath(const char *posixPath);
@@ -43,6 +45,13 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
 #define WEB_REASON_NONE -1
 
 @implementation WebBaseNetscapePluginStream
+
+#ifndef BUILDING_ON_TIGER
++ (void)initialize
+{
+    WebCoreObjCFinalizeOnMainThread(self);
+}
+#endif
 
 + (NPReason)reasonForError:(NSError *)error
 {
@@ -125,6 +134,7 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
 
 - (void)finalize
 {
+    ASSERT_MAIN_THREAD();
     ASSERT(isTerminated);
     ASSERT(stream.ndata == nil);
 
