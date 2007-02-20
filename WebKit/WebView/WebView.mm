@@ -3521,7 +3521,14 @@ static WebFrameView *containingFrameView(NSView *view)
 
 - (void)_removeObjectForIdentifier:(unsigned long)identifier
 {
-    _private->identifierMap->remove(identifier);
+    HashMap<unsigned long, RetainPtr<id> >::iterator it = _private->identifierMap->find(identifier);
+    
+    // FIXME: This is currently needed because of a bug that causes didFail to be sent twice 
+    // sometimes, see <rdar://problem/5009627> for more information.
+    if (it == _private->identifierMap->end())
+        return;
+    
+    _private->identifierMap->remove(it);
     
     // If the identifier map is now empty it means we're no longer loading anything
     // and we should release the web view.
