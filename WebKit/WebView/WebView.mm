@@ -3499,10 +3499,10 @@ static WebFrameView *containingFrameView(NSView *view)
     // If the version is 4 digits long or longer, then the first digit represents
     // the version of the OS. Our user agent string should not include this first digit,
     // so strip it off and report the rest as the version. <rdar://problem/4997547>
-    NSRange decimalRange = [fullVersion rangeOfString:@"."];
-    if (decimalRange.location == NSNotFound && [fullVersion length] >= 4)
+    NSRange nonDigitRange = [fullVersion rangeOfCharacterFromSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]];
+    if (nonDigitRange.location == NSNotFound && [fullVersion length] >= 4)
         return [fullVersion substringFromIndex:1];
-    if (decimalRange.location != NSNotFound && decimalRange.location >= 4)
+    if (nonDigitRange.location != NSNotFound && nonDigitRange.location >= 4)
         return [fullVersion substringFromIndex:1];
     return fullVersion;
 }
