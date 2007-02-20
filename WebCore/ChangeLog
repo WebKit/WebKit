@@ -1,3 +1,36 @@
+2007-02-19  David Hyatt  <hyatt@apple.com>
+
+        Fix for Radar 4981605, regression where button grows randomly when a select is
+        opened.  With the new form controls, the WinIE quirk for using line width
+        ended up being used for them more.
+
+        This patch removes the quirk after verifying that Firefox doesn't implement
+        the quirk at all.  usesLineWidth is being renamed to shrinksToAvoidFloats to
+        make it clear that the new method only applies to block objects that avoid floats
+        and that have auto width.
+
+        Also fixed a regression where whitespace after a floating <select> at the start
+        of a block got incorrectly rendered.  Make sure skipWhitespace always skips
+        through floating/positioned elements regardless of the whitespace setting (this
+        way the white-space:pre value on floating <select>s doesn't cause trouble).
+
+        Reviewed by darin
+
+        fast/block/float/float-avoidance.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::clearFloatsIfNeeded):
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::markAllDescendantsWithFloatsForLayout):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockWidth):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::shrinkToAvoidFloats):
+        * rendering/RenderObject.h:
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::skipWhitespace):
+
 2007-02-19  Zalan Bujtas  <zbujtas@gmail.com>
 
         Reviewed by Darin.

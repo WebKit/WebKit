@@ -883,8 +883,8 @@ void RenderBlock::collapseMargins(RenderObject* child, MarginInfo& marginInfo, i
     view()->addLayoutDelta(IntSize(0, yPosEstimate - ypos));
     child->setPos(child->xPos(), ypos);
     if (ypos != yPosEstimate) {
-        if ((child->style()->width().isPercent() || child->style()->width().isAuto()) && child->usesLineWidth())
-            // The child's width is a percentage of the line width.
+        if (child->shrinkToAvoidFloats())
+            // The child's width depends on the line width.
             // When the child shifts to clear an item, its width can
             // change (because it has more available line width).
             // So go ahead and mark the item as dirty.
@@ -938,8 +938,8 @@ void RenderBlock::clearFloatsIfNeeded(RenderObject* child, MarginInfo& marginInf
         // If our value of clear caused us to be repositioned vertically to be
         // underneath a float, we might have to do another layout to take into account
         // the extra space we now have available.
-        if ((child->style()->width().isPercent() || child->style()->width().isAuto()) && child->usesLineWidth())
-            // The child's width is a percentage of the line width.
+        if (child->shrinkToAvoidFloats())
+            // The child's width depends on the line width.
             // When the child shifts to clear an item, its width can
             // change (because it has more available line width).
             // So go ahead and mark the item as dirty.
@@ -1120,7 +1120,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren)
         
         // If an element might be affected by the presence of floats, then always mark it for
         // layout.
-        if (!child->avoidsFloats() || child->usesLineWidth()) {
+        if (!child->avoidsFloats() || child->shrinkToAvoidFloats()) {
             int fb = floatBottom();
             if (fb > m_height || fb > yPosEstimate)
                 child->setChildNeedsLayout(true);
@@ -2572,7 +2572,7 @@ void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderObject* floatToRem
     if (!childrenInline()) {
         for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
             if (isBlockFlow() && !child->isFloatingOrPositioned() &&
-                ((floatToRemove ? child->containsFloat(floatToRemove) : child->containsFloats()) || child->usesLineWidth()))
+                ((floatToRemove ? child->containsFloat(floatToRemove) : child->containsFloats()) || child->shrinkToAvoidFloats()))
                 child->markAllDescendantsWithFloatsForLayout(floatToRemove);
         }
     }

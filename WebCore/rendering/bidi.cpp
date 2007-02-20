@@ -1995,9 +1995,10 @@ int RenderBlock::skipWhitespace(BidiIterator &it, BidiState &bidi)
     // elements quite right.  In other words, we need to build this function's work into the normal line
     // object iteration process.
     int w = lineWidth(m_height);
-    while (!it.atEnd() && (it.obj->isInlineFlow() || (shouldCollapseWhiteSpace(it.obj->style()) && !it.obj->isBR() &&
-          (it.current() == ' ' || it.current() == '\t' || (!shouldPreserveNewline(it.obj) && it.current() == '\n') ||
-          it.current() == softHyphen || skipNonBreakingSpace(it) || it.obj->isFloatingOrPositioned())))) {
+    while (!it.atEnd() && (it.obj->isFloatingOrPositioned() || it.obj->isInlineFlow() || 
+           (shouldCollapseWhiteSpace(it.obj->style()) && !it.obj->isBR() &&
+            (it.current() == ' ' || it.current() == '\t' || (!shouldPreserveNewline(it.obj) && it.current() == '\n') ||
+             it.current() == softHyphen || skipNonBreakingSpace(it))))) {
         if (it.obj->isFloatingOrPositioned()) {
             RenderObject *o = it.obj;
             // add to special objects...

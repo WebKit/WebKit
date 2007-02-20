@@ -32,7 +32,7 @@ layer at (0,0) size 785x1432
         RenderBlock (floating) {DIV} at (569,0) size 200x200 [bgcolor=#FF0000]
       RenderBlock {DIV} at (0,1016) size 769x200
         RenderBlock (floating) {DIV} at (569,0) size 200x200 [bgcolor=#FF0000]
-        RenderBlock {HR} at (283,0) size 286x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (183,0) size 386x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,1216) size 769x200
         RenderBlock (floating) {DIV} at (569,0) size 200x200 [bgcolor=#FF0000]
         RenderImage {IMG} at (185,0) size 384x50 [bgcolor=#008000]

@@ -736,7 +736,7 @@ int RenderBox::containingBlockWidth() const
     RenderBlock* cb = containingBlock();
     if (!cb)
         return 0;
-    if (usesLineWidth())
+    if (shrinkToAvoidFloats())
         return cb->lineWidth(m_y);
     return cb->availableWidth();
 }

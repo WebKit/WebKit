@@ -2907,14 +2907,16 @@ bool RenderObject::avoidsFloats() const
     return isReplaced() || hasOverflowClip() || isHR();
 }
 
-bool RenderObject::usesLineWidth() const
+bool RenderObject::shrinkToAvoidFloats() const
 {
-    // 1. All auto-width objects that avoid floats should always use lineWidth
-    // 2. For objects with a specified width, we match WinIE's behavior:
-    // (a) tables use contentWidth
-    // (b) <hr>s use lineWidth
-    // (c) all other objects use lineWidth in quirks mode and contentWidth in strict mode.
-    return (avoidsFloats() && (style()->width().isAuto() || isHR() || (style()->htmlHacks() && !isTable())));
+    // FIXME: Technically we should be able to shrink replaced elements on a line, but this is difficult to accomplish, since this
+    // involves doing a relayout during findNextLineBreak and somehow overriding the containingBlockWidth method to return the
+    // current remaining width on a line.
+    if (isInline() || !avoidsFloats())
+        return false;
+
+    // All auto-width objects that avoid floats should always use lineWidth.
+    return style()->width().isAuto();
 }
 
 UChar RenderObject::backslashAsCurrencySymbol() const

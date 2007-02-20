@@ -751,7 +751,7 @@ public:
     virtual void removePositionedObjects(RenderBlock*) { }
 
     virtual bool avoidsFloats() const;
-    bool usesLineWidth() const;
+    bool shrinkToAvoidFloats() const;
 
     // positioning of inline children (bidi)
     virtual void position(InlineBox*) { }
