@@ -265,6 +265,8 @@
 		1CFCEED50AACC66900348750 /* DOMHTMLOptionsCollectionPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEED40AACC65D00348750 /* DOMHTMLOptionsCollectionPrivate.h */; };
 		1CFCEEDF0AACC6A300348750 /* DOMHTMLPreElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEEDA0AACC68300348750 /* DOMHTMLPreElementPrivate.h */; };
 		1CFCEEFA0AACC7A700348750 /* DOMHTMLInputElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEEF90AACC79000348750 /* DOMHTMLInputElementPrivate.h */; };
+		37919C230B7D188600A56998 /* PositionIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37919C210B7D188600A56998 /* PositionIterator.cpp */; };
+		37919C240B7D188600A56998 /* PositionIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 37919C220B7D188600A56998 /* PositionIterator.h */; settings = {ATTRIBUTES = (); }; };
 		448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */; };
 		448A29C00A46D9CB0030759F /* JSHTMLOptionsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */; };
 		448AD27C0A48137A0023D179 /* JSHTMLOptionsCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */; };
@@ -3354,6 +3356,8 @@
 		1CFCEEF90AACC79000348750 /* DOMHTMLInputElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLInputElementPrivate.h; sourceTree = "<group>"; };
 		2D90660B0665D937006B6F1A /* ClipboardMac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardMac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660C0665D937006B6F1A /* ClipboardMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClipboardMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		37919C210B7D188600A56998 /* PositionIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PositionIterator.cpp; sourceTree = "<group>"; };
+		37919C220B7D188600A56998 /* PositionIterator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PositionIterator.h; sourceTree = "<group>"; };
 		448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptionsCollection.h; sourceTree = "<group>"; };
 		448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollection.cpp; sourceTree = "<group>"; };
 		448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollectionCustom.cpp; sourceTree = "<group>"; };
@@ -9607,6 +9611,8 @@
 				1A0D57380A5C7812007EDD4C /* OverflowEvent.idl */,
 				BE91FC8C06133666005E3790 /* Position.cpp */,
 				BE91FC8B06133666005E3790 /* Position.h */,
+				37919C210B7D188600A56998 /* PositionIterator.cpp */,
+				37919C220B7D188600A56998 /* PositionIterator.h */,
 				A8EA7EB50A1945D000A8EF5F /* ProcessingInstruction.cpp */,
 				A8EA7EB40A1945D000A8EF5F /* ProcessingInstruction.h */,
 				93EEC1F509C2877700C515D1 /* ProcessingInstruction.idl */,
@@ -11128,6 +11134,7 @@
 				933A14300B7D188600A53FFD /* TextEvent.h in Headers */,
 				933A14B90B7D1D5200A53FFD /* JSTextEvent.h in Headers */,
 				DDE63ED50B7D45A800226998 /* DOMTextEvent.h in Headers */,
+				37919C240B7D188600A56998 /* PositionIterator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12489,6 +12496,7 @@
 				933A14B80B7D1D5200A53FFD /* JSTextEvent.cpp in Sources */,
 				A7CFB3D10B7ED10A0070C32D /* DragImage.cpp in Sources */,
 				A7CFB3D50B7ED1180070C32D /* DragImageMac.mm in Sources */,
+				37919C230B7D188600A56998 /* PositionIterator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

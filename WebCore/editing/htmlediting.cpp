@@ -32,6 +32,7 @@
 #include "HTMLElement.h"
 #include "HTMLInterchange.h"
 #include "HTMLNames.h"
+#include "PositionIterator.h"
 #include "RenderObject.h"
 #include "RegularExpression.h"
 #include "Range.h"
@@ -195,9 +196,9 @@ bool isContentEditable(Node* node)
 
 Position nextCandidate(const Position& position)
 {
-    Position p = position;
+    PositionIterator p = position;
     while (!p.atEnd()) {
-        p = p.next(UsingComposedCharacters);
+        p.increment();
         if (p.isCandidate())
             return p;
     }
@@ -218,9 +219,9 @@ Position nextVisuallyDistinctCandidate(const Position& position)
 
 Position previousCandidate(const Position& position)
 {
-    Position p = position;
+    PositionIterator p = position;
     while (!p.atStart()) {
-        p = p.previous(UsingComposedCharacters);
+        p.decrement();
         if (p.isCandidate())
             return p;
     }

@@ -1,3 +1,47 @@
+2007-02-20  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin and then Sam.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=10735
+          Clicking in SVG results causes WebKit to consume 100% CPU for several minutes
+
+        No test since there is no change in functionality.
+
+        * CMakeLists.txt:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj: Added PositionIterator.{cpp,h}.
+        * WebCoreSources.bkl:
+        * dom/Position.cpp:
+        (WebCore::Position::Position): Added converting constructor from
+        PositionIterator.
+        (WebCore::Position::previous): Changed assert() to ASSERT().
+        (WebCore::Position::next): Ditto.
+        (WebCore::isStreamer): Changed the argument to a PositionIterator.
+        (WebCore::Position::upstream): Changed to use PositionIterator.
+        (WebCore::Position::downstream): Ditto.
+        (WebCore::Position::inRenderedText): Made public.
+        (WebCore::Position::hasRenderedNonAnonymousDescendantsWithHeight): Changed
+        into a static member function.
+        (WebCore::Position::nodeIsUserSelectNone): Ditto.
+        * dom/Position.h:
+        * dom/PositionIterator.cpp: Added. A Position iterator with constant-time
+        increment, decrement, and several predicates on the Position it is at.
+        Conversion to/from Position is O(n) in the offset.
+        (WebCore::PositionIterator::increment):
+        (WebCore::PositionIterator::decrement):
+        (WebCore::PositionIterator::atStart):
+        (WebCore::PositionIterator::atEnd):
+        (WebCore::PositionIterator::atStartOfNode):
+        (WebCore::PositionIterator::atEndOfNode):
+        (WebCore::PositionIterator::isCandidate):
+        * dom/PositionIterator.h: Added.
+        (WebCore::PositionIterator::PositionIterator):
+        (WebCore::PositionIterator::node):
+        (WebCore::PositionIterator::offsetInLeafNode):
+        * editing/htmlediting.cpp:
+        (WebCore::nextCandidate): Changed to use PositionIterator.
+        (WebCore::previousCandidate): Changed to use PositionIterator.
+
 2007-02-20  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

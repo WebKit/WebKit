@@ -791,6 +791,7 @@ set(WebCore_SRCS
     dom/Notation.cpp
     dom/OverflowEvent.cpp
     dom/Position.cpp
+    dom/PositionIterator.cpp
     dom/ProcessingInstruction.cpp
     dom/QualifiedName.cpp
     dom/Range.cpp
