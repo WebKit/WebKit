@@ -150,22 +150,27 @@ private:
     void setSearchCellState(RenderObject*, const IntRect&);
     void setSearchFieldSize(RenderStyle*) const;
     
+    NSButtonCell* checkbox() const;
+    NSButtonCell* radio() const;
+    NSButtonCell* button() const;
+    NSPopUpButtonCell* popupButton() const;
+    NSSearchFieldCell* search() const;
+    NSSliderCell* sliderThumbHorizontal() const;
+    NSSliderCell* sliderThumbVertical() const;
+    Image* resizeCornerImage() const;
+
 private:
-    NSButtonCell* checkbox;
-    NSButtonCell* radio;
-    NSButtonCell* button;
-    NSPopUpButtonCell* popupButton;
+    mutable NSButtonCell* m_checkbox;
+    mutable NSButtonCell* m_radio;
+    mutable NSButtonCell* m_button;
+    mutable NSPopUpButtonCell* m_popupButton;
+    mutable NSSearchFieldCell* m_search;
+    mutable NSSliderCell* m_sliderThumbHorizontal;
+    mutable NSSliderCell* m_sliderThumbVertical;
+    mutable Image* m_resizeCornerImage;
 
-    NSSearchFieldCell* search;
-    NSButtonCell* searchButton;
-    NSMenu* searchMenu;
-
-    NSSliderCell* sliderThumbHorizontalCell;
-    NSSliderCell* sliderThumbVerticalCell;
-    bool sliderHorizontalCellIsPressed;
-    bool sliderVerticalCellIsPressed;
-
-    Image* resizeCornerImage;
+    bool m_isSliderThumbHorizontalPressed;
+    bool m_isSliderThumbVerticalPressed;
 };
 
 } // namespace WebCore

@@ -1,3 +1,39 @@
+2007-02-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fixed some leaks in RenderThemeMac.
+        
+        No test case because 'leaks' can't detect these leaks inside DRT, even if
+        DRT forces the WebView to paint. ('leaks' can detect these leaks inside
+        Safari. Weird.)
+        
+        * rendering/RenderThemeMac.h:
+            - Renamed data members to m_*, to match our style guidelines.
+            - Renamed *Is* to is**, to match our style guidelines.
+            - Removed a few unnecessary data members.
+            - Made cached values like m_checkbox mutable, since they can change
+            inside functions that don't change the logical state of a RenderTheme
+            object. (The alternative was to make some const functions non-const.)
+
+        (WebCore::RenderThemeMac::paintMenuList): Took CFType pointers that just 
+        used to leak and placed them in RetainPtrs.
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients): ditto
+
+        Factored inline implementations of lazy initialization into these accessor
+        functions, for better encapsulation:
+        
+        (WebCore::RenderThemeMac::checkbox):
+        (WebCore::RenderThemeMac::radio):
+        (WebCore::RenderThemeMac::button):
+        (WebCore::RenderThemeMac::popupButton):
+        (WebCore::RenderThemeMac::search):
+        (WebCore::RenderThemeMac::sliderThumbHorizontal): The inline version of
+        this initialization used to confuse the retained data member with a local
+        stack value, causing both a leak and a failure to initialize. Fixed now.
+        (WebCore::RenderThemeMac::sliderThumbVertical): ditto
+        (WebCore::RenderThemeMac::resizeCornerImage):
+
 2007-02-19  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.
