@@ -356,4 +356,17 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
     return path;
 }
 
+- (NSString *)_webkit_userVisibleBundleVersionFromFullVersion
+{
+    // If the version is 4 digits long or longer, then the first digit represents
+    // the version of the OS. Our user agent string should not include this first digit,
+    // so strip it off and report the rest as the version. <rdar://problem/4997547>
+    NSRange decimalRange = [self rangeOfString:@"."];
+    if (decimalRange.location == NSNotFound && [self length] >= 4)
+        return [self substringFromIndex:1];
+    if (decimalRange.location != NSNotFound && decimalRange.location >= 4)
+        return [self substringFromIndex:1];
+    return self;
+}
+
 @end

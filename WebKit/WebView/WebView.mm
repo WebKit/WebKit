@@ -3480,10 +3480,11 @@ static WebFrameView *containingFrameView(NSView *view)
 
 - (void)_computeUserAgent
 {
-    NSString *userAgent;
+    NSString *userAgent = nil;
     NSString *language = [NSUserDefaults _webkit_preferredLanguageCode];
-    id sourceVersion = [[NSBundle bundleForClass:[WebView class]]
-        objectForInfoDictionaryKey:(id)kCFBundleVersionKey];
+    NSString *sourceVersion = [[NSBundle bundleForClass:[WebView class]] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+    sourceVersion = [sourceVersion _webkit_userVisibleBundleVersionFromFullVersion];
+
     NSString *applicationName = _private->applicationNameForUserAgent;
     if ([applicationName length])
         userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko) %@",
@@ -3491,6 +3492,7 @@ static WebFrameView *containingFrameView(NSView *view)
     else
         userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko)",
             language, sourceVersion];
+
     *_private->userAgent = userAgent;
 }
 
