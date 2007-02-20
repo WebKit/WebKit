@@ -1,0 +1,91 @@
+#!/usr/bin/perl
+
+# Parses the callstacks in a file with malloc_history formatted content, sorting
+# based on total number of bytes allocated, and filtering based on command-line
+# parameters.
+
+use Getopt::Long;
+use File::Basename;
+
+use strict;
+use warnings;
+
+sub commify($);
+
+sub main()
+{
+    my $usage =
+        "Usage: " . basename($0) . " [options] malloc_history.txt\n" .
+        "  --callstack-regexp   Include only call stacks that match this regular expression.\n" .
+        "  --byte-minimum       Include only call stacks with allocation sizes >= this value.\n" .
+        "  --merge-depth        Merge all call stacks that match at this stack depth and above.\n";
+
+    my $mergeDepth = -1;
+    my $callstackRegexp = "";
+    my $byteMinimum = 0;
+    my $getOptionsResult = GetOptions(
+        "callstack-regexp:s" => \$callstackRegexp,
+        "byte-minimum:i" => \$byteMinimum,
+        "merge-depth:i" => \$mergeDepth
+    );
+    my $fileName = $ARGV[0];
+    die $usage if (!$getOptionsResult || !$fileName);
+
+    open FILE, "<$fileName" or die "bad file: $fileName";
+    my @file = <FILE>;
+    close FILE;
+
+    my %callstacks = ();
+    my $byteCountTotal = 0;
+
+    for my $line (@file) {
+        my ($callCount, $byteCount) = ($line =~ /(\d+) calls for (\d+) bytes/);
+        if ($callCount && $byteCount) {
+            $byteCountTotal += $byteCount;
+
+            next if !($line =~ $callstackRegexp);
+
+            my $callstackBegin;
+            if ($mergeDepth == -1) { # start at beginning of callstack
+                $callstackBegin = index($line, "|");
+            } else { # count stack frames backwards from end of callstack
+                $callstackBegin = length($line);
+                for (my $pipeCount = 0; $pipeCount < $mergeDepth; $pipeCount++) {
+                    my $rindexResult = rindex($line, "|", $callstackBegin - 1);
+                    last if $rindexResult == -1;
+                    $callstackBegin = $rindexResult;
+                }
+            }
+
+            my $callstack = substr($line, $callstackBegin + 2); # + 2 skips "| "
+            if (!$callstacks{$callstack}) {
+                $callstacks{$callstack} = {"callCount" => 0, "byteCount" => 0};
+            }
+
+            $callstacks{$callstack}{"callCount"} += $callCount;
+            $callstacks{$callstack}{"byteCount"} += $byteCount;
+        }
+    }
+
+    my $byteCountTotalReported = 0;
+    for my $callstack (sort { $callstacks{$b}{"byteCount"} <=> $callstacks{$a}{"byteCount"} } keys %callstacks) {
+        my $callCount = $callstacks{$callstack}{"callCount"};
+        my $byteCount = $callstacks{$callstack}{"byteCount"};
+        last if $byteCount < $byteMinimum;
+
+        $byteCountTotalReported += $byteCount;
+        print commify($callCount) . " calls for " . commify($byteCount) . " bytes: $callstack\n";
+    }
+
+    print "total: " . commify($byteCountTotalReported) . " bytes (" . commify($byteCountTotal - $byteCountTotalReported) . " bytes excluded).\n";
+}
+
+exit(main());
+
+# Copied from perldoc -- please excuse the style
+sub commify($)
+{
+    local $_  = shift;
+    1 while s/^([-+]?\d+)(\d{3})/$1,$2/;
+    return $_;
+}

@@ -1,3 +1,12 @@
+2007-02-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        New script to parse the output from malloc_history, so we can determine
+        what's using memory in WebKit.
+
+        * Scripts/parse-malloc-history: Added.
+
 2007-02-20  Graham Dennis  <graham.dennis@gmail.com>
 
         Reviewed by Darin Adler.
