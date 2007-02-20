@@ -290,9 +290,6 @@ void RenderTable::layout()
     //int oldWidth = m_width;
     calcWidth();
 
-    m_overflowWidth = m_width + (collapseBorders() ? outerBorderRight() - borderRight() : 0);
-    m_overflowLeft = collapseBorders() ? borderLeft() - outerBorderLeft() : 0;
-
     // FIXME: The optimisation below doesn't work since the internal table
     // layout could have changed.  we need to add a flag to the table
     // layout that tells us if something has changed in the min max
@@ -317,6 +314,9 @@ void RenderTable::layout()
         }
         child = child->nextSibling();
     }
+
+    m_overflowWidth = m_width + (collapseBorders() ? outerBorderRight() - borderRight() : 0);
+    m_overflowLeft = collapseBorders() ? borderLeft() - outerBorderLeft() : 0;
 
     // If any table section moved vertically, we will just repaint everything from that
     // section down (it is quite unlikely that any of the following sections

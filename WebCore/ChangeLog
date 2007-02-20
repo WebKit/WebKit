@@ -1,3 +1,16 @@
+2007-02-19  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12817
+          REGRESSION (r18634): Table border-collapse problems with right margin
+
+        Test: fast/repaint/table-outer-border.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout): Reordered to initialize horizontal overflow
+        after table sections have computed their outer horizontal borders.
+
 2007-02-19  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin
