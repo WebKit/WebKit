@@ -1,3 +1,18 @@
+2007-02-20  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12439
+        SVG parser complains about points attribute in polygon and polyline element
+
+        Return true when the parsed points specification is valid.
+
+        * ksvg2/svg/SVGParserUtilities.cpp:
+        (WebCore::parseNumber):
+        (WebCore::SVGPolyParser::parsePoints):
+        * ksvg2/svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::parseMappedAttribute):
+
 2007-02-20  Zack Rusin  <zrusin@trolltech.com>
 
         Reviewed by Lars

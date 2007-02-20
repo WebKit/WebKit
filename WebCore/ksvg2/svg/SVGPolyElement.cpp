@@ -66,8 +66,10 @@ void SVGPolyElement::parseMappedAttribute(MappedAttribute* attr)
     if (attr->name() == SVGNames::pointsAttr) {
         ExceptionCode ec = 0;
         points()->clear(ec);
-        if (!parsePoints(value) && !m_ignoreAttributeChanges)
+        if (!parsePoints(value) && !m_ignoreAttributeChanges) {
+            points()->clear(ec);
             document()->accessSVGExtensions()->reportError("Problem parsing points=\"" + value + "\"");
+        }
     } else {
         if (SVGTests::parseMappedAttribute(attr))
             return;

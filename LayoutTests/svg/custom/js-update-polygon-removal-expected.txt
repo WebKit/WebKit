@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 30: Error: Problem parsing points="270,265 300,285 320,265 340,285 280,320 390,320 420,280 280,225"
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     RenderSVGContainer {svg} at (265.20,259.34) size 162.25x64.66

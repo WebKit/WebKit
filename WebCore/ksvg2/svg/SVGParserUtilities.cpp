@@ -1,7 +1,7 @@
 /* This file is part of the KDE project
    Copyright (C) 2002, 2003 The Karbon Developers
                  2006       Alexander Kellett <lypanov@kde.org>
-                 2006       Rob Buis <buis@kde.org>
+                 2006, 2007 Rob Buis <buis@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -71,7 +71,6 @@ bool parseNumber(const UChar*& ptr, const UChar* end, double& number, bool skip)
             expsign = -1;
         }
 
-        exponent = 0;
         while (ptr < end && *ptr >= '0' && *ptr <= '9') {
             exponent *= 10;
             exponent += *ptr - '0';
@@ -116,21 +115,31 @@ bool SVGPolyParser::parsePoints(const String& s) const
     const UChar* cur = s.characters();
     const UChar* end = cur + s.length();
 
-    if (!skipOptionalSpaces(cur, end))
-        return false;
+    skipOptionalSpaces(cur, end);
 
+    bool delimParsed = false;
     int segmentNum = 0;
-    while (1) {
+    while (cur < end) {
+        delimParsed = false;
         double xPos = 0;
         if (!parseNumber(cur, end, xPos))
            return false;
 
         double yPos = 0;
-        if (!parseNumber(cur, end, yPos))
+        if (!parseNumber(cur, end, yPos, false))
             return false;
+
+        skipOptionalSpaces(cur, end);
+
+        if (cur < end && *cur == ',') {
+            delimParsed = true;
+            cur++;
+        }
+        skipOptionalSpaces(cur, end);
 
         svgPolyTo(xPos, yPos, segmentNum++);
     }
+    return cur == end && !delimParsed;
 }
 
 bool SVGPathParser::parseSVG(const String& s, bool process)
