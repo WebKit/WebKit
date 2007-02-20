@@ -570,6 +570,7 @@
 				HEADER_SEARCH_PATHS = ForwardingHeaders;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
+				OTHER_CFLAGS = "-Wno-deprecated-declarations";
 				PRODUCT_NAME = JavaScriptGlue;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -586,6 +587,7 @@
 				HEADER_SEARCH_PATHS = ForwardingHeaders;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
+				OTHER_CFLAGS = "-Wno-deprecated-declarations";
 				PRODUCT_NAME = JavaScriptGlue;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -602,6 +604,7 @@
 				HEADER_SEARCH_PATHS = ForwardingHeaders;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
+				OTHER_CFLAGS = "-Wno-deprecated-declarations";
 				PRODUCT_NAME = JavaScriptGlue;
 				SECTORDER_FLAGS = (
 					"-sectorder",
