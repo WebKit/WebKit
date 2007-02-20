@@ -63,7 +63,7 @@ void ScrollView::setScrollArea(QScrollArea* area)
         ScrollViewCanvasQt* canvas = new ScrollViewCanvasQt(static_cast<FrameView*>(this), m_area);
         m_area->setWidget(canvas);
     }
-    Widget::setQWidget(area);
+    Widget::setQWidget(m_area);
 }
 
 void ScrollView::updateContents(const IntRect& updateRect, bool now)

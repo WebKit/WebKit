@@ -38,6 +38,7 @@
 #include "GraphicsContext.h"
 #include "WidgetClient.h"
 
+#include <QScrollArea>
 #include <QWidget>
 
 #define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
@@ -46,12 +47,17 @@ namespace WebCore {
 
 struct WidgetPrivate
 {
-    WidgetPrivate() : m_widget(0), m_client(0) { }
+    WidgetPrivate() : m_client(0), m_widget(0), m_scrollArea(0) { }
     ~WidgetPrivate() { delete m_widget; }
+
+    QWidget* canvas() const {
+        return m_scrollArea ? m_scrollArea->widget() : m_widget;
+    }
 
     WidgetClient* m_client;
 
-    QWidget* m_widget;
+    QWidget*     m_widget;
+    QScrollArea* m_scrollArea;
 
     Font     m_font;
 };
@@ -87,22 +93,22 @@ IntRect Widget::frameGeometry() const
 
 bool Widget::hasFocus() const
 {
-    if (!data->m_widget)
+    if (!data->canvas())
         return false;
 
-    return data->m_widget->hasFocus();
+    return data->canvas()->hasFocus();
 }
 
 void Widget::setFocus()
 {
-    if (data->m_widget)
-        data->m_widget->setFocus();
+    if (data->canvas())
+        data->canvas()->setFocus();
 }
 
 void Widget::clearFocus()
 {
-    if (data->m_widget)
-        data->m_widget->clearFocus();
+    if (data->canvas())
+        data->canvas()->clearFocus();
 }
 
 const Font& Widget::font() const
@@ -112,8 +118,8 @@ const Font& Widget::font() const
 
 void Widget::setFont(const Font& font)
 {
-    if (data->m_widget)
-        data->m_widget->setFont(font);
+    if (data->canvas())
+        data->canvas()->setFont(font);
     data->m_font = font;
 }
 
@@ -140,6 +146,10 @@ void Widget::hide()
 void Widget::setQWidget(QWidget* child)
 {
     data->m_widget = child;
+    if (child && child->inherits("QScrollArea"))
+        data->m_scrollArea = qobject_cast<QScrollArea*>(child);
+    else
+        data->m_scrollArea = 0;
 }
 
 QWidget* Widget::qwidget() const
@@ -202,10 +212,10 @@ void Widget::setEnabled(bool en)
 
 Widget::FocusPolicy Widget::focusPolicy() const
 {
-    if (!data->m_widget)
+    if (!data->canvas())
         return NoFocus;
 
-    switch (data->m_widget->focusPolicy())
+    switch (data->canvas()->focusPolicy())
     {
         case Qt::TabFocus:
             return TabFocus;

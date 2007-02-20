@@ -1,3 +1,22 @@
+2007-02-20  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Lars
+
+        Fix focus handling and make the forms
+        work as expected.
+
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::setScrollArea):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::WidgetPrivate::WidgetPrivate):
+        (WebCore::WidgetPrivate::canvas):
+        (WebCore::Widget::hasFocus):
+        (WebCore::Widget::setFocus):
+        (WebCore::Widget::clearFocus):
+        (WebCore::Widget::setFont):
+        (WebCore::Widget::setQWidget):
+        (WebCore::Widget::focusPolicy):
+
 2007-02-20  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin and then Sam.
