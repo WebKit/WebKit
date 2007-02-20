@@ -59,6 +59,8 @@ namespace WebCore {
     typedef QImage* DragImageRef;
 #elif PLATFORM(WIN)
     typedef HBITMAP DragImageRef;
+#elif PLATFORM(GDK)
+    typedef void* DragImageRef;
 #endif
     
     IntSize dragImageSize(DragImageRef);

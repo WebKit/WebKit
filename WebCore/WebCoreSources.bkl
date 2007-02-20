@@ -166,6 +166,7 @@
         platform/DeprecatedString.cpp
         platform/DeprecatedStringList.cpp
         platform/DeprecatedValueListImpl.cpp
+        platform/DragImage.cpp
         platform/FileChooser.cpp
         platform/Font.cpp
         platform/FontCache.cpp

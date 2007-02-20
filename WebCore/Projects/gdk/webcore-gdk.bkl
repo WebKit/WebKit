@@ -53,6 +53,7 @@
             platform/gdk/CookieJarGdk.cpp
             platform/gdk/CursorGdk.cpp
             platform/gdk/DragDataGdk.cpp
+            platform/gdk/DragImageGdk.cpp
             platform/gdk/EditorClientGdk.cpp
             platform/gdk/FontCacheGdk.cpp
             platform/gdk/FontDataGdk.cpp
@@ -61,6 +62,7 @@
             platform/gdk/FrameGdk.cpp
             platform/gdk/GlyphPageTreeNodeGdk.cpp
             platform/gdk/KeyEventGdk.cpp
+            platform/gdk/MimeTypeRegistryGdk.cpp
             platform/gdk/MouseEventGdk.cpp
             platform/gdk/PopupMenuGdk.cpp
             platform/gdk/RenderThemeGdk.cpp

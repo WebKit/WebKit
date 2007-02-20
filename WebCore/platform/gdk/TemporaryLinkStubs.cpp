@@ -158,6 +158,28 @@ bool ChromeClientGdk::shouldInterruptJavaScript()
     return false;
 }
 
+bool ChromeClientGdk::tabsToLinks() const
+{
+    return false;
+}
+
+IntRect ChromeClientGdk::windowResizerRect() const
+{
+    notImplemented();
+}
+void ChromeClientGdk::addToDirtyRegion(const IntRect&)
+{
+    notImplemented();
+}
+void ChromeClientGdk::scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect)
+{
+    notImplemented();
+}
+void ChromeClientGdk::updateBackingStore()
+{
+    notImplemented();
+}
+
 /********************************************************/
 /* Completely empty stubs (mostly to allow DRT to run): */
 /********************************************************/

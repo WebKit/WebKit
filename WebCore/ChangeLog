@@ -1,5 +1,57 @@
 2007-02-20  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
+        Reviewed by Maciej S.
+
+        Gdk build fixes for recent refactorings.
+
+        * Projects/gdk/webcore-gdk.bkl:
+        * WebCoreSources.bkl:
+        * page/gdk/DragControllerGdk.cpp:
+        (WebCore::DragController::dragOperation):
+        (WebCore::DragController::maxDragImageSize):
+        * page/gdk/EventHandlerGdk.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * platform/DragImage.h:
+        * platform/gdk/ChromeClientGdk.h:
+        * platform/gdk/CursorGdk.cpp:
+        (WebCore::verticalTextCursor):
+        (WebCore::cellCursor):
+        (WebCore::contextMenuCursor):
+        (WebCore::noDropCursor):
+        (WebCore::copyCursor):
+        (WebCore::progressCursor):
+        (WebCore::aliasCursor):
+        (WebCore::noneCursor):
+        (WebCore::notAllowedCursor):
+        * platform/gdk/EditorClientGdk.cpp:
+        (WebCore::EditorClientGdk::shouldChangeSelectedRange):
+        (WebCore::EditorClientGdk::isEditable):
+        (WebCore::EditorClientGdk::textFieldDidBeginEditing):
+        (WebCore::EditorClientGdk::textFieldDidEndEditing):
+        (WebCore::EditorClientGdk::textDidChangeInTextField):
+        (WebCore::EditorClientGdk::doTextFieldCommandFromEvent):
+        (WebCore::EditorClientGdk::textWillBeDeletedInTextField):
+        (WebCore::EditorClientGdk::textDidChangeInTextArea):
+        * platform/gdk/EditorClientGdk.h:
+        * platform/gdk/FrameGdk.cpp:
+        (WebCore::Frame::print):
+        (WebCore::Frame::issueTransposeCommand):
+        (WebCore::Frame::respondToChangedSelection):
+        (WebCore::Frame::cleanupPlatformScriptObjects):
+        (WebCore::Frame::isCharacterSmartReplaceExempt):
+        (WebCore::Frame::dragImageForSelection):
+        * platform/gdk/FrameGdk.h:
+        * platform/gdk/MimeTypeRegistryGdk.cpp: Added.
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (ChromeClientGdk::tabsToLinks):
+        (ChromeClientGdk::windowResizerRect):
+        (ChromeClientGdk::addToDirtyRegion):
+        (ChromeClientGdk::scrollBackingStore):
+        (ChromeClientGdk::updateBackingStore):
+        * webcore-base.bkl:
+
+2007-02-20  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
         Reviewed by Darin.
 
         Allow over-writting Product, ProductSub, Vendor and VendorSub

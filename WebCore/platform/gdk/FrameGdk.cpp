@@ -259,92 +259,34 @@ void FrameGdk::handleGdkEvent(GdkEvent* event)
     }
 }
 
-void FrameGdk::focusWindow()
+void Frame::print() 
 {
     notImplemented();
 }
 
-void FrameGdk::unfocusWindow()
+void Frame::issueTransposeCommand()
 {
     notImplemented();
 }
 
-KJS::Bindings::Instance* FrameGdk::getObjectInstanceForWidget(Widget *)
-{
-    notImplemented();
-    return 0;
-}
-
-KJS::Bindings::Instance* FrameGdk::getEmbedInstanceForWidget(Widget *) 
-{
-    notImplemented();
-    return 0;
-}
-
-KJS::Bindings::RootObject* FrameGdk::bindingRootObject()
-{
-    notImplemented();
-    return 0;
-}
-
-void FrameGdk::print() 
-{
-    notImplemented();
-}
-
-KJS::Bindings::Instance* FrameGdk::getAppletInstanceForWidget(Widget*)
-{
-    notImplemented();
-    return 0;
-}
-
-void FrameGdk::issueCutCommand()
-{
-    notImplemented();
-}
-
-void FrameGdk::issueCopyCommand()
-{
-    notImplemented();
-}
-
-void FrameGdk::issuePasteCommand()
-{
-    notImplemented();
-}
-
-void FrameGdk::issueTransposeCommand()
-{
-    notImplemented();
-}
-
-void FrameGdk::issuePasteAndMatchStyleCommand()
-{
-    notImplemented();
-}
-
-Range* FrameGdk::markedTextRange() const
-{
-    // FIXME: Handle selections.
-    notImplemented();
-    return 0;
-}
-
-bool FrameGdk::shouldChangeSelection(const Selection&, const Selection&, WebCore::EAffinity, bool) const
-{
-    // no-op
-    return true;
-}
-
-void FrameGdk::respondToChangedSelection(WebCore::Selection const&, bool)
+void Frame::respondToChangedSelection(WebCore::Selection const&, bool)
 {
     // FIXME: If we want continous spell checking, we need to implement this.
 }
 
-String FrameGdk::mimeTypeForFileName(String const&) const
+void Frame::cleanupPlatformScriptObjects()
 {
-    notImplemented();
-    return String();
+}
+
+bool Frame::isCharacterSmartReplaceExempt(UChar, bool)
+{
+    // no smart replace
+    return true;
+}
+
+DragImageRef Frame::dragImageForSelection() 
+{
+    return 0;
 }
 
 }

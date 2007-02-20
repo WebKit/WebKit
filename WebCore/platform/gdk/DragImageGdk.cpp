@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
- * All rights reserved.
+ * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,44 +23,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FrameGdk_h
-#define FrameGdk_h
+#include "config.h"
+#include "DragImage.h"
 
-#include "EditorClient.h"
-#include "Frame.h"
-#include <gdk/gdk.h>
-#include "ResourceHandleClient.h"
+#include "CachedImage.h"
+#include "Image.h"
 
 namespace WebCore {
 
-class Element;
-class FrameGdk;
-class FrameLoaderClientGdk;
-class FormData;
-
-class FrameGdk : public Frame {
-public:
-    FrameGdk(Page*, HTMLFrameOwnerElement*, FrameLoaderClientGdk*);
-    virtual ~FrameGdk();
-
-    // FrameGdk-only
-    void handleGdkEvent(GdkEvent*);
-    bool keyPress(const PlatformKeyboardEvent& keyEvent);
-
-    void dumpRenderTree() const;
-
-    void setExitAfterLoading(bool exitAfterLoading) { m_exitAfterLoading = exitAfterLoading; }
-    bool exitAfterLoading() const { return m_exitAfterLoading; }
-
-    void setDumpRenderTreeAfterLoading(bool dumpRenderTreeAfterLoading) { m_dumpRenderTreeAfterLoading = dumpRenderTreeAfterLoading; }
-    bool dumpRenderTreeAfterLoading() const { return m_dumpRenderTreeAfterLoading; }
-
-    void onDidFinishLoad();
-private:
-    bool            m_exitAfterLoading;
-    bool            m_dumpRenderTreeAfterLoading;
-};
-
+IntSize dragImageSize(DragImageRef)
+{
+    return IntSize(0, 0);
 }
 
-#endif
+void deleteDragImage(DragImageRef)
+{
+}
+
+DragImageRef scaleDragImage(DragImageRef image, float)
+{
+    return image;
+}
+    
+DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
+{
+    return image;
+}
+        
+DragImageRef createDragImageFromImage(Image*)
+{
+    return 0;
+}
+    
+DragImageRef createDragImageIconForCachedImage(CachedImage*)
+{
+    return 0;     
+}
+    
+}

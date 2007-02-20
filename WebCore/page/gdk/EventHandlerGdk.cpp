@@ -52,11 +52,6 @@ static bool isKeyboardOptionTab(KeyboardEvent* event)
         && event->keyIdentifier() == "U+000009";
 }
 
-bool EventHandler::tabsToLinks(KeyboardEvent* event) const
-{
-    return isKeyboardOptionTab(event);
-}
-
 bool EventHandler::tabsToAllControls(KeyboardEvent* event) const
 {
     bool handlingOptionTab = isKeyboardOptionTab(event);
@@ -91,12 +86,6 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
     return false;
 }
 
-bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
-{
-    // notImplemented();  // commented out because it's very chatty
-    return false;
-}
-
 bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 {
     notImplemented();
@@ -113,6 +102,12 @@ bool EventHandler::passWheelEventToWidget(Widget* widget)
 {
     notImplemented();
     return false;
+}
+
+Clipboard* EventHandler::createDraggingClipboard() const 
+{
+    notImplemented();
+    return 0;
 }
 
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)

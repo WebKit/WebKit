@@ -198,54 +198,50 @@ const Cursor& rowResizeCursor()
     return c;
 }
 
+// FIXME: should find better GDK cursors for those than a generic GDK_LEFT_PTR
 const Cursor& verticalTextCursor()
 {
-    // FIXME: optimize the way CursorQt is optmized: only one copy of a given
-    // cursor type
-    static Cursor c = gdk_cursor_new(GDK_LEFT_PTR);
-    return c;
+    return pointerCursor();
 }
 
 const Cursor& cellCursor()
 {
-    static Cursor c = gdk_cursor_new(GDK_LEFT_PTR);
-    return c;
+    return pointerCursor();
 }
 
 const Cursor& contextMenuCursor()
 {
-    static Cursor c = gdk_cursor_new(GDK_LEFT_PTR);
-    return c;
+    return pointerCursor();
 }
 
 const Cursor& noDropCursor()
 {
-    static Cursor c = gdk_cursor_new(GDK_LEFT_PTR);
-    return c;
+    return pointerCursor();
 }
 
 const Cursor& copyCursor()
 {
-    static Cursor c = gdk_cursor_new(GDK_LEFT_PTR);
-    return c;
+    return pointerCursor();
 }
 
 const Cursor& progressCursor()
 {
-    static Cursor c = gdk_cursor_new(GDK_LEFT_PTR);
-    return c;
+    return pointerCursor();
 }
 
 const Cursor& aliasCursor()
 {
-    static Cursor c = gdk_cursor_new(GDK_LEFT_PTR);
-    return c;
+    return pointerCursor();
 }
 
 const Cursor& noneCursor()
 {
-    static Cursor c = gdk_cursor_new(GDK_LEFT_PTR);
-    return c;
+    return pointerCursor();
+}
+
+const Cursor& notAllowedCursor()
+{
+    return pointerCursor();
 }
 
 }
