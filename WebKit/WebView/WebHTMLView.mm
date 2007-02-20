@@ -432,120 +432,62 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 {
     NSArray *types = [pasteboard types];
     *chosePlainText = NO;
+    DOMDocumentFragment *fragment;
 
-    if ([types containsObject:WebArchivePboardType]) {
-        WebArchive *archive = [[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]];
-        if (archive) {
-            DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithArchive:archive];
-            [archive release];
-            if (fragment) {
-                return fragment;
-            }
-        }
-    }
-    
-    if ([types containsObject:NSFilenamesPboardType]) {
-        DOMDocumentFragment *fragment = [self _documentFragmentWithPaths:[pasteboard propertyListForType:NSFilenamesPboardType]];
-        if (fragment != nil) {
-            return fragment;
-        }
-    }
-    
-    NSURL *URL;
-    
-    if ([types containsObject:NSHTMLPboardType]) {
-        NSString *HTMLString = [pasteboard stringForType:NSHTMLPboardType];
-        // This is a hack to make Microsoft's HTML pasteboard data work. See 3778785.
-        if ([HTMLString hasPrefix:@"Version:"]) {
-            NSRange range = [HTMLString rangeOfString:@"<html" options:NSCaseInsensitiveSearch];
-            if (range.location != NSNotFound) {
-                HTMLString = [HTMLString substringFromIndex:range.location];
-            }
-        }
-        if ([HTMLString length] != 0) {
-            return [[self _bridge] documentFragmentWithMarkupString:HTMLString baseURLString:nil];
-        }
-    }
-        
-    NSAttributedString *string = nil;
-    if ([types containsObject:NSRTFDPboardType]) {
-        string = [[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:NSRTFDPboardType] documentAttributes:NULL];
-    }
-    if (string == nil && [types containsObject:NSRTFPboardType]) {
-        string = [[NSAttributedString alloc] initWithRTF:[pasteboard dataForType:NSRTFPboardType] documentAttributes:NULL];
-    }
-    if (string != nil) {
-        NSDictionary *documentAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
-            [[self class] _excludedElementsForAttributedStringConversion], NSExcludedElementsDocumentAttribute,
-            self, @"WebResourceHandler", nil];
-        NSArray *subresources;
-        
-        BOOL wasDeferringCallbacks = [[self _webView] defersCallbacks];
-        if (!wasDeferringCallbacks)
-            [[self _webView] setDefersCallbacks:YES];
-            
-        DOMDocumentFragment *fragment = [string _documentFromRange:NSMakeRange(0, [string length]) 
-                                                          document:[[self _frame] DOMDocument] 
-                                                documentAttributes:documentAttributes
-                                                      subresources:&subresources];
-        
-        NSEnumerator *e = [subresources objectEnumerator];
-        WebResource *r;
-        while ((r = [e nextObject])) {
-            [[self _dataSource] addSubresource:r];
-        }
-        
-        if (!wasDeferringCallbacks)
-            [[self _webView] setDefersCallbacks:NO];
-        
-        [documentAttributes release];
-        [string release];
+    if ([types containsObject:WebArchivePboardType] &&
+        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
+                                                  forType:WebArchivePboardType
+                                                inContext:context]))
         return fragment;
-    }
-    
-    if ([types containsObject:NSTIFFPboardType]) {
-        WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSTIFFPboardType]
-                                                              URL:uniqueURLWithRelativePart(@"image.tiff")
-                                                         MIMEType:@"image/tiff" 
-                                                 textEncodingName:nil
-                                                        frameName:nil];
-        DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
-        [resource release];
+                                           
+    if ([types containsObject:NSFilenamesPboardType] &&
+        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
+                                                  forType:NSFilenamesPboardType
+                                                inContext:context]))
         return fragment;
-    }
     
-    if ([types containsObject:NSPICTPboardType]) {
-        WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSPICTPboardType]
-                                                              URL:uniqueURLWithRelativePart(@"image.pict")
-                                                         MIMEType:@"image/pict" 
-                                                 textEncodingName:nil
-                                                        frameName:nil];
-        DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
-        [resource release];
+    if ([types containsObject:NSHTMLPboardType] &&
+        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
+                                                  forType:NSHTMLPboardType
+                                                inContext:context]))
         return fragment;
-    }    
     
-    if ((URL = [NSURL URLFromPasteboard:pasteboard])) {
-        DOMDocument* document = [[self _frame] DOMDocument];
-        ASSERT(document);
-        if (document) {
-            DOMHTMLAnchorElement* anchor = (DOMHTMLAnchorElement*)[document createElement:@"a"];
-            NSString *URLString = [URL _web_originalDataAsString];
-            NSString *URLTitleString = [pasteboard stringForType:WebURLNamePboardType];
-            DOMText* text = [document createTextNode:URLTitleString];
-            [anchor setHref:URLString];
-            [anchor appendChild:text];
-            DOMDocumentFragment* fragment = [document createDocumentFragment];
-            [fragment appendChild:anchor];
-            if ([URLString length] > 0)
-                return fragment;
-        }
-    }
+    if ([types containsObject:NSRTFPboardType] &&
+        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
+                                                  forType:NSRTFPboardType
+                                                inContext:context]))
+        return fragment;
+
+    if ([types containsObject:NSRTFDPboardType] &&
+        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
+                                                  forType:NSRTFDPboardType
+                                                inContext:context]))
+        return fragment;
+
+    if ([types containsObject:NSTIFFPboardType] &&
+        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
+                                                  forType:NSTIFFPboardType
+                                                inContext:context]))
+        return fragment;
+
+    if ([types containsObject:NSPICTPboardType] &&
+        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
+                                                  forType:NSPICTPboardType
+                                                inContext:context]))
+        return fragment;
     
-    if (allowPlainText && [types containsObject:NSStringPboardType]) {
+    if ([types containsObject:NSURLPboardType] &&
+        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
+                                                  forType:NSURLPboardType
+                                                inContext:context]))
+        return fragment;
+        
+    if (allowPlainText && [types containsObject:NSStringPboardType] &&
+        (fragment = [self _documentFragmentFromPasteboard:pasteboard
+                                                  forType:NSStringPboardType
+                                                inContext:context])) {
         *chosePlainText = YES;
-        return [[self _bridge] documentFragmentWithText:[pasteboard stringForType:NSStringPboardType]
-                                              inContext:context];
+        return fragment;
     }
     
     return nil;
@@ -1836,6 +1778,112 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     Page* page = core([self _webView]);
     if (page)
         page->dragController()->setDraggingImageURL(KURL());
+}
+
+- (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard
+                                                 forType:(NSString *)pboardType
+                                               inContext:(DOMRange *)context
+{
+    if (pboardType == WebArchivePboardType) {
+        WebArchive *archive = [[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]];
+        DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithArchive:archive];
+        [archive release];
+        return fragment;
+    }
+    if (pboardType == NSFilenamesPboardType)
+        return [self _documentFragmentWithPaths:[pasteboard propertyListForType:NSFilenamesPboardType]];
+        
+    if (pboardType == NSHTMLPboardType) {
+        NSString *HTMLString = [pasteboard stringForType:NSHTMLPboardType];
+        // This is a hack to make Microsoft's HTML pasteboard data work. See 3778785.
+        if ([HTMLString hasPrefix:@"Version:"]) {
+            NSRange range = [HTMLString rangeOfString:@"<html" options:NSCaseInsensitiveSearch];
+            if (range.location != NSNotFound)
+                HTMLString = [HTMLString substringFromIndex:range.location];
+        }
+        if ([HTMLString length] == 0)
+            return nil;
+        
+        return [[self _bridge] documentFragmentWithMarkupString:HTMLString baseURLString:nil];
+    }
+    if (pboardType == NSRTFPboardType || pboardType == NSRTFDPboardType) {
+        NSAttributedString *string;
+        if (pboardType == NSRTFDPboardType)
+            string = [[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:NSRTFDPboardType] documentAttributes:NULL];
+        if (string == nil)
+            string = [[NSAttributedString alloc] initWithRTF:[pasteboard dataForType:NSRTFPboardType] documentAttributes:NULL];
+        if (string == nil)
+            return nil;
+            
+        NSDictionary *documentAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
+            [[self class] _excludedElementsForAttributedStringConversion], NSExcludedElementsDocumentAttribute,
+            self, @"WebResourceHandler", nil];
+        NSArray *subresources;
+        
+        BOOL wasDeferringCallbacks = [[self _webView] defersCallbacks];
+        if (!wasDeferringCallbacks)
+            [[self _webView] setDefersCallbacks:YES];
+            
+        DOMDocumentFragment *fragment = [string _documentFromRange:NSMakeRange(0, [string length]) 
+                                                          document:[[self _frame] DOMDocument] 
+                                                documentAttributes:documentAttributes
+                                                      subresources:&subresources];
+        
+        NSEnumerator *e = [subresources objectEnumerator];
+        WebResource *r;
+        while ((r = [e nextObject]))
+            [[self _dataSource] addSubresource:r];
+        
+        if (!wasDeferringCallbacks)
+            [[self _webView] setDefersCallbacks:NO];
+        
+        [documentAttributes release];
+        [string release];
+        return fragment;
+    }
+    if (pboardType == NSTIFFPboardType) {
+        WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSTIFFPboardType]
+                                                              URL:uniqueURLWithRelativePart(@"image.tiff")
+                                                         MIMEType:@"image/tiff" 
+                                                 textEncodingName:nil
+                                                        frameName:nil];
+        DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
+        [resource release];
+        return fragment;
+    }
+    if (pboardType == NSPICTPboardType) {
+        WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSPICTPboardType]
+                                                              URL:uniqueURLWithRelativePart(@"image.pict")
+                                                         MIMEType:@"image/pict" 
+                                                 textEncodingName:nil
+                                                        frameName:nil];
+        DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
+        [resource release];
+        return fragment;
+    }
+    if (pboardType == NSURLPboardType) {
+        NSURL *URL = [NSURL URLFromPasteboard:pasteboard];
+        DOMDocument* document = [[self _frame] DOMDocument];
+        ASSERT(document);
+        if (!document)
+            return nil;
+        DOMHTMLAnchorElement *anchor = (DOMHTMLAnchorElement *)[document createElement:@"a"];
+        NSString *URLString = [URL _web_originalDataAsString];
+        if ([URLString length] == 0)
+            return nil;
+        NSString *URLTitleString = [pasteboard stringForType:WebURLNamePboardType];
+        DOMText *text = [document createTextNode:URLTitleString];
+        [anchor setHref:URLString];
+        [anchor appendChild:text];
+        DOMDocumentFragment *fragment = [document createDocumentFragment];
+        [fragment appendChild:anchor];
+        return fragment;
+    }
+    if (pboardType == NSStringPboardType)
+        return [[self _bridge] documentFragmentWithText:[pasteboard stringForType:NSStringPboardType]
+                                              inContext:context];
+                                              
+    return nil;
 }
 
 @end
