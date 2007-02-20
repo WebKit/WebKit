@@ -1808,7 +1808,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         return [[self _bridge] documentFragmentWithMarkupString:HTMLString baseURLString:nil];
     }
     if (pboardType == NSRTFPboardType || pboardType == NSRTFDPboardType) {
-        NSAttributedString *string;
+        NSAttributedString *string = nil;
         if (pboardType == NSRTFDPboardType)
             string = [[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:NSRTFDPboardType] documentAttributes:NULL];
         if (string == nil)
