@@ -1,3 +1,23 @@
+2007-02-19  Zalan Bujtas  <zbujtas@gmail.com>
+
+        Reviewed by Darin.
+
+        1. Test for background image with relative url, when base url element 
+        is present. .html has a base url, which according to the html spec is supposed 
+        to be absolute, is actually a relative url. Absolute url would not work with file:// scheme. 
+        2. Test for base element and @import with relative url.
+        http://bugs.webkit.org/show_bug.cgi?id=12214
+        
+        * fast/css/background-image-with-baseurl-expected.checksum: Added.
+        * fast/css/background-image-with-baseurl-expected.png: Added.
+        * fast/css/background-image-with-baseurl-expected.txt: Added.
+        * fast/css/background-image-with-baseurl.html: Added.
+        * fast/css/import_with_baseurl-expected.checksum: Added.
+        * fast/css/import_with_baseurl-expected.png: Added.
+        * fast/css/import_with_baseurl-expected.txt: Added.
+        * fast/css/import_with_baseurl.html: Added.
+        * fast/css/resources/background_image.css: Added.
+
 2007-02-19  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mitz.

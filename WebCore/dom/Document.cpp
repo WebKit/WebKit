@@ -1518,6 +1518,13 @@ void Document::setURL(const DeprecatedString& url)
         m_styleSelector->setEncodedURL(m_url);
 }
 
+void Document::setBaseURL(const DeprecatedString& baseURL) 
+{ 
+    m_baseURL = baseURL; 
+    if (m_elemSheet)
+        m_elemSheet->setHref(m_baseURL);
+}
+
 void Document::setCSSStyleSheet(const String &url, const String& charset, const String &sheet)
 {
     m_sheet = new CSSStyleSheet(this, url, charset);
