@@ -2593,29 +2593,30 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     
     // Search the first frame, then all the other frames, in order
     NSView <WebDocumentSearching> *startSearchView = nil;
-    BOOL startHasSelection = NO;
     WebFrame *frame = startFrame;
     do {
+        WebFrame *nextFrame = incrementFrame(frame, forward, wrapFlag);
+        
+        BOOL onlyOneFrame = (frame == nextFrame);
+        ASSERT(!onlyOneFrame || frame == startFrame);
+        
         id <WebDocumentView> view = [[frame frameView] documentView];
         if ([view conformsToProtocol:@protocol(WebDocumentSearching)]) {
             NSView <WebDocumentSearching> *searchView = (NSView <WebDocumentSearching> *)view;
             
-            // first time through
-            if (frame == startFrame) {
-                // Remember if start even has a selection, to know if we need to search more later
-                if ([searchView isKindOfClass:[WebHTMLView class]])
-                    // optimization for the common case, to avoid making giant string for selection
-                    startHasSelection = [startFrame _hasSelection];
-                else if ([searchView conformsToProtocol:@protocol(WebDocumentText)])
-                    startHasSelection = [(id <WebDocumentText>)searchView selectedString] != nil;
+            if (frame == startFrame)
                 startSearchView = searchView;
-            }
             
             BOOL foundString;
+            // In some cases we have to search some content twice; see comment later in this method.
+            // We can avoid ever doing this in the common one-frame case by passing YES for wrapFlag 
+            // here, and then bailing out before we get to the code that would search again in the
+            // same content.
+            BOOL wrapOnThisPass = wrapFlag && onlyOneFrame;
             if ([searchView conformsToProtocol:@protocol(WebDocumentIncrementalSearching)])
-                foundString = [(NSView <WebDocumentIncrementalSearching> *)searchView searchFor:string direction:forward caseSensitive:caseFlag wrap:NO startInSelection:startInSelection];
+                foundString = [(NSView <WebDocumentIncrementalSearching> *)searchView searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapOnThisPass startInSelection:startInSelection];
             else
-                foundString = [searchView searchFor:string direction:forward caseSensitive:caseFlag wrap:NO];
+                foundString = [searchView searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapOnThisPass];
             
             if (foundString) {
                 if (frame != startFrame)
@@ -2623,13 +2624,19 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
                 [[self window] makeFirstResponder:searchView];
                 return YES;
             }
+            
+            if (onlyOneFrame)
+                return NO;
         }
-        frame = incrementFrame(frame, forward, wrapFlag);
-    } while (frame != nil && frame != startFrame);
+        frame = nextFrame;
+    } while (frame && frame != startFrame);
     
-    // Search contents of startFrame, on the other side of the selection that we did earlier.
-    // We cheat a bit and just research with wrap on
-    if (wrapFlag && startHasSelection && startSearchView) {
+    // If there are multiple frames and wrapFlag is true and we've visited each one without finding a result, we still need to search in the 
+    // first-searched frame up to the selection. However, the API doesn't provide a way to search only up to a particular point. The only 
+    // way to make sure the entire frame is searched is to pass YES for the wrapFlag. When there are no matches, this will search again
+    // some content that we already searched on the first pass. In the worst case, we could search the entire contents of this frame twice.
+    // To fix this, we'd need to add a mechanism to specify a range in which to search.
+    if (wrapFlag && startSearchView) {
         BOOL foundString;
         if ([startSearchView conformsToProtocol:@protocol(WebDocumentIncrementalSearching)])
             foundString = [(NSView <WebDocumentIncrementalSearching> *)startSearchView searchFor:string direction:forward caseSensitive:caseFlag wrap:YES startInSelection:startInSelection];

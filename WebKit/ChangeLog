@@ -1,3 +1,25 @@
+2007-02-20  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin Decker
+        
+        - fixed <rdar://problem/4989344> REGRESSION: After clicking on page, Find
+        won't find anything if all hits are before the clicked point
+        
+        This was caused by a mismatch between WebCore's search code's notion of "selection" and
+        WebView's search code's notion of "selection". WebCore's search code was starting 
+        just before or just after the "selection", which included collapsed, zero-length
+        selections. WebKit's search code was only considering non-zero-length selections,
+        and would not search all of the content when there was a zero-length selection.
+        The fix was to make WebKit ignore the selection. This has a side effect of increasing 
+        the amount of redundantly-searched content in the case where no matches are found. To
+        compensate for that, I special-cased the most common case of WebViews with a single frame, 
+        to avoid ever searching redundantly in those.
+
+        * WebView/WebView.mm:
+        (-[WebView searchFor:direction:caseSensitive:wrap:startInSelection:]):
+        remove startHasSelection ivar; special-case WebViews with only one frame; clarify the
+        code that leads to redundant searching with comments.
+
 2007-02-20  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
