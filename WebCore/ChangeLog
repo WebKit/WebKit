@@ -2,7 +2,20 @@
 
         Reviewed by Lars
 
-        Refactor and fix the implementation of theming of 
+        Make editing of forms work plus make sure that non-void methods
+        always return something.
+
+        * WebCore.pro:
+        * loader/qt/DocumentLoaderQt.cpp:
+        (WebCore::DocumentLoader::getResponseModifiedHeader):
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::setData):
+
+2007-02-20  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Lars
+
+        Refactor and fix the implementation of theming of
         form elements on the Qt platform.
 
         * platform/qt/RenderThemeQt.cpp:

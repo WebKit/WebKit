@@ -51,8 +51,7 @@ namespace WebCore {
 
 bool EditorClientQt::shouldDeleteRange(Range*)
 {
-    notImplemented();
-    return false;
+    return true;
 }
 
 bool EditorClientQt::shouldShowDeleteInterface(HTMLElement*)
@@ -80,33 +79,28 @@ int EditorClientQt::spellCheckerDocumentTag()
 
 bool EditorClientQt::shouldBeginEditing(WebCore::Range*)
 {
-    notImplemented();
-    return false;
+    return true;
 }
 
 bool EditorClientQt::shouldEndEditing(WebCore::Range*)
 {
-    notImplemented();
-    return false;
+    return true;
 }
 
 bool EditorClientQt::shouldInsertText(String, Range*, EditorInsertAction)
 {
-    notImplemented();
-    return false;
+    return true;
 }
 
 bool EditorClientQt::shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity, bool stillSelecting)
 {
-    notImplemented();
-    return false;
+    return true;
 }
 
 bool EditorClientQt::shouldApplyStyle(WebCore::CSSStyleDeclaration*,
                                       WebCore::Range*)
 {
-    notImplemented();
-    return false;
+    return true;
 }
 
 void EditorClientQt::didBeginEditing()
@@ -185,7 +179,7 @@ void EditorClientQt::redo()
 
 bool EditorClientQt::shouldInsertNode(Node*, Range*, EditorInsertAction)
 {
-    notImplemented();
+    return true;
 }
 
 void EditorClientQt::pageDestroyed()

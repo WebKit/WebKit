@@ -1,3 +1,28 @@
+2007-02-20  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Lars
+
+        Make editing of forms work plus make sure that non-void methods
+        always return something.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::canRunBeforeUnloadConfirmPanel):
+        (WebCore::ChromeClientQt::runBeforeUnloadConfirmPanel):
+        (WebCore::ChromeClientQt::runJavaScriptConfirm):
+        (WebCore::ChromeClientQt::runJavaScriptPrompt):
+        (WebCore::ChromeClientQt::shouldInterruptJavaScript):
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::shouldDeleteRange):
+        (WebCore::EditorClientQt::shouldBeginEditing):
+        (WebCore::EditorClientQt::shouldEndEditing):
+        (WebCore::EditorClientQt::shouldInsertText):
+        (WebCore::EditorClientQt::shouldChangeSelectedRange):
+        (WebCore::EditorClientQt::shouldApplyStyle):
+        (WebCore::EditorClientQt::shouldInsertNode):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidLoadResourceFromMemoryCache):
+        (WebCore::FrameLoaderClientQt::dispatchCreatePage):
+
 2007-02-17  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Maciej.

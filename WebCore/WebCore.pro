@@ -11,7 +11,8 @@ DESTDIR = $$OUTPUT_DIR/lib
 include($$OUTPUT_DIR/config.pri)
 
 CONFIG -= warn_on
-#QMAKE_CXXFLAGS_RELEASE += -Wall -Wno-undef -Wno-unused-parameter
+QMAKE_CXXFLAGS += -Wreturn-type
+#QMAKE_CXXFLAGS += -Wall -Wno-undef -Wno-unused-parameter
 
 contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
 unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
