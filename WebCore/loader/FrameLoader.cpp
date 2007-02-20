@@ -2310,8 +2310,6 @@ void FrameLoader::commitProvisionalLoad(PassRefPtr<PageCache> prpPageCache)
         if (url.isEmpty())
             url = "about:blank";
 
-        m_responseMIMEType = pdl->responseMIMEType();
-
         if (didOpenURL(url)) {
             m_responseRefreshHeader = pdl->response().httpHeaderField("Refresh");
             if (!pdl->getResponseModifiedHeader(m_responseModifiedHeader))
@@ -2388,6 +2386,8 @@ void FrameLoader::transitionToCommitted(PassRefPtr<PageCache> pageCache)
         default:
             ASSERT_NOT_REACHED();
     }
+
+    m_responseMIMEType = dl->responseMIMEType();
 
     // Tell the client we've committed this URL.
     ASSERT(m_client->hasFrameView());

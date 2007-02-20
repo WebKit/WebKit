@@ -1,3 +1,20 @@
+2007-02-19  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adam.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11518
+          REGRESSION (r14376): View Source not available after Back navigation from a non-HTML page
+
+        The FrameLoader's responseMIMEType was not being updated when a page was
+        brought back from the page cache.
+        
+        Moved the line that updates the MIME type from commitProvisionalLoad() to
+        transitionToCommitted().
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::transitionToCommitted):
+
 2007-02-19  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Oliver.
