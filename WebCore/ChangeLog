@@ -1,3 +1,20 @@
+2007-02-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Not not reviewed by Mitz Pettel.
+
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=12827 | <rdar://problem/5006671> 
+        REGRESSION: -[DOMCSSStyleDeclaration setValue:forKey:] doesn't have an 
+        immediate effect
+        
+        Let's just pretend this never happened.
+        
+        I attempted a layout test but I couldn't get the old code to fail because 
+        there's no obvious way to isolate the ObjC bindings in a test that's 
+        controlled by JS.
+        
+        * bindings/objc/WebScriptObject.mm:
+        (_didExecute):
+
 2007-02-20  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Maciej S.

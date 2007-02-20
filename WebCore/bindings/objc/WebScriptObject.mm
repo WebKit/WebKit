@@ -46,7 +46,7 @@ using namespace KJS::Bindings;
 
 static void _didExecute(WebScriptObject *obj)
 {
-    if (![obj _rootObject] || [obj _rootObject]->isValid())
+    if (![obj _rootObject] || ![obj _rootObject]->isValid())
         return;
 
     ExecState* exec = [obj _rootObject]->interpreter()->globalExec();
