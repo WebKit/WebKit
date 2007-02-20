@@ -50,9 +50,9 @@ chdirWebKit();
 
 my $productDir = productDir();
 my @options = XcodeOptions();
-my @additionalWebCoreOptions = ();
+my @overrideFeatureDefinesOption = ();
 
-push @additionalWebCoreOptions, "FEATURE_DEFINES=" if !$svgSupport;
+push @overrideFeatureDefinesOption, "FEATURE_DEFINES=" if !$svgSupport;
 
 # Check that all the project directories are there.
 my @projects = ("JavaScriptCore", "JavaScriptGlue", "WebCore", "WebKit");
@@ -100,13 +100,7 @@ for my $dir (@projects) {
             $result = buildCMakeProject($dir, $colorSupport);
         }
     } elsif (isOSX()) {
-        if ($dir eq "JavaScriptCore") {
-            $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @ARGV;
-        } elsif ($dir eq "WebCore") {
-            $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @additionalWebCoreOptions, @ARGV;
-        } else {
-            $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @ARGV;
-        }
+        $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @overrideFeatureDefinesOption, @ARGV;
     } elsif (isCygwin()) {
         if ($dir eq "WebKit") {
             $result = buildVisualStudioProject($dir);
