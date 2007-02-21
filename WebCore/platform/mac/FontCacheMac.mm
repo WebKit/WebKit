@@ -32,7 +32,6 @@
 #import "Font.h"
 #import "FontData.h"
 #import "FontPlatformData.h"
-#import "WebCoreStringTruncator.h"
 #import "WebCoreSystemInterface.h"
 #import "WebFontCache.h"
 

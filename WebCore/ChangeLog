@@ -1,5 +1,11 @@
 2007-02-20  Adam Roben  <aroben@apple.com>
 
+        Preemptive build fix.
+
+        * platform/mac/FontCacheMac.mm: Remove unused (and non-existent) header.
+
+2007-02-20  Adam Roben  <aroben@apple.com>
+
         Fix the build the right way.
 
         * platform/StringTruncator.cpp:
