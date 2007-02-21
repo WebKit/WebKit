@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,25 +26,37 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import "config.h"
+#import "WebCoreNSStringExtras.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-NSURL *urlByRemovingComponent(NSURL *url, CFURLComponentType component);
-NSURL *urlByRemovingFragment(NSURL *url);
-NSString *urlOriginalDataAsString(NSURL *url);
-NSData *urlOriginalData(NSURL *url);
-NSURL *urlWithData(NSData *data);
-NSURL *urlWithDataRelativeToURL(NSData *data, NSURL *baseURL);
-NSURL *urlByRemovingResourceSpecifier(NSURL *url);
-BOOL urlIsFileURL(NSURL *url);
-BOOL stringIsFileURL(NSString *urlString);
-BOOL urlIsEmpty(NSURL *url);
-NSURL *canonicalURL(NSURL *url);
-NSString *suggestedFilenameWithMIMEType(NSURL *url, NSString *MIMEType);
-
-#ifdef __cplusplus
+BOOL hasCaseInsensitiveSuffix(NSString *string, NSString *suffix)
+{
+    return [string rangeOfString:suffix options:(NSCaseInsensitiveSearch | NSBackwardsSearch | NSAnchoredSearch)].location != NSNotFound;
 }
-#endif
+
+BOOL hasCaseInsensitiveSubstring(NSString *string, NSString *substring)
+{
+    return [string rangeOfString:substring options:NSCaseInsensitiveSearch].location != NSNotFound;
+}
+
+NSString *filenameByFixingIllegalCharacters(NSString *string)
+{
+    NSMutableString *filename = [[string mutableCopy] autorelease];
+
+    // Strip null characters.
+    unichar nullChar = 0;
+    [filename replaceOccurrencesOfString:[NSString stringWithCharacters:&nullChar length:0] withString:@"" options:0 range:NSMakeRange(0, [filename length])];
+
+    // Replace "/" with "-".
+    [filename replaceOccurrencesOfString:@"/" withString:@"-" options:0 range:NSMakeRange(0, [filename length])];
+
+    // Replace ":" with "-".
+    [filename replaceOccurrencesOfString:@":" withString:@"-" options:0 range:NSMakeRange(0, [filename length])];
+    
+    // Strip leading dots.
+    while ([filename hasPrefix:@"."]) {
+        [filename deleteCharactersInRange:NSMakeRange(0,1)];
+    }
+    
+    return filename;
+}

@@ -241,15 +241,6 @@ void WebContextMenuClient::downloadURL(const KURL& url)
     [m_webView _downloadURL:url.getNSURL()];
 }
 
-void WebContextMenuClient::copyImageToClipboard(const HitTestResult& hitTestResult)
-{
-    NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:hitTestResult] autorelease];
-    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
-    NSArray *types = [NSPasteboard _web_writableTypesForImageIncludingArchive:(hitTestResult.innerNonSharedNode() != 0)];
-    [pasteboard declareTypes:types owner:m_webView];
-    [m_webView _writeImageForElement:element withPasteboardTypes:types toPasteboard:pasteboard];
-}
-
 void WebContextMenuClient::searchWithSpotlight()
 {
     [m_webView _searchWithSpotlightFromMenu:nil];

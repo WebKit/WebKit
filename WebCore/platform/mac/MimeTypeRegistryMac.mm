@@ -46,4 +46,23 @@ String MimeTypeRegistry::getMIMETypeForExtension(const String &ext)
     return wkGetMIMETypeForExtension(ext);
 }
 
+Vector<String> MimeTypeRegistry::getExtensionsForMIMEType(const String& type)
+{
+    NSArray *stringsArray = wkGetExtensionsForMIMEType(type);
+    Vector<String> stringsVector = Vector<String>();
+    unsigned count = [stringsArray count];
+    if (count > 0) {
+        NSEnumerator* enumerator = [stringsArray objectEnumerator];
+        NSString* string;
+        while ((string = [enumerator nextObject]) != nil)
+            stringsVector.append(string);
+    }
+    return stringsVector;
+}
+
+String MimeTypeRegistry::getPreferredExtensionForMIMEType(const String& type)
+{
+    return wkGetPreferredExtensionForMIMEType(type);
+}
+
 }

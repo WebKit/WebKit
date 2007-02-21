@@ -80,6 +80,14 @@ String fileButtonNoFileSelectedLabel()
     return String();
 }
 
+String copyImageUnknownFileLabel()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] copyImageUnknownFileLabel];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
 String contextMenuItemTagOpenLinkInNewWindow()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

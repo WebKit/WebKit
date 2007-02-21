@@ -134,7 +134,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         case ContextMenuItemTagCopyImageToClipboard:
             // FIXME: The Pasteboard class is not written yet
             // For now, call into the client. This is temporary!
-            m_client->copyImageToClipboard(result);
+            frame->editor()->copyImage(result);
             break;
         case ContextMenuItemTagOpenFrameInNewWindow: {
             KURL url = frame->loader()->documentLoader()->unreachableURL();

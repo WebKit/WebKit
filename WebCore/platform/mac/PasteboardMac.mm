@@ -26,13 +26,21 @@
 #import "config.h"
 #import "Pasteboard.h"
 
+#import "Cache.h"
+#import "CachedResource.h"
 #import "CharacterNames.h"
 #import "DOMRangeInternal.h"
+#import "Document.h"
 #import "DocumentFragment.h"
 #import "Editor.h"
 #import "EditorClient.h"
+#import "HitTestResult.h"
+#import "Image.h"
 #import "KURL.h"
+#import "LoaderNSURLExtras.h"
+#import "MimeTypeRegistry.h"
 #import "RetainPtr.h"
+#import "WebCoreNSStringExtras.h"
 #import "WebCoreSystemInterface.h"
 #import "markup.h"
 
@@ -76,6 +84,17 @@ static NSArray* writableTypesForURL()
             WebURLNamePboardType,
             NSStringPboardType,
             nil];
+    }
+    return types;
+}
+
+static NSArray* writableTypesForImage()
+{
+    static NSMutableArray *types = nil;
+    if (!types) {
+        types = [[NSMutableArray alloc] initWithObjects:NSTIFFPboardType, nil];
+        [types addObjectsFromArray:writableTypesForURL()];
+        [types addObject:NSRTFDPboardType];
     }
     return types;
 }
@@ -181,13 +200,16 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     Pasteboard::writeSelection(m_pasteboard, selectedRange, canSmartCopyOrDelete, frame);
 }
 
-void Pasteboard::writeURL(NSPasteboard* pasteboard, NSArray* types, const KURL& url, const String& titleStr, Frame* frame)
+void Pasteboard::writeURL(NSPasteboard* pasteboard, NSArray* types, const KURL& url, const String& titleStr, Frame* frame, bool isImage)
 {
     if (WebArchivePboardType == nil)
         Pasteboard::generalPasteboard(); //Initialises pasteboard types
    
     if (types == nil) {
-        types = writableTypesForURL();
+        if (isImage)
+            types = writableTypesForImage();
+        else
+            types = writableTypesForURL();
         [pasteboard declareTypes:types owner:nil];
     }
     
@@ -218,11 +240,63 @@ void Pasteboard::writeURL(NSPasteboard* pasteboard, NSArray* types, const KURL& 
         [pasteboard setString:userVisibleString forType:NSStringPboardType];
 }
     
-void Pasteboard::writeURL(const KURL& url, const String& titleStr, Frame* frame)
+void Pasteboard::writeURL(const KURL& url, const String& titleStr, Frame* frame, bool isImage)
 {
-    Pasteboard::writeURL(m_pasteboard, nil, url, titleStr, frame);
+    Pasteboard::writeURL(m_pasteboard, nil, url, titleStr, frame, isImage);
 }
 
+static NSFileWrapper* fileWrapperForImage(CachedResource* resource, NSURL *URL)
+{
+    SharedBuffer* coreData = resource->allData();
+    NSData *data = [[[NSData alloc] initWithBytes:coreData->platformData() 
+        length:coreData->platformDataSize()] autorelease];
+    NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:data] autorelease];
+    String coreMIMEType = resource->response().mimeType();
+    NSString *MIMEType = nil;
+    if (!coreMIMEType.isNull())
+        MIMEType = coreMIMEType;
+    [wrapper setPreferredFilename:suggestedFilenameWithMIMEType(URL, MIMEType)];
+    return wrapper;
+}
+
+void Pasteboard::writeFileWrapperAsRTFDAttachment(NSFileWrapper* wrapper)
+{
+    NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
+    
+    NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:attachment];
+    [attachment release];
+    
+    NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:nil];
+    [m_pasteboard setData:RTFDData forType:NSRTFDPboardType];
+}
+
+void Pasteboard::writeImage(const HitTestResult& result)
+{    
+    KURL coreURL = result.absoluteLinkURL();
+    if (coreURL.isEmpty())
+        coreURL = result.absoluteImageURL();
+    NSURL *URL = coreURL.getNSURL();
+    ASSERT(URL);
+
+    NSString *title = result.altDisplayString().isNull() ? nil : (NSString*)(result.altDisplayString());
+    Frame* frame = result.innerNonSharedNode()->document()->frame();
+
+    writeURL(URL, title, frame, true);
+    NSArray *types = [m_pasteboard types];
+    [m_pasteboard declareTypes:types owner:nil];
+
+    NSImage *image = (NSImage *)(result.image() ? result.image()->getNSImage() : nil);
+    ASSERT(image);
+    [m_pasteboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
+
+    CachedResource* imageResource = WebCore::cache()->resourceForURL(result.absoluteImageURL().url());
+    ASSERT(imageResource);
+    String MIMEType = imageResource->response().mimeType();
+    ASSERT(MimeTypeRegistry::isSupportedImageResourceMIMEType(MIMEType));
+
+    if (imageResource)
+        writeFileWrapperAsRTFDAttachment(fileWrapperForImage(imageResource, URL));
+}
 
 bool Pasteboard::canSmartReplace()
 {

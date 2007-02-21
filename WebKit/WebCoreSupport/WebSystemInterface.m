@@ -44,16 +44,17 @@ void InitWebCoreSystemInterface(void)
     INIT(ConvertCharToGlyphs);
     INIT(CreateCustomCFReadStream);
     INIT(CreateNSURLConnectionDelegateProxy);
-    INIT(CreateURLPasteboardFlavorTypeName);
     INIT(CreateURLNPasteboardFlavorTypeName);
+    INIT(CreateURLPasteboardFlavorTypeName);
     INIT(DrawBezeledTextArea);
     INIT(DrawBezeledTextFieldCell);
-    INIT(DrawTextFieldCellFocusRing);
     INIT(DrawFocusRing);
+    INIT(DrawTextFieldCellFocusRing);
     INIT(FontSmoothingModeIsLCD);
     INIT(GetATSStyleGroup);
     INIT(GetCGFontFromNSFont);
     INIT(GetDefaultGlyphForChar);
+    INIT(GetExtensionsForMIMEType);
     INIT(GetFontInLanguageForCharacter);
     INIT(GetFontInLanguageForRange);
     INIT(GetFontMetrics);
@@ -66,10 +67,13 @@ void InitWebCoreSystemInterface(void)
     INIT(GetNSURLResponseCalculatedExpiration);
     INIT(GetNSURLResponseLastModifiedDate);
     INIT(GetNSURLResponseMustRevalidate);
+    INIT(GetPreferredExtensionForMIMEType);
     INIT(InitializeGlyphVector);
+    INIT(NSURLProtocolClassForReqest);
     INIT(PathFromFont);
     INIT(PopupMenu);
     INIT(ReleaseStyleGroup);
+    INIT(SecondsSinceLastInputEvent);
     INIT(SetCGFontRenderingMode);
     INIT(SetDragImage);
     INIT(SetNSURLConnectionDefersCallbacks);
@@ -79,8 +83,7 @@ void InitWebCoreSystemInterface(void)
     INIT(SignalCFReadStreamError);
     INIT(SignalCFReadStreamHasBytes);
     INIT(SupportsMultipartXMixedReplace);
-    INIT(NSURLProtocolClassForReqest);
-    INIT(SecondsSinceLastInputEvent);
+
     
     didInit = true;
 }

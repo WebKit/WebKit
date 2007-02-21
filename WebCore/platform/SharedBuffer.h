@@ -56,13 +56,13 @@ public:
 
     void append(const char*, int);
     void clear();
+    const char* platformData() const;
+    unsigned platformDataSize() const;
 
 private:
     void clearPlatformData();
     void maybeTransferPlatformData();
     bool hasPlatformData() const;
-    const char* platformData() const;
-    unsigned platformDataSize() const;
     
     Vector<char> m_buffer;
 #if PLATFORM(MAC)

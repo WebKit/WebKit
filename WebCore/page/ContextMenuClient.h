@@ -45,7 +45,6 @@ namespace WebCore {
         virtual void contextMenuItemSelected(ContextMenuItem*, const ContextMenu*) = 0;
 
         virtual void downloadURL(const KURL& url) = 0;
-        virtual void copyImageToClipboard(const HitTestResult&) = 0;
         virtual void searchWithGoogle(const Frame*) = 0;
         virtual void lookUpInDictionary(Frame*) = 0;
         virtual void speak(const String&) = 0;

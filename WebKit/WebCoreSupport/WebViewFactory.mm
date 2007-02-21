@@ -128,6 +128,11 @@
     return UI_STRING("no file selected", "text to display in file button used in HTML forms when no file is selected");
 }
 
+- (NSString *)copyImageUnknownFileLabel
+{
+    return UI_STRING("unknown", "Unknown filename");
+}
+
 - (NSMenu *)cellMenuForSearchField
 {
     NSMenu* cellMenu = [[[NSMenu alloc] initWithTitle:@""] autorelease];

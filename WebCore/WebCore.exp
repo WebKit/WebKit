@@ -601,7 +601,11 @@ __ZNK7WebCore9Selection23isContentRichlyEditableEv
 __ZNK7WebCore9Selection7toRangeEv
 __ZNK7WebCore9TimerBase8isActiveEv
 _canonicalURL
+_filenameByFixingIllegalCharacters
+_hasCaseInsensitiveSubstring
+_hasCaseInsensitiveSuffix
 _stringIsFileURL
+_suggestedFilenameWithMIMEType
 _urlByRemovingComponent
 _urlByRemovingFragment
 _urlByRemovingResourceSpecifier
@@ -626,6 +630,7 @@ _wkFontSmoothingModeIsLCD
 _wkGetATSStyleGroup
 _wkGetCGFontFromNSFont
 _wkGetDefaultGlyphForChar
+_wkGetExtensionsForMIMEType
 _wkGetFontInLanguageForCharacter
 _wkGetFontInLanguageForRange
 _wkGetFontMetrics
@@ -638,6 +643,7 @@ _wkGetNSFontATSUFontId
 _wkGetNSURLResponseCalculatedExpiration
 _wkGetNSURLResponseLastModifiedDate
 _wkGetNSURLResponseMustRevalidate
+_wkGetPreferredExtensionForMIMEType
 _wkInitializeGlyphVector
 _wkNSURLProtocolClassForReqest
 _wkPathFromFont

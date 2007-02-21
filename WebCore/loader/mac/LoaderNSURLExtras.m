@@ -31,7 +31,15 @@
 #import "LoaderNSURLExtras.h"
 
 #import <wtf/Assertions.h>
+#import <wtf/Vector.h>
+#import "KURL.h"
+#import "LocalizedStrings.h"
+#import "MimeTypeRegistry.h"
+#import "PlatformString.h"
+#import "WebCoreNSStringExtras.h"
 #import "WebCoreSystemInterface.h"
+
+using namespace WebCore;
 
 NSURL *urlByRemovingComponent(NSURL *url, CFURLComponentType component)
 {
@@ -47,7 +55,7 @@ NSURL *urlByRemovingComponent(NSURL *url, CFURLComponentType component)
     CFIndex numBytes = CFURLGetBytes((CFURLRef)url, buffer, 2048);
     if (numBytes == -1) {
         numBytes = CFURLGetBytes((CFURLRef)url, NULL, 0);
-        urlBytes = malloc(numBytes);
+        urlBytes = static_cast<UInt8*>(malloc(numBytes));
         CFURLGetBytes((CFURLRef)url, urlBytes, numBytes);
     } else
         urlBytes = buffer;
@@ -124,7 +132,7 @@ NSURL *urlWithDataRelativeToURL(NSData *data, NSURL *baseURL)
         // work around <rdar://4470771>: CFURLCreateAbsoluteURLWithBytes(.., TRUE) doesn't remove non-path components.
         baseURL = urlByRemovingResourceSpecifier(baseURL);
         
-        const UInt8 *bytes = [data bytes];
+        const UInt8 *bytes = static_cast<const UInt8*>([data bytes]);
         // NOTE: We use UTF-8 here since this encoding is used when computing strings when returning URL components
         // (e.g calls to NSURL -path). However, this function is not tolerant of illegal UTF-8 sequences, which
         // could either be a malformed string or bytes in a different encoding, like shift-jis, so we fall back
@@ -185,4 +193,65 @@ NSURL *canonicalURL(NSURL *url)
     [request release];
     
     return result;
+}
+
+static bool vectorContainsString(Vector<String> vector, String string)
+{
+    int size = vector.size();
+    for (int i = 0; i < size; i++)
+        if (vector[i] == string)
+            return true;
+    return false;
+}
+
+NSString *suggestedFilenameWithMIMEType(NSURL *url, NSString *MIMEType)
+{
+    // Get the filename from the URL. Try the lastPathComponent first.
+    NSString *lastPathComponent = [[url path] lastPathComponent];
+    NSString *filename = filenameByFixingIllegalCharacters(lastPathComponent);
+    NSString *extension = nil;
+
+    if ([filename length] == 0 || [lastPathComponent isEqualToString:@"/"]) {
+        // lastPathComponent is no good, try the host.
+        NSString *host = (NSString *)(KURL(url).host());
+        filename = filenameByFixingIllegalCharacters(host);
+        if ([filename length] == 0) {
+            // Can't make a filename using this URL, use "unknown".
+            filename = copyImageUnknownFileLabel();
+        }
+    } else {
+        // Save the extension for later correction. Only correct the extension of the lastPathComponent.
+        // For example, if the filename ends up being the host, we wouldn't want to correct ".com" in "www.apple.com".
+        extension = [filename pathExtension];
+    }
+
+    // No mime type reported. Just return the filename we have now.
+    if (!MIMEType) {
+        return filename;
+    }
+
+    // Do not correct filenames that are reported with a mime type of tar, and 
+    // have a filename which has .tar in it or ends in .tgz
+    if (([MIMEType isEqualToString:@"application/tar"] || [MIMEType isEqualToString:@"application/x-tar"]) 
+        && (hasCaseInsensitiveSubstring(filename, @".tar")
+        || hasCaseInsensitiveSuffix(filename, @".tgz"))) {
+        return filename;
+    }
+
+    // I don't think we need to worry about this for the image case
+    // If the type is known, check the extension and correct it if necessary.
+    if (![MIMEType isEqualToString:@"application/octet-stream"] && ![MIMEType isEqualToString:@"text/plain"]) {
+        Vector<String> extensions = MimeTypeRegistry::getExtensionsForMIMEType(MIMEType);
+
+        if (!extensions.size() || (extensions && !vectorContainsString(extensions, extension))) {
+            // The extension doesn't match the MIME type. Correct this.
+            NSString *correctExtension = MimeTypeRegistry::getPreferredExtensionForMIMEType(MIMEType);
+            if ([correctExtension length] != 0) {
+                // Append the correct extension.
+                filename = [filename stringByAppendingPathExtension:correctExtension];
+            }
+        }
+    }
+
+    return filename;
 }

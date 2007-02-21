@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2007 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,24 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-NSURL *urlByRemovingComponent(NSURL *url, CFURLComponentType component);
-NSURL *urlByRemovingFragment(NSURL *url);
-NSString *urlOriginalDataAsString(NSURL *url);
-NSData *urlOriginalData(NSURL *url);
-NSURL *urlWithData(NSData *data);
-NSURL *urlWithDataRelativeToURL(NSData *data, NSURL *baseURL);
-NSURL *urlByRemovingResourceSpecifier(NSURL *url);
-BOOL urlIsFileURL(NSURL *url);
-BOOL stringIsFileURL(NSString *urlString);
-BOOL urlIsEmpty(NSURL *url);
-NSURL *canonicalURL(NSURL *url);
-NSString *suggestedFilenameWithMIMEType(NSURL *url, NSString *MIMEType);
+BOOL hasCaseInsensitiveSuffix(NSString *string, NSString *suffix);
+BOOL hasCaseInsensitiveSubstring(NSString *string, NSString *substring);
+NSString *filenameByFixingIllegalCharacters(NSString *string);
 
 #ifdef __cplusplus
 }

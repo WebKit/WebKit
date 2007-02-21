@@ -44,6 +44,7 @@ typedef struct _NSRect NSRect;
 @class NSMutableURLRequest;
 @class NSURLRequest;
 #else
+typedef struct NSArray NSArray;
 typedef struct NSDate NSDate;
 typedef struct NSFont NSFont;
 typedef struct NSImage NSImage;
@@ -96,6 +97,8 @@ extern BOOL (*wkGetGlyphTransformedAdvances)(NSFont*, CGAffineTransform*, ATSGly
 extern ATSLayoutRecord* (*wkGetGlyphVectorFirstRecord)(void* glyphVector);
 extern int (*wkGetGlyphVectorNumGlyphs)(void* glyphVector);
 extern size_t (*wkGetGlyphVectorRecordSize)(void* glyphVector);
+extern NSString* (*wkGetPreferredExtensionForMIMEType)(NSString*);
+extern NSArray* (*wkGetExtensionsForMIMEType)(NSString*);
 extern NSString* (*wkGetMIMETypeForExtension)(NSString*);
 extern ATSUFontID (*wkGetNSFontATSUFontId)(NSFont*);
 extern double (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response);

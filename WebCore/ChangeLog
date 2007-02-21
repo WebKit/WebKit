@@ -1,3 +1,63 @@
+2007-02-20  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej.
+
+        Implement writeImage() on Pasteboard so that the context menus can 
+        call into the editor for the "Copy image" command instead of 
+        calling across the clients.
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/Editor.cpp:
+        (WebCore::Editor::copyImage): Call into the Pasteboard.
+        * editing/Editor.h:
+        * loader/mac/LoaderNSURLExtras.h: A new NSURL extra needed inside 
+        WebCore.
+        * loader/mac/LoaderNSURLExtras.m: Made this file Objective-C++ 
+        (from Objective-C) since the call into the MIMETypeRegistry will 
+        return a Vector.
+        (urlByRemovingComponent): Cast to build as Obj-C++
+        (urlWithDataRelativeToURL): Same.
+        (vectorContainsString): Helper.
+        (suggestedFilenameWithMIMEType): New function.
+        * page/ContextMenuClient.h: Remove copyImageToClipboard()
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected): Call 
+        into the editor instead of the client.
+        * page/mac/WebCoreViewFactory.h: New localized String.
+        * platform/LocalizedStrings.h: Same.
+        * platform/MimeTypeRegistry.h: Expose two additional functions for 
+        MIMEType information from WebCore System Interface.
+        * platform/Pasteboard.h:
+        * platform/SharedBuffer.h: Make platformData() and platformDataSize
+        () public since they are needed to write the image to the 
+        pasteboard.
+        * platform/mac/LocalizedStringsMac.mm: New localized string.
+        (WebCore::copyImageUnknownFileLabel):
+        * platform/mac/MimeTypeRegistryMac.mm:
+        (WebCore::MimeTypeRegistry::getExtensionsForMIMEType):
+        (WebCore::MimeTypeRegistry::getPreferredExtensionForMIMEType):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::writableTypesForImage):
+        (WebCore::Pasteboard::writeURL): Write the correct types if the url 
+        is for an image.
+        (WebCore::fileWrapperForImage):
+        (WebCore::Pasteboard::writeFileWrapperAsRTFDAttachment):
+        (WebCore::Pasteboard::writeImage):
+        * platform/mac/WebCoreNSStringExtras.h: Added. Some the the 
+        NSStringExtras that were in WebKit are now needed by WebCore. To 
+        avoid having two copies of these functions, I just moved the 
+        implementations to WebCore. The WebKit functions just call into 
+        WebCore.
+        * platform/mac/WebCoreNSStringExtras.mm: Added.
+        (hasCaseInsensitiveSuffix):
+        (hasCaseInsensitiveSubstring):
+        (filenameByFixingIllegalCharacters):
+        * platform/mac/WebCoreSystemInterface.h: 
+        wkGetPreferredExtensionForMIMEType and wkGetExtensionsForMIMEType 
+        are now needed in WebCore as well as WebKit.
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2007-02-20  Adam Roben  <aroben@apple.com>
 
         Build fix.

@@ -44,6 +44,7 @@
 - (NSString *)submitButtonDefaultLabel;
 - (NSString *)fileButtonChooseFileLabel;
 - (NSString *)fileButtonNoFileSelectedLabel;
+- (NSString *)copyImageUnknownFileLabel;
 
 // Context menu item titles
 - (NSString *)contextMenuItemTagOpenLinkInNewWindow;

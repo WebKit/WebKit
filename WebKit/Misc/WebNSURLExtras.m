@@ -681,51 +681,7 @@ typedef struct {
 
 - (NSString *)_webkit_suggestedFilenameWithMIMEType:(NSString *)MIMEType
 {
-    // Get the filename from the URL. Try the lastPathComponent first.
-    NSString *lastPathComponent = [[self path] lastPathComponent];
-    NSString *filename = [lastPathComponent _webkit_filenameByFixingIllegalCharacters];
-    NSString *extension = nil;
-
-    if ([filename length] == 0 || [lastPathComponent isEqualToString:@"/"]) {
-        // lastPathComponent is no good, try the host.
-        filename = [[self _web_hostString] _webkit_filenameByFixingIllegalCharacters];
-        if ([filename length] == 0) {
-            // Can't make a filename using this URL, use "unknown".
-            filename = UI_STRING("unknown", "Unknown filename");
-        }
-    } else {
-        // Save the extension for later correction. Only correct the extension of the lastPathComponent.
-        // For example, if the filename ends up being the host, we wouldn't want to correct ".com" in "www.apple.com".
-        extension = [filename pathExtension];
-    }
-
-    // No mime type reported. Just return the filename we have now.
-    if (!MIMEType) {
-        return filename;
-    }
-
-    // Do not correct filenames that are reported with a mime type of tar, and 
-    // have a filename which has .tar in it or ends in .tgz
-    if (([MIMEType isEqualToString:@"application/tar"] || [MIMEType isEqualToString:@"application/x-tar"]) &&
-        ([filename _webkit_hasCaseInsensitiveSubstring:@".tar"] || [filename _webkit_hasCaseInsensitiveSuffix:@".tgz"])) {
-        return filename;
-    }
-
-    // If the type is known, check the extension and correct it if necessary.
-    if (![MIMEType isEqualToString:@"application/octet-stream"] && ![MIMEType isEqualToString:@"text/plain"]) {
-        NSArray *extensions = WKGetExtensionsForMIMEType(MIMEType);
-
-        if (![extension length] || (extensions && ![extensions containsObject:extension])) {
-            // The extension doesn't match the MIME type. Correct this.
-            NSString *correctExtension = WKGetPreferredExtensionForMIMEType(MIMEType);
-            if ([correctExtension length] != 0) {
-                // Append the correct extension.
-                filename = [filename stringByAppendingPathExtension:correctExtension];
-            }
-        }
-    }
-
-    return filename;
+    return suggestedFilenameWithMIMEType(self, MIMEType);
 }
 
 @end
