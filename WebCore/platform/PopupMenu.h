@@ -41,9 +41,9 @@ typedef struct HWND__* HWND;
 typedef struct HDC__* HDC;
 typedef struct HBITMAP__* HBITMAP;
 #elif PLATFORM(QT)
-#include <QHash>
-class QMenu;
-class QListWidgetItem;
+namespace WebCore {
+    class QWebPopup;
+}
 #endif
 
 namespace WebCore {
@@ -125,8 +125,7 @@ private:
 #elif PLATFORM(QT)
     void clear();
     void populate(const IntRect&);
-    QMenu* m_popup;
-    QHash<QListWidgetItem*, int> m_actions;
+    QWebPopup* m_popup;
 #elif PLATFORM(WIN)
     void calculatePositionAndSize(const IntRect&, FrameView*);
     void invalidateItem(int index);

@@ -108,6 +108,7 @@ STYLESHEETS_EMBED = $$PWD/css/html4.css
 
 MANUALMOC += \
     $$PWD/platform/network/qt/ResourceHandleManagerQt.h \
+    $$PWD/platform/qt/QWebPopup.h \
     $$PWD/platform/qt/ScrollViewCanvasQt.h \
     $$PWD/platform/qt/SharedTimerQt.h \
     $$PWD/../WebKitQt/Api/qwebframe.h \
@@ -597,6 +598,7 @@ SOURCES += \
     platform/qt/PlatformMouseEventQt.cpp \
     platform/qt/PlatformScrollBarQt.cpp \
     platform/qt/PopupMenuQt.cpp \
+    platform/qt/QWebPopup.cpp \
     platform/qt/RenderThemeQt.cpp \
     platform/qt/ScreenQt.cpp \
     platform/qt/ScrollViewCanvasQt.cpp \

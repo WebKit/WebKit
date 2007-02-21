@@ -157,6 +157,11 @@ QWidget* Widget::qwidget() const
     return data->m_widget;
 }
 
+QWidget* Widget::canvas() const
+{
+    return data->canvas();
+}
+
 void Widget::setFrameGeometry(const IntRect& r)
 {
     if (!data->m_widget)

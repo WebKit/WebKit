@@ -29,6 +29,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "PopupMenuClient.h"
+#include "QWebPopup.h"
 
 #include <QAction>
 #include <QDebug>
@@ -37,7 +38,6 @@
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QWidgetAction>
-#include <qglobal.h>
 
 #define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
@@ -46,7 +46,7 @@ namespace WebCore {
 PopupMenu::PopupMenu(PopupMenuClient* client)
     : m_popupClient(client)
 {
-    m_popup = new QMenu();
+    m_popup = new QWebPopup(client);
 }
 
 PopupMenu::~PopupMenu()
@@ -57,26 +57,23 @@ PopupMenu::~PopupMenu()
 void PopupMenu::clear()
 {
     m_popup->clear();
-    m_actions.clear();
 }
 
 void PopupMenu::populate(const IntRect& r)
 {
     clear();
     Q_ASSERT(client());
+
     int size = client()->listSize();
-
-    QListWidget* listWidget = new QListWidget(m_popup);
-
     for (int i = 0; i < size; i++) {
-        QListWidgetItem* item = 0;
         if (client()->itemIsSeparator(i)) {
             //FIXME: better seperator item
-            item = new QListWidgetItem("---");
-            item->setFlags(0);
+            m_popup->insertItem(i, QString::fromLatin1("---"));
         }
         else {
-            RenderStyle* style = client()->itemStyle(i);
+            //RenderStyle* style = client()->itemStyle(i);
+            m_popup->insertItem(i, client()->itemText(i));
+#if 0
             item = new QListWidgetItem(client()->itemText(i));
             m_actions.insert(item, i);
             if (style->font() != Font())
@@ -86,51 +83,23 @@ void PopupMenu::populate(const IntRect& r)
             if (client()->itemIsEnabled(i))
                 flags |= Qt::ItemIsEnabled;
             item->setFlags(flags);
+#endif
         }
-        if (item)
-            listWidget->addItem(item);
     }
-    QWidgetAction* action = new QWidgetAction(m_popup);
-    action->setDefaultWidget(listWidget);
-    m_popup->addAction(action);
-    m_popup->setDefaultAction(action);
-    m_popup->resize(r.width(), r.width());
-    QObject::connect(listWidget, SIGNAL(itemActivated(QListWidgetItem*)),
-                     m_popup, SLOT(hide()));
 }
 
 void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 {
     populate(r);
-    //m_popup->setParent(v->qwidget());
-
-    RefPtr<PopupMenu> protector(this);
-    QAction* action = m_popup->exec(v->qwidget()->mapToGlobal(QPoint(r.x(), r.y())));
-    if (!action)
-        action = m_popup->defaultAction();
-
-    if (client()) {
-        QWidgetAction* wa = qobject_cast<QWidgetAction*>(action);
-
-        client()->hidePopup();
-
-        if (!wa)
-            return;
-        QListWidget* lw = qobject_cast<QListWidget*>(wa->defaultWidget());
-        if (!lw)
-            return;
-        QListWidgetItem* item = lw->currentItem();
-        if (!item)
-            return;
-        int newIndex = m_actions[item];
-        if (index != newIndex && newIndex >= 0)
-            client()->valueChanged(newIndex);
-    }
+    m_popup->setGeometry(QRect(v->canvas()->mapToGlobal(QPoint(r.x(), r.y())),
+                               QSize(r.width(), m_popup->sizeHint().height())));
+    m_popup->setCurrentIndex(index);
+    m_popup->exec();
 }
 
 void PopupMenu::hide()
 {
-    m_popup->hide();
+    m_popup->hidePopup();
 }
 
 void PopupMenu::updateFromElement()

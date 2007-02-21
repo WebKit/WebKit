@@ -1,3 +1,27 @@
+2007-02-21  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Lars
+
+        Implementing popups for the Qt platform.
+
+        * WebCore.pro:
+        * platform/PopupMenu.h:
+        * platform/Widget.h:
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::clear):
+        (WebCore::PopupMenu::populate):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        * platform/qt/QWebPopup.cpp: Added.
+        (WebCore::QWebPopup::QWebPopup):
+        (WebCore::QWebPopup::exec):
+        (WebCore::QWebPopup::hideEvent):
+        (WebCore::QWebPopup::activeChanged):
+        * platform/qt/QWebPopup.h: Added.
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::canvas):
+
 2007-02-21  George Staikos  <staikos@kde.org>
 
         Reviewed by Zack.
