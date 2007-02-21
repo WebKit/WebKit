@@ -62,7 +62,11 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
     return 0;
 }
 
-void Pasteboard::writeURL(const KURL&, const String&, Frame*)
+void Pasteboard::writeURL(const KURL&, const String&, Frame*, bool isImage)
+{
+}
+
+void Pasteboard::writeImage(const HitTestResult&)
 {
 }
 

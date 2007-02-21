@@ -1,3 +1,10 @@
+2007-02-21  Zack Rusin  <zrusin@trolltech.com>
+
+        Fix compilation.
+
+        * WebCoreSupport/ContextMenuClientQt.cpp:
+        * WebCoreSupport/ContextMenuClientQt.h:
+
 2007-02-21  George Staikos  <staikos@kde.org>
 
         Fix compile.

@@ -1,3 +1,11 @@
+2007-02-21  Zack Rusin  <zrusin@trolltech.com>
+
+        Fix compilation.
+
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::Pasteboard::writeImage):
+
 2007-02-20  Adam Roben  <aroben@apple.com>
 
         Preemptive build fix.
