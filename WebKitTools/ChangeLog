@@ -1,5 +1,20 @@
 2007-02-20  Geoffrey Garen  <ggaren@apple.com>
 
+        Tools tweak. No review necessary.
+        
+        Made parse-malloc-history executable. (Oops!)
+        
+        Made parse-malloc-history parse 'leaks' output in addition to 'malloc_history" 
+        output.
+        
+        Added the ability to merge callstacks by regexp, not just depth, so you 
+        can ask questions like, "How many of these allocations were due to that one 
+        call to ...?"
+        
+        * Scripts/parse-malloc-history:
+
+2007-02-20  Geoffrey Garen  <ggaren@apple.com>
+
         * Scripts/parse-malloc-history: Added copyright info.
 
 2007-02-20  Geoffrey Garen  <ggaren@apple.com>

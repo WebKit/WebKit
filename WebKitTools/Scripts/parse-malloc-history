@@ -42,17 +42,20 @@ sub main()
 {
     my $usage =
         "Usage: " . basename($0) . " [options] malloc_history.txt\n" .
-        "  --callstack-regexp   Include only call stacks that match this regular expression.\n" .
+        "  --grep-regexp        Include only call stacks that match this regular expression.\n" .
         "  --byte-minimum       Include only call stacks with allocation sizes >= this value.\n" .
+        "  --merge-regexp       Merge all call stacks that match this regular expression.\n" .
         "  --merge-depth        Merge all call stacks that match at this stack depth and above.\n";
 
-    my $mergeDepth = -1;
-    my $callstackRegexp = "";
+    my $grepRegexp = ""; # Expression that always matches
     my $byteMinimum = 0;
+    my $mergeRegexp = "^a(?<=a)"; # Expression that never matches
+    my $mergeDepth = -1;
     my $getOptionsResult = GetOptions(
-        "callstack-regexp:s" => \$callstackRegexp,
-        "byte-minimum:i" => \$byteMinimum,
-        "merge-depth:i" => \$mergeDepth
+        "grep-regexp=s" => \$grepRegexp,
+        "byte-minimum=i" => \$byteMinimum,
+        "merge-regexp=s" => \$mergeRegexp,
+        "merge-depth=i" => \$mergeDepth
     );
     my $fileName = $ARGV[0];
     die $usage if (!$getOptionsResult || !$fileName);
@@ -64,33 +67,60 @@ sub main()
     my %callstacks = ();
     my $byteCountTotal = 0;
 
-    for my $line (@file) {
-        my ($callCount, $byteCount) = ($line =~ /(\d+) calls for (\d+) bytes/);
-        if ($callCount && $byteCount) {
-            $byteCountTotal += $byteCount;
+    for (my $i = 0; $i < @file; $i++) {
+        my $line = $file[$i];
+        my ($callCount, $byteCount);
 
-            next if !($line =~ $callstackRegexp);
+        # First try malloc_history format
+        #   6 calls for 664 bytes thread_ffffffff |0x0 | start
+        ($callCount, $byteCount) = ($line =~ /(\d+) calls for (\d+) bytes/);
+        
+        # Then try leaks format
+        #   Leak: 0x0ac3ca40  size=48
+        #   0x00020001 0x00000001 0x00000000 0x00000000     ................
+        #   Call stack: [thread ffffffff]: | 0x0 | start
+        if (!$callCount || !$byteCount) {
+            $callCount = 1;
+            ($byteCount) = ($line =~ /Leak: [x[:xdigit:]]*  size=(\d+)/);
 
-            my $callstackBegin;
-            if ($mergeDepth == -1) { # start at beginning of callstack
-                $callstackBegin = index($line, "|");
-            } else { # count stack frames backwards from end of callstack
-                $callstackBegin = length($line);
-                for (my $pipeCount = 0; $pipeCount < $mergeDepth; $pipeCount++) {
-                    my $rindexResult = rindex($line, "|", $callstackBegin - 1);
-                    last if $rindexResult == -1;
-                    $callstackBegin = $rindexResult;
+            if ($byteCount) {
+                while (!($line =~ "Call stack: ")) {
+                    $i++;
+                    $line = $file[$i];
                 }
             }
-
-            my $callstack = substr($line, $callstackBegin + 2); # + 2 skips "| "
-            if (!$callstacks{$callstack}) {
-                $callstacks{$callstack} = {"callCount" => 0, "byteCount" => 0};
-            }
-
-            $callstacks{$callstack}{"callCount"} += $callCount;
-            $callstacks{$callstack}{"byteCount"} += $byteCount;
         }
+        
+        # Then give up
+        next if (!$callCount || !$byteCount);
+        
+        $byteCountTotal += $byteCount;
+
+        next if !($line =~ $grepRegexp);
+
+        my $callstackBegin;
+        if ($mergeDepth == -1) { # start at beginning of callstack
+            $callstackBegin = index($line, "|");
+        } else { # count stack frames backwards from end of callstack
+            $callstackBegin = length($line);
+            for (my $pipeCount = 0; $pipeCount < $mergeDepth; $pipeCount++) {
+                my $rindexResult = rindex($line, "|", $callstackBegin - 1);
+                last if $rindexResult == -1;
+                $callstackBegin = $rindexResult;
+            }
+        }
+
+        my $callstack = substr($line, $callstackBegin + 2); # + 2 skips "| "
+        if ($callstack =~ $mergeRegexp) {
+            $callstack = $mergeRegexp . "\n";
+        }
+        
+        if (!$callstacks{$callstack}) {
+            $callstacks{$callstack} = {"callCount" => 0, "byteCount" => 0};
+        }
+
+        $callstacks{$callstack}{"callCount"} += $callCount;
+        $callstacks{$callstack}{"byteCount"} += $byteCount;
     }
 
     my $byteCountTotalReported = 0;
