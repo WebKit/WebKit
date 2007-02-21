@@ -39,6 +39,7 @@
 
 #include "Color.h"
 #include "Document.h"
+#include "Font.h"
 #include "RenderTheme.h"
 #include "GraphicsContext.h"
 
@@ -67,7 +68,8 @@ bool RenderThemeQt::supportsFocusRing(const RenderStyle* style) const
 
 short RenderThemeQt::baselinePosition(const RenderObject* o) const
 {
-    if (o->style()->appearance() == CheckboxAppearance || o->style()->appearance() == RadioAppearance)
+    if (o->style()->appearance() == CheckboxAppearance ||
+        o->style()->appearance() == RadioAppearance)
         return o->marginTop() + o->height() - 2; // Same as in old khtml
     return RenderTheme::baselinePosition(o);
 }
@@ -275,15 +277,6 @@ bool RenderThemeQt::paintTextField(RenderObject* o, const RenderObject::PaintInf
 
 void RenderThemeQt::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
-    style->resetBorder();
-
-    // Height is locked to auto.
-    style->setHeight(Length(Auto));
-
-    // White-space is locked to pre
-    style->setWhiteSpace(PRE);
-
-    setPrimitiveSize(style);
 }
 
 void RenderThemeQt::adjustMenuListStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
@@ -464,7 +457,7 @@ void RenderThemeQt::setSizeFromFont(RenderStyle* style) const
 
 IntSize RenderThemeQt::sizeForFont(RenderStyle* style) const
 {
-    const QFontMetrics &fm = QApplication::fontMetrics();
+    const QFontMetrics fm(style->font());
     QSize size(0, 0);
     switch (style->appearance()) {
     case CheckboxAppearance: {
@@ -517,7 +510,7 @@ void RenderThemeQt::setButtonPadding(RenderStyle* style) const
     const int padding = 8;
     style->setPaddingLeft(Length(padding, Fixed));
     style->setPaddingRight(Length(padding, Fixed));
-    style->setPaddingTop(Length(1, Fixed));
+    style->setPaddingTop(Length(0, Fixed));
     style->setPaddingBottom(Length(0, Fixed));
 }
 
