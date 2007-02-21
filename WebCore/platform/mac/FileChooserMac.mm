@@ -35,8 +35,8 @@
 #import "Frame.h"
 #import "Icon.h"
 #import "LocalizedStrings.h"
+#import "StringTruncator.h"
 #import "WebCoreFrameBridge.h"
-#import "WebCoreStringTruncator.h"
 
 using namespace WebCore;
 
@@ -122,8 +122,7 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
     else
         strToTruncate = [[NSFileManager defaultManager] displayNameAtPath:m_filename];
 
-    return [WebCoreStringTruncator centerTruncateString:strToTruncate
-        toWidth:width withFont:font.primaryFont()->getNSFont()];
+    return StringTruncator::centerTruncate(strToTruncate, width, font);
 }
 
 }

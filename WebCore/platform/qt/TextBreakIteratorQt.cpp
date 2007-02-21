@@ -174,5 +174,10 @@ int textBreakCurrent(TextBreakIterator* bi)
     return bi->currentPos;
 }
 
+bool isTextBreak(TextBreakIterator*, int)
+{
+    return true;
+}
+
 }
 

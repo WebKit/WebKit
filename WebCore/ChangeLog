@@ -1,3 +1,32 @@
+2007-02-20  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Darin and Anders.
+
+        Fix <rdar://problem/4736215> Make WebCoreStringTruncator use WebCore types
+
+        * WebCore.exp: Updated symbols.
+        * WebCore.xcodeproj/project.pbxproj: Updated file names.
+        * bridge/mac/WebCoreStringTruncator.h: Removed.
+        * bridge/mac/WebCoreStringTruncator.mm: Removed.
+        * platform/StringTruncator.cpp: Added. Moved from bridge/mac/WebCoreStringTruncator.mm.
+        (WebCore::textBreakAtOrPreceding): Added.
+        (WebCore::boundedTextBreakFollowing): Added.
+        (WebCore::centerTruncateToBuffer):
+        (WebCore::rightTruncateToBuffer):
+        (WebCore::stringWidth): Now takes a const Font& instead of a Font*.
+        (WebCore::truncateString):
+        (WebCore::StringTruncator::centerTruncate):
+        (WebCore::StringTruncator::rightTruncate):
+        (WebCore::StringTruncator::width):
+        * platform/StringTruncator.h: Added.
+        * platform/TextBreakIterator.h: Added isTextBreak declaration.
+        * platform/TextBreakIteratorICU.cpp:
+        (WebCore::isTextBreak): Implemented.
+        * platform/mac/FileChooserMac.mm:
+        (WebCore::FileChooser::basenameForWidth): Updated for changes to WebCoreStringTruncator.
+        * platform/qt/TextBreakIteratorQt.cpp:
+        (WebCore::isTextBreak): Stubbed out.
+
 2007-02-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

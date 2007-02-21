@@ -29,7 +29,33 @@
 #import "WebStringTruncator.h"
 
 #import "WebSystemInterface.h"
-#import <WebCore/WebCoreStringTruncator.h>
+#import <WebCore/Font.h>
+#import <WebCore/FontPlatformData.h>
+#import <WebCore/PlatformString.h>
+#import <WebCore/StringTruncator.h>
+
+using namespace WebCore;
+
+static NSFont *defaultMenuFont()
+{
+    static NSFont *defaultMenuFont = [[NSFont menuFontOfSize:0] retain];
+    return defaultMenuFont;
+}
+
+static Font& fontFromNSFont(NSFont *font)
+{
+    static NSFont *currentFont;
+    static Font currentRenderer;
+
+    if ([font isEqual:currentFont])
+        return currentRenderer;
+    
+    [currentFont release];
+    currentFont = [font retain];
+    FontPlatformData f(font);
+    currentRenderer = Font(f, ![[NSGraphicsContext currentContext] isDrawingToScreen]);
+    return currentRenderer;
+}
 
 @implementation WebStringTruncator
 
@@ -40,22 +66,22 @@
 
 + (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth
 {
-    return [WebCoreStringTruncator centerTruncateString:string toWidth:maxWidth];
+    return StringTruncator::centerTruncate(string, maxWidth, fontFromNSFont(defaultMenuFont()));
 }
 
 + (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font
 {
-    return [WebCoreStringTruncator centerTruncateString:string toWidth:maxWidth withFont:font];
+    return StringTruncator::centerTruncate(string, maxWidth, fontFromNSFont(font));
 }
 
 + (NSString *)rightTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font
 {
-    return [WebCoreStringTruncator rightTruncateString:string toWidth:maxWidth withFont:font];
+    return StringTruncator::rightTruncate(string, maxWidth, fontFromNSFont(font));
 }
 
 + (float)widthOfString:(NSString *)string font:(NSFont *)font
 {
-    return [WebCoreStringTruncator widthOfString:string font:font];
+    return StringTruncator::width(string, fontFromNSFont(font));
 }
 
 @end

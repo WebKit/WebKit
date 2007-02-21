@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,17 +26,21 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@interface WebCoreStringTruncator : NSObject
+#ifndef StringTruncator_h
+#define StringTruncator_h
 
-+ (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font;
+namespace WebCore {
+    
+    class Font;
+    class String;
+    
+    class StringTruncator {
+    public:
+        static String centerTruncate(const String&, float maxWidth, const Font&);
+        static String rightTruncate(const String&, float maxWidth, const Font&);
+        static float width(const String&, const Font&);
+    };
+    
+} // namespace WebCore
 
-// Default font is [NSFont menuFontOfSize:0].
-+ (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth;
-
-+ (NSString *)rightTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font;
-
-+ (float)widthOfString:(NSString *)string font:(NSFont *)font;
-
-+ (void)clear;
-
-@end
+#endif // !defined(StringTruncator_h)

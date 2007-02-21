@@ -33,6 +33,8 @@
 		066C772D0AB603D200238CC4 /* FileChooserMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 066C772C0AB603D200238CC4 /* FileChooserMac.mm */; };
 		066C77300AB603FD00238CC4 /* RenderFileUploadControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 066C772E0AB603FD00238CC4 /* RenderFileUploadControl.cpp */; };
 		066C77310AB603FD00238CC4 /* RenderFileUploadControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */; };
+		06A6A73C0B8BA44800DF1703 /* StringTruncator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 06A6A73A0B8BA44800DF1703 /* StringTruncator.cpp */; };
+		06A6A73D0B8BA44800DF1703 /* StringTruncator.h in Headers */ = {isa = PBXBuildFile; fileRef = 06A6A73B0B8BA44800DF1703 /* StringTruncator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		06E81ED70AB5D5E900C87837 /* LocalCurrentGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */; };
 		06E81EEC0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */; };
 		1402645E0AFDC19B005919E2 /* LoggingMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1402645D0AFDC19B005919E2 /* LoggingMac.mm */; };
@@ -402,8 +404,6 @@
 		658436860AE01B7400E53753 /* FrameLoadRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 658436850AE01B7400E53753 /* FrameLoadRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		658821660AF4CDF700F01D1F /* ResourceResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 658821650AF4CDF700F01D1F /* ResourceResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6588216C0AF4CE1200F01D1F /* ResourceResponseMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 658821690AF4CE1200F01D1F /* ResourceResponseMac.mm */; };
-		65901A4409FC6039005BD752 /* WebCoreStringTruncator.h in Headers */ = {isa = PBXBuildFile; fileRef = 65901A4209FC6039005BD752 /* WebCoreStringTruncator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		65901A4509FC6039005BD752 /* WebCoreStringTruncator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65901A4309FC6039005BD752 /* WebCoreStringTruncator.mm */; };
 		6593923709AE4346002C531F /* KURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6593923509AE4346002C531F /* KURL.cpp */; };
 		6593923809AE4346002C531F /* KURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 6593923609AE4346002C531F /* KURL.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6593923A09AE435C002C531F /* KURLMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6593923909AE435C002C531F /* KURLMac.mm */; };
@@ -3094,6 +3094,8 @@
 		066C772C0AB603D200238CC4 /* FileChooserMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FileChooserMac.mm; sourceTree = "<group>"; };
 		066C772E0AB603FD00238CC4 /* RenderFileUploadControl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFileUploadControl.cpp; sourceTree = "<group>"; };
 		066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderFileUploadControl.h; sourceTree = "<group>"; };
+		06A6A73A0B8BA44800DF1703 /* StringTruncator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StringTruncator.cpp; sourceTree = "<group>"; };
+		06A6A73B0B8BA44800DF1703 /* StringTruncator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StringTruncator.h; sourceTree = "<group>"; };
 		06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalCurrentGraphicsContext.h; sourceTree = "<group>"; };
 		06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalCurrentGraphicsContext.mm; sourceTree = "<group>"; };
 		1402645D0AFDC19B005919E2 /* LoggingMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LoggingMac.mm; sourceTree = "<group>"; };
@@ -3525,8 +3527,6 @@
 		658436850AE01B7400E53753 /* FrameLoadRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameLoadRequest.h; sourceTree = "<group>"; };
 		658821650AF4CDF700F01D1F /* ResourceResponse.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceResponse.h; sourceTree = "<group>"; };
 		658821690AF4CE1200F01D1F /* ResourceResponseMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceResponseMac.mm; sourceTree = "<group>"; };
-		65901A4209FC6039005BD752 /* WebCoreStringTruncator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreStringTruncator.h; sourceTree = "<group>"; };
-		65901A4309FC6039005BD752 /* WebCoreStringTruncator.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreStringTruncator.mm; sourceTree = "<group>"; };
 		6593923509AE4346002C531F /* KURL.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = KURL.cpp; sourceTree = "<group>"; };
 		6593923609AE4346002C531F /* KURL.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KURL.h; sourceTree = "<group>"; };
 		6593923909AE435C002C531F /* KURLMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KURLMac.mm; sourceTree = "<group>"; };
@@ -6958,8 +6958,6 @@
 				F5B2A52C02E22573018635CB /* WebCoreJavaScript.mm */,
 				7E6FEED60898582300C44C3F /* WebCoreScriptDebugger.h */,
 				7E6FEED70898582300C44C3F /* WebCoreScriptDebugger.mm */,
-				65901A4209FC6039005BD752 /* WebCoreStringTruncator.h */,
-				65901A4309FC6039005BD752 /* WebCoreStringTruncator.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -9133,6 +9131,8 @@
 				93126F6009D7A736008D9626 /* StringHash.h */,
 				93CD4FDC0995F9EA007ECC97 /* StringImpl.cpp */,
 				93CD4FDD0995F9EA007ECC97 /* StringImpl.h */,
+				06A6A73A0B8BA44800DF1703 /* StringTruncator.cpp */,
+				06A6A73B0B8BA44800DF1703 /* StringTruncator.h */,
 				93E62D990985F41600E1B5E3 /* SystemTime.h */,
 				9352071809BD3BA500F2038D /* TextBoundaries.h */,
 				BC18C5CE0B2A886F0018461D /* TextBreakIterator.h */,
@@ -10098,7 +10098,6 @@
 				14115B7309F84CD600CA4FC1 /* JSNodeFilter.h in Headers */,
 				14E8378E09F85D4F00B85AE4 /* JSEvent.h in Headers */,
 				93EB169709F880C00091F8FF /* WebCoreSystemInterface.h in Headers */,
-				65901A4409FC6039005BD752 /* WebCoreStringTruncator.h in Headers */,
 				BC066F6F09FEB2FA00C589A7 /* WebCoreTextRenderer.h in Headers */,
 				14DC0D3809FED073007B0235 /* JSNode.h in Headers */,
 				14D0C82509FF0EF5006B36D9 /* kjs_domnode.h in Headers */,
@@ -11142,6 +11141,7 @@
 				DDE63ED50B7D45A800226998 /* DOMTextEvent.h in Headers */,
 				37919C240B7D188600A56998 /* PositionIterator.h in Headers */,
 				DD05FE0D0B8BA3C6009ACDFE /* WebCoreObjCExtras.h in Headers */,
+				06A6A73D0B8BA44800DF1703 /* StringTruncator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11681,7 +11681,6 @@
 				14115B7209F84CD600CA4FC1 /* JSNodeFilter.cpp in Sources */,
 				14E8378409F85D1C00B85AE4 /* JSEvent.cpp in Sources */,
 				93EB169509F880B00091F8FF /* WebCoreSystemInterface.mm in Sources */,
-				65901A4509FC6039005BD752 /* WebCoreStringTruncator.mm in Sources */,
 				BCFE8E320A02A1D30009E61D /* WebCoreTextRenderer.mm in Sources */,
 				14DC0D3709FED073007B0235 /* JSNode.cpp in Sources */,
 				142011B60A003133008303F9 /* JSCSSStyleDeclaration.cpp in Sources */,
@@ -12505,6 +12504,7 @@
 				A7CFB3D50B7ED1180070C32D /* DragImageMac.mm in Sources */,
 				37919C230B7D188600A56998 /* PositionIterator.cpp in Sources */,
 				DD05FE0E0B8BA3C6009ACDFE /* WebCoreObjCExtras.c in Sources */,
+				06A6A73C0B8BA44800DF1703 /* StringTruncator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
