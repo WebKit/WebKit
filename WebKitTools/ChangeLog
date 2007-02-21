@@ -1,4 +1,12 @@
 2007-02-21  Geoffrey Garen  <ggaren@apple.com>
+        
+        Reduced --leaks mode to running only 750 tests at a time, in the hopes
+        of fixing intermittent crasher that may be caused by out of memory
+        conditions.
+
+        * Scripts/run-webkit-tests:
+
+2007-02-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
 
