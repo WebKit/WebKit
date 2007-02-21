@@ -1034,7 +1034,7 @@ function loadFile(fileIndex, manageNavLists)
         
         functionSelect.removeChildren();
         functionOption.value = null;
-        functionOption.text = "< no selected symbol >";
+        functionOption.text = "<No selected symbol>";
         functionSelect.appendChild(functionOption);
         
         for (var i = 0; i < file.functionNames.length; i++) {
@@ -1051,10 +1051,17 @@ function loadFile(fileIndex, manageNavLists)
         if (currentFile != -1)
             previousFiles.push(currentFile);
     }
-
+    
     document.getElementById("navFileLeftButton").disabled = (previousFiles.length == 0);
     document.getElementById("navFileRightButton").disabled = (nextFiles.length == 0);
 
+    //Remember and recall scroll position for current file and file we just loaded
+    var frameBody = document.getElementById("sources").contentDocument.body;
+    if (currentFile != -1) 
+        files[currentFile].scrollPosition = frameBody.scrollTop;
+    frameBody.scrollTop = file.scrollPosition;
+    frameBody.scrollLeft = 0;
+    
     currentFile = fileIndex;
 }
 
