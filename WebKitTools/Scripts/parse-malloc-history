@@ -47,15 +47,15 @@ sub main()
         "  --merge-regexp       Merge all call stacks that match this regular expression.\n" .
         "  --merge-depth        Merge all call stacks that match at this stack depth and above.\n";
 
-    my $grepRegexp = ""; # Expression that always matches
-    my $byteMinimum = 0;
-    my $mergeRegexp = "^a(?<=a)"; # Expression that never matches
-    my $mergeDepth = -1;
+    my $grepRegexp = "";
+    my $byteMinimum = "";
+    my @mergeRegexps = ();
+    my $mergeDepth = "";
     my $getOptionsResult = GetOptions(
-        "grep-regexp=s" => \$grepRegexp,
-        "byte-minimum=i" => \$byteMinimum,
-        "merge-regexp=s" => \$mergeRegexp,
-        "merge-depth=i" => \$mergeDepth
+        "grep-regexp:s" => \$grepRegexp,
+        "byte-minimum:i" => \$byteMinimum,
+        "merge-regexp:s" => \@mergeRegexps,
+        "merge-depth:i" => \$mergeDepth
     );
     my $fileName = $ARGV[0];
     die $usage if (!$getOptionsResult || !$fileName);
@@ -96,23 +96,28 @@ sub main()
         
         $byteCountTotal += $byteCount;
 
-        next if !($line =~ $grepRegexp);
+        next if ($grepRegexp && !($line =~ $grepRegexp));
 
-        my $callstackBegin;
-        if ($mergeDepth == -1) { # start at beginning of callstack
-            $callstackBegin = index($line, "|");
-        } else { # count stack frames backwards from end of callstack
+        my $callstackBegin = 0;
+        if ($mergeDepth) {
+            # count stack frames backwards from end of callstack
             $callstackBegin = length($line);
             for (my $pipeCount = 0; $pipeCount < $mergeDepth; $pipeCount++) {
                 my $rindexResult = rindex($line, "|", $callstackBegin - 1);
                 last if $rindexResult == -1;
                 $callstackBegin = $rindexResult;
             }
+        } else {
+            # start at beginning of callstack
+            $callstackBegin = index($line, "|");
         }
 
         my $callstack = substr($line, $callstackBegin + 2); # + 2 skips "| "
-        if ($callstack =~ $mergeRegexp) {
-            $callstack = $mergeRegexp . "\n";
+        for my $regexp (@mergeRegexps) {
+            if ($callstack =~ $regexp) {
+                $callstack = $regexp . "\n";
+                last;
+            }
         }
         
         if (!$callstacks{$callstack}) {
@@ -127,7 +132,7 @@ sub main()
     for my $callstack (sort { $callstacks{$b}{"byteCount"} <=> $callstacks{$a}{"byteCount"} } keys %callstacks) {
         my $callCount = $callstacks{$callstack}{"callCount"};
         my $byteCount = $callstacks{$callstack}{"byteCount"};
-        last if $byteCount < $byteMinimum;
+        last if ($byteMinimum && $byteCount < $byteMinimum);
 
         $byteCountTotalReported += $byteCount;
         print commify($callCount) . " calls for " . commify($byteCount) . " bytes: $callstack\n";

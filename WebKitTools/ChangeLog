@@ -1,3 +1,11 @@
+2007-02-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Tools tweak. No review necessary.
+        
+        * Scripts/parse-malloc-history: Enabled multiple merge-regexp command line
+        arguments. Changed command line argument variables from special implicit 
+        no-op values to specific empty values that we test explicitly.
+
 2007-02-21  Vladimir Olexa  <vladimir.olexa@gmail.com>
 
         Reviewed by Tim H.
