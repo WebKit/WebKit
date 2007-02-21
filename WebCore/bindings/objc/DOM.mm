@@ -71,6 +71,15 @@
 #import "SVGNames.h"
 #endif
 
+NSString * const DOMException = @"DOMException";
+NSString * const DOMEventException = @"DOMEventException";
+NSString * const DOMRangeException = @"DOMRangeException";
+NSString * const DOMXPathException = @"DOMXPathException";
+
+#ifdef SVG_SUPPORT
+NSString * const DOMSVGException = @"DOMSVGException";
+#endif
+
 namespace WebCore {
 
 class ObjCEventListener : public EventListener {
