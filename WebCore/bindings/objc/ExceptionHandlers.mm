@@ -31,29 +31,39 @@
 #include "SVGException.h"
 #include "XPathEvaluator.h"
 
+NSString * const DOMException = @"DOMException";
+NSString * const DOMRangeException = @"DOMRangeException";
+NSString * const DOMEventException = @"DOMEventException";
+#ifdef SVG_SUPPORT
+NSString * const DOMSVGException = @"DOMSVGException";
+#endif
+#ifdef XPATH_SUPPORT
+NSString * const DOMXPathException = @"DOMXPathException";
+#endif
+
 namespace WebCore {
 
 void raiseDOMException(ExceptionCode ec)
 {
     ASSERT(ec);
 
-    NSString *name = @"DOMException";
+    NSString *name = DOMException;
 
     int code = ec;
     if (ec >= RangeExceptionOffset && ec <= RangeExceptionMax) {
-        name = @"DOMRangeException";
+        name = DOMRangeException;
         code -= RangeExceptionOffset;
     } else if (ec >= EventExceptionOffset && ec <= EventExceptionMax) {
-        name = @"DOMEventException";
+        name = DOMEventException;
         code -= EventExceptionOffset;
 #ifdef SVG_SUPPORT
     } else if (ec >= SVGExceptionOffset && ec <= SVGExceptionMax) {
-        name = @"DOMSVGException";
+        name = DOMSVGException;
         code -= SVGExceptionOffset;
 #endif
 #ifdef XPATH_SUPPORT
     } else if (ec >= XPathExceptionOffset && ec <= XPathExceptionMax) {
-        name = @"DOMXPathException";
+        name = DOMXPathException;
         code -= XPathExceptionOffset;
 #endif
     }
