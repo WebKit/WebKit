@@ -26,6 +26,7 @@
 #include "HTMLOptionsCollection.h"
 #include "HTMLSelectElement.h"
 #include "JSHTMLOptionElement.h"
+#include "JSHTMLSelectElementCustom.h"
 
 #include <kjs/operations.h>
 
@@ -58,26 +59,11 @@ void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValue* value)
     setDOMException(exec, ec);
 }
 
-void JSHTMLOptionsCollection::indexSetter(KJS::ExecState* exec, const KJS::Identifier &propertyName, KJS::JSValue* value, int attr)
+void JSHTMLOptionsCollection::indexSetter(KJS::ExecState* exec, unsigned index, KJS::JSValue* value, int attr)
 {
-    bool ok;
-    unsigned index = propertyName.toUInt32(&ok);
-    if (!ok)
-        return;
-
     HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
     HTMLSelectElement* base = static_cast<HTMLSelectElement*>(imp->base());
-    if (value->isUndefinedOrNull())
-        base->remove(index);
-    else {
-        ExceptionCode ec = 0;
-        HTMLOptionElement* option = toHTMLOptionElement(value);
-        if (!option)
-            ec = TYPE_MISMATCH_ERR;
-        else
-            base->setOption(index, option, ec);
-        setDOMException(exec, ec);
-    }
+    selectIndexSetter(base, exec, index, value);
 }
 
 }

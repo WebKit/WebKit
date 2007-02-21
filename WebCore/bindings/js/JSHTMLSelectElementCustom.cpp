@@ -19,11 +19,13 @@
  */
 
 #include "config.h"
-#include "JSHTMLSelectElement.h"
+#include "JSHTMLSelectElementCustom.h"
 
+#include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
+#include "JSHTMLOptionElement.h"
 
 namespace WebCore {
 
@@ -42,6 +44,26 @@ JSValue* JSHTMLSelectElement::remove(ExecState* exec, const List& args)
         select.remove(static_cast<int>(args[0]->toNumber(exec)));
 
     return jsUndefined();
+}
+
+void selectIndexSetter(HTMLSelectElement* select, KJS::ExecState* exec, unsigned index, KJS::JSValue* value)
+{
+    if (value->isUndefinedOrNull())
+        select->remove(index);
+    else {
+        ExceptionCode ec = 0;
+        HTMLOptionElement* option = toHTMLOptionElement(value);
+        if (!option)
+            ec = TYPE_MISMATCH_ERR;
+        else
+            select->setOption(index, option, ec);
+        setDOMException(exec, ec);
+    }
+}
+
+void JSHTMLSelectElement::indexSetter(KJS::ExecState* exec, unsigned index, KJS::JSValue* value, int attr)
+{
+    selectIndexSetter(static_cast<HTMLSelectElement*>(impl()), exec, index, value);
 }
 
 }

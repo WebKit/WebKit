@@ -412,7 +412,7 @@ sub GenerateHeader
 
     # Index setter
     if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
-        push(@headerContent, "    void indexSetter(KJS::ExecState*, const KJS::Identifier &propertyName, KJS::JSValue*, int attr);\n");
+        push(@headerContent, "    void indexSetter(KJS::ExecState*, unsigned index, KJS::JSValue*, int attr);\n");
     }
 
     if (!$hasParent) {
@@ -878,11 +878,14 @@ sub GenerateImplementation
             push(@implContent, "void ${className}::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)\n");
             push(@implContent, "{\n");
             if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
-                push(@implContent, "    if (!lookupPut<$className>(exec, propertyName, value, attr, &${className}Table, this))\n");
-                push(@implContent, "        indexSetter(exec, propertyName, value, attr);\n");
-            } else {
-                push(@implContent, "    lookupPut<$className, $parentClassName>(exec, propertyName, value, attr, &${className}Table, this);\n");
+                push(@implContent, "    bool ok;\n");
+                push(@implContent, "    unsigned index = propertyName.toUInt32(&ok);\n");
+                push(@implContent, "    if (ok) {\n");
+                push(@implContent, "        indexSetter(exec, index, value, attr);\n");
+                push(@implContent, "        return;\n");
+                push(@implContent, "    }\n");
             }
+            push(@implContent, "    lookupPut<$className, $parentClassName>(exec, propertyName, value, attr, &${className}Table, this);\n");
             push(@implContent, "}\n\n");
 
             push(@implContent, "void ${className}::putValueProperty(ExecState* exec, int token, JSValue* value, int /*attr*/)\n");
