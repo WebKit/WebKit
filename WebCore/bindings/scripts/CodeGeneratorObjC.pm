@@ -3,7 +3,7 @@
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com> 
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
-# Copyright (C) 2006 Apple Computer, Inc.
+# Copyright (C) 2006, 2007 Apple Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -440,6 +440,30 @@ sub GetObjCType
     return "$name *";
 }
 
+sub GetPropertyAttributes
+{
+    my $type = $codeGenerator->StripModule(shift);
+    my $readOnly = shift;
+
+    my @attributes = ();
+
+    push(@attributes, "readonly") if $readOnly;
+
+#    FIXME: uncomment these lines once <rdar://problem/4996504> is fixed.
+#    unless ($readOnly) {
+        if ($codeGenerator->IsStringType($type) || IsNativeObjCType($type)) {
+            push(@attributes, "copy");
+        } elsif ($codeGenerator->IsPodType($type) || $codeGenerator->IsSVGAnimatedType($type)) {
+            push(@attributes, "retain");
+        } elsif (!$codeGenerator->IsStringType($type) && !$codeGenerator->IsPrimitiveType($type) && $type ne "DOMTimeStamp" && $type ne "CompareHow" && $type ne "SVGPaintType") {
+            push(@attributes, "retain");
+        }
+#    }
+
+    return "" unless @attributes > 0;
+    return "(" . join(", ", @attributes) . ")";
+}
+
 sub GetObjCTypeMaker
 {
     my $type = $codeGenerator->StripModule(shift);
@@ -694,6 +718,9 @@ sub GenerateHeader
     my @headerAttributes = ();
     my @privateHeaderAttributes = ();
 
+    my @headerAttributesOldStyle = ();
+    my @privateHeaderAttributesOldStyle = ();
+
     # - Add attribute getters/setters.
     if ($numAttributes > 0) {
         # Add ivars, if any, first
@@ -701,15 +728,16 @@ sub GenerateHeader
         foreach my $attribute (@{$dataNode->attributes}) {
             push(@ivars, $attribute) if $attribute->signature->extendedAttributes->{"ObjCIvar"};
         }
+
         if (@ivars > 0) {
-            push(@headerAttributes, "{\n");
+            push(@headerContent, "{\n");
             foreach my $attribute (@ivars) {
                 my $type = GetObjCType($attribute->signature->type);;
                 my $name = "m_" . $attribute->signature->name;
                 my $ivarDeclaration = "$type $name";
-                push(@headerAttributes, "    $ivarDeclaration;\n");
+                push(@headerContent, "    $ivarDeclaration;\n");
             }
-            push(@headerAttributes, "}\n");
+            push(@headerContent, "}\n");
         }
 
         foreach my $attribute (@{$dataNode->attributes}) {
@@ -726,20 +754,22 @@ sub GenerateHeader
             my $attributeType = GetObjCType($attribute->signature->type);
             my $attributeIsReadonly = ($attribute->type =~ /^readonly/);
 
-            my $property = "\@property" . ($attributeIsReadonly ? "(readonly)" : "") . " " . $attributeType . ($attributeType =~ /\*$/ ? "" : " ") . $attributeName . ";";
+            my $property = "\@property" . GetPropertyAttributes($attribute->signature->type, $attributeIsReadonly);
+            $property .= " " . $attributeType . ($attributeType =~ /\*$/ ? "" : " ") . $attributeName . ";";
 
             my $public = ($publicInterfaces{$property} or $newPublicClass);
             delete $publicInterfaces{$property};
 
             AddForwardDeclarationsForType($attribute->signature->type, $public);
 
-            my $setterName = "set" . WK_ucfirst($attributeName) . ":";
+            my $setterName = "set" . ucfirst($attributeName) . ":";
 
             my $conflict = $conflictMethod{$attributeName};
             if ($conflict) {
                 warn "$className conflicts with $conflict method $attributeName\n";
                 $sawConflict = 1;
             }
+
             $conflict = $conflictMethod{$setterName};
             if ($conflict) {
                 warn "$className conflicts with $conflict method $setterName\n";
@@ -750,6 +780,12 @@ sub GenerateHeader
                 $property .= "\n";
                 push(@headerAttributes, $property) if $public;
                 push(@privateHeaderAttributes, $property) unless $public;
+
+                my $oldStyleProperty = "\@property" . ($attributeIsReadonly ? "(readonly)" : "");
+                $oldStyleProperty .= " " . $attributeType . ($attributeType =~ /\*$/ ? "" : " ") . $attributeName . ";\n";
+
+                push(@headerAttributesOldStyle, $oldStyleProperty) if $public;
+                push(@privateHeaderAttributesOldStyle, $oldStyleProperty) unless $public;
             } else {
                 # - GETTER
                 my $getter = "- (" . $attributeType . ")" . $attributeName . ";\n";
@@ -758,14 +794,18 @@ sub GenerateHeader
 
                 # - SETTER
                 if (!$attributeIsReadonly) {
-                    my $setter = "- (void)$setterName(" . $attributeType . ")new" . WK_ucfirst($attributeName) . ";\n";
+                    my $setter = "- (void)$setterName(" . $attributeType . ")new" . ucfirst($attributeName) . ";\n";
                     push(@headerAttributes, $setter) if $public;
                     push(@privateHeaderAttributes, $setter) unless $public;
                 }
             }
         }
 
+        push(@headerContent, "#ifdef OBJC_NEW_PROPERTIES\n") if $buildingForLeopardOrLater;
         push(@headerContent, @headerAttributes) if @headerAttributes > 0;
+        push(@headerContent, "#else\n") if $buildingForLeopardOrLater;
+        push(@headerContent, @headerAttributesOldStyle) if @headerAttributesOldStyle > 0 and $buildingForLeopardOrLater;
+        push(@headerContent, "#endif\n") if $buildingForLeopardOrLater;
     }
 
     my @headerFunctions = ();
@@ -866,7 +906,11 @@ sub GenerateHeader
 
         @privateHeaderContent = ();
         push(@privateHeaderContent, "\@interface $className (" . $className . "Private)\n");
+        push(@privateHeaderContent, "#ifdef OBJC_NEW_PROPERTIES\n") if $buildingForLeopardOrLater;
         push(@privateHeaderContent, @privateHeaderAttributes) if @privateHeaderAttributes > 0;
+        push(@privateHeaderContent, "#else\n") if $buildingForLeopardOrLater;
+        push(@privateHeaderContent, @privateHeaderAttributesOldStyle) if @privateHeaderAttributesOldStyle > 0 and $buildingForLeopardOrLater;
+        push(@privateHeaderContent, "#endif\n") if $buildingForLeopardOrLater;
         push(@privateHeaderContent, "\n") if $buildingForLeopardOrLater and @privateHeaderAttributes > 0 and @privateHeaderFunctions > 0;
         push(@privateHeaderContent, @privateHeaderFunctions) if @privateHeaderFunctions > 0;
         push(@privateHeaderContent, "\@end\n");
@@ -1120,8 +1164,8 @@ sub GenerateImplementation
                 my $hasSetterException = @{$attribute->setterExceptions};
 
                 $attributeName = "set" . WK_ucfirst($attributeName);
-                my $setterName = "set" . WK_ucfirst($attributeInterfaceName);
-                my $argName = "new" . WK_ucfirst($attributeInterfaceName);
+                my $setterName = "set" . ucfirst($attributeInterfaceName);
+                my $argName = "new" . ucfirst($attributeInterfaceName);
                 my $arg = GetObjCTypeGetter($argName, $idlType);
 
                 if ($attribute->signature->extendedAttributes->{"ConvertFromString"}) {
@@ -1180,7 +1224,7 @@ sub GenerateImplementation
                 my $paramType = GetObjCType($param->type);
 
                 # make a new parameter name if the original conflicts with a property name
-                $paramName = "in" . WK_ucfirst($paramName) if $attributeNames{$paramName};
+                $paramName = "in" . ucfirst($paramName) if $attributeNames{$paramName};
 
                 AddIncludesForType($param->type);
 

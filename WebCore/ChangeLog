@@ -1,5 +1,15 @@
 2007-02-20  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/4912899> WebCore project ObjC @property cleanup
+
+        * bindings/objc/DOMObject.h: Add the new style @property
+        * bindings/objc/PublicDOMInterfaces.h: Update to the new style @property
+        * bindings/scripts/CodeGeneratorObjC.pm: Export both new and old style @properties
+
+2007-02-20  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Sam Weinig.
 
         <rdar://problem/5007248> need to export symbols for DOM exception constants

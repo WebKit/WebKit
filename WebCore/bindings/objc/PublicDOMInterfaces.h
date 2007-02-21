@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
+// Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
 // Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 //
 // Redistribution and use in source and binary forms, with or without
@@ -31,18 +31,18 @@
 #endif
 
 @interface DOMAttr : DOMNode
-@property(readonly) NSString *name;
+@property(readonly, copy) NSString *name;
 @property(readonly) BOOL specified;
-@property NSString *value;
-@property(readonly) DOMElement *ownerElement;
-@property(readonly) DOMCSSStyleDeclaration *style;
+@property(copy) NSString *value;
+@property(readonly, retain) DOMElement *ownerElement;
+@property(readonly, retain) DOMCSSStyleDeclaration *style;
 @end
 
 @interface DOMCDATASection : DOMText
 @end
 
 @interface DOMCharacterData : DOMNode
-@property NSString *data;
+@property(copy) NSString *data;
 @property(readonly) unsigned length;
 - (NSString *)substringData:(unsigned)offset :(unsigned)length;
 - (NSString *)substringData:(unsigned)offset length:(unsigned)length;
@@ -71,11 +71,11 @@
 @end
 
 @interface DOMDocument : DOMNode
-@property(readonly) DOMDocumentType *doctype;
-@property(readonly) DOMImplementation *implementation;
-@property(readonly) DOMElement *documentElement;
-@property(readonly) DOMAbstractView *defaultView;
-@property(readonly) DOMStyleSheetList *styleSheets;
+@property(readonly, retain) DOMDocumentType *doctype;
+@property(readonly, retain) DOMImplementation *implementation;
+@property(readonly, retain) DOMElement *documentElement;
+@property(readonly, retain) DOMAbstractView *defaultView;
+@property(readonly, retain) DOMStyleSheetList *styleSheets;
 - (DOMElement *)createElement:(NSString *)tagName;
 - (DOMDocumentFragment *)createDocumentFragment;
 - (DOMText *)createTextNode:(NSString *)data;
@@ -117,22 +117,22 @@
 @end
 
 @interface DOMDocumentType : DOMNode
-@property(readonly) NSString *name;
-@property(readonly) DOMNamedNodeMap *entities;
-@property(readonly) DOMNamedNodeMap *notations;
-@property(readonly) NSString *publicId;
-@property(readonly) NSString *systemId;
-@property(readonly) NSString *internalSubset;
+@property(readonly, copy) NSString *name;
+@property(readonly, retain) DOMNamedNodeMap *entities;
+@property(readonly, retain) DOMNamedNodeMap *notations;
+@property(readonly, copy) NSString *publicId;
+@property(readonly, copy) NSString *systemId;
+@property(readonly, copy) NSString *internalSubset;
 @end
 
 @interface DOMElement : DOMNode
-@property(readonly) NSString *tagName;
-@property(readonly) DOMCSSStyleDeclaration *style;
+@property(readonly, copy) NSString *tagName;
+@property(readonly, retain) DOMCSSStyleDeclaration *style;
 @property(readonly) int offsetLeft;
 @property(readonly) int offsetTop;
 @property(readonly) int offsetWidth;
 @property(readonly) int offsetHeight;
-@property(readonly) DOMElement *offsetParent;
+@property(readonly, retain) DOMElement *offsetParent;
 @property(readonly) int clientWidth;
 @property(readonly) int clientHeight;
 @property int scrollLeft;
@@ -168,9 +168,9 @@
 @end
 
 @interface DOMEntity : DOMNode
-@property(readonly) NSString *publicId;
-@property(readonly) NSString *systemId;
-@property(readonly) NSString *notationName;
+@property(readonly, copy) NSString *publicId;
+@property(readonly, copy) NSString *systemId;
+@property(readonly, copy) NSString *notationName;
 @end
 
 @interface DOMEntityReference : DOMNode
@@ -190,21 +190,21 @@
 @end
 
 @interface DOMNode : DOMObject
-@property(readonly) NSString *nodeName;
-@property NSString *nodeValue;
+@property(readonly, copy) NSString *nodeName;
+@property(copy) NSString *nodeValue;
 @property(readonly) unsigned short nodeType;
-@property(readonly) DOMNode *parentNode;
-@property(readonly) DOMNodeList *childNodes;
-@property(readonly) DOMNode *firstChild;
-@property(readonly) DOMNode *lastChild;
-@property(readonly) DOMNode *previousSibling;
-@property(readonly) DOMNode *nextSibling;
-@property(readonly) DOMNamedNodeMap *attributes;
-@property(readonly) DOMDocument *ownerDocument;
-@property(readonly) NSString *namespaceURI;
-@property NSString *prefix;
-@property(readonly) NSString *localName;
-@property NSString *textContent;
+@property(readonly, retain) DOMNode *parentNode;
+@property(readonly, retain) DOMNodeList *childNodes;
+@property(readonly, retain) DOMNode *firstChild;
+@property(readonly, retain) DOMNode *lastChild;
+@property(readonly, retain) DOMNode *previousSibling;
+@property(readonly, retain) DOMNode *nextSibling;
+@property(readonly, retain) DOMNamedNodeMap *attributes;
+@property(readonly, retain) DOMDocument *ownerDocument;
+@property(readonly, copy) NSString *namespaceURI;
+@property(copy) NSString *prefix;
+@property(readonly, copy) NSString *localName;
+@property(copy) NSString *textContent;
 - (DOMNode *)insertBefore:(DOMNode *)newChild :(DOMNode *)refChild;
 - (DOMNode *)insertBefore:(DOMNode *)newChild refChild:(DOMNode *)refChild;
 - (DOMNode *)replaceChild:(DOMNode *)newChild :(DOMNode *)oldChild;
@@ -227,13 +227,13 @@
 @end
 
 @interface DOMNotation : DOMNode
-@property(readonly) NSString *publicId;
-@property(readonly) NSString *systemId;
+@property(readonly, copy) NSString *publicId;
+@property(readonly, copy) NSString *systemId;
 @end
 
 @interface DOMProcessingInstruction : DOMNode
-@property(readonly) NSString *target;
-@property NSString *data;
+@property(readonly, copy) NSString *target;
+@property(copy) NSString *data;
 @end
 
 @interface DOMText : DOMCharacterData
@@ -241,81 +241,81 @@
 @end
 
 @interface DOMHTMLAnchorElement : DOMHTMLElement
-@property NSString *accessKey;
-@property NSString *charset;
-@property NSString *coords;
-@property NSString *href;
-@property NSString *hreflang;
-@property NSString *name;
-@property NSString *rel;
-@property NSString *rev;
-@property NSString *shape;
+@property(copy) NSString *accessKey;
+@property(copy) NSString *charset;
+@property(copy) NSString *coords;
+@property(copy) NSString *href;
+@property(copy) NSString *hreflang;
+@property(copy) NSString *name;
+@property(copy) NSString *rel;
+@property(copy) NSString *rev;
+@property(copy) NSString *shape;
 @property int tabIndex;
-@property NSString *target;
-@property NSString *type;
-@property(readonly) NSURL *absoluteLinkURL;
+@property(copy) NSString *target;
+@property(copy) NSString *type;
+@property(readonly, copy) NSURL *absoluteLinkURL;
 - (void)blur;
 - (void)focus;
 @end
 
 @interface DOMHTMLAppletElement : DOMHTMLElement
-@property NSString *align;
-@property NSString *alt;
-@property NSString *archive;
-@property NSString *code;
-@property NSString *codeBase;
-@property NSString *height;
+@property(copy) NSString *align;
+@property(copy) NSString *alt;
+@property(copy) NSString *archive;
+@property(copy) NSString *code;
+@property(copy) NSString *codeBase;
+@property(copy) NSString *height;
 @property int hspace;
-@property NSString *name;
-@property NSString *object;
+@property(copy) NSString *name;
+@property(copy) NSString *object;
 @property int vspace;
-@property NSString *width;
+@property(copy) NSString *width;
 @end
 
 @interface DOMHTMLAreaElement : DOMHTMLElement
-@property NSString *accessKey;
-@property NSString *alt;
-@property NSString *coords;
-@property NSString *href;
+@property(copy) NSString *accessKey;
+@property(copy) NSString *alt;
+@property(copy) NSString *coords;
+@property(copy) NSString *href;
 @property BOOL noHref;
-@property NSString *shape;
+@property(copy) NSString *shape;
 @property int tabIndex;
-@property NSString *target;
-@property(readonly) NSURL *absoluteLinkURL;
+@property(copy) NSString *target;
+@property(readonly, copy) NSURL *absoluteLinkURL;
 @end
 
 @interface DOMHTMLBRElement : DOMHTMLElement
-@property NSString *clear;
+@property(copy) NSString *clear;
 @end
 
 @interface DOMHTMLBaseElement : DOMHTMLElement
-@property NSString *href;
-@property NSString *target;
+@property(copy) NSString *href;
+@property(copy) NSString *target;
 @end
 
 @interface DOMHTMLBaseFontElement : DOMHTMLElement
-@property NSString *color;
-@property NSString *face;
+@property(copy) NSString *color;
+@property(copy) NSString *face;
 @property int size;
 @end
 
 @interface DOMHTMLBodyElement : DOMHTMLElement
-@property NSString *aLink;
-@property NSString *background;
-@property NSString *bgColor;
-@property NSString *link;
-@property NSString *text;
-@property NSString *vLink;
+@property(copy) NSString *aLink;
+@property(copy) NSString *background;
+@property(copy) NSString *bgColor;
+@property(copy) NSString *link;
+@property(copy) NSString *text;
+@property(copy) NSString *vLink;
 @end
 
 @interface DOMHTMLButtonElement : DOMHTMLElement
-@property(readonly) DOMHTMLFormElement *form;
-@property NSString *accessKey;
+@property(readonly, retain) DOMHTMLFormElement *form;
+@property(copy) NSString *accessKey;
 @property BOOL disabled;
-@property NSString *name;
+@property(copy) NSString *name;
 @property int tabIndex;
-@property(readonly) NSString *type;
-@property NSString *value;
+@property(readonly, copy) NSString *type;
+@property(copy) NSString *value;
 @end
 
 @interface DOMHTMLCollection : DOMObject
@@ -333,21 +333,21 @@
 @end
 
 @interface DOMHTMLDivElement : DOMHTMLElement
-@property NSString *align;
+@property(copy) NSString *align;
 @end
 
 @interface DOMHTMLDocument : DOMDocument
-@property NSString *title;
-@property(readonly) NSString *referrer;
-@property(readonly) NSString *domain;
-@property(readonly) NSString *URL;
-@property DOMHTMLElement *body;
-@property(readonly) DOMHTMLCollection *images;
-@property(readonly) DOMHTMLCollection *applets;
-@property(readonly) DOMHTMLCollection *links;
-@property(readonly) DOMHTMLCollection *forms;
-@property(readonly) DOMHTMLCollection *anchors;
-@property NSString *cookie;
+@property(copy) NSString *title;
+@property(readonly, copy) NSString *referrer;
+@property(readonly, copy) NSString *domain;
+@property(readonly, copy) NSString *URL;
+@property(retain) DOMHTMLElement *body;
+@property(readonly, retain) DOMHTMLCollection *images;
+@property(readonly, retain) DOMHTMLCollection *applets;
+@property(readonly, retain) DOMHTMLCollection *links;
+@property(readonly, retain) DOMHTMLCollection *forms;
+@property(readonly, retain) DOMHTMLCollection *anchors;
+@property(copy) NSString *cookie;
 - (void)open;
 - (void)close;
 - (void)write:(NSString *)text;
@@ -357,141 +357,141 @@
 @end
 
 @interface DOMHTMLElement : DOMElement
-@property NSString *title;
-@property NSString *idName;
-@property NSString *lang;
-@property NSString *dir;
-@property NSString *className;
-@property NSString *innerHTML;
-@property NSString *innerText;
-@property NSString *outerHTML;
-@property NSString *outerText;
-@property(readonly) DOMHTMLCollection *children;
-@property NSString *contentEditable;
+@property(copy) NSString *title;
+@property(copy) NSString *idName;
+@property(copy) NSString *lang;
+@property(copy) NSString *dir;
+@property(copy) NSString *className;
+@property(copy) NSString *innerHTML;
+@property(copy) NSString *innerText;
+@property(copy) NSString *outerHTML;
+@property(copy) NSString *outerText;
+@property(readonly, retain) DOMHTMLCollection *children;
+@property(copy) NSString *contentEditable;
 @property(readonly) BOOL isContentEditable;
-@property(readonly) NSString *titleDisplayString;
+@property(readonly, copy) NSString *titleDisplayString;
 @end
 
 @interface DOMHTMLEmbedElement : DOMHTMLElement
-@property NSString *align;
+@property(copy) NSString *align;
 @property int height;
-@property NSString *name;
-@property NSString *src;
-@property NSString *type;
+@property(copy) NSString *name;
+@property(copy) NSString *src;
+@property(copy) NSString *type;
 @property int width;
 @end
 
 @interface DOMHTMLFieldSetElement : DOMHTMLElement
-@property(readonly) DOMHTMLFormElement *form;
+@property(readonly, retain) DOMHTMLFormElement *form;
 @end
 
 @interface DOMHTMLFontElement : DOMHTMLElement
-@property NSString *color;
-@property NSString *face;
-@property NSString *size;
+@property(copy) NSString *color;
+@property(copy) NSString *face;
+@property(copy) NSString *size;
 @end
 
 @interface DOMHTMLFormElement : DOMHTMLElement
-@property(readonly) DOMHTMLCollection *elements;
+@property(readonly, retain) DOMHTMLCollection *elements;
 @property(readonly) int length;
-@property NSString *name;
-@property NSString *acceptCharset;
-@property NSString *action;
-@property NSString *enctype;
-@property NSString *method;
-@property NSString *target;
+@property(copy) NSString *name;
+@property(copy) NSString *acceptCharset;
+@property(copy) NSString *action;
+@property(copy) NSString *enctype;
+@property(copy) NSString *method;
+@property(copy) NSString *target;
 - (void)submit;
 - (void)reset;
 @end
 
 @interface DOMHTMLFrameElement : DOMHTMLElement
-@property NSString *frameBorder;
-@property NSString *longDesc;
-@property NSString *marginHeight;
-@property NSString *marginWidth;
-@property NSString *name;
+@property(copy) NSString *frameBorder;
+@property(copy) NSString *longDesc;
+@property(copy) NSString *marginHeight;
+@property(copy) NSString *marginWidth;
+@property(copy) NSString *name;
 @property BOOL noResize;
-@property NSString *scrolling;
-@property NSString *src;
-@property(readonly) DOMDocument *contentDocument;
+@property(copy) NSString *scrolling;
+@property(copy) NSString *src;
+@property(readonly, retain) DOMDocument *contentDocument;
 @end
 
 @interface DOMHTMLFrameSetElement : DOMHTMLElement
-@property NSString *cols;
-@property NSString *rows;
+@property(copy) NSString *cols;
+@property(copy) NSString *rows;
 @end
 
 @interface DOMHTMLHRElement : DOMHTMLElement
-@property NSString *align;
+@property(copy) NSString *align;
 @property BOOL noShade;
-@property NSString *size;
-@property NSString *width;
+@property(copy) NSString *size;
+@property(copy) NSString *width;
 @end
 
 @interface DOMHTMLHeadElement : DOMHTMLElement
-@property NSString *profile;
+@property(copy) NSString *profile;
 @end
 
 @interface DOMHTMLHeadingElement : DOMHTMLElement
-@property NSString *align;
+@property(copy) NSString *align;
 @end
 
 @interface DOMHTMLHtmlElement : DOMHTMLElement
-@property NSString *version;
+@property(copy) NSString *version;
 @end
 
 @interface DOMHTMLIFrameElement : DOMHTMLElement
-@property NSString *align;
-@property NSString *frameBorder;
-@property NSString *height;
-@property NSString *longDesc;
-@property NSString *marginHeight;
-@property NSString *marginWidth;
-@property NSString *name;
-@property NSString *scrolling;
-@property NSString *src;
-@property NSString *width;
-@property(readonly) DOMDocument *contentDocument;
+@property(copy) NSString *align;
+@property(copy) NSString *frameBorder;
+@property(copy) NSString *height;
+@property(copy) NSString *longDesc;
+@property(copy) NSString *marginHeight;
+@property(copy) NSString *marginWidth;
+@property(copy) NSString *name;
+@property(copy) NSString *scrolling;
+@property(copy) NSString *src;
+@property(copy) NSString *width;
+@property(readonly, retain) DOMDocument *contentDocument;
 @end
 
 @interface DOMHTMLImageElement : DOMHTMLElement
-@property NSString *name;
-@property NSString *align;
-@property NSString *alt;
-@property NSString *border;
+@property(copy) NSString *name;
+@property(copy) NSString *align;
+@property(copy) NSString *alt;
+@property(copy) NSString *border;
 @property int height;
 @property int hspace;
 @property BOOL isMap;
-@property NSString *longDesc;
-@property NSString *src;
-@property NSString *useMap;
+@property(copy) NSString *longDesc;
+@property(copy) NSString *src;
+@property(copy) NSString *useMap;
 @property int vspace;
 @property int width;
-@property(readonly) NSString *altDisplayString;
-@property(readonly) NSURL *absoluteImageURL;
+@property(readonly, copy) NSString *altDisplayString;
+@property(readonly, copy) NSURL *absoluteImageURL;
 @end
 
 @interface DOMHTMLInputElement : DOMHTMLElement
-@property NSString *defaultValue;
+@property(copy) NSString *defaultValue;
 @property BOOL defaultChecked;
-@property(readonly) DOMHTMLFormElement *form;
-@property NSString *accept;
-@property NSString *accessKey;
-@property NSString *align;
-@property NSString *alt;
+@property(readonly, retain) DOMHTMLFormElement *form;
+@property(copy) NSString *accept;
+@property(copy) NSString *accessKey;
+@property(copy) NSString *align;
+@property(copy) NSString *alt;
 @property BOOL checked;
 @property BOOL disabled;
 @property int maxLength;
-@property NSString *name;
+@property(copy) NSString *name;
 @property BOOL readOnly;
 @property unsigned size;
-@property NSString *src;
+@property(copy) NSString *src;
 @property int tabIndex;
-@property NSString *type;
-@property NSString *useMap;
-@property NSString *value;
-@property(readonly) NSString *altDisplayString;
-@property(readonly) NSURL *absoluteImageURL;
+@property(copy) NSString *type;
+@property(copy) NSString *useMap;
+@property(copy) NSString *value;
+@property(readonly, copy) NSString *altDisplayString;
+@property(readonly, copy) NSURL *absoluteImageURL;
 - (void)blur;
 - (void)focus;
 - (void)select;
@@ -499,43 +499,43 @@
 @end
 
 @interface DOMHTMLIsIndexElement : DOMHTMLInputElement
-@property(readonly) DOMHTMLFormElement *form;
-@property NSString *prompt;
+@property(readonly, retain) DOMHTMLFormElement *form;
+@property(copy) NSString *prompt;
 @end
 
 @interface DOMHTMLLIElement : DOMHTMLElement
-@property NSString *type;
+@property(copy) NSString *type;
 @property int value;
 @end
 
 @interface DOMHTMLLabelElement : DOMHTMLElement
-@property(readonly) DOMHTMLFormElement *form;
-@property NSString *accessKey;
-@property NSString *htmlFor;
+@property(readonly, retain) DOMHTMLFormElement *form;
+@property(copy) NSString *accessKey;
+@property(copy) NSString *htmlFor;
 @end
 
 @interface DOMHTMLLegendElement : DOMHTMLElement
-@property(readonly) DOMHTMLFormElement *form;
-@property NSString *accessKey;
-@property NSString *align;
+@property(readonly, retain) DOMHTMLFormElement *form;
+@property(copy) NSString *accessKey;
+@property(copy) NSString *align;
 @end
 
 @interface DOMHTMLLinkElement : DOMHTMLElement
 @property BOOL disabled;
-@property NSString *charset;
-@property NSString *href;
-@property NSString *hreflang;
-@property NSString *media;
-@property NSString *rel;
-@property NSString *rev;
-@property NSString *target;
-@property NSString *type;
-@property(readonly) NSURL *absoluteLinkURL;
+@property(copy) NSString *charset;
+@property(copy) NSString *href;
+@property(copy) NSString *hreflang;
+@property(copy) NSString *media;
+@property(copy) NSString *rel;
+@property(copy) NSString *rev;
+@property(copy) NSString *target;
+@property(copy) NSString *type;
+@property(readonly, copy) NSURL *absoluteLinkURL;
 @end
 
 @interface DOMHTMLMapElement : DOMHTMLElement
-@property(readonly) DOMHTMLCollection *areas;
-@property NSString *name;
+@property(readonly, retain) DOMHTMLCollection *areas;
+@property(copy) NSString *name;
 @end
 
 @interface DOMHTMLMenuElement : DOMHTMLElement
@@ -543,60 +543,60 @@
 @end
 
 @interface DOMHTMLMetaElement : DOMHTMLElement
-@property NSString *content;
-@property NSString *httpEquiv;
-@property NSString *name;
-@property NSString *scheme;
+@property(copy) NSString *content;
+@property(copy) NSString *httpEquiv;
+@property(copy) NSString *name;
+@property(copy) NSString *scheme;
 @end
 
 @interface DOMHTMLModElement : DOMHTMLElement
-@property NSString *cite;
-@property NSString *dateTime;
+@property(copy) NSString *cite;
+@property(copy) NSString *dateTime;
 @end
 
 @interface DOMHTMLOListElement : DOMHTMLElement
 @property BOOL compact;
 @property int start;
-@property NSString *type;
+@property(copy) NSString *type;
 @end
 
 @interface DOMHTMLObjectElement : DOMHTMLElement
-@property(readonly) DOMHTMLFormElement *form;
-@property NSString *code;
-@property NSString *align;
-@property NSString *archive;
-@property NSString *border;
-@property NSString *codeBase;
-@property NSString *codeType;
-@property NSString *data;
+@property(readonly, retain) DOMHTMLFormElement *form;
+@property(copy) NSString *code;
+@property(copy) NSString *align;
+@property(copy) NSString *archive;
+@property(copy) NSString *border;
+@property(copy) NSString *codeBase;
+@property(copy) NSString *codeType;
+@property(copy) NSString *data;
 @property BOOL declare;
-@property NSString *height;
+@property(copy) NSString *height;
 @property int hspace;
-@property NSString *name;
-@property NSString *standby;
+@property(copy) NSString *name;
+@property(copy) NSString *standby;
 @property int tabIndex;
-@property NSString *type;
-@property NSString *useMap;
+@property(copy) NSString *type;
+@property(copy) NSString *useMap;
 @property int vspace;
-@property NSString *width;
-@property(readonly) DOMDocument *contentDocument;
-@property(readonly) NSURL *absoluteImageURL;
+@property(copy) NSString *width;
+@property(readonly, retain) DOMDocument *contentDocument;
+@property(readonly, copy) NSURL *absoluteImageURL;
 @end
 
 @interface DOMHTMLOptGroupElement : DOMHTMLElement
 @property BOOL disabled;
-@property NSString *label;
+@property(copy) NSString *label;
 @end
 
 @interface DOMHTMLOptionElement : DOMHTMLElement
-@property(readonly) DOMHTMLFormElement *form;
+@property(readonly, retain) DOMHTMLFormElement *form;
 @property BOOL defaultSelected;
-@property(readonly) NSString *text;
+@property(readonly, copy) NSString *text;
 @property(readonly) int index;
 @property BOOL disabled;
-@property NSString *label;
+@property(copy) NSString *label;
 @property BOOL selected;
-@property NSString *value;
+@property(copy) NSString *value;
 @end
 
 @interface DOMHTMLOptionsCollection : DOMObject
@@ -606,14 +606,14 @@
 @end
 
 @interface DOMHTMLParagraphElement : DOMHTMLElement
-@property NSString *align;
+@property(copy) NSString *align;
 @end
 
 @interface DOMHTMLParamElement : DOMHTMLElement
-@property NSString *name;
-@property NSString *type;
-@property NSString *value;
-@property NSString *valueType;
+@property(copy) NSString *name;
+@property(copy) NSString *type;
+@property(copy) NSString *value;
+@property(copy) NSString *valueType;
 @end
 
 @interface DOMHTMLPreElement : DOMHTMLElement
@@ -621,29 +621,29 @@
 @end
 
 @interface DOMHTMLQuoteElement : DOMHTMLElement
-@property NSString *cite;
+@property(copy) NSString *cite;
 @end
 
 @interface DOMHTMLScriptElement : DOMHTMLElement
-@property NSString *text;
-@property NSString *htmlFor;
-@property NSString *event;
-@property NSString *charset;
+@property(copy) NSString *text;
+@property(copy) NSString *htmlFor;
+@property(copy) NSString *event;
+@property(copy) NSString *charset;
 @property BOOL defer;
-@property NSString *src;
-@property NSString *type;
+@property(copy) NSString *src;
+@property(copy) NSString *type;
 @end
 
 @interface DOMHTMLSelectElement : DOMHTMLElement
-@property(readonly) NSString *type;
+@property(readonly, copy) NSString *type;
 @property int selectedIndex;
-@property NSString *value;
+@property(copy) NSString *value;
 @property(readonly) int length;
-@property(readonly) DOMHTMLFormElement *form;
-@property(readonly) DOMHTMLOptionsCollection *options;
+@property(readonly, retain) DOMHTMLFormElement *form;
+@property(readonly, retain) DOMHTMLOptionsCollection *options;
 @property BOOL disabled;
 @property BOOL multiple;
-@property NSString *name;
+@property(copy) NSString *name;
 @property int size;
 @property int tabIndex;
 - (void)add:(DOMHTMLElement *)element :(DOMHTMLElement *)before;
@@ -655,56 +655,56 @@
 
 @interface DOMHTMLStyleElement : DOMHTMLElement
 @property BOOL disabled;
-@property NSString *media;
-@property NSString *type;
+@property(copy) NSString *media;
+@property(copy) NSString *type;
 @end
 
 @interface DOMHTMLTableCaptionElement : DOMHTMLElement
-@property NSString *align;
+@property(copy) NSString *align;
 @end
 
 @interface DOMHTMLTableCellElement : DOMHTMLElement
 @property(readonly) int cellIndex;
-@property NSString *abbr;
-@property NSString *align;
-@property NSString *axis;
-@property NSString *bgColor;
-@property NSString *ch;
-@property NSString *chOff;
+@property(copy) NSString *abbr;
+@property(copy) NSString *align;
+@property(copy) NSString *axis;
+@property(copy) NSString *bgColor;
+@property(copy) NSString *ch;
+@property(copy) NSString *chOff;
 @property int colSpan;
-@property NSString *headers;
-@property NSString *height;
+@property(copy) NSString *headers;
+@property(copy) NSString *height;
 @property BOOL noWrap;
 @property int rowSpan;
-@property NSString *scope;
-@property NSString *vAlign;
-@property NSString *width;
+@property(copy) NSString *scope;
+@property(copy) NSString *vAlign;
+@property(copy) NSString *width;
 @end
 
 @interface DOMHTMLTableColElement : DOMHTMLElement
-@property NSString *align;
-@property NSString *ch;
-@property NSString *chOff;
+@property(copy) NSString *align;
+@property(copy) NSString *ch;
+@property(copy) NSString *chOff;
 @property int span;
-@property NSString *vAlign;
-@property NSString *width;
+@property(copy) NSString *vAlign;
+@property(copy) NSString *width;
 @end
 
 @interface DOMHTMLTableElement : DOMHTMLElement
-@property DOMHTMLTableCaptionElement *caption;
-@property DOMHTMLTableSectionElement *tHead;
-@property DOMHTMLTableSectionElement *tFoot;
-@property(readonly) DOMHTMLCollection *rows;
-@property(readonly) DOMHTMLCollection *tBodies;
-@property NSString *align;
-@property NSString *bgColor;
-@property NSString *border;
-@property NSString *cellPadding;
-@property NSString *cellSpacing;
-@property NSString *frameBorders;
-@property NSString *rules;
-@property NSString *summary;
-@property NSString *width;
+@property(retain) DOMHTMLTableCaptionElement *caption;
+@property(retain) DOMHTMLTableSectionElement *tHead;
+@property(retain) DOMHTMLTableSectionElement *tFoot;
+@property(readonly, retain) DOMHTMLCollection *rows;
+@property(readonly, retain) DOMHTMLCollection *tBodies;
+@property(copy) NSString *align;
+@property(copy) NSString *bgColor;
+@property(copy) NSString *border;
+@property(copy) NSString *cellPadding;
+@property(copy) NSString *cellSpacing;
+@property(copy) NSString *frameBorders;
+@property(copy) NSString *rules;
+@property(copy) NSString *summary;
+@property(copy) NSString *width;
 - (DOMHTMLElement *)createTHead;
 - (void)deleteTHead;
 - (DOMHTMLElement *)createTFoot;
@@ -718,77 +718,77 @@
 @interface DOMHTMLTableRowElement : DOMHTMLElement
 @property(readonly) int rowIndex;
 @property(readonly) int sectionRowIndex;
-@property(readonly) DOMHTMLCollection *cells;
-@property NSString *align;
-@property NSString *bgColor;
-@property NSString *ch;
-@property NSString *chOff;
-@property NSString *vAlign;
+@property(readonly, retain) DOMHTMLCollection *cells;
+@property(copy) NSString *align;
+@property(copy) NSString *bgColor;
+@property(copy) NSString *ch;
+@property(copy) NSString *chOff;
+@property(copy) NSString *vAlign;
 - (DOMHTMLElement *)insertCell:(int)index;
 - (void)deleteCell:(int)index;
 @end
 
 @interface DOMHTMLTableSectionElement : DOMHTMLElement
-@property NSString *align;
-@property NSString *ch;
-@property NSString *chOff;
-@property NSString *vAlign;
-@property(readonly) DOMHTMLCollection *rows;
+@property(copy) NSString *align;
+@property(copy) NSString *ch;
+@property(copy) NSString *chOff;
+@property(copy) NSString *vAlign;
+@property(readonly, retain) DOMHTMLCollection *rows;
 - (DOMHTMLElement *)insertRow:(int)index;
 - (void)deleteRow:(int)index;
 @end
 
 @interface DOMHTMLTextAreaElement : DOMHTMLElement
-@property NSString *defaultValue;
-@property(readonly) DOMHTMLFormElement *form;
-@property NSString *accessKey;
+@property(copy) NSString *defaultValue;
+@property(readonly, retain) DOMHTMLFormElement *form;
+@property(copy) NSString *accessKey;
 @property int cols;
 @property BOOL disabled;
-@property NSString *name;
+@property(copy) NSString *name;
 @property BOOL readOnly;
 @property int rows;
 @property int tabIndex;
-@property(readonly) NSString *type;
-@property NSString *value;
+@property(readonly, copy) NSString *type;
+@property(copy) NSString *value;
 - (void)blur;
 - (void)focus;
 - (void)select;
 @end
 
 @interface DOMHTMLTitleElement : DOMHTMLElement
-@property NSString *text;
+@property(copy) NSString *text;
 @end
 
 @interface DOMHTMLUListElement : DOMHTMLElement
 @property BOOL compact;
-@property NSString *type;
+@property(copy) NSString *type;
 @end
 
 @interface DOMCSSCharsetRule : DOMCSSRule
-@property(readonly) NSString *encoding;
+@property(readonly, copy) NSString *encoding;
 @end
 
 @interface DOMCSSFontFaceRule : DOMCSSRule
-@property(readonly) DOMCSSStyleDeclaration *style;
+@property(readonly, retain) DOMCSSStyleDeclaration *style;
 @end
 
 @interface DOMCSSImportRule : DOMCSSRule
-@property(readonly) NSString *href;
-@property(readonly) DOMMediaList *media;
-@property(readonly) DOMCSSStyleSheet *styleSheet;
+@property(readonly, copy) NSString *href;
+@property(readonly, retain) DOMMediaList *media;
+@property(readonly, retain) DOMCSSStyleSheet *styleSheet;
 @end
 
 @interface DOMCSSMediaRule : DOMCSSRule
-@property(readonly) DOMMediaList *media;
-@property(readonly) DOMCSSRuleList *cssRules;
+@property(readonly, retain) DOMMediaList *media;
+@property(readonly, retain) DOMCSSRuleList *cssRules;
 - (unsigned)insertRule:(NSString *)rule :(unsigned)index;
 - (unsigned)insertRule:(NSString *)rule index:(unsigned)index;
 - (void)deleteRule:(unsigned)index;
 @end
 
 @interface DOMCSSPageRule : DOMCSSRule
-@property NSString *selectorText;
-@property(readonly) DOMCSSStyleDeclaration *style;
+@property(copy) NSString *selectorText;
+@property(readonly, retain) DOMCSSStyleDeclaration *style;
 @end
 
 @interface DOMCSSPrimitiveValue : DOMCSSValue
@@ -806,9 +806,9 @@
 
 @interface DOMCSSRule : DOMObject
 @property(readonly) unsigned short type;
-@property NSString *cssText;
-@property(readonly) DOMCSSStyleSheet *parentStyleSheet;
-@property(readonly) DOMCSSRule *parentRule;
+@property(copy) NSString *cssText;
+@property(readonly, retain) DOMCSSStyleSheet *parentStyleSheet;
+@property(readonly, retain) DOMCSSRule *parentRule;
 @end
 
 @interface DOMCSSRuleList : DOMObject
@@ -817,9 +817,9 @@
 @end
 
 @interface DOMCSSStyleDeclaration : DOMObject
-@property NSString *cssText;
+@property(copy) NSString *cssText;
 @property(readonly) unsigned length;
-@property(readonly) DOMCSSRule *parentRule;
+@property(readonly, retain) DOMCSSRule *parentRule;
 - (NSString *)getPropertyValue:(NSString *)propertyName;
 - (DOMCSSValue *)getPropertyCSSValue:(NSString *)propertyName;
 - (NSString *)removeProperty:(NSString *)propertyName;
@@ -832,20 +832,20 @@
 @end
 
 @interface DOMCSSStyleRule : DOMCSSRule
-@property NSString *selectorText;
-@property(readonly) DOMCSSStyleDeclaration *style;
+@property(copy) NSString *selectorText;
+@property(readonly, retain) DOMCSSStyleDeclaration *style;
 @end
 
 @interface DOMCSSStyleSheet : DOMStyleSheet
-@property(readonly) DOMCSSRule *ownerRule;
-@property(readonly) DOMCSSRuleList *cssRules;
+@property(readonly, retain) DOMCSSRule *ownerRule;
+@property(readonly, retain) DOMCSSRuleList *cssRules;
 - (unsigned)insertRule:(NSString *)rule :(unsigned)index;
 - (unsigned)insertRule:(NSString *)rule index:(unsigned)index;
 - (void)deleteRule:(unsigned)index;
 @end
 
 @interface DOMCSSValue : DOMObject
-@property NSString *cssText;
+@property(copy) NSString *cssText;
 @property(readonly) unsigned short cssValueType;
 @end
 
@@ -858,22 +858,22 @@
 @end
 
 @interface DOMCounter : DOMObject
-@property(readonly) NSString *identifier;
-@property(readonly) NSString *listStyle;
-@property(readonly) NSString *separator;
+@property(readonly, copy) NSString *identifier;
+@property(readonly, copy) NSString *listStyle;
+@property(readonly, copy) NSString *separator;
 @end
 
 @interface DOMRect : DOMObject
-@property(readonly) DOMCSSPrimitiveValue *top;
-@property(readonly) DOMCSSPrimitiveValue *right;
-@property(readonly) DOMCSSPrimitiveValue *bottom;
-@property(readonly) DOMCSSPrimitiveValue *left;
+@property(readonly, retain) DOMCSSPrimitiveValue *top;
+@property(readonly, retain) DOMCSSPrimitiveValue *right;
+@property(readonly, retain) DOMCSSPrimitiveValue *bottom;
+@property(readonly, retain) DOMCSSPrimitiveValue *left;
 @end
 
 @interface DOMEvent : DOMObject
-@property(readonly) NSString *type;
-@property(readonly) id <DOMEventTarget> target;
-@property(readonly) id <DOMEventTarget> currentTarget;
+@property(readonly, copy) NSString *type;
+@property(readonly, retain) id <DOMEventTarget> target;
+@property(readonly, retain) id <DOMEventTarget> currentTarget;
 @property(readonly) unsigned short eventPhase;
 @property(readonly) BOOL bubbles;
 @property(readonly) BOOL cancelable;
@@ -885,17 +885,17 @@
 @end
 
 @interface DOMUIEvent : DOMEvent
-@property(readonly) DOMAbstractView *view;
+@property(readonly, retain) DOMAbstractView *view;
 @property(readonly) int detail;
 - (void)initUIEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view detail:(int)detail;
 - (void)initUIEvent:(NSString *)type :(BOOL)canBubble :(BOOL)cancelable :(DOMAbstractView *)view :(int)detail;
 @end
 
 @interface DOMMutationEvent : DOMEvent
-@property(readonly) DOMNode *relatedNode;
-@property(readonly) NSString *prevValue;
-@property(readonly) NSString *newValue;
-@property(readonly) NSString *attrName;
+@property(readonly, retain) DOMNode *relatedNode;
+@property(readonly, copy) NSString *prevValue;
+@property(readonly, copy) NSString *newValue;
+@property(readonly, copy) NSString *attrName;
 @property(readonly) unsigned short attrChange;
 - (void)initMutationEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable relatedNode:(DOMNode *)relatedNode prevValue:(NSString *)prevValue newValue:(NSString *)newValue attrName:(NSString *)attrName attrChange:(unsigned short)attrChange;
 - (void)initMutationEvent:(NSString *)type :(BOOL)canBubble :(BOOL)cancelable :(DOMNode *)relatedNode :(NSString *)prevValue :(NSString *)newValue :(NSString *)attrName :(unsigned short)attrChange;
@@ -921,7 +921,7 @@
 @end
 
 @interface DOMKeyboardEvent : DOMUIEvent
-@property(readonly) NSString *keyIdentifier;
+@property(readonly, copy) NSString *keyIdentifier;
 @property(readonly) unsigned keyLocation;
 @property(readonly) BOOL ctrlKey;
 @property(readonly) BOOL shiftKey;
@@ -942,19 +942,19 @@
 @property(readonly) BOOL altKey;
 @property(readonly) BOOL metaKey;
 @property(readonly) unsigned short button;
-@property(readonly) id <DOMEventTarget> relatedTarget;
+@property(readonly, retain) id <DOMEventTarget> relatedTarget;
 - (void)initMouseEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view detail:(int)detail screenX:(int)screenX screenY:(int)screenY clientX:(int)clientX clientY:(int)clientY ctrlKey:(BOOL)ctrlKey altKey:(BOOL)altKey shiftKey:(BOOL)shiftKey metaKey:(BOOL)metaKey button:(unsigned short)button relatedTarget:(id <DOMEventTarget>)relatedTarget;
 - (void)initMouseEvent:(NSString *)type :(BOOL)canBubble :(BOOL)cancelable :(DOMAbstractView *)view :(int)detail :(int)screenX :(int)screenY :(int)clientX :(int)clientY :(BOOL)ctrlKey :(BOOL)altKey :(BOOL)shiftKey :(BOOL)metaKey :(unsigned short)button :(id <DOMEventTarget>)relatedTarget;
 @end
 
 @interface DOMRange : DOMObject
-@property(readonly) DOMNode *startContainer;
+@property(readonly, retain) DOMNode *startContainer;
 @property(readonly) int startOffset;
-@property(readonly) DOMNode *endContainer;
+@property(readonly, retain) DOMNode *endContainer;
 @property(readonly) int endOffset;
 @property(readonly) BOOL collapsed;
-@property(readonly) DOMNode *commonAncestorContainer;
-@property(readonly) NSString *text;
+@property(readonly, retain) DOMNode *commonAncestorContainer;
+@property(readonly, copy) NSString *text;
 - (void)setStart:(DOMNode *)refNode offset:(int)offset;
 - (void)setStart:(DOMNode *)refNode :(int)offset;
 - (void)setEnd:(DOMNode *)refNode offset:(int)offset;
@@ -979,9 +979,9 @@
 @end
 
 @interface DOMNodeIterator : DOMObject
-@property(readonly) DOMNode *root;
+@property(readonly, retain) DOMNode *root;
 @property(readonly) unsigned whatToShow;
-@property(readonly) id <DOMNodeFilter> filter;
+@property(readonly, retain) id <DOMNodeFilter> filter;
 @property(readonly) BOOL expandEntityReferences;
 - (DOMNode *)nextNode;
 - (DOMNode *)previousNode;
@@ -989,11 +989,11 @@
 @end
 
 @interface DOMTreeWalker : DOMObject
-@property(readonly) DOMNode *root;
+@property(readonly, retain) DOMNode *root;
 @property(readonly) unsigned whatToShow;
-@property(readonly) id <DOMNodeFilter> filter;
+@property(readonly, retain) id <DOMNodeFilter> filter;
 @property(readonly) BOOL expandEntityReferences;
-@property DOMNode *currentNode;
+@property(retain) DOMNode *currentNode;
 - (DOMNode *)parentNode;
 - (DOMNode *)firstChild;
 - (DOMNode *)lastChild;
@@ -1006,9 +1006,9 @@
 @interface DOMXPathResult : DOMObject
 @property(readonly) unsigned short resultType;
 @property(readonly) double numberValue;
-@property(readonly) NSString *stringValue;
+@property(readonly, copy) NSString *stringValue;
 @property(readonly) BOOL booleanValue;
-@property(readonly) DOMNode *singleNodeValue;
+@property(readonly, retain) DOMNode *singleNodeValue;
 @property(readonly) BOOL invalidIteratorState;
 @property(readonly) unsigned snapshotLength;
 - (DOMNode *)iterateNext;
