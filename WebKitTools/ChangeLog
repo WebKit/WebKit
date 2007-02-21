@@ -1,5 +1,23 @@
 2007-02-21  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Made DRT paint when running run-webkit-tests in --leaks mode, to check
+        for painting leaks.
+
+        * DumpRenderTree/DumpRenderTree.m: Removed some "NO" initializations, since
+        that's the default for statics.
+        (dumpRenderTree): Added --paint command line option, which specifies that
+        DRT should paint at the end of every test.
+        (displayWebView): New function, called by dump() and -[LayoutTestController display].
+        * Scripts/run-webkit-tests: Use the --paint command line option when checking
+        for leaks.
+
+        * Scripts/run-webkit-tests: Added a new, painting leak to the ignore list. 
+        Removed stale comment about THRD leaks -- we now ignore them reliably.
+
+2007-02-21  Geoffrey Garen  <ggaren@apple.com>
+
         Tools tweak. No review necessary.
         
         * Scripts/parse-malloc-history: Enabled multiple merge-regexp command line

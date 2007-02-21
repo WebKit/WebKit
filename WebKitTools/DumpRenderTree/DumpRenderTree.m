@@ -104,6 +104,7 @@ BOOL shouldDumpResourceLoadCallbacks;
 
 static void runTest(const char *pathOrURL);
 static NSString *md5HashStringForBitmap(CGImageRef bitmap);
+static void displayWebView();
 
 volatile BOOL done;
 static NavigationController *navigationController;
@@ -128,14 +129,15 @@ static BOOL dumpSelectionRect;
 static BOOL dumpTitleChanges;
 static BOOL dumpBackForwardList;
 static BOOL dumpChildFrameScrollPositions;
-static int dumpPixels = NO;
-static int dumpAllPixels = NO;
-static int threaded = NO;
-static BOOL readFromWindow = NO;
-static int testRepaintDefault = NO;
-static BOOL testRepaint = NO;
-static int repaintSweepHorizontallyDefault = NO;
-static BOOL repaintSweepHorizontally = NO;
+static int dumpPixels;
+static int paint;
+static int dumpAllPixels;
+static int threaded;
+static BOOL readFromWindow;
+static int testRepaintDefault;
+static BOOL testRepaint;
+static int repaintSweepHorizontallyDefault;
+static BOOL repaintSweepHorizontally;
 static int dumpTree = YES;
 static BOOL printSeparators;
 static NSString *currentTest = nil;
@@ -306,6 +308,7 @@ void dumpRenderTree(int argc, const char *argv[])
         {"horizontal-sweep", no_argument, &repaintSweepHorizontallyDefault, YES},
         {"notree", no_argument, &dumpTree, NO},
         {"pixel-tests", no_argument, &dumpPixels, YES},
+        {"paint", no_argument, &paint, YES},
         {"repaint", no_argument, &testRepaintDefault, YES},
         {"tree", no_argument, &dumpTree, YES},
         {"threaded", no_argument, &threaded, YES},
@@ -629,8 +632,12 @@ static NSString *serializeWebArchiveToXML(WebArchive *webArchive)
 
 static void dump(void)
 {
-    NSString *result = nil;
+    if (paint)
+        displayWebView();
+    
     if (dumpTree) {
+        NSString *result = nil;
+
         dumpAsText |= [[[[frame dataSource] response] MIMEType] isEqualToString:@"text/plain"];
         if (dumpAsText) {
             DOMElement *documentElement = [[frame DOMDocument] documentElement];
@@ -784,6 +791,7 @@ static void dump(void)
 
         printf("#EOF\n");
     }
+    
     fflush(stdout);
 
     done = YES;
@@ -1044,13 +1052,7 @@ static void dump(void)
 
 - (void)display
 {
-    NSView *webView = [frame webView];
-    [webView display];
-    [webView lockFocus];
-    [[[NSColor blackColor] colorWithAlphaComponent:0.66] set];
-    NSRectFillUsingOperation([webView frame], NSCompositeSourceOver);
-    [webView unlockFocus];
-    readFromWindow = YES;
+    displayWebView();
 }
 
 - (void)testRepaint
@@ -1265,6 +1267,17 @@ static NSString *md5HashStringForBitmap(CGImageRef bitmap)
     }
 
     return [NSString stringWithUTF8String:hex];
+}
+
+static void displayWebView()
+{
+    NSView *webView = [frame webView];
+    [webView display];
+    [webView lockFocus];
+    [[[NSColor blackColor] colorWithAlphaComponent:0.66] set];
+    NSRectFillUsingOperation([webView frame], NSCompositeSourceOver);
+    [webView unlockFocus];
+    readFromWindow = YES;
 }
 
 @implementation DumpRenderTreePasteboard

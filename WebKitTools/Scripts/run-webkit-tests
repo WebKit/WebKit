@@ -314,6 +314,7 @@ push @toolArgs, "--pixel-tests" if $pixelTests;
 push @toolArgs, "--repaint" if $repaintTests;
 push @toolArgs, "--horizontal-sweep" if $repaintSweepHorizontally;
 push @toolArgs, "--threaded" if $threaded;
+push @toolArgs, "--paint" if $shouldCheckLeaks; # Otherwise, DRT won't exercise painting leaks.
 push @toolArgs, "-";
 
 $| = 1;
@@ -852,10 +853,8 @@ sub countAndPrintLeaks($$$)
         "NSURLCache cachedResponseForRequest", # leak in CFURL cache, Radar 4768430
         "CGImageSourceGetPropertiesAtIndex", # leak apparently in CG, Radar 4628809
         "BidiRun::operator new", # leak in WebCore, Radar 4987649
+        "gldGetString" # leak apparently in OpenGL, Radar 5013699
     );
-
-    # Note that the exclusion for bug 3387783 doesn't quite work right; sometimes a leak of 'THRD' will
-    # still appear in the leaks output.
 
     my $leaksTool = sourceDir() . "/WebKitTools/Scripts/run-leaks";
     my $excludeString = "--exclude-callstack '" . (join "' --exclude-callstack '", @callStacksToExclude) . "' " .
