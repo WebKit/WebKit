@@ -34,12 +34,8 @@
 NSString * const DOMException = @"DOMException";
 NSString * const DOMRangeException = @"DOMRangeException";
 NSString * const DOMEventException = @"DOMEventException";
-#ifdef SVG_SUPPORT
 NSString * const DOMSVGException = @"DOMSVGException";
-#endif
-#ifdef XPATH_SUPPORT
 NSString * const DOMXPathException = @"DOMXPathException";
-#endif
 
 namespace WebCore {
 
