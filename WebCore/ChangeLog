@@ -1,3 +1,17 @@
+2007-02-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        <rdar://problem/5006779>
+        REGRESSION: Paste and Match Style of quoted text onto empty line yields quoted text
+        
+        We decided to change the copy/paste behavior in both
+        the Paste and the Paste and Match Style cases.
+
+        * editing/markup.cpp:
+        (WebCore::createMarkup): Don't add mail blockquote wrappers
+        unless the user selected one or more paragraphs.
+
 2007-02-20  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.
