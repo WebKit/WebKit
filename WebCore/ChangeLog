@@ -1,3 +1,12 @@
+2007-02-21  George Staikos  <staikos@kde.org>
+
+        Reviewed by Zack.
+
+        Remove unneeded hack now.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::setCheckboxSize):
+
 2007-02-21  Zack Rusin  <zrusin@trolltech.com>
 
         Reviewed by Lars

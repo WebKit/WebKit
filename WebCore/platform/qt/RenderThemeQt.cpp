@@ -182,11 +182,7 @@ void RenderThemeQt::setCheckboxSize(RenderStyle* style) const
     // At different DPI settings on Windows, querying the theme gives you a larger size that accounts for
     // the higher DPI.  Until our entire engine honors a DPI setting other than 96, we can't rely on the theme's
     // metrics.
-#ifdef Q_WS_MAC
-    const int ff = 16;
-#else
     const int ff = 13;
-#endif
     if (style->width().isIntrinsicOrAuto())
         style->setWidth(Length(ff, Fixed));
 
