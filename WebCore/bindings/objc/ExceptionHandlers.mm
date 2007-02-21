@@ -31,11 +31,11 @@
 #include "SVGException.h"
 #include "XPathEvaluator.h"
 
-NSString * const DOMException = @"DOMException";
-NSString * const DOMRangeException = @"DOMRangeException";
-NSString * const DOMEventException = @"DOMEventException";
-NSString * const DOMSVGException = @"DOMSVGException";
-NSString * const DOMXPathException = @"DOMXPathException";
+NSString * DOMException = @"DOMException";
+NSString * DOMRangeException = @"DOMRangeException";
+NSString * DOMEventException = @"DOMEventException";
+NSString * DOMSVGException = @"DOMSVGException";
+NSString * DOMXPathException = @"DOMXPathException";
 
 namespace WebCore {
 
