@@ -90,8 +90,12 @@ public:
     virtual void textWillBeDeletedInTextField(Element*);
     virtual void textDidChangeInTextArea(Element*);
 
+    bool isEditing() const;
+
 private:
     QWebPage* m_page;
+    bool m_editing;
+    bool m_inUndoRedo; // our undo stack works differently - don't re-enter!
 };
 
 }

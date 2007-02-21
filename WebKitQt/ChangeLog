@@ -1,3 +1,34 @@
+2007-02-21  George Staikos  <staikos@kde.org>
+
+        Reviewed by Zack.
+
+        Add more editing support, and undo/redo.  Requires some nasty evil
+        hacks that have to be sorted out in WebCore/editor.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPagePrivate::~QWebPagePrivate):
+        (QWebPage::undoStack):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::didBeginEditing):
+        (WebCore::EditorClientQt::didEndEditing):
+        (WebCore::EditorClientQt::isEditable):
+        (WebCore::EditorClientQt::registerCommandForUndo):
+        (WebCore::EditorClientQt::registerCommandForRedo):
+        (WebCore::EditorClientQt::clearUndoRedoOperations):
+        (WebCore::EditorClientQt::canUndo):
+        (WebCore::EditorClientQt::canRedo):
+        (WebCore::EditorClientQt::undo):
+        (WebCore::EditorClientQt::redo):
+        (WebCore::EditorClientQt::handleKeyPress):
+        (WebCore::EditorClientQt::EditorClientQt):
+        (WebCore::EditorClientQt::textFieldDidBeginEditing):
+        (WebCore::EditorClientQt::textFieldDidEndEditing):
+        (WebCore::EditorClientQt::isEditing):
+        * WebCoreSupport/EditorClientQt.h:
+
 2007-02-21  Zack Rusin  <zrusin@trolltech.com>
 
         Fix compilation.

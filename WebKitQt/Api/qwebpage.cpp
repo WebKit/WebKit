@@ -39,6 +39,7 @@
 #include "KURL.h"
 
 #include <QDebug>
+#include <QUndoStack>
 #include <QUrl>
 #include <QVBoxLayout>
 
@@ -67,11 +68,13 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     settings->setFixedFontFamily("Courier");
     settings->setStandardFontFamily("Arial");
 
+    undoStack = 0;
     mainFrame = 0;
 }
 
 QWebPagePrivate::~QWebPagePrivate()
 {
+    delete undoStack;
     delete page;
 }
 
@@ -197,6 +200,15 @@ void QWebPage::setWindowGeometry(const QRect& geom)
 bool QWebPage::isModified() const
 {
     return d->modified;
+}
+
+
+QUndoStack *QWebPage::undoStack()
+{
+    if (!d->undoStack)
+        d->undoStack = new QUndoStack(this);
+
+    return d->undoStack;
 }
 
 #include "qwebpage.moc"

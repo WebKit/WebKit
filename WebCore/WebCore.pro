@@ -709,6 +709,7 @@ SOURCES += \
     ../WebKitQt/WebCoreSupport/ContextMenuClientQt.cpp \
     ../WebKitQt/WebCoreSupport/DragClientQt.cpp \
     ../WebKitQt/WebCoreSupport/EditorClientQt.cpp \
+    ../WebKitQt/WebCoreSupport/EditCommandQt.cpp \
     ../WebKitQt/WebCoreSupport/FrameLoaderClientQt.cpp \
     ../WebKitQt/Api/qwebframe.cpp \
     ../WebKitQt/Api/qcookiejar.cpp \

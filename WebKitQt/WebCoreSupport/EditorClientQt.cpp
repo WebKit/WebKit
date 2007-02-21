@@ -33,7 +33,7 @@
 #include "qwebpage.h"
 #include "qwebpage_p.h"
 
-#include "EditCommand.h"
+#include "EditCommandQt.h"
 #include "Editor.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -44,6 +44,7 @@
 
 #include <stdio.h>
 
+#include <QUndoStack>
 
 #define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
@@ -105,7 +106,7 @@ bool EditorClientQt::shouldApplyStyle(WebCore::CSSStyleDeclaration*,
 
 void EditorClientQt::didBeginEditing()
 {
-    notImplemented();
+    m_editing = true;
 }
 
 void EditorClientQt::respondToChangedContents()
@@ -115,7 +116,7 @@ void EditorClientQt::respondToChangedContents()
 
 void EditorClientQt::didEndEditing()
 {
-    notImplemented();
+    m_editing = false;
 }
 
 void EditorClientQt::didWriteSelectionToPasteboard()
@@ -137,44 +138,49 @@ bool EditorClientQt::selectWordBeforeMenuEvent()
 bool EditorClientQt::isEditable()
 {
     // FIXME: should be controllable by a setting in QWebPage
-    return true;
+    return false;
 }
 
-void EditorClientQt::registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand>)
+void EditorClientQt::registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand> cmd)
 {
-    notImplemented();
+    Frame* frame = m_page->d->page->focusController()->focusedOrMainFrame();
+    if (m_inUndoRedo || (frame && !frame->editor()->lastEditCommand() /* HACK!! Don't recreate undos */)) {
+        return;
+    }
+    m_page->undoStack()->push(new EditCommandQt(cmd));
 }
 
 void EditorClientQt::registerCommandForRedo(WTF::PassRefPtr<WebCore::EditCommand>)
 {
-    notImplemented();
 }
 
 void EditorClientQt::clearUndoRedoOperations()
 {
-    //notImplemented();
+    return m_page->undoStack()->clear();
 }
 
 bool EditorClientQt::canUndo() const
 {
-    notImplemented();
-    return false;
+    return m_page->undoStack()->canUndo();
 }
 
 bool EditorClientQt::canRedo() const
 {
-    notImplemented();
-    return false;
+    return m_page->undoStack()->canRedo();
 }
 
 void EditorClientQt::undo()
 {
-    notImplemented();
+    m_inUndoRedo = true;
+    m_page->undoStack()->undo();
+    m_inUndoRedo = false;
 }
 
 void EditorClientQt::redo()
 {
-    notImplemented();
+    m_inUndoRedo = true;
+    m_page->undoStack()->redo();
+    m_inUndoRedo = false;
 }
 
 bool EditorClientQt::shouldInsertNode(Node*, Range*, EditorInsertAction)
@@ -223,19 +229,31 @@ void EditorClientQt::handleKeyPress(KeyboardEvent* event)
                                                      CharacterGranularity, false, true);
                 break;
             case VK_LEFT:
-                frame->editor()->execCommand("MoveLeft");
+                if (kevent->shiftKey())
+                    frame->editor()->execCommand("MoveLeftAndModifySelection");
+                else frame->editor()->execCommand("MoveLeft");
                 break;
             case VK_RIGHT:
-                frame->editor()->execCommand("MoveRight");
+                if (kevent->shiftKey())
+                    frame->editor()->execCommand("MoveRightAndModifySelection");
+                else frame->editor()->execCommand("MoveRight");
                 break;
             case VK_UP:
-                frame->editor()->execCommand("MoveUp");
+                if (kevent->shiftKey())
+                    frame->editor()->execCommand("MoveUpAndModifySelection");
+                else frame->editor()->execCommand("MoveUp");
                 break;
             case VK_DOWN:
-                frame->editor()->execCommand("MoveDown");
+                if (kevent->shiftKey())
+                    frame->editor()->execCommand("MoveDownAndModifySelection");
+                else frame->editor()->execCommand("MoveDown");
+                break;
+            case VK_RETURN:
+                frame->editor()->insertLineBreak();
                 break;
             default:
-                frame->editor()->insertText(kevent->text(), false, event);
+                if (!kevent->ctrlKey() && !kevent->altKey())
+                    frame->editor()->insertText(kevent->text(), false, event);
             }
             event->setDefaultHandled();
         }
@@ -243,16 +261,18 @@ void EditorClientQt::handleKeyPress(KeyboardEvent* event)
 }
 
 EditorClientQt::EditorClientQt(QWebPage* page)
-    : m_page(page)
+    : m_page(page), m_editing(false), m_inUndoRedo(false)
 {
 }
 
 void EditorClientQt::textFieldDidBeginEditing(Element*)
 {
+    m_editing = true;
 }
 
 void EditorClientQt::textFieldDidEndEditing(Element*)
 {
+    m_editing = false;
 }
 
 void EditorClientQt::textDidChangeInTextField(Element*)
@@ -270,6 +290,11 @@ void EditorClientQt::textWillBeDeletedInTextField(Element*)
 
 void EditorClientQt::textDidChangeInTextArea(Element*)
 {
+}
+
+bool EditorClientQt::isEditing() const
+{
+    return m_editing;
 }
 
 }

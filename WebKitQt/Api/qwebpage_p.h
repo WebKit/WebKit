@@ -36,6 +36,7 @@ namespace WebCore
 }
 
 class QVBoxLayout;
+class QUndoStack;
 
 class QWebPagePrivate
 {
@@ -53,6 +54,7 @@ public:
     QVBoxLayout *layout;
 
     QWebPage *q;
+    QUndoStack *undoStack;
 
     bool modified;
 };
