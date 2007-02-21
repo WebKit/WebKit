@@ -116,6 +116,10 @@
 .objc_class_name_WebScriptObject
 .objc_class_name_WebScriptObjectPrivate
 .objc_class_name_WebUndefined
+_DOMEventException
+_DOMException
+_DOMRangeException
+_DOMXPathException
 _WebCoreDrawTextAtPoint
 _WebCoreFindFont
 _WebCoreObjCFinalizeOnMainThread
