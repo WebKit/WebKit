@@ -42,7 +42,12 @@ namespace WebCore {
 
 using namespace EventNames;
 
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
+#define notImplementedGdk() do { \
+    static int count; \
+    if (!count && !getenv("DISABLE_NI_WARNING")) \
+        fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", WTF_PRETTY_FUNCTION, __FILE__, __LINE__); \
+    ++count; \
+ } while(0)
 
 static bool isKeyboardOptionTab(KeyboardEvent* event)
 {
@@ -82,31 +87,31 @@ bool EventHandler::passWidgetMouseDownEventToWidget(RenderWidget* renderWidget)
 
 bool EventHandler::passMouseDownEventToWidget(Widget* widget)
 {
-    notImplemented();
+    notImplementedGdk();
     return false;
 }
 
 bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 {
-    notImplemented();
+    notImplementedGdk();
     return false;
 }
 
 bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame* subframe)
 {
-    notImplemented();
+    notImplementedGdk();
     return false;
 }
 
 bool EventHandler::passWheelEventToWidget(Widget* widget)
 {
-    notImplemented();
+    notImplementedGdk();
     return false;
 }
 
 Clipboard* EventHandler::createDraggingClipboard() const 
 {
-    notImplemented();
+    notImplementedGdk();
     return 0;
 }
 

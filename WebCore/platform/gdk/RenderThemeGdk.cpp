@@ -28,7 +28,12 @@
 #include "GraphicsContext.h"
 #include "RenderObject.h"
 
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
+#define notImplementedGdk() do { \
+    static int count; \
+    if (!count && !getenv("DISABLE_NI_WARNING")) \
+        fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", WTF_PRETTY_FUNCTION, __FILE__, __LINE__); \
+    ++count; \
+ } while(0)
 
 #define THEME_COLOR 204
 #define THEME_FONT  210
@@ -149,7 +154,7 @@ ThemeData RenderThemeGdk::getThemeData(RenderObject* o)
 
 void RenderThemeGdk::setCheckboxSize(RenderStyle*) const 
 { 
-    notImplemented(); 
+    notImplementedGdk(); 
 }
 
 bool RenderThemeGdk::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
@@ -160,7 +165,7 @@ bool RenderThemeGdk::paintCheckbox(RenderObject* o, const RenderObject::PaintInf
 
 void RenderThemeGdk::setRadioSize(RenderStyle*) const 
 { 
-    notImplemented(); 
+    notImplementedGdk(); 
 }
 
 bool RenderThemeGdk::paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
@@ -177,7 +182,7 @@ bool RenderThemeGdk::paintButton(RenderObject*, const RenderObject::PaintInfo&, 
 
 void RenderThemeGdk::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element* e) const 
 { 
-    notImplemented(); 
+    notImplementedGdk(); 
 }
 
 bool RenderThemeGdk::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)

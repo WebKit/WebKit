@@ -41,13 +41,18 @@
 
 #include <stdio.h>
 
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
+#define notImplementedGdk() do { \
+    static int count; \
+    if (!count && !getenv("DISABLE_NI_WARNING")) \
+        fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", WTF_PRETTY_FUNCTION, __FILE__, __LINE__); \
+    ++count; \
+ } while(0)
 
 namespace WebCore {
 
 bool EditorClientGdk::shouldDeleteRange(Range*)
 {
-    notImplemented();
+    notImplementedGdk();
     return false;
 }
 
@@ -58,147 +63,147 @@ bool EditorClientGdk::shouldShowDeleteInterface(HTMLElement*)
 
 bool EditorClientGdk::isContinuousSpellCheckingEnabled()
 {
-    notImplemented();
+    notImplementedGdk();
     return false;
 }
 
 bool EditorClientGdk::isGrammarCheckingEnabled()
 {
-    notImplemented();
+    notImplementedGdk();
     return false;
 }
 
 int EditorClientGdk::spellCheckerDocumentTag()
 {
-    notImplemented();
+    notImplementedGdk();
     return 0;
 }
 
 bool EditorClientGdk::shouldBeginEditing(WebCore::Range*)
 {
-    notImplemented();
+    notImplementedGdk();
     return false;
 }
 
 bool EditorClientGdk::shouldEndEditing(WebCore::Range*)
 {
-    notImplemented();
+    notImplementedGdk();
     return false;
 }
 
 bool EditorClientGdk::shouldInsertText(String, Range*, EditorInsertAction)
 {
-    notImplemented();
+    notImplementedGdk();
     return true;
 }
 
 bool EditorClientGdk::shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity, bool stillSelecting)
 {
-    notImplemented();
+    notImplementedGdk();
     return true;
 }
 
 bool EditorClientGdk::shouldApplyStyle(WebCore::CSSStyleDeclaration*,
                                       WebCore::Range*)
 {
-    notImplemented();
+    notImplementedGdk();
     return false;
 }
 
 void EditorClientGdk::didBeginEditing()
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void EditorClientGdk::respondToChangedContents()
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void EditorClientGdk::didEndEditing()
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void EditorClientGdk::didWriteSelectionToPasteboard()
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void EditorClientGdk::didSetSelectionTypesForPasteboard()
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 bool EditorClientGdk::selectWordBeforeMenuEvent()
 {
-    notImplemented();
+    notImplementedGdk();
     return false;
 }
 
 bool EditorClientGdk::isEditable()
 {
-    notImplemented();
+    notImplementedGdk();
     return true;
 }
 
 void EditorClientGdk::registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand>)
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void EditorClientGdk::registerCommandForRedo(WTF::PassRefPtr<WebCore::EditCommand>)
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void EditorClientGdk::clearUndoRedoOperations()
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 bool EditorClientGdk::canUndo() const
 {
-    notImplemented();
+    notImplementedGdk();
     return false;
 }
 
 bool EditorClientGdk::canRedo() const
 {
-    notImplemented();
+    notImplementedGdk();
     return false;
 }
 
 void EditorClientGdk::undo()
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void EditorClientGdk::redo()
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 bool EditorClientGdk::shouldInsertNode(Node*, Range*, EditorInsertAction)
 {
-    notImplemented();
+    notImplementedGdk();
     return false;
 }
 
 void EditorClientGdk::pageDestroyed()
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 bool EditorClientGdk::smartInsertDeleteEnabled()
 {
-    notImplemented();
+    notImplementedGdk();
     return false;
 }
 
 void EditorClientGdk::toggleContinuousSpellChecking()
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void EditorClientGdk::toggleGrammarChecking()
@@ -256,33 +261,33 @@ void EditorClientGdk::setPage(Page* page)
 
 void EditorClientGdk::textFieldDidBeginEditing(Element*)
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void EditorClientGdk::textFieldDidEndEditing(Element*)
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void EditorClientGdk::textDidChangeInTextField(Element*)
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 bool EditorClientGdk::doTextFieldCommandFromEvent(Element*, KeyboardEvent*)
 {
-    notImplemented();
+    notImplementedGdk();
     return false;
 }
 
 void EditorClientGdk::textWillBeDeletedInTextField(Element*)
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void EditorClientGdk::textDidChangeInTextArea(Element*)
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 }
