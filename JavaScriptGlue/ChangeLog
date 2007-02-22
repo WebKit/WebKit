@@ -1,3 +1,30 @@
+2007-02-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed <rdar://problem/4942528> Installer.app Stuck "Examining additional 
+        volumes..."
+        
+        The problem was that JavaScriptGlue held a JSObject in a static pointer
+        without protecting it from garbage collection. 
+        
+            sUserObjectPrototypeImp  = new UserObjectPrototypeImp();
+            static ProtectedPtr<UserObjectPrototypeImp> protectPrototype; // valiant, brave, but useless
+
+        Through an interesting comedy of errors, this object would be collected 
+        and then assigned as the prototype of another object allocated at the 
+        same address, thus becoming its own prototype. (See http://www.ziplo.com/grandpa.htm
+        for further explanation of this phenomenon.) Hence the infinte loop in 
+        property lookup.
+        
+        The solution is equally humorous: all of this code was completely useless --
+        it only served to create an empty object in the prototype chain -- so
+        I just removed it.
+
+        * UserObjectImp.cpp:
+        (UserObjectImp::UserObjectImp):
+        * UserObjectImp.h:
+
 2007-02-19  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Geoff.

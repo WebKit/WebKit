@@ -58,8 +58,6 @@ public:
     virtual void mark();
 
     JSUserObject *GetJSUserObject() const;
-protected:
-    UserObjectImp();
 private:
     static JSValue *userObjectGetter(ExecState *, JSObject *originalObject, const Identifier& propertyName, const PropertySlot&);
 

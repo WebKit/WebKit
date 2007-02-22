@@ -32,39 +32,8 @@
 
 const ClassInfo UserObjectImp::info = {"UserObject", 0, 0, 0};
 
-class UserObjectPrototypeImp : public UserObjectImp {
-  public:
-    UserObjectPrototypeImp();
-    static UserObjectPrototypeImp* GlobalUserObjectPrototypeImp();
-  private:
-    static UserObjectPrototypeImp* sUserObjectPrototypeImp;
-};
-
-UserObjectPrototypeImp* UserObjectPrototypeImp::sUserObjectPrototypeImp = 0;
-
-UserObjectPrototypeImp::UserObjectPrototypeImp()
-  : UserObjectImp()
-{
-}
-
-UserObjectPrototypeImp* UserObjectPrototypeImp::GlobalUserObjectPrototypeImp()
-{
-    if (!sUserObjectPrototypeImp)
-    {
-            sUserObjectPrototypeImp  = new UserObjectPrototypeImp();
-            static ProtectedPtr<UserObjectPrototypeImp> protectPrototype;
-    }
-    return sUserObjectPrototypeImp;
-}
-
-
-UserObjectImp::UserObjectImp(): JSObject(), fJSUserObject(0)
-{
-}
-
-UserObjectImp::UserObjectImp(JSUserObject* userObject) :
-    JSObject(UserObjectPrototypeImp::GlobalUserObjectPrototypeImp()),
-    fJSUserObject((JSUserObject*)userObject->Retain())
+UserObjectImp::UserObjectImp(JSUserObject* userObject)
+    : fJSUserObject((JSUserObject*)userObject->Retain())
 {
 }
 
