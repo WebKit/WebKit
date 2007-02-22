@@ -1,3 +1,31 @@
+2007-02-22  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam. Manual test added.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=12399 REGRESSION: 
+        Unable to prevent default context menu from appearing. <rdar://
+        problem/5017416>
+
+        This problem appeared because of two facets of the current context 
+        menu design. First, all context menu events are now considered to 
+        be "swallowed" since we take care of building up the regular 
+        context menu through the defaultEventHandler(). Second, the context 
+        menu controller holds onto it's context menu until a new one is 
+        created. There would be logistical problems changing this since 
+        AppKit relies on the menu being around for as long as it is
+        visible on the screen and we don't get any notification once the 
+        menu is popped-down.
+
+        This patch fixes the problem by giving WebKit a way to clear the 
+        controller's context menu. WebKit now clears the menu before it 
+        propagates a new context menu event through the DOM.
+
+        * WebCore.exp:
+        * manual-tests/DOMContextMenuEvent.html: Added.
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::clearContextMenu):
+        * page/ContextMenuController.h:
+
 2007-02-22  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin and Adele

@@ -2627,14 +2627,15 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         return nil;
     }
 
+    Page* page = coreFrame->page();
+    if (!page)
+        return nil;
+
+    page->contextMenuController()->clearContextMenu();
     handledEvent = coreFrame->eventHandler()->sendContextMenuEvent(PlatformMouseEvent(event));
     _private->handlingMouseDownEvent = NO;
 
     if (!handledEvent)
-        return nil;
-
-    Page* page = coreFrame->page();
-    if (!page)
         return nil;
 
     ContextMenu* coreMenu = page->contextMenuController()->contextMenu();
