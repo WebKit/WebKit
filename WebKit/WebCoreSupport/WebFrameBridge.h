@@ -46,7 +46,6 @@ namespace WebCore {
     WebCore::KeyboardUIMode _keyboardUIMode;
     BOOL _keyboardUIModeAccessed;
     BOOL _doingClientRedirect;
-    BOOL _inNextKeyViewOutsideWebFrameViews;
     BOOL _haveUndoRedoOperations;
     
     NSDictionary *lastDashboardRegions;
@@ -56,8 +55,5 @@ namespace WebCore {
 - (void)close;
 
 - (WebFrame *)webFrame;
-
-- (BOOL)inNextKeyViewOutsideWebFrameViews;
-- (NSView *)nextValidKeyViewOutsideWebFrameViews;
 
 @end

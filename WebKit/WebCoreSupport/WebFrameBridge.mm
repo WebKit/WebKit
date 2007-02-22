@@ -101,10 +101,6 @@
 - (void)setIsSelected:(BOOL)f;
 @end
 
-@interface NSView (AppKitSecretsWebBridgeKnowsAbout)
-- (NSView *)_findLastViewInKeyViewLoop;
-@end
-
 @interface NSView (JavaPluginSecrets)
 - (jobject)pollForAppletInWindow:(NSWindow *)window;
 @end
@@ -376,45 +372,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (NSString *)userAgentForURL:(NSURL *)URL
 {
     return [[self webView] userAgentForURL:URL];
-}
-
-- (BOOL)inNextKeyViewOutsideWebFrameViews
-{
-    return _inNextKeyViewOutsideWebFrameViews;
-}
-
-- (NSView *)_nextKeyViewOutsideWebFrameViewsWithValidityCheck:(BOOL)mustBeValid
-{
-    // We can get here in unusual situations such as the one listed in 4451831, so we
-    // return nil to avoid an infinite recursion.
-    if (_inNextKeyViewOutsideWebFrameViews)
-        return nil;
-    
-    _inNextKeyViewOutsideWebFrameViews = YES;
-    WebView *webView = [self webView];
-    // Do not ask webView for its next key view, but rather, ask it for 
-    // the next key view of the last view in its key view loop.
-    // Doing so gives us the correct answer as calculated by AppKit, 
-    // and makes HTML views behave like other views.
-    NSView *lastViewInLoop = [webView _findLastViewInKeyViewLoop];
-    NSView *nextKeyView = mustBeValid ? [lastViewInLoop nextValidKeyView] : [lastViewInLoop nextKeyView];
-    _inNextKeyViewOutsideWebFrameViews = NO;
-    return nextKeyView;
-}
-
-- (NSView *)nextKeyViewOutsideWebFrameViews
-{
-    return [self _nextKeyViewOutsideWebFrameViewsWithValidityCheck:NO];
-}
-
-- (NSView *)nextValidKeyViewOutsideWebFrameViews
-{
-    return [self _nextKeyViewOutsideWebFrameViewsWithValidityCheck:YES];
-}
-
-- (NSView *)previousKeyViewOutsideWebFrameViews
-{
-    return [[self webView] previousKeyView];
 }
 
 - (void)setNeedsReapplyStyles
