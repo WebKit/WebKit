@@ -1,3 +1,15 @@
+2007-02-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12818
+          REGRESSION (r19148): shacknews.com does not render completely
+
+        * fast/dynamic/staticY-marking-parents-regression-expected.checksum: Added.
+        * fast/dynamic/staticY-marking-parents-regression-expected.png: Added.
+        * fast/dynamic/staticY-marking-parents-regression-expected.txt: Added.
+        * fast/dynamic/staticY-marking-parents-regression.html: Added.
+
 2007-02-21  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

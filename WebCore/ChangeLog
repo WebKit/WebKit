@@ -1,3 +1,28 @@
+2007-02-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12818
+          REGRESSION (r19148): shacknews.com does not render completely
+
+        Test: fast/dynamic/staticY-marking-parents-regression.html
+
+        Changed calls to setChildNeedsLayout(true) during layout to
+        setChildNeedsLayout(true, false). Prior to r19148, the default behavior
+        of marking containers did not matter because the caller was the container
+        and was already marked, but r19148 added marking of the parent of
+        objects with static Y, which can be different from the caller and not
+        necessarily marked already.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::clearFloatsIfNeeded):
+        (WebCore::RenderBlock::layoutBlockChildren):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setStaticY):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+
 2007-02-21  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dave Harrison

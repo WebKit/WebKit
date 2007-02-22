@@ -686,7 +686,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             // may have changed, and we need to reallocate space.
             child->setOverrideSize(-1);
             if (!relayoutChildren)
-                child->setChildNeedsLayout(true);
+                child->setChildNeedsLayout(true, false);
             haveFlex = true;
             unsigned int flexGroup = child->style()->boxFlexGroup();
             if (lowestFlexGroup == 0)
@@ -709,7 +709,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             if (!child->isPositioned()) {
                 if (relayoutChildren || (child->isReplaced() && (child->style()->width().isPercent() || child->style()->height().isPercent())) ||
                     (child->style()->height().isAuto() && child->isBlockFlow() && !child->needsLayout())) {
-                    child->setChildNeedsLayout(true);
+                    child->setChildNeedsLayout(true, false);
                     
                     // Dirty all the positioned objects.
                     static_cast<RenderBlock*>(child)->markPositionedObjectsForLayout();
@@ -739,7 +739,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                 if (newHeight == child->height())
                     continue;
                 
-                child->setChildNeedsLayout(true);
+                child->setChildNeedsLayout(true, false);
                 child->setOverrideSize(newHeight);
                 m_flexingChildren = true;
                 child->layoutIfNeeded();
@@ -819,7 +819,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
         while (child) {
             // make sure we relayout children if we need it.
             if (!haveLineClamp && (relayoutChildren || (child->isReplaced() && (child->style()->width().isPercent() || child->style()->height().isPercent()))))
-                child->setChildNeedsLayout(true);
+                child->setChildNeedsLayout(true, false);
     
             if (child->isPositioned())
             {
