@@ -134,6 +134,7 @@ void _NSResetKillRingOperationFlag(void);
 
 @interface NSWindow (AppKitSecretsIKnowAbout)
 - (id)_newFirstResponderAfterResigning;
+- (void)_setForceActiveControls:(BOOL)flag;
 @end
 
 @interface NSAttributedString (AppKitSecretsIKnowAbout)
@@ -5621,7 +5622,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     [_tableView setDrawsGrid:NO];
     [_tableView setCornerView:nil];
     [_tableView setHeaderView:nil];
-    [_tableView setAutoresizesAllColumnsToFit:YES];
+    [_tableView setColumnAutoresizingStyle:NSTableViewUniformColumnAutoresizingStyle];
     [_tableView setDelegate:self];
     [_tableView setDataSource:self];
     [_tableView setTarget:self];
@@ -5640,7 +5641,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     [scrollView release];
     [_popupWindow setHasShadow:YES];
     [_popupWindow setOneShot:YES];
-    //[_popupWindow _setForceActiveControls:YES];   // AK secret - no known problem from leaving this out
+    [_popupWindow _setForceActiveControls:YES];
     [_popupWindow setReleasedWhenClosed:NO];
 }
 

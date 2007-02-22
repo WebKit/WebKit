@@ -1,3 +1,16 @@
+2007-02-22  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Mark (age 21).
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12805
+          REGRESSION: suggestion popup has a disabled scroll bar
+
+        * WebView/WebHTMLView.mm:
+        (-[WebTextCompleteController _buildUI]): Uncommented the call to the NSWindow
+        SPI that forces the scroll bar to look active. Also replaced a call to
+        the deprecated NSTableView method setAutoresizesAllColumnsToFit: with
+        the new method setColumnAutoresizingStyle: to eliminate console spew.
+
 2007-02-20  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.
