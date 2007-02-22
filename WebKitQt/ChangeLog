@@ -1,3 +1,33 @@
+2007-02-22  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Lars
+
+        Make the qwebframe act as a proper canvas.
+        Implement it on top of QAbstractScrollArea.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::init):
+        (QWebFramePrivate::_q_adjustScrollbars):
+        (QWebFrame::init):
+        (QWebFrame::QWebFrame):
+        (QWebFrame::resizeEvent):
+        (QWebFrame::childFrames):
+        (QWebFrame::paintEvent):
+        (QWebFrame::mouseMoveEvent):
+        (QWebFrame::mousePressEvent):
+        (QWebFrame::mouseReleaseEvent):
+        (QWebFrame::wheelEvent):
+        (QWebFrame::keyPressEvent):
+        (QWebFrame::keyReleaseEvent):
+        (QWebFrame::dragEnterEvent):
+        (QWebFrame::dragLeaveEvent):
+        (QWebFrame::dragMoveEvent):
+        (QWebFrame::handleKeyEvent):
+        (QWebFrame::scrollContentsBy):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        (QWebFramePrivate::QWebFramePrivate):
+
 2007-02-21  George Staikos  <staikos@kde.org>
 
         Reviewed by Zack.

@@ -25,12 +25,14 @@
 #include "qwebpage_p.h"
 #include "qwebframe_p.h"
 
-#include <qdebug.h>
-
 #include "FrameLoaderClientQt.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "GraphicsContext.h"
+#include "PlatformMouseEvent.h"
+#include "PlatformKeyboardEvent.h"
+#include "PlatformWheelEvent.h"
 #include "ResourceRequest.h"
 
 #include "markup.h"
@@ -46,23 +48,59 @@
 
 #include "wtf/HashMap.h"
 
+#include <qpainter.h>
+#include <qevent.h>
+#include <qscrollbar.h>
+#include <qdebug.h>
+
 using namespace WebCore;
 
+void QWebFramePrivate::init(QWebFrame *qframe, WebCore::Page *page, QWebFrameData *frameData)
+{
+    q = qframe;
+    frameLoaderClient = new FrameLoaderClientQt();
+    frame = new Frame(page, frameData->ownerElement, frameLoaderClient);
+    frameLoaderClient->setFrame(qframe, frame.get());
+
+    frameView = new FrameView(frame.get());
+    frameView->deref();
+    frameView->setScrollArea(qframe);
+    frameView->setAllowsScrolling(frameData->allowsScrolling);
+    frame->setView(frameView.get());
+    eventHandler = frame->eventHandler();
+}
+
+void QWebFramePrivate::_q_adjustScrollbars()
+{
+    QAbstractSlider *hbar = q->horizontalScrollBar();
+    QAbstractSlider *vbar = q->verticalScrollBar();
+
+    const QSize viewportSize = q->viewport()->size();
+    QSize docSize = QSize(frameView->contentsWidth(), frameView->contentsHeight());
+
+    hbar->setRange(0, docSize.width() - viewportSize.width());
+    hbar->setPageStep(viewportSize.width());
+
+    vbar->setRange(0, docSize.height() - viewportSize.height());
+    vbar->setPageStep(viewportSize.height());
+}
+
+void QWebFrame::init(QWebPage *page, QWebFrameData *frameData)
+{
+    setMouseTracking(true);
+    setFocusPolicy(Qt::StrongFocus);
+
+    d->page = page;
+
+    d->init(this, page->d->page, frameData);
+}
+
 QWebFrame::QWebFrame(QWebPage *parent, QWebFrameData *frameData)
-    : QScrollArea(parent)
+    : QAbstractScrollArea(parent)
     , d(new QWebFramePrivate)
 {
-    d->page = parent;
+    init(parent, frameData);
 
-    d->frameLoaderClient = new FrameLoaderClientQt();
-    d->frame = new Frame(parent->d->page, frameData->ownerElement, d->frameLoaderClient);
-    d->frameLoaderClient->setFrame(this, d->frame.get());
-
-    d->frameView = new FrameView(d->frame.get());
-    d->frameView->deref();
-    d->frameView->setScrollArea(this);
-    d->frameView->setAllowsScrolling(frameData->allowsScrolling);
-    d->frame->setView(d->frameView.get());
     if (!frameData->url.isEmpty()) {
         ResourceRequest request(frameData->url, frameData->referrer);
         d->frame->loader()->load(request, frameData->name);
@@ -71,7 +109,7 @@ QWebFrame::QWebFrame(QWebPage *parent, QWebFrameData *frameData)
 
 
 QWebFrame::QWebFrame(QWebFrame *parent, QWebFrameData *frameData)
-    : QScrollArea(parent->widget())
+    : QAbstractScrollArea(parent->viewport())
     , d(new QWebFramePrivate)
 {
     setLineWidth(0);
@@ -80,17 +118,8 @@ QWebFrame::QWebFrame(QWebFrame *parent, QWebFrameData *frameData)
     QPalette pal = palette();
     pal.setBrush(QPalette::Background, Qt::white);
     setPalette(pal);
-    d->page = parent->d->page;
 
-    d->frameLoaderClient = new FrameLoaderClientQt();
-    d->frame = new Frame(parent->d->page->d->page, frameData->ownerElement, d->frameLoaderClient);
-    d->frameLoaderClient->setFrame(this, d->frame.get());
-
-    d->frameView = new FrameView(d->frame.get());
-    d->frameView->deref();
-    d->frameView->setScrollArea(this);
-    d->frameView->setAllowsScrolling(frameData->allowsScrolling);
-    d->frame->setView(d->frameView.get());
+    init(parent->d->page, frameData);
 }
 
 QWebFrame::~QWebFrame()
@@ -160,13 +189,14 @@ QString QWebFrame::selectedText() const
 
 void QWebFrame::resizeEvent(QResizeEvent *e)
 {
-    QScrollArea::resizeEvent(e);
+    QAbstractScrollArea::resizeEvent(e);
     if (d->frame && d->frameView) {
         RenderObject *renderer = d->frame->renderer();
         if (renderer)
             renderer->setNeedsLayout(true);
         d->frameView->scheduleRelayout();
     }
+    d->_q_adjustScrollbars();
 }
 
 QList<QWebFrame*> QWebFrame::childFrames() const
@@ -175,12 +205,124 @@ QList<QWebFrame*> QWebFrame::childFrames() const
     if (d->frame) {
         FrameTree *tree = d->frame->tree();
         for (Frame *child = tree->firstChild(); child; child = child->tree()->nextSibling()) {
-            FrameLoaderClientQt *loader = (FrameLoaderClientQt*)child->loader();
-            rc.append(loader->webFrame());
+            FrameLoader *loader = child->loader();
+            FrameLoaderClientQt *client = static_cast<FrameLoaderClientQt*>(loader->client());
+            if (client)
+                rc.append(client->webFrame());
         }
 
     }
     return rc;
+}
+
+void QWebFrame::paintEvent(QPaintEvent *ev)
+{
+    if (!d->frameView || !d->frame->renderer())
+        return;
+
+#ifdef QWEBKIT_TIME_RENDERING
+    QTime time;
+    time.start();
+#endif
+    QRect clip = ev->rect();
+    if (d->frameView->layoutPending()) {
+        //qDebug()<<"pending "<<m_frameView->layoutPending()
+        //        <<" delayed = "<<m_frameView->haveDelayedLayoutScheduled();
+        d->frameView->layout();
+    }
+    QPainter p(viewport());
+    GraphicsContext ctx(&p);
+
+    const int xOffset = horizontalScrollBar()->value();
+    const int yOffset = verticalScrollBar()->value();
+
+    ctx.translate(-xOffset, -yOffset);
+    clip.translate(xOffset, yOffset);
+
+    d->frame->paint(&ctx, clip);
+    p.end();
+
+#ifdef    QWEBKIT_TIME_RENDERING
+    int elapsed = time.elapsed();
+    qDebug()<<"paint event on "<<clip<<", took to render =  "<<elapsed;
+#endif
+}
+
+void QWebFrame::mouseMoveEvent(QMouseEvent *ev)
+{
+    if (!d->frameView)
+        return;
+
+    d->frameView->handleMouseMoveEvent(PlatformMouseEvent(ev, 0));
+}
+
+void QWebFrame::mousePressEvent(QMouseEvent *ev)
+{
+    if (!d->eventHandler)
+        return;
+
+    d->eventHandler->handleMousePressEvent(PlatformMouseEvent(ev, 1));
+}
+
+void QWebFrame::mouseReleaseEvent(QMouseEvent *ev)
+{
+    if (!d->frameView)
+        return;
+
+    d->frameView->handleMouseReleaseEvent(PlatformMouseEvent(ev, 0));
+}
+
+void QWebFrame::wheelEvent(QWheelEvent *e)
+{
+    PlatformWheelEvent wkEvent(e);
+    bool accepted = false;
+    if (d->eventHandler)
+        accepted = d->eventHandler->handleWheelEvent(wkEvent);
+
+    e->setAccepted(accepted);
+    if (!accepted)
+        QWidget::wheelEvent(e);
+}
+
+void QWebFrame::keyPressEvent(QKeyEvent *ev)
+{
+    handleKeyEvent(ev, false);
+}
+
+void QWebFrame::keyReleaseEvent(QKeyEvent *ev)
+{
+    handleKeyEvent(ev, true);
+}
+
+void QWebFrame::dragEnterEvent(QDragEnterEvent *)
+{
+}
+
+void QWebFrame::dragLeaveEvent(QDragLeaveEvent *)
+{
+}
+
+void QWebFrame::dragMoveEvent(QDragMoveEvent *)
+{
+}
+
+void QWebFrame::handleKeyEvent(QKeyEvent *ev, bool isKeyUp)
+{
+    PlatformKeyboardEvent kevent(ev, isKeyUp);
+
+    if (!d->eventHandler)
+        return;
+
+    bool handled = d->eventHandler->keyEvent(kevent);
+
+    ev->setAccepted(handled);
+}
+
+/*!\reimp
+*/
+void QWebFrame::scrollContentsBy(int dx, int dy)
+{
+    viewport()->scroll(dx, dy);
 }
 
 #include "qwebframe.moc"

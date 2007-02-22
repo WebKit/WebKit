@@ -37,18 +37,18 @@
 #include "PlatformMouseEvent.h"
 
 #include "Frame.h"
-#include "ScrollViewCanvasQt.h"
 
+#include <QAbstractScrollArea>
 #include <QDebug>
 #include <QScrollBar>
-#include <QScrollArea>
 
 #define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
 
 namespace WebCore {
 
 ScrollView::ScrollView()
-    : m_area(0), m_allowsScrolling(true)
+    : m_area(0), m_allowsScrolling(true),
+      m_width(0), m_height(0)
 {
 }
 
@@ -56,21 +56,21 @@ ScrollView::~ScrollView()
 {
 }
 
-void ScrollView::setScrollArea(QScrollArea* area)
+void ScrollView::setScrollArea(QAbstractScrollArea* area)
 {
     m_area = area;
-    if (m_area && isFrameView()) {
-        ScrollViewCanvasQt* canvas = new ScrollViewCanvasQt(static_cast<FrameView*>(this), m_area);
-        m_area->setWidget(canvas);
-    }
     Widget::setQWidget(m_area);
 }
 
 void ScrollView::updateContents(const IntRect& updateRect, bool now)
 {
     //Update is fine for both now=true/false cases
-    if (m_area && m_area->widget())
-        m_area->widget()->update(updateRect);
+    if (m_area && m_area->viewport() && !updateRect.isEmpty()) {
+        IntRect realCoords(updateRect.x() - scrollOffset().width(),
+                           updateRect.y() - scrollOffset().height(),
+                           updateRect.width(), updateRect.height());
+        m_area->viewport()->update(realCoords);
+    }
 }
 
 int ScrollView::visibleWidth() const
@@ -116,8 +116,18 @@ void ScrollView::setContentsPos(int newX, int newY)
 
 void ScrollView::resizeContents(int w, int h)
 {
-    if (m_area && m_area->widget())
-        m_area->widget()->resize(w, h);
+    m_width = w; m_height = h;
+    QAbstractSlider* hbar = m_area->horizontalScrollBar();
+    QAbstractSlider* vbar = m_area->verticalScrollBar();
+
+    const QSize viewportSize = m_area->viewport()->size();
+    QSize docSize = QSize(contentsWidth(), contentsHeight());
+
+    hbar->setRange(0, docSize.width() - viewportSize.width());
+    hbar->setPageStep(viewportSize.width());
+
+    vbar->setRange(0, docSize.height() - viewportSize.height());
+    vbar->setPageStep(viewportSize.height());
 }
 
 int ScrollView::contentsX() const
@@ -136,29 +146,29 @@ int ScrollView::contentsY() const
 
 int ScrollView::contentsWidth() const
 {
-    if (!m_area || !m_area->widget())
-        return 0;
-
-    return m_area->widget()->width();
+    return m_width;
 }
 
 int ScrollView::contentsHeight() const
 {
-    if (!m_area || !m_area->widget())
-        return 0;
-
-    return m_area->widget()->height();
+    return m_height;
 }
 
 
 IntPoint ScrollView::contentsToWindow(const IntPoint& point) const
 {
-    return point;
+    QAbstractSlider* hbar = m_area->horizontalScrollBar();
+    QAbstractSlider* vbar = m_area->verticalScrollBar();
+
+    return IntPoint(point.x() - hbar->value(), point.y() - vbar->value());
 }
 
 IntPoint ScrollView::windowToContents(const IntPoint& point) const
 {
-    return point;
+    QAbstractSlider* hbar = m_area->horizontalScrollBar();
+    QAbstractSlider* vbar = m_area->verticalScrollBar();
+
+    return IntPoint(point.x() + hbar->value(), point.y() + vbar->value());
 }
 
 IntSize ScrollView::scrollOffset() const
@@ -265,7 +275,7 @@ void ScrollView::setStaticBackground(bool flag)
 void ScrollView::addChild(Widget* child)
 {
     QWidget* w = child->qwidget();
-    w->setParent(m_area->widget());
+    w->setParent(m_area->viewport());
 }
 
 void ScrollView::removeChild(Widget* child)

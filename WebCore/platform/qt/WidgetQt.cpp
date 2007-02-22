@@ -38,7 +38,8 @@
 #include "GraphicsContext.h"
 #include "WidgetClient.h"
 
-#include <QScrollArea>
+#include <QAbstractScrollArea>
+#include <QScrollBar>
 #include <QWidget>
 
 #define notImplemented() qDebug("FIXME: UNIMPLEMENTED: %s:%d (%s)", __FILE__, __LINE__, __FUNCTION__)
@@ -51,13 +52,39 @@ struct WidgetPrivate
     ~WidgetPrivate() { delete m_widget; }
 
     QWidget* canvas() const {
-        return m_scrollArea ? m_scrollArea->widget() : m_widget;
+        return m_scrollArea ? m_scrollArea->viewport() : m_widget;
+    }
+
+    QAbstractScrollArea* parentScroll() const {
+        QObject *parent = m_widget->parent();
+        while (parent && !qobject_cast<QAbstractScrollArea*>(parent)) {
+            parent = parent->parent();
+        }
+        if (parent)
+            return static_cast<QAbstractScrollArea*>(parent);
+        return 0;
+    }
+    void setGeometry(const QRect &rect) {
+        QAbstractScrollArea *mapper = parentScroll();
+        QRect r = rect;
+        if (mapper)
+            r = r.translated(-mapper->horizontalScrollBar()->value(),
+                             -mapper->verticalScrollBar()->value());
+        m_widget->setGeometry(r);
+    }
+    QRect geometry() const {
+        QAbstractScrollArea *mapper = parentScroll();
+        QRect r = m_widget->geometry();
+        if (mapper)
+            r = r.translated(-mapper->horizontalScrollBar()->value(),
+                             -mapper->verticalScrollBar()->value());
+        return r;
     }
 
     WidgetClient* m_client;
 
     QWidget*     m_widget;
-    QScrollArea* m_scrollArea;
+    QAbstractScrollArea* m_scrollArea;
 
     Font     m_font;
 };
@@ -87,8 +114,7 @@ IntRect Widget::frameGeometry() const
 {
     if (!data->m_widget)
         return IntRect();
-
-    return data->m_widget->geometry();
+    return data->geometry();
 }
 
 bool Widget::hasFocus() const
@@ -146,10 +172,8 @@ void Widget::hide()
 void Widget::setQWidget(QWidget* child)
 {
     data->m_widget = child;
-    if (child && child->inherits("QScrollArea"))
-        data->m_scrollArea = qobject_cast<QScrollArea*>(child);
-    else
-        data->m_scrollArea = 0;
+    data->m_scrollArea = qobject_cast<QAbstractScrollArea*>(child);
+
 }
 
 QWidget* Widget::qwidget() const
@@ -166,8 +190,7 @@ void Widget::setFrameGeometry(const IntRect& r)
 {
     if (!data->m_widget)
         return;
-
-    data->m_widget->setGeometry(r);
+    data->setGeometry(r);
 }
 
 GraphicsContext* Widget::lockDrawingFocus()

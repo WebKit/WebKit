@@ -1,3 +1,35 @@
+2007-02-22  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Lars
+
+        Properly implement canvas/scrollview's. Get
+        rid of ScrollViewCanvas and replace it with
+        a tailor abstractscrollview (now in qwebframe).
+        Scrolling of pages is finally completely smooth.
+
+        * WebCore.pro:
+        * platform/ScrollView.h:
+        * platform/qt/ScrollViewCanvasQt.cpp: Removed.
+        * platform/qt/ScrollViewCanvasQt.h: Removed.
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::setScrollArea):
+        (WebCore::ScrollView::updateContents):
+        (WebCore::ScrollView::resizeContents):
+        (WebCore::ScrollView::contentsWidth):
+        (WebCore::ScrollView::contentsHeight):
+        (WebCore::ScrollView::contentsToWindow):
+        (WebCore::ScrollView::windowToContents):
+        (WebCore::ScrollView::addChild):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::WidgetPrivate::canvas):
+        (WebCore::WidgetPrivate::parentScroll):
+        (WebCore::WidgetPrivate::setGeometry):
+        (WebCore::WidgetPrivate::geometry):
+        (WebCore::Widget::frameGeometry):
+        (WebCore::Widget::setQWidget):
+        (WebCore::Widget::setFrameGeometry):
+
 2007-02-21  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Adam Roben.
