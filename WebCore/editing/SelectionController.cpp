@@ -1155,6 +1155,14 @@ bool SelectionController::isInPasswordField() const
     
     return static_cast<HTMLInputElement*>(startNode)->inputType() == HTMLInputElement::PASSWORD;
 }
+
+bool SelectionController::isInsideNode() const
+{
+    Node* startNode = start().node();
+    if (!startNode)
+        return false;
+    return !isTableElement(startNode) && !editingIgnoresContent(startNode);
+}
   
 #ifndef NDEBUG
 

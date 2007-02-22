@@ -1413,7 +1413,11 @@ void RenderBlock::paintCaret(PaintInfo& paintInfo, CaretType type)
     SelectionController* selectionController = type == CursorCaret ? document()->frame()->selectionController() : document()->frame()->dragCaretController();
     Node* caretNode = selectionController->start().node();
     RenderObject* renderer = caretNode ? caretNode->renderer() : 0;
-    if (renderer && (renderer == this || (renderer->containingBlock() == this && !renderer->isBlockFlow())) && caretNode->isContentEditable()) {
+    if (!renderer)
+        return;
+    // if caretNode is a block and caret is inside it then caret should be painted by that block
+    bool cursorInsideBlockCaretNode = renderer->isBlockFlow() && selectionController->isInsideNode();
+    if ((cursorInsideBlockCaretNode ? renderer : renderer->containingBlock()) == this && caretNode->isContentEditable()) {
         if (type == CursorCaret)
             document()->frame()->paintCaret(paintInfo.context, paintInfo.rect);
         else

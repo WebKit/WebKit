@@ -1,3 +1,18 @@
+2007-02-21  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12820
+        REGRESSION (r19706): Caret not painted after popup, failing editing/pasteboard/4641033
+
+        Yet another attempt to figure out exactly who should paint the caret.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::isInsideNode):
+        * editing/SelectionController.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintCaret):
+
 2007-02-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.
