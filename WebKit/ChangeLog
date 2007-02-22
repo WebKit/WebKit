@@ -1,5 +1,26 @@
 2007-02-22  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12804
+          REGRESSION (r19043-r19063): suggestion popup doesn't work after pressing Option+Esc
+
+        This patch also fixes a bug where using the arrow keys while
+        the suggestion popup is open moves the caret instead of changing the
+        selection in the popup (for up/down) or accepting the selection and
+        closing the popup (for left/right).
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView keyDown:]): Changed to close the popup only if it was open
+        before the current event, so that the Option-Esc that opens the popup will
+        not close it immediately.
+        (-[WebHTMLView _interceptEditingKeyEvent:]): Give the completion popup a
+        chance to intercept keydown events.
+        (-[WebTextCompleteController popupWindowIsOpen]): Added. Returns whether the
+        suggestion popup is open.
+
+2007-02-22  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Mark (age 21).
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=12805

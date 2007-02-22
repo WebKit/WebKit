@@ -269,6 +269,7 @@ static WebHTMLView *lastHitView;
 - (id)initWithHTMLView:(WebHTMLView *)view;
 - (void)doCompletion;
 - (void)endRevertingChange:(BOOL)revertChange moveLeft:(BOOL)goLeft;
+- (BOOL)popupWindowIsOpen;
 - (BOOL)filterKeyDown:(NSEvent *)event;
 - (void)_reflectSelection;
 @end
@@ -3382,12 +3383,13 @@ done:
     [_private->keyDownEvent release];
     _private->keyDownEvent = [event retain];
 
+    BOOL completionPopupWasOpen = _private->compController && [_private->compController popupWindowIsOpen];
     if (!eventWasSentToWebCore && core([self _frame])->eventHandler()->keyEvent(event)) {
-        // WebCore processed a key event, bail on any outstanding complete: UI
-        [_private->compController endRevertingChange:YES moveLeft:NO];
-    } else if (_private->compController && [_private->compController filterKeyDown:event]) {
-        // Consumed by complete: popup window
-    } else {
+        // WebCore processed a key event, bail on any preexisting complete: UI
+        if (completionPopupWasOpen)
+            [_private->compController endRevertingChange:YES moveLeft:NO];
+    } else if (!_private->compController || ![_private->compController filterKeyDown:event]) {
+        // Not consumed by complete: popup window
         [_private->compController endRevertingChange:YES moveLeft:NO];
         callSuper = YES;
     }
@@ -5231,9 +5233,12 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     WebHTMLViewInterpretKeyEventsParameters parameters;
     parameters.eventWasHandled = false;
     if (const PlatformKeyboardEvent* platformEvent = event->keyEvent()) {
+        NSEvent *macEvent = platformEvent->macEvent();
+        if ([macEvent type] == NSKeyDown && [_private->compController filterKeyDown:macEvent])
+            return true;
         parameters.event = event;
         _private->interpretKeyEventsParameters = &parameters;
-        [self interpretKeyEvents:[NSArray arrayWithObject:platformEvent->macEvent()]];
+        [self interpretKeyEvents:[NSArray arrayWithObject:macEvent]];
         _private->interpretKeyEventsParameters = 0;
     }
     return parameters.eventWasHandled;
@@ -5765,6 +5770,11 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         _originalString = nil;
     }
     // else there is no state to abort if the window was not up
+}
+
+- (BOOL)popupWindowIsOpen
+{
+    return _popupWindow != nil;
 }
 
 // WebHTMLView gives us a crack at key events it sees.  Return whether we consumed the event.
