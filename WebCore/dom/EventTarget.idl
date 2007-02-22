@@ -22,12 +22,12 @@ module events {
 
     // Introduced in DOM Level 2:
     interface [ObjCProtocol] EventTarget {
-        void               addEventListener(in DOMString type, 
-                                            in EventListener listener, 
-                                            in boolean useCapture);
-        void               removeEventListener(in DOMString type, 
-                                               in EventListener listener, 
-                                               in boolean useCapture);
+        [OldStyleObjC] void addEventListener(in DOMString type, 
+                                             in EventListener listener, 
+                                             in boolean useCapture);
+        [OldStyleObjC] void removeEventListener(in DOMString type, 
+                                                in EventListener listener, 
+                                                in boolean useCapture);
         boolean            dispatchEvent(in Event event)
             raises(EventException);
     };

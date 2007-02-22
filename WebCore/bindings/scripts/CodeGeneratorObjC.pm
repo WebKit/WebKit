@@ -126,7 +126,7 @@ my %conflictMethod = (
     "zone" => "NSObject",
 );
 
-my $sawConflict = 0;
+my $fatalError = 0;
 
 # Default Licence Templates
 my $headerLicenceTemplate = << "EOF";
@@ -218,6 +218,7 @@ sub ReadPublicInterfaces
     my $class = shift;
     my $superClass = shift;
     my $defines = shift;
+    my $isProtocol = shift;
 
     my $found = 0;
     my $actualSuperClass;
@@ -230,8 +231,15 @@ sub ReadPublicInterfaces
     close FILE;
 
     foreach $line (@documentContent) {
-        if ($line =~ /^\s?\@interface $class\s?:\s?(\w+)\s?$/) {
-            die "error: Public API change. Superclass for \"$class\" differs ($1 != $superClass)" if $superClass ne $1;
+        if (!$isProtocol && $line =~ /^\s*\@interface\s*$class\s*:\s*(\w+)\s*/) {
+            if ($superClass ne $1) {
+                warn "Public API change. Superclass for \"$class\" differs ($1 != $superClass)";
+                $fatalError = 1;
+            }
+
+            $found = 1;
+            next;
+        } elsif ($isProtocol && $line =~ /^\s*\@protocol $class\s*/) {
             $found = 1;
             next;
         }
@@ -257,7 +265,7 @@ sub GenerateInterface
     my $dataNode = shift;
     my $defines = shift;
 
-    $sawConflict = 0;
+    $fatalError = 0;
 
     my $name = $dataNode->name;
     my $className = GetClassName($name);
@@ -265,7 +273,7 @@ sub GenerateInterface
     $isProtocol = $dataNode->extendedAttributes->{ObjCProtocol};
     $noImpl = $dataNode->extendedAttributes->{ObjCCustomImplementation} || $isProtocol;
 
-    ReadPublicInterfaces($className, $parentClassName, $defines);
+    ReadPublicInterfaces($className, $parentClassName, $defines, $isProtocol);
 
     # Start actual generation..
     $object->GenerateHeader($dataNode);
@@ -277,10 +285,11 @@ sub GenerateInterface
     # Check for missing public API
     if (keys %publicInterfaces > 0) {
         my $missing = join("\n", keys %publicInterfaces);
-        die "error: Public API change. There are missing public properties and/or methods from the \"$className\" class.\n$missing\n";
+        warn "Public API change. There are missing public properties and/or methods from the \"$className\" class.\n$missing\n";
+        $fatalError = 1;
     }
 
-    die if $sawConflict;
+    die if $fatalError;
 }
 
 # Params: 'idlDocument' struct
@@ -767,13 +776,13 @@ sub GenerateHeader
             my $conflict = $conflictMethod{$attributeName};
             if ($conflict) {
                 warn "$className conflicts with $conflict method $attributeName\n";
-                $sawConflict = 1;
+                $fatalError = 1;
             }
 
             $conflict = $conflictMethod{$setterName};
             if ($conflict) {
                 warn "$className conflicts with $conflict method $setterName\n";
-                $sawConflict = 1;
+                $fatalError = 1;
             }
 
             if ($buildingForLeopardOrLater) {
@@ -849,7 +858,12 @@ sub GenerateHeader
             my $conflict = $conflictMethod{$methodName};
             if ($conflict) {
                 warn "$className conflicts with $conflict method $methodName\n";
-                $sawConflict = 1;
+                $fatalError = 1;
+            }
+
+            if ($isProtocol && !$newPublicClass && !defined $publicInterfaces{$functionSig}) {
+                warn "Protocol method $functionSig is not in PublicDOMInterfaces.h. Protocols require all methods to be public";
+                $fatalError = 1;
             }
 
             my $public = ($publicInterfaces{$functionSig} or $newPublicClass);
@@ -876,6 +890,12 @@ sub GenerateHeader
                 push(@deprecatedHeaderFunctions, $deprecatedFunctionSig);
 
                 $deprecatedFunctionKey =~ s/\n$//; # remove the newline
+
+                unless (defined $publicInterfaces{$deprecatedFunctionKey}) {
+                    warn "Deprecated method $deprecatedFunctionKey is not in PublicDOMInterfaces.h. All deprecated methods need to be public, or should have the OldStyleObjC IDL attribute removed";
+                    $fatalError = 1;
+                }
+
                 delete $publicInterfaces{$deprecatedFunctionKey};
             }
         }
@@ -886,10 +906,14 @@ sub GenerateHeader
         }
     }
 
+    if (@deprecatedHeaderFunctions > 0 && $isProtocol) {
+        push(@headerContent, @deprecatedHeaderFunctions);
+    }
+
     # - End @interface or @protocol
     push(@headerContent, "\@end\n");
 
-    if (@deprecatedHeaderFunctions > 0) {
+    if (@deprecatedHeaderFunctions > 0 && !$isProtocol) {
         # - Deprecated category @interface 
         push(@headerContent, "\n\@interface $className (" . $className . "Deprecated)\n");
         push(@headerContent, @deprecatedHeaderFunctions);
@@ -1119,6 +1143,9 @@ sub GenerateImplementation
                 push(@customGetterContent, "    // This node iterator was created from the C++ side.\n");
                 $getterContentHead = "[$attributeClassName $typeMaker:WTF::getPtr(" . $getterContentHead;
                 $getterContentTail .= ")]";
+            } elsif ($attribute->signature->extendedAttributes->{"ConvertToString"}) {
+                $getterContentHead = "WebCore::String::number(" . $getterContentHead;
+                $getterContentTail .= ")";
             } elsif ($attribute->signature->extendedAttributes->{"ConvertFromString"}) {
                 $getterContentTail .= ".toInt()";
             } elsif ($codeGenerator->IsPodType($idlType)) {
@@ -1168,8 +1195,11 @@ sub GenerateImplementation
                 my $argName = "new" . ucfirst($attributeInterfaceName);
                 my $arg = GetObjCTypeGetter($argName, $idlType);
 
+                # The definition of ConvertFromString and ConvertToString is flipped for the setter
                 if ($attribute->signature->extendedAttributes->{"ConvertFromString"}) {
                     $arg = "WebCore::String::number($arg)";
+                } elsif ($attribute->signature->extendedAttributes->{"ConvertToString"}) {
+                    $arg = "WebCore::String($arg).toInt()";
                 }
 
                 my $setterSig = "- (void)$setterName:($attributeType)$argName\n";

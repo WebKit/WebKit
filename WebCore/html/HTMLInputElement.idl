@@ -33,7 +33,11 @@ module html {
                  attribute long            maxLength;
                  attribute DOMString       name;
                  attribute boolean         readOnly;
+#if defined(LANGUAGE_OBJECTIVE_C)
+                 attribute [ConvertToString] DOMString size; // DOM level 2 changed this to a long, but our existing API is a string
+#else
                  attribute unsigned long   size; // Changed string -> long as part of DOM level 2
+#endif
                  attribute DOMString       src;
                  attribute long            tabIndex;
                  attribute DOMString       type; // readonly dropped as part of DOM level 2

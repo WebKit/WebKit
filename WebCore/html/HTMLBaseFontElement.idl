@@ -22,6 +22,10 @@ module html {
     interface [LegacyParent=KJS::JSHTMLElement, GenerateConstructor] HTMLBaseFontElement : HTMLElement {
         attribute DOMString color;
         attribute DOMString face;
+#if defined(LANGUAGE_OBJECTIVE_C)
+        attribute [ConvertToString] DOMString size; // this changed to a long, but our existing API is a string
+#else
         attribute long size;
+#endif
     };
 }
