@@ -17,16 +17,16 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (360,190) size 480x35
           RenderSVGInlineText {#text} at (0,-28) size 52x35
             text run at (0,-28) width 52: "500"
-        RenderSVGText {text} at (360,225) size 480x35
+        RenderSVGText {text} at (360,225) size 480x35 [color=#008000]
           RenderSVGInlineText {#text} at (0,-28) size 61x35
             text run at (0,-28) width 61: "600"
-        RenderSVGText {text} at (360,260) size 480x35
+        RenderSVGText {text} at (360,260) size 480x35 [color=#008000]
           RenderSVGInlineText {#text} at (0,-28) size 59x35
             text run at (0,-28) width 59: "700"
-        RenderSVGText {text} at (360,295) size 480x35
+        RenderSVGText {text} at (360,295) size 480x35 [color=#008000]
           RenderSVGInlineText {#text} at (0,-28) size 62x35
             text run at (0,-28) width 62: "800"
-        RenderSVGText {text} at (360,330) size 480x35
+        RenderSVGText {text} at (360,330) size 480x35 [color=#008000]
           RenderSVGInlineText {#text} at (0,-28) size 61x35
             text run at (0,-28) width 61: "900"
         RenderSVGText {text} at (60,80) size 480x35
@@ -36,11 +36,11 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-28) size 190x35
             text run at (0,-28) width 190: "This is normal"
         RenderSVGContainer {g} at (60,152) size 213x35
-          RenderSVGText {text} at (60,180) size 480x35
+          RenderSVGText {text} at (60,180) size 480x35 [color=#0000FF]
             RenderSVGInlineText {#text} at (0,-28) size 213x35
               text run at (0,-28) width 213: "Blue is bolder"
         RenderSVGContainer {g} at (60,202) size 184x35
-          RenderSVGText {text} at (60,230) size 480x35
+          RenderSVGText {text} at (60,230) size 480x35 [color=#0000FF]
             RenderSVGInlineText {#text} at (0,-28) size 184x35
               text run at (0,-28) width 184: "Blue is lighter"
       RenderSVGText {text} at (10,340) size 480x46

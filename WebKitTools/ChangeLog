@@ -1,4 +1,18 @@
 2007-02-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adam Roben.
+        
+        Added hack to force painting when running an SVG test. This is a work-around
+        for http://bugs.webkit.org/show_bug.cgi?id=12849 SVG renderers update at 
+        paint time instead of style resolution time.
+
+        We need this so that --leaks mode, which always paints, doesn't appear to 
+        fail SVG tests. We also need this if we ever want to test style application 
+        in SVG, since many SVGs don't apply style to their renderers until they paint.
+
+        * Scripts/run-webkit-tests:
+
+2007-02-21  Geoffrey Garen  <ggaren@apple.com>
         
         Reduced --leaks mode to running only 750 tests at a time, in the hopes
         of fixing intermittent crasher that may be caused by out of memory

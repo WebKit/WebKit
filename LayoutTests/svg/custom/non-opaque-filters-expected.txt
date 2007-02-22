@@ -5,6 +5,6 @@ layer at (0,0) size 800x600
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (0,0) size 87x40 [opacity=0.50]
         RenderPath {rect} at (0,0) size 87x40 [fill={[type=SOLID] [color=#008000]}] [filter=#gblur] [data="M0.00,0.00L87.00,0.00L87.00,40.00L0.00,40.00"]
-      RenderSVGText {text} at (0,60) size 800x18
+      RenderSVGText {text} at (0,60) size 800x18 [color=#008000]
         RenderSVGInlineText {#text} at (0,-14) size 139x18
           text run at (0,-14) width 139: "This should not crash."

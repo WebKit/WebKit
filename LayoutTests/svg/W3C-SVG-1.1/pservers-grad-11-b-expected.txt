@@ -32,7 +32,7 @@ layer at (0,0) size 480x360
         RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
           RenderSVGGradientStop {stop} at (0,0) size 0x0
           RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderSVGText {text} at (10,270) size 480x51
+        RenderSVGText {text} at (10,270) size 480x51 [color=#FFFFFF]
           RenderSVGInlineText {#text} at (0,-41) size 460x51
             text run at (0,-41) width 460: "Gradient on text stroke"
         RenderSVGText {text} at (10,285) size 480x14

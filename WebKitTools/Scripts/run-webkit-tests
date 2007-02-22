@@ -337,9 +337,22 @@ my $isHttpdOpen = 0;
 print "Testing ", scalar @tests, " test cases.\n";
 my $overallStartTime = time;
 
+my $didApplySVGPaintHack = 0;
+
 for my $test (@tests) {
     next if $test eq 'results.html';
 
+    # Hack to work around http://bugs.webkit.org/show_bug.cgi?id=12849 SVG renderers 
+    # update at paint time instead of style resolution time.
+    if (!$didApplySVGPaintHack && $test =~ /^svg/) {
+        $didApplySVGPaintHack = 1;
+        closeDumpTool();
+        push @toolArgs, "--paint";
+    } elsif ($didApplySVGPaintHack && $test !~ /^svg/) {
+        $didApplySVGPaintHack = 0;
+        closeDumpTool();
+        pop @toolArgs;
+    }
     openDumpTool();
 
     my $base = $test;

@@ -16,19 +16,19 @@ layer at (0,0) size 480x360
               text run at (327,-43) width 73: " def"
           RenderSVGContainer {g} at (10,220) size 430x20
             RenderPath {rect} at (10,220) size 100x20 [fill={[type=SOLID] [color=#0000FF]}] [data="M10.00,160.00L110.00,160.00L110.00,180.00L10.00,180.00"]
-            RenderSVGText {text} at (60,175) size 480x18
+            RenderSVGText {text} at (60,175) size 480x18 [color=#FFFFFF]
               RenderSVGInlineText {#text} at (-40,-14) size 80x18
                 text run at (-40,-14) width 80: "startIndex++"
             RenderPath {rect} at (120,220) size 100x20 [fill={[type=SOLID] [color=#0000FF]}] [data="M120.00,160.00L220.00,160.00L220.00,180.00L120.00,180.00"]
-            RenderSVGText {text} at (170,175) size 480x18
+            RenderSVGText {text} at (170,175) size 480x18 [color=#FFFFFF]
               RenderSVGInlineText {#text} at (-36,-14) size 72x18
                 text run at (-36,-14) width 72: "startIndex--"
             RenderPath {rect} at (230,220) size 100x20 [fill={[type=SOLID] [color=#0000FF]}] [data="M230.00,160.00L330.00,160.00L330.00,180.00L230.00,180.00"]
-            RenderSVGText {text} at (280,175) size 480x18
+            RenderSVGText {text} at (280,175) size 480x18 [color=#FFFFFF]
               RenderSVGInlineText {#text} at (-41,-14) size 83x18
                 text run at (-41,-14) width 83: "numChars++"
             RenderPath {rect} at (340,220) size 100x20 [fill={[type=SOLID] [color=#0000FF]}] [data="M340.00,160.00L440.00,160.00L440.00,180.00L340.00,180.00"]
-            RenderSVGText {text} at (390,175) size 480x18
+            RenderSVGText {text} at (390,175) size 480x18 [color=#FFFFFF]
               RenderSVGInlineText {#text} at (-37,-14) size 75x18
                 text run at (-37,-14) width 75: "numChars--"
       RenderSVGText {text} at (10,340) size 480x46

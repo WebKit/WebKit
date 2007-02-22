@@ -12,9 +12,9 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (-150,70) size 800x78
           RenderSVGInlineText {#text} at (0,-61) size 420x78
             text run at (0,-61) width 420: "Gradient on fill"
-        RenderSVGText {text} at (-150,140) size 800x78
+        RenderSVGText {text} at (-150,140) size 800x78 [color=#FFFFFF]
           RenderSVGInlineText {#text} at (0,-61) size 506x78
             text run at (0,-61) width 506: "Gradient on stroke"
-        RenderSVGText {text} at (-150,210) size 800x78
+        RenderSVGText {text} at (-150,210) size 800x78 [color=#FFFFFF]
           RenderSVGInlineText {#text} at (0,-61) size 605x78
             text run at (0,-61) width 605: "Gradient on fill/stroke"

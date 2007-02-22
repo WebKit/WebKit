@@ -10,10 +10,10 @@ layer at (0,0) size 480x360
             text run at (0,-9) width 132: "and 'lengthAdjust' attributes."
         RenderSVGContainer {g} at (4.50,66) size 517.50x72
           RenderSVGContainer {g} at (9,66) size 513x30
-            RenderSVGText {text} at (3,30) size 480x10
+            RenderSVGText {text} at (3,30) size 480x10 [color=#0000FF]
               RenderSVGInlineText {#text} at (0,-8) size 61x10
                 text run at (0,-8) width 61: "Line to Stretch"
-            RenderSVGText {text} at (75,30) size 480x10
+            RenderSVGText {text} at (75,30) size 480x10 [color=#0000FF]
               RenderSVGInlineText {#text} at (0,-8) size 99x10
                 text run at (0,-8) width 99: "this is a line to squeeze"
           RenderSVGContainer {g} at (4.50,94.50) size 471x13.50
@@ -38,10 +38,10 @@ layer at (0,0) size 480x360
                 text run at (0,-8) width 85: "lengthAdjust: default"
         RenderSVGContainer {g} at (4.50,132) size 523.50x72 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,22.00)}]
           RenderSVGContainer {g} at (9,132) size 513x30
-            RenderSVGText {text} at (3,30) size 480x10
+            RenderSVGText {text} at (3,30) size 480x10 [color=#0000FF]
               RenderSVGInlineText {#text} at (0,-8) size 61x10
                 text run at (0,-8) width 61: "Line to Stretch"
-            RenderSVGText {text} at (75,30) size 480x10
+            RenderSVGText {text} at (75,30) size 480x10 [color=#0000FF]
               RenderSVGInlineText {#text} at (0,-8) size 99x10
                 text run at (0,-8) width 99: "this is a line to squeeze"
           RenderSVGContainer {g} at (4.50,160.50) size 420x13.50
@@ -66,10 +66,10 @@ layer at (0,0) size 480x360
                 text run at (0,-8) width 85: "lengthAdjust: default"
         RenderSVGContainer {g} at (4.50,198) size 523.50x72 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,44.00)}]
           RenderSVGContainer {g} at (9,198) size 513x30
-            RenderSVGText {text} at (3,30) size 480x10
+            RenderSVGText {text} at (3,30) size 480x10 [color=#0000FF]
               RenderSVGInlineText {#text} at (0,-8) size 61x10
                 text run at (0,-8) width 61: "Line to Stretch"
-            RenderSVGText {text} at (75,30) size 480x10
+            RenderSVGText {text} at (75,30) size 480x10 [color=#0000FF]
               RenderSVGInlineText {#text} at (0,-8) size 99x10
                 text run at (0,-8) width 99: "this is a line to squeeze"
           RenderSVGContainer {g} at (4.50,226.50) size 420x13.50
@@ -94,10 +94,10 @@ layer at (0,0) size 480x360
                 text run at (0,-8) width 89: "lengthAdjust: spacing"
         RenderSVGContainer {g} at (4.50,264) size 523.50x72 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,66.00)}]
           RenderSVGContainer {g} at (9,264) size 513x30
-            RenderSVGText {text} at (3,30) size 480x10
+            RenderSVGText {text} at (3,30) size 480x10 [color=#0000FF]
               RenderSVGInlineText {#text} at (0,-8) size 61x10
                 text run at (0,-8) width 61: "Line to Stretch"
-            RenderSVGText {text} at (75,30) size 480x10
+            RenderSVGText {text} at (75,30) size 480x10 [color=#0000FF]
               RenderSVGInlineText {#text} at (0,-8) size 99x10
                 text run at (0,-8) width 99: "this is a line to squeeze"
           RenderSVGContainer {g} at (4.50,292.50) size 420x13.50

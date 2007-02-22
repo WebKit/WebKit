@@ -14,17 +14,17 @@ layer at (0,0) size 480x360
             RenderSVGInlineText {#text} at (0,-18) size 80x23
               text run at (0,-18) width 80: "Text at 9s"
         RenderSVGContainer {g} at (41,35.91) size 283x249.09
-          RenderSVGText {text} at (0,0) size 480x23
+          RenderSVGText {text} at (0,0) size 480x23 [color=#BBEEEE]
             RenderSVGInlineText {#text} at (0,-18) size 77x23
               text run at (0,-18) width 77: "It's alive!"
-          RenderSVGText {text} at (0,0) size 480x46
+          RenderSVGText {text} at (0,0) size 480x46 [color=#BBEEEE]
             RenderSVGInlineText {#text} at (0,-36) size 148x46
               text run at (0,-36) width 148: "It's alive!"
-          RenderSVGText {text} at (100,270) size 480x69
+          RenderSVGText {text} at (100,270) size 480x69 [color=#BBEEEE]
             RenderSVGInlineText {#text} at (0,-54) size 224x69
               text run at (0,-54) width 224: "It's alive!"
         RenderSVGContainer {g} at (41,35.91) size 78.18x58.42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,90.00)}]
-          RenderSVGText {text} at (0,0) size 480x23
+          RenderSVGText {text} at (0,0) size 480x23 [color=#FF2222]
             RenderSVGInlineText {#text} at (0,-18) size 77x23
               text run at (0,-18) width 77: "It's alive!"
             RenderSVGInlineText {#text} at (0,0) size 0x0

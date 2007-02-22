@@ -3,6 +3,6 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     RenderSVGContainer {svg} at (16.67,40) size 881.67x172.50
       RenderSVGContainer {g} at (16.67,40) size 881.67x172.50 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
-        RenderSVGText {text} at (10,70) size 800x69
+        RenderSVGText {text} at (10,70) size 800x69 [color=#000080]
           RenderSVGInlineText {#text} at (0,-54) size 529x69
             text run at (0,-54) width 529: "Clipped. INVISIBLE."

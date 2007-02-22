@@ -9,7 +9,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,0) size 480x33
             RenderSVGInlineText {#text} at (0,-27) size 98x33
               text run at (0,-27) width 98: "Normal"
-            RenderSVGTSpan {tspan} at (0,0) size 204x33
+            RenderSVGTSpan {tspan} at (0,0) size 204x33 [color=#FF0000]
               RenderSVGInlineText {#text} at (98,-27) size 204x33
                 text run at (98,-27) width 204: "baseline-shift:7"
             RenderSVGInlineText {#text} at (302,-27) size 48x33
@@ -17,7 +17,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,70) size 480x33
             RenderSVGInlineText {#text} at (0,-27) size 98x33
               text run at (0,-27) width 98: "Normal"
-            RenderSVGTSpan {tspan} at (0,0) size 258x33
+            RenderSVGTSpan {tspan} at (0,0) size 258x33 [color=#FF0000]
               RenderSVGInlineText {#text} at (98,-27) size 258x33
                 text run at (98,-27) width 258: "baseline-shift:-70%"
             RenderSVGInlineText {#text} at (356,-27) size 48x33
@@ -25,13 +25,13 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,140) size 480x33
             RenderSVGInlineText {#text} at (0,-27) size 98x33
               text run at (0,-27) width 98: "Normal"
-            RenderSVGTSpan {tspan} at (0,0) size 49x33
+            RenderSVGTSpan {tspan} at (0,0) size 49x33 [color=#FF0000]
               RenderSVGInlineText {#text} at (98,-27) size 49x33
                 text run at (98,-27) width 49: "sub"
-            RenderSVGTSpan {tspan} at (0,0) size 76x33
+            RenderSVGTSpan {tspan} at (0,0) size 76x33 [color=#008000]
               RenderSVGInlineText {#text} at (147,-27) size 76x33
                 text run at (147,-27) width 76: "super"
-            RenderSVGTSpan {tspan} at (0,0) size 25x33
+            RenderSVGTSpan {tspan} at (0,0) size 25x33 [color=#0000FF]
               RenderSVGInlineText {#text} at (223,-27) size 25x33
                 text run at (223,-27) width 25: "te"
             RenderSVGInlineText {#text} at (248,-27) size 23x33

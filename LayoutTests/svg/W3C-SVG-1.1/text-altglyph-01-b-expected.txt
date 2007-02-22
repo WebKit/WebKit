@@ -11,10 +11,10 @@ layer at (0,0) size 480x360
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGContainer {g} at (45,185) size 425x105
           RenderSVGText {text} at (140,190) size 480x0
-          RenderSVGText {text} at (50,270) size 480x69
+          RenderSVGText {text} at (50,270) size 480x69 [color=#008000]
             RenderSVGInlineText {#text} at (0,-54) size 43x69
               text run at (0,-54) width 43: "D"
-          RenderSVGText {text} at (280,270) size 480x69
+          RenderSVGText {text} at (280,270) size 480x69 [color=#0000FF]
             RenderSVGInlineText {#text} at (0,-54) size 185x69
               text run at (0,-54) width 185: "SASSY"
       RenderSVGText {text} at (10,340) size 480x46
