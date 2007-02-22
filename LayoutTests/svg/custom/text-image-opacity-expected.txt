@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     RenderSVGContainer {svg} at (0,11) size 379x144
-      RenderSVGText {text} at (0,25) size 800x18 [color=#FF0000]
+      RenderSVGText {text} at (0,25) size 800x18
         RenderSVGInlineText {#text} at (0,-14) size 29x18
           text run at (0,-14) width 29: "Fail!"
-      RenderSVGText {text} at (0,50) size 800x18 [color=#008000]
+      RenderSVGText {text} at (0,50) size 800x18
         RenderSVGInlineText {#text} at (0,-14) size 379x18
           text run at (0,-14) width 379: "Success! (should be half opacity as should the image below)"
       RenderImage {image} at (0,0) size 100x100

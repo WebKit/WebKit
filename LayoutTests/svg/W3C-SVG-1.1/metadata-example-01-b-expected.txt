@@ -63,38 +63,38 @@ layer at (0,0) size 480x360
             RenderPath {polygon} at (217.57,69.58) size 0.65x0.65 [fill={[type=SOLID] [color=#5A59CE]}] [data="M511.00,264.00L503.00,268.00L503.00,260.00"]
             RenderPath {polygon} at (223.78,70.50) size 0.70x0.67 [fill={[type=SOLID] [color=#5A59CE]}] [data="M597.00,324.00L590.00,329.00L588.00,321.00"]
           RenderSVGContainer {g} at (195.65,53.57) size 38.18x28.48
-            RenderSVGText {text} at (458,105) size 480x12 [color=#426942]
+            RenderSVGText {text} at (458,105) size 480x12
               RenderSVGInlineText {#text} at (0,-10) size 316x12
                 text run at (0,-10) width 316: "http://prismstandard.org/vocabularies/1.0/resourcetype.xml#birdsEye"
-            RenderSVGText {text} at (453,159) size 480x12 [color=#426942]
+            RenderSVGText {text} at (453,159) size 480x12
               RenderSVGInlineText {#text} at (0,-10) size 322x12
                 text run at (0,-10) width 322: "http://prismstandard.org/vocabularies/1.0/resourcetype.xml#illustration"
-            RenderSVGText {text} at (604,213) size 480x12 [color=#426942]
+            RenderSVGText {text} at (604,213) size 480x12
               RenderSVGInlineText {#text} at (0,-10) size 68x12
                 text run at (0,-10) width 68: "image/svg+xml"
-            RenderSVGText {text} at (530,267) size 480x12 [color=#426942]
+            RenderSVGText {text} at (530,267) size 480x12
               RenderSVGInlineText {#text} at (0,-10) size 197x12
                 text run at (0,-10) width 197: "Line drawing of woman in antique attire, ..."
-            RenderSVGText {text} at (177,213) size 480x12 [color=#426942]
+            RenderSVGText {text} at (177,213) size 480x12
               RenderSVGInlineText {#text} at (0,-10) size 31x12
                 text run at (0,-10) width 31: "online:"
-            RenderSVGText {text} at (601,321) size 480x12 [color=#426942]
+            RenderSVGText {text} at (601,321) size 480x12
               RenderSVGInlineText {#text} at (0,-10) size 74x12
                 text run at (0,-10) width 74: "Sibyll Trelawney"
           RenderSVGContainer {g} at (199.02,62.91) size 15.25x15.01
-            RenderSVGText {text} at (256,158) size 480x12 [color=#5A59CE]
+            RenderSVGText {text} at (256,158) size 480x12
               RenderSVGInlineText {#text} at (0,-10) size 162x12
                 text run at (0,-10) width 162: "http://purl.org/dc/elements/1.1/type"
-            RenderSVGText {text} at (250,206) size 480x12 [color=#5A59CE]
+            RenderSVGText {text} at (250,206) size 480x12
               RenderSVGInlineText {#text} at (0,-10) size 171x12
                 text run at (0,-10) width 171: "http://purl.org/dc/elements/1.1/format"
-            RenderSVGText {text} at (250,276) size 480x12 [color=#5A59CE]
+            RenderSVGText {text} at (250,276) size 480x12
               RenderSVGInlineText {#text} at (0,-10) size 175x12
                 text run at (0,-10) width 175: "http://purl.org/dc/elements/1.1/subject"
-            RenderSVGText {text} at (256,105) size 480x12 [color=#5A59CE]
+            RenderSVGText {text} at (256,105) size 480x12
               RenderSVGInlineText {#text} at (0,-10) size 162x12
                 text run at (0,-10) width 162: "http://purl.org/dc/elements/1.1/type"
-            RenderSVGText {text} at (240,225) size 480x12 [color=#5A59CE]
+            RenderSVGText {text} at (240,225) size 480x12
               RenderSVGInlineText {#text} at (0,-10) size 192x12
                 text run at (0,-10) width 192: "http://purl.org/dc/elements/1.1/description"
       RenderSVGText {text} at (10,340) size 480x46

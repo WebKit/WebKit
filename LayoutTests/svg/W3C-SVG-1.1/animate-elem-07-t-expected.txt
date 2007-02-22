@@ -5,7 +5,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (7,8) size 480x10
           RenderSVGInlineText {#text} at (0,-8) size 77x10
             text run at (0,-8) width 77: "Test a motion path"
-        RenderSVGText {text} at (10,18) size 480x10 [color=#FF0000]
+        RenderSVGText {text} at (10,18) size 480x10
           RenderSVGInlineText {#text} at (0,-8) size 67x10
             text run at (0,-8) width 67: "'mpath' element."
         RenderSVGContainer {g} at (-34.85,-66.71) size 532.85x378.71

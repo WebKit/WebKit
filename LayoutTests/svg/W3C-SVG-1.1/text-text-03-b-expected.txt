@@ -2,19 +2,19 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
       RenderSVGContainer {g} at (1,28) size 471x262
-        RenderSVGText {text} at (19,61) size 480x39 [color=#0000FF]
+        RenderSVGText {text} at (19,61) size 480x39
           RenderSVGInlineText {#text} at (0,-32) size 76x39
             text run at (0,-32) width 76: "Plain"
-        RenderSVGText {text} at (142,61) size 480x39 [color=#0000FF]
+        RenderSVGText {text} at (142,61) size 480x39
           RenderSVGInlineText {#text} at (0,-32) size 80x39
             text run at (0,-32) width 80: "Italic"
-        RenderSVGText {text} at (257,60) size 480x39 [color=#0000FF]
+        RenderSVGText {text} at (257,60) size 480x39
           RenderSVGInlineText {#text} at (0,-32) size 79x39
             text run at (0,-32) width 79: "Bold"
-        RenderSVGText {text} at (224,110) size 480x39 [color=#0000FF]
+        RenderSVGText {text} at (224,110) size 480x39
           RenderSVGInlineText {#text} at (0,-32) size 153x39
             text run at (0,-32) width 153: "Underline"
-        RenderSVGText {text} at (39,147) size 480x39 [color=#FF0000]
+        RenderSVGText {text} at (39,147) size 480x39
           RenderSVGInlineText {#text} at (0,-32) size 203x39
             text run at (0,-32) width 203: "Line through"
         RenderSVGText {text} at (1,200) size 480x39

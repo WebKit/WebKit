@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,-36) size 69x46
             text run at (0,-36) width 69: "Test"
       RenderSVGContainer {g} at (246,-6) size 146x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(125.00,25.00)}]
-        RenderSVGText {text} at (0,10) size 800x46 [color=#000080]
+        RenderSVGText {text} at (0,10) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 69x46
             text run at (0,-36) width 69: "Test"
       RenderSVGText {text} at (10,60) size 800x18
@@ -14,6 +14,6 @@ layer at (0,0) size 800x600
           text run at (0,-14) width 240: "The two objects should look identical."
       RenderSVGContainer {use} at (46,-6) size 146x100
         RenderSVGContainer {g} at (46,-6) size 146x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(25.00,25.00)}]
-          RenderSVGText {text} at (0,10) size 800x46 [color=#000080]
+          RenderSVGText {text} at (0,10) size 800x46
             RenderSVGInlineText {#text} at (0,-36) size 69x46
               text run at (0,-36) width 69: "Test"

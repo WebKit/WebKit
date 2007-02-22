@@ -39,7 +39,7 @@ layer at (0,0) size 480x360
           RenderPath {rect} at (60,225) size 200x25 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.20]}] [data="M60.00,225.00L260.00,225.00L260.00,250.00L60.00,250.00"]
           RenderPath {rect} at (60,250) size 200x25 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M60.00,250.00L260.00,250.00L260.00,275.00L60.00,275.00"]
           RenderPath {rect} at (60,275) size 200x25 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.70]}] [data="M60.00,275.00L260.00,275.00L260.00,300.00L60.00,300.00"]
-        RenderSVGText {text} at (60,280) size 480x128 [color=#00FF00]
+        RenderSVGText {text} at (60,280) size 480x128
           RenderSVGInlineText {#text} at (0,-100) size 219x128
             text run at (0,-100) width 219: "SVG"
         RenderSVGText {text} at (200,225) size 480x14

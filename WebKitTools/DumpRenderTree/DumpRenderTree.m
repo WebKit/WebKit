@@ -632,9 +632,6 @@ static NSString *serializeWebArchiveToXML(WebArchive *webArchive)
 
 static void dump(void)
 {
-    if (paint)
-        displayWebView();
-    
     if (dumpTree) {
         NSString *result = nil;
 
@@ -794,6 +791,9 @@ static void dump(void)
     
     fflush(stdout);
 
+    if (paint)
+        displayWebView();
+    
     done = YES;
 }
 

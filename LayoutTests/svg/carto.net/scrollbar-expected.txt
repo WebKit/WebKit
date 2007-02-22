@@ -12,25 +12,25 @@ layer at (0,0) size 800x600
         RenderSVGContainer {g} at (40,60) size 2885.60x336
           RenderImage {image} at (0,0) size 3607x420
           RenderSVGContainer {g} at (371.20,112) size 1624.80x259.20
-            RenderSVGText {text} at (456,88) size 800x17 [color=#FFFFFF]
+            RenderSVGText {text} at (456,88) size 800x17
               RenderSVGInlineText {#text} at (-42,-14) size 85x17
                 text run at (-42,-14) width 85: "Furggeltihorn"
-            RenderSVGText {text} at (593,98) size 800x17 [color=#FFFFFF]
+            RenderSVGText {text} at (593,98) size 800x17
               RenderSVGInlineText {#text} at (-23,-14) size 46x17
                 text run at (-23,-14) width 46: "P 2821"
-            RenderSVGText {text} at (635,79) size 800x17 [color=#FFFFFF]
+            RenderSVGText {text} at (635,79) size 800x17
               RenderSVGInlineText {#text} at (-43,-14) size 86x17
                 text run at (-43,-14) width 86: "Zervreilahorn"
-            RenderSVGText {text} at (805,112) size 800x17 [color=#FFFFFF]
+            RenderSVGText {text} at (805,112) size 800x17
               RenderSVGInlineText {#text} at (-37,-14) size 74x17
                 text run at (-37,-14) width 74: "Plattenberg"
-            RenderSVGText {text} at (2220,178) size 800x17 [color=#FFFFFF]
+            RenderSVGText {text} at (2220,178) size 800x17
               RenderSVGInlineText {#text} at (-29,-14) size 58x17
                 text run at (-29,-14) width 58: "Piz Fess"
-            RenderSVGText {text} at (2291,162) size 800x17 [color=#FFFFFF]
+            RenderSVGText {text} at (2291,162) size 800x17
               RenderSVGInlineText {#text} at (-40,-14) size 80x17
                 text run at (-40,-14) width 80: "Crap Grisch"
-            RenderSVGText {text} at (2412,149) size 800x17 [color=#FFFFFF]
+            RenderSVGText {text} at (2412,149) size 800x17
               RenderSVGInlineText {#text} at (-32,-14) size 65x17
                 text run at (-32,-14) width 65: "Piz Tom\x{FC}l"
             RenderSVGText {text} at (1762,112) size 800x17
@@ -83,7 +83,7 @@ layer at (0,0) size 800x600
           RenderPath {rect} at (39.20,483.20) size 88x16 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M49.00,579.00L159.00,579.00L159.00,599.00L49.00,599.00"]
           RenderPath {rect} at (40.80,484.80) size 88x16 [fill={[type=SOLID] [color=#696969]}] [data="M51.00,581.00L161.00,581.00L161.00,601.00L51.00,601.00"]
           RenderPath {rect} at (40,484) size 88x16 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M50.00,580.00L160.00,580.00L160.00,600.00L50.00,600.00"]
-          RenderSVGText {text} at (105,595) size 800x14 [color=#696969]
+          RenderSVGText {text} at (105,595) size 800x14
             RenderSVGTSpan {tspan} at (0,0) size 78x14
               RenderSVGInlineText {#text} at (-39,-11) size 78x14
                 text run at (-39,-11) width 78: "Hide Scrollbar"
@@ -91,7 +91,7 @@ layer at (0,0) size 800x600
           RenderPath {rect} at (135.20,483.20) size 88x16 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M169.00,579.00L279.00,579.00L279.00,599.00L169.00,599.00"]
           RenderPath {rect} at (136.80,484.80) size 88x16 [fill={[type=SOLID] [color=#696969]}] [data="M171.00,581.00L281.00,581.00L281.00,601.00L171.00,601.00"]
           RenderPath {rect} at (136,484) size 88x16 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M170.00,580.00L280.00,580.00L280.00,600.00L170.00,600.00"]
-          RenderSVGText {text} at (225,595) size 800x14 [color=#696969]
+          RenderSVGText {text} at (225,595) size 800x14
             RenderSVGTSpan {tspan} at (0,0) size 98x14
               RenderSVGInlineText {#text} at (-49,-11) size 98x14
                 text run at (-49,-11) width 98: "Remove Scrollbar"

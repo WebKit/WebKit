@@ -7,7 +7,7 @@ layer at (0,0) size 480x360
             text run at (0,-36) width 346: "Test of 'text-anchor'"
         RenderPath {line} at (224.50,75) size 1x150 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M225.00,75.00L225.00,225.00"]
         RenderSVGContainer {g} at (-4,83) size 473x133
-          RenderSVGText {text} at (225,110) size 480x133 [color=#0000FF]
+          RenderSVGText {text} at (225,110) size 480x133
             RenderSVGInlineText {#text} at (-229,-27) size 229x33
               text run at (-229,-27) width 229: "Begin with \"end\","
             RenderSVGTSpan {tspan} at (0,0) size 400x33

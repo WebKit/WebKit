@@ -8,12 +8,12 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (320,0) size 160x360
           RenderSVGContainer {a} at (320,0) size 160x180
             RenderPath {rect} at (320,0) size 160x180 [fill={[type=SOLID] [color=#008000]}] [data="M320.00,0.00L480.00,0.00L480.00,180.00L320.00,180.00"]
-            RenderSVGText {text} at (330,90) size 480x36 [color=#FFFFFF]
+            RenderSVGText {text} at (330,90) size 480x36
               RenderSVGInlineText {#text} at (0,-28) size 96x36
                 text run at (0,-28) width 96: "Fade in"
           RenderSVGContainer {a} at (320,180) size 160x180
             RenderPath {rect} at (320,180) size 160x180 [fill={[type=SOLID] [color=#800000]}] [data="M320.00,180.00L480.00,180.00L480.00,360.00L320.00,360.00"]
-            RenderSVGText {text} at (330,280) size 480x36 [color=#FFFFFF]
+            RenderSVGText {text} at (330,280) size 480x36
               RenderSVGInlineText {#text} at (0,-28) size 113x36
                 text run at (0,-28) width 113: "Fade out"
       RenderSVGText {text} at (10,340) size 480x46

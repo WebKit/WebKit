@@ -3,53 +3,53 @@ layer at (0,0) size 800x600
     RenderSVGContainer {svg} at (-781.25,-781.25) size 2343.75x2343.75
       RenderPath {rect} at (-781.25,-781.25) size 2343.75x2343.75 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-1000.00,-1000.00L2000.00,-1000.00L2000.00,2000.00L-1000.00,2000.00"]
       RenderSVGContainer {g} at (39.06,37.50) size 678.12x559.38
-        RenderSVGText {text} at (350,60) size 800x15 [color=#696969]
+        RenderSVGText {text} at (350,60) size 800x15
           RenderSVGInlineText {#text} at (0,-12) size 217x15
             text run at (0,-12) width 217: "Selectionlist/Drop-Down List Demo"
         RenderSVGContainer {a} at (273.44,54.69) size 84.38x9.38
-          RenderSVGText {text} at (350,80) size 800x12 [color=#696969]
+          RenderSVGText {text} at (350,80) size 800x12
             RenderSVGInlineText {#text} at (0,-10) size 108x12
               text run at (0,-10) width 108: "Link to Documentation"
-        RenderSVGText {text} at (350,112) size 800x12 [color=#696969]
+        RenderSVGText {text} at (350,112) size 800x12
           RenderSVGInlineText {#text} at (0,-10) size 254x12
             text run at (0,-10) width 254: "Click on this text to randomly resize the selectionList"
-        RenderSVGText {text} at (350,127) size 800x12 [color=#696969]
+        RenderSVGText {text} at (350,127) size 800x12
           RenderSVGInlineText {#text} at (0,-10) size 292x12
             text run at (0,-10) width 292: "Click on this text to randomly move the selectionList (x-axis)"
-        RenderSVGText {text} at (50,475) size 800x12 [color=#696969]
+        RenderSVGText {text} at (50,475) size 800x12
           RenderSVGInlineText {#text} at (0,-10) size 62x12
             text run at (0,-10) width 62: "Butterscotch"
-        RenderSVGText {text} at (150,400) size 800x12 [color=#696969]
+        RenderSVGText {text} at (150,400) size 800x12
           RenderSVGInlineText {#text} at (0,-10) size 192x12
             text run at (0,-10) width 192: "Loading Rose Image, Please be patient!"
-        RenderSVGText {text} at (240,747) size 800x27 [color=#696969]
+        RenderSVGText {text} at (240,747) size 800x27
           RenderSVGInlineText {#text} at (0,-10) size 240x12
             text run at (0,-10) width 180: "Click this text to remove the Flowers "
             text run at (180,-10) width 60: "selectionList"
           RenderSVGTSpan {tspan} at (0,0) size 176x12
             RenderSVGInlineText {#text} at (0,5) size 176x12
               text run at (0,5) width 176: "This list does not react on user input"
-        RenderSVGText {text} at (240,62) size 800x12 [color=#696969]
+        RenderSVGText {text} at (240,62) size 800x12
           RenderSVGInlineText {#text} at (0,-10) size 28x12
             text run at (0,-10) width 28: "Fruits"
-        RenderSVGText {text} at (240,112) size 800x12 [color=#696969]
+        RenderSVGText {text} at (240,112) size 800x12
           RenderSVGInlineText {#text} at (0,-10) size 32x12
             text run at (0,-10) width 32: "Roses"
-        RenderSVGText {text} at (240,732) size 800x12 [color=#696969]
+        RenderSVGText {text} at (240,732) size 800x12
           RenderSVGInlineText {#text} at (0,-10) size 230x12
             text run at (0,-10) width 230: "Flowers, this selectionList opens above the box"
-        RenderSVGText {text} at (765,60) size 800x27 [color=#696969]
+        RenderSVGText {text} at (765,60) size 800x27
           RenderSVGInlineText {#text} at (0,-10) size 153x12
             text run at (0,-10) width 153: "Select a base value to generate"
           RenderSVGTSpan {tspan} at (0,0) size 132x12
             RenderSVGInlineText {#text} at (0,5) size 132x12
               text run at (0,5) width 132: "random nrs for selnumber2"
-        RenderSVGText {text} at (765,112) size 800x12 [color=#696969]
+        RenderSVGText {text} at (765,112) size 800x12
           RenderSVGInlineText {#text} at (0,-10) size 92x12
             text run at (0,-10) width 92: "This is selnumber2"
       RenderImage {image} at (0,0) size 410x307
       RenderSVGContainer {g} at (471.50,238.23) size 312.97x213.17 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(550.00,20.00)}]
-        RenderSVGText {text} at (220,212) size 800x72 [color=#696969]
+        RenderSVGText {text} at (220,212) size 800x72
           RenderSVGInlineText {#text} at (0,-10) size 196x12
             text run at (0,-10) width 196: "Communities of Kt. Aargau (Switzerland)"
           RenderSVGTSpan {tspan} at (0,0) size 340x12
@@ -69,41 +69,41 @@ layer at (0,0) size 800x600
       RenderSVGContainer {g} at (38.67,38.67) size 547.66x536.72
         RenderSVGContainer {g} at (378.61,169.94) size 108.80x70.49 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(550.00,20.00)}]
           RenderPath {rect} at (378.61,169.94) size 108.80x70.49 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,200.00L200.00,200.00L200.00,216.00L50.00,216.00"]
-          RenderSVGText {text} at (53,212) size 800x12 [color=#696969]
+          RenderSVGText {text} at (53,212) size 800x12
             RenderSVGInlineText {#text} at (0,-10) size 29x12
               text run at (0,-10) width 29: "Aarau"
           RenderPath {rect} at (469.27,222.28) size 18.14x18.14 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M184.00,200.00L200.00,200.00L200.00,216.00L184.00,216.00"]
           RenderPath {path} at (474.07,227.09) size 8.54x8.54 [fill={[type=SOLID] [color=#696969]}] [data="M188.00,204.00L196.00,204.00L192.00,212.00"]
         RenderSVGContainer {g} at (38.67,562.11) size 133.59x13.28
           RenderPath {rect} at (38.67,562.11) size 133.59x13.28 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,720.00L220.00,720.00L220.00,736.00L50.00,736.00"]
-          RenderSVGText {text} at (53,732) size 800x12 [color=#696969]
+          RenderSVGText {text} at (53,732) size 800x12
             RenderSVGInlineText {#text} at (0,-10) size 33x12
               text run at (0,-10) width 33: "Acacia"
           RenderPath {rect} at (158.98,562.11) size 13.28x13.28 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,720.00L220.00,720.00L220.00,736.00L204.00,736.00"]
           RenderPath {path} at (162.50,565.62) size 6.25x6.25 [fill={[type=SOLID] [color=#696969]}] [data="M208.00,724.00L216.00,724.00L212.00,732.00"]
         RenderSVGContainer {g} at (38.67,77.73) size 133.59x13.28
           RenderPath {rect} at (38.67,77.73) size 133.59x13.28 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,100.00L220.00,100.00L220.00,116.00L50.00,116.00"]
-          RenderSVGText {text} at (53,112) size 800x12 [color=#696969]
+          RenderSVGText {text} at (53,112) size 800x12
             RenderSVGInlineText {#text} at (0,-10) size 62x12
               text run at (0,-10) width 62: "Butterscotch"
           RenderPath {rect} at (158.98,77.73) size 13.28x13.28 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,100.00L220.00,100.00L220.00,116.00L204.00,116.00"]
           RenderPath {path} at (162.50,81.25) size 6.25x6.25 [fill={[type=SOLID] [color=#696969]}] [data="M208.00,104.00L216.00,104.00L212.00,112.00"]
         RenderSVGContainer {g} at (38.67,38.67) size 133.59x13.28
           RenderPath {rect} at (38.67,38.67) size 133.59x13.28 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,50.00L220.00,50.00L220.00,66.00L50.00,66.00"]
-          RenderSVGText {text} at (53,62) size 800x12 [color=#696969]
+          RenderSVGText {text} at (53,62) size 800x12
             RenderSVGInlineText {#text} at (0,-10) size 29x12
               text run at (0,-10) width 29: "Pears"
           RenderPath {rect} at (158.98,38.67) size 13.28x13.28 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M204.00,50.00L220.00,50.00L220.00,66.00L204.00,66.00"]
           RenderPath {path} at (162.50,42.19) size 6.25x6.25 [fill={[type=SOLID] [color=#696969]}] [data="M208.00,54.00L216.00,54.00L212.00,62.00"]
         RenderSVGContainer {g} at (546.48,38.67) size 39.84x52.34
           RenderPath {rect} at (546.48,77.73) size 39.84x13.28 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M700.00,100.00L750.00,100.00L750.00,116.00L700.00,116.00"]
-          RenderSVGText {text} at (703,112) size 800x12 [color=#696969]
+          RenderSVGText {text} at (703,112) size 800x12
             RenderSVGInlineText {#text} at (0,-10) size 6x12
               text run at (0,-10) width 6: "1"
           RenderPath {rect} at (573.05,77.73) size 13.28x13.28 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M734.00,100.00L750.00,100.00L750.00,116.00L734.00,116.00"]
           RenderPath {path} at (576.56,81.25) size 6.25x6.25 [fill={[type=SOLID] [color=#696969]}] [data="M738.00,104.00L746.00,104.00L742.00,112.00"]
           RenderPath {rect} at (546.48,38.67) size 24.22x13.28 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M700.00,50.00L730.00,50.00L730.00,66.00L700.00,66.00"]
-          RenderSVGText {text} at (703,62) size 800x12 [color=#696969]
+          RenderSVGText {text} at (703,62) size 800x12
             RenderSVGInlineText {#text} at (0,-10) size 6x12
               text run at (0,-10) width 6: "1"
           RenderPath {rect} at (557.42,38.67) size 13.28x13.28 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M714.00,50.00L730.00,50.00L730.00,66.00L714.00,66.00"]

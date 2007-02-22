@@ -7,10 +7,10 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-28) size 228x36
             text run at (0,-28) width 228: "Text fill and stroke"
         RenderSVGContainer {g} at (48,-2) size 424x369
-          RenderSVGText {text} at (60,280) size 480x345 [color=#FF0000]
+          RenderSVGText {text} at (60,280) size 480x345
             RenderSVGInlineText {#text} at (0,-270) size 217x345
               text run at (0,-270) width 217: "A"
-          RenderSVGText {text} at (260,280) size 480x345 [color=#000080]
+          RenderSVGText {text} at (260,280) size 480x345
             RenderSVGInlineText {#text} at (0,-270) size 200x345
               text run at (0,-270) width 200: "B"
         RenderSVGText {text} at (10,340) size 480x46

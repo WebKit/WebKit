@@ -8,19 +8,19 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (150,130) size 125x122 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-150.00,75.00)}]
           RenderPath {rect} at (150,130) size 125x85 [fill={[type=SOLID] [color=#AAAAAA]}] [data="M300.00,55.00L425.00,55.00L425.00,140.00L300.00,140.00"]
           RenderSVGContainer {a} at (170,131) size 103x18
-            RenderSVGText {text} at (320,70) size 480x18 [color=#FF0000]
+            RenderSVGText {text} at (320,70) size 480x18
               RenderSVGInlineText {#text} at (0,-14) size 103x18
                 text run at (0,-14) width 103: "Go to Rectangle"
           RenderSVGContainer {a} at (170,151) size 83x18
-            RenderSVGText {text} at (320,90) size 480x18 [color=#0000FF]
+            RenderSVGText {text} at (320,90) size 480x18
               RenderSVGInlineText {#text} at (0,-14) size 83x18
                 text run at (0,-14) width 83: "Go to Ellipse"
           RenderSVGContainer {a} at (170,171) size 78x18
-            RenderSVGText {text} at (320,110) size 480x18 [color=#FFFF00]
+            RenderSVGText {text} at (320,110) size 480x18
               RenderSVGInlineText {#text} at (0,-14) size 78x18
                 text run at (0,-14) width 78: "Go to Circle"
           RenderSVGContainer {a} at (170,191) size 93x18
-            RenderSVGText {text} at (320,130) size 480x18 [color=#008000]
+            RenderSVGText {text} at (320,130) size 480x18
               RenderSVGInlineText {#text} at (0,-14) size 93x18
                 text run at (0,-14) width 93: "Go to Polygon"
           RenderSVGText {text} at (310,150) size 480x14

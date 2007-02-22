@@ -1,5 +1,20 @@
 2007-02-22  Geoffrey Garen  <ggaren@apple.com>
 
+        Used svn merge -r19786:19785 to roll out previous hack to work around
+        SVG painting issue in DRT.
+        
+        Implemented new work-around, which makes --paint paint *after* dumping
+        the render tree instead of before, so that painting doesn't influence
+        the SVG render tree.
+
+        This should fix the ~400 new pixel failures introduced in r19786.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (dump):
+        * Scripts/run-webkit-tests:
+
+2007-02-22  Geoffrey Garen  <ggaren@apple.com>
+
         Resetting --leaks mode default to run 1000 tests at a time because setting it
         to 750 didn't stop the stack logging related crashes, and running more tests
         at a time is faster. The crashes seem to be a real bug in stack logging, 

@@ -2,18 +2,18 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
       RenderSVGContainer {g} at (30,9) size 410x279
-        RenderSVGText {text} at (30,42) size 480x41 [color=#000000]
+        RenderSVGText {text} at (30,42) size 480x41
           RenderSVGInlineText {#text} at (0,-33) size 410x41
             text run at (0,-33) width 410: "Basic paint: fill properties."
-        RenderSVGText {text} at (100,80) size 480x41 [color=#000000]
+        RenderSVGText {text} at (100,80) size 480x41
           RenderSVGInlineText {#text} at (0,-33) size 279x41
             text run at (0,-33) width 279: "fill=\"currentColor\""
         RenderPath {rect} at (74.50,109.50) size 101x141 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#008000]}] [data="M75.00,110.00L175.00,110.00L175.00,250.00L75.00,250.00"]
         RenderPath {rect} at (274.50,109.50) size 101x141 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M275.00,110.00L375.00,110.00L375.00,250.00L275.00,250.00"]
-        RenderSVGText {text} at (80,280) size 480x41 [color=#000000]
+        RenderSVGText {text} at (80,280) size 480x41
           RenderSVGInlineText {#text} at (0,-33) size 92x41
             text run at (0,-33) width 92: "green"
-        RenderSVGText {text} at (290,280) size 480x41 [color=#000000]
+        RenderSVGText {text} at (290,280) size 480x41
           RenderSVGInlineText {#text} at (0,-33) size 68x41
             text run at (0,-33) width 68: "blue"
       RenderSVGText {text} at (10,340) size 480x46

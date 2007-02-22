@@ -2,10 +2,10 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
       RenderSVGContainer {g} at (3,9) size 457x279
-        RenderSVGText {text} at (3,45) size 480x44 [color=#FF0000]
+        RenderSVGText {text} at (3,45) size 480x44
           RenderSVGInlineText {#text} at (0,-36) size 325x44
             text run at (0,-36) width 325: "calcMode=\"spline\""
-        RenderSVGText {text} at (3,100) size 480x44 [color=#FF0000]
+        RenderSVGText {text} at (3,100) size 480x44
           RenderSVGInlineText {#text} at (0,-36) size 386x44
             text run at (0,-36) width 386: "keyTimes=\"0;.25;.5;1\""
         RenderSVGContainer {g} at (10,138) size 450x150

@@ -9,35 +9,35 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (47.50,45) size 363x261
           RenderSVGContainer {g} at (47.50,45) size 110x128 [transform={m=((1.00,0.00)(0.00,1.00)) t=(77.50,45.00)}]
             RenderPath {rect} at (77.50,45) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L80.00,0.00L80.00,80.00L0.00,80.00"]
-            RenderSVGText {text} at (-30,120) size 480x44 [color=#FF0000]
+            RenderSVGText {text} at (-30,120) size 480x44
               RenderSVGInlineText {#text} at (0,-36) size 95x44
                 text run at (0,-36) width 95: "1: No"
           RenderSVGContainer {g} at (172.50,45) size 113x128 [transform={m=((1.00,0.00)(0.00,1.00)) t=(202.50,45.00)}]
             RenderPath {rect} at (202.50,45) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L80.00,0.00L80.00,80.00L0.00,80.00"]
-            RenderSVGText {text} at (-30,120) size 480x44 [color=#FF0000]
+            RenderSVGText {text} at (-30,120) size 480x44
               RenderSVGInlineText {#text} at (0,-36) size 113x44
                 text run at (0,-36) width 113: "2: Yes"
           RenderSVGContainer {g} at (297.50,45) size 113x128 [transform={m=((1.00,0.00)(0.00,1.00)) t=(327.50,45.00)}]
             RenderSVGContainer {g} at (327.50,45) size 80x80
               RenderPath {rect} at (327.50,45) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L80.00,0.00L80.00,80.00L0.00,80.00"]
-            RenderSVGText {text} at (-30,120) size 480x44 [color=#FF0000]
+            RenderSVGText {text} at (-30,120) size 480x44
               RenderSVGInlineText {#text} at (0,-36) size 113x44
                 text run at (0,-36) width 113: "3: Yes"
           RenderSVGContainer {g} at (47.50,178) size 113x128 [transform={m=((1.00,0.00)(0.00,1.00)) t=(77.50,178.00)}]
             RenderSVGContainer {svg} at (77.50,178) size 80x80
               RenderPath {rect} at (77.50,178) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L80.00,0.00L80.00,80.00L0.00,80.00"]
-            RenderSVGText {text} at (-30,120) size 480x44 [color=#FF0000]
+            RenderSVGText {text} at (-30,120) size 480x44
               RenderSVGInlineText {#text} at (0,-36) size 113x44
                 text run at (0,-36) width 113: "4: Yes"
           RenderSVGContainer {g} at (172.50,178) size 110x128 [transform={m=((1.00,0.00)(0.00,1.00)) t=(202.50,178.00)}]
             RenderSVGContainer {g} at (202.50,178) size 80x80
               RenderPath {rect} at (202.50,178) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L80.00,0.00L80.00,80.00L0.00,80.00"]
-            RenderSVGText {text} at (-30,120) size 480x44 [color=#FF0000]
+            RenderSVGText {text} at (-30,120) size 480x44
               RenderSVGInlineText {#text} at (0,-36) size 95x44
                 text run at (0,-36) width 95: "5: No"
           RenderSVGContainer {g} at (297.50,178) size 113x128 [transform={m=((1.00,0.00)(0.00,1.00)) t=(327.50,178.00)}]
             RenderPath {rect} at (327.50,178) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00L80.00,0.00L80.00,80.00L0.00,80.00"]
-            RenderSVGText {text} at (-30,120) size 480x44 [color=#FF0000]
+            RenderSVGText {text} at (-30,120) size 480x44
               RenderSVGInlineText {#text} at (0,-36) size 113x44
                 text run at (0,-36) width 113: "6: Yes"
       RenderSVGText {text} at (10,340) size 480x46

@@ -84,7 +84,7 @@ layer at (0,0) size 480x360
               RenderImage {image} at (0,0) size 20x20
           RenderSVGContainer {use} at (150,262) size 46x29
             RenderSVGContainer {g} at (150,262) size 46x29 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,260.00)}]
-              RenderSVGText {text} at (0,0) size 480x29 [color=#00FF00]
+              RenderSVGText {text} at (0,0) size 480x29
                 RenderSVGInlineText {#text} at (0,-23) size 46x29
                   text run at (0,-23) width 46: "Text"
           RenderSVGContainer {use} at (330,25) size 20x20

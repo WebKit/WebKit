@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
           RenderPath {rect} at (77.54,22.85) size 48.05x24.61 [stroke={[type=SOLID] [color=#696969] [stroke width=1.50]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M100.00,30.00L160.00,30.00L160.00,60.00L100.00,60.00"]
           RenderSVGContainer {svg} at (77.54,29.69) size 16.99x13.28
             RenderSVGContainer {g} at (77.54,29.69) size 16.99x13.28
-              RenderSVGText {text} at (105,52) size 800x17 [color=#696969]
+              RenderSVGText {text} at (105,52) size 800x17
                 RenderSVGInlineText {#text} at (0,-14) size 16x17
                   text run at (0,-14) width 16: "50"
               RenderPath {line} at (77.54,30.08) size 1.17x12.89 [stroke={[type=SOLID] [color=#FF0000] [stroke width=1.50]}] [fill={[type=SOLID] [color=#000000]}] [data="M100.00,55.00L100.00,38.50"]
@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
           RenderPath {rect} at (77.54,233.79) size 180.86x24.61 [stroke={[type=SOLID] [color=#696969] [stroke width=1.50]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00L230.00,0.00L230.00,30.00L0.00,30.00"]
           RenderSVGContainer {svg} at (77.54,240.62) size 333.40x13.28
             RenderSVGContainer {g} at (77.54,240.62) size 333.40x13.28
-              RenderSVGText {text} at (5,22) size 800x17 [color=#696969]
+              RenderSVGText {text} at (5,22) size 800x17
                 RenderSVGInlineText {#text} at (0,-14) size 421x17
                   text run at (0,-14) width 421: "This is a transformed textbox with a very, very, very long content"
               RenderPath {line} at (77.54,241.02) size 1.17x12.89 [stroke={[type=SOLID] [color=#FF0000] [stroke width=1.50]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,25.00L0.00,8.50"]

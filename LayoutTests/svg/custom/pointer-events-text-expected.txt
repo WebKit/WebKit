@@ -17,19 +17,19 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (105,120) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (157,130) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (157,130) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (162,120) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (214,130) size 800x46 [color=#FFA500]
+        RenderSVGText {text} at (214,130) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (219,120) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (271,130) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (271,130) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (276,120) size 800x18
@@ -41,19 +41,19 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (333,120) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (385,130) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (385,130) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (390,120) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (442,130) size 800x46 [color=#FFA500]
+        RenderSVGText {text} at (442,130) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (447,120) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (499,130) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (499,130) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (504,120) size 800x18
@@ -68,19 +68,19 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (105,177) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (157,187) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (157,187) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (162,177) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (214,187) size 800x46 [color=#FFA500]
+        RenderSVGText {text} at (214,187) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (219,177) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (271,187) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (271,187) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (276,177) size 800x18
@@ -92,19 +92,19 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (333,177) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (385,187) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (385,187) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (390,177) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (442,187) size 800x46 [color=#FFA500]
+        RenderSVGText {text} at (442,187) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (447,177) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (499,187) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (499,187) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (504,177) size 800x18
@@ -119,19 +119,19 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (105,234) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (157,244) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (157,244) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (162,234) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (214,244) size 800x46 [color=#FFA500]
+        RenderSVGText {text} at (214,244) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (219,234) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (271,244) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (271,244) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (276,234) size 800x18
@@ -143,19 +143,19 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (333,234) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (385,244) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (385,244) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (390,234) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (442,244) size 800x46 [color=#FFA500]
+        RenderSVGText {text} at (442,244) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (447,234) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (499,244) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (499,244) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (504,234) size 800x18
@@ -170,19 +170,19 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (105,291) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (157,301) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (157,301) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (162,291) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (214,301) size 800x46 [color=#FFA500]
+        RenderSVGText {text} at (214,301) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (219,291) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (271,301) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (271,301) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (276,291) size 800x18
@@ -194,19 +194,19 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (333,291) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (385,301) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (385,301) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (390,291) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (442,301) size 800x46 [color=#FFA500]
+        RenderSVGText {text} at (442,301) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (447,291) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (499,301) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (499,301) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (504,291) size 800x18
@@ -221,19 +221,19 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (105,348) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (157,358) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (157,358) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (162,348) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (214,358) size 800x46 [color=#FFA500]
+        RenderSVGText {text} at (214,358) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (219,348) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (271,358) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (271,358) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (276,348) size 800x18
@@ -245,19 +245,19 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (333,348) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (385,358) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (385,358) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (390,348) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (442,358) size 800x46 [color=#FFA500]
+        RenderSVGText {text} at (442,358) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (447,348) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (499,358) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (499,358) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (504,348) size 800x18
@@ -272,19 +272,19 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (105,405) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (157,415) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (157,415) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (162,405) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (214,415) size 800x46 [color=#FFA500]
+        RenderSVGText {text} at (214,415) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (219,405) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (271,415) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (271,415) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (276,405) size 800x18
@@ -296,19 +296,19 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (333,405) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (385,415) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (385,415) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (390,405) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (442,415) size 800x46 [color=#FFA500]
+        RenderSVGText {text} at (442,415) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (447,405) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (499,415) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (499,415) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (504,405) size 800x18
@@ -323,19 +323,19 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (105,462) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (157,472) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (157,472) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (162,462) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (214,472) size 800x46 [color=#FFA500]
+        RenderSVGText {text} at (214,472) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (219,462) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (271,472) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (271,472) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (276,462) size 800x18
@@ -347,19 +347,19 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (333,462) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (385,472) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (385,472) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (390,462) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (442,472) size 800x46 [color=#FFA500]
+        RenderSVGText {text} at (442,472) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (447,462) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (499,472) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (499,472) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (504,462) size 800x18
@@ -374,19 +374,19 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (105,519) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (157,529) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (157,529) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (162,519) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (214,529) size 800x46 [color=#FFA500]
+        RenderSVGText {text} at (214,529) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (219,519) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 27x18
             text run at (0,-14) width 27: "HIT"
-        RenderSVGText {text} at (271,529) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (271,529) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (276,519) size 800x18
@@ -398,19 +398,19 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (333,519) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (385,529) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (385,529) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (390,519) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (442,529) size 800x46 [color=#FFA500]
+        RenderSVGText {text} at (442,529) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (447,519) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (499,529) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (499,529) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (504,519) size 800x18
@@ -425,19 +425,19 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (105,576) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (157,586) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (157,586) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (162,576) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (214,586) size 800x46 [color=#FFA500]
+        RenderSVGText {text} at (214,586) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (219,576) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (271,586) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (271,586) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (276,576) size 800x18
@@ -449,19 +449,19 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (333,576) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (385,586) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (385,586) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (390,576) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (442,586) size 800x46 [color=#FFA500]
+        RenderSVGText {text} at (442,586) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (447,576) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 28x18
             text run at (0,-14) width 28: "miss"
-        RenderSVGText {text} at (499,586) size 800x46 [color=#0000FF]
+        RenderSVGText {text} at (499,586) size 800x46
           RenderSVGInlineText {#text} at (0,-36) size 20x46
             text run at (0,-36) width 20: "#"
         RenderSVGText {text} at (504,576) size 800x18

@@ -5,13 +5,13 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (20,44) size 286x210
         RenderSVGContainer {g} at (20,44) size 286x210
           RenderSVGContainer {g} at (20,44) size 286x210
-            RenderSVGText {text} at (20,80) size 480x46 [color=#0000FF]
+            RenderSVGText {text} at (20,80) size 480x46
               RenderSVGInlineText {#text} at (0,-36) size 190x46
                 text run at (0,-36) width 190: "Sample 123"
-            RenderSVGText {text} at (20,155) size 480x69 [color=#0000FF]
+            RenderSVGText {text} at (20,155) size 480x69
               RenderSVGInlineText {#text} at (0,-54) size 286x69
                 text run at (0,-54) width 286: "Sample 123"
-            RenderSVGText {text} at (20,250) size 480x18 [color=#0000FF]
+            RenderSVGText {text} at (20,250) size 480x18
               RenderSVGInlineText {#text} at (0,-14) size 75x18
                 text run at (0,-14) width 75: "Sample 123"
       RenderSVGText {text} at (10,340) size 480x46

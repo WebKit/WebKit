@@ -1,3 +1,95 @@
+2007-02-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Used svn merge -r19786:19785 to roll out previous SVG results produced by 
+        hack to work around SVG painting issue in DRT.
+        
+        The new work-around preserves the old SVG results -- both text and pixel. 
+        This should fix the ~400 new pixel failures introduced in r19786.
+
+        * svg/W3C-SVG-1.1/animate-elem-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-03-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-04-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-05-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-06-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-07-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-08-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-13-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-14-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-15-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-16-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-17-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-18-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-19-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-20-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-21-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-24-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-29-b-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-33-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-36-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-39-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-46-t-expected.txt:
+        * svg/W3C-SVG-1.1/animate-elem-77-t-expected.txt:
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/fonts-elem-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/interact-cursor-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/interact-events-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/linking-uri-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/linking-uri-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/masking-path-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/painting-fill-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/painting-marker-03-f-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-05-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-08-b-expected.txt:
+        * svg/W3C-SVG-1.1/pservers-grad-11-b-expected.txt:
+        * svg/W3C-SVG-1.1/render-elems-06-t-expected.txt:
+        * svg/W3C-SVG-1.1/render-elems-07-t-expected.txt:
+        * svg/W3C-SVG-1.1/render-elems-08-t-expected.txt:
+        * svg/W3C-SVG-1.1/script-handle-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/struct-frag-06-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-use-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-05-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-align-06-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-altglyph-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-deco-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-fonts-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/text-fonts-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/text-text-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-text-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-text-08-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-tref-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-tselect-02-f-expected.txt:
+        * svg/W3C-SVG-1.1/text-tspan-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-ws-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/text-ws-02-t-expected.txt:
+        * svg/carto.net/button-expected.txt:
+        * svg/carto.net/colourpicker-expected.txt:
+        * svg/carto.net/combobox-expected.txt:
+        * svg/carto.net/scrollbar-expected.txt:
+        * svg/carto.net/selectionlist-expected.txt:
+        * svg/carto.net/slider-expected.txt:
+        * svg/carto.net/tabgroup-expected.txt:
+        * svg/carto.net/textbox-expected.txt:
+        * svg/carto.net/window-expected.txt:
+        * svg/custom/gradient-stop-style-change-expected.txt:
+        * svg/custom/js-late-clipPath-and-object-creation-expected.txt:
+        * svg/custom/js-late-clipPath-creation-expected.txt:
+        * svg/custom/js-late-gradient-and-object-creation-expected.txt:
+        * svg/custom/non-opaque-filters-expected.txt:
+        * svg/custom/pointer-events-text-expected.txt:
+        * svg/custom/text-clip-expected.txt:
+        * svg/custom/text-filter-expected.txt:
+        * svg/custom/text-image-opacity-expected.txt:
+        * svg/custom/text-repaint-including-stroke-expected.txt:
+        * svg/custom/use-elementInstance-event-target-expected.txt:
+        * svg/custom/use-on-text-expected.txt:
+
 2007-02-21  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.
