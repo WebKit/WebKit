@@ -1,3 +1,14 @@
+2007-02-22  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5014970> 9A374: Tabs don't work in the message body
+
+        Test: fast/events/keypress-insert-tab.html
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::defaultTextInputEventHandler):
+          If the defaultTabEventHandler doesn't handle the event, then go on to the insertText case.
+
 2007-02-22  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

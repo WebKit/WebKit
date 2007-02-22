@@ -1522,9 +1522,12 @@ bool EventHandler::tabsToLinks(KeyboardEvent* event) const
 void EventHandler::defaultTextInputEventHandler(TextEvent* event)
 {
     String data = event->data();
-    if (data == "\t")
+    if (data == "\t") {
         defaultTabEventHandler(event, event->isBackTab());
-    else if (data == "\n") {
+        if (event->defaultHandled())
+            return;
+    }
+    if (data == "\n") {
         if (event->isLineBreak()) {
             if (m_frame->editor()->insertLineBreak())
                 event->setDefaultHandled();

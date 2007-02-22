@@ -1,3 +1,12 @@
+2007-02-22  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Test for <rdar://problem/5014970> 9A374: Tabs don't work in the message body
+
+        * fast/events/keypress-insert-tab-expected.txt: Added.
+        * fast/events/keypress-insert-tab.html: Added.
+
 2007-02-22  Geoffrey Garen  <ggaren@apple.com>
 
         Used svn merge -r19786:19785 to roll out previous SVG results produced by 

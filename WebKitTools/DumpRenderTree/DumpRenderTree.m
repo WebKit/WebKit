@@ -59,7 +59,7 @@
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
-#import <WebKit/WebView.h>
+#import <WebKit/WebViewPrivate.h>
 #import <getopt.h>
 #import <malloc/malloc.h>
 #import <objc/objc-runtime.h>                       // for class_poseAs
@@ -928,6 +928,7 @@ static void dump(void)
             || aSelector == @selector(clearBackForwardList)
             || aSelector == @selector(keepWebHistory)
             || aSelector == @selector(setAcceptsEditing:)
+            || aSelector == @selector(setTabKeyCyclesThroughElements:)
             || aSelector == @selector(storeWebScriptObject:)
             || aSelector == @selector(accessStoredWebScriptObject))
         return NO;
@@ -950,6 +951,8 @@ static void dump(void)
         return @"queueLoad";
     if (aSelector == @selector(setAcceptsEditing:))
         return @"setAcceptsEditing";
+    if (aSelector == @selector(setTabKeyCyclesThroughElements:))
+        return @"setTabKeyCyclesThroughElements";
     if (aSelector == @selector(storeWebScriptObject:))
         return @"storeWebScriptObject";
     return nil;
@@ -1141,6 +1144,11 @@ static void dump(void)
     [(EditingDelegate *)[[frame webView] editingDelegate] setAcceptsEditing:newAcceptsEditing];
 }
 
+- (void)setTabKeyCyclesThroughElements:(BOOL)newTabKeyCyclesThroughElements
+{
+    [[frame webView] setTabKeyCyclesThroughElements:newTabKeyCyclesThroughElements];
+}
+
 - (void)storeWebScriptObject:(WebScriptObject *)webScriptObject
 {
     if (webScriptObject == storedWebScriptObject)
@@ -1192,6 +1200,7 @@ static void runTest(const char *pathOrURL)
     }
 
     [(EditingDelegate *)[[frame webView] editingDelegate] setAcceptsEditing:YES];
+    [[frame webView] setTabKeyCyclesThroughElements: YES];
     done = NO;
     topLoadingFrame = nil;
     waitToDump = NO;
