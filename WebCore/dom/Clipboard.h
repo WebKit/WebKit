@@ -31,6 +31,7 @@
 #include "ClipboardAccessPolicy.h"
 #include "DragActions.h"
 #include "DragImage.h"
+#include "IntPoint.h"
 #include "Node.h"
 #include "Shared.h"
 
@@ -40,7 +41,6 @@ namespace WebCore {
     class Element;
     class Frame;
     class Image;
-    class IntPoint;
     class KURL;
     class Range;
     class String;
@@ -48,11 +48,11 @@ namespace WebCore {
     // State available during IE's events for drag and drop and copy/paste
     class Clipboard : public Shared<Clipboard> {
     public:
-        Clipboard(ClipboardAccessPolicy policy) : m_policy(policy), m_dragStarted(false) { }
+        Clipboard(ClipboardAccessPolicy policy, bool isForDragging);
         virtual ~Clipboard() { }
 
         // Is this operation a drag-drop or a copy-paste?
-        virtual bool isForDragging() const = 0;
+        bool isForDragging() const { return m_forDragging; }
 
         String dropEffect() const { return m_dropEffect; }
         void setDropEffect(const String&);
@@ -67,10 +67,10 @@ namespace WebCore {
         // extensions beyond IE's API
         virtual HashSet<String> types() const = 0;
     
-        virtual IntPoint dragLocation() const = 0;
-        virtual CachedImage* dragImage() const = 0;
+        IntPoint dragLocation() const { return m_dragLoc; }
+        CachedImage* dragImage() const { return m_dragImage; }
         virtual void setDragImage(CachedImage*, const IntPoint&) = 0;
-        virtual Node* dragImageElement() = 0;
+        Node* dragImageElement() { return m_dragImageElement.get(); }
         virtual void setDragImageElement(Node*, const IntPoint&) = 0;
         
         //Provides the DOM specified 
@@ -90,14 +90,22 @@ namespace WebCore {
         
         void setDragHasStarted() { m_dragStarted = true; }
         static bool canSaveAsWebArchive(Frame*);
+        
     protected:
         ClipboardAccessPolicy policy() const { return m_policy; }
         bool dragStarted() const { return m_dragStarted; }
+        
     private:
         ClipboardAccessPolicy m_policy;
         String m_dropEffect;
         String m_effectAllowed;
         bool m_dragStarted;
+        
+    protected:
+        bool m_forDragging;
+        IntPoint m_dragLoc;
+        CachedImage* m_dragImage;
+        RefPtr<Node> m_dragImageElement;
     };
 
 } // namespace WebCore

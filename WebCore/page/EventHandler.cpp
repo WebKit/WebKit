@@ -1376,7 +1376,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
         if (!dragState().m_dragSrcMayBeDHTML && !dragState().m_dragSrcMayBeUA)
             m_mouseDownMayStartDrag = false;     // no element is draggable
     }
-    
+
     if (m_mouseDownMayStartDrag && !dragState().m_dragSrc) {
         // try to find an element that wants to be dragged
         HitTestRequest request(true, false);
@@ -1407,6 +1407,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
     // or else we bail on the dragging stuff and allow selection to occur
     if (m_mouseDownMayStartDrag && dragState().m_dragSrcInSelection && event.event().timestamp() - m_mouseDownTimestamp < TextDragDelay) {
         m_mouseDownMayStartDrag = false;
+        dragState().m_dragSrc = 0;
         // ...but if this was the first click in the window, we don't even want to start selection
         if (eventActivatedView(event.event()))
             m_mouseDownMayStartSelect = false;

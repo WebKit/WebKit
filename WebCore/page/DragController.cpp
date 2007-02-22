@@ -76,6 +76,7 @@ DragController::DragController(Page* page, DragClient* client)
     , m_dragDestinationAction(DragDestinationActionNone)
     , m_dragSourceAction(DragSourceActionNone)
     , m_didInitiateDrag(false)
+    , m_isHandlingDrag(false)
     , m_dragOperation(DragOperationNone)
 {
 }
@@ -94,7 +95,7 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragD
     Document* document = context->startNode()->document();
     ASSERT(document);
     if (document && dragData->containsCompatibleContent()) {
-        if (DocumentFragment* fragment = dragData->asFragment(document).get())
+        if (PassRefPtr<DocumentFragment> fragment = dragData->asFragment(document))
             return fragment;
 
         if (dragData->containsURL()) {
@@ -259,11 +260,9 @@ DragOperation DragController::tryDocumentDrag(DragData* dragData, DragDestinatio
         operation = tryDHTMLDrag(dragData);
     m_isHandlingDrag = operation != DragOperationNone; 
 
-    RefPtr<FrameView> frameView = 0;
-    if (!m_document || !(frameView = m_document->view()))
+    RefPtr<FrameView> frameView = m_document->view();
+    if (!frameView)
         return operation;
-    
-    
     
     if ((actionMask & DragDestinationActionEdit) && !m_isHandlingDrag && canProcessDrag(dragData)) {
         if (dragData->containsColor()) 
@@ -376,17 +375,18 @@ bool DragController::canProcessDrag(DragData* dragData)
     if (!dragData->containsCompatibleContent())
         return false;
     
-    IntPoint point = m_document->view()->windowToContents(dragData->clientPosition());
+    IntPoint point = m_page->mainFrame()->view()->windowToContents(dragData->clientPosition());
     HitTestResult result = HitTestResult(point);
-    
     if (!m_page->mainFrame()->renderer())
         return false;
 
     result = m_page->mainFrame()->eventHandler()->hitTestResultAtPoint(point, true);
-    if (!result.innerNonSharedNode() || !result.innerNonSharedNode()->isContentEditable()) 
+    if (!result.innerNonSharedNode() || !result.innerNonSharedNode()->isContentEditable())
         return false;
+
     if (m_didInitiateDrag && m_document == m_dragInitiator && result.isSelected())
         return false;
+
     return true;
 }
 
@@ -592,7 +592,7 @@ bool DragController::startDrag(Frame* src, Clipboard* clipboard, DragOperation s
             m_dragOffset = IntPoint(-size.width() / 2, -LinkDragBorderInset);
             dragLoc = IntPoint(mouseDraggedPoint.x() + m_dragOffset.x(), mouseDraggedPoint.y() + m_dragOffset.y());
         } 
-        doSystemDrag(dragImage, dragLoc, src->view()->contentsToWindow(mouseDraggedPoint), clipboard, src, true);
+        doSystemDrag(dragImage, dragLoc, mouseDraggedPoint, clipboard, src, true);
     } else if (isSelected && (m_dragSourceAction & DragSourceActionSelection)) {
         RefPtr<Range> selectionRange = src->selectionController()->toRange();
         ASSERT(selectionRange);
@@ -672,7 +672,8 @@ void DragController::doSystemDrag(DragImageRef image, const IntPoint& dragLoc, c
     // Protect this frame and view, as a load may occur mid drag and attempt to unload this frame
     RefPtr<Frame> frameProtector = m_page->mainFrame();
     RefPtr<FrameView> viewProtector = frameProtector->view();
-    m_client->startDrag(image, viewProtector->windowToContents(frame->view()->contentsToWindow(dragLoc)), eventPos, clipboard, frameProtector.get(), forLink);
+    m_client->startDrag(image, viewProtector->windowToContents(frame->view()->contentsToWindow(dragLoc)),
+        viewProtector->windowToContents(frame->view()->contentsToWindow(eventPos)), clipboard, frameProtector.get(), forLink);
     
     // Drag has ended, dragEnded *should* have been called, however it is possible  
     // for the UIDelegate to take over the drag, and fail to send the appropriate

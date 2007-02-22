@@ -50,10 +50,8 @@
 namespace WebCore {
 
 ClipboardMac::ClipboardMac(bool forDragging, NSPasteboard *pasteboard, ClipboardAccessPolicy policy, Frame *frame)
-    : Clipboard(policy)
+    : Clipboard(policy, forDragging)
     , m_pasteboard(pasteboard)
-    , m_forDragging(forDragging)
-    , m_dragImage(0)
     , m_frame(frame)
 {
     m_changeCount = [m_pasteboard.get() changeCount];
@@ -68,11 +66,6 @@ bool ClipboardMac::hasData()
     return m_pasteboard && [m_pasteboard.get() types] && [[m_pasteboard.get() types] count] > 0;
 }
     
-bool ClipboardMac::isForDragging() const
-{
-    return m_forDragging;
-}
-
 static NSString *cocoaTypeFromMIMEType(const String& type)
 {
     String qType = type.stripWhiteSpace();
@@ -277,24 +270,9 @@ HashSet<String> ClipboardMac::types() const
 
 // The rest of these getters don't really have any impact on security, so for now make no checks
 
-IntPoint ClipboardMac::dragLocation() const
-{
-    return m_dragLoc;
-}
-
-CachedImage* ClipboardMac::dragImage() const
-{
-    return m_dragImage;
-}
-
 void ClipboardMac::setDragImage(CachedImage* img, const IntPoint &loc)
 {
     setDragImage(img, 0, loc);
-}
-
-Node *ClipboardMac::dragImageElement()
-{
-    return m_dragImageElement.get();
 }
 
 void ClipboardMac::setDragImageElement(Node *node, const IntPoint &loc)
