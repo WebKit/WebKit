@@ -4,7 +4,7 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of LI > OL > DIV > BODY > HTML > #document to 49 of #text > LI > OL > DIV > BODY > HTML > #document toDOMRange:range from 0 of LI > OL > DIV > BODY > HTML > #document to 49 of #text > LI > OL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > BODY > HTML > #document to 49 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -12,15 +12,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 179x18
-          text run at (0,0) width 179: "This tests de-listing content. "
-        RenderInline {B} at (0,0) size 768x36
-          RenderText {#text} at (179,0) size 768x36
-            text run at (179,0) width 589: "This demonstrates a bug: the entire editable region should be selected (selections should"
-            text run at (0,18) width 324: "be preserved when performing a list command)."
-      RenderBlock {DIV} at (0,52) size 784x36
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 175x18
+          text run at (0,0) width 175: "This tests de-listing content."
+      RenderBlock {DIV} at (0,34) size 784x36
         RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 322x18
           text run at (0,18) width 322: "There should be a empty paragraph above this one."
-caret: position 0 of child 0 {BR} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {BR} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 49 of child 1 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

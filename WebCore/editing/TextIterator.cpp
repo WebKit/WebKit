@@ -502,23 +502,27 @@ bool TextIterator::handleNonTextNode()
 
 void TextIterator::exitNode()
 {
+    // Emit with a position *inside* m_node, after m_node's contents, in 
+    // case it is a block, because the run should start where the 
+    // emitted character is positioned visually.
+    Node* baseNode = m_node->lastChild() ? m_node->lastChild() : m_node;
     if (m_lastTextNode && shouldEmitNewlineAfterNode(m_node)) {
         // use extra newline to represent margin bottom, as needed
         bool addNewline = shouldEmitExtraNewlineForNode(m_node);
         
         if (m_lastCharacter != '\n') {
-            // insert a newline with a position following this block
-            emitCharacter('\n', m_node->parentNode(), m_node, 1, 1);
+            // insert a newline with a position following this block's contents.
+            emitCharacter('\n', baseNode->parentNode(), baseNode, 1, 1);
 
             // remember whether to later add a newline for the current node
             assert(!m_needAnotherNewline);
             m_needAnotherNewline = addNewline;
         } else if (addNewline) {
-            // insert a newline with a position following this block
-            emitCharacter('\n', m_node->parentNode(), m_node, 1, 1);
+            // insert a newline with a position following this block's contents.
+            emitCharacter('\n', baseNode->parentNode(), baseNode, 1, 1);
         }
     } else if (shouldEmitSpaceBeforeAndAfterNode(m_node))
-        emitCharacter(' ', m_node->parentNode(), m_node, 1, 1);
+        emitCharacter(' ', baseNode->parentNode(), baseNode, 1, 1);
 }
 
 void TextIterator::emitCharacter(UChar c, Node *textNode, Node *offsetBaseNode, int textStartOffset, int textEndOffset)

@@ -1,3 +1,25 @@
+2007-02-21  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <rdar://problem/5012665>
+        Removing indent from list moves the caret to the line below
+
+        Selection preservation during indent, outdent and list 
+        operations uses rangeFromLocationAndLength.  Ranges returned 
+        by rangeFromLocationAndLength were incorrect for locations 
+        just before the line breaks that are emitted after blocks.  
+        This is because TextIterator emitted bad ranges for these line 
+        breaks (ranges that started and ended *after* the block).  
+        The fix corrects the start but not the end.  This is acceptible 
+        because there is code in rangeFromLocationAndLength that corrects 
+        the ends of runs using the start of the run and VisiblePosition 
+        creation.
+        
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::exitNode): Emit a position *inside* 
+        the block, after its contents.
+
 2007-02-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
