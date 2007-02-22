@@ -562,8 +562,7 @@ void HTMLSelectElement::notifyOptionSelected(HTMLOptionElement* selectedOption, 
     if (selected && !m_multiple)
         deselectItems(selectedOption);
 
-    if (renderer() && !usesMenuList())
-        static_cast<RenderListBox*>(renderer())->selectionChanged();
+    scrollToSelection();
 
     m_lastOnChangeIndex = selectedOption->index();
     setChanged(true);
@@ -821,7 +820,7 @@ void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
         }
     }
 
-    static_cast<RenderListBox*>(renderer())->selectionChanged();
+    scrollToSelection();
 }
 
 void HTMLSelectElement::listBoxOnChange()
@@ -1006,6 +1005,12 @@ void HTMLSelectElement::setLength(unsigned newLen, ExceptionCode& ec)
     else // remove elements
         while (diff-- > 0)
             remove(newLen);
+}
+
+void HTMLSelectElement::scrollToSelection()
+{
+    if (renderer() && !usesMenuList())
+        static_cast<RenderListBox*>(renderer())->selectionChanged();
 }
 
 } // namespace

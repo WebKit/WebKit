@@ -245,4 +245,13 @@ bool HTMLOptionElement::disabled() const
     return HTMLGenericFormElement::disabled() || (parentNode() && static_cast<HTMLGenericFormElement*>(parentNode())->disabled()); 
 }
 
+void HTMLOptionElement::insertedIntoDocument()
+{
+    HTMLSelectElement* select;
+    if (selected() && (select = getSelect()))
+        select->scrollToSelection();
+    
+    HTMLGenericFormElement::insertedIntoDocument();
+}
+
 } // namespace

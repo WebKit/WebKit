@@ -79,6 +79,8 @@ public:
     String optionText();
     
     virtual bool disabled() const;
+    
+    virtual void insertedIntoDocument();
 
 private:
     String m_value;

@@ -1,3 +1,22 @@
+2007-02-22  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11447
+        REGRESSION(NativeListBox): List not scrolled to preselected option
+        <rdar://problem/4957463>
+        
+        Initiate scroll when selected <option> is added to <select>.
+
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::insertedIntoDocument):
+        * html/HTMLOptionElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::notifyOptionSelected):
+        (WebCore::HTMLSelectElement::updateListBoxSelection):
+        (WebCore::HTMLSelectElement::scrollToSelection):
+        * html/HTMLSelectElement.h:
+
 2007-02-22  Zack Rusin  <zrusin@trolltech.com>
 
         Reviewed by Lars

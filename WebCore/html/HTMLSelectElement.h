@@ -134,6 +134,8 @@ public:
     
     int activeSelectionStartListIndex() const;
     int activeSelectionEndListIndex() const;
+    
+    void scrollToSelection();
 
 private:
     void recalcListItems() const;

@@ -1,3 +1,16 @@
+2007-02-21  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        - tests for http://bugs.webkit.org/show_bug.cgi?id=11447
+        REGRESSION(NativeListBox): List not scrolled to preselected option
+        <rdar://problem/4957463>
+
+        * fast/forms/select-initial-position-expected.checksum: Added.
+        * fast/forms/select-initial-position-expected.png: Added.
+        * fast/forms/select-initial-position-expected.txt: Added.
+        * fast/forms/select-initial-position.html: Added.
+
 2007-02-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Adam Roben.
