@@ -70,6 +70,10 @@
 - (DOMHTMLDocument *)createHTMLDocument:(NSString *)title;
 @end
 
+@interface DOMAbstractView : DOMObject
+@property(readonly, retain) DOMDocument *document;
+@end
+
 @interface DOMDocument : DOMNode
 @property(readonly, retain) DOMDocumentType *doctype;
 @property(readonly, retain) DOMImplementation *implementation;
@@ -101,6 +105,7 @@
 - (DOMCSSStyleDeclaration *)createCSSStyleDeclaration;
 - (DOMCSSStyleDeclaration *)getOverrideStyle:(DOMElement *)element :(NSString *)pseudoElement;
 - (DOMCSSStyleDeclaration *)getOverrideStyle:(DOMElement *)element pseudoElement:(NSString *)pseudoElement;
+- (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)element :(NSString *)pseudoElement;
 - (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)element pseudoElement:(NSString *)pseudoElement;
 - (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)element pseudoElement:(NSString *)pseudoElement;
 - (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)element pseudoElement:(NSString *)pseudoElement authorOnly:(BOOL)authorOnly;
@@ -764,6 +769,11 @@
 @property(copy) NSString *type;
 @end
 
+@interface DOMStyleSheetList : DOMObject
+@property(readonly) unsigned length;
+- (DOMStyleSheet *)item:(unsigned)index;
+@end
+
 @interface DOMCSSCharsetRule : DOMCSSRule
 @property(readonly, copy) NSString *encoding;
 @end
@@ -804,6 +814,14 @@
 - (DOMRGBColor *)getRGBColorValue;
 @end
 
+@interface DOMRGBColor : DOMObject
+@property(readonly, retain) DOMCSSPrimitiveValue *red;
+@property(readonly, retain) DOMCSSPrimitiveValue *green;
+@property(readonly, retain) DOMCSSPrimitiveValue *blue;
+@property(readonly, retain) DOMCSSPrimitiveValue *alpha;
+@property(readonly, copy) NSColor *color;
+@end
+
 @interface DOMCSSRule : DOMObject
 @property(readonly) unsigned short type;
 @property(copy) NSString *cssText;
@@ -834,6 +852,16 @@
 @interface DOMCSSStyleRule : DOMCSSRule
 @property(copy) NSString *selectorText;
 @property(readonly, retain) DOMCSSStyleDeclaration *style;
+@end
+
+@interface DOMStyleSheet : DOMObject
+@property(readonly, copy) NSString *type;
+@property BOOL disabled;
+@property(readonly, retain) DOMNode *ownerNode;
+@property(readonly, retain) DOMStyleSheet *parentStyleSheet;
+@property(readonly, copy) NSString *href;
+@property(readonly, copy) NSString *title;
+@property(readonly, retain) DOMMediaList *media;
 @end
 
 @interface DOMCSSStyleSheet : DOMStyleSheet
@@ -986,6 +1014,14 @@
 - (DOMNode *)nextNode;
 - (DOMNode *)previousNode;
 - (void)detach;
+@end
+
+@interface DOMMediaList : DOMObject
+@property(copy) NSString *mediaText;
+@property(readonly) unsigned length;
+- (NSString *)item:(unsigned)index;
+- (void)deleteMedium:(NSString *)oldMedium;
+- (void)appendMedium:(NSString *)newMedium;
 @end
 
 @interface DOMTreeWalker : DOMObject

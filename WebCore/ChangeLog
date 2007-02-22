@@ -1,3 +1,10 @@
+2007-02-21  Timothy Hatcher  <timothy@apple.com>
+
+        Rubber-stamped by Darin.
+
+        * bindings/objc/PublicDOMInterfaces.h: Add missing classes that are really public.
+        Also adds the deprecated selector for getComputedStyle: on DOMDocument.
+
 2007-02-21  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john
