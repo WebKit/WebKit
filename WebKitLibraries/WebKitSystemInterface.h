@@ -143,6 +143,8 @@ void WKNSWindowRestoreCGContext(NSWindow *, CGContextRef);
 BOOL WKSupportsMultipartXMixedReplace(NSMutableURLRequest *request);
 NSString* WKPathFromFont(NSFont *font);
 
+BOOL WKCGContextIsBitmapContext(CGContextRef context);
+
 #ifdef __cplusplus
 }
 #endif
