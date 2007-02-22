@@ -1,3 +1,11 @@
+2007-02-22  Adele Peterson  <adele@apple.com>
+
+        Reviewed by John.
+
+        Fix <rdar://problem/5016969> REGRESSION: "Check Spelling As You Type" context menu item is never checked
+
+        * platform/ContextMenu.cpp: (WebCore::ContextMenu::checkOrEnableIfNeeded): Set shouldCheck for ContextMenuItemTagCheckSpellingWhileTyping.
+
 2007-02-22  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.
