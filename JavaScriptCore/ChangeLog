@@ -1,3 +1,14 @@
+2007-02-22  Oscar Cwajbaum  <public@oscarc.net>
+
+        Reviewed by Maciej.
+
+        Fix ARM-specific alignment problem in FastMalloc
+        http://bugs.webkit.org/show_bug.cgi?id=12841
+
+        * wtf/FastMalloc.cpp:
+        Modify how pageheap_memory is declared to ensure proper alignment
+        on architectures such as ARM
+
 2007-02-20  Zack Rusin  <zrusin@trolltech.com>
 
         Reviewed by Lars
