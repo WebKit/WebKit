@@ -1,3 +1,14 @@
+2007-02-21  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dave Harrison
+
+        <rdar://problem/5014313> - Crash in FrameLoader::restoreScrollPositionAndViewState() 
+        after regaining network connection
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::restoreScrollPositionAndViewState):  Leave an assertion for debug
+        build exploration, but gracefully handle the release build case
+
 2007-02-21  Timothy Hatcher  <timothy@apple.com>
 
         Rubber-stamped by Darin.

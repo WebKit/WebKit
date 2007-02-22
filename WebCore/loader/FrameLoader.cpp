@@ -3550,10 +3550,19 @@ void FrameLoader::saveScrollPositionAndViewStateToItem(HistoryItem* item)
 */
 void FrameLoader::restoreScrollPositionAndViewState()
 {
+    ASSERT(m_currentHistoryItem);
+    
+    // FIXME: As the ASSERT attests, it seems we should always have a currentItem here.
+    // One counterexample is <rdar://problem/4917290>
+    // For now, to cover this issue in release builds, there is no technical harm to returning
+    // early and from a user standpoint - as in the above radar - the previous page load failed 
+    // so there *is* no scroll or view state to restore!
+    if (!m_currentHistoryItem)
+        return;
+    
     // FIXME: It would be great to work out a way to put this code in WebCore instead of calling through to the client.
     m_client->restoreViewState();
     
-    ASSERT(m_currentHistoryItem);
     if (m_frame->view()) {
         const IntPoint& scrollPoint = m_currentHistoryItem->scrollPoint();
         m_frame->view()->setContentsPos(scrollPoint.x(), scrollPoint.y());
