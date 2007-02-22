@@ -2,6 +2,15 @@
 
         Reviewed by Lars
 
+        Fix sites with fixed positioned backgrounds.
+
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::setStaticBackground):
+
+2007-02-22  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Lars
+
         Properly implement canvas/scrollview's. Get
         rid of ScrollViewCanvas and replace it with
         a tailor abstractscrollview (now in qwebframe).

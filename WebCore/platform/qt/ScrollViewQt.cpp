@@ -269,7 +269,14 @@ void ScrollView::setScrollbarsMode(ScrollbarMode newMode)
 
 void ScrollView::setStaticBackground(bool flag)
 {
-    // no-op
+    if (flag) {
+        QPalette pal = m_area->viewport()->palette();
+        pal.setBrush(QPalette::Background, QBrush(QColor(Qt::transparent)));
+        m_area->viewport()->setPalette(pal);
+        m_area->viewport()->setAutoFillBackground(false);
+    } else {
+        m_area->viewport()->setAutoFillBackground(true);
+    }
 }
 
 void ScrollView::addChild(Widget* child)
