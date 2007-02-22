@@ -58,6 +58,15 @@ using namespace WebCore;
 void QWebFramePrivate::init(QWebFrame *qframe, WebCore::Page *page, QWebFrameData *frameData)
 {
     q = qframe;
+
+    q->setLineWidth(0);
+    q->setMidLineWidth(0);
+    q->setFrameShape(QFrame::NoFrame);
+    q->setMouseTracking(true);
+    q->setFocusPolicy(Qt::StrongFocus);
+    q->verticalScrollBar()->setSingleStep(20);
+    q->horizontalScrollBar()->setSingleStep(20);
+
     frameLoaderClient = new FrameLoaderClientQt();
     frame = new Frame(page, frameData->ownerElement, frameLoaderClient);
     frameLoaderClient->setFrame(qframe, frame.get());
@@ -85,21 +94,24 @@ void QWebFramePrivate::_q_adjustScrollbars()
     vbar->setPageStep(viewportSize.height());
 }
 
-void QWebFrame::init(QWebPage *page, QWebFrameData *frameData)
+void QWebFramePrivate::_q_handleKeyEvent(QKeyEvent *ev, bool isKeyUp)
 {
-    setMouseTracking(true);
-    setFocusPolicy(Qt::StrongFocus);
+    PlatformKeyboardEvent kevent(ev, isKeyUp);
 
-    d->page = page;
+    if (!eventHandler)
+        return;
 
-    d->init(this, page->d->page, frameData);
+    bool handled = eventHandler->keyEvent(kevent);
+
+    ev->setAccepted(handled);
 }
 
 QWebFrame::QWebFrame(QWebPage *parent, QWebFrameData *frameData)
     : QAbstractScrollArea(parent)
     , d(new QWebFramePrivate)
 {
-    init(parent, frameData);
+    d->page = parent;
+    d->init(this, parent->d->page, frameData);
 
     if (!frameData->url.isEmpty()) {
         ResourceRequest request(frameData->url, frameData->referrer);
@@ -112,14 +124,12 @@ QWebFrame::QWebFrame(QWebFrame *parent, QWebFrameData *frameData)
     : QAbstractScrollArea(parent->viewport())
     , d(new QWebFramePrivate)
 {
-    setLineWidth(0);
-    setMidLineWidth(0);
-    setFrameShape(QFrame::NoFrame);
     QPalette pal = palette();
     pal.setBrush(QPalette::Background, Qt::white);
     setPalette(pal);
 
-    init(parent->d->page, frameData);
+    d->page = parent->d->page;
+    d->init(this, parent->d->page->d->page, frameData);
 }
 
 QWebFrame::~QWebFrame()
@@ -281,17 +291,17 @@ void QWebFrame::wheelEvent(QWheelEvent *e)
 
     e->setAccepted(accepted);
     if (!accepted)
-        QWidget::wheelEvent(e);
+        QAbstractScrollArea::wheelEvent(e);
 }
 
 void QWebFrame::keyPressEvent(QKeyEvent *ev)
 {
-    handleKeyEvent(ev, false);
+    d->_q_handleKeyEvent(ev, false);
 }
 
 void QWebFrame::keyReleaseEvent(QKeyEvent *ev)
 {
-    handleKeyEvent(ev, true);
+    d->_q_handleKeyEvent(ev, true);
 }
 
 void QWebFrame::dragEnterEvent(QDragEnterEvent *)
@@ -304,18 +314,6 @@ void QWebFrame::dragLeaveEvent(QDragLeaveEvent *)
 
 void QWebFrame::dragMoveEvent(QDragMoveEvent *)
 {
-}
-
-void QWebFrame::handleKeyEvent(QKeyEvent *ev, bool isKeyUp)
-{
-    PlatformKeyboardEvent kevent(ev, isKeyUp);
-
-    if (!d->eventHandler)
-        return;
-
-    bool handled = d->eventHandler->keyEvent(kevent);
-
-    ev->setAccepted(handled);
 }
 
 /*!\reimp

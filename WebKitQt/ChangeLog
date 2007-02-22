@@ -2,6 +2,24 @@
 
         Reviewed by Lars
 
+        Fixing the default scroll offset, cleaning
+        up private methods and making the default
+        look not use any frames.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::init):
+        (QWebFramePrivate::_q_handleKeyEvent):
+        (QWebFrame::QWebFrame):
+        (QWebFrame::wheelEvent):
+        (QWebFrame::keyPressEvent):
+        (QWebFrame::keyReleaseEvent):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+
+2007-02-22  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Lars
+
         Make the qwebframe act as a proper canvas.
         Implement it on top of QAbstractScrollArea.
 

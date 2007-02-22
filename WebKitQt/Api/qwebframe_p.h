@@ -70,6 +70,7 @@ public:
               QWebFrameData *frameData);
 
     void _q_adjustScrollbars();
+    void _q_handleKeyEvent(QKeyEvent *ev, bool isKeyUp);
 
     QWebFrame *q;
     WebCore::FrameLoaderClientQt *frameLoaderClient;
