@@ -1,0 +1,17 @@
+<p>This tests for a bug when moving the caret forward by a line from a range selection with a horizontal position for vertical arrow navigation set.  To match TextEdit, the caret should be between the second and third 'x's in the forth paragraph.</p>
+<div id="div" contenteditable="true">
+xxx<br>
+xxx<br>
+x<br>
+xxx<br>
+</div>
+
+<script>
+var sel = window.getSelection();
+sel.setPosition(div, 0);
+sel.modify("move", "forward", "character");
+sel.modify("move", "forward", "character");
+sel.modify("extend", "forward", "line");
+sel.modify("extend", "forward", "line");
+sel.modify("move", "forward", "line");
+</script>

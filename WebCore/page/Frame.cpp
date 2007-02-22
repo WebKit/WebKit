@@ -640,16 +640,6 @@ void Frame::selectionLayoutChanged()
         d->m_doc->updateSelection();
 }
 
-void Frame::setXPosForVerticalArrowNavigation(int x)
-{
-    d->m_xPosForVerticalArrowNavigation = x;
-}
-
-int Frame::xPosForVerticalArrowNavigation() const
-{
-    return d->m_xPosForVerticalArrowNavigation;
-}
-
 void Frame::caretBlinkTimerFired(Timer<Frame>*)
 {
     ASSERT(d->m_caretVisible);

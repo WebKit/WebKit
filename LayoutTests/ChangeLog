@@ -1,3 +1,36 @@
+2007-02-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5007143>
+        REGRESSION: WebKit doesn't remember horizontal position of caret when moving forward by line
+
+        Added, tests the removal of the use of the 
+        recalc bool from xPosForVerticalArrowNavigation(...):
+        * editing/selection/5007143-2-expected.checksum: Added.
+        * editing/selection/5007143-2-expected.png: Added.
+        * editing/selection/5007143-2-expected.txt: Added.
+        * editing/selection/5007143-2.html: Added.
+        Added, demonstrate the changes to modify:
+        * editing/selection/5007143-expected.checksum: Added.
+        * editing/selection/5007143-expected.png: Added.
+        * editing/selection/5007143-expected.txt: Added.
+        * editing/selection/5007143.html: Added.
+        Demonstrates a bug (filed 5017312):
+        * editing/style/block-style-004-expected.txt:
+        * editing/style/block-style-005-expected.txt:
+        * editing/style/block-style-006-expected.txt:
+        Fixed:
+        * editing/selection/3690703-2-expected.checksum:
+        * editing/selection/3690703-2-expected.png:
+        * editing/selection/3690703-2-expected.txt:
+        * editing/style/create-block-for-style-009-expected.checksum:
+        * editing/style/create-block-for-style-009-expected.png:
+        * editing/style/create-block-for-style-009-expected.txt:
+        * editing/style/create-block-for-style-011-expected.checksum:
+        * editing/style/create-block-for-style-011-expected.png:
+        * editing/style/create-block-for-style-011-expected.txt:
+
 2007-02-22  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

@@ -166,7 +166,7 @@ private:
     void layout();
     IntRect caretRepaintRect() const;
 
-    int xPosForVerticalArrowNavigation(EPositionType, bool recalc = false) const;
+    int xPosForVerticalArrowNavigation(EPositionType);
 
     Selection m_sel;
 
@@ -184,6 +184,8 @@ private:
     bool m_isDragCaretController;
 
     bool m_isCaretBlinkingSuspended;
+    
+    int m_xPosForVerticalArrowNavigation;
 };
 
 inline bool operator==(const SelectionController& a, const SelectionController& b)
