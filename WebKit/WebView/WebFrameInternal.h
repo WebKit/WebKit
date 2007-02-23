@@ -165,8 +165,6 @@ struct WebCoreHistoryItem;
 - (void)_attachScriptDebugger;
 - (void)_detachScriptDebugger;
 
-- (void)_recursive_pauseNullEventsForAllNetscapePlugins;
-
 @end
 
 @interface NSObject (WebInternalFrameLoadDelegate)

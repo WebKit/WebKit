@@ -377,16 +377,6 @@ WebView *getWebView(WebFrame *webFrame)
     }
 }
 
-- (void)_recursive_pauseNullEventsForAllNetscapePlugins
-{
-    Frame* coreFrame = core(self);
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
-        NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
-        if ([documentView isKindOfClass:[WebHTMLView class]])
-            [(WebHTMLView *)documentView _pauseNullEventsForAllNetscapePlugins];
-    }
-}
-
 - (id)_initWithWebFrameView:(WebFrameView *)fv webView:(WebView *)v bridge:(WebFrameBridge *)bridge
 {
     self = [super init];
@@ -636,6 +626,16 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
         if ([documentView isKindOfClass:[WebHTMLView class]])
             [(WebHTMLView *)documentView _resumeNullEventsForAllNetscapePlugins];
+    }
+}
+
+- (void)_recursive_pauseNullEventsForAllNetscapePlugins
+{
+    Frame* coreFrame = core(self);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+        NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
+        if ([documentView isKindOfClass:[WebHTMLView class]])
+            [(WebHTMLView *)documentView _pauseNullEventsForAllNetscapePlugins];
     }
 }
 
