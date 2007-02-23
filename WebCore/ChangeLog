@@ -3,6 +3,7 @@
         Reviewed by Mitz.
 
         - 12.5% speedup on BenchJS test 6
+        Partial fix for http://bugs.webkit.org/show_bug.cgi?id=12866
         
         It turns out that calling documentVisibleRect on an NSScrollView is pretty expensive,
         and calling visibleRect even more so. Take measures to call them less often.
@@ -23,6 +24,7 @@
         Reviewed by Mitz.
 
         - 2% speedup on BenchJS test 6
+        Partial fix for http://bugs.webkit.org/show_bug.cgi?id=12866
 
         * css/CSSPrimitiveValue.cpp:
         (WebCore::CSSPrimitiveValue::cssText): Use format() instead of
