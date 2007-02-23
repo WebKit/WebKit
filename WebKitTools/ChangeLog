@@ -1,3 +1,11 @@
+2007-02-22  Vladimir Olexa  <vladimir.olexa@gmail.com>
+
+        Reviewed by Tim H.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12852
+        Bug#12852: Drosera should select function name, not "function" keyword when selecting from function list pop-up
+        * Drosera/debugger.js: Fixed some logic errors resulting in generating double IDs and names.
+
 2007-02-22  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

@@ -848,7 +848,7 @@ function syntaxHighlight(code, file)
 
                 var fileIndex = filesLookup[file.url];
 
-                if (keyword == "function") 
+                if (keyword == "function" && functionIsAnonymous)
                     result += "<span class=\"keyword\"><a name=\"function-" + fileIndex + "-" + file.functionNames.length + "\" id=\"" + fileIndex + "-" + file.functionNames.length + "\">" + keyword + "</a></span>";
                 else
                     result += "<span class=\"keyword\">" + keyword + "</span>";
