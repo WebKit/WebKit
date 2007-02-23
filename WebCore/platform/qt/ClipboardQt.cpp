@@ -35,7 +35,7 @@
 namespace WebCore {
     
 ClipboardQt::ClipboardQt(ClipboardAccessPolicy policy, bool forDragging) 
-    : Clipboard(policy)
+    : Clipboard(policy, forDragging)
     , m_isForDragging(forDragging)
 {
     notImplemented();

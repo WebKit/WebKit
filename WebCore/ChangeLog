@@ -1,3 +1,10 @@
+2007-02-22  George Staikos  <staikos@kde.org>
+
+        Fix the Qt build.
+
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::ClipboardQt):
+
 2007-02-22  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Adam Roben, who never sleeps.
