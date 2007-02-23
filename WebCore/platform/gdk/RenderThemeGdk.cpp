@@ -26,14 +26,8 @@
 #include "RenderThemeGdk.h"
 
 #include "GraphicsContext.h"
+#include "NotImplementedGdk.h"
 #include "RenderObject.h"
-
-#define notImplementedGdk() do { \
-    static int count; \
-    if (!count && !getenv("DISABLE_NI_WARNING")) \
-        fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", WTF_PRETTY_FUNCTION, __FILE__, __LINE__); \
-    ++count; \
- } while(0)
 
 #define THEME_COLOR 204
 #define THEME_FONT  210

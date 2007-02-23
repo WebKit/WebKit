@@ -28,57 +28,56 @@
 
 #include "HitTestResult.h"
 #include "KURL.h"
+#include "NotImplementedGdk.h"
 
 #include <stdio.h>
-
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
 
 namespace WebCore {
     
 void ContextMenuClientGdk::contextMenuDestroyed()
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 PlatformMenuDescription ContextMenuClientGdk::getCustomMenuFromDefaultItems(ContextMenu*)
 {
-    notImplemented();
+    notImplementedGdk();
     return PlatformMenuDescription();
 }
 
 void ContextMenuClientGdk::contextMenuItemSelected(ContextMenuItem*, const ContextMenu*)
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void ContextMenuClientGdk::downloadURL(const KURL& url)
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void ContextMenuClientGdk::copyImageToClipboard(const HitTestResult&)
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void ContextMenuClientGdk::searchWithGoogle(const Frame*)
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void ContextMenuClientGdk::lookUpInDictionary(Frame*)
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void ContextMenuClientGdk::speak(const String&)
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void ContextMenuClientGdk::stopSpeaking()
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 }

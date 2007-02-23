@@ -60,6 +60,7 @@
 #include "LocalizedStrings.h"
 #include "MainResourceLoader.h"
 #include "Node.h"
+#include "NotImplementedGdk.h"
 #include "PageCache.h"
 #include "Pasteboard.h"
 #include "PlatformMouseEvent.h"
@@ -77,13 +78,6 @@
 #include <stdio.h>
 
 using namespace WebCore;
-
-#define notImplementedGdk() do { \
-    static int count; \
-    if (!count && !getenv("DISABLE_NI_WARNING")) \
-        fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", WTF_PRETTY_FUNCTION, __FILE__, __LINE__); \
-    ++count; \
- } while(0)
 
 namespace WebCore {
 class Page;

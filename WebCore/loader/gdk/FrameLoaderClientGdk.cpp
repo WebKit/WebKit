@@ -33,19 +33,12 @@
 #include "DocumentLoader.h"
 #include "FrameGdk.h"
 #include "FrameLoader.h"
+#include "NotImplementedGdk.h"
 #include "PlatformString.h"
 #include "ResourceRequest.h"
 #include <stdio.h>
 
-#define notImplementedGdk() do { \
-    static int count; \
-    if (!count && !getenv("DISABLE_NI_WARNING")) \
-        fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", WTF_PRETTY_FUNCTION, __FILE__, __LINE__); \
-    ++count; \
- } while(0)
-
-namespace WebCore
-{
+namespace WebCore {
 
 FrameLoaderClientGdk::FrameLoaderClientGdk()
     : m_frame(0)
@@ -212,13 +205,13 @@ void FrameLoaderClientGdk::setMainFrameDocumentReady(bool)
 
 bool FrameLoaderClientGdk::hasWebView() const
 {
-    //notImplementedGdk();
+    notImplementedGdk();
     return true;
 }
 
 bool FrameLoaderClientGdk::hasFrameView() const
 {
-    //notImplementedGdk();
+    notImplementedGdk();
     return true;
 }
 

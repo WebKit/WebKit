@@ -38,15 +38,9 @@
 #include "KeyboardEvent.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
+#include "NotImplementedGdk.h"
 
 #include <stdio.h>
-
-#define notImplementedGdk() do { \
-    static int count; \
-    if (!count && !getenv("DISABLE_NI_WARNING")) \
-        fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", WTF_PRETTY_FUNCTION, __FILE__, __LINE__); \
-    ++count; \
- } while(0)
 
 namespace WebCore {
 

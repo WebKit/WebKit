@@ -1,3 +1,53 @@
+2007-02-22  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Adam Roben, who never sleeps.
+
+        To avoid code duplication, move notImplementedGdk() macro to a separate
+        header file. Remove existing notImplementedGdk() macros and replace
+        remaining notImplemented() to notImplementedGdk() in gdk code.
+
+        * loader/gdk/DocumentLoaderGdk.cpp:
+        (WebCore::DocumentLoader::getResponseModifiedHeader):
+        * loader/gdk/FrameLoaderClientGdk.cpp:
+        (WebCore::FrameLoaderClientGdk::hasWebView):
+        (WebCore::FrameLoaderClientGdk::hasFrameView):
+        * page/gdk/ContextMenuClientGdk.cpp:
+        (WebCore::ContextMenuClientGdk::contextMenuDestroyed):
+        (WebCore::ContextMenuClientGdk::getCustomMenuFromDefaultItems):
+        (WebCore::ContextMenuClientGdk::contextMenuItemSelected):
+        (WebCore::ContextMenuClientGdk::downloadURL):
+        (WebCore::ContextMenuClientGdk::copyImageToClipboard):
+        (WebCore::ContextMenuClientGdk::searchWithGoogle):
+        (WebCore::ContextMenuClientGdk::lookUpInDictionary):
+        (WebCore::ContextMenuClientGdk::speak):
+        (WebCore::ContextMenuClientGdk::stopSpeaking):
+        * page/gdk/EventHandlerGdk.cpp:
+        * platform/gdk/CursorGdk.cpp:
+        (WebCore::Cursor::Cursor):
+        * platform/gdk/EditorClientGdk.cpp:
+        * platform/gdk/NotImplementedGdk.h: Added.
+        * platform/gdk/PopupMenuGdk.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::hide):
+        (WebCore::PopupMenu::updateFromElement):
+        * platform/gdk/RenderThemeGdk.cpp:
+        * platform/gdk/ScreenGdk.cpp:
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        * platform/graphics/gdk/ImageGdk.cpp:
+        (WebCore::Image::drawPattern):
+        * platform/network/gdk/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::setDefersLoading):
+        * platform/network/gdk/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::setupPUT):
+        (WebCore::ResourceHandleManager::setupPOST):
+
 2007-02-22  Ian Eng  <ian.eng.webkit@gmail.com>
 
         Reviewed by Maciej.

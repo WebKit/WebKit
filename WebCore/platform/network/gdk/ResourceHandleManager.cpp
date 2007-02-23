@@ -29,12 +29,9 @@
 #include "ResourceHandleManager.h"
 
 #include "CString.h"
+#include "NotImplementedGdk.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
-
-#include <stdio.h>
-
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
 
 namespace WebCore {
 
@@ -170,12 +167,12 @@ void ResourceHandleManager::removeFromCurl(ResourceHandle* job)
 
 void ResourceHandleManager::setupPUT(ResourceHandle*)
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void ResourceHandleManager::setupPOST(ResourceHandle*)
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void ResourceHandleManager::add(ResourceHandle* job)

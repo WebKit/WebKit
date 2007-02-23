@@ -33,6 +33,7 @@
 #include "FrameView.h"
 #include "KeyboardEvent.h"
 #include "MouseEventWithHitTestResults.h"
+#include "NotImplementedGdk.h"
 #include "Page.h"
 #include "PlatformScrollBar.h"
 #include "PlatformWheelEvent.h"
@@ -41,13 +42,6 @@
 namespace WebCore {
 
 using namespace EventNames;
-
-#define notImplementedGdk() do { \
-    static int count; \
-    if (!count && !getenv("DISABLE_NI_WARNING")) \
-        fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", WTF_PRETTY_FUNCTION, __FILE__, __LINE__); \
-    ++count; \
- } while(0)
 
 static bool isKeyboardOptionTab(KeyboardEvent* event)
 {

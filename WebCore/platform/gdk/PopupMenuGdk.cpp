@@ -24,35 +24,35 @@
 #include "config.h"
 #include "PopupMenu.h"
 
+#include "NotImplementedGdk.h"
+
 #include <stdio.h>
-
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
-
+ 
 namespace WebCore {
 
 PopupMenu::PopupMenu(PopupMenuClient* menuList)
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 PopupMenu::~PopupMenu()
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void PopupMenu::show(const IntRect&, FrameView*, int)
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void PopupMenu::hide()
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void PopupMenu::updateFromElement() 
 {
-    notImplemented(); 
+    notImplementedGdk(); 
 }
 
 }

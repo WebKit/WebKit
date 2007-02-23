@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
+ * Copyright (C) 2007 Krzysztof Kowalczyk <kkowalczyk@gmail.com>
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,43 +25,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "Screen.h"
+#ifndef NotImplementedGdk_h
+#define NotImplementedGdk_h
 
-#include "NotImplementedGdk.h"
-#include <wtf/Assertions.h>
-#include <stdio.h>
+#ifndef NDEBUG
+#define notImplementedGdk() do { \
+    static bool printed = false; \
+    if (!printed && !getenv("DISABLE_NI_WARNING")) { \
+        fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", WTF_PRETTY_FUNCTION, __FILE__, __LINE__); \
+        printed = true; \
+    } \
+ } while (0)
+#else
+#define notImplementedGdk() do { } while (0)
+#endif
 
-namespace WebCore {
+#endif
 
-int screenDepth(Widget*) 
-{ 
-    notImplementedGdk(); 
-    return 32;
-}
-
-int screenDepthPerComponent(Widget*)
-{
-    notImplementedGdk();
-    return 8;
-}
-
-bool screenIsMonochrome(Widget*) 
-{ 
-    notImplementedGdk(); 
-    return false; 
-}
-
-FloatRect screenRect(Widget*) 
-{ 
-    notImplementedGdk();
-    return FloatRect(); 
-}
-
-FloatRect screenAvailableRect(Widget*) 
-{ 
-    notImplementedGdk(); 
-    return FloatRect(); 
-}
-
-}
