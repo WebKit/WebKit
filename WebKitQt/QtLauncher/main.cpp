@@ -74,8 +74,13 @@ class HoverLabel : public QWidget {
     Q_OBJECT
 public:
     HoverLabel(QWidget *parent=0)
-        : QWidget(parent)
+        : QWidget(parent),
+          m_animating(false),
+          m_percent(0)
     {
+        m_timer.setInterval(1000/30);
+        connect(&m_timer, SIGNAL(timeout()),
+                this, SLOT(update()));
     }
 
 public slots:
@@ -84,15 +89,24 @@ public slots:
         if (m_link.isEmpty()) {
             hide();
         } else {
+            m_oldSize = m_newSize;
+            m_newSize = sizeForFont();
+            resetAnimation();
             updateSize();
             show();
+            repaint();
         }
     }
-
-    QSize sizeHint() const {
+    QSize sizeForFont() const {
         QFont f = font();
         QFontMetrics fm(f);
         return QSize(fm.width(m_link) + 10, fm.height() + 6);
+    }
+    QSize sizeHint() const {
+        if (!m_animating)
+            return sizeForFont();
+        else
+            return (m_newSize.width() > m_oldSize.width()) ? m_newSize : m_oldSize;
     }
     void updateSize() {
         QRect r = geometry();
@@ -100,9 +114,16 @@ public slots:
         r = QRect(r.x(), r.y(), newSize.width(), newSize.height());
         setGeometry(r);
     }
+    void resetAnimation() {
+        m_animating = true;
+        m_percent = 0;
+        if (!m_timer.isActive())
+            m_timer.start();
+    }
 protected:
     void paintEvent(QPaintEvent *e) {
         QPainter p(this);
+        p.setClipRect(e->rect());
         p.setPen(QPen(Qt::black, 1));
         QLinearGradient gradient(rect().topLeft(), rect().bottomLeft());
         gradient.setColorAt(0, QColor(255, 255, 255, 220));
@@ -111,7 +132,8 @@ protected:
         {
             //draw a nicely rounded corner rectangle. to avoid unwanted
             // borders we move the coordinates outsize the our clip region
-            QRect r(-1, 0, width(), height()+2);
+            QSize size = interpolate(m_oldSize, m_newSize, m_percent);
+            QRect r(-1, 0, size.width(), size.height()+2);
             const int roundness = 20;
             QPainterPath path;
             path.moveTo(r.x(), r.y());
@@ -125,11 +147,35 @@ protected:
             p.setRenderHint(QPainter::Antialiasing);
             p.drawPath(path);
         }
-
-        p.drawText(5, height()-6, m_link);
+        if (m_animating) {
+            if (qFuzzyCompare(m_percent, 1)) {
+                m_animating = false;
+                m_percent = 0;
+                m_timer.stop();
+            } else {
+                m_percent += 0.1;
+                if (m_percent >= 0.99) {
+                    m_percent = 1;
+                }
+            }
+        }
+        if (!m_animating)
+            p.drawText(5, height()-6, m_link);
     }
 
+private:
+    QSize interpolate(const QSize &src, const QSize &dst, qreal percent) {
+        int widthDiff  = int((dst.width() - src.width())  * percent);
+        int heightDiff = int((dst.height() - src.height()) * percent);
+        return QSize(src.width()  + widthDiff,
+                     src.height() + heightDiff);
+    }
     QString m_link;
+    bool    m_animating;
+    QTimer  m_timer;
+    QSize   m_oldSize;
+    QSize   m_newSize;
+    qreal   m_percent;
 };
 
 class SearchEdit;
@@ -194,7 +240,7 @@ protected:
         else
             clearButton->setVisible(true);
     }
-    virtual void resizeEvent(QResizeEvent *e) {
+    virtual void resizeEvent(QResizeEvent *) {
         clearButton->setParent(this);
         clearButton->setGeometry(QRect(width()-27,
                                        0,

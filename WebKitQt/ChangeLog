@@ -1,5 +1,20 @@
 2007-02-23  Zack Rusin  <zrusin@trolltech.com>
 
+        Adding a little bit of eye-candy to the last
+        commit (animations on hover events)
+
+        * QtLauncher/main.cpp:
+        (HoverLabel::HoverLabel):
+        (HoverLabel::setHoverLink):
+        (HoverLabel::sizeForFont):
+        (HoverLabel::sizeHint):
+        (HoverLabel::resetAnimation):
+        (HoverLabel::paintEvent):
+        (HoverLabel::interpolate):
+        (SearchEdit::resizeEvent):
+
+2007-02-23  Zack Rusin  <zrusin@trolltech.com>
+
         Reviewed by Lars
 
         Adding API and code for notification of when the
