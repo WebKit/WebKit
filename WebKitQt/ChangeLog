@@ -1,3 +1,34 @@
+2007-02-23  Zack Rusin  <zrusin@trolltech.com>
+
+        Reviewed by Lars
+
+        Adding API and code for notification of when the
+        mouse is hovering over a link and adding code to
+        the sample app to showcase it.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::mouseMoveEvent):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        (QWebFramePrivate::QWebFramePrivate):
+        * Api/qwebpage.cpp:
+        (QWebPage::createFrame):
+        * Api/qwebpage.h:
+        * QtLauncher/main.cpp:
+        (HoverLabel::HoverLabel):
+        (HoverLabel::setHoverLink):
+        (HoverLabel::sizeHint):
+        (HoverLabel::updateSize):
+        (HoverLabel::paintEvent):
+        (ClearButton::ClearButton):
+        (ClearButton::paintEvent):
+        (SearchEdit::SearchEdit):
+        (SearchEdit::resizeEvent):
+        (SearchEdit::moveEvent):
+        (MainWindow::MainWindow):
+        (MainWindow::showLinkHover):
+        (MainWindow::resizeEvent):
+
 2007-02-22  Zack Rusin  <zrusin@trolltech.com>
 
         Reviewed by Lars

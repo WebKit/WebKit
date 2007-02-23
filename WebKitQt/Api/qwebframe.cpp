@@ -30,6 +30,7 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HitTestResult.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
@@ -264,6 +265,15 @@ void QWebFrame::mouseMoveEvent(QMouseEvent *ev)
         return;
 
     d->frameView->handleMouseMoveEvent(PlatformMouseEvent(ev, 0));
+    const int xOffset = horizontalScrollBar()->value();
+    const int yOffset = verticalScrollBar()->value();
+    IntPoint pt(ev->x() + xOffset, ev->y() + yOffset);
+    WebCore::HitTestResult result = d->eventHandler->hitTestResultAtPoint(pt, false);
+    WebCore::Element *link = result.URLElement();
+    if (link != d->lastHoverElement) {
+        d->lastHoverElement = link;
+        emit hoveringOverLink(result.absoluteLinkURL().prettyURL(), result.title());
+    }
 }
 
 void QWebFrame::mousePressEvent(QMouseEvent *ev)

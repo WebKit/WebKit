@@ -114,7 +114,10 @@ QWebFrame *QWebPage::createFrame(QWebFrame *parentFrame, QWebFrameData *frameDat
     if (parentFrame)
         return new QWebFrame(parentFrame, frameData);
     QWebFrame *f = new QWebFrame(this, frameData);
-    connect(f, SIGNAL(titleChanged(const QString&)), this, SIGNAL(titleChanged(const QString&)));
+    connect(f, SIGNAL(titleChanged(const QString&)),
+            SIGNAL(titleChanged(const QString&)));
+    connect(f, SIGNAL(hoveringOverLink(const QString&, const QString&)),
+            SIGNAL(hoveringOverLink(const QString&, const QString&)));
     return f;
 }
 

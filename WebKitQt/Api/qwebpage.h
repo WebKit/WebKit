@@ -109,6 +109,13 @@ signals:
      * Applies only to the main frame.  Sub-frame titles do not trigger this.
      */
     void titleChanged(const QString& title);
+    /**
+     * Signal is emitted when the mouse is hovering over a link.
+     * The first parameter is the link url, the second is the link title
+     * if any. Method is emitter with both empty parameters when the mouse
+     * isn't hovering over any link element.
+     */
+    void hoveringOverLink(const QString &link, const QString &title);
 
 protected:
     virtual QWebFrame *createFrame(QWebFrame *parentFrame, QWebFrameData *frameData);

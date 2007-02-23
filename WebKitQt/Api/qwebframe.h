@@ -60,6 +60,7 @@ signals:
     void cleared();
     void loadDone(bool ok);
     void titleChanged(const QString &title);
+    void hoveringOverLink(const QString &link, const QString &title);
 
 protected:
     virtual void resizeEvent(QResizeEvent *);
