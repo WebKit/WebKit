@@ -2,6 +2,26 @@
 
         Reviewed by Mitz.
 
+        - 12.5% speedup on BenchJS test 6
+        
+        It turns out that calling documentVisibleRect on an NSScrollView is pretty expensive,
+        and calling visibleRect even more so. Take measures to call them less often.
+
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::visibleContentRect): Use documentVisibleRect when possible.
+        (WebCore::ScrollView::updateContents): Use visibleContentRect to be able to use
+        documentVisibleRect when possible.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::repaintViewRectangle): Don't get or intersect with viewRect
+        if we don't have a parent frame, since the ScrollView will do that anyway. Also,
+        don't get contentX and contentY separately since they are in the viewRect already.
+        (WebCore::RenderView::viewRect): Use visibleContentRect instead of getting each
+        coordinate individually, to avoid calling documentVisibleRect repeatedly.
+
+2007-02-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mitz.
+
         - 2% speedup on BenchJS test 6
 
         * css/CSSPrimitiveValue.cpp:

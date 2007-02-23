@@ -183,26 +183,28 @@ void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
     if (printing() || ur.width() == 0 || ur.height() == 0)
         return;
 
-    IntRect vr = viewRect();
-    if (m_frameView && ur.intersects(vr)) {
-        // We always just invalidate the root view, since we could be an iframe that is clipped out
-        // or even invisible.
-        IntRect r = intersection(ur, vr);
-        Element* elt = element()->document()->ownerElement();
-        if (!elt)
-            m_frameView->repaintRectangle(r, immediate);
-        else if (RenderObject* obj = elt->renderer()) {
-            // Subtract out the contentsX and contentsY offsets to get our coords within the viewing
-            // rectangle.
-            r.move(-m_frameView->contentsX(), -m_frameView->contentsY());
+    if (!m_frameView)
+        return;
 
-            // FIXME: Hardcoded offsets here are not good.
-            int yFrameOffset = m_frameView->hasBorder() ? 2 : 0;
-            int xFrameOffset = m_frameView->hasBorder() ? 1 : 0;
-            r.move(obj->borderLeft() + obj->paddingLeft() + xFrameOffset,
-                   obj->borderTop() + obj->paddingTop() + yFrameOffset);
-            obj->repaintRectangle(r, immediate);
-        }
+    // We always just invalidate the root view, since we could be an iframe that is clipped out
+    // or even invisible.
+    Element* elt = element()->document()->ownerElement();
+    if (!elt)
+        m_frameView->repaintRectangle(ur, immediate);
+    else if (RenderObject* obj = elt->renderer()) {
+        IntRect vr = viewRect();
+        IntRect r = intersection(ur, vr);
+        
+        // Subtract out the contentsX and contentsY offsets to get our coords within the viewing
+        // rectangle.
+        r.move(-vr.x(), -vr.y());
+        
+        // FIXME: Hardcoded offsets here are not good.
+        int yFrameOffset = m_frameView->hasBorder() ? 2 : 0;
+        int xFrameOffset = m_frameView->hasBorder() ? 1 : 0;
+        r.move(obj->borderLeft() + obj->paddingLeft() + xFrameOffset,
+               obj->borderTop() + obj->paddingTop() + yFrameOffset);
+        obj->repaintRectangle(r, immediate);
     }
 }
 
@@ -464,10 +466,7 @@ IntRect RenderView::viewRect() const
     if (printing())
         return IntRect(0, 0, m_width, m_height);
     if (m_frameView)
-        return IntRect(m_frameView->contentsX(),
-                       m_frameView->contentsY(),
-                       m_frameView->visibleWidth(),
-                       m_frameView->visibleHeight());
+        return enclosingIntRect(m_frameView->visibleContentRect());
     return IntRect();
 }
 
