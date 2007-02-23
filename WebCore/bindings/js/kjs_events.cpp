@@ -201,6 +201,24 @@ void JSUnprotectedEventListener::mark()
         listener->mark();
 }
 
+#ifndef NDEBUG
+#ifndef LOG_CHANNEL_PREFIX
+#define LOG_CHANNEL_PREFIX Log
+#endif
+WTFLogChannel LogWebCoreEventListenerLeaks = { 0x00000000, "", WTFLogChannelOn };
+
+struct EventListenerCounter {
+    static unsigned count;
+    ~EventListenerCounter()
+    {
+        if (count)
+            LOG(WebCoreEventListenerLeaks, "LEAK: %u EventListeners\n", count);
+    }
+};
+unsigned EventListenerCounter::count = 0;
+static EventListenerCounter eventListenerCounter;
+#endif
+
 // -------------------------------------------------------------------------
 
 JSEventListener::JSEventListener(JSObject* _listener, Window* _win, bool _html)
@@ -213,6 +231,9 @@ JSEventListener::JSEventListener(JSObject* _listener, Window* _win, bool _html)
             ? _win->jsHTMLEventListeners : _win->jsEventListeners;
         listeners.set(_listener, this);
     }
+#ifndef NDEBUG
+    ++eventListenerCounter.count;
+#endif
 }
 
 JSEventListener::~JSEventListener()
@@ -222,6 +243,9 @@ JSEventListener::~JSEventListener()
             ? win->jsHTMLEventListeners : win->jsEventListeners;
         listeners.remove(listener);
     }
+#ifndef NDEBUG
+    --eventListenerCounter.count;
+#endif
 }
 
 JSObject* JSEventListener::listenerObj() const

@@ -135,8 +135,19 @@ namespace KJS {
     BarInfo *scrollbars(ExecState*) const;
     BarInfo *statusbar(ExecState*) const;
     BarInfo *toolbar(ExecState*) const;
-    JSEventListener *getJSEventListener(JSValue*, bool html = false);
-    JSUnprotectedEventListener *getJSUnprotectedEventListener(JSValue*, bool html = false);
+
+    // Finds a wrapper of a JS EventListener, returns 0 if no existing one.
+    JSEventListener* findJSEventListener(JSValue*, bool html = false);
+
+    // Finds or creates a wrapper of a JS EventListener. JS EventListener object is GC-protected.
+    JSEventListener *findOrCreateJSEventListener(JSValue*, bool html = false);
+
+    // Finds a wrapper of a GC-unprotected JS EventListener, returns 0 if no existing one.
+    JSUnprotectedEventListener* findJSUnprotectedEventListener(JSValue*, bool html = false);
+
+    // Finds or creates a wrapper of a JS EventListener. JS EventListener object is *NOT* GC-protected.
+    JSUnprotectedEventListener *findOrCreateJSUnprotectedEventListener(JSValue*, bool html = false);
+
     void clear();
     virtual UString toString(ExecState *) const;
 
