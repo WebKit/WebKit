@@ -1,3 +1,13 @@
+2007-02-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mitz.
+
+        - 2% speedup on BenchJS test 6
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::cssText): Use format() instead of
+        number() followed by append of a constant string.
+
 2007-02-22  George Staikos  <staikos@kde.org>
 
         Fix the Qt build.

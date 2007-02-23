@@ -454,52 +454,52 @@ String CSSPrimitiveValue::cssText() const
             text = String::number(m_value.num);
             break;
         case CSS_PERCENTAGE:
-            text = String::number(m_value.num) + "%";
+            text = String::format("%.6lg%%", m_value.num);
             break;
         case CSS_EMS:
-            text = String::number(m_value.num) + "em";
+            text = String::format("%.6lgem", m_value.num);
             break;
         case CSS_EXS:
-            text = String::number(m_value.num) + "ex";
+            text = String::format("%.6lgex", m_value.num);
             break;
         case CSS_PX:
-            text = String::number(m_value.num) + "px";
+            text = String::format("%.6lgpx", m_value.num);
             break;
         case CSS_CM:
-            text = String::number(m_value.num) + "cm";
+            text = String::format("%.6lgcm", m_value.num);
             break;
         case CSS_MM:
-            text = String::number(m_value.num) + "mm";
+            text = String::format("%.6lgmm", m_value.num);
             break;
         case CSS_IN:
-            text = String::number(m_value.num) + "in";
+            text = String::format("%.6lgin", m_value.num);
             break;
         case CSS_PT:
-            text = String::number(m_value.num) + "pt";
+            text = String::format("%.6lgpt", m_value.num);
             break;
         case CSS_PC:
-            text = String::number(m_value.num) + "pc";
+            text = String::format("%.6lgpc", m_value.num);
             break;
         case CSS_DEG:
-            text = String::number(m_value.num) + "deg";
+            text = String::format("%.6lgdeg", m_value.num);
             break;
         case CSS_RAD:
-            text = String::number(m_value.num) + "rad";
+            text = String::format("%.6lgrad", m_value.num);
             break;
         case CSS_GRAD:
-            text = String::number(m_value.num) + "grad";
+            text = String::format("%.6lggrad", m_value.num);
             break;
         case CSS_MS:
-            text = String::number(m_value.num) + "ms";
+            text = String::format("%.6lgms", m_value.num);
             break;
         case CSS_S:
-            text = String::number(m_value.num) + "s";
+            text = String::format("%.6lgs", m_value.num);
             break;
         case CSS_HZ:
-            text = String::number(m_value.num) + "hz";
+            text = String::format("%.6lghz", m_value.num);
             break;
         case CSS_KHZ:
-            text = String::number(m_value.num) + "khz";
+            text = String::format("%.6lgkhz", m_value.num);
             break;
         case CSS_DIMENSION:
             // FIXME
