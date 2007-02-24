@@ -79,16 +79,21 @@ public:
           m_percent(0)
     {
         m_timer.setInterval(1000/30);
+        m_hideTimer.setInterval(500);
+        m_hideTimer.setSingleShot(true);
         connect(&m_timer, SIGNAL(timeout()),
                 this, SLOT(update()));
+        connect(&m_hideTimer, SIGNAL(timeout()),
+                this, SLOT(hide()));
     }
 
 public slots:
     void setHoverLink(const QString &link) {
         m_link = link;
         if (m_link.isEmpty()) {
-            hide();
+            m_hideTimer.start();
         } else {
+            m_hideTimer.stop();
             m_oldSize = m_newSize;
             m_newSize = sizeForFont();
             resetAnimation();
@@ -129,10 +134,11 @@ protected:
         gradient.setColorAt(0, QColor(255, 255, 255, 220));
         gradient.setColorAt(1, QColor(193, 193, 193, 220));
         p.setBrush(QBrush(gradient));
+        QSize size;
         {
             //draw a nicely rounded corner rectangle. to avoid unwanted
             // borders we move the coordinates outsize the our clip region
-            QSize size = interpolate(m_oldSize, m_newSize, m_percent);
+            size = interpolate(m_oldSize, m_newSize, m_percent);
             QRect r(-1, 0, size.width(), size.height()+2);
             const int roundness = 20;
             QPainterPath path;
@@ -159,8 +165,11 @@ protected:
                 }
             }
         }
-        if (!m_animating)
-            p.drawText(5, height()-6, m_link);
+
+        QString txt;
+        QFontMetrics fm(fontMetrics());
+        txt = fm.elidedText(m_link, Qt::ElideRight, size.width()-5);
+        p.drawText(5, height()-6, txt);
     }
 
 private:
@@ -173,6 +182,7 @@ private:
     QString m_link;
     bool    m_animating;
     QTimer  m_timer;
+    QTimer  m_hideTimer;
     QSize   m_oldSize;
     QSize   m_newSize;
     qreal   m_percent;

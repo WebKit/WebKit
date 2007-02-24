@@ -1,3 +1,10 @@
+2007-02-24  Zack Rusin  <zrusin@trolltech.com>
+
+        Adjust the animation a little bit to make it more natural.
+
+        * QtLauncher/main.cpp:
+        (HoverLabel::paintEvent):
+
 2007-02-23  Zack Rusin  <zrusin@trolltech.com>
 
         Adding a little bit of eye-candy to the last
