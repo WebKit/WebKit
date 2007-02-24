@@ -1,3 +1,21 @@
+2007-02-24  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Gdk improvements.
+
+        * platform/gdk/FrameGdk.cpp: only scroll on keydown, not both keydown and keyup.
+        (WebCore::FrameGdk::keyPress):
+        (WebCore::FrameGdk::handleGdkEvent):
+        (WebCore::Frame::print):
+        (WebCore::Frame::issueTransposeCommand):
+        (WebCore::Frame::respondToChangedSelection):
+        (WebCore::Frame::cleanupPlatformScriptObjects):
+        (WebCore::Frame::dragImageForSelection):
+        * platform/network/gdk/ResourceHandleManager.cpp: don't free memory that
+        doesn't belong to us.
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+
 2007-02-23  Kevin Dcker <kdecker@apple.com>
 
         Reviewed by Anders.

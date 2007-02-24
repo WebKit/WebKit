@@ -1,3 +1,22 @@
+2007-02-24  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Improve gdklauncher: add text field for entering url.
+
+        * GdkLauncher/gdklauncher.bkl:
+        * GdkLauncher/main.cpp:
+        (strEmpty):
+        (strEq):
+        (handleGdkEvent):
+        (goToUrlBarText):
+        (goButtonClickedCb):
+        (urlBarEnterCb):
+        (registerRenderingAreaEvents):
+        (frameResizeCb):
+        (frameDestroyCb):
+        (main):
+
 2007-02-22  Vladimir Olexa  <vladimir.olexa@gmail.com>
 
         Reviewed by Tim H.

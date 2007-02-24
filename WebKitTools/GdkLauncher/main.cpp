@@ -1,6 +1,8 @@
 #include "config.h"
 #include "ChromeClientGdk.h"
+#include "ContextMenuClientGdk.h"
 #include "Document.h"
+#include "DragClient.h"
 #include "EditorClientGdk.h"
 #include "FrameGdk.h"
 #include "FrameLoader.h"
@@ -9,6 +11,7 @@
 #include "KURL.h"
 #include "Page.h"
 #include "PlatformString.h"
+#include "ResourceHandleManager.h"
 
 #if SVG_SUPPORT
 #include "SVGNames.h"
@@ -21,41 +24,80 @@
 
 using namespace WebCore;
 
-static  FrameGdk *frame;
-static  GdkWindow *win;
+static GtkWidget* gUrlBarEntry;
+static FrameGdk*  gFrame;
 
-static void handle_event(GdkEvent *event)
+static bool strEmpty(const char* str)
 {
-    if (GDK_DELETE == event->type) {
-        gtk_main_quit();
+    return !str || !*str;
+}
+
+static bool strEq(const char* str1, const char* str2)
+{
+    return 0 == strcmp(str1, str2);
+}
+
+static void handleGdkEvent(GtkWidget* widget, GdkEvent* event)
+{
+    gFrame->handleGdkEvent(event);
+}
+
+static void goToUrlBarText(GtkWidget* urlBarEntry)
+{
+    const gchar* url = gtk_entry_get_text(GTK_ENTRY(urlBarEntry));
+    if (strEmpty(url))
         return;
-    }
-    frame->handleGdkEvent(event);
+    // FIXME: append "http://" if doesn't have a scheme
+    gFrame->loader()->load(url, 0);
 }
 
-int strEq(const char *str1, const char *str2)
+static void goButtonClickedCb(GtkWidget* widget, GtkWidget* entry)
 {
-    if (0 == strcmp(str1, str2))
-        return 1;
-    return 0;
+    goToUrlBarText(entry);
 }
 
-int main(int argc, char *argv[]) 
+static void urlBarEnterCb(GtkWidget* widget, GtkWidget* entry)
 {
-    gdk_init(&argc,&argv);
-    gdk_event_handler_set((GdkEventFunc)handle_event, NULL, NULL);
+    goToUrlBarText(entry);
+}
 
-    GdkWindowAttr attr;
-    attr.width = 800;
-    attr.height = 600;
-    attr.window_type = GDK_WINDOW_TOPLEVEL;
-    attr.wclass = GDK_INPUT_OUTPUT;
-    attr.event_mask = ((GDK_ALL_EVENTS_MASK^GDK_POINTER_MOTION_HINT_MASK)); 
-    win = gdk_window_new(NULL, &attr, 0);
-    gdk_window_show(win);
+static void registerRenderingAreaEvents(GtkWidget* win)
+{
+    gtk_widget_set_events(win, GDK_EXPOSURE_MASK
+                         | GDK_BUTTON_PRESS_MASK
+                         | GDK_BUTTON_RELEASE_MASK
+                         | GDK_POINTER_MOTION_MASK
+                         | GDK_KEY_PRESS_MASK
+                         | GDK_KEY_RELEASE_MASK
+                         | GDK_BUTTON_MOTION_MASK
+                         | GDK_BUTTON1_MOTION_MASK
+                         | GDK_BUTTON2_MOTION_MASK
+                         | GDK_BUTTON3_MOTION_MASK);
 
-    // parse command-line arguments
-    char *url = "http://www.google.com";
+    g_signal_connect(GTK_OBJECT(win), "expose-event", G_CALLBACK(handleGdkEvent), NULL);
+    g_signal_connect(GTK_OBJECT(win), "key-press-event", G_CALLBACK(handleGdkEvent), NULL);
+    g_signal_connect(GTK_OBJECT(win), "key-release-event", G_CALLBACK(handleGdkEvent), NULL);
+    g_signal_connect(GTK_OBJECT(win), "button-press-event", G_CALLBACK(handleGdkEvent), NULL);
+    g_signal_connect(GTK_OBJECT(win), "button-release-event", G_CALLBACK(handleGdkEvent), NULL);
+    g_signal_connect(GTK_OBJECT(win), "motion-notify-event", G_CALLBACK(handleGdkEvent), NULL);
+    g_signal_connect(GTK_OBJECT(win), "scroll-event", G_CALLBACK(handleGdkEvent), NULL);
+}
+
+static void frameResizeCb(GtkWidget* widget, gpointer data)
+{
+    // FIXME: resize the area?
+}
+
+static void frameDestroyCb(GtkWidget* widget, gpointer data)
+{
+    gtk_main_quit();
+}
+
+int main(int argc, char* argv[]) 
+{
+    gtk_init(&argc, &argv);
+
+    const char* url = "http://www.google.com";
     bool exitAfterLoading = false;
     bool dumpRenderTree = false;
     for (int argPos = 1; argPos < argc; ++argPos) {
@@ -78,31 +120,56 @@ int main(int argc, char *argv[])
             url = currArg;
     }
 
-    EditorClientGdk *editorClient = new EditorClientGdk();
-    Page* page = new Page(new ChromeClientGdk(), 0, editorClient, 0);
+    GtkWidget* topLevelWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(GTK_WINDOW(topLevelWindow), 800, 600);
+    gtk_widget_set_name(topLevelWindow, "GdkLauncher");
+    GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
+    gtk_container_add(GTK_CONTAINER(topLevelWindow), vbox);
+    g_signal_connect(G_OBJECT(topLevelWindow), "destroy", G_CALLBACK(frameDestroyCb), NULL);
+    g_signal_connect(GTK_OBJECT(topLevelWindow), "size-request", G_CALLBACK(frameResizeCb), NULL);
+
+    GtkWidget* hbox = gtk_hbox_new(FALSE, 2);
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+    gUrlBarEntry = gtk_entry_new();
+    g_signal_connect(G_OBJECT(gUrlBarEntry), "activate", G_CALLBACK(urlBarEnterCb), (gpointer)gUrlBarEntry);
+    gtk_box_pack_start(GTK_BOX(hbox), gUrlBarEntry, TRUE, TRUE, 0);
+
+    GtkWidget* urlBarSubmitButton = gtk_button_new_with_label("Go");  
+    gtk_box_pack_start(GTK_BOX(hbox), urlBarSubmitButton, FALSE, FALSE, 0);
+    g_signal_connect(G_OBJECT(urlBarSubmitButton), "clicked", G_CALLBACK(goButtonClickedCb), (gpointer)gUrlBarEntry);
+    gtk_widget_show(vbox);
+
+    GtkWidget* frameWindow = gtk_drawing_area_new();
+    registerRenderingAreaEvents(frameWindow); 
+    gtk_box_pack_start(GTK_BOX(vbox), frameWindow, TRUE, TRUE, 0);
+    gtk_widget_show(frameWindow);
+    GTK_WIDGET_SET_FLAGS(frameWindow, GTK_CAN_FOCUS);
+
+    gtk_widget_show_all(topLevelWindow);
+
+    EditorClientGdk* editorClient = new EditorClientGdk;
+    ContextMenuClient* contextMenuClient = new ContextMenuClientGdk;
+    Page* page = new Page(new ChromeClientGdk, contextMenuClient, editorClient, 0);
     editorClient->setPage(page);
-    FrameLoaderClientGdk* frameLoaderClient = new FrameLoaderClientGdk();
-    frame = new FrameGdk(page, 0, frameLoaderClient);
-    frame->setExitAfterLoading(exitAfterLoading);
-    frame->setDumpRenderTreeAfterLoading(dumpRenderTree);
-    FrameView* frameView = new FrameView(frame);
-    frame->setView(frameView);
-    frameView->ScrollView::setDrawable(win);
+    FrameLoaderClientGdk* frameLoaderClient = new FrameLoaderClientGdk;
+    gFrame = new FrameGdk(page, 0, frameLoaderClient);
+    gFrame->setExitAfterLoading(exitAfterLoading);
+    gFrame->setDumpRenderTreeAfterLoading(dumpRenderTree);
 
-#if 0
-    String pg(" <html><head><title>Google</title> <body bgcolor=#ffffff text=#000000> <p><font size=-2/>2006 Google Hello bigworld from mike</p></body></html> ");
-    frame->loader()->begin();
-    frame->document()->open();
-    frame->document()->write(pg);
-    frame->document()->close();
-#else
+    FrameView* frameView = new FrameView(gFrame);
+    gFrame->setView(frameView);
+    frameView->ScrollView::setDrawable(frameWindow->window);
+
     printf("OPENING URL == %s \n", url);
-    KURL kurl(url);
-    frame->loader()->load(kurl, 0);
-#endif
-
+    gFrame->loader()->load(url, 0);
     gtk_main();
-    delete frame;
-    gdk_window_destroy(win);
+#if 0 // FIXME: this crashes at the moment. needs to provide DragClient
+    delete page;
+#endif
+    if (FrameLoader* loader = gFrame->loader())
+        loader->stopAllLoaders();
+    delete gFrame;
     return 0;
 }
+

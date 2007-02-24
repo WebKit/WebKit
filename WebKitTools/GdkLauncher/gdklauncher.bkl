@@ -4,7 +4,7 @@
 <makefile>
     <include file="../../Bakefiles/presets.bkl" />
 
-    <template id="webcore_gdk_link" template="gtk,freetype">
+    <template id="webcore_gdk_link" template="gtk,freetype,curl">
         <define>APPLE_CHANGES=1</define>
         <!-- this GC version requires Mach's thread suspend/resume: -->
         <if cond="PLATFORM_MACOSX!='1'">
@@ -44,6 +44,8 @@
         <include>$(TOPDIR)/WebCore/loader</include>
         <include>$(TOPDIR)/WebCore/loader/gdk</include>
         <include>$(TOPDIR)/WebCore/page</include>
+        <include>$(TOPDIR)/WebCore/page/gdk</include>
+        <include>$(TOPDIR)/WebCore/platform</include>
         <include>$(TOPDIR)/WebCore/platform/gdk</include>
         <include>$(TOPDIR)/WebCore/platform/graphics/cairo</include>
         <include>$(TOPDIR)/WebCore/platform/graphics</include>
@@ -53,7 +55,7 @@
         <include>$(TOPDIR)/WebCore/platform/image-decoders/zlib</include>
         <include>$(TOPDIR)/WebCore/platform/image-decoders</include>
         <include>$(TOPDIR)/WebCore/platform/network</include>
-        <include>$(TOPDIR)/WebCore/platform</include>
+        <include>$(TOPDIR)/WebCore/platform/network/gdk</include>
         <include>$(TOPDIR)/WebCore/rendering</include>
         <include>$(TOPDIR)/WebCore/xml</include>
 

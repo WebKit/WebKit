@@ -40,6 +40,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "KeyboardCodes.h"
+#include "NotImplementedGdk.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
@@ -55,8 +56,6 @@
 
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
-
-#define notImplemented() do { fprintf(stderr, "FIXME: UNIMPLEMENTED %s %s:%d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__); } while(0)
 
 // This function loads resources from WebKit
 // This does not belong here and I'm not sure where
@@ -153,13 +152,16 @@ bool FrameGdk::keyPress(const PlatformKeyboardEvent& keyEvent)
 
     switch (keyEvent.WindowsKeyCode()) {
         case VK_LEFT:
-            doScroll(renderer(), true, -120);
+            if (!keyEvent.isKeyUp())
+                doScroll(renderer(), true, -120);
             break;
         case VK_RIGHT:
-            doScroll(renderer(), true, 120);
+            if (!keyEvent.isKeyUp())
+                doScroll(renderer(), true, 120);
             break;
         case VK_UP:
-            doScroll(renderer(), false, -120);
+            if (!keyEvent.isKeyUp())
+                doScroll(renderer(), false, -120);
             break;
         case VK_PRIOR:
             // FIXME: implement me
@@ -168,20 +170,26 @@ bool FrameGdk::keyPress(const PlatformKeyboardEvent& keyEvent)
             // FIXME: implement me
             break;
         case VK_DOWN:
-            doScroll(renderer(), false, 120);
+            if (!keyEvent.isKeyUp())
+                doScroll(renderer(), false, 120);
             break;
         case VK_HOME:
-            renderer()->layer()->scrollToOffset(0, 0, true, true);
-            doScroll(renderer(), false, 120);
+            if (!keyEvent.isKeyUp()) {
+                renderer()->layer()->scrollToOffset(0, 0, true, true);
+                doScroll(renderer(), false, 120);
+            }
             break;
         case VK_END:
-            renderer()->layer()->scrollToOffset(0, renderer()->height(), true, true);
+            if (!keyEvent.isKeyUp())
+                renderer()->layer()->scrollToOffset(0, renderer()->height(), true, true);
             break;
         case VK_SPACE:
-            if (keyEvent.shiftKey())
-                doScroll(renderer(), false, -120);
-            else
-                doScroll(renderer(), false, 120);
+            if (!keyEvent.isKeyUp()) {
+                if (keyEvent.shiftKey())
+                    doScroll(renderer(), false, -120);
+                else
+                    doScroll(renderer(), false, 120);
+            }
             break;
     }
     return true;
@@ -197,7 +205,20 @@ void FrameGdk::handleGdkEvent(GdkEvent* event)
             gdk_window_begin_paint_region(event->any.window, event->expose.region);
             cairo_t* cr = gdk_cairo_create(event->any.window);
             GraphicsContext ctx(cr);
-            paint(&ctx, IntRect(clip.x, clip.y, clip.width, clip.height));
+            if (renderer()) {
+                if (view()->layoutPending())
+                    view()->layout();
+                IntRect rect(clip.x, clip.y, clip.width, clip.height);
+                paint(&ctx, rect);
+            } else {
+                IntRect rect(clip.x, clip.y, clip.width, clip.height);
+                ctx.fillRect(rect, Color(0xff, 0xff, 0xff));
+#if 0 // FIXME: crashes because font subsystem isn't ready yet
+                StringImpl txt("Welcome to Gdk Web Browser");
+                TextRun textRun(txt);
+                ctx.drawText(textRun, IntPoint(10,10));
+#endif
+            }
             cairo_destroy(cr);
             gdk_window_end_paint(event->any.window);
             break;
@@ -261,21 +282,23 @@ void FrameGdk::handleGdkEvent(GdkEvent* event)
 
 void Frame::print() 
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void Frame::issueTransposeCommand()
 {
-    notImplemented();
+    notImplementedGdk();
 }
 
 void Frame::respondToChangedSelection(WebCore::Selection const&, bool)
 {
     // FIXME: If we want continous spell checking, we need to implement this.
+    notImplementedGdk();
 }
 
 void Frame::cleanupPlatformScriptObjects()
 {
+    notImplementedGdk();
 }
 
 bool Frame::isCharacterSmartReplaceExempt(UChar, bool)
@@ -286,6 +309,7 @@ bool Frame::isCharacterSmartReplaceExempt(UChar, bool)
 
 DragImageRef Frame::dragImageForSelection() 
 {
+    notImplementedGdk();
     return 0;
 }
 
