@@ -873,7 +873,7 @@ void RenderLayer::autoscroll()
         renderer()->absolutePosition(objectX, objectY);
         HitTestRequest request(true, false, true);
         HitTestResult result(currentPos - IntSize(objectX, objectY));
-        if (hitTest(request, result) && result.innerNode()->renderer()) {
+        if (hitTest(request, result) && result.innerNode()->renderer() && result.innerNode()->renderer()->shouldSelect()) {
             VisiblePosition pos(result.innerNode()->renderer()->positionForPoint(result.localPoint()));
             currentFrame->eventHandler()->updateSelectionForMouseDragOverPosition(pos);
         }

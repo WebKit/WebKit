@@ -1,3 +1,17 @@
+2007-02-23  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12823
+          REGRESSION(r16968-16977): unable to prevent selection by cancelling "selectstart" event
+
+        Test: fast/events/selectstart-during-autoscroll.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::autoscroll): Invoke the renderer's shouldSelect() --
+        which dispatches the selection DOM event and gives it a chance to cancel
+        the selection -- before updating the selection during autoscroll.
+
 2007-02-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

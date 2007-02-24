@@ -1,3 +1,13 @@
+2007-02-23  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12823
+          REGRESSION(r16968-16977): unable to prevent selection by cancelling "selectstart" event
+
+        * fast/events/selectstart-during-autoscroll-expected.txt: Added.
+        * fast/events/selectstart-during-autoscroll.html: Added.
+
 2007-02-22  Ian Eng  <ian.eng.webkit@gmail.com>
 
         Reviewed by Maciej.
