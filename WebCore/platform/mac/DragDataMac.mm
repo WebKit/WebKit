@@ -116,8 +116,7 @@ bool DragData::containsCompatibleContent() const
     
 bool DragData::containsURL() const
 {
-    //FIXME: is it worth doing the initial [types contains URL] check?
-    return [[[m_platformDragData draggingPasteboard] types] containsObject:NSURLPboardType] || !asURL().isEmpty();
+    return !asURL().isEmpty();
 }
     
 String DragData::asURL(String* title) const
