@@ -479,9 +479,6 @@ void ReplaceSelectionCommand::doApply()
     Element* currentRoot = selection.rootEditableElement();
     ReplacementFragment fragment(document(), m_documentFragment.get(), m_matchStyle, selection);
     
-    if (fragment.isEmpty())
-        return;
-    
     if (m_matchStyle)
         m_insertionStyle = styleAtPosition(selection.start());
     
@@ -574,7 +571,7 @@ void ReplaceSelectionCommand::doApply()
     setTypingStyle(0);    
     
     // We're finished if there is nothing to add.
-    if (!fragment.firstChild())
+    if (fragment.isEmpty() || !fragment.firstChild())
         return;
     
     // 1) Insert the content.

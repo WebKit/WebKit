@@ -1,5 +1,14 @@
 2007-02-23  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Maciej.
+
+        - updated test result for http://bugs.webkit.org/show_bug.cgi?id=12856
+          REGRESSION (r13685): Canceling the suggestion popup does not revert the change
+
+        * editing/deleting/delete-3800834-fix-expected.txt:
+
+2007-02-23  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin.
 
         - test for http://bugs.webkit.org/show_bug.cgi?id=12823

@@ -1,3 +1,14 @@
+2007-02-23  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12856
+          REGRESSION (r13685): Canceling the suggestion popup does not revert the change
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): If the fragment to be inserted
+        is empty, first delete the selection, and only then bail out. 
+
 2007-02-23  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam.
