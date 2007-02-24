@@ -3,6 +3,15 @@ description(
 "It covers both the the one-argument (1.x) and two-argument (2.x) signatures of the add() method."
 );
 
+div = document.createElement("div");
+sel = document.createElement("select");
+sel.setAttribute("id", "select1");
+div.appendChild(sel);
+sel = document.createElement("select");
+sel.setAttribute("id", "select2");
+div.appendChild(sel);
+document.body.insertBefore(div, document.getElementById("console").nextSibling);
+
 debug("1.1 Add Option to empty Options");
 var select1 = document.getElementById("select1");
 var option1 = document.createElement("OPTION");
