@@ -5,9 +5,7 @@
         Fix for http://bugs.webkit.org/show_bug.cgi?id=12870
 
         It turns out short circuiting DragData::containsURL() was bad
-
-        * ChangeLog:
-        * WebCore.xcodeproj/project.pbxproj:
+ 
         * manual-tests/directory-drop-on-view.html: Added.
         * platform/mac/DragDataMac.mm:
         (WebCore::DragData::containsURL):
