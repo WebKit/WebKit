@@ -5762,10 +5762,11 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         if (revertChange) {
             WebFrameBridge *bridge = [_view _bridge];
             [bridge replaceSelectionWithText:_originalString selectReplacement:YES smartReplace:NO];
-        } else if (goLeft) {
-            [_view moveBackward:nil];
-        } else {
-            [_view moveForward:nil];
+        } else if ([_view _hasSelection]) {
+            if (goLeft)
+                [_view moveBackward:nil];
+            else
+                [_view moveForward:nil];
         }
         [_originalString release];
         _originalString = nil;

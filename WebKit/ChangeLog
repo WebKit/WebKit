@@ -1,3 +1,13 @@
+2007-02-23  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=11573
+          REGRESSION: pressing option-left arrow while in suggestion popup moves the insertion point to the left
+
+        * WebView/WebHTMLView.mm:
+        (-[WebTextCompleteController endRevertingChange:moveLeft:]):
+
 2007-02-23  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Brady.
