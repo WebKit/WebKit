@@ -1,3 +1,17 @@
+2007-02-23  Kevin Dcker <kdecker@apple.com>
+
+        Reviewed by Anders.
+
+        Fixed: <rdar://problem/4971226> REGRESSION: Replying to closed HTML mail message does not quote original body (12503)
+        
+        There were two problems here:
+        
+        * page/mac/WebCoreFrameBridge.mm:
+        (+[WebCoreFrameBridge stringWithData:textEncodingName:]): The old code said  "if there is no text encoding name than
+         assume WindowsLatin1 (iso-8859-1) and try to decode that". That's not sufficient because it doesn't handle the fallback
+         case for unknown encodings. This method will now attempt to decode using WindowsLatin1 for unknown encoding types.
+        * platform/mac/mac-encodings.txt: Added the missing "macroman" encoding type. 
+
 2007-02-23  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.

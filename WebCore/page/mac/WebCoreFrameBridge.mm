@@ -761,8 +761,10 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 + (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName
 {
-    NSString* name = textEncodingName ? textEncodingName : @"iso-8859-1";
-    return WebCore::TextEncoding(name).decode(reinterpret_cast<const char*>([data bytes]), [data length]);
+    WebCore::TextEncoding encoding(textEncodingName);
+    if (!encoding.isValid())
+        encoding = WindowsLatin1Encoding();
+    return encoding.decode(reinterpret_cast<const char*>([data bytes]), [data length]);
 }
 
 - (BOOL)needsLayout
