@@ -29,6 +29,7 @@
 #include "Element.h"
 #include "FrameView.h"
 #include "InlineTextBox.h"
+#include "Logging.h"
 #include "RenderArena.h"
 #include "RenderLayer.h"
 #include "RenderListMarker.h"
@@ -111,6 +112,7 @@ static int numSpaces;
 
 static void embed(Direction, BidiState&);
 static void appendRun(BidiState&);
+static void deleteBidiRuns(RenderArena*);
 
 void RenderBlock::bidiReorderCharacters(Document* document, RenderStyle* style, CharacterBuffer& characterBuffer)
 {
@@ -168,10 +170,11 @@ void RenderBlock::bidiReorderCharacters(Document* document, RenderStyle* style, 
         r = r->nextRun;
     }
 
-    // Tear down temporary RenderBlock and RenderText
+    // Tear down temporary RenderBlock, RenderText, and BidiRuns
     block->removeChild(text);
     text->destroy();
     block->destroy();
+    deleteBidiRuns(document->renderArena());
 }
 
 static int getBPMWidth(int childValue, Length cssUnit)
@@ -212,6 +215,19 @@ static int inlineWidth(RenderObject* child, bool start = true, bool end = true)
 }
 
 #ifndef NDEBUG
+WTFLogChannel LogWebCoreBidiRunLeaks =  { 0x00000000, "", WTFLogChannelOn };
+
+struct BidiRunCounter { 
+    static int count; 
+    ~BidiRunCounter() 
+    { 
+        if (count)
+            LOG(WebCoreBidiRunLeaks, "LEAK: %d BidiRun\n", count);
+    }
+};
+int BidiRunCounter::count = 0;
+static BidiRunCounter bidiRunCounter;
+
 static bool inBidiRunDestroy;
 #endif
 
@@ -231,11 +247,17 @@ void BidiRun::destroy(RenderArena* renderArena)
 
 void* BidiRun::operator new(size_t sz, RenderArena* renderArena) throw()
 {
+#ifndef NDEBUG
+    ++BidiRunCounter::count;
+#endif
     return renderArena->allocate(sz);
 }
 
 void BidiRun::operator delete(void* ptr, size_t sz)
 {
+#ifndef NDEBUG
+    --BidiRunCounter::count;
+#endif
     assert(inBidiRunDestroy);
 
     // Stash size where destroy() can find it.
@@ -1689,8 +1711,10 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
                 end = start;
             }
             end = findNextLineBreak(start, bidi);
-            if (start.atEnd())
+            if (start.atEnd()) {
+                deleteBidiRuns(renderArena());
                 break;
+            }
             if (!isLineEmpty) {
                 bidiReorderLine(start, end, bidi);
 
@@ -1722,10 +1746,10 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
                         if (style()->highlight() != nullAtom)
                             lineBox->addHighlightOverflow();
 #endif
-
-                        deleteBidiRuns(renderArena());
                     }
                 }
+
+                deleteBidiRuns(renderArena());
                 
                 if (end == start) {
                     bidi.adjustEmbedding = true;

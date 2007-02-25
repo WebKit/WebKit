@@ -1,3 +1,14 @@
+2007-02-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Layout tests for BidiRun leaks.
+        
+        * fast/leaks/001-expected.txt: Added.
+        * fast/leaks/001.html: Added.
+        * fast/leaks/002-expected.txt: Added.
+        * fast/leaks/002.html: Added.
+
 2007-02-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Anders.

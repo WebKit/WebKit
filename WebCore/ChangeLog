@@ -1,3 +1,32 @@
+2007-02-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed <rdar://problem/4987649> leaks in BidiRun::operator new seen while 
+        running WebKit unit tests
+        
+        In bidi.cpp, some functions allocate BidiRuns and put them in a global data
+        structure, while others uses the BidiRuns in the global data structure. 
+        The caller is responsible for knowing which functions may allocate runs
+        and which may use them, and calling deleteBidiRuns() at the appropriate time.
+
+        The fix is to add some calls to deleteBidiRuns() where they were missing.
+        
+        I also added a BidiRun counter because these two leaks were introduced by
+        our two bidi.cpp experts, so the odds that leaks will creep in again
+        in the future seem pretty high.
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::bidiReorderCharacters): Added  missing call to
+        deleteBidiRuns().
+        (WebCore::BidiRunCounter::~BidiRunCounter):
+        (WebCore::BidiRun::operator delete):
+        (WebCore::RenderBlock::layoutInlineChildren): Added missing call to
+        deleteBidiRuns(). Moved call to deleteBidiRuns() to same scope as call to
+        bidiReorderLine(), to emphasize that they go together like new/delete.
+        In theory, the old code was just as good, but I didn't want to rely on
+        theory.
+
 2007-02-24  David Harrison  <harrison@apple.com>
 
         Reviewed by Kevin.

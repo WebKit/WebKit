@@ -852,7 +852,6 @@ sub countAndPrintLeaks($$$)
         "WebCore::SubresourceLoader::create", # bug in 'leaks', Radar 4985806
         "NSURLCache cachedResponseForRequest", # leak in CFURL cache, Radar 4768430
         "CGImageSourceGetPropertiesAtIndex", # leak apparently in CG, Radar 4628809
-        "BidiRun::operator new", # leak in WebCore, Radar 4987649
         "gldGetString" # leak apparently in OpenGL, Radar 5013699
     );
 
