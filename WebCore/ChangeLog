@@ -1,3 +1,28 @@
+2007-02-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam.
+
+        - fixed layout test failure in fast/overflow/scrollRevealButton
+        
+        I added a new ScrollView method, fullyClippedContentRect, that vies the content rect
+        as clipped by all ancestor scroll views, not just this one. Currently it only works
+        correctly on mac however. visibleContentRect, only accounting for the clipping from
+        this particular scroll view, is sufficient for most purposes.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::visibleSelectionRect):
+        (WebCore::Frame::setIsActive):
+        (WebCore::Frame::markAllMatchesForText):
+        * platform/ScrollView.h:
+        * platform/gdk/ScrollViewGdk.cpp:
+        (WebCore::ScrolView::fullyClippedContentRect):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::fullyClippedContentRect):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrolView::fullyClippedContentRect):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+
 2007-02-24  Adam Roben  <aroben@apple.com>
 
         Reviewed by Steve.

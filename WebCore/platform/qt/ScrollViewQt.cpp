@@ -106,6 +106,13 @@ FloatRect ScrollView::visibleContentRect() const
                      visibleHeight());
 }
 
+FloatRect ScrolView::fullyClippedContentRect() const
+{
+    // FIXME: this isn't exactly right, with this implementation, 
+    // fast/overflow/scrollRevealButton will fail
+    return visibleContentRect();
+}
+
 void ScrollView::setContentsPos(int newX, int newY)
 {
     if (!m_area)
