@@ -1,3 +1,10 @@
+2007-02-25  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        * building/checkout.html:
+        Add Trac link to our SVN repository,
+
 2007-02-15  Darin Adler  <darin@apple.com>
 
         * projects/performance/index.html: Fix i-Bench link.
