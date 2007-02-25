@@ -1,3 +1,14 @@
+2007-02-24  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Steve.
+
+        "Look Up in Dictionary" context menu item should be Mac-only for now,
+        since it's only implemented on that platform (<rdar://problem/5021468>)
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate): Wrap all instances of the dictionary
+        menu item in #if PLATFORM(MAC).
+
 2007-02-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
