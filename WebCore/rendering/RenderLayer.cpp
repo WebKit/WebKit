@@ -1317,10 +1317,13 @@ void RenderLayer::paintOverflowControls(GraphicsContext* p, int tx, int ty, cons
         // Draw a frame around the resizer (1px grey line) if there are any scrollbars present.
         // Clipping will exclude the right and bottom edges of this frame.
         if (m_hBar || m_vBar) {
+            p->save();
             scrollCorner.setSize(IntSize(scrollCorner.width() + 1, scrollCorner.height() + 1));
             p->setStrokeColor(Color(makeRGB(217, 217, 217)));
             p->setStrokeThickness(1.0f);
+            p->setFillColor(Color::transparent);
             p->drawRect(scrollCorner);
+            p->restore();
         }
     }
 }
