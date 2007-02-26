@@ -172,7 +172,8 @@ void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect, bool fi
     if (listIndex >= 0) {
         element = static_cast<HTMLOptionElement*>(items[listIndex]);
         element->setSelected(true);
-    }
+    } else if (deselect)
+        m_lastOnChangeIndex = -1;
 
     if (deselect)
         deselectItems(element);
@@ -444,19 +445,19 @@ bool HTMLSelectElement::appendFormData(FormDataList& list, bool)
 int HTMLSelectElement::optionToListIndex(int optionIndex) const
 {
     const Vector<HTMLElement*>& items = listItems();
-    if (optionIndex < 0 || optionIndex >= int(items.size()))
+    int listSize = (int)items.size();
+    if (optionIndex < 0 || optionIndex >= listSize)
         return -1;
 
-    int listIndex = 0;
-    int optionIndex2 = 0;
-    for (;
-         optionIndex2 < int(items.size()) && optionIndex2 <= optionIndex;
-         listIndex++) { // not a typo!
-        if (items[listIndex]->hasLocalName(optionTag))
+    int optionIndex2 = -1;
+    for (int listIndex = 0; listIndex < listSize; listIndex++) {
+        if (items[listIndex]->hasLocalName(optionTag)) {
             optionIndex2++;
+            if (optionIndex2 == optionIndex)
+                return listIndex;
+        }
     }
-    listIndex--;
-    return listIndex;
+    return -1;
 }
 
 int HTMLSelectElement::listToOptionIndex(int listIndex) const

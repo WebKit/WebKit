@@ -1,3 +1,16 @@
+2007-02-26  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        Fix for <rdar://problem/4990700> Safari always crashes when attempting to edit/view 
+        Yahoo pipes in WebCore::HTMLSelectElement::optionToListIndex
+
+        Test: fast/forms/select-out-of-bounds-index.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setSelectedIndex): If we're about to deselect all options, then set m_lastOnChangeIndex to -1.
+        (WebCore::HTMLSelectElement::optionToListIndex): Moved listSize to a local variable.  Rewrote using a simpler for-loop to prevent out-of-bounds errors.
+
 2007-02-26  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.
