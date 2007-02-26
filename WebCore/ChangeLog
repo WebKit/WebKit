@@ -1,3 +1,43 @@
+2007-02-26  David Hyatt  <hyatt@apple.com>
+
+        Add support for a new property called -webkit-border-fit.  This property
+        has two values: border and lines.  The "border" value means the border and
+        background paint normally at the border box level.  The "lines" value indicates
+        that the border and background should shrink dynamically to snugly hug the
+        line boxes of normal flow descendants.
+
+        Reviewed by darin
+
+        fast/borders/border-fit.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustForBorderFit):
+        (WebCore::RenderBlock::borderFitAdjust):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::borderFitAdjust):
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        (WebCore::RenderStyle::diff):
+        * rendering/RenderStyle.h:
+        (WebCore::):
+        (WebCore::RenderStyle::borderFit):
+        (WebCore::RenderStyle::setBorderFit):
+        (WebCore::RenderStyle::initialBorderFit):
+
 2007-02-26  Adam Roben  <aroben@apple.com>
 
         Reviewed by Darin.

@@ -811,6 +811,8 @@ struct ContentData : Noncopyable {
     ContentData* m_next;
 };
 
+enum EBorderFit { BorderFitBorder, BorderFitLines };
+
 // This struct is for rarely used non-inherited CSS3, CSS2, and WebKit-specific properties.
 // By grouping them together, we save space, and only allocate this object when someone
 // actually uses one of these properties.
@@ -847,7 +849,7 @@ public:
     unsigned marginBottomCollapse : 2; // EMarginCollapse
     unsigned matchNearestMailBlockquoteColor : 1; // EMatchNearestMailBlockquoteColor, FIXME: This property needs to be eliminated. It should never have been added.
     unsigned m_appearance : 6; // EAppearance
-
+    unsigned m_borderFit : 1; // EBorderFit
     ShadowData* m_boxShadow;  // For box-shadow decorations.
     
 #if ENABLE(XBL)
@@ -1459,6 +1461,7 @@ public:
     EKHTMLLineBreak khtmlLineBreak() const { return static_cast<EKHTMLLineBreak>(rareInheritedData->khtmlLineBreak); }
     EMatchNearestMailBlockquoteColor matchNearestMailBlockquoteColor() const { return static_cast<EMatchNearestMailBlockquoteColor>(rareNonInheritedData->matchNearestMailBlockquoteColor); }
     const AtomicString& highlight() const { return rareInheritedData->highlight; }
+    EBorderFit borderFit() const { return static_cast<EBorderFit>(rareNonInheritedData->m_borderFit); }
     EResize resize() const { return static_cast<EResize>(rareInheritedData->resize); }
     float columnWidth() const { return rareNonInheritedData->m_multiCol->m_width; }
     bool hasAutoColumnWidth() const { return rareNonInheritedData->m_multiCol->m_autoWidth; }
@@ -1699,6 +1702,7 @@ public:
     void setKHTMLLineBreak(EKHTMLLineBreak b) { SET_VAR(rareInheritedData, khtmlLineBreak, b); }
     void setMatchNearestMailBlockquoteColor(EMatchNearestMailBlockquoteColor c)  { SET_VAR(rareNonInheritedData, matchNearestMailBlockquoteColor, c); }
     void setHighlight(const AtomicString& h) { SET_VAR(rareInheritedData, highlight, h); }
+    void setBorderFit(EBorderFit b) { SET_VAR(rareNonInheritedData, m_borderFit, b); }
     void setResize(EResize r) { SET_VAR(rareInheritedData, resize, r); }
     void setColumnWidth(float f) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_autoWidth, false); SET_VAR(rareNonInheritedData.access()->m_multiCol, m_width, f); }
     void setHasAutoColumnWidth() { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_autoWidth, true); SET_VAR(rareNonInheritedData.access()->m_multiCol, m_width, 0); }
@@ -1845,6 +1849,7 @@ public:
     static EKHTMLLineBreak initialKHTMLLineBreak() { return LBNORMAL; }
     static EMatchNearestMailBlockquoteColor initialMatchNearestMailBlockquoteColor() { return BCNORMAL; }
     static const AtomicString& initialHighlight() { return nullAtom; }
+    static EBorderFit initialBorderFit() { return BorderFitBorder; }
     static EResize initialResize() { return RESIZE_NONE; }
     static EAppearance initialAppearance() { return NoAppearance; }
     static bool initialVisuallyOrdered() { return false; }

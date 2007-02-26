@@ -118,6 +118,8 @@ public:
 
     virtual void positionListMarker() { }
 
+    virtual void borderFitAdjust(int& x, int& w) const; // Shrink the box in which the border paints if border-fit is set.
+
     // Called to lay out the legend for a fieldset.
     virtual RenderObject* layoutLegend(bool relayoutChildren) { return 0; };
 
@@ -288,6 +290,7 @@ public:
     void adjustRectForColumns(IntRect&) const;
 private:
     void adjustPointToColumnContents(IntPoint&) const;
+    void adjustForBorderFit(int x, int& left, int& right) const; // Helper function for borderFitAdjust
 
 protected:
     void newLine();

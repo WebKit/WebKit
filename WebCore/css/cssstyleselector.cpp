@@ -4222,6 +4222,14 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             style->setHighlight(primitiveValue->getStringValue());
         return;
     }
+    case CSS_PROP__WEBKIT_BORDER_FIT: {
+        HANDLE_INHERIT_AND_INITIAL(borderFit, BorderFit);
+        if (primitiveValue->getIdent() == CSS_VAL_BORDER)
+            style->setBorderFit(BorderFitBorder);
+        else
+            style->setBorderFit(BorderFitLines);
+        return;
+    }
     case CSS_PROP__WEBKIT_TEXT_SIZE_ADJUST: {
         HANDLE_INHERIT_AND_INITIAL(textSizeAdjust, TextSizeAdjust)
         if (!primitiveValue || !primitiveValue->getIdent()) return;

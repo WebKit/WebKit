@@ -4065,6 +4065,73 @@ int RenderBlock::heightForLineCount(int l)
     return getHeightForLineCount(this, l, true, count);
 }
 
+void RenderBlock::adjustForBorderFit(int x, int& left, int& right) const
+{
+    // We don't deal with relative positioning.  Our assumption is that you shrink to fit the lines without accounting
+    // for either overflow or translations via relative positioning.
+    if (style()->visibility() == VISIBLE) {
+        if (childrenInline()) {
+            for (RootInlineBox* box = firstRootBox(); box; box = box->nextRootBox()) {
+                if (box->firstChild())
+                    left = min(left, x + box->firstChild()->xPos());
+                if (box->lastChild())
+                    right = max(right, x + box->lastChild()->xPos() + box->lastChild()->width());
+            }
+        }
+        else {
+            for (RenderObject* obj = firstChild(); obj; obj = obj->nextSibling()) {
+                if (!obj->isFloatingOrPositioned()) {
+                    if (obj->isBlockFlow() && !obj->hasOverflowClip())
+                        static_cast<RenderBlock*>(obj)->adjustForBorderFit(x + obj->xPos(), left, right);
+                    else if (obj->style()->visibility() == VISIBLE) {
+                        // We are a replaced element or some kind of non-block-flow object.
+                        left = min(left, x + obj->xPos());
+                        right = max(right, x + obj->xPos() + obj->width());
+                    }
+                }
+            }
+        }
+        
+        if (m_floatingObjects) {
+            FloatingObject* r;
+            DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
+            for (; (r = it.current()); ++it) {
+                // Only examine the object if our noPaint flag isn't set.
+                if (!r->noPaint) {
+                    int floatLeft = r->left - r->node->xPos() + r->node->marginLeft();
+                    int floatRight = floatLeft + r->node->width();
+                    left = min(left, floatLeft);
+                    right = max(right, floatRight);
+                }
+            }
+        }
+    }
+}
+
+void RenderBlock::borderFitAdjust(int& x, int& w) const
+{
+    if (style()->borderFit() == BorderFitBorder)
+        return;
+
+    // Walk any normal flow lines to snugly fit.
+    int left = INT_MAX;
+    int right = INT_MIN;
+    int oldWidth = w;
+    adjustForBorderFit(0, left, right);
+    if (left != INT_MAX) {
+        left -= borderLeft();
+        if (left > 0) {
+            x += left;
+            w -= left;
+        }
+    }
+    if (right != INT_MIN) {
+        right += borderRight();
+        if (right < oldWidth)
+            w -= (oldWidth - right);
+    }
+}
+
 void RenderBlock::clearTruncation()
 {
     if (style()->visibility() == VISIBLE) {

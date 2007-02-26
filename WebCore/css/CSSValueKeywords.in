@@ -538,3 +538,8 @@ content-box
 #
 logical
 visual
+
+#
+# CSS_PROP__WEBKIT_BORDER_FIT
+#
+lines

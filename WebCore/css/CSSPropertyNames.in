@@ -148,6 +148,7 @@ z-index
 -webkit-binding
 -webkit-border-bottom-left-radius
 -webkit-border-bottom-right-radius
+-webkit-border-fit
 -webkit-border-horizontal-spacing
 -webkit-border-image
 -webkit-border-radius

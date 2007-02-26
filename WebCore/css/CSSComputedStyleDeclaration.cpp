@@ -127,6 +127,7 @@ static const int computedProperties[] = {
     CSS_PROP__WEBKIT_BACKGROUND_COMPOSITE,
     CSS_PROP__WEBKIT_BACKGROUND_ORIGIN,
     CSS_PROP__WEBKIT_BACKGROUND_SIZE,
+    CSS_PROP__WEBKIT_BORDER_FIT,
     CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING,
     CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING,
     CSS_PROP__WEBKIT_BOX_ALIGN,
@@ -982,6 +983,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (style->highlight() == nullAtom)
                 return new CSSPrimitiveValue(CSS_VAL_NONE);
             return new CSSPrimitiveValue(style->highlight(), CSSPrimitiveValue::CSS_STRING);
+        case CSS_PROP__WEBKIT_BORDER_FIT:
+            if (style->borderFit() == BorderFitBorder)
+                return new CSSPrimitiveValue(CSS_VAL_BORDER);
+            return new CSSPrimitiveValue(CSS_VAL_LINES);
         case CSS_PROP_LEFT:
             return getPositionOffsetValue(renderer, CSS_PROP_LEFT);
         case CSS_PROP_LETTER_SPACING:

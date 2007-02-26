@@ -331,6 +331,10 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     int h = height() + borderTopExtra() + borderBottomExtra();
     ty -= borderTopExtra();
 
+    // border-fit can adjust where we paint our border and background.  If set, we snugly fit our line box descendants.  (The iChat
+    // balloon layout is an example of this).
+    borderFitAdjust(tx, w);
+
     int my = max(ty, paintInfo.rect.y());
     int mh;
     if (ty < paintInfo.rect.y())
