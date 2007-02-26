@@ -1081,6 +1081,8 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren)
     // The legend then gets skipped during normal layout.
     RenderObject* legend = layoutLegend(relayoutChildren);
 
+    int previousFloatBottom = 0;
+
     RenderObject* child = firstChild();
     while (child) {
         if (legend == child) {
@@ -1120,7 +1122,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren)
         // If an element might be affected by the presence of floats, then always mark it for
         // layout.
         if (!child->avoidsFloats() || child->shrinkToAvoidFloats()) {
-            int fb = floatBottom();
+            int fb = max(previousFloatBottom, floatBottom());
             if (fb > m_height || fb > yPosEstimate)
                 child->setChildNeedsLayout(true, false);
         }
@@ -1133,6 +1135,10 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren)
         child->setPos(child->xPos(), yPosEstimate);
         if (yPosEstimate != oldRect.y() && !child->avoidsFloats() && child->containsFloats())
             child->markAllDescendantsWithFloatsForLayout();
+
+        if (child->isRenderBlock())
+            previousFloatBottom = max(previousFloatBottom, oldRect.y() + static_cast<RenderBlock*>(child)->floatBottom());
+
         child->layoutIfNeeded();
 
         // Now determine the correct ypos based off examination of collapsing margin

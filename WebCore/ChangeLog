@@ -1,3 +1,16 @@
+2007-02-25  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12886
+          Crash with Scriptalicious javascript library
+
+        Test: fast/dynamic/float-withdrawal.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChildren): Detect when a child block had
+        intruding floats in a previous layout, and in that case force it to relayout.
+
 2007-02-25  David Hyatt  <hyatt@apple.com>
 
         Revert my change to the default fill color.  Just set the color to transparent explicitly when
