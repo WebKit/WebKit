@@ -1162,7 +1162,7 @@ FloatRect Frame::visibleSelectionRect() const
     if (!d->m_view)
         return FloatRect();
     
-    return intersection(selectionRect(), d->m_view->fullyClippedContentRect());
+    return intersection(selectionRect(), d->m_view->visibleContentRect());
 }
 
 bool Frame::isFrameSet() const
@@ -1496,7 +1496,7 @@ void Frame::setIsActive(bool flag)
     // done if the theme supports control tinting.
     if (doc && d->m_view && theme()->supportsControlTints() && renderer()) {
         doc->updateLayout(); // Ensure layout is up to date.
-        IntRect visibleRect(enclosingIntRect(d->m_view->fullyClippedContentRect()));
+        IntRect visibleRect(enclosingIntRect(d->m_view->visibleContentRect()));
         GraphicsContext context((PlatformGraphicsContext*)0);
         context.setUpdatingControlTints(true);
         paint(&context, visibleRect);
@@ -1650,7 +1650,7 @@ unsigned Frame::markAllMatchesForText(const String& target, bool caseFlag, unsig
     Document* doc = document();
     if (doc && d->m_view && renderer()) {
         doc->updateLayout(); // Ensure layout is up to date.
-        IntRect visibleRect(enclosingIntRect(d->m_view->fullyClippedContentRect()));
+        IntRect visibleRect(enclosingIntRect(d->m_view->visibleContentRect()));
         GraphicsContext context((PlatformGraphicsContext*)0);
         context.setPaintingDisabled(true);
         paint(&context, visibleRect);

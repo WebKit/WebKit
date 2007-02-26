@@ -91,16 +91,6 @@ FloatRect ScrollView::visibleContentRect() const
     return FloatRect();
 }
 
-FloatRect ScrollView::fullyClippedContentRect() const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS; 
-    if (NSView *docView = getDocumentView()) 
-        return [docView visibleRect]; 
-    END_BLOCK_OBJC_EXCEPTIONS; 
-
-    return FloatRect();
-}
-
 int ScrollView::contentsWidth() const
 {
     NSView *docView, *view = getView();
