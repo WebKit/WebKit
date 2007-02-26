@@ -39,6 +39,7 @@ var typicalStylePropertyValue = {
     "-webkit-background-composite": "source-over",
     "-webkit-background-origin": "padding",
     "-webkit-background-size": "auto auto",
+    "-webkit-border-fit": "border",
     "-webkit-border-horizontal-spacing": "0px",
     "-webkit-border-vertical-spacing": "0px",
     "-webkit-box-align": "stretch",
