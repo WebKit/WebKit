@@ -318,15 +318,10 @@ void RenderLayer::updateLayerPosition()
     // Clear our cached clip rect information.
     clearClipRect();
 
-    // The canvas is sized to the docWidth/Height over in RenderView::layout, so we
-    // don't need to ever update our layer position here.
-    if (renderer()->isRenderView())
-        return;
-    
     int x = m_object->xPos();
     int y = m_object->yPos() - m_object->borderTopExtra();
 
-    if (!m_object->isPositioned()) {
+    if (!m_object->isPositioned() && m_object->parent()) {
         // We must adjust our position by walking up the render tree looking for the
         // nearest enclosing object with a layer.
         RenderObject* curr = m_object->parent();
