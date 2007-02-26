@@ -53,24 +53,9 @@ using namespace WebCore;
     return [WebCoreJavaScript interpreterCount];
 }
 
-+ (size_t)javaScriptNoGCAllowedObjectsCount
-{
-    return 0;
-}
-
-+ (size_t)javaScriptReferencedObjectsCount
-{
-    return [WebCoreJavaScript protectedObjectCount];
-}
-
 + (size_t)javaScriptProtectedObjectsCount
 {
     return [WebCoreJavaScript protectedObjectCount];
-}
-
-+ (NSSet *)javaScriptRootObjectClasses
-{
-    return [WebCoreJavaScript rootObjectTypeCounts];
 }
 
 + (NSCountedSet *)javaScriptRootObjectTypeCounts
@@ -116,6 +101,22 @@ using namespace WebCore;
 + (void)stopIgnoringWebCoreNodeLeaks;
 {
     WebCore::Node::stopIgnoringLeaks();
+}
+
+// Deprecated
++ (size_t)javaScriptNoGCAllowedObjectsCount
+{
+    return 0;
+}
+
++ (size_t)javaScriptReferencedObjectsCount
+{
+    return [WebCoreJavaScript protectedObjectCount];
+}
+
++ (NSSet *)javaScriptRootObjectClasses
+{
+    return [WebCoreJavaScript rootObjectTypeCounts];
 }
 
 @end

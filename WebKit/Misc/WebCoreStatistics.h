@@ -43,20 +43,20 @@
 + (void)garbageCollectJavaScriptObjects;
 + (void)garbageCollectJavaScriptObjectsOnAlternateThread:(BOOL)waitUntilDone;
 
-// These have been moved to WebCache but need to be around because they're needed by Tiger Safari.
-+ (void)emptyCache;
-+ (void)setCacheDisabled:(BOOL)disabled;
-
-// deprecated
-+ (size_t)javaScriptNoGCAllowedObjectsCount;
-+ (size_t)javaScriptReferencedObjectsCount;
-+ (NSSet *)javaScriptRootObjectClasses;
-
 + (BOOL)shouldPrintExceptions;
 + (void)setShouldPrintExceptions:(BOOL)print;
 
 + (void)startIgnoringWebCoreNodeLeaks;
 + (void)stopIgnoringWebCoreNodeLeaks;
+
+// These have been moved to WebCache but need to be around because they're needed by Tiger Safari.
++ (void)emptyCache;
++ (void)setCacheDisabled:(BOOL)disabled;
+
+// Deprecated
++ (size_t)javaScriptNoGCAllowedObjectsCount;
++ (size_t)javaScriptReferencedObjectsCount;
++ (NSSet *)javaScriptRootObjectClasses;
 
 @end
 
