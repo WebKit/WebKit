@@ -111,7 +111,7 @@ FloatRect ScrollView::visibleContentRect() const
     return contentRect;
 }
 
-FloatRect ScrolView::fullyClippedContentRect() const
+FloatRect ScrollView::fullyClippedContentRect() const
 {
     // FIXME: this isn't exactly right, with this implementation, 
     // fast/overflow/scrollRevealButton will fail
