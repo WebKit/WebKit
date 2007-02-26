@@ -1547,7 +1547,7 @@
 				EXPORTED_SYMBOLS_FILE_ppc = WebKit.exp;
 				EXPORTED_SYMBOLS_FILE_ppc64 = WebKit.LP64.exp;
 				EXPORTED_SYMBOLS_FILE_x86_64 = WebKit.LP64.exp;
-				FEATURE_DEFINES = "SVG_SUPPORT XPATH_SUPPORT";
+				FEATURE_DEFINES = "ENABLE_SVG ENABLE_XPATH ENABLE_XSLT";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks",
@@ -1601,7 +1601,7 @@
 				EXPORTED_SYMBOLS_FILE_ppc = WebKit.exp;
 				EXPORTED_SYMBOLS_FILE_ppc64 = WebKit.LP64.exp;
 				EXPORTED_SYMBOLS_FILE_x86_64 = WebKit.LP64.exp;
-				FEATURE_DEFINES = "SVG_SUPPORT XPATH_SUPPORT";
+				FEATURE_DEFINES = "ENABLE_SVG ENABLE_XPATH ENABLE_XSLT";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks",
@@ -1653,7 +1653,7 @@
 				EXPORTED_SYMBOLS_FILE_ppc = WebKit.exp;
 				EXPORTED_SYMBOLS_FILE_ppc64 = WebKit.LP64.exp;
 				EXPORTED_SYMBOLS_FILE_x86_64 = WebKit.LP64.exp;
-				FEATURE_DEFINES = "SVG_SUPPORT XPATH_SUPPORT";
+				FEATURE_DEFINES = "ENABLE_SVG ENABLE_XPATH ENABLE_XSLT";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks",
