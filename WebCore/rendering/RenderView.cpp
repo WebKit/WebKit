@@ -40,7 +40,6 @@ RenderView::RenderView(Node* node, FrameView* view)
     , m_selectionEndPos(-1)
     , m_printImages(true)
     , m_maximalOutlineSize(0)
-    , m_flexBoxInFirstLayout(0)
 {
     // Clear our anonymous bit, set because RenderObject assumes
     // any renderer with document as the node is anonymous.
@@ -95,34 +94,18 @@ void RenderView::layout()
     if (printing())
         m_minWidth = m_width;
 
-    // FIXME: This is all just a terrible workaround for bugs in layout when the view height changes.
-    // Find a better way to detect view height changes.  We're guessing that if we don't need layout that the reason
-    // we were called is because of a FrameView bounds change.
-    if (!needsLayout()) {
+    bool relayoutChildren = !printing() && (!m_frameView || m_width != m_frameView->visibleWidth() || m_height != m_frameView->visibleHeight());
+    if (relayoutChildren)
         setChildNeedsLayout(true, false);
-        setMinMaxKnown(false);
-        for (RenderObject* c = firstChild(); c; c = c->nextSibling())
-            c->setChildNeedsLayout(true, false);
-    }
 
     if (recalcMinMax())
         recalcMinMaxWidths();
+    
+    if (needsLayout())
+        RenderBlock::layout();
 
-    RenderBlock::layout();
-
-    int docw = docWidth();
-    int doch = docHeight();
-
-    if (!printing()) {
-        setWidth(m_frameView->visibleWidth());
-        setHeight(m_frameView->visibleHeight());
-    }
-
-    // FIXME: we could maybe do the call below better and only pass true if the docsize changed.
-    layoutPositionedObjects(true);
-
-    layer()->setHeight(max(doch, m_height));
-    layer()->setWidth(max(docw, m_width));
+    setOverflowWidth(max(docWidth(), m_width));
+    setOverflowHeight(max(docHeight(), m_height));
 
     setNeedsLayout(false);
 }

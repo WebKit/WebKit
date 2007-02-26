@@ -574,8 +574,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
 
     // Update our scroll information if we're overflow:auto/scroll/hidden now that we know if
     // we overflow or not.
-    RenderObject* flexbox = view()->flexBoxInFirstLayout();
-    if (hasOverflowClip() && !(flexbox && flexbox != this && isDescendantOf(flexbox)))
+    if (hasOverflowClip())
         m_layer->updateScrollInfoAfterLayout();
 
     // Repaint with our new bounds if they are different from our old bounds.

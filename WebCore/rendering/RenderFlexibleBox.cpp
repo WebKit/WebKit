@@ -324,8 +324,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
 
     // Update our scrollbars if we're overflow:auto/scroll/hidden now that we know if
     // we overflow or not.
-    RenderObject* flexbox = view()->flexBoxInFirstLayout();
-    if (hasOverflowClip() && !(flexbox && flexbox != this && isDescendantOf(flexbox)))
+    if (hasOverflowClip())
         m_layer->updateScrollInfoAfterLayout();
 
     // Repaint with our new bounds if they are different from our old bounds.
@@ -805,12 +804,6 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
     // Our first pass is done without flexing.  We simply lay the children
     // out within the box.
     do {
-    
-        if (view()->flexBoxInFirstLayout() == this)
-            view()->setFlexBoxInFirstLayout(0);
-        else if (!view()->flexBoxInFirstLayout())
-            view()->setFlexBoxInFirstLayout(this);
-            
         m_height = borderTop() + paddingTop();
         int minHeight = m_height + toAdd;
         m_overflowHeight = m_height;
