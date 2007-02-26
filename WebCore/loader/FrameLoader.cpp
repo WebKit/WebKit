@@ -1999,7 +1999,6 @@ void FrameLoader::reload()
         initialRequest = ResourceRequest(unreachableURL);
     
     RefPtr<DocumentLoader> loader = m_client->createDocumentLoader(initialRequest, SubstituteData());
-    setPolicyDocumentLoader(loader.get());
 
     ResourceRequest& request = loader->request();
 
