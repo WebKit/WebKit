@@ -25,7 +25,7 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGFECompositeElement : SVGElement,
+    interface [Conditional=SVG&SVG_EXPERIMENTAL_FEATURES] SVGFECompositeElement : SVGElement,
                                                         SVGFilterPrimitiveStandardAttributes {
         // Composite Operators
         const unsigned short SVG_FECOMPOSITE_OPERATOR_UNKNOWN    = 0;

@@ -23,7 +23,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGPointLightSource.h"
 #include "SVGRenderTreeAsText.h"
 #include "SVGSpotLightSource.h"
@@ -64,4 +64,4 @@ TextStream& SVGDistantLightSource::externalRepresentation(TextStream& ts) const
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)

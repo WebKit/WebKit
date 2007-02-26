@@ -24,7 +24,7 @@
 #ifndef SVGFilterEffect_h
 #define SVGFilterEffect_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "FloatRect.h"
 #include "PlatformString.h"
 
@@ -97,6 +97,6 @@ TextStream& operator<<(TextStream&, const SVGFilterEffect&);
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 #endif // SVGFilterEffect_h

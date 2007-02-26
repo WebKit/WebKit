@@ -110,10 +110,10 @@ public:
         TypeStatistic images;
         TypeStatistic cssStyleSheets;
         TypeStatistic scripts;
-#ifdef XSLT_SUPPORT
+#if ENABLE(XSLT)
         TypeStatistic xslStyleSheets;
 #endif
-#ifdef XBL_SUPPORT
+#if ENABLE(XBL)
         TypeStatistic xblDocs;
 #endif
     };

@@ -21,7 +21,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGPaintServerGradient.h"
 
 #include "GraphicsContext.h"

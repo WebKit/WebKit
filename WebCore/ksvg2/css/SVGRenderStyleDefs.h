@@ -28,7 +28,7 @@
 
 #ifndef SVGRenderStyleDefs_h
 #define SVGRenderStyleDefs_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "Color.h"
 #include "Path.h"
@@ -231,7 +231,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // KSVG_SVGRenderStyleDefs_h
 
 // vim:ts=4:noet

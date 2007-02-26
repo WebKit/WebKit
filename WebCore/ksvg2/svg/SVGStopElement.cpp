@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGStopElement.h"
 
 #include "Document.h"
@@ -71,6 +71,6 @@ void SVGStopElement::notifyAttributeChange() const
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

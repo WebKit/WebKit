@@ -27,7 +27,7 @@
 #include "config.h"
 #include "XPathNamespace.h"
 
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
 
 #include "Element.h"
 
@@ -82,4 +82,4 @@ Node::NodeType XPathNamespace::nodeType() const
 
 }
 
-#endif // XPATH_SUPPORT
+#endif // ENABLE(XPATH)

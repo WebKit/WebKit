@@ -1,24 +1,35 @@
 a
-#altGlyph
-#altGlyphDef
-#altGlyphItem
+#if 0
+altGlyph
+altGlyphDef
+altGlyphItem
+#endif
+#ifdef ENABLE_SVG_EXPERIMENTAL_FEATURES
 animate
 animateColor
 animateMotion
 animateTransform
+#endif
 circle
 clipPath
-#color_profile
+#if 0
+color_profile
+#endif
 cursor
-#definition_src
+#if 0
+definition_src
+#endif
 defs
 desc
 ellipse
+#ifdef ENABLE_SVG_EXPERIMENTAL_FEATURES
 feBlend
 feColorMatrix
 feComponentTransfer
 feComposite
-#feConvolveMatrix
+#if 0
+feConvolveMatrix
+#endif
 feDiffuseLighting
 feDisplacementMap
 feDistantLight
@@ -31,7 +42,9 @@ feGaussianBlur
 feImage
 feMerge
 feMergeNode
-#feMorphology
+#if 0
+feMorphology
+#endif
 feOffset
 fePointLight
 feSpecularLighting
@@ -39,24 +52,33 @@ feSpotLight
 feTile
 feTurbulence
 filter
-#font
-#font_face
-#font_face_format
-#font_face_name
-#font_face_src
-#font_face_uri
+#endif
+#if 0
+font
+font_face
+font_face_format
+font_face_name
+font_face_src
+font_face_uri
+#endif
+#ifdef ENABLE_SVG_EXPERIMENTAL_FEATURES
 foreignObject
+#endif
 g
-#glyph
-#glyphRef
-#hkern
+#if 0
+glyph
+glyphRef
+hkern
+#endif
 image
 line
 linearGradient
 marker
 mask
 metadata
-#missing_glyph
+#if 0
+missing_glyph
+#endif
 mpath
 path
 pattern
@@ -72,10 +94,16 @@ svg
 switch
 symbol
 text
-#textPath
+#if 0
+textPath
+#endif
 title
 tref
 tspan
+#ifdef ENABLE_SVG_EXPERIMENTAL_FEATURES
 use
+#endif
 view
-#vkern
+#if 0
+vkern
+#endif

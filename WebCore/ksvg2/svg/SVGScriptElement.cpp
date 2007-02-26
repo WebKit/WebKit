@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "PlatformString.h"
 #include "Attr.h"
 #include "StringImpl.h"
@@ -116,5 +116,5 @@ void SVGScriptElement::executeScript(Document *document, StringImpl *jsCode)
 }
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 

@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFEMergeNodeElement.h"
 
 namespace WebCore {
@@ -49,6 +49,6 @@ void SVGFEMergeNodeElement::parseMappedAttribute(MappedAttribute* attr)
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

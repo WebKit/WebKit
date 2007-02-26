@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGStyledTransformableElement.h"
 
@@ -119,5 +119,5 @@ void SVGStyledTransformableElement::attach()
 }
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 

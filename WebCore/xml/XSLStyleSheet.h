@@ -23,7 +23,7 @@
 #ifndef XSLStyleSheet_h
 #define XSLStyleSheet_h
 
-#ifdef XSLT_SUPPORT
+#if ENABLE(XSLT)
 
 #include "StyleSheet.h"
 #include <libxml/parser.h>
@@ -79,6 +79,6 @@ protected:
 
 } // namespace WebCore
 
-#endif // XSLT_SUPPORT
+#endif // ENABLE(XSLT)
 
 #endif // XSLStyleSheet_h

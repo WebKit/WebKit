@@ -23,7 +23,7 @@
 #ifndef SVGFilterPrimitiveStandardAttributes_h
 #define SVGFilterPrimitiveStandardAttributes_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGStyledElement.h"
 
@@ -59,7 +59,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif
 
 // vim:ts=4:noet

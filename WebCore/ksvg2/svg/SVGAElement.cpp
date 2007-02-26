@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGAElement.h"
 
@@ -117,4 +117,4 @@ void SVGAElement::defaultEventHandler(Event* evt)
 } // namespace WebCore
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)

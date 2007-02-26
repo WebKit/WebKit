@@ -25,6 +25,8 @@
 
 #import <QuartzCore/CoreImage.h>
 
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+
 @interface WKPointLightFilter : CIFilter {
     CIImage  *inputNormalMap;
     CIVector *inputLightPosition;
@@ -32,3 +34,5 @@
 }
 
 @end
+
+#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)

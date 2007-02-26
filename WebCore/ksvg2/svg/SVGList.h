@@ -23,7 +23,7 @@
 #ifndef SVGList_h
 #define SVGList_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include <wtf/Vector.h>
 
@@ -240,7 +240,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGList_h
 
 // vim:ts=4:noet

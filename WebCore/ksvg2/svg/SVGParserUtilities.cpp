@@ -20,7 +20,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGParserUtilities.h"
 
 #include "PlatformString.h"
@@ -603,4 +603,4 @@ void SVGPathParser::svgArcTo(double, double, double, double, double, bool, bool,
 }
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)

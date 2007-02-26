@@ -26,7 +26,7 @@
 #ifndef SVGPaintServerPattern_h
 #define SVGPaintServerPattern_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "AffineTransform.h"
 #include "FloatRect.h"

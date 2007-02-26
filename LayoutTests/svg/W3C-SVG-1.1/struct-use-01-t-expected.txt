@@ -1,7 +1,7 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {g} at (41,22) size 309x269
+      RenderSVGContainer {g} at (41,22) size 269x263
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGContainer {g} at (-3,-17) size 35x38.50
             RenderPath {rect} at (-1.50,-1.50) size 23x23 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L20.00,0.00L20.00,20.00L0.00,20.00"]
@@ -14,9 +14,6 @@ layer at (0,0) size 480x360
             RenderSVGContainer {g} at (-1.50,-1.50) size 23x23
               RenderPath {rect} at (-1.50,-1.50) size 13x23 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L10.00,0.00L10.00,20.00L0.00,20.00"]
               RenderPath {rect} at (8.50,-1.50) size 13x23 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#008000]}] [data="M10.00,0.00L20.00,0.00L20.00,20.00L10.00,20.00"]
-            RenderSVGContainer {use} at (-1.50,-1.50) size 23x23
-              RenderSVGContainer {g} at (-1.50,-1.50) size 23x23
-                RenderPath {rect} at (-1.50,-1.50) size 23x23 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L20.00,0.00L20.00,20.00L0.00,20.00"]
             RenderImage {image} at (0,0) size 20x20
             RenderSVGText {text} at (0,0) size 480x18
               RenderSVGInlineText {#text} at (0,-14) size 29x18
@@ -57,45 +54,7 @@ layer at (0,0) size 480x360
             RenderSVGText {text} at (0,30) size 480x23
               RenderSVGInlineText {#text} at (-49,-18) size 49x23
                 text run at (-49,-18) width 49: "<use>"
-        RenderSVGContainer {g} at (150,25) size 200x266 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,25.00)}]
-          RenderSVGContainer {use} at (150,25) size 20x20
-            RenderSVGContainer {g} at (150,25) size 20x20
-              RenderPath {rect} at (150,25) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [data="M0.00,0.00L20.00,0.00L20.00,20.00L0.00,20.00"]
-          RenderSVGContainer {use} at (150,55) size 20x20
-            RenderSVGContainer {g} at (150,55) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
-              RenderPath {circle} at (150,55) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [data="M20.00,10.00L19.98,10.63L19.92,11.25L19.82,11.87L19.69,12.49L19.51,13.09L19.30,13.68L19.05,14.26L18.76,14.82L18.44,15.36L18.09,15.88L17.71,16.37L17.29,16.85L16.85,17.29L16.37,17.71L15.88,18.09L15.36,18.44L14.82,18.76L14.26,19.05L13.68,19.30L13.09,19.51L12.49,19.69L11.87,19.82L11.25,19.92L10.63,19.98L10.00,20.00L9.37,19.98L8.75,19.92L8.13,19.82L7.51,19.69L6.91,19.51L6.32,19.30L5.74,19.05L5.18,18.76L4.64,18.44L4.12,18.09L3.63,17.71L3.15,17.29L2.71,16.85L2.29,16.37L1.91,15.88L1.56,15.36L1.24,14.82L0.95,14.26L0.70,13.68L0.49,13.09L0.31,12.49L0.18,11.87L0.08,11.25L0.02,10.63L0.00,10.00L0.02,9.37L0.08,8.75L0.18,8.13L0.31,7.51L0.49,6.91L0.70,6.32L0.95,5.74L1.24,5.18L1.56,4.64L1.91,4.12L2.29,3.63L2.71,3.15L3.15,2.71L3.63,2.29L4.12,1.91L4.64,1.56L5.18,1.24L5.74,0.95L6.32,0.70L6.91,0.49L7.51,0.31L8.13,0.18L8.75,0.08L9.37,0.02L10.00,0.00L10.63,0.02L11.25,0.08L11.87,0.18L12.49,0.31L13.09,0.49L13.68,0.70L14.26,0.95L14.82,1.24L15.36,1.56L15.88,1.91L16.37,2.29L16.85,2.71L17.29,3.15L17.71,3.63L18.09,4.12L18.44,4.64L18.76,5.18L19.05,5.74L19.30,6.32L19.51,6.91L19.69,7.51L19.82,8.13L19.92,8.75L19.98,9.37"]
-          RenderSVGContainer {use} at (150,85) size 20x20
-            RenderSVGContainer {g} at (150,85) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
-              RenderPath {ellipse} at (150,85) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [data="M20.00,10.00L19.98,10.63L19.92,11.25L19.82,11.87L19.69,12.49L19.51,13.09L19.30,13.68L19.05,14.26L18.76,14.82L18.44,15.36L18.09,15.88L17.71,16.37L17.29,16.85L16.85,17.29L16.37,17.71L15.88,18.09L15.36,18.44L14.82,18.76L14.26,19.05L13.68,19.30L13.09,19.51L12.49,19.69L11.87,19.82L11.25,19.92L10.63,19.98L10.00,20.00L9.37,19.98L8.75,19.92L8.13,19.82L7.51,19.69L6.91,19.51L6.32,19.30L5.74,19.05L5.18,18.76L4.64,18.44L4.12,18.09L3.63,17.71L3.15,17.29L2.71,16.85L2.29,16.37L1.91,15.88L1.56,15.36L1.24,14.82L0.95,14.26L0.70,13.68L0.49,13.09L0.31,12.49L0.18,11.87L0.08,11.25L0.02,10.63L0.00,10.00L0.02,9.37L0.08,8.75L0.18,8.13L0.31,7.51L0.49,6.91L0.70,6.32L0.95,5.74L1.24,5.18L1.56,4.64L1.91,4.12L2.29,3.63L2.71,3.15L3.15,2.71L3.63,2.29L4.12,1.91L4.64,1.56L5.18,1.24L5.74,0.95L6.32,0.70L6.91,0.49L7.51,0.31L8.13,0.18L8.75,0.08L9.37,0.02L10.00,0.00L10.63,0.02L11.25,0.08L11.87,0.18L12.49,0.31L13.09,0.49L13.68,0.70L14.26,0.95L14.82,1.24L15.36,1.56L15.88,1.91L16.37,2.29L16.85,2.71L17.29,3.15L17.71,3.63L18.09,4.12L18.44,4.64L18.76,5.18L19.05,5.74L19.30,6.32L19.51,6.91L19.69,7.51L19.82,8.13L19.92,8.75L19.98,9.37"]
-          RenderSVGContainer {use} at (150,124) size 20x2
-            RenderSVGContainer {g} at (150,124) size 20x2 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,90.00)}]
-              RenderPath {line} at (150,124) size 20x2 [stroke={[type=SOLID] [color=#00FF00] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,10.00L20.00,10.00"]
-          RenderSVGContainer {use} at (150,144) size 21x21
-            RenderSVGContainer {g} at (150,144) size 21x21 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
-              RenderPath {polyline} at (150,144) size 21x21 [stroke={[type=SOLID] [color=#00FF00] [stroke width=2.00]}] [data="M0.00,0.00L20.00,0.00L20.00,20.00"]
-          RenderSVGContainer {use} at (150,175) size 20x20
-            RenderSVGContainer {g} at (150,175) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,150.00)}]
-              RenderPath {polygon} at (150,175) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [data="M0.00,0.00L20.00,0.00L20.00,20.00L0.00,20.00L0.00,0.00"]
-          RenderSVGContainer {use} at (150,205) size 20x20
-            RenderSVGContainer {g} at (150,205) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,180.00)}]
-              RenderPath {path} at (150,205) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [data="M0.00,0.00L20.00,0.00L20.00,20.00L0.00,20.00"]
-          RenderSVGContainer {use} at (150,235) size 20x20
-            RenderSVGContainer {g} at (150,235) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,210.00)}]
-              RenderImage {image} at (0,0) size 20x20
-          RenderSVGContainer {use} at (150,262) size 46x29
-            RenderSVGContainer {g} at (150,262) size 46x29 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,260.00)}]
-              RenderSVGText {text} at (0,0) size 480x29
-                RenderSVGInlineText {#text} at (0,-23) size 46x29
-                  text run at (0,-23) width 46: "Text"
-          RenderSVGContainer {use} at (330,25) size 20x20
-            RenderSVGContainer {g} at (330,25) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,0.00)}]
-              RenderSVGContainer {g} at (330,25) size 20x20
-                RenderPath {rect} at (330,25) size 10x20 [fill={[type=SOLID] [color=#00FF00]}] [data="M0.00,0.00L10.00,0.00L10.00,20.00L0.00,20.00"]
-                RenderPath {rect} at (340,25) size 10x20 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,0.00L20.00,0.00L20.00,20.00L10.00,20.00"]
-          RenderSVGContainer {use} at (330,55) size 20x20
-            RenderSVGContainer {g} at (330,55) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,30.00)}]
-              RenderSVGContainer {g} at (330,55) size 20x20
-                RenderPath {rect} at (330,55) size 20x20 [fill={[type=SOLID] [color=#00CC00]}] [data="M0.00,0.00L20.00,0.00L20.00,20.00L0.00,20.00"]
+        RenderSVGContainer {g} at (150,25) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,25.00)}]
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 284x46
           text run at (0,-36) width 284: "$Revision: 1.14 $"

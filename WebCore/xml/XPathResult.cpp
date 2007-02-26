@@ -27,7 +27,7 @@
 #include "config.h"
 #include "XPathResult.h"
 
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
 
 #include "EventListener.h"
 #include "EventNames.h"
@@ -224,4 +224,4 @@ Node* XPathResult::snapshotItem(unsigned long index, ExceptionCode& ec)
 
 }
 
-#endif // XPATH_SUPPORT
+#endif // ENABLE(XPATH)

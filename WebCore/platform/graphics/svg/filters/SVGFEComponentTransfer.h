@@ -24,7 +24,7 @@
 #ifndef SVGFEComponentTransfer_h
 #define SVGFEComponentTransfer_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include <wtf/Vector.h>
 
 #include "SVGFilterEffect.h"
@@ -98,6 +98,6 @@ private:
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 #endif // SVGFEComponentTransfer_h

@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGColor.h"
 
 #include "SVGException.h"
@@ -145,5 +145,5 @@ const Color& SVGColor::color() const
 }
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 

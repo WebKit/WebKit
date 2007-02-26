@@ -22,7 +22,7 @@
 
 #ifndef SVGFEComponentTransferElement_h
 #define SVGFEComponentTransferElement_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGFEComponentTransfer.h"
@@ -52,5 +52,5 @@ namespace WebCore
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif

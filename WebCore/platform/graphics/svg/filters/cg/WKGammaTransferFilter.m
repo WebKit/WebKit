@@ -23,7 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import "config.h"
 #import "WKGammaTransferFilter.h"
+
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 static CIKernel *gammaTransferFilter = nil;
 
@@ -78,3 +81,5 @@ static CIKernel *gammaTransferFilter = nil;
 }
 
 @end
+
+#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)

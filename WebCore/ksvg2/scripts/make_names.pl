@@ -42,6 +42,7 @@ my @tags = ();
 my @attrs = ();
 my $tagsNullNamespace = 0;
 my $attrsNullNamespace = 0;
+my $extraDefines = 0;
 
 GetOptions('tags=s' => \$tagsFile, 
     'attrs=s' => \$attrsFile,
@@ -52,7 +53,8 @@ GetOptions('tags=s' => \$tagsFile,
     'cppNamespace=s' => \$cppNamespace,
     'factory' => \$printFactory,
     'tagsNullNamespace' => \$tagsNullNamespace,
-    'attrsNullNamespace' => \$attrsNullNamespace,);
+    'attrsNullNamespace' => \$attrsNullNamespace,
+    'extraDefines' => \$extraDefines,);
 
 die "You must specify a namespace (e.g. SVG) for <namespace>Names.h" unless $namespace;
 die "You must specify a namespaceURI (e.g. http://www.w3.org/2000/svg)" unless $namespaceURI;
@@ -81,11 +83,13 @@ if ($printFactory) {
 sub readNames
 {
     my $namesFile = shift;
-    
-    die "Failed to open file: $namesFile" unless open(NAMES, "<", $namesFile);
+
+    die "Failed to open file: $namesFile" unless open NAMES, "-|", "/usr/bin/gcc", "-E", "-P", "-x", "c++", $namesFile or die;
+
     my @names = ();
     while (<NAMES>) {
         next if (m/#/);
+        next if (m/^[ \t]*$/);
         s/-/_/g;
         chomp $_;
         push @names, $_;
@@ -108,7 +112,7 @@ sub printMacros
 sub printConstructors
 {
     my @names = @_;
-    print "#ifdef SVG_SUPPORT\n";
+    print "#if ENABLE(SVG)\n";
     for my $name (@names) {
         my $upperCase = upperCaseName($name);
     
@@ -407,7 +411,7 @@ END
 printConstructors(@tags);
 
 print <<END
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 static inline void createFunctionMapIfNecessary()
 {
     if (gFunctionMap)
@@ -427,7 +431,7 @@ print <<END
 
 ${namespace}Element *${namespace}ElementFactory::create${namespace}Element(const QualifiedName& qName, Document* doc, bool createdByParser)
 {
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     if (!doc)
         return 0; // Do not allow elements to ever be made without having a doc.
 

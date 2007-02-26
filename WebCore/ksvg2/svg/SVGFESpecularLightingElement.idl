@@ -25,7 +25,7 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGFESpecularLightingElement : SVGElement,
+    interface [Conditional=SVG&SVG_EXPERIMENTAL_FEATURES] SVGFESpecularLightingElement : SVGElement,
                                                                SVGFilterPrimitiveStandardAttributes {
         readonly attribute SVGAnimatedString in1;
         readonly attribute SVGAnimatedNumber surfaceScale;

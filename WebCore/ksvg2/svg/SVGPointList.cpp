@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGPointList.h"
 
@@ -43,6 +43,6 @@ const SVGElement* SVGPointList::context() const
     return m_context;
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

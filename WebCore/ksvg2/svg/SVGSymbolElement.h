@@ -22,7 +22,7 @@
 
 #ifndef SVGSymbolElement_h
 #define SVGSymbolElement_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
@@ -53,7 +53,7 @@ namespace WebCore
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif
 
 // vim:ts=4:noet

@@ -21,7 +21,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFEBlend.h"
 #include "SVGFEHelpersCg.h"
 
@@ -69,4 +69,4 @@ CIFilter* SVGFEBlend::getCIFilter(SVGResourceFilter* svgFilter) const
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)

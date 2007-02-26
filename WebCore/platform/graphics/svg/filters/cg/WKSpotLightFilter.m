@@ -23,7 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
+#import "config.h"
 #import "WKSpotLightFilter.h"
+
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 static CIKernel *spotLightFilter = nil;
 
@@ -77,3 +80,5 @@ static CIKernel *spotLightFilter = nil;
 }
 
 @end
+
+#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)

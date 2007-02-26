@@ -109,7 +109,7 @@ Base settings shared by all Bakefile-based ports.
             <include>$(SRCDIR)/platform/mac</include>
         </if>
 
-        <define>XSLT_SUPPORT=1</define>
+        <define>ENABLE_XSLT=1</define>
 
         <!-- TODO: is there a Linux-specific platform define? -->
         <if cond="PLATFORM_UNIX=='1'">

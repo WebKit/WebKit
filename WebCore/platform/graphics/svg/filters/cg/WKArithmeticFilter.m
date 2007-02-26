@@ -23,7 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import "config.h"
 #import "WKArithmeticFilter.h"
+
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 static CIKernel *arithmeticFilter = nil;
 
@@ -87,3 +90,5 @@ static CIKernel *arithmeticFilter = nil;
 }
 
 @end
+
+#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)

@@ -23,7 +23,7 @@
 #ifndef SVGStyledElement_h
 #define SVGStyledElement_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "AffineTransform.h"
 #include "Path.h"
@@ -73,12 +73,14 @@ namespace WebCore {
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGStyledElement, String, String, ClassName, className)
 
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
         void updateElementInstance(SVGDocumentExtensions*) const;
+#endif
     };
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGStyledElement
 
 // vim:ts=4:noet

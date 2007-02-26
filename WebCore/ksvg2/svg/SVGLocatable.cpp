@@ -21,7 +21,8 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
+
 #include "SVGLocatable.h"
 
 #include "AffineTransform.h"
@@ -44,7 +45,11 @@ SVGElement* SVGLocatable::nearestViewportElement(const SVGStyledElement* e)
     Node* n = e->parentNode();
     while (n && !n->isDocumentNode()) {
         if (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::symbolTag) ||
-            n->hasTagName(SVGNames::imageTag) || n->hasTagName(SVGNames::foreignObjectTag))
+            n->hasTagName(SVGNames::imageTag)
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
+            || n->hasTagName(SVGNames::foreignObjectTag)
+#endif
+            )
             return static_cast<SVGElement*>(n);
 
         n = n->parentNode();
@@ -63,7 +68,11 @@ SVGElement* SVGLocatable::farthestViewportElement(const SVGStyledElement* e)
     Node* n = e->parentNode();
     while (n && !n->isDocumentNode()) {
         if (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::symbolTag) ||
-            n->hasTagName(SVGNames::imageTag) || n->hasTagName(SVGNames::foreignObjectTag))
+            n->hasTagName(SVGNames::imageTag) 
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
+            || n->hasTagName(SVGNames::foreignObjectTag)
+#endif
+            )
             farthest = static_cast<SVGElement*>(n);
 
         n = n->parentNode();
@@ -145,6 +154,6 @@ AffineTransform SVGLocatable::getTransformToElement(SVGElement* target, Exceptio
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

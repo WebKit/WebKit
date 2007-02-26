@@ -41,7 +41,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "ksvgcssproperties.h"
 #include "ksvgcssvalues.h"
 #endif
@@ -980,7 +980,7 @@ property:
         const char* s = str.ascii();
         int l = str.length();
         $$ = getPropertyID(s, l);
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
         if ($$ == 0)
             $$ = SVG::getSVGCSSPropertyID(s, l);
 #endif
@@ -1036,7 +1036,7 @@ term:
   | IDENT maybe_space {
       DeprecatedString str = deprecatedString($1);
       $$.id = getValueID(str.lower().latin1(), str.length());
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
       if ($$.id == 0)
           $$.id = SVG::getSVGCSSValueID(str.lower().latin1(), str.length());
 #endif

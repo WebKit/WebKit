@@ -20,7 +20,7 @@
  */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "ColorDistance.h"
 #include "Color.h"
 #include <wtf/MathExtras.h>

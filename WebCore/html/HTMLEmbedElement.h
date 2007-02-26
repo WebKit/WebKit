@@ -64,7 +64,7 @@ public:
     String type() const;
     void setType(const String&);
     
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     SVGDocument* getSVGDocument(ExceptionCode&) const;
 #endif
 

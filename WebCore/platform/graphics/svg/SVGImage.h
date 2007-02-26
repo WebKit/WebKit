@@ -26,7 +26,7 @@
 #ifndef SVGImage_h
 #define SVGImage_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "Image.h"
 #include "ImageBuffer.h"
@@ -65,6 +65,6 @@ private:
     };
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 #endif

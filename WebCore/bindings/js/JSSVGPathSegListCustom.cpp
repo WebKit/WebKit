@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "JSSVGPathSegList.h"
 
 #include "Document.h"
@@ -203,6 +203,6 @@ JSValue* JSSVGPathSegList::appendItem(ExecState* exec, const List& args)
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

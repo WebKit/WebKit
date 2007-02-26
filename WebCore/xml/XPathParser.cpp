@@ -27,7 +27,7 @@
 #include "config.h"
 #include "XPathParser.h"
 
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
 
 #include "ExceptionCode.h"
 #include "StringHash.h"
@@ -603,4 +603,4 @@ void Parser::deleteString(String* s)
 }
 }
 
-#endif // XPATH_SUPPORT
+#endif // ENABLE(XPATH)

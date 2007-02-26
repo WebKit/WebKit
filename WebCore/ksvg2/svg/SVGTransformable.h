@@ -22,7 +22,7 @@
 
 #ifndef SVGTransformable_h
 #define SVGTransformable_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGLocatable.h"
 
@@ -49,7 +49,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGTransformable_h
 
 // vim:ts=4:noet

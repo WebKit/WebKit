@@ -103,7 +103,7 @@
 #include <unistd.h>
 #endif
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGNames.h"
 #include "XLinkNames.h"
 #include "SVGDocument.h"
@@ -182,7 +182,7 @@ Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient*
     QualifiedName::init();
     MediaFeatureNames::init();
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     SVGNames::init();
     XLinkNames::init();
 #endif

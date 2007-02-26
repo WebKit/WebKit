@@ -108,14 +108,14 @@ CachedScript* DocLoader::requestScript(const String& url, const String& charset)
     return static_cast<CachedScript*>(requestResource(CachedResource::Script, url, &charset));
 }
 
-#ifdef XSLT_SUPPORT
+#if ENABLE(XSLT)
 CachedXSLStyleSheet* DocLoader::requestXSLStyleSheet(const String& url)
 {
     return static_cast<CachedXSLStyleSheet*>(requestResource(CachedResource::XSLStyleSheet, url));
 }
 #endif
 
-#ifdef XBL_SUPPORT
+#if ENABLE(XBL)
 CachedXBLDocument* DocLoader::requestXBLDocument(const String& url)
 {
     return static_cast<CachedXSLStyleSheet*>(requestResource(CachedResource::XBL, url));

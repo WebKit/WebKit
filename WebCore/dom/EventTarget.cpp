@@ -45,7 +45,7 @@ XMLHttpRequest* EventTarget::toXMLHttpRequest()
     return 0;
 }
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 SVGElementInstance* EventTarget::toSVGElementInstance()
 {
     return 0;

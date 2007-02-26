@@ -23,7 +23,7 @@
 #ifndef SVGTransformList_h
 #define SVGTransformList_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGList.h"
 #include "SVGTransform.h"
@@ -46,7 +46,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGTransformList_h
 
 // vim:ts=4:noet

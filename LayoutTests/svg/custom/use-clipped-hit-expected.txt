@@ -1,11 +1,9 @@
+ALERT: was: ,false
+ALERT: shouldBe: true,false
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    RenderSVGContainer {svg} at (29.50,39.50) size 141x94.50
+    RenderSVGContainer {svg} at (90,116) size 39x18
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGContainer {use} at (29.50,39.50) size 141x21
-        RenderSVGContainer {g} at (29.50,39.50) size 141x21 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,50.00)}]
-          RenderSVGContainer {svg} at (29.50,39.50) size 141x21
-            RenderPath {rect} at (29.50,39.50) size 141x21 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M-70.00,-10.00L70.00,-10.00L70.00,10.00L-70.00,10.00"]
       RenderSVGText {text} at (90,130) size 800x18
-        RenderSVGInlineText {#text} at (0,-14) size 43x18
-          text run at (0,-14) width 43: "Passed"
+        RenderSVGInlineText {#text} at (0,-14) size 39x18
+          text run at (0,-14) width 39: "Failed"

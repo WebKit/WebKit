@@ -21,7 +21,7 @@
 
 #ifndef SVGMPathElement_h
 #define SVGMPathElement_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGURIReference.h"
 #include "SVGExternalResourcesRequired.h"
@@ -48,7 +48,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGMPathElement_h
 
 // vim:ts=4:noet

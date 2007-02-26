@@ -51,7 +51,7 @@ static int propertyID(const String& s)
     }
 
     int propID = getPropertyID(buffer, len);
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     if (!propID)
         propID = SVG::getSVGCSSPropertyID(buffer, len);
 #endif

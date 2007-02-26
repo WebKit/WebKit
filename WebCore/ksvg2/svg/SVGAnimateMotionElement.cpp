@@ -20,7 +20,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGAnimateMotionElement.h"
 
 #include "SVGMPathElement.h"
@@ -226,6 +226,6 @@ void SVGAnimateMotionElement::applyAnimatedValueToElement()
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

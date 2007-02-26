@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGStringList.h"
 
 #include "SVGParserUtilities.h"
@@ -67,6 +67,6 @@ void SVGStringList::parse(const String& data, UChar delimiter)
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

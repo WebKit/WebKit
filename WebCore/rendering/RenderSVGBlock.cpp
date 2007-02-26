@@ -20,8 +20,10 @@
  *
  */
 
-#ifdef SVG_SUPPORT
 #include "config.h"
+
+#if ENABLE(SVG)
+
 #include "RenderSVGBlock.h"
 #include "SVGElement.h"
 
@@ -43,4 +45,4 @@ void RenderSVGBlock::setStyle(RenderStyle* style)
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)

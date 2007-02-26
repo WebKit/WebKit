@@ -22,7 +22,7 @@
 
 #ifndef SVGFEOffsetElement_h
 #define SVGFEOffsetElement_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGFEOffset.h"
@@ -54,7 +54,7 @@ namespace WebCore
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif
 
 // vim:ts=4:noet

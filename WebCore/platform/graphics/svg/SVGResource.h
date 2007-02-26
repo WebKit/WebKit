@@ -26,7 +26,7 @@
 #ifndef SVGResource_h
 #define SVGResource_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "PlatformString.h"
 #include "Shared.h"

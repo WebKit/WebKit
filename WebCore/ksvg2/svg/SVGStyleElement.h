@@ -22,7 +22,7 @@
 
 #ifndef SVGStyleElement_h
 #define SVGStyleElement_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include <SVGElement.h>
 #include "StyleElement.h"
@@ -55,7 +55,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGStyleElement_h
 
 // vim:ts=4:noet

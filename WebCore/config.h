@@ -21,7 +21,6 @@
 
 #include <wtf/Platform.h>
 
-#define XSLT_SUPPORT 1
 #define MOBILE 0
 
 #if __APPLE__
@@ -92,7 +91,6 @@ typedef float CGFloat;
 #if PLATFORM(SYMBIAN)
 #define WTF_USE_JAVASCRIPTCORE_BINDINGS 1
 #define WTF_USE_NPOBJECT 1
-#undef XSLT_SUPPORT
 #undef WIN32
 #undef _WIN32
 #undef AVOID_STATIC_CONSTRUCTORS

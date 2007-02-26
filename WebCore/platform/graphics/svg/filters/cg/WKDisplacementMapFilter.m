@@ -23,7 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import "config.h"
 #import "WKDisplacementMapFilter.h"
+
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 static CIKernel *displacementMapFilter = nil;
 
@@ -74,3 +77,5 @@ static CIKernel *displacementMapFilter = nil;
 }
 
 @end
+
+#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)

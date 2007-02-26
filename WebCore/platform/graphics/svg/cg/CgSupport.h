@@ -26,7 +26,7 @@
 #ifndef CgSupport_h
 #define CgSupport_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include <ApplicationServices/ApplicationServices.h>
 #include "GraphicsTypes.h"
@@ -75,5 +75,5 @@ static inline CGLineJoin CGLineJoinFromKC(LineJoin join)
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // !CgSupport_h

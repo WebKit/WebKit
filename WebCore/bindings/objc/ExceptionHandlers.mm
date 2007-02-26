@@ -52,12 +52,12 @@ void raiseDOMException(ExceptionCode ec)
     } else if (ec >= EventExceptionOffset && ec <= EventExceptionMax) {
         name = DOMEventException;
         code -= EventExceptionOffset;
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     } else if (ec >= SVGExceptionOffset && ec <= SVGExceptionMax) {
         name = DOMSVGException;
         code -= SVGExceptionOffset;
 #endif
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
     } else if (ec >= XPathExceptionOffset && ec <= XPathExceptionMax) {
         name = DOMXPathException;
         code -= XPathExceptionOffset;

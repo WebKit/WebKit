@@ -28,7 +28,7 @@
 #include "config.h"
 #include "XPathFunctions.h"
 
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
 
 #include "Document.h"
 #include "NamedAttrMap.h"
@@ -738,4 +738,4 @@ Function* createFunction(const String& name, const Vector<Expression*>& args)
 }
 }
 
-#endif // XPATH_SUPPORT
+#endif // ENABLE(XPATH)

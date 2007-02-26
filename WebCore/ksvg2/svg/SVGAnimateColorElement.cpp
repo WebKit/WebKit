@@ -22,7 +22,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGAnimateColorElement.h"
 
 #include "Document.h"
@@ -101,5 +101,5 @@ bool SVGAnimateColorElement::calculateFromAndToValues(EAnimationMode animationMo
 }
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 

@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#ifdef XSLT_SUPPORT
+#if ENABLE(XSLT)
 
 #include "JSXSLTProcessor.h"
 
@@ -159,4 +159,4 @@ XSLTProcessorConstructorImp::XSLTProcessorConstructorImp(ExecState *exec)
 
 }
 
-#endif // XSLT_SUPPORT
+#endif // ENABLE(XSLT)

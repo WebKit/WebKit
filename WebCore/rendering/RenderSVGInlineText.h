@@ -24,7 +24,7 @@
 #ifndef RenderSVGInlineText_h
 #define RenderSVGInlineText_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "RenderText.h"
 
@@ -41,6 +41,6 @@ public:
 };
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 #endif // !RenderSVGInlineText_h

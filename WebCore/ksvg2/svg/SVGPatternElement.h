@@ -23,7 +23,7 @@
 #ifndef SVGPatternElement_h
 #define SVGPatternElement_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGPaintServerPattern.h"
 #include "SVGExternalResourcesRequired.h"
@@ -90,7 +90,7 @@ namespace WebCore
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif
 
 // vim:ts=4:noet

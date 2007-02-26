@@ -28,7 +28,7 @@
 // Dump the deep-expanded shadow tree (where the renderes are built from)
 // #define DUMP_SHADOW_TREE
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && defined(SVG_ENABLE_EXEPRIMENTAL_FEATURES)
 #include "SVGUseElement.h"
 
 #include "CString.h"
@@ -589,6 +589,6 @@ void SVGUseElement::transferUseAttributesToReplacedElement(SVGElement* from, SVG
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

@@ -134,7 +134,7 @@ namespace WebCore {
         SegmentedString m_pendingSrc;
     };
 
-#if XSLT_SUPPORT
+#if ENABLE(XSLT)
 void* xmlDocPtrForString(DocLoader*, const String& source, const DeprecatedString& URL);
 void setLoaderForLibXMLCallbacks(DocLoader*);
 #endif

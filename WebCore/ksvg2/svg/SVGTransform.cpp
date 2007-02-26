@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGAngle.h"
 #include "SVGTransform.h"
@@ -150,5 +150,5 @@ void SVGTransform::setSkewY(float angle)
 }
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 

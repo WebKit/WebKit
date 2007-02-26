@@ -8,6 +8,3 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (10,60) size 800x18
         RenderSVGInlineText {#text} at (0,-14) size 240x18
           text run at (0,-14) width 240: "The two objects should look identical."
-      RenderSVGContainer {use} at (45,45) size 130x30
-        RenderSVGContainer {g} at (45,45) size 130x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(25.00,25.00)}]
-          RenderPath {rect} at (45,45) size 130x30 [stroke={[type=SOLID] [color=#000080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L60.00,0.00L60.00,10.00L0.00,10.00"]

@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "AffineTransform.h"
 #include "FoundationExtras.h"
 #include "GraphicsContext.h"
@@ -226,4 +226,4 @@ CIImage *SVGResourceFilter::inputImage(const SVGFilterEffect *filterEffect)
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG) ENABLE(SVG_EXPERIMENTAL_FEATURES)

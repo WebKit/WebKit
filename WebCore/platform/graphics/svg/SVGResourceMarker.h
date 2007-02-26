@@ -26,7 +26,7 @@
 #ifndef SVGResourceMarker_h
 #define SVGResourceMarker_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "FloatRect.h"
 #include "SVGResource.h"

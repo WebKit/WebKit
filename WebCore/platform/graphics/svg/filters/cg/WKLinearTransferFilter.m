@@ -23,7 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import "config.h"
 #import "WKLinearTransferFilter.h"
+
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 static CIKernel *linearTransferFilter = nil;
 
@@ -73,3 +76,5 @@ static CIKernel *linearTransferFilter = nil;
 }
 
 @end
+
+#endif ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)

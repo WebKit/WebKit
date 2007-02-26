@@ -732,7 +732,7 @@ RenderBlock* RenderObject::containingBlock() const
     } else {
         while (o && ((o->isInline() && !o->isReplaced()) || o->isTableRow() || o->isTableSection()
                      || o->isTableCol() || o->isFrameSet()
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
                      || o->isSVGContainer()
 #endif
                      ))
@@ -3001,7 +3001,7 @@ IntRect RenderObject::absoluteContentBox() const
     return rect;
 }
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 FloatRect RenderObject::relativeBBox(bool) const
 {
@@ -3025,7 +3025,7 @@ AffineTransform RenderObject::absoluteTransform() const
     return localTransform();
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 } // namespace WebCore
 

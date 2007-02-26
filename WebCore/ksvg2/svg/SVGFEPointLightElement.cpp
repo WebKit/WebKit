@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFEPointLightElement.h"
 #include "SVGPointLightSource.h"
 
@@ -42,6 +42,6 @@ SVGLightSource* SVGFEPointLightElement::lightSource() const
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

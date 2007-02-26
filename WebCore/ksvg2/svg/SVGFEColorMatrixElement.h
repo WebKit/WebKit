@@ -22,7 +22,7 @@
 
 #ifndef SVGFEColorMatrixElement_h
 #define SVGFEColorMatrixElement_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 #include "SVGFEColorMatrix.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
@@ -55,7 +55,7 @@ namespace WebCore
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif
 
 // vim:ts=4:noet

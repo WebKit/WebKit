@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGLength.h"
 
 #include "DeprecatedString.h"
@@ -307,6 +307,6 @@ float SVGLength::PercentageOfViewport(float value, const SVGStyledElement* conte
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

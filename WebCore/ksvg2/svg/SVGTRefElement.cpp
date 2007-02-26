@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGTRefElement.h"
 
 #include "RenderSVGInline.h"
@@ -86,5 +86,5 @@ RenderObject* SVGTRefElement::createRenderer(RenderArena* arena, RenderStyle*)
 }
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 

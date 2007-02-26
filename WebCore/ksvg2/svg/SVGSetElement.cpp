@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGSetElement.h"
 #include "TimeScheduler.h"
 #include "Document.h"
@@ -53,5 +53,5 @@ bool SVGSetElement::calculateFromAndToValues(EAnimationMode, unsigned valueIndex
 }
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 

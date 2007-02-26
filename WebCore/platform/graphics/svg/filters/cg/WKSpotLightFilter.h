@@ -25,6 +25,8 @@
 
 #import <QuartzCore/CoreImage.h>
 
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+
 @interface WKSpotLightFilter : CIFilter {
     CIImage  *inputLightVectors;
     CIVector *inputLightDirection;
@@ -32,3 +34,5 @@
     NSNumber *inputLimitingConeAngle;
 }
 @end
+
+#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)

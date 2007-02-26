@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGEllipseElement.h"
 
 #include "FloatPoint.h"
@@ -100,6 +100,6 @@ bool SVGEllipseElement::hasRelativeValues() const
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

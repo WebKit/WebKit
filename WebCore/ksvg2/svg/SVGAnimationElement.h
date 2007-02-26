@@ -23,7 +23,7 @@
 
 #ifndef SVGAnimationElement_h
 #define SVGAnimationElement_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGExternalResourcesRequired.h"
 #include "SVGStringList.h"
@@ -188,7 +188,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGAnimationElement_h
 
 // vim:ts=4:noet

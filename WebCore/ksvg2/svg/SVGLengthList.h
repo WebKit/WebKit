@@ -23,7 +23,7 @@
 #ifndef SVGLengthList_h
 #define SVGLengthList_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGLength.h"
 #include "SVGList.h"
@@ -41,7 +41,7 @@ namespace WebCore
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif
 
 // vim:ts=4:noet

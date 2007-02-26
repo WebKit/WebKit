@@ -1,3 +1,12 @@
+2007-02-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Lars.
+        
+        - <rdar://problem/5021698> Disable experimental SVG features (12883)
+
+        * wtf/Platform.h: Add ENABLE() macro similar to HAVE() and USE(), to
+        allow nicer handling of optional WebKit features.
+
 2007-02-22  George Staikos  <staikos@kde.org>
 
         Reviewed by Lars.

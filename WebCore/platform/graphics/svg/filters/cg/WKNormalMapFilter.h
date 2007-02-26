@@ -25,8 +25,12 @@
 
 #import <QuartzCore/CoreImage.h>
 
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+
 @interface WKNormalMapFilter : CIFilter {
     CIImage *inputImage;
     NSNumber *inputSurfaceScale;
 }
 @end
+
+#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)

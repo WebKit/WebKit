@@ -20,7 +20,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "PointerEventsHitRules.h"
 
 namespace WebCore {
@@ -107,4 +107,4 @@ PointerEventsHitRules::PointerEventsHitRules(ESVGHitTesting hitTesting, EPointer
 }
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)

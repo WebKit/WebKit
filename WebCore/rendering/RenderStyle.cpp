@@ -432,7 +432,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , matchNearestMailBlockquoteColor(RenderStyle::initialMatchNearestMailBlockquoteColor())
     , m_appearance(RenderStyle::initialAppearance())
     , m_boxShadow(0)
-#ifdef XBL_SUPPORT
+#if ENABLE(XBL)
     , bindingURI(0)
 #endif
 {
@@ -455,7 +455,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , matchNearestMailBlockquoteColor(o.matchNearestMailBlockquoteColor)
     , m_appearance(o.m_appearance)
     , m_boxShadow(o.m_boxShadow ? new ShadowData(*o.m_boxShadow) : 0)
-#ifdef XBL_SUPPORT
+#if ENABLE(XBL)
     , bindingURI(o.bindingURI ? o.bindingURI->copy() : 0)
 #endif
 {
@@ -466,12 +466,12 @@ StyleRareNonInheritedData::~StyleRareNonInheritedData()
     delete m_content;
     delete m_counterDirectives;
     delete m_boxShadow;
-#ifdef XBL_SUPPORT
+#if ENABLE(XBL)
     delete bindingURI;
 #endif
 }
 
-#ifdef XBL_SUPPORT
+#if ENABLE(XBL)
 bool StyleRareNonInheritedData::bindingsEquivalent(const StyleRareNonInheritedData& o) const
 {
     if (this == &o) return true;
@@ -501,7 +501,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && matchNearestMailBlockquoteColor == o.matchNearestMailBlockquoteColor
         && m_appearance == o.m_appearance
         && shadowDataEquivalent(o)
-#ifdef XBL_SUPPORT
+#if ENABLE(XBL)
         && bindingsEquivalent(o)
 #endif
         ;
@@ -701,7 +701,7 @@ RenderStyle::RenderStyle()
     , m_affectedByAttributeSelectors(false)
     , m_unique(false)
     , m_ref(0)
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     , m_svgStyle(defaultStyle->m_svgStyle)
 #endif
 {
@@ -728,7 +728,7 @@ RenderStyle::RenderStyle(bool)
     rareInheritedData.init();
     inherited.init();
     
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     m_svgStyle.init();
 #endif
 }
@@ -748,7 +748,7 @@ RenderStyle::RenderStyle(const RenderStyle& o)
     , m_affectedByAttributeSelectors(false)
     , m_unique(false)
     , m_ref(0)
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     , m_svgStyle(o.m_svgStyle)
 #endif
 {
@@ -759,7 +759,7 @@ void RenderStyle::inheritFrom(const RenderStyle* inheritParent)
     rareInheritedData = inheritParent->rareInheritedData;
     inherited = inheritParent->inherited;
     inherited_flags = inheritParent->inherited_flags;
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     if (m_svgStyle != inheritParent->m_svgStyle)
         m_svgStyle.access()->inheritFrom(inheritParent->m_svgStyle.get());
 #endif
@@ -781,7 +781,7 @@ bool RenderStyle::operator==(const RenderStyle& o) const
             rareNonInheritedData == o.rareNonInheritedData &&
             rareInheritedData == o.rareInheritedData &&
             inherited == o.inherited
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
             && m_svgStyle == o.m_svgStyle
 #endif
             ;
@@ -862,7 +862,7 @@ bool RenderStyle::inheritedNotEqual(RenderStyle* other) const
 {
     return inherited_flags != other->inherited_flags ||
            inherited != other->inherited ||
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
            m_svgStyle->inheritedNotEqual(other->m_svgStyle.get()) ||
 #endif
            rareInheritedData != other->rareInheritedData;
@@ -885,7 +885,7 @@ bool RenderStyle::inheritedNotEqual(RenderStyle* other) const
 */
 RenderStyle::Diff RenderStyle::diff(const RenderStyle* other) const
 {
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     // This is horribly inefficient.  Eventually we'll have to integrate
     // this more directly by calling: Diff svgDiff = svgStyle->diff(other)
     // and then checking svgDiff and returning from the appropriate places below.
@@ -1280,7 +1280,7 @@ void ContentData::clear()
     }
 }
 
-#ifdef XBL_SUPPORT
+#if ENABLE(XBL)
 BindingURI::BindingURI(StringImpl* uri) 
 :m_next(0)
 { 

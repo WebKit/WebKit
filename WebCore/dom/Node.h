@@ -135,7 +135,7 @@ public:
 
     virtual bool isElementNode() const { return false; }
     virtual bool isHTMLElement() const { return false; }
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     virtual bool isSVGElement() const { return false; }
 #endif
     virtual bool isStyledElement() const { return false; }
@@ -383,7 +383,7 @@ public:
     void createRendererIfNeeded();
     virtual RenderStyle* styleForRenderer(RenderObject* parent);
     virtual bool rendererIsNeeded(RenderStyle*);
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     virtual bool childShouldCreateRenderer(Node*) const { return true; }
 #endif
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);

@@ -24,7 +24,7 @@
 #ifndef SVGLightSource_h
 #define SVGLightSource_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 namespace WebCore {
 
@@ -54,6 +54,6 @@ private:
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 #endif // SVGLightSource_h

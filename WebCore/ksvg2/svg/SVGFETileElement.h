@@ -22,7 +22,7 @@
 
 #ifndef SVGFETileElement_h
 #define SVGFETileElement_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGFETile.h"
@@ -52,5 +52,5 @@ namespace WebCore
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif

@@ -24,7 +24,7 @@
 #ifndef SVGResourceFilter_h
 #define SVGResourceFilter_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGResource.h"
 #include "SVGFilterEffect.h"
 
@@ -112,6 +112,6 @@ SVGResourceFilter* getFilterById(Document*, const AtomicString&);
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 #endif // SVGResourceFilter_h

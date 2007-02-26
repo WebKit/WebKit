@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGTextElement.h"
 
 #include "AffineTransform.h"
@@ -130,5 +130,5 @@ bool SVGTextElement::childShouldCreateRenderer(Node* child) const
 }
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 

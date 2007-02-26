@@ -19,7 +19,7 @@
 
 #ifndef SVGFEPointLightElement_h
 #define SVGFEPointLightElement_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 #include "SVGFELightElement.h"
 
@@ -35,5 +35,5 @@ namespace WebCore
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif

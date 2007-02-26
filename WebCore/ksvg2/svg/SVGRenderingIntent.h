@@ -22,7 +22,7 @@
 #ifndef SVGRenderingIntent_h
 #define SVGRenderingIntent_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "Shared.h"
 
@@ -46,7 +46,7 @@ public:
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGRenderingIntent_h
 
 // vim:ts=4:noet

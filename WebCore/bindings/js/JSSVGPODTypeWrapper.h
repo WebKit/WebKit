@@ -26,7 +26,7 @@
 #ifndef JSSVGPODTypeWrapper_h
 #define JSSVGPODTypeWrapper_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "Frame.h"
 #include "Shared.h"
@@ -128,5 +128,5 @@ private:
 
 };
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // JSSVGPODTypeWrapper_h

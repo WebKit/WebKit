@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGLinearGradientElement.h"
 
 #include "LinearGradientAttributes.h"
@@ -149,6 +149,6 @@ LinearGradientAttributes SVGLinearGradientElement::collectGradientProperties() c
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

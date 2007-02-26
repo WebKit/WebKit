@@ -22,7 +22,7 @@
 #ifndef SVGPathSegList_h
 #define SVGPathSegList_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGList.h"
 #include "SVGPathSeg.h"
@@ -49,7 +49,7 @@ namespace WebCore
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif
 
 // vim:ts=4:noet

@@ -1,4 +1,3 @@
-KCanvasResource {id="feTileFilter" [type=FILTER]  [bounding box=at (115,40) size 250x250] [bounding box mode=0] [effects=[[type=FLOOD]  [subregion="at (115,40) size 54x19"] [color=#FF0000] [opacity=1.00], [type=OFFSET]  [result="offset"] [subregion="at (115,40) size 50x25"] [dx=6.00 dy=6.00],  [subregion="at (0,0) size 480x360"]]]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359

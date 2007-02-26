@@ -24,7 +24,7 @@
 #ifndef SVGFilterElement_h
 #define SVGFilterElement_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 #include "SVGResourceFilter.h"
 #include "SVGExternalResourcesRequired.h"
@@ -72,7 +72,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif
 
 // vim:ts=4:noet

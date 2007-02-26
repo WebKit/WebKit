@@ -67,11 +67,11 @@ static CachedResource* createResource(CachedResource::Type type, DocLoader* docL
         return new CachedCSSStyleSheet(docLoader, url.url(), docLoader->cachePolicy(), expireDate, *charset);
     case CachedResource::Script:
         return new CachedScript(docLoader, url.url(), docLoader->cachePolicy(), expireDate, *charset);
-#ifdef XSLT_SUPPORT
+#if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
         return new CachedXSLStyleSheet(docLoader, url.url(), docLoader->cachePolicy(), expireDate);
 #endif
-#ifdef XBL_SUPPORT
+#if ENABLE(XBL)
     case CachedResource::XBLStyleSheet:
         return new CachedXBLDocument(docLoader, url.url(), docLoader->cachePolicy(), expireDate);
 #endif
@@ -348,13 +348,13 @@ Cache::Statistics Cache::getStatistics()
                 stats.scripts.count++;
                 stats.scripts.size += o->size();
                 break;
-#ifdef XSLT_SUPPORT
+#if ENABLE(XSLT)
             case CachedResource::XSLStyleSheet:
                 stats.xslStyleSheets.count++;
                 stats.xslStyleSheets.size += o->size();
                 break;
 #endif
-#ifdef XBL_SUPPORT
+#if ENABLE(XBL)
             case CachedResource::XBL:
                 stats.xblDocs.count++;
                 stats.xblDocs.size += o->size();

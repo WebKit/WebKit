@@ -34,7 +34,7 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "Page.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGDocumentExtensions.h"
 #endif
 #include "kjs_proxy.h"
@@ -79,7 +79,7 @@ PageState::PageState(Page* page)
 
     m_document->setInPageCache(true);
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     if (m_document && m_document->svgExtensions())
         m_document->accessSVGExtensions()->pauseAnimations();
 #endif
@@ -105,7 +105,7 @@ void PageState::restore(Page* page)
         window->resumeTimeouts(m_pausedTimeouts.get());
     }
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     if (m_document && m_document->svgExtensions())
         m_document->accessSVGExtensions()->unpauseAnimations();
 #endif

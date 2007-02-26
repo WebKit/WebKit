@@ -21,7 +21,7 @@
 
 #ifndef SVGAnimateMotionElement_h
 #define SVGAnimateMotionElement_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 #include "SVGAnimationElement.h"
 #include "AffineTransform.h"
@@ -76,7 +76,7 @@ namespace WebCore {
     
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGAnimateMotionElement_h
 
 // vim:ts=4:noet

@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGResource.h"
 
 #include "RenderPath.h"

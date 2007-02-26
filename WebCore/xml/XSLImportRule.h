@@ -23,7 +23,7 @@
 #ifndef XSLImportRule_h
 #define XSLImportRule_h
 
-#ifdef XSLT_SUPPORT
+#if ENABLE(XSLT)
 
 #include "CachedResourceClient.h"
 #include "StyleBase.h"
@@ -59,6 +59,6 @@ protected:
 
 } // namespace WebCore
 
-#endif // XSLT_SUPPORT
+#endif // ENABLE(XSLT)
 
 #endif // XSLImportRule_h

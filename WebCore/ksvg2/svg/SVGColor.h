@@ -22,7 +22,7 @@
 
 #ifndef SVGColor_h
 #define SVGColor_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "CSSValue.h"
 #include "Color.h"
@@ -73,7 +73,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGColor_h
 
 // vim:ts=4:noet

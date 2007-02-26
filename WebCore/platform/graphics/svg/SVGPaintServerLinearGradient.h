@@ -26,7 +26,7 @@
 #ifndef SVGPaintServerLinearGradient_h
 #define SVGPaintServerLinearGradient_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "FloatPoint.h"
 #include "SVGPaintServerGradient.h"

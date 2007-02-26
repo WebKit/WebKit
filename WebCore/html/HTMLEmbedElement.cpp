@@ -33,7 +33,7 @@
 #include "csshelper.h"
 #include "RenderPartObject.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "ExceptionCode.h"
 #include "SVGDocument.h"
 #endif
@@ -202,7 +202,7 @@ void HTMLEmbedElement::setType(const String& value)
     setAttribute(typeAttr, value);
 }
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 SVGDocument* HTMLEmbedElement::getSVGDocument(ExceptionCode& ec) const
 {
     Document* doc = contentDocument();

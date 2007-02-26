@@ -27,7 +27,7 @@
 #include "config.h"
 #include "XPathNSResolver.h"
 
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
 
 namespace WebCore {
 
@@ -37,4 +37,4 @@ XPathNSResolver::~XPathNSResolver()
 
 }
 
-#endif // XPATH_SUPPORT
+#endif // ENABLE(XPATH)

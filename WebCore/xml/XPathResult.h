@@ -27,7 +27,7 @@
 #ifndef XPathResult_h
 #define XPathResult_h
 
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
 
 #include "Shared.h"
 #include "XPathValue.h"
@@ -87,6 +87,6 @@ namespace WebCore {
 
 }
 
-#endif // XPATH_SUPPORT
+#endif // ENABLE(XPATH)
 
 #endif // XPathResult_h

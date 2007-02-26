@@ -26,7 +26,7 @@
 #ifndef JSXSLTProcessor_h
 #define JSXSLTProcessor_h
 
-#ifdef XSLT_SUPPORT
+#if ENABLE(XSLT)
 
 #include "kjs_binding.h"
 
@@ -65,6 +65,6 @@ public:
 
 } // namespace KJS
 
-#endif // XSLT_SUPPORT
+#endif // ENABLE(XSLT)
 
 #endif // JSXSLTProcessor_h

@@ -23,7 +23,7 @@
 #ifndef SVGAnimatedTemplate_h
 #define SVGAnimatedTemplate_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "Shared.h"
 
@@ -65,7 +65,7 @@ namespace WebCore {
     typedef SVGAnimatedTemplate<SVGTransformList*> SVGAnimatedTransformList; 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGAnimatedTemplate_h
 
 // vim:ts=4:noet

@@ -24,7 +24,7 @@
 #ifndef SVGFEDisplacementMap_h
 #define SVGFEDisplacementMap_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFilterEffect.h"
 
 namespace WebCore {
@@ -68,6 +68,6 @@ private:
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 #endif // SVGFEDisplacementMap_h

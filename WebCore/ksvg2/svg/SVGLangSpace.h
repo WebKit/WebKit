@@ -23,7 +23,7 @@
 #ifndef SVGLangSpace_h
 #define SVGLangSpace_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "AtomicString.h"
 
@@ -52,7 +52,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGLangSpace_h
 
 // vim:ts=4:noet

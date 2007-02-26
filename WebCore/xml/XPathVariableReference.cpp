@@ -27,7 +27,7 @@
 #include "config.h"
 #include "XPathVariableReference.h"
 
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
 
 #include "Node.h"
 #include "XPathValue.h"
@@ -57,4 +57,4 @@ Value VariableReference::doEvaluate() const
 }
 }
 
-#endif // XPATH_SUPPORT
+#endif // ENABLE(XPATH)

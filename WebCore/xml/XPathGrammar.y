@@ -29,7 +29,7 @@
 
 #include "config.h"
 
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
 
 #include "XPathFunctions.h"
 #include "XPathNSResolver.h"

@@ -19,7 +19,7 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "BlockExceptions.h"
 #include "SVGFEDisplacementMap.h"
 #include "SVGResourceFilter.h"
@@ -72,4 +72,4 @@ CIFilter* getNormalMap(CIImage* bumpMap, float scale);
 
 #define deg2rad(d) ((d * (2.0 * M_PI)) / 360.0)
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)

@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "AffineTransform.h"
 #include "SVGTransform.h"
@@ -83,6 +83,6 @@ SVGTransform SVGTransformList::concatenateForType(SVGTransform::SVGTransformType
     return totalTransform.addToSVGTransform(SVGTransform());
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

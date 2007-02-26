@@ -66,7 +66,7 @@
 #include "RenderView.h"
 #include "SelectionController.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGNames.h"
 #endif
 
@@ -427,7 +427,7 @@ RenderLayer::enclosingPositionedAncestor() const
 bool
 RenderLayer::isTransparent() const
 {
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     if (m_object->node()->namespaceURI() == SVGNames::svgNamespaceURI)
         return false;
 #endif

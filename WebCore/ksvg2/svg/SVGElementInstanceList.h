@@ -22,7 +22,7 @@
 #ifndef SVGElementInstanceList_h
 #define SVGElementInstanceList_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 #include "Shared.h"
 #include "SVGElementInstance.h"
@@ -41,7 +41,7 @@ namespace WebCore {
     };
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif
 
 // vim:ts=4:noet

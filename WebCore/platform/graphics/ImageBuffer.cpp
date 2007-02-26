@@ -29,7 +29,7 @@
 #include "GraphicsContext.h"
 #include "RenderObject.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "RenderSVGContainer.h"
 #endif
 
@@ -45,7 +45,7 @@ void ImageBuffer::renderSubtreeToImage(ImageBuffer* image, RenderObject* item)
     ASSERT(item && image && image->context());
     RenderObject::PaintInfo info(image->context(), IntRect(), PaintPhaseForeground, 0, 0, 0);
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     RenderSVGContainer* svgContainer = 0;
     if (item && item->isSVGContainer())
          svgContainer = static_cast<RenderSVGContainer*>(item);
@@ -57,7 +57,7 @@ void ImageBuffer::renderSubtreeToImage(ImageBuffer* image, RenderObject* item)
 
     item->paint(info, 0, 0);
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     if (svgContainer && !drawsContents)
         svgContainer->setDrawsContents(false);
 #endif

@@ -22,7 +22,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "TimeScheduler.h"
 
 #include "Document.h"
@@ -137,4 +137,4 @@ double TimeScheduler::elapsed() const
 } // namespace
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)

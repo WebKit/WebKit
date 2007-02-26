@@ -23,7 +23,7 @@
 
 #ifndef SVGAnimateTransformElement_h
 #define SVGAnimateTransformElement_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 #include "SVGAnimationElement.h"
 #include "SVGTransform.h"
@@ -67,7 +67,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGAnimateTransformElement_h
 
 // vim:ts=4:noet

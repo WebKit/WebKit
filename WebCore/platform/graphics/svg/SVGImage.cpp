@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "DocumentLoader.h"
 #include "FloatRect.h"
@@ -154,4 +154,4 @@ bool SVGImage::setData(bool allDataReceived)
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)

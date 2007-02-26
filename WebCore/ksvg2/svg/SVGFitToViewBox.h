@@ -22,7 +22,7 @@
 
 #ifndef SVGFitToViewBox_h
 #define SVGFitToViewBox_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGElement.h"
 
@@ -51,7 +51,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGFitToViewBox_h
 
 // vim:ts=4:noet

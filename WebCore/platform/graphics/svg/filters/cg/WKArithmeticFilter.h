@@ -25,6 +25,8 @@
 
 #import <QuartzCore/CoreImage.h>
 
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+
 @interface WKArithmeticFilter : CIFilter {
     CIImage  *inputImage;
     CIImage  *inputBackgroundImage;
@@ -35,3 +37,5 @@
 }
 
 @end
+
+#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)

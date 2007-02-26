@@ -86,7 +86,7 @@ void RenderText::setStyle(RenderStyle* newStyle)
     RenderObject::setStyle(newStyle);
 
     if (oldTransform != newStyle->textTransform() || oldSecurity != newStyle->textSecurity()
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
         || isSVGText() /* All SVG text has to be transformed */
 #endif
        ) {
@@ -831,7 +831,7 @@ void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
     if (m_text) {
         m_text = m_text->replace('\\', backslashAsCurrencySymbol());
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
         if (isSVGText()) {
             if (style() && style()->whiteSpace() == PRE) {
                 // Spec: When xml:space="preserve", the SVG user agent will do the following using a

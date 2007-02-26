@@ -25,7 +25,7 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGFEColorMatrixElement : SVGElement,
+    interface [Conditional=SVG&SVG_EXPERIMENTAL_FEATURES] SVGFEColorMatrixElement : SVGElement,
                                                           SVGFilterPrimitiveStandardAttributes {
         // Color Matrix Types
         const unsigned short SVG_FECOLORMATRIX_TYPE_UNKNOWN          = 0;

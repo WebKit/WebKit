@@ -23,7 +23,7 @@
 #ifndef SVGLocatable_h
 #define SVGLocatable_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "ExceptionCode.h"
 
@@ -58,7 +58,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGLocatable_h
 
 // vim:ts=4:noet

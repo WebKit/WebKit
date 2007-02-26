@@ -6,12 +6,12 @@
    </option>
 
     <option name="FEATURE_DEFINES" never_empty="1" >
-        <!-- SVG_SUPPORT XPATH_SUPPORT-->
-        <default-value>XPATH_SUPPORT</default-value>
-        <values>XPATH_SUPPORT,SVG_SUPPORT</values>
+        <!-- ENABLE_SVG ENABLE_XPATH-->
+        <default-value>ENABLE_XPATH</default-value>
+        <values>ENABLE_XPATH,ENABLE_SVG</values>
     </option>
 
-    <set var="FEATURE_DEFINES">XPATH_SUPPORT</set>
+    <set var="FEATURE_DEFINES">ENABLE_XPATH</set>
     <set var="ENCODINGS_FILE">$(SRCDIR)/platform/gdk/gdk-encodings.txt</set>
 
     <include file="../../webcore-base.bkl"/>
@@ -47,7 +47,7 @@
         <define>BUILDING_CAIRO__</define>
         <include>platform/gdk</include>
         <include>platform/graphics/cairo</include>
-        <define>XPATH_SUPPORT</define>
+        <define>ENABLE_XPATH</define>
  
         <sources>
             platform/gdk/CookieJarGdk.cpp

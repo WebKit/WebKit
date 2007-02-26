@@ -23,7 +23,7 @@
 #ifndef SVGListTraits_h
 #define SVGListTraits_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 namespace WebCore {
 

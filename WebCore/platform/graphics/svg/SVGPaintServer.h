@@ -26,7 +26,7 @@
 #ifndef SVGPaintServer_h
 #define SVGPaintServer_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGResource.h"
 

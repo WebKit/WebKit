@@ -28,7 +28,7 @@
 #include "config.h"
 #include "XPathStep.h"
 
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
 
 #include "Document.h"
 #include "NamedAttrMap.h"
@@ -282,4 +282,4 @@ Node::NodeType Step::primaryNodeType(Axis axis) const
 }
 }
 
-#endif // XPATH_SUPPORT
+#endif // ENABLE(XPATH)

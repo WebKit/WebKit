@@ -23,7 +23,7 @@
 #ifndef SVGPolylineElement_h
 #define SVGPolylineElement_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGPolyElement.h"
 
@@ -40,7 +40,7 @@ namespace WebCore
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif
 
 // vim:ts=4:noet

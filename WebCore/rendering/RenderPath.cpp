@@ -23,7 +23,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "RenderPath.h"
 
 #include <math.h>
@@ -143,10 +143,12 @@ IntRect RenderPath::getAbsoluteRepaintRect()
     // Markers can expand the bounding box
     repaintRect.unite(m_markerBounds);
 
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     // Filters can expand the bounding box
     SVGResourceFilter* filter = getFilterById(document(), SVGURIReference::getTarget(style()->svgStyle()->filter()));
     if (filter)
         repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
+#endif
 
     if (!repaintRect.isEmpty())
         repaintRect.inflate(1); // inflate 1 pixel for antialiasing
@@ -189,14 +191,18 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
     AtomicString clipperId(SVGURIReference::getTarget(svgStyle->clipPath()));
     AtomicString maskerId(SVGURIReference::getTarget(svgStyle->maskElement()));
 
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     SVGResourceFilter* filter = getFilterById(document(), filterId);
+#endif
     SVGResourceClipper* clipper = getClipperById(document(), clipperId);
     SVGResourceMasker* masker = getMaskerById(document(), maskerId);
 
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     if (filter)
         filter->prepareFilter(paintInfo.context, strokeBBox);
     else if (!filterId.isEmpty())
         svgElement->document()->accessSVGExtensions()->addPendingResource(filterId, styledElement);
+#endif
 
     if (clipper) {
         clipper->addClient(styledElement);
@@ -226,9 +232,11 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
 
     m_markerBounds = drawMarkersIfNeeded(paintInfo.context, paintInfo.rect, m_path);
 
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     // actually apply the filter
     if (filter)
         filter->applyFilter(paintInfo.context, strokeBBox);
+#endif
 
     paintInfo.context->restore();
 }
@@ -449,4 +457,4 @@ bool RenderPath::hasRelativeValues() const
  
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)

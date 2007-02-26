@@ -27,7 +27,7 @@
 #ifndef XPathUtil_h
 #define XPathUtil_h
 
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
 
 #include <wtf/Vector.h>
 
@@ -53,6 +53,6 @@ namespace WebCore {
 
 }
 
-#endif // XPATH_SUPPORT
+#endif // ENABLE(XPATH)
 
 #endif // XPath_Util_H

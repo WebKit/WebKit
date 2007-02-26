@@ -24,7 +24,7 @@
 #ifndef RenderSVGImage_h
 #define RenderSVGImage_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "AffineTransform.h"
 #include "RenderImage.h"
@@ -63,7 +63,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // RenderSVGImage_h
 
 // vim:ts=4:noet

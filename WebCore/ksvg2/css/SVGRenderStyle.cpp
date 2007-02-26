@@ -27,7 +27,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGRenderStyle.h"
 
 namespace WebCore {
@@ -113,5 +113,5 @@ void SVGRenderStyle::inheritFrom(const SVGRenderStyle* svgInheritParent)
 }
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 

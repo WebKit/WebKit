@@ -26,7 +26,7 @@
 
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include <ApplicationServices/ApplicationServices.h>
 #include "CgSupport.h"
 
@@ -112,5 +112,5 @@ FloatRect strokeBoundingBox(const Path& path, RenderStyle* style, const RenderOb
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 

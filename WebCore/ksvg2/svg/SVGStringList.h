@@ -23,7 +23,7 @@
 #ifndef SVGStringList_h
 #define SVGStringList_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "PlatformString.h"
 #include "SVGList.h"
@@ -44,7 +44,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGStringList_h
 
 // vim:ts=4:noet

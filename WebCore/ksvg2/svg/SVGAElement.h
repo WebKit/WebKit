@@ -22,7 +22,7 @@
 
 #ifndef SVGAElement_h
 #define SVGAElement_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
@@ -66,7 +66,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGAElement_h
 
 // vim:ts=4:noet

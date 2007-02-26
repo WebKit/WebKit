@@ -50,7 +50,7 @@
 
 #include "kjs_css.lut.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "JSSVGColor.h"
 #include "JSSVGPaint.h"
 #include "SVGColor.h"
@@ -936,7 +936,7 @@ JSValue* toJS(ExecState* exec, CSSValue *v)
   else {
     if (v->isValueList())
       ret = new JSCSSValueList(exec, static_cast<CSSValueList*>(v));
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     else if (v->isSVGColor())
       ret = new JSSVGColor(exec, static_cast<SVGColor*>(v));
     else if (v->isSVGPaint())

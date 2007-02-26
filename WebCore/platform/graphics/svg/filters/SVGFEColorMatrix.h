@@ -24,7 +24,7 @@
 #ifndef SVGFEColorMatrix_h
 #define SVGFEColorMatrix_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFilterEffect.h"
 #include "SVGRenderTreeAsText.h"
 
@@ -59,6 +59,6 @@ private:
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 #endif // SVGFEColorMatrix_h

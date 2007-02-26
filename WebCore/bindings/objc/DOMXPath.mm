@@ -26,7 +26,7 @@
 
 #import "config.h"
 
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
 
 #import "DOMXPath.h"
 
@@ -91,4 +91,4 @@
 
 @end
 
-#endif // XPATH_SUPPORT
+#endif // ENABLE(XPATH)

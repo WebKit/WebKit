@@ -22,7 +22,7 @@
 
 #ifndef SVGTransform_h
 #define SVGTransform_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "AffineTransform.h"
 #include "FloatPoint.h"
@@ -89,7 +89,7 @@ namespace WebCore {
     
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif
 
 // vim:ts=4:noet

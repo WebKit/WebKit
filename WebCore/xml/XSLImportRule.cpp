@@ -22,7 +22,7 @@
 #include "config.h"
 #include "XSLImportRule.h"
 
-#ifdef XSLT_SUPPORT
+#if ENABLE(XSLT)
 
 #include "CachedXSLStyleSheet.h"
 #include "DocLoader.h"
@@ -113,4 +113,4 @@ void XSLImportRule::loadSheet()
 
 } // namespace WebCore
 
-#endif // XSLT_SUPPORT
+#endif // ENABLE(XSLT)

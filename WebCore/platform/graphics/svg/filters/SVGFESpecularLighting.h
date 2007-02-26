@@ -24,7 +24,7 @@
 #ifndef SVGFESpecularLighting_h
 #define SVGFESpecularLighting_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "Color.h"
 #include "SVGLightSource.h"
 #include "SVGFilterEffect.h"
@@ -75,6 +75,6 @@ private:
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 #endif // SVGFESpecularLighting_h

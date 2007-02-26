@@ -23,7 +23,7 @@
 #ifndef SVGCursorElement_h
 #define SVGCursorElement_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "Image.h"
 
@@ -68,7 +68,7 @@ namespace WebCore
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif
 
 // vim:ts=4:noet

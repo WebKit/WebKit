@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGTextPositioningElement.h"
 
 #include "SVGLengthList.h"
@@ -71,5 +71,5 @@ void SVGTextPositioningElement::parseMappedAttribute(MappedAttribute* attr)
 }
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 

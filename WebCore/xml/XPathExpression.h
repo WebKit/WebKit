@@ -27,7 +27,7 @@
 #ifndef XPathExpression_h
 #define XPathExpression_h
 
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
 
 #include "Shared.h"
 #include <wtf/Forward.h>
@@ -57,6 +57,6 @@ namespace WebCore {
 
 }
 
-#endif // XPATH_SUPPORT
+#endif // ENABLE(XPATH)
 
 #endif // XPathExpression_h

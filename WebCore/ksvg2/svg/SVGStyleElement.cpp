@@ -22,7 +22,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGStyleElement.h"
 
 #include "CSSStyleSheet.h"
@@ -112,4 +112,4 @@ void SVGStyleElement::childrenChanged()
 }
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)

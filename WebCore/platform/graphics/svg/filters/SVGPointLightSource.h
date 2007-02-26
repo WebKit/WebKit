@@ -24,7 +24,7 @@
 #ifndef SVGPointLightSource_h
 #define SVGPointLightSource_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "FloatPoint3D.h"
 #include "SVGLightSource.h"
 
@@ -47,6 +47,6 @@ private:
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 #endif // SVGPointLightSource_h

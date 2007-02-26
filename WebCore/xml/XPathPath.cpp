@@ -27,7 +27,7 @@
 #include "config.h"
 #include "XPathPath.h"
 
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
 
 #include "Document.h"
 #include "XPathPredicate.h"
@@ -152,4 +152,4 @@ Value Path::doEvaluate() const
 }
 }
 
-#endif // XPATH_SUPPORT
+#endif // ENABLE(XPATH)

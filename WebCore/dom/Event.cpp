@@ -120,7 +120,7 @@ bool Event::isOverflowEvent() const
     return false;
 }
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 bool Event::isSVGZoomEvent() const
 {
     return false;

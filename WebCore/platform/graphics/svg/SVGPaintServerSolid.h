@@ -26,7 +26,7 @@
 #ifndef SVGPaintServerSolid_h
 #define SVGPaintServerSolid_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "Color.h"
 #include "SVGPaintServer.h"

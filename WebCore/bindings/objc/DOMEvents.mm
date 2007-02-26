@@ -37,7 +37,7 @@
 #import "OverflowEvent.h"
 #import "UIEvent.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #import "DOMSVGZoomEvent.h"
 #import "SVGZoomEvent.h"
 #endif
@@ -84,7 +84,7 @@
         wrapperClass = [DOMKeyboardEvent class];
     else if (impl->isTextEvent())
         wrapperClass = [DOMTextEvent class];
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     else if (impl->isSVGZoomEvent())
         wrapperClass = [DOMSVGZoomEvent class];
 #endif

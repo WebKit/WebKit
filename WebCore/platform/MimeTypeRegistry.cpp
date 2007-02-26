@@ -108,7 +108,7 @@ static void initialiseSupportedNonImageMimeTypes()
       "application/x-webarchive",
 #endif
       "multipart/x-mixed-replace",
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
       "image/svg+xml"
 #endif
     };

@@ -22,7 +22,7 @@
 
 #ifndef SVGZoomAndPan_h
 #define SVGZoomAndPan_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 namespace WebCore {
 
@@ -51,7 +51,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGZoomAndPan_h
 
 // vim:ts=4:noet

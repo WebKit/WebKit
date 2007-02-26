@@ -1,4 +1,3 @@
-KCanvasResource {id="myfilter" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%] [effects=[[type=GAUSSIAN-BLUR]  [subregion="at (0,0) size 800x600"] [std dev. x=3.00 y=3.00]]]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     RenderSVGContainer {svg} at (4,11) size 567x63

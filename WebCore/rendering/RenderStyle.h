@@ -51,7 +51,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGRenderStyle.h"
 #endif
 
@@ -670,7 +670,7 @@ struct ShadowData {
     ShadowData* next;
 };
 
-#ifdef XBL_SUPPORT
+#if ENABLE(XBL)
 struct BindingURI {
     BindingURI(StringImpl*);
     ~BindingURI();
@@ -820,7 +820,7 @@ public:
     ~StyleRareNonInheritedData();
     StyleRareNonInheritedData(const StyleRareNonInheritedData&);
 
-#ifdef XBL_SUPPORT
+#if ENABLE(XBL)
     bool bindingsEquivalent(const StyleRareNonInheritedData&) const;
 #endif
 
@@ -850,7 +850,7 @@ public:
 
     ShadowData* m_boxShadow;  // For box-shadow decorations.
     
-#ifdef XBL_SUPPORT
+#if ENABLE(XBL)
     BindingURI* bindingURI; // The XBL binding URI list.
 #endif
 };
@@ -1148,7 +1148,7 @@ protected:
     bool m_unique : 1;
     int m_ref;
     
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     DataRef<SVGRenderStyle> m_svgStyle;
 #endif
     
@@ -1419,7 +1419,7 @@ public:
     EPageBreak pageBreakAfter() const { return static_cast<EPageBreak>(noninherited_flags._page_break_after); }
     
     // CSS3 Getter Methods
-#ifdef XBL_SUPPORT
+#if ENABLE(XBL)
     BindingURI* bindingURIs() const { return rareNonInheritedData->bindingURI; }
 #endif
     int outlineOffset() const { 
@@ -1656,7 +1656,7 @@ public:
     void setPageBreakAfter(EPageBreak b) { noninherited_flags._page_break_after = b; }
     
     // CSS3 Setters
-#ifdef XBL_SUPPORT
+#if ENABLE(XBL)
     void deleteBindingURIs() { 
         delete rareNonInheritedData->bindingURI; 
         SET_VAR(rareNonInheritedData, bindingURI, (BindingURI*) 0);
@@ -1720,7 +1720,7 @@ public:
     void setTextSizeAdjust(bool b) { SET_VAR(rareInheritedData, textSizeAdjust, b); }
     void setTextSecurity(ETextSecurity aTextSecurity) { SET_VAR(rareInheritedData, textSecurity, aTextSecurity); } 
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     const SVGRenderStyle* svgStyle() const { return m_svgStyle.get(); }
     SVGRenderStyle* accessSVGStyle() { return m_svgStyle.access(); }
 #endif

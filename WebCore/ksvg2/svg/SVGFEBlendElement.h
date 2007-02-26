@@ -22,7 +22,7 @@
 
 #ifndef SVGFEBlendElement_h
 #define SVGFEBlendElement_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 
 #include "SVGFEBlend.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
@@ -53,6 +53,6 @@ namespace WebCore
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif
 

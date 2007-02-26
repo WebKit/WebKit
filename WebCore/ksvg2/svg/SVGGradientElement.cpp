@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGGradientElement.h"
 
 #include "cssstyleselector.h"
@@ -154,6 +154,6 @@ Vector<SVGGradientStop> SVGGradientElement::buildStops() const
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

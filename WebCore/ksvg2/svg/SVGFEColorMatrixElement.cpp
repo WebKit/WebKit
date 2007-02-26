@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFEColorMatrixElement.h"
 
 #include "SVGNames.h"
@@ -93,6 +93,6 @@ SVGFEColorMatrix* SVGFEColorMatrixElement::filterEffect() const
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

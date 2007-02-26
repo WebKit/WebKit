@@ -26,7 +26,7 @@
 #ifndef XPathVariableReference_h
 #define XPathVariableReference_h
 
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
 
 #include "XPathExpressionNode.h"
 
@@ -46,6 +46,6 @@ namespace WebCore {
     }
 }
 
-#endif // XPATH_SUPPORT
+#endif // ENABLE(XPATH)
 
 #endif // XPath_VariableReference_H

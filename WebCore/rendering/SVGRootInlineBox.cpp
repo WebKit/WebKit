@@ -23,7 +23,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGRootInlineBox.h"
 
@@ -52,4 +52,4 @@ void SVGRootInlineBox::verticallyAlignBoxes(int& heightOfBlock)
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)

@@ -26,7 +26,7 @@
 #ifndef SVGResourceClipper_h
 #define SVGResourceClipper_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGResource.h"
 #include "Path.h"

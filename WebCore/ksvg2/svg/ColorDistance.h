@@ -21,7 +21,7 @@
 
 #ifndef ColorDistance_h
 #define ColorDistance_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 namespace WebCore {
     
@@ -49,5 +49,5 @@ namespace WebCore {
     };
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // ColorDistance_h

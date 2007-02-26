@@ -51,10 +51,10 @@ public:
         ImageResource,
         CSSStyleSheet,
         Script
-#ifdef XSLT_SUPPORT
+#if ENABLE(XSLT)
         , XSLStyleSheet
 #endif
-#ifdef XBL_SUPPORT
+#if ENABLE(XBL)
         , XBL
 #endif
     };

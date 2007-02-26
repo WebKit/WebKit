@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGTests.h"
 
 #include "DOMImplementation.h"
@@ -113,4 +113,4 @@ bool SVGTests::parseMappedAttribute(MappedAttribute* attr)
 }
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)

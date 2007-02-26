@@ -26,7 +26,7 @@
 #include "config.h"
 #include "NativeXPathNSResolver.h"
 
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
 
 #include "Node.h"
 #include "PlatformString.h"
@@ -55,4 +55,4 @@ String NativeXPathNSResolver::lookupNamespaceURI(const String& prefix)
 
 } // namespace WebCore
 
-#endif // XPATH_SUPPORT
+#endif // ENABLE(XPATH)

@@ -23,7 +23,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "RenderSVGInline.h"
 #include "SVGInlineFlowBox.h"
 #include "SVGTextPositioningElement.h"
@@ -55,4 +55,4 @@ InlineBox* RenderSVGInline::createInlineBox(bool makePlaceHolderBox, bool isRoot
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)

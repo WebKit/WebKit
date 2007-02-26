@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGGElement.h"
 
 #include "RenderSVGContainer.h"
@@ -64,6 +64,6 @@ AffineTransform SVGGElement::localMatrix() const
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

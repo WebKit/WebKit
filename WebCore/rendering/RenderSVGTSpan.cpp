@@ -23,7 +23,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "RenderSVGTSpan.h"
 #include "GraphicsContext.h"
 #include "KCanvasRenderingStyle.h"
@@ -49,4 +49,4 @@ void RenderSVGTSpan::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)

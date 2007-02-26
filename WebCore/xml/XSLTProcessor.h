@@ -23,7 +23,7 @@
 #ifndef XSLTProcessor_h
 #define XSLTProcessor_h
 
-#ifdef XSLT_SUPPORT
+#if ENABLE(XSLT)
 
 #include "StringHash.h"
 #include "XSLStyleSheet.h"

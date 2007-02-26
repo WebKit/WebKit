@@ -41,7 +41,7 @@
 #include "TextDocument.h"
 #include "XMLNames.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGNames.h"
 #include "SVGDocument.h"
 #endif
@@ -58,7 +58,7 @@ static bool qualifiedNameIsMalformed(const String&)
     return false;
 }
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 static void addString(HashSet<StringImpl*, CaseInsensitiveHash<StringImpl*> >& set, const
 char* string)
@@ -174,7 +174,7 @@ bool DOMImplementation::hasFeature (const String& feature, const String& version
     if (lower == "xpath" || lower == "textevents")
         return version.isEmpty() || version == "3.0";
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     if ((version.isEmpty() || version == "1.1") && feature.startsWith("http://www.w3.org/tr/svg11/feature#", false)) {
         if (isSVG11Feature(feature.right(feature.length() - 35)))
             return true;
@@ -248,7 +248,7 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
         if (qualifiedNameIsMalformed(qualifiedName) ||
             (colonpos >= 0 && namespaceURI.isNull()) ||
             (colonpos == 3 && qualifiedName[0] == 'x' && qualifiedName[1] == 'm' && qualifiedName[2] == 'l' &&
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
              namespaceURI != SVGNames::svgNamespaceURI &&
 #endif
              namespaceURI != XMLNames::xmlNamespaceURI)) {
@@ -266,7 +266,7 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
     }
 
     RefPtr<Document> doc;
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     if (namespaceURI == SVGNames::svgNamespaceURI)
         doc = new SVGDocument(this, 0);
     else
@@ -347,7 +347,7 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
         return new HTMLViewSourceDocument(this, view);
     if (type == "text/html")
         return new HTMLDocument(this, view);
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     if (type == "image/svg+xml")
         return new SVGDocument(this, view);
 #endif

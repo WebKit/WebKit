@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGMarkerElement.h"
 
 #include "PlatformString.h"
@@ -161,6 +161,6 @@ void SVGMarkerElement::notifyAttributeChange() const
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

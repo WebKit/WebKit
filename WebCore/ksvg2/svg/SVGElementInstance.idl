@@ -24,7 +24,7 @@
  */
 
 module svg {
-    interface [Conditional=SVG] SVGElementInstance {
+    interface [Conditional=SVG&SVG_EXPERIMENTAL_FEATURES] SVGElementInstance {
         readonly attribute SVGElement correspondingElement;
         readonly attribute SVGUseElement correspondingUseElement;
         readonly attribute SVGElementInstance parentNode;

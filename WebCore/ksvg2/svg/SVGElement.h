@@ -23,7 +23,7 @@
 #ifndef SVGElement_h
 #define SVGElement_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "Document.h"
 #include "FloatRect.h"
@@ -253,7 +253,7 @@ namespace WebCore {
 
 } // namespace WebCore 
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGElement_h
 
 // vim:ts=4:noet

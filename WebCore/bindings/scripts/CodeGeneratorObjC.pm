@@ -977,7 +977,11 @@ sub GenerateImplementation
     # - INCLUDES -
     push(@implContentHeader, "\n#import \"config.h\"\n");
     push(@implContentHeader, "\n#import \"logging.h\"\n");
-    push(@implContentHeader, "\n#ifdef ${conditional}_SUPPORT\n\n") if $conditional;
+    my $conditionalString;
+    if ($conditional) {
+        $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+        push(@implContentHeader, "\n#if ${conditionalString}\n\n");
+    }
     push(@implContentHeader, "#import \"$classHeaderName.h\"\n\n");
     push(@implContentHeader, "#import <wtf/GetPtr.h>\n\n");
 
@@ -1574,7 +1578,7 @@ sub GenerateImplementation
     }
 
     # - End the ifdef conditional if necessary
-    push(@implContent, "\n#endif // ${conditional}_SUPPORT\n") if $conditional;
+    push(@implContent, "\n#endif // ${conditionalString}\n") if $conditional;
 }
 
 # Internal helper

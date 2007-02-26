@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGTSpanElement.h"
 
 #include "RenderInline.h"
@@ -55,5 +55,5 @@ RenderObject* SVGTSpanElement::createRenderer(RenderArena* arena, RenderStyle*)
 }
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 

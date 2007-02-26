@@ -25,7 +25,7 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGFEComponentTransferElement : SVGElement,
+    interface [Conditional=SVG&SVG_EXPERIMENTAL_FEATURES] SVGFEComponentTransferElement : SVGElement,
                                                                 SVGFilterPrimitiveStandardAttributes {
         readonly attribute SVGAnimatedString in1;
     };

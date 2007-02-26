@@ -36,7 +36,7 @@ namespace WebCore {
     class DocLoader;
     class TextResourceDecoder;
 
-#ifdef XSLT_SUPPORT
+#if ENABLE(XSLT)
     class CachedXSLStyleSheet : public CachedResource {
     public:
         CachedXSLStyleSheet(DocLoader*, const String& url, CachePolicy, time_t expireDate);

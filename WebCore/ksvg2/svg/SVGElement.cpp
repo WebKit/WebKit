@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGElement.h"
 
 #include "DOMImplementation.h"
@@ -206,6 +206,7 @@ void SVGElement::insertedIntoDocument()
     }
 }
 
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
 static Node* shadowTreeParentElementForShadowTreeElement(Node* node)
 {
     for (Node* n = node; n; n = n->parentNode()) {
@@ -215,10 +216,13 @@ static Node* shadowTreeParentElementForShadowTreeElement(Node* node)
 
     return 0;
 }
+#endif
 
 bool SVGElement::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec, bool tempEvent)
 {
     EventTarget* target = this;
+
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     Node* useNode = shadowTreeParentElementForShadowTreeElement(this);
 
     // If we are a hidden shadow tree element, the target must
@@ -232,12 +236,13 @@ bool SVGElement::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec, bool temp
         if (instance)
             target = instance;
     }
+#endif
 
     return EventTargetNode::dispatchEvent(e, ec, tempEvent, target);
 }
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

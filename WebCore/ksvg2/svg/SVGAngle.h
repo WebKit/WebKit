@@ -22,7 +22,7 @@
 
 #ifndef SVGAngle_h
 #define SVGAngle_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "PlatformString.h"
 
@@ -79,7 +79,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGAngle_h
 
 // vim:ts=4:noet

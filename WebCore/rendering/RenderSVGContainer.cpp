@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "RenderSVGContainer.h"
 
 #include "SVGResourceClipper.h"
@@ -142,9 +142,16 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     const SVGRenderStyle* svgStyle = style()->svgStyle();
     AtomicString filterId(SVGURIReference::getTarget(svgStyle->filter()));
- 
+
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES) 
     SVGResourceFilter* filter = getFilterById(document(), filterId);
-    if (!firstChild() && !filter)
+#endif
+
+    if (!firstChild()
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES) 
+        && !filter
+#endif
+        )
         return; // Spec: groups w/o children still may render filter content.
     
     paintInfo.context->save();
@@ -209,18 +216,22 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
         paintInfo.context->beginTransparencyLayer(opacity);
     }
 
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     if (filter)
         filter->prepareFilter(paintInfo.context, strokeBBox);
     else if (!filterId.isEmpty())
         svgElement->document()->accessSVGExtensions()->addPendingResource(filterId, styledElement);
+#endif
 
     if (!viewBox().isEmpty())
         paintInfo.context->concatCTM(viewportTransform());
 
     RenderContainer::paint(paintInfo, 0, 0);
 
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     if (filter)
         filter->applyFilter(paintInfo.context, strokeBBox);
+#endif
 
     if (opacity < 1.0f)
         paintInfo.context->endTransparencyLayer();
@@ -306,10 +317,12 @@ IntRect RenderSVGContainer::getAbsoluteRepaintRect()
     for (RenderObject* current = firstChild(); current != 0; current = current->nextSibling())
         repaintRect.unite(current->getAbsoluteRepaintRect());
 
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     // Filters can expand the bounding box
     SVGResourceFilter* filter = getFilterById(document(), SVGURIReference::getTarget(style()->svgStyle()->filter()));
     if (filter)
         repaintRect.unite(enclosingIntRect(filter->filterBBoxForItemBBox(repaintRect)));
+#endif
 
     return repaintRect;
 }
@@ -452,6 +465,6 @@ bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResul
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

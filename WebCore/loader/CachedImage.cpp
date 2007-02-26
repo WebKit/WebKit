@@ -41,7 +41,7 @@
 #include "PDFDocumentImage.h"
 #endif
 
-#ifdef SVG_IMAGE_SUPPORT
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #if PLATFORM(MAC) || PLATFORM(QT)
 #include "SVGImage.h"
 #endif
@@ -151,7 +151,7 @@ inline void CachedImage::createImage()
         return;
     }
 #endif
-#ifdef SVG_IMAGE_SUPPORT
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #if PLATFORM(MAC) || PLATFORM(QT)
     if (m_response.mimeType() == "image/svg+xml") {
         m_image = new SVGImage(this);

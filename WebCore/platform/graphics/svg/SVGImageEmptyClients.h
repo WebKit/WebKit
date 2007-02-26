@@ -26,7 +26,7 @@
 #ifndef SVGImageEmptyClients_h
 #define SVGImageEmptyClients_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "ChromeClient.h"
 #include "ContextMenuClient.h"
@@ -374,7 +374,7 @@ public:
     
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 #endif // SVGImageEmptyClients_h
 

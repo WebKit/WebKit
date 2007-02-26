@@ -27,7 +27,7 @@
 #ifndef XPathPath_h
 #define XPathPath_h
 
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
 
 #include "XPathExpressionNode.h"
 #include "XPathUtil.h"
@@ -88,6 +88,6 @@ namespace WebCore {
     }
 }
 
-#endif // XPATH_SUPPORT
+#endif // ENABLE(XPATH)
 
 #endif // XPath_Path_H

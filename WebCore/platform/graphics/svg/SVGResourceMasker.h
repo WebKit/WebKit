@@ -26,7 +26,7 @@
 #ifndef SVGResourceMasker_h
 #define SVGResourceMasker_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "GraphicsContext.h"
 #include "SVGResource.h"

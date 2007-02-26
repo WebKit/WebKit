@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && defined(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFEDiffuseLightingElement.h"
 
 #include "Attr.h"
@@ -116,6 +116,6 @@ void SVGFEDiffuseLightingElement::updateLights() const
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

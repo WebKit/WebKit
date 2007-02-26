@@ -87,10 +87,10 @@ namespace WebCore {
     class Text;
     class Tokenizer;
     class TreeWalker;
-#ifdef XBL_SUPPORT
+#if ENABLE(XBL)
     class XBLBindingManager;
 #endif
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
     class XPathEvaluator;
     class XPathExpression;
     class XPathNSResolver;
@@ -100,7 +100,7 @@ namespace WebCore {
     struct DashboardRegionValue;
     struct HitTestRequest;
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     class SVGDocumentExtensions;
 #endif
 
@@ -231,7 +231,7 @@ public:
     // Other methods (not part of DOM)
     virtual bool isDocumentNode() const { return true; }
     virtual bool isHTMLDocument() const { return false; }
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     virtual bool isSVGDocument() const { return false; }
 #endif
     virtual bool isPluginDocument() const { return false; }
@@ -578,7 +578,7 @@ public:
 
     int docID() const { return m_docID; }
 
-#ifdef XSLT_SUPPORT
+#if ENABLE(XSLT)
     void applyXSLTransform(ProcessingInstruction* pi);
     void setTransformSource(void* doc) { m_transformSource = doc; }
     const void* transformSource() { return m_transformSource; }
@@ -586,7 +586,7 @@ public:
     void setTransformSourceDocument(Document *doc) { m_transformSourceDocument = doc; }
 #endif
 
-#ifdef XBL_SUPPORT
+#if ENABLE(XBL)
     // XBL methods
     XBLBindingManager* bindingManager() const { return m_bindingManager; }
 #endif
@@ -598,7 +598,7 @@ public:
 
     void finishedParsing();
 
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
     // XPathEvaluator methods
     PassRefPtr<XPathExpression> createExpression(const String& expression,
                                                  XPathNSResolver* resolver,
@@ -610,7 +610,7 @@ public:
                                      unsigned short type,
                                      XPathResult* result,
                                      ExceptionCode& ec);
-#endif // XPATH_SUPPORT
+#endif // ENABLE(XPATH)
     
     enum PendingSheetLayout { NoLayoutWithPendingSheets, DidLayoutWithPendingSheets, IgnoreLayoutWithPendingSheets };
 
@@ -717,12 +717,12 @@ protected:
     double m_startTime;
     bool m_overMinimumLayoutThreshold;
     
-#ifdef XSLT_SUPPORT
+#if ENABLE(XSLT)
     void* m_transformSource;
     RefPtr<Document> m_transformSourceDocument;
 #endif
 
-#ifdef XBL_SUPPORT
+#if ENABLE(XBL)
     XBLBindingManager* m_bindingManager; // The access point through which documents and elements communicate with XBL.
 #endif
     
@@ -777,7 +777,7 @@ public:
     HTMLInputElement* checkedRadioButtonForGroup(AtomicStringImpl* name, HTMLFormElement* form);
     void removeRadioButtonGroup(AtomicStringImpl* name, HTMLFormElement* form);
     
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     const SVGDocumentExtensions* svgExtensions();
     SVGDocumentExtensions* accessSVGExtensions();
 #endif
@@ -812,11 +812,11 @@ private:
     HTMLCollection::CollectionInfo m_collectionInfo[HTMLCollection::UnnamedCollectionTypes];
     HashMap<AtomicStringImpl*, HTMLCollection::CollectionInfo> m_nameCollectionInfo[HTMLCollection::CollectionTypes - HTMLCollection::UnnamedCollectionTypes];
 
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
     RefPtr<XPathEvaluator> m_xpathEvaluator;
 #endif
     
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     SVGDocumentExtensions* m_svgExtensions;
 #endif
     

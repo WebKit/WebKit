@@ -24,7 +24,7 @@
 #ifndef SVGInlineFlowBox_h
 #define SVGInlineFlowBox_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "InlineFlowBox.h"
 
@@ -48,6 +48,6 @@ public:
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 #endif // SVGInlineFlowBox_h

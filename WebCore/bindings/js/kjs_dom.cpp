@@ -62,7 +62,7 @@
 #include "kjs_traversal.h"
 #include "kjs_window.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "JSSVGDocument.h"
 #include "JSSVGElementInstance.h"
 #include "JSSVGElementWrapperFactory.h"
@@ -923,7 +923,7 @@ JSValue* toJS(ExecState* exec, Document *n)
 
   if (n->isHTMLDocument())
     ret = new WebCore::JSHTMLDocument(exec, static_cast<HTMLDocument*>(n));
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
   else if (n->isSVGDocument())
     ret = new WebCore::JSSVGDocument(exec, static_cast<SVGDocument*>(n));
 #endif
@@ -966,7 +966,7 @@ JSValue* toJS(ExecState* exec, PassRefPtr<Node> node)
     case Node::ELEMENT_NODE:
       if (n->isHTMLElement())
         ret = createJSHTMLWrapper(exec, static_pointer_cast<HTMLElement>(node));
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
       else if (n->isSVGElement())
         ret = createJSSVGWrapper(exec, static_pointer_cast<SVGElement>(node));
 #endif
@@ -1021,7 +1021,7 @@ JSValue* toJS(ExecState* exec, EventTarget* target)
     if (!target)
         return jsNull();
     
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
     // SVGElementInstance supports both toSVGElementInstance and toNode since so much mouse handling code depends on toNode returning a valid node.
     SVGElementInstance* instance = target->toSVGElementInstance();
     if (instance)

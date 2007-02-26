@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGPathSegCurvetoCubicSmooth.h"
 
 #include "SVGStyledElement.h"
@@ -138,6 +138,6 @@ double SVGPathSegCurvetoCubicSmoothRel::y2() const
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 // vim:ts=4:noet

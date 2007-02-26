@@ -27,7 +27,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGResourceClipper.h"
 
 #include "GraphicsContext.h"
@@ -80,4 +80,4 @@ void SVGResourceClipper::applyClip(GraphicsContext* context, const FloatRect& bo
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)

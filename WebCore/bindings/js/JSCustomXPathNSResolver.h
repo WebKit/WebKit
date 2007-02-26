@@ -26,7 +26,7 @@
 #ifndef JSCustomXPathNSResolver_h
 #define JSCustomXPathNSResolver_h
 
-#ifdef XPATH_SUPPORT
+#if ENABLE(XPATH)
 
 #include "XPathNSResolver.h"
 #include <wtf/Forward.h>
@@ -59,6 +59,6 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // XPATH_SUPPORT
+#endif // ENABLE(XPATH)
 
 #endif // JSCustomXPathNSResolver_h

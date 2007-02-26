@@ -42,7 +42,7 @@
 #include "SelectionController.h"
 #include <wtf/Vector.h>
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "RenderSVGContainer.h"
 #include "SVGRenderTreeAsText.h"
 #endif
@@ -53,7 +53,7 @@ using namespace HTMLNames;
 
 static void writeLayers(TextStream&, const RenderLayer* rootLayer, RenderLayer*, const IntRect& paintDirtyRect, int indent = 0);
 
-#ifndef SVG_SUPPORT
+#ifndef ENABLE(SVG)
 static TextStream &operator<<(TextStream& ts, const IntRect& r)
 {
     return ts << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
@@ -314,7 +314,7 @@ static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBo
 
 void write(TextStream& ts, const RenderObject& o, int indent)
 {
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     if (o.isRenderPath()) {
         write(ts, static_cast<const RenderPath&>(o), indent);
         return;
@@ -484,7 +484,7 @@ DeprecatedString externalRepresentation(RenderObject* o)
     if (o) {
         TextStream ts(&s);
         ts.precision(2);
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
         writeRenderResources(ts, o->document());
 #endif
         o->view()->frameView()->layout();

@@ -1,3 +1,636 @@
+2007-02-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Lars.
+
+        - fixed <rdar://problem/5021698> Disable experimental SVG features (12883)
+        
+        I added an ENABLE_SVG_EXPERIMENTAL_FEATURES define to guard all use of the experimental
+        features, and used it to guard relevant tag names, elements, JS bindings and renderers.
+        
+        I also converted all the existing optional feature defines to
+        ENABLE_FOO instead of FOO_SUPPORT since that is the more standard
+        way to do it in open source projects and works with the handy new
+        ENABLE() macro.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Projects/gdk/webcore-gdk.bkl:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.vcproj/WebCore/build-generated-files.sh:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        * bindings/js/JSCustomXPathNSResolver.h:
+        * bindings/js/JSSVGElementWrapperFactory.cpp:
+        * bindings/js/JSSVGElementWrapperFactory.h:
+        * bindings/js/JSSVGMatrixCustom.cpp:
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        * bindings/js/JSSVGPathSegCustom.cpp:
+        * bindings/js/JSSVGPathSegListCustom.cpp:
+        * bindings/js/JSSVGPointListCustom.cpp:
+        * bindings/js/JSXSLTProcessor.cpp:
+        * bindings/js/JSXSLTProcessor.h:
+        * bindings/js/kjs_binding.cpp:
+        (KJS::setDOMException):
+        * bindings/js/kjs_css.cpp:
+        (KJS::toJS):
+        * bindings/js/kjs_dom.cpp:
+        (KJS::toJS):
+        * bindings/js/kjs_html.cpp:
+        (KJS::HTMLElementFunction::callAsFunction):
+        * bindings/js/kjs_proxy.cpp:
+        * bindings/js/kjs_proxy.h:
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap):
+        (+[DOMNode _nodeWith:WebCore::]):
+        * bindings/objc/DOMCSS.mm:
+        (+[DOMCSSValue _CSSValueWith:WebCore::]):
+        * bindings/objc/DOMCustomXPathNSResolver.h:
+        * bindings/objc/DOMCustomXPathNSResolver.mm:
+        * bindings/objc/DOMEvents.mm:
+        (+[DOMEvent _eventWith:WebCore::]):
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMSVGPathSegInternal.mm:
+        * bindings/objc/DOMXPath.mm:
+        * bindings/objc/ExceptionHandlers.mm:
+        (WebCore::raiseDOMException):
+        * bindings/objc/PublicDOMInterfaces.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * config.h:
+        * css/CSSGrammar.y:
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::propertyID):
+        * css/StyleBase.h:
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/cssparser.h:
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::loadDefaultStyle):
+        (WebCore::CSSStyleSelector::initForStyleResolve):
+        (WebCore::checkPseudoState):
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/cssstyleselector.h:
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::hasFeature):
+        (WebCore::DOMImplementation::createDocument):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::createElement):
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::recalcStyleSelector):
+        (WebCore::Document::createEvent):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/Event.cpp:
+        * dom/Event.h:
+        * dom/EventTarget.cpp:
+        * dom/EventTarget.h:
+        * dom/MappedAttributeEntry.h:
+        (WebCore::):
+        * dom/Node.cpp:
+        (WebCore::Node::createRendererIfNeeded):
+        (WebCore::Node::shadowAncestorNode):
+        * dom/Node.h:
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::ProcessingInstruction):
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        (WebCore::ProcessingInstruction::setCSSStyleSheet):
+        * dom/ProcessingInstruction.h:
+        * dom/Text.cpp:
+        (WebCore::Text::createRenderer):
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::startElementNs):
+        (WebCore::XMLTokenizer::endElementNs):
+        (WebCore::XMLTokenizer::processingInstruction):
+        (WebCore::XMLTokenizer::end):
+        (WebCore::XMLTokenizer::insertErrorMessageBlock):
+        * dom/XMLTokenizer.h:
+        * html/HTMLEmbedElement.cpp:
+        * html/HTMLEmbedElement.h:
+        * html/HTMLObjectElement.cpp:
+        * html/HTMLObjectElement.h:
+        * ksvg2/css/SVGCSSParser.cpp:
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        * ksvg2/css/SVGRenderStyle.cpp:
+        * ksvg2/css/SVGRenderStyle.h:
+        * ksvg2/css/SVGRenderStyleDefs.cpp:
+        * ksvg2/css/SVGRenderStyleDefs.h:
+        * ksvg2/events/JSSVGLazyEventListener.cpp:
+        * ksvg2/events/JSSVGLazyEventListener.h:
+        * ksvg2/events/SVGZoomEvent.cpp:
+        * ksvg2/events/SVGZoomEvent.h:
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+        * ksvg2/misc/PointerEventsHitRules.cpp:
+        * ksvg2/misc/PointerEventsHitRules.h:
+        * ksvg2/misc/SVGDocumentExtensions.cpp:
+        * ksvg2/misc/SVGDocumentExtensions.h:
+        * ksvg2/misc/SVGImageLoader.cpp:
+        * ksvg2/misc/SVGImageLoader.h:
+        * ksvg2/misc/SVGTimer.cpp:
+        * ksvg2/misc/SVGTimer.h:
+        * ksvg2/misc/TimeScheduler.cpp:
+        * ksvg2/misc/TimeScheduler.h:
+        * ksvg2/scripts/make_names.pl:
+        * ksvg2/svg/ColorDistance.cpp:
+        * ksvg2/svg/ColorDistance.h:
+        * ksvg2/svg/GradientAttributes.h:
+        * ksvg2/svg/LinearGradientAttributes.h:
+        * ksvg2/svg/PatternAttributes.h:
+        * ksvg2/svg/RadialGradientAttributes.h:
+        * ksvg2/svg/SVGAElement.cpp:
+        * ksvg2/svg/SVGAElement.h:
+        * ksvg2/svg/SVGAngle.cpp:
+        * ksvg2/svg/SVGAngle.h:
+        * ksvg2/svg/SVGAnimateColorElement.cpp:
+        * ksvg2/svg/SVGAnimateColorElement.h:
+        * ksvg2/svg/SVGAnimateElement.cpp:
+        * ksvg2/svg/SVGAnimateElement.h:
+        * ksvg2/svg/SVGAnimateElement.idl:
+        * ksvg2/svg/SVGAnimateMotionElement.cpp:
+        * ksvg2/svg/SVGAnimateMotionElement.h:
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        * ksvg2/svg/SVGAnimateTransformElement.h:
+        * ksvg2/svg/SVGAnimateTransformElement.idl:
+        * ksvg2/svg/SVGAnimatedPathData.cpp:
+        * ksvg2/svg/SVGAnimatedPathData.h:
+        * ksvg2/svg/SVGAnimatedPoints.cpp:
+        * ksvg2/svg/SVGAnimatedPoints.h:
+        * ksvg2/svg/SVGAnimatedTemplate.h:
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        * ksvg2/svg/SVGAnimationElement.h:
+        * ksvg2/svg/SVGCircleElement.cpp:
+        * ksvg2/svg/SVGCircleElement.h:
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        * ksvg2/svg/SVGClipPathElement.h:
+        * ksvg2/svg/SVGColor.cpp:
+        * ksvg2/svg/SVGColor.h:
+        * ksvg2/svg/SVGComponentTransferFunctionElement.cpp:
+        * ksvg2/svg/SVGComponentTransferFunctionElement.h:
+        * ksvg2/svg/SVGCursorElement.cpp:
+        * ksvg2/svg/SVGCursorElement.h:
+        * ksvg2/svg/SVGDefsElement.cpp:
+        * ksvg2/svg/SVGDefsElement.h:
+        * ksvg2/svg/SVGDescElement.cpp:
+        * ksvg2/svg/SVGDescElement.h:
+        * ksvg2/svg/SVGDocument.cpp:
+        * ksvg2/svg/SVGDocument.h:
+        * ksvg2/svg/SVGElement.cpp:
+        (WebCore::SVGElement::dispatchEvent):
+        * ksvg2/svg/SVGElement.h:
+        * ksvg2/svg/SVGElementInstance.cpp:
+        * ksvg2/svg/SVGElementInstance.h:
+        * ksvg2/svg/SVGElementInstance.idl:
+        * ksvg2/svg/SVGElementInstanceList.cpp:
+        * ksvg2/svg/SVGElementInstanceList.h:
+        * ksvg2/svg/SVGElementInstanceList.idl:
+        * ksvg2/svg/SVGEllipseElement.cpp:
+        * ksvg2/svg/SVGEllipseElement.h:
+        * ksvg2/svg/SVGException.h:
+        * ksvg2/svg/SVGExternalResourcesRequired.cpp:
+        * ksvg2/svg/SVGExternalResourcesRequired.h:
+        * ksvg2/svg/SVGFEBlendElement.cpp:
+        * ksvg2/svg/SVGFEBlendElement.h:
+        * ksvg2/svg/SVGFEBlendElement.idl:
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        * ksvg2/svg/SVGFEColorMatrixElement.h:
+        * ksvg2/svg/SVGFEColorMatrixElement.idl:
+        * ksvg2/svg/SVGFEComponentTransferElement.cpp:
+        * ksvg2/svg/SVGFEComponentTransferElement.h:
+        * ksvg2/svg/SVGFEComponentTransferElement.idl:
+        * ksvg2/svg/SVGFECompositeElement.cpp:
+        * ksvg2/svg/SVGFECompositeElement.h:
+        * ksvg2/svg/SVGFECompositeElement.idl:
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        * ksvg2/svg/SVGFEDiffuseLightingElement.h:
+        * ksvg2/svg/SVGFEDiffuseLightingElement.idl:
+        * ksvg2/svg/SVGFEDisplacementMapElement.cpp:
+        * ksvg2/svg/SVGFEDisplacementMapElement.h:
+        * ksvg2/svg/SVGFEDisplacementMapElement.idl:
+        * ksvg2/svg/SVGFEDistantLightElement.cpp:
+        * ksvg2/svg/SVGFEDistantLightElement.h:
+        * ksvg2/svg/SVGFEDistantLightElement.idl:
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+        * ksvg2/svg/SVGFEFloodElement.h:
+        * ksvg2/svg/SVGFEFloodElement.idl:
+        * ksvg2/svg/SVGFEFuncAElement.cpp:
+        * ksvg2/svg/SVGFEFuncAElement.h:
+        * ksvg2/svg/SVGFEFuncAElement.idl:
+        * ksvg2/svg/SVGFEFuncBElement.cpp:
+        * ksvg2/svg/SVGFEFuncBElement.h:
+        * ksvg2/svg/SVGFEFuncBElement.idl:
+        * ksvg2/svg/SVGFEFuncGElement.cpp:
+        * ksvg2/svg/SVGFEFuncGElement.h:
+        * ksvg2/svg/SVGFEFuncGElement.idl:
+        * ksvg2/svg/SVGFEFuncRElement.cpp:
+        * ksvg2/svg/SVGFEFuncRElement.h:
+        * ksvg2/svg/SVGFEFuncRElement.idl:
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        * ksvg2/svg/SVGFEGaussianBlurElement.h:
+        * ksvg2/svg/SVGFEGaussianBlurElement.idl:
+        * ksvg2/svg/SVGFEImageElement.cpp:
+        * ksvg2/svg/SVGFEImageElement.h:
+        * ksvg2/svg/SVGFEImageElement.idl:
+        * ksvg2/svg/SVGFELightElement.cpp:
+        * ksvg2/svg/SVGFELightElement.h:
+        * ksvg2/svg/SVGFEMergeElement.cpp:
+        * ksvg2/svg/SVGFEMergeElement.h:
+        * ksvg2/svg/SVGFEMergeElement.idl:
+        * ksvg2/svg/SVGFEMergeNodeElement.cpp:
+        * ksvg2/svg/SVGFEMergeNodeElement.h:
+        * ksvg2/svg/SVGFEMergeNodeElement.idl:
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        * ksvg2/svg/SVGFEOffsetElement.h:
+        * ksvg2/svg/SVGFEOffsetElement.idl:
+        * ksvg2/svg/SVGFEPointLightElement.cpp:
+        * ksvg2/svg/SVGFEPointLightElement.h:
+        * ksvg2/svg/SVGFEPointLightElement.idl:
+        * ksvg2/svg/SVGFESpecularLightingElement.cpp:
+        * ksvg2/svg/SVGFESpecularLightingElement.h:
+        * ksvg2/svg/SVGFESpecularLightingElement.idl:
+        * ksvg2/svg/SVGFESpotLightElement.cpp:
+        * ksvg2/svg/SVGFESpotLightElement.h:
+        * ksvg2/svg/SVGFESpotLightElement.idl:
+        * ksvg2/svg/SVGFETileElement.cpp:
+        * ksvg2/svg/SVGFETileElement.h:
+        * ksvg2/svg/SVGFETileElement.idl:
+        * ksvg2/svg/SVGFETurbulenceElement.cpp:
+        * ksvg2/svg/SVGFETurbulenceElement.h:
+        * ksvg2/svg/SVGFETurbulenceElement.idl:
+        * ksvg2/svg/SVGFilterElement.cpp:
+        * ksvg2/svg/SVGFilterElement.h:
+        * ksvg2/svg/SVGFilterElement.idl:
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributes.h:
+        * ksvg2/svg/SVGFitToViewBox.cpp:
+        * ksvg2/svg/SVGFitToViewBox.h:
+        * ksvg2/svg/SVGForeignObjectElement.cpp:
+        * ksvg2/svg/SVGForeignObjectElement.h:
+        * ksvg2/svg/SVGForeignObjectElement.idl:
+        * ksvg2/svg/SVGGElement.cpp:
+        * ksvg2/svg/SVGGElement.h:
+        * ksvg2/svg/SVGGradientElement.cpp:
+        * ksvg2/svg/SVGGradientElement.h:
+        * ksvg2/svg/SVGImageElement.cpp:
+        * ksvg2/svg/SVGImageElement.h:
+        * ksvg2/svg/SVGLangSpace.cpp:
+        * ksvg2/svg/SVGLangSpace.h:
+        * ksvg2/svg/SVGLength.cpp:
+        * ksvg2/svg/SVGLength.h:
+        * ksvg2/svg/SVGLengthList.cpp:
+        * ksvg2/svg/SVGLengthList.h:
+        * ksvg2/svg/SVGLineElement.cpp:
+        * ksvg2/svg/SVGLineElement.h:
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        * ksvg2/svg/SVGLinearGradientElement.h:
+        * ksvg2/svg/SVGList.h:
+        * ksvg2/svg/SVGListTraits.h:
+        * ksvg2/svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::nearestViewportElement):
+        (WebCore::SVGLocatable::farthestViewportElement):
+        * ksvg2/svg/SVGLocatable.h:
+        * ksvg2/svg/SVGMPathElement.cpp:
+        * ksvg2/svg/SVGMPathElement.h:
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        * ksvg2/svg/SVGMarkerElement.h:
+        * ksvg2/svg/SVGMaskElement.cpp:
+        * ksvg2/svg/SVGMaskElement.h:
+        * ksvg2/svg/SVGMetadataElement.cpp:
+        * ksvg2/svg/SVGMetadataElement.h:
+        * ksvg2/svg/SVGNumberList.cpp:
+        * ksvg2/svg/SVGNumberList.h:
+        * ksvg2/svg/SVGPaint.cpp:
+        * ksvg2/svg/SVGPaint.h:
+        * ksvg2/svg/SVGParserUtilities.cpp:
+        * ksvg2/svg/SVGParserUtilities.h:
+        * ksvg2/svg/SVGPathElement.cpp:
+        * ksvg2/svg/SVGPathElement.h:
+        * ksvg2/svg/SVGPathSeg.h:
+        * ksvg2/svg/SVGPathSegArc.cpp:
+        * ksvg2/svg/SVGPathSegArc.h:
+        * ksvg2/svg/SVGPathSegClosePath.cpp:
+        * ksvg2/svg/SVGPathSegClosePath.h:
+        * ksvg2/svg/SVGPathSegCurvetoCubic.cpp:
+        * ksvg2/svg/SVGPathSegCurvetoCubic.h:
+        * ksvg2/svg/SVGPathSegCurvetoCubicSmooth.cpp:
+        * ksvg2/svg/SVGPathSegCurvetoCubicSmooth.h:
+        * ksvg2/svg/SVGPathSegCurvetoQuadratic.cpp:
+        * ksvg2/svg/SVGPathSegCurvetoQuadratic.h:
+        * ksvg2/svg/SVGPathSegCurvetoQuadraticSmooth.cpp:
+        * ksvg2/svg/SVGPathSegCurvetoQuadraticSmooth.h:
+        * ksvg2/svg/SVGPathSegLineto.cpp:
+        * ksvg2/svg/SVGPathSegLineto.h:
+        * ksvg2/svg/SVGPathSegLinetoHorizontal.cpp:
+        * ksvg2/svg/SVGPathSegLinetoHorizontal.h:
+        * ksvg2/svg/SVGPathSegLinetoVertical.cpp:
+        * ksvg2/svg/SVGPathSegLinetoVertical.h:
+        * ksvg2/svg/SVGPathSegList.cpp:
+        * ksvg2/svg/SVGPathSegList.h:
+        * ksvg2/svg/SVGPathSegMoveto.cpp:
+        * ksvg2/svg/SVGPathSegMoveto.h:
+        * ksvg2/svg/SVGPatternElement.cpp:
+        * ksvg2/svg/SVGPatternElement.h:
+        * ksvg2/svg/SVGPointList.cpp:
+        * ksvg2/svg/SVGPointList.h:
+        * ksvg2/svg/SVGPolyElement.cpp:
+        * ksvg2/svg/SVGPolyElement.h:
+        * ksvg2/svg/SVGPolygonElement.cpp:
+        * ksvg2/svg/SVGPolygonElement.h:
+        * ksvg2/svg/SVGPolylineElement.cpp:
+        * ksvg2/svg/SVGPolylineElement.h:
+        * ksvg2/svg/SVGPreserveAspectRatio.cpp:
+        * ksvg2/svg/SVGPreserveAspectRatio.h:
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        * ksvg2/svg/SVGRadialGradientElement.h:
+        * ksvg2/svg/SVGRectElement.cpp:
+        * ksvg2/svg/SVGRectElement.h:
+        * ksvg2/svg/SVGRenderingIntent.h:
+        * ksvg2/svg/SVGSVGElement.cpp:
+        * ksvg2/svg/SVGSVGElement.h:
+        * ksvg2/svg/SVGScriptElement.cpp:
+        * ksvg2/svg/SVGScriptElement.h:
+        * ksvg2/svg/SVGSetElement.cpp:
+        * ksvg2/svg/SVGSetElement.h:
+        * ksvg2/svg/SVGStopElement.cpp:
+        * ksvg2/svg/SVGStopElement.h:
+        * ksvg2/svg/SVGStringList.cpp:
+        * ksvg2/svg/SVGStringList.h:
+        * ksvg2/svg/SVGStylable.cpp:
+        * ksvg2/svg/SVGStylable.h:
+        * ksvg2/svg/SVGStyleElement.cpp:
+        * ksvg2/svg/SVGStyleElement.h:
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::notifyAttributeChange):
+        * ksvg2/svg/SVGStyledElement.h:
+        * ksvg2/svg/SVGStyledLocatableElement.cpp:
+        * ksvg2/svg/SVGStyledLocatableElement.h:
+        * ksvg2/svg/SVGStyledTransformableElement.cpp:
+        * ksvg2/svg/SVGStyledTransformableElement.h:
+        * ksvg2/svg/SVGSwitchElement.cpp:
+        * ksvg2/svg/SVGSwitchElement.h:
+        * ksvg2/svg/SVGSymbolElement.cpp:
+        * ksvg2/svg/SVGSymbolElement.h:
+        * ksvg2/svg/SVGTRefElement.cpp:
+        * ksvg2/svg/SVGTRefElement.h:
+        * ksvg2/svg/SVGTSpanElement.cpp:
+        * ksvg2/svg/SVGTSpanElement.h:
+        * ksvg2/svg/SVGTests.cpp:
+        * ksvg2/svg/SVGTests.h:
+        * ksvg2/svg/SVGTextContentElement.cpp:
+        * ksvg2/svg/SVGTextContentElement.h:
+        * ksvg2/svg/SVGTextElement.cpp:
+        * ksvg2/svg/SVGTextElement.h:
+        * ksvg2/svg/SVGTextPositioningElement.cpp:
+        * ksvg2/svg/SVGTextPositioningElement.h:
+        * ksvg2/svg/SVGTitleElement.cpp:
+        * ksvg2/svg/SVGTitleElement.h:
+        * ksvg2/svg/SVGTransform.cpp:
+        * ksvg2/svg/SVGTransform.h:
+        * ksvg2/svg/SVGTransformDistance.cpp:
+        * ksvg2/svg/SVGTransformDistance.h:
+        * ksvg2/svg/SVGTransformList.cpp:
+        * ksvg2/svg/SVGTransformList.h:
+        * ksvg2/svg/SVGTransformable.cpp:
+        * ksvg2/svg/SVGTransformable.h:
+        * ksvg2/svg/SVGURIReference.cpp:
+        * ksvg2/svg/SVGURIReference.h:
+        * ksvg2/svg/SVGUnitTypes.h:
+        * ksvg2/svg/SVGUseElement.cpp:
+        * ksvg2/svg/SVGUseElement.h:
+        * ksvg2/svg/SVGUseElement.idl:
+        * ksvg2/svg/SVGViewElement.cpp:
+        * ksvg2/svg/SVGViewElement.h:
+        * ksvg2/svg/SVGZoomAndPan.cpp:
+        * ksvg2/svg/SVGZoomAndPan.h:
+        * ksvg2/svg/svgtags.in:
+        * loader/Cache.cpp:
+        (WebCore::createResource):
+        (WebCore::Cache::getStatistics):
+        * loader/Cache.h:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::createImage):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::):
+        * loader/CachedResourceClient.h:
+        * loader/CachedXBLDocument.cpp:
+        * loader/CachedXBLDocument.h:
+        * loader/CachedXSLStyleSheet.cpp:
+        * loader/CachedXSLStyleSheet.h:
+        * loader/DocLoader.cpp:
+        * loader/DocLoader.h:
+        * page/DOMWindow.idl:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::selectCursor):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        * page/PageState.cpp:
+        (WebCore::PageState::PageState):
+        (WebCore::PageState::restore):
+        * platform/MimeTypeRegistry.cpp:
+        (WebCore::initialiseSupportedNonImageMimeTypes):
+        * platform/graphics/FloatPoint3D.cpp:
+        * platform/graphics/FloatPoint3D.h:
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::renderSubtreeToImage):
+        * platform/graphics/svg/SVGImage.cpp:
+        * platform/graphics/svg/SVGImage.h:
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        * platform/graphics/svg/SVGPaintServer.cpp:
+        * platform/graphics/svg/SVGPaintServer.h:
+        * platform/graphics/svg/SVGPaintServerGradient.cpp:
+        * platform/graphics/svg/SVGPaintServerGradient.h:
+        * platform/graphics/svg/SVGPaintServerLinearGradient.cpp:
+        * platform/graphics/svg/SVGPaintServerLinearGradient.h:
+        * platform/graphics/svg/SVGPaintServerPattern.cpp:
+        * platform/graphics/svg/SVGPaintServerPattern.h:
+        * platform/graphics/svg/SVGPaintServerRadialGradient.cpp:
+        * platform/graphics/svg/SVGPaintServerRadialGradient.h:
+        * platform/graphics/svg/SVGPaintServerSolid.cpp:
+        * platform/graphics/svg/SVGPaintServerSolid.h:
+        * platform/graphics/svg/SVGResource.cpp:
+        * platform/graphics/svg/SVGResource.h:
+        * platform/graphics/svg/SVGResourceClipper.cpp:
+        * platform/graphics/svg/SVGResourceClipper.h:
+        * platform/graphics/svg/SVGResourceFilter.cpp:
+        * platform/graphics/svg/SVGResourceFilter.h:
+        * platform/graphics/svg/SVGResourceMarker.cpp:
+        * platform/graphics/svg/SVGResourceMarker.h:
+        * platform/graphics/svg/SVGResourceMasker.cpp:
+        * platform/graphics/svg/SVGResourceMasker.h:
+        * platform/graphics/svg/cg/CgSupport.cpp:
+        * platform/graphics/svg/cg/CgSupport.h:
+        * platform/graphics/svg/cg/RenderPathCg.cpp:
+        * platform/graphics/svg/cg/SVGPaintServerCg.cpp:
+        * platform/graphics/svg/cg/SVGPaintServerGradientCg.cpp:
+        * platform/graphics/svg/cg/SVGPaintServerPatternCg.cpp:
+        * platform/graphics/svg/cg/SVGPaintServerSolidCg.cpp:
+        * platform/graphics/svg/cg/SVGResourceClipperCg.cpp:
+        * platform/graphics/svg/cg/SVGResourceFilterCg.mm:
+        * platform/graphics/svg/cg/SVGResourceMaskerCg.mm:
+        * platform/graphics/svg/filters/SVGDistantLightSource.h:
+        * platform/graphics/svg/filters/SVGFEBlend.cpp:
+        * platform/graphics/svg/filters/SVGFEBlend.h:
+        * platform/graphics/svg/filters/SVGFEColorMatrix.cpp:
+        * platform/graphics/svg/filters/SVGFEColorMatrix.h:
+        * platform/graphics/svg/filters/SVGFEComponentTransfer.cpp:
+        * platform/graphics/svg/filters/SVGFEComponentTransfer.h:
+        * platform/graphics/svg/filters/SVGFEComposite.cpp:
+        * platform/graphics/svg/filters/SVGFEComposite.h:
+        * platform/graphics/svg/filters/SVGFEConvolveMatrix.cpp:
+        * platform/graphics/svg/filters/SVGFEConvolveMatrix.h:
+        * platform/graphics/svg/filters/SVGFEDiffuseLighting.cpp:
+        * platform/graphics/svg/filters/SVGFEDiffuseLighting.h:
+        * platform/graphics/svg/filters/SVGFEDisplacementMap.cpp:
+        * platform/graphics/svg/filters/SVGFEDisplacementMap.h:
+        * platform/graphics/svg/filters/SVGFEFlood.cpp:
+        * platform/graphics/svg/filters/SVGFEFlood.h:
+        * platform/graphics/svg/filters/SVGFEGaussianBlur.cpp:
+        * platform/graphics/svg/filters/SVGFEGaussianBlur.h:
+        * platform/graphics/svg/filters/SVGFEImage.cpp:
+        * platform/graphics/svg/filters/SVGFEImage.h:
+        * platform/graphics/svg/filters/SVGFEMerge.cpp:
+        * platform/graphics/svg/filters/SVGFEMerge.h:
+        * platform/graphics/svg/filters/SVGFEMorphology.cpp:
+        * platform/graphics/svg/filters/SVGFEMorphology.h:
+        * platform/graphics/svg/filters/SVGFEOffset.cpp:
+        * platform/graphics/svg/filters/SVGFEOffset.h:
+        * platform/graphics/svg/filters/SVGFESpecularLighting.cpp:
+        * platform/graphics/svg/filters/SVGFESpecularLighting.h:
+        * platform/graphics/svg/filters/SVGFETile.h:
+        * platform/graphics/svg/filters/SVGFETurbulence.cpp:
+        * platform/graphics/svg/filters/SVGFETurbulence.h:
+        * platform/graphics/svg/filters/SVGFilterEffect.cpp:
+        * platform/graphics/svg/filters/SVGFilterEffect.h:
+        * platform/graphics/svg/filters/SVGLightSource.cpp:
+        * platform/graphics/svg/filters/SVGLightSource.h:
+        * platform/graphics/svg/filters/SVGPointLightSource.h:
+        * platform/graphics/svg/filters/SVGSpotLightSource.h:
+        * platform/graphics/svg/filters/cg/SVGFEBlendCg.mm:
+        * platform/graphics/svg/filters/cg/SVGFEColorMatrixCg.mm:
+        * platform/graphics/svg/filters/cg/SVGFEComponentTransferCg.mm:
+        * platform/graphics/svg/filters/cg/SVGFECompositeCg.mm:
+        * platform/graphics/svg/filters/cg/SVGFEDiffuseLightingCg.mm:
+        * platform/graphics/svg/filters/cg/SVGFEDisplacementMapCg.mm:
+        * platform/graphics/svg/filters/cg/SVGFEFloodCg.mm:
+        * platform/graphics/svg/filters/cg/SVGFEGaussianBlurCg.mm:
+        * platform/graphics/svg/filters/cg/SVGFEHelpersCg.h:
+        * platform/graphics/svg/filters/cg/SVGFEHelpersCg.mm:
+        * platform/graphics/svg/filters/cg/SVGFEImageCg.mm:
+        * platform/graphics/svg/filters/cg/SVGFEMergeCg.mm:
+        * platform/graphics/svg/filters/cg/SVGFEOffsetCg.mm:
+        * platform/graphics/svg/filters/cg/SVGFESpecularLightingCg.mm:
+        * platform/graphics/svg/filters/cg/SVGFETileCg.mm:
+        * platform/graphics/svg/filters/cg/SVGFilterEffectCg.mm:
+        * platform/graphics/svg/qt/SVGPaintServerGradientQt.cpp:
+        * platform/graphics/svg/qt/SVGPaintServerLinearGradientQt.cpp:
+        * platform/graphics/svg/qt/SVGPaintServerPatternQt.cpp:
+        * platform/graphics/svg/qt/SVGPaintServerQt.cpp:
+        * platform/graphics/svg/qt/SVGPaintServerRadialGradientQt.cpp:
+        * platform/graphics/svg/qt/SVGPaintServerSolidQt.cpp:
+        * platform/graphics/svg/qt/SVGResourceClipperQt.cpp:
+        * platform/graphics/svg/qt/SVGResourceFilterQt.cpp:
+        * platform/graphics/svg/qt/SVGResourceMaskerQt.cpp:
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::absoluteImageURL):
+        (WebCore::HitTestResult::absoluteLinkURL):
+        (WebCore::HitTestResult::isLiveLink):
+        * rendering/RenderForeignObject.cpp:
+        * rendering/RenderForeignObject.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::isTransparent):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock):
+        * rendering/RenderObject.h:
+        * rendering/RenderPath.cpp:
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGBlock.cpp:
+        * rendering/RenderSVGBlock.h:
+        * rendering/RenderSVGContainer.cpp:
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGGradientStop.cpp:
+        * rendering/RenderSVGGradientStop.h:
+        * rendering/RenderSVGHiddenContainer.cpp:
+        * rendering/RenderSVGHiddenContainer.h:
+        * rendering/RenderSVGImage.cpp:
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGInline.cpp:
+        * rendering/RenderSVGInline.h:
+        * rendering/RenderSVGInlineText.cpp:
+        * rendering/RenderSVGInlineText.h:
+        * rendering/RenderSVGTSpan.cpp:
+        * rendering/RenderSVGTSpan.h:
+        * rendering/RenderSVGText.cpp:
+        * rendering/RenderSVGText.h:
+        * rendering/RenderStyle.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::~StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        (WebCore::RenderStyle::RenderStyle):
+        (WebCore::RenderStyle::inheritFrom):
+        (WebCore::RenderStyle::operator==):
+        (WebCore::RenderStyle::inheritedNotEqual):
+        (WebCore::RenderStyle::diff):
+        * rendering/RenderStyle.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setStyle):
+        (WebCore::RenderText::setTextInternal):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        (WebCore::externalRepresentation):
+        * rendering/SVGInlineFlowBox.cpp:
+        * rendering/SVGInlineFlowBox.h:
+        * rendering/SVGRenderTreeAsText.cpp:
+        * rendering/SVGRenderTreeAsText.h:
+        * rendering/SVGRootInlineBox.cpp:
+        * rendering/SVGRootInlineBox.h:
+        * rendering/bidi.cpp:
+        (WebCore::shouldPreserveNewline):
+        (WebCore::RenderBlock::findNextLineBreak):
+        * webcore-base.bkl:
+        * xml/NativeXPathNSResolver.cpp:
+        * xml/NativeXPathNSResolver.h:
+        * xml/XPathEvaluator.cpp:
+        * xml/XPathEvaluator.h:
+        * xml/XPathExpression.cpp:
+        * xml/XPathExpression.h:
+        * xml/XPathExpressionNode.cpp:
+        * xml/XPathExpressionNode.h:
+        * xml/XPathFunctions.cpp:
+        * xml/XPathFunctions.h:
+        * xml/XPathGrammar.y:
+        * xml/XPathNSResolver.cpp:
+        * xml/XPathNSResolver.h:
+        * xml/XPathNamespace.cpp:
+        * xml/XPathNamespace.h:
+        * xml/XPathParser.cpp:
+        * xml/XPathParser.h:
+        * xml/XPathPath.cpp:
+        * xml/XPathPath.h:
+        * xml/XPathPredicate.cpp:
+        * xml/XPathPredicate.h:
+        * xml/XPathResult.cpp:
+        * xml/XPathResult.h:
+        * xml/XPathStep.cpp:
+        * xml/XPathStep.h:
+        * xml/XPathUtil.cpp:
+        * xml/XPathUtil.h:
+        * xml/XPathValue.cpp:
+        * xml/XPathValue.h:
+        * xml/XPathVariableReference.cpp:
+        * xml/XPathVariableReference.h:
+        * xml/XSLImportRule.cpp:
+        * xml/XSLImportRule.h:
+        * xml/XSLStyleSheet.cpp:
+        * xml/XSLStyleSheet.h:
+        * xml/XSLTProcessor.cpp:
+        * xml/XSLTProcessor.h:
+
 2007-02-25  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by David Hyatt.

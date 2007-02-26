@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGTitleElement.h"
 
 #include "Document.h"
@@ -56,4 +56,4 @@ void SVGTitleElement::childrenChanged()
 }
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)

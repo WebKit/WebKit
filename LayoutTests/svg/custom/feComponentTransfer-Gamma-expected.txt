@@ -1,8 +1,4 @@
 KRenderingPaintServer {id="MyGradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#00FF00), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}
-KCanvasResource {id="Identity" [type=FILTER]  [effects=[[type=COMPONENT-TRANSFER]  [subregion="at (0,0) size 650x420"] [red func=[type=IDENTITY]] [green func=[type=IDENTITY]] [blue func=[type=IDENTITY]] [alpha func=[type=IDENTITY]]]]}
-KCanvasResource {id="GammaBlank" [type=FILTER]  [effects=[[type=COMPONENT-TRANSFER]  [subregion="at (0,0) size 650x420"] [red func=[type=IDENTITY]] [green func=[type=GAMMA] [amplitude=1.00] [exponent=1.00] [offset=0.00]] [blue func=[type=IDENTITY]] [alpha func=[type=IDENTITY]]]]}
-KCanvasResource {id="GammaFull" [type=FILTER]  [effects=[[type=COMPONENT-TRANSFER]  [subregion="at (0,0) size 650x420"] [red func=[type=IDENTITY]] [green func=[type=GAMMA] [amplitude=1.00] [exponent=0.50] [offset=0.00]] [blue func=[type=IDENTITY]] [alpha func=[type=IDENTITY]]]]}
-KCanvasResource {id="GammaOrd" [type=FILTER]  [effects=[[type=COMPONENT-TRANSFER]  [subregion="at (0,0) size 650x420"] [red func=[type=IDENTITY]] [green func=[type=GAMMA] [amplitude=1.00] [exponent=2.00] [offset=0.00]] [blue func=[type=IDENTITY]] [alpha func=[type=IDENTITY]]]]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     RenderSVGContainer {svg} at (0.83,0.83) size 1081.67x698.33

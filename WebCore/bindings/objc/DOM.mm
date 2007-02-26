@@ -65,7 +65,7 @@
 #import <objc/objc-class.h>
 #import <wtf/HashMap.h>
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #import "SVGDocument.h"
 #import "SVGElement.h"
 #import "SVGNames.h"
@@ -176,17 +176,20 @@ static void createElementClassMap()
     addElementClass(HTMLNames::trTag, [DOMHTMLTableRowElement class]);
     addElementClass(HTMLNames::ulTag, [DOMHTMLUListElement class]);
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     addElementClass(SVGNames::aTag, [DOMSVGAElement class]);
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     addElementClass(SVGNames::animateTag, [DOMSVGAnimateElement class]);
     addElementClass(SVGNames::animateColorTag, [DOMSVGAnimateColorElement class]);
     addElementClass(SVGNames::animateTransformTag, [DOMSVGAnimateTransformElement class]);
+#endif
     addElementClass(SVGNames::circleTag, [DOMSVGCircleElement class]);
     addElementClass(SVGNames::clipPathTag, [DOMSVGClipPathElement class]);
     addElementClass(SVGNames::cursorTag, [DOMSVGCursorElement class]);
     addElementClass(SVGNames::defsTag, [DOMSVGDefsElement class]);
     addElementClass(SVGNames::descTag, [DOMSVGDescElement class]);
     addElementClass(SVGNames::ellipseTag, [DOMSVGEllipseElement class]);
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     addElementClass(SVGNames::feBlendTag, [DOMSVGFEBlendElement class]);
     addElementClass(SVGNames::feColorMatrixTag, [DOMSVGFEColorMatrixElement class]);
     addElementClass(SVGNames::feComponentTransferTag, [DOMSVGFEComponentTransferElement class]);
@@ -211,6 +214,7 @@ static void createElementClassMap()
     addElementClass(SVGNames::feTurbulenceTag, [DOMSVGFETurbulenceElement class]);
     addElementClass(SVGNames::filterTag, [DOMSVGFilterElement class]);
     addElementClass(SVGNames::foreignObjectTag, [DOMSVGForeignObjectElement class]);
+#endif
     addElementClass(SVGNames::gTag, [DOMSVGGElement class]);
     addElementClass(SVGNames::imageTag, [DOMSVGImageElement class]);
     addElementClass(SVGNames::lineTag, [DOMSVGLineElement class]);
@@ -235,7 +239,9 @@ static void createElementClassMap()
     addElementClass(SVGNames::titleTag, [DOMSVGTitleElement class]);
     addElementClass(SVGNames::trefTag, [DOMSVGTRefElement class]);
     addElementClass(SVGNames::tspanTag, [DOMSVGTSpanElement class]);
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     addElementClass(SVGNames::useTag, [DOMSVGUseElement class]);
+#endif
     addElementClass(SVGNames::viewTag, [DOMSVGViewElement class]);
 #endif
 }
@@ -303,7 +309,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
         case WebCore::Node::ELEMENT_NODE:
             if (impl->isHTMLElement())
                 wrapperClass = WebCore::elementClass(static_cast<WebCore::HTMLElement*>(impl)->tagQName(), [DOMHTMLElement class]);
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
             else if (impl->isSVGElement())
                 wrapperClass = WebCore::elementClass(static_cast<WebCore::SVGElement*>(impl)->tagQName(), [DOMSVGElement class]);
 #endif
@@ -334,7 +340,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
         case WebCore::Node::DOCUMENT_NODE:
             if (static_cast<WebCore::Document*>(impl)->isHTMLDocument())
                 wrapperClass = [DOMHTMLDocument class];
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
             else if (static_cast<WebCore::Document*>(impl)->isSVGDocument())
                 wrapperClass = [DOMSVGDocument class];
 #endif

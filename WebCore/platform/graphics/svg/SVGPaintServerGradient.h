@@ -26,7 +26,7 @@
 #ifndef SVGPaintServerGradient_h
 #define SVGPaintServerGradient_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "AffineTransform.h"
 #include "Color.h"

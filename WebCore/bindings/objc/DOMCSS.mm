@@ -45,7 +45,7 @@
 #import "StyleSheet.h"
 #import <objc/objc-class.h>
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #import "DOMSVGColor.h"
 #import "DOMSVGPaint.h"
 #endif
@@ -189,7 +189,7 @@
             wrapperClass = [DOMCSSValue class];
             break;
         case DOM_CSS_CUSTOM:
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
             if (impl->isSVGPaint())
                 wrapperClass = [DOMSVGPaint class];
             else if (impl->isSVGColor())

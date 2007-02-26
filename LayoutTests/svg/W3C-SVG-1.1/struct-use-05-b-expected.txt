@@ -17,10 +17,6 @@ layer at (0,0) size 480x360
             RenderSVGGradientStop {stop} at (0,0) size 0x0
             RenderSVGGradientStop {stop} at (0,0) size 0x0
             RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderSVGContainer {use} at (0,0) size 0x0
-        RenderSVGContainer {use} at (0,0) size 0x0
-        RenderSVGContainer {use} at (0,0) size 0x0
-        RenderSVGContainer {use} at (0,0) size 0x0
       RenderSVGText {text} at (240,35) size 480x28
         RenderSVGInlineText {#text} at (-200,-22) size 400x28
           text run at (-200,-22) width 400: "External references and computed values"

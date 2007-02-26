@@ -24,7 +24,7 @@
  */
 
 module svg {
-    interface [Conditional=SVG] SVGElementInstanceList {
+    interface [Conditional=SVG&SVG_EXPERIMENTAL_FEATURES] SVGElementInstanceList {
         readonly attribute unsigned long length;
 
         SVGElementInstance item(in unsigned long index);

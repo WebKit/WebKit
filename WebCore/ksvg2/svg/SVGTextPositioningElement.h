@@ -22,7 +22,7 @@
 
 #ifndef SVGTextPositioningElement_h
 #define SVGTextPositioningElement_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "SVGTextContentElement.h"
 
@@ -50,7 +50,7 @@ namespace WebCore
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif
 
 // vim:ts=4:noet

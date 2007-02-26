@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFEBlendElement.h"
 
 #include "SVGResourceFilter.h"
@@ -82,5 +82,5 @@ SVGFEBlend* SVGFEBlendElement::filterEffect() const
 }
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 

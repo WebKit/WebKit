@@ -22,7 +22,7 @@
 
 #ifndef SVGStylable_h
 #define SVGStylable_h
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 namespace WebCore {
 
@@ -43,7 +43,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGStylable_h
 
 // vim:ts=4:noet

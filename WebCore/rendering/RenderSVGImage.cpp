@@ -23,7 +23,7 @@
 
 #include "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "RenderSVGImage.h"
 
 #include "Attr.h"
@@ -145,14 +145,18 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     AtomicString clipperId(SVGURIReference::getTarget(svgStyle->clipPath()));
     AtomicString maskerId(SVGURIReference::getTarget(svgStyle->maskElement()));
 
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     SVGResourceFilter* filter = getFilterById(document(), filterId);
+#endif
     SVGResourceClipper* clipper = getClipperById(document(), clipperId);
     SVGResourceMasker* masker = getMaskerById(document(), maskerId);
 
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     if (filter)
         filter->prepareFilter(paintInfo.context, boundingBox);
     else if (!filterId.isEmpty())
         svgElement->document()->accessSVGExtensions()->addPendingResource(filterId, styledElement);
+#endif
 
     if (clipper) {
         clipper->addClient(styledElement);
@@ -189,8 +193,10 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
         }
     }
 
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     if (filter)
         filter->applyFilter(paintInfo.context, boundingBox);
+#endif
 
     if (opacity < 1.0f)
         paintInfo.context->endTransparencyLayer();
@@ -238,10 +244,12 @@ IntRect RenderSVGImage::getAbsoluteRepaintRect()
     FloatRect repaintRect = relativeBBox(true);
     repaintRect = absoluteTransform().mapRect(repaintRect);
 
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     // Filters can expand the bounding box
     SVGResourceFilter* filter = getFilterById(document(), SVGURIReference::getTarget(style()->svgStyle()->filter()));
     if (filter)
         repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
+#endif
 
     if (!repaintRect.isEmpty())
         repaintRect.inflate(1); // inflate 1 pixel for antialiasing
@@ -262,4 +270,4 @@ AffineTransform RenderSVGImage::translationForAttributes()
 
 }
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)

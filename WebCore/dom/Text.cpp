@@ -28,9 +28,9 @@
 #include "ExceptionCode.h"
 #include "RenderText.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "RenderSVGInlineText.h"
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 
 namespace WebCore {
 
@@ -155,10 +155,10 @@ bool Text::rendererIsNeeded(RenderStyle *style)
 
 RenderObject *Text::createRenderer(RenderArena *arena, RenderStyle *style)
 {
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
     if (parentNode()->isSVGElement())
         return new (arena) RenderSVGInlineText(this, str);
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
     
     return new (arena) RenderText(this, str);
 }

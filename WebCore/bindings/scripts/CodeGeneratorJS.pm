@@ -260,7 +260,11 @@ sub GenerateHeader
     push(@headerContent, "\n#ifndef $className" . "_H");
     push(@headerContent, "\n#define $className" . "_H\n\n");
 
-    push(@headerContent, "#ifdef ${conditional}_SUPPORT\n\n") if $conditional;
+    my $conditionalString;
+    if ($conditional) {
+        $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+        push(@headerContent, "\n#if ${conditionalString}\n\n");
+    }
 
     if (exists $dataNode->extendedAttributes->{"LegacyParent"}) {
         push(@headerContent, GetLegacyHeaderIncludes($dataNode->extendedAttributes->{"LegacyParent"}));
@@ -488,7 +492,7 @@ sub GenerateHeader
 
     push(@headerContent, "};\n\n");
     push(@headerContent, "}\n\n");
-    push(@headerContent, "#endif // ${conditional}_SUPPORT\n\n") if $conditional;
+    push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditional;
     push(@headerContent, "#endif\n");
 }
 
@@ -510,7 +514,11 @@ sub GenerateImplementation
     # - Add default header template
     @implContentHeader = split("\r", $headerTemplate);
     push(@implContentHeader, "\n#include \"config.h\"\n\n");
-    push(@implContentHeader, "#ifdef ${conditional}_SUPPORT\n\n") if $conditional;
+    my $conditionalString;
+    if ($conditional) {
+        $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+        push(@implContentHeader, "\n#if ${conditionalString}\n\n");
+    }
 
     if ($className =~ /^JSSVG/) {
         push(@implContentHeader, "#include \"Document.h\"\n");
@@ -1117,7 +1125,7 @@ sub GenerateImplementation
 
     push(@implContent, "\n}\n");
 
-    push(@implContent, "\n#endif // ${conditional}_SUPPORT\n") if $conditional;
+    push(@implContent, "\n#endif // ${conditionalString}\n") if $conditional;
 }
 
 sub GenerateImplementationFunctionCall()

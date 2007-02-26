@@ -23,7 +23,7 @@
 #ifndef SVGPreserveAspectRatio_h
 #define SVGPreserveAspectRatio_h
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #include "Shared.h"
 
@@ -81,7 +81,7 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 #endif // SVGPreserveAspectRatio_h
 
 // vim:ts=4:noet

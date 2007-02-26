@@ -21,7 +21,7 @@
 */
 
 #include "config.h"
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 #include "SVGZoomAndPan.h"
 
 #include "MappedAttribute.h"
@@ -65,5 +65,5 @@ bool SVGZoomAndPan::parseMappedAttribute(MappedAttribute* attr)
 }
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
 

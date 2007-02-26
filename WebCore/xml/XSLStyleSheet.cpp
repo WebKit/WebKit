@@ -22,7 +22,7 @@
 #include "config.h"
 #include "XSLStyleSheet.h"
 
-#ifdef XSLT_SUPPORT
+#if ENABLE(XSLT)
 
 #include "CString.h"
 #include "DocLoader.h"
@@ -261,4 +261,4 @@ void XSLStyleSheet::markAsProcessed()
 
 } // namespace WebCore
 
-#endif // XSLT_SUPPORT
+#endif // ENABLE(XSLT)

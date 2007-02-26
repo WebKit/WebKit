@@ -26,7 +26,7 @@
  
 #import "config.h"
 
-#ifdef SVG_SUPPORT
+#if ENABLE(SVG)
 
 #import "DOMSVGPathSegInternal.h"
 
@@ -151,4 +151,4 @@
 
 @end
 
-#endif // SVG_SUPPORT
+#endif // ENABLE(SVG)
