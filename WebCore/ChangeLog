@@ -1,3 +1,15 @@
+2007-02-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Fix for rdar://problem/5021127 
+
+        Need to add null check to node -- original Obj-C didn't need 
+        the null check due to the Obj-C null messaging semantics
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::shouldInsertFragment):
+
 2007-02-26  David Hyatt  <hyatt@apple.com>
 
         Make text files render using white-space: pre-wrap instead of white-space: pre.
