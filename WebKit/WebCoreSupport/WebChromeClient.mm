@@ -86,7 +86,9 @@ FloatRect WebChromeClient::pageRect()
 
 float WebChromeClient::scaleFactor()
 {
-    return [[m_webView window] userSpaceScaleFactor];
+    if (NSWindow *window = [m_webView window])
+        return [window  userSpaceScaleFactor];
+    return [[NSScreen mainScreen] userSpaceScaleFactor];
 }
 
 void WebChromeClient::focus()

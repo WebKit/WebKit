@@ -1,3 +1,14 @@
+2007-02-27  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=12906
+          REGRESSION: Canvas is pixelated when the page is opened in a background tab
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::scaleFactor): If the view is not in a window, use the main
+        screen's scale factor as a best guess.
+
 2007-02-26  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin and Geoff
