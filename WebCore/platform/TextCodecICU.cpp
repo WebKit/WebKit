@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -183,6 +183,8 @@ void TextCodecICU::createICUConverter() const
     if (err == U_AMBIGUOUS_ALIAS_WARNING)
         LOG_ERROR("ICU ambiguous alias warning for encoding: %s", m_encoding.name());
 #endif
+    if (m_converterICU)
+        ucnv_setFallback(m_converterICU, TRUE);
 }
 
 String TextCodecICU::decode(const char* bytes, size_t length, bool flush)
