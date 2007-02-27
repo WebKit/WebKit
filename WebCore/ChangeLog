@@ -1,3 +1,23 @@
+2007-02-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/4827378>: Canvas with large height 
+        uses lots of memory, computer almost stops responding
+         
+        Put cap on maximum area of canvas, size is similar too the 
+        maximum size allowed by firefox (firefox seems to to cut off 
+        at area == 32767 * 9358). 
+
+        Also protect renderer against the possibility of a null context
+        (this was triggering a CG warning)
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createDrawingContext):
+           Apply maximum canvas area
+        (WebCore::HTMLCanvasElement::createPlatformImage):
+           Protect against null CG Context
+
 2007-02-26  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Antti Koivisto.

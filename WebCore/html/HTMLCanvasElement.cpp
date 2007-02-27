@@ -49,6 +49,11 @@ using namespace HTMLNames;
 const int defaultWidth = 300;
 const int defaultHeight = 150;
 
+// Firefox limits width/height to 32767 pixels, but slows down dramatically before it 
+// reaches that limit we limit by area instead, giving us larger max dimensions, in exchange 
+// for reduce maximum canvas size.
+const float maxCanvasArea = 32768 * 8192; // Maximum canvas area in CSS pixels
+
 HTMLCanvasElement::HTMLCanvasElement(Document* doc)
     : HTMLElement(canvasTag, doc)
     , m_size(defaultWidth, defaultHeight)
@@ -178,7 +183,7 @@ void HTMLCanvasElement::createDrawingContext() const
     float wf = ceilf(unscaledWidth * pageScaleFactor);
     float hf = ceilf(unscaledHeight * pageScaleFactor);
     
-    if (!(wf > 0 && wf < UINT_MAX && hf > 0 && hf < UINT_MAX))
+    if (!(wf >= 1 && hf >= 1 && wf * hf <= maxCanvasArea))
         return;
         
     unsigned w = static_cast<unsigned>(wf);
@@ -214,8 +219,14 @@ CGImageRef HTMLCanvasElement::createPlatformImage() const
     GraphicsContext* context = drawingContext();
     if (!context)
         return 0;
-    CGContextFlush(context->platformContext());
-    return CGBitmapContextCreateImage(context->platformContext());
+    
+    CGContextRef contextRef = context->platformContext();
+    if (!contextRef)
+        return 0;
+    
+    CGContextFlush(contextRef);
+    
+    return CGBitmapContextCreateImage(contextRef);
 }
 
 #endif
