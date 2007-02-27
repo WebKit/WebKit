@@ -230,7 +230,8 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
         strokePaintServer->draw(paintInfo.context, this, ApplyToStrokeTargetType);
     }
 
-    m_markerBounds = drawMarkersIfNeeded(paintInfo.context, paintInfo.rect, m_path);
+    if (styledElement->supportsMarkers())
+        m_markerBounds = drawMarkersIfNeeded(paintInfo.context, paintInfo.rect, m_path);
 
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     // actually apply the filter

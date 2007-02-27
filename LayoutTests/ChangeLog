@@ -1,3 +1,16 @@
+2007-02-27  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        Add test for:
+        http://bugs.webkit.org/show_bug.cgi?id=12905
+        Not all svg shapes should support markers
+
+        * svg/custom/shapes-supporting-markers-expected.checksum: Added.
+        * svg/custom/shapes-supporting-markers-expected.png: Added.
+        * svg/custom/shapes-supporting-markers-expected.txt: Added.
+        * svg/custom/shapes-supporting-markers.svg: Added.
+
 2007-02-27  Adele Peterson  <adele@apple.com>
 
         Reviewed by Lars.

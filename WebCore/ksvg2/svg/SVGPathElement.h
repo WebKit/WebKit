@@ -102,6 +102,8 @@ namespace WebCore
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual Path toPathData() const;
 
+        virtual bool supportsMarkers() const { return true; }
+
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 

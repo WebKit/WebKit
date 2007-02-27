@@ -1,3 +1,23 @@
+2007-02-27  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12905
+        Not all svg shapes should support markers
+
+        Restrict marker usage to svg shapes polyline, polygon, line and path.
+
+        * ksvg2/svg/SVGLineElement.h:
+        (WebCore::SVGLineElement::supportsMarkers):
+        * ksvg2/svg/SVGPathElement.h:
+        (WebCore::SVGPathElement::supportsMarkers):
+        * ksvg2/svg/SVGPolyElement.h:
+        (WebCore::SVGPolyElement::supportsMarkers):
+        * ksvg2/svg/SVGStyledElement.h:
+        (WebCore::SVGStyledElement::supportsMarkers):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+
 2007-02-26  Adele Peterson  <adele@apple.com>
 
         Reviewed by Lars.
