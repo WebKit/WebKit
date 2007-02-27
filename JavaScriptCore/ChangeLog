@@ -1,3 +1,11 @@
+2007-02-26  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Rename *_SUPPORT defines to ENABLE_*.
+
+        * jscore.bkl:
+
 2007-02-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Lars.

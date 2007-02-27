@@ -61,7 +61,7 @@ JavaScriptCore Bakefile project file.
             <define>USE_CONSERVATIVE_GC=1</define>
         </if>
 
-        <define>XSLT_SUPPORT=1</define>
+        <define>ENABLE_XSLT=1</define>
 
         <if cond="FORMAT=='gnu'">
             <!-- FIXME: we need proper configure checks -->
