@@ -1,3 +1,15 @@
+2007-02-26  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12899
+          Ordered lists not updating dynamically with new styles
+
+        * fast/lists/list-style-type-dynamic-change-expected.checksum: Added.
+        * fast/lists/list-style-type-dynamic-change-expected.png: Added.
+        * fast/lists/list-style-type-dynamic-change-expected.txt: Added.
+        * fast/lists/list-style-type-dynamic-change.html: Added.
+
 2007-02-26  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

@@ -1,3 +1,16 @@
+2007-02-26  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12899
+          Ordered lists not updating dynamically with new styles
+
+        Test: fast/lists/list-style-type-dynamic-change.html
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::setStyle): Made changing the marker type trigger
+        updating of the marker.
+
 2007-02-26  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.
