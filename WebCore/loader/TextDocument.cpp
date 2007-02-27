@@ -119,6 +119,8 @@ bool TextTokenizer::write(const SegmentedString& s, bool appendData)
         rootElement->appendChild(body, ec);
 
         RefPtr<Element> preElement = m_doc->createElementNS(xhtmlNamespaceURI, "pre", ec);
+        preElement->setAttribute("style", "white-space: pre-wrap;", ec);
+
         body->appendChild(preElement, ec);
         
         m_preElement = preElement.get();
