@@ -1,3 +1,15 @@
+2007-02-28  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/4985524> Problem with Blot and ToT WebKit (decoding WebCoreScrollView)
+
+        References to WebCoreScrollView as a subview of a WebHTMLView may be present in some NIB
+        files, so NSUnarchiver must be still able to look up the WebCoreScrollView class.
+
+        * WebKit.exp: Export WebCoreScrollView symbol.
+        * WebView/WebHTMLView.mm: Add empty WebCoreScrollView class.
+
 2007-02-27  Adam Roben  <aroben@apple.com>
 
         Reviewed by Beth.

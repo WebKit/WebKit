@@ -197,10 +197,20 @@ extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFramework
 #define MIN_BOLD_WEIGHT 9
 #define STANDARD_BOLD_WEIGHT 10
 
+
+// <rdar://problem/4985524> References to WebCoreScrollView as a subview of a WebHTMLView may be present
+// in some NIB files, so NSUnarchiver must be still able to look up this now-unused class.
+@interface WebCoreScrollView : NSScrollView
+@end
+
+@implementation WebCoreScrollView
+@end
+
+
 // if YES, do the standard NSView hit test (which can't give the right result when HTML overlaps a view)
 static BOOL forceNSViewHitTest;
 
-// if YES, do the "top WebHTMLView" it test (which we'd like to do all the time but can't because of Java requirements [see bug 4349721])
+// if YES, do the "top WebHTMLView" hit test (which we'd like to do all the time but can't because of Java requirements [see bug 4349721])
 static BOOL forceWebHTMLViewHitTest;
 
 static WebHTMLView *lastHitView;
