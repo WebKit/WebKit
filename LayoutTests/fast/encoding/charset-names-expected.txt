@@ -1,0 +1,13 @@
+This tests decoding characters in various character sets.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS decode('UTF-8', '%E2%88%9A') is 'U+221A'
+PASS decode('macintosh', '%C3') is 'U+221A'
+PASS decode('MacRoman', '%C3') is 'U+221A'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
