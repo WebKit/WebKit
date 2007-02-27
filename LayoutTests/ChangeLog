@@ -1,3 +1,17 @@
+2007-02-27  Rob Buis  <buis@kde.org>
+
+        Reviewed by David Hyatt.
+
+        http://bugs.webkit.org/show_bug.cgi?id=4128
+        !important is ignored in inline styling.
+
+        Add testcase based on the one in the bug report.
+
+        * fast/css/inline-properties-important-expected.checksum: Added.
+        * fast/css/inline-properties-important-expected.png: Added.
+        * fast/css/inline-properties-important-expected.txt: Added.
+        * fast/css/inline-properties-important.html: Added.
+
 2007-02-27  Darin Adler  <darin@apple.com>
 
         - test for MacRoman encoding name alias
