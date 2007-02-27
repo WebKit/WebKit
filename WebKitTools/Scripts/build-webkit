@@ -52,7 +52,7 @@ my $productDir = productDir();
 my @options = XcodeOptions();
 my @overrideFeatureDefinesOption = ();
 
-push @overrideFeatureDefinesOption, "FEATURE_DEFINES=" if !$svgSupport;
+push @overrideFeatureDefinesOption, "FEATURE_DEFINES=ENABLE_XSLT" if !$svgSupport;
 
 # Check that all the project directories are there.
 my @projects = ("JavaScriptCore", "JavaScriptGlue", "WebCore", "WebKit");
