@@ -1,3 +1,20 @@
+2007-02-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12909
+          should use ICU, not TEC, for MacRoman decoding
+
+        * platform/TextCodecICU.cpp: (WebCore::TextCodecICU::registerEncodingNames):
+        Add "macroman" as an alias for "macintosh". We have seen that in use in mail,
+        although I'm not sure it's used on the web.
+
+        * platform/mac/mac-encodings.txt: Remove MacRoman line, which was added back
+        as part of the patch for bug 4971226. But by adding it to the this file rather
+        than the ICU codec, we get it only on Mac OS X. And long term we are trying to
+        get rid of the use of TEC entirely, so we want this file to be as empty as
+        possible.
+
 2007-02-27  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.
@@ -1004,7 +1021,7 @@
         doesn't belong to us.
         (WebCore::ResourceHandleManager::downloadTimerCallback):
 
-2007-02-23  Kevin Dcker <kdecker@apple.com>
+2007-02-23  Kevin Decker <kdecker@apple.com>
 
         Reviewed by Anders.
 

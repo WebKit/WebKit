@@ -83,6 +83,10 @@ void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)
             }
     }
 
+    // Additional aliases.
+    // Perhaps we can get these added to ICU.
+    registrar("macroman", "macintosh");
+
     // Additional aliases that historically were present in the encoding
     // table in WebKit on Macintosh that don't seem to be present in ICU.
     // Perhaps we can prove these are not used on the web and remove them.

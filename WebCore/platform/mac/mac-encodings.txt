@@ -39,7 +39,6 @@ MacJapanese: x-mac-japanese
 MacKorean: x-mac-korean
 MacRomanLatin1: x-mac-roman-latin1
 MacRomanian: x-mac-romanian
-MacRoman: macintosh, macroman, xmacroman
 MacSymbol: x-mac-symbol
 MacThai: x-mac-thai
 MacTibetan: x-mac-tibetan
