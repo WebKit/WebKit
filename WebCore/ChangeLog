@@ -1,3 +1,12 @@
+2007-02-27  Dex Deacon  <occupant4@gmail.com>
+
+        Reviewed by Darin.
+
+        Fixed the case where a BackForwardList of capacity==1 would grow without bound.
+
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::addItem):
+
 2007-02-22  Lars Naesbye Christensen  <lars@naesbye.dk>
 
         Reviewed by Maciej.

@@ -68,7 +68,8 @@ void BackForwardList::addItem(PassRefPtr<HistoryItem> prpItem)
     }
 
     // Toss the first item if the list is getting too big, as long as we're not using it
-    if (m_entries.size() == m_capacity && m_current != 0) {
+    // (or even if we are, if we only want 1 entry).
+    if (m_entries.size() == m_capacity && (m_current != 0 || m_capacity == 1)) {
         RefPtr<HistoryItem> item = m_entries[0];
         m_entries.remove(0);
         m_entryHash.remove(item);
