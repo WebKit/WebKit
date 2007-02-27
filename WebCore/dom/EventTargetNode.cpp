@@ -177,11 +177,16 @@ bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> e, ExceptionCode&, 
     
     // work out what nodes to send event to
     DeprecatedPtrList<Node> nodeChain;
-    Node *n;
-
-    for (n = this; n; n = n->eventParentNode()) {
-        n->ref();
-        nodeChain.prepend(n);
+    
+    if (inDocument()) {
+        for (Node* n = this; n; n = n->eventParentNode()) {
+            n->ref();
+            nodeChain.prepend(n);
+        } 
+    } else {
+        // if node is not in the document just send event to itself 
+        ref();
+        nodeChain.prepend(this);
     }
     
     DeprecatedPtrListIterator<Node> it(nodeChain);

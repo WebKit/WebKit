@@ -1,3 +1,16 @@
+2007-02-27  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Hyatt.
+        
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12918
+        REGRESSION: Google Finance dropdown Flickers
+        <rdar://4988039>
+
+        * fast/events/mouseout-dead-node-expected.checksum: Added.
+        * fast/events/mouseout-dead-node-expected.png: Added.
+        * fast/events/mouseout-dead-node-expected.txt: Added.
+        * fast/events/mouseout-dead-node.html: Added.
+
 2007-02-27  Geoffrey Garen  <ggaren@apple.com>
 
         Bumped up the wiggle room on this test because it's failing on the buildbot.

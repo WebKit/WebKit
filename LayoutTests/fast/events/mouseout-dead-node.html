@@ -1,0 +1,40 @@
+<body onload='test()'>
+Test that if node dies under mouse it receives mouseout event but that the event does not propagate.
+<div id=d0 style='border:2px solid red'>
+    <div onmouseout='out("FAIL")'  onmouseover='document.getElementById("d0").innerHTML ="you should see PASS below"'>
+        <div onmouseout='out("FAIL")'>
+            <span id=target1 onmouseout='out("PASS")' >
+                mouse over me
+            </span>
+        </div>
+    </div>
+</div>
+<div id=d1 style='border:2px solid blue'>
+    <div id=target2 onmouseout='out("PASS")'  onmouseover='document.getElementById("d1").innerHTML ="you should see PASS below"' >
+        mouse over me
+    </div>
+</div>
+<script>
+function out(a)
+{   
+    var xx = document.createElement("DIV");
+    xx.innerHTML = 'mouseout '+a;
+    document.body.appendChild(xx);
+}
+
+function test() {
+    if (window.eventSender) {
+        var el = document.getElementById('target1');
+        var x = el.offsetLeft+3;
+        var y = el.offsetTop+3;
+        eventSender.mouseMoveTo(x, y); 
+        eventSender.mouseUp();
+        el = document.getElementById('target2');
+        x = el.offsetLeft+3;
+        y = el.offsetTop+3;
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseUp();
+
+    }
+}
+</script>

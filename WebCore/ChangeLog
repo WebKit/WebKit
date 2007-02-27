@@ -1,3 +1,19 @@
+2007-02-27  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Hyatt.
+        
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12918
+        REGRESSION: Google Finance dropdown Flickers
+        <rdar://4988039>
+        
+        If a node dies while mouse is over it, it is still supposed to receive
+        mouseout event (wasn't case in Tiger webkit). However this event should 
+        not propagate to any other nodes. This patch matches Firefox behavior in
+        this respect.
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchGenericEvent):
+
 2007-02-27  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
