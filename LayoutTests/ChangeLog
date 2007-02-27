@@ -1,3 +1,14 @@
+2007-02-27  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Lars.
+
+        Updated test for http://bugs.webkit.org/show_bug.cgi?id=12902
+        <rdar://problem/5012679> REGRESSION: Pressing return key doesn't 
+        move caret to next line after applying a font color in GMail
+
+        * fast/frames/iframe-window-focus-expected.txt:
+        * fast/frames/iframe-window-focus.html: Updated test to include insertion of newlines.
+
 2007-02-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

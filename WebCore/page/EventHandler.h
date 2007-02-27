@@ -141,6 +141,8 @@ public:
     void dragSourceMovedTo(const PlatformMouseEvent&);
     void dragSourceEndedAt(const PlatformMouseEvent&, DragOperation);
 
+    void focusDocumentView();
+
 #if PLATFORM(MAC)
     PassRefPtr<KeyboardEvent> currentKeyboardEvent() const;
 
@@ -207,8 +209,6 @@ private:
         const PlatformMouseEvent&, Clipboard*);
 
     void freeClipboard();
-
-    void focusDocumentView();
 
     bool handleDrag(const MouseEventWithHitTestResults&);
     bool handleMouseUp(const MouseEventWithHitTestResults&);

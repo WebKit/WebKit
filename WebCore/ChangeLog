@@ -1,3 +1,18 @@
+2007-02-26  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Lars.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=12902
+        <rdar://problem/5012679> REGRESSION: Pressing return key doesn't 
+        move caret to next line after applying a font color in GMail
+
+        Test: fast/frames/iframe-window-focus-2.html
+
+        * page/EventHandler.h: Make focusDocumentView public.
+        * page/Frame.cpp: (WebCore::Frame::focusWindow): Instead of just setting the focused frame,
+          we should set also focus the document view.  The bug here was that since the subframe view
+          wasn't the first responder, the key down event was going to the wrong frame.
+
 2007-02-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

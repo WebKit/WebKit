@@ -1747,7 +1747,7 @@ void Frame::focusWindow()
     if (!tree()->parent())
         page()->chrome()->focus();
 
-    page()->focusController()->setFocusedFrame(this);
+    eventHandler()->focusDocumentView();
 }
 
 void Frame::unfocusWindow()
