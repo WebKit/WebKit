@@ -17,6 +17,7 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include <wtf/Platform.h>
 #include "EditCommandQt.h"
 
 using namespace WebCore;
