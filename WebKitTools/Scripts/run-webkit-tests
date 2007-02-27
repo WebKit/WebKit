@@ -170,7 +170,7 @@ $pixelTests = 1 if $repaintTests;
 $verbose = 1 if $testsPerDumpTool == 1;
 
 if ($shouldCheckLeaks && $testsPerDumpTool > 1000) {
-    die "Running more than 1000 tests at a time with MallocStackLogging enabled may cause a crash.\n";
+    print STDERR "\nWARNING: Running more than 1000 tests at a time with MallocStackLogging enabled may cause a crash.\n\n";
 }
 
 # Force --no-http for Qt/Linux, for now.

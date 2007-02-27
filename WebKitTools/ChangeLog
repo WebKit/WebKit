@@ -1,3 +1,10 @@
+2007-02-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Small tweak to run-webkit-tests.
+
+        * Scripts/run-webkit-tests: Allow people with lots of RAM to run more than
+        1000 MallocStackLogging tests at a time.
+
 2007-02-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Lars.
