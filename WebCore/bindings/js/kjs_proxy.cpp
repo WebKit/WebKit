@@ -43,6 +43,15 @@ KJSProxy::KJSProxy(Frame* frame)
     m_handlerLineno = 0;
 }
 
+KJSProxy::~KJSProxy()
+{
+    m_script = 0;
+    
+    // It's likely that destroying the interpreter has created a lot of garbage.
+    JSLock lock;
+    Collector::collect();
+}
+
 JSValue* KJSProxy::evaluate(const String& filename, int baseLine, const String& str, Node* n) 
 {
     // evaluate code. Returns the JS return value or 0

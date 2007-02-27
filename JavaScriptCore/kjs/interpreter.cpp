@@ -141,9 +141,6 @@ Interpreter::~Interpreter()
     }
     
     interpreterMap().remove(m_globalObject);
-
-    // It's likely that destroying the interpreter has created a lot of garbage.
-    Collector::collect();
 }
 
 JSObject* Interpreter::globalObject() const
@@ -513,11 +510,6 @@ JSObject *Interpreter::builtinTypeErrorPrototype() const
 JSObject *Interpreter::builtinURIErrorPrototype() const
 {
   return m_UriErrorPrototype;
-}
-
-bool Interpreter::collect()
-{
-  return Collector::collect();
 }
 
 void Interpreter::mark(bool)

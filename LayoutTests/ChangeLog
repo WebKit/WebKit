@@ -1,3 +1,17 @@
+2007-02-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Test for http://bugs.webkit.org/show_bug.cgi?id=12659 | <rdar://problem/4954306> 
+        JS objects not collected after closing window @ ebay.com/maps.google.com
+        
+        * fast/leaks/003-expected.txt: Added.
+        * fast/leaks/003.html: Added.
+
+        * fast/dom/gc-10.html: Bumped the wiggle room threshold on this test by 2 
+        because it's failing on my machine with the patch applied but, according 
+        to the test notes, we're still well within the margin of error.
+
 2007-02-27  Rob Buis  <buis@kde.org>
 
         Reviewed by David Hyatt.

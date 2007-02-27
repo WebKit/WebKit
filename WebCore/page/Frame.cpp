@@ -225,14 +225,15 @@ Frame::~Frame()
     --FrameCounter::count;
 #endif
 
-    if (d->m_jscript && d->m_jscript->haveInterpreter())
-        if (Window* w = static_cast<Window*>(d->m_jscript->interpreter()->globalObject()->getObject())) {
-            w->disconnectFrame();
-            // Must clear the window pointer, otherwise we will not
-            // garbage-collect collect the window (inside the call to
-            // delete d below).
-            w = 0;
-        }
+    if (d->m_jscript && d->m_jscript->haveInterpreter()) {
+        Window* volatile w = static_cast<Window*>(d->m_jscript->interpreter()->globalObject());
+        ASSERT(w);
+        w->disconnectFrame();
+        // Clear w, otherwise we will not garbage-collect collect the window 
+        // (inside the call to delete d below). w is volatile to ensure that the 
+        // compiler doesn't optimize out this operation.
+        w = 0;
+    }
 
     disconnectOwnerElement();
     

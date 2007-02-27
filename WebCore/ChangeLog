@@ -1,3 +1,34 @@
+2007-02-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Fixed http://bugs.webkit.org/show_bug.cgi?id=12659 | <rdar://problem/4954306>
+        JS objects not collected after closing window @ ebay.com/maps.google.com
+
+        Garbage collect in the KJSProxy destructor, after clearing our reference
+        to the interpreter, because that's when the interpreter has torn down fully.
+
+        (Technically speaking, we can't *prove* that we have the only reference to 
+        our interpreter, but that's how it works in practice, and manual garbage 
+        collection is just an opportunistic optimization, so it's OK for it to 
+        work in practice even if it can't be proven in theory.)
+        
+        Layout tests pass. No leaks reported.
+
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::~KJSProxy):
+        * bindings/js/kjs_proxy.h:
+        * page/Page.cpp:
+        (WebCore::Page::~Page): Merged pageDestroyed() calls. Moved debug-only
+        code to the bottom.
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame): Don't call getObject() because globalObject()
+        returns a JSObject* already, and the call can leave a pointer to the Window
+        object on the stack. Don't check for NULL because it is an invariant of
+        JavaScriptCore that no JSObject* can be NULL. Do use a volatile pointer
+        for w because the 'w = 0' assignment just screams to the compiler, "Don't
+        generate any code for me!"
+
 2007-02-27  Rob Buis  <buis@kde.org>
 
         Reviewed by David Hyatt.
