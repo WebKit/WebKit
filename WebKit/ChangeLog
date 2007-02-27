@@ -1,3 +1,17 @@
+2007-02-27  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Beth.
+
+        Fix <rdar://problem/5011905> REGRESSION: "Open Link" contextual menu
+        item appears twice
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (fixMenusToSendToOldClients): Remove the "Open Link" item from the
+        default menu items array before sending it off to Tiger Mail.
+        (WebContextMenuClient::getCustomMenuFromDefaultItems): Set the
+        representedObject on every NSMenuItem to match our old (correct) API
+        behavior.
+
 2007-02-27  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
