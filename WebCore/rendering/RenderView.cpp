@@ -54,6 +54,8 @@ RenderView::RenderView(Node* node, FrameView* view)
     m_minWidth = 0;
     m_maxWidth = 0;
 
+    setMinMaxKnown(false);
+    
     setPositioned(true); // to 0,0 :)
 
     // Create a new root layer for our layer hierarchy.
