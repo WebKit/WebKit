@@ -305,7 +305,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
 
         paintDocumentMarkers(paintInfo.context, tx, ty, styleToUse, font, true);
 
-        if (haveSelection)
+        if (haveSelection && !markedTextUsesUnderlines)
             paintSelection(paintInfo.context, tx, ty, styleToUse, font);
     }
 
