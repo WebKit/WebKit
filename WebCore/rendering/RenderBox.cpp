@@ -89,8 +89,8 @@ void RenderBox::setStyle(RenderStyle* newStyle)
 
     RenderObject::setStyle(newStyle);
 
-    // The root always paints its background/border.
-    if (isRoot())
+    // The root and the RenderView always paint their backgrounds/borders.
+    if (isRoot() || isRenderView())
         setHasBoxDecorations(true);
 
     setInline(newStyle->isDisplayInlineType());
