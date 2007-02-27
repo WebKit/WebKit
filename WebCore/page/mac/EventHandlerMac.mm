@@ -151,9 +151,12 @@ bool EventHandler::keyEvent(NSEvent *event)
 void EventHandler::focusDocumentView()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    NSView *view = m_frame->view()->getDocumentView();
-    if ([m_frame->bridge() firstResponder] != view)
-        [m_frame->bridge() makeFirstResponder:view];
+    if (FrameView* frameView = m_frame->view()) {
+        if (NSView *documentView = frameView->getDocumentView()) {
+            if ([m_frame->bridge() firstResponder] != documentView)
+                [m_frame->bridge() makeFirstResponder:documentView];
+        }
+    }
     END_BLOCK_OBJC_EXCEPTIONS;
     if (Page* page = m_frame->page())
         page->focusController()->setFocusedFrame(m_frame);
