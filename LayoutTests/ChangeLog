@@ -1,3 +1,31 @@
+2007-02-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - test cases for <rdar://problem/4946881> Recursive loop with <marker> not caught, crashes in WebCore::SVGPaintServer::draw (11244)
+        http://bugs.webkit.org/show_bug.cgi?id=11244
+
+        * svg/custom/circular-marker-reference-1-expected.checksum: Added.
+        * svg/custom/circular-marker-reference-1-expected.png: Added.
+        * svg/custom/circular-marker-reference-1-expected.txt: Added.
+        * svg/custom/circular-marker-reference-1.svg: Added.
+        * svg/custom/circular-marker-reference-2-expected.checksum: Added.
+        * svg/custom/circular-marker-reference-2-expected.png: Added.
+        * svg/custom/circular-marker-reference-2-expected.txt: Added.
+        * svg/custom/circular-marker-reference-2.svg: Added.
+        * svg/custom/circular-marker-reference-3-expected.checksum: Added.
+        * svg/custom/circular-marker-reference-3-expected.png: Added.
+        * svg/custom/circular-marker-reference-3-expected.txt: Added.
+        * svg/custom/circular-marker-reference-3.svg: Added.
+        * svg/custom/circular-marker-reference-4-expected.checksum: Added.
+        * svg/custom/circular-marker-reference-4-expected.png: Added.
+        * svg/custom/circular-marker-reference-4-expected.txt: Added.
+        * svg/custom/circular-marker-reference-4.svg: Added.
+        * svg/custom/non-circular-marker-reference-expected.checksum: Added.
+        * svg/custom/non-circular-marker-reference-expected.png: Added.
+        * svg/custom/non-circular-marker-reference-expected.txt: Added.
+        * svg/custom/non-circular-marker-reference.svg: Added.
+
 2007-02-26  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Antti Koivisto.

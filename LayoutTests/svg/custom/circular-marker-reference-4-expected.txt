@@ -1,0 +1,10 @@
+KCanvasResource {id="mark1" [type=MARKER] [angle=0.00] [ref x=4.00 y=4.00]}
+KCanvasResource {id="mark2" [type=MARKER] [angle=0.00] [ref x=4.00 y=4.00]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (235,225) size 330x150
+      RenderSVGContainer {marker} at (338.12,271.88) size 123.75x11.25
+        RenderPath {path} at (338.12,271.88) size 123.75x11.25 [stroke={[type=SOLID] [color=#000000] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [start marker=#mark2] [middle marker=#mark2] [end marker=#mark2] [data="M-5.00,-2.00L0.00,-2.00L5.00,-2.00"]
+      RenderSVGContainer {marker} at (338.12,316.88) size 123.75x11.25
+        RenderPath {path} at (338.12,316.88) size 123.75x11.25 [stroke={[type=SOLID] [color=#000000] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [start marker=#mark1] [middle marker=#mark1] [end marker=#mark1] [data="M-5.00,2.00L0.00,2.00L5.00,2.00"]
+      RenderPath {path} at (235,345) size 330x30 [stroke={[type=SOLID] [color=#000000] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [start marker=#mark1] [middle marker=#mark1] [end marker=#mark1] [data="M-5.00,2.00L0.00,2.00L5.00,2.00"]

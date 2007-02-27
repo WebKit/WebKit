@@ -65,6 +65,14 @@ void SVGResourceMarker::draw(GraphicsContext* context, const FloatRect& rect, do
     if (!m_marker)
         return;
 
+    static HashSet<SVGResourceMarker*> currentlyDrawingMarkers;
+
+    // avoid drawing circular marker references
+    if (currentlyDrawingMarkers.contains(this))
+        return;
+
+    currentlyDrawingMarkers.add(this);
+
     AffineTransform transform;
     transform.translate(x, y);
     transform.rotate(m_angle > -1 ? m_angle : angle);
@@ -95,6 +103,8 @@ void SVGResourceMarker::draw(GraphicsContext* context, const FloatRect& rect, do
     context->restore();
 
     m_cachedBounds = transform.mapRect(m_marker->getAbsoluteRepaintRect());
+
+    currentlyDrawingMarkers.remove(this);
 }
 
 FloatRect SVGResourceMarker::cachedBounds() const

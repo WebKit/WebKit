@@ -1,5 +1,16 @@
 2007-02-26  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Oliver.
+
+        - fixed <rdar://problem/4946881> Recursive loop with <marker> not caught, crashes in WebCore::SVGPaintServer::draw (11244)
+        http://bugs.webkit.org/show_bug.cgi?id=11244
+
+        * platform/graphics/svg/SVGResourceMarker.cpp:
+        (WebCore::SVGResourceMarker::draw): Use a HashSet to guard against
+        reference cycles.
+
+2007-02-26  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Kevin McCullough.
 
         - fix Qt build for earlier SVG changes.
