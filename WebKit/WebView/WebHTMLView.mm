@@ -5128,22 +5128,16 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 {
-    NSRect allScreensFrame = NSZeroRect;
     NSArray *screens = [NSScreen screens];
-    unsigned int screenCount = [screens count];
-    unsigned int screenIndex;
     
-    // Linear search here is warranted by the fact that nobody will ever have enough screens to make this slow
-    for (screenIndex = 0; screenIndex < screenCount; screenIndex++) {
-        NSScreen *screen = [screens objectAtIndex:screenIndex];
-        NSRect screenFrame = [screen frame];
-        if (NSEqualRects(allScreensFrame, NSZeroRect))
-            allScreensFrame = screenFrame;
-        else
-            allScreensFrame = NSUnionRect(allScreensFrame, screenFrame);
+    if ([screens count] == 0) {
+        // You could theoretically get here if running with no monitor, in which case it doesn't matter
+        // much where the "on-screen" point is.
+        return CGPointMake(point.x, point.y);
     }
     
-    return CGPointMake(point.x, NSMaxY(allScreensFrame) - point.y);
+    // Flip the y coordinate from the top of the menu bar screen -- see 4636390
+    return CGPointMake(point.x, NSMaxY([[screens objectAtIndex:0] frame]) - point.y);
 }
 #endif
 
