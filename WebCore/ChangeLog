@@ -1,3 +1,19 @@
+2007-02-26  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/5012761> REGRESSION: form submit invokes wrong event handler
+
+        Test: fast/events/submit-reset-nested-bubble.html
+
+        * dom/EventTargetNode.h: Made handleLocalEvents virtual.
+        * html/HTMLFormElement.cpp: (WebCore::HTMLFormElement::handleLocalEvents): If we're
+          not in the capture phase, and the target is a different form, and we're handling
+          the submitEvent or the resetEvent, then stop propagation of the event.  This matches
+          Firefox behavior.  You can only get in this situation if misnested tags cause
+          forms to be nested.
+        * html/HTMLFormElement.h: Added handleLocalEvents.
+
 2007-02-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.

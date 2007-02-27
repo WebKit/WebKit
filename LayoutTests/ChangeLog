@@ -1,3 +1,12 @@
+2007-02-26  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Test for <rdar://problem/5012761> REGRESSION: form submit invokes wrong event handler
+
+        * fast/events/submit-reset-nested-bubble-expected.txt: Added.
+        * fast/events/submit-reset-nested-bubble.html: Added.
+
 2007-02-26  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

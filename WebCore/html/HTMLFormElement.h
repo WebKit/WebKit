@@ -49,6 +49,8 @@ public:
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
  
+    virtual void handleLocalEvents(Event*, bool useCapture);
+     
     PassRefPtr<HTMLCollection> elements();
     unsigned length() const;
     Node* item(unsigned index);

@@ -64,7 +64,7 @@ public:
     void dispatchSimulatedMouseEvent(const AtomicString& eventType, PassRefPtr<Event> underlyingEvent = 0);
     void dispatchSimulatedClick(PassRefPtr<Event> underlyingEvent, bool sendMouseEvents = false, bool showPressedLook = true);
 
-    void handleLocalEvents(Event*, bool useCapture);
+    virtual void handleLocalEvents(Event*, bool useCapture);
 
     virtual void dispatchFocusEvent();
     virtual void dispatchBlurEvent();
