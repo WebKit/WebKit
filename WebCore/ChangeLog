@@ -1,3 +1,12 @@
+2007-02-22  Lars Naesbye Christensen  <lars@naesbye.dk>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12848
+        Help cursor should have a white outline
+
+        * Resources/helpCursor.png:
+
 2007-02-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.
