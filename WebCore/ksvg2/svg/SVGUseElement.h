@@ -60,7 +60,6 @@ namespace WebCore
         virtual void parseMappedAttribute(MappedAttribute*);
         virtual void notifyAttributeChange() const;
 
-        virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
         virtual void attach();
 

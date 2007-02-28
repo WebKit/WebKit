@@ -50,6 +50,8 @@ namespace WebCore
         virtual void parseMappedAttribute(MappedAttribute*);
         virtual void notifyAttributeChange() const;
 
+        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
+
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 

@@ -1,0 +1,6 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x116
+  RenderBlock {html} at (0,0) size 800x116
+    RenderBody {body} at (8,8) size 784x100
+      RenderBlock {div} at (0,0) size 100x100 [bgcolor=#008000]

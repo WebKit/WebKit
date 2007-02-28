@@ -59,6 +59,14 @@ SVGStyledElement::~SVGStyledElement()
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGStyledElement, String, String, string, ClassName, className, HTMLNames::classAttr.localName(), m_className)
 
+bool SVGStyledElement::rendererIsNeeded(RenderStyle* style)
+{
+    if (!parentNode() || parentNode()->isSVGElement())
+        return StyledElement::rendererIsNeeded(style);
+
+    return false;
+}
+
 RenderObject* SVGStyledElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
     // The path data is set upon the first layout() call.

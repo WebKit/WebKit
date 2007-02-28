@@ -99,7 +99,6 @@ namespace WebCore
         virtual void parseMappedAttribute(MappedAttribute* attr);
         virtual void notifyAttributeChange() const;
 
-        virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual Path toPathData() const;
 
         virtual bool supportsMarkers() const { return true; }

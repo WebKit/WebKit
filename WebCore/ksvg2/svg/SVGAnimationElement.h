@@ -97,7 +97,6 @@ namespace WebCore {
         double getSimpleDuration(ExceptionCode&) const;
     
         virtual void parseMappedAttribute(MappedAttribute* attr);
-        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 
         virtual void closeRenderer();
 

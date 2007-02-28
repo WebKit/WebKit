@@ -2,6 +2,19 @@
 
         Reviewed by Maciej.
 
+        Add testcase for:
+        http://bugs.webkit.org/show_bug.cgi?id=12609
+        Any SVG element will create renderers even when children of HTML elements
+
+        * svg/custom/xhtml-no-svg-renderer-expected.checksum: Added.
+        * svg/custom/xhtml-no-svg-renderer-expected.png: Added.
+        * svg/custom/xhtml-no-svg-renderer-expected.txt: Added.
+        * svg/custom/xhtml-no-svg-renderer.xhtml: Added.
+
+2007-02-28  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
         Add test for:
         http://bugs.webkit.org/show_bug.cgi?id=12913
         Markers do not render in webkit when it misses markerWidth or markerHeight attribute

@@ -37,6 +37,8 @@ namespace WebCore
         virtual ~SVGDescElement();
 
         String description() const;
+
+        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
     };
 
 } // namespace WebCore

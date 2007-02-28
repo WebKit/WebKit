@@ -46,6 +46,8 @@ namespace WebCore
         // 'SVGViewElement' functions
         SVGStringList *viewTarget() const;
 
+        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
+
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 

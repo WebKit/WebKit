@@ -2,6 +2,58 @@
 
         Reviewed by Maciej.
 
+        http://bugs.webkit.org/show_bug.cgi?id=12609
+        Any SVG element will create renderers even when children of HTML elements
+
+        Allow creation of svg renderers only when parent is SVG, except for
+        the <svg> element.
+
+        * ksvg2/svg/SVGAElement.h:
+        * ksvg2/svg/SVGAnimationElement.h:
+        * ksvg2/svg/SVGCircleElement.h:
+        * ksvg2/svg/SVGClipPathElement.h:
+        (WebCore::SVGClipPathElement::rendererIsNeeded):
+        * ksvg2/svg/SVGDefsElement.cpp:
+        * ksvg2/svg/SVGDefsElement.h:
+        * ksvg2/svg/SVGDescElement.h:
+        (WebCore::SVGDescElement::rendererIsNeeded):
+        * ksvg2/svg/SVGElement.cpp:
+        * ksvg2/svg/SVGEllipseElement.h:
+        * ksvg2/svg/SVGFilterElement.h:
+        (WebCore::SVGFilterElement::rendererIsNeeded):
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributes.h:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::rendererIsNeeded):
+        * ksvg2/svg/SVGForeignObjectElement.h:
+        * ksvg2/svg/SVGGElement.h:
+        * ksvg2/svg/SVGGradientElement.h:
+        * ksvg2/svg/SVGImageElement.h:
+        * ksvg2/svg/SVGLineElement.h:
+        * ksvg2/svg/SVGMarkerElement.h:
+        * ksvg2/svg/SVGMaskElement.h:
+        * ksvg2/svg/SVGPathElement.h:
+        * ksvg2/svg/SVGPatternElement.h:
+        * ksvg2/svg/SVGPolyElement.h:
+        * ksvg2/svg/SVGRectElement.h:
+        * ksvg2/svg/SVGStopElement.h:
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::rendererIsNeeded):
+        * ksvg2/svg/SVGStyledElement.h:
+        * ksvg2/svg/SVGSwitchElement.h:
+        * ksvg2/svg/SVGSymbolElement.h:
+        (WebCore::SVGSymbolElement::rendererIsNeeded):
+        * ksvg2/svg/SVGTRefElement.h:
+        * ksvg2/svg/SVGTSpanElement.h:
+        * ksvg2/svg/SVGTextElement.h:
+        * ksvg2/svg/SVGTitleElement.h:
+        (WebCore::SVGTitleElement::rendererIsNeeded):
+        * ksvg2/svg/SVGUseElement.h:
+        * ksvg2/svg/SVGViewElement.h:
+        (WebCore::SVGViewElement::rendererIsNeeded):
+
+2007-02-28  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
         http://bugs.webkit.org/show_bug.cgi?id=12913
         Markers do not render in webkit when it misses markerWidth or markerHeight attribute
 

@@ -45,11 +45,6 @@ bool SVGDefsElement::isValid() const
     return SVGTests::isValid();
 }
 
-bool SVGDefsElement::rendererIsNeeded(RenderStyle* style)
-{
-    return StyledElement::rendererIsNeeded(style);
-}
-
 RenderObject* SVGDefsElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
     return new (arena) RenderSVGHiddenContainer(this);

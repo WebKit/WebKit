@@ -42,7 +42,6 @@ namespace WebCore
         
         virtual bool isValid() const;
         
-        virtual bool rendererIsNeeded(RenderStyle*);
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     
     protected:

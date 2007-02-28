@@ -46,7 +46,6 @@ namespace WebCore
         virtual AffineTransform getCTM() const;
         virtual AffineTransform getScreenCTM() const;
 
-        virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
         virtual bool childShouldCreateRenderer(Node*) const;
         virtual void attach();

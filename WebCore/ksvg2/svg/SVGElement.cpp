@@ -32,6 +32,7 @@
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "PlatformString.h"
+#include "RenderObject.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"

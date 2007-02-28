@@ -38,6 +38,8 @@ namespace WebCore
         virtual void insertedIntoDocument();
         virtual void removedFromDocument();
         virtual void childrenChanged();
+
+        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
     };
 
 } // namespace WebCore
