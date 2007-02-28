@@ -43,39 +43,39 @@ private:
 class SavedBuiltinsInternal {
     friend class Interpreter;
 private:
-    ProtectedPtr<JSObject> m_Object;
-    ProtectedPtr<JSObject> m_Function;
-    ProtectedPtr<JSObject> m_Array;
-    ProtectedPtr<JSObject> m_Boolean;
-    ProtectedPtr<JSObject> m_String;
-    ProtectedPtr<JSObject> m_Number;
-    ProtectedPtr<JSObject> m_Date;
-    ProtectedPtr<JSObject> m_RegExp;
-    ProtectedPtr<JSObject> m_Error;
+    ProtectedPtr<ObjectObjectImp> m_Object;
+    ProtectedPtr<FunctionObjectImp> m_Function;
+    ProtectedPtr<ArrayObjectImp> m_Array;
+    ProtectedPtr<BooleanObjectImp> m_Boolean;
+    ProtectedPtr<StringObjectImp> m_String;
+    ProtectedPtr<NumberObjectImp> m_Number;
+    ProtectedPtr<DateObjectImp> m_Date;
+    ProtectedPtr<RegExpObjectImp> m_RegExp;
+    ProtectedPtr<ErrorObjectImp> m_Error;
     
-    ProtectedPtr<JSObject> m_ObjectPrototype;
-    ProtectedPtr<JSObject> m_FunctionPrototype;
-    ProtectedPtr<JSObject> m_ArrayPrototype;
-    ProtectedPtr<JSObject> m_BooleanPrototype;
-    ProtectedPtr<JSObject> m_StringPrototype;
-    ProtectedPtr<JSObject> m_NumberPrototype;
-    ProtectedPtr<JSObject> m_DatePrototype;
-    ProtectedPtr<JSObject> m_RegExpPrototype;
-    ProtectedPtr<JSObject> m_ErrorPrototype;
+    ProtectedPtr<ObjectPrototype> m_ObjectPrototype;
+    ProtectedPtr<FunctionPrototype> m_FunctionPrototype;
+    ProtectedPtr<ArrayPrototype> m_ArrayPrototype;
+    ProtectedPtr<BooleanPrototype> m_BooleanPrototype;
+    ProtectedPtr<StringPrototype> m_StringPrototype;
+    ProtectedPtr<NumberPrototype> m_NumberPrototype;
+    ProtectedPtr<DatePrototype> m_DatePrototype;
+    ProtectedPtr<RegExpPrototype> m_RegExpPrototype;
+    ProtectedPtr<ErrorPrototype> m_ErrorPrototype;
     
-    ProtectedPtr<JSObject> m_EvalError;
-    ProtectedPtr<JSObject> m_RangeError;
-    ProtectedPtr<JSObject> m_ReferenceError;
-    ProtectedPtr<JSObject> m_SyntaxError;
-    ProtectedPtr<JSObject> m_TypeError;
-    ProtectedPtr<JSObject> m_UriError;
+    ProtectedPtr<NativeErrorImp> m_EvalError;
+    ProtectedPtr<NativeErrorImp> m_RangeError;
+    ProtectedPtr<NativeErrorImp> m_ReferenceError;
+    ProtectedPtr<NativeErrorImp> m_SyntaxError;
+    ProtectedPtr<NativeErrorImp> m_TypeError;
+    ProtectedPtr<NativeErrorImp> m_UriError;
     
-    ProtectedPtr<JSObject> m_EvalErrorPrototype;
-    ProtectedPtr<JSObject> m_RangeErrorPrototype;
-    ProtectedPtr<JSObject> m_ReferenceErrorPrototype;
-    ProtectedPtr<JSObject> m_SyntaxErrorPrototype;
-    ProtectedPtr<JSObject> m_TypeErrorPrototype;
-    ProtectedPtr<JSObject> m_UriErrorPrototype;
+    ProtectedPtr<NativeErrorPrototype> m_EvalErrorPrototype;
+    ProtectedPtr<NativeErrorPrototype> m_RangeErrorPrototype;
+    ProtectedPtr<NativeErrorPrototype> m_ReferenceErrorPrototype;
+    ProtectedPtr<NativeErrorPrototype> m_SyntaxErrorPrototype;
+    ProtectedPtr<NativeErrorPrototype> m_TypeErrorPrototype;
+    ProtectedPtr<NativeErrorPrototype> m_UriErrorPrototype;
 };
 
 } // namespace

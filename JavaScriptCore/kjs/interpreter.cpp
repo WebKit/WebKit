@@ -96,6 +96,8 @@ void Interpreter::init()
 {
     JSLock lock;
 
+    Identifier::init();
+
     m_refCount = 0;
     m_timeoutTime = 0;
     m_recursion = 0;
@@ -109,8 +111,6 @@ void Interpreter::init()
     m_argumentsPropertyName = &argumentsPropertyName;
     m_specialPrototypePropertyName = &specialPrototypePropertyName;
 
-    interpreterMap().set(m_globalObject, this);
-
     if (s_hook) {
         prev = s_hook;
         next = s_hook->next;
@@ -120,7 +120,8 @@ void Interpreter::init()
         // This is the first interpreter
         s_hook = next = prev = this;
     }
-    
+    interpreterMap().set(m_globalObject, this);
+
     initGlobalObject();
 }
 
@@ -134,12 +135,10 @@ Interpreter::~Interpreter()
     next->prev = prev;
     prev->next = next;
     s_hook = next;
-    if (s_hook == this)
-    {
+    if (s_hook == this) {
         // This was the last interpreter
         s_hook = 0;
     }
-    
     interpreterMap().remove(m_globalObject);
 }
 
@@ -150,64 +149,111 @@ JSObject* Interpreter::globalObject() const
 
 void Interpreter::initGlobalObject()
 {
-    Identifier::init();
+    // Clear before inititalizing, to avoid marking uninitialized (dangerous) or 
+    // stale (wasteful) pointers during initialization.
 
-    FunctionPrototype *funcProto = new FunctionPrototype(&m_globalExec);
-    m_FunctionPrototype = funcProto;
-    ObjectPrototype *objProto = new ObjectPrototype(&m_globalExec, funcProto);
-    m_ObjectPrototype = objProto;
-    funcProto->setPrototype(m_ObjectPrototype);
+    // Prototypes
+    m_FunctionPrototype = 0;
+    m_ObjectPrototype = 0;
+
+    m_ArrayPrototype = 0;
+    m_StringPrototype = 0;
+    m_BooleanPrototype = 0;
+    m_NumberPrototype = 0;
+    m_DatePrototype = 0;
+    m_RegExpPrototype = 0;
+    m_ErrorPrototype = 0;
     
-    ArrayPrototype *arrayProto = new ArrayPrototype(&m_globalExec, objProto);
-    m_ArrayPrototype = arrayProto;
-    StringPrototype *stringProto = new StringPrototype(&m_globalExec, objProto);
-    m_StringPrototype = stringProto;
-    BooleanPrototype *booleanProto = new BooleanPrototype(&m_globalExec, objProto, funcProto);
-    m_BooleanPrototype = booleanProto;
-    NumberPrototype *numberProto = new NumberPrototype(&m_globalExec, objProto, funcProto);
-    m_NumberPrototype = numberProto;
-    DatePrototype *dateProto = new DatePrototype(&m_globalExec, objProto);
-    m_DatePrototype = dateProto;
-    RegExpPrototype *regexpProto = new RegExpPrototype(&m_globalExec, objProto, funcProto);
-    m_RegExpPrototype = regexpProto;
-    ErrorPrototype *errorProto = new ErrorPrototype(&m_globalExec, objProto, funcProto);
-    m_ErrorPrototype = errorProto;
+    m_EvalErrorPrototype = 0;
+    m_RangeErrorPrototype = 0;
+    m_ReferenceErrorPrototype = 0;
+    m_SyntaxErrorPrototype = 0;
+    m_TypeErrorPrototype = 0;
+    m_UriErrorPrototype = 0;
+
+    // Constructors
+    m_Object = 0;
+    m_Function = 0;
+    m_Array = 0;
+    m_String = 0;
+    m_Boolean = 0;
+    m_Number = 0;
+    m_Date = 0;
+    m_RegExp = 0;
+    m_Error = 0;
     
+    m_EvalError = 0;
+    m_RangeError = 0;
+    m_ReferenceError = 0;
+    m_SyntaxError = 0;
+    m_TypeError = 0;
+    m_UriError = 0;
+
+    // Prototypes
+    m_FunctionPrototype = new FunctionPrototype(&m_globalExec);
+    m_ObjectPrototype = new ObjectPrototype(&m_globalExec, m_FunctionPrototype);
+    m_FunctionPrototype->setPrototype(m_ObjectPrototype);
+    
+    m_ArrayPrototype = new ArrayPrototype(&m_globalExec, m_ObjectPrototype);
+    m_StringPrototype = new StringPrototype(&m_globalExec, m_ObjectPrototype);
+    m_BooleanPrototype = new BooleanPrototype(&m_globalExec, m_ObjectPrototype, m_FunctionPrototype);
+    m_NumberPrototype = new NumberPrototype(&m_globalExec, m_ObjectPrototype, m_FunctionPrototype);
+    m_DatePrototype = new DatePrototype(&m_globalExec, m_ObjectPrototype);
+    m_RegExpPrototype = new RegExpPrototype(&m_globalExec, m_ObjectPrototype, m_FunctionPrototype);;
+    m_ErrorPrototype = new ErrorPrototype(&m_globalExec, m_ObjectPrototype, m_FunctionPrototype);
+    
+    m_EvalErrorPrototype = new NativeErrorPrototype(&m_globalExec, m_ErrorPrototype, EvalError, "EvalError", "EvalError");
+    m_RangeErrorPrototype = new NativeErrorPrototype(&m_globalExec, m_ErrorPrototype, RangeError, "RangeError", "RangeError");
+    m_ReferenceErrorPrototype = new NativeErrorPrototype(&m_globalExec, m_ErrorPrototype, ReferenceError, "ReferenceError", "ReferenceError");
+    m_SyntaxErrorPrototype = new NativeErrorPrototype(&m_globalExec, m_ErrorPrototype, SyntaxError, "SyntaxError", "SyntaxError");
+    m_TypeErrorPrototype = new NativeErrorPrototype(&m_globalExec, m_ErrorPrototype, TypeError, "TypeError", "TypeError");
+    m_UriErrorPrototype = new NativeErrorPrototype(&m_globalExec, m_ErrorPrototype, URIError, "URIError", "URIError");
+
+    // Constructors
+    m_Object = new ObjectObjectImp(&m_globalExec, m_ObjectPrototype, m_FunctionPrototype);
+    m_Function = new FunctionObjectImp(&m_globalExec, m_FunctionPrototype);
+    m_Array = new ArrayObjectImp(&m_globalExec, m_FunctionPrototype, m_ArrayPrototype);
+    m_String = new StringObjectImp(&m_globalExec, m_FunctionPrototype, m_StringPrototype);
+    m_Boolean = new BooleanObjectImp(&m_globalExec, m_FunctionPrototype, m_BooleanPrototype);
+    m_Number = new NumberObjectImp(&m_globalExec, m_FunctionPrototype, m_NumberPrototype);
+    m_Date = new DateObjectImp(&m_globalExec, m_FunctionPrototype, m_DatePrototype);
+    m_RegExp = new RegExpObjectImp(&m_globalExec, m_FunctionPrototype, m_RegExpPrototype);
+    m_Error = new ErrorObjectImp(&m_globalExec, m_FunctionPrototype, m_ErrorPrototype);
+    
+    m_EvalError = new NativeErrorImp(&m_globalExec, m_FunctionPrototype, m_EvalErrorPrototype);
+    m_RangeError = new NativeErrorImp(&m_globalExec, m_FunctionPrototype, m_RangeErrorPrototype);
+    m_ReferenceError = new NativeErrorImp(&m_globalExec, m_FunctionPrototype, m_ReferenceErrorPrototype);
+    m_SyntaxError = new NativeErrorImp(&m_globalExec, m_FunctionPrototype, m_SyntaxErrorPrototype);
+    m_TypeError = new NativeErrorImp(&m_globalExec, m_FunctionPrototype, m_TypeErrorPrototype);
+    m_UriError = new NativeErrorImp(&m_globalExec, m_FunctionPrototype, m_UriErrorPrototype);
+    
+    m_FunctionPrototype->put(&m_globalExec, constructorPropertyName, m_Function, DontEnum);
+    m_ObjectPrototype->put(&m_globalExec, constructorPropertyName, m_Object, DontEnum | DontDelete | ReadOnly);
+    m_FunctionPrototype->put(&m_globalExec, constructorPropertyName, m_Function, DontEnum | DontDelete | ReadOnly);
+    m_ArrayPrototype->put(&m_globalExec, constructorPropertyName, m_Array, DontEnum | DontDelete | ReadOnly);
+    m_BooleanPrototype->put(&m_globalExec, constructorPropertyName, m_Boolean, DontEnum | DontDelete | ReadOnly);
+    m_StringPrototype->put(&m_globalExec, constructorPropertyName, m_String, DontEnum | DontDelete | ReadOnly);
+    m_NumberPrototype->put(&m_globalExec, constructorPropertyName, m_Number, DontEnum | DontDelete | ReadOnly);
+    m_DatePrototype->put(&m_globalExec, constructorPropertyName, m_Date, DontEnum | DontDelete | ReadOnly);
+    m_RegExpPrototype->put(&m_globalExec, constructorPropertyName, m_RegExp, DontEnum | DontDelete | ReadOnly);
+    m_ErrorPrototype->put(&m_globalExec, constructorPropertyName, m_Error, DontEnum | DontDelete | ReadOnly);
+    m_EvalErrorPrototype->put(&m_globalExec, constructorPropertyName, m_EvalError, DontEnum | DontDelete | ReadOnly);
+    m_RangeErrorPrototype->put(&m_globalExec, constructorPropertyName, m_RangeError, DontEnum | DontDelete | ReadOnly);
+    m_ReferenceErrorPrototype->put(&m_globalExec, constructorPropertyName, m_ReferenceError, DontEnum | DontDelete | ReadOnly);
+    m_SyntaxErrorPrototype->put(&m_globalExec, constructorPropertyName, m_SyntaxError, DontEnum | DontDelete | ReadOnly);
+    m_TypeErrorPrototype->put(&m_globalExec, constructorPropertyName, m_TypeError, DontEnum | DontDelete | ReadOnly);
+    m_UriErrorPrototype->put(&m_globalExec, constructorPropertyName, m_UriError, DontEnum | DontDelete | ReadOnly);
+
+    // Set global object prototype
     JSObject* o = m_globalObject;
     while (o->prototype()->isObject())
         o = static_cast<JSObject*>(o->prototype());
     o->setPrototype(m_ObjectPrototype);
-    
-    // Constructors (Object, Array, etc.)
-    m_Object = new ObjectObjectImp(&m_globalExec, objProto, funcProto);
-    m_Function = new FunctionObjectImp(&m_globalExec, funcProto);
-    m_Array = new ArrayObjectImp(&m_globalExec, funcProto, arrayProto);
-    m_String = new StringObjectImp(&m_globalExec, funcProto, stringProto);
-    m_Boolean = new BooleanObjectImp(&m_globalExec, funcProto, booleanProto);
-    m_Number = new NumberObjectImp(&m_globalExec, funcProto, numberProto);
-    m_Date = new DateObjectImp(&m_globalExec, funcProto, dateProto);
-    m_RegExp = new RegExpObjectImp(&m_globalExec, funcProto, regexpProto);
-    m_Error = new ErrorObjectImp(&m_globalExec, funcProto, errorProto);
-    
-    // Error object prototypes
-    m_EvalErrorPrototype = new NativeErrorPrototype(&m_globalExec, errorProto, EvalError, "EvalError", "EvalError");
-    m_RangeErrorPrototype = new NativeErrorPrototype(&m_globalExec, errorProto, RangeError, "RangeError", "RangeError");
-    m_ReferenceErrorPrototype = new NativeErrorPrototype(&m_globalExec, errorProto, ReferenceError, "ReferenceError", "ReferenceError");
-    m_SyntaxErrorPrototype = new NativeErrorPrototype(&m_globalExec, errorProto, SyntaxError, "SyntaxError", "SyntaxError");
-    m_TypeErrorPrototype = new NativeErrorPrototype(&m_globalExec, errorProto, TypeError, "TypeError", "TypeError");
-    m_UriErrorPrototype = new NativeErrorPrototype(&m_globalExec, errorProto, URIError, "URIError", "URIError");
-    
-    // Error objects
-    m_EvalError = new NativeErrorImp(&m_globalExec, funcProto, m_EvalErrorPrototype);
-    m_RangeError = new NativeErrorImp(&m_globalExec, funcProto, m_RangeErrorPrototype);
-    m_ReferenceError = new NativeErrorImp(&m_globalExec, funcProto, m_ReferenceErrorPrototype);
-    m_SyntaxError = new NativeErrorImp(&m_globalExec, funcProto, m_SyntaxErrorPrototype);
-    m_TypeError = new NativeErrorImp(&m_globalExec, funcProto, m_TypeErrorPrototype);
-    m_UriError = new NativeErrorImp(&m_globalExec, funcProto, m_UriErrorPrototype);
-    
-    // ECMA 15.3.4.1
-    funcProto->put(&m_globalExec, constructorPropertyName, m_Function, DontEnum);
-    
+
+    // Set global constructors
+    // FIXME: kjs_window.cpp checks Internal/DontEnum as a performance hack, to
+    // see that these values can be put directly without a check for override
+    // properties. Maybe we should call putDirect instead, for better encapsulation.
     m_globalObject->put(&m_globalExec, "Object", m_Object, DontEnum);
     m_globalObject->put(&m_globalExec, "Function", m_Function, DontEnum);
     m_globalObject->put(&m_globalExec, "Array", m_Array, DontEnum);
@@ -217,55 +263,34 @@ void Interpreter::initGlobalObject()
     m_globalObject->put(&m_globalExec, "Date", m_Date, DontEnum);
     m_globalObject->put(&m_globalExec, "RegExp", m_RegExp, DontEnum);
     m_globalObject->put(&m_globalExec, "Error", m_Error, DontEnum);
-    // Using Internal for those to have something != 0
-    // (see kjs_window). Maybe DontEnum would be ok too ?
     m_globalObject->put(&m_globalExec, "EvalError",m_EvalError, Internal);
     m_globalObject->put(&m_globalExec, "RangeError",m_RangeError, Internal);
     m_globalObject->put(&m_globalExec, "ReferenceError",m_ReferenceError, Internal);
     m_globalObject->put(&m_globalExec, "SyntaxError",m_SyntaxError, Internal);
     m_globalObject->put(&m_globalExec, "TypeError",m_TypeError, Internal);
     m_globalObject->put(&m_globalExec, "URIError",m_UriError, Internal);
+
+    // Set global values
+    m_globalObject->put(&m_globalExec, "Math", new MathObjectImp(&m_globalExec, m_ObjectPrototype), DontEnum);
+    m_globalObject->put(&m_globalExec, "NaN", jsNaN(), DontEnum|DontDelete);
+    m_globalObject->put(&m_globalExec, "Infinity", jsNumber(Inf), DontEnum|DontDelete);
+    m_globalObject->put(&m_globalExec, "undefined", jsUndefined(), DontEnum|DontDelete);
     
-    // Set the constructorPropertyName property of all builtin constructors
-    objProto->put(&m_globalExec, constructorPropertyName, m_Object, DontEnum | DontDelete | ReadOnly);
-    funcProto->put(&m_globalExec, constructorPropertyName, m_Function, DontEnum | DontDelete | ReadOnly);
-    arrayProto->put(&m_globalExec, constructorPropertyName, m_Array, DontEnum | DontDelete | ReadOnly);
-    booleanProto->put(&m_globalExec, constructorPropertyName, m_Boolean, DontEnum | DontDelete | ReadOnly);
-    stringProto->put(&m_globalExec, constructorPropertyName, m_String, DontEnum | DontDelete | ReadOnly);
-    numberProto->put(&m_globalExec, constructorPropertyName, m_Number, DontEnum | DontDelete | ReadOnly);
-    dateProto->put(&m_globalExec, constructorPropertyName, m_Date, DontEnum | DontDelete | ReadOnly);
-    regexpProto->put(&m_globalExec, constructorPropertyName, m_RegExp, DontEnum | DontDelete | ReadOnly);
-    errorProto->put(&m_globalExec, constructorPropertyName, m_Error, DontEnum | DontDelete | ReadOnly);
-    m_EvalErrorPrototype->put(&m_globalExec, constructorPropertyName, m_EvalError, DontEnum | DontDelete | ReadOnly);
-    m_RangeErrorPrototype->put(&m_globalExec, constructorPropertyName, m_RangeError, DontEnum | DontDelete | ReadOnly);
-    m_ReferenceErrorPrototype->put(&m_globalExec, constructorPropertyName, m_ReferenceError, DontEnum | DontDelete | ReadOnly);
-    m_SyntaxErrorPrototype->put(&m_globalExec, constructorPropertyName, m_SyntaxError, DontEnum | DontDelete | ReadOnly);
-    m_TypeErrorPrototype->put(&m_globalExec, constructorPropertyName, m_TypeError, DontEnum | DontDelete | ReadOnly);
-    m_UriErrorPrototype->put(&m_globalExec, constructorPropertyName, m_UriError, DontEnum | DontDelete | ReadOnly);
-    
-    // built-in values
-    m_globalObject->put(&m_globalExec, "NaN",        jsNaN(), DontEnum|DontDelete);
-    m_globalObject->put(&m_globalExec, "Infinity",   jsNumber(Inf), DontEnum|DontDelete);
-    m_globalObject->put(&m_globalExec, "undefined",  jsUndefined(), DontEnum|DontDelete);
-    
-    // built-in functions
-    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, funcProto, GlobalFuncImp::Eval, 1, "eval"), DontEnum);
-    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, funcProto, GlobalFuncImp::ParseInt, 2, "parseInt"), DontEnum);
-    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, funcProto, GlobalFuncImp::ParseFloat, 1, "parseFloat"), DontEnum);
-    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, funcProto, GlobalFuncImp::IsNaN, 1, "isNaN"), DontEnum);
-    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, funcProto, GlobalFuncImp::IsFinite, 1, "isFinite"), DontEnum);
-    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, funcProto, GlobalFuncImp::Escape, 1, "escape"), DontEnum);
-    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, funcProto, GlobalFuncImp::UnEscape, 1, "unescape"), DontEnum);
-    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, funcProto, GlobalFuncImp::DecodeURI, 1, "decodeURI"), DontEnum);
-    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, funcProto, GlobalFuncImp::DecodeURIComponent, 1, "decodeURIComponent"), DontEnum);
-    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, funcProto, GlobalFuncImp::EncodeURI, 1, "encodeURI"), DontEnum);
-    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, funcProto, GlobalFuncImp::EncodeURIComponent, 1, "encodeURIComponent"), DontEnum);
+    // Set global functions
+    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, m_FunctionPrototype, GlobalFuncImp::Eval, 1, "eval"), DontEnum);
+    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, m_FunctionPrototype, GlobalFuncImp::ParseInt, 2, "parseInt"), DontEnum);
+    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, m_FunctionPrototype, GlobalFuncImp::ParseFloat, 1, "parseFloat"), DontEnum);
+    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, m_FunctionPrototype, GlobalFuncImp::IsNaN, 1, "isNaN"), DontEnum);
+    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, m_FunctionPrototype, GlobalFuncImp::IsFinite, 1, "isFinite"), DontEnum);
+    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, m_FunctionPrototype, GlobalFuncImp::Escape, 1, "escape"), DontEnum);
+    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, m_FunctionPrototype, GlobalFuncImp::UnEscape, 1, "unescape"), DontEnum);
+    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, m_FunctionPrototype, GlobalFuncImp::DecodeURI, 1, "decodeURI"), DontEnum);
+    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, m_FunctionPrototype, GlobalFuncImp::DecodeURIComponent, 1, "decodeURIComponent"), DontEnum);
+    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, m_FunctionPrototype, GlobalFuncImp::EncodeURI, 1, "encodeURI"), DontEnum);
+    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, m_FunctionPrototype, GlobalFuncImp::EncodeURIComponent, 1, "encodeURIComponent"), DontEnum);
 #ifndef NDEBUG
-    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, funcProto, GlobalFuncImp::KJSPrint, 1, "kjsprint"), DontEnum);
+    m_globalObject->putDirectFunction(new GlobalFuncImp(&m_globalExec, m_FunctionPrototype, GlobalFuncImp::KJSPrint, 1, "kjsprint"), DontEnum);
 #endif
-    
-    // built-in objects
-    m_globalObject->put(&m_globalExec, "Math", new MathObjectImp(&m_globalExec, objProto), DontEnum);
 }
 
 ExecState* Interpreter::globalExec()
@@ -516,10 +541,76 @@ void Interpreter::mark(bool)
 {
     if (m_context)
         m_context->mark();
-    if (m_globalObject && !m_globalObject->marked())
-        m_globalObject->mark();
+
     if (m_globalExec.exception() && !m_globalExec.exception()->marked())
         m_globalExec.exception()->mark();
+
+    if (m_globalObject && !m_globalObject->marked())
+        m_globalObject->mark();
+
+    if (m_Object && !m_Object->marked())
+        m_Object->mark();
+    if (m_Function && !m_Function->marked())
+        m_Function->mark();
+    if (m_Array && !m_Array->marked())
+        m_Array->mark();
+    if (m_Boolean && !m_Boolean->marked())
+        m_Boolean->mark();
+    if (m_String && !m_String->marked())
+        m_String->mark();
+    if (m_Number && !m_Number->marked())
+        m_Number->mark();
+    if (m_Date && !m_Date->marked())
+        m_Date->mark();
+    if (m_RegExp && !m_RegExp->marked())
+        m_RegExp->mark();
+    if (m_Error && !m_Error->marked())
+        m_Error->mark();
+    
+    if (m_ObjectPrototype && !m_ObjectPrototype->marked())
+        m_ObjectPrototype->mark();
+    if (m_FunctionPrototype && !m_FunctionPrototype->marked())
+        m_FunctionPrototype->mark();
+    if (m_ArrayPrototype && !m_ArrayPrototype->marked())
+        m_ArrayPrototype->mark();
+    if (m_BooleanPrototype && !m_BooleanPrototype->marked())
+        m_BooleanPrototype->mark();
+    if (m_StringPrototype && !m_StringPrototype->marked())
+        m_StringPrototype->mark();
+    if (m_NumberPrototype && !m_NumberPrototype->marked())
+        m_NumberPrototype->mark();
+    if (m_DatePrototype && !m_DatePrototype->marked())
+        m_DatePrototype->mark();
+    if (m_RegExpPrototype && !m_RegExpPrototype->marked())
+        m_RegExpPrototype->mark();
+    if (m_ErrorPrototype && !m_ErrorPrototype->marked())
+        m_ErrorPrototype->mark();
+    
+    if (m_EvalError && !m_EvalError->marked())
+        m_EvalError->mark();
+    if (m_RangeError && !m_RangeError->marked())
+        m_RangeError->mark();
+    if (m_ReferenceError && !m_ReferenceError->marked())
+        m_ReferenceError->mark();
+    if (m_SyntaxError && !m_SyntaxError->marked())
+        m_SyntaxError->mark();
+    if (m_TypeError && !m_TypeError->marked())
+        m_TypeError->mark();
+    if (m_UriError && !m_UriError->marked())
+        m_UriError->mark();
+    
+    if (m_EvalErrorPrototype && !m_EvalErrorPrototype->marked())
+        m_EvalErrorPrototype->mark();
+    if (m_RangeErrorPrototype && !m_RangeErrorPrototype->marked())
+        m_RangeErrorPrototype->mark();
+    if (m_ReferenceErrorPrototype && !m_ReferenceErrorPrototype->marked())
+        m_ReferenceErrorPrototype->mark();
+    if (m_SyntaxErrorPrototype && !m_SyntaxErrorPrototype->marked())
+        m_SyntaxErrorPrototype->mark();
+    if (m_TypeErrorPrototype && !m_TypeErrorPrototype->marked())
+        m_TypeErrorPrototype->mark();
+    if (m_UriErrorPrototype && !m_UriErrorPrototype->marked())
+        m_UriErrorPrototype->mark();
 }
 
 Interpreter* Interpreter::interpreterWithGlobalObject(JSObject* globalObject)

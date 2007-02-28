@@ -1,5 +1,30 @@
 2007-02-27  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Darin Adler.
+        
+        Follow-up to fixing http://bugs.webkit.org/show_bug.cgi?id=12659 | <rdar://problem/4954306>
+        JS objects not collected after closing window @ ebay.com/maps.google.com
+        
+        Changed Interpreter cache of global constructors and prototypes from
+        ProtectedPtrs to bare, marked pointers. ProtectedPtrs are inefficient,
+        and they increase the risk of reference cycles. Also, Darin said something
+        about ProtectedPtrs giving him warts.
+        
+        Also changed data members to precise types from generic JSObject*'s.
+        
+        Layout tests and JS tests pass.
+
+        * kjs/SavedBuiltins.h:
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::init):
+        (KJS::Interpreter::~Interpreter):
+        (KJS::Interpreter::initGlobalObject): Moved Identifier::init() call to
+        constructor, for clarity.
+        (KJS::Interpreter::mark):
+        * kjs/interpreter.h:
+
+2007-02-27  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Maciej Stachowiak.
         
         Fixed http://bugs.webkit.org/show_bug.cgi?id=12659 | <rdar://problem/4954306>

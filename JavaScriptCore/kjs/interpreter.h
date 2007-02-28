@@ -31,11 +31,43 @@
 
 namespace KJS {
 
+  class ArrayObjectImp;
+  class ArrayPrototype;
+  class BooleanObjectImp;
+  class BooleanPrototype;
   class Context;
+  class DateObjectImp;
+  class DatePrototype;
   class Debugger;
+  class ErrorObjectImp;
+  class ErrorPrototype;
+  class EvalError;
+  class EvalErrorPrototype;
+  class FunctionObjectImp;
+  class FunctionPrototype;
+  class NativeErrorImp;
+  class NativeErrorPrototype;
+  class NumberObjectImp;
+  class NumberPrototype;
+  class ObjectObjectImp;
+  class ObjectPrototype;
+  class RangeError;
+  class RangeErrorPrototype;
+  class ReferenceError;
+  class ReferenceError;
+  class ReferenceErrorPrototype;
+  class RegExpObjectImp;
+  class RegExpPrototype;
   class RuntimeMethod;
   class SavedBuiltins;
   class ScopeChain;
+  class StringObjectImp;
+  class StringPrototype;
+  class SyntaxErrorPrototype;
+  class TypeError;
+  class TypeErrorPrototype;
+  class UriError;
+  class UriErrorPrototype;
   
   /**
    * Interpreter objects can be used to evaluate ECMAScript code. Each
@@ -70,11 +102,16 @@ namespace KJS {
     Interpreter();
 
     /**
+     * Resets the global object's default properties and adds the default object 
+     * prototype to its prototype chain.
+     */
+    void initGlobalObject();
+
+    /**
      * Returns the object that is used as the global object during all script
      * execution performed by this interpreter
      */
     JSObject* globalObject() const;
-    void initGlobalObject();
 
     /**
      * Returns the execution state object which can be used to execute
@@ -326,28 +363,18 @@ protected:
     unsigned m_timeoutTime;
 
 private:
-    bool checkTimeout();
     void init();
-    void resetTimeoutCheck();
 
-    /**
-     * This constructor is not implemented, in order to prevent
-     * copy-construction of Interpreter objects. You should always pass around
-     * pointers to an interpreter instance instead.
-     */
+    void resetTimeoutCheck();
+    bool checkTimeout();
+
+    // Uncopyable
     Interpreter(const Interpreter&);
-    
-    /**
-     * This constructor is not implemented, in order to prevent assignment of
-     * Interpreter objects. You should always pass around pointers to an
-     * interpreter instance instead.
-     */
     Interpreter operator=(const Interpreter&);
     
     int m_refCount;
     
     ExecState m_globalExec;
-    JSObject* m_globalObject;
 
     const Identifier *m_argumentsPropertyName;
     const Identifier *m_specialPrototypePropertyName;
@@ -369,39 +396,41 @@ private:
     unsigned m_tickCount;
     unsigned m_ticksUntilNextTimeoutCheck;
 
-    ProtectedPtr<JSObject> m_Object;
-    ProtectedPtr<JSObject> m_Function;
-    ProtectedPtr<JSObject> m_Array;
-    ProtectedPtr<JSObject> m_Boolean;
-    ProtectedPtr<JSObject> m_String;
-    ProtectedPtr<JSObject> m_Number;
-    ProtectedPtr<JSObject> m_Date;
-    ProtectedPtr<JSObject> m_RegExp;
-    ProtectedPtr<JSObject> m_Error;
+    JSObject* m_globalObject;
+
+    ObjectObjectImp* m_Object;
+    FunctionObjectImp* m_Function;
+    ArrayObjectImp* m_Array;
+    BooleanObjectImp* m_Boolean;
+    StringObjectImp* m_String;
+    NumberObjectImp* m_Number;
+    DateObjectImp* m_Date;
+    RegExpObjectImp* m_RegExp;
+    ErrorObjectImp* m_Error;
     
-    ProtectedPtr<JSObject> m_ObjectPrototype;
-    ProtectedPtr<JSObject> m_FunctionPrototype;
-    ProtectedPtr<JSObject> m_ArrayPrototype;
-    ProtectedPtr<JSObject> m_BooleanPrototype;
-    ProtectedPtr<JSObject> m_StringPrototype;
-    ProtectedPtr<JSObject> m_NumberPrototype;
-    ProtectedPtr<JSObject> m_DatePrototype;
-    ProtectedPtr<JSObject> m_RegExpPrototype;
-    ProtectedPtr<JSObject> m_ErrorPrototype;
+    ObjectPrototype* m_ObjectPrototype;
+    FunctionPrototype* m_FunctionPrototype;
+    ArrayPrototype* m_ArrayPrototype;
+    BooleanPrototype* m_BooleanPrototype;
+    StringPrototype* m_StringPrototype;
+    NumberPrototype* m_NumberPrototype;
+    DatePrototype* m_DatePrototype;
+    RegExpPrototype* m_RegExpPrototype;
+    ErrorPrototype* m_ErrorPrototype;
     
-    ProtectedPtr<JSObject> m_EvalError;
-    ProtectedPtr<JSObject> m_RangeError;
-    ProtectedPtr<JSObject> m_ReferenceError;
-    ProtectedPtr<JSObject> m_SyntaxError;
-    ProtectedPtr<JSObject> m_TypeError;
-    ProtectedPtr<JSObject> m_UriError;
+    NativeErrorImp* m_EvalError;
+    NativeErrorImp* m_RangeError;
+    NativeErrorImp* m_ReferenceError;
+    NativeErrorImp* m_SyntaxError;
+    NativeErrorImp* m_TypeError;
+    NativeErrorImp* m_UriError;
     
-    ProtectedPtr<JSObject> m_EvalErrorPrototype;
-    ProtectedPtr<JSObject> m_RangeErrorPrototype;
-    ProtectedPtr<JSObject> m_ReferenceErrorPrototype;
-    ProtectedPtr<JSObject> m_SyntaxErrorPrototype;
-    ProtectedPtr<JSObject> m_TypeErrorPrototype;
-    ProtectedPtr<JSObject> m_UriErrorPrototype;
+    NativeErrorPrototype* m_EvalErrorPrototype;
+    NativeErrorPrototype* m_RangeErrorPrototype;
+    NativeErrorPrototype* m_ReferenceErrorPrototype;
+    NativeErrorPrototype* m_SyntaxErrorPrototype;
+    NativeErrorPrototype* m_TypeErrorPrototype;
+    NativeErrorPrototype* m_UriErrorPrototype;
   };
 
   inline bool Interpreter::timedOut()
