@@ -424,4 +424,68 @@ String contextMenuItemTagRightToLeft()
     return String();
 }
 
+String searchMenuNoRecentSearchesText()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] searchMenuNoRecentSearchesText];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String searchMenuRecentSearchesText ()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] searchMenuRecentSearchesText];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String searchMenuClearRecentSearchesText()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] searchMenuClearRecentSearchesText];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String AXWebAreaText()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] AXWebAreaText];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String AXLinkText()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] AXLinkText];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String AXListMarkerText()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] AXListMarkerText];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String AXImageMapText()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] AXImageMapText];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String AXHeadingText()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] AXHeadingText];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
 }

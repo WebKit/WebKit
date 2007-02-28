@@ -1,3 +1,26 @@
+2007-02-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth.
+
+        Fix for <rdar://problem/4887423> REGRESSION: search results popup menu strings are not localized
+        and <rdar://problem/3517227> accessibility-related strings in WebCore are not localized
+
+        Use localized strings from WebKit instead of hard coded strings.
+
+        * bridge/mac/WebCoreAXObject.mm: (-[WebCoreAXObject roleDescription]):
+        * page/mac/WebCoreViewFactory.h:
+        * platform/LocalizedStrings.h:
+        * platform/mac/LocalizedStringsMac.mm:
+        (WebCore::searchMenuNoRecentSearchesText):
+        (WebCore::searchMenuRecentSearchesText):
+        (WebCore::searchMenuClearRecentSearchesText):
+        (WebCore::AXWebAreaText):
+        (WebCore::AXLinkText):
+        (WebCore::AXListMarkerText):
+        (WebCore::AXImageMapText):
+        (WebCore::AXHeadingText):
+        * rendering/RenderTextControl.cpp: (WebCore::RenderTextControl::itemText):
+
 2007-02-27  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.

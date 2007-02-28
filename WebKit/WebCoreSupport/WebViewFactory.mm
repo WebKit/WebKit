@@ -133,20 +133,19 @@
     return UI_STRING("unknown", "Unknown filename");
 }
 
-- (NSMenu *)cellMenuForSearchField
+- (NSString *)searchMenuNoRecentSearchesText
 {
-    NSMenu* cellMenu = [[[NSMenu alloc] initWithTitle:@""] autorelease];
-    [cellMenu addItemWithTitle:UI_STRING("Recent Searches", "label for first item in the menu that appears when clicking on the search field image, used as embedded menu title")
-                        action:NULL tag:NSSearchFieldRecentsTitleMenuItemTag];
-    [cellMenu addItemWithTitle:@"" action:NULL tag:NSSearchFieldRecentsMenuItemTag];
-    NSMenuItem *separator = [NSMenuItem separatorItem];
-    [separator setTag:NSSearchFieldRecentsTitleMenuItemTag];
-    [cellMenu addItem:separator];
-    [cellMenu addItemWithTitle:UI_STRING("Clear Recent Searches", "menu item in Recent Searches menu that empties menu's contents")
-                        action:NULL tag:NSSearchFieldClearRecentsMenuItemTag];
-    [cellMenu addItemWithTitle:UI_STRING("No recent searches", "Label for only item in menu that appears when clicking on the search field image, when no searches have been performed")
-                        action:NULL tag:NSSearchFieldNoRecentsMenuItemTag];
-    return cellMenu;
+    return UI_STRING("No recent searches", "Label for only item in menu that appears when clicking on the search field image, when no searches have been performed");
+}
+
+- (NSString *)searchMenuRecentSearchesText
+{
+    return UI_STRING("Recent Searches", "label for first item in the menu that appears when clicking on the search field image, used as embedded menu title");
+}
+
+- (NSString *)searchMenuClearRecentSearchesText
+{
+    return UI_STRING("Clear Recent Searches", "menu item in Recent Searches menu that empties menu's contents");
 }
 
 - (NSString *)defaultLanguageCode
@@ -438,6 +437,31 @@
 - (void)unregisterUniqueIdForUIElement:(id)element
 {
     WKUnregisterUniqueIdForElement(element);
+}
+
+- (NSString *)AXWebAreaText
+{
+    return UI_STRING("web area", "accessibility role description for web area");
+}
+
+- (NSString *)AXLinkText
+{
+    return UI_STRING("link", "accessibility role description for link");
+}
+
+- (NSString *)AXListMarkerText
+{
+    return UI_STRING("list marker", "accessibility role description for list marker");
+}
+
+- (NSString *)AXImageMapText
+{
+    return UI_STRING("image map", "accessibility role description for image map");
+}
+
+- (NSString *)AXHeadingText
+{
+    return UI_STRING("heading", "accessibility role description for headings");
 }
 
 @end

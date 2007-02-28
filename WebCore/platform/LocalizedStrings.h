@@ -82,6 +82,16 @@ namespace WebCore {
     String contextMenuItemTagStopSpeaking();
 #endif
 
+    String searchMenuNoRecentSearchesText();
+    String searchMenuRecentSearchesText();
+    String searchMenuClearRecentSearchesText();
+
+    String AXWebAreaText();
+    String AXLinkText();
+    String AXListMarkerText();
+    String AXImageMapText();
+    String AXHeadingText();
+
 }
 
 #endif

@@ -44,6 +44,7 @@
 #import "HTMLTextAreaElement.h"
 #import "HitTestRequest.h"
 #import "HitTestResult.h"
+#import "LocalizedStrings.h"
 #import "RenderImage.h"
 #import "RenderListMarker.h"
 #import "RenderMenuList.h"
@@ -64,9 +65,6 @@
 using namespace WebCore;
 using namespace EventNames;
 using namespace HTMLNames;
-
-// FIXME: This will eventually need to really localize.
-#define UI_STRING(string, comment) ((NSString*)[NSString stringWithUTF8String:(string)])
 
 @interface WebCoreAXObject (PrivateWebCoreAXObject)
 // forward declarations as needed
@@ -460,7 +458,6 @@ static int headingLevel(RenderObject* renderer)
     if ([self isAttachment])
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute];
     
-    // FIXME 3517227: These need to be localized (UI_STRING here is a dummy macro)
     // FIXME 3447564: It would be better to call some AppKit API to get these strings
     // (which would be the best way to localize them)
     
@@ -493,19 +490,19 @@ static int headingLevel(RenderObject* renderer)
         return NSAccessibilityRoleDescription(NSAccessibilityTextAreaRole, [self subrole]);
 
     if ([role isEqualToString:@"AXWebArea"])
-        return UI_STRING("web area", "accessibility role description for web area");
+        return AXWebAreaText();
     
     if ([role isEqualToString:@"AXLink"])
-        return UI_STRING("link", "accessibility role description for link");
+        return AXLinkText();
     
     if ([role isEqualToString:@"AXListMarker"])
-        return UI_STRING("list marker", "accessibility role description for list marker");
+        return AXListMarkerText();
     
     if ([role isEqualToString:@"AXImageMap"])
-        return UI_STRING("image map", "accessibility role description for image map");
+        return AXImageMapText();
 
     if ([role isEqualToString:@"AXHeading"])
-        return UI_STRING("heading", "accessibility role description for headings");
+        return AXHeadingText();
     
     return NSAccessibilityRoleDescription(NSAccessibilityUnknownRole, nil);
 }

@@ -33,6 +33,7 @@
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFieldInnerElement.h"
 #include "HitTestResult.h"
+#include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "RenderTheme.h"
 #include "SearchPopupMenu.h"
@@ -915,14 +916,14 @@ String RenderTextControl::itemText(unsigned listIndex) const
     unsigned size = listSize();
     if (size == 1) {
         ASSERT(!listIndex);
-        return String("No recent searches");
+        return searchMenuNoRecentSearchesText();
     }
     if (!listIndex)
-        return String("Recent Searches");
+        return searchMenuRecentSearchesText();
     if (itemIsSeparator(listIndex))
         return String();
     if (listIndex == (size - 1))
-        return String("Clear Recent Searches");
+        return searchMenuClearRecentSearchesText();
     return m_recentSearches[listIndex - 1];
 }
 
