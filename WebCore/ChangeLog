@@ -1,3 +1,17 @@
+2007-02-28  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Brady.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=12923 REGRESSION: 
+        Assertion failure copying standalone image
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeImage): Use the CachedImage as the 
+        resource. This makes more sense anyway. There is no need to null-
+        check the renderer or the CachedImage since we return early if 
+        there is no Image* and the HitTestResult::image() function checks 
+        for these things.
+
 2007-02-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by Beth.

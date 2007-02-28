@@ -26,7 +26,6 @@
 #import "config.h"
 #import "Pasteboard.h"
 
-#import "Cache.h"
 #import "CachedResource.h"
 #import "CharacterNames.h"
 #import "DOMRangeInternal.h"
@@ -39,6 +38,7 @@
 #import "KURL.h"
 #import "LoaderNSURLExtras.h"
 #import "MimeTypeRegistry.h"
+#import "RenderImage.h"
 #import "RetainPtr.h"
 #import "WebCoreNSStringExtras.h"
 #import "WebCoreSystemInterface.h"
@@ -278,18 +278,25 @@ void Pasteboard::writeImage(const HitTestResult& result)
     NSURL *URL = coreURL.getNSURL();
     ASSERT(URL);
 
+    Node* node = result.innerNonSharedNode();
+    if (!node)
+        return;
+
     NSString *title = result.altDisplayString().isNull() ? nil : (NSString*)(result.altDisplayString());
-    Frame* frame = result.innerNonSharedNode()->document()->frame();
+    Frame* frame = node->document()->frame();
 
     writeURL(URL, title, frame, true);
     NSArray *types = [m_pasteboard types];
     [m_pasteboard declareTypes:types owner:nil];
 
-    NSImage *image = (NSImage *)(result.image() ? result.image()->getNSImage() : nil);
-    ASSERT(image);
-    [m_pasteboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
+    Image* coreImage = result.image();
+    ASSERT(coreImage);
+    if (!coreImage)
+        return;
+    [m_pasteboard setData:[coreImage->getNSImage() TIFFRepresentation] forType:NSTIFFPboardType];
 
-    CachedResource* imageResource = WebCore::cache()->resourceForURL(result.absoluteImageURL().url());
+    RenderImage* renderer = static_cast<RenderImage*>(node->renderer());
+    CachedResource* imageResource = static_cast<CachedResource*>(renderer->cachedImage());
     ASSERT(imageResource);
     String MIMEType = imageResource->response().mimeType();
     ASSERT(MimeTypeRegistry::isSupportedImageResourceMIMEType(MIMEType));
