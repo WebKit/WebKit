@@ -26,6 +26,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
+#include "RenderListItem.h"
 
 namespace WebCore {
 
@@ -60,9 +61,15 @@ void HTMLOListElement::parseMappedAttribute(MappedAttribute* attr)
             addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_UPPER_ROMAN);
         else if (attr->value() == "1")
             addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_DECIMAL);
-    } else if (attr->name() == startAttr)
-        m_start = !attr->isNull() ? attr->value().toInt() : 1;
-    else
+    } else if (attr->name() == startAttr) {
+        int s = !attr->isNull() ? attr->value().toInt() : 1;
+        if (s != m_start) {
+            m_start = s;
+            for (RenderObject* r = renderer(); r; r = r->nextInPreOrder(renderer()))
+                if (r->isListItem())
+                    static_cast<RenderListItem*>(r)->updateValue();
+        }
+    } else
         HTMLElement::parseMappedAttribute(attr);
 }
 
