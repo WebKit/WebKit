@@ -1,3 +1,20 @@
+2007-02-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by oliver
+
+        <rdar://problem/5027300>
+        REGRESSION: Images inserted with align left/right are lost
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::shouldMerge):
+        Don't attempt to merge to or from a position before 
+        or after a block because it will be a no-op and
+        lead to infinite recursion.
+        In this case it instead resulted in content loss because 
+        of bugs in start/endOfParagraph (5027702).
+        * editing/visible_units.cpp: Added two FIXMEs for
+        the problems with start/endOfParagraph.
+
 2007-02-27  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

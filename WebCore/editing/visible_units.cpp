@@ -578,6 +578,7 @@ VisiblePosition nextSentencePosition(const VisiblePosition &c)
     return nextBoundary(c, nextSentencePositionBoundary);
 }
 
+// FIXME: Broken for positions before/after images that aren't inline (5027702)
 VisiblePosition startOfParagraph(const VisiblePosition &c)
 {
     Position p = c.deepEquivalent();
@@ -647,6 +648,7 @@ VisiblePosition startOfParagraph(const VisiblePosition &c)
     return VisiblePosition(node, offset, DOWNSTREAM);
 }
 
+// FIXME: Broken for positions before/after images that aren't inline (5027702)
 VisiblePosition endOfParagraph(const VisiblePosition &c)
 {    
     if (c.isNull())

@@ -1,3 +1,15 @@
+2007-02-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by oliver
+        
+        <rdar://problem/5027300>
+        REGRESSION: Images inserted with align left/right are lost
+
+        * editing/inserting/12882-expected.checksum: Added.
+        * editing/inserting/12882-expected.png: Added.
+        * editing/inserting/12882-expected.txt: Added.
+        * editing/inserting/12882.html: Added.
+
 2007-02-27  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.
