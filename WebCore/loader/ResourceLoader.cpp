@@ -65,7 +65,6 @@ ResourceLoader::ResourceLoader(Frame* frame)
 
 ResourceLoader::~ResourceLoader()
 {
-    // FIXME: Once everything uses the loader, enable this assert again
     ASSERT(m_reachedTerminalState);
 }
 

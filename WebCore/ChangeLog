@@ -1,3 +1,9 @@
+2007-02-27  Anders Carlsson  <acarlsson@apple.com>
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::~ResourceLoader):
+        Remove comment.
+
 2007-02-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by oliver
