@@ -1,3 +1,15 @@
+2007-02-28  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12913
+        Markers do not render in webkit when it misses markerWidth or markerHeight attribute
+
+        Set defaults for markerWidth/markerHeight so markers that do not specify them render.
+
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+
 2007-02-27  Anders Carlsson  <acarlsson@apple.com>
 
         * loader/ResourceLoader.cpp:

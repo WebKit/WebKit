@@ -1,3 +1,16 @@
+2007-02-28  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        Add test for:
+        http://bugs.webkit.org/show_bug.cgi?id=12913
+        Markers do not render in webkit when it misses markerWidth or markerHeight attribute
+
+        * svg/custom/marker-default-width-height-expected.checksum: Added.
+        * svg/custom/marker-default-width-height-expected.png: Added.
+        * svg/custom/marker-default-width-height-expected.txt: Added.
+        * svg/custom/marker-default-width-height.svg: Added.
+
 2007-02-27  Geoffrey Garen  <ggaren@apple.com>
 
         Extending the timeout on this test to see if it fixes the buildbot failure.
