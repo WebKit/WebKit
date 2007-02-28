@@ -1,3 +1,10 @@
+2007-02-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Extending the timeout on this test to see if it fixes the buildbot failure.
+        (I don't get a failure locally.)
+
+        * fast/leaks/003.html:
+
 2007-02-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by oliver
