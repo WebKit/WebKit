@@ -30,6 +30,7 @@
 #include "config.h"
 #include "ResourceLoader.h"
 
+#include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "Page.h"
@@ -56,6 +57,7 @@ ResourceLoader::ResourceLoader(Frame* frame)
     , m_cancelled(false)
     , m_calledDidFinishLoad(false)
     , m_frame(frame)
+    , m_documentLoader(frame->loader()->activeDocumentLoader())
     , m_identifier(0)
     , m_defersLoading(frame->page()->defersLoading())
 {
@@ -64,7 +66,7 @@ ResourceLoader::ResourceLoader(Frame* frame)
 ResourceLoader::~ResourceLoader()
 {
     // FIXME: Once everything uses the loader, enable this assert again
-    //ASSERT(m_reachedTerminalState);
+    ASSERT(m_reachedTerminalState);
 }
 
 void ResourceLoader::releaseResources()
@@ -78,7 +80,8 @@ void ResourceLoader::releaseResources()
     RefPtr<ResourceLoader> protector(this);
 
     m_frame = 0;
-
+    m_documentLoader = 0;
+    
     // We need to set reachedTerminalState to true before we release
     // the resources to prevent a double dealloc of WebView <rdar://problem/4372628>
     m_reachedTerminalState = true;

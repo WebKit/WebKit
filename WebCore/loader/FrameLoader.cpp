@@ -2651,6 +2651,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
 
     ASSERT_NOT_REACHED();
 }
+
 void FrameLoader::continueAfterContentPolicy(PolicyAction policy)
 {
     PolicyCheck check = m_policyCheck;
@@ -2989,7 +2990,7 @@ void FrameLoader::assignIdentifierToInitialRequest(unsigned long identifier, con
 void FrameLoader::willSendRequest(ResourceLoader* loader, ResourceRequest& clientRequest, const ResourceResponse& redirectResponse)
 {
     applyUserAgent(clientRequest);
-    m_client->dispatchWillSendRequest(activeDocumentLoader(), loader->identifier(), clientRequest, redirectResponse);
+    m_client->dispatchWillSendRequest(loader->documentLoader(), loader->identifier(), clientRequest, redirectResponse);
 }
 
 void FrameLoader::didReceiveResponse(ResourceLoader* loader, const ResourceResponse& r)
@@ -2998,14 +2999,14 @@ void FrameLoader::didReceiveResponse(ResourceLoader* loader, const ResourceRespo
     
     if (m_frame->page())
         m_frame->page()->progress()->incrementProgress(loader->identifier(), r);
-    m_client->dispatchDidReceiveResponse(activeDocumentLoader(), loader->identifier(), r);
+    m_client->dispatchDidReceiveResponse(loader->documentLoader(), loader->identifier(), r);
 }
 
 void FrameLoader::didReceiveData(ResourceLoader* loader, const char* data, int length, int lengthReceived)
 {
     if (m_frame->page())
         m_frame->page()->progress()->incrementProgress(loader->identifier(), data, length);
-    m_client->dispatchDidReceiveContentLength(activeDocumentLoader(), loader->identifier(), lengthReceived);
+    m_client->dispatchDidReceiveContentLength(loader->documentLoader(), loader->identifier(), lengthReceived);
 }
 
 void FrameLoader::didFailToLoad(ResourceLoader* loader, const ResourceError& error)
@@ -3013,7 +3014,7 @@ void FrameLoader::didFailToLoad(ResourceLoader* loader, const ResourceError& err
     if (m_frame->page())
         m_frame->page()->progress()->completeProgress(loader->identifier());
     if (!error.isNull())
-        m_client->dispatchDidFailLoading(activeDocumentLoader(), loader->identifier(), error);
+        m_client->dispatchDidFailLoading(loader->documentLoader(), loader->identifier(), error);
 }
 
 const ResourceRequest& FrameLoader::originalRequest() const
@@ -4070,17 +4071,17 @@ void FrameLoader::didFinishLoad(ResourceLoader* loader)
 {    
     if (m_frame->page())
         m_frame->page()->progress()->completeProgress(loader->identifier());
-    m_client->dispatchDidFinishLoading(activeDocumentLoader(), loader->identifier());
+    m_client->dispatchDidFinishLoading(loader->documentLoader(), loader->identifier());
 }
 
 void FrameLoader::didReceiveAuthenticationChallenge(ResourceLoader* loader, const AuthenticationChallenge& currentWebChallenge)
 {
-    m_client->dispatchDidReceiveAuthenticationChallenge(activeDocumentLoader(), loader->identifier(), currentWebChallenge);
+    m_client->dispatchDidReceiveAuthenticationChallenge(loader->documentLoader(), loader->identifier(), currentWebChallenge);
 }
 
 void FrameLoader::didCancelAuthenticationChallenge(ResourceLoader* loader, const AuthenticationChallenge& currentWebChallenge)
 {
-    m_client->dispatchDidCancelAuthenticationChallenge(activeDocumentLoader(), loader->identifier(), currentWebChallenge);
+    m_client->dispatchDidCancelAuthenticationChallenge(loader->documentLoader(), loader->identifier(), currentWebChallenge);
 }
 
 PolicyCheck::PolicyCheck()

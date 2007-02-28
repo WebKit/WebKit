@@ -662,7 +662,7 @@ bool DocumentLoader::startLoadingMainResource(unsigned long identifier)
     // If not, it would be great to remove this line of code.
     frameLoader()->addExtraFieldsToRequest(m_request, true, false);
 
-    if (!m_mainResourceLoader->load(m_request, substituteData())) {
+    if (!m_mainResourceLoader->load(m_request, m_substituteData)) {
         // FIXME: If this should really be caught, we should just ASSERT this doesn't happen;
         // should it be caught by other parts of WebKit or other parts of the app?
         LOG_ERROR("could not create WebResourceHandle for URL %s -- should be caught by policy handler level", m_request.url().url().ascii());

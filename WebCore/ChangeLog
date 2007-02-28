@@ -1,3 +1,31 @@
+2007-02-27  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        Make resource load delegate methods pass the right document loader.
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::willSendRequest):
+        (WebCore::FrameLoader::didReceiveResponse):
+        (WebCore::FrameLoader::didReceiveData):
+        (WebCore::FrameLoader::didFailToLoad):
+        (WebCore::FrameLoader::didFinishLoad):
+        (WebCore::FrameLoader::didReceiveAuthenticationChallenge):
+        (WebCore::FrameLoader::didCancelAuthenticationChallenge):
+        Use the resource loader's document loader instead of the active one.
+        
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::receivedError):
+        Make it so we send the frame load delegate method before the resource load delegate method.
+        This was a regression from 2.0 and was caused by the fix to rdar://problem/4609195. Because the way the loader
+        now works, both delegate methods will be called.
+        
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::ResourceLoader):
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::documentLoader):
+        Add document loader pointer to ResourceLoader.
+
 2007-02-27  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.
