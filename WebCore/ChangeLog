@@ -1,3 +1,18 @@
+2007-02-28  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Maciej.
+
+        Corrected the use of the new ENABLE() macros in some ksvg2/svg files.
+        Add new build-webkit flags "--(no-)xpath" / "--(no-)xslt", to be able
+        to switch off build features easily. Also add "--(no-)svg-experimental-features"
+        flag, to be able to test filters/animations/use/foreignObject easily.
+
+        * DerivedSources.make:
+        * ksvg2/scripts/make_names.pl:
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        * ksvg2/svg/SVGStyledElement.cpp:
+        * ksvg2/svg/SVGUseElement.cpp:
+
 2007-02-28  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.

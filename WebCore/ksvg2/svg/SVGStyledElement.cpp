@@ -222,7 +222,7 @@ void SVGStyledElement::notifyResourceParentIfExistant() const
     }
 }
 
-#ifdef SVG_ENABLE_EXPERIMETAL_FEATURES
+#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
 void SVGStyledElement::updateElementInstance(SVGDocumentExtensions* extensions) const
 {
     SVGStyledElement* nonConstThis = const_cast<SVGStyledElement*>(this);

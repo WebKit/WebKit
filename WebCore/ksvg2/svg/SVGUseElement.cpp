@@ -28,7 +28,7 @@
 // Dump the deep-expanded shadow tree (where the renderes are built from)
 // #define DUMP_SHADOW_TREE
 
-#if ENABLE(SVG) && defined(SVG_ENABLE_EXEPRIMENTAL_FEATURES)
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGUseElement.h"
 
 #include "CString.h"

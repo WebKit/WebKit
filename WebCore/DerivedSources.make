@@ -608,10 +608,17 @@ XMLNames.cpp : ksvg2/scripts/make_names.pl xml/xmlattrs.in
 
 ifeq ($(findstring ENABLE_SVG,$(FEATURE_DEFINES)), ENABLE_SVG)
 
+ifeq ($(findstring ENABLE_SVG_EXPERIMENTAL_FEATURES,$(FEATURE_DEFINES)), ENABLE_SVG_EXPERIMENTAL_FEATURES)
+# SVG tag and attribute names (need to pass an extra flag if svg experimental features are enabled)
+SVGElementFactory.cpp SVGNames.cpp : ksvg2/scripts/make_names.pl ksvg2/svg/svgtags.in ksvg2/svg/svgattrs.in
+	perl $< --tags $(WebCore)/ksvg2/svg/svgtags.in --attrs $(WebCore)/ksvg2/svg/svgattrs.in --extraDefines "ENABLE_SVG_EXPERIMENTAL_FEATURES=1" \
+            --namespace SVG --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --attrsNullNamespace --output .
+else
 # SVG tag and attribute names
 SVGElementFactory.cpp SVGNames.cpp : ksvg2/scripts/make_names.pl ksvg2/svg/svgtags.in ksvg2/svg/svgattrs.in
 	perl $< --tags $(WebCore)/ksvg2/svg/svgtags.in --attrs $(WebCore)/ksvg2/svg/svgattrs.in \
             --namespace SVG --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --attrsNullNamespace --output .
+endif
 
 XLinkNames.cpp : ksvg2/scripts/make_names.pl ksvg2/misc/xlinkattrs.in
 	perl $< --attrs $(WebCore)/ksvg2/misc/xlinkattrs.in \

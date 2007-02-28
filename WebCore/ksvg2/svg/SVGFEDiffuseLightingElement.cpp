@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && defined(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
 #include "SVGFEDiffuseLightingElement.h"
 
 #include "Attr.h"

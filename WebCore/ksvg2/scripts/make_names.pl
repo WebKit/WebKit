@@ -54,7 +54,7 @@ GetOptions('tags=s' => \$tagsFile,
     'factory' => \$printFactory,
     'tagsNullNamespace' => \$tagsNullNamespace,
     'attrsNullNamespace' => \$attrsNullNamespace,
-    'extraDefines' => \$extraDefines,);
+    'extraDefines=s' => \$extraDefines);
 
 die "You must specify a namespace (e.g. SVG) for <namespace>Names.h" unless $namespace;
 die "You must specify a namespaceURI (e.g. http://www.w3.org/2000/svg)" unless $namespaceURI;
@@ -84,7 +84,11 @@ sub readNames
 {
     my $namesFile = shift;
 
-    die "Failed to open file: $namesFile" unless open NAMES, "-|", "/usr/bin/gcc", "-E", "-P", "-x", "c++", $namesFile or die;
+    if ($extraDefines eq 0) {
+        die "Failed to open file: $namesFile" unless open NAMES, "-|", "/usr/bin/gcc", "-E", "-P", "-x", "c++", $namesFile or die;
+    } else {
+        die "Failed to open file: $namesFile" unless open NAMES, "-|", "/usr/bin/gcc", "-E", "-P", "-x", "c++", "-D", "$extraDefines", $namesFile or die;
+    }
 
     my @names = ();
     while (<NAMES>) {

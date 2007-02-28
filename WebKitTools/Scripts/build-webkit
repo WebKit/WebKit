@@ -36,11 +36,17 @@ use webkitdirs;
 use POSIX;
 
 my $svgSupport = 1;
+my $svgExperimentalSupport = 0;
+my $xpathSupport = 1;
+my $xsltSupport = 1;
 my $colorSupport = 1; # Default: colorize make output
 
 our @cmakeBuild;
 
 GetOptions('svg!' => \$svgSupport,
+           'svg-experimental!' => \$svgExperimentalSupport,
+           'xpath!' => \$xpathSupport,
+           'xslt!' => \$xsltSupport,
            'color!' => \$colorSupport,
            'cmake!' => \@cmakeBuild);
 
@@ -52,7 +58,11 @@ my $productDir = productDir();
 my @options = XcodeOptions();
 my @overrideFeatureDefinesOption = ();
 
-push @overrideFeatureDefinesOption, "FEATURE_DEFINES=ENABLE_XSLT" if !$svgSupport;
+push @overrideFeatureDefinesOption, "ENABLE_SVG" if $svgSupport;
+push @overrideFeatureDefinesOption, "ENABLE_SVG_EXPERIMENTAL_FEATURES" if $svgExperimentalSupport;
+push @overrideFeatureDefinesOption, "ENABLE_XPATH" if $xpathSupport;
+push @overrideFeatureDefinesOption, "ENABLE_XSLT" if $xsltSupport;
+my $overrideFeatureDefinesString = "FEATURE_DEFINES=" . join(" ", @overrideFeatureDefinesOption);
 
 # Check that all the project directories are there.
 my @projects = ("JavaScriptCore", "JavaScriptGlue", "WebCore", "WebKit");
@@ -100,7 +110,7 @@ for my $dir (@projects) {
             $result = buildCMakeProject($dir, $colorSupport);
         }
     } elsif (isOSX()) {
-        $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @overrideFeatureDefinesOption, @ARGV;
+        $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, $overrideFeatureDefinesString, @ARGV;
     } elsif (isCygwin()) {
         if ($dir eq "WebKit") {
             $result = buildVisualStudioProject($dir);
@@ -118,6 +128,10 @@ print " WebKit is now built. To run Safari with this newly-built\n";
 print " code, use the \"run-safari\" script.\n";
 if ($svgSupport) {
     print "\n NOTE: WebKit has been built with SVG support enabled.\n";
-    print " Safari will have basic SVG viewing capabilities.\n";
+    print " Safari will have SVG viewing capabilities.\n";
 }
+if ($svgExperimentalSupport) {
+    print "\n NOTE: WebKit has been built with experimental SVG features enabled.\n";
+    print " Your build supports basic animation, filters, foreignObject & use support.\n";
+}    
 print "===========================================================\n";
