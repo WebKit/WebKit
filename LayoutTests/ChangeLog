@@ -1,3 +1,15 @@
+2007-02-27  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - repaint test for http://bugs.webkit.org/show_bug.cgi?id=12910
+          REGRESSION (r18756-r18765): list-bullet doesn't redraw properly when changing the list's content using JavaScript
+
+        * fast/repaint/list-marker-expected.checksum: Added.
+        * fast/repaint/list-marker-expected.png: Added.
+        * fast/repaint/list-marker-expected.txt: Added.
+        * fast/repaint/list-marker.html: Added.
+
 2007-02-27  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Hyatt.

@@ -231,23 +231,37 @@ void RenderListItem::positionListMarker()
             xOffset += o->xPos();
         }
 
+        bool adjustOverflow = false;
+        int markerXPos;
         RootInlineBox* root = m_marker->inlineBoxWrapper()->root();
+
         if (style()->direction() == LTR) {
             int leftLineOffset = leftRelOffset(yOffset, leftOffset(yOffset));
-            int markerXPos = leftLineOffset - xOffset - paddingLeft() - borderLeft() + m_marker->marginLeft();
+            markerXPos = leftLineOffset - xOffset - paddingLeft() - borderLeft() + m_marker->marginLeft();
             m_marker->inlineBoxWrapper()->adjustPosition(markerXPos - markerOldX, 0);
             if (markerXPos < root->leftOverflow()) {
                 root->setHorizontalOverflowPositions(markerXPos, root->rightOverflow());
-                m_overflowLeft = min(markerXPos, m_overflowLeft);
+                adjustOverflow = true;
             }
         } else {
             int rightLineOffset = rightRelOffset(yOffset, rightOffset(yOffset));
-            int markerXPos = rightLineOffset - xOffset + paddingRight() + borderRight() + m_marker->marginLeft();
+            markerXPos = rightLineOffset - xOffset + paddingRight() + borderRight() + m_marker->marginLeft();
             m_marker->inlineBoxWrapper()->adjustPosition(markerXPos - markerOldX, 0);
             if (markerXPos + m_marker->width() > root->rightOverflow()) {
                 root->setHorizontalOverflowPositions(root->leftOverflow(), markerXPos + m_marker->width());
-                m_overflowWidth = max(markerXPos + m_marker->width(), m_overflowLeft);
+                adjustOverflow = true;
             }
+        }
+
+        if (adjustOverflow) {
+            IntRect markerRect(markerXPos + xOffset, yOffset, m_marker->width(), m_marker->height());
+            RenderObject* o = m_marker;
+            do {
+                o = o->parent();
+                if (o->isRenderBlock())
+                    static_cast<RenderBlock*>(o)->addVisualOverflow(markerRect);
+                markerRect.move(-o->xPos(), -o->yPos());
+            } while (o != this);
         }
     }
 }
