@@ -121,21 +121,19 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 {
     int index, count;
     NSMutableArray *entriesForDate;
-    NSCalendarDate *entryDate;
+    NSTimeInterval entryDate;
 
     ASSERT_ARG(entry, entry != nil);
     ASSERT_ARG(dateIndex, dateIndex >= 0 && (uint)dateIndex < [_entriesByDate count]);
 
     //FIXME: just does linear search through entries; inefficient if many entries for this date
-    entryDate = [entry _lastVisitedDate];
+    entryDate = [entry lastVisitedTimeInterval];
     entriesForDate = [_entriesByDate objectAtIndex: dateIndex];
     count = [entriesForDate count];
     // optimized for inserting oldest to youngest
-    for (index = 0; index < count; ++index) {
-        if ([entryDate compare: [[entriesForDate objectAtIndex: index] _lastVisitedDate]] != NSOrderedAscending) {
+    for (index = 0; index < count; ++index)
+        if (entryDate >= [[entriesForDate objectAtIndex:index] lastVisitedTimeInterval])
             break;
-        }
-    }
 
     [entriesForDate insertObject: entry atIndex: index];
 }

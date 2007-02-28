@@ -1,5 +1,14 @@
 2007-02-28  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Maciej.
+
+        <rdar://problem/5028473> WebKit allocates a huge number of NSCalendarDates while loading history file
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate insertItem:atDateIndex:]): Use lastVisitedTimeInterval rather than _lastVisitedDate to avoid allocating NSCalendarDates.
+
+2007-02-28  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Tim Hatcher.
 
         <rdar://problem/4985524> Problem with Blot and ToT WebKit (decoding WebCoreScrollView)
