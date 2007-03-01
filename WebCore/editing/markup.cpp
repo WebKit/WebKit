@@ -394,7 +394,6 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
         root = range->startPosition().node();
         while (root && !root->hasTagName(bodyTag))
             root = root->parentNode();
-        ASSERT(root);
         if (!root)
             root = doc->documentElement();
     }
