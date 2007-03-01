@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Vladimir Olexa (vladimir.olexa@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -246,6 +247,11 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 - (IBAction)showConsole:(id)sender
 {
     [[webView windowScriptObject] callWebScriptMethod:@"showConsoleWindow" withArguments:nil];
+}
+
+- (IBAction)closeCurrentFile:(id)sender
+{
+    [[webView windowScriptObject] callWebScriptMethod:@"closeCurrentFile" withArguments:nil];
 }
 
 #pragma mark -

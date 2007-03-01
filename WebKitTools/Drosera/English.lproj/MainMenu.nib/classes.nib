@@ -8,7 +8,29 @@
             SUPERCLASS = NSObject; 
         }, 
         {
-            ACTIONS = {myAction = id; showConsole = id; stepInto = id; stepOut = id; stepOver = id; }; 
+            ACTIONS = {
+                closeCurrentFile = id; 
+                pause = id; 
+                resume = id; 
+                showConsole = id; 
+                stepInto = id; 
+                stepOut = id; 
+                stepOver = id; 
+            }; 
+            CLASS = DebuggerDocument; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {server = id; webView = WebView; }; 
+            SUPERCLASS = NSWindowController; 
+        }, 
+        {
+            ACTIONS = {
+                closeCurrentFile = id; 
+                myAction = id; 
+                showConsole = id; 
+                stepInto = id; 
+                stepOut = id; 
+                stepOver = id; 
+            }; 
             CLASS = FirstResponder; 
             LANGUAGE = ObjC; 
             SUPERCLASS = NSObject; 

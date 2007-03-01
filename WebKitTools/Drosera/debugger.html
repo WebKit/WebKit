@@ -1,6 +1,6 @@
 <!--
 Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
-Copyright (C) 2006 Vladimir Olexa (vladimir.olexa@gmail.com)
+Copyright (C) 2006, 2007 Vladimir Olexa (vladimir.olexa@gmail.com)
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
@@ -80,7 +80,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <div id="body">
 <div id="header">
 <button id="navFileLeftButton" class="nav left" disabled onclick="navFilePrevious(this)"></button><button id="navFileRightButton" class="nav right" disabled onclick="navFileNext(this)"></button>
-<button class="popup"><select size="1" id="files" onchange="switchFile()"></select><div id="filesPopupButtonContent"><span class="placeholder">no files loaded</span></div></button>
+<button class="popup"><select size="1" id="files" onchange="switchFile()"></select><div id="filesPopupButtonContent"><span class="placeholder">&lt;No files loaded&gt;</span></div></button>
 <button class="popup" id="functionNamesPopup" style="display: none"><select size="1" id="functions" onchange="switchFunction(this.selectedIndex)"></select><div id="functionPopupButtonContent"><span class="placeholder">&lt;No selected symbol&gt;</span></div></button>
 </div>
 <div id="sourcesContainer"><iframe name="sourcesFrame" id="sources" src="viewer.html"></iframe></div>

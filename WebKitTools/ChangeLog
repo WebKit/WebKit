@@ -1,3 +1,20 @@
+2007-02-28  Vladimir Olexa  <vladimir.olexa@gmail.com>
+
+        Reviewed by Tim H.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12887
+        Bug#12887: [Drosera] Add ability to close loaded files
+
+        * Drosera/DebuggerDocument.h:
+        * Drosera/DebuggerDocument.m:
+        (-[DebuggerDocument closeCurrentFile:]): Adds delegation to call a JS script to close files
+        * Drosera/Drosera.xcodeproj/project.pbxproj:
+        * Drosera/English.lproj/MainMenu.nib/classes.nib: 
+        * Drosera/English.lproj/MainMenu.nib/info.nib:
+        * Drosera/English.lproj/MainMenu.nib/keyedobjects.nib: Adds Close Current File menu item
+        * Drosera/debugger.html: Changed "no files loaded" to "<No files loaded>" to match Xcode style
+        * Drosera/debugger.js: Adds implementation of closeFile() to unload currently loaded file
+
 2007-02-28  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Maciej.

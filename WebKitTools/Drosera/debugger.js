@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2006 Vladimir Olexa (vladimir.olexa@gmail.com)
+ * Copyright (C) 2007 Vladimir Olexa (vladimir.olexa@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -664,11 +664,13 @@ function totalOffsetTop(element, stop)
     return currentTop;
 }
 
-function switchFile()
+function switchFile(fileIndex)
 {
     var filesSelect = document.getElementById("files");
-    fileClicked(filesSelect.options[filesSelect.selectedIndex].value, false);
-    loadFile(filesSelect.options[filesSelect.selectedIndex].value, true);
+    
+    if (fileIndex === undefined) fileIndex = filesSelect.selectedIndex;
+    loadFile(filesSelect.options[fileIndex].value, true);
+    fileClicked(filesSelect.options[fileIndex].value, false);
 }
 
 function syntaxHighlight(code, file)
@@ -1051,7 +1053,7 @@ function loadFile(fileIndex, manageNavLists)
         if (currentFile != -1)
             previousFiles.push(currentFile);
     }
-    
+
     document.getElementById("navFileLeftButton").disabled = (previousFiles.length == 0);
     document.getElementById("navFileRightButton").disabled = (nextFiles.length == 0);
 
@@ -1165,6 +1167,19 @@ function SiteBrowser()
         div.appendChild(ul);
         fileBrowser.appendChild(div);        
     }
+    
+    function removeFile(fileIndex)
+    {
+        var theFile = document.getElementById(fileIndex);
+        // If we are removing the last file from its site, go ahead and remove the whole site
+        if (theFile.parentNode.childNodes.length < 2) { 
+            var theSite = theFile.parentNode.parentNode;
+            theSite.removeChildren();
+            theSite.parentNode.removeChild(theSite);
+        }
+        else
+            theFile.parentNode.removeChild(theFile);
+    }
 }
 
 function fileBrowserMouseEvents(event)
@@ -1182,8 +1197,7 @@ function fileBrowserMouseEvents(event)
 function fileClicked(fileId, shouldLoadFile)
 {
     if (shouldLoadFile === undefined) shouldLoadFile = true;
-    
-    document.getElementById(currentFile).className = "passive";
+    if (currentFile != -1) document.getElementById(currentFile).className = "passive";
     document.getElementById(fileId).className = "active";
     if (shouldLoadFile) 
         loadFile(fileId, false);
@@ -1375,4 +1389,41 @@ function showConsoleWindow()
         consoleWindow = window.open("console.html", "console", "top=200, left=200, width=500, height=300, toolbar=yes, resizable=yes");
     else
         consoleWindow.focus();
+}
+
+function closeFile(fileIndex)
+{
+    if (fileIndex != -1) {
+        currentFile = -1;
+        var file = files[fileIndex];
+        var sourcesDocument = document.getElementById("sources").contentDocument;
+        // Clean up our file's content 
+        sourcesDocument.getElementById("file" + fileIndex).removeChildren();
+        // Remove the file from the open files pool
+        delete sourcesDocument.getElementById("file" + fileIndex);
+
+        var filesSelect = document.getElementById("files");
+        // Select the next loaded file. If we're at the end of the list, loop back to beginning. 
+        var nextSelectedFile = (filesSelect.selectedIndex + 1 >= filesSelect.options.length) ? 0 : filesSelect.selectedIndex;
+        // Remove the file from file lists
+        filesSelect.options[filesSelect.selectedIndex] = null;        
+        SiteBrowser.removeFile(fileIndex);
+        delete files[fileIndex];
+        
+        // Clean up the function list
+        document.getElementById("functions").removeChildren();
+
+        // Display appropriate place-holders, if we closed all files
+        if (filesSelect.options.length < 1) {
+            document.getElementById("filesPopupButtonContent").innerHTML = "<span class='placeholder'>&lt;No files loaded&gt;</span>";
+            document.getElementById("functionNamesPopup").style.display = "none";
+        }
+        else 
+            switchFile(nextSelectedFile);
+    }    
+}
+
+function closeCurrentFile()
+{
+    closeFile(currentFile);
 }
