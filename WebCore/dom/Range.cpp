@@ -1618,8 +1618,9 @@ bool operator==(const Range &a, const Range &b)
         && a.endOffset(exception) == b.endOffset(exception);
 }
 
-PassRefPtr<Range> rangeOfContents(Node *node)
+PassRefPtr<Range> rangeOfContents(Node* node)
 {
+    ASSERT(node);
     RefPtr<Range> range = new Range(node->document());
     int exception = 0;
     range->selectNodeContents(node, exception);

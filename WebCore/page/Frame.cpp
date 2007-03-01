@@ -1563,7 +1563,7 @@ static bool isInShadowTree(Node* node)
 // Searches from the beginning of the document if nothing is selected.
 bool Frame::findString(const String& target, bool forward, bool caseFlag, bool wrapFlag, bool startInSelection)
 {
-    if (target.isEmpty())
+    if (target.isEmpty() || !document())
         return false;
     
     // Start from an edge of the selection, if there's a selection that's not in shadow content. Which edge
@@ -1617,7 +1617,7 @@ bool Frame::findString(const String& target, bool forward, bool caseFlag, bool w
 
 unsigned Frame::markAllMatchesForText(const String& target, bool caseFlag, unsigned limit)
 {
-    if (target.isEmpty())
+    if (target.isEmpty() || !document())
         return 0;
     
     RefPtr<Range> searchRange(rangeOfContents(document()));

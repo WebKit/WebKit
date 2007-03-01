@@ -1,3 +1,17 @@
+2007-02-28  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Oliver and Hyatt.
+
+        Fix <rdar://problem/5024233> Crash while using Find on empty document
+
+        No layout test possible, as this involves a null document.
+
+        * dom/Range.cpp:
+        (WebCore::rangeOfContents): Added an ASSERT.
+        * page/Frame.cpp:
+        (WebCore::Frame::findString): Added a null-check for document().
+        (WebCore::Frame::markAllMatchesForText): Ditto.
+
 2007-02-28  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Not reviewed - simple gdk build fix.
