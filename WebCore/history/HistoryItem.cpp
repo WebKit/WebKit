@@ -106,7 +106,6 @@ HistoryItem::HistoryItem(const HistoryItem& item)
     , m_displayTitle(item.m_displayTitle)
     , m_lastVisitedTime(item.m_lastVisitedTime)
     , m_scrollPoint(item.m_scrollPoint)
-    , m_subItems(item.m_subItems.size())
     , m_pageCacheIsPendingRelease(false)
     , m_isTargetItem(item.m_isTargetItem)
     , m_alwaysAttemptToUsePageCache(item.m_alwaysAttemptToUsePageCache)
@@ -119,6 +118,7 @@ HistoryItem::HistoryItem(const HistoryItem& item)
         m_formData = item.m_formData->copy();
         
     unsigned size = item.m_subItems.size();
+    m_subItems.reserveCapacity(size);
     for (unsigned i = 0; i < size; ++i)
         m_subItems.append(item.m_subItems[i]->copy());
 }
