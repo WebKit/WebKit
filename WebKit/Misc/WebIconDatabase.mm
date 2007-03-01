@@ -37,6 +37,8 @@
 #import <WebCore/IconDatabase.h>
 #import <WebCore/Image.h>
 #import <WebCore/IntSize.h>
+#import <WebCore/ThreadCheck.h>
+
 
 using namespace WebCore;
 
@@ -85,7 +87,8 @@ NSSize WebIconLargeSize = {128, 128};
 - init
 {
     [super init];
-    
+    WebCoreThreadViolationCheck();
+        
     _private = [[WebIconDatabasePrivate alloc] init];
     
     // Check the user defaults and see if the icon database should even be enabled.

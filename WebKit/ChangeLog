@@ -1,3 +1,24 @@
+2007-02-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Beth
+
+        Start using the Thread Safety Check implemented in WebCore for the DOM bindings in the rest of
+        the WebKit API instead of the ASSERT_MAIN_THREAD() hack
+
+        * History/WebBackForwardList.mm:
+        (-[WebBackForwardList initWithWebCoreBackForwardList:]):
+        (-[WebBackForwardList init]):
+        (-[WebBackForwardList dealloc]):
+        (-[WebBackForwardList finalize]):
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem initWithURLString:title:lastVisitedTimeInterval:]):
+        (-[WebHistoryItem dealloc]):
+        (-[WebHistoryItem finalize]):
+        (-[WebHistoryItem copyWithZone:]):
+        (-[WebHistoryItem initWithWebCoreHistoryItem:]):
+        * Misc/WebIconDatabase.mm:
+        (-[WebIconDatabase init]):
+
 2007-02-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by Beth.

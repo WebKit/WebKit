@@ -64,42 +64,4 @@ void InitializeLoggingChannelsIfNecessary()
     initializeWithUserDefault(LogNetwork);
 }
 
-
-void _WebCoreThreadViolationCheck(const char* function)
-{
-    static bool fetchDefault = true;
-    static bool performThreadCheck = true;
-    static bool threadViolationIsException = false;
-    if (fetchDefault) {
-        NSString *threadCheckLevel = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebCoreThreadCheck"];
-        if ([threadCheckLevel isEqualToString:@"None"])
-            performThreadCheck = false;
-        else if ([threadCheckLevel isEqualToString:@"Exception"]) {
-            performThreadCheck = true;
-            threadViolationIsException = true;
-        } else if ([threadCheckLevel isEqualToString:@"Log"]) {
-            performThreadCheck = true;
-            threadViolationIsException = false;
-        }
-        fetchDefault = false;
-    }
-    
-    if (!performThreadCheck)
-        return;
-        
-    if (pthread_main_np())
-        return;
-        
-    WebCoreReportThreadViolation(function, threadViolationIsException);
-}
-
-} // namespace WebCore
-
-// Split out the actual reporting of the thread violation to make it easier to set a breakpoint
-void WebCoreReportThreadViolation(const char* function, bool threadViolationIsException)
-{
-    if (threadViolationIsException)
-        [NSException raise:@"WebKitThreadingException" format:@"%s was called from a secondary thread", function];
-    else
-        NSLog(@"WebKit Threading Violation - %s called from secondary thread", function);
 }

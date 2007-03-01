@@ -977,6 +977,7 @@ sub GenerateImplementation
     # - INCLUDES -
     push(@implContentHeader, "\n#import \"config.h\"\n");
     push(@implContentHeader, "\n#import \"logging.h\"\n");
+    push(@implContentHeader, "\n#import \"ThreadCheck.h\"\n");
     my $conditionalString;
     if ($conditional) {
         $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";

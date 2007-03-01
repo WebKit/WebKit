@@ -48,6 +48,7 @@
 #import <WebCore/KURL.h>
 #import <WebCore/PageState.h>
 #import <WebCore/PlatformString.h>
+#import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKitSystemInterface.h>
 
@@ -96,12 +97,13 @@ void WKNotifyHistoryItemChanged()
 
 - (id)initWithURLString:(NSString *)URLString title:(NSString *)title lastVisitedTimeInterval:(NSTimeInterval)time
 {
+    WebCoreThreadViolationCheck();
     return [self initWithWebCoreHistoryItem:(new HistoryItem(URLString, title, time))];
 }
 
 - (void)dealloc
 {
-    ASSERT_MAIN_THREAD();
+    WebCoreThreadViolationCheck();
     if (_private) {
         HistoryItem* coreItem = core(_private);
         coreItem->deref();
@@ -112,7 +114,7 @@ void WKNotifyHistoryItemChanged()
 
 - (void)finalize
 {
-    ASSERT_MAIN_THREAD();
+    WebCoreThreadViolationCheck();
     // FIXME: The WebCore::HistoryItem d'tor is what releases the history item's icon from the icon database
     // It's probably not good to release icons from the database only when the object is garbage-collected. 
     // Need to change design so this happens at a predictable time.
@@ -126,7 +128,7 @@ void WKNotifyHistoryItemChanged()
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    ASSERT_MAIN_THREAD();
+    WebCoreThreadViolationCheck();
     WebHistoryItem *copy = (WebHistoryItem *)NSCopyObject(self, 0, zone);
     RefPtr<HistoryItem> item = core(_private)->copy();
     copy->_private = kitPrivate(item.get());
@@ -280,7 +282,7 @@ static WebWindowWatcher *_windowWatcher = nil;
 
 - (id)initWithWebCoreHistoryItem:(PassRefPtr<HistoryItem>)item
 {   
-    ASSERT_MAIN_THREAD();
+    WebCoreThreadViolationCheck();
     // Need to tell WebCore what function to call for the 
     // "History Item has Changed" notification - no harm in doing this
     // everytime a WebHistoryItem is created

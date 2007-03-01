@@ -40,6 +40,7 @@
 #import <WebCore/BackForwardList.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/RetainPtr.h>
+#import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 
 #define COMPUTE_DEFAULT_PAGE_CACHE_SIZE UINT_MAX
@@ -99,6 +100,7 @@ WebBackForwardList *kit(BackForwardList* list)
 
 - (id)initWithWebCoreBackForwardList:(PassRefPtr<BackForwardList>)list
 {   
+    WebCoreThreadViolationCheck();
     self = [super init];
     if (!self)
         return nil;
@@ -121,6 +123,7 @@ WebBackForwardList *kit(BackForwardList* list)
 
 - (id)init
 {
+    WebCoreThreadViolationCheck();
     self = [super init];
     if (!self) {
         return nil;
@@ -137,6 +140,7 @@ WebBackForwardList *kit(BackForwardList* list)
 
 - (void)dealloc
 {
+    WebCoreThreadViolationCheck();
     BackForwardList* coreList = core(_private);
     ASSERT(coreList->closed());
     backForwardListWrappers().remove(coreList);
@@ -147,7 +151,7 @@ WebBackForwardList *kit(BackForwardList* list)
 
 - (void)finalize
 {
-    ASSERT_MAIN_THREAD();
+    WebCoreThreadViolationCheck();
     BackForwardList* coreList = core(_private);
     ASSERT(coreList->closed());
     backForwardListWrappers().remove(coreList);
