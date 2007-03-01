@@ -234,6 +234,9 @@ String WebCore::contextMenuItemTagWritingDirectionMenu() { return String(); }
 String WebCore::contextMenuItemTagDefaultDirection() { return String(); }
 String WebCore::contextMenuItemTagLeftToRight() { return String(); }
 String WebCore::contextMenuItemTagRightToLeft() { return String(); }
+String WebCore::searchMenuNoRecentSearchesText() { return String("No recent searches"); }
+String WebCore::searchMenuRecentSearchesText() { return String("Recent searches"); }
+String WebCore::searchMenuClearRecentSearchesText() { return String("Clear recent searches"); }
 
 PluginInfo* PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImplementedGdk(); return 0;}
 unsigned PlugInInfoStore::pluginCount() const { notImplementedGdk(); return 0; }
