@@ -1,3 +1,12 @@
+2007-03-02  Dave Hyatt  <hyatt@apple.com>
+
+        Fix crasher in glyph map code (buffer overrun).
+
+        Reviewed by darin
+
+        * platform/win/GlyphPageTreeNodeWin.cpp:
+        (WebCore::GlyphPage::fill):
+
 2007-03-01  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.

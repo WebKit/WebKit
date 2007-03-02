@@ -43,13 +43,17 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const FontData* fontD
 
     TEXTMETRIC tm;
     GetTextMetrics(dc, &tm);
-    WORD localGlyphBuffer[GlyphPage::size];
-    GetGlyphIndices(dc, buffer, bufferLength, localGlyphBuffer, 0);
-    for (unsigned i = 0; i < GlyphPage::size; i++)
-        setGlyphDataForIndex(i, localGlyphBuffer[i], fontData);
+    WORD localGlyphBuffer[GlyphPage::size * 2];
+    DWORD result = GetGlyphIndices(dc, buffer, bufferLength, localGlyphBuffer, 0);
+    bool success = result != GDI_ERROR && (unsigned)result == bufferLength;
+    if (success) {
+        for (unsigned i = 0; i < GlyphPage::size; i++)
+            setGlyphDataForIndex(i, localGlyphBuffer[i], fontData);
+    }
     RestoreDC(dc, -1);
     ReleaseDC(0, dc);
-    return true;
+    return success;
 }
 
 }
+
