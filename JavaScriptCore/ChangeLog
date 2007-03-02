@@ -1,3 +1,21 @@
+2007-03-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin McCullough.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12867
+          REGRESSION: BenchJS test 7 (dates) is 220% slower than in Safari 2.0.4
+
+        * kjs/DateMath.h: Marked GregorianDateTime as noncopyable, since it has a non-trivial
+        destructor and not the correspoding copy constructor or assignment operator.
+        Changed the GregorianDateTime constructor to use member initialization syntax.
+        Fixed the destructor to use the array delete operator, since timeZone is an array.
+
+        * kjs/DateMath.cpp:
+        (KJS::daysInYear): Changed to call isLeapYear so the rule is not repeated twice.
+        (KJS::getUTCOffset): Added caching on PLATFORM(DARWIN), since we can rely on the
+        notify_check function and "com.apple.system.timezone" to let us know when the
+        offset has changed.
+
 2007-02-27  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

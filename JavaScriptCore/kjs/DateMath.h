@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- * Copyright (C) 2006 Apple Computer
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -43,10 +43,10 @@
 
 #include <time.h>
 #include <string.h>
+#include <wtf/Noncopyable.h>
 
 namespace KJS {
 
-// Constants //
 const char * const weekdayName[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
 const char * const monthName[12] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 
@@ -59,38 +59,27 @@ const double msPerMinute = 60.0 * 1000.0;
 const double msPerHour = 60.0 * 60.0 * 1000.0;
 const double msPerDay = 24.0 * 60.0 * 60.0 * 1000.0;
 
-
-// Forward //
-struct GregorianDateTime;
-
-// Exported Functions //
-void msToGregorianDateTime(double, bool outputIsUTC, struct GregorianDateTime&);
-double gregorianDateTimeToMS(const GregorianDateTime&, double, bool inputIsUTC);
-double getUTCOffset();
-int equivalentYearForDST(int year);
-
 // Intentionally overridding the default tm of the system
 // Not all OS' have the same members of their tm's
-struct GregorianDateTime {
+struct GregorianDateTime : Noncopyable{
     GregorianDateTime()
+        : second(0)
+        , minute(0)
+        , hour(0)
+        , weekDay(0)
+        , monthDay(0)
+        , yearDay(0)
+        , month(0)
+        , year(0)
+        , isDST(0)
+        , utcOffset(0)
+        , timeZone(0)
     {
-        second = 0;
-        minute = 0;
-        hour = 0;
-        weekDay = 0;
-        monthDay = 0;
-        yearDay = 0;
-        month = 0;
-        year = 0;
-        isDST = 0;
-        utcOffset = 0;
-        timeZone = NULL;
     }
 
     ~GregorianDateTime()
     {
-        if (timeZone) 
-            delete timeZone;
+        delete [] timeZone;
     }
     
     GregorianDateTime(const tm& inTm)
@@ -147,10 +136,15 @@ struct GregorianDateTime {
     int yearDay;
     int month;
     int year;
-    int  isDST;
+    int isDST;
     int utcOffset;
     char* timeZone;
 };
+
+void msToGregorianDateTime(double, bool outputIsUTC, struct GregorianDateTime&);
+double gregorianDateTimeToMS(const GregorianDateTime&, double, bool inputIsUTC);
+double getUTCOffset();
+int equivalentYearForDST(int year);
 
 }   //namespace KJS
 
