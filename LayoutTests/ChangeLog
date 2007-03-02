@@ -1,3 +1,13 @@
+2007-03-01  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Tests that the url of a document after an open is what it was before the open.
+
+        * fast/loader/external-script-URL-location-expected.txt: Added.
+        * fast/loader/external-script-URL-location.html: Added.
+        * fast/loader/resources/external-script-URL-location.js: Added.
+
 2007-03-01  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Maciej.

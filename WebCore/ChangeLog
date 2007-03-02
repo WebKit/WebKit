@@ -1,3 +1,14 @@
+2007-03-01  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        - Added the test case: external-script-URL-location.html
+        - Fix an issue where the url of a document is null after an open if the document
+        has no parent.
+
+        * dom/Document.cpp:
+        (WebCore::Document::open):
+
 2007-03-01  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

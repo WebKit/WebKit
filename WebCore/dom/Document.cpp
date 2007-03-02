@@ -1252,8 +1252,7 @@ void Document::open()
         setBaseURL(parent->baseURL());
     }
     else
-        setURL(DeprecatedString());
-        
+        setURL(m_url);
 
     if ((frame() && frame()->loader()->isLoadingMainResource()) || (tokenizer() && tokenizer()->executingScript()))
         return;
