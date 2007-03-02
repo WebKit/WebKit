@@ -1,3 +1,12 @@
+2007-03-02  David Harrison  <harrison@apple.com>
+
+        Suggested by Darin.
+
+        A more efficient solution to rdar://4961431.
+
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilityIsIgnored]):
+
 2007-03-01  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

@@ -774,9 +774,12 @@ static IntRect boundingBoxRect(RenderObject* obj)
     if (m_renderer->isImage()) {
         // informal standard is to ignore images with zero-length alt strings
         Element* elt = static_cast<Element*>(m_renderer->element());
-        if (elt->hasAttribute(altAttr) && elt->getAttribute(altAttr).isEmpty())
-            return YES;
-            
+        if (elt) {
+            const AtomicString& alt = elt->getAttribute(altAttr);
+            if (alt.isEmpty() && !alt.isNull())
+                return YES;
+        }
+        
         // check for one-dimensional image
         if (m_renderer->height() <= 1 || m_renderer->width() <= 1)
             return YES;
