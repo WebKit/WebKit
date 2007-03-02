@@ -78,6 +78,9 @@ namespace WTF {
     template<> struct HashTraits<int> : GenericHashTraits<int> {
         static int deletedValue() { return -1; }
     };
+    template<> struct HashTraits<unsigned int> : GenericHashTraits<unsigned int> {
+        static unsigned int deletedValue() { return static_cast<unsigned int>(-1); }
+    };
     template<> struct HashTraits<long> : GenericHashTraits<long> {
         static long deletedValue() { return -1; }
     };

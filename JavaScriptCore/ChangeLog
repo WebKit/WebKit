@@ -1,3 +1,12 @@
+2007-03-02  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Anders.
+        
+        Add unsigned int hash traits (matches existing unsigned long version)
+
+        * wtf/HashTraits.h:
+        (WTF::):
+
 2007-03-02  Adam Roben  <aroben@apple.com>
 
         Reviewed by Kevin M.
