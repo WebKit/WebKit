@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class DeprecatedString;
+class Text;
 
 #define AppleInterchangeNewline   "Apple-interchange-newline"
 #define AppleConvertedSpace       "Apple-converted-space"
@@ -38,7 +39,7 @@ class DeprecatedString;
 
 enum EAnnotateForInterchange { DoNotAnnotateForInterchange, AnnotateForInterchange };
 
-DeprecatedString convertHTMLTextToInterchangeFormat(const DeprecatedString&);
+DeprecatedString convertHTMLTextToInterchangeFormat(const DeprecatedString&, const Text*);
 
 }
 

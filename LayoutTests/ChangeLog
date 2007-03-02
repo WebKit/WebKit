@@ -1,5 +1,19 @@
 2007-03-02  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by harrison
+        
+        <rdar://problem/4545040>
+        innerHTML does not HTML-escape text nodes inside PRE elements
+        <rdar://problem/5027857>
+        Pasting into Mail from Safari's view-source window renders the HTML
+
+        * editing/pasteboard/5027857-expected.checksum: Added.
+        * editing/pasteboard/5027857-expected.png: Added.
+        * editing/pasteboard/5027857-expected.txt: Added.
+        * editing/pasteboard/5027857.html: Added.
+
+2007-03-02  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by john
         
         <rdar://problem/5032095>

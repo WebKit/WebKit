@@ -1,3 +1,21 @@
+2007-03-02  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        <rdar://problem/4545040>
+        innerHTML does not HTML-escape text nodes inside PRE elements
+        <rdar://problem/5027857>
+        Pasting into Mail from Safari's view-source window renders the HTML
+
+        * editing/HTMLInterchange.cpp:
+        (WebCore::convertHTMLTextToInterchangeFormat): Send this function
+        the node that the text comes from as a parameter.  It shouldn't convert
+        '\n's to spaces/nbsps if the text is coming from text where newlines are
+        preserved.
+        * editing/HTMLInterchange.h:
+        * editing/markup.cpp:
+        (WebCore::startMarkup): Escape text inside the children of PREs.
+
 2007-03-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders.
