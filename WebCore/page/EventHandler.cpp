@@ -37,6 +37,7 @@
 #include "FloatPoint.h"
 #include "FocusController.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HitTestRequest.h"
@@ -1257,10 +1258,8 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& keyEvent)
     if (!node)
         return false;
     
-#ifdef MULTIPLE_FORM_SUBMISSION_PROTECTION
     if (!keyEvent.isKeyUp())
-        loader()->resetMultipleFormSubmissionProtection();
-#endif
+        m_frame->loader()->resetMultipleFormSubmissionProtection();
 
     result = !node->dispatchKeyEvent(keyEvent);
 

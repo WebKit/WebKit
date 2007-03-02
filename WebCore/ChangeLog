@@ -1,3 +1,38 @@
+2007-03-01  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
+        
+        Fix http://bugs.webkit.org/show_bug.cgi?id=12690
+        REGRESSION: can not log in to bank of america with TOT webkit
+        <rdar://problem/4990044>
+        
+        and http://bugs.webkit.org/show_bug.cgi?id=12604
+        REGRESSION: After closing the "Would you like to save password" sheet, the form fails 
+        to submit automatically at http://www.mac.com/WebObjects/HomePage.woa
+        <rdar://problem/4871752>
+        
+        and http://bugs.webkit.org/show_bug.cgi?id=12020
+        REGRESSION: Flickr uploading broken
+        <rdar://problem/4928662>
+        
+        Turn protection against multiple forms submission back on. This approach is buggy 
+        but it is way better than not having it at all. Not protecting against this
+        breaks number of major sites.
+        
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilityPerformAction:]):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::resetMultipleFormSubmissionProtection):
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::receivedMainResourceError):
+        * loader/FrameLoader.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent):
+        * page/Frame.cpp:
+        (WebCore::Frame::setView):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::mouseDown):
+
 2007-03-01  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.

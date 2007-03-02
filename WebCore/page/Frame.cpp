@@ -275,12 +275,10 @@ void Frame::setView(FrameView* view)
 
     d->m_view = view;
 
-#ifdef MULTIPLE_FORM_SUBMISSION_PROTECTION
     // Only one form submission is allowed per view of a part.
     // Since this part may be getting reused as a result of being
     // pulled from the back/forward cache, reset this flag.
     loader()->resetMultipleFormSubmissionProtection();
-#endif
 }
 
 KJSProxy *Frame::scriptProxy()

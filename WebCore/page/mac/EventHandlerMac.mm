@@ -455,9 +455,9 @@ void EventHandler::mouseDown(NSEvent *event)
         return;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-#ifdef MULTIPLE_FORM_SUBMISSION_PROTECTION
+    
     m_frame->loader()->resetMultipleFormSubmissionProtection();
-#endif
+
     m_mouseDownView = nil;
     dragState().m_dragSrc = 0;
     

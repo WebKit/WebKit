@@ -1,3 +1,19 @@
+2007-03-01  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
+        
+        HTTP layout test for http://bugs.webkit.org/show_bug.cgi?id=12690
+        REGRESSION: can not log in to bank of america with TOT webkit
+        <rdar://problem/4990044>
+
+        also for
+        http://bugs.webkit.org/show_bug.cgi?id=12604
+        http://bugs.webkit.org/show_bug.cgi?id=12020
+        
+        * http/tests/misc/multiple-submit-expected.txt: Added.
+        * http/tests/misc/multiple-submit.html: Added.
+        * http/tests/misc/resources/post-echo-and-notify-done.cgi: Added.
+
 2007-03-01  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.

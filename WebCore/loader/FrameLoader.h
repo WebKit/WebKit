@@ -338,10 +338,8 @@ namespace WebCore {
 
         bool userGestureHint();
 
-#ifdef MULTIPLE_FORM_SUBMISSION_PROTECTION
         void resetMultipleFormSubmissionProtection();
         void didNotOpenURL(const KURL&);
-#endif
 
         void addData(const char* bytes, int length);
 
@@ -579,9 +577,7 @@ namespace WebCore {
 
         RefPtr<HTMLFormElement> m_formAboutToBeSubmitted;
         HashMap<String, String> m_formValuesAboutToBeSubmitted;
-#ifdef MULTIPLE_FORM_SUBMISSION_PROTECTION
         KURL m_submittedFormURL;
-#endif
     
         Timer<FrameLoader> m_redirectionTimer;
 
