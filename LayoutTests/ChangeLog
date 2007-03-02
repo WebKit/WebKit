@@ -1,3 +1,15 @@
+2007-03-02  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <rdar://problem/5032095>
+        Gmail Editor: Copied text pastes on a new line instead of current line
+
+        * editing/pasteboard/5032095-expected.checksum: Added.
+        * editing/pasteboard/5032095-expected.png: Added.
+        * editing/pasteboard/5032095-expected.txt: Added.
+        * editing/pasteboard/5032095.html: Added.
+
 2007-03-01  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.

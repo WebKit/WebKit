@@ -1,3 +1,18 @@
+2007-03-01  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <rdar://problem/5032095>
+        Gmail Editor: Copied text pastes on a new line instead of current line
+        
+        Start merge failed to occur because positionAtStartOfInsertedContent
+        had a bug.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::positionAtStartOfInsertedContent):
+        Was failing when inserting <span><div>foo/div></span>. Return the 
+        inserted content's first VisiblePosition.
+
 2007-03-02  Dave Hyatt  <hyatt@apple.com>
 
         Fix crasher in glyph map code (buffer overrun).

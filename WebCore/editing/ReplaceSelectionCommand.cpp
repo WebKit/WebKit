@@ -461,7 +461,8 @@ VisiblePosition ReplaceSelectionCommand::positionAtEndOfInsertedContent()
 
 VisiblePosition ReplaceSelectionCommand::positionAtStartOfInsertedContent()
 {
-    return VisiblePosition(Position(m_firstNodeInserted.get(), 0));
+    // Return the inserted content's first VisiblePosition.
+    return VisiblePosition(nextCandidate(positionBeforeNode(m_firstNodeInserted.get())));
 }
 
 void ReplaceSelectionCommand::doApply()
