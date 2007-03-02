@@ -1,3 +1,22 @@
+2007-03-01  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4960250> 
+        http://bugs.webkit.org/show_bug.cgi?id=11627
+        REGRESSION: Reproducible crash at IMDb in WebCore::FrameLoader::stopLoadingSubframes
+        
+        In rare cases, we could end up calling checkLoadComplete twice for the same frame. This would cause the 
+        didFailProvisionalLoad delegate method to be called twice for the same frame, and also cause the provisional document loader
+        to be reset to null when other code wasn't expecting it.
+        
+        This regressed in revision 10904 with the fix for <rdar://problem/4184719>. The fix is to only call stopLoading on the frame
+        if either the document loader is loading, or the document is still being parsed. I've verified that the bug is still fixed and
+        that no leaks occur.
+        
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::stopLoading):
+
 2007-03-01  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Darin.
