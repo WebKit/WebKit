@@ -47,6 +47,13 @@
 
 namespace KJS {
 
+struct GregorianDateTime;
+
+void msToGregorianDateTime(double, bool outputIsUTC, GregorianDateTime&);
+double gregorianDateTimeToMS(const GregorianDateTime&, double, bool inputIsUTC);
+double getUTCOffset();
+int equivalentYearForDST(int year);
+
 const char * const weekdayName[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
 const char * const monthName[12] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 
@@ -61,7 +68,7 @@ const double msPerDay = 24.0 * 60.0 * 60.0 * 1000.0;
 
 // Intentionally overridding the default tm of the system
 // Not all OS' have the same members of their tm's
-struct GregorianDateTime : Noncopyable{
+struct GregorianDateTime : Noncopyable {
     GregorianDateTime()
         : second(0)
         , minute(0)
@@ -140,11 +147,6 @@ struct GregorianDateTime : Noncopyable{
     int utcOffset;
     char* timeZone;
 };
-
-void msToGregorianDateTime(double, bool outputIsUTC, struct GregorianDateTime&);
-double gregorianDateTimeToMS(const GregorianDateTime&, double, bool inputIsUTC);
-double getUTCOffset();
-int equivalentYearForDST(int year);
 
 }   //namespace KJS
 

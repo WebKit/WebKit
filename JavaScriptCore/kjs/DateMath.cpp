@@ -401,7 +401,7 @@ double gregorianDateTimeToMS(const GregorianDateTime& t, double milliSeconds, bo
     return result;
 }
 
-void msToGregorianDateTime(double ms, bool outputIsUTC, struct GregorianDateTime& tm)
+void msToGregorianDateTime(double ms, bool outputIsUTC, GregorianDateTime& tm)
 {
     // input is UTC
     double dstOff = 0.0;

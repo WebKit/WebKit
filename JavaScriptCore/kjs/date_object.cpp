@@ -158,16 +158,16 @@ static UString formatLocaleDate(ExecState *exec, double time, bool includeDate, 
 
 enum LocaleDateTimeFormat { LocaleDateAndTime, LocaleDate, LocaleTime };
  
-static JSCell* formatLocaleDate(GregorianDateTime gdt, const LocaleDateTimeFormat format)
+static JSCell* formatLocaleDate(const GregorianDateTime& gdt, const LocaleDateTimeFormat format)
 {
     static const char* formatStrings[] = {"%#c", "%#x", "%X"};
  
     // Offset year if needed
     struct tm localTM = gdt;
-    gdt.year += 1900;
-    bool yearNeedsOffset = gdt.year < 1900 || gdt.year > 2038;
+    int year = gdt.year + 1900;
+    bool yearNeedsOffset = year < 1900 || year > 2038;
     if (yearNeedsOffset) {
-        localTM.tm_year = equivalentYearForDST(gdt.year) - 1900;
+        localTM.tm_year = equivalentYearForDST(year) - 1900;
      }
  
     // Do the formatting
@@ -185,7 +185,7 @@ static JSCell* formatLocaleDate(GregorianDateTime gdt, const LocaleDateTimeForma
  
         snprintf(yearString, yearLen, "%d", localTM.tm_year + 1900);
         char* yearLocation = strstr(timebuffer, yearString);
-        snprintf(yearString, yearLen, "%d", gdt.year);
+        snprintf(yearString, yearLen, "%d", year);
  
         strncpy(yearLocation, yearString, yearLen - 1);
     }

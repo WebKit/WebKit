@@ -1,3 +1,17 @@
+2007-03-02  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Kevin M.
+
+        Try to fix the Qt build.
+
+        * kjs/DateMath.cpp:
+        (KJS::msToGregorianDateTime): Removed unnecessary "struct" keyword.
+        * kjs/DateMath.h: Moved forward declarations to the top of the file
+        before they are used.
+        * kjs/date_object.cpp:
+        (KJS::formatLocaleDate): Changed to take a const GregorianDateTime&
+        since GregorianDateTime is Noncopyable.
+
 2007-03-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin McCullough.
