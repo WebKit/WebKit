@@ -1,3 +1,19 @@
+2007-03-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders.
+
+        Try to fix the Qt build.
+
+        * platform/qt/TemporaryLinkStubs.cpp: Add stubs.
+        (WebCore::searchMenuNoRecentSearchesText):
+        (WebCore::searchMenuRecentSearchesText):
+        (WebCore::searchMenuClearRecentSearchesText):
+        (WebCore::AXWebAreaText):
+        (WebCore::AXLinkText):
+        (WebCore::AXListMarkerText):
+        (WebCore::AXImageMapText):
+        (WebCore::AXHeadingText):
+
 2007-03-02  David Harrison  <harrison@apple.com>
 
         Suggested by Darin.

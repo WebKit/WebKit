@@ -25,21 +25,19 @@
 
 #include "DragClientQt.h"
 
-namespace WebCore
-{
+namespace WebCore {
 
 DragDestinationAction DragClientQt::actionMaskForDrag(DragData*)
 {
     return DragDestinationActionAny;
 }
 
-void DragClientQt::willPerformDragDestinationAction(DragDestinationAction,
-                                                    DragData*)
+void DragClientQt::willPerformDragDestinationAction(DragDestinationAction, DragData*)
 {
 }
 
 void DragClientQt::dragControllerDestroyed()
-{    
+{
 }
 
 DragSourceAction DragClientQt::dragSourceActionMaskForPoint(const IntPoint&)
@@ -57,8 +55,7 @@ void DragClientQt::startDrag(DragImageRef dragImage, const IntPoint&, const IntP
 
 DragImageRef DragClientQt::createDragImageForLink(KURL&, const String&, Frame*)
 {
+    return 0;
 }
 
-}
-
-
+} // namespace WebCore
