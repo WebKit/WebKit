@@ -1,3 +1,13 @@
+2007-03-01  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Darin.
+
+        Fix ARM crash due to accessing non-4-byte-aligned memory
+        as 32-bit values.
+
+        * platform/AtomicString.cpp:
+        (WebCore::UCharBufferTranslator::equal):
+
 2007-03-01  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
