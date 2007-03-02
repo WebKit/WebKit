@@ -1,6 +1,21 @@
 2007-03-01  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=12895
+        REGRESSION: imagemap: pointer cursor is shown everywhere
+        <rdar://problem/5028163>
+ 
+        Image with imagemap should never itself be URLElement in hit test results. 
+               
+        No layout test, cursor state can't be captured.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTest):
+
+2007-03-01  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej.
         
         Fix http://bugs.webkit.org/show_bug.cgi?id=12690
         REGRESSION: can not log in to bank of america with TOT webkit

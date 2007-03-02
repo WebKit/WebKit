@@ -1528,7 +1528,8 @@ bool RenderLayer::hitTest(const HitTestRequest& request, HitTestResult& result)
     // it already set URLElement and only use the innermost.
     Node* node = result.innerNode();
     while (node) {
-        if (node->isLink() && !result.URLElement())
+        // for imagemaps, URLElement is the associated area element not the image itself
+        if (node->isLink() && !result.URLElement() && !node->hasTagName(imgTag))
             result.setURLElement(static_cast<Element*>(node));
         node = node->parentNode();
     }
