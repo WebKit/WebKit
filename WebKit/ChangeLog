@@ -1,3 +1,20 @@
+2007-03-01  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4838199>
+        Integrate Mail and WebKit paste operations
+        
+        Provide subresources used to create the fragment as a
+        convenience.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _documentFragmentFromPasteboard:inContext:allowPlainText:chosePlainText:]):
+        Update the calls to the changed method.
+        (-[WebHTMLView _documentFragmentFromPasteboard:forType:inContext:subresources:]):
+        Give the caller the subresources in the WebArchive and RTF cases.
+        * WebView/WebHTMLViewPrivate.h:
+
 2007-02-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

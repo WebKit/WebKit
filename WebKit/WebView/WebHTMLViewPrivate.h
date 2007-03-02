@@ -102,7 +102,7 @@
 - (void)_decreaseSelectionListLevel;
 - (void)_setHighlighter:(id<WebHTMLHighlighter>)highlighter ofType:(NSString*)type;
 - (void)_removeHighlighterOfType:(NSString*)type;
-- (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard forType:(NSString *)pboardType inContext:(DOMRange *)context;
+- (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard forType:(NSString *)pboardType inContext:(DOMRange *)context subresources:(NSArray **)subresources;
 
 // SPI for DumpRenderTree
 - (void)_updateActiveState;

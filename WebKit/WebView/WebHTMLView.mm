@@ -445,60 +445,69 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 {
     NSArray *types = [pasteboard types];
     *chosePlainText = NO;
-    DOMDocumentFragment *fragment;
+    DOMDocumentFragment *fragment = nil;
 
     if ([types containsObject:WebArchivePboardType] &&
         (fragment = [self _documentFragmentFromPasteboard:pasteboard 
                                                   forType:WebArchivePboardType
-                                                inContext:context]))
+                                                inContext:context
+                                             subresources:0]))
         return fragment;
                                            
     if ([types containsObject:NSFilenamesPboardType] &&
         (fragment = [self _documentFragmentFromPasteboard:pasteboard 
                                                   forType:NSFilenamesPboardType
-                                                inContext:context]))
+                                                inContext:context
+                                             subresources:0]))
         return fragment;
     
     if ([types containsObject:NSHTMLPboardType] &&
         (fragment = [self _documentFragmentFromPasteboard:pasteboard 
                                                   forType:NSHTMLPboardType
-                                                inContext:context]))
+                                                inContext:context
+                                             subresources:0]))
         return fragment;
     
     if ([types containsObject:NSRTFPboardType] &&
         (fragment = [self _documentFragmentFromPasteboard:pasteboard 
                                                   forType:NSRTFPboardType
-                                                inContext:context]))
+                                                inContext:context
+                                             subresources:0]))
         return fragment;
 
     if ([types containsObject:NSRTFDPboardType] &&
         (fragment = [self _documentFragmentFromPasteboard:pasteboard 
                                                   forType:NSRTFDPboardType
-                                                inContext:context]))
+                                                inContext:context
+                                             subresources:0]))
         return fragment;
 
     if ([types containsObject:NSTIFFPboardType] &&
         (fragment = [self _documentFragmentFromPasteboard:pasteboard 
                                                   forType:NSTIFFPboardType
-                                                inContext:context]))
+                                                inContext:context
+                                             subresources:0]))
         return fragment;
 
     if ([types containsObject:NSPICTPboardType] &&
         (fragment = [self _documentFragmentFromPasteboard:pasteboard 
                                                   forType:NSPICTPboardType
-                                                inContext:context]))
+                                                inContext:context
+                                             subresources:0]))
         return fragment;
     
     if ([types containsObject:NSURLPboardType] &&
         (fragment = [self _documentFragmentFromPasteboard:pasteboard 
                                                   forType:NSURLPboardType
-                                                inContext:context]))
+                                                inContext:context
+                                             subresources:0]))
         return fragment;
         
     if (allowPlainText && [types containsObject:NSStringPboardType] &&
         (fragment = [self _documentFragmentFromPasteboard:pasteboard
                                                   forType:NSStringPboardType
-                                                inContext:context])) {
+                                                inContext:context
+                                             subresources:0])) {
         *chosePlainText = YES;
         return fragment;
     }
@@ -1796,9 +1805,12 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard
                                                  forType:(NSString *)pboardType
                                                inContext:(DOMRange *)context
+                                            subresources:(NSArray **)subresources
 {
     if (pboardType == WebArchivePboardType) {
         WebArchive *archive = [[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]];
+        if (subresources)
+            *subresources = [archive subresources];
         DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithArchive:archive];
         [archive release];
         return fragment;
@@ -1831,7 +1843,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         NSDictionary *documentAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
             [[self class] _excludedElementsForAttributedStringConversion], NSExcludedElementsDocumentAttribute,
             self, @"WebResourceHandler", nil];
-        NSArray *subresources;
+        NSArray *s;
         
         BOOL wasDeferringCallbacks = [[self _webView] defersCallbacks];
         if (!wasDeferringCallbacks)
@@ -1840,9 +1852,11 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         DOMDocumentFragment *fragment = [string _documentFromRange:NSMakeRange(0, [string length]) 
                                                           document:[[self _frame] DOMDocument] 
                                                 documentAttributes:documentAttributes
-                                                      subresources:&subresources];
+                                                      subresources:&s];
+        if (subresources)
+            *subresources = s;
         
-        NSEnumerator *e = [subresources objectEnumerator];
+        NSEnumerator *e = [s objectEnumerator];
         WebResource *r;
         while ((r = [e nextObject]))
             [[self _dataSource] addSubresource:r];
