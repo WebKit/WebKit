@@ -70,6 +70,8 @@ sub main()
     for (my $i = 0; $i < @file; $i++) {
         my $line = $file[$i];
         my ($callCount, $byteCount);
+        
+        next if $line =~ /^\-/;
 
         # First try malloc_history format
         #   6 calls for 664 bytes thread_ffffffff |0x0 | start
