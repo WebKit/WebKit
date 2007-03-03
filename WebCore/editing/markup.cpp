@@ -534,15 +534,27 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
         }
     }
     
-    // FIXME: Do this for all fully selected blocks, not just a body.
     root = range->startPosition().node();
     while (root && !root->hasTagName(bodyTag))
         root = root->parentNode();
+    // Include markup for fully selected blocks (turn the body into a div so that we
+    // don't end up with multiple bodies after a paste).
+    // FIXME: Do this for all fully selected blocks, not just the body.
     if (root && *Selection::selectionFromContentsOfNode(root).toRange() == *range) {
-        CSSMutableStyleDeclaration* inlineStyleDecl = static_cast<HTMLElement*>(root)->inlineStyleDecl();
-        RefPtr<CSSMutableStyleDeclaration> style = inlineStyleDecl ? inlineStyleDecl->copy() : new CSSMutableStyleDeclaration();
-        style->merge(styleFromMatchedRulesForElement(static_cast<Element*>(root)).get());
+        // From this fully selected root editable element we want:
+        // The non-inheritble styles from its matched rules (author only).
+        RefPtr<CSSMutableStyleDeclaration> style = styleFromMatchedRulesForElement(static_cast<Element*>(root));
         
+        // The non-inheritble styles from its inline style declaration.
+        RefPtr<CSSMutableStyleDeclaration> inlineStyleDecl = static_cast<HTMLElement*>(root)->getInlineStyleDecl();
+        style->merge(inlineStyleDecl.get());
+
+        // All the inheritble styles from its computed style.
+        RefPtr<CSSComputedStyleDeclaration> computedStyle = new CSSComputedStyleDeclaration(static_cast<Element*>(root));
+        RefPtr<CSSMutableStyleDeclaration> inheritedComputedProperties = computedStyle->copyInheritableProperties();
+        style->merge(inheritedComputedProperties.get());
+        
+        // Pull off default styles because those will be added via the top level style span.
         defaultStyle->diff(style.get());
         
         // Bring the background attribute over, but not as an attribute because a background attribute on a div

@@ -1,5 +1,17 @@
 2007-03-02  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by kevin
+        
+        <rdar://problem/5028447>
+        REGRESSION: Gmail Editor: Copied message text pastes at the wrong font size
+
+        * editing/pasteboard/5028447-expected.checksum: Added.
+        * editing/pasteboard/5028447-expected.png: Added.
+        * editing/pasteboard/5028447-expected.txt: Added.
+        * editing/pasteboard/5028447.html: Added.
+
+2007-03-02  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by harrison
         
         <rdar://problem/4545040>

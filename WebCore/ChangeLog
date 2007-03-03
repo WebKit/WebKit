@@ -1,5 +1,17 @@
 2007-03-02  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by kevin
+        
+        <rdar://problem/5028447>
+        REGRESSION: Gmail Editor: Copied message text pastes at the wrong font size
+
+        * editing/markup.cpp:
+        (WebCore::createMarkup): The style of the div that holds
+        a fully selected body's styles didn't include styles inherited
+        from the body's ancestors.
+        
+2007-03-02  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by harrison
 
         <rdar://problem/4545040>
