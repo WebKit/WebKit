@@ -618,6 +618,9 @@ public:
 
     String iconURL();
     void setIconURL(const String& iconURL, const String& type);
+
+    bool isAllowedToLoadLocalResources() const { return m_isAllowedToLoadLocalResources; }
+
 protected:
     CSSStyleSelector* m_styleSelector;
     FrameView* m_view;
@@ -628,7 +631,7 @@ protected:
     DeprecatedString m_url;
     DeprecatedString m_baseURL;
     String m_baseTarget;
-    
+
     RefPtr<DocumentType> m_docType;
     RefPtr<DOMImplementation> m_implementation;
 
@@ -783,6 +786,8 @@ public:
 #endif
 
 private:
+    bool shouldBeAllowedToLoadLocalResources() const;
+
     void updateTitle();
     void removeAllDisconnectedNodeEventListeners();
     void imageLoadEventTimerFired(Timer<Document>*);
@@ -830,6 +835,8 @@ private:
     bool m_createRenderers;
     bool m_inPageCache;
     String m_iconURL;
+
+    bool m_isAllowedToLoadLocalResources;
 };
 
 } //namespace

@@ -63,8 +63,7 @@ using namespace WebCore;
 {   
     WebBaseNetscapePluginView *view = (WebBaseNetscapePluginView *)thePlugin->ndata;
 
-    bool hideReferrer;
-    if (!core([view webFrame])->loader()->canLoad([theRequest URL], core([view webFrame])->loader()->outgoingReferrer(), hideReferrer))
+    if (!core([view webFrame])->loader()->canLoad([theRequest URL], core([view webFrame])->document()))
         return nil;
 
     if ([self initWithRequestURL:[theRequest URL]
@@ -78,7 +77,7 @@ using namespace WebCore;
     isTerminated = YES;
     
     request = [theRequest mutableCopy];
-    if (hideReferrer)
+    if (core([view webFrame])->loader()->shouldHideReferrer([theRequest URL], core([view webFrame])->loader()->outgoingReferrer()))
         [(NSMutableURLRequest *)request _web_setHTTPReferrer:nil];
 
     _loader = NetscapePlugInStreamLoader::create(core([view webFrame]), self).releaseRef();

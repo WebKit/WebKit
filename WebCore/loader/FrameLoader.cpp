@@ -82,7 +82,9 @@
 #include <kjs/JSLock.h>
 #include <kjs/object.h>
 
-using namespace KJS;
+using KJS::UString;
+using KJS::JSLock;
+using KJS::JSValue;
 
 namespace WebCore {
 
@@ -155,6 +157,7 @@ struct ScheduledRedirection {
 };
 
 static double storedTimeOfLastCompletedLoad;
+static bool m_restrictAccessToLocal = false;
 
 static bool getString(JSValue* result, String& string)
 {
@@ -952,6 +955,28 @@ void FrameLoader::startIconLoader()
     m_iconLoader->startLoading();
 }
 
+bool FrameLoader::restrictAccessToLocal()
+{
+    return m_restrictAccessToLocal;
+}
+
+void FrameLoader::setRestrictAccessToLocal(bool access)
+{
+    m_restrictAccessToLocal = access;
+}
+
+static HashSet<String, CaseInsensitiveHash<String> >& localSchemes()
+{
+    static HashSet<String, CaseInsensitiveHash<String> > localSchemes;
+
+    if (localSchemes.isEmpty()) {
+        localSchemes.add("file");
+        localSchemes.add("applewebdata");
+    }
+
+    return localSchemes;
+}
+
 void FrameLoader::commitIconURLToIconDatabase(const KURL& icon)
 {
     IconDatabase* iconDB = IconDatabase::sharedIconDatabase();
@@ -1347,8 +1372,7 @@ bool FrameLoader::loadPlugin(RenderPart* renderer, const KURL& url, const String
         if (renderer->node() && renderer->node()->isElementNode())
             pluginElement = static_cast<Element*>(renderer->node());
 
-        bool hideReferrer;
-        if (!canLoad(url, outgoingReferrer(), hideReferrer))
+        if (!canLoad(url, frame()->document()))
             return false;
 
         widget = m_client->createPlugin(pluginElement, url, paramNames, paramValues, mimeType,
@@ -1863,14 +1887,44 @@ void FrameLoader::load(DocumentLoader* loader, FrameLoadType type, PassRefPtr<Fo
 
 bool FrameLoader::canLoad(const KURL& url, const String& referrer, bool& hideReferrer)
 {
-    bool referrerIsWebURL = referrer.startsWith("http:", false) || referrer.startsWith("https:", false);
-    bool referrerIsLocalURL = referrer.startsWith("file:", false) || referrer.startsWith("applewebdata:");
-    bool URLIsFileURL = url.protocol().startsWith("file", false);
+    hideReferrer = shouldHideReferrer(url, referrer);
+
+    if (!shouldTreatURLAsLocal(url.url()))
+        return true;
+
+    return shouldTreatURLAsLocal(referrer);
+}
+
+bool FrameLoader::canLoad(const KURL& url, const Document* doc)
+{
+    if (!shouldTreatURLAsLocal(url.url()))
+        return true;
+
+    return doc && doc->isAllowedToLoadLocalResources();
+}
+
+bool FrameLoader::canLoad(const CachedResource& resource, const Document* doc)
+{
+    if (!resource.treatAsLocal())
+        return true;
+
+    return doc && doc->isAllowedToLoadLocalResources();
+}
+
+bool FrameLoader::shouldHideReferrer(const KURL& url, const String& referrer)
+{
     bool referrerIsSecureURL = referrer.startsWith("https:", false);
-    bool URLIsSecureURL = url.protocol().startsWith("https", false);
-    
-    hideReferrer = !referrerIsWebURL || (referrerIsSecureURL && !URLIsSecureURL);
-    return !URLIsFileURL || referrerIsLocalURL;
+    bool referrerIsWebURL = referrerIsSecureURL || referrer.startsWith("http:", false);
+
+    if (!referrerIsWebURL)
+        return true;
+
+    if (!referrerIsSecureURL)
+        return false;
+
+    bool URLIsSecureURL = url.url().startsWith("https:", false);
+
+    return !URLIsSecureURL;
 }
 
 const ResourceRequest& FrameLoader::initialRequest() const
@@ -2925,9 +2979,7 @@ void FrameLoader::loadResourceSynchronously(const ResourceRequest& request, Reso
     // Since this is a subresource, we can load any URL (we ignore the return value).
     // But we still want to know whether we should hide the referrer or not, so we call the canLoad method.
     String referrer = m_outgoingReferrer;
-    bool hideReferrer;
-    canLoad(request.url(), referrer, hideReferrer);
-    if (hideReferrer)
+    if (shouldHideReferrer(request.url(), referrer))
         referrer = String();
     
     ResourceRequest initialRequest = request;
@@ -4244,6 +4296,31 @@ void FrameLoader::continueLoadWithData(SharedBuffer* buffer, const String& mimeT
         return;
 
     addData(buffer->data(), buffer->size());
+}
+
+void FrameLoader::registerSchemeAsLocal(const String& scheme)
+{
+    localSchemes().add(scheme);
+}
+
+bool FrameLoader::shouldTreatURLAsLocal(const String& url)
+{
+    // This avoids an allocation of another String and the HashSet containts()
+    // call for the file: and http: schemes.
+    if (url.length() >= 5) {
+        const UChar* s = url.characters();
+        if (s[0] == 'h' && s[1] == 't' && s[2] == 't' && s[3] == 'p' && s[4] == ':')
+            return false;
+        if (s[0] == 'f' && s[1] == 'i' && s[2] == 'l' && s[3] == 'e' && s[4] == ':')
+            return true;
+    }
+
+    int loc = url.find(':');
+    if (loc == -1)
+        return false;
+
+    String scheme = url.left(loc);
+    return localSchemes().contains(scheme);
 }
 
 } // namespace WebCore

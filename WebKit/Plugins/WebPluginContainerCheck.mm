@@ -95,10 +95,9 @@ using namespace WebCore;
 
 - (BOOL)_isForbiddenFileLoad
 {
-   bool ignore;
    WebFrameBridge *bridge = [_controller bridge];
    ASSERT(bridge);
-   if (![bridge _frame]->loader()->canLoad([_request URL], [_controller URLPolicyCheckReferrer], ignore)) {
+   if (![bridge _frame]->loader()->canLoad([_request URL], [bridge _frame]->document())) {
        [self _continueWithPolicy:PolicyIgnore];
        return YES;
    }

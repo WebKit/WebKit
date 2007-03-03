@@ -1,0 +1,4 @@
+This test is to see if a remote file can run a local script.
+
+Test Passed.
+

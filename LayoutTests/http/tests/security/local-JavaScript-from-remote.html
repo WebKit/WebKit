@@ -1,0 +1,29 @@
+<html>
+<head>
+        <script>
+            var secretness = 0;
+        </script>
+        <script src="file:///tmp/LayoutTests/http/tests/security/resources/localScript.js"/>
+        <script>
+            function test() {
+                if (window.layoutTestController)
+                    layoutTestController.dumpAsText();
+
+                var tag = document.getElementById("result");
+                if (secretness == 13)
+                    tag.innerHTML = "Test Failed: Local script run remotely.";
+                else
+                    tag.innerHTML = "Test Passed.";
+            }
+        </script>
+</head>
+<body onload="test()">
+    <div id="div0">
+        This test is to see if a remote file can run a local script.
+    </div>
+    </br>
+    <div id="result">
+        Test not run correctly.
+    </div>
+</body>
+</html>

@@ -477,7 +477,7 @@ static Image* getImage(Element* element)
         return 0;
     
     RenderImage* image = static_cast<RenderImage*>(renderer);
-    if (image->cachedImage() && !image->cachedImage()->isErrorImage())
+    if (image->cachedImage() && !image->cachedImage()->errorOccurred())
         return image->cachedImage()->image();
     return 0;
 }

@@ -1,0 +1,33 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="file:///tmp/LayoutTests/http/tests/security/resources/cssStyle.css" />
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+        }
+
+        function backgroundCheck() {
+            var result = document.getElementById("result");
+            var myBody = document.getElementById("myBody");
+            var style = document.defaultView.getComputedStyle(myBody, null);
+            var bgColor = style.getPropertyValue("background-color");
+            if (bgColor[4] == 2) {
+                result.innerHTML = "Test Failed: Local CSS remotely loaded.";
+            } else {
+                result.innerHTML = "Test Passed.";
+            }
+        }
+    </script>
+</head>
+<body id="myBody" onload="backgroundCheck()">
+    <div id="other">
+        This test is to see if a remote file can include a local CSS style.
+        <br/>
+        If the background is yellow then the CSS was loaded.
+    </div>
+    </br>
+    <div id="result">
+        Test not run correctly.
+    </div>
+</body>
+</html>

@@ -103,6 +103,7 @@ void CachedXBLDocument::checkNotify()
 void CachedXBLDocument::error()
 {
     m_loading = false;
+    m_errorOccurred = true;
     checkNotify();
 }
 

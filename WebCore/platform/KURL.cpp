@@ -792,7 +792,10 @@ DeprecatedString KURL::decode_string(const DeprecatedString& urlString, const Te
 
 bool KURL::isLocalFile() const
 {
-    // FIXME - include feed: here too?
+    // Including feed here might be a bad idea since drag and drop uses this check
+    // and including feed would allow feeds to potentially let someone's blog
+    // read the contents of the clipboard on a drag, even without a drop.
+    // Likewise with using the FrameLoader::shouldTreatURLAsLocal() function.
     return protocol() == "file";
 }
 

@@ -1650,6 +1650,9 @@ NSMutableDictionary *countInvocations;
     // Register to receive notifications whenever preference values change.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
                                                  name:WebPreferencesChangedNotification object:[self preferences]];
+
+    if (WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOCAL_RESOURCE_SECURITY_RESTRICTION))
+        FrameLoader::setRestrictAccessToLocal(true);
 }
 
 - (id)initWithFrame:(NSRect)f
@@ -2814,6 +2817,11 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)setAllowsUndo:(BOOL)flag
 {
     _private->allowsUndo = flag;
+}
+
++ (void)registerSchemeAsLocal:(NSString *)protocol
+{
+    FrameLoader::registerSchemeAsLocal(protocol);
 }
 
 @end

@@ -1,0 +1,33 @@
+<html>
+<head>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+        }
+    
+        function iFrameTest() {
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+
+            var result = document.getElementById("result");
+
+            var myFrameDocument = document.getElementById("myFrame").contentDocument;
+            if (myFrameDocument) {
+                result.innerHTML = "Test Passed.";
+            } else {
+                result.innerHTML = "Test Failed: Local page not locally loaded into iFrame.";
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="div0">
+        This test is to see if a local file can include a local page in an iFrame.
+    </div>
+    </br>
+    <div id="result">
+        Test not run correctly.
+    </div>
+    <iFrame id="myFrame" onload="iFrameTest()" src="file:///tmp/LayoutTests/http/tests/security/resources/localPage.html" />
+</body>
+</html>

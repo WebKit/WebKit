@@ -1,3 +1,95 @@
+2007-03-02  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+        - rdar://problem/4922454
+        - This fixes a security issue by making remote referrers not able to access local
+        resources, unless they register their schemes to be treated as local. The result is
+        that those schemes can access local resources and cannot be accessed by remote
+        referrers.
+        Because this behavior is new a link-on-or-after check is made to determine if the
+        app should use the older, less safe, behavior.
+
+        * WebCore.exp: added exported functions
+        * bindings/objc/DOM.mm: consolodated function to base class
+        (-[DOMElement image]):
+        (-[DOMElement _imageTIFFRepresentation]):
+        * dom/Document.cpp: Cache the document's ability to load local resources.
+        (WebCore::Document::Document):
+        (WebCore::Document::setURL):
+        (WebCore::Document::shouldBeAllowedToLoadLocalResources):
+        (WebCore::Document::stylesheetLoaded):
+        * dom/Document.h: Cache the docuent's ability to load local resources.
+        (WebCore::Document::getPendingSheet):
+        (WebCore::Document::isAllowedToLoadLocalResources):
+        * html/HTMLImageLoader.cpp: Moved functionality into base class.
+        (WebCore::HTMLImageLoader::updateFromElement):
+        (WebCore::HTMLImageLoader::dispatchLoadEvent):
+        * html/HTMLLinkElement.cpp: Handles null returns correctly now.
+        * html/HTMLTokenizer.cpp: Moved functionality into base class.
+        (WebCore::HTMLTokenizer::notifyFinished):
+        * ksvg2/misc/SVGImageLoader.cpp: Moved functionality into base class.
+        (WebCore::SVGImageLoader::dispatchLoadEvent):
+        * loader/Cache.cpp: Checks if the cached resource can be loaded.
+        (WebCore::Cache::requestResource):
+        * loader/CachedCSSStyleSheet.cpp: Moved functionality into base class.
+        (WebCore::CachedCSSStyleSheet::ref):
+        (WebCore::CachedCSSStyleSheet::error):
+        * loader/CachedImage.cpp: Moved functionality into base class.
+        (WebCore::CachedImage::CachedImage):
+        * loader/CachedImage.h: Moved functionality into base class.
+        (WebCore::CachedImage::canRender):
+        * loader/CachedResource.cpp: Cache if the CachedResource should be treated as local
+        (WebCore::CachedResource::CachedResource):
+        * loader/CachedResource.h: Moved functionality into base class.
+        (WebCore::CachedResource::errorOccurred):
+        (WebCore::CachedResource::shouldTreatAsLocal):
+        * loader/CachedScript.cpp: Moved functionality into base class.
+        (WebCore::CachedScript::CachedScript):
+        * loader/CachedScript.h: Moved functionality into base class.
+        (WebCore::CachedScript::schedule):
+        * loader/CachedXBLDocument.cpp: Moved functionality into base class.
+        (WebCore::CachedXBLDocument::error):
+        * loader/CachedXSLStyleSheet.cpp: Moved functionality into base class.
+        (WebCore::CachedXSLStyleSheet::error):
+        * loader/FrameLoader.cpp: See comments for each function below.
+        (WebCore::FrameLoader::loadSubframe): Use new canLoad.
+        (WebCore::FrameLoader::restrictAccessToLocal): return value of linked-on-or-after check.
+        (WebCore::FrameLoader::setRestrictAccessToLocal): set value for linked-on-or-after check.
+        (WebCore::localSchemes): Return set of schemes that are to be treated as local.
+        (WebCore::FrameLoader::loadPlugin): Use new canLoad.
+        (WebCore::FrameLoader::canLoad): Now multiple functions that each do the same work but some can take advantage of the cached values, if they were computed previously.
+        (WebCore::FrameLoader::shouldHideReferrer): Extracted out the logic to determine if the referrer should be hidden so it is only calculated when needed.
+        (WebCore::FrameLoader::loadResourceSynchronously): No longer calls canLoad to get hideReferrer info.
+        (WebCore::FrameLoader::registerSchemeAsLocal): Functionality to register a scheme to be treated as local.
+        (WebCore::FrameLoader::treatURLAsLocal): Given a URL this function determines if it should be treated as local.
+        * loader/FrameLoader.h: Declared functions for this security fix.  See above.
+        * loader/MainResourceLoader.cpp: Optized order of bools to regain performance.
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        * loader/SubresourceLoader.cpp: Now restricts remote from loading local resources.
+        (WebCore::SubresourceLoader::create):
+        * page/EventHandler.cpp: Moved functionality into base class.
+        (WebCore::selectCursor):
+        * platform/KURL.cpp: KURLs need to check all the registered schemes now.
+        (WebCore::KURL::isLocalFile):
+        * rendering/HitTestResult.cpp: Moved functionality into base class.
+        (WebCore::HitTestResult::image):
+        * rendering/RenderImage.cpp: Moved functionality into base class.
+        (WebCore::RenderImage::setCachedImage):
+        (WebCore::RenderImage::imageChanged):
+        (WebCore::RenderImage::paint):
+        (WebCore::RenderImage::layout):
+        (WebCore::RenderImage::calcAspectRatioWidth):
+        (WebCore::RenderImage::calcAspectRatioHeight):
+        * rendering/RenderImage.h: Moved functionality into base class.
+        (WebCore::RenderImage::errorOccurred):
+        * rendering/RenderListItem.cpp: Moved functionality into base class.
+        (WebCore::RenderListItem::setStyle):
+        * rendering/RenderListMarker.cpp: Moved functionality into base class.
+        (WebCore::RenderListMarker::isImage):
+        * xml/xmlhttprequest.cpp: Check doc's cached value instead of determining independently.
+        (WebCore::XMLHttpRequest::urlMatchesDocumentDomain):
+
 2007-03-02  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by kevin

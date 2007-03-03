@@ -29,6 +29,7 @@
 #ifndef FrameLoader_h
 #define FrameLoader_h
 
+#include "CachedResource.h"
 #include "CachePolicy.h"
 #include "FormState.h"
 #include "FrameLoaderTypes.h"
@@ -50,6 +51,7 @@ namespace KJS {
 namespace WebCore {
 
     class AuthenticationChallenge;
+    class Document;
     class DocumentLoader;
     class Element;
     class Event;
@@ -148,7 +150,11 @@ namespace WebCore {
         void load(DocumentLoader*);
         void load(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>);
 
-        bool canLoad(const KURL&, const String& referrer, bool& hideReferrer);
+        static bool canLoad(const KURL&, const String& referrer, bool& hideReferrer);
+        static bool canLoad(const KURL&, const Document*);
+        static bool canLoad(const CachedResource&, const Document*);
+
+        static bool shouldHideReferrer(const KURL& url, const String& referrer);
 
         Frame* createWindow(const FrameLoadRequest&, const WindowFeatures&);
 
@@ -390,7 +396,7 @@ namespace WebCore {
         void updateGlobalHistoryForReload(const KURL&);
         bool shouldGoToHistoryItem(HistoryItem*) const;
         bool shouldTreatURLAsSameAsCurrent(const KURL&) const;
-        
+
         void commitProvisionalLoad(PassRefPtr<PageCache>);
 
         void goToItem(HistoryItem*, FrameLoadType);
@@ -405,8 +411,14 @@ namespace WebCore {
         void setCurrentHistoryItem(PassRefPtr<HistoryItem>);
         void setPreviousHistoryItem(PassRefPtr<HistoryItem>);
         void setProvisionalHistoryItem(PassRefPtr<HistoryItem>);
-        
+
         void continueLoadWithData(SharedBuffer*, const String& mimeType, const String& textEncoding, const KURL&); 
+
+        static void registerSchemeAsLocal(const String& scheme);
+        static bool restrictAccessToLocal();
+        static void setRestrictAccessToLocal(bool);
+        static bool shouldTreatURLAsLocal(const String& url);
+
     private:        
         PassRefPtr<HistoryItem> createHistoryItem(bool useOriginal);
         PassRefPtr<HistoryItem> createHistoryItemTree(Frame* targetFrame, bool clipAtTarget);

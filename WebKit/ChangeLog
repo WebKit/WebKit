@@ -1,3 +1,27 @@
+2007-03-02  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+        - rdar://problem/4922454
+        - This fixes a security issue by making remote referrers not able to access local
+        resources, unless they register their schemes to be treated as local. The result is
+        that those schemes can access local resources and cannot be accessed by remote
+        referrers.
+        Because this behavior is new a link-on-or-after check is made to determine if the
+        app should use the older, less safe, behavior.
+
+        * Misc/WebKitVersionChecks.h: added linked-on-or-after check
+        * Misc/WebNSAttributedStringExtras.mm: Moved functionalit into the base class.
+        (fileWrapperForElement):
+        * Plugins/WebNetscapePluginStream.mm: uses new canLoad functions
+        * Plugins/WebPluginContainerCheck.mm: uses new canLoad functions
+        (-[WebPluginContainerCheck _isForbiddenFileLoad]):
+        * WebView/WebView.mm: make linked-on-or-after check and cache value, exposes SPI
+        for registering a scheme as local. 
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (+[WebView registerSchemeAsLocal:]):
+        * WebView/WebViewPrivate.h: exposes SPI for registering a scheme as local.
+
 2007-03-01  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

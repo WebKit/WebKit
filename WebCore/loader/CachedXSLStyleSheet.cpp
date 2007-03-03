@@ -92,6 +92,7 @@ void CachedXSLStyleSheet::checkNotify()
 void CachedXSLStyleSheet::error()
 {
     m_loading = false;
+    m_errorOccurred = true;
     checkNotify();
 }
 

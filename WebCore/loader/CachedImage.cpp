@@ -56,7 +56,6 @@ CachedImage::CachedImage(DocLoader* docLoader, const String& url, CachePolicy ca
     , m_dataSize(0)
 {
     m_image = 0;
-    m_errorOccurred = false;
     m_status = Unknown;
     if (!docLoader || docLoader->autoLoadImages())  {
         m_loading = true;
@@ -70,7 +69,6 @@ CachedImage::CachedImage(Image* image)
     , m_dataSize(0)
 {
     m_image = image;
-    m_errorOccurred = false;
     m_status = Cached;
     m_loading = false;
 }

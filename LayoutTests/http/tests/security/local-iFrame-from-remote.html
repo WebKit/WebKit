@@ -1,0 +1,31 @@
+<html>
+<head>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+        }
+    
+        function iFrameTest() {
+            var result = document.getElementById("result");
+
+            var myFrameDocument = document.getElementById("myFrame").contentDocument;
+            if (myFrameDocument) {
+                result.innerHTML = "Test Failed: Local page remotely loaded into iFrame.";
+            } else {
+                result.innerHTML = "Test Passed.";
+            }
+            
+        }
+    </script>
+</head>
+<body onload="iFrameTest()">
+    <div id="div0">
+        This test is to see if a remote file can include a local page in an iFrame.
+    </div>
+    </br>
+    <div id="result">
+        Test not run correctly.
+    </div>
+    <iFrame id="myFrame" src="file:///tmp/LayoutTests/http/tests/security/resources/localPage.html" />
+</body>
+</html>

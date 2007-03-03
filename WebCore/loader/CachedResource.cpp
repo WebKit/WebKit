@@ -30,6 +30,7 @@
 #include "CachedResource.h"
 
 #include "Cache.h"
+#include "FrameLoader.h"
 #include "Request.h"
 #include <KURL.h>
 #include <wtf/Vector.h>
@@ -54,6 +55,8 @@ CachedResource::CachedResource(const String& URL, Type type, CachePolicy cachePo
     m_deleted = false;
     m_lruIndex = 0;
 #endif
+    m_errorOccurred = false;
+    m_shouldTreatAsLocal = FrameLoader::shouldTreatURLAsLocal(m_url);
 }
 
 CachedResource::~CachedResource()

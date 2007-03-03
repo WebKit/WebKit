@@ -179,7 +179,7 @@ void HTMLLinkElement::process()
             // stylesheet.  Alternate stylesheets don't hold up render tree construction.
             if (!isAlternate())
                 document()->addPendingSheet();
-            
+
             String chset = getAttribute(charsetAttr);
             if (chset.isEmpty() && document()->frame())
                 chset = document()->frame()->loader()->encoding();
@@ -194,6 +194,10 @@ void HTMLLinkElement::process()
             m_cachedSheet = document()->docLoader()->requestCSSStyleSheet(m_url, chset);
             if (m_cachedSheet)
                 m_cachedSheet->ref(this);
+            else if (!isAlternate()) { // request may have been denied if stylesheet is local and document is remote.
+                m_loading = false;
+                document()->stylesheetLoaded();
+            }
         }
     } else if (m_sheet) {
         // we no longer contain a stylesheet, e.g. perhaps rel or type was changed

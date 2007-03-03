@@ -59,7 +59,7 @@ void CachedCSSStyleSheet::ref(CachedResourceClient *c)
     CachedResource::ref(c);
 
     if (!m_loading)
-        c->setCSSStyleSheet(m_url, m_decoder->encoding().name(), m_sheet);
+        c->setCSSStyleSheet(m_url, m_decoder->encoding().name(), errorOccurred() ? "" : m_sheet);
 }
 
 void CachedCSSStyleSheet::setEncoding(const String& chs)
@@ -92,6 +92,7 @@ void CachedCSSStyleSheet::checkNotify()
 void CachedCSSStyleSheet::error()
 {
     m_loading = false;
+    m_errorOccurred = true;
     checkNotify();
 }
 

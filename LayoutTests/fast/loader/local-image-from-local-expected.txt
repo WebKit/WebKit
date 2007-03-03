@@ -1,0 +1,5 @@
+This test is to see if a remote file can include a local image.
+
+Test Passed.
+
+

@@ -1,0 +1,29 @@
+<html>
+<head>
+    <script>        
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        function imgError() {
+            var result = document.getElementById("result");
+            result.innerHTML = "Test Failed: Image Load Error.";
+        }
+
+        function imgLoad() {
+            var result = document.getElementById("result");
+            result.innerHTML = "Test Passed.";
+        }
+    </script>
+</head>
+<body>
+    <div id="div0">
+        This test is to see if a remote file can include a local image.
+    </div>
+    </br>
+    <div id="result">
+        Test has not run.
+    </div>
+    </br>
+    <img id="myImg" src="file:///tmp/LayoutTests/http/tests/security/resources/compass.jpg" onError="imgError()" onLoad="imgLoad()"/>
+</body>
+</html>
