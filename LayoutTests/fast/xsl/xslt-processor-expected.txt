@@ -43,8 +43,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
 <head><title></title></head>
 <body>
-<pre>CHARACTERS IN XSLT: <<<&тест&>>>
-SOURCE XML: <<<&тест&>>>
+<pre>CHARACTERS IN XSLT: &lt;&lt;&lt;&amp;тест&amp;&gt;&gt;&gt;
+SOURCE XML: &lt;&lt;&lt;&amp;тест&amp;&gt;&gt;&gt;
 </pre>
 </body>
 </html>

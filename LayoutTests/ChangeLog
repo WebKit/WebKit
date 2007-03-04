@@ -1,3 +1,18 @@
+2007-03-04  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12951
+          REGRESSION (r19949): LayoutTests/fast/xsl/xslt-processer.html fails
+
+        Fixed spelling of "processer" to "processor" in file names.
+
+        * fast/xsl/xslt-processer-expected.txt: Removed.
+        * fast/xsl/xslt-processer.html: Removed.
+        * fast/xsl/xslt-processor-expected.txt: Added. Results progressed after fixing
+        Bugzilla Bug 12735 (<rdar://problem/4545040>).
+        * fast/xsl/xslt-processor.html: Added.
+
 2007-03-02  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff.
