@@ -1,3 +1,13 @@
+2007-03-04  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Load a url given on a command line in a way that also
+        works for local (file://) urls.
+
+        * GdkLauncher/main.cpp:
+        (main):
+
 2007-03-02  Geoffrey Garen  <ggaren@apple.com>
 
         Tweaked parse-malloc-history to work with new malloc_history output format.

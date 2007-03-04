@@ -162,7 +162,7 @@ int main(int argc, char* argv[])
     frameView->ScrollView::setDrawable(frameWindow->window);
 
     printf("OPENING URL == %s \n", url);
-    gFrame->loader()->load(url, 0);
+    gFrame->loader()->load(ResourceRequest(KURL(url)));
     gtk_main();
 #if 0 // FIXME: this crashes at the moment. needs to provide DragClient
     delete page;

@@ -33,9 +33,9 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
+#include "NotImplementedGdk.h"
 #include "RenderLayer.h"
-#include "assert.h"
-#include <algorithm>
+
 #include <gdk/gdk.h>
 
 using namespace std;
@@ -256,6 +256,62 @@ void ScrollView::setDrawable(GdkDrawable* gdkdrawable)
         return;
     }
     updateGeometry();
+}
+
+
+void ScrollView::addChild(Widget*)
+{ 
+    notImplementedGdk();
+}
+
+void ScrollView::removeChild(Widget*)
+{
+    notImplementedGdk();
+}
+
+void ScrollView::scrollPointRecursively(int x, int y)
+{
+    notImplementedGdk();
+}
+
+bool ScrollView::inWindow() const
+{
+    notImplementedGdk();
+    return true;
+}
+
+void ScrollView::wheelEvent(PlatformWheelEvent&)
+{
+    notImplementedGdk();
+}
+
+void ScrollView::updateScrollbars()
+{
+    notImplementedGdk();
+}
+
+int ScrollView::updateScrollInfo(short type, int current, int max, int pageSize)
+{ 
+    notImplementedGdk();
+    return 0;
+}
+
+IntPoint ScrollView::windowToContents(const IntPoint& point) const
+{ 
+    notImplementedGdk();
+    return point;
+}
+
+IntPoint ScrollView::contentsToWindow(const IntPoint& point) const
+{
+    notImplementedGdk();
+    return point;
+}
+
+PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
+{ 
+    return 0;
+    notImplementedGdk();
 }
 
 }

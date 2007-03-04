@@ -247,17 +247,6 @@ void SearchPopupMenu::saveRecentSearches(const AtomicString& name, const Vector<
 void SearchPopupMenu::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems) { notImplementedGdk(); }
 SearchPopupMenu::SearchPopupMenu(PopupMenuClient* client) : PopupMenu(client) { notImplementedGdk(); }
 
-void ScrollView::addChild(Widget*) { }
-void ScrollView::removeChild(Widget*) { }
-void ScrollView::scrollPointRecursively(int x, int y) { }
-bool ScrollView::inWindow() const { return true; }
-void ScrollView::wheelEvent(PlatformWheelEvent&) { }
-void ScrollView::updateScrollbars() { }
-int ScrollView::updateScrollInfo(short type, int current, int max, int pageSize) { return 0; }
-IntPoint ScrollView::windowToContents(const IntPoint& point) const { return point; }
-IntPoint ScrollView::contentsToWindow(const IntPoint& point) const { return point; }
-PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent) { return 0; }
-
 PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize) : Scrollbar(client, orientation, controlSize) { notImplementedGdk(); }
 PlatformScrollbar::~PlatformScrollbar() { notImplementedGdk(); }
 int PlatformScrollbar::width() const { return 15; }

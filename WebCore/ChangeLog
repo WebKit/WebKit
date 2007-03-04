@@ -1,3 +1,23 @@
+2007-03-04  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Move ScrollView stubs to ScrollViewGdk.cpp
+
+        * platform/gdk/FrameGdk.h: remove comment that no longer makes sense
+        * platform/gdk/ScrollViewGdk.cpp:
+        (WebCore::ScrollView::addChild):
+        (WebCore::ScrollView::removeChild):
+        (WebCore::ScrollView::scrollPointRecursively):
+        (WebCore::ScrollView::inWindow):
+        (WebCore::ScrollView::wheelEvent):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::updateScrollInfo):
+        (WebCore::ScrollView::windowToContents):
+        (WebCore::ScrollView::contentsToWindow):
+        (WebCore::ScrollView::scrollbarUnderMouse):
+        * platform/gdk/TemporaryLinkStubs.cpp:
+
 2007-03-02  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff.
