@@ -231,11 +231,5 @@ void SubresourceLoader::didCancel(const ResourceError& error)
     frameLoader()->removeSubresourceLoader(this);
     ResourceLoader::didCancel(error);
 }
-
-void SubresourceLoader::stopLoading()
-{
-    // FIXME: This should stop loading for real and not just clear the client.
-    m_client = 0;
-}
     
 }

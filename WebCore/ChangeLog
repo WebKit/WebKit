@@ -1,3 +1,25 @@
+2007-03-02  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5028165> 
+        http://bugs.webkit.org/show_bug.cgi?id=12915
+        REGRESSION: XMLHttpRequest.abort() does not stop loading (12915)
+        
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::stopLoading):
+        Save the value of m_loading since calling FrameLoader::stopLoading could set it to false.
+        
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didCancel):
+        * loader/SubresourceLoader.h:
+        Get rid of didCancel now, it's not needed anymore.
+        
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::abort):
+        Call cancel() instead of stopLoading(). Also, set m_aborted to true so the XMLHttpRequest object
+        won't be dereferenced in didFail when aborting.
+
 2007-03-04  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Nikolas Zimmermann.

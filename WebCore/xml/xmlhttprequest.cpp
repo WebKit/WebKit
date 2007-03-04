@@ -461,13 +461,14 @@ void XMLHttpRequest::abort()
 {
     bool hadLoader = m_loader;
 
+    m_aborted = true;
+    
     if (hadLoader) {
-        m_loader->stopLoading();
+        m_loader->cancel();
         m_loader = 0;
     }
 
     m_decoder = 0;
-    m_aborted = true;
 
     if (hadLoader) {
         {

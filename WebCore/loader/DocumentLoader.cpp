@@ -249,16 +249,21 @@ void DocumentLoader::mainReceivedError(const ResourceError& error, bool isComple
 // but not loads initiated by child frames' data sources -- that's the WebFrame's job.
 void DocumentLoader::stopLoading()
 {
+    // In some rare cases, calling FrameLoader::stopLoading could set m_loading to false.
+    // (This can happen when there's a single XMLHttpRequest currently loading and stopLoading causes it
+    // to stop loading. Because of this, we need to save it so we don't return early.
+    bool loading = m_loading;
+    
     if (m_committed) {
         // Attempt to stop the frame if the document loader is loading, or if it is done loading but
         // still  parsing. Failure to do so can cause a world leak.
         Document* doc = m_frame->document();
         
-        if (m_loading || (doc && doc->parsing()))
+        if (loading || (doc && doc->parsing()))
             m_frame->loader()->stopLoading(false);
     }
     
-    if (!m_loading)
+    if (!loading)
         return;
     
     RefPtr<Frame> protectFrame(m_frame);

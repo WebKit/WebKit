@@ -1,3 +1,14 @@
+2007-03-02  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5028165> 
+        http://bugs.webkit.org/show_bug.cgi?id=12915
+        REGRESSION: XMLHttpRequest.abort() does not stop loading (12915)
+
+        * http/tests/xmlhttprequest/abort-should-cancel-load-expected.txt: Added.
+        * http/tests/xmlhttprequest/abort-should-cancel-load.html: Added.
+
 2007-03-04  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

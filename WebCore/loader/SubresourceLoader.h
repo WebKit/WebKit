@@ -53,8 +53,6 @@ namespace WebCore {
         
         virtual ~SubresourceLoader();
 
-        void stopLoading();
-        
         virtual bool load(const ResourceRequest&);
         
         virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
