@@ -50,7 +50,7 @@ function shouldBe(_a, _b)
 
   if (exception)
     testFailed(_a + " should be " + _bv + ". Threw exception " + exception);
-  else if (_av === _bv)
+  else if (_av === _bv || (typeof(_av) == "number" && typeof(_bv) == "number" && isNaN(_av) && isNaN(_bv)))
     testPassed(_a + " is " + _b);
   else {
     testFailed(_a + " should be " + _bv + " (of type " + typeof _bv 
