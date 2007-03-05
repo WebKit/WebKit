@@ -5,7 +5,7 @@
         Fix http://bugs.webkit.org/show_bug.cgi?id=12947
         Bug 12947: REGRESSION: ASSERTION FAILED: maxWidth >= 0 in StringTruncator.cpp:109 in WebCore::truncateString()
 
-        Handle nil window correctly in toUserSpace and toDeviceSpace.  On Intel Mac's a message to nil that returns a
+        Handle nil window correctly in toUserSpace and toDeviceSpace.  On Intel Macs a message to nil that returns a
         float will return 0.0.  We use this as the divisor in calculating a scale factor, which results in NaN being
         introduced into our rect.
 
