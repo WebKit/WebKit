@@ -1,3 +1,15 @@
+2007-03-05  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12868
+        parts of the CSS classes in this simple SVG example are not applied
+
+        Make sure the xml stylesheets are parsed in strict mode.
+
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::parseStyleSheet):
+
 2007-03-04  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
