@@ -1,3 +1,13 @@
+2007-03-04  Don Gibson  <dgibson77@gmail.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12950
+          Assertions.cpp should not #define macros that are already defined
+
+        * wtf/Assertions.cpp: Don't #define WINVER and _WIN32_WINNT if they
+        are already defined.
+
 2007-03-02  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Anders.
