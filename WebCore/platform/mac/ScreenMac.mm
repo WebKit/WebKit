@@ -83,16 +83,18 @@ NSScreen *screenForWindow(NSWindow *window)
 FloatRect toUserSpace(const NSRect& rect, NSWindow *destination)
 {
     FloatRect userRect = rect;
-    userRect.setY(NSMaxY([[destination screen] frame]) - (userRect.y() + userRect.height())); // flip
-    userRect.scale(1 / [destination userSpaceScaleFactor]); // scale down
+    userRect.setY(NSMaxY([screenForWindow(destination) frame]) - (userRect.y() + userRect.height())); // flip
+    if (destination)
+        userRect.scale(1 / [destination userSpaceScaleFactor]); // scale down
     return userRect;
 }
 
 NSRect toDeviceSpace(const FloatRect& rect, NSWindow *source)
 {
     FloatRect deviceRect = rect;
-    deviceRect.scale([source userSpaceScaleFactor]); // scale up
-    deviceRect.setY(NSMaxY([[source screen] frame]) - (deviceRect.y() + deviceRect.height())); // flip
+    if (source)
+        deviceRect.scale([source userSpaceScaleFactor]); // scale up
+    deviceRect.setY(NSMaxY([screenForWindow(source) frame]) - (deviceRect.y() + deviceRect.height())); // flip
     return deviceRect;
 }
 
