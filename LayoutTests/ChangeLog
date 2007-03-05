@@ -1,3 +1,10 @@
+2007-03-04  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        * fast/events/keydown-keypress-preventDefault-expected.txt: Added.
+        * fast/events/keydown-keypress-preventDefault.html: Added.
+
 2007-03-02  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

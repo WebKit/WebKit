@@ -1243,14 +1243,13 @@ static EventTargetNode* eventTargetNodeForDocument(Document* doc)
         else
             node = doc->documentElement();
         if (!node)
-            return false;
+            return 0;
     }
     return EventTargetNodeCast(node);
 }
 
 bool EventHandler::keyEvent(const PlatformKeyboardEvent& keyEvent)
 {
-    bool result;
     // Check for cases where we are too early for events -- possible unmatched key up
     // from pressing return in the location bar.
     EventTargetNode* node = eventTargetNodeForDocument(m_frame->document());
@@ -1260,31 +1259,37 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& keyEvent)
     if (!keyEvent.isKeyUp())
         m_frame->loader()->resetMultipleFormSubmissionProtection();
 
-    result = !node->dispatchKeyEvent(keyEvent);
-
-    // Get the target node again, in case the focus has changed
-    // during the keyDown event handler 
-    node = eventTargetNodeForDocument(m_frame->document());
-    if (!node)
-        return false;
-        
-    // We want to send both a down and a press for the initial key event. (This is the behavior of other browsers)
-    // To get the rest of WebCore to do this, we send a second KeyPress with "is repeat" set to true,
-    // which causes it to send a press to the DOM.
-    // We should do this a better way.
-    if (!keyEvent.isKeyUp() && !keyEvent.isAutoRepeat()) {
-        PlatformKeyboardEvent keyPressedEvent(keyEvent);
-        keyPressedEvent.setIsAutoRepeat(true);
-        if (!node->dispatchKeyEvent(keyPressedEvent))
-            result = true;
-    }
-
-    return result;
+    return !node->dispatchKeyEvent(keyEvent);
 }
 
 void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
 {
-    if (event->type() == keypressEvent) {
+    if (event->type() == keydownEvent) {     
+        // Get the target node again, in case the focus has changed
+        if (EventTargetNode* node = eventTargetNodeForDocument(m_frame->document())) {
+            // Create a keypress event from the keydown event
+            RefPtr<KeyboardEvent> keypress;
+            const PlatformKeyboardEvent* keyEvent = event->keyEvent();
+            if (keyEvent) {
+                PlatformKeyboardEvent key = *keyEvent;
+                // Set "is repeat" to true, which will cause this PlatformKeyboardEvent to be interpreted as a keypress event.
+                // We should do this a better way.
+                key.setIsAutoRepeat(true);
+                keypress = new KeyboardEvent(key, event->view());
+            } else {
+                keypress = new KeyboardEvent(keypressEvent, event->bubbles(), event->cancelable(), 
+                                            event->view(), event->keyIdentifier(), event->keyLocation(),
+                                            event->ctrlKey(), event->altKey(), event->shiftKey(), event->metaKey(), event->altGraphKey());
+            }
+            keypress->setUnderlyingEvent(event);   
+        
+            // Dispatch the new keypress event
+            ExceptionCode ec;
+            node->dispatchEvent(keypress, ec, true);
+            if (keypress->defaultHandled())
+                event->setDefaultHandled();
+        }
+    } else if (event->type() == keypressEvent) {
         m_frame->editor()->handleKeyPress(event);
         if (event->defaultHandled())
             return;

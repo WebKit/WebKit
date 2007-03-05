@@ -1,3 +1,18 @@
+2007-03-04  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Change to dispatch the keypress event during the defaultEventHandler for keydown events.  This matches IE behavior.
+        This is preparation for fixing event dispatch with input methods (http://bugs.webkit.org/show_bug.cgi?id=10871)
+
+        Test: fast/events/keydown-keypress-preventDefault.html
+
+        * dom/EventTargetNode.cpp: (WebCore::EventTargetNode::defaultEventHandler): Call the defaultKeyboardEventHandler for keydown events.
+        * page/EventHandler.cpp:
+        (WebCore::eventTargetNodeForDocument): Return 0 instead of false since the return type in EventTargetNode.
+        (WebCore::EventHandler::keyEvent): Removed dispatch of keypress event, since this is now done in the default event handler.
+        (WebCore::EventHandler::defaultKeyboardEventHandler): For keydown events, create and dispatch a keypress event.
+
 2007-03-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Nikolas Zimmermann (yay!).
