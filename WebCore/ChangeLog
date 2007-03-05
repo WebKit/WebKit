@@ -2,6 +2,21 @@
 
         Reviewed by Darin.
 
+        http://bugs.webkit.org/show_bug.cgi?id=12970
+        Fix and import 4XPath test_core_functions.html test
+
+        * xml/XPathExpression.cpp:
+        (WebCore::XPathExpression::evaluate): Fully initialize the evaluation context.
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunSubstring::doEvaluate): Fixed handling of edge cases.
+        (WebCore::XPath::FunRound::round): Reimplemented to match the spec; exposed FunRound::round() to be used in
+        other functions.
+
+2007-03-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
         http://bugs.webkit.org/show_bug.cgi?id=12954
         XPath relative operations are implemented incorrectly
 

@@ -186,6 +186,8 @@ class FunCeiling : public Function {
 
 class FunRound : public Function {
     virtual Value doEvaluate() const;
+public:
+    static double round(double);
 };
 
 DEFINE_FUNCTION_CREATOR(FunLast)
@@ -511,11 +513,15 @@ Value FunSubstringAfter::doEvaluate() const
 Value FunSubstring::doEvaluate() const
 {
     String s = arg(0)->evaluate().toString();
-    long pos = lround(arg(1)->evaluate().toNumber());
+    long pos = static_cast<long>(FunRound::round(arg(1)->evaluate().toNumber()));
     bool haveLength = argCount() == 3;
     long len = -1;
-    if (haveLength)
-        len = lround(arg(2)->evaluate().toNumber());
+    if (haveLength) {
+        double doubleLen = arg(2)->evaluate().toNumber();
+        if (isnan(doubleLen))
+            return "";
+        len = static_cast<long>(FunRound::round(doubleLen));
+    }
 
     if (pos > long(s.length())) 
         return "";
@@ -669,6 +675,17 @@ Value FunFloor::doEvaluate() const
 Value FunCeiling::doEvaluate() const
 {
     return ceil(arg(0)->evaluate().toNumber());
+}
+
+double FunRound::round(double val)
+{
+    if (!isnan(val) && !isinf(val)) {
+        if (signbit(val) && val >= -0.5)
+            val *= 0; // negative zero
+        else
+            val = floor(val + 0.5);
+    }
+    return val;
 }
 
 Value FunRound::doEvaluate() const

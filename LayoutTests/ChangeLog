@@ -1,3 +1,17 @@
+2007-03-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12970
+        Fix and import 4XPath test_core_functions.html test
+
+        * fast/xpath/4XPath/Core/test_core_functions-expected.txt: Added.
+        * fast/xpath/4XPath/Core/test_core_functions.html: Added.
+        The remaining failures with id() are caused by an XML DOM problem - ID attributes declared
+        in an internal subset are not treated as such.
+
+        * fast/xpath/4XPath/Core/test.js: Common data for XPath tests.
+
 2007-03-05  Anders Carlsson  <acarlsson@apple.com>
 
         * plugins/get-url-with-blank-target-expected.txt:

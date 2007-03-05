@@ -1,4 +1,4 @@
-FAIL DOM.evaluate("last()", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be 1 (of type number). Was 0 (of type number).
+PASS DOM.evaluate("last()", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 1
 PASS DOM.evaluate("position()", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 1
 PASS DOM.evaluate("count(/ROOT | /ROOT/CHILD1)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 2
 FAIL id(1) incorrect length (expected 1, actual 0)
@@ -31,7 +31,7 @@ PASS DOM.evaluate("substring('12345', 2)", CHILD1, null, XPathResult.ANY_TYPE, n
 PASS DOM.evaluate("substring('12345', 1.5, 2.6)", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue is "234"
 PASS DOM.evaluate("substring('12345', 0, 3)", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue is "12"
 PASS DOM.evaluate("substring('12345', number('NaN'), 3)", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue is ""
-FAIL DOM.evaluate("substring('12345', 1, number('NaN'))", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue should be  (of type string). Was 12345 (of type string).
+PASS DOM.evaluate("substring('12345', 1, number('NaN'))", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue is ""
 PASS DOM.evaluate("substring('12345', -42, 1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue is "12345"
 PASS DOM.evaluate("substring('12345', -1 div 0, 1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).stringValue is ""
 PASS DOM.evaluate("string-length('3.14Hi')", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 6
@@ -60,7 +60,7 @@ PASS DOM.evaluate("ceiling(1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).
 PASS DOM.evaluate("ceiling(0.5)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 1
 PASS DOM.evaluate("ceiling(-0.5)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 0
 PASS DOM.evaluate("round(3.14)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 3
-FAIL DOM.evaluate("round(-4.5)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be -4 (of type number). Was -5 (of type number).
+PASS DOM.evaluate("round(-4.5)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is -4
 PASS DOM.evaluate("round(number('NaN'))", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is NaN
 PASS DOM.evaluate("round(1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is Infinity
 PASS DOM.evaluate("round(-1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is -Infinity
