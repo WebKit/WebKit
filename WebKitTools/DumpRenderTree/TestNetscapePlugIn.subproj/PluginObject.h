@@ -42,3 +42,4 @@ typedef struct {
 } PluginObject;
 
 extern NPClass *getPluginClass(void);
+extern void handleCallback(PluginObject* object, const char *url, NPReason reason, void *notifyData);

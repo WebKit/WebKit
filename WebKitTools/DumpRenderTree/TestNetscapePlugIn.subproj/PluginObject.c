@@ -79,15 +79,17 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
 #define ID_TEST_GETURL              1
 #define ID_REMOVE_DEFAULT_METHOD    2
 #define ID_TEST_DOM_ACCESS          3
+#define ID_TEST_GET_URL_NOTIFY      4
 
-#define NUM_METHOD_IDENTIFIERS      4
+#define NUM_METHOD_IDENTIFIERS      5
 
 static NPIdentifier pluginMethodIdentifiers[NUM_METHOD_IDENTIFIERS];
 static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "testCallback",
     "getURL",
     "removeDefaultMethod",
-    "testDOMAccess"
+    "testDOMAccess",
+    "getURLNotify",
 };
 
 static NPUTF8* createCStringFromNPVariant(const NPVariant *variant)
@@ -209,6 +211,22 @@ static bool pluginInvoke(NPObject *header, NPIdentifier name, const NPVariant *a
         testDOMAccess(obj);
         VOID_TO_NPVARIANT(*result);
         return true;
+    } else if (name == pluginMethodIdentifiers[ID_TEST_GET_URL_NOTIFY]) {
+        if (argCount == 3 && NPVARIANT_IS_STRING(args[0]) && NPVARIANT_IS_STRING(args[1]) && NPVARIANT_IS_STRING(args[2])) {
+            NPUTF8* urlString = createCStringFromNPVariant(&args[0]);
+            NPUTF8* targetString = createCStringFromNPVariant(&args[1]);            
+            NPUTF8* callbackString = createCStringFromNPVariant(&args[2]);
+            
+            NPIdentifier callbackIdentifier = browser->getstringidentifier(callbackString);
+            browser->geturlnotify(obj->npp, urlString, targetString, callbackIdentifier);
+
+            free(urlString);
+            free(targetString);
+            free(callbackString);
+            
+            VOID_TO_NPVARIANT(*result);
+            return true;
+        }
     }
 
     return false;
@@ -243,4 +261,22 @@ static NPObject *pluginAllocate(NPP npp, NPClass *theClass)
 static void pluginDeallocate(NPObject *obj) 
 {
     free(obj);
+}
+
+void handleCallback(PluginObject* object, const char *url, NPReason reason, void *notifyData)
+{
+    assert(object);
+    
+    NPVariant args[1];
+    
+    NPObject *windowScriptObject;
+    browser->getvalue(object->npp, NPPVpluginScriptableNPObject, &windowScriptObject);
+    
+    NPIdentifier callbackIdentifier = notifyData;
+
+    INT32_TO_NPVARIANT(reason, args[0]);
+
+    NPVariant browserResult;
+    browser->invoke(object->npp, windowScriptObject, callbackIdentifier, args, 1, &browserResult);
+    browser->releasevariantvalue(&browserResult);
 }

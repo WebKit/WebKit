@@ -1978,6 +1978,16 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             } else {
                 newWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:nil];
             }
+            
+            if (!newWebView) {
+                if ([pluginRequest sendNotification]) {
+                    [self willCallPlugInFunction];
+                    NPP_URLNotify(plugin, [[[pluginRequest request] URL] _web_URLCString], NPERR_GENERIC_ERROR, [pluginRequest notifyData]);
+                    [self didCallPlugInFunction];
+                }
+                return;
+            }
+            
             frame = [newWebView mainFrame];
             core(frame)->tree()->setName(frameName);
             [[newWebView _UIDelegateForwarder] webViewShow:newWebView];

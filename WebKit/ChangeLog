@@ -1,3 +1,15 @@
+2007-03-05  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam, Darin.
+ 
+        <rdar://problem/5025212>
+        In Mail, a crash occurs at WebCore::Frame::tree() when clicking on embedded flash object
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView loadPluginRequest:]):
+        Handle the case where the web view returned from the delegate method is null. Also, send out an error notification
+        in that case so we can catch it.
+
 2007-03-05  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin and Kevin D

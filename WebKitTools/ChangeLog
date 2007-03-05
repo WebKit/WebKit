@@ -1,3 +1,20 @@
+2007-03-05  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam, Darin.
+
+        <rdar://problem/5025212>
+        In Mail, a crash occurs at WebCore::Frame::tree() when clicking on embedded flash object
+        
+        Add a "getURLNotify" method to the plugin object. This lets you pass a URL, a target and a callback function
+        to be run when the URL has finished (or failed) loading.
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
+        (pluginInvoke):
+        (handleCallback):
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.c:
+        (NPP_URLNotify):
+
 2007-03-04  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Nikolas Zimmermann.

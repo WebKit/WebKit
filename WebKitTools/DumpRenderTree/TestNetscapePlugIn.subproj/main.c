@@ -192,6 +192,9 @@ int16 NPP_HandleEvent(NPP instance, void *event)
 
 void NPP_URLNotify(NPP instance, const char *url, NPReason reason, void *notifyData)
 {
+    PluginObject *obj = instance->pdata;
+        
+    handleCallback(obj, url, reason, notifyData);
 }
 
 NPError NPP_GetValue(NPP instance, NPPVariable variable, void *value)
