@@ -1,3 +1,14 @@
+2007-03-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
+        Text encoding test case
+
+        * fast/encoding/char-encoding-expected.txt: Added.
+        * fast/encoding/char-encoding.html: Added.
+        * fast/encoding/charset-names-expected.txt: Moved.
+        * fast/encoding/charset-names.html: Moved.
+
 2007-03-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

@@ -1,0 +1,104 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<form id="form" target="subframe"><input type="text" id="text" name="text"></form>
+<iframe id="subframe" name="subframe"></iframe>
+<script>
+
+
+var charsets = new Array;
+var unicodes = new Array;
+var expectedResults = new Array;
+
+var results = new Object;
+
+var i = 0;
+
+function encode(charset, unicode)
+{
+    // Returns a value already encoded, since we can't do it synchronously.
+    return results[charset][unicode];
+}
+
+function testsDone()
+{
+    var form = document.getElementById('form');
+    var subframe = document.getElementById('subframe');
+
+    form.parentNode.removeChild(form);
+    subframe.parentNode.removeChild(subframe);
+
+    description("This tests encoding characters in various character sets.");
+
+    for (i = 0; i < charsets.length; ++i) {
+        shouldBe("encode('" + charsets[i] + "', '" + unicodes[i] + "')", "'" + expectedResults[i] + "'");
+    }
+
+    // Hack; we'd prefer to use js-test-post.js but it runs too soon.
+    shouldBeTrue("successfullyParsed");
+    debug('<br><span class="pass">TEST COMPLETE</span>');
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function subframeLoaded()
+{
+    var URL = "" + document.getElementById('subframe').contentWindow.location;
+    var charsetResults = results[charsets[i]];
+    if (!charsetResults) {
+        charsetResults = new Object;
+        results[charsets[i]] = charsetResults;
+    }
+    charsetResults[unicodes[i]] = URL.substr(URL.indexOf('=') + 1);
+
+    ++i;
+    runTest();
+}
+
+function runTest()
+{
+    if (i >= charsets.length) {
+        testsDone();
+        return;
+    }
+
+    var form = document.getElementById('form');
+    var text = document.getElementById('text');
+    var subframe = document.getElementById('subframe');
+
+    form.acceptCharset = charsets[i];
+    form.action = "data:text/plain,x";
+    subframe.onload = subframeLoaded;
+    text.value = String.fromCharCode(unicodes[i].replace('U+', '0x'));
+    form.submit();
+}
+
+function testEncode(charsetName, unicode, characterSequence)
+{
+    charsets.push(charsetName);
+    unicodes.push(unicode);
+    expectedResults.push(characterSequence);
+}
+
+testEncode("UTF-8", "U+00A0", "%C2%A0");
+testEncode('macintosh', 'U+221A', '%C3');
+testEncode('MacRoman', 'U+221A', '%C3');
+
+// Turning on this test causes a download to occur. FIXME: A bug?
+//testEncode('UTF-8', 'U+221A', '%E2%88%9A');
+
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+runTest();
+
+successfullyParsed = true;
+
+</script>
+</body>
+</html>
