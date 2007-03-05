@@ -32,6 +32,7 @@
 
 #include "Document.h"
 #include "NamedAttrMap.h"
+#include "XMLNames.h"
 #include "XPathValue.h"
 #include <wtf/MathExtras.h>
 
@@ -596,10 +597,10 @@ Value FunLang::doEvaluate() const
 
     RefPtr<Node> langNode = 0;
     Node* node = evaluationContext().node.get();
-    String xmsnsURI = node->lookupNamespaceURI("xms");
     while (node) {
         NamedAttrMap* attrs = node->attributes();
-        langNode = attrs->getNamedItemNS(xmsnsURI, "lang");
+        if (attrs)
+            langNode = attrs->getNamedItemNS(XMLNames::xmlNamespaceURI, "lang");
         if (langNode)
             break;
         node = node->parentNode();
@@ -609,13 +610,18 @@ Value FunLang::doEvaluate() const
         return false;
 
     String langNodeValue = langNode->nodeValue();
+    while (true) {
+        if (equalIgnoringCase(langNodeValue, lang))
+            return true;
 
-    // extract 'en' out of 'en-us'
-    int index = langNodeValue.find('-');
-    if (index != -1)
+        // Remove suffixes one by one.
+        int index = langNodeValue.reverseFind('-');
+        if (index == -1)
+            break;
         langNodeValue = langNodeValue.left(index);
+    }
 
-    return equalIgnoringCase(langNodeValue, lang);
+    return false;
 }
 
 bool FunLang::isConstant() const

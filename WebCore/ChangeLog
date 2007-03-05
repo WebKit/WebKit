@@ -1,3 +1,19 @@
+2007-03-04  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Nikolas Zimmermann (yay!).
+
+        http://bugs.webkit.org/show_bug.cgi?id=12962
+        4XPath tests crash on lang() function
+
+        Covered by 4XPath tests, to be landed later.
+
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::reverseFind): Do not crash with empty strings.
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunLang::doEvaluate): Do not crash when an element has no
+        attributes. Use a proper namespace for xml:lang (not sure where "xms" came from).
+        Rewrote the algorithm for suffix removing to match the spec.
+
 2007-03-02  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
