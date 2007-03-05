@@ -61,8 +61,7 @@ namespace WebCore {
         class NumericOp : public Expression {
         public:
             enum Opcode {
-                OP_Add, OP_Sub, OP_Mul, OP_Div, OP_Mod,
-                OP_GT, OP_LT, OP_GE, OP_LE
+                OP_Add, OP_Sub, OP_Mul, OP_Div, OP_Mod
             };
             NumericOp(Opcode, Expression* lhs, Expression* rhs);
         private:
@@ -72,10 +71,11 @@ namespace WebCore {
 
         class EqTestOp : public Expression {
         public:
-            enum Opcode { OP_EQ, OP_NE };
+            enum Opcode { OP_EQ, OP_NE, OP_GT, OP_LT, OP_GE, OP_LE };
             EqTestOp(Opcode, Expression* lhs, Expression* rhs);
         private:
             virtual Value doEvaluate() const;
+            bool compare(const Value&, const Value&) const;
             Opcode m_opcode;
         };
 

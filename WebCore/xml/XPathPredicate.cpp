@@ -108,14 +108,6 @@ Value NumericOp::doEvaluate() const
             return leftVal / rightVal;
         case OP_Mod:
             return remainder(leftVal, rightVal);
-        case OP_GT:
-            return leftVal > rightVal;
-        case OP_GE:
-            return leftVal >= rightVal;
-        case OP_LT:
-            return leftVal < rightVal;
-        case OP_LE:
-            return leftVal <= rightVal;
     }
     
     return Value();
@@ -128,23 +120,100 @@ EqTestOp::EqTestOp(Opcode opcode, Expression* lhs, Expression* rhs)
     addSubExpression(rhs);
 }
 
+bool EqTestOp::compare(const Value& lhs, const Value& rhs) const
+{
+    if (lhs.isNodeVector()) {
+        const NodeVector& lhsVector = lhs.toNodeVector();
+        if (rhs.isNodeVector()) {
+            // If both objects to be compared are node-sets, then the comparison will be true if and only if
+            // there is a node in the first node-set and a node in the second node-set such that the result of
+            // performing the comparison on the string-values of the two nodes is true.
+            const NodeVector& rhsVector = rhs.toNodeVector();
+            for (unsigned lindex = 0; lindex < lhsVector.size(); ++lindex)
+                for (unsigned rindex = 0; rindex < rhsVector.size(); ++rindex)
+                    if (compare(stringValue(lhsVector[lindex].get()), stringValue(rhsVector[rindex].get())))
+                        return true;
+            return false;
+        }
+        if (rhs.isNumber()) {
+            // If one object to be compared is a node-set and the other is a number, then the comparison will be true
+            // if and only if there is a node in the node-set such that the result of performing the comparison on the number
+            // to be compared and on the result of converting the string-value of that node to a number using the number function is true.
+            for (unsigned lindex = 0; lindex < lhsVector.size(); ++lindex)
+                if (compare(Value(stringValue(lhsVector[lindex].get())).toNumber(), rhs))
+                    return true;
+            return false;
+        }
+        if (rhs.isString()) {
+            // If one object to be compared is a node-set and the other is a string, then the comparison will be true
+            // if and only if there is a node in the node-set such that the result of performing the comparison on
+            // the string-value of the node and the other string is true.
+            for (unsigned lindex = 0; lindex < lhsVector.size(); ++lindex)
+                if (compare(stringValue(lhsVector[lindex].get()), rhs))
+                    return true;
+            return false;
+        }
+        if (rhs.isBoolean()) {
+            // If one object to be compared is a node-set and the other is a boolean, then the comparison will be true
+            // if and only if the result of performing the comparison on the boolean and on the result of converting
+            // the node-set to a boolean using the boolean function is true.
+            return compare(lhs.toBoolean(), rhs);
+        }
+        ASSERT(0);
+    }
+    if (rhs.isNodeVector()) {
+        const NodeVector& rhsVector = rhs.toNodeVector();
+        if (lhs.isNumber()) {
+            for (unsigned rindex = 0; rindex < rhsVector.size(); ++rindex)
+                if (compare(lhs, Value(stringValue(rhsVector[rindex].get())).toNumber()))
+                    return true;
+            return false;
+        }
+        if (lhs.isString()) {
+            for (unsigned rindex = 0; rindex < rhsVector.size(); ++rindex)
+                if (compare(lhs, stringValue(rhsVector[rindex].get())))
+                    return true;
+            return false;
+        }
+        if (lhs.isBoolean())
+            return compare(lhs, rhs.toBoolean());
+        ASSERT(0);
+    }
+    
+    // Neither side is a NodeVector.
+    switch (m_opcode) {
+        case OP_EQ:
+        case OP_NE:
+            bool equal;
+            if (lhs.isBoolean() || rhs.isBoolean())
+                equal = lhs.toBoolean() == rhs.toBoolean();
+            else if (lhs.isNumber() || rhs.isNumber())
+                equal = lhs.toNumber() == rhs.toNumber();
+            else
+                equal = lhs.toString() == rhs.toString();
+
+            if (m_opcode == OP_EQ)
+                return equal;
+            return !equal;
+        case OP_GT:
+            return lhs.toNumber() > rhs.toNumber();
+        case OP_GE:
+            return lhs.toNumber() >= rhs.toNumber();
+        case OP_LT:
+            return lhs.toNumber() < rhs.toNumber();
+        case OP_LE:
+            return lhs.toNumber() <= rhs.toNumber();
+    }
+    ASSERT(0);
+    return false;
+}
+
 Value EqTestOp::doEvaluate() const
 {
     Value lhs(subExpr(0)->evaluate());
     Value rhs(subExpr(1)->evaluate());
 
-    bool equal;
-    if (lhs.isBoolean() || rhs.isBoolean())
-        equal = lhs.toBoolean() == rhs.toBoolean();
-    else if (lhs.isNumber() || rhs.isNumber())
-        equal = lhs.toNumber() == rhs.toNumber();
-    else
-        equal = lhs.toString() == rhs.toString();
-
-    if (m_opcode == OP_EQ)
-        return equal;
-
-    return !equal;
+    return compare(lhs, rhs);
 }
 
 LogicalOp::LogicalOp(Opcode opcode, Expression* lhs, Expression* rhs)

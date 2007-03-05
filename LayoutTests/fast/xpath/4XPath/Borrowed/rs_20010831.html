@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../js/resources/js-test-style.css">
+<script src="../../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="console"></div>
+
+<script>
+test = '<foo>\
+    <bar>normal text</bar>\
+    <f>f1</f>\
+    Free range chickens\
+    <bar><![CDATA[<cdatatext>]]></bar>\
+    <f>f2</f>\
+</foo>'
+
+    doc = (new DOMParser).parseFromString(test, "application/xml");
+
+    nodeset = doc.evaluate('//bar/text()', doc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+    shouldBe('nodeset.snapshotLength', '2')
+    shouldBe('nodeset.snapshotItem(0).nodeValue', '"normal text"')
+    shouldBe('nodeset.snapshotItem(1).nodeValue', '"<cdatatext>"')
+
+    nodeset = doc.evaluate('//bar[2]/text()', doc, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+    shouldBe('nodeset.singleNodeValue.nodeValue', '"<cdatatext>"')
+
+    var successfullyParsed = true;
+
+</script>
+<script src="../../../js/resources/js-test-post.js"></script>
+</body>
+</html>

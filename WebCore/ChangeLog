@@ -1,3 +1,27 @@
+2007-03-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12954
+        XPath relative operations are implemented incorrectly
+
+        * xml/XPathPredicate.cpp:
+        (WebCore::XPath::NumericOp::doEvaluate):
+        (WebCore::XPath::EqTestOp::compare):
+        (WebCore::XPath::EqTestOp::doEvaluate):
+        Reimplemented relative equality operations to match the spec.
+
+        * xml/XPathPredicate.h:
+        (WebCore::XPath::NumericOp::):
+        (WebCore::XPath::EqTestOp::):
+        Moved relative operations to EqTestOp.
+
+        * xml/XPathGrammar.y:
+        * xml/XPathParser.cpp:
+        (WebCore::XPath::Parser::nextTokenInternal):
+        (WebCore::XPath::Parser::lex):
+        Adapted for the above changes.
+
 2007-03-05  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Lars.

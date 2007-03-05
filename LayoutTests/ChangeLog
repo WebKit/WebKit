@@ -1,3 +1,32 @@
+2007-03-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12954
+        XPath relative operations are implemented incorrectly
+
+        * fast/xpath/4XPath/Core/test_boolean_expr-expected.txt: Added.
+        * fast/xpath/4XPath/Core/test_boolean_expr.html: Added.
+
+        * fast/xpath/4XPath/Borrowed/cz_20030217-expected.txt: Added.
+        * fast/xpath/4XPath/Borrowed/cz_20030217.html: Added.
+        * fast/xpath/4XPath/Borrowed/kd_20010423-expected.txt: Added.
+        * fast/xpath/4XPath/Borrowed/kd_20010423.html: Added.
+        * fast/xpath/4XPath/Borrowed/od_20000608-expected.txt: Added.
+        * fast/xpath/4XPath/Borrowed/od_20000608.html: Added.
+        * fast/xpath/4XPath/Borrowed/resources/od_20000608.xml: Added.
+        * fast/xpath/4XPath/Borrowed/rs_20010831-expected.txt: Added.
+        * fast/xpath/4XPath/Borrowed/rs_20010831.html: Added.
+        * fast/xpath/4XPath/Borrowed/sr_20021217-expected.txt: Added.
+        * fast/xpath/4XPath/Borrowed/sr_20021217.html: Added.
+        Added a bunch of XPath tests that already passed.
+
+        * fast/xpath/4XPath/Borrowed/namespace-nodes-expected.txt: Added.
+        * fast/xpath/4XPath/Borrowed/namespace-nodes.html: Added.
+        * fast/xpath/namespace-nodes-expected.txt: Removed.
+        * fast/xpath/namespace-nodes.html: Removed.
+        Moved a previously imported 4XPath test.
+
 2007-03-05  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

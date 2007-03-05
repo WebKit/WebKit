@@ -1,0 +1,9 @@
+FAIL //* item 2 incorrect (expected GCHILD, actual CHILD2)
+PASS */*
+PASS /
+PASS /child::*
+PASS child::*/child::*
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -72,8 +72,8 @@ void xpathyyerror(const char *str) { }
     
 %}
 
-%left <numop> MULOP RELOP
-%left <eqop> EQOP
+%left <numop> MULOP
+%left <eqop> EQOP RELOP
 %left PLUS MINUS
 %left OR AND
 %token <axis> AXISNAME
@@ -483,7 +483,7 @@ RelationalExpr:
     |
     RelationalExpr RELOP AdditiveExpr
     {
-        $$ = new NumericOp($2, $1, $3);
+        $$ = new EqTestOp($2, $1, $3);
         PARSER->unregisterParseNode($1);
         PARSER->unregisterParseNode($3);
         PARSER->registerParseNode($$);

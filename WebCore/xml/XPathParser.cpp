@@ -307,12 +307,12 @@ Token Parser::nextTokenInternal()
             return Token(ERROR);
         case '<':
             if (peekAheadHelper() == '=')
-                return makeTokenAndAdvance(RELOP, NumericOp::OP_LE, 2);
-            return makeTokenAndAdvance(RELOP, NumericOp::OP_LT);
+                return makeTokenAndAdvance(RELOP, EqTestOp::OP_LE, 2);
+            return makeTokenAndAdvance(RELOP, EqTestOp::OP_LT);
         case '>':
             if (peekAheadHelper() == '=')
-                return makeTokenAndAdvance(RELOP, NumericOp::OP_GE, 2);
-            return makeTokenAndAdvance(RELOP, NumericOp::OP_GT);
+                return makeTokenAndAdvance(RELOP, EqTestOp::OP_GE, 2);
+            return makeTokenAndAdvance(RELOP, EqTestOp::OP_GT);
         case '*':
             if (isOperatorContext())
                 return makeTokenAndAdvance(MULOP, NumericOp::OP_Mul);
@@ -425,9 +425,9 @@ int Parser::lex(void* data)
             yylval->axis = tok.axis;
             break;
         case MULOP:
-        case RELOP:
             yylval->numop = tok.numop;
             break;
+        case RELOP:
         case EQOP:
             yylval->eqop = tok.eqop;
             break;

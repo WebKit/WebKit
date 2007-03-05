@@ -1,0 +1,32 @@
+<!-- http://lists.fourthought.com/pipermail/4suite/2002-December/004771.html -->
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../js/resources/js-test-style.css">
+<script src="../../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="console"></div>
+
+<script>
+    DOC1 = '<a><b><c/><d/></b></a>'
+
+    doc = (new DOMParser).parseFromString(DOC1, "application/xml");
+    nodeset = doc.evaluate('.//*', doc.documentElement, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+    node_names = "";
+    while (currNode = nodeset.iterateNext())
+        node_names += currNode.nodeName;
+    shouldBe('node_names', '"bcd"')
+
+    nodeset = doc.evaluate('(.//*)[1]', doc.documentElement, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+    node_names = "";
+    while (currNode = nodeset.iterateNext())
+        node_names += currNode.nodeName;
+    shouldBe('node_names', '"b"')
+
+    var successfullyParsed = true;
+
+</script>
+<script src="../../../js/resources/js-test-post.js"></script>
+</body>
+</html>
