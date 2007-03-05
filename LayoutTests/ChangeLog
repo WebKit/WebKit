@@ -1,5 +1,10 @@
 2007-03-05  Anders Carlsson  <acarlsson@apple.com>
 
+        * plugins/get-url-with-blank-target-expected.txt:
+        Update test result.
+
+2007-03-05  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Adam, Darin.
 
         <rdar://problem/5025212>
