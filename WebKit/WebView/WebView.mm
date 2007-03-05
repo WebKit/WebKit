@@ -233,6 +233,9 @@ macro(uppercaseWord) \
 macro(yank) \
 macro(yankAndSelect) \
 
+#define WebKitOriginalTopPrintingMarginKey @"WebKitOriginalTopMargin"
+#define WebKitOriginalBottomPrintingMarginKey @"WebKitOriginalBottomMargin"
+
 static BOOL applicationIsTerminating;
 static int pluginDatabaseClientCount = 0;
 
@@ -2896,9 +2899,31 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     NSPrintOperation *op = [NSPrintOperation currentOperation];
     NSPrintInfo *info = [op printInfo];
+    NSMutableDictionary *infoDictionary = [info dictionary];
+    
+    // We need to modify the top and bottom margins in the NSPrintInfo to account for the space needed by the
+    // header and footer. Because this method can be called more than once on the same NSPrintInfo (see 5038087),
+    // we stash away the unmodified top and bottom margins the first time this method is called, and we read from
+    // those stashed-away values on subsequent calls.
+    float originalTopMargin;
+    float originalBottomMargin;
+    NSNumber *originalTopMarginNumber = [infoDictionary objectForKey:WebKitOriginalTopPrintingMarginKey];
+    if (!originalTopMarginNumber) {
+        ASSERT(![infoDictionary objectForKey:WebKitOriginalBottomPrintingMarginKey]);
+        originalTopMargin = [info topMargin];
+        originalBottomMargin = [info bottomMargin];
+        [infoDictionary setObject:[NSNumber numberWithFloat:originalTopMargin] forKey:WebKitOriginalTopPrintingMarginKey];
+        [infoDictionary setObject:[NSNumber numberWithFloat:originalBottomMargin] forKey:WebKitOriginalBottomPrintingMarginKey];
+    } else {
+        ASSERT([originalTopMarginNumber isKindOfClass:[NSNumber class]]);
+        ASSERT([[infoDictionary objectForKey:WebKitOriginalBottomPrintingMarginKey] isKindOfClass:[NSNumber class]]);
+        originalTopMargin = [originalTopMarginNumber floatValue];
+        originalBottomMargin = [[infoDictionary objectForKey:WebKitOriginalBottomPrintingMarginKey] floatValue];
+    }
+    
     float scale = [op _web_pageSetupScaleFactor];
-    [info setTopMargin:[info topMargin] + [self _headerHeight]*scale];
-    [info setBottomMargin:[info bottomMargin] + [self _footerHeight]*scale];
+    [info setTopMargin:originalTopMargin + [self _headerHeight] * scale];
+    [info setBottomMargin:originalBottomMargin + [self _footerHeight] * scale];
 }
 
 - (void)_drawHeaderAndFooter

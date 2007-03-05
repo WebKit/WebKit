@@ -1,3 +1,16 @@
+2007-03-05  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin and Kevin D
+
+        - fixed <rdar://problem/5038087> Header and footer on printed page are too large after certain steps
+
+        * WebView/WebView.mm:
+        (-[WebView _adjustPrintingMarginsForHeaderAndFooter]):
+        This method was modifying the margins in the NSPrintInfo object without any sort of check whether
+        this had already been done. In some cases this can be called multiple times with the same 
+        NSPrintInfo, so now we stash information in the NSPrintInfo's dictionary such that we always
+        start with a fresh copy of the original margins.
+
 2007-03-02  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff.
