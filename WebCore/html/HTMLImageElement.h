@@ -116,6 +116,7 @@ protected:
     bool ismap;
     HTMLFormElement* m_form;
     String oldNameAttr;
+    String oldIdAttr;
     CompositeOperator m_compositeOperator;
 };
 

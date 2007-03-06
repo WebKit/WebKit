@@ -32,6 +32,12 @@ if (window.layoutTestController)
 <img name="image5" width="0" height="0">
 <img name="image5" width="0" height="0">
 <img id="image5" width="0" height="0">
+<img id="image6" name="image6name" width="0" height="0">
+<img id="image7" name="" width="0" height="0">
+<img id="image8" name="image8name" width="0" height="0">
+<img id="image8" width="0" height="0">
+<img id="image8" name="image7name" width="0" height="0">
+<img id="image9" name="image9name" width="0" height="0">
 
 <form name="form1" width="0" height="0"></form>
 <form name="form2" width="0" height="0"></form>
@@ -150,13 +156,13 @@ function printElement(e)
     if (e.tagName) {
         print(" " + e.tagName);
 
-	if (e.name && e.id) {
-	    print("(id,name)");
-	} else if (e.name) {
-	    print("(name)");
+    if (e.name && e.id) {
+        print("(id,name)");
+    } else if (e.name) {
+        print("(name)");
         } else if (e.id) {
-	    print("(id)");
-	}
+        print("(id)");
+    }
     } else if (e.navigator) {
         print(" WINDOW");
     } else {
@@ -173,12 +179,12 @@ function testProperty(description, propName) {
         print(" undefined");
     } else if (propVal.length) {
         print(" collection(" + propVal.length + ")");
-	for (var i = 0; i < propVal.length; i++) {
-	    printElement(propVal[i]);
-	}
+    for (var i = 0; i < propVal.length; i++) {
+        printElement(propVal[i]);
+    }
     } else {
         print(" single");
-	printElement(propVal);
+    printElement(propVal);
     }
     
     print("<br>");
@@ -190,6 +196,11 @@ testProperty("Image by name (multiple)", "image2");
 testProperty("Image by id (unique)", "image3");
 testProperty("Image by id (multiple)", "image4");
 testProperty("Image by id/name mixed", "image5");
+testProperty("Image by id, name present (unique)", "image6");
+testProperty("Image by id, empty name present (unique)", "image7");
+testProperty("Image by id, name present (multiple)", "image8");
+testProperty("Image by name, id present (unique)", "image9name");
+
 print("<br>");
 
 testProperty("Nonexistent form name", "form0");

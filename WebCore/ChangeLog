@@ -1,5 +1,31 @@
 2007-03-06  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Maciej.
+
+        <rdar://problem/5035045>
+        REGRESSION: WebKit browser doesn't display image at http://www.metoffice.gov.uk/weather/satellite/index.html
+        
+        It turns out WinIE does allow you to access images by their id as special document properties. However, this is only
+        allowed when the element also has a name attribute. The value of the name attribute is ignored and can even be empty!
+        
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLDocument::namedItemGetter):
+        Return jsUndefined() if the collection is empty.
+        
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute):
+        (WebCore::HTMLImageElement::insertedIntoDocument):
+        (WebCore::HTMLImageElement::removedFromDocument):
+        * html/HTMLImageElement.h:
+        Add the id attribute value to the extra named item map.
+        
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::traverseNextItem):
+        Check for images with name attributes that match, as well as elements with id attributes that match where
+        the element also has a name attribute.
+
+2007-03-06  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Adam.
 
         WebCore part of patch to make it possible to have different user agents for different URLs.

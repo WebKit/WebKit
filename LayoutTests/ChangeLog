@@ -1,3 +1,15 @@
+2007-03-06  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5035045>
+        REGRESSION: WebKit browser doesn't display image at http://www.metoffice.gov.uk/weather/satellite/index.html
+        
+        Add some tests where image elements have id _and_ name elements.
+        
+        * fast/dom/HTMLDocument/document-special-properties-expected.txt:
+        * fast/dom/HTMLDocument/document-special-properties.html:
+
 2007-03-05  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Mark and Dave H.

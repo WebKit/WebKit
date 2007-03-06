@@ -139,6 +139,16 @@ void HTMLImageElement::parseMappedAttribute(MappedAttribute* attr)
             doc->addNamedItem(newNameAttr);
         }
         oldNameAttr = newNameAttr;
+    } else if (attr->name() == idAttr) {
+        String newIdAttr = attr->value();
+        if (inDocument() && document()->isHTMLDocument()) {
+            HTMLDocument *doc = static_cast<HTMLDocument *>(document());
+            doc->removeDocExtraNamedItem(oldIdAttr);
+            doc->addDocExtraNamedItem(newIdAttr);
+        }
+        oldIdAttr = newIdAttr;
+        // also call superclass
+        HTMLElement::parseMappedAttribute(attr);
     } else
         HTMLElement::parseMappedAttribute(attr);
 }
@@ -180,18 +190,24 @@ void HTMLImageElement::attach()
 
 void HTMLImageElement::insertedIntoDocument()
 {
-    Document* doc = document();
-    if (doc->isHTMLDocument())
-        static_cast<HTMLDocument*>(doc)->addNamedItem(oldNameAttr);
+    if (document()->isHTMLDocument()) {
+        HTMLDocument* doc = static_cast<HTMLDocument*>(document());
+
+        doc->addNamedItem(oldNameAttr);
+        doc->addDocExtraNamedItem(oldIdAttr);
+    }
 
     HTMLElement::insertedIntoDocument();
 }
 
 void HTMLImageElement::removedFromDocument()
 {
-    Document* doc = document();
-    if (doc->isHTMLDocument())
-        static_cast<HTMLDocument*>(doc)->removeNamedItem(oldNameAttr);
+    if (document()->isHTMLDocument()) {
+        HTMLDocument* doc = static_cast<HTMLDocument*>(document());
+
+        doc->removeNamedItem(oldNameAttr);
+        doc->removeDocExtraNamedItem(oldIdAttr);
+    }
 
     HTMLElement::removedFromDocument();
 }
