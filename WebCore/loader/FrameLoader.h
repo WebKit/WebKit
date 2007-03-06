@@ -414,7 +414,7 @@ namespace WebCore {
 
         void continueLoadWithData(SharedBuffer*, const String& mimeType, const String& textEncoding, const KURL&); 
 
-        static void registerSchemeAsLocal(const String& scheme);
+        static void registerURLSchemeAsLocal(const String& scheme);
         static bool restrictAccessToLocal();
         static void setRestrictAccessToLocal(bool);
         static bool shouldTreatURLAsLocal(const String& url);

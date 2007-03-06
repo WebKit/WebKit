@@ -4298,7 +4298,7 @@ void FrameLoader::continueLoadWithData(SharedBuffer* buffer, const String& mimeT
     addData(buffer->data(), buffer->size());
 }
 
-void FrameLoader::registerSchemeAsLocal(const String& scheme)
+void FrameLoader::registerURLSchemeAsLocal(const String& scheme)
 {
     localSchemes().add(scheme);
 }
