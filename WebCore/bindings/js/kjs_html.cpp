@@ -752,8 +752,12 @@ bool JSHTMLElement::implementsCall() const
 {
     HTMLElement* element = static_cast<HTMLElement*>(impl());
     if (element->hasTagName(embedTag) || element->hasTagName(objectTag) || element->hasTagName(appletTag)) {
-        Document* doc = element->document();
-        KJSProxy *proxy = doc->frame()->scriptProxy();
+        Frame* frame = 0;
+        if (Document* doc = element->document())
+            frame = doc->frame();
+        if (!frame)
+            return false;
+        KJSProxy *proxy = frame->scriptProxy();
         ExecState* exec = proxy->interpreter()->globalExec();
         if (JSValue *runtimeObject = getRuntimeObject(exec, element))
             return static_cast<JSObject*>(runtimeObject)->implementsCall();

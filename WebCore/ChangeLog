@@ -1,3 +1,15 @@
+2007-03-05  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John
+
+        Fixes <rdar://problem/4974258>
+        Adds some key null checking
+
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLElement::implementsCall): Null check doc/frame
+        * bindings/objc/DOMInternal.mm:
+        (-[WebScriptObject _initializeScriptDOMNodeImp]): Null check doc/frame
+
 2007-03-06  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Darin.

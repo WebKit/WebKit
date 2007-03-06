@@ -106,7 +106,12 @@ void removeDOMWrapper(DOMObjectInternal* impl)
     WebCore::Node *nodeImpl = [n _node];
 
     // Dig up Interpreter and ExecState.
-    WebCore::Frame *frame = nodeImpl->document()->frame();
+    WebCore::Frame *frame = 0;
+    if (WebCore::Document* document = nodeImpl->document())
+        frame = document->frame();
+    if (!frame)
+        return;
+        
     KJS::Interpreter *interpreter = frame->scriptProxy()->interpreter();
     KJS::ExecState *exec = interpreter->globalExec();
     
