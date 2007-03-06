@@ -20,6 +20,7 @@
 .objc_class_name_WebJavaScriptTextInputPanel
 .objc_class_name_WebKeyGenerator
 .objc_class_name_WebKitStatistics
+.objc_class_name_WebPanelAuthenticationHandler
 .objc_class_name_WebPluginDatabase
 .objc_class_name_WebPreferences
 .objc_class_name_WebRenderNode

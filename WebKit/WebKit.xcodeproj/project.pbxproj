@@ -98,7 +98,7 @@
 		939810260824BF01008DF038 /* WebSearchableTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = F560BEBC030DAF4401C1A526 /* WebSearchableTextView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810270824BF01008DF038 /* WebStringTruncator.h in Headers */ = {isa = PBXBuildFile; fileRef = F59668C802AD2923018635CA /* WebStringTruncator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810290824BF01008DF038 /* WebAuthenticationPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = F8CA15B5029A39D901000122 /* WebAuthenticationPanel.h */; };
-		9398102A0824BF01008DF038 /* WebPanelAuthenticationHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 93154EF103A41270008635CE /* WebPanelAuthenticationHandler.h */; };
+		9398102A0824BF01008DF038 /* WebPanelAuthenticationHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 93154EF103A41270008635CE /* WebPanelAuthenticationHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9398102B0824BF01008DF038 /* WebBaseNetscapePluginStream.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A672B90263866E01000102 /* WebBaseNetscapePluginStream.h */; };
 		9398102C0824BF01008DF038 /* WebBaseNetscapePluginView.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EBC45502134BC301CA1520 /* WebBaseNetscapePluginView.h */; };
 		9398102D0824BF01008DF038 /* WebBaseNetscapePluginViewPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 931A72D203265920008635CE /* WebBaseNetscapePluginViewPrivate.h */; };

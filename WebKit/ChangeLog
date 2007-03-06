@@ -1,3 +1,14 @@
+2007-03-06  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+        
+        Made WebAuthenticationHandler.h SPI so Safari can call it directly.
+
+        * WebKit.exp:
+        added .objc_class_name_WebPanelAuthenticationHandler
+        * WebKit.xcodeproj/project.pbxproj:
+        changed status of WebAuthenticationHandler.h from "project" to "private"
+
 2007-03-06  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.
