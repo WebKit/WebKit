@@ -1,3 +1,24 @@
+2007-03-06  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        WebCore part of patch to make it possible to have different user agents for different URLs.
+
+        * bindings/js/kjs_navigator.cpp:
+        (KJS::Navigator::getValueProperty):
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::initScriptIfNeeded):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setLoading):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::userAgent):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        (WebCore::FrameLoader::applyUserAgent):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::userAgent):
+
 2007-03-05  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Mark and Dave H.

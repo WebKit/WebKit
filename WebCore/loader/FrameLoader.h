@@ -324,7 +324,7 @@ namespace WebCore {
         void tokenizerProcessedData();
 
         void handledOnloadEvents();
-        String userAgent() const;
+        String userAgent(const KURL&) const;
 
         Widget* createJavaAppletWidget(const IntSize&, Element*, const HashMap<String, String>& args);
 

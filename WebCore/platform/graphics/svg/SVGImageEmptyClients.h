@@ -247,7 +247,7 @@ public:
     virtual PassRefPtr<DocumentLoader> createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData) { return new DocumentLoader(request, substituteData); }
     virtual void setTitle(const String& title, const KURL&) { }
     
-    virtual String userAgent() { return ""; }
+    virtual String userAgent(const KURL&) { return ""; }
     
     virtual void setDocumentViewFromPageCache(PageCache*) { }
     virtual void updateGlobalHistoryForStandardLoad(const KURL&) { }

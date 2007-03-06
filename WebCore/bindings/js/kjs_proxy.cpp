@@ -22,6 +22,7 @@
 #include "kjs_proxy.h"
 
 #include "Chrome.h"
+#include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "JSDOMWindow.h"
@@ -143,7 +144,7 @@ void KJSProxy::initScriptIfNeeded()
   // Create a KJS interpreter for this frame
   m_script = new ScriptInterpreter(globalObject, m_frame);
 
-  String userAgent = m_frame->loader()->userAgent();
+  String userAgent = m_frame->loader()->userAgent(m_frame->document() ? m_frame->document()->URL() : KURL());
   if (userAgent.find("Microsoft") >= 0 || userAgent.find("MSIE") >= 0)
     m_script->setCompatMode(Interpreter::IECompat);
   else

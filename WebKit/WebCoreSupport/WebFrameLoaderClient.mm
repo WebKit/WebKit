@@ -985,7 +985,7 @@ void WebFrameLoaderClient::receivedPolicyDecison(PolicyAction action)
     (core(m_webFrame.get())->loader()->*function)(action);
 }
 
-String WebFrameLoaderClient::userAgent()
+String WebFrameLoaderClient::userAgent(const KURL&)
 {
     return [getWebView(m_webFrame.get()) _userAgent];
 }

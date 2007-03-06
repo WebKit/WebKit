@@ -157,7 +157,7 @@ private:
 
     virtual void setDefersLoading(bool);
 
-    virtual WebCore::String userAgent();
+    virtual WebCore::String userAgent(const WebCore::KURL&);
 
     virtual bool willUseArchive(WebCore::ResourceLoader*, const WebCore::ResourceRequest&, const WebCore::KURL& originalURL) const;
     virtual bool isArchiveLoadPending(WebCore::ResourceLoader*) const;
