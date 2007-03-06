@@ -1,3 +1,22 @@
+2007-03-06  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Darin.
+
+        Path::normalAngleAtLength() / Path::pointAtLength() don't work correctly.
+        pointAtLength() was not implemented, basically and normalAngleAtLength()
+        had a bug in the tangent slope calculation.
+
+        The normalAngleAtLength() stuff can only be tested with my local textPath support.
+        New LayoutTest: svg/custom/path-textPath-simulation.svg
+
+        * platform/graphics/Path.cpp:
+        (WebCore::pathLengthApplierFunction):
+        * platform/graphics/PathTraversalState.cpp:
+        (WebCore::PathTraversalState::quadraticBezierTo):
+        (WebCore::PathTraversalState::cubicBezierTo):
+        * platform/graphics/PathTraversalState.h:
+        (WebCore::PathTraversalState::):
+
 2007-03-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

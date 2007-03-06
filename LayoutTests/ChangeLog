@@ -1,3 +1,15 @@
+2007-03-06  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Darin.
+
+        Add new test demonstrating that the getPointAtLength() function
+        of SVGPathElement actually works now.
+
+        * svg/custom/path-textPath-simulation-expected.checksum: Added.
+        * svg/custom/path-textPath-simulation-expected.png: Added.
+        * svg/custom/path-textPath-simulation-expected.txt: Added.
+        * svg/custom/path-textPath-simulation.svg: Added.
+
 2007-03-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.

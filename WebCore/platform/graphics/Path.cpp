@@ -64,17 +64,21 @@ void pathLengthApplierFunction(void* info, const PathElement* element)
             segmentLength = traversalState.closeSubpath();
             break;
     }
-    traversalState.m_totalLength += segmentLength;
-    if ((traversalState.m_action == PathTraversalState::TraversalPointAtLength)
-     && (traversalState.m_totalLength > traversalState.m_desiredLength)) {
-        // FIXME: Need to actually find the exact point and change m_current
-        traversalState.m_success = true;
-    } else if ((traversalState.m_action == PathTraversalState::TraversalNormalAngleAtLength)
-           && (traversalState.m_totalLength > traversalState.m_desiredLength)) {
-        FloatSize change = traversalState.m_previous - traversalState.m_current;
-        // tangent slope = -1/slope = -1/yChange/xChange = -xChange/yChange; arc-tangent converts a slope into an angle
-        static float rad2deg = 360 / 2 * M_PI;
-        traversalState.m_normalAngle = (change.height() == 0) ? 0 : (atan2(-change.width(), change.height()) * rad2deg);
+    traversalState.m_totalLength += segmentLength; 
+    if ((traversalState.m_action == PathTraversalState::TraversalPointAtLength || 
+         traversalState.m_action == PathTraversalState::TraversalNormalAngleAtLength) &&
+        (traversalState.m_totalLength >= traversalState.m_desiredLength)) {
+        FloatSize change = traversalState.m_current - traversalState.m_previous;
+        float slope = atan2(change.height(), change.width());
+
+        if (traversalState.m_action == PathTraversalState::TraversalPointAtLength) {
+            float offset = traversalState.m_desiredLength - traversalState.m_totalLength;
+            traversalState.m_current.move(offset * cos(slope), offset * sin(slope));
+        } else {
+            static float rad2deg = 180.0 / M_PI;
+            traversalState.m_normalAngle = slope * rad2deg;
+        }
+
         traversalState.m_success = true;
     }
 }

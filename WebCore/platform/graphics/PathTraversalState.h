@@ -39,8 +39,7 @@ namespace WebCore {
             TraversalTotalLength,
             TraversalPointAtLength,
             TraversalSegmentAtLength,
-            TraversalNormalAngleAtLength,
-            TraversalPointAndAnglesForOffsets // not yet implemented
+            TraversalNormalAngleAtLength
         };
         
         PathTraversalState(PathTraversalAction);
@@ -67,10 +66,6 @@ namespace WebCore {
         // For normal calculations
         FloatPoint m_previous;
         float m_normalAngle; // degrees
-        
-        // FIXME: for (non-implemented) text-on-path layout
-        Vector<float> m_offsets;
-        Vector< std::pair<FloatPoint, float> > m_pointAndAngles;
     };    
 }
 
