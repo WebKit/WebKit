@@ -14,7 +14,6 @@
 
 <script>
 var useElement = document.getElementsByTagName("use")[1];
-alert(useElement);
 var element = useElement.instanceRoot.correspondingElement;
 element.removeAttribute("viewBox");
 </script>

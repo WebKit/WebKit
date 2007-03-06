@@ -1,3 +1,12 @@
+2007-03-06  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Mitz.
+
+        Remove an alert() which got accidently added in my last commit.
+
+        * svg/custom/use-modify-target-symbol-expected.txt:
+        * svg/custom/use-modify-target-symbol.svg:
+
 2007-03-06  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.
@@ -14,7 +23,7 @@
 
         Reviewed by Mark and Dave H.
 
-	- rdar://problem/5038491
+        - rdar://problem/5038491
         An oversite of the security fix that prevented remote from loading local is that it
         prevents user style sheets when the site is remote.  This fixes that.
 

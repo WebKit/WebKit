@@ -1,5 +1,4 @@
-ALERT: [object SVGUseElement]
-CONSOLE MESSAGE: line 20: Warning: Problem parsing viewBox=""
+CONSOLE MESSAGE: line 19: Warning: Problem parsing viewBox=""
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     RenderSVGContainer {svg} at (45,45) size 330x101
