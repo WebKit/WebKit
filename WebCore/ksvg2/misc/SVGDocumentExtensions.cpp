@@ -109,6 +109,9 @@ void SVGDocumentExtensions::addPendingResource(const AtomicString& id, SVGStyled
 {
     ASSERT(obj);
 
+    if (id.isEmpty())
+        return;
+
     if (m_pendingResources.contains(id))
         m_pendingResources.get(id)->add(obj);
     else {

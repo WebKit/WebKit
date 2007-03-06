@@ -31,6 +31,7 @@
 #if ENABLE(SVG)
 #include "SVGUseElement.h"
 
+#include "cssstyleselector.h"
 #include "CString.h"
 #include "Document.h"
 #include "Event.h"
@@ -171,8 +172,32 @@ void SVGUseElement::recalcStyle(StyleChange change)
 
     // The shadow tree root element is NOT a direct child element of us.
     // So we have to take care it receives style updates, manually.
-    if (m_shadowTreeRootElement)
-        m_shadowTreeRootElement->recalcStyle(change);
+    if (!m_shadowTreeRootElement || !m_shadowTreeRootElement->attached())
+        return;
+
+    // Mimic Element::recalcStyle(). The main difference is that we don't call attach() on the
+    // shadow tree root element, but call attachShadowTree() here. Calling attach() will crash
+    // as the shadow tree root element has no (direct) parent node. Yes, shadow trees are tricky.
+    if (change >= Inherit || m_shadowTreeRootElement->changed()) {
+        RenderStyle* newStyle = document()->styleSelector()->styleForElement(m_shadowTreeRootElement.get());
+        StyleChange ch = m_shadowTreeRootElement->diff(m_shadowTreeRootElement->renderStyle(), newStyle);
+        if (ch == Detach) {
+            ASSERT(m_shadowTreeRootElement->attached());
+            m_shadowTreeRootElement->detach();
+            attachShadowTree();
+
+            // attach recalulates the style for all children. No need to do it twice.
+            m_shadowTreeRootElement->setChanged(false);
+            m_shadowTreeRootElement->setHasChangedChild(false);
+            newStyle->deref(document()->renderArena());
+            return;
+        }
+
+        newStyle->deref(document()->renderArena());
+    }
+
+    // Only change==Detach needs special treatment, for anything else recalcStyle() works.
+    m_shadowTreeRootElement->recalcStyle();
 }
 
 #ifdef DUMP_INSTANCE_TREE

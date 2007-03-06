@@ -1,3 +1,20 @@
+2007-03-07  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12979
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12981
+
+        Guard against registering pending resources with empty id.
+        Be careful with calling recalcStyle() in SVGUseElement, when change is "Detach" we
+        have to use special code, as calling attach() on the shadow tree root element will crash,
+        because it has no (direct) parent node, only a shadow parent node element.
+
+        * ksvg2/misc/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::addPendingResource):
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::recalcStyle):
+
 2007-03-06  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Adele.
