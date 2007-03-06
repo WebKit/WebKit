@@ -1,3 +1,21 @@
+2007-03-05  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Mark and Dave H.
+
+        - rdar://problem/4922454
+        - This fixes a security issue by making remote referrers not able to access local
+        resources, unless they register their schemes to be treated as local. The result is
+        that those schemes can access local resources and cannot be accessed by remote
+        referrers.
+        Because this behavior is new a link-on-or-after check is made to determine if the
+        app should use the older, less safe, behavior.
+
+        * DumpRenderTree/DumpRenderTree.m: Add ability to set user style sheet to DRT.
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (+[LayoutTestController webScriptNameForSelector:]):
+        (-[LayoutTestController setUserStyleSheetLocation:]):
+        (-[LayoutTestController setUserStyleSheetEnabled:]):
+
 2007-03-05  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam, Darin.

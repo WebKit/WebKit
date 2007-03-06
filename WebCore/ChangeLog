@@ -1,3 +1,28 @@
+2007-03-05  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Mark and Dave H.
+
+        - rdar://problem/5038491
+        An oversite of the security fix that prevented remote from loading local is that it
+        prevents user style sheets when the site is remote.  This fixes that.
+
+        * loader/Cache.cpp: Propogate and check user style sheet flag.
+        (WebCore::createResource):
+        (WebCore::Cache::requestResource):
+        * loader/Cache.h: Propogate user style sheet flag.
+        * loader/CachedCSSStyleSheet.cpp: Propogate user style sheet flag.
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet):
+        * loader/CachedCSSStyleSheet.h: Propogate user style sheet flag.
+        * loader/DocLoader.cpp: Propogate user style sheet flag.
+        (WebCore::DocLoader::requestResource):
+        * loader/SubresourceLoader.cpp: Propogate and check user style sheet flag.
+        (WebCore::SubresourceLoader::create):
+        * loader/SubresourceLoader.h: Add check for user style sheet flag.
+        * loader/loader.cpp: Propogate user style sheet flag.
+        (WebCore::Loader::load):
+        (WebCore::Loader::servePendingRequests):
+        * loader/loader.h: Propogate user style sheet flag.
+
 2007-03-06  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Darin.

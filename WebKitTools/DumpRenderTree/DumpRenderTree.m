@@ -55,6 +55,7 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryItemPrivate.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
@@ -930,7 +931,9 @@ static void dump(void)
             || aSelector == @selector(setAcceptsEditing:)
             || aSelector == @selector(setTabKeyCyclesThroughElements:)
             || aSelector == @selector(storeWebScriptObject:)
-            || aSelector == @selector(accessStoredWebScriptObject))
+            || aSelector == @selector(accessStoredWebScriptObject)
+            || aSelector == @selector(setUserStyleSheetLocation:)
+            || aSelector == @selector(setUserStyleSheetEnabled:))
         return NO;
     return YES;
 }
@@ -955,6 +958,10 @@ static void dump(void)
         return @"setTabKeyCyclesThroughElements";
     if (aSelector == @selector(storeWebScriptObject:))
         return @"storeWebScriptObject";
+    if (aSelector == @selector(setUserStyleSheetLocation:))
+        return @"setUserStyleSheetLocation";
+    if (aSelector == @selector(setUserStyleSheetEnabled:))
+        return @"setUserStyleSheetEnabled";
     return nil;
 }
 
@@ -997,6 +1004,17 @@ static void dump(void)
 - (void)dumpAsText
 {
     dumpAsText = YES;
+}
+
+- (void)setUserStyleSheetLocation:(NSString *)path;
+{
+    NSURL *url = [NSURL URLWithString:path];
+    [[WebPreferences standardPreferences] setUserStyleSheetLocation:url];
+}
+
+- (void)setUserStyleSheetEnabled:(BOOL)flag;
+{
+    [[WebPreferences standardPreferences] setUserStyleSheetEnabled:flag];
 }
 
 - (void)dumpAsWebArchive

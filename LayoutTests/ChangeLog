@@ -1,3 +1,14 @@
+2007-03-05  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Mark and Dave H.
+
+	- rdar://problem/5038491
+        An oversite of the security fix that prevented remote from loading local is that it
+        prevents user style sheets when the site is remote.  This fixes that.
+
+        * http/tests/security/local-user-CSS-from-remote-expected.txt: Added.
+        * http/tests/security/local-user-CSS-from-remote.html: Added.
+
 2007-03-06  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Darin.
