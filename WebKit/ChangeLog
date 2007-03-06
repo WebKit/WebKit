@@ -1,3 +1,13 @@
+2007-03-06  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - Rename a function to clarify its purpose.
+
+        * WebView/WebView.mm:
+        (+[WebView registerURLSchemeAsLocal:]):
+        * WebView/WebViewPrivate.h:
+
 2007-03-06  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam.

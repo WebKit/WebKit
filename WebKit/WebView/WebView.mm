@@ -2822,9 +2822,9 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     _private->allowsUndo = flag;
 }
 
-+ (void)registerSchemeAsLocal:(NSString *)protocol
++ (void)registerURLSchemeAsLocal:(NSString *)protocol
 {
-    FrameLoader::registerSchemeAsLocal(protocol);
+    FrameLoader::registerURLSchemeAsLocal(protocol);
 }
 
 @end
