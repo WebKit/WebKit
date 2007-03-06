@@ -1,5 +1,11 @@
 2007-03-06  Adam Roben  <aroben@apple.com>
 
+        Build fix.
+
+        * WebCore.exp: Updated symbols.
+
+2007-03-06  Adam Roben  <aroben@apple.com>
+
         Reviewed by Anders.
 
         Added a parameter to all StringTruncator methods to specify whether
