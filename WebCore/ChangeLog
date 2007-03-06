@@ -1,3 +1,22 @@
+2007-03-06  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Adele.
+
+        Fixed: <rdar://problem/5041660> REGRESSION: <keygen> element broken, prevents users from signing up for Thawte email certs
+        
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap): Added <keygen> to the DOM bindings so it can be accessed from Objective-C.
+        * css/html4.css: Apply the look of the <select> element to <keygen>.
+        * html/HTMLElementFactory.cpp:
+        (WebCore::keygenConstructor): Added. 
+        (WebCore::createFunctionMap): Added keygen.
+        * html/HTMLSelectElement.cpp: Made const typeAheadTimeout variable static const. 
+        (WebCore::HTMLSelectElement::HTMLSelectElement):  Fix both HTMLSelectElement constructors to initialize the
+         same number of member variables. The fact that some fields were not initialized could (and would) crash the
+         keygen element when selecting different items. Also removed m_typedString(String()) from the constructor
+         initialization because this is not needed.
+
+
 2007-03-06  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.
