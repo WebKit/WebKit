@@ -122,7 +122,7 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
     else
         strToTruncate = [[NSFileManager defaultManager] displayNameAtPath:m_filename];
 
-    return StringTruncator::centerTruncate(strToTruncate, width, font);
+    return StringTruncator::centerTruncate(strToTruncate, width, font, false);
 }
 
 }
