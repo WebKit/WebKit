@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    RenderSVGContainer {svg} at (101,29) size 229x28
-      RenderSVGContainer {g} at (101,29) size 229x28
+    RenderSVGContainer {svg} at (101,25) size 289x40
+      RenderSVGContainer {g} at (101,25) size 289x40
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGContainer {g} at (-1.50,-1.50) size 43x43
             RenderPath {rect} at (-1.50,-1.50) size 43x43 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L40.00,0.00L40.00,40.00L0.00,40.00"]
@@ -14,4 +14,7 @@ layer at (0,0) size 800x600
             RenderSVGText {text} at (0,0) size 800x14
               RenderSVGInlineText {#text} at (-229,-11) size 229x14
                 text run at (-229,-11) width 229: "should not cause an assert (Bugzilla Bug 12580)"
-        RenderSVGContainer {g} at (350,25) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,25.00)}]
+        RenderSVGContainer {g} at (350,25) size 40x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,25.00)}]
+          RenderSVGContainer {use} at (350,25) size 40x40
+            RenderSVGContainer {g} at (350,25) size 40x40
+              RenderPath {rect} at (350,25) size 40x40 [fill={[type=SOLID] [color=#00FF00]}] [data="M0.00,0.00L40.00,0.00L40.00,40.00L0.00,40.00"]

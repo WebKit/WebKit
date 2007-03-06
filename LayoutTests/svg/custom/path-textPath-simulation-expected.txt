@@ -1,8 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-    RenderSVGContainer {svg} at (80,248.80) size 648.80x94.40
+    RenderSVGContainer {svg} at (79.72,217.57) size 649.08x164.86
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderPath {path} at (100,0) size 800x300 [fill={[type=SOLID] [color=#000000]}] [data="M100.00,200.00C200.00,100.00,300.00,0.00,400.00,100.00C500.00,200.00,600.00,300.00,700.00,200.00C800.00,100.00,900.00,100.00,900.00,100.00"]
+      RenderSVGContainer {use} at (79.72,217.57) size 640.28x164.86
+        RenderSVGContainer {g} at (79.72,217.57) size 640.28x164.86
+          RenderPath {path} at (79.72,217.57) size 640.28x164.86 [stroke={[type=SOLID] [color=#FF0000]}] [data="M100.00,200.00C200.00,100.00,300.00,0.00,400.00,100.00C500.00,200.00,600.00,300.00,700.00,200.00C800.00,100.00,900.00,100.00,900.00,100.00"]
       RenderSVGContainer {g} at (80,248.80) size 648.80x94.40
         RenderSVGText {text} at (100,200) size 800x18
           RenderSVGInlineText {#text} at (0,-14) size 12x18

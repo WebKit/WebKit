@@ -22,7 +22,7 @@
 #ifndef SVGElementInstance_h
 #define SVGElementInstance_h
 
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG)
 
 #include "EventTarget.h"
 

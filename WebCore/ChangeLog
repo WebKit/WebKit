@@ -1,3 +1,71 @@
+2007-03-06  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Darin.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12936 (Master bug used to track all current use problems.)
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12926 (transform attribute not respected in nested <use> elements)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12267 (getElementById broken for <use>)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12916 (use instance in symbol definition does not work)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12917 (mouseout event does not occur after scaling use instance)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12838 (SVG <use> DOM broken for script)
+
+        Added test: svg/custom/use-nested-transform.svg
+        Added test: svg/custom/struct-use-09-b.svg (not yet official W3C-SVG-1.1 testcase)
+        Fixes test: svg/custom/use-elementInstance-event-target.svg (rectangle now turns green on first click)
+
+        Fix all (except one) known <use> bug. The remaining bug (12630) is not crucical at all.
+        Enable <use> again as default SVG feature, as discussed on webkit-dev.
+
+        dom/Element.cpp needed following tweak: set hasParentStyle to true, if there is no parentNode
+        available - which happens for <use> nodes, as it's a shadow node. This fixes recalcStyle behaviour.
+        Override recalcStyle() in SVGUseElement, and properly forward the call to the shadow tree root element.
+        The shadow tree now receives proper style updates (without having to recreate the whole tree!).
+
+        Override attributeChanged() in SVGUseElement and only call notifyAttributeChange if one of x/y/width/height/xlink:href
+        attribute changed - otherwhise we'll end up recreating the tree for every transform/style/(non-existing-attribute) change.
+
+        Do not override transform in nested use situations, but correctly append (right-sided) the translation of the <use> element.
+        Some cosmetic fixes: don't add transform="translate(0 0)" attributes if both x/y values are null in the shadow tree.
+
+        Factor out logic for replacing symbol/svg tags in the shadow tree, and also invoke it during expandUseElementsInShadowTree -
+        otherwhise <symbol><use xlink:href="#someOtherSymbol"></symbol> the <use> gets expanded to a <symbol>. Though no one expands
+        the <symbol> element - and we're end up in hitting an assertion. Avoid that.
+
+        * bindings/js/JSSVGElementWrapperFactory.cpp:
+        * bindings/js/kjs_dom.cpp:
+        (KJS::toJS):
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap):
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle):
+        * ksvg2/svg/SVGElement.cpp:
+        (WebCore::shadowTreeParentElementForShadowTreeElement):
+        (WebCore::SVGElement::dispatchEvent):
+        * ksvg2/svg/SVGElementInstance.cpp:
+        * ksvg2/svg/SVGElementInstance.h:
+        * ksvg2/svg/SVGElementInstance.idl:
+        * ksvg2/svg/SVGElementInstanceList.cpp:
+        * ksvg2/svg/SVGElementInstanceList.h:
+        * ksvg2/svg/SVGElementInstanceList.idl:
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::notifyAttributeChange):
+        (WebCore::SVGStyledElement::updateElementInstance):
+        * ksvg2/svg/SVGStyledElement.h:
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::attributeChanged):
+        (WebCore::SVGUseElement::notifyAttributeChange):
+        (WebCore::SVGUseElement::recalcStyle):
+        (WebCore::SVGUseElement::buildPendingResource):
+        (WebCore::SVGUseElement::buildShadowTreeForSymbolTag):
+        (WebCore::SVGUseElement::alterShadowTreeForSVGTag):
+        (WebCore::SVGUseElement::buildShadowTree):
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree):
+        (WebCore::SVGUseElement::attachShadowTree):
+        * ksvg2/svg/SVGUseElement.h:
+        * ksvg2/svg/SVGUseElement.idl:
+        * ksvg2/svg/svgtags.in:
+
 2007-03-05  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John

@@ -581,7 +581,12 @@ void Element::recalcStyle(StyleChange change)
     // ### should go away and be done in renderobject
     RenderStyle* _style = renderStyle();
     bool hasParentStyle = parentNode() ? parentNode()->renderStyle() : false;
-    
+
+#if ENABLE(SVG)
+    if (!hasParentStyle && isShadowNode() && isSVGElement())
+        hasParentStyle = true;
+#endif
+
     if (hasParentStyle && (change >= Inherit || changed())) {
         RenderStyle *newStyle = document()->styleSelector()->styleForElement(this);
         StyleChange ch = diff(_style, newStyle);

@@ -1021,7 +1021,7 @@ JSValue* toJS(ExecState* exec, EventTarget* target)
     if (!target)
         return jsNull();
     
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG)
     // SVGElementInstance supports both toSVGElementInstance and toNode since so much mouse handling code depends on toNode returning a valid node.
     SVGElementInstance* instance = target->toSVGElementInstance();
     if (instance)

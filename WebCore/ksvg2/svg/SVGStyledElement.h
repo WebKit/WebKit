@@ -74,9 +74,7 @@ namespace WebCore {
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGStyledElement, String, String, ClassName, className)
 
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
         void updateElementInstance(SVGDocumentExtensions*) const;
-#endif
     };
 
 } // namespace WebCore

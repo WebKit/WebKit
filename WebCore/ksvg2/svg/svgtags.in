@@ -100,9 +100,7 @@ textPath
 title
 tref
 tspan
-#ifdef ENABLE_SVG_EXPERIMENTAL_FEATURES
 use
-#endif
 view
 #if 0
 vkern

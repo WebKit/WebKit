@@ -1,7 +1,7 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {g} at (35.15,46) size 344.85x208.85
+      RenderSVGContainer {g} at (35.15,46) size 409.71x208.85
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderPath {rect} at (-10,-10) size 120x120 [stroke={[type=SOLID] [color=#C82828] [stroke width=20.00]}] [fill={[type=SOLID] [color=#FADC00]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
         RenderSVGText {text} at (120,60) size 480x18
@@ -12,7 +12,10 @@ layer at (0,0) size 480x360
             text run at (-19,-14) width 39: "<use>"
         RenderSVGContainer {g} at (35.15,85.15) size 169.71x169.71 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(120.00,99.29)}]
           RenderPath {rect} at (35.15,85.15) size 169.71x169.71 [stroke={[type=SOLID] [color=#C82828] [stroke width=20.00]}] [fill={[type=SOLID] [color=#FADC00]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
-        RenderSVGContainer {g} at (240,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,0.00)}]
+        RenderSVGContainer {g} at (275.15,85.15) size 169.71x169.71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,0.00)}]
+          RenderSVGContainer {use} at (275.15,85.15) size 169.71x169.71 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(155.36,-35.06)}]
+            RenderSVGContainer {g} at (275.15,85.15) size 169.71x169.71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,120.00)}]
+              RenderPath {rect} at (275.15,85.15) size 169.71x169.71 [stroke={[type=SOLID] [color=#C82828] [stroke width=20.00]}] [fill={[type=SOLID] [color=#FADC00]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
           text run at (0,-36) width 264: "$Revision: 1.7 $"

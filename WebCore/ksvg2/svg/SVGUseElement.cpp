@@ -28,11 +28,12 @@
 // Dump the deep-expanded shadow tree (where the renderes are built from)
 // #define DUMP_SHADOW_TREE
 
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG)
 #include "SVGUseElement.h"
 
 #include "CString.h"
 #include "Document.h"
+#include "Event.h"
 #include "HTMLNames.h"
 #include "RenderSVGContainer.h"
 #include "SVGElementInstance.h"
@@ -134,6 +135,23 @@ void SVGUseElement::removedFromDocument()
     m_shadowTreeRootElement = 0;
 }
 
+void SVGUseElement::attributeChanged(Attribute* attr, bool preserveDecls)
+{
+    // Avoid calling SVGStyledElement::attributeChanged(), as it always calls notifyAttributeChange.
+    SVGElement::attributeChanged(attr, preserveDecls);
+
+    if (!attached())
+       return;
+
+    // Only update the tree if x/y/width/height or xlink:href changed.
+    if (attr->name() == SVGNames::xAttr || attr->name() == SVGNames::yAttr ||
+        attr->name() == SVGNames::widthAttr || attr->name() == SVGNames::heightAttr ||
+        attr->name().matches(XLinkNames::hrefAttr))
+        buildPendingResource();
+    else if (m_shadowTreeRootElement)
+        m_shadowTreeRootElement->setChanged();
+}
+
 void SVGUseElement::notifyAttributeChange() const
 {
     if (!attached())
@@ -143,10 +161,18 @@ void SVGUseElement::notifyAttributeChange() const
     // It has to be done correctly, by implementing attributeChanged().
     const_cast<SVGUseElement*>(this)->buildPendingResource();
 
-    if (renderer())
-        renderer()->setNeedsLayout(true); 
+    if (m_shadowTreeRootElement)
+        m_shadowTreeRootElement->setChanged();
+}
 
-    SVGStyledElement::notifyAttributeChange();
+void SVGUseElement::recalcStyle(StyleChange change)
+{
+    SVGStyledElement::recalcStyle(change);
+
+    // The shadow tree root element is NOT a direct child element of us.
+    // So we have to take care it receives style updates, manually.
+    if (m_shadowTreeRootElement)
+        m_shadowTreeRootElement->recalcStyle(change);
 }
 
 #ifdef DUMP_INSTANCE_TREE
@@ -226,14 +252,16 @@ void SVGUseElement::buildPendingResource()
 
     // Setup shadow tree root node
     m_shadowTreeRootElement = new SVGGElement(SVGNames::gTag, document());
-    m_shadowTreeRootElement->setInDocument(true);
+    m_shadowTreeRootElement->setInDocument();
     m_shadowTreeRootElement->setShadowParentNode(this);
 
     // Spec: An additional transformation translate(x,y) is appended to the end
     // (i.e., right-side) of the transform attribute on the generated 'g', where x
     // and y represent the values of the x and y attributes on the 'use' element. 
-    String transformString = String::format("translate(%f, %f)", x().value(), y().value());
-    m_shadowTreeRootElement->setAttribute(SVGNames::transformAttr, transformString);
+    if (x().value() != 0.0 || y().value() != 0.0) {
+        String transformString = String::format("translate(%f, %f)", x().value(), y().value());
+        m_shadowTreeRootElement->setAttribute(SVGNames::transformAttr, transformString);
+    }
 
     // Build shadow tree from instance tree
     // This also handles the special cases: <use> on <symbol>, <use> on <svg>.
@@ -362,44 +390,71 @@ void SVGUseElement::handleDeepUseReferencing(SVGElement* use, SVGElementInstance
     buildInstanceTree(target, newInstance, foundCycle);
 }
 
-void SVGUseElement::buildShadowTree(SVGElement* target, SVGElementInstance* targetInstance)
+PassRefPtr<SVGSVGElement> SVGUseElement::buildShadowTreeForSymbolTag(SVGElement* target, SVGElementInstance* targetInstance)
 {
     ExceptionCode ec = 0;
 
     String widthString = String::number(width().value());
     String heightString = String::number(height().value());
  
-    if (target->hasTagName(SVGNames::symbolTag)) {
-        // Spec: The referenced 'symbol' and its contents are deep-cloned into the generated tree,
-        // with the exception that the 'symbol' is replaced by an 'svg'. This generated 'svg' will
-        // always have explicit values for attributes width and height. If attributes width and/or
-        // height are provided on the 'use' element, then these attributes will be transferred to
-        // the generated 'svg'. If attributes width and/or height are not specified, the generated
-        // 'svg' element will use values of 100% for these attributes.
-        RefPtr<SVGSVGElement> svgElement = new SVGSVGElement(SVGNames::svgTag, document());
- 
-        // Transfer all attributes from <symbol> to the new <svg> element
-        *svgElement->attributes() = *target->attributes();
+    // Spec: The referenced 'symbol' and its contents are deep-cloned into the generated tree,
+    // with the exception that the 'symbol' is replaced by an 'svg'. This generated 'svg' will
+    // always have explicit values for attributes width and height. If attributes width and/or
+    // height are provided on the 'use' element, then these attributes will be transferred to
+    // the generated 'svg'. If attributes width and/or height are not specified, the generated
+    // 'svg' element will use values of 100% for these attributes.
+    RefPtr<SVGSVGElement> svgElement = new SVGSVGElement(SVGNames::svgTag, document());
 
-        // Explicitly re-set width/height values
-        svgElement->setAttribute(SVGNames::widthAttr, hasAttribute(SVGNames::widthAttr) ? widthString : "100%");
-        svgElement->setAttribute(SVGNames::heightAttr, hasAttribute(SVGNames::heightAttr) ? heightString : "100%");
+    // Transfer all attributes from <symbol> to the new <svg> element
+    *svgElement->attributes() = *target->attributes();
 
-        // Only clone symbol children, and add them to the new <svg> element
+    // Explicitly re-set width/height values
+    svgElement->setAttribute(SVGNames::widthAttr, hasAttribute(SVGNames::widthAttr) ? widthString : "100%");
+    svgElement->setAttribute(SVGNames::heightAttr, hasAttribute(SVGNames::heightAttr) ? heightString : "100%");
+
+    // Only clone symbol children, and add them to the new <svg> element    
+    if (targetInstance) {
+        // Called from buildShadowTree()
         for (SVGElementInstance* instance = targetInstance->firstChild(); instance; instance = instance->nextSibling()) {
             RefPtr<Node> newChild = instance->correspondingElement()->cloneNode(true);
             svgElement->appendChild(newChild.release(), ec);
             ASSERT(ec == 0);
         }
-
-        m_shadowTreeRootElement->appendChild(svgElement.release(), ec);
-        ASSERT(ec == 0);
-
-        return;
+    } else {
+        // Called from expandUseElementsInShadowTree()
+        for (Node* child = target->firstChild(); child; child = child->nextSibling()) {
+            RefPtr<Node> newChild = child->cloneNode(true);
+            svgElement->appendChild(newChild.release(), ec);
+            ASSERT(ec == 0);
+        }
     }
 
-    // For all other target types, we just need to clone the whole referenced subtree.
-    RefPtr<Node> newChild = targetInstance->correspondingElement()->cloneNode(true);
+    return svgElement;
+}
+
+void SVGUseElement::alterShadowTreeForSVGTag(SVGElement* target)
+{
+    String widthString = String::number(width().value());
+    String heightString = String::number(height().value());
+
+    if (hasAttribute(SVGNames::widthAttr))
+        target->setAttribute(SVGNames::widthAttr, widthString);
+
+    if (hasAttribute(SVGNames::heightAttr))
+        target->setAttribute(SVGNames::heightAttr, heightString);
+}
+
+void SVGUseElement::buildShadowTree(SVGElement* target, SVGElementInstance* targetInstance)
+{
+    ExceptionCode ec = 0;
+
+    RefPtr<Node> newChild;
+
+    // Handle use referencing <symbol> special case
+    if (target->hasTagName(SVGNames::symbolTag))
+        newChild = buildShadowTreeForSymbolTag(target, targetInstance);
+    else
+        newChild = targetInstance->correspondingElement()->cloneNode(true);
 
     SVGElement* newChildPtr = svg_dynamic_cast(newChild.get());
     ASSERT(newChildPtr);
@@ -408,15 +463,8 @@ void SVGUseElement::buildShadowTree(SVGElement* target, SVGElementInstance* targ
     ASSERT(ec == 0);
 
     // Handle use referencing <svg> special case
-    if (target->hasTagName(SVGNames::svgTag)) {
-        ASSERT(newChildPtr->hasTagName(SVGNames::svgTag));
-
-        if (hasAttribute(SVGNames::widthAttr))
-            newChildPtr->setAttribute(SVGNames::widthAttr, widthString);
-
-        if (hasAttribute(SVGNames::heightAttr))
-            newChildPtr->setAttribute(SVGNames::heightAttr, heightString);
-    }
+    if (target->hasTagName(SVGNames::svgTag))
+        alterShadowTreeForSVGTag(newChildPtr);
 }
 
 void SVGUseElement::expandUseElementsInShadowTree(Node* element)
@@ -437,11 +485,6 @@ void SVGUseElement::expandUseElementsInShadowTree(Node* element)
 
         // Don't ASSERT(target) here, it may be "pending", too.
         if (target) {
-            ExceptionCode ec = 0;
-
-            // Clone whole target sub-tree
-            RefPtr<Node> clone = target->cloneNode(true);
-
             // Setup sub-shadow tree root node
             RefPtr<SVGElement> cloneParent = new SVGGElement(SVGNames::gTag, document());
 
@@ -451,17 +494,41 @@ void SVGUseElement::expandUseElementsInShadowTree(Node* element)
 
             // Spec: An additional transformation translate(x,y) is appended to the end
             // (i.e., right-side) of the transform attribute on the generated 'g', where x
-            // and y represent the values of the x and y attributes on the 'use' element. 
-            String transformString = String::format("translate(%f, %f)", use->x().value(), use->y().value());
-            cloneParent->setAttribute(SVGNames::transformAttr, transformString);
+            // and y represent the values of the x and y attributes on the 'use' element.
+            if (use->x().value() != 0.0 || use->y().value() != 0.0) {
+                if (!cloneParent->hasAttribute(SVGNames::transformAttr)) {
+                    String transformString = String::format("translate(%f, %f)", use->x().value(), use->y().value());
+                    cloneParent->setAttribute(SVGNames::transformAttr, transformString);
+                } else {
+                    String transformString = String::format(" translate(%f, %f)", use->x().value(), use->y().value());
+                    const AtomicString& transformAttribute = cloneParent->getAttribute(SVGNames::transformAttr);
+                    cloneParent->setAttribute(SVGNames::transformAttr, transformAttribute + transformString); 
+                }
+            }
 
-            cloneParent->appendChild(clone.release(), ec);
+            RefPtr<Node> newChild;
+
+            // Handle use referencing <symbol> special case
+            if (target->hasTagName(SVGNames::symbolTag))
+                newChild = buildShadowTreeForSymbolTag(target, 0);
+            else
+                newChild = target->cloneNode(true);
+
+            SVGElement* newChildPtr = svg_dynamic_cast(newChild.get());
+            ASSERT(newChildPtr);
+
+            ExceptionCode ec = 0;
+            cloneParent->appendChild(newChild.release(), ec);
             ASSERT(ec == 0);
 
             // Replace <use> with referenced content.
             ASSERT(use->parentNode()); 
             use->parentNode()->replaceChild(cloneParent.release(), use, ec);
             ASSERT(ec == 0);
+
+            // Handle use referencing <svg> special case
+            if (target->hasTagName(SVGNames::svgTag))
+                alterShadowTreeForSVGTag(newChildPtr);
 
             // Immediately stop here, and restart expanding.
             expandUseElementsInShadowTree(m_shadowTreeRootElement.get());
@@ -475,11 +542,8 @@ void SVGUseElement::expandUseElementsInShadowTree(Node* element)
 
 void SVGUseElement::attachShadowTree()
 {
-    if (!m_shadowTreeRootElement || !document()->shouldCreateRenderers() || !attached() || !renderer())
+    if (!m_shadowTreeRootElement || m_shadowTreeRootElement->attached() || !document()->shouldCreateRenderers() || !attached() || !renderer())
         return;
-
-    if (m_shadowTreeRootElement->attached())
-        m_shadowTreeRootElement->detach();
 
     // Inspired by RenderTextControl::createSubtreeIfNeeded(). 
     if (renderer()->canHaveChildren() && childShouldCreateRenderer(m_shadowTreeRootElement.get())) {
@@ -487,13 +551,13 @@ void SVGUseElement::attachShadowTree()
 
         if (m_shadowTreeRootElement->rendererIsNeeded(style)) {
             m_shadowTreeRootElement->setRenderer(m_shadowTreeRootElement->createRenderer(document()->renderArena(), style));
-            if (m_shadowTreeRootElement->renderer()) {
-                m_shadowTreeRootElement->renderer()->setStyle(style);
-                renderer()->addChild(m_shadowTreeRootElement->renderer(), m_shadowTreeRootElement->nextRenderer());
+            if (RenderObject* shadowRenderer = m_shadowTreeRootElement->renderer()) {
+                shadowRenderer->setStyle(style);
+                renderer()->addChild(shadowRenderer, m_shadowTreeRootElement->nextRenderer());
 
                 // Mimic SVGStyledTransformableElement::attach() functionality
                 SVGGElement* gElement = static_cast<SVGGElement*>(m_shadowTreeRootElement.get());
-                m_shadowTreeRootElement->renderer()->setLocalTransform(gElement->localMatrix());
+                shadowRenderer->setLocalTransform(gElement->localMatrix());
 
                 m_shadowTreeRootElement->setAttached();
             }

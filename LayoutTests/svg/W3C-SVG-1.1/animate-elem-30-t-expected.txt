@@ -1,7 +1,7 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {g} at (31.70,9.75) size 405.60x266.70 [transform={m=((1.30,0.00)(0.00,1.30)) t=(20.00,0.00)}]
+      RenderSVGContainer {g} at (31.26,9.75) size 406.04x266.70 [transform={m=((1.30,0.00)(0.00,1.30)) t=(20.00,0.00)}]
         RenderPath {path} at (240.41,52) size 53.24x195.26 [stroke={[type=SOLID] [color=#B4B4B4]}] [data="M210.00,40.00C210.00,40.00,210.00,100.00,170.00,190.00"]
         RenderPath {path} at (242.30,226.20) size 13x18.20 [fill={[type=SOLID] [color=#B4B4B4]}] [data="M171.00,188.00L181.00,178.00L171.00,174.00"]
         RenderPath {polyline} at (278.70,26) size 28.60x52 [stroke={[type=SOLID] [color=#B4B4B4] [stroke width=2.00]}] [data="M200.00,20.00L200.00,40.00L220.00,40.00L220.00,60.00"]
@@ -38,6 +38,24 @@ layer at (0,0) size 480x360
           RenderPath {polygon} at (239,19) size 22x22 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#008000]}] [data="M240.00,20.00L240.00,40.00L260.00,40.00L260.00,20.00"]
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderImage {image} at (0,0) size 40x80
+        RenderSVGContainer {use} at (31.26,12.13) size 29.49x53.74
+          RenderSVGContainer {g} at (31.26,12.13) size 29.49x53.74
+            RenderPath {line} at (31.26,12.13) size 29.49x53.74 [stroke={[type=SOLID] [color=#105D8C] [stroke width=3.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M30.00,50.00L10.00,10.00"]
+        RenderSVGContainer {use} at (31.70,76.70) size 80.60x28.60
+          RenderSVGContainer {g} at (31.70,76.70) size 80.60x28.60
+            RenderPath {rect} at (31.70,76.70) size 80.60x28.60 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M10.00,60.00L70.00,60.00L70.00,80.00L10.00,80.00"]
+        RenderSVGContainer {use} at (32.35,116.35) size 27.30x27.30
+          RenderSVGContainer {g} at (32.35,116.35) size 27.30x27.30
+            RenderPath {circle} at (32.35,116.35) size 27.30x27.30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#105D8C]}] [data="M30.00,100.00L29.98,100.63L29.92,101.25L29.82,101.87L29.69,102.49L29.51,103.09L29.30,103.68L29.05,104.26L28.76,104.82L28.44,105.36L28.09,105.88L27.71,106.37L27.29,106.85L26.85,107.29L26.37,107.71L25.88,108.09L25.36,108.44L24.82,108.76L24.26,109.05L23.68,109.30L23.09,109.51L22.49,109.69L21.87,109.82L21.25,109.92L20.63,109.98L20.00,110.00L19.37,109.98L18.75,109.92L18.13,109.82L17.51,109.69L16.91,109.51L16.32,109.30L15.74,109.05L15.18,108.76L14.64,108.44L14.12,108.09L13.63,107.71L13.15,107.29L12.71,106.85L12.29,106.37L11.91,105.88L11.56,105.36L11.24,104.82L10.95,104.26L10.70,103.68L10.49,103.09L10.31,102.49L10.18,101.87L10.08,101.25L10.02,100.63L10.00,100.00L10.02,99.37L10.08,98.75L10.18,98.13L10.31,97.51L10.49,96.91L10.70,96.32L10.95,95.74L11.24,95.18L11.56,94.64L11.91,94.12L12.29,93.63L12.71,93.15L13.15,92.71L13.63,92.29L14.12,91.91L14.64,91.56L15.18,91.24L15.74,90.95L16.32,90.70L16.91,90.49L17.51,90.31L18.13,90.18L18.75,90.08L19.37,90.02L20.00,90.00L20.63,90.02L21.25,90.08L21.87,90.18L22.49,90.31L23.09,90.49L23.68,90.70L24.26,90.95L24.82,91.24L25.36,91.56L25.88,91.91L26.37,92.29L26.85,92.71L27.29,93.15L27.71,93.63L28.09,94.12L28.44,94.64L28.76,95.18L29.05,95.74L29.30,96.32L29.51,96.91L29.69,97.51L29.82,98.13L29.92,98.75L29.98,99.37"]
+        RenderSVGContainer {use} at (278.70,26) size 28.60x52
+          RenderSVGContainer {g} at (278.70,26) size 28.60x52
+            RenderPath {polyline} at (278.70,26) size 28.60x52 [stroke={[type=SOLID] [color=#105D8C] [stroke width=2.00]}] [data="M200.00,20.00L200.00,40.00L220.00,40.00L220.00,60.00"]
+        RenderSVGContainer {use} at (408.70,11.70) size 28.60x28.60
+          RenderSVGContainer {g} at (408.70,11.70) size 28.60x28.60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,-10.00)}]
+            RenderPath {polygon} at (408.70,11.70) size 28.60x28.60 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#008000]}] [data="M240.00,20.00L240.00,40.00L260.00,40.00L260.00,20.00"]
+        RenderSVGContainer {use} at (319,26) size 52x104
+          RenderSVGContainer {g} at (319,26) size 52x104
+            RenderImage {image} at (0,0) size 40x80
       RenderSVGText {text} at (10,340) size 480x46
         RenderSVGInlineText {#text} at (0,-36) size 264x46
           text run at (0,-36) width 264: "$Revision: 1.6 $"

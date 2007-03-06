@@ -8,7 +8,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (240,30) size 480x23
         RenderSVGInlineText {#text} at (-26,-18) size 52x23
           text run at (-26,-18) width 52: "restart"
-      RenderSVGContainer {g} at (82,92) size 323x137 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,80.00)}]
+      RenderSVGContainer {g} at (82,92) size 334.50x137 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,80.00)}]
         RenderSVGContainer {g} at (82,112) size 168x117 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,45.00)}]
           RenderSVGText {text} at (0,0) size 480x17
             RenderSVGInlineText {#text} at (-168,-13) size 168x17
@@ -32,18 +32,54 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (80,0) size 480x17
             RenderSVGInlineText {#text} at (-14,-13) size 29x17
               text run at (-14,-13) width 29: "0s-5s"
-        RenderSVGContainer {g} at (303.50,113.50) size 33x113 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,40.00)}]
+        RenderSVGContainer {g} at (303.50,113.50) size 113x113 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,40.00)}]
           RenderSVGHiddenContainer {defs} at (0,0) size 0x0
             RenderPath {rect} at (-6.50,-6.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
-          RenderSVGContainer {g} at (303.50,113.50) size 13x13
+          RenderSVGContainer {g} at (303.50,113.50) size 93x13
+            RenderSVGContainer {use} at (303.50,113.50) size 13x13
+              RenderSVGContainer {g} at (303.50,113.50) size 13x13
+                RenderPath {rect} at (303.50,113.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
+            RenderSVGContainer {use} at (383.50,113.50) size 13x13
+              RenderSVGContainer {g} at (383.50,113.50) size 13x13 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,0.00)}]
+                RenderPath {rect} at (383.50,113.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
             RenderPath {rect} at (303.50,113.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
-          RenderSVGContainer {g} at (303.50,138.50) size 13x13 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,25.00)}]
+          RenderSVGContainer {g} at (303.50,138.50) size 93x13 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,25.00)}]
+            RenderSVGContainer {use} at (303.50,138.50) size 13x13
+              RenderSVGContainer {g} at (303.50,138.50) size 13x13
+                RenderPath {rect} at (303.50,138.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
+            RenderSVGContainer {use} at (383.50,138.50) size 13x13
+              RenderSVGContainer {g} at (383.50,138.50) size 13x13 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,0.00)}]
+                RenderPath {rect} at (383.50,138.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
             RenderPath {rect} at (303.50,138.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
-          RenderSVGContainer {g} at (303.50,163.50) size 33x13 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
+          RenderSVGContainer {g} at (303.50,163.50) size 113x13 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
+            RenderSVGContainer {use} at (303.50,163.50) size 13x13
+              RenderSVGContainer {g} at (303.50,163.50) size 13x13
+                RenderPath {rect} at (303.50,163.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
+            RenderSVGContainer {use} at (383.50,163.50) size 13x13
+              RenderSVGContainer {g} at (383.50,163.50) size 13x13 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,0.00)}]
+                RenderPath {rect} at (383.50,163.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
             RenderPath {rect} at (303.50,163.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
-            RenderSVGContainer {g} at (323.50,163.50) size 13x13 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,0.00)}]
+            RenderSVGContainer {g} at (323.50,163.50) size 93x13 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,0.00)}]
+              RenderSVGContainer {use} at (323.50,163.50) size 13x13
+                RenderSVGContainer {g} at (323.50,163.50) size 13x13
+                  RenderPath {rect} at (323.50,163.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
+              RenderSVGContainer {use} at (403.50,163.50) size 13x13
+                RenderSVGContainer {g} at (403.50,163.50) size 13x13 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,0.00)}]
+                  RenderPath {rect} at (403.50,163.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
               RenderPath {rect} at (323.50,163.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
-          RenderSVGContainer {g} at (303.50,188.50) size 13x13 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,75.00)}]
+          RenderSVGContainer {g} at (303.50,188.50) size 93x13 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,75.00)}]
+            RenderSVGContainer {use} at (303.50,188.50) size 13x13
+              RenderSVGContainer {g} at (303.50,188.50) size 13x13
+                RenderPath {rect} at (303.50,188.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
+            RenderSVGContainer {use} at (383.50,188.50) size 13x13
+              RenderSVGContainer {g} at (383.50,188.50) size 13x13 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,0.00)}]
+                RenderPath {rect} at (383.50,188.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
             RenderPath {rect} at (303.50,188.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
-          RenderSVGContainer {g} at (303.50,213.50) size 13x13 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,100.00)}]
+          RenderSVGContainer {g} at (303.50,213.50) size 93x13 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,100.00)}]
+            RenderSVGContainer {use} at (303.50,213.50) size 13x13
+              RenderSVGContainer {g} at (303.50,213.50) size 13x13
+                RenderPath {rect} at (303.50,213.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
+            RenderSVGContainer {use} at (383.50,213.50) size 13x13
+              RenderSVGContainer {g} at (383.50,213.50) size 13x13 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,0.00)}]
+                RenderPath {rect} at (383.50,213.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]
             RenderPath {rect} at (303.50,213.50) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [data="M-6.00,-6.00L6.00,-6.00L6.00,6.00L-6.00,6.00"]

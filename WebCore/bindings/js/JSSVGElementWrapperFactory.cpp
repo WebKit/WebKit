@@ -254,6 +254,7 @@ typedef DOMNode* (*CreateSVGElementWrapperFunction)(ExecState*, PassRefPtr<SVGEl
     macro(title, Title) \
     macro(tref, TRef) \
     macro(tspan, TSpan) \
+    macro(use, Use) \
     macro(view, View) \
     // end of macro
 

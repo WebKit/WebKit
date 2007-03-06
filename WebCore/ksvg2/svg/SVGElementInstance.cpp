@@ -21,7 +21,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG)
 #include "SVGElementInstance.h"
 
 #include "Event.h"

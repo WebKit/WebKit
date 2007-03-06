@@ -22,7 +22,7 @@
 #ifndef SVGElementInstanceList_h
 #define SVGElementInstanceList_h
 
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG)
 
 #include "Shared.h"
 #include "SVGElementInstance.h"

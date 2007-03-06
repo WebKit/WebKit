@@ -193,12 +193,10 @@ void SVGStyledElement::notifyAttributeChange() const
     if (!extensions)
         return;
 
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     // In case we're referenced by a <use> element, we have element instances registered
     // to us in the SVGDocumentExtensions. If notifyAttributeChange() is called, we need
     // to recursively update all children including ourselves.
     updateElementInstance(extensions);
-#endif
 
     // If we're a child of an element creating a "resource" (ie. <pattern> child)
     // then we have to notify our parent resource that we changed.
@@ -222,7 +220,6 @@ void SVGStyledElement::notifyResourceParentIfExistant() const
     }
 }
 
-#if ENABLE(SVG_EXPERIMENTAL_FEATURES)
 void SVGStyledElement::updateElementInstance(SVGDocumentExtensions* extensions) const
 {
     SVGStyledElement* nonConstThis = const_cast<SVGStyledElement*>(this);
@@ -248,7 +245,6 @@ void SVGStyledElement::updateElementInstance(SVGDocumentExtensions* extensions) 
     for (; it2 != end2; ++it2)
         (*it2)->updateInstance(nonConstThis);
 }
-#endif
 
 void SVGStyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
 {

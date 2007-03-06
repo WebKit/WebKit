@@ -23,7 +23,7 @@
 #ifndef SVGUseElement_h
 #define SVGUseElement_h
 
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG)
 
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
@@ -60,6 +60,9 @@ namespace WebCore
         virtual void parseMappedAttribute(MappedAttribute*);
         virtual void notifyAttributeChange() const;
 
+        virtual void attributeChanged(Attribute*, bool preserveDecls = false);
+        virtual void recalcStyle(StyleChange = NoChange);
+
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
         virtual void attach();
 
@@ -85,6 +88,9 @@ namespace WebCore
         void handleDeepUseReferencing(SVGElement* use, SVGElementInstance* targetInstance, bool& foundCycle);
 
         // Shadow tree handling
+        PassRefPtr<SVGSVGElement> buildShadowTreeForSymbolTag(SVGElement* target, SVGElementInstance* targetInstance);
+        void alterShadowTreeForSVGTag(SVGElement* target);
+
         void buildShadowTree(SVGElement* target, SVGElementInstance* targetInstance);
         void expandUseElementsInShadowTree(Node* element);
         void attachShadowTree();
