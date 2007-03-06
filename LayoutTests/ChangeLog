@@ -9,6 +9,21 @@
 
 2007-03-06  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Oliver.
+
+        Add new <use> layout tests.
+
+        * svg/custom/use-empty-reference-expected.checksum: Added.
+        * svg/custom/use-empty-reference-expected.png: Added.
+        * svg/custom/use-empty-reference-expected.txt: Added.
+        * svg/custom/use-empty-reference.svg: Added.
+        * svg/custom/use-recalcStyle-crash-expected.checksum: Added.
+        * svg/custom/use-recalcStyle-crash-expected.png: Added.
+        * svg/custom/use-recalcStyle-crash-expected.txt: Added.
+        * svg/custom/use-recalcStyle-crash.svg: Added.
+
+2007-03-06  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Mitz.
 
         Remove an alert() which got accidently added in my last commit.
