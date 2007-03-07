@@ -272,7 +272,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
         break;
 
     case SVGCSS_PROP_KERNING:              // auto | normal | <length> | inherit
-        if (id == CSS_VAL_AUTO)
+        if (id == CSS_VAL_AUTO || id == CSS_VAL_NORMAL)
             valid_primitive = true;
         else
             valid_primitive = validUnit(value, FLength, false);

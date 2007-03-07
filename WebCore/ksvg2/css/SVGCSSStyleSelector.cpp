@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2005 Apple Computer, Inc.
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml css code by:
@@ -60,7 +60,7 @@ else if (isInitial) \
 #define HANDLE_INHERIT_COND(propID, prop, Prop) \
 if (id == propID) \
 {\
-    svgstyle->set##Prop(parentStyle->prop());\
+    svgstyle->set##Prop(parentStyle->svgStyle()->prop());\
     return;\
 }
 
@@ -71,6 +71,12 @@ if (id == propID) \
     return;\
 }
 
+#define HANDLE_INITIAL_COND_WITH_VALUE(propID, Prop, Value) \
+if (id == propID) { \
+    svgstyle->set##Prop(SVGRenderStyle::initial##Value()); \
+    return; \
+}
+
 namespace WebCore {
 
 void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
@@ -79,9 +85,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
     if (value->isPrimitiveValue())
         primitiveValue = static_cast<CSSPrimitiveValue*>(value);
 
-    Length l;
     SVGRenderStyle* svgstyle = style->accessSVGStyle();
-    
     unsigned short valueType = value->cssValueType();
     
     bool isInherit = parentNode && valueType == CSSPrimitiveValue::CSS_INHERIT;
@@ -142,6 +146,47 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
                     return;
             }
 
+            break;
+        }
+        case SVGCSS_PROP_BASELINE_SHIFT:
+        {
+            HANDLE_INHERIT_AND_INITIAL(baselineShift, BaselineShift);
+            if (!primitiveValue)
+                break;
+
+            if (primitiveValue->getIdent()) {
+                switch (primitiveValue->getIdent()) {
+                case CSS_VAL_BASELINE:
+                    svgstyle->setBaselineShift(BS_BASELINE);
+                    break;
+                case CSS_VAL_SUB:
+                    svgstyle->setBaselineShift(BS_SUB);
+                    break;
+                case CSS_VAL_SUPER:
+                    svgstyle->setBaselineShift(BS_SUPER);
+                    break;
+                default:
+                    break;
+                }
+            } else {
+                svgstyle->setBaselineShift(BS_LENGTH);
+                svgstyle->setBaselineShiftValue(primitiveValue);
+            }
+
+            break;
+        }
+        case SVGCSS_PROP_KERNING:
+        {
+            if (isInherit) {
+                HANDLE_INHERIT_COND(SVGCSS_PROP_KERNING, kerning, Kerning)
+                return;
+            }
+            else if (isInitial) {
+                HANDLE_INITIAL_COND_WITH_VALUE(SVGCSS_PROP_KERNING, Kerning, Kerning)
+                return;
+            }
+
+            svgstyle->setKerning(primitiveValue);
             break;
         }
         case SVGCSS_PROP_POINTER_EVENTS:

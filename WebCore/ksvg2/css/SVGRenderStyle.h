@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
     Copyright (C) 2005, 2006 Apple Computer, Inc.
 
@@ -23,6 +23,7 @@
 
 #ifndef SVGRenderStyle_h
 #define SVGRenderStyle_h
+
 #if ENABLE(SVG)
 
 #include "CSSValueList.h"
@@ -35,38 +36,6 @@
 #if PLATFORM(WIN_OS)
 typedef unsigned long long uint64_t;
 #endif
-
-// "Helper" macros for SVG's RenderStyle properties
-// FIXME: These are impossible to work with or debug.
-#define RS_DEFINE_ATTRIBUTE(Data, Type, Name, Initial) \
-    void set##Type(Data val) { noninherited_flags.f._##Name = val; } \
-    Data Name() const { return (Data) noninherited_flags.f._##Name; } \
-    static Data initial##Type() { return Initial; }
-
-#define RS_DEFINE_ATTRIBUTE_INHERITED(Data, Type, Name, Initial) \
-    void set##Type(Data val) { inherited_flags.f._##Name = val; } \
-    Data Name() const { return (Data) inherited_flags.f._##Name; } \
-    static Data initial##Type() { return Initial; }
-
-#define RS_DEFINE_ATTRIBUTE_DATAREF(Data, Group, Variable, Type, Name) \
-    Data Name() const { return Group->Variable; } \
-    void set##Type(Data obj) { RS_SET_VARIABLE(Group, Variable, obj) }
-
-#define RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Data, Group, Variable, Type, Name, Initial) \
-    RS_DEFINE_ATTRIBUTE_DATAREF(Data, Group, Variable, Type, Name) \
-    static Data initial##Type() { return Initial; }
-
-#define RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(Data, Group, Variable, Type, Name, Initial) \
-    Data* Name() const { return Group->Variable.get(); } \
-    void set##Type(PassRefPtr<Data> obj) { \
-        if(!(Group->Variable == obj)) \
-            Group.access()->Variable = obj; \
-    } \
-    static Data* initial##Type() { return Initial; }
-
-#define RS_SET_VARIABLE(Group, Variable, Value) \
-    if(!(Group->Variable == Value)) \
-        Group.access()->Variable = Value;
 
 namespace WebCore {
 
@@ -86,6 +55,7 @@ namespace WebCore {
         // SVG CSS Properties
         SVG_RS_DEFINE_ATTRIBUTE(EAlignmentBaseline, AlignmentBaseline, alignmentBaseline, AB_AUTO)
         SVG_RS_DEFINE_ATTRIBUTE(EDominantBaseline, DominantBaseline, dominantBaseline, DB_AUTO)
+        SVG_RS_DEFINE_ATTRIBUTE(EBaselineShift, BaselineShift, baselineShift, BS_BASELINE)
 
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(LineCap, CapStyle, capStyle, ButtCap)
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(WindRule, ClipRule, clipRule, RULE_NONZERO)
@@ -100,32 +70,35 @@ namespace WebCore {
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(ETextAnchor, TextAnchor, textAnchor, TA_START)
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(ETextRendering, TextRendering, textRendering, TR_AUTO)
         SVG_RS_DEFINE_ATTRIBUTE_INHERITED(EWritingMode, WritingMode, writingMode, WM_LRTB)
-
+ 
         // SVG CSS Properties (using DataRef's)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, fill, opacity, FillOpacity, fillOpacity, 1.0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(SVGPaint, fill, paint, FillPaint, fillPaint, SVGPaint::defaultFill())
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, fill, opacity, FillOpacity, fillOpacity, 1.0)
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(SVGPaint, fill, paint, FillPaint, fillPaint, SVGPaint::defaultFill())
 
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, stroke, opacity, StrokeOpacity, strokeOpacity, 1.0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(SVGPaint, stroke, paint, StrokePaint, strokePaint, SVGPaint::defaultStroke())
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(CSSValueList, stroke, dashArray, StrokeDashArray, strokeDashArray, 0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, stroke, miterLimit, StrokeMiterLimit, strokeMiterLimit, 4.0)
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, stroke, opacity, StrokeOpacity, strokeOpacity, 1.0)
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(SVGPaint, stroke, paint, StrokePaint, strokePaint, SVGPaint::defaultStroke())
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(CSSValueList, stroke, dashArray, StrokeDashArray, strokeDashArray, 0)
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, stroke, miterLimit, StrokeMiterLimit, strokeMiterLimit, 4.0)
         
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(CSSValue, stroke, width, StrokeWidth, strokeWidth, 0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(CSSValue, stroke, dashOffset, StrokeDashOffset, strokeDashOffset, 0);
-    
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, stops, opacity, StopOpacity, stopOpacity, 1.0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Color, stops, color, StopColor, stopColor, Color(0, 0, 0))    
-        
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(String, clip, clipPath, ClipPath, clipPath, String())
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(String, mask, maskElement, MaskElement, maskElement, String())
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(String, markers, startMarker, StartMarker, startMarker, String())
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(String, markers, midMarker, MidMarker, midMarker, String())
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(String, markers, endMarker, EndMarker, endMarker, String())
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(CSSValue, stroke, width, StrokeWidth, strokeWidth, 0)
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(CSSValue, stroke, dashOffset, StrokeDashOffset, strokeDashOffset, 0);
 
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(String, misc, filter, Filter, filter, String())
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, misc, floodOpacity, FloodOpacity, floodOpacity, 1.0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Color, misc, floodColor, FloodColor, floodColor, Color(0, 0, 0))
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(CSSValue, text, kerning, Kerning, kerning, 0)
+
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, stops, opacity, StopOpacity, stopOpacity, 1.0)
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Color, stops, color, StopColor, stopColor, Color(0, 0, 0))    
         
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(String, clip, clipPath, ClipPath, clipPath, String())
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(String, mask, maskElement, MaskElement, maskElement, String())
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(String, markers, startMarker, StartMarker, startMarker, String())
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(String, markers, midMarker, MidMarker, midMarker, String())
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(String, markers, endMarker, EndMarker, endMarker, String())
+
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(String, misc, filter, Filter, filter, String())
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, misc, floodOpacity, FloodOpacity, floodOpacity, 1.0)
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Color, misc, floodColor, FloodColor, floodColor, Color(0, 0, 0))
+        SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(CSSValue, misc, baselineShiftValue, BaselineShiftValue, baselineShiftValue, 0)
+
         // convenience
         bool hasStroke() const { return (strokePaint()->paintType() != SVGPaint::SVG_PAINTTYPE_NONE); }
         bool hasFill() const { return (fillPaint()->paintType() != SVGPaint::SVG_PAINTTYPE_NONE); }
@@ -168,7 +141,8 @@ namespace WebCore {
                 struct {
                     unsigned _alignmentBaseline : 4; // EAlignmentBaseline 
                     unsigned _dominantBaseline : 4; // EDominantBaseline
-                    // 24 bits unused
+                    unsigned _baselineShift : 2; // EBaselineShift
+                    // 22 bits unused
                 } f;
                 uint32_t _niflags;
             };
@@ -178,6 +152,7 @@ namespace WebCore {
         DataRef<StyleFillData> fill;
         DataRef<StyleStrokeData> stroke;
         DataRef<StyleMarkerData> markers;
+        DataRef<StyleTextData> text;
 
         // non-inherited attributes
         DataRef<StyleStopData> stops;
@@ -209,6 +184,7 @@ namespace WebCore {
 
             svg_noninherited_flags.f._alignmentBaseline = initialAlignmentBaseline();
             svg_noninherited_flags.f._dominantBaseline = initialDominantBaseline();
+            svg_noninherited_flags.f._baselineShift = initialBaselineShift();
         }
     };
 

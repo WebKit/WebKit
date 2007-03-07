@@ -22,6 +22,7 @@ color-rendering
 fill
 fill-opacity
 fill-rule
+font-size-adjust
 image-rendering
 marker
 marker-end

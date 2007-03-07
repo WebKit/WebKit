@@ -1,3 +1,40 @@
+2007-03-07  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Rob & Oliver.
+
+        Preparations for the new SVG text engine.
+
+        Handle baseline-shift / kerning css values correctly.
+        Recognize missing svg presentation attribute "font-size-adjust".
+        Add all missing svg<->css property mappings in mapToEntry().
+
+        Doesn't affect any layout test (as these properties are not used w/o my text patch).
+        While I'm at it, unify the macro names (RS_ -> SVG_RS_) & cleanup style a bit.
+
+        * ksvg2/css/CSSPropertyNames.in:
+        * ksvg2/css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * ksvg2/css/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::SVGRenderStyle):
+        (WebCore::SVGRenderStyle::operator==):
+        (WebCore::SVGRenderStyle::inheritedNotEqual):
+        (WebCore::SVGRenderStyle::inheritFrom):
+        * ksvg2/css/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::NonInheritedFlags::):
+        (WebCore::SVGRenderStyle::setBitDefaults):
+        * ksvg2/css/SVGRenderStyleDefs.cpp:
+        (StyleTextData::StyleTextData):
+        (StyleTextData::operator==):
+        (StyleMiscData::StyleMiscData):
+        (StyleMiscData::operator==):
+        * ksvg2/css/SVGRenderStyleDefs.h:
+        (WebCore::):
+        (WebCore::StyleTextData::operator!=):
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::cssPropertyIdForSVGAttributeName):
+
 2007-03-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by kevin

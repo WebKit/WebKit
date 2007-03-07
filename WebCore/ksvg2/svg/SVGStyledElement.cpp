@@ -109,8 +109,10 @@ int SVGStyledElement::cssPropertyIdForSVGAttributeName(const QualifiedName& attr
         mapAttributeToCSSProperty(propertyNameToIdMap, clip_pathAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, clip_ruleAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, colorAttr);
+        mapAttributeToCSSProperty(propertyNameToIdMap, color_interpolationAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, color_interpolation_filtersAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, color_profileAttr);
+        mapAttributeToCSSProperty(propertyNameToIdMap, color_renderingAttr); 
         mapAttributeToCSSProperty(propertyNameToIdMap, cursorAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, directionAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, displayAttr);
@@ -124,6 +126,7 @@ int SVGStyledElement::cssPropertyIdForSVGAttributeName(const QualifiedName& attr
         mapAttributeToCSSProperty(propertyNameToIdMap, flood_opacityAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, font_familyAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, font_sizeAttr);
+        mapAttributeToCSSProperty(propertyNameToIdMap, font_size_adjustAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, font_stretchAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, font_styleAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, font_variantAttr);
@@ -158,6 +161,7 @@ int SVGStyledElement::cssPropertyIdForSVGAttributeName(const QualifiedName& attr
         mapAttributeToCSSProperty(propertyNameToIdMap, unicode_bidiAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, visibilityAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, word_spacingAttr);
+        mapAttributeToCSSProperty(propertyNameToIdMap, writing_modeAttr);
     }
     
     return propertyNameToIdMap->get(attrName.localName().impl());

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
@@ -115,6 +115,21 @@ bool StyleStopData::operator==(const StyleStopData &other) const
            (opacity == other.opacity);
 }
 
+StyleTextData::StyleTextData() : Shared<StyleTextData>()
+{
+    kerning = SVGRenderStyle::initialKerning();
+}
+
+StyleTextData::StyleTextData(const StyleTextData& other) : Shared<StyleTextData>()
+{
+    kerning = other.kerning;
+}
+
+bool StyleTextData::operator==(const StyleTextData& other) const
+{
+    return kerning == other.kerning;
+}
+
 StyleClipData::StyleClipData() : Shared<StyleClipData>()
 {
     clipPath = SVGRenderStyle::initialClipPath();
@@ -166,8 +181,9 @@ bool StyleMarkerData::operator==(const StyleMarkerData &other) const
 
 StyleMiscData::StyleMiscData() : Shared<StyleMiscData>()
 {
-    floodColor = RenderStyle::initialColor();
-    floodOpacity = RenderStyle::initialOpacity();
+    floodColor = SVGRenderStyle::initialFloodColor();
+    floodOpacity = SVGRenderStyle::initialFloodOpacity();
+    baselineShiftValue = SVGRenderStyle::initialBaselineShiftValue();
 }
 
 StyleMiscData::StyleMiscData(const StyleMiscData &other) : Shared<StyleMiscData>()
@@ -175,13 +191,17 @@ StyleMiscData::StyleMiscData(const StyleMiscData &other) : Shared<StyleMiscData>
     filter = other.filter;
     floodColor = other.floodColor;
     floodOpacity = other.floodOpacity;
+    baselineShiftValue = other.baselineShiftValue;
 }
 
 bool StyleMiscData::operator==(const StyleMiscData &other) const
 {
-    return (filter == other.filter && floodOpacity == other.floodOpacity && floodColor == other.floodColor);
+    return filter == other.filter
+           && floodOpacity == other.floodOpacity
+           && floodColor == other.floodColor
+           && baselineShiftValue == other.baselineShiftValue;
 }
 
-// vim:ts=4:noet
 #endif // ENABLE(SVG)
 
+// vim:ts=4:noet

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
@@ -28,8 +28,8 @@
 
 #ifndef SVGRenderStyleDefs_h
 #define SVGRenderStyleDefs_h
-#if ENABLE(SVG)
 
+#if ENABLE(SVG)
 #include "Color.h"
 #include "Path.h"
 #include "PlatformString.h"
@@ -47,7 +47,33 @@
     Data Name() const { return (Data) svg_inherited_flags.f._##Name; } \
     static Data initial##Type() { return Initial; }
 
+// "Helper" macros for SVG's RenderStyle properties
+// FIXME: These are impossible to work with or debug.
+#define SVG_RS_DEFINE_ATTRIBUTE_DATAREF(Data, Group, Variable, Type, Name) \
+    Data Name() const { return Group->Variable; } \
+    void set##Type(Data obj) { SVG_RS_SET_VARIABLE(Group, Variable, obj) }
+
+#define SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Data, Group, Variable, Type, Name, Initial) \
+    SVG_RS_DEFINE_ATTRIBUTE_DATAREF(Data, Group, Variable, Type, Name) \
+    static Data initial##Type() { return Initial; }
+
+#define SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(Data, Group, Variable, Type, Name, Initial) \
+    Data* Name() const { return Group->Variable.get(); } \
+    void set##Type(PassRefPtr<Data> obj) { \
+        if(!(Group->Variable == obj)) \
+            Group.access()->Variable = obj; \
+    } \
+    static Data* initial##Type() { return Initial; }
+
+#define SVG_RS_SET_VARIABLE(Group, Variable, Value) \
+    if(!(Group->Variable == Value)) \
+        Group.access()->Variable = Value;
+
 namespace WebCore {
+
+    enum EBaselineShift {
+        BS_BASELINE, BS_SUB, BS_SUPER, BS_LENGTH
+    };
 
     enum ETextAnchor {
         TA_START, TA_MIDDLE, TA_END
@@ -159,6 +185,23 @@ namespace WebCore {
         StyleStopData &operator=(const StyleStopData &);
     };
 
+    class StyleTextData : public Shared<StyleTextData> {
+    public:
+        StyleTextData();
+        StyleTextData(const StyleTextData& other);
+
+        bool operator==(const StyleTextData& other) const;
+        bool operator!=(const StyleTextData& other) const
+        {
+            return !(*this == other);
+        }
+
+        RefPtr<CSSValue> kerning;
+
+    private:
+        StyleTextData& operator=(const StyleTextData&);
+    };
+
     class StyleClipData : public Shared<StyleClipData> {
     public:
         StyleClipData();
@@ -225,6 +268,9 @@ namespace WebCore {
         Color floodColor;
         float floodOpacity;
 
+        // non-inherited text stuff lives here not in StyleTextData.
+        RefPtr<CSSValue> baselineShiftValue;
+
     private:
         StyleMiscData &operator=(const StyleMiscData &);
     };
@@ -232,6 +278,6 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
-#endif // KSVG_SVGRenderStyleDefs_h
+#endif // SVGRenderStyleDefs_h
 
 // vim:ts=4:noet
