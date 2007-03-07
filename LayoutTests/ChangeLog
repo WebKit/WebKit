@@ -1,3 +1,17 @@
+2007-03-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by mjs
+
+        <http://bugs.webkit.org/show_bug.cgi?id=8592>
+        Extra line left after deleting whitespace:pre text
+
+        Re-enabled the test and removed a FIXME:
+        * editing/deleting/merge-whitespace-pre-expected.checksum:
+        * editing/deleting/merge-whitespace-pre-expected.png:
+        * editing/deleting/merge-whitespace-pre-expected.txt:
+        * editing/deleting/merge-whitespace-pre.html: Added.
+        * editing/deleting/merge-whitespace-pre.html-disabled: Removed.
+
 2007-03-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Sam Weinig.
