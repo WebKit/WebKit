@@ -112,7 +112,7 @@ double Value::toNumber() const
             return m_number;
         case StringValue: {
             bool canConvert;
-            double value = m_string.deprecatedString().simplifyWhiteSpace().toDouble(&canConvert);
+            double value = m_string.simplifyWhiteSpace().toDouble(&canConvert);
             if (canConvert)
                 return value;
             return NAN;

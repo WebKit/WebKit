@@ -75,8 +75,6 @@ Value StringExpression::doEvaluate() const
 Value Negative::doEvaluate() const
 {
     Value p(subExpr(0)->evaluate());
-    if (!p.isNumber())
-        return Value();
     return -p.toNumber();
 }
 
@@ -92,10 +90,8 @@ Value NumericOp::doEvaluate() const
     Value lhs(subExpr(0)->evaluate());
     Value rhs(subExpr(1)->evaluate());
     
-    if (!lhs.isNumber() || !rhs.isNumber())
-        return Value();
-
-    double leftVal = lhs.toNumber(), rightVal = rhs.toNumber();
+    double leftVal = lhs.toNumber();
+    double rightVal = rhs.toNumber();
 
     switch (m_opcode) {
         case OP_Add:
@@ -107,7 +103,7 @@ Value NumericOp::doEvaluate() const
         case OP_Div:
             return leftVal / rightVal;
         case OP_Mod:
-            return remainder(leftVal, rightVal);
+            return fmod(leftVal, rightVal);
     }
     
     return Value();

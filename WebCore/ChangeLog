@@ -1,3 +1,20 @@
+2007-03-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12987
+        Fix and import 4XPath test_numeric_expr.html
+
+        * xml/XPathPredicate.cpp:
+        (WebCore::XPath::Negative::doEvaluate): Convert the argument to number.
+        (WebCore::XPath::NumericOp::doEvaluate): Convert the arguments to numbers. Use a correct operation for mod.
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::nodesInAxis): Do not append parent node if there is none.
+        * xml/XPathValue.cpp:
+        (WebCore::XPath::Value::toNumber): Do not convert to DeprecatedString just to trim whitespace and to convert to double.
+        * platform/DeprecatedString.cpp:
+        (WebCore::DeprecatedStringData::makeAscii): Added a FIXME about unreliable makeAscii() behavior.
+
 2007-03-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele.

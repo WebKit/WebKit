@@ -99,9 +99,12 @@ NodeVector Step::nodesInAxis(Node* context) const
             for (Node* n = context->firstChild(); n; n = n->traverseNextNode(context))
                 nodes.append(n);
             return nodes;
-        case ParentAxis:
-            nodes.append(context->parentNode());
+        case ParentAxis: {
+            Node* parent = context->parentNode();
+            if (parent)
+                nodes.append(parent);
             return nodes;
+        }
         case AncestorAxis:
             for (Node* n = context->parentNode(); n; n = n->parentNode())
                 nodes.append(n);

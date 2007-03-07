@@ -25,6 +25,22 @@ PASS DOM.evaluate("5 mod 2", CHILD1, null, XPathResult.ANY_TYPE, null).numberVal
 PASS DOM.evaluate("5 mod -2", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 1
 PASS DOM.evaluate("-5 mod 2", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is -1
 PASS DOM.evaluate("-5 mod -2", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is -1
+PASS DOM.evaluate("1 mod 0", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is NaN
+PASS DOM.evaluate("0 mod 0", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is NaN
+PASS DOM.evaluate("(0 div 0) mod 2", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is NaN
+PASS DOM.evaluate("2 mod (0 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is NaN
+PASS DOM.evaluate("(1 div 0) mod 2", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is NaN
+PASS DOM.evaluate("(1 div 0) mod 0", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is NaN
+PASS DOM.evaluate("(1 div 0) mod (1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is NaN
+PASS DOM.evaluate("42 mod (1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 42
+PASS DOM.evaluate("0.5 mod 2", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 0.5
+PASS DOM.evaluate("-0.5 mod 2", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is -0.5
+PASS DOM.evaluate("2.5 mod 2", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 0.5
+PASS DOM.evaluate("-2.5 mod 2", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is -0.5
+PASS DOM.evaluate("5 mod 3", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 2
+PASS DOM.evaluate("5 mod -3", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 2
+PASS DOM.evaluate("-5 mod 3", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is -2
+PASS DOM.evaluate("-5 mod -3", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is -2
 PASS DOM.evaluate("5 + 2", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 7
 PASS DOM.evaluate("3 + -2", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 1
 PASS DOM.evaluate("(1 div 0) + (1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is Infinity
@@ -79,37 +95,37 @@ PASS DOM.evaluate("5 < number('NaN')", CHILD1, null, XPathResult.ANY_TYPE, null)
 PASS DOM.evaluate("5 <= number('NaN')", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
 PASS DOM.evaluate("5 > number('NaN')", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
 PASS DOM.evaluate("5 >= number('NaN')", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
-FAIL DOM.evaluate("5 < @attr31", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue should be true (of type boolean). Was false (of type boolean).
-FAIL DOM.evaluate("5 <= @attr31", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue should be true (of type boolean). Was false (of type boolean).
+PASS DOM.evaluate("5 < @attr31", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is true
+PASS DOM.evaluate("5 <= @attr31", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is true
 PASS DOM.evaluate("5 > @attr31", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
 PASS DOM.evaluate("5 >= @attr31", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
-FAIL DOM.evaluate("'-5' * '2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be -10. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'-4' * '-2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be 8. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'0' * '2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be 0. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'1' * '1'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be 1. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'3.1415926535' * '1'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be 3.1415926535. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'' * '1'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be NaN. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'Hi' * '1'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be NaN. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'NaN' * '1'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be NaN. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'• = middle dot' * '1'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be NaN. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'0' div '2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be 0. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'1' div '1'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be 1. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'-5' div '2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be -2.5. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'-4' div '-2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be 2. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'0' div '0'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be NaN. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'1' div '0'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be Infinity. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'-1' div '0'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be -Infinity. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'0' mod '2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be 0. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'5' mod '2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be 1. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'5' mod '-2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be 1. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'-5' mod '2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be -1. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'-5' mod '-2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be -1. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'5' + '2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be 7. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'3' + '-2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be 1. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'5' - '2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be 3. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("'3' - '-2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be 5. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("-'5'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be -5. Threw exception Error: TYPE_ERR: DOM XPath Exception 52
-FAIL DOM.evaluate("-'-2')", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue should be 2. Threw exception Error: INVALID_EXPRESSION_ERR: DOM XPath Exception 51
+PASS DOM.evaluate("'-5' * '2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is -10
+PASS DOM.evaluate("'-4' * '-2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 8
+PASS DOM.evaluate("'0' * '2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 0
+PASS DOM.evaluate("'1' * '1'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 1
+PASS DOM.evaluate("'3.1415926535' * '1'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 3.1415926535
+PASS DOM.evaluate("'' * '1'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is NaN
+PASS DOM.evaluate("'Hi' * '1'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is NaN
+PASS DOM.evaluate("'NaN' * '1'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is NaN
+PASS DOM.evaluate("'• = middle dot' * '1'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is NaN
+PASS DOM.evaluate("'0' div '2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 0
+PASS DOM.evaluate("'1' div '1'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 1
+PASS DOM.evaluate("'-5' div '2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is -2.5
+PASS DOM.evaluate("'-4' div '-2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 2
+PASS DOM.evaluate("'0' div '0'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is NaN
+PASS DOM.evaluate("'1' div '0'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is Infinity
+PASS DOM.evaluate("'-1' div '0'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is -Infinity
+PASS DOM.evaluate("'0' mod '2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 0
+PASS DOM.evaluate("'5' mod '2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 1
+PASS DOM.evaluate("'5' mod '-2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 1
+PASS DOM.evaluate("'-5' mod '2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is -1
+PASS DOM.evaluate("'-5' mod '-2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is -1
+PASS DOM.evaluate("'5' + '2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 7
+PASS DOM.evaluate("'3' + '-2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 1
+PASS DOM.evaluate("'5' - '2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 3
+PASS DOM.evaluate("'3' - '-2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 5
+PASS DOM.evaluate("-'5'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is -5
+PASS DOM.evaluate("-'-2'", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 2
 PASS DOM.evaluate("'5' = '5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is true
 PASS DOM.evaluate("'5' = '-5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
 PASS DOM.evaluate("'-5' = '-5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is true
@@ -133,14 +149,14 @@ PASS DOM.evaluate("5 < '5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanVa
 PASS DOM.evaluate("31 < '5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
 PASS DOM.evaluate("'5' < '5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
 PASS DOM.evaluate("'31' < '5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
-FAIL DOM.evaluate("5 <= '5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue should be true (of type boolean). Was false (of type boolean).
+PASS DOM.evaluate("5 <= '5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is true
 PASS DOM.evaluate("31 <= '5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
-FAIL DOM.evaluate("'5' <= '5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue should be true (of type boolean). Was false (of type boolean).
+PASS DOM.evaluate("'5' <= '5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is true
 PASS DOM.evaluate("'31' <= '5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
 PASS DOM.evaluate("5 > '5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
-FAIL DOM.evaluate("31 > '5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue should be true (of type boolean). Was false (of type boolean).
+PASS DOM.evaluate("31 > '5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is true
 PASS DOM.evaluate("'5' > '5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
-FAIL DOM.evaluate("'31' > '5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue should be true (of type boolean). Was false (of type boolean).
+PASS DOM.evaluate("'31' > '5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is true
 PASS DOM.evaluate("5 < '-5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
 PASS DOM.evaluate("31 < '-5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
 PASS DOM.evaluate("'5' < '-5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
@@ -149,16 +165,16 @@ PASS DOM.evaluate("5 <= '-5'", CHILD1, null, XPathResult.ANY_TYPE, null).boolean
 PASS DOM.evaluate("31 <= '-5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
 PASS DOM.evaluate("'5' <= '-5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
 PASS DOM.evaluate("'31' <= '-5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
-FAIL DOM.evaluate("5 > '-5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue should be true (of type boolean). Was false (of type boolean).
-FAIL DOM.evaluate("31 > '-5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue should be true (of type boolean). Was false (of type boolean).
-FAIL DOM.evaluate("'5' > '-5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue should be true (of type boolean). Was false (of type boolean).
-FAIL DOM.evaluate("'31' > '-5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue should be true (of type boolean). Was false (of type boolean).
+PASS DOM.evaluate("5 > '-5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is true
+PASS DOM.evaluate("31 > '-5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is true
+PASS DOM.evaluate("'5' > '-5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is true
+PASS DOM.evaluate("'31' > '-5'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is true
 PASS DOM.evaluate("'5' < 'Hi'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
 PASS DOM.evaluate("'5' <= 'Hi'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
 PASS DOM.evaluate("'5' > 'Hi'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
 PASS DOM.evaluate("'5' >= 'Hi'", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
-FAIL DOM.evaluate("'5' < @attr31", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue should be true (of type boolean). Was false (of type boolean).
-FAIL DOM.evaluate("'5' <= @attr31", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue should be true (of type boolean). Was false (of type boolean).
+PASS DOM.evaluate("'5' < @attr31", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is true
+PASS DOM.evaluate("'5' <= @attr31", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is true
 PASS DOM.evaluate("'5' > @attr31", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
 PASS DOM.evaluate("'5' >= @attr31", CHILD1, null, XPathResult.ANY_TYPE, null).booleanValue is false
 PASS successfullyParsed is true

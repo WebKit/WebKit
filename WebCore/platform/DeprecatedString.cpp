@@ -476,6 +476,9 @@ char *DeprecatedStringData::makeAscii()
         unsigned i = _length;
         char* cp = _ascii;
         while (i--)
+            // FIXME: this converts non-Latin1 characters to '\0', which may be not what we want in some cases.
+            // In particular, toDouble() may fail to report errors, believing that the string ends earlier
+            // than it actually does.
             *cp++ = (*str++).latin1();
         *cp = 0;
         
