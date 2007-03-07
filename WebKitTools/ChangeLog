@@ -1,3 +1,24 @@
+2007-03-07  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Darin.
+
+        - WebKitTools part of fix for http://bugs.webkit.org/show_bug.cgi?id=12463
+          WebArchiver - attempt to insert nil exception when archive empty iframe
+
+        The dumpDOMAsWebArchive() test method uses the DOMDocument as a basis for creating
+        a webarchive while the dumpSourceAsWebArchive() test method uses the original
+        dataSource (page source) to create a webarchive.  Most tests currently use
+        dumpDOMAsWebArchive() since this is what Safari does when saving a web page as a
+        webarchive.
+
+        * DumpRenderTree/DumpRenderTree.m: Renamed dumpAsWebArchive to dumpDOMAsWebArchive.
+        Added dumpSourceAsWebArchive.
+        (dump):
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (-[LayoutTestController dumpDOMAsWebArchive]):
+        (-[LayoutTestController dumpSourceAsWebArchive]):
+        (runTest):
+
 2007-03-05  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Mark and Dave H.

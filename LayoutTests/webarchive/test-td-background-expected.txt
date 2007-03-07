@@ -8,7 +8,7 @@
 		<string>&lt;html&gt;&lt;head&gt;
 &lt;script&gt;
     if (window.layoutTestController)
-        layoutTestController.dumpAsWebArchive();
+        layoutTestController.dumpDOMAsWebArchive();
 &lt;/script&gt;
 &lt;/head&gt;&lt;body&gt;
   &lt;table&gt;

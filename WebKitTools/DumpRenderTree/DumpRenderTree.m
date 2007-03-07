@@ -125,7 +125,8 @@ static WebFrame *topLoadingFrame;     // !nil iff a load is in progress
 static BOOL waitToDump;     // TRUE if waitUntilDone() has been called, but notifyDone() has not yet been called
 
 static BOOL dumpAsText;
-static BOOL dumpAsWebArchive;
+static BOOL dumpDOMAsWebArchive;
+static BOOL dumpSourceAsWebArchive;
 static BOOL dumpSelectionRect;
 static BOOL dumpTitleChanges;
 static BOOL dumpBackForwardList;
@@ -640,8 +641,11 @@ static void dump(void)
         if (dumpAsText) {
             DOMElement *documentElement = [[frame DOMDocument] documentElement];
             result = [[(DOMElement *)documentElement innerText] stringByAppendingString:@"\n"];
-        } else if (dumpAsWebArchive) {
+        } else if (dumpDOMAsWebArchive) {
             WebArchive *webArchive = [[frame DOMDocument] webArchive];
+            result = serializeWebArchiveToXML(webArchive);
+        } else if (dumpSourceAsWebArchive) {
+            WebArchive *webArchive = [[frame dataSource] webArchive];
             result = serializeWebArchiveToXML(webArchive);
         } else {
             bool isSVGW3CTest = ([currentTest rangeOfString:@"svg/W3C-SVG-1.1"].length);
@@ -656,14 +660,16 @@ static void dump(void)
             const char *errorMessage;
             if (dumpAsText)
                 errorMessage = "[documentElement innerText]";
-            else if (dumpAsWebArchive)
+            else if (dumpDOMAsWebArchive)
                 errorMessage = "[[frame DOMDocument] webArchive]";
+            else if (dumpSourceAsWebArchive)
+                errorMessage = "[[frame dataSource] webArchive]";
             else
                 errorMessage = "[frame renderTreeAsExternalRepresentation]";
             printf("ERROR: nil result from %s", errorMessage);
         } else {
             fputs([result UTF8String], stdout);
-            if (!dumpAsText && !dumpAsWebArchive)
+            if (!dumpAsText && !dumpDOMAsWebArchive && !dumpSourceAsWebArchive)
                 dumpFrameScrollPosition(frame);
         }
 
@@ -704,7 +710,7 @@ static void dump(void)
     }
     
     if (dumpPixels) {
-        if (!dumpAsText && !dumpAsWebArchive) {
+        if (!dumpAsText && !dumpDOMAsWebArchive && !dumpSourceAsWebArchive) {
             // grab a bitmap from the view
             WebView* view = [frame webView];
             NSSize webViewSize = [view frame].size;
@@ -909,7 +915,8 @@ static void dump(void)
     if (aSelector == @selector(waitUntilDone)
             || aSelector == @selector(notifyDone)
             || aSelector == @selector(dumpAsText)
-            || aSelector == @selector(dumpAsWebArchive)
+            || aSelector == @selector(dumpDOMAsWebArchive)
+            || aSelector == @selector(dumpSourceAsWebArchive)
             || aSelector == @selector(dumpTitleChanges)
             || aSelector == @selector(dumpBackForwardList)
             || aSelector == @selector(dumpChildFrameScrollPositions)
@@ -1017,9 +1024,14 @@ static void dump(void)
     [[WebPreferences standardPreferences] setUserStyleSheetEnabled:flag];
 }
 
-- (void)dumpAsWebArchive
+- (void)dumpDOMAsWebArchive
 {
-    dumpAsWebArchive = YES;
+    dumpDOMAsWebArchive = YES;
+}
+
+- (void)dumpSourceAsWebArchive
+{
+    dumpSourceAsWebArchive = YES;
 }
 
 - (void)dumpSelectionRect
@@ -1223,7 +1235,8 @@ static void runTest(const char *pathOrURL)
     topLoadingFrame = nil;
     waitToDump = NO;
     dumpAsText = NO;
-    dumpAsWebArchive = NO;
+    dumpDOMAsWebArchive = NO;
+    dumpSourceAsWebArchive = NO;
     dumpChildFrameScrollPositions = NO;
     shouldDumpEditingCallbacks = NO;
     shouldDumpResourceLoadCallbacks = NO;

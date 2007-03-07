@@ -25,7 +25,7 @@
 		<dict>
 			<key>WebResourceData</key>
 			<string>if (window.layoutTestController)
-    layoutTestController.dumpAsWebArchive();
+    layoutTestController.dumpDOMAsWebArchive();
 </string>
 			<key>WebResourceMIMEType</key>
 			<string>application/x-javascript</string>
@@ -35,7 +35,7 @@
 			b3BYJG9iamVjdHNfEA9OU0tleWVkQXJjaGl2ZXISAAGGoNEICV8Q
 			E1dlYlJlc291cmNlUmVzcG9uc2WAAaQLDBscVSRudWxs1w0ODxAR
 			EhMUFRYXGBkVUiQyUiQzUiQ0UiQwViRjbGFzc1IkNVIkMYACgAAQ
-			ThAHgAMjf+////////+AAF8QGGFwcGxpY2F0aW9uL3gtamF2YXNj
+			URAHgAMjf+////////+AAF8QGGFwcGxpY2F0aW9uL3gtamF2YXNj
 			cmlwdNIdHh8gWCRjbGFzc2VzWiRjbGFzc25hbWWiICFdTlNVUkxS
 			ZXNwb25zZVhOU09iamVjdAgRGyQpMkRJTGJkaW9+gYSHipGUl5mb
 			nZ+hqqzHzNXg4/EAAAAAAAABAQAAAAAAAAAiAAAAAAAAAAAAAAAA

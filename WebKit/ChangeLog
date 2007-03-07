@@ -1,3 +1,22 @@
+2007-03-07  Jim Correia  <jim.correia@pobox.com>
+
+        Reviewed by Darin.
+
+        - WebCore part of fix for http://bugs.webkit.org/show_bug.cgi?id=12463
+          WebArchiver - attempt to insert nil exception when archive empty iframe
+
+        When dealing with an iframe element with no src attribute, the element contains
+        a src attribute in the DOM with a URL of "about:blank" and some HTML to implement
+        the blank page.  In the original page source, however, the iframe element does
+        not include a src attribute, which caused a nil archive to be returned for the
+        childFrameArchive and thus caused the bug.  The fix is a simple nil check.
+
+        Test: webarchive/archive-empty-frame-source.html
+
+        * WebView/WebArchiver.mm:
+        (+ (NSArray *)_subframeArchivesForFrame:(WebFrame *)frame): Don't add childFrameArchive 
+        to the subframeArchives array if it is nil.
+
 2007-03-06  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

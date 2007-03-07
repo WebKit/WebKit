@@ -1,5 +1,41 @@
 2007-03-07  David Kilzer  <ddkilzer@webkit.org>
 
+        Reviewed by Darin.
+
+        - LayoutTests part of fix for http://bugs.webkit.org/show_bug.cgi?id=12463
+          WebArchiver - attempt to insert nil exception when archive empty iframe
+
+        Tests using both dumpDOMAsWebArchive() and dumpSourceAsWebArchive() were added
+        for this bug since a similar fix was suggested for the DOM case which was not
+        needed.  The remaining changes are related to renaming dumpAsWebArchive() to
+        dumpDOMAsWebArchive().
+
+        * webarchive/archive-empty-frame-dom-expected.txt: Added.
+        * webarchive/archive-empty-frame-dom.html: Added.
+        * webarchive/archive-empty-frame-source-expected.txt: Added.
+        * webarchive/archive-empty-frame-source.html: Added.
+        * webarchive/resources/dump-webarchive.js: Renamed dumpAsWebArchive() to dumpDOMAsWebArchive().
+        * webarchive/test-body-background-expected.txt: Ditto.
+        * webarchive/test-body-background.html: Ditto.
+        * webarchive/test-duplicate-resources-expected.txt: Ditto.
+        * webarchive/test-frameset-expected.txt: Ditto.
+        * webarchive/test-frameset.html: Ditto.
+        * webarchive/test-img-src-expected.txt: Ditto.
+        * webarchive/test-img-src.html: Ditto.
+        * webarchive/test-input-src-expected.txt: Ditto.
+        * webarchive/test-input-src.html: Ditto.
+        * webarchive/test-link-href-expected.txt: Ditto.
+        * webarchive/test-link-href.html: Ditto.
+        * webarchive/test-object-data-expected.txt: Ditto.
+        * webarchive/test-object-data.html: Ditto.
+        * webarchive/test-script-src-expected.txt: Ditto.
+        * webarchive/test-table-background-expected.txt: Ditto.
+        * webarchive/test-table-background.html: Ditto.
+        * webarchive/test-td-background-expected.txt: Ditto.
+        * webarchive/test-td-background.html: Ditto.
+
+2007-03-07  David Kilzer  <ddkilzer@webkit.org>
+
         Reviewed by Mitz.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=12992

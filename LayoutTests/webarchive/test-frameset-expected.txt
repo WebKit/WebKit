@@ -8,7 +8,7 @@
 		<string>&lt;html&gt;&lt;head&gt;
 &lt;script&gt;
     if (window.layoutTestController)
-        layoutTestController.dumpAsWebArchive();
+        layoutTestController.dumpDOMAsWebArchive();
 &lt;/script&gt;
 &lt;/head&gt;&lt;frameset rows="*"&gt;&lt;frame src="resources/test-frame.html" name="myframe"&gt;&lt;/frameset&gt;&lt;/html&gt;</string>
 		<key>WebResourceFrameName</key>

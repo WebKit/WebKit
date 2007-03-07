@@ -50,8 +50,11 @@ using namespace WebCore;
     NSEnumerator *enumerator = [[frame childFrames] objectEnumerator];
     NSMutableArray *subframeArchives = [NSMutableArray array];
     WebFrame *childFrame;
-    while ((childFrame = [enumerator nextObject]))
-        [subframeArchives addObject:[self archiveFrame:childFrame]];
+    while ((childFrame = [enumerator nextObject])) {
+        WebArchive *childFrameArchive = [self archiveFrame:childFrame];
+        if (childFrameArchive)
+            [subframeArchives addObject:childFrameArchive];
+    }
 
     return subframeArchives;
 }
