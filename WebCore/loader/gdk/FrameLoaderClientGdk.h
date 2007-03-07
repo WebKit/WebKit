@@ -170,7 +170,7 @@ namespace WebCore {
         virtual WTF::PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
         virtual void setTitle(const String& title, const KURL&);
 
-        virtual String userAgent();
+        virtual String userAgent(const KURL&);
 
         virtual void saveDocumentViewToPageCache(PageCache*);
         virtual bool canCachePage() const;

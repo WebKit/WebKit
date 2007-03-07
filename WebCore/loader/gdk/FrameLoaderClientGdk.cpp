@@ -51,7 +51,7 @@ Frame* FrameLoaderClientGdk::frame()
     return static_cast<Frame*>(m_frame);
 }
 
-String FrameLoaderClientGdk::userAgent()
+String FrameLoaderClientGdk::userAgent(const KURL&)
 {
     return "Mozilla/5.0 (X11; U; Linux i686; en-US) AppleWebKit/420+ (KHTML, like Gecko)";
 }

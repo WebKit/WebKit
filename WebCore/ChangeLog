@@ -1,3 +1,13 @@
+2007-03-06  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Not reviewed.
+
+        Gdk build fix.
+
+        * loader/gdk/FrameLoaderClientGdk.cpp: update userAgent() signature.
+        (WebCore::FrameLoaderClientGdk::userAgent):
+        * loader/gdk/FrameLoaderClientGdk.h: ditto.
+
 2007-03-06  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adele.
