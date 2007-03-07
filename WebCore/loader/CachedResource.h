@@ -67,7 +67,7 @@ public:
         Cached       // regular case
     };
 
-    CachedResource(const String& URL, Type type, CachePolicy cachePolicy, unsigned size = 0);
+    CachedResource(const String& URL, Type type, CachePolicy cachePolicy, unsigned encodedSize = 0);
     virtual ~CachedResource();
 
     virtual void setEncoding(const String&) { }
@@ -81,13 +81,16 @@ public:
     virtual void ref(CachedResourceClient*);
     void deref(CachedResourceClient*);
     bool referenced() const { return !m_clients.isEmpty(); }
+    virtual void allReferencesRemoved() {};
 
     unsigned count() const { return m_clients.size(); }
 
     Status status() const { return m_status; }
 
-    unsigned size() const { return m_size; }
-
+    unsigned size() const { return encodedSize() + decodedSize(); }
+    unsigned encodedSize() const { return m_encodedSize; }
+    virtual unsigned decodedSize() const { return 0; }
+    
     bool isLoaded() const { return !m_loading; }
     void setLoading(bool b) { m_loading = b; }
 
@@ -130,8 +133,10 @@ public:
     bool errorOccurred() const { return m_errorOccurred; }
     bool treatAsLocal() const { return m_shouldTreatAsLocal; }
 
+    virtual void destroyDecodedData() {};
+
 protected:
-    void setSize(unsigned size);
+    void setEncodedSize(unsigned);
 
     HashSet<CachedResourceClient*> m_clients;
 
@@ -148,7 +153,7 @@ protected:
     bool m_errorOccurred;
 
 private:
-    unsigned m_size;
+    unsigned m_encodedSize;
     unsigned m_accessCount;
 
 protected:

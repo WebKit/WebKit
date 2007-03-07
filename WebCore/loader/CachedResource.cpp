@@ -42,7 +42,7 @@ CachedResource::CachedResource(const String& URL, Type type, CachePolicy cachePo
     m_url = URL;
     m_type = type;
     m_status = Pending;
-    m_size = size;
+    m_encodedSize = size;
     m_inCache = false;
     m_cachePolicy = cachePolicy;
     m_request = 0;
@@ -119,32 +119,33 @@ void CachedResource::deref(CachedResourceClient *c)
     if (canDelete() && !inCache())
         delete this;
     else if (!referenced() && inCache()) {
+        allReferencesRemoved();
         cache()->removeFromLiveObjectSize(size());
         cache()->prune();
     }
 }
 
-void CachedResource::setSize(unsigned size)
+void CachedResource::setEncodedSize(unsigned size)
 {
-    if (size == m_size)
+    if (size == m_encodedSize)
         return;
 
-    unsigned oldSize = m_size;
+    unsigned oldSize = m_encodedSize;
 
     // The object must now be moved to a different queue, since its size has been changed.
-    // We have to remove explicitly before updating m_size, so that we find the correct previous
+    // We have to remove explicitly before updating m_encodedSize, so that we find the correct previous
     // queue.
     if (inCache())
         cache()->removeFromLRUList(this);
     
-    m_size = size;
+    m_encodedSize = size;
    
     if (inCache()) { 
         // Now insert into the new LRU list.
         cache()->insertInLRUList(this);
         
         // Update the cache's size totals.
-        cache()->adjustSize(referenced(), oldSize, size);
+        cache()->adjustSize(referenced(), size - oldSize);
     }
 }
 

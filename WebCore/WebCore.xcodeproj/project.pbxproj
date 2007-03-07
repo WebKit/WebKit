@@ -2353,7 +2353,6 @@
 		B2A015BA0AF6CD53006BCE0E /* SVGResourceMasker.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A015A70AF6CD53006BCE0E /* SVGResourceMasker.h */; };
 		B2A10B920B3818BD00099AA4 /* ImageBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A10B910B3818BD00099AA4 /* ImageBuffer.h */; };
 		B2A10B940B3818D700099AA4 /* ImageBufferCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2A10B930B3818D700099AA4 /* ImageBufferCG.cpp */; };
-		B2BFB5A00B22F76200567E80 /* ImageAnimationObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = B2BFB59F0B22F76200567E80 /* ImageAnimationObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C96D8D0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C96D8C0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp */; };
 		B2CB41930AB75904004D9C45 /* SVGRenderingIntent.h in Headers */ = {isa = PBXBuildFile; fileRef = B2CB414C0AB75904004D9C45 /* SVGRenderingIntent.h */; };
 		B2CB41A60AB75904004D9C45 /* SVGUnitTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B2CB415F0AB75904004D9C45 /* SVGUnitTypes.h */; };
@@ -2745,6 +2744,7 @@
 		BC6DB3690A1A7CB700E5CD14 /* GlyphPageTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6DB3680A1A7CB700E5CD14 /* GlyphPageTreeNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC6DB4740A1A90FB00E5CD14 /* GlyphPageTreeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6DB4730A1A90FB00E5CD14 /* GlyphPageTreeNode.cpp */; };
 		BC6DB4D40A1AFEEF00E5CD14 /* GlyphPageTreeNodeMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6DB4D30A1AFEEF00E5CD14 /* GlyphPageTreeNodeMac.cpp */; };
+		BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F44A70B9E324E00A9D081 /* ImageObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCAA90C30A7EBA60008B1229 /* ScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */; };
 		BCB16B8B0979B01400467741 /* DeprecatedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16B880979B01400467741 /* DeprecatedArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCB16B8C0979B01400467741 /* ArrayImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16B890979B01400467741 /* ArrayImpl.cpp */; };
@@ -5415,7 +5415,6 @@
 		B2A015A70AF6CD53006BCE0E /* SVGResourceMasker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGResourceMasker.h; sourceTree = "<group>"; };
 		B2A10B910B3818BD00099AA4 /* ImageBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageBuffer.h; sourceTree = "<group>"; };
 		B2A10B930B3818D700099AA4 /* ImageBufferCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferCG.cpp; sourceTree = "<group>"; };
-		B2BFB59F0B22F76200567E80 /* ImageAnimationObserver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageAnimationObserver.h; sourceTree = "<group>"; };
 		B2C96D8C0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegCustom.cpp; sourceTree = "<group>"; };
 		B2CB41010AB758E6004D9C45 /* SVGAElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGAElement.idl; sourceTree = "<group>"; };
 		B2CB41020AB758E6004D9C45 /* SVGAnimateColorElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGAnimateColorElement.idl; sourceTree = "<group>"; };
@@ -5931,6 +5930,7 @@
 		BC6DB4D30A1AFEEF00E5CD14 /* GlyphPageTreeNodeMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GlyphPageTreeNodeMac.cpp; sourceTree = "<group>"; };
 		BC7B2AF80450824100A8000F /* ScrollBar.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBar.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC7B2AF90450824100A8000F /* PlatformScrollBarMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformScrollBarMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BC7F44A70B9E324E00A9D081 /* ImageObserver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageObserver.h; sourceTree = "<group>"; };
 		BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScrollBar.cpp; path = platform/ScrollBar.cpp; sourceTree = SOURCE_ROOT; };
 		BCB16B880979B01400467741 /* DeprecatedArray.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DeprecatedArray.h; sourceTree = "<group>"; };
 		BCB16B890979B01400467741 /* ArrayImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayImpl.cpp; sourceTree = "<group>"; };
@@ -8690,9 +8690,9 @@
 				B27535400B053814002CE64F /* Icon.h */,
 				B27535410B053814002CE64F /* Image.cpp */,
 				B27535420B053814002CE64F /* Image.h */,
-				B2BFB59F0B22F76200567E80 /* ImageAnimationObserver.h */,
 				B23BCCE40B3829C9005B2415 /* ImageBuffer.cpp */,
 				B2A10B910B3818BD00099AA4 /* ImageBuffer.h */,
+				BC7F44A70B9E324E00A9D081 /* ImageObserver.h */,
 				B27535430B053814002CE64F /* ImageSource.h */,
 				B27535440B053814002CE64F /* IntPoint.h */,
 				B27535450B053814002CE64F /* IntRect.cpp */,
@@ -11100,7 +11100,6 @@
 				06027CAD0B1CBFC000884B2D /* ContextMenuItem.h in Headers */,
 				B2310B770B1F46A200D55D87 /* CgSupport.h in Headers */,
 				932871C00B20DEB70049035A /* PlatformMenuDescription.h in Headers */,
-				B2BFB5A00B22F76200567E80 /* ImageAnimationObserver.h in Headers */,
 				E1D8E3160B29E39C00F4BAF6 /* HTTPParsers.h in Headers */,
 				BC18C5D00B2A886F0018461D /* TextBreakIterator.h in Headers */,
 				AA4C3A770B2B1679002334A2 /* StyleElement.h in Headers */,
@@ -11160,6 +11159,7 @@
 				06A6A73D0B8BA44800DF1703 /* StringTruncator.h in Headers */,
 				934D9BA70B8C1175007B42A9 /* WebCoreNSStringExtras.h in Headers */,
 				51DF6D7E0B92A16D00C2DC85 /* ThreadCheck.h in Headers */,
+				BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

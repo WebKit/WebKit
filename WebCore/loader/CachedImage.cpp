@@ -53,7 +53,6 @@ namespace WebCore {
 
 CachedImage::CachedImage(DocLoader* docLoader, const String& url, CachePolicy cachePolicy, time_t _expireDate)
     : CachedResource(url, ImageResource, cachePolicy, _expireDate)
-    , m_dataSize(0)
 {
     m_image = 0;
     m_status = Unknown;
@@ -66,7 +65,6 @@ CachedImage::CachedImage(DocLoader* docLoader, const String& url, CachePolicy ca
 
 CachedImage::CachedImage(Image* image)
     : CachedResource(String(), ImageResource, CachePolicyCache, 0)
-    , m_dataSize(0)
 {
     m_image = image;
     m_status = Cached;
@@ -87,6 +85,12 @@ void CachedImage::ref(CachedResourceClient* c)
 
     if (!m_loading)
         c->notifyFinished(this);
+}
+
+void CachedImage::allReferencesRemoved()
+{
+    if (m_image && !m_errorOccurred)
+        m_image->resetAnimation();
 }
 
 static Image* brokenImage()
@@ -135,7 +139,7 @@ void CachedImage::clear()
 {
     delete m_image;
     m_image = 0;
-    setSize(0);
+    setEncodedSize(0);
 }
 
 inline void CachedImage::createImage()
@@ -201,8 +205,6 @@ void CachedImage::data(Vector<char>& data, bool allDataReceived)
 
     bool sizeAvailable = false;
 
-    m_dataSize = data.size();
-
     // Have the image update its data from its internal buffer.
     // It will not do anything now, but will delay decoding until 
     // queried for info (like size or specific image frames).
@@ -221,12 +223,10 @@ void CachedImage::data(Vector<char>& data, bool allDataReceived)
         } else
             notifyObservers();
 
-        // FIXME: An animated GIF with a huge frame count can't have its size properly estimated.  The reason is that we don't
-        // want to decode the image to determine the frame count, so what we do instead is max the projected size of a single
-        // RGBA32 buffer (width*height*4) with the data size.  This will help ensure that large animated GIFs with thousands of
-        // frames are at least given a reasonably large size.
-        IntSize s = imageSize();
-        setSize(max(s.width() * s.height() * 4, m_dataSize));
+        if (m_image) {
+            Vector<char>& imageBuffer = m_image->dataBuffer();
+            setEncodedSize(imageBuffer.size());
+        }
     }
     
     if (allDataReceived) {
@@ -254,7 +254,28 @@ void CachedImage::checkNotify()
         c->notifyFinished(this);
 }
 
-bool CachedImage::shouldStopAnimation(const Image* image)
+void CachedImage::destroyDecodedData()
+{
+    if (m_image && !m_errorOccurred)
+        m_image->destroyDecodedData();
+}
+
+unsigned CachedImage::decodedSize() const
+{
+    if (m_image && !m_errorOccurred)
+        return m_image->decodedSize();
+    return 0;
+}
+
+void CachedImage::decodedSizeChanged(const Image* image, int delta)
+{
+    if (image != m_image)
+        return;
+    
+    cache()->adjustSize(referenced(), delta);
+}
+
+bool CachedImage::shouldPauseAnimation(const Image* image)
 {
     if (image != m_image)
         return false;

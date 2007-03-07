@@ -89,7 +89,7 @@ struct FrameData : Noncopyable {
 class BitmapImage : public Image {
     friend class GraphicsContext;
 public:
-    BitmapImage(ImageAnimationObserver* = 0);
+    BitmapImage(ImageObserver* = 0);
     ~BitmapImage();
     
     virtual IntSize size() const;
@@ -102,6 +102,8 @@ public:
     virtual void stopAnimation();
     virtual void resetAnimation();
     
+    virtual unsigned decodedSize() const { return m_decodedSize; }
+
 #if PLATFORM(MAC)
     // Accessors for native image formats.
     virtual NSImage* getNSImage();
@@ -137,8 +139,9 @@ private:
     // Decodes and caches a frame. Never accessed except internally.
     void cacheFrame(size_t index);
 
-    // Called to invalidate all our cached data when more bytes are available.
-    void invalidateData();
+    // Called to invalidate all our cached data.  If an image is loading incrementally, we only
+    // invalidate the last cached frame.
+    virtual void destroyDecodedData(bool incremental = false);
 
     // Whether or not size is available yet.    
     bool isSizeAvailable();
@@ -151,7 +154,7 @@ private:
     // Handle platform-specific data
     void initPlatformData();
     void invalidatePlatformData();
-
+    
     // Checks to see if the image is a 1x1 solid color.  We optimize these images and just do a fill rect instead.
     void checkForSolidColor();
     
@@ -181,6 +184,7 @@ private:
 
     mutable bool m_haveSize; // Whether or not our |m_size| member variable has the final overall image size yet.
     bool m_sizeAvailable; // Whether or not we can obtain the size of the first image frame yet from ImageIO.
+    unsigned m_decodedSize; // The current size of all decoded frames.
 };
 
 }

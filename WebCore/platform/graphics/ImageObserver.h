@@ -23,19 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ImageAnimationObserver_h
-#define ImageAnimationObserver_h
+#ifndef ImageObserver_h
+#define ImageObserver_h
 
 namespace WebCore {
 
 class Image;
 
 // This class gets notified when an image advances animation frames.
-class ImageAnimationObserver {
+class ImageObserver {
 protected:
-    virtual ~ImageAnimationObserver() {}
+    virtual ~ImageObserver() {}
 public:
-    virtual bool shouldStopAnimation(const Image*) = 0;
+    virtual void decodedSizeChanged(const Image*, int delta) = 0;
+
+    virtual bool shouldPauseAnimation(const Image*) = 0;
     virtual void animationAdvanced(const Image*) = 0;
 };
 

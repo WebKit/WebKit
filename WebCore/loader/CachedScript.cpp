@@ -75,8 +75,8 @@ void CachedScript::data(Vector<char>& data, bool allDataReceived)
     if (!allDataReceived)
         return;
 
-    setSize(data.size());
-    m_script = m_encoding.decode(data.data(), size());
+    setEncodedSize(data.size());
+    m_script = m_encoding.decode(data.data(), encodedSize());
     m_loading = false;
     checkNotify();
 }

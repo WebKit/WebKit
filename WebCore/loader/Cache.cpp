@@ -89,14 +89,10 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
     CachedResource* resource = m_resources.get(url.url());
 
     if (resource) {
-        if (!skipCanLoadCheck
-         && FrameLoader::restrictAccessToLocal()
-         && !FrameLoader::canLoad(*resource, docLoader->doc()))
+        if (!skipCanLoadCheck && FrameLoader::restrictAccessToLocal() && !FrameLoader::canLoad(*resource, docLoader->doc()))
             return 0;
     } else {
-        if (!skipCanLoadCheck
-         && FrameLoader::restrictAccessToLocal()
-         && !FrameLoader::canLoad(url, docLoader->doc()))
+        if (!skipCanLoadCheck && FrameLoader::restrictAccessToLocal() && !FrameLoader::canLoad(url, docLoader->doc()))
             return 0;
 
         // The resource does not exist.  Create it.
@@ -135,8 +131,29 @@ void Cache::prune()
     if (unreferencedResourcesSize < m_maximumSize)
         return;
 
-    bool canShrinkLRULists = true;
+    // Our first pass over the objects in the cache will destroy any decoded data in unreferenced objects.
     unsigned size = m_lruLists.size();
+    for (int i = size - 1; i >= 0; i--) {
+        // Start from the tail, since this is the least frequently accessed of the objects.
+        CachedResource* current = m_lruLists[i].m_tail;
+        while (current) {
+            CachedResource* prev = current->m_prevInLRUList;
+            if (!current->referenced()) {
+                // Go ahead and destroy our decoded data.
+                current->destroyDecodedData();
+                
+                // Stop pruning if our total cache size is back under the maximum or if every
+                // remaining object in the cache is live (meaning there is nothing left we are able
+                // to prune).
+                if (m_currentSize <= m_maximumSize || m_currentSize == m_liveResourcesSize)
+                    return;
+            }
+            current = prev;
+        }
+    }
+
+    // Our second pass over the objects in the cache will actually evict objects from the cache.
+    bool canShrinkLRULists = true;
     for (int i = size - 1; i >= 0; i--) {
         // Remove from the tail, since this is the least frequently accessed of the objects.
         CachedResource* current = m_lruLists[i].m_tail;
@@ -188,9 +205,9 @@ void Cache::remove(CachedResource* resource)
             (*itr)->removeCachedResource(resource);
 
         // Subtract from our size totals.
-        m_currentSize -= resource->size();
-        if (resource->referenced())
-            m_liveResourcesSize -= resource->size();
+        int delta = -resource->size();
+        if (delta)
+            adjustSize(resource->referenced(), delta);
     }
 
     if (resource->canDelete())
@@ -228,7 +245,7 @@ static inline unsigned fastLog2(unsigned i)
 LRUList* Cache::lruListFor(CachedResource* resource)
 {
     unsigned accessCount = max(resource->accessCount(), 1U);
-    unsigned queueIndex = fastLog2(resource->size() / accessCount);
+    unsigned queueIndex = fastLog2(resource->encodedSize() / accessCount);
 #ifndef NDEBUG
     resource->m_lruIndex = queueIndex;
 #endif
@@ -327,15 +344,11 @@ void Cache::resourceAccessed(CachedResource* resource)
     insertInLRUList(resource);
 }
 
-void Cache::adjustSize(bool live, unsigned oldResourceSize, unsigned newResourceSize)
+void Cache::adjustSize(bool live, int delta)
 {
-    m_currentSize -= oldResourceSize;
+    m_currentSize += delta;
     if (live)
-        m_liveResourcesSize -= oldResourceSize;
-        
-    m_currentSize += newResourceSize;
-    if (live)
-        m_liveResourcesSize += newResourceSize;
+        m_liveResourcesSize += delta;
 }
 
 Cache::Statistics Cache::getStatistics()

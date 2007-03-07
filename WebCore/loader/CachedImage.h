@@ -29,7 +29,7 @@
 #define CachedImage_h
 
 #include "CachedResource.h"
-#include "ImageAnimationObserver.h"
+#include "ImageObserver.h"
 #include "IntRect.h"
 #include <wtf/Vector.h>
 
@@ -39,7 +39,7 @@ class DocLoader;
 class Cache;
 class Image;
 
-class CachedImage : public CachedResource, public ImageAnimationObserver {
+class CachedImage : public CachedResource, public ImageObserver {
 public:
     CachedImage(DocLoader*, const String& url, CachePolicy, time_t expireDate);
     CachedImage(Image*);
@@ -53,6 +53,9 @@ public:
     IntRect imageRect() const;  // The size of the image.
 
     virtual void ref(CachedResourceClient*);
+    
+    virtual void allReferencesRemoved();
+    virtual void destroyDecodedData();
 
     virtual Vector<char>& bufferData(const char* bytes, int addedSize, Request*);
     virtual void data(Vector<char>&, bool allDataReceived);
@@ -66,7 +69,10 @@ public:
 
     void clear();
     
-    virtual bool shouldStopAnimation(const Image* image);
+    virtual unsigned decodedSize() const;
+
+    virtual void decodedSizeChanged(const Image* image, int delta);
+    virtual bool shouldPauseAnimation(const Image* image);
     virtual void animationAdvanced(const Image* image);
 
     bool stillNeedsLoad() const { return !m_errorOccurred && m_status == Unknown && m_loading == false; }

@@ -93,7 +93,7 @@ public:
     void removeFromLRUList(CachedResource*);
 
     // Called to adjust the cache totals when a resource changes size.
-    void adjustSize(bool live, unsigned oldResourceSize, unsigned newResourceSize);
+    void adjustSize(bool live, int delta);
 
     // Track the size of all resources that are in the cache and still referenced by a Web page. 
     void addToLiveObjectSize(unsigned s) { m_liveResourcesSize += s; }

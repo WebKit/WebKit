@@ -71,8 +71,8 @@ void CachedXSLStyleSheet::data(Vector<char>& data, bool allDataReceived)
     if (!allDataReceived)
         return;
 
-    setSize(data.size());
-    m_sheet = String(m_decoder->decode(data.data(), size()));
+    setEncodedSize(data.size());
+    m_sheet = String(m_decoder->decode(data.data(), encodedSize()));
     m_sheet += m_decoder->flush();
     m_loading = false;
     checkNotify();

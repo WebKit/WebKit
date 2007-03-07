@@ -1,3 +1,86 @@
+2007-03-06  David Hyatt  <hyatt@apple.com>
+
+        This patch reworks the WebCore memory cache to significantly reduce the amount of memory consumed by
+        images in the cache and to enhance the accuracy of the cache size as an absolute bound for the objects
+        contained within it.  WebCore's memory use over time should significantly improve as a result of these
+        changes.
+
+        Cached resources now have both an encoded size (the original data stream) and a decoded size (an estimate of
+        the amount of memory consumed by an expanded version of that resource, e.g., the decoded frames of an image).
+        Both sizes now count towards the total size of the object and towards the allowed memory cache total.
+
+        By including both totals the reported size of resources will now be larger, and the cache will therefore become
+        much more aggressive about flushing.
+
+        Objects are stored in size-adjusted and popularity-aware LRU lists as before, but encoded size is now always
+        used when determining the correct LRU list.
+
+        The flush algorithm for the memory cache has been rewritten to first destroy decoded data before evicting
+        resources.  By being able to compact its resources without evicting them, the memory cache can now hold many more
+        unique resources (encoded) in the same amount of space.  Depending on how much of a hit we want to take from
+        re-decoding images, the memory cache could in theory have its size significantly reduced now while still holding
+        more resources than it did at the larger size!
+
+        Reviewed by mjs
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestResource):
+        (WebCore::Cache::prune):
+        (WebCore::Cache::remove):
+        (WebCore::Cache::lruListFor):
+        (WebCore::Cache::adjustSize):
+        * loader/Cache.h:
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::data):
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage):
+        (WebCore::CachedImage::allReferencesRemoved):
+        (WebCore::CachedImage::clear):
+        (WebCore::CachedImage::data):
+        (WebCore::CachedImage::destroyDecodedData):
+        (WebCore::CachedImage::decodedSize):
+        (WebCore::CachedImage::decodedSizeChanged):
+        (WebCore::CachedImage::shouldPauseAnimation):
+        * loader/CachedImage.h:
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::deref):
+        (WebCore::CachedResource::setEncodedSize):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::allReferencesRemoved):
+        (WebCore::CachedResource::size):
+        (WebCore::CachedResource::encodedSize):
+        (WebCore::CachedResource::decodedSize):
+        (WebCore::CachedResource::destroyDecodedData):
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::data):
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::data):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::~BitmapImage):
+        (WebCore::BitmapImage::destroyDecodedData):
+        (WebCore::BitmapImage::pruneDecodedDataIfNeeded):
+        (WebCore::BitmapImage::cacheFrame):
+        (WebCore::BitmapImage::setNativeData):
+        (WebCore::BitmapImage::shouldAnimate):
+        (WebCore::BitmapImage::advanceAnimation):
+        * platform/graphics/BitmapImage.h:
+        (WebCore::BitmapImage::decodedSize):
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::Image):
+        * platform/graphics/Image.h:
+        (WebCore::Image::destroyDecodedData):
+        (WebCore::Image::decodedSize):
+        (WebCore::Image::imageObserver):
+        * platform/graphics/ImageAnimationObserver.h: Removed.
+        * platform/graphics/ImageObserver.h: Added.
+        (WebCore::ImageObserver::~ImageObserver):
+        * platform/graphics/svg/SVGImage.cpp:
+        (WebCore::SVGImage::SVGImage):
+        * platform/graphics/svg/SVGImage.h:
+
 2007-03-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Sam Weinig.
