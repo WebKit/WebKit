@@ -1,3 +1,11 @@
+2007-03-06  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Brady
+
+        Fixed: <rdar://problem/4126976> private keys imported by WebKit should not be accessible by all applications
+
+        * libWebKitSystemInterface.a:
+
 2007-02-21  Anders Carlsson  <acarlsson@apple.com>
 
         Add new version with WKCGContextIsBitmapContext.
