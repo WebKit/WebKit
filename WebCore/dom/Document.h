@@ -193,6 +193,11 @@ public:
     void setXMLVersion(const String&, ExceptionCode&);
     void setXMLStandalone(bool, ExceptionCode&);
 
+    String documentURI() const;
+    void setDocumentURI(const String&);
+
+    virtual String baseURI() const;
+
     PassRefPtr<Node> adoptNode(PassRefPtr<Node> source, ExceptionCode&);
     
     PassRefPtr<NameNodeList> getElementsByName(const String& elementName);

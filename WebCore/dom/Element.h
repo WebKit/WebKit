@@ -111,7 +111,9 @@ public:
     virtual const AtomicString& prefix() const { return m_tagName.prefix(); }
     virtual void setPrefix(const AtomicString &_prefix, ExceptionCode&);
     virtual const AtomicString& namespaceURI() const { return m_tagName.namespaceURI(); }
-    
+
+    virtual String baseURI() const;
+
     // DOM methods overridden from  parent classes
     virtual NodeType nodeType() const;
     virtual PassRefPtr<Node> cloneNode(bool deep);

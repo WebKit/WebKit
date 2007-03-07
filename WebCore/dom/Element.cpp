@@ -34,16 +34,19 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
+#include "KURL.h"
 #include "NamedAttrMap.h"
 #include "Page.h"
 #include "RenderBlock.h"
 #include "SelectionController.h"
 #include "TextIterator.h"
 #include "TextStream.h"
+#include "XMLNames.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
+using namespace XMLNames;
 
 Element::Element(const QualifiedName& qName, Document *doc)
     : ContainerNode(doc)
@@ -462,6 +465,20 @@ void Element::setPrefix(const AtomicString &_prefix, ExceptionCode& ec)
         return;
 
     m_tagName.setPrefix(_prefix);
+}
+
+String Element::baseURI() const
+{
+    KURL xmlbase(getAttribute(baseAttr).deprecatedString());
+
+    if (!xmlbase.protocol().isEmpty())
+        return xmlbase.url();
+
+    Node* parent = parentNode();
+    if (parent)
+        return KURL(parent->baseURI().deprecatedString(), xmlbase.url()).url();
+
+    return xmlbase.url();
 }
 
 Node* Element::insertAdjacentElement(const String& where, Node* newChild, int& exception)

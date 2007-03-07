@@ -766,6 +766,21 @@ void Document::setXMLStandalone(bool standalone, ExceptionCode& ec)
     m_xmlStandalone = standalone;
 }
 
+String Document::documentURI() const
+{
+    return m_baseURL;
+}
+
+void Document::setDocumentURI(const String &uri)
+{
+    m_baseURL = uri.deprecatedString();
+}
+
+String Document::baseURI() const
+{
+    return documentURI();
+}
+
 Element* Document::elementFromPoint(int x, int y) const
 {
     if (!renderer())

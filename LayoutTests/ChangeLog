@@ -1,3 +1,19 @@
+2007-03-07  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Adjusted tests for:
+        http://bugs.webkit.org/show_bug.cgi?id=12579
+        WebKit fails SVG xml:base test
+
+        * dom/xhtml/level3/core/documentgetdocumenturi01-expected.txt:
+        * dom/xhtml/level3/core/nodegetbaseuri01-expected.txt:
+        * dom/xhtml/level3/core/nodegetbaseuri02-expected.txt:
+        * dom/xhtml/level3/core/nodegetbaseuri04-expected.txt:
+        * dom/xhtml/level3/core/nodegetbaseuri06-expected.txt:
+        * svg/W3C-SVG-1.1/struct-image-07-t-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-image-07-t-expected.png:
+
 2007-03-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

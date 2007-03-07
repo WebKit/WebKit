@@ -33,11 +33,13 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "HTMLNames.h"
+#include "KURL.h"
 #include "Logging.h"
 #include "NamedAttrMap.h"
 #include "RenderObject.h"
 #include "Text.h"
 #include "TextStream.h"
+#include "XMLNames.h"
 #include "htmlediting.h"
 #include "kjs_binding.h"
 
@@ -1215,6 +1217,15 @@ bool Node::hasAttributes() const
 NamedAttrMap *Node::attributes() const
 {
     return 0;
+}
+
+String Node::baseURI() const
+{
+    Node* parent = parentNode();
+    if (parent)
+        return parent->baseURI();
+
+    return String();
 }
 
 bool Node::isEqualNode(Node *other) const

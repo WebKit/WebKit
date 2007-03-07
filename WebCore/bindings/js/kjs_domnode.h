@@ -49,7 +49,7 @@ public:
     virtual UString toString(ExecState*) const;
     
     enum { NodeName, NodeValue, NodeType, ParentNode, ParentElement,
-        ChildNodes, FirstChild, LastChild, PreviousSibling, NextSibling,
+        ChildNodes, FirstChild, LastChild, PreviousSibling, NextSibling, BaseURI,
         Attributes, NamespaceURI, Prefix, LocalName, OwnerDocument, InsertBefore,
         ReplaceChild, RemoveChild, AppendChild, HasAttributes, HasChildNodes,
         CloneNode, Normalize, IsSupported, Contains, IsSameNode, IsEqualNode, TextContent,

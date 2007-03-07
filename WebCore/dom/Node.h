@@ -101,6 +101,8 @@ public:
     virtual bool hasAttributes() const;
     virtual NamedAttrMap* attributes() const;
 
+    virtual String baseURI() const;
+
     // These should all actually return a node, but this is only important for language bindings,
     // which will already know and hold a ref on the right node to return. Returning bool allows
     // these methods to be more efficient since they don't need to return a ref

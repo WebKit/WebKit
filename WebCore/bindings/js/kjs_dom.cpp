@@ -187,6 +187,7 @@ bool DOMNode::toBoolean(ExecState* ) const
   previousSibling  DOMNode::PreviousSibling DontDelete|ReadOnly
   nextSibling   DOMNode::NextSibling    DontDelete|ReadOnly
   attributes    DOMNode::Attributes     DontDelete|ReadOnly
+  baseURI       DOMNode::BaseURI        DontDelete|ReadOnly
   namespaceURI  DOMNode::NamespaceURI   DontDelete|ReadOnly
 # DOM2
   prefix        DOMNode::Prefix         DontDelete
@@ -226,6 +227,8 @@ JSValue* DOMNode::getValueProperty(ExecState* exec, int token) const
     return toJS(exec,node.nextSibling());
   case Attributes:
     return toJS(exec,node.attributes());
+  case BaseURI:
+    return jsStringOrNull(node.baseURI());
   case NamespaceURI:
     return jsStringOrNull(node.namespaceURI());
   case Prefix:

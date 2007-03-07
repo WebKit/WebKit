@@ -90,7 +90,7 @@ void SVGImageElement::parseMappedAttribute(MappedAttribute *attr)
         if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
             return;
         if (SVGURIReference::parseMappedAttribute(attr)) {
-            if (attr->name().matches(XLinkNames::hrefAttr))
+            if (attr->name().matches(XLinkNames::hrefAttr) && attached())
                 m_imageLoader.updateFromElement();
             return;
         }
@@ -119,6 +119,7 @@ bool SVGImageElement::haveLoadedRequiredResources()
 void SVGImageElement::attach()
 {
     SVGStyledTransformableElement::attach();
+    m_imageLoader.updateFromElement();
     if (RenderSVGImage* imageObj = static_cast<RenderSVGImage*>(renderer()))
         imageObj->setCachedImage(m_imageLoader.image());
 }

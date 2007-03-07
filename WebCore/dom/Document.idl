@@ -72,6 +72,7 @@ module core {
         Node               adoptNode(in Node source)
             raises (DOMException);
 
+                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString documentURI;
 
         // DOM Level 2 Events (DocumentEvents interface)
 
