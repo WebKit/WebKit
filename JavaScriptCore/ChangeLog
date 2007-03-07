@@ -13,6 +13,31 @@
 
         Reviewed by Maciej Stachowiak.
         
+        Fixed <rdar://problem/4576242> | http://bugs.webkit.org/show_bug.cgi?id=12586
+        PAC file: malloc deadlock sometimes causes a hang @ www.apple.com/pro/profiles/ (12586)
+        
+        This is a modified version of r14752 on the branch.
+        
+        These changes just add debugging functionality. They ASSERT that we don't 
+        malloc during the mark phase of a garbage collection, which can cause a
+        deadlock.
+
+        * kjs/collector.cpp:
+        (KJS::Collector::collect):
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMallocForbid):
+        (WTF::fastMallocAllow):
+        (WTF::fastMalloc):
+        (WTF::fastCalloc):
+        (WTF::fastFree):
+        (WTF::fastRealloc):
+        (WTF::do_malloc):
+        * wtf/FastMalloc.h:
+
+2007-03-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
         Fixed all known crashers exposed by run-webkit-tests --threaded. This covers:
 
         <rdar://problem/4565394> | http://bugs.webkit.org/show_bug.cgi?id=12585 

@@ -65,12 +65,31 @@
 #include "config.h"
 #include "FastMalloc.h"
 
+#include "Assertions.h"
+
 #ifndef USE_SYSTEM_MALLOC
 #ifndef NDEBUG
 #define USE_SYSTEM_MALLOC 1
 #else
 #define USE_SYSTEM_MALLOC 0
 #endif
+#endif
+
+#ifndef NDEBUG
+namespace WTF {
+
+static bool isForbidden = false;
+void fastMallocForbid()
+{
+    isForbidden = true;
+}
+
+void fastMallocAllow()
+{
+    isForbidden = false;
+}
+
+} // namespace WTF
 #endif
 
 #if USE_SYSTEM_MALLOC
@@ -84,21 +103,25 @@ namespace WTF {
     
 void *fastMalloc(size_t n) 
 {
+    ASSERT(!isForbidden);
     return malloc(n);
 }
 
 void *fastCalloc(size_t n_elements, size_t element_size)
 {
+    ASSERT(!isForbidden);
     return calloc(n_elements, element_size);
 }
 
 void fastFree(void* p)
 {
+    ASSERT(!isForbidden);
     free(p);
 }
 
 void *fastRealloc(void* p, size_t n)
 {
+    ASSERT(!isForbidden);
     return realloc(p, n);
 }
 
@@ -1880,6 +1903,7 @@ static ALWAYS_INLINE void* do_malloc(size_t size) {
 
 #ifdef WTF_CHANGES
     ASSERT(isMultiThreaded || pthread_main_np());
+    ASSERT(!isForbidden);
 #endif
 
 #ifndef WTF_CHANGES

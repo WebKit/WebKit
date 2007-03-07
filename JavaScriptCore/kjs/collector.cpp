@@ -564,6 +564,15 @@ bool Collector::collect()
     bool currentThreadIsMainThread = true;
 #endif
     
+  // MARK: first mark all referenced objects recursively starting out from the set of root objects
+
+#ifndef NDEBUG
+  // Forbid malloc during the mark phase. Marking a thread suspends it, so 
+  // a malloc inside mark() would risk a deadlock with a thread that had been 
+  // suspended while holding the malloc lock.
+  fastMallocForbid();
+#endif
+
   if (Interpreter::s_hook) {
     Interpreter* scr = Interpreter::s_hook;
     do {
@@ -572,13 +581,15 @@ bool Collector::collect()
     } while (scr != Interpreter::s_hook);
   }
 
-  // MARK: first mark all referenced objects recursively starting out from the set of root objects
-
   markStackObjectsConservatively();
   markProtectedObjects();
   List::markProtectedLists();
   if (!currentThreadIsMainThread)
     markMainThreadOnlyObjects();
+
+#ifndef NDEBUG
+  fastMallocAllow();
+#endif
 
   // SWEEP: delete everything with a zero refcount (garbage) and unmark everything else
   

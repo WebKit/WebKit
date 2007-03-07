@@ -1,3 +1,28 @@
+2007-03-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Fixed <rdar://problem/4576242> | http://bugs.webkit.org/show_bug.cgi?id=12586
+        PAC file: malloc deadlock sometimes causes a hang @ www.apple.com/pro/profiles/ (12586)
+        
+        No test because this is very difficult to repro, and the new ASSERTs in 
+        JavaScriptCore catch the underlying cause while running normal layout tests.
+        
+        This is a modified version of r14752 on the branch.
+        
+        The fix is to use a bit inside each node, instead of a hash table, to track 
+        which node subtrees are in the process of being marked. This avoids a call 
+        to malloc inside mark().
+        
+        * bindings/js/kjs_binding.cpp:
+        (KJS::domObjects):
+        (KJS::domNodesPerDocument):
+        * bindings/js/kjs_dom.cpp:
+        (KJS::DOMNode::mark):
+        * dom/Node.cpp:
+        (WebCore::Node::Node):
+        * dom/Node.h:
+
 2007-03-06  David Hyatt  <hyatt@apple.com>
 
         This patch reworks the WebCore memory cache to significantly reduce the amount of memory consumed by

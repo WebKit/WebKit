@@ -139,17 +139,15 @@ void DOMNode::mark()
     root = current;
   }
 
-  static HashSet<Node*> markingRoots;
-
   // If we're already marking this tree, then we can simply mark this wrapper
   // by calling the base class; our caller is iterating the tree.
-  if (markingRoots.contains(root)) {
+  if (root->m_inSubtreeMark) {
     DOMObject::mark();
     return;
   }
 
   // Mark the whole tree; use the global set of roots to avoid reentering.
-  markingRoots.add(root);
+  root->m_inSubtreeMark = true;
   for (Node* nodeToMark = root; nodeToMark; nodeToMark = nodeToMark->traverseNextNode()) {
     DOMNode *wrapper = ScriptInterpreter::getDOMNodeForDocument(m_impl->document(), nodeToMark);
     if (wrapper) {
@@ -165,7 +163,7 @@ void DOMNode::mark()
         mark();
     }
   }
-  markingRoots.remove(root);
+  root->m_inSubtreeMark = false;
 
   // Double check that we actually ended up marked. This assert caught problems in the past.
   assert(marked());
