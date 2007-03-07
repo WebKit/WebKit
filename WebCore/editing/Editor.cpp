@@ -508,26 +508,22 @@ void Editor::removeFormattingAndStyle()
     Document* document = m_frame->document();
     
     // Make a plain text string from the selection to remove formatting like tables and lists.
-    RefPtr<DocumentFragment> text = createFragmentFromText(m_frame->selectionController()->toRange().get(), m_frame->selectionController()->toString());
+    String string = m_frame->selectionController()->toString();
     
-    // Put the fragment made from that string into a style span with the document's
-    // default style to make sure that it is unstyled regardless of where it is inserted.
-    Position pos(document->documentElement(), 0);
-    RefPtr<CSSComputedStyleDeclaration> computedStyle = pos.computedStyle();
+    // Get the default style for this editable root, it's the style that we'll give the
+    // content that we're operating on.
+    Node* root = m_frame->selectionController()->rootEditableElement();
+    RefPtr<CSSComputedStyleDeclaration> computedStyle = new CSSComputedStyleDeclaration(root);
     RefPtr<CSSMutableStyleDeclaration> defaultStyle = computedStyle->copyInheritableProperties();
     
-    RefPtr<Element> span = createStyleSpanElement(document);
-    span->setAttribute(styleAttr, defaultStyle->cssText());
+    // Delete the selected content.
+    // FIXME: We should be able to leave this to insertText, but its delete operation
+    // doesn't preserve the style we're about to set.
+    deleteSelectionWithSmartDelete(false);
     
-    ExceptionCode ec;
-    
-    while (text->firstChild())
-        span->appendChild(text->firstChild(), ec);
-    
-    RefPtr<DocumentFragment> fragment = new DocumentFragment(document);
-    fragment->appendChild(span, ec);
-    
-    applyCommand(new ReplaceSelectionCommand(document, fragment, false, false, false, true, EditActionUnspecified));
+    // Insert the content with the default style.
+    m_frame->setTypingStyle(defaultStyle.get());
+    TypingCommand::insertText(document, string, true);
 }
 
 void Editor::setLastEditCommand(PassRefPtr<EditCommand> lastEditCommand) 

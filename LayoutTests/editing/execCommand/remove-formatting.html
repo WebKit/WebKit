@@ -2,7 +2,7 @@
 if (window.layoutTestController)
      layoutTestController.dumpEditingCallbacks();
 </script>
-<p>This is a test for execCommand("RemoveFormat")</p>
+<p>This is a test for execCommand("RemoveFormat").  <b>It demonstrates a bug: everything in the editable region below should be selected, as everything was selected before Remove Format was performed.</b></p>
 <div id="test" contenteditable="true">
 <b>foo</b><a href="http://www.google.com/">bar</a><i>baz</i><br>
 <table border="1"><tr><td>foo</td><td>bar</td><td>baz</td></tr></table>

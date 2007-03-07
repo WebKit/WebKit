@@ -1,3 +1,37 @@
+2007-03-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by kevin
+        
+        <http://bugs.webkit.org/show_bug.cgi?id=12245>
+        FCKeditor: Remove Format sometimes doesn't work
+        <rdar://problem/4786404>
+        Underline style is not removed from selection after performing Remove Format
+
+        Added:
+        * editing/execCommand/4786404-1-expected.checksum: Added.
+        * editing/execCommand/4786404-1-expected.png: Added.
+        * editing/execCommand/4786404-1-expected.txt: Added.
+        * editing/execCommand/4786404-1.html: Added.
+        * editing/execCommand/4786404-2-expected.checksum: Added.
+        * editing/execCommand/4786404-2-expected.png: Added.
+        * editing/execCommand/4786404-2-expected.txt: Added.
+        * editing/execCommand/4786404-2.html: Added.
+        Demonstrate fixes:
+        * editing/execCommand/4920488-expected.checksum:
+        * editing/execCommand/4920488-expected.png:
+        * editing/execCommand/4920488-expected.txt:
+        * editing/execCommand/4920742-1-expected.checksum:
+        * editing/execCommand/4920742-1-expected.png:
+        * editing/execCommand/4920742-1-expected.txt:
+        * editing/execCommand/remove-formatting-2-expected.checksum:
+        * editing/execCommand/remove-formatting-2-expected.png:
+        * editing/execCommand/remove-formatting-2-expected.txt:
+        Ditto, also added a FIXME:
+        * editing/execCommand/remove-formatting-expected.checksum:
+        * editing/execCommand/remove-formatting-expected.png:
+        * editing/execCommand/remove-formatting-expected.txt:
+        * editing/execCommand/remove-formatting.html:
+
 2007-03-06  Kevin Decker <kdecker@apple.com>
 
         Reviewed by Adele.

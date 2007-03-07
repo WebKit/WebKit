@@ -1,3 +1,15 @@
+2007-03-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by kevin
+        
+        <http://bugs.webkit.org/show_bug.cgi?id=12245>
+        FCKeditor: Remove Format sometimes doesn't work
+        <rdar://problem/4786404>
+        Underline style is not removed from selection after performing Remove Format
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::removeFormattingAndStyle): Re-wrote this.
+
 2007-03-07  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

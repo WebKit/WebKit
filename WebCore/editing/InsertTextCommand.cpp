@@ -100,6 +100,7 @@ void InsertTextCommand::input(const String &text, bool selectInsertedText)
         return;
     
     // Delete the current selection.
+    // FIXME: This delete operation blows away the typing style.
     if (endingSelection().isRange())
         deleteSelection(false, true, true, false);
     
