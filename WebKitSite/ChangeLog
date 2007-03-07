@@ -1,5 +1,11 @@
 2007-03-07  Brady Eidson  <beidson@apple.com>
 
+        Whoops, its actually prepare-ChangeLog
+
+        * coding/contributing.html:
+
+2007-03-07  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Anders
 
         Explicitly mention the prepare-Changelog step for contributing patches
