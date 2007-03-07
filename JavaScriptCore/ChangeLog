@@ -1,3 +1,14 @@
+2007-03-07  Shrikant Gangoda  <shrikant.gangoda@celunite.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12997
+
+        Wrap pthread-specific assertion in #if USE(MULTIPLE_THREADS).
+
+        * kjs/collector.cpp:
+        (KJS::Collector::markMainThreadOnlyObjects):
+
 2007-03-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

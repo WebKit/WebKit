@@ -500,7 +500,9 @@ void Collector::markProtectedObjects()
 
 void Collector::markMainThreadOnlyObjects()
 {
+#if USE(MULTIPLE_THREADS)
     ASSERT(!pthread_main_np());
+#endif
 
     // Optimization for clients that never register "main thread only" objects.
     if (!mainThreadOnlyObjectCount)
