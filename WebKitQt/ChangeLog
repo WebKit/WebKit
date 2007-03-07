@@ -1,5 +1,9 @@
 2007-03-07  Darin Adler  <darin@apple.com>
 
+        * WebCoreSupport/FrameLoaderClientQt.h: Oops, forgot the header.
+
+2007-03-07  Darin Adler  <darin@apple.com>
+
         * WebCoreSupport/FrameLoaderClientQt.cpp: (WebCore::FrameLoaderClientQt::userAgent):
         Try to fix the build by correcting the parameter here.
 

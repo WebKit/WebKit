@@ -163,8 +163,7 @@ namespace WebCore {
         virtual void setTitle(const String& title);
         virtual void setTitle(const String& title, const KURL&);
 
-        virtual String userAgent();
-
+        virtual String userAgent(const WebCore::KURL&);
 
         virtual void setDocumentViewFromPageCache(WebCore::PageCache*);
         virtual void updateGlobalHistoryForStandardLoad(const WebCore::KURL&);
