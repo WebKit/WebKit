@@ -47,7 +47,7 @@ typedef WebCore::Page WebCorePage;
 @class WebBasePluginPackage;
 
 @interface WebView (WebViewEditingExtras)
-- (BOOL)_interceptEditingKeyEvent:(WebCoreKeyboardEvent *)event;
+- (BOOL)_interceptEditingKeyEvent:(WebCoreKeyboardEvent *)event shouldSaveCommand:(BOOL)shouldSave;
 - (BOOL)_shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag;
 @end
 

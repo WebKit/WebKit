@@ -32,6 +32,13 @@ namespace WebCore {
 
     class PlatformKeyboardEvent;
 
+#if PLATFORM(MAC)
+    struct KeypressCommand {
+        String name;
+        String text;
+    };
+#endif
+    
     // Introduced in DOM Level 3
     class KeyboardEvent : public UIEventWithKeyState {
     public:
@@ -68,11 +75,21 @@ namespace WebCore {
         virtual bool isKeyboardEvent() const;
         virtual int which() const;
 
+#if PLATFORM(MAC)
+        // We only have this need to store keypress command info on the Mac.
+        KeypressCommand keypressCommand() { return m_keypressCommand; }
+        void setKeypressCommand(const KeypressCommand& command) { m_keypressCommand = command; }        
+#endif
+
     private:
         PlatformKeyboardEvent* m_keyEvent;
         String m_keyIdentifier;
         unsigned m_keyLocation;
         bool m_altGraphKey : 1;
+
+#if PLATFORM(MAC)        
+        KeypressCommand m_keypressCommand;
+#endif
     };
 
     KeyboardEvent* findKeyboardEvent(Event*);

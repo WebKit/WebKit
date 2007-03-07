@@ -1282,15 +1282,24 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
                                             event->ctrlKey(), event->altKey(), event->shiftKey(), event->metaKey(), event->altGraphKey());
             }
             keypress->setUnderlyingEvent(event);   
-        
-            // Dispatch the new keypress event
-            ExceptionCode ec;
-            node->dispatchEvent(keypress, ec, true);
+            keypress->setTarget(node);
+            
+            // Call handleInputMethodKeypress so that input methods have a chance to handle the event.
+            // If that happens, then we don't need to send the keypress event.  If an input method doesn't handle the event, 
+            // then we'll save the data we need to perform the correct action (like inserting text) 
+            // when we call handleKeypress.
+            m_frame->editor()->handleInputMethodKeypress(keypress.get());
+            
+            if (!keypress->defaultHandled()) {
+                // Dispatch the new keypress event
+                ExceptionCode ec;
+                node->dispatchEvent(keypress, ec, true);
+            }
             if (keypress->defaultHandled())
                 event->setDefaultHandled();
         }
     } else if (event->type() == keypressEvent) {
-        m_frame->editor()->handleKeyPress(event);
+        m_frame->editor()->handleKeypress(event);
         if (event->defaultHandled())
             return;
         if (event->keyIdentifier() == "U+000009")

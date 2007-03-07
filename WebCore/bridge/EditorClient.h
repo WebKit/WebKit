@@ -96,7 +96,8 @@ public:
     virtual void undo() = 0;
     virtual void redo() = 0;
 
-    virtual void handleKeyPress(KeyboardEvent*) = 0;
+    virtual void handleKeypress(KeyboardEvent*) = 0;
+    virtual void handleInputMethodKeypress(KeyboardEvent*) = 0;
     
     virtual void textFieldDidBeginEditing(Element*) = 0;
     virtual void textFieldDidEndEditing(Element*) = 0;

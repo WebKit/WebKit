@@ -101,11 +101,18 @@ EditorClient* Editor::client() const
     return 0;
 }
 
-void Editor::handleKeyPress(KeyboardEvent* event)
+void Editor::handleKeypress(KeyboardEvent* event)
 {
     if (EditorClient* c = client())
         if (selectionForEvent(m_frame, event).isContentEditable())
-            c->handleKeyPress(event);
+            c->handleKeypress(event);
+}
+
+void Editor::handleInputMethodKeypress(KeyboardEvent* event)
+{
+    if (EditorClient* c = client())
+        if (selectionForEvent(m_frame, event).isContentEditable())
+            c->handleInputMethodKeypress(event);
 }
 
 bool Editor::canEdit() const

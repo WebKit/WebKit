@@ -1,3 +1,34 @@
+2007-03-07  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        WebKit part of fix for:
+        http://bugs.webkit.org/show_bug.cgi?id=10871
+        http://bugs.webkit.org/show_bug.cgi?id=12677
+        <rdar://problem/4823129> REGRESSION: IME key events different in nightly
+        <rdar://problem/4759563> REGRESSION: Return key is always sent when you confirm a clause in kotoeri
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _interceptEditingKeyEvent: shouldSaveCommand:]): Added shouldSaveCommand field to WebHTMLViewInterpretKeyEventsParameters.
+          When shouldSaveCommand is true, we call interpretKeyEvents and in doCommandBySelector and insertText, we just save the information without performing any action.
+          When shouldSaveCommand is false, we used the saved information and call doCommandBySelector and insertText directly.
+          If there's no saved command data in the KeyboardEvent, call interpretKeyEvents, and honor the shouldSaveCommand argument.  This allows repeating keypress events
+          to function normally.
+        (-[WebHTMLView doCommandBySelector:]): If the WebHTMLViewInterpretKeyEventsParameters shouldSaveCommand field is set, then
+          just save the selector information in the KeyboardEvent, and don't perform the action.
+        (-[WebHTMLView insertText:]): ditto. 
+          insertText can be called from an input method or from normal key event processing
+          If its from an input method, then we should go ahead and insert the text now.  
+          The only way we know if its from an input method is to check hasMarkedText.  There might be a better way to do this.
+
+        * WebView/WebHTMLViewInternal.h: Added shouldSaveCommand argument.
+        * WebView/WebViewInternal.h: ditto.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::handleKeypress): Changed handleKeyPress to handleKeypress.  Call _interceptEditingKeyEvent with shouldSaveCommand:NO.
+        (WebEditorClient::handleInputMethodKeypress):  Call _interceptEditingKeyEvent with shouldSaveCommand:YES.
+
 2007-03-07  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Brady.

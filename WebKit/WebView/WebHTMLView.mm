@@ -287,6 +287,7 @@ static WebHTMLView *lastHitView;
 struct WebHTMLViewInterpretKeyEventsParameters {
     KeyboardEvent* event;
     BOOL eventWasHandled;
+    BOOL shouldSaveCommand;
 };
 
 @implementation WebHTMLViewPrivate
@@ -5246,18 +5247,30 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     [self _updateMouseoverWithFakeEvent];
 }
 
-- (BOOL)_interceptEditingKeyEvent:(KeyboardEvent *)event
+- (BOOL)_interceptEditingKeyEvent:(KeyboardEvent*)event shouldSaveCommand:(BOOL)shouldSave
 {
     // Ask AppKit to process the key event -- it will call back with either insertText or doCommandBySelector.
     WebHTMLViewInterpretKeyEventsParameters parameters;
     parameters.eventWasHandled = false;
+    parameters.shouldSaveCommand = shouldSave;
+        
     if (const PlatformKeyboardEvent* platformEvent = event->keyEvent()) {
         NSEvent *macEvent = platformEvent->macEvent();
         if ([macEvent type] == NSKeyDown && [_private->compController filterKeyDown:macEvent])
             return true;
         parameters.event = event;
         _private->interpretKeyEventsParameters = &parameters;
-        [self interpretKeyEvents:[NSArray arrayWithObject:macEvent]];
+        KeypressCommand command = event->keypressCommand();
+        bool hasKeypressCommand = !command.name.isEmpty() || !command.text.isEmpty();
+
+        if (parameters.shouldSaveCommand || !hasKeypressCommand)
+            [self interpretKeyEvents:[NSArray arrayWithObject:macEvent]];
+        else {
+            if (!command.text.isEmpty())
+                [self insertText:command.text];
+            else
+                [self doCommandBySelector:NSSelectorFromString(command.name)];
+        }
         _private->interpretKeyEventsParameters = 0;
     }
     return parameters.eventWasHandled;
@@ -5476,11 +5489,19 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
     _private->interpretKeyEventsParameters = 0;
-
+    KeyboardEvent* event = parameters ? parameters->event : 0;
+    
+    bool shouldSaveCommand = parameters && parameters->shouldSaveCommand;
+    if (event && shouldSaveCommand) {
+        KeypressCommand command;
+        command.name = NSStringFromSelector(aSelector);
+        event->setKeypressCommand(command);
+        return;
+    }
+    
     if (aSelector == @selector(noop:))
         return;
 
-    KeyboardEvent* event = parameters ? parameters->event : 0;
     bool eventWasHandled = true;
 
     WebView *webView = [self _webView];
@@ -5516,8 +5537,24 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
     bool eventHandled = false;
     if ([text length]) {
-        Frame* coreFrame = core([self _frame]);
         KeyboardEvent* event = parameters ? parameters->event : 0;
+
+        // insertText can be called from an input method or from normal key event processing
+        // If its from normal key event processing, we may need to save the action to perform it later.
+        // If its from an input method, then we should go ahead and insert the text now.  
+        // We assume it's from the input method if we have marked text.
+        // FIXME: In theory, this could be wrong for some input methods, so we should try to find
+        // another way to determine if the call is from the input method
+        bool shouldSaveCommand = parameters && parameters->shouldSaveCommand;
+        bool isFromInputMethod = [self hasMarkedText];
+        if (event && shouldSaveCommand && !isFromInputMethod) {
+            KeypressCommand command;
+            command.text = text;
+            event->setKeypressCommand(command);
+            return;
+        }
+        
+        Frame* coreFrame = core([self _frame]);
         String eventText = text;
         eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
         eventHandled = coreFrame && coreFrame->eventHandler()->handleTextInputEvent(eventText, event);

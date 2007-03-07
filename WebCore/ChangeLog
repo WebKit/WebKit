@@ -1,3 +1,33 @@
+2007-03-07  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        WebCore part of fix for:
+        http://bugs.webkit.org/show_bug.cgi?id=10871
+        http://bugs.webkit.org/show_bug.cgi?id=12677
+        <rdar://problem/4823129> REGRESSION: IME key events different in nightly
+        <rdar://problem/4759563> REGRESSION: Return key is always sent when you confirm a clause in kotoeri
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::defaultKeyboardEventHandler): Call handleInputMethodKeypress before actually dispatching the keypress event
+          so that input methods have a chance to handle the event.  
+          If the input method handles the event (by marking or unmarking text), then we don't need to send the keypress event.
+          If an input method doesn't handle the event, then we'll save the data we need to perform the correct action (like what text to insert or what selector to use) 
+          when we dispatch the keypress event.
+
+        * dom/KeyboardEvent.h: Added Mac-specific KeypressCommand struct, so we can store command info during handleInputMethodKeypress, and use it during handleKeypress.
+        (WebCore::KeyboardEvent::keypressCommand):
+        (WebCore::KeyboardEvent::setKeypressCommand):
+
+        * bridge/EditorClient.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::handleKeypress): Changed handleKeyPress to handleKeypress.
+        (WebCore::Editor::handleInputMethodKeypress): Added.
+        * editing/Editor.h:
+
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyEditorClient::handleKeypress): Changed handleKeyPress to handleKeypress.
+        (WebCore::SVGEmptyEditorClient::handleInputMethodKeypress): Added.
+
 2007-03-07  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Brady.
@@ -435,7 +465,6 @@
          same number of member variables. The fact that some fields were not initialized could (and would) crash the
          keygen element when selecting different items. Also removed m_typedString(String()) from the constructor
          initialization because this is not needed.
-
 
 2007-03-06  Kevin McCullough  <kmccullough@apple.com>
 

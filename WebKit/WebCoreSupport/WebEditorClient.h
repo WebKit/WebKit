@@ -84,7 +84,8 @@ public:
     virtual void undo();
     virtual void redo();
     
-    virtual void handleKeyPress(WebCore::KeyboardEvent*);
+    virtual void handleKeypress(WebCore::KeyboardEvent*);
+    virtual void handleInputMethodKeypress(WebCore::KeyboardEvent*);
 
     virtual void markedTextAbandoned(WebCore::Frame*);
 

@@ -1,3 +1,18 @@
+2007-03-07  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        WebKitQT part of fix for:
+        http://bugs.webkit.org/show_bug.cgi?id=10871
+        http://bugs.webkit.org/show_bug.cgi?id=12677
+        <rdar://problem/4823129> REGRESSION: IME key events different in nightly
+        <rdar://problem/4759563> REGRESSION: Return key is always sent when you confirm a clause in kotoeri
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeypress): Changed handleKeyPress to handleKeypress.
+        (WebCore::EditorClientQt::handleInputMethodKeypress): Added.
+        * WebCoreSupport/EditorClientQt.h:
+
 2007-03-07  Darin Adler  <darin@apple.com>
 
         * WebCoreSupport/FrameLoaderClientQt.h: Oops, forgot the header.
