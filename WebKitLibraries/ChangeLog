@@ -1,3 +1,9 @@
+2007-03-07  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.  Rebuild against 10.4 SDK.
+
+        * libWebKitSystemInterface.a:
+
 2007-03-06  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Brady
