@@ -1937,16 +1937,6 @@ void FrameLoader::receivedData(const char* data, int length)
     activeDocumentLoader()->receivedData(data, length);
 }
 
-void FrameLoader::setRequest(const ResourceRequest& request)
-{
-    activeDocumentLoader()->setRequest(request);
-}
-
-void FrameLoader::setResponse(const ResourceResponse& response)
-{
-    activeDocumentLoader()->setResponse(response);
-}
-
 bool FrameLoader::willUseArchive(ResourceLoader* loader, const ResourceRequest& request, const KURL& originalURL) const
 {
     return m_client->willUseArchive(loader, request, originalURL);
@@ -2136,16 +2126,6 @@ DocumentLoader* FrameLoader::activeDocumentLoader() const
     return m_documentLoader.get();
 }
 
-void FrameLoader::addPlugInStreamLoader(ResourceLoader* loader)
-{
-    activeDocumentLoader()->addPlugInStreamLoader(loader);
-}
-
-void FrameLoader::removePlugInStreamLoader(ResourceLoader* loader)
-{
-    activeDocumentLoader()->removePlugInStreamLoader(loader);
-}
-
 bool FrameLoader::isLoading() const
 {
     if (m_isLoadingMainResource)
@@ -2154,17 +2134,6 @@ bool FrameLoader::isLoading() const
     if (!docLoader)
         return false;
     return docLoader->isLoadingSubresources() || docLoader->isLoadingPlugIns();
-}
-
-void FrameLoader::addSubresourceLoader(ResourceLoader* loader)
-{
-    ASSERT(!m_provisionalDocumentLoader);
-    activeDocumentLoader()->addSubresourceLoader(loader);
-}
-
-void FrameLoader::removeSubresourceLoader(ResourceLoader* loader)
-{
-    activeDocumentLoader()->removeSubresourceLoader(loader);
 }
 
 void FrameLoader::setDocumentLoader(DocumentLoader* loader)

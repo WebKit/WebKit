@@ -29,6 +29,7 @@
 #include "config.h"
 #include "MainResourceLoader.h"
 
+#include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -162,7 +163,7 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
     }
     
     // Don't set this on the first request. It is set when the main load was started.
-    frameLoader()->setRequest(newRequest);
+    m_documentLoader->setRequest(newRequest);
     
     ref(); // balanced by deref in continueAfterNavigationPolicy
     frameLoader()->checkNavigationPolicy(newRequest, callContinueAfterNavigationPolicy, this);
@@ -265,7 +266,7 @@ void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
     // reference to this object; one example of this is 3266216.
     RefPtr<MainResourceLoader> protect(this);
 
-    frameLoader()->setResponse(r);
+    m_documentLoader->setResponse(r);
 
     m_response = r;
 

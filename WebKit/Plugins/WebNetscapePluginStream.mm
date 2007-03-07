@@ -29,6 +29,7 @@
 #import <WebKit/WebNetscapePluginStream.h>
 
 #import <Foundation/NSURLConnection.h>
+#import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/NetscapePlugInStreamLoader.h>
@@ -107,9 +108,9 @@ using namespace WebCore;
 {
     ASSERT(request);
 
-    _loader->frameLoader()->addPlugInStreamLoader(_loader);
+    _loader->documentLoader()->addPlugInStreamLoader(_loader);
     if (!_loader->load(request))
-        _loader->frameLoader()->removePlugInStreamLoader(_loader);
+        _loader->documentLoader()->removePlugInStreamLoader(_loader);
 }
 
 - (void)cancelLoadWithError:(NSError *)error

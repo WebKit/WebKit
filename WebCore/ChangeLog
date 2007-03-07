@@ -1,3 +1,27 @@
+2007-03-07  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Brady.
+
+        Remove some methods in FrameLoader that just calls down to the active document loader. Since each
+        resource loader now has a pointer to its document loader, we can just call directly to the
+        document loader.
+
+        * WebCore.exp:
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::willSendRequest):
+        (WebCore::MainResourceLoader::didReceiveResponse):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::SubresourceLoader):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::didFail):
+        (WebCore::SubresourceLoader::didCancel):
+        * loader/mac/NetscapePlugInStreamLoaderMac.mm:
+        (WebCore::NetscapePlugInStreamLoader::didFinishLoading):
+        (WebCore::NetscapePlugInStreamLoader::didFail):
+        (WebCore::NetscapePlugInStreamLoader::didCancel):
+
 2007-03-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

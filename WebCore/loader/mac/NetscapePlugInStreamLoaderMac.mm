@@ -29,6 +29,7 @@
 #import "config.h"
 #import "NetscapePlugInStreamLoader.h"
 
+#import "DocumentLoader.h"
 #import "FrameLoader.h"
 #import "ResourceError.h"
 #import "ResourceResponse.h"
@@ -104,7 +105,7 @@ void NetscapePlugInStreamLoader::didFinishLoading()
     // Calling removePlugInStreamLoader will likely result in a call to deref, so we must protect.
     RefPtr<NetscapePlugInStreamLoader> protect(this);
 
-    frameLoader()->removePlugInStreamLoader(this);
+    m_documentLoader->removePlugInStreamLoader(this);
     NSData *data = resourceData()->createNSData();
     [m_stream.get() finishedLoadingWithData:data];
     [data release];
@@ -118,7 +119,7 @@ void NetscapePlugInStreamLoader::didFail(const ResourceError& error)
     // One example of this is Radar 3266216.
     RefPtr<NetscapePlugInStreamLoader> protect(this);
 
-    frameLoader()->removePlugInStreamLoader(this);
+    m_documentLoader->removePlugInStreamLoader(this);
     [m_stream.get() destroyStreamWithError:error];
     ResourceLoader::didFail(error);
 }
@@ -128,7 +129,7 @@ void NetscapePlugInStreamLoader::didCancel(const ResourceError& error)
     // Calling removePlugInStreamLoader will likely result in a call to deref, so we must protect.
     RefPtr<NetscapePlugInStreamLoader> protect(this);
 
-    frameLoader()->removePlugInStreamLoader(this);
+    m_documentLoader->removePlugInStreamLoader(this);
     [m_stream.get() destroyStreamWithError:error];
     ResourceLoader::didCancel(error);
 }

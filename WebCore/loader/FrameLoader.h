@@ -166,12 +166,8 @@ namespace WebCore {
         void stopAllLoaders();
         void cancelPendingArchiveLoad(ResourceLoader*);
 
-        void addPlugInStreamLoader(ResourceLoader*);
-        void removePlugInStreamLoader(ResourceLoader*);
         bool isLoadingMainResource() const;
         bool isLoading() const;
-        void addSubresourceLoader(ResourceLoader*);
-        void removeSubresourceLoader(ResourceLoader*);
 
         int numPendingOrLoadingRequests(bool recurse) const;
         bool isReloading() const;
@@ -197,13 +193,11 @@ namespace WebCore {
         bool privateBrowsingEnabled() const;
         const ResourceRequest& originalRequest() const;
         const ResourceRequest& initialRequest() const;
-        void setRequest(const ResourceRequest&);
         void receivedMainResourceError(const ResourceError&, bool isComplete);
         void receivedData(const char*, int);
 
         void handleFallbackContent();
         bool isStopping() const;
-        void setResponse(const ResourceResponse&);
 
         void finishedLoading();
         KURL URL() const;
