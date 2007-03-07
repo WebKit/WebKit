@@ -287,7 +287,7 @@ void HTMLAnchorElement::parseMappedAttribute(MappedAttribute *attr)
 
 void HTMLAnchorElement::accessKeyAction(bool sendToAnyElement)
 {
-    // send the mouse button events iff the caller specified sendToAnyElement
+    // send the mouse button events if the caller specified sendToAnyElement
     dispatchSimulatedClick(0, sendToAnyElement);
 }
 
