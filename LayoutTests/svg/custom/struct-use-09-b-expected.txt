@@ -23,8 +23,8 @@ layer at (0,0) size 800x600
         RenderSVGInlineText {#text} at (0,-36) size 264x46
           text run at (0,-36) width 264: "$Revision: 1.1 $"
       RenderPath {rect} at (0.83,0.83) size 798.33x598.33 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
-      RenderSVGContainer {g} at (0.83,-0.83) size 798.33x38.33
+      RenderSVGContainer {g} at (0.83,-0.83) size 798.33x40
         RenderPath {rect} at (0.83,0.83) size 798.33x35 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M1.00,1.00L479.00,1.00L479.00,21.00L1.00,21.00"]
-        RenderSVGText {text} at (240,18) size 800x22
-          RenderSVGInlineText {#text} at (-33,-18) size 66x22
+        RenderSVGText {text} at (240,18) size 800x23
+          RenderSVGInlineText {#text} at (-33,-18) size 66x23
             text run at (-33,-18) width 66: "DRAFT"

@@ -52,7 +52,7 @@
   <rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000"/>
 	<g id="draft-watermark">
 		<rect x="1" y="1" width="478" height="20" fill="red" stroke="black" stroke-width="1"/>
-		<text font-family="'Arial Black', Arial, sans-serif" font-weight="bold" font-size="20" x="240" 
+		<text font-family="Helvetica, sans-serif" font-weight="bold" font-size="20" x="240" 
 			text-anchor="middle" y="18" stroke-width="0.5" stroke="black" fill="white">DRAFT</text>
 	</g>
 </svg>

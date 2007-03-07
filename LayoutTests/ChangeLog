@@ -1,3 +1,15 @@
+2007-03-07  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12992
+          Test failure (r19972):  LayoutTests/svg/custom/struct-use-09-b.svg
+
+        * svg/custom/struct-use-09-b.svg: Changed to use Helvetica instead of 'Arial Black', Arial.
+        * svg/custom/struct-use-09-b-expected.checksum: Update results.
+        * svg/custom/struct-use-09-b-expected.png: Ditto.
+        * svg/custom/struct-use-09-b-expected.txt: Ditto.
+
 2007-03-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs
