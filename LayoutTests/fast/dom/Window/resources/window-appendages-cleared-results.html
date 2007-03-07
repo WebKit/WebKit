@@ -8,45 +8,30 @@
 <p id="description"></p>
 <div id="console"></div>
 <script>
-for (var prop in window.history) {
-    shouldBeFalse('history.' + prop + ' == "LEFTOVER"', "false");
+
+function checkForLeftoverProperties(string, object)
+{
+    var array = new Array;
+    for (var property in object) {
+        array.push(property);
+    }
+    array.sort();
+    for (var i = 0; i < array.length; ++i) {
+        var property = array[i];
+        shouldBeFalse(string + '.' + property + ' == "LEFTOVER"');
+    }
 }
 
-for (var prop in screen) {
-    shouldBeFalse('screen.' + prop + ' == "LEFTOVER"', "false");
-}
-
-for (var prop in frames) {
-    shouldBeFalse('frames.' + prop + ' == "LEFTOVER"', "false");
-}
-
-for (var prop in location) {
-    shouldBeFalse('location.' + prop + ' == "LEFTOVER"', "false");
-}
-
-for (var prop in locationbar) {
-    shouldBeFalse('locationbar.' + prop + ' == "LEFTOVER"', "false");
-}
-
-for (var prop in menubar) {
-    shouldBeFalse('menubar.' + prop + ' == "LEFTOVER"', "false");
-}
-
-for (var prop in personalbar) {
-    shouldBeFalse('personalbar.' + prop + ' == "LEFTOVER"', "false");
-}
-
-for (var prop in scrollbars) {
-    shouldBeFalse('scrollbars.' + prop + ' == "LEFTOVER"', "false");
-}
-
-for (var prop in statusbar) {
-    shouldBeFalse('statusbar.' + prop + ' == "LEFTOVER"', "false");
-}
-
-for (var prop in toolbar) {
-    shouldBeFalse('toolbar.' + prop + ' == "LEFTOVER"', "false");
-}
+checkForLeftoverProperties("history", window.history);
+checkForLeftoverProperties("frames", frames);
+checkForLeftoverProperties("location", location);
+checkForLeftoverProperties("locationbar", locationbar);
+checkForLeftoverProperties("menubar", menubar);
+checkForLeftoverProperties("personalbar", personalbar);
+checkForLeftoverProperties("screen", screen);
+checkForLeftoverProperties("scrollbars", scrollbars);
+checkForLeftoverProperties("statusbar", statusbar);
+checkForLeftoverProperties("toolbar", toolbar);
 
 shouldBeUndefined('window.event');
 
@@ -59,5 +44,3 @@ if (window.layoutTestController)
 </script>
 </body>
 </html>
-
-

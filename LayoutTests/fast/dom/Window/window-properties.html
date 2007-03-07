@@ -16,7 +16,6 @@ function log(s)
 var pre = document.getElementById('pre');
 function flushLog()
 {
-    logBuffer.sort();
     var logMessage = logBuffer.join("");
     pre.appendChild(document.createTextNode(logMessage));
 }
@@ -91,8 +90,15 @@ function logValue(valueName)
 
 function logProperties(object, objectName)
 {
-    for (var property in object)
+    var array = new Array;
+    for (var property in object) {
+        array.push(property);
+    }
+    array.sort();
+    for (var i = 0; i < array.length; i++) {
+        var property = array[i];
         logValue(objectName + "." + property);
+    }
 }
 
 logValue('window');

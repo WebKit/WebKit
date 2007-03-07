@@ -1,3 +1,19 @@
+2007-03-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - change tests that depend on the order of iteration of built-in properties
+          to sort explicitly so they don't depend on the order any more
+
+        * fast/dom/Window/resources/window-appendages-cleared-results.html:
+        * fast/dom/Window/window-appendages-cleared-expected.txt:
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-properties.html:
+
+        * fast/js/regexp-caching-expected.txt:
+        * fast/js/regexp-caching.html:
+
 2007-03-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
