@@ -1,3 +1,23 @@
+2007-03-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12953
+        Import/convert 4XPath test suite
+
+        Import the rest of the converted suite. The only remaining failures are due to
+        incorrect node order, bug 12497.
+
+        * fast/xpath/4XPath/Core/test_literal_expr.html: Added.
+        * fast/xpath/4XPath/Core/test_location_path.html: Added.
+        * fast/xpath/4XPath/Core/test_node_test.html: Added.
+        * fast/xpath/4XPath/Core/test_nodeset_expr.html: Added.
+        * fast/xpath/4XPath/Core/test_parser-expected.txt: Added.
+        * fast/xpath/4XPath/Core/test_parser.html: Added.
+        * fast/xpath/4XPath/Core/test_predicate_list.html: Added.
+        * fast/xpath/4XPath/Core/test_step-expected.txt: Added.
+        * fast/xpath/4XPath/Core/test_step.html: Added.
+
 2007-03-07  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Darin.

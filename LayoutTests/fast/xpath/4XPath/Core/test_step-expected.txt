@@ -1,0 +1,9 @@
+PASS ancestor::*
+FAIL ancestor-or-self::* item 0 incorrect (expected ROOT, actual CHILD1)
+PASS descendant-or-self::*
+PASS child::GCHILD[position()=1]
+PASS child::GCHILD[1]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
