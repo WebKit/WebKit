@@ -1,3 +1,14 @@
+2007-03-06  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        <http://bugs.webkit.org/show_bug.cgi?id=12686>
+        REGRESSION: Bloglines.com Feeds tab cannot expand folders in TOT
+        - Now all class constructors implement implementsHasInstance.
+
+        * fast/dom/dom-instanceof-expected.txt: Added.
+        * fast/dom/dom-instanceof.html: Added.
+
 2007-03-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by kevin

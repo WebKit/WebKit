@@ -1648,6 +1648,8 @@ public:
     JSValue* getValueProperty(ExecState*, int token) const;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
+
+    virtual bool implementsHasInstance() const { return true; }
 EOF
 
     if ($canConstruct) {
