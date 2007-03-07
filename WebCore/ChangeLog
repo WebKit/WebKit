@@ -1,5 +1,17 @@
 2007-03-06  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Adele.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12986
+          REGRESSION(NativeListBox): Listboxes not updated when resized dynamically
+
+        Test: fast/forms/select-change-listbox-size.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseMappedAttribute): Reattach on list box size change.
+
+2007-03-06  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Dave Hyatt.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=12885

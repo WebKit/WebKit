@@ -1,5 +1,17 @@
 2007-03-06  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Adele.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12986
+          REGRESSION(NativeListBox): Listboxes not updated when resized dynamically
+
+        * fast/forms/select-change-listbox-size-expected.checksum: Added.
+        * fast/forms/select-change-listbox-size-expected.png: Added.
+        * fast/forms/select-change-listbox-size-expected.txt: Added.
+        * fast/forms/select-change-listbox-size.html: Added.
+
+2007-03-06  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Dave Hyatt.
 
         - repaint tests and updated result for http://bugs.webkit.org/show_bug.cgi?id=12885
