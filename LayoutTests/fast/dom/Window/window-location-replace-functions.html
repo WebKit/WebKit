@@ -1,5 +1,8 @@
 <html>
-<script>window.location.toString = function() { return "http://webkit.org"; }
+<script>
+    window.location.toString = function() { return "http://webkit.org"; }
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
 </script>
 <body>
 You should see this.

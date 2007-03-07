@@ -1,3 +1,9 @@
+2007-03-07  Mark Rowe  <mrowe@apple.com>
+
+        Add dumpAsText to test to match expected results.
+
+        * fast/dom/Window/window-location-replace-functions.html:
+
 2007-03-06  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.
