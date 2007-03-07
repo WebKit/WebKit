@@ -1,3 +1,8 @@
+2007-03-07  Darin Adler  <darin@apple.com>
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp: (WebCore::FrameLoaderClientQt::userAgent):
+        Try to fix the build by correcting the parameter here.
+
 2007-03-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders.
