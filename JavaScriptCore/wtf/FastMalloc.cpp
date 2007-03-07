@@ -78,6 +78,7 @@
 #ifndef NDEBUG
 namespace WTF {
 
+#if USE(MULTIPLE_THREADS)
 static pthread_key_t isForbiddenKey;
 static pthread_once_t isForbiddenKeyOnce = PTHREAD_ONCE_INIT;
 static void initializeIsForbiddenKey()
@@ -103,8 +104,27 @@ void fastMallocAllow()
     pthread_setspecific(isForbiddenKey, 0);
 }
 
+#else
+
+static bool staticIsForbidden;
+static bool isForbidden()
+{
+    return staticIsForbidden;
+}
+
+void fastMallocForbid()
+{
+    staticIsForbidden = true;
+}
+
+void fastMallocAllow()
+{
+    staticIsForbidden = false;
+}
+#endif // USE(MULTIPLE_THREADS)
+
 } // namespace WTF
-#endif
+#endif // NDEBUG
 
 #if USE_SYSTEM_MALLOC
 

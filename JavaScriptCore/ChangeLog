@@ -1,5 +1,16 @@
 2007-03-07  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix for non-multiple-thread folks.
+        
+        Use a shared global in the non-multiple-thread case.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::isForbidden):
+        (WTF::fastMallocForbid):
+        (WTF::fastMallocAllow):
+
+2007-03-07  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin Adler.
         
         Fixed ASSERT failure I just introduced.
