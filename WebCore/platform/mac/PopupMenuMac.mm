@@ -117,7 +117,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
     
     NSPoint location;
     NSFont* font = client()->clientStyle()->font().primaryFont()->getNSFont();
-    
+
     // These values were borrowed from AppKit to match their placement of the menu.
     const int popOverHorizontalAdjust = -10;
     const int popUnderHorizontalAdjust = 6;
@@ -142,9 +142,15 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
     NSEvent* event = [frame->eventHandler()->currentNSEvent() retain];
     
     RefPtr<PopupMenu> protector(this);
+
+    RetainPtr<NSView> dummyView(AdoptNS, [[NSView alloc] initWithFrame:r]);
+    [view addSubview:dummyView.get()];
+    location = [dummyView.get() convertPoint:location fromView:view];
     
     frame->willPopupMenu(menu);
-    wkPopupMenu(menu, location, roundf(NSWidth(r)), view, index, font);
+    wkPopupMenu(menu, location, roundf(NSWidth(r)), dummyView.get(), index, font);
+
+    [dummyView.get() removeFromSuperview];
 
     if (client()) {
         int newIndex = [m_popup.get() indexOfSelectedItem];

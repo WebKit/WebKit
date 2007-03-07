@@ -1,3 +1,15 @@
+2007-03-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele.
+
+        <rdar://problem/4619663> REGRESSION (NativePopup): Popup menu doesn't draw at the correct vertical position (9816)
+        
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::show): Make a temporary dummy view with the
+        passed in rect, since AppKit will use the view bounds to determine
+        what area to exclude when popping up a menu moved to the top of
+        the screen.
+
 2007-03-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
