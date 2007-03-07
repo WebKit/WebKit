@@ -1,3 +1,13 @@
+2007-03-06  Ian Eng <ian.eng.webkit@gmail.com>
+
+        Reviewed by Maciej.
+
+        - Tests for http://bugs.webkit.org/show_bug.cgi?id=12720
+        Bug 12720: Re-defining window.location.toString function keeps re-loading forever
+
+        * fast/dom/Window/window-location-replace-functions-expected.txt: Added.
+        * fast/dom/Window/window-location-replace-functions.html: Added.
+
 2007-03-06  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.
