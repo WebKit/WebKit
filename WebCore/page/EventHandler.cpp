@@ -426,6 +426,10 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
     // the mouse is pressed again.
     m_frame->selectionController()->setCaretBlinkingSuspended(false);
     m_mousePressed = false;
+    m_mouseDownMayStartDrag = false;
+    m_mouseDownMayStartSelect = false;
+    m_mouseDownMayStartAutoscroll = false;
+    m_mouseDownWasInSubframe = false;
   
     bool handled = false;
 

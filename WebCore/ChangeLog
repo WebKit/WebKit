@@ -1,3 +1,14 @@
+2007-03-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Antti.
+
+        Reset mouse down/drag state variables on mouse button release
+        
+        Fixes <rdar://problem/5044654>: Drag out of some QuickTime plug-ins converting into image drag
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+
 2007-03-07  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
