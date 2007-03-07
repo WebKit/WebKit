@@ -1,3 +1,11 @@
+2007-03-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Explicitly mention the prepare-Changelog step for contributing patches
+
+        * coding/contributing.html:
+
 2007-02-25  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

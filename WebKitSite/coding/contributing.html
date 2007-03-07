@@ -19,15 +19,18 @@ without specifying the path to the script.</p>
 <p>The <tt>svn-apply</tt> and <tt>svn-unapply</tt> scripts are handy for applying patches to a tree, and rolling patches out of a tree.
 They go beyond the capabilities of the <tt>patch</tt> tool by handling files added and removed from the repository.</p>
 
+<p>Before you create your patch, you should make sure it has a Changelog entry by using the <tt>prepare-Changelog</tt> script.  It sets up a 
+template for all of the Changelog entries you will have to fill in for your patch based on everything you've changed.</p>
+
+<p>Make sure that your patch meets the
+<a href="../coding/coding-style.html">coding style guidelines</a> and has received sufficient testing.
+Bug fixes should include a <a href="../quality/testing.html">new WebKit or JavaScriptCore test</a>.</p>
+
 <p>Once you have a patch file, it must be reviewed by one of the approved WebKit reviewers.
 To request a review, attach the patch to the bug report, and mark the patch with the flag <tt>review:?</tt>. This will automatically
 send mail to <a href="http://lists.webkit.org/mailman/listinfo/webkit-reviews">webkit-reviews@lists.webkit.org</a> on your behalf. The 
 <a href="../quality/lifecycle.html">WebKit Bug Life Cycle</a> page
 has more information about the stages of a WebKit Bugzilla bug.</p>
-
-<p>Make sure that your patch includes a ChangeLog entry, meets the
-<a href="../coding/coding-style.html">coding style guidelines</a>, and has received sufficient testing.
-Bug fixes should include a <a href="../quality/testing.html">new WebKit or JavaScriptCore test</a>.</p>
 
 <p>The reviewer will typically either approve the patch (by responding with an <tt>r=me</tt> in the bug report or in e-mail
 and marking the patch <tt>review:+</tt>)
