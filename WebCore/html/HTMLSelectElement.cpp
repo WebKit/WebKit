@@ -520,6 +520,7 @@ void HTMLSelectElement::recalcListItems() const
                 current = parent->nextSibling();
         }
     }
+    m_lastOnChangeIndex = -1;
     m_recalcListItems = false;
 }
 

@@ -1,3 +1,16 @@
+2007-03-06  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=12942
+        Bug 12942: ASSERTION FAILURE: qantas.com.au changing selected item in <select> via JS
+
+        Test: fast/dom/select-selectedIndex-bug-12942.html.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::recalcListItems): Reset m_lastOnChangeIndex when recalculating list items.
+        * html/HTMLSelectElement.h:
+
 2007-03-06  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Kevin Decker
