@@ -61,6 +61,7 @@
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebViewPrivate.h>
+#import <JavaScriptCore/Assertions.h>
 #import <getopt.h>
 #import <malloc/malloc.h>
 #import <objc/objc-runtime.h>                       // for class_poseAs
@@ -836,6 +837,7 @@ static void dump(void)
 
 - (void)webView:(WebView *)sender didStartProvisionalLoadForFrame:(WebFrame *)f
 {
+    ASSERT([f provisionalDataSource]);
     // Make sure we only set this once per test.  If it gets cleared, and then set again, we might
     // end up doing two dumps for one test.
     if (!topLoadingFrame && !done)
@@ -844,6 +846,9 @@ static void dump(void)
 
 - (void)webView:(WebView *)sender didCommitLoadForFrame:(WebFrame *)f
 {
+    ASSERT(![f provisionalDataSource]);
+    ASSERT([f dataSource]);
+
     windowIsKey = YES;
     NSView *documentView = [[frame frameView] documentView];
     [[[frame webView] window] makeFirstResponder:documentView];
@@ -853,6 +858,8 @@ static void dump(void)
 
 - (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
+    ASSERT([frame provisionalDataSource]);
+
     [self webView:sender locationChangeDone:error forDataSource:[frame provisionalDataSource]];
 }
 
@@ -864,6 +871,9 @@ static void dump(void)
 
 - (void)webView:(WebView *)sender didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
+    ASSERT(![frame provisionalDataSource]);
+    ASSERT([frame dataSource]);
+
     [self webView:sender locationChangeDone:error forDataSource:[frame dataSource]];
 }
 
