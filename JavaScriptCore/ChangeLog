@@ -1,3 +1,24 @@
+2007-03-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed ASSERT failure I just introduced.
+        
+        Made the fastMalloc isForbidden flag per thread. (Oops!) We expect that
+        other threads will malloc while we're marking -- we just want to prevent
+        our own marking from malloc'ing.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::initializeIsForbiddenKey):
+        (WTF::isForbidden):
+        (WTF::fastMallocForbid):
+        (WTF::fastMallocAllow):
+        (WTF::fastMalloc):
+        (WTF::fastCalloc):
+        (WTF::fastFree):
+        (WTF::fastRealloc):
+        (WTF::do_malloc):
+
 2007-03-07  Shrikant Gangoda  <shrikant.gangoda@celunite.com>
 
         Reviewed by Maciej.
