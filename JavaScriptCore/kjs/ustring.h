@@ -24,11 +24,12 @@
 #ifndef _KJS_USTRING_H_
 #define _KJS_USTRING_H_
 
-#include <wtf/FastMalloc.h>
-#include <wtf/RefPtr.h>
-#include <wtf/PassRefPtr.h>
-
+#include "JSLock.h"
 #include <stdint.h>
+#include <wtf/Assertions.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 /* On ARM some versions of GCC don't pack structures by default so sizeof(UChar)
    will end up being != 2 which causes crashes since the code depends on that. */
@@ -199,8 +200,8 @@ namespace KJS {
       static unsigned computeHash(const UChar *, int length);
       static unsigned computeHash(const char *);
 
-      Rep* ref() { ++rc; return this; }
-      void deref() { if (--rc == 0) destroy(); }
+      Rep* ref() { ASSERT(JSLock::lockCount() > 0); ++rc; return this; }
+      void deref() { ASSERT(JSLock::lockCount() > 0); if (--rc == 0) destroy(); }
 
       // unshared data
       int offset;

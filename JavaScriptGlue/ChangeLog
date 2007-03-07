@@ -1,3 +1,25 @@
+2007-03-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fixed all known crashers exposed by run-webkit-tests --threaded while using
+        a PAC file (for maximum carnage). See JavaScriptCore ChangeLog for 
+        more details.
+
+        * JSBase.cpp:
+        (JSBase::Release): Lock when deleting, because we may be deleting an object
+        (like a JSRun) that holds thread-unsafe data.
+
+        * JSUtils.cpp:
+        (CFStringToUString): Don't lock, because our caller locks. Also, locking
+        inside a function that returns thread-unsafe data by copy will only mask
+        threading problems.
+
+        * JavaScriptGlue.cpp:
+        (JSRunEvaluate): Added missing JSLock.
+        (JSRunCheckSyntax): Converted to JSLock.
+        * JavaScriptGlue.xcodeproj/project.pbxproj:
+
 2007-02-22  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

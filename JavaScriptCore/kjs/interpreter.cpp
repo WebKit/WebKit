@@ -537,7 +537,7 @@ JSObject *Interpreter::builtinURIErrorPrototype() const
   return m_UriErrorPrototype;
 }
 
-void Interpreter::mark(bool)
+void Interpreter::mark()
 {
     if (m_context)
         m_context->mark();

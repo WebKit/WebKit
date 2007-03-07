@@ -83,7 +83,11 @@ class DOMWindowTimer : public TimerBase {
 public:
     DOMWindowTimer(int timeoutId, int nestingLevel, Window* o, ScheduledAction* a)
         : m_timeoutId(timeoutId), m_nestingLevel(nestingLevel), m_object(o), m_action(a) { }
-    virtual ~DOMWindowTimer() { delete m_action; }
+    virtual ~DOMWindowTimer() 
+    { 
+        JSLock lock;
+        delete m_action; 
+    }
 
     int timeoutId() const { return m_timeoutId; }
     
@@ -1848,10 +1852,10 @@ void ScheduledAction::execute(Window* window)
     interpreter->setProcessingTimerCallback(true);
 
     if (JSValue* func = m_func.get()) {
+        JSLock lock;
         if (func->isObject() && static_cast<JSObject*>(func)->implementsCall()) {
             ExecState* exec = interpreter->globalExec();
             ASSERT(window == interpreter->globalObject());
-            JSLock lock;
             interpreter->startTimeoutCheck();
             static_cast<JSObject*>(func)->call(exec, window, m_args);
             interpreter->stopTimeoutCheck();
@@ -1990,6 +1994,8 @@ void Window::timerFired(DOMWindowTimer* timer)
     m_timeouts.remove(timer->timeoutId());
     delete timer;
     action->execute(this);
+    
+    JSLock lock;
     delete action;
 }
 

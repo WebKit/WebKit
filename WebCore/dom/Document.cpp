@@ -392,7 +392,10 @@ Document::~Document()
 #endif
 
     XMLHttpRequest::detachRequests(this);
-    KJS::ScriptInterpreter::forgetAllDOMNodesForDocument(this);
+    {
+        KJS::JSLock lock;
+        KJS::ScriptInterpreter::forgetAllDOMNodesForDocument(this);
+    }
 
     if (m_docChanged && changedDocuments)
         changedDocuments->remove(this);

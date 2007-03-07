@@ -141,6 +141,8 @@ void List::markProtectedLists()
 
 static inline ListImp *allocateListImp()
 {
+    ASSERT(JSLock::lockCount() > 0);
+    
     // Find a free one in the pool.
     if (poolUsed < poolSize) {
         ListImp *imp = poolFreeList ? poolFreeList : &pool[0];
@@ -201,7 +203,9 @@ void List::markValues()
 }
 
 void List::release()
-{
+{   
+    ASSERT(JSLock::lockCount() > 0);
+    
     ListImp *imp = static_cast<ListImp *>(_impBase);
     
 #if DUMP_STATISTICS
@@ -221,7 +225,7 @@ void List::release()
         poolFreeList = imp;
         poolUsed--;
     } else {
-        assert(imp->state == usedOnHeap);
+        ASSERT(imp->state == usedOnHeap);
         HeapListImp *list = static_cast<HeapListImp *>(imp);
 
         // unlink from heap list
@@ -258,6 +262,8 @@ void List::clear()
 
 void List::append(JSValue *v)
 {
+    ASSERT(JSLock::lockCount() > 0);
+    
     ListImp *imp = static_cast<ListImp *>(_impBase);
 
     int i = imp->size++;
@@ -331,10 +337,10 @@ List List::copyTail() const
     return copy;
 }
 
-const List &List::empty()
+const List& List::empty()
 {
-    static List emptyList;
-    return emptyList;
+    static List* staticEmptyList = new List;
+    return *staticEmptyList;
 }
 
 List &List::operator=(const List &b)

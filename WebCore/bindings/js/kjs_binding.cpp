@@ -119,6 +119,11 @@ static DOMObjectMap& domObjects()
 
 static NodePerDocMap& domNodesPerDocument()
 {
+    // domNodesPerDocument() callers must synchronize using the JSLock because 
+    // domNodesPerDocument() is called during garbage collection, which can happen
+    // on a secondary thread.
+    ASSERT(JSLock::lockCount());
+
     static NodePerDocMap staticDOMNodesPerDocument;
     return staticDOMNodesPerDocument;
 }
@@ -214,22 +219,6 @@ void ScriptInterpreter::markDOMNodesForDocument(Document* doc)
                 node->mark();
         }
     }
-}
-
-void ScriptInterpreter::mark(bool currentThreadIsMainThread)
-{
-    if (!currentThreadIsMainThread) {
-        // On alternate threads, DOMObjects remain in the cache because they're not collected.
-        // So, they need an opportunity to mark their children.
-        DOMObjectMap::iterator objectEnd = domObjects().end();
-        for (DOMObjectMap::iterator objectIt = domObjects().begin(); objectIt != objectEnd; ++objectIt) {
-            DOMObject* object = objectIt->second;
-            if (!object->marked())
-                object->mark();
-        }
-    }
-
-    Interpreter::mark(currentThreadIsMainThread);
 }
 
 ExecState* ScriptInterpreter::globalExec()

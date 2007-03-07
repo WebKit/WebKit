@@ -1,3 +1,48 @@
+2007-03-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fixed all known crashers exposed by run-webkit-tests --threaded [*]. See 
+        JavaScriptCore ChangeLog for more details.
+
+        * bindings/js/kjs_binding.cpp:
+        (KJS::domNodesPerDocument): Added thread safety ASSERT.
+        (KJS::ScriptInterpreter::mark): Removed obsolete logic for marking unsafe
+        objects when collecting on a secondary thread. The Collector takes care
+        of this now.
+
+        * bindings/js/kjs_binding.h:
+        (KJS::DOMObject::DOMObject): Used new API for specifying that WebCore
+        objects should be garbage collected on the main thread only.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::ScheduledAction::execute): Moved JSLock to cover implementedsCall() call,
+        which, for some subclasses, ends up allocating garbage collected objects.
+        (This fix was speculative. I didn't actually see a crash from this.)
+        (KJS::Window::timerFired): Added JSLock around ScheduleAction destruction,
+        since it destroys a KJS::List.
+
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject setException:]): Added JSLock. (This fix was speculative. 
+        I didn't actually see a crash from this.)
+
+        * bridge/mac/WebCoreScriptDebugger.mm:
+        (-[WebCoreScriptCallFrame evaluateWebScript:]): Added JSLock. (This fix 
+        was speculative. I didn't actually see a crash from this.)
+
+        * dom/Document.cpp:
+        (WebCore::Document::~Document): Added JSLock around modification to 
+        domNodesPerDocument(), which can be accessed concurrently during garbage 
+        collection.
+        * dom/Node.cpp:
+        (WebCore::Node::setDocument): ditto.
+        
+        [*] fast/js/toString-stack-overflow.html is an exception. --threaded mode
+        crashes this test because it causes the garbage collector to run frequently,
+        and this test crashes if you happen to garbage collect while it's running.
+        This is a known issue with stack overflow during the mark phase. It's
+        not related to threading.
+
 2007-03-06  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

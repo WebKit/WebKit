@@ -287,6 +287,7 @@ JSObjectRef JSRunEvaluate(JSRunRef ref)
     JSRun* ptr = (JSRun*)ref;
     if (ptr)
     {
+        JSLock lock;
         Completion completion = ptr->Evaluate();
         if (completion.isValueCompletion())
         {
@@ -320,9 +321,8 @@ bool JSRunCheckSyntax(JSRunRef ref)
     JSRun* ptr = (JSRun*)ref;
     if (ptr)
     {
-            JSLockInterpreter();
+            JSLock lock;
             result = ptr->CheckSyntax();
-            JSUnlockInterpreter();
     }
     return result;
 }

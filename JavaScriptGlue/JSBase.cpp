@@ -46,6 +46,7 @@ void JSBase::Release()
 {
     if (--fRetainCount == 0)
     {
+        JSLock lock;
         delete this;
     }
 }

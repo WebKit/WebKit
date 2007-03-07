@@ -108,6 +108,7 @@ struct CollectorHeap {
 
 static CollectorHeap heap = {NULL, 0, 0, 0, NULL, 0, 0, 0, 0};
 
+size_t Collector::mainThreadOnlyObjectCount = 0;
 bool Collector::memoryFull = false;
 
 #ifndef NDEBUG
@@ -473,6 +474,19 @@ void Collector::unprotect(JSValue *k)
     protectedValues().remove(k->downcast());
 }
 
+void Collector::collectOnMainThreadOnly(JSValue* value)
+{
+    ASSERT(value);
+    ASSERT(JSLock::lockCount() > 0);
+
+    if (JSImmediate::isImmediate(value))
+      return;
+
+    JSCell* cell = value->downcast();
+    cell->m_collectOnMainThreadOnly = true;
+    ++mainThreadOnlyObjectCount;
+}
+
 void Collector::markProtectedObjects()
 {
   ProtectCountSet& protectedValues = KJS::protectedValues();
@@ -482,6 +496,56 @@ void Collector::markProtectedObjects()
     if (!val->marked())
       val->mark();
   }
+}
+
+void Collector::markMainThreadOnlyObjects()
+{
+    ASSERT(!pthread_main_np());
+
+    // Optimization for clients that never register "main thread only" objects.
+    if (!mainThreadOnlyObjectCount)
+        return;
+
+    // FIXME: We can optimize this marking algorithm by keeping an exact set of 
+    // "main thread only" objects when the "main thread only" object count is 
+    // small. We don't want to keep an exact set all the time, because WebCore 
+    // tends to create lots of "main thread only" objects, and all that set 
+    // thrashing can be expensive.
+    
+    size_t count = 0;
+    
+    for (size_t block = 0; block < heap.usedBlocks; block++) {
+        ASSERT(count < mainThreadOnlyObjectCount);
+        
+        CollectorBlock* curBlock = heap.blocks[block];
+        size_t minimumCellsToProcess = curBlock->usedCells;
+        for (size_t i = 0; (i < minimumCellsToProcess) & (i < CELLS_PER_BLOCK); i++) {
+            CollectorCell* cell = curBlock->cells + i;
+            if (cell->u.freeCell.zeroIfFree == 0)
+                ++minimumCellsToProcess;
+            else {
+                JSCell* imp = reinterpret_cast<JSCell*>(cell);
+                if (imp->m_collectOnMainThreadOnly) {
+                    if(!imp->marked())
+                        imp->mark();
+                    if (++count == mainThreadOnlyObjectCount)
+                        return;
+                }
+            }
+        }
+    }
+
+    for (size_t cell = 0; cell < heap.usedOversizeCells; cell++) {
+        ASSERT(count < mainThreadOnlyObjectCount);
+
+        JSCell* imp = reinterpret_cast<JSCell*>(heap.oversizeCells[cell]);
+        if (imp->m_collectOnMainThreadOnly) {
+            if (!imp->marked())
+                imp->mark();
+            if (++count == mainThreadOnlyObjectCount)
+                return;
+        }
+    }
 }
 
 bool Collector::collect()
@@ -501,7 +565,7 @@ bool Collector::collect()
   if (Interpreter::s_hook) {
     Interpreter* scr = Interpreter::s_hook;
     do {
-      scr->mark(currentThreadIsMainThread);
+      scr->mark();
       scr = scr->next;
     } while (scr != Interpreter::s_hook);
   }
@@ -511,6 +575,8 @@ bool Collector::collect()
   markStackObjectsConservatively();
   markProtectedObjects();
   List::markProtectedLists();
+  if (!currentThreadIsMainThread)
+    markMainThreadOnlyObjects();
 
   // SWEEP: delete everything with a zero refcount (garbage) and unmark everything else
   
@@ -530,12 +596,16 @@ bool Collector::collect()
         JSCell *imp = reinterpret_cast<JSCell *>(cell);
         if (imp->m_marked) {
           imp->m_marked = false;
-        } else if (currentThreadIsMainThread || imp->m_destructorIsThreadSafe) {
+        } else {
           // special case for allocated but uninitialized object
-          // (We don't need this check earlier because nothing prior this point assumes the object has a valid vptr.)
+          // (We don't need this check earlier because nothing prior this point 
+          // assumes the object has a valid vptr.)
           if (cell->u.freeCell.zeroIfFree == 0)
             continue;
 
+          ASSERT(currentThreadIsMainThread || !imp->m_collectOnMainThreadOnly);
+          if (imp->m_collectOnMainThreadOnly)
+            --mainThreadOnlyObjectCount;
           imp->~JSCell();
           --usedCells;
           --numLiveObjects;
@@ -556,7 +626,10 @@ bool Collector::collect()
           JSCell *imp = reinterpret_cast<JSCell *>(cell);
           if (imp->m_marked) {
             imp->m_marked = false;
-          } else if (currentThreadIsMainThread || imp->m_destructorIsThreadSafe) {
+          } else {
+            ASSERT(currentThreadIsMainThread || !imp->m_collectOnMainThreadOnly);
+            if (imp->m_collectOnMainThreadOnly)
+              --mainThreadOnlyObjectCount;
             imp->~JSCell();
             --usedCells;
             --numLiveObjects;
@@ -599,7 +672,13 @@ bool Collector::collect()
   while (cell < heap.usedOversizeCells) {
     JSCell *imp = (JSCell *)heap.oversizeCells[cell];
     
-    if (!imp->m_marked && (currentThreadIsMainThread || imp->m_destructorIsThreadSafe)) {
+    if (imp->m_marked) {
+      imp->m_marked = false;
+      cell++;
+    } else {
+      ASSERT(currentThreadIsMainThread || !imp->m_collectOnMainThreadOnly);
+      if (imp->m_collectOnMainThreadOnly)
+        --mainThreadOnlyObjectCount;
       imp->~JSCell();
 #if DEBUG_COLLECTOR
       heap.oversizeCells[cell]->u.freeCell.zeroIfFree = 0;
@@ -617,9 +696,6 @@ bool Collector::collect()
         heap.numOversizeCells = heap.numOversizeCells / GROWTH_FACTOR; 
         heap.oversizeCells = (CollectorCell **)fastRealloc(heap.oversizeCells, heap.numOversizeCells * sizeof(CollectorCell *));
       }
-    } else {
-      imp->m_marked = false;
-      cell++;
     }
   }
   

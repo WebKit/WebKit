@@ -52,33 +52,12 @@ ObjcInstance::ObjcInstance(ObjectStructPtr instance)
 
 ObjcInstance::~ObjcInstance() 
 {
+    begin(); // -finalizeForWebScript and -dealloc/-finalize may require autorelease pools.
     if ([_instance respondsToSelector:@selector(finalizeForWebScript)])
         [_instance performSelector:@selector(finalizeForWebScript)];
     if (_instance)
         CFRelease(_instance);
-}
-
-ObjcInstance::ObjcInstance(const ObjcInstance &other) : Instance() 
-{
-    _instance = other._instance;
-    if (_instance)
-        CFRetain(_instance);
-    _class = other._class;
-    _pool = 0;
-    _beginCount = 0;
-}
-
-ObjcInstance &ObjcInstance::operator=(const ObjcInstance &other)
-{
-    ObjectStructPtr _oldInstance = _instance;
-    _instance = other._instance;
-    if (_instance)
-        CFRetain(_instance);
-    if (_oldInstance)
-        CFRelease(_oldInstance);
-    // Classes are kept around forever.
-    _class = other._class;
-    return* this;
+    end();
 }
 
 void ObjcInstance::begin()

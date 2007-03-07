@@ -417,6 +417,8 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     if (![self _rootObject])
         return;
 
+    JSLock lock;
+    
     if ([self _rootObject]->interpreter()->context()) {
         ExecState *exec = [self _rootObject]->interpreter()->context()->execState();
 

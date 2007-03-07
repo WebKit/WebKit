@@ -31,12 +31,7 @@
 
 namespace KJS {
 
-  /**
-   * @short Garbage collector.
-   */
   class Collector {
-    // disallow direct construction/destruction
-    Collector();
   public:
     static void* allocate(size_t s);
     static bool collect();
@@ -53,6 +48,8 @@ namespace KJS {
 
     static void protect(JSValue*);
     static void unprotect(JSValue*);
+    
+    static void collectOnMainThreadOnly(JSValue*);
 
     static size_t numInterpreters();
     static size_t numProtectedObjects();
@@ -60,15 +57,18 @@ namespace KJS {
 
     class Thread;
     static void registerThread();
-
+    
   private:
+    Collector();
 
     static void markProtectedObjects();
+    static void markMainThreadOnlyObjects();
     static void markCurrentThreadConservatively();
     static void markOtherThreadConservatively(Thread* thread);
     static void markStackObjectsConservatively();
     static void markStackObjectsConservatively(void* start, void* end);
 
+    static size_t mainThreadOnlyObjectCount;
     static bool memoryFull;
   };
 

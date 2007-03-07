@@ -2,6 +2,122 @@
 
         Reviewed by Maciej Stachowiak.
         
+        Fixed all known crashers exposed by run-webkit-tests --threaded. This covers:
+
+        <rdar://problem/4565394> | http://bugs.webkit.org/show_bug.cgi?id=12585 
+            PAC file: after closing a window that contains macworld.com, new window 
+            crashes (KJS::PropertyMap::mark()) (12585)
+        <rdar://problem/4571215> | http://bugs.webkit.org/show_bug.cgi?id=9211
+            PAC file: Crash occurs when clicking on the navigation tabs at http://www.businessweek.com/ (9211)
+        <rdar://problem/4557926> 
+            PAC file: Crash occurs when attempting to view image in slideshow mode 
+            at http://d.smugmug.com/gallery/581716 ( KJS::IfNode::execute (KJS::
+            ExecState*) + 312) if you use a PAC file
+
+        (1) Added some missing JSLocks, along with related ASSERTs.
+        
+        (2) Fully implemented support for objects that can only be garbage collected
+        on the main thread. So far, only WebCore uses this. We can add it to API
+        later if we learn that it's needed. 
+        
+        The implementation uses a "main thread only" flag inside each object. When 
+        collecting on a secondary thread, the Collector does an extra pass through 
+        the heap to mark all flagged objects before sweeping. This solution makes
+        the common case -- flag lots of objects, but never collect on a secondary 
+        thread -- very fast, even though the uncommon case of garbage collecting
+        on a secondary thread isn't as fast as it could be. I left some notes 
+        about how to speed it up, if we ever care.
+        
+        For posterity, here are some things I learned about GC while investigating:
+        
+        * Each collect must either mark or delete every heap object. "Zombie" 
+        objects, which are neither marked nor deleted, raise these issues:
+
+            * On the next pass, the conservative marking algorithm might mark a 
+            zombie, causing it to mark freed objects.
+
+            * The client might try to use a zombie, which would seem live because 
+            its finalizer had not yet run.
+
+        * A collect on the main thread is free to delete any object. Presumably, 
+        objects allocated on secondary threads have thread-safe finalizers.
+
+        * A collect on a secondary thread must not delete thread-unsafe objects.
+
+        * The mark function must be thread-safe.
+        
+        Line by line comments:
+
+        * API/JSObjectRef.h: Added comment specifying that the finalize callback 
+        may run on any thread.
+
+        * JavaScriptCore.exp: Nothing to see here.
+
+        * bindings/npruntime.cpp:
+        (_NPN_GetStringIdentifier): Added JSLock.
+
+        * bindings/objc/objc_instance.h:
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::~ObjcInstance): Use an autorelease pool. The other callers 
+        to CFRelease needed one, too, but they were dead code, so I removed them 
+        instead. (This fixes a leak seen while running run-webkit-tests --threaded,
+        although I don't think it's specifically a threading issue.) 
+        
+        * kjs/collector.cpp:
+        (KJS::Collector::collectOnMainThreadOnly): New function. Tells the collector
+        to collect a value only if it's collecting on the main thread.
+        (KJS::Collector::markMainThreadOnlyObjects): New function. Scans the heap
+        for "main thread only" objects and marks them.
+
+        * kjs/date_object.cpp: 
+        (KJS::DateObjectImp::DateObjectImp): To make the new ASSERTs happy, allocate 
+        our globals on the heap, avoiding a seemingly unsafe destructor call at 
+        program exit time.
+        * kjs/function_object.cpp:
+        (FunctionPrototype::FunctionPrototype): ditto
+
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::mark): Removed boolean parameter, which was an incomplete
+        and arguably hackish way to implement markMainThreadOnlyObjects() inside WebCore.
+        * kjs/interpreter.h:
+
+        * kjs/identifier.cpp:
+        (KJS::identifierTable): Added some ASSERTs to check for thread safety 
+        problems.
+
+        * kjs/list.cpp: Added some ASSERTs to check for thread safety problems.
+        (KJS::allocateListImp):
+        (KJS::List::release):
+        (KJS::List::append):
+        (KJS::List::empty): Make the new ASSERTs happy.
+
+        * kjs/object.h:
+        (KJS::JSObject::JSObject): "m_destructorIsThreadSafe" => "m_collectOnMainThreadOnly".
+        I removed the constructor parameter because m_collectOnMainThreadOnly,
+        like m_marked, is a Collector bit, so only the Collector should set or get it.
+
+        * kjs/object_object.cpp:
+        (ObjectPrototype::ObjectPrototype): Make the ASSERTs happy.
+        * kjs/regexp_object.cpp:
+        (RegExpPrototype::RegExpPrototype): ditto
+
+        * kjs/ustring.cpp: Added some ASSERTs to check for thread safety problems.
+        (KJS::UCharReference::ref): 
+        (KJS::UString::Rep::createCopying):
+        (KJS::UString::Rep::create):
+        (KJS::UString::Rep::destroy):
+        (KJS::UString::null): Make the new ASSERTs happy.
+        * kjs/ustring.h:
+        (KJS::UString::Rep::ref): Added some ASSERTs to check for thread safety problems.
+        (KJS::UString::Rep::deref):
+
+        * kjs/value.h:
+        (KJS::JSCell::JSCell):
+
+2007-03-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
         2% speedup on super accurate JS iBench.
 
         (KJS::Collector::collect): Removed anti-optimization to call

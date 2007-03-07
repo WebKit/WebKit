@@ -596,15 +596,12 @@ DateObjectImp::DateObjectImp(ExecState *exec,
                              DatePrototype *dateProto)
   : InternalFunctionImp(funcProto)
 {
-  // ECMA 15.9.4.1 Date.prototype
+  static const Identifier* parsePropertyName = new Identifier("parse");
+  static const Identifier* UTCPropertyName = new Identifier("UTC");
+
   putDirect(prototypePropertyName, dateProto, DontEnum|DontDelete|ReadOnly);
-
-  static const Identifier parsePropertyName("parse");
-  putDirectFunction(new DateObjectFuncImp(exec, funcProto, DateObjectFuncImp::Parse, 1, parsePropertyName), DontEnum);
-  static const Identifier UTCPropertyName("UTC");
-  putDirectFunction(new DateObjectFuncImp(exec, funcProto, DateObjectFuncImp::UTC, 7, UTCPropertyName), DontEnum);
-
-  // no. of arguments for constructor
+  putDirectFunction(new DateObjectFuncImp(exec, funcProto, DateObjectFuncImp::Parse, 1, *parsePropertyName), DontEnum);
+  putDirectFunction(new DateObjectFuncImp(exec, funcProto, DateObjectFuncImp::UTC, 7, *UTCPropertyName), DontEnum);
   putDirect(lengthPropertyName, 7, ReadOnly|DontDelete|DontEnum);
 }
 

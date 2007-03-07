@@ -40,12 +40,13 @@ using namespace KJS;
 
 FunctionPrototype::FunctionPrototype(ExecState *exec)
 {
+  static const Identifier* applyPropertyName = new Identifier("apply");
+  static const Identifier* callPropertyName = new Identifier("call");
+
   putDirect(lengthPropertyName, jsNumber(0), DontDelete|ReadOnly|DontEnum);
   putDirectFunction(new FunctionProtoFunc(exec, this, FunctionProtoFunc::ToString, 0, toStringPropertyName), DontEnum);
-  static const Identifier applyPropertyName("apply");
-  putDirectFunction(new FunctionProtoFunc(exec, this, FunctionProtoFunc::Apply, 2, applyPropertyName), DontEnum);
-  static const Identifier callPropertyName("call");
-  putDirectFunction(new FunctionProtoFunc(exec, this, FunctionProtoFunc::Call, 1, callPropertyName), DontEnum);
+  putDirectFunction(new FunctionProtoFunc(exec, this, FunctionProtoFunc::Apply, 2, *applyPropertyName), DontEnum);
+  putDirectFunction(new FunctionProtoFunc(exec, this, FunctionProtoFunc::Call, 1, *callPropertyName), DontEnum);
 }
 
 FunctionPrototype::~FunctionPrototype()

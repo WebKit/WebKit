@@ -38,10 +38,12 @@
 
 #include "identifier.h"
 
+#include "JSLock.h"
+#include <new> // for placement new
+#include <string.h> // for strlen
+#include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>
-#include <string.h> // for strlen
-#include <new> // for placement new
 
 namespace WTF {
 
@@ -66,6 +68,8 @@ static IdentifierTable *table;
 
 static inline IdentifierTable& identifierTable()
 {
+    ASSERT(JSLock::lockCount() > 0);
+
     if (!table)
         table = new IdentifierTable;
     return *table;

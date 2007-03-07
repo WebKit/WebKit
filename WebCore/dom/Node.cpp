@@ -169,7 +169,10 @@ void Node::setDocument(Document* doc)
     if (inDocument() || m_document == doc)
         return;
 
-    KJS::ScriptInterpreter::updateDOMNodeDocument(this, m_document.get(), doc);
+    {
+        KJS::JSLock lock;
+        KJS::ScriptInterpreter::updateDOMNodeDocument(this, m_document.get(), doc);
+    }
     m_document = doc;
 }
 

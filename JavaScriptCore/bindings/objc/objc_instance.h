@@ -43,10 +43,6 @@ public:
     
     virtual Class *getClass() const;
     
-    ObjcInstance(const ObjcInstance &other);
-
-    ObjcInstance &operator=(const ObjcInstance &other);
-    
     virtual void begin();
     virtual void end();
     
@@ -72,6 +68,9 @@ public:
     JSValue *booleanValue() const;
     
 private:
+    ObjcInstance(const ObjcInstance& other);
+    ObjcInstance& operator=(const ObjcInstance& other);
+    
     ObjectStructPtr _instance;
     mutable ObjcClass *_class;
     ObjectStructPtr _pool;

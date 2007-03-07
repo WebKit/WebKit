@@ -33,25 +33,26 @@ using namespace KJS;
 ObjectPrototype::ObjectPrototype(ExecState* exec, FunctionPrototype* funcProto)
   : JSObject() // [[Prototype]] is null
 {
+    static const Identifier* hasOwnPropertyPropertyName = new Identifier("hasOwnProperty");
+    static const Identifier* propertyIsEnumerablePropertyName = new Identifier("propertyIsEnumerable");
+    static const Identifier* isPrototypeOfPropertyName = new Identifier("isPrototypeOf");
+    static const Identifier* defineGetterPropertyName = new Identifier("__defineGetter__");
+    static const Identifier* defineSetterPropertyName = new Identifier("__defineSetter__");
+    static const Identifier* lookupGetterPropertyName = new Identifier("__lookupGetter__");
+    static const Identifier* lookupSetterPropertyName = new Identifier("__lookupSetter__");
+
     putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ToString, 0, toStringPropertyName), DontEnum);
     putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ToLocaleString, 0, toLocaleStringPropertyName), DontEnum);
     putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ValueOf, 0, valueOfPropertyName), DontEnum);
-    static Identifier hasOwnPropertyPropertyName("hasOwnProperty");
-    static Identifier propertyIsEnumerablePropertyName("propertyIsEnumerable");
-    static Identifier isPrototypeOfPropertyName("isPrototypeOf");
-    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::HasOwnProperty, 1, hasOwnPropertyPropertyName), DontEnum);
-    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::PropertyIsEnumerable, 1, propertyIsEnumerablePropertyName), DontEnum);
-    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::IsPrototypeOf, 1, isPrototypeOfPropertyName), DontEnum);
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::HasOwnProperty, 1, *hasOwnPropertyPropertyName), DontEnum);
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::PropertyIsEnumerable, 1, *propertyIsEnumerablePropertyName), DontEnum);
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::IsPrototypeOf, 1, *isPrototypeOfPropertyName), DontEnum);
 
     // Mozilla extensions
-    static const Identifier defineGetterPropertyName("__defineGetter__");
-    static const Identifier defineSetterPropertyName("__defineSetter__");
-    static const Identifier lookupGetterPropertyName("__lookupGetter__");
-    static const Identifier lookupSetterPropertyName("__lookupSetter__");
-    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::DefineGetter, 2, defineGetterPropertyName), DontEnum);
-    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::DefineSetter, 2, defineSetterPropertyName), DontEnum);
-    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::LookupGetter, 1, lookupGetterPropertyName), DontEnum);
-    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::LookupSetter, 1, lookupSetterPropertyName), DontEnum);
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::DefineGetter, 2, *defineGetterPropertyName), DontEnum);
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::DefineSetter, 2, *defineSetterPropertyName), DontEnum);
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::LookupGetter, 1, *lookupGetterPropertyName), DontEnum);
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::LookupSetter, 1, *lookupSetterPropertyName), DontEnum);
 }
 
 
