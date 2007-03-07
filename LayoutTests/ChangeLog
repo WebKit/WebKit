@@ -159,7 +159,7 @@
         Reviewed by Mark and Dave H.
 
         - rdar://problem/5038491
-        An oversite of the security fix that prevented remote from loading local is that it
+        An oversight of the security fix that prevented remote from loading local is that it
         prevents user style sheets when the site is remote.  This fixes that.
 
         * http/tests/security/local-user-CSS-from-remote-expected.txt: Added.
