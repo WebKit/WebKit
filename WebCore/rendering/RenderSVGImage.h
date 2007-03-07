@@ -43,7 +43,7 @@ namespace WebCore {
         virtual void setLocalTransform(const AffineTransform& transform) { m_transform = transform; }
         
         virtual FloatRect relativeBBox(bool includeStroke = true) const;
-        virtual IntRect getAbsoluteRepaintRect();
+        virtual IntRect absoluteClippedOverflowRect();
         
         virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
 

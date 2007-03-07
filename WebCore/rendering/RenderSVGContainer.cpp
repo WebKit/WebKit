@@ -100,9 +100,12 @@ void RenderSVGContainer::layout()
     calcViewport();
 
     IntRect oldBounds;
+    IntRect oldOutlineBox;
     bool checkForRepaint = checkForRepaintDuringLayout();
-    if (selfNeedsLayout() && checkForRepaint)
+    if (selfNeedsLayout() && checkForRepaint) {
         oldBounds = m_absoluteBounds;
+        oldOutlineBox = absoluteOutlineBox();
+    }
 
     RenderObject* child = firstChild();
     while (child) {
@@ -117,10 +120,10 @@ void RenderSVGContainer::layout()
     calcWidth();
     calcHeight();
 
-    m_absoluteBounds = getAbsoluteRepaintRect();
+    m_absoluteBounds = absoluteClippedOverflowRect();
 
     if (selfNeedsLayout() && checkForRepaint)
-        repaintAfterLayoutIfNeeded(oldBounds);
+        repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
 
     setNeedsLayout(false);
 }
@@ -310,12 +313,12 @@ AffineTransform RenderSVGContainer::viewportTransform() const
     return AffineTransform();
 }
 
-IntRect RenderSVGContainer::getAbsoluteRepaintRect()
+IntRect RenderSVGContainer::absoluteClippedOverflowRect()
 {
     IntRect repaintRect;
 
     for (RenderObject* current = firstChild(); current != 0; current = current->nextSibling())
-        repaintRect.unite(current->getAbsoluteRepaintRect());
+        repaintRect.unite(current->absoluteClippedOverflowRect());
 
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     // Filters can expand the bounding box
@@ -329,7 +332,7 @@ IntRect RenderSVGContainer::getAbsoluteRepaintRect()
 
 void RenderSVGContainer::absoluteRects(Vector<IntRect>& rects, int, int)
 {
-    rects.append(getAbsoluteRepaintRect());
+    rects.append(absoluteClippedOverflowRect());
 }
 
 AffineTransform RenderSVGContainer::absoluteTransform() const

@@ -67,7 +67,7 @@ public:
     virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);
     
-    virtual IntRect getAbsoluteRepaintRect();
+    virtual IntRect absoluteClippedOverflowRect();
     virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty);
 
     virtual AffineTransform absoluteTransform() const;

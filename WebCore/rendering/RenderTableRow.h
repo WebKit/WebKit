@@ -49,7 +49,7 @@ public:
     virtual short lineHeight(bool firstLine, bool isRootLineBox = false) const { return 0; }
     virtual void position(InlineBox*) { }
     virtual void layout();
-    virtual IntRect getAbsoluteRepaintRect();
+    virtual IntRect absoluteClippedOverflowRect();
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
     // The only time rows get a layer is when they have transparency.

@@ -865,7 +865,7 @@ void RenderBox::deleteLineBoxWrapper()
     }
 }
 
-IntRect RenderBox::getAbsoluteRepaintRect()
+IntRect RenderBox::absoluteClippedOverflowRect()
 {
     IntRect r = overflowRect(false);
     if (style()) {

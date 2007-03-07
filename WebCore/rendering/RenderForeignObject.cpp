@@ -88,16 +88,19 @@ void RenderForeignObject::layout()
     ASSERT(minMaxKnown());
 
     IntRect oldBounds;
+    IntRect oldOutlineBox;
     bool checkForRepaint = checkForRepaintDuringLayout();
-    if (checkForRepaint)
+    if (checkForRepaint) {
         oldBounds = m_absoluteBounds;
+        oldOutlineBox = absoluteOutlineBox();
+    }
 
     RenderBlock::layout();
 
-    m_absoluteBounds = getAbsoluteRepaintRect();
+    m_absoluteBounds = absoluteClippedOverflowRect();
 
     if (checkForRepaint)
-        repaintAfterLayoutIfNeeded(oldBounds);
+        repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
 
     setNeedsLayout(false);
 }

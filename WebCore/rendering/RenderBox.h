@@ -96,7 +96,7 @@ public:
     virtual int rightmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
     virtual int leftmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
 
-    virtual IntRect getAbsoluteRepaintRect();
+    virtual IntRect absoluteClippedOverflowRect();
     virtual void computeAbsoluteRepaintRect(IntRect&, bool fixed = false);
 
     virtual void repaintDuringLayoutIfMoved(const IntRect&);

@@ -236,10 +236,10 @@ void RenderSVGImage::imageChanged(CachedImage* image)
     RenderImage::imageChanged(image);
 
     // We override to invalidate a larger rect, since SVG images can draw outside their "bounds"
-    repaintRectangle(getAbsoluteRepaintRect());
+    repaintRectangle(absoluteClippedOverflowRect());
 }
 
-IntRect RenderSVGImage::getAbsoluteRepaintRect()
+IntRect RenderSVGImage::absoluteClippedOverflowRect()
 {
     FloatRect repaintRect = relativeBBox(true);
     repaintRect = absoluteTransform().mapRect(repaintRect);
@@ -259,7 +259,7 @@ IntRect RenderSVGImage::getAbsoluteRepaintRect()
 
 void RenderSVGImage::absoluteRects(Vector<IntRect>& rects, int, int)
 {
-    rects.append(getAbsoluteRepaintRect());
+    rects.append(absoluteClippedOverflowRect());
 }
 
 AffineTransform RenderSVGImage::translationForAttributes()

@@ -78,7 +78,7 @@ public:
     void paintLines(PaintInfo&, int tx, int ty);
     bool hitTestLines(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
-    virtual IntRect getAbsoluteRepaintRect();
+    virtual IntRect absoluteClippedOverflowRect();
 
     virtual int lowestPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
     virtual int rightmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;

@@ -82,15 +82,18 @@ void RenderHTMLCanvas::layout()
     ASSERT(minMaxKnown());
 
     IntRect oldBounds;
+    IntRect oldOutlineBox;
     bool checkForRepaint = checkForRepaintDuringLayout();
     if (checkForRepaint) {
-        oldBounds = getAbsoluteRepaintRect();
+        oldBounds = absoluteClippedOverflowRect();
         oldBounds.move(view()->layoutDelta());
+        oldOutlineBox = absoluteOutlineBox();
+        oldOutlineBox.move(view()->layoutDelta());
     }
     calcWidth();
     calcHeight();
     if (checkForRepaint)
-        repaintAfterLayoutIfNeeded(oldBounds);
+        repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
 
     setNeedsLayout(false);
 }

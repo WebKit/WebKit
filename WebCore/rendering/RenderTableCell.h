@@ -99,7 +99,7 @@ public:
     // Lie about position to outside observers.
     virtual int yPos() const { return m_y + m_topExtra; }
 
-    virtual IntRect getAbsoluteRepaintRect();
+    virtual IntRect absoluteClippedOverflowRect();
     virtual void computeAbsoluteRepaintRect(IntRect&, bool fixed = false);
     virtual bool absolutePosition(int& x, int& y, bool fixed = false) const;
 

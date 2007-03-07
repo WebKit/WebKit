@@ -126,13 +126,13 @@ void RenderTableRow::layout()
     setNeedsLayout(false);
 }
 
-IntRect RenderTableRow::getAbsoluteRepaintRect()
+IntRect RenderTableRow::absoluteClippedOverflowRect()
 {
     // For now, just repaint the whole table.
     // FIXME: Find a better way to do this, e.g., need to repaint all the cells that we
     // might have propagated a background color into.
     if (RenderTable* parentTable = table())
-        return parentTable->getAbsoluteRepaintRect();
+        return parentTable->absoluteClippedOverflowRect();
 
     return IntRect();
 }

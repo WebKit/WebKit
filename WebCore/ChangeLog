@@ -1,3 +1,88 @@
+2007-03-06  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12885
+          REGRESSION (r19696): Incomplete background repaint
+
+        Tests: fast/repaint/content-into-overflow.html
+               fast/repaint/overflow-into-content.html
+
+        Changed repaintAfterLayoutIfNeeded() to take, in addition to the clipped overflow
+        rect, the unclipped border box plus outline, and to repaint any areas that
+        were added or removed from that box, in addition to any areas added or removed
+        from the clipped overflow rect.
+
+        * platform/graphics/svg/SVGResourceMarker.cpp:
+        (WebCore::SVGResourceMarker::draw):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absoluteClippedOverflowRect): Renamed getAbsoluteRepaintRect() to
+        this.
+        * rendering/RenderBox.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::absoluteClippedOverflowRect):
+        * rendering/RenderFlow.h:
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::layout):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::layout):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::layout):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::checkForRepaintOnResize):
+        (WebCore::RenderLayer::updateLayerPositions):
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaint):
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        (WebCore::RenderObject::getAbsoluteRepaintRectWithOutline):
+        (WebCore::RenderObject::absoluteClippedOverflowRect):
+        (WebCore::RenderObject::absoluteOutlineBox):
+        * rendering/RenderObject.h:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::layout):
+        (WebCore::RenderPath::absoluteClippedOverflowRect):
+        (WebCore::RenderPath::absoluteRects):
+        (WebCore::RenderPath::drawMarkersIfNeeded):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        (WebCore::RenderSVGContainer::absoluteClippedOverflowRect):
+        (WebCore::RenderSVGContainer::absoluteRects):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGHiddenContainer.cpp:
+        (WebCore::RenderSVGHiddenContainer::absoluteClippedOverflowRect):
+        * rendering/RenderSVGHiddenContainer.h:
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::imageChanged):
+        (WebCore::RenderSVGImage::absoluteClippedOverflowRect):
+        (WebCore::RenderSVGImage::absoluteRects):
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::absoluteClippedOverflowRect):
+        (WebCore::RenderSVGText::layout):
+        (WebCore::RenderSVGText::absoluteRects):
+        * rendering/RenderSVGText.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::absoluteClippedOverflowRect):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::absoluteClippedOverflowRect):
+        * rendering/RenderTableCol.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::absoluteClippedOverflowRect):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteClippedOverflowRect):
+        * rendering/RenderText.h:
+
 2007-03-06  Ian Eng <ian.eng.webkit@gmail.com>
 
         Reviewed by Maciej.

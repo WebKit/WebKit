@@ -137,7 +137,7 @@ void RenderTableCell::layout()
     m_widthChanged = false;
 }
 
-IntRect RenderTableCell::getAbsoluteRepaintRect()
+IntRect RenderTableCell::absoluteClippedOverflowRect()
 {
     // If the table grid is dirty, we cannot get reliable information about adjoining cells,
     // so we ignore outside borders. This should not be a problem because it means that
@@ -180,7 +180,7 @@ IntRect RenderTableCell::getAbsoluteRepaintRect()
         computeAbsoluteRepaintRect(r);
         return r;
     }
-    return RenderBlock::getAbsoluteRepaintRect();
+    return RenderBlock::absoluteClippedOverflowRect();
 }
 
 void RenderTableCell::computeAbsoluteRepaintRect(IntRect& r, bool fixed)

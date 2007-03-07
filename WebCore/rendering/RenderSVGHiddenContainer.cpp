@@ -85,7 +85,7 @@ void RenderSVGHiddenContainer::paint(PaintInfo&, int parentX, int parentY)
     // This subtree does not paint.
 }
 
-IntRect RenderSVGHiddenContainer::getAbsoluteRepaintRect()
+IntRect RenderSVGHiddenContainer::absoluteClippedOverflowRect()
 {
     return IntRect();
 }

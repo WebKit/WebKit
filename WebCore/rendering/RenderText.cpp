@@ -1032,10 +1032,10 @@ int RenderText::width() const
     return max(0, maxx - minx);
 }
 
-IntRect RenderText::getAbsoluteRepaintRect()
+IntRect RenderText::absoluteClippedOverflowRect()
 {
     RenderObject* cb = containingBlock();
-    return cb->getAbsoluteRepaintRect();
+    return cb->absoluteClippedOverflowRect();
 }
 
 IntRect RenderText::selectionRect()

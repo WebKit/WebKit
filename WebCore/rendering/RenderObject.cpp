@@ -1715,7 +1715,7 @@ void RenderObject::repaint(bool immediate)
     RenderView* view = static_cast<RenderView*>(o);
     if (view->printing())
         return; // Don't repaint if we're printing.
-    view->repaintViewRectangle(getAbsoluteRepaintRect(), immediate);
+    view->repaintViewRectangle(absoluteClippedOverflowRect(), immediate);
 }
 
 void RenderObject::repaintRectangle(const IntRect& r, bool immediate)
@@ -1734,17 +1734,21 @@ void RenderObject::repaintRectangle(const IntRect& r, bool immediate)
     view->repaintViewRectangle(absRect, immediate);
 }
 
-bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds)
+bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const IntRect& oldOutlineBox)
 {
     RenderView* v = view();
     if (v->printing())
         return false; // Don't repaint if we're printing.
 
-    IntRect newBounds = getAbsoluteRepaintRect();
-    if (newBounds == oldBounds && !selfNeedsLayout())
-        return false;
+    IntRect newBounds = absoluteClippedOverflowRect();
+    IntRect newOutlineBox;
 
-    bool fullRepaint = selfNeedsLayout() || newBounds.location() != oldBounds.location() || mustRepaintBackgroundOrBorder();
+    bool fullRepaint = selfNeedsLayout() || mustRepaintBackgroundOrBorder();
+    if (!fullRepaint) {
+        newOutlineBox = absoluteOutlineBox();
+        if (newOutlineBox.location() != oldOutlineBox.location())
+            fullRepaint = true;
+    }
     if (fullRepaint) {
         v->repaintViewRectangle(oldBounds);
         if (newBounds != oldBounds)
@@ -1752,24 +1756,64 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds)
         return true;
     }
 
+    if (newBounds == oldBounds && newOutlineBox == oldOutlineBox)
+        return false;
+
+    int deltaLeft = newBounds.x() - oldBounds.x();
+    if (deltaLeft > 0)
+        v->repaintViewRectangle(IntRect(oldBounds.x(), oldBounds.y(), deltaLeft, oldBounds.height()));
+    else if (deltaLeft < 0)
+        v->repaintViewRectangle(IntRect(newBounds.x(), newBounds.y(), -deltaLeft, newBounds.height()));
+
+    int deltaRight = newBounds.right() - oldBounds.right();
+    if (deltaRight > 0)
+        v->repaintViewRectangle(IntRect(oldBounds.right(), newBounds.y(), deltaRight, newBounds.height()));
+    else if (deltaRight < 0)
+        v->repaintViewRectangle(IntRect(newBounds.right(), oldBounds.y(), -deltaRight, oldBounds.height()));
+
+    int deltaTop = newBounds.y() - oldBounds.y();
+    if (deltaTop > 0)
+        v->repaintViewRectangle(IntRect(oldBounds.x(), oldBounds.y(), oldBounds.width(), deltaTop));
+    else if (deltaTop < 0)
+        v->repaintViewRectangle(IntRect(newBounds.x(), newBounds.y(), newBounds.width(), -deltaTop));
+
+    int deltaBottom = newBounds.bottom() - oldBounds.bottom();
+    if (deltaBottom > 0)
+        v->repaintViewRectangle(IntRect(newBounds.x(), oldBounds.bottom(), newBounds.width(), deltaBottom));
+    else if (deltaBottom < 0)
+        v->repaintViewRectangle(IntRect(oldBounds.x(), newBounds.bottom(), oldBounds.width(), -deltaBottom));
+
+    if (newOutlineBox == oldOutlineBox)
+        return false;
+
     // We didn't move, but we did change size.  Invalidate the delta, which will consist of possibly
     // two rectangles (but typically only one).
     int ow = style() ? style()->outlineSize() : 0;
-    int width = abs(newBounds.width() - oldBounds.width());
+    int width = abs(newOutlineBox.width() - oldOutlineBox.width());
     if (width) {
         int borderWidth = max(borderRight(), max(style()->borderTopRightRadius().width(), style()->borderBottomRightRadius().width())) + ow;
-        v->repaintViewRectangle(IntRect(newBounds.x() + min(newBounds.width(), oldBounds.width()) - borderWidth,
-            newBounds.y(),
+        IntRect rightRect(newOutlineBox.x() + min(newOutlineBox.width(), oldOutlineBox.width()) - borderWidth,
+            newOutlineBox.y(),
             width + borderWidth,
-            max(newBounds.height(), oldBounds.height())));
+            max(newOutlineBox.height(), oldOutlineBox.height()));
+        int right = min(newBounds.right(), oldBounds.right());
+        if (rightRect.x() < right) {
+            rightRect.setWidth(min(rightRect.width(), right - rightRect.x()));
+            v->repaintViewRectangle(rightRect);
+        }
     }
-    int height = abs(newBounds.height() - oldBounds.height());
+    int height = abs(newOutlineBox.height() - oldOutlineBox.height());
     if (height) {
         int borderHeight = max(borderBottom(), max(style()->borderBottomLeftRadius().height(), style()->borderBottomRightRadius().height())) + ow;
-        v->repaintViewRectangle(IntRect(newBounds.x(),
-            min(newBounds.bottom(), oldBounds.bottom()) - borderHeight,
-            max(newBounds.width(), oldBounds.width()),
-            height + borderHeight));
+        IntRect bottomRect(newOutlineBox.x(),
+            min(newOutlineBox.bottom(), oldOutlineBox.bottom()) - borderHeight,
+            max(newOutlineBox.width(), oldOutlineBox.width()),
+            height + borderHeight);
+        int bottom = min(newBounds.bottom(), oldBounds.bottom());
+        if (bottomRect.y() < bottom) {
+            bottomRect.setHeight(min(bottomRect.height(), bottom - bottomRect.y()));
+            v->repaintViewRectangle(bottomRect);
+        }
     }
     return false;
 }
@@ -1807,7 +1851,7 @@ void RenderObject::repaintObjectsBeforeLayout()
 
 IntRect RenderObject::getAbsoluteRepaintRectWithOutline(int ow)
 {
-    IntRect r(getAbsoluteRepaintRect());
+    IntRect r(absoluteClippedOverflowRect());
     r.inflate(ow);
 
     if (continuation() && !isInline())
@@ -1823,10 +1867,10 @@ IntRect RenderObject::getAbsoluteRepaintRectWithOutline(int ow)
     return r;
 }
 
-IntRect RenderObject::getAbsoluteRepaintRect()
+IntRect RenderObject::absoluteClippedOverflowRect()
 {
     if (parent())
-        return parent()->getAbsoluteRepaintRect();
+        return parent()->absoluteClippedOverflowRect();
     return IntRect();
 }
 
@@ -2999,6 +3043,16 @@ IntRect RenderObject::absoluteContentBox() const
     absolutePositionForContent(x, y);
     rect.move(x, y);
     return rect;
+}
+
+IntRect RenderObject::absoluteOutlineBox() const
+{
+    IntRect box = borderBox();
+    int x, y;
+    absolutePosition(x, y);
+    box.move(x, y);
+    box.inflate(style()->outlineSize());
+    return box;
 }
 
 #if ENABLE(SVG)

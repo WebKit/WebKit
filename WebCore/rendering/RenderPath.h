@@ -62,7 +62,7 @@ public:
     virtual void setLocalTransform(const AffineTransform& matrix);
     
     virtual void layout();
-    virtual IntRect getAbsoluteRepaintRect();
+    virtual IntRect absoluteClippedOverflowRect();
     virtual bool requiresLayer();
     virtual short lineHeight(bool b, bool isRootLineBox = false) const;
     virtual short baselinePosition(bool b, bool isRootLineBox = false) const;

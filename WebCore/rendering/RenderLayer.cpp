@@ -112,44 +112,42 @@ void ClipRects::destroy(RenderArena* renderArena)
 }
 
 RenderLayer::RenderLayer(RenderObject* object)
-: m_object(object),
-m_parent(0),
-m_previous(0),
-m_next(0),
-m_first(0),
-m_last(0),
-m_repaintX(0),
-m_repaintY(0),
-m_relX(0),
-m_relY(0),
-m_x(0),
-m_y(0),
-m_width(0),
-m_height(0),
-m_scrollX(0),
-m_scrollY(0),
-m_scrollOriginX(0),
-m_scrollLeftOverflow(0),
-m_scrollWidth(0),
-m_scrollHeight(0),
-m_inResizeMode(false),
-m_posZOrderList(0),
-m_negZOrderList(0),
-m_overflowList(0),
-m_clipRects(0) ,
-m_scrollDimensionsDirty(true),
-m_zOrderListsDirty(true),
-m_overflowListDirty(true),
-m_isOverflowOnly(shouldBeOverflowOnly()),
-m_usedTransparency(false),
-m_inOverflowRelayout(false),
-m_repaintOverflowOnResize(false),
-m_overflowStatusDirty(true),
-m_visibleContentStatusDirty( true ),
-m_hasVisibleContent( false ),
-m_visibleDescendantStatusDirty( false ),
-m_hasVisibleDescendant( false ),
-m_marquee(0)
+    : m_object(object)
+    , m_parent(0)
+    , m_previous(0)
+    , m_next(0)
+    , m_first(0)
+    , m_last(0)
+    , m_relX(0)
+    , m_relY(0)
+    , m_x(0)
+    , m_y(0)
+    , m_width(0)
+    , m_height(0)
+    , m_scrollX(0)
+    , m_scrollY(0)
+    , m_scrollOriginX(0)
+    , m_scrollLeftOverflow(0)
+    , m_scrollWidth(0)
+    , m_scrollHeight(0)
+    , m_inResizeMode(false)
+    , m_posZOrderList(0)
+    , m_negZOrderList(0)
+    , m_overflowList(0)
+    , m_clipRects(0) 
+    , m_scrollDimensionsDirty(true)
+    , m_zOrderListsDirty(true)
+    , m_overflowListDirty(true)
+    , m_isOverflowOnly(shouldBeOverflowOnly())
+    , m_usedTransparency(false)
+    , m_inOverflowRelayout(false)
+    , m_repaintOverflowOnResize(false)
+    , m_overflowStatusDirty(true)
+    , m_visibleContentStatusDirty(true)
+    , m_hasVisibleContent(false)
+    , m_visibleDescendantStatusDirty(false)
+    , m_hasVisibleDescendant(false)
+    , m_marquee(0)
 {
     if (!object->firstChild() && object->style()) {
         m_visibleContentStatusDirty = false;
@@ -176,6 +174,8 @@ RenderLayer::~RenderLayer()
 
 void RenderLayer::checkForRepaintOnResize()
 {
+    // FIXME: The second part of the condition is probably no longer needed. The first part can be
+    // done when the object is marked for layout instead of walking the tree here.
     m_repaintOverflowOnResize = m_object->selfNeedsLayout() || m_object->hasOverflowClip() && m_object->normalChildNeedsLayout();
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
         child->checkForRepaintOnResize();
@@ -197,27 +197,26 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
     updateVisibilityStatus();
         
     if (m_hasVisibleContent) {
-        int x, y;
-        m_object->absolutePosition(x, y);
-        IntRect newRect = m_object->getAbsoluteRepaintRect();
+        IntRect newRect = m_object->absoluteClippedOverflowRect();
+        IntRect newOutlineBox = m_object->absoluteOutlineBox();
         if (checkForRepaint) {
-            RenderView* c = m_object->view();
-            ASSERT(c);
-            if (c && !c->printing()) {
-                bool didMove = x != m_repaintX || y != m_repaintY;
+            RenderView* view = m_object->view();
+            ASSERT(view);
+            if (view && !view->printing()) {
+                bool didMove = newOutlineBox.location() != m_outlineBox.location();
                 if (!didMove && !m_repaintOverflowOnResize)
-                    m_object->repaintAfterLayoutIfNeeded(m_repaintRect);
+                    m_object->repaintAfterLayoutIfNeeded(m_repaintRect, m_outlineBox);
                 else if (didMove || newRect != m_repaintRect) {
-                    c->repaintViewRectangle(m_repaintRect);
-                    c->repaintViewRectangle(newRect);
+                    view->repaintViewRectangle(m_repaintRect);
+                    view->repaintViewRectangle(newRect);
                 }
             }
         }
         m_repaintRect = newRect;
-        m_repaintX = x;
-        m_repaintY = y;
+        m_outlineBox = newOutlineBox;
     } else {
         m_repaintRect = IntRect();
+        m_outlineBox = IntRect();
     }
     
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())

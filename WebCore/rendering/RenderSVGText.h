@@ -44,7 +44,7 @@ public:
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
-    virtual IntRect getAbsoluteRepaintRect();
+    virtual IntRect absoluteClippedOverflowRect();
     virtual bool requiresLayer();
     virtual void layout();
     virtual FloatRect relativeBBox(bool includeStroke = true) const;
