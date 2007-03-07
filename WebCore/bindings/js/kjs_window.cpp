@@ -2214,6 +2214,10 @@ void Location::put(ExecState *exec, const Identifier &p, JSValue *v, int attr)
     case Search:
       url.setQuery(str);
       break;
+    default:
+      // Disallow changing other properties in LocationTable. e.g., "window.location.toString = ...".
+      // <http://bugs.webkit.org/show_bug.cgi?id=12720>
+      return;
     }
   else {
     JSObject::put(exec, p, v, attr);
