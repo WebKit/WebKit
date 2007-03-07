@@ -1,3 +1,15 @@
+2007-03-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        2% speedup on super accurate JS iBench.
+
+        (KJS::Collector::collect): Removed anti-optimization to call
+        pthread_is_threaded_np() before calling pthread_main_np(). Almost all 
+        apps have more than one thread, so the extra call is actually worse.
+        Interestingly, even the single-threaded testkjs shows a speed gain
+        from removing the pthread_is_threaded_np() short-circuit. Not sure why.
+
 2007-03-04  Don Gibson  <dgibson77@gmail.com>
 
         Reviewed by Nikolas Zimmermann.
