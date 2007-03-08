@@ -2,6 +2,16 @@
 
         Reviewed by harrison
         
+        <http://bugs.webkit.org/show_bug.cgi?id=13000>
+        Range.createContextualFragment is not supported
+
+        * fast/dom/Range/13000-expected.txt: Added.
+        * fast/dom/Range/13000.html: Added.
+
+2007-03-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
         <rdar::/problem/5049671>
         Gmail Editor: With linked text, Remove Formatting doesn't always remove underline
 

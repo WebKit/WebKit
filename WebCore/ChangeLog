@@ -2,6 +2,19 @@
 
         Reviewed by harrison
         
+        <http://bugs.webkit.org/show_bug.cgi?id=13000>
+        Range.createContextualFragment is not supported
+
+        * dom/Range.cpp:
+        (WebCore::Range::createContextualFragment): The
+        "startContainer" may not be a container, if the
+        range starts inside text.  In that case, look
+        to the parent of the start node for an HTMLElement.
+
+2007-03-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
         <rdar://problem/5049671>
         Gmail Editor: With linked text, Remove Formatting doesn't always remove underline
 
