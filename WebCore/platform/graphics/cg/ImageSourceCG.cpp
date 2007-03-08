@@ -40,8 +40,15 @@ ImageSource::ImageSource()
 
 ImageSource::~ImageSource()
 {
-    if (m_decoder)
+    clear();
+}
+
+void ImageSource::clear()
+{
+    if (m_decoder) {
         CFRelease(m_decoder);
+        m_decoder = 0;
+    }
 }
 
 const CFStringRef kCGImageSourceShouldPreferRGB32 = CFSTR("kCGImageSourceShouldPreferRGB32");

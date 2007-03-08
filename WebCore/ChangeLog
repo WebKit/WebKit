@@ -1,3 +1,25 @@
+2007-03-08  David Hyatt  <hyatt@apple.com>
+
+        This patch dramatically reduces the memory consumed by animated images.  For large animated GIFs (defined for
+        now as >1mb in terms of decoded frame buffer size), we will now aggressively flush previous frames of the
+        animated GIF and just re-decode them on the fly if the animation loops.
+
+        Whenever a large animated GIF has its animation reset, we will also just throw out everything and start
+        the animation over (in order to get rid of any cached detritus held in the ImageSource).
+
+        With this patch and the sample GIF used to test, WebKit's memory consumption went from 160MB down to 16MB.
+
+        Reviewed by mjs
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyDecodedData):
+        (WebCore::BitmapImage::resetAnimation):
+        (WebCore::BitmapImage::advanceAnimation):
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::~ImageSource):
+        (WebCore::ImageSource::clear):
+
 2007-03-08  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

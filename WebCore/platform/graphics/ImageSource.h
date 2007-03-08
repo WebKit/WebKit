@@ -68,6 +68,8 @@ public:
     ImageSource();
     ~ImageSource();
 
+    void clear();
+
     bool initialized() const;
     
     void setData(NativeBytePtr, bool allDataReceived);

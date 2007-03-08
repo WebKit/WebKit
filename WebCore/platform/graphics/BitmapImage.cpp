@@ -37,6 +37,10 @@
 
 namespace WebCore {
 
+// Animated images >1MB are considered large enough that we'll only hang on to
+// one frame at a time.
+const unsigned cLargeAnimationCutoff = 1048576;
+
 BitmapImage::BitmapImage(ImageObserver* observer)
     : Image(observer)
     , m_currentFrame(0)
@@ -72,7 +76,8 @@ void BitmapImage::destroyDecodedData(bool incremental)
             if (m_frames[i].m_frame) {
                 sizeChange -= frameSize;
                 m_frames[i].clear();
-                m_source.destroyFrameAtIndex(i);
+                if (!incremental)
+                    m_source.destroyFrameAtIndex(i);
             }
         }
 
@@ -85,6 +90,13 @@ void BitmapImage::destroyDecodedData(bool incremental)
             m_decodedSize += sizeChange;
             if (imageObserver())
                 imageObserver()->decodedSizeChanged(this, sizeChange);
+        }
+        
+        if (!incremental && frameCount() * frameSize > cLargeAnimationCutoff) {
+            // Reset the image source, since Image I/O has an underlying cache that it uses
+            // while animating that it seems to never clear.
+            m_source.clear();
+            setData(true);
         }
     }
 }
@@ -215,6 +227,11 @@ void BitmapImage::resetAnimation()
     m_currentFrame = 0;
     m_repetitionsComplete = 0;
     m_animationFinished = false;
+    int frameSize = m_size.width() * m_size.height() * 4;
+    
+    // For extremely large animations, when the animation is reset, we just throw everything away.
+    if (frameCount() * frameSize > cLargeAnimationCutoff)
+        destroyDecodedData();
 }
 
 void BitmapImage::advanceAnimation(Timer<BitmapImage>* timer)
@@ -227,7 +244,7 @@ void BitmapImage::advanceAnimation(Timer<BitmapImage>* timer)
     if (imageObserver()->shouldPauseAnimation(this))
         return;
 
-    m_currentFrame++;
+    size_t previousFrame = m_currentFrame++;
     if (m_currentFrame >= frameCount()) {
         m_repetitionsComplete += 1;
         if (m_repetitionCount && m_repetitionsComplete >= m_repetitionCount) {
@@ -240,7 +257,24 @@ void BitmapImage::advanceAnimation(Timer<BitmapImage>* timer)
 
     // Notify our observer that the animation has advanced.
     imageObserver()->animationAdvanced(this);
+
+    // For large animated images, go ahead and throw away frames as we go to save
+    // footprint.
+    int frameSize = m_size.width() * m_size.height() * 4;
+    if (frameCount() * frameSize > cLargeAnimationCutoff) {
+        // Go ahead and decode the next frame so that it can rely on the previous frame.
+        frameAtIndex(m_currentFrame);
         
+        // Now throw away the previous frame.
+        if (m_frames[previousFrame].m_frame) {
+            m_frames[previousFrame].clear();
+            m_source.destroyFrameAtIndex(previousFrame);
+            m_decodedSize -= frameSize;
+            if (imageObserver())
+                imageObserver()->decodedSizeChanged(this, -frameSize);
+        }
+    }
+    
     // Kick off a timer to move to the next frame.
     m_frameTimer = new Timer<BitmapImage>(this, &BitmapImage::advanceAnimation);
     m_frameTimer->startOneShot(frameDurationAtIndex(m_currentFrame));
