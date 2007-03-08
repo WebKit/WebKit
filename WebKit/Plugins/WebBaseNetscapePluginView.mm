@@ -36,6 +36,7 @@
 #import "WebGraphicsExtras.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
+#import "WebKitSystemInterface.h"
 #import "WebNSDataExtras.h"
 #import "WebNSDictionaryExtras.h"
 #import "WebNSObjectExtras.h"
@@ -56,10 +57,8 @@
 #import <WebCore/FrameLoader.h> 
 #import <WebCore/FrameTree.h> 
 #import <WebCore/Page.h> 
-#import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebUIDelegate.h>
-#import <WebKitSystemInterface.h>
 #import <objc/objc-runtime.h>
 
 using namespace WebCore;
@@ -262,6 +261,28 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 }
 #endif
 
+#ifndef NP_NO_QUICKDRAW
+static UInt32 QDPixelFormatFromCGBitmapInfo(CGBitmapInfo bitmapInfo)
+{
+    UInt32 cgByteOrder = bitmapInfo & kCGBitmapByteOrderMask;
+    switch (cgByteOrder) {
+    case kCGBitmapByteOrderDefault:
+        return 0;
+    case kCGBitmapByteOrder16Little:
+        return k16LE555PixelFormat;
+    case kCGBitmapByteOrder32Little:
+        return k32BGRAPixelFormat;
+    case kCGBitmapByteOrder16Big:
+        return k16BE555PixelFormat;
+    case kCGBitmapByteOrder32Big:
+        return k32ARGBPixelFormat;
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+#endif
+
 - (PortState)saveAndSetNewPortStateForUpdate:(BOOL)forUpdate
 {
     ASSERT([self currentWindow] != nil);
@@ -372,13 +393,58 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             
             RgnHandle clipRegion = NewRgn();
             qdPortState->clipRegion = clipRegion;
-            
+
+            CGContextRef currentContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+            // If the current context is an offscreen bitmap, then we create a GWorld for it
+            bool offScreenContext = WKCGContextIsBitmapContext(currentContext);
+            if (offScreenContext) {
+                CGBitmapInfo contextBitmapInfo = CGBitmapContextGetBitmapInfo(currentContext);
+                GWorldPtr pOffScreenGWorld;
+                Rect offscreenBounds;
+                int rowBytes = CGBitmapContextGetBytesPerRow(currentContext);
+                offscreenBounds.top = 0;
+                offscreenBounds.left = 0;
+                offscreenBounds.right = CGBitmapContextGetWidth(currentContext);
+                offscreenBounds.bottom = CGBitmapContextGetHeight(currentContext);
+                UInt32 pixelFormat = QDPixelFormatFromCGBitmapInfo(contextBitmapInfo);
+                if (pixelFormat == 0) {
+                    // Not a valid pixel format - don't render at all.
+                    offscreenBounds.top = 0;
+                    offscreenBounds.left = 0;
+                    offscreenBounds.right = 0;
+                    offscreenBounds.bottom = 0;
+                    rowBytes = 0;
+                    pixelFormat = k32BGRAPixelFormat;
+                }
+                void* bits = CGBitmapContextGetData(currentContext);
+                QDErr err = NewGWorldFromPtr(&pOffScreenGWorld, pixelFormat, &offscreenBounds, 0, 0, 0, static_cast<char*>(bits), rowBytes);
+                ASSERT(pOffScreenGWorld && !err);
+                if (!err) {
+                    SetGWorld(pOffScreenGWorld, NULL);
+                    nPort.qdPort.port = pOffScreenGWorld;
+                    NSRect boundsInWindow = [self bounds];
+                    nPort.qdPort.portx = ((int32)-boundsInWindow.origin.x);
+                    nPort.qdPort.porty = ((int32)-boundsInWindow.origin.y);
+                    window.x = 0;
+                    window.y = 0;
+                    window.window = &nPort;
+
+                    // Get the clip bounds for the existing context and use that for the plug-in's window.clipRect.
+                    // The plug-in will intersect this clip rect with the port's dirty region clip constructed below. 
+                    CGRect contextClip = CGContextGetClipBoundingBox(currentContext);
+                    window.clipRect.top = contextClip.origin.y;
+                    window.clipRect.left = contextClip.origin.x;
+                    window.clipRect.right = window.clipRect.left + contextClip.size.width;
+                    window.clipRect.bottom = window.clipRect.top + contextClip.size.height;
+                }
+            }
             MacSetRectRgn(clipRegion,
                 window.clipRect.left + nPort.qdPort.portx, window.clipRect.top + nPort.qdPort.porty,
                 window.clipRect.right + nPort.qdPort.portx, window.clipRect.bottom + nPort.qdPort.porty);
             
             // Clip to dirty region so plug-in does not draw over already-drawn regions of the window that are
             // not going to be redrawn this update.  This forces plug-ins to play nice with z-index ordering.
+            Rect clipBounds;
             if (forUpdate) {
                 RgnHandle viewClipRegion = NewRgn();
                 
@@ -406,19 +472,19 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                 // Intersect the dirty region with the clip region, so that we only draw over dirty parts
                 SectRgn(clipRegion, viewClipRegion, clipRegion);
                 DisposeRgn(viewClipRegion);
+                if (offScreenContext) {
+                    GetRegionBounds(clipRegion, &clipBounds);
+                    OffsetRgn(clipRegion, -clipBounds.left, -clipBounds.top);
+                    port = nPort.qdPort.port;
+                }
             }
-            
-            qdPortState->forUpdate = forUpdate;
-            
+    
             // Switch to the port and set it up.
             SetPort(port);
-
             PenNormal();
             ForeColor(blackColor);
             BackColor(whiteColor);
-            
             SetOrigin(nPort.qdPort.portx, nPort.qdPort.porty);
-
             SetPortClipRegion(nPort.qdPort.port, clipRegion);
 
             if (forUpdate) {
@@ -429,8 +495,13 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
                 // Some plugins do their own BeginUpdate/EndUpdate.
                 // For those, we must make sure that the update region contains the area we want to draw.
+                if (offScreenContext)
+                    OffsetRgn(clipRegion, clipBounds.left, clipBounds.top);
                 InvalWindowRgn(windowRef, clipRegion);
             }
+            
+            qdPortState->forUpdate = forUpdate;
+
         }
         break;
 #endif /* NP_NO_QUICKDRAW */
@@ -526,6 +597,19 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 #ifndef NP_NO_QUICKDRAW
         case NPDrawingModelQuickDraw:
         {
+            CGContextRef currentContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+            
+            // If the current context is an offscreen bitmap, then we need to
+            // dispose its GWorld and restore the Window's GWorld
+            if (WKCGContextIsBitmapContext(currentContext)) {
+                GWorldPtr curGWorld;
+                GetGWorld(&curGWorld, NULL);
+                DisposeGWorld(curGWorld);
+                WindowRef windowRef = (WindowRef)[[self currentWindow] windowRef];
+                CGrafPtr port = GetWindowPort(windowRef);
+                SetGWorld(port, NULL);
+            }
+
             PortState_QD *qdPortState = (PortState_QD *)portState;
             WindowRef windowRef = (WindowRef)[[self currentWindow] windowRef];
             CGrafPtr port = GetWindowPort(windowRef);
@@ -542,7 +626,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             DisposeRgn(qdPortState->oldVisibleRegion);
             DisposeRgn(qdPortState->clipRegion);
 
-            SetPort(qdPortState->oldPort);
+            SetGWorld(qdPortState->oldPort, NULL);
         }
         break;
 #endif /* NP_NO_QUICKDRAW */

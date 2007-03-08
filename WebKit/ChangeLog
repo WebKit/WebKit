@@ -1,3 +1,19 @@
+2007-03-07  Bruce Q Hammond  <bruceq@apple.om>
+
+        Reviewed by Darin.
+
+        This fixes a problem with Netscape-style Plug-ins which draw through the Quickdraw APIs
+        being unable to render into offscreen bitmap contexts.
+
+        This patches both saveAndSetNewPortStateForUpdate: and restorePortState:
+        These methods now check the current context and see if appropriate setup/cleanup needs to be done
+        for offscreen rendering.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (QDPixelFormatFromCGBitmapInfo):
+        (-[WebBaseNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+        (-[WebBaseNetscapePluginView restorePortState:]):
+
 2007-03-07  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
