@@ -38,24 +38,22 @@ namespace WebCore {
         class Number : public Expression {
         public:
             Number(double);
-            bool isConstant() const;
         private:
-            virtual Value doEvaluate() const;
+            virtual Value evaluate() const;
             double m_value;
         };
 
         class StringExpression : public Expression {
         public:
             StringExpression(const String&);
-            bool isConstant() const;
         private:
-            virtual Value doEvaluate() const;
+            virtual Value evaluate() const;
             String m_value;
         };
 
         class Negative : public Expression {
         private:
-            virtual Value doEvaluate() const;
+            virtual Value evaluate() const;
         };
 
         class NumericOp : public Expression {
@@ -65,7 +63,7 @@ namespace WebCore {
             };
             NumericOp(Opcode, Expression* lhs, Expression* rhs);
         private:
-            virtual Value doEvaluate() const;
+            virtual Value evaluate() const;
             Opcode m_opcode;
         };
 
@@ -73,8 +71,8 @@ namespace WebCore {
         public:
             enum Opcode { OP_EQ, OP_NE, OP_GT, OP_LT, OP_GE, OP_LE };
             EqTestOp(Opcode, Expression* lhs, Expression* rhs);
+            virtual Value evaluate() const;
         private:
-            virtual Value doEvaluate() const;
             bool compare(const Value&, const Value&) const;
             Opcode m_opcode;
         };
@@ -83,16 +81,15 @@ namespace WebCore {
         public:
             enum Opcode { OP_And, OP_Or };
             LogicalOp(Opcode, Expression* lhs, Expression* rhs);
-            virtual bool isConstant() const;
         private:
             bool shortCircuitOn() const;
-            virtual Value doEvaluate() const;
+            virtual Value evaluate() const;
             Opcode m_opcode;
         };
 
         class Union : public Expression {
         private:
-            virtual Value doEvaluate() const;
+            virtual Value evaluate() const;
         };
 
         class Predicate : Noncopyable {
@@ -100,7 +97,6 @@ namespace WebCore {
             Predicate(Expression*);
             ~Predicate();
             bool evaluate() const;
-            void optimize();
         private:
             Expression* m_expr;
         };

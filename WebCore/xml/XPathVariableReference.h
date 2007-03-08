@@ -37,9 +37,8 @@ namespace WebCore {
         class VariableReference : public Expression {
         public:
             VariableReference(const String& name);
-            virtual bool isConstant() const;
         private:
-            virtual Value doEvaluate() const;
+            virtual Value evaluate() const;
             String m_name;
         };
 

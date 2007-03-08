@@ -1,3 +1,69 @@
+2007-03-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13004
+        Repeatedly calling XPathExpression.evaluate() causes crashes or memory leaks
+
+        Removed XPath::Expression::optimize() and related methods, since they were buggy and almost useless.
+        Merged doEvaluate() into evaluate(), since this was all evaluate() was doing after the above changes.
+
+        Test: fast/xpath/evaluate-twice.html
+
+        * xml/XPathExpression.cpp:
+        (WebCore::XPathExpression::evaluate):
+        * xml/XPathExpressionNode.cpp:
+        (WebCore::XPath::Expression::Expression):
+        (WebCore::XPath::Expression::~Expression):
+        * xml/XPathExpressionNode.h:
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunLast::evaluate):
+        (WebCore::XPath::FunPosition::evaluate):
+        (WebCore::XPath::FunId::evaluate):
+        (WebCore::XPath::FunLocalName::evaluate):
+        (WebCore::XPath::FunNamespaceURI::evaluate):
+        (WebCore::XPath::FunName::evaluate):
+        (WebCore::XPath::FunCount::evaluate):
+        (WebCore::XPath::FunString::evaluate):
+        (WebCore::XPath::FunConcat::evaluate):
+        (WebCore::XPath::FunStartsWith::evaluate):
+        (WebCore::XPath::FunContains::evaluate):
+        (WebCore::XPath::FunSubstringBefore::evaluate):
+        (WebCore::XPath::FunSubstringAfter::evaluate):
+        (WebCore::XPath::FunSubstring::evaluate):
+        (WebCore::XPath::FunStringLength::evaluate):
+        (WebCore::XPath::FunNormalizeSpace::evaluate):
+        (WebCore::XPath::FunTranslate::evaluate):
+        (WebCore::XPath::FunBoolean::evaluate):
+        (WebCore::XPath::FunNot::evaluate):
+        (WebCore::XPath::FunTrue::evaluate):
+        (WebCore::XPath::FunLang::evaluate):
+        (WebCore::XPath::FunFalse::evaluate):
+        (WebCore::XPath::FunNumber::evaluate):
+        (WebCore::XPath::FunSum::evaluate):
+        (WebCore::XPath::FunFloor::evaluate):
+        (WebCore::XPath::FunCeiling::evaluate):
+        (WebCore::XPath::FunRound::evaluate):
+        * xml/XPathPath.cpp:
+        (WebCore::XPath::Filter::evaluate):
+        (WebCore::XPath::LocationPath::evaluate):
+        (WebCore::XPath::Path::evaluate):
+        * xml/XPathPath.h:
+        * xml/XPathPredicate.cpp:
+        (WebCore::XPath::Number::evaluate):
+        (WebCore::XPath::StringExpression::evaluate):
+        (WebCore::XPath::Negative::evaluate):
+        (WebCore::XPath::NumericOp::evaluate):
+        (WebCore::XPath::EqTestOp::evaluate):
+        (WebCore::XPath::LogicalOp::evaluate):
+        (WebCore::XPath::Union::evaluate):
+        * xml/XPathPredicate.h:
+        * xml/XPathStep.cpp:
+        * xml/XPathStep.h:
+        * xml/XPathVariableReference.cpp:
+        (WebCore::XPath::VariableReference::evaluate):
+        * xml/XPathVariableReference.h:
+
 2007-03-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Tim H.

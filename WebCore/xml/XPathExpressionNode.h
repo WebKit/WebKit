@@ -63,11 +63,9 @@ namespace WebCore {
             Expression();
             virtual ~Expression();
 
-            virtual Value evaluate() const;
+            virtual Value evaluate() const = 0;
 
             void addSubExpression(Expression*);
-            void optimize();
-            virtual bool isConstant() const;
 
         protected:
             unsigned subExprCount() const;
@@ -75,10 +73,7 @@ namespace WebCore {
             const Expression* subExpr(unsigned) const;
 
         private:
-            virtual Value doEvaluate() const = 0;
-
             Vector<Expression*> m_subExpressions;
-            Value* m_constantValue;
         };
 
     }

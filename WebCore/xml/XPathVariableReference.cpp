@@ -40,12 +40,7 @@ VariableReference::VariableReference(const String& name)
 {
 }
 
-bool VariableReference::isConstant() const
-{
-    return false;
-}
-
-Value VariableReference::doEvaluate() const
+Value VariableReference::evaluate() const
 {
     HashMap<String, String>& bindings = evaluationContext().variableBindings;
     if (!bindings.contains(m_name))

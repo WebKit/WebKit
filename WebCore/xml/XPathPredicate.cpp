@@ -47,12 +47,7 @@ Number::Number(double value)
 {
 }
 
-bool Number::isConstant() const
-{
-    return true;
-}
-
-Value Number::doEvaluate() const
+Value Number::evaluate() const
 {
     return m_value;
 }
@@ -62,17 +57,12 @@ StringExpression::StringExpression(const String& value)
 {
 }
 
-bool StringExpression::isConstant() const
-{
-    return true;
-}
-
-Value StringExpression::doEvaluate() const
+Value StringExpression::evaluate() const
 {
     return m_value;
 }
 
-Value Negative::doEvaluate() const
+Value Negative::evaluate() const
 {
     Value p(subExpr(0)->evaluate());
     return -p.toNumber();
@@ -85,7 +75,7 @@ NumericOp::NumericOp(Opcode opcode, Expression* lhs, Expression* rhs)
     addSubExpression(rhs);
 }
 
-Value NumericOp::doEvaluate() const
+Value NumericOp::evaluate() const
 {
     Value lhs(subExpr(0)->evaluate());
     Value rhs(subExpr(1)->evaluate());
@@ -204,7 +194,7 @@ bool EqTestOp::compare(const Value& lhs, const Value& rhs) const
     return false;
 }
 
-Value EqTestOp::doEvaluate() const
+Value EqTestOp::evaluate() const
 {
     Value lhs(subExpr(0)->evaluate());
     Value rhs(subExpr(1)->evaluate());
@@ -227,13 +217,7 @@ bool LogicalOp::shortCircuitOn() const
     return true;  //true or bar
 }
 
-bool LogicalOp::isConstant() const
-{
-    return subExpr(0)->isConstant() &&
-           subExpr(0)->evaluate().toBoolean() == shortCircuitOn();
-}
-
-Value LogicalOp::doEvaluate() const
+Value LogicalOp::evaluate() const
 {
     Value lhs(subExpr(0)->evaluate());
 
@@ -246,7 +230,7 @@ Value LogicalOp::doEvaluate() const
     return subExpr(1)->evaluate().toBoolean();
 }
 
-Value Union::doEvaluate() const
+Value Union::evaluate() const
 {
     // FIXME: This algorithm doesn't return nodes in document order, as it should.
     Value lhs = subExpr(0)->evaluate();
@@ -292,11 +276,6 @@ bool Predicate::evaluate() const
         return EqTestOp(EqTestOp::OP_EQ, createFunction("position"), new Number(result.toNumber())).evaluate().toBoolean();
 
     return result.toBoolean();
-}
-
-void Predicate::optimize()
-{
-    m_expr->optimize();
 }
 
 }

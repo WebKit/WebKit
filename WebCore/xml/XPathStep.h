@@ -55,8 +55,6 @@ namespace WebCore {
 
             NodeVector evaluate(Node* context) const;
 
-            void optimize();
-
         private:
             NodeVector nodesInAxis(Node* context) const;
             NodeVector nodeTestMatches(const NodeVector& nodes) const;

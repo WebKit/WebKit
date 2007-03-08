@@ -1,3 +1,13 @@
+2007-03-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13004
+        Repeatedly calling XPathExpression.evaluate() causes crashes or memory leaks
+
+        * fast/xpath/evaluate-twice-expected.txt: Added.
+        * fast/xpath/evaluate-twice.html: Added.
+
 2007-03-07  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

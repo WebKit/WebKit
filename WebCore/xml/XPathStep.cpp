@@ -264,12 +264,6 @@ NodeVector Step::nodeTestMatches(const NodeVector& nodes) const
     return matches;
 }
 
-void Step::optimize()
-{
-    for (unsigned i = 0; i < m_predicates.size(); i++)
-        m_predicates[i]->optimize();
-}
-
 Node::NodeType Step::primaryNodeType(Axis axis) const
 {
     switch (axis) {

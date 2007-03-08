@@ -46,9 +46,9 @@ namespace WebCore {
             Filter(Expression*, const Vector<Predicate*>& = Vector<Predicate*>());
             virtual ~Filter();
 
-        private:
-            virtual Value doEvaluate() const;
+            virtual Value evaluate() const;
 
+        private:
             Expression* m_expr;
             Vector<Predicate*> m_predicates;
         };
@@ -58,14 +58,10 @@ namespace WebCore {
             LocationPath();
             virtual ~LocationPath();
 
-            using Expression::evaluate;
+            virtual Value evaluate() const;
             Value evaluate(const NodeVector& startNodes) const;
 
-            void optimize();
-
         private:
-            virtual Value doEvaluate() const;
-
             Vector<Step*> m_steps;
             bool m_absolute;
 
@@ -78,9 +74,9 @@ namespace WebCore {
             Path(Filter*, LocationPath*);
             virtual ~Path();
 
-        private:
-            virtual Value doEvaluate() const;
+            virtual Value evaluate() const;
 
+        private:
             Filter* m_filter;
             LocationPath* m_path;
         };
