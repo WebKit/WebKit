@@ -1,5 +1,16 @@
 2007-03-07  David Hyatt  <hyatt@apple.com>
 
+        Use CGImageRelease instead of CFRelease.
+
+        Reviewed by aroben
+
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::FrameData::clear):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::destroyFrameAtIndex):
+
+2007-03-07  David Hyatt  <hyatt@apple.com>
+
         Fix a regression where the cache size overflows because of a double
         subtraction per resource when they got removed from the cache.  Add an
         assert to adjustSize to detect this case in the future.

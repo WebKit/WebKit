@@ -145,7 +145,7 @@ void ImageSource::destroyFrameAtIndex(size_t index)
     // a new image with NULL options.  This will cause the cache/no-cache flags to mismatch, and it will then drop
     // its reference to the old decoded image.
     CGImageRef image = CGImageSourceCreateImageAtIndex(m_decoder, index, NULL);
-    CFRelease(image);
+    CGImageRelease(image);
 }
 
 float ImageSource::frameDurationAtIndex(size_t index)
