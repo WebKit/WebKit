@@ -130,7 +130,7 @@ void Cache::prune()
     unsigned unreferencedResourcesSize = m_currentSize - m_liveResourcesSize;
     if (unreferencedResourcesSize < m_maximumSize)
         return;
-
+    
     // Our first pass over the objects in the cache will destroy any decoded data in unreferenced objects.
     unsigned size = m_lruLists.size();
     for (int i = size - 1; i >= 0; i--) {
@@ -346,9 +346,12 @@ void Cache::resourceAccessed(CachedResource* resource)
 
 void Cache::adjustSize(bool live, int delta)
 {
+    ASSERT(delta >= 0 || ((int)m_currentSize + delta >= 0));
     m_currentSize += delta;
-    if (live)
+    if (live) {
+        ASSERT(delta >= 0 || ((int)m_liveResourcesSize + delta >= 0));
         m_liveResourcesSize += delta;
+    }
 }
 
 Cache::Statistics Cache::getStatistics()

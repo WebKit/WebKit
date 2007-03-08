@@ -144,6 +144,7 @@ private:
     static void drawPatternCallback(void* info, CGContext*);
 #endif
     
+protected:
     Vector<char> m_data; // The encoded raw data for the image. 
     ImageObserver* m_imageObserver;
 };

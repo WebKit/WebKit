@@ -56,6 +56,8 @@ BitmapImage::BitmapImage(ImageObserver* observer)
 
 BitmapImage::~BitmapImage()
 {
+    // Null out the image observer so that we don't incorrectly communicate that decoded data is being destroyed during destruction.
+    m_imageObserver = 0;
     destroyDecodedData();
     stopAnimation();
 }
@@ -70,6 +72,7 @@ void BitmapImage::destroyDecodedData(bool incremental)
             if (m_frames[i].m_frame) {
                 sizeChange -= frameSize;
                 m_frames[i].clear();
+                m_source.destroyFrameAtIndex(i);
             }
         }
 
