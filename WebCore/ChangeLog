@@ -2,6 +2,14 @@
 
         Reviewed by Tim H.
 
+        Remove unused #import from Objective-C bindings and cleanup the order of #imports.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+
+2007-03-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Tim H.
+
         Make sure the baseURI attribute generates for private Objective-C bindings.
 
         * dom/Node.idl:

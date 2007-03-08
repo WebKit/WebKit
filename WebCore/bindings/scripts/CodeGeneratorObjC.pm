@@ -1,7 +1,7 @@
 # 
 # Copyright (C) 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com> 
-# Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+# Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
 # Copyright (C) 2006, 2007 Apple Inc.
 #
@@ -976,14 +976,16 @@ sub GenerateImplementation
 
     # - INCLUDES -
     push(@implContentHeader, "\n#import \"config.h\"\n");
-    push(@implContentHeader, "\n#import \"logging.h\"\n");
-    push(@implContentHeader, "\n#import \"ThreadCheck.h\"\n");
+
     my $conditionalString;
     if ($conditional) {
         $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
-        push(@implContentHeader, "\n#if ${conditionalString}\n\n");
+        push(@implContentHeader, "\n#if ${conditionalString}\n");
     }
-    push(@implContentHeader, "#import \"$classHeaderName.h\"\n\n");
+
+    push(@implContentHeader, "\n#import \"$classHeaderName.h\"\n\n");
+
+    push(@implContentHeader, "#import \"ThreadCheck.h\"\n");
     push(@implContentHeader, "#import <wtf/GetPtr.h>\n\n");
 
     if ($codeGenerator->IsSVGAnimatedType($interfaceName)) {
