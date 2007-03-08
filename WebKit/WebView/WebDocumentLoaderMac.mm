@@ -30,6 +30,7 @@
 
 #import <JavaScriptCore/Assertions.h>
 #import <WebCore/SubstituteData.h>
+#import <WebCore/FoundationExtras.h>
 
 using namespace WebCore;
 
@@ -44,7 +45,7 @@ WebDocumentLoaderMac::WebDocumentLoaderMac(const ResourceRequest& request, const
 void WebDocumentLoaderMac::setDataSource(WebDataSource *dataSource)
 {
     ASSERT(!m_dataSource);
-    [dataSource retain];
+    HardRetain(dataSource);
     m_dataSource = dataSource;
 }
 
@@ -59,7 +60,7 @@ void WebDocumentLoaderMac::attachToFrame()
     ASSERT(m_loadCount == 0);
 
     if (m_hasEverBeenDetached)
-        [m_dataSource retain];
+        HardRetain(m_dataSource);
 }
 
 void WebDocumentLoaderMac::detachFromFrame()
@@ -67,7 +68,7 @@ void WebDocumentLoaderMac::detachFromFrame()
     DocumentLoader::detachFromFrame();
   
     m_hasEverBeenDetached = true;
-    [m_dataSource release];
+    HardRelease(m_dataSource);
 }
 
 void WebDocumentLoaderMac::increaseLoadCount()
@@ -75,7 +76,7 @@ void WebDocumentLoaderMac::increaseLoadCount()
     ASSERT(m_dataSource);
     
     if (m_loadCount == 0)
-        [m_dataSource retain];
+        HardRetain(m_dataSource);
     
     m_loadCount++;
 }
@@ -87,5 +88,5 @@ void WebDocumentLoaderMac::decreaseLoadCount()
     m_loadCount--;
 
     if (m_loadCount == 0)
-        [m_dataSource release];
+        HardRelease(m_dataSource);
 }

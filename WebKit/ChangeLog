@@ -1,5 +1,18 @@
 2007-03-07  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Darin.
+
+        Use HardRetain/HardRelease.
+        
+        * WebView/WebDocumentLoaderMac.mm:
+        (WebDocumentLoaderMac::setDataSource):
+        (WebDocumentLoaderMac::attachToFrame):
+        (WebDocumentLoaderMac::detachFromFrame):
+        (WebDocumentLoaderMac::increaseLoadCount):
+        (WebDocumentLoaderMac::decreaseLoadCount):
+
+2007-03-07  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Maciej.
 
         <rdar://problem/4961259> 
