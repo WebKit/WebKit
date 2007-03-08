@@ -433,10 +433,10 @@ static UInt32 QDPixelFormatFromCGBitmapInfo(CGBitmapInfo bitmapInfo)
                     // Get the clip bounds for the existing context and use that for the plug-in's window.clipRect.
                     // The plug-in will intersect this clip rect with the port's dirty region clip constructed below. 
                     CGRect contextClip = CGContextGetClipBoundingBox(currentContext);
-                    window.clipRect.top = contextClip.origin.y;
-                    window.clipRect.left = contextClip.origin.x;
-                    window.clipRect.right = window.clipRect.left + contextClip.size.width;
-                    window.clipRect.bottom = window.clipRect.top + contextClip.size.height;
+                    window.clipRect.top = (uint16)contextClip.origin.y;
+                    window.clipRect.left = (uint16)contextClip.origin.x;
+                    window.clipRect.right = (uint16)window.clipRect.left + contextClip.size.width;
+                    window.clipRect.bottom = (uint16)window.clipRect.top + contextClip.size.height;
                 }
             }
             MacSetRectRgn(clipRegion,
