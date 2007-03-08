@@ -55,7 +55,7 @@ String stringValue(Node* node)
                 
                 for (Node* n = node->firstChild(); n; n = n->traverseNextNode(node))
                     if (n->isTextNode())
-                        str += nodeValue(n);
+                        str += n->nodeValue();
 
                 return str;
             }

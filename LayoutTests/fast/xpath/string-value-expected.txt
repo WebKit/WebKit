@@ -5,6 +5,7 @@ PASS doc.evaluate('.', COMMENT, null, XPathResult.STRING_TYPE, null).stringValue
 PASS doc.evaluate('.', CDATA, null, XPathResult.STRING_TYPE, null).stringValue is '-cdata-'
 PASS doc.evaluate('.', TEXT, null, XPathResult.STRING_TYPE, null).stringValue is '0  '
 PASS doc.evaluate('.', EMPTY, null, XPathResult.STRING_TYPE, null).stringValue is ''
+PASS doc.evaluate('.', ATTR, null, XPathResult.STRING_TYPE, null).stringValue is '<&nbsp;>'
 PASS successfullyParsed is true
 
 TEST COMPLETE

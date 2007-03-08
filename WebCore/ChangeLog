@@ -1,3 +1,10 @@
+2007-03-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Build fix.
+
+        * xml/XPathUtil.cpp:
+        (WebCore::XPath::stringValue):
+
 2007-03-08  David Hyatt  <hyatt@apple.com>
 
         This patch dramatically reduces the memory consumed by animated images.  For large animated GIFs (defined for

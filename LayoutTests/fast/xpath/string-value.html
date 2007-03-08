@@ -41,6 +41,7 @@
     shouldBe("doc.evaluate('.', CDATA, null, XPathResult.STRING_TYPE, null).stringValue", "'-cdata-'");
     shouldBe("doc.evaluate('.', TEXT, null, XPathResult.STRING_TYPE, null).stringValue", "'0  '");
     shouldBe("doc.evaluate('.', EMPTY, null, XPathResult.STRING_TYPE, null).stringValue", "''");
+    shouldBe("doc.evaluate('.', ATTR, null, XPathResult.STRING_TYPE, null).stringValue", "'<&nbsp;>'");
 
     var successfullyParsed = true;
 

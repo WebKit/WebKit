@@ -1,5 +1,12 @@
 2007-03-08  Alexey Proskuryakov  <ap@webkit.org>
 
+        Added a test for attribute node string-value.
+
+        * fast/xpath/string-value-expected.txt:
+        * fast/xpath/string-value.html:
+
+2007-03-08  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         http://bugs.webkit.org/show_bug.cgi?id=13006
