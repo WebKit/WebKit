@@ -1,3 +1,11 @@
+2007-03-09  Shrikant Gangoda  <shrikant.gangoda@celunite.com>
+
+        Gdk build fix.
+
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+        (WebCore::ImageSource::~ImageSource):
+        (WebCore::ImageSource::clear):
+
 2007-03-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.
