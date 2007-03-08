@@ -1,3 +1,15 @@
+2007-03-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13006
+        XPath string-value is broken for some node types
+
+        Test: fast/xpath/string-value.html
+
+        * xml/XPathUtil.cpp:
+        (WebCore::XPath::stringValue): Fix it :-)
+
 2007-03-07  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam.

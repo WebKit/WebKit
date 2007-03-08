@@ -46,14 +46,16 @@ String stringValue(Node* node)
         case Node::PROCESSING_INSTRUCTION_NODE:
         case Node::COMMENT_NODE:
         case Node::TEXT_NODE:
+        case Node::CDATA_SECTION_NODE:
+        case Node::XPATH_NAMESPACE_NODE:
             return node->nodeValue();
         default:
-            if (isRootDomNode(node)
-                 || node->nodeType() == Node::ELEMENT_NODE) {
+            if (isRootDomNode(node) || node->nodeType() == Node::ELEMENT_NODE) {
                 String str;
                 
                 for (Node* n = node->firstChild(); n; n = n->traverseNextNode(node))
-                    str += stringValue(n);
+                    if (n->isTextNode())
+                        str += nodeValue(n);
 
                 return str;
             }
