@@ -527,7 +527,9 @@ void Editor::removeFormattingAndStyle()
     // FIXME: We should be able to leave this to insertText, but its delete operation
     // doesn't preserve the style we're about to set.
     deleteSelectionWithSmartDelete(false);
-    
+    // Normally, deleting a fully selected anchor and then inserting text will re-create
+    // the removed anchor, but we don't want that behavior here. 
+    setRemovedAnchor(0);
     // Insert the content with the default style.
     m_frame->setTypingStyle(defaultStyle.get());
     TypingCommand::insertText(document, string, true);

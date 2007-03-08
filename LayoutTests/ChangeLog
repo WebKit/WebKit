@@ -1,3 +1,15 @@
+2007-03-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar::/problem/5049671>
+        Gmail Editor: With linked text, Remove Formatting doesn't always remove underline
+
+        * editing/execCommand/5049671-expected.checksum: Added.
+        * editing/execCommand/5049671-expected.png: Added.
+        * editing/execCommand/5049671-expected.txt: Added.
+        * editing/execCommand/5049671.html: Added.
+
 2007-03-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

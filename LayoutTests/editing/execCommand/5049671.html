@@ -1,0 +1,9 @@
+<p>This tests for a bug where Remove Format would fail to remove links that were fully selected.  You should see plain text only in the editable region below.</p>
+<div id="div" contenteditable="true"><a href="http://www.google.com/">This shouldn't be a link or underlined.</a></div>
+
+<script>
+var div = document.getElementById("div");
+div.focus();
+document.execCommand("SelectAll");
+document.execCommand("RemoveFormat");
+</script>
