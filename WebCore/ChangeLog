@@ -1,4 +1,17 @@
-2007-03-09  Shrikant Gangoda  <shrikant.gangoda@celunite.com>
+2007-03-08  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by NOBODY (build fix).
+
+        Added missing file for r20059:
+        <rdar://problem/4708689> -- REGRESSION: Some symbols with 2-byte display as garbage in Hotmail.
+
+        File was taken from this svn repository which contained versions of ucnv.h and ucnv_err.h
+        that were identical to ours:
+        http://source.icu-project.org/repos/icu/icu/tags/release-3-2/source/common/unicode/ucnv_cb.h
+
+        * icu/unicode/ucnv_cb.h: Added.
+
+2007-03-08  Shrikant Gangoda  <shrikant.gangoda@celunite.com>
 
         Gdk build fix.
 
