@@ -1,3 +1,38 @@
+2007-03-07  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4961259> 
+        REGRESSION: Bumper Car 2.1.1 - Crash at WebCore::FrameLoader::receivedMainResourceError when encountering a invalid URL address
+        
+        (The crash was already fixed, this actually makes Bumper Car load the error page correctly.)
+        
+        This adds a "load counter" to the document loader and keeps the data source retained for as long as something is loading. 
+        
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchWillSendRequest):
+        Increase the load counter.
+        
+        (WebFrameLoaderClient::dispatchDidFinishLoading):
+        (WebFrameLoaderClient::dispatchDidFailLoading):
+        Decrease the load counter,
+        
+        * WebView/WebDocumentLoaderMac.h:
+        * WebView/WebDocumentLoaderMac.mm:
+        (WebDocumentLoaderMac::WebDocumentLoaderMac):
+        
+        (WebDocumentLoaderMac::attachToFrame):
+        If the document loader has been detached, make sure to retain its data source here.
+        
+        (WebDocumentLoaderMac::detachFromFrame):
+        Release the data source.
+        
+        (WebDocumentLoaderMac::increaseLoadCount):
+        Retain the data source if load count was 0.
+        
+        (WebDocumentLoaderMac::decreaseLoadCount):
+        Release the data source if load count becomes 0
+
 2007-03-07  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

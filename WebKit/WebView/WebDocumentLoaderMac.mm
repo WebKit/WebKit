@@ -35,33 +35,57 @@ using namespace WebCore;
 
 WebDocumentLoaderMac::WebDocumentLoaderMac(const ResourceRequest& request, const SubstituteData& substituteData)
     : DocumentLoader(request, substituteData)
-    , m_detachedDataSource(nil)
+    , m_dataSource(nil)
+    , m_hasEverBeenDetached(false)
+    , m_loadCount(0)
 {
 }
 
 void WebDocumentLoaderMac::setDataSource(WebDataSource *dataSource)
 {
-    m_dataSource = dataSource;    
+    ASSERT(!m_dataSource);
+    [dataSource retain];
+    m_dataSource = dataSource;
 }
 
 WebDataSource *WebDocumentLoaderMac::dataSource() const
 {
-    return m_dataSource.get();
+    return m_dataSource;
 }
 
 void WebDocumentLoaderMac::attachToFrame()
 {
     DocumentLoader::attachToFrame();
-    if (m_detachedDataSource) {
-        ASSERT(!m_dataSource);
-        m_dataSource = m_detachedDataSource;
-        m_detachedDataSource = nil;
-    }
+    ASSERT(m_loadCount == 0);
+
+    if (m_hasEverBeenDetached)
+        [m_dataSource retain];
 }
 
 void WebDocumentLoaderMac::detachFromFrame()
 {
     DocumentLoader::detachFromFrame();
-    m_detachedDataSource = m_dataSource.get();
-    m_dataSource = nil;
+  
+    m_hasEverBeenDetached = true;
+    [m_dataSource release];
+}
+
+void WebDocumentLoaderMac::increaseLoadCount()
+{
+    ASSERT(m_dataSource);
+    
+    if (m_loadCount == 0)
+        [m_dataSource retain];
+    
+    m_loadCount++;
+}
+
+void WebDocumentLoaderMac::decreaseLoadCount()
+{
+    ASSERT(m_loadCount > 0);
+
+    m_loadCount--;
+
+    if (m_loadCount == 0)
+        [m_dataSource release];
 }
