@@ -1,3 +1,13 @@
+2007-03-07  Anrong Hu  <huanr@yahoo.com>
+
+        Reviewed by Maciej.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=12535
+        Bug 12535: Stack-optimizing compilers can trick GC into freeing in-use objects
+
+        * kjs/internal.cpp:
+        (KJS::StringImp::toObject): Copy val onto the stack so it is not subject to garbage collection.
+
 2007-03-07  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix for non-multiple-thread folks.
