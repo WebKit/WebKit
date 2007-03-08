@@ -78,6 +78,8 @@ module core {
 
         // Introduced in DOM Level 3:
 
+        readonly attribute DOMString       baseURI;
+
                  // FIXME: the spec says this can also raise on retrieval.
                  attribute DOMString       textContent
                      setter raises(DOMException);
@@ -89,8 +91,6 @@ module core {
         DOMString          lookupNamespaceURI(in DOMString prefix);
 
 #if !defined(LANGUAGE_OBJECTIVE_C)
-        readonly attribute DOMString       baseURI;
-
         // DocumentPosition
         const unsigned short      DOCUMENT_POSITION_DISCONNECTED = 0x01;
         const unsigned short      DOCUMENT_POSITION_PRECEDING    = 0x02;

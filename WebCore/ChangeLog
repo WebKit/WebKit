@@ -1,3 +1,11 @@
+2007-03-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Tim H.
+
+        Make sure the baseURI attribute generates for private Objective-C bindings.
+
+        * dom/Node.idl:
+
 2007-03-07  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.
