@@ -1,3 +1,20 @@
+2007-03-07  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4874059>
+        REGRESSION: Painter IX:register - Crash in WebCore:: ResourceLoader::willSendRequest()
+
+        If a load is done from inside of an error delegate method that is called because we cancel another load, 
+        the first load should be ignored since this is what shipping WebKit does. 
+        
+        (Actually, it does load the page in the data source but doesn't do anything with it since the data source
+        won't have a web frame).
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load):
+        Just bail out if m_isStoppingLoad is true.
+
 2007-03-07  David Hyatt  <hyatt@apple.com>
 
         Use CGImageRelease instead of CFRelease.

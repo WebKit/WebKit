@@ -1801,6 +1801,9 @@ void FrameLoader::load(const KURL& URL, const String& referrer, FrameLoadType ne
 
 void FrameLoader::load(const ResourceRequest& request)
 {
+    if (m_inStopAllLoaders)
+        return;
+    
     load(request, SubstituteData());
 }
 
