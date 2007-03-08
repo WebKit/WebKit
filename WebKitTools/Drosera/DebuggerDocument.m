@@ -179,7 +179,7 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
 - (NSString *)breakpointEditorHTML
 {
-    return [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"breakpointEditor" ofType:@"html"]];
+    return [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"breakpointEditor" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL];
 }
 
 #pragma mark -
@@ -511,7 +511,7 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
     NSBeginInformationalAlertSheet(title, nil, nil, nil, [sender window], nil, NULL, NULL, NULL, message);
 }
 
-- (void)scriptConfirmSheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(int *)contextInfo
+- (void)scriptConfirmSheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(long *)contextInfo
 {
     *contextInfo = returnCode;
 }
@@ -525,7 +525,7 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
         message = [message substringFromIndex:(range.location + range.length)];
     }
 
-    int result = NSNotFound;
+    long result = NSNotFound;
     NSBeginInformationalAlertSheet(title, nil, @"Cancel", nil, [sender window], self, @selector(scriptConfirmSheetDidEnd:returnCode:contextInfo:), NULL, &result, message);
 
     while (result == NSNotFound) {

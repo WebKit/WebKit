@@ -1,3 +1,14 @@
+2007-03-08  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Antti.
+
+        Fix compiler warnings when building Drosera as 64-bit.
+
+        * Drosera/DebuggerDocument.m:
+        (-[DebuggerDocument breakpointEditorHTML]): Move away from deprecated NSString method.
+        (-[DebuggerDocument scriptConfirmSheetDidEnd:returnCode:contextInfo:]): Update type.
+        (-[DebuggerDocument webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:]): Update type to accommodate constant.
+
 2007-03-07  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej.
