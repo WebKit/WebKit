@@ -1,3 +1,15 @@
+2007-03-07  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13002
+          Incomplete repaint of inset outlines
+
+        Test: fast/repaint/outline-inset.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+
 2007-03-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Antti.
