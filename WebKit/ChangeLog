@@ -4,9 +4,13 @@
         
         * Plugins/WebBaseNetscapePluginView.mm:
 
-2007-03-07  Bruce Q Hammond  <bruceq@apple.om>
+2007-03-07  Bruce Q Hammond  <bruceq@apple.com>
 
         Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12515
+          Plug-ins that draw through the Quickdraw interface fail in a CGBitmapContex.
+          <rdar://problem/4975122>
 
         This fixes a problem with Netscape-style Plug-ins which draw through the Quickdraw APIs
         being unable to render into offscreen bitmap contexts.
