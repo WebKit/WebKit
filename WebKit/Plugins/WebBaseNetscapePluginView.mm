@@ -57,6 +57,7 @@
 #import <WebCore/FrameLoader.h> 
 #import <WebCore/FrameTree.h> 
 #import <WebCore/Page.h> 
+#import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 #import <objc/objc-runtime.h>
