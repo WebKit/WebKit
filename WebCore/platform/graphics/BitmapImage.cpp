@@ -37,9 +37,9 @@
 
 namespace WebCore {
 
-// Animated images >1MB are considered large enough that we'll only hang on to
+// Animated images >5MB are considered large enough that we'll only hang on to
 // one frame at a time.
-const unsigned cLargeAnimationCutoff = 1048576;
+const unsigned cLargeAnimationCutoff = 5242880;
 
 BitmapImage::BitmapImage(ImageObserver* observer)
     : Image(observer)
@@ -92,7 +92,7 @@ void BitmapImage::destroyDecodedData(bool incremental)
                 imageObserver()->decodedSizeChanged(this, sizeChange);
         }
         
-        if (!incremental && frameCount() * frameSize > cLargeAnimationCutoff) {
+        if (!incremental) {
             // Reset the image source, since Image I/O has an underlying cache that it uses
             // while animating that it seems to never clear.
             m_source.clear();

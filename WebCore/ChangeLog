@@ -1,3 +1,15 @@
+2007-03-08  David Hyatt  <hyatt@apple.com>
+
+        Fix 2% performance regression on the PLT.  Increase the large animated
+        image cutoff from 1MB to 5MB.
+
+        In addition when pruning we will aggressively discard image sources.
+
+        Reviewed by ggaren
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyDecodedData):
+
 2007-03-08  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by John.
