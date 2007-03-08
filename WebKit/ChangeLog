@@ -1,3 +1,17 @@
+2007-03-08  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/4664697> highlighter SPI needs a node parameter to give more context
+
+        Added new methods to the WebHTMLHighlighter protocol that include the DOMNode being painted.
+
+        * WebCoreSupport/WebFrameBridge.mm:
+        (-[WebFrameBridge customHighlightRect:forLine:representedNode:WebCore::]):
+        (-[WebFrameBridge paintCustomHighlight:forBox:onLine:behindText:entireLine:representedNode:WebCore::]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebHTMLViewPrivate.h:
+
 2007-03-08  Anders Carlsson  <acarlsson@apple.com>
 
         Try fixing the buildbot build.

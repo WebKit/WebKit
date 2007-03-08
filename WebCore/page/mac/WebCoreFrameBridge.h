@@ -315,8 +315,8 @@ typedef enum ObjectElementType {
 - (void)dashboardRegionsChanged:(NSMutableDictionary *)regions;
 - (void)willPopupMenu:(NSMenu *)menu;
 
-- (NSRect)customHighlightRect:(NSString*)type forLine:(NSRect)lineRect;
-- (void)paintCustomHighlight:(NSString*)type forBox:(NSRect)boxRect onLine:(NSRect)lineRect behindText:(BOOL)text entireLine:(BOOL)line;
+- (NSRect)customHighlightRect:(NSString*)type forLine:(NSRect)lineRect representedNode:(WebCore::Node *)node;
+- (void)paintCustomHighlight:(NSString*)type forBox:(NSRect)boxRect onLine:(NSRect)lineRect behindText:(BOOL)text entireLine:(BOOL)line representedNode:(WebCore::Node *)node;
 
 - (WebCore::KeyboardUIMode)keyboardUIMode;
 

@@ -677,10 +677,10 @@ void RenderBox::paintCustomHighlight(int tx, int ty, const AtomicString& type, b
     if (r) {
         FloatRect rootRect(tx + r->xPos(), ty + r->selectionTop(), r->width(), r->selectionHeight());
         FloatRect imageRect(tx + m_x, rootRect.y(), width(), rootRect.height());
-        document()->frame()->paintCustomHighlight(type, imageRect, rootRect, behindText, false);
+        document()->frame()->paintCustomHighlight(type, imageRect, rootRect, behindText, false, node());
     } else {
         FloatRect imageRect(tx + m_x, ty + m_y, width(), height());
-        document()->frame()->paintCustomHighlight(type, imageRect, imageRect, behindText, false);
+        document()->frame()->paintCustomHighlight(type, imageRect, imageRect, behindText, false, node());
     }
 }
 #endif

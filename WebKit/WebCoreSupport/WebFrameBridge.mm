@@ -800,7 +800,7 @@ static BOOL loggedObjectCacheSize = NO;
         [wd webView:wv willPopupMenu:menu];
 }
 
-- (NSRect)customHighlightRect:(NSString*)type forLine:(NSRect)lineRect
+- (NSRect)customHighlightRect:(NSString*)type forLine:(NSRect)lineRect representedNode:(WebCore::Node *)node
 {
     ASSERT(_frame != nil);
     NSView *documentView = [[_frame frameView] documentView];
@@ -809,11 +809,12 @@ static BOOL loggedObjectCacheSize = NO;
 
     WebHTMLView *webHTMLView = (WebHTMLView *)documentView;
     id<WebHTMLHighlighter> highlighter = [webHTMLView _highlighterForType:type];
+    if ([(NSObject *)highlighter respondsToSelector:@selector(highlightRectForLine:representedNode:)])
+        return [highlighter highlightRectForLine:lineRect representedNode:kit(node)];
     return [highlighter highlightRectForLine:lineRect];
 }
 
-- (void)paintCustomHighlight:(NSString*)type forBox:(NSRect)boxRect onLine:(NSRect)lineRect behindText:(BOOL)text
-                  entireLine:(BOOL)line
+- (void)paintCustomHighlight:(NSString*)type forBox:(NSRect)boxRect onLine:(NSRect)lineRect behindText:(BOOL)text entireLine:(BOOL)line representedNode:(WebCore::Node *)node
 {
     ASSERT(_frame != nil);
     NSView *documentView = [[_frame frameView] documentView];
@@ -822,7 +823,10 @@ static BOOL loggedObjectCacheSize = NO;
 
     WebHTMLView *webHTMLView = (WebHTMLView *)documentView;
     id<WebHTMLHighlighter> highlighter = [webHTMLView _highlighterForType:type];
-    [highlighter paintHighlightForBox:boxRect onLine:lineRect behindText:text entireLine:line];
+    if ([(NSObject *)highlighter respondsToSelector:@selector(paintHighlightForBox:onLine:behindText:entireLine:representedNode:)])
+        [highlighter paintHighlightForBox:boxRect onLine:lineRect behindText:text entireLine:line representedNode:kit(node)];
+    else
+        [highlighter paintHighlightForBox:boxRect onLine:lineRect behindText:text entireLine:line];
 }
 
 - (NSString*)imageTitleForFilename:(NSString*)filename size:(NSSize)size

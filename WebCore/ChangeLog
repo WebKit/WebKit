@@ -1,3 +1,24 @@
+2007-03-08  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/4664697> highlighter SPI needs a node parameter to give more context
+
+        Pass the RenderObject's node to customHighlightLineRect and paintCustomHighlight.
+
+        * page/Frame.h:
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::customHighlightLineRect):
+        (WebCore::Frame::paintCustomHighlight):
+        * page/mac/WebCoreFrameBridge.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintCustomHighlight):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintCustomHighlight):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::addHighlightOverflow):
+        (WebCore::RootInlineBox::paintCustomHighlight):
+
 2007-03-08  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
