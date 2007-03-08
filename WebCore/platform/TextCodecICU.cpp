@@ -30,7 +30,9 @@
 #include "CString.h"
 #include "PlatformString.h"
 #include <unicode/ucnv.h>
+#include <unicode/ucnv_cb.h>
 #include <wtf/Assertions.h>
+#include <wtf/HashMap.h>
 
 using std::auto_ptr;
 using std::min;
@@ -147,6 +149,7 @@ TextCodecICU::TextCodecICU(const TextEncoding& encoding)
     : m_encoding(encoding)
     , m_numBufferedBytes(0)
     , m_converterICU(0)
+    , m_needsGBKFallbacks(false)
 {
 }
 
@@ -170,6 +173,7 @@ void TextCodecICU::createICUConverter() const
     ASSERT(!m_converterICU);
 
     UErrorCode err;
+    m_needsGBKFallbacks = m_encoding == "GBK";
 
     if (cachedConverterICU) {
         err = U_ZERO_ERROR;
@@ -235,6 +239,47 @@ String TextCodecICU::decode(const char* bytes, size_t length, bool flush)
     return String::adopt(result);
 }
 
+// We need to apply these fallbacks ourselves as they are not currently supported by ICU and
+// they were provided by the old TEC encoding path
+// Needed to fix <rdar://problem/4708689>
+static HashMap<UChar32, UChar>& gbkEscapes() {
+    static HashMap<UChar32, UChar> escapes;
+    if (escapes.isEmpty()) {
+        escapes.add(0x01F9, 0xE7C8);
+        escapes.add(0x1E3F, 0xE7C7);
+        escapes.add(0x22EF, 0x2026);
+        escapes.add(0x301C, 0xFF5E);
+    }
+        
+    return escapes;
+}
+
+static void gbkCallbackEscape(const void* context, UConverterFromUnicodeArgs* fromUArgs, const UChar* codeUnits, int32_t length,
+                              UChar32 codePoint, UConverterCallbackReason reason, UErrorCode* err) 
+{
+    if (gbkEscapes().contains(codePoint)) {
+        UChar outChar = gbkEscapes().get(codePoint);
+        const UChar* source = &outChar;
+        *err = U_ZERO_ERROR;
+        ucnv_cbFromUWriteUChars(fromUArgs, &source, source + 1, 0, err);
+        return;
+    }
+    UCNV_FROM_U_CALLBACK_ESCAPE(context, fromUArgs, codeUnits, length, codePoint, reason, err);
+}
+
+static void gbkCallbackSubstitute(const void* context, UConverterFromUnicodeArgs* fromUArgs, const UChar* codeUnits, int32_t length,
+                                  UChar32 codePoint, UConverterCallbackReason reason, UErrorCode* err) 
+{
+    if (gbkEscapes().contains(codePoint)) {
+        UChar outChar = gbkEscapes().get(codePoint);
+        const UChar* source = &outChar;
+        *err = U_ZERO_ERROR;
+        ucnv_cbFromUWriteUChars(fromUArgs, &source, source + 1, 0, err);
+        return;
+    }
+    UCNV_FROM_U_CALLBACK_SUBSTITUTE(context, fromUArgs, codeUnits, length, codePoint, reason, err);
+}
+
 CString TextCodecICU::encode(const UChar* characters, size_t length, bool allowEntities)
 {
     if (!length)
@@ -253,14 +298,14 @@ CString TextCodecICU::encode(const UChar* characters, size_t length, bool allowE
 
     const UChar* source = copy.characters();
     const UChar* sourceLimit = source + copy.length();
-
+    
     UErrorCode err = U_ZERO_ERROR;
 
     if (allowEntities)
-        ucnv_setFromUCallBack(m_converterICU, UCNV_FROM_U_CALLBACK_ESCAPE, UCNV_ESCAPE_XML_DEC, 0, 0, &err);
+        ucnv_setFromUCallBack(m_converterICU, m_needsGBKFallbacks ? gbkCallbackEscape : UCNV_FROM_U_CALLBACK_ESCAPE, UCNV_ESCAPE_XML_DEC, 0, 0, &err);
     else {
         ucnv_setSubstChars(m_converterICU, "?", 1, &err);
-        ucnv_setFromUCallBack(m_converterICU, UCNV_FROM_U_CALLBACK_SUBSTITUTE, 0, 0, 0, &err);
+        ucnv_setFromUCallBack(m_converterICU, m_needsGBKFallbacks ? gbkCallbackSubstitute : UCNV_FROM_U_CALLBACK_SUBSTITUTE, 0, 0, 0, &err);
     }
 
     ASSERT(U_SUCCESS(err));

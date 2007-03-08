@@ -1,3 +1,12 @@
+2007-03-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Adding GBK character encoding tests
+
+        * fast/encoding/char-encoding-expected.txt:
+        * fast/encoding/char-encoding.html:
+
 2007-03-08  Alexey Proskuryakov  <ap@webkit.org>
 
         Added a test for attribute node string-value.
