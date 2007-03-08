@@ -89,9 +89,11 @@ for my $file (sort @files) {
             if ($target eq "WebCore") {
                 next if $shortName eq "Frame.o";
                 next if $shortName eq "Node.o";
-                next if $shortName eq "RenderObject.o";
                 next if $shortName eq "Range.o";
+                next if $shortName eq "RenderObject.o";
                 next if $shortName eq "SubresourceLoader.o";
+                next if $shortName eq "bidi.o";
+                next if $shortName eq "kjs_events.o";
             }
         }
 

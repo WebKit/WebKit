@@ -1,3 +1,11 @@
+2007-03-07  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej.
+
+        Update check-for-global-initializers to ignore new debug initializers in bidi.o and kjs_events.o.
+
+        * Scripts/check-for-global-initializers:
+
 2007-03-07  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam.
