@@ -209,6 +209,10 @@ void BitmapImage::startAnimation()
     if (m_frameTimer || !shouldAnimate() || frameCount() <= 1)
         return;
 
+    // Don't advance the animation until the current frame has completely loaded.
+    if (!m_source.frameIsCompleteAtIndex(m_currentFrame))
+        return;
+
     m_frameTimer = new Timer<BitmapImage>(this, &BitmapImage::advanceAnimation);
     m_frameTimer->startOneShot(frameDurationAtIndex(m_currentFrame));
 }
@@ -275,7 +279,10 @@ void BitmapImage::advanceAnimation(Timer<BitmapImage>* timer)
         }
     }
     
-    // Kick off a timer to move to the next frame.
+    // Kick off a timer to move to the next frame, but only if the current frame is complete.
+    if (!m_source.frameIsCompleteAtIndex(m_currentFrame))
+        return;
+
     m_frameTimer = new Timer<BitmapImage>(this, &BitmapImage::advanceAnimation);
     m_frameTimer->startOneShot(frameDurationAtIndex(m_currentFrame));
 }

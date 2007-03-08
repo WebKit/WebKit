@@ -155,6 +155,11 @@ void ImageSource::destroyFrameAtIndex(size_t index)
     CGImageRelease(image);
 }
 
+bool ImageSource::frameIsCompleteAtIndex(size_t index)
+{
+    return CGImageSourceGetStatusAtIndex(m_decoder, index) == kCGImageStatusComplete;
+}
+
 float ImageSource::frameDurationAtIndex(size_t index)
 {
     float duration = 0;
