@@ -204,7 +204,7 @@ void DocumentLoader::setRequest(const ResourceRequest& req)
     // redirect at this point, but we can replace a committed dataSource.
     bool handlingUnreachableURL = false;
 
-    handlingUnreachableURL = substituteData().isValid();
+    handlingUnreachableURL = m_substituteData.isValid() && !m_substituteData.failingURL().isEmpty();
 
     if (handlingUnreachableURL)
         m_committed = false;

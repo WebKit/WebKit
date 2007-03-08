@@ -1,3 +1,23 @@
+2007-03-07  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/4981000> 
+        http://bugs.webkit.org/show_bug.cgi?id=12634
+        REGRESSION: crash loading web archive (12634)
+        
+        The reason this bug wasn't always reproducible is that it involved sending an event to a plugin while 
+        the page was loading. Before we send the event to the plugin we defer loads. The problem was that
+        MainResourceLoader::setDefersLoad would not work with data loads.
+        
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setRequest):
+        Only set m_committed to false if we also have a valid unreachable URL.
+        
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::setDefersLoading):
+        Make sure to stop and start data loads.
+
 2007-03-07  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Not reviewed.
