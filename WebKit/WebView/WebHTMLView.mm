@@ -69,6 +69,7 @@
 #import "WebViewInternal.h"
 #import <AppKit/NSAccessibility.h>
 #import <ApplicationServices/ApplicationServices.h>
+#import <dlfcn.h>
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/Document.h>
 #import <WebCore/Editor.h>
@@ -94,7 +95,6 @@
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
-#import <mach-o/dyld.h> 
 
 using namespace WebCore;
 
@@ -145,10 +145,6 @@ void _NSResetKillRingOperationFlag(void);
 @interface NSSpellChecker (CurrentlyPrivateForTextView)
 - (void)learnWord:(NSString *)word;
 @end
-
-// Used to avoid linking with ApplicationServices framework for _DCMDictionaryServiceWindowShow
-extern "C" void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
-    NSString *inFrameworkName, const char *inFuncName, const struct mach_header **);
 
 // By imaging to a width a little wider than the available pixels,
 // thin pages will be scaled down a little, matching the way they
@@ -5185,32 +5181,44 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     // so bail out early to avoid that.
     if ([[[self selectedString] _webkit_stringByTrimmingWhitespace] length] == 0)
         return;
-    
+
     // We soft link to get the function that displays the dictionary (either pop-up window or app) to avoid the performance
     // penalty of linking to another framework. This function changed signature as well as framework between Tiger and Leopard,
     // so the two cases are handled separately.
+
 #ifdef BUILDING_ON_TIGER
-    static bool lookedForFunction = false;
-    
     typedef OSStatus (*ServiceWindowShowFunction)(id inWordString, NSRect inWordBoundary, UInt16 inLineDirection);
-    static ServiceWindowShowFunction dictionaryServiceWindowShow;
-    
+    const char *frameworkPath = "/System/Library/Frameworks/ApplicationServices.framework/Frameworks/LangAnalysis.framework/LangAnalysis";
+    const char *functionName = "DCMDictionaryServiceWindowShow";
+#else
+    typedef void (*ServiceWindowShowFunction)(id unusedDictionaryRef, id inWordString, CFRange selectionRange, id unusedFont, CGPoint textOrigin, Boolean verticalText, id unusedTransform);
+    const char *frameworkPath = "/System/Library/Frameworks/DictionaryServices.framework/DictionaryServices";
+    const char *functionName = "DCSShowDictionaryServiceWindow";
+#endif
+
+    static bool lookedForFunction = false;
+    static ServiceWindowShowFunction dictionaryServiceWindowShow = NULL;
+
     if (!lookedForFunction) {
-        const struct mach_header *frameworkImageHeader = 0;
-        dictionaryServiceWindowShow = reinterpret_cast<ServiceWindowShowFunction>(
-            _NSSoftLinkingGetFrameworkFuncPtr(@"ApplicationServices", @"LangAnalysis", "_DCMDictionaryServiceWindowShow", &frameworkImageHeader));
+        void* langAnalysisFramework = dlopen(frameworkPath, RTLD_LAZY);
+        ASSERT(langAnalysisFramework);
+        if (langAnalysisFramework)
+            dictionaryServiceWindowShow = (ServiceWindowShowFunction)dlsym(langAnalysisFramework, functionName);
         lookedForFunction = true;
     }
-    
+
+    ASSERT(dictionaryServiceWindowShow);
     if (!dictionaryServiceWindowShow) {
-        LOG_ERROR("Couldn't find _DCMDictionaryServiceWindowShow"); 
+        NSLog(@"Couldn't find the %s function in %s", functionName, frameworkPath); 
         return;
     }
-    
+
+    NSAttributedString *attrString = [self selectedAttributedString];
+
+#ifdef BUILDING_ON_TIGER
     // FIXME: must check for right-to-left here
     NSWritingDirection writingDirection = NSWritingDirectionLeftToRight;
-    
-    NSAttributedString *attrString = [self selectedAttributedString];
+
     // FIXME: the dictionary API expects the rect for the first line of selection. Passing
     // the rect for the entire selection, as we do here, positions the pop-up window near
     // the bottom of the selection rather than at the selected word.
@@ -5219,37 +5227,19 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     NSData *data = [attrString RTFFromRange:NSMakeRange(0, [attrString length]) documentAttributes:nil];
     dictionaryServiceWindowShow(data, rect, (writingDirection == NSWritingDirectionRightToLeft) ? 1 : 0);
 #else
-    static bool lookedForFunction = false;
-    
-    typedef void (*ServiceWindowShowFunction)(id unusedDictionaryRef, id inWordString, CFRange selectionRange, id unusedFont, CGPoint textOrigin, Boolean verticalText, id unusedTransform);
-    static ServiceWindowShowFunction dictionaryServiceWindowShow;
-    
-    if (!lookedForFunction) {
-        const struct mach_header *frameworkImageHeader = 0;
-        dictionaryServiceWindowShow = reinterpret_cast<ServiceWindowShowFunction>(
-            _NSSoftLinkingGetFrameworkFuncPtr(nil, @"DictionaryServices", "_DCSShowDictionaryServiceWindow", &frameworkImageHeader));
-        lookedForFunction = true;
-    }
-        
-    if (!dictionaryServiceWindowShow) {
-        LOG_ERROR("Couldn't find _DCSShowDictionaryServiceWindow"); 
-        return;
-    }
-    
     // The DictionaryServices API requires the origin, in CG screen coordinates, of the first character of text in the selection.
     // FIXME 4945808: We approximate this in a way that works well when a single word is selected, and less well in some other cases
     // (but no worse than we did in Tiger)
-    NSAttributedString *attrString = [self selectedAttributedString];
     NSRect rect = core([self _frame])->visibleSelectionRect();
-    
+
     NSDictionary *attributes = [attrString fontAttributesInRange:NSMakeRange(0,1)];
     NSFont *font = [attributes objectForKey:NSFontAttributeName];
     if (font)
         rect.origin.y += [font ascender];
-    
+
     NSPoint windowPoint = [self convertPoint:rect.origin toView:nil];
     NSPoint screenPoint = [[self window] convertBaseToScreen:windowPoint];
-    
+
     dictionaryServiceWindowShow(nil, attrString, CFRangeMake(0, [attrString length]), nil, 
                                 coreGraphicsScreenPointForAppKitScreenPoint(screenPoint), false, nil);
 #endif    

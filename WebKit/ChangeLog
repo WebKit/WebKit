@@ -1,3 +1,14 @@
+2007-03-09  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4976254> Please get off _NSSoftLinkingGetFrameworkFuncPtr
+
+        Use dlopen and dlsym to access the DCSShowDictionaryServiceWindow function.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
+
 2007-03-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Justin.
