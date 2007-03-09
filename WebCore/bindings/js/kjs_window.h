@@ -129,6 +129,7 @@ namespace KJS {
     static bool isSafeScript(const ScriptInterpreter *origin, const ScriptInterpreter *target);
     Location *location() const;
     Selection *selection() const;
+    bool find(const WebCore::String&, bool, bool, bool, bool, bool, bool) const;
     BarInfo *locationbar(ExecState*) const;
     BarInfo *menubar(ExecState*) const;
     BarInfo *personalbar(ExecState*) const;
@@ -179,7 +180,7 @@ namespace KJS {
            Onfocus, Onkeydown, Onkeypress, Onkeyup, Onload, Onmousedown, Onmousemove,
            Onmouseout, Onmouseover, Onmouseup, OnWindowMouseWheel, Onreset, Onresize, Onscroll, Onsearch,
            Onselect, Onsubmit, Onunload, Onbeforeunload,
-           Statusbar, Toolbar, FrameElement, ShowModalDialog };
+           Statusbar, Toolbar, FrameElement, ShowModalDialog, Find };
 
   private:
     JSValue* getListener(ExecState*, const WebCore::AtomicString& eventType) const;

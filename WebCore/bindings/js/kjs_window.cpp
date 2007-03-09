@@ -323,6 +323,7 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   onbeforeunload Window::Onbeforeunload DontDelete
   frameElement  Window::FrameElement    DontDelete|ReadOnly
   showModalDialog Window::ShowModalDialog    DontDelete|Function 1
+  find            Window::Find               DontDelete|Function 7
 @end
 */
 KJS_IMPLEMENT_PROTOTYPE_FUNCTION(WindowFunc)
@@ -416,6 +417,12 @@ Selection *Window::selection() const
   if (!m_selection)
     m_selection = new Selection(m_frame);
   return m_selection;
+}
+
+bool Window::find(const String& string, bool caseSensitive, bool backwards, bool wrap, bool wholeWord, bool searchInFrames, bool showDialog) const
+{
+    // FIXME (13016): Support wholeWord, searchInFrames and showDialog
+    return m_frame->findString(string, !backwards, caseSensitive, wrap, false);
 }
 
 BarInfo *Window::locationbar(ExecState *exec) const
@@ -1824,6 +1831,16 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     JSValue* result = showModalDialog(exec, window, args);
     return result;
   }
+  case Window::Find:
+      if (!window->isSafeScript(exec))
+          return jsUndefined();
+      return jsBoolean(window->find(args[0]->toString(exec),
+                                    args[1]->toBoolean(exec),
+                                    args[2]->toBoolean(exec),
+                                    args[3]->toBoolean(exec),
+                                    args[4]->toBoolean(exec),
+                                    args[5]->toBoolean(exec),
+                                    args[6]->toBoolean(exec)));
   }
   return jsUndefined();
 }

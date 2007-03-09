@@ -241,7 +241,6 @@ bool execDelete(Frame* frame, bool, const String&)
     return true;
 }
 
-// FIXME: Come up with a way to send more parameters to execCommand so that we can support all of the features of Frame::findString.
 bool execFindString(Frame* frame, bool, const String& value)
 {
     return frame->findString(value, true, false, true, false);

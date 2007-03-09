@@ -2,6 +2,17 @@
 
         Reviewed by harrison
         
+        <http://bugs.webkit.org/show_bug.cgi?id=12244>
+        FCKeditor: Find dialog doesn't work
+
+        * editing/execCommand/12244-expected.txt: Added.
+        * editing/execCommand/12244.html: Added.
+        * fast/dom/Window/window-properties-expected.txt:
+
+2007-03-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
         <http://bugs.webkit.org/show_bug.cgi?id=13000>
         Range.createContextualFragment is not supported
 

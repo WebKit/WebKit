@@ -1,3 +1,18 @@
+2007-03-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        <http://bugs.webkit.org/show_bug.cgi?id=12244>
+        FCKeditor: Find dialog doesn't work
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::find): Added.  This function doesn't yet 
+        support whole word searches, searching in subframes, or
+        opening the find dialog.
+        (KJS::WindowFunc::callAsFunction):
+        * bindings/js/kjs_window.h:
+        (KJS::Window::):
+
 2007-03-08  David Hyatt  <hyatt@apple.com>
 
         Fix regression from throwing away frames of large animated images.  Alter
