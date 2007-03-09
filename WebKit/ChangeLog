@@ -1,3 +1,34 @@
+2007-03-08  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/4561772> HIWebView does not exist for 64-bit
+
+        Update HIWebView and friends to work without QuickDraw.
+
+        Changes are gleaned from the 64-bit support inside HICocoaView.  The main
+        fact of interest are that all Carbon windows must have compositing enabled
+        so the code paths that aren't accessible are #ifdef'd out.  Conveniently
+        these are the exact code paths that make use of QuickDraw.
+
+        There are currently minor event-handling and invalidation issues running as
+        64-bit that are not present in 32-bit.
+
+        * Carbon/CarbonUtils.m:
+        * Carbon/CarbonWindowAdapter.m:
+        * Carbon/CarbonWindowFrame.m:
+        * Carbon/HIViewAdapter.m:
+        (SetViewNeedsDisplay):
+        * Carbon/HIWebView.m:
+        (Draw):
+        (Click):
+        (SyncFrame):
+        (StartUpdateObserver):
+        (StopUpdateObserver):
+        (UpdateObserver):
+        * WebKit.LP64.exp: Removed.
+        * WebKit.xcodeproj/project.pbxproj: Always use WebKit.exp.
+
 2007-03-08  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by John.

@@ -26,9 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// <rdar://problem/4561772> HIWebView needs to be reworked to not use QuickDraw, needed for 64-bit
-#ifndef __LP64__
-
 #include "HIWebView.h"
 
 #include "CarbonWindowAdapter.h"
@@ -189,7 +186,6 @@ static OSStatus			WindowHandler( EventHandlerCallRef inCallRef, EventRef inEvent
 
 static void				StartUpdateObserver( HIWebView* view );
 static void				StopUpdateObserver( HIWebView* view );
-static void 			UpdateObserver( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info );
 
 static inline void HIRectToQDRect( const HIRect* inRect, Rect* outRect )
 {
@@ -332,21 +328,23 @@ Draw( HIWebView* inView, RgnHandle limitRgn, CGContextRef inContext )
 	Rect				drawRect;
 	HIRect				hiRect;
 	bool				createdContext = false;
-    GrafPtr				port;
 
-    if ( !inView->fIsComposited )
+#ifndef __LP64__
+    if (!inView->fIsComposited)
     {
-		Rect	portRect;
+        GrafPtr port;
+        Rect portRect;
 
         GetPort( &port );
-		GetPortBounds( port, &portRect );
+        GetPortBounds( port, &portRect );
         CreateCGContextForPort( port, &inContext );
         SyncCGContextOriginWithPort( inContext, port );
- 		CGContextTranslateCTM( inContext, 0, (portRect.bottom - portRect.top) );
-		CGContextScaleCTM( inContext, 1, -1 );
+        CGContextTranslateCTM( inContext, 0, (portRect.bottom - portRect.top) );
+        CGContextScaleCTM( inContext, 1, -1 );
         createdContext = true;
     }
-    
+#endif
+
 	HIViewGetBounds( inView->fViewRef, &bounds );
 
     CGContextRef savedContext = WKNSWindowOverrideCGContext(inView->fKitWindow, inContext);
@@ -464,21 +462,21 @@ GetWindowRef( HIWebView* inView )
 //----------------------------------------------------------------------------------
 //
 static OSStatus
-Click( HIWebView* inView, EventRef inEvent )
+Click(HIWebView* inView, EventRef inEvent)
 {
     NSEvent *kitEvent = WKCreateNSEventWithCarbonClickEvent(inEvent, GetWindowRef(inView));
 
-    if ( !inView->fIsComposited )
-        StartUpdateObserver( inView );
-        
+    if (!inView->fIsComposited)
+        StartUpdateObserver(inView);
+
     [inView->fKitWindow sendEvent:kitEvent];
 
-    if ( !inView->fIsComposited )
-        StopUpdateObserver( inView );
+    if (!inView->fIsComposited)
+        StopUpdateObserver(inView);
 
-	[kitEvent release];
+    [kitEvent release];
 
-	return noErr;
+    return noErr;
 }
 
 //----------------------------------------------------------------------------------
@@ -825,6 +823,7 @@ SyncFrame( HIWebView* inView )
             [inView->fWebView setFrameOrigin: origin];
             [inView->fWebView setFrameSize: *(NSSize*)&frame.size];
         }
+#ifndef __LP64__
         else
         {
             GrafPtr			port = GetWindowPort( GetControlOwner( inView->fViewRef ) );
@@ -857,7 +856,8 @@ SyncFrame( HIWebView* inView )
             [inView->fWebView setFrameOrigin: *(NSPoint*)&frame.origin];
             [inView->fWebView setFrameSize: *(NSSize*)&frame.size];
         }
-	}
+#endif
+    }
 }
 
 //----------------------------------------------------------------------------------
@@ -1526,6 +1526,12 @@ MissingParameter:
 }
 
 
+#ifdef __LP64__
+static void StartUpdateObserver(HIWebView* view) {};
+static void StopUpdateObserver(HIWebView* view) {};
+#else
+static void UpdateObserver(CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info);
+
 static void
 StartUpdateObserver( HIWebView* view )
 {
@@ -1649,5 +1655,4 @@ UpdateObserver( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void 
         DisposeRgn( region );
     }
 }
-
 #endif

@@ -32,19 +32,12 @@
 #import <Foundation/NSGeometry.h>
 #import <Foundation/NSString.h>
 #import <HIToolbox/MacWindows.h>
-#import <assert.h>
 
 #import "WebTypesInternal.h"
 
 @interface NSView(Secret)
 - (void)_setWindow:(NSWindow *)window;
 @end
-
-// Turn off the assertions in this file.
-// If this is commented out, uncomment it before committing to CVS.  M.P. Warning - 10/18/01
-#undef assert
-#define assert(X)
-
 
 @class NSButton;
 /*

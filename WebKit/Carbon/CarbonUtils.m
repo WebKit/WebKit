@@ -26,9 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// <rdar://problem/4561772> HIWebView needs to be reworked to not use QuickDraw, needed for 64-bit
-#ifndef __LP64__
-
 #include "CarbonUtils.h"
 #import <WebKitSystemInterface.h>
 
@@ -130,4 +127,3 @@ WebConvertNSImageToCGImageRef(
 	return image;
 }
 
-#endif
