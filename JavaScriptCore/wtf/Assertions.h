@@ -102,7 +102,9 @@ void WTFLog(const char *file, int line, const char *function, WTFLogChannel *cha
 
 /* CRASH -- gets us into the debugger or the crash reporter -- signals are ignored by the crash reporter so we must do better */
 
+#ifndef CRASH
 #define CRASH() *(int *)(uintptr_t)0xbbadbeef = 0
+#endif
 
 /* ASSERT, ASSERT_WITH_MESSAGE, ASSERT_NOT_REACHED */
 

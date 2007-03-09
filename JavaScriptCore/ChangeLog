@@ -1,3 +1,12 @@
+2007-03-08  MorganL  <morganl.webkit@yahoo.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13018
+        Bug 13018: allow embedders to override the definition of CRASH.
+
+        * wtf/Assertions.h: make it possible to override CRASH.
+
 2007-03-07  Anrong Hu  <huanr@yahoo.com>
 
         Reviewed by Maciej.
