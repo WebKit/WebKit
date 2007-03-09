@@ -397,7 +397,7 @@ static UInt32 QDPixelFormatFromCGBitmapInfo(CGBitmapInfo bitmapInfo)
 
             CGContextRef currentContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
             // If the current context is an offscreen bitmap, then we create a GWorld for it
-            bool offScreenContext = WKCGContextIsBitmapContext(currentContext);
+            bool offScreenContext = currentContext && WKCGContextIsBitmapContext(currentContext);
             if (offScreenContext) {
                 CGBitmapInfo contextBitmapInfo = CGBitmapContextGetBitmapInfo(currentContext);
                 GWorldPtr pOffScreenGWorld;
@@ -602,7 +602,7 @@ static UInt32 QDPixelFormatFromCGBitmapInfo(CGBitmapInfo bitmapInfo)
             
             // If the current context is an offscreen bitmap, then we need to
             // dispose its GWorld and restore the Window's GWorld
-            if (WKCGContextIsBitmapContext(currentContext)) {
+            if (currentContext && WKCGContextIsBitmapContext(currentContext)) {
                 GWorldPtr curGWorld;
                 GetGWorld(&curGWorld, NULL);
                 DisposeGWorld(curGWorld);
