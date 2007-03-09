@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -61,9 +59,6 @@ public:
     String encoding() const { return m_enctype; }
     void setEncoding(const String& enctype) { setEnctype(enctype); }
 
-    String boundary() const { return m_boundary; }
-    void setBoundary(const String&);
-
     bool autoComplete() const { return m_autocomplete; }
 
     virtual void parseMappedAttribute(MappedAttribute*);
@@ -104,11 +99,18 @@ public:
     virtual String target() const;
     void setTarget(const String&);
 
+    // FIXME: Change this to be private after getting rid of all the clients.
+    Vector<HTMLGenericFormElement*> formElements;
+
+private:
+    void parseEnctype(const String&);
+    PassRefPtr<FormData> formData(const char* boundary) const;
+    unsigned formElementIndex(HTMLGenericFormElement*);
+
     friend class HTMLFormCollection;
 
     HTMLCollection::CollectionInfo* collectionInfo;
 
-    Vector<HTMLGenericFormElement*> formElements;
     Vector<HTMLImageElement*> imgElements;
     String m_url;
     String m_target;
@@ -123,12 +125,6 @@ public:
     bool m_inreset : 1;
     bool m_malformed : 1;
     bool m_preserveAcrossRemove : 1;
-
-private:
-    void parseEnctype(const String&);
-    PassRefPtr<FormData> formData() const;
-
-    unsigned formElementIndex(HTMLGenericFormElement*);
 
     String oldNameAttr;
 };

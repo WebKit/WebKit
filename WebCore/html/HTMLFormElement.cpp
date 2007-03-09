@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -27,6 +25,7 @@
 #include "config.h"
 #include "HTMLFormElement.h"
 
+#include "Base64.h"
 #include "CString.h"
 #include "csshelper.h"
 #include "Event.h"
@@ -59,7 +58,6 @@ HTMLFormElement::HTMLFormElement(Document* doc)
     m_doingsubmit = false;
     m_inreset = false;
     m_enctype = "application/x-www-form-urlencoded";
-    m_boundary = "----------0xKhTmLbOuNdArY";
     m_malformed = false;
     m_preserveAcrossRemove = false;
 }
@@ -196,9 +194,28 @@ static DeprecatedCString encodeCString(const CString& cstr)
     return encoded;
 }
 
-PassRefPtr<FormData> HTMLFormElement::formData() const
+static int randomNumber()
 {
-    DeprecatedCString enc_string = ""; // used for non-multipart data
+    static bool randomSeeded = false;
+
+#if PLATFORM(DARWIN)
+    if (!randomSeeded) {
+        srandomdev();
+        randomSeeded = true;
+    }
+    return random();
+#else
+    if (!randomSeeded) {
+        srand(static_cast<unsigned>(time(0)));
+        randomSeeded = true;
+    }
+    return rand();
+#endif
+}
+
+PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
+{
+    DeprecatedCString enc_string = "";
 
     String str = m_acceptcharset;
     str.replace(',', ' ');
@@ -245,7 +262,7 @@ PassRefPtr<FormData> HTMLFormElement::formData() const
                 else
                 {
                     DeprecatedCString hstr("--");
-                    hstr += m_boundary.deprecatedString().latin1();
+                    hstr += boundary;
                     hstr += "\r\n";
                     hstr += "Content-Disposition: form-data; name=\"";
                     hstr += item.m_data.data();
@@ -294,8 +311,11 @@ PassRefPtr<FormData> HTMLFormElement::formData() const
     }
 
 
-    if (m_multipart)
-        enc_string = ("--" + m_boundary.deprecatedString() + "--\r\n").ascii();
+    if (m_multipart) {
+        enc_string = "--";
+        enc_string += boundary;
+        enc_string += "--\r\n";
+    }
 
     result->appendData(enc_string.data(), enc_string.length());
     return result;
@@ -313,11 +333,6 @@ void HTMLFormElement::parseEnctype(const String& type)
         m_enctype = "application/x-www-form-urlencoded";
         m_multipart = false;
     }
-}
-
-void HTMLFormElement::setBoundary( const String& bound )
-{
-    m_boundary = bound;
 }
 
 bool HTMLFormElement::prepareSubmit(Event* event)
@@ -343,6 +358,30 @@ bool HTMLFormElement::prepareSubmit(Event* event)
 void HTMLFormElement::submit()
 {
     submit(0, false);
+}
+
+// Returns a 0-terminated C string in the vector.
+static void getUniqueBoundaryString(Vector<char>& boundary)
+{
+    // Start with an informative prefix.
+    const char boundaryPrefix[] = "----WebKit-form-boundary-";
+    boundary.append(boundaryPrefix, strlen(boundaryPrefix));
+
+    // Append 16 characters of base 64 randomness.
+    Vector<char> randomBytes;
+    for (int i = 0; i < 3; ++i) {
+        int randomness = randomNumber();
+        randomBytes.append(static_cast<char>(randomness >> 24));
+        randomBytes.append(static_cast<char>(randomness >> 16));
+        randomBytes.append(static_cast<char>(randomness >> 8));
+        randomBytes.append(static_cast<char>(randomness));
+    }
+    Vector<char> randomBase64;
+    base64Encode(randomBytes, randomBase64);
+    boundary.append(randomBase64);
+
+    // Add a 0 at the end so we can use this as a C-style string.
+    boundary.append(0);
 }
 
 void HTMLFormElement::submit(Event* event, bool activateSubmitButton)
@@ -385,12 +424,19 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(true);
 
     if (!m_post)
+
+    if (m_post) {
+        if (!m_multipart)
+            frame->loader()->submitForm("POST", m_url, formData(0), m_target, enctype(), String(), event);
+        else {
+            Vector<char> boundary;
+            getUniqueBoundaryString(boundary);
+            frame->loader()->submitForm("POST", m_url, formData(boundary.data()), m_target, enctype(), boundary.data(), event);
+        }
+    } else {
         m_multipart = false;
-    
-    if (m_post)
-        frame->loader()->submitForm("POST", m_url, formData(), m_target, enctype(), boundary(), event);
-    else
-        frame->loader()->submitForm("GET", m_url, formData(), m_target, String(), String(), event);
+        frame->loader()->submitForm("GET", m_url, formData(0), m_target, String(), String(), event);
+    }
 
     if (needButtonActivation && firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(false);

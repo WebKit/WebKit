@@ -1,3 +1,28 @@
+2007-03-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - <rdar://problem/4470381> multipart/form-data boundary security vulnerability
+
+        By making the form data boundary a string with some random data in it, we reduce
+        the possibility that anyone could take advantage of it by creating a file that
+        intentionally has the boundary string in it.
+
+        * html/HTMLFormElement.h: Removed boundary(), setBoundary(), and m_boundary.
+        Marked a lot more stuff private.
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::HTMLFormElement): Removed code to initialize
+        m_boundary.
+        (WebCore::randomNumber): Added. Function that returns a random number, including
+        seeding the random number generator the first time it's called. For now, usees the more
+        random function random() on Mac OS X and the more-standard rand() on other platforms.
+        (WebCore::HTMLFormElement::formData): Take a parameter with the form boundary string,
+        and use that instead of m_boundary.
+        (WebCore::getUniqueBoundaryString): Added. Makes a boundary string using random numbers
+        and base 64 encoding.
+        (WebCore::HTMLFormElement::submit): Call getUniqueBoundaryString and pass the boundary
+        string into formData for multipart form posts.
+
 2007-03-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele.
