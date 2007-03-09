@@ -2,7 +2,7 @@ from webkit.basesteps import ShellCommand, SVN, Test, Compile, UploadCommand
 from buildbot.status.builder import SUCCESS, FAILURE, WARNINGS
 
 class CheckOutSource(SVN):
-    svnurl = "svn://anoncvs.opensource.apple.com/svn/webkit/trunk"
+    svnurl = "http://svn.webkit.org/repository/webkit/trunk"
     mode = "update"
     def __init__(self, *args, **kwargs):
         SVN.__init__(self, svnurl=self.svnurl, mode=self.mode, *args, **kwargs)
