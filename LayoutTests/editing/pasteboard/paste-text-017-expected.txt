@@ -40,14 +40,10 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (2,30) size 780x28
             RenderBR {BR} at (0,0) size 0x28
           RenderBlock {DIV} at (2,58) size 780x56
-            RenderBlock (anonymous) at (0,0) size 780x0
-              RenderInline {SPAN} at (0,0) size 0x0
-            RenderBlock (anonymous) at (0,0) size 780x28
-              RenderBlock {DIV} at (0,0) size 780x28
-                RenderText {#text} at (0,0) size 36x28
-                  text run at (0,0) width 36: "two"
+            RenderBlock {DIV} at (0,0) size 780x28
+              RenderText {#text} at (0,0) size 36x28
+                text run at (0,0) width 36: "two"
             RenderBlock (anonymous) at (0,28) size 780x28
-              RenderInline {SPAN} at (0,0) size 0x0
               RenderBR {BR} at (0,0) size 0x28
           RenderBlock {DIV} at (2,114) size 780x28
             RenderText {#text} at (0,0) size 49x28

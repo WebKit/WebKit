@@ -45,8 +45,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #FF0000)]
           RenderText {#text} at (2,2) size 78x28
             text run at (2,2) width 78: "line one"
-          RenderInline {SPAN} at (0,0) size 0x18
-            RenderBR {BR} at (80,24) size 0x0
+          RenderBR {BR} at (80,24) size 0x0
           RenderText {#text} at (2,30) size 7x28
             text run at (2,30) width 7: "l"
           RenderText {#text} at (9,30) size 72x28

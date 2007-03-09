@@ -2,7 +2,7 @@ EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > DIV > DIV > SPAN > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > SPAN > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -19,13 +19,10 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (2,2) size 780x28
             RenderText {#text} at (0,0) size 32x28
               text run at (0,0) width 32: "foo"
-            RenderInline {SPAN} at (0,0) size 0x18
-          RenderBlock (anonymous) at (2,30) size 780x28
-            RenderBlock {DIV} at (0,0) size 780x28 [color=#FF0000]
-              RenderBlock {DIV} at (0,0) size 780x28
-                RenderText {#text} at (0,0) size 31x28
-                  text run at (0,0) width 31: "bar"
+          RenderBlock {DIV} at (2,30) size 780x28 [color=#FF0000]
+            RenderBlock {DIV} at (0,0) size 780x28
+              RenderText {#text} at (0,0) size 31x28
+                text run at (0,0) width 31: "bar"
           RenderBlock (anonymous) at (2,58) size 780x0
-            RenderInline {SPAN} at (0,0) size 0x0
           RenderBlock {DIV} at (2,58) size 780x0 [color=#FF0000]
-caret: position 3 of child 0 {#text} of child 0 {DIV} of child 0 {DIV} of child 1 {SPAN} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {#text} of child 0 {DIV} of child 1 {DIV} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -43,13 +43,10 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 319x28
                 text run at (0,0) width 319: "Should be first line of document."
               RenderBR {BR} at (319,22) size 0x0
-              RenderInline {SPAN} at (0,0) size 0x0
-            RenderBlock (anonymous) at (0,28) size 756x28
-              RenderBlock {P} at (0,0) size 756x28
-                RenderText {#text} at (0,0) size 130x28
-                  text run at (0,0) width 130: "***TEST***"
+            RenderBlock {P} at (0,28) size 756x28
+              RenderText {#text} at (0,0) size 130x28
+                text run at (0,0) width 130: "***TEST***"
             RenderBlock (anonymous) at (0,56) size 756x56
-              RenderInline {SPAN} at (0,0) size 0x0
               RenderBR {BR} at (0,0) size 0x28
               RenderText {#text} at (0,28) size 128x28
                 text run at (0,28) width 128: "Another line."

@@ -7,7 +7,7 @@ EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 1 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 1 of SPAN > DIV > BODY > HTML > #document to 1 of SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -29,5 +29,6 @@ layer at (0,0) size 800x600
         RenderBlock {CENTER} at (0,0) size 784x103
           RenderImage {IMG} at (354,0) size 76x103
       RenderBlock {DIV} at (0,207) size 784x103
-        RenderImage {IMG} at (0,0) size 76x103
-caret: position 1 of child 0 {IMG} of child 6 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+        RenderInline {SPAN} at (0,0) size 76x14
+          RenderImage {IMG} at (0,0) size 76x103
+caret: position 1 of child 0 {IMG} of child 0 {SPAN} of child 6 {DIV} of child 1 {BODY} of child 0 {HTML} of document

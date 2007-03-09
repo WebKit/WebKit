@@ -9,12 +9,12 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 5 of #text > DIV > SPAN > DIV > DIV > DIV > BODY > HTML > #document to 5 of #text > DIV > SPAN > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 5 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document to 5 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 Problem: copy/pasting some HTML including tables can give rise to a <div> element as the first child of the table element. This is invalid.
 abcdef
 foo	bar
 ghijk
-<div id="test" class="editing"> <div>abcdef<span class="Apple-style-span" style="font-size: 16px; "><div style="font-size: 24px; text-align: center; "><table style="font-size: 16px; text-align: auto; -webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px; "><tbody style=""><tr style=""><td style="">foo</td><td style="">bar</td></tr></tbody></table>ghijk</div></span> </div> </div>
+<div id="test" class="editing" style="border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-style: solid; border-right-style: solid; border-bottom-style: solid; border-left-style: solid; border-top-color: red; border-right-color: red; border-bottom-color: red; border-left-color: red; font-size: 24px; "> <div>abcdef<div style="text-align: center; "><table><tbody><tr><td>foo</td><td>bar</td></tr></tbody></table>ghijk</div> </div> </div>
 

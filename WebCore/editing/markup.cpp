@@ -153,7 +153,7 @@ static void removeEnclosingMailBlockquoteStyle(CSSMutableStyleDeclaration* style
     blockquoteStyle->diff(style);
 }
 
-static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnotateForInterchange annotate, CSSMutableStyleDeclaration *defaultStyle)
+static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnotateForInterchange annotate)
 {
     bool documentIsHTML = node->document()->isHTMLDocument();
     switch (node->nodeType()) {
@@ -168,24 +168,6 @@ static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnot
             }
             bool useRenderedText = annotate && !enclosingNodeWithTag(const_cast<Node*>(node), selectTag);
             DeprecatedString markup = useRenderedText ? escapeTextForMarkup(renderedText(node, range), false) : escapeTextForMarkup(stringValueForRange(node, range).deprecatedString(), false);
-            if (defaultStyle) {
-                Node *element = node->parentNode();
-                if (element) {
-                    RefPtr<CSSComputedStyleDeclaration> computedStyle = Position(element, 0).computedStyle();
-                    RefPtr<CSSMutableStyleDeclaration> style = computedStyle->copyInheritableProperties();
-                    // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote, to help
-                    // us differentiate those styles from ones that the user has applied.  This helps us
-                    // get the color of content pasted into blockquotes right.
-                    removeEnclosingMailBlockquoteStyle(style.get(), const_cast<Node*>(node));
-                    
-                    defaultStyle->diff(style.get());
-                    if (style->length() > 0) {
-                        // FIXME: Handle case where style->cssText() has illegal characters in it, like "
-                        DeprecatedString openTag = DeprecatedString("<span class=\"") + AppleStyleSpanClass + "\" style=\"" + style->cssText().deprecatedString() + "\">";
-                        markup = openTag + markup + "</span>";
-                    }
-                }            
-            }
             return annotate ? convertHTMLTextToInterchangeFormat(markup, static_cast<const Text*>(node)) : markup;
         }
         case Node::COMMENT_NODE:
@@ -208,23 +190,10 @@ static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnot
             const Element* el = static_cast<const Element*>(node);
             markup += el->nodeNamePreservingCase().deprecatedString();
             String additionalStyle;
-            if (defaultStyle && el->isHTMLElement() && !isMailBlockquote(node)) {
-                RefPtr<CSSComputedStyleDeclaration> computedStyle = Position(const_cast<Element*>(el), 0).computedStyle();
-                RefPtr<CSSMutableStyleDeclaration> style = computedStyle->copyInheritableProperties();
-                style->merge(styleFromMatchedRulesForElement(const_cast<Element*>(el)).get());
-                
-                // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote, to help
-                // us differentiate those styles from ones that the user has applied.  This helps us
-                // get the color of content pasted into blockquotes right.
-                removeEnclosingMailBlockquoteStyle(style.get(), const_cast<Node*>(node));
-                
-                defaultStyle->diff(style.get());
-                if (style->length() > 0) {
-                    CSSMutableStyleDeclaration *inlineStyleDecl = static_cast<const HTMLElement*>(el)->inlineStyleDecl();
-                    if (inlineStyleDecl)
-                        inlineStyleDecl->diff(style.get());
+            if (el->isHTMLElement()) {
+                RefPtr<CSSMutableStyleDeclaration> style = styleFromMatchedRulesForElement(const_cast<Element*>(el));
+                if (style->length() > 0)
                     additionalStyle = style->cssText();
-                }
             }
             NamedAttrMap *attrs = el->attributes();
             unsigned length = attrs->length();
@@ -310,7 +279,7 @@ static DeprecatedString markup(Node* startNode, bool onlyIncludeChildren, bool i
         if (!onlyIncludeChildren) {
             if (nodes)
                 nodes->append(current);
-            me += startMarkup(current, 0, DoNotAnnotateForInterchange, 0);
+            me += startMarkup(current, 0, DoNotAnnotateForInterchange);
         }
         // print children
         if (Node *n = current->firstChild())
@@ -384,20 +353,6 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
     Node *pastEnd = range->pastEndNode();
     Node *lastClosed = 0;
     Vector<Node*> ancestorsToClose;
-
-    // Calculate the "default style" for this markup and put those styles
-    // in a top level span instead of inlining them.
-    Node* root = highestEditableRoot(range->startPosition());
-    if (!root) {
-        root = range->startPosition().node();
-        while (root && !root->hasTagName(bodyTag))
-            root = root->parentNode();
-        if (!root)
-            root = doc->documentElement();
-    }
-    Position pos(root, 0);
-    RefPtr<CSSComputedStyleDeclaration> computedStyle = pos.computedStyle();
-    RefPtr<CSSMutableStyleDeclaration> defaultStyle = computedStyle->copyInheritableProperties();
     
     Node* startNode = range->startNode();
     VisiblePosition visibleStart(range->startPosition(), VP_DEFAULT_AFFINITY);
@@ -433,7 +388,7 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
         
         // Add the node to the markup.
         if (addMarkupForNode) {
-            markups.append(startMarkup(n, range, annotate, defaultStyle.get()));
+            markups.append(startMarkup(n, range, annotate));
             if (nodes)
                 nodes->append(n);
         }
@@ -470,7 +425,7 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
                             continue;
                         // or b) ancestors that we never encountered during a pre-order traversal starting at startNode:
                         ASSERT(startNode->isDescendantOf(parent));
-                        markups.prepend(startMarkup(parent, range, annotate, defaultStyle.get()));
+                        markups.prepend(startMarkup(parent, range, annotate));
                         markups.append(endMarkup(parent));
                         if (nodes)
                             nodes->append(parent);
@@ -487,7 +442,28 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
     int rangeStartOffset = range->startOffset(ec);
     ASSERT(ec == 0);
     
+    // Add a wrapper span with the styles that all of the nodes in the markup inherit.
+    if (!commonAncestor->isElementNode())
+        commonAncestor = commonAncestor->parentNode();
+    
+    if (commonAncestor) {
+        RefPtr<CSSComputedStyleDeclaration> computedStyle = new CSSComputedStyleDeclaration(commonAncestor);
+        RefPtr<CSSMutableStyleDeclaration> style = computedStyle->copyInheritableProperties();
+        // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote, to help
+        // us differentiate those styles from ones that the user has applied.  This helps us
+        // get the color of content pasted into blockquotes right.
+        removeEnclosingMailBlockquoteStyle(style.get(), commonAncestor);
+        
+        if (style->length() > 0) {
+            // FIXME: Handle case where style->cssText() has illegal characters in it, like "
+            DeprecatedString openTag = DeprecatedString("<span class=\"") + AppleStyleSpanClass + "\" style=\"" + style->cssText().deprecatedString() + "\">";
+            markups.prepend(openTag);
+            markups.append("</span>");
+        }
+    }
+    
     // Add ancestors up to the common ancestor block so inline ancestors such as FONT and B are part of the markup.
+    // FIXME: This seems unecessary.
     if (lastClosed) {
         for (Node *ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
             if (Range::compareBoundaryPoints(ancestor, 0, rangeStartNode, rangeStartOffset) >= 0) {
@@ -508,7 +484,7 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
                 } else
                     break;
             }
-            markups.prepend(startMarkup(ancestor, range, annotate, defaultStyle.get()));
+            markups.prepend(startMarkup(ancestor, range, annotate));
             markups.append(endMarkup(ancestor));
             if (nodes) {
                 nodes->append(ancestor);
@@ -528,13 +504,13 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
     if (annotate && selectedOneOrMoreParagraphs) {
         for (Node *ancestor = commonAncestorBlock; ancestor; ancestor = ancestor->parentNode()) {
             if (isMailBlockquote(ancestor)) {
-                markups.prepend(startMarkup(ancestor, range, annotate, defaultStyle.get()));
+                markups.prepend(startMarkup(ancestor, range, annotate));
                 markups.append(endMarkup(ancestor));
             }
         }
     }
     
-    root = range->startPosition().node();
+    Node* root = range->startPosition().node();
     while (root && !root->hasTagName(bodyTag))
         root = root->parentNode();
     // Include markup for fully selected blocks (turn the body into a div so that we
@@ -554,9 +530,6 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
         RefPtr<CSSMutableStyleDeclaration> inheritedComputedProperties = computedStyle->copyInheritableProperties();
         style->merge(inheritedComputedProperties.get());
         
-        // Pull off default styles because those will be added via the top level style span.
-        defaultStyle->diff(style.get());
-        
         // Bring the background attribute over, but not as an attribute because a background attribute on a div
         // appears to have no effect.
         if (!style->getPropertyCSSValue(CSS_PROP_BACKGROUND_IMAGE) && static_cast<Element*>(root)->hasAttribute(backgroundAttr))
@@ -565,12 +538,6 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
         markups.prepend("<div style='" + style->cssText().deprecatedString() + "'>");
         markups.append("</div>");
     }
-    
-    // add in the "default style" for this markup
-    // FIXME: Handle case where value has illegal characters in it, like "
-    DeprecatedString openTag = DeprecatedString("<span class=\"") + AppleStyleSpanClass + "\" style=\"" + defaultStyle->cssText().deprecatedString() + "\">";
-    markups.prepend(openTag);
-    markups.append("</span>");
 
     doc->frame()->editor()->deleteButtonController()->enable();
     return markups.join("");

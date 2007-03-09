@@ -1,3 +1,25 @@
+2007-03-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4903193> 
+        On particular page, Copy is so slow it seems like a hang
+        
+        ~2x speedup copying:
+        http://shakespeare.mit.edu/henryviii/full.html 
+        Also produces less bloated markup.
+
+        * editing/markup.cpp:
+        (WebCore::startMarkup): Don't wrap text nodes in style spans.
+        For Elements, don't inline styles inherited from ancestors.
+        (WebCore::createMarkup): No longer necessary to find 
+        the root's default style and pass it to startMarkup.
+        Add a wrapper span around the markup with the styles
+        that all nodes in the markup inherit (the inheritable 
+        styles from the common ancestor container's computed style).
+        Added a FIXME about unecessary markup for inline ancestors 
+        up to the commonAncestorBlock.
+
 2007-03-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

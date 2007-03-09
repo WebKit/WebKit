@@ -34,6 +34,7 @@ layer at (0,0) size 800x600
               text run at (0,0) width 22: "baz"
             RenderText {#text} at (22,0) size 21x18
               text run at (22,0) width 21: "foo"
+        RenderBlock (anonymous) at (0,86) size 784x0
         RenderBlock {DIV} at (0,102) size 784x52
           RenderBlock (anonymous) at (0,0) size 784x0
           RenderBlock {BLOCKQUOTE} at (40,0) size 704x18
@@ -42,5 +43,4 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (0,34) size 784x18
             RenderText {#text} at (0,0) size 22x18
               text run at (0,0) width 22: "baz"
-        RenderBlock (anonymous) at (0,154) size 784x0
 caret: position 3 of child 1 {#text} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

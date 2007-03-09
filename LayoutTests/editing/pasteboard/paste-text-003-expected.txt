@@ -111,13 +111,10 @@ layer at (0,0) size 800x600
             text run at (0,0) width 63: "There "
           RenderText {#text} at (63,0) size 285x28
             text run at (63,0) width 285: "is a tide in the affairs of men,"
-          RenderInline {SPAN} at (0,0) size 0x18
-        RenderBlock (anonymous) at (14,42) size 756x56
-          RenderBlock {DIV} at (0,0) size 756x56 [border: (2px solid #FF0000)]
-            RenderText {#text} at (14,14) size 434x28
-              text run at (14,14) width 434: "Which taken at the flood leads on to fortune."
+        RenderBlock {DIV} at (14,42) size 756x56 [border: (2px solid #FF0000)]
+          RenderText {#text} at (14,14) size 434x28
+            text run at (14,14) width 434: "Which taken at the flood leads on to fortune."
         RenderBlock (anonymous) at (14,98) size 756x0
-          RenderInline {SPAN} at (0,0) size 0x0
         RenderBlock {DIV} at (14,98) size 756x252 [border: (2px solid #FF0000)]
           RenderBlock (anonymous) at (14,14) size 728x0
           RenderBlock {DIV} at (14,14) size 728x56 [border: (2px solid #FF0000)]
@@ -126,13 +123,10 @@ layer at (0,0) size 800x600
             RenderText {#text} at (94,14) size 285x28
               text run at (94,14) width 285: "is a tide in the affairs of men,"
           RenderBlock (anonymous) at (14,70) size 728x0
-            RenderInline {SPAN} at (0,0) size 0x0
-          RenderBlock (anonymous) at (14,70) size 728x56
-            RenderBlock {DIV} at (0,0) size 728x56 [border: (2px solid #FF0000)]
-              RenderText {#text} at (14,14) size 434x28
-                text run at (14,14) width 434: "Which taken at the flood leads on to fortune."
+          RenderBlock {DIV} at (14,70) size 728x56 [border: (2px solid #FF0000)]
+            RenderText {#text} at (14,14) size 434x28
+              text run at (14,14) width 434: "Which taken at the flood leads on to fortune."
           RenderBlock (anonymous) at (14,126) size 728x0
-            RenderInline {SPAN} at (0,0) size 0x0
           RenderBlock {DIV} at (14,126) size 728x112 [border: (2px solid #FF0000)]
             RenderBlock (anonymous) at (14,14) size 700x28
               RenderText {#text} at (0,0) size 80x28

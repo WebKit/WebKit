@@ -1,3 +1,42 @@
+2007-03-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4903193> 
+        On particular page, Copy is so slow it seems like a hang
+
+        Less messy DOM trees:
+        * editing/deleting/delete-3857753-fix-expected.txt:
+        * editing/inserting/insert-3786362-fix-expected.txt:
+        * editing/inserting/insert-3907422-fix-expected.txt:
+        * editing/pasteboard/display-block-on-spans-expected.txt:
+        * editing/pasteboard/paste-4035648-fix-expected.txt:
+        * editing/pasteboard/paste-4039777-fix-expected.txt:
+        * editing/pasteboard/paste-line-endings-001-expected.txt:
+        * editing/pasteboard/paste-line-endings-006-expected.txt:
+        * editing/pasteboard/paste-list-001-expected.txt:
+        * editing/pasteboard/paste-pre-001-expected.txt:
+        * editing/pasteboard/paste-pre-002-expected.txt:
+        * editing/pasteboard/paste-table-001-expected.txt:
+        * editing/pasteboard/paste-table-002-expected.txt:
+        * editing/pasteboard/paste-text-003-expected.txt:
+        * editing/pasteboard/paste-text-011-expected.txt:
+        * editing/pasteboard/paste-text-015-expected.txt:
+        * editing/pasteboard/paste-text-016-expected.txt:
+        * editing/pasteboard/paste-text-017-expected.txt:
+        * editing/pasteboard/styled-element-markup-expected.txt:
+        * editing/pasteboard/testcase-9507-expected.txt:
+        * editing/style/smoosh-styles-001-expected.txt:
+        * editing/style/smoosh-styles-002-expected.txt:
+        * fast/lists/drag-into-marker-expected.txt:
+        Styles from style sheets are now inlined:
+        * webarchive/test-duplicate-resources-expected.txt:
+        * webarchive/test-frameset-expected.txt:
+        * webarchive/test-link-href-expected.txt:\
+        Two levels of nesting are removed, but text nodes are no
+        longer coalesced when they should be, investigating:
+        * editing/pasteboard/block-wrappers-necessary-expected.txt:
+
 2007-03-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele.

@@ -29,13 +29,13 @@
 				<string>&lt;html&gt;&lt;head&gt;
 &lt;link rel="stylesheet" href="test-style.css" type="text/css"&gt;
 &lt;/head&gt;&lt;body&gt;
-&lt;div&gt;
+&lt;div style="font-family: Arial, Helvetica, sans-serif; color: red; "&gt;
   &lt;img src="apple.gif"&gt;
 &lt;/div&gt;
-&lt;div&gt;
+&lt;div style="font-family: Arial, Helvetica, sans-serif; color: red; "&gt;
   This is a subframe.  This text should be red sans-serif.
 &lt;/div&gt;
-&lt;div&gt;
+&lt;div style="font-family: Arial, Helvetica, sans-serif; color: red; "&gt;
   &lt;img src="apple.gif"&gt;
 &lt;/div&gt;
 

@@ -46,13 +46,11 @@ layer at (0,0) size 800x600
             text run at (0,84) width 49: "plain"
       RenderBlock {DIV} at (0,264) size 784x88
         RenderBlock {DIV} at (0,0) size 784x88 [border: (2px solid #FF0000)]
-          RenderInline {SPAN} at (0,0) size 0x18
-            RenderBR {BR} at (2,2) size 0x28
-          RenderInline {SPAN} at (0,0) size 45x18
-            RenderInline {B} at (0,0) size 45x28
-              RenderText {#text} at (2,30) size 45x28
-                text run at (2,30) width 45: "bold"
-              RenderBR {BR} at (47,52) size 0x0
+          RenderBR {BR} at (2,2) size 0x28
+          RenderInline {B} at (0,0) size 45x28
+            RenderText {#text} at (2,30) size 45x28
+              text run at (2,30) width 45: "bold"
+            RenderBR {BR} at (47,52) size 0x0
           RenderText {#text} at (2,58) size 49x28
             text run at (2,58) width 49: "plain"
 caret: position 5 of child 2 {#text} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

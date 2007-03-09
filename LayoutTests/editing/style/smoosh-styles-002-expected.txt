@@ -55,8 +55,8 @@ layer at (0,0) size 800x600
             RenderInline {SPAN} at (0,0) size 70x37 [color=#000000]
               RenderText {#text} at (31,2) size 46x37
                 text run at (31,2) width 46: "cde"
-              RenderInline {SPAN} at (0,0) size 24x18
-                RenderInline {SPAN} at (0,0) size 24x28 [color=#FF0000]
+              RenderInline {SPAN} at (0,0) size 24x37 [color=#FF0000]
+                RenderInline {SPAN} at (0,0) size 24x28
                   RenderText {#text} at (77,8) size 24x28
                     text run at (77,8) width 24: "fg"
         RenderBlock (anonymous) at (0,41) size 784x0
