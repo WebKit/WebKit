@@ -1,3 +1,16 @@
+2007-03-08  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Beth.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13019
+          REGRESSION (r20074): Forms don't submit on a variety of websites
+
+        No tests added since LayoutTests/fast/forms/document-write.html was timing out
+        and causing a layout test failure.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submit): Removed stray code.
+
 2007-03-08  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Not reviewed - gdk build fix.
