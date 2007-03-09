@@ -486,6 +486,41 @@
         (WebCore::SVGEmptyEditorClient::handleKeypress): Changed handleKeyPress to handleKeypress.
         (WebCore::SVGEmptyEditorClient::handleInputMethodKeypress): Added.
 
+2007-03-07  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12579
+        WebKit fails SVG xml:base test
+
+        Implement DOM3 properties baseURI and documentURI to fix
+        the testcase in bug 12579.
+
+        * bindings/js/kjs_dom.cpp:
+        (KJS::DOMNode::getValueProperty):
+        * bindings/js/kjs_domnode.h:
+        (KJS::DOMNode::):
+        * dom/Document.cpp:
+        (WebCore::Document::documentURI):
+        (WebCore::Document::setDocumentURI):
+        (WebCore::Document::baseURI):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/DocumentType.cpp:
+        (WebCore::DocumentType::baseURI):
+        * dom/DocumentType.h:
+        * dom/Element.cpp:
+        (WebCore::Element::baseURI):
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::Node::baseURI):
+        * dom/Node.h:
+        * ksvg2/misc/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::updateFromElement):
+        * ksvg2/svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::parseMappedAttribute):
+        (WebCore::SVGImageElement::attach):
+
 2007-03-07  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Brady.
