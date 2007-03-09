@@ -167,6 +167,12 @@ void ImageSource::destroyFrameAtIndex(size_t)
     // FIXME: write me
 }
 
+bool ImageSource::frameIsCompleteAtIndex(size_t)
+{
+    // FIXME: write me. Returning false makes the animation not run
+    return false;
+}
+
 float ImageSource::frameDurationAtIndex(size_t index)
 {
     if (!m_decoder)
