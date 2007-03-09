@@ -61,7 +61,7 @@ public:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
     virtual bool isEnumeratable() const { return inputType() != IMAGE; }
-    virtual void focus();
+    virtual void focus(bool restorePreviousSelection = true);
     virtual void dispatchFocusEvent();
     virtual void dispatchBlurEvent();
     virtual void updateFocusAppearance(bool restorePreviousSelection = false);

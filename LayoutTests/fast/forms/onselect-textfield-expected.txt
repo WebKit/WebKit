@@ -16,5 +16,5 @@ Calling blur on text field
 After blur: text field selection start: 6 end: 10
 
 Calling focus on text field
-After focus: text field selection start: 0 end: 10
+After focus: text field selection start: 6 end: 10
 

@@ -105,10 +105,11 @@ Element *HTMLLegendElement::formElement()
     return 0;
 }
 
-void HTMLLegendElement::focus()
+void HTMLLegendElement::focus(bool)
 {
+    // to match other browsers, never restore previous selection
     if (Element *element = formElement())
-        element->focus();
+        element->focus(false);
 }
 
 void HTMLLegendElement::accessKeyAction(bool sendToAnyElement)

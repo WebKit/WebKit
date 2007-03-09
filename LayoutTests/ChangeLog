@@ -1,3 +1,19 @@
+2007-03-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele.
+
+        <rdar://problem/4646563> REGRESSION: Unable to send text message from Verizon text message website: vtext.com (12588)
+        http://bugs.webkit.org/show_bug.cgi?id=12588
+
+        Carefully revised which focus operations restore previous selection, which clear it, and which
+        select the whole control contents, these test cases cover every focus call I could find.
+        
+        * fast/forms/focus-selection-input-expected.txt: Added.
+        * fast/forms/focus-selection-input.html: Added.
+        * fast/forms/focus-selection-textarea-expected.txt: Added.
+        * fast/forms/focus-selection-textarea.html: Added.
+        * fast/forms/onselect-textfield-expected.txt:
+
 2007-03-08  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

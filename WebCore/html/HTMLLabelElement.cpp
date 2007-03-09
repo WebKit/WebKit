@@ -26,12 +26,12 @@
 
 #include "config.h"
 #include "HTMLLabelElement.h"
-#include "HTMLFormElement.h"
 
-#include "HTMLNames.h"
-#include "EventNames.h"
-#include "Event.h"
 #include "Document.h"
+#include "Event.h"
+#include "EventNames.h"
+#include "HTMLFormElement.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 
@@ -130,16 +130,16 @@ void HTMLLabelElement::defaultEventHandler(Event* evt)
     HTMLElement::defaultEventHandler(evt);
 }
 
-void HTMLLabelElement::focus()
+void HTMLLabelElement::focus(bool)
 {
+    // to match other browsers, always restore previous selection
     if (Element* element = formElement())
         element->focus();
 }
 
 void HTMLLabelElement::accessKeyAction(bool sendToAnyElement)
 {
-    Element *element = formElement();
-    if (element)
+    if (Element* element = formElement())
         element->accessKeyAction(sendToAnyElement);
 }
 
