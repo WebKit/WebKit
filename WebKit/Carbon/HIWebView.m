@@ -284,10 +284,10 @@ HIWebViewConstructor( HIViewRef inView )
 static void
 HIWebViewDestructor( HIWebView* inView )
 {
-	[HIViewAdapter unbindNSView:inView->fWebView];
-	CFRelease(inView->fWebView);
-	
-	free( inView );
+    [HIViewAdapter unbindNSView:inView->fWebView];
+    CFRelease(inView->fWebView);
+
+    free(inView);
 }
 
 //----------------------------------------------------------------------------------
@@ -733,39 +733,28 @@ WindowHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData
             break;
         
         case kEventClassMouse:
-            switch( GetEventKind( inEvent ) )
+            switch (GetEventKind(inEvent))
             {
                 case kEventMouseMoved:
                     {
-                        WindowRef		temp;
-                        Point			where;
-                        WindowPartCode	part;
-                        HIViewRef		view;
-                    
-                        GetEventParameter( inEvent, kEventParamMouseLocation, typeQDPoint, NULL,
-                                sizeof( Point ), NULL, &where );
-                                
-                        part = FindWindow( where, &temp );
-                        if ( temp == window )
-                        {
-                            Rect		bounds;
-                            ControlKind	kind;
+                        Point where;
+                        GetEventParameter(inEvent, kEventParamMouseLocation, typeQDPoint, NULL, sizeof(Point), NULL, &where);
 
-                            GetWindowBounds( window, kWindowStructureRgn, &bounds );
+                        WindowRef temp;
+                        FindWindow(where, &temp);
+                        if (temp == window)
+                        {
+                            Rect bounds;
+                            GetWindowBounds(window, kWindowStructureRgn, &bounds);
                             where.h -= bounds.left;
                             where.v -= bounds.top;
-                            SetEventParameter( inEvent, kEventParamWindowRef, typeWindowRef, sizeof( WindowRef ), &window );
-                            SetEventParameter( inEvent, kEventParamWindowMouseLocation, typeQDPoint, sizeof( Point ), &where );
-                            
-                            HIViewGetViewForMouseEvent( HIViewGetRoot( window ), inEvent, &view );
-                        
-                            GetControlKind( view, &kind );
-                            
-                            if ( kind.signature == 'appl' && kind.kind == 'wbvw' )
-                            {
-                                result = SendEventToEventTargetWithOptions( inEvent, HIObjectGetEventTarget( (HIObjectRef)view ),
-                                        kEventTargetDontPropagate );
-                            }
+                            SetEventParameter(inEvent, kEventParamWindowRef, typeWindowRef, sizeof(WindowRef), &window);
+                            SetEventParameter(inEvent, kEventParamWindowMouseLocation, typeQDPoint, sizeof(Point), &where);
+
+                            HIViewRef view;
+                            HIViewGetViewForMouseEvent(HIViewGetRoot(window), inEvent, &view);
+                            if (HIObjectIsOfClass((HIObjectRef)view, kHIWebViewClassID))
+                                result = SendEventToEventTargetWithOptions(inEvent, HIObjectGetEventTarget((HIObjectRef)view), kEventTargetDontPropagate);
                         }
                     }
                     break;
@@ -774,18 +763,10 @@ WindowHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData
                 case kEventMouseDragged:
                 case kEventMouseWheelMoved:
                     {
-                        HIViewRef	view;
-                        ControlKind	kind;
-                        
-                        HIViewGetViewForMouseEvent( HIViewGetRoot( window ), inEvent, &view );
-        
-                        GetControlKind( view, &kind );
-                        
-                        if ( kind.signature == 'appl' && kind.kind == 'wbvw' )
-                        {
-                            result = SendEventToEventTargetWithOptions( inEvent, HIObjectGetEventTarget( (HIObjectRef)view ),
-                                        kEventTargetDontPropagate );
-                        }
+                        HIViewRef view;
+                        HIViewGetViewForMouseEvent(HIViewGetRoot(window), inEvent, &view);
+                        if (HIObjectIsOfClass((HIObjectRef)view, kHIWebViewClassID))
+                            result = SendEventToEventTargetWithOptions(inEvent, HIObjectGetEventTarget((HIObjectRef)view), kEventTargetDontPropagate);
                     }
                     break;
             }
@@ -1301,10 +1282,9 @@ HIWebViewEventHandler(
 
 		case kEventClassKeyboard:
 			{
-                NSEvent* kitEvent = WKCreateNSEventWithCarbonEvent(inEvent);
-
+				NSEvent* kitEvent = WKCreateNSEventWithCarbonEvent(inEvent);
 				[view->fKitWindow sendSuperEvent:kitEvent];
-			
+				[kitEvent release];
 				result = noErr;
 			}
 			break;

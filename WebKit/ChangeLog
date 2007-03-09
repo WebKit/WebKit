@@ -1,3 +1,17 @@
+2007-03-08  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/5051616> Mouse clicks and movement are ignored in HIWebView on 64-bit
+
+        Mouse events are not being handled correctly as GetControlKind is returning an error
+        on 64-bit.  The more modern HIObjectIsOfClass behaves correctly for this use.
+
+        * Carbon/HIWebView.m:
+        (HIWebViewDestructor):
+        (WindowHandler): Use HIObjectIsOfClass in place of GetControlKind.
+        (HIWebViewEventHandler): Don't leak the NSEvent.
+
 2007-03-08  Bruce Q Hammond  <bruceq@apple.om>
 
         Reviewed by Darin.
