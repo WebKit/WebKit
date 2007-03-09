@@ -18,18 +18,6 @@
         * platform/graphics/cairo/ImageSourceCairo.cpp:
         (WebCore::ImageSource::frameIsCompleteAtIndex): add empty stub
 
-2007-03-08  Mitz Pettel  <mitz@webkit.org>
-
-        Reviewed by Brady.
-
-        - fix http://bugs.webkit.org/show_bug.cgi?id=13015
-          REGRESSION (r17233-r17241): Repro crash when leaving a page whose unload handler submits a form
-
-        Test: fast/loader/onunload-form-submit-crash-2.html
-
-        * loader/DocumentLoader.cpp:
-        (WebCore::DocumentLoader::finishedLoading): Added null check.
-
 2007-03-08  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
