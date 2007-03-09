@@ -47,10 +47,6 @@ small, .nocomments, .postmetadata, blockquote, strike {
 	color: #777;
 	}
 	
-code {
-	font-family: 'Courier New', Courier, Fixed;
-	}
-
 acronym, abbr, span.caps
 {
 	font-size: 0.9em;
