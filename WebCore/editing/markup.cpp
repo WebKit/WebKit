@@ -550,9 +550,8 @@ PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const 
     HTMLElement *element = static_cast<HTMLElement*>(document->documentElement());
 
     RefPtr<DocumentFragment> fragment = element->createContextualFragment(markup);
-    ASSERT(fragment);
 
-    if (!baseURL.isEmpty() && baseURL != document->baseURL())
+    if (fragment && !baseURL.isEmpty() && baseURL != document->baseURL())
         completeURLs(fragment.get(), baseURL.deprecatedString());
 
     return fragment.release();

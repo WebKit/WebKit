@@ -1,3 +1,17 @@
+2007-03-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Justin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=8928
+          <rdar://problem/5045708> REPRODUCIBLE ASSERT: Cannot paste HTML into a
+          contenteditable region in an XHTML document (8928)
+
+        Test: editing/pasteboard/paste-xml.xhtml
+
+        * editing/markup.cpp: (WebCore::createFragmentFromMarkup): Added a check for 0
+        here, since createContextualFragment can return 0 for XML documents that fail
+        to parse. In my testing, callers all seem equipped to handle 0.
+
 2007-03-09  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

@@ -1,3 +1,16 @@
+2007-03-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Justin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=8928
+          <rdar://problem/5045708> REPRODUCIBLE ASSERT: Cannot paste HTML into a
+          contenteditable region in an XHTML document (8928)
+
+        * editing/pasteboard/paste-xml-expected.checksum: Added.
+        * editing/pasteboard/paste-xml-expected.png: Added.
+        * editing/pasteboard/paste-xml-expected.txt: Added.
+        * editing/pasteboard/paste-xml.xhtml: Added.
+
 2007-03-09  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
