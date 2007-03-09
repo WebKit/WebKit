@@ -1,3 +1,7 @@
+2007-03-09  Darin Adler  <darin@apple.com>
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2007-03-08  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.
