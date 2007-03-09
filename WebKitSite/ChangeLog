@@ -1,3 +1,9 @@
+2007-03-09  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adam.
+
+        * building/checkout.html: Update repository URL.
+
 2007-03-07  Brady Eidson  <beidson@apple.com>
 
         Whoops, its actually prepare-ChangeLog
@@ -6,7 +12,7 @@
 
 2007-03-07  Brady Eidson  <beidson@apple.com>
 
-        Reviewed by Anders
+        Reviewed by Anders.
 
         Explicitly mention the prepare-Changelog step for contributing patches
 
