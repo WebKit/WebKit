@@ -82,8 +82,6 @@ namespace WebCore {
     struct ScheduledRedirection;
     struct WindowFeatures;
 
-    template <typename T> class Timer;
-
     bool isBackForwardLoadType(FrameLoadType);
 
     typedef void (*NavigationPolicyDecisionFunction)(void* argument,
@@ -362,6 +360,7 @@ namespace WebCore {
         void loadDone();
         void finishedParsing();
         void checkCompleted();
+        void scheduleCheckCompleted();
 
         void clearRecordedFormValues();
         void recordFormValue(const String& name, const String& value, PassRefPtr<HTMLFormElement>);
@@ -435,6 +434,7 @@ namespace WebCore {
         void updateHistoryForCommit();
     
         void redirectionTimerFired(Timer<FrameLoader>*);
+        void checkCompletedTimerFired(Timer<FrameLoader>*);
 
         void cancelRedirection(bool newLoadInProgress = false);
 
@@ -586,6 +586,7 @@ namespace WebCore {
         KURL m_submittedFormURL;
     
         Timer<FrameLoader> m_redirectionTimer;
+        Timer<FrameLoader> m_checkCompletedTimer;
 
         Frame* m_opener;
         HashSet<Frame*> m_openedFrames;

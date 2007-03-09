@@ -1389,19 +1389,22 @@ void Document::implicitClose()
 
     m_processingLoadEvent = false;
 
+    // An event handler may have removed the frame
+    if (!frame())
+        return;
+
     // Make sure both the initial layout and reflow happen after the onload
     // fires. This will improve onload scores, and other browsers do it.
     // If they wanna cheat, we can too. -dwh
 
-    if (frame() && frame()->loader()->isScheduledLocationChangePending() && elapsedTime() < cLayoutScheduleThreshold) {
+    if (frame()->loader()->isScheduledLocationChangePending() && elapsedTime() < cLayoutScheduleThreshold) {
         // Just bail out. Before or during the onload we were shifted to another page.
         // The old i-Bench suite does this. When this happens don't bother painting or laying out.        
         view()->unscheduleRelayout();
         return;
     }
 
-    if (frame())
-        frame()->loader()->checkEmitLoadEvent();
+    frame()->loader()->checkEmitLoadEvent();
 
     // Now do our painting/layout, but only if we aren't in a subframe or if we're in a subframe
     // that has been sized already.  Otherwise, our view size would be incorrect, so doing any 

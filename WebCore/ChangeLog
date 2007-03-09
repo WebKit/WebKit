@@ -1,3 +1,29 @@
+2007-03-09  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=9929
+          REGRESSION: crash on logging in on mijnpostbank.nl
+
+        Test: http/tests/misc/onload-remove-iframe-crash-2.html
+
+        The resulted from an iframe's load event handler removing the iframe
+        from the document.
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose): Bail out early if an event handler
+        removed the frame.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::clear):
+        (WebCore::FrameLoader::checkCompleted): Protect the frame from deletion
+        by event handlers.
+        (WebCore::FrameLoader::checkCompletedTimerFired):
+        (WebCore::FrameLoader::scheduleCheckCompleted):
+        (WebCore::FrameLoader::detachFromParent): Schedule a completion check
+        on the parent (in case the child is what has been keeping it from completing).
+        * loader/FrameLoader.h:
+
 2007-03-08  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Beth.
