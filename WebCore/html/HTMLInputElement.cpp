@@ -1131,6 +1131,14 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         }
     }
 
+    // Before calling the base class defaultEventHandler, which will call handleKeypress, call doTextFieldCommandFromEvent.
+    if (isTextField() && evt->type() == keypressEvent && evt->isKeyboardEvent() && focused() && document()->frame()
+                && document()->frame()->doTextFieldCommandFromEvent(this, static_cast<KeyboardEvent*>(evt))) {
+        evt->setDefaultHandled();
+        return;
+    }
+    
+    // Let the key handling done in EventTargetNode take precedence over the event handling here for editable text fields
     if (!clickDefaultFormButton) {
         HTMLGenericFormElement::defaultEventHandler(evt);
         if (evt->defaultHandled())
@@ -1167,12 +1175,6 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
     // on key down blocks the proper sending of the key press event.
     if (evt->type() == keypressEvent && evt->isKeyboardEvent()) {
         bool clickElement = false;
-
-        if (isTextField() && focused() && document()->frame()
-                && document()->frame()->doTextFieldCommandFromEvent(this, static_cast<KeyboardEvent*>(evt))) {
-            evt->setDefaultHandled();
-            return;
-        }
 
         String key = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
 

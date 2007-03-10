@@ -1,3 +1,13 @@
+2007-03-10  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=13028
+        REGRESSION: textField:doCommandBySelector:inFrame: not being called properly
+
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::defaultEventHandler):
+          Before calling the base class defaultEventHandler, which will call handleKeypress, call doTextFieldCommandFromEvent.        
+
 2007-03-10  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
