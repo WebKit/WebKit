@@ -2,6 +2,16 @@
 
         Reviewed by Darin.
 
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13013
+          REGRESSION: Selection box does not scroll to where the focus jumps when pressing an alphanumeric key
+
+        * fast/forms/listbox-typeahead-scroll-expected.txt: Added.
+        * fast/forms/listbox-typeahead-scroll.html: Added.
+
+2007-03-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - test for http://bugs.webkit.org/show_bug.cgi?id=12973
           REGRESSION: Reproducible assert while loading this test file if css is already in the cache
 

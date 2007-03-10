@@ -2,6 +2,21 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13013
+          REGRESSION: Selection box does not scroll to where the focus jumps when pressing an alphanumeric key
+
+        Test: fast/forms/listbox-typeahead-scroll.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setSelectedIndex): Reordered to set the active selection's
+        anchor and end before selecting the option, since the active selection is used to
+        decide where to scroll when the selection is made.
+        (WebCore::HTMLSelectElement::defaultEventHandler): Removed redundant check.
+
+2007-03-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=12973
           REGRESSION: Reproducible assert while loading this test file if css is already in the cache
 
