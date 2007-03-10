@@ -101,6 +101,10 @@ static const OSType NSViewCarbonControlFirstResponderViewPropertyTag = 'frvw';
 */
 static const OSType NSCarbonWindowPropertyTag = 'win ';
 
+#ifdef BUILDING_ON_TIGER
+const int typeByteCount = typeSInt32;
+#endif
+
 static SEL _NSSelectorForHICommand( const HICommand* hiCommand );
 
 static const EventTypeSpec kEvents[] = { 
@@ -1373,39 +1377,24 @@ HIWebViewEventHandler(
 					break;
 				
 				case kEventControlGetData:
-					GetEventParameter( inEvent, kEventParamControlPart, typeControlPartCode, NULL,
-							sizeof( ControlPartCode ), NULL, &part );
-					GetEventParameter( inEvent, kEventParamControlDataTag, typeEnumeration, NULL,
-							sizeof( OSType ), NULL, &tag );
-					GetEventParameter( inEvent, kEventParamControlDataBuffer, typePtr, NULL,
-							sizeof( Ptr ), NULL, &ptr );
+					GetEventParameter(inEvent, kEventParamControlPart, typeControlPartCode, NULL, sizeof(ControlPartCode), NULL, &part);
+					GetEventParameter(inEvent, kEventParamControlDataTag, typeEnumeration, NULL, sizeof(OSType), NULL, &tag);
+					GetEventParameter(inEvent, kEventParamControlDataBuffer, typePtr, NULL, sizeof(Ptr), NULL, &ptr);
+					GetEventParameter(inEvent, kEventParamControlDataBufferSize, typeByteCount, NULL, sizeof(Size), NULL, &size);
 
-#ifdef __LP64__
-					GetEventParameter(inEvent, kEventParamControlDataBufferSize, typeSInt64, NULL, sizeof(Size), NULL, &size);
-#else
-					GetEventParameter(inEvent, kEventParamControlDataBufferSize, typeSInt32, NULL, sizeof(Size), NULL, &size);
-#endif
-
-					if ( tag == kControlKindTag )
-					{
-						Size		outSize;
-						
+					if (tag == kControlKindTag) {
+						Size outSize;
 						result = noErr;
 
-						if ( ptr )
-						{
-							if ( size != sizeof( ControlKind ) )
+						if (ptr) {
+							if (size != sizeof(ControlKind))
 								result = errDataSizeMismatch;
 							else
-								( *(ControlKind *) ptr ) = GetKind();
+								(*(ControlKind *)ptr) = GetKind();
 						}
 
-						outSize = sizeof( ControlKind );
-#ifdef __LP64__
-                        SetEventParameter(inEvent, kEventParamControlDataBufferSize, typeSInt64, sizeof(Size), &outSize);
-#else
-                        SetEventParameter(inEvent, kEventParamControlDataBufferSize, typeSInt32, sizeof(Size), &outSize);
-#endif
+						outSize = sizeof(ControlKind);
+						SetEventParameter(inEvent, kEventParamControlDataBufferSize, typeByteCount, sizeof(Size), &outSize);
 					}
 
 					break;

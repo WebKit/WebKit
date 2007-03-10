@@ -1,3 +1,17 @@
+2007-03-10  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/5051827> HIWebView handling of kEventControlGetData is broken in 64-bit
+
+        On Leopard the kEventParamControlDataBufferSize event parameter is of type typeByteCount.
+        The 32-bit implementation of GetEventParameter will coerce between integer types and
+        typeByteCount while the 64-bit version will return a failure. As typeByteCount is new
+        in Leopard we must continue using typeSInt32 when building for Tiger.
+
+        * Carbon/HIWebView.m:
+        (HIWebViewEventHandler):
+
 2007-03-09  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
