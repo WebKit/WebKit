@@ -1,3 +1,13 @@
+2007-03-10  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=9609
+          REGRESSION: Missing image icon needs to be moved back to WebKit
+
+        * WebCore.exp: Export WebCore::Image::loadPlatformResource(const char*) for use in
+        [WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:].
+
 2007-03-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Justin.

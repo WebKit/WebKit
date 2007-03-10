@@ -82,6 +82,7 @@
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/Image.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MimeTypeRegistry.h>
 #import <WebCore/Page.h>
@@ -1438,9 +1439,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         [[webView _UIDelegateForwarder] webView:webView willPerformDragSourceAction:WebDragSourceActionDHTML fromPoint:mouseDownPoint withPasteboard:pasteboard];
         if (dragImage == nil) {
             // WebCore should have given us an image, but we'll make one up
-            // FIXME: Oops! I removed this image from WebKit. Is this a dead code path?
-            NSString *imagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"missing_image" ofType:@"tiff"];
-            dragImage = [[[NSImage alloc] initWithContentsOfFile:imagePath] autorelease];
+            dragImage = Image::loadPlatformResource("missingImage")->getNSImage();
             NSSize imageSize = [dragImage size];
             dragLoc = NSMakePoint(mouseDownPoint.x - imageSize.width / 2, mouseDownPoint.y + imageSize.height / 2);
             dragController->setDragOffset(IntPoint((int)(imageSize.width / 2), (int)(imageSize.height / 2)));
