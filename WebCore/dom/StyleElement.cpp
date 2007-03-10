@@ -88,8 +88,8 @@ void StyleElement::childrenChanged(Element* e)
         }
     }
 
-    if (!isLoading() && m_sheet)
-        document->stylesheetLoaded();
+    if (m_sheet)
+        m_sheet->checkLoaded();
 }
 
 }

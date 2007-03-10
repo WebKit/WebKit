@@ -1,3 +1,15 @@
+2007-03-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12973
+          REGRESSION: Reproducible assert while loading this test file if css is already in the cache
+
+        * fast/dom/css-cached-import-rule-expected.checksum: Added.
+        * fast/dom/css-cached-import-rule-expected.png: Added.
+        * fast/dom/css-cached-import-rule-expected.txt: Added.
+        * fast/dom/css-cached-import-rule.html: Added.
+
 2007-03-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Justin.

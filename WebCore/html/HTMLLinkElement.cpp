@@ -185,9 +185,8 @@ void HTMLLinkElement::process()
                 chset = document()->frame()->loader()->encoding();
             
             if (m_cachedSheet) {
-                if (m_loading) {
+                if (m_loading)
                     document()->stylesheetLoaded();
-                }
                 m_cachedSheet->deref(this);
             }
             m_loading = true;
@@ -228,10 +227,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& url, const String& charset,
     m_sheet->setMedia(media.get());
 
     m_loading = false;
-
-    // Tell the doc about the sheet.
-    if (!isLoading() && m_sheet && !isDisabled() && !isAlternate())
-        document()->stylesheetLoaded();
+    m_sheet->checkLoaded();
 }
 
 bool HTMLLinkElement::isLoading() const

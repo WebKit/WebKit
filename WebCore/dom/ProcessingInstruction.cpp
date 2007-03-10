@@ -223,10 +223,7 @@ void ProcessingInstruction::parseStyleSheet(const String& sheet)
     m_cachedSheet = 0;
 
     m_loading = false;
-
-    // Tell the doc about the sheet.
-    if (!isLoading() && m_sheet)
-        document()->stylesheetLoaded();
+    m_sheet->checkLoaded();
 }
 
 String ProcessingInstruction::toString() const

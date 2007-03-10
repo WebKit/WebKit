@@ -43,6 +43,8 @@ namespace WebCore {
         const AtomicString& xmlspace() const;
         void setXmlspace(const AtomicString&, ExceptionCode&);
 
+        virtual bool sheetLoaded();
+
         virtual const AtomicString& type() const;
         void setType(const AtomicString&, ExceptionCode&);
 

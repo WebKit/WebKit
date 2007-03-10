@@ -1,3 +1,29 @@
+2007-03-10  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12973
+          REGRESSION: Reproducible assert while loading this test file if css is already in the cache
+
+        Test: fast/dom/css-cached-import-rule.html
+
+        Replaced some direct calls to document->stylesheetLoaded() with calls to
+        the sheet's checkLoaded(). The latter calls back to the element's sheetLoaded() --
+        which notifies the document of the load -- and then updates the sheet's
+        loadCompleted() flag, ensuring that it stays in sync with whether the stylesheet
+        is still considered pending by the document.
+
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::parseStyleSheet):
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::childrenChanged):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+        * ksvg2/svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::sheetLoaded):
+        * ksvg2/svg/SVGStyleElement.h:
+
 2007-03-10  David Kilzer  <ddkilzer@webkit.org>
 
         Reviewed by Darin.
