@@ -221,7 +221,7 @@ sub generateDiff($$$)
     if ($modificationType eq "additionWithHistory") {
         manufacturePatchForAdditionWithHistory($file, $isBinary);
     }
-    open DIFF, "svn diff --diff-cmd diff -x -uNp '$file' |" or die;
+    open DIFF, "svn diff --diff-cmd diff -x -uaNp '$file' |" or die;
     while (<DIFF>) {
         $patch .= $_;
     }

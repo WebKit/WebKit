@@ -1,3 +1,14 @@
+2007-03-09  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13007
+          svn-create-patch doesn't handle UTF files with BOMs as text
+
+        Force diff to treat files that svn-create-patch thinks are text as text.
+
+        * Scripts/svn-create-patch: Added -a switch to diff command.
+
 2007-03-09  Mark Rowe  <mrowe@apple.com>
 
         Unreviewed.  Use the new SVN URL on the buildbot.
