@@ -71,9 +71,10 @@ void ObjcInstance::end()
 {
     _beginCount--;
     assert(_beginCount >= 0);
-    if (!_beginCount)
+    if (!_beginCount) {
         [_pool drain];
-    _pool = 0;
+        _pool = 0;
+    }
 }
 
 Bindings::Class* ObjcInstance::getClass() const 
@@ -92,7 +93,9 @@ bool ObjcInstance::implementsCall() const
 
 JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodList, const List &args)
 {
-    JSValue* resultValue;
+    JSValue* result = jsUndefined();
+    
+   JSLock::DropAllLocks dropAllLocks; // Can't put this inside the @try scope because it unwinds incorrectly.
 
     // Overloading methods is not allowed in ObjectiveC.  Should only be one
     // name match for a particular method.
@@ -113,7 +116,7 @@ JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodLis
     if (method->isFallbackMethod()) {
         if (objcValueTypeForType([signature methodReturnType]) != ObjcObjectType) {
             NSLog(@"Incorrect signature for invokeUndefinedMethodFromWebScript:withArguments: -- return type must be object.");
-            return jsUndefined();
+            return result;
         }
 
         // Invoke invokeUndefinedMethodFromWebScript:withArguments:, pass JavaScript function
@@ -181,7 +184,6 @@ JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodLis
         }
     }
 
-    // Invoke the ObjectiveC method.
     [invocation invoke];
 
     // Get the return value type.
@@ -199,26 +201,24 @@ JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodLis
     char buffer[1024];
     assert([signature methodReturnLength] < 1024);
 
-    if (*type == 'v')
-        resultValue = jsUndefined();
-    else {
+    if (*type != 'v') {
         [invocation getReturnValue:buffer];
-        resultValue = convertObjcValueToValue (exec, buffer, objcValueType);
+        result = convertObjcValueToValue(exec, buffer, objcValueType);
     }
 } @catch(NSException* localException) {
-    resultValue = jsUndefined();
 }
-
-    return resultValue;
+    return result;
 }
 
 JSValue* ObjcInstance::invokeDefaultMethod (ExecState* exec, const List &args)
 {
-    JSValue* resultValue;
+    JSValue* result = jsUndefined();
+
+   JSLock::DropAllLocks dropAllLocks; // Can't put this inside the @try scope because it unwinds incorrectly.
 
 @try {
     if (![_instance respondsToSelector:@selector(invokeDefaultMethodWithArguments:)])
-        return jsUndefined();
+        return result;
 
     NSMethodSignature* signature = [_instance methodSignatureForSelector:@selector(invokeDefaultMethodWithArguments:)];
     NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:signature];
@@ -227,7 +227,7 @@ JSValue* ObjcInstance::invokeDefaultMethod (ExecState* exec, const List &args)
 
     if (objcValueTypeForType([signature methodReturnType]) != ObjcObjectType) {
         NSLog(@"Incorrect signature for invokeDefaultMethodWithArguments: -- return type must be object.");
-        return jsUndefined();
+        return result;
     }
 
     NSMutableArray* objcArgs = [NSMutableArray array];
@@ -238,7 +238,6 @@ JSValue* ObjcInstance::invokeDefaultMethod (ExecState* exec, const List &args)
     }
     [invocation setArgument:&objcArgs atIndex:2];
 
-    // Invoke the ObjectiveC method.
     [invocation invoke];
 
     // Get the return value type, should always be "@" because of
@@ -251,17 +250,11 @@ JSValue* ObjcInstance::invokeDefaultMethod (ExecState* exec, const List &args)
     // OK with 32 here.
     char buffer[32];
     [invocation getReturnValue:buffer];
-    resultValue = convertObjcValueToValue(exec, buffer, objcValueType);
+    result = convertObjcValueToValue(exec, buffer, objcValueType);
 } @catch(NSException* localException) {
-    resultValue = jsUndefined();
 }
 
-    return resultValue;
-}
-
-void ObjcInstance::setValueOfField(ExecState* exec, const Field* aField, JSValue* aValue) const
-{
-    aField->setValueToInstance(exec, this, aValue);
+    return result;
 }
 
 bool ObjcInstance::supportsSetValueOfUndefinedField()
@@ -276,12 +269,15 @@ void ObjcInstance::setValueOfUndefinedField(ExecState* exec, const Identifier &p
 {
     id targetObject = getObject();
 
+   JSLock::DropAllLocks dropAllLocks; // Can't put this inside the @try scope because it unwinds incorrectly.
+
     // This check is not really necessary because NSObject implements
     // setValue:forUndefinedKey:, and unfortnately the default implementation
     // throws an exception.
     if ([targetObject respondsToSelector:@selector(setValue:forUndefinedKey:)]){
+        ObjcValue objcValue = convertValueToObjcValue(exec, aValue, ObjcObjectType);
+
         @try {
-            ObjcValue objcValue = convertValueToObjcValue(exec, aValue, ObjcObjectType);
             [targetObject setValue:objcValue.objectValue forUndefinedKey:[NSString stringWithCString:property.ascii() encoding:NSASCIIStringEncoding]];
         } @catch(NSException* localException) {
             // Do nothing.  Class did not override valueForUndefinedKey:.
@@ -289,29 +285,27 @@ void ObjcInstance::setValueOfUndefinedField(ExecState* exec, const Identifier &p
     }
 }
 
-JSValue* ObjcInstance::getValueOfField(ExecState* exec, const Field* aField) const {  
-    return aField->valueFromInstance(exec, this);
-}
-
 JSValue* ObjcInstance::getValueOfUndefinedField(ExecState* exec, const Identifier& property, JSType) const
 {
+    JSValue* result = jsUndefined();
+    
     id targetObject = getObject();
+
+   JSLock::DropAllLocks dropAllLocks; // Can't put this inside the @try scope because it unwinds incorrectly.
 
     // This check is not really necessary because NSObject implements
     // valueForUndefinedKey:, and unfortnately the default implementation
     // throws an exception.
     if ([targetObject respondsToSelector:@selector(valueForUndefinedKey:)]){
-        id objcValue;
-
         @try {
-            objcValue = [targetObject valueForUndefinedKey:[NSString stringWithCString:property.ascii() encoding:NSASCIIStringEncoding]];
-            return convertObjcValueToValue(exec, &objcValue, ObjcObjectType);
+            id objcValue = [targetObject valueForUndefinedKey:[NSString stringWithCString:property.ascii() encoding:NSASCIIStringEncoding]];
+            result = convertObjcValueToValue(exec, &objcValue, ObjcObjectType);
         } @catch(NSException* localException) {
             // Do nothing.  Class did not override valueForUndefinedKey:.
         }
     }
 
-    return jsUndefined();
+    return result;
 }
 
 JSValue* ObjcInstance::defaultValue(JSType hint) const

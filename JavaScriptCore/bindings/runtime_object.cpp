@@ -79,7 +79,7 @@ JSValue *RuntimeObjectImp::methodGetter(ExecState* exec, JSObject*, const Identi
     instance->begin();
 
     Class *aClass = instance->getClass();
-    MethodList methodList = aClass->methodsNamed(propertyName.ascii(), instance);
+    MethodList methodList = aClass->methodsNamed(propertyName, instance);
     JSValue *result = new RuntimeMethod(exec, propertyName, methodList);
 
     instance->end();
@@ -103,7 +103,7 @@ bool RuntimeObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& pro
         } else {
             // Now check if a method with specified name exists, if so return a function object for
             // that method.
-            MethodList methodList = aClass->methodsNamed(propertyName.ascii(), instance.get());
+            MethodList methodList = aClass->methodsNamed(propertyName, instance.get());
             if (methodList.length() > 0) {
                 slot.setCustom(this, methodGetter);
                 instance->end();

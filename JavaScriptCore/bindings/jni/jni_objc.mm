@@ -51,13 +51,18 @@ bool KJS::Bindings::dispatchJNICall (const void *targetAppletView, jobject obj, 
         // of the page that contains the applet. The execution restrictions 
         // implemented in WebCore will guarantee that only appropriate JavaScript
         // can reference the applet.
-        result = [view webPlugInCallJava:obj isStatic:isStatic returnType:returnType method:methodID arguments:args callingURL:nil exceptionDescription:&_exceptionDescription];
+        {
+           JSLock::DropAllLocks dropAllLocks;
+            result = [view webPlugInCallJava:obj isStatic:isStatic returnType:returnType method:methodID arguments:args callingURL:nil exceptionDescription:&_exceptionDescription];
+        }
+
         if (_exceptionDescription != 0) {
             exceptionDescription = convertNSStringToString(_exceptionDescription);
         }
         return true;
     }
     else if ([view respondsToSelector:@selector(webPlugInCallJava:method:returnType:arguments:)]) {
+       JSLock::DropAllLocks dropAllLocks;
         result = [view webPlugInCallJava:obj method:methodID returnType:returnType arguments:args];
         return true;
     }

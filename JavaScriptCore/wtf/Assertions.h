@@ -39,7 +39,9 @@
 
 #include "Platform.h"
 
-#if !COMPILER(MSVC)
+#if COMPILER(MSVC)
+#include <stddef.h>
+#else
 #include <inttypes.h>
 #endif
 

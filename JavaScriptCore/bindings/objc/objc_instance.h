@@ -54,11 +54,9 @@ public:
     virtual JSValue *invokeMethod(ExecState *exec, const MethodList &method, const List &args);
     virtual JSValue *invokeDefaultMethod(ExecState *exec, const List &args);
 
-    virtual void setValueOfField(ExecState *exec, const Field *aField, JSValue *aValue) const;
     virtual bool supportsSetValueOfUndefinedField();
     virtual void setValueOfUndefinedField(ExecState *exec, const Identifier &property, JSValue *aValue);
     
-    virtual JSValue *getValueOfField(ExecState *exec, const Field *aField) const;
     virtual JSValue *getValueOfUndefinedField(ExecState *exec, const Identifier &property, JSType hint) const;
 
     ObjectStructPtr getObject() const { return _instance; }
@@ -68,9 +66,6 @@ public:
     JSValue *booleanValue() const;
     
 private:
-    ObjcInstance(const ObjcInstance& other);
-    ObjcInstance& operator=(const ObjcInstance& other);
-    
     ObjectStructPtr _instance;
     mutable ObjcClass *_class;
     ObjectStructPtr _pool;

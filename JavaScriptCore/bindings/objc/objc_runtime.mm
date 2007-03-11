@@ -125,18 +125,23 @@ RuntimeType ObjcField::type() const
 
 JSValue* ObjcField::valueFromInstance(ExecState* exec, const Instance* instance) const
 {
+    JSValue* result = jsUndefined();
+    
     id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
+
+   JSLock::DropAllLocks dropAllLocks; // Can't put this inside the @try scope because it unwinds incorrectly.
 
     @try {
         NSString* key = [NSString stringWithCString:name() encoding:NSASCIIStringEncoding];
-        id objcValue = [targetObject valueForKey:key];
-        if (objcValue)
-            return convertObjcValueToValue(exec, &objcValue, ObjcObjectType);
+        if (id objcValue = [targetObject valueForKey:key])
+            result = convertObjcValueToValue(exec, &objcValue, ObjcObjectType);
     } @catch(NSException* localException) {
+        JSLock::lock();
         throwError(exec, GeneralError, [localException reason]);
+        JSLock::unlock();
     }
 
-    return jsUndefined();
+    return result;
 }
 
 static id convertValueToObjcObject(ExecState* exec, JSValue* value)
@@ -152,11 +157,15 @@ void ObjcField::setValueToInstance(ExecState* exec, const Instance* instance, JS
     id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
     id value = convertValueToObjcObject(exec, aValue);
 
+   JSLock::DropAllLocks dropAllLocks; // Can't put this inside the @try scope because it unwinds incorrectly.
+
     @try {
         NSString* key = [NSString stringWithCString:name() encoding:NSASCIIStringEncoding];
         [targetObject setValue:value forKey:key];
     } @catch(NSException* localException) {
+        JSLock::lock();
         throwError(exec, GeneralError, [localException reason]);
+        JSLock::unlock();
     }
 }
 

@@ -135,6 +135,8 @@ ObjcValue convertValueToObjcValue(ExecState *exec, JSValue *value, ObjcValueType
 
     switch (type) {
         case ObjcObjectType: {
+            JSLock lock;
+            
             Interpreter *originInterpreter = exec->dynamicInterpreter();
             RootObject* originRootObject = findRootObject(originInterpreter);
 
@@ -223,6 +225,8 @@ JSValue *convertNSStringToString(NSString *nsstring)
 */
 JSValue* convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType type)
 {
+    JSLock lock;
+    
     switch (type) {
         case ObjcObjectType: {
             id obj = *(id*)buffer;

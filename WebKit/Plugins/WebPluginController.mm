@@ -79,9 +79,12 @@ static NSMutableSet *pluginViews = nil;
     Class viewFactory = [pluginPackage viewFactory];
     
     NSView *view = nil;
+
     if ([viewFactory respondsToSelector:@selector(plugInViewWithArguments:)]) {
+        KJS::JSLock::DropAllLocks dropAllLocks;
         view = [viewFactory plugInViewWithArguments:arguments];
     } else if ([viewFactory respondsToSelector:@selector(pluginViewWithArguments:)]) {
+        KJS::JSLock::DropAllLocks dropAllLocks;
         view = [viewFactory pluginViewWithArguments:arguments];
     }
     
@@ -125,30 +128,30 @@ static NSMutableSet *pluginViews = nil;
 
 - (void)startAllPlugins
 {
-    if (_started) {
+    if (_started)
         return;
-    }
     
-    if ([_views count] > 0) {
+    if ([_views count] > 0)
         LOG(Plugins, "starting WebKit plugins : %@", [_views description]);
-    }
     
     int i, count = [_views count];
     for (i = 0; i < count; i++) {
         id aView = [_views objectAtIndex:i];
-        if ([aView respondsToSelector:@selector(webPlugInStart)])
+        if ([aView respondsToSelector:@selector(webPlugInStart)]) {
+            KJS::JSLock::DropAllLocks dropAllLocks;
             [aView webPlugInStart];
-        else if ([aView respondsToSelector:@selector(pluginStart)])
+        } else if ([aView respondsToSelector:@selector(pluginStart)]) {
+            KJS::JSLock::DropAllLocks dropAllLocks;
             [aView pluginStart];
+        }
     }
     _started = YES;
 }
 
 - (void)stopAllPlugins
 {
-    if (!_started) {
+    if (!_started)
         return;
-    }
 
     if ([_views count] > 0) {
         LOG(Plugins, "stopping WebKit plugins: %@", [_views description]);
@@ -157,10 +160,13 @@ static NSMutableSet *pluginViews = nil;
     int i, count = [_views count];
     for (i = 0; i < count; i++) {
         id aView = [_views objectAtIndex:i];
-        if ([aView respondsToSelector:@selector(webPlugInStop)])
+        if ([aView respondsToSelector:@selector(webPlugInStop)]) {
+            KJS::JSLock::DropAllLocks dropAllLocks;
             [aView webPlugInStop];
-        else if ([aView respondsToSelector:@selector(pluginStop)])
+        } else if ([aView respondsToSelector:@selector(pluginStop)]) {
+            KJS::JSLock::DropAllLocks dropAllLocks;
             [aView pluginStop];
+        }
     }
     _started = NO;
 }
@@ -176,20 +182,28 @@ static NSMutableSet *pluginViews = nil;
         [_views addObject:view];
         
         LOG(Plugins, "initializing plug-in %@", view);
-        if ([view respondsToSelector:@selector(webPlugInInitialize)])
+        if ([view respondsToSelector:@selector(webPlugInInitialize)]) {
+            KJS::JSLock::DropAllLocks dropAllLocks;
             [view webPlugInInitialize];
-        else if ([view respondsToSelector:@selector(pluginInitialize)])
+        } else if ([view respondsToSelector:@selector(pluginInitialize)]) {
+            KJS::JSLock::DropAllLocks dropAllLocks;
             [view pluginInitialize];
+        }
 
         if (_started) {
             LOG(Plugins, "starting plug-in %@", view);
-            if ([view respondsToSelector:@selector(webPlugInStart)])
+            if ([view respondsToSelector:@selector(webPlugInStart)]) {
+                KJS::JSLock::DropAllLocks dropAllLocks;
                 [view webPlugInStart];
-            else if ([view respondsToSelector:@selector(pluginStart)])
+            } else if ([view respondsToSelector:@selector(pluginStart)]) {
+                KJS::JSLock::DropAllLocks dropAllLocks;
                 [view pluginStart];
+            }
             
-            if ([view respondsToSelector:@selector(setContainingWindow:)])
+            if ([view respondsToSelector:@selector(setContainingWindow:)]) {
+                KJS::JSLock::DropAllLocks dropAllLocks;
                 [view setContainingWindow:[_documentView window]];
+            }
         }
     }
 }
@@ -198,16 +212,22 @@ static NSMutableSet *pluginViews = nil;
 {
     if ([_views containsObject:view]) {
         if (_started) {
-            if ([view respondsToSelector:@selector(webPlugInStop)])
+            if ([view respondsToSelector:@selector(webPlugInStop)]) {
+                KJS::JSLock::DropAllLocks dropAllLocks;
                 [view webPlugInStop];
-            else if ([view respondsToSelector:@selector(pluginStop)])
+            } else if ([view respondsToSelector:@selector(pluginStop)]) {
+                KJS::JSLock::DropAllLocks dropAllLocks;
                 [view pluginStop];
+            }
         }
         
-        if ([view respondsToSelector:@selector(webPlugInDestroy)])
+        if ([view respondsToSelector:@selector(webPlugInDestroy)]) {
+            KJS::JSLock::DropAllLocks dropAllLocks;
             [view webPlugInDestroy];
-        else if ([view respondsToSelector:@selector(pluginDestroy)])
+        } else if ([view respondsToSelector:@selector(pluginDestroy)]) {
+            KJS::JSLock::DropAllLocks dropAllLocks;
             [view pluginDestroy];
+        }
         
         [pluginViews removeObject:view];
         [_views removeObject:view];
@@ -248,8 +268,10 @@ static void cancelOutstandingCheck(const void *item, void *context)
     for (i = 0; i < count; i++) {
         id aView = [_views objectAtIndex:i];
         if ([aView respondsToSelector:@selector(webPlugInDestroy)]) {
+            KJS::JSLock::DropAllLocks dropAllLocks;
             [aView webPlugInDestroy];
         } else if ([aView respondsToSelector:@selector(pluginDestroy)]) {
+            KJS::JSLock::DropAllLocks dropAllLocks;
             [aView pluginDestroy];
         }
         [pluginViews removeObject:aView];

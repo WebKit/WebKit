@@ -54,6 +54,8 @@ using namespace KJS::Bindings;
 
 static void _didExecute(WebScriptObject *obj)
 {
+    ASSERT(JSLock::lockCount() > 0);
+    
     if (![obj _rootObject] || ![obj _rootObject]->isValid())
         return;
 
@@ -146,6 +148,8 @@ static void _didExecute(WebScriptObject *obj)
 
 + (BOOL)throwException:(NSString *)exceptionMessage
 {
+    JSLock lock;
+    
     Interpreter *first, *interp = Interpreter::firstInterpreter();
 
     // This code assumes that we only ever have one running interpreter.  A

@@ -28,6 +28,7 @@
 
 #include "value.h"
 
+#include <wtf/Noncopyable.h>
 #include <wtf/HashMap.h>
 
 namespace KJS  {
@@ -124,8 +125,7 @@ public:
 
 typedef void (*KJSDidExecuteFunctionPtr)(ExecState*, JSObject* rootObject);
 
-class Instance
-{
+class Instance : Noncopyable {
 public:
     typedef enum {
         JavaLanguage,
@@ -182,10 +182,6 @@ public:
 protected:
     RefPtr<RootObject> _rootObject;
     unsigned _refCount;
-
-private:
-    Instance(const Instance &other); // prevent copying
-    Instance &operator=(const Instance &other); // ditto
 };
 
 class Array

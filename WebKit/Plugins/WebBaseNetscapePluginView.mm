@@ -50,6 +50,7 @@
 #import "WebViewInternal.h"
 #import <Carbon/Carbon.h>
 #import <JavaScriptCore/Assertions.h>
+#import <JavaScriptCore/JSLock.h>
 #import <JavaScriptCore/npruntime_impl.h>
 #import <WebCore/Document.h>
 #import <WebCore/Element.h>
@@ -717,8 +718,12 @@ static UInt32 QDPixelFormatFromCGBitmapInfo(CGBitmapInfo bitmapInfo)
     // Temporarily retain self in case the plug-in view is released while sending an event. 
     [[self retain] autorelease];
     
+    BOOL acceptedEvent;
     [self willCallPlugInFunction];
-    BOOL acceptedEvent = NPP_HandleEvent(plugin, event);
+    {
+        KJS::JSLock::DropAllLocks dropAllLocks;
+        acceptedEvent = NPP_HandleEvent(plugin, event);
+    }
     [self didCallPlugInFunction];
     
     currentEventIsUserGesture = NO;
@@ -1173,7 +1178,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         ASSERT((drawingModel != NPDrawingModelCoreGraphics && drawingModel != NPDrawingModelOpenGL) || [NSView focusView] == self);
         
         [self willCallPlugInFunction];
-        npErr = NPP_SetWindow(plugin, &window);
+        {
+            KJS::JSLock::DropAllLocks dropAllLocks;
+            npErr = NPP_SetWindow(plugin, &window);
+        }
         [self didCallPlugInFunction];
         inSetWindow = NO;
 
@@ -1555,7 +1563,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [self setPluginPackage:thePluginPackage];
     
     element = [anElement retain];
-    
     sourceURL = [theURL retain];
     
     [self setMIMEType:MIME];
@@ -1860,8 +1867,12 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         return NULL;
         
     NPObject *value = NULL;
+    NPError error;
     [self willCallPlugInFunction];
-    NPError error = NPP_GetValue(plugin, NPPVpluginScriptableNPObject, &value);
+    {
+        KJS::JSLock::DropAllLocks dropAllLocks;
+        error = NPP_GetValue(plugin, NPPVpluginScriptableNPObject, &value);
+    }
     [self didCallPlugInFunction];
     if (error != NPERR_NO_ERROR)
         return NULL;
@@ -1993,7 +2004,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         // FIXME: If the result is a string, we probably want to put that string into the frame.
         if ([JSPluginRequest sendNotification]) {
             [self willCallPlugInFunction];
-            NPP_URLNotify(plugin, [URL _web_URLCString], NPRES_DONE, [JSPluginRequest notifyData]);
+            {
+                KJS::JSLock::DropAllLocks dropAllLocks;
+                NPP_URLNotify(plugin, [URL _web_URLCString], NPRES_DONE, [JSPluginRequest notifyData]);
+            }
             [self didCallPlugInFunction];
         }
     } else if ([result length] > 0) {
@@ -2022,7 +2036,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     ASSERT([pluginRequest sendNotification]);
         
     [self willCallPlugInFunction];
-    NPP_URLNotify(plugin, [[[pluginRequest request] URL] _web_URLCString], reason, [pluginRequest notifyData]);
+    {
+        KJS::JSLock::DropAllLocks dropAllLocks;
+        NPP_URLNotify(plugin, [[[pluginRequest request] URL] _web_URLCString], reason, [pluginRequest notifyData]);
+    }
     [self didCallPlugInFunction];
     
     [pendingFrameLoads removeObjectForKey:webFrame];
@@ -2067,7 +2084,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             if (!newWebView) {
                 if ([pluginRequest sendNotification]) {
                     [self willCallPlugInFunction];
-                    NPP_URLNotify(plugin, [[[pluginRequest request] URL] _web_URLCString], NPERR_GENERIC_ERROR, [pluginRequest notifyData]);
+                    {
+                        KJS::JSLock::DropAllLocks dropAllLocks;
+                        NPP_URLNotify(plugin, [[[pluginRequest request] URL] _web_URLCString], NPERR_GENERIC_ERROR, [pluginRequest notifyData]);
+                    }
                     [self didCallPlugInFunction];
                 }
                 return;
@@ -2662,7 +2682,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     
     // Tell the plugin to print into the GWorld
     [self willCallPlugInFunction];
-    NPP_Print(plugin, &npPrint);
+    {
+        KJS::JSLock::DropAllLocks dropAllLocks;
+        NPP_Print(plugin, &npPrint);
+    }
     [self didCallPlugInFunction];
 
     // Don't need the GWorld anymore

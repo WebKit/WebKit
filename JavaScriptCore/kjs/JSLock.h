@@ -23,9 +23,12 @@
 #ifndef KJS_INTERPRETER_LOCK_H
 #define KJS_INTERPRETER_LOCK_H
 
+#include <wtf/Assertions.h>
+#include <wtf/Noncopyable.h>
+
 namespace KJS {
 
-    // to make it safe to use JavaScript on multiple threads, it is
+    // To make it safe to use JavaScript on multiple threads, it is
     // important to lock before doing anything that allocates a
     // garbage-collected object or which may affect other shared state
     // such as the protect count hash table. The simplest way to do
@@ -33,42 +36,39 @@ namespace KJS {
     // where the lock must be held. The lock is recursive so nesting
     // is ok.
 
-    // Sometimes it is necessary to temporarily release the lock -
-    // since it is recursive you have to actually release all locks
-    // held by your thread. This is safe to do if you are executing
-    // code that doesn't require the lock, and reacquire the right
-    // number of locks at the end. You can do this by constructing a
-    // locally scoped JSLock::DropAllLocks object.
+    // To avoid deadlock, sometimes it is necessary to temporarily
+    // release the lock. Since it is recursive you actually have to
+    // release all locks held by your thread. This is safe to do if
+    // you are executing code that doesn't require the lock, and you
+    // reacquire the right number of locks at the end. You can do this
+    // by constructing a locally scoped JSLock::DropAllLocks object. The 
+    // DropAllLocks object takes care to release the JSLock only if your
+    // thread acquired it to begin with.
 
-    class JSLock
-    {
+    class JSLock : Noncopyable {
     public:
         JSLock() 
         {
             lock();
         }
-        ~JSLock() { 
+
+        ~JSLock() 
+        { 
             unlock(); 
         }
         
         static void lock();
         static void unlock();
         static int lockCount();
-        
-        class DropAllLocks {
+
+        class DropAllLocks : Noncopyable {
         public:
             DropAllLocks();
             ~DropAllLocks();
+            
         private:
             int m_lockCount;
-            
-            DropAllLocks(const DropAllLocks&);
-            DropAllLocks& operator=(const DropAllLocks&);
         };
-        
-    private:
-        JSLock(const JSLock&);
-        JSLock& operator=(const JSLock&);
     };
 
 } // namespace

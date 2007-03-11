@@ -1,3 +1,119 @@
+2007-03-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixed <rdar://problem/4587763> PAC file: lock inversion between QT and 
+        JSCore causes a hang @ www.panoramas.dk
+        
+        With a PAC file, run-webkit-tests --threaded passes, the reported site
+        works, and all the Quicktime/JavaScript and Flash/JavaScript examples
+        I found through Google work, too.
+        
+        Any time JavaScript causes arbitrary non-JavaScript code to execute, it 
+        risks deadlock, because that code may block, trying to acquire a lock 
+        owned by a thread that is waiting to execute JavaScript. In this case,
+        the thread was a networking thread that was waiting to interpret a PAC file.
+        
+        Because non-JavaScript code may execute in response to, well, anything,
+        a perfect solution to this problem is impossible. I've implemented an
+        optimistic solution, instead: JavaScript will drop its lock whenever it
+        makes a direct call to non-JavaScript code through a bridging/plug-in API,
+        but will blissfully ignore the indirect ways it may cause non-JavaScript 
+        code to run (resizing a window, for example). 
+        
+        Unfortunately, this solution introduces significant locking overhead in 
+        the bridging APIs. I don't see a way around that.
+
+        This patch includes some distinct bug fixes I saw along the way:
+        
+        * bindings/objc/objc_instance.mm: Fixed a bug where a nested begin() call
+        would leak its autorelease pool, because it would NULL out _pool without
+        draining it.
+
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::methodGetter): Don't copy an Identifier to ASCII only
+        to turn around and make an Identifier from the ASCII. In an earlier 
+        version of this patch, the copy caused an assertion failure. Now it's 
+        just unnecessary work.
+        (RuntimeObjectImp::getOwnPropertySlot): ditto
+
+        * bindings/objc/objc_instance.h: Removed overrides of setVAlueOfField and
+        getValueOfField, because they did exactly what the base class versions did.
+        Removed overrides of Noncopyable declarations for the same reason.
+
+        * bindings/runtime.h: Inherit from Noncopyable instead of rolling our own.
+        * bindings/c/c_instance.h: ditto
+
+        And the actual patch:
+        
+        * API/JSCallbackConstructor.cpp: Drop all locks when calling out to C.
+        (KJS::JSCallbackConstructor::construct):
+        * API/JSCallbackFunction.cpp: ditto
+        (KJS::JSCallbackFunction::callAsFunction):
+        * API/JSCallbackObject.cpp: ditto
+        (KJS::JSCallbackObject::init):
+        (KJS::JSCallbackObject::~JSCallbackObject):
+        (KJS::JSCallbackObject::getOwnPropertySlot):
+        (KJS::JSCallbackObject::put):
+        (KJS::JSCallbackObject::deleteProperty):
+        (KJS::JSCallbackObject::construct):
+        (KJS::JSCallbackObject::hasInstance):
+        (KJS::JSCallbackObject::callAsFunction):
+        (KJS::JSCallbackObject::getPropertyNames):
+        (KJS::JSCallbackObject::toNumber):
+        (KJS::JSCallbackObject::toString):
+        (KJS::JSCallbackObject::staticValueGetter):
+        (KJS::JSCallbackObject::callbackGetter):
+        
+        * bindings/c/c_instance.cpp: Drop all locks when calling out to C.
+        (KJS::Bindings::CInstance::invokeMethod):
+        (KJS::Bindings::CInstance::invokeDefaultMethod):
+        * bindings/c/c_runtime.cpp: Drop all locks when calling out to C.
+        (KJS::Bindings::CField::valueFromInstance):
+        (KJS::Bindings::CField::setValueToInstance):
+        * bindings/jni/jni_objc.mm:
+        (KJS::Bindings::dispatchJNICall): Drop all locks when calling out to Java.
+
+        * bindings/objc/objc_instance.mm: The changes here are to accomodate the
+        fact that C++ unwinding of DropAllLocks goes crazy when you put it inside
+        a @try block. I moved all JavaScript stuff outside of the @try blocks, and 
+        then prefixed the whole blocks with DropAllLocks objects. This required some
+        supporting changes in other functions, which now acquire the JSLock for
+        themselves, intead of relying on their callers to do so.
+        (ObjcInstance::end):
+        (ObjcInstance::invokeMethod):
+        (ObjcInstance::invokeDefaultMethod):
+        (ObjcInstance::setValueOfUndefinedField):
+        (ObjcInstance::getValueOfUndefinedField):
+        * bindings/objc/objc_runtime.mm: Same as above, except I didn't want to
+        change throwError to acquire the JSLock for itself.
+        (ObjcField::valueFromInstance):
+        (ObjcField::setValueToInstance):
+        * bindings/objc/objc_utility.mm: Supporting changes mentioned above.
+        (KJS::Bindings::convertValueToObjcValue):
+        (KJS::Bindings::convertObjcValueToValue):
+
+        * kjs/JSLock.cpp: 
+        (1) Fixed DropAllLocks to behave as advertised, and drop the JSLock only 
+        if the current thread actually acquired it in the first place. This is 
+        important because WebKit needs to ensure that the JSLock has been 
+        dropped before it makes a plug-in call, even though it doesn't know if 
+        the current thread actually acquired the JSLock. (We don't want WebKit
+        to accidentally drop a lock belonging to *another thread*.)
+        (2) Used the new per-thread code written for (1) to make recursive calls
+        to JSLock very cheap. JSLock now knows to call pthread_mutext_lock/ 
+        pthread_mutext_unlock only at nesting level 0.
+        (KJS::createDidLockJSMutex):
+        (KJS::JSLock::lock):
+        (KJS::JSLock::unlock):
+        (KJS::DropAllLocks::DropAllLocks):
+        (KJS::DropAllLocks::~DropAllLocks):
+        (KJS::JSLock::lockCount):
+        * kjs/JSLock.h: Don't duplicate Noncopyable.
+        (KJS::JSLock::~JSLock):
+
+        * wtf/Assertions.h: Blind attempt at helping the Windows build.
+
 2007-03-08  MorganL  <morganl.webkit@yahoo.com>
 
         Reviewed by Darin.
