@@ -36,17 +36,10 @@ class RootInlineBox : public InlineFlowBox {
 public:
     RootInlineBox(RenderObject* obj)
         : InlineFlowBox(obj)
-        , m_topOverflow(0)
-        , m_bottomOverflow(0)
-        , m_leftOverflow(0)
-        , m_rightOverflow(0)
+        , m_overflow(0)
         , m_lineBreakObj(0)
         , m_lineBreakPos(0)
         , m_lineBreakContext(0)
-        , m_blockHeight(0)
-        , m_endsWithBreak(false)
-        , m_hasSelectedChildren(false)
-        , m_ellipsisBox(0)
     {
     }
 
@@ -60,18 +53,24 @@ public:
 
     virtual void adjustPosition(int dx, int dy);
 
-    virtual int topOverflow() { return m_topOverflow; }
-    virtual int bottomOverflow() { return m_bottomOverflow; }
-    virtual int leftOverflow() { return m_leftOverflow; }
-    virtual int rightOverflow() { return m_rightOverflow; }
+    virtual int topOverflow() { return m_overflow ? m_overflow->m_topOverflow : m_y; }
+    virtual int bottomOverflow() { return m_overflow ? m_overflow->m_bottomOverflow : m_y + m_height; }
+    virtual int leftOverflow() { return m_overflow ? m_overflow->m_leftOverflow : m_x; }
+    virtual int rightOverflow() { return m_overflow ? m_overflow->m_rightOverflow : m_x + m_width; }
 
-    virtual void setVerticalOverflowPositions(int top, int bottom) { m_topOverflow = top; m_bottomOverflow = bottom; }
-    void setHorizontalOverflowPositions(int left, int right) { m_leftOverflow = left; m_rightOverflow = right; }
+    virtual void setVerticalOverflowPositions(int top, int bottom);
+    void setHorizontalOverflowPositions(int left, int right);
 
-    virtual void setVerticalSelectionPositions(int top, int bottom) { m_selectionTop = top; m_selectionBottom = bottom; }
+    virtual void setVerticalSelectionPositions(int top, int bottom);
 
     RenderObject* lineBreakObj() const { return m_lineBreakObj; }
-    BidiStatus lineBreakBidiStatus() const { return m_lineBreakBidiStatus; }
+    BidiStatus lineBreakBidiStatus() const { 
+        BidiStatus status;
+        status.eor = m_lineBreakBidiStatusEor;
+        status.lastStrong = m_lineBreakBidiStatusLastStrong;
+        status.last = m_lineBreakBidiStatusLast;
+        return status;
+    }
     BidiContext* lineBreakBidiContext() const { return m_lineBreakContext.get(); }
     void setLineBreakInfo(RenderObject*, unsigned breakPos, BidiStatus*, BidiContext*);
 
@@ -90,7 +89,7 @@ public:
     void placeEllipsis(const AtomicString& ellipsisStr, bool ltr, int blockEdge, int ellipsisWidth, InlineBox* markupBox = 0);
     virtual int placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, bool& foundBox);
 
-    EllipsisBox* ellipsisBox() const { return m_ellipsisBox; }
+    EllipsisBox* ellipsisBox() const;
 
     void paintEllipsisBox(RenderObject::PaintInfo&, int tx, int ty) const;
     bool hitTestEllipsisBox(HitTestResult&, int x, int y, int tx, int ty, HitTestAction, bool);
@@ -118,7 +117,7 @@ public:
     RenderBlock* block() const;
 
     int selectionTop();
-    int selectionBottom() { return m_selectionBottom; }
+    int selectionBottom() { return m_overflow ? m_overflow->m_selectionBottom : m_y + m_height; }
     int selectionHeight() { return max(0, selectionBottom() - selectionTop()); }
 
     InlineBox* closestLeafChildForXPos(int x);
@@ -127,34 +126,47 @@ protected:
     // Normally we are only as tall as the style on our block dictates, but we might have content
     // that spills out above the height of our font (e.g, a tall image), or something that extends further
     // below our line (e.g., a child whose font has a huge descent).
-    int m_topOverflow;
-    int m_bottomOverflow;
-    int m_leftOverflow;
-    int m_rightOverflow;
-
-    int m_selectionTop;
-    int m_selectionBottom;
+        
+    // Allocated only when some of these fields have non-default values
+    struct Overflow {
+        Overflow(RootInlineBox* box) 
+            : m_topOverflow(box->m_y)
+            , m_bottomOverflow(box->m_y + box->m_height)
+            , m_leftOverflow(box->m_x)
+            , m_rightOverflow(box->m_x + box->m_width)
+            , m_selectionTop(box->m_y)
+            , m_selectionBottom(box->m_y + box->m_height)
+            {
+            }
+        void destroy(RenderArena*);
+        void* operator new(size_t, RenderArena*) throw();
+        void operator delete(void*, size_t);
+        
+        int m_topOverflow;
+        int m_bottomOverflow;
+        int m_leftOverflow;
+        int m_rightOverflow;
+        int m_selectionTop;
+        int m_selectionBottom;
+    private:
+        void* operator new(size_t) throw();
+    };
+    
+    Overflow* m_overflow;
 
     // Where this line ended.  The exact object and the position within that object are stored so that
     // we can create a BidiIterator beginning just after the end of this line.
     RenderObject* m_lineBreakObj;
     unsigned m_lineBreakPos;
 
-    BidiStatus m_lineBreakBidiStatus;
     RefPtr<BidiContext> m_lineBreakContext;
 
     // The height of the block at the end of this line.  This is where the next line starts.
     int m_blockHeight;
 
-    // Whether the line ends with a <br>.
-    bool m_endsWithBreak : 1;
-
-    // Whether we have any children selected (this bit will also be set if the <br> that terminates our
-    // line is selected).
-    bool m_hasSelectedChildren : 1;
-
-    // An inline text box that represents our text truncation string.
-    EllipsisBox* m_ellipsisBox;
+    WTF::Unicode::Direction m_lineBreakBidiStatusEor : 5;
+    WTF::Unicode::Direction m_lineBreakBidiStatusLastStrong : 5;
+    WTF::Unicode::Direction m_lineBreakBidiStatusLast : 5;
 };
 
 } // namespace WebCore

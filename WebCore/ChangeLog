@@ -1,3 +1,71 @@
+2007-03-11  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Hyatt.
+
+        Optimize linebox memory consumption:
+        - move all bitfields to baseclass compacting them
+        - make InlineTextBox::m_truncation unsigned short and make it relative to m_start
+        - remove extremely rarely used EllipsisBox pointer from RootInlineBox and instead
+          use a global hashmap to store it if needed
+        - use minimum required number of bits to store BidiStatus enum variables in RootInlineBox
+        - move overflow variables in RootInlineBox to a separate struct that is instantiated
+          only if any of the variables is set to a value that can't trivially be derived from 
+          box x, y, width and height
+          
+        As a result line box objects shrink:
+            InlineBox: 44 -> 44 bytes
+            InlineTextBox: 68 -> 60 bytes
+            InlineFlowBox: 68 -> 64 bytes
+            RootInlineBox: 128 -> 88 bytes
+            
+        The optimizations possiblity was noticed when debugging http://bugs.webkit.org/show_bug.cgi?id=12833
+        Bug 12833: REGRESSION: Selecting text in 6.6MB txt file is sluggish as of the Feb 19th nightly
+        <rdar://problem/5028159>
+        
+        On that page the patch saves 11.5MB or some 21% of linebox memory consumption. It also
+        actually improves selection performance somewhat by improving memory locality.
+
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::placeEllipsisBox):
+        (WebCore::InlineTextBox::nodeAtPoint):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintDecoration):
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintMarkedTextUnderline):
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::InlineTextBox):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::throw):
+        (WebCore::RootInlineBox::Overflow::operator delete):
+        (WebCore::RootInlineBox::Overflow::destroy):
+        (WebCore::RootInlineBox::destroy):
+        (WebCore::RootInlineBox::detachEllipsisBox):
+        (WebCore::RootInlineBox::clearTruncation):
+        (WebCore::RootInlineBox::placeEllipsis):
+        (WebCore::RootInlineBox::paintEllipsisBox):
+        (WebCore::RootInlineBox::addHighlightOverflow):
+        (WebCore::RootInlineBox::nodeAtPoint):
+        (WebCore::RootInlineBox::adjustPosition):
+        (WebCore::RootInlineBox::selectionTop):
+        (WebCore::RootInlineBox::setLineBreakInfo):
+        (WebCore::RootInlineBox::ellipsisBox):
+        (WebCore::RootInlineBox::setVerticalOverflowPositions):
+        (WebCore::RootInlineBox::setHorizontalOverflowPositions):
+        (WebCore::RootInlineBox::setVerticalSelectionPositions):
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::RootInlineBox):
+        (WebCore::RootInlineBox::topOverflow):
+        (WebCore::RootInlineBox::bottomOverflow):
+        (WebCore::RootInlineBox::leftOverflow):
+        (WebCore::RootInlineBox::rightOverflow):
+        (WebCore::RootInlineBox::lineBreakBidiStatus):
+        (WebCore::RootInlineBox::selectionBottom):
+        (WebCore::RootInlineBox::Overflow::Overflow):
+
 2007-03-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

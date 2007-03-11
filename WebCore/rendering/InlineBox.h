@@ -43,13 +43,22 @@ public:
         , m_width(0)
         , m_height(0)
         , m_baseline(0)
+        , m_next(0)
+        , m_prev(0)
+        , m_parent(0)
         , m_firstLine(false)
         , m_constructed(false)
         , m_dirty(false)
         , m_extracted(false)
-        , m_next(0)
-        , m_prev(0)
-        , m_parent(0)
+        , m_includeLeftEdge(false)
+        , m_includeRightEdge(false)
+        , m_hasTextChildren(false)
+        , m_endsWithBreak(false)
+        , m_hasSelectedChildren(false)
+        , m_hasEllipsisBox(false)
+        , m_reversed(false)
+        , m_treatAsText(true)
+        , m_toAdd(0)
     {
     }
 
@@ -61,13 +70,22 @@ public:
         , m_width(width)
         , m_height(height)
         , m_baseline(baseline)
+        , m_next(next)
+        , m_prev(prev)
+        , m_parent(parent)
         , m_firstLine(firstLine)
         , m_constructed(constructed)
         , m_dirty(dirty)
         , m_extracted(extracted)
-        , m_next(next)
-        , m_prev(prev)
-        , m_parent(parent)
+        , m_includeLeftEdge(false)
+        , m_includeRightEdge(false)
+        , m_hasTextChildren(false)
+        , m_endsWithBreak(false)
+        , m_hasSelectedChildren(false)   
+        , m_hasEllipsisBox(false)
+        , m_reversed(false)
+        , m_treatAsText(true)
+        , m_toAdd(0)
     {
     }
 
@@ -192,15 +210,30 @@ public: // FIXME: Would like to make this protected, but methods are accessing t
     int m_height;
     int m_baseline;
 
+    InlineBox* m_next; // The next element on the same line as us.
+    InlineBox* m_prev; // The previous element on the same line as us.
+    
+    InlineFlowBox* m_parent; // The box that contains us.
+    
+    // Some of these bits are actually for subclasses and moved here to compact the structures.
+    // for this class
     bool m_firstLine : 1;
     bool m_constructed : 1;
     bool m_dirty : 1;
     bool m_extracted : 1;
-
-    InlineBox* m_next; // The next element on the same line as us.
-    InlineBox* m_prev; // The previous element on the same line as us.
-
-    InlineFlowBox* m_parent; // The box that contains us.
+    // for InlineFlowBox
+    bool m_includeLeftEdge : 1;
+    bool m_includeRightEdge : 1;
+    bool m_hasTextChildren : 1;
+    // for RootInlineBox
+    bool m_endsWithBreak : 1;  // Whether the line ends with a <br>.
+    bool m_hasSelectedChildren : 1; // Whether we have any children selected (this bit will also be set if the <br> that terminates our line is selected).
+    bool m_hasEllipsisBox : 1; 
+    // for InlineTextBox
+    bool m_reversed : 1;
+    bool m_dirOverride : 1;
+    bool m_treatAsText : 1; // Whether or not to treat a <br> as text for the purposes of line height.
+    int m_toAdd : 13; // for justified text
 };
 
 } // namespace WebCore
