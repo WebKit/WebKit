@@ -48,21 +48,52 @@ namespace WebCore {
                 ParentAxis, PrecedingAxis, PrecedingSiblingAxis,
                 SelfAxis
             };
+            
+            class NodeTest {
+            public:
+                enum Kind {
+                    TextNodeTest, CommentNodeTest, ProcessingInstructionNodeTest, AnyNodeTest, NameTest,
+                    ElementNodeTest // XPath 2.0
+                };
+                
+                NodeTest(Kind kind, const String& data = String()) : m_kind(kind), m_data(data) {}
+                
+                Kind kind() const { return m_kind; }
+                const String data() const { return m_data; }
+                
+            private:
+                Kind m_kind;
+                String m_data;
+            };
 
-            Step(Axis, const String& nodeTest, const Vector<Predicate*>& predicates = Vector<Predicate*>());
-            Step(Axis, const String& nodeTest, const String& namespaceURI, const Vector<Predicate*>& predicates = Vector<Predicate*>());
+            Step(Axis, const NodeTest& nodeTest, const Vector<Predicate*>& predicates = Vector<Predicate*>());
+            Step(Axis, const NodeTest& nodeTest, const String& namespaceURI, const Vector<Predicate*>& predicates = Vector<Predicate*>());
             ~Step();
 
             NodeVector evaluate(Node* context) const;
-
+            
+            Axis axis() const { return m_axis; }
+            NodeTest nodeTest() const { return m_nodeTest; }
+            const String& nodeTestData() const { return m_nodeTestData; }
+            const String& namespaceURI() const { return m_namespaceURI; }
+            const Vector<Predicate*>& predicates() const { return m_predicates; }
+            
+            void setAxis(Axis axis) { m_axis = axis; }
+            void setNodeTest(NodeTest nodeTest) { m_nodeTest = nodeTest; }
+            void setNodeTestData(const String& nodeTestData) { m_nodeTestData = nodeTestData; }
+            void setNamespaceURI(const String& namespaceURI) { m_namespaceURI = namespaceURI; }
+            void setPredicates(const Vector<Predicate*>& predicates) { m_predicates = predicates; }
+            
         private:
+            void parseNodeTest(const String&);
             NodeVector nodesInAxis(Node* context) const;
             NodeVector nodeTestMatches(const NodeVector& nodes) const;
             String namespaceFromNodetest(const String& nodeTest) const;
             Node::NodeType primaryNodeType(Axis) const;
 
             Axis m_axis;
-            String m_nodeTest;
+            NodeTest m_nodeTest;
+            String m_nodeTestData;
             String m_namespaceURI;
             Vector<Predicate*> m_predicates;
         };

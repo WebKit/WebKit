@@ -2,7 +2,7 @@ PASS child::*
 PASS /child::*
 PASS /*/*
 PASS /child::*/*/child::GCHILD
-FAIL //* item 2 incorrect (expected GCHILD, actual CHILD2)
+PASS //*
 PASS //GCHILD
 PASS //@attr1
 PASS x:GCHILD

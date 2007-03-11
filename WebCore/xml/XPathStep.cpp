@@ -38,14 +38,14 @@
 namespace WebCore {
 namespace XPath {
 
-Step::Step(Axis axis, const String& nodeTest, const Vector<Predicate*>& predicates)
+Step::Step(Axis axis, const NodeTest& nodeTest, const Vector<Predicate*>& predicates)
     : m_axis(axis)
     , m_nodeTest(nodeTest)
     , m_predicates(predicates)
 {
 }
 
-Step::Step(Axis axis, const String& nodeTest, const String& namespaceURI, const Vector<Predicate*>& predicates)
+Step::Step(Axis axis, const NodeTest& nodeTest, const String& namespaceURI, const Vector<Predicate*>& predicates)
     : m_axis(axis)
     , m_nodeTest(nodeTest)
     , m_namespaceURI(namespaceURI)
@@ -60,31 +60,32 @@ Step::~Step()
 
 NodeVector Step::evaluate(Node* context) const
 {
-    NodeVector inNodes = nodesInAxis(context), outNodes;
-    inNodes = nodeTestMatches(inNodes);
+    NodeVector nodes = nodesInAxis(context);
+    nodes = nodeTestMatches(nodes);
     
-    outNodes = inNodes;
+    EvaluationContext& evaluationContext = Expression::evaluationContext();
+    
     for (unsigned i = 0; i < m_predicates.size(); i++) {
         Predicate* predicate = m_predicates[i];
 
-        outNodes.clear();
-        Expression::evaluationContext().size = inNodes.size();
-        Expression::evaluationContext().position = 1;
-        for (unsigned j = 0; j < inNodes.size(); j++) {
-            Node* node = inNodes[j].get();
+        NodeVector newNodes;
+        evaluationContext.size = nodes.size();
+        evaluationContext.position = 1;
+        for (unsigned j = 0; j < nodes.size(); j++) {
+            Node* node = nodes[j].get();
 
             Expression::evaluationContext().node = node;
-            EvaluationContext backupCtx = Expression::evaluationContext();
+            EvaluationContext backupCtx = evaluationContext;
             if (predicate->evaluate())
-                outNodes.append(node);
+                newNodes.append(node);
 
-            Expression::evaluationContext() = backupCtx;
-            ++Expression::evaluationContext().position;
+            evaluationContext = backupCtx;
+            ++evaluationContext.position;
         }
 
-        inNodes = outNodes;
+        nodes.swap(newNodes);
     }
-    return outNodes;
+    return nodes;
 }
 
 NodeVector Step::nodesInAxis(Node* context) const
@@ -155,10 +156,9 @@ NodeVector Step::nodesInAxis(Node* context) const
                 nodes.append (attrs->item(i));
             return nodes;
         }
-        case NamespaceAxis: {
+        case NamespaceAxis:
             // XPath namespace nodes are not implemented yet.
             return NodeVector();
-        }
         case SelfAxis:
             nodes.append(context);
             return nodes;
@@ -173,7 +173,7 @@ NodeVector Step::nodesInAxis(Node* context) const
                 nodes.append(n);
             return nodes;
     }
-
+    ASSERT_NOT_REACHED();
     return NodeVector();
 }
 
@@ -182,86 +182,91 @@ NodeVector Step::nodeTestMatches(const NodeVector& nodes) const
 {
     NodeVector matches;
 
-    if (m_nodeTest == "*") {
-        for (unsigned i = 0; i < nodes.size(); i++) {
-            Node* node = nodes[i].get();
-            if (node->nodeType() == primaryNodeType(m_axis) &&
-                (m_namespaceURI.isEmpty() || m_namespaceURI == node->namespaceURI()))
-                matches.append(node);
-        }
-        return matches;
-    } else if (m_nodeTest == "text()") {
-        HashSet<Node*> nodeSet;
-        for (unsigned i = 0; i < nodes.size(); i++) {
-            Node* node = nodes[i].get();
-            if ((node->nodeType() == Node::TEXT_NODE || node->nodeType() == Node::CDATA_SECTION_NODE)) {
-                nodeSet.add(node);
-                if (!nodeSet.contains(node->previousSibling())) // See <http://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#TextNodes>
-                    matches.append(node);
-            }
-        }
-        return matches;
-    } else if (m_nodeTest == "comment()") {
-        for (unsigned i = 0; i < nodes.size(); i++) {
-            Node* node = nodes[i].get();
-            if (node->nodeType() == Node::COMMENT_NODE)
-                matches.append(node);
-        }
-        return matches;
-    } else if (m_nodeTest.startsWith("processing-instruction")) {
-        String param;
-
-        const int space = m_nodeTest.find(' ');
-        if (space > -1)
-            param = m_nodeTest.substring(space + 1);
-
-        for (unsigned i = 0; i < nodes.size(); i++) {
-            Node* node = nodes[i].get();
-
-            if (node->nodeType() == Node::PROCESSING_INSTRUCTION_NODE &&
-                (param.isEmpty() || node->nodeName() == param))
-                    matches.append(node);
-        }    
-        return matches;
-    } else if (m_nodeTest == "node()")
-        return nodes;
-    else {
-        if (m_axis == AttributeAxis) {
-            // In XPath land, namespace nodes are not accessible
-            // on the attribute axis.
-            if (m_nodeTest == "xmlns")
-                return matches;
-
+    switch (m_nodeTest.kind()) {
+        case NodeTest::TextNodeTest: {
+            HashSet<Node*> nodeSet;
             for (unsigned i = 0; i < nodes.size(); i++) {
                 Node* node = nodes[i].get();
-                
-                if (node->nodeName() == m_nodeTest) {
-                    matches.append(node);
-                    break; // There can only be one.
+                if ((node->nodeType() == Node::TEXT_NODE || node->nodeType() == Node::CDATA_SECTION_NODE)) {
+                    nodeSet.add(node);
+                    if (!nodeSet.contains(node->previousSibling())) // See <http://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#TextNodes>
+                        matches.append(node);
                 }
             }
-
-            return matches;
-        } else if (m_axis == NamespaceAxis) {
-            // Node test on the namespace axis is not implemented yet
-        } else {
-            for (unsigned i = 0; i < nodes.size(); i++) {
-                Node* node = nodes[i].get();
-
-                // We use tagQName here because we don't want the element name in uppercase 
-                // like we get with HTML elements.
-                // Paths without namespaces should match HTML elements in HTML documents despite those having an XHTML namespace.
-                if (node->nodeType() == Node::ELEMENT_NODE
-                    && static_cast<Element*>(node)->tagQName().localName() == m_nodeTest
-                    && ((node->isHTMLElement() && node->document()->isHTMLDocument() && m_namespaceURI.isNull()) || m_namespaceURI == node->namespaceURI()))
-                    matches.append(node);
-            }
-
             return matches;
         }
-    }
+        case NodeTest::CommentNodeTest:
+            for (unsigned i = 0; i < nodes.size(); i++) {
+                Node* node = nodes[i].get();
+                if (node->nodeType() == Node::COMMENT_NODE)
+                    matches.append(node);
+            }
+            return matches;
+        case NodeTest::ProcessingInstructionNodeTest:
+            for (unsigned i = 0; i < nodes.size(); i++) {
+                Node* node = nodes[i].get();
+                const String& name = m_nodeTest.data();
+                if (node->nodeType() == Node::PROCESSING_INSTRUCTION_NODE && (name.isEmpty() || node->nodeName() == name))
+                        matches.append(node);
+            }    
+            return matches;
+        case NodeTest::ElementNodeTest:
+            for (unsigned i = 0; i < nodes.size(); i++) {
+                Node* node = nodes[i].get();
+                if (node->isElementNode())
+                    matches.append(node);
+            }
+            return matches;
+        case NodeTest::AnyNodeTest:
+            return nodes;
+        case NodeTest::NameTest: {
+            const String& name = m_nodeTest.data();
+            if (name == "*") {
+                for (unsigned i = 0; i < nodes.size(); i++) {
+                    Node* node = nodes[i].get();
+                    if (node->nodeType() == primaryNodeType(m_axis) &&
+                        (m_namespaceURI.isEmpty() || m_namespaceURI == node->namespaceURI()))
+                        matches.append(node);
+                }
+                return matches;
+            }
+            if (m_axis == AttributeAxis) {
+                // In XPath land, namespace nodes are not accessible
+                // on the attribute axis.
+                if (name == "xmlns")
+                    return matches;
 
-    return matches;
+                for (unsigned i = 0; i < nodes.size(); i++) {
+                    Node* node = nodes[i].get();
+                    
+                    if (node->nodeName() == name) {
+                        matches.append(node);
+                        break; // There can only be one.
+                    }
+                }
+
+                return matches;
+            } else if (m_axis == NamespaceAxis) {
+                // Node test on the namespace axis is not implemented yet
+            } else {
+                for (unsigned i = 0; i < nodes.size(); i++) {
+                    Node* node = nodes[i].get();
+
+                    // We use tagQName here because we don't want the element name in uppercase 
+                    // like we get with HTML elements.
+                    // Paths without namespaces should match HTML elements in HTML documents despite those having an XHTML namespace.
+                    if (node->nodeType() == Node::ELEMENT_NODE
+                        && static_cast<Element*>(node)->tagQName().localName() == name
+                        && ((node->isHTMLElement() && node->document()->isHTMLDocument() && m_namespaceURI.isNull()) || m_namespaceURI == node->namespaceURI()))
+                        matches.append(node);
+                }
+
+                return matches;
+            }
+        }
+    }
+    ASSERT_NOT_REACHED();
+    return NodeVector();
 }
 
 Node::NodeType Step::primaryNodeType(Axis axis) const

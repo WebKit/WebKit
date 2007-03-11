@@ -250,31 +250,6 @@ void Function::setArguments(const Vector<Expression*>& args)
         addSubExpression(*it);
 }
 
-void Function::setName(const String& name)
-{
-    m_name = name;
-}
-
-Expression* Function::arg(int i)
-{
-    return subExpr(i);
-}
-
-const Expression* Function::arg(int i) const
-{
-    return subExpr(i);
-}
-
-unsigned int Function::argCount() const
-{
-    return subExprCount();
-}
-
-String Function::name() const
-{
-    return m_name;
-}
-
 Value FunLast::evaluate() const
 {
     return Expression::evaluationContext().size;

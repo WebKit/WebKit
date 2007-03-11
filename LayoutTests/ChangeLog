@@ -1,3 +1,14 @@
+2007-03-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13021
+        XPath can be very slow
+
+        * fast/xpath/4XPath/Core/test_location_path-expected.txt:
+        * fast/xpath/4XPath/Core/test_parser-expected.txt:
+        These tests now pass, as "//*" now happens to produce correct node order.
+
 2007-03-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

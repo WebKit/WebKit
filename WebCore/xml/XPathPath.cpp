@@ -55,25 +55,27 @@ Value Filter::evaluate() const
     if (!v.isNodeVector()) 
         return v;
 
-    NodeVector inNodes = v.toNodeVector(), outNodes;
+    NodeVector nodes = v.toNodeVector();
+
+    EvaluationContext& evaluationContext = Expression::evaluationContext();
     for (unsigned i = 0; i < m_predicates.size(); i++) {
-        outNodes.clear();
-        Expression::evaluationContext().size = inNodes.size();
-        Expression::evaluationContext().position = 0;
+        NodeVector newNodes;
+        evaluationContext.size = nodes.size();
+        evaluationContext.position = 0;
         
-        for (unsigned j = 0; j < inNodes.size(); j++) {
-            Node* node = inNodes[j].get();
+        for (unsigned j = 0; j < nodes.size(); j++) {
+            Node* node = nodes[j].get();
             
-            Expression::evaluationContext().node = node;
-            ++Expression::evaluationContext().position;
+            evaluationContext.node = node;
+            ++evaluationContext.position;
             
             if (m_predicates[i]->evaluate())
-                outNodes.append(node);
+                newNodes.append(node);
         }
-        inNodes = outNodes;
+        nodes.swap(newNodes);
     }
 
-    return outNodes;
+    return nodes;
 }
 
 LocationPath::LocationPath()
@@ -120,10 +122,50 @@ Value LocationPath::evaluate(const NodeVector& startNodes) const
             }
         }
         
-        inDOMNodes = outDOMNodes;
+        inDOMNodes.swap(outDOMNodes);
     }
 
     return inDOMNodes;
+}
+
+void LocationPath::optimizeStepPair(unsigned index)
+{
+    Step* first = m_steps[index];
+    
+    if (first->axis() == Step::DescendantOrSelfAxis
+        && first->nodeTest().kind() == Step::NodeTest::AnyNodeTest
+        && first->predicates().size() == 0) {
+
+        Step* second = m_steps[index + 1];
+        if (second->axis() == Step::ChildAxis
+            && second->namespaceURI().isEmpty()
+            && second->nodeTest().kind() == Step::NodeTest::NameTest
+            && second->nodeTest().data() == "*") {
+
+            // Optimize the common case of "//*" AKA descendant-or-self::node()/child::*.
+            first->setAxis(Step::DescendantAxis);
+            second->setAxis(Step::SelfAxis);
+            second->setNodeTest(Step::NodeTest::ElementNodeTest);
+            ASSERT(second->nodeTest().data().isEmpty());
+        }
+    }
+}
+
+void LocationPath::appendStep(Step* step)
+{
+    m_steps.append(step);
+    
+    unsigned stepCount = m_steps.size();
+    if (stepCount > 1)
+        optimizeStepPair(stepCount - 2);
+}
+
+void LocationPath::insertFirstStep(Step* step)
+{
+    m_steps.insert(0, step);
+
+    if (m_steps.size() > 1)
+        optimizeStepPair(0);
 }
 
 Path::Path(Filter* filter, LocationPath* path)

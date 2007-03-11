@@ -57,15 +57,19 @@ namespace WebCore {
         public:
             LocationPath();
             virtual ~LocationPath();
+            void setAbsolute(bool value) { m_absolute = value; }
 
             virtual Value evaluate() const;
             Value evaluate(const NodeVector& startNodes) const;
 
+            void appendStep(Step* step);
+            void insertFirstStep(Step* step);
+
         private:
+            void optimizeStepPair(unsigned index);
+
             Vector<Step*> m_steps;
             bool m_absolute;
-
-            friend int ::xpathyyparse(void*);
         };
 
         class Path : public Expression

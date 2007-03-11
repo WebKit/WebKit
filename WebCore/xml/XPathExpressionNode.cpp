@@ -35,7 +35,7 @@
 namespace WebCore {
 namespace XPath {
     
-EvaluationContext &Expression::evaluationContext()
+EvaluationContext& Expression::evaluationContext()
 {
     static EvaluationContext evaluationContext;
     return evaluationContext;
@@ -48,28 +48,6 @@ Expression::Expression()
 Expression::~Expression()
 {
     deleteAllValues(m_subExpressions);
-}
-
-void Expression::addSubExpression(Expression* expr)
-{
-    m_subExpressions.append(expr);
-}
-
-unsigned Expression::subExprCount() const
-{
-    return m_subExpressions.size();
-}
-
-Expression* Expression::subExpr(unsigned i)
-{
-    ASSERT(i < subExprCount());
-    return m_subExpressions[i];
-}
-
-const Expression* Expression::subExpr(unsigned i) const
-{
-    ASSERT(i < subExprCount());
-    return m_subExpressions[i];
 }
 
 }

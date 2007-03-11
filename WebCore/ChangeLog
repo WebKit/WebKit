@@ -1,3 +1,77 @@
+2007-03-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        A partial fix for http://bugs.webkit.org/show_bug.cgi?id=13021
+        XPath can be very slow
+
+        * xml/XPathExpression.cpp:
+        (WebCore::XPathExpression::evaluate): Cache evaluationContext in a local variable.
+
+        * xml/XPathExpressionNode.cpp:
+        (WebCore::XPath::Expression::evaluationContext):
+        * xml/XPathExpressionNode.h:
+        (WebCore::XPath::Expression::addSubExpression):
+        (WebCore::XPath::Expression::subExprCount):
+        (WebCore::XPath::Expression::subExpr):
+        * xml/XPathFunctions.cpp:
+        * xml/XPathFunctions.h:
+        (WebCore::XPath::Function::setName):
+        (WebCore::XPath::Function::arg):
+        (WebCore::XPath::Function::argCount):
+        (WebCore::XPath::Function::name):
+        Made one-liners critical for performance inline.
+
+        * xml/XPathGrammar.y: Fully parse NodeTests, so that strings are no longer passed for what is
+        essentially an enum. Use LocationPath accessors to add steps, instead of directly manipulating
+        internal data members.
+
+        * xml/XPathParser.cpp:
+        (WebCore::XPath::Parser::parseStatement):
+        (WebCore::XPath::Parser::registerNodeTest):
+        (WebCore::XPath::Parser::deleteNodeTest):
+        * xml/XPathParser.h:
+        Added support methods for changes in XPathGrammar.y.
+
+        * xml/XPathPath.cpp:
+        (WebCore::XPath::Filter::evaluate): Cache evaluationContext in a local variable. Use swap() to avoid
+        performing vector assignments.
+        (WebCore::XPath::LocationPath::evaluate): Use swap() to avoid performing vector assignments.
+        (WebCore::XPath::LocationPath::optimizeStepPair): This new method is called during LocationPath construction, 
+        to simplify the path as it's being built. Currently, the only optimized case is "//*" - it is a basis for
+        important operations that cannot be efficiently written in XPath 1.0, but can be optimized with a little bit
+        of XPath 2.0.
+        (WebCore::XPath::LocationPath::appendStep): A new accessor that modifies m_steps and calls optimizeStepPair().
+        (WebCore::XPath::LocationPath::insertFirstStep): Ditto.
+        * xml/XPathPath.h:
+        (WebCore::XPath::LocationPath::setAbsolute): A new accessor.
+
+        * xml/XPathStep.h:
+        (WebCore::XPath::Step::NodeTest::):
+        (WebCore::XPath::Step::NodeTest::NodeTest):
+        (WebCore::XPath::Step::NodeTest::kind):
+        (WebCore::XPath::Step::NodeTest::data):
+        Step::NodeTest is a new sub-class that represents a fully parsed NodeTest.
+        (WebCore::XPath::Step::axis):
+        (WebCore::XPath::Step::nodeTest):
+        (WebCore::XPath::Step::nodeTestData):
+        (WebCore::XPath::Step::namespaceURI):
+        (WebCore::XPath::Step::predicates):
+        (WebCore::XPath::Step::setAxis):
+        (WebCore::XPath::Step::setNodeTest):
+        (WebCore::XPath::Step::setNodeTestData):
+        (WebCore::XPath::Step::setNamespaceURI):
+        (WebCore::XPath::Step::setPredicates):
+        New accessors that let optimizeStepPair() manipulate Step data.
+
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::Step): Use the new NodeTest class.
+        (WebCore::XPath::Step::evaluate): Cache evaluationContext in a local variable. Use swap() to avoid
+        performing unneeded vector assignments.
+        (WebCore::XPath::Step::nodesInAxis): Cosmetic changes.
+        (WebCore::XPath::Step::nodeTestMatches): Use NodeTest instead of parsing the test from string each time.
+        Added a partial implementation of XPath 2.0 element() node test.
+
 2007-03-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

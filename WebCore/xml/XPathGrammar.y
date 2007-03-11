@@ -55,6 +55,7 @@ using namespace XPath;
 %union
 {
     Step::Axis axis;
+    Step::NodeTest* nodeTest;
     NumericOp::Opcode numop;
     EqTestOp::Opcode eqop;
     String* str;
@@ -89,7 +90,7 @@ void xpathyyerror(const char *str) { }
 %type <step> Step
 %type <axis> AxisSpecifier
 %type <step> DescendantOrSelf
-%type <str> NodeTest
+%type <nodeTest> NodeTest
 %type <expr> Predicate
 %type <predList> OptionalPredicateList
 %type <predList> PredicateList
@@ -122,12 +123,12 @@ Expr:
 LocationPath:
     RelativeLocationPath
     {
-        $$->m_absolute = false;
+        $$->setAbsolute(false);
     }
     |
     AbsoluteLocationPath
     {
-        $$->m_absolute = true;
+        $$->setAbsolute(true);
     }
     ;
 
@@ -146,7 +147,7 @@ AbsoluteLocationPath:
     DescendantOrSelf RelativeLocationPath
     {
         $$ = $2;
-        $$->m_steps.insert(0, $1);
+        $$->insertFirstStep($1);
         PARSER->unregisterParseNode($1);
     }
     ;
@@ -155,21 +156,21 @@ RelativeLocationPath:
     Step
     {
         $$ = new LocationPath;
-        $$->m_steps.append($1);
+        $$->appendStep($1);
         PARSER->unregisterParseNode($1);
         PARSER->registerParseNode($$);
     }
     |
     RelativeLocationPath '/' Step
     {
-        $$->m_steps.append($3);
+        $$->appendStep($3);
         PARSER->unregisterParseNode($3);
     }
     |
     RelativeLocationPath DescendantOrSelf Step
     {
-        $$->m_steps.append($2);
-        $$->m_steps.append($3);
+        $$->appendStep($2);
+        $$->appendStep($3);
         PARSER->unregisterParseNode($2);
         PARSER->unregisterParseNode($3);
     }
@@ -183,7 +184,7 @@ Step:
             PARSER->deletePredicateVector($2);
         } else
             $$ = new Step(Step::ChildAxis, *$1);
-        PARSER->deleteString($1);
+        PARSER->deleteNodeTest($1);
         PARSER->registerParseNode($$);
     }
     |
@@ -197,10 +198,10 @@ Step:
         }
         
         if ($2) {
-            $$ = new Step(Step::ChildAxis, localName, namespaceURI, *$2);
+            $$ = new Step(Step::ChildAxis, Step::NodeTest(Step::NodeTest::NameTest, localName), namespaceURI, *$2);
             PARSER->deletePredicateVector($2);
         } else
-            $$ = new Step(Step::ChildAxis, localName, namespaceURI);
+            $$ = new Step(Step::ChildAxis, Step::NodeTest(Step::NodeTest::NameTest, localName), namespaceURI);
         PARSER->deleteString($1);
         PARSER->registerParseNode($$);
     }
@@ -212,7 +213,7 @@ Step:
             PARSER->deletePredicateVector($3);
         } else
             $$ = new Step($1, *$2);
-        PARSER->deleteString($2);
+        PARSER->deleteNodeTest($2);
         PARSER->registerParseNode($$);
     }
     |
@@ -226,10 +227,10 @@ Step:
         }
 
         if ($3) {
-            $$ = new Step($1, localName, namespaceURI, *$3);
+            $$ = new Step($1, Step::NodeTest(Step::NodeTest::NameTest, localName), namespaceURI, *$3);
             PARSER->deletePredicateVector($3);
         } else
-            $$ = new Step($1, localName, namespaceURI);
+            $$ = new Step($1, Step::NodeTest(Step::NodeTest::NameTest, localName), namespaceURI);
         PARSER->deleteString($2);
         PARSER->registerParseNode($$);
     }
@@ -249,20 +250,30 @@ AxisSpecifier:
 NodeTest:
     NODETYPE '(' ')'
     {
-        $$ = new String(*$1 + "()");
+        if (*$1 == "node")
+            $$ = new Step::NodeTest(Step::NodeTest::AnyNodeTest);
+        else if (*$1 == "text")
+            $$ = new Step::NodeTest(Step::NodeTest::TextNodeTest);
+        else if (*$1 == "comment")
+            $$ = new Step::NodeTest(Step::NodeTest::CommentNodeTest);
+
         PARSER->deleteString($1);
-        PARSER->registerString($$);
+        PARSER->registerNodeTest($$);
     }
     |
     PI '(' ')'
+    {
+        $$ = new Step::NodeTest(Step::NodeTest::ProcessingInstructionNodeTest);
+        PARSER->deleteString($1);        
+        PARSER->registerNodeTest($$);
+    }
     |
     PI '(' LITERAL ')'
     {
-        String s = *$1 + " " + *$3;
-        $$ = new String(s.stripWhiteSpace());
+        $$ = new Step::NodeTest(Step::NodeTest::ProcessingInstructionNodeTest, $3->stripWhiteSpace());
         PARSER->deleteString($1);        
         PARSER->deleteString($3);
-        PARSER->registerString($$);
+        PARSER->registerNodeTest($$);
     }
     ;
 
@@ -301,7 +312,7 @@ Predicate:
 DescendantOrSelf:
     SLASHSLASH
     {
-        $$ = new Step(Step::DescendantOrSelfAxis, "node()");
+        $$ = new Step(Step::DescendantOrSelfAxis, Step::NodeTest(Step::NodeTest::AnyNodeTest));
         PARSER->registerParseNode($$);
     }
     ;
@@ -309,13 +320,13 @@ DescendantOrSelf:
 AbbreviatedStep:
     '.'
     {
-        $$ = new Step(Step::SelfAxis, "node()");
+        $$ = new Step(Step::SelfAxis, Step::NodeTest(Step::NodeTest::AnyNodeTest));
         PARSER->registerParseNode($$);
     }
     |
     DOTDOT
     {
-        $$ = new Step(Step::ParentAxis, "node()");
+        $$ = new Step(Step::ParentAxis, Step::NodeTest(Step::NodeTest::AnyNodeTest));
         PARSER->registerParseNode($$);
     }
     ;
@@ -411,7 +422,7 @@ PathExpr:
     |
     FilterExpr '/' RelativeLocationPath
     {
-        $3->m_absolute = true;
+        $3->setAbsolute(true);
         $$ = new Path(static_cast<Filter*>($1), $3);
         PARSER->unregisterParseNode($1);
         PARSER->unregisterParseNode($3);
@@ -420,8 +431,8 @@ PathExpr:
     |
     FilterExpr DescendantOrSelf RelativeLocationPath
     {
-        $3->m_steps.insert(0, $2);
-        $3->m_absolute = true;
+        $3->insertFirstStep($2);
+        $3->setAbsolute(true);
         $$ = new Path(static_cast<Filter*>($1), $3);
         PARSER->unregisterParseNode($1);
         PARSER->unregisterParseNode($2);
