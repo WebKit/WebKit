@@ -549,7 +549,7 @@ public:
 
     String toString() const;
     
-    bool execCommand(const String& command, bool userInterface, const String& value);
+    bool execCommand(const String& command, bool userInterface = false, const String& value = String());
     bool queryCommandEnabled(const String& command);
     bool queryCommandIndeterm(const String& command);
     bool queryCommandState(const String& command);

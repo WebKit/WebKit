@@ -1,3 +1,18 @@
+2007-03-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12249
+        FCKeditor: <hr>, <ul> and <ol> have id="undefined"
+
+        This fixes the attached reduction, but not the original issue.
+
+        Test: editing/execCommand/default-parameters.html
+
+        * dom/Document.h:
+        * dom/Document.idl:
+        Make second and third execCommand() parameters optional.
+
 2007-03-10  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

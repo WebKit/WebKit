@@ -128,8 +128,8 @@ module core {
         // Common extensions
 
         boolean execCommand(in DOMString command, 
-                            in boolean userInterface, 
-                            in DOMString value);
+                            in [Optional] boolean userInterface, 
+                            in [Optional] DOMString value);
         boolean queryCommandEnabled(in DOMString command);
         boolean queryCommandIndeterm(in DOMString command);
         boolean queryCommandState(in DOMString command);
