@@ -126,7 +126,7 @@ function getTestCases( ) {
    This test case is incorrect.  Need to fix the DaylightSavings functions in
    shell.js for this to work properly.
 
-    var DST_START_1998 = UTC( GetFirstSundayInApril(TimeFromYear(1998)) + 2*msPerHour )
+    var DST_START_1998 = UTC( GetSecondSundayInMarch(TimeFromYear(1998)) + 2*msPerHour )
 
     addNewTestCase( new Date(DST_START_1998-1),
                     "new Date("+(DST_START_1998-1)+")",
@@ -136,7 +136,7 @@ function getTestCases( ) {
                     "new Date("+DST_START_1998+")",
                     [DST_START_1998,1998,3,5,0,10,0,0,0,1998,3,5,0,3,0,0,0]);
 
-    var DST_END_1998 = UTC( GetLastSundayInOctober(TimeFromYear(1998)) + 2*msPerHour );
+    var DST_END_1998 = UTC( GetFirstSundayInNovember(TimeFromYear(1998)) + 2*msPerHour );
 
     addNewTestCase ( new Date(DST_END_1998-1),
                     "new Date("+(DST_END_1998-1)+")",

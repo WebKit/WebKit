@@ -154,7 +154,7 @@ function getTestCases( ) {
 
     // Daylight Savings Time
 
-    var DST_START_1998 = UTC( GetFirstSundayInApril(TimeFromYear(1998)) + 2*msPerHour )
+    var DST_START_1998 = UTC( GetSecondSundayInMarch(TimeFromYear(1998)) + 2*msPerHour )
 
     addNewTestCase( new Date(1998,3,5,1,59,59,999),
                     "new Date(1998,3,5,1,59,59,999)",
@@ -164,7 +164,7 @@ function getTestCases( ) {
                     "new Date(1998,3,5,2,0,0,0)",
                     [DST_START_1998,1998,3,5,0,10,0,0,0,1998,3,5,0,3,0,0,0]);
 
-    var DST_END_1998 = UTC( GetLastSundayInOctober(TimeFromYear(1998)) + 2*msPerHour );
+    var DST_END_1998 = UTC( GetFirstSundayInNovember(TimeFromYear(1998)) + 2*msPerHour );
 
     addNewTestCase ( new Date(1998,9,25,1,59,59,999),
                     "new Date(1998,9,25,1,59,59,999)",

@@ -415,8 +415,8 @@ function UTC( t ) {
 function DaylightSavingTA( t ) {
     t = t - LocalTZA();
 
-    var dst_start = GetFirstSundayInApril(t) + 2*msPerHour;
-    var dst_end   = GetLastSundayInOctober(t)+ 2*msPerHour;
+    var dst_start = GetSecondSundayInMarch(t) + 2*msPerHour;
+    var dst_end   = GetFirstSundayInNovember(t)+ 2*msPerHour;
 
     if ( t >= dst_start && t < dst_end ) {
         return msPerHour;
@@ -431,7 +431,7 @@ function DaylightSavingTA( t ) {
 
     return UTC(dst_start  + LocalTZA());
 }
-function GetFirstSundayInApril( t ) {
+function GetSecondSundayInMarch( t ) {
     var year = YearFromTime(t);
     var leap = InLeapYear(t);
 
@@ -446,7 +446,7 @@ function GetFirstSundayInApril( t ) {
 
     return first_sunday;
 }
-function GetLastSundayInOctober( t ) {
+function GetFirstSundayInNovember( t ) {
     var year = YearFromTime(t);
     var leap = InLeapYear(t);
 
