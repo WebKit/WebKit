@@ -236,6 +236,14 @@ void FrameLoaderClientGdk::restoreViewState()
     notImplementedGdk(); 
 }
 
+bool FrameLoaderClientGdk::shouldGoToHistoryItem(HistoryItem* item) const 
+{
+    // FIXME: This is a very simple implementation. More sophisticated
+    // implementation would delegate the decision to a PolicyDelegate.
+    // See mac implementation for example.
+    return item != 0;
+}
+
 bool FrameLoaderClientGdk::privateBrowsingEnabled() const { notImplementedGdk(); return false; }
 void FrameLoaderClientGdk::makeDocumentView() { notImplementedGdk(); }
 void FrameLoaderClientGdk::makeRepresentation(DocumentLoader*) { notImplementedGdk(); }
@@ -303,6 +311,5 @@ void FrameLoaderClientGdk::setMainDocumentError(DocumentLoader*, const ResourceE
 void FrameLoaderClientGdk::startDownload(const ResourceRequest&) { notImplementedGdk(); }
 void FrameLoaderClientGdk::updateGlobalHistoryForStandardLoad(const KURL&) { notImplementedGdk(); }
 void FrameLoaderClientGdk::updateGlobalHistoryForReload(const KURL&) { notImplementedGdk(); }
-bool FrameLoaderClientGdk::shouldGoToHistoryItem(HistoryItem*) const { notImplementedGdk(); return false;}
 
 }

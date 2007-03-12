@@ -93,6 +93,23 @@ static void frameDestroyCb(GtkWidget* widget, gpointer data)
     gtk_main_quit();
 }
 
+static void menuMainBackCb(gpointer data)
+{
+    ASSERT(!data);
+    gFrame->loader()->goBackOrForward(-1);
+}
+
+static void menuMainForwardCb(gpointer data)
+{
+    ASSERT(!data);
+    gFrame->loader()->goBackOrForward(1);
+}
+
+static void menuMainQuitCb(gpointer data)
+{
+    gtk_main_quit();
+}
+
 int main(int argc, char* argv[]) 
 {
     gtk_init(&argc, &argv);
@@ -120,6 +137,29 @@ int main(int argc, char* argv[])
             url = currArg;
     }
 
+    GtkWidget* menuMain = gtk_menu_new();
+    GtkWidget* menuMainBack = gtk_menu_item_new_with_label("Back");
+    gtk_menu_shell_append(GTK_MENU_SHELL(menuMain), menuMainBack);
+    g_signal_connect_swapped(G_OBJECT(menuMainBack), "activate", G_CALLBACK(menuMainBackCb), NULL);
+    gtk_widget_show(menuMainBack);
+
+    GtkWidget* menuMainForward = gtk_menu_item_new_with_label("Forward");
+    gtk_menu_shell_append(GTK_MENU_SHELL(menuMain), menuMainForward);
+    g_signal_connect_swapped(G_OBJECT(menuMainForward), "activate", G_CALLBACK(menuMainForwardCb), NULL);
+    gtk_widget_show(menuMainForward);
+
+    GtkWidget* menuMainQuit = gtk_menu_item_new_with_label("Quit");
+    gtk_menu_shell_append(GTK_MENU_SHELL(menuMain), menuMainQuit);
+    g_signal_connect_swapped(G_OBJECT(menuMainQuit), "activate", G_CALLBACK(menuMainQuitCb), NULL);
+    gtk_widget_show(menuMainQuit);
+
+    GtkWidget* menuMainRoot = gtk_menu_item_new_with_label("Main");
+    gtk_widget_show(menuMainRoot);
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuMainRoot), menuMain);
+
+    GtkWidget* menuBar = gtk_menu_bar_new();
+    gtk_menu_bar_append(GTK_MENU_BAR(menuBar), menuMainRoot);
+
     GtkWidget* topLevelWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_default_size(GTK_WINDOW(topLevelWindow), 800, 600);
     gtk_widget_set_name(topLevelWindow, "GdkLauncher");
@@ -129,6 +169,7 @@ int main(int argc, char* argv[])
     g_signal_connect(GTK_OBJECT(topLevelWindow), "size-request", G_CALLBACK(frameResizeCb), NULL);
 
     GtkWidget* hbox = gtk_hbox_new(FALSE, 2);
+    gtk_box_pack_start(GTK_BOX(vbox), menuBar, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
     gUrlBarEntry = gtk_entry_new();

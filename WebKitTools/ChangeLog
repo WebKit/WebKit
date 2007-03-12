@@ -1,3 +1,15 @@
+2007-03-11  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by Brady Edison.
+
+        Add forward/backward/quit menus for easier testing.
+
+        * GdkLauncher/main.cpp:
+        (menuMainBackCb):
+        (menuMainForwardCb):
+        (menuMainQuitCb):
+        (main):
+
 2007-03-09  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Darin.
