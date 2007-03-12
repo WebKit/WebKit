@@ -110,11 +110,6 @@ using namespace WebCore;
 - (void)invalidate;
 @end
 
-static inline WebView *getWebView(DocumentLoader* loader)
-{
-    return kit(loader->frameLoader()->frame()->page());
-}
-
 static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     return loader ? static_cast<WebDocumentLoaderMac*>(loader)->dataSource() : nil;
@@ -251,7 +246,7 @@ void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceReques
 
 bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader* loader, const ResourceRequest& request, const ResourceResponse& response, int length)
 {
-    WebView *webView = getWebView(loader);
+    WebView *webView = getWebView(m_webFrame.get());
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
@@ -264,7 +259,7 @@ bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader
 
 void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
 {
-    WebView *webView = getWebView(loader);
+    WebView *webView = getWebView(m_webFrame.get());
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
@@ -283,7 +278,7 @@ void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identi
 
 void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
-    WebView *webView = getWebView(loader);
+    WebView *webView = getWebView(m_webFrame.get());
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
@@ -329,7 +324,7 @@ void WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge(DocumentLoad
 
 void WebFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& response)
 {
-    WebView *webView = getWebView(loader);
+    WebView *webView = getWebView(m_webFrame.get());
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
@@ -339,7 +334,7 @@ void WebFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader* loader, un
 
 void WebFrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader* loader, unsigned long identifier, int lengthReceived)
 {
-    WebView *webView = getWebView(loader);
+    WebView *webView = getWebView(m_webFrame.get());
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
@@ -349,7 +344,7 @@ void WebFrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader* loade
 
 void WebFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long identifier)
 {
-    WebView *webView = getWebView(loader);
+    WebView *webView = getWebView(m_webFrame.get());
     id resourceLoadDelegate = WebViewGetResourceLoadDelegate(webView);
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
     

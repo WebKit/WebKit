@@ -1,3 +1,21 @@
+2007-03-12  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5057575> 
+        REGRESSION: Repro Crash in FrameLoader::frame loading about:blank in PLT
+        
+        Always get the web view from the current web frame, since the document loader's frame can have been zeroed out
+        (for example when detaching the document loader).
+        
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache):
+        (WebFrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebFrameLoaderClient::dispatchWillSendRequest):
+        (WebFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebFrameLoaderClient::dispatchDidFinishLoading):
+
 2007-03-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adele.
