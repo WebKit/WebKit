@@ -195,6 +195,17 @@ PassRefPtr<Node> HTMLParser::parseToken(Token *t)
         if (inBody && !skipMode() && current->localName() != styleTag && current->localName() != titleTag && 
             current->localName() != scriptTag && !t->text->containsOnlyWhitespace()) 
             haveContent = true;
+        
+        RefPtr<Node> n;
+        String text = t->text.get();
+        unsigned charsLeft = text.length();
+        while (charsLeft) {
+            // split large blocks of text to nodes of manageable size
+            n = Text::createWithLengthLimit(document, text, charsLeft);
+            if (!insertNode(n.get(), t->flat))
+                return 0;
+        }
+        return n;
     }
 
     RefPtr<Node> n = getNode(t);

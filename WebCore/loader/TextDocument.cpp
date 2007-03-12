@@ -127,9 +127,12 @@ bool TextTokenizer::write(const SegmentedString& s, bool appendData)
     } 
     
     String string = String(m_buffer, m_dest - m_buffer);
-    
-    RefPtr<Text> text = m_doc->createTextNode(string);
-    m_preElement->appendChild(text, ec);
+    unsigned charsLeft = string.length();
+    while (charsLeft) {
+        // split large text to nodes of manageable size
+        RefPtr<Text> text = Text::createWithLengthLimit(m_doc, string, charsLeft);
+        m_preElement->appendChild(text, ec);
+    }
 
     return false;
 }

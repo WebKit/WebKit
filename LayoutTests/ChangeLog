@@ -1,3 +1,17 @@
+2007-03-12  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Alexey
+        
+        Test that this works correctly with composed characters
+        http://bugs.webkit.org/show_bug.cgi?id=12833
+        REGRESSION: Selecting text in 6.6MB txt file is sluggish as of the Feb 19th nightly
+        <rdar://problem/5028159>
+
+        * fast/text/large-text-composed-char-expected.checksum: Added.
+        * fast/text/large-text-composed-char-expected.png: Added.
+        * fast/text/large-text-composed-char-expected.txt: Added.
+        * fast/text/large-text-composed-char.html: Added.
+
 2007-03-09  Rob Buis  <buis@kde.org>
 
         Reviewed by Nikolas Zimmermann.

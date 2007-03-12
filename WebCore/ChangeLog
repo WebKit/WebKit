@@ -1,3 +1,22 @@
+2007-03-12  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Alexey.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=12833
+        REGRESSION: Selecting text in 6.6MB txt file is sluggish as of the Feb 19th nightly
+        <rdar://problem/5028159>
+        
+        Divide large text blocks (>64kB) over multiple text nodes. This limits linebox searches to
+        a manageable subset.
+        
+        * dom/Text.cpp:
+        (WebCore::Text::createWithLengthLimit):
+        * dom/Text.h:
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::parseToken):
+        * loader/TextDocument.cpp:
+        (WebCore::TextTokenizer::write):
+
 2007-03-12  David Hyatt  <hyatt@apple.com>
 
         Fix a regression in printing.  Printer fonts need to be part of the

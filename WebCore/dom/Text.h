@@ -28,6 +28,8 @@
 #include "CharacterData.h"
 
 namespace WebCore {
+    
+const unsigned cTextNodeLengthLimit = 1 << 16;
 
 class Text : public CharacterData
 {
@@ -56,6 +58,8 @@ public:
     virtual bool childTypeAllowed(NodeType);
 
     virtual String toString() const;
+    
+    static PassRefPtr<Text> createWithLengthLimit(Document*, const String&, unsigned& charsLeft, unsigned maxChars = cTextNodeLengthLimit);
 
 #ifndef NDEBUG
     virtual void formatForDebugger(char *buffer, unsigned length) const;
