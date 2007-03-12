@@ -497,8 +497,8 @@ function UTC( t	) {
 function DaylightSavingTA( t ) {
 	t =	t -	LocalTZA();
 
-	var	dst_start =	GetFirstSundayInApril(t) + 2*msPerHour;
-	var	dst_end	  =	GetLastSundayInOctober(t)+ 2*msPerHour;
+	var	dst_start = GetSecondSundayInMarch(t) + 2*msPerHour;
+	var	dst_end	  = GetFirstSundayInNovember(t)+ 2*msPerHour;
 
 	if ( t >= dst_start	&& t < dst_end ) {
 		return msPerHour;
@@ -513,34 +513,37 @@ function DaylightSavingTA( t ) {
 
 	return UTC(dst_start  +	LocalTZA());
 }
-function GetFirstSundayInApril(	t )	{
+function GetSecondSundayInMarch( t ) {
 	var	year = YearFromTime(t);
 	var	leap = InLeapYear(t);
 
-	var	april =	TimeFromYear(year) + TimeInMonth(0,	leap) +	TimeInMonth(1,leap)	+
-	TimeInMonth(2,leap);
+	var	march =	TimeFromYear(year) + TimeInMonth(0, leap) + TimeInMonth(1,leap);
 
-	for	( var first_sunday = april;	WeekDay(first_sunday) >	0;
-		first_sunday +=	msPerDay )
+	var sundayCount = 0;
+	var flag = true;
+	for ( var second_sunday = march; flag; second_sunday += msPerDay )
 	{
-		;
+		if (WeekDay(second_sunday) == 0) {
+			if(++sundayCount == 2)
+				flag = false;
+		}
 	}
 
-	return first_sunday;
+	return second_sunday;
 }
-function GetLastSundayInOctober( t ) {
-	var	year = YearFromTime(t);
-	var	leap = InLeapYear(t);
+function GetFirstSundayInNovember( t ) {
+	var year = YearFromTime(t);
+	var leap = InLeapYear(t);
 
-	for	( var oct =	TimeFromYear(year),	m =	0; m < 9; m++ )	{
-		oct	+= TimeInMonth(m, leap);
+	for ( var nov = TimeFromYear(year), m =	0; m < 11; m++ ) {
+		nov += TimeInMonth(m, leap);
 	}
-	for	( var last_sunday =	oct	+ 30*msPerDay; WeekDay(last_sunday)	> 0;
-		last_sunday	-= msPerDay	)
+	for ( var first_sunday = nov; WeekDay(first_sunday) > 0;
+		first_sunday += msPerDay	)
 	{
 		;
 	}
-	return last_sunday;
+	return first_sunday;
 }
 function LocalTime(	t )	{
 	return ( t + LocalTZA()	+ DaylightSavingTA(t) );
