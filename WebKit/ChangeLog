@@ -1,3 +1,22 @@
+2007-03-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12964
+          <rdar://problem/5045717> REGRESSION: crash in -[WebBaseNetscapePluginStream _deliverData]
+          at simpsonsmovie.com (12964)
+
+        * Plugins/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream startStreamResponseURL:expectedContentLength:lastModifiedDate:MIMEType:]):
+        At every place we call the plug-in, since it could destroy the stream, get pluginView into a local
+        variable; it will be set to nil if the stream is destroyed.
+        (-[WebBaseNetscapePluginStream _destroyStream]): Added calls to retain/release to handle the case where
+        one of the calls to the plug-in destroys the stream. Added a call to cancelPreviousPerformRequestsWithTarget
+        in case _deliverData has been scheduled but not yet delivered. Also get pluginView into a local variable
+        as mentioned above, and check at strategic points and exit if the stream was already destroyed to avoid
+        multiple calls to NPP_DestroyStream or NPP_URLNotify.
+        (-[WebBaseNetscapePluginStream _deliverData]): Ditto.
+
 2007-03-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
