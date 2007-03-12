@@ -290,12 +290,6 @@ void Frame::issueTransposeCommand()
     notImplementedGdk();
 }
 
-void Frame::respondToChangedSelection(WebCore::Selection const&, bool)
-{
-    // FIXME: If we want continous spell checking, we need to implement this.
-    notImplementedGdk();
-}
-
 void Frame::cleanupPlatformScriptObjects()
 {
     notImplementedGdk();

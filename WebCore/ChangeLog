@@ -1,3 +1,14 @@
+2007-03-11  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Not reviewed - gdk build fixes.
+
+        * platform/gdk/EditorClientGdk.cpp:
+        (WebCore::EditorClientGdk::respondToChangedSelection): add stub
+        * platform/gdk/EditorClientGdk.h:
+        * platform/gdk/FrameGdk.cpp:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (Editor::markMisspellings): add stub
+
 2007-03-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adele.
