@@ -720,14 +720,6 @@ static BOOL loggedObjectCacheSize = NO;
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeNotification object:[self webView]];
 }
 
-- (void)respondToChangedSelection
-{
-    NSView <WebDocumentView> *view = [[_frame frameView] documentView];
-    if ([view isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)view _selectionChanged];
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeSelectionNotification object:[self webView]];
-}
-
 - (NSUndoManager *)undoManager
 {
     return [[self webView] undoManager];

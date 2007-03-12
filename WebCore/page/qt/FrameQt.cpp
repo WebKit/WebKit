@@ -102,11 +102,6 @@ void Frame::issueTransposeCommand()
     notImplemented();
 }
 
-void Frame::respondToChangedSelection(const Selection& oldSelection, bool closeTyping)
-{
-    // TODO: If we want continous spell checking, we need to implement this.
-}
-
 void Frame::print()
 {
     notImplemented();

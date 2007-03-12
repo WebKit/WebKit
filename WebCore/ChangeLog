@@ -1,3 +1,29 @@
+2007-03-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adele.
+
+        Moving Frame{Mac}::respondToChangedSelection to Frame.cpp
+        Added new EditorClient method to handle old bridge function
+        
+        * bridge/EditorClient.h:
+           Added respondToChangedSelection to replace old bridge function
+        * editing/Editor.cpp:
+        (WebCore::Editor::respondToChangedSelection):
+           Add client call to replace old bridge call from Frame::respondToChangedSelection
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection):
+           No longer directly call Editor as Frame::respondToChangedSelection
+           makes the call
+        * page/Frame.cpp:
+        (WebCore::Frame::respondToChangedSelection):
+           Moved from FrameMac, replaced bridge call with call to Editor
+        * page/mac/FrameMac.mm:
+           Moved respondToChangedSelection to Frame.cpp
+        * page/mac/WebCoreFrameBridge.h:
+           Removed respondToChangedSelection from bridge
+        * page/qt/FrameQt.cpp:
+           Remove stub method for respondToChangedSelection
+
 2007-03-11  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Brady Eidson.

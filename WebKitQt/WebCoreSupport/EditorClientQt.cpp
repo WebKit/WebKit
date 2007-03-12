@@ -114,6 +114,11 @@ void EditorClientQt::respondToChangedContents()
     m_page->d->modified = true;
 }
 
+void EditorClientQt::respondToChangedSelection()
+{
+    notImplemented();
+}
+
 void EditorClientQt::didEndEditing()
 {
     m_editing = false;

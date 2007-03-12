@@ -67,6 +67,7 @@ public:
 
     virtual void didBeginEditing();
     virtual void respondToChangedContents();
+    virtual void respondToChangedSelection();
     virtual void didEndEditing();
     virtual void didWriteSelectionToPasteboard();
     virtual void didSetSelectionTypesForPasteboard();

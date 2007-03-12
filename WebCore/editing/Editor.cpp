@@ -412,6 +412,8 @@ bool Editor::shouldShowDeleteInterface(HTMLElement* element) const
 
 void Editor::respondToChangedSelection(const Selection& oldSelection)
 {
+    if (client())
+        client()->respondToChangedSelection();
     m_deleteButtonController->respondToChangedSelection(oldSelection);
 }
 

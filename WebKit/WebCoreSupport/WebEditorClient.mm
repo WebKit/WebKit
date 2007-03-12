@@ -260,6 +260,14 @@ void WebEditorClient::respondToChangedContents()
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeNotification object:m_webView];    
 }
 
+void WebEditorClient::respondToChangedSelection()
+{
+    NSView <WebDocumentView> *view = [[[m_webView selectedFrame] frameView] documentView];
+    if ([view isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)view _selectionChanged];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeSelectionNotification object:m_webView];
+}
+
 void WebEditorClient::didEndEditing()
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidEndEditingNotification object:m_webView];

@@ -1,3 +1,13 @@
+2007-03-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adele.
+
+        Stub for EditorClientQt::respondToChangedSelection
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::respondToChangedSelection):
+        * WebCoreSupport/EditorClientQt.h:
+
 2007-03-07  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

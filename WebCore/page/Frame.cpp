@@ -1797,6 +1797,40 @@ void Frame::scheduleClose()
         chrome->closeWindowSoon();
 }
 
+void Frame::respondToChangedSelection(const Selection &oldSelection, bool closeTyping)
+{
+    if (document()) {
+        if (editor()->isContinuousSpellCheckingEnabled()) {
+            Selection oldAdjacentWords;
+            
+            // If this is a change in selection resulting from a delete operation, oldSelection may no longer
+            // be in the document.
+            if (oldSelection.start().node() && oldSelection.start().node()->inDocument()) {
+                VisiblePosition oldStart(oldSelection.visibleStart());
+                oldAdjacentWords = Selection(startOfWord(oldStart, LeftWordIfOnBoundary), endOfWord(oldStart, RightWordIfOnBoundary));   
+            }
+            
+            VisiblePosition newStart(selectionController()->selection().visibleStart());
+            Selection newAdjacentWords(startOfWord(newStart, LeftWordIfOnBoundary), endOfWord(newStart, RightWordIfOnBoundary));
+            
+            // When typing we check spelling elsewhere, so don't redo it here.
+            if (closeTyping && oldAdjacentWords != newAdjacentWords)
+                editor()->markMisspellings(oldAdjacentWords);
+            
+            // This only erases a marker in the first word of the selection.
+            // Perhaps peculiar, but it matches AppKit.
+            document()->removeMarkers(newAdjacentWords.toRange().get(), DocumentMarker::Spelling);
+            document()->removeMarkers(newAdjacentWords.toRange().get(), DocumentMarker::Grammar);
+        } else {
+            // When continuous spell checking is off, existing markers disappear after the selection changes.
+            document()->removeMarkers(DocumentMarker::Spelling);
+            document()->removeMarkers(DocumentMarker::Grammar);
+        }
+    }
+    
+    editor()->respondToChangedSelection(oldSelection);
+}
+
 FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFrameOwnerElement* ownerElement,
                            FrameLoaderClient* frameLoaderClient)
     : m_page(page)

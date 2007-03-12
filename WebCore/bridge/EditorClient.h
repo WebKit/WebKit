@@ -79,6 +79,7 @@ public:
 
     virtual void didBeginEditing() = 0;
     virtual void respondToChangedContents() = 0;
+    virtual void respondToChangedSelection() = 0;
     virtual void didEndEditing() = 0;
     virtual void didWriteSelectionToPasteboard() = 0;
     virtual void didSetSelectionTypesForPasteboard() = 0;
