@@ -1,3 +1,17 @@
+2007-03-12  David Hyatt  <hyatt@apple.com>
+
+        Fix a regression in printing.  Printer fonts need to be part of the
+        font cache key, since printer fonts have different glyph widths.
+        (Integer antialiasing is used for screen fonts but not for printer fonts.)
+
+        Reviewed by aroben
+
+        * platform/FontCache.cpp:
+        (WebCore::FontPlatformDataCacheKey::FontPlatformDataCacheKey):
+        (WebCore::FontPlatformDataCacheKey::operator==):
+        (WebCore::computeHash):
+        (WebCore::FontCache::getCachedFontPlatformData):
+
 2007-03-12  Lars Knoll <lars@trolltech.com>
 
         add missing symbol to fix the Qt build again.
