@@ -1,3 +1,12 @@
+2007-03-12  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Oliver.
+
+        Add a missing parameter to the constructor.
+
+        * platform/PlatformKeyboardEvent.h:
+        * platform/win/KeyEventWin.cpp: (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+
 2007-03-12  Lars Knoll <lars@trolltech.com>
 
         Fix the Qt build. I still get crashes though :/

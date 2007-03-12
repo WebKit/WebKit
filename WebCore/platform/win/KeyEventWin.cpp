@@ -136,7 +136,7 @@ static String keyIdentifierForWindowsKeyCode(short keyCode)
 
 static String singleCharacterString(UChar c) { return String(&c, 1); }
 
-PlatformKeyboardEvent::PlatformKeyboardEvent(HWND hWnd, WPARAM wParam, LPARAM lParam)
+PlatformKeyboardEvent::PlatformKeyboardEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, UChar)
     : m_text(singleCharacterString(wParam))
     , m_unmodifiedText(singleCharacterString(wParam))
     , m_keyIdentifier(keyIdentifierForWindowsKeyCode(wParam))
