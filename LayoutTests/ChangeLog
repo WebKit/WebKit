@@ -1,3 +1,12 @@
+2007-03-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by hyatt.
+
+        <rdar://problem/5055690> ASSERTION failure on drop into editable element with content changed on drop
+
+        * fast/events/content-changed-during-drop-expected.txt: Added.
+        * fast/events/content-changed-during-drop.html: Added.
+
 2007-03-11  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

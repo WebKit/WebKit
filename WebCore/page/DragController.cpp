@@ -298,6 +298,17 @@ DragOperation DragController::operationForLoad(DragData* dragData)
     return dragOperation(dragData);
 }
 
+static bool setSelectionToDragCaret(Frame* frame, Selection& dragCaret, RefPtr<Range>& range, const IntPoint& point)
+{
+    frame->selectionController()->setSelection(dragCaret);
+    if (frame->selectionController()->isNone()) {
+        dragCaret = visiblePositionForPoint(frame, point);
+        frame->selectionController()->setSelection(dragCaret);
+        range = dragCaret.toRange();
+    }
+    return !frame->selectionController()->isNone();
+}
+
 bool DragController::concludeDrag(DragData* dragData, DragDestinationAction actionMask)
 {
     ASSERT(dragData);
@@ -351,8 +362,8 @@ bool DragController::concludeDrag(DragData* dragData, DragDestinationAction acti
                           && dragData->canSmartReplace();
             applyCommand(new MoveSelectionCommand(fragment, dragCaret.base(), smartMove));
         } else {
-            innerFrame->selectionController()->setSelection(dragCaret);
-            applyCommand(new ReplaceSelectionCommand(m_document, fragment, true, dragData->canSmartReplace(), chosePlainText)); 
+            if (setSelectionToDragCaret(innerFrame, dragCaret, range, point))
+                applyCommand(new ReplaceSelectionCommand(m_document, fragment, true, dragData->canSmartReplace(), chosePlainText)); 
         }    
     } else {
         String text = dragData->asPlainText();
@@ -360,8 +371,8 @@ bool DragController::concludeDrag(DragData* dragData, DragDestinationAction acti
             return false;
         
         m_client->willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
-        innerFrame->selectionController()->setSelection(dragCaret);
-        applyCommand(new ReplaceSelectionCommand(m_document, createFragmentFromText(range.get(), text), true, false, true)); 
+        if (setSelectionToDragCaret(innerFrame, dragCaret, range, point))
+            applyCommand(new ReplaceSelectionCommand(m_document, createFragmentFromText(range.get(), text), true, false, true)); 
     }
 
     return true;

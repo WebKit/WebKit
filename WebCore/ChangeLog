@@ -1,5 +1,21 @@
 2007-03-11  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by hyatt.
+
+        Fix for <rdar://problem/5055690> ASSERTION failure on drop into 
+        editable element with content changed on drop 
+
+        After setting the selection for a drop into an editable region 
+        we make sure the we succeeded.  If we didn't we assume a focus handler
+        or similar altered the element contents and try again, if the second
+        attempt fails we bail out.
+
+        * page/DragController.cpp:
+        (WebCore::setSelectionToDragCaret):
+        (WebCore::DragController::concludeDrag):
+
+2007-03-11  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Adele.
 
         Moving Frame{Mac}::respondToChangedSelection to Frame.cpp
