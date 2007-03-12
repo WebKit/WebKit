@@ -283,6 +283,13 @@ const QPixmap* ImageDecoderQt::imageAtIndex(size_t index) const
     return  &m_pixmapCache[index];
 }
 
+void ImageDecoderQt::clearFrame(size_t index)
+{
+    if (m_imageList.size() < (int)index)
+        m_imageList[index].m_image = QImage();
+    m_pixmapCache.take(index);
+}
+
 }
 
 // vim: ts=4 sw=4 et

@@ -1,3 +1,21 @@
+2007-03-12  Lars Knoll <lars@trolltech.com>
+
+        Fix the Qt build. I still get crashes though :/
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::clearFrame):
+        * platform/graphics/qt/ImageDecoderQt.h:
+        * platform/graphics/qt/ImageSourceQt.cpp:
+        (WebCore::ImageSource::setData):
+        (WebCore::ImageSource::frameIsCompleteAtIndex):
+        (WebCore::ImageSource::clear):
+        (WebCore::ImageSource::destroyFrameAtIndex):
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::ClipboardQt):
+        * platform/qt/ClipboardQt.h:
+        * platform/qt/DragDataQt.cpp:
+        (WebCore::DragData::createClipboard):
+
 2007-03-11  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Not reviewed - gdk build fixes.

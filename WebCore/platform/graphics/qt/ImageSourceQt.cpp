@@ -107,15 +107,12 @@ bool ImageSource::initialized() const
 
 void ImageSource::setData(const Vector<char>* data, bool allDataReceived)
 {
-    if ( m_decoder) {
-        delete  m_decoder;
-        m_decoder = 0;
-    }
     // Make the decoder by sniffing the bytes.
     // This method will examine the data and instantiate an instance of the appropriate decoder plugin.
     // If insufficient bytes are available to determine the image type, no decoder plugin will be
     // made.
-    m_decoder = createDecoder(*data);
+    if (!m_decoder)
+        m_decoder = createDecoder(*data);
 
     if (!m_decoder)
         return;
@@ -186,6 +183,24 @@ bool ImageSource::frameHasAlphaAtIndex(size_t index)
         return false;
     
     return source->hasAlphaChannel();
+}
+
+bool ImageSource::frameIsCompleteAtIndex(size_t index)
+{
+    return (m_decoder && m_decoder->imageAtIndex(index) != 0);
+}
+
+void ImageSource::clear()
+{
+    delete  m_decoder;
+    m_decoder = 0;
+}
+
+
+void ImageSource::destroyFrameAtIndex(size_t index)
+{
+    if (m_decoder)
+        m_decoder->clearFrame(index);
 }
 
 }
