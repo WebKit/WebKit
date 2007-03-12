@@ -30,11 +30,12 @@ namespace KJS {
 
     // To make it safe to use JavaScript on multiple threads, it is
     // important to lock before doing anything that allocates a
-    // garbage-collected object or which may affect other shared state
-    // such as the protect count hash table. The simplest way to do
-    // this is by having a local JSLock object for the scope
-    // where the lock must be held. The lock is recursive so nesting
-    // is ok.
+    // JavaScript data structure or that interacts with shared state
+    // such as the protect count hash table. The simplest way to lock
+    // is to create a local JSLock object in the scope where the lock 
+    // must be held. The lock is recursive so nesting is ok. The JSLock 
+    // object also acts as a convenience short-hand for running important
+    // initialization routines.
 
     // To avoid deadlock, sometimes it is necessary to temporarily
     // release the lock. Since it is recursive you actually have to
@@ -47,9 +48,10 @@ namespace KJS {
 
     class JSLock : Noncopyable {
     public:
-        JSLock() 
+        JSLock()
         {
             lock();
+            registerThread();
         }
 
         ~JSLock() 
@@ -60,6 +62,8 @@ namespace KJS {
         static void lock();
         static void unlock();
         static int lockCount();
+
+        static void registerThread();
 
         class DropAllLocks : Noncopyable {
         public:

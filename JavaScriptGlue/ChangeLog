@@ -1,3 +1,17 @@
+2007-03-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Updated in light of fix for <rdar://problem/4681051> Installer crashes 
+        in KJS::Collector::markOtherThreadConservatively(KJS::Collector::Thread*) 
+        trying to install iLife 06 using Rosetta on an Intel Machine
+        
+        * JavaScriptGlue.cpp:
+        (JSLockInterpreter): Ensure backwards compatibility by calling 
+        registerThread() when explicitly taking the JSLock. (This doesn't happen 
+        automatically anymore.) I doubt this actally matters, but in JavaScriptGlue
+        territory, that kind of thinking will get you killed.
+
 2007-03-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

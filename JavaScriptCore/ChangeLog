@@ -1,3 +1,31 @@
+2007-03-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Fixed <rdar://problem/4681051> Installer crashes in KJS::Collector::
+        markOtherThreadConservatively(KJS::Collector::Thread*) trying to install 
+        iLife 06 using Rosetta on an Intel Machine
+        
+        The problem was that our thread-specific data destructor would modify the
+        list of active JavaScript threads without holding the JSLock, corrupting
+        the list. Corruption was especially likely if one JavaScript thread exited 
+        while another was starting up.
+
+        * JavaScriptCore.exp:
+        * kjs/JSLock.cpp: Don't conflate locking the JSLock with registering a
+        thread, since the thread-specific data destructor needs to lock
+        without registering a thread. Instead, treat thread registration as a
+        part of the convenience of the JSLock object, and whittle down JSLock::lock()
+        to just the bits that actually do the locking.
+        (KJS::JSLock::lock):
+        (KJS::JSLock::registerThread):
+        * kjs/JSLock.h: Updated comments to mention the new behavior above, and
+        other recent changes.
+        (KJS::JSLock::JSLock):
+        * kjs/collector.cpp:
+        (KJS::destroyRegisteredThread): Lock here.
+        (KJS::Collector::registerThread): To match, assert that we're locked here.
+
 2007-03-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

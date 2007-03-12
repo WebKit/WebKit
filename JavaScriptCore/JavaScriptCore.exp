@@ -164,6 +164,7 @@ __ZN3KJS6JSCell9getObjectEv
 __ZN3KJS6JSCellnwEm
 __ZN3KJS6JSLock12DropAllLocksC1Ev
 __ZN3KJS6JSLock12DropAllLocksD1Ev
+__ZN3KJS6JSLock14registerThreadEv
 __ZN3KJS6JSLock4lockEv
 __ZN3KJS6JSLock6unlockEv
 __ZN3KJS6JSLock9lockCountEv

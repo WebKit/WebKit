@@ -641,6 +641,7 @@ CFMutableArrayRef JSCreateJSArrayFromCFArray(CFArrayRef array)
 void JSLockInterpreter()
 {
     JSLock::lock();
+    JSLock::registerThread();
 }
 
 

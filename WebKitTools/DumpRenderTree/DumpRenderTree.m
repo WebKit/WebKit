@@ -157,13 +157,27 @@ static BOOL workQueueFrozen;
 const unsigned maxViewHeight = 600;
 const unsigned maxViewWidth = 800;
 
-// Loops forever, running a script
+static pthread_mutex_t javaScriptThreadsMutex = PTHREAD_MUTEX_INITIALIZER;
+static BOOL javaScriptThreadsShouldTerminate;
+
+static const int javaScriptThreadsCount = 4;
+static CFMutableDictionaryRef javaScriptThreads()
+{
+    assert(pthread_mutex_trylock(&javaScriptThreadsMutex) == EBUSY);
+    static CFMutableDictionaryRef staticJavaScriptThreads;
+    if (!staticJavaScriptThreads)
+        staticJavaScriptThreads = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
+    return staticJavaScriptThreads;
+}
+
+// Loops forever, running a script and randomly respawning, until 
+// javaScriptThreadsShouldTerminate becomes true.
 void* runJavaScriptThread(void* arg)
 {
-    char* script =
+    const char* const script =
     " \
     var array = []; \
-    for (var i = 0; i < 1000; i++) { \
+    for (var i = 0; i < 10; i++) { \
         array.push(String(i)); \
     } \
     ";
@@ -181,23 +195,61 @@ void* runJavaScriptThread(void* arg)
         
         JSGarbageCollect(ctx);
 
-        pthread_testcancel(); // Allow thread termination
+        pthread_mutex_lock(&javaScriptThreadsMutex);
+
+        // Check for cancellation.
+        if (javaScriptThreadsShouldTerminate) {
+            pthread_mutex_unlock(&javaScriptThreadsMutex);
+            return 0;
+        }
+
+        // Respawn probabilistically.
+        if (random() % 5 == 0) {
+            pthread_t pthread;
+            pthread_create(&pthread, NULL, &runJavaScriptThread, NULL);
+            pthread_detach(pthread);
+
+            CFDictionaryRemoveValue(javaScriptThreads(), pthread_self());
+            CFDictionaryAddValue(javaScriptThreads(), pthread, NULL);
+
+            pthread_mutex_unlock(&javaScriptThreadsMutex);
+            return 0;
+        }
+
+        pthread_mutex_unlock(&javaScriptThreadsMutex);
     }
 }
 
-static pthread_t javaScriptThread;
-
-static void startJavaScriptThread(void)
+static void startJavaScriptThreads(void)
 {
-    assert(!javaScriptThread);
-    pthread_create(&javaScriptThread, NULL, runJavaScriptThread, NULL);
+    pthread_mutex_lock(&javaScriptThreadsMutex);
+
+    for (int i = 0; i < javaScriptThreadsCount; i++) {
+        pthread_t pthread;
+        pthread_create(&pthread, NULL, &runJavaScriptThread, NULL);
+        pthread_detach(pthread);
+        CFDictionaryAddValue(javaScriptThreads(), pthread, NULL);
+    }
+
+    pthread_mutex_unlock(&javaScriptThreadsMutex);
 }
 
-static void stopJavaScriptThread(void)
+static void stopJavaScriptThreads(void)
 {
-    assert(javaScriptThread);
-    pthread_cancel(javaScriptThread);
-    javaScriptThread = NULL;
+    pthread_mutex_lock(&javaScriptThreadsMutex);
+
+    javaScriptThreadsShouldTerminate = YES;
+
+    const pthread_t pthreads[javaScriptThreadsCount];
+    assert(CFDictionaryGetCount(javaScriptThreads()) == javaScriptThreadsCount);
+    CFDictionaryGetKeysAndValues(javaScriptThreads(), (const void**)pthreads, NULL);
+
+    pthread_mutex_unlock(&javaScriptThreadsMutex);
+
+    for (int i = 0; i < javaScriptThreadsCount; i++) {
+        pthread_t pthread = pthreads[i];
+        pthread_join(pthread, NULL);
+    }
 }
 
 static BOOL shouldIgnoreWebCoreNodeLeaks(CFStringRef URLString)
@@ -427,7 +479,7 @@ void dumpRenderTree(int argc, const char *argv[])
     [webView cacheDisplayInRect:[webView bounds] toBitmapImageRep:imageRep];
 
     if (threaded)
-        startJavaScriptThread();
+        startJavaScriptThreads();
     
     if (argc == optind+1 && strcmp(argv[optind], "-") == 0) {
         char filenameBuffer[2048];
@@ -449,7 +501,7 @@ void dumpRenderTree(int argc, const char *argv[])
     }
 
     if (threaded)
-        stopJavaScriptThread();
+        stopJavaScriptThreads();
     
     [workQueue release];
 

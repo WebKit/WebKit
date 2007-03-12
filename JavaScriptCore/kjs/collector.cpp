@@ -236,18 +236,26 @@ static void destroyRegisteredThread(void *data)
 {
   Collector::Thread *thread = (Collector::Thread *)data;
 
+  // Can't use JSLock convenience object here because we don't want to re-register
+  // an exiting thread.
+  JSLock::lock();
+  
   if (registeredThreads == thread) {
     registeredThreads = registeredThreads->next;
   } else {
     Collector::Thread *last = registeredThreads;
-    for (Collector::Thread *t = registeredThreads->next; t != NULL; t = t->next) {
+    Collector::Thread *t;
+    for (t = registeredThreads->next; t != NULL; t = t->next) {
       if (t == thread) {
         last->next = t->next;
           break;
       }
       last = t;
     }
+    ASSERT(t); // If t is NULL, we never found ourselves in the list.
   }
+
+  JSLock::unlock();
 
   delete thread;
 }
@@ -259,6 +267,8 @@ static void initializeRegisteredThreadKey()
 
 void Collector::registerThread()
 {
+  ASSERT(JSLock::lockCount() > 0);
+  
   pthread_once(&registeredThreadKeyOnce, initializeRegisteredThreadKey);
 
   if (!pthread_getspecific(registeredThreadKey)) {
