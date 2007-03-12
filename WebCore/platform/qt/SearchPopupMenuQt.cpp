@@ -37,4 +37,9 @@ void SearchPopupMenu::loadRecentSearches(const AtomicString& name, Vector<String
 {
 }
 
+bool SearchPopupMenu::enabled()
+{
+    return true;
+}
+
 }

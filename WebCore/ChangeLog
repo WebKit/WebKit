@@ -1,3 +1,10 @@
+2007-03-12  Lars Knoll <lars@trolltech.com>
+
+        add missing symbol to fix the Qt build again.
+
+        * platform/qt/SearchPopupMenuQt.cpp:
+        (WebCore::SearchPopupMenu::enabled):
+
 2007-03-12  Adele Peterson  <adele@apple.com>
 
         Reviewed by Oliver.
