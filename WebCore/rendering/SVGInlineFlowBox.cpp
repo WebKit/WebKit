@@ -31,6 +31,7 @@
 #include "KCanvasRenderingStyle.h"
 #include "RootInlineBox.h"
 #include "SVGLengthList.h"
+#include "SVGNames.h"
 #include "SVGPaintServer.h"
 #include "SVGResourceClipper.h"
 #include "SVGResourceFilter.h"
@@ -42,6 +43,8 @@ using std::min;
 using std::max;
 
 namespace WebCore {
+
+using namespace SVGNames;
 
 void SVGInlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
 {
@@ -146,7 +149,7 @@ static bool translateBox(InlineBox* box, int x, int y, bool topLevel)
     if (box->object()->isText()) {
         box->setXPos(box->xPos() + x);
         box->setYPos(box->yPos() + y);
-    } else {
+    } else if (!box->object()->element()->hasTagName(aTag)) {
         InlineFlowBox* flow = static_cast<InlineFlowBox*>(box);
         SVGTextPositioningElement* text = static_cast<SVGTextPositioningElement*>(box->object()->element());
 
@@ -187,24 +190,27 @@ static int placePositionedBoxesHorizontally(InlineFlowBox* flow, int x, int& lef
             x += text->width();
             mx = max(mx, x);
             amx = max(amx, x);
-        } else {
-            ASSERT(curr->object()->isInlineFlow());
+        } else if (curr->object()->isInlineFlow()) {
             InlineFlowBox* flow = static_cast<InlineFlowBox*>(curr);
-            SVGTextPositioningElement* text = static_cast<SVGTextPositioningElement*>(flow->object()->element());
-            x += (int)(text->dx()->getFirst().value());
-            if (text->x()->numberOfItems() > 0)
-                x = (int)(text->x()->getFirst().value() - xPos);
-            if (text->x()->numberOfItems() > 0 || text->y()->numberOfItems() > 0 ||
-                text->dx()->numberOfItems() > 0 || text->dy()->numberOfItems() > 0) {
-                seenPositionedElement = true;
-                needsWordSpacing = false;
-                int ignoreX, ignoreY;
-                x = placePositionedBoxesHorizontally(flow, x, mn, mx, ignoreX, ignoreY, needsWordSpacing, xPos, true);
-            } else if (seenPositionedElement) {
-                int ignoreX, ignoreY;
-                x = placePositionedBoxesHorizontally(flow, x, mn, mx, ignoreX, ignoreY, needsWordSpacing, xPos, false);
-            } else
+            if (flow->object()->element()->hasTagName(aTag)) {
                 x = placePositionedBoxesHorizontally(flow, x, mn, mx, amn, amx, needsWordSpacing, xPos, false);
+            } else {
+                SVGTextPositioningElement* text = static_cast<SVGTextPositioningElement*>(flow->object()->element());
+                x += (int)(text->dx()->getFirst().value());
+                if (text->x()->numberOfItems() > 0)
+                    x = (int)(text->x()->getFirst().value() - xPos);
+                if (text->x()->numberOfItems() > 0 || text->y()->numberOfItems() > 0 ||
+                    text->dx()->numberOfItems() > 0 || text->dy()->numberOfItems() > 0) {
+                    seenPositionedElement = true;
+                    needsWordSpacing = false;
+                    int ignoreX, ignoreY;
+                    x = placePositionedBoxesHorizontally(flow, x, mn, mx, ignoreX, ignoreY, needsWordSpacing, xPos, true);
+                } else if (seenPositionedElement) {
+                    int ignoreX, ignoreY;
+                    x = placePositionedBoxesHorizontally(flow, x, mn, mx, ignoreX, ignoreY, needsWordSpacing, xPos, false);
+                } else
+                    x = placePositionedBoxesHorizontally(flow, x, mn, mx, amn, amx, needsWordSpacing, xPos, false);
+            }
         }
     }
 
@@ -257,7 +263,7 @@ int placeSVGFlowHorizontally(InlineFlowBox* flow, int x, int& leftPosition, int&
 static void placeBoxesVerticallyWithAbsBaseline(InlineFlowBox* flow, int& heightOfBlock, int& minY, int& maxY, int& baseline, int yPos)
 {
     for (InlineBox* curr = flow->firstChild(); curr; curr = curr->nextOnLine()) {
-        if (curr->isInlineFlowBox()) {
+        if (curr->isInlineFlowBox() && !curr->object()->element()->hasTagName(aTag)) {
             SVGTextPositioningElement* text = static_cast<SVGTextPositioningElement*>(curr->object()->element());
             baseline += (int)(text->dy()->getFirst().value());
 

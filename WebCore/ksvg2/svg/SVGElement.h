@@ -203,6 +203,7 @@ namespace WebCore {
         virtual bool isSVG() const { return false; }
         virtual bool isFilterEffect() const { return false; }
         virtual bool isGradientStop() const { return false; }
+        virtual bool isTextContent() const { return false; }
 
         virtual bool isShadowNode() const { return m_shadowParent; }
         virtual Node* shadowParentNode() { return m_shadowParent; }

@@ -1,11 +1,20 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {g} at (150,142) size 260x106
-        RenderSVGContainer {g} at (150,142) size 260x106
-          RenderSVGText {text} at (50,100) size 480x0
-          RenderSVGText {text} at (250,100) size 480x0
-          RenderSVGText {text} at (50,170) size 480x0
+      RenderSVGContainer {g} at (50,72) size 360x176
+        RenderSVGContainer {g} at (50,72) size 360x176
+          RenderSVGText {text} at (50,100) size 480x36
+            RenderSVGInline {a} at (0,0) size 86x36
+              RenderSVGInlineText {#text} at (0,0) size 86x0
+                text run at (0,0) width 86: "Visited"
+          RenderSVGText {text} at (250,100) size 480x36
+            RenderSVGInline {a} at (0,0) size 116x36
+              RenderSVGInlineText {#text} at (0,0) size 116x0
+                text run at (0,0) width 116: "Unvisited"
+          RenderSVGText {text} at (50,170) size 480x36
+            RenderSVGInline {a} at (0,0) size 119x36
+              RenderSVGInlineText {#text} at (0,0) size 119x0
+                text run at (0,0) width 119: "Hover me"
           RenderSVGText {text} at (250,170) size 480x36
             RenderSVGInlineText {#text} at (0,-28) size 160x36
               text run at (0,-28) width 160: "And me, too!"

@@ -1,11 +1,14 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {g} at (115.29,1) size 294.71x334
+    RenderSVGContainer {svg} at (0.50,0.50) size 525.50x359
+      RenderSVGContainer {g} at (97,1) size 429x334
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGText {text} at (240,25) size 480x31
-          RenderSVGInlineText {#text} at (-63,-24) size 126x31
-            text run at (-63,-24) width 126: "Text Cursor"
+          RenderSVGInlineText {#text} at (-143,-24) size 143x31
+            text run at (-143,-24) width 133: "Text Cursor "
+          RenderSVGInline {a} at (0,0) size 153x31
+            RenderSVGInlineText {#text} at (133,0) size 153x0
+              text run at (133,0) width 153: "Pointer Cursor"
           RenderSVGInlineText {#text} at (0,0) size 0x0
         RenderPath {rect} at (118.50,38.50) size 243x239 [stroke={[type=SOLID] [color=#666666] [stroke width=3.00]}] [data="M120.00,40.00L360.00,40.00L360.00,276.00L120.00,276.00"]
         RenderSVGContainer {g} at (148,70) size 184x176

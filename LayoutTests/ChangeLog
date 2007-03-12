@@ -1,3 +1,24 @@
+2007-03-09  Rob Buis  <buis@kde.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12500
+        SVG fails to correctly handle all link style selectors
+        http://bugs.webkit.org/show_bug.cgi?id=12567
+        <text> elements ignore <a> children
+
+        Updated results because of allowing <a> inside <text>.
+
+        * svg/W3C-SVG-1.1/interact-cursor-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/interact-cursor-01-f-expected.png:
+        * svg/W3C-SVG-1.1/interact-cursor-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/struct-frag-05-t-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-frag-05-t-expected.png:
+        * svg/W3C-SVG-1.1/struct-frag-05-t-expected.txt:
+        * svg/W3C-SVG-1.1/styling-css-06-b-expected.checksum:
+        * svg/W3C-SVG-1.1/styling-css-06-b-expected.png:
+        * svg/W3C-SVG-1.1/styling-css-06-b-expected.txt:
+
 2007-03-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by hyatt.

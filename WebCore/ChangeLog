@@ -1,3 +1,30 @@
+2007-03-09  Rob Buis  <buis@kde.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12500
+        SVG fails to correctly handle all link style selectors
+        http://bugs.webkit.org/show_bug.cgi?id=12567
+        <text> elements ignore <a> children
+
+        Allow <a> inside svg text and handle xlink:show.
+
+        * ksvg2/svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::createRenderer):
+        (WebCore::SVGAElement::defaultEventHandler):
+        (WebCore::SVGAElement::childShouldCreateRenderer):
+        * ksvg2/svg/SVGAElement.h:
+        * ksvg2/svg/SVGElement.h:
+        (WebCore::SVGElement::isTextContent):
+        * ksvg2/svg/SVGTextContentElement.h:
+        (WebCore::SVGTextContentElement::isTextContent):
+        * ksvg2/svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::childShouldCreateRenderer):
+        * rendering/SVGInlineFlowBox.cpp:
+        (WebCore::translateBox):
+        (WebCore::placePositionedBoxesHorizontally):
+        (WebCore::placeBoxesVerticallyWithAbsBaseline):
+
 2007-03-12  Adele Peterson  <adele@apple.com>
 
         Reviewed by Oliver.

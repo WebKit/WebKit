@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,6 +32,8 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "MouseEvent.h"
+#include "PlatformMouseEvent.h"
+#include "RenderSVGInline.h"
 #include "RenderSVGContainer.h"
 #include "ResourceRequest.h"
 #include "SVGNames.h"
@@ -84,6 +86,9 @@ void SVGAElement::parseMappedAttribute(MappedAttribute* attr)
 
 RenderObject* SVGAElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
+    if (static_cast<SVGElement*>(parent())->isTextContent())
+        return new (arena) RenderSVGInline(this);
+
     return new (arena) RenderSVGContainer(this);
 }
 
@@ -93,17 +98,21 @@ void SVGAElement::defaultEventHandler(Event* evt)
     if ((evt->type() == EventNames::mouseupEvent && m_isLink)) {
         MouseEvent* e = static_cast<MouseEvent*>(evt);
 
-        if (e && e->button() == 2) {
+        if (e && e->button() == RightButton) {
             SVGStyledTransformableElement::defaultEventHandler(evt);
             return;
         }
 
-        String url = parseURL(href());
-
         String target = getAttribute(SVGNames::targetAttr);
-        if (e && e->button() == 1)
+        String xlinktarget = getAttribute(XLinkNames::showAttr);
+        if (e && e->button() == MiddleButton)
             target = "_blank";
+        else if (xlinktarget == "new" || target == "_blank")
+            target = "_blank";
+        else // default is replace/_self
+            target = "_self";
 
+        String url = parseURL(href());
         if (!evt->defaultPrevented())
             if (document() && document()->frame())
                 document()->frame()->loader()->urlSelected(document()->completeURL(url), target, evt);
@@ -113,6 +122,15 @@ void SVGAElement::defaultEventHandler(Event* evt)
 
     SVGStyledTransformableElement::defaultEventHandler(evt);
 }
+
+bool SVGAElement::childShouldCreateRenderer(Node* child) const
+{
+    if (static_cast<SVGElement*>(parent())->isTextContent())
+        return child->isTextNode();
+
+    return SVGElement::childShouldCreateRenderer(child);
+}
+
 
 } // namespace WebCore
 
