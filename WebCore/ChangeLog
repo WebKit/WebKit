@@ -1,3 +1,14 @@
+2007-03-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adele.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12560
+        W3C XPath test Text_Nodes.svg fails
+
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::nodeTestMatches): Revert the fix, as the behavior doesn't appear 
+        all that desirable as it did at first glance.
+
 2007-03-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by hyatt.

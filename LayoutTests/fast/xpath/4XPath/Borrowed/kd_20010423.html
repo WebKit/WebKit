@@ -24,8 +24,9 @@ SRC_1 = '<?xml version="1.0" encoding="utf-8"?>\
     while (currNode = nodeset.iterateNext())
         actual += currNode.nodeValue;
     
-    // In the original 4Suite test, the expectation was "abcabcabc". I believe it was wrong.
-    shouldBe('actual', '"abcabca"')
+    // According to DOM XPath working group note, this should be "abcabca", but we'll rather match Firefox.
+    // See <http://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#TextNodes>.
+    shouldBe('actual', '"abcabcabc"')
 
     var successfullyParsed = true;
 

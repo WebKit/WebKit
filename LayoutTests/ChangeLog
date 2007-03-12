@@ -9,6 +9,23 @@
 
 2007-03-11  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Adele.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12560
+        W3C XPath test Text_Nodes.svg fails
+
+        * dom/svg/level3/xpath/Text_Nodes-expected.txt: This fails again.
+
+        * fast/xpath/4XPath/Borrowed/kd_20010423-expected.txt:
+        * fast/xpath/4XPath/Borrowed/kd_20010423.html:
+        Brought the test back to its original form (in which Firefox passes).
+
+        * fast/xpath/text-nodes-expected.txt: Added.
+        * fast/xpath/text-nodes.html: Added.
+        A new test for text nodes, verifying some more arcane cases.
+
+2007-03-11  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         http://bugs.webkit.org/show_bug.cgi?id=13021
