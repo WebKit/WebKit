@@ -1,3 +1,13 @@
+2007-03-12  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Oliver.
+
+        Adding the ability to enable or disable a SearchPopupMenu.
+
+        * platform/SearchPopupMenu.h:
+        * platform/mac/SearchPopupMenuMac.mm: (WebCore::SearchPopupMenu::enabled):
+        * rendering/RenderTextControl.cpp: (WebCore::RenderTextControl::showPopup):
+
 2007-03-09  Rob Buis  <buis@kde.org>
 
         Reviewed by Nikolas Zimmermann.

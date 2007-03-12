@@ -865,6 +865,10 @@ void RenderTextControl::showPopup()
 
     if (!m_searchPopup)
         m_searchPopup = SearchPopupMenu::create(this);
+
+    if (!m_searchPopup->enabled())
+        return;
+    
     m_searchPopupIsVisible = true;
 
     const AtomicString& name = autosaveName();

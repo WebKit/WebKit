@@ -34,6 +34,11 @@ static NSString* autosaveKey(const String& name)
     return [@"com.apple.WebKit.searchField:" stringByAppendingString:name];
 }
 
+bool SearchPopupMenu::enabled()
+{
+    return true;
+}
+
 void SearchPopupMenu::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems)
 {
     if (name.isEmpty())

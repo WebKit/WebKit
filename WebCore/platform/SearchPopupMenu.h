@@ -35,6 +35,8 @@ public:
 
     void saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems);
     void loadRecentSearches(const AtomicString& name, Vector<String>& searchItems);
+
+    bool enabled();
     
 protected:
     SearchPopupMenu(PopupMenuClient* client);
