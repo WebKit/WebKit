@@ -1,3 +1,18 @@
+2007-03-13  David Hyatt  <hyatt@apple.com>
+
+        Fix two counting errors in the decoded size of objects in the WebCore cache.  We need to explicitly
+        destroy decoded data when clearing out a partially loaded image that had an error, since the destructor
+        (although it does destroy the data) disconnects the observer so that the notification doesn't happen.
+
+        Some CachedImages aren't in the cache (like image documents).  When the decoded size of such an image
+        changes we should not notify the cache, since - newsflash - we aren't actually in it.
+
+        Reviewed by ggaren
+
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::clear):
+        (WebCore::CachedImage::decodedSizeChanged):
+
 2007-03-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher and John Sullivan.
