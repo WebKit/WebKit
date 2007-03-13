@@ -142,7 +142,7 @@ static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchF
     ExceptionCode ec = 0;
     searchRange->selectNodeContents(boundary, ec);
     searchRange->setStart(start.node(), start.offset(), ec);
-    TextIterator it(searchRange.get(), RUNFINDER);
+    TextIterator it(searchRange.get());
     DeprecatedString string;
     unsigned next = 0;
     bool inTextSecurityMode = start.node() && start.node()->renderer() && start.node()->renderer()->style()->textSecurity() != TSNONE;

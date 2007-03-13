@@ -1,3 +1,90 @@
+2007-03-13  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+        <rdar://problem/5031181> cntl-k at end of paragraph adds nothing to the kill ring
+        <rdar://problem/5031189> REGRESSION: cntl-y yanks only the most recently killed content
+
+        For rdar://5031181, properly extend the selection before the killring handling, and
+        make sure plainText of that selection returns a linefeed.
+        
+        For rdar://5031189, restore Editor::deleteRange() code that continued current killring,
+        even though the range deletion implicitly stopped it via changing the selection.
+        
+        A byproduct of this change is the elimination of RUNDFINDER vs CONTENT TextIterator. The
+        only difference between the two was whether to emit a newline when the range started
+        with a blockflow element. No callers actually need that any more.
+
+        Tests added:
+        * editing/pasteboard/emacs-ctrl-k-y-001-expected.checksum: Added.
+        * editing/pasteboard/emacs-ctrl-k-y-001-expected.png: Added.
+        * editing/pasteboard/emacs-ctrl-k-y-001-expected.txt: Added.
+        * editing/pasteboard/emacs-ctrl-k-y-001.html: Added.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::deleteRange):
+        Clear the "start new kill ring sequence" setting, because it was set to true
+        when the selection was updated by deleting the range.
+        
+        (WebCore::Editor::deleteWithDirection):
+        If extending the selection to the end of paragraph resulted in a caret selection,
+        extend by character, to handle the case when the selection started as a caret at
+        the end of paragraph.
+        
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator):
+        Initialize new member variables for tracking handling of the beginning of the range.
+        
+        (WebCore::TextIterator::advance):
+        Call representNodeOffsetZero on the m_endContainer.
+        Move visibility checks into handleTextNode and handleReplacedElement.
+        
+        (WebCore::TextIterator::handleTextNode):
+        (WebCore::TextIterator::handleTextBox):
+        Call emitText.
+        
+        (WebCore::TextIterator::handleReplacedElement):
+        Moved visibility check into here.
+        
+        (WebCore::shouldEmitNewlinesBeforeAndAfterNode):
+        
+        (WebCore::TextIterator::shouldRepresentNodeOffsetZero):
+        (WebCore::TextIterator::representNodeOffsetZero):
+        New. Emits proper sequence when encountering offset 0 of a node, including the
+        m_endContainer. Started with code from handleNonTextNode.
+        
+        (WebCore::TextIterator::handleNonTextNode):
+        Call representNodeOffsetZero.
+        
+        (WebCore::TextIterator::exitNode):
+        Similar to shouldRepresentNodeOffsetZero, do not emit the newline if the node
+        was collapsed, and before any other emitted content.
+        
+        (WebCore::TextIterator::emitCharacter):
+        
+        (WebCore::TextIterator::emitText):
+        New. Consolidates code used by handleText and handleTextBox.
+        
+        (WebCore::CharacterIterator::CharacterIterator):
+        Removed RUNFINDER.
+
+        (WebCore::WordAwareIterator::WordAwareIterator):
+        Removed RUNFINDER.
+        
+        (WebCore::WordAwareIterator::advance):
+        Formatting.
+
+        (WebCore::TextIterator::rangeLength):
+        Formatting.
+        
+        * editing/TextIterator.h:
+        Added member variables for tracking handling of the beginning of the range.
+        Eliminated concept of RUNDFINDER vs CONTENT TextIterator.
+        
+        * editing/visible_units.cpp:
+        (WebCore::nextBoundary):
+        Eliminated concept of RUNDFINDER vs CONTENT TextIterator.
+
 2007-03-13  David Hyatt  <hyatt@apple.com>
 
         Clean up the null image case in CachedImage::data to make sure the size totals will stay accurate.
