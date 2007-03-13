@@ -1,3 +1,11 @@
+2007-03-13  David Hyatt  <hyatt@apple.com>
+
+        Reorder the call to allReferencesRemoved, since otherwise the live object size will become
+        incorrect.
+
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::deref):
+
 2007-03-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.
