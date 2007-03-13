@@ -2,7 +2,7 @@
 
         Reviewed by Maciej.
 
-        Export DocumentLoader::setFrame(). Part for fix for <rdar://
+        Export DocumentLoader::setFrame(). Part of fix for <rdar://
         problem/4277074> 8F32: Help Viewer crashed on clicking link - 
         KHTMLView::viewportMouseReleaseEvent (12647)
 
