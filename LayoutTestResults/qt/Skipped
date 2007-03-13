@@ -51,6 +51,7 @@ dom/svg/level3/xpath/Conformance_ID.svg
 
 dom/xhtml/level2/html/HTMLBaseElement01.xhtml
 dom/xhtml/level2/html/HTMLBaseElement02.xhtml
+dom/xhtml/level2/html/HTMLIFrameElement11.xhtml
 dom/xhtml/level2/html/frame.xhtml
 dom/xhtml/level2/html/iframe.xhtml
 dom/xhtml/level3/core/canonicalform08.xhtml

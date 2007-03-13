@@ -1,3 +1,9 @@
+2007-03-13  Lars Knoll <lars@trolltech.com>
+
+        Add a test that currently crashes the Qt build.
+
+        * qt/Skipped:
+
 2007-01-26  Lars Knoll <lars@trolltech.com>
 
         Update the test cases after the last change to
