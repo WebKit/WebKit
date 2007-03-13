@@ -108,18 +108,36 @@ static void myExecve(NSString *executable, NSArray *args, NSDictionary *environm
     execve([executable fileSystemRepresentation], argv, env);
 }
 
-int main(int argc, char *argv[])
+NSBundle *locateSafariBundle()
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    checkMacOSXVersion();
+    NSArray *applicationDirectories = NSSearchPathForDirectoriesInDomains(NSApplicationDirectory, NSAllDomainsMask, YES);
+    NSEnumerator *e = [applicationDirectories objectEnumerator];
+    NSString *applicationDirectory;
+    while (applicationDirectory = [e nextObject]) {
+        NSString *possibleSafariPath = [applicationDirectory stringByAppendingPathComponent:@"Safari.app"];
+        NSBundle *possibleSafariBundle = [NSBundle bundleWithPath:possibleSafariPath];
+        if ([[possibleSafariBundle bundleIdentifier] isEqualToString:@"com.apple.Safari"])
+            return possibleSafariBundle;
+    }
 
     CFURLRef safariURL = nil;
     OSStatus err = LSFindApplicationForInfo(kLSUnknownCreator, CFSTR("com.apple.Safari"), nil, nil, &safariURL);
     if (err != noErr)
         displayErrorAndQuit(@"Unable to locate Safari", @"Nightly builds of WebKit require Safari to run.  Please check that it is available and then try again.");
 
+    NSBundle *safariBundle = [NSBundle bundleWithPath:[(NSURL *)safariURL path]];
+    CFRelease(safariURL);
+    return safariBundle;
+}
+
+int main(int argc, char *argv[])
+{
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    checkMacOSXVersion();
+
+    NSBundle *safariBundle = locateSafariBundle();
+    NSString *executablePath = [safariBundle executablePath];
     NSString *frameworkPath = [[NSBundle mainBundle] resourcePath];
-    NSString *executablePath = [[NSBundle bundleWithPath:[(NSURL *)safariURL path]] executablePath];
     NSString *pathToEnablerLib = [[NSBundle mainBundle] pathForResource:@"WebKitNightlyEnabler" ofType:@"dylib"];
     
     NSMutableArray *arguments = [NSMutableArray arrayWithObjects:executablePath, @"-WebKitDeveloperExtras", @"YES", @"-WebKitScriptDebuggerEnabled", @"YES", nil];
@@ -133,7 +151,7 @@ int main(int argc, char *argv[])
     myExecve(executablePath, arguments, environment);
 
     char *error = strerror(errno);
-    NSString *errorMessage = [NSString stringWithFormat:@"Launching Safari at %@ failed with the error '%s' (%d)", [(NSURL *)safariURL path], error, errno];
+    NSString *errorMessage = [NSString stringWithFormat:@"Launching Safari at %@ failed with the error '%s' (%d)", [safariBundle bundlePath], error, errno];
     displayErrorAndQuit(@"Unable to launch Safari", errorMessage);
 
     [pool release];

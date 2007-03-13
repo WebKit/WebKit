@@ -1,3 +1,16 @@
+2007-03-13  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej.
+
+        Have the nightly launcher prefer Safari found in /Applications or ~/Applications
+        if present, otherwise fall back on using LaunchServices to locate it elsewhere
+        on the system.  The motivation for this is to make the behaviour of the nightly
+        builds more predictable on machines with multiple copies of Safari present.
+
+        * WebKitLauncher/main.m:
+        (locateSafariBundle):
+        (main):
+
 2007-03-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
