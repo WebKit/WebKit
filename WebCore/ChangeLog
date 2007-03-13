@@ -1,3 +1,28 @@
+2007-03-13  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Maciej.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12974
+
+        Call forgetGenericContext in JSSVGPathSeg destructor, otherwhise
+        we'll hit an ASSERT in a debug build, when running svg/custom/js-update-path-changes.svg
+        a few dozen times in a single WebKit instance. The ASSERT is good and just warns that
+        there was already a generic context pointer registered, and the new "to be registered"
+        object already exists, but pointing to a different object. That's because garbage collection
+        calls the JSSVGPathSeg destructor, but that didn't cleanup the generic context map.
+
+        Only JSSVGPathSeg is hit by this problem, as it's the only non SVGAnimated* type
+        using the generic context system while using a custom JSSVGPathSegList implementation.
+
+        Also cleanup JSSVGPathSegListCustom code to call the static forgetGenericContext
+        method instead of doing the same using custom code.
+
+        * bindings/js/JSSVGPathSegListCustom.cpp:
+        (WebCore::removeFromPathSegContextMap):
+        (WebCore::JSSVGPathSegList::clear):
+        (WebCore::JSSVGPathSegList::removeItem):
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2007-03-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

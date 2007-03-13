@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
+# Copyright (C) 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com>
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
@@ -164,6 +164,16 @@ sub UsesManualToJSImplementation
 
     return 1 if $type eq "SVGPathSeg";
     return 0;
+}
+
+sub CreateSVGContextInterfaceName
+{
+    my $type = shift;
+
+    return $type if $codeGenerator->IsSVGAnimatedType($type);
+    return "SVGPathSeg" if $type =~ /^SVGPathSeg/ and $type ne "SVGPathSegList";
+
+    return "";
 }
 
 sub AddIncludesForType
@@ -729,8 +739,9 @@ sub GenerateImplementation
     if (!$hasParent) {
         push(@implContent, "${className}::~$className()\n");
 
-        if ($codeGenerator->IsSVGAnimatedType($interfaceName)) {
-            push(@implContent, "{\n    SVGDocumentExtensions::forgetGenericContext<$interfaceName>(m_impl.get());\n");   
+        my $contextInterfaceName = CreateSVGContextInterfaceName($interfaceName);
+        if ($contextInterfaceName ne "") {
+            push(@implContent, "{\n    SVGDocumentExtensions::forgetGenericContext<$contextInterfaceName>(m_impl.get());\n");   
             push(@implContent, "    ScriptInterpreter::forgetDOMObject(m_impl.get());\n}\n\n");
         } else {
             push(@implContent, "{\n    ScriptInterpreter::forgetDOMObject(m_impl.get());\n}\n\n");
@@ -948,16 +959,17 @@ sub GenerateImplementation
             }
             push(@implContent, "    }\n"); # end switch
 
+            my $contextInterfaceName = CreateSVGContextInterfaceName($interfaceName);
             if ($interfaceName eq "DOMWindow") {
                 push(@implContent, "    // FIXME: Hack to prevent unused variable warning -- remove once DOMWindow includes a settable property\n");
                 push(@implContent, "    (void)imp;\n");
-            } elsif ($interfaceName =~ /^SVGPathSeg/ or $codeGenerator->IsSVGAnimatedType($interfaceName)) {
+            } elsif ($contextInterfaceName ne "") {
                 push(@implContent, "    ASSERT(exec && exec->dynamicInterpreter());\n");
                 push(@implContent, "    Frame* activeFrame = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->frame();\n");
                 push(@implContent, "    if (!activeFrame)\n        return;\n\n");
                 push(@implContent, "    SVGDocumentExtensions* extensions = (activeFrame->document() ? activeFrame->document()->accessSVGExtensions() : 0);\n");
-                push(@implContent, "    if (extensions && extensions->hasGenericContext<$interfaceName>(imp)) {\n");
-                push(@implContent, "        const SVGElement* context = extensions->genericContext<$interfaceName>(imp);\n");
+                push(@implContent, "    if (extensions && extensions->hasGenericContext<$contextInterfaceName>(imp)) {\n");
+                push(@implContent, "        const SVGElement* context = extensions->genericContext<$contextInterfaceName>(imp);\n");
                 push(@implContent, "        ASSERT(context);\n\n");
                 push(@implContent, "        context->notifyAttributeChange();\n");
                 push(@implContent, "    }\n\n");

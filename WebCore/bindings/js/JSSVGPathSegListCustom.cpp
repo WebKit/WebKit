@@ -57,22 +57,12 @@ static void updatePathSegContextMap(ExecState* exec, SVGPathSegList* list, SVGPa
     context->notifyAttributeChange();
 }
 
-static void removeFromPathSegContextMap(ExecState* exec, SVGPathSegList* list, SVGPathSeg* obj)
+static void removeFromPathSegContextMap(SVGPathSegList* list, SVGPathSeg* obj)
 {
-    ASSERT(exec && exec->dynamicInterpreter());
-    Frame* activeFrame = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter())->frame();
-    if (!activeFrame)
-        return;
-
     const SVGElement* context = list->context();
     ASSERT(context);
 
-    SVGDocumentExtensions* extensions = (activeFrame->document() ? activeFrame->document()->accessSVGExtensions() : 0);
-    if (extensions) {
-        if (extensions->hasGenericContext<SVGPathSeg>(obj))
-            extensions->removeGenericContext<SVGPathSeg>(obj);
-    }
-
+    SVGDocumentExtensions::forgetGenericContext(obj);
     context->notifyAttributeChange();
 }
 
@@ -84,7 +74,7 @@ JSValue* JSSVGPathSegList::clear(ExecState* exec, const List& args)
 
     unsigned int nr = imp->numberOfItems();
     for (unsigned int i = 0; i < nr; i++)
-        removeFromPathSegContextMap(exec, imp, imp->getItem(i, ec).get());
+        removeFromPathSegContextMap(imp, imp->getItem(i, ec).get());
 
     imp->clear(ec);
     setDOMException(exec, ec);
@@ -181,7 +171,7 @@ JSValue* JSSVGPathSegList::removeItem(ExecState* exec, const List& args)
     SVGPathSegList* imp = static_cast<SVGPathSegList*>(impl());
 
     RefPtr<SVGPathSeg> obj(imp->removeItem(index, ec));
-    removeFromPathSegContextMap(exec, imp, obj.get());
+    removeFromPathSegContextMap(imp, obj.get());
 
     KJS::JSValue* result = toJS(exec, obj.get());
     setDOMException(exec, ec);
