@@ -1,3 +1,14 @@
+2007-03-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Lars.
+
+        Update text in tests to match expected output.
+
+        * fast/dom/gc-6-expected.txt:
+        * fast/dom/gc-6.html:
+        * fast/dom/gc-7-expected.txt:
+        * fast/dom/gc-7.html:
+
 2007-03-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Alexey.
