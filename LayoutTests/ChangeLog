@@ -41,7 +41,6 @@
         * fast/text/large-text-composed-char-expected.txt: Added.
         * fast/text/large-text-composed-char.html: Added.
 
->>>>>>> .r20131
 2007-03-09  Rob Buis  <buis@kde.org>
 
         Reviewed by Nikolas Zimmermann.
