@@ -246,6 +246,7 @@ void WebCore::refreshPlugins(bool) { notImplementedGdk(); }
 void SearchPopupMenu::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems) { notImplementedGdk(); }
 void SearchPopupMenu::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems) { notImplementedGdk(); }
 SearchPopupMenu::SearchPopupMenu(PopupMenuClient* client) : PopupMenu(client) { notImplementedGdk(); }
+bool SearchPopupMenu::enabled() { notImplementedGdk(); return true; }
 
 PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize) : Scrollbar(client, orientation, controlSize) { notImplementedGdk(); }
 PlatformScrollbar::~PlatformScrollbar() { notImplementedGdk(); }

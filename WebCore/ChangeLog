@@ -1,3 +1,10 @@
+2007-03-12  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Not reviewed - gdk build fix.
+
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (SearchPopupMenu::enabled): add missing stub.
+
 2007-03-12  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin.
