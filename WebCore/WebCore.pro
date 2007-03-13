@@ -140,12 +140,15 @@ IDL_BINDINGS += \
     css/MediaList.idl \
     dom/Attr.idl \
     dom/CharacterData.idl \
+    dom/CDATASection.idl \
+    dom/Comment.idl \
     dom/DocumentFragment.idl \
     dom/Document.idl \
     dom/DocumentType.idl \
     dom/DOMImplementation.idl \
     dom/Element.idl \
     dom/Entity.idl \
+    dom/EntityReference.idl \
     dom/Event.idl \
 #    dom/EventListener.idl \
 #    dom/EventTarget.idl \

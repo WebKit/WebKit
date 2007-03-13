@@ -1,3 +1,9 @@
+2007-03-13  Lars Knoll <lars@trolltech.com>
+
+        Fix the Qt build
+
+        * WebCore.pro:
+
 2007-03-13  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
