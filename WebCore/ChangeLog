@@ -1,3 +1,14 @@
+2007-03-12  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13045
+          REGRESSION: Blackboard CourseWare Error with Nightlies after Mar 8
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::getUniqueBoundaryString): Speculative fix: remove dashes from
+        the boundary prefix that appear after non-dash characters.
+
 2007-03-12  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Anders.
