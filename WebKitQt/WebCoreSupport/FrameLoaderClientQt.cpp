@@ -849,7 +849,9 @@ Frame* FrameLoaderClientQt::createFrame(const KURL& url, const String& name, HTM
 
 ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const String& mimeType)
 {
-    notImplemented();
+    if (!url.isValid())
+        return ObjectContentType();
+    
     //This is not really correct. it works because getMIMETypeForExtension
     //  currently returns only the mimetypes that frames can handle
     QFileInfo fi(url.path());

@@ -1,5 +1,16 @@
 2007-03-13  Lars Knoll <lars@trolltech.com>
 
+        Reviewed by George.
+
+        Don't try to load <object> tags with an invalid url.
+        Fixes LayoutTests/fast/dom/object-plugin-hides-properties.html
+        which hit an assertion in the frameloader.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::objectContentType):
+
+2007-03-13  Lars Knoll <lars@trolltech.com>
+
         Reviewed by Anders.
 
         Fix some crashes in the Qt build.
