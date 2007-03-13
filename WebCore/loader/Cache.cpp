@@ -138,7 +138,7 @@ void Cache::prune()
         CachedResource* current = m_lruLists[i].m_tail;
         while (current) {
             CachedResource* prev = current->m_prevInLRUList;
-            if (!current->referenced()) {
+            if (!current->referenced() && current->isLoaded()) {
                 // Go ahead and destroy our decoded data.
                 current->destroyDecodedData();
                 

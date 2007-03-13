@@ -1,3 +1,19 @@
+2007-03-13  David Hyatt  <hyatt@apple.com>
+
+        Two more cleanup fixes to the cache.  Don't call destroyDecodedData in the BitmapImage destructor, since
+        clearing the image source and calling setData on it again causes it to do an extra copy of the encoded
+        data.  Since we're about to be destroyed this is just wasteful.
+
+        When the cache prunes, don't allow it to destroy the decoded data of an image that is still actively loading,
+        since we've established that ImageIO can actually crash if you yank the rug out from under it like that.
+
+        Reviewed by ggaren
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::prune):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::~BitmapImage):
+
 2007-03-13  Anders Carlsson  <acarlsson@apple.com>
 
         Try fixing the Qt build.
