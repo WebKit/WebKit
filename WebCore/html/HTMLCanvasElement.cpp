@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,15 +30,14 @@
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
 #include "CanvasStyle.h"
+#include "Chrome.h"
 #include "Document.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "Page.h"
 #include "RenderHTMLCanvas.h"
-#include "Chrome.h"
 #include "Settings.h"
-#include "Screen.h"
 #include <math.h>
 
 namespace WebCore {
@@ -95,12 +94,18 @@ void HTMLCanvasElement::parseMappedAttribute(MappedAttribute* attr)
     HTMLElement::parseMappedAttribute(attr);
 }
 
-RenderObject* HTMLCanvasElement::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject* HTMLCanvasElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
-    RenderHTMLCanvas* r = new (arena) RenderHTMLCanvas(this);
-    r->setIntrinsicWidth(width());
-    r->setIntrinsicHeight(height());
-    return r;
+    if (document()->frame() && document()->frame()->settings()->isJavaScriptEnabled()) {
+        m_rendererIsCanvas = true;
+        RenderHTMLCanvas* r = new (arena) RenderHTMLCanvas(this);
+        r->setIntrinsicWidth(width());
+        r->setIntrinsicHeight(height());
+        return r;
+    }
+
+    m_rendererIsCanvas = false;
+    return HTMLElement::createRenderer(arena, style);
 }
 
 void HTMLCanvasElement::setHeight(int value)
@@ -144,12 +149,13 @@ void HTMLCanvasElement::reset()
         h = defaultHeight;
     m_size = IntSize(w, h);
 
-    RenderHTMLCanvas* r = static_cast<RenderHTMLCanvas*>(renderer());
-    if (r) {
-        r->setIntrinsicWidth(w);
-        r->setIntrinsicHeight(h);
-        r->repaint();
-    }
+    if (RenderObject* ro = renderer())
+        if (m_rendererIsCanvas) {
+            RenderHTMLCanvas* r = static_cast<RenderHTMLCanvas*>(ro);
+            r->setIntrinsicWidth(w);
+            r->setIntrinsicHeight(h);
+            r->repaint();
+        }
 
     m_createdDrawingContext = false;
     fastFree(m_data);

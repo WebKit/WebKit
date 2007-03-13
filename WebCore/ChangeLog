@@ -1,3 +1,86 @@
+2007-03-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12794
+          <rdar://problem/5028154> REGRESSION: TripTik planner at aaa.com never
+          finishes loading due to unclosed canvas tag (12794)
+
+        Change <canvas> elements so that their contents are parsed normally,
+        but not rendered. This change fixes the bug, because normal parsing
+        rules close the <canvas> element in that case. The special parser
+        stuff was just getting in the way.
+
+        Also do some basic cleanup to the HTML parser. This was motivated by
+        an earlier version of this patch that made even more changes to the
+        parser, but the cleanup is still worth landing.
+
+        Test: fast/canvas/canvas-hides-fallback.html
+        Test: fast/canvas/script-inside-canvas-fallback.html
+        Test: fast/canvas/unclosed-canvas-1.html
+        Test: fast/canvas/unclosed-canvas-2.html
+        Test: fast/canvas/unclosed-canvas-3.html
+        Test: fast/canvas/unclosed-canvas-4.html
+
+        * html/HTMLCanvasElement.h: Added a data member to keep track of whether the
+        renderer is a RenderHTMLCanvas or not.
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createRenderer): If JavaScript is enabled, create
+        a RenderHTMLCanvas. If it's not, let the default code create the default type
+        of renderer, which will result in fallback content being visible. The
+        RenderHTMLCanvas class already hides all of its children. Set the m_rendererIsCanvas
+        boolean accordingly. Since the actual storage for the canvas is allocated lazily
+        when you actually get a drawing context, we don't need to do anything special
+        to prevent it when JavaScript is disabled; the relevant functions won't be called.
+        (WebCore::HTMLCanvasElement::reset): Protect the code that manipulates the
+        RenderHTMLCanvas with a check of m_rendererIsCanvas. This is the only code inside
+        the DOM element that relies on the renderer type.
+
+        * html/HTMLParser.h: Removed unneeded includes. Marked HTMLParser as
+        Noncopyable. Changed the Document parameter to the constructor to instead
+        of HTMLDocument. Renamed discard_until to m_skipModeTag for clarity.
+        Removed unused noSpaces function and unneeded public doc() function.
+        Moved data members all down to the end so you can see them together in order.
+        Renamed map to m_currentMapElement and isindex to m_isindexElement.
+        Removed unused end and headLoaded data members.  Renamed m_fragment to
+        m_isParsingFragment to make it clearer that it's a boolean, not a fragment.
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::HTMLParser): Changed to use member construction
+        syntax instead of calling reset(). This is especially helpful in the
+        fragment case, where calling reset() later on is illegal, so not using
+        it in the constructor lets us assert.
+        (WebCore::HTMLParser::~HTMLParser): Did an explicit deref instead of
+        calling setCurrent for its side effect.
+        (WebCore::HTMLParser::reset): Updated for member name changes and removal
+        and to use document instead of doc().
+        (WebCore::HTMLParser::setCurrent): Use document instead of doc().
+        (WebCore::HTMLParser::setSkipMode): Added. No longer inline. Now sets the
+        m_inCanvasBeforeFirstOpenTag data member to false.
+        (WebCore::HTMLParser::parseToken): Tightened up the skip mode logic at the
+        top of the function, and added a FIXME about the strange case there where
+        we don't skip yet stay in skip mode. Updated for renaming and doc().
+        (WebCore::HTMLParser::insertNode): Updated for renaming and doc().
+        (WebCore::HTMLParser::handleError): Ditto.
+        (WebCore::HTMLParser::framesetCreateErrorCheck): Ditto.
+        (WebCore::HTMLParser::isindexCreateErrorCheck): Changed to use RefPtr.
+        (WebCore::HTMLParser::noscriptCreateErrorCheck): Updated for renaming and doc().
+        (WebCore::HTMLParser::mapCreateErrorCheck): Ditto.
+        (WebCore::HTMLParser::getNode): Removed the special case for canvas here.
+        Canvas fallback is now handled in the DOM, not the parser. Updated for
+        renaming and doc().
+        (WebCore::HTMLParser::allowNestedRedundantTag): Changed a #define into a C++
+        constant.
+        (WebCore::HTMLParser::processCloseTag): Updated for renaming and doc().
+        (WebCore::HTMLParser::isInline): Ditto.
+        (WebCore::HTMLParser::tagIsOnStack): Added. Used by new canvas logic.
+        (WebCore::HTMLParser::popBlock): Updated for renaming and doc(). Also renamed
+        the local variable Elem to elem.
+        (WebCore::HTMLParser::createHead): Ditto.
+        (WebCore::HTMLParser::handleIsindex): Changed to use RefPtr.
+        (WebCore::HTMLParser::startBody): Updated for renaming and doc().
+        (WebCore::HTMLParser::finished): Ditto.
+
 2007-03-13  David Hyatt  <hyatt@apple.com>
 
         Two more cleanup fixes to the cache.  Don't call destroyDecodedData in the BitmapImage destructor, since

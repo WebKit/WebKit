@@ -1,3 +1,24 @@
+2007-03-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - tests for http://bugs.webkit.org/show_bug.cgi?id=12794
+          <rdar://problem/5028154> REGRESSION: TripTik planner at aaa.com never
+          finishes loading due to unclosed canvas tag (12794)
+
+        * fast/canvas/canvas-hides-fallback-expected.txt: Added.
+        * fast/canvas/canvas-hides-fallback.html: Added.
+        * fast/canvas/script-inside-canvas-fallback-expected.txt: Added.
+        * fast/canvas/script-inside-canvas-fallback.html: Added.
+        * fast/canvas/unclosed-canvas-1-expected.txt: Added.
+        * fast/canvas/unclosed-canvas-1.html: Added.
+        * fast/canvas/unclosed-canvas-2-expected.txt: Added.
+        * fast/canvas/unclosed-canvas-2.html: Added.
+        * fast/canvas/unclosed-canvas-3-expected.txt: Added.
+        * fast/canvas/unclosed-canvas-3.html: Added.
+        * fast/canvas/unclosed-canvas-4-expected.txt: Added.
+        * fast/canvas/unclosed-canvas-4.html: Added.
+
 2007-03-13  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin.

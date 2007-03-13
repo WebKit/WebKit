@@ -76,6 +76,8 @@ private:
     void createDrawingContext() const;
     void reset();
 
+    bool m_rendererIsCanvas;
+
     RefPtr<CanvasRenderingContext2D> m_2DContext;
     IntSize m_size;
 
