@@ -19,10 +19,14 @@
 
 2007-03-13  David Hyatt  <hyatt@apple.com>
 
-        Double the encoded size of images for now.  We do this to account for a bug in ImageIO where they hold
-        a separate copy of image data.
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13050
+          6 objects and ~200MB leaked after opening then closing tab
+          <rdar://problem/5058714>
 
-        Reviewed by aroben
+        Double the encoded size of images for now.  We do this to account for a bug in ImageIO where they hold
+        a separate copy of image data.  See <rdar://problem/5050645>.
+
+        Reviewed by aroben.
 
         * loader/CachedImage.cpp:
         (WebCore::CachedImage::data):
