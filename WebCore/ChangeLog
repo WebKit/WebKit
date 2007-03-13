@@ -1,3 +1,13 @@
+2007-03-13  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Alexey.
+
+        Alexey spotted a DOS by using string of 64k unbreakable character in
+        fix for http://bugs.webkit.org/show_bug.cgi?id=12833
+
+        * dom/Text.cpp:
+        (WebCore::Text::createWithLengthLimit):
+
 2007-03-13  Lars Knoll <lars@trolltech.com>
 
         Fix the Qt build

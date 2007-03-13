@@ -212,6 +212,10 @@ PassRefPtr<Text> Text::createWithLengthLimit(Document* doc, const String& text, 
     if (end < text.length() && !isTextBreak(it, end))
         end = textBreakPreceding(it, end);
         
+    // maxChars of unbreakable characters could lead to infinite loop
+    if (end <= start)
+        end = text.length();
+    
     String nodeText = text.substring(start, end - start);
     charsLeft = text.length() - end;
         
