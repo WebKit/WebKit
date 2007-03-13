@@ -1,5 +1,11 @@
 2007-03-12  Anders Carlsson  <acarlsson@apple.com>
 
+        Add expected results.
+        
+        * fast/frames/frame-navigation-expected.txt: Added.
+
+2007-03-12  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Darin.
 
         <rdar://problem/4900071>
