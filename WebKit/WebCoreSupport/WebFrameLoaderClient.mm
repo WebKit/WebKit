@@ -987,9 +987,9 @@ void WebFrameLoaderClient::receivedPolicyDecison(PolicyAction action)
     (core(m_webFrame.get())->loader()->*function)(action);
 }
 
-String WebFrameLoaderClient::userAgent(const KURL&)
+String WebFrameLoaderClient::userAgent(const KURL& url)
 {
-    return [getWebView(m_webFrame.get()) _userAgent];
+    return [getWebView(m_webFrame.get()) _userAgentForURL:url];
 }
 
 static const MouseEvent* findMouseEvent(const Event* event)

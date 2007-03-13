@@ -1,3 +1,22 @@
+2007-03-13  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5057117> Spoof user agent on Yahoo.com with Safari and WebKit as version 4xx
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView userAgent]): Stop using the deprecated lossyCString method.
+        * WebCoreSupport/WebFrameBridge.mm: Removed dead code, userAgentForURL: wasn't used.
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::userAgent): Call WebView's _userAgentForURL:.
+        * WebView/WebView.mm:
+        (-[WebView _cachedResponseForURL:]): Call userAgentForURL: instead of _userAgent.
+        (-[WebView userAgentForURL:]): Call _userAgentForURL:.
+        (-[WebView _userAgentWithApplicationName:andWebKitVersion:]): New method to construct a UA.
+        (-[WebView _computeUserAgent]): Ractored out into _userAgentWithApplicationName:andWebKitVersion:
+        (-[WebView _userAgentForURL:]): Tail compare for Yahoo.com, and return a UA with an older WebKit version.
+        * WebView/WebViewInternal.h: Declare _userAgentForURL:.
+
 2007-03-12  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

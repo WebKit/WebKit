@@ -1144,7 +1144,7 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 - (NSCachedURLResponse *)_cachedResponseForURL:(NSURL *)URL
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
-    [request _web_setHTTPUserAgent:[self _userAgent]];
+    [request _web_setHTTPUserAgent:[self userAgentForURL:URL]];
     NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
     [request release];
     return cachedResponse;
@@ -2081,10 +2081,9 @@ NS_ENDHANDLER
 }
 
 // Get the appropriate user-agent string for a particular URL.
-// Since we no longer automatically spoof, this no longer requires looking at the URL.
-- (NSString *)userAgentForURL:(NSURL *)URL
+- (NSString *)userAgentForURL:(NSURL *)url
 {
-    return [self _userAgent];
+    return [self _userAgentForURL:KURL(url)];
 }
 
 - (void)setHostWindow:(NSWindow *)hostWindow
@@ -3540,28 +3539,30 @@ static WebFrameView *containingFrameView(NSView *view)
     return fullVersion;
 }
 
-- (void)_computeUserAgent
+- (NSString *)_userAgentWithApplicationName:(NSString *)applicationName andWebKitVersion:(NSString *)version
 {
-    NSString *userAgent = nil;
     NSString *language = [NSUserDefaults _webkit_preferredLanguageCode];
-    NSString *sourceVersion = [[NSBundle bundleForClass:[WebView class]] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
-    sourceVersion = [self _userVisibleBundleVersionFromFullVersion:sourceVersion];
-
-    NSString *applicationName = _private->applicationNameForUserAgent;
     if ([applicationName length])
-        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko) %@",
-            language, sourceVersion, applicationName];
-    else
-        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko)",
-            language, sourceVersion];
-
-    *_private->userAgent = userAgent;
+        return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko) %@", language, version, applicationName];
+    return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko)", language, version];
 }
 
-- (WebCore::String&)_userAgent
+// Get the appropriate user-agent string for a particular URL.
+- (WebCore::String)_userAgentForURL:(const WebCore::KURL&)url
 {
-    if (_private->userAgent->isNull())
-        [self _computeUserAgent];
+    // FIXME: Make this a hash table lookup if more domains need spoofing.
+    // FIXME: Remove yahoo.com once <rdar://problem/5057117> is fixed.
+    if (url.host().endsWith("yahoo.com")) {
+        static String yahooUserAgent([self _userAgentWithApplicationName:_private->applicationNameForUserAgent andWebKitVersion:@"422"]);
+        return yahooUserAgent;
+    }
+
+    if (_private->userAgent->isNull()) {
+        NSString *sourceVersion = [[NSBundle bundleForClass:[WebView class]] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+        sourceVersion = [self _userVisibleBundleVersionFromFullVersion:sourceVersion];
+        *_private->userAgent = [self _userAgentWithApplicationName:_private->applicationNameForUserAgent andWebKitVersion:sourceVersion];
+    }
+
     return *_private->userAgent;
 }
 

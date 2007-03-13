@@ -369,11 +369,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return newFrame.get();
 }
 
-- (NSString *)userAgentForURL:(NSURL *)URL
-{
-    return [[self webView] userAgentForURL:URL];
-}
-
 - (void)setNeedsReapplyStyles
 {
     NSView <WebDocumentView> *view = [[_frame frameView] documentView];

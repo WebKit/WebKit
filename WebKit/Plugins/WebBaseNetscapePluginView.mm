@@ -2326,7 +2326,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 - (const char *)userAgent
 {
-    return [[[self webView] userAgentForURL:baseURL] lossyCString];
+    return [[[self webView] userAgentForURL:baseURL] UTF8String];
 }
 
 -(void)status:(const char *)message
