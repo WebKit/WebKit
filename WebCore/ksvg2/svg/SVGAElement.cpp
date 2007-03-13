@@ -107,7 +107,7 @@ void SVGAElement::defaultEventHandler(Event* evt)
         String xlinktarget = getAttribute(XLinkNames::showAttr);
         if (e && e->button() == MiddleButton)
             target = "_blank";
-        else if (xlinktarget == "new" || target == "_blank")
+        else if (xlinktarget == "new" || !(target.isEmpty() || target == "_self"))
             target = "_blank";
         else // default is replace/_self
             target = "_self";

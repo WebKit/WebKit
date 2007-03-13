@@ -1,3 +1,16 @@
+2007-03-13  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12576
+        WebKit does not support xlink:show attributes
+
+        Make an exception for non-empty targets, these should be opened
+        in a new window, unless the value is _self.
+
+        * ksvg2/svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+
 2007-03-13  David Hyatt  <hyatt@apple.com>
 
         Double the encoded size of images for now.  We do this to account for a bug in ImageIO where they hold
@@ -268,7 +281,6 @@
         * platform/qt/SearchPopupMenuQt.cpp:
         (WebCore::SearchPopupMenu::enabled):
 
->>>>>>> .r20131
 2007-03-12  Adele Peterson  <adele@apple.com>
 
         Reviewed by Oliver.
@@ -279,7 +291,7 @@
         * platform/mac/SearchPopupMenuMac.mm: (WebCore::SearchPopupMenu::enabled):
         * rendering/RenderTextControl.cpp: (WebCore::RenderTextControl::showPopup):
 
-2007-03-09  Rob Buis  <buis@kde.org>
+2007-03-12  Rob Buis  <buis@kde.org>
 
         Reviewed by Nikolas Zimmermann.
 
