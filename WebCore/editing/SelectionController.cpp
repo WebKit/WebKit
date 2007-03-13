@@ -142,20 +142,27 @@ void SelectionController::setSelection(const Selection& s, bool closeTyping, boo
         m_frame->revealCaret(RenderLayer::gAlignToEdgeIfNeeded);
 }
 
+static bool removingNodeRemovesPosition(Node* node, const Position& position)
+{
+    if (!position.node())
+        return false;
+        
+    if (position.node() == node || position.node()->isDescendantOf(node))
+        return true;
+    
+    Node* shadowAncestorNode = position.node()->shadowAncestorNode();
+    return shadowAncestorNode && shadowAncestorNode->isDescendantOf(node);
+}
+
 void SelectionController::nodeWillBeRemoved(Node *node)
 {
     if (isNone())
         return;
     
-    Node* base = m_sel.base().node();
-    Node* extent = m_sel.extent().node();
-    Node* start = m_sel.start().node();
-    Node* end = m_sel.end().node();
-    
-    bool baseRemoved = node == base || (base && base->isDescendantOf(node));
-    bool extentRemoved = node == extent || (extent && extent->isDescendantOf(node));
-    bool startRemoved = node == start || (start && start->isDescendantOf(node));
-    bool endRemoved = node == end || (end && end->isDescendantOf(node));
+    bool baseRemoved = removingNodeRemovesPosition(node, m_sel.base());
+    bool extentRemoved = removingNodeRemovesPosition(node, m_sel.extent());
+    bool startRemoved = removingNodeRemovesPosition(node, m_sel.start());
+    bool endRemoved = removingNodeRemovesPosition(node, m_sel.end());
     
     bool clearRenderTreeSelection = false;
     bool clearDOMTreeSelection = false;
@@ -183,7 +190,7 @@ void SelectionController::nodeWillBeRemoved(Node *node)
     }
 
     if (clearRenderTreeSelection) {
-        RefPtr<Document> document = start->document();
+        RefPtr<Document> document = m_sel.start().node()->document();
         document->updateRendering();
         if (RenderView* view = static_cast<RenderView*>(document->renderer()))
             view->clearSelection();

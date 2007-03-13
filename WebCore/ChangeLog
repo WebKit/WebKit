@@ -1,3 +1,19 @@
+2007-03-12  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5056619> 
+        REGRESSION: Gmail Editor: Dragging text into Reply (textarea) field results in a crash at WebCore::InsertNodeBeforeCommand::doApply()
+        
+        * editing/SelectionController.cpp:
+        (WebCore::removingNodeRemovesPosition): Added.
+        (WebCore::SelectionController::nodeWillBeRemoved): Clear the
+        selection if it's inside a shadow tree.
+        * page/DragController.cpp:
+        (WebCore::setSelectionToDragCaret): Return false to signal to
+        clients that a drop shouldn't be performed if the second attempt
+        to set a selection ends up in non-editable content.
+
 2007-03-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.

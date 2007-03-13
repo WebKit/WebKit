@@ -306,7 +306,7 @@ static bool setSelectionToDragCaret(Frame* frame, Selection& dragCaret, RefPtr<R
         frame->selectionController()->setSelection(dragCaret);
         range = dragCaret.toRange();
     }
-    return !frame->selectionController()->isNone();
+    return !frame->selectionController()->isNone() && frame->selectionController()->isContentEditable();
 }
 
 bool DragController::concludeDrag(DragData* dragData, DragDestinationAction actionMask)
