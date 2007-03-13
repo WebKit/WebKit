@@ -1,3 +1,20 @@
+2007-03-12  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4900071>
+        http://bugs.webkit.org/show_bug.cgi?id=6454
+        ASSERTION: Navigating 'back' in frameset: !_private->previousItem (6454)
+
+        Change back the behavior of checkLoadComplete to traverse the entire frame tree instead of
+        just the parent frames of the current frame. This is needed in order to reset the previous history item
+        for all frames when doing a frame navigation. (This was changed in revision 11819)
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::recursiveCheckLoadComplete):
+        (WebCore::FrameLoader::checkLoadComplete):
+        * loader/FrameLoader.h:
+
 2007-03-12  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
@@ -211,6 +228,7 @@
         * platform/qt/SearchPopupMenuQt.cpp:
         (WebCore::SearchPopupMenu::enabled):
 
+>>>>>>> .r20131
 2007-03-12  Adele Peterson  <adele@apple.com>
 
         Reviewed by Oliver.

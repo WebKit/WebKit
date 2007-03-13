@@ -249,6 +249,7 @@ namespace WebCore {
         void requestFromDelegate(ResourceRequest&, unsigned long& identifier, ResourceError&);
         void loadedResourceFromMemoryCache(const ResourceRequest&, const ResourceResponse&, int length);
 
+        void recursiveCheckLoadComplete();
         void checkLoadComplete();
         void detachFromParent();
         void detachChildren();

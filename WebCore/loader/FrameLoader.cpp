@@ -2742,12 +2742,29 @@ void FrameLoader::detachChildren()
     }
 }
 
+void FrameLoader::recursiveCheckLoadComplete()
+{
+    Vector<RefPtr<Frame>, 10> frames;
+    
+    for (RefPtr<Frame> frame = m_frame->tree()->firstChild(); frame; frame = frame->tree()->nextSibling())
+        frames.append(frame);
+    
+    unsigned size = frames.size();
+    for (unsigned i = 0; i < size; i++)
+        frames[i]->loader()->recursiveCheckLoadComplete();
+    
+    checkLoadCompleteForThisFrame();
+}
+
 // Called every time a resource is completely loaded, or an error is received.
 void FrameLoader::checkLoadComplete()
 {
     ASSERT(m_client->hasWebView());
-    for (RefPtr<Frame> frame = m_frame; frame; frame = frame->tree()->parent())
-        frame->loader()->checkLoadCompleteForThisFrame();
+    
+    // FIXME: Always traversing the entire frame tree is a bit inefficient, but 
+    // is currently needed in order to null out the previous history item for all frames.
+    if (Page* page = m_frame->page())
+        page->mainFrame()->loader()->recursiveCheckLoadComplete();
 }
 
 int FrameLoader::numPendingOrLoadingRequests(bool recurse) const

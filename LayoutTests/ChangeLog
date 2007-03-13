@@ -1,3 +1,14 @@
+2007-03-12  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4900071>
+        http://bugs.webkit.org/show_bug.cgi?id=6454
+        ASSERTION: Navigating 'back' in frameset: !_private->previousItem (6454)
+
+        * fast/frames/frame-navigation.html: Added.
+        * fast/frames/resources/frame-navigation-child.html: Added.
+
 2007-03-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
@@ -24,6 +35,7 @@
         * fast/text/large-text-composed-char-expected.txt: Added.
         * fast/text/large-text-composed-char.html: Added.
 
+>>>>>>> .r20131
 2007-03-09  Rob Buis  <buis@kde.org>
 
         Reviewed by Nikolas Zimmermann.
