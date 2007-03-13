@@ -170,22 +170,26 @@ void ScrollView::scrollPointRecursively(int x, int y)
     x = (x < 0) ? 0 : x;
     y = (y < 0) ? 0 : y;
     NSPoint p = NSMakePoint(x,y);
-    
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSView *docView;
     NSView *view = getView();    
     docView = getDocumentView();
     if (docView)
         view = docView;
-    
+
     NSView *originalView = view;
     while (view) {
         if ([view isKindOfClass:[NSClipView class]]) {
-            NSPoint viewPoint = [view convertPoint:p fromView:originalView];
-            [view scrollPoint:viewPoint];
+            NSClipView *clipView = (NSClipView *)view;
+            NSView *documentView = [clipView documentView];
+            NSPoint viewPoint = [clipView constrainScrollPoint:[documentView convertPoint:p fromView:originalView]];
+            [documentView scrollPoint:viewPoint];
         }
+
         view = [view superview];
     }
+
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 

@@ -1,3 +1,17 @@
+2007-03-12  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4990691> REGRESSION: Selecting text in Adium's Messages field causes horizontal shift
+
+        Corrected the recursive point conversion and scrolling done in scrollPointRecursively to use the
+        document view of each NSClipView.
+
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::scrollPointRecursively): Call convertPoint:fromView: on the document views,
+        not the clip views as we encounter them. Then call constrainScrollPoint: on the converted point to
+        constrain to the document view bounds. And finally call scrollPoint: on the document view, not the clip view.
+
 2007-03-12  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Alexey.
