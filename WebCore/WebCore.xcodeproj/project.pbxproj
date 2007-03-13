@@ -1647,7 +1647,7 @@
 		93F19B1608245E59001E9ABC /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8216299029F4FB501000131 /* JavaScriptCore.framework */; };
 		93F19B1708245E59001E9ABC /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F1D31A0558CC5C00821BC0 /* libicucore.dylib */; };
 		93F19B1808245E59001E9ABC /* libxslt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 840633070731A77200DB1FD1 /* libxslt.dylib */; };
-		93F9B6560BA0F35E00854064 /* DOMHTMLCanvasElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F9B6530BA0F35E00854064 /* DOMHTMLCanvasElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93F9B6560BA0F35E00854064 /* DOMHTMLCanvasElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 93F9B6530BA0F35E00854064 /* DOMHTMLCanvasElement.h */; settings = {ATTRIBUTES = (); }; };
 		93F9B6570BA0F35E00854064 /* DOMHTMLCanvasElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93F9B6540BA0F35E00854064 /* DOMHTMLCanvasElement.mm */; };
 		93F9B6580BA0F35E00854064 /* DOMHTMLCanvasElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F9B6550BA0F35E00854064 /* DOMHTMLCanvasElementInternal.h */; };
 		93F9B6E00BA0FB7200854064 /* JSComment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F9B6DE0BA0FB7200854064 /* JSComment.cpp */; };
@@ -2944,6 +2944,7 @@
 			dstPath = Versions/A/PrivateHeaders;
 			dstSubfolderSpec = 1;
 			files = (
+				93F9B6560BA0F35E00854064 /* DOMHTMLCanvasElement.h in Copy Generated Headers */,
 				6596F2C10B87325C001326BD /* DOMHTMLTextAreaElementInternal.h in Copy Generated Headers */,
 				6596F2B30B8731DF001326BD /* DOMHTMLInputElementInternal.h in Copy Generated Headers */,
 				A8D06B390A265DCD005E7203 /* HTMLNames.h in Copy Generated Headers */,
@@ -11187,7 +11188,6 @@
 				934D9BA70B8C1175007B42A9 /* WebCoreNSStringExtras.h in Headers */,
 				51DF6D7E0B92A16D00C2DC85 /* ThreadCheck.h in Headers */,
 				BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */,
-				93F9B6560BA0F35E00854064 /* DOMHTMLCanvasElement.h in Headers */,
 				93F9B6580BA0F35E00854064 /* DOMHTMLCanvasElementInternal.h in Headers */,
 				93F9B6E10BA0FB7200854064 /* JSComment.h in Headers */,
 				93F9B7750BA5FDDD00854064 /* JSEntityReference.h in Headers */,
@@ -11229,6 +11229,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -11243,6 +11244,7 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
