@@ -194,6 +194,8 @@ public:
 #if PLATFORM(MAC)
     NSString* userVisibleString(NSURL*);
     void setStartNewKillRingSequence(bool flag) { m_startNewKillRingSequence = flag; }
+#else 
+    void setStartNewKillRingSequence(bool) { }
 #endif
 
 private:
