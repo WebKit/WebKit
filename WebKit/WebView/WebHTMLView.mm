@@ -4609,13 +4609,11 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 {
     if (![self _canEdit])
         return;
-    
+        
     NSString* yankee = _NSYankFromKillRing();
-    if ([yankee length]) {
-        if (Frame* coreFrame = core([self _frame]))
-            coreFrame->editor()->insertText(yankee, false);
-    } else
-        [self deleteBackward:nil];
+    
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->insertText(yankee, false);
 
     _NSSetKillRingToYankedState();
 }
@@ -4625,12 +4623,10 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     if (![self _canEdit])
         return;
 
-    NSString* yankee = _NSYankPreviousFromKillRing();
-    if ([yankee length]) {
-        if (Frame* coreFrame = core([self _frame]))
-            coreFrame->editor()->insertText(yankee, true);
-    } else
-        [self deleteBackward:nil];
+    NSString* yankee = _NSYankFromKillRing();
+    
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->insertText(yankee, true);
         
     _NSSetKillRingToYankedState();
 }
