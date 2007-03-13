@@ -19,7 +19,7 @@
 
 2007-03-13  David Hyatt  <hyatt@apple.com>
 
-        - fix http://bugs.webkit.org/show_bug.cgi?id=13050
+        - fix cache issues seen in http://bugs.webkit.org/show_bug.cgi?id=13050
           6 objects and ~200MB leaked after opening then closing tab
           <rdar://problem/5058714>
 
