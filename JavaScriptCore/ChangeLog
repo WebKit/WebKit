@@ -1,3 +1,12 @@
+2007-03-13  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by .
+
+        - Adding expected failures until the are truly fixed. 
+        - rdar://problem/5060302
+
+        * tests/mozilla/expected.html:
+
 2007-03-12  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by .
