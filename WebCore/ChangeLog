@@ -38,7 +38,7 @@
 
         * html/HTMLParser.h: Removed unneeded includes. Marked HTMLParser as
         Noncopyable. Changed the Document parameter to the constructor to instead
-        of HTMLDocument. Renamed discard_until to m_skipModeTag for clarity.
+        be HTMLDocument. Renamed discard_until to m_skipModeTag for clarity.
         Removed unused noSpaces function and unneeded public doc() function.
         Moved data members all down to the end so you can see them together in order.
         Renamed map to m_currentMapElement and isindex to m_isindexElement.
