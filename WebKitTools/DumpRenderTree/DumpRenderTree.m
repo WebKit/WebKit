@@ -1002,7 +1002,8 @@ static void dump(void)
             || aSelector == @selector(storeWebScriptObject:)
             || aSelector == @selector(accessStoredWebScriptObject)
             || aSelector == @selector(setUserStyleSheetLocation:)
-            || aSelector == @selector(setUserStyleSheetEnabled:))
+            || aSelector == @selector(setUserStyleSheetEnabled:)
+            || aSelector == @selector(objCClassNameOf:))
         return NO;
     return YES;
 }
@@ -1031,6 +1032,8 @@ static void dump(void)
         return @"setUserStyleSheetLocation";
     if (aSelector == @selector(setUserStyleSheetEnabled:))
         return @"setUserStyleSheetEnabled";
+    if (aSelector == @selector(objCClassNameOf:))
+        return @"objCClassName";
     return nil;
 }
 
@@ -1267,6 +1270,11 @@ static void dump(void)
 {
     [storedWebScriptObject release];
     [super dealloc];
+}
+
+- (NSString *)objCClassNameOf:(id)object
+{
+    return NSStringFromClass([object class]);
 }
 
 @end

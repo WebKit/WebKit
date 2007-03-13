@@ -1,3 +1,17 @@
+2007-03-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - add a DumpRenderTree feature where you can get the Objective-C
+          class name of a JavaScript object
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]): Add the
+        objCClassNameOf: selector.
+        (+[LayoutTestController webScriptNameForSelector:]): Add the
+        objCClassNameOf: selector, with the name "objCClassName".
+        (-[LayoutTestController objCClassNameOf:]): Added.
+
 2007-03-11  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
