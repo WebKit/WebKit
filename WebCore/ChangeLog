@@ -1,3 +1,13 @@
+2007-03-13  David Hyatt  <hyatt@apple.com>
+
+        Double the encoded size of images for now.  We do this to account for a bug in ImageIO where they hold
+        a separate copy of image data.
+
+        Reviewed by aroben
+
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::data):
+
 2007-03-12  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Not reviewed - gdk build fix.

@@ -225,7 +225,13 @@ void CachedImage::data(Vector<char>& data, bool allDataReceived)
 
         if (m_image) {
             Vector<char>& imageBuffer = m_image->dataBuffer();
+#if PLATFORM(CG)
+            // ImageIO sources copy the image data.  We will go ahead and count encoded
+            // size twice until this issue is fixed.  See <rdar://problem/5050645>
+            setEncodedSize(imageBuffer.size() * 2);
+#else
             setEncodedSize(imageBuffer.size());
+#endif
         }
     }
     
