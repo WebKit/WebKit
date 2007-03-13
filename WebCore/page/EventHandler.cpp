@@ -1561,7 +1561,8 @@ void EventHandler::defaultTextInputEventHandler(TextEvent* event)
 void EventHandler::defaultTabEventHandler(Event* event, bool isBackTab)
 {
     Page* page = m_frame->page();
-    if (!page ||! page->tabKeyCyclesThroughElements())
+    // Tabs can be used in design mode editing. You can still move out with back tab.
+    if (!page || !page->tabKeyCyclesThroughElements() || (m_frame->document()->inDesignMode() && !isBackTab))
         return;
     FocusController* focus = page->focusController();
     KeyboardEvent* keyboardEvent = findKeyboardEvent(event);

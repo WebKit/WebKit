@@ -1,0 +1,2 @@
+	 try if tabs work in designMode
+

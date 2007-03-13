@@ -1,0 +1,19 @@
+<body>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+        
+document.designMode="on";
+
+var e = document.body;
+var s = window.getSelection();
+s.setPosition(e, 0);
+
+if (window.eventSender) {
+    var mod = [];
+    eventSender.keyDown('\t', mod);
+}
+</script>
+try if tabs work in designMode<br>
+
+</script>

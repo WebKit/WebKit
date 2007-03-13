@@ -1,3 +1,16 @@
+2007-03-13  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Fix http://bugs.webkit.org/show_bug.cgi?id=11083
+        REGRESSION: Typing tab key fails to insert a tab character in Google Docs editable area
+        <rdar://problem/4757650>
+        
+        Allow inserting tabs in designMode. Backtab behaves like before (matches FF).
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultTabEventHandler):
+
 2007-03-13  David Hyatt  <hyatt@apple.com>
 
         Fix two counting errors in the decoded size of objects in the WebCore cache.  We need to explicitly

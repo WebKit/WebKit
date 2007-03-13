@@ -1,3 +1,18 @@
+2007-03-13  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        http://bugs.webkit.org/show_bug.cgi?id=11083
+        REGRESSION: Typing tab key fails to insert a tab character in Google Docs editable area
+        <rdar://problem/4757650>
+
+        * editing/inserting/typing-tab-designmode-expected.txt: Added.
+        * editing/inserting/typing-tab-designmode-forms-expected.checksum: Added.
+        * editing/inserting/typing-tab-designmode-forms-expected.png: Added.
+        * editing/inserting/typing-tab-designmode-forms-expected.txt: Added.
+        * editing/inserting/typing-tab-designmode-forms.html: Added.
+        * editing/inserting/typing-tab-designmode.html: Added.
+
 2007-03-13  Darin Adler  <darin@apple.com>
 
         * fast/js/kde/RegExp-expected.txt: Fix the one other test affected by
