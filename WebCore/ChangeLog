@@ -1,5 +1,13 @@
 2007-03-13  David Hyatt  <hyatt@apple.com>
 
+        Clean up the null image case in CachedImage::data to make sure the size totals will stay accurate.
+        I'm not convinced this case can even be hit, but I'm cleaning it up just in case.
+
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::data):
+
+2007-03-13  David Hyatt  <hyatt@apple.com>
+
         Reorder the call to allReferencesRemoved, since otherwise the live object size will become
         incorrect.
 

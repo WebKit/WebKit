@@ -217,12 +217,14 @@ void CachedImage::data(Vector<char>& data, bool allDataReceived)
     // to decode.
     if (sizeAvailable || allDataReceived) {
         if (m_image->isNull()) {
-            m_errorOccurred = true;
-            notifyObservers();
+            // FIXME: I'm not convinced this case can even be hit.
+            error();
             if (inCache())
                 cache()->remove(this);
-        } else
-            notifyObservers();
+            return;
+        }
+        
+        notifyObservers();
 
         if (m_image) {
             Vector<char>& imageBuffer = m_image->dataBuffer();
