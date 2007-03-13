@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Trolltech ASA
  *
@@ -97,6 +97,10 @@
 @interface NSObject (WebPlugIn)
 - (id)objectForWebScript;
 - (NPObject *)createPluginScriptableObject;
+@end
+ 
+@interface NSView (WebCoreHTMLDocumentView)
+- (void)drawSingleRect:(NSRect)rect;
 @end
  
 using namespace std;
@@ -324,6 +328,8 @@ NSImage* Frame::imageFromRect(NSRect rect) const
     NSView* view = d->m_view->getDocumentView();
     if (!view)
         return nil;
+    if (![view respondsToSelector:@selector(drawSingleRect:)])
+        return nil;
     
     NSImage* resultImage;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -341,12 +347,15 @@ NSImage* Frame::imageFromRect(NSRect rect) const
     if (rect.size.width != 0 && rect.size.height != 0) {
         [resultImage setFlipped:YES];
         [resultImage lockFocus];
-
         CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-
         CGContextSaveGState(context);
         CGContextTranslateCTM(context, bounds.origin.x - rect.origin.x, bounds.origin.y - rect.origin.y);
-        [view drawRect:rect];
+
+        // Note: Must not call drawRect: here, because drawRect: assumes that it's called from AppKit's
+        // display machinery. It calls getRectsBeingDrawn:count:, which can only be called inside
+        // when a real AppKit display is underway.
+        [view drawSingleRect:rect];
+
         CGContextRestoreGState(context);
         [resultImage unlockFocus];
         [resultImage setFlipped:NO];

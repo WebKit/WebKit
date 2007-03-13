@@ -1,3 +1,16 @@
+2007-03-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher and John Sullivan.
+
+        - fix <rdar://problem/4915303> CrashTracer: 36 crashes in Safari at
+          com.apple.AppKit: -[NSView getRectsBeingDrawn:count:] + 502
+
+        * page/mac/FrameMac.mm: (WebCore::Frame::imageFromRect):
+        This was calling drawRect: directly, but NSView's getRectsBeingDrawn:count:
+        method was never really safe to call unless it was AppKit that called your
+        drawRect: method. Changed it to call drawSingleRect: instead. A little ugly,
+        but seems to work and will almost certainly fix the bug.
+
 2007-03-13  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Maciej.
