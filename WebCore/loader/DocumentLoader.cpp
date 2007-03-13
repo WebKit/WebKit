@@ -309,8 +309,10 @@ void DocumentLoader::finishedLoading()
 {
     m_gotFirstByte = true;   
     commitIfReady();
-    frameLoader()->finishedLoadingDocument(this);
-    m_frame->loader()->end();
+    if (FrameLoader* loader = frameLoader()) {
+        loader->finishedLoadingDocument(this);
+        loader->end();
+    }
 }
 
 void DocumentLoader::setCommitted(bool f)

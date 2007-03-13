@@ -1,3 +1,13 @@
+2007-03-12  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Anders.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13015
+          REGRESSION (r17233-r17241): Repro crash when leaving a page whose unload handler submits a form
+
+        * fast/loader/onunload-form-submit-crash-2-expected.txt: Added.
+        * fast/loader/onunload-form-submit-crash-2.html: Added.
+
 2007-03-12  Anders Carlsson  <acarlsson@apple.com>
 
         Add expected results.
