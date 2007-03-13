@@ -1,3 +1,17 @@
+2007-03-13  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Anders.
+
+        Fix some crashes in the Qt build.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::markup):
+            Check for null pointer
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+            Don't use an async callback into the FrameLoader.
+        (WebCore::FrameLoaderClientQt::createFrame):
+
 2007-03-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adele.

@@ -161,6 +161,8 @@ void QWebFrame::addToJSWindowObject(const QByteArray &name, QObject *object)
 
 QString QWebFrame::markup() const
 {
+    if (!d->frame->document())
+        return QString();
     return createMarkup(d->frame->document());
 }
 

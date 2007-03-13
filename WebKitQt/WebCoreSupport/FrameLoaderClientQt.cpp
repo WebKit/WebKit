@@ -792,13 +792,9 @@ void FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction(FramePolicyFunc
 void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const WebCore::NavigationAction&, const WebCore::ResourceRequest& request)
 {
     Q_ASSERT(!m_policyFunction);
-    KURL url = request.url();
-    if (url.isEmpty() || url.protocol() == "about") {
-        m_policyFunction = function;
-        slotCallPolicyFunction(PolicyUse);
-        return;
-    }
-    callPolicyFunction(function, PolicyUse);
+    m_policyFunction = function;
+    slotCallPolicyFunction(PolicyUse);
+    return;
 }
 
 void FrameLoaderClientQt::dispatchUnableToImplementPolicy(const WebCore::ResourceError&)
@@ -843,11 +839,11 @@ Frame* FrameLoaderClientQt::createFrame(const KURL& url, const String& name, HTM
 
     childFrame->loader()->load(frameData.url, frameData.referrer, childLoadType,
                              String(), 0, 0, WTF::HashMap<String, String>());
-    
+
     // The frame's onload handler may have removed it from the document.
     if (!childFrame->tree()->parent())
         return 0;
-    
+
     return childFrame.get();
 }
 
