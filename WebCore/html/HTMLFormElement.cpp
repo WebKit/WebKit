@@ -49,21 +49,23 @@ using namespace HTMLNames;
 
 HTMLFormElement::HTMLFormElement(Document* doc)
     : HTMLElement(formTag, doc)
+    , m_oldNames(0)
+    , collectionInfo(0)
+    , m_enctype("application/x-www-form-urlencoded")
+    , m_post(false)
+    , m_multipart(false)
+    , m_autocomplete(false)
+    , m_insubmit(false)
+    , m_doingsubmit(false)
+    , m_inreset(false)
+    , m_malformed(false)
+    , m_preserveAcrossRemove(false)
 {
-    collectionInfo = 0;
-    m_post = false;
-    m_multipart = false;
-    m_autocomplete = true;
-    m_insubmit = false;
-    m_doingsubmit = false;
-    m_inreset = false;
-    m_enctype = "application/x-www-form-urlencoded";
-    m_malformed = false;
-    m_preserveAcrossRemove = false;
 }
 
 HTMLFormElement::~HTMLFormElement()
 {
+    delete m_oldNames;
     delete collectionInfo;
     
     for (unsigned i = 0; i < formElements.size(); ++i)
@@ -272,19 +274,19 @@ PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
                     // include the filename
                     if (current->hasLocalName(inputTag) &&
                         static_cast<HTMLInputElement*>(current)->inputType() == HTMLInputElement::FILE) {
-                        String path = static_cast<HTMLInputElement*>(current)->value();
+                        const AtomicString& path = static_cast<HTMLInputElement*>(current)->value();
 
                         // FIXME: This won't work if the filename includes a " mark,
                         // or control characters like CR or LF. This also does strange
                         // things if the filename includes characters you can't encode
                         // in the website's character set.
                         hstr += "; filename=\"";
-                        int start = path.reverseFind('/') + 1;
+                        int start = path.domString().reverseFind('/') + 1;
                         int length = path.length() - start;
                         hstr += encoding.encode(reinterpret_cast<const UChar*>(path.characters() + start), length, true);
                         hstr += "\"";
 
-                        if (!static_cast<HTMLInputElement*>(current)->value().isEmpty()) {
+                        if (!path.isEmpty()) {
                             DeprecatedString mimeType = MimeTypeRegistry::getMIMETypeForPath(path).deprecatedString();
                             if (!mimeType.isEmpty()) {
                                 hstr += "\r\nContent-Type: ";
@@ -498,7 +500,7 @@ void HTMLFormElement::parseMappedAttribute(MappedAttribute *attr)
     else if (attr->name() == onresetAttr)
         setHTMLEventListener(resetEvent, attr);
     else if (attr->name() == nameAttr) {
-        String newNameAttr = attr->value();
+        const AtomicString& newNameAttr = attr->value();
         if (inDocument() && document()->isHTMLDocument()) {
             HTMLDocument *doc = static_cast<HTMLDocument *>(document());
             doc->removeNamedItem(oldNameAttr);
@@ -559,9 +561,28 @@ void HTMLFormElement::removeFormElement(HTMLGenericFormElement* e)
         HTMLGenericFormElement* currentCheckedRadio = document()->checkedRadioButtonForGroup(e->name().impl(), this);
         if (currentCheckedRadio == e)
             document()->removeRadioButtonGroup(e->name().impl(), this);
+        formElementNameChanged(e, e->name());
     }
     removeFromVector(formElements, e);
     document()->incDOMTreeVersion();
+}
+
+void HTMLFormElement::formElementNameChanged(HTMLGenericFormElement* element, const AtomicString& oldName)
+{
+    if (oldName.isEmpty())
+        return;
+    if (!m_oldNames)
+        m_oldNames = new OldNameMap;
+    m_oldNames->set(oldName.impl(), element);
+}
+
+HTMLGenericFormElement* HTMLFormElement::oldNamedElement(const AtomicString& oldName) const
+{
+    if (oldName.isEmpty())
+        return 0;
+    if (!m_oldNames)
+        return 0;
+    return m_oldNames->get(oldName.impl()).get();
 }
 
 bool HTMLFormElement::isURLAttribute(Attribute *attr) const

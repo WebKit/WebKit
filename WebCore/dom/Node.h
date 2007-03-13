@@ -54,6 +54,7 @@ class RenderArena;
 class RenderObject;
 class RenderStyle;
 class TextStream;
+class TreeNodeList;
 
 typedef int ExceptionCode;
 
@@ -439,8 +440,8 @@ public:
     void showTreeAndMark(const Node* markedNode1, const char* markedLabel1, const Node* markedNode2 = 0, const char* markedLabel2 = 0) const;
 #endif
 
-    void registerNodeList(NodeList*);
-    void unregisterNodeList(NodeList*);
+    void registerNodeList(TreeNodeList*);
+    void unregisterNodeList(TreeNodeList*);
     void notifyNodeListsChildrenChanged();
     void notifyLocalNodeListsChildrenChanged();
     void notifyNodeListsAttributeChanged();
@@ -456,7 +457,7 @@ private: // members
     RenderObject* m_renderer;
 
 protected:
-    typedef HashSet<NodeList*> NodeListSet;
+    typedef HashSet<TreeNodeList*> NodeListSet;
     NodeListSet* m_nodeLists;
 
     short m_tabIndex;

@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -55,10 +53,13 @@ HTMLGenericFormElement::~HTMLGenericFormElement()
         m_form->removeFormElement(this);
 }
 
-void HTMLGenericFormElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLGenericFormElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == nameAttr) {
-        // Do nothing.
+        if (m_form) {
+            m_form->formElementNameChanged(this, m_oldName);
+            m_oldName = name();
+        }
     } else if (attr->name() == disabledAttr) {
         bool oldDisabled = m_disabled;
         m_disabled = !attr->isNull();
@@ -100,9 +101,10 @@ void HTMLGenericFormElement::insertedIntoTree(bool deep)
         // setting a form, we will already have a non-null value for m_form, 
         // and so we don't need to do anything.
         m_form = getForm();
-        if (m_form)
+        if (m_form) {
             m_form->registerFormElement(this);
-        else
+            m_oldName = name();
+        } else
             if (isRadioButton() && !name().isEmpty() && isChecked())
                 document()->radioButtonChecked((HTMLInputElement*)this, m_form);
     }

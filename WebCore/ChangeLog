@@ -1,3 +1,93 @@
+2007-03-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12595
+          <rdar://problem/4722863> REGRESSION: Can't add item to cart at lnt.com
+          (JS type error) (12595)
+
+        Test: fast/forms/old-names.html
+
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::canGetItemsForName): If the form collection has
+        nothing for a given name, try the form's oldNamedElement function.
+        (WebCore::JSHTMLFormElement::nameGetter): Ditto.
+
+        * bindings/js/kjs_dom.h: Removed the DOMNamedNodesCollection. Instead we will use
+        a class derived from NodeList.
+        * bindings/js/kjs_dom.cpp: Ditto.
+
+        * bindings/js/kjs_html.cpp:
+        (KJS::VectorNodeList::VectorNodeList): Added. Constructor for a new class derived
+        from NodeList to be used for the named items result from a collection -- uses a
+        vector of node pointers.
+        (KJS::VectorNodeList::length): Added.
+        (KJS::VectorNodeList::item): Added.
+        (KJS::JSHTMLCollection::getNamedItems): Use VectorNodeList and the existing wrapper
+        for NodeList rather than a custom JavaScript class, DOMNamedNodesCollection.
+
+        * dom/ChildNodeList.h:
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::ChildNodeList): Updated to derive from TreeNodeList,
+        since NodeList is now a simpler class.
+        (WebCore::ChildNodeList::elementMatches): Updated for name and parameter change.
+
+        * dom/NameNodeList.h:
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::NameNodeList): Updated to derive from TreeNodeList,
+        since NodeList is now a simpler class.
+        (WebCore::NameNodeList::rootNodeAttributeChanged): Updated for name and
+        parameter change.
+
+        * dom/Node.h: Change register/unregister functions to take TreeNodeList.
+        * dom/Node.cpp:
+        (WebCore::TagNodeList::TagNodeList): Updated to derive from TreeNodeList,
+        since NodeList is now a simpler abstract class.
+        (WebCore::TagNodeList::elementMatches): Updated for name and parameter change.
+        (WebCore::Node::registerNodeList): Changed type from NodeList to TreeNodeList.
+        (WebCore::Node::unregisterNodeList): Ditto.
+
+        * dom/NodeList.h: Broke NodeList into a simpler base class and a derived class
+        with the machinery for iterating a tree, called TreeNodeList.
+        * dom/NodeList.cpp:
+        (WebCore::NodeList::~NodeList): Added.
+        (WebCore::NodeList::itemWithName): Factored out of the old itemWithName.
+        (WebCore::TreeNodeList::TreeNodeList): Renamed from NodeList.
+        (WebCore::TreeNodeList::~TreeNodeList): Ditto.
+        (WebCore::TreeNodeList::recursiveLength): Ditto.
+        (WebCore::TreeNodeList::itemForwardsFromCurrent): Ditto.
+        (WebCore::TreeNodeList::itemBackwardsFromCurrent): Ditto.
+        (WebCore::TreeNodeList::recursiveItem): Ditto.
+        (WebCore::TreeNodeList::itemWithName): Factored half of this into this function,
+        the other half in NodeList::itemWithName.
+        (WebCore::TreeNodeList::rootNodeAttributeChanged): Added. No longer inline.
+        (WebCore::TreeNodeList::rootNodeChildrenChanged): Renamed from NodeList.
+
+        * html/HTMLFormElement.h: Added formElementNameChanged and oldNamedElement
+        fucntions, and a map called m_oldNames. Also removed m_boundary, which I
+        thought I had already done.
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::HTMLFormElement): Initialize m_oldNames to 0.
+        Switched the rest of the members to initialization syntax.
+        (WebCore::HTMLFormElement::~HTMLFormElement): Delete m_oldNames.
+        (WebCore::HTMLFormElement::formElementNameChanged): Added. Stores a reference
+        to one element under each of its old names.
+        (WebCore::HTMLFormElement::oldNamedElement): Added. Returns the old element
+        that once had a given name.
+
+        * html/HTMLGenericFormElement.h:
+        * html/HTMLGenericFormElement.cpp:
+        (WebCore::HTMLGenericFormElement::parseMappedAttribute): When the name
+        attribute changes, tell the form about the old name.
+        (WebCore::HTMLGenericFormElement::insertedIntoTree): When telling a form
+        about an element, also store away the old name so that we can use it
+        when the name changes later.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute): Added a call to the
+        base class in the nameAttr case, so the code in HTMLGenericFormElement
+        above will get called in the input element case.
+
 2007-03-13  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Alexey.

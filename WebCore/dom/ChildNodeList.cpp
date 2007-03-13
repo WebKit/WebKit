@@ -24,14 +24,15 @@
 
 #include "config.h"
 #include "ChildNodeList.h"
-#include "Node.h"
+
+#include "Element.h"
 
 using namespace WebCore;
 
 namespace WebCore {
 
-ChildNodeList::ChildNodeList( Node *n )
-    : NodeList(n)
+ChildNodeList::ChildNodeList(Node* n)
+    : TreeNodeList(n)
 {
 }
 
@@ -41,8 +42,7 @@ unsigned ChildNodeList::length() const
         return cachedLength;
 
     unsigned len = 0;
-    Node *n;
-    for(n = rootNode->firstChild(); n != 0; n = n->nextSibling())
+    for (Node* n = rootNode->firstChild(); n; n = n->nextSibling())
         len++;
 
     cachedLength = len;
@@ -51,10 +51,10 @@ unsigned ChildNodeList::length() const
     return len;
 }
 
-Node *ChildNodeList::item ( unsigned index ) const
+Node *ChildNodeList::item(unsigned index) const
 {
     unsigned int pos = 0;
-    Node *n = rootNode->firstChild();
+    Node* n = rootNode->firstChild();
 
     if (isItemCacheValid) {
         if (index == lastItemOffset) {
@@ -80,9 +80,9 @@ Node *ChildNodeList::item ( unsigned index ) const
     return 0;
 }
 
-bool ChildNodeList::nodeMatches(Node *testNode) const
+bool ChildNodeList::elementMatches(Element* element) const
 {
-    return testNode->parentNode() == rootNode;
+    return element->parentNode() == rootNode;
 }
 
 }

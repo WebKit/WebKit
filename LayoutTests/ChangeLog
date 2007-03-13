@@ -1,3 +1,20 @@
+2007-03-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12595
+          <rdar://problem/4722863> REGRESSION: Can't add item to cart at lnt.com
+          (JS type error) (12595)
+
+        * fast/forms/old-names-expected.txt: Added.
+        * fast/forms/old-names.html: Added.
+
+        - check in files that were somehow left out in the last check-in
+
+        * fast/js/resources/js-test-pre.js: Improve the format of the failure message when
+        both the real results and expected results are strings.
+        * fast/dom/wrapper-classes-expected.txt: Changed back to use the new format.
+
 2007-03-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Lars.
@@ -83,8 +100,6 @@
 
         * fast/dom/wrapper-classes-expected.txt: Added.
         * fast/dom/wrapper-classes.html: Added.
-        * fast/js/resources/js-test-pre.js: Improve the format of the failure message when
-        both the real results and expected results are strings.
 
 2007-03-12  Antti Koivisto  <antti@apple.com>
 
