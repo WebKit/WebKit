@@ -1,3 +1,16 @@
+2007-03-13  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/4277074> 8F32: Help Viewer crashed on 
+        clicking link - KHTMLView::viewportMouseReleaseEvent (12647)
+
+        Re-set the DocumentLoader's frame when loading it from the page 
+        cache before setting the document view.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::setDocumentViewFromPageCache):
+
 2007-03-13  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Geoff.

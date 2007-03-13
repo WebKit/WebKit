@@ -172,6 +172,7 @@ void WebFrameLoaderClient::setDocumentViewFromPageCache(PageCache* pageCache)
 {
     DocumentLoader* cachedDocumentLoader = pageCache->documentLoader();
     ASSERT(cachedDocumentLoader);
+    cachedDocumentLoader->setFrame(core(m_webFrame.get()));
     NSView <WebDocumentView> *cachedView = pageCache->documentView();
     ASSERT(cachedView != nil);
     [cachedView setDataSource:dataSource(cachedDocumentLoader)];
