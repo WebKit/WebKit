@@ -1087,7 +1087,7 @@ Widget* WebFrameLoaderClient::createPlugin(Element* element, const KURL& url, co
                               attributeNames:nsArray(paramNames)
                               attributeValues:nsArray(paramValues)
                               MIMEType:mimeType
-                              DOMElement:[DOMElement _elementWith:element]
+                              DOMElement:[DOMElement _wrapElement:element]
                               loadManually:loadManually]);
     END_BLOCK_OBJC_EXCEPTIONS;
 
@@ -1112,7 +1112,7 @@ WebCore::Widget* WebFrameLoaderClient::createJavaAppletWidget(const IntSize& siz
                             attributeNames:nsArray(paramNames)
                             attributeValues:nsArray(paramValues)
                             baseURL:baseURL.getNSURL()
-                            DOMElement:[DOMElement _elementWith:element]]);    
+                            DOMElement:[DOMElement _wrapElement:element]]);    
     END_BLOCK_OBJC_EXCEPTIONS;
     
     return result;

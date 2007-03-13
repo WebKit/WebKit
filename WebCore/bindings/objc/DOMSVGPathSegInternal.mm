@@ -73,7 +73,7 @@
     return self;
 }
 
-+ (DOMSVGPathSeg *)_SVGPathSegWith:(WebCore::SVGPathSeg *)impl
++ (DOMSVGPathSeg *)_wrapSVGPathSeg:(WebCore::SVGPathSeg *)impl
 {
     if (!impl)
         return nil;

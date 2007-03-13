@@ -1,3 +1,15 @@
+2007-03-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - added a test that checks the classes of wrappers created by both
+          the JavaScript binding and the Objective-C binding
+
+        * fast/dom/wrapper-classes-expected.txt: Added.
+        * fast/dom/wrapper-classes.html: Added.
+        * fast/js/resources/js-test-pre.js: Improve the format of the failure message when
+        both the real results and expected results are strings.
+
 2007-03-12  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Alexey

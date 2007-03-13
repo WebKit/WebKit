@@ -22,7 +22,7 @@ module html {
 
     // FIXME: The W3C spec says that HTMLOptionsCollection should not have a parent class.
 
-    interface [LegacyParent=KJS::JSHTMLCollection, HasCustomIndexSetter] HTMLOptionsCollection : HTMLCollection {
+    interface [LegacyParent=KJS::JSHTMLCollection, GenerateNativeConverter, HasCustomIndexSetter] HTMLOptionsCollection : HTMLCollection {
                  attribute long selectedIndex;
                  attribute [Custom] unsigned long length
                         setter raises (DOMException);

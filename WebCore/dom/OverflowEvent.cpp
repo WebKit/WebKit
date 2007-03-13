@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,22 +22,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include "config.h"
 
+#include "config.h"
 #include "OverflowEvent.h"
+
 #include "EventNames.h"
 
 namespace WebCore {
     
 using namespace EventNames;
     
+OverflowEvent::OverflowEvent()
+    : Event(overflowchangedEvent, false, false)
+    , m_orient(VERTICAL)
+    , m_horizontalOverflow(false)
+    , m_verticalOverflow(false)
+{
+}
+
 OverflowEvent::OverflowEvent(bool horizontalOverflowChanged, bool horizontalOverflow, bool verticalOverflowChanged, bool verticalOverflow)
     : Event(overflowchangedEvent, false, false)
     , m_horizontalOverflow(horizontalOverflow)
     , m_verticalOverflow(verticalOverflow)
 {
     ASSERT(horizontalOverflowChanged || verticalOverflowChanged);
-        
+
     if (horizontalOverflowChanged && verticalOverflowChanged)
         m_orient = BOTH;
     else if (horizontalOverflowChanged)
@@ -51,5 +60,14 @@ bool OverflowEvent::isOverflowEvent() const
     return true;
 }
 
+void OverflowEvent::initOverflowEvent(unsigned short orient, bool horizontalOverflow, bool verticalOverflow)
+{
+    if (dispatched())
+        return;
+    
+    m_orient = orient;
+    m_horizontalOverflow = horizontalOverflow;
+    m_verticalOverflow = verticalOverflow;
 }
 
+}

@@ -1,3 +1,146 @@
+2007-03-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - fixed JavaScript wrapper classes to be correct for a variety of cases
+          that a new test uncovered: was broken for at least 5 classes
+
+        - fixed Objective-C wrapper classes to be correct for a variety of cases
+          that a test case uncovered: was broken for ast least 50 classes
+
+        - added missing DOM API for creating OverflowEvent and WheelEvent instances
+
+        Test: fast/dom/wrapper-classes.html
+
+        * DerivedSources.make: Added missing bindings: HTMLCanvasElement for ObjC,
+        CDATASection, Comment, and EntityReference for JavaScript.
+        * WebCore.xcodeproj/project.pbxproj: Added those new generated files.
+
+        * bindings/js/JSHTMLElementWrapperFactory.cpp:
+        (WebCore::createJSHTMLWrapper): Corrected the wrapper classes for <keygen>,
+        which needs an HTMLSelectElement wrapper, and <xmp>, which needs an
+        HTMLPreElement wrapper.
+
+        * bindings/objc/DOMInternal.h: Updated for new naming scheme.
+        Also moved createDOMWrapper from the KJS namespace to the WebCore namespace.
+        * bindings/objc/DOMUtility.mm:
+        (KJS::createDOMWrapper): Broke the core function into a separate one, and
+        left it in the KJS namespace because Objective-C++ rules make it impossible
+        for it to work in the WebCore namespace. Used a macro-based implementation
+        to cut down on repeated code, and added missing cases for Counter,
+        HTMLOptionsCollection, Range, XPathExpression, XPathResult, Event, RGBColor,
+        Rect, Window, DOMImplementation, NodeIterator, TreeWalker, and HTMLCollection.
+        (WebCore::createDOMWrapper): The other half of the function.
+
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap): Corrected the wrapper classes for
+        <canvas>, which needs a DOMHTMLCanvasElement wrapper, <del>, which needs
+        a DOMHTMLModElement wrapper, <embed>, which needs a DOMHTMLEmbedElement
+        wrapper, <ins>, which needs a DOMHTMLModElement wrapper, <th>, which needs
+        a DOMHTMLTableCellElement wrapper, and <xmp>, which needs an
+        DOMHTMLPreElement wrapper.
+        (+[DOMNode _wrapNode:]): Updated for new naming scheme.
+        (+[DOMNode _wrapEventTarget:]): Ditto.
+        (+[DOMNodeFilter _wrapNodeFilter:]): Ditto.
+        (ObjCNodeFilterCondition::acceptNode): Ditto.
+        (-[DOMDocument createNodeIterator:whatToShow:filter:expandEntityReferences:]): Ditto.
+        (-[DOMDocument createTreeWalker:whatToShow:filter:expandEntityReferences:]): Ditto.
+        (WebCore::ObjCEventListener::handleEvent): Ditto.
+
+        * dom/Document.cpp: (WebCore::Document::createEvent):
+        Added cases for OverflowEvent and WheelEvent.
+
+        * dom/OverflowEvent.h: Added empty constructor and initOverflowEvent.
+        * dom/OverflowEvent.cpp:
+        (WebCore::OverflowEvent::OverflowEvent): Added.
+        (WebCore::OverflowEvent::initOverflowEvent): Added.
+        * dom/OverflowEvent.idl: Added initOverflowEvent.
+
+        * bindings/objc/PublicDOMInterfaces.h: Added initOverflowEvent.
+
+        * bindings/objc/DOMCSS.mm:
+        (+[DOMStyleSheet _wrapStyleSheet:]): Updated for new naming scheme.
+        (+[DOMCSSRule _wrapCSSRule:]): Corrected wrapper for CSSUnknownRule.
+        (+[DOMCSSValue _wrapCSSValue:]): Updated for new naming scheme.
+
+        * bindings/js/kjs_css.h:
+        (KJS::DOMRGBColor::impl): Added. Used when making an ObjC wrapper.
+        (KJS::DOMRect::impl): Ditto.
+
+        * bindings/js/kjs_dom.cpp: (KJS::toJS): Corrected the wrapper classes for
+        CDATASection, Comment, and EntityReference.
+
+        * bindings/js/kjs_html.cpp: Corrected the class name for HTMLElement
+        (was "DOMHTMLElement") and HTMLCollection (was "Collection").
+
+        * bindings/objc/DOMImplementationFront.h:
+        * bindings/objc/DOMImplementationFront.cpp:
+        (WebCore::implementationFront): Added new overload that returns a front given
+        a JavaScript wrapper. Needed by the code that makes the Objective-C wrapper.
+
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:originRootObject:rootObject:]):
+        Updated since createDOMWrapper is now in the WebCore namespace.
+
+        * bindings/scripts/CodeGeneratorObjC.pm: Update the naming scheme for the
+        wrapper creation functions to use _wrapElement: rather then _elementWith:
+        style. Removed now-unneeded special cases for things that needed to stay
+        upper-case, since we don't have to do the whole lcfirst thing.
+
+        * html/HTMLCanvasElement.idl: Added #if so we can successfully generate the
+        Objective-C wrapper for this class, even though we can't yet handle the
+        DOMObject return type.
+
+        * html/HTMLOptionsCollection.idl: Added GenerateNativeConverter so we get
+        an appropriate toJS function.
+
+        * bindings/objc/DOMEvents.mm:
+        (+[DOMEvent _wrapEvent:]):
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLDocument createDocumentFragmentWithMarkupString:baseURL:]):
+        (-[DOMHTMLDocument createDocumentFragmentWithText:]):
+        * bindings/objc/DOMObject.mm:
+        (-[DOMObject sheet]):
+        * bindings/objc/DOMRGBColor.mm:
+        (-[DOMRGBColor red]):
+        (-[DOMRGBColor green]):
+        (-[DOMRGBColor blue]):
+        (-[DOMRGBColor alpha]):
+        (+[DOMRGBColor _wrapRGBColor:]):
+        * bindings/objc/DOMSVGPathSegInternal.mm:
+        (+[DOMSVGPathSeg _wrapSVGPathSeg:]):
+        * bindings/objc/DOMXPath.mm:
+        (+[DOMNativeXPathNSResolver _wrapXPathNSResolver:]):
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge nodesFromList:]):
+        (-[WebCoreFrameBridge elementWithName:inForm:]):
+        (-[WebCoreFrameBridge formForElement:]):
+        (-[WebCoreFrameBridge currentForm]):
+        (-[WebCoreFrameBridge controlsInForm:]):
+        (-[WebCoreFrameBridge rangeByAlteringCurrentSelection:SelectionController::direction:SelectionController::granularity:]):
+        (-[WebCoreFrameBridge convertNSRangeToDOMRange:]):
+        (-[WebCoreFrameBridge markDOMRange]):
+        (-[WebCoreFrameBridge markedTextDOMRange]):
+        (-[WebCoreFrameBridge smartDeleteRangeForProposedRange:]):
+        (-[WebCoreFrameBridge documentFragmentWithMarkupString:baseURLString:]):
+        (-[WebCoreFrameBridge documentFragmentWithText:inContext:]):
+        (-[WebCoreFrameBridge documentFragmentWithNodesAsParagraphs:]):
+        (-[WebCoreFrameBridge replaceSelectionWithNode:selectReplacement:smartReplace:matchStyle:]):
+        (-[WebCoreFrameBridge replaceSelectionWithText:selectReplacement:smartReplace:]):
+        (-[WebCoreFrameBridge increaseSelectionListLevel]):
+        (-[WebCoreFrameBridge increaseSelectionListLevelOrdered]):
+        (-[WebCoreFrameBridge increaseSelectionListLevelUnordered]):
+        (-[WebCoreFrameBridge dragCaretDOMRange]):
+        (-[WebCoreFrameBridge editableDOMRangeForPoint:]):
+        (-[WebCoreFrameBridge characterRangeAtPoint:]):
+        (-[WebCoreFrameBridge typingStyle]):
+        (-[WebCoreFrameBridge rangeOfCharactersAroundCaret]):
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::declareAndWriteDragImage):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeSelection):
+        Updated for new naming scheme.
+
 2007-03-12  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
@@ -2700,13 +2843,13 @@
         (KJS::Window::getValueProperty):
         * bindings/objc/DOM.mm:
         (WebCore::createElementClassMap):
-        (+[DOMNode _nodeWith:WebCore::]):
+        (+[DOMNode _nodeWith:]):
         * bindings/objc/DOMCSS.mm:
-        (+[DOMCSSValue _CSSValueWith:WebCore::]):
+        (+[DOMCSSValue _CSSValueWith:]):
         * bindings/objc/DOMCustomXPathNSResolver.h:
         * bindings/objc/DOMCustomXPathNSResolver.mm:
         * bindings/objc/DOMEvents.mm:
-        (+[DOMEvent _eventWith:WebCore::]):
+        (+[DOMEvent _eventWith:]):
         * bindings/objc/DOMInternal.h:
         * bindings/objc/DOMSVGPathSegInternal.mm:
         * bindings/objc/DOMXPath.mm:
@@ -18853,7 +18996,7 @@
         * platform/mac/SharedBufferMac.mm: Added.
         (-[SharedBufferData dealloc]):
         (-[SharedBufferData finalize]):
-        (-[SharedBufferData initWithSharedBuffer:WebCore::]):
+        (-[SharedBufferData initWithSharedBuffer:]):
         (-[SharedBufferData length]):
         (-[SharedBufferData bytes]):
         (WebCore::SharedBuffer::wrapNSData):

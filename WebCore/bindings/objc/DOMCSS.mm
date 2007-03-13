@@ -69,7 +69,7 @@
     return self;
 }
 
-+ (DOMStyleSheet *)_styleSheetWith:(WebCore::StyleSheet *)impl
++ (DOMStyleSheet *)_wrapStyleSheet:(WebCore::StyleSheet *)impl
 {
     if (!impl)
         return nil;
@@ -108,7 +108,7 @@
     return self;
 }
 
-+ (DOMCSSRule *)_CSSRuleWith:(WebCore::CSSRule *)impl
++ (DOMCSSRule *)_wrapCSSRule:(WebCore::CSSRule *)impl
 {
     if (!impl)
         return nil;
@@ -121,7 +121,7 @@
     Class wrapperClass = nil;
     switch (impl->type()) {
         case DOM_UNKNOWN_RULE:
-            wrapperClass = [DOMCSSRule class];
+            wrapperClass = [DOMCSSUnknownRule class];
             break;
         case DOM_STYLE_RULE:
             wrapperClass = [DOMCSSStyleRule class];
@@ -167,7 +167,7 @@
     return self;
 }
 
-+ (DOMCSSValue *)_CSSValueWith:(WebCore::CSSValue *)impl
++ (DOMCSSValue *)_wrapCSSValue:(WebCore::CSSValue *)impl
 {
     if (!impl)
         return nil;

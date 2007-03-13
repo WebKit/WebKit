@@ -231,25 +231,28 @@ set(IDL_BINDINGS
     css/MediaList.idl
 
     dom/Attr.idl
+    dom/CDATASection.idl
     dom/CharacterData.idl
-    dom/DocumentFragment.idl
-    dom/Document.idl
-    dom/DocumentType.idl
+    dom/Comment.idl
     dom/DOMImplementation.idl
+    dom/Document.idl
+    dom/DocumentFragment.idl
+    dom/DocumentType.idl
     dom/Element.idl
     dom/Entity.idl
+    dom/EntityReference.idl
     dom/Event.idl
     dom/KeyboardEvent.idl
     dom/MouseEvent.idl
     dom/MutationEvent.idl
-    dom/NodeFilter.idl
     dom/Node.idl
+    dom/NodeFilter.idl
     dom/NodeIterator.idl
     dom/Notation.idl
     dom/OverflowEvent.idl
     dom/ProcessingInstruction.idl
-    dom/RangeException.idl
     dom/Range.idl
+    dom/RangeException.idl
     dom/Text.idl
     dom/TextEvent.idl
     dom/TreeWalker.idl

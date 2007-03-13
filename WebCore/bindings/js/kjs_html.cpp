@@ -422,7 +422,7 @@ const ClassInfo JSHTMLElement::embed_info = { "HTMLEmbedElement", &JSHTMLElement
 const ClassInfo JSHTMLElement::frameSet_info = { "HTMLFrameSetElement", &JSHTMLElement::info, &HTMLFrameSetElementTable, 0 };
 const ClassInfo JSHTMLElement::frame_info = { "HTMLFrameElement", &JSHTMLElement::info, &HTMLFrameElementTable, 0 };
 const ClassInfo JSHTMLElement::iFrame_info = { "HTMLIFrameElement", &JSHTMLElement::info, &HTMLIFrameElementTable, 0 };
-const ClassInfo JSHTMLElement::info = { "DOMHTMLElement", &JSElement::info, &HTMLElementTable, 0 };
+const ClassInfo JSHTMLElement::info = { "HTMLElement", &JSElement::info, &HTMLElementTable, 0 };
 const ClassInfo JSHTMLElement::marquee_info = { "HTMLMarqueeElement", &JSHTMLElement::info, &HTMLMarqueeElementTable, 0 };
 const ClassInfo JSHTMLElement::object_info = { "HTMLObjectElement", &JSHTMLElement::info, &HTMLObjectElementTable, 0 };
 const ClassInfo JSHTMLElement::table_info = { "HTMLTableElement", &JSHTMLElement::info, &HTMLTableElementTable, 0 };
@@ -665,7 +665,7 @@ rows          KJS::JSHTMLElement::FrameSetRows                  DontDelete
 */
 
 KJS_IMPLEMENT_PROTOTYPE_FUNCTION(JSHTMLElementPrototypeFunction)
-KJS_IMPLEMENT_PROTOTYPE("DOMHTMLElement", JSHTMLElementPrototype, JSHTMLElementPrototypeFunction)
+KJS_IMPLEMENT_PROTOTYPE("HTMLElement", JSHTMLElementPrototype, JSHTMLElementPrototypeFunction)
 
 JSValue* JSHTMLElementPrototypeFunction::callAsFunction(ExecState*, JSObject*, const List&)
 {
@@ -1440,7 +1440,7 @@ HTMLTableSectionElement* toHTMLTableSectionElement(JSValue *val)
 KJS_IMPLEMENT_PROTOTYPE_FUNCTION(JSHTMLCollectionPrototypeFunction)
 KJS_IMPLEMENT_PROTOTYPE("HTMLCollection",JSHTMLCollectionPrototype,JSHTMLCollectionPrototypeFunction)
 
-const ClassInfo JSHTMLCollection::info = { "Collection", 0, 0, 0 };
+const ClassInfo JSHTMLCollection::info = { "HTMLCollection", 0, 0, 0 };
 
 JSHTMLCollection::JSHTMLCollection(ExecState* exec, HTMLCollection* c)
   : m_impl(c) 

@@ -157,7 +157,7 @@ CSSStyleDeclaration* core(DOMCSSStyleDeclaration *declaration)
 
 DOMCSSStyleDeclaration *kit(WebCore::CSSStyleDeclaration* declaration)
 {
-    return [DOMCSSStyleDeclaration _CSSStyleDeclarationWith:declaration];
+    return [DOMCSSStyleDeclaration _wrapCSSStyleDeclaration:declaration];
 }
 
 Element* core(DOMElement *element)
@@ -167,7 +167,7 @@ Element* core(DOMElement *element)
 
 DOMElement *kit(Element* element)
 {
-    return [DOMElement _elementWith:element];
+    return [DOMElement _wrapElement:element];
 }
 
 Node* core(DOMNode *node)
@@ -177,7 +177,7 @@ Node* core(DOMNode *node)
 
 DOMNode *kit(Node* node)
 {
-    return [DOMNode _nodeWith:node];
+    return [DOMNode _wrapNode:node];
 }
 
 Document* core(DOMDocument *document)
@@ -187,7 +187,7 @@ Document* core(DOMDocument *document)
 
 DOMDocument *kit(Document* document)
 {
-    return [DOMDocument _documentWith:document];
+    return [DOMDocument _wrapDocument:document];
 }
 
 HTMLElement* core(DOMHTMLElement *element)
@@ -197,7 +197,7 @@ HTMLElement* core(DOMHTMLElement *element)
 
 DOMHTMLElement *kit(HTMLElement *element)
 {
-    return [DOMHTMLElement _HTMLElementWith:element];
+    return [DOMHTMLElement _wrapHTMLElement:element];
 }
 
 Range* core(DOMRange *range)
@@ -207,7 +207,7 @@ Range* core(DOMRange *range)
 
 DOMRange *kit(Range* range)
 {
-    return [DOMRange _rangeWith:range];
+    return [DOMRange _wrapRange:range];
 }
 
 WebCore::EditableLinkBehavior core(WebKitEditableLinkBehavior editableLinkBehavior)

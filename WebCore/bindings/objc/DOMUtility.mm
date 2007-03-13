@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 James G. Speth (speth@end.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,48 +24,100 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 
+#import "DOMImplementationFront.h"
 #import "DOMInternal.h"
 #import "JSCSSRuleList.h"
+#import "JSCounter.h"
+#import "JSDOMImplementation.h"
+#import "JSEvent.h"
+#import "JSHTMLOptionsCollection.h"
+#import "JSNodeIterator.h"
+#import "JSRange.h"
+#import "JSTreeWalker.h"
+#import "JSXPathExpression.h"
+#import "JSXPathResult.h"
 #import "Node.h"
 #import "WebScriptObjectPrivate.h"
 #import "kjs_css.h"
 #import "kjs_dom.h"
+#import "kjs_html.h"
+#import "kjs_window.h"
 #import <objc/objc-runtime.h>
 
-// This file makes use of the ObjC DOM API, and the C++ DOM API, so we need to be careful about what
-// headers are included to avoid naming conflicts.
+// This file makes use of both the ObjC DOM API and the C++ DOM API, so we need to be careful about what
+// headers are included and what namespaces we use to avoid naming conflicts.
+
+// FIXME: This has to be in the KJS namespace to avoid an Objective-C++ ambiguity with C++ and
+// Objective-C classes of the same name (even when not in the same namespace). That's also the
+// reason for the use of objc_getClass in the WRAP_OLD macro below.
+
+// Some day if the compiler is fixed, or if all the JS wrappers are named with a "JS" prefix,
+// we could move the function into the WebCore namespace where it belongs.
 
 namespace KJS {
 
-id createDOMWrapper(JSObject* object, PassRefPtr<Bindings::RootObject> origin, PassRefPtr<Bindings::RootObject> current)
+static inline id createDOMWrapper(KJS::JSObject* object)
 {
-    id newObj = nil;
-    
-    if (object->inherits(&DOMNode::info))
-        newObj = [objc_getClass("DOMNode") _nodeWith:static_cast<DOMNode*>(object)->impl()];
-    else if (object->inherits(&DOMNodeList::info))
-        newObj = [objc_getClass("DOMNodeList") _nodeListWith:static_cast<DOMNodeList*>(object)->impl()];
-    else if (object->inherits(&DOMNamedNodeMap::info))
-        newObj = [objc_getClass("DOMNamedNodeMap") _namedNodeMapWith:static_cast<DOMNamedNodeMap*>(object)->impl()];
-    else if (object->inherits(&DOMStyleSheetList::info))
-        newObj = [objc_getClass("DOMStyleSheetList") _styleSheetListWith:static_cast<DOMStyleSheetList*>(object)->impl()];
-    else if (object->inherits(&DOMStyleSheet::info))
-        newObj = [objc_getClass("DOMStyleSheet") _styleSheetWith:static_cast<DOMStyleSheet*>(object)->impl()];
-    else if (object->inherits(&DOMMediaList::info))
-        newObj = [objc_getClass("DOMMediaList") _mediaListWith:static_cast<DOMMediaList*>(object)->impl()];
-    else if (object->inherits(&WebCore::JSCSSRuleList::info))
-        newObj = [objc_getClass("DOMCSSRuleList") _CSSRuleListWith:static_cast<WebCore::JSCSSRuleList*>(object)->impl()];
-    else if (object->inherits(&DOMCSSRule::info))
-        newObj = [objc_getClass("DOMCSSRule") _CSSRuleWith:static_cast<DOMCSSRule*>(object)->impl()];
-    else if (object->inherits(&DOMCSSStyleDeclaration::info))
-        newObj = [objc_getClass("DOMCSSStyleDeclaration") _CSSStyleDeclarationWith:static_cast<DOMCSSStyleDeclaration*>(object)->impl()];
-    else if (object->inherits(&DOMCSSValue::info))
-        newObj = [objc_getClass("DOMCSSValue") _CSSValueWith:static_cast<DOMCSSValue*>(object)->impl()];
-    
-    [newObj _initializeWithObjectImp:object originRootObject:origin rootObject:current];
-    return newObj;
+    #define WRAP(className) \
+        if (object->inherits(&WebCore::JS##className::info)) \
+            return [DOM##className _wrap##className:static_cast<WebCore::JS##className*>(object)->impl()];
+
+    WRAP(CSSRuleList)
+    WRAP(Counter)
+    WRAP(HTMLOptionsCollection)
+    WRAP(Range)
+    WRAP(XPathExpression)
+    WRAP(XPathResult)
+
+    #undef WRAP
+
+    #define WRAP(className) \
+        if (object->inherits(&DOM##className::info)) \
+            return [objc_getClass("DOM" #className) _wrap##className:static_cast<DOM##className*>(object)->impl()];
+
+    WRAP(CSSRule)
+    WRAP(CSSStyleDeclaration)
+    WRAP(CSSValue)
+    WRAP(Event)
+    WRAP(MediaList)
+    WRAP(NamedNodeMap)
+    WRAP(Node)
+    WRAP(NodeList)
+    WRAP(RGBColor)
+    WRAP(Rect)
+    WRAP(StyleSheet)
+    WRAP(StyleSheetList)
+
+    #undef WRAP
+
+    if (object->inherits(&Window::info))
+        return [DOMAbstractView _wrapAbstractView:static_cast<Window*>(object)->impl()];
+    if (object->inherits(&WebCore::JSDOMImplementation::info))
+        return [DOMImplementation _wrapDOMImplementation:implementationFront(static_cast<WebCore::JSDOMImplementation*>(object))];
+    if (object->inherits(&WebCore::JSNodeIterator::info))
+        return [DOMNodeIterator _wrapNodeIterator:static_cast<WebCore::JSNodeIterator*>(object)->impl() filter:nil];
+    if (object->inherits(&WebCore::JSTreeWalker::info))
+        return [DOMTreeWalker _wrapTreeWalker:static_cast<WebCore::JSTreeWalker*>(object)->impl() filter:nil];
+
+    // This must be after the HTMLOptionsCollection check, because it's a subclass in the JavaScript
+    // binding, but not a subclass in the ObjC binding.
+    if (object->inherits(&JSHTMLCollection::info))
+        return [DOMHTMLCollection _wrapHTMLCollection:static_cast<JSHTMLCollection*>(object)->impl()];
+
+    return nil;
 }
 
-} // namespace KJS
+}
+
+namespace WebCore {
+
+id createDOMWrapper(KJS::JSObject* object, PassRefPtr<KJS::Bindings::RootObject> origin, PassRefPtr<KJS::Bindings::RootObject> current)
+{
+    id wrapper = KJS::createDOMWrapper(object);
+    [wrapper _initializeWithObjectImp:object originRootObject:origin rootObject:current];
+    return wrapper;
+}
+
+}

@@ -71,7 +71,7 @@
     return self;    
 }
 
-+ (DOMNativeXPathNSResolver *)_xpathNSResolverWith:(WebCore::XPathNSResolver *)impl
++ (DOMNativeXPathNSResolver *)_wrapXPathNSResolver:(WebCore::XPathNSResolver *)impl
 {
     if (!impl)
         return nil;

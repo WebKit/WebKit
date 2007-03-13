@@ -6,6 +6,7 @@
         DerivedSources/WebCore/HTMLEntityNames.c
         DerivedSources/WebCore/HTMLNames.cpp
         DerivedSources/WebCore/JSAttr.cpp
+        DerivedSources/WebCore/JSCDATASection.cpp
         DerivedSources/WebCore/JSCSSPrimitiveValue.cpp
         DerivedSources/WebCore/JSCSSRule.cpp
         DerivedSources/WebCore/JSCSSRuleList.cpp
@@ -16,6 +17,7 @@
         DerivedSources/WebCore/JSCanvasPattern.cpp
         DerivedSources/WebCore/JSCanvasRenderingContext2D.cpp
         DerivedSources/WebCore/JSCharacterData.cpp
+        DerivedSources/WebCore/JSComment.cpp
         DerivedSources/WebCore/JSCounter.cpp
         DerivedSources/WebCore/JSDOMImplementation.cpp
         DerivedSources/WebCore/JSDOMParser.cpp
@@ -25,6 +27,7 @@
         DerivedSources/WebCore/JSDocumentType.cpp
         DerivedSources/WebCore/JSElement.cpp
         DerivedSources/WebCore/JSEntity.cpp
+        DerivedSources/WebCore/JSEntityReference.cpp
         DerivedSources/WebCore/JSEvent.cpp
         DerivedSources/WebCore/JSHTMLAnchorElement.cpp
         DerivedSources/WebCore/JSHTMLAppletElement.cpp

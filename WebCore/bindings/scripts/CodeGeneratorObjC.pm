@@ -331,11 +331,9 @@ sub GetImplClassName
 {
     my $name = $codeGenerator->StripModule(shift);
 
-    # special cases
     return "DOMImplementationFront" if $name eq "DOMImplementation";
     return "RectImpl" if $name eq "Rect";
     return "DOMWindow" if $name eq "AbstractView";
-
     return $name;
 }
 
@@ -478,22 +476,8 @@ sub GetObjCTypeMaker
     my $type = $codeGenerator->StripModule(shift);
 
     return "" if $codeGenerator->IsNonPointerType($type) or $codeGenerator->IsStringType($type) or IsNativeObjCType($type);
-    return "_RGBColorWithRGB" if $type eq "RGBColor";
-
-    my $typeMaker = "";
-    if ($type =~ /^(HTML|CSS|SVG)/ or $type eq "DOMImplementation" or $type eq "CDATASection") {
-        $typeMaker = $type;
-    } elsif ($type =~ /^XPath(.+)/) {
-        $typeMaker = "xpath" . $1;
-    } elsif ($type eq "DOMWindow") {
-        $typeMaker = "abstractView";
-    } else {
-        $typeMaker = lcfirst($type);
-    }
-
-    # put into the form "_fooBarWith" for type FooBar.
-    $typeMaker = "_" . $typeMaker . "With";
-    return $typeMaker;
+    return "_wrapAbstractView" if $type eq "DOMWindow";
+    return "_wrap$type";
 }
 
 sub GetObjCTypeGetterName
@@ -1337,14 +1321,14 @@ sub GenerateImplementation
                 push(@functionContent, "    if (x == 0.0 || y == 0.0)\n");
                 push(@functionContent, "        ec = WebCore::SVG_INVALID_VALUE_ERR;\n");
                 push(@functionContent, "    $exceptionRaiseOnError\n");
-                push(@functionContent, "    return [DOMSVGMatrix _SVGMatrixWith:$content];\n");
+                push(@functionContent, "    return [DOMSVGMatrix _wrapSVGMatrix:$content];\n");
             } elsif ($svgMatrixInverse) {
                 # Special case with inverse & SVGMatrix
                 push(@functionContent, "    $exceptionInit\n");
                 push(@functionContent, "    if (!$caller->isInvertible())\n");
                 push(@functionContent, "        ec = WebCore::SVG_MATRIX_NOT_INVERTABLE;\n");
                 push(@functionContent, "    $exceptionRaiseOnError\n");
-                push(@functionContent, "    return [DOMSVGMatrix _SVGMatrixWith:$content];\n");
+                push(@functionContent, "    return [DOMSVGMatrix _wrapSVGMatrix:$content];\n");
             } elsif ($returnType eq "void") {
                 # Special case 'void' return type.
                 if ($raisesExceptions) {
@@ -1496,7 +1480,7 @@ sub GenerateImplementation
     push(@internalHeaderContent, $typeGetterSig . ";\n");
     push(@internalHeaderContent, $typeMakerSig . ";\n");
     if ($interfaceName eq "Node") {
-        push(@internalHeaderContent, "+ (id <DOMEventTarget>)_eventTargetWith:(WebCore::EventTarget *)eventTarget;\n");
+        push(@internalHeaderContent, "+ (id <DOMEventTarget>)_wrapEventTarget:(WebCore::EventTarget *)eventTarget;\n");
     }
     push(@internalHeaderContent, "\@end\n");
 
@@ -1530,7 +1514,7 @@ sub GenerateImplementation
             push(@implContent, "    return self;\n");
             push(@implContent, "}\n\n");
 
-            # - (DOMFooBar)_FooBarWith:(WebCore::FooBar)impl for implementation class FooBar
+            # - (DOMFooBar)_wrapFooBar:(WebCore::FooBar)impl for implementation class FooBar
             push(@implContent, "$typeMakerSig\n");
             push(@implContent, "{\n");
             push(@implContent, "    $assertMainThread;\n");
@@ -1552,7 +1536,7 @@ sub GenerateImplementation
             push(@implContent, "    return self;\n");
             push(@implContent, "}\n\n");
 
-            # - (DOMFooBar)_FooBarWith:(WebCore::FooBar *)impl for implementation class FooBar
+            # - (DOMFooBar)_wrapFooBar:(WebCore::FooBar *)impl for implementation class FooBar
             push(@implContent, "$typeMakerSig\n");
             push(@implContent, "{\n");
             push(@implContent, "    $assertMainThread;\n");
@@ -1568,7 +1552,7 @@ sub GenerateImplementation
             my $internalBaseType = "DOM$baseClass";
             my $internalBaseTypeMaker = GetObjCTypeMaker($baseClass);
 
-            # - (DOMFooBar)_FooBarWith:(WebCore::FooBar *)impl for implementation class FooBar
+            # - (DOMFooBar)_wrapFooBar:(WebCore::FooBar *)impl for implementation class FooBar
             push(@implContent, "$typeMakerSig\n");
             push(@implContent, "{\n");
             push(@implContent, "    $assertMainThread;\n");

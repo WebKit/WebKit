@@ -332,7 +332,7 @@ void ClipboardMac::declareAndWriteDragImage(Element* element, const KURL& url, c
 {
     ASSERT(frame);
     if (Page* page = frame->page())
-        page->dragController()->client()->declareAndWriteDragImage(m_pasteboard.get(), [DOMElement _elementWith:element], url.getNSURL(), title, frame, Clipboard::canSaveAsWebArchive(frame));
+        page->dragController()->client()->declareAndWriteDragImage(m_pasteboard.get(), [DOMElement _wrapElement:element], url.getNSURL(), title, frame, Clipboard::canSaveAsWebArchive(frame));
 }
     
 DragImageRef ClipboardMac::createDragImage(IntPoint& loc) const

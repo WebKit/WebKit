@@ -302,22 +302,22 @@ namespace WebCore {
 // CSS Internal Interfaces
 
 @interface DOMRGBColor (WebCoreInternal)
-+ (DOMRGBColor *)_RGBColorWithRGB:(WebCore::RGBA32)value;
++ (DOMRGBColor *)_wrapRGBColor:(WebCore::RGBA32)value;
 - (WebCore::RGBA32)_RGBColor;
 @end
 
 // Traversal Internal Interfaces
 
 @interface DOMNodeFilter : DOMObject <DOMNodeFilter>
-+ (DOMNodeFilter *)_nodeFilterWith:(WebCore::NodeFilter *)impl;
++ (DOMNodeFilter *)_wrapNodeFilter:(WebCore::NodeFilter *)impl;
 @end
 
-
 #if ENABLE(XPATH)
+
 // XPath Internal Interfaces
 
 @interface DOMNativeXPathNSResolver : DOMObject <DOMXPathNSResolver>
-+ (DOMNativeXPathNSResolver *)_xpathNSResolverWith:(WebCore::XPathNSResolver *)impl;
++ (DOMNativeXPathNSResolver *)_wrapXPathNSResolver:(WebCore::XPathNSResolver *)impl;
 - (WebCore::XPathNSResolver *)_xpathNSResolver;
 @end
 
@@ -325,11 +325,9 @@ namespace WebCore {
 
 // Helper functions for DOM wrappers and gluing to Objective-C
 
-namespace KJS {
-    id createDOMWrapper(KJS::JSObject*, PassRefPtr<Bindings::RootObject> origin, PassRefPtr<Bindings::RootObject> current);
-} // namespace KJS
-
 namespace WebCore {
+
+    id createDOMWrapper(KJS::JSObject*, PassRefPtr<KJS::Bindings::RootObject> origin, PassRefPtr<KJS::Bindings::RootObject> current);
 
     NSObject* getDOMWrapper(DOMObjectInternal*);
     void addDOMWrapper(NSObject* wrapper, DOMObjectInternal*);

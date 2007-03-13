@@ -81,28 +81,28 @@ void removeWrapperForRGB(WebCore::RGBA32 value)
 {
     WebCore::RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
     int value = (rgb >> 16) & 0xFF;
-    return [DOMCSSPrimitiveValue _CSSPrimitiveValueWith:new WebCore::CSSPrimitiveValue(value, WebCore::CSSPrimitiveValue::CSS_NUMBER)];
+    return [DOMCSSPrimitiveValue _wrapCSSPrimitiveValue:new WebCore::CSSPrimitiveValue(value, WebCore::CSSPrimitiveValue::CSS_NUMBER)];
 }
 
 - (DOMCSSPrimitiveValue *)green
 {
     WebCore::RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
     int value = (rgb >> 8) & 0xFF;
-    return [DOMCSSPrimitiveValue _CSSPrimitiveValueWith:new WebCore::CSSPrimitiveValue(value, WebCore::CSSPrimitiveValue::CSS_NUMBER)];
+    return [DOMCSSPrimitiveValue _wrapCSSPrimitiveValue:new WebCore::CSSPrimitiveValue(value, WebCore::CSSPrimitiveValue::CSS_NUMBER)];
 }
 
 - (DOMCSSPrimitiveValue *)blue
 {
     WebCore::RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
     int value = rgb & 0xFF;
-    return [DOMCSSPrimitiveValue _CSSPrimitiveValueWith:new WebCore::CSSPrimitiveValue(value, WebCore::CSSPrimitiveValue::CSS_NUMBER)];
+    return [DOMCSSPrimitiveValue _wrapCSSPrimitiveValue:new WebCore::CSSPrimitiveValue(value, WebCore::CSSPrimitiveValue::CSS_NUMBER)];
 }
 
 - (DOMCSSPrimitiveValue *)alpha
 {
     WebCore::RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
     float value = static_cast<float>(WebCore::Color(rgb).alpha()) / 0xFF;
-    return [DOMCSSPrimitiveValue _CSSPrimitiveValueWith:new WebCore::CSSPrimitiveValue(value, WebCore::CSSPrimitiveValue::CSS_NUMBER)];
+    return [DOMCSSPrimitiveValue _wrapCSSPrimitiveValue:new WebCore::CSSPrimitiveValue(value, WebCore::CSSPrimitiveValue::CSS_NUMBER)];
     
 }
 
@@ -140,7 +140,7 @@ void removeWrapperForRGB(WebCore::RGBA32 value)
     return self;
 }
 
-+ (DOMRGBColor *)_RGBColorWithRGB:(WebCore::RGBA32)value
++ (DOMRGBColor *)_wrapRGBColor:(WebCore::RGBA32)value
 {
     id cachedInstance;
     cachedInstance = WebCore::getWrapperForRGB(value);

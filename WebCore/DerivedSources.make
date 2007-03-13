@@ -1,4 +1,4 @@
-# Copyright (C) 2006 Apple Computer, Inc. All rights reserved.
+# Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com> 
 #
 # Redistribution and use in source and binary forms, with or without
@@ -80,6 +80,7 @@ all : \
     DOMHTMLBaseFontElement.h \
     DOMHTMLBodyElement.h \
     DOMHTMLButtonElement.h \
+    DOMHTMLCanvasElement.h \
     DOMHTMLCollection.h \
     DOMHTMLDListElement.h \
     DOMHTMLDirectoryElement.h \
@@ -297,6 +298,7 @@ all : \
     DocTypeStrings.cpp \
     HTMLEntityNames.c \
     JSAttr.h \
+    JSCDATASection.h \
     JSCSSPrimitiveValue.h \
     JSCSSRule.h \
     JSCSSRuleList.h \
@@ -306,6 +308,7 @@ all : \
     JSCanvasPattern.h \
     JSCanvasRenderingContext2D.h \
     JSCharacterData.h \
+    JSComment.h \
     JSCounter.h \
     JSCSSStyleDeclaration.h \
     JSDOMImplementation.h \
@@ -317,6 +320,7 @@ all : \
     JSElement.h \
     JSEvent.h \
     JSEntity.h \
+    JSEntityReference.h \
     JSHTMLAppletElement.h \
     JSHTMLAnchorElement.h \
     JSHTMLAreaElement.h \

@@ -85,7 +85,7 @@
     else
         return nil;
 
-    return [DOMStyleSheet _styleSheetWith:styleSheet];
+    return [DOMStyleSheet _wrapStyleSheet:styleSheet];
 }
 
 @end

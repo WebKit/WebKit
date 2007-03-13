@@ -192,7 +192,9 @@ FOR_EACH_TAG(ADD_TO_HASH_MAP)
         map.set(h6Tag.localName().impl(), createHeadingWrapper);
         map.set(imageTag.localName().impl(), createImageWrapper);
         map.set(insTag.localName().impl(), createModWrapper);
+        map.set(keygenTag.localName().impl(), createSelectWrapper);
         map.set(listingTag.localName().impl(), createPreWrapper);
+        map.set(xmpTag.localName().impl(), createPreWrapper);
     }
     CreateHTMLElementWrapperFunction createWrapperFunction = map.get(element->localName().impl());
     if (createWrapperFunction)

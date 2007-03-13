@@ -332,7 +332,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     size_t size = nodesVector->size();
     NSMutableArray *nodes = [NSMutableArray arrayWithCapacity:size];
     for (size_t i = 0; i < size; ++i)
-        [nodes addObject:[DOMNode _nodeWith:(*nodesVector)[i]]];
+        [nodes addObject:[DOMNode _wrapNode:(*nodesVector)[i]]];
     return nodes;
 }
 
@@ -549,7 +549,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
             HTMLGenericFormElement *elt = elements[i];
             // Skip option elements, other duds
             if (elt->name() == targetName)
-                return [DOMElement _elementWith:elt];
+                return [DOMElement _wrapElement:elt];
         }
     }
     return nil;
@@ -576,7 +576,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (inputElement) {
         HTMLFormElement *formElement = inputElement->form();
         if (formElement) {
-            return [DOMElement _elementWith:formElement];
+            return [DOMElement _wrapElement:formElement];
         }
     }
     return nil;
@@ -584,7 +584,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (DOMElement *)currentForm
 {
-    return [DOMElement _elementWith:m_frame->currentForm()];
+    return [DOMElement _wrapElement:m_frame->currentForm()];
 }
 
 - (NSArray *)controlsInForm:(DOMElement *)form
@@ -595,7 +595,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         Vector<HTMLGenericFormElement*>& elements = formElement->formElements;
         for (unsigned int i = 0; i < elements.size(); i++) {
             if (elements.at(i)->isEnumeratable()) { // Skip option elements, other duds
-                DOMElement *de = [DOMElement _elementWith:elements.at(i)];
+                DOMElement *de = [DOMElement _wrapElement:elements.at(i)];
                 if (!results) {
                     results = [NSMutableArray arrayWithObject:de];
                 } else {
@@ -838,7 +838,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     SelectionController selectionController;
     selectionController.setSelection(m_frame->selectionController()->selection());
     selectionController.modify(alteration, direction, granularity);
-    return [DOMRange _rangeWith:selectionController.toRange().get()];
+    return [DOMRange _wrapRange:selectionController.toRange().get()];
 }
 
 - (void)alterCurrentSelection:(SelectionController::EAlteration)alteration verticalDistance:(float)verticalDistance
@@ -901,7 +901,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)convertNSRangeToDOMRange:(NSRange)nsrange
 {
-    return [DOMRange _rangeWith:[self convertToDOMRange:nsrange].get()];
+    return [DOMRange _wrapRange:[self convertToDOMRange:nsrange].get()];
 }
 
 - (NSRange)convertDOMRangeToNSRange:(DOMRange *)range
@@ -927,7 +927,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)markDOMRange
 {
-    return [DOMRange _rangeWith:m_frame->mark().toRange().get()];
+    return [DOMRange _wrapRange:m_frame->mark().toRange().get()];
 }
 
 - (void)setMarkedTextDOMRange:(DOMRange *)range customAttributes:(NSArray *)attributes ranges:(NSArray *)ranges
@@ -937,7 +937,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)markedTextDOMRange
 {
-    return [DOMRange _rangeWith:m_frame->markedTextRange()];
+    return [DOMRange _wrapRange:m_frame->markedTextRange()];
 }
 
 - (NSRange)markedTextNSRange
@@ -989,7 +989,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     int exception = 0;
     range->setStart(newStart.node(), newStart.offset(), exception);
     range->setEnd(newStart.node(), newStart.offset(), exception);
-    return [DOMRange _rangeWith:range.get()];
+    return [DOMRange _wrapRange:range.get()];
 }
 
 // Determines whether whitespace needs to be added around aString to preserve proper spacing and
@@ -1055,12 +1055,12 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (!m_frame || !m_frame->document())
         return 0;
 
-    return [DOMDocumentFragment _documentFragmentWith:createFragmentFromMarkup(m_frame->document(), markupString, baseURLString).get()];
+    return [DOMDocumentFragment _wrapDocumentFragment:createFragmentFromMarkup(m_frame->document(), markupString, baseURLString).get()];
 }
 
 - (DOMDocumentFragment *)documentFragmentWithText:(NSString *)text inContext:(DOMRange *)context
 {
-    return [DOMDocumentFragment _documentFragmentWith:createFragmentFromText([context _range], text).get()];
+    return [DOMDocumentFragment _wrapDocumentFragment:createFragmentFromText([context _range], text).get()];
 }
 
 - (DOMDocumentFragment *)documentFragmentWithNodesAsParagraphs:(NSArray *)nodes
@@ -1074,7 +1074,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     while ((node = [nodeEnum nextObject]))
         nodesVector.append([node _node]);
     
-    return [DOMDocumentFragment _documentFragmentWith:createFragmentFromNodes(m_frame->document(), nodesVector).get()];
+    return [DOMDocumentFragment _wrapDocumentFragment:createFragmentFromNodes(m_frame->document(), nodesVector).get()];
 }
 
 - (void)replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
@@ -1088,7 +1088,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)replaceSelectionWithNode:(DOMNode *)node selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
 {
-    DOMDocumentFragment *fragment = [DOMDocumentFragment _documentFragmentWith:m_frame->document()->createDocumentFragment().get()];
+    DOMDocumentFragment *fragment = [DOMDocumentFragment _wrapDocumentFragment:m_frame->document()->createDocumentFragment().get()];
     [fragment appendChild:node];
     [self replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:matchStyle];
 }
@@ -1102,7 +1102,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (void)replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
 {
     [self replaceSelectionWithFragment:[self documentFragmentWithText:text
-        inContext:[DOMRange _rangeWith:m_frame->selectionController()->toRange().get()]]
+        inContext:[DOMRange _wrapRange:m_frame->selectionController()->toRange().get()]]
         selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:YES];
 }
 
@@ -1123,7 +1123,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     
     Node* newList = IncreaseSelectionListLevelCommand::increaseSelectionListLevel(m_frame->document());
     m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
-    return [DOMNode _nodeWith:newList];
+    return [DOMNode _wrapNode:newList];
 }
 
 - (DOMNode *)increaseSelectionListLevelOrdered;
@@ -1133,7 +1133,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     
     Node* newList = IncreaseSelectionListLevelCommand::increaseSelectionListLevelOrdered(m_frame->document());
     m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
-    return [DOMNode _nodeWith:newList];
+    return [DOMNode _wrapNode:newList];
 }
 
 - (DOMNode *)increaseSelectionListLevelUnordered;
@@ -1143,7 +1143,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     
     Node* newList = IncreaseSelectionListLevelCommand::increaseSelectionListLevelUnordered(m_frame->document());
     m_frame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
-    return [DOMNode _nodeWith:newList];
+    return [DOMNode _wrapNode:newList];
 }
 
 - (void)decreaseSelectionListLevel
@@ -1198,7 +1198,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)dragCaretDOMRange
 {
-    return [DOMRange _rangeWith:m_frame->dragCaretController()->toRange().get()];
+    return [DOMRange _wrapRange:m_frame->dragCaretController()->toRange().get()];
 }
 
 - (BOOL)isDragCaretRichlyEditable
@@ -1209,7 +1209,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
 {
     VisiblePosition position = [self _visiblePositionForPoint:point];
-    return position.isNull() ? nil : [DOMRange _rangeWith:Selection(position).toRange().get()];
+    return position.isNull() ? nil : [DOMRange _wrapRange:Selection(position).toRange().get()];
 }
 
 - (DOMRange *)characterRangeAtPoint:(NSPoint)point
@@ -1220,7 +1220,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     
     VisiblePosition previous = position.previous();
     if (previous.isNotNull()) {
-        DOMRange *previousCharacterRange = [DOMRange _rangeWith:makeRange(previous, position).get()];
+        DOMRange *previousCharacterRange = [DOMRange _wrapRange:makeRange(previous, position).get()];
         NSRect rect = [self firstRectForDOMRange:previousCharacterRange];
         if (NSPointInRect(point, rect))
             return previousCharacterRange;
@@ -1228,7 +1228,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
     VisiblePosition next = position.next();
     if (next.isNotNull()) {
-        DOMRange *nextCharacterRange = [DOMRange _rangeWith:makeRange(position, next).get()];
+        DOMRange *nextCharacterRange = [DOMRange _wrapRange:makeRange(position, next).get()];
         NSRect rect = [self firstRectForDOMRange:nextCharacterRange];
         if (NSPointInRect(point, rect))
             return nextCharacterRange;
@@ -1259,7 +1259,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 {
     if (!m_frame || !m_frame->typingStyle())
         return nil;
-    return [DOMCSSStyleDeclaration _CSSStyleDeclarationWith:m_frame->typingStyle()->copy().get()];
+    return [DOMCSSStyleDeclaration _wrapCSSStyleDeclaration:m_frame->typingStyle()->copy().get()];
 }
 
 - (void)setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(EditAction)undoAction
@@ -1339,7 +1339,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (previous.isNull() || next.isNull() || caret == next || caret == previous)
         return nil;
 
-    return [DOMRange _rangeWith:makeRange(previous, next).get()];
+    return [DOMRange _wrapRange:makeRange(previous, next).get()];
 }
 
 // FIXME: The following 2 functions are copied from AppKit. It would be best to share code.

@@ -28,21 +28,24 @@
 #include "DocumentType.h"
 #include "Element.h"
 #include "Entity.h"
+#include "EntityReference.h"
 #include "Event.h"
-#include "EventTarget.h"
 #include "EventNames.h"
+#include "EventTarget.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "JSAttr.h"
-#include "JSCharacterData.h"
+#include "JSCDATASection.h"
+#include "JSComment.h"
 #include "JSDOMImplementation.h"
 #include "JSDocumentFragment.h"
 #include "JSDocumentType.h"
 #include "JSElement.h"
 #include "JSEntity.h"
+#include "JSEntityReference.h"
 #include "JSHTMLDocument.h"
 #include "JSHTMLElementWrapperFactory.h"
 #include "JSNode.h"
@@ -50,17 +53,17 @@
 #include "JSProcessingInstruction.h"
 #include "JSRange.h"
 #include "JSText.h"
-#include "Settings.h"
 #include "NamedNodeMap.h"
 #include "Notation.h"
 #include "ProcessingInstruction.h"
 #include "Range.h"
 #include "RenderView.h"
-#include "xmlhttprequest.h"
+#include "Settings.h"
 #include "kjs_css.h"
 #include "kjs_events.h"
 #include "kjs_traversal.h"
 #include "kjs_window.h"
+#include "xmlhttprequest.h"
 
 #if ENABLE(SVG)
 #include "JSSVGDocument.h"
@@ -978,8 +981,10 @@ JSValue* toJS(ExecState* exec, PassRefPtr<Node> node)
       ret = new JSAttr(exec, static_cast<Attr*>(n));
       break;
     case Node::TEXT_NODE:
-    case Node::CDATA_SECTION_NODE:
       ret = new JSText(exec, static_cast<Text*>(n));
+      break;
+    case Node::CDATA_SECTION_NODE:
+      ret = new JSCDATASection(exec, static_cast<CDATASection*>(n));
       break;
     case Node::ENTITY_NODE:
       ret = new JSEntity(exec, static_cast<Entity*>(n));
@@ -988,7 +993,7 @@ JSValue* toJS(ExecState* exec, PassRefPtr<Node> node)
       ret = new JSProcessingInstruction(exec, static_cast<ProcessingInstruction*>(n));
       break;
     case Node::COMMENT_NODE:
-      ret = new JSCharacterData(exec, static_cast<CharacterData*>(n));
+      ret = new JSComment(exec, static_cast<WebCore::Comment*>(n));
       break;
     case Node::DOCUMENT_NODE:
       // we don't want to cache the document itself in the per-document dictionary
@@ -1003,6 +1008,8 @@ JSValue* toJS(ExecState* exec, PassRefPtr<Node> node)
       ret = new JSDocumentFragment(exec, static_cast<DocumentFragment*>(n));
       break;
     case Node::ENTITY_REFERENCE_NODE:
+      ret = new JSEntityReference(exec, static_cast<EntityReference*>(n));
+      break;
     default:
       ret = new JSNode(exec, n);
   }

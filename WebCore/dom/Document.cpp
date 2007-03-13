@@ -75,6 +75,7 @@
 #include "NameNodeList.h"
 #include "NodeFilter.h"
 #include "NodeIterator.h"
+#include "OverflowEvent.h"
 #include "PlatformKeyboardEvent.h"
 #include "ProcessingInstruction.h"
 #include "RegisteredEventListener.h"
@@ -92,6 +93,7 @@
 #include "TextResourceDecoder.h"
 #include "TreeWalker.h"
 #include "UIEvent.h"
+#include "WheelEvent.h"
 #include "XMLTokenizer.h"
 #include "csshelper.h"
 #include "cssstyleselector.h"
@@ -2303,6 +2305,10 @@ PassRefPtr<Event> Document::createEvent(const String &eventType, ExceptionCode& 
         return new Event;
     if (eventType == "TextEvent")
         return new TextEvent;
+    if (eventType == "OverflowEvent")
+        return new OverflowEvent;
+    if (eventType == "WheelEvent")
+        return new WheelEvent;
 #if ENABLE(SVG)
     if (eventType == "SVGEvents")
         return new Event;

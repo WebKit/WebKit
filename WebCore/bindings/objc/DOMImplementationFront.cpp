@@ -25,12 +25,18 @@
 #include "DocumentType.h"
 #include "DOMImplementation.h"
 #include "HTMLDocument.h"
+#include "JSDOMImplementation.h"
 
 namespace WebCore {
 
 DOMImplementationFront* implementationFront(Document* document)
 {
     return reinterpret_cast<DOMImplementationFront*>(document->implementation());
+}
+
+DOMImplementationFront* implementationFront(JSDOMImplementation* wrapper)
+{
+    return reinterpret_cast<DOMImplementationFront*>(wrapper->impl());
 }
 
 void DOMImplementationFront::ref()

@@ -63,7 +63,7 @@
     return self;
 }
 
-+ (DOMEvent *)_eventWith:(WebCore::Event *)impl
++ (DOMEvent *)_wrapEvent:(WebCore::Event *)impl
 {
     if (!impl)
         return nil;
