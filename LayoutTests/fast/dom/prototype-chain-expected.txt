@@ -32,7 +32,7 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object HTMLElementPrototype]
 
-[object DOMHTMLElementPrototype]
+[object HTMLElementPrototype]
 
 [object HTMLDivElementPrototype]
 

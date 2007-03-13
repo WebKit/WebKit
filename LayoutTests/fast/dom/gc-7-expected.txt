@@ -3,7 +3,7 @@ This test verifies that bjects are protected against garbage collection as long 
 The output should be the following pieces of text on lines by themselves: "B", "[object DOMHTMLElement]", "[object DOMHTMLElement]", "[object HTMLDocument]".
 
 B
-[object DOMHTMLElement]
-[object DOMHTMLElement]
+[object HTMLElement]
+[object HTMLElement]
 [object HTMLDocument]
 

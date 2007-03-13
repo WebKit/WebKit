@@ -1,3 +1,21 @@
+2007-03-13  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Tim H.
+
+        - fix test results for http://bugs.webkit.org/show_bug.cgi?id=13054
+          Layout tests results require updates after JavaScript wrapper class name fixes
+
+        * fast/dom/gc-6-expected.txt: Renamed DOMHTMLElement to HTMLElement.
+        * fast/dom/gc-7-expected.txt: Ditto.
+        * fast/dom/prototype-chain-expected.txt: Renamed DOMHTMLElementPrototype to HTMLElementPrototype.
+        * fast/dom/undetectable-document-all-expected.txt: Renamed Collection to HTMLCollection.
+        * fast/dom/wrapper-classes-expected.txt: Updated for change to output for string comparison failure
+        in fast/js/resources/js-test-pre.js.
+        * fast/events/mouseclick-target-and-positioning-expected.txt: Renamed DOMHTMLElement to HTMLElement.
+        * fast/tokenizer/external-script-document-write-expected.checksum: Ditto.
+        * fast/tokenizer/external-script-document-write-expected.png: Ditto.
+        * fast/tokenizer/external-script-document-write-expected.txt: Ditto.
+
 2007-03-12  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
