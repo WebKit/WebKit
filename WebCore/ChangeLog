@@ -1,3 +1,88 @@
+2007-03-14  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Added InsertTab, InsertBacktab, InsertLineBreak, and InsertNewline to the editing command table.
+        Added Event parameter to execCommand, and to all of the enabled and exec functions.  Right now,
+        the event is only used by the newly added commands.  But in the future, many (and possibly all) of
+        these editing commands will need to consider the event so they are applied to the correct selection.
+
+        * WebCore.exp:
+        * editing/Editor.cpp:
+        (WebCore::execCopy):
+        (WebCore::execCut):
+        (WebCore::execDelete):
+        (WebCore::execBackwardDelete):
+        (WebCore::execForwardDelete):
+        (WebCore::execMoveBackward):
+        (WebCore::execMoveBackwardAndModifySelection):
+        (WebCore::execMoveUpByPageAndModifyCaret):
+        (WebCore::execMoveDown):
+        (WebCore::execMoveDownAndModifySelection):
+        (WebCore::execMoveForward):
+        (WebCore::execMoveForwardAndModifySelection):
+        (WebCore::execMoveDownByPageAndModifyCaret):
+        (WebCore::execMoveLeft):
+        (WebCore::execMoveLeftAndModifySelection):
+        (WebCore::execMoveRight):
+        (WebCore::execMoveRightAndModifySelection):
+        (WebCore::execMoveToBeginningOfDocument):
+        (WebCore::execMoveToBeginningOfDocumentAndModifySelection):
+        (WebCore::execMoveToBeginningOfSentence):
+        (WebCore::execMoveToBeginningOfSentenceAndModifySelection):
+        (WebCore::execMoveToBeginningOfLine):
+        (WebCore::execMoveToBeginningOfLineAndModifySelection):
+        (WebCore::execMoveToBeginningOfParagraph):
+        (WebCore::execMoveToBeginningOfParagraphAndModifySelection):
+        (WebCore::execMoveToEndOfDocument):
+        (WebCore::execMoveToEndOfDocumentAndModifySelection):
+        (WebCore::execMoveToEndOfSentence):
+        (WebCore::execMoveToEndOfSentenceAndModifySelection):
+        (WebCore::execMoveToEndOfLine):
+        (WebCore::execMoveToEndOfLineAndModifySelection):
+        (WebCore::execMoveToEndOfParagraph):
+        (WebCore::execMoveToEndOfParagraphAndModifySelection):
+        (WebCore::execMoveParagraphBackwardAndModifySelection):
+        (WebCore::execMoveParagraphForwardAndModifySelection):
+        (WebCore::execMoveUp):
+        (WebCore::execMoveUpAndModifySelection):
+        (WebCore::execMoveWordBackward):
+        (WebCore::execMoveWordBackwardAndModifySelection):
+        (WebCore::execMoveWordForward):
+        (WebCore::execMoveWordForwardAndModifySelection):
+        (WebCore::execMoveWordLeft):
+        (WebCore::execMoveWordLeftAndModifySelection):
+        (WebCore::execMoveWordRight):
+        (WebCore::execMoveWordRightAndModifySelection):
+        (WebCore::execPaste):
+        (WebCore::execSelectAll):
+        (WebCore::execToggleBold):
+        (WebCore::execToggleItalic):
+        (WebCore::execRedo):
+        (WebCore::execUndo):
+        (WebCore::execInsertTab):
+        (WebCore::execInsertBacktab):
+        (WebCore::execInsertNewline):
+        (WebCore::execInsertLineBreak):
+        (WebCore::enabled):
+        (WebCore::canPaste):
+        (WebCore::hasEditableSelection):
+        (WebCore::hasEditableRangeSelection):
+        (WebCore::hasRangeSelection):
+        (WebCore::hasRichlyEditableSelection):
+        (WebCore::canRedo):
+        (WebCore::canUndo):
+        (WebCore::CommandEntry::):
+        (WebCore::Editor::toggleBold):
+
+        (WebCore::Editor::execCommand): Added optional event parameter.
+        (WebCore::Editor::insertText): Added.  Calls handleTextInputEvent.
+        (WebCore::Editor::insertTextWithoutSendingTextEvent): Renamed from insertText.
+         Performs the actual insertion without dispatching any event.
+        * editing/Editor.h:
+        * page/EventHandler.cpp: (WebCore::EventHandler::defaultTextInputEventHandler):
+          Call insertTextWithoutSendingTextEvent.
+
 2007-03-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

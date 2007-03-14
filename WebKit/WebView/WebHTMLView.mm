@@ -242,8 +242,6 @@ static WebHTMLView *lastHitView;
 
 @interface WebHTMLView (WebNSTextInputSupport) <NSTextInput>
 - (void)_updateSelectionForInputManager;
-- (BOOL)_insertNewlineWithEvent:(KeyboardEvent*)event isLineBreak:(BOOL)isLineBreak;
-- (BOOL)_insertTabWithEvent:(KeyboardEvent*)event isBackTab:(BOOL)isBackTab;
 @end
 
 @interface WebHTMLView (WebEditingStyleSupport)
@@ -4332,27 +4330,32 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)insertTab:(id)sender
 {
-    [self _insertTabWithEvent:0 isBackTab:NO];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("InsertTab");
 }
 
 - (void)insertBacktab:(id)sender
 {
-    [self _insertTabWithEvent:0 isBackTab:YES];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("InsertBacktab");
 }
 
 - (void)insertNewline:(id)sender
 {
-    [self _insertNewlineWithEvent:0 isLineBreak:NO];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("InsertNewline");
 }
 
 - (void)insertLineBreak:(id)sender
 {
-    [self _insertNewlineWithEvent:0 isLineBreak:YES];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("InsertLineBreak");
 }
 
 - (void)insertParagraphSeparator:(id)sender
 {
-    [self _insertNewlineWithEvent:0 isLineBreak:NO];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("InsertNewline");
 }
 
 - (void)_changeWordCaseWithSelector:(SEL)selector
@@ -4562,12 +4565,14 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)insertNewlineIgnoringFieldEditor:(id)sender
 {
-    [self _insertNewlineWithEvent:0 isLineBreak:NO];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("InsertNewline");
 }
 
 - (void)insertTabIgnoringFieldEditor:(id)sender
 {
-    [self _insertTabWithEvent:0 isBackTab:NO];
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor()->execCommand("InsertTab");
 }
 
 - (void)subscript:(id)sender
@@ -4611,9 +4616,9 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         return;
         
     NSString* yankee = _NSYankFromKillRing();
-    
+
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->insertText(yankee, false);
+        coreFrame->editor()->insertTextWithoutSendingTextEvent(yankee, false);
 
     _NSSetKillRingToYankedState();
 }
@@ -4626,7 +4631,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     NSString* yankee = _NSYankFromKillRing();
     
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor()->insertText(yankee, true);
+        coreFrame->editor()->insertTextWithoutSendingTextEvent(yankee, true);
         
     _NSSetKillRingToYankedState();
 }
@@ -5503,15 +5508,16 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     bool eventWasHandled = true;
 
     WebView *webView = [self _webView];
-    if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:aSelector]) {
+    Frame* coreFrame = core([self _frame]);
+    if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:aSelector] && coreFrame) {
         if (aSelector == @selector(insertNewline:) || aSelector == @selector(insertParagraphSeparator:) || aSelector == @selector(insertNewlineIgnoringFieldEditor:))
-            eventWasHandled = [self _insertNewlineWithEvent:event isLineBreak:NO];
+            eventWasHandled = coreFrame->editor()->execCommand("InsertNewline", event);
         else if (aSelector == @selector(insertLineBreak:))
-            eventWasHandled = [self _insertNewlineWithEvent:event isLineBreak:YES];
+            eventWasHandled = coreFrame->editor()->execCommand("InsertLineBreak", event);
         else if (aSelector == @selector(insertTab:) || aSelector == @selector(insertTabIgnoringFieldEditor:))
-            eventWasHandled = [self _insertTabWithEvent:event isBackTab:NO];
+            eventWasHandled = coreFrame->editor()->execCommand("InsertTab", event);
         else if (aSelector == @selector(insertBacktab:))
-            eventWasHandled = [self _insertTabWithEvent:event isBackTab:YES];
+            eventWasHandled = coreFrame->editor()->execCommand("InsertBacktab", event);
         else
             [super doCommandBySelector:aSelector];
     }
@@ -5555,23 +5561,11 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         Frame* coreFrame = core([self _frame]);
         String eventText = text;
         eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
-        eventHandled = coreFrame && coreFrame->eventHandler()->handleTextInputEvent(eventText, event);
+        eventHandled = coreFrame && coreFrame->editor()->insertText(eventText, event);
     }
 
     if (parameters)
         parameters->eventWasHandled = eventHandled;
-}
-
-- (BOOL)_insertNewlineWithEvent:(KeyboardEvent*)event isLineBreak:(BOOL)isLineBreak
-{
-    Frame* coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->eventHandler()->handleTextInputEvent("\n", event, isLineBreak);
-}
-
-- (BOOL)_insertTabWithEvent:(KeyboardEvent*)event isBackTab:(BOOL)isBackTab
-{
-    Frame* coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->eventHandler()->handleTextInputEvent("\t", event, false, isBackTab);
 }
 
 - (BOOL)_selectionIsInsideMarkedText

@@ -1553,7 +1553,7 @@ void EventHandler::defaultTextInputEventHandler(TextEvent* event)
                 event->setDefaultHandled();
         }
     } else {
-        if (m_frame->editor()->insertText(data, false, event))
+        if (m_frame->editor()->insertTextWithoutSendingTextEvent(data, false, event))
             event->setDefaultHandled();
     }
 }

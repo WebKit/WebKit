@@ -43,6 +43,7 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Event.h"
+#include "EventHandler.h"
 #include "EventNames.h"
 #include "FocusController.h"
 #include "FontData.h"
@@ -766,49 +767,49 @@ void Editor::reappliedEditing(PassRefPtr<EditCommand> cmd)
 
 // Execute command functions
 
-static bool execCopy(Frame* frame)
+static bool execCopy(Frame* frame, Event*)
 {
     frame->editor()->copy();
     return true;
 }
 
-static bool execCut(Frame* frame)
+static bool execCut(Frame* frame, Event*)
 {
     frame->editor()->cut();
     return true;
 }
 
-static bool execDelete(Frame* frame)
+static bool execDelete(Frame* frame, Event*)
 {
     frame->editor()->performDelete();
     return true;
 }
 
-static bool execBackwardDelete(Frame* frame)
+static bool execBackwardDelete(Frame* frame, Event*)
 {
     frame->editor()->deleteWithDirection(SelectionController::BACKWARD, CharacterGranularity, false, true);
     return true;
 }
 
-static bool execForwardDelete(Frame* frame)
+static bool execForwardDelete(Frame* frame, Event*)
 {
     frame->editor()->deleteWithDirection(SelectionController::FORWARD, CharacterGranularity, false, true);
     return true;
 }
 
-static bool execMoveBackward(Frame* frame)
+static bool execMoveBackward(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::MOVE, SelectionController::BACKWARD, CharacterGranularity, true);
     return true;
 }
 
-static bool execMoveBackwardAndModifySelection(Frame* frame)
+static bool execMoveBackwardAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::BACKWARD, CharacterGranularity, true);
     return true;
 }
 
-static bool execMoveUpByPageAndModifyCaret(Frame* frame)
+static bool execMoveUpByPageAndModifyCaret(Frame* frame, Event*)
 {
     RenderObject* renderer = frame->document()->focusedNode()->renderer();
     if (renderer->style()->overflowY() == OSCROLL
@@ -822,31 +823,31 @@ static bool execMoveUpByPageAndModifyCaret(Frame* frame)
     return false;
 }
 
-static bool execMoveDown(Frame* frame)
+static bool execMoveDown(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::MOVE, SelectionController::FORWARD, LineGranularity, true);
     return true;
 }
 
-static bool execMoveDownAndModifySelection(Frame* frame)
+static bool execMoveDownAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::FORWARD, LineGranularity, true);
     return true;
 }
 
-static bool execMoveForward(Frame* frame)
+static bool execMoveForward(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::MOVE, SelectionController::FORWARD, CharacterGranularity, true);
     return true;
 }
 
-static bool execMoveForwardAndModifySelection(Frame* frame)
+static bool execMoveForwardAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::FORWARD, CharacterGranularity, true);
     return true;
 }
 
-static bool execMoveDownByPageAndModifyCaret(Frame* frame)
+static bool execMoveDownByPageAndModifyCaret(Frame* frame, Event*)
 {
     RenderObject* renderer = frame->document()->focusedNode()->renderer();
     if (renderer->style()->overflowY() == OSCROLL
@@ -860,211 +861,211 @@ static bool execMoveDownByPageAndModifyCaret(Frame* frame)
     return false;
 }
 
-static bool execMoveLeft(Frame* frame)
+static bool execMoveLeft(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::MOVE, SelectionController::LEFT, CharacterGranularity, true);
     return true;
 }
 
-static bool execMoveLeftAndModifySelection(Frame* frame)
+static bool execMoveLeftAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::LEFT, CharacterGranularity, true);
     return true;
 }
 
-static bool execMoveRight(Frame* frame)
+static bool execMoveRight(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::MOVE, SelectionController::RIGHT, CharacterGranularity, true);
     return true;
 }
 
-static bool execMoveRightAndModifySelection(Frame* frame)
+static bool execMoveRightAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::RIGHT, CharacterGranularity, true);
     return true;
 }
 
-static bool execMoveToBeginningOfDocument(Frame* frame)
+static bool execMoveToBeginningOfDocument(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::MOVE, SelectionController::BACKWARD, DocumentBoundary, true);
     return true;
 }
 
-static bool execMoveToBeginningOfDocumentAndModifySelection(Frame* frame)
+static bool execMoveToBeginningOfDocumentAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::BACKWARD, DocumentBoundary, true);
     return true;
 }
 
-static bool execMoveToBeginningOfSentence(Frame* frame)
+static bool execMoveToBeginningOfSentence(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::MOVE, SelectionController::BACKWARD, SentenceBoundary, true);
     return true;
 }
 
-static bool execMoveToBeginningOfSentenceAndModifySelection(Frame* frame)
+static bool execMoveToBeginningOfSentenceAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::BACKWARD, SentenceBoundary, true);
     return true;
 }
 
-static bool execMoveToBeginningOfLine(Frame* frame)
+static bool execMoveToBeginningOfLine(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::MOVE, SelectionController::BACKWARD, LineBoundary, true);
     return true;
 }
 
-static bool execMoveToBeginningOfLineAndModifySelection(Frame* frame)
+static bool execMoveToBeginningOfLineAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::BACKWARD, LineBoundary, true);
     return true;
 }
 
-static bool execMoveToBeginningOfParagraph(Frame* frame)
+static bool execMoveToBeginningOfParagraph(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::MOVE, SelectionController::BACKWARD, ParagraphBoundary, true);
     return true;
 }
 
-static bool execMoveToBeginningOfParagraphAndModifySelection(Frame* frame)
+static bool execMoveToBeginningOfParagraphAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::BACKWARD, ParagraphBoundary, true);
     return true;
 }
 
-static bool execMoveToEndOfDocument(Frame* frame)
+static bool execMoveToEndOfDocument(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::MOVE, SelectionController::FORWARD, DocumentBoundary, true);
     return true;
 }
 
-static bool execMoveToEndOfDocumentAndModifySelection(Frame* frame)
+static bool execMoveToEndOfDocumentAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::FORWARD, DocumentBoundary, true);
     return true;
 }
 
-static bool execMoveToEndOfSentence(Frame* frame)
+static bool execMoveToEndOfSentence(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::MOVE, SelectionController::FORWARD, SentenceBoundary, true);
     return true;
 }
 
-static bool execMoveToEndOfSentenceAndModifySelection(Frame* frame)
+static bool execMoveToEndOfSentenceAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::FORWARD, SentenceBoundary, true);
     return true;
 }
 
-static bool execMoveToEndOfLine(Frame* frame)
+static bool execMoveToEndOfLine(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::MOVE, SelectionController::FORWARD, LineBoundary, true);
     return true;
 }
 
-static bool execMoveToEndOfLineAndModifySelection(Frame* frame)
+static bool execMoveToEndOfLineAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::FORWARD, LineBoundary, true);
     return true;
 }
 
-static bool execMoveToEndOfParagraph(Frame* frame)
+static bool execMoveToEndOfParagraph(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::MOVE, SelectionController::FORWARD, ParagraphBoundary, true);
     return true;
 }
 
-static bool execMoveToEndOfParagraphAndModifySelection(Frame* frame)
+static bool execMoveToEndOfParagraphAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::FORWARD, ParagraphBoundary, true);
     return true;
 }
 
-static bool execMoveParagraphBackwardAndModifySelection(Frame* frame)
+static bool execMoveParagraphBackwardAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::BACKWARD, ParagraphGranularity, true);
     return true;
 }
 
-static bool execMoveParagraphForwardAndModifySelection(Frame* frame)
+static bool execMoveParagraphForwardAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::FORWARD, ParagraphGranularity, true);
     return true;
 }
 
-static bool execMoveUp(Frame* frame)
+static bool execMoveUp(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::MOVE, SelectionController::BACKWARD, LineGranularity, true);
     return true;
 }
 
-static bool execMoveUpAndModifySelection(Frame* frame)
+static bool execMoveUpAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::BACKWARD, LineGranularity, true);
     return true;
 }
 
-static bool execMoveWordBackward(Frame* frame)
+static bool execMoveWordBackward(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::MOVE, SelectionController::BACKWARD, WordGranularity, true);
     return true;
 }
 
-static bool execMoveWordBackwardAndModifySelection(Frame* frame)
+static bool execMoveWordBackwardAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::BACKWARD, WordGranularity, true);
     return true;
 }
 
-static bool execMoveWordForward(Frame* frame)
+static bool execMoveWordForward(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::MOVE, SelectionController::FORWARD, WordGranularity, true);
     return true;
 }
 
-static bool execMoveWordForwardAndModifySelection(Frame* frame)
+static bool execMoveWordForwardAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::FORWARD, WordGranularity, true);
     return true;
 }
 
-static bool execMoveWordLeft(Frame* frame)
+static bool execMoveWordLeft(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::MOVE, SelectionController::LEFT, WordGranularity, true);
     return true;
 }
 
-static bool execMoveWordLeftAndModifySelection(Frame* frame)
+static bool execMoveWordLeftAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::LEFT, WordGranularity, true);
     return true;
 }
 
-static bool execMoveWordRight(Frame* frame)
+static bool execMoveWordRight(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::MOVE, SelectionController::RIGHT, WordGranularity, true);
     return true;
 }
 
-static bool execMoveWordRightAndModifySelection(Frame* frame)
+static bool execMoveWordRightAndModifySelection(Frame* frame, Event*)
 {
     frame->selectionController()->modify(SelectionController::EXTEND, SelectionController::RIGHT, WordGranularity, true);
     return true;
 }
 
-static bool execPaste(Frame* frame)
+static bool execPaste(Frame* frame, Event*)
 {
     frame->editor()->paste();
     return true;
 }
 
-static bool execSelectAll(Frame* frame)
+static bool execSelectAll(Frame* frame, Event*)
 {
     frame->selectionController()->selectAll();
     return true;
 }
 
-static bool execToggleBold(Frame* frame)
+static bool execToggleBold(Frame* frame, Event*)
 {
     ExceptionCode ec;
     
@@ -1076,7 +1077,7 @@ static bool execToggleBold(Frame* frame)
     return true;
 }
 
-static bool execToggleItalic(Frame* frame)
+static bool execToggleItalic(Frame* frame, Event*)
 {
     ExceptionCode ec;
     
@@ -1088,63 +1089,109 @@ static bool execToggleItalic(Frame* frame)
     return true;
 }
 
-static bool execRedo(Frame* frame)
+static bool execRedo(Frame* frame, Event*)
 {
     frame->editor()->redo();
     return true;
 }
 
-static bool execUndo(Frame* frame)
+static bool execUndo(Frame* frame, Event*)
 {
     frame->editor()->undo();
     return true;
 }
 
+static bool execInsertTab(Frame* frame, Event* evt)
+{
+    Frame* targetFrame = frame;
+    if (evt) {
+        if (Node* node = evt->target()->toNode())
+            if (Document* doc = node->document())
+                targetFrame = doc->frame();
+    }
+    return targetFrame->eventHandler()->handleTextInputEvent("\t", evt, false, false);
+}
+
+static bool execInsertBacktab(Frame* frame, Event* evt)
+{
+    Frame* targetFrame = frame;
+    if (evt) {
+        if (Node* node = evt->target()->toNode())
+            if (Document* doc = node->document())
+                targetFrame = doc->frame();
+    }
+    return targetFrame->eventHandler()->handleTextInputEvent("\t", evt, false, true);
+}
+
+static bool execInsertNewline(Frame* frame, Event* evt)
+{
+    Frame* targetFrame = frame;
+    if (evt) {
+        if (Node* node = evt->target()->toNode())
+            if (Document* doc = node->document())
+                targetFrame = doc->frame();
+    }
+    return targetFrame->eventHandler()->handleTextInputEvent("\n", evt, !targetFrame->editor()->canEditRichly());
+}
+
+static bool execInsertLineBreak(Frame* frame, Event* evt)
+{
+    Frame* targetFrame = frame;
+    if (evt) {
+        if (Node* node = evt->target()->toNode())
+            if (Document* doc = node->document())
+                targetFrame = doc->frame();
+    }
+    return targetFrame->eventHandler()->handleTextInputEvent("\n", evt, true);
+}
+
 // Enabled functions
 
-static bool enabled(Frame*)
+static bool enabled(Frame*, Event*)
 {
     return true;
 }
 
-static bool canPaste(Frame* frame)
+static bool canPaste(Frame* frame, Event*)
 {
     return frame->editor()->canPaste();
 }
 
-static bool hasEditableSelection(Frame* frame)
+static bool hasEditableSelection(Frame* frame, Event* evt)
 {
+    if (evt)
+        return selectionForEvent(frame, evt).isContentEditable();
     return frame->selectionController()->isContentEditable();
 }
 
-static bool hasEditableRangeSelection(Frame* frame)
+static bool hasEditableRangeSelection(Frame* frame, Event*)
 {
     return frame->selectionController()->isRange() && frame->selectionController()->isContentEditable();
 }
 
-static bool hasRangeSelection(Frame* frame)
+static bool hasRangeSelection(Frame* frame, Event*)
 {
     return frame->selectionController()->isRange();
 }
 
-static bool hasRichlyEditableSelection(Frame* frame)
+static bool hasRichlyEditableSelection(Frame* frame, Event*)
 {
     return frame->selectionController()->isCaretOrRange() && frame->selectionController()->isContentRichlyEditable();
 }
 
-static bool canRedo(Frame* frame)
+static bool canRedo(Frame* frame, Event*)
 {
     return frame->editor()->canRedo();
 }
 
-static bool canUndo(Frame* frame)
+static bool canUndo(Frame* frame, Event*)
 {
     return frame->editor()->canUndo();
 }
 
 struct Command {
-    bool (*enabled)(Frame* frame);
-    bool (*exec)(Frame* frame);
+    bool (*enabled)(Frame*, Event*);
+    bool (*exec)(Frame*, Event*);
 };
 
 typedef HashMap<RefPtr<AtomicStringImpl>, const Command*> CommandMap;
@@ -1159,6 +1206,10 @@ static CommandMap* createCommandMap()
         { "Cut", { hasEditableRangeSelection, execCut } },
         { "Delete", { hasEditableSelection, execDelete } },
         { "ForwardDelete", { hasEditableSelection, execForwardDelete } },
+        { "InsertBacktab", { hasEditableSelection, execInsertBacktab } },
+        { "InsertTab", { hasEditableSelection, execInsertTab } },
+        { "InsertLineBreak", { hasEditableSelection, execInsertLineBreak } },        
+        { "InsertNewline", { hasEditableSelection, execInsertNewline } },        
         { "MoveBackward", { hasEditableSelection, execMoveBackward } },
         { "MoveBackwardAndModifySelection", { hasEditableSelection, execMoveBackwardAndModifySelection } },
         { "MoveUpByPageAndModifyCaret", { hasEditableSelection, execMoveUpByPageAndModifyCaret } },
@@ -1233,26 +1284,32 @@ Editor::~Editor()
 {
 }
 
-bool Editor::execCommand(const AtomicString& command)
+bool Editor::execCommand(const AtomicString& command, Event* triggeringEvent)
 {
     static CommandMap* commandMap;
     if (!commandMap)
         commandMap = createCommandMap();
     
     const Command* c = commandMap->get(command.impl());
-    ASSERT(c);
+    if (!c)
+        return false;
     
     bool handled = false;
     
-    if (c->enabled(m_frame)) {
+    if (c->enabled(m_frame, triggeringEvent)) {
         m_frame->document()->updateLayoutIgnorePendingStylesheets();
-        handled = c->exec(m_frame);
+        handled = c->exec(m_frame, triggeringEvent);
     }
     
     return handled;
 }
 
-bool Editor::insertText(const String& text, bool selectInsertedText, Event* triggeringEvent)
+bool Editor::insertText(const String& text, Event* triggeringEvent)
+{
+    return m_frame->eventHandler()->handleTextInputEvent(text, triggeringEvent);
+}
+
+bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectInsertedText, Event* triggeringEvent)
 {
     if (text.isEmpty())
         return false;
@@ -1501,7 +1558,7 @@ void Editor::didWriteSelectionToPasteboard()
 
 void Editor::toggleBold()
 {
-    execToggleBold(frame());
+    execToggleBold(frame(), 0);
 }
 
 void Editor::toggleUnderline()
