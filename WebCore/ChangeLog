@@ -1,3 +1,12 @@
+2007-03-14  Administrator  <acarlsson@apple.com>
+
+        Get the size from the shared buffer.
+        
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::setData):
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::dataChanged):
+
 2007-03-14  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt, thumbs up by Darin.

@@ -63,7 +63,7 @@ bool PDFDocumentImage::dataChanged(bool allDataReceived)
 #else
         // If no NSData is available, then we know SharedBuffer will always just be a vector.  That means no secret changes can occur to it behind the
         // scenes.  We use CFDataCreateWithBytesNoCopy in that case.
-        CFDataRef data = CFDataCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(m_data->data()), length, kCFAllocatorNull);
+        CFDataRef data = CFDataCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(m_data->data()), m_data->size(), kCFAllocatorNull);
 #endif
         CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(data);
         CFRelease(data);
