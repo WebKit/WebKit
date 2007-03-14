@@ -56,7 +56,15 @@ IntSize PDFDocumentImage::size() const
 bool PDFDocumentImage::dataChanged(bool allDataReceived)
 {
     if (allDataReceived && !m_document) {
+#if PLATFORM(MAC)
+        // On Mac the NSData inside the SharedBuffer can be secretly appended to without the SharedBuffer's knowledge.  We use SharedBuffer's ability
+        // to wrap itself in an NSData to get around this, ensuring that ImageIO is really looking at the SharedBuffer.
         CFDataRef data = (CFDataRef)m_data->createNSData();
+#else
+        // If no NSData is available, then we know SharedBuffer will always just be a vector.  That means no secret changes can occur to it behind the
+        // scenes.  We use CFDataCreateWithBytesNoCopy in that case.
+        CFDataRef data = CFDataCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(m_data->data()), length, kCFAllocatorNull);
+#endif
         CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(data);
         CFRelease(data);
         m_document = CGPDFDocumentCreateWithProvider(dataProvider);

@@ -1,3 +1,14 @@
+2007-03-14  David Hyatt  <hyatt@apple.com>
+
+        Make sure to use CFDataCreateWithBytesNoCopy where we can.
+
+        Reviewed by andersca
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::setData):
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::dataChanged):
+
 2007-03-13  David Hyatt  <hyatt@apple.com>
 
         Fix for bugzilla bug 13050 and also radar p1 5050645.
