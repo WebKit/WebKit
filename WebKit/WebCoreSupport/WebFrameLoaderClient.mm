@@ -949,6 +949,7 @@ void WebFrameLoaderClient::deliverArchivedResources(Timer<WebFrameLoaderClient>*
         WebResource *resource = it->second.get();
         NSData *data = [[resource data] retain];
         loader->didReceiveResponse([resource _response]);
+        loader->addData((const char*)[data bytes], [data length], true);
         loader->didReceiveData((const char*)[data bytes], [data length], [data length], true);
         [data release];
         loader->didFinishLoading();

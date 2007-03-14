@@ -30,6 +30,9 @@
 #include "Color.h"
 #include "GraphicsTypes.h"
 #include "ImageSource.h"
+#include <wtf/RefPtr.h>
+#include <wtf/PassRefPtr.h>
+#include "SharedBuffer.h"
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__
@@ -60,6 +63,7 @@ class FloatSize;
 class GraphicsContext;
 class IntRect;
 class IntSize;
+class SharedBuffer;
 class String;
 
 // This class gets notified when an image creates or destroys decoded frames and when it advances animation frames.
@@ -81,15 +85,15 @@ public:
     int width() const;
     int height() const;
 
-    virtual bool setData(bool allDataReceived);
-    virtual bool setNativeData(NativeBytePtr, bool allDataReceived) { return false; }
+    bool setData(PassRefPtr<SharedBuffer> data, bool allDataReceived);
+    virtual bool dataChanged(bool allDataReceived) { return false; }
     
     // FIXME: PDF/SVG will be underreporting decoded sizes and will be unable to prune because these functions are not
     // implemented yet for those image types.
     virtual void destroyDecodedData(bool incremental = false) {};
     virtual unsigned decodedSize() const { return 0; }
 
-    Vector<char>& dataBuffer() { return m_data; }
+    SharedBuffer* data() { return m_data.get(); }
 
     // It may look unusual that there is no start animation call as public API.  This is because
     // we start and stop animating lazily.  Animation begins whenever someone draws the image.  It will
@@ -145,7 +149,7 @@ private:
 #endif
     
 protected:
-    Vector<char> m_data; // The encoded raw data for the image. 
+    RefPtr<SharedBuffer> m_data; // The encoded raw data for the image. 
     ImageObserver* m_imageObserver;
 };
 

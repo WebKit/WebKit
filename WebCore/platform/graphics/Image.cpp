@@ -59,9 +59,13 @@ bool Image::isNull() const
     return size().isEmpty();
 }
 
-bool Image::setData(bool allDataReceived)
+bool Image::setData(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
-    int length = m_data.size();
+    m_data = data;
+    if (!m_data.get())
+        return true;
+
+    int length = m_data->size();
     if (!length)
         return true;
 
@@ -75,16 +79,7 @@ bool Image::setData(bool allDataReceived)
     }
 #endif
     
-#if PLATFORM(CG)
-    // Avoid the extra copy of bytes by just handing the byte array directly to a CFDataRef.
-    CFDataRef data = CFDataCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(m_data.data()), length, kCFAllocatorNull);
-    bool result = setNativeData(data, allDataReceived);
-    CFRelease(data);
-#else
-    bool result = setNativeData(&m_data, allDataReceived);
-#endif
-
-    return result;
+    return dataChanged(allDataReceived);
 }
 
 IntRect Image::rect() const

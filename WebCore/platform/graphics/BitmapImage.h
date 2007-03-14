@@ -94,7 +94,7 @@ public:
     
     virtual IntSize size() const;
 
-    virtual bool setNativeData(NativeBytePtr, bool allDataReceived);
+    virtual bool dataChanged(bool allDataReceived);
 
     // It may look unusual that there is no start animation call as public API.  This is because
     // we start and stop animating lazily.  Animation begins whenever someone draws the image.  It will

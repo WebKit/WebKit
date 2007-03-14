@@ -202,7 +202,7 @@ void DocLoader::checkCacheObjectStatus(CachedResource* resource)
     
     ResourceRequest request(resource->url());
     const ResourceResponse& response = resource->response();
-    SharedBuffer* data = resource->allData();
+    SharedBuffer* data = resource->data();
     
     // FIXME: If the WebKit client changes or cancels the request, WebCore does not respect this and continues the load.
     m_frame->loader()->loadedResourceFromMemoryCache(request, response, data ? data->size() : 0);

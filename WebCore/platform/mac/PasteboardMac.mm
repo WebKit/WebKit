@@ -247,7 +247,7 @@ void Pasteboard::writeURL(const KURL& url, const String& titleStr, Frame* frame,
 
 static NSFileWrapper* fileWrapperForImage(CachedResource* resource, NSURL *URL)
 {
-    SharedBuffer* coreData = resource->allData();
+    SharedBuffer* coreData = resource->data();
     NSData *data = [[[NSData alloc] initWithBytes:coreData->platformData() 
         length:coreData->platformDataSize()] autorelease];
     NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:data] autorelease];

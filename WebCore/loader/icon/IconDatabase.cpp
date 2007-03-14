@@ -320,12 +320,12 @@ void IconDatabase::createDatabaseTables(SQLDatabase& db)
     }
 }    
 
-void IconDatabase::imageDataForIconURL(const String& iconURL, Vector<unsigned char>& result)
+void IconDatabase::imageDataForIconURL(const String& iconURL, PassRefPtr<SharedBuffer> result)
 {      
     // If private browsing is enabled, we'll check there first as the most up-to-date data for an icon will be there
     if (m_privateBrowsingEnabled) {    
         imageDataForIconURLQuery(m_privateBrowsingDB, iconURL, result);
-        if (!result.isEmpty())
+        if (!result->isEmpty())
             return;
     } 
     
@@ -370,9 +370,9 @@ Image* IconDatabase::iconForPageURL(const String& pageURL, const IntSize& size, 
     // If it's a new IconDataCache object that doesn't have its imageData set yet,
     // we'll read in that image data now
     if (icon->imageDataStatus() == ImageDataStatusUnknown) {
-        Vector<unsigned char> data;
-        imageDataForIconURL(iconURL, data);
-        icon->setImageData(data.data(), data.size());
+        RefPtr<SharedBuffer> data = new SharedBuffer();
+        imageDataForIconURL(iconURL, data.get());
+        icon->setImageData(data.get());
     }
         
     return icon->getImage(size);
@@ -640,22 +640,16 @@ IconDataCache* IconDatabase::getOrCreateIconDataCache(const String& iconURL)
     return icon;
 }
 
-void IconDatabase::setIconDataForIconURL(const void* data, int size, const String& iconURL)
+void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> data, const String& iconURL)
 {
-    ASSERT(size > -1);
     if (!isOpen() || iconURL.isEmpty())
         return;
 
-    if (size)
-        ASSERT(data);
-    else
-        data = 0;
-    
     // Get the IconDataCache for this IconURL (note, IconDataCacheForIconURL will create it if necessary)
     IconDataCache* icon = getOrCreateIconDataCache(iconURL);
     
     // Set the data in the IconDataCache
-    icon->setImageData((unsigned char*)data, size);
+    icon->setImageData(data);
     
     // Update the timestamp in the IconDataCache to NOW
     icon->setTimestamp((int)currentTime());
@@ -666,7 +660,7 @@ void IconDatabase::setIconDataForIconURL(const void* data, int size, const Strin
 
 void IconDatabase::setHaveNoIconForIconURL(const String& iconURL)
 {   
-    setIconDataForIconURL(0, 0, iconURL);
+    setIconDataForIconURL(0, iconURL);
 }
 
 bool IconDatabase::setIconURLForPageURL(const String& iconURL, const String& pageURL)
@@ -955,16 +949,18 @@ bool IconDatabase::pageURLTableIsEmptyQuery(SQLDatabase& db)
     return !SQLStatement(db, "SELECT iconID FROM PageURL LIMIT 1;").returnsAtLeastOneResult();
 }
 
-void IconDatabase::imageDataForIconURLQuery(SQLDatabase& db, const String& iconURL, Vector<unsigned char>& imageData)
+void IconDatabase::imageDataForIconURLQuery(SQLDatabase& db, const String& iconURL, PassRefPtr<SharedBuffer> imageData)
 {
     readySQLStatement(m_imageDataForIconURLStatement, db, "SELECT Icon.data FROM Icon WHERE Icon.url = (?);");
     m_imageDataForIconURLStatement->bindText16(1, iconURL, false);
     
     int result = m_imageDataForIconURLStatement->step();
-    imageData.clear();
-    if (result == SQLResultRow)
-        m_imageDataForIconURLStatement->getColumnBlobAsVector(0, imageData);
-    else if (result != SQLResultDone)
+    imageData->clear();
+    if (result == SQLResultRow) {
+        Vector<char> data;
+        m_imageDataForIconURLStatement->getColumnBlobAsVector(0, data);
+        imageData->append(data.data(), data.size());
+    } else if (result != SQLResultDone)
         LOG_ERROR("imageDataForIconURLQuery failed");
 
     m_imageDataForIconURLStatement->reset();

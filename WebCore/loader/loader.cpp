@@ -104,8 +104,7 @@ void Loader::didFinishLoading(SubresourceLoader* loader)
     DocLoader* docLoader = req->docLoader();
 
     docLoader->setLoadInProgress(true);
-    object->data(req->buffer(), true);
-    object->setAllData(loader->resourceData());
+    object->data(loader->resourceData(), true);
     docLoader->setLoadInProgress(false);
     object->finish();
 
@@ -167,14 +166,13 @@ void Loader::didReceiveData(SubresourceLoader* loader, const char* data, int siz
         return;
 
     CachedResource* object = request->cachedResource();    
-    Vector<char>& buffer = object->bufferData(data, size, request);
 
     // Set the data.
     if (request->isMultipart())
         // The loader delivers the data in a multipart section all at once, send eof.
-        object->data(buffer, true);
+        object->data(loader->resourceData(), true);
     else if (request->isIncremental())
-        object->data(buffer, false);
+        object->data(loader->resourceData(), false);
 }
 
 int Loader::numRequests(DocLoader* dl) const

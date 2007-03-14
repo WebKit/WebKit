@@ -67,13 +67,17 @@ void CachedCSSStyleSheet::setEncoding(const String& chs)
     m_decoder->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
 }
 
-void CachedCSSStyleSheet::data(Vector<char>& data, bool allDataReceived)
+void CachedCSSStyleSheet::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
     if (!allDataReceived)
         return;
 
-    setEncodedSize(data.size());
-    m_sheet = m_decoder->decode(data.data(), encodedSize());
+    m_data = data;
+    setEncodedSize(m_data.get() ? m_data->size() : 0);
+    if (!m_data.get())
+        return;
+
+    m_sheet = m_decoder->decode(m_data->data(), encodedSize());
     m_sheet += m_decoder->flush();
     m_loading = false;
     checkNotify();

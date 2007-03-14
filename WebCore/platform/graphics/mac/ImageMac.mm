@@ -64,7 +64,7 @@ Image* Image::loadPlatformResource(const char *name)
     NSData *namedImageData = [NSData dataWithContentsOfFile:imagePath];
     if (namedImageData) {
         Image* image = new BitmapImage;
-        image->setNativeData((CFDataRef)namedImageData, true);
+        image->setData(SharedBuffer::wrapNSData(namedImageData), true);
         return image;
     }
     return 0;

@@ -38,6 +38,7 @@ namespace WebCore {
 class Image;
 class IntSize;
 class IconDataCache;
+class SharedBuffer;
 class SQLTransaction;
 
 class IconDatabase : Noncopyable {
@@ -67,7 +68,7 @@ public:
 
     bool isIconExpiredForIconURL(const String&);
     
-    void setIconDataForIconURL(const void* data, int size, const String&);
+    void setIconDataForIconURL(PassRefPtr<SharedBuffer> data, const String&);
     void setHaveNoIconForIconURL(const String&);
     
     // Returns true if the set actually took place, false if the mapping already existed
@@ -121,7 +122,7 @@ private:
     void createDatabaseTables(SQLDatabase&);
     
     // Returns the image data for the given IconURL, checking both databases if necessary
-    void imageDataForIconURL(const String& iconURL, Vector<unsigned char>&);
+    void imageDataForIconURL(const String& iconURL, PassRefPtr<SharedBuffer> result);
     
     // Retains an iconURL, bringing it back from the brink if it was pending deletion
     void retainIconURL(const String& iconURL);
@@ -161,7 +162,7 @@ private:
     SQLStatement* m_addIconForIconURLStatement;
     
     // Query - Returns the image data from the given database for the given IconURL
-    void imageDataForIconURLQuery(SQLDatabase& db, const String& iconURL, Vector<unsigned char>& result);
+    void imageDataForIconURLQuery(SQLDatabase& db, const String& iconURL, PassRefPtr<SharedBuffer> result);
     SQLStatement* m_imageDataForIconURLStatement;
 
     void deleteAllPreparedStatements(bool withSync);

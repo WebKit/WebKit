@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "ImageSource.h"
+#include "SharedBuffer.h"
 
 #if PLATFORM(CG)
 
@@ -71,11 +72,14 @@ bool ImageSource::initialized() const
     return m_decoder;
 }
 
-void ImageSource::setData(NativeBytePtr data, bool allDataReceived)
+void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
 {
     if (!m_decoder)
         m_decoder = CGImageSourceCreateIncremental(NULL);
-    CGImageSourceUpdateData(m_decoder, data, allDataReceived);
+        
+    CFDataRef cfData = (CFDataRef)data->createNSData();
+    CGImageSourceUpdateData(m_decoder, cfData, allDataReceived);
+    CFRelease(cfData);
 }
 
 bool ImageSource::isSizeAvailable()

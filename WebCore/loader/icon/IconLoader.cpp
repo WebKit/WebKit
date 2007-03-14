@@ -41,8 +41,6 @@ using namespace std;
 
 namespace WebCore {
 
-const size_t defaultBufferSize = 4096; // bigger than most icons
-
 IconLoader::IconLoader(Frame* frame)
     : m_frame(frame)
     , m_loadIsInProgress(false)
@@ -74,7 +72,6 @@ void IconLoader::startLoading()
     // Set flag so we can detect the case where the load completes before
     // SubresourceLoader::create returns.
     m_loadIsInProgress = true;
-    m_buffer.reserveCapacity(defaultBufferSize);
 
     RefPtr<SubresourceLoader> loader = SubresourceLoader::create(m_frame, this, m_frame->loader()->iconURL());
     if (!loader)
@@ -99,22 +96,18 @@ void IconLoader::didReceiveResponse(SubresourceLoader* resourceLoader, const Res
     int status = response.httpStatusCode();
     if (status && (status < 200 || status > 299)) {
         KURL iconURL = resourceLoader->handle()->url();
-        m_resourceLoader = 0;
         finishLoading(iconURL);
+        m_resourceLoader = 0;
     }
 }
 
 void IconLoader::didReceiveData(SubresourceLoader*, const char* data, int size)
 {
-    ASSERT(data || size == 0);
-    ASSERT(size >= 0);
-    m_buffer.append(data, size);
 }
 
 void IconLoader::didFail(SubresourceLoader* resourceLoader, const ResourceError&)
 {
     ASSERT(m_loadIsInProgress);
-    m_buffer.clear();
     finishLoading(resourceLoader->handle()->url());
 }
 
@@ -130,7 +123,7 @@ void IconLoader::didFinishLoading(SubresourceLoader* resourceLoader)
 
 void IconLoader::finishLoading(const KURL& iconURL)
 {
-    IconDatabase::sharedIconDatabase()->setIconDataForIconURL(m_buffer.data(), m_buffer.size(), iconURL.url());
+    IconDatabase::sharedIconDatabase()->setIconDataForIconURL(m_resourceLoader->resourceData(), iconURL.url());
     m_frame->loader()->commitIconURLToIconDatabase(iconURL);
     m_frame->loader()->client()->dispatchDidReceiveIcon();
     clearLoadingState();
@@ -139,7 +132,6 @@ void IconLoader::finishLoading(const KURL& iconURL)
 void IconLoader::clearLoadingState()
 {
     m_resourceLoader = 0;
-    m_buffer.clear();
     m_loadIsInProgress = false;
 }
 

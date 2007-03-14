@@ -47,8 +47,8 @@ namespace WebCore {
         
         virtual IntSize size() const;
         
-        virtual bool setData(bool allDataReceived);
-        
+        virtual bool dataChanged(bool allDataReceived);
+
         virtual NativeImagePtr frameAtIndex(size_t) { return 0; }
         
 private:

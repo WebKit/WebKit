@@ -230,7 +230,7 @@ int64_t SQLStatement::getColumnInt64(int col)
     return sqlite3_column_int64(m_statement, col);
 }
     
-void SQLStatement::getColumnBlobAsVector(int col, Vector<unsigned char>& result)
+void SQLStatement::getColumnBlobAsVector(int col, Vector<char>& result)
 {
     if (!m_statement && prepareAndStep() != SQLITE_ROW) {
         result.clear();

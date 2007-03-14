@@ -165,43 +165,10 @@ inline void CachedImage::createImage()
     m_image = new BitmapImage(this);
 }
 
-Vector<char>& CachedImage::bufferData(const char* bytes, int addedSize, Request* request)
+void CachedImage::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
-    createImage();
+    m_data = data;
 
-    Vector<char>& imageBuffer = m_image->dataBuffer();
-
-    if (addedSize > 0) {
-        bool success = false;
-        unsigned oldSize = imageBuffer.size();
-        unsigned newSize = oldSize + addedSize;
-
-        // Check for overflow
-        if (newSize > oldSize) {
-            // Use temporary Vector so we can safely detect if the allocation fails
-            //
-            // The code that was here before, just called resize of the imageBuffer.  Vector<>::resize
-            // will crash if the resize of a non-empty Vector<> fails.
-            Vector<char> tempBuffer(newSize);
-
-            char* tempBufferBytes = tempBuffer.data();
-            if (tempBufferBytes) {
-                memcpy(tempBufferBytes, imageBuffer.data(), oldSize);
-                memcpy(tempBufferBytes + oldSize, bytes, addedSize);
-                tempBuffer.swap(imageBuffer);
-                success = true;
-            }
-        }
-
-        if (!success)
-            error();
-    }
-
-    return imageBuffer;
-}
-
-void CachedImage::data(Vector<char>& data, bool allDataReceived)
-{
     createImage();
 
     bool sizeAvailable = false;
@@ -209,7 +176,7 @@ void CachedImage::data(Vector<char>& data, bool allDataReceived)
     // Have the image update its data from its internal buffer.
     // It will not do anything now, but will delay decoding until 
     // queried for info (like size or specific image frames).
-    sizeAvailable = m_image->setData(allDataReceived);
+    sizeAvailable = m_image->setData(m_data, allDataReceived);
 
     // Go ahead and tell our observers to try to draw if we have either
     // received all the data or the size is known.  Each chunk from the
@@ -226,16 +193,8 @@ void CachedImage::data(Vector<char>& data, bool allDataReceived)
         
         notifyObservers();
 
-        if (m_image) {
-            Vector<char>& imageBuffer = m_image->dataBuffer();
-#if PLATFORM(CG)
-            // ImageIO sources copy the image data.  We will go ahead and count encoded
-            // size twice until this issue is fixed.  See <rdar://problem/5050645>
-            setEncodedSize(imageBuffer.size() * 2);
-#else
-            setEncodedSize(imageBuffer.size());
-#endif
-        }
+        if (m_image)
+            setEncodedSize(m_image->data() ? m_image->data()->size() : 0);
     }
     
     if (allDataReceived) {

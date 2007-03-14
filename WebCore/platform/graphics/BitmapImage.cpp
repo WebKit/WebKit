@@ -94,7 +94,7 @@ void BitmapImage::destroyDecodedData(bool incremental)
             // Reset the image source, since Image I/O has an underlying cache that it uses
             // while animating that it seems to never clear.
             m_source.clear();
-            setData(true);
+            dataChanged(true);
         }
     }
 }
@@ -137,12 +137,12 @@ IntSize BitmapImage::size() const
     return m_size;
 }
 
-bool BitmapImage::setNativeData(NativeBytePtr data, bool allDataReceived)
+bool BitmapImage::dataChanged(bool allDataReceived)
 {
     destroyDecodedData(true);
     
     // Feed all the data we've seen so far to the image decoder.
-    m_source.setData(data, allDataReceived);
+    m_source.setData(m_data.get(), allDataReceived);
     
     // Image properties will not be available until the first frame of the file
     // reaches kCGImageStatusIncomplete.

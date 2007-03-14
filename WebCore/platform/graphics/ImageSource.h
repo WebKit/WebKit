@@ -43,20 +43,18 @@ typedef struct _cairo_surface cairo_surface_t;
 namespace WebCore {
 
 class IntSize;
+class SharedBuffer;
 
 #if PLATFORM(CG)
 typedef CGImageSourceRef NativeImageSourcePtr;
 typedef CGImageRef NativeImagePtr;
-typedef CFDataRef NativeBytePtr;
 #elif PLATFORM(QT)
 class ImageDecoderQt;
 typedef ImageDecoderQt* NativeImageSourcePtr;
-typedef const Vector<char>* NativeBytePtr;
 typedef QPixmap* NativeImagePtr;
 #else
 class ImageDecoder;
 typedef ImageDecoder* NativeImageSourcePtr;
-typedef const Vector<char>* NativeBytePtr;
 typedef cairo_surface_t* NativeImagePtr;
 #endif
 
@@ -72,7 +70,7 @@ public:
 
     bool initialized() const;
     
-    void setData(NativeBytePtr, bool allDataReceived);
+    void setData(SharedBuffer* data, bool allDataReceived);
 
     bool isSizeAvailable();
     IntSize size() const;

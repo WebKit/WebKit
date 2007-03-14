@@ -32,6 +32,7 @@ namespace WebCore {
 
 class Image;
 class IntSize;
+class SharedBuffer;
 class SQLDatabase;
 
 enum ImageDataStatus {
@@ -49,7 +50,7 @@ public:
     Image* getImage(const IntSize&);    
     String getIconURL() { return m_iconURL; }
 
-    void setImageData(unsigned char* data, int size);
+    void setImageData(PassRefPtr<SharedBuffer> data);
     
     void loadImageFromResource(const char*);
     

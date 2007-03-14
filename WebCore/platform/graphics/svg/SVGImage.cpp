@@ -118,9 +118,9 @@ NativeImagePtr SVGImage::nativeImageForCurrentFrame()
 #endif
 }
 
-bool SVGImage::setData(bool allDataReceived)
+bool SVGImage::dataChanged(bool allDataReceived)
 {
-    int length = dataBuffer().size();
+    int length = m_data->size();
     if (!length) // if this was an empty image
         return true;
     
@@ -146,7 +146,7 @@ bool SVGImage::setData(bool allDataReceived)
         m_frame->loader()->commitProvisionalLoad(0);
         m_frame->loader()->setResponseMIMEType("image/svg+xml");
         m_frame->loader()->begin("placeholder.svg"); // create the empty document
-        m_frame->loader()->write(dataBuffer().data(), dataBuffer().size());
+        m_frame->loader()->write(m_data->data(), m_data->size());
         m_frame->loader()->end();
     }
     return m_frameView;

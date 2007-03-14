@@ -529,7 +529,7 @@ static NSData* iconDataFromPathForIconURL(NSString *databasePath, NSString *icon
     while ((url = [enumerator nextObject]) != nil) {
         iconData = iconDataFromPathForIconURL(databaseDirectory, url);
         if (iconData)
-            IconDatabase::sharedIconDatabase()->setIconDataForIconURL([iconData bytes], [iconData length], url);
+            IconDatabase::sharedIconDatabase()->setIconDataForIconURL(SharedBuffer::wrapNSData(iconData), url);
         else {
             // This really *shouldn't* happen, so it'd be good to track down why it might happen in a debug build
             // however, we do know how to handle it gracefully in release

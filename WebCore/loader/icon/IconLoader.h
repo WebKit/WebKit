@@ -30,7 +30,6 @@
 #include "SubresourceLoaderClient.h"
 #include <memory>
 #include <wtf/Noncopyable.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -58,7 +57,6 @@ private:
     Frame* m_frame;
 
     RefPtr<SubresourceLoader> m_resourceLoader;
-    Vector<char> m_buffer;
     bool m_loadIsInProgress;
 }; // class IconLoader
 

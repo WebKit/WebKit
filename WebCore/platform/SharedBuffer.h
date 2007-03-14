@@ -54,6 +54,8 @@ public:
     const char* data() const;
     unsigned size() const;
 
+    bool isEmpty() const { return size() == 0; }
+
     void append(const char*, int);
     void clear();
     const char* platformData() const;

@@ -1,3 +1,95 @@
+2007-03-13  David Hyatt  <hyatt@apple.com>
+
+        Fix for bugzilla bug 13050 and also radar p1 5050645.
+
+        This patch reworks resource loading to avoid having redundant buffers in the icon database and in cached
+        images in the WebCore cache.  It also avoids overcopying in top-level image documents and in the icon
+        database.
+
+        There is now only one SharedBuffer for a resource and everybody observes that buffer now instead of ever
+        making their own.  Even ImageIO uses the SharedBuffer while decoding.
+
+        The page in 13050 dropped from 145mb down to 45mb of memory use with this change for a stunning savings
+        of 100mb.
+
+        Reviewed by olliej, mjs
+
+        * WebCore.exp:
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::data):
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::data):
+        * loader/CachedImage.h:
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::~CachedResource):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::data):
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::data):
+        * loader/CachedScript.h:
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::data):
+        * loader/CachedXSLStyleSheet.h:
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::checkCacheObjectStatus):
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageTokenizer::writeRawData):
+        (WebCore::ImageTokenizer::finish):
+        * loader/icon/IconDataCache.cpp:
+        (WebCore::IconDataCache::setImageData):
+        (WebCore::IconDataCache::writeToDatabase):
+        * loader/icon/IconDataCache.h:
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::imageDataForIconURL):
+        (WebCore::IconDatabase::iconForPageURL):
+        (WebCore::IconDatabase::setIconDataForIconURL):
+        (WebCore::IconDatabase::setHaveNoIconForIconURL):
+        (WebCore::IconDatabase::imageDataForIconURLQuery):
+        * loader/icon/IconDatabase.h:
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+        (WebCore::IconLoader::didReceiveResponse):
+        (WebCore::IconLoader::didReceiveData):
+        (WebCore::IconLoader::didFail):
+        (WebCore::IconLoader::finishLoading):
+        (WebCore::IconLoader::clearLoadingState):
+        * loader/icon/IconLoader.h:
+        * loader/icon/SQLStatement.cpp:
+        (WebCore::SQLStatement::getColumnBlobAsVector):
+        (WebCore::SQLStatement::isExpired):
+        * loader/icon/SQLStatement.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::didFinishLoading):
+        (WebCore::Loader::didReceiveData):
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge getData:andResponse:forURL:]):
+        (-[WebCoreFrameBridge getAllResourceDatas:andResponses:]):
+        * platform/SharedBuffer.h:
+        (WebCore::SharedBuffer::isEmpty):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyDecodedData):
+        (WebCore::BitmapImage::dataChanged):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::setData):
+        * platform/graphics/Image.h:
+        (WebCore::Image::dataChanged):
+        (WebCore::Image::data):
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::setData):
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::dataChanged):
+        * platform/graphics/cg/PDFDocumentImage.h:
+        * platform/graphics/mac/ImageMac.mm:
+        (WebCore::Image::loadPlatformResource):
+        * platform/graphics/svg/SVGImage.cpp:
+        (WebCore::SVGImage::setData):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::fileWrapperForImage):
+
 2007-03-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

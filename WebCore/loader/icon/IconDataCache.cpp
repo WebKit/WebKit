@@ -60,24 +60,16 @@ Image* IconDataCache::getImage(const IntSize& size)
     return 0;
 }
 
-void IconDataCache::setImageData(unsigned char* data, int size)
+void IconDataCache::setImageData(PassRefPtr<SharedBuffer> data)
 {
-    if (!data)
-        ASSERT(!size);
-
     // It's okay to delete the raw image data here. Any existing clients using this icon will be
     // managing an image that was created with a copy of this raw image data.
     if (m_image)
         delete m_image;
     m_image = new BitmapImage();
 
-    // Copy the provided data into the buffer of the new Image object
-    Vector<char>& dataBuffer = m_image->dataBuffer();
-    dataBuffer.resize(size);
-    memcpy(dataBuffer.data(), data, size);
-    
-    // Tell the Image object that all of its data has been set
-    if (!m_image->setData(true)) {
+    // Copy the provided data into the buffer of the new Image object.
+    if (!m_image->setData(data, true)) {
         LOG(IconDatabase, "Manual image data for iconURL '%s' FAILED - it was probably invalid image data", m_iconURL.ascii().data());
         delete m_image;
         m_image = 0;
@@ -119,8 +111,8 @@ void IconDataCache::writeToDatabase(SQLDatabase& db)
     
     // If we *have* image data, bind it to this statement - Otherwise the DB will get "null" for the blob data, 
     // signifying that this icon doesn't have any data    
-    if (m_image && !m_image->dataBuffer().isEmpty())
-        if (updateAttempt.bindBlob(2, m_image->dataBuffer().data(), m_image->dataBuffer().size()) != SQLResultOk) {
+    if (m_image && !m_image->data()->isEmpty())
+        if (updateAttempt.bindBlob(2, m_image->data()->data(), m_image->data()->size()) != SQLResultOk) {
             LOG_ERROR("Failed to bind icon data to SQL statement to update icon data for url %s", m_iconURL.ascii().data());
             return;
         }
@@ -146,8 +138,8 @@ void IconDataCache::writeToDatabase(SQLDatabase& db)
         
     // Then, if we *have* data, we bind it.  Otherwise the DB will get "null" for the blob data, 
     // signifying that this icon doesn't have any data
-    if (m_image && !m_image->dataBuffer().isEmpty())
-        insertStatement.bindBlob(3, m_image->dataBuffer().data(), m_image->dataBuffer().size());
+    if (m_image && !m_image->data()->isEmpty())
+        insertStatement.bindBlob(3, m_image->data()->data(), m_image->data()->size());
     
     // Finally we step and make sure the step was successful
     if (insertStatement.step() != SQLResultDone)

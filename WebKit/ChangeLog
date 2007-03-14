@@ -1,3 +1,14 @@
+2007-03-14  David Hyatt  <hyatt@apple.com>
+
+        Fixes to ensure that the resource loader's shared buffer can always be used.
+
+        Reviewed by olliej, mjs
+
+        * Misc/WebIconDatabase.mm:
+        (-[WebIconDatabase _convertToWebCoreFormat]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::deliverArchivedResources):
+
 2007-03-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Brady.

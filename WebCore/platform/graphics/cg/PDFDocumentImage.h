@@ -41,7 +41,7 @@ namespace WebCore {
         PDFDocumentImage();
         ~PDFDocumentImage();
         
-        virtual bool setNativeData(NativeBytePtr, bool allDataReceived);
+        virtual bool dataChanged(bool allDataReceived);
 
         virtual IntSize size() const;
 

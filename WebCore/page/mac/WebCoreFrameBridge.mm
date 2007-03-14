@@ -1408,7 +1408,7 @@ static NSCharacterSet *_getPostSmartSet(void)
     if (!resource)
         return NO;
 
-    SharedBuffer* buffer = resource->allData();
+    SharedBuffer* buffer = resource->data();
     if (buffer)
         *data = [buffer->createNSData() autorelease];
     else
@@ -1435,7 +1435,7 @@ static NSCharacterSet *_getPostSmartSet(void)
 
     HashMap<String, CachedResource*>::const_iterator end = allResources.end();
     for (HashMap<String, CachedResource*>::const_iterator it = allResources.begin(); it != end; ++it) {
-        SharedBuffer* buffer = it->second->allData();
+        SharedBuffer* buffer = it->second->data();
         NSData *data;
         
         if (buffer)

@@ -53,10 +53,12 @@ IntSize PDFDocumentImage::size() const
     return IntSize((int)m_mediaBox.size().width(), (int)m_mediaBox.size().height());
 }
 
-bool PDFDocumentImage::setNativeData(NativeBytePtr data, bool allDataReceived)
+bool PDFDocumentImage::dataChanged(bool allDataReceived)
 {
-    if (allDataReceived && !m_document && data) {
+    if (allDataReceived && !m_document) {
+        CFDataRef data = (CFDataRef)m_data->createNSData();
         CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(data);
+        CFRelease(data);
         m_document = CGPDFDocumentCreateWithProvider(dataProvider);
         CGDataProviderRelease(dataProvider);
         setCurrentPage(0);

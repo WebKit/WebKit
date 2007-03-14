@@ -66,13 +66,16 @@ void CachedXSLStyleSheet::setEncoding(const String& chs)
     m_decoder->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
 }
 
-void CachedXSLStyleSheet::data(Vector<char>& data, bool allDataReceived)
+void CachedXSLStyleSheet::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
-    if (!allDataReceived)
+    if (!allDataReceived || !data.get())
         return;
 
-    setEncodedSize(data.size());
-    m_sheet = String(m_decoder->decode(data.data(), encodedSize()));
+    m_data = data;     
+    setEncodedSize(m_data.get() ? m_data->size() : 0);
+    if (!m_data.get())
+        return;
+    m_sheet = String(m_decoder->decode(m_data->data(), encodedSize()));
     m_sheet += m_decoder->flush();
     m_loading = false;
     checkNotify();

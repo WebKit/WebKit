@@ -57,8 +57,7 @@ public:
     virtual void allReferencesRemoved();
     virtual void destroyDecodedData();
 
-    virtual Vector<char>& bufferData(const char* bytes, int addedSize, Request*);
-    virtual void data(Vector<char>&, bool allDataReceived);
+    virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
     virtual void error();
 
     virtual bool schedule() const { return true; }
@@ -83,7 +82,6 @@ private:
     void notifyObservers();
 
     Image* m_image;
-    int m_dataSize;
 
     friend class Cache;
 };
