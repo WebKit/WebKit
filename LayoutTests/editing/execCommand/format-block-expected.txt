@@ -33,9 +33,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 25: "Foo"
             RenderBR {BR} at (25,14) size 0x0
           RenderBlock {H1} at (0,39) size 782x37
-            RenderInline {SPAN} at (0,0) size 120x37
-              RenderText {#text} at (0,0) size 120x37
-                text run at (0,0) width 120: "Make h1"
+            RenderText {#text} at (0,0) size 120x37
+              text run at (0,0) width 120: "Make h1"
           RenderBlock (anonymous) at (0,97) size 782x18
             RenderText {#text} at (0,0) size 22x18
               text run at (0,0) width 22: "baz"

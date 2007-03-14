@@ -26,9 +26,8 @@ layer at (0,0) size 800x600
             RenderInline {SPAN} at (0,0) size 0x0
           RenderBlock (anonymous) at (0,34) size 782x18
             RenderBlock {DL} at (0,0) size 782x18
-              RenderInline {SPAN} at (0,0) size 22x18
-                RenderText {#text} at (0,0) size 22x18
-                  text run at (0,0) width 22: "baz"
+              RenderText {#text} at (0,0) size 22x18
+                text run at (0,0) width 22: "baz"
           RenderBlock (anonymous) at (0,68) size 782x0
             RenderInline {SPAN} at (0,0) size 0x0
           RenderBlock {DL} at (0,68) size 782x18

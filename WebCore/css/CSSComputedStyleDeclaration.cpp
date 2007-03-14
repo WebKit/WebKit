@@ -1701,4 +1701,9 @@ PassRefPtr<CSSMutableStyleDeclaration> CSSComputedStyleDeclaration::makeMutable(
     return copy();
 }
 
+PassRefPtr<CSSComputedStyleDeclaration> computedStyle(Node* node)
+{
+    return new CSSComputedStyleDeclaration(node);
+}
+
 } // namespace WebCore

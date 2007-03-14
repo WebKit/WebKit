@@ -354,50 +354,19 @@ void ReplaceSelectionCommand::removeRedundantStyles(Node* mailBlockquoteEnclosin
         RefPtr<CSSMutableStyleDeclaration> spanStyle = static_cast<HTMLElement*>(node)->inlineStyleDecl();
         spanStyle->merge(blockquoteStyle.get());  
     }
-    else if (isStyleSpan(node)) {
-    
-        RefPtr<CSSMutableStyleDeclaration> parentStyle
-            = Position(node, 0).computedStyle()->copyInheritableProperties();
-
-        RefPtr<Node> child = node->firstChild();
-        while (child) {
-            RefPtr<Node> next = child->nextSibling();
-            if (isStyleSpan(child.get())) {
-                HTMLElement* elem = static_cast<HTMLElement*>(child.get());
-                CSSMutableStyleDeclaration* inlineStyleDecl = elem->inlineStyleDecl();
-                // be defensive because we used to sometimes leave unstyled Apple style spans in the DOM,
-                // and we could be processing an old email with that flaw
-                if (!inlineStyleDecl)
-                    setNodeAttribute(elem, styleAttr, parentStyle->cssText());
-                else {
-                    inlineStyleDecl->merge(parentStyle.get(), false);
-                    setNodeAttribute(elem, styleAttr, inlineStyleDecl->cssText());
-                }
-            } else if (node->isElementNode()) {
-                RefPtr<Node> clone = node->cloneNode(false);
-                int index = child->nodeIndex();
-                removeNode(child.get());
-                insertNodeAt(clone.get(), node, index);
-                appendNode(child.get(), clone.get());
-            }
-            child = next;
-        }
-        
-        removeNodePreservingChildren(node);
-    }
     
     // Compute and save the non-redundant styles for all HTML elements.
     // Don't do any mutation here, because that would cause the diffs to trigger layouts.
     Vector<RefPtr<CSSMutableStyleDeclaration> > styles;
     Vector<RefPtr<HTMLElement> > elements;
     for (node = m_firstNodeInserted.get(); node; node = node->traverseNextNode()) {
-        if (node->isHTMLElement()) {
+        if (node->isHTMLElement() && isStyleSpan(node)) {
             elements.append(static_cast<HTMLElement*>(node));
-            RefPtr<CSSMutableStyleDeclaration> style
-                = Position(node, 0).computedStyle()->copyInheritableProperties();
-            RefPtr<CSSMutableStyleDeclaration> parentStyle
-                = Position(node->parentNode(), 0).computedStyle()->copyInheritableProperties();
+            
+            RefPtr<CSSMutableStyleDeclaration> parentStyle = computedStyle(node->parentNode())->copyInheritableProperties();
+            RefPtr<CSSMutableStyleDeclaration> style = computedStyle(node)->copyInheritableProperties();
             parentStyle->diff(style.get());
+            
             styles.append(style.release());
         }
         if (node == m_lastLeafInserted)
@@ -417,6 +386,10 @@ void ReplaceSelectionCommand::removeRedundantStyles(Node* mailBlockquoteEnclosin
 
         // Remove empty style spans.
         if (isStyleSpan(element) && !element->hasChildNodes()) {
+            if (m_firstNodeInserted == element)
+                m_firstNodeInserted = element->traverseNextSibling();
+            if (m_lastLeafInserted == element)
+                m_lastLeafInserted = element->traverseNextSibling();
             removeNodeAndPruneAncestors(element);
             continue;
         }

@@ -1,3 +1,29 @@
+2007-03-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        Removed unnecessary style spans:
+        * editing/deleting/delete-3857753-fix-expected.txt:
+        * editing/execCommand/4916541-expected.txt:
+        * editing/execCommand/create-list-from-range-selection-expected.txt:
+        * editing/execCommand/format-block-expected.txt:
+        * editing/execCommand/format-block-from-range-selection-expected.txt:
+        * editing/execCommand/format-block-with-braces-expected.txt:
+        * editing/execCommand/indent-selection-expected.txt:
+        * editing/execCommand/remove-list-from-range-selection-expected.txt:
+        * editing/execCommand/remove-list-items-expected.txt:
+        * editing/execCommand/switch-list-type-expected.txt:
+        * editing/pasteboard/4861080-expected.txt:
+        * editing/pasteboard/display-block-on-spans-expected.txt:
+        * editing/pasteboard/drag-drop-modifies-page-expected.txt:
+        * editing/pasteboard/paste-table-002-expected.txt:
+        * editing/pasteboard/paste-text-001-expected.txt:
+        * editing/pasteboard/paste-text-at-tabspan-001-expected.txt:
+        * editing/pasteboard/paste-text-at-tabspan-002-expected.txt:
+        * editing/pasteboard/paste-text-at-tabspan-003-expected.txt:
+        * editing/style/smoosh-styles-001-expected.txt:
+        * editing/style/smoosh-styles-002-expected.txt:
+
 2007-03-14  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt, thumbs up by Darin.

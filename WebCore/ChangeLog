@@ -1,3 +1,32 @@
+2007-03-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        ~3x speedup pasting 5k lines of rich text:
+        http://shakespeare.mit.edu/hamlet/full.html
+        ~2x speedup pasting 10k lines of plain text
+        
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computedStyle): Added for convenience.
+        * css/CSSComputedStyleDeclaration.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStyles):
+        The code that pushed down the top level style span had
+        a bug in it that made it do unnecessary work.  Instead of
+        fixing the bug I removed the code because it was used to 
+        help see more redundancies in second level style spans, but 
+        createMarkup now *only* creates a top level style span.
+        Only remove redundant styles from style spans and only remove
+        unstyled elements if they are style spans.  FF doesn't
+        remove redundant styles from elements, or remove redundant 
+        font tags on copy/paste.  We could offer this functionality 
+        through a separate "cleanup" command.
+        * editing/markup.cpp:
+        (WebCore::createMarkup): Only add markup for ancestors of 
+        lastClosed if we're including markup for acommonAncestorBlock 
+        (we do this for commonAncestorBlocks like tables and lists),
+        otherwise it's unnecessary/redundant.
+
 2007-03-14  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Ada.

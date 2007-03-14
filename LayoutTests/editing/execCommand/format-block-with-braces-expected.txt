@@ -17,10 +17,9 @@ layer at (0,0) size 800x600
         RenderInline {DIV} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,57) size 784x37
         RenderBlock {H1} at (0,0) size 784x37
-          RenderInline {DIV} at (0,0) size 156x37
-            RenderText {#text} at (0,0) size 156x37
-              text run at (0,0) width 156: "Format Me"
+          RenderText {#text} at (0,0) size 156x37
+            text run at (0,0) width 156: "Format Me"
       RenderBlock (anonymous) at (0,115) size 784x0
         RenderInline {DIV} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-caret: position 0 of child 0 {#text} of child 0 {DIV} of child 0 {H1} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {#text} of child 0 {H1} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document
