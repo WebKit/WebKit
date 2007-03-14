@@ -51,6 +51,7 @@ BitmapImage::BitmapImage(ImageObserver* observer)
     , m_isSolidColor(false)
     , m_animatingImageType(true)
     , m_animationFinished(false)
+    , m_allDataReceived(false)
     , m_haveSize(false)
     , m_sizeAvailable(false)
     , m_decodedSize(0)
@@ -94,7 +95,7 @@ void BitmapImage::destroyDecodedData(bool incremental)
             // Reset the image source, since Image I/O has an underlying cache that it uses
             // while animating that it seems to never clear.
             m_source.clear();
-            dataChanged(true);
+            m_source.setData(m_data.get(), m_allDataReceived);
         }
     }
 }
@@ -142,6 +143,7 @@ bool BitmapImage::dataChanged(bool allDataReceived)
     destroyDecodedData(true);
     
     // Feed all the data we've seen so far to the image decoder.
+    m_allDataReceived = allDataReceived;
     m_source.setData(m_data.get(), allDataReceived);
     
     // Image properties will not be available until the first frame of the file
@@ -264,13 +266,16 @@ void BitmapImage::advanceAnimation(Timer<BitmapImage>* timer)
     // footprint.
     int frameSize = m_size.width() * m_size.height() * 4;
     if (frameCount() * frameSize > cLargeAnimationCutoff) {
-        // Go ahead and decode the next frame so that it can rely on the previous frame.
+        // Clear and reset the source.
+        m_source.clear();
+        m_source.setData(m_data.get(), m_allDataReceived);
+        
+        // Go ahead and decode the next frame.
         frameAtIndex(m_currentFrame);
         
         // Now throw away the previous frame.
         if (m_frames[previousFrame].m_frame) {
             m_frames[previousFrame].clear();
-            m_source.destroyFrameAtIndex(previousFrame);
             m_decodedSize -= frameSize;
             if (imageObserver())
                 imageObserver()->decodedSizeChanged(this, -frameSize);

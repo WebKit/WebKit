@@ -1,5 +1,21 @@
 2007-03-14  David Hyatt  <hyatt@apple.com>
 
+        Fix Radar 5050688.  
+
+        For large animated GIFs, destroy and recreate the source for every animation frame.  This keeps
+        the memory consumption down while giant images are animating.
+
+        Reviewed by andersca
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::destroyDecodedData):
+        (WebCore::BitmapImage::dataChanged):
+        (WebCore::BitmapImage::advanceAnimation):
+        * platform/graphics/BitmapImage.h:
+
+2007-03-14  David Hyatt  <hyatt@apple.com>
+
         Make sure to use CFDataCreateWithBytesNoCopy where we can.
 
         Reviewed by andersca
