@@ -1,3 +1,15 @@
+2007-03-13  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Test for <rdar://problem/5025925> A hang occurs in Safari when 
+        attempting to print page at http://www.pcadvisor.co.uk
+
+        * fast/block/float/nestedAnonymousBlocks-expected.checksum: Added.
+        * fast/block/float/nestedAnonymousBlocks-expected.png: Added.
+        * fast/block/float/nestedAnonymousBlocks-expected.txt: Added.
+        * fast/block/float/nestedAnonymousBlocks.html: Added.
+
 2007-03-13  David Harrison  <harrison@apple.com>
         
         <rdar://problem/5031181> cntl-k at end of paragraph adds nothing to the kill ring

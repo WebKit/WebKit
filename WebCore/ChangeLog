@@ -1,3 +1,40 @@
+2007-03-13  Beth Dakin  <bdakin@apple.com>
+
+        Rendering part reviewed by Hyatt. Editing part consulted with and 
+        rubber stamped by Justin and Harrison.
+
+        Fix for <rdar://problem/5025925> A hang occurs in Safari when 
+        attempting to print page at http://www.pcadvisor.co.uk
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::makeChildrenNonInline): 
+        RenderBlock::makeChildrenNonInline() takes a block's inline 
+        children and turns them into block children. If the children had 
+        line boxes, those boxes were being leaked. In the layout test I 
+        added with the change (and at pcadvisor.co.uk during printing) 
+        children were being made non-inline, and then they were being made 
+        inline again. This meant that some of the children ended up 
+        pointing to totally stale line boxes that are normally just leaked. 
+        This caused an infinite loop in RenderFlow::destroy(). This patch 
+        simply deletes everyone's line boxes in 
+        RenderBlock::makeChildrenNonInline()
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): The other part 
+        of this fix is that I added a call to updateLayout in 
+        InsertParagraphSeparatorCommand::doApply(). One layout test 
+        (editing/spelling/spelling.html) was changed by my patch to 
+        RenderBlock. doApply() inserts a node into the render tree. In at 
+        least one case in spelling.html, that caused some line boxes to be 
+        deleted. Back in doApply() this meant that the RenderTree was out-
+        of-date, and we mistakenly thought we were at the end of the 
+        paragraph. This caused us to insert a RenderBR() at the end of the 
+        tree instead of an empty RenderText(). No one seems to know exactly 
+        why we insert either, or if the change is necessarily a problem. It 
+        is clear, though, that the RenderTree in doApply() is out-of-date 
+        after inserting the node and deleting some line boxes, so it seems 
+        prudent to call into updateLayout().
+
 2007-03-13  Adam Roben  <aroben@apple.com>
 
         Reviewed by Anders.

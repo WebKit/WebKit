@@ -234,6 +234,8 @@ void InsertParagraphSeparatorCommand::doApply()
     else
         insertNodeAfter(blockToInsert.get(), startBlock);
 
+    updateLayout();
+    
     // Make clones of ancestors in between the start node and the start block.
     RefPtr<Node> parent = blockToInsert;
     for (size_t i = ancestors.size(); i != 0; --i) {

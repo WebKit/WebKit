@@ -283,6 +283,15 @@ void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
 
     m_childrenInline = false;
 
+    InlineFlowBox* line = m_firstLineBox;
+    InlineFlowBox* nextLine;
+    while (line) {
+        nextLine = line->nextFlowBox();
+        line->deleteLine(renderArena());
+        line = nextLine;
+    }
+    m_firstLineBox = m_lastLineBox = 0;
+
     RenderObject *child = firstChild();
 
     while (child) {
