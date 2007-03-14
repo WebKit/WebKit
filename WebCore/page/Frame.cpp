@@ -1665,7 +1665,7 @@ bool Frame::markedTextMatchesAreHighlighted() const
 
 void Frame::setMarkedTextMatchesAreHighlighted(bool flag)
 {
-    if (flag == d->m_highlightTextMatches)
+    if (flag == d->m_highlightTextMatches || !document())
         return;
     
     d->m_highlightTextMatches = flag;

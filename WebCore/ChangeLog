@@ -1,3 +1,13 @@
+2007-03-14  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam.
+
+        Added missing null check in case this is called on a subframe
+        that hasn't started loading.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setMarkedTextMatchesAreHighlighted): Check for a null document.
+
 2007-03-14  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Geoff.
