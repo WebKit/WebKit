@@ -126,6 +126,7 @@ public:
 
 #if PLATFORM(WIN)
     bool m_isMLangFont;
+    bool m_isSystemFont;
 #endif
 };
 

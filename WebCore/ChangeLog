@@ -1,3 +1,9 @@
+2007-03-13  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Anders.
+
+        * platform/FontData.h: Added m_isSystemFont parameter to match NSFont.
+
 2007-03-13  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.
