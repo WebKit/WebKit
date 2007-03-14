@@ -1,3 +1,13 @@
+2007-03-13  David Harrison  <harrison@apple.com>
+        
+        <rdar://problem/5031181> cntl-k at end of paragraph adds nothing to the kill ring
+        <rdar://problem/5031189> REGRESSION: cntl-y yanks only the most recently killed content
+
+        Updated results.
+
+        * editing/deleting/delete-to-end-of-paragraph-expected.checksum:
+        * editing/deleting/delete-to-end-of-paragraph-expected.txt:
+
 2007-03-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
