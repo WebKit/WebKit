@@ -1,3 +1,20 @@
+2007-03-14  Lars Knoll <lars@trolltech.com>
+
+        Reviewed by Antti.
+
+        Fix the Qt build.
+        Add a getter to SharedBuffer that returns a reference to the internal
+        Vector to avoid an extra copy of the data.
+
+        * platform/SharedBuffer.h:
+        (WebCore::SharedBuffer::buffer):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::Image::loadPlatformResource):
+        * platform/graphics/qt/ImageSourceQt.cpp:
+        (WebCore::detectImageFormat):
+        (WebCore::createDecoder):
+        (WebCore::ImageSource::setData):
+
 2007-03-14  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mitz.
