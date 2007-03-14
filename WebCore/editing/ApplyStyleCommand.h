@@ -65,7 +65,7 @@ private:
     void applyBlockStyle(CSSMutableStyleDeclaration*);
     void applyRelativeFontStyleChange(CSSMutableStyleDeclaration*);
     void applyInlineStyle(CSSMutableStyleDeclaration*);
-    void addBlockStyleIfNeeded(CSSMutableStyleDeclaration*, Node*);
+    void addBlockStyleIfNeeded(CSSMutableStyleDeclaration*, const VisiblePosition&);
     void addInlineStyleIfNeeded(CSSMutableStyleDeclaration*, Node* start, Node* end);
     bool splitTextAtStartIfNeeded(const Position& start, const Position& end);
     bool splitTextAtEndIfNeeded(const Position& start, const Position& end);

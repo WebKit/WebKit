@@ -1,3 +1,26 @@
+2007-03-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5046875> 
+        Gmail Editor: Applying alignment to selected text in message also applies alignment to signature
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::doApply): Don't call applyBlockStyle unless
+        there is a block style to apply.
+        (WebCore::ApplyStyleCommand::applyBlockStyle): Don't do the remove step.
+        It was unnecessary and removed properties from blocks that could contain 
+        content outside the range being operated on (added a testcase).
+        (WebCore::ApplyStyleCommand::addBlockStyleIfNeeded): Used an early return
+        instead of if-nesting.
+        * editing/ApplyStyleCommand.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        Return the new block, if one was created.  Use moveParagraphs to move
+        paragraphs into the new block, instead of moving nodes.  The old code moved
+        too much (added a testcase).
+        * editing/CompositeEditCommand.h:
+
 2007-03-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Brady.

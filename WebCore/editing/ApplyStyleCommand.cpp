@@ -27,9 +27,11 @@
 #include "ApplyStyleCommand.h"
 
 #include "CSSComputedStyleDeclaration.h"
+#include "cssparser.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
+#include "htmlediting.h"
 #include "HTMLElement.h"
 #include "HTMLInterchange.h"
 #include "HTMLNames.h"
@@ -37,8 +39,8 @@
 #include "Range.h"
 #include "RenderObject.h"
 #include "Text.h"
-#include "cssparser.h"
-#include "htmlediting.h"
+#include "TextIterator.h"
+#include "visible_units.h"
 
 namespace WebCore {
 
@@ -331,7 +333,8 @@ void ApplyStyleCommand::doApply()
         case PropertyDefault: {
             // apply the block-centric properties of the style
             RefPtr<CSSMutableStyleDeclaration> blockStyle = m_style->copyBlockProperties();
-            applyBlockStyle(blockStyle.get());
+            if (blockStyle->length())
+                applyBlockStyle(blockStyle.get());
             // apply any remaining styles to the inline elements
             // NOTE: hopefully, this string comparison is the same as checking for a non-null diff
             if (blockStyle->length() < m_style->length() || m_styledInlineElement) {
@@ -369,49 +372,28 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclaration *style)
         start = end;
         end = swap;
     }
-
-    // remove current values, if any, of the specified styles from the blocks
-    // NOTE: tracks the previous block to avoid repeated processing
-    // Also, gather up all the nodes we want to process in a Vector before
-    // doing anything. This averts any bugs iterating over these nodes
-    // once you start removing and applying style.
-    
-    // If the end node is before the start node (can only happen if the end node is
-    // an ancestor of the start node), we gather nodes up to the next sibling of the end node
-    Node *beyondEnd;
-    if (start.node()->isDescendantOf(end.node()))
-        beyondEnd = end.node()->traverseNextSibling();
-    else
-        beyondEnd = end.node()->traverseNextNode();
-
-    Vector<Node*> nodes;
-    for (Node *node = start.node(); node != beyondEnd; node = node->traverseNextNode())
-        nodes.append(node);
         
-    Node *prevBlock = 0;
-    for (unsigned i = 0; i < nodes.size(); i++) {
-        Node *block = nodes[i]->enclosingBlockFlowElement();
-        if (block != prevBlock && block->isHTMLElement()) {
-            removeCSSStyle(style, static_cast<HTMLElement *>(block));
-            prevBlock = block;
-        }
+    VisiblePosition visibleStart(start);
+    VisiblePosition visibleEnd(end);
+    // Save and restore the selection endpoints using their indices in the document, since
+    // addBlockStyleIfNeeded may moveParagraphs, which can remove these endpoints.
+    RefPtr<Range> startRange = new Range(document(), Position(document(), 0), visibleStart.deepEquivalent());
+    RefPtr<Range> endRange = new Range(document(), Position(document(), 0), visibleEnd.deepEquivalent());
+    int startIndex = TextIterator::rangeLength(startRange.get());
+    int endIndex = TextIterator::rangeLength(endRange.get());
+    
+    VisiblePosition paragraphStart(startOfParagraph(visibleStart));
+    VisiblePosition nextParagraphStart(endOfParagraph(paragraphStart).next());
+    VisiblePosition beyondEnd(endOfParagraph(visibleEnd).next());
+    while (paragraphStart.isNotNull() && paragraphStart != beyondEnd) {
+        addBlockStyleIfNeeded(style, paragraphStart);
+        paragraphStart = nextParagraphStart;
+        nextParagraphStart = endOfParagraph(paragraphStart).next();
     }
     
-    if (m_removeOnly)
-        return;
-    
-    // apply specified styles to the block flow elements in the selected range
-    prevBlock = 0;
-    for (unsigned i = 0; i < nodes.size(); i++) {
-        Node *node = nodes[i];
-        if (node->renderer()) {
-            Node *block = node->enclosingBlockFlowElement();
-            if (block != prevBlock) {
-                addBlockStyleIfNeeded(style, node);
-                prevBlock = block;
-            }
-        }
-    }
+    setEndingSelection(Selection(TextIterator::rangeFromLocationAndLength(document()->documentElement(), startIndex, 0)->startPosition(), 
+                                 TextIterator::rangeFromLocationAndLength(document()->documentElement(), endIndex, 0)->startPosition(), 
+                                 DOWNSTREAM));
 }
 
 #define NoFontDelta (0.0f)
@@ -1216,27 +1198,37 @@ void ApplyStyleCommand::surroundNodeRangeWithElement(Node *startNode, Node *endN
     }
 }
 
-void ApplyStyleCommand::addBlockStyleIfNeeded(CSSMutableStyleDeclaration *style, Node *node)
+void ApplyStyleCommand::addBlockStyleIfNeeded(CSSMutableStyleDeclaration* style, const VisiblePosition& paragraphStart)
 {
     // Do not check for legacy styles here. Those styles, like <B> and <I>, only apply for
     // inline content.
-    if (!node)
+    if (paragraphStart.isNull())
         return;
     
-    HTMLElement *block = static_cast<HTMLElement *>(node->enclosingBlockFlowElement());
+    Node* block = enclosingBlock(paragraphStart.deepEquivalent().node());
     if (!block)
         return;
         
     StyleChange styleChange(style, Position(block, 0), StyleChange::styleModeForParseMode(document()->inCompatMode()));
-    if (styleChange.cssStyle().length() > 0) {
-        moveParagraphContentsToNewBlockIfNecessary(Position(node, 0));
-        block = static_cast<HTMLElement *>(node->enclosingBlockFlowElement());
-        String cssText = styleChange.cssStyle();
-        CSSMutableStyleDeclaration *decl = block->inlineStyleDecl();
-        if (decl)
-            cssText += decl->cssText();
-        setNodeAttribute(block, styleAttr, cssText);
-    }
+    if (styleChange.cssStyle().length() == 0)
+        return;
+
+    // If a new block was necessary, this function uses moveParagraphs to move content into
+    // the new block, which invalidates block.
+    Node* newBlock = moveParagraphContentsToNewBlockIfNecessary(paragraphStart.deepEquivalent());
+    
+    if (newBlock)
+        block = newBlock;
+        
+    ASSERT(block->isHTMLElement());
+    if (!block->isHTMLElement())
+        return;
+        
+    String cssText = styleChange.cssStyle();
+    CSSMutableStyleDeclaration* decl = static_cast<HTMLElement*>(block)->inlineStyleDecl();
+    if (decl)
+        cssText += decl->cssText();
+    setNodeAttribute(static_cast<Element*>(block), styleAttr, cssText);
 }
 
 void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclaration *style, Node *startNode, Node *endNode)

@@ -1,3 +1,30 @@
+2007-03-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5046875> 
+        Gmail Editor: Applying alignment to selected text in message also applies alignment to signature
+
+        Added:
+        * editing/style/5046875-1-expected.checksum: Added.
+        * editing/style/5046875-1-expected.png: Added.
+        * editing/style/5046875-1-expected.txt: Added.
+        * editing/style/5046875-1.html: Added.
+        * editing/style/5046875-2-expected.checksum: Added.
+        * editing/style/5046875-2-expected.png: Added.
+        * editing/style/5046875-2-expected.txt: Added.
+        * editing/style/5046875-2.html: Added.
+        moveParagraphs doesn't move unnecessary brs:
+        * editing/style/create-block-for-style-002-expected.txt:
+        * editing/style/create-block-for-style-004-expected.txt:
+        * editing/style/create-block-for-style-001-expected.txt:
+        * editing/style/create-block-for-style-009-expected.txt:
+        * editing/style/create-block-for-style-010-expected.txt:
+        moveParagraphs clears out unrendered text during the move:
+        * editing/style/create-block-for-style-011-expected.txt:
+        * editing/style/create-block-for-style-007-expected.txt:
+        * editing/style/create-block-for-style-012-expected.txt:
+
 2007-03-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Brady.
