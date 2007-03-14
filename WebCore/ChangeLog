@@ -1,3 +1,13 @@
+2007-03-14  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        Fix for <rdar://problem/5062898> REGRESSION: autocomplete window in text fields doesn't come up
+
+        When we moved the initialization of a bunch of variables in the HTMLFormElement constructor, m_autocomplete accidently got initialized to false.
+
+        * html/HTMLFormElement.cpp: (WebCore::HTMLFormElement::HTMLFormElement):
+
 2007-03-14  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam.
