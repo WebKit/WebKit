@@ -1,3 +1,15 @@
+2007-03-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Brady.
+
+        To fix <rdar://problem/5044366> we now pass a NSString
+        representation of the URL extracted with _web_originalDataAsString
+        instead of relying on [NSURL absoluteString] in the bridge
+
+        * page/mac/WebCoreFrameBridge.h:
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge getData:andResponse:forURL:]):
+
 2007-03-13  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

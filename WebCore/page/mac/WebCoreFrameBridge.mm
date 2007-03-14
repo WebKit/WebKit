@@ -1398,13 +1398,13 @@ static NSCharacterSet *_getPostSmartSet(void)
     return [isPreviousCharacter ? _getPreSmartSet() : _getPostSmartSet() characterIsMember:c];
 }
 
-- (BOOL)getData:(NSData **)data andResponse:(NSURLResponse **)response forURL:(NSURL *)URL
+- (BOOL)getData:(NSData **)data andResponse:(NSURLResponse **)response forURL:(NSString *)URL
 {
     Document* doc = m_frame->document();
     if (!doc)
         return NO;
 
-    CachedResource* resource = doc->docLoader()->cachedResource([URL absoluteString]);
+    CachedResource* resource = doc->docLoader()->cachedResource(URL);
     if (!resource)
         return NO;
 

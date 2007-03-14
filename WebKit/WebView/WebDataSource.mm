@@ -483,7 +483,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
     NSData *data;
     NSURLResponse *response;
-    if (![[self _bridge] getData:&data andResponse:&response forURL:URL])
+    if (![[self _bridge] getData:&data andResponse:&response forURL:[URL _web_originalDataAsString]])
         return [self _archivedSubresourceForURL:URL];
 
     return [[[WebResource alloc] _initWithData:data URL:URL response:response] autorelease];

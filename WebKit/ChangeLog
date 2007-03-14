@@ -1,3 +1,13 @@
+2007-03-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Brady.
+
+        Modify subresourceForURL to take NSString argument 
+        so we can avoid [NSURL absoluteString]
+
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource subresourceForURL:]):
+
 2007-03-13  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Alice

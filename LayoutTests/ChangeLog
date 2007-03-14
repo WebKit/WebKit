@@ -1,3 +1,13 @@
+2007-03-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Brady.
+
+        Test for <rdar://problem/5044366> make sure we can create
+        a WebArchive from a page with a partially decoded url.
+
+        * webarchive/archive-with-unencoded-url-expected.txt: Added.
+        * webarchive/archive-with-unencoded-url.html: Added.
+
 2007-03-13  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
