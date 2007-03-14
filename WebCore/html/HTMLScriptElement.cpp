@@ -155,8 +155,11 @@ void HTMLScriptElement::notifyFinished(CachedResource* o)
         dispatchHTMLEvent(loadEvent, false, false);
     }
 
-    cs->deref(this);
-    m_cachedScript = 0;
+    // script evaluation may have dereffed it already
+    if (m_cachedScript) {
+        m_cachedScript->deref(this);
+        m_cachedScript = 0;
+    }
 }
 
 bool HTMLScriptElement::shouldExecuteAsJavaScript()

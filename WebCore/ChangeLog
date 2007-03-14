@@ -1,3 +1,17 @@
+2007-03-14  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Geoff.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=13060
+        REGRESSION: Repro ASSERT failure in Cache::adjustSize running layout tests
+        <rdar://5060208>
+        
+        Script evaluation may have dereffed the CachedScript object already, causing double deref and
+        eventually m_liveResourcesSize underflow.
+
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::notifyFinished):
+
 2007-03-14  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
