@@ -111,7 +111,7 @@ void IconDataCache::writeToDatabase(SQLDatabase& db)
     
     // If we *have* image data, bind it to this statement - Otherwise the DB will get "null" for the blob data, 
     // signifying that this icon doesn't have any data    
-    if (m_image && !m_image->data()->isEmpty())
+    if (m_image && m_image->data() && !m_image->data()->isEmpty())
         if (updateAttempt.bindBlob(2, m_image->data()->data(), m_image->data()->size()) != SQLResultOk) {
             LOG_ERROR("Failed to bind icon data to SQL statement to update icon data for url %s", m_iconURL.ascii().data());
             return;
@@ -138,7 +138,7 @@ void IconDataCache::writeToDatabase(SQLDatabase& db)
         
     // Then, if we *have* data, we bind it.  Otherwise the DB will get "null" for the blob data, 
     // signifying that this icon doesn't have any data
-    if (m_image && !m_image->data()->isEmpty())
+    if (m_image && m_image->data() && !m_image->data()->isEmpty())
         insertStatement.bindBlob(3, m_image->data()->data(), m_image->data()->size());
     
     // Finally we step and make sure the step was successful

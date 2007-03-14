@@ -1,3 +1,12 @@
+2007-03-14  Alice Liu  <alice.liu@apple.com>
+
+        Rubber-stamped by Hyatt.
+
+        Adding null check to prevent the crash that happens on 2nd run of iBench HTML load test
+
+        * loader/icon/IconDataCache.cpp:
+        (WebCore::IconDataCache::writeToDatabase):
+
 2007-03-14  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.
