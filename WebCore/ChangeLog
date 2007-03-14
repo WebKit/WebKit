@@ -1,5 +1,16 @@
 2007-03-14  David Hyatt  <hyatt@apple.com>
 
+        Tweak the data() functions of stylesheets and scripts to be internally consistent.
+
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::data):
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::data):
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::data):
+
+2007-03-14  David Hyatt  <hyatt@apple.com>
+
         Fix Radar 5050688.  
 
         For large animated GIFs, destroy and recreate the source for every animation frame.  This keeps

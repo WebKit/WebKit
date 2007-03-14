@@ -72,14 +72,13 @@ void CachedScript::setEncoding(const String& chs)
 
 void CachedScript::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
-    if (!allDataReceived || !data.get())
+    if (!allDataReceived)
         return;
 
     m_data = data;
     setEncodedSize(m_data.get() ? m_data->size() : 0);
-    if (!m_data.get())
-        return;
-    m_script = m_encoding.decode(m_data->data(), encodedSize());
+    if (m_data.get())
+        m_script = m_encoding.decode(m_data->data(), encodedSize());
     m_loading = false;
     checkNotify();
 }
