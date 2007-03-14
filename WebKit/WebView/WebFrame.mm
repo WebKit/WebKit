@@ -269,10 +269,6 @@ WebView *getWebView(WebFrame *webFrame)
     When this method is called with doClip=YES we're able to create the whole tree except for the target's children, 
     which will be loaded in the future.  That part of the tree will be filled out as the child loads are committed.
 */
-- (BOOL)_canCachePage
-{
-    return core(self)->page()->backForwardList()->usesPageCache() && core(self)->loader()->canCachePage();
-}
 
 + (CFAbsoluteTime)_timeOfLastCompletedLoad
 {

@@ -1,3 +1,12 @@
+2007-03-13  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Alice
+
+        Meant to be part of my previous checkin... pruning unused code from WebKit
+
+        * WebView/WebFrame.mm: Removed _canCachePage
+        * WebView/WebFrameInternal.h: Ditto
+
 2007-03-13  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.
