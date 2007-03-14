@@ -223,9 +223,7 @@ void Loader::cancelRequests(DocLoader* dl)
 
     for (unsigned i = 0; i < loadersToCancel.size(); ++i) {
         SubresourceLoader* loader = loadersToCancel[i];
-        Request* r = m_requestsLoading.get(loader);
-        m_requestsLoading.remove(loader);
-        cache()->remove(r->cachedResource());
+        didFail(loader, loader->cancelledError());
     }
 }
 

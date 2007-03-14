@@ -1,3 +1,37 @@
+2007-03-13  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        <rdar://problem/5048818> - REGRESSION: Incompletely loaded resources being saved to the object cache
+
+        Due to a subtle change in loader behavior back in 10904, we would stop all loaders before calling 
+        didFail() on them in the Cache loader.  As a result, we basically cleared all of the Subresource Loaders 
+        out of the Cache loader before more properly failing them as errored out.  The result?  Partially loaded
+        resources being cached.
+        
+        Since Loader::didFail() both calls error() on the object *and* removes the loader, the solution is to call 
+        didFail() for all cancelled loaders instead of *only* removing them from the set of active loaders.
+        
+        In addition, pages that didn't completely load were being saved to the back/forward cache.  To fix that,
+        I added a null check on the DocumentLoader's error to see if the page ended in an error, or did indeed 
+        completely load.
+
+        Note that the layout test for this - if possible - will require other enhancements including possibly adding
+        support for window.stop().  That task is documented in <rdar://problem/5061826>
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::provisionalLoadStarted): Fixed a few bugs relating to my original BFCache rewrite to
+          more perfectly restore the original behavior - including only caching HTML documents via the 
+          m_client->canCachePage() call
+        (WebCore::FrameLoader::canCachePage): Don't make the call to m_client->canCachePage() as that serves a different
+          purpose
+          - Check the mainDocumentError to see if the load ended in error as a further criteria in determining the 
+          cachability of a page
+
+        * loader/loader.cpp:
+        (WebCore::Loader::cancelRequests): Call didFail(cancelledError()) instead of just removing the loaders from the 
+          loaders-in-progress set.  This adds the effect of properly cleaning up the cached object.
+
 2007-03-13  Beth Dakin  <bdakin@apple.com>
 
         Rendering part reviewed by Hyatt. Editing part consulted with and 
