@@ -1,3 +1,15 @@
+2007-03-14  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt, thumbs up by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=12782
+          Reproducible crash in BidiContext::deref
+
+        * fast/dynamic/anonymous-block-orphaned-lines-expected.checksum: Added.
+        * fast/dynamic/anonymous-block-orphaned-lines-expected.png: Added.
+        * fast/dynamic/anonymous-block-orphaned-lines-expected.txt: Added.
+        * fast/dynamic/anonymous-block-orphaned-lines.html: Added.
+
 2007-03-14  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mitz.

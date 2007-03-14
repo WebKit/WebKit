@@ -343,6 +343,26 @@ void RenderBlock::removeChild(RenderObject *oldChild)
             prev->appendChildNode(next->removeChildNode(no));
             no->setNeedsLayoutAndMinMaxRecalc();
         }
+        
+        // Do the same with line boxes.
+        RenderBlock* prevBlock = static_cast<RenderBlock*>(prev);
+        RenderBlock* nextBlock = static_cast<RenderBlock*>(next);
+        if (RootInlineBox* box = nextBlock->firstRootBox()) {
+            if (prevBlock->lastRootBox()) {
+                prevBlock->lastRootBox()->setNextLineBox(box);
+                box->setPreviousLineBox(prevBlock->lastRootBox());
+            } else
+                prevBlock->m_firstLineBox = box;
+
+            while (box) {
+                prevBlock->m_lastLineBox = box;
+                box->m_object = prevBlock;
+                box = box->nextRootBox();
+            }
+            nextBlock->m_firstLineBox = 0;
+            nextBlock->m_lastLineBox = 0;
+        }
+        
         // Nuke the now-empty block.
         next->destroy();
     }
@@ -355,7 +375,7 @@ void RenderBlock::removeChild(RenderObject *oldChild)
         // box.  We can go ahead and pull the content right back up into our
         // box.
         setNeedsLayoutAndMinMaxRecalc();
-        RenderObject* anonBlock = removeChildNode(child);
+        RenderBlock* anonBlock = static_cast<RenderBlock*>(removeChildNode(child));
         m_childrenInline = true;
         RenderObject* o = anonBlock->firstChild();
         while (o) {
@@ -364,6 +384,17 @@ void RenderBlock::removeChild(RenderObject *oldChild)
             appendChildNode(anonBlock->removeChildNode(no));
             no->setNeedsLayoutAndMinMaxRecalc();
         }
+
+        // Take over the anonymous child's line boxes.
+        RootInlineBox* box = anonBlock->firstRootBox();
+        m_firstLineBox = box;
+        while (box) {
+            m_lastLineBox = box;
+            box->m_object = this;
+            box = box->nextRootBox();
+        }
+        anonBlock->m_firstLineBox = 0;
+        anonBlock->m_lastLineBox = 0;
 
         // Nuke the now-empty block.
         anonBlock->destroy();

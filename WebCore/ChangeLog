@@ -1,3 +1,20 @@
+2007-03-14  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt, thumbs up by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=12782
+          Reproducible crash in BidiContext::deref
+
+        Test: fast/dynamic/anonymous-block-orphaned-lines.html
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::root): Added an assertion that we return a root inline box.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild): Added code to adopt the line boxes of
+        anonymous blocks being destroyed instead of leaving them orphaned, which
+        is what caused this crash. The boxes will be deleted on the next layout, but
+        this ensures consistency in the mean time.
+
 2007-03-14  Lars Knoll <lars@trolltech.com>
 
         Reviewed by Antti.

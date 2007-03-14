@@ -173,6 +173,7 @@ RootInlineBox* InlineBox::root()
 { 
     if (m_parent)
         return m_parent->root(); 
+    ASSERT(isRootInlineBox());
     return static_cast<RootInlineBox*>(this);
 }
 
