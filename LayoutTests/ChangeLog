@@ -1,3 +1,15 @@
+2007-03-14  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Mitz.
+        
+        Test case for <rdar://problem/5058774>
+        REGRESSION: In Mail, caret appears oversized when typing in a To Do note
+
+        * editing/style/highlight-expected.checksum: Added.
+        * editing/style/highlight-expected.png: Added.
+        * editing/style/highlight-expected.txt: Added.
+        * editing/style/highlight.html: Added.
+
 2007-03-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
