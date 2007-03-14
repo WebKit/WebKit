@@ -1,3 +1,13 @@
+2007-03-14  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Ada.
+
+        Make sure to call ResourceLoader::didReceiveData to ensure that there's a shared buffer with the resource
+        data, since SubresourceLoaderClients now make use of that buffer.
+        
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveData):
+
 2007-03-14  Administrator  <acarlsson@apple.com>
 
         Get the size from the shared buffer.

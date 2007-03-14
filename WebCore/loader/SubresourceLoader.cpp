@@ -168,13 +168,13 @@ void SubresourceLoader::didReceiveData(const char* data, int length, long long l
     // Reference the object in this method since the additional processing can do
     // anything including removing the last reference to this object; one example of this is 3266216.
     RefPtr<SubresourceLoader> protect(this);
+    
+    ResourceLoader::didReceiveData(data, length, lengthReceived, allAtOnce);
 
     // A subresource loader does not load multipart sections progressively.
     // So don't deliver any data to the loader yet.
     if (!m_loadingMultipartContent && m_client)
         m_client->didReceiveData(this, data, length);
-
-    ResourceLoader::didReceiveData(data, length, lengthReceived, allAtOnce);
 }
 
 void SubresourceLoader::didFinishLoading()
