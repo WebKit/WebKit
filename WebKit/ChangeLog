@@ -1,3 +1,24 @@
+2007-03-14  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5058714>
+        http://bugs.webkit.org/show_bug.cgi?id=13050
+        
+        World leaks seen on Leopard after opening then closing tab (13050)
+
+        Add a hash set to prevent the load count to be increased twice for the same resource.
+        
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchWillSendRequest):
+        (WebFrameLoaderClient::dispatchDidFinishLoading):
+        (WebFrameLoaderClient::dispatchDidFailLoading):
+        * WebView/WebDocumentLoaderMac.h:
+        * WebView/WebDocumentLoaderMac.mm:
+        (loadingResources):
+        (WebDocumentLoaderMac::increaseLoadCount):
+        (WebDocumentLoaderMac::decreaseLoadCount):
+
 2007-03-14 Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

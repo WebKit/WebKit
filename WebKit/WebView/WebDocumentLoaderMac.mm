@@ -34,6 +34,13 @@
 
 using namespace WebCore;
 
+static HashSet<unsigned long>& loadingResources()
+{
+    static HashSet<unsigned long> resources;
+    
+    return resources;
+}
+
 WebDocumentLoaderMac::WebDocumentLoaderMac(const ResourceRequest& request, const SubstituteData& substituteData)
     : DocumentLoader(request, substituteData)
     , m_dataSource(nil)
@@ -71,20 +78,27 @@ void WebDocumentLoaderMac::detachFromFrame()
     HardRelease(m_dataSource);
 }
 
-void WebDocumentLoaderMac::increaseLoadCount()
+void WebDocumentLoaderMac::increaseLoadCount(unsigned long identifier)
 {
     ASSERT(m_dataSource);
     
+    if (loadingResources().contains(identifier))
+        return;
+    
+    loadingResources().add(identifier);
+       
     if (m_loadCount == 0)
         HardRetain(m_dataSource);
     
     m_loadCount++;
 }
 
-void WebDocumentLoaderMac::decreaseLoadCount()
+void WebDocumentLoaderMac::decreaseLoadCount(unsigned long identifier)
 {
     ASSERT(m_loadCount > 0);
 
+    loadingResources().remove(identifier);
+    
     m_loadCount--;
 
     if (m_loadCount == 0)

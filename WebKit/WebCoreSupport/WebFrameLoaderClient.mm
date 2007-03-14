@@ -284,7 +284,7 @@ void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, unsig
     WebResourceDelegateImplementationCache implementations = WebViewGetResourceLoadDelegateImplementations(webView);
 
     if (redirectResponse.isNull())
-        static_cast<WebDocumentLoaderMac*>(loader)->increaseLoadCount();
+        static_cast<WebDocumentLoaderMac*>(loader)->increaseLoadCount(identifier);
 
     if (implementations.delegateImplementsWillSendRequest)
         request = implementations.willSendRequestFunc(resourceLoadDelegate, @selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:), webView, [webView _objectForIdentifier:identifier], request.nsURLRequest(), redirectResponse.nsURLResponse(), dataSource(loader));
@@ -353,7 +353,7 @@ void WebFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader* loader, unsi
         implementations.didFinishLoadingFromDataSourceFunc(resourceLoadDelegate, @selector(webView:resource:didFinishLoadingFromDataSource:), webView, [webView _objectForIdentifier:identifier], dataSource(loader));
     [webView _removeObjectForIdentifier:identifier];
 
-    static_cast<WebDocumentLoaderMac*>(loader)->decreaseLoadCount();
+    static_cast<WebDocumentLoaderMac*>(loader)->decreaseLoadCount(identifier);
 }
 
 void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader* loader, unsigned long identifier, const WebCore::ResourceError& error)
@@ -362,7 +362,7 @@ void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader* loader, unsign
     [[webView _resourceLoadDelegateForwarder] webView:webView resource:[webView _objectForIdentifier:identifier] didFailLoadingWithError:error fromDataSource:dataSource(loader)];
     [webView _removeObjectForIdentifier:identifier];
 
-    static_cast<WebDocumentLoaderMac*>(loader)->decreaseLoadCount();
+    static_cast<WebDocumentLoaderMac*>(loader)->decreaseLoadCount(identifier);
 }
 
 void WebFrameLoaderClient::dispatchDidHandleOnloadEvents()
