@@ -164,7 +164,11 @@ static JSCell* formatLocaleDate(const GregorianDateTime& gdt, const LocaleDateTi
  
     // Offset year if needed
     struct tm localTM = gdt;
-    localTM.tm_year = equivalentYearForDST(gdt.year + 1900) - 1900;
+    int year = gdt.year + 1900;
+    bool yearNeedsOffset = year < 1900 || year > 2038;
+    if (yearNeedsOffset) {
+        localTM.tm_year = equivalentYearForDST(year) - 1900;
+     }
  
     // Do the formatting
     const int bufsize=128;

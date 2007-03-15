@@ -2,6 +2,15 @@
 
         Reviewed by .
 
+        - Fixed one more build breakage
+
+        * kjs/date_object.cpp:
+        (KJS::formatLocaleDate):
+
+2007-03-14  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by .
+
         - Fixed a build breakage.
 
         * kjs/DateMath.cpp:
