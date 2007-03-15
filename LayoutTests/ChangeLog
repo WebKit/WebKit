@@ -1,3 +1,17 @@
+2007-03-14  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+        - rdar://problem/5045720
+        - DST changes in US affect JavaScript date calculations (12975)
+        Changed layout tests to properly check for the new changes to DST in the
+        US. Also these now test that equivalent years return the same results for DST.
+
+        * fast/js/date-DST-time-cusps-expected.txt:
+        * fast/js/date-big-setdate-expected.txt:
+        * fast/js/resources/date-DST-time-cusps.js:
+        * fast/js/resources/date-big-setdate.js:
+
 t: 2007-03-15  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

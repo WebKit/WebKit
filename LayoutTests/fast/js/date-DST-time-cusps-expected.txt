@@ -3,10 +3,10 @@ For times that happen twice the behavior of all major browsers seems to be to pi
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS (new Date(1982, 3, 25, 2, 10)).getHours() is 1
-PASS (new Date(1982,3,25,2)).getHours() is 1
-PASS (new Date(1982, 9, 31, 1, 10)).getTimezoneOffset() is 480
-PASS (new Date(1982, 9, 31, 1)).getTimezoneOffset() is 480
+PASS (new Date(1982, 2, 14, 2, 10)).getHours() is 1
+PASS (new Date(1982, 2, 14, 2)).getHours() is 1
+PASS (new Date(1982, 11, 7, 1, 10)).getTimezoneOffset() is 480
+PASS (new Date(1982, 11, 7, 1)).getTimezoneOffset() is 480
 PASS successfullyParsed is true
 
 TEST COMPLETE

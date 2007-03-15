@@ -44,6 +44,9 @@
 
 #include <math.h>
 #include <stdint.h>
+#include <value.h>
+
+#include <wtf/Assertions.h>
 
 #if PLATFORM(DARWIN)
 #include <notify.h>
@@ -267,19 +270,74 @@ static int dateToDayInYear(int year, int month, int day)
     return yearday + monthday + day - 1;
 }
 
+double getCurrentUTCTime()
+{
+#if PLATFORM(WIN_OS)
+#if COMPILER(BORLAND)
+    struct timeb timebuffer;
+    ftime(&timebuffer);
+#else
+    struct _timeb timebuffer;
+    _ftime(&timebuffer);
+#endif
+    double utc = timebuffer.time * msPerSecond + timebuffer.millitm;
+#else
+    struct timeval tv;
+    gettimeofday(&tv, 0);
+    double utc = floor(tv.tv_sec * msPerSecond + tv.tv_usec / 1000);
+#endif
+    return utc;
+}
+
+// There is a hard limit at 2038 that we currently do not have a workaround
+// for (rdar://problem/5052975).
+static inline int maximumYearForDST()
+{
+    return 2037;
+}
+
+// It is ok if the cached year is not the current year (e.g. Dec 31st)
+// so long as the rules for DST did not change between the two years, if it does
+// the app would need to be restarted.
+static int mimimumYearForDST()
+{
+    // Because of the 2038 issue (see maximumYearForDST) if the current year is
+    // greater than the max year minus 27 (2010), we want to use the max year
+    // minus 27 instead, to ensure there is a range of 28 years that all years
+    // can map to.
+    static int minYear = std::min(msToYear(getCurrentUTCTime()), maximumYearForDST()-27) ;
+    return minYear;
+}
+
 /*
- * Find a year for which any given date will fall on the same weekday.
+ * Find an equivalent year for the one given, where equivalence is deterined by
+ * the two years having the same leapness and the first day of the year, falling
+ * on the same day of the week.
  *
- * This function should be used with caution when used other than
- * for determining DST; it hasn't been proven not to produce an
- * incorrect year for times near year boundaries.
+ * This function returns a year between this current year and 2037, however this
+ * function will potentially return incorrect results if the current year is after
+ * 2010, (rdar://problem/5052975), if the year passed in is before 1900 or after
+ * 2100, (rdar://problem/5055038).
  */
 int equivalentYearForDST(int year)
 {
-    int difference = 2000 - year;   // Arbitrary year around which most dates equivalence is correct
-    int quotient = difference / 28; // Integer division, no remainder.
-    int product = quotient * 28;
-    return year + product;
+    static int minYear = mimimumYearForDST();
+    static int maxYear = maximumYearForDST();
+    
+    int difference;
+    if (year > maxYear)
+        difference = minYear - year;
+    else if (year < minYear)
+        difference = maxYear - year;
+    else
+        return year;
+
+    int quotient = difference / 28;
+    int product = (quotient) * 28;
+
+    year += product;
+    ASSERT((year >= minYear && year <= maxYear) || (product - year == static_cast<int>(NaN)));
+    return year;
 }
 
 /*
@@ -376,11 +434,10 @@ static double getDSTOffset(double ms)
     // standard explicitly dictates that historical information should not be considered when
     // determining DST. For this reason we shift away from years that localtime can handle but would
     // return historically accurate information.
-
-    // if before Jan 01, 2000 12:00:00 AM UTC or after Jan 01, 2038 12:00:00 AM UTC
-    if (ms < 946684800000.0 || ms > 2145916800000.0) {
-        int year = equivalentYearForDST(msToYear(ms));
-        int day = dateToDayInYear(year, msToMonth(ms), msToDayInMonth(ms));
+    int year = msToYear(ms);
+    int equvalentYear = equivalentYearForDST(year);
+    if (year != equvalentYear) {
+        int day = dateToDayInYear(equvalentYear, msToMonth(ms), msToDayInMonth(ms));
         ms = (day * msPerDay) + msToMilliseconds(ms);
     }
 

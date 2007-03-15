@@ -1,3 +1,30 @@
+2007-03-14  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+        - rdar://problem/5045720
+        - DST changes in US affect JavaScript date calculations (12975)
+        This fix was to ensure we properly test for the new changes to DST in the US.
+        Also this fixes when we apply DST, now we correctly map most past years to current
+        DST rules.  We still have a small issue with years before 1900 or after 2100.
+        rdar://problem/5055038
+
+        * kjs/DateMath.cpp: Fix DST to match spec better.
+        (KJS::getCurrentUTCTime):
+        (KJS::mimimumYearForDST):
+        (KJS::maximumYearForDST):
+        (KJS::equivalentYearForDST):
+        (KJS::getDSTOffset):
+        * kjs/DateMath.h: Consolodated common funtionality.
+        * kjs/date_object.cpp: Consolodated common functionality.
+        (KJS::formatLocaleDate):
+        (KJS::DateObjectImp::construct):
+        * tests/mozilla/ecma/jsref.js: Added functions for finding the correct days when DST starts and ends.
+        * tests/mozilla/ecma/shell.js: Added back in the old DST functions for ease of merging with mozilla if needed.
+        * tests/mozilla/ecma_2/jsref.js: Added functions for finding the correct days when DST starts and ends.
+        * tests/mozilla/ecma_3/Date/shell.js: Added functions for finding the correct days when DST starts and ends.
+        * tests/mozilla/expected.html: Updated to show all date tests passing.
+
 2007-03-13  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by .
