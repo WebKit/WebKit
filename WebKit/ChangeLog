@@ -1,3 +1,27 @@
+2007-03-15  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders.
+
+        Fixed: <rdar://problem/5001428> stationery background images do not display
+       
+        Change 19244 fixed the method -[WebResource _shouldIgnoreWhenUnarchiving], but also broke Mail stationery.
+        
+        The problem was that with archivedResourceForURL now fixed, the engine will try to decode the images.  These images wouldn't decode because
+        Mail re-encodes and directly manipulates the image data in such a way that prevented WebKit from decoding the image.  Because Mail was giving
+        us bad data, the images wouldn't render.  This was never an issue before because archivedResourceForURL (broken) always returned nil, thus the
+        engine would never attempt to decode the resource, therefore the responsibility was delegated to Mail's protocol handler, which would do the 
+        right thing and load the image.
+        
+        Since Mail is relying on the fact it can store arbitrary data in WebArchives, I've introduced SPI that acts as a hint for us to ignore certain 
+        subresources while unarchiving. This SPI is -[WebResource _shouldIgnoreWhenUnarchiving].
+        
+        * WebView/WebResource.mm: Addd private ivar shouldIgnoreWhenUnarchiving.
+        (-[WebResource _ignoreWhenUnarchiving]): Added.
+        (-[WebResource _shouldIgnoreWhenUnarchiving]): Added.
+        * WebView/WebResourcePrivate.h: Added two methods to private header.
+        * WebView/WebUnarchivingState.m:
+        (-[WebUnarchivingState archivedResourceForURL:]): Check if we should ignore the resource.
+
 2007-03-15  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Antti.

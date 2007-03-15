@@ -49,6 +49,7 @@ NSString *WebResourceResponseKey =          @"WebResourceResponse";
     NSString *MIMEType;
     NSString *textEncodingName;
     NSURLResponse *response;
+    BOOL shouldIgnoreWhenUnarchiving;
 }
 @end
 
@@ -157,6 +158,17 @@ NSString *WebResourceResponseKey =          @"WebResourceResponse";
 @end
 
 @implementation WebResource (WebResourcePrivate)
+
+// SPI for Mail (5066325)
+- (void)_ignoreWhenUnarchiving
+{
+    _private->shouldIgnoreWhenUnarchiving = YES;
+}
+
+- (BOOL)_shouldIgnoreWhenUnarchiving
+{
+    return _private->shouldIgnoreWhenUnarchiving;
+}
 
 + (NSArray *)_resourcesFromPropertyLists:(NSArray *)propertyLists
 {

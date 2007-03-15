@@ -32,6 +32,7 @@
 #import "WebArchive.h"
 #import <JavaScriptCore/Assertions.h>
 #import "WebResource.h"
+#import "WebResourcePrivate.h"
 #import "WebNSURLExtras.h"
 
 @implementation WebUnarchivingState
@@ -77,11 +78,9 @@
 
 - (WebResource *)archivedResourceForURL:(NSURL *)URL
 {
-    // FIXME: <rdar://problem/4699166> REGRESSION: Background images in Mail stationery do not load
-    // This should be just return [URL _web_originalDataAsString]
-    WebResource *resource = [archivedResources objectForKey:URL];
-    if (!resource)
-        resource = [archivedResources objectForKey:[URL _web_originalDataAsString]];
+    WebResource *resource = [archivedResources objectForKey:[URL _web_originalDataAsString]];
+    if ([resource _shouldIgnoreWhenUnarchiving]) 
+        return nil;
     return resource;
 }
 
