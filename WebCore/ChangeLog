@@ -1,3 +1,10 @@
+2007-03-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Added an assert to help catch a bug. Hopefully someone will hit it!
+        
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::~KJSProxy):
+
 2007-03-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adele.
