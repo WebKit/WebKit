@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class ChildNodeList : public TreeNodeList {
+class ChildNodeList : public NodeList {
 public:
     ChildNodeList(Node*);
 
@@ -37,7 +37,7 @@ public:
     virtual Node* item(unsigned index) const;
 
 protected:
-    virtual bool elementMatches(Element*) const;
+    virtual bool nodeMatches(Node* testNode) const;
 };
 
 } // namespace WebCore

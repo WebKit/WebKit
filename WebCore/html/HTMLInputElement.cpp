@@ -591,7 +591,6 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
             if (checked())
                 document()->radioButtonChecked(this, form());
         }
-        HTMLGenericFormElement::parseMappedAttribute(attr);
     } else if (attr->name() == autocompleteAttr) {
         m_autocomplete = !equalIgnoringCase(attr->value(), "off");
     } else if (attr->name() == typeAttr) {

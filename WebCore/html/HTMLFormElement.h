@@ -65,8 +65,6 @@ public:
 
     void registerFormElement(HTMLGenericFormElement*);
     void removeFormElement(HTMLGenericFormElement*);
-    void formElementNameChanged(HTMLGenericFormElement*, const AtomicString& oldName);
-
     void registerImgElement(HTMLImageElement*);
     void removeImgElement(HTMLImageElement*);
 
@@ -101,8 +99,6 @@ public:
     virtual String target() const;
     void setTarget(const String&);
 
-    HTMLGenericFormElement* oldNamedElement(const AtomicString& oldName) const;
-
     // FIXME: Change this to be private after getting rid of all the clients.
     Vector<HTMLGenericFormElement*> formElements;
 
@@ -113,15 +109,13 @@ private:
 
     friend class HTMLFormCollection;
 
-    typedef HashMap<RefPtr<AtomicStringImpl>, RefPtr<HTMLGenericFormElement> > OldNameMap;
-
-    OldNameMap* m_oldNames;
     HTMLCollection::CollectionInfo* collectionInfo;
 
     Vector<HTMLImageElement*> imgElements;
     String m_url;
     String m_target;
     String m_enctype;
+    String m_boundary;
     String m_acceptcharset;
     bool m_post : 1;
     bool m_multipart : 1;

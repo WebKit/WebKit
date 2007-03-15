@@ -33,7 +33,7 @@ namespace WebCore {
 /**
  * NodeList which lists all Nodes in a Element with a given "name=" tag
  */
-class NameNodeList : public TreeNodeList {
+class NameNodeList : public NodeList {
 public:
     NameNodeList(Node* doc, const String& name);
 
@@ -44,10 +44,10 @@ public:
 
     // Other methods (not part of DOM)
     virtual void rootNodeChildrenChanged() { }
-    virtual void rootNodeAttributeChanged() { TreeNodeList::rootNodeChildrenChanged(); }
+    virtual void rootNodeAttributeChanged() { NodeList::rootNodeChildrenChanged(); }
 
 protected:
-    virtual bool elementMatches(Element*) const;
+    virtual bool nodeMatches(Node* testNode) const;
 
     String nodeName;
 };

@@ -1,8 +1,10 @@
 /**
+ * This file is part of the DOM implementation for KDE.
+ *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,22 +30,7 @@
 
 namespace WebCore {
 
-NodeList::~NodeList()
-{
-}
-
-Node* NodeList::itemWithName(const AtomicString& name) const
-{
-    unsigned l = length();
-    for (unsigned i = 0; i < l; i++) {
-        Node* node = item(i);
-        if (node->isElementNode() && static_cast<Element*>(node)->getIDAttribute() == name)
-            return node;
-    }
-    return 0;
-}
-
-TreeNodeList::TreeNodeList(PassRefPtr<Node> _rootNode)
+NodeList::NodeList(PassRefPtr<Node> _rootNode)
     : rootNode(_rootNode),
       isLengthCacheValid(false),
       isItemCacheValid(false)
@@ -51,12 +38,12 @@ TreeNodeList::TreeNodeList(PassRefPtr<Node> _rootNode)
     rootNode->registerNodeList(this);
 }    
 
-TreeNodeList::~TreeNodeList()
+NodeList::~NodeList()
 {
     rootNode->unregisterNodeList(this);
 }
 
-unsigned TreeNodeList::recursiveLength(Node* start) const
+unsigned NodeList::recursiveLength(Node* start) const
 {
     if (!start)
         start = rootNode.get();
@@ -68,7 +55,8 @@ unsigned TreeNodeList::recursiveLength(Node* start) const
 
     for (Node* n = start->firstChild(); n; n = n->nextSibling())
         if (n->isElementNode()) {
-            len += elementMatches(static_cast<Element*>(n));
+            if (nodeMatches(n))
+                len++;
             len += recursiveLength(n);
         }
 
@@ -80,13 +68,13 @@ unsigned TreeNodeList::recursiveLength(Node* start) const
     return len;
 }
 
-Node* TreeNodeList::itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const
+Node* NodeList::itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const
 {
     ASSERT(remainingOffset >= 0);
 
     for (Node *n = start; n; n = n->traverseNextNode(rootNode.get())) {
         if (n->isElementNode()) {
-            if (elementMatches(static_cast<Element*>(n))) {
+            if (nodeMatches(n)) {
                 if (!remainingOffset) {
                     lastItem = n;
                     lastItemOffset = offset;
@@ -101,12 +89,12 @@ Node* TreeNodeList::itemForwardsFromCurrent(Node* start, unsigned offset, int re
     return 0; // no matching node in this subtree
 }
 
-Node* TreeNodeList::itemBackwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const
+Node* NodeList::itemBackwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const
 {
     ASSERT(remainingOffset < 0);
     for (Node *n = start; n; n = n->traversePreviousNode(rootNode.get())) {
         if (n->isElementNode()) {
-            if (elementMatches(static_cast<Element*>(n))) {
+            if (nodeMatches(n)) {
                 if (!remainingOffset) {
                     lastItem = n;
                     lastItemOffset = offset;
@@ -121,7 +109,7 @@ Node* TreeNodeList::itemBackwardsFromCurrent(Node* start, unsigned offset, int r
     return 0; // no matching node in this subtree
 }
 
-Node* TreeNodeList::recursiveItem(unsigned offset, Node* start) const
+Node* NodeList::recursiveItem(unsigned offset, Node* start) const
 {
     int remainingOffset = offset;
     if (!start) {
@@ -142,11 +130,12 @@ Node* TreeNodeList::recursiveItem(unsigned offset, Node* start) const
         return itemForwardsFromCurrent(start, offset, remainingOffset);
 }
 
-Node* TreeNodeList::itemWithName(const AtomicString& name) const
+Node* NodeList::itemWithName(const AtomicString& elementId) const
 {
     if (rootNode->isDocumentNode() || rootNode->inDocument()) {
-        Element* node = rootNode->document()->getElementById(name);
-        if (!node || !elementMatches(node))
+        Node* node = rootNode->document()->getElementById(elementId);
+
+        if (!node || !nodeMatches(node))
             return 0;
 
         for (Node* p = node->parentNode(); p; p = p->parentNode())
@@ -156,14 +145,17 @@ Node* TreeNodeList::itemWithName(const AtomicString& name) const
         return 0;
     }
 
-    return NodeList::itemWithName(name);
+    unsigned l = length();
+    for (unsigned i = 0; i < l; i++) {
+        Node* node = item(i);
+        if (node->isElementNode() && static_cast<Element*>(node)->getIDAttribute() == elementId)
+            return node;
+    }
+
+    return 0;
 }
 
-void TreeNodeList::rootNodeAttributeChanged()
-{
-}
-
-void TreeNodeList::rootNodeChildrenChanged()
+void NodeList::rootNodeChildrenChanged()
 {
     isLengthCacheValid = false;
     isItemCacheValid = false;     

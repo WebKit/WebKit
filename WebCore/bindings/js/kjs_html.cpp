@@ -1,7 +1,8 @@
 // -*- c-basic-offset: 4 -*-
 /*
+ *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -67,17 +68,6 @@ using namespace HTMLNames;
 using namespace EventNames;
 
 namespace KJS {
-
-class VectorNodeList : public NodeList {
-public:
-    VectorNodeList(const Vector<RefPtr<Node> >& nodes) : m_nodes(nodes) { }
-
-    virtual unsigned length() const { return m_nodes.size(); }
-    virtual Node* item(unsigned index) const { return index < m_nodes.size() ? m_nodes[index].get() : 0; }
-
-private:
-    Vector<RefPtr<Node> > m_nodes;
-};
 
 class HTMLElementFunction : public InternalFunctionImp {
 public:
@@ -1560,7 +1550,7 @@ JSValue *JSHTMLCollection::getNamedItems(ExecState* exec, const Identifier &prop
     if (namedItems.size() == 1)
         return toJS(exec, namedItems[0].get());
 
-    return toJS(exec, new VectorNodeList(namedItems));
+    return new DOMNamedNodesCollection(exec, namedItems);
 }
 
 JSValue* JSHTMLCollectionPrototypeFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)

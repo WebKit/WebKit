@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,8 @@
 #include "config.h"
 #include "JSHTMLFormElement.h"
 
-#include "HTMLCollection.h"
-#include "HTMLGenericFormElement.h"
 #include "HTMLFormElement.h"
+#include "HTMLCollection.h"
 
 using namespace KJS;
 
@@ -36,18 +35,17 @@ namespace WebCore {
 
 bool JSHTMLFormElement::canGetItemsForName(ExecState* exec, HTMLFormElement* form, const AtomicString& propertyName)
 {
-    if (!JSHTMLCollection(exec, form->elements().get()).getNamedItems(exec, propertyName)->isUndefined())
-        return true;
-    return !!form->oldNamedElement(propertyName);
+    // FIXME: ideally there should be a lighter-weight way of doing this
+    JSValue* namedItems = JSHTMLCollection(exec, form->elements().get()).getNamedItems(exec, propertyName);
+    return !namedItems->isUndefined();
 }
 
 JSValue* JSHTMLFormElement::nameGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
 {
-    HTMLFormElement* form = static_cast<HTMLFormElement*>(static_cast<JSHTMLElement*>(slot.slotBase())->impl());
-    JSValue* items = JSHTMLCollection(exec, form->elements().get()).getNamedItems(exec, propertyName);
-    if (!items->isUndefined())
-        return items;
-    return toJS(exec, form->oldNamedElement(propertyName));
+    JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
+    HTMLFormElement* form = static_cast<HTMLFormElement*>(thisObj->impl());
+    
+    return JSHTMLCollection(exec, form->elements().get()).getNamedItems(exec, propertyName);
 }
 
 }

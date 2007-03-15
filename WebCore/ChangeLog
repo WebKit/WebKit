@@ -1,3 +1,67 @@
+2007-03-15  Beth Dakin  <bdakin@apple.com>
+
+        Rubber-stamped by Adele.
+
+        Rolling out http://trac.webkit.org/projects/webkit/changeset/20148 
+        (which is a fix for http://bugs.webkit.org/show_bug.cgi?id=12595 
+        and rdar://4722863) because it causes a horrible memory-trasher. 
+
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::canGetItemsForName):
+        (WebCore::JSHTMLFormElement::nameGetter):
+        * bindings/js/kjs_dom.cpp:
+        (KJS::):
+        (KJS::DOMNamedNodesCollection::DOMNamedNodesCollection):
+        (KJS::DOMNamedNodesCollection::lengthGetter):
+        (KJS::DOMNamedNodesCollection::indexGetter):
+        (KJS::DOMNamedNodesCollection::getOwnPropertySlot):
+        * bindings/js/kjs_dom.h:
+        (KJS::DOMNamedNodesCollection::classInfo):
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLCollection::getNamedItems):
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::ChildNodeList):
+        (WebCore::ChildNodeList::length):
+        (WebCore::ChildNodeList::item):
+        (WebCore::ChildNodeList::nodeMatches):
+        * dom/ChildNodeList.h:
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::NameNodeList):
+        (WebCore::NameNodeList::item):
+        (WebCore::NameNodeList::nodeMatches):
+        * dom/NameNodeList.h:
+        (WebCore::NameNodeList::rootNodeAttributeChanged):
+        * dom/Node.cpp:
+        (WebCore::TagNodeList::TagNodeList):
+        (WebCore::TagNodeList::nodeMatches):
+        (WebCore::Node::registerNodeList):
+        (WebCore::Node::unregisterNodeList):
+        * dom/Node.h:
+        * dom/NodeList.cpp:
+        (WebCore::NodeList::NodeList):
+        (WebCore::NodeList::~NodeList):
+        (WebCore::NodeList::recursiveLength):
+        (WebCore::NodeList::itemForwardsFromCurrent):
+        (WebCore::NodeList::itemBackwardsFromCurrent):
+        (WebCore::NodeList::recursiveItem):
+        (WebCore::NodeList::itemWithName):
+        (WebCore::NodeList::rootNodeChildrenChanged):
+        * dom/NodeList.h:
+        (WebCore::NodeList::rootNodeAttributeChanged):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::HTMLFormElement):
+        (WebCore::HTMLFormElement::~HTMLFormElement):
+        (WebCore::HTMLFormElement::formData):
+        (WebCore::HTMLFormElement::parseMappedAttribute):
+        (WebCore::HTMLFormElement::removeFormElement):
+        * html/HTMLFormElement.h:
+        * html/HTMLGenericFormElement.cpp:
+        (WebCore::HTMLGenericFormElement::parseMappedAttribute):
+        (WebCore::HTMLGenericFormElement::insertedIntoTree):
+        * html/HTMLGenericFormElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+
 2007-03-15  Geoffrey Garen  <ggaren@apple.com>
 
         Added an assert to help catch a bug. Hopefully someone will hit it!

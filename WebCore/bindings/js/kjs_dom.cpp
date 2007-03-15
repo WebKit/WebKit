@@ -1121,4 +1121,59 @@ JSObject* getDOMExceptionConstructor(ExecState* exec)
   return cacheGlobalObject<DOMExceptionConstructor>(exec, "[[DOMException.constructor]]");
 }
 
+// -------------------------------------------------------------------------
+
+const ClassInfo DOMNamedNodesCollection::info = { "Collection", 0, 0, 0 };
+
+// Such a collection is usually very short-lived, it only exists
+// for constructs like document.forms.<name>[1],
+// so it shouldn't be a problem that it's storing all the nodes (with the same name). (David)
+DOMNamedNodesCollection::DOMNamedNodesCollection(ExecState* exec, const Vector<RefPtr<Node> >& nodes)
+  : m_nodes(nodes)
+{
+    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
+}
+
+JSValue* DOMNamedNodesCollection::lengthGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
+{
+  DOMNamedNodesCollection *thisObj = static_cast<DOMNamedNodesCollection*>(slot.slotBase());
+  return jsNumber(thisObj->m_nodes.size());
+}
+
+JSValue* DOMNamedNodesCollection::indexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
+{
+  DOMNamedNodesCollection *thisObj = static_cast<DOMNamedNodesCollection*>(slot.slotBase());
+  return toJS(exec, thisObj->m_nodes[slot.index()].get());
+}
+
+bool DOMNamedNodesCollection::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+  if (propertyName == lengthPropertyName) {
+    slot.setCustom(this, lengthGetter);
+    return true;
+  }
+
+  // array index ?
+  bool ok;
+  unsigned idx = propertyName.toUInt32(&ok);
+  if (ok && idx < m_nodes.size()) {
+    slot.setCustomIndex(this, idx, indexGetter);
+    return true;
+  }
+
+  // For IE compatibility, we need to be able to look up elements in a
+  // document.formName.name result by id as well as be index.
+
+  AtomicString atomicPropertyName = propertyName;
+  for (unsigned i = 0; i < m_nodes.size(); i++) {
+    Node* node = m_nodes[i].get();
+    if (node->hasAttributes() && node->attributes()->id() == atomicPropertyName) {
+      slot.setCustomIndex(this, i, indexGetter);
+      return true;
+    }
+  }
+
+  return DOMObject::getOwnPropertySlot(exec, propertyName, slot);
+}
+
 } // namespace

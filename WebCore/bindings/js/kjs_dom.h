@@ -142,6 +142,21 @@ namespace KJS {
   JSObject* getNodeConstructor(ExecState*);
   JSObject* getDOMExceptionConstructor(ExecState*);
 
+  // Internal class, used for the collection return by e.g. document.forms.myinput
+  // when multiple nodes have the same name.
+  class DOMNamedNodesCollection : public DOMObject {
+  public:
+    DOMNamedNodesCollection(ExecState *exec, const Vector<RefPtr<WebCore::Node> >& nodes);
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+private:
+    static JSValue *lengthGetter(ExecState* exec, JSObject *, const Identifier&, const PropertySlot& slot);
+    static JSValue *indexGetter(ExecState* exec, JSObject *, const Identifier&, const PropertySlot& slot);
+
+    Vector<RefPtr<WebCore::Node> > m_nodes;
+  };
+
 } // namespace
 
 #endif
