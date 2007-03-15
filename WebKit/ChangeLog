@@ -1,3 +1,19 @@
+2007-03-14  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13076
+        REGRESSION: Multiple loading tabs cause assertion in WebDocumentLoaderMac::decreaseLoadCount(unsigned long)
+
+        Store the identifier set in the document loader since identifiers are per-webview and not global.
+        
+        * WebView/WebDocumentLoaderMac.h:
+        * WebView/WebDocumentLoaderMac.mm:
+        (WebDocumentLoaderMac::WebDocumentLoaderMac):
+        (WebDocumentLoaderMac::attachToFrame):
+        (WebDocumentLoaderMac::increaseLoadCount):
+        (WebDocumentLoaderMac::decreaseLoadCount):
+
 2007-03-14  David Harrison  <harrison@apple.com>
 
         Reviewed by Maciej.

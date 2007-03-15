@@ -34,18 +34,10 @@
 
 using namespace WebCore;
 
-static HashSet<unsigned long>& loadingResources()
-{
-    static HashSet<unsigned long> resources;
-    
-    return resources;
-}
-
 WebDocumentLoaderMac::WebDocumentLoaderMac(const ResourceRequest& request, const SubstituteData& substituteData)
     : DocumentLoader(request, substituteData)
     , m_dataSource(nil)
     , m_hasEverBeenDetached(false)
-    , m_loadCount(0)
 {
 }
 
@@ -64,7 +56,7 @@ WebDataSource *WebDocumentLoaderMac::dataSource() const
 void WebDocumentLoaderMac::attachToFrame()
 {
     DocumentLoader::attachToFrame();
-    ASSERT(m_loadCount == 0);
+    ASSERT(m_loadingResources.isEmpty());
 
     if (m_hasEverBeenDetached)
         HardRetain(m_dataSource);
@@ -82,25 +74,21 @@ void WebDocumentLoaderMac::increaseLoadCount(unsigned long identifier)
 {
     ASSERT(m_dataSource);
     
-    if (loadingResources().contains(identifier))
+    if (m_loadingResources.contains(identifier))
         return;
-    
-    loadingResources().add(identifier);
-       
-    if (m_loadCount == 0)
+
+    if (m_loadingResources.isEmpty() == 0)
         HardRetain(m_dataSource);
-    
-    m_loadCount++;
+
+    m_loadingResources.add(identifier);
 }
 
 void WebDocumentLoaderMac::decreaseLoadCount(unsigned long identifier)
 {
-    ASSERT(m_loadCount > 0);
-
-    loadingResources().remove(identifier);
+    ASSERT(m_loadingResources.contains(identifier));
     
-    m_loadCount--;
-
-    if (m_loadCount == 0)
+    m_loadingResources.remove(identifier);
+    
+    if (m_loadingResources.isEmpty())
         HardRelease(m_dataSource);
 }

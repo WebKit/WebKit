@@ -27,6 +27,7 @@
  */
 
 #import <WebCore/DocumentLoader.h>
+#import <wtf/HashSet.h>
 
 @class WebDataSource;
 
@@ -50,5 +51,5 @@ public:
 private:
     WebDataSource *m_dataSource;
     bool m_hasEverBeenDetached;
-    unsigned m_loadCount;
+    HashSet<unsigned long> m_loadingResources;
 };
