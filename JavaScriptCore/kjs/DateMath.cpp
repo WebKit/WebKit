@@ -52,6 +52,10 @@
 #include <notify.h>
 #endif
 
+#if HAVE(SYS_TIMEB_H)
+#include <sys/timeb.h>
+#endif
+
 namespace KJS {
 
 /* Constants */

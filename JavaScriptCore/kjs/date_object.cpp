@@ -164,11 +164,7 @@ static JSCell* formatLocaleDate(const GregorianDateTime& gdt, const LocaleDateTi
  
     // Offset year if needed
     struct tm localTM = gdt;
-    int year = gdt.year + 1900;
-    bool yearNeedsOffset = year < 1900 || year > 2038;
-    if (yearNeedsOffset) {
-        localTM.tm_year = equivalentYearForDST(year) - 1900;
-     }
+    localTM.tm_year = equivalentYearForDST(gdt.year + 1900) - 1900;
  
     // Do the formatting
     const int bufsize=128;
@@ -618,21 +614,7 @@ JSObject *DateObjectImp::construct(ExecState *exec, const List &args)
   double value;
 
   if (numArgs == 0) { // new Date() ECMA 15.9.3.3
-#if PLATFORM(WIN_OS)
-#if COMPILER(BORLAND)
-    struct timeb timebuffer;
-    ftime(&timebuffer);
-#else
-    struct _timeb timebuffer;
-    _ftime(&timebuffer);
-#endif
-    double utc = timebuffer.time * msPerSecond + timebuffer.millitm;
-#else
-    struct timeval tv;
-    gettimeofday(&tv, 0);
-    double utc = floor(tv.tv_sec * msPerSecond + tv.tv_usec / 1000);
-#endif
-    value = utc;
+    value = getCurrentUTCTime();
   } else if (numArgs == 1) {
     if (args[0]->isObject(&DateInstance::info))
       value = static_cast<DateInstance*>(args[0])->internalValue()->toNumber(exec);
