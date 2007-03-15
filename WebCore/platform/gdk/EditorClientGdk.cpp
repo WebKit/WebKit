@@ -242,7 +242,7 @@ void EditorClientGdk::handleKeypress(KeyboardEvent* event)
                 frame->editor()->execCommand("MoveDown");
                 break;
             default:
-                frame->editor()->insertText(kevent->text(), false, event);
+                frame->editor()->insertText(kevent->text(), event);
             }
             event->setDefaultHandled();
         }

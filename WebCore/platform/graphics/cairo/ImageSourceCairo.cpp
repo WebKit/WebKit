@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "ImageSource.h"
+#include "SharedBuffer.h"
 
 #if PLATFORM(CAIRO)
 
@@ -104,17 +105,17 @@ bool ImageSource::initialized() const
     return m_decoder;
 }
 
-void ImageSource::setData(const Vector<char>* data, bool allDataReceived)
+void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
 {
     // Make the decoder by sniffing the bytes.
     // This method will examine the data and instantiate an instance of the appropriate decoder plugin.
     // If insufficient bytes are available to determine the image type, no decoder plugin will be
     // made.
     delete m_decoder;
-    m_decoder = createDecoder(*data);
+    m_decoder = createDecoder(data->buffer());
     if (!m_decoder)
         return;
-    m_decoder->setData(*data, allDataReceived);
+    m_decoder->setData(data->buffer(), allDataReceived);
 }
 
 bool ImageSource::isSizeAvailable()
