@@ -1,3 +1,13 @@
+2007-03-14  David Hyatt  <hyatt@apple.com>
+
+        Add asserts to help catch double refs and double derefs of CachedResources.
+
+        Reviewed by mjs
+
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::ref):
+        (WebCore::CachedResource::deref):
+
 2007-03-14  Alice Liu  <alice.liu@apple.com>
 
         Rubber-stamped by Hyatt.

@@ -94,6 +94,7 @@ void CachedResource::setRequest(Request* request)
 
 void CachedResource::ref(CachedResourceClient *c)
 {
+    ASSERT(!m_clients.contains(c));
     if (!referenced() && inCache())
         cache()->addToLiveObjectSize(size());
     m_clients.add(c);
@@ -101,6 +102,7 @@ void CachedResource::ref(CachedResourceClient *c)
 
 void CachedResource::deref(CachedResourceClient *c)
 {
+    ASSERT(m_clients.contains(c));
     m_clients.remove(c);
     if (canDelete() && !inCache())
         delete this;
