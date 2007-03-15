@@ -1,3 +1,9 @@
+2007-03-16  Shrikant Gangoda  <shrikant.gangoda@celunite.com>
+
+        Gdk build fix.
+
+        * kjs/DateMath.cpp:  gettimeofday comes from <sys/time.h> on Linux.
+
 2007-03-14  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by .
