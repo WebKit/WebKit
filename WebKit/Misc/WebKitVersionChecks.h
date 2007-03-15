@@ -31,12 +31,10 @@
    For example the version 1.2.3 is returned as 0x00010203 and version 200.3.5 is returned as 0x00C80305
    A version of -1 is returned if the main executable did not link against WebKit (should never happen). */
 
-
-// FIXME 4927747: We should make the framework version numbers match the info.plist version numbers
-#define WEBKIT_FIRST_VERSION_WITH_3_0_CONTEXT_MENU_TAGS 0x00020000
-#define WEBKIT_FIRST_VERSION_WITHOUT_ACROBAT_QUIRK 0x00020000
-#define WEBKIT_FIRST_VERSION_WITH_LOCAL_RESOURCE_SECURITY_RESTRICTION 0x00020000
-#define WEBKIT_FIRST_VERSION_WITHOUT_APERTURE_QUIRK 0x00020000
+#define WEBKIT_FIRST_VERSION_WITH_3_0_CONTEXT_MENU_TAGS 0x020A0000 // 522.0.0
+#define WEBKIT_FIRST_VERSION_WITHOUT_ACROBAT_QUIRK 0x020A0000 // 522.0.0
+#define WEBKIT_FIRST_VERSION_WITH_LOCAL_RESOURCE_SECURITY_RESTRICTION 0x020A0000 // 522.0.0
+#define WEBKIT_FIRST_VERSION_WITHOUT_APERTURE_QUIRK 0x020A0000 // 522.0.0
 
 #ifdef __cplusplus
 extern "C" {

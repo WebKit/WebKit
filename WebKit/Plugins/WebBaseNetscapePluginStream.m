@@ -221,8 +221,8 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
     stream.url = strdup([responseURL _web_URLCString]);
 
     stream.ndata = self;
-    stream.end = expectedContentLength > 0 ? expectedContentLength : 0;
-    stream.lastmodified = [lastModifiedDate timeIntervalSince1970];
+    stream.end = expectedContentLength > 0 ? (uint32)expectedContentLength : 0;
+    stream.lastmodified = (uint32)[lastModifiedDate timeIntervalSince1970];
     stream.notifyData = notifyData;
     
     transferMode = NP_NORMAL;

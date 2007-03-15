@@ -5,20 +5,20 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>JavaScriptCore</string>
+	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleGetInfoString</key>
-	<string>522+, Copyright 2003-2007 Apple Inc.; Copyright 1999-2001 Harri Porten &lt;porten@kde.org&gt;; Copyright 2001 Peter Kelly &lt;pmk@post.com&gt;; Copyright 1997-2005 University of Cambridge; Copyright 1991, 2000, 2001 by Lucent Technologies.</string>
+	<string>${BUNDLE_VERSION}, Copyright 2003-2007 Apple Inc.; Copyright 1999-2001 Harri Porten &lt;porten@kde.org&gt;; Copyright 2001 Peter Kelly &lt;pmk@post.com&gt;; Copyright 1997-2005 University of Cambridge; Copyright 1991, 2000, 2001 by Lucent Technologies.</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.apple.JavaScriptCore</string>
+	<string>com.apple.${PRODUCT_NAME}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>JavaScriptCore</string>
+	<string>${PRODUCT_NAME}</string>
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>522+</string>
+	<string>${BUNDLE_VERSION}</string>
 	<key>CFBundleVersion</key>
-	<string>522+</string>
+	<string>${BUNDLE_VERSION}</string>
 </dict>
 </plist>

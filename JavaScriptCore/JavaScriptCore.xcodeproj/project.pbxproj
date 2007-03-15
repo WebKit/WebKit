@@ -467,6 +467,10 @@
 		14D857740A4696C80032146C /* testapi.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = testapi.js; sourceTree = "<group>"; };
 		14F137580A3A727E00F26F90 /* Context.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Context.cpp; sourceTree = "<group>"; };
 		14F137820A3A765B00F26F90 /* context.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = context.h; sourceTree = "<group>"; };
+		1C9051420BA9E8A70081E9D0 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
+		1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = JavaScriptCore.xcconfig; sourceTree = "<group>"; };
+		1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		1C9051450BA9E8A70081E9D0 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1CAF34880A6C421700ABE06E /* WebScriptObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebScriptObject.h; path = bindings/objc/WebScriptObject.h; sourceTree = "<group>"; };
 		45E12D8806A49B0F00E9DF84 /* testkjs.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 2; lastKnownFileType = sourcecode.cpp.cpp; name = testkjs.cpp; path = ../kjs/testkjs.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		5114F47B05E4426200D1BBBD /* runtime_root.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = runtime_root.cpp; path = bindings/runtime_root.cpp; sourceTree = "<group>"; tabWidth = 8; };
@@ -741,6 +745,7 @@
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				932FC3C10824BB61005B3C75 /* Intermediates */,
 				034768DFFF38A50411DB9C8B /* Products */,
+				1C90513E0BA9E8830081E9D0 /* Configurations */,
 			);
 			name = JavaScriptCore;
 			sourceTree = "<group>";
@@ -813,6 +818,17 @@
 				144007480A536CC20005F061 /* NodeList.h */,
 			);
 			name = minidom;
+			sourceTree = "<group>";
+		};
+		1C90513E0BA9E8830081E9D0 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				1C9051450BA9E8A70081E9D0 /* Base.xcconfig */,
+				1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */,
+				1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */,
+				1C9051420BA9E8A70081E9D0 /* Version.xcconfig */,
+			);
+			path = Configurations;
 			sourceTree = "<group>";
 		};
 		51856D950562EE9C008B9D83 /* bindings */ = {
@@ -1338,19 +1354,21 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C277108902AFE008A9EFC /* Build configuration list for PBXProject "JavaScriptCore" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* JavaScriptCore */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
+				932F5BE30822A1C700736975 /* All */,
 				932F5B3E0822A1C700736975 /* JavaScriptCore */,
-				935F69F508244FEA003D1A45 /* dftables */,
 				65FB3F6609D11E9100F49DEB /* Derived Sources */,
+				935F69F508244FEA003D1A45 /* dftables */,
 				1412111F0A48793C00480255 /* minidom */,
 				14BD59BE0A3E8F9000BAF59C /* testapi */,
 				932F5BDA0822A1C700736975 /* testkjs */,
-				932F5BE30822A1C700736975 /* All */,
 			);
 		};
 /* End PBXProject section */
@@ -1595,60 +1613,24 @@
 		1412113A0A48798400480255 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				HEADER_SEARCH_PATHS = (
-					.,
-					icu,
-					"$(HEADER_SEARCH_PATHS_QUOTED_1)",
-				);
-				HEADER_SEARCH_PATHS_QUOTED_1 = "\"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore\"";
-				INSTALL_PATH = "$(HOME)/bin";
-				PREBINDING = NO;
+				HEADER_SEARCH_PATHS = .;
 				PRODUCT_NAME = minidom;
-				ZERO_LINK = YES;
 			};
 			name = Debug;
 		};
 		1412113B0A48798400480255 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
-				HEADER_SEARCH_PATHS = (
-					.,
-					icu,
-					"$(HEADER_SEARCH_PATHS_QUOTED_1)",
-				);
-				HEADER_SEARCH_PATHS_QUOTED_1 = "\"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore\"";
-				INSTALL_PATH = "$(HOME)/bin";
-				PREBINDING = NO;
+				HEADER_SEARCH_PATHS = .;
 				PRODUCT_NAME = minidom;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
 		1412113C0A48798400480255 /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				HEADER_SEARCH_PATHS = (
-					.,
-					icu,
-					"$(HEADER_SEARCH_PATHS_QUOTED_1)",
-				);
-				HEADER_SEARCH_PATHS_QUOTED_1 = "\"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore\"";
-				INSTALL_PATH = "$(HOME)/bin";
-				PREBINDING = NO;
+				HEADER_SEARCH_PATHS = .;
 				PRODUCT_NAME = minidom;
-				ZERO_LINK = YES;
 			};
 			name = Production;
 		};
@@ -1675,132 +1657,30 @@
 		};
 		149C275E08902AFE008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
 				DEBUG_DEFINES = "";
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				EXPORTED_SYMBOLS_FILE = JavaScriptCore.exp;
-				GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(DEBUG_DEFINES)";
-				HEADER_SEARCH_PATHS = (
-					.,
-					icu,
-					"$(HEADER_SEARCH_PATHS_QUOTED_1)",
-				);
-				HEADER_SEARCH_PATHS_QUOTED_1 = "\"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore\"";
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
-				OTHER_LDFLAGS = (
-					"-sub_library",
-					libobjc,
-					"-Wl,-Y,3",
-				);
-				PRODUCT_NAME = JavaScriptCore;
-				VALID_ARCHS = "i386 ppc ppc7400 ppc970 ppc64 x86_64";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-long-double",
-					"-Wundef",
-					"-Wshorten-64-to-32",
-				);
 			};
 			name = Debug;
 		};
 		149C275F08902AFE008A9EFC /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
 				DEBUG_DEFINES = NDEBUG;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				EXPORTED_SYMBOLS_FILE = JavaScriptCore.exp;
-				GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(DEBUG_DEFINES)";
-				HEADER_SEARCH_PATHS = (
-					.,
-					icu,
-					"$(HEADER_SEARCH_PATHS_QUOTED_1)",
-				);
-				HEADER_SEARCH_PATHS_QUOTED_1 = "\"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore\"";
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
-				OTHER_LDFLAGS = (
-					"-sub_library",
-					libobjc,
-					"-Wl,-Y,3",
-				);
-				PRODUCT_NAME = JavaScriptCore;
-				VALID_ARCHS = "i386 ppc ppc7400 ppc970 ppc64 x86_64";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-long-double",
-					"-Wundef",
-					"-Wshorten-64-to-32",
-				);
 			};
 			name = Release;
 		};
 		149C276108902AFE008A9EFC /* Production */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
 				DEBUG_DEFINES = NDEBUG;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				EXPORTED_SYMBOLS_FILE = JavaScriptCore.exp;
-				GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(DEBUG_DEFINES)";
-				HEADER_SEARCH_PATHS = (
-					.,
-					icu,
-					"$(HEADER_SEARCH_PATHS_QUOTED_1)",
-				);
-				HEADER_SEARCH_PATHS_QUOTED_1 = "\"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore\"";
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks";
-				OTHER_LDFLAGS = (
-					"-sub_library",
-					libobjc,
-					"-Wl,-Y,3",
-				);
-				PRODUCT_NAME = JavaScriptCore;
 				SECTORDER_FLAGS = (
 					"-sectorder",
 					__TEXT,
 					__text,
 					"$(APPLE_INTERNAL_DIR)/OrderFiles/JavaScriptCore.order",
-				);
-				VALID_ARCHS = "i386 ppc ppc7400 ppc970 ppc64 x86_64";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-long-double",
-					"-Wundef",
-					"-Wshorten-64-to-32",
 				);
 			};
 			name = Production;
@@ -1832,25 +1712,14 @@
 		149C276D08902AFE008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DEBUG_DEFINES = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				PREBINDING = NO;
 				PRODUCT_NAME = All;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
 			};
 			name = Debug;
 		};
 		149C276E08902AFE008A9EFC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				PREBINDING = NO;
 				PRODUCT_NAME = All;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
 			};
 			name = Release;
 		};
@@ -1863,195 +1732,51 @@
 		};
 		149C277208902AFE008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_STRICT_ALIASING = YES;
-				GCC_THREADSAFE_STATICS = NO;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				MACOSX_DEPLOYMENT_TARGET = "$(MACOSX_DEPLOYMENT_TARGET_$(MAC_OS_X_VERSION_MAJOR))";
-				MACOSX_DEPLOYMENT_TARGET_ = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_1040 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_1050 = 10.5;
-				PREBINDING = NO;
 				STRIP_INSTALLED_PRODUCT = NO;
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-					"-Wno-long-double",
-					"-Wundef",
-					"-Wshorten-64-to-32",
-				);
 			};
 			name = Debug;
 		};
 		149C277308902AFE008A9EFC /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_DEBUGGING_SYMBOLS = full;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_ENABLE_SYMBOL_SEPARATION = NO;
-				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_STRICT_ALIASING = YES;
-				GCC_THREADSAFE_STATICS = NO;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				MACOSX_DEPLOYMENT_TARGET = "$(MACOSX_DEPLOYMENT_TARGET_$(MAC_OS_X_VERSION_MAJOR))";
-				MACOSX_DEPLOYMENT_TARGET_ = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_1040 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_1050 = 10.5;
-				PREBINDING = NO;
 				STRIP_INSTALLED_PRODUCT = NO;
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-					"-Wno-long-double",
-					"-Wundef",
-					"-Wshorten-64-to-32",
-				);
 			};
 			name = Release;
 		};
 		149C277508902AFE008A9EFC /* Production */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C9051450BA9E8A70081E9D0 /* Base.xcconfig */;
 			buildSettings = {
-				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_DEBUGGING_SYMBOLS = full;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_STRICT_ALIASING = YES;
-				GCC_THREADSAFE_STATICS = NO;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-					"-Wno-long-double",
-					"-Wundef",
-					"-Wshorten-64-to-32",
-				);
 			};
 			name = Production;
 		};
 		14BD59D70A3E8FC900BAF59C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				HEADER_SEARCH_PATHS = (
-					.,
-					icu,
-					"$(HEADER_SEARCH_PATHS_QUOTED_1)",
-				);
-				HEADER_SEARCH_PATHS_QUOTED_1 = "\"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore\"";
-				INSTALL_PATH = "$(HOME)/bin";
-				PREBINDING = NO;
+				HEADER_SEARCH_PATHS = .;
 				PRODUCT_NAME = testapi;
-				ZERO_LINK = YES;
 			};
 			name = Debug;
 		};
 		14BD59D80A3E8FC900BAF59C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
-				HEADER_SEARCH_PATHS = (
-					.,
-					icu,
-					"$(HEADER_SEARCH_PATHS_QUOTED_1)",
-				);
-				HEADER_SEARCH_PATHS_QUOTED_1 = "\"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore\"";
-				INSTALL_PATH = "$(HOME)/bin";
-				PREBINDING = NO;
+				HEADER_SEARCH_PATHS = .;
 				PRODUCT_NAME = testapi;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
 		14BD59D90A3E8FC900BAF59C /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				HEADER_SEARCH_PATHS = (
-					.,
-					icu,
-					"$(HEADER_SEARCH_PATHS_QUOTED_1)",
-				);
-				HEADER_SEARCH_PATHS_QUOTED_1 = "\"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore\"";
-				INSTALL_PATH = "$(HOME)/bin";
-				PREBINDING = NO;
+				HEADER_SEARCH_PATHS = .;
 				PRODUCT_NAME = testapi;
-				ZERO_LINK = YES;
 			};
 			name = Production;
 		};

@@ -1,3 +1,20 @@
+2007-03-15  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by John.
+
+        * Factored out most of our common build settings into .xcconfig files. Anything that was common in
+          each build configuration was factored out into the shared .xcconfig file.
+        * Adds a Version.xcconfig file to define the current framework version, to be used in other places.
+        * Use the new $(BUNDLE_VERSION) (defined in Version.xcconfig) in the preprocessed Info.plist.
+        * Use the versions defined in Version.xcconfig to set $(DYLIB_CURRENT_VERSION).
+
+        * Configurations/Base.xcconfig: Added.
+        * Configurations/DebugRelease.xcconfig: Added.
+        * Configurations/JavaScriptGlue.xcconfig: Added.
+        * Configurations/Version.xcconfig: Added.
+        * Info.plist:
+        * JavaScriptGlue.xcodeproj/project.pbxproj:
+
 2007-03-12  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
