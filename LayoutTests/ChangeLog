@@ -1,3 +1,40 @@
+2007-03-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        Removed an unnecessary block (one that was fully
+        selected but whose markup wasn't needed to preserve
+        appearance):
+        * editing/pasteboard/paste-text-011-expected.txt:
+        Removed unnecessary style spans:
+        * editing/pasteboard/merge-end-blockquote-expected.txt:
+        Removed unnecessary empty anonymous blocks:
+        * editing/execCommand/create-list-with-hr-expected.txt:
+        * editing/pasteboard/display-block-on-spans-expected.txt:
+        * editing/pasteboard/paste-text-006-expected.txt:
+        * editing/pasteboard/paste-table-001-expected.txt:
+        * editing/pasteboard/paste-text-013-expected.txt:
+        * editing/pasteboard/paste-text-002-expected.txt:
+        * editing/pasteboard/paste-list-001-expected.txt:
+        * editing/pasteboard/paste-text-005-expected.txt:
+        * editing/pasteboard/paste-text-003-expected.txt:
+        * editing/pasteboard/paste-text-014-expected.txt:
+        * editing/pasteboard/paste-pre-001-expected.txt:
+        Now (correctly) includes fully selected root:
+        * editing/pasteboard/paste-text-015-expected.checksum:
+        * editing/pasteboard/paste-text-015-expected.png:
+        * editing/pasteboard/paste-text-015-expected.txt:
+        * editing/inserting/insert-3907422-fix-expected.txt:
+        * editing/pasteboard/paste-text-004-expected.txt:
+        Demonstrates a bug that already existed (we don't inline 
+        the font styles from the Preference Pane on copy):
+        * editing/pasteboard/5027857-expected.checksum:
+        * editing/pasteboard/5027857-expected.png:
+        * editing/pasteboard/5027857-expected.txt:
+        * editing/pasteboard/paste-pre-002-expected.checksum:
+        * editing/pasteboard/paste-pre-002-expected.png:
+        * editing/pasteboard/paste-pre-002-expected.txt:
+
 2007-03-15  Beth Dakin  <bdakin@apple.com>
 
         Rubber-stamped by Adele.

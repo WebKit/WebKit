@@ -8,7 +8,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of P > BODY > HTML > #document to 0 of P > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 5 of #text > B > FONT > P > DIV > B > FONT > P > BODY > HTML > #document to 5 of #text > B > FONT > P > DIV > B > FONT > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 5 of #text > B > FONT > P > SPAN > B > FONT > P > BODY > HTML > #document to 5 of #text > B > FONT > P > SPAN > B > FONT > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -30,20 +30,20 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,0) size 784x0
           RenderInline {FONT} at (0,0) size 0x0
             RenderInline {B} at (0,0) size 0x0
+              RenderInline {SPAN} at (0,0) size 0x0
         RenderBlock (anonymous) at (0,0) size 784x58
-          RenderBlock {DIV} at (0,0) size 784x58
-            RenderBlock {P} at (0,0) size 784x21
-              RenderInline {FONT} at (0,0) size 55x20
-                RenderInline {B} at (0,0) size 55x20
-                  RenderText {#text} at (0,0) size 55x20
-                    text run at (0,0) width 55: "hello"
-            RenderBlock {P} at (0,37) size 784x21
-              RenderInline {FONT} at (0,0) size 55x20
-                RenderInline {B} at (0,0) size 55x20
-                  RenderText {#text} at (0,0) size 55x20
-                    text run at (0,0) width 55: "there"
-            RenderBlock (anonymous) at (0,74) size 784x0
+          RenderBlock {P} at (0,0) size 784x21
+            RenderInline {FONT} at (0,0) size 55x20
+              RenderInline {B} at (0,0) size 55x20
+                RenderText {#text} at (0,0) size 55x20
+                  text run at (0,0) width 55: "hello"
+          RenderBlock {P} at (0,37) size 784x21
+            RenderInline {FONT} at (0,0) size 55x20
+              RenderInline {B} at (0,0) size 55x20
+                RenderText {#text} at (0,0) size 55x20
+                  text run at (0,0) width 55: "there"
         RenderBlock (anonymous) at (0,74) size 784x0
           RenderInline {FONT} at (0,0) size 0x0
             RenderInline {B} at (0,0) size 0x0
-caret: position 5 of child 0 {#text} of child 0 {B} of child 0 {FONT} of child 1 {P} of child 0 {DIV} of child 0 {B} of child 0 {FONT} of child 4 {P} of child 1 {BODY} of child 0 {HTML} of document
+              RenderInline {SPAN} at (0,0) size 0x0
+caret: position 5 of child 0 {#text} of child 0 {B} of child 0 {FONT} of child 1 {P} of child 0 {SPAN} of child 0 {B} of child 0 {FONT} of child 4 {P} of child 1 {BODY} of child 0 {HTML} of document

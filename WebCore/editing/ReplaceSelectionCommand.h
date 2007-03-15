@@ -49,6 +49,7 @@ public:
     bool hasInterchangeNewlineAtEnd() const { return m_hasInterchangeNewlineAtEnd; }
     
     void removeNode(PassRefPtr<Node>);
+    void removeNodePreservingChildren(Node*);
 
 private:
     PassRefPtr<Node> insertFragmentForTestRendering(Node* context);
@@ -56,7 +57,6 @@ private:
     void restoreTestRenderingNodesToFragment(Node*);
     void removeInterchangeNodes(Node*);
     
-    void removeNodePreservingChildren(Node*);
     void insertNodeBefore(Node* node, Node* refNode);
 
     RefPtr<Document> m_document;

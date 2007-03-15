@@ -36,7 +36,6 @@ layer at (0,0) size 800x600
           RenderBlock {BLOCKQUOTE} at (40,0) size 676x28
             RenderText {#text} at (0,0) size 32x28
               text run at (0,0) width 32: "foo"
-      RenderBlock (anonymous) at (0,268) size 784x0
       RenderBlock {DIV} at (0,268) size 784x56 [border: (2px solid #FF0000)]
         RenderText {#text} at (14,14) size 12x28
           text run at (14,14) width 12: "x"

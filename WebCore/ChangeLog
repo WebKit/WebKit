@@ -1,3 +1,28 @@
+2007-03-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        ~2x speed up of 5k rich text paste:
+        http://shakespeare.mit.edu/hamlet/full.html        
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Remove the top 
+        level style span if its unnecessary before inserting
+        into the document, its faster than doing it after.
+        * editing/ReplaceSelectionCommand.h: Exposed 
+        ReplacementFragment::removeNodePreservingChildren so that
+        the style span can be removed using non-undoable removes,
+        like the rest of the removes done on the ReplacementFragment.
+        * editing/markup.cpp:
+        (WebCore::createMarkup): Make the style span the top level
+        element, otherwise it's useless.  This also facilitates the
+        optimization mentioned above.
+        When including markup for a fully selected root, include markup
+        for all the nodes beneath that fully selected root, to preserve 
+        the structure and appearance of the copied markup.  Did this
+        by merging with the code for adding markup for descendants of
+        special commonAncestorBlocks.
+
 2007-03-15  Beth Dakin  <bdakin@apple.com>
 
         Rubber-stamped by Adele.

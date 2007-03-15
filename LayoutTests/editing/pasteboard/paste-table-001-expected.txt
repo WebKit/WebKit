@@ -67,7 +67,6 @@ layer at (0,0) size 800x600
                 RenderTableCell {TD} at (85,26) size 201x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                   RenderText {#text} at (2,2) size 197x18
                     text run at (2,2) width 197: "I should be in the right column."
-          RenderBlock (anonymous) at (0,54) size 756x0
           RenderTable {TABLE} at (0,54) size 292x54 [border: (2px outset #808080)]
             RenderTableSection {TBODY} at (2,2) size 288x50
               RenderTableRow {TR} at (0,2) size 288x22

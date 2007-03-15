@@ -438,26 +438,13 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
             ancestorsToClose.append(n);
     }
     
-    // Add a wrapper span with the styles that all of the nodes in the markup inherit.
-    if (!commonAncestor->isElementNode())
-        commonAncestor = commonAncestor->parentNode();
-    
-    if (commonAncestor) {
-        RefPtr<CSSComputedStyleDeclaration> computedStyle = new CSSComputedStyleDeclaration(commonAncestor);
-        RefPtr<CSSMutableStyleDeclaration> style = computedStyle->copyInheritableProperties();
-        // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote, to help
-        // us differentiate those styles from ones that the user has applied.  This helps us
-        // get the color of content pasted into blockquotes right.
-        removeEnclosingMailBlockquoteStyle(style.get(), commonAncestor);
-        
-        if (style->length() > 0) {
-            // FIXME: Handle case where style->cssText() has illegal characters in it, like "
-            DeprecatedString openTag = DeprecatedString("<span class=\"") + AppleStyleSpanClass + "\" style=\"" + style->cssText().deprecatedString() + "\">";
-            markups.prepend(openTag);
-            markups.append("</span>");
-        }
-    }
-    
+    Node* body = enclosingNodeWithTag(commonAncestor, bodyTag);
+    // FIXME: Do this for all fully selected blocks, not just the body.
+    Node* fullySelectedRoot = body && *Selection::selectionFromContentsOfNode(body).toRange() == *range ? body : 0;
+    // FIXME: Only include markup for a fully selected root (and ancestors of lastClosed up to that root) if
+    // there are styles/attributes on those nodes that need to be included to preserve the appearance of the copied markup.
+    if (fullySelectedRoot)
+        commonAncestorBlock = fullySelectedRoot;
     // Include ancestor blocks that are required to retain the appearance of the copied markup.
     if (annotate &&
         (commonAncestorBlock->hasTagName(listingTag)
@@ -465,14 +452,55 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
             || commonAncestorBlock->hasTagName(preTag)
             || commonAncestorBlock->hasTagName(tableTag)
             || commonAncestorBlock->hasTagName(ulTag)
-            || commonAncestorBlock->hasTagName(xmpTag))) {
+            || commonAncestorBlock->hasTagName(xmpTag)
+            || commonAncestorBlock == fullySelectedRoot)) {
+        // Also include all of the ancestors of lastClosed up to this ancestor block.
         for (Node* ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
-            markups.prepend(startMarkup(ancestor, range, annotate));
-            markups.append(endMarkup(ancestor));
+            if (ancestor == fullySelectedRoot) {
+                // From a fully selected root we want:
+                // The non-inheritble styles from its matched rules (author only).
+                RefPtr<CSSMutableStyleDeclaration> style = styleFromMatchedRulesForElement(static_cast<Element*>(fullySelectedRoot));
+                
+                // The non-inheritble styles from its inline style declaration.
+                RefPtr<CSSMutableStyleDeclaration> inlineStyleDecl = static_cast<HTMLElement*>(fullySelectedRoot)->getInlineStyleDecl();
+                style->merge(inlineStyleDecl.get());
+                
+                // Bring the background attribute over, but not as an attribute because a background attribute on a div
+                // appears to have no effect.
+                if (!style->getPropertyCSSValue(CSS_PROP_BACKGROUND_IMAGE) && static_cast<Element*>(fullySelectedRoot)->hasAttribute(backgroundAttr))
+                    style->setProperty(CSS_PROP_BACKGROUND_IMAGE, "url('" + static_cast<Element*>(fullySelectedRoot)->getAttribute(backgroundAttr) + "')");
+                
+                if (style->length()) {
+                    markups.prepend("<div style='" + style->cssText().deprecatedString() + "'>");
+                    markups.append("</div>");
+                }
+            } else {
+                markups.prepend(startMarkup(ancestor, range, annotate));
+                markups.append(endMarkup(ancestor));
+            }
             if (nodes)
                 nodes->append(ancestor);
+            
+            lastClosed = ancestor;
+            
             if (ancestor == commonAncestorBlock)
                 break;
+        }
+    }
+    
+    // Add a wrapper span with the styles that all of the nodes in the markup inherit.
+    if (Node* parentOfLastClosed = lastClosed->parentNode()) {
+        RefPtr<CSSMutableStyleDeclaration> style = computedStyle(parentOfLastClosed)->copyInheritableProperties();
+        // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote, to help
+        // us differentiate those styles from ones that the user has applied.  This helps us
+        // get the color of content pasted into blockquotes right.
+        removeEnclosingMailBlockquoteStyle(style.get(), parentOfLastClosed);
+        
+        if (style->length() > 0) {
+            // FIXME: Handle case where style->cssText() has illegal characters in it, like "
+            DeprecatedString openTag = DeprecatedString("<span class=\"") + AppleStyleSpanClass + "\" style=\"" + style->cssText().deprecatedString() + "\">";
+            markups.prepend(openTag);
+            markups.append("</span>");
         }
     }
 
@@ -490,35 +518,6 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
                 markups.append(endMarkup(ancestor));
             }
         }
-    }
-    
-    Node* root = range->startPosition().node();
-    while (root && !root->hasTagName(bodyTag))
-        root = root->parentNode();
-    // Include markup for fully selected blocks (turn the body into a div so that we
-    // don't end up with multiple bodies after a paste).
-    // FIXME: Do this for all fully selected blocks, not just the body.
-    if (root && *Selection::selectionFromContentsOfNode(root).toRange() == *range) {
-        // From this fully selected root editable element we want:
-        // The non-inheritble styles from its matched rules (author only).
-        RefPtr<CSSMutableStyleDeclaration> style = styleFromMatchedRulesForElement(static_cast<Element*>(root));
-        
-        // The non-inheritble styles from its inline style declaration.
-        RefPtr<CSSMutableStyleDeclaration> inlineStyleDecl = static_cast<HTMLElement*>(root)->getInlineStyleDecl();
-        style->merge(inlineStyleDecl.get());
-
-        // All the inheritble styles from its computed style.
-        RefPtr<CSSComputedStyleDeclaration> computedStyle = new CSSComputedStyleDeclaration(static_cast<Element*>(root));
-        RefPtr<CSSMutableStyleDeclaration> inheritedComputedProperties = computedStyle->copyInheritableProperties();
-        style->merge(inheritedComputedProperties.get());
-        
-        // Bring the background attribute over, but not as an attribute because a background attribute on a div
-        // appears to have no effect.
-        if (!style->getPropertyCSSValue(CSS_PROP_BACKGROUND_IMAGE) && static_cast<Element*>(root)->hasAttribute(backgroundAttr))
-            style->setProperty(CSS_PROP_BACKGROUND_IMAGE, "url('" + static_cast<Element*>(root)->getAttribute(backgroundAttr) + "')");
-        
-        markups.prepend("<div style='" + style->cssText().deprecatedString() + "'>");
-        markups.append("</div>");
     }
 
     doc->frame()->editor()->deleteButtonController()->enable();

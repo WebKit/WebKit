@@ -9,7 +9,7 @@ EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > SPAN > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document to 3 of #text > SPAN > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document to 3 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -36,13 +36,11 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (0,0) size 704x18
             RenderText {#text} at (0,0) size 81x18
               text run at (0,0) width 81: "Blockquoted"
-            RenderInline {SPAN} at (0,0) size 21x18
-              RenderText {#text} at (81,0) size 21x18
-                text run at (81,0) width 21: "foo"
+            RenderText {#text} at (81,0) size 21x18
+              text run at (81,0) width 21: "foo"
           RenderBlock {DIV} at (0,18) size 704x18
-            RenderInline {SPAN} at (0,0) size 20x18
-              RenderText {#text} at (0,0) size 20x18
-                text run at (0,0) width 20: "bar"
+            RenderText {#text} at (0,0) size 20x18
+              text run at (0,0) width 20: "bar"
             RenderText {#text} at (20,0) size 33x18
               text run at (20,0) width 33: " Text"
-caret: position 3 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of child 0 {BLOCKQUOTE} of child 10 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {#text} of child 1 {DIV} of child 0 {BLOCKQUOTE} of child 10 {DIV} of child 1 {BODY} of child 0 {HTML} of document
