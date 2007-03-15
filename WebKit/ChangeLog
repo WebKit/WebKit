@@ -1,3 +1,14 @@
+2007-03-15  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Antti.
+
+        Fix for <rdar://problem/5065060> ASSERTION FAILURE: newUsername && newPassword
+        when submitting an authentication form without password.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchWillSubmitForm): Don't omit form fields with empty values from the dictionary
+        passed to the delegate.
+
 2007-03-14  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Dave Hyatt.

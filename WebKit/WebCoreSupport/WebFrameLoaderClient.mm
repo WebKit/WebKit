@@ -558,8 +558,7 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, 
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] initWithCapacity:formState->values().size()];
     HashMap<String, String>::const_iterator end = formState->values().end();
     for (HashMap<String, String>::const_iterator it = formState->values().begin(); it != end; ++it)
-        if (!it->first.isNull() && !it->second.isNull())
-            [dictionary setObject:it->second forKey:it->first];
+        [dictionary setObject:it->second forKey:it->first];
 
     [formDelegate frame:m_webFrame.get()
             sourceFrame:kit(formState->sourceFrame())
