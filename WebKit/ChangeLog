@@ -1,5 +1,14 @@
 2007-03-14  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Dave Hyatt.
+
+        Don't add the data twice, it's also done by didReceiveData.
+        
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::deliverArchivedResources):
+
+2007-03-14  Anders Carlsson  <acarlsson@apple.com>
+
         Fix segmentation fault when running layout tests.
 
         Remove bogus check that that I added on purpose to see how good Geoff is at spotting mistakes when reviewing code.
