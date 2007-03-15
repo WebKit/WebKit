@@ -2,6 +2,18 @@
 
         Reviewed by Hyatt.
 
+        - http://bugs.webkit.org/show_bug.cgi?id=13071
+          REGRESSION: Plain text files no longer wrap lines longer than the width of the browser window
+
+        Test: fast/loader/text-document-wrapping.html
+
+        * loader/TextDocument.cpp:
+        (WebCore::TextTokenizer::write): Specified word-wrap:break-word for the <pre> element.
+
+2007-03-14  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=13072
           REGRESSION (r15617): white-space: pre-wrap breaks off the last character of a wide word
 

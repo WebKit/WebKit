@@ -1,3 +1,16 @@
+t: 2007-03-15  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - test for://bugs.webkit.org/show_bug.cgi?id=13071
+          REGRESSION: Plain text files no longer wrap lines longer than the width of the browser window
+
+        * fast/loader/resources/text-document-wrapping.txt: Added.
+        * fast/loader/text-document-wrapping-expected.checksum: Added.
+        * fast/loader/text-document-wrapping-expected.png: Added.
+        * fast/loader/text-document-wrapping-expected.txt: Added.
+        * fast/loader/text-document-wrapping.html: Added.
+
 2007-03-14  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.
