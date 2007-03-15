@@ -77,7 +77,7 @@ void WebDocumentLoaderMac::increaseLoadCount(unsigned long identifier)
     if (m_loadingResources.contains(identifier))
         return;
 
-    if (m_loadingResources.isEmpty() == 0)
+    if (m_loadingResources.isEmpty())
         HardRetain(m_dataSource);
 
     m_loadingResources.add(identifier);

@@ -1,5 +1,15 @@
 2007-03-14  Anders Carlsson  <acarlsson@apple.com>
 
+        Fix segmentation fault when running layout tests.
+
+        Remove bogus check that that I added on purpose to see how good Geoff is at spotting mistakes when reviewing code.
+        (Turns out he's not that good!)
+        
+        * WebView/WebDocumentLoaderMac.mm:
+        (WebDocumentLoaderMac::increaseLoadCount):
+
+2007-03-14  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Geoff.
 
         http://bugs.webkit.org/show_bug.cgi?id=13076
