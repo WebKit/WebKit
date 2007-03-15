@@ -1,3 +1,16 @@
+2007-03-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adele.
+
+        Fix for rdar://problem/5061737.
+        
+        This was a regression from the original Objective-C -> C++ conversion
+        for the drag logic.  We don't need to call Range::startNode as we just
+        need the document that contains the range.   
+
+        * page/DragController.cpp:
+        (WebCore::documentFragmentFromDragData):
+
 2007-03-14  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

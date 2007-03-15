@@ -1,3 +1,12 @@
+2007-03-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adele.
+
+        Layout tests for rdar://problem/5061737
+
+        * editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.txt: Added.
+        * editing/pasteboard/drag-image-to-contenteditable-in-iframe.html: Added.
+
 2007-03-14  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff.

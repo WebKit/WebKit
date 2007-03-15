@@ -92,7 +92,7 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragD
     ASSERT(dragData);
     chosePlainText = false;
 
-    Document* document = context->startNode()->document();
+    Document* document = context->ownerDocument();
     ASSERT(document);
     if (document && dragData->containsCompatibleContent()) {
         if (PassRefPtr<DocumentFragment> fragment = dragData->asFragment(document))
