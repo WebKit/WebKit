@@ -1,3 +1,15 @@
+2007-03-14  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13072
+          REGRESSION (r15617): white-space: pre-wrap breaks off the last character of a wide word
+
+        Test: fast/text/whitespace/pre-wrap-last-char.html
+
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::findNextLineBreak): Undid the change from r15617.
+
 2007-03-14  David Hyatt  <hyatt@apple.com>
 
         Add asserts to help catch double refs and double derefs of CachedResources.

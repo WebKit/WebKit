@@ -1,3 +1,15 @@
+2007-03-14  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13072
+          REGRESSION (r15617): white-space: pre-wrap breaks off the last character of a wide word
+
+        * fast/text/whitespace/pre-wrap-last-char-expected.checksum: Added.
+        * fast/text/whitespace/pre-wrap-last-char-expected.png: Added.
+        * fast/text/whitespace/pre-wrap-last-char-expected.txt: Added.
+        * fast/text/whitespace/pre-wrap-last-char.html: Added.
+
 2007-03-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
