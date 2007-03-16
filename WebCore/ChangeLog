@@ -26,6 +26,16 @@
 
 2007-03-16  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Brady Eidson.
+
+        Fixed dir creation to account for already existing dirs and missing leading
+        dirs in path.
+        
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::makeAllDirectories):
+
+2007-03-16  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Anders Carlsson.
         
         Fixed <rdar://problem/5065399> REGRESSION: leaks in Frame::bindingRootObject 
