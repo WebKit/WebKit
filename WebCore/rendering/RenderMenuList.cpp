@@ -140,10 +140,10 @@ void RenderMenuList::updateFromElement()
         m_optionsChanged = false;
     }
 
-    setTextFromOption(static_cast<HTMLSelectElement*>(node())->selectedIndex());
-
     if (m_popupIsVisible)
         m_popup->updateFromElement();
+    else
+        setTextFromOption(static_cast<HTMLSelectElement*>(node())->selectedIndex());
 }
 
 void RenderMenuList::setTextFromOption(int optionIndex)
