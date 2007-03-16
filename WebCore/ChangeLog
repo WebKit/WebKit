@@ -395,6 +395,8 @@
         * loader/icon/IconDataCache.cpp:
         (WebCore::IconDataCache::writeToDatabase):
 
+=== Safari-5522.4 ===
+
 2007-03-14  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.

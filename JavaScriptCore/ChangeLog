@@ -97,6 +97,8 @@
         * tests/mozilla/ecma_3/Date/shell.js: Added functions for finding the correct days when DST starts and ends.
         * tests/mozilla/expected.html: Updated to show all date tests passing.
 
+=== Safari-5522.4 ===
+
 2007-03-13  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by .

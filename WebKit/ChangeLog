@@ -120,6 +120,8 @@
         Provide compatibility by not sending WebViewDidChangeSelectionNotification if
         the app is Aperture and is linked against WebKit 2.0.
 
+=== Safari-5522.4 ===
+
 2007-03-14  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.
