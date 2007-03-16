@@ -1,5 +1,13 @@
 2007-03-15  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed.
+        
+        - build fix
+
+        * wtf/TCSystemAlloc.cpp:
+
+2007-03-15  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Geoff and Steve.
         
         - fix some portability issues with TCMalloc.

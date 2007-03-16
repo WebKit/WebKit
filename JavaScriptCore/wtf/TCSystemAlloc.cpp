@@ -75,7 +75,9 @@ static bool use_devmem = false;
 #endif
 static bool use_sbrk = false;
 static bool use_mmap = true;
+#if HAVE(VIRTUALALLOC)
 static bool use_VirtualAlloc = true;
+#endif
 
 // Flags to keep us from retrying allocators that failed.
 static bool devmem_failure = false;
