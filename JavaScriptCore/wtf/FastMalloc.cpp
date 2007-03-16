@@ -189,7 +189,6 @@ void fastMallocSetIsMultiThreaded()
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 
 #if WTF_CHANGES
 namespace WTF {
@@ -328,11 +327,11 @@ static inline int LgFloor(size_t n) {
 }
 #endif
 
-static inline int SizeClass(size_t size) {
+static inline size_t SizeClass(size_t size) {
   if (size == 0) size = 1;
   const int lg = LgFloor(size);
   const int align = size_shift[lg];
-  return static_cast<int>(size_base[lg]) + ((size-1) >> align);
+  return size_base[lg] + ((size-1) >> align);
 }
 
 // Get the byte-size for a specified class
@@ -349,7 +348,7 @@ static void InitSizeClasses() {
   }
 
   size_t next_class = 1;
-  int alignshift = kAlignShift;
+  unsigned char alignshift = kAlignShift;
   int last_lg = -1;
   for (size_t size = kAlignment; size <= kMaxSize; size += (1 << alignshift)) {
     int lg = LgFloor(size);
@@ -364,7 +363,7 @@ static void InitSizeClasses() {
       if ((lg >= 8) && (alignshift < 9)) {
         alignshift++;
       }
-      size_base[lg] = next_class - ((size-1) >> alignshift);
+      size_base[lg] = static_cast<unsigned char>(next_class - ((size-1) >> alignshift));
       size_shift[lg] = alignshift;
     }
 
@@ -818,7 +817,7 @@ Span* TCMalloc_PageHeap::Split(Span* span, Length n) {
   ASSERT(span->sizeclass == 0);
   Event(span, 'T', n);
 
-  const int extra = span->length - n;
+  const Length extra = span->length - n;
   Span* leftover = NewSpan(span->start + n, extra);
   Event(leftover, 'U', extra);
   RecordSpan(leftover);
@@ -908,7 +907,7 @@ void TCMalloc_PageHeap::RegisterSizeClass(Span* span, size_t sc) {
   ASSERT(GetDescriptor(span->start) == span);
   ASSERT(GetDescriptor(span->start+span->length-1) == span);
   Event(span, 'C', sc);
-  span->sizeclass = sc;
+  span->sizeclass = static_cast<unsigned int>(sc);
   for (Length i = 1; i < span->length-1; i++) {
     pagemap_.set(span->start+i, span);
   }
@@ -1141,7 +1140,7 @@ class TCMalloc_Central_FreeList {
 
   // REQUIRES: lock_ is held
   // Number of free objects in cache
-  int length() const { return counter_; }
+  size_t length() const { return counter_; }
 
   // Lock -- exposed because caller grabs it before touching this object
   SpinLock lock_;
@@ -1564,7 +1563,7 @@ void TCMalloc_ThreadCache::InitTSD() {
   ASSERT(pageheap_lock.IsLocked());
 #endif
   for (TCMalloc_ThreadCache* h = thread_heaps; h != NULL; h = h->next_) {
-    if (h->tid_ == zero) {
+    if (pthread_equal(h->tid_, zero)) {
       h->tid_ = pthread_self();
     }
   }
@@ -1588,7 +1587,7 @@ void* TCMalloc_ThreadCache::CreateCacheIfNecessary() {
     // In that case, the heap for this thread has already been created
     // and added to the linked list.  So we search for that first.
     for (TCMalloc_ThreadCache* h = thread_heaps; h != NULL; h = h->next_) {
-      if (h->tid_ == me) {
+      if (pthread_equal(h->tid_, me)) {
         heap = h;
         break;
       }

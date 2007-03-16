@@ -34,8 +34,13 @@
 #define TCMALLOC_INTERNAL_SPINLOCK_H__
 
 #include "config.h"
+
+#if (PLATFORM(X86) || PLATFORM(PPC)) && COMPILER(GCC)
+
 #include <time.h>       /* For nanosleep() */
+
 #include <sched.h>      /* For sched_yield() */
+
 #if HAVE(STDINT_H)
 #include <stdint.h>
 #elif HAVE(INTTYPES_H)
@@ -45,7 +50,6 @@
 #endif
 #include <stdlib.h>     /* for abort() */
 
-#if (PLATFORM(X86) || PLATFORM(PPC)) && COMPILER(GCC)
 static void TCMalloc_SlowLock(volatile unsigned int* lockword);
 
 // The following is a struct so that it can be initialized at compile time

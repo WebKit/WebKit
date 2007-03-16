@@ -1,3 +1,24 @@
+2007-03-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff and Steve.
+        
+        - fix some portability issues with TCMalloc.
+
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * kjs/config.h:
+        * wtf/FastMalloc.cpp:
+        (WTF::SizeClass):
+        (WTF::InitSizeClasses):
+        (WTF::TCMalloc_PageHeap::Split):
+        (WTF::TCMalloc_PageHeap::RegisterSizeClass):
+        (WTF::TCMalloc_Central_FreeList::length):
+        (WTF::TCMalloc_ThreadCache::InitTSD):
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+        * wtf/TCSpinLock.h:
+        * wtf/TCSystemAlloc.cpp:
+        (TryVirtualAlloc):
+        (TCMalloc_SystemAlloc):
+
 2007-03-15  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by John.

@@ -38,7 +38,9 @@
 #else
 #include <sys/types.h>
 #endif
-#if !PLATFORM(WIN_OS)
+#if PLATFORM(WIN_OS)
+#include "windows.h"
+#else
 #include <unistd.h>
 #include <sys/mman.h>
 #endif
@@ -73,11 +75,13 @@ static bool use_devmem = false;
 #endif
 static bool use_sbrk = false;
 static bool use_mmap = true;
+static bool use_VirtualAlloc = true;
 
 // Flags to keep us from retrying allocators that failed.
 static bool devmem_failure = false;
 static bool sbrk_failure = false;
 static bool mmap_failure = false;
+static bool VirtualAlloc_failure = false;
 
 #ifndef WTF_CHANGES
 DEFINE_int32(malloc_devmem_start, 0,
@@ -164,6 +168,54 @@ static void* TryMmap(size_t size, size_t alignment) {
   }
   if (adjust < extra) {
     munmap(reinterpret_cast<void*>(ptr + adjust + size), extra - adjust);
+  }
+
+  ptr += adjust;
+  return reinterpret_cast<void*>(ptr);
+}
+
+#endif /* HAVE(MMAP) */
+
+#if HAVE(VIRTUALALLOC)
+
+static void* TryVirtualAlloc(size_t size, size_t alignment) {
+  // Enforce page alignment
+  if (pagesize == 0) {
+    SYSTEM_INFO system_info;
+    GetSystemInfo(&system_info);
+    pagesize = system_info.dwPageSize;
+  }
+  if (alignment < pagesize) alignment = pagesize;
+  size = ((size + alignment - 1) / alignment) * alignment;
+
+  // Ask for extra memory if alignment > pagesize
+  size_t extra = 0;
+  if (alignment > pagesize) {
+    extra = alignment - pagesize;
+  }
+  void* result = VirtualAlloc(NULL, size + extra,
+                              MEM_RESERVE | MEM_COMMIT | MEM_TOP_DOWN, 
+                              PAGE_READWRITE);
+
+  if (result == NULL) {
+    VirtualAlloc_failure = true;
+    return NULL;
+  }
+
+  // Adjust the return memory so it is aligned
+  uintptr_t ptr = reinterpret_cast<uintptr_t>(result);
+  size_t adjust = 0;
+  if ((ptr & (alignment - 1)) != 0) {
+    adjust = alignment - (ptr & (alignment - 1));
+  }
+
+  // Return the unused memory to the system - we'd like to release but the best we can do
+  // is decommit, since Windows only lets you free the whole allocation.
+  if (adjust > 0) {
+    VirtualFree(reinterpret_cast<void*>(ptr), adjust, MEM_DECOMMIT);
+  }
+  if (adjust < extra) {
+    VirtualFree(reinterpret_cast<void*>(ptr + adjust + size), extra-adjust, MEM_DECOMMIT);
   }
 
   ptr += adjust;
@@ -282,10 +334,18 @@ void* TCMalloc_SystemAlloc(size_t size, size_t alignment) {
     }
 #endif
 
+#if HAVE(VIRTUALALLOC)
+    if (use_VirtualAlloc && !VirtualAlloc_failure) {
+      void* result = TryVirtualAlloc(size, alignment);
+      if (result != NULL) return result;
+    }
+#endif
+
     // nothing worked - reset failure flags and try again
     devmem_failure = false;
     sbrk_failure = false;
     mmap_failure = false;
+    VirtualAlloc_failure = false;
   }
   return NULL;
 }

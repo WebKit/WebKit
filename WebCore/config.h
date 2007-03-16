@@ -53,10 +53,6 @@ typedef float CGFloat;
 #define max max
 #define min min
 
-// Hack to match configuration of JavaScriptCore.
-// Maybe there's a better way to do this.
-#define USE_SYSTEM_MALLOC 1
-
 // FIXME: Should probably just dump this eventually, but it's needed for now.
 // We get this from some system place on OS X; probably better not to use it
 // in WebCore code.
