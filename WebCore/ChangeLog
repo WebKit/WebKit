@@ -1,3 +1,11 @@
+2007-03-15  Shrikant Gangoda  <shrikant.gangoda@celunite.com>
+
+        Gdk build fix.
+
+        * loader/gdk/FrameLoaderClientGdk.cpp:
+        (WebCore::FrameLoaderClientGdk::blockedError):
+        * loader/gdk/FrameLoaderClientGdk.h:
+
 2007-03-15  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff.

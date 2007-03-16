@@ -297,6 +297,7 @@ void FrameLoaderClientGdk::dispatchDidFailProvisionalLoad(const ResourceError&) 
 void FrameLoaderClientGdk::dispatchDidFailLoad(const ResourceError&) { notImplementedGdk(); }
 void FrameLoaderClientGdk::download(ResourceHandle*, const ResourceRequest&, const ResourceResponse&) { notImplementedGdk(); }
 ResourceError FrameLoaderClientGdk::cancelledError(const ResourceRequest&) { notImplementedGdk(); return ResourceError(); }
+ResourceError FrameLoaderClientGdk::blockedError(const ResourceRequest&) { notImplementedGdk(); return ResourceError(); }
 ResourceError FrameLoaderClientGdk::cannotShowURLError(const ResourceRequest&) { notImplementedGdk(); return ResourceError(); }
 ResourceError FrameLoaderClientGdk::interruptForPolicyChangeError(const ResourceRequest&) { notImplementedGdk(); return ResourceError(); }
 ResourceError FrameLoaderClientGdk::cannotShowMIMETypeError(const ResourceResponse&) { notImplementedGdk(); return ResourceError(); }
