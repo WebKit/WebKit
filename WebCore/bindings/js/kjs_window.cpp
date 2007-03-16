@@ -225,7 +225,7 @@ JSValue* Screen::getValueProperty(ExecState*, int token) const
 const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
 
 /*
-@begin WindowTable 103
+@begin WindowTable 118
   atob          Window::AToB            DontDelete|Function 1
   btoa          Window::BToA            DontDelete|Function 1
   closed        Window::Closed          DontDelete|ReadOnly

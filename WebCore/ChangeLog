@@ -1,5 +1,13 @@
 2007-03-16  Brady Eidson  <beidson@apple.com>
 
+        Rubberstamped by Tim Hatcher
+
+        Update the hash table header for Window object properties
+
+        * bindings/js/kjs_window.cpp:
+
+2007-03-16  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Anders
 
         <rdar://problem/5061826> and
