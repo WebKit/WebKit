@@ -57,6 +57,7 @@ public:
     virtual bool childrenInline() const { return m_childrenInline; }
     virtual void setChildrenInline(bool b) { m_childrenInline = b; }
     void makeChildrenNonInline(RenderObject* insertionPoint = 0);
+    void deleteLineBoxTree();
 
     // The height (and width) of a block when you include overflow spillage out of the bottom
     // of the block (e.g., a <div style="height:25px"> that has a 100px tall image inside

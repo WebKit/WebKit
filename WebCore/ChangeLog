@@ -1,3 +1,32 @@
+2007-03-15  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/5065396> REGRESSION: leaks in 
+        RenderBlock::layoutInlineChildren seen on buildbot
+
+        This leak appeared after http://trac.webkit.org/projects/webkit/
+        changeset/20188. This change shifted line boxes around in 
+        removeChild(). But since removeChild() calls 
+        setNeedsLayoutAndMinMaxRecalc(), all of the line boxes will be 
+        removed once we actually lay out anyway. So this patch fixes the 
+        leak by deleting the line boxes instead of shifting them around. 
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::outdentParagraph): Call into 
+        updateLayout(). This fixes an assertion I got in editing/
+        execCommand/4976800.html This is very similar to the line box fix I 
+        made recently (http://trac.webkit.org/projects/webkit/changeset/
+        20177). We need to update layout before relying on VisiblePositions 
+        after removing a node.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::deleteLinesForBlock): New helper function 
+        since this functionality is needed in three places now.
+        (WebCore::RenderBlock::makeChildrenNonInline): Call into new 
+        deleteLinesForBlock().
+        (WebCore::RenderBlock::removeChild): Same.
+        * rendering/RenderBlock.h:
+
 2007-03-15  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by John.
