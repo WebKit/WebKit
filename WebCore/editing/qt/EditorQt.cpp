@@ -24,18 +24,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "Editor.h"
+#include "config.h"
+#include "Editor.h"
 
-#import "ClipboardAccessPolicy.h"
-#import "Clipboard.h"
-#import "Document.h"
-#import "Element.h"
-#import "Selection.h"
-#import "SelectionController.h"
-#import "TextIterator.h"
-#import "htmlediting.h"
-#import "visible_units.h"
+#include "ClipboardAccessPolicy.h"
+#include "Clipboard.h"
+#include "Document.h"
+#include "Element.h"
+#include "Selection.h"
+#include "SelectionController.h"
+#include "TextIterator.h"
+#include "htmlediting.h"
+#include "visible_units.h"
 
 namespace WebCore {
 

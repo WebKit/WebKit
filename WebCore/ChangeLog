@@ -1,5 +1,11 @@
 2007-03-16  Lars Knoll <lars@trolltech.com>
 
+        don't use #import in .cpp files.
+
+        * editing/qt/EditorQt.cpp:
+
+2007-03-16  Lars Knoll <lars@trolltech.com>
+
         Fix the Qt build once again.
 
         * platform/qt/PasteboardQt.cpp:
