@@ -1,3 +1,25 @@
+2007-03-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Anders Carlsson.
+        
+        Fixed <rdar://problem/5065399> REGRESSION: leaks in Frame::bindingRootObject 
+        seen on buildbot
+
+        The problem was that we were initializing the same WebScriptObject twice.
+        This caused it to leak its original set of ivars.
+        
+        I think some refactoring could prevent this situation from arising in the
+        first place, but I'm just adding a check at the call site for now, to do 
+        the simplest thing.
+
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject _setImp:originRootObject:rootObject:]): Added ASSERTs
+        against multiple calls.
+
+        * bindings/objc/WebScriptObjectPrivate.h: Renamed _initializeWithObjectImp
+        to setImp because "init" vs "initialize" was a too subtle indication that
+        one was a Cocoa initializer and one was not.
+
 2007-03-16  Lars Knoll <lars@trolltech.com>
 
         don't use #import in .cpp files.

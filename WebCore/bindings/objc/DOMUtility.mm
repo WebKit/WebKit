@@ -116,7 +116,8 @@ namespace WebCore {
 id createDOMWrapper(KJS::JSObject* object, PassRefPtr<KJS::Bindings::RootObject> origin, PassRefPtr<KJS::Bindings::RootObject> current)
 {
     id wrapper = KJS::createDOMWrapper(object);
-    [wrapper _initializeWithObjectImp:object originRootObject:origin rootObject:current];
+    if (![wrapper _hasImp]) // new wrapper, not from cache
+        [wrapper _setImp:object originRootObject:origin rootObject:current];
     return wrapper;
 }
 

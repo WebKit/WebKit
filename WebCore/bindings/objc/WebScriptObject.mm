@@ -65,8 +65,13 @@ static void _didExecute(WebScriptObject *obj)
         func(exec, static_cast<JSObject*>([obj _rootObject]->interpreter()->globalObject()));
 }
 
-- (void)_initializeWithObjectImp:(JSObject*)imp originRootObject:(PassRefPtr<RootObject>)originRootObject rootObject:(PassRefPtr<RootObject>)rootObject
+- (void)_setImp:(JSObject*)imp originRootObject:(PassRefPtr<RootObject>)originRootObject rootObject:(PassRefPtr<RootObject>)rootObject
 {
+    // This function should only be called once, as a (possibly lazy) initializer.
+    ASSERT(!_private->imp);
+    ASSERT(!_private->rootObject);
+    ASSERT(!_private->originRootObject);
+
     _private->imp = imp;
     _private->rootObject = rootObject.releaseRef();
     _private->originRootObject = originRootObject.releaseRef();
@@ -75,13 +80,13 @@ static void _didExecute(WebScriptObject *obj)
         _private->rootObject->gcProtect(imp);
 }
 
-- _initWithJSObject:(KJS::JSObject*)imp originRootObject:(PassRefPtr<KJS::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<KJS::Bindings::RootObject>)rootObject
+- (id)_initWithJSObject:(KJS::JSObject*)imp originRootObject:(PassRefPtr<KJS::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<KJS::Bindings::RootObject>)rootObject
 {
     ASSERT(imp);
 
     self = [super init];
     _private = [[WebScriptObjectPrivate alloc] init];
-    [self _initializeWithObjectImp:imp originRootObject:originRootObject rootObject:rootObject];
+    [self _setImp:imp originRootObject:originRootObject rootObject:rootObject];
     
     return self;
 }
@@ -93,6 +98,11 @@ static void _didExecute(WebScriptObject *obj)
     if (!_private->imp && _private->isCreatedByDOMWrapper)
         [self _initializeScriptDOMNodeImp];
     return _private->imp;
+}
+
+- (BOOL)_hasImp
+{
+    return _private->imp != nil;
 }
 
 - (RootObject*)_rootObject

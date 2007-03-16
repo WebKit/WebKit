@@ -120,7 +120,7 @@ void removeDOMWrapper(DOMObjectInternal* impl)
 
     KJS::Bindings::RootObject* rootObject = frame->bindingRootObject();
 
-    [self _initializeWithObjectImp:scriptImp originRootObject:rootObject rootObject:rootObject];
+    [self _setImp:scriptImp originRootObject:rootObject rootObject:rootObject];
 }
 
 @end

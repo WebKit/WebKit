@@ -11,11 +11,12 @@
 
 @interface WebScriptObject (Private)
 + (id)_convertValueToObjcValue:(KJS::JSValue*)value originRootObject:(KJS::Bindings::RootObject*)originRootObject rootObject:(KJS::Bindings::RootObject*)rootObject;
-- _init;
-- _initWithJSObject:(KJS::JSObject*)imp originRootObject:(PassRefPtr<KJS::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<KJS::Bindings::RootObject>)rootObject;
-- (void)_initializeWithObjectImp:(KJS::JSObject*)imp originRootObject:(PassRefPtr<KJS::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<KJS::Bindings::RootObject>)rootObject;
+- (id)_init;
+- (id)_initWithJSObject:(KJS::JSObject*)imp originRootObject:(PassRefPtr<KJS::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<KJS::Bindings::RootObject>)rootObject;
+- (void)_setImp:(KJS::JSObject*)imp originRootObject:(PassRefPtr<KJS::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<KJS::Bindings::RootObject>)rootObject;
 - (void)_initializeScriptDOMNodeImp;
 - (KJS::JSObject *)_imp;
+- (BOOL)_hasImp;
 - (KJS::Bindings::RootObject*)_rootObject;
 - (KJS::Bindings::RootObject*)_originRootObject;
 @end
