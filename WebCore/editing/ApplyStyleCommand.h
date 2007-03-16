@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class HTMLElement;
+class StyleChange;
 
 class ApplyStyleCommand : public CompositeEditCommand {
 public:
@@ -65,7 +66,7 @@ private:
     void applyBlockStyle(CSSMutableStyleDeclaration*);
     void applyRelativeFontStyleChange(CSSMutableStyleDeclaration*);
     void applyInlineStyle(CSSMutableStyleDeclaration*);
-    void addBlockStyleIfNeeded(CSSMutableStyleDeclaration*, const VisiblePosition&);
+    void addBlockStyle(const StyleChange&, HTMLElement*);
     void addInlineStyleIfNeeded(CSSMutableStyleDeclaration*, Node* start, Node* end);
     bool splitTextAtStartIfNeeded(const Position& start, const Position& end);
     bool splitTextAtEndIfNeeded(const Position& start, const Position& end);

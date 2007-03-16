@@ -1,3 +1,15 @@
+2007-03-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <rdar://problem/5062376> 
+        REGRESSION: In Mail and Gmail, can't change alignment to text after it has been applied
+
+        * editing/execCommand/5062376-expected.checksum: Added.
+        * editing/execCommand/5062376-expected.png: Added.
+        * editing/execCommand/5062376-expected.txt: Added.
+        * editing/execCommand/5062376.html: Added.
+
 2007-03-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adele

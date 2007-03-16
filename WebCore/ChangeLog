@@ -1,3 +1,30 @@
+2007-03-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <rdar://problem/5062376> 
+        REGRESSION: In Mail and Gmail, can't change alignment to text after it has been applied
+        
+        Bring back the remove step in applyBlockStyle.  It's 
+        necessary because addBlockStyleIfNeeded assumes that 
+        the properties it adds aren't already on the block that 
+        it adds them to.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle): 
+        Bring back the remove step (added a testcase).
+        Don't do the add step if m_removeOnly is true (no testcase
+        because there aren't any clients using removeOnly functionality
+        to remove styles yet, only styled elemets).
+        Moved the code for creating new blocks up one level
+        to this function so that we can pass blocks to removeCSSStyle.
+        When converting VisiblePositions to indices and vice versa,
+        use the highest node in the shadow tree if we're in one as
+        the scope (working on a testcase).
+        (WebCore::ApplyStyleCommand::addBlockStyle): Moved code to
+        applyBlockStyle.
+        * editing/ApplyStyleCommand.h: 
+
 2007-03-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej
