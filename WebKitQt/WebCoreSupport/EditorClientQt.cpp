@@ -258,7 +258,7 @@ void EditorClientQt::handleKeypress(KeyboardEvent* event)
                 break;
             default:
                 if (!kevent->ctrlKey() && !kevent->altKey())
-                    frame->editor()->insertText(kevent->text(), false, event);
+                    frame->editor()->insertText(kevent->text(), event);
             }
             event->setDefaultHandled();
         }

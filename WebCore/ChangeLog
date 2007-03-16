@@ -1,3 +1,16 @@
+2007-03-16  Lars Knoll <lars@trolltech.com>
+
+        Fix the Qt build once again.
+
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::Pasteboard::documentFragment):
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::Pasteboard::writeImage):
+        (WebCore::Pasteboard::clear):
+
 2007-03-15  Shrikant Gangoda  <shrikant.gangoda@celunite.com>
 
         Gdk build fix.

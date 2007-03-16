@@ -1,3 +1,13 @@
+2007-03-16  Lars Knoll <lars@trolltech.com>
+
+        Fix the Qt build once again.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeypress):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::blockedError):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2007-03-13  Lars Knoll <lars@trolltech.com>
 
         Reviewed by George.
