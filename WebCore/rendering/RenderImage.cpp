@@ -128,10 +128,9 @@ void RenderImage::imageChanged(CachedImage* newImage)
     if (documentBeingDestroyed())
         return;
 
-    if (newImage != m_cachedImage) {
-        RenderReplaced::imageChanged(newImage);
+    RenderReplaced::imageChanged(newImage);
+    if (newImage != m_cachedImage)
         return;
-    }
 
     bool imageSizeChanged = false;
 

@@ -1,3 +1,29 @@
+2007-03-16  David Hyatt  <hyatt@apple.com>
+
+        Fix for 13084, assertion failure in the Cache.  Convert the client list
+        to a HashCountedSet so that multiple refs and derefs are allowed.
+
+        Fix RenderImage so that if it has the same image used as a background/border
+        and as the foreground that it will repaint properly (can be tested using
+        border-image and a foreground image).
+
+        Optimize list marker so that it doesn't waste time in the base class method,
+        since list markers don't support background or border images.
+
+        Reviewed by andersca
+
+        * ChangeLog:
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::ref):
+        * loader/CachedResource.h:
+        * loader/CachedResourceClientWalker.cpp:
+        (WebCore::CachedResourceClientWalker::CachedResourceClientWalker):
+        * loader/CachedResourceClientWalker.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::imageChanged):
+
 2007-03-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Anders Carlsson.

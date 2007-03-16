@@ -631,10 +631,9 @@ void RenderListMarker::layout()
 
 void RenderListMarker::imageChanged(CachedImage* o)
 {
-    if (o != m_image) {
-        RenderBox::imageChanged(o);
+    // A list marker can't have a background or border image, so no need to call the base class method.
+    if (o != m_image)
         return;
-    }
 
     if (m_width != m_image->imageSize().width() || m_height != m_image->imageSize().height())
         setNeedsLayoutAndMinMaxRecalc();

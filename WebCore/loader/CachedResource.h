@@ -32,7 +32,7 @@
 #include "PlatformString.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
-#include <wtf/HashSet.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/Vector.h>
 #include <time.h>
 
@@ -136,7 +136,7 @@ public:
 protected:
     void setEncodedSize(unsigned);
 
-    HashSet<CachedResourceClient*> m_clients;
+    HashCountedSet<CachedResourceClient*> m_clients;
 
     String m_url;
     String m_accept;

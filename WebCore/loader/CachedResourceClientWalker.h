@@ -27,7 +27,7 @@
 #ifndef CachedResourceClientWalker_h
 #define CachedResourceClientWalker_h
 
-#include <wtf/HashSet.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -38,10 +38,10 @@ namespace WebCore {
     // Just keep calling next() on this. It's safe from deletions of items.
     class CachedResourceClientWalker {
     public:
-        CachedResourceClientWalker(const HashSet<CachedResourceClient*>&);
+        CachedResourceClientWalker(const HashCountedSet<CachedResourceClient*>&);
         CachedResourceClient* next();
     private:
-        const HashSet<CachedResourceClient*>& m_clientSet;
+        const HashCountedSet<CachedResourceClient*>& m_clientSet;
         Vector<CachedResourceClient*> m_clientVector;
         size_t m_index;
     };

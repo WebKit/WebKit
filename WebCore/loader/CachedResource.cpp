@@ -94,7 +94,6 @@ void CachedResource::setRequest(Request* request)
 
 void CachedResource::ref(CachedResourceClient *c)
 {
-    ASSERT(!m_clients.contains(c));
     if (!referenced() && inCache())
         cache()->addToLiveObjectSize(size());
     m_clients.add(c);
