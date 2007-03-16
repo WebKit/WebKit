@@ -11223,8 +11223,8 @@
 				93F199FD08245E59001E9ABC /* Resources */,
 				93F19A0C08245E59001E9ABC /* Sources */,
 				939D050109D9FF6B00984996 /* Check For Global Initializers */,
-				1CB71D4A0B02658D0061EA45 /* Generate 64-bit Export File */,
 				93F19B1208245E59001E9ABC /* Frameworks */,
+				1CB71D4A0B02658D0061EA45 /* Generate 64-bit Export File */,
 			);
 			buildRules = (
 				1C8715220B0BA37B00E3CB7B /* PBXBuildRule */,
@@ -11245,6 +11245,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -11259,6 +11260,7 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
