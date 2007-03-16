@@ -1,3 +1,14 @@
+2007-03-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver
+
+        A few platform specific tweaks
+
+        * platform/cf/RetainPtr.h:
+        (WebCore::RetainPtr::releaseRef): Fixed releaseRef to work with CF
+        
+        * platform/network/ResourceHandle.h: Added a "releaseRef" style call
+
 2007-03-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff and Steve.
