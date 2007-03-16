@@ -68,12 +68,12 @@ public:
 #if PLATFORM(MAC)
     //Helper functions to allow Clipboard to share code
     static void writeSelection(NSPasteboard* pasteboard, Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame);
-    static void writeURL(NSPasteboard* pasteboard, NSArray* types, const KURL& url, const String& titleStr, Frame* frame, bool isImage = false);
+    static void writeURL(NSPasteboard* pasteboard, NSArray* types, const KURL& url, const String& titleStr, Frame* frame);
 #endif
     
     static Pasteboard* generalPasteboard();
     void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*);
-    void writeURL(const KURL&, const String&, Frame* = 0, bool isImage = false);
+    void writeURL(const KURL&, const String&, Frame* = 0);
     void writeImage(const HitTestResult&);
 #if PLATFORM(MAC)
     void writeFileWrapperAsRTFDAttachment(NSFileWrapper*);

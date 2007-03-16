@@ -1,3 +1,21 @@
+2007-03-15  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=13088 REGRESSION
+        (r19761-19779): Copy image no longer includes image address 
+        (rdar://5067927)
+
+        writeURL() does not need an isImage parameter. Now that it accepts 
+        the types as a parameter, we can just declare the appropriate image 
+        types within writeImage and send them to writeURL(). Also, 
+        declaring the types twice is what broke this.
+
+        * platform/Pasteboard.h:
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::Pasteboard::writeImage):
+
 2007-03-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Kevin Decker.

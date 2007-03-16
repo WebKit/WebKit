@@ -200,16 +200,13 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     Pasteboard::writeSelection(m_pasteboard, selectedRange, canSmartCopyOrDelete, frame);
 }
 
-void Pasteboard::writeURL(NSPasteboard* pasteboard, NSArray* types, const KURL& url, const String& titleStr, Frame* frame, bool isImage)
+void Pasteboard::writeURL(NSPasteboard* pasteboard, NSArray* types, const KURL& url, const String& titleStr, Frame* frame)
 {
     if (WebArchivePboardType == nil)
         Pasteboard::generalPasteboard(); //Initialises pasteboard types
    
     if (types == nil) {
-        if (isImage)
-            types = writableTypesForImage();
-        else
-            types = writableTypesForURL();
+        types = writableTypesForURL();
         [pasteboard declareTypes:types owner:nil];
     }
     
@@ -240,9 +237,9 @@ void Pasteboard::writeURL(NSPasteboard* pasteboard, NSArray* types, const KURL& 
         [pasteboard setString:userVisibleString forType:NSStringPboardType];
 }
     
-void Pasteboard::writeURL(const KURL& url, const String& titleStr, Frame* frame, bool isImage)
+void Pasteboard::writeURL(const KURL& url, const String& titleStr, Frame* frame)
 {
-    Pasteboard::writeURL(m_pasteboard, nil, url, titleStr, frame, isImage);
+    Pasteboard::writeURL(m_pasteboard, nil, url, titleStr, frame);
 }
 
 static NSFileWrapper* fileWrapperForImage(CachedResource* resource, NSURL *URL)
@@ -285,9 +282,9 @@ void Pasteboard::writeImage(const HitTestResult& result)
     NSString *title = result.altDisplayString().isNull() ? nil : (NSString*)(result.altDisplayString());
     Frame* frame = node->document()->frame();
 
-    writeURL(URL, title, frame, true);
-    NSArray *types = [m_pasteboard types];
+    NSArray* types = writableTypesForImage();
     [m_pasteboard declareTypes:types owner:nil];
+    writeURL(m_pasteboard, types, URL, title, frame);
 
     Image* coreImage = result.image();
     ASSERT(coreImage);
