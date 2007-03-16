@@ -180,7 +180,7 @@ namespace KJS {
            Onfocus, Onkeydown, Onkeypress, Onkeyup, Onload, Onmousedown, Onmousemove,
            Onmouseout, Onmouseover, Onmouseup, OnWindowMouseWheel, Onreset, Onresize, Onscroll, Onsearch,
            Onselect, Onsubmit, Onunload, Onbeforeunload,
-           Statusbar, Toolbar, FrameElement, ShowModalDialog, Find };
+           Statusbar, Toolbar, FrameElement, ShowModalDialog, Find, Stop };
 
   private:
     JSValue* getListener(ExecState*, const WebCore::AtomicString& eventType) const;

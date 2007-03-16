@@ -1,3 +1,16 @@
+2007-03-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        <rdar://problem/5061826> and
+        http://bugs.webkit.org/show_bug.cgi?id=12863
+        Implement window.stop()
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowFunc::callAsFunction): Add case Window::Stop
+        * bindings/js/kjs_window.h:
+        (KJS::Window::): Add "Stop"
+
 2007-03-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Brady Eidson.

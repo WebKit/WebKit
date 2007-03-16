@@ -1,3 +1,14 @@
+2007-03-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        <rdar://problem/5061826> and
+        http://bugs.webkit.org/show_bug.cgi?id=12863
+        Implement window.stop()
+
+        * http/tests/misc/window-dot-stop-expected.txt: Added.
+        * http/tests/misc/window-dot-stop.html: Added.
+
 2007-03-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john
