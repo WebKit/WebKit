@@ -11245,7 +11245,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -11260,7 +11259,6 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
@@ -12598,7 +12596,9 @@
 			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
 			buildSettings = {
 				DEBUG_DEFINES = DISABLE_THREAD_CHECK;
+				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = (
+					"-lobjc",
 					"-sub_library",
 					libobjc,
 				);
@@ -12610,7 +12610,9 @@
 			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
 			buildSettings = {
 				DEBUG_DEFINES = NDEBUG;
+				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = (
+					"-lobjc",
 					"-sub_library",
 					libobjc,
 				);
@@ -12623,6 +12625,7 @@
 			buildSettings = {
 				DEBUG_DEFINES = NDEBUG;
 				OTHER_LDFLAGS = (
+					"-lobjc",
 					"-sub_library",
 					libobjc,
 					"-umbrella",

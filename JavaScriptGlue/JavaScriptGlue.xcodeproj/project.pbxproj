@@ -286,13 +286,11 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 14AC662B08CE7791006915A8 /* Build configuration list for PBXProject "JavaScriptGlue" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* JavaScriptGlue */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				1422E8C409DE3EA600749B87 /* All */,
 				DD66F3B908F73ED700C75FD7 /* JavaScriptGlue */,
@@ -475,6 +473,7 @@
 			baseConfigurationReference = 1C9051A10BA9F3050081E9D0 /* JavaScriptGlue.xcconfig */;
 			buildSettings = {
 				DEBUG_DEFINES = "";
+				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 			};
 			name = Debug;
 		};
@@ -483,6 +482,7 @@
 			baseConfigurationReference = 1C9051A10BA9F3050081E9D0 /* JavaScriptGlue.xcconfig */;
 			buildSettings = {
 				DEBUG_DEFINES = NDEBUG;
+				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 			};
 			name = Release;
 		};
