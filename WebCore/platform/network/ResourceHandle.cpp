@@ -28,6 +28,10 @@
 #include "ResourceHandleInternal.h"
 
 #include "Logging.h"
+#include "ResourceHandleClient.h"
+#include "Timer.h"
+
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
@@ -38,12 +42,29 @@ ResourceHandle::ResourceHandle(const ResourceRequest& request, ResourceHandleCli
 
 PassRefPtr<ResourceHandle> ResourceHandle::create(const ResourceRequest& request, ResourceHandleClient* client, Frame* frame, bool defersLoading, bool mightDownloadFromHandle)
 {
-    RefPtr<ResourceHandle> newLoader(new ResourceHandle(request, client, defersLoading, mightDownloadFromHandle));
-    
-    if (newLoader->start(frame))
-        return newLoader.release();
+    RefPtr<ResourceHandle> newHandle(new ResourceHandle(request, client, defersLoading, mightDownloadFromHandle));
+
+    if (!portAllowed(request)) {
+        newHandle->scheduleBlockedFailure();
+        return newHandle.release();
+    }
+        
+    if (newHandle->start(frame))
+        return newHandle.release();
 
     return 0;
+}
+
+void ResourceHandle::scheduleBlockedFailure()
+{
+    Timer<ResourceHandle>* blockedTimer = new Timer<ResourceHandle>(this, &ResourceHandle::fireBlockedFailure);
+    blockedTimer->startOneShot(0);
+}
+
+void ResourceHandle::fireBlockedFailure(Timer<ResourceHandle>* timer)
+{
+    client()->wasBlocked(this);
+    delete timer;
 }
 
 const HTTPHeaderMap& ResourceHandle::requestHeaders() const
@@ -83,6 +104,95 @@ void ResourceHandle::clearAuthentication()
 #endif
     d->m_currentWebChallenge.nullify();
 }
+
+bool ResourceHandle::portAllowed(const ResourceRequest& request)
+{
+    uint16_t port = request.url().port();
+    if (!port)
+        return true;
+        
+    // The blocked port list matches the port blocking mozilla implements
+    // See http://www.mozilla.org/projects/netlib/PortBanning.html for more information
+    static uint16_t blockedPortList[] = { 
+    1,    // tcpmux          
+    7,    // echo     
+    9,    // discard          
+    11,   // systat   
+    13,   // daytime          
+    15,   // netstat  
+    17,   // qotd             
+    19,   // chargen  
+    20,   // FTP-data 
+    21,   // FTP-control        
+    22,   // SSH              
+    23,   // telnet   
+    25,   // SMTP     
+    37,   // time     
+    42,   // name     
+    43,   // nicname  
+    53,   // domain  
+    77,   // priv-rjs 
+    79,   // finger   
+    87,   // ttylink  
+    95,   // supdup   
+    101,  // hostriame
+    102,  // iso-tsap 
+    103,  // gppitnp  
+    104,  // acr-nema 
+    109,  // POP2     
+    110,  // POP3     
+    111,  // sunrpc   
+    113,  // auth     
+    115,  // SFTP     
+    117,  // uucp-path
+    119,  // nntp     
+    123,  // NTP
+    135,  // loc-srv / epmap         
+    139,  // netbios
+    143,  // IMAP2  
+    179,  // BGP
+    389,  // LDAP
+    465,  // SMTP+SSL
+    512,  // print / exec          
+    513,  // login         
+    514,  // shell         
+    515,  // printer         
+    526,  // tempo         
+    530,  // courier        
+    531,  // Chat         
+    532,  // netnews        
+    540,  // UUCP       
+    556,  // remotefs    
+    563,  // NNTP+SSL
+    587,  // ESMTP
+    601,  // syslog-conn  
+    636,  // LDAP+SSL
+    993,  // IMAP+SSL
+    995,  // POP3+SSL
+    2049, // NFS
+    4045, // lockd
+    6000, // X11        
+    0 };   
+    
+    static HashSet<int>* blockedPortHash = 0;
+    if (!blockedPortHash) {
+        blockedPortHash = new HashSet<int>;
+        
+        for (int i = 0; blockedPortList[i]; ++i)
+            blockedPortHash->add(blockedPortList[i]);
+    }
+    
+    bool restricted = blockedPortHash->contains(port);
+    
+    if (restricted) {
+        // An exception in the mozilla port blocking is they allow 21 and 22 for FTP (and Secure FTP), which we have to do also
+        if ((port == 21 || port == 22) && request.url().url().startsWith("ftp:", false))
+            return true;
+    }
+        
+    return !restricted;
+}
+
 
 } // namespace WebCore
 

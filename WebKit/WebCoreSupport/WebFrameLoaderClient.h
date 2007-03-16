@@ -147,6 +147,7 @@ private:
     virtual bool shouldGoToHistoryItem(WebCore::HistoryItem*) const;
 
     virtual WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&);
+    virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&);
     virtual WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&);
     virtual WebCore::ResourceError interruptForPolicyChangeError(const WebCore::ResourceRequest&);
 

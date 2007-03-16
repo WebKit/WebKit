@@ -685,9 +685,14 @@ bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
     return [[view _policyDelegateForwarder] webView:view shouldGoToHistoryItem:webItem];
 }
 
-ResourceError WebFrameLoaderClient::cancelledError(const ResourceRequest &request)
+ResourceError WebFrameLoaderClient::cancelledError(const ResourceRequest& request)
 {
     return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled URL:request.url().getNSURL()];
+}
+    
+ResourceError WebFrameLoaderClient::blockedError(const ResourceRequest& request)
+{
+    return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorCannotUseRestrictedPort URL:request.url().getNSURL()];
 }
 
 ResourceError WebFrameLoaderClient::cannotShowURLError(const ResourceRequest& request)

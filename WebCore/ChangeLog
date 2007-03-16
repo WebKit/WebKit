@@ -1,3 +1,35 @@
+2007-03-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        <rdar://problem/4429701>
+        Implements a port blocking black list that matches Firefox's
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::blockedError): Call through to the client for blockedError 
+        * loader/FrameLoader.h:
+
+        * loader/FrameLoaderClient.h: Get the "port blocked" error for the current platform
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::wasBlocked): ResourceHandleClient method to pass on the didFail(error)
+        (WebCore::ResourceLoader::blockedError): Following the pattern of "CancelledError()", get the 
+          error to fail with for the didFail() call
+        * loader/ResourceLoader.h:
+
+        * platform/graphics/svg/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::blockedError): Added stub
+
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::create): If the port is blocked, create the handle but schedule it for
+          deferred failure on a timer
+        (WebCore::ResourceHandle::scheduleBlockedFailure): Do the timer scheduling
+        (WebCore::ResourceHandle::fireBlockedFailure): Fire the timer here
+        (WebCore::ResourceHandle::portAllowed): Implements checking of Mozilla's
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::wasBlocked): Virtual for clients to get the "blocked" message
+
 2007-03-15  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

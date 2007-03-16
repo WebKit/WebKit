@@ -202,6 +202,7 @@ namespace WebCore {
 
         ResourceError cancelledError(const ResourceRequest&) const;
         ResourceError fileDoesNotExistError(const ResourceResponse&) const;
+        ResourceError blockedError(const ResourceRequest&) const;
         bool willUseArchive(ResourceLoader*, const ResourceRequest&, const KURL&) const;
         bool isArchiveLoadPending(ResourceLoader*) const;
         void cannotShowMIMEType(const ResourceResponse&);

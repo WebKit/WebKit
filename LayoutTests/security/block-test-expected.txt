@@ -1,0 +1,128 @@
+http://nonexistantdomain.com.fake/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake/test.jpg> redirectResponse (null)
+<unknown> - didFinishLoading
+http://nonexistantdomain.com.fake:1/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:1/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake/test.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1003, failing URL "http://nonexistantdomain.com.fake/test.jpg">
+http://nonexistantdomain.com.fake:1/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:1/test.jpg">
+http://nonexistantdomain.com.fake:7/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:7/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:7/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:7/test.jpg">
+http://nonexistantdomain.com.fake:9/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:9/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:9/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:9/test.jpg">
+http://nonexistantdomain.com.fake:11/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:11/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:11/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:11/test.jpg">
+http://nonexistantdomain.com.fake:13/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:13/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:13/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:13/test.jpg">
+http://nonexistantdomain.com.fake:15/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:15/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:15/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:15/test.jpg">
+http://nonexistantdomain.com.fake:17/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:17/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:17/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:17/test.jpg">
+http://nonexistantdomain.com.fake:19/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:19/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:19/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:19/test.jpg">
+http://nonexistantdomain.com.fake:20/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:20/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:20/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:20/test.jpg">
+http://nonexistantdomain.com.fake:21/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:21/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:21/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:21/test.jpg">
+http://nonexistantdomain.com.fake:22/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:22/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:22/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:22/test.jpg">
+http://nonexistantdomain.com.fake:23/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:23/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:23/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:23/test.jpg">
+http://nonexistantdomain.com.fake:25/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:25/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:25/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:25/test.jpg">
+http://nonexistantdomain.com.fake:37/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:37/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:37/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:37/test.jpg">
+http://nonexistantdomain.com.fake:42/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:42/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:42/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:42/test.jpg">
+http://nonexistantdomain.com.fake:43/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:43/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:43/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:43/test.jpg">
+http://nonexistantdomain.com.fake:53/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:53/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:53/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:53/test.jpg">
+http://nonexistantdomain.com.fake:77/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:77/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:77/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:77/test.jpg">
+http://nonexistantdomain.com.fake:79/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:79/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:79/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:79/test.jpg">
+http://nonexistantdomain.com.fake:87/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:87/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:87/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:87/test.jpg">
+http://nonexistantdomain.com.fake:95/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:95/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:95/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:95/test.jpg">
+http://nonexistantdomain.com.fake:101/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:101/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:101/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:101/test.jpg">
+http://nonexistantdomain.com.fake:102/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:102/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:102/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:102/test.jpg">
+http://nonexistantdomain.com.fake:103/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:103/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:103/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:103/test.jpg">
+http://nonexistantdomain.com.fake:104/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:104/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:104/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:104/test.jpg">
+http://nonexistantdomain.com.fake:109/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:109/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:109/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:109/test.jpg">
+http://nonexistantdomain.com.fake:110/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:110/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:110/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:110/test.jpg">
+http://nonexistantdomain.com.fake:111/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:111/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:111/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:111/test.jpg">
+http://nonexistantdomain.com.fake:113/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:113/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:113/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:113/test.jpg">
+http://nonexistantdomain.com.fake:115/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:115/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:115/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:115/test.jpg">
+http://nonexistantdomain.com.fake:117/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:117/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:117/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:117/test.jpg">
+http://nonexistantdomain.com.fake:119/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:119/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:119/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:119/test.jpg">
+http://nonexistantdomain.com.fake:123/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:123/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:123/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:123/test.jpg">
+http://nonexistantdomain.com.fake:135/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:135/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:135/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:135/test.jpg">
+http://nonexistantdomain.com.fake:139/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:139/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:139/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:139/test.jpg">
+http://nonexistantdomain.com.fake:143/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:143/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:143/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:143/test.jpg">
+http://nonexistantdomain.com.fake:179/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:179/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:179/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:179/test.jpg">
+http://nonexistantdomain.com.fake:389/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:389/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:389/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:389/test.jpg">
+http://nonexistantdomain.com.fake:465/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:465/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:465/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:465/test.jpg">
+http://nonexistantdomain.com.fake:512/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:512/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:512/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:512/test.jpg">
+http://nonexistantdomain.com.fake:513/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:513/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:513/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:513/test.jpg">
+http://nonexistantdomain.com.fake:514/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:514/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:514/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:514/test.jpg">
+http://nonexistantdomain.com.fake:515/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:515/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:515/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:515/test.jpg">
+http://nonexistantdomain.com.fake:526/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:526/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:526/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:526/test.jpg">
+http://nonexistantdomain.com.fake:530/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:530/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:530/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:530/test.jpg">
+http://nonexistantdomain.com.fake:531/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:531/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:531/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:531/test.jpg">
+http://nonexistantdomain.com.fake:532/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:532/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:532/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:532/test.jpg">
+http://nonexistantdomain.com.fake:540/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:540/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:540/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:540/test.jpg">
+http://nonexistantdomain.com.fake:556/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:556/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:556/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:556/test.jpg">
+http://nonexistantdomain.com.fake:563/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:563/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:563/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:563/test.jpg">
+http://nonexistantdomain.com.fake:587/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:587/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:587/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:587/test.jpg">
+http://nonexistantdomain.com.fake:601/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:601/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:601/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:601/test.jpg">
+http://nonexistantdomain.com.fake:636/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:636/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:636/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:636/test.jpg">
+http://nonexistantdomain.com.fake:993/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:993/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:993/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:993/test.jpg">
+http://nonexistantdomain.com.fake:995/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:995/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:995/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:995/test.jpg">
+http://nonexistantdomain.com.fake:2049/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:2049/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:2049/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:2049/test.jpg">
+http://nonexistantdomain.com.fake:4045/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:4045/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:4045/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:4045/test.jpg">
+http://nonexistantdomain.com.fake:6000/test.jpg - willSendRequest <NSURLRequest http://nonexistantdomain.com.fake:6000/test.jpg> redirectResponse (null)
+http://nonexistantdomain.com.fake:6000/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://nonexistantdomain.com.fake:6000/test.jpg">
+ftp://nonexistantdomain.com.fake/test.jpg - willSendRequest <NSURLRequest ftp://nonexistantdomain.com.fake/test.jpg> redirectResponse (null)
+ftp://nonexistantdomain.com.fake/test.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1004, failing URL "ftp://nonexistantdomain.com.fake/test.jpg">
+ftp://nonexistantdomain.com.fake:21/test.jpg - willSendRequest <NSURLRequest ftp://nonexistantdomain.com.fake:21/test.jpg> redirectResponse (null)
+ftp://nonexistantdomain.com.fake:21/test.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1004, failing URL "ftp://nonexistantdomain.com.fake:21/test.jpg">
+ftp://nonexistantdomain.com.fake:22/test.jpg - willSendRequest <NSURLRequest ftp://nonexistantdomain.com.fake:22/test.jpg> redirectResponse (null)
+ftp://nonexistantdomain.com.fake:22/test.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1004, failing URL "ftp://nonexistantdomain.com.fake:22/test.jpg">
+This test attempts to change the src of an IMG tag to all black listed ports to confirm that WebKit returns the correct error for them - blocked instead of cannot find. It also tries the FTP ports for exemptions. Due to the nature of this test, the results can only be processed automatically via DumpRenderTree
+
+

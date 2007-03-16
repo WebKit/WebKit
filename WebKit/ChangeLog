@@ -1,3 +1,21 @@
+2007-03-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        <rdar://problem/4429701>
+        Implements a port blocking black list that matches Firefox's
+
+        * English.lproj/Localizable.strings: Added localizable string for port blocked error code
+
+        * Misc/WebKitErrors.h:
+        * Misc/WebKitErrors.m:
+        (registerErrors): Add new port blocked error code to WebKitErrorDomain
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::cancelledError): Fixed coding style
+        (WebFrameLoaderClient::blockedError): Return a ResourceError with the new custom error code
+
 2007-03-15  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by John.

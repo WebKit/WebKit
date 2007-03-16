@@ -1,3 +1,19 @@
+2007-03-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adele
+
+        <rdar://problem/4429701>
+        Implements a port blocking black list that matches Firefox's
+
+        The layout test attempts to load an image at an invalid domain name on each
+        of the black listed ports.  Using dumpResourceLoadCallbacks(), DRT is able
+        to see the error codes for each resource.  A successful test shows the blocked
+        error for each image load except for the few that are standard or should 
+        succeed due to exemptions.
+
+        * security/block-test-expected.txt: Added.
+        * security/block-test.html: Added.
+
 2007-03-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

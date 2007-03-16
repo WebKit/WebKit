@@ -147,7 +147,13 @@ public:
     PassRefPtr<FormData> postData() const;
     const ResourceRequest& request() const;
 
+    void fireBlockedFailure(Timer<ResourceHandle>*);
+
 private:
+    static bool portAllowed(const ResourceRequest&);
+    
+    void scheduleBlockedFailure();
+
     bool start(Frame*);
         
     OwnPtr<ResourceHandleInternal> d;

@@ -150,6 +150,7 @@ namespace WebCore {
         virtual bool shouldGoToHistoryItem(HistoryItem*) const = 0;
 
         virtual ResourceError cancelledError(const ResourceRequest&) = 0;
+        virtual ResourceError blockedError(const ResourceRequest&) = 0;
         virtual ResourceError cannotShowURLError(const ResourceRequest&) = 0;
         virtual ResourceError interruptForPolicyChangeError(const ResourceRequest&) = 0;
 

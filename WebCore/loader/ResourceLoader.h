@@ -60,7 +60,8 @@ namespace WebCore {
         
         virtual void cancel(const ResourceError&);
         ResourceError cancelledError();
-
+        ResourceError blockedError();
+        
         virtual void setDefersLoading(bool);
 
         void setIdentifier(unsigned long identifier) { m_identifier = identifier; }
@@ -79,6 +80,7 @@ namespace WebCore {
         void willStopBufferingData(const char*, int);
         virtual void didFinishLoading();
         virtual void didFail(const ResourceError&);
+        virtual void wasBlocked();
 
         void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
         void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
@@ -90,6 +92,7 @@ namespace WebCore {
         virtual void didReceiveData(ResourceHandle*, const char*, int, int lengthReceived);
         virtual void didFinishLoading(ResourceHandle*);
         virtual void didFail(ResourceHandle*, const ResourceError&);
+        virtual void wasBlocked(ResourceHandle*);
         virtual void willStopBufferingData(ResourceHandle*, const char* data, int length) { willStopBufferingData(data, length); } 
         virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) { didReceiveAuthenticationChallenge(challenge); } 
         virtual void didCancelAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) { didCancelAuthenticationChallenge(challenge); } 

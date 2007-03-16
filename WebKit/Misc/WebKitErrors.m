@@ -44,6 +44,7 @@ NSString * const WebKitErrorPlugInPageURLStringKey =    @"WebKitErrorPlugInPageU
 #define WebKitErrorDescriptionCannotShowMIMEType UI_STRING("Cannot show content with specified mime type", "WebKitErrorCannotShowMIMEType description")
 #define WebKitErrorDescriptionCannotShowURL UI_STRING("Cannot show URL", "WebKitErrorCannotShowURL description")
 #define WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange UI_STRING("Frame load interrupted", "WebKitErrorFrameLoadInterruptedByPolicyChange description")
+#define WebKitErrorDescriptionCannotUseRestrictedPort UI_STRING("Not allowed to use restricted network port", "WebKitErrorCannotUseRestrictedPort description")
 
 // Plug-in and java errors
 #define WebKitErrorDescriptionCannotFindPlugin UI_STRING("Cannot find plug-in", "WebKitErrorCannotFindPlugin description")
@@ -146,7 +147,8 @@ static void registerErrors()
         WebKitErrorDescriptionCannotShowMIMEType,                   [NSNumber numberWithInt: WebKitErrorCannotShowMIMEType],
         WebKitErrorDescriptionCannotShowURL,                        [NSNumber numberWithInt: WebKitErrorCannotShowURL],
         WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange,   [NSNumber numberWithInt: WebKitErrorFrameLoadInterruptedByPolicyChange],
-
+        WebKitErrorDescriptionCannotUseRestrictedPort,              [NSNumber numberWithInt: WebKitErrorCannotUseRestrictedPort],
+        
         // Plug-in and java errors
         WebKitErrorDescriptionCannotFindPlugin,                     [NSNumber numberWithInt: WebKitErrorCannotFindPlugIn],
         WebKitErrorDescriptionCannotLoadPlugin,                     [NSNumber numberWithInt: WebKitErrorCannotLoadPlugIn],
