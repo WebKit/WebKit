@@ -1555,6 +1555,7 @@
 			buildSettings = {
 				DEBUG_DEFINES = DISABLE_THREAD_CHECK;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
+				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders";
 				OTHER_LDFLAGS = (
 					"-lobjc",
 					"-sub_library",
@@ -1570,6 +1571,7 @@
 			buildSettings = {
 				DEBUG_DEFINES = NDEBUG;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
+				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders";
 				OTHER_LDFLAGS = (
 					"-lobjc",
 					"-sub_library",
