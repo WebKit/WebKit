@@ -1,3 +1,13 @@
+2007-03-16  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4869095>
+        default content type changed for XMLHttpRequest POSTs changed (breaks Flickrator 0.1 widget)
+        
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
 2007-03-16  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Tim Hatcher
