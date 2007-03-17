@@ -1,3 +1,19 @@
+2007-03-17  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam Weinig.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=13046 (CSS styles on hover and focus are broken for <use>)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12838 (SVG <use> CSS styles broken)
+        Added test: svg/custom/use-css-events.svg
+
+        In general this fixes the peepo.co.uk website.
+
+        Forgot to pass the actual StyleChange to the recalcStyle() function,
+        when calling it on the shadow tree root element.
+
+        * ksvg2/svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::recalcStyle):
+
 2007-03-17  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.

@@ -197,7 +197,7 @@ void SVGUseElement::recalcStyle(StyleChange change)
     }
 
     // Only change==Detach needs special treatment, for anything else recalcStyle() works.
-    m_shadowTreeRootElement->recalcStyle();
+    m_shadowTreeRootElement->recalcStyle(change);
 }
 
 #ifdef DUMP_INSTANCE_TREE

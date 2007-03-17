@@ -1,3 +1,14 @@
+2007-03-17  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam Weinig.
+
+        Added new layout test checking CSS pseudo styles work with <use> elements.
+
+        * svg/custom/use-css-events-expected.checksum: Added.
+        * svg/custom/use-css-events-expected.png: Added.
+        * svg/custom/use-css-events-expected.txt: Added.
+        * svg/custom/use-css-events.svg: Added.
+
 2007-03-17  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adele.
