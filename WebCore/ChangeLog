@@ -1,3 +1,13 @@
+2007-03-17  David Hyatt  <hyatt@apple.com>
+
+        Fix tiny PLT regression.  Don't examine the border/background data for RenderImage when images change
+        unless we actually have a border/background.
+
+        Reviewed by Brady
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged):
+
 2007-03-17  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Sam Weinig.

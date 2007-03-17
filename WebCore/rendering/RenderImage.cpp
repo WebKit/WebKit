@@ -128,7 +128,9 @@ void RenderImage::imageChanged(CachedImage* newImage)
     if (documentBeingDestroyed())
         return;
 
-    RenderReplaced::imageChanged(newImage);
+    if (hasBoxDecorations())
+        RenderReplaced::imageChanged(newImage);
+    
     if (newImage != m_cachedImage)
         return;
 
