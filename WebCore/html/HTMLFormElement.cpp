@@ -49,21 +49,23 @@ using namespace HTMLNames;
 
 HTMLFormElement::HTMLFormElement(Document* doc)
     : HTMLElement(formTag, doc)
+    , m_elementAliases(0)
+    , collectionInfo(0)
+    , m_enctype("application/x-www-form-urlencoded")
+    , m_post(false)
+    , m_multipart(false)
+    , m_autocomplete(true)
+    , m_insubmit(false)
+    , m_doingsubmit(false)
+    , m_inreset(false)
+    , m_malformed(false)
+    , m_preserveAcrossRemove(false)
 {
-    collectionInfo = 0;
-    m_post = false;
-    m_multipart = false;
-    m_autocomplete = true;
-    m_insubmit = false;
-    m_doingsubmit = false;
-    m_inreset = false;
-    m_enctype = "application/x-www-form-urlencoded";
-    m_malformed = false;
-    m_preserveAcrossRemove = false;
 }
 
 HTMLFormElement::~HTMLFormElement()
 {
+    delete m_elementAliases;
     delete collectionInfo;
     
     for (unsigned i = 0; i < formElements.size(); ++i)
@@ -638,5 +640,44 @@ void HTMLFormElement::setTarget(const String &value)
 {
     setAttribute(targetAttr, value);
 }
-    
+
+PassRefPtr<HTMLGenericFormElement> HTMLFormElement::elementForAlias(const AtomicString& alias)
+{
+    if (alias.isEmpty() || !m_elementAliases)
+        return 0;
+    return m_elementAliases->get(alias.impl());
+}
+
+void HTMLFormElement::addElementAlias(HTMLGenericFormElement* element, const AtomicString& alias)
+{
+    if (alias.isEmpty())
+        return;
+    if (!m_elementAliases)
+        m_elementAliases = new AliasMap;
+    m_elementAliases->set(alias.impl(), element);
+}
+
+void HTMLFormElement::getNamedElements(const AtomicString& name, Vector<RefPtr<Node> >& namedItems)
+{
+    elements()->namedItems(name, namedItems);
+
+    // see if we have seen something with this name before
+    RefPtr<HTMLGenericFormElement> aliasElem;
+    if (aliasElem = elementForAlias(name)) {
+        bool found = false;
+        for (unsigned n = 0; n < namedItems.size(); n++) {
+            if (namedItems[n] == aliasElem.get()) {
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+            // we have seen it before but it is gone now. still, we need to return it.
+            namedItems.append(aliasElem.get());
+    }
+    // name has been accessed, remember it
+    if (namedItems.size() && aliasElem != namedItems.first())
+        addElementAlias(static_cast<HTMLGenericFormElement*>(namedItems.first().get()), name);        
+}
+
 } // namespace

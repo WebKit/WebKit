@@ -50,6 +50,8 @@ public:
     virtual void handleLocalEvents(Event*, bool useCapture);
      
     PassRefPtr<HTMLCollection> elements();
+    void getNamedElements(const AtomicString&, Vector<RefPtr<Node> >&);
+    
     unsigned length() const;
     Node* item(unsigned index);
 
@@ -98,6 +100,9 @@ public:
 
     virtual String target() const;
     void setTarget(const String&);
+    
+    PassRefPtr<HTMLGenericFormElement> elementForAlias(const AtomicString&);
+    void addElementAlias(HTMLGenericFormElement*, const AtomicString& alias);
 
     // FIXME: Change this to be private after getting rid of all the clients.
     Vector<HTMLGenericFormElement*> formElements;
@@ -109,13 +114,15 @@ private:
 
     friend class HTMLFormCollection;
 
+    typedef HashMap<RefPtr<AtomicStringImpl>, RefPtr<HTMLGenericFormElement> > AliasMap;
+    
+    AliasMap* m_elementAliases;
     HTMLCollection::CollectionInfo* collectionInfo;
 
     Vector<HTMLImageElement*> imgElements;
     String m_url;
     String m_target;
     String m_enctype;
-    String m_boundary;
     String m_acceptcharset;
     bool m_post : 1;
     bool m_multipart : 1;

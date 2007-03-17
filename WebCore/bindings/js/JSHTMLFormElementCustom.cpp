@@ -35,17 +35,23 @@ namespace WebCore {
 
 bool JSHTMLFormElement::canGetItemsForName(ExecState* exec, HTMLFormElement* form, const AtomicString& propertyName)
 {
-    // FIXME: ideally there should be a lighter-weight way of doing this
-    JSValue* namedItems = JSHTMLCollection(exec, form->elements().get()).getNamedItems(exec, propertyName);
-    return !namedItems->isUndefined();
+    Vector<RefPtr<Node> > namedItems;
+    form->getNamedElements(propertyName, namedItems);
+    return namedItems.size();
 }
 
 JSValue* JSHTMLFormElement::nameGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
 {
-    JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
-    HTMLFormElement* form = static_cast<HTMLFormElement*>(thisObj->impl());
+    HTMLFormElement* form = static_cast<HTMLFormElement*>(static_cast<JSHTMLElement*>(slot.slotBase())->impl());
     
-    return JSHTMLCollection(exec, form->elements().get()).getNamedItems(exec, propertyName);
+    Vector<RefPtr<Node> > namedItems;
+    form->getNamedElements(propertyName, namedItems);
+    
+    if (namedItems.size() == 1)
+        return toJS(exec, namedItems[0].get());
+    if (namedItems.size() > 1) 
+        return new DOMNamedNodesCollection(exec, namedItems);
+    return jsUndefined();
 }
 
 }
