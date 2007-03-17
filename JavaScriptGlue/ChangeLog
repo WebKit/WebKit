@@ -1,3 +1,15 @@
+2007-03-17  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Made Version.xcconfig smarter when building for different configurations.
+        Now uses the 522+ OpenSource version for Debug and Release, while using the    
+        full 522.4 version for Production builds. The system prefix is also computed
+        based on the current system, so 4522.4 on Tiger and 5522.4 on Leopard.
+
+        * Configurations/JavaScriptGlue.xcconfig:
+        * Configurations/Version.xcconfig:
+
 2007-03-15  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by John.
