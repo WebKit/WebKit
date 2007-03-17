@@ -1296,6 +1296,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C283208902B0F008A9EFC /* Build configuration list for PBXProject "WebKit" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -1310,6 +1311,7 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				9398100A0824BF01008DF038 /* WebKit */,
 			);
@@ -1553,7 +1555,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C904FD20BA9DD0F0081E9D0 /* WebKit.xcconfig */;
 			buildSettings = {
-				DEBUG_DEFINES = DISABLE_THREAD_CHECK;
+				DEBUG_DEFINES = "DISABLE_THREAD_CHECK ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM";
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders";
 				OTHER_LDFLAGS = (
@@ -1569,7 +1571,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C904FD20BA9DD0F0081E9D0 /* WebKit.xcconfig */;
 			buildSettings = {
-				DEBUG_DEFINES = NDEBUG;
+				DEBUG_DEFINES = "NDEBUG ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM";
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders";
 				OTHER_LDFLAGS = (
