@@ -783,6 +783,9 @@ static bool debugWidget = true;
 
 - (void)_loadBackForwardListFromOtherView:(WebView *)otherView
 {
+    if (!_private->page)
+        return;
+    
     // It turns out the right combination of behavior is done with the back/forward load
     // type.  (See behavior matrix at the top of WebFramePrivate.)  So we copy all the items
     // in the back forward list, and go to the current one.
@@ -826,6 +829,9 @@ static bool debugWidget = true;
 
 - (void)_updateWebCoreSettingsFromPreferences:(WebPreferences *)preferences
 {
+    if (!_private->page)
+        return;
+    
     Settings* settings = _private->page->settings();
     
     settings->setCursiveFontFamily([preferences cursiveFontFamily]);
@@ -1235,7 +1241,7 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
 {
     // FIXME: Remove this blanket assignment once Dashboard and Dashcode implement 
     // specific support for the backward compatibility mode flag.
-    if (behavior == WebDashboardBehaviorAllowWheelScrolling && flag == NO)
+    if (behavior == WebDashboardBehaviorAllowWheelScrolling && flag == NO && _private->page)
         _private->page->settings()->setUsesDashboardBackwardCompatibilityMode(true);
     
     switch (behavior) {
@@ -1256,7 +1262,8 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
             break;
         }
         case WebDashboardBehaviorUseBackwardCompatibilityMode: {
-            _private->page->settings()->setUsesDashboardBackwardCompatibilityMode(flag);
+            if (_private->page)
+                _private->page->settings()->setUsesDashboardBackwardCompatibilityMode(flag);
             break;
         }
     }
@@ -1278,7 +1285,7 @@ WebResourceDelegateImplementationCache WebViewGetResourceLoadDelegateImplementat
             return _private->dashboardBehaviorAllowWheelScrolling;
         }
         case WebDashboardBehaviorUseBackwardCompatibilityMode: {
-            return _private->page->settings()->usesDashboardBackwardCompatibilityMode();
+            return _private->page && _private->page->settings()->usesDashboardBackwardCompatibilityMode();
         }
     }
     return NO;
@@ -1969,16 +1976,25 @@ NS_ENDHANDLER
 
 - (BOOL)goBack
 {
+    if (!_private->page)
+        return NO;
+    
     return _private->page->goBack();
 }
 
 - (BOOL)goForward
 {
+    if (!_private->page)
+        return NO;
+
     return _private->page->goForward();
 }
 
 - (BOOL)goToBackForwardItem:(WebHistoryItem *)item
 {
+    if (!_private->page)
+        return NO;
+
     _private->page->goToItem(core(item), FrameLoadTypeIndexedBackForward);
     return YES;
 }
@@ -2444,11 +2460,17 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (BOOL)canGoBack
 {
+    if (!_private->page)
+        return NO;
+
     return !!_private->page->backForwardList()->backItem();
 }
 
 - (BOOL)canGoForward
 {
+    if (!_private->page)
+        return NO;
+
     return !!_private->page->backForwardList()->forwardItem();
 }
 
@@ -2700,12 +2722,13 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)setTabKeyCyclesThroughElements:(BOOL)cyclesElements
 {
     _private->tabKeyCyclesThroughElementsChanged = YES;
-    _private->page->setTabKeyCyclesThroughElements(cyclesElements);
+    if (_private->page)
+        _private->page->setTabKeyCyclesThroughElements(cyclesElements);
 }
 
 - (BOOL)tabKeyCyclesThroughElements
 {
-    return _private->page->tabKeyCyclesThroughElements();
+    return _private->page && _private->page->tabKeyCyclesThroughElements();
 }
 
 - (void)setScriptDebugDelegate:(id)delegate
@@ -3040,7 +3063,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     if (_private->editable != flag) {
         _private->editable = flag;
-        if (!_private->tabKeyCyclesThroughElementsChanged)
+        if (!_private->tabKeyCyclesThroughElementsChanged && _private->page)
             _private->page->setTabKeyCyclesThroughElements(!flag);
         Frame* mainFrame = [[[self mainFrame] _bridge] _frame];
         if (mainFrame) {

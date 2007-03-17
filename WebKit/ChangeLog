@@ -1,3 +1,26 @@
+2007-03-17  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Hatcher
+        
+        Discovered while working on <rdar://problem/5070334> that many WebView calls will crash if called
+        after -[WebView close] has executed because _private->page is deferenced after it's been set to 0. 
+        It might be silly/wrong to call these methods after -close, but obviously it shouldn't crash. Made
+        each use of _private->page robust against nil-dereferencing.
+
+        * WebView/WebView.mm:
+        (-[WebView _loadBackForwardListFromOtherView:]):
+        (-[WebView _updateWebCoreSettingsFromPreferences:]):
+        (-[WebView _setDashboardBehavior:to:]):
+        (-[WebView _dashboardBehavior:]):
+        (-[WebView goBack]):
+        (-[WebView goForward]):
+        (-[WebView goToBackForwardItem:]):
+        (-[WebView canGoBack]):
+        (-[WebView canGoForward]):
+        (-[WebView setTabKeyCyclesThroughElements:]):
+        (-[WebView tabKeyCyclesThroughElements]):
+        (-[WebView setEditable:]):
+
 2007-03-17  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.
