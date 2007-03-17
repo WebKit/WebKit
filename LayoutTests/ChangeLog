@@ -1,5 +1,13 @@
 2007-03-16  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Braveheart
+
+        Updated layouttest results because I added a window property
+
+        * fast/dom/Window/window-properties-expected.txt:
+
+2007-03-16  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Anders
 
         <rdar://problem/5061826> and
