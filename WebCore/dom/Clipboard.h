@@ -89,7 +89,6 @@ namespace WebCore {
         void setDestinationOperation(DragOperation);
         
         void setDragHasStarted() { m_dragStarted = true; }
-        static bool canSaveAsWebArchive(Frame*);
         
     protected:
         ClipboardAccessPolicy policy() const { return m_policy; }

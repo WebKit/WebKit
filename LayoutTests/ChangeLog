@@ -1,3 +1,15 @@
+2007-03-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Hyatt.
+
+        Updating layout test to allow stand alone image to be
+        dragged into a content editable div
+
+        * fast/events/standalone-image-drag-to-editable-expected.checksum:
+        * fast/events/standalone-image-drag-to-editable-expected.png:
+        * fast/events/standalone-image-drag-to-editable-expected.txt:
+        * fast/events/standalone-image-drag-to-editable.html:
+
 2007-03-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Braveheart

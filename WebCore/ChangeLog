@@ -1,3 +1,20 @@
+2007-03-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Hyatt.
+
+        The old canSaveAsWebArchive call was necessary as stand alone
+        images used to be rendered by ImageDocument.
+
+        Fixes rdar://problem/5061252
+
+        * dom/Clipboard.cpp:
+        * dom/Clipboard.h:
+        (WebCore::Clipboard::setDragHasStarted):
+        * page/DragClient.h:
+        (WebCore::DragClient::declareAndWriteDragImage):
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::declareAndWriteDragImage):
+
 2007-03-16  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

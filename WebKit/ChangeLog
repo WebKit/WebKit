@@ -1,3 +1,17 @@
+2007-03-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Hyatt.
+
+        The old canSaveAsWebArchive call was necessary as stand alone
+        images used to be rendered by ImageDocument.
+
+        Fixes rdar://problem/5061252
+
+        * WebCoreSupport/WebDragClient.h:
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::declareAndWriteDragImage):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2007-03-15  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej

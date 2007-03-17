@@ -69,7 +69,7 @@ namespace WebCore {
         //Mac specific helper functions to allow access to functionality in webkit -- such as 
         //web archives and NSPasteboard extras 
         //not abstract as that would require another #if PLATFORM(MAC) for the SVGImage client empty impl
-        virtual void declareAndWriteDragImage(NSPasteboard*, DOMElement*, NSURL*, NSString*, Frame*, bool canSaveAsWebArchive) {};
+        virtual void declareAndWriteDragImage(NSPasteboard*, DOMElement*, NSURL*, NSString*, Frame*) {};
 #endif
         
         virtual ~DragClient() {};

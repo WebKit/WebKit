@@ -118,21 +118,13 @@ DragImageRef WebDragClient::createDragImageForLink(KURL& url, const String& titl
 }
 
 
-void WebDragClient::declareAndWriteDragImage(NSPasteboard* pasteboard, DOMElement* element, NSURL* URL, NSString* title, WebCore::Frame* frame, bool canSaveAsWebArchive) 
+void WebDragClient::declareAndWriteDragImage(NSPasteboard* pasteboard, DOMElement* element, NSURL* URL, NSString* title, WebCore::Frame* frame) 
 {
     ASSERT(pasteboard);
     ASSERT(element);
     id source = (WebHTMLView*)[[kit(frame) frameView] documentView];        
+    WebArchive *archive = [element webArchive];
     
-    WebArchive *archive;
-    
-    // If the image element comes from an ImageDocument, we don't want to 
-    // create a web archive from the image element.
-    if (canSaveAsWebArchive)
-        archive = [element webArchive];
-    else
-        archive = [WebArchiver archiveMainResourceForFrame:kit(frame)];
-    ASSERT(archive);
     [pasteboard _web_declareAndWriteDragImageForElement:element URL:URL title:title archive:archive source:source];
 }
 
