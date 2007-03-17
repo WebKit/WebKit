@@ -1,3 +1,13 @@
+2007-03-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Updated test for <rdar://problem/4990050> REGRESSION: onchange gets fired when clicking on a programmatically selected element in a listbox
+        http://bugs.webkit.org/show_bug.cgi?id=12725
+
+        * fast/forms/listbox-onchange-expected.txt:
+        * fast/forms/listbox-onchange.html:
+
 2007-03-16  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Hyatt.

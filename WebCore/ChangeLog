@@ -1,3 +1,46 @@
+2007-03-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/4990050> REGRESSION: onchange gets fired when clicking on a programmatically selected element in a listbox
+        http://bugs.webkit.org/show_bug.cgi?id=12725
+
+        Test: updated fast/forms/listbox-onchange.html
+
+        Added HTMLSelectElement::saveLastSelection that is called before changing a selection that could result
+        in onChange being called.  m_lastOnChangeIndex and m_lastOnChangeSelection no longer have to be up-to date all the time, 
+        they just have to be up-to-date before we execute an action that may trigger onChange.
+
+        * html/HTMLOptionElement.cpp: (WebCore::HTMLOptionElement::setSelectedState): Added.
+          The HTMLSelectElement will only set an option's selected state with this method.  This ensures
+          that notifyOptionSelected won't get called when the call originates from the select element.
+        * html/HTMLOptionElement.h:
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::deselectItems): Calls setSelectedState.
+        (WebCore::HTMLSelectElement::setSelectedIndex): ditto. Don't update the last selection variables here.  Scroll to the new selection.
+         The scrolling call used to only be in notifyOptionSelected.  There's no reason we shouldn't scroll when the selection is set through
+         the HTMLSelectElement.
+        (WebCore::HTMLSelectElement::setValue): Call setSelectedIndex to update all options selected state.
+        (WebCore::HTMLSelectElement::restoreState): Call setSelectedState.
+        (WebCore::HTMLSelectElement::selectAll): Call saveLastSelection before making the selection, and calling onChange.
+        (WebCore::HTMLSelectElement::recalcListItems): Call setSelectedState.  Don't need to save selection here anymore, 
+         since it will get saved before we call onChange.
+        (WebCore::HTMLSelectElement::reset): ditto.
+        (WebCore::HTMLSelectElement::dispatchFocusEvent): Added. Call saveLastSelection for menu lists, since onChange can be fired
+         on blur.
+        (WebCore::HTMLSelectElement::dispatchBlurEvent): Call menuListOnChange.
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler): Call saveLastSelection before showing the popup window.
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):  Call saveLastSelection during mousedown (to prepare for an 
+         onchange during mouseup, or after autoscroll).
+        (WebCore::HTMLSelectElement::updateListBoxSelection): Call setSelectedState.
+
+        (WebCore::HTMLSelectElement::menuListOnChange): Added. Compares the m_lastOnChangeIndex to the selectedIndex().
+        (WebCore::HTMLSelectElement::listBoxOnChange): Move the m_lastOnChangeSelection creation to saveLastSelection.
+        (WebCore::HTMLSelectElement::saveLastSelection): Added. Sets m_lastOnChangeIndex or m_lastOnChangeSelection.
+        * html/HTMLSelectElement.h:
+        * platform/PopupMenu.h:
+
 2007-03-16  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Hyatt.

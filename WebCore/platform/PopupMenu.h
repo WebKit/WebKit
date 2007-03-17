@@ -83,7 +83,7 @@ public:
 
     int listIndexAtPoint(const IntPoint&) const;
 
-    bool setFocusedIndex(int index, bool hotTracking = false, bool fireOnChange = false);
+    bool setFocusedIndex(int index, bool hotTracking = false);
     int focusedIndex() const;
     void focusFirst();
     void focusLast();
@@ -139,6 +139,7 @@ private:
     int m_itemHeight;
     int m_scrollOffset;
     int m_wheelDelta;
+    int m_focusedIndex;
 #endif
 
 };

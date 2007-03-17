@@ -175,7 +175,16 @@ void HTMLOptionElement::setSelected(bool selected)
         return;
     m_selected = selected;
     if (HTMLSelectElement* select = getSelect())
-        select->notifyOptionSelected(this, selected);
+        select->setSelectedIndex(selected ? index() : -1, false);
+
+}
+
+void HTMLOptionElement::setSelectedState(bool selected)
+{
+    if (m_selected == selected)
+        return;
+    m_selected = selected;
+    setChanged();
 }
 
 void HTMLOptionElement::childrenChanged()

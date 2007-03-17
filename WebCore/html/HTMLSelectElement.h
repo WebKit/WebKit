@@ -56,11 +56,11 @@ public:
 
     virtual void recalcStyle(StyleChange);
 
+    virtual void dispatchFocusEvent();
     virtual void dispatchBlurEvent();
 
     int selectedIndex() const;
     void setSelectedIndex(int index, bool deselect = true, bool fireOnChange = false);
-    void notifyOptionSelected(HTMLOptionElement* selectedOption, bool selected);
     int lastSelectedListIndex() const;
 
     virtual bool isEnumeratable() const { return true; }
@@ -131,6 +131,7 @@ public:
     void setActiveSelectionEndIndex(int index) { m_activeSelectionEndIndex = index; }
     void updateListBoxSelection(bool deselectOtherOptions);
     void listBoxOnChange();
+    void menuListOnChange();
     
     int activeSelectionStartListIndex() const;
     int activeSelectionEndListIndex() const;
@@ -146,6 +147,7 @@ private:
     void menuListDefaultEventHandler(Event*);
     void listBoxDefaultEventHandler(Event*);
     void typeAheadFind(KeyboardEvent*);
+    void saveLastSelection();
 
     mutable Vector<HTMLElement*> m_listItems;
     Vector<bool> m_cachedStateForActiveSelection;
