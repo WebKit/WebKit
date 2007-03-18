@@ -51,6 +51,7 @@ namespace KJS {
         bool isEmpty() const { return _ustring.isEmpty(); }
         
         uint32_t toUInt32(bool* ok) const { return _ustring.toUInt32(ok); }
+        uint32_t toUInt32(bool* ok, bool tolerateEmptyString) const { return _ustring.toUInt32(ok, tolerateEmptyString); };
         uint32_t toStrictUInt32(bool* ok) const { return _ustring.toStrictUInt32(ok); }
         unsigned toArrayIndex(bool* ok) const { return _ustring.toArrayIndex(ok); }
         double toDouble() const { return _ustring.toDouble(); }

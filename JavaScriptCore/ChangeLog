@@ -1,5 +1,17 @@
 2007-03-18  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Oliver Hunt.
+        
+        Exposed some extra toUInt32 functionality, as part of the fix for
+        REGRESSION: Incomplete document.all implementation breaks abtelectronics.com 
+        (Style Change Through JavaScript Blanks Content)
+
+        * JavaScriptCore.exp:
+        * kjs/identifier.h:
+        (KJS::Identifier::toUInt32):
+
+2007-03-18  Geoffrey Garen  <ggaren@apple.com>
+
         Removed duplicate export name.
         
         * JavaScriptCore.exp:
