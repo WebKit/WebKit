@@ -95,11 +95,8 @@ void RenderFrameSet::paintColumnBorder(const PaintInfo& paintInfo, const IntRect
     // Now stroke the edges but only if we have enough room to paint both edges with a little
     // bit of the fill color showing through.
     if (borderRect.width() >= 3) {
-        context->setStrokeThickness(1.0f);
-        context->setStrokeColor(borderStartEdgeColor());
-        context->drawLine(borderRect.topLeft(), borderRect.bottomLeft());
-        context->setStrokeColor(borderEndEdgeColor());
-        context->drawLine(borderRect.topRight(), borderRect.bottomRight());
+        context->fillRect(IntRect(borderRect.topLeft(), IntSize(1, height())), borderStartEdgeColor());
+        context->fillRect(IntRect(borderRect.topRight(), IntSize(1, height())), borderEndEdgeColor());
     }
 }
 
@@ -117,13 +114,8 @@ void RenderFrameSet::paintRowBorder(const PaintInfo& paintInfo, const IntRect& b
     // Now stroke the edges but only if we have enough room to paint both edges with a little
     // bit of the fill color showing through.
     if (borderRect.height() >= 3) {
-        Color startEdge(170, 170, 170);
-        Color endEdge(Color::black);
-        context->setStrokeThickness(1.0f);
-        context->setStrokeColor(borderStartEdgeColor());
-        context->drawLine(borderRect.topLeft(), borderRect.topRight());
-        context->setStrokeColor(borderEndEdgeColor());
-        context->drawLine(borderRect.bottomLeft(), borderRect.bottomRight());
+        context->fillRect(IntRect(borderRect.topLeft(), IntSize(width(), 1)), borderStartEdgeColor());
+        context->fillRect(IntRect(borderRect.bottomLeft(), IntSize(width(), 1)), borderEndEdgeColor());
     }
 }
 
