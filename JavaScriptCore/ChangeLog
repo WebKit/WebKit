@@ -1,3 +1,9 @@
+2007-03-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed duplicate export name.
+        
+        * JavaScriptCore.exp:
+
 2007-03-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

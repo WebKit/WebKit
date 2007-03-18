@@ -22,7 +22,6 @@ _JSObjectIsFunction
 _JSObjectMake
 _JSObjectMakeConstructor
 _JSObjectMakeFunction
-_JSObjectMakeFunction
 _JSObjectMakeFunctionWithCallback
 _JSObjectSetPrivate
 _JSObjectSetProperty
