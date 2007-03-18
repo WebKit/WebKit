@@ -1,3 +1,15 @@
+2007-03-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Fixed <rdar://problem/5070967> REGRESSION (r20211): Repro crash when 
+        closing View Source window
+        
+        I award myself 0 points, and may God have mercy on my soul.
+
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::~KJSProxy):
+
 2007-03-17  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Not reviewed - gdk build fix.

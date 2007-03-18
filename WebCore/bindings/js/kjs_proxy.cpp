@@ -48,7 +48,7 @@ KJSProxy::~KJSProxy()
 {
     // Check for <rdar://problem/4876466>. In theory, no JS should be executing
     // in our interpreter. 
-    ASSERT(!m_script->context());
+    ASSERT(!m_script || !m_script->context());
     m_script = 0;
     
     // It's likely that destroying the interpreter has created a lot of garbage.
