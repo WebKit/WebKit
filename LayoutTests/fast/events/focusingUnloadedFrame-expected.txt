@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderFrameSet {FRAMESET} at (0,0) size 800x600
       RenderFrame {FRAME} at (0,0) size 800x600
-        layer at (0,0) size 798x596
-          RenderView at (0,0) size 798x596
-        layer at (0,0) size 798x596
-          RenderBlock {HTML} at (0,0) size 798x596
-            RenderBody {BODY} at (8,8) size 782x580
+        layer at (0,0) size 800x600
+          RenderView at (0,0) size 800x600
+        layer at (0,0) size 800x600
+          RenderBlock {HTML} at (0,0) size 800x600
+            RenderBody {BODY} at (8,8) size 784x584
               RenderText {#text} at (0,0) size 764x36
                 text run at (0,0) width 654: "To reproduce the original crash outside of DumpRenderTree, press option-tab twice. After focusing the "
                 text run at (654,0) width 110: "link below on the"
