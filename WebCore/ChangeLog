@@ -1,3 +1,15 @@
+2007-03-17  Dave Hyatt  <hyatt@apple.com>
+
+        Prevent starvation of user input and painting when processing timers.
+        If we are already in the processing of a custom timer message, don't allow that
+        processing to do another PostMessage.  Force SetTimer to be used instead.
+      
+        Reviewed by ggaren
+
+       * platform/win/SharedTimerWin.cpp:
+        (WebCore::TimerWindowWndProc):
+        (WebCore::setSharedTimerFireTime):
+
 2007-03-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.

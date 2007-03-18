@@ -40,12 +40,15 @@ static void (*sharedTimerFiredFunction)();
 static HWND timerWindowHandle = 0;
 static UINT timerFiredMessage = 0;
 const LPCWSTR kTimerWindowClassName = L"TimerWindowClass";
+static bool processingCustomTimerMessage = false;
 
 LRESULT CALLBACK TimerWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    if (message == timerFiredMessage)
+    if (message == timerFiredMessage) {
+        processingCustomTimerMessage = true;
         sharedTimerFiredFunction();
-    else
+        processingCustomTimerMessage = false;
+    } else
         return DefWindowProc(hWnd, message, wParam, lParam);
     return 0;
 }
@@ -94,16 +97,19 @@ void setSharedTimerFireTime(double fireTime)
             intervalInMS = (unsigned)interval;
     }
 
-    if (timerID)
+    if (timerID) {
         KillTimer(0, timerID);
-
-    if (intervalInMS == 0) {
         timerID = 0;
+    }
+
+    // We don't allow nested PostMessages, since the custom messages will effectively starve
+    // painting and user input. (Win32 has a tri-level queue with application messages > 
+    // user input > WM_PAINT/WM_TIMER.)
+    if (intervalInMS < USER_TIMER_MINIMUM && !processingCustomTimerMessage) {
         // Windows SetTimer does not allow timeouts smaller than 10ms (USER_TIMER_MINIMUM)
         initializeOffScreenTimerWindow();
         PostMessage(timerWindowHandle, timerFiredMessage, 0, 0);
     } else
-        // FIXME: 1-9ms timeouts may fire too late.
         timerID = SetTimer(0, 0, intervalInMS, timerFired);
 }
 
