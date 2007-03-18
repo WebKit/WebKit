@@ -1,3 +1,10 @@
+2007-03-17  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Not reviewed - gdk build fix.
+
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (Pasteboard::writeURL):
+
 2007-03-17  David Hyatt  <hyatt@apple.com>
 
         Fix tiny PLT regression.  Don't examine the border/background data for RenderImage when images change

@@ -296,7 +296,7 @@ void Editor::markMisspellings(const Selection&) { notImplementedGdk(); }
 
 Pasteboard* Pasteboard::generalPasteboard() { notImplementedGdk(); return 0; }
 void Pasteboard::writeSelection(Range*, bool, Frame*) { notImplementedGdk(); }
-void Pasteboard::writeURL(const KURL&, const String&, Frame*, bool) { notImplementedGdk(); }
+void Pasteboard::writeURL(const KURL&, const String&, Frame*) { notImplementedGdk(); }
 void Pasteboard::writeImage(const HitTestResult&) { notImplementedGdk(); }
 void Pasteboard::clear() { notImplementedGdk(); }
 bool Pasteboard::canSmartReplace() { notImplementedGdk(); return false; }
