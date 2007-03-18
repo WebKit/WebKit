@@ -1,5 +1,15 @@
 2007-03-18  David Hyatt  <hyatt@apple.com>
 
+        Make iframes work properly with frameborder="0".
+
+        Reviewed by aroben
+
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::mapToEntry):
+        (WebCore::HTMLIFrameElement::parseMappedAttribute):
+
+2007-03-18  David Hyatt  <hyatt@apple.com>
+
         Add a 2px border by default to <iframe>s for compatibility with other browsers.
 
         Reviewed by aroben
