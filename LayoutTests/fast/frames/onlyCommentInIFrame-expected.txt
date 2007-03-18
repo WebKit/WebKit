@@ -8,34 +8,34 @@ layer at (0,0) size 800x600
         text run at (0,18) width 773: "construct RenderViews for such iframes. We need to propery construct an empty frame instead, so the RenderView should"
         text run at (0,36) width 502: "have a RenderBlock and RenderBody below it in the dump of the RenderTree. "
       RenderBR {BR} at (502,50) size 0x0
-      RenderPartObject {IFRAME} at (0,54) size 784x10
-        layer at (0,0) size 767x8
-          RenderView at (0,0) size 767x6
-        layer at (0,0) size 767x8
-          RenderBlock {HTML} at (0,0) size 767x8
-            RenderBody {BODY} at (8,8) size 751x0
+      RenderPartObject {IFRAME} at (0,54) size 788x14 [border: (2px inset #000000)]
+        layer at (0,0) size 784x10
+          RenderView at (0,0) size 784x10
+        layer at (0,0) size 784x10
+          RenderBlock {HTML} at (0,0) size 784x10
+            RenderBody {BODY} at (8,8) size 768x0
       RenderText {#text} at (0,0) size 0x0
       RenderBR {BR} at (0,0) size 0x0
-      RenderBR {BR} at (0,64) size 0x18
-      RenderPartObject {IFRAME} at (0,82) size 784x10
-        layer at (0,0) size 767x130
-          RenderView at (0,0) size 767x6
-        layer at (0,0) size 767x130
-          RenderBlock {html} at (0,0) size 767x130
-            RenderBody {body} at (8,18) size 751x94
-              RenderBlock (anonymous) at (0,0) size 751x0
+      RenderBR {BR} at (0,68) size 0x18
+      RenderPartObject {IFRAME} at (0,86) size 788x14 [border: (2px inset #000000)]
+        layer at (0,0) size 769x130
+          RenderView at (0,0) size 769x10
+        layer at (0,0) size 769x130
+          RenderBlock {html} at (0,0) size 769x130
+            RenderBody {body} at (8,18) size 753x94
+              RenderBlock (anonymous) at (0,0) size 753x0
                 RenderInline {parsererror} at (0,0) size 0x0 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
-              RenderBlock (anonymous) at (0,0) size 751x94
-                RenderBlock {h3} at (0,0) size 751x22
+              RenderBlock (anonymous) at (0,0) size 753x94
+                RenderBlock {h3} at (0,0) size 753x22
                   RenderText {#text} at (0,0) size 324x22
                     text run at (0,0) width 324: "This page contains the following errors:"
-                RenderBlock {div} at (0,40) size 751x14
+                RenderBlock {div} at (0,40) size 753x14
                   RenderText {#text} at (0,0) size 490x14
                     text run at (0,0) width 490: "error on line 1 at column 15: Extra content at the end of the document"
                     text run at (490,0) width 0: " "
-                RenderBlock {h3} at (0,72) size 751x22
+                RenderBlock {h3} at (0,72) size 753x22
                   RenderText {#text} at (0,0) size 429x22
                     text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
-              RenderBlock (anonymous) at (0,112) size 751x0
+              RenderBlock (anonymous) at (0,112) size 753x0
                 RenderInline {parsererror} at (0,0) size 0x0 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
       RenderText {#text} at (0,0) size 0x0
