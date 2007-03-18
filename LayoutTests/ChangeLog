@@ -1,3 +1,14 @@
+2007-03-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13105
+        REGRESSION: an exception raised when calculating base value of a dot expression is not returned
+
+        * fast/js/dot-node-base-exception-expected.txt: Added.
+        * fast/js/dot-node-base-exception.html: Added.
+        * fast/js/resources/dot-node-base-exception.js: Added.
+
 2007-03-17  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Sam Weinig.

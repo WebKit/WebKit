@@ -1,3 +1,15 @@
+2007-03-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13105
+        REGRESSION: an exception raised when calculating base value of a dot expression is not returned
+
+        Test: fast/js/dot-node-base-exception.html
+
+        * kjs/nodes.cpp:
+        (FunctionCallDotNode::evaluate): Added the necessary KJS_CHECKEXCEPTIONVALUE.
+
 2007-03-18  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

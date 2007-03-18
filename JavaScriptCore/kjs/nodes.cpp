@@ -755,6 +755,7 @@ static const char *dotExprDoesNotAllowCallsString()
 JSValue *FunctionCallDotNode::evaluate(ExecState *exec)
 {
   JSValue *baseVal = base->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
 
   JSObject *baseObj = baseVal->toObject(exec);
   PropertySlot slot;
