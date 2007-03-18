@@ -671,11 +671,6 @@ static BOOL loggedObjectCacheSize = NO;
         sourceIsDHTML:flag DHTMLWroteData:dhtmlWroteData];
 }
 
-- (void)setHasBorder:(BOOL)hasBorder
-{
-    [[_frame frameView] _setHasBorder:hasBorder];
-}
-
 - (void)print
 {
     id wd = [[self webView] UIDelegate];    

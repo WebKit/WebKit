@@ -102,9 +102,6 @@ public:
     void adjustViewSize();
     void initScrollbars();
     
-    void setHasBorder(bool);
-    bool hasBorder() const;
-    
     virtual IntRect windowClipRect() const;
     IntRect windowClipRect(bool clipToContents) const;
     IntRect windowClipRectForLayer(const RenderLayer*, bool clipToLayerContents) const;

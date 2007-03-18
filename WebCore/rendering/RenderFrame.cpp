@@ -44,12 +44,9 @@ void RenderFrame::viewCleared()
 {
     if (element() && m_widget && m_widget->isFrameView()) {
         FrameView* view = static_cast<FrameView*>(m_widget);
-        HTMLFrameSetElement* frameSet = static_cast<HTMLFrameSetElement*>(element()->parentNode());
-        bool hasBorder = element()->hasFrameBorder() && frameSet->frameBorder();
         int marginw = element()->getMarginWidth();
         int marginh = element()->getMarginHeight();
 
-        view->setHasBorder(hasBorder);
         if (marginw != -1)
             view->setMarginWidth(marginw);
         if (marginh != -1)

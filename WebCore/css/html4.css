@@ -586,6 +586,10 @@ frameset, frame {
     display: block
 }
 
+frameset {
+    border-color: inherit
+}
+
 blockquote.webkit-indent-blockquote {
     margin: 0 0 0 40px;
 }

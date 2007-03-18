@@ -53,8 +53,7 @@ struct ScheduledEvent {
 class FrameViewPrivate {
 public:
     FrameViewPrivate(FrameView* view)
-        : m_hasBorder(false)
-        , layoutTimer(view, &FrameView::layoutTimerFired)
+        : layoutTimer(view, &FrameView::layoutTimerFired)
         , m_mediaType("screen")
         , m_enqueueEvents(0)
         , m_overflowStatusDirty(true)
@@ -83,7 +82,6 @@ public:
     }
 
     bool doFullRepaint;
-    bool m_hasBorder;
     
     ScrollbarMode vmode;
     ScrollbarMode hmode;
@@ -738,17 +736,6 @@ void FrameView::setBaseBackgroundColor(Color bc)
     if (!bc.isValid())
         bc = Color::white;
     d->baseBackgroundColor = bc;
-}
-
-void FrameView::setHasBorder(bool b)
-{
-    d->m_hasBorder = b;
-    updateBorder();
-}
-
-bool FrameView::hasBorder() const
-{
-    return d->m_hasBorder;
 }
 
 void FrameView::scheduleEvent(PassRefPtr<Event> event, PassRefPtr<EventTargetNode> eventTarget, bool tempEvent)

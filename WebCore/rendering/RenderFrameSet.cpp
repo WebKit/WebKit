@@ -31,6 +31,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "GraphicsContext.h"
 #include "HTMLFrameSetElement.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
@@ -63,6 +64,101 @@ RenderFrameSet::GridAxis::GridAxis()
 inline HTMLFrameSetElement* RenderFrameSet::frameSet() const
 {
     return static_cast<HTMLFrameSetElement*>(node());
+}
+
+static Color borderStartEdgeColor()
+{
+    return Color(170,170,170);
+}
+
+static Color borderEndEdgeColor()
+{
+    return Color::black;
+}
+
+void RenderFrameSet::paintColumnBorder(const PaintInfo& paintInfo, const IntRect& borderRect)
+{
+    if (!paintInfo.rect.intersects(borderRect))
+        return;
+        
+    // FIXME: We should do something clever when borders from distinct framesets meet at a join.
+    
+    // Fill first.
+    GraphicsContext* context = paintInfo.context;
+    context->fillRect(borderRect, frameSet()->hasBorderColor() ? style()->borderLeftColor() : Color::white);
+    
+    // Now stroke the edges but only if we have enough room to paint both edges with a little
+    // bit of the fill color showing through.
+    if (borderRect.width() >= 3) {
+        context->setStrokeThickness(1.0f);
+        context->setStrokeColor(borderStartEdgeColor());
+        context->drawLine(borderRect.topLeft(), borderRect.bottomLeft());
+        context->setStrokeColor(borderEndEdgeColor());
+        context->drawLine(borderRect.topRight(), borderRect.bottomRight());
+    }
+}
+
+void RenderFrameSet::paintRowBorder(const PaintInfo& paintInfo, const IntRect& borderRect)
+{
+    if (!paintInfo.rect.intersects(borderRect))
+        return;
+
+    // FIXME: We should do something clever when borders from distinct framesets meet at a join.
+    
+    // Fill first.
+    GraphicsContext* context = paintInfo.context;
+    context->fillRect(borderRect, frameSet()->hasBorderColor() ? style()->borderLeftColor() : Color::white);
+
+    // Now stroke the edges but only if we have enough room to paint both edges with a little
+    // bit of the fill color showing through.
+    if (borderRect.height() >= 3) {
+        Color startEdge(170, 170, 170);
+        Color endEdge(Color::black);
+        context->setStrokeThickness(1.0f);
+        context->setStrokeColor(borderStartEdgeColor());
+        context->drawLine(borderRect.topLeft(), borderRect.topRight());
+        context->setStrokeColor(borderEndEdgeColor());
+        context->drawLine(borderRect.bottomLeft(), borderRect.bottomRight());
+    }
+}
+
+void RenderFrameSet::paint(PaintInfo& paintInfo, int tx, int ty)
+{
+    if (paintInfo.phase != PaintPhaseForeground)
+        return;
+    
+    RenderObject* child = firstChild();
+    if (!child)
+        return;
+
+    // Add in our offsets.
+    tx += m_x;
+    ty += m_y;
+
+    int rows = frameSet()->totalRows();
+    int cols = frameSet()->totalCols();
+    int borderThickness = frameSet()->border();
+    
+    int yPos = 0;
+    for (int r = 0; r < rows; r++) {
+        int xPos = 0;
+        for (int c = 0; c < cols; c++) {
+            child->paint(paintInfo, tx, ty);
+            xPos += m_cols.m_sizes[c];
+            if (borderThickness) {
+                paintColumnBorder(paintInfo, IntRect(tx + xPos, ty + yPos, borderThickness, height()));
+                xPos += borderThickness;
+            }
+            child = child->nextSibling();
+            if (!child)
+                return;
+        }
+        yPos += m_rows.m_sizes[r];
+        if (borderThickness) {
+            paintRowBorder(paintInfo, IntRect(tx, ty + yPos, width(), borderThickness));
+            yPos += borderThickness;
+        }
+    }
 }
 
 bool RenderFrameSet::nodeAtPoint(const HitTestRequest& request, HitTestResult& result,

@@ -294,8 +294,6 @@ typedef enum ObjectElementType {
 
 - (BOOL)startDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc operation:(NSDragOperation)op event:(NSEvent *)event sourceIsDHTML:(BOOL)flag DHTMLWroteData:(BOOL)dhtmlWroteData;
 
-- (void)setHasBorder:(BOOL)hasBorder;
-
 - (void)print;
 
 - (jobject)getAppletInView:(NSView *)view;

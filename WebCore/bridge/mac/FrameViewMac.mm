@@ -36,13 +36,6 @@
 
 namespace WebCore {
 
-void FrameView::updateBorder()
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [m_frame.get()->bridge() setHasBorder:hasBorder()];
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
 void FrameView::updateDashboardRegions()
 {
     Document* doc = m_frame->document();

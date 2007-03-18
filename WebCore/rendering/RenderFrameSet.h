@@ -42,7 +42,8 @@ public:
 
     virtual void layout();
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
-
+    virtual void paint(PaintInfo& paintInfo, int tx, int ty);
+    
     bool userResize(MouseEvent*);
 
     bool isResizingRow() const;
@@ -83,6 +84,9 @@ private:
 
     void startResizing(GridAxis&, int position);
     void continueResizing(GridAxis&, int position);
+
+    void paintRowBorder(const PaintInfo& paintInfo, const IntRect& rect);
+    void paintColumnBorder(const PaintInfo& paintInfo, const IntRect& rect);
 
     GridAxis m_rows;
     GridAxis m_cols;

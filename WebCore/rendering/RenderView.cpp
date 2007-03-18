@@ -185,10 +185,8 @@ void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
         r.move(-vr.x(), -vr.y());
         
         // FIXME: Hardcoded offsets here are not good.
-        int yFrameOffset = m_frameView->hasBorder() ? 2 : 0;
-        int xFrameOffset = m_frameView->hasBorder() ? 1 : 0;
-        r.move(obj->borderLeft() + obj->paddingLeft() + xFrameOffset,
-               obj->borderTop() + obj->paddingTop() + yFrameOffset);
+        r.move(obj->borderLeft() + obj->paddingLeft(),
+               obj->borderTop() + obj->paddingTop());
         obj->repaintRectangle(r, immediate);
     }
 }

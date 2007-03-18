@@ -80,6 +80,11 @@ public:
     void setWidth(int width) { m_size.setWidth(width); }
     void setHeight(int height) { m_size.setHeight(height); }
 
+    IntPoint topLeft() const { return m_location; }
+    IntPoint topRight() const { return IntPoint(right() - 1, y()); }
+    IntPoint bottomLeft() const { return IntPoint(x(), bottom() - 1); }
+    IntPoint bottomRight() const { return IntPoint(right() - 1, bottom() - 1); }
+
     bool isEmpty() const { return m_size.isEmpty(); }
 
     int right() const { return x() + width(); }

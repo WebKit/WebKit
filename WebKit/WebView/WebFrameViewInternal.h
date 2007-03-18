@@ -45,6 +45,5 @@
 + (Class)_viewClassForMIMEType:(NSString *)MIMEType;
 + (BOOL)_canShowMIMETypeAsHTML:(NSString *)MIMEType;
 - (NSScrollView *)_scrollView;
-- (void)_setHasBorder:(BOOL)hasBorder;
 
 @end

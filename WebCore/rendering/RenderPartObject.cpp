@@ -259,17 +259,13 @@ void RenderPartObject::viewCleared()
 {
     if (element() && m_widget && m_widget->isFrameView()) {
         FrameView* view = static_cast<FrameView*>(m_widget);
-        bool hasBorder = false;
         int marginw = -1;
         int marginh = -1;
         if (element()->hasTagName(iframeTag)) {
             HTMLIFrameElement* frame = static_cast<HTMLIFrameElement*>(element());
-            hasBorder = frame->hasFrameBorder();
             marginw = frame->getMarginWidth();
             marginh = frame->getMarginHeight();
         }
-
-        view->setHasBorder(hasBorder);
         if (marginw != -1)
             view->setMarginWidth(marginw);
         if (marginh != -1)

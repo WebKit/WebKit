@@ -1,3 +1,41 @@
+2007-03-18  David Hyatt  <hyatt@apple.com>
+
+        Move frame borders out of WebKit and into WebCore.
+
+        Reviewed by aroben, olliej
+
+        * bridge/mac/FrameViewMac.mm:
+        * css/html4.css:
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::HTMLFrameSetElement):
+        (WebCore::HTMLFrameSetElement::mapToEntry):
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+        (WebCore::HTMLFrameSetElement::attach):
+        * html/HTMLFrameSetElement.h:
+        (WebCore::HTMLFrameSetElement::hasBorderColor):
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::FrameViewPrivate):
+        * page/FrameView.h:
+        * page/mac/WebCoreFrameBridge.h:
+        * platform/graphics/IntRect.h:
+        (WebCore::IntRect::topLeft):
+        (WebCore::IntRect::topRight):
+        (WebCore::IntRect::bottomLeft):
+        (WebCore::IntRect::bottomRight):
+        * rendering/RenderFrame.cpp:
+        (WebCore::RenderFrame::viewCleared):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::borderStartEdgeColor):
+        (WebCore::borderEndEdgeColor):
+        (WebCore::RenderFrameSet::paintColumnBorder):
+        (WebCore::RenderFrameSet::paintRowBorder):
+        (WebCore::RenderFrameSet::paint):
+        * rendering/RenderFrameSet.h:
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::viewCleared):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::repaintViewRectangle):
+
 2007-03-17  David Hyatt  <hyatt@apple.com>
 
         Make onload do an explicit paint when a top-level document is ready (to ensure that a first paint always

@@ -73,8 +73,6 @@ enum {
 
 @interface WebFrameView (WebFrameViewFileInternal) <WebCoreBridgeHolder>
 - (float)_verticalKeyboardScrollDistance;
-- (void)_tile;
-- (BOOL)_shouldDrawBorder;
 - (WebCoreFrameBridge *) webCoreBridge;
 @end
 
@@ -88,8 +86,6 @@ enum {
     // we have the appropriate document view type.
     int marginWidth;
     int marginHeight;
-    
-    BOOL hasBorder;
 }
 @end
 
@@ -119,32 +115,6 @@ enum {
 {
     // Arrow keys scroll the same distance that clicking the scroll arrow does.
     return [[self _scrollView] verticalLineScroll];
-}
-
-- (BOOL)_shouldDrawBorder
-{
-    if (!_private->hasBorder)
-        return NO;
-        
-    // Only draw a border for frames that request a border and the frame does
-    // not contain a frameset.  Additionally we should (some day) not draw
-    // a border (left, right, top or bottom) if the frame edge abutts the window frame.
-    NSView *docV = [self documentView];
-    if ([docV isKindOfClass:[WebHTMLView class]])
-        if (core(_private->webFrame)->isFrameSet())
-            return NO;
-    return YES;
-}
-
-- (void)_tile
-{
-    NSRect scrollViewFrame = [self bounds];
-    // The border drawn by WebFrameView is 1 pixel on the left and right,
-    // two pixels on top and bottom.  Shrink the scroll view to accomodate
-    // the border.
-    if ([self _shouldDrawBorder])
-        scrollViewFrame = NSInsetRect (scrollViewFrame, 1, 2);
-    [_private->frameScrollView setFrame:scrollViewFrame];
 }
 
 - (WebCoreFrameBridge *) webCoreBridge
@@ -295,15 +265,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     return [WebView _viewClass:&viewClass andRepresentationClass:nil forMIMEType:MIMEType] ? viewClass : nil;
 }
 
-- (void)_setHasBorder:(BOOL)hasBorder
-{
-    if (_private->hasBorder == hasBorder) {
-        return;
-    }
-    _private->hasBorder = hasBorder;
-    [self _tile];
-}
-
 @end
 
 @implementation WebFrameView
@@ -451,33 +412,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     return [[self _webView] drawsBackground];
 }
 
-- (void)_drawBorder
-{
-    if ([self _shouldDrawBorder]){
-        NSRect vRect = [self frame];
-            
-        // Left, black
-        [[NSColor blackColor] set];
-        NSRectFill(NSMakeRect(0,0,1,vRect.size.height));
-        
-        // Top, light gray, black
-        [[NSColor lightGrayColor] set];
-        NSRectFill(NSMakeRect(0,0,vRect.size.width,1));
-        [[NSColor whiteColor] set];
-        NSRectFill(NSMakeRect(1,1,vRect.size.width-2,1));
-        
-        // Right, light gray
-        [[NSColor lightGrayColor] set];
-        NSRectFill(NSMakeRect(vRect.size.width-1,1,1,vRect.size.height-2));
-        
-        // Bottom, light gray, white
-        [[NSColor blackColor] set];
-        NSRectFill(NSMakeRect(0,vRect.size.height-1,vRect.size.width,1));
-        [[NSColor lightGrayColor] set];
-        NSRectFill(NSMakeRect(1,vRect.size.height-2,vRect.size.width-2,1));
-    }
-}
-
 - (void)drawRect:(NSRect)rect
 {
     if ([self documentView] == nil) {
@@ -494,8 +428,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         }
 #endif
     }
-    
-    [self _drawBorder];
 }
 
 - (void)setFrameSize:(NSSize)size
@@ -504,7 +436,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         [[self _scrollView] setDrawsBackground:YES];
     }
     [super setFrameSize:size];
-    [self _tile];
 }
 
 - (WebFrameBridge *)_bridge
