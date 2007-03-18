@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderPartObject {IFRAME} at (0,0) size 300x150
+      RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
         layer at (0,0) size 300x150
           RenderView at (0,0) size 300x150
         layer at (0,0) size 300x150
@@ -15,9 +15,9 @@ layer at (0,0) size 800x600
                 text run at (0,36) width 269: "pop-up blocking will prevent it from doing"
                 text run at (0,54) width 18: "so."
               RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (300,136) size 4x18
-        text run at (300,136) width 4: " "
-      RenderPartObject {IFRAME} at (304,0) size 300x150
+      RenderText {#text} at (304,140) size 4x18
+        text run at (304,140) width 4: " "
+      RenderPartObject {IFRAME} at (308,0) size 304x154 [border: (2px inset #000000)]
         layer at (0,0) size 300x150
           RenderView at (0,0) size 300x150
         layer at (0,0) size 300x150
