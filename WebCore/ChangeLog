@@ -1,3 +1,16 @@
+2007-03-17  David Hyatt  <hyatt@apple.com>
+
+        Make onload do an explicit paint when a top-level document is ready (to ensure that a first paint always
+        happens before any timers set by the onload can fire).
+
+        Reviewed by aroben
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        * platform/ScrollView.h:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::update):
+
 2007-03-17  Dave Hyatt  <hyatt@apple.com>
 
         Prevent starvation of user input and painting when processing timers.

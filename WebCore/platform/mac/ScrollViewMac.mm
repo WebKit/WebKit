@@ -359,6 +359,17 @@ void ScrollView::updateContents(const IntRect &rect, bool now)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+void ScrollView::update()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    NSView *view = getView();
+    [[view window] displayIfNeeded];
+    [[view window] flushWindowIfNeeded];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
 // "Containing Window" means the NSWindow's coord system, which is origin lower left
 
 IntPoint ScrollView::contentsToWindow(const IntPoint& contentsPoint) const
