@@ -157,6 +157,22 @@ static BOOL _allowsScriptsFullAccess = NO;
     return nil;
 }
 
++ (NSString *)webScriptNameForKey:(const char *)key 
+{
+    if (strcmp(key, "throwOnDealloc") == 0)
+      return @"throwOnDealloc";
+    
+    return nil;
+}
+
++ (BOOL)isKeyExcludedFromWebScript:(const char *)key 
+{
+    if (strcmp(key, "throwOnDealloc") == 0)
+      return NO;
+    
+    return YES;
+}
+
 - (void)removeBridgeRestrictions:(id)container
 {
     // let scripts invoke any selector
@@ -177,6 +193,14 @@ static BOOL _allowsScriptsFullAccess = NO;
 {
     if (![str isEqualToString:@"Hello"]) 
         [WebScriptObject throwException:[NSString stringWithFormat:@"%@ != Hello", str]];
+}
+
+- (void)dealloc
+{
+    if (throwOnDealloc)
+        [WebScriptObject throwException:@"Throwing exception on dealloc of ObjCPlugin"];
+    
+    [super dealloc];
 }
 
 @end

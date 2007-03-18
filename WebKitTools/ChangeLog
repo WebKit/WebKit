@@ -1,3 +1,18 @@
+2007-03-18  Dan Waylonis  <waylonis@mac.com>
+
+        Reviewed by Tim Hatcher.
+
+        DumpRenderTree changes for http://bugs.webkit.org/show_bug.cgi?id=13005
+        Bug 13005: WebScriptObject +throwException needs NULL check.
+
+        Add tests to ensure that a plugin can safely throw an exception in dealloc.
+
+        * DumpRenderTree/ObjCPlugin.h:
+        * DumpRenderTree/ObjCPlugin.m:
+        (+[ObjCPlugin webScriptNameForKey:]):
+        (+[ObjCPlugin isKeyExcludedFromWebScript:]):
+        (-[ObjCPlugin dealloc]):
+
 2007-03-13  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej.

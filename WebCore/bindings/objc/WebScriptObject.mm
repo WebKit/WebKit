@@ -168,6 +168,9 @@ static void _didExecute(WebScriptObject *obj)
     // in which case this will have to change.
     first = interp;
     do {
+        if (!interp)
+            return NO;
+
         // If the interpreter has a context, we set the exception.
         if (interp->context()) {
             ExecState *exec = interp->context()->execState();

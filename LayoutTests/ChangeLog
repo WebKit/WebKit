@@ -1,3 +1,15 @@
+2007-03-18  Dan Waylonis  <waylonis@mac.com>
+
+        Reviewed by Tim Hatcher.
+
+        Tests for http://bugs.webkit.org/show_bug.cgi?id=13005
+        Bug 13005: WebScriptObject +throwException needs NULL check.
+
+        A plugin that throws on dealloc can crash WebKit.
+
+        * plugins/throw-on-dealloc-expected.txt: Added.
+        * plugins/throw-on-dealloc.html: Added.
+
 2007-03-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

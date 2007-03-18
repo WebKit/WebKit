@@ -1,3 +1,15 @@
+2007-03-18  Dan Waylonis  <waylonis@mac.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=13005
+        Bug 13005: WebScriptObject +throwException needs NULL check.
+
+        Add checking for NULL interpreter before throwing exception.
+
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject throwException:]):
+
 2007-03-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
