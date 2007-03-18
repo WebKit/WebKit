@@ -301,10 +301,18 @@ JavaMethod::JavaMethod (JNIEnv *env, jobject aMethod)
     _isStatic = (bool)callJNIStaticBooleanMethod (modifierClass, "isStatic", "(I)Z", modifiers);
 }
 
+JavaMethod::~JavaMethod() 
+{
+    delete _signature;
+    delete [] _parameters;
+};
+
 // JNI method signatures use '/' between components of a class name, but
 // we get '.' between components from the reflection API.
-static void appendClassName (UString *aString, const char *className)
+static void appendClassName(UString& aString, const char* className)
 {
+    ASSERT(JSLock::lockCount() > 0);
+    
     char *result, *cp = strdup(className);
     
     result = cp;
@@ -314,46 +322,47 @@ static void appendClassName (UString *aString, const char *className)
         cp++;
     }
         
-    aString->append(result);
+    aString.append(result);
 
     free (result);
 }
 
 const char *JavaMethod::signature() const 
 {
-    if (_signature == 0){
-        int i;
-        
-        _signature = new UString("(");
-        for (i = 0; i < _numParameters; i++) {
+    if (!_signature) {
+        JSLock lock;
+
+        UString signatureBuilder("(");
+        for (int i = 0; i < _numParameters; i++) {
             JavaParameter *aParameter = static_cast<JavaParameter *>(parameterAt(i));
             JNIType _JNIType = aParameter->getJNIType();
             if (_JNIType == array_type)
-                appendClassName(_signature, aParameter->type());
+                appendClassName(signatureBuilder, aParameter->type());
             else {
-                _signature->append(signatureFromPrimitiveType (_JNIType));
+                signatureBuilder.append(signatureFromPrimitiveType(_JNIType));
                 if (_JNIType == object_type) {
-                    appendClassName (_signature, aParameter->type());
-                    _signature->append(";");
+                    appendClassName(signatureBuilder, aParameter->type());
+                    signatureBuilder.append(";");
                 }
             }
         }
-        _signature->append(")");
+        signatureBuilder.append(")");
         
         const char *returnType = _returnType.UTF8String();
         if (_JNIReturnType == array_type) {
-            appendClassName (_signature, returnType);
-        }
-        else {
-            _signature->append(signatureFromPrimitiveType (_JNIReturnType));
+            appendClassName(signatureBuilder, returnType);
+        } else {
+            signatureBuilder.append(signatureFromPrimitiveType(_JNIReturnType));
             if (_JNIReturnType == object_type) {
-                appendClassName (_signature, returnType);
-                _signature->append(";");
+                appendClassName(signatureBuilder, returnType);
+                signatureBuilder.append(";");
             }
         }
+        
+        _signature = strdup(signatureBuilder.ascii());
     }
     
-    return _signature->ascii();
+    return _signature;
 }
 
 JNIType JavaMethod::JNIReturnType() const

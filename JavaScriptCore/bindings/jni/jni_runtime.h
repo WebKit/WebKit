@@ -38,13 +38,20 @@ namespace Bindings
 class JavaString
 {
 public:
-    JavaString () {};
-    
+    JavaString()
+    {
+        JSLock lock;
+        _rep = UString().rep();
+    }
+
     void _commonInit (JNIEnv *e, jstring s)
     {
         int _size = e->GetStringLength (s);
         const jchar *uc = getUCharactersFromJStringInEnv (e, s);
-        _ustring = UString((UChar *)uc,_size);
+        {
+            JSLock lock;
+            _rep = UString((UChar *)uc,_size).rep();
+        }
         releaseUCharactersForJStringInEnv (e, s, uc);
     }
     
@@ -56,17 +63,25 @@ public:
         _commonInit (getJNIEnv(), s);
     }
     
+    ~JavaString()
+    {
+        JSLock lock;
+        _rep = 0;
+    }
+    
     const char *UTF8String() const { 
-        if (_utf8String.c_str() == 0)
-            _utf8String = _ustring.UTF8String();
+        if (_utf8String.c_str() == 0) {
+            JSLock lock;
+            _utf8String = UString(_rep).UTF8String();
+        }
         return _utf8String.c_str();
     }
-    const jchar *uchars() const { return (const jchar *)_ustring.data(); }
-    int length() const { return _ustring.size(); }
-    UString ustring() const { return _ustring; }
-    
+    const jchar *uchars() const { return (const jchar *)_rep->data(); }
+    int length() const { return _rep->size(); }
+    UString ustring() const { return UString(_rep); }
+
 private:
-    UString _ustring;
+    RefPtr<UString::Rep> _rep;
     mutable CString _utf8String;
 };
 
@@ -199,46 +214,8 @@ private:
 class JavaMethod : public Method
 {
 public:
-    JavaMethod() : Method(), _signature(0), _methodID(0) {};
-    
-    JavaMethod (JNIEnv *env, jobject aMethod);
-    
-    void _commonDelete() {
-        delete _signature;
-        delete [] _parameters;
-    };
-    
-    ~JavaMethod () {
-        _commonDelete();
-    };
-
-    void _commonCopy(const JavaMethod &other) {
-        _name = other._name;
-        _returnType = other._returnType;
-
-        _numParameters = other._numParameters;
-        _parameters = new JavaParameter[_numParameters];
-        int i;
-        for (i = 0; i < _numParameters; i++) {
-            _parameters[i] = other._parameters[i];
-        }
-        _signature = other._signature;
-    };
-    
-    JavaMethod(const JavaMethod &other) : Method() {
-        _commonCopy(other);
-    };
-
-    JavaMethod &operator=(const JavaMethod &other)
-    {
-        if (this == &other)
-            return *this;
-            
-        _commonDelete();
-        _commonCopy(other);
-
-        return *this;
-    };
+    JavaMethod(JNIEnv* env, jobject aMethod);
+    ~JavaMethod();
 
     virtual const char *name() const { return _name.UTF8String(); };
     RuntimeType returnType() const { return _returnType.UTF8String(); };
@@ -256,7 +233,7 @@ private:
     JavaParameter *_parameters;
     int _numParameters;
     JavaString _name;
-    mutable UString *_signature;
+    mutable char* _signature;
     JavaString _returnType;
     JNIType _JNIReturnType;
     mutable jmethodID _methodID;

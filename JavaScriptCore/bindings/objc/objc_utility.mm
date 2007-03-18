@@ -195,6 +195,8 @@ ObjcValue convertValueToObjcValue(ExecState *exec, JSValue *value, ObjcValueType
 
 JSValue *convertNSStringToString(NSString *nsstring)
 {
+    JSLock lock;
+    
     unichar *chars;
     unsigned int length = [nsstring length];
     chars = (unichar *)malloc(sizeof(unichar)*length);

@@ -747,8 +747,10 @@ jvalue getJNIField( jobject obj, JNIType type, const char *name, const char *sig
     return result;
 }
 
-jobject convertArrayInstanceToJavaArray(ExecState *exec, JSValue *value, const char *javaClassName) {
+static jobject convertArrayInstanceToJavaArray(ExecState *exec, JSValue *value, const char *javaClassName) {
 
+    ASSERT(JSLock::lockCount() > 0);
+    
     JNIEnv *env = getJNIEnv();
     // As JS Arrays can contain a mixture of objects, assume we can convert to
     // the requested Java Array type requested, unless the array type is some object array
@@ -871,6 +873,8 @@ jobject convertArrayInstanceToJavaArray(ExecState *exec, JSValue *value, const c
 
 jvalue convertValueToJValue (ExecState *exec, JSValue *value, JNIType _JNIType, const char *javaClassName)
 {
+    JSLock lock;
+    
     jvalue result;
    
     switch (_JNIType){

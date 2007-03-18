@@ -341,6 +341,8 @@ jlong JavaJSObject::createNative(jlong nativeHandle)
 
 jobject JavaJSObject::convertValueToJObject (JSValue *value) const
 {
+    JSLock lock;
+    
     RootObject* rootObject = this->rootObject();
     if (!rootObject)
         return 0;

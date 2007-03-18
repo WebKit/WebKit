@@ -1,3 +1,73 @@
+2007-03-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Fixed <rdar://problem/5064964> Repro ASSERT failure in JS Bindings when 
+        closing window @ lowtrades.bptrade.com
+        
+        Unfortunately, the bindings depend on UString and Identifier as string 
+        representations. So, they need to acquire the JSLock when doing something
+        that will ref/deref their strings.
+
+        Layout tests, the original site, and Java, Flash, and Quicktime on the 
+        web work. No leaks reported. No automated test for this because testing 
+        the Java bindings, like math, is hard.
+        
+        * bindings/runtime.h: Made Noncopyable, just to be sure.
+        
+        * bindings/c/c_class.cpp: 
+        (KJS::Bindings::CClass::~CClass): Acquire the JSLock and explicitly clear the keys
+        in our hashtable, since they're UString::Reps, and ref/deref aren't thread-safe.
+        (KJS::Bindings::CClass::methodsNamed): Also acquire the JSLock when adding
+        keys to the table, since the table ref's them.
+        (KJS::Bindings::CClass::fieldNamed): ditto.
+
+        * bindings/c/c_utility.cpp: Removed dead function.
+        (KJS::Bindings::convertValueToNPVariant): Acquire the JSLock because doing
+        it recursively is pretty cheap, and it's just too confusing to tell whether
+        all our callers do it for us.
+        (KJS::Bindings::convertNPVariantToValue): ditto
+        * bindings/c/c_utility.h:
+
+        * bindings/jni/jni_class.cpp: Same deal as c_class.cpp.
+        (JavaClass::JavaClass):
+        (JavaClass::~JavaClass):
+
+        * bindings/jni/jni_instance.cpp: Same deal as c_utility.cpp.
+        (JavaInstance::stringValue):
+        * bindings/jni/jni_jsobject.cpp:
+        (JavaJSObject::convertValueToJObject):
+
+        * bindings/jni/jni_runtime.cpp:
+        (JavaMethod::~JavaMethod): Moved from header, for clarity.
+        (appendClassName): Made this static, so the set of callers is known, and
+        we can assert that we hold the JSLock. Also changed it to take a UString
+        reference, which makes the calling code simpler.
+        (JavaMethod::signature): Store the ASCII value we care about instead of
+        a UString, since UString is so much more hassle. Hold the JSLock while
+        building up the temporary UString.
+
+        * bindings/jni/jni_runtime.h: Nixed dead code in JavaMethod.
+        (KJS::Bindings::JavaString::JavaString): Hold a UString::Rep instead of
+        a UString, so we can acquire the JSLock and explicitly release it.
+        (KJS::Bindings::JavaString::_commonInit):
+        (KJS::Bindings::JavaString::~JavaString):
+        (KJS::Bindings::JavaString::UTF8String):
+        (KJS::Bindings::JavaString::uchars):
+        (KJS::Bindings::JavaString::length):
+        (KJS::Bindings::JavaString::ustring):
+
+        * bindings/jni/jni_utility.cpp:
+        (KJS::Bindings::convertArrayInstanceToJavaArray): Made this static, so 
+        the set of callers is known, and we can assert that we hold the JSLock. 
+        (KJS::Bindings::convertValueToJValue): Acquire the JSLock because doing
+        it recursively is pretty cheap, and it's just too confusing to tell whether
+        all our callers do it for us.
+
+        * bindings/objc/objc_runtime.h: Nixed some dead code.
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertNSStringToString): Same drill as above.
+
 2007-03-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff.

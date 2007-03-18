@@ -102,21 +102,6 @@ public:
             CFRelease(_javaScriptName);
     }
 
-    ObjcMethod(const ObjcMethod &other) : Method()
-    {
-        _objcClass = other._objcClass;
-        _selector = other._selector;
-    }
-    
-    ObjcMethod &operator=(const ObjcMethod &other)
-    {
-        if (this == &other)
-            return *this;
-        _objcClass = other._objcClass;
-        _selector = other._selector;
-        return *this;
-    }
-
     virtual const char *name() const;
 
     virtual int numParameters() const;
