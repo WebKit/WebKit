@@ -1,5 +1,16 @@
 2007-03-18  David Hyatt  <hyatt@apple.com>
 
+        Change the frameborder color to be light gray for framesets.
+
+        Reviewed by aroben
+
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::borderFillColor):
+        (WebCore::RenderFrameSet::paintColumnBorder):
+        (WebCore::RenderFrameSet::paintRowBorder):
+
+2007-03-18  David Hyatt  <hyatt@apple.com>
+
         Make iframes work properly with frameborder="0".
 
         Reviewed by aroben
