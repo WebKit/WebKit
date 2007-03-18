@@ -1,5 +1,13 @@
 2007-03-18  David Hyatt  <hyatt@apple.com>
 
+        Add a 2px border by default to <iframe>s for compatibility with other browsers.
+
+        Reviewed by aroben
+
+        * css/html4.css:
+
+2007-03-18  David Hyatt  <hyatt@apple.com>
+
         Move frame borders out of WebKit and into WebCore.
 
         Reviewed by aroben, olliej
