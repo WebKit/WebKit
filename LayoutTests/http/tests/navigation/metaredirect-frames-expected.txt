@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderFrameSet {FRAMESET} at (0,0) size 800x600
-      RenderFrame {FRAME} at (0,0) size 800x536
-        layer at (0,0) size 783x1550
-          RenderView at (0,0) size 783x532
-        layer at (0,0) size 783x1550
-          RenderBlock {HTML} at (0,0) size 783x1550
-            RenderBody {BODY} at (8,8) size 767x1510
-              RenderBlock (anonymous) at (0,0) size 767x259
+      RenderFrame {FRAME} at (0,0) size 800x534
+        layer at (0,0) size 785x1550
+          RenderView at (0,0) size 785x534
+        layer at (0,0) size 785x1550
+          RenderBlock {HTML} at (0,0) size 785x1550
+            RenderBody {BODY} at (8,8) size 769x1510
+              RenderBlock (anonymous) at (0,0) size 769x259
                 RenderText {#text} at (0,0) size 749x185
                   text run at (0,0) width 676: "This is test page that we navigate to as part of testing"
                   text run at (0,37) width 333: "various navigation styles. "
@@ -20,8 +20,8 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (119,177) size 0x0
                 RenderBR {BR} at (0,185) size 0x37
                 RenderBR {BR} at (0,222) size 0x37
-              RenderBlock {HR} at (0,275) size 767x2 [border: (1px inset #000000)]
-              RenderBlock {FORM} at (0,293) size 767x424
+              RenderBlock {HR} at (0,275) size 769x2 [border: (1px inset #000000)]
+              RenderBlock {FORM} at (0,293) size 769x424
                 RenderButton {INPUT} at (2,2) size 111x18 [bgcolor=#C0C0C0]
                   RenderBlock (anonymous) at (8,2) size 95x13
                     RenderText at (0,0) size 95x13
@@ -63,38 +63,38 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (259,281) size 0x0
                 RenderTextControl {TEXTAREA} at (2,290) size 232x132 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {HR} at (0,749) size 767x2 [border: (1px inset #000000)]
-              RenderBlock {P} at (0,783) size 767x37
+              RenderBlock {HR} at (0,749) size 769x2 [border: (1px inset #000000)]
+              RenderBlock {P} at (0,783) size 769x37
                 RenderText {#text} at (0,0) size 62x37
                   text run at (0,0) width 62: "Now"
-              RenderBlock {P} at (0,852) size 767x37
+              RenderBlock {P} at (0,852) size 769x37
                 RenderText {#text} at (0,0) size 67x37
                   text run at (0,0) width 67: "some"
-              RenderBlock {P} at (0,921) size 767x37
+              RenderBlock {P} at (0,921) size 769x37
                 RenderText {#text} at (0,0) size 63x37
                   text run at (0,0) width 63: "filler"
-              RenderBlock {P} at (0,990) size 767x37
+              RenderBlock {P} at (0,990) size 769x37
                 RenderText {#text} at (0,0) size 28x37
                   text run at (0,0) width 28: "so"
-              RenderBlock {P} at (0,1059) size 767x37
+              RenderBlock {P} at (0,1059) size 769x37
                 RenderText {#text} at (0,0) size 39x37
                   text run at (0,0) width 39: "the"
-              RenderBlock {P} at (0,1128) size 767x37
+              RenderBlock {P} at (0,1128) size 769x37
                 RenderText {#text} at (0,0) size 46x37
                   text run at (0,0) width 46: "doc"
-              RenderBlock {P} at (0,1197) size 767x37
+              RenderBlock {P} at (0,1197) size 769x37
                 RenderText {#text} at (0,0) size 21x37
                   text run at (0,0) width 21: "is"
-              RenderBlock {P} at (0,1266) size 767x37
+              RenderBlock {P} at (0,1266) size 769x37
                 RenderText {#text} at (0,0) size 57x37
                   text run at (0,0) width 57: "long"
-              RenderBlock {P} at (0,1335) size 767x37
+              RenderBlock {P} at (0,1335) size 769x37
                 RenderText {#text} at (0,0) size 94x37
                   text run at (0,0) width 94: "enough"
-              RenderBlock {P} at (0,1404) size 767x37
+              RenderBlock {P} at (0,1404) size 769x37
                 RenderText {#text} at (0,0) size 112x37
                   text run at (0,0) width 112: "to scroll."
-              RenderBlock {P} at (0,1473) size 767x37
+              RenderBlock {P} at (0,1473) size 769x37
                 RenderInline {A} at (0,0) size 531x37
                   RenderText {#text} at (0,0) size 531x37
                     text run at (0,0) width 531: "This is an anchor point named \"anchor1\"."
@@ -111,11 +111,11 @@ layer at (0,0) size 800x600
               text run at (188,0) width 0: " "
             RenderBR {BR} at (3,13) size 0x13
       RenderFrame {FRAME} at (0,540) size 800x60
-        layer at (0,0) size 783x90
-          RenderView at (0,0) size 783x56
-        layer at (0,0) size 783x90
-          RenderBlock {HTML} at (0,0) size 783x90
-            RenderBody {BODY} at (8,8) size 767x74
+        layer at (0,0) size 785x90
+          RenderView at (0,0) size 785x60
+        layer at (0,0) size 785x90
+          RenderBlock {HTML} at (0,0) size 785x90
+            RenderBody {BODY} at (8,8) size 769x74
               RenderText {#text} at (0,0) size 722x74
                 text run at (0,0) width 722: "This is just a minimal page that we navigate to as part of"
                 text run at (0,37) width 272: "testing back/forward."
