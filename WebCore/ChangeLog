@@ -1,5 +1,18 @@
 2007-03-18  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Adele.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13101
+          REGRESSION (NativeTextField): Specifying word-wrap:break-word makes text field wrap
+
+        Test: fast/forms/input-text-word-wrap.html
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::createInnerTextStyle): Force the inner block to
+        'word-wrap:normal'.
+
+2007-03-18  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Tim Hatcher.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=13091

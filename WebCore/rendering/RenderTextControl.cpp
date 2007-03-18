@@ -153,6 +153,7 @@ RenderStyle* RenderTextControl::createInnerTextStyle(RenderStyle* startStyle)
         }
     } else {
         textBlockStyle->setWhiteSpace(PRE);
+        textBlockStyle->setWordWrap(WBNORMAL);
         textBlockStyle->setOverflowX(OHIDDEN);
         textBlockStyle->setOverflowY(OHIDDEN);
         

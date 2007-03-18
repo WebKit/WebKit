@@ -1,5 +1,17 @@
 2007-03-18  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Adele.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13101
+          REGRESSION (NativeTextField): Specifying word-wrap:break-word makes text field wrap
+
+        * fast/forms/input-text-word-wrap-expected.checksum: Added.
+        * fast/forms/input-text-word-wrap-expected.png: Added.
+        * fast/forms/input-text-word-wrap-expected.txt: Added.
+        * fast/forms/input-text-word-wrap.html: Added.
+
+2007-03-18  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Tim Hatcher.
 
         - test and updated result for http://bugs.webkit.org/show_bug.cgi?id=13091
