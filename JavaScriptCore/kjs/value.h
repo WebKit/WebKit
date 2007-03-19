@@ -59,7 +59,6 @@ class JSValue {
 
 private:
     JSValue();
-    virtual ~JSValue();
 
 public:
     // Querying the type.

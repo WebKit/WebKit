@@ -1,3 +1,21 @@
+2007-03-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - remove ~JSValue; tiny low-risk performance boost
+
+        * kjs/value.h: Remove unneeded empty virtual destructor from JSValue.
+        The only class derived from JSValue is JSCell and it already has a
+        virtual destructor. Declaring an empty constructor in JSValue had one
+        good effect: it marked the destructor private, making it a compile
+        time error to try to destroy a JSValue; but that's not a likely
+        mistake for someone to make. It had two bad effects: (1) it caused gcc,
+        at least, to generate code to fix up the virtual table pointer to
+        point to the JSValue version of the virtual table inside the destructor
+        of all classes derived from JSValue directly or indirectly; (2) it
+        caused JSValue to be a polymorphic class so required a virtual table for
+        it. It's cleaner to not have either of those.
+
 2007-03-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark.
