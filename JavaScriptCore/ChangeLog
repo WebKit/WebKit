@@ -1,5 +1,19 @@
 2007-03-19  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff.
+
+        - Changed list size threshold to 5 based on testing.
+
+        I was testing the i-Bench JavaScript with the list statistics
+        dumping on, and discovered that there were many 5-element lists.
+        The fast case for lists was for 4 elements and fewer. By changing
+        the threshold to 5 elements we get a measurable speedup. I believe
+        this will help real web pages too, not just the benchmark.
+
+        * kjs/list.cpp: Change constant from 4 to 5.
+
+2007-03-19  Darin Adler  <darin@apple.com>
+
         * kjs/value.h: Oops, fix build.
 
 2007-03-19  Darin Adler  <darin@apple.com>
