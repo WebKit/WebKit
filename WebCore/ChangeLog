@@ -1,3 +1,13 @@
+2007-03-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Lars Knoll.
+
+        Fix crash when opening a SVG document which contains SVG elements, but no <svg> root element.
+        Moving the mouse was crashing WebKit. Fixes svg/hixie/dynamic/006.xml.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::updateHitTestResult):
+
 2007-03-19  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.

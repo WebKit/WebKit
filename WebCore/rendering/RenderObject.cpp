@@ -2590,7 +2590,7 @@ void RenderObject::updateHitTestResult(HitTestResult& result, const IntPoint& po
         node = continuation()->element();
 
     if (node) {
-        if (node->renderer()->continuation() && node->renderer() != this) {
+        if (node->renderer() && node->renderer()->continuation() && node->renderer() != this) {
             // We're in the continuation of a split inline.  Adjust our local point to be in the coordinate space
             // of the principal renderer's containing block.  This will end up being the innerNonSharedNode.
             RenderObject* firstBlock = node->renderer()->containingBlock();

@@ -1,5 +1,16 @@
 2007-03-19  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Lars Knoll.
+
+        Reeanble svg/hixie/error/006.xml. Doesn't crash anymore.
+
+        * svg/hixie/error/006-expected.checksum: Added.
+        * svg/hixie/error/006-expected.png: Added.
+        * svg/hixie/error/006-expected.txt: Added.
+        * svg/hixie/error/006.xml-disabled: Removed.
+
+2007-03-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Maciej.
 
         Partly fix svg/hixie/dynamic/005-broken.svg. Update test results.
