@@ -1,3 +1,10 @@
+2007-03-19  Zack Rusin  <zrusin@trolltech.com>
+
+        Compile fix.
+
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::update):
+
 2007-03-19  Adam Roben  <aroben@apple.com>
 
         Reviewed by Hyatt and Maciej.

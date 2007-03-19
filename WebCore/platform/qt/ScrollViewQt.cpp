@@ -333,6 +333,13 @@ void ScrollView::setAllowsScrolling(bool allows)
     m_allowsScrolling = allows;
 }
 
+void ScrollView::update()
+{
+    if (m_area && m_area->viewport()) {
+        m_area->viewport()->update();
+    }
+}
+
 }
 
 // vim: ts=4 sw=4 et
