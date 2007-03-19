@@ -992,7 +992,8 @@ sub GenerateImplementation
         push(@implContent, "      return throwError(exec, TypeError);\n\n");
 
         if ($podType) {
-            push(@implContent, "    $podType& imp(*static_cast<$className*>(thisObj)->impl());\n\n");
+            push(@implContent, "    JSSVGPODTypeWrapper<$podType>* wrapper = static_cast<$className*>(thisObj)->impl();\n");
+            push(@implContent, "    $podType& imp(*wrapper);\n\n");
         } else {
             push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(thisObj)->impl());\n\n");
         }
@@ -1030,7 +1031,7 @@ sub GenerateImplementation
 
                 if ($hasOptionalArguments) {
                     push(@implContent, "        if (argsCount < " . ($paramIndex + 1) . ") {\n");
-                    GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 3);
+                    GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 3, $podType);
                     push(@implContent, "        }\n\n");
                 }
 
@@ -1071,7 +1072,7 @@ sub GenerateImplementation
             }
 
             push(@implContent, "\n");
-            GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 2);
+            GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 2, $podType);
 
             push(@implContent, "    }\n"); # end case
         }
@@ -1146,6 +1147,7 @@ sub GenerateImplementationFunctionCall()
     my $functionString = shift;
     my $paramIndex = shift;
     my $indent = shift;
+    my $podType = shift;
 
     if (@{$function->raisesExceptions}) {
         $functionString .= ", " if $paramIndex;
@@ -1156,10 +1158,12 @@ sub GenerateImplementationFunctionCall()
     if ($function->signature->type eq "void") {
         push(@implContent, $indent . "$functionString;\n");
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
+        push(@implContent, $indent . "wrapper->commitChange(exec);\n") if $podType;
         push(@implContent, $indent . "return jsUndefined();\n");
     } else {
         push(@implContent, "\n" . $indent . "KJS::JSValue* result = " . NativeToJSValue($function->signature, "", $functionString) . ";\n");
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
+        push(@implContent, $indent . "wrapper->commitChange(exec);\n") if $podType;
         push(@implContent, $indent . "return result;\n");
     }
 }

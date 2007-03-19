@@ -1,3 +1,19 @@
+2007-03-18  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Maciej.
+
+        Make JS function calls on POD-types (ie. SVGLength) take effect.
+        Calling ie. newValueInSpecifiedUnits on SVGLength works as expected.
+
+        This worked fine before we switched to SVGLength POD type, so this
+        can be considered as P1 regression fix.
+
+        Partly fix svg/hixie/dynamic/005-broken.svg. We match Opera now though
+        it's not yet completly fixed. Setting baseVal attribute on SVGAnimatedString
+        doesn't work as expected - needs a seperated fix.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2007-03-19  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.

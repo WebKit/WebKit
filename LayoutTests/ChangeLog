@@ -2,6 +2,15 @@
 
         Reviewed by Maciej.
 
+        Partly fix svg/hixie/dynamic/005-broken.svg. Update test results.
+
+        * svg/hixie/dynamic/005-broken-expected.png:
+        * svg/hixie/dynamic/005-broken-expected.txt:
+
+2007-03-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Maciej.
+
         Import Hixie's SVG testsuite. It highlights one bug, one regression in JS and one crash.
         The crashing file is marked with "-disabled", the broken ones with "-broken".
 
