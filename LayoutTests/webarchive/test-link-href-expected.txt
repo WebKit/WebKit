@@ -12,7 +12,7 @@
 &lt;/script&gt;
 &lt;link rel="stylesheet" href="resources/test-style.css" type="text/css"&gt;
 &lt;/head&gt;&lt;body&gt;
-&lt;div style="font-family: Arial, Helvetica, sans-serif; color: red; "&gt;
+&lt;div&gt;
 This text should be red sans-serif.
 &lt;/div&gt;
 

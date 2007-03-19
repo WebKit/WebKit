@@ -11,13 +11,13 @@
 &lt;script src="resources/dump-webarchive.js" language="javascript" type="text/javascript"&gt;&lt;/script&gt;
 &lt;link rel="stylesheet" href="resources/test-style.css" type="text/css"&gt;
 &lt;/head&gt;&lt;body&gt;
-&lt;div style="font-family: Arial, Helvetica, sans-serif; color: red; "&gt;
+&lt;div&gt;
   &lt;img src="resources/apple.gif"&gt;
 &lt;/div&gt;
-&lt;div style="font-family: Arial, Helvetica, sans-serif; color: red; "&gt;
+&lt;div&gt;
   This is not a frameset.  This text should be red sans-serif.
 &lt;/div&gt;
-&lt;div style="font-family: Arial, Helvetica, sans-serif; color: red; "&gt;
+&lt;div&gt;
   &lt;img src="resources/apple.gif"&gt;
 &lt;/div&gt;
 &lt;iframe src="resources/test-frame.html"&gt;&lt;/iframe&gt;
@@ -42,13 +42,13 @@
 				<string>&lt;html&gt;&lt;head&gt;
 &lt;link rel="stylesheet" href="test-style.css" type="text/css"&gt;
 &lt;/head&gt;&lt;body&gt;
-&lt;div style="font-family: Arial, Helvetica, sans-serif; color: red; "&gt;
+&lt;div&gt;
   &lt;img src="apple.gif"&gt;
 &lt;/div&gt;
-&lt;div style="font-family: Arial, Helvetica, sans-serif; color: red; "&gt;
+&lt;div&gt;
   This is a subframe.  This text should be red sans-serif.
 &lt;/div&gt;
-&lt;div style="font-family: Arial, Helvetica, sans-serif; color: red; "&gt;
+&lt;div&gt;
   &lt;img src="apple.gif"&gt;
 &lt;/div&gt;
 

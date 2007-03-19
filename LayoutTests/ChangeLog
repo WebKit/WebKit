@@ -1,3 +1,17 @@
+2007-03-19  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Tim Hatcher.
+
+        - test and updated result for http://bugs.webkit.org/show_bug.cgi?id=13091
+          REGRESSION (r20075): Wrong text style and pixel break in Apple Store Locator HUD
+
+        * editing/pasteboard/paste-table-002-expected.txt:
+        * fast/innerHTML/additional-inline-style-expected.txt: Added.
+        * fast/innerHTML/additional-inline-style.html: Added.
+        * webarchive/test-duplicate-resources-expected.txt:
+        * webarchive/test-frameset-expected.txt:
+        * webarchive/test-link-href-expected.txt:
+
 2007-03-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark.
