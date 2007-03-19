@@ -198,10 +198,6 @@ inline JSValue::JSValue()
 {
 }
 
-inline JSValue::~JSValue()
-{
-}
-
 inline JSCell::JSCell()
     : m_collectOnMainThreadOnly(false)
     , m_marked(false)

@@ -1,5 +1,9 @@
 2007-03-19  Darin Adler  <darin@apple.com>
 
+        * kjs/value.h: Oops, fix build.
+
+2007-03-19  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff.
 
         - remove ~JSValue; tiny low-risk performance boost
