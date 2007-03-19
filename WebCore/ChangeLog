@@ -1,3 +1,10 @@
+2007-03-18  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Not reviewed - gdk build fix.
+
+        * platform/gdk/ScrollViewGdk.cpp:
+        (WebCore::ScrollView::update): add a stub
+
 2007-03-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Hyatt

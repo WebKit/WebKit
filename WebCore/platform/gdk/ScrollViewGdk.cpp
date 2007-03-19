@@ -93,6 +93,11 @@ void ScrollView::updateContents(const IntRect& updateRect, bool now)
     updateView(adjustedDirtyRect, now);
 }
 
+void ScrollView::update()
+{
+    notImplementedGdk();
+}
+
 int ScrollView::visibleWidth() const
 {
     return m_data->viewportArea.width();
