@@ -1,3 +1,20 @@
+2007-03-19  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        Adding comments and a little cleanup from my last checkin.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setSelectedIndex): Removed commented out assert.  Added comment about how we use onChange.
+        (WebCore::HTMLSelectElement::selectAll): Added comment about how we use saveLastSelection and onChange.
+        (WebCore::HTMLSelectElement::dispatchFocusEvent): ditto.
+        (WebCore::HTMLSelectElement::dispatchBlurEvent): ditto.
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler): ditto.
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler): ditto.
+        (WebCore::HTMLSelectElement::menuListOnChange): Added assert that usesMenuList() is true.
+        (WebCore::HTMLSelectElement::listBoxOnChange): Added assert that usesMenuList() is false.
+        (WebCore::HTMLSelectElement::saveLastSelection): Added early return for menu lists.
+
 2007-03-19  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Tim Hatcher.
