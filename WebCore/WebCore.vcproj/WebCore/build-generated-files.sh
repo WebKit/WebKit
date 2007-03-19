@@ -7,7 +7,7 @@ WebKitOutputConfigDirUnix="${WebKitOutputDirUnix}/$1"
 SRCROOT="`pwd`/../.."
 SRCROOT=`realpath "$SRCROOT"`
 # Do a little dance to get the path into 8.3 form to make it safe for gnu make
-# http://bugzilla.opendarwin.org/show_bug.cgi?id=8173
+# http://bugs.webkit.org/show_bug.cgi?id=8173
 SRCROOT=`cygpath -m -s "$SRCROOT"`
 SRCROOT=`cygpath -u "$SRCROOT"`
 export SRCROOT

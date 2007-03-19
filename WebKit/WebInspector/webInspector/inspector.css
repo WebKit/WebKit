@@ -437,7 +437,7 @@ button.toggle.right {
 }
 
 /* This is a workaround for text-overflow: ellipsis not working on boxes. */
-/* http://bugzilla.opendarwin.org/show_bug.cgi?id=5990 */
+/* http://bugs.webkit.org/show_bug.cgi?id=5990 */
 .infoRow .value div {
     width: 100%;
     overflow: hidden;

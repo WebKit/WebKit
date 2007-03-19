@@ -44,7 +44,7 @@ import          RESERVED
 super           RESERVED
 
 # these words are reserved for future use in the ECMA spec, but not in WinIE
-# (see http://bugzilla.opendarwin.org/show_bug.cgi?id=6179)
+# (see http://bugs.webkit.org/show_bug.cgi?id=6179)
 # abstract      RESERVED
 # boolean       RESERVED
 # byte          RESERVED

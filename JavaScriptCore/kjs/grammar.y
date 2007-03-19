@@ -243,7 +243,7 @@ PrimaryExpr:
     PrimaryExprNoBrace
   | '{' '}'                             { $$ = new ObjectLiteralNode(); }
   | '{' PropertyList '}'                { $$ = new ObjectLiteralNode($2); }
-  /* allow extra comma, see http://bugzilla.opendarwin.org/show_bug.cgi?id=5939 */
+  /* allow extra comma, see http://bugs.webkit.org/show_bug.cgi?id=5939 */
   | '{' PropertyList ',' '}'            { $$ = new ObjectLiteralNode($2); }
 ;
 

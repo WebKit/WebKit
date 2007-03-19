@@ -1,3 +1,53 @@
+2007-03-19  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Brady.
+
+        Update references to bugzilla.opendarwin.org with bugs.webkit.org.
+
+        * ChangeLog:
+        * WebCore.vcproj/WebCore/build-generated-files.sh:
+        * manual-tests/ATSU-bad-layout.html:
+        * manual-tests/accidental-strict-mode.html:
+        * manual-tests/applet-param-no-name.html:
+        * manual-tests/bidi-parens.html:
+        * manual-tests/bugzilla-3855.html:
+        * manual-tests/bugzilla-4840.html:
+        * manual-tests/bugzilla-6821.html:
+        * manual-tests/containing-block-position-chage.html:
+        * manual-tests/contenteditable-link.html:
+        * manual-tests/css3-cursor-fallback-quirks.html:
+        * manual-tests/css3-cursor-fallback-strict.html:
+        * manual-tests/custom-cursors.html:
+        * manual-tests/dictionary-scrolled-iframe.html:
+        * manual-tests/dom-manipulation-on-resize.html:
+        * manual-tests/drag-image-to-address-bar.html:
+        * manual-tests/empty-link-target.html:
+        * manual-tests/empty-title-popup.html:
+        * manual-tests/first-line-style-crash.html:
+        * manual-tests/invalid-mouse-event.html:
+        * manual-tests/left-overflow-repaint.html:
+        * manual-tests/linkjump-3.html:
+        * manual-tests/log-keypress-events.html:
+        * manual-tests/named-window-blank-target.html:
+        * manual-tests/plain-text-paste.html:
+        * manual-tests/plugin-controller-datasource.html:
+        * manual-tests/pre-tab-selection-rect.html:
+        * manual-tests/redirection-target.html:
+        * manual-tests/redraw-page-cache-visited-links.html:
+        * manual-tests/reset-initiatedDrag.html:
+        * manual-tests/resources/named-window-blank-target-step2.html:
+        * manual-tests/resources/named-window-blank-target-step3.html:
+        * manual-tests/resources/named-window-blank-target-step4.html:
+        * manual-tests/resources/redraw-page-cache-visited-links-2.html:
+        * manual-tests/scrollbar-hittest.html:
+        * manual-tests/scrollbar-hittest2.html:
+        * manual-tests/subview-click-assertion.html:
+        * manual-tests/tabbing-input-google.html:
+        * manual-tests/text-field-autoscroll.html:
+        * manual-tests/textarea-after-stylesheet-link.html:
+        * manual-tests/textarea-focus.html:
+        * manual-tests/whitespace-pre-affinity.html:
+
 2007-03-18  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Not reviewed - gdk build fix.
@@ -19635,7 +19685,7 @@
 
         Reviewed by Eric.
 
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=10587
+        http://bugs.webkit.org/show_bug.cgi?id=10587
         pointer-events is not implemented for RenderSVGImage or RenderSVGText
 
         Implement pointer-events for raster images and svg text.

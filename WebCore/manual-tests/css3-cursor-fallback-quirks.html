@@ -1,15 +1,15 @@
 <html>
 <head><title>Quirks custom cursor tests</title></head>
 <body>
-<p><a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=8991">Bug .991</a>: REGRESSION: missing or broken CSS custom cursors are displayed as a missing image icon.</p>
+<p><a href="http://bugs.webkit.org/show_bug.cgi?id=8991">Bug .991</a>: REGRESSION: missing or broken CSS custom cursors are displayed as a missing image icon.</p>
 <p>Move the cursor over the blue box - it should not turn into a missing image icon, and should turn into an I-beam over text.</p>
 
 <div style="width:100px;height:50px;background-color:lightblue; cursor:url(nonexistent.png), auto;"><span style="cursor:url(nonexistent.png), auto;">some text</span></div>
 <div style="width:100px;height:50px;background-color:lightblue; cursor:url(nonexistent.png);"></div>
 
 <hr>
-<p><a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=6001">Bug 6001</a>: WebKit does not handle fallback custom cursors</p>
-<p><a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=9013">Bug 9013</a>: Let correct CSS custom cursor declarations parse</p>
+<p><a href="http://bugs.webkit.org/show_bug.cgi?id=6001">Bug 6001</a>: WebKit does not handle fallback custom cursors</p>
+<p><a href="http://bugs.webkit.org/show_bug.cgi?id=9013">Bug 9013</a>: Let correct CSS custom cursor declarations parse</p>
 <p>In each of the blue boxes below, the cursor should become a help cursor (question mark).</p>
 <table><tr>
  <td><div style="width:100px;height:100px;background-color:lightblue; cursor:url(resources/helpCursor.tiff), text;"></div></td> <!-- Valid, no fallback needed -->

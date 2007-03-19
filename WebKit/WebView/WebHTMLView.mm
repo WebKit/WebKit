@@ -5321,7 +5321,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     WebFrameBridge *bridge = [self _bridge];
     
     // Just to match NSTextView's behavior. Regression tests cannot detect this;
-    // to reproduce, use a test application from http://bugzilla.opendarwin.org/show_bug.cgi?id=4682
+    // to reproduce, use a test application from http://bugs.webkit.org/show_bug.cgi?id=4682
     // (type something; try ranges (1, -1) and (2, -1).
     if ((theRange.location + theRange.length < theRange.location) && (theRange.location + theRange.length != 0))
         theRange.length = 0;

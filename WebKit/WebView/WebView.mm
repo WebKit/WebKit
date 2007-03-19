@@ -1681,7 +1681,7 @@ NSMutableDictionary *countInvocations;
     // may not work with other WebKit applications.  Unsetting DYLD_FRAMEWORK_PATH removes the
     // need for Safari to unset it to prevent it from being passed to applications it launches.
     // Unsetting it when a WebView is first created is as good a place as any.
-    // See <http://bugzilla.opendarwin.org/show_bug.cgi?id=4286> for more details.
+    // See <http://bugs.webkit.org/show_bug.cgi?id=4286> for more details.
     if (getenv("WEBKIT_UNSET_DYLD_FRAMEWORK_PATH")) {
         unsetenv("DYLD_FRAMEWORK_PATH");
         unsetenv("WEBKIT_UNSET_DYLD_FRAMEWORK_PATH");
