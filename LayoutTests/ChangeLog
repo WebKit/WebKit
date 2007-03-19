@@ -1,3 +1,22 @@
+2007-03-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark.
+
+        Update results after Hyatt's patch in r20268.
+
+        * tables/mozilla/bugs/bug137388-2-expected.checksum:
+        * tables/mozilla/bugs/bug137388-2-expected.png:
+        * tables/mozilla/bugs/bug137388-2-expected.txt:
+        * tables/mozilla/bugs/bug137388-3-expected.checksum:
+        * tables/mozilla/bugs/bug137388-3-expected.png:
+        * tables/mozilla/bugs/bug137388-3-expected.txt:
+        * tables/mozilla/bugs/bug50695-2-expected.checksum:
+        * tables/mozilla/bugs/bug50695-2-expected.png:
+        * tables/mozilla/bugs/bug50695-2-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug137388-1-expected.checksum:
+        * tables/mozilla_expected_failures/bugs/bug137388-1-expected.png:
+        * tables/mozilla_expected_failures/bugs/bug137388-1-expected.txt:
+
 2007-03-18  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adele.
