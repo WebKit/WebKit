@@ -384,7 +384,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (void)forceLayoutAdjustingViewSize:(BOOL)flag
 {
-    m_frame->forceLayout();
+    m_frame->forceLayout(!flag);
     if (flag)
         m_frame->view()->adjustViewSize();
 }
@@ -769,8 +769,8 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (BOOL)needsLayout
 {
-    RenderObject *renderer = m_frame->renderer();
-    return renderer ? renderer->needsLayout() : false;
+    FrameView* view = m_frame->view();
+    return view ? view->layoutPending() : false;
 }
 
 - (void)setNeedsLayout

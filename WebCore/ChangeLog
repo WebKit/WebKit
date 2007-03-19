@@ -1,3 +1,19 @@
+2007-03-19  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13117
+        REGRESSION (r14658): Flickering text fields when updating via javascript
+
+        * page/Frame.cpp:
+        (WebCore::Frame::forceLayout): Added a flag to allow partial relayout.
+        * page/Frame.h:
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge forceLayoutAdjustingViewSize:]): Allow partial relayout
+        if not adjusting view size.
+        (-[WebCoreFrameBridge needsLayout]): Changed to check for pending subtree
+        layout instead of just whether the root needs layout.
+
 2007-03-18  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Maciej.

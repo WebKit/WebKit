@@ -217,7 +217,7 @@ public:
 
     void adjustPageHeight(float* newBottom, float oldTop, float oldBottom, float bottomLimit);
 
-    void forceLayout();
+    void forceLayout(bool allowSubtree = false);
     void forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth);
 
     void sendResizeEvent();
