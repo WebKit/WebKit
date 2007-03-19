@@ -33,19 +33,6 @@
         (WebCore::RenderTextControl::createInnerTextStyle): Force the inner block to
         'word-wrap:normal'.
 
-2007-03-18  Mitz Pettel  <mitz@webkit.org>
-
-        Reviewed by Tim Hatcher.
-
-        - fix http://bugs.webkit.org/show_bug.cgi?id=13091
-          REGRESSION (r20075): Wrong text style and pixel break in Apple Store Locator HUD
-
-        Test: fast/innerHTML/additional-inline-style.html
-
-        * editing/markup.cpp:
-        (WebCore::startMarkup): Changed to add inline style based on CSS rules only
-        in AnnotateForInterchange mode.
-
 2007-03-18  Dan Waylonis  <waylonis@mac.com>
 
         Reviewed by Tim Hatcher.
