@@ -25,7 +25,7 @@
 
 #include "config.h"
 #include "RenderFrame.h"
-
+#include "RenderFrameSet.h"
 #include "FrameView.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
@@ -38,6 +38,11 @@ RenderFrame::RenderFrame(HTMLFrameElement* frame)
     : RenderPart(frame)
 {
     setInline(false);
+}
+
+FrameEdgeInfo RenderFrame::edgeInfo() const
+{
+    return FrameEdgeInfo(element()->noResize(), element()->hasFrameBorder());
 }
 
 void RenderFrame::viewCleared()

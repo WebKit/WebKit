@@ -1,3 +1,53 @@
+2007-03-18  David Hyatt  <hyatt@apple.com>
+
+        Fix for REGRESSION bug 13108, frame borders being painted when they shouldn't be.  Rework both frame borders
+        and resizing to be more like other browsers.
+
+        Reviewed by ggaren
+
+        fast/frames/no-frame-borders.html
+
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::HTMLFrameElement):
+        (WebCore::HTMLFrameElement::attach):
+        (WebCore::HTMLFrameElement::parseMappedAttribute):
+        * html/HTMLFrameElement.h:
+        (WebCore::HTMLFrameElement::hasFrameBorder):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::HTMLFrameElementBase):
+        (WebCore::HTMLFrameElementBase::parseMappedAttribute):
+        * html/HTMLFrameElementBase.h:
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::attach):
+        * html/HTMLFrameSetElement.h:
+        (WebCore::HTMLFrameSetElement::hasFrameBorder):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::HTMLIFrameElement):
+        * rendering/RenderFrame.cpp:
+        (WebCore::RenderFrame::edgeInfo):
+        * rendering/RenderFrame.h:
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::paint):
+        (WebCore::RenderFrameSet::GridAxis::resize):
+        (WebCore::RenderFrameSet::fillFromEdgeInfo):
+        (WebCore::RenderFrameSet::computeEdgeInfo):
+        (WebCore::RenderFrameSet::edgeInfo):
+        (WebCore::RenderFrameSet::layout):
+        (WebCore::RenderFrameSet::startResizing):
+        (WebCore::RenderFrameSet::continueResizing):
+        (WebCore::RenderFrameSet::canResizeRow):
+        (WebCore::RenderFrameSet::canResizeColumn):
+        (WebCore::RenderFrameSet::splitPosition):
+        (WebCore::RenderFrameSet::hitTestSplit):
+        (WebCore::RenderFrameSet::dump):
+        * rendering/RenderFrameSet.h:
+        (WebCore::):
+        (WebCore::FrameEdgeInfo::FrameEdgeInfo):
+        (WebCore::FrameEdgeInfo::preventResize):
+        (WebCore::FrameEdgeInfo::allowBorder):
+        (WebCore::FrameEdgeInfo::setPreventResize):
+        (WebCore::FrameEdgeInfo::setAllowBorder):
+
 2007-03-19  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Brady.

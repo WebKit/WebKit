@@ -156,7 +156,7 @@ void HTMLFrameSetElement::attach()
         if (node->hasTagName(framesetTag)) {
             HTMLFrameSetElement* frameset = static_cast<HTMLFrameSetElement*>(node);
             if (!frameBorderSet)
-                frameborder = frameset->frameBorder();
+                frameborder = frameset->hasFrameBorder();
             if (frameborder) {
                 if (!m_borderSet)
                     m_border = frameset->border();

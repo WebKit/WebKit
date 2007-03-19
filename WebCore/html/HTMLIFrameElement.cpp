@@ -38,7 +38,6 @@ using namespace HTMLNames;
 HTMLIFrameElement::HTMLIFrameElement(Document* doc)
     : HTMLFrameElementBase(iframeTag, doc)
 {
-    m_frameBorder = false;
 }
 
 bool HTMLIFrameElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

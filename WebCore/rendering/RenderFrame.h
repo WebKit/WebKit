@@ -27,6 +27,7 @@
 
 #include "HTMLFrameElement.h"
 #include "RenderPart.h"
+#include "RenderFrameSet.h"
 
 namespace WebCore {
 
@@ -37,6 +38,8 @@ public:
     virtual const char* renderName() const { return "RenderFrame"; }
 
     HTMLFrameElement* element() const { return static_cast<HTMLFrameElement*>(RenderPart::element()); }
+
+    FrameEdgeInfo edgeInfo() const;
 
     virtual void viewCleared();
 };

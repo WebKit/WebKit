@@ -49,7 +49,7 @@ public:
     
     virtual void defaultEventHandler(Event*);
 
-    bool frameBorder() const { return frameborder; }
+    bool hasFrameBorder() const { return frameborder; }
     bool noResize() const { return noresize; }
 
     int totalRows() const { return m_totalRows; }
