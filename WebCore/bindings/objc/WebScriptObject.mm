@@ -37,7 +37,7 @@ using namespace KJS::Bindings;
 
 #define LOG_EXCEPTION(exec) \
     if (Interpreter::shouldPrintExceptions()) \
-        printf("%s:%d:[%d]  JavaScript exception:  %s\n", __FILE__, __LINE__, getpid(), exec->exception()->toObject(exec)->get(exec, messagePropertyName)->toString(exec).ascii());
+        printf("%s:%d:[%d]  JavaScript exception:  %s\n", __FILE__, __LINE__, getpid(), exec->exception()->toObject(exec)->get(exec, exec->propertyNames().message)->toString(exec).ascii());
 
 @implementation WebScriptObjectPrivate
 

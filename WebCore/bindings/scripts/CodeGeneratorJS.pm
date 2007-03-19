@@ -1654,7 +1654,7 @@ public:
     ${className}Constructor(ExecState* exec)
     {
         setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
-        putDirect(prototypePropertyName, ${protoClassName}::self(exec), None);
+        putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec), None);
     }
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     JSValue* getValueProperty(ExecState*, int token) const;
@@ -1703,7 +1703,7 @@ public:
         : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)
         , id(i)
     {
-        put(exec, lengthPropertyName, jsNumber(len), DontDelete|ReadOnly|DontEnum);
+        put(exec, exec->propertyNames().length, jsNumber(len), DontDelete|ReadOnly|DontEnum);
     }
     virtual JSValue* callAsFunction(ExecState* exec, JSObject* thisObj, const List& args);
 private:

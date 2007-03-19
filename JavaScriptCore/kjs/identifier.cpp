@@ -20,21 +20,6 @@
  */
 
 #include "config.h"
-// For JavaScriptCore we need to avoid having static constructors.
-// Our strategy is to declare the global objects with a different type (initialized to 0)
-// and then use placement new to initialize the global objects later. This is not completely
-// portable, and it would be good to figure out a 100% clean way that still avoids code that
-// runs at init time.
-
-#if !PLATFORM(WIN_OS) // can't get this to compile on Visual C++ yet
-#define AVOID_STATIC_CONSTRUCTORS 1
-#else
-#define AVOID_STATIC_CONSTRUCTORS 0
-#endif
-
-#if AVOID_STATIC_CONSTRUCTORS
-#define KJS_IDENTIFIER_HIDE_GLOBALS 1
-#endif
 
 #include "identifier.h"
 
@@ -207,44 +192,6 @@ PassRefPtr<UString::Rep> Identifier::add(UString::Rep *r)
 void Identifier::remove(UString::Rep *r)
 {
     identifierTable().remove(r);
-}
-
-// Global constants for property name strings.
-
-#if !AVOID_STATIC_CONSTRUCTORS
-    // Define an Identifier in the normal way.
-    #define DEFINE_GLOBAL(name, string) extern const Identifier name(string);
-#else
-    // Define an Identifier-sized array of pointers to avoid static initialization.
-    // Use an array of pointers instead of an array of char in case there is some alignment issue.
-    #define DEFINE_GLOBAL(name, string) \
-        void * name[(sizeof(Identifier) + sizeof(void *) - 1) / sizeof(void *)];
-#endif
-
-const char * const nullCString = 0;
-
-DEFINE_GLOBAL(nullIdentifier, nullCString)
-DEFINE_GLOBAL(specialPrototypePropertyName, "__proto__")
-
-#define DEFINE_PROPERTY_NAME_GLOBAL(name) DEFINE_GLOBAL(name ## PropertyName, #name)
-KJS_IDENTIFIER_EACH_PROPERTY_NAME_GLOBAL(DEFINE_PROPERTY_NAME_GLOBAL)
-
-void Identifier::init()
-{
-#if AVOID_STATIC_CONSTRUCTORS
-    static bool initialized;
-    if (!initialized) {
-        // Use placement new to initialize the globals.
-
-        new (&nullIdentifier) Identifier(nullCString);
-        new (&specialPrototypePropertyName) Identifier("__proto__");
-
-        #define PLACEMENT_NEW_PROPERTY_NAME_GLOBAL(name) new(&name ## PropertyName) Identifier(#name);
-        KJS_IDENTIFIER_EACH_PROPERTY_NAME_GLOBAL(PLACEMENT_NEW_PROPERTY_NAME_GLOBAL)
-
-        initialized = true;
-    }
-#endif
 }
 
 } // namespace KJS

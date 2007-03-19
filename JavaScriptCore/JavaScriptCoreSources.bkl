@@ -2,6 +2,7 @@
 <makefile>
     <set append="1" var="JSCORE_SOURCES_KJS">
         DerivedSources/JavaScriptCore/grammar.cpp
+        kjs/CommonIdentifiers.cpp
         kjs/Context.cpp
         kjs/DateMath.cpp
         kjs/ExecState.cpp

@@ -26,6 +26,7 @@
 
 #include "value.h"
 #include "types.h"
+#include "CommonIdentifiers.h"
 
 namespace KJS {
     class Context;
@@ -75,16 +76,22 @@ namespace KJS {
     JSValue** exceptionSlot() { return &m_exception; }
     bool hadException() const { return !!m_exception; }
 
+    // This is a workaround to avoid accessing the global variables for these identifiers in
+    // important property lookup functions, to avoid taking PIC branches in Mach-O binaries
+    const CommonIdentifiers& propertyNames() const { return *m_propertyNames; }
+
   private:
     ExecState(Interpreter* interp, Context* con)
         : m_interpreter(interp)
         , m_context(con)
         , m_exception(0)
+        , m_propertyNames(CommonIdentifiers::shared())
     { 
     }
     Interpreter* m_interpreter;
     Context* m_context;
     JSValue* m_exception;
+    CommonIdentifiers* m_propertyNames;
   };
 
 } // namespace KJS

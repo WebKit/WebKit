@@ -1,3 +1,33 @@
+2007-03-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark.
+
+        - avoid static construction (and global variable access) in a smarter, more portable way,
+        to later enable MUTLI_THREAD mode to work on other platforms and compilers.
+        
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSHTMLInputElementBase.cpp:
+        (WebCore::JSHTMLInputElementBaseFunction::JSHTMLInputElementBaseFunction):
+        * bindings/js/JSHTMLOptionElementConstructor.cpp:
+        (WebCore::JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor):
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequestConstructorImp::JSXMLHttpRequestConstructorImp):
+        * bindings/js/JSXSLTProcessor.cpp:
+        (KJS::XSLTProcessorConstructorImp::XSLTProcessorConstructorImp):
+        * bindings/js/kjs_dom.cpp:
+        (KJS::DOMNamedNodeMap::getOwnPropertySlot):
+        (KJS::DOMNamedNodesCollection::getOwnPropertySlot):
+        * bindings/js/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+        * bindings/js/kjs_html.cpp:
+        (KJS::HTMLElementFunction::HTMLElementFunction):
+        (KJS::JSHTMLCollection::getOwnPropertySlot):
+        * bindings/js/kjs_window.cpp:
+        (KJS::ScheduledAction::execute):
+        * bindings/objc/WebScriptObject.mm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2007-03-18  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Mark Rowe

@@ -52,22 +52,22 @@ NumberPrototype::NumberPrototype(ExecState *exec,
 
   // The constructor will be added later, after NumberObjectImp has been constructed
 
-  putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToString,       1, toStringPropertyName), DontEnum);
-  putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToLocaleString, 0, toLocaleStringPropertyName), DontEnum);
-  putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ValueOf,        0, valueOfPropertyName), DontEnum);
-  putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToFixed,        1, toFixedPropertyName), DontEnum);
-  putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToExponential,  1, toExponentialPropertyName), DontEnum);
-  putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToPrecision,    1, toPrecisionPropertyName), DontEnum);
+  putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToString,       1, exec->propertyNames().toString), DontEnum);
+  putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToLocaleString, 0, exec->propertyNames().toLocaleString), DontEnum);
+  putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ValueOf,        0, exec->propertyNames().valueOf), DontEnum);
+  putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToFixed,        1, exec->propertyNames().toFixed), DontEnum);
+  putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToExponential,  1, exec->propertyNames().toExponential), DontEnum);
+  putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToPrecision,    1, exec->propertyNames().toPrecision), DontEnum);
 }
 
 
 // ------------------------------ NumberProtoFunc ---------------------------
 
-NumberProtoFunc::NumberProtoFunc(ExecState*, FunctionPrototype* funcProto, int i, int len, const Identifier& name)
+NumberProtoFunc::NumberProtoFunc(ExecState* exec, FunctionPrototype* funcProto, int i, int len, const Identifier& name)
    : InternalFunctionImp(funcProto, name)
    , id(i)
 {
-  putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
+  putDirect(exec->propertyNames().length, len, DontDelete|ReadOnly|DontEnum);
 }
 
 static UString integer_part_noexp(double d)
@@ -416,14 +416,14 @@ const ClassInfo NumberObjectImp::info = {"Function", &InternalFunctionImp::info,
   MIN_VALUE             NumberObjectImp::MinValue       DontEnum|DontDelete|ReadOnly
 @end
 */
-NumberObjectImp::NumberObjectImp(ExecState*, FunctionPrototype* funcProto, NumberPrototype* numberProto)
+NumberObjectImp::NumberObjectImp(ExecState* exec, FunctionPrototype* funcProto, NumberPrototype* numberProto)
   : InternalFunctionImp(funcProto)
 {
   // Number.Prototype
-  putDirect(prototypePropertyName, numberProto,DontEnum|DontDelete|ReadOnly);
+  putDirect(exec->propertyNames().prototype, numberProto,DontEnum|DontDelete|ReadOnly);
 
   // no. of arguments for constructor
-  putDirect(lengthPropertyName, jsNumber(1), ReadOnly|DontDelete|DontEnum);
+  putDirect(exec->propertyNames().length, jsNumber(1), ReadOnly|DontDelete|DontEnum);
 }
 
 bool NumberObjectImp::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

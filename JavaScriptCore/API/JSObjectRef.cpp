@@ -100,7 +100,7 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObje
         : exec->dynamicInterpreter()->builtinObjectPrototype();
     
     JSObject* constructor = new JSCallbackConstructor(exec, jsClass, callAsConstructor);
-    constructor->put(exec, prototypePropertyName, jsPrototype, DontEnum|DontDelete|ReadOnly);
+    constructor->put(exec, exec->propertyNames().prototype, jsPrototype, DontEnum|DontDelete|ReadOnly);
     return toRef(constructor);
 }
 

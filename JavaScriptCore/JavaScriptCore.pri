@@ -47,6 +47,7 @@ SOURCES += \
     kjs/array_object.cpp \
     kjs/bool_object.cpp \
     kjs/collector.cpp \
+    kjs/CommonIdentifiers.cpp \
     kjs/Context.cpp \
     kjs/date_object.cpp \
     kjs/debugger.cpp \

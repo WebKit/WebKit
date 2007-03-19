@@ -26,6 +26,7 @@
 #define KJS_OBJECT_H
 
 #include "JSType.h"
+#include "CommonIdentifiers.h"
 #include "interpreter.h"
 #include "property_map.h"
 #include "property_slot.h"
@@ -245,8 +246,8 @@ namespace KJS {
      * @param propertyName The name of the property to set
      * @param propertyValue The value to set
      */
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
-    virtual void put(ExecState *exec, unsigned propertyName, JSValue *value, int attr = None);
+    virtual void put(ExecState* exec, const Identifier &propertyName, JSValue* value, int attr = None);
+    virtual void put(ExecState* exec, unsigned propertyName, JSValue* value, int attr = None);
 
     /**
      * Used to check whether or not a particular property is allowed to be set
@@ -564,7 +565,7 @@ inline bool JSObject::getPropertySlot(ExecState *exec, const Identifier& propert
 // It may seem crazy to inline a function this large, especially a virtual function,
 // but it makes a big difference to property lookup that derived classes can inline their
 // base class call to this.
-ALWAYS_INLINE bool JSObject::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+ALWAYS_INLINE bool JSObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     if (JSValue **location = getDirectLocation(propertyName)) {
         if (_prop.hasGetterSetterProperties() && location[0]->type() == GetterSetterType)
@@ -575,7 +576,7 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlot(ExecState *exec, const Identifie
     }
 
     // non-standard Netscape extension
-    if (propertyName == exec->dynamicInterpreter()->specialPrototypeIdentifier()) {
+    if (propertyName == exec->propertyNames().underscoreProto) {
         slot.setValueSlot(this, &_proto);
         return true;
     }

@@ -118,7 +118,7 @@ private:
 
 TestFunctionImp::TestFunctionImp(int i, int length) : JSObject(), id(i)
 {
-  putDirect(lengthPropertyName,length,DontDelete|ReadOnly|DontEnum);
+  putDirect(Identifier("length"), length, DontDelete | ReadOnly | DontEnum);
 }
 
 JSValue* TestFunctionImp::callAsFunction(ExecState* exec, JSObject*, const List &args)

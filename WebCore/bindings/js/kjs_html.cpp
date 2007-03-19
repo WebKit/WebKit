@@ -1072,7 +1072,7 @@ HTMLElementFunction::HTMLElementFunction(ExecState* exec, int i, int len, const 
   : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)
   , id(i)
 {
-  put(exec,lengthPropertyName,jsNumber(len),DontDelete|ReadOnly|DontEnum);
+  put(exec, exec->propertyNames().length, jsNumber(len), DontDelete | ReadOnly | DontEnum);
 }
 
 JSValue *HTMLElementFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
@@ -1473,7 +1473,7 @@ JSValue *JSHTMLCollection::nameGetter(ExecState* exec, JSObject* originalObject,
 
 bool JSHTMLCollection::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  if (propertyName == lengthPropertyName) {
+  if (propertyName == exec->propertyNames().length) {
       slot.setCustom(this, lengthGetter);
       return true;
   } else {

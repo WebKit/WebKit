@@ -32,7 +32,8 @@
 #include "nodes.h"
 #include "lexer.h"
 #include "internal.h"
-
+#include "CommonIdentifiers.h"
+    
 // Not sure why, but yacc doesn't add this define along with the others.
 #define yylloc kjsyylloc
 
@@ -815,7 +816,7 @@ ThrowStatement:
 ;
 
 TryStatement:
-    TRY Block FINALLY Block             { $$ = new TryNode($2, Identifier::null(), 0, $4); DBG($$, @1, @2); }
+TRY Block FINALLY Block             { $$ = new TryNode($2, CommonIdentifiers::shared()->nullIdentifier, 0, $4); DBG($$, @1, @2); }
   | TRY Block CATCH '(' IDENT ')' Block { $$ = new TryNode($2, *$5, $7, 0); DBG($$, @1, @2); }
   | TRY Block CATCH '(' IDENT ')' Block FINALLY Block
                                         { $$ = new TryNode($2, *$5, $7, $9); DBG($$, @1, @2); }
@@ -833,9 +834,9 @@ FunctionDeclaration:
 ;
 
 FunctionExpr:
-    FUNCTION '(' ')' FunctionBody       { $$ = new FuncExprNode(Identifier::null(), $4); }
+    FUNCTION '(' ')' FunctionBody       { $$ = new FuncExprNode(CommonIdentifiers::shared()->nullIdentifier, $4); }
   | FUNCTION '(' FormalParameterList ')' FunctionBody
-                                        { $$ = new FuncExprNode(Identifier::null(), $5, $3); }
+                                        { $$ = new FuncExprNode(CommonIdentifiers::shared()->nullIdentifier, $5, $3); }
   | FUNCTION IDENT '(' ')' FunctionBody { $$ = new FuncExprNode(*$2, $5); }
   | FUNCTION IDENT '(' FormalParameterList ')' FunctionBody
                                         { $$ = new FuncExprNode(*$2, $6, $4); }
@@ -1001,7 +1002,7 @@ static bool makeGetterOrSetterPropertyNode(PropertyNode*& result, Identifier& ge
         return false;
     
     result = new PropertyNode(new PropertyNameNode(name), 
-                              new FuncExprNode(Identifier::null(), body, params), type);
+                              new FuncExprNode(CommonIdentifiers::shared()->nullIdentifier, body, params), type);
 
     return true;
 }

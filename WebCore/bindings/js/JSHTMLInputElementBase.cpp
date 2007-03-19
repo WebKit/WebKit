@@ -62,7 +62,7 @@ JSHTMLInputElementBaseFunction::JSHTMLInputElementBaseFunction(ExecState* exec, 
     : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)
     , m_id(i)
 {
-    put(exec, lengthPropertyName, jsNumber(len), DontDelete|ReadOnly|DontEnum);
+    put(exec, exec->propertyNames().length, jsNumber(len), DontDelete|ReadOnly|DontEnum);
 }
 
 JSValue* JSHTMLInputElementBaseFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)

@@ -29,8 +29,6 @@ namespace KJS {
     class Identifier {
         friend class PropertyMap;
     public:
-        static void init();
-
         Identifier() { }
         Identifier(const char* s) : _ustring(add(s)) { }
         Identifier(const UChar* s, int length) : _ustring(add(s, length)) { }
@@ -56,8 +54,6 @@ namespace KJS {
         unsigned toArrayIndex(bool* ok) const { return _ustring.toArrayIndex(ok); }
         double toDouble() const { return _ustring.toDouble(); }
         
-        static const Identifier& null();
-        
         friend bool operator==(const Identifier&, const Identifier&);
         friend bool operator!=(const Identifier&, const Identifier&);
 
@@ -82,13 +78,6 @@ namespace KJS {
         static PassRefPtr<UString::Rep> add(UString::Rep*);
     };
     
-#ifndef KJS_IDENTIFIER_HIDE_GLOBALS
-    extern const Identifier nullIdentifier;
-
-    inline const Identifier& Identifier::null()
-        { return nullIdentifier; }
-#endif
-
     inline bool operator==(const Identifier& a, const Identifier& b)
         { return Identifier::equal(a, b); }
 
@@ -97,34 +86,6 @@ namespace KJS {
 
     inline bool operator==(const Identifier& a, const char* b)
         { return Identifier::equal(a, b); }
-
-    // List of property names, passed to a macro so we can do set them up various
-    // ways without repeating the list.
-    #define KJS_IDENTIFIER_EACH_PROPERTY_NAME_GLOBAL(macro) \
-        macro(arguments) \
-        macro(callee) \
-        macro(caller) \
-        macro(constructor) \
-        macro(fromCharCode) \
-        macro(length) \
-        macro(message) \
-        macro(name) \
-        macro(prototype) \
-        macro(toLocaleString) \
-        macro(toString) \
-        macro(toFixed) \
-        macro(toExponential) \
-        macro(toPrecision) \
-        macro(valueOf)
-
-    // Define external global variables for all property names above (and one more).
-#ifndef KJS_IDENTIFIER_HIDE_GLOBALS
-    extern const Identifier specialPrototypePropertyName;
-
-    #define KJS_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL(name) extern const Identifier name ## PropertyName;
-    KJS_IDENTIFIER_EACH_PROPERTY_NAME_GLOBAL(KJS_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL)
-    #undef KJS_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL
-#endif
 
 } // namespace KJS
 

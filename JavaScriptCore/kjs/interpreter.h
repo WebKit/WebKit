@@ -327,11 +327,6 @@ namespace KJS {
      */
     virtual bool isSafeScript(const Interpreter*) { return true; }
   
-    // This is a workaround to avoid accessing the global variables for these identifiers in
-    // important property lookup functions, to avoid taking PIC branches in Mach-O binaries
-    const Identifier& argumentsIdentifier() { return *m_argumentsPropertyName; }
-    const Identifier& specialPrototypeIdentifier() { return *m_specialPrototypePropertyName; }
-    
     // Chained list of interpreters (ring)
     static Interpreter* firstInterpreter() { return s_hook; }
     Interpreter* nextInterpreter() const { return next; }
@@ -375,9 +370,6 @@ private:
     int m_refCount;
     
     ExecState m_globalExec;
-
-    const Identifier *m_argumentsPropertyName;
-    const Identifier *m_specialPrototypePropertyName;
 
     // Chained list of interpreters (ring) - for collector
     static Interpreter* s_hook;

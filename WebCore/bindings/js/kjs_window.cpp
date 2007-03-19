@@ -1883,7 +1883,7 @@ void ScheduledAction::execute(Window* window)
             if (exec->hadException()) {
                 JSObject* exception = exec->exception()->toObject(exec);
                 exec->clearException();
-                String message = exception->get(exec, messagePropertyName)->toString(exec);
+                String message = exception->get(exec, exec->propertyNames().message)->toString(exec);
                 int lineNumber = exception->get(exec, "line")->toInt32(exec);
                 if (Interpreter::shouldPrintExceptions())
                     printf("(timer):%s\n", message.utf8().data());

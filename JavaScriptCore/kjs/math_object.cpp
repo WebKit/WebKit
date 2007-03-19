@@ -121,7 +121,7 @@ MathFuncImp::MathFuncImp(ExecState* exec, int i, int l, const Identifier& name)
   : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)
   , id(i)
 {
-  putDirect(lengthPropertyName, l, DontDelete|ReadOnly|DontEnum);
+  putDirect(exec->propertyNames().length, l, DontDelete|ReadOnly|DontEnum);
 }
 
 JSValue *MathFuncImp::callAsFunction(ExecState *exec, JSObject* /*thisObj*/, const List &args)

@@ -445,7 +445,7 @@ JSValue *ArrayNode::evaluate(ExecState *exec)
   if (element) {
     array = static_cast<JSObject*>(element->evaluate(exec));
     KJS_CHECKEXCEPTIONVALUE
-    length = opt ? array->get(exec,lengthPropertyName)->toInt32(exec) : 0;
+    length = opt ? array->get(exec, exec->propertyNames().length)->toInt32(exec) : 0;
   } else {
     JSValue *newArr = exec->lexicalInterpreter()->builtinArray()->construct(exec,List::empty());
     array = static_cast<JSObject*>(newArr);
@@ -453,7 +453,7 @@ JSValue *ArrayNode::evaluate(ExecState *exec)
   }
 
   if (opt)
-    array->put(exec,lengthPropertyName, jsNumber(elision + length), DontEnum | DontDelete);
+    array->put(exec, exec->propertyNames().length, jsNumber(elision + length), DontEnum | DontDelete);
 
   return array;
 }
@@ -2369,14 +2369,14 @@ void FuncDeclNode::processFuncDecl(ExecState *exec)
   FunctionImp *func = new DeclaredFunctionImp(exec, ident, body.get(), context->scopeChain());
 
   JSObject *proto = exec->lexicalInterpreter()->builtinObject()->construct(exec, List::empty());
-  proto->put(exec, constructorPropertyName, func, ReadOnly|DontDelete|DontEnum);
-  func->put(exec, prototypePropertyName, proto, Internal|DontDelete);
+  proto->put(exec, exec->propertyNames().constructor, func, ReadOnly | DontDelete | DontEnum);
+  func->put(exec, exec->propertyNames().prototype, proto, Internal|DontDelete);
 
   int plen = 0;
   for(ParameterNode *p = param.get(); p != 0L; p = p->nextParam(), plen++)
     func->addParameter(p->ident());
 
-  func->put(exec, lengthPropertyName, jsNumber(plen), ReadOnly|DontDelete|DontEnum);
+  func->put(exec, exec->propertyNames().length, jsNumber(plen), ReadOnly|DontDelete|DontEnum);
 
   // ECMA 10.2.2
   context->variableObject()->put(exec, ident, func, Internal | (context->codeType() == EvalCode ? 0 : DontDelete));
@@ -2415,10 +2415,10 @@ JSValue *FuncExprNode::evaluate(ExecState *exec)
     context->pushScope(functionScopeObject);
   }
 
-  FunctionImp *func = new DeclaredFunctionImp(exec, ident, body.get(), context->scopeChain());
-  JSObject *proto = exec->lexicalInterpreter()->builtinObject()->construct(exec, List::empty());
-  proto->put(exec, constructorPropertyName, func, ReadOnly|DontDelete|DontEnum);
-  func->put(exec, prototypePropertyName, proto, Internal|DontDelete);
+  FunctionImp* func = new DeclaredFunctionImp(exec, ident, body.get(), context->scopeChain());
+  JSObject* proto = exec->lexicalInterpreter()->builtinObject()->construct(exec, List::empty());
+  proto->put(exec, exec->propertyNames().constructor, func, ReadOnly | DontDelete | DontEnum);
+  func->put(exec, exec->propertyNames().prototype, proto, Internal | DontDelete);
 
   int plen = 0;
   for(ParameterNode *p = param.get(); p != 0L; p = p->nextParam(), plen++)

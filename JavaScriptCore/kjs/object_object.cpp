@@ -41,9 +41,9 @@ ObjectPrototype::ObjectPrototype(ExecState* exec, FunctionPrototype* funcProto)
     static const Identifier* lookupGetterPropertyName = new Identifier("__lookupGetter__");
     static const Identifier* lookupSetterPropertyName = new Identifier("__lookupSetter__");
 
-    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ToString, 0, toStringPropertyName), DontEnum);
-    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ToLocaleString, 0, toLocaleStringPropertyName), DontEnum);
-    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ValueOf, 0, valueOfPropertyName), DontEnum);
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ToString, 0, exec->propertyNames().toString), DontEnum);
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ToLocaleString, 0, exec->propertyNames().toLocaleString), DontEnum);
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ValueOf, 0, exec->propertyNames().valueOf), DontEnum);
     putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::HasOwnProperty, 1, *hasOwnPropertyPropertyName), DontEnum);
     putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::PropertyIsEnumerable, 1, *propertyIsEnumerablePropertyName), DontEnum);
     putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::IsPrototypeOf, 1, *isPrototypeOfPropertyName), DontEnum);
@@ -58,11 +58,11 @@ ObjectPrototype::ObjectPrototype(ExecState* exec, FunctionPrototype* funcProto)
 
 // ------------------------------ ObjectProtoFunc --------------------------------
 
-ObjectProtoFunc::ObjectProtoFunc(ExecState*, FunctionPrototype* funcProto, int i, int len, const Identifier& name)
+ObjectProtoFunc::ObjectProtoFunc(ExecState* exec, FunctionPrototype* funcProto, int i, int len, const Identifier& name)
   : InternalFunctionImp(funcProto, name)
   , id(i)
 {
-  putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
+  putDirect(exec->propertyNames().length, len, DontDelete|ReadOnly|DontEnum);
 }
 
 
@@ -152,14 +152,14 @@ JSValue *ObjectProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
 
 // ------------------------------ ObjectObjectImp --------------------------------
 
-ObjectObjectImp::ObjectObjectImp(ExecState*, ObjectPrototype* objProto, FunctionPrototype* funcProto)
+ObjectObjectImp::ObjectObjectImp(ExecState* exec, ObjectPrototype* objProto, FunctionPrototype* funcProto)
   : InternalFunctionImp(funcProto)
 {
   // ECMA 15.2.3.1
-  putDirect(prototypePropertyName, objProto, DontEnum|DontDelete|ReadOnly);
+  putDirect(exec->propertyNames().prototype, objProto, DontEnum|DontDelete|ReadOnly);
 
   // no. of arguments for constructor
-  putDirect(lengthPropertyName, jsNumber(1), ReadOnly|DontDelete|DontEnum);
+  putDirect(exec->propertyNames().length, jsNumber(1), ReadOnly|DontDelete|DontEnum);
 }
 
 

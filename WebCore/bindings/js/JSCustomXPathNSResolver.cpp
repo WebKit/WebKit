@@ -112,7 +112,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
 
     if (exec->hadException()) {
         JSObject* exception = exec->exception()->toObject(exec);
-        String message = exception->get(exec, messagePropertyName)->toString(exec);
+        String message = exception->get(exec, exec->propertyNames().message)->toString(exec);
         int lineNumber = exception->get(exec, "line")->toInt32(exec);
         String sourceURL = exception->get(exec, "sourceURL")->toString(exec);
         if (Interpreter::shouldPrintExceptions())

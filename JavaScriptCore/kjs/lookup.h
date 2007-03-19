@@ -352,7 +352,7 @@ namespace KJS {
       : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name) \
       , id(i) \
     { \
-       put(exec, lengthPropertyName, jsNumber(len), DontDelete|ReadOnly|DontEnum); \
+       put(exec, exec->propertyNames().length, jsNumber(len), DontDelete|ReadOnly|DontEnum); \
     } \
     /* Macro user needs to implement the callAsFunction function. */ \
     virtual JSValue* callAsFunction(ExecState* exec, JSObject* thisObj, const List& args); \

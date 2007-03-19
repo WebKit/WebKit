@@ -92,6 +92,7 @@ set(kjs-unity_LIB_SRCS
     kjs/array_object.cpp
     kjs/bool_object.cpp
     kjs/collector.cpp
+    kjs/CommonIdentifiers.cpp
     kjs/Context.cpp
     kjs/date_object.cpp
     kjs/debugger.cpp

@@ -56,9 +56,9 @@ JSValue *RuntimeMethod::lengthGetter(ExecState*, JSObject*, const Identifier&, c
     return jsNumber(thisObj->_methodList.methodAt(0)->numParameters());
 }
 
-bool RuntimeMethod::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot &slot)
+bool RuntimeMethod::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-    if (propertyName == lengthPropertyName) {
+    if (propertyName == exec->propertyNames().length) {
         slot.setCustom(this, lengthGetter);
         return true;
     }

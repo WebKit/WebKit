@@ -207,6 +207,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\CommonIdentifiers.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\CommonIdentifiers.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\config.h"
 				>
 			</File>

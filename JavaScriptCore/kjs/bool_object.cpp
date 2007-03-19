@@ -46,24 +46,24 @@ BooleanPrototype::BooleanPrototype(ExecState* exec, ObjectPrototype* objectProto
 {
   // The constructor will be added later by Interpreter::Interpreter()
 
-  putDirectFunction(new BooleanProtoFunc(exec, funcProto, BooleanProtoFunc::ToString, 0, toStringPropertyName), DontEnum);
-  putDirectFunction(new BooleanProtoFunc(exec, funcProto, BooleanProtoFunc::ValueOf, 0, valueOfPropertyName),  DontEnum);
+  putDirectFunction(new BooleanProtoFunc(exec, funcProto, BooleanProtoFunc::ToString, 0, exec->propertyNames().toString), DontEnum);
+  putDirectFunction(new BooleanProtoFunc(exec, funcProto, BooleanProtoFunc::ValueOf, 0, exec->propertyNames().valueOf),  DontEnum);
   setInternalValue(jsBoolean(false));
 }
 
 
 // ------------------------------ BooleanProtoFunc --------------------------
 
-BooleanProtoFunc::BooleanProtoFunc(ExecState*, FunctionPrototype* funcProto, int i, int len, const Identifier& name)
+BooleanProtoFunc::BooleanProtoFunc(ExecState* exec, FunctionPrototype* funcProto, int i, int len, const Identifier& name)
   : InternalFunctionImp(funcProto, name)
   , id(i)
 {
-  putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
+  putDirect(exec->propertyNames().length, len, DontDelete|ReadOnly|DontEnum);
 }
 
 
 // ECMA 15.6.4.2 + 15.6.4.3
-JSValue *BooleanProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &/*args*/)
+JSValue *BooleanProtoFunc::callAsFunction(ExecState* exec, JSObject *thisObj, const List &/*args*/)
 {
   // no generic function. "this" has to be a Boolean object
   if (!thisObj->inherits(&BooleanInstance::info))
@@ -82,13 +82,13 @@ JSValue *BooleanProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, co
 // ------------------------------ BooleanObjectImp -----------------------------
 
 
-BooleanObjectImp::BooleanObjectImp(ExecState*, FunctionPrototype* funcProto, BooleanPrototype* booleanProto)
+BooleanObjectImp::BooleanObjectImp(ExecState* exec, FunctionPrototype* funcProto, BooleanPrototype* booleanProto)
   : InternalFunctionImp(funcProto)
 {
-  putDirect(prototypePropertyName, booleanProto, DontEnum|DontDelete|ReadOnly);
+  putDirect(exec->propertyNames().prototype, booleanProto, DontEnum|DontDelete|ReadOnly);
 
   // no. of arguments for constructor
-  putDirect(lengthPropertyName, jsNumber(1), ReadOnly|DontDelete|DontEnum);
+  putDirect(exec->propertyNames().length, jsNumber(1), ReadOnly|DontDelete|DontEnum);
 }
 
 

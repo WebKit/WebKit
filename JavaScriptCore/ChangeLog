@@ -1,3 +1,121 @@
+2007-03-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark.
+        
+        - avoid static construction (and global variable access) in a smarter, more portable way,
+        to later enable MUTLI_THREAD mode to work on other platforms and compilers.
+        
+        * kjs/CommonIdentifiers.cpp: Added. New class to hold all the shared identifiers.
+        (KJS::CommonIdentifiers::CommonIdentifiers):
+        (KJS::CommonIdentifiers::shared):
+        * kjs/CommonIdentifiers.h: Added.
+
+        * kjs/ExecState.h:
+        (KJS::ExecState::propertyNames): Hand the CommonIdentifiers instance here for easy access.
+        (KJS::ExecState::ExecState):
+
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeConstructor):
+        * CMakeLists.txt:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * bindings/runtime_array.cpp:
+        (RuntimeArray::getOwnPropertySlot):
+        (RuntimeArray::put):
+        * bindings/runtime_method.cpp:
+        (RuntimeMethod::getOwnPropertySlot):
+        * kjs/array_object.cpp:
+        (ArrayInstance::getOwnPropertySlot):
+        (ArrayInstance::put):
+        (ArrayInstance::deleteProperty):
+        (ArrayProtoFunc::ArrayProtoFunc):
+        (ArrayProtoFunc::callAsFunction):
+        (ArrayObjectImp::ArrayObjectImp):
+        * kjs/bool_object.cpp:
+        (BooleanPrototype::BooleanPrototype):
+        (BooleanProtoFunc::BooleanProtoFunc):
+        (BooleanProtoFunc::callAsFunction):
+        (BooleanObjectImp::BooleanObjectImp):
+        * kjs/completion.h:
+        (KJS::Completion::Completion):
+        * kjs/date_object.cpp:
+        (KJS::DateProtoFunc::DateProtoFunc):
+        (KJS::DateObjectImp::DateObjectImp):
+        (KJS::DateObjectFuncImp::DateObjectFuncImp):
+        * kjs/error_object.cpp:
+        (ErrorPrototype::ErrorPrototype):
+        (ErrorProtoFunc::ErrorProtoFunc):
+        (ErrorProtoFunc::callAsFunction):
+        (ErrorObjectImp::ErrorObjectImp):
+        (ErrorObjectImp::construct):
+        (NativeErrorPrototype::NativeErrorPrototype):
+        (NativeErrorImp::NativeErrorImp):
+        (NativeErrorImp::construct):
+        (NativeErrorImp::callAsFunction):
+        * kjs/function.cpp:
+        (KJS::FunctionImp::getOwnPropertySlot):
+        (KJS::FunctionImp::put):
+        (KJS::FunctionImp::deleteProperty):
+        (KJS::FunctionImp::getParameterName):
+        (KJS::DeclaredFunctionImp::construct):
+        (KJS::IndexToNameMap::unMap):
+        (KJS::Arguments::Arguments):
+        (KJS::ActivationImp::getOwnPropertySlot):
+        (KJS::ActivationImp::deleteProperty):
+        (KJS::GlobalFuncImp::GlobalFuncImp):
+        * kjs/function_object.cpp:
+        (FunctionPrototype::FunctionPrototype):
+        (FunctionProtoFunc::FunctionProtoFunc):
+        (FunctionProtoFunc::callAsFunction):
+        (FunctionObjectImp::FunctionObjectImp):
+        (FunctionObjectImp::construct):
+        * kjs/grammar.y:
+        * kjs/identifier.cpp:
+        * kjs/identifier.h:
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::init):
+        (KJS::Interpreter::initGlobalObject):
+        * kjs/interpreter.h:
+        * kjs/lookup.h:
+        * kjs/math_object.cpp:
+        (MathFuncImp::MathFuncImp):
+        * kjs/nodes.cpp:
+        (ArrayNode::evaluate):
+        (FuncDeclNode::processFuncDecl):
+        (FuncExprNode::evaluate):
+        * kjs/number_object.cpp:
+        (NumberPrototype::NumberPrototype):
+        (NumberProtoFunc::NumberProtoFunc):
+        (NumberObjectImp::NumberObjectImp):
+        * kjs/object.cpp:
+        (KJS::JSObject::put):
+        (KJS::JSObject::defaultValue):
+        (KJS::JSObject::hasInstance):
+        * kjs/object.h:
+        (KJS::JSObject::getOwnPropertySlot):
+        * kjs/object_object.cpp:
+        (ObjectPrototype::ObjectPrototype):
+        (ObjectProtoFunc::ObjectProtoFunc):
+        (ObjectObjectImp::ObjectObjectImp):
+        * kjs/regexp_object.cpp:
+        (RegExpPrototype::RegExpPrototype):
+        (RegExpProtoFunc::RegExpProtoFunc):
+        (RegExpObjectImp::RegExpObjectImp):
+        * kjs/string_object.cpp:
+        (KJS::StringInstance::getOwnPropertySlot):
+        (KJS::StringInstance::put):
+        (KJS::StringInstance::deleteProperty):
+        (KJS::StringPrototype::StringPrototype):
+        (KJS::StringProtoFunc::StringProtoFunc):
+        (KJS::StringProtoFunc::callAsFunction):
+        (KJS::StringObjectImp::StringObjectImp):
+        (KJS::StringObjectFuncImp::StringObjectFuncImp):
+        * kjs/testkjs.cpp:
+        (TestFunctionImp::TestFunctionImp):
+
 2007-03-18  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Mark Rowe
