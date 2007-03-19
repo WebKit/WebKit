@@ -1,32 +1,32 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
-      RenderSVGContainer {g} at (5,49.50) size 472x242.50
-        RenderSVGContainer {g} at (5,82) size 472x210
-          RenderSVGText {text} at (5,90) size 480x10
-            RenderSVGInlineText {#text} at (0,-8) size 32x10
-              text run at (0,-8) width 32: "Stroked"
-          RenderSVGText {text} at (5,195) size 480x10
-            RenderSVGInlineText {#text} at (0,-8) size 42x10
-              text run at (0,-8) width 42: "Unstroked"
-          RenderSVGText {text} at (50,135) size 480x10
-            RenderSVGInlineText {#text} at (0,-8) size 61x10
-              text run at (0,-8) width 61: "Zero width rect"
-          RenderSVGText {text} at (130,135) size 480x10
-            RenderSVGInlineText {#text} at (0,-8) size 65x10
-              text run at (0,-8) width 65: "Zero height rect"
-          RenderSVGText {text} at (210,135) size 480x10
-            RenderSVGInlineText {#text} at (0,-8) size 71x10
-              text run at (0,-8) width 71: "Zero radius circle"
-          RenderSVGText {text} at (315,135) size 480x10
-            RenderSVGInlineText {#text} at (0,-8) size 83x10
-              text run at (0,-8) width 83: "Zero x radius ellipse"
-          RenderSVGText {text} at (394,135) size 480x10
-            RenderSVGInlineText {#text} at (0,-8) size 83x10
-              text run at (0,-8) width 83: "Zero y radius ellipse"
-          RenderSVGText {text} at (210,290) size 480x10
-            RenderSVGInlineText {#text} at (0,-8) size 63x10
-              text run at (0,-8) width 63: "Zero length line"
+      RenderSVGContainer {g} at (5,49.50) size 458x242.50
+        RenderSVGContainer {g} at (5,83) size 458x209
+          RenderSVGText {text} at (5,90) size 480x9
+            RenderSVGInlineText {#text} at (0,-7) size 26x9
+              text run at (0,-7) width 26: "Stroked"
+          RenderSVGText {text} at (5,195) size 480x9
+            RenderSVGInlineText {#text} at (0,-7) size 35x9
+              text run at (0,-7) width 35: "Unstroked"
+          RenderSVGText {text} at (50,135) size 480x9
+            RenderSVGInlineText {#text} at (0,-7) size 51x9
+              text run at (0,-7) width 51: "Zero width rect"
+          RenderSVGText {text} at (130,135) size 480x9
+            RenderSVGInlineText {#text} at (0,-7) size 53x9
+              text run at (0,-7) width 53: "Zero height rect"
+          RenderSVGText {text} at (210,135) size 480x9
+            RenderSVGInlineText {#text} at (0,-7) size 60x9
+              text run at (0,-7) width 60: "Zero radius circle"
+          RenderSVGText {text} at (315,135) size 480x9
+            RenderSVGInlineText {#text} at (0,-7) size 69x9
+              text run at (0,-7) width 69: "Zero x radius ellipse"
+          RenderSVGText {text} at (394,135) size 480x9
+            RenderSVGInlineText {#text} at (0,-7) size 69x9
+              text run at (0,-7) width 69: "Zero y radius ellipse"
+          RenderSVGText {text} at (210,290) size 480x9
+            RenderSVGInlineText {#text} at (0,-7) size 52x9
+              text run at (0,-7) width 52: "Zero length line"
         RenderSVGContainer {g} at (49.50,49.50) size 380x221
           RenderPath {rect} at (49.50,49.50) size 36x61 [stroke={[type=SOLID] [color=#000000]}] [data="M50.00,50.00L85.00,50.00L85.00,110.00L50.00,110.00"]
           RenderPath {rect} at (49.50,154.50) size 36x61 [stroke={[type=SOLID] [color=#000000]}] [data="M50.00,155.00L85.00,155.00L85.00,215.00L50.00,215.00"]

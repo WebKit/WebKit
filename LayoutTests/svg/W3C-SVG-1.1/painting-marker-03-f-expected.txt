@@ -11,7 +11,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (240,28) size 480x23
         RenderSVGInlineText {#text} at (-87,-18) size 174x23
           text run at (-87,-18) width 174: "'marker' property test"
-      RenderSVGText {text} at (240,70) size 480x23
+      RenderSVGText {text} at (240,70) size 480x23 [color=#228B22]
         RenderSVGInlineText {#text} at (-70,-18) size 140x23
           text run at (-70,-18) width 140: "'marker' property"
       RenderSVGContainer {g} at (59.50,79.50) size 360.83x81 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,20.00)}] [start marker=#marker1] [middle marker=#marker1] [end marker=#marker1]
@@ -20,7 +20,7 @@ layer at (0,0) size 480x360
         RenderPath {polyline} at (239.51,79.88) size 80.99x80.24 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFD700] [fill rule=EVEN-ODD]}] [start marker=#marker1] [middle marker=#marker1] [end marker=#marker1] [data="M190.00,60.00L210.00,140.00L230.00,60.00L250.00,140.00L270.00,60.00L270.00,100.00L190.00,100.00"]
         RenderPath {line} at (329.67,79.63) size 90.66x80.75 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFD700] [fill rule=EVEN-ODD]}] [start marker=#marker1] [middle marker=#marker1] [end marker=#marker1] [data="M280.00,60.00L370.00,140.00"]
         RenderPath {line} at (329.67,79.63) size 90.66x80.75 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFD700] [fill rule=EVEN-ODD]}] [start marker=#marker1] [middle marker=#marker1] [end marker=#marker1] [data="M370.00,60.00L280.00,140.00"]
-      RenderSVGText {text} at (240,200) size 480x23
+      RenderSVGText {text} at (240,200) size 480x23 [color=#228B22]
         RenderSVGInlineText {#text} at (-213,-18) size 426x23
           text run at (-213,-18) width 426: "'marker-start', 'marker-mid' & 'marker-end' attribute"
       RenderSVGContainer {g} at (59.50,209.50) size 360.83x81 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,150.00)}] [start marker=#marker1] [middle marker=#marker1] [end marker=#marker1]

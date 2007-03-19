@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
     RenderSVGContainer {svg} at (0,76) size 648x63
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (0,76) size 648x63
-        RenderSVGText {text} at (0,125) size 800x63
+        RenderSVGText {text} at (0,125) size 800x63 [color=#008000]
           RenderSVGInlineText {#text} at (0,-49) size 133x63
             text run at (0,-49) width 133: "PASS"
-        RenderSVGText {text} at (0,125) size 800x63
+        RenderSVGText {text} at (0,125) size 800x63 [color=#FF0000]
           RenderSVGInlineText {#text} at (0,-49) size 648x63
             text run at (0,-49) width 648: "FAIL (should be clipped out)"

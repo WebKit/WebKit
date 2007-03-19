@@ -88,7 +88,7 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (215.23,316.88) size 3.91x15.62
               RenderSVGContainer {svg} at (215.23,316.88) size 3.91x15.62
                 RenderPath {line} at (215.23,316.88) size 3.91x15.62 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00L0.00,10.00"]
-          RenderSVGText {text} at (416,420) size 800x14
+          RenderSVGText {text} at (416,420) size 800x14 [color=#696969]
             RenderSVGInlineText {#text} at (0,-11) size 76x14
               text run at (0,-11) width 76: "Hue (0\x{B0}-360\x{B0})"
           RenderPath {rect} at (186.13,351.76) size 41.02x33.98 [stroke={[type=SOLID] [color=#000000] [opacity=0.70] [stroke width=7.50]}] [data="M242.00,454.00L287.00,454.00L287.00,490.00L242.00,490.00"]
@@ -100,7 +100,7 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (318.36,335.62) size 3.91x15.62
               RenderSVGContainer {svg} at (318.36,335.62) size 3.91x15.62
                 RenderPath {line} at (318.36,335.62) size 3.91x15.62 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00L0.00,10.00"]
-          RenderSVGText {text} at (416,444) size 800x14
+          RenderSVGText {text} at (416,444) size 800x14 [color=#696969]
             RenderSVGInlineText {#text} at (0,-11) size 78x14
               text run at (0,-11) width 78: "Saturation (%)"
           RenderPath {rect} at (235.94,359.26) size 84.38x5.86 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#000000), (1.00,#00FF00)]] [start=(0,0)] [end=(1,0)]}] [data="M302.00,459.85L410.00,459.85L410.00,467.35L302.00,467.35"]
@@ -110,7 +110,7 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (318.36,354.38) size 3.91x15.62
               RenderSVGContainer {svg} at (318.36,354.38) size 3.91x15.62
                 RenderPath {line} at (318.36,354.38) size 3.91x15.62 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00L0.00,10.00"]
-          RenderSVGText {text} at (416,468) size 800x14
+          RenderSVGText {text} at (416,468) size 800x14 [color=#696969]
             RenderSVGInlineText {#text} at (0,-11) size 54x14
               text run at (0,-11) width 54: "Value (%)"
           RenderPath {rect} at (235.94,378.01) size 84.38x5.86 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#00FF0000), (1.00,#00FF00)]] [start=(0,0)] [end=(1,0)]}] [data="M302.00,483.85L410.00,483.85L410.00,491.35L302.00,491.35"]
@@ -120,10 +120,10 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (318.36,373.12) size 3.91x15.62
               RenderSVGContainer {svg} at (318.36,373.12) size 3.91x15.62
                 RenderPath {line} at (318.36,373.12) size 3.91x15.62 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00L0.00,10.00"]
-          RenderSVGText {text} at (416,492) size 800x14
+          RenderSVGText {text} at (416,492) size 800x14 [color=#696969]
             RenderSVGInlineText {#text} at (0,-11) size 63x14
               text run at (0,-11) width 63: "Opacity (%)"
-          RenderSVGText {text} at (212,514) size 800x14
+          RenderSVGText {text} at (212,514) size 800x14 [color=#696969]
             RenderSVGInlineText {#text} at (0,-11) size 243x14
               text run at (0,-11) width 243: "RGBA: 0,255,0,100; HSVA: 120,100,100,100"
         RenderSVGContainer {g} at (390.62,156.25) size 234.38x78.12
@@ -135,7 +135,7 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (398.05,158.59) size 3.91x15.62
               RenderSVGContainer {svg} at (398.05,158.59) size 3.91x15.62
                 RenderPath {line} at (398.05,158.59) size 3.91x15.62 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00L0.00,10.00"]
-          RenderSVGText {text} at (716,217) size 800x14
+          RenderSVGText {text} at (716,217) size 800x14 [color=#696969]
             RenderSVGInlineText {#text} at (0,-11) size 76x14
               text run at (0,-11) width 76: "Hue (0\x{B0}-180\x{B0})"
           RenderPath {rect} at (420.51,188.48) size 41.02x29.30 [stroke={[type=SOLID] [color=#787878] [stroke width=7.50]}] [data="M542.00,245.00L587.00,245.00L587.00,275.00L542.00,275.00"]
@@ -147,7 +147,7 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (552.73,179.43) size 3.91x15.62
               RenderSVGContainer {svg} at (552.73,179.43) size 3.91x15.62
                 RenderPath {line} at (552.73,179.43) size 3.91x15.62 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00L0.00,10.00"]
-          RenderSVGText {text} at (716,244) size 800x14
+          RenderSVGText {text} at (716,244) size 800x14 [color=#696969]
             RenderSVGInlineText {#text} at (0,-11) size 78x14
               text run at (0,-11) width 78: "Saturation (%)"
           RenderPath {rect} at (470.31,205.14) size 84.38x5.86 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#000000), (1.00,#FF0000)]] [start=(0,0)] [end=(1,0)]}] [data="M602.00,262.58L710.00,262.58L710.00,270.08L602.00,270.08"]
@@ -157,10 +157,10 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (552.73,200.26) size 3.91x15.62
               RenderSVGContainer {svg} at (552.73,200.26) size 3.91x15.62
                 RenderPath {line} at (552.73,200.26) size 3.91x15.62 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00L0.00,10.00"]
-          RenderSVGText {text} at (716,270) size 800x14
+          RenderSVGText {text} at (716,270) size 800x14 [color=#696969]
             RenderSVGInlineText {#text} at (0,-11) size 54x14
               text run at (0,-11) width 54: "Value (%)"
-          RenderSVGText {text} at (512,295) size 800x14
+          RenderSVGText {text} at (512,295) size 800x14 [color=#696969]
             RenderSVGInlineText {#text} at (0,-11) size 229x14
               text run at (0,-11) width 229: "RGBA: 255,0,0,100; HSVA: 0,100,100,100"
         RenderSVGContainer {g} at (546.88,390.62) size 234.38x93.75
@@ -172,7 +172,7 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (554.30,395.00) size 3.91x15.62
               RenderSVGContainer {svg} at (554.30,395.00) size 3.91x15.62
                 RenderPath {line} at (554.30,395.00) size 3.91x15.62 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00L0.00,10.00"]
-          RenderSVGText {text} at (916,520) size 800x14
+          RenderSVGText {text} at (916,520) size 800x14 [color=#696969]
             RenderSVGInlineText {#text} at (0,-11) size 76x14
               text run at (0,-11) width 76: "Hue (0\x{B0}-360\x{B0})"
           RenderPath {rect} at (553.32,415.82) size 41.02x33.98 [stroke={[type=SOLID] [color=#787878] [stroke width=7.50]}] [data="M712.00,536.00L757.00,536.00L757.00,572.00L712.00,572.00"]
@@ -183,7 +183,7 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (601.17,413.75) size 3.91x15.62
               RenderSVGContainer {svg} at (601.17,413.75) size 3.91x15.62
                 RenderPath {line} at (601.17,413.75) size 3.91x15.62 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00L0.00,10.00"]
-          RenderSVGText {text} at (916,544) size 800x14
+          RenderSVGText {text} at (916,544) size 800x14 [color=#696969]
             RenderSVGInlineText {#text} at (0,-11) size 78x14
               text run at (0,-11) width 78: "Saturation (%)"
           RenderPath {rect} at (603.12,437.38) size 107.81x5.86 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#000000), (1.00,#FFFFFF)]] [start=(0,0)] [end=(1,0)]}] [data="M772.00,559.85L910.00,559.85L910.00,567.35L772.00,567.35"]
@@ -193,7 +193,7 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (651.84,432.50) size 3.91x15.62
               RenderSVGContainer {svg} at (651.84,432.50) size 3.91x15.62
                 RenderPath {line} at (651.84,432.50) size 3.91x15.62 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00L0.00,10.00"]
-          RenderSVGText {text} at (916,568) size 800x14
+          RenderSVGText {text} at (916,568) size 800x14 [color=#696969]
             RenderSVGInlineText {#text} at (0,-11) size 54x14
               text run at (0,-11) width 54: "Value (%)"
           RenderPath {rect} at (603.12,456.13) size 107.81x5.86 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#78787800), (1.00,#787878)]] [start=(0,0)] [end=(1,0)]}] [data="M772.00,583.85L910.00,583.85L910.00,591.35L772.00,591.35"]
@@ -203,10 +203,10 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (708.98,451.25) size 3.91x15.62
               RenderSVGContainer {svg} at (708.98,451.25) size 3.91x15.62
                 RenderPath {line} at (708.98,451.25) size 3.91x15.62 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00L0.00,10.00"]
-          RenderSVGText {text} at (916,592) size 800x14
+          RenderSVGText {text} at (916,592) size 800x14 [color=#696969]
             RenderSVGInlineText {#text} at (0,-11) size 63x14
               text run at (0,-11) width 63: "Opacity (%)"
-          RenderSVGText {text} at (712,614) size 800x14
+          RenderSVGText {text} at (712,614) size 800x14 [color=#696969]
             RenderSVGInlineText {#text} at (0,-11) size 236x14
               text run at (0,-11) width 236: "RGBA: 120,120,120,100; HSVA: 0,0,47,100"
       RenderSVGContainer {g} at (81.76,63.15) size 260.75x260.75 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,-400.00)}]
@@ -226,7 +226,7 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (224.62,146.01) size 13.81x13.81
               RenderSVGContainer {svg} at (224.62,146.01) size 13.81x13.81
                 RenderPath {line} at (224.62,146.01) size 13.81x13.81 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00L0.00,10.00"]
-          RenderSVGText {text} at (716,216) size 800x14
+          RenderSVGText {text} at (716,216) size 800x14 [color=#696969]
             RenderSVGInlineText {#text} at (0,-11) size 83x14
               text run at (0,-11) width 83: "Hue (90\x{B0}-240\x{B0})"
           RenderPath {rect} at (142.53,95.74) size 39.77x39.77 [fill={[type=SOLID] [color=#00FFFF] [opacity=0.50]}] [data="M512.00,227.00L557.00,227.00L557.00,254.00L512.00,254.00"]
@@ -237,7 +237,7 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (255.11,203.03) size 13.81x13.81
               RenderSVGContainer {svg} at (255.11,203.03) size 13.81x13.81
                 RenderPath {line} at (255.11,203.03) size 13.81x13.81 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00L0.00,10.00"]
-          RenderSVGText {text} at (716,240) size 800x14
+          RenderSVGText {text} at (716,240) size 800x14 [color=#696969]
             RenderSVGInlineText {#text} at (0,-11) size 78x14
               text run at (0,-11) width 78: "Saturation (%)"
           RenderPath {rect} at (170.45,144.88) size 80.38x80.38 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#00FFFF00), (1.00,#00FFFF)]] [start=(0,0)] [end=(1,0)]}] [data="M572.00,255.95L710.00,255.95L710.00,263.45L572.00,263.45"]
@@ -247,10 +247,10 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (203.74,178.17) size 13.81x13.81
               RenderSVGContainer {svg} at (203.74,178.17) size 13.81x13.81
                 RenderPath {line} at (203.74,178.17) size 13.81x13.81 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00L0.00,10.00"]
-          RenderSVGText {text} at (716,264) size 800x14
+          RenderSVGText {text} at (716,264) size 800x14 [color=#696969]
             RenderSVGInlineText {#text} at (0,-11) size 63x14
               text run at (0,-11) width 63: "Opacity (%)"
-          RenderSVGText {text} at (512,285) size 800x14
+          RenderSVGText {text} at (512,285) size 800x14 [color=#696969]
             RenderSVGInlineText {#text} at (0,-11) size 243x14
               text run at (0,-11) width 243: "RGBA: 0,255,255,50; HSVA: 180,100,100,50"
       RenderSVGContainer {g} at (389.84,132.03) size 286.72x273.44
@@ -258,7 +258,7 @@ layer at (0,0) size 800x600
           RenderPath {rect} at (397.66,344.53) size 85.94x15.62 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M509.00,441.00L619.00,441.00L619.00,461.00L509.00,461.00"]
           RenderPath {rect} at (399.22,346.09) size 85.94x15.62 [fill={[type=SOLID] [color=#696969]}] [data="M511.00,443.00L621.00,443.00L621.00,463.00L511.00,463.00"]
           RenderPath {rect} at (398.44,345.31) size 85.94x15.62 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M510.00,442.00L620.00,442.00L620.00,462.00L510.00,462.00"]
-          RenderSVGText {text} at (565,457) size 800x14
+          RenderSVGText {text} at (565,457) size 800x14 [color=#696969]
             RenderSVGTSpan {tspan} at (0,0) size 100x14
               RenderSVGInlineText {#text} at (-50,-11) size 100x14
                 text run at (-50,-11) width 100: "Hide ColourPicker"
@@ -266,7 +266,7 @@ layer at (0,0) size 800x600
           RenderPath {rect} at (397.66,366.41) size 85.94x15.62 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M509.00,469.00L619.00,469.00L619.00,489.00L509.00,489.00"]
           RenderPath {rect} at (399.22,367.97) size 85.94x15.62 [fill={[type=SOLID] [color=#696969]}] [data="M511.00,471.00L621.00,471.00L621.00,491.00L511.00,491.00"]
           RenderPath {rect} at (398.44,367.19) size 85.94x15.62 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M510.00,470.00L620.00,470.00L620.00,490.00L510.00,490.00"]
-          RenderSVGText {text} at (565,485) size 800x14
+          RenderSVGText {text} at (565,485) size 800x14 [color=#696969]
             RenderSVGTSpan {tspan} at (0,0) size 87x14
               RenderSVGInlineText {#text} at (-43,-11) size 87x14
                 text run at (-43,-11) width 87: "Set Random Fill"
@@ -274,7 +274,7 @@ layer at (0,0) size 800x600
           RenderPath {rect} at (397.66,388.28) size 85.94x15.62 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M509.00,497.00L619.00,497.00L619.00,517.00L509.00,517.00"]
           RenderPath {rect} at (399.22,389.84) size 85.94x15.62 [fill={[type=SOLID] [color=#696969]}] [data="M511.00,499.00L621.00,499.00L621.00,519.00L511.00,519.00"]
           RenderPath {rect} at (398.44,389.06) size 85.94x15.62 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M510.00,498.00L620.00,498.00L620.00,518.00L510.00,518.00"]
-          RenderSVGText {text} at (565,513) size 800x14
+          RenderSVGText {text} at (565,513) size 800x14 [color=#696969]
             RenderSVGTSpan {tspan} at (0,0) size 106x14
               RenderSVGInlineText {#text} at (-53,-11) size 106x14
                 text run at (-53,-11) width 106: "Set Random Stroke"
@@ -282,7 +282,7 @@ layer at (0,0) size 800x600
           RenderPath {rect} at (389.84,132.03) size 140.62x15.62 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M499.00,169.00L679.00,169.00L679.00,189.00L499.00,189.00"]
           RenderPath {rect} at (391.41,133.59) size 140.62x15.62 [fill={[type=SOLID] [color=#696969]}] [data="M501.00,171.00L681.00,171.00L681.00,191.00L501.00,191.00"]
           RenderPath {rect} at (390.62,132.81) size 140.62x15.62 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M500.00,170.00L680.00,170.00L680.00,190.00L500.00,190.00"]
-          RenderSVGText {text} at (590,185) size 800x14
+          RenderSVGText {text} at (590,185) size 800x14 [color=#696969]
             RenderSVGTSpan {tspan} at (0,0) size 174x14
               RenderSVGInlineText {#text} at (-87,-11) size 174x14
                 text run at (-87,-11) width 174: "Randomly Resize Colour Picker"
@@ -290,7 +290,7 @@ layer at (0,0) size 800x600
           RenderPath {rect} at (534.38,132.03) size 140.62x15.62 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M684.00,169.00L864.00,169.00L864.00,189.00L684.00,189.00"]
           RenderPath {rect} at (535.94,133.59) size 140.62x15.62 [fill={[type=SOLID] [color=#696969]}] [data="M686.00,171.00L866.00,171.00L866.00,191.00L686.00,191.00"]
           RenderPath {rect} at (535.16,132.81) size 140.62x15.62 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M685.00,170.00L865.00,170.00L865.00,190.00L685.00,190.00"]
-          RenderSVGText {text} at (775,185) size 800x14
+          RenderSVGText {text} at (775,185) size 800x14 [color=#696969]
             RenderSVGTSpan {tspan} at (0,0) size 166x14
               RenderSVGInlineText {#text} at (-83,-11) size 166x14
                 text run at (-83,-11) width 166: "Randomly Move Colour Picker"
@@ -298,7 +298,7 @@ layer at (0,0) size 800x600
         RenderPath {rect} at (358.59,389.06) size 19.53x12.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M459.00,498.00L484.00,498.00L484.00,514.00L459.00,514.00"]
         RenderPath {rect} at (360.16,390.62) size 19.53x12.50 [fill={[type=SOLID] [color=#696969]}] [data="M461.00,500.00L486.00,500.00L486.00,516.00L461.00,516.00"]
         RenderPath {rect} at (359.38,389.84) size 19.53x12.50 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M460.00,499.00L485.00,499.00L485.00,515.00L460.00,515.00"]
-        RenderSVGText {text} at (472,512) size 800x14
+        RenderSVGText {text} at (472,512) size 800x14 [color=#696969]
           RenderSVGTSpan {tspan} at (0,0) size 17x14
             RenderSVGInlineText {#text} at (-8,-11) size 17x14
               text run at (-8,-11) width 17: "OK"

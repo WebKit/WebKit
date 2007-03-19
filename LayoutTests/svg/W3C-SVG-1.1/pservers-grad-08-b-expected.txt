@@ -10,7 +10,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (20,70) size 480x78
           RenderSVGInlineText {#text} at (0,-61) size 420x78
             text run at (0,-61) width 420: "Gradient on fill"
-        RenderSVGText {text} at (20,160) size 480x63
+        RenderSVGText {text} at (20,160) size 480x63 [color=#FFFFFF]
           RenderSVGInlineText {#text} at (0,-49) size 410x63
             text run at (0,-49) width 410: "Gradient on stroke"
       RenderSVGText {text} at (40,145) size 480x36

@@ -10,7 +10,7 @@ layer at (0,0) size 480x360
             RenderSVGText {text} at (0,0) size 480x33
               RenderSVGInlineText {#text} at (0,-27) size 25x33
                 text run at (0,-27) width 25: "te"
-              RenderSVGTSpan {tspan} at (0,0) size 17x33
+              RenderSVGTSpan {tspan} at (0,0) size 17x33 [color=#FF0000]
                 RenderSVGInlineText {#text} at (25,-27) size 17x33
                   text run at (25,-27) width 17: "7"
               RenderSVGInlineText {#text} at (42,-27) size 23x33
@@ -18,7 +18,7 @@ layer at (0,0) size 480x360
             RenderSVGText {text} at (80,0) size 480x33
               RenderSVGInlineText {#text} at (0,-27) size 25x33
                 text run at (0,-27) width 25: "te"
-              RenderSVGTSpan {tspan} at (0,0) size 71x33
+              RenderSVGTSpan {tspan} at (0,0) size 71x33 [color=#FF0000]
                 RenderSVGInlineText {#text} at (25,-27) size 71x33
                   text run at (25,-27) width 71: "-70%"
               RenderSVGInlineText {#text} at (96,-27) size 23x33
@@ -26,10 +26,10 @@ layer at (0,0) size 480x360
             RenderSVGText {text} at (180,0) size 480x33
               RenderSVGInlineText {#text} at (0,-27) size 25x33
                 text run at (0,-27) width 25: "te"
-              RenderSVGTSpan {tspan} at (0,0) size 49x33
+              RenderSVGTSpan {tspan} at (0,0) size 49x33 [color=#FF0000]
                 RenderSVGInlineText {#text} at (25,-27) size 49x33
                   text run at (25,-27) width 49: "sub"
-              RenderSVGTSpan {tspan} at (0,0) size 15x33
+              RenderSVGTSpan {tspan} at (0,0) size 15x33 [color=#0000FF]
                 RenderSVGInlineText {#text} at (74,-27) size 15x33
                   text run at (74,-27) width 15: "x"
               RenderSVGInlineText {#text} at (89,-27) size 8x33
@@ -37,10 +37,10 @@ layer at (0,0) size 480x360
             RenderSVGText {text} at (260,0) size 480x33
               RenderSVGInlineText {#text} at (0,-27) size 25x33
                 text run at (0,-27) width 25: "te"
-              RenderSVGTSpan {tspan} at (0,0) size 76x33
+              RenderSVGTSpan {tspan} at (0,0) size 76x33 [color=#008000]
                 RenderSVGInlineText {#text} at (25,-27) size 76x33
                   text run at (25,-27) width 76: "super"
-              RenderSVGTSpan {tspan} at (0,0) size 15x33
+              RenderSVGTSpan {tspan} at (0,0) size 15x33 [color=#0000FF]
                 RenderSVGInlineText {#text} at (101,-27) size 15x33
                   text run at (101,-27) width 15: "x"
               RenderSVGInlineText {#text} at (116,-27) size 8x33

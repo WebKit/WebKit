@@ -8,7 +8,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (35,60) size 480x39
           RenderSVGInlineText {#text} at (0,-32) size 373x39
             text run at (0,-32) width 373: "& whitespace handling."
-        RenderSVGText {text} at (15,105) size 480x44
+        RenderSVGText {text} at (15,105) size 480x44 [color=#0000FF]
           RenderSVGInlineText {#text} at (0,-36) size 513x44
             text run at (0,-36) width 513: " WS   with  indented lines.     "
         RenderSVGText {text} at (15,140) size 480x44
@@ -18,7 +18,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (28,175) size 480x44
           RenderSVGInlineText {#text} at (0,-36) size 372x44
             text run at (0,-36) width 372: "xml:space='preserve'"
-        RenderSVGText {text} at (15,225) size 480x44
+        RenderSVGText {text} at (15,225) size 480x44 [color=#0000FF]
           RenderSVGInlineText {#text} at (0,-36) size 488x44
             text run at (0,-36) width 488: "WS non-indented lines.       "
         RenderSVGText {text} at (15,260) size 480x44

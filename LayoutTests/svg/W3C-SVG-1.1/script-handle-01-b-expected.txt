@@ -14,7 +14,7 @@ layer at (0,0) size 480x360
             RenderPath {line} at (60,169.75) size 20x0.50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000000]}] [data="M60.00,170.00L80.00,170.00"]
             RenderPath {line} at (69.75,160) size 0.50x20 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000000]}] [data="M70.00,160.00L70.00,180.00"]
           RenderSVGContainer {g} at (70,142) size 286x36
-            RenderSVGText {text} at (70,170) size 480x36
+            RenderSVGText {text} at (70,170) size 480x36 [color=#008000]
               RenderSVGInlineText {#text} at (0,-28) size 286x36
                 text run at (0,-28) width 286: "Scripting Test Passed!"
       RenderSVGText {text} at (10,340) size 480x46

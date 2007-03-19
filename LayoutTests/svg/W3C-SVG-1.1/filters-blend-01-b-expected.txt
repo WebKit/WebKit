@@ -12,28 +12,28 @@ layer at (0,0) size 480x360
         RenderPath {rect} at (90,186) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [filter=#BlendScreen] [data="M30.00,62.00L150.00,62.00L150.00,72.00L30.00,72.00"]
         RenderPath {rect} at (90,225) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [filter=#BlendDarken] [data="M30.00,75.00L150.00,75.00L150.00,85.00L30.00,85.00"]
         RenderPath {rect} at (90,264) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [filter=#BlendLighten] [data="M30.00,88.00L150.00,88.00L150.00,98.00L30.00,98.00"]
-        RenderSVGContainer {g} at (15,27) size 105x264
-          RenderSVGText {text} at (5,17) size 480x10
-            RenderSVGInlineText {#text} at (0,-8) size 28x10
-              text run at (0,-8) width 28: "Normal"
-          RenderSVGText {text} at (5,30) size 480x10
-            RenderSVGInlineText {#text} at (0,-8) size 35x10
-              text run at (0,-8) width 35: "Multiply"
-          RenderSVGText {text} at (5,43) size 480x10
-            RenderSVGInlineText {#text} at (0,-8) size 35x10
-              text run at (0,-8) width 35: "Multiply"
-          RenderSVGText {text} at (5,56) size 480x10
-            RenderSVGInlineText {#text} at (0,-8) size 35x10
-              text run at (0,-8) width 35: "Multiply"
-          RenderSVGText {text} at (5,69) size 480x10
-            RenderSVGInlineText {#text} at (0,-8) size 25x10
-              text run at (0,-8) width 25: "Screen"
-          RenderSVGText {text} at (5,82) size 480x10
-            RenderSVGInlineText {#text} at (0,-8) size 27x10
-              text run at (0,-8) width 27: "Darken"
-          RenderSVGText {text} at (5,95) size 480x10
-            RenderSVGInlineText {#text} at (0,-8) size 30x10
-              text run at (0,-8) width 30: "Lighten"
+        RenderSVGContainer {g} at (15,33) size 78x258
+          RenderSVGText {text} at (5,17) size 480x8 [color=#333333]
+            RenderSVGInlineText {#text} at (0,-6) size 21x8
+              text run at (0,-6) width 21: "Normal"
+          RenderSVGText {text} at (5,30) size 480x8 [color=#333333]
+            RenderSVGInlineText {#text} at (0,-6) size 26x8
+              text run at (0,-6) width 26: "Multiply"
+          RenderSVGText {text} at (5,43) size 480x8 [color=#333333]
+            RenderSVGInlineText {#text} at (0,-6) size 26x8
+              text run at (0,-6) width 26: "Multiply"
+          RenderSVGText {text} at (5,56) size 480x8 [color=#333333]
+            RenderSVGInlineText {#text} at (0,-6) size 26x8
+              text run at (0,-6) width 26: "Multiply"
+          RenderSVGText {text} at (5,69) size 480x8 [color=#333333]
+            RenderSVGInlineText {#text} at (0,-6) size 19x8
+              text run at (0,-6) width 19: "Screen"
+          RenderSVGText {text} at (5,82) size 480x8 [color=#333333]
+            RenderSVGInlineText {#text} at (0,-6) size 21x8
+              text run at (0,-6) width 21: "Darken"
+          RenderSVGText {text} at (5,95) size 480x8 [color=#333333]
+            RenderSVGInlineText {#text} at (0,-6) size 23x8
+              text run at (0,-6) width 23: "Lighten"
       RenderSVGText {text} at (3,112) size 480x14
         RenderSVGInlineText {#text} at (0,-11) size 78x14
           text run at (0,-11) width 78: "$Revision: 1.8 $"

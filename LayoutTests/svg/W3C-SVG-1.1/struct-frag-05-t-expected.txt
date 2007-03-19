@@ -2,7 +2,7 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
       RenderSVGContainer {g} at (240,64) size 89x46
-        RenderSVGText {text} at (240,100) size 480x46
+        RenderSVGText {text} at (240,100) size 480x46 [color=#336699]
           RenderSVGInline {toto:a} at (0,0) size 89x46
             RenderSVGInlineText {#text} at (0,0) size 89x0
               text run at (0,0) width 89: "Valid"

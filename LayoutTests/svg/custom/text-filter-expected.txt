@@ -2,6 +2,6 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
     RenderSVGContainer {svg} at (4,11) size 567x63
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGText {text} at (4,60) size 800x63
+      RenderSVGText {text} at (4,60) size 800x63 [color=#008000]
         RenderSVGInlineText {#text} at (0,-49) size 567x63
           text run at (0,-49) width 567: "This text should be blury."

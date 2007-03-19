@@ -5,16 +5,16 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (30,30) size 480x18
           RenderSVGInlineText {#text} at (0,-14) size 243x18
             text run at (0,-14) width 243: "Default entities: amp, lt, gt, apos, quot:"
-        RenderSVGText {text} at (90,60) size 480x18
+        RenderSVGText {text} at (90,60) size 480x18 [color=#808080]
           RenderSVGInlineText {#text} at (0,-14) size 72x18
             text run at (0,-14) width 72: "&, <, >, ', \""
         RenderSVGText {text} at (30,100) size 480x18
           RenderSVGInlineText {#text} at (0,-14) size 133x18
             text run at (0,-14) width 133: "Character references:"
-        RenderSVGText {text} at (90,130) size 480x18
+        RenderSVGText {text} at (90,130) size 480x18 [color=#808080]
           RenderSVGInlineText {#text} at (0,-14) size 178x18
             text run at (0,-14) width 178: "A hexadecimal (&#x41)= A"
-        RenderSVGText {text} at (90,160) size 480x18
+        RenderSVGText {text} at (90,160) size 480x18 [color=#808080]
           RenderSVGInlineText {#text} at (0,-14) size 140x18
             text run at (0,-14) width 69: "A decimal "
             text run at (69,-14) width 71: "(&#65)= A"

@@ -6,7 +6,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (240,25) size 480x31
           RenderSVGInlineText {#text} at (-143,-24) size 143x31
             text run at (-143,-24) width 133: "Text Cursor "
-          RenderSVGInline {a} at (0,0) size 153x31
+          RenderSVGInline {a} at (0,0) size 153x31 [color=#0000FF]
             RenderSVGInlineText {#text} at (133,0) size 153x0
               text run at (133,0) width 153: "Pointer Cursor"
           RenderSVGInlineText {#text} at (0,0) size 0x0
@@ -14,42 +14,42 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (148,70) size 184x176
           RenderSVGContainer {g} at (148,70) size 84x32
             RenderPath {rect} at (148,70) size 80x32 [fill={[type=SOLID] [color=#666666]}] [data="M148.00,70.00L228.00,70.00L228.00,102.00L148.00,102.00"]
-            RenderSVGText {text} at (154,90) size 480x20
+            RenderSVGText {text} at (154,90) size 480x20 [color=#FFFFFF]
               RenderSVGInlineText {#text} at (0,-16) size 78x20
                 text run at (0,-16) width 78: "crosshair"
           RenderSVGContainer {g} at (148,118) size 80x32
             RenderPath {rect} at (148,118) size 80x32 [fill={[type=SOLID] [color=#666666]}] [data="M148.00,118.00L228.00,118.00L228.00,150.00L148.00,150.00"]
-            RenderSVGText {text} at (154,138) size 480x20
+            RenderSVGText {text} at (154,138) size 480x20 [color=#FFFFFF]
               RenderSVGInlineText {#text} at (0,-16) size 61x20
                 text run at (0,-16) width 61: "default"
           RenderSVGContainer {g} at (148,166) size 80x32
             RenderPath {rect} at (148,166) size 80x32 [fill={[type=SOLID] [color=#666666]}] [data="M148.00,166.00L228.00,166.00L228.00,198.00L148.00,198.00"]
-            RenderSVGText {text} at (154,186) size 480x20
+            RenderSVGText {text} at (154,186) size 480x20 [color=#FFFFFF]
               RenderSVGInlineText {#text} at (0,-16) size 62x20
                 text run at (0,-16) width 62: "pointer"
           RenderSVGContainer {g} at (148,214) size 80x32
             RenderPath {rect} at (148,214) size 80x32 [fill={[type=SOLID] [color=#666666]}] [data="M148.00,214.00L228.00,214.00L228.00,246.00L148.00,246.00"]
-            RenderSVGText {text} at (154,235) size 480x20
+            RenderSVGText {text} at (154,235) size 480x20 [color=#FFFFFF]
               RenderSVGInlineText {#text} at (0,-16) size 46x20
                 text run at (0,-16) width 46: "move"
           RenderSVGContainer {g} at (252,70) size 80x32
             RenderPath {rect} at (252,70) size 80x32 [fill={[type=SOLID] [color=#666666]}] [data="M252.00,70.00L332.00,70.00L332.00,102.00L252.00,102.00"]
-            RenderSVGText {text} at (258,90) size 480x20
+            RenderSVGText {text} at (258,90) size 480x20 [color=#FFFFFF]
               RenderSVGInlineText {#text} at (0,-16) size 35x20
                 text run at (0,-16) width 35: "text"
           RenderSVGContainer {g} at (252,118) size 80x32
             RenderPath {rect} at (252,118) size 80x32 [fill={[type=SOLID] [color=#666666]}] [data="M252.00,118.00L332.00,118.00L332.00,150.00L252.00,150.00"]
-            RenderSVGText {text} at (258,138) size 480x20
+            RenderSVGText {text} at (258,138) size 480x20 [color=#FFFFFF]
               RenderSVGInlineText {#text} at (0,-16) size 36x20
                 text run at (0,-16) width 36: "wait"
           RenderSVGContainer {g} at (252,166) size 80x32
             RenderPath {rect} at (252,166) size 80x32 [fill={[type=SOLID] [color=#666666]}] [data="M252.00,166.00L332.00,166.00L332.00,198.00L252.00,198.00"]
-            RenderSVGText {text} at (258,186) size 480x20
+            RenderSVGText {text} at (258,186) size 480x20 [color=#FFFFFF]
               RenderSVGInlineText {#text} at (0,-16) size 36x20
                 text run at (0,-16) width 36: "help"
           RenderSVGContainer {g} at (252,214) size 80x32
             RenderPath {rect} at (252,214) size 80x32 [fill={[type=SOLID] [color=#666666]}] [data="M252.00,214.00L332.00,214.00L332.00,246.00L252.00,246.00"]
-            RenderSVGText {text} at (258,235) size 480x20
+            RenderSVGText {text} at (258,235) size 480x20 [color=#FFFFFF]
               RenderSVGInlineText {#text} at (0,-16) size 46x20
                 text run at (0,-16) width 46: "<url>"
         RenderSVGContainer {g} at (115.29,35.26) size 249.41x245.48

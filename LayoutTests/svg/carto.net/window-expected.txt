@@ -7,52 +7,52 @@ layer at (0,0) size 800x600
       RenderPath {rect} at (-3906.25,-3879.69) size 3906.25x11718.75 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-5000.00,-5000.00L0.00,-5000.00L0.00,10000.00L-5000.00,10000.00"]
       RenderPath {rect} at (800,-3879.69) size 3906.25x11718.75 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M1024.00,-5000.00L6024.00,-5000.00L6024.00,10000.00L1024.00,10000.00"]
       RenderPath {rect} at (-3906.25,573.44) size 11718.75x3906.25 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-5000.00,700.00L10000.00,700.00L10000.00,5700.00L-5000.00,5700.00"]
-      RenderSVGText {text} at (10,30) size 800x22
+      RenderSVGText {text} at (10,30) size 800x22 [color=#696969]
         RenderSVGInlineText {#text} at (0,-18) size 322x22
           text run at (0,-18) width 322: "Demonstration of the Window object"
-      RenderSVGText {text} at (10,50) size 800x16
+      RenderSVGText {text} at (10,50) size 800x16 [color=#696969]
         RenderSVGInlineText {#text} at (0,-13) size 63x16
           text run at (0,-13) width 63: "Statustext"
       RenderSVGContainer {use} at (319.92,33.98) size 110.16x16.41
         RenderSVGContainer {g} at (319.92,33.98) size 110.16x16.41 [transform={m=((1.00,0.00)(0.00,1.00)) t=(480.00,20.00)}]
           RenderSVGContainer {svg} at (319.92,33.98) size 110.16x16.41
             RenderPath {rect} at (319.92,33.98) size 110.16x16.41 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M-70.00,-10.00L70.00,-10.00L70.00,10.00L-70.00,10.00"]
-      RenderSVGText {text} at (480,25) size 800x12
+      RenderSVGText {text} at (480,25) size 800x12 [color=#696969]
         RenderSVGInlineText {#text} at (-61,-10) size 123x12
           text run at (-61,-10) width 123: "Close Navigation Window"
       RenderSVGContainer {use} at (437.11,33.98) size 110.16x16.41
         RenderSVGContainer {g} at (437.11,33.98) size 110.16x16.41 [transform={m=((1.00,0.00)(0.00,1.00)) t=(630.00,20.00)}]
           RenderSVGContainer {svg} at (437.11,33.98) size 110.16x16.41
             RenderPath {rect} at (437.11,33.98) size 110.16x16.41 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M-70.00,-10.00L70.00,-10.00L70.00,10.00L-70.00,10.00"]
-      RenderSVGText {text} at (630,25) size 800x12
+      RenderSVGText {text} at (630,25) size 800x12 [color=#696969]
         RenderSVGInlineText {#text} at (-43,-10) size 87x12
           text run at (-43,-10) width 87: "Close Big Window"
       RenderSVGContainer {use} at (554.30,33.98) size 110.16x16.41
         RenderSVGContainer {g} at (554.30,33.98) size 110.16x16.41 [transform={m=((1.00,0.00)(0.00,1.00)) t=(780.00,20.00)}]
           RenderSVGContainer {svg} at (554.30,33.98) size 110.16x16.41
             RenderPath {rect} at (554.30,33.98) size 110.16x16.41 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M-70.00,-10.00L70.00,-10.00L70.00,10.00L-70.00,10.00"]
-      RenderSVGText {text} at (780,25) size 800x12
+      RenderSVGText {text} at (780,25) size 800x12 [color=#696969]
         RenderSVGInlineText {#text} at (-61,-10) size 123x12
           text run at (-61,-10) width 123: "Close Middlesize Window"
       RenderSVGContainer {use} at (671.48,33.98) size 110.16x16.41
         RenderSVGContainer {g} at (671.48,33.98) size 110.16x16.41 [transform={m=((1.00,0.00)(0.00,1.00)) t=(930.00,20.00)}]
           RenderSVGContainer {svg} at (671.48,33.98) size 110.16x16.41
             RenderPath {rect} at (671.48,33.98) size 110.16x16.41 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M-70.00,-10.00L70.00,-10.00L70.00,10.00L-70.00,10.00"]
-      RenderSVGText {text} at (930,25) size 800x12
+      RenderSVGText {text} at (930,25) size 800x12 [color=#696969]
         RenderSVGInlineText {#text} at (-48,-10) size 97x12
           text run at (-48,-10) width 97: "Close Colour Picker"
       RenderSVGContainer {use} at (671.48,57.42) size 110.16x16.41
         RenderSVGContainer {g} at (671.48,57.42) size 110.16x16.41 [transform={m=((1.00,0.00)(0.00,1.00)) t=(930.00,50.00)}]
           RenderSVGContainer {svg} at (671.48,57.42) size 110.16x16.41
             RenderPath {rect} at (671.48,57.42) size 110.16x16.41 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M-70.00,-10.00L70.00,-10.00L70.00,10.00L-70.00,10.00"]
-      RenderSVGText {text} at (930,55) size 800x12
+      RenderSVGText {text} at (930,55) size 800x12 [color=#696969]
         RenderSVGInlineText {#text} at (-49,-10) size 98x12
           text run at (-49,-10) width 98: "Close Small Window"
       RenderSVGContainer {use} at (319.92,57.42) size 110.16x16.41
         RenderSVGContainer {g} at (319.92,57.42) size 110.16x16.41 [transform={m=((1.00,0.00)(0.00,1.00)) t=(480.00,50.00)}]
           RenderSVGContainer {svg} at (319.92,57.42) size 110.16x16.41
             RenderPath {rect} at (319.92,57.42) size 110.16x16.41 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M-70.00,-10.00L70.00,-10.00L70.00,10.00L-70.00,10.00"]
-      RenderSVGText {text} at (480,55) size 800x12
+      RenderSVGText {text} at (480,55) size 800x12 [color=#696969]
         RenderSVGInlineText {#text} at (-64,-10) size 129x12
           text run at (-64,-10) width 129: "Resize Navigation Window"
       RenderSVGContainer {g} at (38.67,92.58) size 758.59x442.19
@@ -60,7 +60,7 @@ layer at (0,0) size 800x600
           RenderSVGContainer {g} at (624.61,92.58) size 172.66x157.03
             RenderPath {rect} at (624.61,92.58) size 172.66x157.03 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,0.00L220.00,0.00L220.00,200.00L0.00,200.00"]
             RenderSVGContainer {g} at (632.81,102.34) size 161.72x96.88
-              RenderSVGText {text} at (10,25) size 800x124
+              RenderSVGText {text} at (10,25) size 800x124 [color=#696969]
                 RenderSVGInlineText {#text} at (0,-13) size 124x16
                   text run at (0,-13) width 124: "This window should"
                 RenderSVGTSpan {tspan} at (0,0) size 149x16
@@ -82,7 +82,7 @@ layer at (0,0) size 800x600
                   RenderSVGInlineText {#text} at (0,95) size 186x16
                     text run at (0,95) width 186: "features a window decoration"
             RenderPath {rect} at (624.61,238.67) size 172.66x10.94 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,187.00L220.00,187.00L220.00,200.00L0.00,200.00"]
-            RenderSVGText {text} at (3,197) size 800x11
+            RenderSVGText {text} at (3,197) size 800x11 [color=#696969]
               RenderSVGInlineText {#text} at (0,-9) size 45x11
                 text run at (0,-9) width 45: "Statusbar"
           RenderSVGContainer {g} at (757.03,94.92) size 35.43x9.38
@@ -106,7 +106,7 @@ layer at (0,0) size 800x600
             RenderPath {rect} at (38.67,143.36) size 547.66x391.41 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,0.00L700.00,0.00L700.00,500.00L0.00,500.00"]
             RenderSVGContainer {g} at (39.06,143.75) size 0x0
             RenderPath {rect} at (38.67,523.83) size 547.66x10.94 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,487.00L700.00,487.00L700.00,500.00L0.00,500.00"]
-            RenderSVGText {text} at (3,497) size 800x11
+            RenderSVGText {text} at (3,497) size 800x11 [color=#696969]
               RenderSVGInlineText {#text} at (0,-9) size 134x11
                 text run at (0,-9) width 134: "This is a big movable window"
             RenderSVGContainer {g} at (77.73,182.42) size 313.28x235.16 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}]
@@ -114,7 +114,7 @@ layer at (0,0) size 800x600
                 RenderPath {rect} at (77.73,182.42) size 313.28x235.16 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,0.00L400.00,0.00L400.00,300.00L0.00,300.00"]
                 RenderSVGContainer {g} at (78.12,182.81) size 0x0
                 RenderPath {rect} at (77.73,406.64) size 313.28x10.94 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,287.00L400.00,287.00L400.00,300.00L0.00,300.00"]
-                RenderSVGText {text} at (3,297) size 800x11
+                RenderSVGText {text} at (3,297) size 800x11 [color=#696969]
                   RenderSVGInlineText {#text} at (0,-9) size 167x11
                     text run at (0,-9) width 167: "This window contains other windows"
                 RenderSVGContainer {g} at (77.73,195.70) size 172.66x141.41 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,17.00)}]
@@ -122,12 +122,12 @@ layer at (0,0) size 800x600
                     RenderPath {rect} at (77.73,195.70) size 172.66x141.41 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,0.00L220.00,0.00L220.00,180.00L0.00,180.00"]
                     RenderSVGContainer {g} at (78.12,196.09) size 0x0
                     RenderPath {rect} at (77.73,326.17) size 172.66x10.94 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,167.00L220.00,167.00L220.00,180.00L0.00,180.00"]
-                    RenderSVGText {text} at (3,177) size 800x11
+                    RenderSVGText {text} at (3,177) size 800x11 [color=#696969]
                       RenderSVGInlineText {#text} at (0,-9) size 186x11
                         text run at (0,-9) width 186: "Changing a colour changes background"
                   RenderSVGContainer {g} at (77.73,195.70) size 172.66x14.06
                     RenderPath {rect} at (77.73,195.70) size 172.66x14.06 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M0.00,0.00L220.00,0.00L220.00,17.00L0.00,17.00"]
-                    RenderSVGText {text} at (3,14) size 800x16
+                    RenderSVGText {text} at (3,14) size 800x16 [color=#696969]
                       RenderSVGInlineText {#text} at (0,-13) size 85x16
                         text run at (0,-13) width 85: "Colour Picker"
                     RenderSVGContainer {use} at (236.44,198.16) size 9.15x9.15
@@ -149,7 +149,7 @@ layer at (0,0) size 800x600
                   RenderSVGContainer {g} at (249.61,344.14) size 141.41x63.28
                     RenderPath {rect} at (249.61,344.14) size 141.41x63.28 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,0.00L180.00,0.00L180.00,80.00L0.00,80.00"]
                     RenderSVGContainer {g} at (257.81,365.62) size 121.88x37.50
-                      RenderSVGText {text} at (10,40) size 800x48
+                      RenderSVGText {text} at (10,40) size 800x48 [color=#696969]
                         RenderSVGInlineText {#text} at (0,-13) size 156x16
                           text run at (0,-13) width 156: "This is a none-moveable"
                         RenderSVGTSpan {tspan} at (0,0) size 139x16
@@ -160,7 +160,7 @@ layer at (0,0) size 800x600
                             text run at (0,19) width 47: "window"
                   RenderSVGContainer {g} at (249.61,344.14) size 141.41x14.06
                     RenderPath {rect} at (249.61,344.14) size 141.41x14.06 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M0.00,0.00L180.00,0.00L180.00,17.00L0.00,17.00"]
-                    RenderSVGText {text} at (3,14) size 800x16
+                    RenderSVGText {text} at (3,14) size 800x16 [color=#696969]
                       RenderSVGInlineText {#text} at (0,-13) size 94x16
                         text run at (0,-13) width 94: "Status Window"
                     RenderSVGContainer {use} at (376.95,346.48) size 9.38x9.38
@@ -174,7 +174,7 @@ layer at (0,0) size 800x600
                           RenderPath {line} at (364.06,355.08) size 8.59x0.78 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [data="M5.50,5.50L-5.50,5.50"]
               RenderSVGContainer {g} at (77.73,182.42) size 313.28x14.06
                 RenderPath {rect} at (77.73,182.42) size 313.28x14.06 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M0.00,0.00L400.00,0.00L400.00,17.00L0.00,17.00"]
-                RenderSVGText {text} at (3,14) size 800x16
+                RenderSVGText {text} at (3,14) size 800x16 [color=#696969]
                   RenderSVGInlineText {#text} at (0,-13) size 170x16
                     text run at (0,-13) width 170: "Nested middlesize Window"
                 RenderSVGContainer {use} at (377.07,184.88) size 9.15x9.15
@@ -196,7 +196,7 @@ layer at (0,0) size 800x600
               RenderSVGContainer {g} at (312.11,377.73) size 157.03x141.41
                 RenderPath {rect} at (312.11,377.73) size 157.03x141.41 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,0.00L200.00,0.00L200.00,180.00L0.00,180.00"]
                 RenderSVGContainer {g} at (320.31,399.22) size 137.50x62.50
-                  RenderSVGText {text} at (10,40) size 800x80
+                  RenderSVGText {text} at (10,40) size 800x80 [color=#696969]
                     RenderSVGInlineText {#text} at (0,-13) size 172x16
                       text run at (0,-13) width 172: "This window has a callback"
                     RenderSVGTSpan {tspan} at (0,0) size 161x16
@@ -212,12 +212,12 @@ layer at (0,0) size 800x600
                       RenderSVGInlineText {#text} at (0,51) size 42x16
                         text run at (0,51) width 42: "events"
                 RenderPath {rect} at (312.11,508.20) size 157.03x10.94 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,167.00L200.00,167.00L200.00,180.00L0.00,180.00"]
-                RenderSVGText {text} at (3,177) size 800x11
+                RenderSVGText {text} at (3,177) size 800x11 [color=#696969]
                   RenderSVGInlineText {#text} at (0,-9) size 119x11
                     text run at (0,-9) width 119: "Callback function is active"
               RenderSVGContainer {g} at (312.11,377.73) size 157.03x14.06
                 RenderPath {rect} at (312.11,377.73) size 157.03x14.06 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M0.00,0.00L200.00,0.00L200.00,17.00L0.00,17.00"]
-                RenderSVGText {text} at (3,14) size 800x16
+                RenderSVGText {text} at (3,14) size 800x16 [color=#696969]
                   RenderSVGInlineText {#text} at (0,-13) size 89x16
                     text run at (0,-13) width 89: "Small Window"
                 RenderSVGContainer {use} at (455.19,380.19) size 9.15x9.15
@@ -239,7 +239,7 @@ layer at (0,0) size 800x600
               RenderSVGContainer {g} at (39.45,476.17) size 117.97x47.66
                 RenderPath {rect} at (39.45,476.17) size 117.97x47.66 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [data="M0.00,0.00L150.00,0.00L150.00,60.00L0.00,60.00"]
                 RenderSVGContainer {g} at (43.75,480.47) size 112.50x35.94
-                  RenderSVGText {text} at (5,16) size 800x46
+                  RenderSVGText {text} at (5,16) size 800x46 [color=#696969]
                     RenderSVGInlineText {#text} at (0,-11) size 136x14
                       text run at (0,-11) width 136: "This is a minimal window"
                     RenderSVGTSpan {tspan} at (0,0) size 144x14
@@ -251,7 +251,7 @@ layer at (0,0) size 800x600
               RenderSVGContainer {g} at (39.84,476.56) size 0x0
           RenderSVGContainer {g} at (38.67,143.36) size 547.66x14.06
             RenderPath {rect} at (38.67,143.36) size 547.66x14.06 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [data="M0.00,0.00L700.00,0.00L700.00,17.00L0.00,17.00"]
-            RenderSVGText {text} at (3,14) size 800x16
+            RenderSVGText {text} at (3,14) size 800x16 [color=#696969]
               RenderSVGInlineText {#text} at (0,-13) size 74x16
                 text run at (0,-13) width 74: "Big Window"
             RenderSVGContainer {use} at (572.38,145.82) size 9.15x9.15

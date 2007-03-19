@@ -2,7 +2,7 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
     RenderSVGContainer {svg} at (0.50,0.50) size 479x359
       RenderSVGContainer {g} at (72.50,14) size 283.50x206
-        RenderSVGText {text} at (75,25) size 480x14
+        RenderSVGText {text} at (75,25) size 480x14 [color=#0000FF]
           RenderSVGInlineText {#text} at (0,-11) size 281x14
             text run at (0,-11) width 281: "Test 'tref' element with an external referenced string."
         RenderSVGText {text} at (75,200) size 480x0

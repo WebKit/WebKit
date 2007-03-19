@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
     RenderSVGContainer {svg} at (-1562.50,-1562.50) size 4687.50x4687.50
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderPath {rect} at (-1562.50,-1562.50) size 4687.50x4687.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-2000.00,-2000.00L4000.00,-2000.00L4000.00,4000.00L-2000.00,4000.00"]
-      RenderSVGText {text} at (512,40) size 800x22
+      RenderSVGText {text} at (512,40) size 800x22 [color=#696969]
         RenderSVGInlineText {#text} at (-254,-18) size 508x22
           text run at (-254,-18) width 508: "Demonstration of the carto.net SVG GUI slider object"
       RenderSVGContainer {g} at (546.88,44.92) size 15.62x89.84

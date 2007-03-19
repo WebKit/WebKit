@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           RenderPath {rect} at (77.34,77.34) size 78.12x23.44 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M99.00,99.00L199.00,99.00L199.00,129.00L99.00,129.00"]
           RenderPath {rect} at (78.91,78.91) size 78.12x23.44 [fill={[type=SOLID] [color=#000080]}] [data="M101.00,101.00L201.00,101.00L201.00,131.00L101.00,131.00"]
           RenderPath {rect} at (78.12,78.12) size 78.12x23.44 [fill={[type=SOLID] [color=#B0C4DE]}] [data="M100.00,100.00L200.00,100.00L200.00,130.00L100.00,130.00"]
-          RenderSVGText {text} at (150,120) size 800x14
+          RenderSVGText {text} at (150,120) size 800x14 [color=#000080]
             RenderSVGTSpan {tspan} at (0,0) size 47x14
               RenderSVGInlineText {#text} at (-23,-11) size 47x14
                 text run at (-23,-11) width 47: "Click me"
@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
           RenderPath {rect} at (171.09,77.34) size 78.12x23.44 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M219.00,99.00L319.00,99.00L319.00,129.00L219.00,129.00"]
           RenderPath {rect} at (172.66,78.91) size 78.12x23.44 [fill={[type=SOLID] [color=#000080]}] [data="M221.00,101.00L321.00,101.00L321.00,131.00L221.00,131.00"]
           RenderPath {rect} at (171.88,78.12) size 78.12x23.44 [fill={[type=SOLID] [color=#B0C4DE]}] [data="M220.00,100.00L320.00,100.00L320.00,130.00L220.00,130.00"]
-          RenderSVGText {text} at (270,120) size 800x14
+          RenderSVGText {text} at (270,120) size 800x14 [color=#000080]
             RenderSVGTSpan {tspan} at (0,0) size 57x14
               RenderSVGInlineText {#text} at (-28,-11) size 57x14
                 text run at (-28,-11) width 57: "Click me 2"
@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
           RenderPath {rect} at (264.84,77.34) size 101.56x23.44 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M339.00,99.00L469.00,99.00L469.00,129.00L339.00,129.00"]
           RenderPath {rect} at (266.41,78.91) size 101.56x23.44 [fill={[type=SOLID] [color=#000080]}] [data="M341.00,101.00L471.00,101.00L471.00,131.00L341.00,131.00"]
           RenderPath {rect} at (265.62,78.12) size 101.56x23.44 [fill={[type=SOLID] [color=#B0C4DE]}] [data="M340.00,100.00L470.00,100.00L470.00,130.00L340.00,130.00"]
-          RenderSVGText {text} at (405,120) size 800x14
+          RenderSVGText {text} at (405,120) size 800x14 [color=#000080]
             RenderSVGTSpan {tspan} at (0,0) size 106x14
               RenderSVGInlineText {#text} at (-53,-11) size 106x14
                 text run at (-53,-11) width 106: "Deactivate Button 2"
@@ -32,7 +32,7 @@ layer at (0,0) size 800x600
           RenderPath {rect} at (382.03,77.34) size 93.75x23.44 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M489.00,99.00L609.00,99.00L609.00,129.00L489.00,129.00"]
           RenderPath {rect} at (383.59,78.91) size 93.75x23.44 [fill={[type=SOLID] [color=#000080]}] [data="M491.00,101.00L611.00,101.00L611.00,131.00L491.00,131.00"]
           RenderPath {rect} at (382.81,78.12) size 93.75x23.44 [fill={[type=SOLID] [color=#B0C4DE]}] [data="M490.00,100.00L610.00,100.00L610.00,130.00L490.00,130.00"]
-          RenderSVGText {text} at (550,120) size 800x14
+          RenderSVGText {text} at (550,120) size 800x14 [color=#000080]
             RenderSVGTSpan {tspan} at (0,0) size 91x14
               RenderSVGInlineText {#text} at (-45,-11) size 91x14
                 text run at (-45,-11) width 91: "Switch Button on"
@@ -40,7 +40,7 @@ layer at (0,0) size 800x600
           RenderPath {rect} at (491.41,77.34) size 101.56x23.44 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M629.00,99.00L759.00,99.00L759.00,129.00L629.00,129.00"]
           RenderPath {rect} at (492.97,78.91) size 101.56x23.44 [fill={[type=SOLID] [color=#000080]}] [data="M631.00,101.00L761.00,101.00L761.00,131.00L631.00,131.00"]
           RenderPath {rect} at (492.19,78.12) size 101.56x23.44 [fill={[type=SOLID] [color=#B0C4DE]}] [data="M630.00,100.00L760.00,100.00L760.00,130.00L630.00,130.00"]
-          RenderSVGText {text} at (695,120) size 800x14
+          RenderSVGText {text} at (695,120) size 800x14 [color=#000080]
             RenderSVGTSpan {tspan} at (0,0) size 94x14
               RenderSVGInlineText {#text} at (-47,-11) size 94x14
                 text run at (-47,-11) width 94: "Remove Button 1"
@@ -48,7 +48,7 @@ layer at (0,0) size 800x600
           RenderPath {rect} at (608.59,77.34) size 101.56x23.44 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M779.00,99.00L909.00,99.00L909.00,129.00L779.00,129.00"]
           RenderPath {rect} at (610.16,78.91) size 101.56x23.44 [fill={[type=SOLID] [color=#000080]}] [data="M781.00,101.00L911.00,101.00L911.00,131.00L781.00,131.00"]
           RenderPath {rect} at (609.38,78.12) size 101.56x23.44 [fill={[type=SOLID] [color=#B0C4DE]}] [data="M780.00,100.00L910.00,100.00L910.00,130.00L780.00,130.00"]
-          RenderSVGText {text} at (845,120) size 800x14
+          RenderSVGText {text} at (845,120) size 800x14 [color=#000080]
             RenderSVGTSpan {tspan} at (0,0) size 101x14
               RenderSVGInlineText {#text} at (-50,-11) size 101x14
                 text run at (-50,-11) width 101: "Switch Button 4 on"
@@ -56,7 +56,7 @@ layer at (0,0) size 800x600
           RenderPath {rect} at (155.47,233.59) size 117.19x46.88 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M209.00,299.00L339.00,299.00C344.52,299.00,349.00,303.48,349.00,309.00L349.00,349.00C349.00,354.52,344.52,359.00,339.00,359.00L209.00,359.00C203.48,359.00,199.00,354.52,199.00,349.00L199.00,309.00C199.00,303.48,203.48,299.00,209.00,299.00"]
           RenderPath {rect} at (157.03,235.16) size 117.19x46.88 [fill={[type=SOLID] [color=#000080]}] [data="M211.00,301.00L341.00,301.00C346.52,301.00,351.00,305.48,351.00,311.00L351.00,351.00C351.00,356.52,346.52,361.00,341.00,361.00L211.00,361.00C205.48,361.00,201.00,356.52,201.00,351.00L201.00,311.00C201.00,305.48,205.48,301.00,211.00,301.00"]
           RenderPath {rect} at (156.25,234.38) size 117.19x46.88 [fill={[type=SOLID] [color=#B0C4DE]}] [data="M210.00,300.00L340.00,300.00C345.52,300.00,350.00,304.48,350.00,310.00L350.00,350.00C350.00,355.52,345.52,360.00,340.00,360.00L210.00,360.00C204.48,360.00,200.00,355.52,200.00,350.00L200.00,310.00C200.00,304.48,204.48,300.00,210.00,300.00"]
-          RenderSVGText {text} at (275,322) size 800x40
+          RenderSVGText {text} at (275,322) size 800x40 [color=#000080]
             RenderSVGTSpan {tspan} at (0,0) size 94x14
               RenderSVGInlineText {#text} at (-47,-11) size 94x14
                 text run at (-47,-11) width 94: "This is a multiline"
