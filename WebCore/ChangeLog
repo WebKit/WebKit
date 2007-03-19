@@ -1,3 +1,18 @@
+2007-03-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Hyatt
+
+        http://bugs.webkit.org/show_bug.cgi?id=13111
+        When stopped a load before it completes, partial images become the 
+        broken image icon
+
+        * loader/loader.cpp:
+        (WebCore::Loader::didFail): Split off into a method that knows the 
+          difference between failed and cancelled.  If a load is cancelled,
+          don't call error() on the object - only remove it from the cache
+        (WebCore::Loader::cancelRequests): Call didFail(loader, true)
+        * loader/loader.h: Added didFail(SubresourceLoader*, bool cancelled)
+
 2007-03-18  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adele.

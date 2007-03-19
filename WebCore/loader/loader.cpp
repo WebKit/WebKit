@@ -113,7 +113,12 @@ void Loader::didFinishLoading(SubresourceLoader* loader)
     servePendingRequests();
 }
 
-void Loader::didFail(SubresourceLoader* loader, const ResourceError& error)
+void Loader::didFail(SubresourceLoader* loader, const ResourceError&)
+{
+    didFail(loader);
+}
+
+void Loader::didFail(SubresourceLoader* loader, bool cancelled)
 {
     RequestMap::iterator i = m_requestsLoading.find(loader);
     if (i == m_requestsLoading.end())
@@ -125,8 +130,11 @@ void Loader::didFail(SubresourceLoader* loader, const ResourceError& error)
     CachedResource* object = req->cachedResource();
     DocLoader* docLoader = req->docLoader();
 
-    docLoader->setLoadInProgress(true);
-    object->error();
+    if (!cancelled) {
+        docLoader->setLoadInProgress(true);
+        object->error();
+    }
+    
     docLoader->setLoadInProgress(false);
     cache()->remove(object);
 
@@ -221,7 +229,7 @@ void Loader::cancelRequests(DocLoader* dl)
 
     for (unsigned i = 0; i < loadersToCancel.size(); ++i) {
         SubresourceLoader* loader = loadersToCancel[i];
-        didFail(loader, loader->cancelledError());
+        didFail(loader, true);
     }
 }
 
