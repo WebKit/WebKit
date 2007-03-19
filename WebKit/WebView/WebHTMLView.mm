@@ -3975,6 +3975,9 @@ done:
     if (![self _canEdit])
         return NO;
     
+    if (([event modifierFlags] & NSDeviceIndependentModifierFlagsMask) != NSCommandKeyMask)
+        return NO;
+    
     NSString *string = [event charactersIgnoringModifiers];
     if ([string isEqualToString:@"b"]) {
         [self _toggleBold];

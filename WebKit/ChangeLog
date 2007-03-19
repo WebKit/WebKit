@@ -1,3 +1,15 @@
+2007-03-19  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Justin
+        
+        - fixed <rdar://problem/5071238> REGRESSION: opt-cmd-B to show Bookmarks view does 
+        nothing when form field has focus
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _handleStyleKeyEquivalent:]):
+        we were counting any set of modifiers plus 'b' as the standard key equivalent for
+        toggling Bold; now we only accept command+'b'
+
 2007-03-19  Adam Roben  <aroben@apple.com>
 
         Reviewed by Hyatt and Maciej.
