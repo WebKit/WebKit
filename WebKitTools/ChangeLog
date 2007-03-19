@@ -1,3 +1,13 @@
+2007-03-19  David Hyatt  <hyatt@apple.com>
+
+        Update the minimum font size pref to match the actual default setting in Safari.  It should have been 1
+        all this time and not 9.
+
+        Reviewed by aroben
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (dumpRenderTree):
+
 2007-03-18  Dan Waylonis  <waylonis@mac.com>
 
         Reviewed by Tim Hatcher.

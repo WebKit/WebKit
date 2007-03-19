@@ -392,7 +392,7 @@ void dumpRenderTree(int argc, const char *argv[])
     [preferences setFantasyFontFamily:@"Papyrus"];
     [preferences setDefaultFontSize:16];
     [preferences setDefaultFixedFontSize:13];
-    [preferences setMinimumFontSize:9];
+    [preferences setMinimumFontSize:1];
     [preferences setJavaEnabled:NO];
     [preferences setJavaScriptCanOpenWindowsAutomatically:NO];
     [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
