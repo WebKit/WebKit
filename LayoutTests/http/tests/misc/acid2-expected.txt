@@ -27,9 +27,9 @@ layer at (36,2638) size 764x226
       RenderBlock {DIV} at (48,0) size 518x0
     RenderBlock {DIV} at (48,132) size 668x24
     RenderBlock {DIV} at (60,168) size 120x12 [bgcolor=#FFFF00] [border: (12px solid #000000) none (12px solid #000000)]
-      RenderInline {DIV} at (0,0) size 2x10
-        RenderText {#text} at (12,2) size 2x10
-          text run at (12,2) width 2: " "
+      RenderInline {DIV} at (0,0) size 1x3
+        RenderText {#text} at (12,8) size 1x3
+          text run at (12,8) width 1: " "
     RenderBlock {DIV} at (12,180) size 740x12
       RenderBlock {DIV} at (60,0) size 96x12 [color=#FFA500] [bgcolor=#FFFF00] [border: none (24px solid #000000) none (24px solid #000000)]
     RenderTable {UL} at (96,192) size 48x12 [bgcolor=#FF0000]
