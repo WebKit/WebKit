@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (-2,-2) size 404x404
+      RenderSVGText {text} at (10,15) size 800x6
+        RenderSVGInlineText {#text} at (0,-5) size 50x6
+          text run at (0,-5) width 50: "SVG Performance test."
+      RenderSVGText {text} at (10,95) size 800x6
+        RenderSVGInlineText {#text} at (0,-5) size 36x6
+          text run at (0,-5) width 36: "Test not started."
+      RenderPath {rect} at (-2,-2) size 404x404 [stroke={[type=SOLID] [color=#000000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]

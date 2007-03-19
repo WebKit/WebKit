@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 1: Warning: Problem parsing viewBox="0 0 1 1 1"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (0,0) size 304x35
+      RenderPath {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L1.00,0.00L1.00,1.00L0.00,1.00"]
+      RenderSVGText {text} at (10,30) size 800x23 [color=#0000FF]
+        RenderSVGInlineText {#text} at (0,-18) size 294x23
+          text run at (0,-18) width 294: "There should be no red on this page."

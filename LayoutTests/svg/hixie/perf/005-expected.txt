@@ -1,0 +1,16 @@
+KRenderingPaintServer {id="gradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (0.10,#FF6600), (0.90,#FFFF66), (1.00,#0000FF)]] [start=(0,0)] [end=(1,0)]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (-2,-2) size 404x404
+      RenderSVGText {text} at (10,15) size 800x6
+        RenderSVGInlineText {#text} at (0,-5) size 50x6
+          text run at (0,-5) width 50: "SVG Performance test."
+      RenderSVGText {text} at (10,95) size 800x6
+        RenderSVGInlineText {#text} at (0,-5) size 36x6
+          text run at (0,-5) width 36: "Test not started."
+      RenderPath {rect} at (-2,-2) size 404x404 [stroke={[type=SOLID] [color=#000000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+      RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
+        RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGGradientStop {stop} at (0,0) size 0x0

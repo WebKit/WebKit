@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 4: Error: A negative value for rect <width> is not allowed
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (0,0) size 200x200
+      RenderPath {rect} at (0,0) size 200x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L200.00,0.00L200.00,100.00L0.00,100.00"]
+      RenderPath {rect} at (0,100) size 200x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,100.00L200.00,100.00L200.00,200.00L0.00,200.00"]
+      RenderPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [data=""]
+      RenderPath {rect} at (0,0) size 200x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L200.00,0.00L200.00,100.00L0.00,100.00"]

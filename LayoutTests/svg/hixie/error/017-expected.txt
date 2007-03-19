@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (-102.50,-102.50) size 576.50x405.00
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGContainer {g} at (0,0) size 0x0
+          RenderSVGContainer {use} at (0,0) size 0x0
+            RenderSVGContainer {g} at (0,0) size 0x0
+              RenderSVGContainer {g} at (0,0) size 0x0
+        RenderSVGContainer {g} at (0,0) size 0x0
+          RenderSVGContainer {use} at (0,0) size 0x0
+            RenderSVGContainer {g} at (0,0) size 0x0
+              RenderSVGContainer {g} at (0,0) size 0x0
+        RenderSVGContainer {g} at (0,0) size 0x0
+          RenderSVGContainer {use} at (0,0) size 0x0
+            RenderSVGContainer {g} at (0,0) size 0x0
+              RenderSVGContainer {g} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0
+        RenderSVGContainer {use} at (0,0) size 0x0
+      RenderSVGText {text} at (20,220) size 800x230
+        RenderSVGInlineText {#text} at (0,-180) size 444x230
+          text run at (0,-180) width 444: "FAIL"
+      RenderPath {circle} at (-102.50,-102.50) size 405.00x405.00 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M300.00,100.00L299.61,112.56L298.42,125.07L296.46,137.48L293.72,149.74L290.21,161.80L285.96,173.62L280.97,185.16L275.26,196.35L268.87,207.17L261.80,217.56L254.10,227.48L245.79,236.91L236.91,245.79L227.48,254.10L217.56,261.80L207.17,268.87L196.35,275.26L185.16,280.97L173.62,285.96L161.80,290.21L149.74,293.72L137.48,296.46L125.07,298.42L112.56,299.61L100.00,300.00L87.44,299.61L74.93,298.42L62.52,296.46L50.26,293.72L38.20,290.21L26.38,285.96L14.84,280.97L3.65,275.26L-7.17,268.87L-17.56,261.80L-27.48,254.10L-36.91,245.79L-45.79,236.91L-54.10,227.48L-61.80,217.56L-68.87,207.17L-75.26,196.35L-80.97,185.16L-85.96,173.62L-90.21,161.80L-93.72,149.74L-96.46,137.48L-98.42,125.07L-99.61,112.56L-100.00,100.00L-99.61,87.44L-98.42,74.93L-96.46,62.52L-93.72,50.26L-90.21,38.20L-85.96,26.38L-80.97,14.84L-75.26,3.65L-68.87,-7.17L-61.80,-17.56L-54.10,-27.48L-45.79,-36.91L-36.91,-45.79L-27.48,-54.10L-17.56,-61.80L-7.17,-68.87L3.65,-75.26L14.84,-80.97L26.38,-85.96L38.20,-90.21L50.26,-93.72L62.52,-96.46L74.93,-98.42L87.44,-99.61L100.00,-100.00L112.56,-99.61L125.07,-98.42L137.48,-96.46L149.74,-93.72L161.80,-90.21L173.62,-85.96L185.16,-80.97L196.35,-75.26L207.17,-68.87L217.56,-61.80L227.48,-54.10L236.91,-45.79L245.79,-36.91L254.10,-27.48L261.80,-17.56L268.87,-7.17L275.26,3.65L280.97,14.84L285.96,26.38L290.21,38.20L293.72,50.26L296.46,62.52L298.42,74.93L299.61,87.44"]
+      RenderSVGText {text} at (20,220) size 800x230 [color=#FFFFFF]
+        RenderSVGInlineText {#text} at (0,-180) size 444x230
+          text run at (0,-180) width 444: "FAIL"

@@ -1,0 +1,6 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (10,10) size 105x13
+      RenderSVGText {text} at (10,20) size 800x13 [color=#FF0000]
+        RenderSVGInlineText {#text} at (0,-10) size 105x13
+          text run at (0,-10) width 105: "This line should be green."

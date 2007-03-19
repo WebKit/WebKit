@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x301
+  RenderBlock {html} at (0,0) size 800x301
+    RenderBody {body} at (8,16) size 784x277
+      RenderBlock {p} at (0,0) size 784x23
+        RenderTextControl {input} at (2,2) size 356x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderBlock {p} at (0,39) size 784x18
+        RenderText {#text} at (0,0) size 463x18
+          text run at (0,0) width 463: "It should say \"PASSED\" above and there should be a green circle below."
+      RenderBlock (anonymous) at (0,73) size 784x204
+        RenderSVGContainer {svg} at (8,89) size 100x100
+          RenderPath {circle} at (8,89) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M100.00,50.00L99.90,53.14L99.61,56.27L99.11,59.37L98.43,62.43L97.55,65.45L96.49,68.41L95.24,71.29L93.82,74.09L92.22,76.79L90.45,79.39L88.53,81.87L86.45,84.23L84.23,86.45L81.87,88.53L79.39,90.45L76.79,92.22L74.09,93.82L71.29,95.24L68.41,96.49L65.45,97.55L62.43,98.43L59.37,99.11L56.27,99.61L53.14,99.90L50.00,100.00L46.86,99.90L43.73,99.61L40.63,99.11L37.57,98.43L34.55,97.55L31.59,96.49L28.71,95.24L25.91,93.82L23.21,92.22L20.61,90.45L18.13,88.53L15.77,86.45L13.55,84.23L11.47,81.87L9.55,79.39L7.78,76.79L6.18,74.09L4.76,71.29L3.51,68.41L2.45,65.45L1.57,62.43L0.89,59.37L0.39,56.27L0.10,53.14L0.00,50.00L0.10,46.86L0.39,43.73L0.89,40.63L1.57,37.57L2.45,34.55L3.51,31.59L4.76,28.71L6.18,25.91L7.78,23.21L9.55,20.61L11.47,18.13L13.55,15.77L15.77,13.55L18.13,11.47L20.61,9.55L23.21,7.78L25.91,6.18L28.71,4.76L31.59,3.51L34.55,2.45L37.57,1.57L40.63,0.89L43.73,0.39L46.86,0.10L50.00,0.00L53.14,0.10L56.27,0.39L59.37,0.89L62.43,1.57L65.45,2.45L68.41,3.51L71.29,4.76L74.09,6.18L76.79,7.78L79.39,9.55L81.87,11.47L84.23,13.55L86.45,15.77L88.53,18.13L90.45,20.61L92.22,23.21L93.82,25.91L95.24,28.71L96.49,31.59L97.55,34.55L98.43,37.57L99.11,40.63L99.61,43.73L99.90,46.86"]
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (13,21) size 350x13
+  RenderBlock {div} at (3,3) size 350x13
+    RenderText {#text} at (1,0) size 115x13
+      text run at (1,0) width 115: "This test has PASSED."

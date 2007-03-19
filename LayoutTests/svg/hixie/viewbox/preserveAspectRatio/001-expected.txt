@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (97.88,-2.12) size 604.24x604.24
+      RenderPath {rect} at (100.00,0) size 600x600 [fill={[type=SOLID] [color=#000080]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]
+      RenderPath {line} at (97.88,-2.12) size 604.24x604.24 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00L100.00,100.00"]
+      RenderPath {line} at (97.88,-2.12) size 604.24x604.24 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [data="M100.00,0.00L0.00,100.00"]
+      RenderSVGText {text} at (50,30) size 800x8 [color=#FFFFFF]
+        RenderSVGInlineText {#text} at (-41,-6) size 82x8
+          text run at (-41,-6) width 82: "This should be a SQUARE."
+      RenderSVGText {text} at (50,40) size 800x6 [color=#FFFFFF]
+        RenderSVGInlineText {#text} at (-35,-5) size 70x6
+          text run at (-35,-5) width 70: "It should stretch to fit the window."
+      RenderSVGText {text} at (50,48) size 800x3 [color=#FFFFFF]
+        RenderSVGInlineText {#text} at (-18,-2) size 37x3
+          text run at (-18,-2) width 37: "(Whatever the window size.)"

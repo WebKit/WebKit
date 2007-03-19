@@ -1,0 +1,6 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (0,60) size 640x160
+      RenderSVGText {text} at (0,0) size 800x1 [color=#000080]
+        RenderSVGInlineText {#text} at (0,-1) size 4x1
+          text run at (0,-1) width 4: "PASS"

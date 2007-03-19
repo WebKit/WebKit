@@ -1,0 +1,3 @@
+ALERT: The test has passed.
+A dialog should appear and say the test has passed.
+

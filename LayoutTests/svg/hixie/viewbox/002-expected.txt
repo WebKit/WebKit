@@ -1,0 +1,7 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderSVGContainer {svg} at (50,0) size 10800x7000
+      RenderPath {rect} at (50,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L1.00,0.00L1.00,1.00L0.00,1.00"]
+      RenderSVGText {text} at (10,30) size 800x23
+        RenderSVGInlineText {#text} at (0,-18) size 44x23
+          text run at (0,-18) width 44: "FAIL"
