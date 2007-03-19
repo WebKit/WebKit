@@ -1,3 +1,11 @@
+2007-03-18  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Mark Rowe
+        
+        Set Xcode editor to use 4 space indentation (http://webkit.org/coding/coding-style.html)
+
+        * JavaScriptGlue.xcodeproj/project.pbxproj:
+
 2007-03-17  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Mark Rowe.
