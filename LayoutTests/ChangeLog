@@ -1,3 +1,15 @@
+2007-03-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        <rdar://problem/5071074> 
+        REGRESSION: Links that aren't fully selected copy and paste as only text
+
+        * editing/pasteboard/5071074-expected.checksum: Added.
+        * editing/pasteboard/5071074-expected.png: Added.
+        * editing/pasteboard/5071074-expected.txt: Added.
+        * editing/pasteboard/5071074.html: Added.
+
 2007-03-19  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Lars Knoll.

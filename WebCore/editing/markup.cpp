@@ -337,18 +337,6 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
     doc->frame()->editor()->deleteButtonController()->disable();
     doc->updateLayoutIgnorePendingStylesheets();
 
-    Node *commonAncestorBlock = 0;
-    if (commonAncestor) {
-        commonAncestorBlock = enclosingBlock(commonAncestor);
-        if (commonAncestorBlock && commonAncestorBlock->hasTagName(tbodyTag)) {
-            Node* table = commonAncestorBlock->parentNode();
-            while (table && !table->hasTagName(tableTag))
-                table = table->parentNode();
-            if (table)
-                commonAncestorBlock = table;
-        }
-    }
-
     DeprecatedStringList markups;
     Node *pastEnd = range->pastEndNode();
     Node *lastClosed = 0;
@@ -438,23 +426,39 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
             ancestorsToClose.append(n);
     }
     
+    // Include ancestors that aren't completely inside the range but are required to retain 
+    // the structure and appearance of the copied markup.
+    Node *specialCommonAncestor = 0;
+    Node *commonAncestorBlock = commonAncestor ? enclosingBlock(commonAncestor) : 0;
+    if (commonAncestorBlock) {
+        if (commonAncestorBlock->hasTagName(tbodyTag)) {
+            Node* table = commonAncestorBlock->parentNode();
+            while (table && !table->hasTagName(tableTag))
+                table = table->parentNode();
+            if (table)
+                specialCommonAncestor = table;
+        } else if (commonAncestorBlock->hasTagName(listingTag)
+                    || commonAncestorBlock->hasTagName(olTag)
+                    || commonAncestorBlock->hasTagName(preTag)
+                    || commonAncestorBlock->hasTagName(tableTag)
+                    || commonAncestorBlock->hasTagName(ulTag)
+                    || commonAncestorBlock->hasTagName(xmpTag))
+            specialCommonAncestor = commonAncestorBlock;
+    }
+    
+    if (Node *enclosingAnchor = enclosingNodeWithTag(specialCommonAncestor ? specialCommonAncestor : commonAncestor, aTag))
+        specialCommonAncestor = enclosingAnchor;
+    
     Node* body = enclosingNodeWithTag(commonAncestor, bodyTag);
-    // FIXME: Do this for all fully selected blocks, not just the body.
-    Node* fullySelectedRoot = body && *Selection::selectionFromContentsOfNode(body).toRange() == *range ? body : 0;
     // FIXME: Only include markup for a fully selected root (and ancestors of lastClosed up to that root) if
     // there are styles/attributes on those nodes that need to be included to preserve the appearance of the copied markup.
+    // FIXME: Do this for all fully selected blocks, not just the body.
+    Node* fullySelectedRoot = body && *Selection::selectionFromContentsOfNode(body).toRange() == *range ? body : 0;
     if (fullySelectedRoot)
-        commonAncestorBlock = fullySelectedRoot;
-    // Include ancestor blocks that are required to retain the appearance of the copied markup.
-    if (annotate &&
-        (commonAncestorBlock->hasTagName(listingTag)
-            || commonAncestorBlock->hasTagName(olTag)
-            || commonAncestorBlock->hasTagName(preTag)
-            || commonAncestorBlock->hasTagName(tableTag)
-            || commonAncestorBlock->hasTagName(ulTag)
-            || commonAncestorBlock->hasTagName(xmpTag)
-            || commonAncestorBlock == fullySelectedRoot)) {
-        // Also include all of the ancestors of lastClosed up to this ancestor block.
+        specialCommonAncestor = fullySelectedRoot;
+        
+    if (annotate && specialCommonAncestor) {
+        // Also include all of the ancestors of lastClosed up to this special ancestor.
         for (Node* ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
             if (ancestor == fullySelectedRoot) {
                 // From a fully selected root we want:
@@ -483,7 +487,7 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
             
             lastClosed = ancestor;
             
-            if (ancestor == commonAncestorBlock)
+            if (ancestor == specialCommonAncestor)
                 break;
         }
     }
@@ -512,7 +516,7 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
                                       
     // Retain the Mail quote level by including all ancestor mail block quotes.
     if (annotate && selectedOneOrMoreParagraphs) {
-        for (Node *ancestor = commonAncestorBlock; ancestor; ancestor = ancestor->parentNode()) {
+        for (Node *ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
             if (isMailBlockquote(ancestor)) {
                 markups.prepend(startMarkup(ancestor, range, annotate));
                 markups.append(endMarkup(ancestor));
