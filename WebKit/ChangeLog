@@ -1,3 +1,23 @@
+2007-03-19  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Hyatt and Maciej.
+
+        Updated WebCoreStatistics for the conversion of WebCoreJavaScript to
+        C++.
+
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics javaScriptObjectsCount]):
+        (+[WebCoreStatistics javaScriptInterpretersCount]):
+        (+[WebCoreStatistics javaScriptProtectedObjectsCount]):
+        (+[WebCoreStatistics javaScriptRootObjectTypeCounts]): Moved
+        conversion to NSCountedSet here from WebCore.
+        (+[WebCoreStatistics garbageCollectJavaScriptObjects]):
+        (+[WebCoreStatistics garbageCollectJavaScriptObjectsOnAlternateThread:]):
+        (+[WebCoreStatistics shouldPrintExceptions]):
+        (+[WebCoreStatistics setShouldPrintExceptions:]):
+        (+[WebCoreStatistics javaScriptReferencedObjectsCount]):
+        (+[WebCoreStatistics javaScriptRootObjectClasses]):
+
 2007-03-18  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Mark Rowe

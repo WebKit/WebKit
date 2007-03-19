@@ -1,3 +1,29 @@
+2007-03-19  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Hyatt and Maciej.
+
+        Renamed WebCoreJavaScript to JavaScriptStatistics and made it C++ as
+        part of <rdar://problem/5071653>.
+
+        All layout tests pass.
+
+        * WebCore.exp: Updated.
+        * WebCore.xcodeproj/project.pbxproj: Updated.
+        * bridge/JavaScriptStatistics.cpp: Moved from
+        bridge/mac/WebCoreJavaScript.mm, and converted to C++.
+        (WebCore::collect):
+        (WebCore::JavaScriptStatistics::objectCount):
+        (WebCore::JavaScriptStatistics::interpreterCount):
+        (WebCore::JavaScriptStatistics::protectedObjectCount):
+        (WebCore::JavaScriptStatistics::rootObjectTypeCounts):
+        (WebCore::JavaScriptStatistics::garbageCollect):
+        (WebCore::JavaScriptStatistics::garbageCollectOnAlternateThread):
+        (WebCore::JavaScriptStatistics::shouldPrintExceptions):
+        (WebCore::JavaScriptStatistics::setShouldPrintExceptions):
+        * bridge/JavaScriptStatistics.h: Added.
+        * bridge/mac/WebCoreJavaScript.h: Removed.
+        * bridge/mac/WebCoreJavaScript.mm: Removed.
+
 2007-03-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark.

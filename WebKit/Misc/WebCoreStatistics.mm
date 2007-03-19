@@ -29,8 +29,8 @@
 #import "WebCoreStatistics.h"
 
 #import "WebCache.h"
+#import <WebCore/JavaScriptStatistics.h>
 #import <WebCore/Node.h>
-#import <WebCore/WebCoreJavaScript.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebFrameInternal.h>
 
@@ -45,42 +45,51 @@ using namespace WebCore;
 
 + (size_t)javaScriptObjectsCount
 {
-    return [WebCoreJavaScript objectCount];
+    return JavaScriptStatistics::objectCount();
 }
 
 + (size_t)javaScriptInterpretersCount
 {
-    return [WebCoreJavaScript interpreterCount];
+    return JavaScriptStatistics::interpreterCount();
 }
 
 + (size_t)javaScriptProtectedObjectsCount
 {
-    return [WebCoreJavaScript protectedObjectCount];
+    return JavaScriptStatistics::protectedObjectCount();
 }
 
 + (NSCountedSet *)javaScriptRootObjectTypeCounts
 {
-    return [WebCoreJavaScript rootObjectTypeCounts];
+    NSCountedSet *result = [NSCountedSet set];
+
+    HashCountedSet<const char*>* counts = JavaScriptStatistics::rootObjectTypeCounts();
+    HashCountedSet<const char*>::iterator end = counts->end();
+    for (HashCountedSet<const char*>::iterator it = counts->begin(); it != end; ++it)
+        for (unsigned i = 0; i < it->second; ++i)
+            [result addObject:[NSString stringWithUTF8String:it->first]];
+    
+    delete counts;
+    return result;
 }
 
 + (void)garbageCollectJavaScriptObjects
 {
-    [WebCoreJavaScript garbageCollect];
+    JavaScriptStatistics::garbageCollect();
 }
 
 + (void)garbageCollectJavaScriptObjectsOnAlternateThread:(BOOL)waitUntilDone;
 {
-    [WebCoreJavaScript garbageCollectOnAlternateThread:waitUntilDone];
+    JavaScriptStatistics::garbageCollectOnAlternateThread(waitUntilDone);
 }
 
 + (BOOL)shouldPrintExceptions
 {
-    return [WebCoreJavaScript shouldPrintExceptions];
+    return JavaScriptStatistics::shouldPrintExceptions();
 }
 
 + (void)setShouldPrintExceptions:(BOOL)print
 {
-    [WebCoreJavaScript setShouldPrintExceptions:print];
+    JavaScriptStatistics::setShouldPrintExceptions(print);
 }
 
 + (void)emptyCache
@@ -111,12 +120,12 @@ using namespace WebCore;
 
 + (size_t)javaScriptReferencedObjectsCount
 {
-    return [WebCoreJavaScript protectedObjectCount];
+    return JavaScriptStatistics::protectedObjectCount();
 }
 
 + (NSSet *)javaScriptRootObjectClasses
 {
-    return [WebCoreJavaScript rootObjectTypeCounts];
+    return [self javaScriptRootObjectTypeCounts];
 }
 
 @end

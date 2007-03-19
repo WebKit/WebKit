@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,66 +23,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
-#import "WebCoreJavaScript.h"
+#include "config.h"
+#include "JavaScriptStatistics.h"
 
-#import <JavaScriptCore/HashCountedSet.h>
-#import <JavaScriptCore/JSLock.h>
-#import <JavaScriptCore/collector.h>
-#import <JavaScriptCore/interpreter.h>
+#include <JavaScriptCore/HashCountedSet.h>
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/collector.h>
+#include <JavaScriptCore/interpreter.h>
+
+namespace WebCore {
 
 using KJS::Collector;
 using KJS::Interpreter;
 using KJS::JSLock;
 
-void* collect(void*)
+static void* collect(void*)
 {
     JSLock lock;
     Collector::collect();
     return 0;
 }
 
-@implementation WebCoreJavaScript
-
-+ (size_t)objectCount
+size_t JavaScriptStatistics::objectCount()
 {
     JSLock lock;
     return Collector::size();
 }
 
-+ (size_t)interpreterCount
+size_t JavaScriptStatistics::interpreterCount()
 {
     JSLock lock;
     return Collector::numInterpreters();
 }
 
-+ (size_t)protectedObjectCount
+size_t JavaScriptStatistics::protectedObjectCount()
 {
     JSLock lock;
     return Collector::numProtectedObjects();
 }
 
-+ (NSCountedSet *)rootObjectTypeCounts
+HashCountedSet<const char*>* JavaScriptStatistics::rootObjectTypeCounts()
 {
     JSLock lock;
-    NSCountedSet* result = [NSCountedSet set];
-
-    HashCountedSet<const char*>* counts = Collector::rootObjectTypeCounts();
-    HashCountedSet<const char*>::iterator end = counts->end();
-    for (HashCountedSet<const char*>::iterator it = counts->begin(); it != end; ++it)
-        for (unsigned i = 0; i < it->second; ++i)
-            [result addObject:[NSString stringWithUTF8String:it->first]];
-
-    delete counts;
-    return result;
+    
+    return Collector::rootObjectTypeCounts();
 }
 
-+ (void)garbageCollect
+void JavaScriptStatistics::garbageCollect()
 {
-    collect(NULL);
+    collect(0);
 }
 
-+ (void)garbageCollectOnAlternateThread:(BOOL)waitUntilDone
+void JavaScriptStatistics::garbageCollectOnAlternateThread(bool waitUntilDone)
 {
     pthread_t thread;
     pthread_create(&thread, NULL, collect, NULL);
@@ -93,16 +85,16 @@ void* collect(void*)
     }
 }
 
-+ (BOOL)shouldPrintExceptions
+bool JavaScriptStatistics::shouldPrintExceptions()
 {
     JSLock lock;
     return Interpreter::shouldPrintExceptions();
 }
 
-+ (void)setShouldPrintExceptions:(BOOL)print
+void JavaScriptStatistics::setShouldPrintExceptions(bool print)
 {
     JSLock lock;
     Interpreter::setShouldPrintExceptions(print);
 }
 
-@end
+} // namespace WebCore

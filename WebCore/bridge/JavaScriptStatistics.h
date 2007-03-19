@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-@interface WebCoreJavaScript : NSObject
-{
-}
+#ifndef JavaScriptStatistics_h
+#define JavaScriptStatistics_h
 
-+ (size_t)interpreterCount;
-+ (size_t)objectCount;
-+ (size_t)protectedObjectCount;
-+ (NSCountedSet *)rootObjectTypeCounts;
+#include <wtf/HashCountedSet.h>
 
-+ (void)garbageCollect;
-+ (void)garbageCollectOnAlternateThread:(BOOL)waitUntilDone;
+namespace WebCore {
+    
+    class JavaScriptStatistics {
+    public:
+        static size_t interpreterCount();
+        static size_t objectCount();
+        static size_t protectedObjectCount();
+        static HashCountedSet<const char*>* rootObjectTypeCounts();
 
-+ (BOOL)shouldPrintExceptions;
-+ (void)setShouldPrintExceptions:(BOOL)print;
+        static void garbageCollect();
+        static void garbageCollectOnAlternateThread(bool waitUntilDone);
 
-@end
+        static bool shouldPrintExceptions();
+        static void setShouldPrintExceptions(bool print);
+    };
+    
+} // namespace WebCore
+
+#endif // !defined(JavaScriptStatistics_h)
