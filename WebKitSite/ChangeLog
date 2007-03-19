@@ -1,3 +1,9 @@
+2007-03-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Added a random JS benchmark.
+
+        * misc/morph.html: Added.
+
 2007-03-14  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by .
