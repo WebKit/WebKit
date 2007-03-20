@@ -891,8 +891,11 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
         passMouseMoveEventToSubframe(mev, m_lastMouseMoveEventSubframe.get());
 
     bool swallowEvent = dispatchMouseEvent(mousemoveEvent, mev.targetNode(), false, 0, mouseEvent, true);
-    
-    PlatformScrollbar* scrollbar = m_frame->view()->scrollbarUnderMouse(mouseEvent);
+
+    PlatformScrollbar* scrollbar = 0;
+    if (m_frame->view())
+        m_frame->view()->scrollbarUnderMouse(mouseEvent);
+
     if (!scrollbar)
         scrollbar = mev.scrollbar();
 
