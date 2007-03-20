@@ -94,6 +94,7 @@ void IconLoader::didReceiveResponse(SubresourceLoader* resourceLoader, const Res
     // If we got a status code indicating an invalid response, then lets
     // ignore the data and not try to decode the error page as an icon.
     int status = response.httpStatusCode();
+    LOG(IconDatabase, "IconLoader::didReceiveResponse() - Loader %p, response %i", resourceLoader, status);
     if (status && (status < 200 || status > 299)) {
         KURL iconURL = resourceLoader->handle()->url();
         finishLoading(iconURL);
@@ -101,18 +102,21 @@ void IconLoader::didReceiveResponse(SubresourceLoader* resourceLoader, const Res
     }
 }
 
-void IconLoader::didReceiveData(SubresourceLoader*, const char* data, int size)
+void IconLoader::didReceiveData(SubresourceLoader* loader, const char*, int size)
 {
+    LOG(IconDatabase, "IconLoader::didReceiveData() - Loader %p, number of bytes %i", loader, size);
 }
 
 void IconLoader::didFail(SubresourceLoader* resourceLoader, const ResourceError&)
 {
+    LOG(IconDatabase, "IconLoader::didFail() - Loader %p", resourceLoader);
     ASSERT(m_loadIsInProgress);
     finishLoading(resourceLoader->handle()->url());
 }
 
 void IconLoader::didFinishLoading(SubresourceLoader* resourceLoader)
 {
+    LOG(IconDatabase, "IconLoader::didFinishLoading() - Loader %p", resourceLoader);
     // If the icon load resulted in an error-response earlier, the ResourceHandle was killed and icon data commited via finishLoading().
     // In that case this didFinishLoading callback is pointless and we bail.  Otherwise, finishLoading() as expected
     if (m_loadIsInProgress) {

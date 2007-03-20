@@ -1,3 +1,15 @@
+2007-03-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John Sullivan
+
+        Add some very helpful logging to the IconLoader's SubresourceLoaderClient impl.
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::didReceiveResponse):
+        (WebCore::IconLoader::didReceiveData):
+        (WebCore::IconLoader::didFail):
+        (WebCore::IconLoader::didFinishLoading):
+
 2007-03-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
