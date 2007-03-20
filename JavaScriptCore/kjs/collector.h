@@ -58,6 +58,8 @@ namespace KJS {
     class Thread;
     static void registerThread();
     
+    static void registerAsMainThread();
+
   private:
     Collector();
 

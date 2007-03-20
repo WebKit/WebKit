@@ -71,7 +71,6 @@ JSCallbackObject::~JSCallbackObject()
     
     for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parentClass)
         if (JSObjectFinalizeCallback finalize = jsClass->finalize) {
-            JSLock::DropAllLocks dropAllLocks;
             finalize(thisRef);
         }
     

@@ -23,15 +23,9 @@
 #ifndef WTF_FastMallocInternal_h
 #define WTF_FastMallocInternal_h
 
-#if !PLATFORM(WIN_OS)
-
-#include <pthread.h>
-
 namespace WTF {
     // Clients must call this function before allocating memory on a secondary thread.
     void fastMallocSetIsMultiThreaded();
 }
-
-#endif
 
 #endif //  WTF_FastMallocInternal_h

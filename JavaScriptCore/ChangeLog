@@ -1,3 +1,56 @@
+2007-03-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff and Adam.
+        
+        - make USE(MULTIPLE_THREADS) support more portable
+        http://bugs.webkit.org/show_bug.cgi?id=13069
+        
+        - fixed a threadsafety bug discovered by testing this
+        
+        - enhanced threadsafety assertions in collector
+
+        * API/JSCallbackObject.cpp:
+        (KJS::JSCallbackObject::~JSCallbackObject): This destructor can't
+        DropAllLocks around the finalize callback, because it gets called
+        from garbage collection and we can't let other threads collect!
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * kjs/JSLock.cpp:
+        (KJS::JSLock::currentThreadIsHoldingLock): Added new function
+        to allow stronger assertions than just that the lock is held
+        by some thread (you can now assert that the current thread is
+        holding it, given the new JSLock design).
+        * kjs/JSLock.h:
+        * kjs/collector.cpp: Refactored for portability plus added some
+        stronger assertions.
+        (KJS::Collector::allocate):
+        (KJS::currentThreadStackBase):
+        (KJS::Collector::registerAsMainThread):
+        (KJS::onMainThread):
+        (KJS::PlatformThread::PlatformThread):
+        (KJS::getCurrentPlatformThread):
+        (KJS::Collector::Thread::Thread):
+        (KJS::destroyRegisteredThread):
+        (KJS::Collector::registerThread):
+        (KJS::Collector::markCurrentThreadConservatively):
+        (KJS::suspendThread):
+        (KJS::resumeThread):
+        (KJS::getPlatformThreadRegisters):
+        (KJS::otherThreadStackPointer):
+        (KJS::otherThreadStackBase):
+        (KJS::Collector::markOtherThreadConservatively):
+        (KJS::Collector::markStackObjectsConservatively):
+        (KJS::Collector::protect):
+        (KJS::Collector::unprotect):
+        (KJS::Collector::collectOnMainThreadOnly):
+        (KJS::Collector::markMainThreadOnlyObjects):
+        (KJS::Collector::collect):
+        * kjs/collector.h:
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMallocSetIsMultiThreaded):
+        * wtf/FastMallocInternal.h:
+        * wtf/Platform.h:
+
 2007-03-19  Darin Adler  <darin@apple.com>
 
         * kjs/value.h: Roll ~JSValue change out. It was causing problems. I'll do it right later.

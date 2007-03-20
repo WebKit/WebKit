@@ -32,9 +32,10 @@
 #include <setjmp.h>
 #include <algorithm>
 
+#include <pthread.h>
+
 #if PLATFORM(DARWIN)
 
-#include <pthread.h>
 #include <mach/mach_port.h>
 #include <mach/task.h>
 #include <mach/thread_act.h>
@@ -44,8 +45,6 @@
 #include <windows.h>
 
 #elif PLATFORM(UNIX)
-
-#include <pthread.h>
 
 #if HAVE(PTHREAD_NP_H)
 #include <pthread_np.h>
@@ -112,6 +111,7 @@ size_t Collector::mainThreadOnlyObjectCount = 0;
 bool Collector::memoryFull = false;
 
 #ifndef NDEBUG
+
 class GCLock {
     static bool isLocked;
 
@@ -134,7 +134,8 @@ bool GCLock::isLocked = false;
 
 void* Collector::allocate(size_t s)
 {
-  assert(JSLock::lockCount() > 0);
+  ASSERT(JSLock::lockCount() > 0);
+  ASSERT(JSLock::currentThreadIsHoldingLock());
 
   // collect if needed
   size_t numLiveObjects = heap.numLiveObjects;
@@ -179,13 +180,13 @@ void* Collector::allocate(size_t s)
   if (i != usedBlocks) {
     targetBlock = heap.blocks[i];
     targetBlockUsedCells = targetBlock->usedCells;
-    assert(targetBlockUsedCells <= CELLS_PER_BLOCK);
+    ASSERT(targetBlockUsedCells <= CELLS_PER_BLOCK);
     while (targetBlockUsedCells == CELLS_PER_BLOCK) {
       if (++i == usedBlocks)
         goto allocateNewBlock;
       targetBlock = heap.blocks[i];
       targetBlockUsedCells = targetBlock->usedCells;
-      assert(targetBlockUsedCells <= CELLS_PER_BLOCK);
+      ASSERT(targetBlockUsedCells <= CELLS_PER_BLOCK);
     }
     heap.firstBlockWithPossibleSpace = i;
   } else {
@@ -219,22 +220,98 @@ allocateNewBlock:
   return newCell;
 }
 
+static inline void* currentThreadStackBase()
+{
+#if PLATFORM(DARWIN)
+    pthread_t thread = pthread_self();
+    return pthread_get_stackaddr_np(thread);
+#elif PLATFORM(WIN_OS) && PLATFORM(X86) && COMPILER(MSVC)
+    // offset 0x18 from the FS segment register gives a pointer to
+    // the thread information block for the current thread
+    NT_TIB* pTib;
+    __asm {
+        MOV EAX, FS:[18h]
+        MOV pTib, EAX
+    }
+    return (void*)pTib->StackBase;
+#elif PLATFORM(UNIX)
+    static void *stackBase = 0;
+    static pthread_t stackThread;
+    pthread_t thread = pthread_self();
+    if (stackBase == 0 || thread != stackThread) {
+        pthread_attr_t sattr;
+#if HAVE(PTHREAD_NP_H)
+        // e.g. on FreeBSD 5.4, neundorf@kde.org
+        pthread_attr_get_np(thread, &sattr);
+#else
+        // FIXME: this function is non-portable; other POSIX systems may have different np alternatives
+        pthread_getattr_np(thread, &sattr);
+#endif
+        size_t stackSize;
+        int rc = pthread_attr_getstack(&sattr, &stackBase, &stackSize);
+        (void)rc; // FIXME: deal with error code somehow?  seems fatal...
+        ASSERT(stackBase);
+        return (void*)(size_t(stackBase) + stackSize);
+        stackThread = thread;
+    }
+#else
+#error Need a way to get the stack base on this platform
+#endif
+}
+
+static pthread_t mainThread;
+
+void Collector::registerAsMainThread()
+{
+    mainThread = pthread_self();
+}
+
+static inline bool onMainThread()
+{
+#if PLATFORM(DARWIN)
+    return pthread_main_np();
+#else
+    return !!pthread_equal(pthread_self(), mainThread);
+#endif
+}
+
 #if USE(MULTIPLE_THREADS)
 
-struct Collector::Thread {
-  Thread(pthread_t pthread, mach_port_t mthread) : posixThread(pthread), machThread(mthread) {}
-  Thread *next;
+#if PLATFORM(DARWIN)
+typedef mach_port_t PlatformThread;
+#elif PLATFORM(WIN_OS)
+struct PlatformThread {
+    PlatformThread(DWORD _id, HANDLE _handle) : id(_id), handle(_handle) {}
+    DWORD id;
+    HANDLE handle;
+};
+#endif
+
+static inline PlatformThread getCurrentPlatformThread()
+{
+#if PLATFORM(DARWIN)
+    return pthread_mach_thread_np(pthread_self());
+#elif PLATFORM(WIN_OS)
+    HANDLE threadHandle = pthread_getw32threadhandle_np(pthread_self());
+    return PlatformThread(GetCurrentThreadId(), threadHandle);
+#endif
+}
+
+class Collector::Thread {
+public:
+  Thread(pthread_t pthread, const PlatformThread& platThread) : posixThread(pthread), platformThread(platThread) {}
+  Thread* next;
   pthread_t posixThread;
-  mach_port_t machThread;
+  PlatformThread platformThread;
 };
 
 pthread_key_t registeredThreadKey;
 pthread_once_t registeredThreadKeyOnce = PTHREAD_ONCE_INIT;
-Collector::Thread *registeredThreads;
-  
-static void destroyRegisteredThread(void *data) 
+Collector::Thread* registeredThreads;
+
+static void destroyRegisteredThread(void* data) 
 {
-  Collector::Thread *thread = (Collector::Thread *)data;
+  Collector::Thread* thread = (Collector::Thread*)data;
 
   // Can't use JSLock convenience object here because we don't want to re-register
   // an exiting thread.
@@ -246,8 +323,8 @@ static void destroyRegisteredThread(void *data)
     Collector::Thread *last = registeredThreads;
     Collector::Thread *t;
     for (t = registeredThreads->next; t != NULL; t = t->next) {
-      if (t == thread) {
-        last->next = t->next;
+      if (t == thread) {          
+          last->next = t->next;
           break;
       }
       last = t;
@@ -268,14 +345,15 @@ static void initializeRegisteredThreadKey()
 void Collector::registerThread()
 {
   ASSERT(JSLock::lockCount() > 0);
+  ASSERT(JSLock::currentThreadIsHoldingLock());
   
   pthread_once(&registeredThreadKeyOnce, initializeRegisteredThreadKey);
 
   if (!pthread_getspecific(registeredThreadKey)) {
-    if (!pthread_main_np())
+    if (!onMainThread())
         WTF::fastMallocSetIsMultiThreaded();
-    pthread_t pthread = pthread_self();
-    Collector::Thread *thread = new Collector::Thread(pthread, pthread_mach_thread_np(pthread));
+    Collector::Thread *thread = new Collector::Thread(pthread_self(), getCurrentPlatformThread());
+
     thread->next = registeredThreads;
     registeredThreads = thread;
     pthread_setspecific(registeredThreadKey, thread);
@@ -297,9 +375,9 @@ void Collector::markStackObjectsConservatively(void *start, void *end)
     end = tmp;
   }
 
-  assert(((char *)end - (char *)start) < 0x1000000);
-  assert(IS_POINTER_ALIGNED(start));
-  assert(IS_POINTER_ALIGNED(end));
+  ASSERT(((char *)end - (char *)start) < 0x1000000);
+  ASSERT(IS_POINTER_ALIGNED(start));
+  ASSERT(IS_POINTER_ALIGNED(end));
   
   char **p = (char **)start;
   char **e = (char **)end;
@@ -336,6 +414,7 @@ gotGoodPointer:
 
 void Collector::markCurrentThreadConservatively()
 {
+    // setjmp forces volatile registers onto the stack
     jmp_buf registers;
 #if COMPILER(MSVC)
 #pragma warning(push)
@@ -346,97 +425,163 @@ void Collector::markCurrentThreadConservatively()
 #pragma warning(pop)
 #endif
 
-#if PLATFORM(DARWIN)
-    pthread_t thread = pthread_self();
-    void *stackBase = pthread_get_stackaddr_np(thread);
-#elif PLATFORM(WIN_OS) && PLATFORM(X86) && COMPILER(MSVC)
-    NT_TIB *pTib;
-    __asm {
-        MOV EAX, FS:[18h]
-        MOV pTib, EAX
-    }
-    void *stackBase = (void *)pTib->StackBase;
-#elif PLATFORM(UNIX)
-    static void *stackBase = 0;
-    static pthread_t stackThread;
-    pthread_t thread = pthread_self();
-    if (stackBase == 0 || thread != stackThread) {
-        pthread_attr_t sattr;
-#if HAVE(PTHREAD_NP_H)
-        // e.g. on FreeBSD 5.4, neundorf@kde.org
-        pthread_attr_get_np(thread, &sattr);
-#else
-        // FIXME: this function is non-portable; other POSIX systems may have different np alternatives
-        pthread_getattr_np(thread, &sattr);
-#endif
-        size_t stackSize;
-        int rc = pthread_attr_getstack(&sattr, &stackBase, &stackSize);
-        (void)rc; // FIXME: deal with error code somehow?  seems fatal...
-        assert(stackBase);
-        stackBase = (void*)(size_t(stackBase) + stackSize);
-        stackThread = thread;
-    }
-#else
-#error Need a way to get the stack base on this platform
-#endif
-
-    void *dummy;
-    void *stackPointer = &dummy;
+    void* dummy;
+    void* stackPointer = &dummy;
+    void* stackBase = currentThreadStackBase();
 
     markStackObjectsConservatively(stackPointer, stackBase);
 }
 
 #if USE(MULTIPLE_THREADS)
 
+static inline void suspendThread(const PlatformThread& platformThread)
+{
+#if PLATFORM(DARWIN)
+  thread_suspend(platformThread);
+#elif PLATFORM(WIN_OS)
+  SuspendThread(platformThread.handle);
+#else
+#error Need a way to suspend threads on this platform
+#endif
+}
+
+static inline void resumeThread(const PlatformThread& platformThread)
+{
+#if PLATFORM(DARWIN)
+  thread_resume(platformThread);
+#elif PLATFORM(WIN_OS)
+  ResumeThread(platformThread.handle);
+#else
+#error Need a way to resume threads on this platform
+#endif
+}
+
 typedef unsigned long usword_t; // word size, assumed to be either 32 or 64 bit
 
-void Collector::markOtherThreadConservatively(Thread *thread)
-{
-  thread_suspend(thread->machThread);
+#if PLATFORM(DARWIN)
 
-#if PLATFORM(X86)
-  i386_thread_state_t regs;
+#if     PLATFORM(X86)
+typedef i386_thread_state_t PlatformThreadRegisters;
+#elif   PLATFORM(X86_64)
+typedef x86_thread_state64_t PlatformThreadRegisters;
+#elif   PLATFORM(PPC)
+typedef ppc_thread_state_t PlatformThreadRegisters;
+#elif   PLATFORM(PPC64)
+typedef ppc_thread_state64_t PlatformThreadRegisters;
+#else
+#error Unknown Architecture
+#endif
+
+#elif PLATFORM(WIN_OS)&& PLATFORM(X86)
+typedef CONTEXT PlatformThreadRegisters;
+#else
+#error Need a thread register struct for this platform
+#endif
+
+size_t getPlatformThreadRegisters(const PlatformThread& platformThread, PlatformThreadRegisters& regs)
+{
+#if PLATFORM(DARWIN)
+
+#if     PLATFORM(X86)
   unsigned user_count = sizeof(regs)/sizeof(int);
   thread_state_flavor_t flavor = i386_THREAD_STATE;
-#elif PLATFORM(X86_64)
-  x86_thread_state64_t  regs;
+#elif   PLATFORM(X86_64)
   unsigned user_count = x86_THREAD_STATE64_COUNT;
   thread_state_flavor_t flavor = x86_THREAD_STATE64;
-#elif PLATFORM(PPC)
-  ppc_thread_state_t  regs;
+#elif   PLATFORM(PPC) 
   unsigned user_count = PPC_THREAD_STATE_COUNT;
   thread_state_flavor_t flavor = PPC_THREAD_STATE;
-#elif PLATFORM(PPC64)
-  ppc_thread_state64_t  regs;
+#elif   PLATFORM(PPC64)
   unsigned user_count = PPC_THREAD_STATE64_COUNT;
   thread_state_flavor_t flavor = PPC_THREAD_STATE64;
 #else
 #error Unknown Architecture
 #endif
-  // get the thread register state
-  thread_get_state(thread->machThread, flavor, (thread_state_t)&regs, &user_count);
-  
-  // scan the registers
-  markStackObjectsConservatively((void *)&regs, (void *)((char *)&regs + (user_count * sizeof(usword_t))));
-   
-  // scan the stack
-#if PLATFORM(X86) && __DARWIN_UNIX03
-  markStackObjectsConservatively((void *)regs.__esp, pthread_get_stackaddr_np(thread->posixThread));
-#elif PLATFORM(X86)
-  markStackObjectsConservatively((void *)regs.esp, pthread_get_stackaddr_np(thread->posixThread));
-#elif PLATFORM(X86_64) && __DARWIN_UNIX03
-  markStackObjectsConservatively((void *)regs.__rsp, pthread_get_stackaddr_np(thread->posixThread));
+
+  thread_get_state(platformThread, flavor, (thread_state_t)&regs, &user_count);
+  return user_count * sizeof(usword_t);
+// end PLATFORM(DARWIN)
+
+#elif PLATFORM(WIN_OS) && PLATFORM(X86)
+  regs.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL | CONTEXT_SEGMENTS;
+  GetThreadContext(platformThread.handle, &regs);
+  return sizeof(CONTEXT);
+#else
+#error Need a way to get thread registers on this platform
+#endif
+}
+
+static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
+{
+#if PLATFORM(DARWIN)
+
+#if __DARWIN_UNIX03
+
+#if PLATFORM(X86)
+  return (void*)regs.__esp;
 #elif PLATFORM(X86_64)
-  markStackObjectsConservatively((void *)regs.rsp, pthread_get_stackaddr_np(thread->posixThread));
-#elif (PLATFORM(PPC) || PLATFORM(PPC64)) && __DARWIN_UNIX03
-  markStackObjectsConservatively((void *)regs.__r1, pthread_get_stackaddr_np(thread->posixThread));
+  return (void*)regs.__rsp;
 #elif PLATFORM(PPC) || PLATFORM(PPC64)
-  markStackObjectsConservatively((void *)regs.r1, pthread_get_stackaddr_np(thread->posixThread));
+  return (void*)regs.__r1;
 #else
 #error Unknown Architecture
 #endif
 
-  thread_resume(thread->machThread);
+#else // !__DARWIN_UNIX03
+
+#if PLATFORM(X86)
+  return (void*)regs.esp;
+#elif PLATFORM(X86_64)
+  return (void*)regs.rsp;
+#elif (PLATFORM(PPC) || PLATFORM(PPC64))
+  return (void*)regs.r1;
+#else
+#error Unknown Architecture
+#endif
+
+#endif // __DARWIN_UNIX03
+
+// end PLATFORM(DARWIN)
+#elif PLATFORM(X86) && PLATFORM(WIN_OS)
+  return (void*)(uintptr_t)regs.Esp;
+#else
+#error Need a way to get the stack pointer for another thread on this platform
+#endif
+}
+
+static inline void* otherThreadStackBase(const PlatformThreadRegisters& regs, Collector::Thread* thread)
+{
+#if PLATFORM(DARWIN)
+  (void)regs;
+  return pthrad_get_stackaddr_np(thread->posixThread);
+// end PLATFORM(DARWIN);
+#elif PLATFORM(X86) && PLATFORM(WIN_OS)
+  LDT_ENTRY desc;
+  NT_TIB* tib;
+  GetThreadSelectorEntry(thread->platformThread.handle, regs.SegFs, &desc);
+  tib = (NT_TIB*)(uintptr_t)(desc.BaseLow | desc.HighWord.Bytes.BaseMid << 16 | desc.HighWord.Bytes.BaseHi << 24);
+  ASSERT(tib == tib->Self);
+  return tib->StackBase;
+#else
+#error Need a way to get the stack pointer for another thread on this platform
+#endif
+}
+
+void Collector::markOtherThreadConservatively(Thread* thread)
+{
+  suspendThread(thread->platformThread);
+
+  PlatformThreadRegisters regs;
+  size_t regSize = getPlatformThreadRegisters(thread->platformThread, regs);
+
+  // mark the thread's registers
+  markStackObjectsConservatively((void*)&regs, (void*)((char*)&regs + regSize));
+ 
+  void* stackPointer = otherThreadStackPointer(regs);
+  void* stackBase = otherThreadStackBase(regs, thread);
+  markStackObjectsConservatively(stackPointer, stackBase);
+
+  resumeThread(thread->platformThread);
 }
 
 #endif
@@ -447,7 +592,7 @@ void Collector::markStackObjectsConservatively()
 
 #if USE(MULTIPLE_THREADS)
   for (Thread *thread = registeredThreads; thread != NULL; thread = thread->next) {
-    if (thread->posixThread != pthread_self()) {
+    if (!pthread_equal(thread->posixThread, pthread_self())) {
       markOtherThreadConservatively(thread);
     }
   }
@@ -464,8 +609,9 @@ static ProtectCountSet& protectedValues()
 
 void Collector::protect(JSValue *k)
 {
-    assert(k);
-    assert(JSLock::lockCount() > 0);
+    ASSERT(k);
+    ASSERT(JSLock::lockCount() > 0);
+    ASSERT(JSLock::currentThreadIsHoldingLock());
 
     if (JSImmediate::isImmediate(k))
       return;
@@ -475,8 +621,9 @@ void Collector::protect(JSValue *k)
 
 void Collector::unprotect(JSValue *k)
 {
-    assert(k);
-    assert(JSLock::lockCount() > 0);
+    ASSERT(k);
+    ASSERT(JSLock::lockCount() > 0);
+    ASSERT(JSLock::currentThreadIsHoldingLock());
 
     if (JSImmediate::isImmediate(k))
       return;
@@ -488,6 +635,7 @@ void Collector::collectOnMainThreadOnly(JSValue* value)
 {
     ASSERT(value);
     ASSERT(JSLock::lockCount() > 0);
+    ASSERT(JSLock::currentThreadIsHoldingLock());
 
     if (JSImmediate::isImmediate(value))
       return;
@@ -511,7 +659,7 @@ void Collector::markProtectedObjects()
 void Collector::markMainThreadOnlyObjects()
 {
 #if USE(MULTIPLE_THREADS)
-    ASSERT(!pthread_main_np());
+    ASSERT(!onMainThread());
 #endif
 
     // Optimization for clients that never register "main thread only" objects.
@@ -562,14 +710,16 @@ void Collector::markMainThreadOnlyObjects()
 
 bool Collector::collect()
 {
-  assert(JSLock::lockCount() > 0);
+  ASSERT(JSLock::lockCount() > 0);
+  ASSERT(JSLock::currentThreadIsHoldingLock());
+
 
 #ifndef NDEBUG
   GCLock lock;
 #endif
   
 #if USE(MULTIPLE_THREADS)
-    bool currentThreadIsMainThread = pthread_main_np();
+    bool currentThreadIsMainThread = onMainThread();
 #else
     bool currentThreadIsMainThread = true;
 #endif

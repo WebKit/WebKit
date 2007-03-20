@@ -62,6 +62,7 @@ namespace KJS {
         static void lock();
         static void unlock();
         static int lockCount();
+        static bool currentThreadIsHoldingLock();
 
         static void registerThread();
 

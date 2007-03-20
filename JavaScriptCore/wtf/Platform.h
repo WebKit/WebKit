@@ -172,7 +172,7 @@
 #endif
 
 /* multiple threads only supported on Mac for now */
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(WIN)
 #define WTF_USE_MULTIPLE_THREADS 1
 #endif
 

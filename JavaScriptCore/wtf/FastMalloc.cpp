@@ -66,6 +66,9 @@
 #include "FastMalloc.h"
 
 #include "Assertions.h"
+#if USE(MULTIPLE_THREADS)
+#include <pthread.h>
+#endif
 
 #ifndef USE_SYSTEM_MALLOC
 #ifndef NDEBUG
@@ -159,11 +162,9 @@ void *fastRealloc(void* p, size_t n)
     return realloc(p, n);
 }
 
-#if !PLATFORM(WIN_OS)
 void fastMallocSetIsMultiThreaded() 
 {
 }
-#endif
 
 } // namespace WTF
 
