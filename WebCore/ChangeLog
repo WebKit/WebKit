@@ -1,3 +1,11 @@
+2007-03-20  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        Stub out a couple of CFNetwork backend functions.
+        
+        * platform/network/ResourceHandle.h:
+
 2007-03-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Ada.
