@@ -1,3 +1,16 @@
+2007-03-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Fixed <rdar://problem/5073380> REGRESSION: Crash occurs at WTF::fastFree() 
+        when reloading liveconnect page (applet)
+        
+        Best to use free when you use malloc, especially when malloc and delete
+        use completely different libraries.
+
+        * bindings/jni/jni_runtime.cpp:
+        (JavaMethod::~JavaMethod):
+
 2007-03-19  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Maciej.
