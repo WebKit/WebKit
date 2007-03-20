@@ -29,15 +29,15 @@
 
 #if ENABLE(XPATH)
 
-#include "PlatformString.h"
 #include "Document.h"
+#include "ExceptionCode.h"
 #include "Node.h"
+#include "PlatformString.h"
+#include "XPathExpressionNode.h"
 #include "XPathNSResolver.h"
 #include "XPathParser.h"
 #include "XPathResult.h"
-#include "ExceptionCode.h"
-
-#include "XPathExpressionNode.h"
+#include "XPathUtil.h"
 
 namespace WebCore {
 

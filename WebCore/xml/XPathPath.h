@@ -30,7 +30,7 @@
 #if ENABLE(XPATH)
 
 #include "XPathExpressionNode.h"
-#include "XPathUtil.h"
+#include "XPathNodeSet.h"
 
 int xpathyyparse(void*);
 
@@ -60,7 +60,7 @@ namespace WebCore {
             void setAbsolute(bool value) { m_absolute = value; }
 
             virtual Value evaluate() const;
-            Value evaluate(const NodeVector& startNodes) const;
+            Value evaluate(const NodeSet& startNodes) const;
 
             void appendStep(Step* step);
             void insertFirstStep(Step* step);

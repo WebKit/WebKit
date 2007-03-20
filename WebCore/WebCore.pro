@@ -694,6 +694,7 @@ SOURCES += \
     xml/XPathExpressionNode.cpp \
     xml/XPathFunctions.cpp \
     xml/XPathNamespace.cpp \
+    xml/XPathNodeSet.cpp \
     xml/XPathNSResolver.cpp \
     xml/XPathParser.cpp \
     xml/XPathPath.cpp \

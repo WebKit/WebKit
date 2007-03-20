@@ -63,10 +63,10 @@ XPathResult::XPathResult(EventTargetNode* eventTarget, const Value& value)
         case Value::StringValue:
             m_resultType = STRING_TYPE;
             return;
-        case Value::NodeVectorValue:
+        case Value::NodeSetValue:
             m_resultType = UNORDERED_NODE_ITERATOR_TYPE;
             m_nodeSetPosition = 0;
-            m_nodeSet = m_value.toNodeVector();
+            m_nodeSet = m_value.toNodeSet();
             m_invalidIteratorState = false;
             return;
     }
@@ -97,16 +97,31 @@ void XPathResult::convertTo(unsigned short type, ExceptionCode& ec)
             m_value = m_value.toBoolean();
             break;
         case UNORDERED_NODE_ITERATOR_TYPE:
-        case ORDERED_NODE_ITERATOR_TYPE:
         case UNORDERED_NODE_SNAPSHOT_TYPE:
-        case ORDERED_NODE_SNAPSHOT_TYPE:
         case ANY_UNORDERED_NODE_TYPE:
-        case FIRST_ORDERED_NODE_TYPE:
-            if (!m_value.isNodeVector()) {
+        case FIRST_ORDERED_NODE_TYPE: // This is correct - singleNodeValue() will take care of ordering.
+            if (!m_value.isNodeSet()) {
                 ec = TYPE_ERR;
                 return;
             }
             m_resultType = type;
+            break;
+        case ORDERED_NODE_ITERATOR_TYPE:
+            if (!m_value.isNodeSet()) {
+                ec = TYPE_ERR;
+                return;
+            }
+            m_nodeSet.sort();
+            m_resultType = type;
+            break;
+        case ORDERED_NODE_SNAPSHOT_TYPE:
+            if (!m_value.isNodeSet()) {
+                ec = TYPE_ERR;
+                return;
+            }
+            m_value.toNodeSet().sort();
+            m_resultType = type;
+            break;
     }
 }
 
@@ -149,11 +164,11 @@ Node* XPathResult::singleNodeValue(ExceptionCode& ec) const
         return 0;
     }
   
-    NodeVector nodes = m_value.toNodeVector();
-    if (nodes.size () == 0)
-        return 0;
-
-    return nodes[0].get();
+    const NodeSet& nodes = m_value.toNodeSet();
+    if (resultType() == FIRST_ORDERED_NODE_TYPE)
+        return nodes.firstNode();
+    else
+        return nodes.anyNode();
 }
 
 void XPathResult::invalidateIteratorState()
@@ -183,7 +198,7 @@ unsigned long XPathResult::snapshotLength(ExceptionCode& ec) const
         return 0;
     }
 
-    return m_value.toNodeVector().size();
+    return m_value.toNodeSet().size();
 }
 
 Node* XPathResult::iterateNext(ExceptionCode& ec)
@@ -201,7 +216,7 @@ Node* XPathResult::iterateNext(ExceptionCode& ec)
     if (m_nodeSetPosition + 1 > m_nodeSet.size())
         return 0;
 
-    Node* node = m_nodeSet[m_nodeSetPosition].get();
+    Node* node = m_nodeSet[m_nodeSetPosition];
     
     m_nodeSetPosition++;
 
@@ -215,11 +230,11 @@ Node* XPathResult::snapshotItem(unsigned long index, ExceptionCode& ec)
         return 0;
     }
     
-    NodeVector nodes = m_value.toNodeVector();
+    NodeSet nodes = m_value.toNodeSet();
     if (index >= nodes.size())
         return 0;
     
-    return nodes[index].get();
+    return nodes[index];
 }
 
 }

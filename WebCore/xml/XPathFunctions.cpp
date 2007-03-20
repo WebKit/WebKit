@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "NamedAttrMap.h"
 #include "XMLNames.h"
+#include "XPathUtil.h"
 #include "XPathValue.h"
 #include <wtf/MathExtras.h>
 
@@ -262,15 +263,13 @@ Value FunPosition::evaluate() const
 
 Value FunId::evaluate() const
 {
-    // FIXME: this algorithm does not produce an ordered node-set, as it should.
-
     Value a = arg(0)->evaluate();
     Vector<UChar> idList; // A whitespace-separated list of IDs
 
-    if (a.isNodeVector()) {
-        const NodeVector& nodes = a.toNodeVector();
+    if (a.isNodeSet()) {
+        const NodeSet& nodes = a.toNodeSet();
         for (size_t i = 0; i < nodes.size(); ++i) {
-            String str = stringValue(nodes[i].get());
+            String str = stringValue(nodes[i]);
             idList.append(str.characters(), str.length());
             idList.append(' ');
         }
@@ -280,7 +279,7 @@ Value FunId::evaluate() const
     }
     
     Document* contextDocument = evaluationContext().node->document();
-    NodeVector result;
+    NodeSet result;
     HashSet<Node*> resultSet;
 
     size_t startPos = 0;
@@ -305,6 +304,8 @@ Value FunId::evaluate() const
         startPos = endPos;
     }
     
+    result.markSorted(false);
+    
     return result;
 }
 
@@ -313,10 +314,12 @@ Value FunLocalName::evaluate() const
     Node* node = 0;
     if (argCount() > 0) {
         Value a = arg(0)->evaluate();
-        if (!a.isNodeVector() || a.toNodeVector().size() == 0)
+        if (!a.isNodeSet())
             return "";
-        
-        node = a.toNodeVector()[0].get();
+
+        node = a.toNodeSet().firstNode();
+        if (!node)
+            return "";
     }
 
     if (!node)
@@ -330,10 +333,12 @@ Value FunNamespaceURI::evaluate() const
     Node* node = 0;
     if (argCount() > 0) {
         Value a = arg(0)->evaluate();
-        if (!a.isNodeVector() || a.toNodeVector().size() == 0)
+        if (!a.isNodeSet())
             return "";
 
-        node = a.toNodeVector()[0].get();
+        node = a.toNodeSet().firstNode();
+        if (!node)
+            return "";
     }
 
     if (!node)
@@ -347,10 +352,12 @@ Value FunName::evaluate() const
     Node* node = 0;
     if (argCount() > 0) {
         Value a = arg(0)->evaluate();
-        if (!a.isNodeVector() || a.toNodeVector().size() == 0)
+        if (!a.isNodeSet())
             return "";
 
-        node = a.toNodeVector()[0].get();
+        node = a.toNodeSet().firstNode();
+        if (!node)
+            return "";
     }
 
     if (!node)
@@ -364,10 +371,10 @@ Value FunCount::evaluate() const
 {
     Value a = arg(0)->evaluate();
     
-    if (!a.isNodeVector())
+    if (!a.isNodeSet())
         return 0.0;
     
-    return a.toNodeVector().size();
+    return a.toNodeSet().size();
 }
 
 Value FunString::evaluate() const
@@ -570,14 +577,16 @@ Value FunNumber::evaluate() const
 Value FunSum::evaluate() const
 {
     Value a = arg(0)->evaluate();
-    if (!a.isNodeVector())
+    if (!a.isNodeSet())
         return 0.0;
 
     double sum = 0.0;
-    NodeVector nodes = a.toNodeVector();
-    
+    const NodeSet& nodes = a.toNodeSet();
+    // To be really compliant, we should sort the node-set, as floating point addition is not associative.
+    // However, this is unlikely to ever become a practical issue, and sorting is slow.
+
     for (unsigned i = 0; i < nodes.size(); i++)
-        sum += Value(stringValue(nodes[i].get())).toNumber();
+        sum += Value(stringValue(nodes[i])).toNumber();
     
     return sum;
 }

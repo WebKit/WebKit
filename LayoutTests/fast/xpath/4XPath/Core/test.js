@@ -60,19 +60,3 @@ GCHILD22 = GCHILDREN2[1];
 LCHILDREN = [LANG.getElementsByTagName("foo")[0], LANG.getElementsByTagName("foo")[1], LANG.getElementsByTagName("f\xf6\xf8")[0]];
 LCHILD1 = LCHILDREN[0];
 LCHILD2 = LCHILDREN[1];
-
-function checkSnapshot(comment, actual, expected) {
-    if (actual.snapshotLength != expected.length) {
-        testFailed(comment + " incorrect length (expected " + expected.length + ", actual " + actual.snapshotLength + ")");
-        return;
-    }
-    
-    for (i = 0; i < actual.snapshotLength; ++i) {
-        if (actual.snapshotItem(i) != expected[i]) {
-            testFailed(comment + " item " + i + " incorrect (expected " + expected[i].nodeName + ", actual " + actual.snapshotItem(i).nodeName + ")");
-            return;
-        }
-    }
-    
-    testPassed(comment);
-}

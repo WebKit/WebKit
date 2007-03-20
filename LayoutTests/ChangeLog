@@ -1,3 +1,30 @@
+2007-03-20  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12497
+        Implement XPath result ordering.
+
+        * fast/xpath/document-order-expected.txt: Added.
+        * fast/xpath/document-order.html: Added.
+
+        * fast/xpath/text-nodes-expected.txt:
+        * fast/xpath/text-nodes.html:
+        * fast/xpath/4XPath/Core/test_step-expected.txt:
+        Updated results for tests that now pass.
+
+        * fast/xpath/xpath-test-pre.js: Added.
+        * fast/xpath/4XPath/Core/test.js:
+        Moved checkSnapshot() to a separate file.
+
+        * fast/xpath/4XPath/Core/test_core_functions.html:
+        * fast/xpath/4XPath/Core/test_location_path.html:
+        * fast/xpath/4XPath/Core/test_nodeset_expr.html:
+        * fast/xpath/4XPath/Core/test_parser.html:
+        * fast/xpath/4XPath/Core/test_predicate_list.html:
+        * fast/xpath/4XPath/Core/test_step.html:
+        Load xpath-test-pre.js for checkSnapshot().
+
 2007-03-19  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

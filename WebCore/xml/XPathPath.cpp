@@ -1,6 +1,7 @@
 /*
  * Copyright 2005 Frerich Raabe <raabe@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,19 +53,20 @@ Value Filter::evaluate() const
 {
     Value v = m_expr->evaluate();
     
-    if (!v.isNodeVector()) 
+    if (!v.isNodeSet()) 
         return v;
 
-    NodeVector nodes = v.toNodeVector();
+    NodeSet nodes = v.toNodeSet();
+    nodes.sort();
 
     EvaluationContext& evaluationContext = Expression::evaluationContext();
     for (unsigned i = 0; i < m_predicates.size(); i++) {
-        NodeVector newNodes;
+        NodeSet newNodes;
         evaluationContext.size = nodes.size();
         evaluationContext.position = 0;
         
         for (unsigned j = 0; j < nodes.size(); j++) {
-            Node* node = nodes[j].get();
+            Node* node = nodes[j];
             
             evaluationContext.node = node;
             ++evaluationContext.position;
@@ -97,35 +99,36 @@ Value LocationPath::evaluate() const
     if (m_absolute && context->nodeType() != Node::DOCUMENT_NODE) 
         context = context->ownerDocument();
 
-    NodeVector startNodes;
+    NodeSet startNodes;
     startNodes.append(context);
     
     return evaluate(startNodes);
 }
 
-Value LocationPath::evaluate(const NodeVector& startNodes) const
+Value LocationPath::evaluate(const NodeSet& startNodes) const
 {
-    NodeVector inDOMNodes = startNodes;
+    NodeSet nodes = startNodes;
     
     for (unsigned i = 0; i < m_steps.size(); i++) {
         Step* step = m_steps[i];
-        NodeVector outDOMNodes;
-        HashSet<Node*> outDOMNodesSet;
+        NodeSet newNodes;
+        HashSet<Node*> newNodesSet;
 
-        for (unsigned j = 0; j < inDOMNodes.size(); j++) {
-            NodeVector matches = step->evaluate(inDOMNodes[j].get());
+        for (unsigned j = 0; j < nodes.size(); j++) {
+            NodeSet matches = step->evaluate(nodes[j]);
             
             for (size_t nodeIndex = 0; nodeIndex < matches.size(); ++nodeIndex) {
-                Node* node = matches[nodeIndex].get();
-                if (outDOMNodesSet.add(node).second)
-                    outDOMNodes.append(node);
+                Node* node = matches[nodeIndex];
+                if (newNodesSet.add(node).second)
+                    newNodes.append(node);
             }
         }
         
-        inDOMNodes.swap(outDOMNodes);
+        nodes.swap(newNodes);
     }
 
-    return inDOMNodes;
+    nodes.markSorted(false);
+    return nodes;
 }
 
 void LocationPath::optimizeStepPair(unsigned index)
@@ -182,7 +185,7 @@ Path::~Path()
 
 Value Path::evaluate() const
 {
-    return m_path->evaluate(m_filter->evaluate().toNodeVector());
+    return m_path->evaluate(m_filter->evaluate().toNodeSet());
 }
 
 }

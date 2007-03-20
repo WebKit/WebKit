@@ -30,7 +30,7 @@
 #if ENABLE(XPATH)
 
 #include "PlatformString.h"
-#include "XPathUtil.h"
+#include "XPathNodeSet.h"
 
 namespace WebCore {
 
@@ -38,11 +38,11 @@ namespace WebCore {
     
         class Value {
         public:
-            enum Type { NodeVectorValue, BooleanValue, NumberValue, StringValue };
+            enum Type { NodeSetValue, BooleanValue, NumberValue, StringValue };
             
             Value();
             Value(Node*);
-            Value(const NodeVector&);
+            Value(const NodeSet&);
             Value(bool);
             Value(unsigned);
             Value(unsigned long);
@@ -52,19 +52,19 @@ namespace WebCore {
             
             Type type() const { return m_type; }
 
-            bool isNodeVector() const { return m_type == NodeVectorValue; }
+            bool isNodeSet() const { return m_type == NodeSetValue; }
             bool isBoolean() const { return m_type == BooleanValue; }
             bool isNumber() const { return m_type == NumberValue; }
             bool isString() const { return m_type == StringValue; }
 
-            const NodeVector& toNodeVector() const;    
+            const NodeSet& toNodeSet() const;    
             bool toBoolean() const;
             double toNumber() const;
             String toString() const;
             
         private:
             Type m_type;
-            NodeVector m_nodeVector;
+            NodeSet m_nodeSet;
             bool m_bool;
             double m_number;
             String m_string;

@@ -1,6 +1,7 @@
 /*
  * Copyright 2005 Maksim Orlovich <maksim@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions

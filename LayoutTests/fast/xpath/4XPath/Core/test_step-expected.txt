@@ -1,5 +1,5 @@
 PASS ancestor::*
-FAIL ancestor-or-self::* item 0 incorrect (expected ROOT, actual CHILD1)
+PASS ancestor-or-self::*
 PASS descendant-or-self::*
 PASS child::GCHILD[position()=1]
 PASS child::GCHILD[1]

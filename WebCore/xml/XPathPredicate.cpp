@@ -1,6 +1,7 @@
 /*
  * Copyright 2005 Frerich Raabe <raabe@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +33,7 @@
 
 #include "Node.h"
 #include "XPathFunctions.h"
+#include "XPathUtil.h"
 #include "XPathValue.h"
 #include <math.h>
 
@@ -108,16 +110,16 @@ EqTestOp::EqTestOp(Opcode opcode, Expression* lhs, Expression* rhs)
 
 bool EqTestOp::compare(const Value& lhs, const Value& rhs) const
 {
-    if (lhs.isNodeVector()) {
-        const NodeVector& lhsVector = lhs.toNodeVector();
-        if (rhs.isNodeVector()) {
+    if (lhs.isNodeSet()) {
+        const NodeSet& lhsSet = lhs.toNodeSet();
+        if (rhs.isNodeSet()) {
             // If both objects to be compared are node-sets, then the comparison will be true if and only if
             // there is a node in the first node-set and a node in the second node-set such that the result of
             // performing the comparison on the string-values of the two nodes is true.
-            const NodeVector& rhsVector = rhs.toNodeVector();
-            for (unsigned lindex = 0; lindex < lhsVector.size(); ++lindex)
-                for (unsigned rindex = 0; rindex < rhsVector.size(); ++rindex)
-                    if (compare(stringValue(lhsVector[lindex].get()), stringValue(rhsVector[rindex].get())))
+            const NodeSet& rhsSet = rhs.toNodeSet();
+            for (unsigned lindex = 0; lindex < lhsSet.size(); ++lindex)
+                for (unsigned rindex = 0; rindex < rhsSet.size(); ++rindex)
+                    if (compare(stringValue(lhsSet[lindex]), stringValue(rhsSet[rindex])))
                         return true;
             return false;
         }
@@ -125,8 +127,8 @@ bool EqTestOp::compare(const Value& lhs, const Value& rhs) const
             // If one object to be compared is a node-set and the other is a number, then the comparison will be true
             // if and only if there is a node in the node-set such that the result of performing the comparison on the number
             // to be compared and on the result of converting the string-value of that node to a number using the number function is true.
-            for (unsigned lindex = 0; lindex < lhsVector.size(); ++lindex)
-                if (compare(Value(stringValue(lhsVector[lindex].get())).toNumber(), rhs))
+            for (unsigned lindex = 0; lindex < lhsSet.size(); ++lindex)
+                if (compare(Value(stringValue(lhsSet[lindex])).toNumber(), rhs))
                     return true;
             return false;
         }
@@ -134,8 +136,8 @@ bool EqTestOp::compare(const Value& lhs, const Value& rhs) const
             // If one object to be compared is a node-set and the other is a string, then the comparison will be true
             // if and only if there is a node in the node-set such that the result of performing the comparison on
             // the string-value of the node and the other string is true.
-            for (unsigned lindex = 0; lindex < lhsVector.size(); ++lindex)
-                if (compare(stringValue(lhsVector[lindex].get()), rhs))
+            for (unsigned lindex = 0; lindex < lhsSet.size(); ++lindex)
+                if (compare(stringValue(lhsSet[lindex]), rhs))
                     return true;
             return false;
         }
@@ -147,17 +149,17 @@ bool EqTestOp::compare(const Value& lhs, const Value& rhs) const
         }
         ASSERT(0);
     }
-    if (rhs.isNodeVector()) {
-        const NodeVector& rhsVector = rhs.toNodeVector();
+    if (rhs.isNodeSet()) {
+        const NodeSet& rhsSet = rhs.toNodeSet();
         if (lhs.isNumber()) {
-            for (unsigned rindex = 0; rindex < rhsVector.size(); ++rindex)
-                if (compare(lhs, Value(stringValue(rhsVector[rindex].get())).toNumber()))
+            for (unsigned rindex = 0; rindex < rhsSet.size(); ++rindex)
+                if (compare(lhs, Value(stringValue(rhsSet[rindex])).toNumber()))
                     return true;
             return false;
         }
         if (lhs.isString()) {
-            for (unsigned rindex = 0; rindex < rhsVector.size(); ++rindex)
-                if (compare(lhs, stringValue(rhsVector[rindex].get())))
+            for (unsigned rindex = 0; rindex < rhsSet.size(); ++rindex)
+                if (compare(lhs, stringValue(rhsSet[rindex])))
                     return true;
             return false;
         }
@@ -166,7 +168,7 @@ bool EqTestOp::compare(const Value& lhs, const Value& rhs) const
         ASSERT(0);
     }
     
-    // Neither side is a NodeVector.
+    // Neither side is a NodeSet.
     switch (m_opcode) {
         case OP_EQ:
         case OP_NE:
@@ -232,26 +234,27 @@ Value LogicalOp::evaluate() const
 
 Value Union::evaluate() const
 {
-    // FIXME: This algorithm doesn't return nodes in document order, as it should.
     Value lhs = subExpr(0)->evaluate();
     Value rhs = subExpr(1)->evaluate();
-    if (!lhs.isNodeVector() || !rhs.isNodeVector())
-        return NodeVector();
+    if (!lhs.isNodeSet() || !rhs.isNodeSet())
+        return NodeSet();
     
-    NodeVector lhsNodes = lhs.toNodeVector();
-    NodeVector rhsNodes = rhs.toNodeVector();
-    NodeVector result = lhsNodes;
+    NodeSet result = lhs.toNodeSet();
+    const NodeSet& rhsNodes = rhs.toNodeSet();
     
     HashSet<Node*> nodes;
     for (size_t i = 0; i < result.size(); ++i)
-        nodes.add(result[i].get());
+        nodes.add(result[i]);
     
     for (size_t i = 0; i < rhsNodes.size(); ++i) {
-        Node* node = rhsNodes[i].get();
+        Node* node = rhsNodes[i];
         if (nodes.add(node).second)
             result.append(node);
     }
-    
+
+    // It is also possible to use merge sort to avoid making the result unsorted;
+    // but this would waste the time in cases when order is not important.
+    result.markSorted(false);
     return result;
 }
 

@@ -1,3 +1,103 @@
+2007-03-20  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12497
+        Implement XPath result ordering.
+
+        XPath::NodeVector typedef is replaced with a real XPath::NodeSet class that knows how 
+        to sort itself, and can remember whether it has been already sorted.
+
+        * CMakeLists.txt:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        Added XPathNodeSet files.
+
+        * xml/XPathExpression.cpp: Fixed includes.
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunId::evaluate): Mark the resulting node-set as unsorted.
+        (WebCore::XPath::FunLocalName::evaluate): Replacing NodeVector with NodeSet.
+        (WebCore::XPath::FunNamespaceURI::evaluate): Ditto.
+        (WebCore::XPath::FunName::evaluate): Ditto.
+        (WebCore::XPath::FunCount::evaluate): Ditto.
+        (WebCore::XPath::FunSum::evaluate): Ditto.
+
+        * xml/XPathNodeSet.cpp: Added.
+        (WebCore::XPath::parentWithDepth):
+        (WebCore::XPath::sortBlock):
+        (WebCore::XPath::NodeSet::sort): Sort the node-set in document order.
+        (WebCore::XPath::NodeSet::reverse): Reverse the order (useful for making axes such as 
+        parent or ancestor sorted).
+        (WebCore::XPath::NodeSet::firstNode): Returns the first node in document order; currently
+        implemented via fully sorting the node-set, but this can obviously be optimized.
+        (WebCore::XPath::NodeSet::anyNode): Added for symmetry with firstNode().
+        
+        * xml/XPathNodeSet.h: Added.
+        (WebCore::XPath::NodeSet::NodeSet):
+        (WebCore::XPath::NodeSet::operator=):
+        (WebCore::XPath::NodeSet::size):
+        (WebCore::XPath::NodeSet::isEmpty):
+        (WebCore::XPath::NodeSet::operator[]):
+        (WebCore::XPath::NodeSet::reserveCapacity):
+        (WebCore::XPath::NodeSet::clear):
+        (WebCore::XPath::NodeSet::swap):
+        (WebCore::XPath::NodeSet::append):
+        (WebCore::XPath::NodeSet::markSorted):
+        (WebCore::XPath::NodeSet::isSorted):
+        Most of these methods just call Vector counterparts. 
+
+        * xml/XPathParser.cpp: Updated the copyright notice.
+
+        * xml/XPathPath.cpp:
+        (WebCore::XPath::Filter::evaluate): Replacing NodeVector with NodeSet.
+        (WebCore::XPath::Path::evaluate): Ditto.
+        (WebCore::XPath::LocationPath::evaluate): Replacing NodeVector with NodeSet. This function
+        always marks the result as unsorted, because it is hard to tell whether a step breaks node order.
+        Identifying and implementing special cases when it is not necessary to do so is an important
+        future optimization.
+
+        * xml/XPathPath.h: Replacing NodeVector with NodeSet.
+        * xml/XPathPredicate.cpp:
+        (WebCore::XPath::EqTestOp::compare): Replacing NodeVector with NodeSet.
+        (WebCore::XPath::Union::evaluate): Replacing NodeVector with NodeSet. Currently, Union just
+        marks the result as unordered; we can consider using merge sort to avoid this.
+
+        * xml/XPathResult.cpp:
+        (WebCore::XPathResult::XPathResult): Replacing NodeVector with NodeSet.
+        (WebCore::XPathResult::singleNodeValue): Ditto.
+        (WebCore::XPathResult::snapshotLength): Ditto.
+        (WebCore::XPathResult::iterateNext): Ditto.
+        (WebCore::XPathResult::snapshotItem): Ditto.
+        (WebCore::XPathResult::convertTo): Ditto. Sort the result when requested to.
+
+        * xml/XPathResult.h: Replacing NodeVector with NodeSet.
+
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::evaluate): If the input is not sorted, mark the output as such, too.
+        (WebCore::XPath::Step::nodesInAxis): Fixed a number of bugs when enumerating with an
+        attribute context node.
+        (WebCore::XPath::Step::nodeTestMatches): Replacing NodeVector with NodeSet.
+        * xml/XPathStep.h: Ditto.
+
+        * xml/XPathUtil.cpp:
+        (WebCore::XPath::isValidContextNode): XPath data model doesn't put attribute data into child
+        nodes, so passing such node as a context could cause problems.
+
+        * xml/XPathUtil.h: Removed NodeVector typedef.
+
+        * xml/XPathValue.cpp:
+        (WebCore::XPath::Value::Value):
+        (WebCore::XPath::Value::toNodeSet):
+        (WebCore::XPath::Value::toBoolean):
+        (WebCore::XPath::Value::toNumber):
+        (WebCore::XPath::Value::toString):
+        * xml/XPathValue.h:
+        (WebCore::XPath::Value::):
+        (WebCore::XPath::Value::isNodeSet):
+        Replacing NodeVector with NodeSet.
+
 2007-03-21  Mark Rowe  <mrowe@apple.com>
 
         Build fix.

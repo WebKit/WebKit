@@ -30,9 +30,9 @@
     test("descendant::*", elem);
     test("descendant::node()", elem);
     test("descendant::node()[2]", elem);
-    test("ancestor-or-self::node()", bText); // the order of result nodes is incorrect in this test
+    test("ancestor-or-self::node()", bText);
     test("ancestor-or-self::*", bText);
-    test("ancestor-or-self::node()", aText); // the order of result nodes is incorrect in this test
+    test("ancestor-or-self::node()", aText);
     test("ancestor-or-self::*", aText);
     test("following::node()", elem);
     test("following::node()", aText);
@@ -44,10 +44,10 @@
     test("following-sibling::node()", bText);
     test("preceding::node()", bText);
     test("preceding-sibling::node()", bText);
-    test("preceding::node()", cText); // the order of result nodes is incorrect in this test
-    test("preceding::text()", cText); // the order of result nodes is incorrect in this test
-    test("preceding-sibling::node()", cText); // the order of result nodes is incorrect in this test
-    test("preceding-sibling::text()", cText); // the order of result nodes is incorrect in this test
+    test("preceding::node()", cText);
+    test("preceding::text()", cText);
+    test("preceding-sibling::node()", cText);
+    test("preceding-sibling::text()", cText);
     test("self::node()", bText);
 
     var successfullyParsed = true;

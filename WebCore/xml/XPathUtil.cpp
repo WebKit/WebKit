@@ -74,7 +74,8 @@ bool isValidContextNode(Node* node)
            node->nodeType() == Node::PROCESSING_INSTRUCTION_NODE ||
            node->nodeType() == Node::COMMENT_NODE ||
            node->nodeType() == Node::DOCUMENT_NODE ||
-           node->nodeType() == Node::XPATH_NAMESPACE_NODE);
+           node->nodeType() == Node::XPATH_NAMESPACE_NODE) &&
+           !(node->nodeType() == Node::TEXT_NODE && node->parentNode() && node->parentNode()->isAttributeNode());
 }
 
 }
