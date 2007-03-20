@@ -59,6 +59,7 @@ public:
     virtual bool isPointInScrollbar(HitTestResult&, int x, int y, int tx, int ty);
 
     virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1.0f);
+    virtual bool isScrollable() const;
 
     virtual void calcMinMaxWidth();
     virtual short baselinePosition(bool firstLine, bool isRootLineBox) const;

@@ -1033,4 +1033,11 @@ void RenderTextControl::startSearchEventTimer()
     m_searchEventTimer.startOneShot(max(0.2, 0.6 - 0.1 * length));
 }
 
+bool RenderTextControl::isScrollable() const
+{
+    if (m_innerText && m_innerText->renderer()->isScrollable())
+        return true;
+    return RenderObject::isScrollable();
+}
+
 } // namespace WebCore

@@ -1167,6 +1167,13 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
     if (!node->renderer())
         return false;
 
+#if PLATFORM(MAC)
+    if (!e.deltaX() && !e.deltaY() && node->renderer()->isScrollable())
+        // smooth scroll events on mac may have (0,0) deltas
+        // they need to be eaten until we start supporting them
+        e.accept();
+#endif
+    
     // Just break up into two scrolls if we need to.  Diagonal movement on 
     // a MacBook pro is an example of a 2-dimensional mouse wheel event (where both deltaX and deltaY can be set).
     if (e.deltaX() && node->renderer()->scroll(e.deltaX() < 0 ? ScrollRight : ScrollLeft, ScrollByWheel,

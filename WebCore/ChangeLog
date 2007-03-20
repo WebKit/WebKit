@@ -1,3 +1,26 @@
+2007-03-20  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=10747
+        REGRESSION: Using two fingers on a trackpad to scroll inside a text area makes the whole page move
+        <rdar://problem/5045710>
+        
+        Eat smooth scroll events in WebCore if pointer is over scrollable area. Not
+        really a good fix, smooth scrolling should be supported properly. It should do for now.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::isScrollable):
+        * rendering/RenderListBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::isScrollable):
+        * rendering/RenderObject.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::isScrollable):
+        * rendering/RenderTextControl.h:
+
 2007-03-20  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff.

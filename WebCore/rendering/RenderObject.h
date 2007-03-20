@@ -640,6 +640,7 @@ public:
     virtual bool shouldAutoscroll() const;
     virtual void autoscroll();
     virtual void stopAutoscroll() { }
+    virtual bool isScrollable() const;
 
     // The following seven functions are used to implement collapsing margins.
     // All objects know their maximal positive and negative margins.  The

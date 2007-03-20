@@ -546,4 +546,11 @@ IntRect RenderListBox::windowClipRect() const
     return frameView->windowClipRectForLayer(enclosingLayer(), true);
 }
 
+bool RenderListBox::isScrollable() const
+{
+    if (numVisibleItems() < numItems())
+        return true;
+    return RenderObject::isScrollable();
+}
+
 } // namespace WebCore
