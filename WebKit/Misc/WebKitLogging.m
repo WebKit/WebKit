@@ -99,6 +99,5 @@ void WebKitInitializeLoggingChannelsIfNecessary()
 
 BOOL WebKitRunningOnMainThread()
 {
-    return pthread_main_np() == 1;
+    return pthread_main_np() != 0;
 }
-
