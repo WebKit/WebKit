@@ -525,7 +525,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
 - (IMP)methodForSelector:(SEL)selector
 {
-    if (sel_isEqual(selector, @selector(count:)) && [self _shouldRespondToCount])
+    if (selector == @selector(count:) && [self _shouldRespondToCount])
         selector = @selector(_count:);
 
     return [super methodForSelector:selector];
@@ -533,7 +533,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
 - (BOOL)respondsToSelector:(SEL)selector
 {
-    if (sel_isEqual(selector, @selector(count:)) && [self _shouldRespondToCount])
+    if (selector == @selector(count:) && [self _shouldRespondToCount])
         selector = @selector(_count:);
 
     return [super respondsToSelector:selector];
