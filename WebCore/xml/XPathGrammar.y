@@ -365,6 +365,8 @@ FunctionCall:
     FUNCTIONNAME '(' ')'
     {
         $$ = createFunction(*$1);
+        if (!$$)
+            YYABORT;
         PARSER->deleteString($1);
         PARSER->registerParseNode($$);
     }
@@ -372,6 +374,8 @@ FunctionCall:
     FUNCTIONNAME '(' ArgumentList ')'
     {
         $$ = createFunction(*$1, *$3);
+        if (!$$)
+            YYABORT;
         PARSER->deleteString($1);
         PARSER->deleteExpressionVector($3);
         PARSER->registerParseNode($$);

@@ -1,3 +1,13 @@
+2007-03-19  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13107
+        XPath should raise an exception when trying to parse an unknown function
+
+        * fast/xpath/invalid-functions-expected.txt: Added.
+        * fast/xpath/invalid-functions.html: Added.
+
 2007-03-19  Adele Peterson  <adele@apple.com>
 
         Reviewed by Beth.

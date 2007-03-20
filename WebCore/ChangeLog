@@ -1,3 +1,16 @@
+2007-03-19  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13107
+        XPath should raise an exception when trying to parse an unknown function
+
+        Test: fast/xpath/invalid-functions.html
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::createFunction): Return 0 if the function couldn't be created.
+        * xml/XPathGrammar.y: Handle nulls returned from createFunction().
+
 2007-03-19  Adele Peterson  <adele@apple.com>
 
         Reviewed by Beth.
