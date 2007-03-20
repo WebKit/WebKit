@@ -79,15 +79,10 @@ int ScrollView::visibleHeight() const
 
 FloatRect ScrollView::visibleContentRect() const
 {
-    NSScrollView *view = (NSScrollView *)getView();
-    
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    if ([view isKindOfClass:[NSScrollView class]])
-        return [view documentVisibleRect];
-    else
-        return [view visibleRect];
+    if (NSView *docView = getDocumentView())
+        return [docView visibleRect];
     END_BLOCK_OBJC_EXCEPTIONS;
-
     return FloatRect();
 }
 
@@ -339,15 +334,14 @@ void ScrollView::updateContents(const IntRect &rect, bool now)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSView *view = getView();
+
     if ([view isKindOfClass:[NSScrollView class]])
         view = getDocumentView();
-
-    NSRect visibleRect = visibleContentRect();
 
     // Checking for rect visibility is an important optimization for the case of
     // Select All of a large document. AppKit does not do this check, and so ends
     // up building a large complicated NSRegion if we don't perform the check.
-    NSRect dirtyRect = NSIntersectionRect(rect, visibleRect);
+    NSRect dirtyRect = NSIntersectionRect(rect, [view visibleRect]);
     if (!NSIsEmptyRect(dirtyRect)) {
         [view setNeedsDisplayInRect:dirtyRect];
         if (now) {
