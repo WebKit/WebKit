@@ -894,7 +894,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
 
     PlatformScrollbar* scrollbar = 0;
     if (m_frame->view())
-        m_frame->view()->scrollbarUnderMouse(mouseEvent);
+        scrollbar = m_frame->view()->scrollbarUnderMouse(mouseEvent);
 
     if (!scrollbar)
         scrollbar = mev.scrollbar();

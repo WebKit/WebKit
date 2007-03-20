@@ -1,3 +1,8 @@
+2007-03-20  Darin Adler  <darin@apple.com>
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::handleMouseMoveEvent):
+        Fix obvious typo in the change from last night -- forgot to assign to the variable.
+
 2007-03-20  Dave Hyatt  <hyatt@apple.com>
 
         Refactor fonts a bit for portability.
