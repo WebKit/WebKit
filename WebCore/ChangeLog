@@ -1,3 +1,27 @@
+2007-03-20  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff.
+
+        Covered by existing test case.
+
+        Fix for <rdar://problem/5072678> Crash in 
+        RenderLayer::scrollRectToVisible with MallocScribble enabled
+
+        This removes some code that was added with http://bugs.webkit.org/
+        show_bug.cgi?id=8360. This code was not needed to fix that bug, but 
+        the idea behind it was that there are times when it is safe for 
+        scheduleEvent() to propagate the event immediately. The 
+        MallocScribble crash revealed that this assumption was a bit too 
+        broad; the cause of the crash was that we were propagating events 
+        immediately when it was not safe. Mitz and I discussed this online 
+        and we agree that the safest solution is to revert to the old 
+        behavior here, and always delay the propagation of the event. 
+
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::FrameViewPrivate):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::scheduleEvent):
+
 2007-03-20  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John Sullivan
