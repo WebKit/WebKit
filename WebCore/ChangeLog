@@ -1,3 +1,23 @@
+2007-03-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John
+
+        <rdar://5071341> - Crash in IconLoader::finishLoading()
+        
+        Though the reproducibility of the crash is still elusive, there's been a crasher likely uncovered 
+        Hyatt's recent caching changings to the IconLoader.  This crash tends to hit on sites without favicons,
+        that serve up complex 404 pages, often when the load is cancelled or redirected.  Occasionally, it *seems*
+        the IconLoader is getting failed/cancelled twice.
+        
+        This patch adds some assertions and a "fail gracefully in a release build" check that will have to
+        serve us until we know more about the cause.
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::didFail): Add an assertion to catch this case
+        (WebCore::IconLoader::finishLoading): Add an assertion to catch the case, and fail
+          gracefully in debug builds.  Also add an efficiency check to not commit to the DB if there is no
+          IconURL
+
 2007-03-20  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.

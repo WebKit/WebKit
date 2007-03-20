@@ -110,6 +110,7 @@ void IconLoader::didReceiveData(SubresourceLoader* loader, const char*, int size
 void IconLoader::didFail(SubresourceLoader* resourceLoader, const ResourceError&)
 {
     LOG(IconDatabase, "IconLoader::didFail() - Loader %p", resourceLoader);
+    ASSERT(resourceLoader == m_resourceLoader);
     ASSERT(m_loadIsInProgress);
     finishLoading(resourceLoader->handle()->url());
 }
@@ -127,9 +128,17 @@ void IconLoader::didFinishLoading(SubresourceLoader* resourceLoader)
 
 void IconLoader::finishLoading(const KURL& iconURL)
 {
-    IconDatabase::sharedIconDatabase()->setIconDataForIconURL(m_resourceLoader->resourceData(), iconURL.url());
-    m_frame->loader()->commitIconURLToIconDatabase(iconURL);
-    m_frame->loader()->client()->dispatchDidReceiveIcon();
+    // <rdar://5071341> - Crash in IconLoader::finishLoading()
+    // In certain circumstance where there is no favicon and the site's 404 page is large and complex, the IconLoader can get 
+    // cancelled/failed twice.  Reproducibility of these phenomenom is unknown, so we'd like to catch this case in debug builds,
+    // but must handle it gracefully in release
+    ASSERT(m_resourceLoader);
+    if (!iconURL.isEmpty() && m_resourceLoader) {
+        IconDatabase::sharedIconDatabase()->setIconDataForIconURL(m_resourceLoader->resourceData(), iconURL.url());
+        m_frame->loader()->commitIconURLToIconDatabase(iconURL);
+        m_frame->loader()->client()->dispatchDidReceiveIcon();
+    }
+
     clearLoadingState();
 }
 
