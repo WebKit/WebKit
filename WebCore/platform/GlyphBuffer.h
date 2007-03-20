@@ -29,13 +29,12 @@
 #ifndef GlyphBuffer_h
 #define GlyphBuffer_h
 
+#include "FloatSize.h"
+
 #if PLATFORM(CG)
 #include <ApplicationServices/ApplicationServices.h>
 #elif PLATFORM(CAIRO)
 #include <cairo.h>
-#include "FloatSize.h"
-#elif PLATFORM(QT)
-#include "FloatSize.h"
 #endif
 
 #include <wtf/Vector.h>
@@ -110,22 +109,27 @@ public:
 
     void add(Glyph glyph, const FontData* font, float width)
     {
+        add(glyph, font, FloatSize(width, 0));
+    }
+
+    void add(Glyph glyph, const FontData* font, FloatSize advanceSize)
+    {
         m_fontData.append(font);
 #if PLATFORM(CG)
         m_glyphs.append(glyph);
         CGSize advance;
-        advance.width = width;
-        advance.height = 0;
+        advance.width = advanceSize.width();
+        advance.height = advanceSize.height();
         m_advances.append(advance);
 #elif PLATFORM(CAIRO)
         cairo_glyph_t cairoGlyph;
         cairoGlyph.index = glyph;
         cairoGlyph.y = 0;
         m_glyphs.append(cairoGlyph);
-        m_advances.append(FloatSize(width, 0));
+        m_advances.append(advanceSize);
 #elif PLATFORM(QT)
         m_glyphs.append(glyph);
-        m_advances.append(FloatSize(width, 0));
+        m_advances.append(advanceSize);
 #endif
     }
     

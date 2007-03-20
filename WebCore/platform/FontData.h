@@ -34,6 +34,10 @@
 typedef struct OpaqueATSUStyle* ATSUStyle;
 #endif
 
+#if PLATFORM(WIN)
+#include <usp10.h>
+#endif
+
 namespace WebCore {
 
 class FontDescription;
@@ -80,7 +84,10 @@ public:
 #endif
 
 #if PLATFORM(WIN)
+    bool isSystemFont() const { return m_isSystemFont; }
     void setIsMLangFont() { m_isMLangFont = true; }
+    SCRIPT_FONTPROPERTIES* scriptFontProperties() const;
+    SCRIPT_CACHE* scriptCache() const { return &m_scriptCache; }
 #endif
 
 #if PLATFORM(GDK)
@@ -127,6 +134,8 @@ public:
 #if PLATFORM(WIN)
     bool m_isMLangFont;
     bool m_isSystemFont;
+    mutable SCRIPT_CACHE m_scriptCache;
+    mutable SCRIPT_FONTPROPERTIES* m_scriptFontProperties;
 #endif
 };
 

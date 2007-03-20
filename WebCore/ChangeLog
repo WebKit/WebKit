@@ -1,3 +1,20 @@
+2007-03-20  Dave Hyatt  <hyatt@apple.com>
+
+        Refactor fonts a bit for portability.
+       
+        Reviewed by aroben
+
+        * platform/Font.cpp:
+        (WebCore::Font::drawSimpleText):
+        (WebCore::Font::drawGlyphBuffer):
+        (WebCore::Font::floatWidthForSimpleText):
+        * platform/Font.h:
+        * platform/FontData.h:
+        (WebCore::FontData::isSystemFont):
+        (WebCore::FontData::scriptCache):
+        * platform/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::add):
+
 2007-03-20  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam.

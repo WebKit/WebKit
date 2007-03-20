@@ -159,6 +159,7 @@ private:
     bool canUseGlyphCache(const TextRun&) const;
     void drawSimpleText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const;
     void drawGlyphs(GraphicsContext*, const FontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
+    void drawGlyphBuffer(GraphicsContext*, const GlyphBuffer&, const TextRun&, const TextStyle&, const FloatPoint&) const;
     void drawComplexText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const;
     float floatWidthForSimpleText(const TextRun&, const TextStyle&, float* startX, GlyphBuffer*) const;
     float floatWidthForComplexText(const TextRun&, const TextStyle&) const;
