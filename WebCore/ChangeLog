@@ -1,3 +1,10 @@
+2007-03-19  Adam Roben  <aroben@apple.com>
+
+        Rubberstamped by Oliver.
+
+        * bridge/JavaScriptStatistics.cpp: Added missing header for
+        correctness.
+
 2007-03-19  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Maciej.

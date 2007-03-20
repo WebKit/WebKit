@@ -30,6 +30,7 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/collector.h>
 #include <JavaScriptCore/interpreter.h>
+#include <pthread.h>
 
 namespace WebCore {
 
