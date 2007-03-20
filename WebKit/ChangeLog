@@ -1,3 +1,11 @@
+2007-03-19  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Maciej.
+
+        Really set Xcode editor to use 4 space indentation (http://webkit.org/coding/coding-style.html)
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2007-03-19  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.

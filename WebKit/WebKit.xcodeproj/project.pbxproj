@@ -564,7 +564,7 @@
 		F5AFB45F02B94DC8018635CA /* WebFrameBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFrameBridge.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5B67130023EDF8901C1A525 /* url_icon.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = url_icon.tiff; path = Resources/url_icon.tiff; sourceTree = "<group>"; };
 		F5B92B820223191D01C1A525 /* WebHistoryPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5C283730284676D018635CA /* WebKitPrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebKitPrefix.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
+		F5C283730284676D018635CA /* WebKitPrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebKitPrefix.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
 		F5C2869302846DCD018635CA /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
 		F5C2869402846DCD018635CA /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		F5C2869502846DCD018635CA /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -579,7 +579,7 @@
 		F5F717230288493C018635CA /* npapi.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = npapi.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5F7174C02885C5B018635CA /* WebViewFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebViewFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5F7174D02885C5B018635CA /* WebViewFactory.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewFactory.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5F732D202FF4D4F01A80180 /* WebKit.exp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.exports; path = WebKit.exp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
+		F5F732D202FF4D4F01A80180 /* WebKit.exp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.exports; path = WebKit.exp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
 		F5F81C3902B67C26018635CA /* WebRenderNode.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = WebRenderNode.h; path = ../WebView/WebRenderNode.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5F81C3A02B67C26018635CA /* WebRenderNode.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebRenderNode.mm; path = ../WebView/WebRenderNode.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F738C9E903FAD3DF0321FBE0 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -630,7 +630,7 @@
 			name = Products;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
@@ -675,7 +675,7 @@
 			name = "Frameworks and Libraries";
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		089C1665FE841158C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
@@ -693,7 +693,7 @@
 			name = Resources;
 			sourceTree = SOURCE_ROOT;
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		1C68F63F095B5F9C00C2984E /* WebInspector */ = {
 			isa = PBXGroup;
@@ -714,7 +714,7 @@
 			path = WebInspector;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		1C904FCE0BA9DCF20081E9D0 /* Configurations */ = {
 			isa = PBXGroup;
@@ -727,7 +727,7 @@
 			path = Configurations;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		254DC334016E1D3F0ECA149E /* Misc */ = {
 			isa = PBXGroup;
@@ -802,7 +802,7 @@
 			path = Misc;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		25A8176801B5474B0ECA149E /* History */ = {
 			isa = PBXGroup;
@@ -824,7 +824,7 @@
 			path = History;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		51E94C0706C02CA300A9B09E /* PDF */ = {
 			isa = PBXGroup;
@@ -862,7 +862,7 @@
 			path = DefaultDelegates;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		848DFF410365F6FB00CA2ACA /* Netscape Plug-ins */ = {
 			isa = PBXGroup;
@@ -972,7 +972,7 @@
 			path = WebView;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		F52CA6BD02DF9D0F018635CA /* HTML */ = {
 			isa = PBXGroup;
@@ -1001,7 +1001,7 @@
 			path = Misc;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		F57D194A034E732C01A80180 /* DOM */ = {
 			isa = PBXGroup;
@@ -1013,7 +1013,7 @@
 			path = DOM;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		F5B36B400281DE87018635CB /* WebCoreSupport */ = {
 			isa = PBXGroup;
@@ -1046,7 +1046,7 @@
 			path = WebCoreSupport;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		F5EBC45202134BB601CA1520 /* Plugins */ = {
 			isa = PBXGroup;
@@ -1065,7 +1065,7 @@
 			path = Plugins;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		F7EBEE5903F9DB2203CA0DE6 /* Carbon */ = {
 			isa = PBXGroup;
@@ -1077,7 +1077,7 @@
 			path = Carbon;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		F7EBEECF03F9DBBD03CA0DE6 /* AppKit Overrides */ = {
 			isa = PBXGroup;
@@ -1124,7 +1124,7 @@
 			path = Panels;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 /* End PBXGroup section */
 

@@ -456,7 +456,7 @@
 		14ABB454099C2A0F00E2A24F /* JSType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSType.h; sourceTree = "<group>"; };
 		14ABDF5D0A437FEF00ECCA01 /* JSCallbackObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackObject.h; sourceTree = "<group>"; };
 		14ABDF5E0A437FEF00ECCA01 /* JSCallbackObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCallbackObject.cpp; sourceTree = "<group>"; };
-		14B8ECA60A5653980062BE54 /* JavaScriptCore.exp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.exports; path = JavaScriptCore.exp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
+		14B8ECA60A5653980062BE54 /* JavaScriptCore.exp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.exports; path = JavaScriptCore.exp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
 		14BD534A0A3E0AEA00BAF59C /* SavedBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SavedBuiltins.h; sourceTree = "<group>"; };
 		14BD53F30A3E12D800BAF59C /* ExecState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecState.h; sourceTree = "<group>"; };
 		14BD53F40A3E12D800BAF59C /* ExecState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecState.cpp; sourceTree = "<group>"; };
@@ -584,7 +584,7 @@
 		931C6CEF038EE8DE008635CE /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; tabWidth = 8; };
 		931C6CF0038EE8DE008635CE /* list.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = list.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		9322A00306C341D3009067BB /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
-		932F5BD80822A1C700736975 /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; tabWidth = 8; };
+		932F5BD80822A1C700736975 /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		932F5BD90822A1C700736975 /* JavaScriptCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		932F5BE10822A1C700736975 /* testkjs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testkjs; sourceTree = BUILT_PRODUCTS_DIR; };
 		933A3499038AE7C6008635CE /* grammar.y */ = {isa = PBXFileReference; explicitFileType = sourcecode.yacc; fileEncoding = 4; indentWidth = 4; path = grammar.y; sourceTree = "<group>"; tabWidth = 8; };
@@ -733,7 +733,7 @@
 			name = Products;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		0867D691FE84028FC02AAC07 /* JavaScriptCore */ = {
 			isa = PBXGroup;
@@ -768,7 +768,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		141211000A48772600480255 /* tests */ = {
 			isa = PBXGroup;
@@ -782,7 +782,7 @@
 			path = API;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		1432EBD70A34CAD400717B9F /* API */ = {
 			isa = PBXGroup;
@@ -813,7 +813,7 @@
 			path = API;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		144005170A531CB50005F061 /* minidom */ = {
 			isa = PBXGroup;
@@ -843,7 +843,7 @@
 			path = Configurations;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		51856D950562EE9C008B9D83 /* bindings */ = {
 			isa = PBXGroup;
@@ -898,7 +898,7 @@
 			name = bindings;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		650FDF8D09D0FCA700769E54 /* Derived Sources */ = {
 			isa = PBXGroup;
@@ -918,7 +918,7 @@
 			path = DerivedSources/JavaScriptCore;
 			sourceTree = BUILT_PRODUCTS_DIR;
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		65162EF108E6A21C007556CD /* wtf */ = {
 			isa = PBXGroup;
@@ -961,7 +961,7 @@
 			path = wtf;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		65417200039E01BA0058BFEB /* kjs */ = {
 			isa = PBXGroup;
@@ -1059,7 +1059,7 @@
 			path = kjs;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		65417203039E01F90058BFEB /* pcre */ = {
 			isa = PBXGroup;
@@ -1085,7 +1085,7 @@
 			name = pcre;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		932FC3C10824BB61005B3C75 /* Intermediates */ = {
 			isa = PBXGroup;
@@ -1095,7 +1095,7 @@
 			name = Intermediates;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		932FC3C20824BB70005B3C75 /* Resources */ = {
 			isa = PBXGroup;
@@ -1105,7 +1105,7 @@
 			name = Resources;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 1;
+			usesTabs = 0;
 		};
 		E195678D09E7CF1200B89D13 /* unicode */ = {
 			isa = PBXGroup;
