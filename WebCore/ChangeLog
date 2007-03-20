@@ -1,3 +1,23 @@
+2007-03-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=13129.
+        Bug 13129: Democracy Player dies in NSException from WebScriptObject on startup.
+
+        Some cross-language scripting bridges use the presence of -(int)count to determine
+        whether to treat objects as sequence-like.  All WebScriptObject's exposed this method
+        which lead to non-collection WebScriptObject's being mishandled by PyObjC.  We now
+        expose -count only when the object we wrap looks like a collection from a JavaScript
+        point of view (eg, it has a length property).
+
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject _shouldRespondToCount]):
+        (-[WebScriptObject methodForSelector:]):
+        (-[WebScriptObject respondsToSelector:]):
+        (-[WebScriptObject _count]):
+        * bindings/objc/WebScriptObjectPrivate.h:
+
 2007-03-20  Darin Adler  <darin@apple.com>
 
         * page/EventHandler.cpp: (WebCore::EventHandler::handleMouseMoveEvent):

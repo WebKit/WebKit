@@ -497,14 +497,50 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
 @interface WebScriptObject (WebKitCocoaBindings)
 
-- (unsigned)count;
+- (unsigned)_count;
 - (id)objectAtIndex:(unsigned)index;
 
 @end
 
 @implementation WebScriptObject (WebKitCocoaBindings)
 
-- (unsigned)count
+- (BOOL)_shouldRespondToCount
+{
+    if (_private->shouldRespondToCountSet)
+        return _private->shouldRespondToCount;
+
+    BOOL shouldRespondToCount = YES;
+ 
+    @try {
+        [self valueForKey:@"length"];
+    } @catch (id e) {
+        shouldRespondToCount = NO;
+    }
+
+    _private->shouldRespondToCount = shouldRespondToCount;
+    _private->shouldRespondToCountSet = YES;
+
+    return shouldRespondToCount;
+}
+
+- (IMP)methodForSelector:(SEL)selector
+{
+    if (sel_isEqual(selector, @selector(count:)) && [self _shouldRespondToCount])
+        selector = @selector(_count:);
+
+    return [super methodForSelector:selector];
+}
+
+- (BOOL)respondsToSelector:(SEL)selector
+{
+    if (sel_isEqual(selector, @selector(count:)) && [self _shouldRespondToCount])
+        selector = @selector(_count:);
+
+    return [super respondsToSelector:selector];
+}
+
+
+- (unsigned)_count
 {
     id length = [self valueForKey:@"length"];
     if ([length respondsToSelector:@selector(intValue)])
