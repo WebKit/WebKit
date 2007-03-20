@@ -59,6 +59,7 @@ class JSValue {
 
 private:
     JSValue();
+    virtual ~JSValue();
 
 public:
     // Querying the type.
@@ -195,6 +196,10 @@ inline JSValue *jsNumber(double d)
 }
 
 inline JSValue::JSValue()
+{
+}
+
+inline JSValue::~JSValue()
 {
 }
 
