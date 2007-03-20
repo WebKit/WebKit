@@ -1,3 +1,13 @@
+2007-03-19  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth.
+
+        Test for http://bugs.webkit.org/show_bug.cgi?id=13087
+        <rdar://problem/5064316> REGRESSION: Allow setting the checked attribute in js and in markup for unnamed radio buttons (dominos.com)
+
+        * fast/forms/radio_checked_name-expected.txt: Added.
+        * fast/forms/radio_checked_name.html: Added.
+
 2007-03-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

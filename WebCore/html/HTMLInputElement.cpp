@@ -584,9 +584,6 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         m_name = attr->value();
         
         if (inputType() == RADIO) {
-            // In case we parsed the checked attribute first, call setChecked if the element is checked by default.
-            if (m_useDefaultChecked)
-                setChecked(m_defaultChecked);
             // Add the button to its new group.
             if (checked())
                 document()->radioButtonChecked(this, form());
@@ -879,8 +876,7 @@ void HTMLInputElement::reset()
 
 void HTMLInputElement::setChecked(bool nowChecked, bool sendChangeEvent)
 {
-    // We mimic WinIE and don't allow unnamed radio buttons to be checked.
-    if (checked() == nowChecked || (inputType() == RADIO && name().isEmpty()))
+    if (checked() == nowChecked)
         return;
 
     if (inputType() == RADIO && nowChecked)
@@ -1059,7 +1055,8 @@ void* HTMLInputElement::preDispatchEventHandler(Event *evt)
         } else {
             // For radio buttons, store the current selected radio object.
             if (name().isEmpty() || checked())
-                return 0; // Unnamed radio buttons dont get checked. Checked buttons just stay checked.
+                return 0; // Match WinIE and don't allow unnamed radio buttons to be checked.
+                          // Checked buttons just stay checked.
                           // FIXME: Need to learn to work without a form.
 
             // We really want radio groups to end up in sane states, i.e., to have something checked.
@@ -1096,7 +1093,9 @@ void HTMLInputElement::postDispatchEventHandler(Event *evt, void* data)
                 // Restore the original selected radio button if possible.
                 // Make sure it is still a radio button and only do the restoration if it still
                 // belongs to our group.
-                if (input->form() == form() && input->inputType() == RADIO && input->name() == name()) {
+
+                // Match WinIE and don't allow unnamed radio buttons to be checked.
+                if (input->form() == form() && input->inputType() == RADIO && !name().isEmpty() && input->name() == name()) {
                     // Ok, the old radio button is still in our form and in our group and is still a 
                     // radio button, so it's safe to restore selection to it.
                     input->setChecked(true);
@@ -1252,9 +1251,9 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
                     if (elt->form() != form())
                         break;
                     if (n->hasTagName(inputTag)) {
+                        // Match WinIE and don't allow unnamed radio buttons to be checked.
                         HTMLInputElement* inputElt = static_cast<HTMLInputElement*>(n);
-                        if (inputElt->inputType() == RADIO && inputElt->name() == name() &&
-                            inputElt->isFocusable()) {
+                        if (inputElt->inputType() == RADIO && !name().isEmpty() && inputElt->name() == name() && inputElt->isFocusable()) {
                             inputElt->setChecked(true);
                             document()->setFocusedNode(inputElt);
                             inputElt->dispatchSimulatedClick(evt, false, false);

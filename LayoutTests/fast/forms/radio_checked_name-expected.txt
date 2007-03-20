@@ -1,0 +1,11 @@
+There is a WinIE quirk that does not allow a user to select radio buttons that don't have names. This tests that we only honor that quirk
+in response to mouse and keyboard events. If the checked attribute is set on the element in the markup, or in javascript, we should ignore the quirk.
+    
+Pass
+Pass
+Pass
+Pass
+Pass
+Pass
+Pass
+

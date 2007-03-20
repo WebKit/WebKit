@@ -1,3 +1,23 @@
+2007-03-19  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth.
+
+        Fix for http://bugs.webkit.org/show_bug.cgi?id=13087
+        <rdar://problem/5064316> REGRESSION: Allow setting the checked attribute in js and in markup for unnamed radio buttons (dominos.com)
+
+        Test: fast/forms/radio_checked_name.html
+
+        We were matching a WinIE quirk that does not allow a user to check and uncheck an unnamed radio button.  But they still
+        allow the checked attribute to be set in html, and changed in javascript.  So this change matches that behavior.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute): We no longer need a special call to setChecked when parsing the name
+         attribute, since we setChecked will now work with unnamed radio buttons.
+        (WebCore::HTMLInputElement::preDispatchEventHandler): Added comment.
+        (WebCore::HTMLInputElement::setChecked): Don't check for the unnamed radio button case here.
+        (WebCore::HTMLInputElement::postDispatchEventHandler): Don't call setChecked for unnamed radio buttons.
+        (WebCore::HTMLInputElement::defaultEventHandler): ditto.
+
 2007-03-19  Adam Roben  <aroben@apple.com>
 
         Rubberstamped by Oliver.
