@@ -1,3 +1,20 @@
+2007-03-19  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/5067983>
+        iSale: Crash occurs at WebFrameLoaderClient::dispatchDecidePolicyForMIMEType() when attempting to load a HTML template
+        
+        Restore old behavior (broke in r14533) where the resource load and download delegates are retained for as long as the 
+        data source is loading.
+        
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createDocumentLoader):
+        * WebView/WebDocumentLoaderMac.h:
+        * WebView/WebDocumentLoaderMac.mm:
+        (WebDocumentLoaderMac::setDataSource):
+        (WebDocumentLoaderMac::decreaseLoadCount):
+
 2007-03-19  Geoffrey Garen  <ggaren@apple.com>
 
         Speculative fix for why ASSERT_MAIN_THREAD didn't work for me. (The

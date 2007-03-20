@@ -32,6 +32,8 @@
 #import <WebCore/SubstituteData.h>
 #import <WebCore/FoundationExtras.h>
 
+#import "WebView.h"
+
 using namespace WebCore;
 
 WebDocumentLoaderMac::WebDocumentLoaderMac(const ResourceRequest& request, const SubstituteData& substituteData)
@@ -41,11 +43,14 @@ WebDocumentLoaderMac::WebDocumentLoaderMac(const ResourceRequest& request, const
 {
 }
 
-void WebDocumentLoaderMac::setDataSource(WebDataSource *dataSource)
+void WebDocumentLoaderMac::setDataSource(WebDataSource *dataSource, WebView* webView)
 {
     ASSERT(!m_dataSource);
     HardRetain(dataSource);
     m_dataSource = dataSource;
+    
+    m_resourceLoadDelegate = [webView resourceLoadDelegate];
+    m_downloadDelegate = [webView downloadDelegate];
 }
 
 WebDataSource *WebDocumentLoaderMac::dataSource() const
@@ -89,6 +94,9 @@ void WebDocumentLoaderMac::decreaseLoadCount(unsigned long identifier)
     
     m_loadingResources.remove(identifier);
     
-    if (m_loadingResources.isEmpty())
+    if (m_loadingResources.isEmpty()) {
+        m_resourceLoadDelegate = 0;
+        m_downloadDelegate = 0;
         HardRelease(m_dataSource);
+    }
 }

@@ -879,7 +879,7 @@ PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const Reso
     RefPtr<WebDocumentLoaderMac> loader = new WebDocumentLoaderMac(request, substituteData);
 
     WebDataSource *dataSource = [[WebDataSource alloc] _initWithDocumentLoader:loader.get()];
-    loader->setDataSource(dataSource);
+    loader->setDataSource(dataSource, getWebView(m_webFrame.get()));
     [dataSource release];
 
     return loader.release();
