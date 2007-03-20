@@ -1,3 +1,29 @@
+2007-03-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        <rdar://problem/5071074> 
+        REGRESSION: Links are pasted as plain text at certain positions
+        
+        moveParagraphs calls createMarkup without annotation, which leaves
+        out anchor elements that aren't fully selected.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs): We don't want 
+        createMarkup to do full annotation here.  Doing so could include 
+        special ancestor blocks, which would prevent the copied content 
+        from appearing in the destination paragraph when it's re-inserted.  
+        Annotation would also inline styles from style sheets,  which is 
+        unnecessary because the content is being moved to the same 
+        document it's being moved from.
+        Added a new bool to createMarkup that when true allows markup for 
+        special ancestors as long as they are inline when annotation is off.
+        * editing/markup.cpp:
+        (WebCore::createMarkup): Don't set specialCommonAncestor if annotation
+        is off, unless it's inline and we've been told it's ok to include such
+        elements.
+        * editing/markup.h:
+
 2007-03-20  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
@@ -1074,8 +1100,8 @@
 
         * editing/ReplaceSelectionCommand.cpp:
         (WebCore::ReplaceSelectionCommand::doApply): Remove the top 
-        level style span if its unnecessary before inserting
-        into the document, its faster than doing it after.
+        level style span if it's unnecessary before inserting
+        into the document, it's faster than doing it after.
         * editing/ReplaceSelectionCommand.h: Exposed 
         ReplacementFragment::removeNodePreservingChildren so that
         the style span can be removed using non-undoable removes,

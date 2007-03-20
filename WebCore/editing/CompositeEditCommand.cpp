@@ -733,7 +733,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
 
     // FIXME: This is an inefficient way to preserve style on nodes in the paragraph to move.  It 
     // shouldn't matter though, since moved paragraphs will usually be quite small.
-    RefPtr<DocumentFragment> fragment = startOfParagraphToMove != endOfParagraphToMove ? createFragmentFromMarkup(document(), range->toHTML(), "") : 0;
+    RefPtr<DocumentFragment> fragment = startOfParagraphToMove != endOfParagraphToMove ? createFragmentFromMarkup(document(), createMarkup(range.get(), 0, DoNotAnnotateForInterchange, true), "") : 0;
     
     setEndingSelection(Selection(start, end, DOWNSTREAM));
     deleteSelection(false, false, false, false);

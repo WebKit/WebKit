@@ -1,3 +1,15 @@
+2007-03-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5071074> 
+        REGRESSION: Links are pasted as plain text at certain positions
+
+        * editing/pasteboard/5071074-2-expected.checksum: Added.
+        * editing/pasteboard/5071074-2-expected.png: Added.
+        * editing/pasteboard/5071074-2-expected.txt: Added.
+        * editing/pasteboard/5071074-2.html: Added.
+
 2007-03-20  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

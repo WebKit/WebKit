@@ -318,7 +318,7 @@ static bool needInterchangeNewlineAfter(const VisiblePosition& v)
 
 // FIXME: Shouldn't we omit style info when annotate == DoNotAnnotateForInterchange? 
 // FIXME: At least, annotation and style info should probably not be included in range.markupString()
-DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotateForInterchange annotate)
+DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotateForInterchange annotate, bool includeInlineSpecialAncestors)
 {
     if (!range || range->isDetached())
         return DeprecatedString();
@@ -430,7 +430,7 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
     // the structure and appearance of the copied markup.
     Node *specialCommonAncestor = 0;
     Node *commonAncestorBlock = commonAncestor ? enclosingBlock(commonAncestor) : 0;
-    if (commonAncestorBlock) {
+    if (annotate && commonAncestorBlock) {
         if (commonAncestorBlock->hasTagName(tbodyTag)) {
             Node* table = commonAncestorBlock->parentNode();
             while (table && !table->hasTagName(tableTag))
@@ -447,19 +447,22 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
     }
     
     if (Node *enclosingAnchor = enclosingNodeWithTag(specialCommonAncestor ? specialCommonAncestor : commonAncestor, aTag))
-        specialCommonAncestor = enclosingAnchor;
+        if (annotate || includeInlineSpecialAncestors && !isBlock(enclosingAnchor))
+            specialCommonAncestor = enclosingAnchor;
     
     Node* body = enclosingNodeWithTag(commonAncestor, bodyTag);
     // FIXME: Only include markup for a fully selected root (and ancestors of lastClosed up to that root) if
     // there are styles/attributes on those nodes that need to be included to preserve the appearance of the copied markup.
     // FIXME: Do this for all fully selected blocks, not just the body.
     Node* fullySelectedRoot = body && *Selection::selectionFromContentsOfNode(body).toRange() == *range ? body : 0;
-    if (fullySelectedRoot)
+    if (annotate && fullySelectedRoot)
         specialCommonAncestor = fullySelectedRoot;
         
-    if (annotate && specialCommonAncestor) {
+    if (specialCommonAncestor) {
         // Also include all of the ancestors of lastClosed up to this special ancestor.
         for (Node* ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+            if (!annotate && includeInlineSpecialAncestors && isBlock(ancestor))
+                continue;
             if (ancestor == fullySelectedRoot) {
                 // From a fully selected root we want:
                 // The non-inheritble styles from its matched rules (author only).
