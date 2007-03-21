@@ -131,6 +131,7 @@ FrameView::~FrameView()
     resetScrollbars();
 
     ASSERT(m_refCount == 0);
+    ASSERT((!d->m_scheduledEvents || d->m_scheduledEvents.isEmpty()) && !d->m_enqueueEvents);
 
     if (m_frame) {
         ASSERT(m_frame->view() != this || !m_frame->document() || !m_frame->document()->renderer());
@@ -419,7 +420,7 @@ void FrameView::layout(bool allowSubtree)
         if (root->recalcMinMax())
             root->recalcMinMaxWidths();
     }
-    d->m_enqueueEvents++;
+    pauseScheduledEvents();
     root->layout();
     d->layoutRoot = 0;
 
@@ -465,9 +466,8 @@ void FrameView::layout(bool allowSubtree)
         updateOverflowStatus(visibleWidth() < contentsWidth(),
                              visibleHeight() < contentsHeight());
 
-    // Dispatch events scheduled during layout
-    dispatchScheduledEvents();
-    d->m_enqueueEvents--;
+    // Allow events scheduled during layout to fire
+    resumeScheduledEvents();
 }
 
 //
@@ -751,6 +751,20 @@ void FrameView::scheduleEvent(PassRefPtr<Event> event, PassRefPtr<EventTargetNod
     scheduledEvent->m_eventTarget = eventTarget;
     scheduledEvent->m_tempEvent = tempEvent;
     d->m_scheduledEvents.append(scheduledEvent);
+}
+
+void FrameView::pauseScheduledEvents()
+{
+    ASSERT(!d->m_scheduledEvents || d->m_scheduledEvents.isEmpty() || d->m_enqueueEvents);
+    d->m_enqueueEvents++;
+}
+
+void FrameView::resumeScheduledEvents()
+{
+    d->m_enqueueEvents--;
+    if (!d->m_enqueueEvents)
+        dispatchScheduledEvents();
+    ASSERT(!d->m_scheduledEvents || d->m_scheduledEvents.isEmpty() || d->m_enqueueEvents);
 }
 
 void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow)

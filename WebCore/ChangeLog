@@ -1,3 +1,35 @@
+2007-03-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff.
+
+        Fix for <rdar://problem/5072678> Crash in
+        RenderLayer::scrollRectToVisible with MallocScribble enabled
+
+        I tried to fix this earlier today but my fix caused a regression
+        scrolling through RSS pages. It turns out that sometimes scroll
+        events need to propagate immediately, and sometimes they must be
+        delayed or they risk deleting objects that are expected to be
+        around after the event has propagated. Mitz's original fix made
+        sheduleEvent() only delay events that happen during layout. This
+        fix marks two other places in addition to layout where events also
+        need to be delayed. These two places are places that were marked
+        with FIXMEs that Mitz removed in his original patch. (There was a
+        third FIXME in RenderLayer::updateScrollInfoAfterLayout() but that
+        case is only called through layout and is covered by Mitz's
+        original patch.)
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::~FrameView): Added assertion.
+        (WebCore::FrameView::layout): Call new functions to increment and 
+        decrement the queued events count.
+        (WebCore::FrameView::pauseScheduledEvents):
+        (WebCore::FrameView::resumeScheduledEvents): Decrement queued 
+        events count and dispatch events if the count has zeroed.
+        * page/FrameView.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::Marquee::start):
+
 2007-03-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by John Sullivan.

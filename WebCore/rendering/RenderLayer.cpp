@@ -724,6 +724,12 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment
     RenderLayer* parentLayer = 0;
     IntRect newRect = rect;
     int xOffset = 0, yOffset = 0;
+
+    // We may end up propagating a scroll event. It is important that we suspend events until 
+    // the end of the function since they could delete the layer or the layer's m_object.
+    FrameView* frameView = m_object->document()->view();
+    if (frameView)
+        frameView->pauseScheduledEvents();
     
     if (m_object->hasOverflowClip()) {
         int x, y;
@@ -752,32 +758,34 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment
         if (m_object->parent())
             parentLayer = m_object->parent()->enclosingLayer();
     } else {
-        FrameView* view = m_object->document()->view();
-        if (view) {
-            IntRect viewRect = enclosingIntRect(view->visibleContentRect());
+        if (frameView) {
+            IntRect viewRect = enclosingIntRect(frameView->visibleContentRect());
             IntRect r = getRectToExpose(viewRect, rect, alignX, alignY);
             
             xOffset = r.x();
             yOffset = r.y();
             // Adjust offsets if they're outside of the allowable range.
-            xOffset = max(0, min(view->contentsWidth(), xOffset));
-            yOffset = max(0, min(view->contentsHeight(), yOffset));
+            xOffset = max(0, min(frameView->contentsWidth(), xOffset));
+            yOffset = max(0, min(frameView->contentsHeight(), yOffset));
 
             if (m_object->document() && m_object->document()->ownerElement() && m_object->document()->ownerElement()->renderer()) {
-                view->setContentsPos(xOffset, yOffset);
+                frameView->setContentsPos(xOffset, yOffset);
                 parentLayer = m_object->document()->ownerElement()->renderer()->enclosingLayer();
-                newRect.setX(rect.x() - view->contentsX() + view->x());
-                newRect.setY(rect.y() - view->contentsY() + view->y());
+                newRect.setX(rect.x() - frameView->contentsX() + frameView->x());
+                newRect.setY(rect.y() - frameView->contentsY() + frameView->y());
             } else {
                 // If this is the outermost view that RenderLayer needs to scroll, then we should scroll the view recursively
                 // Other apps, like Mail, rely on this feature.
-                view->scrollPointRecursively(xOffset, yOffset);
+                frameView->scrollPointRecursively(xOffset, yOffset);
             }
         }
     }
     
     if (parentLayer)
         parentLayer->scrollRectToVisible(newRect, alignX, alignY);
+
+    if (frameView)
+        frameView->resumeScheduledEvents();
 }
 
 IntRect RenderLayer::getRectToExpose(const IntRect &visibleRect, const IntRect &exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
@@ -2187,7 +2195,13 @@ void Marquee::start()
 {
     if (m_timer.isActive() || m_layer->renderer()->style()->marqueeIncrement().isZero())
         return;
-    
+
+    // We may end up propagating a scroll event. It is important that we suspend events until 
+    // the end of the function since they could delete the layer, including the marquee.
+    FrameView* frameView = m_layer->renderer()->document()->view();
+    if (frameView)
+        frameView->pauseScheduledEvents();
+
     if (!m_suspended && !m_stopped) {
         if (isHorizontal())
             m_layer->scrollToOffset(m_start, 0, false, false);
@@ -2200,6 +2214,9 @@ void Marquee::start()
     }
 
     m_timer.startRepeating(speed() * 0.001);
+
+    if (frameView)
+        frameView->resumeScheduledEvents();
 }
 
 void Marquee::suspend()
