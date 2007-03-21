@@ -1,3 +1,14 @@
+2007-03-20  Matt Lilek  <pewtermoose@gmail.com>
+
+        Reviewed by Darin.
+
+        Clear up the steps necessary to get a patch landed.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12877 - Bug 12877: "Contributing Code" page could be clearer
+        http://bugs.webkit.org/show_bug.cgi?id=8690 - Bug 8690: Contributing code doesn't mention what to do with new files
+
+        * coding/contributing.html:
+
 2007-03-18  Maciej Stachowiak  <mjs@apple.com>
 
         Added a random JS benchmark.
