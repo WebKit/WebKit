@@ -1,3 +1,29 @@
+2007-03-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        <rdar://problem/5073391> and http://bugs.webkit.org/show_bug.cgi?id=13137
+
+        Crash in IconDatabase when private browsing is enabled.
+
+        The problem was caused by http://trac.webkit.org/projects/webkit/changeset/20182 
+        which changed many uses of char[] and Vector<char> to SharedBuffer.  The patch
+        tended to literally replace a Vector<char> with RefPtr<SharedBuffers> but forgot
+        to enforce the concept that Vector<char>'s always exist, whereas RefPtr<SharedBuffers>
+        can be null.  This led to derefs.
+
+        I took the opportunity to rework the iconDB functions to live in a SharedBuffer 
+        world, as that didn't exist when they were originally written - now they just return
+        SharedBuffers instead of taking a Vector<char>& as a parameter
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::imageDataForIconURL): Return a SharedBuffer
+        (WebCore::IconDatabase::iconForPageURL): Null check the SharedBuffer before asking
+          it if it's empty
+        (WebCore::IconDatabase::imageDataForIconURLQuery): Return a new SharedBuffer
+
+        * loader/icon/IconDatabase.h: Return SharedBuffer's instead of taking Vector<char>&'s
+
 2007-03-20  Adam Roben  <aroben@apple.com>
 
         Rubberstamped by Adele.
