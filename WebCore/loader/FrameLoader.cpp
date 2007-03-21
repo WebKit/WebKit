@@ -1820,14 +1820,14 @@ void FrameLoader::load(const KURL& URL, const String& referrer, FrameLoadType ne
 
 void FrameLoader::load(const ResourceRequest& request)
 {
-    if (m_inStopAllLoaders)
-        return;
-    
     load(request, SubstituteData());
 }
 
 void FrameLoader::load(const ResourceRequest& request, const SubstituteData& substituteData)
 {
+    if (m_inStopAllLoaders)
+        return;
+        
     // FIXME: is this the right place to reset loadType? Perhaps this should be done after loading is finished or aborted.
     m_loadType = FrameLoadTypeStandard;
     load(m_client->createDocumentLoader(request, substituteData).get());

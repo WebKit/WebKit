@@ -1,6 +1,17 @@
+2007-03-20  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5077252> 
+        In NetNewsWire 2.1.1 and 3.0d62, a crash occurs after triple-clicking a link on the page
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load):
+        Move the m_inStopAllLoaders check to the load function that's common for loading a request or substitute data.
+
 2007-03-20  Brady Eidson  <beidson@apple.com>
 
-        Reviewed by Anders
+        Reviewed by Anders.
 
         <rdar://problem/5073391> and http://bugs.webkit.org/show_bug.cgi?id=13137
 
