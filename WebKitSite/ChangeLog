@@ -1,3 +1,13 @@
+2007-03-21  Maciej Stachowiak  <mjs@apple.com>
+
+        - some specs to propose by email
+
+        * specs/HTML_Timed_Media_Elements.html: Added.
+        * specs/Timed_Media_CSS.html: Added.
+        * specs/Timed_Media_Elements-Open_Issues.html: Added.
+        * specs/mediaelement.css: Added.
+        * specs/movie-status-states.png: Added.
+
 2007-03-20  Matt Lilek  <pewtermoose@gmail.com>
 
         Reviewed by Darin.
