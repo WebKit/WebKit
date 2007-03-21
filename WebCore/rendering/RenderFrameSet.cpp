@@ -553,10 +553,9 @@ void RenderFrameSet::continueResizing(GridAxis& axis, int position)
 
 bool RenderFrameSet::userResize(MouseEvent* evt)
 {
-    if (needsLayout())
-        return false;
-    
     if (!m_isResizing) {
+        if (needsLayout())
+            return false;
         if (evt->type() == mousedownEvent) {
             startResizing(m_cols, evt->pageX() - xPos());
             startResizing(m_rows, evt->pageY() - yPos());

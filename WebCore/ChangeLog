@@ -1,3 +1,15 @@
+2007-03-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by John Sullivan.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13130
+          REGRESSION: Sometimes a frame resizer keeps following the mouse after mouseup
+
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::userResize): Reordered the code to allow resizing
+        to be terminated by a mouseup event regardless of whether the frameset needs
+        layout.
+
 2007-03-20  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Oliver.
