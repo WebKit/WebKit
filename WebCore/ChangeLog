@@ -1,3 +1,14 @@
+2007-03-20  Adam Roben  <aroben@apple.com>
+
+        Rubberstamped by Adele.
+
+        Roll out r20348 because it was causing crashes.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::FrameViewPrivate):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::scheduleEvent):
+
 2007-03-20  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Kevin Decker.

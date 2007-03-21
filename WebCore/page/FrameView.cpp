@@ -55,6 +55,7 @@ public:
     FrameViewPrivate(FrameView* view)
         : layoutTimer(view, &FrameView::layoutTimerFired)
         , m_mediaType("screen")
+        , m_enqueueEvents(0)
         , m_overflowStatusDirty(true)
         , m_viewportRenderer(0)
     {
@@ -107,6 +108,7 @@ public:
     
     String m_mediaType;
     
+    unsigned m_enqueueEvents;
     Vector<ScheduledEvent*> m_scheduledEvents;
     
     bool m_overflowStatusDirty;
@@ -417,6 +419,7 @@ void FrameView::layout(bool allowSubtree)
         if (root->recalcMinMax())
             root->recalcMinMaxWidths();
     }
+    d->m_enqueueEvents++;
     root->layout();
     d->layoutRoot = 0;
 
@@ -464,6 +467,7 @@ void FrameView::layout(bool allowSubtree)
 
     // Dispatch events scheduled during layout
     dispatchScheduledEvents();
+    d->m_enqueueEvents--;
 }
 
 //
@@ -736,6 +740,12 @@ void FrameView::setBaseBackgroundColor(Color bc)
 
 void FrameView::scheduleEvent(PassRefPtr<Event> event, PassRefPtr<EventTargetNode> eventTarget, bool tempEvent)
 {
+    if (!d->m_enqueueEvents) {
+        ExceptionCode ec = 0;
+        eventTarget->dispatchEvent(event, ec, tempEvent);
+        return;
+    }
+
     ScheduledEvent* scheduledEvent = new ScheduledEvent;
     scheduledEvent->m_event = event;
     scheduledEvent->m_eventTarget = eventTarget;
