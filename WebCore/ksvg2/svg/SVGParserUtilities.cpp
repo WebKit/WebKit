@@ -153,7 +153,10 @@ bool SVGPathParser::parseSVG(const String& s, bool process)
     double contrlx, contrly, curx, cury, subpathx, subpathy, tox, toy, x1, y1, x2, y2, xc, yc;
     double px1, py1, px2, py2, px3, py3;
     bool closed = true;
-    skipOptionalSpaces(ptr, end); // skip any leading spaces
+    
+    if (!skipOptionalSpaces(ptr, end)) // skip any leading spaces
+        return false;
+    
     char command = *(ptr++), lastCommand = ' ';
     if (command != 'm' && command != 'M') // path must start with moveto
         return false;

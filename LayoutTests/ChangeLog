@@ -1,3 +1,12 @@
+2007-03-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Antti.
+
+        Fuzz test for SVG transform parser 
+
+        * svg/dom/transform-parser-expected.txt: Added.
+        * svg/dom/transform-parser.html: Added.
+
 2007-03-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Mitz.

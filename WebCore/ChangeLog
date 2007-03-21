@@ -1,3 +1,21 @@
+2007-03-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Antti.
+
+        Update a few SVG attribute parsers to be more defensive against
+        reading beyond the end of input. 
+
+        Fixes rdar://problem/5077218 -- SVG transform parser runs past
+        end of buffer when running fuzzing test
+
+        * ksvg2/svg/SVGParserUtilities.cpp:
+        (WebCore::SVGPathParser::parseSVG):
+        * ksvg2/svg/SVGParserUtilities.h:
+        (WebCore::skipOptionalSpacesOrDelimiter):
+        * ksvg2/svg/SVGTransformable.cpp:
+        (WebCore::parseTransformParamList):
+        (WebCore::SVGTransformable::parseTransformAttribute):
+
 2007-03-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Mitz.

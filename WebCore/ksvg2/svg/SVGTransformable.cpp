@@ -56,38 +56,48 @@ AffineTransform SVGTransformable::getScreenCTM(const SVGElement* element) const
 int parseTransformParamList(const UChar*& ptr, const UChar* end, double* x, int required, int optional)
 {
     int optionalParams = 0, requiredParams = 0;
-    skipOptionalSpaces(ptr, end);
-    if (*ptr != '(')
+    
+    if (!skipOptionalSpaces(ptr, end) || *ptr != '(')
         return -1;
+    
     ptr++;
+   
     skipOptionalSpaces(ptr, end);
 
     while (requiredParams < required) {
-        if (!parseNumber(ptr, end, x[requiredParams], false))
+        if (ptr >= end || !parseNumber(ptr, end, x[requiredParams], false))
             return -1;
         requiredParams++;
         if (requiredParams < required)
             skipOptionalSpacesOrDelimiter(ptr, end);
     }
-    skipOptionalSpaces(ptr, end);
+    if (!skipOptionalSpaces(ptr, end))
+        return -1;
+    
     bool delimParsed = skipOptionalSpacesOrDelimiter(ptr, end);
 
+    if (ptr >= end)
+        return -1;
+    
     if (*ptr == ')') { // skip optionals
         ptr++;
         if (delimParsed)
             return -1;
     } else {
-         while (optionalParams < optional) {
-            if (!parseNumber(ptr, end, x[requiredParams + optionalParams], false))
+        while (optionalParams < optional) {
+            if (ptr >= end || !parseNumber(ptr, end, x[requiredParams + optionalParams], false))
                 return -1;
             optionalParams++;
             if (optionalParams < optional)
                 skipOptionalSpacesOrDelimiter(ptr, end);
-         }
-         skipOptionalSpaces(ptr, end);
-         delimParsed = skipOptionalSpacesOrDelimiter(ptr, end);
-
-        if (*ptr != ')' || delimParsed)
+        }
+        
+        if (!skipOptionalSpaces(ptr, end))
+            return -1;
+        
+        delimParsed = skipOptionalSpacesOrDelimiter(ptr, end);
+        
+        if (ptr >= end || *ptr != ')' || delimParsed)
             return -1;
         ptr++;
     }
@@ -115,7 +125,10 @@ bool SVGTransformable::parseTransformAttribute(SVGTransformList* list, const Ato
         delimParsed = false;
         unsigned short type = SVGTransform::SVG_TRANSFORM_UNKNOWN;
         skipOptionalSpaces(currTransform, end);
-
+        
+        if (currTransform >= end)
+            return false;
+        
         if (*currTransform == 's') {
             if (checkString(currTransform, end, skewXDesc, sizeof(skewXDesc) / sizeof(UChar))) {
                 required = 1;

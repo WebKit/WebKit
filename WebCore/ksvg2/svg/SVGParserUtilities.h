@@ -47,7 +47,7 @@ namespace WebCore
         if (ptr < end && !isWhitespace(*ptr) && *ptr != delimiter)
             return false;
         if (skipOptionalSpaces(ptr, end)) {
-            if (*ptr == delimiter) {
+            if (ptr < end && *ptr == delimiter) {
                 ptr++;
                 skipOptionalSpaces(ptr, end);
             }
