@@ -97,6 +97,8 @@ size_t JSStringGetUTF8CString(JSStringRef string, char* buffer, size_t bufferSiz
 
 bool JSStringIsEqual(JSStringRef a, JSStringRef b)
 {
+    JSLock lock;
+
     UString::Rep* aRep = toJS(a);
     UString::Rep* bRep = toJS(b);
     
