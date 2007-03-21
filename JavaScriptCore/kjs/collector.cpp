@@ -553,7 +553,7 @@ static inline void* otherThreadStackBase(const PlatformThreadRegisters& regs, Co
 {
 #if PLATFORM(DARWIN)
   (void)regs;
-  return pthrad_get_stackaddr_np(thread->posixThread);
+  return pthread_get_stackaddr_np(thread->posixThread);
 // end PLATFORM(DARWIN);
 #elif PLATFORM(X86) && PLATFORM(WIN_OS)
   LDT_ENTRY desc;
