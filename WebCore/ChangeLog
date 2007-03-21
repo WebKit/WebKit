@@ -1,3 +1,16 @@
+2007-03-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mitz.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13140
+        Crash after loading SVG fragment with XMLHttpRequest (Yosemite Map Geology Layer)
+
+        Test: svg/carto.net/frameless-svg-parse-error.html
+
+        * ksvg2/misc/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::reportError): Added a null check.
+        (WebCore::SVGDocumentExtensions::reportWarning): Ditto.
+
 2007-03-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff.
