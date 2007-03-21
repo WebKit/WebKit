@@ -1,3 +1,31 @@
+2007-03-21  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by oliver
+        
+        <rdar://problem/5075944> 
+        REGRESSION: Partially selected underlined content pastes as plain text
+
+        Tests for the bug:
+        * editing/pasteboard/5075944-expected.checksum: Added.
+        * editing/pasteboard/5075944-expected.png: Added.
+        * editing/pasteboard/5075944-expected.txt: Added.
+        * editing/pasteboard/5075944.html: Added.
+        Tests that the element that has the text-decoration
+        and all its descendants down to the common ancestor
+        are included in the copied markup (instead of the
+        text-decoration property being treated as though it
+        were inheritable and placed on the style span wrapper):
+        * editing/pasteboard/5075944-2-expected.checksum: Added.
+        * editing/pasteboard/5075944-2-expected.png: Added.
+        * editing/pasteboard/5075944-2-expected.txt: Added.
+        * editing/pasteboard/5075944-2.html: Added.
+        Tests that moveParagraphs gets underlining right (it doesn't
+        use annotation):
+        * editing/pasteboard/5075944-3-expected.checksum: Added.
+        * editing/pasteboard/5075944-3-expected.png: Added.
+        * editing/pasteboard/5075944-3-expected.txt: Added.
+        * editing/pasteboard/5075944-3.html: Added.
+
 2007-03-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Antti.

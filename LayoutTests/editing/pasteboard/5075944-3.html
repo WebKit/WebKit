@@ -1,0 +1,12 @@
+<p>This test for a bug moving a paragraph of underlined text.  The text should look the same before and after the deletion.</p>
+<div id="div" contenteditable="true"><div>This should not be underlined.</div><span style="text-decoration: underline; color: blue;"><span style="color:red;">This should be underlined.</span></span></div>
+
+<script>
+var div = document.getElementById("div");
+var sel = window.getSelection();
+
+sel.setPosition(div, 0);
+sel.modify("move", "forward", "paragraphBoundary");
+sel.modify("move", "forward", "character");
+document.execCommand("Delete");
+</script>

@@ -1,3 +1,28 @@
+2007-03-21  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by oliver
+
+        <rdar://problem/5075944> 
+        REGRESSION: Partially selected underlined content pastes as plain text
+        
+        We stopped adding markup for all the ancestors
+        of lastClosed up to the commonAncestorBlock
+        because it was adding a lot of unnecessary markup.
+        This caused us to lose underlining when copying a 
+        partially selected underlined element (even though 
+        we put all styles that the copied markup inherits 
+        into a style span, because the text-decoration 
+        isn't inheritable).
+
+        * editing/markup.cpp:
+        (WebCore::styleFromMatchedRulesAndInlineDecl): Moved
+        code here.
+        (WebCore::elementHasTextDecorationProperty): Added.
+        (WebCore::createMarkup): If the copied markup has a
+        text-decoration because some common ancestor has
+        a text-decoration property set, include that ancestor
+        and all its descendants in the copied markup.
+
 2007-03-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Antti.
