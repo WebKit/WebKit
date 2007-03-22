@@ -273,7 +273,6 @@ __ZNK3KJS9ExecState18lexicalInterpreterEv
 __ZTVN3KJS14StringInstanceE
 __ZTVN3KJS15JSWrapperObjectE
 __ZTVN3KJS19InternalFunctionImpE
-__ZTVN3KJS6JSCellE
 __ZTVN3KJS8JSObjectE
 _kJSClassDefinitionEmpty
 _kjs_pcre_compile

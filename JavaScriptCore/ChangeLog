@@ -1,3 +1,11 @@
+2007-03-21  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5076599> JavaScriptCore has a weak export (vtable for KJS::JSCell)
+
+        * JavaScriptCore.exp: Remove __ZTVN3KJS6JSCellE.
+
 2007-03-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Geoff.
