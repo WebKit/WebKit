@@ -48,8 +48,10 @@ function testClick()
         return;
     }
     log("Clicking " + clickCount + " times<br>");
-    for (var click = 0; click < clickCount; click++)
-        eventSender.mouseClick();
+    for (var click = 0; click < clickCount; click++) {
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
     clickCount++;
     setTimeout(testClick, 1000);
 }

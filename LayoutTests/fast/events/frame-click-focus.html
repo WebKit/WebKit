@@ -19,18 +19,21 @@
 
             if (window.eventSender) {
                 eventSender.mouseMoveTo(1, 300);
-                eventSender.mouseClick();
+                eventSender.mouseDown();
+                eventSender.mouseUp();
 
                 // We need to "wait" a bit before the next click -- otherwise it is ignored
                 eventSender.leapForward(2000);
 
                 eventSender.mouseMoveTo(50, 50);
-                eventSender.mouseClick();
+                eventSender.mouseDown();
+                eventSender.mouseUp();
 
                 eventSender.leapForward(2000);
 
                 eventSender.mouseMoveTo(1, 300);
-                eventSender.mouseClick();
+                eventSender.mouseDown();
+                eventSender.mouseUp();
             }
         }
     </script>

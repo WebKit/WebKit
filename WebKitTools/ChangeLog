@@ -1,5 +1,16 @@
 2007-03-22  Adam Roben  <aroben@apple.com>
 
+        Reviewed by Geoff.
+
+        Removed eventSender.mouseClick because it was only useful for AppKit
+        controls, which we don't use anymore.
+
+        * DumpRenderTree/EventSendingController.m:
+        (+[EventSendingController isSelectorExcludedFromWebScript:]): Removed
+        mouseClick.
+
+2007-03-22  Adam Roben  <aroben@apple.com>
+
         Reviewed by Ada.
 
         Make eventSender.mouseClick actually send a mouse up event.

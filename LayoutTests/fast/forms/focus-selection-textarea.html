@@ -34,7 +34,8 @@ function runTest()
     shouldBe("fourth.selectionStart", "11");
     shouldBe("fourth.selectionEnd", "18");
     eventSender.mouseMoveTo(fourth.offsetLeft + 4, fourth.offsetTop + 4);
-    eventSender.mouseClick();
+    eventSender.mouseDown();
+    eventSender.mouseUp();
     shouldBe("fourth.selectionStart", "0");
     shouldBe("fourth.selectionEnd", "0");
 
@@ -42,7 +43,8 @@ function runTest()
     shouldBe("fifth.selectionEnd", "18");
     var fifthLabel = document.getElementById("fifthLabel");
     eventSender.mouseMoveTo(fifthLabel.offsetLeft + 4, fifthLabel.offsetTop + 4);
-    eventSender.mouseClick();
+    eventSender.mouseDown();
+    eventSender.mouseUp();
     shouldBe("fifth.selectionStart", "11");
     shouldBe("fifth.selectionEnd", "18");
 

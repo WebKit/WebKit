@@ -101,7 +101,6 @@ BOOL replayingSavedEvents;
 {
     if (aSelector == @selector(mouseDown)
             || aSelector == @selector(mouseUp)
-            || aSelector == @selector(mouseClick)
             || aSelector == @selector(contextClick)
             || aSelector == @selector(mouseMoveToX:Y:)
             || aSelector == @selector(leapForward:)
@@ -286,41 +285,6 @@ BOOL replayingSavedEvents;
             }
         } else
             [subView mouseMoved:event];
-    }
-}
-
-- (void)mouseClick
-{
-    [[[frame frameView] documentView] layout];
-    if ([self currentEventTime] - lastClick >= 1)
-        clickCount = 1;
-    else
-        clickCount++;
-    NSEvent *mouseDownEvent = [NSEvent mouseEventWithType:NSLeftMouseDown 
-                                        location:lastMousePosition 
-                                   modifierFlags:0 
-                                       timestamp:[self currentEventTime]
-                                    windowNumber:[[[frame webView] window] windowNumber] 
-                                         context:[NSGraphicsContext currentContext] 
-                                     eventNumber:++eventNumber 
-                                      clickCount:clickCount 
-                                        pressure:0.0];
-
-    NSView *subView = [[frame webView] hitTest:[mouseDownEvent locationInWindow]];
-    if (subView) {
-        [self leapForward:1];
-        NSEvent *mouseUpEvent = [NSEvent mouseEventWithType:NSLeftMouseUp
-                                                   location:lastMousePosition
-                                              modifierFlags:0
-                                                  timestamp:[self currentEventTime]
-                                               windowNumber:[[[frame webView] window] windowNumber]
-                                                    context:[NSGraphicsContext currentContext]
-                                                eventNumber:++eventNumber
-                                                 clickCount:clickCount
-                                                   pressure:0.0];
-        [subView mouseDown:mouseDownEvent];
-        [subView mouseUp:mouseUpEvent];
-        lastClick = [mouseUpEvent timestamp];
     }
 }
 

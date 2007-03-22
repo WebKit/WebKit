@@ -1,5 +1,20 @@
 2007-03-22  Adam Roben  <aroben@apple.com>
 
+        Reviewed by Geoff.
+
+        Replaced all calls to eventSender.mouseClick with paired calls to
+        mouseDown/mouseUp.
+
+        * fast/events/click-count.html:
+        * fast/events/event-sender-mouse-click-expected.txt: Removed.
+        * fast/events/event-sender-mouse-click.html: Removed.
+        * fast/events/frame-click-focus.html:
+        * fast/events/objc-event-api.html:
+        * fast/forms/focus-selection-input.html:
+        * fast/forms/focus-selection-textarea.html:
+
+2007-03-22  Adam Roben  <aroben@apple.com>
+
         Reviewed by Ada.
 
         Added a new test to make sure that eventSender.mouseClick works
