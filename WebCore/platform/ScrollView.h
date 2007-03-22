@@ -28,6 +28,7 @@
 
 #include "ScrollTypes.h"
 #include "Widget.h"
+#include <wtf/HashSet.h>
 
 #if PLATFORM(QT)
 class QAbstractScrollArea;
@@ -125,6 +126,8 @@ namespace WebCore {
         void addToDirtyRegion(const IntRect&);
         void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);
         void updateBackingStore();
+
+        HashSet<Widget*>* children();
 
     private:
         void updateScrollbars(const IntSize& desiredOffset);
