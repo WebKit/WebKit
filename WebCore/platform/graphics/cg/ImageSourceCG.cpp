@@ -157,15 +157,6 @@ CGImageRef ImageSource::createFrameAtIndex(size_t index)
     return CGImageSourceCreateImageAtIndex(m_decoder, index, imageSourceOptions());
 }
 
-void ImageSource::destroyFrameAtIndex(size_t index)
-{
-    // FIXME: Image I/O has no API for flushing frames from its internal cache.  The best we can do is tell it to create
-    // a new image with NULL options.  This will cause the cache/no-cache flags to mismatch, and it will then drop
-    // its reference to the old decoded image.
-    CGImageRef image = CGImageSourceCreateImageAtIndex(m_decoder, index, NULL);
-    CGImageRelease(image);
-}
-
 bool ImageSource::frameIsCompleteAtIndex(size_t index)
 {
     return CGImageSourceGetStatusAtIndex(m_decoder, index) == kCGImageStatusComplete;
