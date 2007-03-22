@@ -83,7 +83,7 @@ static inline bool parseNumberOrPercent(const UChar*& ptr, const UChar* end, dou
 {
     if (!parseNumber(ptr, end, value))
         return false;
-    if (*ptr == '%') {
+    if (ptr < end && *ptr == '%') {
         value = int((255.0 * value) / 100.0);
         ptr++;
     }
@@ -107,10 +107,7 @@ Color SVGColor::colorFromRGBColorString(const String& colorString)
          || !parseNumberOrPercent(ptr, end, b))
             return Color();
 
-        if (*ptr != ')')
-            return Color();
-        ptr++;
-        if (ptr != end)
+        if (ptr >= end || *ptr != ')')
             return Color();
 
          return Color(int(r), int(g), int(b));

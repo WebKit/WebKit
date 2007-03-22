@@ -2,6 +2,18 @@
 
         Reviewed by Beth Dakin.
         
+        Fixed <rdar://problem/5078471> SVG rgb color parser runs past end of 
+        buffer when running fuzzing test
+
+        * ksvg2/svg/SVGColor.cpp:
+        (WebCore::parseNumberOrPercent): Check for past the end condition.
+        (WebCore::SVGColor::colorFromRGBColorString): Reversed "read past end
+        of buffer, then check if you're past the end" logic.
+
+2007-03-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
         Fixed <rdar://problem/5079410> SVG path parser hangs, exhausts memory when 
         running fuzzer test
 

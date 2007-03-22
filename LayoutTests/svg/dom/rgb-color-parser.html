@@ -1,0 +1,77 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/scripted-random.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This test fuzzes the length list parser with semi-random attribute values and dumps the results of any values that parse successfully.");
+
+    var characters = [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        " ",
+        "\t",
+        "(",
+        ")",
+        "%",
+        "+",
+        "-",
+        ".",
+        "e",
+        ","
+    ];
+    
+    var stopElement = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+    stopElement.style.stopColor = "blue";
+    function parseRGBColor(string)
+    {
+        try {
+            stopElement.style.getPropertyCSSValue("stop-color").setRGBColor(string);
+            var rgbColor = stopElement.style.getPropertyCSSValue("stop-color").rgbColor;
+
+            var red = rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+            var green = rgbColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+            var blue = rgbColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+            var rgbColorString = "rgb(" + red + "," + green + "," + blue + ")";
+            debug("Parsed as " + rgbColorString + ": " + string);
+        } catch(e) {
+            debug("Threw exception " + e + ": " + string);
+        }
+    }
+
+    function fuzz()
+    {
+        // Random assortments of valid characters
+        for (var i = 0; i < 250; i++) { //>
+            var colorString = "rgb(";
+            var count = Math.scriptedRandomInt(20);
+            for (var j = 0; j < count; j++) { //>
+                colorString += characters[Math.scriptedRandomInt(characters.length)];
+            }
+            parseRGBColor(colorString);
+        }
+        
+        // Empty-ish colors
+        parseRGBColor("");
+        parseRGBColor(String.fromCharCode(0));
+        parseRGBColor("rgb(" + String.fromCharCode(0) + ")");
+    }
+    
+    fuzz();
+
+    successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</html>
