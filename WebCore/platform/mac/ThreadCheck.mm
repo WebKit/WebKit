@@ -31,7 +31,12 @@ void _WebCoreThreadViolationCheck(const char* function)
 {
     static bool fetchDefault = true;
     static bool performThreadCheck = true;
+#ifdef BUILDING_ON_TIGER
+    static bool threadViolationIsException = false;
+#else
     static bool threadViolationIsException = true;
+#endif
+
     if (fetchDefault) {
         NSString *threadCheckLevel = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebCoreThreadCheck"];
         if ([threadCheckLevel isEqualToString:@"None"])
