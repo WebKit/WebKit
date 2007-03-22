@@ -1,5 +1,18 @@
 2007-03-21  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by darin
+
+        * editing/markup.cpp:
+        (WebCore::styleFromMatchedRulesAndInlineDecl): 
+        Release the RefPtr to avoid increasing/decreasing
+        the refcount unnecessarily.
+        (WebCore::propertyMissingOrEqualToNone): Added and used
+        instead of converting values to strings.
+        (WebCore::elementHasTextDecorationProperty): 
+        (WebCore::createMarkup):
+
+2007-03-21  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by oliver
 
         <rdar://problem/5075944> 
