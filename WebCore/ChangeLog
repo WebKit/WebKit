@@ -1,3 +1,13 @@
+2007-03-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix <rdar://problem/5074630> detachChildren call should move from WebKit to WebCore
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::setDocumentLoader):
+        Add a call to detachChildren() after the call to prepareForDataSourceReplacement().
+        There was no reason for this crucial loading step to be left to the client.
+
 2007-03-22  David Hyatt  <hyatt@apple.com>
 
         Minor refactoring and cleanup of the bridge calls that want to control layout settings on the RenderView.

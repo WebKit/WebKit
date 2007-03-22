@@ -2167,6 +2167,7 @@ void FrameLoader::setDocumentLoader(DocumentLoader* loader)
     ASSERT(!loader || loader->frameLoader() == this);
 
     m_client->prepareForDataSourceReplacement();
+    detachChildren();
     if (m_documentLoader)
         m_documentLoader->detachFromFrame();
 

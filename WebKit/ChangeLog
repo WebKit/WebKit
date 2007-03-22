@@ -1,3 +1,12 @@
+2007-03-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix <rdar://problem/5074630> detachChildren call should move from WebKit to WebCore
+
+        * WebCoreSupport/WebFrameLoaderClient.mm: (WebFrameLoaderClient::prepareForDataSourceReplacement):
+        Remove call to detachChildren. This should be a WebCore responsibility.
+
 2007-03-19  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Dave Hyatt.

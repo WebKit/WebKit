@@ -870,8 +870,6 @@ void WebFrameLoaderClient::prepareForDataSourceReplacement()
     NSResponder *firstResp = [window firstResponder];
     if ([firstResp isKindOfClass:[NSView class]] && [(NSView *)firstResp isDescendantOf:frameView])
         [window endEditingFor:firstResp];
-    
-    core(m_webFrame.get())->loader()->detachChildren();
 }
 
 PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
