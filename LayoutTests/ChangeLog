@@ -2,6 +2,15 @@
 
         Reviewed by Beth Dakin.
         
+        Added fuzz tester for the path parser.
+
+        * svg/dom/path-parser-expected.txt: Added.
+        * svg/dom/path-parser.html: Added.
+
+2007-03-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
         Added fuzz tester for the string list parser.
 
         * svg/dom/string-list-parser-expected.txt: Added.
