@@ -1,5 +1,11 @@
 2007-03-21  David Kilzer  <ddkilzer@apple.com>
 
+        Reviewed by NOBODY (more word tweaking).
+
+        * building/checkout.html: By popular demand, the link to the svn 1.3 client has been removed.
+
+2007-03-21  David Kilzer  <ddkilzer@apple.com>
+
         Reviewed by NOBODY (tweaked wording).
 
         * building/checkout.html: Got rid of "click here" link and restructured sentences
