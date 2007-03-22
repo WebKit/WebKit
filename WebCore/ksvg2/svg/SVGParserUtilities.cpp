@@ -421,12 +421,14 @@ bool SVGPathParser::parseSVG(const String& s, bool process)
         if (ptr >= end)
             return true;
 
-        // Mx,y,x,y => Mx,y Lx,y
-        if ((command == 'M') && (*ptr == '+' || *ptr == '-' || (*ptr >= '0' && *ptr <= '9')))
-            command = 'L';
-        else if ((command == 'm') && (*ptr == '+' || *ptr == '-' || (*ptr >= '0' && *ptr <= '9')))
-            command = 'l';
-        else
+        // Check for remaining coordinates in the current command.
+        if ((*ptr == '+' || *ptr == '-' || (*ptr >= '0' && *ptr <= '9')) &&
+            (command != 'z' && command !='a' && command != 'A')) {
+            if (command == 'M')
+                command = 'L';
+            else if (command == 'm')
+                command = 'l';
+        } else
             command = *(ptr++);
 
         if (lastCommand != 'C' && lastCommand != 'c' &&
