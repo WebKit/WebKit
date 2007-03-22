@@ -265,7 +265,7 @@ NSString* Frame::searchForLabelsBeforeElement(NSArray* labels, Element* element)
             startingTableCell = static_cast<HTMLTableCellElement*>(n);
         } else if (n->hasTagName(trTag) && startingTableCell) {
             NSString* result = searchForLabelsAboveCell(regExp, startingTableCell);
-            if (result) {
+            if (result && [result length] > 0) {
                 return result;
             }
             searchedCellAbove = true;

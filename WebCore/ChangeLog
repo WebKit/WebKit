@@ -1,3 +1,14 @@
+2007-03-21  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam
+        
+        - fixed <rdar://problem/5079700> REGRESSION (r19702): Name/password aren't autofilled 
+          or saved for .Mac homepage login
+
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::searchForLabelsBeforeElement):
+        don't count empty strings as valid results
+
 2007-03-21  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
