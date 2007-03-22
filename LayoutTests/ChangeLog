@@ -1,3 +1,14 @@
+2007-03-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        Factored randomizing functions into their own file, in preparation for future
+        tests that rely on them.
+        
+        * svg/dom/resources/scripted-random.js: Added.
+        * svg/dom/transform-parser.html: Factored out scripted-random.js, added
+        a small string that increases the normal-seemingness of the last test.
+
 2007-03-21  Timothy Hatcher  <timothy@apple.com>
 
         New results after rolling out r19828 in r20352.
