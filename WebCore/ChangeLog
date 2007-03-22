@@ -1,3 +1,14 @@
+2007-03-22  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+        
+        Followup for recent fix to 5079700, found by assertion added to Safari.
+
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::searchForLabelsBeforeElement):
+        Fixed another place in this method where an empty NSString was being returned instead of nil.
+        Cleaned up the style a little too.
+
 2007-03-22  David Hyatt  <hyatt@apple.com>
 
         Remove unnecessary destroyFrameAtIndex call.  Now that we throw away

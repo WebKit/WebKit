@@ -265,9 +265,8 @@ NSString* Frame::searchForLabelsBeforeElement(NSArray* labels, Element* element)
             startingTableCell = static_cast<HTMLTableCellElement*>(n);
         } else if (n->hasTagName(trTag) && startingTableCell) {
             NSString* result = searchForLabelsAboveCell(regExp, startingTableCell);
-            if (result && [result length] > 0) {
+            if (result && [result length] > 0)
                 return result;
-            }
             searchedCellAbove = true;
         } else if (n->isTextNode() && n->renderer() && n->renderer()->style()->visibility() == VISIBLE) {
             // For each text chunk, run the regexp
@@ -278,18 +277,20 @@ NSString* Frame::searchForLabelsBeforeElement(NSArray* labels, Element* element)
             int pos = regExp->searchRev(nodeString);
             if (pos >= 0)
                 return nodeString.mid(pos, regExp->matchedLength()).getNSString();
-            else
-                lengthSearched += nodeString.length();
+
+            lengthSearched += nodeString.length();
         }
     }
 
     // If we started in a cell, but bailed because we found the start of the form or the
     // previous element, we still might need to search the row above us for a label.
     if (startingTableCell && !searchedCellAbove) {
-         return searchForLabelsAboveCell(regExp, startingTableCell);
-    } else {
-        return nil;
+        NSString* result = searchForLabelsAboveCell(regExp, startingTableCell);
+        if (result && [result length] > 0)
+            return result;
     }
+    
+    return nil;
 }
 
 NSString* Frame::matchLabelsAgainstElement(NSArray* labels, Element* element)
