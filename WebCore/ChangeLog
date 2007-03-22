@@ -1,3 +1,19 @@
+2007-03-22  Beth Dakin  <bdakin@apple.com>
+
+        Patch by Hyatt, reviewed and committed by me.
+
+        Does not reproduce consistently, so a layout test does not seem 
+        possible.
+
+        Fix for <rdar://problem/5082421> Constantly hitting ASSERT(!
+        needsLayout()) in RenderView::paint()
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layoutPending): It is not enough to ask if the 
+        layout timer is active. There may be times that we don't have a 
+        body yet so we cannot schedule layout yet, but the root still needs 
+        layout.  
+
 2007-03-22  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin
