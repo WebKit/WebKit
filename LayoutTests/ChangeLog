@@ -1,3 +1,15 @@
+2007-03-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13145
+          Regression: Scrollbar not resizing after display none
+
+        * fast/dynamic/view-overflow-expected.checksum: Added.
+        * fast/dynamic/view-overflow-expected.png: Added.
+        * fast/dynamic/view-overflow-expected.txt: Added.
+        * fast/dynamic/view-overflow.html: Added.
+
 2007-03-21  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed bad version of results that I check in accidentally.

@@ -106,8 +106,12 @@ void RenderView::layout()
     if (needsLayout())
         RenderBlock::layout();
 
-    setOverflowWidth(max(docWidth(), m_width));
-    setOverflowHeight(max(docHeight(), m_height));
+    // Ensure that docWidth() >= width() and docHeight() >= height().
+    setOverflowWidth(m_width);
+    setOverflowHeight(m_height);
+
+    setOverflowWidth(docWidth());
+    setOverflowHeight(docHeight());
 
     setNeedsLayout(false);
 }

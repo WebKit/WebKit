@@ -1,3 +1,17 @@
+2007-03-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13145
+          Regression: Scrollbar not resizing after display none
+
+        Test: fast/dynamic/view-overflow.html
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layout): Reset overflowHeight() and overflowWidth()
+        before calling docHeight() and docWidth(), since the former act as a lower
+        bound for the latter.
+
 2007-03-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.
