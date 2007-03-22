@@ -1,5 +1,12 @@
 2007-03-21  David Kilzer  <ddkilzer@apple.com>
 
+        Reviewed by NOBODY (tweaked wording).
+
+        * building/checkout.html: Got rid of "click here" link and restructured sentences
+        linking to svn clients.
+
+2007-03-21  David Kilzer  <ddkilzer@apple.com>
+
         Reviewed by Adam.
 
         * building/checkout.html: Add link to svn 1.4 client for Mac OS X 10.4.
