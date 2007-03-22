@@ -29,18 +29,6 @@
 
 namespace WebCore {
 
-static bool checkString(const UChar*& ptr, const UChar*& end, const char* str)
-{
-    int length = strlen(str);
-    if (end - ptr < length)
-        return false;
-    for (int i = 0; i < length; ++i)
-        if (ptr[i] != str[i])
-            return false;
-    ptr += length;
-    return true;
-}
-
 SVGPreserveAspectRatio::SVGPreserveAspectRatio(const SVGStyledElement* context)
     : Shared<SVGPreserveAspectRatio>()
     , m_align(SVG_PRESERVEASPECTRATIO_XMIDYMID)
@@ -88,7 +76,7 @@ void SVGPreserveAspectRatio::parsePreserveAspectRatio(const String& string)
         goto bail_out;
 
     if (*currParam == 'd') {
-        if (!checkString(currParam, end, "defer"))
+        if (!skipString(currParam, end, "defer"))
             goto bail_out;
         // FIXME: We just ignore the "defer" here.
         if (!skipOptionalSpaces(currParam, end))
@@ -96,7 +84,7 @@ void SVGPreserveAspectRatio::parsePreserveAspectRatio(const String& string)
     }
 
     if (*currParam == 'n') {
-        if (!checkString(currParam, end, "none"))
+        if (!skipString(currParam, end, "none"))
             goto bail_out;
         skipOptionalSpaces(currParam, end);
     } else if (*currParam == 'x') {
@@ -152,11 +140,11 @@ void SVGPreserveAspectRatio::parsePreserveAspectRatio(const String& string)
 
     if (currParam < end) {
         if (*currParam == 'm') {
-            if (!checkString(currParam, end, "meet"))
+            if (!skipString(currParam, end, "meet"))
                 goto bail_out;
             skipOptionalSpaces(currParam, end);
         } else if (*currParam == 's') {
-            if (!checkString(currParam, end, "slice"))
+            if (!skipString(currParam, end, "slice"))
                 goto bail_out;
             skipOptionalSpaces(currParam, end);
             if (align != SVG_PRESERVEASPECTRATIO_NONE)

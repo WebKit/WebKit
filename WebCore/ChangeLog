@@ -2,6 +2,23 @@
 
         Reviewed by Beth Dakin.
         
+        A little cleanup based work I've been doing on the SVG parsers.
+
+        * ksvg2/svg/SVGParserUtilities.h:
+        (WebCore::skipString):
+        * ksvg2/svg/SVGPreserveAspectRatio.cpp: Moved checkString into
+        SVGParserUtilities.h, so it could be with all its friends. Renamed 
+        "checkString" to "skipString" to match the rest of the code and to be 
+        clear about which functions move the buffer pointer.
+        (WebCore::SVGPreserveAspectRatio::parsePreserveAspectRatio):
+        * ksvg2/svg/SVGTransformable.cpp:
+        (WebCore::SVGTransformable::parseTransformAttribute): Changed gotos into 
+        returns. Removed unnecessary magic number.
+
+2007-03-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
         Fixed <rdar://problem/5078471> SVG rgb color parser runs past end of 
         buffer when running fuzzing test
 
