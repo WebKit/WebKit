@@ -769,15 +769,13 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (BOOL)needsLayout
 {
-    FrameView* view = m_frame->view();
-    return view ? view->layoutPending() : false;
+    return m_frame->view() ? m_frame->view()->needsLayout() : false;
 }
 
 - (void)setNeedsLayout
 {
-    RenderObject *renderer = m_frame->renderer();
-    if (renderer)
-        renderer->setNeedsLayout(true);
+    if (m_frame->view())
+        m_frame->view()->setNeedsLayout();
 }
 
 - (NSString *)renderTreeAsExternalRepresentation

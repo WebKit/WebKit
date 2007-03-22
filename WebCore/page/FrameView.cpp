@@ -217,12 +217,10 @@ void FrameView::setMarginHeight(int h)
 void FrameView::adjustViewSize()
 {
     ASSERT(m_frame->view() == this);
-    if (Document* document = m_frame->document()) {
-        RenderView* root = static_cast<RenderView*>(document->renderer());
-        if (!root)
-            return;
-        resizeContents(root->overflowWidth(), root->overflowHeight());
-    }
+    RenderView* root = static_cast<RenderView*>(m_frame->renderer());
+    if (!root)
+        return;
+    resizeContents(root->overflowWidth(), root->overflowHeight());
 }
 
 void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, ScrollbarMode& vMode)
@@ -695,6 +693,17 @@ void FrameView::scheduleRelayoutOfSubtree(Node* n)
 bool FrameView::layoutPending() const
 {
     return d->layoutTimer.isActive();
+}
+
+bool FrameView::needsLayout() const
+{
+    return layoutPending();
+}
+
+void FrameView::setNeedsLayout()
+{
+    if (m_frame->renderer())
+        m_frame->renderer()->setNeedsLayout(true);
 }
 
 bool FrameView::haveDelayedLayoutScheduled()

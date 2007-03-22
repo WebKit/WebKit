@@ -128,6 +128,9 @@ bool RenderView::absolutePosition(int& xPos, int& yPos, bool fixed) const
 
 void RenderView::paint(PaintInfo& paintInfo, int tx, int ty)
 {
+    // If we ever require layout but receive a paint anyway, something has gone horribly wrong.
+    ASSERT(!needsLayout());
+
     // Cache the print rect because the dirty rect could get changed during painting.
     if (printing())
         setPrintRect(paintInfo.rect);

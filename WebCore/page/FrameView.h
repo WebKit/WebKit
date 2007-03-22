@@ -84,6 +84,10 @@ public:
     Node* layoutRoot() const;
     int layoutCount() const;
 
+    // These two helper functions just pass through to the RenderView.
+    bool needsLayout() const;
+    void setNeedsLayout();
+
     bool needsFullRepaint() const;
     void repaintRectangle(const IntRect&, bool immediate);
     void addRepaintInfo(RenderObject*, const IntRect&);
