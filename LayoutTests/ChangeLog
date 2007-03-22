@@ -1,3 +1,20 @@
+2007-03-22  Adam Roben  <aroben@apple.com>
+
+        Reviewed by Ada.
+
+        Added a new test to make sure that eventSender.mouseClick works
+        correctly.
+
+        * fast/events/click-count-expected.txt: Added.
+        * fast/events/click-count.html: Added.
+
+        Updated results for some tests that depended on the broken version of
+        eventSender.mouseClick.
+
+        * fast/events/objc-event-api-expected.txt:
+        * fast/forms/focus-selection-input-expected.txt:
+        * fast/forms/focus-selection-textarea-expected.txt:
+
 2007-03-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

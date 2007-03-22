@@ -318,8 +318,8 @@ BOOL replayingSavedEvents;
                                                 eventNumber:++eventNumber
                                                  clickCount:clickCount
                                                    pressure:0.0];
-        [NSApp postEvent:mouseUpEvent atStart:NO];
         [subView mouseDown:mouseDownEvent];
+        [subView mouseUp:mouseUpEvent];
         lastClick = [mouseUpEvent timestamp];
     }
 }

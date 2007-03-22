@@ -195,6 +195,58 @@ event type:      selectstart
   eventPhase:    3
   bubbles:       1
   cancelable:    1
+event type:      mouseup
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        2
+  view:          OK (document: OK)
+  button:        0
+  clientX:       400
+  clientY:       150
+  screenX:       -9600
+  screenY:       -9850
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      click
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        2
+  view:          OK (document: OK)
+  button:        0
+  clientX:       400
+  clientY:       150
+  screenX:       -9600
+  screenY:       -9850
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      dblclick
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        2
+  view:          OK (document: OK)
+  button:        0
+  clientX:       400
+  clientY:       150
+  screenX:       -9600
+  screenY:       -9850
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      mousemove
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    0
+  detail:        0
+  view:          OK (document: OK)
+  button:        0
+  clientX:       400
+  clientY:       150
+  screenX:       -9600
+  screenY:       -9850
+  modifier keys: c:0 s:0 a:0 m:0
 event type:      mousedown
   target:        <div>
   eventPhase:    3

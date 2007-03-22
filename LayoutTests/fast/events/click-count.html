@@ -1,0 +1,62 @@
+<html>
+<head>
+<script>
+function log(string)
+{
+    document.getElementById('output').innerHTML += string;
+}
+
+function mouseDown(evt)
+{
+    log("<span style='color:green'>[Mouse Down]</span> Button: " + evt.button + " Click Count: " + evt.detail + "<br>");
+}
+
+function mouseUp(evt)
+{
+    log("<span style='color:green'>[Mouse Up]</span> Button: " + evt.button + " Click Count: " + evt.detail + "<br>");
+}
+
+function mouseClick(evt)
+{
+    log("<span style='color:green'>[Mouse Click]</span> Button: " + evt.button + " Click Count: " + evt.detail + "<br>");
+}
+
+function mouseDoubleClick(evt)
+{
+    log("<span style='color:green'>[Mouse Double Click]</span> Button: " + evt.button + " Click Count: " + evt.detail + "<br>");
+}
+
+function test()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    if (window.eventSender) {
+        var testEle = document.getElementById("testDiv");
+        eventSender.mouseMoveTo(testEle.offsetLeft+testEle.offsetWidth/2, testEle.offsetTop+testEle.offsetHeight/2);
+        testClick();
+    }
+}
+
+var clickCount = 1;
+function testClick()
+{
+    if (clickCount > 5) {
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+        return;
+    }
+    log("Clicking " + clickCount + " times<br>");
+    for (var click = 0; click < clickCount; click++)
+        eventSender.mouseClick();
+    clickCount++;
+    setTimeout(testClick, 1000);
+}
+
+</script>
+</head>
+<body onload="test()">
+<div id="testDiv" style="-webkit-user-select: none; border:1px solid red" onmousedown="mouseDown(event)" onmouseup="mouseUp(event)" onclick="mouseClick(event)" ondblclick="mouseDoubleClick(event)">Click inside this div</div>
+<p id="output">
+</p>
