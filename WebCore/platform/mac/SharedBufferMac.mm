@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "FoundationExtras.h"
 #include "SharedBuffer.h"
 #include "WebCoreObjCExtras.h"
 #include <string.h>
@@ -101,6 +102,11 @@ SharedBuffer::SharedBuffer(NSData *nsData)
 NSData *SharedBuffer::createNSData()
 {    
     return [[SharedBufferData alloc] initWithSharedBuffer:this];
+}
+
+CFDataRef SharedBuffer::createCFData()
+{    
+    return (CFDataRef)HardRetainWithNSRelease([[SharedBufferData alloc] initWithSharedBuffer:this]);
 }
 
 bool SharedBuffer::hasPlatformData() const

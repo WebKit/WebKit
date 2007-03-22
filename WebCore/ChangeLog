@@ -1,3 +1,33 @@
+2007-03-21  David Harrison  <harrison@apple.com>
+
+        Reviewed by hyatt.
+
+        <rdar://problem/5072460> CrashTracer: [USER] 1 crashes in Xcode at com.apple.ImageIO.framework: getBandProcPNG + 168
+
+        An NSData object was being alloc/init'd, then returned callers who cast the pointer as a
+        CFDataRef, including calling CFRelease on it. The problem is that under garbage collection, the NS
+        retain count is ignored (it's always 0), but the CFRetain and CFRelease are not ignored. This
+        caused the object to be over-released. The solution that works in both GC and non-GC is to "transfer"
+        the initial NS retain count to the CF retain count, using HardRetainWithNSRelease.
+        
+        The creator of the NSData was SharedBuffer::createNSData. The callers were PDFDocumentImage::dataChanged()
+        and ImageSource::setData(). This particular crash involved the ImageSource::setData() case.
+
+        * platform/SharedBuffer.h:
+        Declare createCFData().
+        
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::setData):
+        Call createCFData instead of createNSData.
+        
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::dataChanged):
+        Call createCFData instead of createNSData.
+        
+       * platform/mac/SharedBufferMac.mm:
+        (WebCore::SharedBuffer::createCFData):
+        Implement createCFData(). Use HardRetainWithNSRelease for gc safety.
+        
 2007-03-21  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
