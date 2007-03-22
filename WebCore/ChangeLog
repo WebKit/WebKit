@@ -1,5 +1,15 @@
 2007-03-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by Brady.
+
+        - use binary_search instead of hash table; slightly better performance and
+          less memory use
+
+        * platform/network/ResourceHandle.cpp: (WebCore::ResourceHandle::portAllowed):
+        Use binary_search.
+
+2007-03-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Adele.
 
         - fix <rdar://problem/5074630> detachChildren call should move from WebKit to WebCore
