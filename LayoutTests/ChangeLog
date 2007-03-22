@@ -1,3 +1,11 @@
+2007-03-21  Timothy Hatcher  <timothy@apple.com>
+
+        New results after rolling out r19828 in r20352.
+
+        * fast/overflow/scrollRevealButton-expected.checksum:
+        * fast/overflow/scrollRevealButton-expected.png:
+        * fast/overflow/scrollRevealButton-expected.txt:
+
 2007-03-21  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by oliver
