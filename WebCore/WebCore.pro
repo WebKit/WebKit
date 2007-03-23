@@ -78,8 +78,6 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/../WebKitQt/Api \
                 $$PWD/WebCore+SVG
 QT += network
-!mac:CONFIG += link_pkgconfig
-PKGCONFIG += libxslt
 LIBS += -lsqlite3
 
 
@@ -91,6 +89,8 @@ TOKENIZER = $$PWD/css/tokenizer.flex
 CSSBISON = $$PWD/css/CSSGrammar.y
 
 HTML_NAMES = $$PWD/html/HTMLTagNames.in
+
+XML_NAMES = $$PWD/xml/xmlattrs.in
 
 ENTITIES_GPERF = $$PWD/html/HTMLEntityNames.gperf
 
@@ -732,6 +732,8 @@ contains(DEFINES, ENABLE_XPATH=1) {
 
 contains(DEFINES, ENABLE_XSLT=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_XSLT
+    !mac:CONFIG += link_pkgconfig
+    PKGCONFIG += libxslt
 }
 
 contains(DEFINES, ENABLE_XBL=1) {
@@ -742,8 +744,6 @@ contains(DEFINES, ENABLE_SVG=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG
 
     SVG_NAMES = $$PWD/ksvg2/svg/svgtags.in
-
-    XML_NAMES = $$PWD/xml/xmlattrs.in
 
     XLINK_NAMES = $$PWD/ksvg2/misc/xlinkattrs.in
 
@@ -1054,7 +1054,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/SVGInlineTextBox.cpp \
         rendering/SVGRootInlineBox.cpp
 
-        # GENERATOR 5-B:
+        # GENERATOR 5-C:
         svgnames_a.output = tmp/SVGNames.cpp
         svgnames_a.commands = perl $$PWD/ksvg2/scripts/make_names.pl --tags $$PWD/ksvg2/svg/svgtags.in --attrs $$PWD/ksvg2/svg/svgattrs.in --namespace SVG --cppNamespace WebCore --namespaceURI 'http://www.w3.org/2000/svg' --factory --attrsNullNamespace --output tmp
         svgnames_a.input = SVG_NAMES
@@ -1072,7 +1072,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svgnames_b.clean += tmp/SVGElementFactory.h ${QMAKE_FILE_OUT}
         QMAKE_EXTRA_COMPILERS += svgnames_b
 
-        # GENERATOR 5-C:
+        # GENERATOR 5-D:
         xlinknames.output = tmp/XLinkNames.cpp
         xlinknames.commands = perl $$PWD/ksvg2/scripts/make_names.pl --attrs $$PWD/ksvg2/misc/xlinkattrs.in --namespace XLink --cppNamespace WebCore --namespaceURI 'http://www.w3.org/1999/xlink' --output tmp
         xlinknames.input = XLINK_NAMES
@@ -1081,16 +1081,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         xlinknames.variable_out = GENERATED_SOURCES
         xlinknames.clean = ${QMAKE_FILE_OUT} tmp/XLinkNames.h
         QMAKE_EXTRA_COMPILERS += xlinknames
-
-        # GENERATOR 5-D:
-        xmlnames.output = tmp/XMLNames.cpp
-        xmlnames.commands = perl $$PWD/ksvg2/scripts/make_names.pl --attrs $$PWD/xml/xmlattrs.in --namespace XML --cppNamespace WebCore --namespaceURI 'http://www.w3.org/XML/1998/namespace' --output tmp
-        xmlnames.input = XML_NAMES
-        xmlnames.dependency_type = TYPE_C
-        xmlnames.CONFIG = target_predeps
-        xmlnames.variable_out = GENERATED_SOURCES
-        xmlnames.clean = ${QMAKE_FILE_OUT} tmp/XMLNames.h
-        QMAKE_EXTRA_COMPILERS += xmlnames
 }
 
 
@@ -1152,6 +1142,16 @@ htmlnames.CONFIG = target_predeps
 htmlnames.variable_out = GENERATED_SOURCES
 htmlnames.clean = ${QMAKE_FILE_OUT} tmp/HTMLNames.h
 QMAKE_EXTRA_COMPILERS += htmlnames
+
+# GENERATOR 5-B:
+xmlnames.output = tmp/XMLNames.cpp
+xmlnames.commands = perl $$PWD/ksvg2/scripts/make_names.pl --attrs $$PWD/xml/xmlattrs.in --namespace XML --cppNamespace WebCore --namespaceURI 'http://www.w3.org/XML/1998/namespace' --output tmp
+xmlnames.input = XML_NAMES
+xmlnames.dependency_type = TYPE_C
+xmlnames.CONFIG = target_predeps
+xmlnames.variable_out = GENERATED_SOURCES
+xmlnames.clean = ${QMAKE_FILE_OUT} tmp/XMLNames.h
+QMAKE_EXTRA_COMPILERS += xmlnames
 
 # GENERATOR 6-A:
 cssprops.output = tmp/CSSPropertyNames.c
