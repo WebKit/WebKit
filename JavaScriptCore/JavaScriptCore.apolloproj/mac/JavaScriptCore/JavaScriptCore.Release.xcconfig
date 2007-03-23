@@ -1,0 +1,2 @@
+#include "JavaScriptCore.xcconfig"
+ARCHS = i386 ppc;

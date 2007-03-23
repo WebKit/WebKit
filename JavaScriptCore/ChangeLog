@@ -1,3 +1,15 @@
+2007-03-22  Christopher Brichford  <chrisb@adobe.com>
+
+        Reviewed/landed by Adam.
+
+        - Adding mac project files for apollo port of JavaScriptCore. Currently project
+        just builds dftables.
+
+        * JavaScriptCore.apolloproj/mac/JavaScriptCore/JavaScriptCore.Debug.xcconfig: Added.
+        * JavaScriptCore.apolloproj/mac/JavaScriptCore/JavaScriptCore.Release.xcconfig: Added.
+        * JavaScriptCore.apolloproj/mac/JavaScriptCore/JavaScriptCore.xcconfig: Added.
+        * JavaScriptCore.apolloproj/mac/JavaScriptCore/JavaScriptCore.xcodeproj/project.pbxproj: Added.
+
 2007-03-21  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

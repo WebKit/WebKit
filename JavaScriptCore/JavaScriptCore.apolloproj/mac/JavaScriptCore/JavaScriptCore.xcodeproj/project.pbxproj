@@ -1,0 +1,282 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		810BFA3F0BB32D340021035B /* dftables.c in Sources */ = {isa = PBXBuildFile; fileRef = 810BFA3E0BB32D340021035B /* dftables.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		810BFA3E0BB32D340021035B /* dftables.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = dftables.c; path = ../../../pcre/dftables.c; sourceTree = SOURCE_ROOT; };
+		8152CC530BB32D480075B74E /* libJavaScriptCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libJavaScriptCore.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8152CC550BB32D480075B74E /* dftables */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dftables; sourceTree = BUILT_PRODUCTS_DIR; };
+		8160D74E0BB3262800D65181 /* JavaScriptCore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = JavaScriptCore.xcconfig; sourceTree = "<group>"; };
+		8160D7510BB3270400D65181 /* JavaScriptCore.Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = JavaScriptCore.Debug.xcconfig; sourceTree = "<group>"; };
+		8160D7540BB3273D00D65181 /* JavaScriptCore.Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = JavaScriptCore.Release.xcconfig; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		81BD43600BB32AF2006A63BF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D289987405E68DCB004EDB86 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* JavaScriptCore */ = {
+			isa = PBXGroup;
+			children = (
+				810BFA3D0BB32D0E0021035B /* pcre */,
+				810BFA310BB32CBD0021035B /* Configurations */,
+				8152CC540BB32D480075B74E /* Products */,
+			);
+			name = JavaScriptCore;
+			sourceTree = "<group>";
+		};
+		810BFA310BB32CBD0021035B /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				8160D74E0BB3262800D65181 /* JavaScriptCore.xcconfig */,
+				8160D7510BB3270400D65181 /* JavaScriptCore.Debug.xcconfig */,
+				8160D7540BB3273D00D65181 /* JavaScriptCore.Release.xcconfig */,
+			);
+			name = Configurations;
+			sourceTree = "<group>";
+		};
+		810BFA3D0BB32D0E0021035B /* pcre */ = {
+			isa = PBXGroup;
+			children = (
+				810BFA3E0BB32D340021035B /* dftables.c */,
+			);
+			name = pcre;
+			sourceTree = "<group>";
+		};
+		8152CC540BB32D480075B74E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8152CC530BB32D480075B74E /* libJavaScriptCore.a */,
+				8152CC550BB32D480075B74E /* dftables */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D2AAC043055464E500DB518D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		81BD43610BB32AF2006A63BF /* dftables */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 81BD43640BB32B51006A63BF /* Build configuration list for PBXNativeTarget "dftables" */;
+			buildPhases = (
+				81BD435F0BB32AF2006A63BF /* Sources */,
+				81BD43600BB32AF2006A63BF /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = dftables;
+			productName = dftables;
+			productReference = 8152CC550BB32D480075B74E /* dftables */;
+			productType = "com.apple.product-type.tool";
+		};
+		D2AAC045055464E500DB518D /* JavaScriptCore */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB91EB08733DB70010E9CD /* Build configuration list for PBXNativeTarget "JavaScriptCore" */;
+			buildPhases = (
+				D2AAC043055464E500DB518D /* Headers */,
+				D2AAC044055464E500DB518D /* Sources */,
+				D289987405E68DCB004EDB86 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = JavaScriptCore;
+			productName = JavaScriptCore;
+			productReference = 8152CC530BB32D480075B74E /* libJavaScriptCore.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB91EF08733DB70010E9CD /* Build configuration list for PBXProject "JavaScriptCore" */;
+			hasScannedForEncodings = 1;
+			mainGroup = 08FB7794FE84155DC02AAC07 /* JavaScriptCore */;
+			productRefGroup = 8152CC540BB32D480075B74E /* Products */;
+			projectDirPath = "";
+			targets = (
+				D2AAC045055464E500DB518D /* JavaScriptCore */,
+				81BD43610BB32AF2006A63BF /* dftables */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		81BD435F0BB32AF2006A63BF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				810BFA3F0BB32D340021035B /* dftables.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2AAC044055464E500DB518D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB91EC08733DB70010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8160D7510BB3270400D65181 /* JavaScriptCore.Debug.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = JavaScriptCore;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		1DEB91ED08733DB70010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8160D7540BB3273D00D65181 /* JavaScriptCore.Release.xcconfig */;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = JavaScriptCore;
+			};
+			name = Release;
+		};
+		1DEB91F008733DB70010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8160D74E0BB3262800D65181 /* JavaScriptCore.xcconfig */;
+			buildSettings = {
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				JAVASCRIPTCORE_SRC_ROOT = "${PROJECT_DIR}/../../..";
+				PREBINDING = NO;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				WEBKIT_BUILD_DIR = "${JAVASCRIPTCORE_SRC_ROOT}/../WebKitBuild";
+			};
+			name = Debug;
+		};
+		1DEB91F108733DB70010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8160D74E0BB3262800D65181 /* JavaScriptCore.xcconfig */;
+			buildSettings = {
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				JAVASCRIPTCORE_SRC_ROOT = "${PROJECT_DIR}/../../..";
+				PREBINDING = NO;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				WEBKIT_BUILD_DIR = "${JAVASCRIPTCORE_SRC_ROOT}/../WebKitBuild";
+			};
+			name = Release;
+		};
+		81BD43650BB32B51006A63BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8160D7510BB3270400D65181 /* JavaScriptCore.Debug.xcconfig */;
+			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(CONFIGURATION_TEMP_DIR)";
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PREBINDING = NO;
+				PRODUCT_NAME = dftables;
+				ZERO_LINK = NO;
+			};
+			name = Debug;
+		};
+		81BD43660BB32B51006A63BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8160D7540BB3273D00D65181 /* JavaScriptCore.Release.xcconfig */;
+			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/JavaScriptCore.build";
+				COPY_PHASE_STRIP = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = s;
+				PREBINDING = NO;
+				PRODUCT_NAME = dftables;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB91EB08733DB70010E9CD /* Build configuration list for PBXNativeTarget "JavaScriptCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91EC08733DB70010E9CD /* Debug */,
+				1DEB91ED08733DB70010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB91EF08733DB70010E9CD /* Build configuration list for PBXProject "JavaScriptCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91F008733DB70010E9CD /* Debug */,
+				1DEB91F108733DB70010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		81BD43640BB32B51006A63BF /* Build configuration list for PBXNativeTarget "dftables" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				81BD43650BB32B51006A63BF /* Debug */,
+				81BD43660BB32B51006A63BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}
