@@ -1,3 +1,15 @@
+2007-03-23  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13157
+          List markers positioned incorrectly and don't repaint properly on Oxford homepage
+
+        * fast/lists/marker-image-error-expected.checksum: Added.
+        * fast/lists/marker-image-error-expected.png: Added.
+        * fast/lists/marker-image-error-expected.txt: Added.
+        * fast/lists/marker-image-error.html: Added.
+
 2007-03-23  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Adam.

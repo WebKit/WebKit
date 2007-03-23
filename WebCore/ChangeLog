@@ -1,3 +1,16 @@
+2007-03-23  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13157
+          List markers positioned incorrectly and don't repaint properly on Oxford homepage
+
+        Test: fast/lists/marker-image-error.html
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::imageChanged): Mark ourselves for relayout if
+        the image failed to load, since that means we will use a bullet instead.
+
 2007-03-23  Zack Rusin  <zrusin@trolltech.com>
 
         Fix the compile.

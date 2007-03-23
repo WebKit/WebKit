@@ -635,7 +635,7 @@ void RenderListMarker::imageChanged(CachedImage* o)
     if (o != m_image)
         return;
 
-    if (m_width != m_image->imageSize().width() || m_height != m_image->imageSize().height())
+    if (m_width != m_image->imageSize().width() || m_height != m_image->imageSize().height() || m_image->errorOccurred())
         setNeedsLayoutAndMinMaxRecalc();
     else
         repaint();
