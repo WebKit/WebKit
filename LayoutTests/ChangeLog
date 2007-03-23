@@ -1,3 +1,20 @@
+2007-03-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        Fixed (was missing a newline):
+        * editing/execCommand/4917055-expected.txt:
+        Tests setting a caet before the image and changing its alignment:
+        * editing/execCommand/5080333-1-expected.checksum: Added.
+        * editing/execCommand/5080333-1-expected.png: Added.
+        * editing/execCommand/5080333-1-expected.txt: Added.
+        * editing/execCommand/5080333-1.html: Added.
+        Tests selecting the image and changing its alignment:
+        * editing/execCommand/5080333-2-expected.checksum: Added.
+        * editing/execCommand/5080333-2-expected.png: Added.
+        * editing/execCommand/5080333-2-expected.txt: Added.
+        * editing/execCommand/5080333-2.html: Added.
+
 2007-03-23  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

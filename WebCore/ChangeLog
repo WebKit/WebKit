@@ -1,3 +1,43 @@
+2007-03-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        <rdar://problem/5080333> 
+        REGRESSION: Selection changes when changing the alignment of an image
+        
+        Regression occurred when we started using moveParagraphs
+        to move content in applyBlockStyle.  moveParagraphs 
+        moves by copying, deleting and reinserting content, and
+        so must be accompanied by selection preservation code.
+        That code uses rangeFromLocationAndLength and rangeLength,
+        which use TextIterators, which don't emit anything for images 
+        and other replaced elements, causing this bug.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle): Ask rangeLength 
+        and rangeFromLocationAndLength to request that their
+        TextIterators emit spaces for replaced elements.
+        Use rangeCompliantEquivalent()s when creating a Range from
+        VisiblePositions, since some VisiblePositions have illegal
+        deepEquivalent()s.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs): Ditto.
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator):
+        (WebCore::TextIterator::handleReplacedElement): Emit
+        a space if requested.
+        (WebCore::TextIterator::representNodeOffsetZero): Emit
+        ranges before m_node, not around m_lastTextNode.  These
+        ranges should represent the part of the document associated
+        with the emitted character. 
+        (WebCore::TextIterator::rangeLength): Take in the new bool.
+        (WebCore::TextIterator::rangeFromLocationAndLength): Ditto.
+        Also, don't loop an extra time after finding the end of the
+        range when we're looking for zero length ranges.  This appeared
+        to be a workaround for the bugs fixed in representNodeOffsetZero
+        in this patch.
+        * editing/TextIterator.h:
+
 2007-03-24  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Darin.

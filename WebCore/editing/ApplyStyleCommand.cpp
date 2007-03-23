@@ -380,10 +380,10 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclaration *style)
     // Calculate start and end indices from the start of the tree that they're in.
     Node* scope = highestAncestor(visibleStart.deepEquivalent().node());
     Position rangeStart(scope, 0);
-    RefPtr<Range> startRange = new Range(document(), rangeStart, visibleStart.deepEquivalent());
-    RefPtr<Range> endRange = new Range(document(), rangeStart, visibleEnd.deepEquivalent());
-    int startIndex = TextIterator::rangeLength(startRange.get());
-    int endIndex = TextIterator::rangeLength(endRange.get());
+    RefPtr<Range> startRange = new Range(document(), rangeStart, rangeCompliantEquivalent(visibleStart.deepEquivalent()));
+    RefPtr<Range> endRange = new Range(document(), rangeStart, rangeCompliantEquivalent(visibleEnd.deepEquivalent()));
+    int startIndex = TextIterator::rangeLength(startRange.get(), true);
+    int endIndex = TextIterator::rangeLength(endRange.get(), true);
     
     VisiblePosition paragraphStart(startOfParagraph(visibleStart));
     VisiblePosition nextParagraphStart(endOfParagraph(paragraphStart).next());
@@ -406,8 +406,8 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclaration *style)
         nextParagraphStart = endOfParagraph(paragraphStart).next();
     }
     
-    updateStartEnd(TextIterator::rangeFromLocationAndLength(static_cast<Element*>(scope), startIndex, 0)->startPosition(),
-                   TextIterator::rangeFromLocationAndLength(static_cast<Element*>(scope), endIndex, 0)->startPosition());
+    updateStartEnd(TextIterator::rangeFromLocationAndLength(static_cast<Element*>(scope), startIndex, 0, true)->startPosition(),
+                   TextIterator::rangeFromLocationAndLength(static_cast<Element*>(scope), endIndex, 0, true)->startPosition());
 }
 
 #define NoFontDelta (0.0f)

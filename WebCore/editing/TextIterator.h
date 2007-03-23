@@ -58,7 +58,7 @@ class TextIterator
 {
 public:
     TextIterator();
-    explicit TextIterator(const Range *);
+    explicit TextIterator(const Range*, bool emitSpaceForReplacedElements = false);
     
     bool atEnd() const { return !m_positionNode; }
     void advance();
@@ -68,8 +68,8 @@ public:
     
     PassRefPtr<Range> range() const;
      
-    static int rangeLength(const Range *r);
-    static PassRefPtr<Range> rangeFromLocationAndLength(Element *scope, int rangeLocation, int rangeLength);
+    static int rangeLength(const Range*, bool spacesForReplacedElements = false);
+    static PassRefPtr<Range> rangeFromLocationAndLength(Element* scope, int rangeLocation, int rangeLength, bool spacesForReplacedElements = false);
     static PassRefPtr<Range> subrange(Range* entireRange, int characterOffset, int characterCount);
     
 private:
@@ -124,6 +124,9 @@ private:
     
     // Used when deciding whether to emit a "positioning" (e.g. newline) before any other content
     bool m_haveEmitted;
+    
+    // Used by selection preservation code.
+    bool m_emitSpaceForReplacedElements;
 };
 
 // Iterates through the DOM range, returning all the text, and 0-length boundaries

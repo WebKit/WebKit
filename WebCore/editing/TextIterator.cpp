@@ -78,7 +78,13 @@ TextIterator::TextIterator() : m_startContainer(0), m_startOffset(0), m_endConta
 {
 }
 
-TextIterator::TextIterator(const Range *r) : m_startContainer(0), m_startOffset(0), m_endContainer(0), m_endOffset(0), m_positionNode(0)
+TextIterator::TextIterator(const Range* r, bool emitSpaceForReplacedElements) 
+    : m_startContainer(0) 
+    , m_startOffset(0)
+    , m_endContainer(0)
+    , m_endOffset(0)
+    , m_positionNode(0)
+    , m_emitSpaceForReplacedElements(emitSpaceForReplacedElements)
 {
     if (!r)
         return;
@@ -343,6 +349,11 @@ bool TextIterator::handleReplacedElement()
 
     m_haveEmitted = true;
     
+    if (m_emitSpaceForReplacedElements) {
+        emitCharacter(' ', m_node->parentNode(), m_node, 0, 1);
+        return true;
+    }
+    
     m_positionNode = m_node->parentNode();
     m_positionOffsetBaseNode = m_node;
     m_positionStartOffset = 0;
@@ -522,11 +533,11 @@ void TextIterator::representNodeOffsetZero()
         return;
     
     if (shouldEmitTabBeforeNode(m_node))
-        emitCharacter('\t', m_lastTextNode->parentNode(), m_lastTextNode, 0, 1);
+        emitCharacter('\t', m_node->parentNode(), m_node, 0, 0);
     else if (shouldEmitNewlineBeforeNode(m_node))
-        emitCharacter('\n', m_lastTextNode->parentNode(), m_lastTextNode, 0, 1);
+        emitCharacter('\n', m_node->parentNode(), m_node, 0, 0);
     else if (shouldEmitSpaceBeforeAndAfterNode(m_node))
-        emitCharacter(' ', m_lastTextNode->parentNode(), m_lastTextNode, 0, 1);
+        emitCharacter(' ', m_node->parentNode(), m_node, 0, 0);
 }
 
 bool TextIterator::handleNonTextNode()
@@ -1095,10 +1106,10 @@ bool CircularSearchBuffer::isMatch() const
         && memcmp(m_buffer, m_target.characters() + tailSpace, headSpace * sizeof(UChar)) == 0;
 }
 
-int TextIterator::rangeLength(const Range *r)
+int TextIterator::rangeLength(const Range *r, bool spacesForReplacedElements)
 {
     int length = 0;
-    for (TextIterator it(r); !it.atEnd(); it.advance())
+    for (TextIterator it(r, spacesForReplacedElements); !it.atEnd(); it.advance())
         length += it.length();
     
     return length;
@@ -1125,7 +1136,7 @@ PassRefPtr<Range> TextIterator::subrange(Range* entireRange, int characterOffset
     return result.release();
 }
 
-PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element *scope, int rangeLocation, int rangeLength)
+PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element *scope, int rangeLocation, int rangeLength, bool spacesForReplacedElements)
 {
     RefPtr<Range> resultRange = scope->document()->createRange();
 
@@ -1135,7 +1146,7 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element *scope, int r
 
     RefPtr<Range> textRunRange;
 
-    TextIterator it(rangeOfContents(scope).get());
+    TextIterator it(rangeOfContents(scope).get(), spacesForReplacedElements);
     
     // FIXME: the atEnd() check shouldn't be necessary, workaround for <http://bugs.webkit.org/show_bug.cgi?id=6289>.
     if (rangeLocation == 0 && rangeLength == 0 && it.atEnd()) {
@@ -1197,10 +1208,8 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element *scope, int r
                 else
                     resultRange->setEnd(textRunRange->endContainer(exception), textRunRange->endOffset(exception), exception);
             }
-            if (!(rangeLength == 0 && rangeEnd == docTextPosition + len)) {
-                docTextPosition += len;
-                break;
-            }
+            docTextPosition += len;
+            break;
         }
         docTextPosition += len;
     }

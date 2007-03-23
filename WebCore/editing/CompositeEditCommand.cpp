@@ -707,13 +707,13 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
             startIndex = 0;
             if (startInParagraph) {
                 RefPtr<Range> startRange = new Range(document(), startOfParagraphToMove.deepEquivalent(), visibleStart.deepEquivalent());
-                startIndex = TextIterator::rangeLength(startRange.get());
+                startIndex = TextIterator::rangeLength(startRange.get(), true);
             }
 
             endIndex = 0;
             if (endInParagraph) {
                 RefPtr<Range> endRange = new Range(document(), startOfParagraphToMove.deepEquivalent(), visibleEnd.deepEquivalent());
-                endIndex = TextIterator::rangeLength(endRange.get());
+                endIndex = TextIterator::rangeLength(endRange.get(), true);
             }
         }
     }
@@ -781,14 +781,14 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     }
         
     RefPtr<Range> startToDestinationRange(new Range(document(), Position(document(), 0), rangeCompliantEquivalent(destination.deepEquivalent())));
-    destinationIndex = TextIterator::rangeLength(startToDestinationRange.get());
+    destinationIndex = TextIterator::rangeLength(startToDestinationRange.get(), true);
     
     setEndingSelection(destination);
     applyCommandToComposite(new ReplaceSelectionCommand(document(), fragment.get(), true, false, !preserveStyle, false));
     
     if (preserveSelection && startIndex != -1) {
-        setEndingSelection(Selection(TextIterator::rangeFromLocationAndLength(document()->documentElement(), destinationIndex + startIndex, 0)->startPosition(), 
-                                     TextIterator::rangeFromLocationAndLength(document()->documentElement(), destinationIndex + endIndex, 0)->startPosition(), 
+        setEndingSelection(Selection(TextIterator::rangeFromLocationAndLength(document()->documentElement(), destinationIndex + startIndex, 0, true)->startPosition(), 
+                                     TextIterator::rangeFromLocationAndLength(document()->documentElement(), destinationIndex + endIndex, 0, true)->startPosition(), 
                                      DOWNSTREAM));
     }
 }
