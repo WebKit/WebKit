@@ -1,3 +1,18 @@
+2007-03-23  Christopher Brichford  <chrisb@adobe.com>
+
+        Reviewed/landed by Adam.
+
+        Bug 13175: Make apollo mac project files for JavaScriptCore actually
+        build something
+        http://bugs.webkit.org/show_bug.cgi?id=13175
+
+        - Changing apollo mac project files for JavaScriptCore such that they actually build
+        JavaScriptCore source code.
+
+        * JavaScriptCore.apolloproj/ForwardingSources/grammar.cpp: Added.
+        * JavaScriptCore.apolloproj/mac/JavaScriptCore/JavaScriptCore.xcconfig:
+        * JavaScriptCore.apolloproj/mac/JavaScriptCore/JavaScriptCore.xcodeproj/project.pbxproj:
+
 2007-03-24  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Darin.
@@ -7,6 +22,10 @@
 2007-03-22  Christopher Brichford  <chrisb@adobe.com>
 
         Reviewed/landed by Adam.
+
+        Bug 13164: Initial version of mac JavaScriptCore project files for
+        apollo port 
+        http://bugs.webkit.org/show_bug.cgi?id=13164
 
         - Adding mac project files for apollo port of JavaScriptCore. Currently project
         just builds dftables.
