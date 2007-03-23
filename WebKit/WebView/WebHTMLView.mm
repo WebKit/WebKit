@@ -5368,7 +5368,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 }
 
 // test for 10.4 because of <rdar://problem/4243463>
-#if BUILDING_ON_TIGER
+#ifdef BUILDING_ON_TIGER
 - (long)conversationIdentifier
 {
     return (long)self;

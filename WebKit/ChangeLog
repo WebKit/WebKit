@@ -1,3 +1,10 @@
+2007-03-23  Mark Rowe  <mrowe@apple.com>
+
+        Build fix for when BUILDING_ON_TIGER is not defined.
+
+        * Misc/WebTypesInternal.h:
+        * WebView/WebHTMLView.mm:
+
 2007-03-22  David Kilzer  <ddkilzer@apple.com>
 
         Reviewed by Darin.
