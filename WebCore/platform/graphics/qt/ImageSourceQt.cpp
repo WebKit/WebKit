@@ -197,12 +197,6 @@ void ImageSource::clear()
 }
 
 
-void ImageSource::destroyFrameAtIndex(size_t index)
-{
-    if (m_decoder)
-        m_decoder->clearFrame(index);
-}
-
 }
 
 // vim: ts=4 sw=4 et

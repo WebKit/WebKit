@@ -1,3 +1,9 @@
+2007-03-23  Zack Rusin  <zrusin@trolltech.com>
+
+        Fix the compile.
+
+        * platform/graphics/qt/ImageSourceQt.cpp:
+
 2007-03-22  Dave Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/5083072>.
