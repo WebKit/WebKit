@@ -686,6 +686,20 @@ void Frame::setZoomFactor(int percent)
       view()->layout();
 }
 
+void Frame::setPrinting(bool printing, float minPageWidth, float maxPageWidth, bool adjustViewSize)
+{
+    if (!d->m_doc)
+        return;
+
+    d->m_doc->setPrinting(printing);
+    view()->setMediaType(printing ? "print" : "screen");
+    d->m_doc->updateStyleSelector();
+    forceLayoutWithPageWidthRange(minPageWidth, maxPageWidth, adjustViewSize);
+
+    for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
+        child->setPrinting(printing, minPageWidth, maxPageWidth, adjustViewSize);
+}
+
 void Frame::setJSStatusBarText(const String& text)
 {
     d->m_kjsStatusBarText = text;
@@ -1344,7 +1358,7 @@ void Frame::forceLayout(bool allowSubtree)
     }
 }
 
-void Frame::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth)
+void Frame::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth, bool adjustViewSize)
 {
     // Dumping externalRepresentation(m_frame->renderer()).ascii() is a good trick to see
     // the state of things before and after the layout
@@ -1368,6 +1382,9 @@ void Frame::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth
             forceLayout();
         }
     }
+
+    if (adjustViewSize && view())
+        view()->adjustViewSize();
 }
 
 void Frame::sendResizeEvent()

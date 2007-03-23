@@ -1,3 +1,14 @@
+2007-03-22  Dave Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5083072>.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setPrinting):
+        (WebCore::Frame::forceLayoutWithPageWidthRange):
+        * page/Frame.h:
+        * page/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge forceLayoutWithMinimumPageWidth:maximumPageWidth:adjustingViewSize:]):
+
 2007-03-22  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Ada.

@@ -391,9 +391,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (void)forceLayoutWithMinimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustingViewSize:(BOOL)flag
 {
-    m_frame->forceLayoutWithPageWidthRange(minPageWidth, maxPageWidth);
-    if (flag)
-        m_frame->view()->adjustViewSize();
+    m_frame->forceLayoutWithPageWidthRange(minPageWidth, maxPageWidth, flag);
 }
 
 - (void)sendResizeEvent

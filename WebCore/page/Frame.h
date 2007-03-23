@@ -186,6 +186,8 @@ public:
     void setZoomFactor(int percent);
     int zoomFactor() const;
 
+    void setPrinting(bool printing, float minPageWidth, float maxPageWidth, bool adjustViewSize);
+
     bool inViewSourceMode() const;
     void setInViewSourceMode(bool = true) const;
 
@@ -218,7 +220,7 @@ public:
     void adjustPageHeight(float* newBottom, float oldTop, float oldBottom, float bottomLimit);
 
     void forceLayout(bool allowSubtree = false);
-    void forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth);
+    void forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth, bool adjustViewSize);
 
     void sendResizeEvent();
     void sendScrollEvent();
