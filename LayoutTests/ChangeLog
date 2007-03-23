@@ -1,3 +1,14 @@
+2007-03-23  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Adam.
+
+        Make script-add.html more deterministic.
+        
+        * fast/dom/resources/script3.js:
+        * fast/dom/resources/script4.js:
+        * fast/dom/resources/script5.js:
+        * fast/dom/script-add.html:
+
 2007-03-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by kevin

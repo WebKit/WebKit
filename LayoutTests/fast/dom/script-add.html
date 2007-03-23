@@ -13,7 +13,7 @@
                 var oScript = document.createElement('script');
                 oScript.setAttribute('type', 'text/javascript');
                 oHead.appendChild(oScript);
-                oScript.text = 'log("1")';
+                oScript.text = 'log("1"); test2();';
             }
             function test2()
             {
@@ -21,7 +21,7 @@
                 var oScript = document.createElement('script');
                 oScript.setAttribute('type', 'text/javascript');
                 oHead.appendChild(oScript);
-                oScript.innerText = 'log("2")';
+                oScript.innerText = 'log("2"); test3();';
             }
             function test3()
             {
@@ -49,16 +49,14 @@
             }
             function test()
             {
-                if (window.layoutTestController)
+                if (window.layoutTestController) {
                     layoutTestController.dumpAsText();
-
+                    layoutTestController.waitUntilDone();
+                }
+                
                 test1();
-                test2();
-                test3();
-                test4();
-                test5();
             }
-	</script>
+    </script>
     </head>
     <body onload="test()">
         <p>This tests 5 different ways of dynamically loading a script by creating a script element.</p>
