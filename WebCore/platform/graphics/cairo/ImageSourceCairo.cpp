@@ -163,11 +163,6 @@ NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
                                                size().width()*4);
 }
 
-void ImageSource::destroyFrameAtIndex(size_t)
-{
-    // FIXME: write me
-}
-
 bool ImageSource::frameIsCompleteAtIndex(size_t)
 {
     // FIXME: write me. Returning false makes the animation not run

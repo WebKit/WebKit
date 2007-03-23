@@ -1,3 +1,9 @@
+2007-03-22  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Not reviewed - gdk build fix.
+
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+
 2007-03-22  Dave Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/5083473>.  Make sure wheeling still forwards to the frame view even
