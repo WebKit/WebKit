@@ -1,3 +1,16 @@
+2007-03-23  David Hyatt  <hyatt@apple.com>
+
+        <rdar://problem/5085063>
+
+        Fix non-looping animation on cuteoverload.com. Just always flush
+        decoded data for large animated images to avoid our cache getting
+        out of sync with the image source.
+
+        Reviewed by ggaren
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::advanceAnimation):
+
 2007-03-23  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
