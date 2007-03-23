@@ -1,3 +1,9 @@
+2007-03-23  George Staikos  <staikos@kde.org>
+
+        Reviewed and committed by George.
+
+        Patch by Adam Treat.  Removes hardcoded path to .pro file.
+
 2007-03-22  Adam Roben  <aroben@apple.com>
 
         Reviewed by Geoff.
