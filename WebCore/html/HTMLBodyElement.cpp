@@ -1,11 +1,9 @@
 /**
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann (hausmann@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,19 +20,21 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "HTMLBodyElement.h"
 
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPropertyNames.h"
-#include "cssstyleselector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "FrameView.h"
+#include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
 #include "csshelper.h"
+#include "cssstyleselector.h"
 
 namespace WebCore {
 
@@ -152,16 +152,22 @@ void HTMLBodyElement::insertedIntoDocument()
 {
     HTMLElement::insertedIntoDocument();
 
-    // FIXME: perhaps this code should be in attach() instead of here
+    // FIXME: Perhaps this code should be in attach() instead of here.
+    Element* ownerElement = document()->ownerElement();
+    if (ownerElement && (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag))) {
+        HTMLFrameElementBase* ownerFrameElement = static_cast<HTMLFrameElementBase*>(ownerElement);
+        int marginWidth = ownerFrameElement->getMarginWidth();
+        if (marginWidth != -1)
+            setAttribute(marginwidthAttr, String::number(marginWidth));
+        int marginHeight = ownerFrameElement->getMarginHeight();
+        if (marginHeight != -1)
+            setAttribute(marginheightAttr, String::number(marginHeight));
+    }
 
-    FrameView *w = document()->view();
-    if (w && w->marginWidth() != -1)
-        setAttribute(marginwidthAttr, String::number(w->marginWidth()));
-    if (w && w->marginHeight() != -1)
-        setAttribute(marginheightAttr, String::number(w->marginHeight()));
-
-    if (w)
-        w->scheduleRelayout();
+    // FIXME: This call to scheduleRelayout not be needed here.
+    // But without it we hang during WebKit tests; need to fix that and remove this.
+    if (FrameView* view = document()->view())
+        view->scheduleRelayout();
 }
 
 bool HTMLBodyElement::isURLAttribute(Attribute *attr) const

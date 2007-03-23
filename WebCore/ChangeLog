@@ -1,3 +1,16 @@
+2007-03-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - <rdar://problem/5074439> handle margins on frame and iframe elements
+          without involving FrameView, FrameLoader, etc.
+
+        * html/HTMLBodyElement.cpp: (WebCore::HTMLBodyElement::insertedIntoDocument):
+        Grab the margin from the frame directly here. There was no real benefit
+        to doing this via FrameView. Later we can delete quite a bit of unneeded code
+        here and in WebKit that exists only to set up the margin values in FrameView,
+        which are now unused.
+
 2007-03-23  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
