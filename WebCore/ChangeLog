@@ -3,6 +3,7 @@
         Reviewed by Dave Hyatt.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=13157
+              <rdar://problem/5083995>
           List markers positioned incorrectly and don't repaint properly on Oxford homepage
 
         Test: fast/lists/marker-image-error.html
