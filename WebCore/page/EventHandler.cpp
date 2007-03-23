@@ -1156,33 +1156,31 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
         return true;
     }
 
-    if (!node)
-        return false;
-
-    node = node->shadowAncestorNode();
-    EventTargetNodeCast(node)->dispatchWheelEvent(e);
-    if (e.isAccepted())
-        return true;
+    if (node) {
+        node = node->shadowAncestorNode();
+        EventTargetNodeCast(node)->dispatchWheelEvent(e);
+        if (e.isAccepted())
+            return true;
             
-    if (!node->renderer())
-        return false;
-
+        if (node->renderer()) {
 #if PLATFORM(MAC)
-    if (!e.deltaX() && !e.deltaY() && node->renderer()->isScrollable())
-        // smooth scroll events on mac may have (0,0) deltas
-        // they need to be eaten until we start supporting them
-        e.accept();
+            if (!e.deltaX() && !e.deltaY() && node->renderer()->isScrollable())
+                // smooth scroll events on mac may have (0,0) deltas
+                // they need to be eaten until we start supporting them
+                e.accept();
 #endif
-    
-    // Just break up into two scrolls if we need to.  Diagonal movement on 
-    // a MacBook pro is an example of a 2-dimensional mouse wheel event (where both deltaX and deltaY can be set).
-    if (e.deltaX() && node->renderer()->scroll(e.deltaX() < 0 ? ScrollRight : ScrollLeft, ScrollByWheel,
-                                               e.deltaX() < 0 ? -e.deltaX() : e.deltaX()))
-        e.accept();
-    if (e.deltaY() && node->renderer()->scroll(e.deltaY() < 0 ? ScrollDown : ScrollUp, ScrollByWheel,
-                                               e.deltaY() < 0 ? -e.deltaY() : e.deltaY()))
-        e.accept();
         
+            // Just break up into two scrolls if we need to.  Diagonal movement on 
+            // a MacBook pro is an example of a 2-dimensional mouse wheel event (where both deltaX and deltaY can be set).
+            if (e.deltaX() && node->renderer()->scroll(e.deltaX() < 0 ? ScrollRight : ScrollLeft, ScrollByWheel,
+                                                       e.deltaX() < 0 ? -e.deltaX() : e.deltaX()))
+                e.accept();
+            if (e.deltaY() && node->renderer()->scroll(e.deltaY() < 0 ? ScrollDown : ScrollUp, ScrollByWheel,
+                                                       e.deltaY() < 0 ? -e.deltaY() : e.deltaY()))
+                e.accept();
+        }
+    }
+
     if (!e.isAccepted())
         m_frame->view()->wheelEvent(e);
     

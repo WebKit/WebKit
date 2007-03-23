@@ -1,3 +1,15 @@
+2007-03-22  Dave Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5083473>.  Make sure wheeling still forwards to the frame view even
+        when no node is hit.  Technically not ever hitting a node is a regression from the RenderView
+        size changes (making it be the size of the initial containing block according to CSS2.1), but
+        we should still handle this case gracefully in case it comes up again.
+       
+        Reviewed by olliej
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent):
+
 2007-03-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by kevin
