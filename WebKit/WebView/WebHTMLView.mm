@@ -5368,7 +5368,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 }
 
 // test for 10.4 because of <rdar://problem/4243463>
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
+#if BUILDING_ON_TIGER
 - (long)conversationIdentifier
 {
     return (long)self;

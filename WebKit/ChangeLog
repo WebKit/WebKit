@@ -1,3 +1,13 @@
+2007-03-22  David Kilzer  <ddkilzer@apple.com>
+
+        Reviewed by Darin.
+
+        Use BUILDING_ON_TIGER from WebKitPrefix.h instead of local
+        MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4 tests.
+
+        * Misc/WebTypesInternal.h:
+        * WebView/WebHTMLView.mm:
+
 2007-03-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
