@@ -1,3 +1,21 @@
+2007-03-23  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5080428> REGRESSION: getting value for hidden input element fails after the fix for Bug 11866
+        http://bugs.webkit.org/show_bug.cgi?id=13121
+
+        Rolled out the change for 11866 that made hidden input elements store the value separately from the value attribute.
+        Added an m_originalValue field that gets set when the element is done being parsed (in closeRenderer).  In reset,
+        use the m_originalValue for hidden input elements.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::closeRenderer):
+        (WebCore::HTMLInputElement::reset):
+        (WebCore::HTMLInputElement::setValue):
+        (WebCore::HTMLInputElement::storesValueSeparateFromAttribute):
+        * html/HTMLInputElement.h:
+
 2007-03-23  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.

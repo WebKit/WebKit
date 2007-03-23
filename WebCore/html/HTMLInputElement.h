@@ -99,6 +99,7 @@ public:
 
     virtual String stateValue() const;
     virtual void restoreState(const String&);
+    virtual void closeRenderer();
 
     bool canHaveSelection() const;
     int selectionStart() const;
@@ -192,6 +193,7 @@ private:
     void recheckValue();
 
     String m_value;
+    String m_originalValue;
     int xPos;
     short m_maxLen;
     short m_size;

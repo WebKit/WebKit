@@ -1,3 +1,14 @@
+2007-03-23  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Tests for <rdar://problem/5080428> REGRESSION: getting value for hidden input element fails after the fix for Bug 11866
+        http://bugs.webkit.org/show_bug.cgi?id=13121
+
+        * fast/dom/HTMLInputElement/input-hidden-value-expected.txt: Added.
+        * fast/dom/HTMLInputElement/input-hidden-value.html: Added.
+        * fast/forms/input-value-expected.txt:
+
 2007-03-23  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.
