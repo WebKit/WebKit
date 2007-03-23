@@ -10,6 +10,5 @@ GCC_PREFIX_HEADER = WebCorePrefix.h;
 GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(FEATURE_DEFINES) $(GCC_PREPROCESSOR_DEFINITIONS);
 HEADER_SEARCH_PATHS = ForwardingHeaders icu /usr/include/libxslt /usr/include/libxml2 "${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore" $(HEADER_SEARCH_PATHS);
 INFOPLIST_FILE = Info.plist;
-INFOPLIST_PREPROCESS = YES;
 INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
 PRODUCT_NAME = WebCore;

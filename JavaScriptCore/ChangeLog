@@ -1,3 +1,9 @@
+2007-03-24  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Darin.
+
+        * Configurations/JavaScriptCore.xcconfig: Remove unnecessary INFOPLIST_PREPROCESS.
+
 2007-03-22  Christopher Brichford  <chrisb@adobe.com>
 
         Reviewed/landed by Adam.
