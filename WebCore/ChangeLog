@@ -1,3 +1,15 @@
+2007-03-23  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5061024> REGRESSION: Returning false from onkeypress event on Input is ignored when key is Tab
+        http://bugs.webkit.org/show_bug.cgi?id= 13020
+
+        No known way to add a layout test for this.  We would need a way to know exactly how the event was consumed.
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::defaultKeyboardEventHandler):
+          If the keypress event has its default behavior prevented, then we should consider the keydown event handled.
+
 2007-03-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

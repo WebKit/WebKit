@@ -1307,7 +1307,7 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
                 ExceptionCode ec;
                 node->dispatchEvent(keypress, ec, true);
             }
-            if (keypress->defaultHandled())
+            if (keypress->defaultHandled() || keypress->defaultPrevented())
                 event->setDefaultHandled();
         }
     } else if (event->type() == keypressEvent) {
