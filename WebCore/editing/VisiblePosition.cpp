@@ -151,7 +151,7 @@ Position VisiblePosition::canonicalPosition(const Position& position)
         
     // If the html element is editable, descending into its body will look like a descent 
     // from non-editable to editable content since rootEditableElement() always stops at the body.
-    if (editingRoot && editingRoot->hasTagName(htmlTag))
+    if (editingRoot && editingRoot->hasTagName(htmlTag) || position.node()->isDocumentNode())
         return next.isNotNull() ? next : prev;
         
     bool prevIsInSameEditableElement = prevNode && editableRootForPosition(prev) == editingRoot;

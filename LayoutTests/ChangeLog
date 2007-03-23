@@ -1,3 +1,19 @@
+2007-03-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by kevin
+        
+        <rdar://problem/5081257> 
+        REGRESSION: New Mail signatures start out empty
+        
+        * editing/selection/5081257-1-expected.checksum: Added.
+        * editing/selection/5081257-1-expected.png: Added.
+        * editing/selection/5081257-1-expected.txt: Added.
+        * editing/selection/5081257-1.html: Added.
+        * editing/selection/5081257-2-expected.checksum: Added.
+        * editing/selection/5081257-2-expected.png: Added.
+        * editing/selection/5081257-2-expected.txt: Added.
+        * editing/selection/5081257-2.html: Added.
+
 2007-03-22  Adam Roben  <aroben@apple.com>
 
         Reviewed by Geoff.

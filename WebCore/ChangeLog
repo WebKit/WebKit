@@ -1,3 +1,15 @@
+2007-03-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by kevin
+
+        <rdar://problem/5081257> 
+        REGRESSION: New Mail signatures start out empty
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::canonicalPosition): Allow
+        descent from positions inside the document into an 
+        editable body.
+
 2007-03-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adele and John
