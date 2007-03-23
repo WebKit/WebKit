@@ -79,7 +79,7 @@ void NetscapePlugInStreamLoader::didReceiveResponse(const ResourceResponse& theR
     ResourceLoader::didReceiveResponse(theResponse);
     if (!m_stream)
         return;
-    if (theResponse.isHTTP() &&
+    if ([theResponse.nsURLResponse() isKindOfClass:[NSHTTPURLResponse class]] &&
         (theResponse.httpStatusCode() >= 400 || theResponse.httpStatusCode() < 100)) {
         NSError *error = frameLoader()->fileDoesNotExistError(theResponse);
         [m_stream.get() cancelLoadAndDestroyStreamWithError:error];

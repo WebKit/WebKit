@@ -1,3 +1,15 @@
+2007-03-22  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Ada.
+
+        <rdar://problem/5074974>
+        CrashTracer: [USER] repro crash in Safari at com.apple.WebCore: WebCore::FrameLoader::activeDocumentLoader const + 6
+        
+        * loader/mac/NetscapePlugInStreamLoaderMac.mm:
+        (WebCore::NetscapePlugInStreamLoader::didReceiveResponse):
+        Don't use ResourceResponse:isHTTP here since that only looks at the protocol instead of if the response came from a 
+        HTTP server (and not a web archive).
+
 2007-03-22  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Not reviewed - gdk build fix.
