@@ -215,7 +215,7 @@ bool RenderSVGImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
         translationForAttributes().inverse().map(localX, localY, &localX, &localY);
 
         if (hitRules.canHitFill) {
-            if (IntRect(0, 0, m_width, m_height).contains(localX, localY)) {
+            if (FloatRect(0, 0, m_width, m_height).contains(localX, localY)) {
                 updateHitTestResult(result, IntPoint(_x, _y));
                 return true;
             }
