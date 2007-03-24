@@ -28,7 +28,7 @@
  */
 
 #import <WebCore/EditorClient.h>
-#import <WebCore/RetainPtr.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/Forward.h>
 
 @class WebView;

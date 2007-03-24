@@ -1,3 +1,15 @@
+2007-03-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam
+
+        <rdar://problem/5086210> - Move RetainPtr to WTF
+        
+        * ForwardingHeaders/wtf/RetainPtr.h: Added.
+        * History/WebBackForwardList.mm: Changed #import to <wtf/RetainPtr.h>
+        * WebCoreSupport/WebEditorClient.h: Ditto
+        * WebCoreSupport/WebFrameLoaderClient.h: Ditto
+        * WebView/WebDocumentLoaderMac.h: Ditto
+
 2007-03-24  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adele

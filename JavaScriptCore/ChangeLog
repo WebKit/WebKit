@@ -1,3 +1,14 @@
+2007-03-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam
+        
+        <rdar://problem/5086210> - Move RetainPtr to WTF
+
+        * wtf/RetainPtr.h: Added
+        * JavaScriptCore.xcodeproj/project.pbxproj: Add it to the project file
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Ditto
+
+
 2007-03-23  Christopher Brichford  <chrisb@adobe.com>
 
         Reviewed/landed by Adam.

@@ -33,7 +33,7 @@
 #include "PlatformMenuDescription.h"
 #include "PlatformString.h"
 #if PLATFORM(MAC)
-#include "RetainPtr.h"
+#include <wtf/RetainPtr.h>
 #elif PLATFORM(QT)
 #include <QMenu>
 typedef QMenu* PlatformMenuDescription;

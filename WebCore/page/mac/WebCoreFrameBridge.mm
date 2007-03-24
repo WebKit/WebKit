@@ -68,7 +68,6 @@
 #import "RenderWidget.h"
 #import "ReplaceSelectionCommand.h"
 #import "ResourceRequest.h"
-#import "RetainPtr.h"
 #import "Screen.h"
 #import "SelectionController.h"
 #import "SystemTime.h"
@@ -90,6 +89,7 @@
 #import <JavaScriptCore/array_instance.h>
 #import <JavaScriptCore/date_object.h>
 #import <JavaScriptCore/runtime_root.h>
+#import <wtf/RetainPtr.h>
 
 @class NSView;
 

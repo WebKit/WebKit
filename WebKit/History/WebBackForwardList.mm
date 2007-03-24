@@ -39,9 +39,10 @@
 #import "WebTypesInternal.h"
 #import <WebCore/BackForwardList.h>
 #import <WebCore/HistoryItem.h>
-#import <WebCore/RetainPtr.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
+
+#import <wtf/RetainPtr.h>
 
 #define COMPUTE_DEFAULT_PAGE_CACHE_SIZE UINT_MAX
 

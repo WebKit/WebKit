@@ -39,10 +39,11 @@
 #import "LoaderNSURLExtras.h"
 #import "MimeTypeRegistry.h"
 #import "RenderImage.h"
-#import "RetainPtr.h"
 #import "WebCoreNSStringExtras.h"
 #import "WebCoreSystemInterface.h"
 #import "markup.h"
+
+#import <wtf/RetainPtr.h>
 
 @interface NSAttributedString (AppKitSecretsIKnowAbout)
 - (id)_initWithDOMRange:(DOMRange *)domRange;

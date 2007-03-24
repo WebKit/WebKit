@@ -1,3 +1,34 @@
+2007-03-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam
+
+        <rdar://problem/5086210> - Move RetainPtr to WTF
+
+        * ForwardingHeaders/wtf/RetainPtr.h: Added.
+        * WebCore.xcodeproj/project.pbxproj: Removed WebCore/RetainPtr.h
+        
+        * history/HistoryItem.h: Changed #include to <wtf/RetainPtr.h>
+        * history/PageCache.h: Ditto
+        * page/mac/WebCoreFrameBridge.mm: Ditto
+        * platform/ContextMenu.h: Ditto
+        * platform/ContextMenuItem.h: Ditto
+        * platform/DragImage.h: Ditto
+        * platform/FileChooser.h: Ditto
+        * platform/PlatformKeyboardEvent.h: Ditto
+        * platform/PopupMenu.h: Ditto
+        * platform/SharedBuffer.h: Ditto
+        * platform/cf/RetainPtr.h: Removed.
+        * platform/graphics/Icon.h: Changed #include
+        * platform/mac/ClipboardMac.h: Ditto
+        * platform/mac/PasteboardMac.mm: Ditto
+        * platform/mac/WidgetMac.mm: Ditto
+        * platform/network/AuthenticationChallenge.h: Ditto
+        * platform/network/ResourceError.h: Ditto
+        * platform/network/ResourceHandle.h: Ditto
+        * platform/network/ResourceRequest.h: Ditto
+        * platform/network/ResourceResponse.h: Ditto
+        * rendering/RenderThemeMac.mm: Ditto
+
 2007-03-24  Mitz Pettel  <mitz@webkit.org>
 
         Fix for <rdar://problem/5086797>, layoutPending is now reporting incorrect results, which will lead

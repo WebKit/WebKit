@@ -27,10 +27,10 @@
  */
 
 #import <WebCore/FrameLoaderClient.h>
-#import <WebCore/RetainPtr.h>
 #import <WebCore/Timer.h>
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
+#import <wtf/RetainPtr.h>
 
 @class WebFrame;
 @class WebFramePolicyListener;

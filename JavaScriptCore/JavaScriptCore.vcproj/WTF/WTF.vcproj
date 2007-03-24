@@ -260,6 +260,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\RetainPtr.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\StringExtras.h"
 			>
 		</File>

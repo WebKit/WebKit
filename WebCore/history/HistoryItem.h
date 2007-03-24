@@ -38,7 +38,7 @@
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
-#import "RetainPtr.h"
+#import <wtf/RetainPtr.h>
 typedef struct objc_object* id;
 #endif
 

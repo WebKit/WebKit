@@ -33,14 +33,14 @@
 #include "HTTPHeaderMap.h"
 
 #if PLATFORM(MAC)
-#include "RetainPtr.h"
+#include <wtf/RetainPtr.h>
 #ifdef __OBJC__
 @class NSURLRequest;
 #else
 class NSURLRequest;
 #endif
 #elif USE(CFNETWORK)
-#include "RetainPtr.h"
+#include <wtf/RetainPtr.h>
 typedef const struct _CFURLRequest* CFURLRequestRef;
 #endif
 

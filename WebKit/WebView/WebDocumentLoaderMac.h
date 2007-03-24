@@ -27,7 +27,7 @@
  */
 
 #import <WebCore/DocumentLoader.h>
-#import <WebCore/RetainPtr.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/HashSet.h>
 
 @class WebDataSource;

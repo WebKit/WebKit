@@ -31,14 +31,14 @@
 #include "KURL.h"
 
 #if PLATFORM(MAC)
-#include "RetainPtr.h"
+#include <wtf/RetainPtr.h>
 #ifdef __OBJC__
 @class NSURLResponse;
 #else
 class NSURLResponse;
 #endif
 #elif USE(CFNETWORK)
-#include "RetainPtr.h"
+#include <wtf/RetainPtr.h>
 typedef struct _CFURLResponse* CFURLResponseRef;
 #endif
 

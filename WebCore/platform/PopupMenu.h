@@ -28,7 +28,7 @@
 #include <wtf/PassRefPtr.h>
 
 #if PLATFORM(MAC)
-#include "RetainPtr.h"
+#include <wtf/RetainPtr.h>
 #ifdef __OBJC__
 @class NSPopUpButtonCell;
 #else

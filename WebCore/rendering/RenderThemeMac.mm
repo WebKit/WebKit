@@ -33,10 +33,10 @@
 #import "LocalCurrentGraphicsContext.h"
 #import "RenderSlider.h"
 #import "RenderView.h"
-#import "RetainPtr.h"
 #import "WebCoreSystemInterface.h"
 #import "cssstyleselector.h"
 #import <Cocoa/Cocoa.h>
+#import <wtf/RetainPtr.h>
 
 
 // The methods in this file are specific to the Mac OS X platform.

@@ -32,11 +32,12 @@
 #import "Font.h"
 #import "Frame.h"
 #import "GraphicsContext.h"
-#import "RetainPtr.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
 #import "WidgetClient.h"
+
+#import <wtf/RetainPtr.h>
 
 namespace WebCore {
 
