@@ -1,5 +1,11 @@
 2007-03-24  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Dave Hyatt.
+
+        * JavaScriptGlue.xcodeproj/project.pbxproj: Use GCC 4.0 for testjsglue.
+
+2007-03-24  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Darin.
 
         * Configurations/JavaScriptGlue.xcconfig: Remove unnecessary INFOPLIST_PREPROCESS.

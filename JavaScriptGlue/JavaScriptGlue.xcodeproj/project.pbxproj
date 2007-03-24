@@ -60,6 +60,22 @@
 			outputFiles = (
 			);
 		};
+		5D89690E0BB521EE009477BE /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.4_0;
+			fileType = sourcecode.c;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		5D8969150BB52209009477BE /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.4_0;
+			fileType = sourcecode.cpp;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
@@ -260,6 +276,8 @@
 				1422E87509DE3BE800749B87 /* Frameworks */,
 			);
 			buildRules = (
+				5D8969150BB52209009477BE /* PBXBuildRule */,
+				5D89690E0BB521EE009477BE /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -296,11 +314,13 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 14AC662B08CE7791006915A8 /* Build configuration list for PBXProject "JavaScriptGlue" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* JavaScriptGlue */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				1422E8C409DE3EA600749B87 /* All */,
 				DD66F3B908F73ED700C75FD7 /* JavaScriptGlue */,
