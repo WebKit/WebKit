@@ -1,3 +1,15 @@
+2007-03-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by adele
+
+        <rdar://problem/5078739> 
+        Crash in in ReplaceSelectionCommand if the fragment contains only a style span
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Check 
+        for an empty fragment after removing a redundant
+        style span instead of before.
+
 2007-03-23  David Hyatt  <hyatt@apple.com>
 
         <rdar://problem/5085063>

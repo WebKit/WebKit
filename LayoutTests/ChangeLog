@@ -1,5 +1,15 @@
 2007-03-23  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by adele
+
+        <rdar://problem/5078739> 
+        Crash in in ReplaceSelectionCommand if the fragment contains only a style span
+
+        * editing/pasteboard/5078739-expected.txt: Added.
+        * editing/pasteboard/5078739.html: Added.
+
+2007-03-23  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by darin
 
         Fixed (was missing a newline):

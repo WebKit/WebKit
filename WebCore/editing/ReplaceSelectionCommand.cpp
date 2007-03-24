@@ -544,10 +544,6 @@ void ReplaceSelectionCommand::doApply()
     frame->clearTypingStyle();
     setTypingStyle(0);    
     
-    // We're finished if there is nothing to add.
-    if (fragment.isEmpty() || !fragment.firstChild())
-        return;
-        
     // Remove the top level style span if its unnecessary before inserting it into the document, its faster.
     RefPtr<CSSMutableStyleDeclaration> styleAtInsertionPos = insertionPos.computedStyle()->copyInheritableProperties();
     if (isStyleSpan(fragment.firstChild())) {
@@ -556,6 +552,10 @@ void ReplaceSelectionCommand::doApply()
         if (styleText == styleAtInsertionPos->cssText())
             fragment.removeNodePreservingChildren(styleSpan);
     }
+    
+    // We're finished if there is nothing to add.
+    if (fragment.isEmpty() || !fragment.firstChild())
+        return;
     
     // 1) Insert the content.
     // 2) Remove redundant styles and style tags, this inner <b> for example: <b>foo <b>bar</b> baz</b>.
