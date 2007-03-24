@@ -303,7 +303,6 @@ void FrameView::layout(bool allowSubtree)
         d->layoutRoot = 0;
     }
 
-    bool subtree = d->layoutRoot;
 
     ASSERT(m_frame->view() == this);
 
@@ -314,7 +313,6 @@ void FrameView::layout(bool allowSubtree)
         return;
     }
 
-    Node* rootNode = subtree ? d->layoutRoot.get() : document;
     d->layoutSchedulingEnabled = false;
 
     // Always ensure our style info is up-to-date.  This can happen in situations where
@@ -322,6 +320,9 @@ void FrameView::layout(bool allowSubtree)
     if (document->hasChangedChild())
         document->recalcStyle();
     
+    bool subtree = d->layoutRoot;
+    Node* rootNode = subtree ? d->layoutRoot.get() : document;
+
     // If there is only one ref to this view left, then its going to be destroyed as soon as we exit, 
     // so there's no point to continuiing to layout
     if (protector->hasOneRef())

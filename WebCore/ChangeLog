@@ -1,3 +1,18 @@
+2007-03-24  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13180
+              <rdar://problem/5084478>
+          Another debug build crash from ASSERTION FAILED: !needsLayout()
+
+        No test possible because updateRendering() is always called after script
+        execution.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): Get the layout root after calling recalcStyle()
+        since a style recalc may result in needing to do start layout at the root.
+
 2007-03-24  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Not reviewed. Build fix.
