@@ -189,19 +189,19 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
             renderer = renderers[offset / 2];
             if (renderer != lastRenderer) {
                 lastRenderer = renderer;
+                spaceGlyph = renderer->m_spaceGlyph;
                 // The CoreGraphics interpretation of NSFontAntialiasedIntegerAdvancementsRenderingMode seems
                 // to be "round each glyph's width to the nearest integer". This is not the same as ATSUI
                 // does in any of its device-metrics modes.
                 shouldRound = [renderer->m_font.font renderingMode] == NSFontAntialiasedIntegerAdvancementsRenderingMode;
-                if (syntheticBoldPass) {
+                if (syntheticBoldPass)
                     syntheticBoldOffset = FloatToFixed(renderer->m_syntheticBoldOffset);
-                    spaceGlyph = renderer->m_spaceGlyph;
-                }
             }
             float width;
-            if (nextCh == zeroWidthSpace)
+            if (nextCh == zeroWidthSpace || Font::treatAsZeroWidthSpace(nextCh) && !Font::treatAsSpace(nextCh)) {
                 width = 0;
-            else {
+                layoutRecords[i-1].glyphID = spaceGlyph;
+            } else {
                 width = FixedToFloat(layoutRecords[i].realPos - lastNativePos);
                 if (shouldRound)
                     width = roundf(width);
@@ -330,7 +330,6 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
     
     // FIXME: This is currently missing the following required features that the CoreGraphics code path has:
     // - \n, \t, and nonbreaking space render as a space.
-    // - Other control characters do not render (other code path uses zero-width spaces).
 
     UniCharCount totalLength = m_run.length();
     UniCharArrayOffset runTo = m_run.to();

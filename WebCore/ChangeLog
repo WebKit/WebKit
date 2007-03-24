@@ -1,3 +1,14 @@
+2007-03-24  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=13177
+          Suppress control characters in the ATSUI code path
+
+        * platform/mac/FontMac.mm:
+        (WebCore::overrideLayoutOperation):
+        (WebCore::ATSULayoutParameters::initialize):
+
 2007-03-24  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/5086400>, images scrolled offscreen continue to animate.  Safari 2 would
@@ -21,7 +32,7 @@
 
 2007-03-23  Dave Hyatt  <hyatt@apple.com>
 
-        Fix for <rdar:://problem/5048219>, spurious glyphs in gmail.   This is bugzilla bug 13136, which
+        Fix for <rdar://problem/5048219>, spurious glyphs in gmail.   This is bugzilla bug 13136, which
         will remain open to cover patching the complex text path.
         
         Reviewed by aroben
