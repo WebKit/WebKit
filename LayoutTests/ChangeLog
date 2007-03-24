@@ -2,6 +2,20 @@
 
         Reviewed by Adele.
 
+        - pixel test and updated results for http://bugs.webkit.org/show_bug.cgi?id=13153
+          REGRESSION: Visual highlighting of pre-populated blank line in textarea is broken
+
+        * editing/selection/doubleclick-crash-expected.checksum:
+        * editing/selection/doubleclick-crash-expected.png:
+        * fast/text/selection-hard-linebreak-expected.checksum: Added.
+        * fast/text/selection-hard-linebreak-expected.png: Added.
+        * fast/text/selection-hard-linebreak-expected.txt: Added.
+        * fast/text/selection-hard-linebreak.html: Added.
+
+2007-03-23  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele.
+
         - test for http://bugs.webkit.org/show_bug.cgi?id=13124
           REGRESSION: Reproducible crash in Widget::getView
 

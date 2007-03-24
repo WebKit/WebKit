@@ -2,6 +2,24 @@
 
         Reviewed by Adele.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13153
+          REGRESSION: Visual highlighting of pre-populated blank line in textarea is broken
+
+        - fix a bug where selecting across a soft line break did not highlight to
+          the end of the first line if it contained skipped whitespace
+
+        Test: fast/text/selection-hard-linebreak.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionState): Changed to treat a selection that ends on the
+        end of a hard line break as if it ends after the line break. Fixed the case of a selection
+        that starts and ends in the same text object as the box but does not intersect it
+        to return SelectionNone instead of selectionBoth.
+
+2007-03-23  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=13124
           REGRESSION: Reproducible crash in Widget::getView
 
