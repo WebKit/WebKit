@@ -1,3 +1,17 @@
+2007-03-23  Dave Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar:://problem/5048219>, spurious glyphs in gmail.   This is bugzilla bug 13136, which
+        will remain open to cover patching the complex text path.
+        
+        Reviewed by aroben
+
+        * platform/Font.cpp:
+        (WebCore::Font::glyphDataForCharacter):
+        * platform/Font.h:
+        (WebCore::Font::treatAsZeroWidthSpace):
+        * platform/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::initializePage):
+
 2007-03-23  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adele.

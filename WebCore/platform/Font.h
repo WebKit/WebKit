@@ -178,6 +178,7 @@ public:
     
     static const uint8_t gRoundingHackCharacterTable[256];
     static bool treatAsSpace(UChar c) { return c == ' ' || c == '\t' || c == '\n' || c == 0x00A0; }
+    static bool treatAsZeroWidthSpace(UChar c) { return c < 0x20 || (c >= 0x7F && c < 0xA0) || c == 0x200e || c == 0x200f; }
     static bool isRoundingHackCharacter(UChar32 c)
     {
         return (((c & ~0xFF) == 0 && gRoundingHackCharacterTable[c])); 

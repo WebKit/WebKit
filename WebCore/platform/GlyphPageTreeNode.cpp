@@ -84,6 +84,10 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                     buffer[(int)'\n'] = ' ';
                     buffer[(int)'\t'] = ' ';
                     buffer[noBreakSpace] = ' ';
+                } else if (start == 8192) {
+                    // LRM/RLM must not render at all
+                    buffer[0x200e - start] = zeroWidthSpace;
+                    buffer[0x200f - start] = zeroWidthSpace;
                 }
             } else {
                 bufferLength = GlyphPage::size * 2;
