@@ -179,19 +179,15 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     PaintInfo pi(paintInfo);
     pi.rect = absoluteTransform().inverse().mapRect(pi.rect);
 
-    int x = 0, y = 0;
-    if (shouldPaint(pi, x, y)) {
-        SVGImageElement* imageElt = static_cast<SVGImageElement*>(node());
+    SVGImageElement* imageElt = static_cast<SVGImageElement*>(node());
 
-        if (imageElt->preserveAspectRatio()->align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
-            RenderImage::paint(pi, 0, 0);
-        else {
-            FloatRect destRect(m_x, m_y, contentWidth(), contentHeight());
-            FloatRect srcRect(0, 0, image()->width(), image()->height());
-            adjustRectsForAspectRatio(destRect, srcRect, imageElt->preserveAspectRatio());
-            paintInfo.context->drawImage(image(), destRect, srcRect);
-        }
-    }
+    FloatRect destRect(m_x, m_y, contentWidth(), contentHeight());
+    FloatRect srcRect(0, 0, image()->width(), image()->height());
+
+    if (imageElt->preserveAspectRatio()->align() != SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
+        adjustRectsForAspectRatio(destRect, srcRect, imageElt->preserveAspectRatio());
+
+    paintInfo.context->drawImage(image(), destRect, srcRect);
 
 #if ENABLE(SVG_EXPERIMENTAL_FEATURES)
     if (filter)
@@ -206,17 +202,26 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
 bool RenderSVGImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
+    // We only draw in the forground phase, so we only hit-test then.
+    if (hitTestAction != HitTestForeground)
+        return false;
+
     PointerEventsHitRules hitRules(PointerEventsHitRules::SVG_IMAGE_HITTESTING, style()->svgStyle()->pointerEvents());
     
     bool isVisible = (style()->visibility() == VISIBLE);
     if (isVisible || !hitRules.requireVisible) {
-        AffineTransform totalTransform = absoluteTransform();
-        totalTransform *= translationForAttributes();
         double localX, localY;
-        totalTransform.inverse().map(_x + _tx, _y + _ty, &localX, &localY);
-        if (hitRules.canHitFill)
-            return RenderImage::nodeAtPoint(request, result, (int)localX, (int)localY, 0, 0, hitTestAction);
+        absoluteTransform().inverse().map(_x, _y, &localX, &localY);
+        translationForAttributes().inverse().map(localX, localY, &localX, &localY);
+
+        if (hitRules.canHitFill) {
+            if (IntRect(0, 0, m_width, m_height).contains(localX, localY)) {
+                updateHitTestResult(result, IntPoint(_x, _y));
+                return true;
+            }
+        }
     }
+
     return false;
 }
 

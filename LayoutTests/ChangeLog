@@ -1,3 +1,14 @@
+2007-03-24  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Add new layout test checking that SVG images repaint properly when embedded in HTML files.
+
+        * svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.checksum: Added.
+        * svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png: Added.
+        * svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt: Added.
+        * svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html: Added.
+
 2007-03-23  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Adele.

@@ -1,3 +1,27 @@
+2007-03-23  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Fix all known RenderSVGImage problems.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12126 (RenderSVGImage seems to suffer from integer overflow)
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12442 (raster images disappearing during script execution (SVG))
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=12572 (WebKit does not properly invalidate image region after image load)
+
+        Added test: svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html
+
+        In RenderSVGImage::paint, do not call shouldPaint() as this will never work properly for SVG renderers, as shouldPaint
+        doesn't take into account any special SVG transformation (localTransform/absoluteTransform). Just remove the call.
+
+        Fix hit detection on RenderSVGImage - it didn't work properly at all. No idea why I didn't notice before.
+        Thanks Andreas Neumann once again for writing excellent bug reports and pointing me to them :-)
+
+        The carto.net navigation tools work as expected now, and also the "dock like" image effect example.
+
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        (WebCore::RenderSVGImage::nodeAtPoint):
+
 2007-03-24  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Dave Hyatt.
