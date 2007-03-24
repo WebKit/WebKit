@@ -271,12 +271,10 @@ void BitmapImage::advanceAnimation(Timer<BitmapImage>* timer)
         frameAtIndex(m_currentFrame);
     }
     
-    // Kick off a timer to move to the next frame, but only if the current frame is complete.
-    if (!m_source.frameIsCompleteAtIndex(m_currentFrame))
-        return;
-    
-    m_frameTimer = new Timer<BitmapImage>(this, &BitmapImage::advanceAnimation);
-    m_frameTimer->startOneShot(frameDurationAtIndex(m_currentFrame));
+    // We do not advance the animation explicitly.  We rely on a subsequent draw of the image
+    // to force a request for the next frame via startAnimation().  This allows images that move offscreen while
+    // scrolling to stop animating (thus saving memory from additional decoded frames and
+    // CPU time spent doing the decoding).
 }
 
 }

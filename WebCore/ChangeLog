@@ -1,5 +1,15 @@
 2007-03-24  David Hyatt  <hyatt@apple.com>
 
+        Fix for <rdar://problem/5086400>, images scrolled offscreen continue to animate.  Safari 2 would
+        halt animations when images were no longer visible.
+
+        Reviewed by mjs, olliej
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::advanceAnimation):
+
+2007-03-24  David Hyatt  <hyatt@apple.com>
+
         Fix for <rdar://problem/508328>, sluggish text entry in search field.  Make sure
         our size actually changed before we decide to do a full repaint because of background/border
         complexities.
