@@ -693,15 +693,15 @@ void FrameView::scheduleRelayoutOfSubtree(Node* n)
 
 bool FrameView::layoutPending() const
 {
-    // It is possible that our document will not have a body yet. If this is the case, 
-    // then we are not allowed to schedule layouts yet, so there won't be a timer.
-    RenderView* root = static_cast<RenderView*>(m_frame->renderer());
-    return d->layoutTimer.isActive() || (root && root->needsLayout());
+    return d->layoutTimer.isActive();
 }
 
 bool FrameView::needsLayout() const
 {
-    return layoutPending();
+    // It is possible that our document will not have a body yet. If this is the case, 
+    // then we are not allowed to schedule layouts yet, so we won't be pending layout.
+    RenderView* root = static_cast<RenderView*>(m_frame->renderer());
+    return layoutPending() || (root && root->needsLayout());
 }
 
 void FrameView::setNeedsLayout()

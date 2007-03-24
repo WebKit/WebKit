@@ -1,5 +1,22 @@
 2007-03-24  Mitz Pettel  <mitz@webkit.org>
 
+        Fix for <rdar://problem/5086797>, layoutPending is now reporting incorrect results, which will lead
+        to all sorts of layout issues.  This is in bugzilla as 13179.
+
+        Reviewed by hyatt
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13179
+          REGRESSION (r20410): In debug builds, loading a certain page is suspended until redisplay is forced
+
+        Moved the root->needsLayout() check from layoutPending() to needsLayout()
+        to restore the behavior before r20324.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layoutPending):
+        (WebCore::FrameView::needsLayout):
+
+2007-03-24  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Adele.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=13180
@@ -64,6 +81,7 @@
         (WebCore::overrideLayoutOperation):
         (WebCore::ATSULayoutParameters::initialize):
 
+>>>>>>> .r20473
 2007-03-24  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/5086400>, images scrolled offscreen continue to animate.  Safari 2 would
