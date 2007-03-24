@@ -1,3 +1,14 @@
+2007-03-24  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/508328>, sluggish text entry in search field.  Make sure
+        our size actually changed before we decide to do a full repaint because of background/border
+        complexities.
+
+        Reviewed by aroben
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+
 2007-03-23  Dave Hyatt  <hyatt@apple.com>
 
         Fix for <rdar:://problem/5048219>, spurious glyphs in gmail.   This is bugzilla bug 13136, which
