@@ -129,12 +129,12 @@ bool ReplacementFragment::isEmpty() const
 
 Node *ReplacementFragment::firstChild() const 
 { 
-    return m_fragment->firstChild(); 
+    return m_fragment ? m_fragment->firstChild() : 0; 
 }
 
 Node *ReplacementFragment::lastChild() const 
 { 
-    return m_fragment->lastChild(); 
+    return m_fragment ? m_fragment->lastChild() : 0; 
 }
 
 void ReplacementFragment::removeNodePreservingChildren(Node *node)
