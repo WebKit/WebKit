@@ -1,3 +1,15 @@
+2007-03-23  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13124
+          REGRESSION: Reproducible crash in Widget::getView
+
+        Test: fast/frames/hover-timer-crash.html
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setView): Added a call to EventHandler::clear().
+
 2007-03-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by adele

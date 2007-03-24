@@ -1,3 +1,13 @@
+2007-03-23  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13124
+          REGRESSION: Reproducible crash in Widget::getView
+
+        * fast/frames/hover-timer-crash-expected.txt: Added.
+        * fast/frames/hover-timer-crash.html: Added.
+
 2007-03-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by adele
