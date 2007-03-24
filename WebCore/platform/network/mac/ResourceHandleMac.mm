@@ -383,7 +383,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 {
 #ifndef NDEBUG
     if (isInitializingConnection)
-        LOG_ERROR("connection:willCacheResponse: was called inside of [NSURLConnection initWithRequest:delegate:] (40676250)");
+        LOG_ERROR("connection:willCacheResponse: was called inside of [NSURLConnection initWithRequest:delegate:] (4067625)");
 #endif
     if (!m_handle)
         return nil;
