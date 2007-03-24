@@ -279,6 +279,7 @@ static int pluginDatabaseClientCount = 0;
     BOOL userAgentOverridden;
     
     WebPreferences *preferences;
+    BOOL useSiteSpecificSpoofing;
         
     BOOL lastElementWasNonNil;
 
@@ -870,6 +871,8 @@ static bool debugWidget = true;
     ASSERT(preferences == [self preferences]);
     if (!_private->userAgentOverridden)
         *_private->userAgent = String();
+    // Cache this value so we don't have to read NSUserDefaults on each page load
+    _private->useSiteSpecificSpoofing = [preferences _useSiteSpecificSpoofing];
     [self _updateWebCoreSettingsFromPreferences: preferences];
 }
 
@@ -1850,6 +1853,8 @@ NS_ENDHANDLER
         [WebPreferences _removeReferenceForIdentifier:[_private->preferences identifier]];
         [_private->preferences release];
         _private->preferences = [prefs retain];
+        // Cache this value so we don't have to read NSUserDefaults on each page load
+        _private->useSiteSpecificSpoofing = [prefs _useSiteSpecificSpoofing];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
             name:WebPreferencesChangedNotification object:[self preferences]];
         [[NSNotificationCenter defaultCenter]
@@ -3573,13 +3578,22 @@ static WebFrameView *containingFrameView(NSView *view)
 // Get the appropriate user-agent string for a particular URL.
 - (WebCore::String)_userAgentForURL:(const WebCore::KURL&)url
 {
-    // FIXME: Make this a hash table lookup if more domains need spoofing.
-    // FIXME: Remove yahoo.com once <rdar://problem/5057117> is fixed.
-    if (url.host().endsWith("yahoo.com")) {
-        static String yahooUserAgent([self _userAgentWithApplicationName:_private->applicationNameForUserAgent andWebKitVersion:@"422"]);
-        return yahooUserAgent;
+    if (_private->useSiteSpecificSpoofing) {
+        // FIXME: Make this a hash table lookup if more domains need spoofing.
+        // FIXME: Remove yahoo.com once <rdar://problem/5057117> is fixed.
+        if (url.host().endsWith("yahoo.com")) {
+            static String yahooUserAgent([self _userAgentWithApplicationName:_private->applicationNameForUserAgent andWebKitVersion:@"422"]);
+            return yahooUserAgent;
+        }
+        
+        // FIXME: Remove flickr.com workaround once <rdar://problem/5084872> is fixed
+        if (url.host().endsWith("flickr.com")) {
+            // Safari 2.0.4's user agent string works here
+            static String safari204UserAgent([self _userAgentWithApplicationName:@"Safari/419.3" andWebKitVersion:@"419"]);
+            return safari204UserAgent;
+        }
     }
-
+    
     if (_private->userAgent->isNull()) {
         NSString *sourceVersion = [[NSBundle bundleForClass:[WebView class]] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
         sourceVersion = [self _userVisibleBundleVersionFromFullVersion:sourceVersion];

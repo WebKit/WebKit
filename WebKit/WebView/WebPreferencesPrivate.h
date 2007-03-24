@@ -73,6 +73,12 @@ typedef enum {
 - (WebKitEditableLinkBehavior)editableLinkBehavior;
 - (void)setEditableLinkBehavior:(WebKitEditableLinkBehavior)behavior;
 
+// If site-specific spoofing is enabled, some pages that do inappropriate user-agent string checks will be
+// passed a nonstandard user-agent string to get them to work correctly. This method might be removed in
+// the future when there's no more need for it.
+- (BOOL)_useSiteSpecificSpoofing;
+- (void)_setUseSiteSpecificSpoofing:(BOOL)newValue;
+
 // For debugging purposes, can be removed when no longer needed
 - (BOOL)_usePDFPreviewView;
 - (void)_setUsePDFPreviewView:(BOOL)newValue;

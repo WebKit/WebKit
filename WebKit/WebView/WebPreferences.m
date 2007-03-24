@@ -231,6 +231,7 @@ NS_ENDHANDLER
         @"1",                           WebKitPDFDisplayModePreferenceKey,
         @"0",                           WebKitPDFScaleFactorPreferenceKey,
         @"1",                           WebKitUsePDFPreviewViewPreferenceKey,
+        @"0",                           WebKitUseSiteSpecificSpoofingPreferenceKey,
         [NSNumber numberWithInt:WebKitEditableLinkDefaultBehavior], 
                                         WebKitEditableLinkBehaviorPreferenceKey,
         nil];
@@ -689,6 +690,15 @@ NS_ENDHANDLER
     [self _setIntegerValue:behavior forKey:WebKitEditableLinkBehaviorPreferenceKey];
 }
 
+- (BOOL)_useSiteSpecificSpoofing
+{
+    return [self _boolValueForKey:WebKitUseSiteSpecificSpoofingPreferenceKey];
+}
+
+- (void)_setUseSiteSpecificSpoofing:(BOOL)newValue
+{
+    [self _setBoolValue:newValue forKey:WebKitUseSiteSpecificSpoofingPreferenceKey];
+}
 
 static NSMutableDictionary *webPreferencesInstances = nil;
 

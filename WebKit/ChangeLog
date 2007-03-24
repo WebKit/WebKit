@@ -1,3 +1,34 @@
+2007-03-24  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adele
+
+        - fixed <rdar://problem/5084872> Need to add flickr to spoof list in WebKit
+        - only do site-specific spoofing if a preference is set
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        added WebKitUseSiteSpecificSpoofingPreferenceKey 
+        
+        * WebView/WebPreferences.m:
+        (+[WebPreferences initialize]):
+        initialize WebKitUseSiteSpecificSpoofingPreferenceKey to false
+        (-[WebPreferences _useSiteSpecificSpoofing]):
+        get value of WebKitUseSiteSpecificSpoofingPreferenceKey
+        (-[WebPreferences _setUseSiteSpecificSpoofing:]):
+        set value of WebKitUseSiteSpecificSpoofingPreferenceKey
+        
+        * WebView/WebPreferencesPrivate.h:
+        declare _useSiteSpecificSpoofing and _setUseSiteSpecificSpoofing
+        
+        * WebView/WebView.mm:
+        cache the value of WebKitUseSiteSpecificSpoofingPreferenceKey in a bool in _private
+        (-[WebView _preferencesChangedNotification:]):
+        update the cached value
+        (-[WebView setPreferences:]):
+        ditto
+        (-[WebView WebCore::_userAgentForURL:WebCore::]):
+        Only spoof here if the new site-specific spoofing preference is enabled. If it is, pass
+        Safari 2.0.4's user agent string for flickr.com. We can remove this case when 5081617 is addressed.
+
 2007-03-24  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Darin.
