@@ -1,5 +1,9 @@
 2007-03-25  Darin Adler  <darin@apple.com>
 
+        * coding/RefPtr.html: A couple wording tweaks.
+
+2007-03-25  Darin Adler  <darin@apple.com>
+
         * coding/RefPtr.html: More formatting tweaks. Added a possible new topic for the document,
         suggested by Anders.
 

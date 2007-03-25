@@ -1,5 +1,5 @@
 <?php 
-    $title="WebKit RefPtr and PassRefPtr Basics";
+    $title="RefPtr and PassRefPtr Basics";
     include("../header.inc"); 
 ?>
 
@@ -19,7 +19,7 @@
     }
 </style>
 
-<h1>WebKit <span class="class">RefPtr</span> and <span class="class">PassRefPtr</span> Basics</h1>
+<h1><span class="class">RefPtr</span> and <span class="class">PassRefPtr</span> Basics</h1>
 <div>Darin Adler</div>
 <div>first draft, 2007-03-24</div>
 
@@ -329,6 +329,8 @@ returns a <span class="class">PassRefPtr</span>.</li>
 
 <ul>
 
+<li>The “protector” idiom, where a local RefPtr variable is used to keep an object alive.</li>
+
 <li>Perils of programming with floating objects.</li>
 
 <li>Why we should use create functions that return <span class="class">PassRefPtr</span>
@@ -336,16 +338,16 @@ rather than use <span class="function">new</span> directly.</li>
 
 <li>Perils of programming with <span class="class">TreeShared</span>.</li>
 
-<li>How we we mix reference counting with garbage collection to implement the DOM
-and the JavaScript and Objective-C DOM bindings.</li>
-
 <li>Our desire to rename <span class="class">Shared</span> to <span class="class">RefCounted</span>.</li>
 
 <li>Our desire to eliminate <span class="class">TreeShared</span> and instead have
 <span class="variable">m_firstChild</span> and <span class="variable">m_next</span> be
 <span class="class">ListRefPtr</span> or the equivalent.</li>
 
-<li>Comparison of our intrusive reference counting over other schemes, like the
+<li>How we we mix reference counting with garbage collection to implement the DOM
+and the JavaScript and Objective-C DOM bindings.</li>
+
+<li>Comparison of our intrusive reference counting with other schemes such as the
 external reference counting in Boost <span class="class">shared_ptr</class>.</li>
 
 <li>The <span class="class">OwnPtr</span> class template, and how
@@ -360,8 +362,6 @@ and the lack of a <span class="class">PassRetainPtr</span>.</li>
 <li>The <span class="class">DocPtr</span> class template.</li>
 
 <li>The <span class="class">ListRefPtr</span> class template.</li>
-
-<li>The “protector” idiom, where a local RefPtr variable is used to keep an object alive.</li>
 
 </ul>
 
