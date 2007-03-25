@@ -1,11 +1,9 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)
  *               1999 Waldo Bastian (bastian@kde.org)
  *               2001 Andreas Schlapbach (schlpbch@iam.unibe.ch)
  *               2001-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2006 Apple Computer, Inc.
+ * Copyright (C) 2002, 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -214,14 +212,18 @@ bool CSSSelector::operator==(const CSSSelector& other)
 
 String CSSSelector::selectorText() const
 {
-    // FIXME: Support namespaces when dumping the selector text. -dwh
-    String str;
+    String str = "";
+
+    const AtomicString& prefix = m_tag.prefix();
+    const AtomicString& localName = m_tag.localName();
+    if (m_match == CSSSelector::None || !prefix.isNull() || localName != starAtom) {
+        if (prefix.isNull())
+            str = localName;
+        else
+            str = prefix + "|" + localName;
+    }
+
     const CSSSelector* cs = this;
-    const AtomicString& localName = cs->m_tag.localName();
-
-    if (cs->m_match == CSSSelector::None || localName != starAtom)
-        str = localName;
-
     while (true) {
         if (cs->m_match == CSSSelector::Id) {
             str += "#";
@@ -232,14 +234,23 @@ String CSSSelector::selectorText() const
         } else if (cs->m_match == CSSSelector::PseudoClass) {
             str += ":";
             str += cs->m_value;
+            if (cs->pseudoType() == PseudoNot) {
+                if (CSSSelector* subSel = cs->m_simpleSelector)
+                    str += subSel->selectorText();
+                str += ")";
+            } else if (cs->pseudoType() == PseudoLang) {
+                str += cs->m_argument;
+                str += ")";
+            }
         } else if (cs->m_match == CSSSelector::PseudoElement) {
             str += "::";
             str += cs->m_value;
         } else if (cs->hasAttribute()) {
-            // FIXME: Add support for dumping namespaces.
-            String attrName = cs->m_attr.localName();
             str += "[";
-            str += attrName;
+            const AtomicString& prefix = cs->m_attr.prefix();
+            if (!prefix.isNull())
+                str += prefix + "|";
+            str += cs->m_attr.localName();
             switch (cs->m_match) {
                 case CSSSelector::Exact:
                     str += "=";

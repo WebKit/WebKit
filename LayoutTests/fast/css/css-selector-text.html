@@ -1,0 +1,133 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("This tests parsing and re-serialization of some CSS selectors.");
+
+function parseThenSerializeRule(rule)
+{
+    var styleElement = document.createElement("style");
+    styleElement.appendChild(document.createTextNode(rule));
+    return styleElement.sheet.cssRules[0].cssText;
+}
+
+function testSelectorRoundTrip(selector)
+{
+    shouldBe("parseThenSerializeRule('" + selector + " { }')", "'" + selector + " { }'");
+}
+
+testSelectorRoundTrip('*');
+testSelectorRoundTrip('a');
+testSelectorRoundTrip('#a');
+testSelectorRoundTrip('.a');
+testSelectorRoundTrip(':active');
+testSelectorRoundTrip('[a]');
+testSelectorRoundTrip('[a="b"]');
+testSelectorRoundTrip('[a~="b"]');
+testSelectorRoundTrip('[a|="b"]');
+testSelectorRoundTrip('[a^="b"]');
+testSelectorRoundTrip('[a$="b"]');
+testSelectorRoundTrip('[a*="b"]');
+
+debug('');
+
+testSelectorRoundTrip('*|a');
+testSelectorRoundTrip('n|a');
+testSelectorRoundTrip('*|*');
+testSelectorRoundTrip('n|*');
+testSelectorRoundTrip('[*|a]');
+testSelectorRoundTrip('[n|a]');
+
+debug('');
+
+testSelectorRoundTrip('a:active');
+testSelectorRoundTrip('a b');
+testSelectorRoundTrip('a + b');
+testSelectorRoundTrip('a ~ b');
+testSelectorRoundTrip('a > b');
+
+debug('');
+
+testSelectorRoundTrip(":active");
+testSelectorRoundTrip(":checked");
+testSelectorRoundTrip(":disabled");
+testSelectorRoundTrip(":empty");
+testSelectorRoundTrip(":enabled");
+testSelectorRoundTrip(":first-child");
+testSelectorRoundTrip(":first-of-type");
+testSelectorRoundTrip(":focus");
+testSelectorRoundTrip(":hover");
+testSelectorRoundTrip(":indeterminate");
+testSelectorRoundTrip(":link");
+testSelectorRoundTrip(":root");
+testSelectorRoundTrip(":target");
+testSelectorRoundTrip(":visited");
+
+debug('');
+
+testSelectorRoundTrip(":lang(a)");
+testSelectorRoundTrip(":not(a)");
+
+debug('');
+
+testSelectorRoundTrip("::after");
+testSelectorRoundTrip("::before");
+testSelectorRoundTrip("::first-letter");
+testSelectorRoundTrip("::first-line");
+testSelectorRoundTrip("::selection");
+
+debug('');
+
+testSelectorRoundTrip(":-webkit-any-link");
+testSelectorRoundTrip(":-webkit-autofill");
+testSelectorRoundTrip(":-webkit-drag");
+
+debug('');
+
+testSelectorRoundTrip("::-webkit-file-upload-button");
+testSelectorRoundTrip("::-webkit-search-cancel-button");
+testSelectorRoundTrip("::-webkit-search-decoration");
+testSelectorRoundTrip("::-webkit-search-results-button");
+testSelectorRoundTrip("::-webkit-search-results-decoration");
+testSelectorRoundTrip("::-webkit-slider-thumb");
+
+debug('');
+
+testSelectorRoundTrip('input:not([type="file"]):focus');
+
+debug('');
+
+shouldBe("parseThenSerializeRule('*:active { }')", "':active { }'");
+shouldBe("parseThenSerializeRule('|a { }')", "'a { }'");
+
+debug('');
+
+shouldBe("parseThenSerializeRule('input[type=file]:focus { }')", "'input[type=\"file\"]:focus { }'");
+
+debug('');
+
+shouldBe("parseThenSerializeRule('a+b { }')", "'a + b { }'");
+shouldBe("parseThenSerializeRule('a~b { }')", "'a ~ b { }'");
+shouldBe("parseThenSerializeRule('a>b { }')", "'a > b { }'");
+
+debug('');
+
+shouldBe("parseThenSerializeRule(':after { }')", "'::after { }'");
+shouldBe("parseThenSerializeRule(':before { }')", "'::before { }'");
+shouldBe("parseThenSerializeRule(':first-letter { }')", "'::first-letter { }'");
+shouldBe("parseThenSerializeRule(':first-line { }')", "'::first-line { }'");
+
+debug('');
+
+successfullyParsed = true;
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

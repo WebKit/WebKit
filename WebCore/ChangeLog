@@ -1,3 +1,16 @@
+2007-03-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13123
+          CSS selectors that use :lang, :not, and namespaces do not serialize correctly
+
+        Test: fast/css/css-selector-text.html
+
+        * css/CSSSelector.cpp: (WebCore::CSSSelector::selectorText): Add the namespace
+        prefix for tag or attribute names, the sub-selector for :not, and the argument
+        for :lang.
+
 2007-03-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam

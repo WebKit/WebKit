@@ -1,3 +1,13 @@
+2007-03-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13123
+          CSS selectors that use :lang, :not, and namespaces do not serialize correctly
+
+        * fast/css/css-selector-text-expected.txt: Added.
+        * fast/css/css-selector-text.html: Added.
+
 2007-03-24  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.
