@@ -81,7 +81,10 @@ public:
     void remove(CachedResource*);
 
     // Flush the cache.  Any resources still referenced by Web pages will not be removed by this call.
-    void prune();
+    void pruneAllResources();
+
+    // Flush live resources only.
+    void pruneLiveResources();
 
     void addDocLoader(DocLoader*);
     void removeDocLoader(DocLoader*);
@@ -93,17 +96,22 @@ public:
     void removeFromLRUList(CachedResource*);
 
     // Called to adjust the cache totals when a resource changes size.
-    void adjustSize(bool live, int delta);
+    void adjustSize(bool live, int delta, int decodedDelta);
 
     // Track the size of all resources that are in the cache and still referenced by a Web page. 
-    void addToLiveObjectSize(unsigned s) { m_liveResourcesSize += s; }
-    void removeFromLiveObjectSize(unsigned s) { m_liveResourcesSize -= s; }
+    void insertInLiveResourcesList(CachedResource*);
+    void removeFromLiveResourcesList(CachedResource*);
+
+    void addToLiveResourcesSize(CachedResource*);
+    void removeFromLiveResourcesSize(CachedResource*);
 
     // Functions to collect cache statistics for the caches window in the Safari Debug menu.
     struct TypeStatistic {
         int count;
         int size;
-        TypeStatistic() : count(0), size(0) { }
+        int liveSize;
+        int decodedSize;
+        TypeStatistic() : count(0), size(0), liveSize(0), decodedSize(0) { }
     };
     
     struct Statistics {
@@ -122,6 +130,7 @@ public:
 
 private:
     LRUList* lruListFor(CachedResource*);
+    LRUList* liveLRUListFor(CachedResource*);
     
     void resourceAccessed(CachedResource*);
 
@@ -135,11 +144,17 @@ private:
     unsigned m_maximumSize;  // The maximum size in bytes that the global cache can consume.
     unsigned m_currentSize;  // The current size of the global cache in bytes.
     unsigned m_liveResourcesSize; // The current size of "live" resources that cannot be flushed.
+    
+    unsigned m_currentDecodedSize; // The current size of all decoded data in the global cache.
+    unsigned m_liveDecodedSize; // The current decoded size of "live" resources only.  We are willing to flush decoded data even off live resources.
 
     // Size-adjusted and popularity-aware LRU list collection for cache objects.  This collection can hold
     // more resources than the cached resource map, since it can also hold "stale" muiltiple versions of objects that are
     // waiting to die when the clients referencing them go away.
-    Vector<LRUList, 32> m_lruLists;
+    Vector<LRUList, 32> m_allResources;
+    
+    // Lists for live resources only.  Access to this list is based off painting of the resource.
+    Vector<LRUList, 32> m_liveResources;
     
     // A URL-based map of all resources that are in the cache (including the freshest version of objects that are currently being 
     // referenced by a Web page).

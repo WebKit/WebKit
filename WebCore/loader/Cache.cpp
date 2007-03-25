@@ -55,6 +55,8 @@ Cache::Cache()
 , m_maximumSize(cDefaultCacheSize)
 , m_currentSize(0)
 , m_liveResourcesSize(0)
+, m_currentDecodedSize(0)
+, m_liveDecodedSize(0)
 {
 }
 
@@ -117,7 +119,40 @@ CachedResource* Cache::resourceForURL(const String& url)
     return m_resources.get(url);
 }
 
-void Cache::prune()
+void Cache::pruneLiveResources()
+{
+    // No need to prune if all of our objects fit.
+    if (m_currentSize <= m_maximumSize)
+        return;
+
+    // We allow the live resource size to get as big as the maximum cache size
+    // before we do a prune.
+    if (m_liveDecodedSize <= m_maximumSize)
+        return;
+    
+    // Destroy any decoded data in live objects that we can.
+    unsigned size = m_liveResources.size();
+    for (int i = size - 1; i >= 0; i--) {
+        // Start from the tail, since this is the least frequently accessed of the objects.
+        CachedResource* current = m_liveResources[i].m_tail;
+        while (current) {
+            CachedResource* prev = current->m_prevInLiveResourcesList;
+            ASSERT(current->referenced());
+            if (current->isLoaded()) {
+                // Go ahead and destroy our decoded data.  Note that this has the effect of moving
+                // us to a different list.
+                current->destroyDecodedData();
+                
+                // Stop pruning if our total live resource size is back under the maximum.
+                if (m_liveDecodedSize <= m_maximumSize)
+                    return;
+            }
+            current = prev;
+        }
+    }
+}
+
+void Cache::pruneAllResources()
 {
     // No need to prune if all of our objects fit.
     if (m_currentSize <= m_maximumSize)
@@ -131,13 +166,15 @@ void Cache::prune()
     if (unreferencedResourcesSize < m_maximumSize)
         return;
     
-    // Our first pass over the objects in the cache will destroy any decoded data in unreferenced objects.
-    unsigned size = m_lruLists.size();
+    unsigned size = m_allResources.size();
+    bool canShrinkLRULists = true;
     for (int i = size - 1; i >= 0; i--) {
-        // Start from the tail, since this is the least frequently accessed of the objects.
-        CachedResource* current = m_lruLists[i].m_tail;
+        // Remove from the tail, since this is the least frequently accessed of the objects.
+        CachedResource* current = m_allResources[i].m_tail;
+        
+        // First flush all the decoded data in this queue.
         while (current) {
-            CachedResource* prev = current->m_prevInLRUList;
+            CachedResource* prev = current->m_prevInAllResourcesList;
             if (!current->referenced() && current->isLoaded()) {
                 // Go ahead and destroy our decoded data.
                 current->destroyDecodedData();
@@ -150,15 +187,11 @@ void Cache::prune()
             }
             current = prev;
         }
-    }
 
-    // Our second pass over the objects in the cache will actually evict objects from the cache.
-    bool canShrinkLRULists = true;
-    for (int i = size - 1; i >= 0; i--) {
-        // Remove from the tail, since this is the least frequently accessed of the objects.
-        CachedResource* current = m_lruLists[i].m_tail;
+        // Now evict objects from this queue.
+        current = m_allResources[i].m_tail;
         while (current) {
-            CachedResource* prev = current->m_prevInLRUList;
+            CachedResource* prev = current->m_prevInAllResourcesList;
             if (!current->referenced()) {
                 remove(current);
                 
@@ -173,17 +206,17 @@ void Cache::prune()
             
         // Shrink the vector back down so we don't waste time inspecting
         // empty LRU lists on future prunes.
-        if (m_lruLists[i].m_head)
+        if (m_allResources[i].m_head)
             canShrinkLRULists = false;
         else if (canShrinkLRULists)
-            m_lruLists.resize(i);
+            m_allResources.resize(i);
     }
 }
 
 void Cache::setMaximumSize(unsigned bytes)
 {
     m_maximumSize = bytes;
-    prune();
+    pruneAllResources();
 }
 
 void Cache::remove(CachedResource* resource)
@@ -197,7 +230,9 @@ void Cache::remove(CachedResource* resource)
 
         // Remove from the appropriate LRU list.
         removeFromLRUList(resource);
-
+        if (resource->referenced())
+            removeFromLiveResourcesList(resource);
+        
         // Notify all doc loaders that might be observing this object still that it has been
         // extracted from the set of resources.
         HashSet<DocLoader*>::iterator end = m_docLoaders.end();
@@ -207,7 +242,7 @@ void Cache::remove(CachedResource* resource)
         // Subtract from our size totals.
         int delta = -resource->size();
         if (delta)
-            adjustSize(resource->referenced(), delta);
+            adjustSize(resource->referenced(), delta, -resource->decodedSize());
     }
 
     if (resource->canDelete())
@@ -249,9 +284,9 @@ LRUList* Cache::lruListFor(CachedResource* resource)
 #ifndef NDEBUG
     resource->m_lruIndex = queueIndex;
 #endif
-    if (m_lruLists.size() <= queueIndex)
-        m_lruLists.resize(queueIndex + 1);
-    return &m_lruLists[queueIndex];
+    if (m_allResources.size() <= queueIndex)
+        m_allResources.resize(queueIndex + 1);
+    return &m_allResources[queueIndex];
 }
 
 void Cache::removeFromLRUList(CachedResource* resource)
@@ -272,7 +307,7 @@ void Cache::removeFromLRUList(CachedResource* resource)
 
     // Verify that we are in fact in this list.
     bool found = false;
-    for (CachedResource* current = list->m_head; current; current = current->m_nextInLRUList) {
+    for (CachedResource* current = list->m_head; current; current = current->m_nextInAllResourcesList) {
         if (current == resource) {
             found = true;
             break;
@@ -281,22 +316,22 @@ void Cache::removeFromLRUList(CachedResource* resource)
     ASSERT(found);
 #endif
 
-    CachedResource* next = resource->m_nextInLRUList;
-    CachedResource* prev = resource->m_prevInLRUList;
+    CachedResource* next = resource->m_nextInAllResourcesList;
+    CachedResource* prev = resource->m_prevInAllResourcesList;
     
     if (next == 0 && prev == 0 && list->m_head != resource)
         return;
     
-    resource->m_nextInLRUList = 0;
-    resource->m_prevInLRUList = 0;
+    resource->m_nextInAllResourcesList = 0;
+    resource->m_prevInAllResourcesList = 0;
     
     if (next)
-        next->m_prevInLRUList = prev;
+        next->m_prevInAllResourcesList = prev;
     else if (list->m_tail == resource)
         list->m_tail = prev;
 
     if (prev)
-        prev->m_nextInLRUList = next;
+        prev->m_nextInAllResourcesList = next;
     else if (list->m_head == resource)
         list->m_head = next;
 }
@@ -304,23 +339,23 @@ void Cache::removeFromLRUList(CachedResource* resource)
 void Cache::insertInLRUList(CachedResource* resource)
 {
     // Make sure we aren't in some list already.
-    ASSERT(!resource->m_nextInLRUList && !resource->m_prevInLRUList);
+    ASSERT(!resource->m_nextInAllResourcesList && !resource->m_prevInAllResourcesList);
 
     LRUList* list = lruListFor(resource);
 
-    resource->m_nextInLRUList = list->m_head;
+    resource->m_nextInAllResourcesList = list->m_head;
     if (list->m_head)
-        list->m_head->m_prevInLRUList = resource;
+        list->m_head->m_prevInAllResourcesList = resource;
     list->m_head = resource;
     
-    if (!resource->m_nextInLRUList)
+    if (!resource->m_nextInAllResourcesList)
         list->m_tail = resource;
         
 #ifndef NDEBUG
     // Verify that we are in now in the list like we should be.
     list = lruListFor(resource);
     bool found = false;
-    for (CachedResource* current = list->m_head; current; current = current->m_nextInLRUList) {
+    for (CachedResource* current = list->m_head; current; current = current->m_nextInAllResourcesList) {
         if (current == resource) {
             found = true;
             break;
@@ -344,13 +379,116 @@ void Cache::resourceAccessed(CachedResource* resource)
     insertInLRUList(resource);
 }
 
-void Cache::adjustSize(bool live, int delta)
+LRUList* Cache::liveLRUListFor(CachedResource* resource)
+{
+    unsigned accessCount = max(resource->liveAccessCount(), 1U);
+    unsigned queueIndex = fastLog2(resource->decodedSize() / accessCount);
+#ifndef NDEBUG
+    resource->m_liveLRUIndex = queueIndex;
+#endif
+    if (m_liveResources.size() <= queueIndex)
+        m_liveResources.resize(queueIndex + 1);
+    return &m_liveResources[queueIndex];
+}
+
+void Cache::removeFromLiveResourcesList(CachedResource* resource)
+{
+    // If we've never been accessed, then we're brand new and not in any list.
+    if (resource->liveAccessCount() == 0)
+        return;
+
+#ifndef NDEBUG
+    unsigned oldListIndex = resource->m_liveLRUIndex;
+#endif
+
+    LRUList* list = liveLRUListFor(resource);
+
+#ifndef NDEBUG
+    // Verify that the list we got is the list we want.
+    ASSERT(resource->m_liveLRUIndex == oldListIndex);
+
+    // Verify that we are in fact in this list.
+    bool found = false;
+    for (CachedResource* current = list->m_head; current; current = current->m_nextInLiveResourcesList) {
+        if (current == resource) {
+            found = true;
+            break;
+        }
+    }
+    ASSERT(found);
+#endif
+
+    CachedResource* next = resource->m_nextInLiveResourcesList;
+    CachedResource* prev = resource->m_prevInLiveResourcesList;
+    
+    if (next == 0 && prev == 0 && list->m_head != resource)
+        return;
+    
+    resource->m_nextInLiveResourcesList = 0;
+    resource->m_prevInLiveResourcesList = 0;
+    
+    if (next)
+        next->m_prevInLiveResourcesList = prev;
+    else if (list->m_tail == resource)
+        list->m_tail = prev;
+
+    if (prev)
+        prev->m_nextInLiveResourcesList = next;
+    else if (list->m_head == resource)
+        list->m_head = next;
+}
+
+void Cache::insertInLiveResourcesList(CachedResource* resource)
+{
+    // Make sure we aren't in some list already.
+    ASSERT(!resource->m_nextInLiveResourcesList && !resource->m_prevInLiveResourcesList);
+
+    LRUList* list = liveLRUListFor(resource);
+
+    resource->m_nextInLiveResourcesList = list->m_head;
+    if (list->m_head)
+        list->m_head->m_prevInLiveResourcesList = resource;
+    list->m_head = resource;
+    
+    if (!resource->m_nextInLiveResourcesList)
+        list->m_tail = resource;
+        
+#ifndef NDEBUG
+    // Verify that we are in now in the list like we should be.
+    list = liveLRUListFor(resource);
+    bool found = false;
+    for (CachedResource* current = list->m_head; current; current = current->m_nextInLiveResourcesList) {
+        if (current == resource) {
+            found = true;
+            break;
+        }
+    }
+    ASSERT(found);
+#endif
+
+}
+
+void Cache::addToLiveResourcesSize(CachedResource* resource)
+{
+    m_liveResourcesSize += resource->size();
+    m_liveDecodedSize += resource->decodedSize();
+}
+
+void Cache::removeFromLiveResourcesSize(CachedResource* resource)
+{
+    m_liveResourcesSize -= resource->size();
+    m_liveDecodedSize -= resource->decodedSize();
+}
+
+void Cache::adjustSize(bool live, int delta, int decodedDelta)
 {
     ASSERT(delta >= 0 || ((int)m_currentSize + delta >= 0));
     m_currentSize += delta;
+    m_currentDecodedSize += decodedDelta;
     if (live) {
         ASSERT(delta >= 0 || ((int)m_liveResourcesSize + delta >= 0));
         m_liveResourcesSize += delta;
+        m_liveDecodedSize += decodedDelta;
     }
 }
 
@@ -364,27 +502,37 @@ Cache::Statistics Cache::getStatistics()
             case CachedResource::ImageResource:
                 stats.images.count++;
                 stats.images.size += o->size();
+                stats.images.liveSize += o->referenced() ? o->size() : 0;
+                stats.images.decodedSize += o->decodedSize();
                 break;
 
             case CachedResource::CSSStyleSheet:
                 stats.cssStyleSheets.count++;
                 stats.cssStyleSheets.size += o->size();
+                stats.cssStyleSheets.liveSize += o->referenced() ? o->size() : 0;
+                stats.cssStyleSheets.decodedSize += o->decodedSize();
                 break;
 
             case CachedResource::Script:
                 stats.scripts.count++;
                 stats.scripts.size += o->size();
+                stats.scripts.liveSize += o->referenced() ? o->size() : 0;
+                stats.scripts.decodedSize += o->decodedSize();
                 break;
 #if ENABLE(XSLT)
             case CachedResource::XSLStyleSheet:
                 stats.xslStyleSheets.count++;
                 stats.xslStyleSheets.size += o->size();
+                stats.xslStyleSheets.liveSize += o->referenced() ? o->size() : 0;
+                stats.xslStyleSheets.decodedSize += o->decodedSize();
                 break;
 #endif
 #if ENABLE(XBL)
             case CachedResource::XBL:
                 stats.xblDocs.count++;
                 stats.xblDocs.size += o->size();
+                stats.xblDocs.liveSize += o->referenced() ? o->size() : 0;
+                stats.xblDocs.decodedSize += o->decodedSize();
                 break;
 #endif
             default:

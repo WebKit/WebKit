@@ -84,6 +84,8 @@ void BitmapImage::destroyDecodedData(bool incremental)
         invalidatePlatformData();
         
         if (sizeChange) {
+            if (imageObserver())
+                imageObserver()->decodedSizeWillChange(this, sizeChange);
             m_decodedSize += sizeChange;
             if (imageObserver())
                 imageObserver()->decodedSizeChanged(this, sizeChange);
@@ -121,6 +123,8 @@ void BitmapImage::cacheFrame(size_t index)
     
     int sizeChange = m_size.width() * m_size.height() * 4;
     if (sizeChange) {
+        if (imageObserver())
+            imageObserver()->decodedSizeWillChange(this, sizeChange);
         m_decodedSize += sizeChange;
         if (imageObserver())
             imageObserver()->decodedSizeChanged(this, sizeChange);

@@ -1,3 +1,63 @@
+2007-03-24  David Hyatt  <hyatt@apple.com>
+
+        Fix for bugzilla bug 13187, place a hard limit on the amount of decoded data that WebCore will keep
+        around even on live pages (pages being displayed in tabs/windows or in the back/forward cache).
+        Images will decode to paint and once the decoded data exceeds the cache size, the decoded data will be
+        tossed.
+
+        Refine the flushing algorithm to apply the two-pass decode/evict model to each LRU-SP queue individually, rather
+        than to all the lists at once.  This allows the cache to evict large encoded resources before flushing small
+        or frequently accessed decoded onces.
+
+        Added information on live/decoded data to the cache statistics.
+
+        Reviewed by darin
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::Cache):
+        (WebCore::Cache::pruneLiveResources):
+        (WebCore::Cache::pruneAllResources):
+        (WebCore::Cache::setMaximumSize):
+        (WebCore::Cache::remove):
+        (WebCore::Cache::lruListFor):
+        (WebCore::Cache::removeFromLRUList):
+        (WebCore::Cache::insertInLRUList):
+        (WebCore::Cache::liveLRUListFor):
+        (WebCore::Cache::removeFromLiveResourcesList):
+        (WebCore::Cache::insertInLiveResourcesList):
+        (WebCore::Cache::addToLiveResourcesSize):
+        (WebCore::Cache::removeFromLiveResourcesSize):
+        (WebCore::Cache::adjustSize):
+        (WebCore::Cache::getStatistics):
+        * loader/Cache.h:
+        (WebCore::Cache::TypeStatistic::TypeStatistic):
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::decodedSizeWillChange):
+        (WebCore::CachedImage::decodedSizeChanged):
+        * loader/CachedImage.h:
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::ref):
+        (WebCore::CachedResource::deref):
+        (WebCore::CachedResource::setEncodedSize):
+        (WebCore::CachedResource::liveResourceAccessed):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::liveAccessCount):
+        (WebCore::CachedResource::resetLiveAccessCount):
+        (WebCore::CachedResource::increaseLiveAccessCount):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyDecodedData):
+        (WebCore::BitmapImage::cacheFrame):
+        * platform/graphics/ImageObserver.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBackgroundExtended):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paint):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintBorderImage):
+
 2007-03-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

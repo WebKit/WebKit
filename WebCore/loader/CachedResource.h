@@ -98,6 +98,11 @@ public:
     unsigned accessCount() const { return m_accessCount; }
     void increaseAccessCount() { m_accessCount++; }
 
+    unsigned liveAccessCount() const { return m_liveAccessCount; }
+    void resetLiveAccessCount() { m_liveAccessCount = 0; }
+    void increaseLiveAccessCount() { m_liveAccessCount++; }
+    void liveResourceAccessed();
+    
     // Computes the status of an object after loading.  
     // Updates the expire date on the cache entry file
     void finish();
@@ -135,7 +140,7 @@ public:
 
 protected:
     void setEncodedSize(unsigned);
-
+    
     HashCountedSet<CachedResourceClient*> m_clients;
 
     String m_url;
@@ -153,7 +158,8 @@ protected:
 private:
     unsigned m_encodedSize;
     unsigned m_accessCount;
-
+    unsigned m_liveAccessCount;
+    
 protected:
     CachePolicy m_cachePolicy;
     bool m_inCache;
@@ -162,11 +168,16 @@ protected:
 #ifndef NDEBUG
     bool m_deleted;
     unsigned m_lruIndex;
+    unsigned m_liveLRUIndex;
 #endif
 
 private:
-    CachedResource* m_nextInLRUList;
-    CachedResource* m_prevInLRUList;
+    CachedResource* m_nextInAllResourcesList;
+    CachedResource* m_prevInAllResourcesList;
+    
+    CachedResource* m_nextInLiveResourcesList;
+    CachedResource* m_prevInLiveResourcesList;
+
     friend class Cache;
     
     bool m_shouldTreatAsLocal;

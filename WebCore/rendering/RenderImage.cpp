@@ -291,6 +291,8 @@ void RenderImage::paint(PaintInfo& paintInfo, int tx, int ty)
         HTMLImageElement* imageElt = (element() && element()->hasTagName(imgTag)) ? static_cast<HTMLImageElement*>(element()) : 0;
         CompositeOperator compositeOperator = imageElt ? imageElt->compositeOperator() : CompositeSourceOver;
         context->drawImage(image(), rect, compositeOperator);
+        if (!context->paintingDisabled())
+            m_cachedImage->liveResourceAccessed();
     }
 
     // draw the selection tint even if the image itself is not available

@@ -47,12 +47,20 @@ CachedResource::CachedResource(const String& URL, Type type, CachePolicy cachePo
     m_cachePolicy = cachePolicy;
     m_request = 0;
     m_expireDateChanged = false;
+
     m_accessCount = 0;
-    m_nextInLRUList = 0;
-    m_prevInLRUList = 0;
+    m_liveAccessCount = 0;
+    
+    m_nextInAllResourcesList = 0;
+    m_prevInAllResourcesList = 0;
+    
+    m_nextInLiveResourcesList = 0;
+    m_prevInLiveResourcesList = 0;
+
 #ifndef NDEBUG
     m_deleted = false;
     m_lruIndex = 0;
+    m_liveLRUIndex = 0;
 #endif
     m_errorOccurred = false;
     m_shouldTreatAsLocal = FrameLoader::shouldTreatURLAsLocal(m_url);
@@ -94,8 +102,11 @@ void CachedResource::setRequest(Request* request)
 
 void CachedResource::ref(CachedResourceClient *c)
 {
-    if (!referenced() && inCache())
-        cache()->addToLiveObjectSize(size());
+    if (!referenced() && inCache()) {
+        increaseLiveAccessCount();
+        cache()->addToLiveResourcesSize(this);
+        cache()->insertInLiveResourcesList(this);
+    }
     m_clients.add(c);
 }
 
@@ -106,9 +117,11 @@ void CachedResource::deref(CachedResourceClient *c)
     if (canDelete() && !inCache())
         delete this;
     else if (!referenced() && inCache()) {
-        cache()->removeFromLiveObjectSize(size());
+        cache()->removeFromLiveResourcesSize(this);
+        cache()->removeFromLiveResourcesList(this);
+        resetLiveAccessCount();
         allReferencesRemoved();
-        cache()->prune();
+        cache()->pruneAllResources();
     }
 }
 
@@ -132,7 +145,17 @@ void CachedResource::setEncodedSize(unsigned size)
         cache()->insertInLRUList(this);
         
         // Update the cache's size totals.
-        cache()->adjustSize(referenced(), size - oldSize);
+        cache()->adjustSize(referenced(), size - oldSize, 0);
+    }
+}
+
+void CachedResource::liveResourceAccessed()
+{
+    if (inCache()) {
+        cache()->removeFromLiveResourcesList(this);
+        increaseLiveAccessCount();
+        cache()->insertInLiveResourcesList(this);
+        cache()->pruneLiveResources();
     }
 }
 
