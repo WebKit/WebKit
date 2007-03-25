@@ -35,14 +35,28 @@
 
     return [NSArray arrayWithObjects:
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithInt:s.images.count], @"images",
-            [NSNumber numberWithInt:s.cssStyleSheets.count], @"style sheets",
-            [NSNumber numberWithInt:s.scripts.count], @"scripts",
+            [NSNumber numberWithInt:s.images.count], @"Images",
+            [NSNumber numberWithInt:s.cssStyleSheets.count], @"CSS",
+            [NSNumber numberWithInt:s.xslStyleSheets.count], @"XSL",
+            [NSNumber numberWithInt:s.scripts.count], @"JavaScript",
             nil],
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithInt:s.images.size], @"images",
-            [NSNumber numberWithInt:s.cssStyleSheets.size] ,@"style sheets",
-            [NSNumber numberWithInt:s.scripts.size], @"scripts",
+            [NSNumber numberWithInt:s.images.size], @"Images",
+            [NSNumber numberWithInt:s.cssStyleSheets.size] ,@"CSS",
+            [NSNumber numberWithInt:s.xslStyleSheets.size], @"XSL",
+            [NSNumber numberWithInt:s.scripts.size], @"JavaScript",
+            nil],
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithInt:s.images.liveSize], @"Images",
+            [NSNumber numberWithInt:s.cssStyleSheets.liveSize] ,@"CSS",
+            [NSNumber numberWithInt:s.xslStyleSheets.liveSize], @"XSL",
+            [NSNumber numberWithInt:s.scripts.liveSize], @"JavaScript",
+            nil],
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithInt:s.images.decodedSize], @"Images",
+            [NSNumber numberWithInt:s.cssStyleSheets.decodedSize] ,@"CSS",
+            [NSNumber numberWithInt:s.xslStyleSheets.decodedSize], @"XSL",
+            [NSNumber numberWithInt:s.scripts.decodedSize], @"JavaScript",
             nil],
         nil];
 }

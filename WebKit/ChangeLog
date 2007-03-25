@@ -1,3 +1,10 @@
+2007-03-24  David Hyatt  <hyatt@apple.com>
+
+        Amend the statistics reporting for the WebCore cache to include XSL and to report live/decoded sizes.
+
+        * Misc/WebCache.mm:
+        (+[WebCache statistics]):
+
 2007-03-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam
