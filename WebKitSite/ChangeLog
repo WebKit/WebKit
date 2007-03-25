@@ -1,5 +1,9 @@
 2007-03-24  Darin Adler  <darin@apple.com>
 
+        * coding/RefPtr.html: <span> -> </span>
+
+2007-03-24  Darin Adler  <darin@apple.com>
+
         * coding/RefPtr.html: "smart pointer" -> "smart pointers"
 
 2007-03-24  Darin Adler  <darin@apple.com>
