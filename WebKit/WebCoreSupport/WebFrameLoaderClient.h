@@ -46,7 +46,7 @@ namespace WebCore {
     class ResourceRequest;
 }
 
-typedef HashMap<RefPtr<WebCore::ResourceLoader>, WebCore::RetainPtr<WebResource> > ResourceMap;
+typedef HashMap<RefPtr<WebCore::ResourceLoader>, RetainPtr<WebResource> > ResourceMap;
 
 class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
 public:
@@ -199,7 +199,7 @@ private:
     bool canUseArchivedResource(NSURLResponse *) const;
     void deliverArchivedResources(WebCore::Timer<WebFrameLoaderClient>*);
 
-    WebCore::RetainPtr<WebFramePolicyListener> setUpPolicyListener(WebCore::FramePolicyFunction);
+    RetainPtr<WebFramePolicyListener> setUpPolicyListener(WebCore::FramePolicyFunction);
 
     NSDictionary *actionDictionary(const WebCore::NavigationAction&) const;
 
@@ -207,9 +207,9 @@ private:
     
     virtual bool canCachePage() const;
 
-    WebCore::RetainPtr<WebFrame> m_webFrame;
+    RetainPtr<WebFrame> m_webFrame;
 
-    WebCore::RetainPtr<WebFramePolicyListener> m_policyListener;
+    RetainPtr<WebFramePolicyListener> m_policyListener;
     WebCore::FramePolicyFunction m_policyFunction;
 
     mutable ResourceMap m_pendingArchivedResources;

@@ -49,7 +49,6 @@
 using WebCore::BackForwardList;
 using WebCore::HistoryItem;
 using WebCore::HistoryItemVector;
-using WebCore::RetainPtr;
 
 static inline WebBackForwardListPrivate* kitPrivate(BackForwardList* list) { return (WebBackForwardListPrivate*)list; }
 static inline BackForwardList* core(WebBackForwardListPrivate* list) { return (BackForwardList*)list; }

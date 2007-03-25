@@ -52,8 +52,8 @@ public:
     void decreaseLoadCount(unsigned long identifier);
 private:
     WebDataSource *m_dataSource;
-    WebCore::RetainPtr<id> m_resourceLoadDelegate;
-    WebCore::RetainPtr<id> m_downloadDelegate;
+    RetainPtr<id> m_resourceLoadDelegate;
+    RetainPtr<id> m_downloadDelegate;
     bool m_hasEverBeenDetached;
     HashSet<unsigned long> m_loadingResources;
 };

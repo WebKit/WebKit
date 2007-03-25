@@ -2,6 +2,17 @@
 
         Reviewed by Adam
 
+        RetainPtr is no longer in the WebCore namespace
+
+        * History/WebBackForwardList.mm:
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebView/WebDocumentLoaderMac.h:
+
+2007-03-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam
+
         <rdar://problem/5086210> - Move RetainPtr to WTF
         
         * ForwardingHeaders/wtf/RetainPtr.h: Added.

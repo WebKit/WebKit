@@ -1,6 +1,14 @@
 2007-03-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam
+
+        Whoops, RetainPtr should be in the WTF namespace
+
+        * wtf/RetainPtr.h:
+
+2007-03-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam
         
         <rdar://problem/5086210> - Move RetainPtr to WTF
 
