@@ -1,3 +1,21 @@
+2007-03-24  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13156
+          REGRESSION (r19621): Pasting breakable content where wrapped line is too long to fit in a textarea fails to draw a horizontal scrollbar
+
+        Test: fast/text/midword-break-after-breakable-char.html
+
+        Breaking in the middle of the word
+        is allowed only if no breaking opportunity between words has occurred yet. The
+        first position on the line should not be considered "between words" even if
+        it is a breaking opportunity.
+        
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::findNextLineBreak): Changed according to the above. Also
+        cleaned up a couple of lines.
+
 2007-03-24  David Hyatt  <hyatt@apple.com>
 
         Fix for bugzilla bug 13187, place a hard limit on the amount of decoded data that WebCore will keep

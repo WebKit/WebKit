@@ -2095,6 +2095,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
     RenderObject *last = o;
     RenderObject *previous = o;
     int pos = start.pos;
+    bool atStart = true;
 
     bool prevLineBrokeCleanly = previousLineBrokeCleanly;
     previousLineBrokeCleanly = false;
@@ -2308,11 +2309,11 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 currentCharacterIsWS = currentCharacterIsSpace || (breakNBSP && c == noBreakSpace);
 
                 if (breakWords && !midWordBreak) {
-                    wrapW += t->width(pos, 1, f, w+wrapW);
+                    wrapW += t->width(pos, 1, f, w + wrapW);
                     midWordBreak = w + wrapW > width;
                 }
 
-                bool betweenWords = c == '\n' || (currWS != PRE && isBreakable(str, pos, strlen, nextBreakable, breakNBSP));
+                bool betweenWords = c == '\n' || (currWS != PRE && !atStart && isBreakable(str, pos, strlen, nextBreakable, breakNBSP));
 
                 if (betweenWords || midWordBreak) {
                     bool stoppedIgnoringSpaces = false;
@@ -2484,6 +2485,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                     
                 pos++;
                 len--;
+                atStart = false;
             }
             
             // IMPORTANT: pos is > length here!
@@ -2513,7 +2515,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                             checkForBreak = true;
                     }
                     bool willFitOnLine = (w + tmpW <= width);
-                    bool canPlaceOnLine = willFitOnLine || !willFitOnLine && !autoWrapWasEverTrueOnLine;
+                    bool canPlaceOnLine = willFitOnLine || !autoWrapWasEverTrueOnLine;
                     if (canPlaceOnLine && checkForBreak) {
                         w += tmpW;
                         tmpW = 0;
@@ -2570,6 +2572,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             currentCharacterIsSpace = false;
         
         pos = 0;
+        atStart = false;
     }
 
     

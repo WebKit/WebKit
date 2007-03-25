@@ -1,3 +1,15 @@
+2007-03-24  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13156
+          REGRESSION (r19621): Pasting breakable content where wrapped line is too long to fit in a textarea fails to draw a horizontal scrollbar
+
+        * fast/text/midword-break-after-breakable-char-expected.checksum: Added.
+        * fast/text/midword-break-after-breakable-char-expected.png: Added.
+        * fast/text/midword-break-after-breakable-char-expected.txt: Added.
+        * fast/text/midword-break-after-breakable-char.html: Added.
+
 2007-03-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.
