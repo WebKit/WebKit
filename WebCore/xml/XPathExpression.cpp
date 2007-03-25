@@ -76,6 +76,7 @@ PassRefPtr<XPathResult> XPathExpression::evaluate(Node* contextNode, unsigned sh
     evaluationContext.size = 1;
     evaluationContext.position = 1;
     RefPtr<XPathResult> result = new XPathResult(eventTarget, m_topExpression->evaluate());
+    evaluationContext.node = 0; // Do not hold a reference to the context node, as this may prevent the whole document from being destroyed in time.
 
     if (type != XPathResult::ANY_TYPE) {
         ec = 0;

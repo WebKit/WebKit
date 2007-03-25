@@ -51,12 +51,15 @@ Attr::~Attr()
 
 void Attr::createTextChild()
 {
-    assert(refCount());
+    ASSERT(refCount());
     if (!m_attribute->value().isEmpty()) {
-        ExceptionCode ec = 0;
-        m_ignoreChildrenChanged++;
-        appendChild(document()->createTextNode(m_attribute->value().impl()), ec);
-        m_ignoreChildrenChanged--;
+        RefPtr<Text> textNode = document()->createTextNode(m_attribute->value().impl());
+
+        // This does everything appendChild() would do in this situation (assuming m_ignoreChildrenChanged was set),
+        // but much more efficiently.
+        textNode->setParent(this);
+        fastSetFirstChild(textNode.get());
+        fastSetLastChild(textNode.get());
     }
 }
 

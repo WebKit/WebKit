@@ -87,7 +87,7 @@ namespace WebCore {
         private:
             void parseNodeTest(const String&);
             NodeSet nodesInAxis(Node* context) const;
-            NodeSet nodeTestMatches(const NodeSet& nodes) const;
+            bool nodeMatches(Node*) const;
             String namespaceFromNodetest(const String& nodeTest) const;
             Node::NodeType primaryNodeType(Axis) const;
 

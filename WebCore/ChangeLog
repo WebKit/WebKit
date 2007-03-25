@@ -1,3 +1,29 @@
+2007-03-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        A partial fix for http://bugs.webkit.org/show_bug.cgi?id=13021
+        XPath can be very slow
+
+        * xml/XPathExpression.cpp:
+        (WebCore::XPathExpression::evaluate): Reset a reference to the context node, as this may prevent the whole document
+        from being destroyed in time.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::createTextChild): Instead of calling appendChild(), just do the few operations it really needs to perform.
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::fastSetFirstChild):
+        (WebCore::ContainerNode::fastSetLastChild):
+        Added operations that let Attr hack internal ContainerNode data (evil, but fast!).
+
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::evaluate):
+        (WebCore::XPath::Step::nodesInAxis):
+        (WebCore::XPath::Step::nodeMatches):
+        * xml/XPathStep.h:
+        Merged node testing into axis enumeration. This saves a lot of Vector resizing and passing, and is necessary for future 
+        optimizations (sometimes, we can just pick the single result node instead of enumerating and filtering the whole axis).
+
 2007-03-24  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

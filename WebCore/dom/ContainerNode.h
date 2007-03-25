@@ -65,7 +65,7 @@ public:
 
     Node* fastFirstChild() const { return m_firstChild; }
     Node* fastLastChild() const { return m_lastChild; }
-    
+
     void removeAllChildren();
     void removeChildren();
     void cloneChildNodes(Node* clone);
@@ -73,6 +73,9 @@ public:
 protected:
     static void queuePostAttachCallback(NodeCallback, Node*);
 
+    void fastSetFirstChild(Node* child) { m_firstChild = child; }
+    void fastSetLastChild(Node* child) { m_lastChild = child; }
+    
 private:
     Node* m_firstChild;
     Node* m_lastChild;
