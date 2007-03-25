@@ -142,7 +142,17 @@ class UploadLayoutResults(UploadCommand, ShellCommand):
     def __init__(self, *args, **kwargs):
         UploadCommand.__init__(self, *args, **kwargs)
         
-        self.command = 'if [[ -d layout-test-results ]]; then find layout-test-results -type d -print0 | xargs -0 chmod ug+rx; find layout-test-results -type f -print0 | xargs -0 chmod ug+r;  rsync -rlvzP --rsync-path="/home/buildresults/bin/rsync" layout-test-results/ %s && rm -rf layout-test-results; fi' % (self.getRemotePath(), )
+        self.command = '''\
+        if [[ -d layout-test-results ]]; then \
+            find layout-test-results -type d -print0 | xargs -0 chmod ug+rx; \
+            find layout-test-results -type f -print0 | xargs -0 chmod ug+r; \
+            rsync -rlvzP --rsync-path="/home/buildresults/bin/rsync" layout-test-results/ %s && rm -rf layout-test-results; \
+        fi; \
+        CRASH_LOG=~/Library/Logs/CrashReporter/DumpRenderTree*.crash*; \
+        if [[ -f $(ls -1 $CRASH_LOG | head -n 1 ) ]]; then \
+            chmod ug+r $CRASH_LOG; \
+            rsync -rlvzP --rsync-path="/home/buildresults/bin/rsync" $CRASH_LOG %s && rm -rf $CRASH_LOG; \
+        fi;''' % (self.getRemotePath(), self.getRemotePath())
 
         ShellCommand.__init__(self, *args, **kwargs)
 
