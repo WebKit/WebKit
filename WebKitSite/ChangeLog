@@ -1,3 +1,8 @@
+2007-03-25  Darin Adler  <darin@apple.com>
+
+        * coding/RefPtr.html: More formatting tweaks. Added a possible new topic for the document,
+        suggested by Anders.
+
 2007-03-24  Darin Adler  <darin@apple.com>
 
         * css/main.css: Try tighter spacing for code examples.

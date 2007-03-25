@@ -266,7 +266,7 @@ changing the reference count, <span class="class">PassRefPtr</span> provides the
 RefPtr&lt;Node&gt; node = createSpecialNode();
 Node* rawNodePointer = node.release().releaseRef();</pre>
 
-<p>Since releaseRef is rarely used, it’s provided only in the
+<p>Since <span class="function">releaseRef</span> is rarely used, it’s provided only in the
 <span class="class">PassRefPtr</span> class, hence the need to call <span class="function">release</span>,
 then <span class="function">releaseRef</span>. If we find this is used often we could
 provide <span class="function">releaseRef</span> for <span class="class">RefPtr</span> too.</p>
@@ -278,47 +278,47 @@ and <span class="class">PassRefPtr</span> in WebKit code.</p>
 
 <h3>Local variables</h3>
 <ul>
-<li><p>If ownership and lifetime are guaranteed, a local variable can be a raw pointer.</p></li>
-<li><p>If the code needs to hold ownership or guarantee lifetime, a local variable should
-be a <span class="class">RefPtr</span>.</p></li>
-<li><p>Local variables should never be <span class="class">PassRefPtr</span>.</p></li>
+<li>If ownership and lifetime are guaranteed, a local variable can be a raw pointer.</li>
+<li>If the code needs to hold ownership or guarantee lifetime, a local variable should
+be a <span class="class">RefPtr</span>.</li>
+<li>Local variables should never be <span class="class">PassRefPtr</span>.</li>
 </ul>
 
 <h3>Data members</h3>
 <ul>
-<li><p>If ownership and lifetime are guaranteed, a data member can be a raw pointer.</p></li>
-<li><p>If the class needs to hold ownership or guarantee lifetime, the data member should
-be a <span class="class">RefPtr</span>.</p></li>
-<li><p>Data members should never be <span class="class">PassRefPtr</span>.</p></li>
+<li>If ownership and lifetime are guaranteed, a data member can be a raw pointer.</li>
+<li>If the class needs to hold ownership or guarantee lifetime, the data member should
+be a <span class="class">RefPtr</span>.</li>
+<li>Data members should never be <span class="class">PassRefPtr</span>.</li>
 </ul>
 
 <h3>Function arguments</h3>
 <ul>
-<li><p>If a function does not take ownership of an object, the argument should be a raw pointer.</p></li>
-<li><p>If a function does take ownership of an object, the argument should be a <span class="class">PassRefPtr</span>.
-This includes most setter functions.</p>
-<p>Unless the use of the argument is very simple, the argument should be transferred to a
+<li>If a function does not take ownership of an object, the argument should be a raw pointer.</li>
+<li>If a function does take ownership of an object, the argument should be a <span class="class">PassRefPtr</span>.
+This includes most setter functions.
+Unless the use of the argument is very simple, the argument should be transferred to a
 <span class="class">RefPtr</span> at the start of the function; the argument can be named with
-a “prp” prefix in such cases.</p></li>
+a “prp” prefix in such cases.</li>
 </ul>
 
 <h3>Function results</h3>
 <ul>
-<li><p>If a function’s result is an object, but ownership is not being transferred, the result
-should be a raw pointer. This includes most getter functions.</p></li>
-<li><p>If a function’s result is a new object or ownership is being transferred for any other
-reason, the result should be a <span class="class">PassRefPtr</span>.</p>
-<p>Since local variables are typically <span class="class">RefPtr</span>, it’s common to call
+<li>If a function’s result is an object, but ownership is not being transferred, the result
+should be a raw pointer. This includes most getter functions.</li>
+<li>If a function’s result is a new object or ownership is being transferred for any other
+reason, the result should be a <span class="class">PassRefPtr</span>.
+Since local variables are typically <span class="class">RefPtr</span>, it’s common to call
 <span class="function">release</span> in the return statement to transfer the
-<span class="class">RefPtr</span> to the <span class="class">PassRefPtr</span>.</p></li>
+<span class="class">RefPtr</span> to the <span class="class">PassRefPtr</span>.</li>
 </ul>
 
 <h3>New objects</h3>
 <ul>
-<li><p>New objects should by put into a <span class="class">RefPtr</span> as soon as possible
-after creation to avoid possibly leaking an object while it’s in a floating state.</p></li>
-<li><p>Best idiom is to use a private constructor and have a public factory function that
-returns a <span class="class">PassRefPtr</span>.</p></li>
+<li>New objects should be put into a <span class="class">RefPtr</span> as soon as possible
+after creation to avoid possibly leaking an object while it’s in a floating state.</li>
+<li>Best idiom is to use a private constructor and have a public factory function that
+returns a <span class="class">PassRefPtr</span>.</li>
 </ul>
 
 <h2>Improving this document</h2>
@@ -360,6 +360,8 @@ and the lack of a <span class="class">PassRetainPtr</span>.</li>
 <li>The <span class="class">DocPtr</span> class template.</li>
 
 <li>The <span class="class">ListRefPtr</span> class template.</li>
+
+<li>The “protector” idiom, where a local RefPtr variable is used to keep an object alive.</li>
 
 </ul>
 
