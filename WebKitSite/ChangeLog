@@ -1,5 +1,9 @@
 2007-03-24  Darin Adler  <darin@apple.com>
 
+        * coding/RefPtr.html: "smart pointer" -> "smart pointers"
+
+2007-03-24  Darin Adler  <darin@apple.com>
+
         * coding/RefPtr.html: Added. First draft of a document about RefPtr.
 
         Also tweaked the MIME types of a few files and removed a stray executable bit.
