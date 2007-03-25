@@ -185,4 +185,5 @@ dt {
 .code {
     margin-left: 2em;
     font-size: 90%;
+    line-height: initial;
 }
