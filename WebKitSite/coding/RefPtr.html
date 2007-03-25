@@ -130,7 +130,7 @@ Then the reference count is incremented to 2 to create <span class="variable">b<
 to 1 when the return value of <span class="function">createSpecialNode</span> is destroyed.</p>
 
 <p>(This analysis ignores the possibility that the compiler might implement the
-<a href="http://www.awprofessional.com/articles/article.asp?p=25033&seqNum=3&rl=1">return value optimization</a>.
+<a href="http://www.awprofessional.com/articles/article.asp?p=25033&amp;seqNum=3&amp;rl=1">return value optimization</a>.
 If the compiler does, some of the reference count churn may be mitigated.)</p>
 
 <p>The overhead of reference count churn is even greater when both function arguments and return
@@ -143,7 +143,7 @@ When you copy a <span class="class">PassRefPtr</span> or
 assign the value of a <span class="class">PassRefPtr</span> to a <span class="class">RefPtr</span> or
 another <span class="class">PassRefPtr</span>, the original
 pointer value is set to 0; the operation is done without any change to the reference count.
-Lets take a look at a new version of our example:</p>
+Let’s take a look at a new version of our example:</p>
 
 <pre class="code"><span class="comment">// example, not preferred style</span>
 
