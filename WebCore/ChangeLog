@@ -1,3 +1,17 @@
+2007-03-25  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adam.
+
+        Fix <rdar://problem/5049842>
+        Gmail Editor: Dragging message text in the message body results in a crash at WebCore::Frame::eventHandler()
+
+        Null check frame in m_dragTarget, it might be gone already.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateDragAndDrop):
+        (WebCore::EventHandler::cancelDragAndDrop):
+        (WebCore::EventHandler::performDragAndDrop):
+
 2007-03-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
@@ -229,7 +243,6 @@
         (WebCore::overrideLayoutOperation):
         (WebCore::ATSULayoutParameters::initialize):
 
->>>>>>> .r20473
 2007-03-24  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/5086400>, images scrolled offscreen continue to animate.  Safari 2 would

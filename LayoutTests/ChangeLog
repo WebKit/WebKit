@@ -1,3 +1,15 @@
+2007-03-26  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adam.
+        
+        Test for <rdar://problem/5049842>
+        Gmail Editor: Dragging message text in the message body results in a crash at WebCore::Frame::eventHandler()
+
+        * editing/pasteboard/drag-drop-dead-frame-expected.checksum: Added.
+        * editing/pasteboard/drag-drop-dead-frame-expected.png: Added.
+        * editing/pasteboard/drag-drop-dead-frame-expected.txt: Added.
+        * editing/pasteboard/drag-drop-dead-frame.html: Added.
+
 2007-03-24  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
