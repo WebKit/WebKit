@@ -1,3 +1,7 @@
+2007-03-26  Darin Adler  <darin@apple.com>
+
+        * coding/coding-style.html: Let's misquote George Orwell: "Wrong is right. Right is wrong."
+
 2007-03-25  Darin Adler  <darin@apple.com>
 
         * coding/coding-style.html: Put !important on right/wrong colors so they override the

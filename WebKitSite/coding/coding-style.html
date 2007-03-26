@@ -70,7 +70,7 @@ class Document {
 </li>
 
 <li>In an implementation file, code inside a namespace should <em>not</em> be indented.
-<h4 class="wrong">Right:</h4>
+<h4 class="right">Right:</h4>
 <pre class="code">
 // Document.cpp
 namespace WebCore {
@@ -131,7 +131,7 @@ switch (condition) {
 i++;
 </pre>
 
-<h4 class="right">Wrong:</h4>
+<h4 class="wrong">Wrong:</h4>
 <pre class="code">
 i ++;
 </pre>
@@ -146,7 +146,7 @@ c = a | b;
 return condition ? 1 : 0;
 </pre>
 
-<h4 class="right">Wrong:</h4>
+<h4 class="wrong">Wrong:</h4>
 <pre class="code">
 y=m*x+b;
 f(a,b);
@@ -162,7 +162,7 @@ if (condition)
     doIt();
 </pre>
 
-<h4 class="right">Wrong:</h4>
+<h4 class="wrong">Wrong:</h4>
 <pre class="code">
 if(condition)
     doIt();
@@ -175,7 +175,7 @@ if(condition)
 f(a, b);
 </pre>
 
-<h4 class="right">Wrong:</h4>
+<h4 class="wrong">Wrong:</h4>
 <pre class="code">
 f (a, b);
 f( a, b );
@@ -267,7 +267,7 @@ class MyClass
 };
 </pre>
 <li>One-line control clauses should not use braces
-<h4 class="wrong">Right:</h4>
+<h4 class="right">Right:</h4>
 <pre class="code">
 if (condition)
     doIt();
