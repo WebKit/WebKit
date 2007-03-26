@@ -1,5 +1,10 @@
 2007-03-25  Darin Adler  <darin@apple.com>
 
+        * coding/coding-style.html: Put !important on right/wrong colors so they override the
+        green color that comes from the green.css stylesheet.
+
+2007-03-25  Darin Adler  <darin@apple.com>
+
         * coding/RefPtr.html: A couple minor wording tweaks.
 
 2007-03-25  Darin Adler  <darin@apple.com>
