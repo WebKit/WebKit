@@ -1,3 +1,15 @@
+2007-03-26  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dave Harrison
+        
+        - fixed <rdar://problem/4769772> Problem with Find on certain PDF page
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView _scaledAttributedString:]):
+        We were hitting an exception trying to set the font attribute to nil, which was happening because
+        the result of -[PDFSelection attributedString] had no attributes. That PDFSelection bug is now
+        filed separately, but this works around the exception.
+
 2007-03-24  David Hyatt  <hyatt@apple.com>
 
         Amend the statistics reporting for the WebCore cache to include XSL and to report live/decoded sizes.

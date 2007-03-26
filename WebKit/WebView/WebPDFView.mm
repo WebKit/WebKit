@@ -1104,7 +1104,6 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 - (NSAttributedString *)_scaledAttributedString:(NSAttributedString *)unscaledAttributedString
 {
-    NSLog(@"unscaledAttributedString is %@", unscaledAttributedString);
     if (!unscaledAttributedString)
         return nil;
     
@@ -1119,6 +1118,15 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     [result beginEditing];    
     while (NSMaxRange(effectiveRange) < length) {
         NSFont *unscaledFont = [result attribute:NSFontAttributeName atIndex:NSMaxRange(effectiveRange) effectiveRange:&effectiveRange];
+        
+        if (!unscaledFont) {
+            // FIXME: We can't scale the font if we don't know what it is. We should always know what it is,
+            // but sometimes don't due to PDFKit issue 5089411. When that's addressed, we can remove this
+            // early continue.
+            LOG_ERROR("no font attribute found in range %@ for attributed string \"%@\" on page %@ (see radar 5089411)", NSStringFromRange(effectiveRange), result, [[dataSource request] URL]);
+            continue;
+        }
+        
         NSFont *scaledFont = [NSFont fontWithName:[unscaledFont fontName] size:[unscaledFont pointSize]*scaleFactor];
         [result addAttribute:NSFontAttributeName value:scaledFont range:effectiveRange];
     }
