@@ -53,11 +53,6 @@ typedef float CGFloat;
 #define max max
 #define min min
 
-// FIXME: Should probably just dump this eventually, but it's needed for now.
-// We get this from some system place on OS X; probably better not to use it
-// in WebCore code.
-#include <assert.h>
-
 #endif /* PLATFORM(WIN_OS) */
 
 #if !PLATFORM(SYMBIAN)

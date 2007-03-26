@@ -1,5 +1,18 @@
 2007-03-26  Geoffrey Garen  <ggaren@apple.com>
 
+        Removed now-stale #includes of <assert.h>.
+        
+        * WebCorePrefix.h:
+        * config.h:
+        * css/CSSGrammar.y:
+        * platform/Arena.cpp:
+        * platform/KURL.cpp:
+        * platform/SegmentedString.h:
+        * rendering/DataRef.h:
+        * rendering/RenderArena.cpp:
+
+2007-03-26  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Kevin McCulough.
 
         Global replace of "assert(" with "ASSERT(" to assist debugging. Removed

@@ -37,7 +37,6 @@
 #include "MediaQueryExp.h"
 #include "PlatformString.h"
 #include "cssparser.h"
-#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 

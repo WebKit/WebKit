@@ -37,8 +37,6 @@
 #include <QUrl>
 #endif
 
-#include <assert.h>
-
 using namespace std;
 
 namespace WebCore {

@@ -35,7 +35,6 @@
 #include "config.h"
 #include "RenderArena.h"
 
-#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include <wtf/Assertions.h>

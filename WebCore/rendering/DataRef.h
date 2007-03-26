@@ -26,8 +26,6 @@
 #ifndef DataRef_h
 #define DataRef_h
 
-#include <assert.h>
-
 namespace WebCore {
 
 template <typename T> class DataRef {

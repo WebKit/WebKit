@@ -47,7 +47,6 @@
 #include "Arena.h"
 
 #include <algorithm>
-#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include <wtf/Assertions.h>
