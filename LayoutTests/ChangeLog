@@ -1,3 +1,15 @@
+2007-03-26  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed and landed by Darin.
+
+        - pixel test for http://bugs.webkit.org/show_bug.cgi?id=13194
+          REGRESSION: Selection rects are wrong for images in search results from images.google.com
+
+        * fast/replaced/selection-rect-in-table-cell-expected.checksum: Added.
+        * fast/replaced/selection-rect-in-table-cell-expected.png: Added.
+        * fast/replaced/selection-rect-in-table-cell-expected.txt: Added.
+        * fast/replaced/selection-rect-in-table-cell.html: Added.
+
 2007-03-26  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Adam.

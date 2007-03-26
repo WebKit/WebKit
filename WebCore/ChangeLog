@@ -1,3 +1,16 @@
+2007-03-26  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed and landed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13194
+          <rdar://problem/5087738>
+          REGRESSION: Selection rects are wrong for images in search results from images.google.com
+
+        Test: fast/replaced/selection-rect-in-table-cell.html
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::selectionRect):
+
 2007-03-26  Geoffrey Garen  <ggaren@apple.com>
 
         Removed now-stale #includes of <assert.h>.

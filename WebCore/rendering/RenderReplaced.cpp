@@ -165,7 +165,7 @@ IntRect RenderReplaced::selectionRect()
     int selectionRight = xPos() + width();
     
     int absx, absy;
-    cb->absolutePosition(absx, absy);
+    cb->absolutePositionForContent(absx, absy);
     if (cb->hasOverflowClip())
         cb->layer()->subtractScrollOffset(absx, absy);
 
