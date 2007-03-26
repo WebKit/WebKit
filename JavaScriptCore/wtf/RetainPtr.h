@@ -57,7 +57,6 @@ namespace WTF {
     public:
         typedef typename RemovePointer<T>::type ValueType;
         typedef ValueType* PtrType;
-        typedef ValueType& RefType;
 
         RetainPtr() : m_ptr(0) {}
         RetainPtr(PtrType ptr) : m_ptr(ptr) { if (ptr) CFRetain(ptr); }
@@ -75,7 +74,6 @@ namespace WTF {
         
         PtrType releaseRef() { PtrType tmp = m_ptr; m_ptr = 0; return tmp; }
         
-        RefType operator*() const { return *m_ptr; }
         PtrType operator->() const { return m_ptr; }
         
         bool operator!() const { return !m_ptr; }

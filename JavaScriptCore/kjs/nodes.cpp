@@ -144,7 +144,7 @@ void Node::ref()
 void Node::deref()
 {
     ASSERT(!newNodes || !newNodes->contains(this));
-
+    
     if (!nodeExtraRefCounts) {
         delete this;
         return;
