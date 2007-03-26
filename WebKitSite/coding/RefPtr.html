@@ -36,8 +36,9 @@ inheriting from the <span class="class">Shared</span> class template.</p>
 
 <p>Back in 2005, we discovered that there were many memory leaks, especially in WebCore
 editor code, caused either by mismatches of <span class="function">ref</span> and
-<span class="function">deref</span> calls or by objects that were created with new
-that never got a <span class="function">ref</span> call at all that remained in the floating state.</p>
+<span class="function">deref</span> calls or by objects that were created with
+<span class="function">new</span> that never got a <span class="function">ref</span>
+call at all that remained in the floating state.</p>
 
 <p>We decided that we’d like
 to use smart pointers to mitigate the problem. However, some early experiments showed that

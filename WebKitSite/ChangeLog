@@ -1,8 +1,11 @@
+2007-03-25  Darin Adler  <darin@apple.com>
+
+        * coding/RefPtr.html: Put the operator name "new" in the oblique style as with other identifiers.
+
 2007-03-25  Mark Rowe  <mrowe@apple.com>
 
-        Fix grammar error that Mitz pointed out.  Replace raw ampersands in hyperlink URL with named entity.
-
-        * coding/RefPtr.html:
+        * coding/RefPtr.html: Fix grammar error that Mitz pointed out.
+        Replace raw ampersands in hyperlink URL with named entity.
 
 2007-03-25  Darin Adler  <darin@apple.com>
 
