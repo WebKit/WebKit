@@ -293,7 +293,7 @@ JSValue *JSHTMLDocument::getValueProperty(ExecState* exec, int token) const
   case DesignMode:
     return jsString(doc.inDesignMode() ? "on" : "off");
   default:
-    assert(0);
+    ASSERT(0);
     return jsUndefined();
   }
 }

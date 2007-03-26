@@ -38,6 +38,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wtf/Assertions.h>
 
 #define ROUNDUP(x,y) ((((x)+((y)-1))/(y))*(y))
 
@@ -75,7 +76,7 @@ void* RenderArena::allocate(size_t size)
 {
 #ifndef NDEBUG
     // Use standard malloc so that memory debugging tools work.
-    assert(this);
+    ASSERT(this);
     void* block = ::malloc(sizeof(RenderArenaDebugHeader) + size);
     RenderArenaDebugHeader* header = (RenderArenaDebugHeader*)block;
     header->arena = this;
@@ -114,9 +115,9 @@ void RenderArena::free(size_t size, void* ptr)
 #ifndef NDEBUG
     // Use standard free so that memory debugging tools work.
     RenderArenaDebugHeader* header = (RenderArenaDebugHeader*)ptr - 1;
-    assert(header->signature == signature);
-    assert(header->size == size);
-    assert(header->arena == this);
+    ASSERT(header->signature == signature);
+    ASSERT(header->size == size);
+    ASSERT(header->arena == this);
     header->signature = signatureDead;
     ::free(header);
 #else

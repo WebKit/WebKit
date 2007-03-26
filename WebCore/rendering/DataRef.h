@@ -39,7 +39,7 @@ public:
 
     DataRef(const DataRef<T>& d)
     {
-        assert(d.m_data);
+        ASSERT(d.m_data);
         m_data = d.m_data;
         m_data->ref();
     }
@@ -67,14 +67,14 @@ public:
 
     void init()
     {
-        assert(!m_data);
+        ASSERT(!m_data);
         m_data = new T;
         m_data->ref();
     }
 
     DataRef<T>& operator=(const DataRef<T>& d)
     {
-        assert(d.m_data);
+        ASSERT(d.m_data);
         d.m_data->ref();
         if (m_data)
             m_data->deref();
@@ -84,15 +84,15 @@ public:
 
     bool operator==(const DataRef<T>& o) const
     {
-        assert(m_data);
-        assert(o.m_data);
+        ASSERT(m_data);
+        ASSERT(o.m_data);
         return m_data == o.m_data || *m_data == *o.m_data;
     }
     
     bool operator!=(const DataRef<T>& o) const
     {
-        assert(m_data);
-        assert(o.m_data);
+        ASSERT(m_data);
+        ASSERT(o.m_data);
         return m_data != o.m_data && *m_data != *o.m_data;
     }
 

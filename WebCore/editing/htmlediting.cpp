@@ -844,7 +844,7 @@ PassRefPtr<Element> createTabSpanElement(Document* document, PassRefPtr<Node> ta
     // make the span to hold the tab
     ExceptionCode ec = 0;
     RefPtr<Element> spanElement = document->createElementNS(xhtmlNamespaceURI, "span", ec);
-    assert(ec == 0);
+    ASSERT(ec == 0);
     spanElement->setAttribute(classAttr, AppleTabSpanClass);
     spanElement->setAttribute(styleAttr, "white-space:pre");
 
@@ -852,7 +852,7 @@ PassRefPtr<Element> createTabSpanElement(Document* document, PassRefPtr<Node> ta
     if (!tabTextNode)
         tabTextNode = document->createEditingTextNode("\t");
     spanElement->appendChild(tabTextNode, ec);
-    assert(ec == 0);
+    ASSERT(ec == 0);
 
     return spanElement.release();
 }

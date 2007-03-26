@@ -124,7 +124,7 @@ DOMNode::~DOMNode()
 
 void DOMNode::mark()
 {
-  assert(!marked());
+  ASSERT(!marked());
 
   Node* node = m_impl.get();
 
@@ -169,7 +169,7 @@ void DOMNode::mark()
   root->m_inSubtreeMark = false;
 
   // Double check that we actually ended up marked. This assert caught problems in the past.
-  assert(marked());
+  ASSERT(marked());
 }
 
 bool DOMNode::toBoolean(ExecState* ) const
@@ -717,7 +717,7 @@ JSValue* DOMNodeList::toPrimitive(ExecState* exec, JSType) const
 
 JSValue* DOMNodeList::getValueProperty(ExecState* exec, int token) const
 {
-  assert(token == Length);
+  ASSERT(token == Length);
   return jsNumber(m_impl->length());
 }
 

@@ -94,7 +94,7 @@ Position InsertTextCommand::prepareForTextInsertion(const Position& p)
 
 void InsertTextCommand::input(const String &text, bool selectInsertedText)
 {
-    assert(text.find('\n') == -1);
+    ASSERT(text.find('\n') == -1);
 
     if (endingSelection().isNone())
         return;

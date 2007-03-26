@@ -1519,7 +1519,7 @@ static void parseWindowFeatures(const String& features, WindowFeatures& windowFe
             i++;
         valueEnd = i;
         
-        assert(i <= length);
+        ASSERT(i <= length);
 
         String keyString(buffer.substring(keyBegin, keyEnd - keyBegin));
         String valueString(buffer.substring(valueBegin, valueEnd - valueBegin));

@@ -606,7 +606,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
 - (void)dealloc
 {
-    assert(false);
+    ASSERT(false);
     return;
     [super dealloc]; // make -Wdealloc-check happy
 }

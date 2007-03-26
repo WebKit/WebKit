@@ -184,20 +184,20 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
         if (child->parentNode())
             break;
 
-        assert(!child->nextSibling());
-        assert(!child->previousSibling());
+        ASSERT(!child->nextSibling());
+        ASSERT(!child->previousSibling());
 
         // Add child before "next".
         forbidEventDispatch();
         Node* prev = next->previousSibling();
-        assert(m_lastChild != prev);
+        ASSERT(m_lastChild != prev);
         next->setPreviousSibling(child.get());
         if (prev) {
-            assert(m_firstChild != next);
-            assert(prev->nextSibling() == next);
+            ASSERT(m_firstChild != next);
+            ASSERT(prev->nextSibling() == next);
             prev->setNextSibling(child.get());
         } else {
-            assert(m_firstChild == next);
+            ASSERT(m_firstChild == next);
             m_firstChild = child.get();
         }
         child->setParent(this);
@@ -282,26 +282,26 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
         if (child->parentNode())
             break;
 
-        assert(!child->nextSibling());
-        assert(!child->previousSibling());
+        ASSERT(!child->nextSibling());
+        ASSERT(!child->previousSibling());
 
         // Add child after "prev".
         forbidEventDispatch();
         Node* next;
         if (prev) {
             next = prev->nextSibling();
-            assert(m_firstChild != next);
+            ASSERT(m_firstChild != next);
             prev->setNextSibling(child.get());
         } else {
             next = m_firstChild;
             m_firstChild = child.get();
         }
         if (next) {
-            assert(m_lastChild != prev);
-            assert(next->previousSibling() == prev);
+            ASSERT(m_lastChild != prev);
+            ASSERT(next->previousSibling() == prev);
             next->setPreviousSibling(child.get());
         } else {
-            assert(m_lastChild == prev);
+            ASSERT(m_lastChild == prev);
             m_lastChild = child.get();
         }
         child->setParent(this);
@@ -878,7 +878,7 @@ Node *ContainerNode::childNode(unsigned index) const
 
 static void dispatchChildInsertionEvents(Node* child, ExceptionCode& ec)
 {
-    assert(!eventDispatchForbidden());
+    ASSERT(!eventDispatchForbidden());
 
     RefPtr<Node> c = child;
     RefPtr<Document> doc = child->document();

@@ -233,7 +233,6 @@ IntRect RenderView::selectionRect() const
     while (os && os != stop) {
         if ((os->canBeSelectionLeaf() || os == m_selectionStart || os == m_selectionEnd) && os->selectionState() != SelectionNone) {
             // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
-//          assert(!selectedObjects.get(os));
             selectedObjects.set(os, new SelectionInfo(os));
             RenderBlock* cb = os->containingBlock();
             while (cb && !cb->isRenderView()) {

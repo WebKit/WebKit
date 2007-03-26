@@ -131,7 +131,7 @@ void KJSProxy::finishedWithEvent(Event* event)
 ScriptInterpreter* KJSProxy::interpreter()
 {
   initScriptIfNeeded();
-  assert(m_script);
+  ASSERT(m_script);
   return m_script.get();
 }
 

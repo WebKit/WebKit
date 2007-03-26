@@ -169,7 +169,7 @@ RenderLayer::~RenderLayer()
     delete m_marquee;
     
     // Make sure we have no lingering clip rects.
-    assert(!m_clipRects);
+    ASSERT(!m_clipRects);
 }
 
 void RenderLayer::checkForRepaintOnResize()
@@ -482,7 +482,7 @@ void* RenderLayer::operator new(size_t sz, RenderArena* renderArena) throw()
 
 void RenderLayer::operator delete(void* ptr, size_t sz)
 {
-    assert(inRenderLayerDestroy);
+    ASSERT(inRenderLayerDestroy);
     
     // Stash size where destroy can find it.
     *(size_t *)ptr = sz;

@@ -300,7 +300,7 @@ KJS_IMPLEMENT_PROTOTYPE_FUNCTION(PluginsFunc)
 
 JSValue *Plugins::getValueProperty(ExecState *exec, int token) const
 {
-  assert(token == Length);
+  ASSERT(token == Length);
   return jsNumber(plugins->size());
 }
 
@@ -363,7 +363,7 @@ bool Plugins::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName
 
 JSValue *MimeTypes::getValueProperty(ExecState *exec, int token) const
 {
-  assert(token == Length);
+  ASSERT(token == Length);
   return jsNumber(mimes->size());
 }
 
@@ -437,7 +437,7 @@ JSValue *Plugin::getValueProperty(ExecState *exec, int token) const
     case Length: 
         return jsNumber(m_info->mimes.size());
     default:
-        assert(0);
+        ASSERT(0);
         return jsUndefined();
     }
 }

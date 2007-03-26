@@ -665,7 +665,7 @@ bool Editor::selectionStartHasStyle(CSSStyleDeclaration* style) const
     if (nodeToRemove) {
         ExceptionCode ec = 0;
         nodeToRemove->remove(ec);
-        assert(ec == 0);
+        ASSERT(ec == 0);
     }
     
     return match;

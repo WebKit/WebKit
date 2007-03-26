@@ -749,7 +749,7 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
         rebalanceWhitespaceAt(end);
 
         if (m_matchStyle) {
-            assert(m_insertionStyle);
+            ASSERT(m_insertionStyle);
             applyStyle(m_insertionStyle.get(), start, end);
         }    
         

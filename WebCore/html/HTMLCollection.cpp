@@ -96,7 +96,7 @@ void HTMLCollection::resetCollectionInfo() const
 
 Node *HTMLCollection::traverseNextItem(Node *current) const
 {
-    assert(current);
+    ASSERT(current);
 
     if (type == NodeChildren && m_base.get() != current)
         current = current->nextSibling();

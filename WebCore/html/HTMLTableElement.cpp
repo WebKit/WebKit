@@ -295,7 +295,7 @@ ContainerNode* HTMLTableElement::addChild(PassRefPtr<Node> child)
 
     // The creation of <tbody> elements relies on the "childAllowed" check,
     // so we need to do it even for XML documents.
-    assert(child->nodeType() != DOCUMENT_FRAGMENT_NODE);
+    ASSERT(child->nodeType() != DOCUMENT_FRAGMENT_NODE);
     if (!document()->isHTMLDocument() && !childAllowed(child.get()))
         return 0;
 
@@ -607,7 +607,7 @@ CSSMutableStyleDeclaration* HTMLTableElement::getSharedGroupDecl(bool rows)
 
 void HTMLTableElement::attach()
 {
-    assert(!m_attached);
+    ASSERT(!m_attached);
     HTMLElement::attach();
     if (renderer() && renderer()->isTable())
         static_cast<RenderTable*>(renderer())->setCellPadding(m_padding);

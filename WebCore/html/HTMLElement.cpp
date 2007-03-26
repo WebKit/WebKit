@@ -261,15 +261,15 @@ PassRefPtr<DocumentFragment> HTMLElement::createContextualFragment(const String 
             for (RefPtr<Node> child = firstChild; child; child = nextChild) {
                 nextChild = child->nextSibling();
                 node->removeChild(child.get(), ignoredExceptionCode);
-                assert(!ignoredExceptionCode);
+                ASSERT(!ignoredExceptionCode);
                 fragment->insertBefore(child, node.get(), ignoredExceptionCode);
-                assert(!ignoredExceptionCode);
+                ASSERT(!ignoredExceptionCode);
             }
             fragment->removeChild(node.get(), ignoredExceptionCode);
-            assert(!ignoredExceptionCode);
+            ASSERT(!ignoredExceptionCode);
         } else if (node->hasTagName(headTag)) {
             fragment->removeChild(node.get(), ignoredExceptionCode);
-            assert(!ignoredExceptionCode);
+            ASSERT(!ignoredExceptionCode);
         }
     }
 

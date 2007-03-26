@@ -258,7 +258,7 @@ void BidiRun::operator delete(void* ptr, size_t sz)
 #ifndef NDEBUG
     --BidiRunCounter::count;
 #endif
-    assert(inBidiRunDestroy);
+    ASSERT(inBidiRunDestroy);
 
     // Stash size where destroy() can find it.
     *(size_t*)ptr = sz;
@@ -530,7 +530,7 @@ static void reverseRuns(int start, int end)
     if (start >= end)
         return;
 
-    assert(start >= 0 && end < sBidiRunCount);
+    ASSERT(start >= 0 && end < sBidiRunCount);
     
     // Get the item before the start of the runs to reverse and put it in
     // |beforeStart|.  |curr| should point to the first run to reverse.
@@ -722,9 +722,9 @@ static void embed(Direction d, BidiState& bidi)
         BidiContext *c = bidi.context->parent;
         if (c) {
             if (!emptyRun && bidi.eor != bidi.last) {
-                assert(bidi.status.eor != OtherNeutral);
+                ASSERT(bidi.status.eor != OtherNeutral);
                 // bidi.sor ... bidi.eor ... bidi.last eor; need to append the bidi.sor-bidi.eor run or extend it through bidi.last
-                assert(bidi.status.last == EuropeanNumberSeparator
+                ASSERT(bidi.status.last == EuropeanNumberSeparator
                     || bidi.status.last == EuropeanNumberTerminator
                     || bidi.status.last == CommonNumberSeparator
                     || bidi.status.last == BoundaryNeutral
@@ -782,9 +782,9 @@ static void embed(Direction d, BidiState& bidi)
 
         if (level < 61) {
             if (!emptyRun && bidi.eor != bidi.last) {
-                assert(bidi.status.eor != OtherNeutral);
+                ASSERT(bidi.status.eor != OtherNeutral);
                 // bidi.sor ... bidi.eor ... bidi.last eor; need to append the bidi.sor-bidi.eor run or extend it through bidi.last
-                assert(bidi.status.last == EuropeanNumberSeparator
+                ASSERT(bidi.status.last == EuropeanNumberSeparator
                     || bidi.status.last == EuropeanNumberTerminator
                     || bidi.status.last == CommonNumberSeparator
                     || bidi.status.last == BoundaryNeutral
@@ -910,7 +910,7 @@ RootInlineBox* RenderBlock::constructLine(const BidiIterator& start, const BidiI
 
     // We should have a root inline box.  It should be unconstructed and
     // be the last continuation of our line list.
-    assert(lastLineBox() && !lastLineBox()->isConstructed());
+    ASSERT(lastLineBox() && !lastLineBox()->isConstructed());
 
     // Set bits on our inline flow boxes that indicate which sides should
     // paint borders/margins/padding.  This knowledge will ultimately be used when
@@ -1102,7 +1102,7 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
     sLastBidiRun = 0;
     sBidiRunCount = 0;
 
-    assert(bidi.dir == OtherNeutral);
+    ASSERT(bidi.dir == OtherNeutral);
 
     emptyRun = true;
 
@@ -1143,7 +1143,7 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
                 dirCurrent = bidi.status.last;
         }
 
-        assert(bidi.status.eor != OtherNeutral);
+        ASSERT(bidi.status.eor != OtherNeutral);
         switch (dirCurrent) {
 
         // embedding and overrides (X1-X9 in the Bidi specs)
@@ -1395,7 +1395,7 @@ void RenderBlock::bidiReorderLine(const BidiIterator& start, const BidiIterator&
                             bidi.dir = bidi.status.lastStrong == LeftToRight ? LeftToRight : EuropeanNumber;
                             break;
                         default:
-                            assert(false);
+                            ASSERT(false);
                     }
                     appendRun(bidi);
                 }
@@ -2196,7 +2196,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             }
         } else if (o->isInlineFlow()) {
             // Only empty inlines matter.  We treat those similarly to replaced elements.
-            assert(!o->firstChild());
+            ASSERT(!o->firstChild());
             tmpW += o->marginLeft() + o->borderLeft() + o->paddingLeft() +
                     o->marginRight() + o->borderRight() + o->paddingRight();
         } else if (o->isReplaced()) {

@@ -50,6 +50,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 
 using namespace std;
@@ -128,7 +129,7 @@ void* ArenaAllocate(ArenaPool *pool, unsigned int nb)
     Arena *a;   
     char *rp;     /* returned pointer */
 
-    assert((nb & pool->mask) == 0);
+    ASSERT((nb & pool->mask) == 0);
     
     nb = (uword)ARENA_ALIGN(pool, nb); /* force alignment */
 
@@ -225,7 +226,7 @@ static void FreeArenaList(ArenaPool *pool, Arena *head, bool reallyFree)
 
 #ifdef DEBUG
     do {
-        assert(a->base <= a->avail && a->avail <= a->limit);
+        ASSERT(a->base <= a->avail && a->avail <= a->limit);
         a->avail = a->base;
         CLEAR_UNUSED(a);
     } while ((a = a->next) != 0);

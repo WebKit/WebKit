@@ -1610,7 +1610,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSub
                 dynamicPseudo = RenderStyle::SEARCH_RESULTS_BUTTON;
                 return true;
             case CSSSelector::PseudoNotParsed:
-                assert(false);
+                ASSERT(false);
                 break;
         }
         return false;

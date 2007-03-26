@@ -63,7 +63,7 @@ HTMLObjectElement::~HTMLObjectElement()
 {
 #if USE(JAVASCRIPTCORE_BINDINGS)
     // m_instance should have been cleaned up in detach().
-    assert(!m_instance);
+    ASSERT(!m_instance);
 #endif
     
     delete m_imageLoader;

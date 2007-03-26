@@ -57,7 +57,7 @@ public:
     bool isNotNull() const { return m_deepPosition.isNotNull(); }
 
     Position deepEquivalent() const { return m_deepPosition; }
-    EAffinity affinity() const { assert(m_affinity == UPSTREAM || m_affinity == DOWNSTREAM); return m_affinity; }
+    EAffinity affinity() const { ASSERT(m_affinity == UPSTREAM || m_affinity == DOWNSTREAM); return m_affinity; }
     void setAffinity(EAffinity affinity) { m_affinity = affinity; }
 
     // next() and previous() will increment/decrement by a character cluster.

@@ -62,7 +62,7 @@ void* InlineBox::operator new(size_t sz, RenderArena* renderArena) throw()
 
 void InlineBox::operator delete(void* ptr, size_t sz)
 {
-    assert(inInlineBoxDetach);
+    ASSERT(inInlineBoxDetach);
 
     // Stash size where destroy can find it.
     *(size_t *)ptr = sz;

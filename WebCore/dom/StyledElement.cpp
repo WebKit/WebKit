@@ -382,7 +382,7 @@ void StyledElement::addCSSColor(MappedAttribute* attr, int id, const String &c)
             colors[0] >>= 4*maxDigit;
             colors[1] >>= 4*maxDigit;
             colors[2] >>= 4*maxDigit;
-            // assert(colors[0] < 0x100 && colors[1] < 0x100 && colors[2] < 0x100);
+            // ASSERT(colors[0] < 0x100 && colors[1] < 0x100 && colors[2] < 0x100);
             
             color = String::format("#%02x%02x%02x", colors[0], colors[1], colors[2]);
             if (attr->decl()->setProperty(id, color, false))
@@ -419,7 +419,7 @@ unsigned MappedAttributeHash::hash(const MappedAttributeKey& key)
     tmp = (p[1] << 11) ^ hash;
     hash = (hash << 16) ^ tmp;
     hash += hash >> 11;
-    assert(sizeof(key.name) == 4 || sizeof(key.name) == 8);
+    ASSERT(sizeof(key.name) == 4 || sizeof(key.name) == 8);
     if (sizeof(key.name) == 8) {
         p += 2;
         hash += p[0];
@@ -433,7 +433,7 @@ unsigned MappedAttributeHash::hash(const MappedAttributeKey& key)
     tmp = (p[1] << 11) ^ hash;
     hash = (hash << 16) ^ tmp;
     hash += hash >> 11;
-    assert(sizeof(key.value) == 4 || sizeof(key.value) == 8);
+    ASSERT(sizeof(key.value) == 4 || sizeof(key.value) == 8);
     if (sizeof(key.value) == 8) {
         p += 2;
         hash += p[0];

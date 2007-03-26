@@ -572,10 +572,10 @@ JSValue *Clipboard::getValueProperty(ExecState *exec, int token) const
 {
     switch (token) {
         case DropEffect:
-            assert(clipboard->isForDragging() || clipboard->dropEffect().isNull());
+            ASSERT(clipboard->isForDragging() || clipboard->dropEffect().isNull());
             return jsStringOrUndefined(clipboard->dropEffect());
         case EffectAllowed:
-            assert(clipboard->isForDragging() || clipboard->effectAllowed().isNull());
+            ASSERT(clipboard->isForDragging() || clipboard->effectAllowed().isNull());
             return jsStringOrUndefined(clipboard->effectAllowed());
         case Types:
         {

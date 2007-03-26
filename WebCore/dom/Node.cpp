@@ -486,20 +486,20 @@ Node *Node::childNode(unsigned /*index*/) const
 Node *Node::traverseNextNode(const Node *stayWithin) const
 {
     if (firstChild()) {
-        assert(!stayWithin || firstChild()->isDescendantOf(stayWithin));
+        ASSERT(!stayWithin || firstChild()->isDescendantOf(stayWithin));
         return firstChild();
     }
     if (this == stayWithin)
         return 0;
     if (nextSibling()) {
-        assert(!stayWithin || nextSibling()->isDescendantOf(stayWithin));
+        ASSERT(!stayWithin || nextSibling()->isDescendantOf(stayWithin));
         return nextSibling();
     }
     const Node *n = this;
     while (n && !n->nextSibling() && (!stayWithin || n->parentNode() != stayWithin))
         n = n->parentNode();
     if (n) {
-        assert(!stayWithin || !n->nextSibling() || n->nextSibling()->isDescendantOf(stayWithin));
+        ASSERT(!stayWithin || !n->nextSibling() || n->nextSibling()->isDescendantOf(stayWithin));
         return n->nextSibling();
     }
     return 0;
@@ -510,14 +510,14 @@ Node *Node::traverseNextSibling(const Node *stayWithin) const
     if (this == stayWithin)
         return 0;
     if (nextSibling()) {
-        assert(!stayWithin || nextSibling()->isDescendantOf(stayWithin));
+        ASSERT(!stayWithin || nextSibling()->isDescendantOf(stayWithin));
         return nextSibling();
     }
     const Node *n = this;
     while (n && !n->nextSibling() && (!stayWithin || n->parentNode() != stayWithin))
         n = n->parentNode();
     if (n) {
-        assert(!stayWithin || !n->nextSibling() || n->nextSibling()->isDescendantOf(stayWithin));
+        ASSERT(!stayWithin || !n->nextSibling() || n->nextSibling()->isDescendantOf(stayWithin));
         return n->nextSibling();
     }
     return 0;
@@ -539,20 +539,20 @@ Node *Node::traversePreviousNode(const Node *stayWithin) const
 Node *Node::traversePreviousNodePostOrder(const Node *stayWithin) const
 {
     if (lastChild()) {
-        assert(!stayWithin || lastChild()->isDescendantOf(stayWithin));
+        ASSERT(!stayWithin || lastChild()->isDescendantOf(stayWithin));
         return lastChild();
     }
     if (this == stayWithin)
         return 0;
     if (previousSibling()) {
-        assert(!stayWithin || previousSibling()->isDescendantOf(stayWithin));
+        ASSERT(!stayWithin || previousSibling()->isDescendantOf(stayWithin));
         return previousSibling();
     }
     const Node *n = this;
     while (n && !n->previousSibling() && (!stayWithin || n->parentNode() != stayWithin))
         n = n->parentNode();
     if (n) {
-        assert(!stayWithin || !n->previousSibling() || n->previousSibling()->isDescendantOf(stayWithin));
+        ASSERT(!stayWithin || !n->previousSibling() || n->previousSibling()->isDescendantOf(stayWithin));
         return n->previousSibling();
     }
     return 0;
@@ -810,8 +810,8 @@ void Node::dump(TextStream* stream, DeprecatedString ind) const
 
 void Node::attach()
 {
-    assert(!attached());
-    assert(!renderer() || (renderer()->style() && renderer()->parent()));
+    ASSERT(!attached());
+    ASSERT(!renderer() || (renderer()->style() && renderer()->parent()));
     document()->incDOMTreeVersion();
     m_attached = true;
 }
@@ -888,7 +888,7 @@ Node *Node::previousEditable() const
 // the last child, it specifies to start at next sibling.
 Node *Node::nextEditable(int offset) const
 {
-    assert(offset>=0);
+    ASSERT(offset>=0);
     Node *node;
     if (hasChildNodes())
         node = (offset >= (int)childNodeCount()) ? nextSibling() : childNode(offset)->nextLeafNode();
@@ -994,11 +994,11 @@ void Node::createRendererIfNeeded()
     if (!document()->shouldCreateRenderers())
         return;
     
-    assert(!attached());
-    assert(!renderer());
+    ASSERT(!attached());
+    ASSERT(!renderer());
     
     Node *parent = parentNode();    
-    assert(parent);
+    ASSERT(parent);
     
     RenderObject *parentRenderer = parent->renderer();
     if (parentRenderer && parentRenderer->canHaveChildren()
@@ -1034,7 +1034,7 @@ bool Node::rendererIsNeeded(RenderStyle *style)
 
 RenderObject *Node::createRenderer(RenderArena *arena, RenderStyle *style)
 {
-    assert(false);
+    ASSERT(false);
     return 0;
 }
 

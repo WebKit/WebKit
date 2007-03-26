@@ -427,7 +427,7 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
                 break;
             Position pos(n, n->caretMinOffset());
             if (pos.isCandidate()) {
-                assert(n->renderer());
+                ASSERT(n->renderer());
                 box = n->renderer()->inlineBox(n->caretMaxOffset());
                 if (box) {
                     // previous root line box found
@@ -497,7 +497,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
                 break;
             Position pos(n, n->caretMinOffset());
             if (pos.isCandidate()) {
-                assert(n->renderer());
+                ASSERT(n->renderer());
                 box = n->renderer()->inlineBox(n->caretMinOffset());
                 if (box) {
                     // next root line box found

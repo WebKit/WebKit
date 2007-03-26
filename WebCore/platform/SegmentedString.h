@@ -85,7 +85,7 @@ public:
             m_pushedChar1 = c;
             m_currentChar = m_pushedChar1 ? &m_pushedChar1 : m_currentString.m_current;
         } else {
-            assert(!m_pushedChar2);
+            ASSERT(!m_pushedChar2);
             m_pushedChar2 = c;
         }
     }

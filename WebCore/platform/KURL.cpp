@@ -1478,7 +1478,7 @@ bool KURL::isHierarchical() const
 {
     if (!m_isValid)
         return false;
-    assert(urlString[schemeEndPos] == ':');
+    ASSERT(urlString[schemeEndPos] == ':');
     return urlString[schemeEndPos + 1] == '/';
 }
 

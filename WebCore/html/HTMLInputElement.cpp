@@ -701,7 +701,7 @@ bool HTMLInputElement::rendererIsNeeded(RenderStyle *style)
         case HIDDEN:
             return false;
     }
-    assert(false);
+    ASSERT(false);
     return false;
 }
 
@@ -729,7 +729,7 @@ RenderObject *HTMLInputElement::createRenderer(RenderArena *arena, RenderStyle *
         case TEXT:
             return new (arena) RenderTextControl(this, false);             
     }
-    assert(false);
+    ASSERT(false);
     return 0;
 }
 

@@ -66,7 +66,7 @@ PassRefPtr<Node> Element::cloneNode(bool deep)
 {
     ExceptionCode ec = 0;
     RefPtr<Element> clone = document()->createElementNS(namespaceURI(), nodeName(), ec);
-    assert(!ec);
+    ASSERT(!ec);
     
     // clone attributes
     if (namedAttrMap)
@@ -670,7 +670,7 @@ bool Element::childTypeAllowed(NodeType type)
 
 void Element::dispatchAttrRemovalEvent(Attribute*)
 {
-    assert(!eventDispatchForbidden());
+    ASSERT(!eventDispatchForbidden());
 #if 0
     if (!document()->hasListenerType(Document::DOMATTRMODIFIED_LISTENER))
         return;
@@ -682,7 +682,7 @@ void Element::dispatchAttrRemovalEvent(Attribute*)
 
 void Element::dispatchAttrAdditionEvent(Attribute *attr)
 {
-    assert(!eventDispatchForbidden());
+    ASSERT(!eventDispatchForbidden());
 #if 0
     if (!document()->hasListenerType(Document::DOMATTRMODIFIED_LISTENER))
         return;

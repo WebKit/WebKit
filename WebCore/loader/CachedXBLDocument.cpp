@@ -75,7 +75,7 @@ void CachedXBLDocument::data(Vector<char>& data, bool )
     if (!allDataReceived)
         return;
     
-    assert(!m_document);
+    ASSERT(!m_document);
     
     m_document = new XBL::XBLDocument();
     m_document->ref();

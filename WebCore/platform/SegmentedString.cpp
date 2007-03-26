@@ -95,7 +95,7 @@ void SegmentedString::append(const SegmentedSubstring &s)
 
 void SegmentedString::prepend(const SegmentedSubstring &s)
 {
-    assert(!escaped());
+    ASSERT(!escaped());
     if (s.m_length) {
         if (!m_currentString.m_length)
             m_currentString = s;
@@ -110,7 +110,7 @@ void SegmentedString::prepend(const SegmentedSubstring &s)
 
 void SegmentedString::append(const SegmentedString &s)
 {
-    assert(!s.escaped());
+    ASSERT(!s.escaped());
     append(s.m_currentString);
     if (s.m_composite) {
         DeprecatedValueListConstIterator<SegmentedSubstring> i = s.m_substrings.begin();
@@ -123,8 +123,8 @@ void SegmentedString::append(const SegmentedString &s)
 
 void SegmentedString::prepend(const SegmentedString &s)
 {
-    assert(!escaped());
-    assert(!s.escaped());
+    ASSERT(!escaped());
+    ASSERT(!s.escaped());
     if (s.m_composite) {
         DeprecatedValueListConstIterator<SegmentedSubstring> i = s.m_substrings.fromLast();
         DeprecatedValueListConstIterator<SegmentedSubstring> e = s.m_substrings.end();

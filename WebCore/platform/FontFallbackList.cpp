@@ -57,7 +57,7 @@ const FontData* FontFallbackList::fontDataAt(const Font* font, unsigned realized
         return m_fontList[realizedFontIndex]; // This fallback font is already in our list.
 
     // Make sure we're not passing in some crazy value here.
-    assert(realizedFontIndex == m_fontList.size());
+    ASSERT(realizedFontIndex == m_fontList.size());
 
     if (m_familyIndex == cAllFamiliesScanned)
         return 0;

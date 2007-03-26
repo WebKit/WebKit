@@ -1066,7 +1066,7 @@ static xmlEntityPtr getXHTMLEntity(const xmlChar* name)
         return 0;
 
     CString value = String(&c, 1).utf8();
-    assert(value.length() < 5);
+    ASSERT(value.length() < 5);
     sharedXHTMLEntity.length = value.length();
     sharedXHTMLEntity.name = name;
     memcpy(sharedXHTMLEntityResult, value.data(), sharedXHTMLEntity.length + 1);
