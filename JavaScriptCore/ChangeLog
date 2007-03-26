@@ -1,3 +1,10 @@
+2007-03-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Touched a file to (hopefully) help the compiler with RetainPtr dependencies.
+
+        * kjs/nodes.cpp:
+        (Node::deref):
+
 2007-03-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam
