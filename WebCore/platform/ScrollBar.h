@@ -28,7 +28,7 @@
 
 #include "Shared.h"
 #include "ScrollTypes.h"
-#include <math.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
