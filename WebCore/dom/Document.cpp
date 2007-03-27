@@ -1421,8 +1421,12 @@ void Document::implicitClose()
         // Paint immediately after the document is ready.  We do this to ensure that any timers set by the
         // onload don't have a chance to fire before we would have painted.  To avoid over-flushing we only
         // worry about this for the top-level document.
+#if !PLATFORM(MAC)
+        // FIXME: This causes a timing issue with the dispatchDidFinishLoad delegate callback.
+        // See <rdar://problem/5092361>
         if (view() && !ownerElement())
             view()->update();
+#endif
     }
 
 #if PLATFORM(MAC)

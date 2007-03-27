@@ -1,3 +1,14 @@
+2007-03-27  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/5026141> REGRESSION: Aperture Viewer Flashes when switching from Index Page to Detail page in Web Gallery
+
+        This disables the paint that occurs after WebCore finishes loading the document.  We should reenable this when we
+        move the dispatchDidFinishLoad delegate callback to happen around the same time as the JS onload call.  See <rdar://problem/5092361>.
+
+        * dom/Document.cpp: (WebCore::Document::implicitClose):
+
 2007-03-26  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
