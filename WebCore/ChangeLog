@@ -1,3 +1,24 @@
+2007-03-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixed <rdar://problem/5088234> REGRESSION: Crash occurs at WebCore::Node::
+        createRendererIfNeeded() when changing map views with MS Virtual Earth 
+        (http://www.ziprealty.com/)
+        
+        The cause of the crash was the insertion of a <script> element whose
+        script removed it from the document. The <script> element would then be 
+        garbage when the insertion routine went on to attach() it.
+        
+        The solution here is to check that an element is still your child before
+        trying to attach() it. This matches the style of checks we do elsewhere
+        in the node insertion and removal code.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::appendChild):
+
 2007-03-26  David Carson  <dacarson@gmail.com>
 
         Reviewed by Darin, landed by Anders.
@@ -20,27 +41,6 @@
 
         * rendering/RenderReplaced.cpp:
         (WebCore::RenderReplaced::selectionRect):
-
-2007-03-26  Geoffrey Garen  <ggaren@apple.com>
-
-        Reviewed by Darin Adler.
-
-        Fixed <rdar://problem/5088234> REGRESSION: Crash occurs at WebCore::Node::
-        createRendererIfNeeded() when changing map views with MS Virtual Earth 
-        (http://www.ziprealty.com/)
-        
-        The cause of the crash was the insertion of a <script> element whose
-        script removed it from the document. The <script> element would then be 
-        garbage when the insertion routine went on to attach() it.
-        
-        The solution here is to check that an element is still your child before
-        trying to attach() it. This matches the style of checks we do elsewhere
-        in the node insertion and removal code.
-
-        * dom/ContainerNode.cpp:
-        (WebCore::ContainerNode::insertBefore):
-        (WebCore::ContainerNode::replaceChild):
-        (WebCore::ContainerNode::appendChild):
 
 2007-03-26  Geoffrey Garen  <ggaren@apple.com>
 
