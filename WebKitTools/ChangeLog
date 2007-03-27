@@ -1,5 +1,12 @@
 2007-03-27  Adele Peterson  <adele@apple.com>
 
+        Adding comment.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (-[WaitUntilDoneDelegate webView:didFinishLoadForFrame:]):
+
+2007-03-27  Adele Peterson  <adele@apple.com>
+
         Fix svg tests by calling displayIfNeeded.
 
         * DumpRenderTree/DumpRenderTree.m:
