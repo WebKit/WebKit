@@ -65,6 +65,7 @@ public:
         m_fontData.clear();
         m_glyphs.clear();
         m_advances.clear();
+        m_offsets.clear();
     }
 
     GlyphBufferGlyph* glyphs(int from) { return m_glyphs.data() + from; }
@@ -87,6 +88,12 @@ public:
         GlyphBufferAdvance s = m_advances[index1];
         m_advances[index1] = m_advances[index2];
         m_advances[index2] = s;
+
+#if PLATFORM(WIN)
+        FloatSize offset = m_offsets[index1];
+        m_offsets[index1] = m_offsets[index2];
+        m_offsets[index2] = offset;
+#endif
     }
 
     Glyph glyphAt(int index) const
@@ -107,29 +114,38 @@ public:
 #endif
     }
 
-    void add(Glyph glyph, const FontData* font, float width)
+    FloatSize offsetAt(int index) const
     {
-        add(glyph, font, FloatSize(width, 0));
+#if PLATFORM(WIN)
+        return m_offsets[index];
+#else
+        return FloatSize();
+#endif
     }
 
-    void add(Glyph glyph, const FontData* font, FloatSize advanceSize)
+    void add(Glyph glyph, const FontData* font, float width, const FloatSize* offset = 0)
     {
         m_fontData.append(font);
 #if PLATFORM(CG)
         m_glyphs.append(glyph);
         CGSize advance;
-        advance.width = advanceSize.width();
-        advance.height = advanceSize.height();
+        advance.width = width;
+        advance.height = 0;
         m_advances.append(advance);
 #elif PLATFORM(CAIRO)
         cairo_glyph_t cairoGlyph;
         cairoGlyph.index = glyph;
-        cairoGlyph.y = 0;
         m_glyphs.append(cairoGlyph);
-        m_advances.append(advanceSize);
+        m_advances.append(FloatSize(width, 0));
 #elif PLATFORM(QT)
         m_glyphs.append(glyph);
-        m_advances.append(advanceSize);
+        m_advances.append(FloatSize(width, 0));
+#endif
+#if PLATFORM(WIN)
+        if (offset)
+            m_offsets.append(*offset);
+        else
+            m_offsets.append(FloatSize());
 #endif
     }
     
@@ -137,6 +153,9 @@ private:
     Vector<const FontData*, 2048> m_fontData;
     Vector<GlyphBufferGlyph, 2048> m_glyphs;
     Vector<GlyphBufferAdvance, 2048> m_advances;
+#if PLATFORM(WIN)
+    Vector<FloatSize, 2048> m_offsets;
+#endif
 };
 
 }

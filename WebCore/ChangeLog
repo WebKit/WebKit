@@ -1,3 +1,17 @@
+2007-03-27  Dave Hyatt  <hyatt@apple.com>
+
+        Add support for glyph offsets to the GlyphBuffer.
+       
+        Reviewed by olliej
+
+        * platform/Font.cpp:
+        (WebCore::Font::drawGlyphBuffer):
+        * platform/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::clear):
+        (WebCore::GlyphBuffer::swap):
+        (WebCore::GlyphBuffer::offsetAt):
+        (WebCore::GlyphBuffer::add):
+
 2007-03-27  Antti Koivisto  <antti@apple.com>
 
         Keep buildbot happy.

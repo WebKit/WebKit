@@ -608,16 +608,19 @@ void Font::drawGlyphBuffer(GraphicsContext* context, const GlyphBuffer& glyphBuf
 {   
     // Draw each contiguous run of glyphs that use the same font data.
     const FontData* fontData = glyphBuffer.fontDataAt(0);
+    FloatSize offset = glyphBuffer.offsetAt(0);
     FloatPoint startPoint(point);
     float nextX = startPoint.x();
     int lastFrom = 0;
     int nextGlyph = 0;
     while (nextGlyph < glyphBuffer.size()) {
         const FontData* nextFontData = glyphBuffer.fontDataAt(nextGlyph);
-        if (nextFontData != fontData) {
+        FloatSize nextOffset = glyphBuffer.offsetAt(nextGlyph);
+        if (nextFontData != fontData || nextOffset != offset) {
             drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
             lastFrom = nextGlyph;
             fontData = nextFontData;
+            offset = nextOffset;
             startPoint.setX(nextX);
         }
         nextX += glyphBuffer.advanceAt(nextGlyph);
