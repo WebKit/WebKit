@@ -918,7 +918,7 @@ static void dump(void)
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
     // FIXME: This call to displayIfNeeded can be removed when <rdar://problem/5092361> is fixed.
-    // After that fixed, we will reenable painting after WebCore is done loading the document, 
+    // After that is fixed, we will reenable painting after WebCore is done loading the document, 
     // and this call will no longer be needed.
     if ([[sender mainFrame] isEqual:frame])
         [sender displayIfNeeded];
