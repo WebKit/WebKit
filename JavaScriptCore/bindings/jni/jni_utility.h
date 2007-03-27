@@ -29,11 +29,15 @@
 
 #include <JavaVM/jni.h>
 
+// The order of these items can not be modified as they are tightly
+// bound with the JVM on Mac OSX. If new types need to be added, they
+// should be added to the end. It is used in jni_obc.mm when calling
+// through to the JVM. Newly added items need to be made compatible
+// in that file.
 typedef enum {
     invalid_type = 0,
     void_type,
     object_type,
-    array_type,
     boolean_type,
     byte_type,
     char_type,
@@ -41,7 +45,8 @@ typedef enum {
     int_type,
     long_type,
     float_type,
-    double_type
+    double_type,
+    array_type
 } JNIType;
 
 namespace KJS {

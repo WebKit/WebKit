@@ -1,3 +1,13 @@
+2007-03-26  David Carson  <dacarson@gmail.com>
+
+        Reviewed by Darin, landed by Anders.
+
+        Manual test case for http://bugs.webkit.org/show_bug.cgi?id=13142
+
+        * manual-tests/liveconnect-applet-get-boolean.html: Added.
+        * manual-tests/resources/CheckerApplet.class: Added.
+        * manual-tests/resources/CheckerApplet.java: Added.
+
 2007-03-26  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed and landed by Darin.

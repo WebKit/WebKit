@@ -44,6 +44,10 @@ bool KJS::Bindings::dispatchJNICall (const void *targetAppletView, jobject obj, 
 {
     id view = (id)targetAppletView;
     
+    // As array_type is not known by the Mac JVM, change it to a compatible type.
+    if (returnType == array_type)
+        returnType = object_type;
+    
     if ([view respondsToSelector:@selector(webPlugInCallJava:isStatic:returnType:method:arguments:callingURL:exceptionDescription:)]) {
         NSString *_exceptionDescription = 0;
 

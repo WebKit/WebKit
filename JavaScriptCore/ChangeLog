@@ -1,3 +1,22 @@
+2007-03-26  David Carson  <dacarson@gmail.com>
+
+        Reviewed by Darin, landed by Anders.
+
+        Fix for: http://bugs.webkit.org/show_bug.cgi?id=13142
+
+        The previous fix http://bugs.webkit.org/show_bug.cgi?id=12636 
+        introduced new JNIType to enum in jni_utility.h This is a 
+        problem on the Mac as it seems that the JNIType enum is also
+        used in the JVM, it is used to specify the return type in
+        jni_objc.mm
+        Corrected the fix by moving type to the end, and changing
+        jni_objc.mm to convert the new type to an old compatible
+        type.
+
+        * bindings/jni/jni_objc.mm:
+        (KJS::Bindings::dispatchJNICall):
+        * bindings/jni/jni_utility.h:
+
 2007-03-26  Christopher Brichford  <chrisb@adobe.com>
 
         Reviewed/landed by Adam.
