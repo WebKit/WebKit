@@ -1,3 +1,16 @@
+2007-03-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Layout tests for <rdar://problem/5088234> REGRESSION: Crash occurs at 
+        WebCore::Node::createRendererIfNeeded() when changing map views with MS 
+        Virtual Earth (http://www.ziprealty.com/)
+
+        * fast/dom/mutation-event-remove-inserted-node-expected.txt: Added.
+        * fast/dom/mutation-event-remove-inserted-node.html: Added.
+        * fast/dom/script-element-remove-self-expected.txt: Added.
+        * fast/dom/script-element-remove-self.html: Added.
+
 2007-03-26  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed and landed by Darin.

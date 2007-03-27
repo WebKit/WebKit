@@ -209,7 +209,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
         dispatchChildInsertionEvents(child.get(), ec);
                 
         // Add child to the rendering tree.
-        if (attached() && !child->attached())
+        if (attached() && !child->attached() && child->parent() == this)
             child->attach();
 
         child = nextChild.release();
@@ -313,7 +313,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
         dispatchChildInsertionEvents(child.get(), ec);
                 
         // Add child to the rendering tree
-        if (attached() && !child->attached())
+        if (attached() && !child->attached() && child->parent() == this)
             child->attach();
 
         prev = child;
@@ -531,10 +531,9 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec)
 
         // Dispatch the mutation events
         dispatchChildInsertionEvents(child.get(), ec);
-                
+
         // Add child to the rendering tree
-        // ### should we detach() it first if it's already attached?
-        if (attached() && !child->attached())
+        if (attached() && !child->attached() && child->parent() == this)
             child->attach();
         
         child = nextChild.release();
