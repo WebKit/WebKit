@@ -1,3 +1,18 @@
+2007-03-26  Christopher Brichford  <chrisb@adobe.com>
+
+        Reviewed/landed by Adam.
+
+        Bug 13198: Move build settings from project file to xcconfig file for apollo
+        port JSCore
+        http://bugs.webkit.org/show_bug.cgi?id=13198
+
+        - Moving build settings from xcode project file to xcconfig files.
+
+        * JavaScriptCore.apolloproj/mac/JavaScriptCore/JavaScriptCore.Debug.xcconfig:
+        * JavaScriptCore.apolloproj/mac/JavaScriptCore/JavaScriptCore.Release.xcconfig:
+        * JavaScriptCore.apolloproj/mac/JavaScriptCore/JavaScriptCore.xcconfig:
+        * JavaScriptCore.apolloproj/mac/JavaScriptCore/JavaScriptCore.xcodeproj/project.pbxproj:
+
 2007-03-26  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Anders and Maciej aand Geoff (oh my!)
