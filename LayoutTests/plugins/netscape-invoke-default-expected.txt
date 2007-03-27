@@ -1,0 +1,3 @@
+This tests that it's possible to call NPN_InvokeDefault on a JavaScript object. If this test succeeded, the text "SUCCESS" should be shown below.
+SUCCESS
+

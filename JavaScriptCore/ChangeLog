@@ -1,3 +1,11 @@
+2007-03-27  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        * bindings/NP_jsobject.cpp:
+        (_NPN_InvokeDefault):
+        Call JSObject:call for native JavaScript objects.
+
 2007-03-26  David Carson  <dacarson@gmail.com>
 
         Reviewed by Darin, landed by Anders.

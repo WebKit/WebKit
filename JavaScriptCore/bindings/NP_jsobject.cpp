@@ -102,9 +102,29 @@ NPObject *_NPN_CreateNoScriptObject(void)
 
 bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCount, NPVariant* result)
 {
-    if (o->_class == NPScriptObjectClass)
-        // No notion of a default function on JS objects. Just return false, can't handle.
-        return false;
+    if (o->_class == NPScriptObjectClass) {
+        JavaScriptObject* obj = (JavaScriptObject*)o; 
+        if (!_isSafeScript(obj))
+            return false;        
+        
+        // Lookup the function object.
+        RootObject* rootObject = obj->rootObject;
+        if (!rootObject || !rootObject->isValid())
+            return false;
+        
+        ExecState* exec = rootObject->interpreter()->globalExec();
+        JSLock lock;
+        
+        // Call the function object.
+        JSObject *funcImp = static_cast<JSObject*>(obj->imp);
+        List argList = listFromVariantArgs(exec, args, argCount);
+        JSValue *resultV = funcImp->call (exec, funcImp, argList);
+        
+        // Convert and return the result of the function call.
+        convertValueToNPVariant(exec, resultV, result);
+        return true;        
+    }
+
     if (o->_class->invokeDefault)
         return o->_class->invokeDefault(o, args, argCount, result);    
     VOID_TO_NPVARIANT(*result);

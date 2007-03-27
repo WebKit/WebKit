@@ -1,3 +1,11 @@
+2007-03-27  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
+        (pluginInvoke):
+        Add new function which takes a function and calls it using NPN_InvokeDefault.
+
 2007-03-27  Adele Peterson  <adele@apple.com>
 
         Adding comment.

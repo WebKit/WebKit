@@ -80,8 +80,8 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
 #define ID_REMOVE_DEFAULT_METHOD    2
 #define ID_TEST_DOM_ACCESS          3
 #define ID_TEST_GET_URL_NOTIFY      4
-
-#define NUM_METHOD_IDENTIFIERS      5
+#define ID_TEST_INVOKE_DEFAULT      5
+#define NUM_METHOD_IDENTIFIERS      6
 
 static NPIdentifier pluginMethodIdentifiers[NUM_METHOD_IDENTIFIERS];
 static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
@@ -90,6 +90,7 @@ static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "removeDefaultMethod",
     "testDOMAccess",
     "getURLNotify",
+    "testInvokeDefault"
 };
 
 static NPUTF8* createCStringFromNPVariant(const NPVariant *variant)
@@ -227,6 +228,20 @@ static bool pluginInvoke(NPObject *header, NPIdentifier name, const NPVariant *a
             VOID_TO_NPVARIANT(*result);
             return true;
         }
+    } else if (name == pluginMethodIdentifiers[ID_TEST_INVOKE_DEFAULT] && NPVARIANT_IS_OBJECT(args[0])) {
+        NPObject *callback = NPVARIANT_TO_OBJECT(args[0]);
+        
+        NPVariant args[1];
+        NPVariant browserResult;
+        
+        STRINGZ_TO_NPVARIANT("test", args[0]);
+        bool retval = browser->invokeDefault(obj->npp, callback, args, 1, &browserResult);
+        
+        if (retval)
+            browser->releasevariantvalue(&browserResult);
+        
+        BOOLEAN_TO_NPVARIANT(retval, *result);
+        return true;        
     }
 
     return false;

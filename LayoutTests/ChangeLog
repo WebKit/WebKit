@@ -1,3 +1,12 @@
+2007-03-27  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        Add NPN_InvokeDefault test.
+        
+        * plugins/netscape-invoke-default-expected.txt: Added.
+        * plugins/netscape-invoke-default.html: Added.
+
 2007-03-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
