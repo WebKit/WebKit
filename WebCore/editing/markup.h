@@ -45,7 +45,7 @@ namespace WebCore {
     PassRefPtr<DocumentFragment> createFragmentFromNodes(Document*, const Vector<Node*>&);
 
     DeprecatedString createMarkup(const Range*,
-        Vector<Node*>* = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange, bool includeInlineSpecialAncestors = false);
+        Vector<Node*>* = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange, bool convertBlocksToInlines = false);
     DeprecatedString createMarkup(const Node*, EChildrenOnly = IncludeNode,
         Vector<Node*>* = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange);
 

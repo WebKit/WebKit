@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 42x18 [color=#000000]
             RenderText {#text} at (21,0) size 20x18
               text run at (21,0) width 20: "bar"
-            RenderInline {SPAN} at (0,0) size 22x18 [color=#0000EE]
+            RenderInline {A} at (0,0) size 22x18 [color=#0000EE]
               RenderText {#text} at (41,0) size 22x18
                 text run at (41,0) width 22: "baz"
         RenderBlock (anonymous) at (0,18) size 784x0

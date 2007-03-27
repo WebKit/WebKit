@@ -154,7 +154,7 @@ static void removeEnclosingMailBlockquoteStyle(CSSMutableStyleDeclaration* style
     blockquoteStyle->diff(style);
 }
 
-static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnotateForInterchange annotate)
+static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnotateForInterchange annotate, bool convertBlocksToInlines = false)
 {
     bool documentIsHTML = node->document()->isHTMLDocument();
     switch (node->nodeType()) {
@@ -189,10 +189,13 @@ static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnot
         case Node::ELEMENT_NODE: {
             DeprecatedString markup = DeprecatedChar('<');
             const Element* el = static_cast<const Element*>(node);
+            convertBlocksToInlines &= isBlock(const_cast<Node*>(node));
             markup += el->nodeNamePreservingCase().deprecatedString();
             String additionalStyle;
             if (annotate && el->isHTMLElement()) {
                 RefPtr<CSSMutableStyleDeclaration> style = styleFromMatchedRulesForElement(const_cast<Element*>(el));
+                if (convertBlocksToInlines)
+                    style->setProperty(CSS_PROP_DISPLAY, CSS_VAL_INLINE, true);
                 if (style->length() > 0)
                     additionalStyle = style->cssText();
             }
@@ -202,6 +205,11 @@ static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnot
             for (unsigned int i = 0; i < length; i++) {
                 Attribute *attr = attrs->attributeItem(i);
                 String value = attr->value();
+                if (attr->name() == styleAttr && convertBlocksToInlines) {
+                    RefPtr<CSSMutableStyleDeclaration> inlineStyle = static_cast<const HTMLElement*>(el)->getInlineStyleDecl()->copy();
+                    inlineStyle->setProperty(CSS_PROP_DISPLAY, CSS_VAL_INLINE, true);
+                    value = inlineStyle->cssText();
+                }
                 if (annotate && attr->name() == styleAttr && additionalStyle.length()) {
                     value += "; " + additionalStyle;
                     additionalStyle = "";
@@ -351,7 +359,7 @@ bool elementHasTextDecorationProperty(Node* node)
 
 // FIXME: Shouldn't we omit style info when annotate == DoNotAnnotateForInterchange? 
 // FIXME: At least, annotation and style info should probably not be included in range.markupString()
-DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotateForInterchange annotate, bool includeInlineSpecialAncestors)
+DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotateForInterchange annotate, bool convertBlocksToInlines)
 {
     if (!range || range->isDetached())
         return DeprecatedString();
@@ -486,9 +494,6 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
         
     if (Node *enclosingAnchor = enclosingNodeWithTag(specialCommonAncestor ? specialCommonAncestor : commonAncestor, aTag))
         specialCommonAncestor = enclosingAnchor;
-        
-    if (!annotate && includeInlineSpecialAncestors && isBlock(specialCommonAncestor))
-        specialCommonAncestor = 0;
     
     Node* body = enclosingNodeWithTag(commonAncestor, bodyTag);
     // FIXME: Only include markup for a fully selected root (and ancestors of lastClosed up to that root) if
@@ -501,9 +506,7 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
     if (specialCommonAncestor) {
         // Also include all of the ancestors of lastClosed up to this special ancestor.
         for (Node* ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
-            if (!annotate && includeInlineSpecialAncestors && isBlock(ancestor))
-                continue;
-            if (ancestor == fullySelectedRoot) {
+            if (ancestor == fullySelectedRoot && !convertBlocksToInlines) {
                 RefPtr<CSSMutableStyleDeclaration> style = styleFromMatchedRulesAndInlineDecl(fullySelectedRoot);
                 
                 // Bring the background attribute over, but not as an attribute because a background attribute on a div
@@ -516,7 +519,7 @@ DeprecatedString createMarkup(const Range *range, Vector<Node*>* nodes, EAnnotat
                     markups.append("</div>");
                 }
             } else {
-                markups.prepend(startMarkup(ancestor, range, annotate));
+                markups.prepend(startMarkup(ancestor, range, annotate, convertBlocksToInlines));
                 markups.append(endMarkup(ancestor));
             }
             if (nodes)

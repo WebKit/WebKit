@@ -1,3 +1,25 @@
+2007-03-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5091898> REGRESSION: GMail Editor: A line of underlined text copied with Select All pastes with wrong font family
+        
+        createMarkup skipped elements if they were blocks
+        when called from moveParagraphs (because that function 
+        must receive only inline content).  This patch adds 
+        code to inline these blocks instead of skipping them 
+        so that we don't lose any of the style that they 
+        contribute to the copied markup.
+
+        * editing/markup.cpp:
+        (WebCore::startMarkup): Add an inlineBlocks option.
+        Make sure to overwrite display:block coming from
+        a style sheet or the inline style declaration.
+        (WebCore::createMarkup): Don't refuse to include a 
+        specialCommonAncestor that's a block if we were asked 
+        to include only inline content, since we can now inline 
+        block elements in startMarkup.
+
 2007-03-27  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

@@ -1,3 +1,25 @@
+2007-03-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5091898> REGRESSION: GMail Editor: A line of underlined text copied with Select All pastes with wrong font family
+
+        Demonstrates the bug fixed:
+        * editing/style/5091898-expected.checksum: Added.
+        * editing/style/5091898-expected.png: Added.
+        * editing/style/5091898-expected.txt: Added.
+        * editing/style/5091898.html: Added.
+        Demonstrates a related bug fixed (deleting
+        the line break before a paragraph could remove
+        its underlining):
+        * editing/deleting/5091898-expected.checksum: Added.
+        * editing/deleting/5091898-expected.png: Added.
+        * editing/deleting/5091898-expected.txt: Added.
+        * editing/deleting/5091898.html: Added.
+        Demonstrates that a link now (correctly) exists, 
+        instead of just underlined text:
+        * editing/pasteboard/4840662-expected.txt:
+
 2007-03-26  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
