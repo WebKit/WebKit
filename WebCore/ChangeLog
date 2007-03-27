@@ -1,3 +1,18 @@
+2007-03-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5065910> REGRESSION: In Mail and GMail, Can't apply color to pasted line of text
+        <rdar://problem/5084241> After deleting a paragraph of colored text, can't change text color
+        <rdar://problem/5065605> REGRESSION: Text copied with Select All + Copy loses color on Paste
+        <rdar://problem/4916887> GMAIL: Can't apply color to text once it becomes indented
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::copyInheritableProperties):
+        If a node's text fill color is invalid, then its children use 
+        their font-color as their text fill color (they don't inherit 
+        it).  Likewise for stroke color.
+
 2007-03-27  Anders Carlsson  <acarlsson@apple.com>
 
         * platform/ScrollBar.h:

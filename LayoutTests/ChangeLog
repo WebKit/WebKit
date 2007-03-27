@@ -1,3 +1,29 @@
+2007-03-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5065910> REGRESSION: In Mail and GMail, Can't apply color to pasted line of text
+        <rdar://problem/5084241> After deleting a paragraph of colored text, can't change text color
+        <rdar://problem/5065605> REGRESSION: Text copied with Select All + Copy loses color on Paste
+        <rdar://problem/4916887> GMAIL: Can't apply color to text once it becomes indented
+
+        * editing/pasteboard/5065605-expected.checksum: Added.
+        * editing/pasteboard/5065605-expected.png: Added.
+        * editing/pasteboard/5065605-expected.txt: Added.
+        * editing/pasteboard/5065605.html: Added.
+        * editing/style/4916887-expected.checksum: Added.
+        * editing/style/4916887-expected.png: Added.
+        * editing/style/4916887-expected.txt: Added.
+        * editing/style/4916887.html: Added.
+        * editing/style/5065910-expected.checksum: Added.
+        * editing/style/5065910-expected.png: Added.
+        * editing/style/5065910-expected.txt: Added.
+        * editing/style/5065910.html: Added.
+        * editing/style/5084241-expected.checksum: Added.
+        * editing/style/5084241-expected.png: Added.
+        * editing/style/5084241-expected.txt: Added.
+        * editing/style/5084241.html: Added.
+
 2007-03-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

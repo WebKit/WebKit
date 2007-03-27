@@ -1688,7 +1688,19 @@ void CSSComputedStyleDeclaration::removeComputedInheritablePropertiesFrom(CSSMut
 
 PassRefPtr<CSSMutableStyleDeclaration> CSSComputedStyleDeclaration::copyInheritableProperties() const
 {
-    return copyPropertiesInSet(inheritableProperties, numInheritableProperties);
+    RefPtr<CSSMutableStyleDeclaration> style = copyPropertiesInSet(inheritableProperties, numInheritableProperties);
+    if (style) {
+        // If a node's text fill color is invalid, then its children use 
+        // their font-color as their text fill color (they don't
+        // inherit it).  Likewise for stroke color.
+        ExceptionCode ec = 0;
+        if (!m_node->renderer()->style()->textFillColor().isValid())
+            style->removeProperty(CSS_PROP__WEBKIT_TEXT_FILL_COLOR, ec);
+        if (!m_node->renderer()->style()->textStrokeColor().isValid())
+            style->removeProperty(CSS_PROP__WEBKIT_TEXT_STROKE_COLOR, ec);
+        ASSERT(ec == 0);
+    }
+    return style.release();
 }
 
 PassRefPtr<CSSMutableStyleDeclaration> CSSComputedStyleDeclaration::copy() const

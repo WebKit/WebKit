@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 517x18
+          text run at (0,0) width 517: "This tests for a bug where text copied with Select All + Copy would lose its color."
+      RenderBlock {DIV} at (0,34) size 784x72
+        RenderBlock (anonymous) at (0,0) size 784x18
+          RenderInline {FONT} at (0,0) size 148x18 [color=#FF0000]
+            RenderText {#text} at (0,0) size 148x18
+              text run at (0,0) width 148: "This text should be red."
+        RenderBlock {DIV} at (0,18) size 784x18
+          RenderInline {FONT} at (0,0) size 148x18 [color=#FF0000]
+            RenderText {#text} at (0,0) size 148x18
+              text run at (0,0) width 148: "This text should be red."
+        RenderBlock {DIV} at (0,36) size 784x36
+          RenderBlock (anonymous) at (0,0) size 784x18
+            RenderInline {FONT} at (0,0) size 148x18 [color=#FF0000]
+              RenderInline {SPAN} at (0,0) size 148x18 [color=#000000]
+                RenderInline {FONT} at (0,0) size 148x18 [color=#FF0000]
+                  RenderText {#text} at (0,0) size 148x18
+                    text run at (0,0) width 148: "This text should be red."
+          RenderBlock (anonymous) at (0,18) size 784x18
+            RenderBlock {DIV} at (0,0) size 784x18
+              RenderInline {FONT} at (0,0) size 148x18 [color=#FF0000]
+                RenderText {#text} at (0,0) size 148x18
+                  text run at (0,0) width 148: "This text should be red."
+          RenderBlock (anonymous) at (0,36) size 784x0
+            RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
+              RenderInline {SPAN} at (0,0) size 0x0 [color=#000000]
+caret: position 24 of child 0 {#text} of child 0 {FONT} of child 1 {DIV} of child 0 {SPAN} of child 0 {FONT} of child 2 {DIV} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
