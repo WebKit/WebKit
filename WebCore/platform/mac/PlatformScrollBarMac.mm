@@ -152,7 +152,7 @@ bool PlatformScrollbar::scrollbarHit(NSScrollerPart hitPart)
         return false; // Impossible to scroll anywhere.
     
     WebCoreScrollBar *bar = (WebCoreScrollBar *)getView();
-    int newPos = m_currentPos;
+    int newPos = value();
     switch (hitPart) {
         case NSScrollerDecrementLine:
             newPos -= m_lineStep;
