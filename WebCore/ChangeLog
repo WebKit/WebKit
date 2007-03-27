@@ -1,3 +1,10 @@
+2007-03-27  Zack Rusin  <zrusin@trolltech.com>
+
+        Fix the compile - when using math.h functions
+        actually include the header with them.
+
+        * platform/ScrollBar.h:
+
 2007-03-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.
