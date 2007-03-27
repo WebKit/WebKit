@@ -1,3 +1,21 @@
+2007-03-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej.
+
+        The WebArchiver needs all the subresources of a document to be accessible
+        through the DocLoader, so we can't remove a CachedResource simultaneously
+        from the global Cache and all DocLoaders, just because it needs to be 
+        reloaded in one.
+
+        Fixes rdar://problem/5044366
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::remove):
+           Don't evict the resource from all DocLoaders
+        * manual-tests/test-iframes-loading-the-same-resource.html: Added.
+           Alas it wasn't possible to make a nice layout test, even this manual test
+           is not entirely deterministic
+
 2007-03-27  Mark Rowe  <mrowe@apple.com>
 
         Build fix.
