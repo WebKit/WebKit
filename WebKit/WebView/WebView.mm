@@ -1619,7 +1619,7 @@ NSMutableDictionary *countInvocations;
     _private->drawsBackground = YES;
     _private->smartInsertDeleteEnabled = YES;
     _private->backgroundColor = [[NSColor whiteColor] retain];
-
+    
     NSRect f = [self frame];
     WebFrameView *frameView = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
     [frameView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
@@ -1655,14 +1655,20 @@ NSMutableDictionary *countInvocations;
     if ([WebView _scriptDebuggerEnabled])
         [WebScriptDebugServer sharedScriptDebugServer];
 
+    WebPreferences *prefs = [self preferences];
+    
     // Update WebCore with preferences.  These values will either come from an archived WebPreferences,
     // or from the standard preferences, depending on whether this method was called from initWithCoder:
     // or initWithFrame, respectively.
-    [self _updateWebCoreSettingsFromPreferences: [self preferences]];
+    [self _updateWebCoreSettingsFromPreferences:prefs];
+
+    // Initialize this cached value for the common case where we're using [WebPreferences standardPreferences],
+    // since neither setPreferences: nor _preferencesChangedNotification: will be called.
+    _private->useSiteSpecificSpoofing = [prefs _useSiteSpecificSpoofing];
     
     // Register to receive notifications whenever preference values change.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
-                                                 name:WebPreferencesChangedNotification object:[self preferences]];
+                                                 name:WebPreferencesChangedNotification object:prefs];
 
     if (WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOCAL_RESOURCE_SECURITY_RESTRICTION))
         FrameLoader::setRestrictAccessToLocal(true);
