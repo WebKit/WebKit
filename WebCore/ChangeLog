@@ -1,5 +1,12 @@
 2007-03-27  Justin Garcia  <justin.garcia@apple.com>
 
+        Build fix
+        
+        * editing/markup.cpp:
+        (WebCore::startMarkup):
+
+2007-03-27  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by darin
         
         <rdar://problem/5091898> REGRESSION: GMail Editor: A line of underlined text copied with Select All pastes with wrong font family
