@@ -23,7 +23,9 @@
 
         Reviewed by Darin, landed by Anders.
 
-        Manual test case for http://bugs.webkit.org/show_bug.cgi?id=13142
+        Manual test case for: REGRESSION (r19559): Java applet crash
+        http://bugs.webkit.org/show_bug.cgi?id=13142
+        <rdar://problem/5080340>
 
         * manual-tests/liveconnect-applet-get-boolean.html: Added.
         * manual-tests/resources/CheckerApplet.class: Added.
