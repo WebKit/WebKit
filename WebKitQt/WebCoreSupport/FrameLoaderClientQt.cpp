@@ -179,7 +179,8 @@ void FrameLoaderClientQt::makeRepresentation(DocumentLoader*)
 
 void FrameLoaderClientQt::forceLayout()
 {
-    notImplemented();
+    m_frame->view()->setNeedsLayout();
+    m_frame->view()->layout();
 }
 
 

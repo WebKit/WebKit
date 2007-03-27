@@ -204,10 +204,8 @@ void QWebFrame::resizeEvent(QResizeEvent *e)
 {
     QAbstractScrollArea::resizeEvent(e);
     if (d->frame && d->frameView) {
-        RenderObject *renderer = d->frame->renderer();
-        if (renderer)
-            renderer->setNeedsLayout(true);
-        d->frameView->scheduleRelayout();
+        d->frame->forceLayout();
+        d->frame->view()->adjustViewSize();
     }
     d->_q_adjustScrollbars();
 }
@@ -238,9 +236,8 @@ void QWebFrame::paintEvent(QPaintEvent *ev)
     time.start();
 #endif
     QRect clip = ev->rect();
-    if (d->frameView->layoutPending()) {
-        //qDebug()<<"pending "<<m_frameView->layoutPending()
-        //        <<" delayed = "<<m_frameView->haveDelayedLayoutScheduled();
+
+    if (d->frameView->needsLayout()) {
         d->frameView->layout();
     }
     QPainter p(viewport());

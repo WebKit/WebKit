@@ -1,3 +1,15 @@
+2007-03-27  Zack Rusin  <zrusin@trolltech.com>
+
+        Fix the rendering crashes due triggered
+        asserts. Improve a bit the layout
+        scheduling.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::resizeEvent):
+        (QWebFrame::paintEvent):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::forceLayout):
+
 2007-03-16  Lars Knoll <lars@trolltech.com>
 
         Fix the Qt build once again.
