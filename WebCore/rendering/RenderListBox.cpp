@@ -229,7 +229,7 @@ void RenderListBox::calcHeight()
     
     if (m_vBar) {
         m_vBar->setEnabled(numVisibleItems() < numItems());
-        m_vBar->setSteps(1, min(1, numVisibleItems() - 1));
+        m_vBar->setSteps(1, min(1, numVisibleItems() - 1), itemHeight);
         m_vBar->setProportion(numVisibleItems(), numItems());
     }
 }

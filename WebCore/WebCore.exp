@@ -662,6 +662,7 @@ _wkGetNSURLResponseCalculatedExpiration
 _wkGetNSURLResponseLastModifiedDate
 _wkGetNSURLResponseMustRevalidate
 _wkGetPreferredExtensionForMIMEType
+_wkGetWheelEventDeltas
 _wkInitializeGlyphVector
 _wkNSURLProtocolClassForReqest
 _wkPathFromFont

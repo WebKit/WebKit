@@ -53,6 +53,7 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEvent* event)
     m_ctrlKey = event->button.state & GDK_CONTROL_MASK;
     m_altKey = event->button.state & GDK_MOD1_MASK;
     m_metaKey = event->button.state & GDK_MOD2_MASK;
+    m_isContinuous = false;
 }
 
 }

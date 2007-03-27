@@ -68,6 +68,7 @@ void InitWebCoreSystemInterface(void)
     INIT(GetNSURLResponseLastModifiedDate);
     INIT(GetNSURLResponseMustRevalidate);
     INIT(GetPreferredExtensionForMIMEType);
+    INIT(GetWheelEventDeltas);
     INIT(InitializeGlyphVector);
     INIT(NSURLProtocolClassForReqest);
     INIT(PathFromFont);

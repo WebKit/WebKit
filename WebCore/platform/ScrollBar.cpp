@@ -37,6 +37,7 @@ Scrollbar::Scrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, 
     , m_currentPos(0)
     , m_lineStep(0)
     , m_pageStep(0)
+    , m_pixelStep(1)
 {
 }
 
@@ -47,7 +48,7 @@ bool Scrollbar::setValue(int v)
         v = maxPos;
     if (v < 0)
         v = 0;
-    if (m_currentPos == v)
+    if (value() == v)
         return false; // Our value stayed the same.
     m_currentPos = v;
 
@@ -70,38 +71,47 @@ void Scrollbar::setProportion(int visibleSize, int totalSize)
     updateThumbProportion();
 }
 
-void Scrollbar::setSteps(int lineStep, int pageStep)
+void Scrollbar::setSteps(int lineStep, int pageStep, int pixelsPerStep)
 {
     m_lineStep = lineStep;
     m_pageStep = pageStep;
+    m_pixelStep = 1.0f / pixelsPerStep;
 }
 
 bool Scrollbar::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
-    float delta = 0.0;
-    if ((direction == ScrollUp && m_orientation == VerticalScrollbar) || (direction == ScrollLeft && m_orientation == HorizontalScrollbar)) {
-        if (granularity == ScrollByLine) {
-            delta = -m_lineStep;
-        } else if (granularity == ScrollByPage) {
-            delta = -m_pageStep;
-        } else if (granularity == ScrollByDocument) {
-            delta = -m_currentPos;
-        } else if (granularity == ScrollByWheel) {
-            delta = -m_lineStep;
-        }
-    } else if ((direction == ScrollDown && m_orientation == VerticalScrollbar) || (direction == ScrollRight && m_orientation == HorizontalScrollbar)) {
-        if (granularity == ScrollByLine) {
-            delta = m_lineStep;
-        } else if (granularity == ScrollByPage) {
-            delta = m_pageStep;
-        } else if (granularity == ScrollByDocument) {
-            delta = m_totalSize - m_visibleSize - m_currentPos;
-        } else if (granularity == ScrollByWheel) {
-            delta = m_lineStep;
-        }
-    }
-    int newPos = (int)(m_currentPos + (delta * multiplier));
-    return setValue(newPos);
+    float step = 0;
+    if ((direction == ScrollUp && m_orientation == VerticalScrollbar) || (direction == ScrollLeft && m_orientation == HorizontalScrollbar))
+        step = -1;
+    else if ((direction == ScrollDown && m_orientation == VerticalScrollbar) || (direction == ScrollRight && m_orientation == HorizontalScrollbar)) 
+        step = 1;
+    
+    if (granularity == ScrollByLine)
+        step *= m_lineStep;
+    else if (granularity == ScrollByPage)
+        step *= m_pageStep;
+    else if (granularity == ScrollByDocument)
+        step *= m_totalSize;
+    else if (granularity == ScrollByPixel)
+        step *= m_pixelStep;
+        
+    float newPos = m_currentPos + step * multiplier;
+    float maxPos = m_totalSize - m_visibleSize;
+    if (newPos < 0)
+        newPos = 0;
+    if (newPos > maxPos)
+        newPos = maxPos;
+    if (newPos == m_currentPos)
+        return false;
+    
+    int oldValue = value();
+    m_currentPos = newPos;
+    updateThumbPosition();
+    
+    if (value() != oldValue && client())
+        client()->valueChanged(this);
+    
+    // return true even if the integer value did not change so that scroll event gets eaten
+    return true;
 }
-
 }

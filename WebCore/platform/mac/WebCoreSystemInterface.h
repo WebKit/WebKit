@@ -40,12 +40,14 @@ typedef struct _NSRect NSRect;
 #endif
 
 #ifdef __OBJC__
+@class NSEvent;
 @class NSFont;
 @class NSMutableURLRequest;
 @class NSURLRequest;
 #else
 typedef struct NSArray NSArray;
 typedef struct NSDate NSDate;
+typedef struct NSEvent NSEvent;
 typedef struct NSFont NSFont;
 typedef struct NSImage NSImage;
 typedef struct NSMenu NSMenu;
@@ -104,6 +106,7 @@ extern ATSUFontID (*wkGetNSFontATSUFontId)(NSFont*);
 extern double (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response);
 extern NSDate *(*wkGetNSURLResponseLastModifiedDate)(NSURLResponse *response);
 extern BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);
+extern void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, BOOL* continuous);
 extern OSStatus (*wkInitializeGlyphVector)(int count, void* glyphs);
 extern NSString* (*wkPathFromFont)(NSFont*);
 extern void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*);

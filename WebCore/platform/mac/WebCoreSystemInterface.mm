@@ -53,6 +53,7 @@ ATSUFontID (*wkGetNSFontATSUFontId)(NSFont*);
 NSTimeInterval (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response);
 NSDate *(*wkGetNSURLResponseLastModifiedDate)(NSURLResponse *response);
 BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);
+void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, BOOL* continuous);
 OSStatus (*wkInitializeGlyphVector)(int count, void* glyphs);
 NSString* (*wkPathFromFont)(NSFont*);
 void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*);
@@ -78,4 +79,3 @@ id (*wkCreateNSURLConnectionDelegateProxy)(void);
 BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
 Class (*wkNSURLProtocolClassForReqest)(NSURLRequest *);
 float (*wkSecondsSinceLastInputEvent)(void);
-

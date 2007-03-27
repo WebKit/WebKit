@@ -27,20 +27,22 @@
 #import "PlatformWheelEvent.h"
 
 #import "PlatformMouseEvent.h"
+#import "WebCoreSystemInterface.h"
 
 namespace WebCore {
 
 PlatformWheelEvent::PlatformWheelEvent(NSEvent* event)
     : m_position(pointForEvent(event))
     , m_globalPosition(globalPointForEvent(event))
-    , m_deltaX([event deltaX])
-    , m_deltaY([event deltaY])
     , m_isAccepted(false)
     , m_shiftKey([event modifierFlags] & NSShiftKeyMask)
     , m_ctrlKey([event modifierFlags] & NSControlKeyMask)
     , m_altKey([event modifierFlags] & NSAlternateKeyMask)
     , m_metaKey([event modifierFlags] & NSCommandKeyMask)
 {
+    BOOL continuous;
+    wkGetWheelEventDeltas(event, &m_deltaX, &m_deltaY, &continuous);
+    m_isContinuous = continuous;
 }
 
 } // namespace WebCore
