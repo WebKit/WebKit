@@ -917,6 +917,8 @@ static void dump(void)
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
+    if ([[sender mainFrame] isEqual:frame])
+        [sender displayIfNeeded];
     [self webView:sender locationChangeDone:nil forDataSource:[frame dataSource]];
     [navigationController webView:sender didFinishLoadForFrame:frame];
 }

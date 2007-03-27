@@ -1,3 +1,10 @@
+2007-03-27  Adele Peterson  <adele@apple.com>
+
+        Fix svg tests by calling displayIfNeeded.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (-[WaitUntilDoneDelegate webView:didFinishLoadForFrame:]):
+
 2007-03-26  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.
