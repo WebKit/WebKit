@@ -1,3 +1,15 @@
+2007-03-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Don't enforce text-selection drag delay when we are
+        going to drag an image anyway.
+
+        Fixes rdar://problem/4668935
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleDrag):
+
 2007-03-27  Justin Garcia  <justin.garcia@apple.com>
 
         Build fix

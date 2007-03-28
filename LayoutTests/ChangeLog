@@ -1,3 +1,14 @@
+2007-03-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Test to ensure there is no delay forced when dragging a selected image
+
+        * editing/pasteboard/drag-selected-image-to-contenteditable-expected.checksum: Added.
+        * editing/pasteboard/drag-selected-image-to-contenteditable-expected.png: Added.
+        * editing/pasteboard/drag-selected-image-to-contenteditable-expected.txt: Added.
+        * editing/pasteboard/drag-selected-image-to-contenteditable.html: Added.
+
 2007-03-27  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

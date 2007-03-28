@@ -1431,7 +1431,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
     
     // For drags starting in the selection, the user must wait between the mousedown and mousedrag,
     // or else we bail on the dragging stuff and allow selection to occur
-    if (m_mouseDownMayStartDrag && dragState().m_dragSrcInSelection && event.event().timestamp() - m_mouseDownTimestamp < TextDragDelay) {
+    if (m_mouseDownMayStartDrag && !dragState().m_dragSrcIsImage && dragState().m_dragSrcInSelection && event.event().timestamp() - m_mouseDownTimestamp < TextDragDelay) {
         m_mouseDownMayStartDrag = false;
         dragState().m_dragSrc = 0;
         // ...but if this was the first click in the window, we don't even want to start selection
