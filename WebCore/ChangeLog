@@ -1,3 +1,12 @@
+2007-03-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Kevin M.
+
+        WebCore part of fix for <rdar://problem/5095515> VitalSource Bookshelf should not pass return statements into stringByEvaluatingJavaScriptFromString
+
+        * page/mac/WebCoreFrameBridge.mm: (-[WebCoreFrameBridge stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        Convert return value to a string.  This matches the behavior in Safari 2.0.
+
 2007-03-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

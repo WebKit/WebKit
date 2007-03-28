@@ -2099,6 +2099,14 @@ NS_ENDHANDLER
 
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)script
 {
+    // FIXME: We can remove this workaround for VitalSource Bookshelf when they update
+    // their code so that it no longer calls stringByEvaluatingJavaScriptFromString with a return statement.
+    // Return statements are only valid in a function.  See <rdar://problem/5095515> for the evangelism bug.
+    if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.vitalsource.bookshelf"]) {
+        NSRange returnStringRange = [script rangeOfString:@"return "];
+        if (returnStringRange.length != 0 && returnStringRange.location == 0)
+            script = [script substringFromIndex: returnStringRange.location + returnStringRange.length];
+    }
     return [[[self mainFrame] _bridge] stringByEvaluatingJavaScriptFromString:script];
 }
 

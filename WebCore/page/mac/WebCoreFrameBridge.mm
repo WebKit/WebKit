@@ -687,10 +687,10 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 {
     m_frame->loader()->createEmptyDocument();
     JSValue* result = m_frame->loader()->executeScript(0, string, forceUserGesture);
-    if (!result || !result->isString())
+    if (!result)
         return 0;
     JSLock lock;
-    return String(result->getString());
+    return String(result->isString() ? result->getString() : result->toString(m_frame->scriptProxy()->interpreter()->globalExec()));
 }
 
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)string
