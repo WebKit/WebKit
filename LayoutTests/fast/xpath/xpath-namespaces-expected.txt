@@ -1,3 +1,9 @@
 This tests that XPath expressions with prefixes work correctly.
-SUCCESS: test completed
+
+PASS /ns:foo
+PASS /ns:*
+PASS /foo:*
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

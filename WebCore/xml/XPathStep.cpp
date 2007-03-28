@@ -46,14 +46,6 @@ Step::Step(Axis axis, const NodeTest& nodeTest, const Vector<Predicate*>& predic
 {
 }
 
-Step::Step(Axis axis, const NodeTest& nodeTest, const String& namespaceURI, const Vector<Predicate*>& predicates)
-    : m_axis(axis)
-    , m_nodeTest(nodeTest)
-    , m_namespaceURI(namespaceURI)
-    , m_predicates(predicates)
-{
-}
-
 Step::~Step()
 {
     deleteAllValues(m_predicates);
@@ -192,6 +184,14 @@ NodeSet Step::nodesInAxis(Node* context) const
             if (context->nodeType() != Node::ELEMENT_NODE)
                 return nodes;
 
+            // Avoid lazily creating attribute nodes for attributes that we do not need anyway.
+            if (m_nodeTest.kind() == NodeTest::NameTest && m_nodeTest.data() != "*") {
+                RefPtr<Node> n = static_cast<Element*>(context)->getAttributeNodeNS(m_nodeTest.namespaceURI(), m_nodeTest.data());
+                if (n && n->namespaceURI() != "http://www.w3.org/2000/xmlns/") // In XPath land, namespace nodes are not accessible on the attribute axis.
+                    nodes.append(n.release());
+                return nodes;
+            }
+            
             NamedAttrMap* attrs = context->attributes();
             if (!attrs)
                 return nodes;
@@ -259,26 +259,35 @@ bool Step::nodeMatches(Node* node) const
             return true;
         case NodeTest::NameTest: {
             const String& name = m_nodeTest.data();
-            if (name == "*")
-                return node->nodeType() == primaryNodeType(m_axis) && (m_namespaceURI.isEmpty() || m_namespaceURI == node->namespaceURI());
+            const String& namespaceURI = m_nodeTest.namespaceURI();
 
             if (m_axis == AttributeAxis) {
+                ASSERT(node->isAttributeNode());
+
                 // In XPath land, namespace nodes are not accessible on the attribute axis.
-                if (name == "xmlns")
+                if (node->namespaceURI() == "http://www.w3.org/2000/xmlns/")
                     return false;
 
-                // FIXME: check the namespace!
-                return node->nodeName() == name;
-            } else if (m_axis == NamespaceAxis) {
-                // Node test on the namespace axis is not implemented yet
-            } else {
-                // We use tagQName here because we don't want the element name in uppercase 
-                // like we get with HTML elements.
-                // Paths without namespaces should match HTML elements in HTML documents despite those having an XHTML namespace.
-                return node->nodeType() == Node::ELEMENT_NODE
-                        && static_cast<Element*>(node)->tagQName().localName() == name
-                        && ((node->isHTMLElement() && node->document()->isHTMLDocument() && m_namespaceURI.isNull()) || m_namespaceURI == node->namespaceURI());
+                if (name == "*")
+                    return namespaceURI.isEmpty() || node->namespaceURI() == namespaceURI;
+
+                return node->localName() == name && node->namespaceURI() == namespaceURI;
             }
+
+            if (m_axis == NamespaceAxis) {
+                // Node test on the namespace axis is not implemented yet
+                return false;
+            }
+            
+            if (name == "*")
+                return node->nodeType() == primaryNodeType(m_axis) && (namespaceURI.isEmpty() || namespaceURI == node->namespaceURI());
+
+            // We use tagQName here because we don't want the element name in uppercase 
+            // like we get with HTML elements.
+            // Paths without namespaces should match HTML elements in HTML documents despite those having an XHTML namespace.
+            return node->nodeType() == Node::ELEMENT_NODE
+                    && static_cast<Element*>(node)->tagQName().localName() == name
+                    && ((node->isHTMLElement() && node->document()->isHTMLDocument() && namespaceURI.isNull()) || namespaceURI == node->namespaceURI());
         }
     }
     ASSERT_NOT_REACHED();

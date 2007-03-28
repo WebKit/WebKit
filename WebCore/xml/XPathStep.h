@@ -56,32 +56,31 @@ namespace WebCore {
                     ElementNodeTest // XPath 2.0
                 };
                 
-                NodeTest(Kind kind, const String& data = String()) : m_kind(kind), m_data(data) {}
+                NodeTest(Kind kind) : m_kind(kind) {}
+                NodeTest(Kind kind, const String& data) : m_kind(kind), m_data(data) {}
+                NodeTest(Kind kind, const String& data, const String& namespaceURI) : m_kind(kind), m_data(data), m_namespaceURI(namespaceURI) {}
                 
                 Kind kind() const { return m_kind; }
                 const String data() const { return m_data; }
+                const String namespaceURI() const { return m_namespaceURI; }
                 
             private:
                 Kind m_kind;
                 String m_data;
+                String m_namespaceURI;
             };
 
             Step(Axis, const NodeTest& nodeTest, const Vector<Predicate*>& predicates = Vector<Predicate*>());
-            Step(Axis, const NodeTest& nodeTest, const String& namespaceURI, const Vector<Predicate*>& predicates = Vector<Predicate*>());
             ~Step();
 
             NodeSet evaluate(Node* context) const;
             
             Axis axis() const { return m_axis; }
             NodeTest nodeTest() const { return m_nodeTest; }
-            const String& nodeTestData() const { return m_nodeTestData; }
-            const String& namespaceURI() const { return m_namespaceURI; }
             const Vector<Predicate*>& predicates() const { return m_predicates; }
             
             void setAxis(Axis axis) { m_axis = axis; }
             void setNodeTest(NodeTest nodeTest) { m_nodeTest = nodeTest; }
-            void setNodeTestData(const String& nodeTestData) { m_nodeTestData = nodeTestData; }
-            void setNamespaceURI(const String& namespaceURI) { m_namespaceURI = namespaceURI; }
             void setPredicates(const Vector<Predicate*>& predicates) { m_predicates = predicates; }
             
         private:
@@ -93,8 +92,6 @@ namespace WebCore {
 
             Axis m_axis;
             NodeTest m_nodeTest;
-            String m_nodeTestData;
-            String m_namespaceURI;
             Vector<Predicate*> m_predicates;
         };
 

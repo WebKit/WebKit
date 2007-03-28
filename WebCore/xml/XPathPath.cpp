@@ -141,7 +141,7 @@ void LocationPath::optimizeStepPair(unsigned index)
 
         Step* second = m_steps[index + 1];
         if (second->axis() == Step::ChildAxis
-            && second->namespaceURI().isEmpty()
+            && second->nodeTest().namespaceURI().isEmpty()
             && second->nodeTest().kind() == Step::NodeTest::NameTest
             && second->nodeTest().data() == "*") {
 

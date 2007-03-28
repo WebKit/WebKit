@@ -198,10 +198,10 @@ Step:
         }
         
         if ($2) {
-            $$ = new Step(Step::ChildAxis, Step::NodeTest(Step::NodeTest::NameTest, localName), namespaceURI, *$2);
+            $$ = new Step(Step::ChildAxis, Step::NodeTest(Step::NodeTest::NameTest, localName, namespaceURI), *$2);
             PARSER->deletePredicateVector($2);
         } else
-            $$ = new Step(Step::ChildAxis, Step::NodeTest(Step::NodeTest::NameTest, localName), namespaceURI);
+            $$ = new Step(Step::ChildAxis, Step::NodeTest(Step::NodeTest::NameTest, localName, namespaceURI));
         PARSER->deleteString($1);
         PARSER->registerParseNode($$);
     }
@@ -227,10 +227,10 @@ Step:
         }
 
         if ($3) {
-            $$ = new Step($1, Step::NodeTest(Step::NodeTest::NameTest, localName), namespaceURI, *$3);
+            $$ = new Step($1, Step::NodeTest(Step::NodeTest::NameTest, localName, namespaceURI), *$3);
             PARSER->deletePredicateVector($3);
         } else
-            $$ = new Step($1, Step::NodeTest(Step::NodeTest::NameTest, localName), namespaceURI);
+            $$ = new Step($1, Step::NodeTest(Step::NodeTest::NameTest, localName, namespaceURI));
         PARSER->deleteString($2);
         PARSER->registerParseNode($$);
     }

@@ -1,3 +1,27 @@
+2007-03-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13190
+        XPath incorrectly handles namespaces on attributes
+
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::nodesInAxis): Added a special case for faster attribute lookup; gives a slight but 
+        measurable performance improvement for bug 13021.
+        (WebCore::XPath::Step::nodeMatches): Fixed NameTest for attribute nodes.
+
+        * xml/XPathStep.h:
+        (WebCore::XPath::Step::NodeTest::NodeTest):
+        (WebCore::XPath::Step::NodeTest::namespaceURI):
+        (WebCore::XPath::Step::nodeTest):
+        (WebCore::XPath::Step::setNodeTest):
+        Move m_namespaceURI to NodeTest, where it belongs. Removed unused m_nodeTestData (oops!).
+
+        * xml/XPathGrammar.y:
+        * xml/XPathPath.cpp:
+        (WebCore::XPath::LocationPath::optimizeStepPair):
+        Accounted for the above change.
+
 2007-03-28  Oliver Hunt  <oliver@apple.com>
 
         rs=Hyatt.

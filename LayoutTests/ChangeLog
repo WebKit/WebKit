@@ -1,3 +1,17 @@
+2007-03-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13190
+        XPath incorrectly handles namespaces on attributes
+
+        * fast/xpath/attr-namespace-expected.txt: Added.
+        * fast/xpath/attr-namespace.html: Added.
+
+        * fast/xpath/xpath-namespaces-expected.txt:
+        * fast/xpath/xpath-namespaces.html:
+        Cleaned up; added a couple more cases (which passed anyway, but weren't tested for).
+
 2007-03-27  Darin Adler  <darin@apple.com>
 
         * svg/hixie/text/003-expected.txt: Updated results for this one test that now has
