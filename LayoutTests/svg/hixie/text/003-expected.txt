@@ -11,7 +11,7 @@ layer at (0,0) size 800x402
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150
               RenderSVGContainer {svg} at (0,-15) size 240x60
-                RenderSVGText {text} at (0,0) size 300x1
+                RenderSVGText {text} at (0,0) size 300x1 [color=#000080]
                   RenderSVGInlineText {#text} at (0,-1) size 4x1
                     text run at (0,-1) width 4: "PASS"
       RenderBlock {P} at (0,210) size 784x160
@@ -19,6 +19,6 @@ layer at (0,0) size 800x402
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150
               RenderSVGContainer {svg} at (0,39) size 143.40x69
-                RenderSVGText {text} at (0,800) size 300x1150
+                RenderSVGText {text} at (0,800) size 300x1150 [color=#000080]
                   RenderSVGInlineText {#text} at (0,-900) size 2390x1150
                     text run at (0,-900) width 2390: "PASS"

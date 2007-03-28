@@ -1,3 +1,9 @@
+2007-03-27  Darin Adler  <darin@apple.com>
+
+        * svg/hixie/text/003-expected.txt: Updated results for this one test that now has
+        different results due to the painting Adele added to DumpRenderTree. Long term,
+        we just have to fix SVG so that painting doesn't cause changes to the render tree!
+
 2007-03-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.
