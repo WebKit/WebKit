@@ -1,6 +1,4 @@
 /**
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller ( mueller@kde.org )
@@ -390,13 +388,17 @@ bool StringImpl::isLower() const
     UChar ored = 0;
     for (unsigned i = 0; i < m_length; i++) {
         UChar c = m_data[i];
-        allLower &= islower(c);
+        // The islower function is only guaranteed to work correctly and 
+        // locale-independently for ASCII characters.
+        allLower &= islower(c & 0x7F);
         ored |= c;
     }
     if (!(ored & ~0x7F))
         return allLower;
 
     // Do a slower check for the other cases.
+    // FIXME : still broken for non-BMP characters 
+    // (e.g. Deseret and Mathematical alphanumeric symbols)
     bool allLower2 = true;
     for (unsigned i = 0; i < m_length; i++)
         allLower2 &= Unicode::isLower(m_data[i]);
@@ -420,7 +422,10 @@ StringImpl* StringImpl::lower() const
     for (int i = 0; i < length; i++) {
         UChar c = m_data[i];
         ored |= c;
-        data[i] = tolower(c);
+        // The tolower function is only guaranteed to work correctly and 
+        // locale-independently for ASCII characters. If it's not all ASCII,
+        // we'll take a slower but correct path after the loop.
+        data[i] = tolower(c & 0x7F);
     }
     if (!(ored & ~0x7F))
         return c;
@@ -1036,7 +1041,10 @@ bool equalIgnoringCase(const StringImpl* a, const char* b)
             return false;
         UChar ac = as[i];
         ored |= ac;
-        equal &= tolower(ac) == tolower(bc);
+        // The tolower function is only guaranteed to work correctly and 
+        // locale-independently for ASCII characters. If it's not all ASCII,
+        // we'll take a slower but correct path after the loop.
+        equal &= tolower(ac & 0x7F) == tolower(bc);
     }
 
     if (ored & ~0x7F) {

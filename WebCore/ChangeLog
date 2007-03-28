@@ -1,3 +1,15 @@
+2007-03-28  Jungshik Shin  <jungshik.shin@gmail.com>
+
+        Reviewed  and landed by Darin
+
+        Get rid of some misuses of |islower| and |tolower| for non-ASCII characters.
+        http://bugs.webkit.org/show_bug.cgi?id=13138
+
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::isLower):
+        (WebCore::StringImpl::lower):
+        (WebCore::StringImpl::equalIgnoringCase):
+
 2007-03-28  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Hyatt.
