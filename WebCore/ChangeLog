@@ -1,3 +1,13 @@
+2007-03-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Hyatt.
+
+        Roll out r20511 due to incredible badness
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::pruneAllResources):
+        (WebCore::Cache::remove):
+
 2007-03-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.
