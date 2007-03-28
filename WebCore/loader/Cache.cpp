@@ -42,7 +42,7 @@ using namespace std;
 
 namespace WebCore {
 
-const int cDefaultCacheSize = 1000;// 8192 * 1024;
+const int cDefaultCacheSize = 8192 * 1024;
 
 Cache* cache()
 {
@@ -154,7 +154,6 @@ void Cache::pruneLiveResources()
 
 void Cache::pruneAllResources()
 {
-    m_maximumSize = 1000;
     // No need to prune if all of our objects fit.
     if (m_currentSize <= m_maximumSize)
         return;
@@ -234,12 +233,12 @@ void Cache::remove(CachedResource* resource)
         if (resource->referenced())
             removeFromLiveResourcesList(resource);
         
-        // Notify all doc loaders that might be observing this object still that it has been 
-        // extracted from the set of resources. 
-        HashSet<DocLoader*>::iterator end = m_docLoaders.end(); 
-        for (HashSet<DocLoader*>::iterator itr = m_docLoaders.begin(); itr != end; ++itr) 
-            (*itr)->removeCachedResource(resource); 
-        
+        // Notify all doc loaders that might be observing this object still that it has been
+        // extracted from the set of resources.
+        HashSet<DocLoader*>::iterator end = m_docLoaders.end();
+        for (HashSet<DocLoader*>::iterator itr = m_docLoaders.begin(); itr != end; ++itr)
+            (*itr)->removeCachedResource(resource);
+
         // Subtract from our size totals.
         int delta = -resource->size();
         if (delta)

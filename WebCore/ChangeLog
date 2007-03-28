@@ -1,5 +1,15 @@
 2007-03-28  Oliver Hunt  <oliver@apple.com>
 
+        rs=Hyatt.
+
+        Rollout local changes :-/
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::pruneAllResources):
+        (WebCore::Cache::remove):
+
+2007-03-28  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Hyatt.
 
         Roll out r20511 due to incredible badness
