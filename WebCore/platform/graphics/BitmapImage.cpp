@@ -103,6 +103,8 @@ void BitmapImage::destroyDecodedData(bool incremental)
 void BitmapImage::cacheFrame(size_t index)
 {
     size_t numFrames = frameCount();
+    ASSERT(m_decodedSize == 0 || numFrames > 1);
+    
     if (!m_frames.size() && shouldAnimate()) {            
         // Snag the repetition count.
         m_repetitionCount = m_source.repetitionCount();
@@ -121,7 +123,7 @@ void BitmapImage::cacheFrame(size_t index)
         m_frames[index].m_duration = m_source.frameDurationAtIndex(index);
     m_frames[index].m_hasAlpha = m_source.frameHasAlphaAtIndex(index);
     
-    int sizeChange = m_size.width() * m_size.height() * 4;
+    int sizeChange = m_frames[index].m_frame ? m_size.width() * m_size.height() * 4 : 0;
     if (sizeChange) {
         if (imageObserver())
             imageObserver()->decodedSizeWillChange(this, sizeChange);

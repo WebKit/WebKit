@@ -1,3 +1,19 @@
+2007-03-28  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix <rdar://problem/5092653>
+        REGRESSION: Image decoding making scrolling slow
+        
+        If decoder gave back a null frame (which I think happens regularly if you don't have full frame 
+        data yet for image that does not decode incrementally) m_decodedSize was incremented anyway. This
+        led to massive growth in calculated image size and eventually made cache prune constantly. 
+        
+        No test, I don't know how to make one for this.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::cacheFrame):
+
 2007-03-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by Kevin M.
