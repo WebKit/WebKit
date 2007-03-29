@@ -52,7 +52,6 @@ void FontData::platformInit()
     m_lineSpacing = metrics.lineSpacing();
     m_lineGap = metrics.leading();
     m_xHeight = metrics.xHeight();
-    m_lineSpacing = m_ascent + m_descent + m_lineGap;
 }
 
 void FontData::platformDestroy()

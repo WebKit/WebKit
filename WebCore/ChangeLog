@@ -1,5 +1,14 @@
 2007-03-29  Adam Treat  <adam@staikos.net>
 
+        Reviewed and committed by George Staikos.
+
+        Remove redundant line.
+
+        * platform/qt/FontDataQt.cpp:
+        (WebCore::FontData::platformInit):
+
+2007-03-29  Adam Treat  <adam@staikos.net>
+
         Reviewed by David Hyatt, committed by George Staikos.
 
         Take into account the entire run length to get a proper selection.
