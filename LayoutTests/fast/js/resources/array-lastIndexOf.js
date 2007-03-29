@@ -23,4 +23,32 @@ shouldBe('lastIndex', '0');
 lastIndex = testArray.lastIndexOf(2, -1);
 shouldBe('lastIndex', '3');
 
+delete testArray[1];
+
+lastIndex = testArray.lastIndexOf(undefined);
+shouldBe('lastIndex', '-1');
+
+delete testArray[3];
+
+lastIndex = testArray.lastIndexOf(undefined);
+shouldBe('lastIndex', '-1');
+
+testArray = new Array(20);
+
+lastIndex = testArray.lastIndexOf(undefined);
+shouldBe('lastIndex', '-1');
+
+testArray[19] = undefined;
+
+lastIndex = testArray.lastIndexOf(undefined);
+shouldBe('lastIndex', '19');
+
+lastIndex = testArray.lastIndexOf(undefined, 18);
+shouldBe('lastIndex', '-1');
+
+delete testArray[19];
+
+lastIndex = testArray.lastIndexOf(undefined);
+shouldBe('lastIndex', '-1');
+
 var successfullyParsed = true;

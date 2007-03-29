@@ -80,5 +80,16 @@ shouldBe("accumulator.toString()", "[12, 5].toString()");
 accumulator.length = 0;
 shouldBeTrue("[12, 54, 18, 130, 44].every(isBigEnoughShortCircuit)");
 shouldBe("accumulator.toString()", "[12, 54, 18, 130, 44].toString()");
+debug("");
+
+debug('7.0 Behavior for Holes in Arrays');
+var arr = [5, 5, 5, 5];
+delete arr[1];
+function isNotUndefined(element, index, array) {
+    return typeof element !== "undefined";
+}
+shouldBeTrue("arr.every(isNotUndefined)");
+arr = new Array(20);
+shouldBeTrue("arr.every(isNotUndefined)");
 
 successfullyParsed = true;

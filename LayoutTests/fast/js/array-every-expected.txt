@@ -42,6 +42,10 @@ PASS [12, 5, 8, 130, 44].every(isBigEnoughShortCircuit) is false
 PASS accumulator.toString() is [12, 5].toString()
 PASS [12, 54, 18, 130, 44].every(isBigEnoughShortCircuit) is true
 PASS accumulator.toString() is [12, 54, 18, 130, 44].toString()
+
+7.0 Behavior for Holes in Arrays
+PASS arr.every(isNotUndefined) is true
+PASS arr.every(isNotUndefined) is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

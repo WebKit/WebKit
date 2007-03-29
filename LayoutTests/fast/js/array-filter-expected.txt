@@ -1,0 +1,6 @@
+1.0 Behavior with Holes in Array
+The following tests ensure that filter skips holes in the array it constructs. You should see true printed twice:
+
+true
+true
+

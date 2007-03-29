@@ -156,6 +156,38 @@ function isBigEnough(element, index, array) {
 print("Done with first array.");
 [12, 5, 8, 1, 44].some(isBigEnough);
 print("Done with second array.");
+
+</script>
+<br/>
+7.0 Behavior with Holes in Arrays<br/>
+This test checks that the callback function is not invoked for holes in the array. Five arrays are tested:<br/><br/>
+<script>
+function isBigEnough(element, index, array) {
+    print("Testing element " + element + "...");
+    return (element >= 10);
+}
+
+var arr = [2, 5, 8, 1, 4];
+delete arr[1];
+arr.some(isBigEnough);
+print("Done with first array.");
+
+arr = [undefined];
+arr.some(isBigEnough);
+print("Done with second array.");
+
+delete arr[0];
+arr.some(isBigEnough);
+print("Done with third array.");
+
+arr = new Array(20);
+arr.some(isBigEnough);
+print("Done with fourth array.");
+
+arr[17] = undefined;
+arr.some(isBigEnough);
+print("Done with fifth array.");
+
 </script>
 </body>
 </html>

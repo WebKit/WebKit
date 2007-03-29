@@ -1,3 +1,31 @@
+2007-03-28  Jeff Walden  <jwalden+code@mit.edu>
+
+        Reviewed by Darin.
+
+         http://bugs.webkit.org/show_bug.cgi?id=12963
+         Fix some inconsistencies in the Mozilla JS Array extras implementations
+         with respect to the Mozilla implementation:
+
+           - holes in arrays should be skipped, not treated as undefined,
+             by all such methods
+           - an element with value undefined is not a hole
+           - Array.prototype.forEach should return undefined
+
+        * fast/js/array-every-expected.txt:
+        * fast/js/array-filter-expected.txt: Added.
+        * fast/js/array-filter.html: Added.
+        * fast/js/array-foreach-expected.txt:
+        * fast/js/array-foreach.html:
+        * fast/js/array-indexof-expected.txt:
+        * fast/js/array-indexof.html:
+        * fast/js/array-lastIndexOf-expected.txt:
+        * fast/js/array-map-expected.txt: Added.
+        * fast/js/array-map.html: Added.
+        * fast/js/array-some-expected.txt:
+        * fast/js/array-some.html:
+        * fast/js/resources/array-every.js:
+        * fast/js/resources/array-lastIndexOf.js:
+
 2007-03-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

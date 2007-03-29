@@ -11,6 +11,12 @@ PASS lastIndex is 3
 PASS lastIndex is 0
 PASS lastIndex is 0
 PASS lastIndex is 3
+PASS lastIndex is -1
+PASS lastIndex is -1
+PASS lastIndex is -1
+PASS lastIndex is 19
+PASS lastIndex is -1
+PASS lastIndex is -1
 PASS successfullyParsed is true
 
 TEST COMPLETE

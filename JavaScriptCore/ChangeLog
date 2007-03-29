@@ -1,3 +1,20 @@
+2007-03-28  Jeff Walden  <jwalden+code@mit.edu>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12963
+        Fix some inconsistencies in the Mozilla JS Array extras implementations
+        with respect to the Mozilla implementation:
+
+          - holes in arrays should be skipped, not treated as undefined,
+            by all such methods
+          - an element with value undefined is not a hole
+          - Array.prototype.forEach should return undefined
+
+        * kjs/array_object.cpp:
+        (ArrayInstance::getOwnPropertySlot):
+        (ArrayProtoFunc::callAsFunction):
+
 2007-03-27  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

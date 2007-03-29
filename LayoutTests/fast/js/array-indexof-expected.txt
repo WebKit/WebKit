@@ -49,6 +49,9 @@
 13.0 Looking for undefined
 * The indexOf undefined is 7
 * The indexOf undefined is -1
+* The indexOf undefined is 3
+* The indexOf undefined is -1
+* The indexOf undefined is -1
 
 14.0 Object using the Array prototype
 * The indexOf String "Hello" is 0

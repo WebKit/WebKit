@@ -139,5 +139,43 @@ try {
 
 </script>
 
+<br/>
+6.0 Behavior for Holes in Arrays<br/>
+This test checks that holes in arrays (indexes which have been deleted or are not present) are not included in enumeration:<br/><br/>
+<script>
+function throwIfUndefined(element, index, array) {
+    if (typeof element === "undefined")
+        throw "undefined element enumerated!";
+}
+
+var arr;
+try {
+    arr = [5, 5, 5, 5];
+    delete arr[1];
+    arr.forEach(throwIfUndefined);
+    print("Manually deleted index not enumerated");
+} catch (e) {
+    print(e);
+}
+
+try {
+    arr = new Array(20);
+    arr.forEach(throwIfUndefined);
+    print("Array created using constructor has no properties, so no indexes enumerated");
+} catch (e) {
+    print(e);
+}
+
+</script>
+
+<br/>
+7.0 Return Value<br/>
+This test checks that the return value of Array.prototype.forEach is undefined:<br/><br/>
+<script>
+var wasUndefined = typeof ([1, 2, 3].forEach(function(){})) === "undefined";
+
+print("Return value is " + (wasUndefined ? "" : "NOT ") + "undefined!");
+</script>
+
 </body>
 </html>
