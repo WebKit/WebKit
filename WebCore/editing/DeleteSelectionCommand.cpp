@@ -131,9 +131,9 @@ void DeleteSelectionCommand::initializePositionData()
     
     Node* startCell = enclosingTableCell(m_upstreamStart.node());
     Node* endCell = enclosingTableCell(m_downstreamEnd.node());
-    // Don't move content between parts of a table or between table and non-table content.
+    // Don't move content out of a table cell.
     // FIXME: This isn't right.  A borderless table with two rows and a single column would appear as two paragraphs.
-    if ((startCell || endCell) && endCell != startCell)
+    if (endCell && endCell != startCell)
         m_mergeBlocksAfterDelete = false;
     
     // Usually the start and the end of the selection to delete are pulled together as a result of the deletion.

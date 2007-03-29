@@ -1,3 +1,46 @@
+2007-03-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        <rdar://problem/5032066> Delete should work between ToDos
+        
+        Stop selecting the table when the user attempts to delete
+        the line break just after it, instead, extend the selection
+        into the last table cell.
+        Let deletion merge content into table cells (as long as 
+        its not from another table cell).  
+        Start calling shouldInsertNode:replacingDOMRange:givenAction: 
+        when moving content with moveParagraphs, so that Mail can 
+        modify content before it is moved into a ToDo during a delete.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs): Ask the
+        delegate before performing the move.  This will let Mail
+        prevent styles from entering a ToDo.
+        Added a FIXME about adding a new WebViewInsertAction
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializePositionData):
+        Allow merging into table cells from content not in a table.
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modifyExtendingRightForward):
+        Don't select the table when extending by character/word from
+        just before it.  This code was here to make it easier to select
+        tables in order to delete them, but the deletion UI makes it 
+        largely unnecessary.
+        (WebCore::SelectionController::modifyExtendingLeftBackward):
+        Ditto.
+        * editing/TypingCommand.cpp:
+        (WebCore::isFirstPositionAfterTable): Added.
+        (WebCore::isLastPositionBeforeTable): Ditto.
+        (WebCore::TypingCommand::deleteKeyPressed): When pressing
+        the delete key with a caret at the beginning of a paragraph
+        just after a table, move the paragraph into the last table
+        cell.
+        Do not do this if it would mean moving a block table.
+        Removed some old irrelevant comments.
+        * editing/htmlediting.cpp: Removed unused functions.
+        * editing/htmlediting.h:
+
 2007-03-29  Adam Treat  <adam@staikos.net>
 
         Reviewed and committed by George Staikos.

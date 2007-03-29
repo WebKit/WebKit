@@ -1,3 +1,137 @@
+2007-03-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        <rdar://problem/5032066> <Delete> should work between To Dos
+
+        Demonstrates the fix:
+        * editing/deleting/5032066-expected.checksum: Added.
+        * editing/deleting/5032066-expected.png: Added.
+        * editing/deleting/5032066-expected.txt: Added.
+        * editing/deleting/5032066.html: Added.
+        
+        Fixed:
+        * editing/deleting/delete-block-table-expected.checksum:
+        * editing/deleting/delete-block-table-expected.png:
+        * editing/deleting/delete-block-table-expected.txt:
+        
+        shouldInsertNode:... now being called during moves:
+        * editing/deleting/delete-3857753-fix-expected.txt:
+        * editing/deleting/delete-at-paragraph-boundaries-003-expected.txt:
+        * editing/deleting/delete-at-paragraph-boundaries-007-expected.txt:
+        * editing/deleting/delete-at-paragraph-boundaries-009-expected.txt:
+        * editing/deleting/delete-block-merge-contents-001-expected.txt:
+        * editing/deleting/delete-block-merge-contents-002-expected.txt:
+        * editing/deleting/delete-block-merge-contents-003-expected.txt:
+        * editing/deleting/delete-block-merge-contents-004-expected.txt:
+        * editing/deleting/delete-block-merge-contents-005-expected.txt:
+        * editing/deleting/delete-block-merge-contents-006-expected.txt:
+        * editing/deleting/delete-block-merge-contents-007-expected.txt:
+        * editing/deleting/delete-block-merge-contents-008-expected.txt:
+        * editing/deleting/delete-block-merge-contents-009-expected.txt:
+        * editing/deleting/delete-block-merge-contents-010-expected.txt:
+        * editing/deleting/delete-block-merge-contents-012-expected.txt:
+        * editing/deleting/delete-block-merge-contents-013-expected.txt:
+        * editing/deleting/delete-block-merge-contents-014-expected.txt:
+        * editing/deleting/delete-block-merge-contents-015-expected.txt:
+        * editing/deleting/delete-block-merge-contents-016-expected.txt:
+        * editing/deleting/delete-block-merge-contents-017-expected.txt:
+        * editing/deleting/delete-block-merge-contents-018-expected.txt:
+        * editing/deleting/delete-block-merge-contents-019-expected.txt:
+        * editing/deleting/delete-block-merge-contents-020-expected.txt:
+        * editing/deleting/delete-block-merge-contents-021-expected.txt:
+        * editing/deleting/delete-block-merge-contents-022-expected.txt:
+        * editing/deleting/delete-br-010-expected.txt:
+        * editing/deleting/delete-line-002-expected.txt:
+        * editing/deleting/delete-line-004-expected.txt:
+        * editing/deleting/delete-line-006-expected.txt:
+        * editing/deleting/delete-line-007-expected.txt:
+        * editing/deleting/delete-line-008-expected.txt:
+        * editing/deleting/delete-line-011-expected.txt:
+        * editing/deleting/delete-line-012-expected.txt:
+        * editing/deleting/delete-listitem-001-expected.txt:
+        * editing/deleting/delete-to-end-of-paragraph-expected.txt:
+        * editing/deleting/merge-different-styles-expected.txt:
+        * editing/deleting/merge-no-br-expected.txt:
+        * editing/deleting/pruning-after-merge-1-expected.txt:
+        * editing/deleting/pruning-after-merge-2-expected.txt:
+        * editing/execCommand/create-list-from-range-selection-expected.txt:
+        * editing/execCommand/create-list-with-hr-expected.txt:
+        * editing/execCommand/format-block-expected.txt:
+        * editing/execCommand/format-block-from-range-selection-expected.txt:
+        * editing/execCommand/format-block-with-braces-expected.txt:
+        * editing/execCommand/format-block-with-trailing-br-expected.txt:
+        * editing/execCommand/indent-list-item-expected.txt:
+        * editing/execCommand/indent-selection-expected.txt:
+        * editing/execCommand/insert-list-and-stitch-expected.txt:
+        * editing/execCommand/insert-list-with-id-expected.txt:
+        * editing/execCommand/nsresponder-indent-expected.txt:
+        * editing/execCommand/outdent-selection-expected.txt:
+        * editing/execCommand/queryCommandState-01-expected.txt:
+        * editing/execCommand/remove-list-1-expected.txt:
+        * editing/execCommand/remove-list-from-range-selection-expected.txt:
+        * editing/execCommand/remove-list-item-1-expected.txt:
+        * editing/execCommand/remove-list-items-expected.txt:
+        * editing/execCommand/switch-list-type-expected.txt:
+        * editing/inserting/insert-3907422-fix-expected.txt:
+        * editing/inserting/insert-div-026-expected.txt:
+        * editing/inserting/multiple-lines-selected-expected.txt:
+        * editing/inserting/return-key-with-selection-001-expected.txt:
+        * editing/inserting/return-key-with-selection-002-expected.txt:
+        * editing/pasteboard/4076267-2-expected.txt:
+        * editing/pasteboard/4700297-expected.txt:
+        * editing/pasteboard/8145-3-expected.txt:
+        * editing/pasteboard/display-block-on-spans-expected.txt:
+        * editing/pasteboard/emacs-ctrl-k-y-001-expected.txt:
+        * editing/pasteboard/interchange-newline-1-expected.txt:
+        * editing/pasteboard/interchange-newline-2-expected.txt:
+        * editing/pasteboard/merge-after-delete-1-expected.txt:
+        * editing/pasteboard/merge-after-delete-2-expected.txt:
+        * editing/pasteboard/merge-after-delete-expected.txt:
+        * editing/pasteboard/merge-end-1-expected.txt:
+        * editing/pasteboard/merge-end-2-expected.txt:
+        * editing/pasteboard/merge-end-3-expected.txt:
+        * editing/pasteboard/merge-end-4-expected.txt:
+        * editing/pasteboard/merge-end-5-expected.txt:
+        * editing/pasteboard/merge-end-blockquote-expected.txt:
+        * editing/pasteboard/merge-end-borders-expected.txt:
+        * editing/pasteboard/merge-end-list-expected.txt:
+        * editing/pasteboard/merge-end-table-expected.txt:
+        * editing/pasteboard/paste-line-endings-007-expected.txt:
+        * editing/pasteboard/paste-line-endings-008-expected.txt:
+        * editing/pasteboard/paste-line-endings-009-expected.txt:
+        * editing/pasteboard/paste-match-style-001-expected.txt:
+        * editing/pasteboard/paste-text-002-expected.txt:
+        * editing/pasteboard/paste-text-003-expected.txt:
+        * editing/pasteboard/paste-text-004-expected.txt:
+        * editing/pasteboard/paste-text-005-expected.txt:
+        * editing/pasteboard/paste-text-006-expected.txt:
+        * editing/pasteboard/paste-text-008-expected.txt:
+        * editing/pasteboard/paste-text-009-expected.txt:
+        * editing/pasteboard/paste-text-010-expected.txt:
+        * editing/pasteboard/smart-paste-001-expected.txt:
+        * editing/pasteboard/smart-paste-002-expected.txt:
+        * editing/pasteboard/smart-paste-003-expected.txt:
+        * editing/pasteboard/smart-paste-004-expected.txt:
+        * editing/pasteboard/smart-paste-005-expected.txt:
+        * editing/pasteboard/smart-paste-006-expected.txt:
+        * editing/pasteboard/smart-paste-007-expected.txt:
+        * editing/pasteboard/smart-paste-008-expected.txt:
+        * editing/style/create-block-for-style-001-expected.txt:
+        * editing/style/create-block-for-style-002-expected.txt:
+        * editing/style/create-block-for-style-003-expected.txt:
+        * editing/style/create-block-for-style-004-expected.txt:
+        * editing/style/create-block-for-style-007-expected.txt:
+        * editing/style/create-block-for-style-009-expected.txt:
+        * editing/style/create-block-for-style-010-expected.txt:
+        * editing/style/create-block-for-style-011-expected.txt:
+        * editing/style/create-block-for-style-012-expected.txt:
+        * editing/style/create-block-for-style-013-expected.txt:
+        * editing/style/smoosh-styles-001-expected.txt:
+        * editing/style/smoosh-styles-002-expected.txt:
+        * editing/style/style-boundary-005-expected.txt:
+        * editing/unsupported-content/list-delete-001-expected.txt:
+
 2007-03-29  Darin Adler  <darin@apple.com>
 
         Layout test for <rdar://problem/4545060>, technorati and arstechnica fail

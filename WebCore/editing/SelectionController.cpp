@@ -232,16 +232,10 @@ VisiblePosition SelectionController::modifyExtendingRightForward(TextGranularity
     VisiblePosition pos(m_sel.extent(), m_sel.affinity());
     switch (granularity) {
         case CharacterGranularity:
-            if (isLastVisiblePositionBeforeTableElement(pos.deepEquivalent()))
-                pos = VisiblePosition(positionAfterFollowingTableElement(pos.deepEquivalent()), VP_DEFAULT_AFFINITY);
-            else
-                pos = pos.next();
+            pos = pos.next();
             break;
         case WordGranularity:
-            if (isLastVisiblePositionBeforeTableElement(pos.deepEquivalent()))
-                pos = VisiblePosition(positionAfterFollowingTableElement(pos.deepEquivalent()), VP_DEFAULT_AFFINITY);
-            else
-                pos = nextWordPosition(pos);
+            pos = nextWordPosition(pos);
             break;
         case SentenceGranularity:
             pos = nextSentencePosition(pos);
@@ -332,16 +326,10 @@ VisiblePosition SelectionController::modifyExtendingLeftBackward(TextGranularity
     // over everything.
     switch (granularity) {
         case CharacterGranularity:
-            if (isFirstVisiblePositionAfterTableElement(pos.deepEquivalent()))
-                pos = VisiblePosition(positionBeforePrecedingTableElement(pos.deepEquivalent()), VP_DEFAULT_AFFINITY);
-            else
-                pos = pos.previous();
+            pos = pos.previous();
             break;
         case WordGranularity:
-            if (isFirstVisiblePositionAfterTableElement(pos.deepEquivalent()))
-                pos = VisiblePosition(positionBeforePrecedingTableElement(pos.deepEquivalent()), VP_DEFAULT_AFFINITY);
-            else
-                pos = previousWordPosition(pos);
+            pos = previousWordPosition(pos);
             break;
         case SentenceGranularity:
             pos = previousSentencePosition(pos);

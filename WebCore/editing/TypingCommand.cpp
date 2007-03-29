@@ -333,6 +333,24 @@ void TypingCommand::insertParagraphSeparatorInQuotedContent()
     typingAddedToOpenCommand();
 }
 
+static Node* isFirstPositionAfterTable(const VisiblePosition& visiblePosition)
+{
+    Position upstream(visiblePosition.deepEquivalent().upstream());
+    if (upstream.node() && upstream.node()->renderer() && upstream.node()->renderer()->isTable() && upstream.offset() == maxDeepOffset(upstream.node()))
+        return upstream.node();
+    
+    return 0;
+}
+
+static Node* isLastPositionBeforeTable(const VisiblePosition& visiblePosition)
+{
+    Position downstream(visiblePosition.deepEquivalent().upstream());
+    if (downstream.node() && downstream.node()->renderer() && downstream.node()->renderer()->isTable() && downstream.offset() == maxDeepOffset(downstream.node()))
+        return downstream.node();
+    
+    return 0;
+}
+
 void TypingCommand::deleteKeyPressed(TextGranularity granularity)
 {
     Selection selectionToDelete;
@@ -342,9 +360,6 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity)
             selectionToDelete = endingSelection();
             break;
         case Selection::CARET: {
-            // Handle delete at beginning-of-block case.
-            // Do nothing in the case that the caret is at the start of a
-            // root editable element or at the start of a document.
             SelectionController selectionController;
             selectionController.setSelection(endingSelection());
             selectionController.modify(SelectionController::EXTEND, SelectionController::BACKWARD, granularity);
@@ -357,13 +372,17 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity)
                 }
             }
             
-            // When the caret is a) just after a table, or b) at the beginning of the paragraph after a table, select the table.
-            Position upstreamStart = endingSelection().start().upstream();
-            VisiblePosition visibleStart = endingSelection().visibleStart();
-            if (isStartOfParagraph(visibleStart))
-                upstreamStart = visibleStart.previous(true).deepEquivalent().upstream();
-            if (upstreamStart.node() && upstreamStart.node()->renderer() && upstreamStart.node()->renderer()->isTable() && upstreamStart.offset() == maxDeepOffset(upstreamStart.node())) {
-                setEndingSelection(Selection(Position(upstreamStart.node(), 0), endingSelection().start(), DOWNSTREAM));
+            VisiblePosition visibleStart(endingSelection().visibleStart());
+            // If the caret is at the start of a paragraph after a table, move content into the last table cell.
+            if (isStartOfParagraph(visibleStart) && isFirstPositionAfterTable(visibleStart.previous(true))) {
+                // Unless the caret is just before a table.  We don't want to move a table into the last table cell.
+                if (isLastPositionBeforeTable(visibleStart))
+                    return;
+                // Extend the selection backward into the last cell, then deletion will handle the move.
+                selectionController.modify(SelectionController::EXTEND, SelectionController::BACKWARD, granularity);
+            // If the caret is just after a table, select the table and don't delete anything.
+            } else if (Node* table = isFirstPositionAfterTable(visibleStart)) {
+                setEndingSelection(Selection(Position(table, 0), endingSelection().start(), DOWNSTREAM));
                 typingAddedToOpenCommand();
                 return;
             }

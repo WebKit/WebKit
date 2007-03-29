@@ -699,34 +699,6 @@ bool isTableElement(Node* n)
     return (renderer && (renderer->style()->display() == TABLE || renderer->style()->display() == INLINE_TABLE));
 }
 
-bool isFirstVisiblePositionAfterTableElement(const Position& pos)
-{
-    return isTableElement(pos.upstream().node());
-}
-
-Position positionBeforePrecedingTableElement(const Position& pos)
-{
-    ASSERT(isFirstVisiblePositionAfterTableElement(pos));
-    Position result = positionBeforeNode(pos.upstream().node());
-    if (result.isNull() || !result.node()->rootEditableElement())
-        return pos;
-    return result;
-}
-
-bool isLastVisiblePositionBeforeTableElement(const Position &pos)
-{
-    return isTableElement(pos.downstream().node());
-}
-
-Position positionAfterFollowingTableElement(const Position &pos)
-{
-    ASSERT(isLastVisiblePositionBeforeTableElement(pos));
-    Position result = positionAfterNode(pos.downstream().node());
-    if (result.isNull() || !result.node()->rootEditableElement())
-        return pos;
-    return result;
-}
-
 // This function is necessary because a VisiblePosition is allowed
 // to be at the start or end of elements where we do not want to
 // add content directly.  For example, clicking at the end of a hyperlink,
