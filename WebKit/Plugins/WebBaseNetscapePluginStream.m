@@ -26,23 +26,29 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebBaseNetscapePluginStream.h>
+#import "WebBaseNetscapePluginStream.h"
 
-#import <WebKit/WebBaseNetscapePluginView.h>
-#import <WebKit/WebKitErrorsPrivate.h>
-#import <WebKit/WebKitLogging.h>
-#import <WebKit/WebNetscapePluginPackage.h>
-#import <WebKit/WebNSObjectExtras.h>
-#import <WebKit/WebNSURLExtras.h>
-#import <WebKitSystemInterface.h>
-
-#import <WebCore/WebCoreObjCExtras.h>
-
+#import "WebBaseNetscapePluginView.h"
+#import "WebKitErrorsPrivate.h"
+#import "WebKitLogging.h"
+#import "WebNSObjectExtras.h"
+#import "WebNSURLExtras.h"
+#import "WebNetscapePluginPackage.h"
 #import <Foundation/NSURLResponse.h>
+#import <WebCore/WebCoreObjCExtras.h>
+#import <WebKitSystemInterface.h>
+#import <wtf/HashMap.h>
+
+#define WEB_REASON_NONE -1
 
 static char *CarbonPathFromPOSIXPath(const char *posixPath);
 
-#define WEB_REASON_NONE -1
+typedef HashMap<WebBaseNetscapePluginStream *, NPP> StreamMap;
+static StreamMap& streams()
+{
+    static StreamMap staticStreams;
+    return staticStreams;
+}
 
 @implementation WebBaseNetscapePluginStream
 
@@ -52,6 +58,11 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
     WebCoreObjCFinalizeOnMainThread(self);
 }
 #endif
+
++ (NPP)ownerForStream:(WebBaseNetscapePluginStream *)stream
+{
+    return streams().get(stream);
+}
 
 + (NPReason)reasonForError:(NSError *)error
 {
@@ -105,6 +116,8 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
     [self setPlugin:thePlugin];
     notifyData = theNotifyData;
     sendNotification = flag;
+
+    streams().add(self, thePlugin);
     
     isTerminated = NO;
     
@@ -129,6 +142,8 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
     free((void *)stream.url);
     free(path);
 
+    streams().remove(self);
+
     [super dealloc];
 }
 
@@ -143,6 +158,8 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
 
     free((void *)stream.url);
     free(path);
+
+    streams().remove(self);
 
     [super finalize];
 }
@@ -495,7 +512,7 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath)
         CFRelease(url);
         if (hfsPath) {
             CFIndex bufSize = CFStringGetMaximumSizeOfFileSystemRepresentation(hfsPath);
-            char *filename = malloc(bufSize);
+            char* filename = static_cast<char*>(malloc(bufSize));
             CFStringGetFileSystemRepresentation(hfsPath, filename, bufSize);
             CFRelease(hfsPath);
             return filename;

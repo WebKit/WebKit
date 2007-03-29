@@ -60,7 +60,9 @@
     NPP_URLNotifyProcPtr NPP_URLNotify;
 }
 
++ (NPP)ownerForStream:(WebBaseNetscapePluginStream *)stream;
 + (NPReason)reasonForError:(NSError *)error;
+
 - (NSError *)errorForReason:(NPReason)theReason;
 
 - (id)initWithRequestURL:(NSURL *)theRequestURL

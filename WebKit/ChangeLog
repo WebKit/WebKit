@@ -1,3 +1,29 @@
+2007-03-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reluctantly tolerated by Darin Adler.
+        
+        Fixed <rdar://problem/5091330> REGRESSION: Repro crash in 
+        -[WebBaseNetscapePluginView(WebNPPCallbacks) destroyStream:reason:] 
+        navigating away from page with DivX movie plug-in (13203)
+        
+        The problem was that the DivX plug-in would ask us to destroy an NPStream
+        that had already been destroyed, causing us to wander off into freed
+        memory. (I believe the reason this was a regression was that we never used 
+        to destroy plug-in streams, period.)
+        
+        The solution here is to track the NPStreams belonging to a plug-in, and 
+        guard against plug-ins making calls with NPStreams that don't belong to 
+        them. (It turns out that NPN_DestroyStream is the only stream-based 
+        plug-in call we support.)
+
+        (CarbonPathFromPOSIXPath): Fixed up a cast to be C++ compatible.
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView destroyStream:reason:]): The actual fix.
+        Use helper method to guard against a plug-in using an NPStream that doesn't
+        belong to it.
+        * WebKit.xcodeproj/project.pbxproj: Made WebBaseNetscapePluginView ObjC++
+        so I could use HashMap.
+
 2007-03-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by Brady.

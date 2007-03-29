@@ -2316,10 +2316,15 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 -(NPError)destroyStream:(NPStream*)stream reason:(NPReason)reason
 {
     LOG(Plugins, "NPN_DestroyStream");
-    if (!stream->ndata) {
+    WebBaseNetscapePluginStream *browserStream = static_cast<WebBaseNetscapePluginStream *>(stream->ndata);
+
+    // This function does a sanity check to ensure that the NPStream provided actually
+    // belongs to the plug-in that provided it, which fixes a crash in the DivX 
+    // plug-in: <rdar://problem/5093862> | http://bugs.webkit.org/show_bug.cgi?id=13203
+    if (!stream || [WebBaseNetscapePluginStream ownerForStream:browserStream] != plugin) {
+        LOG_ERROR("Invalid NPStream passed to NPN_DestroyStream: %p\n", stream);
         return NPERR_INVALID_INSTANCE_ERROR;
     }
-    WebBaseNetscapePluginStream *browserStream = (WebBaseNetscapePluginStream *)stream->ndata;
     [browserStream cancelLoadAndDestroyStreamWithError:[browserStream errorForReason:reason]];
     return NPERR_NO_ERROR;
 }
