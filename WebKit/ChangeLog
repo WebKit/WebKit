@@ -1,3 +1,13 @@
+2007-03-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber stamped by Beth Dakin.
+        
+        WebBaseNetscapePluginStream.m => WebBaseNetscapePluginStream.mm, since
+        it's ObjC++ now.
+
+        * Plugins/WebBaseNetscapePluginStream.m: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2007-03-27  Geoffrey Garen  <ggaren@apple.com>
 
         Reluctantly tolerated by Darin Adler.

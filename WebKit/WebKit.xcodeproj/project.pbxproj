@@ -211,7 +211,7 @@
 		939810CC0824BF01008DF038 /* WebStringTruncator.m in Sources */ = {isa = PBXBuildFile; fileRef = F59668C902AD2923018635CA /* WebStringTruncator.m */; };
 		939810CF0824BF01008DF038 /* WebAuthenticationPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = F8CA15B6029A39D901000122 /* WebAuthenticationPanel.m */; };
 		939810D00824BF01008DF038 /* WebPanelAuthenticationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 93154EF203A41270008635CE /* WebPanelAuthenticationHandler.m */; };
-		939810D10824BF01008DF038 /* WebBaseNetscapePluginStream.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A672BA0263866E01000102 /* WebBaseNetscapePluginStream.m */; };
+		939810D10824BF01008DF038 /* WebBaseNetscapePluginStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5A672BA0263866E01000102 /* WebBaseNetscapePluginStream.mm */; };
 		939810D20824BF01008DF038 /* WebBaseNetscapePluginView.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5EBC45602134BC301CA1520 /* WebBaseNetscapePluginView.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		939810D30824BF01008DF038 /* WebBasePluginPackage.m in Sources */ = {isa = PBXBuildFile; fileRef = 83E4AF47036652150000E506 /* WebBasePluginPackage.m */; };
 		939810D50824BF01008DF038 /* WebNetscapePluginEmbeddedView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84D4BFF80348EF7600CA2ACA /* WebNetscapePluginEmbeddedView.mm */; };
@@ -558,7 +558,7 @@
 		F59EAE410253C8DE018635CA /* WebCoreStatistics.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreStatistics.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5A55DC702BAA2E8018635CC /* WebHTMLRepresentationPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHTMLRepresentationPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5A672B90263866E01000102 /* WebBaseNetscapePluginStream.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebBaseNetscapePluginStream.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5A672BA0263866E01000102 /* WebBaseNetscapePluginStream.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebBaseNetscapePluginStream.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F5A672BA0263866E01000102 /* WebBaseNetscapePluginStream.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebBaseNetscapePluginStream.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5AEBB3D024A527601C1A526 /* WebPreferences.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebPreferences.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5AFB45E02B94DC8018635CA /* WebFrameBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameBridge.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5AFB45F02B94DC8018635CA /* WebFrameBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFrameBridge.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -870,7 +870,7 @@
 				51C16E4006138EB400A1657B /* npfunctions.h */,
 				F5F717230288493C018635CA /* npapi.m */,
 				F5A672B90263866E01000102 /* WebBaseNetscapePluginStream.h */,
-				F5A672BA0263866E01000102 /* WebBaseNetscapePluginStream.m */,
+				F5A672BA0263866E01000102 /* WebBaseNetscapePluginStream.mm */,
 				F5EBC45502134BC301CA1520 /* WebBaseNetscapePluginView.h */,
 				2203984A0922D765009C3FFC /* WebBaseNetscapePluginViewInternal.h */,
 				931A72D203265920008635CE /* WebBaseNetscapePluginViewPrivate.h */,
@@ -1435,7 +1435,7 @@
 				939810CC0824BF01008DF038 /* WebStringTruncator.m in Sources */,
 				939810CF0824BF01008DF038 /* WebAuthenticationPanel.m in Sources */,
 				939810D00824BF01008DF038 /* WebPanelAuthenticationHandler.m in Sources */,
-				939810D10824BF01008DF038 /* WebBaseNetscapePluginStream.m in Sources */,
+				939810D10824BF01008DF038 /* WebBaseNetscapePluginStream.mm in Sources */,
 				939810D20824BF01008DF038 /* WebBaseNetscapePluginView.mm in Sources */,
 				939810D30824BF01008DF038 /* WebBasePluginPackage.m in Sources */,
 				939810D50824BF01008DF038 /* WebNetscapePluginEmbeddedView.mm in Sources */,
