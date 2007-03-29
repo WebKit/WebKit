@@ -67,12 +67,14 @@ static bool identifiersInitialized = false;
 
 #define ID_PROPERTY_PROPERTY        0
 #define ID_PROPERTY_EVENT_LOGGING   1
-#define NUM_PROPERTY_IDENTIFIERS    2
+#define ID_PROPERTY_HAS_STREAM      2
+#define NUM_PROPERTY_IDENTIFIERS    3
 
 static NPIdentifier pluginPropertyIdentifiers[NUM_PROPERTY_IDENTIFIERS];
 static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
     "property",
-    "eventLoggingEnabled"
+    "eventLoggingEnabled",
+    "hasStream"
 };
 
 #define ID_TEST_CALLBACK_METHOD     0
@@ -81,7 +83,8 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
 #define ID_TEST_DOM_ACCESS          3
 #define ID_TEST_GET_URL_NOTIFY      4
 #define ID_TEST_INVOKE_DEFAULT      5
-#define NUM_METHOD_IDENTIFIERS      6
+#define ID_DESTROY_STREAM           6
+#define NUM_METHOD_IDENTIFIERS      7
 
 static NPIdentifier pluginMethodIdentifiers[NUM_METHOD_IDENTIFIERS];
 static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
@@ -90,7 +93,8 @@ static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "removeDefaultMethod",
     "testDOMAccess",
     "getURLNotify",
-    "testInvokeDefault"
+    "testInvokeDefault",
+    "destroyStream"
 };
 
 static NPUTF8* createCStringFromNPVariant(const NPVariant *variant)
@@ -131,6 +135,9 @@ static bool pluginGetProperty(NPObject *obj, NPIdentifier name, NPVariant *varia
         return true;
     } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_EVENT_LOGGING]) {
         BOOLEAN_TO_NPVARIANT(((PluginObject *)obj)->eventLogging, *variant);
+        return true;
+    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_HAS_STREAM]) {
+        BOOLEAN_TO_NPVARIANT(((PluginObject *)obj)->stream != 0, *variant);
         return true;
     }
     return false;
@@ -242,7 +249,12 @@ static bool pluginInvoke(NPObject *header, NPIdentifier name, const NPVariant *a
         
         BOOLEAN_TO_NPVARIANT(retval, *result);
         return true;        
-    }
+    } else if (name == pluginMethodIdentifiers[ID_DESTROY_STREAM]) {
+        assert(obj->stream);
+        NPError npError = browser->destroystream(obj->npp, obj->stream, NPRES_USER_BREAK);
+        INT32_TO_NPVARIANT(npError, *result);
+        return true;        
+    } 
 
     return false;
 }
@@ -267,8 +279,8 @@ static NPObject *pluginAllocate(NPP npp, NPClass *theClass)
     }
 
     newInstance->npp = npp;
-    
     newInstance->eventLogging = FALSE;
+    newInstance->stream = 0;
     
     return (NPObject *)newInstance;
 }

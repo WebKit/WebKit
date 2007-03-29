@@ -1,3 +1,17 @@
+2007-03-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin, reviewed by Maciej Stachowiak.
+        
+        Layout test for <rdar://problem/5091330> REGRESSION: Repro crash in 
+        -[WebBaseNetscapePluginView(WebNPPCallbacks) destroyStream:reason:] 
+        navigating away from page with DivX movie plug-in (13203)
+        
+        Changed LOG_ERROR to LOG so the layout test doesn't produce console spew
+        every time you run it.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView destroyStream:reason:]):
+
 2007-03-29  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Brady.

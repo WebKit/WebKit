@@ -1,3 +1,21 @@
+2007-03-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        Layout test for <rdar://problem/5091330> REGRESSION: Repro crash in 
+        -[WebBaseNetscapePluginView(WebNPPCallbacks) destroyStream:reason:] 
+        navigating away from page with DivX movie plug-in (13203)
+        
+        Added hasStream property and destroyStream function, used by layout test.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
+        (pluginGetProperty):
+        (pluginInvoke):
+        (pluginAllocate):
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.c:
+        (NPP_NewStream):
+
 2007-03-27  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

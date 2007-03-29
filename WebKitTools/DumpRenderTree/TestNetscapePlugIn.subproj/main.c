@@ -92,7 +92,10 @@ NPError NPP_SetWindow(NPP instance, NPWindow *window)
 
 NPError NPP_NewStream(NPP instance, NPMIMEType type, NPStream *stream, NPBool seekable, uint16 *stype)
 {
+    PluginObject* obj = instance->pdata;
+    obj->stream = stream;
     *stype = NP_ASFILEONLY;
+
     return NPERR_NO_ERROR;
 }
 
