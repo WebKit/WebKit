@@ -106,6 +106,12 @@ FloatRect ScrollView::visibleContentRect() const
                      visibleHeight());
 }
 
+FloatRect ScrollView::visibleContentRectConsideringExternalScrollers() const
+{
+    // external scrollers not supported for now
+    return visibleContentRect();
+}
+
 void ScrollView::setContentsPos(int newX, int newY)
 {
     if (!m_area)
@@ -290,8 +296,11 @@ void ScrollView::removeChild(Widget* child)
     child->hide();
 }
 
-void ScrollView::scrollPointRecursively(int x, int y)
+void ScrollView::scrollRectIntoViewRecursively(const IntRect& r)
 {
+    int x = r.x();
+    int y = r.y();
+
     x = (x < 0) ? 0 : x;
     y = (y < 0) ? 0 : y;
 

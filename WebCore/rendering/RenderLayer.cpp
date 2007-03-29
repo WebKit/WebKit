@@ -759,24 +759,27 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment
             parentLayer = m_object->parent()->enclosingLayer();
     } else {
         if (frameView) {
-            IntRect viewRect = enclosingIntRect(frameView->visibleContentRect());
-            IntRect r = getRectToExpose(viewRect, rect, alignX, alignY);
-            
-            xOffset = r.x();
-            yOffset = r.y();
-            // Adjust offsets if they're outside of the allowable range.
-            xOffset = max(0, min(frameView->contentsWidth(), xOffset));
-            yOffset = max(0, min(frameView->contentsHeight(), yOffset));
-
             if (m_object->document() && m_object->document()->ownerElement() && m_object->document()->ownerElement()->renderer()) {
+                IntRect viewRect = enclosingIntRect(frameView->visibleContentRect());
+                IntRect r = getRectToExpose(viewRect, rect, alignX, alignY);
+                
+                xOffset = r.x();
+                yOffset = r.y();
+                // Adjust offsets if they're outside of the allowable range.
+                xOffset = max(0, min(frameView->contentsWidth(), xOffset));
+                yOffset = max(0, min(frameView->contentsHeight(), yOffset));
+
                 frameView->setContentsPos(xOffset, yOffset);
                 parentLayer = m_object->document()->ownerElement()->renderer()->enclosingLayer();
                 newRect.setX(rect.x() - frameView->contentsX() + frameView->x());
                 newRect.setY(rect.y() - frameView->contentsY() + frameView->y());
             } else {
+                IntRect viewRect = enclosingIntRect(frameView->visibleContentRectConsideringExternalScrollers());
+                IntRect r = getRectToExpose(viewRect, rect, alignX, alignY);
+                
                 // If this is the outermost view that RenderLayer needs to scroll, then we should scroll the view recursively
                 // Other apps, like Mail, rely on this feature.
-                frameView->scrollPointRecursively(xOffset, yOffset);
+                frameView->scrollRectIntoViewRecursively(r);
             }
         }
     }

@@ -1,3 +1,13 @@
+2007-03-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - <rdar://problem/4820817> Autoscroll is broken in Mail.app (message jumps around when trying to select text)
+
+        * fast/overflow/scrollRevealButton-expected.checksum:
+        * fast/overflow/scrollRevealButton-expected.png:
+        * fast/overflow/scrollRevealButton-expected.txt:
+
 2007-03-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

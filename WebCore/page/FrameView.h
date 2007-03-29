@@ -110,7 +110,7 @@ public:
     IntRect windowClipRect(bool clipToContents) const;
     IntRect windowClipRectForLayer(const RenderLayer*, bool clipToLayerContents) const;
 
-    virtual void scrollPointRecursively(int x, int y);
+    virtual void scrollRectIntoViewRecursively(const IntRect& r);
     virtual void setContentsPos(int x, int y);
 
     String mediaType() const;

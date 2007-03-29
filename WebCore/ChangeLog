@@ -1,3 +1,36 @@
+2007-03-28  Maciej Stachowiak  <mjs@apple.com>
+        
+        Reviewed by Darin.
+        
+        - fixed <rdar://problem/4820817> Autoscroll is broken in Mail.app (message jumps around when trying to select text)
+                
+        Handle scrolling external scrollviews around the webview during
+        autoscroll or when scrolling into view.
+        
+        This should also restore performance on BenchJS test 6 lost due to Tim's partial fix.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollRectIntoViewRecursively):
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+        * platform/gdk/ScrollViewGdk.cpp:
+        (WebCore::ScrollView::visibleContentRectConsideringExternalScrollers):
+        (WebCore::ScrollView::scrollRectIntoViewRecursively):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::visibleContentRect):
+        (WebCore::ScrollView::visibleContentRectConsideringExternalScrollers):
+        (WebCore::ScrollView::scrollRectIntoViewRecursively):
+        (WebCore::ScrollView::updateContents):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::visibleContentRectConsideringExternalScrollers):
+        (WebCore::ScrollView::scrollRectIntoViewRecursively):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::visibleContentRectConsideringExternalScrollers):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::ScrollView::scrollRectIntoViewRecursively):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+       
 2007-03-28  Jungshik Shin  <jungshik.shin@gmail.com>
 
         Reviewed  and landed by Darin

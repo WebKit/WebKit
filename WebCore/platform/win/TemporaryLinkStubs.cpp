@@ -346,7 +346,7 @@ bool ResourceHandle::loadsBlocked() { notImplemented(); return false; }
 
 void ScrollView::addChild(Widget*) { notImplemented(); }
 void ScrollView::removeChild(Widget*) { notImplemented(); }
-void ScrollView::scrollPointRecursively(int x, int y) { notImplemented(); }
+void ScrollView::scrollRectIntoViewRecursively(const IntRect&) { notImplemented(); }
 bool ScrollView::inWindow() const { notImplemented(); return true; }
 void ScrollView::paint(GraphicsContext*, const IntRect&) { notImplemented(); }
 void ScrollView::wheelEvent(PlatformWheelEvent&) { notImplemented(); }

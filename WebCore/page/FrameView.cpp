@@ -603,11 +603,11 @@ void FrameView::restoreScrollbar()
     suppressScrollbars(false);
 }
 
-void FrameView::scrollPointRecursively(int x, int y)
+void FrameView::scrollRectIntoViewRecursively(const IntRect& r)
 {
     if (frame()->prohibitsScrolling())
         return;
-    ScrollView::scrollPointRecursively(x, y);
+    ScrollView::scrollRectIntoViewRecursively(r);
 }
 
 void FrameView::setContentsPos(int x, int y)
