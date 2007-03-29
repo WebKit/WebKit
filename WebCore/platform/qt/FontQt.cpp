@@ -52,6 +52,8 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, co
     p.setPen(QColor(color));
     p.setFont(font->platformData().font());
 
+    // TODO: rework this to make justified text work.  Qt doesn't provide a good
+    // API to solve this problem yet.
     const QChar* buffer = reinterpret_cast<const QChar*>(glyphBuffer.glyphs(from));
     QString str = QString::fromRawData(buffer, numGlyphs);
 
