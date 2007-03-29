@@ -1,3 +1,13 @@
+2007-03-29  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/4545060>, technorati and arstechnica fail because of getComputedStyle not
+        reporting display:none properly when it is set.  This is bugzilla bug 13103.
+
+        Reviewed by mitz
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2007-03-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Hyatt.

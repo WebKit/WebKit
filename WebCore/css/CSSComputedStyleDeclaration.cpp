@@ -481,10 +481,15 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
     if (updateLayout)
         node->document()->updateLayout();
 
-    // FIXME: This should work even if we do not have a renderer.
+    // FIXME: This should work even if we do not have a renderer for all properties.
     RenderObject* renderer = node->renderer();
-    if (!renderer)
+    if (!renderer) {
+        // Handle display:none at the very least.  By definition if we don't have a renderer
+        // we are considered to have no display.
+        if (propertyID == CSS_PROP_DISPLAY)
+            return new CSSPrimitiveValue(CSS_VAL_NONE);
         return 0;
+    }
 
     RenderStyle* style = renderer->style();
     if (!style)
