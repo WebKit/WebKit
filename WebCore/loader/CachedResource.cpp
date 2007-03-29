@@ -37,14 +37,13 @@
 
 namespace WebCore {
 
-CachedResource::CachedResource(const String& URL, Type type, CachePolicy cachePolicy, unsigned size)
+CachedResource::CachedResource(const String& URL, Type type, unsigned size)
 {
     m_url = URL;
     m_type = type;
     m_status = Pending;
     m_encodedSize = size;
     m_inCache = false;
-    m_cachePolicy = cachePolicy;
     m_request = 0;
     m_expireDateChanged = false;
 

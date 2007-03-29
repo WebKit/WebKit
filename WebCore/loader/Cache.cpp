@@ -65,18 +65,18 @@ static CachedResource* createResource(CachedResource::Type type, DocLoader* docL
     switch (type) {
     case CachedResource::ImageResource:
         // User agent images need to null check the docloader.  No other resources need to.
-        return new CachedImage(docLoader, url.url(), docLoader ? docLoader->cachePolicy() : CachePolicyCache, expireDate);
+        return new CachedImage(docLoader, url.url(), expireDate);
     case CachedResource::CSSStyleSheet:
-        return new CachedCSSStyleSheet(docLoader, url.url(), docLoader->cachePolicy(), expireDate, *charset, skipCanLoadCheck);
+        return new CachedCSSStyleSheet(docLoader, url.url(), expireDate, *charset, skipCanLoadCheck);
     case CachedResource::Script:
-        return new CachedScript(docLoader, url.url(), docLoader->cachePolicy(), expireDate, *charset);
+        return new CachedScript(docLoader, url.url(), expireDate, *charset);
 #if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
-        return new CachedXSLStyleSheet(docLoader, url.url(), docLoader->cachePolicy(), expireDate);
+        return new CachedXSLStyleSheet(docLoader, url.url(), expireDate);
 #endif
 #if ENABLE(XBL)
     case CachedResource::XBLStyleSheet:
-        return new CachedXBLDocument(docLoader, url.url(), docLoader->cachePolicy(), expireDate);
+        return new CachedXBLDocument(docLoader, url.url(), expireDate);
 #endif
     default:
         break;

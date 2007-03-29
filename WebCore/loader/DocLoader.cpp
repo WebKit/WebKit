@@ -41,15 +41,15 @@
 namespace WebCore {
 
 DocLoader::DocLoader(Frame *frame, Document* doc)
-: m_cache(cache())
+    : m_cache(cache())
+    , m_expireDate(0)
+    , m_cachePolicy(CachePolicyVerify)
+    , m_frame(frame)
+    , m_doc(doc)
+    , m_autoLoadImages(true)
+    , m_loadInProgress(false)
+    , m_pasteInProgress(false)
 {
-    m_cachePolicy = CachePolicyVerify;
-    m_expireDate = 0;
-    m_autoLoadImages = true;
-    m_frame = frame;
-    m_doc = doc;
-    m_loadInProgress = false;
-
     m_cache->addDocLoader(this);
 }
 
@@ -65,6 +65,8 @@ void DocLoader::setExpireDate(time_t _expireDate)
 
 void DocLoader::checkForReload(const KURL& fullURL)
 {
+    if (m_pasteInProgress)
+        return; //Don't reload resources while pasting
     if (m_cachePolicy == CachePolicyVerify) {
        if (!m_reloadedURLs.contains(fullURL.url())) {
           CachedResource* existing = cache()->resourceForURL(fullURL.url());

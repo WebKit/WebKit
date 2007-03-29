@@ -1,3 +1,53 @@
+2007-03-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Anders and Steve.
+
+        Add a flag to DocLoader to prevent it from reloading 
+        when performing a paste or drop operation.
+        
+        Remove m_cachePolicy from CachedResource as it is never used
+        
+        Fixes rdar://problem/5044366 : REGRESSION: Repro ASSERT failures 
+        dragging image into GMail message in _web_writeImage and 
+        documentFragmentFromDragData
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::paste):
+          prevent the docloader from reloading resources on paste
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::updateFromElement):
+        * loader/Cache.cpp:
+        (WebCore::createResource):
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet):
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage):
+        * loader/CachedImage.h:
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        * loader/CachedResource.h:
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::CachedScript):
+        * loader/CachedScript.h:
+        * loader/CachedXBLDocument.cpp:
+        (WebCore::CachedXBLDocument::CachedXBLDocument):
+        * loader/CachedXBLDocument.h:
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::CachedXSLStyleSheet):
+        * loader/CachedXSLStyleSheet.h:
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::DocLoader):
+           Tidy up constructor initialise new field
+        (WebCore::DocLoader::checkForReload):
+           Prevent reload when pasting
+        * loader/DocLoader.h:
+        (WebCore::DocLoader::setPasteInProgress):
+          new field and setter
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeDrag):
+          prevent the docloader from reloading resources on drop
+
 2007-03-27  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Not reviewed - fix typo in gdk build.

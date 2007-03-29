@@ -39,8 +39,8 @@
 
 namespace WebCore {
 
-CachedCSSStyleSheet::CachedCSSStyleSheet(DocLoader* dl, const String& url, CachePolicy cachePolicy, time_t _expireDate, const String& charset, bool skipCanLoadCheck)
-    : CachedResource(url, CSSStyleSheet, cachePolicy, _expireDate)
+CachedCSSStyleSheet::CachedCSSStyleSheet(DocLoader* dl, const String& url, time_t _expireDate, const String& charset, bool skipCanLoadCheck)
+    : CachedResource(url, CSSStyleSheet, _expireDate)
     , m_decoder(new TextResourceDecoder("text/css", charset))
 {
     // Prefer text/css but accept any type (dell.com serves a stylesheet

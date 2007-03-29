@@ -41,7 +41,7 @@ class Image;
 
 class CachedImage : public CachedResource, public ImageObserver {
 public:
-    CachedImage(DocLoader*, const String& url, CachePolicy, time_t expireDate);
+    CachedImage(DocLoader*, const String& url, time_t expireDate);
     CachedImage(Image*);
     virtual ~CachedImage();
 

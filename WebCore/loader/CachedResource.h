@@ -28,7 +28,6 @@
 #ifndef CachedResource_h
 #define CachedResource_h
 
-#include "CachePolicy.h"
 #include "PlatformString.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
@@ -67,7 +66,7 @@ public:
         Cached       // regular case
     };
 
-    CachedResource(const String& URL, Type type, CachePolicy cachePolicy, unsigned encodedSize = 0);
+    CachedResource(const String& URL, Type type, unsigned encodedSize = 0);
     virtual ~CachedResource();
 
     virtual void setEncoding(const String&) { }
@@ -113,8 +112,6 @@ public:
     void setInCache(bool b) { m_inCache = b; }
     bool inCache() const { return m_inCache; }
     
-    CachePolicy cachePolicy() const { return m_cachePolicy; }
-
     void setRequest(Request*);
 
     SharedBuffer* data() const { return m_data.get(); }
@@ -161,7 +158,6 @@ private:
     unsigned m_liveAccessCount;
     
 protected:
-    CachePolicy m_cachePolicy;
     bool m_inCache;
     bool m_loading;
     bool m_expireDateChanged;

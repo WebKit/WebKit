@@ -31,6 +31,7 @@
 #include "CSSStyleDeclaration.h"
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "DocLoader.h"
 #include "DragActions.h"
 #include "Editor.h"
 #include "EditorClient.h"
@@ -349,11 +350,15 @@ bool DragController::concludeDrag(DragData* dragData, DragDestinationAction acti
     Selection dragCaret(m_page->dragCaretController()->selection());
     m_page->dragCaretController()->clear();
     RefPtr<Range> range = dragCaret.toRange();
+    DocLoader* loader = range->ownerDocument()->docLoader();
+    loader->setPasteInProgress(true);
     if (dragIsMove(innerFrame->selectionController(), dragData) || dragCaret.isContentRichlyEditable()) { 
         bool chosePlainText = false;
         RefPtr<DocumentFragment> fragment = documentFragmentFromDragData(dragData, range, true, chosePlainText);
-        if (!fragment || !innerFrame->editor()->shouldInsertFragment(fragment, range, EditorInsertActionDropped))
+        if (!fragment || !innerFrame->editor()->shouldInsertFragment(fragment, range, EditorInsertActionDropped)) {
+            loader->setPasteInProgress(false);
             return false;
+        }
         
         m_client->willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
         if (dragIsMove(innerFrame->selectionController(), dragData)) {
@@ -367,13 +372,16 @@ bool DragController::concludeDrag(DragData* dragData, DragDestinationAction acti
         }    
     } else {
         String text = dragData->asPlainText();
-        if (text.isEmpty() || !innerFrame->editor()->shouldInsertText(text, range.get(), EditorInsertActionDropped))
+        if (text.isEmpty() || !innerFrame->editor()->shouldInsertText(text, range.get(), EditorInsertActionDropped)) {
+            loader->setPasteInProgress(false);
             return false;
+        }
         
         m_client->willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
         if (setSelectionToDragCaret(innerFrame, dragCaret, range, point))
             applyCommand(new ReplaceSelectionCommand(m_document, createFragmentFromText(range.get(), text), true, false, true)); 
     }
+    loader->setPasteInProgress(false);
 
     return true;
 }

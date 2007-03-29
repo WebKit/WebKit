@@ -37,6 +37,7 @@
 #include "ClipboardEvent.h"
 #include "DeleteButtonController.h"
 #include "DeleteSelectionCommand.h"
+#include "DocLoader.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "EditCommand.h"
@@ -1417,19 +1418,25 @@ void Editor::copy()
 
 void Editor::paste()
 {
+    ASSERT(m_frame->document());
+    DocLoader* loader = m_frame->document()->docLoader();
 #if PLATFORM(MAC)
     // using the platform independent code below requires moving all of
     // WEBHTMLView: _documentFragmentFromPasteboard over to PasteboardMac.
+    loader->setPasteInProgress(true);
     m_frame->issuePasteCommand();
+    loader->setPasteInProgress(false);
 #else
     if (tryDHTMLPaste())
         return;     // DHTML did the whole operation
     if (!canPaste())
         return;
+    loader->setPasteInProgress(true);
     if (m_frame->selectionController()->isContentRichlyEditable())
         pasteWithPasteboard(Pasteboard::generalPasteboard(), true);
     else
         pasteAsPlainTextWithPasteboard(Pasteboard::generalPasteboard());
+    loader->setPasteInProgress(false);
 #endif
 }
 
