@@ -1,3 +1,13 @@
+2007-03-29  Adam Treat  <adam@staikos.net>
+
+        Reviewed by David Hyatt, committed by George Staikos.
+
+        Take into account the entire run length to get a proper selection.
+        Doesn't seem to affect the Mac build but is a problem for Qt.
+
+        * platform/Font.cpp:
+        (WebCore::WidthIterator::WidthIterator):
+
 2007-03-29  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/4545060>, technorati and arstechnica fail because of getComputedStyle not

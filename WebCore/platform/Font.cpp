@@ -101,7 +101,7 @@ WidthIterator::WidthIterator(const Font* font, const TextRun& run, const TextSty
         m_padPerSpace = 0;
     else {
         float numSpaces = 0;
-        for (int i = run.from(); i < m_end; i++)
+        for (int i = 0; i < run.length(); i++)
             if (Font::treatAsSpace(m_run[i]))
                 numSpaces++;
 
