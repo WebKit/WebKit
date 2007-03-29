@@ -2,10 +2,10 @@
 function test() {
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
-    var style = document.defaultView.getComputedStyle(document.body);
+    var style = document.defaultView.getComputedStyle(document.body, "");
     var text = "";
     for (var i = 0; i != style.length; ++i) {
-        var name = style[i];
+        var name = style.item(i);
         var value = style.getPropertyValue(name);
         text += name + ": " + value + ";\n";
     }

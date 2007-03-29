@@ -1,3 +1,18 @@
+2007-03-29  Darin Adler  <darin@apple.com>
+
+        Layout test for <rdar://problem/4545060>, technorati and arstechnica fail
+        because of getComputedStyle not reporting display:none.
+        http://bugs.webkit.org/show_bug.cgi?id=13103
+
+        * fast/css/computed-style-display-none.html: Added.
+        * fast/css/computed-style-display-none-expected.txt: Added.
+
+        * fast/css/computed-style-negative-top.html: Updated to work with Gecko.
+        * fast/css/computed-style-negative-top-expected.txt: Newline change needed
+        because of change above.
+
+        * fast/css/computed-style.html: Updated to work with Gecko.
+
 2007-03-28  Jeff Walden  <jwalden+code@mit.edu>
 
         Reviewed by Darin.
