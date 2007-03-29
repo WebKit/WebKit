@@ -44,7 +44,7 @@
 		22181BD309DC8C4B008342E8 /* ObjCPluginFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 22181BCF09DC8C4B008342E8 /* ObjCPluginFunction.h */; };
 		22181BD409DC8C4B008342E8 /* ObjCPluginFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = 22181BD009DC8C4B008342E8 /* ObjCPluginFunction.m */; };
 		9340994C08540CAE007F3BC8 /* DumpRenderTreePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */; };
-		9340994E08540CAE007F3BC8 /* DumpRenderTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* DumpRenderTree.m */; settings = {ATTRIBUTES = (); }; };
+		9340994E08540CAE007F3BC8 /* DumpRenderTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* DumpRenderTree.m */; settings = {ATTRIBUTES = (); COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		9340995108540CAE007F3BC8 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9335435F03D75502008635CE /* WebKit.framework */; };
 		93442CF608F8BA4900BFE8CA /* TextInputController.h in Headers */ = {isa = PBXBuildFile; fileRef = 93442CF408F8BA4900BFE8CA /* TextInputController.h */; };
 		93442CF708F8BA4900BFE8CA /* TextInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93442CF508F8BA4900BFE8CA /* TextInputController.m */; };
@@ -355,11 +355,13 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C29C308902C6D008A9EFC /* Build configuration list for PBXProject "DumpRenderTree" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 08FB7794FE84155DC02AAC07 /* DumpRenderTree */;
 			productRefGroup = 9340995508540CAF007F3BC8 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			shouldCheckCompatibility = 1;
 			targets = (
 				A84F608D08B1370600E9745F /* All */,
 				9340994A08540CAE007F3BC8 /* DumpRenderTree */,
@@ -525,6 +527,10 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = "$(MACOSX_DEPLOYMENT_TARGET_$(MAC_OS_X_VERSION_MAJOR))";
+				MACOSX_DEPLOYMENT_TARGET_ = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_1040 = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_1050 = 10.5;
 				PREBINDING = NO;
 				WARNING_CFLAGS = (
 					"-Wall",
@@ -544,6 +550,10 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = "$(MACOSX_DEPLOYMENT_TARGET_$(MAC_OS_X_VERSION_MAJOR))";
+				MACOSX_DEPLOYMENT_TARGET_ = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_1040 = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_1050 = 10.5;
 				PREBINDING = NO;
 				WARNING_CFLAGS = (
 					"-Wall",
