@@ -1,3 +1,14 @@
+2007-03-29  Patti Hoa  <patti@apple.com>
+
+        Reviewed by harrison.
+
+        <rdar://problem/4918397> Exception raise inspecting note contents in the background
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject subrole]):
+        (-[WebCoreAXObject title]):
+        Check that attachment supports the attribute before requesting it.
+
 2007-03-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

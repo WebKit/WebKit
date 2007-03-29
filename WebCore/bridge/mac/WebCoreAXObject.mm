@@ -442,9 +442,13 @@ static int headingLevel(RenderObject* renderer)
 {
     if ([self isPasswordField])
         return NSAccessibilitySecureTextFieldSubrole;
-
-    if ([self isAttachment])
-        return [[self attachmentView] accessibilityAttributeValue:NSAccessibilitySubroleAttribute];
+    
+    if ([self isAttachment]) {
+        NSView* attachmentView = [self attachmentView];
+        if ([[attachmentView accessibilityAttributeNames] containsObject:NSAccessibilitySubroleAttribute]) {
+            return [attachmentView accessibilityAttributeValue:NSAccessibilitySubroleAttribute];
+        }
+    }
 
     return nil;
 }
@@ -643,8 +647,12 @@ static HTMLLabelElement* labelForElement(Element* element)
     if (m_renderer->element()->isLink())
         return [self textUnderElement];
         
-    if ([self isAttachment])
-        return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityTitleAttribute];
+    if ([self isAttachment]) {
+        NSView* attachmentView = [self attachmentView];
+        if ([[attachmentView accessibilityAttributeNames] containsObject:NSAccessibilityTitleAttribute]) {
+            return [attachmentView accessibilityAttributeValue:NSAccessibilityTitleAttribute];
+        }
+    }
     
     return nil;
 }
