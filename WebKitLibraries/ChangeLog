@@ -1,3 +1,12 @@
+2007-03-29  Beth Dakin  <bdakin@apple.com>
+
+        Rubber-stamped by Adam.
+
+        Keep OpenSource building.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterface.a:
+
 2007-03-28  Antti Koivisto  <antti@apple.com>
 
         Update libWebKitSystemInterface, previous version was out of date.
