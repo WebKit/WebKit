@@ -87,7 +87,7 @@ public:
     void setLoadInProgress(bool);
     bool loadInProgress() const { return m_loadInProgress; }
     
-    void setPasteInProgress(bool pasteInProgress) { m_pasteInProgress = pasteInProgress; }
+    void setAllowStaleResources(bool allowStaleResources) { m_allowStaleResources = allowStaleResources; }
 
 private:
     CachedResource* requestResource(CachedResource::Type, const String& url, const String* charset = 0, bool skipCanLoadCheck = false);
@@ -106,7 +106,7 @@ private:
     //29 bits left
     bool m_autoLoadImages : 1;
     bool m_loadInProgress : 1;
-    bool m_pasteInProgress : 1;
+    bool m_allowStaleResources : 1;
 };
 
 }

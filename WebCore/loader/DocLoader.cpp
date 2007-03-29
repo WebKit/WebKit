@@ -48,7 +48,7 @@ DocLoader::DocLoader(Frame *frame, Document* doc)
     , m_doc(doc)
     , m_autoLoadImages(true)
     , m_loadInProgress(false)
-    , m_pasteInProgress(false)
+    , m_allowStaleResources(false)
 {
     m_cache->addDocLoader(this);
 }
@@ -65,7 +65,7 @@ void DocLoader::setExpireDate(time_t _expireDate)
 
 void DocLoader::checkForReload(const KURL& fullURL)
 {
-    if (m_pasteInProgress)
+    if (m_allowStaleResources)
         return; //Don't reload resources while pasting
     if (m_cachePolicy == CachePolicyVerify) {
        if (!m_reloadedURLs.contains(fullURL.url())) {

@@ -1423,20 +1423,20 @@ void Editor::paste()
 #if PLATFORM(MAC)
     // using the platform independent code below requires moving all of
     // WEBHTMLView: _documentFragmentFromPasteboard over to PasteboardMac.
-    loader->setPasteInProgress(true);
+    loader->setAllowStaleResources(true);
     m_frame->issuePasteCommand();
-    loader->setPasteInProgress(false);
+    loader->setAllowStaleResources(false);
 #else
     if (tryDHTMLPaste())
         return;     // DHTML did the whole operation
     if (!canPaste())
         return;
-    loader->setPasteInProgress(true);
+    loader->setAllowStaleResources(true);
     if (m_frame->selectionController()->isContentRichlyEditable())
         pasteWithPasteboard(Pasteboard::generalPasteboard(), true);
     else
         pasteAsPlainTextWithPasteboard(Pasteboard::generalPasteboard());
-    loader->setPasteInProgress(false);
+    loader->setAllowStaleResources(false);
 #endif
 }
 

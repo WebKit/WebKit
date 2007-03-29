@@ -1,5 +1,22 @@
 2007-03-28  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Hyatt.
+
+        Rename DocLoader::setPasteInProgress, etc to more generic 
+        setAllowStaleResources, etc
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::paste):
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::DocLoader):
+        (WebCore::DocLoader::checkForReload):
+        * loader/DocLoader.h:
+        (WebCore::DocLoader::setAllowStaleResources):
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeDrag):
+
+2007-03-28  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Anders and Steve.
 
         Add a flag to DocLoader to prevent it from reloading 
