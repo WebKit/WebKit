@@ -29,7 +29,7 @@
 
         * BuildSlaveSupport/build.webkit.org-config/webkit/steps.py:
 
-2007-03-23  George Staikos  <staikos@kde.org>
+2007-03-23  Adam Treat  <adam@staikos.net>
 
         Reviewed and committed by George.
 

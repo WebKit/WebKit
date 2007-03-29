@@ -838,7 +838,7 @@
 
         * html/HTMLBodyElement.cpp: Fix comment typo.
 
-2007-03-23  George Staikos  <staikos@kde.org>
+2007-03-23  Adam Treat  <adam@staikos.net>
 
         Reviewed and committed by George.
 
