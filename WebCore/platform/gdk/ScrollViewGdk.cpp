@@ -314,7 +314,7 @@ IntPoint ScrollView::windowToContents(const IntPoint& point) const
 }
 
 IntPoint ScrollView::contentsToWindow(const IntPoint& point) const
-`{
+{
     notImplementedGdk();
     return point;
 }
