@@ -860,8 +860,9 @@ static bool debugWidget = true;
         settings->setUserStyleSheetLocation([NSURL URLWithString:(location ? location : @"")]);
     } else
         settings->setUserStyleSheetLocation([NSURL URLWithString:@""]);
-    settings->setNeedsAcrobatFrameReloadingQuirk(!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_ACROBAT_QUIRK)
-        && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.adobe.Acrobat.Pro"]);
+    settings->setNeedsAcrobatFrameReloadingQuirk(WKAppVersionCheckLessThan(@"com.adobe.Acrobat", -1, 9)
+        || WKAppVersionCheckLessThan(@"com.adobe.Acrobat.Pro", -1, 9)
+        || WKAppVersionCheckLessThan(@"com.adobe.Reader", -1, 9));
 }
 
 - (void)_preferencesChangedNotification: (NSNotification *)notification

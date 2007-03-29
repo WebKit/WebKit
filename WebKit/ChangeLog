@@ -1,3 +1,28 @@
+2007-03-29  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Brady.
+
+        Fix for <rdar://problem/4674537> REGRESSION: Adobe Acrobat 8 - Text 
+        blinks when mouse is moved, and is invisible otherwise
+
+        -and-
+
+        <rdar://problem/4992521> Please adjust WebKit's Acrobat-workaround 
+        methodology
+
+        The fix for the first bug is to compare against the bundle 
+        identifiers for Adobe Reader and the non-Pro Adobe Acrobat in 
+        addition to Adobe Acrobat Pro. The fix for the second bug is to 
+        check the version number of Acrobat/Reader through 
+        WebKitSystemInterface instead of checking which version of WebKit 
+        it has been linked against.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Two new bundle 
+        identifiers.
+        * Misc/WebKitVersionChecks.h: Remove Acrobat quirk constant.
+        * WebView/WebView.mm:
+        (-[WebView _updateWebCoreSettingsFromPreferences:]):
+
 2007-03-29  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber stamped by Beth Dakin.
