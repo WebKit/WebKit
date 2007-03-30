@@ -1,3 +1,14 @@
+2007-03-30  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Brian Dash
+
+        Fixes an intermittent failure in the port blocking layout test where
+        some sort of indeterminacy would change the error code the networking
+        layer reported.
+
+        * security/block-test-expected.txt:
+        * security/block-test.html:  Use 255.255.255.255 instead of a bogus domain name
+
 2007-03-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.

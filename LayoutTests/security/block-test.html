@@ -6,7 +6,7 @@
       143, 179, 389, 465, 512, 513, 514, 515, 526, 530, 531, 532,
       540, 556, 563, 587, 601, 636, 993, 995, 2049, 4045, 6000, 0);
     
-    var baseURL = "nonexistantdomain.com.fake";
+    var baseURL = "255.255.255.255";
     var currentPort = 0;
     
     if (window.layoutTestController) {
@@ -54,6 +54,6 @@
 correct error for them - blocked instead of cannot find.  It also tries the FTP ports for exemptions.  Due to the 
 nature of this test, the results can only be processed automatically via DumpRenderTree
 </p>
-<img id="testIMG" src="http://nonexistantdomain.com.fake/test.jpg" onError="nextTest();"></img>
+<img id="testIMG" src="http://255.255.255.255/test.jpg" onError="nextTest();"></img>
 </body>
 </html>
