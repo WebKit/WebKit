@@ -1,3 +1,28 @@
+2007-03-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Add TestObject.c and TestObject.h
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
+        (pluginGetProperty):
+        Implement the testObject property.
+        
+        (pluginInvoke):
+        Implement testEnumerate which takes an object and an array and enumerates
+        the properties of the object and adds them to the array.
+        
+        (pluginAllocate):
+        Allocate the test object.
+        
+        (pluginDeallocate):
+        Free the test object.
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.c: Added.
+        * DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.h: Added.
+        Add a test object with two enumerable properties.
+
 2007-03-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.

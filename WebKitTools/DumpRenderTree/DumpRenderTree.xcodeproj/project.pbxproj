@@ -39,6 +39,8 @@
 		14A6FB8A0971CAE5008B014F /* NavigationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A6FB880971CAE5008B014F /* NavigationController.h */; };
 		14A6FB8B0971CAE5008B014F /* NavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14A6FB890971CAE5008B014F /* NavigationController.m */; };
 		1A6CA8DE0B7122D100A24B62 /* ResourceLoadDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6CA8640B7120CF00A24B62 /* ResourceLoadDelegate.m */; };
+		1A8F02E70BB9B4EC008CFA34 /* TestObject.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A8F024D0BB9B056008CFA34 /* TestObject.c */; };
+		1A8F02E80BB9B4EC008CFA34 /* TestObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F024C0BB9B056008CFA34 /* TestObject.h */; };
 		22181BD109DC8C4B008342E8 /* ObjCPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 22181BCD09DC8C4B008342E8 /* ObjCPlugin.h */; };
 		22181BD209DC8C4B008342E8 /* ObjCPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 22181BCE09DC8C4B008342E8 /* ObjCPlugin.m */; };
 		22181BD309DC8C4B008342E8 /* ObjCPluginFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 22181BCF09DC8C4B008342E8 /* ObjCPluginFunction.h */; };
@@ -105,6 +107,8 @@
 		14A6FB890971CAE5008B014F /* NavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavigationController.m; sourceTree = "<group>"; };
 		1A6CA8630B7120CF00A24B62 /* ResourceLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadDelegate.h; sourceTree = "<group>"; };
 		1A6CA8640B7120CF00A24B62 /* ResourceLoadDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResourceLoadDelegate.m; sourceTree = "<group>"; };
+		1A8F024C0BB9B056008CFA34 /* TestObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestObject.h; sourceTree = "<group>"; };
+		1A8F024D0BB9B056008CFA34 /* TestObject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TestObject.c; sourceTree = "<group>"; };
 		22181BCD09DC8C4B008342E8 /* ObjCPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ObjCPlugin.h; sourceTree = "<group>"; };
 		22181BCE09DC8C4B008342E8 /* ObjCPlugin.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ObjCPlugin.m; sourceTree = "<group>"; };
 		22181BCF09DC8C4B008342E8 /* ObjCPluginFunction.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ObjCPluginFunction.h; sourceTree = "<group>"; };
@@ -198,6 +202,8 @@
 				141BF445096A45C800E0753C /* main.c */,
 				141BF446096A45C800E0753C /* PluginObject.c */,
 				141BF447096A45C800E0753C /* PluginObject.h */,
+				1A8F024D0BB9B056008CFA34 /* TestObject.c */,
+				1A8F024C0BB9B056008CFA34 /* TestObject.h */,
 				141BF448096A45C800E0753C /* Info.plist */,
 			);
 			path = TestNetscapePlugIn.subproj;
@@ -264,6 +270,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				141BF453096A45EB00E0753C /* PluginObject.h in Headers */,
+				1A8F02E80BB9B4EC008CFA34 /* TestObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -355,13 +362,11 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C29C308902C6D008A9EFC /* Build configuration list for PBXProject "DumpRenderTree" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 08FB7794FE84155DC02AAC07 /* DumpRenderTree */;
 			productRefGroup = 9340995508540CAF007F3BC8 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				A84F608D08B1370600E9745F /* All */,
 				9340994A08540CAE007F3BC8 /* DumpRenderTree */,
@@ -389,6 +394,7 @@
 			files = (
 				141BF44A096A45C800E0753C /* main.c in Sources */,
 				141BF44B096A45C800E0753C /* PluginObject.c in Sources */,
+				1A8F02E70BB9B4EC008CFA34 /* TestObject.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

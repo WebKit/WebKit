@@ -6,7 +6,7 @@
  redistribute this Apple software.
  
  In consideration of your agreement to abide by the following terms, and subject to these 
- terms, Apple grants you a personal, non-exclusive license, under AppleÕs copyrights in 
+ terms, Apple grants you a personal, non-exclusive license, under Appleâ€™s copyrights in 
  this original Apple software (the "Apple Software"), to use, reproduce, modify and 
  redistribute the Apple Software, with or without modifications, in source and/or binary 
  forms; provided that if you redistribute the Apple Software in its entirety and without 
@@ -31,17 +31,7 @@
  OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/npfunctions.h>
+#import <WebKit/npapi.h>
+#import <WebKit/npruntime.h>
 
-extern NPNetscapeFuncs *browser;
-
-typedef struct {
-    NPObject header;
-    NPP npp;
-    NPBool eventLogging;
-    NPObject* testObject;
-    NPStream* stream;
-} PluginObject;
-
-extern NPClass *getPluginClass(void);
-extern void handleCallback(PluginObject* object, const char *url, NPReason reason, void *notifyData);
+NPClass *getTestClass(void);

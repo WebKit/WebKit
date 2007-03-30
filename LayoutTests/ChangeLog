@@ -1,3 +1,12 @@
+2007-03-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        Add enumeration test.
+        
+        * plugins/netscape-enumerate-expected.txt: Added.
+        * plugins/netscape-enumerate.html: Added.
+
 2007-03-29  Geoffrey Garen  <ggaren@apple.com>
 
         Layout test for <rdar://problem/5061807>. (This one's for you, Boyscout!)

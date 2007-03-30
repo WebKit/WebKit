@@ -31,6 +31,7 @@
 #include "c_utility.h"
 #include "list.h"
 #include "npruntime_impl.h"
+#include "PropertyNameArray.h"
 #include "runtime_root.h"
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
@@ -171,6 +172,34 @@ JSValue* CInstance::booleanValue() const
 JSValue* CInstance::valueOf() const 
 {
     return stringValue();
+}
+
+void CInstance::getPropertyNames(ExecState*, PropertyNameArray& nameArray) 
+{
+    if (!NP_CLASS_STRUCT_VERSION_HAS_ENUM(_object->_class) ||
+        !_object->_class->enumerate)
+        return;
+
+    unsigned count;
+    NPIdentifier* identifiers;
+    
+    {
+        JSLock::DropAllLocks dropAllLocks;
+        if (!_object->_class->enumerate(_object, &identifiers, &count))
+            return;
+    }
+    
+    for (unsigned i = 0; i < count; i++) {
+        PrivateIdentifier* identifier = static_cast<PrivateIdentifier*>(identifiers[i]);
+        
+        if (identifier->isString)
+            nameArray.add(identifierFromNPIdentifier(identifier->value.string));
+        else
+            nameArray.add(Identifier::from(identifier->value.number));
+    }
+         
+    // FIXME: This should really call NPN_MemFree but that's in WebKit
+    free(identifiers);
 }
 
 }

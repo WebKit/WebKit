@@ -29,6 +29,9 @@ typedef NPError (*NPN_GetURLProcPtr)(NPP instance, const char* URL, const char* 
 typedef NPError (*NPN_PostURLProcPtr)(NPP instance, const char* URL, const char* window, uint32 len, const char* buf, NPBool file);
 typedef void* (*NPN_GetJavaEnvProcPtr)(void);
 typedef void* (*NPN_GetJavaPeerProcPtr)(NPP instance);
+typedef void  (*NPN_PushPopupsEnabledStateProcPtr)(NPP instance, NPBool enabled);
+typedef void  (*NPN_PopPopupsEnabledStateProcPtr)(NPP instance);
+
 
 typedef void (*NPN_ReleaseVariantValueProcPtr) (NPVariant *variant);
 
@@ -51,6 +54,7 @@ typedef bool (*NPN_HasPropertyProcPtr) (NPP, NPObject *npobj, NPIdentifier prope
 typedef bool (*NPN_HasMethodProcPtr) (NPP npp, NPObject *npobj, NPIdentifier methodName);
 typedef bool (*NPN_RemovePropertyProcPtr) (NPP npp, NPObject *obj, NPIdentifier propertyName);
 typedef void (*NPN_SetExceptionProcPtr) (NPObject *obj, const NPUTF8 *message);
+typedef bool (*NPN_EnumerateProcPtr) (NPP npp, NPObject *npobj, NPIdentifier **identifier, uint32_t *count);
 
 typedef NPError (*NPP_NewProcPtr)(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, char* argn[], char* argv[], NPSavedData* saved);
 typedef NPError (*NPP_DestroyProcPtr)(NPP instance, NPSavedData** save);
@@ -115,6 +119,9 @@ typedef struct _NPNetscapeFuncs {
     NPN_HasMethodProcPtr hasmethod;
     NPN_ReleaseVariantValueProcPtr releasevariantvalue;
     NPN_SetExceptionProcPtr setexception;
+    NPN_PushPopupsEnabledStateProcPtr pushpopupsenabledstate;
+    NPN_PopPopupsEnabledStateProcPtr poppopupsenabledstate;
+    NPN_EnumerateProcPtr enumerate;
 } NPNetscapeFuncs;
 
 typedef struct _NPPluginFuncs {

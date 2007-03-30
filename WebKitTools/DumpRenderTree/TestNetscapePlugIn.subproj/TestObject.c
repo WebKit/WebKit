@@ -6,7 +6,7 @@
  redistribute this Apple software.
  
  In consideration of your agreement to abide by the following terms, and subject to these 
- terms, Apple grants you a personal, non-exclusive license, under AppleÕs copyrights in 
+ terms, Apple grants you a personal, non-exclusive license, under Appleâ€™s copyrights in 
  this original Apple software (the "Apple Software"), to use, reproduce, modify and 
  redistribute the Apple Software, with or without modifications, in source and/or binary 
  forms; provided that if you redistribute the Apple Software in its entirety and without 
@@ -31,17 +31,85 @@
  OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/npfunctions.h>
+#import "TestObject.h"
+#import "PluginObject.h"
 
-extern NPNetscapeFuncs *browser;
+static bool testEnumerate(NPObject *npobj, NPIdentifier **value, uint32_t *count);
+static bool testHasProperty(NPObject *obj, NPIdentifier name);
+static NPObject *testAllocate(NPP npp, NPClass *theClass);
+static void testDeallocate(NPObject *obj);
 
-typedef struct {
-    NPObject header;
-    NPP npp;
-    NPBool eventLogging;
-    NPObject* testObject;
-    NPStream* stream;
-} PluginObject;
+static NPClass testClass = { 
+    NP_CLASS_STRUCT_VERSION,
+    testAllocate, 
+    testDeallocate, 
+    0,
+    0,
+    0,
+    0,
+    testHasProperty,
+    0,
+    0,
+    0,
+    testEnumerate
+};
 
-extern NPClass *getPluginClass(void);
-extern void handleCallback(PluginObject* object, const char *url, NPReason reason, void *notifyData);
+NPClass *getTestClass(void)
+{
+    return &testClass;
+}
+
+static bool identifiersInitialized = false;
+
+#define NUM_TEST_IDENTIFIERS 2
+
+static NPIdentifier testIdentifiers[NUM_TEST_IDENTIFIERS];
+static const NPUTF8 *testIdentifierNames[NUM_TEST_IDENTIFIERS] = {
+    "foo",
+    "bar"
+};
+
+static void initializeIdentifiers(void)
+{
+    browser->getstringidentifiers(testIdentifierNames, NUM_TEST_IDENTIFIERS, testIdentifiers);
+}
+
+static NPObject *testAllocate(NPP npp, NPClass *theClass)
+{
+    NPObject *newInstance = malloc(sizeof(NPObject));
+    
+    if (!identifiersInitialized) {
+        identifiersInitialized = true;
+        initializeIdentifiers();
+    }
+    
+    return newInstance;
+}
+
+static void testDeallocate(NPObject *obj) 
+{
+    free(obj);
+}
+
+static bool testHasProperty(NPObject *obj, NPIdentifier name)
+{
+    for (unsigned i = 0; i < NUM_TEST_IDENTIFIERS; i++) {
+        if (testIdentifiers[i] == name)
+            return true;
+    }
+    
+    return false;
+}
+
+
+static bool testEnumerate(NPObject *npobj, NPIdentifier **value, uint32_t *count)
+{
+    *count = NUM_TEST_IDENTIFIERS;
+    
+    *value = browser->memalloc(NUM_TEST_IDENTIFIERS * sizeof(NPIdentifier));
+    memcpy(*value, testIdentifiers, sizeof(NPIdentifier) * NUM_TEST_IDENTIFIERS);
+    
+    return true;
+}
+
+

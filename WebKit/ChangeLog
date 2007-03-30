@@ -1,3 +1,19 @@
+2007-03-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        * Plugins/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage load]):
+        Initialize pushpopupsenabledstate, poppopupsenabledstate and enumerate.
+        
+        * Plugins/npapi.m:
+        (NPN_PushPopupsEnabledState):
+        (NPN_PopPopupsEnabledState):
+        Add stubs for these functions.
+        
+        * Plugins/npfunctions.h:
+        Add new methods to NPNetscapeFuncs.
+
 2007-03-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin, reviewed by Maciej Stachowiak.

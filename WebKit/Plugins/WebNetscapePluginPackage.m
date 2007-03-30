@@ -377,7 +377,9 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.forceredraw = (NPN_ForceRedrawProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_ForceRedraw);
         browserFuncs.getJavaEnv = (NPN_GetJavaEnvProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetJavaEnv);
         browserFuncs.getJavaPeer = (NPN_GetJavaPeerProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetJavaPeer);
-
+        browserFuncs.pushpopupsenabledstate = (NPN_PushPopupsEnabledStateProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_PushPopupsEnabledState);
+        browserFuncs.poppopupsenabledstate = (NPN_PopPopupsEnabledStateProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_PopPopupsEnabledState);
+        
         browserFuncs.releasevariantvalue = (NPN_ReleaseVariantValueProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_ReleaseVariantValue);
         browserFuncs.getstringidentifier = (NPN_GetStringIdentifierProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_GetStringIdentifier);
         browserFuncs.getstringidentifiers = (NPN_GetStringIdentifiersProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_GetStringIdentifiers);
@@ -394,7 +396,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.setproperty = (NPN_SetPropertyProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_SetProperty);
         browserFuncs.removeproperty = (NPN_RemovePropertyProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_RemoveProperty);
         browserFuncs.setexception = (NPN_SetExceptionProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_SetException);
-
+        browserFuncs.enumerate = (NPN_EnumerateProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_Enumerate);
+        
 #if !LOG_DISABLED
         CFAbsoluteTime mainStart = CFAbsoluteTimeGetCurrent();
 #endif
@@ -470,7 +473,9 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.forceredraw = NPN_ForceRedraw;
         browserFuncs.getJavaEnv = NPN_GetJavaEnv;
         browserFuncs.getJavaPeer = NPN_GetJavaPeer;
-
+        browserFuncs.pushpopupsenabledstate = NPN_PushPopupsEnabledState;
+        browserFuncs.poppopupsenabledstate = NPN_PopPopupsEnabledState;
+        
         browserFuncs.releasevariantvalue = _NPN_ReleaseVariantValue;
         browserFuncs.getstringidentifier = _NPN_GetStringIdentifier;
         browserFuncs.getstringidentifiers = _NPN_GetStringIdentifiers;
@@ -487,6 +492,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.setproperty = _NPN_SetProperty;
         browserFuncs.removeproperty = _NPN_RemoveProperty;
         browserFuncs.setexception = _NPN_SetException;
+        browserFuncs.enumerate = _NPN_Enumerate;
 
 #if !LOG_DISABLED
         CFAbsoluteTime initializeStart = CFAbsoluteTimeGetCurrent();

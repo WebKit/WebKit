@@ -158,3 +158,13 @@ void* NPN_GetJavaPeer(NPP instance)
     LOG(Plugins, "NPN_GetJavaPeer");
     return NULL;
 }
+
+void
+NPN_PushPopupsEnabledState(NPP instance, NPBool enabled)
+{
+}
+
+void
+NPN_PopPopupsEnabledState(NPP instance)
+{
+}

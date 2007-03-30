@@ -1,3 +1,25 @@
+2007-03-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        Implement _NPN_Enumerate support.
+        
+        * JavaScriptCore.exp:
+        * bindings/NP_jsobject.cpp:
+        (_NPN_Enumerate):
+        * bindings/c/c_instance.cpp:
+        (KJS::Bindings::CInstance::getPropertyNames):
+        * bindings/c/c_instance.h:
+        * bindings/npapi.h:
+        * bindings/npruntime.h:
+        * bindings/npruntime_impl.h:
+        * bindings/runtime.h:
+        (KJS::Bindings::Instance::getPropertyNames):
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::getPropertyNames):
+        * bindings/runtime_object.h:
+        (KJS::RuntimeObjectImp::getInternalInstance):
+
 2007-03-28  Jeff Walden  <jwalden+code@mit.edu>
 
         Reviewed by Darin.

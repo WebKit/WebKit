@@ -44,9 +44,10 @@ public:
     virtual JSValue *defaultValue(ExecState *exec, JSType hint) const;
     virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
-    
-    Bindings::Instance *getInternalInstance() const { return instance.get(); }
+    virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
+    Bindings::Instance *getInternalInstance() const { return instance.get(); }
+    
     static const ClassInfo info;
 
 private:

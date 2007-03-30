@@ -194,3 +194,10 @@ JSValue *RuntimeObjectImp::callAsFunction(ExecState* exec, JSObject*, const List
     return aValue;
 }
 
+void RuntimeObjectImp::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
+{
+    instance->begin();
+    instance->getPropertyNames(exec, propertyNames);
+    instance->end();
+}
+

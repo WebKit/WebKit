@@ -30,6 +30,7 @@
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
 #include "object.h"
+#include "PropertyNameArray.h"
 #include "runtime_root.h"
 
 using namespace KJS;
@@ -64,8 +65,8 @@ static void jsDeallocate(NPObject* npObj)
     free(obj);
 }
 
-static NPClass javascriptClass = { 1, jsAllocate, jsDeallocate, 0, 0, 0, 0, 0, 0, 0, 0 };
-static NPClass noScriptClass = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+static NPClass javascriptClass = { 1, jsAllocate, jsDeallocate, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+static NPClass noScriptClass = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 NPClass* NPScriptObjectClass = &javascriptClass;
 static NPClass* NPNoScriptObjectClass = &noScriptClass;
@@ -391,4 +392,39 @@ void _NPN_SetException(NPObject* o, const NPUTF8* message)
         JSLock lock;
         throwError(exec, GeneralError, message);
     }
+}
+
+bool _NPN_Enumerate(NPP npp, NPObject *o, NPIdentifier **identifier, uint32_t *count)
+{
+    if (o->_class == NPScriptObjectClass) {
+        JavaScriptObject* obj = (JavaScriptObject*)o; 
+        if (!_isSafeScript(obj))
+            return false;
+        
+        RootObject* rootObject = obj->rootObject;
+        if (!rootObject || !rootObject->isValid())
+            return false;
+        
+        ExecState* exec = rootObject->interpreter()->globalExec();
+        JSLock lock;
+        PropertyNameArray propertyNames;
+
+        obj->imp->getPropertyNames(exec, propertyNames);
+        unsigned size = propertyNames.size();
+        // FIXME: This should really call NPN_MemAlloc but that's in WebKit
+        NPIdentifier *identifiers = static_cast<NPIdentifier*>(malloc(sizeof(NPIdentifier) * size));
+        
+        for (unsigned i = 0; i < size; i++)
+            identifiers[i] = _NPN_GetStringIdentifier(propertyNames[i].ustring().UTF8String().c_str());
+
+        *identifier = identifiers;
+        *count = size;
+        
+        return true;
+    }
+    
+    if (NP_CLASS_STRUCT_VERSION_HAS_ENUM(o->_class) && o->_class->enumerate)
+        return o->_class->enumerate(o, identifier, count);
+    
+    return false;
 }

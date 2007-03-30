@@ -35,6 +35,7 @@ namespace KJS  {
 
 class Identifier;
 class List;
+class PropertyNameArray;
 
 namespace Bindings {
 
@@ -170,6 +171,8 @@ public:
     virtual JSValue* invokeMethod(ExecState*, const MethodList&, const List& args) = 0;
     virtual JSValue* invokeDefaultMethod(ExecState*, const List&) { return jsUndefined(); }
     
+    virtual void getPropertyNames(ExecState*, PropertyNameArray&) { }
+
     virtual JSValue* defaultValue(JSType hint) const = 0;
     
     virtual JSValue* valueOf() const { return jsString(getClass()->name()); }

@@ -84,6 +84,7 @@ _WTFReportError
 _WTFReportFatalError
 __NPN_CreateObject
 __NPN_DeallocateObject
+__NPN_Enumerate
 __NPN_Evaluate
 __NPN_GetIntIdentifier
 __NPN_GetProperty

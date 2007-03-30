@@ -52,6 +52,7 @@ extern bool _NPN_RemoveProperty(NPP npp, NPObject *npobj, NPIdentifier propertyN
 extern bool _NPN_HasProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName);
 extern bool _NPN_HasMethod(NPP npp, NPObject *npobj, NPIdentifier methodName);
 extern void _NPN_SetException(NPObject *obj, const NPUTF8 *message);
+extern bool _NPN_Enumerate(NPP npp, NPObject *npobj, NPIdentifier **identifier, uint32_t *count);
 
 #ifdef __cplusplus
 }  /* end extern "C" */
