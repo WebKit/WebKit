@@ -4417,14 +4417,14 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 {
     Frame* coreFrame = core([self _frame]);
     if (coreFrame)
-        coreFrame->editor()->deleteWithDirection(SelectionController::FORWARD, WordGranularity, true, false);
+        coreFrame->editor()->execCommand("DeleteWordForward");
 }
 
 - (void)deleteWordBackward:(id)sender
 {
     Frame* coreFrame = core([self _frame]);
     if (coreFrame)
-        coreFrame->editor()->deleteWithDirection(SelectionController::BACKWARD, WordGranularity, true, false);
+        coreFrame->editor()->execCommand("DeleteWordBackward");
 }
 
 - (void)deleteToBeginningOfLine:(id)sender

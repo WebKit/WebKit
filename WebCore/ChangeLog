@@ -1,3 +1,14 @@
+2007-03-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Added DeleteWordBackward and DeleteWordForward to execCommand.
+
+        * editing/Editor.cpp:
+        (WebCore::execDeleteWordBackward):
+        (WebCore::execDeleteWordForward):
+        (WebCore::CommandEntry::):
+
 2007-03-30  Simon Hausmann  <hausmann@kde.org>
 
         Reviewed by Zack

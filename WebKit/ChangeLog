@@ -1,3 +1,14 @@
+2007-03-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Call execCommand for deleteWordForward and deleteWordBackward instead of calling
+        deleteWithDirection directly.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView deleteWordForward:]):
+        (-[WebHTMLView deleteWordBackward:]):
+
 2007-03-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.
