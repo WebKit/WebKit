@@ -1,3 +1,21 @@
+2007-03-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <rdar://problem/5099303> Deleting after a ToDo puts the caret in the wrong position
+
+        Tests for the bug:
+        * editing/deleting/5099303-expected.checksum: Added.
+        * editing/deleting/5099303-expected.png: Added.
+        * editing/deleting/5099303-expected.txt: Added.
+        * editing/deleting/5099303.html: Added.
+        Tests that extending an editable selection skips non-editable
+        content:
+        * editing/selection/5099303-expected.checksum: Added.
+        * editing/selection/5099303-expected.png: Added.
+        * editing/selection/5099303-expected.txt: Added.
+        * editing/selection/5099303.html: Added.
+
 2007-03-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.

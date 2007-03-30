@@ -1,3 +1,21 @@
+2007-03-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        <rdar://problem/5099303> Deleting after a ToDo puts the caret in the wrong position
+        
+        We were failing to create the correct selection 
+        for DeleteSelectionCommand because the selection extension 
+        operations don't skip over non-editable content for editable 
+        selections.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modifyExtendingRightForward):
+        When extending an editable selection, don't extend into
+        non-editable content.
+        (WebCore::SelectionController::modifyExtendingLeftBackward):
+        Ditto.
+
 2007-03-29  Patti Hoa  <patti@apple.com>
 
         Reviewed by harrison.
