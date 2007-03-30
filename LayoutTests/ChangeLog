@@ -1,3 +1,10 @@
+2007-03-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Layout test for <rdar://problem/5061807>. (This one's for you, Boyscout!)
+
+        * fast/frames/remove-frame-with-scrollbars-crash-expected.txt: Added.
+        * fast/frames/remove-frame-with-scrollbars-crash.html: Added.
+
 2007-03-29  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
