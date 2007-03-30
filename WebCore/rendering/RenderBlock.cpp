@@ -2003,22 +2003,6 @@ void RenderBlock::removeFloatingObject(RenderObject *o)
     }
 }
 
-void RenderBlock::setPaintsFloatingObject(RenderObject* o, bool b)
-{
-    if (!m_floatingObjects)
-        return;
-    
-    DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
-    while (it.current()) {
-        if (it.current()->node == o) {
-            it.current()->noPaint = !b;
-            setChildNeedsLayout(true);
-            return;
-        }
-        ++it;
-    }
-}
-
 void RenderBlock::positionNewFloats()
 {
     if (!m_floatingObjects)

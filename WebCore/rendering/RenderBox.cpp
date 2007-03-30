@@ -70,18 +70,6 @@ RenderBox::RenderBox(Node* node)
 {
 }
 
-static RenderBlock* blockThatPaintsFloat(RenderObject* f)
-{
-    RenderBlock* lastBlock = 0;
-    for (RenderObject* o = f->parent(); o; o = o->parent()) {
-        if (lastBlock && o->layer())
-            break;
-        if (o->isRenderBlock())
-            lastBlock = static_cast<RenderBlock*>(o);
-    }
-    return lastBlock;
-}
-
 void RenderBox::setStyle(RenderStyle* newStyle)
 {
     bool wasFloating = isFloating();
@@ -124,10 +112,8 @@ void RenderBox::setStyle(RenderStyle* newStyle)
 
     if (requiresLayer()) {
         if (!m_layer) {
-            if (wasFloating && isFloating()) {
-                if (RenderBlock* b = blockThatPaintsFloat(this))
-                    b->setPaintsFloatingObject(this, false);
-            }
+            if (wasFloating && isFloating())
+                setChildNeedsLayout(true);
             m_layer = new (renderArena()) RenderLayer(this);
             m_layer->insertOnlyThisLayer();
             if (parent() && !needsLayout() && containingBlock())
@@ -138,10 +124,8 @@ void RenderBox::setStyle(RenderStyle* newStyle)
         RenderLayer* layer = m_layer;
         m_layer = 0;
         layer->removeOnlyThisLayer();
-        if (wasFloating && isFloating()) {
-            if (RenderBlock* b = blockThatPaintsFloat(this))
-                b->setPaintsFloatingObject(this, true);
-        }
+        if (wasFloating && isFloating())
+            setChildNeedsLayout(true);
     }
 
     if (m_layer)
