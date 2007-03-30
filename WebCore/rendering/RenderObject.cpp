@@ -2392,14 +2392,6 @@ int RenderObject::paddingRight() const
     return w;
 }
 
-int RenderObject::tabWidth() const
-{
-    if (style()->collapseWhiteSpace())
-        return 0;
-
-    return containingBlock()->tabWidth(true);
-}
-
 RenderView* RenderObject::view() const
 {
     return static_cast<RenderView*>(document()->renderer());

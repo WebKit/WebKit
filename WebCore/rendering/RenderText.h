@@ -125,6 +125,8 @@ public:
 
     InlineTextBox* findNextInlineTextBox(int offset, int& pos) const;
 
+    int allowTabs() const { return !style()->collapseWhiteSpace(); }
+
 protected:
     void setTextInternal(PassRefPtr<StringImpl>);
 
@@ -138,8 +140,7 @@ private:
     bool containsOnlyWhitespace(unsigned from, unsigned len) const;
     void calcMinMaxWidthInternal(int leadWidth);
 
-    void updateMonospaceCharacterWidth();
-    int widthFromCache(const Font&, int start, int len, int tabWidth, int xPos) const;
+    int widthFromCache(const Font&, int start, int len, int xPos) const;
     bool isAllASCII() const { return m_isAllASCII; }
 
     RefPtr<StringImpl> m_text;
@@ -164,8 +165,6 @@ private:
                            // or removed).
     bool m_containsReversedText : 1;
     bool m_isAllASCII : 1;
-
-    int m_monospaceCharacterWidth;
 };
 
 } // namespace WebCore

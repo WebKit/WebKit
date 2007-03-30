@@ -178,9 +178,10 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
 
         // Now that we have a glyph and font data, get its width.
         float width;
-        if (c == '\t' && m_style.tabWidth())
-            width = m_style.tabWidth() - fmodf(m_style.xPos() + runWidthSoFar, m_style.tabWidth());
-        else {
+        if (c == '\t' && m_style.allowTabs()) {
+            int tabWidth = m_font->tabWidth();
+            width = tabWidth - fmodf(m_style.xPos() + runWidthSoFar, tabWidth);
+        } else {
             width = fontData->widthForGlyph(glyph);
             // We special case spaces in two ways when applying word rounding.
             // First, we round spaces to an adjusted width in all fonts.
@@ -506,6 +507,11 @@ int Font::lineSpacing() const
 float Font::xHeight() const
 {
     return primaryFont()->xHeight();
+}
+
+int Font::spaceWidth() const
+{
+    return (int)ceilf(primaryFont()->m_adjustedSpaceWidth + m_letterSpacing);
 }
 
 bool Font::isFixedPitch() const

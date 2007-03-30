@@ -929,22 +929,6 @@ RootInlineBox* RenderBlock::constructLine(const BidiIterator& start, const BidiI
     return lastRootBox();
 }
 
-// usage: tw - (xpos % tw);
-int RenderBlock::tabWidth(bool isWhitespacePre)
-{
-    if (!isWhitespacePre)
-        return 0;
-
-    if (m_tabWidth == -1) {
-        const UChar spaceChar = ' ';
-        const Font& font = style()->font();
-        int spaceWidth = font.width(TextRun(&spaceChar, 1));
-        m_tabWidth = spaceWidth * 8;
-    }
-
-    return m_tabWidth;
-}
-
 void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, BidiState& bidi)
 {
     // First determine our total width.

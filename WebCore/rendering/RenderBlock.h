@@ -137,7 +137,6 @@ public:
     BidiIterator findNextLineBreak(BidiIterator& start, BidiState& info);
     RootInlineBox* constructLine(const BidiIterator& start, const BidiIterator& end);
     InlineFlowBox* createLineBoxes(RenderObject*);
-    int tabWidth(bool isWhitespacePre);
     void computeHorizontalPositionsForLine(RootInlineBox*, BidiState&);
     void computeVerticalPositionsForLine(RootInlineBox*);
     void checkLinesForOverflow();
@@ -459,9 +458,7 @@ protected:
     int m_overflowTop;
 
 private:
-    // full width of a tab character
-    int m_tabWidth;
-    
+
     // Column information.
     int m_desiredColumnWidth;
     unsigned m_desiredColumnCount;

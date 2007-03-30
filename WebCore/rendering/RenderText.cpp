@@ -64,7 +64,6 @@ RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)
      , m_linesDirty(false)
      , m_containsReversedText(false)
      , m_isAllASCII(m_text ? charactersAreAllASCII(m_text.get()) : true)
-     , m_monospaceCharacterWidth(0)
 {
     setRenderText();
     if (m_text)
@@ -77,8 +76,6 @@ void RenderText::setStyle(RenderStyle* newStyle)
     RenderStyle* oldStyle = style();
     if (oldStyle == newStyle)
         return;
-
-    bool fontChanged = !oldStyle || oldStyle->font() != newStyle->font();
 
     ETextTransform oldTransform = oldStyle ? oldStyle->textTransform() : TTNONE;
     ETextSecurity oldSecurity = oldStyle ? oldStyle->textSecurity() : TSNONE;
@@ -93,9 +90,6 @@ void RenderText::setStyle(RenderStyle* newStyle)
         if (RefPtr<StringImpl> textToTransform = originalText())
             setText(textToTransform.release(), true);
     }
-
-    if (fontChanged)
-        updateMonospaceCharacterWidth();
 }
 
 void RenderText::destroy()
@@ -394,22 +388,13 @@ IntRect RenderText::caretRect(int offset, EAffinity affinity, int* extraWidthToE
     return IntRect(left, top, 1, height);
 }
 
-void RenderText::updateMonospaceCharacterWidth()
+ALWAYS_INLINE int RenderText::widthFromCache(const Font& f, int start, int len, int xPos) const
 {
-    const Font& f = style()->font();
     if (f.isFixedPitch() && !f.isSmallCaps() && m_isAllASCII) {
-        const UChar c = ' ';
-        m_monospaceCharacterWidth = f.width(TextRun(&c, 1));
-        return;
-    }
-    m_monospaceCharacterWidth = 0;
-}
-
-ALWAYS_INLINE int RenderText::widthFromCache(const Font& f, int start, int len, int tabWidth, int xPos) const
-{
-    if (m_monospaceCharacterWidth) {
         // FIXME: This code should be simplfied; it's only run when m_text is known to be all 0000-007F,
         // but is uses the general purpose Unicode direction function.
+        int monospaceCharacterWidth = f.spaceWidth();
+        int tabWidth = allowTabs() ? monospaceCharacterWidth * 8 : 0;
         int w = 0;
         char previousChar = ' '; // FIXME: Preserves historical behavior, but seems wrong for start > 0.
         for (int i = start; i < start + len; i++) {
@@ -419,7 +404,7 @@ ALWAYS_INLINE int RenderText::widthFromCache(const Font& f, int start, int len, 
                 if (c == '\t' && tabWidth)
                     w += tabWidth - ((xPos + w) % tabWidth);
                 else
-                    w += m_monospaceCharacterWidth;
+                    w += monospaceCharacterWidth;
                 if (isspace(c) && !isspace(previousChar))
                     w += f.wordSpacing();
             }
@@ -428,7 +413,7 @@ ALWAYS_INLINE int RenderText::widthFromCache(const Font& f, int start, int len, 
         return w;
     }
 
-    return f.width(TextRun(text(), start, len, 0), TextStyle(tabWidth, xPos));
+    return f.width(TextRun(text(), start, len, 0), TextStyle(allowTabs(), xPos));
 }
 
 void RenderText::trimmedMinMaxWidth(int leadWidth,
@@ -487,7 +472,7 @@ void RenderText::trimmedMinMaxWidth(int leadWidth,
                 linelen++;
 
             if (linelen) {
-                endMaxW = widthFromCache(f, i, linelen, tabWidth(), leadWidth + endMaxW);
+                endMaxW = widthFromCache(f, i, linelen, leadWidth + endMaxW);
                 if (firstLine) {
                     firstLine = false;
                     leadWidth = 0;
@@ -601,7 +586,7 @@ void RenderText::calcMinMaxWidthInternal(int leadWidth)
 
         int wordLen = j - i;
         if (wordLen) {
-            int w = widthFromCache(f, i, wordLen, tabWidth(), leadWidth + currMaxWidth);
+            int w = widthFromCache(f, i, wordLen, leadWidth + currMaxWidth);
             currMinWidth += w;
             currMaxWidth += w;
 
@@ -652,7 +637,7 @@ void RenderText::calcMinMaxWidthInternal(int leadWidth)
                     m_maxWidth = currMaxWidth;
                 currMaxWidth = 0;
             } else {
-                currMaxWidth += f.width(TextRun(txt + i, 1), TextStyle(tabWidth(), leadWidth + currMaxWidth));
+                currMaxWidth += f.width(TextRun(txt + i, 1), TextStyle(allowTabs(), leadWidth + currMaxWidth));
                 needsWordSpacing = isSpace && !previousCharacterIsSpace && i == len - 1;
             }
         }
@@ -823,7 +808,6 @@ static inline bool isInlineFlowOrEmptyText(RenderObject* o)
 
 void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
 {
-    bool wasAllASCII = m_isAllASCII;
     bool isAllASCII = true;
 
     m_text = text;
@@ -909,9 +893,6 @@ void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
 
     ASSERT(!isBR() || (textLength() == 1 && (*m_text)[0] == '\n'));
     ASSERT(!textLength() || characters());
-
-    if (wasAllASCII != isAllASCII)
-        updateMonospaceCharacterWidth();
 }
 
 void RenderText::setText(PassRefPtr<StringImpl> text, bool force)
@@ -1009,9 +990,9 @@ unsigned int RenderText::width(unsigned int from, unsigned int len, const Font& 
         if (!style()->preserveNewline() && !from && len == textLength())
             w = m_maxWidth;
         else
-            w = widthFromCache(f, from, len, tabWidth(), xPos);
+            w = widthFromCache(f, from, len, xPos);
     } else
-        w = f.width(TextRun(text(), from, len, 0), TextStyle(tabWidth(), xPos));
+        w = f.width(TextRun(text(), from, len, 0), TextStyle(allowTabs(), xPos));
 
     return w;
 }

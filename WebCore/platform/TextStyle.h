@@ -25,9 +25,9 @@ namespace WebCore {
 
 class TextStyle {
 public:
-    TextStyle(int tabWidth = 0, int xpos = 0, int padding = 0, bool rtl = false, bool directionalOverride = false,
+    TextStyle(bool allowTabs = false, int xpos = 0, int padding = 0, bool rtl = false, bool directionalOverride = false,
               bool applyRunRounding = true, bool applyWordRounding = true, bool attemptFontSubstitution = true)
-        : m_tabWidth(tabWidth)
+        : m_allowTabs(allowTabs)
         , m_xpos(xpos)
         , m_padding(padding)
         , m_rtl(rtl)
@@ -38,7 +38,7 @@ public:
     {
     }
 
-    int tabWidth() const { return m_tabWidth; }
+    bool allowTabs() const { return m_allowTabs; }
     int xPos() const { return m_xpos; }
     int padding() const { return m_padding; }
     bool rtl() const { return m_rtl; }
@@ -52,7 +52,7 @@ public:
     void setRTL(bool b) { m_rtl = b; }
     
 private:
-    int m_tabWidth;
+    bool m_allowTabs;
     int m_xpos;
     int m_padding;
     bool m_rtl;

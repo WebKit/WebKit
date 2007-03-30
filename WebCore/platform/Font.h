@@ -147,6 +147,8 @@ public:
     int height() const { return ascent() + descent(); }
     int lineSpacing() const;
     float xHeight() const;
+    int spaceWidth() const;
+    int tabWidth() const { return 8 * spaceWidth(); }
 
     const FontData* primaryFont() const;
     const FontData* fontDataAt(unsigned) const;
