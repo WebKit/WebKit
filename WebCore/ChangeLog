@@ -1,3 +1,10 @@
+2007-03-31  Alexey Proskuryakov  <ap@webkit.org>
+
+        Debug build fix.
+
+        * xml/XPathValue.cpp:
+        (WebCore::XPath::): Define Value::adopt.
+
 2007-03-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

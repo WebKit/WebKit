@@ -38,6 +38,8 @@
 namespace WebCore {
 namespace XPath {
 
+const Value::AdoptTag Value::adopt = {};
+
 const NodeSet& Value::toNodeSet() const
 {
     if (!m_data) {
