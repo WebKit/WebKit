@@ -291,7 +291,6 @@ static bool pluginInvoke(NPObject *header, NPIdentifier name, const NPVariant *a
             return true;            
         }
     } else if (name == pluginMethodIdentifiers[ID_DESTROY_STREAM]) {
-        assert(obj->stream);
         NPError npError = browser->destroystream(obj->npp, obj->stream, NPRES_USER_BREAK);
         INT32_TO_NPVARIANT(npError, *result);
         return true;        

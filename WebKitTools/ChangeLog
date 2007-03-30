@@ -1,3 +1,12 @@
+2007-03-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Removing an assertion I just added because it's crashing the Leopard 
+        buildbot. The related layout test will still report a failure, so we 
+        don't really need this assertion.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
+        (pluginInvoke):
+
 2007-03-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.
