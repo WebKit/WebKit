@@ -31,8 +31,8 @@
  OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "TestObject.h"
-#import "PluginObject.h"
+#include "TestObject.h"
+#include "PluginObject.h"
 
 static bool testEnumerate(NPObject *npobj, NPIdentifier **value, uint32_t *count);
 static bool testHasProperty(NPObject *obj, NPIdentifier name);
@@ -76,7 +76,7 @@ static void initializeIdentifiers(void)
 
 static NPObject *testAllocate(NPP npp, NPClass *theClass)
 {
-    NPObject *newInstance = malloc(sizeof(NPObject));
+    NPObject *newInstance = (NPObject*)malloc(sizeof(NPObject));
     
     if (!identifiersInitialized) {
         identifiersInitialized = true;
@@ -106,7 +106,7 @@ static bool testEnumerate(NPObject *npobj, NPIdentifier **value, uint32_t *count
 {
     *count = NUM_TEST_IDENTIFIERS;
     
-    *value = browser->memalloc(NUM_TEST_IDENTIFIERS * sizeof(NPIdentifier));
+    *value = (NPIdentifier*)browser->memalloc(NUM_TEST_IDENTIFIERS * sizeof(NPIdentifier));
     memcpy(*value, testIdentifiers, sizeof(NPIdentifier) * NUM_TEST_IDENTIFIERS);
     
     return true;

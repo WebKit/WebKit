@@ -1,5 +1,17 @@
 2007-03-30  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Geoff.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.c:
+        (testAllocate):
+        (testEnumerate):
+        Add casts.
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.h:
+        Don't use #import, use #include.
+
+2007-03-30  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Alexey.
 
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
