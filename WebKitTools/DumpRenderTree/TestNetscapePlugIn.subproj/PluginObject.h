@@ -41,6 +41,7 @@ typedef struct {
     NPBool eventLogging;
     NPObject* testObject;
     NPStream* stream;
+    char* onStreamLoad;
 } PluginObject;
 
 extern NPClass *getPluginClass(void);

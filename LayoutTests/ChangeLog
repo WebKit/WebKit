@@ -1,3 +1,10 @@
+2007-03-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        * plugins/destroy-stream-twice.html:
+        Put the scripts before the embed element. Set the timeout in the onstreamload handler.
+
 2007-03-30  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

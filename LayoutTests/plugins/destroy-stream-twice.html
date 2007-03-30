@@ -5,14 +5,17 @@
 <body>
 <p id="description"></p>
 <div id="console"></div>
-<embed id="plugin" 
-       type="application/x-webkit-test-netscape"
-       src="data:text/plain,"
-       style="width:0; height:0">
-</embed>
-
 <script>
-description("Test for http://bugs.webkit.org/show_bug.cgi?id=13203: REGRESSION: Repro crash in -[WebBaseNetscapePluginView(WebNPPCallbacks) destroyStream:reason:] navigating away from page with DivX movie plug-in");
+function main() 
+{
+    if (!window.layoutTestController) {
+        debug("This test can only run from within DumpRenderTree because it requires TestNetscapePlugin.\n");
+        return;
+    }
+
+    layoutTestController.waitUntilDone();
+}
+main();
 
 function runTest()
 {
@@ -28,18 +31,17 @@ function runTest()
     debug('<br><span class="pass">TEST COMPLETE</span>');
     layoutTestController.notifyDone();
 }
+</script>
+<embed id="plugin" 
+       type="application/x-webkit-test-netscape"
+       src="data:text/plain,"
+       style="width:0; height:0"
+       onstreamload="setTimeout(runTest, 0);">
+</embed>
 
-function main() 
-{
-    if (!window.layoutTestController) {
-        debug("This test can only run from within DumpRenderTree because it requires TestNetscapePlugin.\n");
-        return;
-    }
+<script>
+description("Test for http://bugs.webkit.org/show_bug.cgi?id=13203: REGRESSION: Repro crash in -[WebBaseNetscapePluginView(WebNPPCallbacks) destroyStream:reason:] navigating away from page with DivX movie plug-in");
 
-    layoutTestController.waitUntilDone();
-    setTimeout(runTest, 5); // FIXME: Don't know how to wait until a plug-in stream has loaded.
-}
-main();
 
 successfullyParsed = true;
 </script>

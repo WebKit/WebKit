@@ -1,3 +1,20 @@
+2007-03-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        Add an "onstreamload" attribute to the plugin which is called when a stream starts loading.
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.c:
+        (NPP_New):
+        Look for the onstreamload attribute.
+        
+        (NPP_Destroy):
+        Free the onstreamload attribute.
+        
+        (NPP_NewStream):
+        Call the onstreamload handler.
+
 2007-03-30  Geoffrey Garen  <ggaren@apple.com>
 
         Removing an assertion I just added because it's crashing the Leopard 
