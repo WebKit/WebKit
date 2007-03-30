@@ -1442,7 +1442,7 @@ void RenderBlock::paintCaret(PaintInfo& paintInfo, CaretType type)
         return;
     // if caretNode is a block and caret is inside it then caret should be painted by that block
     bool cursorInsideBlockCaretNode = renderer->isBlockFlow() && selectionController->isInsideNode();
-    if ((cursorInsideBlockCaretNode ? renderer : renderer->containingBlock()) == this && caretNode->isContentEditable()) {
+    if ((cursorInsideBlockCaretNode ? renderer : renderer->containingBlock()) == this && selectionController->isContentEditable()) {
         if (type == CursorCaret)
             document()->frame()->paintCaret(paintInfo.context, paintInfo.rect);
         else

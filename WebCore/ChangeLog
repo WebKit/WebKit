@@ -1,3 +1,30 @@
+2007-03-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        <rdar://problem/5076323> Only one To Do can be created by a selection in a message
+
+        When Mail's ToDoify operation called moveToEndOfDocument: 
+        with a selection that started just before a ToDo, we'd 
+        move them to the end of the document, not to the end
+        of the editable root, because we incorrectly checked
+        for the editability of positions before ToDos.  Then Mail
+        would refuse to create a ToDo because the selection was 
+        outside of the region where they allowed editing.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modifyExtendingRightForward):
+        Check the position for editability, not the position's node,
+        since there are editable positions of the form [node, offset]
+        where node is contenteditable=false.
+        Re-use pos.  Nothing that happens after it's created can invalidate
+        it or the position and affinity used to create it.
+        (WebCore::SelectionController::modifyMovingRightForward): Ditto.
+        (WebCore::SelectionController::modifyExtendingLeftBackward): Ditto.
+        (WebCore::SelectionController::modifyMovingLeftBackward): Ditto.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintCaret): Ditto.
+
 2007-03-30  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

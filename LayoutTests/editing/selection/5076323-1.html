@@ -1,0 +1,11 @@
+<p>This tests for a bug where moving the selection to the end of the document would move it outside of an editable region if the selection started just before a table.</p>
+<div id="div" contenteditable="true"><table contenteditable="false" style="border: 1px solid #aaa"><tr><td>foo</td></tr></table></div>
+<p>In the above editable region, you should see 'foo' in the bordered table and 'bar' outside it.</p>
+<script>
+var sel = window.getSelection();
+var div = document.getElementById("div");
+
+sel.setPosition(div, 0);
+sel.modify("move", "forward", "documentBoundary");
+document.execCommand("InsertText", false, "bar");
+</script>

@@ -1,3 +1,19 @@
+2007-03-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        <rdar://problem/5076323> Only one To Do can be created by a selection in a message
+
+        * editing/selection/5076323-1-expected.checksum: Added.
+        * editing/selection/5076323-1-expected.txt: Added.
+        * editing/selection/5076323-1.html: Added.
+        * editing/selection/5076323-2-expected.checksum: Added.
+        * editing/selection/5076323-2-expected.txt: Added.
+        * editing/selection/5076323-2.html: Added.
+        * editing/selection/5076323-3-expected.checksum: Added.
+        * editing/selection/5076323-3-expected.txt: Added.
+        * editing/selection/5076323-3.html: Added.
+
 2007-03-30  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Brian Dash
