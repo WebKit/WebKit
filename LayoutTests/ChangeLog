@@ -1,3 +1,13 @@
+2007-03-29  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13166
+          REGRESSION (2005-10-16 - 2005-10-19): Ampersands showing up in the last column of the Gmail contacts table
+
+        * fast/tokenizer/write-partial-entity-expected.txt: Added.
+        * fast/tokenizer/write-partial-entity.html: Added.
+
 2007-03-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

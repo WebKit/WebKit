@@ -1,3 +1,16 @@
+2007-03-29  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13166
+          REGRESSION (2005-10-16 - 2005-10-19): Ampersands showing up in the last column of the Gmail contacts table
+
+        Test: fast/tokenizer/write-partial-entity.html
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag): Reordered to avoid resetting the buffer position
+        after script execution which can write to the buffer.
+
 2007-03-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

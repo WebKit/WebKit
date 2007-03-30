@@ -1161,6 +1161,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             }
 
             RefPtr<Node> n = processToken();
+            m_cBufferPos = cBufferPos;
             if (n) {
                 if ((tagName == preTag || tagName == listingTag) && !inViewSourceMode()) {
                     if (beginTag)
@@ -1225,7 +1226,6 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             }
             if (tagName == plaintextTag)
                 state.setInPlainText(beginTag);
-            m_cBufferPos = cBufferPos;
             return state; // Finished parsing tag!
         }
         } // end switch
