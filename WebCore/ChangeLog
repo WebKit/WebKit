@@ -1,5 +1,14 @@
 2007-03-30  Antti Koivisto  <antti@apple.com>
 
+        Reviewed by bdash.
+
+        Spotted an int that should be float in previous patch.
+
+        * platform/Font.cpp:
+        (WebCore::WidthIterator::advance):
+
+2007-03-30  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Hyatt.
 
         Render tree memory savings, part 1
