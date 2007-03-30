@@ -1,3 +1,10 @@
+2007-03-30  Anders Carlsson <andersca@apple.com>
+
+        Build fix.
+        
+        * bindings/NP_jsobject.cpp:
+        (_NPN_Enumerate):
+
 2007-03-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.

@@ -394,7 +394,7 @@ void _NPN_SetException(NPObject* o, const NPUTF8* message)
     }
 }
 
-bool _NPN_Enumerate(NPP npp, NPObject *o, NPIdentifier **identifier, uint32_t *count)
+bool _NPN_Enumerate(NPP, NPObject *o, NPIdentifier **identifier, uint32_t *count)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = (JavaScriptObject*)o; 
@@ -410,7 +410,7 @@ bool _NPN_Enumerate(NPP npp, NPObject *o, NPIdentifier **identifier, uint32_t *c
         PropertyNameArray propertyNames;
 
         obj->imp->getPropertyNames(exec, propertyNames);
-        unsigned size = propertyNames.size();
+        unsigned size = static_cast<unsigned>(propertyNames.size());
         // FIXME: This should really call NPN_MemAlloc but that's in WebKit
         NPIdentifier *identifiers = static_cast<NPIdentifier*>(malloc(sizeof(NPIdentifier) * size));
         
