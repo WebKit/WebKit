@@ -1,3 +1,9 @@
+2007-03-30  Simon Hausmann  <hausmann@kde.org>
+
+        Reviewed by Zack
+
+        * WebCore.pro: Fix release Qt builds.
+
 2007-03-30  Antti Koivisto  <antti@apple.com>
 
         Reviewed by bdash.

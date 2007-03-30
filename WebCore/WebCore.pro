@@ -17,6 +17,14 @@ QMAKE_CXXFLAGS += -Wreturn-type
 contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
 unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
 
+linux-*: DEFINES += HAVE_STDINT_H
+
+DEFINES += USE_SYSTEM_MALLOC
+
+CONFIG(release) {
+    DEFINES += NDEBUG
+}
+
 # PRE-BUILD: make the required config.h file
 #config_h.target = config.h
 #config_h.commands = cp config.h.qmake config.h
