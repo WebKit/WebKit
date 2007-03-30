@@ -1,3 +1,53 @@
+2007-03-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13021
+        XPath can be very slow
+
+        This patch finally makes us faster than Firefox 2.0 on this test case.
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunConcat::evaluate): Use a Vector buffer for faster appending.
+        (WebCore::XPath::FunId::evaluate): Move the result NodeSet into Value instead of copying it.
+        (WebCore::XPath::FunLocalName::evaluate): Cosmetic changes.
+        (WebCore::XPath::FunNamespaceURI::evaluate): Ditto.
+        (WebCore::XPath::FunName::evaluate): Ditto.
+        (WebCore::XPath::FunNormalizeSpace::evaluate): Ditto.
+
+        * xml/XPathValue.cpp:
+        (WebCore::XPath::Value::toNodeSet):
+        (WebCore::XPath::Value::modifiableNodeSet):
+        (WebCore::XPath::Value::toBoolean):
+        (WebCore::XPath::Value::toNumber):
+        (WebCore::XPath::Value::toString):
+        * xml/XPathValue.h:
+        (WebCore::XPath::ValueData::ValueData):
+        (WebCore::XPath::Value::Value):
+        Made Value copying faster by putting large data members into a separate refcounted ValueData class.
+        Added provisions for moving a NodeSet in and out of Value without copying.
+        Made construction safer by moving bool version to a template constructor.
+        Removed an (almost) unused default constructor.
+
+        * xml/XPathPredicate.h: Store a Value for literal string and number expressions to avoid 
+        constructing one each time.
+
+        * xml/XPathPath.cpp:
+        (WebCore::XPath::Filter::evaluate):
+        (WebCore::XPath::LocationPath::evaluate):
+        (WebCore::XPath::Path::evaluate):
+        * xml/XPathPath.h:
+        * xml/XPathPredicate.cpp:
+        (WebCore::XPath::NumericOp::evaluate):
+        (WebCore::XPath::Union::evaluate):
+        * xml/XPathResult.cpp:
+        (WebCore::XPathResult::snapshotItem):
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::evaluate):
+        (WebCore::XPath::Step::nodesInAxis):
+        * xml/XPathStep.h:
+        Got rid of unnecessary NodeSet copying in many cases.
+
 2007-03-30  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

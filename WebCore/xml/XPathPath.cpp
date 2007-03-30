@@ -56,7 +56,7 @@ Value Filter::evaluate() const
     if (!v.isNodeSet()) 
         return v;
 
-    NodeSet nodes = v.toNodeSet();
+    NodeSet& nodes = v.modifiableNodeSet();
     nodes.sort();
 
     EvaluationContext& evaluationContext = Expression::evaluationContext();
@@ -77,7 +77,7 @@ Value Filter::evaluate() const
         nodes.swap(newNodes);
     }
 
-    return nodes;
+    return v;
 }
 
 LocationPath::LocationPath()
@@ -99,23 +99,23 @@ Value LocationPath::evaluate() const
     if (m_absolute && context->nodeType() != Node::DOCUMENT_NODE) 
         context = context->ownerDocument();
 
-    NodeSet startNodes;
-    startNodes.append(context);
+    NodeSet nodes;
+    nodes.append(context);
+    evaluate(nodes);
     
-    return evaluate(startNodes);
+    return Value(nodes, Value::adopt);
 }
 
-Value LocationPath::evaluate(const NodeSet& startNodes) const
+void LocationPath::evaluate(NodeSet& nodes) const
 {
-    NodeSet nodes = startNodes;
-    
     for (unsigned i = 0; i < m_steps.size(); i++) {
         Step* step = m_steps[i];
         NodeSet newNodes;
         HashSet<Node*> newNodesSet;
 
         for (unsigned j = 0; j < nodes.size(); j++) {
-            NodeSet matches = step->evaluate(nodes[j]);
+            NodeSet matches;
+            step->evaluate(nodes[j], matches);
             
             for (size_t nodeIndex = 0; nodeIndex < matches.size(); ++nodeIndex) {
                 Node* node = matches[nodeIndex];
@@ -128,7 +128,6 @@ Value LocationPath::evaluate(const NodeSet& startNodes) const
     }
 
     nodes.markSorted(false);
-    return nodes;
 }
 
 void LocationPath::optimizeStepPair(unsigned index)
@@ -185,7 +184,12 @@ Path::~Path()
 
 Value Path::evaluate() const
 {
-    return m_path->evaluate(m_filter->evaluate().toNodeSet());
+    Value v = m_filter->evaluate();
+
+    NodeSet& nodes = v.modifiableNodeSet();
+    m_path->evaluate(nodes);
+    
+    return v;
 }
 
 }

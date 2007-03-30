@@ -306,7 +306,7 @@ Value FunId::evaluate() const
     
     result.markSorted(false);
     
-    return result;
+    return Value(result, Value::adopt);
 }
 
 Value FunLocalName::evaluate() const
@@ -325,7 +325,7 @@ Value FunLocalName::evaluate() const
     if (!node)
         node = evaluationContext().node.get();
 
-    return Value(node->localName());
+    return node->localName().domString();
 }
 
 Value FunNamespaceURI::evaluate() const
@@ -344,7 +344,7 @@ Value FunNamespaceURI::evaluate() const
     if (!node)
         node = evaluationContext().node.get();
 
-    return Value(node->namespaceURI());
+    return node->namespaceURI().domString();
 }
 
 Value FunName::evaluate() const
@@ -364,7 +364,7 @@ Value FunName::evaluate() const
         node = evaluationContext().node.get();
 
     const AtomicString& prefix = node->prefix();
-    return prefix.isEmpty() ? node->localName().domString() : node->prefix() + ":" + node->localName();
+    return prefix.isEmpty() ? node->localName().domString() : prefix + ":" + node->localName();
 }
 
 Value FunCount::evaluate() const
@@ -386,12 +386,15 @@ Value FunString::evaluate() const
 
 Value FunConcat::evaluate() const
 {
-    String str = "";
+    Vector<UChar, 1024> result;
 
-    for (unsigned i = 0; i < argCount(); ++i)
-        str += arg(i)->evaluate().toString();
+    unsigned count = argCount();
+    for (unsigned i = 0; i < count; ++i) {
+        String str(arg(i)->evaluate().toString());
+        result.append(str.characters(), str.length());
+    }
 
-    return str;
+    return String(result.data(), result.size());
 }
 
 Value FunStartsWith::evaluate() const
@@ -484,11 +487,11 @@ Value FunNormalizeSpace::evaluate() const
 {
     if (!argCount()) {
         String s = Value(Expression::evaluationContext().node.get()).toString();
-        return Value(s.simplifyWhiteSpace());
+        return s.simplifyWhiteSpace();
     }
 
     String s = arg(0)->evaluate().toString();
-    return Value(s.simplifyWhiteSpace());
+    return s.simplifyWhiteSpace();
 }
 
 Value FunTranslate::evaluate() const

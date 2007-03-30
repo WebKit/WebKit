@@ -36,20 +36,36 @@ namespace WebCore {
 
     namespace XPath {
     
+        class ValueData : public Shared<ValueData> {
+        public:
+            ValueData() {}
+            ValueData(const NodeSet& nodeSet) : m_nodeSet(nodeSet) {}
+            ValueData(const String& string) : m_string(string) {}
+
+            NodeSet m_nodeSet;
+            String m_string;
+        };
+
+        // Copying Value objects makes their data partially shared, so care has to be taken when dealing with copies.
         class Value {
         public:
             enum Type { NodeSetValue, BooleanValue, NumberValue, StringValue };
             
-            Value();
-            Value(Node*);
-            Value(const NodeSet&);
-            Value(bool);
-            Value(unsigned);
-            Value(unsigned long);
-            Value(double);
-            Value(const char*);
-            Value(const String&);
-            
+            Value(unsigned value) : m_type(NumberValue), m_number(value) {}
+            Value(unsigned long value) : m_type(NumberValue), m_number(value) {}
+            Value(double value) : m_type(NumberValue), m_number(value) {}
+
+            Value(const char* value) : m_type(StringValue), m_data(new ValueData(value)) {}
+            Value(const String& value) : m_type(StringValue), m_data(new ValueData(value)) {}
+            Value(const NodeSet& value) : m_type(NodeSetValue), m_data(new ValueData(value)) {}
+            Value(Node* value) : m_type(NodeSetValue), m_data(new ValueData) { m_data->m_nodeSet.append(value); }
+
+            // This is needed to safely implement constructing from bool - with normal function overloading, any pointer type would match.
+            template<typename T> Value(T);
+
+            static const struct AdoptTag {} adopt;
+            Value(NodeSet& value, const AdoptTag&) : m_type(NodeSetValue), m_data(new ValueData) { value.swap(m_data->m_nodeSet); }
+
             Type type() const { return m_type; }
 
             bool isNodeSet() const { return m_type == NodeSetValue; }
@@ -57,19 +73,25 @@ namespace WebCore {
             bool isNumber() const { return m_type == NumberValue; }
             bool isString() const { return m_type == StringValue; }
 
-            const NodeSet& toNodeSet() const;    
+            const NodeSet& toNodeSet() const;
+            NodeSet& modifiableNodeSet();
             bool toBoolean() const;
             double toNumber() const;
             String toString() const;
-            
+
         private:
             Type m_type;
-            NodeSet m_nodeSet;
             bool m_bool;
             double m_number;
-            String m_string;
+            RefPtr<ValueData> m_data;
         };
 
+        template<>
+        inline Value::Value(bool value)
+            : m_type(BooleanValue)
+            , m_bool(value)
+        {
+        }
     }
 }
 

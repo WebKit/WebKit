@@ -97,8 +97,8 @@ Value NumericOp::evaluate() const
         case OP_Mod:
             return fmod(leftVal, rightVal);
     }
-    
-    return Value();
+    ASSERT_NOT_REACHED();
+    return 0.0;
 }
 
 EqTestOp::EqTestOp(Opcode opcode, Expression* lhs, Expression* rhs)
@@ -234,28 +234,28 @@ Value LogicalOp::evaluate() const
 
 Value Union::evaluate() const
 {
-    Value lhs = subExpr(0)->evaluate();
+    Value lhsResult = subExpr(0)->evaluate();
     Value rhs = subExpr(1)->evaluate();
-    if (!lhs.isNodeSet() || !rhs.isNodeSet())
+    if (!lhsResult.isNodeSet() || !rhs.isNodeSet())
         return NodeSet();
     
-    NodeSet result = lhs.toNodeSet();
+    NodeSet& resultSet = lhsResult.modifiableNodeSet();
     const NodeSet& rhsNodes = rhs.toNodeSet();
     
     HashSet<Node*> nodes;
-    for (size_t i = 0; i < result.size(); ++i)
-        nodes.add(result[i]);
+    for (size_t i = 0; i < resultSet.size(); ++i)
+        nodes.add(resultSet[i]);
     
     for (size_t i = 0; i < rhsNodes.size(); ++i) {
         Node* node = rhsNodes[i];
         if (nodes.add(node).second)
-            result.append(node);
+            resultSet.append(node);
     }
 
     // It is also possible to use merge sort to avoid making the result unsorted;
     // but this would waste the time in cases when order is not important.
-    result.markSorted(false);
-    return result;
+    resultSet.markSorted(false);
+    return lhsResult;
 }
 
 Predicate::Predicate(Expression* expr)

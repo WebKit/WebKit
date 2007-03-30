@@ -60,7 +60,7 @@ namespace WebCore {
             void setAbsolute(bool value) { m_absolute = value; }
 
             virtual Value evaluate() const;
-            Value evaluate(const NodeSet& startNodes) const;
+            void evaluate(NodeSet& nodes) const; // nodes is an input/output parameter
 
             void appendStep(Step* step);
             void insertFirstStep(Step* step);

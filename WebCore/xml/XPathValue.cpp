@@ -38,68 +38,36 @@
 namespace WebCore {
 namespace XPath {
 
-Value::Value()
-    : m_type(BooleanValue), m_bool(false)
-{
-}
-
-Value::Value(Node* value)
-    : m_type(NodeSetValue)
-{
-    m_nodeSet.append(value);
-}
-
-Value::Value(const NodeSet& value)
-    : m_type(NodeSetValue), m_nodeSet(value)
-{
-}
-
-Value::Value(bool value)
-    : m_type(BooleanValue), m_bool(value)
-{
-}
-
-Value::Value(unsigned value)
-    : m_type(NumberValue), m_number(value)
-{
-}
-
-Value::Value(unsigned long value)
-    : m_type(NumberValue), m_number(value)
-{
-}
-
-Value::Value(double value)
-    : m_type(NumberValue), m_number(value)
-{
-}
-
-Value::Value(const char* value)
-    : m_type(StringValue), m_string(value)
-{
-}
-
-Value::Value(const String& value)
-    : m_type(StringValue), m_string(value)
-{
-}
-
 const NodeSet& Value::toNodeSet() const
 {
-    return m_nodeSet;
+    if (!m_data) {
+        static NodeSet emptyNodeSet;
+        return emptyNodeSet;
+    }
+
+    return m_data->m_nodeSet;
 }    
+
+NodeSet& Value::modifiableNodeSet()
+{
+    if (!m_data)
+        m_data = new ValueData;
+    
+    m_type = NodeSetValue;
+    return m_data->m_nodeSet;
+}
 
 bool Value::toBoolean() const
 {
     switch (m_type) {
         case NodeSetValue:
-            return !m_nodeSet.isEmpty();
+            return !m_data->m_nodeSet.isEmpty();
         case BooleanValue:
             return m_bool;
         case NumberValue:
             return m_number != 0 && !isnan(m_number);
         case StringValue:
-            return !m_string.isEmpty();
+            return !m_data->m_string.isEmpty();
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -114,7 +82,7 @@ double Value::toNumber() const
             return m_number;
         case StringValue: {
             bool canConvert;
-            double value = m_string.simplifyWhiteSpace().toDouble(&canConvert);
+            double value = m_data->m_string.simplifyWhiteSpace().toDouble(&canConvert);
             if (canConvert)
                 return value;
             return NAN;
@@ -130,11 +98,11 @@ String Value::toString() const
 {
     switch (m_type) {
         case NodeSetValue:
-            if (m_nodeSet.isEmpty()) 
+            if (m_data->m_nodeSet.isEmpty()) 
                 return "";
-            return stringValue(m_nodeSet.firstNode());
+            return stringValue(m_data->m_nodeSet.firstNode());
         case StringValue:
-            return m_string;
+            return m_data->m_string;
         case NumberValue:
             if (isnan(m_number))
                 return "NaN";

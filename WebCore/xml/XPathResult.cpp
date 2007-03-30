@@ -230,7 +230,7 @@ Node* XPathResult::snapshotItem(unsigned long index, ExceptionCode& ec)
         return 0;
     }
     
-    NodeSet nodes = m_value.toNodeSet();
+    const NodeSet& nodes = m_value.toNodeSet();
     if (index >= nodes.size())
         return 0;
     
