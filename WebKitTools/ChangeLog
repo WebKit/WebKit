@@ -1,5 +1,13 @@
 2007-03-30  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Alexey.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
+        (pluginInvoke):
+        Free the identifier string.
+
+2007-03-30  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Geoff.
 
         * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:

@@ -279,8 +279,9 @@ static bool pluginInvoke(NPObject *header, NPIdentifier name, const NPVariant *a
                     NPVariant args[1];
                     STRINGZ_TO_NPVARIANT(string, args[0]);
                     NPVariant browserResult;
-                     browser->invoke(obj->npp, outArray, pushIdentifier, args, 1, &browserResult);
+                    browser->invoke(obj->npp, outArray, pushIdentifier, args, 1, &browserResult);
                     browser->releasevariantvalue(&browserResult);
+                    browser->memfree(string);
                 }
                 
                 browser->memfree(identifiers);
