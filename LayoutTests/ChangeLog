@@ -1,3 +1,16 @@
+2007-03-31  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=13214
+
+        A layout test documenting shrink-to-fit width calculation for floating elements.
+
+        * fast/block/float/shrink-to-fit-width-expected.checksum: Added.
+        * fast/block/float/shrink-to-fit-width-expected.png: Added.
+        * fast/block/float/shrink-to-fit-width-expected.txt: Added.
+        * fast/block/float/shrink-to-fit-width.html: Added.
+
 2007-03-31  Nicholas Shanks  <webkit@nickshanks.com>
 
         Reviewed by Adele.
