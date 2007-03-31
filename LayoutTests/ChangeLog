@@ -1,3 +1,13 @@
+2007-03-31  Nicholas Shanks  <webkit@nickshanks.com>
+
+        Reviewed by Adele.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13184
+        HTMLImageElement longdesc should be complete resolved URL
+
+        * fast/dom/HTMLImageElement/image-longdesc-absolute-url-expected.txt: Added.
+        * fast/dom/HTMLImageElement/image-longdesc-absolute-url.html: Added.
+
 2007-03-31  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Hyatt.
