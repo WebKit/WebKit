@@ -1,5 +1,17 @@
 2007-03-31  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Hyatt.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13178
+          Helvetica zero-width space has non-zero width
+
+        * fast/text/wide-zero-width-space-expected.checksum: Added.
+        * fast/text/wide-zero-width-space-expected.png: Added.
+        * fast/text/wide-zero-width-space-expected.txt: Added.
+        * fast/text/wide-zero-width-space.html: Added.
+
+2007-03-31  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin.
 
         - test and updates for http://bugs.webkit.org/show_bug.cgi?id=8016

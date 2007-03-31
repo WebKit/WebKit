@@ -1,5 +1,18 @@
 2007-03-31  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Hyatt.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=13178
+          Helvetica zero-width space has non-zero width
+
+        Test: fast/text/wide-zero-width-space.html
+
+        * platform/FontData.cpp:
+        (WebCore::FontData::FontData): Force the ZERO WIDTH SPACE glyph to have width
+        0, unless the SPACE character maps to the same glyph.
+
+2007-03-31  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin.
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=8016

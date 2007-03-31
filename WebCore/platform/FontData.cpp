@@ -49,6 +49,20 @@ FontData::FontData(const FontPlatformData& f)
     m_spaceWidth = width;
     determinePitch();
     m_adjustedSpaceWidth = m_treatAsFixedPitch ? ceilf(width) : roundf(width);
+
+    // Force the glyph for ZERO WIDTH SPACE to have zero width, unless it is shared with SPACE.
+    // Helvetica is an example of a non-zero width ZERO WIDTH SPACE glyph.
+    // See <http://bugs.webkit.org/show_bug.cgi?id=13178>
+    // Ask for the glyph for 0 to avoid paging in ZERO WIDTH SPACE. Control characters, including 0,
+    // are mapped to the ZERO WIDTH SPACE glyph.
+    Glyph zeroWidthSpaceGlyph = GlyphPageTreeNode::getRootChild(this, 0)->page()->glyphDataForCharacter(0).glyph;
+    if (zeroWidthSpaceGlyph) {
+        if (zeroWidthSpaceGlyph != m_spaceGlyph)
+            m_glyphToWidthMap.setWidthForGlyph(zeroWidthSpaceGlyph, 0);
+        else
+            LOG_ERROR("Font maps SPACE and ZERO WIDTH SPACE to the same glyph. Glyph width not overridden.");
+    }
+
     m_missingGlyphData.fontData = this;
     m_missingGlyphData.glyph = 0;
 }
