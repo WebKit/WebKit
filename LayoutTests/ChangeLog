@@ -1,5 +1,16 @@
 2007-03-31  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Sam Weinig.
+
+        - pixel test for partially selected justified text
+
+        * fast/text/justified-selection-expected.checksum: Added.
+        * fast/text/justified-selection-expected.png: Added.
+        * fast/text/justified-selection-expected.txt: Added.
+        * fast/text/justified-selection.html: Added.
+
+2007-03-31  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Darin.
 
         - http://bugs.webkit.org/show_bug.cgi?id=13214

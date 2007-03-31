@@ -321,8 +321,9 @@
 
         Reviewed by David Hyatt, committed by George Staikos.
 
+        Test: fast/text/justified-selection.html
+
         Take into account the entire run length to get a proper selection.
-        Doesn't seem to affect the Mac build but is a problem for Qt.
 
         * platform/Font.cpp:
         (WebCore::WidthIterator::WidthIterator):
