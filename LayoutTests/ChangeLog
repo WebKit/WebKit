@@ -1,3 +1,21 @@
+2007-03-31  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - test and updates for http://bugs.webkit.org/show_bug.cgi?id=8016
+          REPRO: Safari hangs loading 18 MB page (deeply nested DOM tree)
+
+        * fast/overflow/002-expected.checksum:
+        * fast/overflow/002-expected.png:
+        * fast/overflow/002-expected.txt:
+        * fast/overflow/002.html: Added missing ">" to one of the BR tags.
+        * fast/text/atsui-multiple-renderers-expected.checksum:
+        * fast/text/atsui-multiple-renderers-expected.png:
+        * fast/text/atsui-multiple-renderers-expected.txt:
+        * fast/text/atsui-multiple-renderers.html: Added missing ">" to the TITLE tag.
+        * fast/tokenizer/lessthan-terminates-tags-and-attrs-expected.txt: Added.
+        * fast/tokenizer/lessthan-terminates-tags-and-attrs.html: Added.
+
 2007-03-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.
