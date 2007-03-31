@@ -2,6 +2,18 @@
 
         Reviewed by Hyatt.
 
+        - repaint test for http://bugs.webkit.org/show_bug.cgi?id=13209
+          REGRESSION (r18756-18765): Incomplete list marker repaint when resizing list item
+
+        * fast/repaint/list-marker-2-expected.checksum: Added.
+        * fast/repaint/list-marker-2-expected.png: Added.
+        * fast/repaint/list-marker-2-expected.txt: Added.
+        * fast/repaint/list-marker-2.html: Added.
+
+2007-03-31  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
         - test for http://bugs.webkit.org/show_bug.cgi?id=13178
           Helvetica zero-width space has non-zero width
 

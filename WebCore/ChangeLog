@@ -2,6 +2,25 @@
 
         Reviewed by Hyatt.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13209
+          REGRESSION (r18756-18765): Incomplete list marker repaint when resizing list item
+
+        Test: fast/repaint/list-marker-2.html
+
+        A list marker can increase the horizontal overflow after layoutInlineChildren(),
+        so made that function return only the vertical bounds of the repaint rect. As the
+        horizontal bounds, made layoutBlock() just use the overflow bounds after layout.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        * rendering/RenderBlock.h:
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+
+2007-03-31  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Hyatt.
+
         - http://bugs.webkit.org/show_bug.cgi?id=13178
           Helvetica zero-width space has non-zero width
 

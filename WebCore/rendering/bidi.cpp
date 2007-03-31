@@ -1549,13 +1549,11 @@ static void buildCompactRuns(RenderObject* compactObj, BidiState& bidi)
     sBuildingCompactRuns = false;
 }
 
-IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
+void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, int& repaintBottom)
 {
     BidiState bidi;
 
-    bool useRepaintRect = false;
-    int repaintTop = 0;
-    int repaintBottom = 0;
+    bool useRepaintBounds = false;
 
     m_overflowHeight = 0;
     
@@ -1664,7 +1662,7 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
         if (endLine && cleanLineBidiContext)
             cleanLineBidiContext->ref();
         if (startLine) {
-            useRepaintRect = true;
+            useRepaintBounds = true;
             repaintTop = m_height;
             repaintBottom = m_height;
             RenderArena* arena = renderArena();
@@ -1743,7 +1741,7 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
 
                 if (lineBox) {
                     lineBox->setLineBreakInfo(end.obj, end.pos, &bidi.status, bidi.context.get());
-                    if (useRepaintRect) {
+                    if (useRepaintBounds) {
                         repaintTop = min(repaintTop, lineBox->topOverflow());
                         repaintBottom = max(repaintBottom, lineBox->bottomOverflow());
                     }
@@ -1809,14 +1807,6 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
     // See if any lines spill out of the block.  If so, we need to update our overflow width.
     checkLinesForOverflow();
 
-    IntRect repaintRect(0, 0, 0, 0);
-    if (useRepaintRect) {
-        repaintRect.setX(m_overflowLeft);
-        repaintRect.setWidth(m_overflowWidth - m_overflowLeft);
-        repaintRect.setY(repaintTop);
-        repaintRect.setHeight(repaintBottom - repaintTop);
-    }
-
     if (!firstLineBox() && hasLineIfEmpty())
         m_height += lineHeight(true, true);
 
@@ -1824,12 +1814,6 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
     // truncate text.
     if (hasTextOverflow)
         checkLinesForTextOverflow();
-
-    return repaintRect;
-
-#if defined(BIDI_DEBUG) && BIDI_DEBUG > 1
-    kdDebug(6041) << " ------- bidi end " << this << " -------" << endl;
-#endif
 }
 
 RootInlineBox* RenderBlock::determineStartPosition(bool fullLayout, BidiIterator& start, BidiState& bidi)

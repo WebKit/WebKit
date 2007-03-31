@@ -542,9 +542,10 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
             m_layer->setHasVerticalScrollbar(true);
     }
 
-    IntRect repaintRect;
+    int repaintTop = 0;
+    int repaintBottom = 0;
     if (childrenInline())
-        repaintRect = layoutInlineChildren(relayoutChildren);
+        layoutInlineChildren(relayoutChildren, repaintTop, repaintBottom);
     else
         layoutBlockChildren(relayoutChildren);
 
@@ -601,7 +602,9 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     bool didFullRepaint = false;
     if (checkForRepaint)
         didFullRepaint = repaintAfterLayoutIfNeeded(oldBounds, oldOutlineBox);
-    if (!didFullRepaint && !repaintRect.isEmpty()) {
+    if (!didFullRepaint && repaintTop != repaintBottom) {
+        IntRect repaintRect(m_overflowLeft, repaintTop, m_overflowWidth - m_overflowLeft, repaintBottom - repaintTop);
+
         // FIXME: Deal with multiple column repainting.  We have to split the repaint
         // rect up into multiple rects if it spans columns.
 
