@@ -38,10 +38,6 @@ static NSString *DebuggerStepIntoToolbarItem = @"DebuggerStepIntoToolbarItem";
 static NSString *DebuggerStepOverToolbarItem = @"DebuggerStepOverToolbarItem";
 static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
-@interface WebScriptObject (WebScriptObjectPrivate)
-- (unsigned int)count;
-@end
-
 @implementation DebuggerDocument
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
 {
@@ -118,7 +114,7 @@ static NSString *DebuggerStepOutToolbarItem = @"DebuggerStepOutToolbarItem";
 
     NSMutableArray *result = [[NSMutableArray alloc] init];
     WebScriptObject *variables = [enumerateAttributes callWebScriptMethod:@"call" withArguments:[NSArray arrayWithObject:object]];
-    unsigned length = [variables count];
+    unsigned length = [[variables valueForKey:@"length"] intValue];
     for (unsigned i = 0; i < length; i++) {
         NSString *key = [variables webScriptValueAtIndex:i];
         [result addObject:key];

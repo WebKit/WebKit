@@ -1,3 +1,16 @@
+2007-03-31  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Mitz.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=13239
+        Bug 13239: REGRESSION (r20343): Drosera hits exception trying to call "count" cross-process
+
+        Use -[WebScriptObject valueForKey:@"length"] to retrieve the length of a JavaScript array
+        rather than -[WebScriptObject count].
+
+        * Drosera/DebuggerDocument.m:
+        (-[DebuggerDocument webScriptAttributeKeysForScriptObject:]):
+
 2007-03-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.
