@@ -141,9 +141,9 @@ namespace WebCore {
         int textDrawingMode();
         void setTextDrawingMode(int);
 
-        void drawText(const TextRun&, const IntPoint&);
-        void drawText(const TextRun&, const IntPoint&, const TextStyle&);
-        void drawHighlightForText(const TextRun&, const IntPoint&, int h, const TextStyle&, const Color& backgroundColor);
+        void drawText(const TextRun&, const IntPoint&, int from = 0, int to = -1);
+        void drawText(const TextRun&, const IntPoint&, const TextStyle&, int from = 0, int to = -1);
+        void drawHighlightForText(const TextRun&, const IntPoint&, int h, const TextStyle&, const Color& backgroundColor, int from = 0, int to = -1);
 
         FloatRect roundToDevicePixels(const FloatRect&);
         

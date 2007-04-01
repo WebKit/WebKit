@@ -202,25 +202,25 @@ void GraphicsContext::drawImage(Image* image, const IntRect& dest, const IntRect
     drawImage(image, FloatRect(dest), srcRect, op);
 }
 
-void GraphicsContext::drawText(const TextRun& run, const IntPoint& point)
+void GraphicsContext::drawText(const TextRun& run, const IntPoint& point, int from, int to)
 {
-    drawText(run, point, TextStyle());
+    drawText(run, point, TextStyle(), from, to);
 }
 
-void GraphicsContext::drawText(const TextRun& run, const IntPoint& point, const TextStyle& style)
+void GraphicsContext::drawText(const TextRun& run, const IntPoint& point, const TextStyle& style, int from, int to)
 {
     if (paintingDisabled())
         return;
     
-    font().drawText(this, run, style, point);
+    font().drawText(this, run, style, point, from, to);
 }
 
-void GraphicsContext::drawHighlightForText(const TextRun& run, const IntPoint& point, int h, const TextStyle& style, const Color& backgroundColor)
+void GraphicsContext::drawHighlightForText(const TextRun& run, const IntPoint& point, int h, const TextStyle& style, const Color& backgroundColor, int from, int to)
 {
     if (paintingDisabled())
         return;
 
-    fillRect(font().selectionRectForText(run, style, point, h), backgroundColor);
+    fillRect(font().selectionRectForText(run, style, point, h, from, to), backgroundColor);
 }
 
 void GraphicsContext::initFocusRing(int width, int offset)

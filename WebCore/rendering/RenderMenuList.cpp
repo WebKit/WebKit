@@ -121,7 +121,7 @@ void RenderMenuList::updateOptionsWidth()
         if (element->hasTagName(optionTag)) {
             String text = static_cast<HTMLOptionElement*>(element)->optionText();
             if (!text.isEmpty())
-                maxOptionWidth = max(maxOptionWidth, style()->font().floatWidth(text.impl(), textStyle));
+                maxOptionWidth = max(maxOptionWidth, style()->font().floatWidth(text, textStyle));
         }
     }
 

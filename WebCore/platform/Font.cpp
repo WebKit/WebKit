@@ -76,7 +76,6 @@ struct WidthIterator {
     
     unsigned m_currentCharacter;
     float m_runWidthSoFar;
-    float m_widthToStart;
     float m_padding;
     float m_padPerSpace;
     float m_finalRoundingWidth;
@@ -88,9 +87,9 @@ private:
 WidthIterator::WidthIterator(const Font* font, const TextRun& run, const TextStyle& style)
     : m_font(font)
     , m_run(run)
-    , m_end(style.rtl() ? run.length() : run.to())
+    , m_end(run.length())
     , m_style(style)
-    , m_currentCharacter(run.from())
+    , m_currentCharacter(0)
     , m_runWidthSoFar(0)
     , m_finalRoundingWidth(0)
 {
@@ -109,19 +108,6 @@ WidthIterator::WidthIterator(const Font* font, const TextRun& run, const TextSty
             m_padPerSpace = 0;
         else
             m_padPerSpace = ceilf(m_style.padding() / numSpaces);
-    }
-    
-    // Calculate width up to starting position of the run.  This is
-    // necessary to ensure that our rounding hacks are always consistently
-    // applied.
-    if (run.from() == 0)
-        m_widthToStart = 0;
-    else {
-        TextRun completeRun(run);
-        completeRun.makeComplete();
-        WidthIterator startPositionIterator(font, completeRun, style);
-        startPositionIterator.advance(run.from());
-        m_widthToStart = startPositionIterator.m_runWidthSoFar;
     }
 }
 
@@ -237,7 +223,7 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
         // width so that the total run width will be on an integer boundary.
         if ((m_style.applyWordRounding() && currentCharacter < m_run.length() && Font::isRoundingHackCharacter(*cp))
                 || (m_style.applyRunRounding() && currentCharacter >= m_end)) {
-            float totalWidth = m_widthToStart + runWidthSoFar + width;
+            float totalWidth = runWidthSoFar + width;
             width += ceilf(totalWidth) - totalWidth;
         }
 
@@ -537,7 +523,7 @@ bool Font::canUseGlyphCache(const TextRun& run) const
     }
     
     // Start from 0 since drawing and highlighting also measure the characters before run->from
-    for (int i = 0; i < run.to(); i++) {
+    for (int i = 0; i < run.length(); i++) {
         const UChar c = run[i];
         if (c < 0x300)      // U+0300 through U+036F Combining diacritical marks
             continue;
@@ -584,18 +570,29 @@ bool Font::canUseGlyphCache(const TextRun& run) const
 
 }
 
-void Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const TextStyle& style, const FloatPoint& point) const
+void Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const TextStyle& style, const FloatPoint& point, int from, int to) const
 {
     // This glyph buffer holds our glyphs+advances+font data for each glyph.
     GlyphBuffer glyphBuffer;
 
-    // Our measuring code will generate glyphs and advances for us.
-    float startX;
-    floatWidthForSimpleText(run, style, &startX, &glyphBuffer);
+    float startX = point.x();
+    WidthIterator it(this, run, style);
+    it.advance(from);
+    float beforeWidth = it.m_runWidthSoFar;
+    it.advance(to, &glyphBuffer);
     
     // We couldn't generate any glyphs for the run.  Give up.
     if (glyphBuffer.isEmpty())
         return;
+    
+    float afterWidth = it.m_runWidthSoFar;
+
+    if (style.rtl()) {
+        float finalRoundingWidth = it.m_finalRoundingWidth;
+        it.advance(run.length());
+        startX += finalRoundingWidth + it.m_runWidthSoFar - afterWidth;
+    } else
+        startX += beforeWidth;
 
     // Swap the order of the glyphs if right-to-left.
     if (style.rtl())
@@ -604,7 +601,6 @@ void Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const Te
 
     // Calculate the starting point of the glyphs to be displayed by adding
     // all the advances up to the first glyph.
-    startX += point.x();
     FloatPoint startPoint(startX, point.y());
     drawGlyphBuffer(context, glyphBuffer, run, style, startPoint);
 }
@@ -635,54 +631,43 @@ void Font::drawGlyphBuffer(GraphicsContext* context, const GlyphBuffer& glyphBuf
     drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
 }
 
-void Font::drawText(GraphicsContext* context, const TextRun& run, const TextStyle& style, const FloatPoint& point) const
+void Font::drawText(GraphicsContext* context, const TextRun& run, const TextStyle& style, const FloatPoint& point, int from, int to) const
 {
+    to = (to == -1 ? run.length() : to);
     if (canUseGlyphCache(run))
-        drawSimpleText(context, run, style, point);
+        drawSimpleText(context, run, style, point, from, to);
     else
-        drawComplexText(context, run, style, point);
+        drawComplexText(context, run, style, point, from, to);
 }
 
 float Font::floatWidth(const TextRun& run, const TextStyle& style) const
 {
     if (canUseGlyphCache(run))
-        return floatWidthForSimpleText(run, style, 0, 0);
+        return floatWidthForSimpleText(run, style, 0);
     return floatWidthForComplexText(run, style);
 }
 
-float Font::floatWidthForSimpleText(const TextRun& run, const TextStyle& style, float* startPosition, GlyphBuffer* glyphBuffer) const
+float Font::floatWidthForSimpleText(const TextRun& run, const TextStyle& style, GlyphBuffer* glyphBuffer) const
 {
     WidthIterator it(this, run, style);
-    it.advance(run.to(), glyphBuffer);
-    float runWidth = it.m_runWidthSoFar;
-    if (startPosition) {
-        if (style.ltr())
-            *startPosition = it.m_widthToStart;
-        else {
-            float finalRoundingWidth = it.m_finalRoundingWidth;
-            it.advance(run.length());
-            *startPosition = it.m_runWidthSoFar - runWidth + finalRoundingWidth;
-        }
-    }
-    return runWidth;
+    it.advance(run.length(), glyphBuffer);
+    return it.m_runWidthSoFar;
 }
 
-FloatRect Font::selectionRectForText(const TextRun& run, const TextStyle& style, const IntPoint& point, int h) const
+FloatRect Font::selectionRectForText(const TextRun& run, const TextStyle& style, const IntPoint& point, int h, int from, int to) const
 {
+    to = (to == -1 ? run.length() : to);
     if (canUseGlyphCache(run))
-        return selectionRectForSimpleText(run, style, point, h);
-    return selectionRectForComplexText(run, style, point, h);
+        return selectionRectForSimpleText(run, style, point, h, from, to);
+    return selectionRectForComplexText(run, style, point, h, from, to);
 }
 
-FloatRect Font::selectionRectForSimpleText(const TextRun& run, const TextStyle& style, const IntPoint& point, int h) const
+FloatRect Font::selectionRectForSimpleText(const TextRun& run, const TextStyle& style, const IntPoint& point, int h, int from, int to) const
 {
-    TextRun completeRun(run);
-    completeRun.makeComplete();
-
-    WidthIterator it(this, completeRun, style);
-    it.advance(run.from());
+    WidthIterator it(this, run, style);
+    it.advance(from);
     float beforeWidth = it.m_runWidthSoFar;
-    it.advance(run.to());
+    it.advance(to);
     float afterWidth = it.m_runWidthSoFar;
 
     // Using roundf() rather than ceilf() for the right edge as a compromise to ensure correct caret positioning
@@ -710,7 +695,7 @@ int Font::offsetForPositionForSimpleText(const TextRun& run, const TextStyle& st
     GlyphBuffer localGlyphBuffer;
     unsigned offset;
     if (style.rtl()) {
-        delta -= floatWidthForSimpleText(run, style, 0, 0);
+        delta -= floatWidthForSimpleText(run, style, 0);
         while (1) {
             offset = it.m_currentCharacter;
             float w;
@@ -742,7 +727,7 @@ int Font::offsetForPositionForSimpleText(const TextRun& run, const TextStyle& st
         }
     }
 
-    return offset - run.from();
+    return offset;
 }
 
 }

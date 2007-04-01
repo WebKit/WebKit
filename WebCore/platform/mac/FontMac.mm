@@ -94,7 +94,7 @@ static TextRun addDirectionalOverride(const TextRun& run, bool rtl)
     memcpy(&charactersWithOverride[1], run.data(0), sizeof(UChar) * run.length());
     charactersWithOverride[run.length() + 1] = popDirectionalFormatting;
 
-    return TextRun(charactersWithOverride, run.length() + 2, run.from() + 1, run.to() + 1);
+    return TextRun(charactersWithOverride, run.length() + 2);
 }
 
 static void initializeATSUStyle(const FontData* fontData)
@@ -167,8 +167,8 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
         
         Fixed lastNativePos = 0;
         float lastAdjustedPos = 0;
-        const UChar* characters = params->m_charBuffer ? params->m_charBuffer + params->m_run.from() : params->m_run.data(params->m_run.from());
-        const FontData **renderers = params->m_fonts + params->m_run.from();
+        const UChar* characters = params->m_charBuffer ? params->m_charBuffer : params->m_run.characters();
+        const FontData **renderers = params->m_fonts;
         const FontData *renderer;
         const FontData *lastRenderer = 0;
         UChar ch, nextCh;
@@ -238,11 +238,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
             if (Font::isRoundingHackCharacter(ch))
                 width = ceilf(width);
             lastAdjustedPos = lastAdjustedPos + width;
-            if (Font::isRoundingHackCharacter(nextCh)
-                && (!isLastChar
-                    || params->m_style.applyRunRounding()
-                    || (params->m_run.to() < (int)params->m_run.length() && 
-                        Font::isRoundingHackCharacter(characters[params->m_run.to() - params->m_run.from()])))) {
+            if (Font::isRoundingHackCharacter(nextCh) && (!isLastChar || params->m_style.applyRunRounding())){
                 if (params->m_style.ltr())
                     lastAdjustedPos = ceilf(lastAdjustedPos);
                 else {
@@ -331,20 +327,16 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
     // FIXME: This is currently missing the following required features that the CoreGraphics code path has:
     // - \n, \t, and nonbreaking space render as a space.
 
-    UniCharCount totalLength = m_run.length();
-    UniCharArrayOffset runTo = m_run.to();
-    UniCharArrayOffset runFrom = m_run.from();
-    
+    UniCharCount runLength = m_run.length();
+     
     if (m_charBuffer)
-        memcpy(m_charBuffer, m_run.characters(), totalLength * sizeof(UChar));
-
-    UniCharCount runLength = runTo - runFrom;
+        memcpy(m_charBuffer, m_run.characters(), runLength * sizeof(UChar));
     
     status = ATSUCreateTextLayoutWithTextPtr(
             (m_charBuffer ? m_charBuffer : m_run.characters()),
-            runFrom,        // offset
+            0,        // offset
             runLength,      // length
-            totalLength,    // total length
+            runLength,    // total length
             1,              // styleRunCount
             &runLength,     // length of style run
             &fontData->m_ATSUStyle, 
@@ -379,12 +371,12 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
 
     m_hasSyntheticBold = false;
     ATSUFontID ATSUSubstituteFont;
-    UniCharArrayOffset substituteOffset = runFrom;
+    UniCharArrayOffset substituteOffset = 0;
     UniCharCount substituteLength;
     UniCharArrayOffset lastOffset;
     const FontData* substituteFontData = 0;
 
-    while (substituteOffset < runTo) {
+    while (substituteOffset < runLength) {
         lastOffset = substituteOffset;
         status = ATSUMatchFontsToText(layout, substituteOffset, kATSUToTextEnd, &ATSUSubstituteFont, &substituteOffset, &substituteLength);
         if (status == kATSUFontsMatched || status == kATSUFontsNotMatched) {
@@ -396,7 +388,7 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
             } else
                 substituteFontData = fontData;
         } else {
-            substituteOffset = runTo;
+            substituteOffset = runLength;
             substituteLength = 0;
         }
 
@@ -420,18 +412,18 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
             if (!shapedArabic && ublock_getCode(m_run[i]) == UBLOCK_ARABIC && !r->shapesArabic()) {
                 shapedArabic = true;
                 if (!m_charBuffer) {
-                    m_charBuffer = new UChar[totalLength];
+                    m_charBuffer = new UChar[runLength];
                     memcpy(m_charBuffer, m_run.characters(), i * sizeof(UChar));
                     ATSUTextMoved(layout, m_charBuffer);
                 }
-                shapeArabic(m_run.characters(), m_charBuffer, totalLength, i);
+                shapeArabic(m_run.characters(), m_charBuffer, runLength, i);
             }
             if (m_style.rtl() && !r->m_ATSUMirrors) {
                 UChar mirroredChar = u_charMirror(m_run[i]);
                 if (mirroredChar != m_run[i]) {
                     if (!m_charBuffer) {
-                        m_charBuffer = new UChar[totalLength];
-                        memcpy(m_charBuffer, m_run.characters(), totalLength * sizeof(UChar));
+                        m_charBuffer = new UChar[runLength];
+                        memcpy(m_charBuffer, m_run.characters(), runLength * sizeof(UChar));
                         ATSUTextMoved(layout, m_charBuffer);
                     }
                     m_charBuffer[i] = mirroredChar;
@@ -468,7 +460,7 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
     if (m_style.padding()) {
         float numSpaces = 0;
         unsigned k;
-        for (k = 0; k < totalLength; k++)
+        for (k = 0; k < runLength; k++)
             if (Font::treatAsSpace(m_run[k]))
                 numSpaces++;
 
@@ -487,15 +479,9 @@ static void disposeATSULayoutParameters(ATSULayoutParameters *params)
     delete []params->m_fonts;
 }
 
-FloatRect Font::selectionRectForComplexText(const TextRun& run, const TextStyle& style, const IntPoint& point, int h) const
-{
-    int from = run.from();
-    int to = run.to();
-        
-    TextRun completeRun(run);
-    completeRun.makeComplete();
-    
-    TextRun adjustedRun = style.directionalOverride() ? addDirectionalOverride(completeRun, style.rtl()) : completeRun;
+FloatRect Font::selectionRectForComplexText(const TextRun& run, const TextStyle& style, const IntPoint& point, int h, int from, int to) const
+{        
+    TextRun adjustedRun = style.directionalOverride() ? addDirectionalOverride(run, style.rtl()) : run;
     if (style.directionalOverride()) {
         from++;
         to++;
@@ -525,26 +511,28 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run, const TextStyle&
     return rect;
 }
 
-void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run, const TextStyle& style, const FloatPoint& point) const
+void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run, const TextStyle& style, const FloatPoint& point, int from, int to) const
 {
     OSStatus status;
     
-    int runLength = run.to() - run.from();
-
+    int drawPortionLength = to - from;
     TextRun adjustedRun = style.directionalOverride() ? addDirectionalOverride(run, style.rtl()) : run;
-    ATSULayoutParameters params(TextRun(adjustedRun.characters(), adjustedRun.length(), 0, adjustedRun.length()), style);
+    if (style.directionalOverride())
+        from++;
+
+    ATSULayoutParameters params(TextRun(adjustedRun.characters(), adjustedRun.length()), style);
     params.initialize(this, graphicsContext);
     
     // ATSUI can't draw beyond -32768 to +32767 so we translate the CTM and tell ATSUI to draw at (0, 0).
     CGContextRef context = graphicsContext->platformContext();
 
     CGContextTranslateCTM(context, point.x(), point.y());
-    status = ATSUDrawText(params.m_layout, adjustedRun.from(), runLength, 0, 0);
+    status = ATSUDrawText(params.m_layout, from, drawPortionLength, 0, 0);
     if (status == noErr && params.m_hasSyntheticBold) {
         // Force relayout for the bold pass
         ATSUClearLayoutCache(params.m_layout, 0);
         params.m_syntheticBoldPass = true;
-        status = ATSUDrawText(params.m_layout, adjustedRun.from(), runLength, 0, 0);
+        status = ATSUDrawText(params.m_layout, from, drawPortionLength, 0, 0);
     }
     CGContextTranslateCTM(context, -point.x(), -point.y());
 
@@ -560,7 +548,7 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
 
 float Font::floatWidthForComplexText(const TextRun& run, const TextStyle& style) const
 {
-    if (run.from() == run.to())
+    if (run.length() == 0)
         return 0;
 
     ATSULayoutParameters params(run, style);
@@ -570,7 +558,7 @@ float Font::floatWidthForComplexText(const TextRun& run, const TextStyle& style)
     
     ATSTrapezoid firstGlyphBounds;
     ItemCount actualNumBounds;
-    status = ATSUGetGlyphBounds(params.m_layout, 0, 0, run.from(), run.to() - run.from(), kATSUseFractionalOrigins, 1, &firstGlyphBounds, &actualNumBounds);    
+    status = ATSUGetGlyphBounds(params.m_layout, 0, 0, 0, run.length(), kATSUseFractionalOrigins, 1, &firstGlyphBounds, &actualNumBounds);    
     if (status != noErr)
         LOG_ERROR("ATSUGetGlyphBounds() failed(%d)", status);
     if (actualNumBounds != 1)
@@ -589,7 +577,7 @@ int Font::offsetForPositionForComplexText(const TextRun& run, const TextStyle& s
     ATSULayoutParameters params(adjustedRun, style);
     params.initialize(this);
 
-    UniCharArrayOffset primaryOffset = adjustedRun.from();
+    UniCharArrayOffset primaryOffset = 0;
     
     // FIXME: No idea how to avoid including partial glyphs.
     // Not even sure if that's the behavior this yields now.
@@ -597,9 +585,11 @@ int Font::offsetForPositionForComplexText(const TextRun& run, const TextStyle& s
     UniCharArrayOffset secondaryOffset = 0;
     OSStatus status = ATSUPositionToOffset(params.m_layout, FloatToFixed(x), FloatToFixed(-1), &primaryOffset, &isLeading, &secondaryOffset);
     unsigned offset;
-    if (status == noErr)
+    if (status == noErr) {
         offset = (unsigned)primaryOffset;
-    else
+        if (style.directionalOverride() && offset > 0)
+            offset--;
+    } else
         // Failed to find offset!  Return 0 offset.
         offset = 0;
 
@@ -608,7 +598,7 @@ int Font::offsetForPositionForComplexText(const TextRun& run, const TextStyle& s
     if (style.directionalOverride())
         delete []adjustedRun.characters();
 
-    return offset - adjustedRun.from();
+    return offset;
 }
 
 void Font::drawGlyphs(GraphicsContext* context, const FontData* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const

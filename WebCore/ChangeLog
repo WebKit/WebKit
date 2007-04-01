@@ -1,3 +1,63 @@
+2007-03-31  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 13234, layout of selected justified text is broken.  Rework TextRuns to avoid having
+        from/to members.  Let those be passed in only by the functions that need them (drawing and selection rect).
+
+        Reviewed by mitz
+
+        fast/text/justified-selection-at-edge.html
+
+        * platform/Font.cpp:
+        (WebCore::WidthIterator::WidthIterator):
+        (WebCore::WidthIterator::advance):
+        (WebCore::Font::canUseGlyphCache):
+        (WebCore::Font::drawSimpleText):
+        (WebCore::Font::drawText):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::floatWidthForSimpleText):
+        (WebCore::Font::selectionRectForText):
+        (WebCore::Font::selectionRectForSimpleText):
+        (WebCore::Font::offsetForPositionForSimpleText):
+        * platform/Font.h:
+        (WebCore::TextRun::m_len):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawText):
+        (WebCore::GraphicsContext::drawHighlightForText):
+        * platform/graphics/GraphicsContext.h:
+        * platform/mac/FontMac.mm:
+        (WebCore::addDirectionalOverride):
+        (WebCore::overrideLayoutOperation):
+        (WebCore::ATSULayoutParameters::initialize):
+        (WebCore::Font::selectionRectForComplexText):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        * platform/qt/FontQt.cpp:
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (Font::selectionRectForComplexText):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintMarkedTextBackground):
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        (WebCore::RenderListMarker::calcMinMaxWidth):
+        (WebCore::RenderListMarker::getRelativeMarkerRect):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateOptionsWidth):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::widthFromCache):
+        (WebCore::RenderText::width):
+
 2007-03-31  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

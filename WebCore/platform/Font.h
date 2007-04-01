@@ -51,34 +51,22 @@ struct GlyphData;
 class TextRun {
 public:
     TextRun(const UChar* c, int len)
-    :m_characters(c), m_len(len), m_from(0), m_to(len)
+    :m_characters(c), m_len(len)
     {}
 
-    TextRun(const UChar* c, int len, int from, int to) // This constructor is only used in Mac-specific code.
-    :m_characters(c), m_len(len), m_from(from), m_to(to)
-    {}
-
-    TextRun(const StringImpl* s, int offset = 0, int length = -1, int from = -1, int to = -1)
-    :m_characters(s->characters() + offset), m_len(length == -1 ? s->length() - offset : length), m_from(adjustFrom(from)), m_to(adjustTo(to))
+    TextRun(const String& s)
+    :m_characters(s.characters()), m_len(s.length())
     {}
 
     const UChar operator[](int i) const { return m_characters[i]; }
     const UChar* data(int i) const { return &m_characters[i]; }
 
-    int adjustFrom(int from) const { return from == -1 ? 0 : from; }
-    int adjustTo(int to) const { return to == -1 ? m_len : to; }
-    void makeComplete() { m_from = 0; m_to = m_len; }
-
     const UChar* characters() const { return m_characters; }
     int length() const { return m_len; }
-    int from() const { return m_from; }
-    int to() const { return m_to; }
-
+   
 private:
     const UChar* m_characters;
     int m_len;
-    int m_from;
-    int m_to;
 };
 
 class Font {
@@ -110,7 +98,7 @@ public:
     
     void update() const;
 
-    void drawText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const;
+    void drawText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&, int from = 0, int to = -1) const;
 
     int width(const TextRun&, const TextStyle&) const;
     int width(const TextRun&) const;
@@ -118,7 +106,7 @@ public:
     float floatWidth(const TextRun&) const;
     
     int offsetForPosition(const TextRun&, const TextStyle&, int position, bool includePartialGlyphs) const;
-    FloatRect selectionRectForText(const TextRun&, const TextStyle&, const IntPoint&, int h) const;
+    FloatRect selectionRectForText(const TextRun&, const TextStyle&, const IntPoint&, int h, int from = 0, int to = -1) const;
 
     bool isSmallCaps() const { return m_fontDescription.smallCaps(); }
 
@@ -159,16 +147,16 @@ public:
 private:
     // FIXME: This will eventually be cross-platform, but we want to keep Windows compiling for now.
     bool canUseGlyphCache(const TextRun&) const;
-    void drawSimpleText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const;
+    void drawSimpleText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&, int from, int to) const;
     void drawGlyphs(GraphicsContext*, const FontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
     void drawGlyphBuffer(GraphicsContext*, const GlyphBuffer&, const TextRun&, const TextStyle&, const FloatPoint&) const;
-    void drawComplexText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const;
-    float floatWidthForSimpleText(const TextRun&, const TextStyle&, float* startX, GlyphBuffer*) const;
+    void drawComplexText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&, int from, int to) const;
+    float floatWidthForSimpleText(const TextRun&, const TextStyle&, GlyphBuffer*) const;
     float floatWidthForComplexText(const TextRun&, const TextStyle&) const;
     int offsetForPositionForSimpleText(const TextRun&, const TextStyle&, int position, bool includePartialGlyphs) const;
     int offsetForPositionForComplexText(const TextRun&, const TextStyle&, int position, bool includePartialGlyphs) const;
-    FloatRect selectionRectForSimpleText(const TextRun&, const TextStyle&, const IntPoint&, int h) const;
-    FloatRect selectionRectForComplexText(const TextRun&, const TextStyle&, const IntPoint&, int h) const;
+    FloatRect selectionRectForSimpleText(const TextRun&, const TextStyle&, const IntPoint&, int h, int from, int to) const;
+    FloatRect selectionRectForComplexText(const TextRun&, const TextStyle&, const IntPoint&, int h, int from, int to) const;
 
     friend struct WidthIterator;
     

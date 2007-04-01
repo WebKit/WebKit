@@ -594,7 +594,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
     if (m_text.isEmpty())
         return;
 
-    TextRun textRun(m_text.impl());
+    TextRun textRun(m_text);
 
     // Text is not arbitrary. We can judge whether it's RTL from the first character,
     // and we only need to handle the direction RightToLeft for now.
@@ -691,7 +691,7 @@ void RenderListMarker::calcMinMaxWidth()
             if (m_text.isEmpty())
                 width = 0;
             else {
-                int itemWidth = font.width(m_text.impl());
+                int itemWidth = font.width(m_text);
                 const UChar periodSpace[2] = { '.', ' ' };
                 int periodSpaceWidth = font.width(TextRun(periodSpace, 2));
                 width = itemWidth + periodSpaceWidth;
@@ -839,7 +839,7 @@ IntRect RenderListMarker::getRelativeMarkerRect()
             if (m_text.isEmpty())
                 return IntRect();
             const Font& font = style()->font();
-            int itemWidth = font.width(m_text.impl());
+            int itemWidth = font.width(m_text);
             const UChar periodSpace[2] = { '.', ' ' };
             int periodSpaceWidth = font.width(TextRun(periodSpace, 2));
             return IntRect(m_x, m_y + font.ascent(), itemWidth + periodSpaceWidth, font.height());
