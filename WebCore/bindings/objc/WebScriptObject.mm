@@ -497,50 +497,17 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
 @interface WebScriptObject (WebKitCocoaBindings)
 
-- (unsigned)_count;
 - (id)objectAtIndex:(unsigned)index;
 
 @end
 
 @implementation WebScriptObject (WebKitCocoaBindings)
 
-- (BOOL)_shouldRespondToCount
-{
-    if (_private->shouldRespondToCountSet)
-        return _private->shouldRespondToCount;
+#if 0 
+// FIXME: presence of 'count' method on WebScriptObject breaks Democracy player
+//        http://bugs.webkit.org/show_bug.cgi?id=13129
 
-    BOOL shouldRespondToCount = YES;
- 
-    @try {
-        [self valueForKey:@"length"];
-    } @catch (id e) {
-        shouldRespondToCount = NO;
-    }
-
-    _private->shouldRespondToCount = shouldRespondToCount;
-    _private->shouldRespondToCountSet = YES;
-
-    return shouldRespondToCount;
-}
-
-- (IMP)methodForSelector:(SEL)selector
-{
-    if (selector == @selector(count:) && [self _shouldRespondToCount])
-        selector = @selector(_count:);
-
-    return [super methodForSelector:selector];
-}
-
-- (BOOL)respondsToSelector:(SEL)selector
-{
-    if (selector == @selector(count:) && [self _shouldRespondToCount])
-        selector = @selector(_count:);
-
-    return [super respondsToSelector:selector];
-}
-
-
-- (unsigned)_count
+- (unsigned)count
 {
     id length = [self valueForKey:@"length"];
     if ([length respondsToSelector:@selector(intValue)])
@@ -548,6 +515,8 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     else
         return 0;
 }
+
+#endif
 
 - (id)objectAtIndex:(unsigned)index
 {

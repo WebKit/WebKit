@@ -1,3 +1,19 @@
+2007-03-31  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin.
+
+        A more correct fix for http://bugs.webkit.org/show_bug.cgi?id=13129
+        Bug 13129: Democracy Player dies in NSException from WebScriptObject on startup
+
+        The previous attempt at a fix in r20343 attempted to conditionally expose the 'count'
+        method.  It did not work which resulted in 'count' always being hidden.  This change
+        disables -[WebScriptObject count] completely until it can be determined whether it is
+        needed and how to support it without breaking third-party applications.
+
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject count]):
+        * bindings/objc/WebScriptObjectPrivate.h:
+
 2007-03-31  Nicholas Shanks  <webkit@nickshanks.com>
 
         Reviewed by Adele.
