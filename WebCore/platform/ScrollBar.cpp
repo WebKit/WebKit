@@ -26,6 +26,11 @@
 #include "config.h"
 #include "ScrollBar.h"
 
+#include <algorithm>
+
+using std::max;
+using std::min;
+
 namespace WebCore {
 
 Scrollbar::Scrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
@@ -43,11 +48,7 @@ Scrollbar::Scrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, 
 
 bool Scrollbar::setValue(int v)
 {
-    int maxPos = m_totalSize - m_visibleSize;
-    if (v > maxPos)
-        v = maxPos;
-    if (v < 0)
-        v = 0;
+    v = max(min(v, m_totalSize - m_visibleSize), 0);
     if (value() == v)
         return false; // Our value stayed the same.
     m_currentPos = v;
@@ -97,10 +98,8 @@ bool Scrollbar::scroll(ScrollDirection direction, ScrollGranularity granularity,
         
     float newPos = m_currentPos + step * multiplier;
     float maxPos = m_totalSize - m_visibleSize;
-    if (newPos < 0)
-        newPos = 0;
-    if (newPos > maxPos)
-        newPos = maxPos;
+    newPos = max(min(newPos, maxPos), 0.0f);
+
     if (newPos == m_currentPos)
         return false;
     

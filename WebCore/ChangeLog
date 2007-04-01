@@ -2,6 +2,19 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13243
+              <rdar://problem/5103226>
+          REGRESSION (r20506): Repro crash/assert when using scroll wheel on a list box taller than its contents
+
+        * platform/ScrollBar.cpp:
+        (WebCore::Scrollbar::setValue): Cleaned up a little.
+        (WebCore::Scrollbar::scroll): Changed to apply the minimum and maximum constraints
+        in the right order, and cleaned up a little.
+
+2007-03-31  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=13242
           REGRESSION: Repro crash when specifying the content property for an image
 
