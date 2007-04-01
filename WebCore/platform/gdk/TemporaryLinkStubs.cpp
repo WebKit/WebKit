@@ -277,8 +277,8 @@ Icon::~Icon() { notImplementedGdk(); }
 PassRefPtr<Icon> Icon::newIconForFile(const String& filename) { notImplementedGdk(); return PassRefPtr<Icon>(new Icon()); }
 void Icon::paint(GraphicsContext*, const IntRect&) { notImplementedGdk(); }
 
-FloatRect Font::selectionRectForComplexText(const TextRun&, const TextStyle&, const IntPoint&, int) const { return FloatRect(); }
-void Font::drawComplexText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const { notImplementedGdk(); }
+FloatRect Font::selectionRectForComplexText(const TextRun&, const TextStyle&, const IntPoint&, int, int, int) const { return FloatRect(); notImplementedGdk(); }
+void Font::drawComplexText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&, int from, int to) const { notImplementedGdk(); }
 float Font::floatWidthForComplexText(const TextRun&, const TextStyle&) const { notImplementedGdk(); return 0; }
 int Font::offsetForPositionForComplexText(const TextRun&, const TextStyle&, int, bool) const { notImplementedGdk(); return 0; }
 

@@ -1,3 +1,11 @@
+2007-03-31  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Not reviewed - gdk build fix.
+
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        (Font::selectionRectForComplexText):
+        (Font::drawComplexText):
+
 2007-03-31  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
