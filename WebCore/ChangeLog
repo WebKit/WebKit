@@ -1,3 +1,17 @@
+2007-03-31  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13242
+          REGRESSION: Repro crash when specifying the content property for an image
+
+        Test: fast/images/text-content-crash.html
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute): Added a check that the
+        renderer is an image.
+        (WebCore::HTMLImageElement::attach): Ditto.
+
 2007-03-31  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin.

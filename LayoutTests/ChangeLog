@@ -1,5 +1,15 @@
 2007-03-31  Mitz Pettel  <mitz@webkit.org>
 
+        Reviewed by Darin.
+
+        - test for http://bugs.webkit.org/show_bug.cgi?id=13242
+          REGRESSION: Repro crash when specifying the content property for an image
+
+        * fast/images/text-content-crash-expected.txt: Added.
+        * fast/images/text-content-crash.html: Added.
+
+2007-03-31  Mitz Pettel  <mitz@webkit.org>
+
         Reviewed by Sam Weinig.
 
         - pixel test for partially selected justified text
