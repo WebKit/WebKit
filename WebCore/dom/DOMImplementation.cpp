@@ -345,8 +345,24 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
 {
     if (inViewSourceMode)
         return new HTMLViewSourceDocument(this, view);
+
+    // Plugins cannot take HTML and XHTML from us, and we don't even need to initialize the plugin database for those.
     if (type == "text/html")
         return new HTMLDocument(this, view);
+    if (type == "application/xhtml+xml")
+        return new Document(this, view);
+
+    // PDF is one image type for which a plugin can override built-in support.
+    // We do not want QuickTime to take over all image types, obviously.
+    if ((type == "application/pdf" || type == "text/pdf") && PlugInInfoStore::supportsMIMEType(type))
+        return new PluginDocument(this, view);
+    if (Image::supportsType(type))
+        return new ImageDocument(this, view);
+
+    // Everything else can be overridden by plugins. In particular, Adobe SVG Viewer should be used for SVG, if installed.
+    if (PlugInInfoStore::supportsMIMEType(type))
+        return new PluginDocument(this, view);
+
 #if ENABLE(SVG)
     if (type == "image/svg+xml")
         return new SVGDocument(this, view);
@@ -355,12 +371,7 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
         return new Document(this, view);
     if (isTextMIMEType(type))
         return new TextDocument(this, view);
-    if ((type == "application/pdf" || type == "text/pdf") && PlugInInfoStore::supportsMIMEType(type))
-        return new PluginDocument(this, view);
-    if (Image::supportsType(type))
-        return new ImageDocument(this, view);
-    if (PlugInInfoStore::supportsMIMEType(type))
-        return new PluginDocument(this, view);
+
     return new HTMLDocument(this, view);
 }
 

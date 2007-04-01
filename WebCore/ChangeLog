@@ -1,3 +1,15 @@
+2007-03-31  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12778
+        REGRESSION: Nightly won't load Curl plugin for full page use
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument): Re-order cases to give more priority to plugins.
+        This also fixes Adobe SVG Viewer and any plugins that register XML MIME types.
+        Added a case for XHTML to avoid enumerating plugins.
+
 2007-03-31  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 13234, layout of selected justified text is broken.  Rework TextRuns to avoid having
