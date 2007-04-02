@@ -1,3 +1,10 @@
+2007-04-02  Antti Koivisto  <antti@apple.com>
+
+        Fix build. This one was not supposed to be checked in.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+
 2007-03-30  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Hyatt.
