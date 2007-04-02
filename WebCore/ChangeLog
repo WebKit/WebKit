@@ -1,3 +1,13 @@
+2007-04-02  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Adele.
+
+        <rdar://5105331> Missing null check in Editor::execCommand
+        Added null check.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::execCommand):
+
 2007-04-02  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
