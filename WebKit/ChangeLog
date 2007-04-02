@@ -1,3 +1,58 @@
+2007-04-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13026
+          <rdar://problem/5061026> incomplete render of menu
+          (assertion failing in -[WebBaseNetscapePluginView saveAndSetNewPortStateForUpdate:])
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13120
+          <rdar://problem/5080339> Plug-ins that draw through the QuickDraw interface may crash
+          by hanging onto old GWorlds.
+
+        - set clip path for CoreGraphics plug-ins in the same way we do for QuickDraw plug-ins
+          this is a better fix for <rdar://problem/4939511> WebKit should set the the CG clip
+          path for plug-ins that draw using Core Graphics
+
+        Incorporates changes from a patch by Mark Ambachtsheer.
+
+        Here are the changes:
+
+            1) Don't try to use the offscreen code path if GGBitmapContextGetData returns 0.
+            2) Handle kCGBitmapByteOrderDefault when computing the QD pixel format, even though
+               we don't have any evidence that this happens in practice.
+            3) Keep the GWorld around until we create a new one or the plug-in is destroyed.
+            4) Use the GWorld pointer itself as a flag to indicate whether we are using an
+               offscreen GWorld.
+            5) Set up clipping for CoreGraphics in the same way we do for QuickDraw; remove an
+               earlier attempt that handled CoreGraphics differently.
+
+        * Plugins/WebBaseNetscapePluginView.h: Added a field named offscreenGWorld to hold
+        the GWorld until it's needed.
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (getQDPixelFormatForBitmapContext): Replaced QDPixelFormatFromCGBitmapInfo. Used the
+        "get" prefix so we don't intrude on the QD namespace. Added code to handle the
+        kCGBitmapByteOrderDefault case, although I'm not sure it will really come up in
+        practice -- it wasn't really coming up in the buggy case.
+        (getNPRect): Added helper functions. Used to make the code below clearer.
+        (-[WebBaseNetscapePluginView saveAndSetNewPortStateForUpdate:]): Use getNPRect to
+        streamline code. Use GetGWorld to save the port since we use SetGWorld to restore
+        it later. Store the GWorld we create in the offscreenGWorld field and dispose the
+        existing one. Don't treat the CGBitmapContext as an offscreen bitmap if it
+        has a data pointer of 0. Set up the clip based on the result of
+        -[NSView getRectsBeingDrawn:count] when setting up the port for CoreGraphics
+        (after saving the port state).
+        (-[WebBaseNetscapePluginView restorePortState:]): Remove now-unneeded code to
+        destroy the offscreen GWorld, and simplified the code that restores the port so we
+        don't need a separate case for offscreen.
+        (-[WebBaseNetscapePluginView fini]): Renamed from freeAttributeKeysAndValues, since
+        this method now does more than just the attributes. This is the shared method that
+        does things needed in both dealloc and finalize. Added a call to DisposeGWorld here.
+        (-[WebBaseNetscapePluginView dealloc]): Updated for name change.
+        (-[WebBaseNetscapePluginView finalize]): Ditto.
+        (-[WebBaseNetscapePluginView drawRect:]): Removed code to set clip. This is done in
+        the saveAndSetNewPortStateForUpdate: method instead.
+
 2007-03-30  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
