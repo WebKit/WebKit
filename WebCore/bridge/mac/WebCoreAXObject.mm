@@ -29,6 +29,7 @@
 #import "DOMInternal.h"
 #import "Document.h"
 #import "EventNames.h"
+#import "FocusController.h"
 #import "FontData.h"
 #import "FrameLoader.h"
 #import "Frame.h"
@@ -45,6 +46,7 @@
 #import "HitTestRequest.h"
 #import "HitTestResult.h"
 #import "LocalizedStrings.h"
+#import "Page.h"
 #import "RenderImage.h"
 #import "RenderListMarker.h"
 #import "RenderMenuList.h"
@@ -964,17 +966,17 @@ static IntRect boundingBoxRect(RenderObject* obj)
     return [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
 }
 
-- (Document*)topDocument
-{
-    return m_renderer->document()->topDocument();
-}
-
 - (RenderObject*)topRenderer
 {
     return m_renderer->document()->topDocument()->renderer();
 }
 
-- (FrameView*)topView
+- (FrameView*)frameView
+{
+    return m_renderer->document()->view();
+}
+
+- (FrameView*)topFrameView
 {
     return m_renderer->document()->topDocument()->renderer()->view()->frameView();
 }
@@ -1095,32 +1097,24 @@ static IntRect boundingBoxRect(RenderObject* obj)
     if ([attributeName isEqualToString: NSAccessibilityWindowAttribute]) {
         if (m_renderer && m_renderer->view() && m_renderer->view()->frameView())
             return [m_renderer->view()->frameView()->getView() window];
+
         return nil;
     }
     
     if ([attributeName isEqualToString: @"AXSelectedTextMarkerRange"]) {
-        // get the selection from the document part
-        // NOTE: BUG support nested WebAreas, like in <http://webcourses.niu.edu/>
-        // (there is a web archive of this page attached to <rdar://problem/3888973>)
-        // Trouble is we need to know which document view to ask.
-        Selection selection = [self topView]->frame()->selectionController()->selection();
-        if (selection.isNone()) {
-            FrameView* view = m_renderer->document()->renderer()->view()->frameView();
-            if (!view)
-                return nil;
-            selection = view->frame()->selectionController()->selection();
-            if (selection.isNone())
-                return nil;
-        }
-        
-        return (id) [self textMarkerRangeFromVisiblePositions:selection.visibleStart() andEndPos:selection.visibleEnd()];
+        // get the selection from the document
+        Selection selection = [self frameView]->frame()->selectionController()->selection();
+        if (selection.isNone())
+            return nil;
+
+        return (id) [self textMarkerRangeFromVisiblePositions:selection.visibleStart() andEndPos:selection.visibleEnd()];        
     }
     
     if ([attributeName isEqualToString: @"AXStartTextMarker"])
-        return (id) [self textMarkerForVisiblePosition: startOfDocument(m_renderer->document()->topDocument())];
+        return (id) [self textMarkerForVisiblePosition: startOfDocument(m_renderer->document())];
 
     if ([attributeName isEqualToString: @"AXEndTextMarker"])
-        return (id) [self textMarkerForVisiblePosition: endOfDocument(m_renderer->document()->topDocument())];
+        return (id) [self textMarkerForVisiblePosition: endOfDocument(m_renderer->document())];
 
     return nil;
 }
@@ -1235,7 +1229,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
     // iterate over the lines
     // NOTE: BUG this is wrong when lineNumber is lineCount+1,  because nextLinePosition takes you to the
     // last offset of the last line
-    VisiblePosition visiblePos = [self topRenderer]->positionForCoordinates(0, 0);
+    VisiblePosition visiblePos = m_renderer->document()->renderer()->positionForCoordinates(0, 0);
     VisiblePosition savedVisiblePos;
     while (--lineCount != 0) {
         savedVisiblePos = visiblePos;
@@ -1276,10 +1270,10 @@ static IntRect boundingBoxRect(RenderObject* obj)
 - (id)doAXTextMarkerForPosition: (NSPoint) point
 {
     // convert absolute point to view coordinates
-    FrameView* docView = [self topView];
-    NSView* view = docView->getDocumentView();
+    FrameView* frameView = [self topFrameView];
+    NSView* view = frameView->getDocumentView();
     RenderObject* renderer = [self topRenderer];
-    Node* innerNode = NULL;
+    Node* innerNode = 0;
     
     // locate the node containing the point
     IntPoint pointResult;
@@ -1313,8 +1307,8 @@ static IntRect boundingBoxRect(RenderObject* obj)
         if (!document)
             break;
         renderer = document->renderer();
-        docView = static_cast<FrameView*>(widget);
-        view = docView->getDocumentView();
+        frameView = static_cast<FrameView*>(widget);
+        view = frameView->getDocumentView();
     }
     
     // get position within the node
@@ -1324,7 +1318,6 @@ static IntRect boundingBoxRect(RenderObject* obj)
 
 - (id)doAXBoundsForTextMarkerRange: (WebCoreTextMarkerRange*) textMarkerRange
 {
-
     // extract the start and end VisiblePosition
     VisiblePosition startVisiblePosition = [self visiblePositionForStartOfTextMarkerRange: textMarkerRange];
     if (startVisiblePosition.isNull())
@@ -1333,27 +1326,26 @@ static IntRect boundingBoxRect(RenderObject* obj)
     VisiblePosition endVisiblePosition = [self visiblePositionForEndOfTextMarkerRange: textMarkerRange];
     if (endVisiblePosition.isNull())
         return nil;
-    
+
     IntRect rect1 = startVisiblePosition.caretRect();
     IntRect rect2 = endVisiblePosition.caretRect();
     IntRect ourrect = rect1;
     ourrect.unite(rect2);
 
-    // try to use the document view from the selection, so that nested WebAreas work,
+    // try to use the document view from the first position, so that nested WebAreas work,
     // but fall back to the top level doc if we do not find it easily
-    FrameView* docView = NULL;
+    FrameView* frameView = 0;
     RenderObject* renderer = startVisiblePosition.deepEquivalent().node()->renderer();
     if (renderer) {
         Document* doc = renderer->document();
         if (doc)
-            docView = doc->view();
+            frameView = doc->view();
     }
-    if (!docView)
-        docView = [self topView];
-    NSView* view = docView->getView();
+    if (!frameView)
+        frameView = [self frameView];
+    NSView* view = frameView->getView();
 
-    // if the selection spans lines, the rectangle is to extend
-    // across the width of the view
+    // if the rectangle spans lines, it is to extend across the width of the view
     if (rect1.bottom() != rect2.bottom()) {
         ourrect.setX(static_cast<int>([view frame].origin.x));
         ourrect.setWidth(static_cast<int>([view frame].size.width));
@@ -1361,10 +1353,10 @@ static IntRect boundingBoxRect(RenderObject* obj)
  
     // convert our rectangle to screen coordinates
     NSRect rect = ourrect;
-    rect = NSOffsetRect(rect, -docView->contentsX(), -docView->contentsY());
+    rect = NSOffsetRect(rect, -frameView->contentsX(), -frameView->contentsY());
     rect = [view convertRect:rect toView:nil];
     rect.origin = [[view window] convertBaseToScreen:rect.origin];
-   
+
     // return the converted rect
     return [NSValue valueWithRect:rect];
 }
@@ -1393,10 +1385,10 @@ static CGColorRef CreateCGColorIfDifferent(NSColor* nsColor, CGColorRef existing
 
 static void AXAttributeStringSetColor(NSMutableAttributedString* attrString, NSString* attribute, NSColor* color, NSRange range)
 {
-    if (color != nil) {
+    if (color) {
         CGColorRef existingColor = (CGColorRef) [attrString attribute:attribute atIndex:range.location effectiveRange:nil];
         CGColorRef cgColor = CreateCGColorIfDifferent(color, existingColor);
-        if (cgColor != NULL) {
+        if (cgColor) {
             [attrString addAttribute:attribute value:(id)cgColor range:range];
             CGColorRelease(cgColor);
         }
@@ -1406,7 +1398,7 @@ static void AXAttributeStringSetColor(NSMutableAttributedString* attrString, NSS
 
 static void AXAttributeStringSetNumber(NSMutableAttributedString* attrString, NSString* attribute, NSNumber* number, NSRange range)
 {
-    if (number != nil)
+    if (number)
         [attrString addAttribute:attribute value:number range:range];
     else
         [attrString removeAttribute:attribute range:range];
@@ -1416,7 +1408,7 @@ static void AXAttributeStringSetFont(NSMutableAttributedString* attrString, NSSt
 {
     NSDictionary* dict;
     
-    if (font != nil) {
+    if (font) {
         dict = [NSDictionary dictionaryWithObjectsAndKeys:
             [font fontName]                             , NSAccessibilityFontNameKey,
             [font familyName]                           , NSAccessibilityFontFamilyKey,
@@ -1451,7 +1443,7 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
         [attrString removeAttribute:NSAccessibilitySuperscriptTextAttribute range:range];
     
     // set shadow
-    if (style->textShadow() != nil)
+    if (style->textShadow())
         AXAttributeStringSetNumber(attrString, NSAccessibilityShadowTextAttribute, [NSNumber numberWithBool:YES], range);
     else
         [attrString removeAttribute:NSAccessibilityShadowTextAttribute range:range];
@@ -1508,10 +1500,10 @@ static void AXAttributeStringSetBlockquoteLevel(NSMutableAttributedString* attrS
 
 static void AXAttributeStringSetElement(NSMutableAttributedString* attrString, NSString* attribute, id element, NSRange range)
 {
-    if (element != nil) {
+    if (element) {
         // make a serialiazable AX object
         AXUIElementRef axElement = [[WebCoreViewFactory sharedFactory] AXUIElementForElement:element];
-        if (axElement != NULL) {
+        if (axElement) {
             [attrString addAttribute:attribute value:(id)axElement range:range];
             CFRelease(axElement);
         }
@@ -2358,15 +2350,15 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
 
     Frame* frame = [bridge _frame];
     if (!frame)
-        return NULL;
+        return nil;
         
     Document* document = frame->document();
     if (!document)
-        return NULL;
+        return nil;
         
     Node* node = document->ownerElement();
     if (!node)
-        return NULL;
+        return nil;
 
     return node->renderer();
 }
@@ -2385,10 +2377,15 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
 
 - (id)accessibilityFocusedUIElement
 {
-    // NOTE: BUG support nested WebAreas
-    Node* focusedNode = m_renderer->document()->focusedNode();
-    if (!focusedNode || !focusedNode->renderer())
+    // get the focused node in the page
+    Page* page = m_renderer->document()->page();
+    if (!page)
         return nil;
+
+    Document* focusedDocument = page->focusController()->focusedOrMainFrame()->document();
+    Node* focusedNode = focusedDocument->focusedNode();
+    if (!focusedNode || !focusedNode->renderer())
+        focusedNode = focusedDocument;
 
     WebCoreAXObject* obj = focusedNode->renderer()->document()->axObjectCache()->get(focusedNode->renderer());
     
@@ -2411,9 +2408,8 @@ static VisiblePosition endOfStyleRange (const VisiblePosition visiblePos)
         return;
     
     // make selection and tell the document to use it
-    // NOTE: BUG support nested WebAreas
     Selection newSelection = Selection(startVisiblePosition, endVisiblePosition);
-    [self topDocument]->frame()->selectionController()->setSelection(newSelection);
+    m_renderer->document()->frame()->selectionController()->setSelection(newSelection);
 }
 
 - (BOOL)canSetFocusAttribute

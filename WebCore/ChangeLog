@@ -1,3 +1,50 @@
+ 2007-04-02  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4906488> text attributes are not working for frame based web page
+
+        Attribute handling now treats each WebArea as its own world, rather than sometimes
+        referring back up to the top WebArea. e.g. getting/setting the selection now
+        operates on the WebArea containing the WebCoreAXObject that is being messaged (self).
+        The methods that sit above this and are able to go into arbitrary WebAreas
+        are accessibilityFocusedUIElement and doAXTextMarkerForPosition, allowing VoiceOver
+        to navigate between frames.
+        
+        * bridge/mac/WebCoreAXObject.mm:
+        (-[WebCoreAXObject topRenderer]):
+        (-[WebCoreAXObject frameView]):
+        (-[WebCoreAXObject topFrameView]):
+        Removed topDocument, renamed topView to topFrameView, added frameView.
+        
+        (-[WebCoreAXObject accessibilityAttributeValue:]):
+        AXSelectedTextMarkerRange, AXStartTextMarker, and AXEndTextMarker now use
+        self's WebArea, rather than the top WebArea.
+        
+        (-[WebCoreAXObject doAXTextMarkerRangeForLine:]):
+        Use self's WebArea, rather than the top WebArea.
+
+        (-[WebCoreAXObject doAXTextMarkerForPosition:]):
+        Use renamed methods for accessing top WebArea.
+         
+        (-[WebCoreAXObject doAXBoundsForTextMarkerRange:]):
+        Use renamed methods for accessing self's WebArea.
+
+        (AXAttributeStringSetColor):
+        (AXAttributeStringSetNumber):
+        (AXAttributeStringSetFont):
+        (AXAttributeStringSetStyle):
+        (AXAttributeStringSetElement):
+        (-[WebCoreAXObject rendererForView:]):
+        Clean up uses of nil and NULL.
+        
+        (-[WebCoreAXObject accessibilityFocusedUIElement]):
+        Find the focused node on the whole page. If there is no focused node,
+        return the WebArea for the focused document.
+        
+        (-[WebCoreAXObject doSetAXSelectedTextMarkerRange:]):
+        Use self's WebArea, rather than the top WebArea.
+
 2007-04-02  Antti Koivisto  <antti@apple.com>
 
         Fix build. This one was not supposed to be checked in.
