@@ -31,7 +31,7 @@
  OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/npfunctions.h>
+#include <WebKit/npfunctions.h>
 
 extern NPNetscapeFuncs *browser;
 
