@@ -188,6 +188,7 @@ RenderObject::RenderObject(Node* node)
     , m_replaced(false)
     , m_isDragging(false)
     , m_hasOverflowClip(false)
+    , m_hasOverrideSize(false)
     , m_hasCounterNodeMap(false)
 {
 #ifndef NDEBUG

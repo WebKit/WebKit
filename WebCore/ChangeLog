@@ -1,3 +1,50 @@
+2007-03-30  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Hyatt.
+
+        Render tree memory savings, part 2
+        
+        - Move staticX and staticY variables to RenderLayer since they are only
+          applicable to positioned objects
+        - Move very rarely used overrideSize variable to hash
+        
+        These changes shrink all box types by 12 bytes
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::RenderBox):
+        (WebCore::RenderBox::destroy):
+        (WebCore::RenderBox::overrideSize):
+        (WebCore::RenderBox::setOverrideSize):
+        (WebCore::RenderBox::overrideWidth):
+        (WebCore::RenderBox::overrideHeight):
+        (WebCore::RenderBox::position):
+        (WebCore::RenderBox::calcWidth):
+        (WebCore::RenderBox::calcHeight):
+        (WebCore::RenderBox::staticX):
+        (WebCore::RenderBox::staticY):
+        (WebCore::RenderBox::setStaticX):
+        (WebCore::RenderBox::setStaticY):
+        (WebCore::RenderBox::calcAbsoluteHorizontal):
+        (WebCore::RenderBox::calcAbsoluteVertical):
+        (WebCore::RenderBox::calcAbsoluteHorizontalReplaced):
+        (WebCore::RenderBox::calcAbsoluteVerticalReplaced):
+        * rendering/RenderBox.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::staticX):
+        (WebCore::RenderLayer::staticY):
+        (WebCore::RenderLayer::setStaticX):
+        (WebCore::RenderLayer::setStaticY):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        * rendering/RenderObject.h:
+        (WebCore::):
+        (WebCore::RenderObject::hasOverrideSize):
+        (WebCore::RenderObject::setHasOverrideSize):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+
 2007-03-31  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Not reviewed - gdk build fix.

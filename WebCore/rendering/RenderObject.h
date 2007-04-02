@@ -101,9 +101,9 @@ enum HitTestAction {
 };
 
 enum VerticalPositionHint {
-    PositionTop = -0x4000,
-    PositionBottom = 0x4000,
-    PositionUndefined = 0x3fff
+    PositionTop = -0x2000,
+    PositionBottom = 0x2000,
+    PositionUndefined = 0x1fff
 };
 
 struct DashboardRegionValue {
@@ -881,6 +881,9 @@ public:
         return !paintInfo.paintingRoot || paintInfo.paintingRoot == this;
     }
 
+    bool hasOverrideSize() const { return m_hasOverrideSize; }
+    void setHasOverrideSize(bool b) { m_hasOverrideSize = b; }
+    
     void remove() { if (parent()) parent()->removeChild(this); }
 
 protected:
@@ -904,7 +907,7 @@ private:
     RenderObject* m_previous;
     RenderObject* m_next;
 
-    mutable short m_verticalPosition;
+    mutable short m_verticalPosition : 15;
 
     bool m_needsLayout               : 1;
     bool m_normalChildNeedsLayout    : 1;
@@ -926,6 +929,8 @@ private:
 
     bool m_hasOverflowClip           : 1;
 
+    bool m_hasOverrideSize           : 1;
+    
 public:
     bool m_hasCounterNodeMap         : 1;
 };

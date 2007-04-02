@@ -148,6 +148,8 @@ RenderLayer::RenderLayer(RenderObject* object)
     , m_visibleDescendantStatusDirty(false)
     , m_hasVisibleDescendant(false)
     , m_marquee(0)
+    , m_staticX(0)
+    , m_staticY(0)
 {
     if (!object->firstChild() && object->style()) {
         m_visibleContentStatusDirty = false;

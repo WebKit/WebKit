@@ -45,10 +45,10 @@ public:
     virtual int minWidth() const { return m_minWidth; }
     virtual int maxWidth() const { return m_maxWidth; }
 
-    virtual int overrideSize() const { return m_overrideSize; }
+    virtual int overrideSize() const;
     virtual int overrideWidth() const;
     virtual int overrideHeight() const;
-    virtual void setOverrideSize(int s) { m_overrideSize = s; }
+    virtual void setOverrideSize(int);
 
     virtual bool absolutePosition(int& x, int& y, bool fixed = false) const;
 
@@ -141,9 +141,9 @@ public:
     virtual void paintBackgroundExtended(GraphicsContext*, const Color&, const BackgroundLayer*, int clipY, int clipHeight,
                                          int tx, int ty, int width, int height, bool includeLeftEdge = true, bool includeRightEdge = true);
 
-    virtual int staticX() const { return m_staticX; }
-    virtual int staticY() const { return m_staticY; }
-    virtual void setStaticX(int staticX) { m_staticX = staticX; }
+    virtual int staticX() const;
+    virtual int staticY() const;
+    virtual void setStaticX(int staticX);
     virtual void setStaticY(int staticY);
 
     virtual IntRect getOverflowClipRect(int tx, int ty);
@@ -208,14 +208,6 @@ protected:
 
     // For inline replaced elements, the inline box that owns us.
     InlineBox* m_inlineBoxWrapper;
-
-private:
-    // Used by flexible boxes when flexing this element.
-    int m_overrideSize;
-
-    // Cached normal flow values for absolute positioned elements with static left/top values.
-    int m_staticX;
-    int m_staticY;
 };
 
 } // namespace WebCore
