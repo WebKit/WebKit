@@ -1,3 +1,24 @@
+2007-04-02  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        <rdar://problem/5058163> 
+        Hitting return inserts a new line between two To Dos, but caret is position after second ToDo
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        Removed refPos, it was unused.
+        Don't assume that upstream() moves to a different
+        node.  This assumption caused the line break to
+        be inserted *after* the caret and a bad position
+        to be set (added a testcase).
+        Use isStartOfParagraph instead of checking
+        for the existence of a br because the line might 
+        be broken by a newline character in text that 
+        preserves newlines.  Paragraphs that are created 
+        in other ways, like with blocks, are handled 
+        above (added a testcase).
+
  2007-04-02  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

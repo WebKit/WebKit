@@ -1,3 +1,19 @@
+2007-04-02  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5058163> 
+        Hitting return inserts a new line between two To Dos, but caret is position after second ToDo
+
+        * editing/inserting/5058163-1-expected.checksum: Added.
+        * editing/inserting/5058163-1-expected.png: Added.
+        * editing/inserting/5058163-1-expected.txt: Added.
+        * editing/inserting/5058163-1.html: Added.
+        * editing/inserting/5058163-2-expected.checksum: Added.
+        * editing/inserting/5058163-2-expected.png: Added.
+        * editing/inserting/5058163-2-expected.txt: Added.
+        * editing/inserting/5058163-2.html: Added.
+
 2007-03-31  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

@@ -166,7 +166,6 @@ void InsertParagraphSeparatorCommand::doApply()
     // similar case where previous position is in another, presumeably nested, block.
     if (isFirstInBlock || !inSameBlock(visiblePos, visiblePos.previous())) {
         pos = pos.downstream();
-        Position refPos;
         Node *refNode;
         if (isFirstInBlock && !nestNewBlock)
             refNode = startBlock;
@@ -187,10 +186,13 @@ void InsertParagraphSeparatorCommand::doApply()
     //---------------------------------------------------------------------
     // Handle the (more complicated) general case,
 
-    Position upstreamPos = pos.upstream();
-    if (upstreamPos.node()->hasTagName(brTag)) {
+    // All of the content in the current block after visiblePos is
+    // about to be wrapped in a new paragraph element.  Add a br before 
+    // it if visiblePos is at the start of a paragraph so that the 
+    // content will move down a line.
+    if (isStartOfParagraph(visiblePos)) {
         RefPtr<Element> br = createBreakElement(document());
-        insertNodeAfter(br.get(), upstreamPos.node());
+        insertNodeAt(br.get(), pos.node(), pos.offset());
         pos = positionAfterNode(br.get());
     }
     
