@@ -1,3 +1,21 @@
+2007-04-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        Fix crash when running plugins/destroy-stream-twice.html under GuardMalloc
+
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (+[WebBaseNetscapePluginStream ownerForStream:]):
+        (-[WebBaseNetscapePluginStream initWithRequestURL:plugin:notifyData:sendNotification:]):
+        (-[WebBaseNetscapePluginStream dealloc]):
+        (-[WebBaseNetscapePluginStream finalize]):
+        Change the streams hash map to contain an NPStream*, and change ownerForStream to take an NPStream*.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView destroyStream:reason:]):
+        Check that the NPStream pointer is valid before accessing stream->ndata.
+
 2007-04-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

@@ -43,7 +43,7 @@
 
 static char *CarbonPathFromPOSIXPath(const char *posixPath);
 
-typedef HashMap<WebBaseNetscapePluginStream *, NPP> StreamMap;
+typedef HashMap<NPStream*, NPP> StreamMap;
 static StreamMap& streams()
 {
     static StreamMap staticStreams;
@@ -59,7 +59,7 @@ static StreamMap& streams()
 }
 #endif
 
-+ (NPP)ownerForStream:(WebBaseNetscapePluginStream *)stream
++ (NPP)ownerForStream:(NPStream *)stream
 {
     return streams().get(stream);
 }
@@ -117,7 +117,7 @@ static StreamMap& streams()
     notifyData = theNotifyData;
     sendNotification = flag;
 
-    streams().add(self, thePlugin);
+    streams().add(&stream, thePlugin);
     
     isTerminated = NO;
     
@@ -142,7 +142,7 @@ static StreamMap& streams()
     free((void *)stream.url);
     free(path);
 
-    streams().remove(self);
+    streams().remove(&stream);
 
     [super dealloc];
 }
@@ -159,7 +159,7 @@ static StreamMap& streams()
     free((void *)stream.url);
     free(path);
 
-    streams().remove(self);
+    streams().remove(&stream);
 
     [super finalize];
 }
