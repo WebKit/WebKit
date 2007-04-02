@@ -1,3 +1,11 @@
+2007-04-02  David Hyatt  <hyatt@apple.com>
+
+        Throw in an assert to try to track down a problem where an image is being set to a smaller encoded
+        size.
+
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::setEncodedSize):
+
 2007-04-02  Ada Chan  <adachan@apple.com>
 
         Reviewed by Adele.
