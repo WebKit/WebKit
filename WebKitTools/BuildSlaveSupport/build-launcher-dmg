@@ -77,7 +77,7 @@ sub buildDiskImage
 
     print "Compressing disk image...\n";
     system("mv", "-f", $nightlyLauncherDiskImagePath, "$nightlyLauncherDiskImagePath.uncompressed.dmg") == 0 or die "Renaming disk image failed";
-    system("hdiutil", "convert", "-quiet", "$nightlyLauncherDiskImagePath.uncompressed.dmg", "-format", "UDZO", "-imagekey", "zlib-level=9", "-o", "$nightlyLauncherDiskImagePath");
+    system("hdiutil", "convert", "-quiet", "$nightlyLauncherDiskImagePath.uncompressed.dmg", "-format", "UDBZ", "-imagekey", "zlib-level=9", "-o", "$nightlyLauncherDiskImagePath");
     die "Compressing disk image failed" if $?;
 
     unlink "$nightlyLauncherDiskImagePath.uncompressed.dmg";

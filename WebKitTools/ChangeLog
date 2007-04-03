@@ -1,3 +1,9 @@
+2007-04-03  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Antti.
+
+        * BuildSlaveSupport/build-launcher-dmg: Use bzip2 compression in nightly build disk images rather than gzip.
+
 2007-04-02  Anders Carlsson  <andersca@apple.com>
 
         * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
