@@ -2,6 +2,71 @@
 
         Reviewed by Hyatt.
 
+        Render tree memory savings, part 3
+        
+        These changes shrink all RenderBlocks by additional 28 bytes. Together with parts 1 and 2
+        RenderBlock goes from 172 bytes to 128 bytes, a saving of 26%.
+        
+        - Pack bitfields together in RenderFlow
+        - Move top/bottom min/max margin values to a struct that is only allocated in case these
+          variables have non default values. Usually this is <5% of all blocks. 
+        - Move rarely used column variables to hash
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::ColumnInfo::ColumnInfo):
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::~RenderBlock):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::clearFloatsIfNeeded):
+        (WebCore::RenderBlock::setCollapsedBottomMargin):
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::paintColumns):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::fillSelectionGaps):
+        (WebCore::RenderBlock::lowestPosition):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::leftmostPosition):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::hitTestColumns):
+        (WebCore::RenderBlock::positionForCoordinates):
+        (WebCore::RenderBlock::availableWidth):
+        (WebCore::RenderBlock::calcColumnWidth):
+        (WebCore::RenderBlock::setDesiredColumnCountAndWidth):
+        (WebCore::RenderBlock::desiredColumnWidth):
+        (WebCore::RenderBlock::desiredColumnCount):
+        (WebCore::RenderBlock::columnRects):
+        (WebCore::RenderBlock::layoutColumns):
+        (WebCore::RenderBlock::adjustPointToColumnContents):
+        (WebCore::RenderBlock::adjustRectForColumns):
+        (WebCore::RenderBlock::setMaxTopMargins):
+        (WebCore::RenderBlock::setMaxBottomMargins):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::maxTopMargin):
+        (WebCore::RenderBlock::maxBottomMargin):
+        (WebCore::RenderBlock::maxTopPosMargin):
+        (WebCore::RenderBlock::maxTopNegMargin):
+        (WebCore::RenderBlock::maxBottomPosMargin):
+        (WebCore::RenderBlock::maxBottomNegMargin):
+        (WebCore::RenderBlock::initMaxMarginValues):
+        (WebCore::RenderBlock::MaxMargin::MaxMargin):
+        (WebCore::RenderBlock::MaxMargin::topPosDefault):
+        (WebCore::RenderBlock::MaxMargin::topNegDefault):
+        (WebCore::RenderBlock::MaxMargin::bottomPosDefault):
+        (WebCore::RenderBlock::MaxMargin::bottomNegDefault):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderFlow.h:
+        (WebCore::RenderFlow::RenderFlow):
+        (WebCore::RenderFlow::hasColumns):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::RenderInline):
+        * rendering/RenderInline.h:
+
+2007-04-03  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Hyatt.
+
         Fix asserts, these may also be called for rel positioned elements
 
         * rendering/RenderBox.cpp:

@@ -34,7 +34,6 @@ namespace WebCore {
 
 RenderInline::RenderInline(Node* node)
     : RenderFlow(node)
-    , m_isContinuation(false)
 {
 }
 

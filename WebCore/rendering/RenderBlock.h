@@ -76,26 +76,23 @@ public:
     virtual bool isTopMarginQuirk() const { return m_topMarginQuirk; }
     virtual bool isBottomMarginQuirk() const { return m_bottomMarginQuirk; }
 
-    virtual int maxTopMargin(bool positive) const { return positive ? m_maxTopPosMargin : m_maxTopNegMargin; }
-    virtual int maxBottomMargin(bool positive) const { return positive ? m_maxBottomPosMargin : m_maxBottomNegMargin; }
+    virtual int maxTopMargin(bool positive) const { return positive ? maxTopPosMargin() : maxTopNegMargin(); }
+    virtual int maxBottomMargin(bool positive) const { return positive ? maxBottomPosMargin() : maxBottomNegMargin(); }
 
+    int maxTopPosMargin() const { return m_maxMargin ? m_maxMargin->m_topPos : MaxMargin::topPosDefault(this); }
+    int maxTopNegMargin() const { return m_maxMargin ? m_maxMargin->m_topNeg : MaxMargin::topNegDefault(this); }
+    int maxBottomPosMargin() const { return m_maxMargin ? m_maxMargin->m_bottomPos : MaxMargin::bottomPosDefault(this); }
+    int maxBottomNegMargin() const { return m_maxMargin ? m_maxMargin->m_bottomNeg : MaxMargin::bottomNegDefault(this); }
+    void setMaxTopMargins(int pos, int neg);
+    void setMaxBottomMargins(int pos, int neg);
+    
     void initMaxMarginValues()
     {
-        int margTop = marginTop();
-        if (margTop >= 0) {
-            m_maxTopPosMargin = margTop;
-            m_maxTopNegMargin = 0;
-        } else {
-            m_maxTopNegMargin = -margTop;
-            m_maxTopPosMargin = 0;
-        }
-        int margBottom = marginBottom();
-        if (margBottom >= 0) {
-            m_maxBottomPosMargin = margBottom;
-            m_maxBottomNegMargin = 0;
-        } else {
-            m_maxBottomNegMargin = -margBottom;
-            m_maxBottomPosMargin = 0;
+        if (m_maxMargin) {
+            m_maxMargin->m_topPos = MaxMargin::topPosDefault(this);
+            m_maxMargin->m_topNeg = MaxMargin::topNegDefault(this);
+            m_maxMargin->m_bottomPos = MaxMargin::bottomPosDefault(this);
+            m_maxMargin->m_bottomNeg = MaxMargin::bottomNegDefault(this);
         }
     }
 
@@ -285,7 +282,11 @@ public:
     int heightForLineCount(int);
     void clearTruncation();
 
-    virtual bool hasColumns() const { return m_desiredColumnCount > 1; }
+    int desiredColumnWidth() const;
+    unsigned desiredColumnCount() const;
+    Vector<IntRect>* columnRects() const;
+    void setDesiredColumnCountAndWidth(int count, int width);
+    
     void adjustRectForColumns(IntRect&) const;
 private:
     void adjustPointToColumnContents(IntPoint&) const;
@@ -436,33 +437,35 @@ protected:
 private:
     DeprecatedPtrList<FloatingObject>* m_floatingObjects;
     DeprecatedPtrList<RenderObject>* m_positionedObjects;
+         
+     // Allocated only when some of these fields have non-default values
+     struct MaxMargin {
+         MaxMargin(const RenderBlock* o) 
+             : m_topPos(topPosDefault(o))
+             , m_topNeg(topNegDefault(o))
+             , m_bottomPos(bottomPosDefault(o))
+             , m_bottomNeg(bottomNegDefault(o))
+             { 
+             }
+         static int topPosDefault(const RenderBlock* o) { return o->marginTop() > 0 ? o->marginTop() : 0; }
+         static int topNegDefault(const RenderBlock* o) { return o->marginTop() < 0 ? -o->marginTop() : 0; }
+         static int bottomPosDefault(const RenderBlock* o) { return o->marginBottom() > 0 ? o->marginBottom() : 0; }
+         static int bottomNegDefault(const RenderBlock* o) { return o->marginBottom() < 0 ? -o->marginBottom() : 0; }
+         
+         int m_topPos;
+         int m_topNeg;
+         int m_bottomPos;
+         int m_bottomNeg;
+     };
 
-    bool m_childrenInline : 1;
-    bool m_firstLine : 1;
-    unsigned m_clearStatus  : 2; // EClear
-    bool m_topMarginQuirk : 1;
-    bool m_bottomMarginQuirk : 1;
-    bool m_hasMarkupTruncation : 1;
-    unsigned m_selectionState : 3; // SelectionState
+    MaxMargin* m_maxMargin;
 
 protected:
-    int m_maxTopPosMargin;
-    int m_maxTopNegMargin;
-    int m_maxBottomPosMargin;
-    int m_maxBottomNegMargin;
-
     // How much content overflows out of our block vertically or horizontally.
     int m_overflowHeight;
     int m_overflowWidth;
     int m_overflowLeft;
     int m_overflowTop;
-
-private:
-
-    // Column information.
-    int m_desiredColumnWidth;
-    unsigned m_desiredColumnCount;
-    Vector<IntRect>* m_columnRects;
 };
 
 } // namespace WebCore

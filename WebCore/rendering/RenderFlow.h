@@ -46,6 +46,15 @@ public:
         , m_firstLineBox(0)
         , m_lastLineBox(0)
         , m_lineHeight(-1)
+        , m_childrenInline(true)
+        , m_firstLine(false)
+        , m_clearStatus(CNONE)
+        , m_topMarginQuirk(false) 
+        , m_bottomMarginQuirk(false)
+        , m_hasMarkupTruncation(false)
+        , m_selectionState(SelectionNone)
+        , m_hasColumns(false)
+        , m_isContinuation(false)
     {
     }
 
@@ -90,7 +99,7 @@ public:
     void paintOutlineForLine(GraphicsContext*, int tx, int ty, const IntRect& prevLine, const IntRect& thisLine, const IntRect& nextLine);
     void paintOutline(GraphicsContext*, int tx, int ty);
 
-    virtual bool hasColumns() const { return false; }
+    virtual bool hasColumns() const { return m_hasColumns; }
 
 private:
     // An inline can be split with blocks occurring in between the inline content.
@@ -107,6 +116,20 @@ protected:
     InlineFlowBox* m_lastLineBox;
 
     mutable short m_lineHeight;
+    
+    // These bitfields are moved here from subclasses to pack them together
+    // from RenderBlock
+    bool m_childrenInline : 1;
+    bool m_firstLine : 1;
+    unsigned m_clearStatus  : 2; // EClear
+    bool m_topMarginQuirk : 1;
+    bool m_bottomMarginQuirk : 1;
+    bool m_hasMarkupTruncation : 1;
+    unsigned m_selectionState : 3; // SelectionState
+    bool m_hasColumns : 1;
+    
+    // from RenderInline
+    bool m_isContinuation : 1; // Whether or not we're a continuation of an inline.
 };
 
 } // namespace WebCore
