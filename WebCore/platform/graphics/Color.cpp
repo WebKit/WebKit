@@ -38,6 +38,9 @@ using namespace std;
 
 namespace WebCore {
 
+const RGBA32 lightenedBlack = 0xFF545454;
+const RGBA32 darkenedWhite = 0xFFABABAB;
+
 RGBA32 makeRGB(int r, int g, int b)
 {
     return 0xFF000000 | max(0, min(r, 255)) << 16 | max(0, min(g, 255)) << 8 | max(0, min(b, 255));
@@ -227,6 +230,10 @@ static void convertHSVToRGB(float h, float s, float v, float& r, float& g, float
 
 Color Color::light() const
 {
+    // Hardcode this common case for speed.
+    if (m_color == black)
+        return lightenedBlack;
+    
     const float scaleFactor = nextafterf(256.0f, 0.0f);
 
     float r, g, b, a, h, s, v;
@@ -242,6 +249,10 @@ Color Color::light() const
 
 Color Color::dark() const
 {
+    // Hardcode this common case for speed.
+    if (m_color == white)
+        return darkenedWhite;
+    
     const float scaleFactor = nextafterf(256.0f, 0.0f);
 
     float r, g, b, a, h, s, v;

@@ -1,3 +1,14 @@
+2007-04-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Updated fix for <rdar://problem/5107095> REGRESSION: disabled text color calculations are slowing down launchtime measurements
+
+        * platform/graphics/Color.cpp: Moved optimization for lightening black and darkening white into the Color class.
+        (WebCore::Color::light):
+        (WebCore::Color::dark):
+        * rendering/RenderTextControl.cpp: (WebCore::disabledTextColor): Skip the difference calculation for black text, which will always be lightened.
+
 2007-04-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Tim.
