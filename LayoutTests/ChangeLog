@@ -1,3 +1,14 @@
+2007-04-03  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Hyatt.
+        
+        Test you don't crash when you have abs positioned elements inside rel inline.
+
+        * fast/block/positioning/abs-inside-inline-rel-expected.checksum: Added.
+        * fast/block/positioning/abs-inside-inline-rel-expected.png: Added.
+        * fast/block/positioning/abs-inside-inline-rel-expected.txt: Added.
+        * fast/block/positioning/abs-inside-inline-rel.html: Added.
+
 2007-04-02  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

@@ -1,3 +1,13 @@
+2007-04-03  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix asserts, these may also be called for rel positioned elements
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setStaticX):
+        (WebCore::RenderBox::setStaticY):
+
 2007-04-02  David Hyatt  <hyatt@apple.com>
 
         Throw in an assert to try to track down a problem where an image is being set to a smaller encoded
