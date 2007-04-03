@@ -1,3 +1,16 @@
+2007-04-03  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by darin
+        
+        <http://bugs.webkit.org/show_bug.cgi?id=13268>
+        Make editing/selection/drag-in-iframe.html valid and deterministic
+
+        * editing/resources/select-and-drag-iframe.html: Removed.
+        * editing/selection/drag-in-iframe-expected.checksum:
+        * editing/selection/drag-in-iframe-expected.png:
+        * editing/selection/drag-in-iframe-expected.txt:
+        * editing/selection/drag-in-iframe.html:
+
 2007-04-03  Adele Peterson  <adele@apple.com>
 
         Updated results for recent change to always lighten disabled text color for black text.
