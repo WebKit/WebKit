@@ -1,3 +1,11 @@
+2007-04-03  Adele Peterson  <adele@apple.com>
+
+        Updated results for recent change to always lighten disabled text color for black text.
+
+        * fast/forms/input-disabled-color-expected.checksum:
+        * fast/forms/input-disabled-color-expected.png:
+        * fast/forms/input-disabled-color-expected.txt:
+
 2007-04-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
