@@ -1,3 +1,13 @@
+2007-04-03  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5108896>, make sure the assert for setEncodedSize
+        deals with the error case.
+
+        Reviewed by andersca
+
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::setEncodedSize):
+
 2007-04-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dave Hyatt.

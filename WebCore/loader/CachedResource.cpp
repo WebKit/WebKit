@@ -125,8 +125,8 @@ void CachedResource::setEncodedSize(unsigned size)
     if (size == m_encodedSize)
         return;
 
-    // The size cannot ever shrink.  If it ever does, assert.
-    ASSERT(size >= m_encodedSize);
+    // The size cannot ever shrink (unless it is being nulled out because of an error).  If it ever does, assert.
+    ASSERT(size == 0 || size >= m_encodedSize);
     
     unsigned oldSize = m_encodedSize;
 
