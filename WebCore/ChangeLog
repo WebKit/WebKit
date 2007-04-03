@@ -1,3 +1,10 @@
+2007-04-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        * loader/ImageDocument.cpp:
+        Don't call error() in stopParsing.
+
 2007-04-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

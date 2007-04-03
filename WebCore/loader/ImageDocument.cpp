@@ -49,7 +49,6 @@ public:
     ImageTokenizer(Document* doc) : m_doc(doc), m_imageElement(0) {}
         
     virtual bool write(const SegmentedString&, bool appendData);
-    virtual void stopParsing();
     virtual void finish();
     virtual bool isWaitingForScripts() const;
     
@@ -99,13 +98,6 @@ bool ImageTokenizer::writeRawData(const char* data, int len)
     cachedImage->data(m_doc->frame()->loader()->documentLoader()->mainResourceData(), false);
 
     return false;
-}
-
-void ImageTokenizer::stopParsing()
-{
-    Tokenizer::stopParsing();
-    if (m_imageElement)
-        m_imageElement->cachedImage()->error();
 }
 
 void ImageTokenizer::finish()
