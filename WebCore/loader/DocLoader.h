@@ -76,9 +76,6 @@ public:
     CachePolicy cachePolicy() const { return m_cachePolicy; }
     void setCachePolicy(CachePolicy);
     
-    time_t expireDate() const { return m_expireDate; }
-    void setExpireDate(time_t);
-    
     Frame* frame() const { return m_frame; }
     Document* doc() const { return m_doc; }
 
@@ -98,7 +95,6 @@ private:
     Cache* m_cache;
     HashSet<String> m_reloadedURLs;
     mutable HashMap<String, CachedResource*> m_docResources;
-    time_t m_expireDate;
     CachePolicy m_cachePolicy;
     Frame* m_frame;
     Document *m_doc;

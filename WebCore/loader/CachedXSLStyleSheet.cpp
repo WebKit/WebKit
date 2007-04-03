@@ -40,8 +40,8 @@ namespace WebCore {
 
 #if ENABLE(XSLT)
 
-CachedXSLStyleSheet::CachedXSLStyleSheet(DocLoader* dl, const String &url, time_t _expireDate)
-    : CachedResource(url, XSLStyleSheet, _expireDate)
+CachedXSLStyleSheet::CachedXSLStyleSheet(DocLoader* dl, const String &url)
+    : CachedResource(url, XSLStyleSheet)
     , m_decoder(new TextResourceDecoder("text/xsl"))
 {
     // It's XML we want.

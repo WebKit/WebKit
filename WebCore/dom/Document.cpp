@@ -1752,10 +1752,6 @@ void Document::processHttpEquiv(const String &equiv, const String &content)
                 // We want a new history item if the refresh timeout > 1 second
                 frame->loader()->scheduleRedirection(delay, completeURL(url), delay <= 1);
         }
-    } else if (equalIgnoringCase(equiv, "expires")) {
-        String str = content.stripWhiteSpace();
-        time_t expire_date = str.toInt();
-        m_docLoader->setExpireDate(expire_date);
     } else if (equalIgnoringCase(equiv, "set-cookie")) {
         // FIXME: make setCookie work on XML documents too; e.g. in case of <html:meta .....>
         if (isHTMLDocument())

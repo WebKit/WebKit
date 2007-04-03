@@ -1,3 +1,43 @@
+2007-04-02  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5105784>, assertion failure in cache.  Encoded sizes were being set to
+        garbage by accident because of a mismatch between derived class and base class constructors.  This
+        patch cleans all of this up and gets rid of expiration date as a concept separate from the response.
+
+        Reviewed by anders
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::updateFromElement):
+        * loader/Cache.cpp:
+        (WebCore::createResource):
+        (WebCore::Cache::requestResource):
+        * loader/Cache.h:
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet):
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage):
+        * loader/CachedImage.h:
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::finish):
+        * loader/CachedResource.h:
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::CachedScript):
+        * loader/CachedScript.h:
+        * loader/CachedXBLDocument.cpp:
+        (WebCore::CachedXBLDocument::CachedXBLDocument):
+        * loader/CachedXBLDocument.h:
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::CachedXSLStyleSheet):
+        * loader/CachedXSLStyleSheet.h:
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::DocLoader):
+        (WebCore::DocLoader::requestResource):
+        * loader/DocLoader.h:
+
 2007-04-03  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Hyatt.

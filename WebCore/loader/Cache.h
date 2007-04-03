@@ -65,7 +65,7 @@ public:
 
     // Request resources from the cache.  A load will be initiated and a cache object created if the object is not
     // found in the cache.
-    CachedResource* requestResource(DocLoader*, CachedResource::Type, const KURL& url, time_t expireDate = 0, const String* charset = 0, bool skipCanLoadCheck = false);
+    CachedResource* requestResource(DocLoader*, CachedResource::Type, const KURL& url, const String* charset = 0, bool skipCanLoadCheck = false);
 
     // Set/retreive the size of the cache. This will only hold approximately, since the size some 
     // cached objects (like stylesheets) take up in memory is not exactly known.

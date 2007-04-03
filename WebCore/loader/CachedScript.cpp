@@ -37,8 +37,8 @@
 
 namespace WebCore {
 
-CachedScript::CachedScript(DocLoader* dl, const String& url, time_t _expireDate, const String& charset)
-    : CachedResource(url, Script, _expireDate)
+CachedScript::CachedScript(DocLoader* dl, const String& url, const String& charset)
+    : CachedResource(url, Script)
     , m_encoding(charset)
 {
     // It's javascript we want.

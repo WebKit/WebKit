@@ -37,7 +37,7 @@ namespace WebCore {
 
     class CachedScript : public CachedResource {
     public:
-        CachedScript(DocLoader*, const String& URL, time_t expireDate, const String& charset);
+        CachedScript(DocLoader*, const String& URL, const String& charset);
         virtual ~CachedScript();
 
         const String& script() const { return m_script; }

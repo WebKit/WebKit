@@ -39,7 +39,7 @@ namespace WebCore {
 #if ENABLE(XSLT)
     class CachedXSLStyleSheet : public CachedResource {
     public:
-        CachedXSLStyleSheet(DocLoader*, const String& url, time_t expireDate);
+        CachedXSLStyleSheet(DocLoader*, const String& url);
 
         const String& sheet() const { return m_sheet; }
         
