@@ -138,7 +138,7 @@ ScriptInterpreter::ScriptInterpreter(JSObject* global, Frame* frame)
     , m_timerCallback(false)
 {
     // Time in milliseconds before the script timeout handler kicks in.
-    setTimeoutTime(5000);
+    setTimeoutTime(10000);
 }
 
 DOMObject* ScriptInterpreter::getDOMObject(void* objectHandle) 

@@ -1,3 +1,14 @@
+2007-04-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/4649516> 
+        Turn off slow script dialog or crank up time that makes it come up
+        
+        * bindings/js/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::ScriptInterpreter):
+        Increase the timeout to 10 seconds to match Firefox.
+
 2007-04-03  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.
