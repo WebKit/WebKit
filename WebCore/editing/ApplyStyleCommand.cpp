@@ -169,6 +169,11 @@ bool StyleChange::checkForLegacyHTMLStyleChange(const CSSProperty *property)
         case CSS_PROP_FONT_SIZE:
             if (property->value()->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE) {
                 CSSPrimitiveValue *value = static_cast<CSSPrimitiveValue *>(property->value());
+
+                if (value->primitiveType() < CSSPrimitiveValue::CSS_PX || value->primitiveType() > CSSPrimitiveValue::CSS_PC)
+                    // Size keyword or relative unit.
+                    return false;
+
                 float number = value->getFloatValue(CSSPrimitiveValue::CSS_PX);
                 if (number <= 9)
                     m_applyFontSize = "1";

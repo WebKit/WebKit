@@ -2,6 +2,25 @@
 
         Reviewed by Darin.
 
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13251
+          editing/style/fontsize-1.html fails intermittently when run multiple times on Intel, generates incorrect DOM
+
+        Covered by existing editing tests.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::getFloatValue): Added ASSERTs that the requested conversion
+        is from a scalar type to a scalar type. The intermittent failures in the test were
+        the result of trying to convert an identifier type to a scalar type.
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::StyleChange::checkForLegacyHTMLStyleChange): Added a check that the
+        font-size property value is an absolute length. If it is not (such as in the case
+        of relative units or keywords like "x-large"), then no corresponding 'size' attribute
+        will be generated for legacy HTML.
+
+2007-04-03  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
         - fix http://bugs.webkit.org/show_bug.cgi?id=13218
           <rdar://problem/5095977>
           Reproducible crash after call to window.close()

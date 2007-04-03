@@ -1,3 +1,15 @@
+2007-04-03  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - updated results for http://bugs.webkit.org/show_bug.cgi?id=13251
+          editing/style/fontsize-1.html fails intermittently when run multiple times on Intel, generates incorrect DOM
+
+        * editing/style/block-style-004-expected.txt:
+        * editing/style/block-style-005-expected.txt:
+        * editing/style/block-style-006-expected.txt:
+        * editing/style/fontsize-1-expected.txt:
+
 2007-04-03  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Hyatt.

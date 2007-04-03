@@ -369,6 +369,9 @@ double scaleFactorForConversion(unsigned short unitType)
 
 double CSSPrimitiveValue::getFloatValue(unsigned short unitType)
 {
+    ASSERT(m_type <= CSS_DIMENSION);
+    ASSERT(unitType <= CSS_DIMENSION);
+
     if (unitType == m_type || unitType < CSS_PX || unitType > CSS_PC)
         return m_value.num;
 
