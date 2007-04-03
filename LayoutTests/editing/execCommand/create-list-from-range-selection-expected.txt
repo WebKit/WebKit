@@ -1,14 +1,6 @@
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 9 of DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of LI > OL > DIV > BODY > HTML > #document to 0 of LI > OL > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 2 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of LI > OL > DIV > BODY > HTML > #document to 0 of LI > OL > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of LI > OL > DIV > BODY > HTML > #document to 0 of LI > OL > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of LI > OL > DIV > BODY > HTML > #document to 0 of LI > OL > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 1 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of LI > OL > DIV > BODY > HTML > #document to 0 of LI > OL > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of LI > OL > DIV > BODY > HTML > #document to 0 of LI > OL > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 2 of #text > SPAN > LI > OL > DIV > BODY > HTML > #document to 2 of #text > LI > OL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification

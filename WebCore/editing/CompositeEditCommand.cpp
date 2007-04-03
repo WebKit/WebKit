@@ -35,10 +35,8 @@
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
 #include "DocumentFragment.h"
-#include "Editor.h"
 #include "EditorInsertAction.h"
 #include "Element.h"
-#include "Frame.h"
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "InsertIntoTextNodeCommand.h"
@@ -738,9 +736,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     // shouldn't matter though, since moved paragraphs will usually be quite small.
     RefPtr<DocumentFragment> fragment = startOfParagraphToMove != endOfParagraphToMove ? createFragmentFromMarkup(document(), createMarkup(range.get(), 0, DoNotAnnotateForInterchange, true), "") : 0;
     
-    // FIXME (5098931): We should add a new insert action "WebViewInsertActionMoved" for this shouldInsert... call.
-    if (fragment.get() && !document()->frame()->editor()->shouldInsertFragment(fragment.get(), Selection(destination).toRange(), EditorInsertActionPasted))
-        return;
+    // FIXME (5098931): We should add a new insert action "WebViewInsertActionMoved" and call shouldInsertFragment here.
     
     setEndingSelection(Selection(start, end, DOWNSTREAM));
     deleteSelection(false, false, false, false);

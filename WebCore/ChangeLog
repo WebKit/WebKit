@@ -1,3 +1,19 @@
+2007-04-03  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5107422> 
+        TOT REGRESSION: Delete key fails to delete text, and cursor disappears in Mail.app
+        <rdar://problem/5107413> 
+        TOT REGRESSION: Crash deleting text in email (infinite recursion in shouldInsertNode)
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        Back out the call to shouldInsert until we
+        add WebViewInsertActionMoved, because Mail returns
+        NO from shouldInsert for WebViewInsertActionPasted
+        to override our Paste operation.
+
 2007-04-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.
