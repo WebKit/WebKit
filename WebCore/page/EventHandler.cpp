@@ -1243,7 +1243,16 @@ void EventHandler::setResizingFrameSet(HTMLFrameSetElement* frameSet)
 void EventHandler::hoverTimerFired(Timer<EventHandler>*)
 {
     m_hoverTimer.stop();
-    prepareMouseEvent(HitTestRequest(false, false, true), PlatformMouseEvent(PlatformMouseEvent::currentEvent));
+
+    ASSERT(m_frame);
+    ASSERT(m_frame->document());
+
+    if (RenderObject* renderer = m_frame->renderer()) {
+        IntPoint documentPoint = m_frame->view()->windowToContents(m_currentMousePosition);
+        HitTestResult result(documentPoint);
+        renderer->layer()->hitTest(HitTestRequest(false, false, true), result);
+        m_frame->document()->updateRendering();
+    }
 }
 
 static EventTargetNode* eventTargetNodeForDocument(Document* doc)

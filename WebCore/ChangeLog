@@ -1,3 +1,18 @@
+2007-04-03  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=13218
+          <rdar://problem/5095977>
+          Reproducible crash after call to window.close()
+
+        * manual-tests/stale-currentEvent.html: Added.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hoverTimerFired): Instead of faking a mouse event,
+        just hit-test the last mouse event coordinates and update for hover state
+        changes. This eliminates the use of currentEvent, which can be a non-mouse
+        event or even a stale event.
+
 2007-04-02  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.
