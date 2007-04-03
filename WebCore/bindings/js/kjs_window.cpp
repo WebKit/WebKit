@@ -726,11 +726,11 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
     case InnerHeight:
       if (!m_frame->view())
         return jsUndefined();
-      return jsNumber(m_frame->view()->visibleHeight());
+      return jsNumber(m_frame->view()->height());
     case InnerWidth:
       if (!m_frame->view())
         return jsUndefined();
-      return jsNumber(m_frame->view()->visibleWidth());
+      return jsNumber(m_frame->view()->width());
     case Length:
       return jsNumber(m_frame->tree()->childCount());
     case Location_:

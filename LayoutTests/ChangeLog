@@ -1,3 +1,17 @@
+2007-04-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        Add tests for innerWidth/innerHeight and clientWidth/clientHeight in quirks mode.
+
+        Modify the strict clientWidth/clientHeight test to test the behavior with scrollbars visible.
+        
+        * fast/dom/client-width-height-quirks-expected.txt: Added.
+        * fast/dom/client-width-height-quirks.html: Added.
+        * fast/dom/client-width-height.html:
+        * fast/dom/inner-width-height-expected.txt: Added.
+        * fast/dom/inner-width-height.html: Added.
+
 2007-04-03  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by Darin.

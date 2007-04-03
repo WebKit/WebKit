@@ -1,3 +1,21 @@
+2007-04-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        Make window.innerWidth/innerHeight include the size of any present scrollbar to match Firefox.
+        
+        Make document.body.clientWidth/clientHeight return the width/height of the visible content when in
+        quirks mode to match WinIE.
+        
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        Return the width and height of the scroll view, not the visible width and height.
+        
+        * dom/Element.cpp:
+        (WebCore::Element::clientWidth):        
+        (WebCore::Element::clientHeight):
+        Return the visible size if the element is the body element and we're in quirks mode.
+
 2007-04-03  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

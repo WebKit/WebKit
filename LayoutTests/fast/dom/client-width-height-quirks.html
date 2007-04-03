@@ -1,5 +1,3 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
     <script>
@@ -12,19 +10,19 @@
             if (window.layoutTestController)
                 layoutTestController.dumpAsText();
 
-            if (document.documentElement.clientWidth != window.innerWidth ||
-                document.documentElement.clientHeight != window.innerHeight) {
+            if (document.body.clientWidth != window.innerWidth ||
+                document.body.clientHeight != window.innerHeight) {
                 debug("FAILURE!")
                 return;
             }
-            
+
             // Now force scroll bars. innerWidth and innerHeight should not take the scroll bar into account
             // but clientWidth and clientHeight should.
-            document.documentElement.style.overflow = 'scroll';
+            document.body.style.overflow = 'scroll';
             document.body.offsetTop;
             
-            if (document.documentElement.clientWidth >= window.innerWidth ||
-                document.documentElement.clientHeight >= window.innerHeight) {
+            if (document.body.clientWidth >= window.innerWidth ||
+                document.body.clientHeight >= window.innerHeight) {
                 debug("FAILURE!")
                 return;
             }
@@ -34,7 +32,7 @@
     </script>
 </head>
 <body onload="runTests()">
-    This tests that clientWidth/clientHeight on the document element in strict mode returns the visible size of the frame.
+    This tests that clientWidth/clientHeight on the body element in quirks mode returns the visible size of the frame.
     <pre id="console"></pre>
 </body>
 </html>
