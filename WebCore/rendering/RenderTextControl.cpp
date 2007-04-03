@@ -103,11 +103,14 @@ void RenderTextControl::setStyle(RenderStyle* style)
     setReplaced(isInline());
 }
 
+// Hardcode these common cases for speed.
+const unsigned blackDisabledColor = 0xFF545454;
+const unsigned whiteDisabledColor = 0xFFABABAB;
 static Color disabledTextColor(const Color& textColor, const Color& backgroundColor)
 {
     if (differenceSquared(textColor, Color::white) > differenceSquared(backgroundColor, Color::white))
-        return textColor.light();
-    return textColor.dark();
+        return textColor == Color::black ? Color(blackDisabledColor) : textColor.light();
+    return textColor == Color::white ? Color(whiteDisabledColor) : textColor.dark();
 }
 
 RenderStyle* RenderTextControl::createInnerBlockStyle(RenderStyle* startStyle)

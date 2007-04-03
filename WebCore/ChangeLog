@@ -1,3 +1,13 @@
+2007-04-02  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/5107095> REGRESSION: disabled text color calculations are slowing down launchtime measurements
+
+        Hardcode disabled text colors for the most common cases- black and white.
+
+        * rendering/RenderTextControl.cpp: (WebCore::disabledTextColor):
+
 2007-04-02  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/5105784>, assertion failure in cache.  Encoded sizes were being set to
