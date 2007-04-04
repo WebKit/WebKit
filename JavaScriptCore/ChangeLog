@@ -16,7 +16,8 @@
         
         * bindings/NP_jsobject.cpp:
         (_NPN_InvokeDefault):
-        Return false if the object isn't a function.
+        Return false if the object isn't a function. Set the return value to undefined by default
+        (to match Firefox).
         
 2007-03-30  Anders Carlsson <andersca@apple.com>
 
