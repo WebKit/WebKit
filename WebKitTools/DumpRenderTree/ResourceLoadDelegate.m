@@ -117,6 +117,9 @@
         printf ("%s\n", [string UTF8String]);
     }    
     
+    if ([disallowedURLs containsObject:[newRequest URL]])
+        return nil;
+    
     return newRequest;
 }
 

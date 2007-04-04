@@ -109,8 +109,7 @@ using namespace WebCore;
     ASSERT(request);
 
     _loader->documentLoader()->addPlugInStreamLoader(_loader);
-    if (!_loader->load(request))
-        _loader->documentLoader()->removePlugInStreamLoader(_loader);
+    _loader->load(request);
 }
 
 - (void)cancelLoadWithError:(NSError *)error

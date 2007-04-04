@@ -103,6 +103,7 @@ BOOL windowIsKey = YES;
 WebFrame *frame = 0;
 BOOL shouldDumpEditingCallbacks;
 BOOL shouldDumpResourceLoadCallbacks;
+NSMutableSet *disallowedURLs = 0;
 
 static void runTest(const char *pathOrURL);
 static NSString *md5HashStringForBitmap(CGImageRef bitmap);
@@ -527,6 +528,9 @@ void dumpRenderTree(int argc, const char *argv[])
     
     [navigationController release];
     navigationController = nil;
+    
+    [disallowedURLs release];
+    disallowedURLs = nil;
     
     if (dumpPixels)
         restoreColorSpace(0);
@@ -1008,7 +1012,8 @@ static void dump(void)
             || aSelector == @selector(accessStoredWebScriptObject)
             || aSelector == @selector(setUserStyleSheetLocation:)
             || aSelector == @selector(setUserStyleSheetEnabled:)
-            || aSelector == @selector(objCClassNameOf:))
+            || aSelector == @selector(objCClassNameOf:)
+            || aSelector == @selector(addDisallowedURL:))
         return NO;
     return YES;
 }
@@ -1039,6 +1044,9 @@ static void dump(void)
         return @"setUserStyleSheetEnabled";
     if (aSelector == @selector(objCClassNameOf:))
         return @"objCClassName";
+    if (aSelector == @selector(addDisallowedURL:))
+        return @"addDisallowedURL";
+    
     return nil;
 }
 
@@ -1083,13 +1091,26 @@ static void dump(void)
     dumpAsText = YES;
 }
 
-- (void)setUserStyleSheetLocation:(NSString *)path;
+- (void)addDisallowedURL:(NSString *)urlString
+{
+    if (!disallowedURLs)
+        disallowedURLs = [[NSMutableSet alloc] init];
+    
+    
+    // Canonicalize the URL
+    NSURLRequest* request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlString]];
+    request = [NSURLProtocol canonicalRequestForRequest:request];
+    
+    [disallowedURLs addObject:[request URL]];
+}
+
+- (void)setUserStyleSheetLocation:(NSString *)path
 {
     NSURL *url = [NSURL URLWithString:path];
     [[WebPreferences standardPreferences] setUserStyleSheetLocation:url];
 }
 
-- (void)setUserStyleSheetEnabled:(BOOL)flag;
+- (void)setUserStyleSheetEnabled:(BOOL)flag
 {
     [[WebPreferences standardPreferences] setUserStyleSheetEnabled:flag];
 }
@@ -1324,7 +1345,8 @@ static void runTest(const char *pathOrURL)
     if ([WebHistory optionalSharedHistory])
         [WebHistory setOptionalSharedHistory:nil];
     lastMousePosition = NSMakePoint(0, 0);
-
+    [disallowedURLs removeAllObjects];
+    
     if (currentTest != nil)
         CFRelease(currentTest);
     currentTest = (NSString *)pathOrURLString;

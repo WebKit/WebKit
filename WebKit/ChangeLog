@@ -1,3 +1,14 @@
+2007-04-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5028178>
+        Crash occurs at WebCore::FrameLoader::activeDocumentLoader() after loading Froggster widget
+        
+        * Plugins/WebNetscapePluginStream.mm:
+        (-[WebNetscapePluginStream start]):
+        If load returns no the plugin loader has already been removed by the didFail callback.
+
 2007-04-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.

@@ -1,3 +1,19 @@
+2007-04-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Add the notion of a "disallowed URL", which the resource loader won't allow to be loaded.
+        
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.m:
+        (dumpRenderTree):
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (+[LayoutTestController webScriptNameForSelector:]):
+        (-[LayoutTestController addDisallowedURL:]):
+        (runTest):
+        * DumpRenderTree/ResourceLoadDelegate.m:
+        (-[ResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+
 2007-04-03  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Antti.

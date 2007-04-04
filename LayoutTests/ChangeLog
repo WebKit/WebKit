@@ -1,3 +1,13 @@
+2007-04-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5028178>
+        Crash occurs at WebCore::FrameLoader::activeDocumentLoader() after loading Froggster widget
+
+        * plugins/get-url-that-the-resource-load-delegate-will-disallow-expected.txt: Added.
+        * plugins/get-url-that-the-resource-load-delegate-will-disallow.html: Added.
+
 2007-04-03  Mitz Pettel  <mitz@webkit.org>
 
         Reviewed by darin
