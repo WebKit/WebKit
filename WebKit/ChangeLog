@@ -1,3 +1,16 @@
+2007-04-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/5107536> 
+        http://bugs.webkit.org/show_bug.cgi?id=13264
+        REGRESSION: Crash when canceling about:blank in Activity viewer
+        
+        * WebView/WebFrame.mm:
+        (-[WebFrame stopLoading]):
+        Add a null check for the frame loader - it can be null when the frame has been disconnected
+        from the web page.
+
 2007-04-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

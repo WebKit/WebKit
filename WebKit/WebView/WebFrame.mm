@@ -787,7 +787,8 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (void)stopLoading
 {
-    [self _frameLoader]->stopAllLoaders();
+    if (FrameLoader* frameLoader = [self _frameLoader])
+        frameLoader->stopAllLoaders();
 }
 
 - (void)reload
