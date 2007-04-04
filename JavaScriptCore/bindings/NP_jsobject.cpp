@@ -108,6 +108,8 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
         if (!_isSafeScript(obj))
             return false;        
         
+        VOID_TO_NPVARIANT(*result);
+        
         // Lookup the function object.
         RootObject* rootObject = obj->rootObject;
         if (!rootObject || !rootObject->isValid())
@@ -118,6 +120,9 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
         
         // Call the function object.
         JSObject *funcImp = static_cast<JSObject*>(obj->imp);
+        if (!funcImp->implementsCall())
+            return false;
+        
         List argList = listFromVariantArgs(exec, args, argCount);
         JSValue *resultV = funcImp->call (exec, funcImp, argList);
         

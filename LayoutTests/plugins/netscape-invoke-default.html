@@ -16,7 +16,11 @@ function runTest()
     if (retval)
         successCount++;
         
-    if (successCount == 2)
+    retval = plugin.testInvokeDefault(window.location);
+    if (!retval)
+        successCount++;
+        
+    if (successCount == 3)
         document.getElementById('result').innerHTML = 'SUCCESS'
 }
 </script>

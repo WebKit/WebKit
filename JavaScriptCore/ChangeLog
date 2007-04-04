@@ -1,3 +1,15 @@
+2007-04-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5107534>
+        http://bugs.webkit.org/show_bug.cgi?id=13265
+        REGRESSION: Crash in KJS::Bindings::convertValueToNPVariant
+        
+        * bindings/NP_jsobject.cpp:
+        (_NPN_InvokeDefault):
+        Return false if the object isn't a function.
+        
 2007-03-30  Anders Carlsson <andersca@apple.com>
 
         Build fix.
