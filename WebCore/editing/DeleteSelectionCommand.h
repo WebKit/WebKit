@@ -76,6 +76,8 @@ private:
     RefPtr<Node> m_endBlock;
     RefPtr<CSSMutableStyleDeclaration> m_typingStyle;
     RefPtr<CSSMutableStyleDeclaration> m_deleteIntoBlockquoteStyle;
+    RefPtr<Node> m_startRoot;
+    RefPtr<Node> m_endRoot;
 };
 
 } // namespace WebCore

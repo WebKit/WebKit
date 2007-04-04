@@ -129,6 +129,9 @@ void DeleteSelectionCommand::initializePositionData()
     m_upstreamEnd = end.upstream();
     m_downstreamEnd = end.downstream();
     
+    m_startRoot = editableRootForPosition(start);
+    m_endRoot = editableRootForPosition(end);
+    
     Node* startCell = enclosingTableCell(m_upstreamStart.node());
     Node* endCell = enclosingTableCell(m_downstreamEnd.node());
     // Don't move content out of a table cell.
@@ -238,6 +241,31 @@ static void updatePositionForNodeRemoval(Node* node, Position& position)
 
 void DeleteSelectionCommand::removeNode(Node *node)
 {
+    if (!node)
+        return;
+        
+    if (m_startRoot != m_endRoot && !(node->isDescendantOf(m_startRoot.get()) && node->isDescendantOf(m_endRoot.get()))) {
+        // If a node is not in both the start and end editable roots, remove it only if its inside an editable region.
+        if (!node->parentNode()->isContentEditable()) {
+            // Don't remove non-editable atomic nodes.
+            if (!node->firstChild())
+                return;
+            // Search this non-editable region for editable regions to empty.
+            RefPtr<Node> child = node->firstChild();
+            while (child) {
+                RefPtr<Node> nextChild = child->nextSibling();
+                removeNode(child.get());
+                // Bail if nextChild is no longer node's child.
+                if (nextChild && nextChild->parentNode() != node)
+                    return;
+                child = nextChild;
+            }
+            
+            // Don't remove editable regions that are inside non-editable ones, just clear them.
+            return;
+        }
+    }
+    
     if (isTableStructureNode(node) || node == node->rootEditableElement()) {
         // Do not remove an element of table structure; remove its contents.
         // Likewise for the root editable element.

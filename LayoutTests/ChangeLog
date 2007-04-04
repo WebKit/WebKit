@@ -1,3 +1,32 @@
+2007-04-03  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/5026848> Can cut/delete To Do subunits
+
+        This tests to make sure that non-editable content
+        that is in both the start and end editable roots
+        is removed:
+        * editing/deleting/5026848-1-expected.checksum: Added.
+        * editing/deleting/5026848-1-expected.png: Added.
+        * editing/deleting/5026848-1-expected.txt: Added.
+        * editing/deleting/5026848-1.html: Added.
+        This tests to make sure that non-editable content
+        that is not in both the start and end editable roots
+        is not removed:
+        * editing/deleting/5026848-2-expected.checksum: Added.
+        * editing/deleting/5026848-2-expected.png: Added.
+        * editing/deleting/5026848-2-expected.txt: Added.
+        * editing/deleting/5026848-2.html: Added.
+        This tests to make sure that editable regions 
+        that are not in both the start and end editable roots
+        are cleared (not removed, unless they are in another
+        editable region):
+        * editing/deleting/5026848-3-expected.checksum: Added.
+        * editing/deleting/5026848-3-expected.png: Added.
+        * editing/deleting/5026848-3-expected.txt: Added.
+        * editing/deleting/5026848-3.html: Added.
+
 2007-04-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
