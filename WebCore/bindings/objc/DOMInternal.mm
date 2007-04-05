@@ -124,19 +124,3 @@ void removeDOMWrapper(DOMObjectInternal* impl)
 }
 
 @end
-
-namespace WebCore {
-
-NSString* displayString(const String& string, const Node* node)
-{
-    if (!node)
-        return string;
-    Document* document = node->document();
-    if (!document)
-        return string;
-    String copy(string);
-    copy.replace('\\', document->backslashAsCurrencySymbol());
-    return copy;
-}
-
-} // namespace WebCore

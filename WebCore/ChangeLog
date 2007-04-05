@@ -1,3 +1,31 @@
+2007-04-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        Some clean-up while fixing <rdar://problem/5112273> REGRESSION(TOT): 
+        Reproducible crash loading an old version of amazon.com as a web archive
+        
+        Removed superfluous document NULL checks. (Node::document() never returns
+        NULL, and it asserts as much.)
+        
+        Removed duplicate implementation of displayString.
+        
+        Layout tests pass.
+
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMInternal.mm:
+        * html/HTMLGenericFormElement.cpp:
+        (WebCore::HTMLGenericFormElement::supportsFocus):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::createNPObject):
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::checkOrEnableIfNeeded):
+        * rendering/HitTestResult.cpp:
+        (WebCore::displayString):
+        * rendering/HitTestResult.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateHoverActiveState):
+
 2007-04-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

@@ -377,11 +377,7 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
     if (item.type() == SeparatorType)
         return;
     
-    Document* document = m_hitTestResult.innerNonSharedNode()->document();
-    if (!document)
-        return;
-
-    Frame* frame = document->frame();
+    Frame* frame = m_hitTestResult.innerNonSharedNode()->document()->frame();
     if (!frame)
         return;
 

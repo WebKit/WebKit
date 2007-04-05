@@ -159,15 +159,12 @@ String HitTestResult::title() const
     return String();
 }
 
-static String displayString(const String& string, const Node* node)
+String displayString(const String& string, const Node* node)
 {
     if (!node)
         return string;
-    Document* document = node->document();
-    if (!document)
-        return string;
     String copy(string);
-    copy.replace('\\', document->backslashAsCurrencySymbol());
+    copy.replace('\\', node->document()->backslashAsCurrencySymbol());
     return copy;
 }
 

@@ -238,7 +238,7 @@ void HTMLGenericFormElement::setTabIndex(int value)
     
 bool HTMLGenericFormElement::supportsFocus() const
 {
-    return isFocusable() || (!disabled() && document() && !document()->haveStylesheetsLoaded());
+    return isFocusable() || (!disabled() && !document()->haveStylesheetsLoaded());
 }
 
 } // namespace

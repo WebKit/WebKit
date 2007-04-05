@@ -63,11 +63,11 @@ public:
     String spellingToolTip() const;
     String title() const;
     String altDisplayString() const;
+    String titleDisplayString() const;
     Image* image() const;
     IntRect imageRect() const;
     KURL absoluteImageURL() const;
     KURL absoluteLinkURL() const;
-    String titleDisplayString() const;
     String textContent() const;
     bool isLiveLink() const;
     bool isContentEditable() const;
@@ -81,6 +81,8 @@ private:
     RefPtr<Element> m_innerURLElement;
     RefPtr<PlatformScrollbar> m_scrollbar;
 };
+
+String displayString(const String&, const Node*);
 
 } // namespace WebCore
 

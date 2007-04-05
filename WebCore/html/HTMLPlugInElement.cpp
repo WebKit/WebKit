@@ -175,7 +175,7 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
 NPObject* HTMLPlugInElement::createNPObject()
 {
     // This shouldn't ever happen, but might as well check anyway
-    if (!document() || !document()->frame())
+    if (!document()->frame())
         return _NPN_CreateNoScriptObject();
 
     // Can't create NPObjects when JavaScript is disabled
