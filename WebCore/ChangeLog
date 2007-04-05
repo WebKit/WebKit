@@ -1,3 +1,14 @@
+2007-04-05  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by darin.
+
+        Coverity fix. Coverity says:
+        "Event var_deref_model: Variable "unicode" tracked as NULL was passed to a 
+        function that dereferences it."
+
+        * platform/DeprecatedString.cpp:
+        (WebCore::DeprecatedString::DeprecatedString):
+
 2007-04-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

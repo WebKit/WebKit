@@ -666,7 +666,7 @@ DeprecatedString::DeprecatedString(DeprecatedChar qc)
 
 DeprecatedString::DeprecatedString(const DeprecatedChar *unicode, unsigned length)
 {
-    if (!unicode && !length) {
+    if (!unicode || !length) {
         internalData.deref();
         dataHandle = makeSharedNullHandle();
         dataHandle[0]->ref();
