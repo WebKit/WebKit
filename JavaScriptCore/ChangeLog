@@ -2,6 +2,19 @@
 
         Reviewed by darin.
 
+        Coverity fixes. Coverity says:
+        "Event leaked_storage: Returned without freeing storage "buffer""
+        and:
+        "Event leaked_storage: Returned without freeing storage "script""
+
+        * kjs/testkjs.cpp:
+        (doIt):
+        (createStringWithContentsOfFile):
+
+2007-04-05  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by darin.
+
         Coverity fix: in single-threaded case currentThreadIsMainThread is always true
         so the code in if (!currentThreadIsMainThread) cannot possibly be reached
         and Coverity complains about dead code.

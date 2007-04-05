@@ -252,6 +252,7 @@ bool doIt(int argc, char** argv)
       if (s.isNull()) {
         fprintf(stderr, "%s:%d: %s.\n", fileName, errLine, errMsg.UTF8String().c_str());
         success = false;
+        free(script);
         break;
       }
       
@@ -332,6 +333,7 @@ static char* createStringWithContentsOfFile(const char* fileName)
   FILE* f = fopen(fileName, "r");
   if (!f) {
     fprintf(stderr, "Could not open file: %s\n", fileName);
+    free(buffer);
     return 0;
   }
   
