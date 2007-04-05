@@ -416,7 +416,7 @@ const GlyphData& Font::glyphDataForCharacter(UChar32 c, const UChar* cluster, un
             // Even system fallback can fail.
             // FIXME: Should the last resort font be used?
             const GlyphData& data = primaryFont()->missingGlyphData();
-            if (!smallCaps)
+            if (!smallCaps && page)
                 page->setGlyphDataForCharacter(c, data.glyph, data.fontData);
             return data;
         }

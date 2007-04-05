@@ -1,5 +1,15 @@
 2007-04-05  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
+        Reviewed by rwlbuis.
+
+        Coverity fix. Coverity says:
+        "Event var_deref_model: Variable "page" tracked as NULL was passed to a function that dereferences it."
+
+        * platform/Font.cpp:
+        (WebCore::Font::glyphDataForCharacter):
+
+2007-04-05  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
         Reviewed by darin.
 
         Coverity fix. Coverity says:
