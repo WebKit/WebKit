@@ -321,6 +321,7 @@ input, input[type="password"], input[type="search"], isindex {
     border: 2px inset;
     -webkit-rtl-ordering: logical;
     -webkit-user-select: text;
+    cursor: auto;
 }
 
 input[type="search"] {
@@ -352,6 +353,7 @@ textarea {
     -webkit-user-select: text;
     -webkit-box-orient: vertical;
     resize: auto;
+    cursor: auto;
 }
 
 input[type="password"] {
@@ -450,6 +452,7 @@ keygen, select {
     border: 1px solid;
     background-color: white;
     white-space: pre;
+    cursor: default;
 }
 
 select[size],
