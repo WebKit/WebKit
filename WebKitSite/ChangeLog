@@ -1,3 +1,12 @@
+2007-04-05  Mark Malone  <markmalone@mac.com>
+
+        Reviewed by Darin.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13273
+        Bug 13273: DOM Interfaces Nav link should go somewhere more useful
+
+        * nav.inc: Link directly to the hierarchy.
+
 2007-03-26  Darin Adler  <darin@apple.com>
 
         * coding/coding-style.html: Let's misquote George Orwell: "Wrong is right. Right is wrong."
