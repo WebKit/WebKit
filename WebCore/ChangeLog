@@ -1,3 +1,15 @@
+2007-04-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/5021500> Cursor should stay as pointer when slider is being dragged
+
+        Don't set the selection ibeam cursor when there's a node that's capturing mouse events.
+
+        * page/EventHandler.cpp:
+        (WebCore::selectCursor):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+
 2007-04-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.

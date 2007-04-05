@@ -620,10 +620,12 @@ static bool nodeIsNotBeingEdited(Node* node, Frame* frame)
     return frame->selectionController()->rootEditableElement() != node->rootEditableElement();
 }
 
-static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* frame, bool mousePressed, PlatformScrollbar* scrollbar)
+// FIXME: We should consider making this a member function now that we're passing in more info about the object.
+static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* frame, bool mousePressed, PlatformScrollbar* scrollbar, bool capturingMouseEvents)
 {
     // During selection, use an I-beam no matter what we're over.
-    if (mousePressed && frame->selectionController()->isCaretOrRange())
+    // If you're capturing mouse events for a particular node, don't treat this as a selection.
+    if (mousePressed && frame->selectionController()->isCaretOrRange() && !capturingMouseEvents)
         return iBeamCursor();
 
     Node* node = event.targetNode();
@@ -921,7 +923,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
         if (scrollbar && !m_mousePressed)
             scrollbar->handleMouseMoveEvent(mouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
         if ((!m_resizeLayer || !m_resizeLayer->inResizeMode()) && m_frame->view())
-            m_frame->view()->setCursor(selectCursor(mev, m_frame, m_mousePressed, scrollbar));
+            m_frame->view()->setCursor(selectCursor(mev, m_frame, m_mousePressed, scrollbar, m_capturingMouseEventsNode));
     }
 
     m_lastMouseMoveEventSubframe = newSubframe;
