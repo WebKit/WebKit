@@ -221,7 +221,7 @@ void HTMLAnchorElement::defaultEventHandler(Event* evt)
     } else if (m_isLink && isContentEditable()) {
     // This keeps track of the editable block that the selection was in (if it was in one) just before the link was clicked
     // for the LiveWhenNotFocused editable link behavior
-        if (evt->type() == mousedownEvent && document()->frame() && document()->frame()->selectionController()) {
+        if (evt->type() == mousedownEvent && static_cast<MouseEvent*>(evt)->button() != RightButton && document()->frame() && document()->frame()->selectionController()) {
             MouseEvent* e = static_cast<MouseEvent*>(evt);
 
             m_rootEditableElementForSelectionOnMouseDown = document()->frame()->selectionController()->rootEditableElement();

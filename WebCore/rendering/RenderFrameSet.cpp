@@ -556,7 +556,7 @@ bool RenderFrameSet::userResize(MouseEvent* evt)
     if (!m_isResizing) {
         if (needsLayout())
             return false;
-        if (evt->type() == mousedownEvent) {
+        if (evt->type() == mousedownEvent && evt->button() == LeftButton) {
             startResizing(m_cols, evt->pageX() - xPos());
             startResizing(m_rows, evt->pageY() - yPos());
             if (m_cols.m_splitBeingResized != noSplit || m_rows.m_splitBeingResized != noSplit) {
@@ -565,10 +565,10 @@ bool RenderFrameSet::userResize(MouseEvent* evt)
             }
         }
     } else {
-        if (evt->type() == mousemoveEvent || evt->type() == mouseupEvent) {
+        if (evt->type() == mousemoveEvent || (evt->type() == mouseupEvent && evt->button() == LeftButton)) {
             continueResizing(m_cols, evt->pageX() - xPos());
             continueResizing(m_rows, evt->pageY() - yPos());
-            if (evt->type() == mouseupEvent) {
+            if (evt->type() == mouseupEvent && evt->button() == 0) {
                 setIsResizing(false);
                 return true;
             }

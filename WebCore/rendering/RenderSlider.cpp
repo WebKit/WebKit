@@ -72,7 +72,7 @@ HTMLSliderThumbElement::HTMLSliderThumbElement(Document* doc, Node* shadowParent
 void HTMLSliderThumbElement::defaultEventHandler(Event* event)
 {
     const AtomicString& eventType = event->type();
-    if (eventType == mousedownEvent && event->isMouseEvent()) {
+    if (eventType == mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
         if (document()->frame() && renderer() && renderer()->parent()
                 && static_cast<RenderSlider*>(renderer()->parent())->mouseEventIsInThumb(mouseEvent)) {
@@ -87,7 +87,7 @@ void HTMLSliderThumbElement::defaultEventHandler(Event* event)
             event->setDefaultHandled();
             return;
         }
-    } else if (eventType == mouseupEvent) {
+    } else if (eventType == mouseupEvent && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         if (m_inDragMode) {
             if (Frame* frame = document()->frame())
                 frame->eventHandler()->setCapturingMouseEventsNode(0);      

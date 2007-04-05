@@ -849,7 +849,8 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEv
     bool swallowMouseUpEvent = dispatchMouseEvent(mouseupEvent, mev.targetNode(), true, m_clickCount, mouseEvent, false);
 
     bool swallowClickEvent = false;
-    if (mev.targetNode() == m_clickNode)
+    // Don't ever dispatch click events for right clicks
+    if (mouseEvent.button() != RightButton && mev.targetNode() == m_clickNode)
         swallowClickEvent = dispatchMouseEvent(clickEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
 
     bool swallowMouseReleaseEvent = false;
@@ -954,8 +955,9 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 
     bool swallowMouseUpEvent = dispatchMouseEvent(mouseupEvent, mev.targetNode(), true, m_clickCount, mouseEvent, false);
 
+    // Don't ever dispatch click events for right clicks
     bool swallowClickEvent = false;
-    if (m_clickCount > 0 && mev.targetNode() == m_clickNode)
+    if (m_clickCount > 0 && mouseEvent.button() != RightButton && mev.targetNode() == m_clickNode)
         swallowClickEvent = dispatchMouseEvent(clickEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
 
     if (m_resizeLayer) {

@@ -1,3 +1,26 @@
+2007-04-04  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Oliver.
+
+        Fix for <rdar://5105009> Prepare for fix to send mousedown and mouseup (but not click) events when right-clicking
+
+        * page/EventHandler.cpp: Don't ever send click events for right-clicks.
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        
+        Check that the mousedown and mouseup are not with the right button before performing default behavior.
+        * html/HTMLAnchorElement.cpp: (WebCore::HTMLAnchorElement::defaultEventHandler):
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::defaultEventHandler):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        * html/HTMLTextFieldInnerElement.cpp:
+        (WebCore::HTMLSearchFieldResultsButtonElement::defaultEventHandler):
+        (WebCore::HTMLSearchFieldCancelButtonElement::defaultEventHandler):
+        * ksvg2/svg/SVGAElement.cpp:(WebCore::SVGAElement::defaultEventHandler):
+        * rendering/RenderFrameSet.cpp: (WebCore::RenderFrameSet::userResize):
+        * rendering/RenderSlider.cpp: (WebCore::HTMLSliderThumbElement::defaultEventHandler):
+
 2007-04-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
