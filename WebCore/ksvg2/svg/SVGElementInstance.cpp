@@ -48,8 +48,7 @@ SVGElementInstance::SVGElementInstance(SVGUseElement* useElement, PassRefPtr<SVG
     ASSERT(m_element);
 
     // Register as instance for passed element.
-    if (Document* document = m_element->document())
-        document->accessSVGExtensions()->mapInstanceToElement(this, m_element.get());
+    m_element->document()->accessSVGExtensions()->mapInstanceToElement(this, m_element.get());
 }
 
 SVGElementInstance::~SVGElementInstance()
@@ -58,8 +57,7 @@ SVGElementInstance::~SVGElementInstance()
         child->setParent(0);
 
     // Deregister as instance for passed element.
-    if (Document* document = m_element->document())
-        document->accessSVGExtensions()->removeInstanceMapping(this, m_element.get());
+    m_element->document()->accessSVGExtensions()->removeInstanceMapping(this, m_element.get());
 }
 
 SVGElement* SVGElementInstance::correspondingElement() const

@@ -1,3 +1,20 @@
+2007-04-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        More clean-up while fixing <rdar://problem/5112273> REGRESSION(TOT): 
+        Reproducible crash loading an old version of amazon.com as a web archive
+        
+        Layout tests pass.
+        
+        Removed more superfluous document NULL checks. (Node::document() never 
+        returns NULL, and it asserts as much.)
+        
+        Merged some duplicate editing code into a static inline function.
+        
+        * page/mac/WebCoreFrameBridge.mm:
+        (updateRenderingForBindings): Removed superfluous static_cast.
+
 2007-04-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

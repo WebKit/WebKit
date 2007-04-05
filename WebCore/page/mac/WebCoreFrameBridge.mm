@@ -144,8 +144,7 @@ static void updateRenderingForBindings(ExecState* exec, JSObject* rootObject)
     if (!window)
         return;
         
-    Document* doc = static_cast<Document*>(window->frame()->document());
-    if (doc)
+    if (Document* doc = window->frame()->document())
         doc->updateRendering();
 }
 

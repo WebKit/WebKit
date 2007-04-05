@@ -753,9 +753,7 @@ bool JSHTMLElement::implementsCall() const
 {
     HTMLElement* element = static_cast<HTMLElement*>(impl());
     if (element->hasTagName(embedTag) || element->hasTagName(objectTag) || element->hasTagName(appletTag)) {
-        Frame* frame = 0;
-        if (Document* doc = element->document())
-            frame = doc->frame();
+        Frame* frame = element->document()->frame();
         if (!frame)
             return false;
         KJSProxy *proxy = frame->scriptProxy();

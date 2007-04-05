@@ -102,7 +102,7 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragD
         if (dragData->containsURL()) {
             String title;
             String url = dragData->asURL(&title);
-            if (document && !url.isEmpty()) {
+            if (!url.isEmpty()) {
                 ExceptionCode ec;
                 RefPtr<HTMLAnchorElement> anchor = static_cast<HTMLAnchorElement*>(document->createElement("a", ec).get());
                 anchor->setHref(url);

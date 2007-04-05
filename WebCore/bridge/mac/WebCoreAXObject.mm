@@ -1334,13 +1334,8 @@ static IntRect boundingBoxRect(RenderObject* obj)
 
     // try to use the document view from the first position, so that nested WebAreas work,
     // but fall back to the top level doc if we do not find it easily
-    FrameView* frameView = 0;
     RenderObject* renderer = startVisiblePosition.deepEquivalent().node()->renderer();
-    if (renderer) {
-        Document* doc = renderer->document();
-        if (doc)
-            frameView = doc->view();
-    }
+    FrameView* frameView = renderer ? renderer->document()->view() : 0;
     if (!frameView)
         frameView = [self frameView];
     NSView* view = frameView->getView();

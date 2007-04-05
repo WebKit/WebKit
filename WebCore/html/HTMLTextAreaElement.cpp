@@ -231,7 +231,7 @@ void HTMLTextAreaElement::updateFocusAppearance(bool restorePreviousSelection)
         // Restore the cached selection.  This matches other browsers' behavior.
         setSelectionRange(cachedSelStart, cachedSelEnd); 
 
-    if (document() && document()->frame())
+    if (document()->frame())
         document()->frame()->revealSelection();
 }
 

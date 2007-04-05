@@ -1114,48 +1114,33 @@ static bool execUndo(Frame* frame, Event*)
     return true;
 }
 
+static inline Frame* targetFrame(Frame* frame, Event* evt)
+{
+    Node* node = evt ? evt->target()->toNode() : 0;
+    if (!node)
+        return frame;
+    return node->document()->frame();
+}
+
 static bool execInsertTab(Frame* frame, Event* evt)
 {
-    Frame* targetFrame = frame;
-    if (evt) {
-        if (Node* node = evt->target()->toNode())
-            if (Document* doc = node->document())
-                targetFrame = doc->frame();
-    }
-    return targetFrame->eventHandler()->handleTextInputEvent("\t", evt, false, false);
+    return targetFrame(frame, evt)->eventHandler()->handleTextInputEvent("\t", evt, false, false);
 }
 
 static bool execInsertBacktab(Frame* frame, Event* evt)
 {
-    Frame* targetFrame = frame;
-    if (evt) {
-        if (Node* node = evt->target()->toNode())
-            if (Document* doc = node->document())
-                targetFrame = doc->frame();
-    }
-    return targetFrame->eventHandler()->handleTextInputEvent("\t", evt, false, true);
+    return targetFrame(frame, evt)->eventHandler()->handleTextInputEvent("\t", evt, false, true);
 }
 
 static bool execInsertNewline(Frame* frame, Event* evt)
 {
-    Frame* targetFrame = frame;
-    if (evt) {
-        if (Node* node = evt->target()->toNode())
-            if (Document* doc = node->document())
-                targetFrame = doc->frame();
-    }
+    Frame* targetFrame = WebCore::targetFrame(frame, evt);
     return targetFrame->eventHandler()->handleTextInputEvent("\n", evt, !targetFrame->editor()->canEditRichly());
 }
 
 static bool execInsertLineBreak(Frame* frame, Event* evt)
 {
-    Frame* targetFrame = frame;
-    if (evt) {
-        if (Node* node = evt->target()->toNode())
-            if (Document* doc = node->document())
-                targetFrame = doc->frame();
-    }
-    return targetFrame->eventHandler()->handleTextInputEvent("\n", evt, true);
+    return targetFrame(frame, evt)->eventHandler()->handleTextInputEvent("\n", evt, true);
 }
 
 // Enabled functions
