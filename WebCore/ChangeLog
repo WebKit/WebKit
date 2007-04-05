@@ -1,3 +1,13 @@
+2007-04-05  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5078866> tables should only reset text-align
+        in quirks mode.
+
+        Reviewed by beth
+
+        * css/html4.css:
+        * css/quirks.css:
+
 2007-04-05  Adele Peterson  <adele@apple.com>
 
         Fixing typo that's crashing.
