@@ -1,5 +1,12 @@
 2007-04-05  Adele Peterson  <adele@apple.com>
 
+        Fixing typo that's crashing.
+
+        * html/HTMLAnchorElement.cpp: (WebCore::HTMLAnchorElement::defaultEventHandler):
+          Use evt instead of null variable k.
+
+2007-04-05  Adele Peterson  <adele@apple.com>
+
         Reviewed by Hyatt.
 
         Fix for <rdar://problem/5021500> Cursor should stay as pointer when slider is being dragged

@@ -131,7 +131,7 @@ void HTMLAnchorElement::defaultEventHandler(Event* evt)
             e = static_cast<MouseEvent*>(evt);
 
         KeyboardEvent* k = 0;
-        if (evt->type() == keydownEvent && k->isKeyboardEvent())
+        if (evt->type() == keydownEvent && evt->isKeyboardEvent())
             k = static_cast<KeyboardEvent*>(evt);
 
         if (e && e->button() == 2) {
