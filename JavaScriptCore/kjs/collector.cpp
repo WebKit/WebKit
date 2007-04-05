@@ -744,8 +744,10 @@ bool Collector::collect()
   markStackObjectsConservatively();
   markProtectedObjects();
   List::markProtectedLists();
+#if USE(MULTIPLE_THREADS)
   if (!currentThreadIsMainThread)
     markMainThreadOnlyObjects();
+#endif
 
 #ifndef NDEBUG
   fastMallocAllow();
