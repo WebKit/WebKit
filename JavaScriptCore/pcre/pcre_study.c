@@ -409,8 +409,7 @@ pcre_extra *extra;
 pcre_study_data *study;
 const uschar *tables;
 const real_pcre *re = (const real_pcre *)external_re;
-uschar *code = (uschar *)re + re->name_table_offset +
-  (re->name_count * re->name_entry_size);
+uschar *code;
 compile_data compile_block;
 
 *errorptr = NULL;
@@ -420,6 +419,9 @@ if (re == NULL || re->magic_number != MAGIC_NUMBER)
   *errorptr = "argument is not a compiled regular expression";
   return NULL;
   }
+
+code = (uschar *)re + re->name_table_offset +
+  (re->name_count * re->name_entry_size);
 
 if ((options & ~PUBLIC_STUDY_OPTIONS) != 0)
   {

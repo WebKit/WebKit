@@ -2,6 +2,16 @@
 
         Reviewed by darin.
 
+        Coverity fix. Coverity says:
+        "Event check_after_deref: Pointer "re" dereferenced before NULL check"
+
+        * pcre/pcre_study.c:
+        (pcre_study):
+
+2007-04-05  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by darin.
+
         Coverity fixes. Coverity says:
         "Event leaked_storage: Returned without freeing storage "buffer""
         and:
