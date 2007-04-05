@@ -77,6 +77,8 @@ void ContextMenuController::clearContextMenu()
 void ContextMenuController::handleContextMenuEvent(Event* event)
 {
     ASSERT(event->type() == contextmenuEvent);
+    if (!event->isMouseEvent())
+        return;
     MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
     IntPoint point = IntPoint(mouseEvent->pageX(), mouseEvent->pageY());
     HitTestResult result(point);

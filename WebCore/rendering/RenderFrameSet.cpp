@@ -568,7 +568,7 @@ bool RenderFrameSet::userResize(MouseEvent* evt)
         if (evt->type() == mousemoveEvent || (evt->type() == mouseupEvent && evt->button() == LeftButton)) {
             continueResizing(m_cols, evt->pageX() - xPos());
             continueResizing(m_rows, evt->pageY() - yPos());
-            if (evt->type() == mouseupEvent && evt->button() == 0) {
+            if (evt->type() == mouseupEvent && evt->button() == LeftButton) {
                 setIsResizing(false);
                 return true;
             }

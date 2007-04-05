@@ -1,3 +1,22 @@
+2007-04-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        A little cleanup from my last checkin.  Always check if an Event is really a MouseEvent or a KeyboardEvent
+        before casting it.
+
+        * html/HTMLAnchorElement.cpp: (WebCore::HTMLAnchorElement::defaultEventHandler):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        * html/HTMLTextFieldInnerElement.cpp:
+        (WebCore::HTMLSearchFieldResultsButtonElement::defaultEventHandler):
+        (WebCore::HTMLSearchFieldCancelButtonElement::defaultEventHandler):
+        * ksvg2/svg/SVGAElement.cpp: (WebCore::SVGAElement::defaultEventHandler):
+        * page/ContextMenuController.cpp: (WebCore::ContextMenuController::handleContextMenuEvent):
+        * rendering/RenderFrameSet.cpp: (WebCore::RenderFrameSet::userResize):
+        * rendering/RenderSlider.cpp: (WebCore::HTMLSliderThumbElement::defaultEventHandler):
+
 2007-04-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth Dakin.

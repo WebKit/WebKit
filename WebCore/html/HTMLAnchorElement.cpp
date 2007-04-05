@@ -127,11 +127,11 @@ void HTMLAnchorElement::defaultEventHandler(Event* evt)
     // when pressing Enter in the combo.
     if (m_isLink && (evt->type() == clickEvent || (evt->type() == keydownEvent && m_focused))) {
         MouseEvent* e = 0;
-        if (evt->type() == clickEvent)
+        if (evt->type() == clickEvent && evt->isMouseEvent())
             e = static_cast<MouseEvent*>(evt);
 
         KeyboardEvent* k = 0;
-        if (evt->type() == keydownEvent)
+        if (evt->type() == keydownEvent && k->isKeyboardEvent())
             k = static_cast<KeyboardEvent*>(evt);
 
         if (e && e->button() == 2) {
@@ -221,7 +221,7 @@ void HTMLAnchorElement::defaultEventHandler(Event* evt)
     } else if (m_isLink && isContentEditable()) {
     // This keeps track of the editable block that the selection was in (if it was in one) just before the link was clicked
     // for the LiveWhenNotFocused editable link behavior
-        if (evt->type() == mousedownEvent && static_cast<MouseEvent*>(evt)->button() != RightButton && document()->frame() && document()->frame()->selectionController()) {
+        if (evt->type() == mousedownEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() != RightButton && document()->frame() && document()->frame()->selectionController()) {
             MouseEvent* e = static_cast<MouseEvent*>(evt);
 
             m_rootEditableElementForSelectionOnMouseDown = document()->frame()->selectionController()->rootEditableElement();

@@ -95,7 +95,7 @@ RenderObject* SVGAElement::createRenderer(RenderArena* arena, RenderStyle* style
 void SVGAElement::defaultEventHandler(Event* evt)
 {
     // TODO : should use CLICK instead
-    if ((evt->type() == EventNames::mouseupEvent && static_cast<MouseEvent*>(evt)->button() != RightButton && m_isLink)) {
+    if ((evt->type() == EventNames::mouseupEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() != RightButton && m_isLink)) {
         MouseEvent* e = static_cast<MouseEvent*>(evt);
 
         if (e && e->button() == RightButton) {

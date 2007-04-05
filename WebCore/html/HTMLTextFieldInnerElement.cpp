@@ -77,7 +77,7 @@ void HTMLSearchFieldResultsButtonElement::defaultEventHandler(Event* evt)
 {
     // On mousedown, bring up a menu, if needed
     HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
-    if (evt->type() == mousedownEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
+    if (evt->type() == mousedownEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
         input->focus();
         input->select();
         if (input && input->renderer() && static_cast<RenderTextControl*>(input->renderer())->popupIsVisible())
@@ -100,14 +100,14 @@ void HTMLSearchFieldCancelButtonElement::defaultEventHandler(Event* evt)
 {
     // If the element is visible, on mouseup, clear the value, and set selection
     HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
-    if (evt->type() == mousedownEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
+    if (evt->type() == mousedownEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
         input->focus();
         input->select();
         evt->setDefaultHandled();
         if (Frame* frame = document()->frame())
             frame->eventHandler()->setCapturingMouseEventsNode(this);
         m_capturing = true;
-    } else if (evt->type() == mouseupEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
+    } else if (evt->type() == mouseupEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
         if (m_capturing && renderer() && renderer()->style()->visibility() == VISIBLE) {
             if (hovered()) {
                 input->setValue("");
