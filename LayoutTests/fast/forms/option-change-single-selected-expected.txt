@@ -1,0 +1,5 @@
+Test for bug 13278: REGRESSION: cannot change SELECT option.
+
+ 
+SUCCESS
+

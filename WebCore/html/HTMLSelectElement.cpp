@@ -174,6 +174,9 @@ void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect, bool fi
     int listIndex = optionToListIndex(optionIndex);
     HTMLOptionElement* element = 0;
 
+    if (!multiple())
+        deselect = true;
+
     if (listIndex >= 0) {
         if (m_activeSelectionAnchorIndex < 0 || deselect)
             setActiveSelectionAnchorIndex(listIndex);
