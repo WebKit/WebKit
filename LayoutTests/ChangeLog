@@ -1,3 +1,15 @@
+2007-04-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Testcase for landscape pdfs as image
+
+        rdar://problem/5030934 -- landscape PDFs embedded as an image are cut off
+
+        * fast/images/pdf-as-image-landscape-expected.txt: Added.
+        * fast/images/pdf-as-image-landscape.html: Added.
+        * fast/images/resources/pdf_test_landscape.pdf: Added.
+
 2007-04-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

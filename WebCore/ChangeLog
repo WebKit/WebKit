@@ -1,3 +1,22 @@
+2007-04-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam.
+
+        Fix rdar://problem/5030934 -- landscape PDFs embedded as an image are cut off
+        also fixes scaling of pdf images
+
+        PDFDocumentImage was not accounting for page rotation in a number of places
+
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::size):
+          we need to account for rotation of the pdf image effecting our bounds
+        (WebCore::PDFDocumentImage::draw):
+          When compensating for flipped coords we need to use the correct rect for the 
+          coordinate space.  We can't pass size() to CGContextDrawPDFDocument as it
+          returns the rotated bounds now -- this is also save the old 
+          FloatSize -> IntSize -> FloatSize conversions.
+          
+
 2007-04-04  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

@@ -50,7 +50,14 @@ PDFDocumentImage::~PDFDocumentImage()
 
 IntSize PDFDocumentImage::size() const
 {
-    return IntSize((int)m_mediaBox.size().width(), (int)m_mediaBox.size().height());
+    const float sina = sinf(-m_rotation);
+    const float cosa = cosf(-m_rotation);
+    const float width = m_mediaBox.size().width();
+    const float height = m_mediaBox.size().height();
+    const float rotWidth = width * cosa - height * sina;
+    const float rotHeight = width * sina + height * cosa;
+    
+    return IntSize((int)(fabsf(rotWidth) + 0.5f), (int)(fabsf(rotHeight) + 0.5f));
 }
 
 bool PDFDocumentImage::dataChanged(bool allDataReceived)
@@ -150,14 +157,14 @@ void PDFDocumentImage::draw(GraphicsContext* context, const FloatRect& dstRect, 
     CGContextTranslateCTM(context->platformContext(), dstRect.x() - srcRect.x() * hScale, dstRect.y() - srcRect.y() * vScale);
     CGContextScaleCTM(context->platformContext(), hScale, vScale);
     CGContextScaleCTM(context->platformContext(), 1, -1);
-    CGContextTranslateCTM(context->platformContext(), 0, -dstRect.height());
+    CGContextTranslateCTM(context->platformContext(), 0, -srcRect.height());
     CGContextClipToRect(context->platformContext(), CGRectIntegral(srcRect));
 
     // Rotate translate image into position according to doc properties.
     adjustCTM(context);
 
     // Media box may have non-zero origin which we ignore. Pass 1 for the page number.
-    CGContextDrawPDFDocument(context->platformContext(), FloatRect(FloatPoint(), size()),
+    CGContextDrawPDFDocument(context->platformContext(), FloatRect(FloatPoint(), m_mediaBox.size()),
         m_document, m_currentPage + 1);
 
     context->restore();
