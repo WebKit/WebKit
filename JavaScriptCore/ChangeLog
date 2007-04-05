@@ -3,6 +3,16 @@
         Reviewed by darin.
 
         Coverity fix. Coverity says:
+        "Event check_after_deref: Pointer "dateString" dereferenced before NULL check"
+
+        * kjs/date_object.cpp:
+        (KJS::parseDate):
+
+2007-04-05  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed by darin.
+
+        Coverity fix. Coverity says:
         "Event check_after_deref: Pointer "re" dereferenced before NULL check"
 
         * pcre/pcre_study.c:
