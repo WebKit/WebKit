@@ -192,6 +192,8 @@
         * rendering/RenderLayer.cpp:
         (WebCore::RenderLayer::updateHoverActiveState):
 
+=== Safari-5522.6 ===
+
 2007-04-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.

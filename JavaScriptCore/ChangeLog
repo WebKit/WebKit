@@ -42,6 +42,8 @@
         * kjs/collector.cpp:
         (KJS::Collector::collect):
 
+=== Safari-5522.6 ===
+
 2007-04-03  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.
