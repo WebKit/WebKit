@@ -1,3 +1,11 @@
+2007-04-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Add text-align: -webkit-auto for form controls.  Buttons already override this property to center their text.
+
+        * css/html4.css:
+
 2007-04-05  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by rwlbuis.
