@@ -1,3 +1,10 @@
+2007-04-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber stamped by Adele Peterson.
+
+        * kjs/ExecState.h: Removed obsolete forward/friend declaration of 
+        RuntimeMethodImp.
+
 2007-04-05  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by darin.
