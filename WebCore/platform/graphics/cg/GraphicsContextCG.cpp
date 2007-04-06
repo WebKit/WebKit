@@ -771,44 +771,44 @@ void GraphicsContext::drawLineForText(const IntPoint& point, int width, bool pri
 {
     if (paintingDisabled())
         return;
-    
-    // Note: This function assumes that point.x and point.y are integers (and that's currently always the case).
+
+    CGContextSaveGState(platformContext());
+
     float x = point.x();
     float y = point.y();
+    float lineLength = width;
 
-    float thickness = strokeThickness();
-    if (printing) {
-        // When printing, use a minimum thickness of 0.5 in user space.
-        // See bugzilla bug 4255 for details of why 0.5 is the right minimum thickness to use while printing.
-        if (thickness < 0.5)
-            thickness = 0.5;
+    // Use a minimum thickness of 0.5 in user space.
+    // See http://bugs.webkit.org/show_bug.cgi?id=4255 for details of why 0.5 is the right minimum thickness to use.
+    float thickness = max(strokeThickness(), 0.5f);
 
-        // When printing, use antialiasing instead of putting things on integral pixel boundaries.
-    } else {
+    if (!printing) {
         // On screen, use a minimum thickness of 1.0 in user space (later rounded to an integral number in device space).
-        if (thickness < 1)
-            thickness = 1;
+        float adjustedThickness = max(thickness, 1.0f);
 
-        // On screen, round all parameters to integer boundaries in device space.
-        CGRect lineRect = roundToDevicePixels(FloatRect(x, y, width, thickness));
-        x = lineRect.origin.x;
-        y = lineRect.origin.y;
-        width = (int)(lineRect.size.width);
-        thickness = lineRect.size.height;
+        // FIXME: This should be done a better way.
+        // We try to round all parameters to integer boundaries in device space. If rounding pixels in device space
+        // makes our thickness more than double, then there must be a shrinking-scale factor and rounding to pixels
+        // in device space will make the underlines too thick.
+        CGRect lineRect = roundToDevicePixels(FloatRect(x, y, lineLength, adjustedThickness));
+        if (lineRect.size.height < thickness * 2.0) {
+            x = lineRect.origin.x;
+            y = lineRect.origin.y;
+            lineLength = lineRect.size.width;
+            thickness = lineRect.size.height;
+            CGContextSetShouldAntialias(platformContext(), false);
+        }
     }
-
-    // FIXME: How about using a rectangle fill instead of drawing a line?
-    CGContextSaveGState(platformContext());
     
     CGContextSetLineWidth(platformContext(), thickness);
-    CGContextSetShouldAntialias(platformContext(), printing);
 
     float halfThickness = thickness / 2;
 
+    // FIXME: How about using a rectangle fill instead of drawing a line?
     CGPoint linePoints[2];
     linePoints[0].x = x + halfThickness;
     linePoints[0].y = y + halfThickness;
-    linePoints[1].x = x + width - halfThickness;
+    linePoints[1].x = x + lineLength - halfThickness;
     linePoints[1].y = y + halfThickness;
     CGContextStrokeLineSegments(platformContext(), linePoints, 2);
 
