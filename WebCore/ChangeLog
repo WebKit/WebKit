@@ -1,3 +1,23 @@
+2007-04-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        Fixed <rdar://problem/5112273> REGRESSION(TOT): Reproducible crash loading 
+        an old version of amazon.com as a web archive
+        
+        The problem was JavaScript executing inside a frame with a NULL document.
+        It's probably a bug that the document was NULL, but we don't want a minor
+        bug to be a crasher, and we don't want the DOM to depend on the implementation
+        details of the JS bindings, so I added NULL checks.
+
+        * bindings/js/kjs_window.cpp: Call FrameLoader::completeURL instead of
+        Document::completeURL, since FrameLoader::completeURL is safe against a
+        NULL document.
+        (KJS::Window::put):
+        (KJS::WindowFunc::callAsFunction):
+        (KJS::Location::put):
+        (KJS::LocationFunc::callAsFunction):
+
 2007-04-06  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 13274.  Rework mouse events so that subframe capturing works again.  Make sure

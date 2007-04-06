@@ -1032,7 +1032,7 @@ void Window::put(ExecState* exec, const Identifier &propertyName, JSValue *value
     case Location_: {
       Frame* p = Window::retrieveActive(exec)->m_frame;
       if (p) {
-        DeprecatedString dstUrl = p->document()->completeURL(DeprecatedString(value->toString(exec)));
+        DeprecatedString dstUrl = p->loader()->completeURL(DeprecatedString(value->toString(exec))).url();
         if (!dstUrl.startsWith("javascript:", false) || isSafeScript(exec)) {
           bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
           // We want a new history item if this JS was called via a user gesture
@@ -1631,7 +1631,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       KURL url;
       Frame* activeFrame = Window::retrieveActive(exec)->m_frame;
       if (!str.isEmpty() && activeFrame)
-          url = activeFrame->document()->completeURL(str.deprecatedString());
+          url = activeFrame->loader()->completeURL(str.deprecatedString()).url();
 
       ResourceRequest resRequest(url);
       FrameLoadRequest frameRequest(resRequest, frameName);
@@ -2204,7 +2204,7 @@ void Location::put(ExecState *exec, const Identifier &p, JSValue *v, int attr)
     case Href: {
       Frame* p = Window::retrieveActive(exec)->frame();
       if ( p )
-        url = p->document()->completeURL( str );
+        url = p->loader()->completeURL(str).url();
       else
         url = str;
       break;
@@ -2296,7 +2296,7 @@ JSValue *LocationFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const 
         const Window* window = Window::retrieveWindow(frame);
         if (!str.startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
           bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-          frame->loader()->scheduleLocationChange(p->document()->completeURL(str), p->loader()->outgoingReferrer(), true /*lock history*/, userGesture);
+          frame->loader()->scheduleLocationChange(p->loader()->completeURL(str).url(), p->loader()->outgoingReferrer(), true /*lock history*/, userGesture);
         }
       }
       break;
@@ -2315,7 +2315,7 @@ JSValue *LocationFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const 
         Frame *p = Window::retrieveActive(exec)->frame();
         if (p) {
             const Window *window = Window::retrieveWindow(frame);
-            DeprecatedString dstUrl = p->document()->completeURL(DeprecatedString(args[0]->toString(exec)));
+            DeprecatedString dstUrl = p->loader()->completeURL(DeprecatedString(args[0]->toString(exec))).url();
             if (!dstUrl.startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
                 bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
                 // We want a new history item if this JS was called via a user gesture
