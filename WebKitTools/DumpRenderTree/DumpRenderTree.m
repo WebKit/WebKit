@@ -112,6 +112,12 @@ static void displayWebView();
 volatile BOOL done;
 static NavigationController *navigationController;
 
+// Delegates
+static WaitUntilDoneDelegate *waitUntilDoneDelegate;
+static UIDelegate *uiDelegate;
+static EditingDelegate *editingDelegate;
+static ResourceLoadDelegate *resourceLoadDelegate;
+
 // Deciding when it's OK to dump out the state is a bit tricky.  All these must be true:
 // - There is no load in progress
 // - There is no work queued up (see workQueue var, below)
@@ -351,6 +357,38 @@ static void makeLargeMallocFailSilently(void)
     zone->realloc = checkedRealloc;
 }
 
+WebView *createWebView()
+{
+    NSRect rect = NSMakeRect(0, 0, maxViewWidth, maxViewHeight);
+    WebView *webView = [[WebView alloc] initWithFrame:rect];
+        
+    [webView setUIDelegate:uiDelegate];
+    [webView setFrameLoadDelegate:waitUntilDoneDelegate];
+    [webView setEditingDelegate:editingDelegate];
+    [webView setResourceLoadDelegate:resourceLoadDelegate];
+    
+    // The back/forward cache is causing problems due to layouts during transition from one page to another.
+    // So, turn it off for now, but we might want to turn it back on some day.
+    [[webView backForwardList] setPageCacheSize:0];
+    
+    [webView setContinuousSpellCheckingEnabled:YES];
+    
+    // To make things like certain NSViews, dragging, and plug-ins work, put the WebView a window, but put it off-screen so you don't see it.
+    // Put it at -10000, -10000 in "flipped coordinates", since WebCore and the DOM use flipped coordinates.
+    NSRect windowRect = NSOffsetRect(rect, -10000, [[[NSScreen screens] objectAtIndex:0] frame].size.height - rect.size.height + 10000);
+    NSWindow *window = [[NSWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
+    [[window contentView] addSubview:webView];
+    [window orderBack:nil];
+    [window setAutodisplay:NO];
+    
+    // For reasons that are not entirely clear, the following pair of calls makes WebView handle its
+    // dynamic scrollbars properly. Without it, every frame will always have scrollbars.
+    NSBitmapImageRep *imageRep = [webView bitmapImageRepForCachingDisplayInRect:[webView bounds]];
+    [webView cacheDisplayInRect:[webView bounds] toBitmapImageRep:imageRep];
+        
+    return webView;
+}
+
 void dumpRenderTree(int argc, const char *argv[])
 {    
     [NSApplication sharedApplication];
@@ -420,44 +458,21 @@ void dumpRenderTree(int argc, const char *argv[])
     }
     
     localPasteboards = [[NSMutableDictionary alloc] init];
-
     navigationController = [[NavigationController alloc] init];
-
-    NSRect rect = NSMakeRect(0, 0, maxViewWidth, maxViewHeight);
-    WebView *webView = [[WebView alloc] initWithFrame:rect];
-    frame = [webView mainFrame];
-    
-    WaitUntilDoneDelegate *waitUntilDoneDelegate = [[WaitUntilDoneDelegate alloc] init];
-    [webView setFrameLoadDelegate:waitUntilDoneDelegate];
-    
-    UIDelegate *uiDelegate = [[UIDelegate alloc] init];
-    [webView setUIDelegate:uiDelegate];
-
-    EditingDelegate *editingDelegate = [[EditingDelegate alloc] init];
-    [webView setEditingDelegate:editingDelegate];
-    
-    ResourceLoadDelegate *resourceLoadDelegate = [[ResourceLoadDelegate alloc] init];
-    [webView setResourceLoadDelegate:resourceLoadDelegate];
+    waitUntilDoneDelegate = [[WaitUntilDoneDelegate alloc] init];
+    uiDelegate = [[UIDelegate alloc] init];
+    editingDelegate = [[EditingDelegate alloc] init];    
+    resourceLoadDelegate = [[ResourceLoadDelegate alloc] init];
     
     NSString *pwd = [[NSString stringWithUTF8String:argv[0]] stringByDeletingLastPathComponent];
     [WebPluginDatabase setAdditionalWebPlugInPaths:[NSArray arrayWithObject:pwd]];
     [[WebPluginDatabase sharedDatabase] refresh];
-
-    // The back/forward cache is causing problems due to layouts during transition from one page to another.
-    // So, turn it off for now, but we might want to turn it back on some day.
-    [[webView backForwardList] setPageCacheSize:0];
-
-    // To make things like certain NSViews, dragging, and plug-ins work, put the WebView a window, but put it off-screen so you don't see it.
-    // Put it at -10000, -10000 in "flipped coordinates", since WebCore and the DOM use flipped coordinates.
-    NSRect windowRect = NSOffsetRect(rect, -10000, [[[NSScreen screens] objectAtIndex:0] frame].size.height - rect.size.height + 10000);
-    NSWindow *window = [[NSWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
-    [[window contentView] addSubview:webView];
-    [window orderBack:nil];
-    [window setAutodisplay:NO];
-
+    
+    WebView *webView = createWebView();    
+    frame = [webView mainFrame];
+    NSWindow *window = [webView window];
+    
     workQueue = [[NSMutableArray alloc] init];
-
-    [webView setContinuousSpellCheckingEnabled:YES];
 
     makeLargeMallocFailSilently();
 
@@ -474,11 +489,6 @@ void dumpRenderTree(int argc, const char *argv[])
     
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
     
-    // For reasons that are not entirely clear, the following pair of calls makes WebView handle its
-    // dynamic scrollbars properly. Without it, every frame will always have scrollbars.
-    NSBitmapImageRep *imageRep = [webView bitmapImageRepForCachingDisplayInRect:[webView bounds]];
-    [webView cacheDisplayInRect:[webView bounds] toBitmapImageRep:imageRep];
-
     if (threaded)
         startJavaScriptThreads();
     
