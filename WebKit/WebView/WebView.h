@@ -171,6 +171,13 @@ extern NSString *WebViewProgressFinishedNotification;
 + (NSString *)URLTitleFromPasteboard:(NSPasteboard *)pasteboard;
 
 /*!
+    @method registerURLSchemeAsLocal:
+    @abstract Adds the scheme to the list of schemes to be treated as local.
+    @param scheme The scheme to register
+*/
++ (void)registerURLSchemeAsLocal:(NSString *)scheme;
+
+/*!
     @method initWithFrame:frameName:groupName:
     @abstract The designated initializer for WebView.
     @discussion Initialize a WebView with the supplied parameters. This method will 

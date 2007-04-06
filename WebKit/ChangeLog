@@ -1,3 +1,14 @@
+2007-04-05  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - Moved registerURLSchemeAsLocal to the public API.
+
+        * WebView/WebView.h:
+        * WebView/WebView.mm:
+        (+[WebView registerURLSchemeAsLocal:]):
+        * WebView/WebViewPrivate.h:
+
 2007-04-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John.

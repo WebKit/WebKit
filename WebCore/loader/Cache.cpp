@@ -91,11 +91,21 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
     CachedResource* resource = m_resources.get(url.url());
 
     if (resource) {
-        if (!skipCanLoadCheck && FrameLoader::restrictAccessToLocal() && !FrameLoader::canLoad(*resource, docLoader->doc()))
+        if (!skipCanLoadCheck && FrameLoader::restrictAccessToLocal() && !FrameLoader::canLoad(*resource, docLoader->doc())) {
+            Document* doc = docLoader->doc();
+            if(doc)
+                FrameLoader::reportLocalLoadFailed(doc->page(), resource->url());
+
             return 0;
+        }
     } else {
-        if (!skipCanLoadCheck && FrameLoader::restrictAccessToLocal() && !FrameLoader::canLoad(url, docLoader->doc()))
+        if (!skipCanLoadCheck && FrameLoader::restrictAccessToLocal() && !FrameLoader::canLoad(url, docLoader->doc())) {
+            Document* doc = docLoader->doc();
+            if(doc)
+                FrameLoader::reportLocalLoadFailed(doc->page(), url.url());
+
             return 0;
+        }
 
         // The resource does not exist.  Create it.
         resource = createResource(type, docLoader, url, charset, skipCanLoadCheck);

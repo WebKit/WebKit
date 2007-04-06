@@ -65,6 +65,7 @@ namespace WebCore {
     class IntSize;
     class NavigationAction;
     class Node;
+    class Page;
     class PageCache;
     class PageState;
     class RenderPart;
@@ -151,6 +152,7 @@ namespace WebCore {
         static bool canLoad(const KURL&, const String& referrer, bool& hideReferrer);
         static bool canLoad(const KURL&, const Document*);
         static bool canLoad(const CachedResource&, const Document*);
+        static void reportLocalLoadFailed(const Page*, const String& url);
 
         static bool shouldHideReferrer(const KURL& url, const String& referrer);
 

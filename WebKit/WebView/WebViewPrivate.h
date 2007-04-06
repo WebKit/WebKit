@@ -171,8 +171,6 @@ typedef enum {
 - (BOOL)allowsUndo;
 - (void)setAllowsUndo:(BOOL)flag;
 
-+ (void)registerURLSchemeAsLocal:(NSString *)scheme;
-
 @end
 
 @interface WebView (WebPrivate)

@@ -1604,6 +1604,11 @@ NSMutableDictionary *countInvocations;
     return [pasteboard stringForType:WebURLNamePboardType];
 }
 
++ (void)registerURLSchemeAsLocal:(NSString *)protocol
+{
+    FrameLoader::registerURLSchemeAsLocal(protocol);
+}
+
 - (void)_registerDraggedTypes
 {
     NSArray *editableTypes = [WebHTMLView _insertablePasteboardTypes];
@@ -2862,11 +2867,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)setAllowsUndo:(BOOL)flag
 {
     _private->allowsUndo = flag;
-}
-
-+ (void)registerURLSchemeAsLocal:(NSString *)protocol
-{
-    FrameLoader::registerURLSchemeAsLocal(protocol);
 }
 
 @end

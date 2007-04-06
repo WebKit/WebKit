@@ -1,3 +1,21 @@
+2007-04-05  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - Added reportLocalLoadFailed to FrameLoader to send an error to the console when
+        calls to canLoad fail. 
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestResource):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadSubframe):
+        (WebCore::FrameLoader::loadPlugin):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::reportLocalLoadFailed):
+        * loader/FrameLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+
 2007-04-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

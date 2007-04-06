@@ -1,3 +1,14 @@
+2007-04-05  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        - Now we add a console message when local resources are blocked.
+
+        * http/tests/security/local-CSS-from-remote-expected.txt:
+        * http/tests/security/local-JavaScript-from-remote-expected.txt:
+        * http/tests/security/local-iFrame-from-remote-expected.txt:
+        * http/tests/security/local-image-from-remote-expected.txt:
+
 2007-04-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Adam.
