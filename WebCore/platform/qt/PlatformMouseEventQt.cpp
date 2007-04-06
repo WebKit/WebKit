@@ -34,8 +34,6 @@
 
 namespace WebCore {
 
-const PlatformMouseEvent::CurrentEventTag PlatformMouseEvent::currentEvent = { };
-
 PlatformMouseEvent::PlatformMouseEvent(QMouseEvent* event, int clickCount)
 {
     m_position = IntPoint(event->pos());

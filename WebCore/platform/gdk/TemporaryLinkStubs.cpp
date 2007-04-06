@@ -98,8 +98,6 @@ void Widget::setIsSelected(bool) { notImplementedGdk(); }
 void Widget::invalidate() { notImplementedGdk(); }
 void Widget::invalidateRect(const IntRect&) { notImplementedGdk(); }
 
-PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&) { notImplementedGdk(); }
-
 int WebCore::findNextSentenceFromIndex(UChar const*, int, int, bool) { notImplementedGdk(); return 0; }
 void WebCore::findSentenceBoundary(UChar const*, int, int, int*, int*) { notImplementedGdk(); }
 int WebCore::findNextWordFromIndex(UChar const*, int, int, bool) { notImplementedGdk(); return 0; }

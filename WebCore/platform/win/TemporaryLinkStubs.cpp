@@ -315,8 +315,6 @@ void Path::addRect(const FloatRect&) { notImplemented(); }
 void Path::addEllipse(const FloatRect&) { notImplemented(); }
 void Path::transform(const AffineTransform&) { notImplemented(); }
 
-PlatformMouseEvent::PlatformMouseEvent(const CurrentEventTag&) { notImplemented(); }
-
 PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize) : Scrollbar(client, orientation, controlSize) { notImplemented(); }
 PlatformScrollbar::~PlatformScrollbar() { notImplemented(); }
 int PlatformScrollbar::width() const { notImplemented(); return 0; }

@@ -1,3 +1,20 @@
+2007-04-06  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Oliver.
+
+        Eliminate PlatformMouseEvent::currentEvent.
+
+        No test possible (no change to functionality).
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleDrag):
+        * platform/PlatformMouseEvent.h:
+        * platform/gdk/TemporaryLinkStubs.cpp:
+        * platform/mac/PlatformMouseEventMac.mm:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/qt/PlatformMouseEventQt.cpp:
+        * platform/win/TemporaryLinkStubs.cpp:
+
 2007-04-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej.

@@ -64,8 +64,6 @@ namespace WebCore {
     
     class PlatformMouseEvent {
     public:
-        static const struct CurrentEventTag {} currentEvent;
-    
         PlatformMouseEvent()
             : m_button(NoButton)
             , m_eventType(MouseEventMoved)
@@ -77,8 +75,6 @@ namespace WebCore {
             , m_timestamp(0)
         {
         }
-
-        PlatformMouseEvent(const CurrentEventTag&);
 
         PlatformMouseEvent(const IntPoint& pos, const IntPoint& globalPos, MouseButton button, MouseEventType eventType,
                            int clickCount, bool shift, bool ctrl, bool alt, bool meta, double timestamp)
