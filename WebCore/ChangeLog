@@ -1,3 +1,14 @@
+2007-04-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Oliver.
+
+        Fix for <rdar://problem/4965597> REGRESSION: mouseup doesn't fire for slider (causes it to always default to max)
+
+        Test: fast/forms/slider-mouse-events.html
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::dispatchMouseEvent):
+        Since the actual target node of the event can't be a shadow node, set the target node to the capturing node before adjusting it.
+
 2007-04-05  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.

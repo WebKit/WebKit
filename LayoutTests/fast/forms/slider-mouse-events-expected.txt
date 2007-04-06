@@ -1,0 +1,6 @@
+This tests that slider controls get mouse down, input, and mouseup events.
+
+mousedown
+input
+mouseup
+
